@@ -13,7 +13,7 @@ export function useFixThreats( siteId: number, threatIds: number[] ) {
 	const queryClient = useQueryClient();
 	const [ fixState, setFixState ] = useState< FixState >( 'idle' );
 
-	const fixMutation = useMutation( {
+	const { mutate: fixThreats, error: fixError } = useMutation( {
 		...fixThreatsMutation( siteId ),
 		onError: () => setFixState( 'idle' ),
 	} );
@@ -58,8 +58,8 @@ export function useFixThreats( siteId: number, threatIds: number[] ) {
 
 	const startFix = useCallback( () => {
 		setFixState( 'fixing' );
-		return fixMutation.mutate( threatIds );
-	}, [ threatIds, fixMutation ] );
+		return fixThreats( threatIds );
+	}, [ threatIds, fixThreats ] );
 
 	useEffect( () => {
 		if ( status.isComplete && fixState === 'fixing' ) {
@@ -73,6 +73,6 @@ export function useFixThreats( siteId: number, threatIds: number[] ) {
 		startFix,
 		isFixing: fixState === 'fixing',
 		status,
-		error: fixMutation.error,
+		error: fixError,
 	};
 }

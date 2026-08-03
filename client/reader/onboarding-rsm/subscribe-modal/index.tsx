@@ -5,20 +5,21 @@ import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { StepIndicator } from 'calypso/reader/components/step-indicator';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
+import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useSite } from 'calypso/reader/data/site';
+import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getFeedUrl } from 'calypso/reader/get-helpers';
-import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
-import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
+import {
+	READER_ONBOARDING_FOLLOW_SOURCE,
+	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
+} from 'calypso/reader/onboarding-rsm/constants';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import { requestPage, requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { nextSelectedSite } from './selection';
 import { type CardData, useSubscribeRecommendations } from './use-subscribe-recommendations';
 import SubscribeVerificationNudge from './verificationNudge';
@@ -27,7 +28,7 @@ import './style.scss';
 
 interface SubscribeModalProps {
 	promptVerification: boolean;
-	onClose: () => void;
+	onFinish: () => void;
 }
 
 interface StreamProps {
@@ -55,9 +56,8 @@ const SITES_PER_PAGE = 6;
 // mounted while the step is active. X-out / escape are handled by the
 // wrapper's `onRequestClose`, which also runs the same close-side-effects
 // (data refresh, analytics) that `handleClose` previously did inline.
-const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, onClose } ) => {
+const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, onFinish } ) => {
 	const {
-		combinedRecommendations,
 		recommendations,
 		isLoading,
 		isValidating,
@@ -65,6 +65,44 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		followedTagSlugs,
 		markSessionFollow,
 	} = useSubscribeRecommendations();
+
+	const [ currentPage, setCurrentPage ] = useState( 0 );
+	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
+	const { data: selectedFeed } = useFeedQuery( selectedSite?.feed_ID );
+	// Pull the WP.com Reader site record once the React Query cache has it.
+	// Curated entries with `site_ID: 0` never trigger a fetch (the hook is
+	// disabled for non-positive ids). For WP.com sites the record exposes the
+	// canonical `feed_URL` which `getFeedUrl` prefers over the feed's own URL.
+	const { site: selectedReaderSite } = useSite(
+		selectedSite && selectedSite.site_ID > 0 ? selectedSite.site_ID : undefined
+	);
+	const selectedFeedIconUrl = selectedFeed?.site_icon ?? selectedFeed?.image;
+	// Subscribing via the curated `site_URL` (often a bare hostname like `design-milk.com`)
+	// can fail with `invalid_feed` for non-WP.com sites because the WP.com follow API has to
+	// auto-discover a feed and not all sites resolve. Mirror the
+	// `getFeedUrl({ feed, site })` derivation that the list-item path uses internally
+	// (precedence: `site.feed_URL` → `feed.feed_URL || feed.URL` → bare `site_URL`)
+	// so both subscribe paths agree on the URL the follow API ends up with.
+	const selectedFollowUrl =
+		getFeedUrl( {
+			feed: selectedFeed ?? undefined,
+			site: selectedReaderSite ?? undefined,
+		} ) ||
+		selectedSite?.site_URL ||
+		'';
+	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
+
+	const maxPages = Math.ceil( recommendations.length / SITES_PER_PAGE ) - 1;
+
+	const displayedRecommendations = useMemo(
+		() => recommendations.slice( 0, ( currentPage + 1 ) * SITES_PER_PAGE ),
+		[ recommendations, currentPage ]
+	);
+
+	const recommendationIdsKey = recommendations.map( ( site ) => site.feed_ID ).join( ',' );
+	const recommendationsRef = useRef( recommendations );
+	recommendationsRef.current = recommendations;
 
 	// Notify the hook when the user follows a feed inside the modal so a
 	// pinned card stays visible (showing "Subscribed") even after the follows
@@ -79,51 +117,8 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		[ markSessionFollow ]
 	);
 
-	const [ currentPage, setCurrentPage ] = useState( 0 );
-	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
-	const selectedFeed = useSelector( ( state: object ) =>
-		selectedSite ? getFeed( state, selectedSite.feed_ID ) : null
-	) as { site_icon?: string; image?: string; feed_URL?: string; URL?: string } | null;
-	// Pull the WP.com Reader site record once `<QueryReaderSite>` has populated
-	// the entry. Curated entries with `site_ID: 0` never produce one. For
-	// WP.com sites the record exposes the canonical `feed_URL` which
-	// `getFeedUrl` prefers over the feed object's own URL.
-	const selectedReduxSite = useSelector( ( state: object ) =>
-		selectedSite && selectedSite.site_ID > 0 ? getSite( state, selectedSite.site_ID ) : null
-	) as { feed_URL?: string } | null;
-	const selectedFeedIconUrl = selectedFeed?.site_icon ?? selectedFeed?.image;
-	// Subscribing via the curated `site_URL` (often a bare hostname like `design-milk.com`)
-	// can fail with `invalid_feed` for non-WP.com sites because the WP.com follow API has to
-	// auto-discover a feed and not all sites resolve. Mirror the
-	// `getFeedUrl({ feed, site })` derivation that the list-item path uses internally
-	// (precedence: `site.feed_URL` → `feed.feed_URL || feed.URL` → bare `site_URL`)
-	// so both subscribe paths agree on the URL the follow API ends up with.
-	const selectedFollowUrl =
-		getFeedUrl( {
-			feed: selectedFeed ?? undefined,
-			site: selectedReduxSite ?? undefined,
-		} ) ||
-		selectedSite?.site_URL ||
-		'';
-	const dispatch = useDispatch();
-	const queryClient = useQueryClient();
-
-	const maxPages = Math.ceil( recommendations.length / SITES_PER_PAGE ) - 1;
-
-	const displayedRecommendations = useMemo(
-		() => recommendations.slice( 0, ( currentPage + 1 ) * SITES_PER_PAGE ),
-		[ recommendations, currentPage ]
-	);
-
-	// Stable across renders when only unrelated Redux slices update (e.g. feed metadata
-	// bridging for other feeds). Prevents `requestPage` effects from storming the data layer.
-	const recommendationIdsKey = recommendations.map( ( s ) => s.feed_ID ).join( ',' );
-	const recommendationsRef = useRef( recommendations );
-	recommendationsRef.current = recommendations;
-
-	// Tracks which feeds we've already kicked off a stream prefetch for. `requestPage` forces a
-	// network fetch (staleTime=0 in the thunk), so re-dispatching it for the same feed every time
-	// `recommendations` grows would N×-amplify requests as cards trickle in from validation.
+	// Tracks which feeds we've already kicked off a stream prefetch for, so growing
+	// recommendation lists don't re-prefetch the same feed as cards trickle in from validation.
 	const prefetchedFeedIdsRef = useRef< Set< number > >( new Set() );
 
 	const handleLoadMore = useCallback( () => {
@@ -133,19 +128,18 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
 	}, [ maxPages, currentPage ] );
 
-	// Prefetch a stream page for every newly-validated recommendation, exactly once per feed.
 	useEffect( () => {
-		const sites = recommendationsRef.current;
-		for ( const site of sites ) {
+		for ( const site of recommendationsRef.current ) {
 			if ( prefetchedFeedIdsRef.current.has( site.feed_ID ) ) {
 				continue;
 			}
 			prefetchedFeedIdsRef.current.add( site.feed_ID );
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
+			prefetchInfiniteStream( queryClient, dispatch, {
+				streamKey: `feed:${ site.feed_ID }`,
+			} ).catch( () => null );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by id list, not array identity
-	}, [ recommendationIdsKey, dispatch ] );
+	}, [ recommendationIdsKey, dispatch, queryClient ] );
 
 	useEffect( () => {
 		setCurrentPage( 0 );
@@ -174,42 +168,30 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 				if ( previewContainer ) {
 					previewContainer.scrollTop = 0;
 				}
+				recordTracksEvent(
+					`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_site_previewed`,
+					{
+						feed_id: site.feed_ID,
+						site_id: site.site_ID,
+						site_name: site.site_name,
+					}
+				);
 			}
 			setSelectedSite( site );
 		},
 		[ selectedSite ]
 	);
 
-	const handleContinue = useCallback( () => {
-		queryClient.invalidateQueries( {
-			queryKey: [ 'read', 'subscriptions-count' ],
-		} );
-
-		dispatch(
-			requestPaginatedStream( {
-				streamKey: 'recent',
-				page: 1,
-				perPage: 10,
-			} )
-		);
-
-		onClose();
-	}, [ dispatch, onClose, queryClient ] );
+	const handleFinish = useCallback( () => {
+		onFinish();
+	}, [ onFinish ] );
 
 	return (
 		<>
 			{ promptVerification && <SubscribeVerificationNudge /> }
-			{ /* Site metadata is still loaded via the legacy data layer; feed metadata
-			     is fetched inside `useSubscribeRecommendations` with readFeedQuery.
-			     Curated entries for non-WP.com feeds carry `site_ID: 0` and have
-			     no associated WP.com site to prefetch — `QueryReaderSite` would
-			     short-circuit on the falsy ID, but each instance still mounts a
-			     Redux subscription and effect, so skip them up front. */ }
-			{ combinedRecommendations
-				.filter( ( site ) => site.site_ID > 0 )
-				.map( ( site ) => (
-					<QueryReaderSite key={ `prefetch-site-${ site.feed_ID }` } siteId={ site.site_ID } />
-				) ) }
+			{ /* Site + feed metadata are prefetched inside `useSubscribeRecommendations`
+			     via `useQueries( readSiteQuery / readFeedQuery )`; nothing else needed
+			     at this level. */ }
 			<div className="subscribe-modal__container">
 				<div className="subscribe-modal__content">
 					<div className="subscribe-modal__intro">
@@ -222,7 +204,9 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 					</div>
 					<div className="subscribe-modal__columns">
 						<div className="subscribe-modal__site-list-column">
-							{ ( isLoading || isValidating ) && <LoadingPlaceholder /> }
+							{ ( isLoading || isValidating ) && recommendations.length === 0 && (
+								<LoadingPlaceholder />
+							) }
 							{ hasNoRecommendations && (
 								<p>{ __( 'No recommendations available at the moment.' ) }</p>
 							) }
@@ -234,17 +218,14 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 											feedId={ site.feed_ID }
 											siteId={ site.site_ID }
 											site={ site }
-											// Intentionally not passing `url`: curated entries
-											// only carry a bare hostname (e.g. `design-milk.com`),
-											// and overriding the prop here would force the follow
-											// API to auto-discover a feed from that hostname,
-											// which fails for many non-WP.com sites with
-											// `invalid_feed`. Letting the list item fall back to
-											// `getFeedUrl({feed, site})` uses the canonical
-											// `feed_URL` from loaded feed metadata instead.
+											url={ site.feed_URL }
+											// Pass the canonical feed URL from onboarding data so
+											// the list item does not derive subscribe URL from
+											// `site_URL` alone.
 											showLastUpdatedDate={ false }
 											showNotificationSettings={ false }
 											showFollowedOnDate={ false }
+											followApiSource={ READER_ONBOARDING_FOLLOW_SOURCE }
 											followSource="reader-onboarding-modal"
 											replaceStreamClickWithItemClick
 											onItemClick={ () => handleItemClick( site ) }
@@ -278,9 +259,15 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												</span>
 											</div>
 											<ReaderFollowButton
+												// Remount per previewed site so the follow mutation's
+												// pending state (which lingers while follow-sensitive
+												// caches refetch) can't disable the button for the next
+												// site the user previews.
+												key={ selectedSite.feed_ID }
 												siteUrl={ selectedFollowUrl }
 												feedId={ selectedSite.feed_ID }
 												siteId={ selectedSite.site_ID }
+												followApiSource={ READER_ONBOARDING_FOLLOW_SOURCE }
 												followSource="reader-onboarding-modal"
 												hasButtonStyle
 												onFollowToggle={ ( isFollowing: boolean ) =>
@@ -297,7 +284,11 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												}
 											/>
 										</div>
-										<div className="subscribe-modal__preview-stream-container">
+										<div
+											className="subscribe-modal__preview-stream-container"
+											// `inert` removes preview stream from tab order + a11y tree (preview is non-interactive).
+											inert
+										>
 											<TypedStream
 												streamKey={ `feed:${ selectedSite.feed_ID }` }
 												className="is-site-stream subscribe-modal__preview-stream no-padding"
@@ -320,7 +311,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 					<HStack spacing={ 2 } justify="right" className="reader-onboarding-modal__footer-buttons">
 						<Button
 							__next40pxDefaultSize
-							onClick={ handleContinue }
+							onClick={ handleFinish }
 							variant="secondary"
 							disabled={ promptVerification }
 							accessibleWhenDisabled

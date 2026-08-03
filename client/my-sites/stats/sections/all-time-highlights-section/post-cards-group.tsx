@@ -2,7 +2,7 @@ import { ComponentSwapper, DotPager } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import { usePostLikes } from 'calypso/components/data/post-likes';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -14,7 +14,6 @@ import {
 	isRequestingSitePost,
 	getPostsForQuery,
 	isRequestingPostsForQuery,
-	countPostLikes,
 } from 'calypso/state/posts/selectors';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -88,10 +87,6 @@ export default function PostCardsGroup( {
 		getStatsTopPostsData( state, siteId, topPostsQuery )
 	);
 
-	const countLikes = useSelector(
-		( state ) => countPostLikes( state, siteId, topViewedPost?.id ) || 0
-	);
-
 	// Prepare the most popular post card.
 	const mostPopularPost = useSelector( ( state ) =>
 		getSitePost( state, siteId, topViewedPost?.id )
@@ -102,6 +97,7 @@ export default function PostCardsGroup( {
 	const mostPopularPostViewCount = useSelector(
 		( state ) => getPostStat( state, siteId, topViewedPost?.id, 'views' ) || 0
 	);
+	const { likeCount: mostPopularPostLikeCount } = usePostLikes( siteId, topViewedPost?.id );
 
 	const mostPopularPostData = {
 		date: mostPopularPost?.date,
@@ -110,7 +106,6 @@ export default function PostCardsGroup( {
 			getProcessedText( mostPopularPost?.title ),
 			POST_STATS_CARD_TITLE_LIMIT
 		),
-		likeCount: countLikes,
 		viewCount: mostPopularPostViewCount,
 		commentCount: mostPopularPost?.discussion?.comment_count,
 	};
@@ -149,7 +144,7 @@ export default function PostCardsGroup( {
 			<PostStatsCard
 				key="mostPopularPostCard"
 				heading={ translate( 'Most popular post in the past year' ) }
-				likeCount={ mostPopularPostData?.likeCount }
+				likeCount={ mostPopularPostLikeCount }
 				post={ mostPopularPostData }
 				viewCount={ mostPopularPostData?.viewCount }
 				commentCount={ mostPopularPostData?.commentCount }
@@ -176,7 +171,6 @@ export default function PostCardsGroup( {
 				<>
 					<QueryPosts siteId={ siteId } postId={ topViewedPost.id } query={ {} } />
 					<QueryPostStats siteId={ siteId } postId={ topViewedPost.id } />
-					<QueryPostLikes siteId={ siteId } postId={ topViewedPost.id } />
 				</>
 			) }
 

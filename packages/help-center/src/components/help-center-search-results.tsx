@@ -12,6 +12,7 @@ import {
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { Button } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
@@ -25,7 +26,6 @@ import {
 	page as pageIcon,
 	verse,
 } from '@wordpress/icons';
-import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Fragment, useEffect, useMemo } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -295,9 +295,15 @@ function HelpSearchResults( {
 
 			// push state only if it's internal link.
 			if ( ! /^http/.test( link ) ) {
-				openAdminInNewTab ? window.open( link, '_blank' ) : page( link );
+				if ( openAdminInNewTab ) {
+					window.open( link, '_blank' );
+				} else {
+					page( link );
+				}
+			} else if ( openAdminInNewTab ) {
+				window.open( link, '_blank' );
 			} else {
-				openAdminInNewTab ? window.open( link, '_blank' ) : window.open( link, '_self' );
+				window.open( link, '_self' );
 			}
 			return;
 		}

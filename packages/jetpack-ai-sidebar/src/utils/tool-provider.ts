@@ -3,10 +3,10 @@
  *
  * Used by jetpack-ai-provider.ts (Agents Manager provider module).
  *
- * Title optimization is routed through AM's native `big_sky__show_component`
- * pipeline, so no client-side `wpcom/select-title` ability is registered here;
- * the TitlePicker component is resolved via `getChatComponent('title-picker')`
- * at render time.
+ * Title optimization is routed through the Jetpack AI show-component pipeline,
+ * so no client-side `wpcom/select-title` ability is registered here; the
+ * TitlePicker component is resolved via `getChatComponent('title-picker')` at
+ * render time.
  */
 
 import type { Tool } from '@automattic/agenttic-client';
@@ -33,6 +33,11 @@ export const UPDATE_BLOCK_CONTENT_ABILITY: Tool = {
 			summary: {
 				type: 'string',
 				description: 'A brief user-friendly description of what was changed.',
+			},
+			currentText: {
+				type: 'string',
+				description:
+					'Optional: an exact substring of the existing block content that should be replaced by `content`. When provided and matched exactly once, only that span is replaced. When provided but missing or ambiguous, the update fails safely. Omit `currentText` to replace the full block content.',
 			},
 		},
 		required: [ 'clientId', 'content' ],

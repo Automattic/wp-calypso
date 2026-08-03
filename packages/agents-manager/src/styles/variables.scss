@@ -1,19 +1,25 @@
+@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
-$layout-spacing: 16px;
-// CSS custom-property wrapper so the split-screen toggle can override the
-// width at runtime. Fallback keeps existing consumers at 350px unchanged.
+$layout-spacing: $grid-unit-20;
+// CSS custom-property wrapper so split-screen can flip the width at runtime;
+// falls back to the docked 350px.
 $sidebar-width: var( --am-sidebar-width, 350px );
-$chat-header-height: 38px;
-$main-border-radius: 8px;
-$transition-duration: 0.2s;
-$transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
-$agents-manager-z-index-docked: 999999;
+$main-border-radius: $radius-large;
+// CSS custom-property wrapper so reduced-motion can zero every derived
+// transition at once.
+$transition-duration: var( --am-transition-duration, 0.2s );
+// Decelerate curve: starts at full speed so the slide responds instantly,
+// then eases into place.
+$transition-timing: $transition-duration cubic-bezier( 0, 0, 0.2, 1 );
+// Shared overlay-panel stacking, mirrored in Help Center
+// (packages/help-center/src/components/_variables.scss). A focused panel must
+// always beat an unfocused one, so they share one base + focused offset.
+$overlay-panel-z-index-base: 999990;
+$overlay-panel-z-index-focused: 999995;
+$agents-manager-z-index-docked: $overlay-panel-z-index-base;
+$agents-manager-z-index-focused: $overlay-panel-z-index-focused;
+$agents-manager-z-index-sidebar: $overlay-panel-z-index-base - 1;
 
 /* WP Admin */
 $admin-menu-width-unified: 272px;
-$admin-menu-width-classic: $admin-sidebar-width;
-$admin-menu-width-folded: 37px;
-$admin-content-top: calc( $admin-bar-height + $layout-spacing );
-$admin-background-color: #f1f1f1;
-$admin-border-color: #545454;

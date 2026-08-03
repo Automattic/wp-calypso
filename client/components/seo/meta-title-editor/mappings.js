@@ -21,7 +21,6 @@
 //               |                                                  |
 //               \--------------------------------------------------\--- tokens
 //
-//   @see README for `TokenField`
 //   [
 //   	{ value: 'Site Name', type: 'siteName' },
 //   	{ value: ' | ', type: 'string' },
@@ -29,17 +28,14 @@
 //   ]
 //
 
-import {
-	camelCase,
-	flowRight as compose,
-	get,
-	last,
-	map,
-	mapKeys,
-	mapValues,
-	reduce,
-	snakeCase,
-} from 'lodash';
+import { camelCase, mapKeys, mapValues, snakeCase } from '@automattic/js-utils';
+
+// Right-to-left composition of unary functions. Kept local so this pure mapping
+// module doesn't take on a dependency it otherwise has no need for.
+const compose =
+	( ...fns ) =>
+	( value ) =>
+		fns.reduceRight( ( acc, fn ) => fn( acc ), value );
 
 const mergeStringPieces = ( a, b ) => ( {
 	type: 'string',
@@ -54,7 +50,7 @@ const mergeStringPieces = ( a, b ) => ( {
  * @returns {Array} List of native format pieces
  */
 export const rawToNative = ( list ) =>
-	map( list, ( p ) =>
+	list.map( ( p ) =>
 		'string' === p.type ? { type: 'string', value: p.value } : { type: camelCase( p.value ) }
 	);
 
@@ -68,23 +64,19 @@ export const rawToNative = ( list ) =>
 export const nativeToRaw = compose(
 	// combine adjacent strings
 	( list ) =>
-		reduce(
-			list,
-			( format, piece ) => {
-				const lastPiece = last( format );
+		list.reduce( ( format, piece ) => {
+			const lastPiece = format.at( -1 );
 
-				if ( lastPiece && 'string' === lastPiece.type && 'string' === piece.type ) {
-					return [ ...format.slice( 0, -1 ), mergeStringPieces( lastPiece, piece ) ];
-				}
+			if ( lastPiece && 'string' === lastPiece.type && 'string' === piece.type ) {
+				return [ ...format.slice( 0, -1 ), mergeStringPieces( lastPiece, piece ) ];
+			}
 
-				return [ ...format, piece ];
-			},
-			[]
-		),
+			return [ ...format, piece ];
+		}, [] ),
 	( list ) =>
-		map( list, ( p ) => ( {
+		list.map( ( p ) => ( {
 			type: p.type === 'string' ? 'string' : 'token',
-			value: get( p, 'value', snakeCase( p.type ) ),
+			value: p?.value ?? snakeCase( p.type ),
 		} ) )
 );
 

@@ -1,4 +1,9 @@
-import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import {
+	Button,
+	FormStatus,
+	useFormStatus,
+	PAYMENT_METHOD_STEP_ID,
+} from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field } from '@automattic/wpcom-checkout';
@@ -6,7 +11,7 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState, Fragment, type JSX } from 'react';
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/src/components/payment-method-logos';
 import {
 	SummaryLine,
@@ -168,7 +173,6 @@ function WeChatPayButton( {
 					stripZeros: true,
 				} ) }
 			/>
-			<div className="we-chat-modal-target" />
 		</Button>
 	);
 }
@@ -205,6 +209,11 @@ function isFormValid( state: WeChatPaymentMethodState ): boolean {
 	if ( ! state.data.customerName.length || state.data.customerName.length < 3 ) {
 		// Touch the field so it displays a validation error
 		state.change( '' );
+		// The field may be scrolled out of view (e.g. behind a sticky submit
+		// button), which would otherwise make the click look like a no-op.
+		document
+			.getElementById( PAYMENT_METHOD_STEP_ID )
+			?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
 		return false;
 	}
 	return true;

@@ -5,6 +5,7 @@ import {
 	FEATURE_SFTP,
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_BUSINESS,
+	PLAN_PERSONAL,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -12,7 +13,6 @@ import { CompactCard, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { includes } from 'lodash';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
@@ -32,9 +32,11 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
 import SupportLink from './support-link';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
-import WarningList from './warning-list';
+import WarningList, { type AtomicTransferAction } from './warning-list';
 import type { EligibilityData } from 'calypso/state/automated-transfer/selectors';
 import './style.scss';
+
+export type { AtomicTransferAction } from './warning-list';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
@@ -49,6 +51,7 @@ interface ExternalProps {
 	className?: string;
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
+	atomicTransferAction?: AtomicTransferAction;
 	isMarketplace?: boolean;
 	isOnboarding?: boolean;
 	showDataCenterPicker?: boolean;
@@ -63,13 +66,14 @@ export const EligibilityWarnings = ( {
 	className,
 	ctaName,
 	context,
+	atomicTransferAction,
 	feature,
 	eligibilityData,
 	isEligible,
 	isMarketplace,
 	isPlaceholder,
 	onDismiss,
-	onProceed,
+	onProceed = noop,
 	standaloneProceed,
 	recordUpgradeClick,
 	showDataCenterPicker,
@@ -118,7 +122,9 @@ export const EligibilityWarnings = ( {
 		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
-			const planSlug = PLAN_BUSINESS;
+			// Plugin upload is available on the Personal plan and up, so upsell the
+			// lowest eligible plan for that context instead of Business.
+			const planSlug = context === 'plugins-upload' ? PLAN_PERSONAL : PLAN_BUSINESS;
 			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
 			if ( context === 'plugins-upload' ) {
 				redirectUrl = `${ redirectUrl }?redirect_to=${ encodeURIComponent(
@@ -200,7 +206,12 @@ export const EligibilityWarnings = ( {
 
 			{ showWarnings && (
 				<CompactCard className="eligibility-warnings__warnings-card">
-					<WarningList context={ context } warnings={ warnings } showContact={ false } />
+					<WarningList
+						context={ context }
+						warnings={ warnings }
+						showContact={ false }
+						transferAction={ atomicTransferAction }
+					/>
 				</CompactCard>
 			) }
 
@@ -234,7 +245,13 @@ export const EligibilityWarnings = ( {
 						isBusy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
 						onClick={ logEventAndProceed }
 					>
-						{ getProceedButtonText( listHolds, translate, context, showFreeTrial ) }
+						{ getProceedButtonText(
+							listHolds,
+							translate,
+							context,
+							showFreeTrial,
+							atomicTransferAction
+						) }
 					</Button>
 				</div>
 			</CompactCard>
@@ -261,7 +278,8 @@ function getProceedButtonText(
 	holds: string[],
 	translate: LocalizeProps[ 'translate' ],
 	context: string | null,
-	showFreeTrial?: boolean
+	showFreeTrial?: boolean,
+	atomicTransferAction?: AtomicTransferAction
 ) {
 	if ( siteRequiresUpgrade( holds ) ) {
 		if ( context === 'plugin-details' || context === 'plugins' ) {
@@ -277,6 +295,12 @@ function getProceedButtonText(
 	}
 	if ( siteRequiresGoingPublic( holds ) ) {
 		return translate( 'Make your site public and continue' );
+	}
+	if ( atomicTransferAction === 'scan' ) {
+		return translate( 'Activate Jetpack Scan' );
+	}
+	if ( atomicTransferAction === 'backup' ) {
+		return translate( 'Activate Jetpack VaultPress Backup' );
 	}
 	if ( context === 'hosting-features' ) {
 		return translate( 'Activate hosting features' );
@@ -306,10 +330,6 @@ function siteRequiresLaunch( holds: string[] ) {
 function siteRequiresGoingPublic( holds: string[] ) {
 	return holds.includes( 'SITE_NOT_PUBLIC' );
 }
-
-EligibilityWarnings.defaultProps = {
-	onProceed: noop,
-};
 
 /**
  * processMarketplaceExceptions: Remove 'NO_BUSINESS_PLAN' holds if the
@@ -424,19 +444,19 @@ function mergeProps(
 		context = ownProps.currentContext;
 		feature = FEATURE_SFTP;
 		ctaName = 'calypso-hosting-features-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'plugins' ) ) {
+	} else if ( ownProps.backUrl?.includes( 'plugins' ) ) {
 		context = 'plugins-upload';
 		feature = FEATURE_UPLOAD_PLUGINS;
 		ctaName = 'calypso-plugin-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'themes' ) ) {
+	} else if ( ownProps.backUrl?.includes( 'themes' ) ) {
 		context = 'themes';
 		feature = FEATURE_UPLOAD_THEMES;
 		ctaName = 'calypso-theme-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'hosting' ) ) {
+	} else if ( ownProps.backUrl?.includes( 'hosting' ) ) {
 		context = 'hosting';
 		feature = FEATURE_SFTP;
 		ctaName = 'calypso-hosting-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'performance' ) ) {
+	} else if ( ownProps.backUrl?.includes( 'performance' ) ) {
 		context = 'performance';
 		feature = FEATURE_PERFORMANCE;
 		ctaName = 'calypso-performance-features-activate-nudge';

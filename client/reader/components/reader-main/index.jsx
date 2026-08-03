@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import Main from 'calypso/components/main';
 import { ReaderPendingActionHandler } from './pending-action-handler';
 import './style.scss';
@@ -47,7 +46,6 @@ export default class ReaderMain extends Component {
 		return (
 			<div ref={ forwardRef }>
 				<Main { ...props }>
-					<SyncReaderFollows key="syncReaderFollows" />
 					<ReaderPendingActionHandler />
 					{ children }
 				</Main>

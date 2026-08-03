@@ -97,6 +97,7 @@ describe( 'useSurvicate', () => {
 
 		expect( mockedLoadScript ).toHaveBeenCalledWith( SURVICATE_WORKSPACE_ID );
 		expect( mockedSetTraits ).toHaveBeenCalledWith( {
+			user_id: '1',
 			email: 'test@example.com',
 			account_age_in_days: 42,
 		} );

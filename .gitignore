@@ -62,8 +62,6 @@ checkstyle.xml
 cover.html
 .test.log
 
-cached-requests.json
-
 # Monorepo output
 /apps/*/dist/
 /apps/*/build/
@@ -133,6 +131,8 @@ playwright-report/
 .playwright-mcp/
 /cookies
 output/
+# Deferred account closes; hold bearer tokens, so kept out of the published output/.
+.teardown-pending/
 
 # Claude settings and rules
 # Allow user-contributed files, but keep Claude.md and main settings under version control

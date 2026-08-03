@@ -40,6 +40,41 @@ export function getPathWithUpdatedQueryString( query = {}, path = page.current )
 }
 
 /**
+ * Build a module "View details" summary link that forwards the current date range.
+ * When the source query carries a custom range we emit the modern `chartStart`/`chartEnd`
+ * (plus the matched `shortcut`) contract; otherwise we keep the legacy single-date `startDate`.
+ * @param {Object} params params
+ * @param {Object} params.period period object with `period` string and `endOf` moment
+ * @param {string} params.module module path segment (e.g. `referrers`)
+ * @param {string} params.siteSlug site slug
+ * @param {Object} params.query stats query (may carry `start_date`/`date`)
+ * @param {string} [params.shortcut] active shortcut id to forward
+ * @returns {string|undefined} the summary URL or undefined when required params are missing
+ */
+export function buildSummaryUrl( { period, module, siteSlug, query, shortcut } = {} ) {
+	if ( ! period?.period || ! module || ! siteSlug ) {
+		return undefined;
+	}
+
+	const url = `/stats/${ period.period }/${ module }/${ siteSlug }`;
+
+	if ( ! query?.start_date || ! query?.date ) {
+		return `${ url }?startDate=${ period.endOf.format( DATE_FORMAT ) }`;
+	}
+
+	// The range and shortcut originate from the URL, so serialize instead of interpolating.
+	const params = new URLSearchParams( {
+		chartStart: query.start_date,
+		chartEnd: query.date,
+	} );
+	if ( shortcut ) {
+		params.set( 'shortcut', shortcut );
+	}
+
+	return `${ url }?${ params.toString() }`;
+}
+
+/**
  * Add analytics event.
  * @param {*} eventName Analytics event name, automatically prefixed with 'jetpack_odyssey' or 'calypso'
  * @param {*} properties Analytics properties
@@ -63,6 +98,33 @@ export const appendQueryStringForRedirection = ( pathname, query = {} ) => {
 	const queryString = new URLSearchParams( query ).toString();
 
 	return `${ pathname }${ queryString ? '?' : '' }${ queryString }`;
+};
+
+/**
+ * Zero-pad a naive `YYYY-M-D`-style date string (e.g. an unpadded chartStart/chartEnd
+ * URL param) to the canonical `YYYY-MM-DD` form. Non-matching input (already padded,
+ * not a date-only string, or not a string at all) is returned unchanged.
+ *
+ * moment's IANA-timezone parsing (see getMomentSiteZone) hands unrecognized non-ISO
+ * strings to its legacy Date() fallback, which parses them as UTC and can shift the
+ * result to the wrong calendar day once converted to the site's timezone. Normalizing
+ * the param at the point it enters the app (route params) avoids that entirely, and
+ * keeps every downstream consumer comparing canonical, identically-formatted strings.
+ * @param {*} value The raw query param value.
+ * @returns {*} The zero-padded date string, or the original value if it doesn't match.
+ */
+export const normalizeChartDateParam = ( value ) => {
+	if ( typeof value !== 'string' ) {
+		return value;
+	}
+
+	const match = value.match( /^(\d{4})-(\d{1,2})-(\d{1,2})$/ );
+	if ( ! match ) {
+		return value;
+	}
+
+	const [ , year, month, day ] = match;
+	return `${ year }-${ month.padStart( 2, '0' ) }-${ day.padStart( 2, '0' ) }`;
 };
 
 /**

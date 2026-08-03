@@ -27,6 +27,8 @@ Out of scope (lives elsewhere):
 client/reader/social/
   index.ts                      # public barrel — only export from here
   profile-card.tsx              # SocialProfileCard (used by every protocol's profile/verify view)
+  account-row.tsx               # SocialAccountRow — one row in an account list (avatar / name / handle / bio / follow button)
+  account-list.tsx              # SocialAccountList<T> — generic wrapper around SocialFeedList<T> rendering each item via SocialAccountRow
   author-profile-header.tsx     # AuthorProfileHeader — back-button shim for the profile route (slice 6)
   author-profile-panel.tsx      # SocialAuthorProfilePanel — generic author-profile surface, both protocols wrap (slice 6)
   profile-header-skeleton.tsx   # SocialProfileHeaderSkeleton — layout-stable placeholder used by the panel (slice 6)
@@ -48,7 +50,7 @@ client/reader/social/
       analytics-context.tsx     # SocialAnalyticsProvider + useSocialAnalytics
       post-card-header.tsx      # avatar + name/handle + timestamp + repost reason + reply context
       post-card-body.tsx        # sanitized post.html injected as HTML
-      post-card-counts.tsx      # replies / reposts / likes / quotes row
+      post-card-counts.tsx      # replies / reposts / likes row + stats row on the focused thread root
       post-card-link.tsx        # card-link accessibility pattern (one real <a> + ::after overlay)
       post-card-embed.tsx       # dispatcher on embed.type
       post-card-embed-images.tsx
@@ -60,6 +62,26 @@ client/reader/social/
       sanitize-post-html.ts     # DOMPurify allow-list helper
       style.scss
       test/
+
+    notifications-list/
+      index.tsx                 # SocialNotificationsList — filter bar + date dividers + grouped rows
+      notification-item.tsx     # SocialNotificationItem — single-row renderer
+      stacked-notification.tsx  # StackedNotification — multi-actor row with inline follow expansion
+      filter.ts                 # ChipFilter UI alias (re-exports NotificationsFilter from @automattic/api-core) + CHIP_FILTERS array
+      filter-bar.tsx            # NotificationsFilterBar — aria-pressed chip strip
+      date-bucket.ts            # bucketFor( iso, now ) → 'today' | 'yesterday' | 'this_week' | 'earlier'
+      group-notifications.ts    # groupNotifications( items ) — stacking algorithm + GroupedRow types
+      style.scss
+      test/
+
+  site-handoff/                 # generic site picker + draft-save handoff (extracted from composer-overflow-handoff)
+    index.ts                    # public barrel — only export from here
+    site-handoff.tsx            # SiteHandoff — picker + submit button, owns single-vs-multi-site branching
+    site-icon-thumb.tsx
+    use-handoff-mutation.ts     # saveDraftMutation wrapper + popup-blocker fallback + tracks + logstash
+    site-handoff.scss
+    test/
+      site-handoff.test.tsx
 
   composer/                     # generic composer shell, driven by per-protocol ComposerConfig (slice 7)
     index.ts                    # public barrel — only export from here
@@ -107,6 +129,9 @@ Don't speculate ahead of that signal. Adding a generic shape now will make the a
 - `SocialAuthorProfilePanel` (slice 6) — generic author-profile surface that owns the layout (back-button + profile header + feed list), the `profile_viewed` / `profile_error_shown` / `profile_retry_clicked` / `profile_back_to_timeline_clicked` Tracks events with ref-based dedupe, and the `SocialAnalyticsProvider` value. Per-protocol wrappers inject already-fetched query results, mappers, error projectors, URL builders, and copy. Atmosphere's wrapper is `client/reader/atmosphere/author-profile-panel.tsx`; Mastodon's is `client/reader/mastodon/author-profile-panel.tsx`. Both shrink to ~150 lines of config.
 - `SocialProfileHeaderSkeleton` (slice 6) — layout-stable placeholder used as the default `renderProfileLoading` slot of `SocialAuthorProfilePanel`. Mirrors `SocialProfileCard`'s sizing so the surface doesn't shift when profile data resolves.
 - `AuthorProfileHeader` — back-button shim taking `timelineUrl: string`. Both protocols use it directly via the shared panel.
+- `SocialAccountRow` — one row in an account list (avatar / name / handle / bio / follow button), with optional Follows you badge and self-row mode. Pass `hideFollowedByBadge: true` to suppress the badge on followers-list surfaces (where every row trivially follows the viewer); `followState.isFollowedBy` is still consumed by the follow button to pick the "Follow back" label. Card-link overlay pattern: the whole row is a click target via a `::after` overlay on the timestamp-style anchor; the follow button sits above the overlay via `position: relative; z-index: 1` so it stays individually clickable. Caller maps the protocol shape to row props.
+- `SocialAccountList<T>` — thin generic wrapper around `SocialFeedList<T>` that renders each item via `<SocialAccountRow {...renderItem(item)} />`. Caller provides the `renderItem` mapper from protocol shape to `SocialAccountRow` props; the list shell, sentinel-based pagination, skeleton, and error variants are inherited unchanged. Optionally renders a follow-list header above the list via the `header` prop (`{ displayName, handle, count, mode: 'followers' | 'following', isPending }`) so followers/following surfaces look identical across protocols. The header shows the actor's display name (or `@handle` fallback) and a pluralized count line; while `isPending` it renders a layout-stable skeleton, and when `count` is `null` (profile fetch errored) it renders the heading only.
+- `SocialNotificationsList` — the Notifications-tab list shell, generic across protocols. Owns the filter-chip bar, date-divider insertion, and stack-aware row rendering. Per-protocol wrappers (`client/reader/atmosphere/notifications-panel.tsx`, `client/reader/mastodon/notifications-panel.tsx`) own the `useState< ChipFilter >( 'all' )` and thread `filter` + `onFilterChange` + `onStackExpandedChange` into the shared list. See "Notifications list" below for the architecture.
 
 ### What's Bluesky-specific today (likely needs forking or refactoring)
 
@@ -204,7 +229,7 @@ Allow-list shape:
 - `ALLOWED_TAGS: ['p', 'br', 'a']` for post content (extend cautiously for new protocols).
 - `ALLOWED_TAGS: ['p', 'br', 'a', 'span']` for profile bios (Mastodon emits `<span>` mention scaffolding).
 - `ALLOWED_ATTR` for post content: `href`, `rel`, `target`, `data-id`. The `data-id` attribute carries the protocol's stable author identifier on @-mention anchors so `<PostCardBody>` can route mentions in-app via `getProfileUrl` without parsing the href.
-- `ALLOWED_ATTR` for profile bios: `href`, `rel`, `target`, `class`, `data-id`. Bios carry the same @-mention `data-id` contract as post content; `<SocialProfileCard>` intercepts bio mention clicks via the same pattern as `<PostCardBody>`.
+- `ALLOWED_ATTR` for profile bios: `href`, `rel`, `target`, `class`, `data-id`, `data-tag`. Bios carry the same @-mention `data-id` and hashtag `data-tag` contracts as post content; `<SocialProfileCard>` intercepts bio mention and hashtag clicks via the same pattern as `<PostCardBody>`, routing through `getProfileUrl` and `getTagUrl` respectively.
 - `ALLOW_DATA_ATTR: false` on both post content and profile bios. DOMPurify allows every `data-*` attribute by default; we restrict to the explicit allow-list above so a future backend change can't smuggle a new `data-*` attribute (e.g. `data-tracking`) through to the DOM.
 - `ADD_URI_SAFE_ATTR: ['data-id']` on both post content and profile bios. DOMPurify scheme-checks every attribute value containing a colon and would otherwise drop `data-id="did:plc:…"` for atmosphere DIDs as an unknown URI scheme. Use `ADD_URI_SAFE_ATTR` (extends DOMPurify's defaults) rather than `URI_SAFE_ATTRIBUTES` (replaces them and would drop `xml:lang`, `xlink:href`, etc.). Don't switch to `ALLOW_UNKNOWN_PROTOCOLS: true` — that would also loosen `href` validation.
 - DOMPurify's default scheme allow-list strips `javascript:` / `data:` / etc. on `href`. Don't extend it.
@@ -235,8 +260,11 @@ the timeline). When `expanded={true}`, the component renders a native
 
 The thumbnail is used as the `<video poster>` so users see a frame before
 hitting play. `<SocialPostCard>` forwards `expandedVideo` only for the
-highlighted root node inside `<ThreadTree>` — replies and parents stay
-thumbnail-only.
+highlighted root node inside `<ThreadTree>` — replies and parents render
+as thumbnail buttons by default. Clicking a thumbnail flips the embed to
+the player inline (no navigation) and autoplays inside the click's
+user-gesture window, so video posts deeper in a thread don't require a
+detour through the post detail view to play.
 
 This mirrors what bsky.app's own web app and other modern Bluesky clients do.
 The static `embed.bsky.app` widget was an earlier attempt but doesn't include
@@ -320,13 +348,14 @@ Both mutation hooks optimistically patch every cached query under their
 protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
 plus thread-tree nodes recursively), then restore snapshots on error.
 
-The connection ID flows from the protocol panel:
-`Panel` → `<LikeProvider value={makeUse…LikeAction(id)}>` plus
-`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<LikeButton>`.
-Any future interactive count button (repost, follow, bookmark) should
-follow the same provider-injected adapter shape rather than reading
-connection identity from global state or hard-coding protocol logic into
-the shared button.
+The connection ID is captured by the adapter factory at panel mount time
+(`makeUse…LikeAction(connection.id)`) and lives inside the closure passed
+to `<LikeProvider value={…}>`. `<PostCardCounts>` does not need to know
+about it; `<LikeButton>` reads its action straight from the provider via
+`useLikeAction(post)`. Any future interactive count button (repost,
+follow, bookmark) should follow the same provider-injected adapter
+shape rather than reading connection identity from global state or
+hard-coding protocol logic into the shared button.
 
 ### Repost / Boost interactions
 
@@ -358,8 +387,7 @@ Two render branches by viewer state:
   (disabled when `action.canQuote === false`). ATmosphere sets
   `canQuote: Boolean(analytics.onQuoteClick && post.cid)` — both
   composer-presence and the AT-Proto strong-ref check are required;
-  clicking the item opens the same composer as the standalone
-  `<QuoteButton>`. Mastodon sets
+  the item opens the quote composer via `analytics.onQuoteClick`. Mastodon sets
   `canQuote: Boolean(analytics.onQuoteClick)` — no `cid` requirement
   since Mastodon's quote contract uses a numeric status id. Mastodon
   4.5+ supports native quote posts via `quoted_status_id`;
@@ -381,8 +409,9 @@ Each protocol shell wires its own adapter hook factory:
   emits the labels "Repost" / "Repost, %d repost(s)" / "Undo repost, %d
   repost(s)". Tracks events: `_repost_clicked`, `_unrepost_clicked`,
   `_quote_clicked`, `_repost_error_shown`. The `quote()` action delegates
-  to the analytics context's `onQuoteClick`, sharing the composer wiring
-  with the standalone `<QuoteButton>`.
+  to the analytics context's `onQuoteClick`, opening the composer in
+  quote mode (the only surface for quote actions after the standalone
+  QuoteButton was retired).
 - Mastodon: `client/reader/mastodon/use-mastodon-repost-action.ts`
   exports `makeUseMastodonRepostAction(connectionId)`. It calls
   `useCreateMastodonRepostMutation()` / `useDeleteMastodonRepostMutation()`,
@@ -398,10 +427,104 @@ Both mutation hooks optimistically patch every cached query under their
 protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
 plus thread-tree nodes recursively), then restore snapshots on error.
 
-The connection ID flows from the protocol panel:
-`Panel` → `<RepostProvider value={makeUse…RepostAction(id)}>` plus
-`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<RepostButton>`.
-Mirrors the like / favorite flow.
+The connection ID is captured by the adapter factory
+(`makeUse…RepostAction(connection.id)`) and lives inside the closure passed
+to `<RepostProvider value={…}>`; `<RepostButton>` reads its action via
+`useRepostAction(post)`. Mirrors the like / favorite flow.
+
+The far-right slot of `<PostCardCounts>` hosts `<BlogAboutButton>` — an
+icon-only button (WordPress logomark, `@wordpress/icons`'s `wordpress`
+glyph) that opens `<BlogAboutModal>`. The modal lets the user pick one
+of their WordPress sites, then creates a draft with a `core/embed`
+block pointing at the source post's permalink, and opens the editor in
+a new tab. The button renders unconditionally — `<PostCardCounts>` is
+only mounted by social post cards (atmosphere / mastodon today), and
+the analytics provider is always wrapped around it, so no extra gate is
+needed. The empty-sites case is handled inside the modal (a
+"Create a site" link). Tracks events: `_blog_about_clicked`,
+`_blog_about_shown`, `_blog_about_dismissed`,
+`_blog_about_editor_opened`, `_blog_about_error_shown` — all under
+`calypso_reader_<source>_*`.
+
+The far-right placement is achieved via `margin-inline-start: auto` on
+the button wrapper (`.social-post-card-counts__blog-about`); the
+existing `HStack` keeps `justify="flex-start"` so the three engagement
+buttons stay grouped on the left.
+
+### Notifications list
+
+The Notifications-tab list (`components/notifications-list/`) is shared
+across ATmosphere and Mastodon. The wpcom endpoints emit a
+byte-compatible envelope (`{ items, next_cursor, seen_at }`) keyed by
+`canonical_type` (`like | repost | follow | mention | reply | quote |
+other`), so one renderer handles both protocols. Three coordinated
+behaviours sit on top of that envelope:
+
+**Filter chips** — `<NotificationsFilterBar>` wraps
+`@wordpress/components`' `ToggleGroupControl` (with
+`ToggleGroupControlOption` children) for the chip strip
+(`All / Conversations / Likes / Reposts / Follows`). The component
+renders as a `radiogroup`, gets arrow-key handling and the WP design
+system's selected-state styling for free, and reports its accessible
+name via the hidden `label` prop. Selected chip is
+session state in the per-protocol panel wrapper
+(`useState< ChipFilter >( 'all' )`); on change, the wrapper threads it
+into the hook and fires
+`calypso_reader_<source>_notifications_filter_changed`. The chip union
+and the wire mapper both live in
+`packages/api-core/src/reader-social/notifications-filter.ts` as
+`NotificationsFilter` and `mapNotificationsFilter`: `filter.ts`
+re-exports the type as `ChipFilter` for UI call sites, and the
+per-protocol notifications-infinite-query hooks
+(`packages/api-queries/src/reader-{atmosphere,mastodon}.ts`) import the
+mapper directly. The wpcom side translates `types=` into ATProto
+`reasons[]` (Bluesky) or Mastodon `types[]`, post-filtering client-side
+for the `other` bucket.
+
+**Date dividers** — `bucketFor( iso, now )` in `date-bucket.ts` returns
+`'today' | 'yesterday' | 'this_week' | 'earlier'` against the user's
+local timezone, with a 7-day rolling window for `this_week`. The list
+walks grouped rows and emits an `<h3>` heading whenever the bucket
+changes. Empty buckets are not rendered; when every
+loaded row lands in a single bucket the lone divider is also suppressed
+(it would feel like noise). `now` is captured inside the bucketing
+`useMemo`, not lifted to its own hook.
+
+**Stacking** — `groupNotifications( items, now )` in
+`group-notifications.ts` is a pure function that buckets a flat
+newest-first `SocialNotification[]` into `GroupedRow[]`. Group key:
+`canonical_type:target.uri` for like/repost/mention/reply/quote,
+`follow:<date-bucket>` for follow rows (using the same `bucketFor`
+vocabulary the renderer uses for date dividers — a long-tailed
+follower history would otherwise collapse into a single mega-stack,
+since every follow shares the same target = "you"), and a per-item
+singleton key for `other` (never stacks) or for any row missing a
+`target.uri`. The `now` argument is shared by `<SocialNotificationsList>`
+with the divider computation so each follow stack lands under the
+matching bucket heading. Stacks form only at `members.length >= 2`;
+singletons
+render via `<SocialNotificationItem>` unchanged. Position of a stack in
+the rendered list is the position of its newest member, which falls out
+of the algorithm because the first time a key is seen creates its
+bucket. `newestCreatedAt` is computed via `reduce` over the members so
+the algorithm is robust to out-of-order input (e.g. paginated pages
+re-merged). `<StackedNotification>` renders the avatar cluster (max 3
+visible avatars + `+N` overflow), name line ("Jane, Sam and N others
+liked your post"), excerpt, timestamp, and unread dot. Like/repost/etc
+stacks click → `targetUrl` (external `<a target="_blank">`). Follow
+stacks click → `aria-expanded` toggle revealing per-member child rows;
+follow stacks cap rendered children at 50 (`FOLLOW_TRUNCATE_AT`). The
+toggle fires
+`calypso_reader_<source>_notifications_stack_{expanded,collapsed}` via
+the panel wrapper's `onStackExpandedChange` callback.
+
+**Per-protocol wrappers** (`client/reader/{atmosphere,mastodon}/notifications-panel.tsx`)
+own the filter state, hook invocation
+(`useXxxNotificationsInfiniteQuery( connectionId, { filter } )`), the
+Tracks dispatches above, and pass everything as props into the shared
+list. They are deliberately byte-for-byte symmetric (only event-name
+prefix + protocol-specific imports differ), matching the pattern
+established by the timeline / thread / author-profile wrappers.
 
 ### Composer (slice 7)
 
@@ -472,7 +595,26 @@ Per-protocol `ComposerConfig` supplies:
   and Mastodon both wire it as `calypso_reader_<protocol>_overflow_handoff_{shown,editor_opened}`
   with `connection_id` + `mode_kind` props (plus `site_id` on the
   click event).
-- `copy.{title, placeholder}` — per-mode strings.
+- `copy.{title, placeholder}` — per-mode strings. `copy.title( mode, t,
+  handle )` is called by the modal with the resolved `useAuthorHandle`
+  value (or `null` when the hook is omitted / pending) so each protocol
+  can render "New post · @handle" — the destination context the issue
+  CM-799 surfaced. All three protocols (atmosphere, mastodon, fediverse)
+  wire this; fediverse's handle is the webfinger identity of the source
+  blog (e.g. `@myblog@myblog.wordpress.com`).
+- `headerIcon?` — optional `ReactElement` rendered before the modal
+  title via `<Modal icon>`. Atmosphere passes `<ReaderBlueskyIcon
+  filled />`, Mastodon passes `<ReaderMastodonIcon />`, Fediverse passes
+  `<ReaderFediverseIcon />`. Together with the `· @handle` title suffix
+  this communicates "you're posting to Bluesky as @jordesign.bsky.social"
+  without a destination picker.
+- `useAuthorHandle?` — optional hook returning the connected account's
+  handle for the given `connectionId` (or `null` for `null` / pending /
+  missing). Called unconditionally inside `<ComposerModal>` (rules of
+  hooks) — same contract as `useLimit`. Atmosphere reads it from
+  `useConnectionsQuery`, Mastodon from `useMastodonConnectionsQuery`,
+  Fediverse from `useFediverseConnectionsQuery`, all running the result
+  through `normalizeHandle()` so the leading `@` doesn't double up.
 - `logBadRequest?` — fire-and-forget hook for the `bad_request` body
   log. Lives in the per-protocol adapter so `calypso/lib/logstash`
   doesn't have to be imported from `packages/api-queries` (which is
@@ -512,6 +654,43 @@ The connection ID flows from the protocol shell:
 view content). Inline pills (`<TimelineComposePill />`) live inside
 panels that opt into the composer via `useOptionalComposer()`.
 
+#### Fediverse migration follow-up
+
+`ComposerProtocolExtrasSlot.renderControls` is `@deprecated` but retained
+because `client/reader/fediverse/use-fediverse-composer-extras.tsx` still
+renders an inline visibility/CW control block via this slot. Migrating
+Fediverse to `renderTrigger` + a popover (mirroring the Mastodon migration)
+is a follow-up. When that lands, drop `renderControls` from the interface,
+the modal, the NOOP slot, and the atmosphere + Mastodon shim returns.
+
+### Site handoff
+
+`<SiteHandoff>` (in `site-handoff/`) is the shared picker + save-draft +
+open-editor primitive used by every Reader Social surface that needs to
+create a WordPress draft from in-Reader content. Today two callers
+use it:
+
+- `ComposerOverflowHandoff` — over-limit "publish on your own site"
+  escape hatch inside the composer modal. Draft body is the composer's
+  plain text.
+- `<BlogAboutButton>` / `<BlogAboutModal>` in
+  `components/post-card/` — the fourth slot in `<PostCardCounts>` for
+  turning a third-party post into a WordPress blog post. Draft body is
+  a `core/embed` block pointing at `post.permalink` (built by
+  `buildEmbedBlock`).
+
+The shared piece owns the single-vs-multi-site branching, the
+`<ComboboxControl>` picker with primary-site pre-selection, the
+draft-save mutation, the popup-blocker fallback (success notice with
+"Open in editor" button when `window.open` returns null), and the
+logstash error log. Each caller owns its own gate, its own intro copy,
+its own draft body, and its own Tracks event shape (the `tracks` prop
+is optional and shaped as `{ editorOpened, errorShown }` callbacks
+returning `{ event, props }`).
+
+When adding a third caller, pass its own `caller: string` identifier
+so the logstash dashboard can split error rates by surface.
+
 ## Boundaries (for new code)
 
 Inherits everything from `client/reader/AGENTS.md` and `client/AGENTS.md`. Highlights worth restating because they trip up new contributors:
@@ -546,7 +725,7 @@ yarn test-client:watch client/reader/social
 
 When wiring up a second (Mastodon) or third social protocol, expect to:
 
-1. **Add a per-protocol shell** under `client/reader/<protocol>/` (e.g. `client/reader/mastodon/`) — routes, controller, account view, panels (timeline / profile / settings).
+1. **Add a per-protocol shell** under `client/reader/<protocol>/` (e.g. `client/reader/mastodon/`) — routes, controller, account view, panels (timeline / profile).
 2. **Add per-protocol fetchers + types + hooks** under `packages/api-core/src/reader-<protocol>/` and `packages/api-queries/src/reader-<protocol>.ts`. Mirror the ATmosphere shape: typed fetchers, error classifier, query keys, infinite-query factory + hook.
 3. **Reuse this directory's protocol-agnostic primitives directly:** `SocialProfileCard`, `SocialFeedList`, `PostCardLink`, `sanitizePostHtml`, `SocialAnalyticsProvider`. Don't duplicate.
 4. **Decide on the post card.** Either refactor `SocialPostCard` and the embed dispatcher to take a `SocialPost` shape with a Bluesky→`SocialPost` mapper and a Mastodon→`SocialPost` mapper, or fork into `BlueskyPostCard` / `MastodonPostCard` keeping shared subcomponents (`PostCardLink`, `PostCardCounts`, etc.). Pick after looking at concrete fixtures, not before.
@@ -559,7 +738,7 @@ Future-extraction candidates flagged for later PRs (currently in `client/reader/
 
 - `connect-form.tsx` — likely shareable with Mastodon's connect flow.
 - `profile-panel.tsx` (your-own-connection profile) — already uses `SocialProfileCard` (rich variant); the panel shell could move shared-side once Mastodon's profile shape is fully aligned.
-- `atmosphere-navigation.tsx` — the Timeline / Profile / Settings tab structure likely ports.
+- `atmosphere-navigation.tsx` — the Timeline / Profile tab structure likely ports.
 
 `author-profile-panel.tsx` was extracted to this directory as
 `SocialAuthorProfilePanel` in slice 6 — both protocols already wrap the

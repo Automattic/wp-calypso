@@ -3,8 +3,9 @@ import { useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useMemo, type JSX } from 'react';
 import { receiptRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { isAkismetPro500Plan } from '../../utils/akismet';
 import { getTaxName } from '../../utils/tax';
 import {
@@ -16,7 +17,7 @@ import {
 	summarizeReceiptItems,
 	transactionIncludesTax,
 } from './utils';
-import type { CountryListItem, Receipt } from '@automattic/api-core';
+import type { CountryListItem, Receipt, Site } from '@automattic/api-core';
 import type { Fields, Operator, SortDirection, View } from '@wordpress/dataviews';
 
 import './styles.scss';
@@ -54,17 +55,14 @@ export const DEFAULT_VIEW: View = {
 
 export function useActions() {
 	const navigate = useNavigate();
-	const sendEmailMutation = useMutation( {
-		...sendReceiptEmailMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Your receipt was sent by email successfully.' ),
-				error: __(
-					'There was a problem sending your receipt. Please try again later or contact support.'
-				),
-			},
-		},
-	} );
+	const { mutate: sendEmail } = useMutation(
+		withSnackbar( sendReceiptEmailMutation(), {
+			success: __( 'Your receipt was sent by email successfully.' ),
+			error: __(
+				'There was a problem sending your receipt. Please try again later or contact support.'
+			),
+		} )
+	);
 
 	return useMemo(
 		() => [
@@ -87,19 +85,48 @@ export function useActions() {
 				isEligible: ( item: Receipt ) => Boolean( item.id ),
 				callback: ( items: Receipt[] ) => {
 					const item = items[ 0 ];
-					sendEmailMutation.mutate( String( item.id ) );
+					sendEmail( String( item.id ) );
 				},
 			},
 		],
-		[ navigate, sendEmailMutation ]
+		[ navigate, sendEmail ]
 	);
 }
 
 export function getFields(
 	receipts: Receipt[],
-	countryList: CountryListItem[] = []
+	countryList: CountryListItem[] = [],
+	visibleFields: string[] = WIDE_FIELDS,
+	locale: string,
+	sites: Site[] = [],
+	siteFilter?: number
 ): Fields< Receipt > {
+	// No point in having a filter if there's only one site.
+	const shouldAllowSiteFilter = sites.length > 1;
+
 	return [
+		{
+			id: 'site',
+			label: __( 'Site' ),
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: false,
+			enableHiding: false,
+			...( shouldAllowSiteFilter
+				? {
+						elements: sites.map( ( site ) => {
+							return { value: String( site.ID ), label: `${ site.name } (${ site.slug })` };
+						} ),
+						filterBy: {
+							operators: [ 'isAny' as Operator ],
+							...( siteFilter && { isPrimary: true } ),
+						},
+				  }
+				: { filterBy: false } ),
+			getValue: ( { item }: { item: Receipt } ) => {
+				return getReceiptSiteIds( item );
+			},
+		},
 		{
 			id: 'date',
 			label: __( 'Date' ),
@@ -115,20 +142,12 @@ export function getFields(
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
-			elements: getDatesForFiltering( receipts ),
+			elements: getDatesForFiltering( receipts, locale ),
 			getValue: ( { item }: { item: Receipt } ) => {
-				return getDateForFiltering( item );
+				return getDateForFiltering( item, locale );
 			},
 			render: ( { item }: { item: Receipt } ) => {
-				return (
-					<time>
-						{ new Date( item.date ).toLocaleDateString( undefined, {
-							year: 'numeric',
-							month: 'short',
-							day: 'numeric',
-						} ) }
-					</time>
-				);
+				return <time>{ formatReceiptDate( item, locale ) }</time>;
 			},
 		},
 		{
@@ -154,14 +173,17 @@ export function getFields(
 			},
 			render: ( { item }: { item: Receipt } ) => {
 				return (
-					<Link
-						to={ receiptRoute.fullPath }
-						params={ { receiptId: item.id } }
-						title={ __( 'View receipt' ) }
-						className="receipts-link-to-receipt"
-					>
-						{ renderServiceNameDescription( item ) }
-					</Link>
+					<VStack spacing={ 1 }>
+						<Link
+							to={ receiptRoute.fullPath }
+							params={ { receiptId: item.id } }
+							title={ __( 'View receipt' ) }
+							className="receipts-link-to-receipt"
+						>
+							{ renderServiceNameDescription( item ) }
+						</Link>
+						{ renderInlineHiddenFields( item, visibleFields, locale ) }
+					</VStack>
 				);
 			},
 		},
@@ -210,7 +232,12 @@ export function getFields(
 				return search_data;
 			},
 			render: ( { item }: { item: Receipt } ) =>
-				renderReceiptAmount( item, getTaxName( countryList, item.tax_country_code ) ),
+				renderReceiptAmount(
+					item,
+					item.tax_breakdown?.length
+						? item.tax_breakdown.map( ( e ) => e.label ).join( ' + ' )
+						: getTaxName( countryList, item.tax_country_code )
+				),
 		},
 		{
 			id: 'extra_receipt_data_for_search',
@@ -233,14 +260,14 @@ export function getFields(
 				// Date field: Add the full date in a couple of formats, so
 				// it's possible to search for e.g. "October 23" or "Oct 23".
 				search_data.push(
-					new Date( item.date ).toLocaleDateString( undefined, {
+					new Date( item.date ).toLocaleDateString( locale, {
 						year: 'numeric',
 						month: 'long',
 						day: 'numeric',
 					} )
 				);
 				search_data.push(
-					new Date( item.date ).toLocaleDateString( undefined, {
+					new Date( item.date ).toLocaleDateString( locale, {
 						year: 'numeric',
 						month: 'short',
 						day: 'numeric',
@@ -275,11 +302,14 @@ export function getFields(
 	];
 }
 
-function getDatesForFiltering( receipts: Receipt[] ): Array< { value: string; label: string } > {
+function getDatesForFiltering(
+	receipts: Receipt[],
+	locale: string
+): Array< { value: string; label: string } > {
 	const datesForFiltering = new Map< string, Date >();
 
 	receipts.forEach( ( receipt ) => {
-		const key = getDateForFiltering( receipt );
+		const key = getDateForFiltering( receipt, locale );
 		const date = new Date( receipt.date );
 		datesForFiltering.set( key, date );
 	} );
@@ -292,12 +322,24 @@ function getDatesForFiltering( receipts: Receipt[] ): Array< { value: string; la
 		} ) );
 }
 
-function getDateForFiltering( receipt: Receipt ): string {
+function getDateForFiltering( receipt: Receipt, locale: string ): string {
 	// Filter by year and month only.
-	return new Date( receipt.date ).toLocaleDateString( undefined, {
+	return new Date( receipt.date ).toLocaleDateString( locale, {
 		year: 'numeric',
 		month: 'long',
 	} );
+}
+
+function formatReceiptDate( receipt: Receipt, locale: string ): string {
+	return new Date( receipt.date ).toLocaleDateString( locale, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+	} );
+}
+
+function getReceiptSiteIds( receipt: Receipt ): string[] {
+	return [ ...new Set( receipt.items.map( ( item ) => String( item.site_id ) ) ) ];
 }
 
 function getServicesForFiltering( receipts: Receipt[] ): Array< { value: string; label: string } > {
@@ -357,6 +399,36 @@ function renderServiceNameDescription( receipt: Receipt ) {
 			) }
 		</VStack>
 	);
+}
+
+function renderInlineHiddenField( key: string, label: string, value: string ) {
+	return (
+		<Text key={ key } isBlock variant="muted" size="12" className="billing-history-receipt-meta">
+			<span className="billing-history-receipt-meta-label">{ label }</span>
+			<span className="billing-history-receipt-meta-value">{ value }</span>
+		</Text>
+	);
+}
+
+function renderInlineHiddenFields( receipt: Receipt, visibleFields: string[], locale: string ) {
+	const lines: JSX.Element[] = [];
+
+	if ( ! visibleFields.includes( 'date' ) ) {
+		lines.push(
+			renderInlineHiddenField( 'date', __( 'Date' ), formatReceiptDate( receipt, locale ) )
+		);
+	}
+	if ( ! visibleFields.includes( 'type' ) ) {
+		lines.push(
+			renderInlineHiddenField( 'type', __( 'Type' ), getReceiptItemTypeForDisplay( receipt ) )
+		);
+	}
+	if ( ! visibleFields.includes( 'amount' ) ) {
+		lines.push(
+			renderInlineHiddenField( 'amount', __( 'Amount' ), formatReceiptAmount( receipt ) )
+		);
+	}
+	return lines;
 }
 
 function getReceiptItemTypesForFiltering(

@@ -8,15 +8,18 @@ import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { purchasesRoute } from '../../app/router/me';
+import { billingHistoryRoute, purchasesIndexRoute, purchasesRoute } from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
+import { useIsSplitCancelRemoveEnabled } from './cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	WIDE_FIELDS,
 	DESKTOP_FIELDS,
@@ -26,15 +29,53 @@ import {
 	getItemId,
 	usePurchasesListActions,
 } from './dataviews';
+import { PurchaseRemovedNotice } from './purchase-removed-notice';
 
 export default function PurchasesList() {
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const currentSearchParams = purchasesRoute.useSearch();
+	const { removed, removedDomain, removedId } = purchasesIndexRoute.useSearch();
+	// Capture notice data on first render — useSearch() may lose the values
+	// after replaceState strips the URL params.
+	const [ removedNoticeData ] = useState( () =>
+		removed
+			? { productNoun: removed, atomicDomain: removedDomain, purchaseId: removedId ?? null }
+			: null
+	);
+	const [ showRemovedNotice, setShowRemovedNotice ] = useState( Boolean( removedNoticeData ) );
+
+	useEffect( () => {
+		if ( removed ) {
+			// Strip notice params from the URL without triggering a TanStack Router
+			// re-navigation — avoids a route loader re-run and layout shift.
+			const url = new URL( window.location.href );
+			url.searchParams.delete( 'removed' );
+			url.searchParams.delete( 'removedDomain' );
+			url.searchParams.delete( 'removedId' );
+			window.history.replaceState( window.history.state, '', url.toString() );
+		}
+	}, [ removed ] );
+
 	const { data: purchases = [], isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases = [], isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
 	);
 	const { data: sites = [], isLoading: isLoadingSites } = useQuery( allSitesQuery() );
 	const isLoading = isLoadingPurchases || isLoadingTransferredPurchases || isLoadingSites;
+
+	// Dismiss the success notice when the background mutation rolls back —
+	// detected by the captured purchase reappearing in the userPurchasesQuery
+	// cache. The cancel page's 15s cache guard re-strips transient stale
+	// refetches synchronously inside the QueryCache notify callback, so this
+	// effect never observes transient success-path reappearances.
+	useEffect( () => {
+		if ( ! removedNoticeData?.purchaseId ) {
+			return;
+		}
+		if ( purchases.some( ( p ) => p.ID === removedNoticeData.purchaseId ) ) {
+			setShowRemovedNotice( false );
+		}
+	}, [ purchases, removedNoticeData ] );
 
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
 	const { view, updateView, resetView } = usePersistentView( {
@@ -63,6 +104,7 @@ export default function PurchasesList() {
 		paymentMethods,
 		transferredPurchases,
 		siteFilter: currentSearchParams.site,
+		visibleFields: view.fields,
 	} );
 
 	const allSubscriptions = useMemo( () => {
@@ -77,6 +119,13 @@ export default function PurchasesList() {
 		transferredPurchases,
 	} );
 
+	const { recordTracksEvent } = useAnalytics();
+	const siteFilterValue = view.filters?.find( ( filter ) => filter.field === 'site' )?.value;
+	const activeSiteId =
+		Array.isArray( siteFilterValue ) && siteFilterValue.length === 1
+			? Number( siteFilterValue[ 0 ] )
+			: undefined;
+
 	return (
 		<PageLayout
 			size="large"
@@ -85,9 +134,32 @@ export default function PurchasesList() {
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Active upgrades' ) }
 					description={ __( 'View and manage your active plans and purchases.' ) }
+					actions={
+						activeSiteId !== undefined && (
+							<RouterLinkButton
+								variant="secondary"
+								to={ billingHistoryRoute.fullPath }
+								search={ { site: activeSiteId } }
+								onClick={ () =>
+									recordTracksEvent(
+										'calypso_dashboard_purchases_see_billing_history_for_site_click'
+									)
+								}
+							>
+								{ __( 'View billing history for this site' ) }
+							</RouterLinkButton>
+						)
+					}
 				/>
 			}
 		>
+			{ isSplitCancelRemoveEnabled && showRemovedNotice && (
+				<PurchaseRemovedNotice
+					productNoun={ removedNoticeData?.productNoun ?? '' }
+					atomicDomain={ removedNoticeData?.atomicDomain }
+					onClose={ () => setShowRemovedNotice( false ) }
+				/>
+			) }
 			<div ref={ ref }>
 				<DataViewsCard className="purchases-list__wrapper">
 					{ ! isLoading && <PerformanceTrackerStop /> }
@@ -97,7 +169,7 @@ export default function PurchasesList() {
 						fields={ purchasesDataFields }
 						view={ view }
 						onChangeView={ updateView }
-						onResetView={ resetView }
+						onReset={ resetView }
 						defaultLayouts={ { table: {} } }
 						actions={ actions }
 						getItemId={ getItemId }

@@ -87,6 +87,8 @@ export interface Purchase {
 	 */
 	attached_to_purchase_id: number | null;
 
+	advertised_total_upload_space_in_gb?: number | null;
+
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
 
@@ -139,6 +141,47 @@ export interface Purchase {
 	domain_registration_agreement_url: string | undefined;
 	blog_created_date: string;
 	expiry_date: string;
+
+	/**
+	 * A coarse, display-oriented summary of where this purchase is in its
+	 * lifecycle. Derived on the backend from
+	 * `Store_Subscription::get_expiry_status()`, which combines the subscription
+	 * status, the expiry date, whether it expires "soon", and whether it is
+	 * configured to auto-renew. One of:
+	 *
+	 * - 'active': Active, has a future expiry date, and set to auto-renew, but
+	 *   renewal is not imminent (more than ~3 months away; ~10 days for monthly
+	 *   plans). Renews automatically on the renewal date. No action needed.
+	 *
+	 * - 'auto-renewing': Same as 'active' but renewal IS imminent (within the
+	 *   "expiring soon" window). Will auto-renew on the renewal date.
+	 *
+	 * - 'manual-renew': Active, has a future expiry date, but NOT set to
+	 *   auto-renew and not yet expiring soon. The user must renew manually
+	 *   before the expiry date or it will lapse.
+	 *
+	 * - 'expiring': Active, expiring soon but NOT yet past its expiry date, and
+	 *   NOT going to auto-renew. This is the "needs attention" state: the
+	 *   purchase is still active but will lapse unless renewed.
+	 *
+	 * - 'expired': The expiry date has passed. This covers BOTH a subscription
+	 *   that is still active but past its expiry date — its post-expiry grace
+	 *   period (`subscription_status === 'active'`), during which it can still be
+	 *   renewed before being removed — and one that has since been removed
+	 *   (`subscription_status !== 'active'`). See below.
+	 *
+	 * - 'included': This purchase is part of a bundle (e.g. a domain bundled
+	 *   with a plan) and its lifecycle is governed by the parent subscription.
+	 *   This overrides any of the above.
+	 *
+	 * - 'one-time-purchase': The purchase has no expiry time at all (a perpetual
+	 *   purchase or a one-time product). Never renews and never lapses.
+	 *
+	 * Distinguishing the two 'expired' cases: both report `expiry_status` of
+	 * 'expired'. While `subscription_status` is still 'active' the purchase is in
+	 * its post-expiry grace period and can still be renewed; once it has been
+	 * removed, `subscription_status` is no longer 'active'.
+	 */
 	expiry_status:
 		| 'expiring'
 		| 'included'
@@ -147,6 +190,46 @@ export interface Purchase {
 		| 'manual-renew'
 		| 'expired'
 		| 'one-time-purchase';
+
+	/**
+	 * True if the subscription's expiry date has already passed, whether it is
+	 * still active (i.e. in its post-expiry grace period) or has since been
+	 * removed.
+	 *
+	 * This is about the expiry date specifically. It closely tracks
+	 * `expiry_status === 'expired'`, which the backend also reports once the
+	 * expiry date passes; the two only diverge for a subscription removed before
+	 * its expiry date (which reports 'expired' while this stays false).
+	 *
+	 * Always false for purchases with no expiry time (one-time purchases and
+	 * perpetual purchases).
+	 */
+	is_past_expiry_date: boolean;
+
+	/**
+	 * Whole days from today until the subscription expires, counted in UTC.
+	 * Negative once the subscription has expired, and null for subscriptions
+	 * that never expire (for example, one-time purchases).
+	 *
+	 * Don't use this in text that counts down to a date the viewer can also
+	 * see; the fact that it is UTC-based means it can disagree by 1 day with
+	 * the viewer's own time zone. For example, a subscription expiration date
+	 * of July 30 (midnight UTC) will be shown as July 29 in any timezone west
+	 * of UTC (such as New York). As a result, the viewer will expect the
+	 * displayed days until expiration to equal 2 any time during the day on
+	 * July 27 in their time zone, and to equal 1 any time during the day on
+	 * July 28 in their time zone, etc. To get that behavior, see
+	 * `getCalendarDaysUntil` and `getRelativeDayString` in
+	 * `client/dashboard/utils/datetime.ts` instead.
+	 *
+	 * By contrast, do use this when the answer should match the server's time
+	 * rather than the viewer's time. If you want the count of days to change
+	 * at the same moment the subscription itself can change state (for
+	 * example, as soon as the subscription's `expiry_status` becomes
+	 * "expired"), then this property is a good choice.
+	 */
+	days_until_expiry: number | null;
+
 	iap_purchase_management_link: string | null;
 
 	/**
@@ -302,6 +385,23 @@ export interface Purchase {
 	refund_period_in_days: number;
 	regular_price_text: string;
 	regular_price_integer: number;
+
+	/**
+	 * The date of the next scheduled auto-renewal attempt (ISO 8601), or an
+	 * empty string when no renewal is scheduled.
+	 *
+	 * Populated only when the subscription is set to auto-renew and a renewal
+	 * attempt is still upcoming. WordPress.com begins attempting renewals before
+	 * a subscription expires (e.g. non-monthly WordPress.com plans first attempt
+	 * ~30 days before `expiry_date`) and can keep attempting during the
+	 * post-expiry grace period, so this date may fall before or after
+	 * `expiry_date`.
+	 *
+	 * An empty string means no attempt is scheduled: auto-renew is off, or the
+	 * subscription is in its grace period past the final auto-renewal attempt.
+	 * It does NOT fall back to the expiry date — read `expiry_date` explicitly
+	 * where an expiry date is wanted.
+	 */
 	renew_date: string;
 
 	sale_amount?: number;
@@ -351,9 +451,85 @@ export interface Purchase {
 	 */
 	is_auto_renew_enabled: boolean;
 
+	/**
+	 * True if the purchase is past the UTC date of its first auto-renewal attempt.
+	 *
+	 * Once this is `true` the subscription has had at least one chance to renew
+	 * itself and has not taken it.
+	 *
+	 * The same caveats as `is_past_last_auto_renew_attempt_date` apply: it is
+	 * unaffected by whether auto-renew is actually enabled, and it is
+	 * day-granular.
+	 */
+	is_past_first_auto_renew_attempt_date: boolean;
+
+	/**
+	 * True if the purchase is past the UTC date of its final auto-renewal attempt.
+	 *
+	 * Note that whether or not auto-renew is actually enabled has no bearing
+	 * on the value of this property; it simply checks against the schedule for
+	 * subscriptions of this type that do have auto-renew turned on.
+	 *
+	 * Also, since we don't know in advance the exact moment at which
+	 * auto-renewals will happen, this property effectively has a granularity
+	 * of one day; in other words, when this is `false` it is still possible
+	 * that the final renewal attempt of the billing cycle actually already
+	 * took place earlier on the same day. Nonetheless, this property is still
+	 * useful to distinguish between expired subscriptions that might have
+	 * remaining auto-renewal attempts and those that definitely do not.
+	 */
+	is_past_last_auto_renew_attempt_date: boolean;
+
+	/**
+	 * True if the purchase may still auto-renew: its subscription is active (not
+	 * removed), auto-renew is enabled, it has a rechargeable payment method
+	 * attached, and it is not past its final auto-renewal attempt date.
+	 *
+	 * This is the "a charge will actually be attempted" signal. Note it is a
+	 * superset of the renewing `expiry_status` values: any purchase reported as
+	 * `active` or `auto-renewing` necessarily satisfies this (those statuses
+	 * already require a chargeable payment method), so it holds for both
+	 * not-yet-expired auto-renewing purchases and grace-period purchases that may
+	 * still recover via a remaining auto-renewal attempt.
+	 *
+	 * As with `is_past_last_auto_renew_attempt_date`, this is best-effort: the
+	 * underlying dates are day-granular and a charge can still fail, so "might"
+	 * is intentional.
+	 */
+	might_still_auto_renew: boolean;
+
+	/**
+	 * The ID of the stored payment method used for this subscription (the
+	 * `stored_details_id` of the underlying payment method).
+	 *
+	 * Only set when the payment method is a stored card; undefined otherwise.
+	 */
 	payment_card_id: number | string | undefined;
+
+	/**
+	 * The lowercased card type/brand of the stored card (eg: 'visa' or
+	 * 'mastercard').
+	 *
+	 * Only set when the payment method is a stored card; undefined otherwise.
+	 */
 	payment_card_type: string | undefined;
+
+	/**
+	 * The billing processor class name for the stored card, or undefined for
+	 * the default (updatable) case.
+	 *
+	 * Used to determine whether the card number can be updated. Cards processed
+	 * via CC & Paygate can be updated, so this stays undefined; EBANX cards
+	 * cannot, so this is set to 'WPCOM_Billing_Ebanx' for them.
+	 */
 	payment_card_processor: string | undefined;
+
+	/**
+	 * A human-readable display string for the stored card, currently its last 4
+	 * digits.
+	 *
+	 * Only set when the payment method is a stored card; undefined otherwise.
+	 */
 	payment_details: string | undefined;
 
 	/**
@@ -375,8 +551,30 @@ export interface Purchase {
 	 * link will typically go to the plans page for the site or some other
 	 * location depending on the product. To cause these buttons to instead add
 	 * a product directly to the cart, also set `upgrade_product_slug`.
+	 *
+	 * Note that a subscription may be upgradable even if it is past its expiry
+	 * date (i.e. in its grace period). This allows lapsed customers to choose
+	 * a different plan.
 	 */
 	is_upgradable: boolean;
+
+	/**
+	 * True if this subscription's plan can be downgraded to a different, lower
+	 * plan type (eg: Business to Personal).
+	 *
+	 * Only ever true for WordPress.com plans. Like `is_upgradable`, it may
+	 * return true for expired subscriptions that are in their grace period, to
+	 * allow lapsed customers to downgrade to a lower plan.
+	 */
+	is_plan_type_downgradable: boolean;
+
+	/**
+	 * True if this subscription's plan can be downgraded to a shorter billing
+	 * term of the same plan (eg: annual to monthly).
+	 *
+	 * Gated by the same eligibility rules as `is_plan_type_downgradable`.
+	 */
+	is_plan_term_downgradable: boolean;
 
 	/**
 	 * True if deactivating this subscription will cause the site to be reverted
@@ -407,6 +605,19 @@ export interface Purchase {
 	 * number.
 	 */
 	cancellation_offer_notice_discount_percentage: number | null;
+
+	/**
+	 * True when a delayed downgrade has been scheduled for this subscription.
+	 * The plan will be downgraded at the next renewal rather than immediately.
+	 * See `delayed_downgrade_to_product_slug` for the target plan.
+	 */
+	is_delayed_downgrade_pending: boolean;
+
+	/**
+	 * The product slug of the plan this subscription will downgrade to at
+	 * renewal, or null when no delayed downgrade is scheduled.
+	 */
+	delayed_downgrade_to_product_slug: string | null;
 }
 
 export type RawPurchase = Purchase & {
@@ -448,6 +659,12 @@ export interface PurchaseCancelOptions {
 	 * will also be cancelled.
 	 */
 	cancel_bundled_domain: boolean;
+
+	/**
+	 * The experiment variation name for the refund email A/B test.
+	 * When 'treatment', the backend sends the wpcom-2022 themed email.
+	 */
+	email_variant?: 'treatment' | 'control';
 }
 
 /**

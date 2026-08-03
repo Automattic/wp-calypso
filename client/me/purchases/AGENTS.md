@@ -40,15 +40,20 @@ between the two without converting field names and values.
 
 ## Architectural Decisions
 
-1. **Two cancel paths (mutually exclusive)** — `manage-purchase/index.tsx` renders one
-   of two cancel entry points based on `canAutoRenewBeTurnedOff(purchase)`:
+1. **Two cancel entry points (mutually exclusive)** — `manage-purchase/index.tsx` renders
+   one of two CTAs, both linking to the same cancel page with a different `?intent=`:
 
-   - **True** → `renderCancelPurchaseNavItem()` → navigates to cancel page (full flow)
-   - **False** → `renderRemovePurchaseNavItem()` → renders `<RemovePurchase>` inline (delete)
+   - `renderCancelPurchaseNavItem()` → `?intent=cancel`, when auto-renew is on and
+     `canAutoRenewBeTurnedOff(purchase)` is true
+   - `renderRemovePurchaseNavItem()` → `?intent=remove`, when auto-renew is off, the
+     purchase is in its post-expiry grace period, or it's a domain connection bundled
+     with a plan
 
-   These map to different API calls (`cancelPurchase` for refund, `removePurchase`
-   DELETE for expired, `disableAutoRenew` for toggle). All say "Cancel" in the UI
-   but are NOT interchangeable.
+   The intent decides the API call on submit (`disableAutoRenew` for cancel,
+   `cancelAndRefund` for a refundable remove, `removePurchase` DELETE otherwise) — see
+   `getMutationFlowType` in `client/lib/purchases/utils.ts`. They are NOT interchangeable.
+   `<RemovePurchase>` in `remove-purchase/` is no longer part of this page; only
+   `client/my-sites/domains/domain-management` still uses it.
 
 2. **Three payment method paths** — `changePaymentMethod` (per-purchase, has card),
    `addPaymentMethod` (per-purchase, no card), `addNewPaymentMethod` (account-level).
@@ -65,40 +70,47 @@ between the two without converting field names and values.
    purchases even when auto-renew is already off. See `client/lib/purchases/index.ts`.
    Don't substitute `purchase.isAutoRenewEnabled`.
 
-2. **`isSiteLevel` prop changes data source silently** — In `manage-purchase`,
+2. **Bundled purchases are Remove-only** — A purchase with `expiry_status === 'included'`
+   renews with its parent plan, so `is_auto_renew_enabled` says nothing useful about it and
+   disabling auto-renew is a no-op (`canAutoRenewBeTurnedOff` already returns `false` for
+   them). Only domain connections (`domain_map`) can be removed on their own; the rest of a
+   plan's bundle goes with the plan. See `renderRemovePurchaseNavItem` in
+   `manage-purchase/index.tsx`.
+
+3. **`isSiteLevel` prop changes data source silently** — In `manage-purchase`,
    `isSiteLevel=true` checks `hasLoadedSitePurchasesFromServer` instead of
    `hasLoadedUserPurchasesFromServer`. Without the matching `QuerySitePurchases`
    component, you get a permanent loading state with no error.
 
-3. **Auto-renew toggle: deferred notice pattern** — Notices created while
+4. **Auto-renew toggle: deferred notice pattern** — Notices created while
    `showAutoRenewDisablingDialog` is visible get swallowed. The component uses
    `pendingNotice` state + `componentDidUpdate` to defer. Don't call `createNotice`
    directly in dialog callbacks.
 
-4. **`page()` vs `page.redirect()` after actions** — Use `page.redirect()` after
+5. **`page()` vs `page.redirect()` after actions** — Use `page.redirect()` after
    cancel/remove so users can't navigate back to an invalid state. `page()` is
    for normal navigation.
 
-5. **`purchase` is optional in PaymentMethodSelector** — The "add payment method"
+6. **`purchase` is optional in PaymentMethodSelector** — The "add payment method"
    flow passes `undefined`. Processors must handle this case. Success messages
    branch on whether `purchase` exists.
 
-6. **`site.wpcom_url` lies for `.home.blog` sites** — Always returns
+7. **`site.wpcom_url` lies for `.home.blog` sites** — Always returns
    `.wordpress.com` even when the site's free domain is `.home.blog` (or 27
    other `.blog` subdomains). Use `getWpComDomainBySiteId()` selector to get
    the actual free domain. Affects `NonPrimaryDomainDialog` in both
    `remove-purchase/` and `manage-purchase/`.
 
-7. **`isMonthly()` only checks plan slugs** — Returns `false` for Jetpack
+8. **`isMonthly()` only checks plan slugs** — Returns `false` for Jetpack
    product slugs like `jetpack_videopress_monthly` because it only checks
    `JETPACK_MONTHLY_PLANS`. Use `getJetpackItemTermVariants()` for products.
    Same issue with `getYearlyPlanByMonthly()` — only works for plans.
 
-8. **VAT API errors need field mapping** — `useMutation` error has
+9. **VAT API errors need field mapping** — `useMutation` error has
    `{ error: string, message: string }` but no field indicator. Map error
    codes to fields: `missing_country`/`invalid_country` → country field,
    `invalid_vat`/`missing_id`/`validation_failed` → id field.
 
-9. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use holding sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `purchase.isAttachedToHoldingSite`. Never query site data for these — use `purchase.domain` for display, skip site-dependent UI entirely.
+10. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use holding sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `purchase.isAttachedToHoldingSite`. Never query site data for these — use `purchase.domain` for display, skip site-dependent UI entirely.
 
-10. **Transferred purchases** — Always check ownership before allowing purchase actions.
+11. **Transferred purchases** — Always check ownership before allowing purchase actions.

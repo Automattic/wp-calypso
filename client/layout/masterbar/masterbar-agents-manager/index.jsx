@@ -1,41 +1,32 @@
 import { AGENTS_MANAGER_STORE } from '@automattic/agents-manager';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { usePrevious } from '@wordpress/compose';
-import {
-	useDispatch as useDataStoreDispatch,
-	useSelect as useDateStoreSelect,
-} from '@wordpress/data';
+import { useSelect as useDateStoreSelect } from '@wordpress/data';
 import { Icon, comment, backup, page, video, rss } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from '../item';
-import AgentsManagerIcon from './agents-manager-icon';
+import {
+	closeAgentsManagerChat,
+	getAgentsManagerChatRoute,
+	isAgentsManagerChatVisible,
+	openAgentsManagerChat,
+} from './chat-actions';
+import HelpIcon from './help-icon';
 import './style.scss';
 
 const MasterbarAgentsManager = ( { tooltip } ) => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
-	const isNotificationsOpen = useSelector( ( state ) => getIsNotificationsOpen( state ) );
-	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
-	const [ agentsManagerPage, setAgentsManagerPage ] = useState( null );
 
-	const { agentsManagerVisible, routerHistory } = useDateStoreSelect( ( select ) => {
-		const state = select( AGENTS_MANAGER_STORE ).getAgentsManagerState();
-		return {
-			agentsManagerVisible: state.isOpen,
-			routerHistory: state.routerHistory,
-		};
-	}, [] );
-
-	const { setIsOpen, setRouterHistory } = useDataStoreDispatch( AGENTS_MANAGER_STORE );
+	const agentsManagerVisible = useDateStoreSelect(
+		( select ) => select( AGENTS_MANAGER_STORE ).getAgentsManagerState().isOpen,
+		[]
+	);
 
 	const trackIconInteraction = () => {
-		recordTracksEvent( `wpcom_help_center_icon_interaction`, {
+		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: agentsManagerVisible,
 			section: sectionName,
 			is_menu_panel_enabled: true,
@@ -43,61 +34,40 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 		} );
 	};
 
-	// Helper to navigate to a route by updating the router history
-	const navigateToRoute = ( pathname, state = null ) => {
-		const newLocation = {
-			pathname,
-			search: '',
-			hash: '',
-			state,
-			key: crypto.randomUUID(),
-		};
-
-		const currentEntries = routerHistory?.entries || [
-			{ pathname: '/', search: '', hash: '', key: 'default', state: null },
-		];
-		const currentIndex = routerHistory?.index ?? 0;
-
-		// Add the new location to history
-		const newEntries = [ ...currentEntries.slice( 0, currentIndex + 1 ), newLocation ];
-		const newIndex = newEntries.length - 1;
-
-		setRouterHistory( { entries: newEntries, index: newIndex } );
-	};
-
 	const handleMenuClick = ( destination, isExternal = false ) => {
-		recordTracksEvent( `calypso_dashboard_help_center_menu_panel_click`, {
+		// Re-clicking the current route closes the chat; external links never do.
+		const isClosing =
+			! isExternal && isAgentsManagerChatVisible() && getAgentsManagerChatRoute() === destination;
+
+		recordTracksEvent( 'calypso_dashboard_help_center_menu_panel_click', {
 			section: sectionName,
 			destination,
+			action: isClosing ? 'close' : 'open',
 		} );
 
 		if ( isExternal ) {
 			return window.open( destination, '_blank', 'noopener,noreferrer' );
 		}
 
-		// If agents manager is already open and we click the same destination, close it
-		if ( agentsManagerVisible && destination === agentsManagerPage ) {
-			recordTracksEvent( `calypso_inlinehelp_close`, {
+		if ( isClosing ) {
+			recordTracksEvent( 'calypso_inlinehelp_close', {
 				force_site_id: true,
 				location: 'help-center',
 				section: sectionName,
 			} );
-			setIsOpen( false );
-			setAgentsManagerPage( null );
-		} else {
-			// Navigate to the route and open the agents manager
-			const routeState = destination === '/chat' ? { isNewChat: true } : null;
-			navigateToRoute( destination, routeState );
-			setAgentsManagerPage( destination );
-			setIsOpen( true );
-
-			recordTracksEvent( `calypso_inlinehelp_show`, {
-				force_site_id: true,
-				location: 'help-center',
-				section: sectionName,
-				destination,
-			} );
+			return closeAgentsManagerChat();
 		}
+
+		// `/chat` resumes the active conversation (no path), matching the AI
+		// button; other items open the chat at their own route.
+		openAgentsManagerChat( destination === '/chat' ? undefined : destination );
+
+		recordTracksEvent( 'calypso_inlinehelp_show', {
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+			destination,
+		} );
 	};
 
 	// Menu items for the panel
@@ -107,7 +77,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 				label: (
 					<div className="masterbar__agents-manager-menu-item">
 						<Icon icon={ comment } size={ 24 } />
-						<span>{ translate( 'Chat Support' ) }</span>
+						<span>{ translate( 'Chat support' ) }</span>
 					</div>
 				),
 				onClick: () => handleMenuClick( '/chat' ),
@@ -164,28 +134,17 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 		],
 	];
 
-	// Close the agents manager when notifications are opened
-	useEffect( () => {
-		if ( ! prevIsNotificationsOpen && isNotificationsOpen && agentsManagerVisible ) {
-			setIsOpen( false );
-		}
-	}, [ agentsManagerVisible, isNotificationsOpen, prevIsNotificationsOpen, setIsOpen ] );
-
 	return (
-		<>
-			<Item
-				onClick={ trackIconInteraction }
-				className={ clsx( 'masterbar__item-agents-manager', {
-					'is-active': agentsManagerVisible,
-					'is-menu-panel': true,
-				} ) }
-				wrapperClassName="is-menu-panel"
-				tooltip={ tooltip }
-				icon={ <AgentsManagerIcon hasUnread={ false } /> }
-				subItems={ menuItems }
-				openSubMenuOnClick
-			/>
-		</>
+		<Item
+			onClick={ trackIconInteraction }
+			className="masterbar__item-agents-manager"
+			wrapperClassName="is-menu-panel"
+			tooltip={ tooltip }
+			icon={ <HelpIcon /> }
+			subItems={ menuItems }
+			openSubMenuOnClick
+			closeSubMenuOnItemClick
+		/>
 	);
 };
 

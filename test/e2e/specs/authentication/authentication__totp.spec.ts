@@ -1,8 +1,10 @@
 import { DataHelper, TOTPClient } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
+const WOO_LOGIN_TIMEOUT = 30_000;
+
 test.describe(
-	'Authentication: Time-based One Time Passcode (TOTP)',
+	DataHelper.createSuiteTitle( 'Authentication: Time-based One Time Passcode (TOTP)' ),
 	{ tag: [ tags.AUTHENTICATION ] },
 	() => {
 		test.describe.configure( { mode: 'serial' } ); // Since both tests use the same TOTP, they should not be run at the same time
@@ -80,13 +82,18 @@ test.describe(
 			} );
 
 			await test.step( 'And I choose to log in', async function () {
-				await page.getByRole( 'link', { name: 'Log in' } ).click();
+				const loginLink = page.getByRole( 'link', { name: 'Log in', exact: true } );
+				await expect( loginLink ).toBeVisible( { timeout: WOO_LOGIN_TIMEOUT } );
+				await loginLink.click();
+				await expect( page ).toHaveURL( /wordpress\.com\/log-in/, {
+					timeout: WOO_LOGIN_TIMEOUT,
+				} );
 			} );
 
 			await test.step( 'Then I see the WordPress.com log in page', async function () {
 				await expect(
 					page.getByRole( 'heading', { name: 'Log in to Woo with WordPress.com' } )
-				).toBeVisible();
+				).toBeVisible( { timeout: WOO_LOGIN_TIMEOUT } );
 			} );
 
 			await test.step( 'When I enter my username', async function () {
@@ -108,13 +115,14 @@ test.describe(
 				await pageLogin.submitVerificationCode( code );
 			} );
 
-			await test.step( 'Then I am see the my dashboard page on WooCommerce.com', async function () {
-				await expect
-					.poll( async () => page.url() )
-					.toBe( `${ environment.WOO_BASE_URL }/my-dashboard/` );
+			await test.step( 'Then I see the WooCommerce.com dashboard page', async function () {
+				await expect( page ).toHaveURL( `${ environment.WOO_BASE_URL }/my-dashboard/` );
 
-				// The Log Out link is only visible to authenticated users.
-				await expect( page.getByRole( 'link', { name: /log ?out/i } ) ).toBeVisible();
+				// These dashboard headings are only visible after a successful WooCommerce.com login.
+				await expect( page.getByRole( 'heading', { name: 'My account' } ) ).toBeVisible();
+				await expect(
+					page.getByRole( 'heading', { name: 'Welcome to the world of WooCommerce!' } )
+				).toBeVisible();
 			} );
 		} );
 	}

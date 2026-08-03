@@ -17,6 +17,7 @@ import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
+import { sanitizePhoneNumber } from '../../components/domain-contact-details-form/contact-validation-utils';
 import Notice from '../../components/notice';
 import PhoneNumberInput from '../../components/phone-number-input';
 import { SectionHeader } from '../../components/section-header';
@@ -166,7 +167,13 @@ export default function RecoverySMS() {
 						<PhoneNumberInput
 							data={ data.smsNumber }
 							onChange={ ( edits ) => {
-								onChange( { ...data, smsNumber: edits } );
+								onChange( {
+									...data,
+									smsNumber: {
+										...edits,
+										phoneNumber: sanitizePhoneNumber( edits.phoneNumber ?? '' ),
+									},
+								} );
 							} }
 							isDisabled={ isValidateSMSPending }
 						/>
@@ -224,7 +231,10 @@ export default function RecoverySMS() {
 								<DataForm< SecuritySMSFormData >
 									data={ formData }
 									fields={ fields }
-									form={ { layout: { type: 'regular' as const }, fields } }
+									form={ {
+										layout: { type: 'regular' as const },
+										fields: fields.map( ( field ) => field.id ),
+									} }
 									onChange={ ( edits: Partial< SecuritySMSFormData > ) => {
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }

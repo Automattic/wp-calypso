@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -6,10 +7,12 @@ import PageLayout from '../../components/page-layout';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import SecurityAccountRecoverySummary from '../security-account-recovery/summary';
 import SecurityConnectedAppsSummary from '../security-connected-apps/summary';
+import SecurityLegacyContactSummary from '../security-legacy-contact/summary';
 import SecurityPasswordSummary from '../security-password/summary';
 import SecuritySocialLoginsSummary from '../security-social-logins/summary';
 import SecuritySshKeySummary from '../security-ssh-key/summary';
 import SecurityTwoStepAuthSummary from '../security-two-step-auth/summary';
+import RecoveryNudgeNotice from './recovery-nudge-notice';
 
 function Security() {
 	const { supports } = useAppContext();
@@ -28,6 +31,7 @@ function Security() {
 					description={ __( 'Manage your account security settings and authentication methods.' ) }
 				/>
 			}
+			notices={ <RecoveryNudgeNotice /> }
 		>
 			<SummaryButtonList>
 				<SecurityPasswordSummary />
@@ -36,6 +40,7 @@ function Security() {
 				{ supportsSecurity.sshKey ? <SecuritySshKeySummary /> : null }
 				<SecurityConnectedAppsSummary />
 				<SecuritySocialLoginsSummary />
+				{ isEnabled( 'me/legacy-contact' ) ? <SecurityLegacyContactSummary /> : null }
 			</SummaryButtonList>
 			<PerformanceTrackerStop />
 		</PageLayout>

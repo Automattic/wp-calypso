@@ -44,18 +44,6 @@ export const stripeConfiguration = {
 	setup_intent_id: undefined,
 };
 
-export const razorpayConfiguration = {
-	js_url: 'https://checkout.razorpay.com/v1/checkout.js',
-	options: {
-		key: 'razorpay-public-key',
-		config: {
-			display: {
-				language: 'en',
-			},
-		},
-	},
-};
-
 export const processorOptions = {
 	includeDomainDetails: false,
 	includeGSuiteDetails: false,
@@ -477,8 +465,6 @@ export const professionalEmailMonthly: ResponseCartProduct = {
 
 export const fetchStripeConfiguration = async () => stripeConfiguration;
 
-export const fetchRazorpayConfiguration = async () => razorpayConfiguration;
-
 export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 	return async ( _: CartKey, requestCart: RequestCart ): Promise< ResponseCart > => {
 		const { products: requestProducts, coupon: requestCoupon } = requestCart;
@@ -533,6 +519,9 @@ function convertRequestProductToResponseProduct(
 		const { product_slug } = product;
 
 		switch ( product_slug ) {
+			// The cart endpoint accepts a plan's path slug (e.g. `personal`) as
+			// well as its product slug, resolving it server-side.
+			case 'personal':
 			case 'personal-bundle': // WPCOM Personal Bundle
 				return {
 					...getEmptyResponseCartProduct(),

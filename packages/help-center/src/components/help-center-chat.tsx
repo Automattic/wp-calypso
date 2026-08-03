@@ -10,6 +10,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useShouldUseWapuu } from '../hooks';
+import type { JSX } from 'react';
 import './help-center-chat.scss';
 
 export function HelpCenterChat( {
@@ -23,8 +24,13 @@ export function HelpCenterChat( {
 	const shouldUseWapuu = useShouldUseWapuu();
 	// Before issuing a redirect, make sure the status is loaded.
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
-	const { currentUser, site, newInteractionsBotSlug, newInteractionsBotVersion } =
-		useHelpCenterContext();
+	const {
+		currentUser,
+		site,
+		newInteractionsBotSlug,
+		newLoggedOutInteractionsBotSlug,
+		newInteractionsBotVersion,
+	} = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
 	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging(
 		!! currentUser?.ID
@@ -35,6 +41,8 @@ export function HelpCenterChat( {
 	const userFieldMessage = params.get( 'userFieldMessage' );
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
+	const externalChatProvider = params.get( 'externalChatProvider' );
+	const externalChatId = params.get( 'externalChatId' );
 
 	const userFieldFlowName = featureConfig.chat.flowName || data?.eligibility?.user_field_flow_name;
 
@@ -53,6 +61,7 @@ export function HelpCenterChat( {
 	return (
 		<OdieAssistantProvider
 			newInteractionsBotSlug={ newInteractionsBotSlug }
+			newLoggedOutInteractionsBotSlug={ newLoggedOutInteractionsBotSlug }
 			newInteractionsBotVersion={ newInteractionsBotVersion }
 			currentUser={ currentUser }
 			canConnectToZendesk={ canConnectToZendesk }
@@ -61,6 +70,8 @@ export function HelpCenterChat( {
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
+			externalChatProvider={ externalChatProvider }
+			externalChatId={ externalChatId }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
 			isChatRestricted={ Boolean( isChatRestricted ) }

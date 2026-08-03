@@ -1,3 +1,4 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
@@ -7,7 +8,7 @@ import {
 	WPCOM_FEATURES_COMMUNITY_THEMES,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { getThemeIdFromStylesheet, Onboard } from '@automattic/data-stores';
 import {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
@@ -17,6 +18,7 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { useQuery } from '@tanstack/react-query';
 import {
 	MenuItem,
 	Dropdown,
@@ -28,9 +30,9 @@ import {
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { chevronDown, chevronUp, Icon, external } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { hasQueryArg } from '@wordpress/url';
+import { addQueryArgs, hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize, getLocaleSlug, useTranslate } from 'i18n-calypso';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -56,15 +58,22 @@ import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
 import { HOSTING_THEME_SELCETED_HASH } from 'calypso/hosting/constants';
 import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
-import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
+import ActivationModal from 'calypso/my-sites/themes/activation-modal';
+import {
+	localizeThemesPath,
+	shouldEnableThemesColorScheme,
+	shouldSelectSite,
+} from 'calypso/my-sites/themes/helpers';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -78,7 +87,6 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { withSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/with-site-global-styles-on-personal';
 import { getCurrentPlan, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
@@ -102,6 +110,7 @@ import {
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
+	shouldShowActivationModal,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -120,6 +129,7 @@ import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
+import ThemeActiveBadge from './theme-active-badge';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
@@ -143,6 +153,62 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 const { Badge } = unlock( privateApis );
 
 const SiteIntent = Onboard.SiteIntent;
+
+/**
+ * Secondary Theme Sheet CTA: when the wpcom theme API marks a theme with a
+ * matching blueprint archive (has_blueprint / blueprint_id), offer to build a
+ * new WoA site from it via the onboarding blueprint flow.
+ *
+ * A function component (rather than a ThemeSheet method) so it can read the
+ * Automattician check via the `isAutomatticianQuery` hook. Gated to
+ * Automatticians for now, behind the `themes/blueprint-cta` feature flag.
+ */
+function BlueprintCtaButton( {
+	hasBlueprint,
+	blueprintId,
+	themeId,
+	themeType,
+	themeTier,
+	isLoading,
+	recordTracksEvent: recordCtaTracksEvent,
+} ) {
+	const translate = useTranslate();
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+
+	if (
+		! config.isEnabled( 'themes/blueprint-cta' ) ||
+		! isAutomattician ||
+		! hasBlueprint ||
+		! blueprintId
+	) {
+		return null;
+	}
+
+	// The onboarding blueprint step (getBlueprintID) accepts a numeric
+	// blueprint-library id via ?blueprint=<id>.
+	const href = addQueryArgs( '/setup/onboarding/blueprint', {
+		blueprint: blueprintId,
+		ref: `theme-${ themeId }`,
+	} );
+
+	return (
+		<Button
+			className="theme__sheet-blueprint-button"
+			href={ href }
+			onClick={ () =>
+				recordCtaTracksEvent( 'calypso_theme_sheet_blueprint_button_click', {
+					theme: themeId,
+					theme_type: themeType,
+					theme_tier: themeTier?.slug,
+					blueprint_id: blueprintId,
+				} )
+			}
+			disabled={ isLoading }
+		>
+			{ translate( 'Build a site with this blueprint' ) }
+		</Button>
+	);
+}
 
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
@@ -168,16 +234,23 @@ class ThemeSheet extends Component {
 		retired: PropTypes.bool,
 		// Connected props
 		isLoggedIn: PropTypes.bool,
+		isThemesColorSchemeEnabled: PropTypes.bool,
 		siteCount: PropTypes.number,
 		isActive: PropTypes.bool,
 		isThemePurchased: PropTypes.bool,
 		isAtomic: PropTypes.bool,
 		isStandaloneJetpack: PropTypes.bool,
+		isSiteRoute: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		backPath: PropTypes.string,
 		isWpcomTheme: PropTypes.bool,
 		softLaunched: PropTypes.bool,
+		// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
+		has_blueprint: PropTypes.bool,
+		// A dotcomblueprints post slug (string); numeric blueprint-library ids are also tolerated.
+		// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
+		blueprint_id: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		defaultOption: PropTypes.shape( {
 			label: PropTypes.string,
 			action: PropTypes.func,
@@ -210,6 +283,7 @@ class ThemeSheet extends Component {
 		isRedirectingToEditorWebPreview: false,
 		isReviewsModalVisible: false,
 		isSiteSelectorModalVisible: false,
+		isActivationModalVisible: false,
 		isWide: isWithinBreakpoint( '>960px' ),
 	};
 
@@ -331,7 +405,20 @@ class ThemeSheet extends Component {
 		}
 
 		this.onBeforeOptionAction();
+
+		// Intercept activation so the user can preview the new theme and choose
+		// between a basic and a full setup, when applicable.
+		if ( this.props.defaultOption?.key === 'activate' && this.props.shouldShowActivationModal ) {
+			event?.preventDefault();
+			this.setState( { isActivationModalVisible: true } );
+			return;
+		}
+
 		this.props.defaultOption.action?.( this.props.themeId );
+	};
+
+	closeActivationModal = () => {
+		this.setState( { isActivationModalVisible: false } );
 	};
 
 	onUnlockStyleButtonClick = () => {
@@ -657,16 +744,19 @@ class ThemeSheet extends Component {
 				<div className="theme__sheet-main">
 					<div className="theme__sheet-main-info">
 						<h1 className="theme__sheet-main-info-title">
-							<ThemeTierBadge
-								className="theme__sheet-main-info-type"
-								showUpgradeBadge
-								showPartnerPrice
-								themeId={ themeId }
-								siteId={ siteId }
-								siteSlug={ siteSlug }
-								isThemeRetired={ retired }
-								isThemeActiveForSite={ isActive }
-							/>
+							<div className="theme__sheet-main-info-badges">
+								{ isActive && <ThemeActiveBadge /> }
+								<ThemeTierBadge
+									className="theme__sheet-main-info-type"
+									showUpgradeBadge
+									showPartnerPrice
+									themeId={ themeId }
+									siteId={ siteId }
+									siteSlug={ siteSlug }
+									isThemeRetired={ retired }
+									isThemeActiveForSite={ isActive }
+								/>
+							</div>
 
 							{ title }
 							{ softLaunched && (
@@ -681,6 +771,7 @@ class ThemeSheet extends Component {
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
+						{ this.renderBlueprintButton() }
 					</div>
 					{ this.renderDisclaimer() }
 				</div>
@@ -745,33 +836,12 @@ class ThemeSheet extends Component {
 	};
 
 	renderStyleVariations = () => {
-		const {
-			isPremium,
-			isFreePlan,
-			isThemePurchased,
-			themeTier,
-			shouldLimitGlobalStyles,
-			styleVariations,
-			isExternallyManagedTheme,
-			isBundledSoftwareSet,
-		} = this.props;
-
-		const isGlobalStylesOnPersonal = this.props.isGlobalStylesOnPersonal;
+		const { isFreePlan, themeTier, shouldLimitGlobalStyles, styleVariations } = this.props;
 
 		const isFreeTier = isFreePlan && themeTier?.slug === 'free';
-		const hasLimitedFeatures =
-			! isExternallyManagedTheme &&
-			! isBundledSoftwareSet &&
-			! isThemePurchased &&
-			! isGlobalStylesOnPersonal &&
-			! isPremium &&
-			shouldLimitGlobalStyles;
+		const shouldSplitDefaultVariation = isFreeTier;
 
-		const shouldSplitDefaultVariation = isFreeTier || hasLimitedFeatures;
-
-		const needsUpgrade = isGlobalStylesOnPersonal
-			? isFreePlan || shouldLimitGlobalStyles
-			: shouldLimitGlobalStyles || ( isPremium && ! isThemePurchased );
+		const needsUpgrade = isFreePlan || shouldLimitGlobalStyles;
 
 		return (
 			styleVariations.length > 0 && (
@@ -917,12 +987,7 @@ class ThemeSheet extends Component {
 	getDefaultOptionLabel = () => {
 		const { defaultOption, isActive, isLoggedIn, siteId, translate } = this.props;
 		if ( isActive ) {
-			return (
-				<span className="theme__sheet-customize-button">
-					<Gridicon icon="external" />
-					{ translate( 'Customize site' ) }
-				</span>
-			);
+			return translate( 'Customize site' );
 		} else if ( isLoggedIn && siteId ) {
 			return translate( 'Activate' );
 		}
@@ -982,10 +1047,29 @@ class ThemeSheet extends Component {
 				primary
 				busy={ this.isRequestingActivatingTheme() }
 				disabled={ this.isLoading() }
-				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
 			</Button>
+		);
+	};
+
+	// Secondary CTA: when the theme has a matching blueprint archive on
+	// blueprintlibrary.wordpress.com (surfaced by the wpcom theme API as
+	// has_blueprint / blueprint_id), offer to build a new WoA site from it via the
+	// onboarding blueprint flow. Gated by the themes/blueprint-cta feature flag.
+	renderBlueprintButton = () => {
+		return (
+			<BlueprintCtaButton
+				// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
+				hasBlueprint={ this.props.has_blueprint }
+				// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
+				blueprintId={ this.props.blueprint_id }
+				themeId={ this.props.themeId }
+				themeType={ this.props.themeType }
+				themeTier={ this.props.themeTier }
+				isLoading={ this.isLoading() }
+				recordTracksEvent={ this.props.recordTracksEvent }
+			/>
 		);
 	};
 
@@ -1136,7 +1220,7 @@ class ThemeSheet extends Component {
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		const upgradeToPlan = this.props.isGlobalStylesOnPersonal ? 'personal' : 'premium';
+		const upgradeToPlan = 'personal';
 
 		page( `/checkout/${ this.props.siteSlug || '' }/${ upgradeToPlan }?${ params.toString() }` );
 	};
@@ -1319,6 +1403,15 @@ class ThemeSheet extends Component {
 					/>
 				) }
 				<EligibilityWarningModal />
+				{ this.state.isActivationModalVisible && (
+					<ActivationModal
+						themeId={ themeId }
+						siteId={ siteId }
+						source="details"
+						styleVariation={ this.getSelectedStyleVariation() }
+						onClose={ this.closeActivationModal }
+					/>
+				) }
 			</Main>
 		);
 	};
@@ -1413,7 +1506,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'activate';
 	}
 
-	return (
+	return withColorScheme(
 		<ConnectedThemeSheet
 			{ ...props }
 			themeTier={ themeTier }
@@ -1425,13 +1518,19 @@ const ThemeSheetWithOptions = ( props ) => {
 			source="showcase-sheet"
 			activeThemeId={ activeThemeId }
 			siteIntent={ siteIntent }
-		/>
+		/>,
+		{
+			bodyClass: 'is-themes-dark-mode',
+			enabled: props.isThemesColorSchemeEnabled,
+			Provider: ClassicColorSchemeProvider,
+		}
 	);
 };
 
 export default connect(
-	( state, { id } ) => {
+	( state, { id, isSiteRoute } ) => {
 		const themeId = id;
+		const isLoggedIn = isUserLoggedIn( state );
 		const site = getSelectedSite( state );
 		const productionSiteId = site ? getProductionSiteId( site ) : null;
 		const siteId = getSelectedSiteId( state );
@@ -1483,6 +1582,7 @@ export default connect(
 		return {
 			...theme,
 			themeId,
+			shouldShowActivationModal: shouldShowActivationModal( state, siteId, themeId ),
 			error,
 			siteId,
 			siteSlug,
@@ -1491,7 +1591,12 @@ export default connect(
 			isWpcomTheme,
 			isWpcomStaging,
 			productionSiteSlug,
-			isLoggedIn: isUserLoggedIn( state ),
+			isLoggedIn,
+			isThemesColorSchemeEnabled: shouldEnableThemesColorScheme( {
+				isSiteRoute,
+				isLoggedIn,
+				dashboardOptIn: hasDashboardOptIn( state ),
+			} ),
 			siteCount: getCurrentUserSiteCount( state ),
 			isActive: isThemeActive( state, themeId, siteId ),
 			isAtomic,
@@ -1548,8 +1653,6 @@ export default connect(
 	}
 )(
 	withCompleteLaunchpadTasksWithNotice(
-		withSiteGlobalStylesStatus(
-			withSiteGlobalStylesOnPersonal( localize( ThemeSheetWithOptions ) )
-		)
+		withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) )
 	)
 );

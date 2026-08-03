@@ -20,6 +20,7 @@ import type {
 	MyAccountInformationResponse,
 	AccountClosureResponse,
 	SiteDeletionResponse,
+	CalypsoPreferences,
 	CalypsoPreferencesResponse,
 	ErrorResponse,
 	AccountCredentials,
@@ -43,6 +44,8 @@ import type {
 	JetpackSearchParams,
 	Subscriber,
 	SitePostState,
+	AllPurchasesResponse,
+	PurchaseCancelParams,
 } from './types';
 
 /* Internal types and interfaces */
@@ -152,6 +155,21 @@ export class RestAPIClient {
 	}
 
 	/**
+	 * Returns the store sandbox cookie header.
+	 *
+	 * E2E purchases are made in the browser with the `store_sandbox` cookie set
+	 * (see `BrowserManager.setStoreCookie`), which routes the request to the
+	 * sandboxed store and its own ownership registry. Store-facing REST calls
+	 * made from Node must carry the same cookie, or they read the production
+	 * store and see none of the purchases the tests created.
+	 *
+	 * @returns {string} Cookie header string.
+	 */
+	private getStoreSandboxCookieHeader(): string {
+		return `store_sandbox=${ SecretsManager.secrets.storeSandboxCookieValue }`;
+	}
+
+	/**
 	 * Returns a fully constructed URL object pointing to the request endpoint.
 	 *
 	 * @param {EndpointVersions} version Version of the API to use.
@@ -234,6 +252,11 @@ export class RestAPIClient {
 			client_secret: SecretsManager.secrets.calypsoOauthApplication.client_secret,
 			blog_name: newSiteParams.name,
 			blog_title: newSiteParams.title,
+			...( newSiteParams.public !== undefined && { public: newSiteParams.public } ),
+			...( newSiteParams.find_available_url !== undefined && {
+				find_available_url: newSiteParams.find_available_url,
+			} ),
+			...( newSiteParams.options && { options: newSiteParams.options } ),
 		};
 
 		const params: RequestParams = {
@@ -284,22 +307,39 @@ export class RestAPIClient {
 			return null;
 		}
 
-		console.log( `Deleting site ${ targetSite.domain }.` );
-
-		const scheme = 'http://';
-		const targetDomain = targetSite.domain.startsWith( scheme )
-			? targetSite.domain.replace( scheme, '' )
-			: targetSite.domain;
+		// `/all-domains/` returns scheme-less, lowercase `domain` values, while
+		// callers commonly pass `blog_details.url` (e.g.
+		// `https://e2eflowtesting….wordpress.com/`). Normalize both sides (strip
+		// scheme, path and trailing slash; lowercase) so the ownership comparison
+		// below is not defeated by a formatting or case difference, which would
+		// abort a legitimate cleanup and leak the site.
+		const normalizeDomain = ( value: string ): string =>
+			value
+				.trim()
+				.replace( /^https?:\/\//i, '' )
+				.replace( /\/.*$/, '' )
+				.toLowerCase();
+		const targetDomain = normalizeDomain( targetSite.domain );
 
 		const mySites: AllDomainsResponse = await this.getAllDomains();
 
-		const match = mySites.domains.filter( ( site: DomainData ) => {
-			site.blog_id === targetSite.id && site.domain === targetDomain;
-		} );
+		// Ensure the target site actually belongs to the authenticated user before
+		// issuing the deletion. The `.some()` predicate returns a real boolean; the
+		// previous `.filter()` callback returned no value (always an empty, truthy
+		// array), so this ownership guard never fired.
+		const isOwnedByUser = mySites.domains.some(
+			( site: DomainData ) =>
+				site.blog_id === targetSite.id && normalizeDomain( site.domain ) === targetDomain
+		);
 
-		if ( ! match ) {
+		if ( ! isOwnedByUser ) {
+			console.warn(
+				`Aborting site deletion: site ${ targetSite.id } (${ targetDomain }) is not owned by the authenticated user.`
+			);
 			return null;
 		}
+
+		console.log( `Deleting site ${ targetSite.domain }.` );
 
 		const params: RequestParams = {
 			method: 'post',
@@ -389,8 +429,10 @@ export class RestAPIClient {
 	/**
 	 *
 	 * @param siteID
+	 * @param pageSize Page size. The endpoint defaults to 25 and paginates; pass a
+	 * higher value (100 is the max page size) to fetch more in one request.
 	 */
-	async getInvites( siteID: number ): Promise< AllInvitesResponse > {
+	async getInvites( siteID: number, pageSize?: number ): Promise< AllInvitesResponse > {
 		const params: RequestParams = {
 			method: 'get',
 			headers: {
@@ -399,10 +441,12 @@ export class RestAPIClient {
 			},
 		};
 
-		const response = await this.sendRequest(
-			this.getRequestURL( '1.1', `/sites/${ siteID }/invites` ),
-			params
-		);
+		const url = this.getRequestURL( '1.1', `/sites/${ siteID }/invites` );
+		if ( pageSize !== undefined ) {
+			url.searchParams.set( 'number', String( pageSize ) );
+		}
+
+		const response = await this.sendRequest( url, params );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
@@ -421,24 +465,29 @@ export class RestAPIClient {
 	async deleteInvite( siteID: number, email: string ): Promise< boolean > {
 		const invites = await this.getInvites( siteID );
 
-		let inviteID = undefined;
+		const invite = Object.values( invites ).find(
+			( invite: Invite ) =>
+				invite.invited_by.site_ID === siteID && invite.is_pending && invite.user.email === email
+		);
 
-		Object.values( invites ).forEach( ( invite: Invite ) => {
-			if (
-				invite.invited_by.site_ID === siteID &&
-				invite.is_pending &&
-				invite.user.email === email
-			) {
-				inviteID = invite.invite_key;
-			}
-		} );
-
-		if ( inviteID === undefined ) {
+		if ( invite === undefined ) {
 			throw new Error(
 				`Aborting invite deletion: inviteID not found for email: ${ email } and siteID: ${ siteID }}`
 			);
 		}
 
+		const response = await this.deleteInvites( siteID, [ invite.invite_key ] );
+		return response.deleted.includes( invite.invite_key );
+	}
+
+	/**
+	 * Bulk-deletes pending invites by their invite keys in a single request.
+	 *
+	 * @param siteID Target site ID.
+	 * @param inviteKeys Invite keys to delete.
+	 * @returns The list of deleted and invalid invite keys.
+	 */
+	async deleteInvites( siteID: number, inviteKeys: string[] ): Promise< DeleteInvitesResponse > {
 		const params: RequestParams = {
 			method: 'post',
 			headers: {
@@ -446,23 +495,22 @@ export class RestAPIClient {
 				'Content-Type': this.getContentTypeHeader( 'json' ),
 			},
 			body: JSON.stringify( {
-				invite_ids: [ inviteID ],
+				invite_ids: inviteKeys,
 			} ),
 		};
 
-		const response: DeleteInvitesResponse = await this.sendRequest(
+		const response = await this.sendRequest(
 			this.getRequestURL( '2', `/sites/${ siteID }/invites/delete`, 'wpcom' ),
 			params
 		);
 
-		// This call does not return a traditional error that's in the
-		// format of ErrorResponse, instead returning a
-		// DeleteInvitesResponse which always has the `deleted` and
-		// `invalid` fields.
-		if ( response.deleted.includes( inviteID ) ) {
-			return true;
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
 		}
-		return false;
+
+		return response;
 	}
 
 	/* Me */
@@ -596,6 +644,109 @@ export class RestAPIClient {
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/account/close' ), params );
 	}
 
+	/* Purchases */
+
+	/**
+	 * Returns purchases belonging to the authenticated user.
+	 *
+	 * Discovery is bearer-scoped and needs no site ID, so it works even when the
+	 * test failed before a site slug/ID was known. Pass `siteId` to scope the
+	 * listing to one site: the long-lived shared accounts have accumulated enough
+	 * sandbox purchases that the unscoped listing times out at the gateway.
+	 *
+	 * @param {number|string} [siteId] List only this site's purchases.
+	 * @returns {Promise<AllPurchasesResponse>} Array of the user's purchases.
+	 * @throws {Error} If the API responded with an error.
+	 */
+	async getAllPurchases( siteId?: number | string ): Promise< AllPurchasesResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+				Cookie: this.getStoreSandboxCookieHeader(),
+			},
+		};
+
+		const endpoint = siteId === undefined ? '/me/purchases' : `/sites/${ siteId }/purchases`;
+		const response = await this.sendRequest( this.getRequestURL( '1.2', endpoint ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Cancels and refunds a purchase. Cancelling a Business-plan purchase on an
+	 * Atomic site triggers asynchronous deprovision of the site, the only lever
+	 * that later allows the account to be closed.
+	 *
+	 * Mirrors Calypso's cancel-and-refund call (POST wpcom/v2 /purchases/{id}/cancel).
+	 *
+	 * @param {string|number} purchaseId ID of the purchase to cancel.
+	 * @param {PurchaseCancelParams} body Cancellation parameters.
+	 * @returns {Promise<any>} Decoded JSON response.
+	 */
+	async cancelPurchase( purchaseId: string | number, body: PurchaseCancelParams ): Promise< any > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+				Cookie: this.getStoreSandboxCookieHeader(),
+			},
+			body: JSON.stringify( body ),
+		};
+
+		return await this.sendRequest(
+			this.getRequestURL( '2', `/purchases/${ purchaseId }/cancel`, 'wpcom' ),
+			params
+		);
+	}
+
+	/**
+	 * Cancels the Business-plan purchase, triggering asynchronous Atomic-site
+	 * deprovision (the only lever that later allows the account to be closed).
+	 *
+	 * The purchase is discovered bearer-scoped via `getAllPurchases`, so no site
+	 * slug/ID is required. When `siteId` is omitted the first Business plan found
+	 * is cancelled; pass `siteId` to restrict to that site's Business plan.
+	 *
+	 * @param {number|string} [siteId] Restrict cancellation to this site's Business plan.
+	 * @returns {Promise<any | null>} The cancel response, or null if no Business plan was found.
+	 * @throws {Error} If listing purchases responded with an error.
+	 */
+	async cancelAtomicPlan( siteId?: number | string ): Promise< any | null > {
+		const purchases = await this.getAllPurchases( siteId );
+
+		const plan = purchases.find(
+			( purchase ) =>
+				purchase.product_slug === 'business-bundle' &&
+				( siteId === undefined || Number( purchase.blog_id ) === Number( siteId ) )
+		);
+
+		if ( ! plan ) {
+			console.info(
+				siteId !== undefined
+					? `No Business plan purchase found for site ${ siteId }; skipping Atomic deprovision.`
+					: 'No Business plan purchase found; skipping Atomic deprovision.'
+			);
+			return null;
+		}
+
+		console.log( `Cancelling Business plan purchase ${ plan.ID } to deprovision Atomic site.` );
+
+		return await this.cancelPurchase( plan.ID, {
+			product_id: plan.product_id,
+			cancel_bundled_domain: 0,
+			email_variant: 'control',
+		} );
+	}
+
 	/**
 	 * Returns Calypso preferences for the user.
 	 *
@@ -608,6 +759,27 @@ export class RestAPIClient {
 				Authorization: await this.getAuthorizationHeader( 'bearer' ),
 				'Content-Type': this.getContentTypeHeader( 'json' ),
 			},
+		};
+
+		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
+	}
+
+	/**
+	 * Updates Calypso preferences for the user.
+	 *
+	 * @param {Partial<CalypsoPreferences>} preferences Key/value preferences to persist.
+	 * @returns {Promise<CalypsoPreferencesResponse>} JSON response containing the updated Calypso preferences.
+	 */
+	async setCalypsoPreferences(
+		preferences: Partial< CalypsoPreferences >
+	): Promise< CalypsoPreferencesResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( { calypso_preferences: preferences } ),
 		};
 
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
@@ -932,7 +1104,14 @@ export class RestAPIClient {
 
 		if ( media ) {
 			const data = new FormData();
-			data.append( 'media[]', fs.createReadStream( media.fullpath ) );
+			// The request body below is built with `getBuffer()`, which cannot
+			// serialize a stream (it throws on the DelayedStream a read stream
+			// produces). Append the file contents as a Buffer instead, passing the
+			// filename explicitly so form-data still sets the Content-Disposition
+			// filename and the mime-derived Content-Type the stream's path supplied.
+			data.append( 'media[]', fs.readFileSync( media.fullpath ), {
+				filename: media.basename,
+			} );
 
 			params = {
 				method: 'post',
@@ -941,7 +1120,7 @@ export class RestAPIClient {
 					Authorization: await this.getAuthorizationHeader( 'bearer' ),
 					...data.getHeaders(),
 				},
-				body: data.getBuffer(),
+				body: Uint8Array.from( data.getBuffer() ),
 			};
 		}
 		if ( mediaURL ) {
@@ -966,7 +1145,13 @@ export class RestAPIClient {
 			);
 		}
 
-		return response;
+		// `/sites/$site/media/new` wraps the uploaded item(s) in a `media` array;
+		// per-file rejections come back as `{ media: [], errors: [...] }` with no
+		// top-level `error` key.
+		if ( ! response.media?.length ) {
+			throw new Error( `Media upload failed: ${ JSON.stringify( response.errors ?? response ) }` );
+		}
+		return response.media[ 0 ];
 	}
 
 	/* Shopping Cart */

@@ -6,7 +6,6 @@ import { getTld, isFreeSubdomainQuery } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
@@ -33,6 +32,7 @@ interface GetNewSiteParams {
 	partnerBundle: string | null;
 	sourceSlug?: string;
 	siteIntent?: string;
+	provisionTarget?: string | null;
 }
 
 type NewSiteParams = {
@@ -54,6 +54,7 @@ type NewSiteParams = {
 		wpcom_public_coming_soon: 0 | 1;
 		site_accent_color?: string;
 		site_intent?: string;
+		early_provision_target?: string;
 	};
 	validate: boolean;
 };
@@ -106,6 +107,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
+		provisionTarget,
 	} = params;
 
 	// We will use the default annotation instead of theme annotation as fallback,
@@ -130,6 +132,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 			...( themeSlugWithRepo && { theme: themeSlugWithRepo } ),
 			...( siteIntent && { site_intent: siteIntent } ),
 			...( partnerBundle && { site_partner_bundle: partnerBundle } ),
+			...( provisionTarget && { early_provision_target: provisionTarget } ),
 		},
 		validate: false,
 	};
@@ -153,7 +156,10 @@ export const createSite = async (
 	siteGoals?: SiteGoal[],
 	gardenName?: string | null,
 	gardenPartnerName?: string | null,
-	specId?: string | null
+	specId?: string | null,
+	ref?: string,
+	provisionTarget?: string | null,
+	aiLaunchpadEnabled?: boolean
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 
@@ -169,6 +175,7 @@ export const createSite = async (
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
+		provisionTarget,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
@@ -210,7 +217,11 @@ export const createSite = async (
 					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
 					: {} ),
 				...( siteGoals && { site_goals: siteGoals } ),
-				...( refParam && { ref: refParam } ),
+				...( ( ref ?? refParam ) && { ref: ref ?? refParam } ),
+				// Enables the wp-admin AI Launchpad from the moment the site exists, so every
+				// post-checkout path (direct, chooser, Big Sky return) converges on it. The
+				// option is in the WoA transfer allowlist, so it survives the Atomic transfer.
+				...( aiLaunchpadEnabled && { wpcom_ai_launchpad_enabled: true } ),
 				// Trigger backend build for ai-site-builder flow with commerce garden and spec_id
 				...( flowName === AI_SITE_BUILDER_FLOW &&
 					gardenName === 'commerce' &&
@@ -309,7 +320,7 @@ export async function setThemeOnSite(
 	themeSlugWithRepo: string,
 	themeStyleVariation?: string
 ) {
-	if ( isEmpty( themeSlugWithRepo ) ) {
+	if ( ! themeSlugWithRepo ) {
 		return;
 	}
 

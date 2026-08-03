@@ -10,6 +10,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 function getIndividualConfig( options = {} ) {
 	const { name, env, argv, injectPolyfill = true } = options;
+	const isLoggedOutEntry = name === 'help-center-logged-out';
 
 	const outputPath = path.join( __dirname, 'dist' );
 	const webpackConfig = getBaseWebpackConfig( env, argv );
@@ -24,6 +25,16 @@ function getIndividualConfig( options = {} ) {
 			filename: '[name].min.js', // dynamic filename
 			chunkFilename: `[id].[contenthash:8].min.js`,
 			library: 'helpCenter',
+		},
+		resolve: {
+			...webpackConfig.resolve,
+			alias: {
+				...( webpackConfig.resolve?.alias || {} ),
+				// Share one Smooch instance with the Agents Manager bundle when both load
+				// together (e.g. the Site Editor). See smooch-shim.js.
+				// TODO: Remove once Agents Manager takes over the Help Center.
+				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
+			},
 		},
 		optimization: {
 			...webpackConfig.optimization,
@@ -42,10 +53,15 @@ function getIndividualConfig( options = {} ) {
 				output: path.resolve( './dist/chunks-map.json' ),
 			} ),
 			new DependencyExtractionWebpackPlugin( {
-				injectPolyfill,
+				injectPolyfill: isLoggedOutEntry ? false : injectPolyfill,
 				outputFilename: '[name].asset.json',
 				outputFormat: 'json',
+				useDefaults: ! isLoggedOutEntry,
 				requestToExternal( request ) {
+					if ( isLoggedOutEntry ) {
+						return null;
+					}
+
 					// The extraction logic will only extract a package if requestToExternal
 					// explicitly returns undefined for the given request. Null
 					// shortcuts the logic such that the package will be bundled instead.
@@ -53,11 +69,28 @@ function getIndividualConfig( options = {} ) {
 						return null;
 					}
 
+					// Externalize the `react-dom/client` subpath to WordPress's `ReactDOM`
+					// global so `createRoot` comes from the same React that WordPress provides.
+					// The default extraction only maps bare `react-dom`, so this subpath would
+					// otherwise bundle our own react-dom (React 19), which reads React internals
+					// off the host's React and throws ("Cannot read properties of undefined").
+					if ( request === 'react-dom/client' ) {
+						return 'ReactDOM';
+					}
+
 					// Bundle @wordpress/dataviews and @wordpress/ui instead of externalizing.
 					// These are only used by HelpCenterA4AContactForm which is lazy-loaded,
 					// so we don't want them listed as dependencies for the main entry point.
 					if ( request === '@wordpress/dataviews' || request === '@wordpress/ui' ) {
 						return null;
+					}
+				},
+				requestToHandle( request ) {
+					// `react-dom/client` is externalized to the `ReactDOM` global above; point its
+					// script dependency at the existing `react-dom` handle since the request name
+					// itself is not a registered handle.
+					if ( request === 'react-dom/client' ) {
+						return 'react-dom';
 					}
 				},
 			} ),
@@ -89,8 +122,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 
 	return [
 		getIndividualConfig( { env, argv, name: 'help-center-gutenberg' } ),
-		getIndividualConfig( { env, argv, name: 'help-center-ciab-admin' } ),
-		getIndividualConfig( { env, argv, name: 'help-center-ciab-admin-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-wp-admin' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-customizer' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-gutenberg-disconnected' } ),

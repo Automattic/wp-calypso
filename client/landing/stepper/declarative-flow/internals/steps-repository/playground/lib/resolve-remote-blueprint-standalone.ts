@@ -185,7 +185,7 @@ function normalizePath( path: string ): string {
  */
 export class StreamedFile extends File {
 	readonly filesize: number | undefined;
-	private readableStream: ReadableStream< Uint8Array >;
+	private readableStream: ReadableStream< Uint8Array< ArrayBuffer > >;
 
 	static fromArrayBuffer(
 		arrayBuffer: Uint8Array,
@@ -205,7 +205,7 @@ export class StreamedFile extends File {
 	}
 
 	constructor(
-		readableStream: ReadableStream< Uint8Array >,
+		readableStream: ReadableStream< Uint8Array< ArrayBuffer > >,
 		name: string,
 		options?: { type?: string; filesize?: number }
 	) {
@@ -218,7 +218,7 @@ export class StreamedFile extends File {
 		throw new Error( 'slice() is not possible on a StreamedFile' );
 	}
 
-	override stream(): ReadableStream< Uint8Array > {
+	override stream(): ReadableStream< Uint8Array< ArrayBuffer > > {
 		return this.readableStream;
 	}
 
@@ -289,7 +289,7 @@ export class ZipFilesystem implements ReadableFilesystemBackend {
 	private entries: Map< string, Entry > = new Map();
 	private zipReader: ZipReader< BlobReader >;
 
-	static fromStream( stream: ReadableStream< Uint8Array > ): ZipFilesystem {
+	static fromStream( stream: ReadableStream< Uint8Array< ArrayBuffer > > ): ZipFilesystem {
 		const zipReader = new ZipReader( new BlobReader( new StreamedFile( stream, 'archive.zip' ) ) );
 		return new ZipFilesystem( zipReader );
 	}

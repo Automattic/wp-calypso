@@ -150,12 +150,12 @@ describe( 'atmosphereComposerConfig', () => {
 			expect( container.textContent?.trim().length ).toBeGreaterThan( 0 );
 		} );
 
-		it( 'auth_required renders a Reconnect link to /reader/atmosphere/connect', () => {
+		it( 'auth_required renders a connection-error message with no link', () => {
 			const t = getTranslate();
 			const node = atmosphereComposerConfig.errorMessage( { kind: 'auth_required' }, t );
 			const { container } = render( <span>{ node }</span> );
-			const link = container.querySelector( 'a' );
-			expect( link?.getAttribute( 'href' ) ).toBe( '/reader/atmosphere/connect' );
+			expect( container.textContent ).toMatch( /Bluesky connection/i );
+			expect( container.querySelector( 'a' ) ).toBeNull();
 		} );
 	} );
 
@@ -212,19 +212,32 @@ describe( 'atmosphereComposerConfig', () => {
 	} );
 
 	describe( 'copy', () => {
-		it( 'reply title is "Reply"', () => {
+		it( 'reply title is "Reply" with no handle', () => {
 			const t = getTranslate();
 			expect( atmosphereComposerConfig.copy.title( replyMode, t ) ).toBe( 'Reply' );
 		} );
 
-		it( 'quote title is "Quote post"', () => {
+		it( 'quote title is "Quote post" with no handle', () => {
 			const t = getTranslate();
 			expect( atmosphereComposerConfig.copy.title( quoteMode, t ) ).toBe( 'Quote post' );
 		} );
 
-		it( 'standalone title is "New post"', () => {
+		it( 'standalone title is "New post" with no handle', () => {
 			const t = getTranslate();
 			expect( atmosphereComposerConfig.copy.title( standaloneMode, t ) ).toBe( 'New post' );
+		} );
+
+		it( 'appends "· @handle" to the title when a handle is supplied', () => {
+			const t = getTranslate();
+			expect(
+				atmosphereComposerConfig.copy.title( standaloneMode, t, 'jordesign.bsky.social' )
+			).toBe( 'New post · @jordesign.bsky.social' );
+			expect( atmosphereComposerConfig.copy.title( replyMode, t, 'alice.bsky.social' ) ).toBe(
+				'Reply · @alice.bsky.social'
+			);
+			expect( atmosphereComposerConfig.copy.title( quoteMode, t, 'alice.bsky.social' ) ).toBe(
+				'Quote post · @alice.bsky.social'
+			);
 		} );
 
 		it( 'reply placeholder mentions the handle', () => {

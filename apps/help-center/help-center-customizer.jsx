@@ -91,6 +91,8 @@ function CustomizerHelpCenterContent() {
 			onboardingUrl="https://wordpress.com/start"
 			handleClose={ closeCallback }
 			isCommerceGarden={ helpCenterData.isCommerceGarden }
+			newInteractionsBotSlug={ helpCenterData.newInteractionsBotSlug }
+			newLoggedOutInteractionsBotSlug={ helpCenterData.newLoggedOutInteractionsBotSlug }
 		/>
 	);
 }

@@ -14,6 +14,7 @@ export * from './domain-search-component';
 export * from './isolated-block-editor-component';
 export * from './block-widget-editor-component';
 export * from './notice-component';
+export * from './dashboard-snackbar-component';
 export * from './react-modal-component';
 export * from './editor-component';
 export * from './editor-inline-block-inserter-component';

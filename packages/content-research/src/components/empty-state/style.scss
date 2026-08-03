@@ -1,0 +1,39 @@
+.content-research-empty {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 12px;
+	padding: 4px 16px 16px;
+	text-align: left;
+	justify-content: space-between;
+
+	&__title {
+		margin: 8px 0;
+		font-size: 12px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: #1e1e1e;
+	}
+
+	&__description {
+		margin: 0;
+		font-size: 13px;
+		line-height: 1.5;
+		color: #50575e;
+	}
+
+	&__footer {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+
+		.components-tip svg {
+			align-self: flex-start;
+			margin-right: 8px;
+		}
+	}
+}

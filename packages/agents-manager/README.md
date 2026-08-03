@@ -20,7 +20,14 @@ import AgentsManager from '@automattic/agents-manager';
 function MyApp() {
 	const site = { ID: 456, URL: 'https://example.com' };
 
-	return <AgentsManager currentRoute="/dashboard" sectionName="dashboard" site={ site } currentSiteId={ site.ID } />;
+	return (
+		<AgentsManager
+			sectionName="dashboard"
+			site={ site }
+			currentSiteId={ site.ID }
+			currentRoute="/dashboard"
+		/>
+	);
 }
 ```
 
@@ -32,6 +39,8 @@ Use `HeadlessAgentInitializer` when you need to create the agent without renderi
 import { HeadlessAgentInitializer } from '@automattic/agents-manager';
 
 function MyApp() {
+	const site = { ID: 456, URL: 'https://example.com' };
+
 	return <HeadlessAgentInitializer site={ site } currentRoute="/media" />;
 }
 ```
@@ -69,35 +78,33 @@ function MyComponent() {
 
 The Agents Manager exposes a `window.__agentsManagerActions` API for controlling the UI from outside the React tree (e.g., from a host app, legacy code, or a separate bundle).
 
-See `src/hooks/use-setup-custom-actions/README.md` for details.
+See `src/hooks/custom-actions/README.md` for details.
 
 ## API Reference
 
 ### AgentsManager Props
 
 | Prop            | Type                           | Description                                                                                                              |
-|-----------------|--------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| --------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
 | `sectionName`   | `string`                       | The name of the current section (e.g., 'wp-admin', 'gutenberg').                                                         |
 | `currentUser`   | `CurrentUser` (optional)       | Current user (from `@automattic/data-stores`). Sets `isLoggedIn`.                                                        |
 | `site`          | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).                                                               |
 | `currentRoute`  | `string` (optional)            | The current route path.                                                                                                  |
 | `currentSiteId` | `number` (optional)            | The ID of the selected site. When set, chat state is scoped to this site. When omitted, uses a shared "no-site" context. |
-| `handleClose`   | `() => void` (optional)        | Called when the agent is closed.                                                                                         |
+| `agentId`       | `string` (optional)            | Explicit agent ID for hosts that must not fall back to Unified Chat.                                                     |
 
 ### Exported Hooks and Utilities
 
 ```tsx
-import {
-	useShouldUseUnifiedAgent,
-	getUseUnifiedExperienceFromInlineData,
-} from '@automattic/agents-manager';
+import { useShouldUseUnifiedAgent, getAgentsManagerInlineData } from '@automattic/agents-manager';
 
 function MyComponent() {
-	// Check if the unified agent experience is active
+	// Check if the unified agent experience is active. Outside a
+	// `QueryClientProvider`, pass a client: `useShouldUseUnifiedAgent( queryClient )`.
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
 	// Read the unified experience flag from inline script data (non-hook)
-	const useUnifiedExperience = getUseUnifiedExperienceFromInlineData();
+	const useUnifiedExperience = getAgentsManagerInlineData()?.useUnifiedExperience;
 }
 ```
 
@@ -114,6 +121,8 @@ import type {
 	BaseContextEntry,
 	ContextEntry,
 	Suggestion,
+	UseFeedbackActionConfig,
+	UseFeedbackActionReturn,
 } from '@automattic/agents-manager';
 ```
 

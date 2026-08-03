@@ -1,13 +1,14 @@
+import './style.scss';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
-import { YearsOfServiceBadge } from 'calypso/reader/components/achievements/years-of-service-badge';
+import UserProfilePrivateTabNotice from 'calypso/reader/user-profile/components/private-tab-notice';
 import AchievementsGrid from './achievements-grid';
 import AchievementsSettings from './achievements-settings';
+import { ActivityStreak } from './activity-streak';
 import type { ReaderUser } from '@automattic/api-core';
-
-import './style.scss';
+import type { JSX } from 'react';
 
 interface UserAchievementsProps {
 	user: ReaderUser;
@@ -16,7 +17,9 @@ interface UserAchievementsProps {
 const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null => {
 	const translate = useTranslate();
 	const { isOwnProfile, isVisible, isLoading } = useAchievementsVisibility( user.user_login );
-	const { yearsOfService } = useAchievementsQuery( isVisible ? user.user_login : undefined );
+	const { engagementStreak } = useAchievementsQuery( isVisible ? user.user_login : undefined, {
+		refetchOnMount: 'always',
+	} );
 
 	if ( isLoading ) {
 		return (
@@ -32,11 +35,20 @@ const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null
 
 	return (
 		<div className="achievements">
+			{ isOwnProfile && (
+				<UserProfilePrivateTabNotice
+					title={ translate( 'Your achievements are private' ) }
+					tab="achievements"
+					userPreferencesKey="achievements-visibility"
+				/>
+			) }
 			<div className="achievements__header">
-				{ !! yearsOfService && (
-					<YearsOfServiceBadge size="large" yearsOfService={ yearsOfService } />
+				<ActivityStreak streak={ engagementStreak } isOwnProfile={ isOwnProfile } />
+				{ isOwnProfile && (
+					<div className="achievements__settings">
+						<AchievementsSettings />
+					</div>
 				) }
-				{ isOwnProfile && <AchievementsSettings /> }
 			</div>
 			<AchievementsGrid userLogin={ user.user_login } isOwnProfile={ isOwnProfile } />
 		</div>

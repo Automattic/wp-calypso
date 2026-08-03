@@ -6,6 +6,7 @@
 	width: 100%;
 
 	@include break-large {
+		display: inline-flex;
 		width: auto;
 	}
 }

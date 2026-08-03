@@ -176,6 +176,7 @@ export const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 			break;
 		case 'plans-new-hosted-site':
+		case 'plans-ai-assembler-paid-only':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-new-hosted-site-business-only':
@@ -221,6 +222,15 @@ export const usePlanTypesWithIntent = ( {
 			}
 			break;
 		}
+		case 'plans-upgrade-or-downgrade': {
+			// Show all plans — used when the current plan is expired and the user
+			// may want to downgrade as well as upgrade.
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			if ( isEnterpriseAvailable ) {
+				planTypes.push( TYPE_ENTERPRISE_GRID_WPCOM );
+			}
+			break;
+		}
 		case 'plans-jetpack-app':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
@@ -249,6 +259,9 @@ export const usePlanTypesWithIntent = ( {
 			];
 			break;
 		case 'plans-business-trial':
+			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
+		case 'plans-student':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-videopress':
@@ -317,6 +330,8 @@ const useGridPlans: UseGridPlansType = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 	useFocusedNewCopyTaglines,
+	usePlansGridRedesignNewDescription,
+	showBillingDescriptionForIncreasedRenewalPrice,
 } ) => {
 	const translate = useTranslate();
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
@@ -379,6 +394,7 @@ const useGridPlans: UseGridPlansType = ( {
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
 		reflectStorageSelectionInPlanPrices,
+		showBillingDescriptionForIncreasedRenewalPrice,
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
@@ -468,10 +484,56 @@ const useGridPlans: UseGridPlansType = ( {
 			}
 		}
 
-		const productNameShort =
-			isWpcomEnterpriseGridPlan( planSlug ) && planConstantObj.getPathSlug
-				? planConstantObj.getPathSlug()
-				: planObject?.productNameShort ?? null;
+		if ( usePlansGridRedesignNewDescription ) {
+			const existingTagline = tagline;
+			if ( isFreePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For exploring WordPress.' )
+						? translate( 'For exploring WordPress.' )
+						: existingTagline;
+			} else if ( isPersonalPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For making a personal site or blog truly yours.' )
+						? translate( 'For making a personal site or blog truly yours.' )
+						: existingTagline;
+			} else if ( isPremiumPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For creators and professionals building a credible presence.' )
+						? translate( 'For creators and professionals building a credible presence.' )
+						: existingTagline;
+			} else if ( isBusinessPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation(
+						'For businesses and developers who need powerful tools and priority support.'
+					)
+						? translate(
+								'For businesses and developers who need powerful tools and priority support.'
+						  )
+						: existingTagline;
+			} else if ( isEcommercePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For merchants growing an online store.' )
+						? translate( 'For merchants growing an online store.' )
+						: existingTagline;
+			} else if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Publish securely at enterprise scale.' )
+						? translate( 'Publish securely at enterprise scale.' )
+						: existingTagline;
+			}
+		}
+
+		// The enterprise plan isn't returned by the plans endpoint, so it has no
+		// server-provided product name; fall back to its fixed path slug.
+		const productNameShort = isWpcomEnterpriseGridPlan( planSlug )
+			? 'enterprise'
+			: planObject?.productNameShort ?? null;
 
 		// cartItemForPlan done in line here as it's a small piece of logic to pass another selector for
 		const cartItemForPlan =

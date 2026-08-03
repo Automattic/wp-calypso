@@ -1,7 +1,7 @@
 import { AkismetPlans, TitanMailSlugs } from '@automattic/api-core';
 import { _n, __, sprintf } from '@wordpress/i18n';
 import { intervalToDuration } from 'date-fns';
-import { isGSuiteOrGoogleWorkspaceProductSlug, CancelIntent } from '../../../utils/purchase';
+import { isGSuiteOrGoogleWorkspaceProductSlug, DisplayVariant } from '../../../utils/purchase';
 
 /**
  * Minimal purchase shape the confirmation copy depends on. Both surfaces
@@ -24,6 +24,7 @@ export type PurchaseForCopy = {
 	expiry_status: string;
 	meta?: string;
 	domain: string;
+	advertised_total_upload_space_in_gb?: number | null;
 };
 
 /**
@@ -41,10 +42,7 @@ export type ProductCategory =
 	| 'other';
 
 function isTitanMailSlug( productSlug: string ): boolean {
-	return (
-		productSlug === TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG ||
-		productSlug === TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG
-	);
+	return ( Object.values( TitanMailSlugs ) as readonly string[] ).includes( productSlug );
 }
 
 function isAkismetProductSlug( productSlug: string ): boolean {
@@ -140,14 +138,14 @@ export function formatTimeRemaining( expiryDate: string | Date, from: Date = new
 	}
 	if ( parts.length === 2 ) {
 		return sprintf(
-			/* translators: joins two duration parts, e.g. "1 month and 11 days" */
+			/* translators: %1$s and %2$s are duration parts, e.g. "1 month and 11 days" */
 			__( '%1$s and %2$s' ),
 			parts[ 0 ],
 			parts[ 1 ]
 		);
 	}
 	return sprintf(
-		/* translators: joins three duration parts, e.g. "2 years, 3 months, and 14 days" */
+		/* translators: %1$s, %2$s and %3$s are duration parts, e.g. "2 years, 3 months, and 14 days" */
 		__( '%1$s, %2$s, and %3$s' ),
 		parts[ 0 ],
 		parts[ 1 ],
@@ -157,7 +155,7 @@ export function formatTimeRemaining( expiryDate: string | Date, from: Date = new
 
 type ConfirmationCopyArgs = {
 	purchase: PurchaseForCopy;
-	intent: CancelIntent;
+	intent: DisplayVariant;
 };
 
 /**
@@ -167,6 +165,9 @@ type ConfirmationCopyArgs = {
  *   "Remove {productName}" for individual products).
  */
 export function getCancellationHeading( { purchase, intent }: ConfirmationCopyArgs ): string {
+	if ( intent === 'auto-renew' ) {
+		return __( 'Turn off auto-renew' );
+	}
 	if ( intent === 'cancel' ) {
 		return __( 'Cancel subscription' );
 	}
@@ -202,7 +203,7 @@ export function getCancellationHeading( { purchase, intent }: ConfirmationCopyAr
  * managed or already-expired purchases).
  */
 export function getTopNoticeCopy( { purchase, intent }: ConfirmationCopyArgs ): string | null {
-	if ( intent !== 'cancel' ) {
+	if ( intent !== 'cancel' && intent !== 'auto-renew' ) {
 		return null;
 	}
 	if ( ! purchase.expiry_date ) {
@@ -249,8 +250,30 @@ export function getTopNoticeCopy( { purchase, intent }: ConfirmationCopyArgs ): 
  * Form: "Your {category} will expire on {date} and you’ll lose access to:"
  * Falls back to a date-less form when no expiry is available.
  */
-export function getCancelLossIntro( purchase: PurchaseForCopy, fullExpiryDate: string ): string {
+export function getCancelLossIntro(
+	purchase: PurchaseForCopy,
+	fullExpiryDate: string,
+	isInGracePeriod: boolean
+): string {
 	const category = getProductCategory( purchase );
+	// Already past the expiry date (grace period): the expiry date is in the past,
+	// so frame the loss around imminent removal instead of a future expiry.
+	if ( isInGracePeriod ) {
+		switch ( category ) {
+			case 'plan':
+				return __( 'Your plan will be removed soon. Here’s what you’ll lose:' );
+			case 'domain':
+				return __( 'Your domain will be removed soon. Here’s what you’ll lose:' );
+			case 'email':
+				return __( 'Your email will be removed soon. Here’s what you’ll lose:' );
+			default:
+				return sprintf(
+					/* translators: %(productName)s is the product name */
+					__( 'Your %(productName)s subscription will be removed soon. Here’s what you’ll lose:' ),
+					{ productName: purchase.product_name }
+				);
+		}
+	}
 	if ( ! fullExpiryDate ) {
 		return __( 'You’ll lose access to:' );
 	}
@@ -322,9 +345,36 @@ export function getRemoveLossIntro( purchase: PurchaseForCopy ): string {
  */
 export function getSingleItemCancelCopy(
 	purchase: PurchaseForCopy,
-	fullExpiryDate: string
+	fullExpiryDate: string,
+	isInGracePeriod: boolean
 ): string {
 	const category = getProductCategory( purchase );
+	// Already past the expiry date (grace period): the expiry date is in the past,
+	// so frame it around imminent removal instead of a future expiry.
+	if ( isInGracePeriod ) {
+		switch ( category ) {
+			case 'plan':
+				return __(
+					"Your plan subscription will be removed soon. It will be deactivated and you'll no longer be able to use it."
+				);
+			case 'domain':
+				return __(
+					"Your domain subscription will be removed soon. It will be deactivated and you'll no longer be able to use it."
+				);
+			case 'email':
+				return __(
+					"Your email subscription will be removed soon. It will be deactivated and you'll no longer be able to use it."
+				);
+			default:
+				return sprintf(
+					/* translators: %(productName)s is the product name */
+					__(
+						"Your %(productName)s subscription will be removed soon. It will be deactivated and you'll no longer be able to use it."
+					),
+					{ productName: purchase.product_name }
+				);
+		}
+	}
 	if ( ! fullExpiryDate ) {
 		switch ( category ) {
 			case 'plan':
@@ -459,6 +509,27 @@ export function getRefundNoticeCopy( {
 }
 
 /**
+ * Promo notice shown on the Cancel screen when a refund is still available:
+ * a prompt sentence plus the label for the link that switches to the Remove
+ * flow. Plan-worded (not product-aware) to match the current copy.
+ */
+export function getRefundEligibilityPromoCopy( { refundAmount }: { refundAmount: string } ): {
+	prompt: string;
+	linkLabel: string;
+} {
+	return {
+		prompt: sprintf(
+			/* translators: %(refundAmount)s is a monetary amount, e.g. "$96.00" */
+			__(
+				'You’re eligible for a %(refundAmount)s refund if you remove your plan now. Your features will be unavailable right away.'
+			),
+			{ refundAmount }
+		),
+		linkLabel: __( 'Remove plan and claim refund.' ),
+	};
+}
+
+/**
  * Universal confirm checkbox — same on Cancel and Remove, any product type.
  * Expiry date lives in the feature-list intro and the top notice; the
  * checkbox is a final "I read the above" ack.
@@ -497,6 +568,12 @@ export function getButtonLabels( { purchase, intent }: ConfirmationCopyArgs ): {
 			default:
 				return { primary, secondary: __( 'Keep subscription' ) };
 		}
+	}
+	if ( intent === 'auto-renew' ) {
+		return {
+			primary: __( 'Turn off auto-renew' ),
+			secondary: __( 'Keep auto-renew on' ),
+		};
 	}
 	// Cancel intent: always "Cancel subscription" / "Keep subscription" to match
 	// the heading and Purchase Settings button.

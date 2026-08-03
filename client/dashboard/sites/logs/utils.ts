@@ -106,12 +106,6 @@ export function getInitialDateRangeFromSearch( search: string ): DateRange | nul
 	return start && end && start <= end ? { start, end } : null;
 }
 
-export const LOG_TABS = [
-	{ name: 'activity', title: __( 'Activity' ) },
-	{ name: 'php', title: __( 'PHP errors' ) },
-	{ name: 'server', title: __( 'Web server' ) },
-];
-
 export function formatDateCell( {
 	timezoneString,
 	gmtOffset,
@@ -151,7 +145,7 @@ export function getDateTimeLabel( {
 	gmtOffset?: number;
 	isLargeScreen: boolean;
 } ) {
-	let dateTimeLabel = __( 'Date & time' );
+	let dateTimeLabel: string = __( 'Date & time' );
 
 	/* translators: %s is the site's timezone (e.g., "Europe/London") or UTC offset (e.g., "UTC+02:00") */
 	const dateTimeWithTz = __( 'Date & time (%s)' );

@@ -4,7 +4,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -76,12 +75,13 @@ class MapDomainStep extends Component {
 	}
 
 	render() {
-		const suggestion = get( this.props, 'products.domain_map', false )
-			? {
-					cost: this.props.products.domain_map.cost_display,
-					product_slug: this.props.products.domain_map.product_slug,
-			  }
-			: { cost: null, product_slug: '' };
+		const suggestion =
+			this.props?.products?.domain_map ?? false
+				? {
+						cost: this.props.products.domain_map.cost_display,
+						product_slug: this.props.products.domain_map.product_slug,
+				  }
+				: { cost: null, product_slug: '' };
 		const { searchQuery } = this.state;
 		const { translate } = this.props;
 
@@ -230,10 +230,10 @@ class MapDomainStep extends Component {
 		this.setState( { suggestion: null, notice: null, isPendingSubmit: true } );
 
 		checkDomainAvailability(
-			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+			{ domainName: domain, blogId: this.props?.selectedSite?.ID ?? null },
 			( error, result ) => {
-				const mappableStatus = get( result, 'mappable', error );
-				const status = get( result, 'status', error );
+				const mappableStatus = result?.mappable ?? error;
+				const status = result?.status ?? error;
 				const { AVAILABLE, AVAILABILITY_CHECK_ERROR, MAPPABLE, MAPPED, NOT_REGISTRABLE, UNKNOWN } =
 					domainAvailability;
 
@@ -251,14 +251,14 @@ class MapDomainStep extends Component {
 					return;
 				}
 
-				let site = get( result, 'other_site_domain', null );
+				let site = result?.other_site_domain ?? null;
 				if ( ! site ) {
-					site = get( this.props, 'selectedSite.slug', null );
+					site = this.props?.selectedSite?.slug ?? null;
 				}
 
 				const availabilityStatus = MAPPED === mappableStatus ? mappableStatus : status;
 
-				const maintenanceEndTime = get( result, 'maintenance_end_time', null );
+				const maintenanceEndTime = result?.maintenance_end_time ?? null;
 				const { message, severity } = getAvailabilityNotice(
 					domain,
 					availabilityStatus,

@@ -1,4 +1,7 @@
 @use "sass:math";
+
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
@@ -184,7 +187,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 			border-radius: 5px; // stylelint-disable-line scales/radii
 		}
 		button:focus {
-			box-shadow: 0 0 0 2px var(--color-primary-light);
+			box-shadow: 0 0 0 2px var(--color-accent-light);
 		}
 	}
 

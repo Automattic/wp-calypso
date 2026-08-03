@@ -18,4 +18,7 @@ export interface UserSite {
 	last_published: string;
 	posts_count: number;
 	subscribers_count: number;
+
+	// Only present in owner-scoped requests (`owner=1`)
+	is_hidden?: boolean;
 }

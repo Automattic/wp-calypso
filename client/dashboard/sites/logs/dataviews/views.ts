@@ -6,8 +6,9 @@ export const DEFAULT_PER_PAGE = 50;
 const DEFAULT_VIEW = {
 	type: 'table',
 	perPage: DEFAULT_PER_PAGE,
-	infiniteScrollEnabled: true,
 	showLevels: false,
+	infiniteScrollEnabled: true,
+	startPosition: 1,
 } satisfies Partial< View >;
 
 export const DEFAULT_PHP_LOGS_VIEW: View = {

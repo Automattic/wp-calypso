@@ -129,6 +129,7 @@ export interface AddReadListFeedVariables {
 
 export const addReadListFeedMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, AddReadListFeedVariables, ListItemMutationContext >( {
+		meta: { statId: 'read-list-feed-add' },
 		mutationFn: ( variables ) => addReadListFeed( variables ),
 		onMutate: ( { owner, slug, feedId } ) =>
 			snapshotAndOptimisticallyUpdate( queryClient, owner, slug, ( items ) => {
@@ -152,6 +153,7 @@ export interface DeleteReadListFeedVariables {
 
 export const deleteReadListFeedMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, DeleteReadListFeedVariables, ListItemMutationContext >( {
+		meta: { statId: 'read-list-feed-delete' },
 		mutationFn: ( variables ) => deleteReadListFeed( variables ),
 		onMutate: ( { owner, slug, feedId } ) =>
 			snapshotAndOptimisticallyUpdate( queryClient, owner, slug, ( items ) =>
@@ -169,6 +171,7 @@ export interface DeleteReadListSiteVariables {
 
 export const deleteReadListSiteMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, DeleteReadListSiteVariables, ListItemMutationContext >( {
+		meta: { statId: 'read-list-site-delete' },
 		mutationFn: ( variables ) => deleteReadListSite( variables ),
 		onMutate: ( { owner, slug, siteId } ) =>
 			snapshotAndOptimisticallyUpdate( queryClient, owner, slug, ( items ) =>
@@ -190,6 +193,7 @@ export interface AddReadListTagVariables {
 
 export const addReadListTagMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, AddReadListTagVariables, ListItemMutationContext >( {
+		meta: { statId: 'read-list-tag-add' },
 		mutationFn: ( variables ) => addReadListTag( variables ),
 		onMutate: ( { owner, slug, tagId, tagSlug } ) =>
 			snapshotAndOptimisticallyUpdate( queryClient, owner, slug, ( items ) => {
@@ -220,6 +224,7 @@ export interface DeleteReadListTagVariables {
 
 export const deleteReadListTagMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, DeleteReadListTagVariables, ListItemMutationContext >( {
+		meta: { statId: 'read-list-tag-delete' },
 		mutationFn: ( variables ) => deleteReadListTag( variables ),
 		onMutate: ( { owner, slug, tagId } ) =>
 			snapshotAndOptimisticallyUpdate( queryClient, owner, slug, ( items ) =>

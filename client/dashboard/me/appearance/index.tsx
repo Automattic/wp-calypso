@@ -1,13 +1,12 @@
-import { Badge } from '@automattic/ui';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useColorScheme, type ColorScheme } from 'calypso/lib/color-scheme';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { useColorScheme, type ColorScheme } from '../../app/color-scheme';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -42,8 +41,7 @@ export default function Appearance() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Appearance' ) }
-					description={ __( 'Customize the dashboard display.' ) }
-					actions={ <Badge>{ __( 'Experimental' ) }</Badge> }
+					description={ __( 'Customize the appearance.' ) }
 				/>
 			}
 		>
@@ -54,7 +52,7 @@ export default function Appearance() {
 							level={ 3 }
 							title={ __( 'Color scheme' ) }
 							description={ __(
-								'Set the dashboard appearance to light, dark, or your system setting. This is experimental, if you like it or find issues we’d love to hear your feedback on it.'
+								'Set the dashboard appearance to light, dark, or your system setting. This setting will also apply to other supported surface areas.'
 							) }
 						/>
 						<ToggleGroupControl

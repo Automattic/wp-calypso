@@ -1,5 +1,5 @@
 import { Card, DotPager } from '@automattic/components';
-import { times } from 'lodash';
+import { times } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -55,6 +55,7 @@ const PluginsBrowserList = ( {
 	carouselPageSize = DEFAULT_CAROUSEL_PAGE_SIZE,
 	injectAfterIndex = null,
 	injectElement = null,
+	afterHeader = null,
 } ) => {
 	const extendedVariant = extended
 		? PluginsBrowserElementVariant.Extended
@@ -214,6 +215,7 @@ const PluginsBrowserList = ( {
 					isRootPage={ listType !== 'browse' }
 				/>
 			) }
+			{ afterHeader }
 			{ listName === 'paid' && (
 				<AsyncLoad
 					require={ loadJitm }
@@ -250,6 +252,7 @@ PluginsBrowserList.propTypes = {
 	extended: PropTypes.bool,
 	useCarousel: PropTypes.bool,
 	carouselPageSize: PropTypes.number,
+	afterHeader: PropTypes.node,
 };
 
 export default PluginsBrowserList;

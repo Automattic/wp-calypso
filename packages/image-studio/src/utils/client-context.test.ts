@@ -131,7 +131,7 @@ describe( 'getClientContext', () => {
 				getBlockType: () => null,
 			},
 			videoStudio: {
-				getSelectedStyle: () => 'promotional',
+				getSelectedStyle: () => 'cinematic',
 			},
 		} );
 
@@ -142,7 +142,7 @@ describe( 'getClientContext', () => {
 		expect( ctx.videoStudio ).toMatchObject( {
 			isOpen: true,
 			id: null,
-			style: 'promotional',
+			style: 'cinematic',
 			entryPoint: 'post_editor_feature_clip',
 		} );
 		// The server pins 9:16; aspect_ratio is not part of the videoStudio payload shape.
@@ -162,7 +162,7 @@ describe( 'getClientContext', () => {
 				getBlockType: () => null,
 			},
 			videoStudio: {
-				getSelectedStyle: () => 'promotional',
+				getSelectedStyle: () => 'cinematic',
 			},
 			editor: {
 				getEditedPostAttribute: ( name: string ) =>
@@ -187,7 +187,7 @@ describe( 'getClientContext', () => {
 				getBlockType: () => null,
 			},
 			videoStudio: {
-				getSelectedStyle: () => 'promotional',
+				getSelectedStyle: () => 'cinematic',
 			},
 			editor: {
 				getEditedPostAttribute: ( name: string ) => ( name === 'title' ? '   ' : undefined ),
@@ -211,7 +211,7 @@ describe( 'getClientContext', () => {
 				getBlockType: () => null,
 			},
 			videoStudio: {
-				getSelectedStyle: () => 'promotional',
+				getSelectedStyle: () => 'cinematic',
 			},
 		} );
 
@@ -233,7 +233,7 @@ describe( 'getClientContext', () => {
 				getBlockType: () => null,
 			},
 			videoStudio: {
-				getSelectedStyle: () => 'promotional',
+				getSelectedStyle: () => 'cinematic',
 				// update-canvas-video writes the generated clip's id here.
 				getCurrentAttachmentId: () => 4242,
 			},

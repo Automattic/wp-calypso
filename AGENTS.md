@@ -25,6 +25,7 @@
 - **Help Center** (`packages/help-center`) — shared component library for WordPress.com support. Also deployed via `apps/help-center/` to `widgets.wp.com`.
 - **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation
 - **Block Notes** (`packages/block-notes`) — AI-powered block commenting system for WordPress
+- **Calypso Products** (`packages/calypso-products`) — ⚠️ **Avoid.** Deprecated/frozen: a bloated client-side duplicate of product data the backend already owns. Don't add to it; prefer backend-driven data (e.g. `@automattic/api-queries`). See `packages/calypso-products/AGENTS.md`.
 
 ## Apps
 
@@ -44,6 +45,8 @@ yarn start
 # Build and start the dev server for the Dashboard client only.
 yarn start-dashboard
 ```
+
+If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`, increase the Node heap size by running `NODE_OPTIONS=--max-old-space-size=8192 yarn start`. For other errors, run `yarn calypso-doctor` to diagnose and fix common environment issues.
 
 ## Testing instructions
 
@@ -73,6 +76,10 @@ yarn lint:js          # Lint JavaScript
 yarn reformat-files   # Fix formatting with Prettier
 yarn typecheck-client # Type-check client
 ```
+
+## Conventions
+
+- Do NOT add any verbose code comments that narrate what the change does or why it was made (e.g. `// Added this to fix X`, `// Changed from Y to Z`, restating the code in prose). Such explanation belongs in the PR description, not the source. Only keep comments that a future reader genuinely needs — non-obvious rationale, gotchas, links to context — and match the comment density and style of the surrounding code.
 
 ## Pre-PR checks
 

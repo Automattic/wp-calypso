@@ -22,7 +22,8 @@ import {
 	sanitizeFields,
 } from '../sites/dataviews';
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
-import { SitesNotices } from '../sites/notices';
+import { SitesNoticeArbiter } from '../sites/notice-arbiter';
+import { RestoringSitesNotices } from '../sites/restoring-sites-notice';
 import { wpcomLink } from '../utils/link';
 import type { View } from '@wordpress/dataviews';
 
@@ -73,7 +74,7 @@ export default function CIABSites() {
 
 	const emptyTitle = hasFilterOrSearch ? __( 'No stores found' ) : __( 'No stores' );
 
-	let emptyDescription = __( 'Get started by creating a new store.' );
+	let emptyDescription: string = __( 'Get started by creating a new store.' );
 	if ( view.search ) {
 		emptyDescription = sprintf(
 			// Translators: %s is the search term used when looking for stores by title or domain name.
@@ -150,7 +151,11 @@ export default function CIABSites() {
 						}
 					/>
 				}
-				notices={ <SitesNotices /> }
+				notices={
+					<SitesNoticeArbiter>
+						{ isRestoringAccount && <RestoringSitesNotices /> }
+					</SitesNoticeArbiter>
+				}
 			>
 				<SitesDataViews
 					view={ view }
@@ -161,7 +166,7 @@ export default function CIABSites() {
 					paginationInfo={ paginationInfo }
 					empty={ emptyState }
 					onChangeView={ handleViewChange }
-					onResetView={ resetView }
+					onReset={ resetView }
 				/>
 			</PageLayout>
 		</>

@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -14,9 +15,8 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import getMostRecentOpenLiveInteraction, {
-	hasReachedConversationLimit,
-} from '../notices/get-most-recent-open-live-interaction';
+import { useOpenInteractionStatusMap } from '../../hooks/use-open-interaction-status-map';
+import { getOpenLiveInteractions } from '../../utils/get-open-live-interactions';
 import { JumpToRecent } from './jump-to-recent';
 import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -32,6 +32,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
 	const isTestMode = isTestModeEnvironment();
+	const hasEnTranslation = useHasEnTranslation();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const navigate = useNavigate();
@@ -44,7 +45,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
 
-	const alreadyHasActiveZendeskChatId = getMostRecentOpenLiveInteraction();
+	const interactionStatusByUuid = useOpenInteractionStatusMap();
 
 	useZendeskMessageListener();
 	const isScrolling = useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
@@ -81,15 +82,21 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			searchParams.set( 'direct-zd-chat', '1' );
 			setSearchParams( searchParams );
 
+			// Compute from a fresh Smooch snapshot at call time: Smooch can mutate its
+			// conversation list outside React without triggering a re-render.
+			const { mostRecentSupportInteractionId: alreadyHasActiveZendeskChatId, hasReachedLimit } =
+				getOpenLiveInteractions( interactionStatusByUuid );
+
 			// when forwarding to zd avoid creating new chats
 			if ( alreadyHasActiveZendeskChatId ) {
 				// Redirect to the existing Zendesk chat.
 				searchParams.set( 'id', alreadyHasActiveZendeskChatId );
-				return navigate( '/odie?' + searchParams.toString() );
+				navigate( '/odie?' + searchParams.toString() );
+				return;
 			}
 
 			// Don't create a new conversation if the user has reached the limit.
-			if ( hasReachedConversationLimit() ) {
+			if ( hasReachedLimit ) {
 				return;
 			}
 
@@ -105,9 +112,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		isChatLoaded,
 		chat?.conversationId,
 		createZendeskConversation,
-		alreadyHasActiveZendeskChatId,
 		forceEmailSupport,
-		supportInteraction?.uuid,
+		interactionStatusByUuid,
 		searchParams,
 		setSearchParams,
 	] );
@@ -143,7 +149,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					<ChatMessage
 						message={ getOdieInitialMessage(
 							supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY,
-							currentUser?.display_name
+							currentUser?.display_name,
+							hasEnTranslation
 						) }
 						key={ 0 }
 					/>

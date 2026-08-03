@@ -64,3 +64,20 @@
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
 	cursor: pointer;
 }
+
+/* TEMPORARY: these two screens scroll instead of paginating, so the footer
+   holds nothing — but DataViews still mounts it partway through a fetch, which
+   resizes the scroll container under the reader. Scoped to php and server
+   because the activity log does paginate and needs its footer. Hide it until
+   the @wordpress/dataviews 17.2.0 bump lands, which stops tying the footer's
+   visibility to the loading state, then remove this rule. */
+.site-logs-card--php .dataviews-footer,
+.site-logs-card--server .dataviews-footer {
+	display: none;
+}
+
+/* Center the Auto-refresh toggle with the sibling view-config and download icon buttons. */
+.site-logs-card .dataviews__view-actions .components-toggle-control {
+	display: flex;
+	align-items: center;
+}

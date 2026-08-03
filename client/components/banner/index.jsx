@@ -12,7 +12,6 @@ import { Button, Card, Gridicon, PlanPrice } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import clsx from 'clsx';
 import DOMPurify from 'dompurify';
-import { size } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, isValidElement } from 'react';
 import { connect } from 'react-redux';
@@ -79,6 +78,7 @@ export class Banner extends Component {
 		showLinkIcon: PropTypes.bool,
 		extraContent: PropTypes.node,
 		isBusy: PropTypes.bool,
+		isCallToActionDisabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -101,6 +101,7 @@ export class Banner extends Component {
 		tracksDismissName: 'calypso_banner_dismiss',
 		isSiteWPForTeams: false,
 		isBusy: false,
+		isCallToActionDisabled: false,
 	};
 
 	getHref() {
@@ -255,6 +256,7 @@ export class Banner extends Component {
 			tracksImpressionProperties,
 			extraContent,
 			isBusy,
+			isCallToActionDisabled,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
@@ -275,7 +277,7 @@ export class Banner extends Component {
 				<div className="banner__info">
 					<h3 className="banner__title">{ title }</h3>
 					{ this.renderDescription( description ) }
-					{ size( list ) > 0 && (
+					{ ( list || [] ).length > 0 && (
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
 								<li key={ key }>
@@ -293,8 +295,8 @@ export class Banner extends Component {
 				</div>
 				{ ( callToAction || price ) && (
 					<div className="banner__action">
-						{ size( prices ) === 1 && <PlanPrice rawPrice={ prices[ 0 ] } /> }
-						{ size( prices ) === 2 && (
+						{ prices.length === 1 && <PlanPrice rawPrice={ prices[ 0 ] } /> }
+						{ prices.length === 2 && (
 							<div className="banner__prices">
 								<PlanPrice rawPrice={ prices[ 0 ] } original />
 								<PlanPrice rawPrice={ prices[ 1 ] } discounted />
@@ -328,6 +330,7 @@ export class Banner extends Component {
 									primary={ primaryButton }
 									target={ target }
 									busy={ isBusy }
+									disabled={ isCallToActionDisabled }
 								>
 									{ callToAction }
 								</Button>

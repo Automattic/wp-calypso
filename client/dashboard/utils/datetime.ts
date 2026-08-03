@@ -1,6 +1,7 @@
+import { translationExists } from '@automattic/i18n-utils';
 import { dateI18n } from '@wordpress/date';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { parse, isValid, format } from 'date-fns';
+import { parse, isValid, format, differenceInCalendarDays } from 'date-fns';
 
 const HOUR_MS = 3_600_000;
 const YMD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
@@ -51,10 +52,73 @@ export function isWithinNext( date: Date, count: number, unit: 'hours' | 'days' 
 }
 
 /**
+ * Whole days from today until `date` in the viewer's time zone: positive for
+ * future dates, negative for past ones, 0 for any time today.
+ *
+ * For example, if today is July 27 in the viewer's time zone (any time during
+ * that day) and a `date` is passed in corresponding to any time of day on July
+ * 29 in the viewer's time zone, this function will return 2.
+ *
+ * This is especially helpful to use when the viewer is being shown both the
+ * number of days and the date itself (since the date itself would typically be
+ * displayed in their time zone too); it guarantees they will stay consistent.
+ * For example, "Expires in X days on July 29"; if today is July 27, then the
+ * viewer would obviously expect X to be 2, and that is what this function
+ * provides.
+ *
+ * See also `getRelativeDayString` if you want to handle the relative date
+ * strings ("in X days" in the above example) automatically.
+ */
+export function getCalendarDaysUntil( date: Date ): number {
+	return differenceInCalendarDays( date, new Date() );
+}
+
+/**
+ * Like `getRelativeTimeString`, but it never gets more precise than a day, and
+ * never points the wrong way (where "wrong" is defined by the passed-in
+ * `direction`). Instead, anything that happens today reads "today", as does
+ * anything that has already moved past the expected `direction`.
+ *
+ * For example:
+ * - If your text is like "Expires %s", calling this function and passing in
+ *   "upcoming" for the `direction` means that a `date` 1 day from now will
+ *   render as "Expires in 1 day", but a `date` 1 day ago will render as
+ *   "Expires today" (rather than the nonsensical "Expires 1 day ago").
+ * - Similarly, if your text is like "Expired %s", passing in "past" for the
+ *   `direction` will ensure the text is either like "Expired 1 day ago" or
+ *   "Expired today", and never like "Expired in 1 day".
+ *
+ * This is helpful for cases where the timing of a server-determined status
+ * ("expires" vs. "expired" in the above example) may not line up exactly with
+ * calendar date transitions in the viewer's time zone; if we know the
+ * transition hasn't happened yet, then it is better to indicate it will happen
+ * imminently (i.e. "today") than to claim it will happen at a specific time
+ * that already passed.
+ */
+export function getRelativeDayString( date: Date, direction: 'upcoming' | 'past' ): string {
+	const days = getCalendarDaysUntil( date );
+	const isToday = direction === 'upcoming' ? days <= 0 : days >= 0;
+
+	if ( isToday && translationExists( 'today' ) ) {
+		return __( 'today' );
+	}
+
+	return getRelativeTimeString( date );
+}
+
+/**
  * Return a string like "in 2 days" or "1 month ago" for a given date.
  *
  * Note that given the imprecision of date math and time zones, this may not be
  * totally accurate. Use it only in places where precision is not required.
+ *
+ * It can drop to hours and minutes within a single day, and always says which
+ * direction the date actually points (for example, "in 2 minutes" for a date 2
+ * minutes in the future, or "2 minutes ago" for a date 2 minutes in the past).
+ *
+ * If your wording assumes a particular direction (for example, "Expires %s" or
+ * "Expired %s") and the smallest unit of precision you need is a day (rather
+ * than hours or minutes), use `getRelativeDayString` instead.
  */
 export function getRelativeTimeString( date: Date ): string {
 	const now = new Date();
@@ -117,27 +181,27 @@ export function getRelativeTimeString( date: Date ): string {
 			case 'year':
 				// translators: value is a number
 				return sprintf( _n( '%(value)s year ago', '%(value)s years ago', value ), {
-					value,
+					value: String( value ),
 				} );
 			case 'month':
 				// translators: value is a number
 				return sprintf( _n( '%(value)s month ago', '%(value)s months ago', value ), {
-					value,
+					value: String( value ),
 				} );
 			case 'day':
 				// translators: value is a number
 				return sprintf( _n( '%(value)s day ago', '%(value)s days ago', value ), {
-					value,
+					value: String( value ),
 				} );
 			case 'hour':
 				// translators: value is a number
 				return sprintf( _n( '%(value)s hour ago', '%(value)s hours ago', value ), {
-					value,
+					value: String( value ),
 				} );
 			case 'minute':
 				// translators: value is a number
 				return sprintf( _n( '%(value)s minute ago', '%(value)s minutes ago', value ), {
-					value,
+					value: String( value ),
 				} );
 			default:
 				return __( 'just now' );
@@ -147,27 +211,27 @@ export function getRelativeTimeString( date: Date ): string {
 		case 'year':
 			// translators: value is a number
 			return sprintf( _n( 'in %(value)s year', 'in %(value)s years', value ), {
-				value,
+				value: String( value ),
 			} );
 		case 'month':
 			// translators: value is a number
 			return sprintf( _n( 'in %(value)s month', 'in %(value)s months', value ), {
-				value,
+				value: String( value ),
 			} );
 		case 'day':
 			// translators: value is a number
 			return sprintf( _n( 'in %(value)s day', 'in %(value)s days', value ), {
-				value,
+				value: String( value ),
 			} );
 		case 'hour':
 			// translators: value is a number
 			return sprintf( _n( 'in %(value)s hour', 'in %(value)s hours', value ), {
-				value,
+				value: String( value ),
 			} );
 		case 'minute':
 			// translators: value is a number
 			return sprintf( _n( 'in %(value)s minute', 'in %(value)s minutes', value ), {
-				value,
+				value: String( value ),
 			} );
 		default:
 			return __( 'just now' );

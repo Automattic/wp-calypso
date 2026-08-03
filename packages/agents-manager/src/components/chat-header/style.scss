@@ -1,6 +1,3 @@
-@import '../../styles/variables.scss';
-@import '../../styles/mixins.scss';
-
 .agents-manager-chat-header {
 	width: 100%;
 	display: flex;
@@ -27,6 +24,12 @@
 		font-weight: 600;
 		color: var( --color-foreground );
 		flex-grow: 1;
+		// Truncate long titles with an ellipsis.
+		// `min-width: 0` lets the flex item shrink so the ellipsis can show.
+		min-width: 0;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 
 	&__actions {
@@ -43,8 +46,11 @@
 		// from @wordpress/components, which makes SVGs invisible in dark mode.
 		// Descendant selector handles DropdownMenu (class on wrapper div),
 		// compound selector handles Button (class directly on element).
+		//
+		// Exclude DropdownMenu popover items: they render inline on WP's white
+		// popover, so the white fill would hide them. Keep currentColor.
 		&.components-button,
-		.components-button {
+		.components-button:not( .components-dropdown-menu__menu-item ) {
 			svg {
 				fill: var( --color-foreground );
 			}

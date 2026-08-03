@@ -1,8 +1,12 @@
 import {
+	DashboardMeSidebarComponent,
+	DashboardPurchasesPage,
+	DashboardSnackbarComponent,
 	NewSiteResponse,
 	NewTestUserDetails,
 	NewUserResponse,
 	RestAPIClient,
+	cancelDashboardPurchaseFlow,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
@@ -26,6 +30,7 @@ test.describe(
 			flowLOHPThemeSignup,
 			helperData,
 			secrets,
+			page,
 		} ) => {
 			let themeSlug: string | null = null;
 			const planName = 'Premium';
@@ -132,27 +137,32 @@ test.describe(
 				expect( theme ).toBe( `pub/${ themeSlug }` );
 			} );
 
-			await test.step( 'When I cancel my plan from the purchases page', async function () {
-				await flowLOHPThemeSignup.purchasesPage.visit();
+			await test.step( 'When I navigate to Billing > Active upgrades', async function () {
+				await page.goto( helperData.getDashboardURL( '/me' ) );
+				const meSidebar = new DashboardMeSidebarComponent( page );
+				await meSidebar.openMobileMenu();
+				await meSidebar.navigate( 'Billing' );
+				await page.getByRole( 'link', { name: 'Active upgrades', exact: true } ).click();
+			} );
 
-				await flowLOHPThemeSignup.purchasesPage.clickOnPurchase(
+			await test.step( 'When I cancel my plan', async function () {
+				const purchasesPage = new DashboardPurchasesPage( page );
+				await purchasesPage.clickOnPurchase(
 					`WordPress.com ${ planName }`,
 					newSiteDetails.blog_details.site_slug
 				);
-				await flowLOHPThemeSignup.purchasesPage.cancelPurchase( 'Cancel plan' );
-			} );
-
-			await test.step( 'And I confirm the cancellation', async function () {
-				await flowLOHPThemeSignup.cancelPlanPurchase();
+				await purchasesPage.cancelPurchase();
+				await cancelDashboardPurchaseFlow( page, {
+					reason: 'Another reason…',
+					customReasonText: 'E2E TEST CANCELLATION',
+				} );
 			} );
 
 			await test.step( 'Then I see a cancellation confirmation notice', async function () {
-				await flowLOHPThemeSignup.noticeComponent.noticeShown(
-					'Your refund has been processed and your purchase removed.',
-					{
-						timeout: 30000,
-					}
-				);
+				const snackbar = new DashboardSnackbarComponent( page );
+				await snackbar.noticeShown( 'Your refund has been processed and your purchase removed.', {
+					exact: true,
+				} );
 			} );
 		} );
 

@@ -1,6 +1,6 @@
 import { SelectDropdown } from '@automattic/components';
+import { times } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { includes, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -63,7 +63,7 @@ export class EditorMediaModalGalleryFields extends Component {
 	};
 
 	getSizeOptions = () => {
-		if ( ! includes( GallerySizeableTypes, this.props.settings.type ) ) {
+		if ( ! GallerySizeableTypes.includes( this.props.settings.type ) ) {
 			return {};
 		}
 
@@ -115,7 +115,7 @@ export class EditorMediaModalGalleryFields extends Component {
 	};
 
 	renderColumnsOption = () => {
-		if ( ! includes( GalleryColumnedTypes, this.props.settings.type ) ) {
+		if ( ! GalleryColumnedTypes.includes( this.props.settings.type ) ) {
 			return;
 		}
 

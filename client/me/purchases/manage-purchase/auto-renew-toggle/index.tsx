@@ -1,8 +1,10 @@
+import { isPurchaseOneTimePurchase } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { Button, ToggleControl } from '@wordpress/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { Component, type ReactNode } from 'react';
 import { connect } from 'react-redux';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { disableAutoRenew, enableAutoRenew } from 'calypso/lib/purchases/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -12,11 +14,17 @@ import { isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
-import { getChangePaymentMethodPath } from '../../utils';
+import {
+	getChangePaymentMethodPath,
+	isExpiredWithNoAutoRenewAttemptsLeft,
+	isRechargeable,
+	isRemoved,
+} from '../../lib/raw-purchase-helpers';
+import { cancelPurchase as cancelPurchaseUrl } from '../../paths';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
-import type { GetChangePaymentMethodUrlFor, Purchase } from 'calypso/lib/purchases/types';
+import type { GetChangePaymentMethodUrlFor } from '../../lib/types';
+import type { Purchase } from '@automattic/api-core';
 import type { NoticeStatus, NoticeText, NoticeOptions } from 'calypso/state/notices/types';
 
 export interface AutoRenewToggleProps {
@@ -40,6 +48,7 @@ export interface AutoRenewToggleConnectedProps {
 	isEnabled: boolean;
 	currentUserId: number | null;
 	isAtomicSite: boolean;
+	isSplitCancelRemoveEnabled: boolean;
 	siteSlug?: string | null;
 	fetchUserPurchases: ( userId: number ) => Promise< Purchase[] >;
 	recordTracksEvent: (
@@ -126,7 +135,7 @@ class AutoRenewToggle extends Component<
 
 	toggleAutoRenew = () => {
 		const {
-			purchase: { id: purchaseId, productSlug },
+			purchase: { ID: purchaseId, product_slug: productSlug },
 			currentUserId,
 			isEnabled,
 			isAtomicSite,
@@ -193,9 +202,15 @@ class AutoRenewToggle extends Component<
 	};
 
 	onToggleAutoRenew = () => {
-		const { isEnabled } = this.props;
+		const { isEnabled, isSplitCancelRemoveEnabled, purchase, siteSlug } = this.props;
 
 		if ( isEnabled ) {
+			if ( isSplitCancelRemoveEnabled ) {
+				const url = cancelPurchaseUrl( siteSlug ?? '', purchase.ID );
+				page( `${ url }?intent=auto-renew` );
+				return;
+			}
+
 			this.setState( {
 				showAutoRenewDisablingDialog: true,
 			} );
@@ -224,7 +239,11 @@ class AutoRenewToggle extends Component<
 	}
 
 	shouldRender( purchase: Purchase ) {
-		return ! isExpired( purchase ) && ! isOneTimePurchase( purchase );
+		return (
+			! isRemoved( purchase ) &&
+			! isExpiredWithNoAutoRenewAttemptsLeft( purchase ) &&
+			! isPurchaseOneTimePurchase( purchase )
+		);
 	}
 
 	render() {
@@ -282,13 +301,13 @@ class AutoRenewToggle extends Component<
 	}
 }
 
-export default connect(
+const ConnectedAutoRenewToggle = connect(
 	( state: IAppState, { purchase, siteSlug }: AutoRenewToggleProps ) => ( {
 		fetchingUserPurchases: isFetchingUserPurchases( state ),
-		isEnabled: purchase.isAutoRenewEnabled,
+		isEnabled: purchase.is_auto_renew_enabled,
 		currentUserId: getCurrentUserId( state ),
 		// It's possible for this check to return null if this site is not connected (won't be in the sites array in state), but the prop types require a value
-		isAtomicSite: isSiteAtomic( state, purchase.siteId ) ?? false,
+		isAtomicSite: isSiteAtomic( state, purchase.blog_id ) ?? false,
 		siteSlug: siteSlug || getSelectedSiteSlug( state ),
 	} ),
 	{
@@ -297,3 +316,13 @@ export default connect(
 		createNotice,
 	}
 )( localize( AutoRenewToggle ) );
+
+export default function AutoRenewToggleWithExperiment( props: AutoRenewToggleProps ) {
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	return (
+		<ConnectedAutoRenewToggle
+			{ ...props }
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
+		/>
+	);
+}

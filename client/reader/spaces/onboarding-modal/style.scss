@@ -1,0 +1,159 @@
+// Layout and typography come from the @wordpress/components primitives
+// (Modal, VStack/HStack, Heading, Text). Only the bespoke visual atoms are
+// styled here, using design-system tokens and logical properties.
+
+.reader-spaces-onboarding {
+	.reader-spaces-onboarding__close {
+		position: absolute;
+		inset-block-start: 8px;
+		inset-inline-end: 8px;
+		z-index: 1;
+	}
+
+	// Each step fades/slides in as it mounts.
+	.reader-spaces-onboarding__pane {
+		animation: reader-spaces-onboarding-fade 0.4s ease;
+	}
+
+	.reader-spaces-onboarding__pane.is-center {
+		text-align: center;
+	}
+
+	// Colored rounded tile holding a space icon. Size and accent are passed
+	// inline (they are data), so only the shared chrome lives here.
+	.reader-spaces-onboarding__tile {
+		display: grid;
+		place-items: center;
+		flex: none;
+		border-radius: 8px;
+		color: var( --color-text-inverted );
+	}
+
+	// @wordpress/icons default to a black fill; make the glyphs follow the
+	// container's text color (white on the accent tiles, primary on the tints).
+	.reader-spaces-onboarding__tile svg,
+	.reader-spaces-onboarding__tick svg,
+	.reader-spaces-onboarding__badge svg {
+		fill: currentColor;
+	}
+
+	// Extra breathing room above the welcome hero so the content sits more
+	// vertically centered in the modal.
+	.reader-spaces-onboarding__hero {
+		margin-block-start: 24px;
+	}
+
+	// Welcome hero: fan the tiles out with a slight tilt and pop them in,
+	// staggered, so the entrance reads as playful rather than a flat row.
+	.reader-spaces-onboarding__hero .reader-spaces-onboarding__tile {
+		box-shadow: 0 8px 20px -8px color-mix( in srgb, var( --color-neutral-100 ) 25%, transparent );
+		animation: reader-spaces-onboarding-pop 0.5s cubic-bezier( 0.2, 0.8, 0.3, 1.2 ) backwards;
+	}
+
+	.reader-spaces-onboarding__hero .reader-spaces-onboarding__tile:nth-child( odd ) {
+		transform: translateY( -6px ) rotate( -5deg );
+	}
+
+	.reader-spaces-onboarding__hero .reader-spaces-onboarding__tile:nth-child( even ) {
+		transform: translateY( 6px ) rotate( 5deg );
+	}
+
+	.reader-spaces-onboarding__hero .reader-spaces-onboarding__tile:nth-child( 2 ) {
+		animation-delay: 0.06s;
+	}
+
+	.reader-spaces-onboarding__hero .reader-spaces-onboarding__tile:nth-child( 3 ) {
+		animation-delay: 0.12s;
+	}
+
+	.reader-spaces-onboarding__hero .reader-spaces-onboarding__tile:nth-child( 4 ) {
+		animation-delay: 0.18s;
+	}
+
+	.reader-spaces-onboarding__panel {
+		flex: 1;
+		padding: 16px;
+		border: 1px solid var( --color-border-subtle );
+		border-radius: 8px;
+		background: var( --color-surface );
+	}
+
+	.reader-spaces-onboarding__jumble {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.reader-spaces-onboarding__glyph {
+		inline-size: 20px;
+		block-size: 20px;
+		border-radius: 4px;
+		background: var( --color-neutral-10 );
+	}
+
+	.reader-spaces-onboarding__space-bar {
+		flex: 1;
+		block-size: 10px;
+		border-radius: 4px;
+	}
+
+	.reader-spaces-onboarding__arrow {
+		flex: none;
+		fill: var( --color-neutral-30 );
+	}
+
+	// Tinted round backdrop shared by the checkmarks and the "create" badge.
+	.reader-spaces-onboarding__tick,
+	.reader-spaces-onboarding__badge {
+		display: grid;
+		place-items: center;
+		flex: none;
+		border-radius: 50%;
+		color: var( --color-primary );
+		background: color-mix( in srgb, var( --color-primary ) 12%, var( --color-surface ) );
+	}
+
+	.reader-spaces-onboarding__tick {
+		inline-size: 24px;
+		block-size: 24px;
+	}
+
+	.reader-spaces-onboarding__badge {
+		inline-size: 64px;
+		block-size: 64px;
+		animation: reader-spaces-onboarding-pop 0.5s cubic-bezier( 0.2, 0.8, 0.3, 1.2 ) backwards;
+	}
+
+	.reader-spaces-onboarding__footer {
+		padding-block-start: 16px;
+		border-block-start: 1px solid var( --color-border-subtle );
+	}
+
+	// Step dots stay on the left; the Back/Skip + primary buttons sit together
+	// on the right, regardless of the flex container's own distribution.
+	.reader-spaces-onboarding__footer-actions {
+		margin-inline-start: auto;
+	}
+}
+
+@keyframes reader-spaces-onboarding-fade {
+	from {
+		opacity: 0;
+		transform: translateY( 8px );
+	}
+}
+
+@keyframes reader-spaces-onboarding-pop {
+	from {
+		opacity: 0;
+		transform: scale( 0.6 ) translateY( 8px );
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.reader-spaces-onboarding__pane,
+	.reader-spaces-onboarding__hero .reader-spaces-onboarding__tile,
+	.reader-spaces-onboarding__badge {
+		animation: none;
+	}
+}

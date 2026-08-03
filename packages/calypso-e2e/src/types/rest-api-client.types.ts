@@ -20,6 +20,9 @@ export interface SiteDetails {
 export interface NewSiteParams {
 	name: string;
 	title: string;
+	public?: number;
+	find_available_url?: boolean;
+	options?: Record< string, unknown >;
 }
 
 export interface NewPostParams {
@@ -54,16 +57,21 @@ export interface AllDomainsResponse {
 	domains: Array< DomainData >;
 }
 
+export interface CalypsoPreferences {
+	recentSites?: number[];
+	'account-recovery-interstitial-snoozed-until'?: number;
+	[ key: string ]: unknown;
+}
+
 export interface CalypsoPreferencesResponse {
-	calypso_preferences: {
-		recentSites: number[];
-	};
+	calypso_preferences: CalypsoPreferences;
 }
 
 export interface MyAccountInformationResponse {
 	ID: number;
 	username: string;
 	email: string;
+	email_verified: boolean;
 	primary_blog: number;
 	primary_blog_url: string;
 	language: string;
@@ -97,6 +105,23 @@ export interface SiteDeletionResponse {
 
 export interface AccountClosureResponse {
 	success: boolean;
+}
+
+// Raw `/me/purchases` (v1.2) items. `ID`/`product_id` come back as either
+// strings or numbers depending on the endpoint, so both are accepted.
+export interface Purchase {
+	ID: string | number;
+	product_id: string | number;
+	product_slug: string;
+	blog_id: string | number;
+}
+
+export type AllPurchasesResponse = Array< Purchase >;
+
+export interface PurchaseCancelParams {
+	product_id: string | number;
+	cancel_bundled_domain: 0 | 1;
+	email_variant: 'control';
 }
 
 export interface NewInviteResponse {

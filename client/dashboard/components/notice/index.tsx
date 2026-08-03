@@ -65,7 +65,7 @@ function UnforwardedNotice(
 							{ children && <div className="dashboard-notice__description">{ children }</div> }
 						</VStack>
 						{ actions && (
-							<ButtonStack className="dashboard-notice__actions" justify="flex-start">
+							<ButtonStack className="dashboard-notice__actions" justify="flex-start" wrap>
 								{ actions }
 							</ButtonStack>
 						) }

@@ -2,18 +2,21 @@ import { isPlan, isDomainRegistration } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useMemo, useCallback, useState } from 'react';
+import { FunctionComponent, useMemo, useCallback, useState, useEffect, useRef } from 'react';
+import { dismissCard } from 'calypso/blocks/dismissible-card/actions';
+import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
+import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import { getName, isExpired, isRenewing, isInExpirationGracePeriod } from 'calypso/lib/purchases';
+import { getName, isRenewingBeforeExpiration, isExpiredOrRemoved } from 'calypso/lib/purchases';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { PartialCart } from 'calypso/my-sites/checkout/src/components/secondary-cart-promotions';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import {
 	getRenewableSitePurchases,
 	hasLoadedUserPurchasesFromServer,
@@ -22,6 +25,8 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
+
+const URGENT_RENEWAL_WINDOW_IN_DAYS = 10;
 
 const OtherPurchasesLink = styled.button`
 	background: transparent;
@@ -55,7 +60,6 @@ interface Props {
 const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) as SelectedSite );
 	const renewableSitePurchases: Purchase[] = useSelector( ( state ) =>
 		getRenewableSitePurchases( state, selectedSite?.ID )
@@ -79,7 +83,35 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		[ renewableSitePurchases, purchasesIdsAlreadyInCart ]
 	);
 
+	// Urgent = already expired, or expiring within 10 days. daysUntilExpiry is the
+	// server's day count (negative during the post-expiry grace period).
+	const urgentPurchases = useMemo(
+		() =>
+			renewablePurchasesNotAlreadyInCart.filter(
+				( purchase ) =>
+					purchase.daysUntilExpiry != null &&
+					purchase.daysUntilExpiry < URGENT_RENEWAL_WINDOW_IN_DAYS
+			),
+		[ renewablePurchasesNotAlreadyInCart ]
+	);
+
+	// Dismissal key for the current set of urgent purchases. Dismissing keeps the
+	// modal hidden until the set changes. dismissCard namespaces it under
+	// `dismissible-card-`, e.g. `dismissible-card-checkout-urgent-renewals-10-22`.
+	const sortedPurchaseIds = urgentPurchases
+		.map( ( purchase ) => purchase.id )
+		.sort( ( a, b ) => a - b );
+	const dismissPreferenceName = `checkout-urgent-renewals-${ sortedPurchaseIds.join( '-' ) }`;
+	const isUrgentSetDismissed = useSelector( isCardDismissed( dismissPreferenceName ) );
+
+	// isCardDismissed reads falsy until preferences load, so the auto-open effect
+	// checks this first - otherwise a dismissed modal re-opens (like DismissibleCard).
+	const arePreferencesLoaded = useSelector( hasReceivedRemotePreferences );
+
 	const [ isUpcomingRenewalsDialogVisible, setUpcomingRenewalsDialogVisible ] = useState( false );
+
+	// 'urgent' = auto-opened for the urgent subset; 'all' = manual "other upgrades" link.
+	const [ dialogVariant, setDialogVariant ] = useState< 'urgent' | 'all' >( 'all' );
 
 	const addPurchasesToCart = useCallback(
 		( purchases: Purchase[] ) => {
@@ -123,10 +155,48 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 
 	const onClose = useCallback( () => {
 		setUpcomingRenewalsDialogVisible( false );
-	}, [ setUpcomingRenewalsDialogVisible ] );
+		if ( dialogVariant === 'urgent' ) {
+			reduxDispatch( dismissCard( dismissPreferenceName ) );
+			reduxDispatch( recordTracksEvent( 'calypso_checkout_urgent_renewals_modal_dismiss' ) );
+		}
+	}, [ dialogVariant, dismissPreferenceName, reduxDispatch ] );
+
+	const openAllPurchasesDialog = useCallback( () => {
+		setDialogVariant( 'all' );
+		setUpcomingRenewalsDialogVisible( true );
+	}, [] );
 
 	const arePurchasesLoaded = useSelector( hasLoadedUserPurchasesFromServer );
 	const userId = useSelector( getCurrentUserId );
+
+	// Auto-open once per session, when purchases and preferences have loaded,
+	// there's an urgent set, and it hasn't already been dismissed.
+	const hasAutoOpened = useRef( false );
+	useEffect( () => {
+		if (
+			hasAutoOpened.current ||
+			! arePurchasesLoaded ||
+			! arePreferencesLoaded ||
+			urgentPurchases.length === 0 ||
+			isUrgentSetDismissed
+		) {
+			return;
+		}
+		hasAutoOpened.current = true;
+		setDialogVariant( 'urgent' );
+		setUpcomingRenewalsDialogVisible( true );
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_urgent_renewals_modal_impression', {
+				urgent_count: urgentPurchases.length,
+			} )
+		);
+	}, [
+		arePurchasesLoaded,
+		arePreferencesLoaded,
+		urgentPurchases,
+		isUrgentSetDismissed,
+		reduxDispatch,
+	] );
 
 	if ( ! userId || ! selectedSite ) {
 		return null;
@@ -136,11 +206,13 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 
 	const { message, buttonLabel } = getMessages( {
 		translate,
-		moment,
 		selectedSite,
-		setUpcomingRenewalsDialogVisible,
+		setUpcomingRenewalsDialogVisible: openAllPurchasesDialog,
 		renewablePurchasesNotAlreadyInCart,
 	} );
+
+	const dialogPurchases =
+		dialogVariant === 'urgent' ? urgentPurchases : renewablePurchasesNotAlreadyInCart;
 
 	return (
 		<>
@@ -149,7 +221,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 				<div className="cart__upsell-wrapper">
 					<UpcomingRenewalsDialog
 						isVisible={ isUpcomingRenewalsDialogVisible }
-						purchases={ renewablePurchasesNotAlreadyInCart }
+						purchases={ dialogPurchases }
 						site={ selectedSite }
 						onConfirm={ onConfirm }
 						onClose={ onClose }
@@ -173,13 +245,11 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 
 function getMessages( {
 	translate,
-	moment,
 	selectedSite,
 	setUpcomingRenewalsDialogVisible,
 	renewablePurchasesNotAlreadyInCart,
 }: {
 	translate: ReturnType< typeof useTranslate >;
-	moment: ReturnType< typeof useLocalizedMoment >;
 	selectedSite: SelectedSite;
 	setUpcomingRenewalsDialogVisible: ( isVisible: boolean ) => void;
 	renewablePurchasesNotAlreadyInCart: Purchase[];
@@ -220,14 +290,19 @@ function getMessages( {
 	let message: TranslateResult = '';
 	const translateOptions = {
 		comment:
-			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',
+			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "a week ago", "today"',
 		args: {
 			purchaseName: getName( purchase ),
-			expiry: moment( purchase.expiryDate ).fromNow(),
+			// This slot feeds both "expired %(expiry)s" and "is expiring %(expiry)s",
+			// so it is clamped to match the tense of the branch it lands in.
+			expiry: getRelativeDayString(
+				new Date( purchase.expiryDate ),
+				isExpiredOrRemoved( purchase ) ? 'past' : 'upcoming'
+			),
 		},
 	};
 
-	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+	if ( isExpiredOrRemoved( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
 			message = translate(
 				'Your %(purchaseName)s domain expired %(expiry)s. Would you like to renew it now?',
@@ -244,13 +319,13 @@ function getMessages( {
 				translateOptions
 			);
 		}
-	} else if ( isRenewing( purchase ) ) {
+	} else if ( isRenewingBeforeExpiration( purchase ) ) {
 		const renewingTranslateOptions = {
 			comment:
-				'"relativeRenewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',
+				'"relativeRenewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
 			args: {
 				purchaseName: getName( purchase ),
-				relativeRenewDate: moment( purchase.renewDate ).fromNow(),
+				relativeRenewDate: getRelativeDayString( new Date( purchase.renewDate ), 'upcoming' ),
 			},
 		};
 		if ( isDomainRegistration( purchase ) ) {

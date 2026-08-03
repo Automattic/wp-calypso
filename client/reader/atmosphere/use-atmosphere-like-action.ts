@@ -2,6 +2,7 @@ import { PENDING_LIKE_URI } from '@automattic/api-core';
 import { useCreateLikeMutation, useDeleteLikeMutation } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
+import { createElement } from 'react';
 import { useDispatch } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { rkeyFromUri } from 'calypso/reader/social/utils/rkey-from-uri';
@@ -21,7 +22,7 @@ function errorMessageForLike(
 		case 'auth_required':
 		case 'auth_failed':
 		case 'invalid_credentials':
-			return translate( 'Reconnect your Bluesky account to like posts.' );
+			return translate( 'Something went wrong with your Bluesky connection. Try again.' );
 		case 'rate_limited':
 			return translate( "You're liking posts too quickly. Try again in a moment." );
 		case 'connection_not_found':
@@ -158,17 +159,30 @@ export function makeUseAtmosphereLikeAction( connectionId: number ): UseLikeActi
 		};
 
 		const accessibleLabel = ( count: number ) =>
-			translate( 'Like, %(count)s like', 'Like, %(count)s likes', {
+			count > 0
+				? translate( 'Like, %(count)s like', 'Like, %(count)s likes', {
+						count,
+						args: { count: formatNumber( count ) },
+						textOnly: true,
+				  } )
+				: translate( 'Like', {
+						textOnly: true,
+						comment:
+							'Accessible label and tooltip for the like button on a Bluesky/ATmosphere post card when the post has no likes yet. Verb.',
+				  } );
+
+		const statRowText = ( count: number ) =>
+			translate( '{{strong}}%(count)s{{/strong}} like', '{{strong}}%(count)s{{/strong}} likes', {
 				count,
 				args: { count: formatNumber( count ) },
-				textOnly: true,
+				components: { strong: createElement( 'strong' ) },
 			} );
 
 		return {
 			supported: true,
 			isLiked,
 			isPending,
-			label: { accessibleLabel },
+			label: { accessibleLabel, statRowText },
 			like,
 			unlike,
 		};

@@ -8,6 +8,9 @@
 	height: auto;
 	transition: none;
 	width: 100%;
+	// Buttons centre their text by default, which centres each wrapped line of a
+	// multi-line title or description even though the flex layout is start-aligned.
+	text-align: start;
 
 	&:hover:not(:disabled, [aria-disabled="true"]) {
 		background: color-mix(in srgb, #fff 98%, var(--wp-admin-theme-color, #3858e9));

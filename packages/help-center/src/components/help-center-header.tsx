@@ -29,6 +29,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
+import { ZendeskStagingBadge } from './help-center-zendesk-staging-badge';
 import type { Header } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -82,7 +83,12 @@ const EllipsisMenu = () => {
 	};
 
 	return (
-		<DropdownMenu icon={ moreVertical } label={ __( 'Help Center Options', __i18n_text_domain__ ) }>
+		<DropdownMenu
+			icon={ moreVertical }
+			label={ __( 'Help Center Options', __i18n_text_domain__ ) }
+			// Render the popover inside the panel node so opening the menu doesn't blur the panel
+			popoverProps={ { inline: true } }
+		>
 			{ ( { onClose } ) => (
 				<>
 					<MenuGroup>
@@ -227,8 +233,8 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 		}
 	);
 
-	const userAskingSupport =
-		pathname.startsWith( '/odie' ) || pathname.startsWith( '/contact-form' );
+	const isOdieRoute = pathname.startsWith( '/odie' );
+	const userAskingSupport = isOdieRoute || pathname.startsWith( '/contact-form' );
 	const isHelpCenterHome = pathname === '/';
 	// Show the back button if it's not the help center home page and:
 	// - it's a chat and the hideBackButton option is not set
@@ -248,6 +254,7 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 				<HStack alignment="center" justify="space-between" spacing={ 5 }>
 					<HStack justify="flex-start">
 						<HeaderText />
+						{ isOdieRoute && <ZendeskStagingBadge /> }
 					</HStack>
 					<Icon icon={ chevronUp } />
 				</HStack>
@@ -260,6 +267,7 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 			<Flex>
 				{ shouldShowBackButton ? <BackButton /> : null }
 				<HeaderText />
+				{ isOdieRoute && <ZendeskStagingBadge /> }
 				{ featureConfig.header.ellipsisMenu ? (
 					<EllipsisMenu />
 				) : (

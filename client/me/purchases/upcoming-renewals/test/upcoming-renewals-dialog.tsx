@@ -6,7 +6,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
-import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
 import UpcomingRenewalsDialog from '../upcoming-renewals-dialog';
 
@@ -21,7 +20,9 @@ describe( '<UpcomingRenewalsDialog>', () => {
 	} );
 
 	afterEach( () => {
-		unmountComponentAtNode( modalRoot );
+		// React Testing Library auto-unmounts the rendered tree (and its modal
+		// portal) after each test, so no explicit unmount is needed here
+		// (`unmountComponentAtNode` is removed in React 19).
 		document.body.removeChild( modalRoot );
 		modalRoot = null;
 	} );
@@ -32,9 +33,10 @@ describe( '<UpcomingRenewalsDialog>', () => {
 			currencyCode: 'USD',
 			expiryDate: moment().add( 20, 'days' ).format(),
 			expiryStatus: 'expiring',
+			subscriptionStatus: 'active',
 			renewDate: '',
 			productSlug: 'personal-bundle',
-			productName: 'Personal Plan',
+			productName: 'WordPress.com Personal',
 			amount: 100,
 		},
 		{
@@ -42,6 +44,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 			currencyCode: 'USD',
 			expiryDate: moment().add( 10, 'days' ).format(),
 			expiryStatus: 'expiring',
+			subscriptionStatus: 'active',
 			renewDate: '',
 			productSlug: 'dotlive_domain',
 			meta: 'personalsitetest1234.live',
@@ -77,7 +80,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		).toHaveTextContent( '$200' );
 		expect(
 			document.body.querySelectorAll( '.upcoming-renewals-dialog__name' )[ 1 ]
-		).toHaveTextContent( /Personal PlanSite Plan: expires in 20 days/ );
+		).toHaveTextContent( /WordPress.com PersonalExpires in 20 days/ );
 		expect(
 			document.body.querySelectorAll( '.upcoming-renewals-dialog__price' )[ 1 ]
 		).toHaveTextContent( '$100' );

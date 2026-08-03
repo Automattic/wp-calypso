@@ -18,6 +18,13 @@ export type { SupportedSlugs } from './product-icon/config';
 export { default as ProgressBar } from './progress-bar';
 export { default as CircularProgressBar } from './circular-progress-bar';
 export { default as ResponsiveToolbarGroup } from './responsive-toolbar-group';
+export { default as ResurrectedWelcomeModal } from './resurrected-welcome-modal';
+export {
+	WELCOME_BACK_VARIATIONS,
+	type ResurrectedWelcomeModalCta,
+	type ResurrectedWelcomeModalDraft,
+	type ResurrectedWelcomeModalProps,
+} from './resurrected-welcome-modal';
 export { default as Ribbon } from './ribbon';
 export { default as RootChild } from './root-child';
 export { default as ScreenReaderText } from './screen-reader-text';
@@ -66,6 +73,7 @@ export { JetpackLogo } from './logos/jetpack-logo';
 export { BigSkyLogo } from './logos/big-sky-logo';
 export { CloudLogo } from './logos/cloud-logo';
 export { VIPLogo } from './logos/vip-logo';
+export { AutomatticLogo } from './logos/automattic-logo';
 export { WooLogo } from './logos/woo-logo';
 export { WordPressLogo } from './logos/wordpress-logo';
 export { WooCommerceWooLogo } from './logos/woocommerce-woo-logo';

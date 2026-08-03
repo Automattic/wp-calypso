@@ -1,19 +1,15 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
+import type { Purchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ReactElement } from 'react';
 
 const BUILT_BY_URL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
-const RENEW_COUPON = 'biz25';
+const RENEW_COUPON = 'DONTGO25';
 const SUPPORT_URL = localizeUrl( 'https://wordpress.com/support/' );
 const SITE_SPEED_URL = localizeUrl( 'https://wordpress.com/support/site-speed/' );
 const SITE_MIGRATION_URL = localizeUrl( 'https://wordpress.com/support/site-migration/' );
 const DOMAINS_SUPPORT_URL = localizeUrl( 'https://wordpress.com/support/domains/' );
-
-function getLiveChatUrlForPlans( site: SiteDetails, purchase: Purchase ): string {
-	return `/purchases/subscriptions/${ site.slug }/${ purchase.id }`;
-}
 
 export type CardActionContext = {
 	site: SiteDetails;
@@ -21,20 +17,24 @@ export type CardActionContext = {
 	closeDialog: () => void;
 	changePlanUrl: string;
 	renewNowUrl: string;
+	yearlyPlanUrl?: string;
 	cancellationReason: string;
 	onClickDowngrade?: ( upsell: string ) => void;
 	onSelectSwitchToMonthly?: () => void;
+	canConnectToZendeskMessaging: boolean;
+	setNavigateToRoute: ( route?: string ) => void;
+	setShowHelpCenter: ( show: boolean ) => void;
 	setNewMessagingChat: ( config: {
 		initialMessage: string;
-		section: string;
-		siteUrl: string;
-		siteId: number;
+		section?: string;
+		siteUrl?: string;
+		siteId?: string;
 	} ) => void;
 	setOpenOdieWithContext: ( config: {
 		initialMessage: string;
-		section: string;
-		siteUrl: string;
-		siteId: number;
+		section?: string;
+		siteUrl?: string;
+		siteId?: string;
 	} ) => void;
 };
 
@@ -53,8 +53,8 @@ export type SolutionCardConfigEntry = {
 export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 	{
 		id: 'change-plan',
-		title: 'Change plan',
-		subtitle: 'Find a plan that better suits your needs.',
+		title: 'Switch to a different plan',
+		subtitle: 'You can change to a plan with the features and pricing that work for you.',
 		getHref: ( ctx ) => ctx.changePlanUrl,
 		onClick: ( ctx ) => {
 			page( ctx.changePlanUrl );
@@ -80,20 +80,38 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		},
 	},
 	{
+		id: 'switch-to-yearly',
+		title: 'Switch to yearly billing',
+		subtitle: 'Pay less over time by switching to an annual plan.',
+		getHref: ( ctx ) => ctx.yearlyPlanUrl,
+		onClick: ( ctx ) => {
+			if ( ctx.yearlyPlanUrl ) {
+				page( ctx.yearlyPlanUrl );
+				ctx.closeDialog();
+			}
+		},
+	},
+	{
 		id: 'speak-with-support',
 		title: 'Speak with our support team',
 		subtitle: "We're here to answer any of your questions.",
 		onClick: ( ctx ) => {
-			page( getLiveChatUrlForPlans( ctx.site, ctx.purchase ) );
-			ctx.setNewMessagingChat( {
-				initialMessage:
-					"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
-					ctx.cancellationReason,
-				section: 'pre-cancellation-upsell',
-				siteUrl: ctx.site.URL,
-				siteId: ctx.site.ID,
-			} );
-			ctx.closeDialog();
+			const initialMessage =
+				"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
+				ctx.cancellationReason;
+			if ( ctx.canConnectToZendeskMessaging ) {
+				ctx.setNewMessagingChat( {
+					initialMessage,
+					siteUrl: ctx.site.URL,
+					siteId: String( ctx.site.ID ),
+				} );
+			} else {
+				ctx.setOpenOdieWithContext( {
+					initialMessage,
+					siteUrl: ctx.site.URL,
+					siteId: String( ctx.site.ID ),
+				} );
+			}
 		},
 	},
 	{
@@ -107,8 +125,8 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 	},
 	{
 		id: 'ask-ai-assistant',
-		title: 'Ask our AI assistant',
-		subtitle: 'Use our AI assistant to quickly find solutions.',
+		title: 'Ask WordPress Agent',
+		subtitle: 'Use WordPress Agent to quickly find solutions.',
 		onClick: ( ctx ) => {
 			ctx.setOpenOdieWithContext( {
 				initialMessage:
@@ -116,7 +134,7 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 					ctx.cancellationReason,
 				section: 'pre-cancellation-upsell',
 				siteUrl: ctx.site.URL,
-				siteId: ctx.site.ID,
+				siteId: String( ctx.site.ID ),
 			} );
 			ctx.closeDialog();
 		},
@@ -189,4 +207,4 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 	},
 ];
 
-export { BUILT_BY_URL, RENEW_COUPON, getLiveChatUrlForPlans };
+export { BUILT_BY_URL, RENEW_COUPON };

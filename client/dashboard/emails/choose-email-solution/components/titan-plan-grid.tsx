@@ -1,0 +1,337 @@
+import { useNavigate } from '@tanstack/react-router';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Button,
+} from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
+import { addMailboxRoute } from '../../../app/router/emails';
+import { PriceDisplay } from '../../../components/price-display';
+import { Text } from '../../../components/text';
+import { useEmailProduct } from '../../hooks/use-email-product';
+import poweredByTitanLogo from '../../resources/powered-by-titan-caps.svg';
+import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../types';
+import { getTrialMonths } from '../../utils/get-trial-months';
+import { isEligibleForIntroductoryOffer } from '../../utils/is-eligible-for-introductory-offer';
+import type { Domain, EmailSubscription, Product } from '@automattic/api-core';
+
+interface TitanPlan {
+	tier: TitanPlanTier;
+	product?: Product;
+	hasFreeTrial: boolean;
+	trialMonths: number;
+	isPopular: boolean;
+	everythingInName?: string;
+}
+
+const getTierName = ( tier: TitanPlanTier ): string => {
+	switch ( tier ) {
+		case TitanPlanTier.Pro:
+			return __( 'Pro' );
+		case TitanPlanTier.Premium:
+			return __( 'Premium' );
+		case TitanPlanTier.Ultra:
+			return __( 'Ultra' );
+	}
+};
+
+// Descriptions remain placeholder copy; feature lists reflect the tier
+// comparison from DOTEMP-111.
+const getTierDetails = ( tier: TitanPlanTier ): { description: string; features: string[] } => {
+	switch ( tier ) {
+		case TitanPlanTier.Pro:
+			return {
+				description: __( 'Everything you need to get started with professional, secure email.' ),
+				features: [
+					__( '30 GB / mailbox' ),
+					__( '10 read receipts' ),
+					__( '1 email template' ),
+					__( '1 contact group' ),
+					__( 'Blocklist' ),
+					__( 'Allowlist' ),
+					__( 'Grammar & spell check' ),
+					__( 'Undo send' ),
+				],
+			};
+		case TitanPlanTier.Premium:
+			return {
+				description: __(
+					'Smarter tools to help your growing business stay organized and productive.'
+				),
+				features: [
+					__( '50 GB / mailbox' ),
+					__( 'Unlimited read receipts' ),
+					__( 'Unlimited email templates' ),
+					__( 'Unlimited contact groups' ),
+					__( 'Two-factor authentication' ),
+					__( 'Priority inbox' ),
+					__( 'Business auto reply' ),
+					__( 'Titan Task' ),
+					__( 'Titan Drive (1 GB storage)' ),
+					__( 'Email labels' ),
+					__( 'Auto-clean' ),
+					__( 'Send later' ),
+					__( 'Follow-up reminders' ),
+					__( 'Turbo search' ),
+					__( 'Send as alias' ),
+					__( 'Undo send' ),
+					__( 'Branding' ),
+					__( 'Team chat' ),
+				],
+			};
+		case TitanPlanTier.Ultra:
+			return {
+				description: __( 'AI-powered email to scale your business and boost marketing impact.' ),
+				features: [
+					__( '100 GB / mailbox' ),
+					__( 'Email backup (50 GB storage)' ),
+					__( 'File transfer' ),
+					__( 'Titan AI (compose, reply)' ),
+					__( 'AI summary' ),
+					__( 'Titan Booking' ),
+					__( 'Titan Drive (50 GB storage)' ),
+					__( 'Signature designer' ),
+					__( 'File and link tracking' ),
+					__( 'Email designer' ),
+					__( 'Email campaigns' ),
+					__( 'Invoice builder' ),
+				],
+			};
+	}
+};
+
+// Tiers ordered from lowest to highest, used to tell upgrades from downgrades
+// relative to the current tier.
+const TIER_ORDER: TitanPlanTier[] = [
+	TitanPlanTier.Pro,
+	TitanPlanTier.Premium,
+	TitanPlanTier.Ultra,
+];
+
+export function TitanPlanGrid( {
+	domain,
+	domainName,
+	interval,
+	available,
+	currentTier,
+	onUpgrade,
+}: {
+	domain?: Domain;
+	domainName: string;
+	interval: IntervalLength;
+	available: boolean;
+	// The tier the user is currently subscribed to. When set, the grid is in
+	// upgrade mode: lower tiers are shown with a disabled button, the current
+	// tier is labeled, and higher tiers offer an upgrade.
+	currentTier?: TitanPlanTier;
+	// Called when a higher tier is selected in upgrade mode (currentTier set).
+	onUpgrade?: ( tier: TitanPlanTier ) => void;
+} ) {
+	const navigate = useNavigate();
+
+	const { product: proProduct } = useEmailProduct(
+		MailboxProvider.Titan,
+		interval,
+		domain,
+		TitanPlanTier.Pro
+	);
+	const { product: premiumProduct } = useEmailProduct(
+		MailboxProvider.Titan,
+		interval,
+		domain,
+		TitanPlanTier.Premium
+	);
+	const { product: ultraProduct } = useEmailProduct(
+		MailboxProvider.Titan,
+		interval,
+		domain,
+		TitanPlanTier.Ultra
+	);
+
+	const emailSubscription = domain?.titan_mail_subscription as EmailSubscription | undefined;
+	const hasFreeTrial = ( product?: Product ) =>
+		isEligibleForIntroductoryOffer( { emailSubscription, product } );
+
+	const plans: TitanPlan[] = [
+		{
+			tier: TitanPlanTier.Pro,
+			product: proProduct,
+			hasFreeTrial: hasFreeTrial( proProduct ),
+			trialMonths: getTrialMonths( proProduct ),
+			isPopular: false,
+		},
+		{
+			tier: TitanPlanTier.Premium,
+			product: premiumProduct,
+			hasFreeTrial: hasFreeTrial( premiumProduct ),
+			trialMonths: getTrialMonths( premiumProduct ),
+			isPopular: true,
+			everythingInName: getTierName( TitanPlanTier.Pro ),
+		},
+		{
+			tier: TitanPlanTier.Ultra,
+			product: ultraProduct,
+			hasFreeTrial: hasFreeTrial( ultraProduct ),
+			trialMonths: getTrialMonths( ultraProduct ),
+			isPopular: false,
+			everythingInName: getTierName( TitanPlanTier.Premium ),
+		},
+	];
+
+	// All tiers stay visible when upgrading; lower tiers render with a disabled
+	// button since this flow cannot downgrade.
+	const isLowerTier = ( tier: TitanPlanTier ) =>
+		currentTier ? TIER_ORDER.indexOf( tier ) < TIER_ORDER.indexOf( currentTier ) : false;
+
+	// The tier that gets the emphasized (primary) button: the recommended plan when
+	// buying, or the recommended upgrade target when upgrading. The current and lower
+	// tiers are never emphasized because their buttons are disabled.
+	const primaryTier = ( () => {
+		const candidates = currentTier
+			? plans.filter( ( plan ) => plan.tier !== currentTier && ! isLowerTier( plan.tier ) )
+			: plans;
+		return ( candidates.find( ( plan ) => plan.isPopular ) ?? candidates[ 0 ] )?.tier;
+	} )();
+
+	const getMonthlyPrice = ( product?: Product ) => {
+		if ( ! product?.cost ) {
+			return 0;
+		}
+
+		const baseCost = product.sale_cost ?? product.cost;
+		return interval === IntervalLength.Annually ? baseCost / 12 : baseCost;
+	};
+
+	return (
+		<div className="email-providers">
+			{ plans.map( ( plan ) => {
+				const planName = getTierName( plan.tier );
+				const details = getTierDetails( plan.tier );
+				const isCurrentPlan = plan.tier === currentTier;
+				const isDowngrade = isLowerTier( plan.tier );
+
+				let actionLabel;
+				if ( isCurrentPlan ) {
+					actionLabel = __( 'Current plan' );
+				} else if ( isDowngrade ) {
+					actionLabel = __( 'Included in your plan' );
+				} else if ( currentTier ) {
+					actionLabel = __( 'Upgrade' );
+				} else if ( plan.hasFreeTrial ) {
+					actionLabel = __( 'Start trial' );
+				} else {
+					actionLabel = sprintf(
+						/* translators: %s is the email plan name. */
+						__( 'Get %s' ),
+						planName
+					);
+				}
+
+				return (
+					<VStack
+						className="email-provider email-titan-plan"
+						key={ `titan-plan-${ plan.tier }` }
+						spacing={ 4 }
+					>
+						<VStack spacing={ 2 }>
+							<Text
+								as="h2"
+								size={ 28 }
+								lineHeight="36px"
+								className="email-provider-name email-titan-plan-name"
+							>
+								{ planName }
+							</Text>
+							<Text className="email-titan-plan-description">{ details.description }</Text>
+						</VStack>
+						<VStack spacing={ 2 } justify="flex-start" className="email-titan-plan-pricing">
+							<HStack
+								alignment="topLeft"
+								spacing={ 1 }
+								expanded={ false }
+								className="email-titan-plan-price"
+							>
+								<PriceDisplay
+									price={ plan.hasFreeTrial ? 0 : getMonthlyPrice( plan.product ) }
+									currency={ plan.product?.currency_code ?? 'USD' }
+								/>
+								{ plan.hasFreeTrial && (
+									<PriceDisplay
+										price={ getMonthlyPrice( plan.product ) }
+										currency={ plan.product?.currency_code ?? 'USD' }
+										discounted
+									/>
+								) }
+								<Text variant="muted" size={ 16 } lineHeight="24px">
+									{ __( '/month' ) }
+								</Text>
+							</HStack>
+							<Text variant="muted">
+								{ interval === IntervalLength.Annually
+									? __( 'per month, per mailbox, billed every 12 months.' )
+									: __( 'per month, per mailbox, billed monthly.' ) }
+							</Text>
+							{ plan.hasFreeTrial && (
+								<div className="email-provider-trial">
+									{ sprintf(
+										/* translators: %d is the number of free trial months. */
+										__( '%d month free trial' ),
+										plan.trialMonths
+									) }
+								</div>
+							) }
+							{ ! available && (
+								<Text variant="muted">{ __( 'Not available for this domain name.' ) }</Text>
+							) }
+						</VStack>
+						<Button
+							__next40pxDefaultSize
+							className="email-provider-action"
+							variant={ plan.tier === primaryTier ? 'primary' : 'secondary' }
+							disabled={ ! available || isCurrentPlan || isDowngrade }
+							onClick={ () => {
+								// Upgrade mode goes to checkout for the picked tier; otherwise the
+								// grid is buying a new plan, so collect mailboxes first.
+								if ( currentTier ) {
+									onUpgrade?.( plan.tier );
+									return;
+								}
+								navigate( {
+									to: addMailboxRoute.to,
+									params: {
+										domain: domainName,
+										provider: MailboxProvider.Titan,
+										interval,
+									},
+									search: { tier: plan.tier },
+								} );
+							} }
+						>
+							{ actionLabel }
+						</Button>
+						<VStack spacing={ 1 }>
+							<Text weight={ 600 } className="email-titan-plan-everything-in">
+								{ plan.everythingInName &&
+									sprintf(
+										/* translators: %s is the name of the previous, cheaper email plan. */
+										__( 'Everything in %s' ),
+										plan.everythingInName
+									) }
+							</Text>
+							<ul className="email-provider-features">
+								{ details.features.map( ( feature, featureIndex ) => (
+									<li key={ `feature-${ plan.tier }-${ featureIndex }` }>{ feature }</li>
+								) ) }
+							</ul>
+						</VStack>
+						<img
+							className="email-provider-powered-by"
+							src={ poweredByTitanLogo }
+							alt={ __( 'Powered by Titan' ) }
+						/>
+					</VStack>
+				);
+			} ) }
+		</div>
+	);
+}

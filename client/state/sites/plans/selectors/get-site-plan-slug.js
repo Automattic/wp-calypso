@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors/get-current-plan';
 
 /**
@@ -8,5 +7,5 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors/get-current-
  * @returns {?string}          The site's current plan's product slug
  */
 export function getSitePlanSlug( state, siteId ) {
-	return get( getCurrentPlan( state, siteId ), 'productSlug', null );
+	return getCurrentPlan( state, siteId )?.productSlug ?? null;
 }

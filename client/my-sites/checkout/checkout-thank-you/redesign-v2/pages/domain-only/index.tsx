@@ -4,6 +4,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import QuerySites from 'calypso/components/data/query-sites';
 import { OptionContent } from 'calypso/components/option-content';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
@@ -17,6 +18,7 @@ import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-feature
 import { useSelector } from 'calypso/state';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-connect-domains';
+import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import attachToSite from './icons/attach-to-site.svg';
 import useDomainOnly from './icons/domain-only.svg';
 import addMailbox from './icons/mailbox.svg';
@@ -43,6 +45,11 @@ export default function DomainOnly( {
 	const hasConnectableSites = useSelector( canAnySiteConnectDomains );
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
 
+	// Don't offer to create a new site when the domain's site already has a paid plan attached.
+	const siteHasPaidPlan = useSelector( ( state ) =>
+		isCurrentPlanPaid( state, domainPurchase.blogId )
+	);
+
 	const planUpgradeCreditsApplicable = useDomainToPlanCreditsApplicable( domainPurchase.blogId );
 
 	// translators: %(domain)s is a domain name, like example.com
@@ -63,6 +70,7 @@ export default function DomainOnly( {
 
 	return (
 		<div className="checkout-thank-you__domain-only-container">
+			<QuerySites siteId={ domainPurchase.blogId } />
 			<Step.CenteredColumnLayout
 				className="step-container-v2--domain-only"
 				columnWidth={ 6 }
@@ -74,30 +82,32 @@ export default function DomainOnly( {
 				}
 				verticalAlign="center"
 			>
-				<OptionContent
-					illustration={ <img src={ startSite } alt="" aria-hidden /> }
-					titleText={ translate( 'Start a new site' ) }
-					topText={ translate( 'Create and launch a site on WordPress.com.' ) }
-					benefits={
-						planUpgradeCreditsApplicable
-							? [
-									translate(
-										'%(upgradeCredits)s in upgrade credits will be applied to new paid plan purchases.',
-										{
-											args: {
-												upgradeCredits: formatCurrency( planUpgradeCreditsApplicable, currency, {
-													stripZeros: true,
-													isSmallestUnit: true,
-												} ),
-											},
-										}
-									),
-							  ]
-							: undefined
-					}
-					href={ createSiteFromDomainOnly( domainPurchase.meta, domainPurchase.blogId ) }
-					onSelect={ getOnClickEventHandler( 'start_new_site' ) }
-				/>
+				{ false === siteHasPaidPlan && (
+					<OptionContent
+						illustration={ <img src={ startSite } alt="" aria-hidden /> }
+						titleText={ translate( 'Start a new site' ) }
+						topText={ translate( 'Create and launch a site on WordPress.com.' ) }
+						benefits={
+							planUpgradeCreditsApplicable
+								? [
+										translate(
+											'%(upgradeCredits)s in upgrade credits will be applied to new paid plan purchases.',
+											{
+												args: {
+													upgradeCredits: formatCurrency( planUpgradeCreditsApplicable, currency, {
+														stripZeros: true,
+														isSmallestUnit: true,
+													} ),
+												},
+											}
+										),
+								  ]
+								: undefined
+						}
+						href={ createSiteFromDomainOnly( domainPurchase.meta, domainPurchase.blogId ) }
+						onSelect={ getOnClickEventHandler( 'start_new_site' ) }
+					/>
+				) }
 				<OptionContent
 					illustration={ <img src={ addMailbox } alt="" aria-hidden /> }
 					titleText={ translate( 'Add a mailbox' ) }

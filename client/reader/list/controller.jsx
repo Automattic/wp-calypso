@@ -24,8 +24,20 @@ export const createList = ( context, next ) => {
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack( 'calypso_reader_list_create_loaded' );
 
-	context.primary = <AsyncLoad require={ loadListManage } key="list-manage" isCreateForm />;
+	context.primary = (
+		<AsyncLoad require={ loadListManage } key="list-manage" isCreateForm placeholder={ null } />
+	);
 	next();
+};
+
+/**
+ * Returns a unique stream key for a list based on the owner and slug.
+ * @param {string} owner
+ * @param {string} slug
+ * @returns {string}
+ */
+export const getListStreamKey = ( owner, slug ) => {
+	return `list:${ JSON.stringify( { owner, slug } ) }`;
 };
 
 export const listListing = ( context, next ) => {
@@ -34,8 +46,6 @@ export const listListing = ( context, next ) => {
 	const fullAnalyticsPageTitle =
 		analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list;
 	const mcKey = 'list';
-	const streamKey =
-		'list:' + JSON.stringify( { owner: context.params.user, slug: context.params.list } );
 	const state = context.store.getState();
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -51,8 +61,8 @@ export const listListing = ( context, next ) => {
 	context.primary = (
 		<AsyncLoad
 			require={ loadList }
-			key={ 'tag-' + context.params.user + '-' + context.params.list }
-			streamKey={ streamKey }
+			key={ 'list-' + context.params.user + '-' + context.params.list }
+			streamKey={ getListStreamKey( context.params.user, context.params.list ) }
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			view={ view }
@@ -64,6 +74,7 @@ export const listListing = ( context, next ) => {
 				mcKey
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+			placeholder={ null }
 		/>
 	);
 	next();
@@ -87,6 +98,7 @@ export const editList = ( context, next ) => {
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="details"
+			placeholder={ null }
 		/>
 	);
 	next();
@@ -110,6 +122,7 @@ export const editListItems = ( context, next ) => {
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="items"
+			placeholder={ null }
 		/>
 	);
 	next();
@@ -133,6 +146,7 @@ export const exportList = ( context, next ) => {
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="export"
+			placeholder={ null }
 		/>
 	);
 	next();
@@ -156,6 +170,7 @@ export const deleteList = ( context, next ) => {
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="delete"
+			placeholder={ null }
 		/>
 	);
 	next();

@@ -1,14 +1,11 @@
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { compose } from 'redux';
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
+import { useFeedQuery } from 'calypso/reader/data/feed';
+import { withSite } from 'calypso/reader/data/site';
 import ReaderPostEllipsisMenu from './reader-post-ellipsis-menu';
 import './style.scss';
 
@@ -17,16 +14,13 @@ class ReaderPostOptionsMenu extends Component {
 		post: PropTypes.object,
 		feed: PropTypes.object,
 		followSource: PropTypes.string,
-		onBlock: PropTypes.func,
 		openSuggestedFollows: PropTypes.func,
 		showFollow: PropTypes.bool,
 		showVisitPost: PropTypes.bool,
-		showEditPost: PropTypes.bool,
-		showConversationFollow: PropTypes.bool,
 		showReportPost: PropTypes.bool,
 		showReportSite: PropTypes.bool,
-		position: PropTypes.string,
-		posts: PropTypes.array,
+		showEditPost: PropTypes.bool,
+		showConversationFollow: PropTypes.bool,
 		teams: PropTypes.array,
 	};
 
@@ -37,10 +31,6 @@ class ReaderPostOptionsMenu extends Component {
 			feed,
 			followSource,
 			teams,
-			translate,
-			position,
-			posts,
-			onBlock,
 			openSuggestedFollows,
 			showVisitPost,
 			showReportPost,
@@ -58,18 +48,11 @@ class ReaderPostOptionsMenu extends Component {
 
 		return (
 			<span className={ classes }>
-				{ ! feed && post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
-				{ ! site && post && ! post.is_external && post.site_ID && (
-					<QueryReaderSite siteId={ +post.site_ID } />
-				) }
 				<ReaderPostEllipsisMenu
+					feed={ feed }
 					site={ site }
 					teams={ teams }
-					translate={ translate }
-					position={ position }
 					post={ post }
-					posts={ posts }
-					onBlock={ onBlock }
 					showVisitPost={ showVisitPost }
 					showReportPost={ showReportPost }
 					showReportSite={ showReportSite }
@@ -84,15 +67,16 @@ class ReaderPostOptionsMenu extends Component {
 	}
 }
 
-export default compose(
+const ConnectedReaderPostOptionsMenu = compose(
 	withReaderTeams,
-	connect( ( state, { post: { feed_ID: feedId, is_external, site_ID } = {} } ) => {
-		const siteId = is_external ? null : site_ID;
-		return Object.assign(
-			{},
-			feedId > 0 && { feed: getFeed( state, feedId ) },
-			siteId > 0 && { site: getSite( state, siteId ) }
-		);
-	} ),
-	localize
+	connect( ( _state, { post: { is_external: isExternal, site_ID: siteId } = {} } ) =>
+		Object.assign( {}, ! isExternal && siteId > 0 && { siteId: +siteId } )
+	),
+	withSite
 )( ReaderPostOptionsMenu );
+
+export default function ReaderPostOptionsMenuContainer( props ) {
+	const { data: feed } = useFeedQuery( props.post?.feed_ID );
+
+	return <ConnectedReaderPostOptionsMenu { ...props } feed={ feed } />;
+}

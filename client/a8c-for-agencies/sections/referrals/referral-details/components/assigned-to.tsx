@@ -1,12 +1,14 @@
-import { BadgeType, Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Badge } from '@automattic/ui';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { ExternalLink, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
 import InfoModal from 'calypso/a8c-for-agencies/components/a4a-info-modal';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
+import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
 import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import { useSubscriptionDetails } from 'calypso/a8c-for-agencies/hooks/use-subscription-details';
 import { isWPCOMHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
@@ -20,10 +22,12 @@ type Props = {
 	data?: APIProductFamilyProduct[];
 };
 
+type BadgeIntent = 'default' | 'info' | 'success' | 'warning' | 'error';
+
 function getPurchaseStatus(
 	purchase: ReferralPurchase,
 	translate: ReturnType< typeof useTranslate >
-): [ BadgeType, React.ReactNode ] {
+): [ BadgeIntent, string ] {
 	if ( purchase.status === 'active' ) {
 		if ( purchase.site_assigned ) {
 			return [ 'success', translate( 'Assigned' ) ];
@@ -60,7 +64,7 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 	const { expiryDate, isFetchingProductInfo } = useSubscriptionDetails( purchase );
 	const [ showPopover, setShowPopover ] = useState( false );
 
-	const wrapperRef = useRef< HTMLDivElement >( null );
+	const wrapperRef = useRef< HTMLSpanElement | null >( null );
 	const popoverContentRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
@@ -71,12 +75,7 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 
 	if ( purchase.site_assigned ) {
 		return isPressable ? (
-			<StatusBadge
-				statusProps={ {
-					children: translate( 'Pressable' ),
-					type: 'success',
-				} }
-			/>
+			<Badge intent="success">{ translate( 'Pressable' ) }</Badge>
 		) : (
 			<Button
 				className="referrals-purchases__assign-button"
@@ -114,18 +113,15 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 					) }
 				</p>
 				<p>
-					{ translate( '{{link}}Learn more about cancelations ↗{{/link}}', {
+					{ translate( '{{link}}Learn more about cancelations{{/link}}', {
 						components: {
 							link: (
-								<a
+								<ExternalLink
 									href={ localizeUrl(
 										'https://wordpress.com/support/manage-purchases/cancel-a-purchase/'
 									) }
-									target="_blank"
-									rel="noreferrer noopener"
-								>
-									{  }
-								</a>
+									children={ null }
+								/>
 							),
 						},
 					} ) }
@@ -144,28 +140,25 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 
 	return (
 		<div className="badge-assigned-to">
-			<StatusBadge
-				statusProps={ {
-					children: statusText,
-					type: statusType,
-					tooltip,
-				} }
-			/>
+			{ tooltip ? (
+				// Badge does not forward refs, so Tooltip needs a DOM element to anchor to.
+				<Tooltip text={ tooltip }>
+					<span style={ { display: 'inline-flex' } }>
+						<Badge intent={ statusType }>{ statusText }</Badge>
+					</span>
+				</Tooltip>
+			) : (
+				<Badge intent={ statusType }>{ statusText }</Badge>
+			) }
 			{ cancellationInfo && (
-				<span
+				<A4APopoverTrigger
 					className="status-card__info-icon"
-					onClick={ () => setShowPopover( ! showPopover ) }
-					role="button"
-					tabIndex={ 0 }
-					onKeyDown={ ( event ) => {
-						if ( event.key === 'Enter' ) {
-							setShowPopover( ! showPopover );
-						}
-					} }
+					aria-label={ translate( 'More information about cancellation' ) }
 					ref={ wrapperRef }
+					onActivate={ () => setShowPopover( ( prev ) => ! prev ) }
 				>
 					<Gridicon icon="info-outline" size={ 18 } />
-				</span>
+				</A4APopoverTrigger>
 			) }
 			{ cancellationInfo &&
 				showPopover &&

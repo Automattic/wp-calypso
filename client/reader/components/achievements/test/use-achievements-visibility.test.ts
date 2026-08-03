@@ -4,11 +4,6 @@
 import { renderHook } from '@testing-library/react';
 import useAchievementsVisibility from '../use-achievements-visibility';
 
-const mockIsEnabled = jest.fn();
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: ( ...args: unknown[] ) => mockIsEnabled( ...args ),
-} ) );
-
 const mockUseQuery = jest.fn();
 jest.mock( '@tanstack/react-query', () => ( {
 	useQuery: ( options: unknown ) => mockUseQuery( options ),
@@ -18,7 +13,9 @@ jest.mock( '@automattic/api-queries', () => ( {
 	readAchievementsSettingsQuery: ( userIdOrLogin: string ) => ( {
 		queryKey: [ 'read', 'achievements', userIdOrLogin, 'settings' ],
 	} ),
-	readTeamsQuery: () => ( { queryKey: [ 'read', 'teams' ] } ),
+	userPreferenceQuery: ( preferenceName: string ) => ( {
+		queryKey: [ 'me', 'preferences', preferenceName ],
+	} ),
 } ) );
 
 const mockGetCurrentUser = jest.fn();
@@ -31,16 +28,25 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 
 type QueryOptions = { queryKey: unknown[]; enabled?: boolean };
 type QueryResult = { data?: unknown; isLoading?: boolean };
-type QueryResponses = { teams?: QueryResult; settings?: QueryResult };
 
-function setupUseQuery( responses: QueryResponses = {} ) {
+function setupUseQuery( {
+	settings = {},
+	preference = {},
+}: {
+	settings?: QueryResult;
+	preference?: QueryResult;
+} = {} ) {
 	mockUseQuery.mockImplementation( ( options: QueryOptions ) => {
 		if ( options.enabled === false ) {
 			return { data: undefined, isLoading: false };
 		}
-		const isTeams = options.queryKey[ 1 ] === 'teams';
-		const response = ( isTeams ? responses.teams : responses.settings ) ?? {};
-		return { data: response.data, isLoading: response.isLoading ?? false };
+		if ( options.queryKey[ 0 ] === 'read' ) {
+			return { data: settings.data, isLoading: settings.isLoading ?? false };
+		}
+		if ( options.queryKey[ 0 ] === 'me' ) {
+			return { data: preference.data, isLoading: preference.isLoading ?? false };
+		}
+		return { data: undefined, isLoading: false };
 	} );
 }
 
@@ -53,116 +59,107 @@ function findCall( mock: jest.Mock, predicate: ( options: QueryOptions ) => bool
 describe( 'useAchievementsVisibility', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockIsEnabled.mockReturnValue( true );
 		mockGetCurrentUser.mockReturnValue( { username: 'myself' } );
-		setupUseQuery( {
-			teams: { data: { teams: [ { slug: 'a8c' } ] } },
-		} );
+		setupUseQuery();
 	} );
 
-	test( 'returns isVisible false when feature flag is disabled', () => {
-		mockIsEnabled.mockReturnValue( false );
-
-		const { result } = renderHook( () => useAchievementsVisibility( 'myself' ) );
-
-		expect( result.current.isVisible ).toBe( false );
-		expect( result.current.isLoading ).toBe( false );
-	} );
-
-	test( 'does not fetch teams or settings when flag is disabled', () => {
-		mockIsEnabled.mockReturnValue( false );
-
-		renderHook( () => useAchievementsVisibility( 'other_user' ) );
-
-		const teamsCall = findCall( mockUseQuery, ( o ) => o.queryKey[ 1 ] === 'teams' );
-		const settingsCall = findCall( mockUseQuery, ( o ) => o.queryKey[ 1 ] === 'achievements' );
-		expect( teamsCall?.[ 0 ].enabled ).toBe( false );
-		expect( settingsCall?.[ 0 ].enabled ).toBe( false );
-	} );
-
-	test( 'returns isLoading true while teams query loads', () => {
-		setupUseQuery( {
-			teams: { isLoading: true },
-		} );
-
-		const { result } = renderHook( () => useAchievementsVisibility( 'myself' ) );
-
-		expect( result.current.isLoading ).toBe( true );
-		expect( result.current.isVisible ).toBe( false );
-	} );
-
-	test( 'returns isVisible false when viewer is not an automattician', () => {
-		setupUseQuery( {
-			teams: { data: { teams: [] } },
-			settings: { data: { settings: { 'achievements-visibility': 'public' } } },
-		} );
-
-		const { result } = renderHook( () => useAchievementsVisibility( 'myself' ) );
-
-		expect( result.current.isVisible ).toBe( false );
-		expect( result.current.isLoading ).toBe( false );
-	} );
-
-	test( 'does not fetch settings when viewer is not an automattician', () => {
-		setupUseQuery( {
-			teams: { data: { teams: [] } },
-		} );
-
-		renderHook( () => useAchievementsVisibility( 'other_user' ) );
-
-		const settingsCall = findCall( mockUseQuery, ( o ) => o.queryKey[ 1 ] === 'achievements' );
-		expect( settingsCall?.[ 0 ].enabled ).toBe( false );
-	} );
-
-	test( 'returns isOwnProfile and isVisible true for own profile when viewer is A8C', () => {
+	test( 'returns isOwnProfile and isVisible true for own profile', () => {
 		const { result } = renderHook( () => useAchievementsVisibility( 'myself' ) );
 
 		expect( result.current.isOwnProfile ).toBe( true );
 		expect( result.current.isVisible ).toBe( true );
+		expect( result.current.isPublic ).toBe( false );
 		expect( result.current.isLoading ).toBe( false );
 	} );
 
-	test( 'does not fetch settings for own profile', () => {
+	test( 'does not fetch public settings for own profile', () => {
 		renderHook( () => useAchievementsVisibility( 'myself' ) );
 
 		const settingsCall = findCall( mockUseQuery, ( o ) => o.queryKey[ 1 ] === 'achievements' );
 		expect( settingsCall?.[ 0 ].enabled ).toBe( false );
 	} );
 
-	test( 'returns isVisible true when other user has public achievements and viewer is A8C', () => {
+	test( 'fetches own preference for own profile', () => {
+		renderHook( () => useAchievementsVisibility( 'myself' ) );
+
+		const preferenceCall = findCall(
+			mockUseQuery,
+			( o ) => o.queryKey[ 0 ] === 'me' && o.queryKey[ 2 ] === 'achievements-visibility'
+		);
+		expect( preferenceCall?.[ 0 ].enabled ).toBe( true );
+	} );
+
+	test( 'returns isPublic true when own achievements preference is public', () => {
+		setupUseQuery( { preference: { data: 'public' } } );
+
+		const { result } = renderHook( () => useAchievementsVisibility( 'myself' ) );
+
+		expect( result.current.isOwnProfile ).toBe( true );
+		expect( result.current.isPublic ).toBe( true );
+		expect( result.current.isVisible ).toBe( true );
+		expect( result.current.isLoading ).toBe( false );
+	} );
+
+	test( 'still shows own profile when own achievements preference is private', () => {
+		setupUseQuery( { preference: { data: 'private' } } );
+
+		const { result } = renderHook( () => useAchievementsVisibility( 'myself' ) );
+
+		expect( result.current.isOwnProfile ).toBe( true );
+		expect( result.current.isPublic ).toBe( false );
+		expect( result.current.isVisible ).toBe( true );
+		expect( result.current.isLoading ).toBe( false );
+	} );
+
+	test( 'does not fetch settings when profileUserLogin is undefined', () => {
+		renderHook( () => useAchievementsVisibility( undefined ) );
+
+		const settingsCall = findCall( mockUseQuery, ( o ) => o.queryKey[ 1 ] === 'achievements' );
+		expect( settingsCall?.[ 0 ].enabled ).toBe( false );
+	} );
+
+	test( 'returns isVisible true when other user has public achievements', () => {
 		setupUseQuery( {
-			teams: { data: { teams: [ { slug: 'a8c' } ] } },
 			settings: { data: { settings: { 'achievements-visibility': 'public' } } },
 		} );
 
 		const { result } = renderHook( () => useAchievementsVisibility( 'other_user' ) );
 
 		expect( result.current.isOwnProfile ).toBe( false );
+		expect( result.current.isPublic ).toBe( true );
 		expect( result.current.isVisible ).toBe( true );
 		expect( result.current.isLoading ).toBe( false );
 	} );
 
 	test( 'returns isVisible false when other user has private achievements', () => {
 		setupUseQuery( {
-			teams: { data: { teams: [ { slug: 'a8c' } ] } },
 			settings: { data: { settings: { 'achievements-visibility': 'private' } } },
 		} );
 
 		const { result } = renderHook( () => useAchievementsVisibility( 'other_user' ) );
 
 		expect( result.current.isOwnProfile ).toBe( false );
+		expect( result.current.isPublic ).toBe( false );
 		expect( result.current.isVisible ).toBe( false );
 	} );
 
+	test( 'does not fetch own preference for other user profile', () => {
+		renderHook( () => useAchievementsVisibility( 'other_user' ) );
+
+		const preferenceCall = findCall(
+			mockUseQuery,
+			( o ) => o.queryKey[ 0 ] === 'me' && o.queryKey[ 2 ] === 'achievements-visibility'
+		);
+		expect( preferenceCall?.[ 0 ].enabled ).toBe( false );
+	} );
+
 	test( 'returns isLoading true while fetching other user settings', () => {
-		setupUseQuery( {
-			teams: { data: { teams: [ { slug: 'a8c' } ] } },
-			settings: { isLoading: true },
-		} );
+		setupUseQuery( { settings: { isLoading: true } } );
 
 		const { result } = renderHook( () => useAchievementsVisibility( 'other_user' ) );
 
 		expect( result.current.isLoading ).toBe( true );
+		expect( result.current.isPublic ).toBe( false );
 		expect( result.current.isVisible ).toBe( false );
 	} );
 } );

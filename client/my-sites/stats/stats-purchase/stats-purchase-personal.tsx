@@ -55,6 +55,9 @@ const PersonalPurchase = ( {
 	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
+	// The opt-out form on the commercial page already collects this same pledge (and only lets the
+	// user through once all four boxes are checked), so don't make them repeat it here.
+	const hasConfirmedNonCommercialUsage = from === 'switch-from-commercial';
 
 	const continueButtonText = translate( 'Contribute now and continue' );
 
@@ -101,7 +104,7 @@ const PersonalPurchase = ( {
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
-					'This plan is for non-commercial sites only. Sites with any commercial activity {{Button}}require a commercial license{{/Button}}.',
+					'To unlock UTM tracking, device attribution, commercial use and more, {{Button}}upgrade to a commercial license{{/Button}}.',
 					{
 						components: {
 							Button: <Button variant="link" href="#" onClick={ handleClick } />,
@@ -120,7 +123,7 @@ const PersonalPurchase = ( {
 				onSliderChange={ handleSliderChanged }
 			/>
 
-			{ subscriptionValue === 0 && (
+			{ subscriptionValue === 0 && ! hasConfirmedNonCommercialUsage && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist` }>
 					<p>
 						<strong>
@@ -178,7 +181,8 @@ const PersonalPurchase = ( {
 						variant="primary"
 						primary={ isWPCOMSite ? true : undefined }
 						disabled={
-							! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
+							! hasConfirmedNonCommercialUsage &&
+							( ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked )
 						}
 						onClick={ () =>
 							gotoCheckoutPage( {
@@ -252,6 +256,12 @@ function StatsBenefitsListing( {
 				) }
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
 					{ translate( 'No UTM tracking for your marketing campaigns' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+					{ translate( 'No granular location stats' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+					{ translate( 'No device attribution' ) }
 				</li>
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
 					{ translate( 'No access to upcoming advanced features' ) }

@@ -1,12 +1,9 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { Button, Modal, Spinner } from '@wordpress/components';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { __experimentalHStack as HStack, Button, Modal, Spinner } from '@wordpress/components';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { __ } from '@wordpress/i18n';
 import { Icon, external, download, close } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useCallback } from 'react';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
-import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -23,9 +20,9 @@ import {
 	CommissionEligibilityColumn,
 } from './site-columns';
 import type { SitesWithWooPaymentsState } from '../types';
+import type { Field, View } from '@wordpress/dataviews';
 
 export default function SitesWithWooPayments() {
-	const translate = useTranslate();
 	const {
 		sitesWithPluginsStates: items,
 		woopaymentsData,
@@ -46,8 +43,13 @@ export default function SitesWithWooPayments() {
 		isLoading: false,
 	} );
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
-		...initialDataViewsState,
+	const [ view, setView ] = useState< View >( {
+		type: 'table',
+		page: 1,
+		perPage: 50,
+		search: '',
+		filters: [],
+		sort: { field: '', direction: 'asc' },
 		fields: [
 			'site',
 			'transactions',
@@ -56,13 +58,23 @@ export default function SitesWithWooPayments() {
 			'woopaymentsStatus',
 			'commissionEligibility',
 		],
+		layout: {
+			styles: {
+				site: { minWidth: '260px' },
+				transactions: { minWidth: '120px' },
+				commissionsPaid: { minWidth: '150px' },
+				timeframeCommissions: { minWidth: '170px' },
+				woopaymentsStatus: { minWidth: '160px' },
+				commissionEligibility: { minWidth: '190px' },
+			},
+		},
 	} );
 
-	const fields = useMemo(
+	const fields = useMemo< Field< SitesWithWooPaymentsState >[] >(
 		() => [
 			{
 				id: 'site',
-				label: translate( 'Site' ).toUpperCase(),
+				label: __( 'Site' ),
 				getValue: () => '-',
 				render: ( { item }: { item: SitesWithWooPaymentsState } ) => (
 					<SiteColumn site={ item.siteUrl } />
@@ -72,7 +84,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'transactions',
-				label: translate( 'Transactions' ).toUpperCase(),
+				label: __( 'Transactions' ),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -86,7 +98,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'commissionsPaid',
-				label: translate( 'Commissions Paid' ).toUpperCase(),
+				label: __( 'Commissions paid' ),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -100,7 +112,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'timeframeCommissions',
-				label: translate( 'Timeframe Commissions' ).toUpperCase(),
+				label: __( 'Timeframe commissions' ),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -114,7 +126,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'woopaymentsStatus',
-				label: translate( 'WooPayments Status' ).toUpperCase(),
+				label: __( 'WooPayments status' ),
 				getValue: () => '-',
 				render: ( { item } ) => (
 					<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
@@ -124,7 +136,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'commissionEligibility',
-				label: translate( 'Commission Eligibility' ).toUpperCase(),
+				label: __( 'Commission eligibility' ),
 				getValue: () => '-',
 				render: ( { item } ) => (
 					<CommissionEligibilityColumn
@@ -137,12 +149,12 @@ export default function SitesWithWooPayments() {
 				enableSorting: false,
 			},
 		],
-		[ isLoadingWooPaymentsData, translate, woopaymentsData ]
+		[ isLoadingWooPaymentsData, woopaymentsData ]
 	);
 
 	const { data, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( items, dataViewsState, fields );
-	}, [ items, dataViewsState, fields ] );
+		return filterSortAndPaginate( items, view, fields );
+	}, [ items, view, fields ] );
 
 	const handleDownloadCommissionsReport = useCallback(
 		async ( selectedItems: SitesWithWooPaymentsState[] ) => {
@@ -176,7 +188,7 @@ export default function SitesWithWooPayments() {
 		() => [
 			{
 				id: 'visit-wp-admin',
-				label: translate( 'Visit WP Admin' ),
+				label: __( 'Visit WP Admin' ),
 				icon: external,
 				callback( items: SitesWithWooPaymentsState[] ) {
 					const isInstalled = items[ 0 ].state === 'active';
@@ -193,7 +205,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'download-commissions-report',
-				label: translate( 'Download commissions report' ),
+				label: __( 'Download commissions report' ),
 				icon: download,
 				callback: handleDownloadCommissionsReport,
 				isEligible( item: SitesWithWooPaymentsState ) {
@@ -201,7 +213,7 @@ export default function SitesWithWooPayments() {
 				},
 			},
 		],
-		[ translate, dispatch, handleDownloadCommissionsReport ]
+		[ dispatch, handleDownloadCommissionsReport ]
 	);
 
 	return (
@@ -210,19 +222,27 @@ export default function SitesWithWooPayments() {
 				<SitesWithWooPaymentsMobileView items={ items } actions={ actions } />
 			) : (
 				<div className="redesigned-a8c-table full-width">
-					<ItemsDataViews
-						data={ {
-							items: data,
-							getItemId: ( item: SitesWithWooPaymentsState ) => `${ item.blogId }`,
-							pagination: paginationInfo,
-							enableSearch: false,
-							fields,
-							actions,
-							setDataViewsState,
-							dataViewsState,
-							defaultLayouts: { table: {} },
-						} }
-					/>
+					<DataViews< SitesWithWooPaymentsState >
+						data={ data }
+						getItemId={ ( item ) => `${ item.blogId }` }
+						paginationInfo={ paginationInfo }
+						search={ false }
+						fields={ fields }
+						actions={ actions }
+						view={ view }
+						onChangeView={ setView }
+						defaultLayouts={ { table: {} } }
+					>
+						<HStack
+							className="dataviews__view-actions"
+							justify="end"
+							style={ { paddingInline: '64px' } }
+						>
+							<DataViews.ViewConfig />
+						</HStack>
+						<DataViews.Layout />
+						<DataViews.Footer />
+					</DataViews>
 				</div>
 			) }
 
@@ -235,20 +255,20 @@ export default function SitesWithWooPayments() {
 					<Button
 						className="download-commissions-modal__close-button"
 						onClick={ handleCancelDownload }
-						aria-label={ translate( 'Close' ) }
+						aria-label={ __( 'Close' ) }
 					>
 						<Icon size={ 24 } icon={ close } />
 					</Button>
 					<h1 className="download-commissions-modal__title">
-						{ translate( 'Generating commissions report' ) }
+						{ __( 'Generating commissions report' ) }
 					</h1>
 
 					<div className="download-commissions-modal__instruction">
 						<Spinner />
 						<div className="download-commissions-modal__instruction-text">
-							{ translate( 'Your report is being prepared.' ) }
+							{ __( 'Your report is being prepared.' ) }
 							<br />
-							{ translate( 'The download will begin automatically.' ) }
+							{ __( 'The download will begin automatically.' ) }
 						</div>
 					</div>
 				</Modal>

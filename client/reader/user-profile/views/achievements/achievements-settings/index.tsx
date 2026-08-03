@@ -16,55 +16,20 @@ export default function AchievementsSettings() {
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 
-	const { data: savedVisibility } = useQuery( userPreferenceQuery( 'achievements-visibility' ) );
 	const { data: savedNotifications } = useQuery(
 		userPreferenceQuery( 'achievements-global-notifications' )
 	);
 
 	// Local state for immediate toggle feedback. Synced from query data on load.
-	const [ visibility, setLocalVisibility ] = useState( savedVisibility ?? 'private' );
 	const [ notifications, setLocalNotifications ] = useState( savedNotifications ?? 'enabled' );
-	useEffect( () => setLocalVisibility( savedVisibility ?? 'private' ), [ savedVisibility ] );
 	useEffect(
 		() => setLocalNotifications( savedNotifications ?? 'enabled' ),
 		[ savedNotifications ]
 	);
 
-	const { mutate: setVisibility, isPending: isSetVisibilityPending } = useMutation(
-		userPreferenceOptimisticMutation( 'achievements-visibility' )
-	);
-	const { mutate: setNotifications, isPending: isSetNotificationsPending } = useMutation(
+	const { mutate: setNotifications } = useMutation(
 		userPreferenceOptimisticMutation( 'achievements-global-notifications' )
 	);
-
-	const handleSetVisibility = ( checked: boolean ) => {
-		const newVisibility = checked ? 'public' : 'private';
-		setLocalVisibility( newVisibility );
-		setVisibility( newVisibility, {
-			onSuccess() {
-				dispatch(
-					successNotice(
-						newVisibility === 'public'
-							? translate( 'Your achievements page is now public.' )
-							: translate( 'Your achievements page is now private.' ),
-						{ duration: 4000 }
-					)
-				);
-				recordAction( `set_achievements_visibility_${ newVisibility }` );
-				recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
-					setting: 'achievements-visibility',
-					value: newVisibility,
-				} );
-			},
-			onError() {
-				dispatch(
-					errorNotice( translate( 'Failed to save the achievements visibility settings.' ), {
-						duration: 4000,
-					} )
-				);
-			},
-		} );
-	};
 
 	const handleSetNotifications = ( checked: boolean ) => {
 		const newNotifications = checked ? 'enabled' : 'disabled';
@@ -121,15 +86,7 @@ export default function AchievementsSettings() {
 			renderContent={ () => (
 				<div className="achievements-settings__content">
 					<ToggleControl
-						checked={ visibility === 'public' }
-						disabled={ isSetVisibilityPending }
-						onChange={ handleSetVisibility }
-						label={ translate( 'Public achievements' ) }
-						help={ translate( 'When enabled, your achievements page is visible to other users.' ) }
-					/>
-					<ToggleControl
 						checked={ notifications !== 'disabled' }
-						disabled={ isSetNotificationsPending }
 						onChange={ handleSetNotifications }
 						label={ translate( 'Achievement notifications' ) }
 						help={ translate(

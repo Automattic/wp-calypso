@@ -26,7 +26,7 @@ const reporter: ReporterDescription[] = [
 			outputFile: `ctrf-report-${ Date.now() }.json`,
 			branchName: process.env.BRANCH_NAME || '',
 			commit: process.env.BUILD_VCS_NUMBER || '',
-			appName: 'calypso',
+			appName: process.env.E2E_CTRF_APP_NAME || 'calypso',
 			repositoryName: 'Automattic/wp-calypso',
 		},
 	],
@@ -40,6 +40,22 @@ if ( process.env.CI ) {
 const E2E_USER_AGENT_SUFFIX = 'wp-e2e-tests';
 
 const appendE2EUserAgent = ( userAgent: string ) => `${ userAgent } ${ E2E_USER_AGENT_SUFFIX }`;
+
+const loginBrowserUse = {
+	...devices[ 'Desktop Chrome HiDPI' ],
+	bypassCSP: true,
+	launchOptions: {
+		args: [
+			'--disable-blink-features=AutomationControlled',
+			'--disable-features=IsolateOrigins,site-per-process',
+		],
+		slowMo: 1000,
+		env: {},
+		channel: '',
+	},
+	userAgent:
+		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
+};
 
 function getWorkers(): number | string {
 	if ( process.env.PW_WORKERS ) {
@@ -67,6 +83,10 @@ export default defineConfig( {
 	},
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter,
+	/* Runs once before the suite, before any worker starts */
+	globalSetup: require.resolve( './lib/global-setup' ),
+	/* Runs once after the suite, when every worker has finished */
+	globalTeardown: require.resolve( './lib/global-teardown' ),
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	outputDir: `${ outputPath }/test-results`,
 	use: {
@@ -151,21 +171,7 @@ export default defineConfig( {
 			dependencies: [ 'mailosaur-usage-check' ],
 			retries: 0,
 			testDir: './specs/authentication',
-			use: {
-				...devices[ 'Desktop Chrome HiDPI' ],
-				bypassCSP: true,
-				launchOptions: {
-					args: [
-						'--disable-blink-features=AutomationControlled',
-						'--disable-features=IsolateOrigins,site-per-process',
-					],
-					slowMo: 1000,
-					env: {},
-					channel: '',
-				},
-				userAgent:
-					'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/94.0.4606.61 Safari/537.36',
-			},
+			use: loginBrowserUse,
 		},
 	],
 } );

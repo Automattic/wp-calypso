@@ -13,6 +13,18 @@
 
 .sites-dataviews__site-favicon {
 	margin-right: 16px;
+	display: flex;
+
+	// Back loaded site icons with the white surface so logos with transparent
+	// backgrounds read as a clean card instead of showing the gray base tile.
+	// The fallback tiles (is-blank / is-primary) keep their own backgrounds.
+	.site-icon:not(.is-blank):not(.is-primary) {
+		background: var(--color-surface);
+	}
+
+	.site-icon {
+		outline: 0;
+	}
 }
 
 .sites-dataviews__site-name {
@@ -28,6 +40,10 @@
 	.status-badge {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 12px;
+	}
+
+	.sites-dataviews__site-development-badge {
+		margin-block-start: 4px;
 	}
 }
 

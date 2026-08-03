@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SocialAnalyticsProvider } from '../components/post-card/analytics-context';
 import { SocialProfileCard } from '../profile-card';
@@ -289,6 +289,23 @@ describe( 'SocialProfileCard', () => {
 		expect( link ).toHaveAttribute( 'data-id', 'alice.bsky.social' );
 	} );
 
+	it( 'preserves data-handle alongside data-id on bio mention anchors (CM-725)', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://example.com/@alice"' +
+					' data-id="https://example.com/users/alice"' +
+					' data-handle="alice@example.com">@alice@example.com</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link ).toHaveAttribute( 'data-id', 'https://example.com/users/alice' );
+		expect( link ).toHaveAttribute( 'data-handle', 'alice@example.com' );
+	} );
+
 	it( 'strips arbitrary data-* attributes from bio anchors', () => {
 		const { container } = render(
 			<SocialProfileCard
@@ -304,6 +321,23 @@ describe( 'SocialProfileCard', () => {
 		expect( link ).toHaveAttribute( 'data-id', '42' );
 		expect( link?.hasAttribute( 'data-tracking' ) ).toBe( false );
 		expect( link?.hasAttribute( 'data-evil' ) ).toBe( false );
+	} );
+
+	it( 'renders a stat as a link when href is provided', () => {
+		render(
+			<SocialProfileCard
+				avatar="https://example.test/avatar.jpg"
+				bio="hi"
+				statsLabel="Profile stats"
+				stats={ [
+					{ key: 'followers', count: 10, label: 'followers', href: '/profile/me/followers' },
+					{ key: 'following', count: 5, label: 'following' },
+				] }
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: /10 followers/i } );
+		expect( link ).toHaveAttribute( 'href', '/profile/me/followers' );
+		expect( screen.queryByRole( 'link', { name: /5 following/i } ) ).not.toBeInTheDocument();
 	} );
 } );
 
@@ -439,6 +473,167 @@ describe( 'SocialProfileCard — bio mention click routing', () => {
 		await user.click( getByText( '@alice' ) );
 		expect( pageMock ).not.toHaveBeenCalled();
 	} );
+
+	it( 'passes data-handle as ref.handle separately from data-id (CM-725)', async () => {
+		// Bios on Fediverse / Mastodon profile pages can carry mention
+		// anchors stamped with both `data-id` (canonical id — actor URL
+		// or numeric) and `data-handle` (webfinger). The bio click
+		// handler routes them to distinct ref fields so resolvers can
+		// build a clean user-readable URL from the handle.
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+			ref.handle ? `/reader/fediverse/7/profile/${ ref.handle }` : null
+		);
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://example.com/@alice"' +
+				' data-id="https://example.com/users/alice"' +
+				' data-handle="alice@example.com">@alice</a></p>',
+			getProfileUrl
+		);
+		await user.click( getByText( '@alice' ) );
+		expect( getProfileUrl ).toHaveBeenCalledWith( {
+			id: 'https://example.com/users/alice',
+			handle: 'alice@example.com',
+			did: 'https://example.com/users/alice',
+		} );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/fediverse/7/profile/alice@example.com' );
+	} );
+} );
+
+describe( 'SocialProfileCard — bio hashtag click routing', () => {
+	const onClick = jest.fn();
+
+	function renderInsideProvider( bioHtml: string, getTagUrl: ( tag: string ) => string | null ) {
+		return render(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 7,
+					onClick,
+					getTagUrl,
+				} }
+			>
+				<SocialProfileCard
+					bioHtml={ bioHtml }
+					statsLabel="Profile stats"
+					stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+				/>
+			</SocialAnalyticsProvider>
+		);
+	}
+
+	beforeEach( () => {
+		pageMock.mockClear();
+		onClick.mockClear();
+	} );
+
+	it( 'preserves data-tag on hashtag anchors in the bio (sanitiser allow-list)', () => {
+		// Regression: BIO_SANITIZE_CONFIG must allow `data-tag` so the click
+		// handler can route hashtag clicks in-app. Without it, DOMPurify strips
+		// the attribute and the click falls through to the bsky.app href.
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://bsky.app/hashtag/wordpress"' +
+					' data-tag="wordpress">#WordPress</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link ).toHaveAttribute( 'data-tag', 'wordpress' );
+	} );
+
+	it( 'routes the click in-app when data-tag resolves to an in-app URL', async () => {
+		const user = userEvent.setup();
+		const getTagUrl = jest.fn( ( tag: string ) => `/reader/atmosphere/7/tag/${ tag }` );
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/hashtag/wordpress"' +
+				' data-tag="wordpress">#WordPress</a></p>',
+			getTagUrl
+		);
+		await user.click( getByText( '#WordPress' ) );
+		expect( getTagUrl ).toHaveBeenCalledWith( 'wordpress' );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/atmosphere/7/tag/wordpress' );
+	} );
+
+	it( 'fires *_tag_unresolved Tracks when data-tag is present but resolver returns null', async () => {
+		const user = userEvent.setup();
+		const getTagUrl = jest.fn( () => null );
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/hashtag/wordpress"' +
+				' data-tag="wordpress">#WordPress</a></p>',
+			getTagUrl
+		);
+		await user.click( getByText( '#WordPress' ) );
+		expect( pageMock ).not.toHaveBeenCalled();
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_tag_unresolved',
+			expect.objectContaining( { connection_id: 7, data_tag: 'wordpress' } )
+		);
+	} );
+
+	it( 'passes through modifier-clicks on hashtag anchors so users can open in a new tab', async () => {
+		const user = userEvent.setup();
+		const getTagUrl = jest.fn( ( tag: string ) => `/reader/atmosphere/7/tag/${ tag }` );
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/hashtag/wordpress"' +
+				' data-tag="wordpress">#WordPress</a></p>',
+			getTagUrl
+		);
+		await user.keyboard( '[MetaLeft>]' );
+		await user.click( getByText( '#WordPress' ) );
+		await user.keyboard( '[/MetaLeft]' );
+		expect( pageMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'is a no-op for hashtag clicks when no analytics provider is in scope (slim layout)', async () => {
+		const user = userEvent.setup();
+		const { getByText } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://bsky.app/hashtag/wordpress"' +
+					' data-tag="wordpress">#WordPress</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		await user.click( getByText( '#WordPress' ) );
+		expect( pageMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'data-id takes precedence when both attributes are on the same anchor', async () => {
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( ( ref: { id?: string | null } ) =>
+			ref.id ? `/reader/atmosphere/7/profile/${ ref.id }` : null
+		);
+		const getTagUrl = jest.fn( () => '/reader/atmosphere/7/tag/wrong' );
+		const { getByText } = render(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 7,
+					onClick,
+					getProfileUrl,
+					getTagUrl,
+				} }
+			>
+				<SocialProfileCard
+					bioHtml={
+						'<p><a href="https://bsky.app/profile/alice.bsky.social"' +
+						' data-id="alice.bsky.social" data-tag="wordpress">@alice</a></p>'
+					}
+					statsLabel="Profile stats"
+					stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+				/>
+			</SocialAnalyticsProvider>
+		);
+		await user.click( getByText( '@alice' ) );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/atmosphere/7/profile/alice.bsky.social' );
+		expect( getTagUrl ).not.toHaveBeenCalled();
+	} );
 } );
 
 describe( 'SocialProfileCard — rich variant', () => {
@@ -488,7 +683,97 @@ describe( 'SocialProfileCard — rich variant', () => {
 		expect( screen.getByText( 'Plain bio.' ) ).toBeVisible();
 	} );
 
-	it( 'hides the banner image on load failure', () => {
+	it( 'wraps the display name in an external link when displayNameLink is set', () => {
+		render(
+			<SocialProfileCard
+				displayName="Alice"
+				handle="alice.bsky.social"
+				displayNameLink="https://bsky.app/profile/alice.bsky.social"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: 'Alice' } );
+		expect( link ).toHaveAttribute( 'href', 'https://bsky.app/profile/alice.bsky.social' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+		// The heading's accessible name remains the bare display name so
+		// existing heading-by-name lookups continue to work.
+		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
+	} );
+
+	it( 'falls back to the handle inside the link when displayName is missing', () => {
+		render(
+			<SocialProfileCard
+				handle="alice.bsky.social"
+				displayNameLink="https://bsky.app/profile/alice.bsky.social"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: 'alice.bsky.social' } );
+		expect( link ).toBeVisible();
+	} );
+
+	it( 'renders the display name as plain text when no displayNameLink is provided', () => {
+		render(
+			<SocialProfileCard
+				displayName="Alice"
+				handle="alice.bsky.social"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		expect( screen.queryByRole( 'link', { name: 'Alice' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
+	} );
+
+	it( 'fires the profile_external_clicked Tracks event when the link is clicked', async () => {
+		const user = userEvent.setup();
+		const onClick = jest.fn();
+		render(
+			<SocialAnalyticsProvider value={ { source: 'atmosphere', connectionId: 7, onClick } }>
+				<SocialProfileCard
+					displayName="Alice"
+					handle="alice.bsky.social"
+					displayNameLink="https://bsky.app/profile/alice.bsky.social"
+					stats={ [] }
+					statsLabel="Profile stats"
+				/>
+			</SocialAnalyticsProvider>
+		);
+		await user.click( screen.getByRole( 'link', { name: 'Alice' } ) );
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_profile_external_clicked',
+			expect.objectContaining( {
+				connection_id: 7,
+				destination: 'external',
+				actor_handle: 'alice.bsky.social',
+			} )
+		);
+	} );
+
+	it.each( [
+		[ 'javascript: URL', 'javascript:alert(1)' ],
+		[ 'data: URL', 'data:text/html,<script>alert(1)</script>' ],
+		[ 'protocol-relative URL', '//evil.example/profile' ],
+		[ 'whitespace-only string', '   ' ],
+		[ 'malformed URL', 'not a url' ],
+	] )( 'renders plain heading text when displayNameLink is a %s', ( _label, value ) => {
+		render(
+			<SocialProfileCard
+				displayName="Alice"
+				handle="alice.bsky.social"
+				displayNameLink={ value }
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		expect( screen.queryByRole( 'link', { name: 'Alice' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
+	} );
+
+	it( 'swaps the banner image for a same-class placeholder div on load failure', () => {
 		const { container } = render(
 			<SocialProfileCard
 				banner="https://cdn.example/broken.jpg"
@@ -497,11 +782,30 @@ describe( 'SocialProfileCard — rich variant', () => {
 				statsLabel="Profile stats"
 			/>
 		);
-		const banner = container.querySelector(
-			'.social-profile-card__banner'
-		) as HTMLImageElement | null;
-		expect( banner ).not.toBeNull();
-		banner!.dispatchEvent( new Event( 'error', { bubbles: true } ) );
-		expect( banner!.style.display ).toBe( 'none' );
+		const bannerImg = container.querySelector( 'img.social-profile-card__banner' );
+		expect( bannerImg ).not.toBeNull();
+		// `fireEvent.error` triggers React's synthetic onError handler, which
+		// flips the SocialAvatar's `errored` state and renders the fallback
+		// (a `<div>` with the same SCSS class) so the band keeps its
+		// dimensions + background colour instead of collapsing.
+		fireEvent.error( bannerImg! );
+		expect( container.querySelector( 'img.social-profile-card__banner' ) ).toBeNull();
+		expect( container.querySelector( 'div.social-profile-card__banner' ) ).not.toBeNull();
+	} );
+
+	it( 'swaps the avatar image for a same-class placeholder div on load failure', () => {
+		const { container } = render(
+			<SocialProfileCard
+				avatar="https://cdn.example/broken.jpg"
+				displayName="Alice"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		const avatarImg = container.querySelector( 'img.social-profile-card__avatar' );
+		expect( avatarImg ).not.toBeNull();
+		fireEvent.error( avatarImg! );
+		expect( container.querySelector( 'img.social-profile-card__avatar' ) ).toBeNull();
+		expect( container.querySelector( 'div.social-profile-card__avatar' ) ).not.toBeNull();
 	} );
 } );

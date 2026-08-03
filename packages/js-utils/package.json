@@ -17,7 +17,6 @@
 			"require": "./dist/cjs/index.js"
 		}
 	},
-	"private": true,
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
@@ -40,6 +39,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.8.3"
+		"typescript": "^6.0.3"
 	}
 }

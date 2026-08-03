@@ -9,6 +9,7 @@ import {
 	PLAN_TRIENNIAL_PERIOD,
 	isJetpackPlan,
 	isJetpackProduct,
+	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
@@ -16,9 +17,9 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { getPaymentMethodImageURL, razorpayImage as upiImage } from '@automattic/wpcom-checkout';
 import { ExternalLink, Button } from '@wordpress/components';
-import { Icon, warning as warningIcon } from '@wordpress/icons';
+import { Icon, cautionFilled as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { localize, useTranslate } from 'i18n-calypso';
+import { fixMe, localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
@@ -28,18 +29,21 @@ import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
+import { getCalendarDaysUntil, getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getDisplayName,
-	isExpired,
+	isExpiredOrRemoved,
+	isExpiredWithNoAutoRenewAttemptsLeft,
 	isExpiring,
 	isRechargeable,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRecentMonthlyPurchase,
-	isRenewing,
+	isRenewingBeforeExpiration,
+	isRemoved,
 	purchaseType,
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
@@ -48,7 +52,7 @@ import {
 	isIntroductoryOfferFreeTrial,
 	hasPaymentMethod,
 	isPaidWithCredits,
-	isInExpirationGracePeriod,
+	mightStillAutoRenew,
 } from 'calypso/lib/purchases';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
@@ -428,9 +432,9 @@ export function PurchaseItemStatus( {
 	if (
 		isWithinIntroductoryOfferPeriod( purchase ) &&
 		isIntroductoryOfferFreeTrial( purchase ) &&
-		! isInExpirationGracePeriod( purchase )
+		! isExpiredOrRemoved( purchase )
 	) {
-		if ( isRenewing( purchase ) ) {
+		if ( isRenewingBeforeExpiration( purchase ) ) {
 			return translate(
 				'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}}',
 				{
@@ -468,7 +472,7 @@ export function PurchaseItemStatus( {
 		);
 	}
 
-	if ( isRenewing( purchase ) && purchase.renewDate ) {
+	if ( isRenewingBeforeExpiration( purchase ) && purchase.renewDate ) {
 		const renewDate = moment( purchase.renewDate );
 
 		if ( creditCardHasAlreadyExpired( purchase ) ) {
@@ -499,8 +503,32 @@ export function PurchaseItemStatus( {
 			);
 		}
 
-		if ( isInExpirationGracePeriod( purchase ) ) {
-			return <span className="purchase-item__is-error">{ translate( 'Pending renewal' ) }</span>;
+		// When a downgrade is scheduled for the next renewal, the plan won't simply
+		// renew at its current price — it changes to a lower-tier plan. Say so instead
+		// of the usual "Renews ... on <date>" line.
+		if ( purchase.isDelayedDowngradePending ) {
+			const targetPlanName = purchase.delayedDowngradeToProductSlug
+				? getPlan( purchase.delayedDowngradeToProductSlug )?.getTitle()
+				: null;
+			if ( targetPlanName ) {
+				return translate( 'Changing to %(plan)s on {{span}}%(date)s{{/span}}', {
+					args: {
+						plan: targetPlanName,
+						date: renewDate.format( 'LL' ),
+					},
+					components: {
+						span: <span className="purchase-item__date" />,
+					},
+				} );
+			}
+			return translate( 'Changing plan on {{span}}%(date)s{{/span}}', {
+				args: {
+					date: renewDate.format( 'LL' ),
+				},
+				components: {
+					span: <span className="purchase-item__date" />,
+				},
+			} );
 		}
 
 		if ( purchase.billPeriodDays ) {
@@ -561,22 +589,41 @@ export function PurchaseItemStatus( {
 		);
 	}
 
-	if (
-		isExpiring( purchase ) &&
-		! isInExpirationGracePeriod( purchase ) &&
-		! isAkismetFreeProduct( purchase )
-	) {
-		if ( expiry < moment().add( 30, 'days' ) && ! isRecentMonthlyPurchase( purchase ) ) {
+	if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
+		const expiresOnText = translate( 'Expires on {{span}}%s{{/span}}', {
+			args: expiry.format( 'LL' ),
+			components: {
+				span: <span className="purchase-item__date" />,
+			},
+		} );
+		const daysUntilExpiry = getCalendarDaysUntil( expiry.toDate() );
+
+		// Covers both "later today" and a purchase whose expiry date has passed
+		// but which the backend still reports as expiring.
+		if ( daysUntilExpiry <= 0 ) {
+			return (
+				<span className="purchase-item__is-error">
+					{ fixMe( {
+						text: 'Expires today',
+						newCopy: translate( 'Expires today' ),
+						oldCopy: expiresOnText,
+					} ) }
+					<TrackImpression warning="purchase-expiring" />
+				</span>
+			);
+		}
+
+		if ( daysUntilExpiry <= 30 && ! isRecentMonthlyPurchase( purchase ) ) {
 			const expiryClass =
-				expiry < moment().add( 7, 'days' )
-					? 'purchase-item__is-error'
-					: 'purchase-item__is-warning';
+				daysUntilExpiry <= 7 ? 'purchase-item__is-error' : 'purchase-item__is-warning';
 
 			return (
 				<span className={ expiryClass }>
 					{ translate( 'Expires %(timeUntilExpiry)s on {{span}}%(date)s{{/span}}', {
 						args: {
-							timeUntilExpiry: expiry.fromNow(),
+							// The branch above already excludes today and past dates, but
+							// the clamp keeps that guarantee local to this call.
+							timeUntilExpiry: getRelativeDayString( expiry.toDate(), 'upcoming' ),
 							date: expiry.format( 'LL' ),
 						},
 						components: {
@@ -588,33 +635,32 @@ export function PurchaseItemStatus( {
 			);
 		}
 
-		return translate( 'Expires on {{span}}%s{{/span}}', {
-			args: expiry.format( 'LL' ),
-			components: {
-				span: <span className="purchase-item__date" />,
-			},
-		} );
+		return expiresOnText;
 	}
 
-	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+	if ( isExpiredOrRemoved( purchase ) ) {
 		if ( isConciergeSession( purchase ) ) {
 			return translate( 'Session used on %s', {
 				args: expiry.format( 'LL' ),
 			} );
 		}
 
-		const isExpiredToday = moment().diff( expiry, 'hours' ) < 24;
+		// getCalendarDaysUntil counts forward, so this is negative once the expiry
+		// date has passed. Anything else means the expiry lands today or later —
+		// later being a purchase removed ahead of its expiry date — and both read
+		// as "Expired today" rather than "Expired in 3 days".
+		const expiredBeforeToday = getCalendarDaysUntil( expiry.toDate() ) < 0;
 		const expiredTodayText = translate( 'Expired today' );
 		const expiredFromNowText = translate( 'Expired %(timeSinceExpiry)s', {
 			args: {
-				timeSinceExpiry: expiry.fromNow(),
+				timeSinceExpiry: getRelativeDayString( expiry.toDate(), 'past' ),
 			},
 			context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 		} );
 
 		return (
 			<span className="purchase-item__is-error">
-				{ isExpiredToday ? expiredTodayText : expiredFromNowText }
+				{ expiredBeforeToday ? expiredFromNowText : expiredTodayText }
 				<TrackImpression warning="purchase-expired" />
 			</span>
 		);
@@ -643,6 +689,10 @@ export function PurchaseItemPaymentMethod( {
 	translate: LocalizeProps[ 'translate' ];
 	isDisconnectedSite?: boolean;
 } ) {
+	if ( isRemoved( purchase ) ) {
+		return null;
+	}
+
 	if ( isIncludedWithPlan( purchase ) ) {
 		return translate( 'Included with Plan' );
 	}
@@ -674,8 +724,8 @@ export function PurchaseItemPaymentMethod( {
 
 	if (
 		purchase.isAutoRenewEnabled &&
-		! isExpired( purchase ) &&
 		( ! hasPaymentMethod( purchase ) || isPaidWithCredits( purchase ) ) &&
+		! isExpiredWithNoAutoRenewAttemptsLeft( purchase ) &&
 		! isPartnerPurchase( purchase ) &&
 		! isAkismetFreeProduct( purchase )
 	) {
@@ -710,7 +760,7 @@ export function PurchaseItemPaymentMethod( {
 		);
 	}
 
-	if ( isRenewing( purchase ) ) {
+	if ( mightStillAutoRenew( purchase ) ) {
 		if ( purchase.payment.type === 'credit_card' && purchase.payment.creditCard ) {
 			const paymentMethodType = purchase.payment.creditCard.displayBrand
 				? purchase.payment.creditCard.displayBrand
@@ -839,7 +889,9 @@ class PurchaseItem extends Component<
 						translate={ translate }
 						isDisconnectedSite={ isDisconnectedSite }
 					/>
-					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
+					{ isBackupMethodAvailable && mightStillAutoRenew( purchase ) && (
+						<BackupPaymentMethodNotice />
+					) }
 				</div>
 			</div>
 		);

@@ -5,6 +5,7 @@
 	"boom_analytics_enabled": false,
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": false,
+	"checkout_additional_allowed_redirect_hosts": [],
 	"client_slug": false,
 	"facebook_api_key": false,
 	"features": {},
@@ -19,6 +20,7 @@
 	"login_url": false,
 	"logout_url": false,
 	"wpcom_url": "https://wordpress.com",
+	"calypso_live_image": false,
 	"wpcom_signup_url": false,
 	"wpcom_login_url": false,
 	"wpcom_authorize_endpoint": false,
@@ -185,6 +187,7 @@
 		"a8c-for-agencies-learn": false,
 		"a8c-for-agencies-dev-tools": false,
 		"a8c-for-agencies-exclusive-offers": false,
+		"a8c-for-agencies-amplify": false,
 		"jetpack-cloud": false,
 		"jetpack-cloud-overview": false,
 		"jetpack-cloud-agency-dashboard": false,
@@ -221,10 +224,9 @@
 	"dolly_telegram_show_userpic": false,
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
 	"blackbox_url": "https://blackbox-api.wp.com/v1/dist/v.js",
-	"blackbox_api_key": "e16ecd5d7848b169d97088e4c69065d8",
+	"blackbox_api_key": "1b4f123e7dae4d83bbd18170c4358f8e",
 	"site_spec": {
-		"script_url": "https://widgets.wp.com/site-spec/v1.5.0/index.js",
-		"css_url": "https://widgets.wp.com/site-spec/v1.5.0/style.css"
-	},
-	"dashboard_opt_in_oldest_eligible_user": 275231967
+		"script_url": "https://widgets.wp.com/site-spec/v1.13.3/index.js",
+		"css_url": "https://widgets.wp.com/site-spec/v1.13.3/style.css"
+	}
 }

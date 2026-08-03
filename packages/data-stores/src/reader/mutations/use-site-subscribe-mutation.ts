@@ -1,7 +1,11 @@
+import {
+	getSiteSubscriptionsQueryKey,
+	readFeedQueryKey,
+	type SiteSubscriptionsInfiniteData,
+} from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { buildQueryKey, callApi, getSubscriptionMutationParams, isValidId } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
-import { SiteSubscriptionsPages } from '../types';
 import type { SiteSubscriptionDetails } from '../types';
 
 type SubscribeParams = {
@@ -39,11 +43,7 @@ const buildSubscriptionDetailsByBlogIdQueryKey = (
 const useSiteSubscribeMutation = () => {
 	const { isLoggedIn, id: userId } = useIsLoggedIn();
 	const queryClient = useQueryClient();
-	const siteSubscriptionsCacheKey = buildQueryKey(
-		[ 'read', 'site-subscriptions' ],
-		isLoggedIn,
-		userId
-	);
+	const siteSubscriptionsCacheKey = getSiteSubscriptionsQueryKey();
 	const subscriptionsCountCacheKey = buildQueryKey(
 		[ 'read', 'subscriptions-count' ],
 		isLoggedIn,
@@ -100,20 +100,30 @@ const useSiteSubscribeMutation = () => {
 			}
 
 			const previousSiteSubscriptions =
-				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
+				queryClient.getQueryData< SiteSubscriptionsInfiniteData >( siteSubscriptionsCacheKey );
 
 			if ( previousSiteSubscriptions ) {
 				queryClient.setQueryData( siteSubscriptionsCacheKey, {
 					...previousSiteSubscriptions,
 					pages: previousSiteSubscriptions.pages.map( ( page ) => {
+						const shouldIncreaseTotalCount = page.subscriptions.some(
+							( siteSubscription ) =>
+								Number( siteSubscription.blog_ID ) === Number( params.blog_id ) &&
+								( siteSubscription.isDeleted || ! siteSubscription.is_following )
+						);
+
 						return {
 							...page,
-							total_subscriptions: page.total_subscriptions - 1,
+							totalCount:
+								typeof page.totalCount === 'number' && shouldIncreaseTotalCount
+									? page.totalCount + 1
+									: page.totalCount,
 							subscriptions: page.subscriptions.map( ( siteSubscription ) =>
-								siteSubscription.blog_ID === params.blog_id
+								Number( siteSubscription.blog_ID ) === Number( params.blog_id )
 									? {
 											...siteSubscription,
 											date_subscribed: new Date(),
+											is_following: true,
 											isDeleted: false,
 											resubscribed: params.resubscribed ?? false,
 									  }
@@ -148,27 +158,27 @@ const useSiteSubscribeMutation = () => {
 
 			params.onError?.( _error );
 		},
-		onSettled: ( _data, _error, params: SubscribeParams ) => {
+		onSettled: ( data, _error, params: SubscribeParams ) => {
 			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
 				queryClient.invalidateQueries( { queryKey: siteSubscriptionsCacheKey } );
 			}
 
-			if ( isValidId( params.blog_id ) ) {
+			const blogId = params.blog_id ?? data?.subscription?.blog_ID;
+			if ( isValidId( blogId ) ) {
 				const siteSubscriptionDetailsCacheKey = buildSubscriptionDetailsByBlogIdQueryKey(
-					String( params.blog_id ),
+					String( blogId ),
 					isLoggedIn,
 					userId
 				);
 				queryClient.invalidateQueries( { queryKey: siteSubscriptionDetailsCacheKey } );
 				queryClient.invalidateQueries( {
-					queryKey: [ 'read', 'sites', Number( params.blog_id ) ],
+					queryKey: [ 'read', 'sites', Number( blogId ) ],
 				} );
 			}
 
 			if ( isValidId( params.feed_id ) ) {
-				const feedCacheKey = [ 'read', 'feeds', Number( params.feed_id ) ];
 				queryClient.invalidateQueries( {
-					queryKey: feedCacheKey,
+					queryKey: readFeedQueryKey( params.feed_id ),
 				} );
 			}
 

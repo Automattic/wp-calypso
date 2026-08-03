@@ -1,5 +1,4 @@
 import { keyToString } from 'calypso/reader/post-key';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import type { PostKey, SavedPostItem } from './types';
 import type { AppState } from 'calypso/types';
 
@@ -26,12 +25,4 @@ export function isSavedPostsLoading( state: AppState ): boolean {
 
 export function getSavedPostsError( state: AppState ): string | null {
 	return state.reader?.saved?.error ?? null;
-}
-
-export function getSavedPostsTotalReadingTime( state: AppState ): number {
-	return getItems( state ).reduce( ( total: number, item: SavedPostItem ) => {
-		const post = getPostByKey( state, item.postKey );
-		const minutes = post?.minutes_to_read ?? 0;
-		return total + minutes;
-	}, 0 );
 }

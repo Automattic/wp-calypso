@@ -1,11 +1,26 @@
 @import "@wordpress/base-styles/colors";
 
-/* @wordpress/components FormToggle overrides ----------------------------------------- */
-.components-form-toggle {
-	input[type="checkbox"] {
-		cursor: pointer;
-
-	}
+/* @wordpress/components Menu workaround ---------------------------------------------- *
+ * The `Menu.Popover` refactor in @wordpress/components 33.0.0 (Gutenberg #77460) split
+ * the popover into `MenuMotionRoot` (motion styles) > `MenuSurface` (panel chrome) and
+ * spread Ariakit's `htmlProps` on the inner `MenuSurface`. Ariakit's `useDisclosureContent`
+ * reads `getComputedStyle(MenuSurface).transitionDuration`, which is `0s` (the transitions
+ * live on the outer `MenuMotionRoot`). In isolation this still works because Ariakit also
+ * reads from the disclosure trigger element which usually has a non-zero `box-shadow`
+ * transition — Gutenberg Storybook confirms the Menu component itself is fine.
+ *
+ * In classic Calypso, something in the surrounding React tree (masterbar / Help Center /
+ * focus management) trips Ariakit's `animated` state machine into `false` before the
+ * trigger's transition can be measured, so `data-enter` is never stamped on `MenuSurface`,
+ * the companion `MenuMotionRoot:has(> MenuSurface[data-enter])` rule never matches, and
+ * the popover stays at `opacity: 0`. This breaks the DataViews "Add filter" popover on
+ * /p2s, /sites/<slug>/logs/*, etc.
+ *
+ * Adding a tiny transition directly on `MenuSurface` makes Ariakit's `getComputedStyle()`
+ * check non-zero regardless of trigger timing, so the pipeline always stamps `data-enter`.
+ * The real fade/slide motion still comes from `MenuMotionRoot`, unchanged. */
+[data-dialog][role="menu"] {
+	transition: opacity 1ms;
 }
 
 /* @wordpress/components Button overrides --------------------------------------------- */
@@ -71,10 +86,29 @@
 
 /* A4A */
 .theme-a8c-for-agencies {
+	// 37.0.0's design tokens hardcode the stock blue for the wpds brand and focus colors,
+	// bypassing their --wp-admin-theme-color fallbacks; point them at the A4A primary.
+	--wpds-color-stroke-focus: var(--color-primary);
+	--wpds-color-foreground-interactive-brand: var(--color-primary);
+	--wpds-color-foreground-interactive-brand-active: var(--color-primary-70);
+	--wpds-color-stroke-interactive-brand: var(--color-primary);
+	--wpds-color-stroke-interactive-brand-active: var(--color-primary-70);
+	--wpds-color-background-interactive-brand-weak-active: var(--color-primary-0);
+	--wpds-color-background-interactive-brand-strong: var(--color-primary);
+	--wpds-color-background-interactive-brand-strong-active: var(--color-primary-70);
+
 	.components-button:not(.is-destructive) {
 		--wp-components-color-accent: var(--color-primary);
 		--wp-components-color-accent-darker-10: var(--color-primary-60);
 		--wp-components-color-accent-darker-20: var(--color-primary-60);
+	}
+
+	// A4A secondary buttons keep a primary border. 37.0.0's border-color is forced off
+	// by the Calypso override and reinstated as a box-shadow; restore the border here
+	// and drop the box-shadow. Buttons with their own outline keep it (higher specificity).
+	:where(.components-button.is-secondary:not(.is-destructive):not(:disabled)) {
+		border-color: var(--color-primary) !important;
+		box-shadow: none;
 	}
 }
 
@@ -125,8 +159,8 @@
 			&:hover {
 				color: var(--color-passport-accent);
 			}
-		}	
-	
+		}
+
 		.components-button.is-link {
 			color: var(--color-passport-base);
 		}
@@ -200,11 +234,35 @@
 	}
 }
 
+/* @wordpress/components emphasis font weight ----------------------------------------- *
+ * 37.0.0 moved Button and other emphasised labels from the legacy medium weight onto
+ * `--wpds-typography-font-weight-emphasis`, which the design system sets to 600. Hold
+ * the previous 499 so button text keeps its existing weight. Remove this to adopt the
+ * heavier design-system weight. */
+:root {
+	--wpds-typography-font-weight-emphasis: 499;
+}
+
+/* @wordpress/components button focus ring offset ------------------------------------ *
+ * 37.0.0 offsets the button focus ring by its own width, leaving a gap. Keep the ring
+ * against the edge as before. The panel body toggle sets its own inset ring, so leave
+ * it be. Remove to adopt the detached design-system ring. */
+.components-button:focus:not(:active):not(.components-panel__body-toggle) {
+	outline-offset: 0;
+}
+
+/* 37.0.0 draws the secondary border with `border-color` instead of the inset box-shadow
+ * Calypso and several packages still use, so it leaks as a stray accent outline. Turn it
+ * off and keep the box-shadow as the border. Destructive buttons keep their red border. */
+:where(.components-button.is-secondary:not(.is-destructive):not(:disabled)) {
+	border-color: transparent !important;
+	box-shadow: inset 0 0 0 1px var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+}
+
 /* @wordpress/components RadioControl overrides --------------------------------------- */
 .components-radio-control {
 	&__input[type="radio"] {
 		padding: 6px;
-		cursor: pointer;
 
 		&:checked {
 			border-color: var(--color-accent);

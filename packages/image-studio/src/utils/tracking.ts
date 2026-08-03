@@ -7,11 +7,23 @@
 
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
-import { store as imageStudioStore, type ImageStudioEntryPoint } from '../store';
+// ImageStudioEntryPoint is a value import here, not type-only: the Feature Clip
+// wrapper reads the enum member at runtime.
+import { store as imageStudioStore, ImageStudioEntryPoint } from '../store';
+import { ImageStudioMode, type MetadataField } from '../types';
 import { getSessionId } from '../utils/session';
-import type { ImageStudioMode, MetadataField } from '../types';
+import { parseErrorUrl } from './parse-error-url';
 
 const TRACKS_PREFIX = 'jetpack_big_sky';
+const SITE_TYPES = [ 'simple', 'atomic', 'jetpack' ] as const;
+
+type ImageStudioSiteType = ( typeof SITE_TYPES )[ number ];
+type ImageStudioTrackingData = {
+	blogId?: number | string;
+	siteType?: string;
+	isA11n?: boolean;
+	isDevMode?: boolean;
+};
 
 /**
  * Format suggestion IDs into a pipe-delimited string for tracking
@@ -31,14 +43,48 @@ export function formatSuggestionIds( suggestions: Array< { id?: string } > ): st
  */
 function getImageStudioEntryPoint(): string | null {
 	try {
-		const imageStudioStoreData = select( imageStudioStore );
-		if ( imageStudioStoreData && imageStudioStoreData.getEntryPoint ) {
-			return imageStudioStoreData.getEntryPoint();
+		const imageStudioSelectors = select( imageStudioStore );
+		if ( imageStudioSelectors && imageStudioSelectors.getEntryPoint ) {
+			return imageStudioSelectors.getEntryPoint();
 		}
 	} catch ( error ) {
 		// Store may not be registered yet
 	}
 	return null;
+}
+
+function getImageStudioWindowData(): ImageStudioTrackingData | undefined {
+	return ( window as unknown as { imageStudioData?: ImageStudioTrackingData } ).imageStudioData;
+}
+
+function getTrackingBlogId(): number | null {
+	const blogId = getImageStudioWindowData()?.blogId;
+
+	if ( typeof blogId !== 'number' && typeof blogId !== 'string' ) {
+		return null;
+	}
+
+	const parsedBlogId = typeof blogId === 'number' ? blogId : Number( blogId );
+
+	return Number.isFinite( parsedBlogId ) && parsedBlogId > 0 ? parsedBlogId : null;
+}
+
+function getTrackingSiteType(): ImageStudioSiteType {
+	const siteType = getImageStudioWindowData()?.siteType;
+
+	if ( SITE_TYPES.includes( siteType as ImageStudioSiteType ) ) {
+		return siteType as ImageStudioSiteType;
+	}
+
+	if ( siteType === 'wpcom' ) {
+		return 'simple';
+	}
+
+	if ( siteType === 'woa' ) {
+		return 'atomic';
+	}
+
+	return 'jetpack';
 }
 
 /**
@@ -63,12 +109,26 @@ function recordImageStudioEvent(
 	properties: Record< string, string | number | boolean > = {}
 ): void {
 	const entryPoint = getImageStudioEntryPoint();
+	const blogId = getTrackingBlogId();
+	const siteType = getTrackingSiteType();
+	const imageStudioWindowData = getImageStudioWindowData();
 	const baseProps: Record< string, string | number | boolean > = {
 		...properties,
 		sessionid: getSessionId(),
 	};
 
-	if ( entryPoint ) {
+	if ( blogId ) {
+		baseProps.blog_id = blogId;
+	}
+
+	baseProps.site_type = siteType;
+
+	// The store's entry point is only a fallback. An event that knows its own
+	// placement passes it explicitly, and must keep it: the store holds whichever
+	// entry point was used last in this page load, which for an event that fires
+	// on mount rather than on open would report where the user happened to have
+	// been rather than where the event came from.
+	if ( entryPoint && undefined === baseProps.placement ) {
 		baseProps.placement = entryPoint;
 	}
 
@@ -81,10 +141,37 @@ function recordImageStudioEvent(
 		baseProps.post_type = win.typenow;
 	}
 
+	baseProps.is_a11n = !! imageStudioWindowData?.isA11n;
+
 	// Add dev mode flag for filtering test/internal traffic
-	baseProps.is_test = !! win.imageStudioData?.isDevMode;
+	baseProps.is_test = !! imageStudioWindowData?.isDevMode;
 
 	recordTracksEvent( eventName, baseProps );
+}
+
+/**
+ * Records a Feature Clip event, always carrying the Feature Clip placement.
+ *
+ * Every event in this family belongs to the post-editor Feature Clip flow,
+ * whether it fires from the sidebar panel or from the modal opened out of it.
+ * The store can't be relied on for that: the panel and its share actions run
+ * before anything opens Image Studio, so the entry point is still null and the
+ * event would go out with no placement and no way to filter it.
+ *
+ * @param eventName  Event name, without the tracks prefix.
+ * @param properties Event-specific properties.
+ */
+function recordFeatureClipEvent(
+	eventName: string,
+	properties: Record< string, string | number | boolean > = {}
+): void {
+	recordImageStudioEvent( eventName, {
+		...properties,
+		// Last, so the placement is guaranteed rather than merely defaulted. An
+		// event that needs a different one doesn't belong in this family and
+		// should call recordImageStudioEvent directly.
+		placement: ImageStudioEntryPoint.PostEditorFeatureClip,
+	} );
 }
 
 interface TrackImageStudioOpenedOptions {
@@ -141,18 +228,21 @@ interface TrackImageStudioImageGeneratedOptions {
 	isAnnotated: boolean;
 }
 
+type ImageStudioErrorType =
+	| 'generation_failed'
+	| 'edit_failed'
+	| 'quota_exceeded'
+	| 'ability_failed'
+	| 'preparation_failed'
+	| 'draft_cleanup_failed'
+	| 'draft_cleanup_permission_denied'
+	| 'delete_permanently_failed'
+	| 'save_metadata_failed'
+	| 'other';
+
 interface TrackImageStudioErrorOptions {
 	mode: ImageStudioMode;
-	errorType:
-		| 'generation_failed'
-		| 'edit_failed'
-		| 'ability_failed'
-		| 'preparation_failed'
-		| 'draft_cleanup_failed'
-		| 'draft_cleanup_permission_denied'
-		| 'delete_permanently_failed'
-		| 'save_metadata_failed'
-		| 'other';
+	errorType: ImageStudioErrorType;
 	attachmentId?: number;
 }
 
@@ -165,6 +255,29 @@ interface TrackImageStudioImageFeedbackOptions {
 interface TrackImageStudioFileNavigatedOptions {
 	attachmentId: number;
 	direction: 'previous' | 'next';
+}
+
+/**
+ * Classifies request errors for Image Studio error tracking.
+ * @param error - The request error
+ * @param mode  - The active Image Studio mode
+ * @returns The corresponding tracking error type
+ */
+export function getImageStudioRequestErrorType(
+	error: unknown,
+	mode: ImageStudioMode
+): ImageStudioErrorType {
+	const message =
+		error && typeof error === 'object' && 'message' in error
+			? String( error.message )
+			: String( error ?? '' );
+
+	// The agent endpoint exposes usage-quota errors to the client through an appended upgrade URL.
+	if ( parseErrorUrl( message ).isUpgradeUrl ) {
+		return 'quota_exceeded';
+	}
+
+	return mode === ImageStudioMode.Edit ? 'edit_failed' : 'generation_failed';
 }
 
 /**
@@ -441,6 +554,29 @@ export function trackImageStudioError( {
 }
 
 /**
+ * Tracks when the limit-reached upgrade notice is shown
+ * @param options      - Tracking options
+ * @param options.mode - 'edit' or 'generate'
+ */
+export function trackImageStudioUpgradeNoticeShown( { mode }: { mode: ImageStudioMode } ): void {
+	recordImageStudioEvent( 'image_studio_upgrade_notice_shown', { mode } );
+}
+
+/**
+ * Tracks a click on the upgrade notice action. Also fires the product-wide
+ * `jetpack_ai_upgrade_button` event so this surface appears in the same
+ * funnel as every other Jetpack AI upgrade button.
+ * @param options      - Tracking options
+ * @param options.mode - 'edit' or 'generate'
+ */
+export function trackImageStudioUpgradeNoticeClick( { mode }: { mode: ImageStudioMode } ): void {
+	recordImageStudioEvent( 'image_studio_upgrade_notice_click', { mode } );
+	recordTracksEventBase( 'jetpack_ai_upgrade_button', {
+		placement: 'image-studio-limit-notice',
+	} );
+}
+
+/**
  * Tracks when a user provides thumbs up/down feedback on an image
  * @param options              - Tracking options
  * @param options.feedback     - User's feedback (up or down)
@@ -540,126 +676,247 @@ export function trackImageStudioImageDeletedPermanently( {
 }
 
 /**
+ * Surface a clip share originated from. Distinguishes the post-editor Feature
+ * Clip sidebar from the in-modal Image Studio share row so per-surface share
+ * funnels can be computed.
+ */
+export type ShareSurface = 'sidebar' | 'modal';
+
+/**
  * Tracks when the Reel share button is clicked, before any pre-checks run.
  * @param options                  - Tracking options
+ * @param options.surface          - Where the share originated ('sidebar' | 'modal')
  * @param options.attachmentId     - The video attachment ID
  * @param options.durationSeconds  - Optional duration of the clip in seconds
  */
 export function trackImageStudioReelShareClicked( {
+	surface,
 	attachmentId,
 	durationSeconds,
 }: {
+	surface: ShareSurface;
 	attachmentId: number;
 	durationSeconds?: number | null;
 } ): void {
-	const properties: Record< string, string | number > = { attachment_id: attachmentId };
+	const properties: Record< string, string | number > = {
+		surface,
+		attachment_id: attachmentId,
+	};
 	if ( durationSeconds != null ) {
 		properties.duration_seconds = durationSeconds;
 	}
-	recordImageStudioEvent( 'image_studio_reel_share_clicked', properties );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_clicked', properties );
 }
 
 /**
  * Tracks when the Reel share is blocked by a missing Instagram Business connection.
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
-export function trackImageStudioReelShareNotConnected(): void {
-	recordImageStudioEvent( 'image_studio_reel_share_not_connected' );
+export function trackImageStudioReelShareNotConnected( {
+	surface,
+}: {
+	surface: ShareSurface;
+} ): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_not_connected', { surface } );
 }
 
 /**
  * Tracks when the Reel share is blocked because the IG connection exists but is
  * toggled off for this post in the Jetpack Social sidebar.
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
-export function trackImageStudioReelShareConnectionDisabled(): void {
-	recordImageStudioEvent( 'image_studio_reel_share_connection_disabled' );
+export function trackImageStudioReelShareConnectionDisabled( {
+	surface,
+}: {
+	surface: ShareSurface;
+} ): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_connection_disabled', { surface } );
 }
 
 /**
  * Tracks when the Reel share is blocked because the post isn't published yet.
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
-export function trackImageStudioReelShareNotPublished(): void {
-	recordImageStudioEvent( 'image_studio_reel_share_post_not_published' );
+export function trackImageStudioReelShareNotPublished( {
+	surface,
+}: {
+	surface: ShareSurface;
+} ): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_post_not_published', { surface } );
 }
 
 /**
  * Tracks when the Reel share is blocked by missing video state (defensive).
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
-export function trackImageStudioReelShareInvalidState(): void {
-	recordImageStudioEvent( 'image_studio_reel_share_invalid_state' );
+export function trackImageStudioReelShareInvalidState( {
+	surface,
+}: {
+	surface: ShareSurface;
+} ): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_invalid_state', { surface } );
+}
+
+/**
+ * Tracks when the user dismisses the Reel share confirmation dialog.
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
+ */
+export function trackImageStudioReelShareCancelled( { surface }: { surface: ShareSurface } ): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_cancelled', { surface } );
 }
 
 /**
  * Tracks when shareCurrentPost successfully dispatched the IG submission.
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
-export function trackImageStudioReelShareDispatched(): void {
-	recordImageStudioEvent( 'image_studio_reel_share_dispatched' );
+export function trackImageStudioReelShareDispatched( {
+	surface,
+}: {
+	surface: ShareSurface;
+} ): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_dispatched', { surface } );
 }
 
 /**
  * Tracks when shareCurrentPost returned false or threw.
- * @param errorMessage - Optional error description from the thunk/exception.
+ * @param options              - Tracking options
+ * @param options.surface      - Where the share originated ('sidebar' | 'modal')
+ * @param options.errorMessage - Optional error description from the thunk/exception.
  */
-export function trackImageStudioReelShareFailed( errorMessage?: string ): void {
-	const properties: Record< string, string | number > = {};
+export function trackImageStudioReelShareFailed( {
+	surface,
+	errorMessage,
+}: {
+	surface: ShareSurface;
+	errorMessage?: string;
+} ): void {
+	const properties: Record< string, string | number > = { surface };
 	if ( errorMessage ) {
 		properties.error_message = errorMessage;
 	}
-	recordImageStudioEvent( 'image_studio_reel_share_failed', properties );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_failed', properties );
 }
 
 /**
  * Tracks when the generic share initiates a particular method. Fires once per
- * attempted method, before the work runs — so a click that probes web-share,
- * finds files unsupported, and falls back to download produces three events
- * (one per method tried).
- * @param options        - Tracking options
- * @param options.method - 'web-share' (Web Share API attempt), 'web-share-unsupported'
- *                         (canShare rejected files), or 'download' (fallback / direct).
+ * attempted method, before the work runs.
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
+ * @param options.method  - 'web-share' (Web Share API attempt) or 'web-share-unsupported'
+ *                          (canShare rejected files / Web Share unavailable).
  */
 export function trackImageStudioGenericShareClicked( {
+	surface,
 	method,
 }: {
-	method: 'web-share' | 'web-share-unsupported' | 'download';
+	surface: ShareSurface;
+	method: 'web-share' | 'web-share-unsupported';
 } ): void {
-	recordImageStudioEvent( 'image_studio_generic_share_clicked', { method } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_generic_share_clicked', { surface, method } );
 }
 
 /**
  * Tracks when the generic share completed successfully.
- * @param options        - Tracking options
- * @param options.method - 'web-share' or 'download' (the only methods that can complete;
- *                         'web-share-unsupported' is a precondition failure, never a success).
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
+ * @param options.method  - 'web-share' (the only method that can complete;
+ *                          'web-share-unsupported' is a precondition failure).
  */
 export function trackImageStudioGenericShareCompleted( {
+	surface,
 	method,
 }: {
-	method: 'web-share' | 'download';
+	surface: ShareSurface;
+	method: 'web-share';
 } ): void {
-	recordImageStudioEvent( 'image_studio_generic_share_completed', { method } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_generic_share_completed', {
+		surface,
+		method,
+	} );
 }
 
 /**
  * Tracks when the generic share failed.
  * @param options             - Tracking options
- * @param options.method      - 'web-share', 'web-share-unsupported', or 'download'
+ * @param options.surface     - Where the share originated ('sidebar' | 'modal')
+ * @param options.method      - 'web-share' or 'web-share-unsupported'
  * @param options.message     - Optional error message
- * @param options.failureKind - Optional categorical reason: 'http' | 'open-blocked'
+ * @param options.failureKind - Optional categorical reason: 'http' (fetch returned !ok).
  */
 export function trackImageStudioGenericShareFailed( {
+	surface,
 	method,
 	message,
 	failureKind,
 }: {
-	method: 'web-share' | 'web-share-unsupported' | 'download';
+	surface: ShareSurface;
+	method: 'web-share' | 'web-share-unsupported';
 	message?: string;
-	failureKind?: 'http' | 'open-blocked';
+	failureKind?: 'http';
 } ): void {
-	const properties: Record< string, string | number > = { method };
+	const properties: Record< string, string | number > = { surface, method };
 	if ( message ) {
 		properties.error_message = message;
 	}
 	if ( failureKind ) {
 		properties.failure_kind = failureKind;
 	}
-	recordImageStudioEvent( 'image_studio_generic_share_failed', properties );
+	recordFeatureClipEvent( 'image_studio_feature_clip_generic_share_failed', properties );
+}
+
+/**
+ * Tracks when a generated Feature Clip is inserted into the post via the
+ * sidebar's "Add to post" action — the primary clip → post conversion.
+ * @param options              - Tracking options
+ * @param options.attachmentId - The video attachment ID added to the post
+ */
+export function trackImageStudioFeatureClipAddedToPost( {
+	attachmentId,
+}: {
+	attachmentId: number;
+} ): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_added_to_post', {
+		attachment_id: attachmentId,
+		surface: 'sidebar',
+	} );
+}
+
+/**
+ * Tracks when the Feature Clip sidebar panel is rendered in the post editor.
+ * Fires once per panel mount — the impression denominator for sidebar
+ * engagement rates.
+ */
+export function trackImageStudioFeatureClipPanelViewed(): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_panel_viewed' );
+}
+
+/**
+ * Tracks when the "generation in progress" close warning is shown — i.e. the
+ * user tried to close the modal while a clip was still rendering. The
+ * impression denominator for how often closing mid-generation happens.
+ */
+export function trackImageStudioFeatureClipCloseWarningShown(): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_close_warning_shown' );
+}
+
+/**
+ * Tracks when the user dismisses the close warning to let the clip keep
+ * generating ("Cancel").
+ */
+export function trackImageStudioFeatureClipCloseWarningKeptGenerating(): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_close_warning_kept_generating' );
+}
+
+/**
+ * Tracks when the user confirms the close warning, stopping the in-progress
+ * generation and closing the modal ("Stop and close").
+ */
+export function trackImageStudioFeatureClipCloseWarningStopped(): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_close_warning_stopped' );
 }

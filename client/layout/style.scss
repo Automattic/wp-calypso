@@ -1,3 +1,10 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@wordpress/base-styles/mixins";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/clear-fix";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+
 // Disable scroll when Site Picker is active. In future,
 // the Site Picker's Site List could be made compatible
 // SidebarScrollSynchronizer. Currently, it is not and
@@ -64,6 +71,13 @@ body.is-focus-sites {
 		margin: 0;
 		// Allow descendant `position: sticky` (order summary sidebar) to pin
 		// against the viewport. Global `overflow: hidden` above breaks sticky.
+		overflow: visible;
+	}
+
+	// `overflow: hidden` above breaks the subnav baton-pass sticky; let it pin.
+	.is-section-themes:has( .x-nav--2026-redesign ) &,
+	.is-section-patterns:has( .x-nav--2026-redesign ) &,
+	.is-section-plugins:has( .x-nav--2026-redesign ) & {
 		overflow: visible;
 	}
 	// Note that we have to use a 0,0,3,1 specificity selector to override the
@@ -199,6 +213,10 @@ body.is-mobile-app-view {
 	// Ensure that the sidebar always remains on top.
 	// Related issue: https://github.com/Automattic/wp-calypso/issues/53504
 	z-index: z-index( 'root', '.layout__secondary' );
+
+	.is-section-reader & {
+		--color-sidebar-background: var( --color-main-background );
+	}
 
 	@include breakpoint-deprecated( '<960px' ) {
 		width: var( --sidebar-width-min );
@@ -558,3 +576,44 @@ body.is-mobile-app-view {
 .layout.has-universal-header .lpc-header-nav-wrapper {
 	padding-top: var( --masterbar-height );
 }
+
+.is-nav-2026-assignment-loading {
+	display: none;
+}
+
+// Source of truth for the fixed 2026 nav's geometry; everything that clears or sticks
+// to the nav derives from these vars.
+.layout:has( .x-nav--2026-redesign ) {
+	/* stylelint-disable-next-line length-zero-no-unit -- px needed for the consuming calc() */
+	--nav-2026-admin-offset: 0px; // admin-bar height logged-in, 0 logged-out
+	--nav-2026-height: 64px;
+	--nav-2026-sticky-offset: calc( var( --nav-2026-admin-offset ) + var( --nav-2026-height ) );
+
+	// Shared stacking contract: sidebar 176 < nav-closed 177 < sub-nav 178 < open 179 < masterbar 180.
+	--nav-2026-z-closed: 177;
+	--nav-2026-z-sub-nav: 178;
+	--nav-2026-z-open: 179;
+
+	// The nav is fixed (out of flow); reserve its height on the wrapper so every section's
+	// content clears it, and zero the content's own clearance so the two never stack.
+	.layout__header-section {
+		min-height: var( --nav-2026-sticky-offset );
+	}
+
+	.layout__content {
+		--_layout__content-top-spacing: 0;
+		padding-top: 0;
+	}
+}
+
+.layout.is-logged-in:has( .x-nav--2026-redesign ) {
+	--nav-2026-admin-offset: var( --masterbar-height );
+}
+
+// These surfaces float the nav over their hero, so don't reserve its space.
+.layout.is-section-patterns:has( .x-nav--2026-redesign ) .layout__header-section,
+.layout.is-theme-showcase-modern:has( .x-nav--2026-redesign ) .layout__header-section,
+.layout.is-section-plugins:not( .is-logged-in ):has( .x-nav--2026-redesign ) .layout__header-section {
+	min-height: 0;
+}
+

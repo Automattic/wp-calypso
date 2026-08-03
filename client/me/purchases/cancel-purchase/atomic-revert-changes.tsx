@@ -4,8 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import { isRefundable } from 'calypso/lib/purchases';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -17,6 +17,7 @@ type AtomicRevertChangesProps = {
 	onConfirmationChange: ( isChecked: boolean ) => void;
 	needsAtomicRevertConfirmation: boolean;
 	isLoading?: boolean;
+	additionalChanges?: Array< { slug: string; text: ReactNode } >;
 };
 
 const AtomicRevertChanges = ( {
@@ -25,13 +26,16 @@ const AtomicRevertChanges = ( {
 	onConfirmationChange,
 	needsAtomicRevertConfirmation,
 	isLoading = false,
+	additionalChanges,
 }: AtomicRevertChangesProps ) => {
 	const translate = useTranslate();
 	const [ isConfirmed, setIsConfirmed ] = useState( false );
 
-	// Only show for plan cancellations on Atomic sites — removing a plugin or
-	// domain on an Atomic site does not trigger a site revert.
-	if ( ! atomicTransfer?.created_at || ! isPlan( purchase ) ) {
+	const hasAtomicChanges = Boolean( atomicTransfer?.created_at ) && isPlan( purchase );
+	const hasAdditionalChanges = Boolean( additionalChanges?.length );
+
+	// Only show when there are Atomic changes or additional site-dependency warnings.
+	if ( ! hasAtomicChanges && ! hasAdditionalChanges ) {
 		return null;
 	}
 
@@ -43,13 +47,13 @@ const AtomicRevertChanges = ( {
 		changes.push( translate( 'Set your site to private.' ) );
 
 		// Plugins and themes will be removed
-		if ( ! isRefundable( purchase ) ) {
+		if ( ! purchase.is_refundable ) {
 			changes.push(
 				translate(
 					'Any themes and plugins you have installed will be removed on %(expiryDate)s, along with their data.',
 					{
 						args: {
-							expiryDate: moment( purchase.expiryDate ).format( 'LL' ),
+							expiryDate: moment( purchase.expiry_date ).format( 'LL' ),
 						},
 					}
 				)
@@ -63,7 +67,7 @@ const AtomicRevertChanges = ( {
 		return changes;
 	};
 
-	const changes = getChangesList();
+	const changes = hasAtomicChanges ? getChangesList() : [];
 
 	const handleCheckboxChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const checked = event.target.checked;
@@ -73,7 +77,11 @@ const AtomicRevertChanges = ( {
 
 	return (
 		<div className="cancel-purchase__atomic-revert-changes">
-			<p>{ translate( 'We will also make these changes to your site:' ) }</p>
+			<p>
+				{ isPlan( purchase )
+					? translate( 'We will also make these changes to your site:' )
+					: translate( "Here's what will happen:" ) }
+			</p>
 			<ul className="cancel-purchase__atomic-revert-changes-list">
 				{ changes.map( ( change, index ) => (
 					<li key={ index }>
@@ -83,6 +91,16 @@ const AtomicRevertChanges = ( {
 							icon="notice-outline"
 						/>
 						<span>{ change }</span>
+					</li>
+				) ) }
+				{ additionalChanges?.map( ( change ) => (
+					<li key={ change.slug }>
+						<Gridicon
+							className="cancel-purchase__atomic-revert-changes--item-notice"
+							size={ 24 }
+							icon="notice-outline"
+						/>
+						<span>{ change.text }</span>
 					</li>
 				) ) }
 			</ul>

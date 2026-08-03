@@ -9,12 +9,13 @@ import {
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
 import { sectionify } from 'calypso/lib/route';
-import { sidebar, setBeforePrimary } from 'calypso/reader/controller';
+import { sidebar } from 'calypso/reader/controller';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
+import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import { recordTrack } from 'calypso/reader/stats';
 import { getCurrentTabFromURL } from 'calypso/reader/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -75,6 +76,7 @@ const discover = ( context, next ) => {
 				className="is-discover-stream"
 				selectedTab={ selectedTab }
 				query={ context.query }
+				placeholder={ null }
 			/>
 		</>
 	);
@@ -88,7 +90,6 @@ export default function ( router ) {
 		redirectInvalidLanguage,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
-		setBeforePrimary,
 		sidebar,
 		discover,
 		makeLayout,
@@ -100,4 +101,6 @@ export default function ( router ) {
 
 	//
 	router( getDiscoverRoutes( anyLangParam ), ...commonMiddleware );
+
+	router( '/discover/*', readerNotFound );
 }

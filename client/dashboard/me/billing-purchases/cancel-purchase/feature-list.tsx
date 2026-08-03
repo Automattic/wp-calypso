@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
 import { Text } from '../../../components/text';
-import { DisplayVariant } from '../../../utils/purchase';
+import { DisplayVariant, isExpiredAndInGracePeriod } from '../../../utils/purchase';
 import {
 	getCancelLossIntro,
 	getFallbackLossItems,
@@ -33,17 +33,20 @@ const CancelPurchaseFeatureList = ( {
 	cancellationFeatures: CancellationFeature[];
 	cancellationChanges: FeatureObject[];
 } ) => {
-	// When the server returns no feature list, fall back to a per-product-type
-	// item so every confirmation screen shows at least one concrete thing the
-	// user is giving up.
-	const lossItems: Array< { key: string; title: string } > = cancellationFeatures.length
-		? cancellationFeatures
-				.filter( ( feature ): feature is CancellationFeature => Boolean( feature ) )
-				.map( ( feature ) => ( { key: String( feature.feature_id ), title: feature.title } ) )
-		: getFallbackLossItems( purchase ).map( ( title, idx ) => ( {
-				key: `fallback-${ idx }`,
-				title,
-		  } ) );
+	// Use the server-provided cancellation feature list, falling back to a
+	// per-product-type item so every confirmation screen shows at least one
+	// concrete thing the user is giving up.
+	let lossItems: Array< { key: string; title: string } >;
+	if ( cancellationFeatures.length ) {
+		lossItems = cancellationFeatures
+			.filter( ( feature ): feature is CancellationFeature => Boolean( feature ) )
+			.map( ( feature ) => ( { key: String( feature.feature_id ), title: feature.title } ) );
+	} else {
+		lossItems = getFallbackLossItems( purchase ).map( ( title, idx ) => ( {
+			key: `fallback-${ idx }`,
+			title,
+		} ) );
+	}
 
 	if ( ! lossItems.length && ! cancellationChanges.length ) {
 		return null;
@@ -60,10 +63,11 @@ const CancelPurchaseFeatureList = ( {
 				'\u00a0'
 		  )
 		: '';
+	const inGracePeriod = isExpiredAndInGracePeriod( purchase );
 	const introCopy =
 		displayVariant === 'remove'
 			? getRemoveLossIntro( purchase )
-			: getCancelLossIntro( purchase, fullExpiryDate );
+			: getCancelLossIntro( purchase, fullExpiryDate, inGracePeriod );
 
 	return (
 		<VStack spacing={ 6 }>
@@ -71,7 +75,7 @@ const CancelPurchaseFeatureList = ( {
 				<Text as="p">
 					{ displayVariant === 'remove'
 						? getSingleItemRemoveCopy( purchase )
-						: getSingleItemCancelCopy( purchase, fullExpiryDate ) }
+						: getSingleItemCancelCopy( purchase, fullExpiryDate, inGracePeriod ) }
 				</Text>
 			) : (
 				lossItems.length > 0 && (
@@ -99,7 +103,11 @@ const CancelPurchaseFeatureList = ( {
 			) }
 			{ cancellationChanges.length > 0 && (
 				<VStack spacing={ 2 }>
-					<Text as="p">{ __( 'We will also make these changes to your site:' ) }</Text>
+					<Text as="p">
+						{ purchase.is_plan
+							? __( 'We will also make these changes to your site:' )
+							: __( "Here's what will happen:" ) }
+					</Text>
 					<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
 						{ cancellationChanges.map( ( change ) => (
 							<li key={ change.getSlug() }>

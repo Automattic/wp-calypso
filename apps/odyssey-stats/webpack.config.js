@@ -13,10 +13,13 @@ const {
 	defaultRequestToHandle,
 } = require( '@wordpress/dependency-extraction-webpack-plugin/lib/util' );
 const autoprefixerPlugin = require( 'autoprefixer' );
+const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
+const prefixSelectorPlugin = require( 'postcss-prefix-selector' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../../build-tools/babel/babel-loader-cache-identifier' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
+const cssScope = require( './webpack-css-scope' );
 
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -69,6 +72,14 @@ module.exports = {
 	module: {
 		strictExportPresence: true,
 		rules: [
+			// Disable `resolve.fullySpecified` for .mjs and .js files. Some
+			// dependencies ship .mjs that imports bare paths like
+			// `fast-deep-equal/es6`, which webpack would otherwise reject as
+			// not fully specified.
+			{
+				test: /\.m?js$/,
+				resolve: { fullySpecified: false },
+			},
 			TranspileConfig.loader( {
 				workerCount: 2,
 				configFile: path.resolve( '../../babel.config.js' ),
@@ -86,17 +97,20 @@ module.exports = {
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
-				includePaths: [ __dirname ],
 				postCssOptions: {
 					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
-					plugins: [ autoprefixerPlugin() ],
+					plugins: [
+						// Scopes this repo's own component styles to .jp-stats-dashboard and
+						// .jp-stats-widget (Odyssey's mount points), so generic classes (`.card`,
+						// `.button`, etc.) can't collide with wp-admin's own chrome. See
+						// AGENTS.md > CSS Scoping and webpack-css-scope.js.
+						prefixSelectorPlugin( cssScope ),
+						autoprefixerPlugin(),
+					],
 				},
-				prelude: `@use '${ require.resolve(
-					'calypso/assets/stylesheets/shared/_utils.scss'
-				) }' as *;`,
 			} ),
 			FileConfig.loader(),
 			{
@@ -106,12 +120,30 @@ module.exports = {
 		],
 	},
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		extensions: [ '.json', '.js', '.mjs', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 		alias: {
 			// Resolve fast-deep-equal/es6 to fast-deep-equal/es6/index.js.
 			'fast-deep-equal/es6': 'fast-deep-equal/es6/index.js',
+			// Keep @wordpress/components' base CSS out of the main bundle. wp-admin normally serves
+			// that stylesheet already (see src/lib/load-wp-components-style.ts), and a second,
+			// independently-versioned copy of these unnamespaced class names collides with
+			// wp-admin's own component instances. `style.scss` imports it unconditionally because
+			// Calypso/Blaze/Stepper are standalone SPAs that genuinely need it, so stub that
+			// import out for this build only...
+			'@wordpress/components/build-style/style.css': path.join(
+				__dirname,
+				'src/styles/empty-vendor-components.css'
+			),
+			// ...and expose the real file under a name of our own, so `load-wp-components-style.ts`
+			// can pull it in as an async chunk on the sites where wp-admin doesn't provide it.
+			// Resolved by path rather than `require.resolve`, which rejects this subpath: the
+			// package's `exports` map doesn't list it, though webpack's own resolver accepts it.
+			'odyssey-wp-components-style': path.join(
+				__dirname,
+				'../../node_modules/@wordpress/components/build-style/style.css'
+			),
 		},
 	},
 	node: false,
@@ -122,20 +154,40 @@ module.exports = {
 		} ),
 		...SassConfig.plugins( {
 			filename: '[name].min.css',
-			chunkFilename: '[contenthash].css',
+			// [name] resolves from the `webpackChunkName` magic comment on the dynamic `import()`
+			// that pulled the chunk in (falls back to a numeric id for chunks with none), matching
+			// the JS chunkFilename pattern below instead of shipping every split CSS file under an
+			// unreadable bare hash.
+			chunkFilename: '[name].[contenthash].css',
 			minify: ! isDevelopment,
 		} ),
 		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useDefaults: false,
-			requestToHandle: defaultRequestToHandle,
+			requestToHandle: ( request ) => {
+				if ( request === 'react-dom/client' ) {
+					return 'wp-element';
+				}
+
+				return defaultRequestToHandle( request );
+			},
 			requestToExternal: ( request ) => {
+				if ( request === 'react-dom/client' ) {
+					return [ 'wp', 'element' ];
+				}
+
 				if (
 					! [
 						'lodash',
 						'lodash-es',
 						'react',
 						'react-dom',
+						// Externalize the JSX runtime alongside react/react-dom so it matches the
+						// React that WordPress provides. Bundling it (the default here, since it is
+						// absent from this allow list) ships an older React's runtime, whose elements
+						// React 19 rejects ("A React Element from an older version of React was rendered").
+						'react/jsx-runtime',
+						'react/jsx-dev-runtime',
 						'@wordpress/api-fetch',
 						'@wordpress/components',
 						'@wordpress/compose',
@@ -173,6 +225,11 @@ module.exports = {
 			'calypso/lib/explat/internals/logger-browser-replacement'
 		),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
+		new MomentTimezoneDataPlugin( {
+			startYear: 2000,
+			endYear: 2030,
+			cacheDir: path.resolve( cachePath, 'moment-timezone' ),
+		} ),
 		new ExtensiveLodashReplacementPlugin(),
 		new InlineConstantExportsPlugin( /\/client\/state\/action-types.[tj]s$/ ),
 		new InlineConstantExportsPlugin( /\/client\/state\/themes\/action-types.[tj]s$/ ),
@@ -200,6 +257,10 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-site-purchases$/,
 			path.resolve( __dirname, 'src/components/odyssey-query-site-purchases' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-sites$/,
+			path.resolve( __dirname, 'src/components/odyssey-query-sites' )
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-products-list$/,

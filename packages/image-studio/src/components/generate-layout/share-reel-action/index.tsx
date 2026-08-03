@@ -4,11 +4,13 @@ import { share } from '@wordpress/icons';
 import { SocialLogo } from 'social-logos';
 import { useGenericShare } from '../../../hooks/use-generic-share';
 import { useReelShare } from '../../../hooks/use-reel-share';
+import { ReelShareConfirmationDialog } from '../../reel-share-confirmation-dialog';
+import type { JSX } from 'react';
 import './style.scss';
 
 export function ShareReelAction(): JSX.Element | null {
-	const reel = useReelShare();
-	const generic = useGenericShare();
+	const reel = useReelShare( 'modal' );
+	const generic = useGenericShare( 'modal' );
 
 	if ( ! reel.isVisible && ! generic.isVisible ) {
 		return null;
@@ -47,9 +49,15 @@ export function ShareReelAction(): JSX.Element | null {
 					showTooltip
 					disabled={ reel.isSharing }
 					isBusy={ reel.isSharing }
-					onClick={ reel.handleShare }
+					onClick={ reel.requestShare }
 				/>
 			) }
+			<ReelShareConfirmationDialog
+				isOpen={ reel.isConfirming }
+				igDisplayName={ reel.igDisplayName }
+				onConfirm={ reel.confirmShare }
+				onCancel={ reel.cancelShare }
+			/>
 		</div>
 	);
 }

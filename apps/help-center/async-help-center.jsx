@@ -1,4 +1,6 @@
 /* global helpCenterData */
+import './config';
+import './help-center.scss';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import { createRoot } from 'react-dom/client';
@@ -11,9 +13,6 @@ export default function loadHelpCenter() {
 	const container = document.createElement( 'div' );
 	container.id = 'jetpack-help-center';
 	document.body.appendChild( container );
-	const botProps = helpCenterData.isCommerceGarden
-		? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
-		: {};
 
 	return import( '@automattic/help-center' ).then( ( { default: HelpCenter } ) =>
 		createRoot( container ).render(
@@ -27,7 +26,8 @@ export default function loadHelpCenter() {
 					onboardingUrl="https://wordpress.com/start"
 					handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
 					product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
-					{ ...botProps }
+					newInteractionsBotSlug={ helpCenterData.newInteractionsBotSlug }
+					newLoggedOutInteractionsBotSlug={ helpCenterData.newLoggedOutInteractionsBotSlug }
 				/>
 			</QueryClientProvider>
 		)

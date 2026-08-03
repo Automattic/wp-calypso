@@ -1,5 +1,7 @@
-.upgrade-popover {
-	z-index: 100000;
+@import "@automattic/typography/styles/variables";
+
+.popover.upgrade-popover {
+	z-index: 100201;
 	border-radius: 4px;
 
 	.popover__inner {

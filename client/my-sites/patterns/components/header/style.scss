@@ -1,6 +1,6 @@
-
-@import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/styles/typography";
 @import "calypso/my-sites/patterns/mixins";
 
 .patterns-header {

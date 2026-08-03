@@ -1,9 +1,15 @@
 @import '@wordpress/base-styles/variables';
-@import '../../styles/mixins';
 
 .agent-manager-support-guides-wrapper {
 	height: calc( 100% - 32px );
 	padding: 16px;
+
+	.agent-manager-support-guides__title {
+		margin: 0;
+		font-size: $font-size-small;
+		font-weight: 600;
+		color: var( --color-foreground );
+	}
 
 	.agent-manager-support-guides__status {
 		text-align: center;
@@ -17,6 +23,9 @@
 	}
 
 	.components-search-control {
+		// Add space below the search bar, on top of the `VStack` gap.
+		margin-bottom: 8px;
+
 		.components-input-control__container {
 			background-color: var( --color-muted );
 
@@ -53,7 +62,8 @@
 	.components-item-group {
 		border-radius: 16px;
 		border-color: var( --color-muted );
-		max-height: 85%;
+		// Cap the list height so long lists scroll instead of growing the panel.
+		max-height: 80%;
 		overflow-y: auto;
 
 		div[role='listitem'] {
@@ -80,7 +90,7 @@
 }
 
 // Docked chat overrides
-@include docked-chat-without-modal {
+.agents-manager-chat--docked {
 	.agent-manager-support-guides-wrapper {
 		padding-left: 0;
 		padding-right: 0;

@@ -22,7 +22,19 @@ export type McpAbility = {
 	enabled: boolean;
 	/** When false, hide this tool from account settings UIs. */
 	visible?: boolean;
+	/** Whether this ability is read-only. The backend guarantees this as of AIINT-469, but treat it as optional since older/partial payloads may omit it — fall back to `annotations.readonly`. */
+	readonly?: boolean;
+	/** The display group this ability belongs to — a clean slug (e.g. `site`), decoupled from any STRAP facade's tool key. `null`/absent for abilities with no resolved group. */
+	group?: string | null;
 	annotations?: McpAbilityAnnotations;
+};
+
+/** Ordered display-group descriptor for the settings UI's middle grouping layer (AIINT-469). A group's members usually come from one STRAP facade, but multiple facades can resolve to the same group (e.g. Create Site into Site), and standalone abilities can declare a group directly in config. */
+export type McpGroupDescriptor = {
+	name: string;
+	label: string;
+	description: string;
+	order: number;
 };
 
 export type McpSiteOverride = {
@@ -30,12 +42,19 @@ export type McpSiteOverride = {
 	account_tools_enabled?: boolean;
 	site_level_enabled?: boolean;
 	abilities?: Record< string, unknown >;
+	/** Site-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or a bare group slug (e.g. `site`). */
+	group_intents?: Record< string, boolean >;
 };
 
 export type McpAbilities = {
 	account?: Record< string, McpAbility >;
 	site?: Record< string, McpAbility >; // Site-scoped ability defaults
 	sites?: McpSiteOverride[]; // Array of site-specific overrides
+	site_level_enabled_default?: boolean;
+	/** Ordered display-group descriptors (AIINT-469). */
+	groups?: McpGroupDescriptor[];
+	/** Account-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or a bare group slug (e.g. `site`). */
+	group_intents?: Record< string, boolean >;
 };
 
 export interface UserSettings {
@@ -52,6 +71,7 @@ export interface UserSettings {
 	user_email: string;
 	user_login: string;
 	user_URL: string;
+	last_admin_activity_timestamp: number | string;
 	language?: string;
 	locale_variant?: string;
 	i18n_empathy_mode?: boolean;
@@ -97,4 +117,10 @@ export interface PasswordValidationResponse {
 			explanation: string;
 		}[];
 	};
+}
+
+export interface SendVerificationEmailResponse {
+	success: boolean;
+	// Seconds until another verification email may be requested.
+	retry_after?: number;
 }

@@ -1,6 +1,6 @@
 import { useMastodonConnectionQuery, useMastodonConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Spinner, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -10,15 +10,15 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import { normalizeHandle } from 'calypso/reader/social/utils/normalize-handle';
 import { mastodonComposerConfig } from './composer-config';
-import { PROFILE_TAB, SETTINGS_TAB, TIMELINE_TAB } from './helper';
+import { NOTIFICATIONS_TAB, PROFILE_TAB, TIMELINE_TAB } from './helper';
 import { MastodonNavigation } from './mastodon-navigation';
+import { NotificationsPanel } from './notifications-panel';
 import { ProfilePanel } from './profile-panel';
-import { SettingsPanel } from './settings-panel';
 import { TimelinePanel } from './timeline-panel';
 import { MastodonReauthGate, useMastodonReauthGateState } from './use-mastodon-reauth-gate';
 import type { MastodonConnection } from '@automattic/api-core';
 
-const VALID_TABS = new Set( [ TIMELINE_TAB, PROFILE_TAB, SETTINGS_TAB ] );
+const VALID_TABS = new Set( [ TIMELINE_TAB, NOTIFICATIONS_TAB, PROFILE_TAB ] );
 
 interface Props {
 	connectionId: number;
@@ -63,8 +63,9 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 		return (
 			<ReaderMain className="mastodon-view">
 				<DocumentHead title={ translate( 'Mastodon ‹ Reader' ) } />
-				<div role="status" aria-live="polite">
-					{ translate( 'Loading…' ) }
+				<div className="wp-spinner-wrapper" role="status" aria-live="polite">
+					<Spinner />
+					<p>{ translate( 'Loading…' ) }</p>
 				</div>
 			</ReaderMain>
 		);
@@ -114,8 +115,8 @@ function renderTab( slug: string, connection: MastodonConnection ) {
 	switch ( slug ) {
 		case PROFILE_TAB:
 			return <ProfilePanel connection={ connection } />;
-		case SETTINGS_TAB:
-			return <SettingsPanel />;
+		case NOTIFICATIONS_TAB:
+			return <NotificationsPanel connection={ connection } />;
 		case TIMELINE_TAB:
 		default:
 			return <TimelinePanel connection={ connection } />;

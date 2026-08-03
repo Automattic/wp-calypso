@@ -1,7 +1,7 @@
+import { groupBy, partition } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { find, groupBy, isEqual, partition, property } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 import { Fragment, Component } from 'react';
-import ReactDOM from 'react-dom';
 import Item from './item';
 
 /**
@@ -70,7 +70,7 @@ class Suggestions extends Component< Props, State > {
 				return foundIndex;
 			}
 
-			const suggestion = find( category.suggestions, { index } );
+			const suggestion = category.suggestions.find( ( item ) => item.index === index );
 			return suggestion ? suggestion.originalIndex : -1;
 		}, -1 );
 
@@ -79,7 +79,7 @@ class Suggestions extends Component< Props, State > {
 
 	moveSelectionDown = (): void => {
 		const position = ( this.state.suggestionPosition + 1 ) % this.getSuggestionsCount();
-		const element = ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] );
+		const element = this.refsCollection[ 'suggestion_' + position ];
 		if ( element instanceof Element ) {
 			element.scrollIntoView( { block: 'nearest' } );
 		}
@@ -91,7 +91,7 @@ class Suggestions extends Component< Props, State > {
 		const position =
 			( this.state.suggestionPosition - 1 + this.getSuggestionsCount() ) %
 			this.getSuggestionsCount();
-		const element = ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] );
+		const element = this.refsCollection[ 'suggestion_' + position ];
 		if ( element instanceof Element ) {
 			element.scrollIntoView( { block: 'nearest' } );
 		}
@@ -121,8 +121,9 @@ class Suggestions extends Component< Props, State > {
 				break;
 
 			case 'Enter':
-				this.state.suggestionPosition >= 0 &&
+				if ( this.state.suggestionPosition >= 0 ) {
 					this.suggest( this.getOriginalIndexFromPosition( this.state.suggestionPosition ) );
+				}
 				break;
 		}
 	};
@@ -148,9 +149,10 @@ class Suggestions extends Component< Props, State > {
 			( suggestion ) => !! suggestion.category
 		);
 
-		// For all intents and purposes `groupBy` keeps the order stable
-		// https://github.com/lodash/lodash/issues/2212
-		const byCategory = groupBy( withCategory, property( 'category' ) );
+		// `groupBy` preserves the input order within each group.
+		// `withCategory` is the truthy-category half of the partition above, so
+		// `category` is always present here.
+		const byCategory = groupBy( withCategory, ( suggestion ) => suggestion.category! );
 
 		const categories: CategorizedSuggestions = Object.entries( byCategory ).map(
 			( [ category, suggestions ] ) => ( {

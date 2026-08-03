@@ -11,6 +11,7 @@ import {
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
+import { wpcomLink } from '../../utils/link';
 import { useAppContext } from '../context';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
@@ -134,24 +135,16 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		}
 
 		const currentPath = window.location.href;
-		const path = config( 'wpcom_login_url' ) || '/log-in';
+		const path = config( 'wpcom_login_url' ) || wpcomLink( '/log-in' );
 		const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
 		window.location.href = loginUrl;
-	}, [] );
+	}, [ supports.startStoreRoute ] );
 
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.
 	useEffect( () => {
 		const isAuthError = ( { statusCode, error = '' }: WPError ) => {
-			if ( [ 'authorization_required' ].includes( error ) ) {
-				return true;
-			}
-
-			if ( statusCode === 401 && error === 'rest_forbidden' ) {
-				return true;
-			}
-
-			return false;
+			return statusCode === 401 && [ 'authorization_required', 'rest_forbidden' ].includes( error );
 		};
 
 		const handleEvent = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) => {

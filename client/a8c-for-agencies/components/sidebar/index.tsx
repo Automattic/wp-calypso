@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, type JSX } from 'react';
 import JetpackIcons from 'calypso/components/jetpack/jetpack-icons';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
@@ -30,6 +30,7 @@ type Props = {
 		path: string;
 		link: string;
 		title: string;
+		badge?: string;
 		onClickMenuItem?: ( path: string ) => void;
 		withChevron?: boolean;
 		isExternalLink?: boolean;

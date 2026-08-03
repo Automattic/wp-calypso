@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
-import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
+import SignupFormSocialFirst, {
+	MobileCompactTosNotice,
+} from 'calypso/blocks/signup-form/signup-form-social-first';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -104,6 +106,118 @@ describe( 'SignupFormSocialFirst', () => {
 			// Verify filtered buttons are rendered
 			expect( screen.getByText( /Continue with Google/i ) ).toBeInTheDocument();
 			expect( screen.getByText( /Continue with PayPal/i ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'isMobileCompactVariant', () => {
+		test( 'renders the mobile-compact wrapper class', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant />
+			);
+
+			expect(
+				container.querySelector( '.signup-form-social-first--mobile-compact' )
+			).toBeInTheDocument();
+		} );
+
+		test( 'omits the "Have an account? Log in" paragraph', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant />
+			);
+
+			expect(
+				container.querySelector( '.signup-form-social-first__login-link' )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'renders the "options above" ToS when no customTosElement is provided', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant />
+			);
+
+			expect(
+				screen.getByText( /By continuing with any of the options above/i )
+			).toBeInTheDocument();
+			expect(
+				screen.queryByText( /By continuing with any of the options listed/i )
+			).not.toBeInTheDocument();
+			// Regression: exactly one tos-link <p> — guards against double-wrapping
+			// when a future caller routes <MobileCompactTosNotice /> through
+			// customTosElement (which renderTermsOfService would wrap in <p>).
+			expect( container.querySelectorAll( '.signup-form-social-first__tos-link' ) ).toHaveLength(
+				1
+			);
+		} );
+
+		test( 'renders the partner customTosElement instead of the default ToS', () => {
+			const customTos = <span data-testid="partner-tos">Partner terms</span>;
+
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					isMobileCompactVariant
+					customTosElement={ customTos }
+				/>
+			);
+
+			expect( screen.getByTestId( 'partner-tos' ) ).toBeInTheDocument();
+			expect(
+				screen.queryByText( /By continuing with any of the options above/i )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'renders the OR divider between social and email blocks', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant />
+			);
+
+			expect( container.querySelector( '.auth-form__separator' ) ).toBeInTheDocument();
+		} );
+
+		test( 'forwards allowedSocialServices to the social row', () => {
+			// `apple_oauth_client_id` isn't mocked, so the Apple button skips itself —
+			// use the same google/paypal pair the upstream allowedSocialServices test uses.
+			const allowedServices: SignupAllowedService[] = [ 'google', 'paypal' ];
+
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					isMobileCompactVariant
+					allowedSocialServices={ allowedServices }
+				/>
+			);
+
+			expect( screen.getByText( /Continue with Google/i ) ).toBeInTheDocument();
+			expect( screen.getByText( /Continue with PayPal/i ) ).toBeInTheDocument();
+			expect( screen.queryByText( /Continue with GitHub/i ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'MobileCompactTosNotice', () => {
+		test( 'renders the "options above" copy', () => {
+			render( <MobileCompactTosNotice /> );
+
+			expect(
+				screen.getByText( /By continuing with any of the options above/i )
+			).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'isEmailAtBottom', () => {
+		test( 'renders the email block after the social buttons when isEmailAtBottom is true', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isEmailFirstVariant isEmailAtBottom />
+			);
+
+			const emailBlock = container.querySelector( '.signup-form-social-first-email' );
+			const googleButton = screen.getByText( /Continue with Google/i );
+
+			expect( emailBlock ).not.toBeNull();
+			// DOCUMENT_POSITION_FOLLOWING (4) → emailBlock follows googleButton in DOM order.
+			expect(
+				googleButton.compareDocumentPosition( emailBlock as Node ) &
+					Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
 		} );
 	} );
 } );

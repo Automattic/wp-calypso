@@ -19,6 +19,7 @@ export class SummaryInList extends Component {
 		} else {
 			recordTracksEvent( 'calypso_notification_note_open', {
 				note_type: this.props.note.type,
+				...( this.props.note.variant ? { variant: this.props.note.variant } : {} ),
 			} );
 			this.props.selectNote( this.props.note.id );
 		}

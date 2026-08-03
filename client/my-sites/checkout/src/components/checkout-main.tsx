@@ -1,4 +1,3 @@
-import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
@@ -42,6 +41,7 @@ import { existingPayPalPPCPPrefix } from '../hooks/use-create-payment-methods/us
 import useCreatePaymentSubmittedAndProcessingCallback from '../hooks/use-create-payment-submitted-and-processing-callback';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
+import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
@@ -58,7 +58,6 @@ import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
-import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import upiProcessor from '../lib/upi-processor';
 import weChatProcessor from '../lib/we-chat-processor';
@@ -199,7 +198,6 @@ export default function CheckoutMain( {
 	} )();
 
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const reduxDispatch = useDispatch();
 
 	const updatedSiteSlug = useMemo( () => {
@@ -439,9 +437,6 @@ export default function CheckoutMain( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isRazorpayLoading,
-		razorpayLoadingError,
-		razorpayConfiguration,
 		storedCards,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
@@ -534,7 +529,6 @@ export default function CheckoutMain( {
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
-			razorpayConfiguration,
 			recaptchaClientId,
 			fromSiteSlug,
 			isJetpackNotAtomic,
@@ -551,7 +545,6 @@ export default function CheckoutMain( {
 			updatedSiteId,
 			stripe,
 			stripeConfiguration,
-			razorpayConfiguration,
 			updatedSiteSlug,
 			recaptchaClientId,
 			fromSiteSlug,
@@ -583,8 +576,6 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'bancontact', transactionData, dataForProcessor ),
 			wechat: ( transactionData: unknown ) =>
 				weChatProcessor( transactionData, dataForProcessor, translate ),
-			netbanking: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'netbanking', transactionData, dataForProcessor ),
 			ideal: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'ideal', transactionData, dataForProcessor ),
 			sofort: ( transactionData: unknown ) =>
@@ -609,8 +600,6 @@ export default function CheckoutMain( {
 			'paypal-express': () => payPalProcessor( dataForProcessor ),
 			'paypal-js': ( transactionData: unknown ) =>
 				payPalJsProcessor( transactionData, dataForProcessor ),
-			razorpay: ( transactionData: unknown ) =>
-				razorpayProcessor( transactionData, dataForProcessor, translate ),
 		} ),
 		[ dataForProcessor, sitelessCheckoutType, translate ]
 	);
@@ -667,6 +656,8 @@ export default function CheckoutMain( {
 
 	const isCheckoutV2ExperimentLoading = false;
 	const [ isCheckoutUiRedesignLoading ] = useCheckoutUiRedesignExperiment();
+	const { isLoading: isMobileCheckoutStickySummaryLoading } =
+		useMobileCheckoutStickySummaryExperiment();
 
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
@@ -692,7 +683,10 @@ export default function CheckoutMain( {
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
 		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
-		{ name: translate( 'Loading checkout' ), isLoading: isCheckoutUiRedesignLoading },
+		{
+			name: translate( 'Loading checkout' ),
+			isLoading: isCheckoutUiRedesignLoading || isMobileCheckoutStickySummaryLoading,
+		},
 	];
 
 	if ( shouldSetMigrationSticker ) {
@@ -840,7 +834,7 @@ export default function CheckoutMain( {
 				translate( 'An error occurred during your purchase.' )
 			);
 
-			reduxDispatch( errorNotice( errorNoticeText ) );
+			reduxDispatch( errorNotice( errorNoticeText, { id: 'checkout-payment-error' } ) );
 
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_payment_error', {

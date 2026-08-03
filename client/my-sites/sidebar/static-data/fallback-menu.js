@@ -139,20 +139,6 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/post/${ siteDomain }`,
 				},
-				{
-					parent: 'edit.php',
-					slug: 'edit-tags-phptaxonomycategory',
-					title: translate( 'Categories' ),
-					type: 'submenu-item',
-					url: `/settings/taxonomies/category/${ siteDomain }`,
-				},
-				{
-					parent: 'edit.php',
-					slug: 'edit-tags-phptaxonomypost_tag',
-					title: translate( 'Tags' ),
-					type: 'submenu-item',
-					url: `/settings/taxonomies/post_tag/${ siteDomain }`,
-				},
 			],
 		},
 		{
@@ -569,9 +555,9 @@ export default function buildFallbackResponse( {
 				{
 					parent: 'options-podcasting.php',
 					slug: 'options-podcasting-php',
-					title: translate( 'Podcasting' ),
+					title: translate( 'Podcast' ),
 					type: 'submenu-item',
-					url: `/settings/podcasting/${ siteDomain }`,
+					url: `https://${ siteDomain }/wp-admin/admin.php?page=jetpack-podcast`,
 				},
 				{
 					parent: 'options-general.php',

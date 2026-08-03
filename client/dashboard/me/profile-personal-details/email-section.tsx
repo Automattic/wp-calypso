@@ -1,11 +1,15 @@
-import { cancelPendingEmailChangeMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import { accountRecoveryQuery, cancelPendingEmailChangeMutation } from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { __experimentalInputControl as InputControl, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useState, useEffect, useCallback } from 'react';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/utils';
+import { isCustomDomainEmail } from './email-utils';
 import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
 
@@ -13,7 +17,8 @@ interface EmailSectionProps {
 	value: string;
 	onChange: ( value: string ) => void;
 	disabled?: boolean;
-	userData: UserSettings;
+	userSettings: UserSettings;
+	isEmailVerified: boolean;
 	onValidationChange?: ( isValid: boolean ) => void;
 }
 
@@ -38,13 +43,17 @@ export default function EmailSection( {
 	value,
 	onChange,
 	disabled = false,
-	userData,
+	userSettings,
+	isEmailVerified,
 	onValidationChange,
 }: EmailSectionProps ) {
 	const mutation = cancelPendingEmailChangeMutation();
 
 	const { mutate: cancelPendingEmail, isPending: isCancelPending } = useMutation( {
-		...mutation,
+		...withSnackbar( mutation, {
+			success: __( 'Pending email change canceled.' ),
+			error: __( 'Failed to cancel pending email change.' ),
+		} ),
 		onSuccess: ( data, variables, context ) => {
 			// Call the original onSuccess from the mutation if it exists
 			if ( mutation.onSuccess ) {
@@ -53,17 +62,11 @@ export default function EmailSection( {
 			// Use the fresh data from the mutation response
 			onChange( data.user_email || '' );
 		},
-		meta: {
-			snackbar: {
-				success: __( 'Pending email change canceled.' ),
-				error: __( 'Failed to cancel pending email change.' ),
-			},
-		},
 	} );
 
-	const isEmailPending = userData.user_email_change_pending;
-	const pendingEmail = userData.new_user_email;
-	const currentEmail = isEmailPending && pendingEmail ? pendingEmail : userData.user_email;
+	const isEmailPending = userSettings.user_email_change_pending;
+	const pendingEmail = userSettings.new_user_email;
+	const currentEmail = isEmailPending && pendingEmail ? pendingEmail : userSettings.user_email;
 
 	const [ emailValidationState, setEmailValidationState ] =
 		useEmailValidation( onValidationChange );
@@ -96,9 +99,27 @@ export default function EmailSection( {
 		validateEmail( value );
 	}, [ value, validateEmail ] );
 
+	const { data: accountRecovery } = useQuery( accountRecoveryQuery() );
+	const isAccountRecoveryReady = accountRecovery !== undefined;
+	const hasUsableRecoveryEmail =
+		!! accountRecovery?.email &&
+		! recoveryEmailMatchesAccountEmail( accountRecovery.email, userSettings.user_email );
+	const hasRecoveryMethod = hasUsableRecoveryEmail || !! accountRecovery?.phone;
+
+	const showCustomDomainWarning =
+		! isEmailPending &&
+		!! value &&
+		emailValidator.validate( value ) &&
+		isCustomDomainEmail( value ) &&
+		isAccountRecoveryReady &&
+		! hasRecoveryMethod;
+
 	const getValidationClass = () => {
 		if ( isEmailPending ) {
 			return '';
+		}
+		if ( showCustomDomainWarning ) {
+			return 'has-warning';
 		}
 		if ( emailValidationState === 'valid' ) {
 			return 'has-success';
@@ -137,6 +158,24 @@ export default function EmailSection( {
 			);
 		}
 
+		if ( showCustomDomainWarning ) {
+			return (
+				<>
+					<Icon icon={ info } size={ 16 } />
+					<span>
+						{ createInterpolateElement(
+							__(
+								'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. <a>Set up a recovery email or phone number</a> to keep access to your account.'
+							),
+							{
+								a: <Link to="/me/security/account-recovery" />,
+							}
+						) }
+					</span>
+				</>
+			);
+		}
+
 		// Input validation messages
 		if ( value && value !== currentEmail ) {
 			if ( emailValidationState === 'valid' ) {
@@ -158,9 +197,16 @@ export default function EmailSection( {
 			}
 		}
 
+		// The saved email address has never been verified (and no change is pending).
+		if ( ! isEmailVerified ) {
+			return __( 'Your email has not been verified yet.' );
+		}
+
 		return null;
 	}, [
 		isEmailPending,
+		isEmailVerified,
+		showCustomDomainWarning,
 		value,
 		currentEmail,
 		emailValidationState,

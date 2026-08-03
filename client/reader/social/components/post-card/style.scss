@@ -7,11 +7,14 @@
 	.social-post-card-header__reply-context-link,
 	.social-post-card-counts__link,
 	.social-post-card-counts__reply-button,
+	.social-post-card-counts__blog-about,
 	.social-post-card-timestamp-link,
 	.social-post-card-body a,
 	a.social-post-card-embed-external,
+	.social-post-card-embed-external__publication-pill-link,
 	.social-post-card-embed-quote-link,
 	button.social-post-card-embed-images__item,
+	button.social-post-card-embed-video--thumbnail,
 	.social-post-card-embed-audio,
 	.social-post-card-embed-gifv,
 	.social-post-card-content-warning .components-button,
@@ -56,7 +59,7 @@
 .social-post-card.components-card {
 	box-shadow: none;
 	border-radius: 0;
-	border-bottom: 1px solid var( --studio-gray-5 );
+	border-bottom: 1px solid var( --color-border-subtle );
 	background: transparent;
 
 	&:hover {
@@ -71,7 +74,7 @@
 .social-post-card--compact.components-card {
 	border-radius: 8px;
 	border-bottom: none;
-	box-shadow: 0 0 0 1px var( --studio-gray-5 );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
 	background: transparent;
 
 	.components-card__body {
@@ -121,11 +124,14 @@ a.social-post-card-header__author:hover .social-post-card-header__display-name {
 	flex-shrink: 0;
 	border-radius: 50%;
 	object-fit: cover;
-	background: var( --studio-gray-5 );
+	background: var( --color-border-subtle );
+	// Calypso's global `img { height: auto }` overrides the height attribute,
+	// so non-square sources skew. Square the box so object-fit can crop.
+	aspect-ratio: 1 / 1;
 }
 
 .social-post-card-header__avatar--placeholder {
-	background: var( --studio-gray-10 );
+	background: var( --color-neutral-10 );
 }
 
 .social-post-card-header__author-text {
@@ -200,7 +206,7 @@ a.social-post-card-header__timestamp::after {
 	}
 
 	a {
-		color: var( --studio-blue-50 );
+		color: var( --color-link, var( --studio-blue-50 ) );
 		text-decoration: none;
 
 		&:hover {
@@ -218,12 +224,29 @@ a.social-post-card-header__timestamp::after {
 	padding-inline: 16px;
 	font-size: 0.875rem;
 	color: var( --studio-gray-50 );
-	border-block: 1px solid var( --studio-gray-5 );
+	border-block: 1px solid var( --color-border-subtle );
+}
 
-	+ .social-post-card-counts {
-		// Reuse the timestamp's bottom border as the counts row's top separator (no extra gap).
-		margin-block-start: 8px;
-	}
+.social-post-card-timestamp + .social-post-card-counts,
+.social-post-card-stats + .social-post-card-counts {
+	margin-block-start: 8px;
+}
+
+.social-post-card-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-inline: -16px;
+	padding-block: 8px;
+	padding-inline: 16px;
+	font-size: 0.875rem;
+	color: var( --studio-gray-50 );
+	border-block-end: 1px solid var( --color-border-subtle );
+}
+
+.social-post-card-stats__item strong {
+	color: var( --studio-gray-100 );
+	font-weight: 600;
 }
 
 // Wrapper anchor when a permalink is available; matches the hover-reveal
@@ -259,18 +282,37 @@ a.social-post-card-header__timestamp::after {
 	margin-block-start: 8px;
 }
 
+.social-post-card-counts__blog-about {
+	margin-inline-start: auto;
+
+	.social-post-card-counts__blog-about-button {
+		color: var( --studio-gray-50 );
+
+		&:hover,
+		&:focus-visible {
+			color: var( --studio-blue-50 );
+		}
+	}
+}
+
 .social-post-card-counts {
 	margin-top: 8px;
 	font-size: 0.875rem;
 	color: var( --studio-gray-50 );
 	gap: 16px;
 
-	span,
+	// Scope to direct-child spans so the cell padding doesn't leak into the
+	// count-wrapping spans inside <LikeButton> / <RepostButton>, which would
+	// otherwise stack 6px of padding on top of the flex gap and push the
+	// numbers further from their icons than the replies cell.
+	> span,
 	.social-post-card-counts__link,
 	.social-post-card-counts__reply-button {
 		display: inline-flex;
 		align-items: center;
-		gap: 4px;
+		gap: 6px;
+		padding: 4px 6px;
+		border-radius: 8px;
 	}
 
 	.social-post-card-counts__link {
@@ -280,13 +322,13 @@ a.social-post-card-header__timestamp::after {
 		&:hover,
 		&:focus-visible {
 			color: var( --studio-blue-50 );
+			background: var( --studio-gray-0 );
 		}
 	}
 
 	.social-post-card-counts__reply-button {
 		background: transparent;
 		border: 0;
-		padding: 0;
 		cursor: pointer;
 		color: inherit;
 		font: inherit;
@@ -294,6 +336,7 @@ a.social-post-card-header__timestamp::after {
 		&:hover,
 		&:focus-visible {
 			color: var( --studio-blue-50 );
+			background: var( --studio-gray-0 );
 		}
 	}
 
@@ -351,7 +394,7 @@ a.social-post-card-header__timestamp::after {
 .social-post-card-embed-images__item {
 	display: block;
 	overflow: hidden;
-	background: var( --studio-gray-5 );
+	background: var( --color-border-subtle );
 
 	img {
 		width: 100%;
@@ -386,6 +429,27 @@ a.social-post-card-header__timestamp::after {
 	background: var( --studio-gray-90 );
 }
 
+// Reset native button chrome so the thumbnail-as-play-button matches the
+// flush card styling. The button still has the inner-anchor z-index lift
+// on `.social-post-card-link` so it intercepts clicks above the
+// timestamp ::after overlay.
+button.social-post-card-embed-video--thumbnail {
+	display: block;
+	padding: 0;
+	border: 0;
+	background: var( --studio-gray-90 );
+	cursor: pointer;
+	width: 100%;
+	color: inherit;
+	font: inherit;
+	text-align: inherit;
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
+}
+
 .social-post-card-embed-video__thumbnail {
 	width: 100%;
 	height: auto;
@@ -415,12 +479,12 @@ a.social-post-card-header__timestamp::after {
 .social-post-card-embed-external {
 	display: block;
 	margin-top: 8px;
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var( --color-border-subtle );
 	border-radius: 8px;
 	overflow: hidden;
 	text-decoration: none;
-	color: inherit;
-	background: var( --studio-white );
+	color: var( --color-text );
+	background: var( --color-surface );
 
 	&:hover {
 		background: var( --studio-gray-0 );
@@ -437,6 +501,32 @@ a.social-post-card-header__timestamp::after {
 	border-radius: 8px;
 	object-fit: cover;
 	flex-shrink: 0;
+}
+
+// Full-width cover image used when `long_form.document.cover_image` is
+// set. The 1.91:1 aspect ratio matches OpenGraph's documented standard
+// for `og:image` (and what Bluesky's article cards target), so the
+// image stays consistent whether the underlying record carried a
+// portrait or landscape blob — the crop favours the centre of the
+// image.
+.social-post-card-embed-external__cover {
+	display: block;
+	width: 100%;
+	aspect-ratio: 1.91 / 1;
+	object-fit: cover;
+	background: var( --color-border-subtle );
+}
+
+// Padded text block under the long-form cover image (title / description /
+// meta line). The cover image runs full-bleed above it.
+.social-post-card-embed-external__content {
+	padding: 12px;
+}
+
+// Published date · reading time, mirroring Bluesky's standard.site card.
+.social-post-card-embed-external__meta {
+	font-size: 0.75rem;
+	color: var( --studio-gray-50 );
 }
 
 .social-post-card-embed-external__title {
@@ -465,10 +555,77 @@ a.social-post-card-header__timestamp::after {
 	color: var( --studio-gray-50 );
 }
 
+// Publication "pill" — small attribution row sitting below the long-form
+// preview card. Mirrors Bluesky's own clients' card layout. Avatar + (name +
+// handle) stacked vertically + "View publication" link aligned to the
+// inline-end. Behaves as a horizontal flex row so a missing avatar or empty
+// handle collapses cleanly without leaving a hole.
+.social-post-card-embed-external__publication-pill {
+	margin-block-start: 8px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 12px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	background: var( --color-surface );
+}
+
+.social-post-card-embed-external__publication-pill-avatar {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	object-fit: cover;
+	flex-shrink: 0;
+	background: var( --color-border-subtle );
+}
+
+.social-post-card-embed-external__publication-pill-text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	flex: 1 1 auto;
+	line-height: 1.3;
+}
+
+.social-post-card-embed-external__publication-pill-name {
+	font-weight: 600;
+	font-size: 0.875rem;
+	color: var( --studio-gray-100 );
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.social-post-card-embed-external__publication-pill-handle {
+	font-size: 0.75rem;
+	color: var( --studio-gray-50 );
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.social-post-card-embed-external__publication-pill-link {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var( --color-primary );
+	text-decoration: none;
+	white-space: nowrap;
+
+	&:hover,
+	&:focus-visible {
+		text-decoration: underline;
+	}
+}
+
 .social-post-card-embed-quote-link {
 	display: block;
 	margin-top: 8px;
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var( --color-border-subtle );
 	border-radius: 8px;
 	overflow: hidden;
 	text-decoration: none;
@@ -482,7 +639,7 @@ a.social-post-card-header__timestamp::after {
 .social-post-card-embed-quote-tombstone {
 	margin-top: 8px;
 	padding: 12px;
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var( --color-border-subtle );
 	border-radius: 8px;
 	color: var( --studio-gray-50 );
 	font-size: 0.875rem;

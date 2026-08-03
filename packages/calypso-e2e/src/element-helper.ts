@@ -1,4 +1,4 @@
-import { Locator, Page, Frame } from 'playwright';
+import { Locator, Page, Frame, Response } from 'playwright';
 import envVariables from './env-variables';
 
 const coreNavTabParent = 'div.components-tab-panel__tabs';
@@ -51,6 +51,62 @@ export async function waitForElementEnabled(
 	] );
 
 	return elementHandle;
+}
+
+/**
+ * Waits for a locator attribute to match the expected pattern.
+ *
+ * This keeps shared helpers runner-neutral: callers can use it from both legacy
+ * Jest E2E and Playwright Test without importing `playwright/test`.
+ *
+ * @param {Locator} locator Target locator.
+ * @param {string} attributeName Attribute to read.
+ * @param {RegExp} pattern Expected attribute value pattern.
+ * @param {Object} options Optional timeout and diagnostic label.
+ * @param {number} options.timeout Timeout in milliseconds.
+ * @param {string} options.description Human-readable target description for errors.
+ * @param {string} options.state Locator state to wait for before reading the attribute.
+ * @returns {Promise<string>} Matching attribute value.
+ */
+export async function waitForLocatorAttribute(
+	locator: Locator,
+	attributeName: string,
+	pattern: RegExp,
+	options?: { timeout?: number; description?: string; state?: 'attached' | 'visible' }
+): Promise< string > {
+	const timeout = options?.timeout ?? 10000;
+	const description = options?.description ?? 'locator';
+	const state = options?.state ?? 'attached';
+	const deadline = Date.now() + timeout;
+	const interval = 250;
+	let lastValue: string | null = null;
+
+	do {
+		const timeRemaining = Math.max( deadline - Date.now(), 1 );
+		try {
+			await locator.waitFor( {
+				state,
+				timeout: Math.min( interval, timeRemaining ),
+			} );
+			lastValue = await locator.getAttribute( attributeName, {
+				timeout: Math.min( interval, timeRemaining ),
+			} );
+			pattern.lastIndex = 0;
+			if ( lastValue && pattern.test( lastValue ) ) {
+				return lastValue;
+			}
+		} catch {
+			// Retry until the explicit timeout below so callers get one clear error.
+		}
+
+		if ( Date.now() < deadline ) {
+			await locator.page().waitForTimeout( Math.min( interval, deadline - Date.now() ) );
+		}
+	} while ( Date.now() < deadline );
+
+	throw new Error(
+		`Timed out after ${ timeout }ms waiting for ${ description } to be ${ state } and ${ attributeName } to match ${ pattern }. Last value: ${ lastValue }`
+	);
 }
 
 /**
@@ -130,7 +186,11 @@ export async function clickNavTab(
  */
 export async function reloadAndRetry(
 	page: Page,
-	func: ( page: Page ) => Promise< void >
+	func: ( page: Page ) => Promise< void >,
+	options?: {
+		onReload?: ( response: Response | null ) => Promise< void > | void;
+		waitUntil?: 'load' | 'domcontentloaded' | 'networkidle' | 'commit';
+	}
 ): Promise< void > {
 	for ( let retries = 3; retries > 0; retries -= 1 ) {
 		try {
@@ -140,11 +200,90 @@ export async function reloadAndRetry(
 			if ( retries === 1 ) {
 				throw err;
 			} else {
-				await page.reload();
+				const response = await page.reload( { waitUntil: options?.waitUntil } );
+				await options?.onReload?.( response );
 			}
 		}
 	}
 	return;
+}
+
+export type AvailabilityClock = {
+	now: () => number;
+	sleep: ( ms: number ) => Promise< void >;
+};
+
+const realAvailabilityClock: AvailabilityClock = {
+	now: () => Date.now(),
+	sleep: ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) ),
+};
+
+/**
+ * Result of polling a single target for availability.
+ */
+export type ProbeTargetResult = {
+	label: string;
+	/** Time (relative to `AvailabilityProbe.measuredFrom`) at which the target first returned 200, or null if it never did within the cap. */
+	recoveredMs: number | null;
+	/** Last HTTP status seen: 200 when recovered, otherwise the final failing status, or -1 on network error. */
+	lastStatus: number;
+};
+
+/**
+ * Aggregate result of a post-publish availability probe.
+ */
+export type AvailabilityProbe = {
+	capMs: number;
+	measuredFrom: 'publish' | 'probe-start';
+	targets: ProbeTargetResult[];
+};
+
+/**
+ * Polls `getStatus` until it returns 200 or `capMs` elapses since the first call.
+ *
+ * Cap is strict: no poll starts and no sleep runs once the budget is exhausted.
+ * Each call receives the remaining budget so callers can clamp per-request timeouts.
+ * Clock is injectable for unit testing without real timers or network access.
+ */
+export async function pollUntilAvailable(
+	getStatus: ( remainingMs: number ) => Promise< number >,
+	{
+		capMs,
+		intervalMs,
+		clock = realAvailabilityClock,
+	}: { capMs: number; intervalMs: number; clock?: AvailabilityClock }
+): Promise< { recoveredAfterMs: number | null; lastStatus: number } > {
+	const start = clock.now();
+	const remaining = () => capMs - ( clock.now() - start );
+
+	let lastStatus = await getStatus( capMs );
+
+	while ( lastStatus !== 200 && remaining() > 0 ) {
+		await clock.sleep( Math.min( intervalMs, remaining() ) );
+		if ( remaining() <= 0 ) {
+			break;
+		}
+		lastStatus = await getStatus( remaining() );
+	}
+
+	if ( lastStatus === 200 ) {
+		return { recoveredAfterMs: clock.now() - start, lastStatus };
+	}
+	return { recoveredAfterMs: null, lastStatus };
+}
+
+/**
+ * Formats an availability probe for inclusion in a failure message.
+ */
+export function formatAvailabilityProbe( probe: AvailabilityProbe ): string {
+	const lines = probe.targets.map( ( target ) => {
+		if ( target.recoveredMs !== null ) {
+			return `  ${ target.label }: recovered after ${ target.recoveredMs }ms (since ${ probe.measuredFrom })`;
+		}
+		return `  ${ target.label }: not recovered within ${ probe.capMs }ms (last status ${ target.lastStatus })`;
+	} );
+
+	return [ `Availability probe (cap ${ probe.capMs }ms):`, ...lines ].join( '\n' );
 }
 
 /**

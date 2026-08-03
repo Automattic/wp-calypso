@@ -45,7 +45,7 @@ export default function FeaturedCardSite( { domain }: Props ) {
 			icon={ shouldShowAddAttachSite ? <Icon icon={ layout } /> : <SiteIcon site={ site } /> }
 			description={
 				shouldShowAddAttachSite ? (
-					__( 'Attach this domain name to an existing site.' )
+					__( 'Attach this domain name to a new or existing site.' )
 				) : (
 					<Truncate tooltip={ domain.site_slug } numberOfLines={ 1 }>
 						{ domain.site_slug }

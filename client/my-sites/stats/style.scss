@@ -1,5 +1,8 @@
 @use "sass:math";
 @import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "calypso/components/jetpack-page-layout/admin-ui-page";
 @import "calypso/my-sites/stats/modernized-tooltip-styles";
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles";
@@ -34,7 +37,7 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 }
 
 .stats {
-	--color-link: var(--theme-highlight-color);
+	--color-link: var(--color-accent);
 	--color-link-dark: var(--color-accent-dark);
 }
 
@@ -95,38 +98,79 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 		@include apply-improved-classic-dark-colors();
 	}
 
+	// The stats layout zeroes the page padding-bottom, leaving content flush
+	// against the footer. Restore a page-controlled gap. Applies to both the
+	// Calypso shell (Simple) and Odyssey/wp-admin (self-hosted).
+	.layout__primary .main > .admin-ui-page {
+		padding-block-end: $vertical-margin;
+
+		// Stop the last section stacking its own trailing space on the page gap
+		// above (otherwise varies by tab and site).
+		.stats > :last-child {
+			margin-block-end: 0;
+			padding-block-end: 0;
+
+			// Drop the flexible-grid `::after` balancer, whose `gap` adds a
+			// trailing row (as already done for `.subscribers-page`).
+			&::after {
+				display: none;
+			}
+		}
+	}
+
 	.sticky-panel.is-sticky {
 		padding: 0;
 	}
 
-	// Pull stats-navigation tabs into the Page header area visually.
-	.admin-ui-page__header {
-		border-bottom: none;
-
-		// Allow the title to truncate when breadcrumb text is long.
+	// admin-ui 2.x moved the Page internals to CSS Modules, so the old
+	// `.admin-ui-page*` class hooks were lost. `.admin-ui-page` is restored on
+	// the Page root via its `className` prop; everything else hangs off it.
+	.admin-ui-page {
+		// The header has no stable class in 2.x, so anchor structurally:
+		// StatsMain always passes a `title`, so the header is the first child.
 		> :first-child {
-			align-items: center;
-			height: $grid-unit-40;
+			// Merge the header into the navigation strip below it.
+			border-bottom: none;
 
-			> :first-child {
+			// Let the title group shrink so long breadcrumb text can truncate.
+			// admin-ui's title-group flex item has no stable class, so anchor on
+			// the element wrapping the title heading rather than its DOM position.
+			// Replace with a stable hook if @wordpress/admin-ui exposes one.
+			*:has(> h1) {
 				min-width: 0;
+			}
+
+			// The Jetpack logo (JetpackTitle's HStack) is a flex item with the
+			// default flex-shrink: 1, so it compresses along with a truncating
+			// title unless pinned.
+			.jetpack-logo {
+				flex-shrink: 0;
 			}
 		}
 
-		// Breadcrumb styling for detail pages.
-		.admin-ui-page__header-title {
-			display: flex;
-			align-items: center;
-		}
-
+		// Breadcrumb trail rendered inside the unified header on detail pages.
 		.stats-breadcrumbs {
 			display: inline-flex;
 			align-items: center;
 			gap: 8px;
 			min-width: 0;
+		}
 
-			.jetpack-logo {
-				flex-shrink: 0;
+		// Each crumb (separator + label) wraps in a span that is the actual
+		// flex item. Intermediate crumbs must not shrink: their content
+		// (separator and link) is flex-shrink: 0, so a shrinking wrapper just
+		// overflows and the label paints over the next crumb. Only the last
+		// crumb — the current page — shrinks, so its min-width: 0 lets the
+		// label's ellipsis rules below take effect.
+		.stats-breadcrumbs__item {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			flex-shrink: 0;
+
+			&:last-child {
+				flex-shrink: 1;
+				min-width: 0;
 			}
 		}
 
@@ -143,12 +187,20 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 		.stats-breadcrumbs__current {
 			overflow: hidden;
 			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
-	}
 
-	.admin-ui-page > .stats-navigation {
-		background: var(--wpds-color-bg-surface-neutral-strong);
-		padding-inline: var(--wpds-dimension-padding-2xl, 24px);
+		> .stats-navigation {
+			// The unified-header treatment (background strip + inset) only
+			// applies on wider screens. On small screens the nav block insets
+			// the tabs itself (16px on the --improved variant), so applying the
+			// inset here too would stack. Mirrors the block's
+			// `@media (max-width: $break-small)` rule.
+			@media (min-width: ($break-small + 1px)) {
+				background: var(--wpds-color-background-surface-neutral-strong);
+				padding-inline: var(--wpds-dimension-padding-2xl, 24px);
+			}
+		}
 	}
 
 	// TODO: Remove other independent segmented control styles by this mixin.

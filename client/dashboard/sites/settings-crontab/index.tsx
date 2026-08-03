@@ -35,7 +35,7 @@ import { formatScheduleLabel, formatScheduleDescription } from './schedules';
 import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
-const metaIconStyle = { color: 'var(--color-text-subtle, #646970)', flexShrink: 0 } as const;
+const metaIconStyle = { fill: 'currentColor', flexShrink: 0 } as const;
 
 function CrontabCreatedInfo( { item }: { item: Crontab } ) {
 	const timeSince = useTimeSince( item.created_at ?? '' );

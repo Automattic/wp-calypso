@@ -48,70 +48,59 @@ jobs:
             }
 
             const link = `https://calypso.live?${{steps.build_link.outputs.QUERY}}`;
+            const homeLink = `https://calypso.live/home?${{steps.build_link.outputs.QUERY}}`;
 
-            const body = trimIndent(`
-              <!--calypso-live-watermark:apr@v1-->
+            const groups = [
+              {
+                label: 'WordPress.com',
+                environments: [
+                  { label: 'Dashboard Live', url: `${link}&env=dashboard` },
+                  { label: 'Calypso Live (/home)', url: homeLink },
+                ],
+              },
+              {
+                label: 'Automattic for Agencies',
+                environments: [
+                  { label: 'Dashboard Live', url: `${link}&env=dashboard-a4a` },
+                  { label: 'Automattic for Agencies Live', url: `${link}&env=a8c-for-agencies` },
+                ],
+              },
+              {
+                label: 'Jetpack Cloud',
+                environments: [
+                  { label: 'Jetpack Cloud Live', url: `${link}&env=jetpack` },
+                ],
+              },
+            ];
+
+            const renderEnv = ( env ) => trimIndent(`
               <details>
-                <summary>
-                  Calypso Live <a href="${link}">(direct link)</a>
-                </summary>
+                <summary>${env.label} <a href="${env.url}">(direct link)</a></summary>
                 <table>
                   <tr>
                     <td>
-                      <a href="${link}">${link}</a>
-                    </td>
-                  </tr>
-                </table>
-              </details>
-              <details>
-                <summary>
-                  Jetpack Cloud Live <a href="${link}&env=jetpack">(direct link)</a>
-                </summary>
-                <table>
-                  <tr>
-                    <td>
-                      <a href="${link}&env=jetpack">${link}&env=jetpack</a>
-                    </td>
-                  </tr>
-                </table>
-              </details>
-              <details>
-                <summary>
-                  Automattic for Agencies Live <a href="${link}&env=a8c-for-agencies">(direct link)</a>
-                </summary>
-                <table>
-                  <tr>
-                    <td>
-                      <a href="${link}&env=a8c-for-agencies">${link}&env=a8c-for-agencies</a>
-                    </td>
-                  </tr>
-                </table>
-              </details>
-              <details>
-                <summary>
-                  Dashboard Live (dotcom) <a href="${link}&env=dashboard">(direct link)</a>
-                </summary>
-                <table>
-                  <tr>
-                    <td>
-                      <a href="${link}&env=dashboard">${link}&env=dashboard</a>
-                    </td>
-                  </tr>
-                </table>
-              </details>
-              <details>
-                <summary>
-                  Dashboard Live (CIAB) <a href="${link}&env=dashboard">(direct link)</a>
-                </summary>
-                <table>
-                  <tr>
-                    <td>
-                      <a href="${link}&env=dashboard-ciab">${link}&env=dashboard-ciab</a>
+                      <a href="${env.url}">${env.url}</a>
                     </td>
                   </tr>
                 </table>
               </details>`
             );
+
+            // A group holding a single environment renders as a bare item, without a heading.
+            const renderGroup = ( group ) =>
+              group.environments.length === 1
+                ? renderEnv( group.environments[ 0 ] )
+                : [
+                    `<p>${ group.label }</p>`,
+                    '<ul>',
+                    ...group.environments.map( env => `<li>\n${ renderEnv( env ) }\n</li>` ),
+                    '</ul>',
+                  ].join( '\n' );
+
+            const body = [
+              '<!--calypso-live-watermark:apr@v1-->',
+              groups.map( renderGroup ).join( '\n<hr>\n' ),
+            ].join( '\n' );
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,

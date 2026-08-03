@@ -30,6 +30,7 @@ export const SECTION_BLOGGING_PROMPT = 'home-section-blogging-prompt';
 export const SECTION_BLOGANUARY_BLOGGING_PROMPT = 'home-section-bloganuary-blogging-prompt';
 export const SECTION_MANAGE_SITE = 'home-section-manage-site';
 export const TASK_AFFILIATES = 'home-task-affiliates';
+export const TASK_CODE_FOR_THE_PEOPLE = 'home-task-code-for-the-people';
 export const TASK_JANUARY_BUMP = 'home-task-january-bump';
 export const TASK_CONNECT_ACCOUNTS = 'home-task-connect-accounts';
 export const TASK_EARN_FEATURES = 'home-task-earn-features';

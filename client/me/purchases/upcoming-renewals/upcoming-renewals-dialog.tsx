@@ -1,17 +1,16 @@
 import { Button, Dialog, FormLabel } from '@automattic/components';
+import { capitalize } from '@automattic/js-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { capitalize } from 'lodash';
 import { FunctionComponent, Fragment, useState, useEffect, useCallback, useMemo } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import {
 	getName,
 	getRenewalPrice,
 	purchaseType,
-	isExpired,
-	isRenewing,
-	isInExpirationGracePeriod,
+	isRenewingBeforeExpiration,
+	isExpiredOrRemoved,
 } from 'calypso/lib/purchases';
 import { managePurchase } from '../paths';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -36,32 +35,27 @@ interface Props {
 
 function getExpiresText(
 	translate: ReturnType< typeof useTranslate >,
-	moment: ReturnType< typeof useLocalizedMoment >,
 	purchase: Purchase
 ): TranslateResult {
-	if ( isRenewing( purchase ) ) {
-		if ( isInExpirationGracePeriod( purchase ) ) {
-			return translate( 'pending renewal' );
-		}
-
+	if ( isRenewingBeforeExpiration( purchase ) ) {
 		return translate( 'renews %(renewDate)s', {
 			comment:
-				'"renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',
-			args: { renewDate: moment( purchase.renewDate ).fromNow() },
+				'"renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
+			args: { renewDate: getRelativeDayString( new Date( purchase.renewDate ), 'upcoming' ) },
 		} );
 	}
-	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+	if ( isExpiredOrRemoved( purchase ) ) {
 		return translate( 'expired %(expiry)s', {
 			comment:
-				'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',
-			args: { expiry: moment( purchase.expiryDate ).fromNow() },
+				'"expiry" is relative to the present time and it is already localized, eg. "a week ago", "today"',
+			args: { expiry: getRelativeDayString( new Date( purchase.expiryDate ), 'past' ) },
 		} );
 	}
 	return translate( 'expires %(expiry)s', {
 		comment:
-			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',
+			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
 		args: {
-			expiry: moment( purchase.expiryDate ).fromNow(),
+			expiry: getRelativeDayString( new Date( purchase.expiryDate ), 'upcoming' ),
 		},
 	} );
 }
@@ -77,14 +71,13 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 	getManagePurchaseUrlFor = managePurchase,
 } ) => {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const [ selectedPurchases, setSelectedPurchases ] = useState< number[] >( [] );
 
 	const purchasesSortByRecentExpiryDate = useMemo(
 		() =>
 			[ ...purchases ].sort( ( a, b ) => {
-				const compareDateA = isRenewing( a ) ? a.renewDate : a.expiryDate;
-				const compareDateB = isRenewing( b ) ? b.renewDate : b.expiryDate;
+				const compareDateA = isRenewingBeforeExpiration( a ) ? a.renewDate : a.expiryDate;
+				const compareDateB = isRenewingBeforeExpiration( b ) ? b.renewDate : b.expiryDate;
 
 				return compareDateA?.localeCompare?.( compareDateB );
 			} ),
@@ -114,7 +107,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 			</h3>
 			<hr />
 			{ purchasesSortByRecentExpiryDate.map( ( purchase ) => {
-				const expiresText = getExpiresText( translate, moment, purchase ) as string;
+				const expiresText = getExpiresText( translate, purchase ) as string;
 				const purchaseTypeText = purchaseType( purchase );
 				const onChange = () => {
 					if ( selectedPurchases.includes( purchase.id ) ) {
@@ -143,7 +136,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 									{ getName( purchase ) }
 									<div className="upcoming-renewals-dialog__detail">
 										{ purchaseTypeText ? `${ purchaseTypeText }: ` : '' }
-										<span className={ isExpired( purchase ) ? 'expired' : '' }>
+										<span className={ isExpiredOrRemoved( purchase ) ? 'expired' : '' }>
 											{ purchaseTypeText ? expiresText : capitalize( expiresText ) }
 										</span>
 									</div>

@@ -121,23 +121,6 @@
 	animation-fill-mode: forwards;
 }
 
-.notification-settings__email-container {
-	margin-block-start: 8px;
-	width: 100%;
-
-	.token-field__suggestions-list {
-		display: none;
-	}
-
-	.token-field__remove-token {
-		display: none;
-	}
-
-	.token-field__input-container {
-		cursor: default;
-	}
-}
-
 .notification-settings__email-condition {
 	margin-block-start: 4px;
 	@extend .notification-settings-title-light;

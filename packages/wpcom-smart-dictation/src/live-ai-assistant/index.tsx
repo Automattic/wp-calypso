@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
+import { Button, ExternalLink } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '@wordpress/ui';
 import clsx from 'clsx';
@@ -16,6 +17,10 @@ import './style.scss';
 type TimelineRow =
 	| { kind: 'message'; timestamp: number; entry: RealtimeTranscriptEntry }
 	| { kind: 'tool'; timestamp: number; evt: RealtimeToolEvent };
+
+const DICTATION_UPGRADE_URL = `https://wordpress.com/checkout/${ encodeURIComponent(
+	window.location.host
+) }/premium?redirect_to=${ encodeURIComponent( window.location.href ) }`;
 
 function buildTimelineRows(
 	transcript: RealtimeTranscriptEntry[],
@@ -76,7 +81,7 @@ function buildInstructions( locale: string, extra?: string ): string {
 		'Streaming writes: keep extending the current TRAILING block at the end of the article as the user keeps talking (not a mid-post block unless they explicitly asked you to write there). When you append, set attributes.content to the FULL accumulated content of that block (existing content + new words), not just the new words, so RichText stays consistent. If you accidentally duplicate a phrase, immediately fix it with another update_block_attributes_tool call rather than waiting.',
 		'Never buffer dictation internally hoping for a "complete" thought. There is no such thing as too-frequent a write. If in doubt, write now and refine later.',
 		'Structural cues: when the user says "new paragraph" / "next paragraph", start a fresh core/paragraph block appended at the END of the article (same placement default as inserts) unless they told you a specific spot. "Heading" / "heading two" / "subheading" → core/heading at the END unless they specified otherwise. "Bullet list" / "bulleted list" / "numbered list" → core/list (with ordered=true for numbered) containing core/list-item children, inserted at the END by default. "Quote" / "blockquote" → core/quote. "Horizontal line" / "divider" → core/separator. "Image of X" / "picture of X" / "draw / generate / create / make an image of X" → call generate_image_tool with a vivid English prompt describing X (the tool inserts a core/image at the end of the post and fills it with a freshly generated AI image, no URL needed). "Add an image" / "insert an image" / "add a picture" / "I want a photo here" with NO subject and NO source specified → IMMEDIATELY call pick_image_tool with action "menu" — DO NOT speak the three options out loud, the on-screen chooser shows them. After the user says one of "upload" / "select" (or "library") / "generate" + description, route to the matching tool: pick_image_tool action "upload", pick_image_tool action "open", or generate_image_tool. If they say "from my media library" / "pick from library" up front → pick_image_tool action "open" directly. If they say "upload an image" up front → pick_image_tool action "upload" directly.',
-		'Editing cues: "delete that" / "remove the last block" → remove the most recently inserted block (or the selected block). "Change this to a heading" → replace the selected/last paragraph with a heading carrying the same content. "Make this the title" → set the post title.',
+		'Editing cues: "delete that" / "remove the last block" → remove the most recently inserted block (or the selected block). "Delete everything" / "clear all blocks" / "remove all blocks" / "start over" when they clearly mean the post body → call remove_all_blocks_tool once; do not remove blocks one by one. "Change this to a heading" → replace the selected/last paragraph with a heading carrying the same content. "Make this the title" → set the post title.',
 		'Punctuation: convert spoken cues like "comma", "period" / "full stop", "question mark", "exclamation mark", "colon", "semicolon", "open quote" / "close quote", "new line" into actual punctuation. Capitalize sentence beginnings and proper nouns.',
 		'Never greet proactively, never narrate what you are doing, never explain the tools, and never volunteer extra commentary. Focus on writing.',
 		`The current UI locale is "${ locale }". Write the article in the language the user is dictating in. Spoken responses to the user should be in English unless they explicitly switch.`,
@@ -89,7 +94,7 @@ function buildInstructions( locale: string, extra?: string ): string {
 		"5. Use update_block_attributes_tool to tweak an existing block (rewrite a paragraph's content, change heading level, set image alt text). Prefer this over replace_block_tool when the block type stays the same.",
 		'Cursor placement: after EVERY write that commits content to a block (update_block_attributes_tool extending a paragraph, insert_block_tool / insert_blocks_tool adding new blocks, replace_block_tool swapping a block, format_text_tool formatting inline text), make sure the editor selection (the caret) ends up at the END of the block whose content you just wrote, so the user can keep dictating from where they left off without ever clicking. Concretely: insert_block_tool / insert_blocks_tool already do this when update_selection stays true (the default — never set it to false during dictation). For update_block_attributes_tool, follow up with a select_block call on the same clientId so focus snaps back to that block. Never leave the caret in a previous, now-stale block.',
 		'6. Use replace_block_tool when the user wants to convert a block into a different type ("turn this paragraph into a heading", "make this a quote"). Reuse the previous block\'s text content where it makes sense.',
-		'7. Use remove_block_tool when the user says "delete that", "remove the last paragraph", "scratch the heading". Defaults to selecting the previous block so dictation can continue.',
+		'7. Use remove_block_tool when the user says "delete that", "remove the last paragraph", "scratch the heading". Defaults to selecting the previous block so dictation can continue. Use remove_all_blocks_tool when the user clearly asks to clear/delete/remove all blocks or wipe the post body.',
 		'8. Use move_block_tool to reorder blocks ("move that up", "move this to the top" → to_index: 0).',
 		"9. Use format_text_tool for inline RichText formatting: bold, italic, strikethrough, code, link (with url), underline, subscript, superscript. Pass target_text to format a substring of the current/selected block, or omit it to use the editor's active text selection.",
 		//'Formatting fallback: if you cannot achieve what the user asked on a paragraph (format_text_tool errors, RichText strips forbidden tags or refuses the markup, update_block_attributes on core/paragraph will not persist the layout/colors/snippet — do not spiral on retries forever) — swap to the Custom HTML block (core/html) via replace_block_tool on that paragraph or insert_block_tool at the end following placement rules, with attributes.content as valid equivalent HTML preserving their dictated text.',
@@ -97,7 +102,8 @@ function buildInstructions( locale: string, extra?: string ): string {
 		'Post-level workflow:',
 		'- Use set_post_title_tool when the user dictates a title or says "make this the title" / "the title is …". The title is NOT a block — it has its own field above the blocks.',
 		'- Use save_post_tool when the user says "save", "save draft", "save my work". This does not change publish status.',
-		'- Use stop_dictation_tool immediately when the user asks to stop, end, cancel, or finish dictation.',
+		'- Use stop_dictation_tool when the user clearly wants to end the entire dictation session — e.g. "stop dictation", "end the session", "I\'m done", "finish up", "that\'s all", "exit", "close". This kills the mic and the panel, so only call it when they really mean to wrap up.',
+		'- Use cancel_image_generation_tool — NOT stop_dictation_tool — when an image is currently being generated (you previously called generate_image_tool and have not yet received its result) and the user says a bare "stop", "cancel", "never mind", "abort", "scratch that", "don\'t make that", "forget the image", or similar. Bare "stop" / "cancel" while an image is in flight always means "abandon the image, keep dictating", never "end the session". After cancelling, stay in the session and wait for the next instruction.',
 		'- Use publish_post_tool ONLY when the user explicitly says "publish" / "publish it" / "go ahead and publish". Never publish proactively.',
 		'- Use undo_tool / redo_tool for "undo that" / "redo".',
 		'- Use get_post_info_tool sparingly, e.g. when the user asks "is it saved?" / "did it publish?" / "what\'s the status?".',
@@ -127,8 +133,6 @@ function getStatusLabel( status: ReturnType< typeof useRealtimeSession >[ 'statu
 			return __( 'Connecting…' );
 		case 'active':
 			return __( 'Listening' );
-		case 'ending':
-			return __( 'Stopping…' );
 		case 'error':
 			return __( 'Something went wrong' );
 		case 'idle':
@@ -137,8 +141,20 @@ function getStatusLabel( status: ReturnType< typeof useRealtimeSession >[ 'statu
 	}
 }
 
+function formatRemainingTime( remainingMs: number ): string {
+	const totalSeconds = Math.max( 0, Math.ceil( remainingMs / 1000 ) );
+	const minutes = Math.floor( totalSeconds / 60 );
+	const seconds = totalSeconds % 60;
+
+	return `${ minutes }:${ seconds.toString().padStart( 2, '0' ) }`;
+}
+
 export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProps ) {
 	const locale = useLocale();
+	const smartDictationSupportUrl = useMemo(
+		() => localizeUrl( 'https://wordpress.com/support/wordpress-editor/smart-dictation/', locale ),
+		[ locale ]
+	);
 	const instructions = useMemo(
 		() => buildInstructions( locale, contextualInstructions ),
 		[ locale, contextualInstructions ]
@@ -147,6 +163,10 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 	const {
 		status,
 		error,
+		errorIntent,
+		sessionTimeLimitMs,
+		sessionTimeRemainingMs,
+		canUpgrade,
 		isMuted,
 		localStream,
 		transcript,
@@ -179,17 +199,33 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 
 	const isSessionActive = status === 'active';
 	const isSessionBusy =
-		status === 'requesting-token' ||
-		status === 'requesting-mic' ||
-		status === 'connecting' ||
-		status === 'ending';
+		status === 'requesting-token' || status === 'requesting-mic' || status === 'connecting';
+	const sessionTimeLimit = sessionTimeLimitMs ?? 0;
+	const sessionTimeRemaining = sessionTimeRemainingMs ?? 0;
+	const hasSessionTimeRemaining = sessionTimeLimit > 0;
+	const hasKnownSessionTimeRemaining = sessionTimeRemainingMs !== null;
+	const sessionTimeProgress = hasSessionTimeRemaining
+		? Math.max( 0, Math.min( 100, ( sessionTimeRemaining / sessionTimeLimit ) * 100 ) )
+		: 0;
+	const hasExhaustedQuota = hasKnownSessionTimeRemaining && sessionTimeRemaining <= 0;
+	const showQuotaLimitNotice = hasExhaustedQuota && ! isSessionActive;
+	const showUpgradeButton = canUpgrade && hasExhaustedQuota && ! isSessionActive && ! isSessionBusy;
+	const showQuotaReachedButton =
+		! canUpgrade && hasExhaustedQuota && ! isSessionActive && ! isSessionBusy;
 
 	const handleSessionToggle = () => {
 		if ( isSessionActive || isSessionBusy ) {
 			stop();
+		} else if ( hasExhaustedQuota ) {
+			return;
 		} else {
 			start();
 		}
+	};
+	const handleUpgradeClick = () => {
+		recordTracksEvent( 'calypso_smart_dictation_upgrade_clicked', {
+			source: 'quota_exhausted',
+		} );
 	};
 	const statusContent = isSessionActive ? (
 		<>
@@ -206,6 +242,48 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 	);
 	const showSubtitle =
 		isSessionActive || isSessionBusy || timelineRows.length > 0 || status === 'error';
+	let primaryAction;
+	if ( showUpgradeButton ) {
+		primaryAction = (
+			<Button
+				variant="primary"
+				className="live-ai-assistant__call-button"
+				href={ DICTATION_UPGRADE_URL }
+				onClick={ handleUpgradeClick }
+			>
+				<span>{ __( 'Upgrade to premium' ) }</span>
+			</Button>
+		);
+	} else if ( showQuotaReachedButton ) {
+		primaryAction = (
+			<Button variant="primary" className="live-ai-assistant__call-button" disabled>
+				<span>{ __( 'Quota reached' ) }</span>
+			</Button>
+		);
+	} else {
+		primaryAction = (
+			<Button
+				variant="primary"
+				className={ clsx( 'live-ai-assistant__call-button', {
+					'is-hangup': isSessionActive || isSessionBusy,
+				} ) }
+				onClick={ handleSessionToggle }
+				isBusy={ isSessionBusy }
+			>
+				{ isSessionActive || isSessionBusy ? (
+					<>
+						<StopIcon />
+						<span>{ __( 'Stop dictation' ) }</span>
+					</>
+				) : (
+					<>
+						<MicIcon />
+						<span>{ __( 'Start dictation' ) }</span>
+					</>
+				) }
+			</Button>
+		);
+	}
 
 	return (
 		<>
@@ -226,7 +304,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 							</div>
 						) }
 
-						{ status === 'idle' && timelineRows.length === 0 && (
+						{ status === 'idle' && timelineRows.length === 0 && ! hasExhaustedQuota && (
 							<div className="live-ai-assistant__intro">
 								<video
 									className="live-ai-assistant__intro-artwork"
@@ -244,13 +322,32 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 										'Tap Start dictation and speak naturally. This is more than a dictation tool: it gives you full voice control of the editor. Format text, insert pictures, manipulate any available block, and even save the post.'
 									) }
 								</p>
+								<ExternalLink
+									className="live-ai-assistant__intro-learn-more"
+									href={ smartDictationSupportUrl }
+								>
+									{ __( 'Learn more' ) }
+								</ExternalLink>
 							</div>
 						) }
 
 						{ error && (
-							<Notice.Root intent="error">
-								<Notice.Title>{ __( 'Error' ) }</Notice.Title>
+							<Notice.Root intent={ errorIntent }>
+								<Notice.Title>
+									{ errorIntent === 'warning' ? __( 'Notice' ) : __( 'Error' ) }
+								</Notice.Title>
 								<Notice.Description>{ error }</Notice.Description>
+							</Notice.Root>
+						) }
+
+						{ showQuotaLimitNotice && (
+							<Notice.Root intent="info">
+								<Notice.Title>{ __( 'Daily quota limit reached' ) }</Notice.Title>
+								<Notice.Description>
+									{ canUpgrade
+										? __( 'It will reset at midnight. Upgrade to keep writing by voice.' )
+										: __( 'It will reset at midnight.' ) }
+								</Notice.Description>
 							</Notice.Root>
 						) }
 
@@ -291,12 +388,17 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 					<div className="live-ai-assistant__footer">
 						<Notice.Root intent="info">
 							<Notice.Title>Beta feature</Notice.Title>
-							<Notice.Description>Only available for proxied a11ns</Notice.Description>
-							<Notice.Actions>
-								<Notice.ActionLink href="https://wp.me/phcsdm-3kj" openInNewTab>
-									Share feedback
-								</Notice.ActionLink>
-							</Notice.Actions>
+							<Notice.Description>
+								{ createInterpolateElement( __( 'Share your feedback <link>here</link>.' ), {
+									link: (
+										<a
+											href="https://wordpressdotcom.survey.fm/wordpress-com-smart-dictation-survey"
+											target="_blank"
+											rel="noreferrer"
+										/>
+									),
+								} ) }
+							</Notice.Description>
 						</Notice.Root>
 						<div className="live-ai-assistant__controls">
 							<Button
@@ -309,27 +411,29 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 								<MicIcon muted={ isMuted } />
 								<span>{ isMuted ? __( 'Unmute' ) : __( 'Mute' ) }</span>
 							</Button>
-							<Button
-								variant="primary"
-								className={ clsx( 'live-ai-assistant__call-button', {
-									'is-hangup': isSessionActive || isSessionBusy,
-								} ) }
-								onClick={ handleSessionToggle }
-								isBusy={ isSessionBusy }
-							>
-								{ isSessionActive || isSessionBusy ? (
-									<>
-										<StopIcon />
-										<span>{ __( 'Stop dictation' ) }</span>
-									</>
-								) : (
-									<>
-										<MicIcon />
-										<span>{ __( 'Start dictation' ) }</span>
-									</>
-								) }
-							</Button>
+							{ primaryAction }
 						</div>
+						{ hasSessionTimeRemaining && (
+							<div className="live-ai-assistant__time">
+								<div className="live-ai-assistant__time-label">
+									<span>{ __( 'Daily quota' ) }</span>
+									<span>{ formatRemainingTime( sessionTimeRemaining ) }</span>
+								</div>
+								<div
+									className="live-ai-assistant__time-bar"
+									role="progressbar"
+									aria-label={ __( 'Daily quota' ) }
+									aria-valuemin={ 0 }
+									aria-valuemax={ 100 }
+									aria-valuenow={ Math.round( sessionTimeProgress ) }
+								>
+									<div
+										className="live-ai-assistant__time-bar-fill"
+										style={ { width: `${ sessionTimeProgress }%` } }
+									/>
+								</div>
+							</div>
+						) }
 					</div>
 				</div>
 			</div>

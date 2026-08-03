@@ -36,6 +36,7 @@ import {
 	checkDomainContactInfoPermissions,
 	checkDomainDnsRecordsPermissions,
 	checkDomainContactVerificationPermissions,
+	checkDomainNotPendingRegistration,
 } from '../../utils/domain-permissions';
 import { queryParamToArray } from '../../utils/url';
 import { dashboardRedirect } from './redirect';
@@ -133,6 +134,9 @@ export const domainRoute = createRoute( {
 		const isContactInfoSubRoute = location.pathname.includes( '/contact-info' );
 		const isDnsSubRoute = location.pathname.includes( '/dns' );
 		const isContactVerificationSubRoute = location.pathname.includes( '/contact-verification' );
+		const isForwardingSubRoute = location.pathname.includes( '/forwarding' );
+		const isSecuritySubRoute = location.pathname.includes( '/security' );
+		const isGlueRecordsSubRoute = location.pathname.includes( '/glue-records' );
 
 		// For generic sub-routes permissions checks,
 		// throw error and handle it with the global error boundary
@@ -167,15 +171,14 @@ export const domainRoute = createRoute( {
 			checkDomainContactVerificationPermissions( domain );
 		}
 
+		if ( isForwardingSubRoute || isSecuritySubRoute || isGlueRecordsSubRoute ) {
+			checkDomainNotPendingRegistration( domain );
+		}
+
 		return domain;
 	},
-} ).lazy( () =>
-	import( '../../domains/domain' ).then( ( d ) =>
-		createLazyRoute( 'domain' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: Outlet,
+} );
 
 export const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,

@@ -3,7 +3,6 @@ import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
-import { some, startsWith } from 'lodash';
 import { createElement } from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
@@ -57,6 +56,7 @@ import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
 import {
 	getCurrentUser,
+	getCurrentUserId,
 	isUserLoggedIn,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
@@ -64,11 +64,13 @@ import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isSiteA4ADevSite from 'calypso/state/selectors/is-site-a4a-dev-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -197,6 +199,10 @@ export function renderNoVisibleSites( context ) {
 function renderSelectedSiteNotFound( context ) {
 	setSectionMiddleware( { group: 'sites' } )( context );
 
+	recordTracksEvent( 'calypso_site_selection_no_access', {
+		path: sectionify( context.path ),
+	} );
+
 	context.primary = createElement( EmptyContentComponent, {
 		title: i18n.translate( "You don't have access to that site" ),
 		line: i18n.translate(
@@ -297,7 +303,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		domainUseMyDomain( slug ),
 	];
 
-	if ( some( startsWithPaths, ( startsWithPath ) => startsWith( path, startsWithPath ) ) ) {
+	if ( startsWithPaths.some( ( startsWithPath ) => path.startsWith( startsWithPath ) ) ) {
 		return true;
 	}
 
@@ -373,7 +379,7 @@ function onSelectedSiteAvailable( context ) {
 	} else {
 		// If migration is in progress, only /migrate paths should be loaded for the site
 		const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
-		if ( isMigrationInProgress && ! startsWith( context.pathname, '/migrate/' ) ) {
+		if ( isMigrationInProgress && ! context.pathname.startsWith( '/migrate/' ) ) {
 			page.redirect( `/migrate/${ selectedSite.slug }` );
 			return false;
 		}
@@ -556,6 +562,32 @@ const PATHS_EXCLUDED_FROM_SINGLE_SITE_CONTEXT_FOR_SINGLE_SITE_USERS = [
 ];
 
 /*
+ * `requestSite` keeps a site we can't manage out of the state, so the API can hand us back a site
+ * that we then fail to select. Capabilities take a moment to propagate after a site is created or
+ * transferred to Atomic, so wait for them rather than sending a just-paid-for site to the
+ * "You don't have access to that site" page.
+ */
+const UNMANAGEABLE_SITE_RETRY_LIMIT = 3;
+const UNMANAGEABLE_SITE_RETRY_DELAY = 1000;
+
+// A wait can outlast the route that asked for it, so anything resuming after an await must bail
+// out rather than select a site or redirect out of the page the user moved on to.
+function hasNavigatedAwayFrom( context ) {
+	return page.current !== context.path;
+}
+
+// Missing capabilities are propagation lag rather than a lack of access when something that
+// doesn't depend on them says otherwise: the user owns the site, or `/me/sites` saw them as
+// an admin of it.
+function capabilitiesArePropagating( state, site ) {
+	if ( site.site_owner && site.site_owner === getCurrentUserId( state ) ) {
+		return true;
+	}
+
+	return canCurrentUser( state, site.ID, 'manage_options' ) === true;
+}
+
+/*
  * Set up site selection based on last URL param and/or handle no-sites error cases
  */
 export function siteSelection( context, next ) {
@@ -664,54 +696,99 @@ export function siteSelection( context, next ) {
 			}
 		} );
 	} else {
-		// Fetch the site by siteFragment and then try to select again
-		dispatch( requestSite( siteFragment ) )
-			.catch( () => null )
-			.then( ( site ) => {
-				let freshSiteId;
+		requestAndSelectSite( context, next, {
+			siteFragment,
+			isUnlinkedCheckout,
+			attempt: 0,
+		} );
+	}
+}
+
+// Fetch the site by siteFragment and then try to select it again
+function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout, attempt } ) {
+	const { getState, dispatch } = getStore( context );
+
+	return dispatch( requestSite( siteFragment ) )
+		.catch( () => null )
+		.then( ( site ) => {
+			if ( hasNavigatedAwayFrom( context ) ) {
+				return;
+			}
+
+			let freshSiteId;
+
+			if ( site && site.ID ) {
+				// An unlinked checkout ignores the site it finds below, so waiting on its
+				// capabilities would only delay the Jetpack authorization.
+				if (
+					! isUnlinkedCheckout &&
+					! getSite( getState(), site.ID ) &&
+					attempt < UNMANAGEABLE_SITE_RETRY_LIMIT &&
+					capabilitiesArePropagating( getState(), site )
+				) {
+					const retryDelay = UNMANAGEABLE_SITE_RETRY_DELAY * 2 ** attempt;
+
+					return new Promise( ( resolve ) =>
+						setTimeout( () => {
+							if ( hasNavigatedAwayFrom( context ) ) {
+								resolve();
+								return;
+							}
+
+							resolve(
+								requestAndSelectSite( context, next, {
+									siteFragment,
+									isUnlinkedCheckout,
+									attempt: attempt + 1,
+								} )
+							);
+						}, retryDelay )
+					);
+				}
 
 				// If we found a site using the fragment and the fragment matches the *.wordpress.com domain for a site with a mapped domain,
 				// redirect to the mapped domain, e.g /site-editor/example.wordpress.com -> /site-editor/example.com
-				if ( site && site.ID ) {
-					const siteSlug = getSiteSlug( getState(), site.ID );
-					const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
+				const siteSlug = getSiteSlug( getState(), site.ID );
+				const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
 
-					if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
-						const hash = context.hashstring ? `#${ context.hashstring }` : '';
-						return page.redirect( context.path.replace( siteFragment, siteSlug ) + hash );
-					}
-
-					freshSiteId = site.ID;
+				if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
+					const hash = context.hashstring ? `#${ context.hashstring }` : '';
+					return page.redirect( context.path.replace( siteFragment, siteSlug ) + hash );
 				}
 
-				freshSiteId ??= getSiteId( getState(), siteFragment );
+				freshSiteId = site.ID;
+			}
 
-				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteFragment
-						.toString()
-						.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
-					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
-				}
+			freshSiteId ??= getSiteId( getState(), siteFragment );
 
-				// If the user is presumably not connected to WPCOM, we ignore the site ID we found.
-				// Details: p9dueE-6Hf-p2
-				if ( freshSiteId && ! isUnlinkedCheckout ) {
-					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
-					// to wp-admin. In that case, don't continue handling the route.
-					dispatch( setSelectedSiteId( freshSiteId ) );
-					if ( onSelectedSiteAvailable( context ) ) {
-						next();
-					}
-				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
-					navigate( getJetpackAuthorizeURL( context, site ) );
-				} else {
-					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
-					const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
-					const allSitesPath = context.path.substring( 0, siteFragmentOffset );
-					page.redirect( allSitesPath );
+			if ( ! freshSiteId ) {
+				const wpcomStagingFragment = siteFragment
+					.toString()
+					.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+				freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+			}
+
+			// If the user is presumably not connected to WPCOM, we ignore the site ID we found.
+			// Details: p9dueE-6Hf-p2
+			if ( freshSiteId && ! isUnlinkedCheckout ) {
+				// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
+				// to wp-admin. In that case, don't continue handling the route.
+				dispatch( setSelectedSiteId( freshSiteId ) );
+				if ( onSelectedSiteAvailable( context ) ) {
+					next();
 				}
-			} );
-	}
+			} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
+				navigate( getJetpackAuthorizeURL( context, site ) );
+			} else {
+				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
+				const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
+				let allSitesPath = context.path.substring( 0, siteFragmentOffset );
+				if ( context.querystring ) {
+					allSitesPath += `?${ context.querystring }`;
+				}
+				page.redirect( allSitesPath );
+			}
+		} );
 }
 
 export function loggedInSiteSelection( context, next ) {
@@ -795,6 +872,25 @@ export function stagingSiteNotSupportedRedirect( context, next ) {
 	const selectedSite = getSelectedSite( store.getState() );
 
 	if ( selectedSite && isSiteWpcomStaging( store.getState(), selectedSite.ID ) ) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by
+ * Automattic for Agencies dev sites.
+ * @param {Object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function a4aDevSiteNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if ( selectedSite && isSiteA4ADevSite( store.getState(), selectedSite.ID ) ) {
 		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
 
 		return page.redirect( `/home/${ siteSlug }` );

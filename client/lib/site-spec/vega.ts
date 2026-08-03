@@ -2,32 +2,11 @@ import { __ } from '@wordpress/i18n';
 import { getDefaultSiteSpecConfig } from './utils';
 import type { SiteSpecConfig } from './utils';
 
-/**
- * ExPlat experiment driving the Vega site-spec rollout.
- *
- * Month-scoped; keep in sync with the server-side configuration when renamed.
- */
-export const VEGA_EXPERIMENT_NAME = 'wpcom_ai_website_builder_vega_site_spec_202604';
-
-export const VEGA_CONTROL_AGENT_ID = 'site-spec';
-export const VEGA_TREATMENT_AGENT_ID = 'vega-site-spec';
-
-export type VegaVariation = 'control' | 'treatment';
+export const VEGA_AGENT_ID = 'vega-site-spec';
 
 /**
- * Returns the agent id for a given ExPlat variation.
- *
- * `null` / unknown variation falls back to control so users never hit the
- * treatment endpoint without a recorded assignment.
- */
-export function getVegaAgentId( variation: string | null | undefined ): string {
-	return variation === 'treatment' ? VEGA_TREATMENT_AGENT_ID : VEGA_CONTROL_AGENT_ID;
-}
-
-/**
- * Seven primary chips for the treatment starter screen. Selecting any of
- * these sends the prompt as the first user message to the `vega-site-spec`
- * agent.
+ * Seven primary chips for the Vega starter screen. Selecting any of these
+ * sends the prompt as the first user message to the `vega-site-spec` agent.
  *
  * Each prompt extends its label by answering the single most useful follow-up
  * question an onboarder would ask (e.g. "what should visitors do?"). That
@@ -89,29 +68,29 @@ function getVegaPrimaryChips() {
 }
 
 /**
- * Post-spec-confirm landing URL for the treatment variation.
+ * Post-spec-confirm landing URL for the Vega site-spec flow.
  *
  * The widget bundle ships with a hardcoded default that includes
  * `create_garden_site=1`, which the AI Site Builder flow uses as a signal to
- * provision a WooCommerce garden site. Vega treatment targets the standard
- * AI Builder flow, so we override the default with a non-garden path and let
- * the widget append the `spec_id` to the trailing `=`.
+ * provision a WooCommerce garden site. Vega targets the standard AI Builder
+ * flow, so we override the default with a non-garden path and let the widget
+ * append the `spec_id` to the trailing `=`.
  */
 const VEGA_BUILD_SITE_URL = '/setup/ai-site-builder/?spec_id=';
 
 /**
- * Returns the Calypso-side configuration for the Vega treatment variation.
+ * Returns the Calypso-side configuration for the Vega site-spec widget.
  *
  * Inherits everything from `getDefaultSiteSpecConfig()` (agent URL, tracking
- * prefix, etc.) and only overrides the pieces that differ for treatment:
- * agent id, the non-garden `buildSiteUrl`, placeholder copy, and the chip
- * set. Spec-confirm card additions are rendered by the widget itself based
- * on the `vega-site-spec` agent response.
+ * prefix, etc.) and only overrides the pieces that differ: agent id, the
+ * non-garden `buildSiteUrl`, placeholder copy, and the chip set. Spec-confirm
+ * card additions are rendered by the widget itself based on the
+ * `vega-site-spec` agent response.
  */
 export function getVegaSiteSpecConfig(): SiteSpecConfig {
 	return {
 		...getDefaultSiteSpecConfig(),
-		agentId: VEGA_TREATMENT_AGENT_ID,
+		agentId: VEGA_AGENT_ID,
 		buildSiteUrl: VEGA_BUILD_SITE_URL,
 		placeholder: __( 'I want to…', 'site-spec' ),
 		theme: {

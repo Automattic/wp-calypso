@@ -224,6 +224,20 @@ export const useWPCOMDomainSearchEvents = ( {
 					)
 				);
 			},
+			onBundleShown: ( bundle, placement ) => {
+				recordTracksEvent( 'calypso_domain_bundle_shown', {
+					domain_bundle_group_id: bundle.bundle_group_id,
+					domain_count: bundle.domains.length,
+					placement,
+				} );
+			},
+			onBundleAddToCart: ( bundle, placement ) => {
+				recordTracksEvent( 'calypso_domain_bundle_accepted', {
+					domain_bundle_group_id: bundle.bundle_group_id,
+					domain_count: bundle.domains.length,
+					placement,
+				} );
+			},
 		};
 	}, [ flowName, vendor, query, debouncedDomainSearchEvent, analyticsSection, dispatch ] );
 

@@ -13,7 +13,6 @@ export interface Email {
 	forwardingTo?: string;
 	storageUsed?: number;
 	storageLimit?: number;
-	canUserManage: boolean;
 	status:
 		| 'active'
 		| 'pending'
@@ -35,4 +34,10 @@ export enum IntervalLength {
 export enum MailboxProvider {
 	Google = EmailProvider.Google,
 	Titan = EmailProvider.Titan,
+}
+
+export enum TitanPlanTier {
+	Pro = 'pro',
+	Premium = 'premium',
+	Ultra = 'ultra',
 }

@@ -5,6 +5,8 @@ import { backup, chevronRight, external, Icon, page, rss, video } from '@wordpre
 import { useI18n } from '@wordpress/react-i18n';
 import { useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useHelpCenterCTA } from '../hooks';
+import { HelpCenterCTA } from './help-center-cta';
 
 import './help-center-more-resources.scss';
 
@@ -13,6 +15,7 @@ export const HelpCenterMoreResources = () => {
 	const { sectionName } = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
 	const navigate = useNavigate();
+	const cta = useHelpCenterCTA( 'link-list-item' );
 
 	const trackMoreResourcesButtonClick = ( resource: string ) => {
 		recordTracksEvent( 'calypso_help_moreresources_click', {
@@ -38,6 +41,7 @@ export const HelpCenterMoreResources = () => {
 				{ __( 'More resources', __i18n_text_domain__ ) }
 			</h3>
 			<ul aria-labelledby="help-center-more-resources__resources">
+				{ cta && <HelpCenterCTA { ...cta } /> }
 				{ featureConfig.moreResources.supportHistory && (
 					<li className="help-center-more-resources__resource-item help-center-link__item">
 						<div className="help-center-more-resources__resource-cell help-center-link__cell">

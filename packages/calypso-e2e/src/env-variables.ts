@@ -1,4 +1,4 @@
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 import crypto from 'crypto';
 import path from 'path';
 import { getMag16Locales, getViewports } from './data-helper';
@@ -205,12 +205,12 @@ class EnvVariables implements SupportedEnvVariables {
 	private getValidatedUrlEnvVar( envVarName: keyof SupportedEnvVariables ): string {
 		const value = process.env[ envVarName as string ];
 		const defaultValue = this._defaultEnvVariables[ envVarName ];
-		const url = value ?? defaultValue;
+		const url = value || defaultValue;
 
 		try {
 			// eslint-disable-next-line no-new
 			new URL( url as string );
-		} catch ( error ) {
+		} catch {
 			throw new Error( `Invalid ${ envVarName } value: ${ url }.\nYou must provide a valid URL.` );
 		}
 		return url as string;
@@ -287,7 +287,7 @@ class EnvVariables implements SupportedEnvVariables {
 			const envVarName = property as keyof SupportedEnvVariables;
 			// Access each property
 			// Any validation errors within the getter will throw an exception here.
-			this[ envVarName ];
+			void this[ envVarName ];
 		}
 	}
 }

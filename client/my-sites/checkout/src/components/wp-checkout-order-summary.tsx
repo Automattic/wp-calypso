@@ -42,12 +42,11 @@ import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useEquivalentMonthlyTotals, {
-	getSimulatedCostBeforeDiscounts,
+	getSubtotalBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
-import { useRsmBetterCheckoutExperiment } from '../hooks/use-rsm-better-checkout-experiment';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
@@ -57,6 +56,7 @@ import CheckoutPayButtonFooter from './checkout-pay-button-footer';
 import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
 import { ProductsAndCostOverridesList } from './cost-overrides-list';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { LineItemType } from '@automattic/wpcom-checkout';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -160,23 +160,23 @@ function CheckoutSummaryPriceList() {
 	const translate = useTranslate();
 	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
-	const isRsmBetterCheckout = useRsmBetterCheckoutExperiment();
 	const { setSlotEl } = useSubmitButtonSlot();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
+	const { formStatus } = useFormStatus();
+	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 
-	const subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
-		const originalAmountInteger = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
-		// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
-		return subtotal + Math.max( product.item_subtotal_integer, originalAmountInteger );
-	}, 0 );
+	const subtotalBeforeDiscounts = getSubtotalBeforeDiscounts( responseCart, monthlyPrices );
 	const totalDiscount = subtotalBeforeDiscounts - responseCart.sub_total_integer;
 
 	return (
 		<>
 			<CheckoutSummaryTitle className="wp-checkout-order-summary__section-title">
-				<span>{ isRsmBetterCheckout ? translate( 'Summary' ) : translate( 'Your order' ) }</span>
+				<span>{ translate( 'Summary' ) }</span>
 			</CheckoutSummaryTitle>
-			<ProductsAndCostOverridesList responseCart={ responseCart } />
+			<ProductsAndCostOverridesList
+				responseCart={ responseCart }
+				isCartUpdating={ isCartUpdating }
+			/>
 			<CheckoutSummaryAmountWrapper className="wp-checkout-order-summary__amount-wrapper">
 				<CheckoutSubtotalSection className="wp-checkout-order-summary__subtotal-section">
 					<CheckoutSummarySubtotal
@@ -185,32 +185,47 @@ function CheckoutSummaryPriceList() {
 						isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 					>
 						<span>{ translate( 'Subtotal' ) }</span>
-						<span className="wp-checkout-order-summary__subtotal-price">
-							{ totalDiscount > 0 && (
-								<s>
-									{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+						{ isCartUpdating ? (
+							<PriceLoadingIndicator
+								className="wp-checkout-order-summary__subtotal-price"
+								width="80px"
+								height="18px"
+							/>
+						) : (
+							<span className="wp-checkout-order-summary__subtotal-price">
+								{ totalDiscount > 0 && (
+									<s>
+										{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+											isSmallestUnit: true,
+											stripZeros: true,
+										} ) }
+									</s>
+								) }
+								<span>
+									{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
 										isSmallestUnit: true,
 										stripZeros: true,
 									} ) }
-								</s>
-							) }
-							<span>
-								{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
-									isSmallestUnit: true,
-									stripZeros: true,
-								} ) }
+								</span>
 							</span>
-						</span>
+						) }
 					</CheckoutSummarySubtotal>
 					{ totalDiscount > 0 && (
 						<CheckoutSummaryTotalDiscount className="wp-checkout-order-summary__line-item">
 							<span>{ translate( 'Discount' ) }</span>
-							<span className="wp-checkout-order-summary__subtotal-discount">
-								{ formatCurrency( totalDiscount, responseCart.currency, {
-									isSmallestUnit: true,
-									stripZeros: true,
-								} ) }
-							</span>
+							{ isCartUpdating ? (
+								<PriceLoadingIndicator
+									className="wp-checkout-order-summary__subtotal-discount"
+									width="60px"
+								/>
+							) : (
+								<span className="wp-checkout-order-summary__subtotal-discount">
+									{ formatCurrency( totalDiscount, responseCart.currency, {
+										isSmallestUnit: true,
+										stripZeros: true,
+									} ) }
+								</span>
+							) }
 						</CheckoutSummaryTotalDiscount>
 					) }
 
@@ -219,8 +234,12 @@ function CheckoutSummaryPriceList() {
 							key={ 'checkout-summary-line-item-' + taxLineItem.id }
 							className="wp-checkout-order-summary__line-item"
 						>
-							<span>{ taxLineItem.label }</span>
-							<span>{ taxLineItem.formattedAmount }</span>
+							<CheckoutSummaryLineItemLabel lineItem={ taxLineItem } />
+							{ isCartUpdating ? (
+								<PriceLoadingIndicator width="50px" />
+							) : (
+								<span>{ taxLineItem.formattedAmount }</span>
+							) }
 						</CheckoutSummaryLineItem>
 					) ) }
 					{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
@@ -230,7 +249,11 @@ function CheckoutSummaryPriceList() {
 							className="wp-checkout-order-summary__line-item"
 						>
 							<span>{ creditsLineItem.label }</span>
-							<span>{ creditsLineItem.formattedAmount }</span>
+							{ isCartUpdating ? (
+								<PriceLoadingIndicator width="50px" />
+							) : (
+								<span>{ creditsLineItem.formattedAmount }</span>
+							) }
 						</CheckoutSummaryLineItem>
 					) }
 				</CheckoutSubtotalSection>
@@ -242,11 +265,19 @@ function CheckoutSummaryPriceList() {
 							textOnly: true,
 						} ) }
 					</span>
-					<span className="wp-checkout-order-summary__total-price">
-						{ totalLineItem.formattedAmount }
-					</span>
+					{ isCartUpdating ? (
+						<PriceLoadingIndicator
+							className="wp-checkout-order-summary__total-price"
+							width="80px"
+							height="22px"
+						/>
+					) : (
+						<span className="wp-checkout-order-summary__total-price">
+							{ totalLineItem.formattedAmount }
+						</span>
+					) }
 				</CheckoutSummaryTotal>
-				{ isRsmBetterCheckout && isLargeViewport && (
+				{ isLargeViewport && (
 					<>
 						<CheckoutSummaryPayButtonSlot
 							ref={ setSlotEl }
@@ -257,6 +288,23 @@ function CheckoutSummaryPriceList() {
 				) }
 			</CheckoutSummaryAmountWrapper>
 		</>
+	);
+}
+
+function CheckoutSummaryLineItemLabel( { lineItem }: { lineItem: LineItemType } ) {
+	if ( ! lineItem.labelSuffix ) {
+		return <span>{ lineItem.label }</span>;
+	}
+
+	const labelSuffixWithParentheses = ` (${ lineItem.labelSuffix })`;
+	const label = lineItem.label.endsWith( labelSuffixWithParentheses )
+		? lineItem.label.slice( 0, -labelSuffixWithParentheses.length )
+		: lineItem.label;
+
+	return (
+		<span>
+			{ label } (<em>{ lineItem.labelSuffix }</em>)
+		</span>
 	);
 }
 
@@ -690,16 +738,22 @@ const CheckoutSummaryPayButtonSlot = styled.div`
 	margin-top: 16px;
 
 	/*
-	 * The real submit button renders here via a React portal (see submit-button-slot.ts).
-	 * Each payment method provides its own button element, so we style the slot to give
-	 * them a consistent full-width look in the sidebar.
+	 * The submit button renders here via a React portal (see submit-button-slot.ts).
+	 * Each payment method provides its own button element, and a "Continue" button
+	 * renders here while steps are incomplete, so normalize every button in the slot
+	 * to a consistent full-width, 50px-tall look in the sidebar regardless of which
+	 * one is showing (Pay, Continue, PayPal, etc.). The "Use a different payment
+	 * method" link is also a <button> but is a text link, so it is excluded from
+	 * the 50px submit-button sizing below.
 	 */
 	.checkout-submit-button {
 		width: 100%;
 	}
 
-	.checkout-submit-button button {
+	button:not( .checkout-steps__change-payment-method-button ) {
 		width: 100%;
+		height: 50px;
+		box-sizing: border-box;
 	}
 `;
 const CheckoutSummaryFeatures = styled.div`
@@ -793,9 +847,6 @@ const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isSupported?: boolean 
 		padding-left: 0;
 	}
 `;
-CheckoutSummaryFeaturesListItem.defaultProps = {
-	isSupported: true,
-};
 
 const CheckoutSummaryTitle = styled.div`
 	margin-bottom: 16px;
@@ -826,10 +877,16 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	margin-bottom: 4px;
 
 	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
+`;
 
-	.is-loading & {
-		animation: ${ pulse } 1.5s ease-in-out infinite;
-	}
+export const PriceLoadingIndicator = styled.span< { width?: string; height?: string } >`
+	display: inline-block;
+	height: ${ ( props ) => props.height ?? '16px' };
+	width: ${ ( props ) => props.width ?? '60px' };
+	background: ${ ( props ) => props.theme.colors.borderColorLight };
+	border-radius: 2px;
+	animation: ${ pulse } 1.5s ease-in-out infinite;
+	vertical-align: middle;
 `;
 
 const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {

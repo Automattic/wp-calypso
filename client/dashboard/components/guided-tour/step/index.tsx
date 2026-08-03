@@ -120,7 +120,12 @@ export function GuidedTourStep( {
 						<HStack justify="space-between">
 							<SectionHeader title={ currentTour.title } level={ 3 } />
 							{ totalSteps > 1 && currentStep + 1 < totalSteps && isSkippable && (
-								<Button icon={ closeSmall } iconSize={ 24 } onClick={ endTour } />
+								<Button
+									icon={ closeSmall }
+									iconSize={ 24 }
+									label={ __( 'Close tour' ) }
+									onClick={ () => endTour( false ) }
+								/>
 							) }
 						</HStack>
 						<Text as="p" lineHeight="20px">
@@ -134,8 +139,8 @@ export function GuidedTourStep( {
 									// translators: %(currentStep)s is the number of the current step and %(totalSteps)s is the number of total steps.
 									__( '%(currentStep)s of %(totalSteps)s' ),
 									{
-										currentStep: currentStep + 1,
-										totalSteps,
+										currentStep: String( currentStep + 1 ),
+										totalSteps: String( totalSteps ),
 									}
 								) }
 							</Text>

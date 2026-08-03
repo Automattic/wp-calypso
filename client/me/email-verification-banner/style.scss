@@ -6,6 +6,24 @@
 
 	.banner__action {
 		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+
+		.button + .is-primary {
+			margin-left: 0;
+		}
+
+		.button {
+			white-space: nowrap;
+		}
+	}
+
+	// Stacked, so the countdown isn't ellipsised away by the shared zero flex basis.
+	@media (max-width: $break-mobile) {
+		.banner__action {
+			flex-direction: column;
+			align-items: stretch;
+		}
 	}
 
 	@media (max-width: $break-xlarge) {

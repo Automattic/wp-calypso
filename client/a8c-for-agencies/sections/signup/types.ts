@@ -26,4 +26,6 @@ export interface AgencyDetailsSignupPayload {
 	agencySize?: string;
 	plansToOfferProducts?: 'Yes' | 'No';
 	initialSource?: string;
+	bypass_duplicate_check?: boolean;
+	skip_hubspot?: boolean;
 }

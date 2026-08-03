@@ -231,7 +231,7 @@ const domain: FlowV2< typeof initialize > = {
 						providedDependencies.mode &&
 						providedDependencies.domain
 					) {
-						const destination = addQueryArgs( '/use-my-domain', {
+						const destination = addQueryArgs( 'use-my-domain', {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
@@ -327,7 +327,10 @@ const domain: FlowV2< typeof initialize > = {
 								signup: 0,
 								isDomainOnly: 1,
 								cancel_to: new URL(
-									addQueryArgs( '/setup/domain/new-or-existing-site', window.location.search ),
+									addQueryArgs(
+										'/setup/domain/new-or-existing-site',
+										getQueryArgs( window.location.search )
+									),
 									window.location.href
 								).href,
 							} )

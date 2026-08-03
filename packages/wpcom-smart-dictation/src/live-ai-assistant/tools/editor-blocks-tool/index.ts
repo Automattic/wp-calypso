@@ -12,6 +12,7 @@ export const INSERT_BLOCKS_TOOL_NAME = 'insert_blocks_tool';
 export const UPDATE_BLOCK_ATTRIBUTES_TOOL_NAME = 'update_block_attributes_tool';
 export const REPLACE_BLOCK_TOOL_NAME = 'replace_block_tool';
 export const REMOVE_BLOCK_TOOL_NAME = 'remove_block_tool';
+export const REMOVE_ALL_BLOCKS_TOOL_NAME = 'remove_all_blocks_tool';
 export const MOVE_BLOCK_TOOL_NAME = 'move_block_tool';
 export const GET_BLOCK_TOOL_NAME = 'get_block_tool';
 export const FORMAT_TEXT_TOOL_NAME = 'format_text_tool';
@@ -438,6 +439,18 @@ export const removeBlockToolDefinition = {
 	},
 } as const;
 
+export const removeAllBlocksToolDefinition = {
+	type: 'function',
+	name: REMOVE_ALL_BLOCKS_TOOL_NAME,
+	description:
+		'Remove every block from the post in one operation. Uses wp.data select("core/block-editor").getBlocks to collect all top-level block clientIds, then dispatch("core/block-editor").removeBlocks when available. Use this when the user clearly asks to delete, remove, clear, wipe, or start over with all blocks / the whole post body. This only removes blocks in the editor canvas; it does not delete the post title, post settings, media library items, or publish status.',
+	parameters: {
+		type: 'object',
+		properties: {},
+		additionalProperties: false,
+	},
+} as const;
+
 export const moveBlockToolDefinition = {
 	type: 'function',
 	name: MOVE_BLOCK_TOOL_NAME,
@@ -569,6 +582,7 @@ type BlockEditorActions = {
 	) => void | Promise< unknown >;
 	replaceBlock: ( clientId: string | string[], block: unknown ) => void | Promise< unknown >;
 	removeBlock: ( clientId: string, selectPrevious?: boolean ) => void | Promise< unknown >;
+	removeBlocks?: ( clientIds: string[], selectPrevious?: boolean ) => void | Promise< unknown >;
 	moveBlocksUp: ( clientIds: string[], rootClientId?: string ) => void | Promise< unknown >;
 	moveBlocksDown: ( clientIds: string[], rootClientId?: string ) => void | Promise< unknown >;
 	moveBlocksToPosition: (
@@ -1807,6 +1821,45 @@ export async function executeRemoveBlockTool( rawArgs: unknown ) {
 		scrollBlockIntoView( newSelectedClientId );
 	}
 	return { ok: true, client_id: parsed.clientId, select_previous: parsed.selectPrevious };
+}
+
+export async function executeRemoveAllBlocksTool() {
+	const be = getBlockEditorSelect();
+	const d = getBlockEditorDispatch();
+	if ( ! be || typeof be.getBlocks !== 'function' || ! d || typeof d.removeBlock !== 'function' ) {
+		return {
+			ok: false,
+			error:
+				'Block editor is not available (core/block-editor store missing or block removal missing).',
+		};
+	}
+
+	const blocks = be.getBlocks();
+	const clientIds = blocks.map( ( block ) => block.clientId ).filter( Boolean );
+	if ( ! clientIds.length ) {
+		return { ok: true, removed_count: 0, client_ids: [] };
+	}
+
+	try {
+		if ( typeof d.removeBlocks === 'function' ) {
+			const out = d.removeBlocks( clientIds, false );
+			if ( out && typeof ( out as Promise< unknown > ).then === 'function' ) {
+				await ( out as Promise< unknown > );
+			}
+		} else {
+			for ( const clientId of clientIds ) {
+				const out = d.removeBlock( clientId, false );
+				if ( out && typeof ( out as Promise< unknown > ).then === 'function' ) {
+					await ( out as Promise< unknown > );
+				}
+			}
+		}
+	} catch ( err ) {
+		const message = err instanceof Error ? err.message : 'unknown error';
+		return { ok: false, error: `remove all blocks failed: ${ message }` };
+	}
+
+	return { ok: true, removed_count: clientIds.length, client_ids: clientIds };
 }
 
 function parseMoveBlockArgs( rawArgs: unknown ):

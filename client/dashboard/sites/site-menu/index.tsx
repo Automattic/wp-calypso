@@ -64,9 +64,14 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 					{ __( 'Overview' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ isAvailable( siteDeploymentsRoute ) && siteTypeSupports.deployments && (
-				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/deployments` }>
-					{ __( 'Deployments' ) }
+			{ isAvailable( siteDomainsRoute ) && siteTypeSupports.domains && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
+					{ __( 'Domains' ) }
+				</ResponsiveMenu.Item>
+			) }
+			{ isAvailable( siteBackupsRoute ) && siteTypeSupports.backups && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/backups` }>
+					{ __( 'Backups' ) }
 				</ResponsiveMenu.Item>
 			) }
 			{ isAvailable( sitePerformanceRoute ) && siteTypeSupports.performance && (
@@ -89,14 +94,9 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 					{ __( 'Scan' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ isAvailable( siteBackupsRoute ) && siteTypeSupports.backups && (
-				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/backups` }>
-					{ __( 'Backups' ) }
-				</ResponsiveMenu.Item>
-			) }
-			{ isAvailable( siteDomainsRoute ) && siteTypeSupports.domains && (
-				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
-					{ __( 'Domains' ) }
+			{ isAvailable( siteDeploymentsRoute ) && siteTypeSupports.deployments && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/deployments` }>
+					{ __( 'Deployments' ) }
 				</ResponsiveMenu.Item>
 			) }
 			{ isAvailable( siteSettingsRoute ) &&

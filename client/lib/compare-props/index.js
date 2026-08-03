@@ -1,16 +1,16 @@
-import { includes, isEqual } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 
 export default ( options = {} ) => {
 	const { ignore, deep, shallow } = options;
 	return ( prevProps, nextProps ) => {
 		for ( const propName in prevProps ) {
 			// Skip ignored properties
-			if ( ignore && includes( ignore, propName ) ) {
+			if ( ignore && ignore.includes( propName ) ) {
 				continue;
 			}
 
 			// Some properties want to be compared deeply
-			if ( deep && includes( deep, propName ) ) {
+			if ( deep && deep.includes( propName ) ) {
 				if ( ! isEqual( prevProps[ propName ], nextProps[ propName ] ) ) {
 					return false;
 				}
@@ -19,7 +19,7 @@ export default ( options = {} ) => {
 			}
 
 			// Compare all other props (or a selected subset) shallowly
-			if ( ! shallow || includes( shallow, propName ) ) {
+			if ( ! shallow || shallow.includes( propName ) ) {
 				if ( prevProps[ propName ] !== nextProps[ propName ] ) {
 					return false;
 				}
@@ -31,8 +31,8 @@ export default ( options = {} ) => {
 		for ( const propName in nextProps ) {
 			if (
 				! ( propName in prevProps ) &&
-				! ( ignore && includes( ignore, propName ) ) &&
-				! ( shallow && ! includes( shallow, propName ) )
+				! ( ignore && ignore.includes( propName ) ) &&
+				! ( shallow && ! shallow.includes( propName ) )
 			) {
 				return false;
 			}

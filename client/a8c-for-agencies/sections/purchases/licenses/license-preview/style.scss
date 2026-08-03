@@ -1,3 +1,7 @@
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
@@ -36,45 +40,15 @@
 	inset-block-start: 3px;
 }
 
-.license-preview__product-pressable-link {
+.theme-a8c-for-agencies a.license-preview__product-pressable-link {
 
 	&,
-	&:visited {
-		@include heading-medium;
-		display: flex;
-		flex-direction: row;
-		gap: 4px;
-		align-items: center;
-		text-decoration: underline;
-		color: var(--color-text);
-	}
-
-	.gridicon {
-		fill: var(--color-text);
-
-	}
-}
-
-.license-preview__domain {
-	padding: 0;
-	margin: 0 0 4px;
-	@include body-x-large;
-	color: var(--color-neutral-100);
-	overflow: hidden;
-	word-break: break-all;
-
-	span + span {
-		margin-inline-start: 12px;
-
-		@include break-xlarge() {
-			display: block;
-			margin-inline-start: 0;
-		}
-
-		@include break-wide() {
-			display: inline;
-			margin-inline-start: 12px;
-		}
+	&:visited,
+	&:active,
+	&:hover,
+	&:focus {
+		font-size: $font-size-small;
+		color: var(--color-accent-80);
 	}
 }
 
@@ -123,14 +97,6 @@
 	}
 }
 
-.license-preview__copy-license-key {
-	&.button {
-		font-weight: 600;
-		color: var(--color-neutral-80);
-		border-color: var(--color-text-subtle);
-	}
-}
-
 .license-preview__toggle {
 	padding: 0;
 }
@@ -149,10 +115,7 @@
 }
 
 .license-preview--placeholder {
-	.license-preview__domain,
-	.license-preview__product,
-	.license-preview__label + div,
-	.license-preview__copy-license-key {
+	.license-preview__placeholder-bar {
 		@include placeholder( --color-neutral-10 );
 	}
 }

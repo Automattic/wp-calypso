@@ -4,17 +4,28 @@ import {
 	A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
 	A4A_AI_MCP_CONNECT_LINK,
 	A4A_AI_MCP_LINK,
+	A4A_AGENT_STUDIO_LINK,
+	A4A_BENCHMARKS_LINK,
 	A4A_DEV_TOOLS_LINK,
 	A4A_LEARN_LINK,
 	A4A_RESOURCES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
+import {
+	requireAccessContext,
+	requireMcpBetaAccessContext,
+} from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	agentStudioBriefContext,
+	agentStudioContext,
+	agentStudioOutputContext,
+} from '../agent-studio/controller';
 import {
 	aiMcpAvailableToolsContext,
 	aiMcpConnectContext,
 	aiMcpOverviewContext,
 } from '../ai-mcp/controller';
+import { benchmarksContext } from '../benchmarks/controller';
 import { devToolsContext } from '../dev-tools/controller';
 import * as controller from './controller';
 
@@ -28,23 +39,60 @@ export default function () {
 	);
 	page( A4A_DEV_TOOLS_LINK, requireAccessContext, devToolsContext, makeLayout, clientRender );
 
-	if ( isEnabled( 'a4a-ai-mcp' ) ) {
-		page( A4A_AI_MCP_LINK, requireAccessContext, aiMcpOverviewContext, makeLayout, clientRender );
+	if ( isEnabled( 'a4a-agent-studio' ) ) {
 		page(
-			A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
+			A4A_AGENT_STUDIO_LINK,
 			requireAccessContext,
-			aiMcpAvailableToolsContext,
+			agentStudioContext,
 			makeLayout,
 			clientRender
 		);
 		page(
-			A4A_AI_MCP_CONNECT_LINK,
+			`${ A4A_AGENT_STUDIO_LINK }/agents/:agentId/new`,
 			requireAccessContext,
-			aiMcpConnectContext,
+			agentStudioBriefContext,
+			makeLayout,
+			clientRender
+		);
+		page(
+			`${ A4A_AGENT_STUDIO_LINK }/outputs/:outputId`,
+			requireAccessContext,
+			agentStudioOutputContext,
 			makeLayout,
 			clientRender
 		);
 	}
 
-	page( A4A_RESOURCES_LINK, () => page.redirect( A4A_LEARN_LINK ) );
+	if ( isEnabled( 'a4a-benchmarks' ) ) {
+		page( A4A_BENCHMARKS_LINK, requireAccessContext, benchmarksContext, makeLayout, clientRender );
+	}
+
+	page(
+		A4A_AI_MCP_LINK,
+		requireAccessContext,
+		requireMcpBetaAccessContext,
+		aiMcpOverviewContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
+		requireAccessContext,
+		requireMcpBetaAccessContext,
+		aiMcpAvailableToolsContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		A4A_AI_MCP_CONNECT_LINK,
+		requireAccessContext,
+		requireMcpBetaAccessContext,
+		aiMcpConnectContext,
+		makeLayout,
+		clientRender
+	);
+
+	page( A4A_RESOURCES_LINK, () =>
+		page.redirect( isEnabled( 'a4a-agent-studio' ) ? A4A_AGENT_STUDIO_LINK : A4A_LEARN_LINK )
+	);
 }

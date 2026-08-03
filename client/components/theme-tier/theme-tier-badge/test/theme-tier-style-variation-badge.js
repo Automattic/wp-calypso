@@ -1,5 +1,5 @@
 /** @jest-environment jsdom */
-import { getPlan } from '@automattic/calypso-products';
+import { getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,7 +7,10 @@ import { ThemeTierBadgeContextProvider } from '../theme-tier-badge-context';
 import ThemeTierStyleVariationBadge from '../theme-tier-style-variation-badge';
 
 jest.mock( 'calypso/state' );
-jest.mock( '@automattic/calypso-products' );
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
+	getPlan: jest.fn(),
+} ) );
 
 describe( 'ThemeTierStyleVariationBadge', () => {
 	const siteSlug = 'example.wordpress.com';
@@ -59,10 +62,8 @@ describe( 'ThemeTierStyleVariationBadge', () => {
 
 	test( 'should render a link to the plan on the tooltip content', async () => {
 		const title = 'Premium';
-		const pathSlug = 'premium';
 		getPlan.mockImplementation( () => ( {
 			getTitle: () => title,
-			getPathSlug: () => pathSlug,
 		} ) );
 
 		renderWithQueryClient( <ThemeTierStyleVariationBadge /> );
@@ -76,7 +77,7 @@ describe( 'ThemeTierStyleVariationBadge', () => {
 
 		await waitFor( () =>
 			expect( global.window.location.href ).toBe(
-				`/checkout/${ siteSlug }/${ pathSlug }?redirect_to=http%3A%2F%2Fwwww.example.com`
+				`/checkout/${ siteSlug }/${ PLAN_PERSONAL }?redirect_to=http%3A%2F%2Fwwww.example.com`
 			)
 		);
 	} );

@@ -1,3 +1,4 @@
+import { userPurchasesQuery } from '@automattic/api-queries';
 import i18n from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -13,11 +14,32 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import 'calypso/state/purchases/init';
 
 const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
 const PURCHASE_REMOVE_ERROR_MESSAGE = i18n.translate( 'There was an error removing the purchase.' );
+
+/**
+ * Tracks purchase IDs that were recently removed via removePurchaseFromState.
+ * fetchSitePurchases filters these from the API response to prevent stale
+ * server data from re-inserting a removed purchase into Redux (the server
+ * may still return it due to replication lag / eventual consistency).
+ * Each entry self-clears after 15 seconds.
+ */
+const recentlyRemovedPurchaseIds = new Set();
+
+function trackRemovedPurchase( purchaseId ) {
+	const id = String( purchaseId );
+	recentlyRemovedPurchaseIds.add( id );
+	setTimeout( () => {
+		recentlyRemovedPurchaseIds.delete( id );
+	}, 15_000 );
+}
+
+// Exported for test teardown only.
+export const __resetRecentlyRemovedPurchaseIds = () => recentlyRemovedPurchaseIds.clear();
 
 export const clearPurchases = () => ( dispatch, getState ) => {
 	const siteId = getSelectedSiteId( getState() );
@@ -48,8 +70,10 @@ export const clearPurchases = () => ( dispatch, getState ) => {
  * migrates to `useQuery`, this helper can be removed.
  */
 export const removePurchaseFromState = ( purchaseId ) => ( dispatch, getState ) => {
+	trackRemovedPurchase( purchaseId );
 	const state = getState();
 	const currentData = state.purchases.data ?? [];
+	const captured = currentData.find( ( p ) => String( p.ID ) === String( purchaseId ) ) ?? null;
 	const siteId = getSelectedSiteId( state );
 	dispatch( {
 		type: PURCHASE_REMOVE_COMPLETED,
@@ -58,6 +82,23 @@ export const removePurchaseFromState = ( purchaseId ) => ( dispatch, getState ) 
 	if ( siteId ) {
 		dispatch( requestAdminMenu( siteId ) );
 	}
+	return captured;
+};
+
+/**
+ * Reverses a previous removePurchaseFromState by re-adding the purchase to
+ * Redux state and clearing it from recentlyRemovedPurchaseIds so a subsequent
+ * fetch result is not filtered out. Idempotent.
+ */
+export const restorePurchaseToState = ( purchase ) => ( dispatch, getState ) => {
+	recentlyRemovedPurchaseIds.delete( String( purchase.ID ) );
+	const state = getState();
+	const currentData = state.purchases.data ?? [];
+	const exists = currentData.some( ( p ) => String( p.ID ) === String( purchase.ID ) );
+	dispatch( {
+		type: PURCHASE_REMOVE_COMPLETED,
+		purchases: exists ? currentData : [ ...currentData, purchase ],
+	} );
 };
 
 export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
@@ -72,10 +113,13 @@ export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
 			apiVersion: '1.2',
 		} )
 		.then( ( data ) => {
+			const purchases = recentlyRemovedPurchaseIds.size
+				? data.filter( ( p ) => ! recentlyRemovedPurchaseIds.has( String( p.ID ) ) )
+				: data;
 			dispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
 				siteId,
-				purchases: data,
+				purchases,
 			} );
 		} )
 		.catch( () => {
@@ -102,6 +146,7 @@ export const fetchUserPurchases = ( userId ) => ( dispatch ) => {
 				purchases: data,
 				userId,
 			} );
+			return data;
 		} )
 		.catch( () => {
 			dispatch( {
@@ -126,6 +171,11 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch, getState ) =
 					purchases: data.purchases,
 					userId,
 				} );
+
+				// Updating Redux isn't enough: pages reading purchases through
+				// `@automattic/api-queries` would keep serving the removed purchase.
+				// Invalidating the `[ 'upgrades' ]` root key covers them all at once.
+				getCalypsoQueryClient()?.invalidateQueries( userPurchasesQuery() );
 
 				if ( siteId ) {
 					dispatch( requestAdminMenu( siteId ) );

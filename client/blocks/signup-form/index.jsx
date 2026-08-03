@@ -1,25 +1,10 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { camelCase, mapKeys, merge, omitBy, pick, snakeCase, isEmpty } from '@automattic/js-utils';
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import {
-	camelCase,
-	find,
-	filter,
-	forEach,
-	get,
-	includes,
-	keys,
-	map,
-	mapKeys,
-	merge,
-	pick,
-	omitBy,
-	snakeCase,
-	isEmpty,
-} from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -195,7 +180,7 @@ class SignupForm extends Component {
 			return null;
 		}
 
-		const userExistsError = find( step.errors, ( error ) => error.error === 'user_exists' );
+		const userExistsError = step.errors?.find( ( error ) => error.error === 'user_exists' );
 
 		return userExistsError;
 	}
@@ -267,13 +252,13 @@ class SignupForm extends Component {
 	};
 
 	validate = ( fields, onComplete ) => {
-		const fieldsForValidation = filter( [
+		const fieldsForValidation = [
 			'email',
 			this.props.isPasswordless === false && 'password', // Remove password from validation if passwordless
 			this.displayUsernameInput() && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
-		] );
+		].filter( Boolean );
 
 		const data = mapKeys( pick( fields, fieldsForValidation ), ( value, key ) => snakeCase( key ) );
 		wpcom.req.post(
@@ -302,14 +287,14 @@ class SignupForm extends Component {
 					messages = this.filterUntouchedFieldErrors( messages );
 				}
 
-				forEach( messages, ( fieldError, field ) => {
+				Object.entries( messages ).forEach( ( [ field, fieldError ] ) => {
 					if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
 						return;
 					}
 
-					if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
+					if ( field === 'username' && ! usernamesSearched.includes( fields.username ) ) {
 						recordTracksEvent( 'calypso_signup_username_validation_failed', {
-							error: keys( fieldError )[ 0 ],
+							error: Object.keys( fieldError )[ 0 ],
 							username: fields.username,
 						} );
 
@@ -318,7 +303,7 @@ class SignupForm extends Component {
 
 					if ( field === 'password' ) {
 						recordTracksEvent( 'calypso_signup_password_validation_failed', {
-							error: keys( fieldError )[ 0 ],
+							error: Object.keys( fieldError )[ 0 ],
 						} );
 
 						timesPasswordValidationFailed++;
@@ -326,7 +311,7 @@ class SignupForm extends Component {
 
 					if ( field === 'email' ) {
 						recordTracksEvent( 'calypso_signup_email_validation_failed', {
-							error: keys( fieldError )[ 0 ],
+							error: Object.keys( fieldError )[ 0 ],
 							email: fields.email,
 						} );
 
@@ -546,7 +531,7 @@ class SignupForm extends Component {
 			return;
 		}
 
-		return map( messages, ( message, error_code ) => {
+		return Object.entries( messages ).map( ( [ error_code, message ] ) => {
 			if ( error_code === 'taken' ) {
 				const fieldValue = formState.getFieldValue( this.state.form, fieldName );
 				const link = addQueryArgs( { email_address: fieldValue }, this.getLoginLink() );
@@ -845,7 +830,7 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			oauth2Client,
 			sectionName: getSectionName( state ),
-			from: get( getCurrentQueryArguments( state ), 'from' ),
+			from: getCurrentQueryArguments( state )?.from,
 			wccomFrom: getWccomFrom( state ),
 			isWoo: getIsWoo( state ),
 			isWooJPC,

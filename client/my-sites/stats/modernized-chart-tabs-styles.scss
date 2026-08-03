@@ -178,7 +178,7 @@ $custom-stats-tab-mobile-break: $break-medium;
 			&.is-selected.is-low {
 				a {
 					color: var(--studio-black);
-					border-color: var(--color-primary);
+					border-color: var(--color-accent);
 					background-color: var(--color-surface);
 
 					// Keep the original mobile stats-tabs border styles

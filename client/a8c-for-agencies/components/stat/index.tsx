@@ -1,5 +1,6 @@
 import { ProgressBar } from '@automattic/components';
 import clsx from 'clsx';
+import { ReactNode } from 'react';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 
 import './style.scss';
@@ -18,7 +19,7 @@ interface StatProps {
 	progressColor?: keyof typeof progressColorMap;
 	progressLabel?: string;
 	progressValue?: number;
-	strapline?: string;
+	strapline?: ReactNode;
 }
 
 export function Stat( {
@@ -63,7 +64,7 @@ export function Stat( {
 					value={ isLoading ? 0 : progressValue }
 					total={ 100 }
 					title={ progressLabel }
-					color={ progressColor ? progressColorMap[ progressColor ] : undefined }
+					color={ progressColor ? progressColorMap[ progressColor ] : 'var(--color-primary)' }
 				/>
 			) }
 		</div>

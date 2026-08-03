@@ -1,6 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
+	CANCEL_IMAGE_GENERATION_TOOL_NAME,
 	STOP_DICTATION_TOOL_NAME,
+	executeCancelImageGenerationTool,
 	executeStopDictationTool,
 } from '../tools/dictation-control-tool';
 import {
@@ -15,6 +17,7 @@ import {
 	INSERT_BLOCK_TOOL_NAME,
 	INSERT_BLOCKS_TOOL_NAME,
 	MOVE_BLOCK_TOOL_NAME,
+	REMOVE_ALL_BLOCKS_TOOL_NAME,
 	REMOVE_BLOCK_TOOL_NAME,
 	REPLACE_BLOCK_TOOL_NAME,
 	SELECT_BLOCK_TOOL_NAME,
@@ -30,6 +33,7 @@ import {
 	executeInsertBlockTool,
 	executeInsertBlocksTool,
 	executeMoveBlockTool,
+	executeRemoveAllBlocksTool,
 	executeRemoveBlockTool,
 	executeReplaceBlockTool,
 	executeSelectBlockTool,
@@ -62,6 +66,12 @@ import type { RealtimeToolEvent } from './types';
 interface ExecuteRealtimeToolCallsArgs {
 	event: { response?: { output?: unknown[] } };
 	onToolEvent: ( event: RealtimeToolEvent ) => void;
+	/**
+	 * Drop any running entry with this id. Used when a tool call resolves into a
+	 * "no log entry needed" state (e.g. user-cancelled image generation) and we'd
+	 * otherwise leave the "Generating image…" indicator up forever.
+	 */
+	onToolEventRemove: ( id: string ) => void;
 	sendFunctionCallOutput: ( callId: string, result: unknown ) => void;
 	/**
 	 * Aborted when the realtime session tears down. Long-running tools
@@ -86,6 +96,7 @@ interface RealtimeFunctionCall {
 export async function executeRealtimeToolCalls( {
 	event,
 	onToolEvent,
+	onToolEventRemove,
 	sendFunctionCallOutput,
 	signal,
 }: ExecuteRealtimeToolCallsArgs ): Promise< ExecuteRealtimeToolCallsResult > {
@@ -138,6 +149,10 @@ export async function executeRealtimeToolCalls( {
 				status: getToolCallResultOk( result ) ? 'done' : 'error',
 				timestamp: Date.now(),
 			} );
+		} else if ( call.call_id ) {
+			// No final label means the entry should disappear (e.g. cancelled
+			// image generation). Drop any running placeholder we put up earlier.
+			onToolEventRemove( call.call_id );
 		}
 
 		sendFunctionCallOutput( call.call_id, result );
@@ -196,6 +211,9 @@ async function executeRealtimeToolCall(
 	if ( call.name === REMOVE_BLOCK_TOOL_NAME ) {
 		return executeRemoveBlockTool( call.arguments );
 	}
+	if ( call.name === REMOVE_ALL_BLOCKS_TOOL_NAME ) {
+		return executeRemoveAllBlocksTool();
+	}
 	if ( call.name === MOVE_BLOCK_TOOL_NAME ) {
 		return executeMoveBlockTool( call.arguments );
 	}
@@ -231,6 +249,9 @@ async function executeRealtimeToolCall(
 	}
 	if ( call.name === STOP_DICTATION_TOOL_NAME ) {
 		return executeStopDictationTool();
+	}
+	if ( call.name === CANCEL_IMAGE_GENERATION_TOOL_NAME ) {
+		return executeCancelImageGenerationTool();
 	}
 	if ( call.name === GENERATE_IMAGE_TOOL_NAME ) {
 		return executeGenerateImageTool( call.arguments, signal );

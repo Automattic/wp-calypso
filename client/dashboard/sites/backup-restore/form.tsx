@@ -3,11 +3,10 @@ import { useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { rotateLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBackupRestoreRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import type { RestoreConfig } from '@automattic/api-core';
@@ -52,12 +51,15 @@ const fields: Field< RestoreConfig >[] = [
 
 function SiteBackupRestoreForm( {
 	siteId,
+	rewindId,
+	restorePointDate,
 	onRestoreInitiate,
 }: {
 	siteId: number;
+	rewindId: string;
+	restorePointDate: string;
 	onRestoreInitiate: ( restoreId: number ) => void;
 } ) {
-	const { rewindId } = siteBackupRestoreRoute.useParams();
 	const { mutate: restoreMutation, isPending: isRestoreMutationPending } = useMutation(
 		siteBackupRestoreInitiateMutation( siteId )
 	);
@@ -118,7 +120,12 @@ function SiteBackupRestoreForm( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				<p>{ __( 'Choose the items you wish to restore:' ) }</p>
+				<p>
+					{ createInterpolateElement(
+						__( 'Choose what to restore from your <restorePointDate /> backup:' ),
+						{ restorePointDate: <strong>{ restorePointDate }</strong> }
+					) }
+				</p>
 				<DataForm< RestoreConfig >
 					data={ formData }
 					fields={ fields }
@@ -133,7 +140,6 @@ function SiteBackupRestoreForm( {
 				<ButtonStack justify="flex-start">
 					<Button
 						variant="primary"
-						icon={ rotateLeft }
 						type="submit"
 						isBusy={ isRestoreMutationPending }
 						disabled={ ! isFormValid || isRestoreMutationPending }

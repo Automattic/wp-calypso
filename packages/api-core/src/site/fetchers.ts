@@ -37,6 +37,7 @@ export const SITE_FIELDS = [
 	'was_hosting_trial',
 	'was_upgraded_from_trial',
 	'is_garden',
+	'is_multisite',
 	'garden_name',
 	'garden_partner',
 	'garden_is_provisioned',
@@ -63,6 +64,9 @@ export const SITE_OPTIONS = [
 	'software_version',
 	'updated_at',
 	'woocommerce_is_active',
+	'wpcom_ai_launchpad_enabled',
+	'wpcom_ai_launchpad_dismissed',
+	'wpcom_ai_launchpad_completed',
 	'wpcom_production_blog_id',
 ];
 

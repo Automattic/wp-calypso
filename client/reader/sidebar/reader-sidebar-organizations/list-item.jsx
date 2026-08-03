@@ -1,10 +1,13 @@
-import { Count } from '@automattic/components';
+import page from '@automattic/calypso-router';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
+import { getReaderSidebarSiteName } from 'calypso/reader/get-helpers';
+import MoreMenuActions from 'calypso/reader/sidebar/more-menu-actions';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
@@ -14,6 +17,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		path: PropTypes.string,
+		fallbackPath: PropTypes.string,
 	};
 
 	handleSidebarClick = () => {
@@ -25,13 +29,14 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 	};
 
 	render() {
-		const { site, path, moment } = this.props;
+		const { site, path, moment, fallbackPath } = this.props;
 		const computedClassName = ReaderSidebarHelper.itemLinkClass(
 			'/reader/feeds/' + site.feed_ID,
 			path
 		);
 
 		const selected = computedClassName.includes( 'selected' );
+		const feedId = site.feed_ID ? Number( site.feed_ID ) : null;
 
 		return (
 			<MenuItem selected={ selected } key={ this.props.title }>
@@ -50,7 +55,24 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 							{ site.last_updated > 0 && moment( new Date( site.last_updated ) ).fromNow() }
 						</span>
 					</span>
-					{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
+					<span className="sidebar__actions-and-count">
+						{ feedId && site.feed_URL && (
+							<MoreMenuActions
+								identifier={ `feed:${ feedId }` }
+								feedIds={ [ feedId ] }
+								feedUrls={ [ site.feed_URL ] }
+								unseenCount={ site.unseen_count }
+								siteName={ getReaderSidebarSiteName( site ) }
+								source="reader-organization-item"
+								onUnsubscribed={ () => {
+									if ( selected && fallbackPath ) {
+										page( fallbackPath );
+									}
+								} }
+							/>
+						) }
+						<ReaderUnreadCount count={ site.unseen_count } />
+					</span>
 				</MenuItemLink>
 			</MenuItem>
 		);

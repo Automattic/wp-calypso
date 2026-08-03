@@ -61,7 +61,7 @@ import type { WpcomRequestParams } from 'wpcom-proxy-request';
 
 const loadCookieBanner = () =>
 	import(
-		/* webpackChunkName: "async-load-calypso-blocks-cookie-banner" */ 'calypso/blocks/cookie-banner'
+		/* webpackChunkName: "async-load-calypso-blocks-privacy-prefs" */ 'calypso/blocks/cookie-banner'
 	);
 const loadGlobalNotices = () =>
 	import(
@@ -147,7 +147,11 @@ async function main() {
 
 			return new Promise< T >( ( resolve, reject ) => {
 				const cb = ( error: Error, response: T ) => {
-					error ? reject( error ) : resolve( response );
+					if ( error ) {
+						reject( error );
+					} else {
+						resolve( response );
+					}
 				};
 				if ( method && ( method as string ).toUpperCase() !== 'GET' ) {
 					wpcom.req.post( { ...rest, method }, queryObj, body, cb );
@@ -280,11 +284,7 @@ async function main() {
 							<LazyHelpCenter currentUser={ user as UserStore.CurrentUser } />
 						) : (
 							<>
-								<AsyncHelpCenterApp
-									requireLogin
-									currentUser={ user as UserStore.CurrentUser }
-									sectionName="stepper"
-								/>
+								<AsyncHelpCenterApp requireLogin sectionName="stepper" />
 								<AsyncLoad
 									require={ loadAgentsManagerLoader }
 									placeholder={ null }

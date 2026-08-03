@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/variables";
+
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -107,8 +111,8 @@ button, a {
 			}
 
 			.add-new-site__popover-button-heading {
-				font-size: rem(14px);
-				font-weight: 500;
+				font-size: rem(20px);
+				font-weight: 400;
 			}
 		}
 
@@ -127,17 +131,18 @@ button, a {
 		}
 
 		.add-new-site__popover-button-heading {
-			font-size: rem(14px);
-			font-weight: 600;
+			font-size: rem(13px);
+			font-weight: 500;
 			text-wrap: pretty;
 		}
 
 		.add-new-site__popover-button-description {
 			font-size: rem(12px);
 			font-weight: 400;
-			color: var(--color-text-black);
-			padding-top: 4px;
+			color: var(--color-neutral-50);
+			padding-block: 8px;
 			text-wrap: pretty;
+
 		}
 	}
 }

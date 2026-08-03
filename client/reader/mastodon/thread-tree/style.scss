@@ -28,10 +28,10 @@
 	align-items: center;
 	gap: 8px;
 	padding: 16px;
-	border: 1px solid var( --studio-gray-5, #dcdcde );
+	border: 1px solid var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
 	border-radius: 4px;
 	background: var( --studio-gray-0, #f6f7f7 );
-	color: var( --studio-gray-50, #646970 );
+	color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
 	font-size: 0.875rem;
 }
 
@@ -44,7 +44,7 @@
 	&.thread-node--capped::before {
 		content: '↳';
 		margin-inline-end: 4px;
-		color: var( --studio-gray-30, #a7aaad );
+		color: var( --color-neutral-light, var( --studio-gray-30, #a7aaad ) );
 	}
 
 	&.is-target {

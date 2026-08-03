@@ -8,15 +8,19 @@ import {
 	deleteMastodonFollow,
 	deleteMastodonLike,
 	deleteMastodonRepost,
+	getMastodonActorFollowers,
+	getMastodonActorFollowing,
 	getMastodonAuthStatus,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
 	getMastodonConnection,
 	getMastodonConnections,
 	getMastodonInstanceConfig,
+	getMastodonNotifications,
 	getMastodonTagFeed,
 	getMastodonThread,
 	getMastodonTimeline,
+	mapNotificationsFilter,
 	readerMastodonKeys,
 	uploadMastodonMedia,
 } from '@automattic/api-core';
@@ -38,6 +42,7 @@ import type {
 	GetMastodonAuthorFeedParams,
 	GetMastodonTagFeedParams,
 	GetMastodonTimelineParams,
+	MastodonAccountSummariesPage,
 	MastodonAuthStatus,
 	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
@@ -54,11 +59,13 @@ import type {
 	MastodonInstanceConfig,
 	MastodonMediaUploadParams,
 	MastodonMediaUploadResult,
+	MastodonNotificationsPage,
 	MastodonTagFilter,
 	MastodonTagFeedPage,
 	MastodonThreadNode,
 	MastodonThreadResponse,
 	MastodonTimelinePage,
+	NotificationsFilter,
 } from '@automattic/api-core';
 
 export const mastodonConnectionsQueryOptions = () =>
@@ -75,6 +82,7 @@ export function useMastodonConnectionsQuery( { enabled }: { enabled?: boolean } 
 export function useAuthorizeMastodonConnectionMutation() {
 	return useMutation< MastodonAuthorizeResponse, MastodonError, AuthorizeMastodonConnectionParams >(
 		{
+			meta: { statId: 'mastodon-conn-authorize' },
 			mutationFn: authorizeMastodonConnection,
 		}
 	);
@@ -87,6 +95,7 @@ export function useCompleteMastodonConnectionMutation() {
 		MastodonError,
 		CompleteMastodonConnectionParams
 	>( {
+		meta: { statId: 'mastodon-conn-complete' },
 		mutationFn: completeMastodonConnection,
 		onSuccess: ( { connection } ) => {
 			// Seed the list cache synchronously so the route we `page.replace`
@@ -197,6 +206,59 @@ export function useMastodonTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( mastodonTimelineInfiniteQuery( connectionId ) );
 }
 
+export interface UseMastodonNotificationsOptions {
+	filter?: NotificationsFilter;
+}
+
+export const mastodonNotificationsInfiniteQuery = (
+	connectionId: number,
+	filter: NotificationsFilter = 'all'
+) =>
+	infiniteQueryOptions<
+		MastodonNotificationsPage,
+		MastodonError,
+		InfiniteData< MastodonNotificationsPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.notifications( connectionId, filter ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonNotifications( {
+				connectionId,
+				cursor: pageParam,
+				types: mapNotificationsFilter( filter ),
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.next_cursor ?? undefined,
+		enabled: connectionId > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		// Mirror the timeline policy: transient errors get one extra
+		// attempt with backoff keyed off `retry_after` where present;
+		// terminal errors (`auth_required`, `not_found`, `unknown`) fall
+		// through to the EmptyContent immediately.
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+
+export function useMastodonNotificationsInfiniteQuery(
+	connectionId: number,
+	options: UseMastodonNotificationsOptions = {}
+) {
+	const { filter = 'all' } = options;
+	return useInfiniteQuery( mastodonNotificationsInfiniteQuery( connectionId, filter ) );
+}
+
 export const mastodonThreadQueryOptions = ( connectionId: number, statusId: string ) =>
 	queryOptions< MastodonThreadResponse, MastodonError >( {
 		queryKey: readerMastodonKeys.thread( connectionId, statusId ),
@@ -232,14 +294,14 @@ export function useMastodonThreadQuery( connectionId: number, statusId: string )
 // entry rather than two. (Numeric ids and `@user@instance` route segments
 // can't always be reduced to the same key without a backend round-trip; we
 // dedupe what we can.)
-function normalizeActor( actor: string ): string {
+export function normalizeMastodonActor( actor: string ): string {
 	const trimmed = actor.trim();
 	const stripped = trimmed.startsWith( '@' ) ? trimmed.slice( 1 ) : trimmed;
 	return stripped.toLowerCase();
 }
 
 export const mastodonAuthorProfileQueryOptions = ( connectionId: number, actor: string ) => {
-	const normalized = normalizeActor( actor );
+	const normalized = normalizeMastodonActor( actor );
 	return queryOptions< MastodonAuthorProfile, MastodonError >( {
 		queryKey: readerMastodonKeys.authorProfile( connectionId, normalized ),
 		queryFn: () => getMastodonAuthorProfile( { connectionId, actor: normalized } ),
@@ -270,7 +332,7 @@ export const mastodonAuthorFeedInfiniteQuery = (
 	actor: string,
 	filter?: MastodonAuthorFeedFilter
 ) => {
-	const normalizedActor = normalizeActor( actor );
+	const normalizedActor = normalizeMastodonActor( actor );
 	// `posts_with_replies` is the wire default (no filter param); collapse
 	// to undefined so callers that pass it share the slice-6 cache key with
 	// no-filter callers. `posts_no_replies` and `posts_with_media` survive
@@ -320,6 +382,101 @@ export function useMastodonAuthorFeedInfiniteQuery(
 	filter?: MastodonAuthorFeedFilter
 ) {
 	return useInfiniteQuery( mastodonAuthorFeedInfiniteQuery( connectionId, actor, filter ) );
+}
+
+export interface MastodonActorPageQueryParams {
+	connectionId: number;
+	actor: string;
+	/**
+	 * Lets the caller suppress the request even when connectionId and actor
+	 * are valid — used by the followers / following views to short-circuit
+	 * when the upstream profile reports `hide_collections: true` so we don't
+	 * burn an upstream call only to render the empty-state placeholder.
+	 * Defaults to enabled.
+	 */
+	enabled?: boolean;
+}
+
+export const mastodonActorFollowersInfiniteQuery = ( params: MastodonActorPageQueryParams ) => {
+	const normalizedActor = normalizeMastodonActor( params.actor );
+	return infiniteQueryOptions<
+		MastodonAccountSummariesPage,
+		MastodonError,
+		InfiniteData< MastodonAccountSummariesPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.actorFollowers( params.connectionId, normalizedActor ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonActorFollowers( {
+				connectionId: params.connectionId,
+				actor: normalizedActor,
+				cursor: pageParam,
+			} ),
+		initialPageParam: undefined,
+		// `|| undefined` (not `??`): an empty-string cursor terminates pagination,
+		// matching the slice-6 author-feed hardening.
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.connectionId > 0 && normalizedActor.length > 0 && params.enabled !== false,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+};
+
+export function useMastodonActorFollowersInfiniteQuery( params: MastodonActorPageQueryParams ) {
+	return useInfiniteQuery( mastodonActorFollowersInfiniteQuery( params ) );
+}
+
+export const mastodonActorFollowingInfiniteQuery = ( params: MastodonActorPageQueryParams ) => {
+	const normalizedActor = normalizeMastodonActor( params.actor );
+	return infiniteQueryOptions<
+		MastodonAccountSummariesPage,
+		MastodonError,
+		InfiniteData< MastodonAccountSummariesPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.actorFollowing( params.connectionId, normalizedActor ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonActorFollowing( {
+				connectionId: params.connectionId,
+				actor: normalizedActor,
+				cursor: pageParam,
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.connectionId > 0 && normalizedActor.length > 0 && params.enabled !== false,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+};
+
+export function useMastodonActorFollowingInfiniteQuery( params: MastodonActorPageQueryParams ) {
+	return useInfiniteQuery( mastodonActorFollowingInfiniteQuery( params ) );
 }
 
 export const mastodonTagFeedInfiniteQuery = (
@@ -518,6 +675,22 @@ function isQueryKeyForConnection( key: unknown, connectionId: number ): boolean 
 	return Array.isArray( key ) && key[ 3 ] === connectionId;
 }
 
+// Slot-2 names for Mastodon cache keys that hold MastodonFeedItem rows.
+// Keep in lockstep with `readerMastodonKeys` in `@automattic/api-core` —
+// other shapes (`actor-followers` / `actor-following` / `profile`) also
+// have `pages[].items` but the items are MastodonAccountSummary, and
+// Mastodon snowflake IDs are allocated per-table (account 12345 and
+// status 12345 routinely coexist), so walking those caches with a
+// status-id patch would corrupt the wrong row.
+const POST_BEARING_KEY_KINDS = new Set( [ 'timeline', 'thread', 'profile-feed', 'tag-feed' ] );
+
+function isPostBearingMastodonKey( key: unknown, connectionId: number ): boolean {
+	if ( ! Array.isArray( key ) || key[ 3 ] !== connectionId ) {
+		return false;
+	}
+	return typeof key[ 2 ] === 'string' && POST_BEARING_KEY_KINDS.has( key[ 2 ] );
+}
+
 function patchMastodonPostCaches(
 	queryClient: QueryClient,
 	connectionId: number,
@@ -528,7 +701,7 @@ function patchMastodonPostCaches(
 	for ( const [ key, data ] of queryClient.getQueriesData( {
 		queryKey: readerMastodonKeys.all,
 	} ) ) {
-		if ( ! isQueryKeyForConnection( key, connectionId ) ) {
+		if ( ! isPostBearingMastodonKey( key, connectionId ) ) {
 			continue;
 		}
 		const result = patchMastodonQueryData( data, statusId, patch );
@@ -662,6 +835,7 @@ function restoreMastodonPostSnapshots(
 export function useCreateMastodonLikeMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		meta: { statId: 'mastodon-like-create' },
 		mutationFn: ( { statusId } ) => createMastodonLike( { connectionId, statusId } ),
 		onMutate: async ( { statusId } ) => {
 			// cancelQueries is best-effort — TanStack docs flag it as such.
@@ -691,6 +865,7 @@ export function useCreateMastodonLikeMutation( connectionId: number ) {
 export function useDeleteMastodonLikeMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		meta: { statId: 'mastodon-like-delete' },
 		mutationFn: ( { statusId } ) => deleteMastodonLike( { connectionId, statusId } ),
 		onMutate: async ( { statusId } ) => {
 			try {
@@ -717,6 +892,7 @@ export function useDeleteMastodonLikeMutation( connectionId: number ) {
 export function useCreateMastodonRepostMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		meta: { statId: 'mastodon-repost-create' },
 		mutationFn: ( { statusId } ) => createMastodonRepost( { connectionId, statusId } ),
 		onMutate: async ( { statusId } ) => {
 			try {
@@ -741,6 +917,7 @@ export function useCreateMastodonRepostMutation( connectionId: number ) {
 export function useDeleteMastodonRepostMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		meta: { statId: 'mastodon-repost-delete' },
 		mutationFn: ( { statusId } ) => deleteMastodonRepost( { connectionId, statusId } ),
 		onMutate: async ( { statusId } ) => {
 			try {
@@ -902,6 +1079,7 @@ export const createMastodonPostMutation = (
 		MastodonCreatePostMutationParams,
 		CreatePostContext
 	>( {
+		meta: { statId: 'mastodon-post-create' },
 		mutationFn: ( vars ) => createMastodonPostWithQuoteFallback( vars, hooks ),
 		onMutate: async ( vars ) => {
 			// cancelQueries is best-effort — TanStack docs flag it as such.
@@ -971,6 +1149,7 @@ export const createMastodonPostMutation = (
  */
 export const uploadMastodonMediaMutation = () =>
 	mutationOptions< MastodonMediaUploadResult, MastodonError, MastodonMediaUploadParams >( {
+		meta: { statId: 'mastodon-media-upload' },
 		mutationFn: uploadMastodonMedia,
 	} );
 
@@ -1002,12 +1181,12 @@ export interface FollowMastodonMutationContext {
 
 // Normalize the actor before keying so we hit the same cache entry as
 // useMastodonAuthorProfileQuery, which runs every actor through
-// normalizeActor() before building its key. Without this, webfinger
+// normalizeMastodonActor() before building its key. Without this, webfinger
 // or mixed-case actor inputs (e.g. '@Alice@MASTODON.social') key to a
 // different entry than the one the query reads from — the optimistic
 // patch and rollback become silent no-ops.
 const mastodonAuthorProfileKey = ( vars: { connectionId: number; actor: string } ) =>
-	readerMastodonKeys.authorProfile( vars.connectionId, normalizeActor( vars.actor ) );
+	readerMastodonKeys.authorProfile( vars.connectionId, normalizeMastodonActor( vars.actor ) );
 
 /**
  * Mutation factory for following a Mastodon account. Optimistically
@@ -1026,6 +1205,7 @@ export const followMastodonActorMutation = ( queryClient: QueryClient ) =>
 		FollowMastodonActorVars,
 		FollowMastodonMutationContext
 	>( {
+		meta: { statId: 'mastodon-actor-follow' },
 		mutationFn: ( vars ) =>
 			createMastodonFollow( { connectionId: vars.connectionId, accountId: vars.accountId } ),
 		onMutate: async ( vars ) => {
@@ -1104,6 +1284,7 @@ export const unfollowMastodonActorMutation = ( queryClient: QueryClient ) =>
 		FollowMastodonActorVars,
 		FollowMastodonMutationContext
 	>( {
+		meta: { statId: 'mastodon-actor-unfollow' },
 		mutationFn: ( vars ) =>
 			deleteMastodonFollow( { connectionId: vars.connectionId, accountId: vars.accountId } ),
 		onMutate: async ( vars ) => {

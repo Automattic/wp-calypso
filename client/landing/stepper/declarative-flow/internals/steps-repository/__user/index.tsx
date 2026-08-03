@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
-import { Step, StepContainer } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useState } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
@@ -23,53 +24,102 @@ import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
+import EmailVerificationGate from './email-verification';
+import { beginGate, gateScope, isGatePending, resolveGate } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
+import useAccountCreationExperiment from './use-account-creation-experiment';
 import { useSocialService } from './use-social-service';
+import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
 import './style.scss';
 
-const UserStepComponent: StepType = function UserStep( {
+// Social providers shown on the mobile treatment per the design. Also keeps the
+// local-dev-only PayPal button off the treatment (the prod build never has that
+// flag enabled, but the local-dev one does).
+const MOBILE_SOCIAL_SERVICES: SignupAllowedService[] = [ 'google', 'apple', 'github' ];
+
+export type UserStepAccepts = {
+	headerText?: string;
+	subHeaderText?: string;
+	/**
+	 * Hides the top-level "Log in" link (V2 top bar / V1 footer). The email-first
+	 * account-step variant keeps its own in-form "Have an account? Log in" link.
+	 * Existing users can still sign in via the social / email buttons either way.
+	 */
+	hideLoginLink?: boolean;
+	allowedSocialServices?: SignupAllowedService[];
+};
+
+const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function UserStep( {
 	flow,
 	stepName,
 	navigation,
 	redirectTo = window.location.href,
 	signupUrl = window.location.href,
+	headerText,
+	subHeaderText,
+	hideLoginLink,
+	allowedSocialServices: allowedSocialServicesProp,
 } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const userId = useSelector( getCurrentUserId );
 	const queryArgs = useQuery();
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
+
+	const gateEnabled =
+		config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW;
+	// The scope of the gate this attempt must clear, or null. In-session state is the source of
+	// truth, so a failed storage write can't skip the gate; storage only restores it on refresh.
+	const [ pendingScope, setPendingScope ] = useState< string | null >( null );
+	const storedScope = gateEnabled ? gateScope( flow, userId ) : null;
+	const activeScope =
+		pendingScope ?? ( storedScope && isGatePending( storedScope ) ? storedScope : null );
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
-	// Users arriving from woocommerce.com's hosting-solutions CTA see the "open email + slider"
-	// account-step variant. Everyone else sees the default single-column signup.
-	const isEmailFirstVariant = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+	// Woo-referrer users keep the permanent email-first + slider treatment from PR #110118.
+	// Everyone else is bucketed by calypso_account_step_improvement_202606_v2 (round 2):
+	//   - control                            -> default single-column signup
+	//   - treatment_email_slider_webp        -> open email + slider, email on top
+	//   - treatment_email_bottom_slider_webp -> open email + slider, email below social
+	const isWooReferrer = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+	const { isEmailFirstVariant: isEmailFirstFromExperiment, isEmailAtBottom } =
+		useAccountCreationExperiment( { flow } );
+	const isEmailFirstVariant = isWooReferrer || isEmailFirstFromExperiment;
+
+	// Load the new account's token and refresh the current user. Depends only on the
+	// account-create response, so gate/navigation state changes don't repeat it.
+	useEffect( () => {
+		if ( ! ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) ) {
+			return;
+		}
+		wpcom.loadToken( wpAccountCreateResponse.bearer_token );
+		if ( ! config.isEnabled( 'oauth' ) ) {
+			reloadProxy();
+			requestAllBlogsAccess();
+		}
+		// Allow retries of fetching new users after creation. New user sign-ups go to one DC
+		// but follow-up API calls go to the closest DC, which may be different and might not
+		// have replicated the user data yet.
+		dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
+	}, [ dispatch, wpAccountCreateResponse ] );
 
 	useEffect( () => {
-		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
-			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
-			if ( ! config.isEnabled( 'oauth' ) ) {
-				reloadProxy();
-				requestAllBlogsAccess();
-			}
-			// Allow retries of fetching new users after creation. New user sign-ups go to one DC
-			// but follow-up API calls go to the closest DC, which may be different and might not
-			// have replicated the user data yet.
-			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
-		}
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
-		} else {
+		} else if ( ! activeScope ) {
+			// While a gate is active it renders instead and owns the transition via `onDone`,
+			// so this only submits once nothing is pending.
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, wpAccountCreateResponse ] );
+	}, [ dispatch, isLoggedIn, navigation, activeScope ] );
 
 	const locale = useFlowLocale();
 
@@ -83,8 +133,20 @@ const UserStepComponent: StepType = function UserStep( {
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
 	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
-		if ( 'ID' in data ) {
-			setSignupIsNewUser( data.ID );
+		if ( ! ( 'ID' in data ) ) {
+			return;
+		}
+		setSignupIsNewUser( data.ID );
+		if ( gateEnabled ) {
+			// Open the gate. The activation email from signup is the one to confirm, so the gate
+			// sends nothing on arrival — and claims no cooldown, since the server hasn't either.
+			const gateKey = gateScope( flow, data.ID );
+			beginGate( gateKey );
+			setPendingScope( gateKey );
+			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
+				flow,
+				is_resend: false,
+			} );
 		}
 	};
 
@@ -97,7 +159,29 @@ const UserStepComponent: StepType = function UserStep( {
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
 	const isLargeViewport = useViewportMatch( 'large' );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
+	// Thumb-friendly compact layout for mobile signup. Woo referrers keep their
+	// permanent email-first treatment and partner-branded flows keep their own
+	// SSO providers, ToS, and heading copy — both are excluded so the compact
+	// layout never overrides them.
+	const isMobileCompactLayout =
+		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig;
+
+	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
+	// Partner branding always wins: isMobileCompactLayout is already false whenever
+	// partnerConfig is set, so the ! partnerConfig check here is belt-and-suspenders
+	// — it keeps the "partners never get the compact SSO set" invariant local to
+	// this line and safe if the eligibility above is ever refactored.
+	const allowedSocialServices =
+		allowedSocialServicesProp ??
+		( isMobileCompactLayout && ! partnerConfig
+			? MOBILE_SOCIAL_SERVICES
+			: partnerConfig?.ssoProviders );
+	// customTosElement is reserved for partner branding (legal); the form's
+	// mobile-compact branch renders MobileCompactTosNotice as its own fallback
+	// when no customTosElement is provided. Routing the notice through
+	// customTosElement would double-wrap it in <p>.
 	const stepContent = (
 		<>
 			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
@@ -116,9 +200,11 @@ const UserStepComponent: StepType = function UserStep( {
 				isSocialFirst
 				onCreateAccountSuccess={ handleCreateAccountSuccess }
 				backButtonInFooter={ ! isStepContainerV2 }
-				emailLabelText={ isStepContainerV2 ? translate( 'Enter your email' ) : undefined }
+				emailLabelText={ emailLabelText }
 				isEmailFirstVariant={ isEmailFirstVariant }
-				allowedSocialServices={ partnerConfig?.ssoProviders }
+				isEmailAtBottom={ isEmailAtBottom }
+				isMobileCompactVariant={ isMobileCompactLayout }
+				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
@@ -131,19 +217,41 @@ const UserStepComponent: StepType = function UserStep( {
 		</>
 	);
 
+	if ( isLoggedIn && activeScope ) {
+		return (
+			<EmailVerificationGate
+				flow={ flow }
+				scope={ activeScope }
+				logo={ topBarLogo }
+				onDone={ () => {
+					resolveGate( activeScope );
+					navigation.submit?.();
+				} }
+			/>
+		);
+	}
+
 	if ( isStepContainerV2 ) {
-		let headingText = translate( 'Create your account' );
+		let headingText = headerText ?? translate( 'Create your account' );
+		let headingSubText = subHeaderText;
 		if ( partnerConfig ) {
 			headingText = translate( 'Create an account for %(partner)s', {
 				args: { partner: partnerConfig.displayName },
 				textOnly: true,
 			} );
+		} else if ( isMobileCompactLayout ) {
+			headingText = translate( 'Welcome to WordPress.com' );
+			headingSubText = translate( 'Sign up free to start creating your site.' );
 		}
 		const heading = (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
-				<Step.Heading text={ headingText } align={ isEmailFirstVariant ? 'left' : undefined } />
+				<Step.Heading
+					text={ headingText }
+					subText={ headingSubText }
+					align={ isEmailFirstVariant ? 'left' : undefined }
+				/>
 			</>
 		);
 
@@ -154,7 +262,7 @@ const UserStepComponent: StepType = function UserStep( {
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}
 				rightElement={
-					isEmailFirstVariant ? null : (
+					hideLoginLink || isEmailFirstVariant ? null : (
 						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
 					)
 				}
@@ -188,7 +296,9 @@ const UserStepComponent: StepType = function UserStep( {
 
 		return (
 			<Step.CenteredColumnLayout
-				className="step-container-v2--user"
+				className={ clsx( 'step-container-v2--user', {
+					'step-container-v2--user-mobile': isMobileCompactLayout,
+				} ) }
 				verticalAlign="center"
 				columnWidth={ 4 }
 				heading={ heading }
@@ -214,7 +324,8 @@ const UserStepComponent: StepType = function UserStep( {
 					<>
 						<FormattedHeader
 							align="center"
-							headerText={ translate( 'Create your account' ) }
+							headerText={ headerText ?? translate( 'Create your account' ) }
+							subHeaderText={ subHeaderText }
 							brandFont
 						/>
 						{ stepContent }
@@ -222,13 +333,15 @@ const UserStepComponent: StepType = function UserStep( {
 				}
 				recordTracksEvent={ recordTracksEvent }
 				customizedActionButtons={
-					<Button
-						className="step-wrapper__navigation-link forward"
-						href={ loginLink }
-						variant="link"
-					>
-						<span>{ translate( 'Log in' ) }</span>
-					</Button>
+					hideLoginLink ? undefined : (
+						<Button
+							className="step-wrapper__navigation-link forward"
+							href={ loginLink }
+							variant="link"
+						>
+							<span>{ translate( 'Log in' ) }</span>
+						</Button>
+					)
 				}
 			/>
 		</>

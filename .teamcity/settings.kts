@@ -2,6 +2,7 @@
 import _self.bashNodeScript
 import _self.yarn_install_cmd
 import _self.CalypsoE2ETestsBuildTemplate
+import _self.lib.utils.allBranchesExceptMergeQueue
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
@@ -126,6 +127,7 @@ object YarnInstall : BuildType({
 	description = "Installs dependencies, e.g. yarn install"
 	vcs {
 		root(WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 	steps {
@@ -164,6 +166,7 @@ object BuildBaseImages : BuildType({
 
 	vcs {
 		root(WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -302,6 +305,7 @@ object BuildToolchainPreviewImages : BuildType({
 
 	vcs {
 		root(WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -482,6 +486,7 @@ object BuildCacheSeedImages : BuildType({
 
 	vcs {
 		root(WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -610,6 +615,7 @@ object BuildCacheSeedPreviewImage : BuildType({
 
 	vcs {
 		root(WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -686,6 +692,7 @@ object CheckCodeStyle : BuildType({
 
 	vcs {
 		root(WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -776,6 +783,7 @@ object SmartBuildLauncher : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 

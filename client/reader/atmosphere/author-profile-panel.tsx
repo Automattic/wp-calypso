@@ -29,8 +29,14 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
 import { projectAtmosphereError } from './error-projection';
-import { errorMessage } from './profile-errors';
-import { getProfileUrl, getTagFeedUrl, getThreadUrl } from './route';
+import { errorMessage, followErrorMessage } from './profile-errors';
+import {
+	getFollowersUrl,
+	getFollowingUrl,
+	getProfileUrl,
+	getTagFeedUrl,
+	getThreadUrl,
+} from './route';
 import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
 import { makeUseAtmosphereRepostAction } from './use-atmosphere-repost-action';
 import type {
@@ -43,26 +49,6 @@ import type {
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
-
-/**
- * Action-aware copy for follow / unfollow failure toasts. Most kinds are
- * semantically identical to a profile-load failure (auth, rate limit,
- * upstream), so we delegate to the shared `errorMessage`. The exception is
- * `not_found`: the shared copy is profile-load-shaped and would mislead the
- * user when an actor disappears between profile load and the follow click.
- */
-function followErrorMessage(
-	error: AtmosphereError,
-	action: 'follow' | 'unfollow',
-	translate: ReturnType< typeof useTranslate >
-): TranslateResult {
-	if ( error.kind === 'not_found' ) {
-		return action === 'follow'
-			? translate( 'Couldn’t follow this account.' )
-			: translate( 'Couldn’t unfollow this account.' );
-	}
-	return errorMessage( error, translate );
-}
 
 function buildEmptyTitle(
 	filter: AtmosphereAuthorFeedFilter,
@@ -287,6 +273,11 @@ export function AuthorProfilePanel( {
 					label: translate( 'follower', 'followers', {
 						count: profile.data.counts.followers,
 					} ),
+					href:
+						getFollowersUrl( connection.id, {
+							handle: profile.data.handle,
+							did: profile.data.did,
+						} ) ?? undefined,
 				},
 				{
 					key: 'follows',
@@ -294,6 +285,11 @@ export function AuthorProfilePanel( {
 					label: translate( 'following', {
 						context: 'profile stats: count of accounts followed',
 					} ),
+					href:
+						getFollowingUrl( connection.id, {
+							handle: profile.data.handle,
+							did: profile.data.did,
+						} ) ?? undefined,
 				},
 				{
 					key: 'posts',
@@ -450,7 +446,7 @@ export function AuthorProfilePanel( {
 			} )
 		);
 		unfollowMutate(
-			{ connectionId: connection.id, actor, rkey },
+			{ connectionId: connection.id, actor, rkey, subjectDid: profile.data.did },
 			{
 				onSuccess: () => {
 					dispatch( removeNotice( 'atmosphere-follow-error' ) );
@@ -462,18 +458,13 @@ export function AuthorProfilePanel( {
 
 	const renderHeaderError = ( error: AtmosphereError ) => {
 		const noRetry = new Set< AtmosphereError[ 'kind' ] >( [
-			'auth_required',
-			'auth_failed',
 			'not_found',
 			'connection_not_found',
 			'bad_request',
-			'invalid_handle',
-			'invalid_credentials',
 		] );
 		const showRetry = ! noRetry.has( error.kind );
 		const titleByKind: Partial< Record< AtmosphereError[ 'kind' ], TranslateResult > > = {
 			not_found: translate( 'Profile not found' ),
-			auth_required: translate( 'Reconnect needed' ),
 			rate_limited: translate( 'Slow down' ),
 			upstream_unavailable: translate( 'Bluesky unreachable' ),
 		};
@@ -509,6 +500,7 @@ export function AuthorProfilePanel( {
 				stats={ stats }
 				statsLabel={ String( translate( 'Profile stats' ) ) }
 				headerActions={ followButton }
+				displayNameLink={ profileData.bluesky_url }
 			/>
 		);
 	};
@@ -556,6 +548,10 @@ export function AuthorProfilePanel( {
 							protocolLabel="Bluesky"
 							protocolHomeURL="/reader/atmosphere"
 							protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
+							authRequiredCopy={ {
+								title: String( translate( "Couldn't load posts" ) ),
+								line: String( translate( 'Something went wrong with your Bluesky connection.' ) ),
+							} }
 						/>
 					</VStack>
 				</RepostProvider>

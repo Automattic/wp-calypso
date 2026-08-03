@@ -2,9 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { READER_SHARE_MENU_CLOSE } from 'calypso/blocks/reader-share';
+import { usePost } from 'calypso/reader/data/post';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import { useSelector } from 'calypso/state';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import type { TrackPostData } from 'calypso/state/reader/analytics/types';
 
 interface EngagementBarProps {
 	className?: string;
@@ -13,6 +13,25 @@ interface EngagementBarProps {
 	commentsApiDisabled?: boolean;
 }
 
+const numberValue = ( value: unknown ): number => {
+	const number = Number( value );
+	return Number.isFinite( number ) ? number : 0;
+};
+
+const postToTrackPostData = ( post: Record< string, unknown > ): TrackPostData => ( {
+	site_ID: numberValue( post.site_ID ),
+	ID: numberValue( post.ID ),
+	feed_ID: numberValue( post.feed_ID ),
+	feed_item_ID: numberValue( post.feed_item_ID ),
+	is_external: Boolean( post.is_external ),
+	is_jetpack: Boolean( post.is_jetpack ),
+	railcar: ( post.railcar ?? {} ) as Record< string, unknown >,
+	blog_id: numberValue( post.site_ID ),
+	post_id: numberValue( post.ID ),
+	feed_id: numberValue( post.feed_ID ),
+	feed_item_id: numberValue( post.feed_item_ID ),
+} );
+
 const EngagementBar = ( {
 	className = '',
 	feedId,
@@ -20,17 +39,29 @@ const EngagementBar = ( {
 	commentsApiDisabled = false,
 }: EngagementBarProps ) => {
 	const barRef = useRef< HTMLDivElement >( null );
-	const post = useSelector( ( state ) =>
-		feedId && postId ? getPostByKey( state, { feedId, postId } ) : null
-	);
+	const postKey =
+		feedId && postId
+			? {
+					feedId: Number( feedId ),
+					postId: Number( postId ),
+			  }
+			: null;
+	const { data: post } = usePost( postKey );
 
 	const [ isActionsVisible, setIsActionsVisible ] = useState( false );
 	const [ actionsElement, setActionsElement ] = useState< Element | null >( null );
 
 	const handleCommentClick = () => {
+		if ( ! post ) {
+			return;
+		}
+
 		recordAction( 'click_comments' );
 		recordGaEvent( 'Clicked Post Comment Button' );
-		recordTrackForPost( 'calypso_reader_post_comments_button_clicked', post );
+		recordTrackForPost(
+			'calypso_reader_post_comments_button_clicked',
+			postToTrackPostData( post )
+		);
 		scrollToComments( { focusTextArea: true } );
 	};
 

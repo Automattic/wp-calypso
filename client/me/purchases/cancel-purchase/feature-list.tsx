@@ -7,28 +7,27 @@ import {
 	getSingleItemCancelCopy,
 	getSingleItemRemoveCopy,
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
-import { toPurchaseForCopy } from './to-purchase-for-copy';
-import type { CancellationFeature } from '@automattic/api-core';
-import type { Purchases } from '@automattic/data-stores';
-import type { DisplayVariant } from 'calypso/lib/purchases/utils';
+import { isExpiredAndInGracePeriod } from 'calypso/dashboard/utils/purchase';
+import type { CancellationFeature, Purchase } from '@automattic/api-core';
+import type { DisplayVariant } from 'calypso/dashboard/utils/purchase';
 
 const CancelPurchaseFeatureList = ( {
 	purchase,
 	displayVariant,
 	cancellationFeatures,
 }: {
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	displayVariant: DisplayVariant;
 	cancellationFeatures: CancellationFeature[];
 } ) => {
-	const adapted = toPurchaseForCopy( purchase );
+	const inGracePeriod = isExpiredAndInGracePeriod( purchase );
 	// When the server returns no features, fall back to a per-product-type item.
 	const items: Array< { key: string; title: string } > = cancellationFeatures.length
 		? cancellationFeatures.map( ( feature ) => ( {
 				key: feature.feature_id,
 				title: feature.title,
 		  } ) )
-		: getFallbackLossItems( adapted ).map( ( title, idx ) => ( {
+		: getFallbackLossItems( purchase ).map( ( title, idx ) => ( {
 				key: `fallback-${ idx }`,
 				title,
 		  } ) );
@@ -38,15 +37,15 @@ const CancelPurchaseFeatureList = ( {
 	}
 
 	// Use non-breaking spaces in the formatted date so it never wraps mid-date.
-	const fullExpiryDate = purchase.expiryDate
-		? moment( purchase.expiryDate ).format( 'LL' ).replace( / /g, '\u00a0' )
+	const fullExpiryDate = purchase.expiry_date
+		? moment( purchase.expiry_date ).format( 'LL' ).replace( / /g, '\u00a0' )
 		: '';
 
 	if ( items.length === 1 ) {
 		const singleItemCopy =
 			displayVariant === 'remove'
-				? getSingleItemRemoveCopy( adapted )
-				: getSingleItemCancelCopy( adapted, fullExpiryDate );
+				? getSingleItemRemoveCopy( purchase )
+				: getSingleItemCancelCopy( purchase, fullExpiryDate, inGracePeriod );
 		return (
 			<div className="cancel-purchase__features">
 				<p>{ singleItemCopy }</p>
@@ -56,8 +55,8 @@ const CancelPurchaseFeatureList = ( {
 
 	const intro =
 		displayVariant === 'remove'
-			? getRemoveLossIntro( adapted )
-			: getCancelLossIntro( adapted, fullExpiryDate );
+			? getRemoveLossIntro( purchase )
+			: getCancelLossIntro( purchase, fullExpiryDate, inGracePeriod );
 
 	return (
 		<div className="cancel-purchase__features">
