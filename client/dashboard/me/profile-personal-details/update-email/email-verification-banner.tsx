@@ -89,9 +89,8 @@ export default function EmailVerificationBanner( {
 
 	const pendingEmail = userSettings.new_user_email;
 	const isEmailChangePending = !! userSettings.user_email_change_pending && !! pendingEmail;
-	// A wait per path. The dedicated endpoint's is the server's, and is kept while a pending
-	// change is in play — dropping it would forget a limit the server still enforces. The pending
-	// path has no server limit, so its wait is ours and belongs to one address.
+	// One wait per path: the server rate limits the dedicated endpoint, and re-saving a pending
+	// address is limited only by us.
 	const originalCooldown = useResendCooldown();
 	const pendingCooldown = useResendCooldown();
 	const { secondsUntilResend } = isEmailChangePending ? pendingCooldown : originalCooldown;
@@ -144,8 +143,8 @@ export default function EmailVerificationBanner( {
 			  )
 			: __( 'Verification email sent.' );
 
-	// A refusal is worth honouring whenever it lands, but only worth mentioning while that
-	// endpoint is on screen — otherwise the notice contradicts an enabled button.
+	// Honour a refusal whenever it lands, but only mention it while that endpoint is on screen,
+	// or the notice contradicts an enabled button.
 	const isThrottledPathActiveRef = useRef( ! isEmailChangePending );
 	isThrottledPathActiveRef.current = ! isEmailChangePending;
 
@@ -169,26 +168,24 @@ export default function EmailVerificationBanner( {
 		},
 	} );
 
-	// Same reason, one level down: the address is a variable and the callbacks belong to the
-	// call, so a late response can't report an address it wasn't sent to. Per-call callbacks run
-	// alongside the factory's rather than replacing it.
-	const { mutate: mutateResendToPending, isPending: isPendingResendPending } = useMutation(
-		resendEmailVerificationMutation()
-	);
-
-	const resendToPending = ( email: string ) =>
-		mutateResendToPending( email, {
-			onSuccess: () => {
-				createSuccessNotice( sentToEmail( email ), { type: 'snackbar' } );
-				// Nothing on the server stops this mailing the same address repeatedly — but a wait
-				// is meaningless once the address has moved on.
-				if ( email === pendingEmailRef.current ) {
-					pendingCooldown.hold( RESEND_MIN_INTERVAL_SECONDS );
-				}
-			},
-			onError: () =>
-				createErrorNotice( __( 'Failed to resend verification email.' ), { type: 'snackbar' } ),
-		} );
+	// The address is a mutation variable, so a response that lands late is still reported against
+	// the address it was sent to rather than whichever one is on screen by then.
+	const pendingResend = resendEmailVerificationMutation();
+	const { mutate: resendToPending, isPending: isPendingResendPending } = useMutation( {
+		...pendingResend,
+		// On the options rather than the `mutate()` call: TanStack skips per-call callbacks once
+		// the observer loses its listeners, so navigating away mid-request would report nothing.
+		onSuccess: ( data, email, context ) => {
+			pendingResend.onSuccess?.( data, email, context );
+			createSuccessNotice( sentToEmail( email ), { type: 'snackbar' } );
+			// A wait is meaningless once the address has moved on.
+			if ( email === pendingEmailRef.current ) {
+				pendingCooldown.hold( RESEND_MIN_INTERVAL_SECONDS );
+			}
+		},
+		onError: () =>
+			createErrorNotice( __( 'Failed to resend verification email.' ), { type: 'snackbar' } ),
+	} );
 
 	const resendEmail = () =>
 		isEmailChangePending ? resendToPending( pendingEmail || '' ) : sendToOriginal();
@@ -241,7 +238,6 @@ export default function EmailVerificationBanner( {
 				actions={
 					<>
 						<Button
-							className="dashboard-email-verification-resend"
 							variant="primary"
 							__next40pxDefaultSize
 							onClick={ resendEmail }

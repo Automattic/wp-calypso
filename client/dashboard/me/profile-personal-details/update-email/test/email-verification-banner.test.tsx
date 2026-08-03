@@ -53,9 +53,8 @@ function TargetSwitcher() {
 }
 
 describe( '<EmailVerificationBanner>', () => {
-	// Both of these outlive a render, so one case's announcement would otherwise be found by the
-	// next: the notices store (where snackbars are their own type, not cleared by default), and
-	// the live region `@wordpress/a11y` keeps on the body holding the last thing it announced.
+	// Both outlive a render, so one case's announcement would otherwise be found by the next:
+	// snackbars are their own notice type, and `@wordpress/a11y` keeps a live region on the body.
 	afterEach( () => {
 		dispatch( noticesStore ).removeAllNotices( 'snackbar' );
 		dispatch( noticesStore ).removeAllNotices();
@@ -83,6 +82,35 @@ describe( '<EmailVerificationBanner>', () => {
 		await waitFor( () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
+	} );
+
+	test( 'confirms a pending resend that finishes after the banner has gone', async () => {
+		const user = userEvent.setup();
+
+		const { unmount } = render(
+			<>
+				<EmailVerificationBanner userSettings={ pendingSettings } isEmailVerified />
+				<Snackbars />
+			</>
+		);
+
+		expect( await screen.findByText( 'Verify your email' ) ).toBeVisible();
+
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings', ( body ) => 'user_email' in body )
+			.delay( 100 )
+			.reply( 200, pendingSettings );
+
+		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
+		// Navigating away mid-request must not swallow the outcome.
+		unmount();
+
+		render( <Snackbars /> );
+		await waitFor( () =>
+			expect( document.querySelector( '.components-snackbar__content' ) ).toHaveTextContent(
+				'pending@example.com'
+			)
+		);
 	} );
 
 	test( 'counts down on the button when a resend is refused', async () => {
@@ -129,8 +157,7 @@ describe( '<EmailVerificationBanner>', () => {
 	test( 'sets a cooldown aside while a pending change is in play, then applies it again', async () => {
 		const user = userEvent.setup();
 
-		// Stands in for the settings query updating after a correction is saved; the banner has
-		// to switch target inside the same mounted tree.
+		// Stands in for the settings query updating after a correction is saved.
 		render( <TargetSwitcher /> );
 
 		expect( await screen.findByText( 'Verify your email' ) ).toBeVisible();
@@ -167,8 +194,7 @@ describe( '<EmailVerificationBanner>', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'save-change' } ) );
 
-		// The refusal describes the address left behind, and the path now in use isn't rate
-		// limited at all, so it must not hold this button.
+		// The refusal describes the address left behind, and this path isn't rate limited.
 		await waitFor( () =>
 			expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeEnabled()
 		);
@@ -189,8 +215,7 @@ describe( '<EmailVerificationBanner>', () => {
 
 		expect( await screen.findByText( 'Verify your email' ) ).toBeVisible();
 
-		// Still in flight when the cancellation lands, so it answers describing a change that by
-		// then no longer exists.
+		// Still in flight when the cancellation lands, so it describes a change that by then is gone.
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/settings', ( body ) => 'user_email' in body )
 			.delay( 150 )
@@ -215,8 +240,7 @@ describe( '<EmailVerificationBanner>', () => {
 			queryClient.getQueryData< UserSettings >( userSettingsQuery().queryKey )
 				?.user_email_change_pending
 		).toBe( false );
-		// Nor may it have marked the settings stale: a refetch it started before the cancellation
-		// would answer with the change still pending and overwrite it.
+		// Nor marked them stale: a refetch started before the cancellation would overwrite it.
 		expect( queryClient.getQueryState( userSettingsQuery().queryKey )?.isInvalidated ).toBe(
 			false
 		);
@@ -264,8 +288,7 @@ describe( '<EmailVerificationBanner>', () => {
 
 		// The wait belonged to the address it was sent to, and so does the confirmation.
 		expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeEnabled();
-		// Selected rather than queried by text: the banner shows the current address, and the a11y
-		// live region mirrors whatever the snackbar announced.
+		// Selected, not queried by text: the banner and the live region both carry the address.
 		expect( document.querySelector( '.components-snackbar__content' ) ).toHaveTextContent(
 			'pending@example.com'
 		);
@@ -290,7 +313,7 @@ describe( '<EmailVerificationBanner>', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
 
-		// Scoped to the snackbar: the a11y live region mirrors what it announced.
+		// Scoped to the snackbar: the live region mirrors it.
 		await waitFor( () =>
 			expect( document.querySelector( '.components-snackbar__content' ) ).toHaveTextContent(
 				'Failed to resend'
