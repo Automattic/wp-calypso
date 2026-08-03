@@ -82,14 +82,21 @@ describe( '<EmailVerificationBanner>', () => {
 
 		expect( await screen.findByText( 'Verify your email' ) ).toBeVisible();
 
+		// Held open so the request is genuinely in flight at the point the banner goes away.
+		let deliverReply: () => void;
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/settings', ( body ) => 'user_email' in body )
-			.delay( 100 )
-			.reply( 200, pendingSettings );
+			.reply(
+				() =>
+					new Promise( ( resolve ) => {
+						deliverReply = () => resolve( [ 200, pendingSettings ] );
+					} )
+			);
 
 		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
 		// Navigating away mid-request must not swallow the outcome.
 		unmount();
+		deliverReply!();
 
 		render( <Snackbars /> );
 		await waitFor( () =>
