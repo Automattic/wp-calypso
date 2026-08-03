@@ -24,8 +24,13 @@ export function HelpCenterChat( {
 	const shouldUseWapuu = useShouldUseWapuu();
 	// Before issuing a redirect, make sure the status is loaded.
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
-	const { currentUser, site, newInteractionsBotSlug, newInteractionsBotVersion } =
-		useHelpCenterContext();
+	const {
+		currentUser,
+		site,
+		newInteractionsBotSlug,
+		newLoggedOutInteractionsBotSlug,
+		newInteractionsBotVersion,
+	} = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
 	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging(
 		!! currentUser?.ID
@@ -56,6 +61,7 @@ export function HelpCenterChat( {
 	return (
 		<OdieAssistantProvider
 			newInteractionsBotSlug={ newInteractionsBotSlug }
+			newLoggedOutInteractionsBotSlug={ newLoggedOutInteractionsBotSlug }
 			newInteractionsBotVersion={ newInteractionsBotVersion }
 			currentUser={ currentUser }
 			canConnectToZendesk={ canConnectToZendesk }

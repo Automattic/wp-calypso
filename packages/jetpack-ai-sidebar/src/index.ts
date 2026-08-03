@@ -24,6 +24,7 @@ import ImageAltTextPicker from './components/image-alt-text-picker';
 import './components/image-alt-text-picker.scss';
 import PostFeedback from './components/post-feedback';
 import Proofread from './components/proofread';
+import './components/split-screen-guide.scss';
 import SeoDescriptionPicker from './components/seo-description-picker';
 import SeoTitlePicker from './components/seo-title-picker';
 import './components/base-suggestion-picker.scss';
@@ -47,6 +48,7 @@ import {
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
+import { isImageStudioAvailable, openImageStudioForBlock } from './utils/image-studio';
 import {
 	isAiEditorialReviewEnabled,
 	isBlockTransformationsEnabled,
@@ -80,7 +82,6 @@ let wasAgentProcessing = false;
 let pendingBlockShimmerClientId: string | null = null;
 let blockShimmerStartedForRequest = false;
 let suppressCurrentPageContentForNextContext = false;
-let jetpackAIRequestScopeForNextContext: 'selected-block' | null = null;
 
 /** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
 let suggestionRenderedFiredOnce = false;
@@ -757,9 +758,7 @@ export const contextProvider = {
 		let selectedBlockContent = '';
 		let currentPostType: string | undefined;
 		const suppressCurrentPageContent = suppressCurrentPageContentForNextContext;
-		const jetpackAIRequestScope = jetpackAIRequestScopeForNextContext;
 		suppressCurrentPageContentForNextContext = false;
-		jetpackAIRequestScopeForNextContext = null;
 
 		if ( wpData ) {
 			const editor = wpData.select( 'core/editor' );
@@ -792,7 +791,6 @@ export const contextProvider = {
 			},
 			currentPageContent,
 			selectedBlockClientId,
-			...( jetpackAIRequestScope && { jetpackAIRequestScope } ),
 			// Forward the host's SEO Enhancer verdict (plan + Jetpack SEO Tools
 			// module + kill switches) so the orchestrator can drop the SEO
 			// suggestion abilities when they aren't usable on this site — e.g. a
@@ -803,11 +801,6 @@ export const contextProvider = {
 					id: 'selected-block-content',
 					type: 'selected-block-content',
 					data: selectedBlockContent ? { content: selectedBlockContent } : null,
-				},
-				{
-					id: 'ai-editorial-review-contract',
-					type: 'ai-editorial-review-contract',
-					data: { version: 2 },
 				},
 			],
 		};
@@ -940,6 +933,9 @@ type BlockSuggestion = {
 	type: BlockTransformationSuggestionType;
 	condition: ( block: any ) => boolean;
 	options?: SuggestionOption[];
+	// Runs on click instead of sending the prompt. AgentUI submits the prompt
+	// only when this resolves true, so returning false keeps the chat untouched.
+	action?: () => boolean | Promise< boolean >;
 };
 
 /** Change-tone dropdown options; `value` is the full localized prompt filled on selection. */
@@ -1100,6 +1096,24 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 		type: 'image',
 		condition: ( block: any ) => IMAGE_BLOCK_TYPES.includes( block?.name ),
 	},
+	{
+		id: 'generate-image',
+		label: __( 'Generate image', __i18n_text_domain__ ),
+		// Empty prompt — opening Image Studio replaces sending anything to the agent.
+		prompt: '',
+		type: 'image',
+		condition: ( block: any ) => block?.name === 'core/image' && isImageStudioAvailable(),
+		action: () => ! openImageStudioForBlock( getSelectedOrRememberedBlock(), 'generate' ),
+	},
+	{
+		id: 'edit-image',
+		label: __( 'Edit image', __i18n_text_domain__ ),
+		prompt: '',
+		type: 'image',
+		condition: ( block: any ) =>
+			block?.name === 'core/image' && !! block?.attributes?.id && isImageStudioAvailable(),
+		action: () => ! openImageStudioForBlock( getSelectedOrRememberedBlock(), 'edit' ),
+	},
 ];
 
 function trackRenderedBlockTransformationSuggestions(
@@ -1155,6 +1169,7 @@ export function useSuggestions(
 		description?: string;
 		prompt?: string;
 		options?: SuggestionOption[];
+		action?: () => boolean | Promise< boolean >;
 	} >;
 	replaceEmptyViewSuggestions: boolean;
 } {
@@ -1173,11 +1188,6 @@ export function useSuggestions(
 			pendingBlockShimmerClientId = BLOCK_SUGGESTIONS.some( matchesSuggestion )
 				? getSelectedOrRememberedBlock()?.clientId ?? null
 				: null;
-			jetpackAIRequestScopeForNextContext = null;
-
-			if ( BLOCK_SUGGESTIONS.some( matchesSuggestion ) ) {
-				jetpackAIRequestScopeForNextContext = 'selected-block';
-			}
 
 			if ( matchesSuggestion( POST_FEEDBACK_SUGGESTION ) ) {
 				suppressCurrentPageContentForNextContext = true;
@@ -1262,7 +1272,13 @@ export function useSuggestions(
 	);
 	const blockTransformationSuggestions = useMemo(
 		() =>
-			applicable.map( ( { id, label, prompt, options } ) => ( { id, label, prompt, options } ) ),
+			applicable.map( ( { id, label, prompt, options, action } ) => ( {
+				id,
+				label,
+				prompt,
+				options,
+				action,
+			} ) ),
 		[ applicable ]
 	);
 	// Editor-level reviews (Optimize Title, Generate Feedback, AI Editorial Review)
@@ -1278,6 +1294,7 @@ export function useSuggestions(
 			label: string;
 			prompt: string;
 			options?: SuggestionOption[];
+			action?: () => boolean | Promise< boolean >;
 		} > = selectedBlock ? blockTransformationSuggestions : postLevelSuggestions;
 		return applySuggestionLimit( activeSuggestions, maxSuggestions );
 	}, [

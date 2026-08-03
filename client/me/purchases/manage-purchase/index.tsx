@@ -15,7 +15,6 @@ import {
 	isPersonal,
 	isPremium,
 	isBusiness,
-	isEcommerce,
 	isPlan,
 	isComplete,
 	isDomainProduct,
@@ -27,7 +26,6 @@ import {
 	isJetpackProduct,
 	isConciergeSession,
 	isTitanMail,
-	isPro,
 	applyTestFiltersToPlansList,
 	isWpComMonthlyPlan,
 	JETPACK_BACKUP_T1_PRODUCTS,
@@ -35,7 +33,6 @@ import {
 	JETPACK_LEGACY_PLANS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_SECURITY_T1_PLANS,
-	isP2Plus,
 	getMonthlyPlanByYearly,
 	hasMarketplaceProduct,
 	isDIFMProduct,
@@ -48,10 +45,6 @@ import {
 	is100Year,
 	isJetpackGrowthPlan,
 	JETPACK_GROWTH_UPGRADE_MAP,
-	PLAN_MONTHLY_PERIOD,
-	PLAN_ANNUAL_PERIOD,
-	PLAN_BIENNIAL_PERIOD,
-	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -92,12 +85,14 @@ import {
 	getCancelButtonCopy,
 	getRemoveButtonCopy,
 } from 'calypso/dashboard/me/billing-purchases/purchase-settings/get-cancel-remove-copy';
+import { getPlanChangeAction } from 'calypso/dashboard/me/billing-purchases/purchase-settings/get-plan-change-action';
 import {
 	getPurchaseCancellationFlowType,
+	hasAmountAvailableToRefund,
 	isA4ABillingDragonPurchase,
 	isA4AHoldingSitePurchase,
 	isAkismetHoldingSitePurchase,
-	isJetpackHoldingSitePurchase,
+	isDotcomPlan,
 	isMarketplaceHoldingSitePurchase,
 	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
@@ -153,7 +148,6 @@ import {
 	getDisplayName,
 	getName,
 	getRenewalPriceInSmallestUnit,
-	hasAmountAvailableToRefund,
 	hasPaymentMethod,
 	isCloseToExpiration,
 	isExpiredAndInGracePeriod,
@@ -163,7 +157,6 @@ import {
 	isPaidWithCredits,
 	isRemoved,
 	isRenewable,
-	isWithinRefundWindowDowngradeEligible,
 	needsToRenewSoon,
 	purchaseType,
 	shouldRenderMonthlyRenewalOption,
@@ -253,24 +246,6 @@ interface ManagePurchaseState {
 	isRemoving: boolean;
 	isCancelSurveyVisible: boolean;
 	isReinstalling: boolean;
-}
-
-// Map the purchase's billing term to the plan grid's `intervalType` param so the
-// Stepper grid opens on the same term as the current plan. Downgrades only work
-// within the same term, and the grid hides the term selector in the downgrade flow.
-function getPlanGridIntervalType( billPeriodDays: number ): string | undefined {
-	switch ( billPeriodDays ) {
-		case PLAN_MONTHLY_PERIOD:
-			return 'monthly';
-		case PLAN_ANNUAL_PERIOD:
-			return 'yearly';
-		case PLAN_BIENNIAL_PERIOD:
-			return '2yearly';
-		case PLAN_TRIENNIAL_PERIOD:
-			return '3yearly';
-		default:
-			return undefined;
-	}
 }
 
 class ManagePurchase extends Component<
@@ -421,26 +396,36 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
+		if ( ! purchase.is_upgradable ) {
 			return null;
 		}
 
-		const isUpgradeablePlan =
-			isPlan( purchase ) &&
-			! isEcommerce( purchase ) &&
-			! isPro( purchase ) &&
-			! isComplete( purchase ) &&
-			! is100Year( purchase ) &&
-			! isP2Plus( purchase );
+		// Deliberately hidden once expired: the nav item still offers the link, we
+		// just don't give it prominence here.
+		if ( isExpiredOrRemoved( purchase ) ) {
+			return null;
+		}
+
+		// Shares its destination with the nav item so the two can't disagree, but
+		// always promotes upgrades — downgrades are offered in the list below.
+		if ( isDotcomPlan( purchase ) ) {
+			const action = this.buildPlanChangeAction( { upgradeOnly: true } );
+			if ( ! action ) {
+				return null;
+			}
+			return (
+				<Button primary={ !! preventRenewal } compact href={ action.href }>
+					{ action.title }
+				</Button>
+			);
+		}
+
+		const isUpgradeablePlan = isPlan( purchase ) && ! isComplete( purchase );
 		const isUpgradeableProduct =
 			! isPlan( purchase ) &&
 			( isJetpackBackupT1Slug( purchase.product_slug ) || isAkismetProduct( purchase ) );
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
-			return null;
-		}
-
-		if ( isExpiredOrRemoved( purchase ) ) {
 			return null;
 		}
 
@@ -454,7 +439,7 @@ class ManagePurchase extends Component<
 		// Show the upgrade button without the primary style if both buttons are present
 		return (
 			<Button primary={ !! preventRenewal } compact href={ upgradeUrl }>
-				{ translate( 'Upgrade plan' ) }
+				{ isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' ) }
 			</Button>
 		);
 	}
@@ -628,80 +613,65 @@ class ManagePurchase extends Component<
 		return `/plans/${ siteSlug }`;
 	}
 
-	shouldRenderDowngradeOption(): boolean {
-		const { purchase } = this.props;
-		if ( ! purchase || ! isPlan( purchase ) ) {
-			return false;
-		}
-		if ( ! purchase.is_plan_type_downgradable ) {
-			return false;
-		}
-		const expiredOrRefundDowngrade =
-			config.isEnabled( 'plans/expired-downgrade' ) &&
-			( isExpiredAndInGracePeriod( purchase ) ||
-				isWithinRefundWindowDowngradeEligible( purchase ) );
-		const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
-		return expiredOrRefundDowngrade || delayedDowngrade;
-	}
-
-	renderChangePlanNavItem() {
-		const { purchase, siteSlug, getManagePurchaseUrlFor = managePurchase, translate } = this.props;
-		if ( ! this.shouldRenderDowngradeOption() || ! purchase ) {
-			return null;
-		}
-		// Route to the Stepper plan-upgrade flow, whose plan grid and downgrade
-		// dialog are more polished than the classic `/plans` page. The downgrade
-		// logic itself is shared (both pages render `PlansFeaturesMain`), and it
-		// reads `redirect_to`/`cancel_to` straight off the URL, so we still land
-		// back on this manage-purchase page afterwards. The `:purchaseId`
-		// placeholder is substituted with the newly-provisioned plan's purchase by
-		// either the instant-downgrade handler or the checkout pending page
-		// (analogous to `:receiptId`).
-		const redirectTo = getManagePurchaseUrlFor( siteSlug, ':purchaseId' ) + '?plan_changed=true';
-		const cancelTo = getManagePurchaseUrlFor( siteSlug, purchase.ID );
-		const intervalType = getPlanGridIntervalType( purchase.bill_period_days );
-		const href = addQueryArgs(
-			{
-				siteSlug,
-				allow_downgrade: 'true',
-				redirect_to: redirectTo,
-				cancel_to: cancelTo,
-				...( intervalType && { intervalType } ),
-			},
-			'/setup/plan-upgrade'
-		);
-		return (
-			<CompactCard tagName="a" displayAsLink href={ href }>
-				<Icon icon={ column } className="card__icon" />
-				{ translate( 'Change plan' ) }
-			</CompactCard>
-		);
-	}
-
-	renderUpgradeNavItem() {
-		const { purchase, translate } = this.props;
-		if ( this.shouldRenderDowngradeOption() ) {
-			return null;
-		}
+	/**
+	 * The `:purchaseId` placeholder is substituted with the newly-provisioned
+	 * plan's purchase by either the instant-downgrade handler or the checkout
+	 * pending page (analogous to `:receiptId`).
+	 */
+	buildPlanChangeAction( { upgradeOnly = false }: { upgradeOnly?: boolean } = {} ) {
+		const { purchase, siteSlug, getManagePurchaseUrlFor = managePurchase } = this.props;
 		if ( ! purchase ) {
 			return null;
 		}
-		if (
-			isJetpackHoldingSitePurchase( purchase ) ||
-			isPartnerPurchase( purchase ) ||
-			isA4ABillingDragonPurchase( purchase )
-		) {
+		return getPlanChangeAction( purchase, {
+			upgradeOnly,
+			cancelTo: getManagePurchaseUrlFor( siteSlug, purchase.ID ),
+			redirectTo: getManagePurchaseUrlFor( siteSlug, ':purchaseId' ),
+		} );
+	}
+
+	/**
+	 * The single entry point for moving a purchase onto something else.
+	 * WordPress.com plans can change in either direction and route to the Stepper
+	 * plan-upgrade flow, whose plan grid and downgrade dialog are more polished
+	 * than the classic `/plans` page. The downgrade logic itself is shared (both
+	 * pages render `PlansFeaturesMain`), and it reads `redirect_to`/`cancel_to`
+	 * straight off the URL, so we still land back on this manage-purchase page
+	 * afterwards. Everything else can only upgrade, and keeps its own
+	 * per-product destination.
+	 */
+	renderProductChangeNavItem() {
+		const { purchase, translate } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+		if ( isDotcomPlan( purchase ) ) {
+			const action = this.buildPlanChangeAction();
+			if ( ! action ) {
+				return null;
+			}
+			return (
+				<CompactCard
+					tagName="a"
+					displayAsLink
+					href={ action.href }
+					// Downgrades are not tracked here; they could be if desired, but
+					// historically only the upgrade case ever was.
+					onClick={ action.offersDowngrades ? undefined : this.handleUpgradeClick }
+				>
+					<Icon icon={ column } className="card__icon" />
+					{ action.title }
+				</CompactCard>
+			);
+		}
+
+		if ( ! purchase.is_upgradable ) {
 			return null;
 		}
 
-		const isUpgradeablePlan =
-			purchase &&
-			isPlan( purchase ) &&
-			! isEcommerce( purchase ) &&
-			! isPro( purchase ) &&
-			! isComplete( purchase ) &&
-			! isP2Plus( purchase ) &&
-			! is100Year( purchase );
+		// Allow Jetpack plans except the top one (Jetpack Complete) to be
+		// upgraded. WordPress.com plans were already handled above.
+		const isUpgradeablePlan = isPlan( purchase ) && ! isComplete( purchase );
 
 		const isUpgradeableBackupProduct = (
 			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
@@ -709,6 +679,12 @@ class ManagePurchase extends Component<
 		const isUpgradeableProduct = isUpgradeableBackupProduct;
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
+			return null;
+		}
+
+		const upgradeUrl = this.getUpgradeUrl();
+
+		if ( ! upgradeUrl ) {
 			return null;
 		}
 
@@ -721,8 +697,6 @@ class ManagePurchase extends Component<
 		} else {
 			buttonText = isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' );
 		}
-
-		const upgradeUrl = this.getUpgradeUrl();
 
 		return (
 			<CompactCard
@@ -942,9 +916,7 @@ class ManagePurchase extends Component<
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
 				purchase={ purchase }
-				linkedPurchases={ this.getActiveMarketplaceSubscriptions().map( ( p ) =>
-					createPurchaseObject( p as unknown as Parameters< typeof createPurchaseObject >[ 0 ] )
-				) }
+				linkedPurchases={ this.getActiveMarketplaceSubscriptions() }
 				isVisible={ this.state.isCancelSurveyVisible }
 				onClose={ this.closeDialog }
 				onSurveyComplete={ this.cancelSubscription }
@@ -1438,15 +1410,7 @@ class ManagePurchase extends Component<
 		return (
 			<Fragment>
 				{ ( this.props.showHeader ?? true ) && (
-					// Temporary bridge (SHILL-2256): PurchaseSiteHeader still expects the
-					// camelCase Purchase. Remove once it reads the raw shape.
-					<PurchaseSiteHeader
-						siteId={ siteId }
-						name={ siteName }
-						purchase={ createPurchaseObject(
-							purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-						) }
-					/>
+					<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
 				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
@@ -1510,7 +1474,6 @@ class ManagePurchase extends Component<
 				) }
 				{ isProductOwner && ! purchase.is_locked && (
 					<>
-						{ this.renderChangePlanNavItem() }
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&
@@ -1519,7 +1482,7 @@ class ManagePurchase extends Component<
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
 						{ /* TODO: Add ability to Renew Akismet subscription */ }
-						{ this.renderUpgradeNavItem() }
+						{ this.renderProductChangeNavItem() }
 						{ this.renderUpgradeStorageNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ config.isEnabled( 'jetpack/crm-downloads' ) && this.renderCrmDownloadsNavItem() }

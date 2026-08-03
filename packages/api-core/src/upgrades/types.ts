@@ -539,6 +539,10 @@ export interface Purchase {
 	 * link will typically go to the plans page for the site or some other
 	 * location depending on the product. To cause these buttons to instead add
 	 * a product directly to the cart, also set `upgrade_product_slug`.
+	 *
+	 * Note that a subscription may be upgradable even if it is past its expiry
+	 * date (i.e. in its grace period). This allows lapsed customers to choose
+	 * a different plan.
 	 */
 	is_upgradable: boolean;
 
@@ -546,11 +550,9 @@ export interface Purchase {
 	 * True if this subscription's plan can be downgraded to a different, lower
 	 * plan type (eg: Business to Personal).
 	 *
-	 * Only ever true for plans. Like `is_upgradable`, this is false for A4A
-	 * plans, bundle-`included` subscriptions, and (for Jetpack plans) holding
-	 * sites. Unlike `is_upgradable`, an active subscription that is merely past
-	 * its expiry date (grace period) is still considered downgradable; only
-	 * inactive ('expired') subscriptions are excluded.
+	 * Only ever true for WordPress.com plans. Like `is_upgradable`, it may
+	 * return true for expired subscriptions that are in their grace period, to
+	 * allow lapsed customers to downgrade to a lower plan.
 	 */
 	is_plan_type_downgradable: boolean;
 

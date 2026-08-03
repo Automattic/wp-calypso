@@ -15,6 +15,8 @@ import {
 	mightStillAutoRenew,
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	creditCardExpiresBeforeSubscription,
+	getRenewalUrlFromPurchase,
+	isPurchaseDowngradeEligible,
 } from '../purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -407,5 +409,89 @@ describe( 'creditCardExpiresBeforeSubscription', () => {
 				} )
 			)
 		).toBe( false );
+	} );
+} );
+
+describe( 'getRenewalUrlFromPurchase', () => {
+	test( 'omits the site slug for an A4A holding site purchase', () => {
+		const url = getRenewalUrlFromPurchase(
+			makePurchase( {
+				ID: 28259013,
+				product_slug: 'pressable_build_monthly',
+				meta: 'is-a4a',
+				is_attached_to_holding_site: true,
+				site_slug: 'siteless.agencies.automattic.com::yETR9VrPZIMpOMIL6CICWl36',
+			} )
+		);
+
+		expect( url ).toContain( '/checkout/pressable_build_monthly:is-a4a/renew/28259013/?' );
+		expect( url ).not.toContain( 'siteless.agencies.automattic.com' );
+	} );
+
+	test( 'keeps the site slug for a regular site purchase', () => {
+		const url = getRenewalUrlFromPurchase(
+			makePurchase( {
+				ID: 12345,
+				product_slug: 'business-bundle',
+				is_attached_to_holding_site: false,
+				site_slug: 'example.wordpress.com',
+			} )
+		);
+
+		expect( url ).toContain( '/checkout/business-bundle/renew/12345/example.wordpress.com?' );
+	} );
+} );
+
+describe( 'isPurchaseDowngradeEligible', () => {
+	// Both `plans/expired-downgrade` and `plans/delayed-downgrade` are enabled in
+	// every config, so these exercise the shipping behaviour.
+	test( 'is true for a downgradable plan', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( { is_plan: true, is_plan_type_downgradable: true } )
+			)
+		).toBe( true );
+	} );
+
+	test( 'is false for a plan with nothing below it', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( { is_plan: true, is_plan_type_downgradable: false } )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false for a non-plan product', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( { is_plan: false, is_plan_type_downgradable: true } )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is true for a downgradable plan past its expiry date', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( {
+					is_plan: true,
+					is_plan_type_downgradable: true,
+					is_past_expiry_date: true,
+					expiry_status: 'expired',
+					subscription_status: 'active',
+				} )
+			)
+		).toBe( true );
+	} );
+
+	test( 'is true for a downgradable plan inside its refund window', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( {
+					is_plan: true,
+					is_plan_type_downgradable: true,
+					is_within_initial_refund_window: true,
+				} )
+			)
+		).toBe( true );
 	} );
 } );

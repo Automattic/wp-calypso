@@ -681,9 +681,6 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 }
 
 function refreshNotes() {
-	if ( this.subscribed ) {
-		return;
-	}
 	debug( 'Refreshing notes...' );
 
 	getNotesList.call( this );
@@ -790,6 +787,10 @@ function setVisibility( { isShowing, isVisible } ) {
 	}
 }
 
+function setLocale( locale ) {
+	this.locale = locale;
+}
+
 Client.prototype.main = main;
 Client.prototype.reschedule = reschedule;
 Client.prototype.getNote = getNote;
@@ -802,5 +803,6 @@ Client.prototype.loadMore = loadMore;
 Client.prototype.hasMoreNotes = hasMoreNotes;
 Client.prototype.refreshNotes = refreshNotes;
 Client.prototype.setVisibility = setVisibility;
+Client.prototype.setLocale = setLocale;
 
 export default Client;

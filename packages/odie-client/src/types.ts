@@ -9,6 +9,7 @@ export type OdieAssistantContextInterface = {
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	newInteractionsBotSlug: string;
+	newLoggedOutInteractionsBotSlug: string;
 	newInteractionsBotVersion?: string;
 	chat: Chat;
 	clearChat: () => void;
@@ -35,6 +36,7 @@ export type OdieAssistantContextInterface = {
 
 export type OdieAssistantProviderProps = {
 	newInteractionsBotSlug: OdieAllowedBots;
+	newLoggedOutInteractionsBotSlug: string;
 	newInteractionsBotVersion?: string;
 	canConnectToZendesk?: boolean;
 	isLoadingCanConnectToZendesk?: boolean;

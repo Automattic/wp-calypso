@@ -595,6 +595,12 @@ describe( 'convertToolMessagesToComponents', () => {
 
 			expect( result[ 0 ] ).toMatchObject( { disabled } );
 			expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+			const componentProps = (
+				result[ 0 ].content[ 0 ] as {
+					componentProps?: { isMessageStale?: boolean };
+				}
+			 ).componentProps;
+			expect( componentProps?.isMessageStale === true ).toBe( disabled );
 		}
 	);
 } );

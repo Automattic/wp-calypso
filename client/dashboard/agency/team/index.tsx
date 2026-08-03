@@ -13,7 +13,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
-import { agencyTeamRoute } from '../../app/router/agency';
+import { agencyTeamRoute, hasAnyCapability } from '../../app/router/agency';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { useTeamActions, type TeamActionRequest } from './dataviews/actions';
@@ -24,6 +24,7 @@ import TeamMembersContent from './team-members-content';
 import type { TeamMember } from '@automattic/api-core';
 
 const REMOVE_USERS_CAPABILITY = 'a4a_remove_users';
+const INVITE_USERS_CAPABILITY = 'a4a_edit_user_invites';
 
 export default function AgencyTeam() {
 	const { recordTracksEvent } = useAnalytics();
@@ -52,7 +53,9 @@ export default function AgencyTeam() {
 		[ members, invites ]
 	);
 
-	const canRemove = !! activeAgency?.user?.capabilities?.includes( REMOVE_USERS_CAPABILITY );
+	const capabilities = activeAgency?.user?.capabilities ?? [];
+	const canRemove = hasAnyCapability( capabilities, REMOVE_USERS_CAPABILITY );
+	const canInvite = hasAnyCapability( capabilities, INVITE_USERS_CAPABILITY );
 
 	const [ activeRequest, setActiveRequest ] = useState< TeamActionRequest | null >( null );
 	const [ isInviteOpen, setIsInviteOpen ] = useState( false );
@@ -74,6 +77,7 @@ export default function AgencyTeam() {
 
 	const actions = useTeamActions( {
 		canRemove,
+		canInvite,
 		currentUserEmail: user?.email,
 		onResendInvite,
 		onConfirmAction: setActiveRequest,
@@ -86,16 +90,18 @@ export default function AgencyTeam() {
 					title={ __( 'Team' ) }
 					description={ __( 'Manage team members and invitations for your agency.' ) }
 					actions={
-						<Button
-							variant="primary"
-							__next40pxDefaultSize
-							onClick={ () => {
-								recordTracksEvent( 'calypso_dashboard_team_invite_member_click' );
-								setIsInviteOpen( true );
-							} }
-						>
-							{ __( 'Invite a team member' ) }
-						</Button>
+						canInvite ? (
+							<Button
+								variant="primary"
+								__next40pxDefaultSize
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_team_invite_member_click' );
+									setIsInviteOpen( true );
+								} }
+							>
+								{ __( 'Invite a team member' ) }
+							</Button>
+						) : undefined
 					}
 				/>
 			}

@@ -1,8 +1,9 @@
 import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
-import { siteCurrentPlanQuery, siteByIdQuery, purchaseQuery } from '@automattic/api-queries';
+import { siteCurrentPlanQuery, siteByIdQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
 import {
+	Button,
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -11,9 +12,13 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
+import { useAnalytics } from '../../app/analytics';
+import { purchasesRoute } from '../../app/router/me';
 import { commerceGardenPlan } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
+import RouterLinkButton from '../../components/router-link-button';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
@@ -48,6 +53,37 @@ function SitePlanStats( { site }: { site: Site } ) {
 			<SiteStorageStat site={ site } />
 			<SiteBandwidthStat site={ site } />
 		</VStack>
+	);
+}
+
+function SeeAllPurchasesLink( { site }: { site: Site } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	const handleClick = () => {
+		recordTracksEvent( 'calypso_dashboard_site_overview_see_all_purchases_click' );
+	};
+
+	if ( isDashboardBackport() ) {
+		return (
+			<Button
+				variant="link"
+				href={ `/purchases/subscriptions/${ site.slug }` }
+				onClick={ handleClick }
+			>
+				{ __( 'See all purchases' ) }
+			</Button>
+		);
+	}
+
+	return (
+		<RouterLinkButton
+			variant="link"
+			to={ purchasesRoute.fullPath }
+			search={ { site: site.ID } }
+			onClick={ handleClick }
+		>
+			{ __( 'See all purchases' ) }
+		</RouterLinkButton>
 	);
 }
 
@@ -100,10 +136,12 @@ function JetpackPlanCard( {
 function WpcomPlanCard( {
 	site,
 	purchase,
+	hasPurchases,
 	isLoading,
 }: {
 	site: Site;
 	purchase?: Purchase;
+	hasPurchases: boolean;
 	isLoading: boolean;
 } ) {
 	return (
@@ -115,7 +153,12 @@ function WpcomPlanCard( {
 			link={ getSitePlanUrl( site, purchase ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
-			bottom={ <SitePlanStats site={ site } /> }
+			bottom={
+				<VStack spacing={ 3 }>
+					<SitePlanStats site={ site } />
+					{ hasPurchases && <SeeAllPurchasesLink site={ site } /> }
+				</VStack>
+			}
 		/>
 	);
 }
@@ -183,12 +226,12 @@ function CommerceGardenPlanCard( {
 
 export default function PlanCard( { site }: { site: Site } ) {
 	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
-	const { data: purchase, isLoading: isLoadingPurchase } = useQuery( {
-		...purchaseQuery( plan?.id ?? 0 ),
-		enabled: !! plan?.id,
-	} );
+	const { data: purchases, isLoading: isLoadingPurchases } = useQuery(
+		sitePurchasesQuery( site.ID )
+	);
+	const purchase = purchases?.find( ( sitePurchase ) => sitePurchase.ID === plan?.id );
 
-	const isLoading = isLoadingPlan || isLoadingPurchase;
+	const isLoading = isLoadingPlan || isLoadingPurchases;
 
 	if ( site.is_a4a_dev_site ) {
 		return <AgencyPlanCard site={ site } isLoading={ isLoading } />;
@@ -206,7 +249,14 @@ export default function PlanCard( { site }: { site: Site } ) {
 		return <WpcomStagingSitePlanCard site={ site } />;
 	}
 
-	return <WpcomPlanCard site={ site } purchase={ purchase } isLoading={ isLoading } />;
+	return (
+		<WpcomPlanCard
+			site={ site }
+			purchase={ purchase }
+			hasPurchases={ ( purchases?.length ?? 0 ) > 0 }
+			isLoading={ isLoading }
+		/>
+	);
 }
 
 function getCardDescription( site: Site, purchase?: Purchase ) {

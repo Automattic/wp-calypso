@@ -5,22 +5,34 @@
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
+jest.mock( '@wordpress/data', () => ( {
+	select: jest.fn(),
+} ) );
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { select } from '@wordpress/data';
 import {
 	trackAiEditorialReviewItemAction,
 	trackAiEditorialReviewResultRendered,
 	trackAiEditorialReviewSuggestionRendered,
 	trackBlockTransformationSuggestionRendered,
+	trackSplitScreenGuideClick,
+	trackSplitScreenGuideRendered,
 } from './tracking';
 
 const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 	typeof recordTracksEvent
 >;
+const mockedSelect = select as jest.MockedFunction< typeof select >;
 
-const expectPrivacySafePayload = ( properties: Record< string, unknown > ) => {
+const expectPrivacySafePayload = (
+	properties: Record< string, unknown >,
+	{ allowPostType = false }: { allowPostType?: boolean } = {}
+) => {
 	expect( properties ).not.toHaveProperty( 'post_id' );
-	expect( properties ).not.toHaveProperty( 'post_type' );
+	if ( ! allowPostType ) {
+		expect( properties ).not.toHaveProperty( 'post_type' );
+	}
 	expect( properties ).not.toHaveProperty( 'block_index' );
 	expect( properties ).not.toHaveProperty( 'run_id' );
 	expect( properties ).not.toHaveProperty( 'client_run_id' );
@@ -45,15 +57,25 @@ type WindowWithAgentsManagerActions = Window & {
 	};
 };
 
-describe( 'AI Editorial Review tracking', () => {
+describe( 'Jetpack AI sidebar tracking', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		( globalThis as Record< string, unknown > ).agentsManagerData = { isDevMode: false };
+		window.bigSkyInitialState = {
+			isFreeTrial: '',
+			currentScreen: { screen: 'post' },
+		};
+		mockedSelect.mockReturnValue( {
+			getCurrentPostType: jest.fn( () => 'post' ),
+		} as ReturnType< typeof select > );
 		( window as WindowWithAgentsManagerActions ).__agentsManagerActions = {
 			getSessionId: jest.fn( () => 'test-session-id' ),
 		};
 	} );
 
 	afterEach( () => {
+		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
+		delete window.bigSkyInitialState;
 		delete ( window as WindowWithAgentsManagerActions ).__agentsManagerActions;
 	} );
 
@@ -133,5 +155,87 @@ describe( 'AI Editorial Review tracking', () => {
 			}
 		);
 		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
+	} );
+
+	it( 'tracks split-screen guide clicks with stable component metadata', () => {
+		trackSplitScreenGuideClick( { componentType: 'post-feedback' } );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith( 'jetpack_ai_split_screen_guide_click', {
+			component_type: 'post-feedback',
+			guide_variant: 'inline_action_card',
+			is_test: false,
+			post_type: 'post',
+			screen: 'post',
+			sessionid: 'test-session-id',
+			session_type: 'paid-user-session',
+		} );
+		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
+			allowPostType: true,
+		} );
+	} );
+
+	it( 'tracks a split-screen guide impression with stable component metadata', () => {
+		trackSplitScreenGuideRendered( { componentType: 'ai-editorial-review' } );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_split_screen_guide_rendered',
+			{
+				component_type: 'ai-editorial-review',
+				guide_variant: 'inline_action_card',
+				is_test: false,
+				post_type: 'post',
+				screen: 'post',
+				sessionid: 'test-session-id',
+				session_type: 'paid-user-session',
+			}
+		);
+		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
+			allowPostType: true,
+		} );
+	} );
+
+	it( 'uses Agents Manager test and Big Sky free-trial and screen context', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = { isDevMode: true };
+		window.bigSkyInitialState = {
+			isFreeTrial: '1',
+			currentScreen: { screen: 'site-editor' },
+		};
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_split_screen_guide_click',
+			expect.objectContaining( {
+				is_test: true,
+				session_type: 'free-trial-session',
+				screen: 'site-editor',
+			} )
+		);
+	} );
+
+	it( 'does not use Big Sky dev mode as test context', () => {
+		( window as unknown as { bigSkyInitialState: { isDevMode: string } } ).bigSkyInitialState = {
+			isDevMode: '1',
+		};
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_split_screen_guide_click',
+			expect.objectContaining( { is_test: false } )
+		);
+	} );
+
+	it( 'uses an empty post type when the editor store is unavailable', () => {
+		mockedSelect.mockImplementation( () => {
+			throw new Error( 'Store unavailable' );
+		} );
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_split_screen_guide_click',
+			expect.objectContaining( { post_type: '' } )
+		);
 	} );
 } );

@@ -87,6 +87,9 @@ function PartnerOfferCard( {
 							href={ item.termsUrl ?? VIEW_TERMS_URL }
 							target="_blank"
 							onClick={ handleViewTermsClick }
+							style={ {
+								whiteSpace: 'nowrap',
+							} }
 						>
 							{ __( 'View terms' ) }
 						</Button>

@@ -5,6 +5,7 @@ import {
 	isPurchaseOneTimePurchase,
 } from '@automattic/api-core';
 import {
+	findPlansKeys,
 	getAkismetPro500ProductDisplayName,
 	getJetpackProductsDisplayNames,
 	getPlan,
@@ -29,26 +30,30 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
+	TYPE_PERSONAL,
 	TYPE_PRO,
 } from '@automattic/calypso-products';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import i18n from 'i18n-calypso';
 import moment from 'moment';
 import {
+	hasAmountAvailableToRefund,
 	isA4AHoldingSitePurchase,
 	isAgencyPartnerType,
 	isMarketplaceHoldingSitePurchase,
 	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
 import { addPaymentMethod, changePaymentMethod } from '../paths';
-import type { Purchase } from '@automattic/api-core';
+import type { MarketingSurveyResponses, Purchase } from '@automattic/api-core';
 import type { TranslateResult } from 'i18n-calypso';
+
+const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 /**
  * Raw-`Purchase` ports of the `calypso/lib/purchases` helpers used by the legacy
- * `client/me/purchases` pages while they migrate off the data-stores assembler
- * (SHILL-2256). These read the snake_case `Purchase` from `@automattic/api-core`
- * directly.
+ * `client/me/purchases` pages, and the marketing-survey cancellation dialogs they
+ * render, while they migrate off the data-stores assembler (SHILL-2256). These
+ * read the snake_case `Purchase` from `@automattic/api-core` directly.
  *
  * This module is intentionally local and not exported from any shared package:
  * several of these helpers have historically misleading names and should not be
@@ -62,6 +67,31 @@ export function getName( purchase: Purchase ): string {
 		return purchase.meta ?? '';
 	}
 	return purchase.product_name;
+}
+
+export function enrichedSurveyData(
+	surveyData: Omit< MarketingSurveyResponses, 'purchaseId' | 'purchase' >,
+	purchase?: Pick< Purchase, 'subscribed_date' | 'blog_created_date' | 'ID' | 'product_slug' >,
+	timestamp = new Date()
+): MarketingSurveyResponses {
+	const purchaseStartDate = purchase?.subscribed_date;
+	const siteStartDate = purchase?.blog_created_date;
+	const purchaseId = purchase?.ID ?? 0;
+	const productSlug = purchase?.product_slug ?? '';
+
+	return {
+		purchase: productSlug,
+		purchaseId,
+		...( purchaseStartDate && {
+			daysSincePurchase:
+				( new Date( timestamp ).getTime() - new Date( purchaseStartDate ).getTime() ) / DAY_IN_MS,
+		} ),
+		...( siteStartDate && {
+			daysSinceSiteCreation:
+				( new Date( timestamp ).getTime() - new Date( siteStartDate ).getTime() ) / DAY_IN_MS,
+		} ),
+		...surveyData,
+	};
 }
 
 export function isIncludedWithPlan( purchase: Purchase ): boolean {
@@ -324,14 +354,6 @@ export function getRenewalPriceInSmallestUnit( purchase: Purchase ): number {
 	return purchase.sale_amount_integer || purchase.price_integer;
 }
 
-export function isRefundable( purchase: Purchase ): boolean {
-	return purchase.is_refundable && purchase.product_type !== 'saas_plugin';
-}
-
-export function hasAmountAvailableToRefund( purchase: Purchase ): boolean {
-	return isRefundable( purchase ) && purchase.refund_amount > 0;
-}
-
 export function canAutoRenewBeTurnedOff( purchase: Purchase ): boolean {
 	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
@@ -346,6 +368,21 @@ export function canAutoRenewBeTurnedOff( purchase: Purchase ): boolean {
 	}
 
 	return purchase.is_auto_renew_enabled;
+}
+
+export function getDowngradePlanFromPurchase( purchase: Purchase ) {
+	const plan = getPlan( purchase.product_slug );
+	if ( ! plan ) {
+		return null;
+	}
+
+	const newPlanKeys = findPlansKeys( {
+		group: plan.group,
+		type: TYPE_PERSONAL,
+		term: plan.term,
+	} );
+
+	return getPlan( newPlanKeys[ 0 ] );
 }
 
 export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {

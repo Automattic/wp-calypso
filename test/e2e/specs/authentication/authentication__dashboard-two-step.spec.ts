@@ -94,11 +94,12 @@ async function continueWithSecurityKey( page: Page ): Promise< void > {
 		await switchToSecurityKey.click();
 	}
 
-	const continueButton = page.getByRole( 'button', { name: 'Continue with security key' } );
-	const isContinueButtonVisible = await continueButton.isVisible();
-	if ( isContinueButtonVisible ) {
-		await continueButton.click();
-	}
+	// The button stays aria-disabled until the ceremony resolves and navigates away, so the
+	// nudge is best-effort; the navigation below is the real signal.
+	await page
+		.getByRole( 'button', { name: 'Continue with security key' } )
+		.click( { timeout: 5_000 } )
+		.catch( ( error ) => console.warn( `Security key nudge skipped: ${ error }` ) );
 
 	await page.waitForURL( ( url ) => ! url.pathname.includes( '/log-in' ), { timeout: 30_000 } );
 }

@@ -3,7 +3,7 @@ import { Location } from 'history';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import type { HelpCenterAction } from './actions';
-import type { HelpCenterOptions } from './types';
+import type { HelpCenterOptions, LoggedOutOdieChat, LoggedOutOdieChats } from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -58,13 +58,30 @@ const helpCenterRouterHistory: Reducer<
 	return state;
 };
 
-const loggedOutOdieChat: Reducer<
-	{ odieId: number; sessionId: string; botSlug: string } | undefined,
+export const loggedOutOdieChat: Reducer<
+	LoggedOutOdieChat | LoggedOutOdieChats | undefined,
 	HelpCenterAction
 > = ( state = undefined, action ) => {
 	switch ( action.type ) {
+		// Keep the singular value for backward compatibility with independently deployed clients.
 		case 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT':
 			return action.session;
+	}
+	return state;
+};
+
+export const loggedOutOdieChats: Reducer< LoggedOutOdieChats | undefined, HelpCenterAction > = (
+	state = undefined,
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT':
+			return action.session
+				? {
+						...state,
+						[ action.session.botSlug ]: action.session,
+				  }
+				: undefined;
 	}
 	return state;
 };
@@ -239,6 +256,7 @@ const reducer = combineReducers( {
 	odieBotNameSlug,
 	helpCenterRouterHistory,
 	loggedOutOdieChat,
+	loggedOutOdieChats,
 	hasPremiumSupport,
 	contextTerm,
 	helpCenterOptions,
