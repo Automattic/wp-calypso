@@ -2,20 +2,21 @@ import '@testing-library/jest-dom';
 
 const { TextEncoder, TextDecoder } = require( 'util' );
 const nock = require( 'nock' );
-const { queryClient } = require( '@automattic/api-queries' );
 
 // Fail any network requests which aren't mocked.
 nock.disableNetConnect();
 
-afterEach( () => {
-	nock.cleanAll();
-	jest.clearAllMocks();
-	queryClient.clear();
-} );
-
 // Define TextEncoder for ReactDOMServer
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
+
+afterEach( () => {
+	nock.cleanAll();
+	jest.clearAllMocks();
+	// Required lazily: @automattic/api-queries pulls in superagent → @noble/hashes,
+	// which reference TextEncoder at module load, so it must load after the global above.
+	require( '@automattic/api-queries' ).queryClient.clear();
+} );
 
 global.ResizeObserver = require( 'resize-observer-polyfill' );
 
