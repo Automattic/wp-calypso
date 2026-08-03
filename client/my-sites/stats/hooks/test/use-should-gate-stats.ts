@@ -2,7 +2,11 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import {
 	STAT_TYPE_CLICKS,
+	STAT_TYPE_TOP_POSTS,
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
+	STATS_FEATURE_DOWNLOAD_CSV,
+	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
+	STATS_FEATURE_UTM_STATS,
 	STATS_TYPE_DEVICE_STATS,
 } from '../../constants';
 import { shouldGateStats } from '../use-should-gate-stats';
@@ -432,27 +436,48 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 		},
 	};
 
-	it( 'should not gate basic stats for commercial jetpack sites past the paywall threshold, since the commercial paywall is no longer enforced (STATS-387)', () => {
-		const isGatedStats = shouldGateStats( walledCommercialSiteState, siteId, gatedStatType );
-		expect( isGatedStats ).toBe( false );
-	} );
+	// Everything the commercial paywall used to take away, itemised so a regression names itself.
+	it.each( [
+		[ 'basic modules', STAT_TYPE_TOP_POSTS ],
+		[ 'clicks', gatedStatType ],
+		[ 'date controls', STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS ],
+		[ 'interval dropdowns', STATS_FEATURE_INTERVAL_DROPDOWN_WEEK ],
+		[ 'CSV export', STATS_FEATURE_DOWNLOAD_CSV ],
+	] )(
+		'should not gate %s for commercial jetpack sites past the paywall threshold (STATS-387)',
+		( _, statType ) => {
+			expect( shouldGateStats( walledCommercialSiteState, siteId, statType ) ).toBe( false );
+		}
+	);
 
-	it( 'should not gate date controls for commercial jetpack sites past the paywall threshold, lifting the 7-day limit (STATS-387)', () => {
-		const isGatedStats = shouldGateStats(
-			walledCommercialSiteState,
-			siteId,
-			STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS
-		);
-		expect( isGatedStats ).toBe( false );
-	} );
+	// Advanced stats are paid for every Jetpack site, commercial or not, so lifting the
+	// commercial paywall must not open them.
+	it.each( [
+		[ 'devices', STATS_TYPE_DEVICE_STATS ],
+		[ 'UTM', STATS_FEATURE_UTM_STATS ],
+	] )(
+		'should still gate advanced %s stats for commercial jetpack sites past the paywall threshold',
+		( _, statType ) => {
+			expect( shouldGateStats( walledCommercialSiteState, siteId, statType ) ).toBe( true );
+		}
+	);
 
-	it( 'should still gate advanced stats for commercial jetpack sites past the paywall threshold', () => {
-		const isGatedStats = shouldGateStats(
-			walledCommercialSiteState,
-			siteId,
-			jetpackStatsAdvancedStatType
-		);
-		expect( isGatedStats ).toBe( true );
+	it( 'should not gate anything for a VIP site past the paywall threshold', () => {
+		const vipState = {
+			...walledCommercialSiteState,
+			sites: {
+				...walledCommercialSiteState.sites,
+				items: {
+					[ siteId ]: {
+						jetpack: true,
+						options: { is_wpcom_atomic: false, is_commercial: true, is_vip: true },
+					},
+				},
+			},
+		};
+
+		expect( shouldGateStats( vipState, siteId, gatedStatType ) ).toBe( false );
+		expect( shouldGateStats( vipState, siteId, jetpackStatsAdvancedStatType ) ).toBe( false );
 	} );
 
 	// The case the kill switch must leave alone: commercial, unpaid, but never past the threshold.
