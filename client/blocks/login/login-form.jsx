@@ -109,7 +109,7 @@ export class LoginForm extends Component {
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
-		isFromNewUserEmailConfirmation: PropTypes.bool,
+		isUserAccountEmailUpdateRedirect: PropTypes.bool,
 		loginButtonText: PropTypes.string,
 		isGravatarFixedAccountLogin: PropTypes.bool.isRequired,
 		isGravPoweredClient: PropTypes.bool,
@@ -704,7 +704,7 @@ export class LoginForm extends Component {
 			isGravPoweredClient,
 			isGravatarFixedAccountLogin,
 			isSocialFirst,
-			isFromNewUserEmailConfirmation,
+			isUserAccountEmailUpdateRedirect,
 		} = this.props;
 
 		const isLastUsedPassword =
@@ -752,7 +752,7 @@ export class LoginForm extends Component {
 			);
 		};
 
-		const renderNewUserEmailNotice = () => {
+		const renderUserAccountEmailUpdateNotice = () => {
 			return (
 				<Notice variant="info">
 					{ this.props.translate(
@@ -786,7 +786,7 @@ export class LoginForm extends Component {
 
 				<div className="login__form-userdata">
 					{ linkingSocialUser && renderSocialLinkingNotice() }
-					{ isFromNewUserEmailConfirmation && renderNewUserEmailNotice() }
+					{ isUserAccountEmailUpdateRedirect && renderUserAccountEmailUpdateNotice() }
 
 					<FormLabel
 						htmlFor="usernameOrEmail"

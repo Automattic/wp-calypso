@@ -47,7 +47,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import getIsNewUserEmailRedirect from 'calypso/state/selectors/get-is-new-user-email-redirect';
+import getIsUserAccountEmailUpdateRedirect from 'calypso/state/selectors/get-is-user-account-email-update-redirect';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
@@ -82,7 +82,7 @@ class Login extends Component {
 		isJetpack: PropTypes.bool.isRequired,
 		isFromAkismet: PropTypes.bool,
 		isFromPassport: PropTypes.bool,
-		isFromNewUserEmailConfirmation: PropTypes.bool,
+		isUserAccountEmailUpdateRedirect: PropTypes.bool,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		linkingSocialService: PropTypes.string,
@@ -420,7 +420,7 @@ class Login extends Component {
 			redirectTo,
 			isWooJPC,
 			isWoo,
-			isFromNewUserEmailConfirmation,
+			isUserAccountEmailUpdateRedirect,
 		} = this.props;
 
 		const signupLink = this.getSignupLinkComponent();
@@ -533,7 +533,7 @@ class Login extends Component {
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isFromAkismet={ this.props.isFromAkismet }
 				isFromPassport={ this.props.isFromPassport }
-				isFromNewUserEmailConfirmation={ isFromNewUserEmailConfirmation }
+				isUserAccountEmailUpdateRedirect={ isUserAccountEmailUpdateRedirect }
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst } // TODO just not gravatar
 				isJetpack={ isJetpack }
@@ -632,7 +632,7 @@ export default connect(
 			new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 		),
 		isFromPassport: isPassportRedirect( getRedirectToOriginal( state ) ),
-		isFromNewUserEmailConfirmation: getIsNewUserEmailRedirect( state ),
+		isUserAccountEmailUpdateRedirect: getIsUserAccountEmailUpdateRedirect( state ),
 
 		isFromAutomatticForAgenciesPlugin:
 			'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from ||

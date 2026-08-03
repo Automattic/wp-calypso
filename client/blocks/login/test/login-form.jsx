@@ -68,8 +68,8 @@ describe( 'LoginForm', () => {
 		expect( notice ).toBeInTheDocument();
 	} );
 
-	test( 'displays notice when isFromNewUserEmailConfirmation is true', async () => {
-		render( <LoginForm isFromNewUserEmailConfirmation /> );
+	test( 'displays notice when isUserAccountEmailUpdateRedirect is true', async () => {
+		render( <LoginForm isUserAccountEmailUpdateRedirect /> );
 
 		const notice = screen.getByText(
 			/Please log in using the original email address for your account, not the updated email address you are verifying/i

@@ -1,9 +1,9 @@
-import isNewUserEmailRedirect from '../is-new-user-email-redirect';
+import isUserAccountEmailUpdateRedirect from '../is-user-account-email-update-redirect';
 
-describe( 'isNewUserEmailRedirect', () => {
+describe( 'isUserAccountEmailUpdateRedirect', () => {
 	test( 'should return false for null or empty input', () => {
-		expect( isNewUserEmailRedirect( null ) ).toBe( false );
-		expect( isNewUserEmailRedirect( '' ) ).toBe( false );
+		expect( isUserAccountEmailUpdateRedirect( null ) ).toBe( false );
+		expect( isUserAccountEmailUpdateRedirect( '' ) ).toBe( false );
 	} );
 
 	test( 'should return true when newuseremail param is present', () => {
@@ -14,7 +14,7 @@ describe( 'isNewUserEmailRedirect', () => {
 		];
 
 		validUrls.forEach( ( url ) => {
-			expect( isNewUserEmailRedirect( url ) ).toBe( true );
+			expect( isUserAccountEmailUpdateRedirect( url ) ).toBe( true );
 		} );
 	} );
 
@@ -25,7 +25,7 @@ describe( 'isNewUserEmailRedirect', () => {
 		];
 
 		invalidUrls.forEach( ( url ) => {
-			expect( isNewUserEmailRedirect( url ) ).toBe( false );
+			expect( isUserAccountEmailUpdateRedirect( url ) ).toBe( false );
 		} );
 	} );
 } );

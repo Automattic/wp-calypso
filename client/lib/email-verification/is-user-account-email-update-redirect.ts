@@ -1,4 +1,4 @@
-const isNewUserEmailRedirect = ( redirectUrl: string | null ): boolean => {
+const isUserAccountEmailUpdateRedirect = ( redirectUrl: string | null ): boolean => {
 	if ( ! redirectUrl ) {
 		return false;
 	}
@@ -10,4 +10,4 @@ const isNewUserEmailRedirect = ( redirectUrl: string | null ): boolean => {
 	}
 };
 
-export default isNewUserEmailRedirect;
+export default isUserAccountEmailUpdateRedirect;
