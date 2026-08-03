@@ -1,6 +1,4 @@
 /* global helpCenterData */
-import './config';
-import './help-center.scss';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import { createRoot } from 'react-dom/client';
