@@ -243,7 +243,8 @@ function resolveNotice(
 	// Close in, count the days exactly. `getRelativeDayString` would round a
 	// month-and-change up to "in 1 month", which reads as far less urgent than
 	// the 29 days it actually is.
-	const expiresInDaysTitleSource = 'Your %(planName)s plan expires in %(days)d days';
+	// The singular, because that is the key translations are stored under.
+	const expiresInDaysTitleSource = 'Your %(planName)s plan expires in %(days)d day';
 	const expiresInDaysTitle = sprintf(
 		// translators: %(planName)s is a short plan name like "Business", and %(days)d is a number of days
 		_n(
@@ -258,7 +259,7 @@ function resolveNotice(
 	// translators: %(planName)s is a short plan name, like "Business"
 	const expiresTodayTitle = sprintf( __( 'Your %(planName)s plan expires today' ), { planName } );
 
-	const remainingTitleSource = 'Your %(planName)s plan has %(days)d days remaining';
+	const remainingTitleSource = 'Your %(planName)s plan has %(days)d day remaining';
 	const remainingTitle = sprintf(
 		// translators: %(planName)s is a short plan name like "Business", and %(days)d is a number of days
 		_n(
