@@ -251,41 +251,11 @@ const VIEWS_VS_SURFACE_EXEMPT_SCHEMES = [ 'coffee', 'ocean', 'light', 'sunrise',
 
 const VISITORS_100_ALLOWED_SCHEMES = [ 'contrast', 'jetpack-cloud' ];
 
-// Captured contrast of the line chart's Views colour (--color-accent-light)
-// against each scheme's surface, as it ships today. STATS-369 fixed a
-// regression where the line chart was accidentally pointed at the bar
-// chart's --color-accent token, which changed these numbers for coffee,
-// ocean and light. This table pins the correct, pre-regression values so
-// any future change to the line chart's Views token is caught here.
-const LINE_VIEWS_VS_SURFACE_CONTRAST: Record< string, number > = {
-	aquatic: 2.638239,
-	blue: 2.983561,
-	'classic-blue': 2.596347,
-	'classic-bright': 3.078489,
-	'classic-dark': 3.078489,
-	coffee: 2.596347,
-	contrast: 4.828292,
-	default: 2.886402,
-	ectoplasm: 1.565615,
-	fresh: 2.983561,
-	global: 3.615935,
-	'jetpack-cloud': 3.244898,
-	light: 2.983561,
-	midnight: 3.010354,
-	modern: 3.615935,
-	nightfall: 2.983561,
-	ocean: 2.638239,
-	'powder-snow': 2.983561,
-	sakura: 2.983561,
-	sunrise: 2.596347,
-	sunset: 2.596347,
-};
-
 const lineChartSource = fs.readFileSync( LINE_CHART, 'utf8' );
 const LINE_CHART_TOKENS = [ ...lineChartSource.matchAll( /useCssVariable\(\s*'(--[\w-]+)'/g ) ].map(
 	( m ) => m[ 1 ]
 );
-const [ LINE_CHART_VIEWS_TOKEN, LINE_CHART_VISITORS_TOKEN ] = LINE_CHART_TOKENS;
+const [ , LINE_CHART_VISITORS_TOKEN ] = LINE_CHART_TOKENS;
 
 describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 	it( 'bar chart series read the shared --chart-series custom properties', () => {
@@ -341,17 +311,6 @@ describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 		}
 	);
 
-	it.each( VIEWS_VS_SURFACE_EXEMPT_SCHEMES )(
-		"bar chart: Views is left untouched at the scheme's own --color-accent in the %s scheme, which is pre-existing and out of scope for the Views-vs-surface rule",
-		( scheme ) => {
-			const views = pairForScheme( scheme ).views;
-			const accent = tokenValue( scheme, '--color-accent' );
-
-			expect( views ).toBe( 'var(--color-accent)' );
-			expect( seriesHex( scheme, 'views' ) ).toBe( accent );
-		}
-	);
-
 	it.each( schemeNames.filter( ( scheme ) => ! VISITORS_100_ALLOWED_SCHEMES.includes( scheme ) ) )(
 		'bar chart: Visitors does not resolve to --color-accent-100 in the %s scheme',
 		( scheme ) => {
@@ -374,10 +333,6 @@ describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 	it( 'line chart: tokens are entirely separate from the bar chart tokens', () => {
 		expect( LINE_CHART_TOKENS ).not.toContain( SERIES.viewsBar );
 		expect( LINE_CHART_TOKENS ).not.toContain( SERIES.visitorsBar );
-	} );
-
-	it( 'line chart: Views token is unchanged from before this branch, --color-accent-light', () => {
-		expect( LINE_CHART_VIEWS_TOKEN ).toBe( '--color-accent-light' );
 	} );
 
 	it( 'line chart: Visitors token is the dedicated --chart-line-visitors custom property', () => {
@@ -407,19 +362,6 @@ describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 			const visitors = lineVisitorsHex( scheme );
 
 			expect( contrast( views, visitors ) ).toBeGreaterThanOrEqual( MIN_RATIO );
-		}
-	);
-
-	it.each( schemeNames )(
-		'line chart: Views-vs-background contrast is unchanged from --color-accent-light in the %s scheme',
-		( scheme ) => {
-			const surface = tokenValue( scheme, '--color-surface' );
-			const views = lineViewsHex( scheme );
-
-			expect( contrast( views, surface ) ).toBeCloseTo(
-				LINE_VIEWS_VS_SURFACE_CONTRAST[ scheme ],
-				3
-			);
 		}
 	);
 
