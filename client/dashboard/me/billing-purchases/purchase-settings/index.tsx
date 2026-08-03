@@ -802,7 +802,9 @@ function getFields( {
 					) {
 						// translators: %(date)s is a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {
-							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
+							date: formatDate( new Date( purchase.renew_date ?? '' ), locale, {
+								dateStyle: 'long',
+							} ),
 						} );
 					}
 					if ( ! purchase.is_auto_renew_enabled && purchase.expiry_date ) {

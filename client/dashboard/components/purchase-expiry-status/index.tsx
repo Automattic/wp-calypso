@@ -205,7 +205,9 @@ export function PurchaseExpiryStatus( {
 					// translators: %(date)s: a formatted date
 					__( 'Credit card expires before your next renewal on %(date)s' ),
 					{
-						date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
+						date: formatDate( new Date( purchase.renew_date ?? '' ), locale, {
+							dateStyle: 'long',
+						} ),
 					}
 				) }
 			</span>
@@ -219,7 +221,7 @@ export function PurchaseExpiryStatus( {
 		const slug = purchase.delayed_downgrade_to_product_slug;
 		const planNames = getPlanNames() as Record< string, string | undefined >;
 		const targetPlanName = slug ? planNames[ slug ] ?? null : null;
-		const renewalDate = formatDate( new Date( purchase.renew_date ), locale, {
+		const renewalDate = formatDate( new Date( purchase.renew_date ?? '' ), locale, {
 			dateStyle: 'long',
 		} );
 		if ( targetPlanName ) {
@@ -250,7 +252,7 @@ export function PurchaseExpiryStatus( {
 				isSmallestUnit: true,
 				stripZeros: true,
 			} ),
-			date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
+			date: formatDate( new Date( purchase.renew_date ?? '' ), locale, { dateStyle: 'long' } ),
 		};
 		const translateComponents = {
 			excludeTaxStringAbbreviation: (
