@@ -1,6 +1,7 @@
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
-import type { RestAPIClient } from './rest-api-client';
+import { setTimeout as delay } from 'node:timers/promises';
+import { RestAPIClient } from './rest-api-client';
 import type { AccountClosureResponse, AccountDetails } from './types';
 
 const MAX_ERROR_LENGTH = 300;
@@ -15,6 +16,24 @@ const ATOMIC_DEPROVISION_POLL_MS = 15 * 1000;
 // Fresh signup tokens can reach `/me` before the account-close endpoint.
 const TOKEN_PROPAGATION_TIMEOUT_MS = 30 * 1000;
 const TOKEN_PROPAGATION_POLL_MS = 5 * 1000;
+
+// The reap runs in `globalTeardown`, which no Playwright timeout bounds, and
+// `sendRequest` issues bare `fetch` calls that can stall far longer than a poll
+// interval. Cap the whole thing so it cannot consume the build's remaining time
+// and starve the leak-check step that reports the outcome.
+const REAP_TOTAL_TIMEOUT_MS = ATOMIC_DEPROVISION_TIMEOUT_MS + 60 * 1000;
+
+export interface PendingClose {
+	userID: number;
+	username: string;
+	email: string;
+	/**
+	 * Needed to close the account later. Signup accounts are passwordless, so the
+	 * token is the only lever and cannot be re-derived from the credentials.
+	 * Keep pending records off `test/e2e/output`, which CI publishes as artifacts.
+	 */
+	bearerToken: string;
+}
 
 export interface AccountLeak {
 	/**
@@ -148,8 +167,10 @@ export function isAccountClosedError( error: unknown ): boolean {
  *
  * @param {string} leakDir Directory where markers are written.
  * @param {AccountLeak} leak Details of the leaked account.
+ * @returns {boolean} Whether the marker reached disk. Callers that are about to
+ * discard their own copy of the evidence must check it.
  */
-export function recordAccountLeak( leakDir: string, leak: AccountLeak ): void {
+export function recordAccountLeak( leakDir: string, leak: AccountLeak ): boolean {
 	const key = leak.userID || leak.email;
 	try {
 		mkdirSync( leakDir, { recursive: true } );
@@ -161,8 +182,10 @@ export function recordAccountLeak( leakDir: string, leak: AccountLeak ): void {
 			error: errorMessage( leak.error ),
 		};
 		writeFileSync( markerPath( leakDir, key ), JSON.stringify( payload ) + '\n' );
+		return true;
 	} catch ( error ) {
 		console.warn( `Failed to record teardown leak marker for account ${ key }: ${ error }` );
+		return false;
 	}
 }
 
@@ -182,6 +205,232 @@ export function clearAccountLeak( leakDir: string, userID: number ): void {
 }
 
 /**
+ * Absolute path of the pending-close record for an account inside `pendingDir`.
+ *
+ * @param {string} pendingDir Directory where pending records are written.
+ * @param {number} userID The user ID.
+ * @returns {string} Absolute record file path.
+ */
+function pendingPath( pendingDir: string, userID: number ): string {
+	return path.join( pendingDir, `pending-${ userID }.json` );
+}
+
+/**
+ * Defers an account close that is blocked by an Atomic site still deprovisioning.
+ *
+ * The spec has already cancelled the plan, so deprovision is in flight; blocking
+ * the `afterAll` on it burns minutes of the run per Atomic spec and still leaks
+ * whenever deprovision outlasts the window. Recording the account instead lets
+ * `reapPendingCloses` retry once the rest of the suite has run, spending the
+ * remaining run time as the wait. Never throws.
+ *
+ * @param {string} pendingDir Directory where pending records are written.
+ * @param {PendingClose} pending Account to close later.
+ * @returns {boolean} Whether the record reached disk. A false here means the
+ * account has no deferred owner, so the caller must fall back to a leak marker.
+ */
+export function recordPendingClose( pendingDir: string, pending: PendingClose ): boolean {
+	try {
+		mkdirSync( pendingDir, { recursive: true } );
+		writeFileSync( pendingPath( pendingDir, pending.userID ), JSON.stringify( pending ) + '\n' );
+		return true;
+	} catch ( error ) {
+		console.warn( `Failed to record pending close for user ${ pending.userID }: ${ error }` );
+		return false;
+	}
+}
+
+/**
+ * Removes a pending-close record. Idempotent and never throws.
+ *
+ * @param {string} pendingDir Directory where pending records are written.
+ * @param {number} userID The user ID.
+ */
+function clearPendingClose( pendingDir: string, userID: number ): void {
+	try {
+		rmSync( pendingPath( pendingDir, userID ), { force: true } );
+	} catch ( error ) {
+		console.warn( `Failed to clear pending close for user ${ userID }: ${ error }` );
+	}
+}
+
+/**
+ * Reads every pending-close record in `pendingDir`. Malformed records are skipped
+ * with a warning rather than failing the whole reap.
+ *
+ * @param {string} pendingDir Directory where pending records are written.
+ * @returns {PendingClose[]} The records that parsed.
+ */
+function readPendingCloses( pendingDir: string ): PendingClose[] {
+	let entries: string[];
+	try {
+		entries = readdirSync( pendingDir ).filter( ( name ) => name.startsWith( 'pending-' ) );
+	} catch {
+		// No directory means nothing was deferred.
+		return [];
+	}
+
+	const pending: PendingClose[] = [];
+	for ( const entry of entries ) {
+		let record: unknown;
+		try {
+			record = JSON.parse( readFileSync( path.join( pendingDir, entry ), 'utf8' ) );
+		} catch ( error ) {
+			console.warn( `Skipping unreadable pending close ${ entry }: ${ error }` );
+			continue;
+		}
+		if ( ! isPendingClose( record ) ) {
+			// Left in place on purpose: the CI check reports it, which is the only
+			// remaining signal for an account whose identity we cannot recover.
+			console.warn( `Skipping malformed pending close ${ entry }.` );
+			continue;
+		}
+		pending.push( record );
+	}
+	return pending;
+}
+
+/**
+ * Whether a value read back from disk is a usable pending-close record.
+ *
+ * A record can be truncated by a killed worker or left over in an older format,
+ * and the reaper acts on every field: an empty token silently degrades into a
+ * password login, and a non-object crashes the reap outright.
+ *
+ * @param {unknown} value Parsed record.
+ * @returns {boolean} True when every field the reaper needs is present and usable.
+ */
+function isPendingClose( value: unknown ): value is PendingClose {
+	if ( ! value || typeof value !== 'object' ) {
+		return false;
+	}
+	const record = value as Record< string, unknown >;
+	return (
+		Number.isFinite( record.userID ) &&
+		[ record.username, record.email, record.bearerToken ].every(
+			( field ) => typeof field === 'string' && field.length > 0
+		)
+	);
+}
+
+/**
+ * Hands a close blocked by Atomic deprovision to the end-of-run reaper.
+ *
+ * Falls back to a leak marker when the bearer token cannot be read, since without
+ * it the reaper has no way to authenticate and the account would vanish silently.
+ *
+ * @param {RestAPIClient} client REST API client authenticated as the account.
+ * @param {AccountDetails} accountDetails Identity of the account to close.
+ * @param {string} leakDir Directory where leak markers are written.
+ * @param {string} pendingDir Directory where pending records are written.
+ */
+async function deferClose(
+	client: RestAPIClient,
+	accountDetails: AccountDetails,
+	leakDir: string,
+	pendingDir: string
+): Promise< void > {
+	let bearerToken: string;
+	try {
+		bearerToken = await client.getBearerToken();
+	} catch ( error ) {
+		recordAccountLeak( leakDir, { ...accountDetails, error } );
+		return;
+	}
+
+	const deferred = recordPendingClose( pendingDir, {
+		userID: accountDetails.userID,
+		username: accountDetails.username,
+		email: accountDetails.email,
+		bearerToken,
+	} );
+
+	if ( ! deferred ) {
+		// Nothing owns the close now, so fall back to the pre-deferral contract:
+		// report it as a leak rather than let the account vanish from CI.
+		recordAccountLeak( leakDir, {
+			...accountDetails,
+			error: 'Atomic site still deprovisioning and the pending-close record could not be written.',
+		} );
+		return;
+	}
+
+	console.log(
+		`[atomic-teardown] user ${ accountDetails.userID } is blocked by an Atomic site; deferring close to the end of the run.`
+	);
+}
+
+/**
+ * Retries every deferred account close, then converts whatever is still blocked
+ * into a leak marker so CI reports it.
+ *
+ * Runs after the suite, when an Atomic site cancelled early in the run has had
+ * the whole run to deprovision. Accounts are reaped concurrently so the total
+ * wait is bounded by the slowest one rather than their sum. Each gets a fresh
+ * deprovision window, so an account that is already free closes on the first
+ * attempt and one that is not still has room to absorb a transient error.
+ *
+ * The pending record is cleared only once the account is accounted for - closed,
+ * confirmed gone, or written out as a leak marker. Clearing it unconditionally
+ * would discard the last evidence of an account whose marker failed to write,
+ * and the record is also the CI backstop for a reap that never finished.
+ *
+ * Never throws: `globalTeardown` rejecting would fail an otherwise green run.
+ *
+ * @param {string} pendingDir Directory where pending records are written.
+ * @param {string} leakDir Directory where leak markers are written.
+ */
+export async function reapPendingCloses( pendingDir: string, leakDir: string ): Promise< void > {
+	const pending = readPendingCloses( pendingDir );
+	if ( ! pending.length ) {
+		return;
+	}
+
+	console.log( `[atomic-teardown] reaping ${ pending.length } deferred account close(s).` );
+
+	const reaps = pending.map( async ( record ) => {
+		const client = new RestAPIClient(
+			{ username: record.username, password: '' },
+			record.bearerToken
+		);
+		const accountDetails: AccountDetails = {
+			userID: record.userID,
+			username: record.username,
+			email: record.email,
+		};
+
+		// The spec's cancel is best-effort (it warns and continues), so a run where
+		// it failed leaves a deprovision that never started and a close that can
+		// never succeed. Re-issuing it is a no-op once the plan is already gone.
+		try {
+			await client.cancelAtomicPlan();
+		} catch ( error ) {
+			console.warn( `Error re-cancelling Atomic plan for user ${ record.userID }: ${ error }` );
+		}
+
+		// No `pendingDir`: the reaper is the last stop, so it waits inline for the
+		// full deprovision window rather than deferring again.
+		const accountedFor = await closeAccountAndRecordLeak( client, accountDetails, leakDir );
+
+		if ( accountedFor ) {
+			clearPendingClose( pendingDir, record.userID );
+		} else {
+			console.warn(
+				`[atomic-teardown] user ${ record.userID } is neither closed nor leak-marked; keeping its pending record as the remaining evidence.`
+			);
+		}
+	} );
+
+	// `allSettled` so a single bad record cannot abandon the others mid-poll, and a
+	// deadline so the reap cannot eat the CI build's remaining time: the leak-check
+	// step runs after this and is the only thing that reports what was left behind.
+	await Promise.race( [
+		Promise.allSettled( reaps ),
+		delay( REAP_TOTAL_TIMEOUT_MS, undefined, { ref: false } ),
+	] );
+}
+
+/**
  * Closes a test account and maintains its teardown leak marker as CI evidence.
  *
  * Records a marker only when the account is confirmed to still exist after a
@@ -192,15 +441,25 @@ export function clearAccountLeak( leakDir: string, userID: number ): void {
  * (recorded), so a transient error never silently drops a real leak. Never throws,
  * so it is safe to call from an `afterAll`.
  *
+ * When `pendingDir` is given and the close is refused because the account's Atomic
+ * site is still deprovisioning, the account is deferred to `reapPendingCloses`
+ * rather than waited on here. Callers without a `pendingDir` (the reaper itself)
+ * fall back to waiting inline.
+ *
  * @param {RestAPIClient} client REST API client authenticated as the account.
  * @param {AccountDetails} accountDetails Identity of the account to close.
  * @param {string} leakDir Directory where leak markers are written.
+ * @param {string} [pendingDir] Directory where deferred closes are recorded.
+ * @returns {Promise<boolean>} Whether the account ended up accounted for: closed,
+ * confirmed already gone, deferred, or recorded as a leak. False means every
+ * signal failed, so a caller holding its own evidence must keep it.
  */
 export async function closeAccountAndRecordLeak(
 	client: RestAPIClient,
 	accountDetails: AccountDetails,
-	leakDir: string
-): Promise< void > {
+	leakDir: string,
+	pendingDir?: string
+): Promise< boolean > {
 	const hasUserID = Number.isInteger( accountDetails.userID ) && accountDetails.userID > 0;
 	const username =
 		typeof accountDetails.username === 'string' ? accountDetails.username.trim() : '';
@@ -209,7 +468,7 @@ export async function closeAccountAndRecordLeak(
 	if ( ! hasUserID || ! username || ! email ) {
 		console.warn( 'Skipping remote account teardown: account identity is incomplete.' );
 		if ( hasUserID || email ) {
-			recordAccountLeak( leakDir, {
+			return recordAccountLeak( leakDir, {
 				...( hasUserID ? { userID: accountDetails.userID } : {} ),
 				username,
 				email,
@@ -217,7 +476,8 @@ export async function closeAccountAndRecordLeak(
 					'Remote teardown skipped because the signup response contained an incomplete account identity.',
 			} );
 		}
-		return;
+		// No recordable key: nothing to close and nothing that could be leaking.
+		return true;
 	}
 
 	console.log( `Closing account ${ accountDetails.userID }.` );
@@ -251,7 +511,7 @@ export async function closeAccountAndRecordLeak(
 				}
 				console.log( `Successfully deleted user ID ${ accountDetails.userID }` );
 				clearAccountLeak( leakDir, accountDetails.userID );
-				return;
+				return true;
 			}
 
 			console.warn( `Failed to delete user ID ${ accountDetails.userID }` );
@@ -263,8 +523,17 @@ export async function closeAccountAndRecordLeak(
 		}
 
 		let pollMs: number;
-		if ( isActiveAtomicSiteError( closeError ) && Date.now() < atomicDeadline ) {
+		if ( isActiveAtomicSiteError( closeError ) ) {
+			// Hand the wait to the end-of-run reaper instead of holding the spec's
+			// `afterAll` open while the site deprovisions.
+			if ( pendingDir ) {
+				await deferClose( client, accountDetails, leakDir, pendingDir );
+				return true;
+			}
 			sawAtomicSite = true;
+			if ( Date.now() >= atomicDeadline ) {
+				break;
+			}
 			pollMs = ATOMIC_DEPROVISION_POLL_MS;
 		} else if ( isTransientInvalidTokenCloseResponse( closeError ) ) {
 			if ( tokenDeadline === undefined ) {
@@ -293,15 +562,15 @@ export async function closeAccountAndRecordLeak(
 	try {
 		await client.getMyAccountInformation();
 		// Account still exists and we failed to close it: a real leak.
-		recordAccountLeak( leakDir, { ...accountDetails, error: closeError } );
+		return recordAccountLeak( leakDir, { ...accountDetails, error: closeError } );
 	} catch ( probeError ) {
 		if ( isAccountClosedError( probeError ) ) {
 			// Dead token: the account is already gone. Not a leak.
 			clearAccountLeak( leakDir, accountDetails.userID );
-		} else {
-			// Could not confirm the account is gone (transient/network error).
-			// Be conservative and record so the CI check does not miss a real leak.
-			recordAccountLeak( leakDir, { ...accountDetails, error: closeError } );
+			return true;
 		}
+		// Could not confirm the account is gone (transient/network error).
+		// Be conservative and record so the CI check does not miss a real leak.
+		return recordAccountLeak( leakDir, { ...accountDetails, error: closeError } );
 	}
 }

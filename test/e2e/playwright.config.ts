@@ -83,6 +83,10 @@ export default defineConfig( {
 	},
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter,
+	/* Drops deferred-close records (and their bearer tokens) left by an earlier run. */
+	globalSetup: require.resolve( './lib/global-setup' ),
+	/* Closes the accounts whose Atomic site was still deprovisioning when their spec finished. */
+	globalTeardown: require.resolve( './lib/global-teardown' ),
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	outputDir: `${ outputPath }/test-results`,
 	use: {

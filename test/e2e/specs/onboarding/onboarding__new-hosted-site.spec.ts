@@ -35,7 +35,8 @@ test.describe(
 			// site via API"), so the only lever is cancelling the Business plan, which
 			// deprovisions the site asynchronously. The in-test cancellation only runs
 			// on the happy path; cancel here too (bearer-scoped) so a mid-test failure
-			// still deprovisions. apiCloseAccount then polls the close past that wait.
+			// still deprovisions. apiCloseAccount defers the close that deprovision
+			// blocks to the end-of-run reaper, so this hook does not wait it out.
 			test.setTimeout( 300 * 1000 );
 
 			const restAPIClient = new RestAPIClient(
