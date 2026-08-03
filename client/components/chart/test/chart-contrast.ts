@@ -4,8 +4,8 @@
 import fs from 'fs';
 import path from 'path';
 import chroma from 'chroma-js';
-import postcss from 'postcss';
 import postcssScss from 'postcss-scss';
+import type postcss from 'postcss';
 
 const REPO_ROOT = path.resolve( __dirname, '../../../..' );
 const SCHEME_DIR = path.join(
