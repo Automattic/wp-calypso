@@ -6,7 +6,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { STAT_TYPE_CLICKS, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from '../../constants';
 import { shouldGateStats } from '../use-should-gate-stats';
-import { shouldShowPaywallAfterGracePeriod } from '../use-stats-purchases';
+import { shouldShowPaywallAfterGracePeriod, shouldShowPaywallNotice } from '../use-stats-purchases';
 
 jest.mock( '../../constants', () => ( {
 	...jest.requireActual( '../../constants' ),
@@ -65,6 +65,19 @@ describe( 'with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
 
 	it( 'reports the paywall again for a walled commercial site', () => {
 		expect( shouldShowPaywallAfterGracePeriod( walledCommercialSiteState, siteId ) ).toBe( true );
+	} );
+
+	it( 'escalates the upgrade notice to its lockout variant again', () => {
+		const walledWithStickerDate = {
+			...walledCommercialSiteState,
+			stats: {
+				planUsage: {
+					data: { [ siteId ]: { should_show_paywall: true, paywall_date_from: '2026-07-14' } },
+				},
+			},
+		};
+
+		expect( shouldShowPaywallNotice( walledWithStickerDate, siteId ) ).toBe( true );
 	} );
 
 	it( 'gates basic stats again', () => {

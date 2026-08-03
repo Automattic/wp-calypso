@@ -46,13 +46,12 @@ describe( 'shouldShowPaywallAfterGracePeriod', () => {
 	} );
 } );
 
-// The upgrade notice is handled separately, so this PR must leave it escalating as it does today.
 describe( 'shouldShowPaywallNotice', () => {
-	it( 'still reports the sticker, so the notice behaviour is unchanged here', () => {
-		expect( shouldShowPaywallNotice( walledState, siteId ) ).toBe( true );
+	it( 'ignores the commercial paywall sticker while the kill switch is on', () => {
+		expect( shouldShowPaywallNotice( walledState, siteId ) ).toBe( false );
 	} );
 
-	it( 'is false for a site that owns commercial use', () => {
+	it( 'stays false for a site that owns commercial use', () => {
 		expect(
 			shouldShowPaywallNotice(
 				{ ...walledState, purchases: { data: [ commercialPurchase ] } },
