@@ -33,6 +33,18 @@ export const CANCEL_FLOW_TYPE = {
 export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
 
 /**
+ * Once expiration is this close, a subscription that will not renew itself is a
+ * problem worth raising rather than a date still comfortably far off.
+ */
+export const EXPIRY_WARNING_DAYS = 60;
+
+/**
+ * Once expiration is this close, losing the subscription is the most likely
+ * outcome rather than a distant possibility.
+ */
+export const EXPIRY_ERROR_DAYS = 7;
+
+/**
  * Returns true if the purchase is auto-renewing and not yet expired.
  */
 export function isRenewingBeforeExpiration( purchase: Purchase ): boolean {

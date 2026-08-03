@@ -1,16 +1,21 @@
+import './style.scss';
+
 import { SubscriptionBillPeriod, getPlanNames } from '@automattic/api-core';
-import { translationExists } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { arrowUpRight } from '@wordpress/icons';
+import { useAnalytics } from '../../app/analytics';
+import { useAuth } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
 import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../utils/datetime';
 import {
+	EXPIRY_ERROR_DAYS,
+	EXPIRY_WARNING_DAYS,
 	isA4ABillingDragonPurchase,
-	isRecentMonthlyPurchase,
 	isRenewingBeforeExpiration,
 	isExpiring,
 	isExpiredOrRemoved,
@@ -20,7 +25,15 @@ import {
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
 	isCentennialPurchase,
+	getRenewalUrlFromPurchase,
 } from '../../utils/purchase';
+import {
+	getExpiredCopy,
+	getExpiredRenewalTitle,
+	getExpiringSoonCopy,
+	getExpiringSoonRenewalTitle,
+} from '../../utils/purchase-expiry-copy';
+import type { ExpiryStatusCopy } from '../../utils/purchase-expiry-copy';
 import type { Purchase } from '@automattic/api-core';
 
 // Renders a formatted purchase's expiry date in an inline-block span
@@ -32,6 +45,100 @@ function FormattedExpiryDate( { locale, purchase }: { locale: string; purchase: 
 				dateStyle: 'long',
 			} ) }
 		</span>
+	);
+}
+
+/**
+ * The expiry status of a subscription that is close to expiring or has already
+ * expired: colored to draw attention, and linked to renewal checkout where
+ * renewing is something the viewer can act on right now.
+ *
+ * Expiry further off than the warning window is not urgent, and is rendered as
+ * plain text by the caller rather than through here.
+ */
+function UrgentExpiryStatus( {
+	purchase,
+	copy,
+	hasExpired,
+	untranslatedFallbackText,
+}: {
+	purchase: Purchase;
+	copy: ExpiryStatusCopy;
+
+	/**
+	 * Whether `copy` describes a lapsed subscription rather than one still
+	 * heading for expiry. Taken from the caller because that is decided by the
+	 * subscription's status, which can disagree with its date in both
+	 * directions — and the tooltip has to read the same way the status does.
+	 */
+	hasExpired: boolean;
+
+	/**
+	 * Wording for locales that have no translation for `copy` yet. A `ReactNode`
+	 * because that older sentence interpolates the date into an element. Both
+	 * this and `copy.text`'s nullability go away once the copy is translated.
+	 */
+	untranslatedFallbackText?: React.ReactNode;
+} ) {
+	const locale = useLocale();
+	const { user } = useAuth();
+	const { recordTracksEvent } = useAnalytics();
+
+	// The wording drops the expiry date to keep the column short, so it moves to
+	// a tooltip rather than disappearing.
+	const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
+	const expiryDateTitle = formatDate( new Date( purchase.expiry_date ), locale, {
+		dateStyle: 'long',
+	} );
+
+	// The purchase page gates its "Renew now" action on these same two
+	// conditions. Calypso's equivalent surfaces apply a longer list; the two
+	// clients are knowingly out of step here.
+	const canRenew = purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
+
+	// How close to expiry a subscription has to be before renewal is worth
+	// offering. A monthly subscription is never far from expiring, so the annual
+	// window would ask for a renewal within days of the purchase; it gets the
+	// last week instead. Anything already past its expiry date is inside either.
+	const renewalWindowDays =
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
+			? EXPIRY_ERROR_DAYS
+			: EXPIRY_WARNING_DAYS;
+	const isRenewalWorthOffering = canRenew && daysUntilExpiry <= renewalWindowDays;
+
+	const expiryText = copy.text ?? untranslatedFallbackText;
+
+	if ( ! isRenewalWorthOffering ) {
+		return (
+			<Text intent={ copy.intent } title={ expiryDateTitle }>
+				{ expiryText }
+			</Text>
+		);
+	}
+
+	const renewalTitle = hasExpired
+		? getExpiredRenewalTitle( expiryDateTitle )
+		: getExpiringSoonRenewalTitle( expiryDateTitle );
+
+	return (
+		<Text intent={ copy.intent }>
+			<a
+				className="purchase-expiry-status__renew-link"
+				// On the link rather than the wrapper, so that it describes the link
+				// to a screen reader as well as showing on hover.
+				title={ renewalTitle ?? expiryDateTitle }
+				href={ getRenewalUrlFromPurchase( purchase ) }
+				onClick={ () =>
+					recordTracksEvent( 'calypso_purchases_renew_now_click', {
+						product_slug: purchase.product_slug,
+						position: 'purchase-list',
+					} )
+				}
+			>
+				{ expiryText }
+				<Icon icon={ arrowUpRight } size={ 18 } />
+			</a>
+		</Text>
 	);
 }
 
@@ -312,54 +419,42 @@ export function PurchaseExpiryStatus( {
 		}
 	}
 
-	const expiresOnText = createInterpolateElement(
-		// translators: date is a formatted expiry date
-		__( 'Expires on <date />' ),
-		{
-			date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
-		}
-	);
-
 	if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
-		const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
+		const copy = getExpiringSoonCopy( new Date( purchase.expiry_date ) );
 
-		// Covers both "later today" and a purchase whose expiry date has passed
-		// but which the backend still reports as expiring.
-		if ( daysUntilExpiry <= 0 ) {
-			return (
-				<Text intent="error">
-					{ translationExists( 'Expires today' ) ? __( 'Expires today' ) : expiresOnText }
-				</Text>
+		if ( ! copy ) {
+			return createInterpolateElement(
+				// translators: date is a formatted expiry date
+				__( 'Expires on <date />' ),
+				{
+					date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
+				}
 			);
 		}
 
-		if ( daysUntilExpiry <= 30 && ! isRecentMonthlyPurchase( purchase ) ) {
-			const intent = daysUntilExpiry <= 7 ? ( 'error' as const ) : ( 'warning' as const );
+		// Only reached where the day-count copy has no translation yet. Delete
+		// this and the prop it is passed to once it does; see `getExpiringSoonCopy`.
+		const untranslatedFallbackText = createInterpolateElement(
+			sprintf(
+				// translators: timeUntilExpiry is a formatted expiration string like "in 30 days" and date is a formatted expiry date
+				__( 'Expires %(timeUntilExpiry)s on <date />' ),
+				{
+					timeUntilExpiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
+				}
+			),
+			{
+				date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
+			}
+		);
 
-			return (
-				<Text intent={ intent }>
-					{ createInterpolateElement(
-						sprintf(
-							// translators: timeUntilExpiry is a formatted expiration string like "in 30 days" and date is a formatted expiry date
-							__( 'Expires %(timeUntilExpiry)s on <date />' ),
-							{
-								// The branch above already excludes today and past dates, but
-								// the clamp keeps that guarantee local to this call.
-								timeUntilExpiry: getRelativeDayString(
-									new Date( purchase.expiry_date ),
-									'upcoming'
-								),
-							}
-						),
-						{
-							date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
-						}
-					) }
-				</Text>
-			);
-		}
-
-		return expiresOnText;
+		return (
+			<UrgentExpiryStatus
+				purchase={ purchase }
+				copy={ copy }
+				hasExpired={ false }
+				untranslatedFallbackText={ untranslatedFallbackText }
+			/>
+		);
 	}
 	if ( isExpiredOrRemoved( purchase ) && 'concierge-session' === purchase.product_slug ) {
 		// translators: %s is a formatted expiry date
@@ -369,19 +464,12 @@ export function PurchaseExpiryStatus( {
 	}
 
 	if ( isExpiredOrRemoved( purchase ) ) {
-		// getCalendarDaysUntil counts forward, so this is negative once the expiry
-		// date has passed. Anything else means the expiry lands today or later —
-		// later being a purchase removed ahead of its expiry date — and both read
-		// as "Expired today" rather than "Expired in 3 days".
-		const expiredBeforeToday = getCalendarDaysUntil( new Date( purchase.expiry_date ) ) < 0;
-		const expiredTodayText = __( 'Expired today' );
-		// translators: timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"
-		const expiredFromNowText = sprintf( __( 'Expired %(timeSinceExpiry)s' ), {
-			timeSinceExpiry: getRelativeDayString( new Date( purchase.expiry_date ), 'past' ),
-		} );
-
 		return (
-			<Text intent="error">{ expiredBeforeToday ? expiredFromNowText : expiredTodayText }</Text>
+			<UrgentExpiryStatus
+				purchase={ purchase }
+				copy={ getExpiredCopy( new Date( purchase.expiry_date ) ) }
+				hasExpired
+			/>
 		);
 	}
 

@@ -3,6 +3,8 @@ import { translationExists } from '@automattic/i18n-utils';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../utils/datetime';
 import {
+	EXPIRY_ERROR_DAYS,
+	EXPIRY_WARNING_DAYS,
 	getRenewalUrlFromPurchase,
 	isDotcomPlan,
 	isExpiredAndInGracePeriod,
@@ -11,19 +13,6 @@ import {
 } from '../../utils/purchase';
 import { getPlanStorageInGb } from './plan-storage';
 import type { Purchase } from '@automattic/api-core';
-
-/**
- * Once expiration is this close, a plan that cannot renew itself is a problem
- * worth raising rather than a date still comfortably far off, so this is where
- * the messaging begins, as a warning.
- */
-const WARNING_DAYS_BEFORE_EXPIRY = 60;
-
-/**
- * Once expiration is this close, losing the plan is the most likely outcome
- * rather than a distant possibility, so the messaging switches to an error.
- */
-const ERROR_DAYS_BEFORE_EXPIRY = 7;
 
 export type PlanExpiryUrgency = 'info' | 'warning' | 'error';
 
@@ -271,7 +260,7 @@ function resolveNotice(
 	);
 
 	// The day of expiration, or the last few days before it.
-	if ( daysUntilExpiry <= ERROR_DAYS_BEFORE_EXPIRY ) {
+	if ( daysUntilExpiry <= EXPIRY_ERROR_DAYS ) {
 		const isExpiringToday = daysUntilExpiry <= 0;
 
 		if ( canAutoRenew ) {
@@ -342,7 +331,7 @@ function resolveNotice(
 		};
 	}
 
-	if ( daysUntilExpiry <= WARNING_DAYS_BEFORE_EXPIRY ) {
+	if ( daysUntilExpiry <= EXPIRY_WARNING_DAYS ) {
 		return {
 			variant: 'warning',
 			titleSource: expiresInDaysTitleSource,

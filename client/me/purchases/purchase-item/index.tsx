@@ -10,6 +10,7 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 	getPlan,
+	is100Year,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
@@ -17,9 +18,9 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { getPaymentMethodImageURL, razorpayImage as upiImage } from '@automattic/wpcom-checkout';
 import { ExternalLink, Button } from '@wordpress/components';
-import { Icon, cautionFilled as warningIcon } from '@wordpress/icons';
+import { Icon, arrowUpRight, cautionFilled as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { fixMe, localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
@@ -30,6 +31,13 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getCalendarDaysUntil, getRelativeDayString } from 'calypso/dashboard/utils/datetime';
+import { EXPIRY_ERROR_DAYS, EXPIRY_WARNING_DAYS } from 'calypso/dashboard/utils/purchase';
+import {
+	getExpiredCopy,
+	getExpiredRenewalTitle,
+	getExpiringSoonCopy,
+	getExpiringSoonRenewalTitle,
+} from 'calypso/dashboard/utils/purchase-expiry-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
@@ -41,7 +49,8 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPartnerPurchase,
-	isRecentMonthlyPurchase,
+	isRenewable,
+	isCloseToExpiration,
 	isRenewingBeforeExpiration,
 	isRemoved,
 	purchaseType,
@@ -53,8 +62,11 @@ import {
 	hasPaymentMethod,
 	isPaidWithCredits,
 	mightStillAutoRenew,
+	handleRenewNowClick,
 } from 'calypso/lib/purchases';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import { getSite } from 'calypso/state/sites/selectors';
 import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
@@ -69,6 +81,7 @@ import OwnerInfo from './owner-info';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import 'calypso/me/purchases/style.scss';
 import type { Site } from 'calypso/blocks/site-icon';
+import type { ExpiryStatusCopy } from 'calypso/dashboard/utils/purchase-expiry-copy';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 import type { AppState } from 'calypso/types';
 import type { LocalizeProps } from 'i18n-calypso';
@@ -313,6 +326,130 @@ export function PurchaseItemProduct( {
 	return productType;
 }
 
+/**
+ * The expiry status of a subscription that is close to expiring or has already
+ * expired: colored to draw attention, and linked to renewal checkout where
+ * renewing is something the viewer can act on right now.
+ *
+ * Expiry further off than the warning window is not urgent, and is rendered as
+ * plain text by the caller rather than through here.
+ */
+function UrgentExpiryStatus( {
+	purchase,
+	copy,
+	hasExpired,
+	untranslatedFallbackText,
+	isDisconnectedSite,
+	impression,
+}: {
+	purchase: Purchases.Purchase;
+	copy: ExpiryStatusCopy;
+
+	/**
+	 * Whether `copy` describes a lapsed subscription rather than one still
+	 * heading for expiry. Taken from the caller because that is decided by the
+	 * subscription's status, which can disagree with its date in both
+	 * directions — and the tooltip has to read the same way the status does.
+	 */
+	hasExpired: boolean;
+
+	/**
+	 * Wording for locales that have no translation for `copy` yet. A `ReactNode`
+	 * because that older sentence interpolates the date into an element. Both
+	 * this and `copy.text`'s nullability go away once the copy is translated.
+	 */
+	untranslatedFallbackText?: React.ReactNode;
+	isDisconnectedSite?: boolean;
+
+	/** Rendered alongside the status, but outside the renewal link. */
+	impression: React.ReactNode;
+} ) {
+	const dispatch = useDispatch();
+	const moment = useLocalizedMoment();
+	const currentUserId = useSelector( getCurrentUserId );
+	const expiry = moment( purchase.expiryDate );
+	const className =
+		copy.intent === 'error' ? 'purchase-item__is-error' : 'purchase-item__is-warning';
+	const expiryText = copy.text ?? untranslatedFallbackText;
+
+	// The same conditions as `renderRenewButton` in `manage-purchase/index.tsx`:
+	// both the ones inside it and the ownership and lock checks in the JSX that
+	// renders it. That page also has a "Renew now" nav item which applies fewer
+	// conditions, and it isn't clear whether the difference between the two is
+	// intentional; these were copied from the header control because the link
+	// below is prominent in the same way that one is.
+	//
+	// Repeated rather than shared because that page reads the raw
+	// `@automattic/api-core` purchase and this list still reads the camelCase
+	// `@automattic/data-stores` one (SHILL-2256), so each side needs different
+	// field names.
+	const canRenewNow =
+		( ! isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) &&
+		isRenewable( purchase ) &&
+		( ! isDisconnectedSite ||
+			isAkismetHoldingSitePurchase( purchase ) ||
+			isMarketplaceHoldingSitePurchase( purchase ) ||
+			isA4ABillingDragonPurchase( purchase ) ) &&
+		! isAkismetFreeProduct( purchase ) &&
+		! ( is100Year( purchase ) && ! isCloseToExpiration( purchase ) ) &&
+		purchase.canExplicitRenew &&
+		purchase.userId === currentUserId &&
+		! purchase.isLocked;
+
+	// How close to expiry a subscription has to be before renewal is worth
+	// offering. A monthly subscription is never far from expiring, so the annual
+	// window would ask for a renewal within days of the purchase; it gets the
+	// last week instead. Anything already past its expiry date is inside either.
+	const renewalWindowDays =
+		purchase.billPeriodDays === PLAN_MONTHLY_PERIOD ? EXPIRY_ERROR_DAYS : EXPIRY_WARNING_DAYS;
+	const daysUntilExpiry = getCalendarDaysUntil( expiry.toDate() );
+	const isRenewalWorthOffering = canRenewNow && daysUntilExpiry <= renewalWindowDays;
+
+	if ( ! isRenewalWorthOffering ) {
+		return (
+			<span className={ className } title={ expiry.format( 'LL' ) }>
+				{ expiryText }
+				{ impression }
+			</span>
+		);
+	}
+
+	const renewalTitle = hasExpired
+		? getExpiredRenewalTitle( expiry.format( 'LL' ) )
+		: getExpiringSoonRenewalTitle( expiry.format( 'LL' ) );
+
+	return (
+		<span className={ className }>
+			<button
+				className="purchase-item__expiry-link"
+				// On the button rather than the wrapper, so that it describes the
+				// control to a screen reader as well as showing on hover.
+				title={ renewalTitle ?? expiry.format( 'LL' ) }
+				onClick={ ( event ) => {
+					event.preventDefault();
+					event.stopPropagation();
+					// Come back to the list afterwards, whether the renewal goes
+					// through or is abandoned, since that is where they were.
+					// Absolute, since checkout runs on wordpress.com and the purchase
+					// listing page can run on other hosts like Jetpack Cloud and A4A.
+					const backUrl = window.location.href;
+					dispatch(
+						handleRenewNowClick( purchase, purchase.siteSlug ?? '', {
+							redirectTo: backUrl,
+							cancelTo: backUrl,
+							tracksProps: { position: 'purchase-list' },
+						} )
+					);
+				} }
+			>
+				{ expiryText }
+				<Icon icon={ arrowUpRight } size={ 18 } />
+			</button>
+			{ impression }
+		</span>
+	);
+}
+
 export function PurchaseItemStatus( {
 	purchase,
 	translate,
@@ -325,6 +462,7 @@ export function PurchaseItemStatus( {
 	isDisconnectedSite?: boolean;
 } ) {
 	const expiry = moment( purchase.expiryDate );
+
 	// @todo: There isn't currently a way to get the taxName based on the
 	// country. The country is not included in the purchase information
 	// envelope. We should add this information so we can utilize useTaxName
@@ -590,52 +728,42 @@ export function PurchaseItemStatus( {
 	}
 
 	if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
-		const expiresOnText = translate( 'Expires on {{span}}%s{{/span}}', {
-			args: expiry.format( 'LL' ),
-			components: {
-				span: <span className="purchase-item__date" />,
-			},
-		} );
-		const daysUntilExpiry = getCalendarDaysUntil( expiry.toDate() );
+		const copy = getExpiringSoonCopy( expiry.toDate() );
 
-		// Covers both "later today" and a purchase whose expiry date has passed
-		// but which the backend still reports as expiring.
-		if ( daysUntilExpiry <= 0 ) {
-			return (
-				<span className="purchase-item__is-error">
-					{ fixMe( {
-						text: 'Expires today',
-						newCopy: translate( 'Expires today' ),
-						oldCopy: expiresOnText,
-					} ) }
-					<TrackImpression warning="purchase-expiring" />
-				</span>
-			);
+		if ( ! copy ) {
+			return translate( 'Expires on {{span}}%s{{/span}}', {
+				args: expiry.format( 'LL' ),
+				components: {
+					span: <span className="purchase-item__date" />,
+				},
+			} );
 		}
 
-		if ( daysUntilExpiry <= 30 && ! isRecentMonthlyPurchase( purchase ) ) {
-			const expiryClass =
-				daysUntilExpiry <= 7 ? 'purchase-item__is-error' : 'purchase-item__is-warning';
+		// Only reached where the day-count copy has no translation yet. Delete
+		// this and the prop it is passed to once it does; see `getExpiringSoonCopy`.
+		const untranslatedFallbackText = translate(
+			'Expires %(timeUntilExpiry)s on {{span}}%(date)s{{/span}}',
+			{
+				args: {
+					timeUntilExpiry: getRelativeDayString( expiry.toDate(), 'upcoming' ),
+					date: expiry.format( 'LL' ),
+				},
+				components: {
+					span: <span className="purchase-item__date" />,
+				},
+			}
+		);
 
-			return (
-				<span className={ expiryClass }>
-					{ translate( 'Expires %(timeUntilExpiry)s on {{span}}%(date)s{{/span}}', {
-						args: {
-							// The branch above already excludes today and past dates, but
-							// the clamp keeps that guarantee local to this call.
-							timeUntilExpiry: getRelativeDayString( expiry.toDate(), 'upcoming' ),
-							date: expiry.format( 'LL' ),
-						},
-						components: {
-							span: <span className="purchase-item__date" />,
-						},
-					} ) }
-					<TrackImpression warning="purchase-expiring" />
-				</span>
-			);
-		}
-
-		return expiresOnText;
+		return (
+			<UrgentExpiryStatus
+				purchase={ purchase }
+				copy={ copy }
+				hasExpired={ false }
+				untranslatedFallbackText={ untranslatedFallbackText }
+				isDisconnectedSite={ isDisconnectedSite }
+				impression={ <TrackImpression warning="purchase-expiring" /> }
+			/>
+		);
 	}
 
 	if ( isExpiredOrRemoved( purchase ) ) {
@@ -645,24 +773,14 @@ export function PurchaseItemStatus( {
 			} );
 		}
 
-		// getCalendarDaysUntil counts forward, so this is negative once the expiry
-		// date has passed. Anything else means the expiry lands today or later —
-		// later being a purchase removed ahead of its expiry date — and both read
-		// as "Expired today" rather than "Expired in 3 days".
-		const expiredBeforeToday = getCalendarDaysUntil( expiry.toDate() ) < 0;
-		const expiredTodayText = translate( 'Expired today' );
-		const expiredFromNowText = translate( 'Expired %(timeSinceExpiry)s', {
-			args: {
-				timeSinceExpiry: getRelativeDayString( expiry.toDate(), 'past' ),
-			},
-			context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
-		} );
-
 		return (
-			<span className="purchase-item__is-error">
-				{ expiredBeforeToday ? expiredFromNowText : expiredTodayText }
-				<TrackImpression warning="purchase-expired" />
-			</span>
+			<UrgentExpiryStatus
+				purchase={ purchase }
+				copy={ getExpiredCopy( expiry.toDate() ) }
+				hasExpired
+				isDisconnectedSite={ isDisconnectedSite }
+				impression={ <TrackImpression warning="purchase-expired" /> }
+			/>
 		);
 	}
 
