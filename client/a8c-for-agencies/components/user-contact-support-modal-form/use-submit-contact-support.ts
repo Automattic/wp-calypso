@@ -9,7 +9,6 @@ type Output = {
 	isSubmitting: boolean;
 	submit: ( params: SubmitContactSupportParams ) => void;
 	isSubmissionSuccessful: boolean;
-	reset: () => void;
 };
 
 type Options = {
@@ -20,9 +19,7 @@ export default function useSubmitContactSupport( { isSignup }: Options = {} ): O
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { isError, isSuccess, mutate, isPending, reset } = useSubmitSupportFormMutation( {
-		isSignup,
-	} );
+	const { isError, isSuccess, mutate, isPending } = useSubmitSupportFormMutation( { isSignup } );
 
 	useEffect( () => {
 		if ( isError ) {
@@ -39,6 +36,5 @@ export default function useSubmitContactSupport( { isSignup }: Options = {} ): O
 		isSubmitting: isPending,
 		submit: mutate,
 		isSubmissionSuccessful: isSuccess,
-		reset,
 	};
 }
