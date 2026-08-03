@@ -14,12 +14,19 @@ export { persistAgentsManagerState } from './persist-state';
 
 let isRegistered = false;
 
-export function register(): typeof STORE_KEY {
+type RegisterOptions = {
+	shouldLoadPersistedState?: () => boolean;
+};
+
+export function register( options: RegisterOptions = {} ): typeof STORE_KEY {
 	if ( isRegistered ) {
 		return STORE_KEY;
 	}
 
 	registerPlugins();
+	const resolveAgentsManagerState = function* () {
+		yield* getAgentsManagerState( options.shouldLoadPersistedState );
+	};
 
 	registerStore( STORE_KEY, {
 		actions,
@@ -28,7 +35,7 @@ export function register(): typeof STORE_KEY {
 		selectors,
 		persist: [],
 		// Don't restore persisted state for e2e users, because parallel tests will start interfering with each other.
-		resolvers: isE2ETest() ? undefined : { getAgentsManagerState },
+		resolvers: isE2ETest() ? undefined : { getAgentsManagerState: resolveAgentsManagerState },
 	} );
 
 	isRegistered = true;

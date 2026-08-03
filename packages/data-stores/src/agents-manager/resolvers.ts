@@ -37,7 +37,12 @@ type AgentsManagerStateResponse = {
 	agents_manager_last_activity?: PerSiteLastActivity;
 };
 
-export function* getAgentsManagerState() {
+export function* getAgentsManagerState( shouldLoadPersistedState: () => boolean = () => true ) {
+	if ( ! shouldLoadPersistedState() ) {
+		yield setHasLoaded( true );
+		return;
+	}
+
 	yield setIsLoading( true );
 	try {
 		const state: AgentsManagerStateResponse = canAccessWpcomApis()
