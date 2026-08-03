@@ -15,6 +15,10 @@ The Agents Manager runs in multiple different environments:
    - as a wpadminbar menu item.
 4. In CIAB (Commerce in a Box)
    - as a Next Admin SPA integration.
+5. In the WooCommerce AI admin
+   - as a standalone chat container, without touching the admin bar.
+6. On public blog frontends
+   - as Reader Chat for logged-out visitors.
 
 ### How to develop the Agents Manager
 
@@ -51,6 +55,7 @@ After every change to the Agents Manager, the development process is two parts:
 This simply means deploying Calypso as you normally would.
 
 #### Deploy the Agents Manager for Jetpack consumption
+
 1. Connect to your sandbox and run: `install-plugin.sh am --release`
 2. When prompted where to push the branch, select the WPCOM repository.
 3. This will create a PR on the WPCOM repository.

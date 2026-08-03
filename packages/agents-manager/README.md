@@ -94,14 +94,17 @@ The host page URL can carry these query parameters:
 
 ### AgentsManager Props
 
-| Prop            | Type                           | Description                                                                                                              |
-| --------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| `sectionName`   | `string`                       | The name of the current section (e.g., 'wp-admin', 'gutenberg').                                                         |
-| `currentUser`   | `CurrentUser` (optional)       | Current user (from `@automattic/data-stores`). Sets `isLoggedIn`.                                                        |
-| `site`          | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).                                                               |
-| `currentRoute`  | `string` (optional)            | The current route path.                                                                                                  |
-| `currentSiteId` | `number` (optional)            | The ID of the selected site. When set, chat state is scoped to this site. When omitted, uses a shared "no-site" context. |
-| `agentId`       | `string` (optional)            | Explicit agent ID for hosts that must not fall back to Unified Chat.                                                     |
+| Prop                             | Type                           | Description                                                                                                              |
+| -------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `sectionName`                    | `string`                       | The name of the current section (e.g., 'wp-admin', 'gutenberg').                                                         |
+| `currentUser`                    | `CurrentUser` (optional)       | Current user (from `@automattic/data-stores`). Sets `isLoggedIn`.                                                        |
+| `site`                           | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).                                                               |
+| `currentRoute`                   | `string` (optional)            | The current route path.                                                                                                  |
+| `currentSiteId`                  | `number` (optional)            | The ID of the selected site. When set, chat state is scoped to this site. When omitted, uses a shared "no-site" context. |
+| `agentId`                        | `string` (optional)            | Explicit agent ID for hosts that must not fall back to Unified Chat.                                                     |
+| `zendeskConversationTags`        | `string[]` (optional)          | Zendesk conversation tags to apply when a new support conversation is created.                                           |
+| `zendeskSmoochIntegrationKey`    | `string` (optional)            | Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`).                               |
+| `zendeskTicketProductFieldValue` | `string` (optional)            | Zendesk Product ticket-field value to apply to new support conversations.                                                |
 
 ### Exported Hooks and Utilities
 
@@ -117,6 +120,8 @@ function MyComponent() {
 	const useUnifiedExperience = getAgentsManagerInlineData()?.useUnifiedExperience;
 }
 ```
+
+Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `rateMessage`, and the `FeedbackInput` component.
 
 ### Exported Types
 
