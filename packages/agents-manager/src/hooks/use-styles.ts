@@ -1,5 +1,5 @@
 import { store as coreStore } from '@wordpress/core-data';
-import { useDispatch } from '@wordpress/data';
+import { dispatch, useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { isEditorPage } from '../utils/is-editor-page';
 import { findLegacyBlocksInStylesValue } from '../utils/legacy-style-variation-css';
@@ -104,6 +104,17 @@ export default function useStyles() {
 					console.warn(
 						'[AgentsManager] Legacy Easy Site Editor CSS found — font picks may not be visible until it is removed.'
 					);
+
+					// TODO (ability-migration): Delete this dispatch once the removal
+					// dialog ports with `set-styles`. Where Big Sky's app mounts, it
+					// opens Big Sky's existing removal dialog — exactly as before AM
+					// took over pick execution; elsewhere the store is unregistered
+					// and this is a no-op.
+					(
+						dispatch( 'ai-assembler' ) as
+							| { setLegacyCssBlocks?: ( legacyBlocks: typeof blocks ) => void }
+							| undefined
+					 )?.setLegacyCssBlocks?.( blocks );
 				}
 			}
 

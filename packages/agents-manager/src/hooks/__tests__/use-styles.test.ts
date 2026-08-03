@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook, act } from '@testing-library/react';
+import { dispatch } from '@wordpress/data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { LEGACY_CSS_END, LEGACY_CSS_START } from '../../utils/legacy-style-variation-css';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
@@ -33,6 +34,7 @@ let mockCurrentRecord = makeRecord();
 
 jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 jest.mock( '@wordpress/data', () => ( {
+	dispatch: jest.fn(),
 	useSelect: ( callback: ( select: ( store: string ) => unknown ) => unknown ) =>
 		callback( () => ( {
 			__experimentalGetCurrentGlobalStylesId: () => mockGlobalStylesId,
@@ -40,6 +42,13 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) ),
 	useDispatch: () => ( { editEntityRecord: mockEditEntityRecord } ),
 } ) );
+
+const addLegacyCssToRecord = () => {
+	mockCurrentRecord.styles = {
+		...mockCurrentRecord.styles,
+		css: `${ LEGACY_CSS_START }\nh1 {font-family:x !important;}\n${ LEGACY_CSS_END }`,
+	} as unknown as ReturnType< typeof makeRecord >[ 'styles' ];
+};
 
 describe( 'useStyles', () => {
 	beforeEach( () => {
@@ -364,10 +373,7 @@ describe( 'useStyles', () => {
 
 	it( 'records legacy CSS telemetry once per session on a font pick', () => {
 		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
-		mockCurrentRecord.styles = {
-			...mockCurrentRecord.styles,
-			css: `${ LEGACY_CSS_START }\nh1 {font-family:x !important;}\n${ LEGACY_CSS_END }`,
-		} as unknown as ReturnType< typeof makeRecord >[ 'styles' ];
+		addLegacyCssToRecord();
 		const { result } = renderHook( () => useStyles() );
 
 		act( () => {
@@ -382,11 +388,25 @@ describe( 'useStyles', () => {
 		expect( warn ).toHaveBeenCalled();
 	} );
 
+	it( 'forwards legacy CSS blocks to the provider store dialog when registered', () => {
+		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const setLegacyCssBlocks = jest.fn();
+		( dispatch as jest.Mock ).mockReturnValue( { setLegacyCssBlocks } );
+		addLegacyCssToRecord();
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current( { title: 'Modern Sans', styles: {} }, 'font' );
+		} );
+
+		expect( dispatch ).toHaveBeenCalledWith( 'ai-assembler' );
+		expect( setLegacyCssBlocks ).toHaveBeenCalledWith( [
+			expect.objectContaining( { text: expect.stringContaining( LEGACY_CSS_START ) } ),
+		] );
+	} );
+
 	it( 'does not scan for legacy CSS on non-font picks', () => {
-		mockCurrentRecord.styles = {
-			...mockCurrentRecord.styles,
-			css: `${ LEGACY_CSS_START }\nh1 {}\n${ LEGACY_CSS_END }`,
-		} as unknown as ReturnType< typeof makeRecord >[ 'styles' ];
+		addLegacyCssToRecord();
 		const { result } = renderHook( () => useStyles() );
 
 		act( () => {
