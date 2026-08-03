@@ -250,6 +250,16 @@ function HelpCenterContent() {
 		/>
 	);
 
+	const customProps = {};
+
+	if ( helpCenterData?.newInteractionsBotSlug ) {
+		customProps.newInteractionsBotSlug = helpCenterData.newInteractionsBotSlug;
+	}
+
+	if ( helpCenterData?.newLoggedOutInteractionsBotSlug ) {
+		customProps.newLoggedOutInteractionsBotSlug = helpCenterData.newLoggedOutInteractionsBotSlug;
+	}
+
 	return (
 		<>
 			{ showHelpIcon &&
@@ -268,8 +278,7 @@ function HelpCenterContent() {
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
 				product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
-				newInteractionsBotSlug={ helpCenterData.newInteractionsBotSlug }
-				newLoggedOutInteractionsBotSlug={ helpCenterData.newLoggedOutInteractionsBotSlug }
+				{ ...customProps }
 			/>
 		</>
 	);
