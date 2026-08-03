@@ -1,8 +1,5 @@
 // One session-storage record per gate attempt, keyed by flow and user, so the gate survives a
-// refresh. The record's presence means the gate is pending; resolving removes it. `sentAt`
-// anchors the resend cooldown, `shownAt` the duration metric.
-
-export const RESEND_COOLDOWN_SECONDS = 60;
+// refresh. The record's presence means the gate is pending; resolving removes it.
 
 const STORAGE_KEY = 'onboarding-email-verification-gate';
 
@@ -11,7 +8,7 @@ export function gateScope( flow: string, userId: number | string | null | undefi
 }
 
 interface GateRecord {
-	sentAt: number;
+	resendAvailableAt: number;
 	shownAt: number;
 }
 
@@ -36,10 +33,10 @@ function write( scope: string, record: GateRecord ): void {
 	}
 }
 
-// Called at email account creation: open the gate and record the activation email as
-// the initial send. `shownAt` is filled in later, when the gate first renders.
+// Called at email account creation. No cooldown is claimed: signup's activation email doesn't go
+// through the throttled path, so the server would accept a resend right away.
 export function beginGate( scope: string ): void {
-	write( scope, { sentAt: Date.now(), shownAt: 0 } );
+	write( scope, { resendAvailableAt: 0, shownAt: 0 } );
 }
 
 // Stamped when the gate first renders, so the duration metric excludes the token-load and
@@ -63,10 +60,11 @@ export function resolveGate( scope: string ): void {
 	}
 }
 
-export function markResent( scope: string ): void {
+// Persisted so a reload doesn't forget a lockout and reopen the button into a refusal.
+export function markResendUnavailableUntil( scope: string, deadline: number ): void {
 	const record = read( scope );
 	if ( record ) {
-		write( scope, { ...record, sentAt: Date.now() } );
+		write( scope, { ...record, resendAvailableAt: deadline } );
 	}
 }
 
@@ -74,11 +72,7 @@ export function gateShownAt( scope: string ): number {
 	return read( scope )?.shownAt || Date.now();
 }
 
-export function gateSentAt( scope: string ): number {
-	return read( scope )?.sentAt ?? 0;
-}
-
-export function cooldownRemainingSeconds( sentAt: number ): number {
-	const remainingMs = RESEND_COOLDOWN_SECONDS * 1000 - ( Date.now() - sentAt );
-	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), RESEND_COOLDOWN_SECONDS ) : 0;
+// 0 when nothing is stored, which is also right when storage is unavailable: nothing claimed.
+export function gateResendAvailableAt( scope: string ): number {
+	return read( scope )?.resendAvailableAt ?? 0;
 }

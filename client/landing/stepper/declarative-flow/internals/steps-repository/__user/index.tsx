@@ -138,8 +138,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 		setSignupIsNewUser( data.ID );
 		if ( gateEnabled ) {
-			// Open the gate. The activation email from signup counts as the initial send, so
-			// the resend cooldown starts here rather than the gate sending a second email.
+			// Open the gate. The activation email from signup is the one to confirm, so the gate
+			// sends nothing on arrival — and claims no cooldown, since the server hasn't either.
 			const gateKey = gateScope( flow, data.ID );
 			beginGate( gateKey );
 			setPendingScope( gateKey );

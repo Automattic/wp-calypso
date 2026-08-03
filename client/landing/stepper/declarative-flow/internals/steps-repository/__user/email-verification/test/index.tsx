@@ -31,13 +31,22 @@ jest.mock( 'calypso/state/current-user/actions', () => ( {
 
 const EMAIL = 'onboarder@example.com';
 const USER_ID = 1;
-const COOLDOWN_MS = 60 * 1000;
 const FLOW = 'onboarding';
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 
-const mockSendVerificationEmail = ( response: { success: boolean } = { success: true } ) =>
-	mockApi().post( '/rest/v1.1/me/send-verification-email' ).reply( 200, response );
+const mockSendVerificationEmail = (
+	response: { success: boolean; retry_after?: number } = { success: true }
+) => mockApi().post( '/rest/v1.1/me/send-verification-email' ).reply( 200, response );
+
+const mockSendVerificationEmailThrottled = ( retryAfter: number ) =>
+	mockApi()
+		.post( '/rest/v1.1/me/send-verification-email' )
+		.reply( 429, {
+			error: 'throttled',
+			message: 'You have requested too many verification emails.',
+			data: { retry_after: retryAfter },
+		} );
 
 const mockFetchUser = ( emailVerified: boolean ) =>
 	mockApi()
@@ -58,8 +67,7 @@ const currentUserState = ( emailVerified: boolean ) => ( {
 const SCOPE = `${ FLOW }:${ USER_ID }`;
 
 const render = ( { onDone = jest.fn(), logo }: { onDone?: jest.Mock; logo?: ReactNode } = {} ) => {
-	// The account step opens the gate on account creation, seeding the send/shown
-	// timestamps; simulate that once. A remount (refresh) must not rewrite them.
+	// The account step opens the gate on account creation; simulate that once.
 	if ( ! isGatePending( SCOPE ) ) {
 		beginGate( SCOPE );
 	}
@@ -84,16 +92,15 @@ describe( 'EmailVerificationGate', () => {
 
 	afterAll( () => nock.enableNetConnect() );
 
-	it( 'shows the seeded cooldown on mount without sending or recording a send', async () => {
+	it( 'opens ready to resend, without sending or recording a send', async () => {
 		const request = mockSendVerificationEmail();
 
 		render();
 
 		expect( screen.getByRole( 'heading', { name: 'Verify your email' } ) ).toBeVisible();
 		expect( screen.getByText( EMAIL ) ).toBeVisible();
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
-		);
+		// Signup's activation email doesn't claim the server's interval, so nothing is held here.
+		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeEnabled();
 
 		expect( request.isDone() ).toBe( false );
 		// The initial send is recorded by the account step, not the gate.
@@ -115,8 +122,7 @@ describe( 'EmailVerificationGate', () => {
 
 		const openButton = await screen.findByRole( 'link', { name: 'Open email inbox' } );
 		expect( openButton.getAttribute( 'href' ) ).toContain( 'mail.google.com' );
-		// For a known provider the inbox link is the only confirmation action; the manual
-		// re-check is the fallback for providers without one.
+		// The manual re-check is the fallback for providers without an inbox link.
 		expect(
 			screen.queryByRole( 'button', { name: /confirmed my email/ } )
 		).not.toBeInTheDocument();
@@ -138,8 +144,7 @@ describe( 'EmailVerificationGate', () => {
 
 	it( 'finishes as soon as the confirmation lands in another tab', async () => {
 		const onDone = jest.fn();
-		// Only the slices this gate touches: its own user state, plus the two
-		// `DocumentHead` reads.
+		// Only the slices this gate touches, plus the two `DocumentHead` reads.
 		const store = createStore(
 			combineReducers( {
 				currentUser: currentUserReducer,
@@ -159,8 +164,7 @@ describe( 'EmailVerificationGate', () => {
 
 		expect( onDone ).not.toHaveBeenCalled();
 
-		// `UserVerificationChecker` refetches the user when the confirmation
-		// landing page signals it from the other tab; this is what lands in the store.
+		// What `UserVerificationChecker` lands in the store when the other tab confirms.
 		act( () => {
 			store.dispatch( {
 				type: CURRENT_USER_RECEIVE,
@@ -197,24 +201,44 @@ describe( 'EmailVerificationGate', () => {
 		expect( onDone ).not.toHaveBeenCalled();
 	} );
 
-	it( 'resends once the cooldown lapses and restarts it', async () => {
+	it( 'holds the button for as long as the server says when it throttles', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		const request = mockSendVerificationEmail();
+		mockSendVerificationEmailThrottled( 25 * 60 );
 
 		render();
 
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+
+		expect( await screen.findByRole( 'button', { name: 'Resend (25:00)' } ) ).toBeVisible();
+		expect( screen.getByText( /Too many attempts/ ) ).toBeVisible();
+		// A refusal is not a failure, so the generic send error stays away.
+		expect( screen.queryByText( /We couldn’t send the email/ ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_send_failed',
+			expect.objectContaining( { flow: FLOW, is_resend: true, error: 'throttled' } )
 		);
+
+		// A notice explaining a locked button must not outlive the lock.
 		act( () => {
-			jest.advanceTimersByTime( COOLDOWN_MS );
+			jest.advanceTimersByTime( 25 * 60 * 1000 );
 		} );
+		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeEnabled();
+		expect( screen.queryByText( /Too many attempts/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'resends, then holds for the wait the server reports', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		// Not always the interval: spending the daily allowance answers with its reset.
+		const request = mockSendVerificationEmail( { success: true, retry_after: 4 * 60 * 60 } );
+
+		render();
 
 		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
 
 		await waitFor( () => expect( request.isDone() ).toBe( true ) );
-		expect( await screen.findByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible();
+		expect( await screen.findByRole( 'button', { name: 'Resend (4:00:00)' } ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_email_sent',
 			expect.objectContaining( { flow: FLOW, is_resend: true } )

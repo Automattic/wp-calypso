@@ -52,8 +52,7 @@ jest.mock( '../handle-social-response', () => ( {
 } ) );
 jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 	__esModule: true,
-	// A stand-in whose button simulates a successful email account creation, the way
-	// the real form's `onCreateAccountSuccess` + `goToNextStep` fire.
+	// A stand-in whose button fires the real form's `goToNextStep` + `onCreateAccountSuccess`.
 	default: ( {
 		onCreateAccountSuccess,
 		goToNextStep,
@@ -192,8 +191,7 @@ describe( 'account step email verification gate', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	// Social signups and existing sessions never call `beginGate`, so this is the rule that
-	// keeps both of them out of the gate.
+	// Social signups and existing sessions never call `beginGate`; this is what keeps them out.
 	it( 'skips the gate when nothing is pending', async () => {
 		sessionStorage.clear();
 		const { submit } = renderUser( makeStore( false ) );

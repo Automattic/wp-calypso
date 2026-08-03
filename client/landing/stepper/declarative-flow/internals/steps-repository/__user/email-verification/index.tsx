@@ -8,6 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { formatCooldown } from 'calypso/lib/email-verification/resend';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -33,7 +34,7 @@ interface Props {
 const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 	const { __ } = useI18n();
 	const email = useSelector( getCurrentUserEmail );
-	const { isVerified, isSending, hasSendError, secondsUntilResend, checkStatus, checkNow, resend } =
+	const { isVerified, sendStatus, secondsUntilResend, checkStatus, checkNow, resend } =
 		useEmailVerification( flow, scope );
 
 	const hasSubmitted = useRef( false );
@@ -41,6 +42,15 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 	const inboxLink = getInboxLink( email ?? undefined );
 
 	const title = __( 'Verify your email' );
+
+	const resendLabel =
+		secondsUntilResend > 0
+			? sprintf(
+					// translators: %s is a countdown to when the email can be resent, e.g. 4:59.
+					__( 'Resend (%s)' ),
+					formatCooldown( secondsUntilResend )
+			  )
+			: __( 'Resend' );
 
 	// Stamp the shown-at time now the gate is actually on screen (see storage.ts).
 	useEffect( () => {
@@ -149,16 +159,10 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 
 						<Button
 							onClick={ resend }
-							disabled={ isSending || secondsUntilResend > 0 }
-							busy={ isSending }
+							disabled={ sendStatus === 'sending' || secondsUntilResend > 0 }
+							busy={ sendStatus === 'sending' }
 						>
-							{ secondsUntilResend > 0
-								? sprintf(
-										// translators: %d is the number of seconds until the email can be resent.
-										__( 'Resend in %ds' ),
-										secondsUntilResend
-								  )
-								: __( 'Resend' ) }
+							{ resendLabel }
 						</Button>
 
 						{ checkStatus === 'unconfirmed' && (
@@ -175,9 +179,15 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 							</p>
 						) }
 
-						{ hasSendError && (
+						{ sendStatus === 'error' && (
 							<p className="onboarding-email-verification__notice is-error" role="alert">
 								{ __( 'We couldn’t send the email. Please try again in a moment.' ) }
+							</p>
+						) }
+
+						{ sendStatus === 'throttled' && secondsUntilResend > 0 && (
+							<p className="onboarding-email-verification__notice" role="status">
+								{ __( 'Too many attempts. Please wait before trying again.' ) }
 							</p>
 						) }
 					</VStack>
