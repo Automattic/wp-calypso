@@ -3,6 +3,10 @@ import { useEffect, useRef } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import {
+	createRevertedTransferWatcher,
+	getTransferFailureMessage,
+} from 'calypso/landing/stepper/utils/atomic-transfer-outcome';
 import wpcom from 'calypso/lib/wp';
 import type { Step } from '../../types';
 import type { SiteSelect } from '@automattic/data-stores';
@@ -76,6 +80,7 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 		setPendingAction( async () => {
 			setProgress( 0 );
 			let stopPollingTransfer = false;
+			const isRevertOfThisTransfer = createRevertedTransferWatcher();
 
 			while ( ! stopPollingTransfer ) {
 				await wait( TIME_CHECK_TRANSFER_STATUS );
@@ -101,7 +106,11 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 				}
 
 				if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
-					throw new Error( 'Error copying site' );
+					throw new Error( getTransferFailureMessage( 'error' ) );
+				}
+
+				if ( isRevertOfThisTransfer( transfer ) ) {
+					throw new Error( getTransferFailureMessage( 'reverted' ) );
 				}
 
 				stopPollingTransfer = transferStatus === transferStates.COMPLETED;

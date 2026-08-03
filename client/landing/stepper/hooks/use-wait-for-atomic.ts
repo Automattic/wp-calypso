@@ -5,6 +5,10 @@ import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
+import {
+	createRevertedTransferWatcher,
+	getTransferFailureMessage,
+} from '../utils/atomic-transfer-outcome';
 import { useSiteData } from './use-site-data';
 import type { SiteSelect, SiteDetails } from '@automattic/data-stores';
 
@@ -75,6 +79,7 @@ export const useWaitForAtomic = ( {
 		const startTime = new Date().getTime();
 		const totalTimeout = 1000 * 300;
 		const maxFinishTime = startTime + totalTimeout;
+		const isRevertOfThisTransfer = createRevertedTransferWatcher();
 
 		while ( true ) {
 			await wait( 3000 );
@@ -90,7 +95,16 @@ export const useWaitForAtomic = ( {
 					error: transferError?.message || '',
 					code: transferError?.code || '',
 				} );
-				throw new Error( 'transfer error' );
+				throw new Error( getTransferFailureMessage( 'error' ) );
+			}
+
+			if ( isRevertOfThisTransfer( transfer ) ) {
+				handleTransferFailure?.( {
+					type: 'transfer_reverted',
+					error: `transfer reverted (status: ${ transferStatus })`,
+					code: 'transfer_reverted',
+				} );
+				throw new Error( getTransferFailureMessage( 'reverted' ) );
 			}
 
 			if ( maxFinishTime < new Date().getTime() ) {
@@ -99,7 +113,7 @@ export const useWaitForAtomic = ( {
 					error: 'transfer took too long',
 					code: 'transfer_timeout',
 				} );
-				throw new Error( 'transfer timeout' );
+				throw new Error( getTransferFailureMessage( 'timeout' ) );
 			}
 
 			if ( transferStatus === transferStates.COMPLETED ) {
