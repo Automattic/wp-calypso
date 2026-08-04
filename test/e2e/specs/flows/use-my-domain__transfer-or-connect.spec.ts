@@ -45,7 +45,7 @@ async function assertLandsOnTransferOrConnect(
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Use My Domain: transfer-or-connect renders across flows' ),
-	{ tag: [ tags.CALYPSO_PR ] },
+	{ tag: [ tags.CALYPSO_PR, tags.DESKTOP_ONLY ] },
 	() => {
 		test( 'Onboarding flow shows transfer-or-connect after entering an owned domain', async ( {
 			page,
