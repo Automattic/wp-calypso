@@ -67,7 +67,7 @@ export default function SeoDescriptionPicker( {
 
 	return (
 		<BaseSuggestionPicker
-			intro={ __( 'Choose an SEO description for your post:', 'jetpack' ) }
+			intro={ __( 'Choose an SEO description for your content:', 'jetpack' ) }
 			options={ descriptions.map( ( option ) => option.description ) }
 			onApply={ handleApply }
 			appliedMessage={ __( 'SEO description updated.', 'jetpack' ) }

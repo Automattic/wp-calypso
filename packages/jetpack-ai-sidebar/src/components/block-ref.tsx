@@ -1,8 +1,8 @@
 /**
  * BlockRef — chip for a block referenced by 0-based index. Renders the block's
  * registered icon plus a short content snippet ("Revenue grew 23%…"); clicking
- * invokes `onFocus(index)` to anchor the editor to that block. A post-wide item
- * (null index) has no anchorable block, so it renders a plain "Post-wide" label.
+ * invokes `onFocus(index)` to anchor the editor to that block. A content-wide item
+ * (null index) has no anchorable block, so it renders a plain "Content-wide" label.
  */
 
 /**
@@ -34,7 +34,7 @@ export interface BlockSnapshot {
 }
 
 interface BlockRefProps {
-	/** 0-based block index from the review payload. Null = post-wide. */
+	/** 0-based block index from the review payload. Null = content-wide. */
 	index: number | null;
 	/** Flat pre-order block list from the review/editor block tree. */
 	blocks: BlockSnapshot[];
@@ -137,7 +137,7 @@ function BlockChipContent( { block }: { block: BlockSnapshot } ) {
 /**
  * Render a block reference.
  * @param           props             BlockRefProps.
- * @param {number}  props.index       0-based block index, or null for post-wide.
+ * @param {number}  props.index       0-based block index, or null for content-wide.
  * @param           props.blocks      Flat pre-order block snapshot list.
  * @param           props.onFocus     Optional click handler; when omitted the ref renders as a plain span.
  * @param {string}  props.className   Optional extra class name.
@@ -147,7 +147,7 @@ export default function BlockRef( { index, blocks, onFocus, className = '' }: Bl
 	if ( index === null || index === undefined ) {
 		return (
 			<span className={ `jetpack-ai-block-ref is-post-wide ${ className }`.trim() }>
-				{ __( 'Post-wide', __i18n_text_domain__ ) }
+				{ __( 'Content-wide', __i18n_text_domain__ ) }
 			</span>
 		);
 	}

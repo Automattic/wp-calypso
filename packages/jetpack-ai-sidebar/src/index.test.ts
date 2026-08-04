@@ -831,7 +831,7 @@ describe( 'PostFeedback', () => {
 		);
 
 		expect( container.querySelector( '.jetpack-ai-feedback-list__block-ref' )?.textContent ).toBe(
-			'Post-wide'
+			'Content-wide'
 		);
 		const goto = findButton( container, 'Go to section' );
 		expect( goto ).toBeDefined();
@@ -934,7 +934,9 @@ describe( 'PostFeedback', () => {
 		);
 
 		// Stale banner is shown, but the card keeps its category badge and no tag.
-		expect( container.textContent ).toContain( 'Feedback context changed' );
+		expect( container.textContent ).toContain(
+			'Feedback context changed. Generate feedback again for this content.'
+		);
 		expect( container.querySelector( '.jetpack-ai-feedback-list__item-badge' )?.textContent ).toBe(
 			'Spacing (1/1)'
 		);
@@ -1510,6 +1512,20 @@ describe( 'Proofread', () => {
 		expect( container.textContent ).toContain( 'Punctuation' );
 	} );
 
+	it( 'uses content-neutral copy when the review context is stale', () => {
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 999,
+				items: [],
+			} )
+		);
+
+		expect( container.textContent ).toContain(
+			'Review context changed. Run the spelling and grammar check again for this content.'
+		);
+	} );
+
 	it( 'renders server-sanitised backend fragments in Current and New rows', () => {
 		const currentText =
 			'<strong><em>Consultation</em></strong> <a href="https://example.com"><strong><em>opens</em>s</strong></a> next week, <s>not this week</s>, ref<sup>2</sup>';
@@ -2003,6 +2019,55 @@ describe( 'getEmptyViewSuggestions', () => {
 		} );
 	} );
 
+	it( 'uses content-neutral descriptions and prompts for editor-level suggestions', () => {
+		installAiEditorialReviewData( {
+			optimizeTitleSuggestion: true,
+			proofreadContent: true,
+			seoSuggestions: true,
+			excerptSuggestion: true,
+		} );
+		installPostTypeMock( 'page', 123, true );
+
+		const suggestions = getEmptyViewSuggestions();
+		const byId = ( id: string ) => suggestions.find( ( suggestion ) => suggestion.id === id );
+
+		expect( byId( 'optimize-title' ) ).toEqual(
+			expect.objectContaining( {
+				description: 'Refine the title based on your content and SEO best practices.',
+				prompt: 'Optimize the title of this content',
+			} )
+		);
+		expect( byId( 'generate-excerpt' ) ).toEqual(
+			expect.objectContaining( {
+				description: 'Generate an excerpt for your content.',
+				prompt: 'Generate an excerpt for this content',
+			} )
+		);
+		expect( byId( 'generate-feedback' ) ).toEqual(
+			expect.objectContaining( {
+				prompt:
+					'Generate feedback for this saved content. Review the saved title and saved block content for content structure, reader clarity, completeness, media/caption/link issues, and obvious publishability concerns. Return practical feedback with one-click suggestions when safe.',
+			} )
+		);
+		expect( byId( 'proofread-content' ) ).toEqual(
+			expect.objectContaining( {
+				prompt:
+					'Proofread this saved content for spelling, grammar, and punctuation. Review the saved title and saved block content, and return practical fixes with one-click suggestions when safe.',
+			} )
+		);
+		expect( byId( 'ai-editorial-review' ) ).toEqual(
+			expect.objectContaining( {
+				prompt:
+					'Run an AI Editorial Review for this content. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
+			} )
+		);
+		expect( byId( 'seo-enhancer' ) ).toEqual(
+			expect.objectContaining( {
+				description: 'Generate metadata for the content to optimize SEO.',
+			} )
+		);
+	} );
+
 	it( 'shows Generate Excerpt when the excerptSuggestion feature is enabled', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
 		installPostTypeMock( 'post' );
@@ -2012,7 +2077,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		);
 
 		expect( excerptChip?.label ).toBe( 'Generate Excerpt' );
-		expect( excerptChip?.prompt ).toBe( 'Generate an excerpt for this post' );
+		expect( excerptChip?.prompt ).toBe( 'Generate an excerpt for this content' );
 	} );
 
 	it( 'hides Generate Excerpt when the feature is disabled', () => {
@@ -2122,17 +2187,17 @@ describe( 'getEmptyViewSuggestions', () => {
 			{
 				id: 'seo-title',
 				label: 'Title',
-				value: 'Generate an SEO title (meta title) for this post',
+				value: 'Generate an SEO title (meta title) for this content',
 			},
 			{
 				id: 'seo-description',
 				label: 'Description',
-				value: 'Generate an SEO meta description for this post',
+				value: 'Generate an SEO meta description for this content',
 			},
 			{
 				id: 'image-alt-text',
 				label: 'Image Alt Text',
-				value: 'Generate descriptive alt text for the images in this post',
+				value: 'Generate descriptive alt text for the images in this content',
 			},
 		] );
 	} );

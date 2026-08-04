@@ -50,6 +50,11 @@ describe( 'ExcerptPicker', () => {
 
 	it( 'renders every suggested excerpt', () => {
 		render( <ExcerptPicker excerpts={ excerpts } /> );
+		expect(
+			screen.getByText(
+				'Choose an excerpt for your content — ask for a different length or tone if you’d like:'
+			)
+		).toBeInTheDocument();
 		expect( screen.getByText( excerpts[ 0 ].excerpt ) ).toBeInTheDocument();
 		expect( screen.getByText( excerpts[ 1 ].excerpt ) ).toBeInTheDocument();
 	} );

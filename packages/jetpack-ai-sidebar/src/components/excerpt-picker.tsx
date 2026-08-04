@@ -65,7 +65,7 @@ export default function ExcerptPicker( { excerpts, onComplete }: ExcerptPickerPr
 	return (
 		<BaseSuggestionPicker
 			intro={ __(
-				'Choose an excerpt for your post — ask for a different length or tone if you’d like:',
+				'Choose an excerpt for your content — ask for a different length or tone if you’d like:',
 				'jetpack'
 			) }
 			options={ options }

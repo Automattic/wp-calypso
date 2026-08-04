@@ -1661,7 +1661,11 @@ describe( 'AiEditorialReview — cached-run hint', () => {
 		const cached_at = Math.floor( Date.now() / 1000 ) - 600;
 		render( <AiEditorialReview { ...basePayload( { cached_at } ) } /> );
 
-		expect( screen.getByText( /Reusing review from .* ago/ ) ).toBeInTheDocument();
+		const note = screen.getByText( /Reusing review from .* ago\. Edit the content to re-run\./ );
+		expect( note ).toHaveAttribute(
+			'title',
+			'The inputs (content, notes, comments, guidelines) have not changed since the previous run, so the saved result is being reused to avoid a duplicate LLM call.'
+		);
 	} );
 
 	it( 'omits the note when cached_at is not provided', () => {

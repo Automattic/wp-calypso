@@ -65,7 +65,7 @@ export default function SeoTitlePicker( { titles, onComplete }: SeoTitlePickerPr
 
 	return (
 		<BaseSuggestionPicker
-			intro={ __( 'Choose an SEO title for your post:', 'jetpack' ) }
+			intro={ __( 'Choose an SEO title for your content:', 'jetpack' ) }
 			options={ titles.map( ( option ) => option.title ) }
 			onApply={ handleApply }
 			appliedMessage={ __( 'SEO title updated.', 'jetpack' ) }

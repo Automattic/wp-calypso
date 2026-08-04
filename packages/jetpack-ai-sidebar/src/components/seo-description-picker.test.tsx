@@ -50,6 +50,7 @@ describe( 'SeoDescriptionPicker', () => {
 
 	it( 'renders every suggested SEO description', () => {
 		render( <SeoDescriptionPicker descriptions={ descriptions } /> );
+		expect( screen.getByText( 'Choose an SEO description for your content:' ) ).toBeInTheDocument();
 		expect( screen.getByText( descriptions[ 0 ].description ) ).toBeInTheDocument();
 		expect( screen.getByText( descriptions[ 1 ].description ) ).toBeInTheDocument();
 	} );

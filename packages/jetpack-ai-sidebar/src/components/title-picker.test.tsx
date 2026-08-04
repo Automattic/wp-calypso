@@ -44,6 +44,7 @@ describe( 'TitlePicker', () => {
 
 	it( 'renders every suggested title', () => {
 		render( <TitlePicker titles={ titles } /> );
+		expect( screen.getByText( 'Choose a title for your content:' ) ).toBeInTheDocument();
 		expect( screen.getByText( titles[ 0 ].title ) ).toBeInTheDocument();
 		expect( screen.getByText( titles[ 1 ].title ) ).toBeInTheDocument();
 	} );

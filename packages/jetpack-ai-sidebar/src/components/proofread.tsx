@@ -48,7 +48,7 @@ export default function Proofread( {
 			isMessageStale={ isMessageStale }
 			sectionFallbackTitle={ __( 'Suggested edits', __i18n_text_domain__ ) }
 			staleWarning={ __(
-				'Review context changed. Run the spelling and grammar check again for this post.',
+				'Review context changed. Run the spelling and grammar check again for this content.',
 				__i18n_text_domain__
 			) }
 			failureMessage={ __(

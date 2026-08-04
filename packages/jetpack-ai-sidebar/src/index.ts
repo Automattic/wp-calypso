@@ -94,10 +94,10 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
 	label: __( 'Optimize Title', __i18n_text_domain__ ),
 	description: __(
-		'Refine the title based on your post’s content and SEO best practices.',
+		'Refine the title based on your content and SEO best practices.',
 		__i18n_text_domain__
 	),
-	prompt: __( 'Optimize the title of this post', __i18n_text_domain__ ),
+	prompt: __( 'Optimize the title of this content', __i18n_text_domain__ ),
 };
 
 /**
@@ -109,8 +109,8 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 const GENERATE_EXCERPT_SUGGESTION = {
 	id: 'generate-excerpt',
 	label: __( 'Generate Excerpt', __i18n_text_domain__ ),
-	description: __( 'Generate an excerpt for your post.', __i18n_text_domain__ ),
-	prompt: __( 'Generate an excerpt for this post', __i18n_text_domain__ ),
+	description: __( 'Generate an excerpt for your content.', __i18n_text_domain__ ),
+	prompt: __( 'Generate an excerpt for this content', __i18n_text_domain__ ),
 };
 
 /**
@@ -132,27 +132,24 @@ const GENERATE_EXCERPT_SUGGESTION = {
 const SEO_ENHANCER_SUGGESTION = {
 	id: 'seo-enhancer',
 	label: __( 'SEO Enhancer', __i18n_text_domain__ ),
-	description: __(
-		'Generate metadata for the contents of the post to optimize SEO.',
-		__i18n_text_domain__
-	),
+	description: __( 'Generate metadata for the content to optimize SEO.', __i18n_text_domain__ ),
 	prompt: '',
 	options: [
 		{
 			id: 'seo-title',
 			label: _x( 'Title', 'SEO Enhancer dropdown option', __i18n_text_domain__ ),
-			value: __( 'Generate an SEO title (meta title) for this post', __i18n_text_domain__ ),
+			value: __( 'Generate an SEO title (meta title) for this content', __i18n_text_domain__ ),
 		},
 		{
 			id: 'seo-description',
 			label: _x( 'Description', 'SEO Enhancer dropdown option', __i18n_text_domain__ ),
-			value: __( 'Generate an SEO meta description for this post', __i18n_text_domain__ ),
+			value: __( 'Generate an SEO meta description for this content', __i18n_text_domain__ ),
 		},
 		{
 			id: 'image-alt-text',
 			label: _x( 'Image Alt Text', 'SEO Enhancer dropdown option', __i18n_text_domain__ ),
 			value: __(
-				'Generate descriptive alt text for the images in this post',
+				'Generate descriptive alt text for the images in this content',
 				__i18n_text_domain__
 			),
 		},
@@ -165,7 +162,7 @@ const AI_EDITORIAL_REVIEW_SUGGESTION = {
 	label: __( 'Editorial Review', __i18n_text_domain__ ),
 	description: __( 'In-depth review against your content guidelines.', __i18n_text_domain__ ),
 	prompt: __(
-		'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
+		'Run an AI Editorial Review for this content. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
 		__i18n_text_domain__
 	),
 };
@@ -175,7 +172,7 @@ const POST_FEEDBACK_SUGGESTION = {
 	label: __( 'Simple Review', __i18n_text_domain__ ),
 	description: __( 'Quick feedback on your content’s structure.', __i18n_text_domain__ ),
 	prompt: __(
-		'Generate feedback for this saved post. Review the saved title and saved block content for content structure, reader clarity, completeness, media/caption/link issues, and obvious publishability concerns. Return practical feedback with one-click suggestions when safe.',
+		'Generate feedback for this saved content. Review the saved title and saved block content for content structure, reader clarity, completeness, media/caption/link issues, and obvious publishability concerns. Return practical feedback with one-click suggestions when safe.',
 		__i18n_text_domain__
 	),
 };
@@ -185,7 +182,7 @@ const PROOFREAD_SUGGESTION = {
 	label: __( 'Proofread', __i18n_text_domain__ ),
 	description: __( 'Correct spelling, grammar, and punctuation.', __i18n_text_domain__ ),
 	prompt: __(
-		'Proofread this saved post for spelling, grammar, and punctuation. Review the saved title and saved block content, and return practical fixes with one-click suggestions when safe.',
+		'Proofread this saved content for spelling, grammar, and punctuation. Review the saved title and saved block content, and return practical fixes with one-click suggestions when safe.',
 		__i18n_text_domain__
 	),
 };

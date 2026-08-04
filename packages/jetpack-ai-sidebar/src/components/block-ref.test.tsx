@@ -63,9 +63,9 @@ describe( 'BlockRef', () => {
 		mockGetBlockType.mockReturnValue( undefined );
 	} );
 
-	it( 'renders "Post-wide" for null index, non-clickable, with no block icon', () => {
+	it( 'renders "Content-wide" for null index, non-clickable, with no block icon', () => {
 		render( <BlockRef index={ null } blocks={ blocks } /> );
-		const el = screen.getByText( 'Post-wide' );
+		const el = screen.getByText( 'Content-wide' );
 		expect( el.tagName ).toBe( 'SPAN' );
 		expect( screen.queryByTestId( 'block-icon' ) ).not.toBeInTheDocument();
 	} );

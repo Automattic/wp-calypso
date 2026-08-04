@@ -1116,13 +1116,13 @@ export default function AiEditorialReview( {
 							<p
 								className="jetpack-ai-editorial-review__cached-hint"
 								title={ __(
-									'The inputs (post content, notes, comments, guidelines) have not changed since the previous run, so the saved result is being reused to avoid a duplicate LLM call.',
+									'The inputs (content, notes, comments, guidelines) have not changed since the previous run, so the saved result is being reused to avoid a duplicate LLM call.',
 									__i18n_text_domain__
 								) }
 							>
 								{ sprintf(
 									/* translators: %s is a short relative-time phrase, e.g. "3 minutes ago" */
-									__( 'Reusing review from %s. Edit the post to re-run.', __i18n_text_domain__ ),
+									__( 'Reusing review from %s. Edit the content to re-run.', __i18n_text_domain__ ),
 									formatRelativeTime( cached_at )
 								) }
 							</p>

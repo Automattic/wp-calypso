@@ -50,7 +50,7 @@ export default function PostFeedback( {
 			isMessageStale={ isMessageStale }
 			sectionFallbackTitle={ __( 'Suggested edits', __i18n_text_domain__ ) }
 			staleWarning={ __(
-				'Feedback context changed. Generate feedback again for this post.',
+				'Feedback context changed. Generate feedback again for this content.',
 				__i18n_text_domain__
 			) }
 			failureMessage={ __(

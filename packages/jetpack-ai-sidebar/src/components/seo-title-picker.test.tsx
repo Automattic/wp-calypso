@@ -44,6 +44,7 @@ describe( 'SeoTitlePicker', () => {
 
 	it( 'renders every suggested SEO title', () => {
 		render( <SeoTitlePicker titles={ titles } /> );
+		expect( screen.getByText( 'Choose an SEO title for your content:' ) ).toBeInTheDocument();
 		expect( screen.getByText( titles[ 0 ].title ) ).toBeInTheDocument();
 		expect( screen.getByText( titles[ 1 ].title ) ).toBeInTheDocument();
 	} );
