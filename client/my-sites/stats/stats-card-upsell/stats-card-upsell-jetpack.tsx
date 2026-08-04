@@ -58,7 +58,7 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteId, statTyp
 					onClick={ onClick }
 					primary
 				>
-					{ translate( 'Upgrade to Commercial' ) }
+					{ translate( 'Upgrade my Stats' ) }
 				</Button>
 			}
 		/>
