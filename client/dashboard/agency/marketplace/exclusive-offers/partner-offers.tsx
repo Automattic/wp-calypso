@@ -54,7 +54,15 @@ function PartnerOfferCard( {
 			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
 					<HStack>
-						<div className="exclusive-offers-card-logo">{ item.logo }</div>
+						<HStack
+							className="exclusive-offers-card-logo"
+							spacing={ 0 }
+							justify="flex-start"
+							alignment="center"
+							expanded={ false }
+						>
+							{ item.logo }
+						</HStack>
 						{ offerType?.label && <Badge>{ offerType.label }</Badge> }
 					</HStack>
 					<VStack spacing={ 1 }>

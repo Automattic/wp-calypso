@@ -1,7 +1,5 @@
 .exclusive-offers-card-logo {
-	display: flex;
-	align-items: center;
-	block-size: 24px;
+	min-block-size: 24px;
 	min-inline-size: 0;
 }
 
@@ -10,6 +8,7 @@
 	inline-size: auto;
 	block-size: 24px;
 	max-inline-size: 160px;
+	object-fit: contain;
 }
 
 .exclusive-offers-card-logo img.exclusive-offers-card-logo-compact {
