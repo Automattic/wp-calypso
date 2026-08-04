@@ -1,5 +1,7 @@
 import getNotes from './get-notes';
 
-export const getFilteredNoteIds = ( notesState ) => notesState.filteredNoteIds;
+// The cached id list for `filterKey`, or undefined if that tab was never fetched.
+export const getFilteredNoteIds = ( notesState, filterKey ) =>
+	notesState.filteredNoteIds[ filterKey ];
 
-export default ( state ) => getFilteredNoteIds( getNotes( state ) );
+export default ( state, filterKey ) => getFilteredNoteIds( getNotes( state ), filterKey );
