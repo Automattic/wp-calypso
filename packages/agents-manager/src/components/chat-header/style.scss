@@ -47,11 +47,6 @@
 			padding: 4px;
 			border-radius: 4px;
 
-			&:hover:not( :disabled ),
-			&:focus-visible {
-				background-color: var( --color-muted );
-			}
-
 			// Override wp's `svg { fill: currentColor }`, which makes the
 			// icons invisible in dark mode.
 			svg {
