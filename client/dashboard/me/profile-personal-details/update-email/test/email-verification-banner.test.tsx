@@ -146,12 +146,11 @@ describe( '<EmailVerificationBanner>', () => {
 		).toBeDisabled();
 	} );
 
-	test( 'keeps the cached settings in step with a pending resend', async () => {
+	test( 'a resend cannot put back settings saved while it was in flight', async () => {
 		const user = userEvent.setup();
-		// Deliberately stale, so only the response can bring it back into line.
 		queryClient.setQueryData( userSettingsQuery().queryKey, {
 			...pendingSettings,
-			new_user_email: 'stale@example.com',
+			first_name: 'Jon',
 		} );
 
 		render( <EmailVerificationBanner userSettings={ pendingSettings } isEmailVerified />, {
@@ -160,17 +159,34 @@ describe( '<EmailVerificationBanner>', () => {
 
 		expect( await screen.findByText( 'Verify your email' ) ).toBeVisible();
 
+		// The endpoint answers with the whole account, as it stood before the save below.
+		let deliverReply: () => void;
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/settings', ( body ) => 'user_email' in body )
-			.reply( 200, pendingSettings );
+			.reply(
+				() =>
+					new Promise( ( resolve ) => {
+						deliverReply = () => resolve( [ 200, { ...pendingSettings, first_name: 'Jon' } ] );
+					} )
+			);
 
 		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
 
+		// An ordinary settings save lands first. It carries no address, so nothing orders it
+		// against the resend.
+		queryClient.setQueryData( userSettingsQuery().queryKey, {
+			...pendingSettings,
+			first_name: 'Jane',
+		} );
+		deliverReply!();
+
+		// The button taking up its wait is what tells us the response has been handled.
 		await waitFor( () =>
-			expect(
-				queryClient.getQueryData< UserSettings >( userSettingsQuery().queryKey )?.new_user_email
-			).toBe( 'pending@example.com' )
+			expect( screen.getByRole( 'button', { name: /Resend email \(/ } ) ).toBeDisabled()
 		);
+		expect(
+			queryClient.getQueryData< UserSettings >( userSettingsQuery().queryKey )?.first_name
+		).toBe( 'Jane' );
 	} );
 
 	test( 'withholds the resend while a cancellation is in flight', async () => {

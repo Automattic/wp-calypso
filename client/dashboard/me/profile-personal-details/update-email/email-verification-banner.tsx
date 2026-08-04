@@ -171,16 +171,12 @@ export default function EmailVerificationBanner( {
 
 	// The address is a mutation variable, so a response that lands late is still reported against
 	// the address it was sent to rather than whichever one is on screen by then.
-	const pendingResend = resendEmailVerificationMutation();
 	const { mutate: resendToPending, isPending: isPendingResendPending } = useMutation( {
-		...pendingResend,
+		...resendEmailVerificationMutation(),
 		// Deliberately not passed to `mutate()`, where these would usually go: TanStack skips
 		// per-call callbacks once the observer loses its listeners, so a resend outliving the
-		// banner would report nothing at all. Declaring it here replaces the factory's, so that
-		// one is called on: forwarded whole, so a change to its arguments can't drift from this.
-		onSuccess: ( ...args ) => {
-			pendingResend.onSuccess?.( ...args );
-			const [ , email ] = args;
+		// banner would report nothing at all.
+		onSuccess: ( _data, email ) => {
 			createSuccessNotice( sentToEmail( email ), { type: 'snackbar' } );
 			// A wait is meaningless once the address has moved on.
 			if ( email === pendingEmailRef.current ) {

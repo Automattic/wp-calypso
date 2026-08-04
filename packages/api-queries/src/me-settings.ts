@@ -61,6 +61,9 @@ export const cancelPendingEmailChangeMutation = () =>
 	} );
 
 // Re-saves the address already pending, which is what prompts another email.
+//
+// Deliberately leaves the cache alone. It changes nothing, and its response is a whole settings
+// object: merging one that was read before an unrelated save would put the older values back.
 export const resendEmailVerificationMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'email-verify-resend' },
@@ -68,16 +71,6 @@ export const resendEmailVerificationMutation = () =>
 		// The address is a variable rather than closed over, so a caller can tell which request a
 		// late response belongs to.
 		mutationFn: ( email: string ) => updateUserSettings( { user_email: email } ),
-		onSuccess: ( newData ) => {
-			queryClient.setQueryData(
-				userSettingsQuery().queryKey,
-				( oldData ) =>
-					oldData && {
-						...oldData,
-						...newData,
-					}
-			);
-		},
 	} );
 
 export const sendEmailVerificationMutation = () =>
