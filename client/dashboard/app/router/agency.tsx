@@ -1,9 +1,4 @@
 import {
-	JetpackLicenseFilter,
-	JetpackLicenseSortField,
-	JetpackLicenseSortDirection,
-} from '@automattic/api-core';
-import {
 	activeAgencyQuery,
 	agencyProductsQuery,
 	agencyQuery,
@@ -11,7 +6,6 @@ import {
 	agencySiteQuery,
 	agencySitesWithPluginsQuery,
 	agencyWooPaymentsDataQuery,
-	jetpackAgencyLicensesQuery,
 	mcpSettingsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -22,6 +16,8 @@ import {
 	referralsQuery,
 	referralCommissionPayoutQuery,
 	tipaltiPayeeQuery,
+	wooPaymentsLicensesQuery,
+	WOOPAYMENTS_PLUGIN,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -307,16 +303,9 @@ export const earnWooPaymentsRoute = createRoute( {
 		}
 		const [ sitesWithPlugins, licenses ] = await Promise.all( [
 			queryClient.ensureQueryData(
-				agencySitesWithPluginsQuery( agency.id, [ 'woocommerce-payments/woocommerce-payments' ] )
+				agencySitesWithPluginsQuery( agency.id, [ WOOPAYMENTS_PLUGIN ] )
 			),
-			queryClient.ensureQueryData(
-				jetpackAgencyLicensesQuery( agency.id, {
-					filter: JetpackLicenseFilter.Attached,
-					search: 'woopayments',
-					sortField: JetpackLicenseSortField.IssuedAt,
-					sortDirection: JetpackLicenseSortDirection.Descending,
-				} )
-			),
+			queryClient.ensureQueryData( wooPaymentsLicensesQuery( agency.id ) ),
 		] );
 		if ( sitesWithPlugins.length > 0 || licenses.length > 0 ) {
 			await Promise.all( [
