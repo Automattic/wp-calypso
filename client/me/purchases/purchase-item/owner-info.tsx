@@ -1,8 +1,9 @@
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
-import { Purchase } from 'calypso/lib/purchases/types';
-import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import type { Purchase } from '@automattic/api-core';
 
 type OwnProps = {
 	purchase: Purchase;
@@ -11,9 +12,9 @@ type OwnProps = {
 
 const OwnerInfo: React.FC< OwnProps > = ( { purchase, isTransferredOwnership = false } ) => {
 	const translate = useTranslate();
-	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
+	const currentUserId = useSelector( getCurrentUserId );
 
-	if ( isCurrentUserPurchaseOwner( purchase ) ) {
+	if ( currentUserId === purchase.user_id ) {
 		return null;
 	}
 
@@ -23,7 +24,7 @@ const OwnerInfo: React.FC< OwnProps > = ( { purchase, isTransferredOwnership = f
 				"This license was activated on {{strong}}%(domain)s{{/strong}} by another user. If you haven't given the license to them on purpose, {{link}}contact our support team{{/link}} for more assistance.",
 				{
 					args: {
-						domain: purchase.domain || purchase.siteName || translate( 'a site' ),
+						domain: purchase.domain || purchase.blogname || translate( 'a site' ),
 					},
 					components: {
 						strong: <strong />,
