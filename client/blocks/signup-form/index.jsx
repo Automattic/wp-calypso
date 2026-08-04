@@ -72,6 +72,7 @@ class SignupForm extends Component {
 		isPasswordless: PropTypes.bool,
 		isSocialFirst: PropTypes.bool,
 		isSocialSignupEnabled: PropTypes.bool,
+		footerLink: PropTypes.node,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
 		redirectToAfterLoginUrl: PropTypes.string,
@@ -816,6 +817,7 @@ class SignupForm extends Component {
 						/>
 					</>
 				) }
+				{ this.props.footerLink }
 			</div>
 		);
 	}

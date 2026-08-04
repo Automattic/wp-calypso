@@ -17,7 +17,7 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
 import './style.scss';
 
 interface QueryArgs {
@@ -54,6 +54,7 @@ interface SignupFormSocialFirst {
 	isMobileCompactVariant?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
+	footerLink?: ReactNode;
 }
 
 const options = {
@@ -112,6 +113,7 @@ const SignupFormSocialFirst = ( {
 	isMobileCompactVariant,
 	allowedSocialServices,
 	customTosElement,
+	footerLink,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
@@ -250,6 +252,7 @@ const SignupFormSocialFirst = ( {
 					<PasswordlessSignupForm { ...passwordlessFormProps } />
 				</div>
 				{ inFormTosElement }
+				{ footerLink }
 			</div>
 		);
 	}
@@ -333,6 +336,7 @@ const SignupFormSocialFirst = ( {
 					) : null }
 				</div>
 			</div>
+			{ footerLink }
 		</div>
 	);
 };

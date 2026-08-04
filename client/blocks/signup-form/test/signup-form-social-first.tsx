@@ -109,6 +109,27 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 	} );
 
+	describe( 'footerLink', () => {
+		test( 'renders the provided footer link', () => {
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					footerLink={
+						<div>
+							Already have a WordPress.com account? <a href="/log-in">Log in instead</a>
+						</div>
+					}
+				/>
+			);
+
+			expect( screen.getByText( /Already have a WordPress.com account/i ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: /Log in instead/i } ) ).toHaveAttribute(
+				'href',
+				'/log-in'
+			);
+		} );
+	} );
+
 	describe( 'isMobileCompactVariant', () => {
 		test( 'renders the mobile-compact wrapper class', () => {
 			const { container } = render(
