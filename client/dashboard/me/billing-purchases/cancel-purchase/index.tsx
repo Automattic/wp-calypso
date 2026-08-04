@@ -63,7 +63,6 @@ import {
 	hasQueryableSite,
 	isAgencyPartnerType,
 	isRemoved,
-	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackHoldingSitePurchase,
 	isAkismetProduct,
 	isPartnerPurchase,
@@ -324,7 +323,7 @@ function getBasicSurveySteps( {
 	if ( purchase.is_domain_registration ) {
 		return [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
 	}
-	if ( ! isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug ) && ! purchase.is_plan ) {
+	if ( ! purchase.is_google_workspace_product && ! purchase.is_plan ) {
 		return [ NEXT_ADVENTURE_STEP ];
 	}
 	if ( upsell && ! hasBeenRemoved && ! isDowngradePlan ) {

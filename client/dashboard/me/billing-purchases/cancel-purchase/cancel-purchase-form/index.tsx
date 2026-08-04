@@ -14,7 +14,7 @@ import { getSolutionsForReason } from '../get-solutions-for-reason';
 import { useIsSplitCancelRemoveEnabled } from '../use-is-split-cancel-remove-enabled';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
-import FeedbackStep from './step-components/feedback-step';
+import FeedbackStep, { shouldShowCancellationReason } from './step-components/feedback-step';
 import JetpackCancellationOfferStep from './step-components/jetpack-cancellation-offer-step';
 import NextAdventureStep from './step-components/next-adventure-step';
 import SolutionsCardsUpsellStep from './step-components/solutions-cards-upsell-step';
@@ -489,6 +489,12 @@ function canGoToNextStep( {
 	}
 
 	if ( surveyStep === FEEDBACK_STEP ) {
+		// Nothing to answer, so nothing to wait for. Without this the step would
+		// render empty and leave the user unable to continue.
+		if ( ! shouldShowCancellationReason( purchase ) ) {
+			return true;
+		}
+
 		if ( isImport && ! importQuestionRadio ) {
 			return false;
 		}
