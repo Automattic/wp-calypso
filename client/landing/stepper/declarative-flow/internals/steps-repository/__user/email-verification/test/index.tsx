@@ -11,6 +11,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import currentUserReducer from 'calypso/state/current-user/reducer';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -48,15 +49,6 @@ const mockSendVerificationEmailThrottled = ( retryAfter: number ) =>
 			data: { retry_after: retryAfter },
 		} );
 
-const mockFetchUser = ( emailVerified: boolean ) =>
-	mockApi()
-		.get( '/rest/v1.1/me' )
-		.query( true )
-		.reply( 200, { ID: USER_ID, email: EMAIL, email_verified: emailVerified } );
-
-const mockFetchUserError = () =>
-	mockApi().get( '/rest/v1.1/me' ).query( true ).reply( 500, { error: 'server_error' } );
-
 const currentUserState = ( emailVerified: boolean ) => ( {
 	currentUser: {
 		id: USER_ID,
@@ -65,6 +57,15 @@ const currentUserState = ( emailVerified: boolean ) => ( {
 } );
 
 const SCOPE = `${ FLOW }:${ USER_ID }`;
+
+const MINUTE = 60 * 1000;
+
+// One step of fake time. The poll's interval is re-registered by an effect, so each change of
+// rung needs its own `act` boundary to take hold.
+const advance = ( ms: number ) =>
+	act( () => {
+		jest.advanceTimersByTime( ms );
+	} );
 
 const render = ( { onDone = jest.fn(), logo }: { onDone?: jest.Mock; logo?: ReactNode } = {} ) => {
 	// The account step opens the gate on account creation; simulate that once.
@@ -122,10 +123,10 @@ describe( 'EmailVerificationGate', () => {
 
 		const openButton = await screen.findByRole( 'link', { name: 'Open email inbox' } );
 		expect( openButton.getAttribute( 'href' ) ).toContain( 'mail.google.com' );
-		// The manual re-check is the fallback for providers without an inbox link.
-		expect(
-			screen.queryByRole( 'button', { name: /confirmed my email/ } )
-		).not.toBeInTheDocument();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_view',
+			expect.objectContaining( { flow: FLOW, provider: 'gmail' } )
+		);
 
 		await userEvent.click( openButton );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -134,12 +135,32 @@ describe( 'EmailVerificationGate', () => {
 		);
 	} );
 
-	it( 'falls back to a manual re-check for an unrecognized provider', () => {
+	it( 'leaves resend as the only action for an unrecognized provider', () => {
 		render();
 
-		// `onboarder@example.com` has no known inbox link.
-		expect( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) ).toBeVisible();
+		// `onboarder@example.com` has no known inbox link, and the poll is what resolves the
+		// gate either way, so nothing stands in for the missing one.
 		expect( screen.queryByRole( 'link', { name: /^Open / } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeVisible();
+		// The cohort still has to be countable, or its confirmations have nothing to divide by.
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_view',
+			expect.objectContaining( { flow: FLOW, provider: 'none' } )
+		);
+	} );
+
+	it( 'records the view once per gate, not once per mount', () => {
+		const viewEvents = () =>
+			( recordTracksEvent as jest.Mock ).mock.calls.filter(
+				( [ event ] ) => event === 'calypso_signup_email_verification_view'
+			);
+
+		render().unmount();
+		expect( viewEvents() ).toHaveLength( 1 );
+
+		// A refresh lands on the same pending gate; the denominator must not count it twice.
+		render();
+		expect( viewEvents() ).toHaveLength( 1 );
 	} );
 
 	it( 'finishes as soon as the confirmation lands in another tab', async () => {
@@ -179,26 +200,59 @@ describe( 'EmailVerificationGate', () => {
 		);
 	} );
 
-	it( 'finishes when the manual check finds the email confirmed', async () => {
-		mockFetchUser( true );
-		const { onDone } = render();
+	it( 'walks down the poll schedule without ever stopping', () => {
+		jest.useFakeTimers();
+		render();
+		const poll = fetchCurrentUser as jest.Mock;
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) );
+		// The span of each rung in minutes, so a rung's cost is what its own chunk of time bought.
+		const requestsPerRung = [ 5, 5, 20, 30, 60 ].map( ( minutes ) => {
+			poll.mockClear();
+			advance( minutes * MINUTE );
+			return poll.mock.calls.length;
+		} );
 
-		await waitFor( () => expect( onDone ).toHaveBeenCalled() );
+		// Every 10s for five minutes, then 30s, a minute, and three minutes from half an hour on
+		// — the floor, so a confirmation from a phone is never more than three minutes stale.
+		expect( requestsPerRung ).toEqual( [ 30, 10, 20, 10, 20 ] );
 	} );
 
-	it( 'distinguishes a failed check request from an unconfirmed email', async () => {
-		mockFetchUserError();
-		const { onDone } = render();
+	it( 'checks on focus, which is all a desktop mail client leaves to go on', () => {
+		jest.useFakeTimers();
+		render();
+		const poll = fetchCurrentUser as jest.Mock;
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) );
+		// Out to the slowest rung, where the next tick is minutes away.
+		[ 5, 5, 20, 30 ].forEach( ( minutes ) => advance( minutes * MINUTE ) );
 
-		expect( await screen.findByText( /We couldn’t check right now\./ ) ).toBeVisible();
-		expect(
-			screen.queryByText( /We haven’t received your confirmation yet\./ )
-		).not.toBeInTheDocument();
-		expect( onDone ).not.toHaveBeenCalled();
+		// The tab was never hidden — verifying in another app raises no visibility change.
+		poll.mockClear();
+		act( () => {
+			window.dispatchEvent( new Event( 'focus' ) );
+		} );
+		expect( poll ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'polls at the opening rate again after a resend', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const request = mockSendVerificationEmail();
+		render();
+		const poll = fetchCurrentUser as jest.Mock;
+
+		// Out to the slowest rung, where a minute buys no request at all.
+		[ 5, 5, 20, 30, 60 ].forEach( ( minutes ) => advance( minutes * MINUTE ) );
+		poll.mockClear();
+		advance( MINUTE );
+		expect( poll ).not.toHaveBeenCalled();
+
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+		await waitFor( () => expect( request.isDone() ).toBe( true ) );
+		await screen.findByRole( 'button', { name: /^Resend \(/ } );
+
+		poll.mockClear();
+		advance( MINUTE );
+		expect( poll ).toHaveBeenCalledTimes( 6 );
 	} );
 
 	it( 'holds the button for as long as the server says when it throttles', async () => {

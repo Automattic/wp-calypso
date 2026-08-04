@@ -34,12 +34,16 @@ interface Props {
 const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 	const { __ } = useI18n();
 	const email = useSelector( getCurrentUserEmail );
-	const { isVerified, sendStatus, secondsUntilResend, checkStatus, checkNow, resend } =
-		useEmailVerification( flow, scope );
+	const { isVerified, sendStatus, secondsUntilResend, resend } = useEmailVerification(
+		flow,
+		scope
+	);
 
 	const hasSubmitted = useRef( false );
 	const headingRef = useRef< HTMLDivElement >( null );
 	const inboxLink = getInboxLink( email ?? undefined );
+	// A stable dependency: `inboxLink` is a fresh object every render.
+	const provider = inboxLink?.provider ?? 'none';
 
 	const title = __( 'Verify your email' );
 
@@ -52,10 +56,13 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 			  )
 			: __( 'Resend' );
 
-	// Stamp the shown-at time now the gate is actually on screen (see storage.ts).
+	// The denominator for everything that follows: `provider` names which variant was shown
+	// (`none` when the address has no inbox link), and a view with no confirmation is a drop-off.
 	useEffect( () => {
-		markGateShown( scope );
-	}, [ scope ] );
+		if ( markGateShown( scope ) ) {
+			recordTracksEvent( 'calypso_signup_email_verification_view', { flow, provider } );
+		}
+	}, [ scope, flow, provider ] );
 
 	// The gate replaces the account form without a route change, so move focus onto its heading
 	// — otherwise it strands on the unmounted submit button and the screen change goes unsaid.
@@ -139,21 +146,18 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 
 					<VStack spacing={ 3 }>
 						{ /* Calypso's Button, not the Step.* ones: the design follows its outline, radius,
-						   and weight. A known provider gets an inbox deep link — confirming there
-						   resolves the gate by polling; the rest get a manual re-check. */ }
-						{ inboxLink ? (
-							<Button primary href={ inboxLink.url } target="_blank" onClick={ openInbox }>
-								{ __( 'Open email inbox' ) }
-								<Icon icon={ arrowUpRight } size={ 16 } fill="currentColor" />
-							</Button>
-						) : (
+						   and weight. A known provider gets an inbox deep link; confirming there — or
+						   anywhere else — resolves the gate by polling, so nothing else is needed. */ }
+						{ inboxLink && (
 							<Button
 								primary
-								onClick={ checkNow }
-								busy={ checkStatus === 'checking' }
-								disabled={ checkStatus === 'checking' }
+								href={ inboxLink.url }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ openInbox }
 							>
-								{ __( 'I’ve confirmed my email' ) }
+								{ __( 'Open email inbox' ) }
+								<Icon icon={ arrowUpRight } size={ 16 } fill="currentColor" />
 							</Button>
 						) }
 
@@ -164,20 +168,6 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 						>
 							{ resendLabel }
 						</Button>
-
-						{ checkStatus === 'unconfirmed' && (
-							<p className="onboarding-email-verification__notice" role="status">
-								{ __(
-									'We haven’t received your confirmation yet. Open the link in your inbox, then try again.'
-								) }
-							</p>
-						) }
-
-						{ checkStatus === 'error' && (
-							<p className="onboarding-email-verification__notice is-error" role="alert">
-								{ __( 'We couldn’t check right now. Please try again in a moment.' ) }
-							</p>
-						) }
 
 						{ sendStatus === 'error' && (
 							<p className="onboarding-email-verification__notice is-error" role="alert">
