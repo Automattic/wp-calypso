@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useCallback, useMemo } from 'react';
@@ -24,8 +23,6 @@ import WooPaymentsDashboardEmptyState from './empty-state';
 import './style.scss';
 
 const WooPaymentsDashboard = () => {
-	const isDesktop = useDesktopBreakpoint();
-
 	const title = __( 'WooPayments commissions' );
 
 	const dispatch = useDispatch();
@@ -78,7 +75,7 @@ const WooPaymentsDashboard = () => {
 		sitesWithPluginsStates,
 	] );
 
-	const isFullWidth = ! showEmptyState && isDesktop && ! isLoading;
+	const isFullWidth = ! showEmptyState && ! isLoading;
 
 	return (
 		<Layout
