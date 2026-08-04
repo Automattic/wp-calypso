@@ -25,7 +25,6 @@ import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
-import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
 import getSuggestionClickPayload from './get-suggestion-click-payload';
 import GroupedEmptyView from './grouped-empty-view';
@@ -327,7 +326,6 @@ export default function AgentChat( {
 						suggestions={ emptyViewSuggestions }
 						groupWritingSuggestions={ groupWritingSuggestions }
 						onSuggestionClick={ onSuggestionClick }
-						icon={ <AI size={ 32 } /> }
 					/>
 				)
 			}

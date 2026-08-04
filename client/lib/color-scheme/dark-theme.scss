@@ -821,6 +821,12 @@ This mixin generates alias variables for a color palette. For example, the
 		--color-primary-foreground: var( --wp-components-color-accent-inverted );
 		--color-muted: var( --dashboard-surface__border-color );
 		--color-muted-foreground: var( --dashboard__text-muted-color );
+		--color-input-border: var( --dashboard-surface__border-color );
+		--color-input-border-focused: color-mix(
+			in srgb,
+			var( --dashboard-surface__border-color ) 85%,
+			var( --dashboard__text-muted-color )
+		);
 		--color-ring: var( --wp-admin-theme-color );
 		--color-link: var( --wp-admin-theme-color-darker-20 );
 	}

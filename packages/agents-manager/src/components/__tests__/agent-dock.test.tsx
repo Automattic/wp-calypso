@@ -103,13 +103,13 @@ jest.mock( '../orchestrator-chat', () => ( {
 		onExpand,
 		onClose,
 	}: {
-		chatHeaderOptions: { title: string; onClick?: () => void; isDisabled?: boolean }[];
+		chatHeaderOptions: { title: string; onClick?: () => void; isDisabled?: boolean }[][];
 		isOpen: boolean;
 		onExpand: () => void;
 		onClose: () => void;
 	} ) => (
 		<div data-testid="orchestrator-chat" data-chat-open={ String( isOpen ) }>
-			{ chatHeaderOptions.map( ( option ) => (
+			{ chatHeaderOptions.flat().map( ( option ) => (
 				<button
 					key={ option.title }
 					type="button"

@@ -50,17 +50,28 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 		.button-module_button:has( .agents-manager-message-action-icon ) {
 			width: 32px;
 			height: 32px;
+			border-radius: 4px;
 
 			.agents-manager-message-action-icon {
-				width: 30px;
-				height: 30px;
+				width: 28px;
+				height: 28px;
 
 				path {
 					fill: var( --color-muted-foreground );
 				}
 			}
 
-			&:hover:not( :disabled ) .agents-manager-message-action-icon path {
+			&:hover:not( :disabled ) {
+				background-color: var( --color-muted );
+
+				.agents-manager-message-action-icon path {
+					fill: var( --color-foreground );
+				}
+			}
+
+			// After voting: the chosen feedback button keeps the foreground
+			// icon; the other one is disabled and dimmed by the ghost style.
+			&.button-module_pressed .agents-manager-message-action-icon path {
 				fill: var( --color-foreground );
 			}
 		}

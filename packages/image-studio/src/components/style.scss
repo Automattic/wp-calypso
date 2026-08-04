@@ -392,6 +392,9 @@ body.js.is-image-studio-open {
 		padding: 4px 4px 4px 8px;
 		transition: margin-top 0.3s ease;
 		border-radius: var(--radius-lg, 8px);
+		// The border is token-driven, including its textarea-focused state.
+		--color-input-border: transparent;
+		--color-input-border-focused: transparent;
 		border-color: transparent;
 		z-index: 100;
 

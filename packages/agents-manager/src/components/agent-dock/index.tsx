@@ -260,7 +260,7 @@ export default function AgentDock( {
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
-		return [
+		const options = [
 			{
 				icon: comment,
 				title: __( 'New chat', __i18n_text_domain__ ),
@@ -272,34 +272,6 @@ export default function AgentDock( {
 					navigate( '/' );
 				},
 			},
-			// Sidebar docking only makes sense in wp-admin where a block-editor
-			// sidebar slot exists. On public reader-chat frontends there's no
-			// sidebar to dock into — the click does nothing, so hide the option.
-			! isReaderChat &&
-				isDocked && {
-					icon: login,
-					title: __( 'Pop out sidebar', __i18n_text_domain__ ),
-					onClick: () => {
-						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
-							type: 'undock',
-						} );
-						undock();
-						setIsDocked( false );
-					},
-				},
-			! isReaderChat &&
-				! isDocked &&
-				canDock && {
-					icon: drawerRight,
-					title: __( 'Move to sidebar', __i18n_text_domain__ ),
-					onClick: () => {
-						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
-							type: 'dock',
-						} );
-						dock();
-						setIsDocked( true );
-					},
-				},
 			// Split-screen toggle — gated to providers that opt in via
 			// `capabilities.supportsSplitScreen`. Only visible while the
 			// sidebar is docked (at 50vw the floating modal would be redundant).
@@ -316,7 +288,41 @@ export default function AgentDock( {
 						setIsSplitScreen( ! isSplitScreen );
 					},
 				},
-		].filter( Boolean ) as ChatHeaderOptions;
+		].filter( Boolean );
+
+		// Sidebar docking only makes sense in wp-admin where a block-editor
+		// sidebar slot exists. On public reader-chat frontends there's no
+		// sidebar to dock into — the click does nothing, so hide the option.
+		const switchOptions = [
+			! isReaderChat &&
+				isDocked && {
+					icon: login,
+					title: __( 'Switch to floating', __i18n_text_domain__ ),
+					onClick: () => {
+						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+							type: 'undock',
+						} );
+						undock();
+						setIsDocked( false );
+					},
+				},
+			! isReaderChat &&
+				! isDocked &&
+				canDock && {
+					icon: drawerRight,
+					title: __( 'Switch to sidebar', __i18n_text_domain__ ),
+					onClick: () => {
+						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+							type: 'dock',
+						} );
+						dock();
+						setIsDocked( true );
+					},
+				},
+		].filter( Boolean );
+
+		// A second control group renders the switch option behind a divider.
+		return ( switchOptions.length ? [ options, switchOptions ] : [ options ] ) as ChatHeaderOptions;
 	};
 
 	const chatHeaderOptions = getChatHeaderOptions();
