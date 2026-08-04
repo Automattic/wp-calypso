@@ -40,3 +40,65 @@ export const Minimize = ( { size = 24, color = 'currentColor', className }: Icon
 		</SVG>
 	);
 };
+
+export const SwitchToFloating = ( {
+	size = 24,
+	color = 'currentColor',
+	className,
+}: IconProps ) => {
+	return (
+		<SVG
+			className={ className }
+			width={ size }
+			height={ size }
+			viewBox="0 0 24 24"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			aria-hidden="true"
+			focusable="false"
+		>
+			<Path
+				d="M18 4C19.1046 4 20 4.89543 20 6V9H18.5V6C18.5 5.72386 18.2761 5.5 18 5.5H6C5.72386 5.5 5.5 5.72386 5.5 6V18C5.5 18.2761 5.72386 18.5 6 18.5H9V20H6L5.7959 19.9893C4.78722 19.887 4 19.0357 4 18V6C4 4.89543 4.89543 4 6 4H18Z"
+				fill={ color }
+			/>
+			{ /* Explicit fill="none": wp's `svg { fill: currentColor }` would
+			     otherwise flood the stroked rect. */ }
+			<Rect
+				x="10.75"
+				y="10.75"
+				width="8.5"
+				height="8.5"
+				rx="1.25"
+				fill="none"
+				stroke={ color }
+				strokeWidth="1.5"
+			/>
+		</SVG>
+	);
+};
+
+export const SwitchToSidebar = ( {
+	size = 24,
+	color = 'currentColor',
+	className,
+}: IconProps ) => {
+	return (
+		<SVG
+			className={ className }
+			width={ size }
+			height={ size }
+			viewBox="0 0 24 24"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			aria-hidden="true"
+			focusable="false"
+		>
+			<Path
+				fillRule="evenodd"
+				clipRule="evenodd"
+				d="M18 4H6C4.9 4 4 4.9 4 6V18C4 19.1 4.9 20 6 20H18C19.1 20 20 19.1 20 18V6C20 4.9 19.1 4 18 4ZM11.25 18.5H6C5.7 18.5 5.5 18.3 5.5 18V6C5.5 5.7 5.7 5.5 6 5.5H11.25V18.5ZM18.5 18C18.5 18.3 18.3 18.5 18 18.5H12.75V5.5H18C18.3 5.5 18.5 5.7 18.5 6V18Z"
+				fill={ color }
+			/>
+		</SVG>
+	);
+};

@@ -7,7 +7,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { columns, comment, drawerRight, login } from '@wordpress/icons';
+import { columns, comment } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
@@ -24,6 +24,7 @@ import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import EditorAiChatButton from '../editor-ai-chat-button';
 import EditorHelpCenterButton from '../editor-help-center-button';
+import { SwitchToFloating, SwitchToSidebar } from '../icons';
 import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
@@ -296,7 +297,7 @@ export default function AgentDock( {
 		const switchOptions = [
 			! isReaderChat &&
 				isDocked && {
-					icon: login,
+					icon: <SwitchToFloating />,
 					title: __( 'Switch to floating', __i18n_text_domain__ ),
 					onClick: () => {
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
@@ -309,7 +310,7 @@ export default function AgentDock( {
 			! isReaderChat &&
 				! isDocked &&
 				canDock && {
-					icon: drawerRight,
+					icon: <SwitchToSidebar />,
 					title: __( 'Switch to sidebar', __i18n_text_domain__ ),
 					onClick: () => {
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
