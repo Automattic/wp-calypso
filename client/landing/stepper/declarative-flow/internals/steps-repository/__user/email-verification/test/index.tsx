@@ -89,7 +89,7 @@ describe( 'EmailVerificationGate', () => {
 		jest.clearAllMocks();
 		jest.useRealTimers();
 		nock.cleanAll();
-		sessionStorage.clear();
+		localStorage.clear();
 	} );
 
 	afterAll( () => nock.enableNetConnect() );
@@ -137,6 +137,21 @@ describe( 'EmailVerificationGate', () => {
 			'calypso_signup_email_verification_open_inbox',
 			expect.objectContaining( { flow: FLOW, provider: 'gmail' } )
 		);
+	} );
+
+	it( 'does not claim to have just sent anything to a returning unverified user', () => {
+		renderStep(
+			<EmailVerificationGate
+				flow={ FLOW }
+				scope={ SCOPE }
+				isNewSignup={ false }
+				onDone={ jest.fn() }
+			/>,
+			{ initialState: currentUserState( false ) }
+		);
+
+		expect( screen.getByText( /Check your inbox for the verification email/ ) ).toBeVisible();
+		expect( screen.queryByText( /We just sent an email/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'leaves resend as the only action for an unrecognized provider', () => {

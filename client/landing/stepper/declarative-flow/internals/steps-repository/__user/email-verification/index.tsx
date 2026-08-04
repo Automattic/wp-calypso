@@ -105,20 +105,27 @@ const EmailVerificationGate = ( { flow, scope, isNewSignup, logo, onDone }: Prop
 			provider: inboxLink?.provider,
 		} );
 
-	const subText = useMemo(
-		() =>
-			createInterpolateElement(
-				sprintf(
+	// Nothing was sent to someone who arrived here already unverified from an earlier signup, so
+	// they're pointed at the email they were sent then, and at the resend below it.
+	const subText = useMemo( () => {
+		const text = isNewSignup
+			? sprintf(
 					// translators: %s is the email address the verification link was sent to.
 					__(
 						'We just sent an email to <email>%s</email>. Click the link in the email to verify your account.'
 					),
 					email ?? ''
-				),
-				{ email: <strong /> }
-			),
-		[ __, email ]
-	);
+			  )
+			: sprintf(
+					// translators: %s is the email address the verification link was sent to.
+					__(
+						'Check your inbox for the verification email we sent to <email>%s</email>, or send yourself a new one below.'
+					),
+					email ?? ''
+			  );
+
+		return createInterpolateElement( text, { email: <strong /> } );
+	}, [ __, email, isNewSignup ] );
 
 	return (
 		<>

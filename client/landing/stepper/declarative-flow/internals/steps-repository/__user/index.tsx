@@ -20,7 +20,7 @@ import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import wpcom from 'calypso/lib/wp';
-import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
+import { getSignupIsNewUser, setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -28,7 +28,7 @@ import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/sel
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from './email-verification';
-import { gateScope } from './email-verification/storage';
+import { clearGateMetadata, gateScope } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
@@ -74,9 +74,19 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 
-	const { isEnabled: gateEnabled, isGated } = useEmailVerificationGate( flow );
-	// Only for the view event, to size the returning-unverified cohort against fresh signups.
-	const [ isNewSignup, setIsNewSignup ] = useState( false );
+	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
+	const gateScopeForUser = gateScope( flow, userId );
+	// `/me` opens the gate but doesn't close it. The gate owns the confirmation — recording it and
+	// calling `onDone` — so dropping it the moment `/me` reports verified would carry the step
+	// forward without anything ever noting that it happened.
+	const [ latchedScope, setLatchedScope ] = useState< string | null >( null );
+	useEffect( () => {
+		if ( gateStatus === 'gated' ) {
+			setLatchedScope( ( current ) => current ?? gateScopeForUser );
+		}
+	}, [ gateStatus, gateScopeForUser ] );
+	// The latch is set by an effect, so cover the render that opened the gate as well.
+	const activeScope = latchedScope ?? ( gateStatus === 'gated' ? gateScopeForUser : null );
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -108,14 +118,15 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	}, [ dispatch, wpAccountCreateResponse ] );
 
 	useEffect( () => {
-		if ( ! isLoggedIn ) {
+		// `pending` means logged in from a persisted ID with no user object yet, which is not an
+		// answer either way — so ask for one rather than reading the silence as verified.
+		if ( ! isLoggedIn || gateStatus === 'pending' ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
-		} else if ( ! isGated ) {
-			// While the gate is up it renders instead and owns the transition via `onDone`,
-			// so this only submits once the email is verified.
+		} else if ( ! activeScope ) {
+			// While the gate is up it renders instead and owns the transition via `onDone`.
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, isGated ] );
+	}, [ dispatch, isLoggedIn, navigation, activeScope, gateStatus ] );
 
 	const locale = useFlowLocale();
 
@@ -134,7 +145,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 		setSignupIsNewUser( data.ID );
 		if ( gateEnabled ) {
-			setIsNewSignup( true );
 			// The activation email from account creation is the one the gate asks for, so the gate
 			// sends nothing on arrival — this only records the send the server just made.
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
@@ -211,14 +221,17 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		</>
 	);
 
-	if ( isGated ) {
+	if ( activeScope ) {
 		return (
 			<EmailVerificationGate
 				flow={ flow }
-				scope={ gateScope( flow, userId ) }
-				isNewSignup={ isNewSignup }
+				scope={ activeScope }
+				isNewSignup={ !! getSignupIsNewUser( userId ) }
 				logo={ topBarLogo }
-				onDone={ () => navigation.submit?.() }
+				onDone={ () => {
+					clearGateMetadata( activeScope );
+					navigation.submit?.();
+				} }
 			/>
 		);
 	}

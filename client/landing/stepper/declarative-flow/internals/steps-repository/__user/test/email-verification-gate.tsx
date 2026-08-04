@@ -8,8 +8,10 @@ import { MemoryRouter } from 'react-router-dom';
 // eslint-disable-next-line no-restricted-imports
 import { applyMiddleware, createStore, type Reducer } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import initialReducer from 'calypso/state/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -152,6 +154,11 @@ describe( 'account step email verification gate', () => {
 		} );
 
 		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
+		// The gate owns this event, so it has to still be mounted when the confirmation lands.
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_confirmed',
+			expect.objectContaining( { flow: 'onboarding', seconds_on_step: expect.any( Number ) } )
+		);
 	} );
 
 	// The point of reading `/me` rather than a marker: a new tab starts with empty storage, and
@@ -160,12 +167,50 @@ describe( 'account step email verification gate', () => {
 		const first = renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 		first.unmount();
+		localStorage.clear();
 		sessionStorage.clear();
 
 		const { submit } = renderUser( makeStore( false ) );
 
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	// The user ID is persisted across a reload but the user object is not, so there's a window
+	// where the account is logged in and nothing is known about it. Reading that as unverified
+	// would open the gate onto a blank address it can't resend to or check.
+	it( 'neither gates nor continues while the user object is still missing', async () => {
+		const store = createStore(
+			rootReducer,
+			{ currentUser: { id: USER_ID } },
+			applyMiddleware( thunkMiddleware )
+		);
+		const { submit } = renderUser( store );
+
+		await waitFor( () => expect( fetchCurrentUser ).toHaveBeenCalled() );
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps the gate mounted through the confirmation rather than swapping it out', async () => {
+		const store = makeStore( false );
+		renderUser( store );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: USER_ID, email: EMAIL, email_verified: true },
+			} );
+		} );
+
+		// `/me` opening the gate is not the same as `/me` closing it: the gate has work to finish.
+		await waitFor( () =>
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_signup_email_verification_confirmed',
+				expect.anything()
+			)
+		);
 	} );
 
 	it( 'shows the gate once an email account is created and logged in', async () => {
