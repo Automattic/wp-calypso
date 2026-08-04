@@ -40,6 +40,7 @@ import {
 	PLUGIN_REMOVE_REQUEST_FAILURE,
 	SITE_PLUGIN_UPDATED,
 	PLUGIN_ACTION_STATUS_UPDATE,
+	ANALYTICS_STAT_BUMP,
 } from 'calypso/state/action-types';
 import {
 	fetchSitePlugins,
@@ -64,6 +65,13 @@ import {
 
 describe( 'actions', () => {
 	const spy = jest.fn();
+
+	const statBumps = ( group, name ) =>
+		spy.mock.calls
+			.map( ( [ action ] ) => action )
+			.filter( ( action ) => action?.type === ANALYTICS_STAT_BUMP )
+			.map( ( action ) => action.meta.analytics[ 0 ].payload )
+			.filter( ( payload ) => payload.group === group && payload.name === name );
 
 	const getState = () => ( {
 		currentUser: {
@@ -229,12 +237,27 @@ describe( 'actions', () => {
 				.reply( 400, {
 					error: 'activation_error',
 					message: 'Plugin file does not exist.',
+				} )
+				.post( '/rest/v1.1/sites/2916284/plugins/alreadyactive%2Falreadyactive', {
+					active: true,
+				} )
+				.reply( 400, {
+					error: 'activation_error',
+					message: 'The Plugin is already active.',
+					data: { reason: 'already_active' },
 				} );
 		} );
 
 		afterAll( () => {
 			nock.cleanAll();
 		} );
+
+		// Calypso still believes the plugin is inactive, so the early-return guard does not apply.
+		const alreadyActive = {
+			slug: 'alreadyactive',
+			id: 'alreadyactive/alreadyactive',
+			sites: { [ 2916284 ]: { active: false } },
+		};
 
 		test( 'should dispatch request action when triggered', () => {
 			activatePlugin( 2916284, {
@@ -282,6 +305,37 @@ describe( 'actions', () => {
 				error: expect.objectContaining( { message: 'Plugin file does not exist.' } ),
 			} );
 		} );
+
+		test( 'should record one failure and no success when the error carries no reason', async () => {
+			await activatePlugin( 2916284, {
+				slug: 'fake',
+				id: 'fake/fake',
+				sites: { [ 2916284 ]: { active: false } },
+			} )( spy, getState );
+
+			expect( spy ).not.toHaveBeenCalledWith(
+				expect.objectContaining( { type: PLUGIN_ACTIVATE_REQUEST_SUCCESS } )
+			);
+			expect( statBumps( 'calypso_plugin_activated', 'failed' ) ).toHaveLength( 1 );
+			expect( statBumps( 'calypso_plugin_activated', 'succeeded' ) ).toHaveLength( 0 );
+		} );
+
+		test( 'should record one success with the plugin marked active when it is already active', async () => {
+			await activatePlugin( 2916284, alreadyActive )( spy, getState );
+
+			expect( spy ).toHaveBeenCalledWith( {
+				type: PLUGIN_ACTIVATE_REQUEST_SUCCESS,
+				action: ACTIVATE_PLUGIN,
+				siteId: 2916284,
+				pluginId: 'alreadyactive/alreadyactive',
+				data: { ...alreadyActive, active: true },
+			} );
+			expect( spy ).not.toHaveBeenCalledWith(
+				expect.objectContaining( { type: PLUGIN_ACTIVATE_REQUEST_FAILURE } )
+			);
+			expect( statBumps( 'calypso_plugin_activated', 'succeeded' ) ).toHaveLength( 1 );
+			expect( statBumps( 'calypso_plugin_activated', 'failed' ) ).toHaveLength( 0 );
+		} );
 	} );
 
 	describe( '#deactivatePlugin()', () => {
@@ -294,12 +348,27 @@ describe( 'actions', () => {
 				.reply( 400, {
 					error: 'deactivation_error',
 					message: 'Plugin file does not exist.',
+				} )
+				.post( '/rest/v1.1/sites/2916284/plugins/alreadyinactive%2Falreadyinactive', {
+					active: false,
+				} )
+				.reply( 400, {
+					error: 'deactivation_error',
+					message: 'The Plugin is already deactivated.',
+					data: { reason: 'already_inactive' },
 				} );
 		} );
 
 		afterAll( () => {
 			nock.cleanAll();
 		} );
+
+		// Calypso still believes the plugin is active, so the early-return guard does not apply.
+		const alreadyInactive = {
+			slug: 'alreadyinactive',
+			id: 'alreadyinactive/alreadyinactive',
+			sites: { [ 2916284 ]: { active: true } },
+		};
 
 		test( 'should dispatch request action when triggered', () => {
 			deactivatePlugin( 2916284, akismetWithSites )( spy, getState );
@@ -335,6 +404,36 @@ describe( 'actions', () => {
 				pluginId: 'fake/fake',
 				error: expect.objectContaining( { message: 'Plugin file does not exist.' } ),
 			} );
+		} );
+
+		test( 'should record one failure and no success when the error carries no reason', async () => {
+			await deactivatePlugin( 2916284, { slug: 'fake', id: 'fake/fake', active: true } )(
+				spy,
+				getState
+			);
+
+			expect( spy ).not.toHaveBeenCalledWith(
+				expect.objectContaining( { type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS } )
+			);
+			expect( statBumps( 'calypso_plugin_deactivated', 'failed' ) ).toHaveLength( 1 );
+			expect( statBumps( 'calypso_plugin_deactivated', 'succeeded' ) ).toHaveLength( 0 );
+		} );
+
+		test( 'should record one success with the plugin marked inactive when it is already inactive', async () => {
+			await deactivatePlugin( 2916284, alreadyInactive )( spy, getState );
+
+			expect( spy ).toHaveBeenCalledWith( {
+				type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS,
+				action: DEACTIVATE_PLUGIN,
+				siteId: 2916284,
+				pluginId: 'alreadyinactive/alreadyinactive',
+				data: { ...alreadyInactive, active: false },
+			} );
+			expect( spy ).not.toHaveBeenCalledWith(
+				expect.objectContaining( { type: PLUGIN_DEACTIVATE_REQUEST_FAILURE } )
+			);
+			expect( statBumps( 'calypso_plugin_deactivated', 'succeeded' ) ).toHaveLength( 1 );
+			expect( statBumps( 'calypso_plugin_deactivated', 'failed' ) ).toHaveLength( 0 );
 		} );
 	} );
 
