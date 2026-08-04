@@ -31,9 +31,8 @@ function storageKey( scope: string ): string {
 	return `${ STORAGE_KEY }:${ scope }`;
 }
 
-// Storage can be unavailable or full. Without a fallback the view would still be recorded and the
-// confirmation silently wouldn't, since one reports success on a failed write and the other reads
-// back an empty record. This tab's accounting stays intact; cross-tab dedup is best-effort there.
+// A tab's own copy, so an attempt survives storage being unavailable or cleared underneath it.
+// Cross-tab agreement is best-effort in that state; this tab's own accounting still adds up.
 const memoryRecords = new Map< string, GateRecord >();
 let isStorageUsable = true;
 
@@ -70,9 +69,8 @@ function read( scope: string ): GateRecord {
 
 	const remembered = memoryRecords.get( scope );
 	if ( ! stored && remembered ) {
-		// Gone from under this tab: resolving a different user than the one last stored clears
-		// browser storage wholesale, which would otherwise reopen a live lockout, count the view
-		// again and lose the confirmation. This tab still knows its own attempt, so put it back.
+		// Resolving a different user than the one last stored clears browser storage wholesale,
+		// which would reopen a live lockout, recount the view and lose the confirmation.
 		persist( scope, remembered );
 		stored = remembered;
 	}
@@ -85,13 +83,12 @@ function write( scope: string, record: Partial< GateRecord > ): void {
 	persist( scope, next );
 }
 
-// How long "we just sent an email" stays true. Long enough to cover a signup that detours through
-// checkout, short enough that someone who abandoned this morning isn't told it after lunch — which
-// the attempt's own day-long life is far too generous for.
+// How long "we just sent an email" stays true: long enough for a signup that detours through
+// checkout, short enough that someone returning hours later isn't told it.
 const FRESH_SIGNUP_WINDOW_MS = 30 * 60 * 1000;
 
-// Called at account creation, before `/me` has caught up. On the shared record rather than this
-// tab's own, so every tab tells the user the same thing and the view event agrees with the copy.
+// On the shared record rather than one tab's own, so every tab says the same thing and the view
+// event agrees with the copy.
 export function markFreshSignup( scope: string ): void {
 	write( scope, { freshUntil: Date.now() + FRESH_SIGNUP_WINDOW_MS } );
 }

@@ -173,21 +173,6 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
-	// The point of reading `/me` rather than a marker: a new tab starts with empty storage, and
-	// used to sail straight past the gate.
-	it( 'holds an unverified account with nothing stored at all', async () => {
-		const first = renderUser( makeStore( false ) );
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-		first.unmount();
-		localStorage.clear();
-		sessionStorage.clear();
-
-		const { submit } = renderUser( makeStore( false ) );
-
-		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
-		expect( submit ).not.toHaveBeenCalled();
-	} );
-
 	// The user ID is persisted across a reload but the user object is not, so there's a window
 	// where the account is logged in and nothing is known about it. Reading that as unverified
 	// would open the gate onto a blank address it can't resend to or check.

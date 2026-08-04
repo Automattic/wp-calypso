@@ -7,9 +7,9 @@ import {
 } from 'calypso/lib/interval';
 import type { TimeoutMS } from 'calypso/types';
 
-// Quick enough at first not to feel stuck, then slow enough that a tab left open — or a fleet of
-// them waiting on an endpoint that's already struggling — isn't a problem of its own. It backs off
-// rather than stopping: the answer can arrive at any point, and nothing else will fetch it.
+// Quick enough at first not to feel stuck, slow enough that a fleet of tabs waiting on an
+// endpoint that's already struggling isn't a problem of its own. It backs off rather than
+// stopping: the answer can arrive at any point, and nothing else will fetch it.
 const POLL_SCHEDULE: { after: TimeoutMS; delay: TimeoutMS }[] = [
 	{ after: 0, delay: EVERY_TEN_SECONDS },
 	{ after: 5 * EVERY_MINUTE, delay: EVERY_THIRTY_SECONDS },
@@ -55,10 +55,8 @@ export function useBackoffPoll( poll: () => void, isEnabled: boolean ) {
 		setDelay( POLL_SCHEDULE[ 0 ].delay );
 	}, [] );
 
-	// Nothing is listening while disabled, so visibility can have changed unseen — a tab that was
-	// hidden at mount would never poll, one that was visible would poll on in the background. The
-	// elapsed time would also count however long the hook sat idle, landing the first poll on the
-	// slowest rung.
+	// Nothing listens while disabled, so visibility can have changed unseen, and the elapsed time
+	// would otherwise count however long the hook sat idle.
 	useEffect( () => {
 		if ( ! isEnabled ) {
 			return;

@@ -78,7 +78,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
-	const [ didCreateAccount, setDidCreateAccount ] = useState( false );
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -130,7 +129,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// it keeps asking on its own account.
 	useBackoffPoll(
 		() => dispatch( fetchCurrentUser() as unknown as AnyAction ),
-		( isLoggedIn || didCreateAccount ) && gateStatus === 'pending'
+		( isLoggedIn || !! wpAccountCreateResponse ) && gateStatus === 'pending'
 	);
 
 	const locale = useFlowLocale();
@@ -152,7 +151,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		if ( gateEnabled ) {
 			// Records that an email really was just sent. It does not decide whether the gate opens.
 			markFreshSignup( gateScope( flow, data.ID ) );
-			setDidCreateAccount( true );
 			// The activation email from account creation is the one the gate asks for, so the gate
 			// sends nothing on arrival — this only records the send the server just made.
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
