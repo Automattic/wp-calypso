@@ -11,9 +11,9 @@ jest.mock( 'calypso/state', () => ( {
 	useStore: () => mockStore,
 } ) );
 // What the refreshed plugin list says, which is what the hook decides on.
-const mockIsPluginActive = jest.fn( () => false );
+const mockGetPluginOnSite = jest.fn();
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
-	isPluginActive: () => mockIsPluginActive(),
+	getPluginOnSite: () => mockGetPluginOnSite(),
 } ) );
 jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
 	fetchSitePlugins: jest.fn( ( siteId: number ) => ( { type: 'FETCH_SITE_PLUGINS', siteId } ) ),
@@ -64,7 +64,7 @@ const tick = async () => {
 describe( 'usePostTransferPluginRecovery', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockIsPluginActive.mockReturnValue( false );
+		mockGetPluginOnSite.mockReturnValue( INSTALLED );
 		mockIntervalCallback = null;
 		mockIntervalDelay = null;
 	} );
@@ -84,7 +84,6 @@ describe( 'usePostTransferPluginRecovery', () => {
 	it( 'nudges an installed-but-inactive plugin active on a tick', async () => {
 		render();
 		await tick();
-		// The plugin goes over as the store has it, so activatePlugin can read `active` off it.
 		expect( activatePlugin ).toHaveBeenCalledWith( 1, INSTALLED );
 	} );
 
@@ -100,24 +99,36 @@ describe( 'usePostTransferPluginRecovery', () => {
 	} );
 
 	it( 'does not activate a plugin the refreshed list already reports active', async () => {
-		mockIsPluginActive.mockReturnValue( true );
+		mockGetPluginOnSite.mockReturnValue( { ...INSTALLED, active: true } );
 		render();
 		await tick();
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 );
 		expect( activatePlugin ).not.toHaveBeenCalled();
 	} );
 
-	// The endpoint may not be able to report the benign already-active case, in which case a
-	// redundant activation comes back as a plain failure and the plugin stays inactive in the props
-	// this hook was rendered with. The refreshed list is what settles it either way.
+	it( 'does not activate when the refreshed list does not have the plugin', async () => {
+		mockGetPluginOnSite.mockReturnValue( undefined );
+		render();
+		await tick();
+		expect( activatePlugin ).not.toHaveBeenCalled();
+
+		// The budget is intact for when it does show up.
+		mockGetPluginOnSite.mockReturnValue( INSTALLED );
+		await tick();
+		await tick();
+		await tick();
+		expect( activatePlugin ).toHaveBeenCalledTimes( 3 );
+	} );
+
+	// An endpoint with no way to report the benign already-active case answers a redundant activation
+	// with a plain failure, leaving the plugin reading inactive in the props this hook was rendered
+	// with. Nothing here rerenders, mirroring that.
 	it( 'stops re-activating once the refreshed list reports active, even while the props say otherwise', async () => {
 		render();
 		await tick();
 		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
 
-		// No rerender: the failed activation left `active` false on the props, as it would in the
-		// browser. Only the refreshed list knows better.
-		mockIsPluginActive.mockReturnValue( true );
+		mockGetPluginOnSite.mockReturnValue( { ...INSTALLED, active: true } );
 		await tick();
 		await tick();
 		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
@@ -169,7 +180,7 @@ describe( 'usePostTransferPluginRecovery', () => {
 		expect( activatePlugin ).not.toHaveBeenCalled();
 	} );
 
-	it( 'waits to activate until the plugin appears in the refreshed list', async () => {
+	it( 'waits to activate until the caller knows which plugin was installed', async () => {
 		const { rerender } = render( { installedPlugin: null } );
 		await tick();
 		expect( activatePlugin ).not.toHaveBeenCalled();

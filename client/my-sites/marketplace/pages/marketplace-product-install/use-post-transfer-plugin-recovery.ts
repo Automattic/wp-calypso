@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useInterval } from 'calypso/lib/interval';
 import { useDispatch, useStore } from 'calypso/state';
 import { activatePlugin, fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
-import { isPluginActive } from 'calypso/state/plugins/installed/selectors-ts';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors-ts';
 
 const POLL_INTERVAL_MS = 3000;
 const MAX_ACTIVATION_ATTEMPTS = 3;
@@ -22,7 +22,7 @@ export function usePostTransferPluginRecovery( {
 	enabled: boolean;
 	canActivate: boolean;
 	ownsActivation: boolean;
-	installedPlugin: { slug?: string; id?: string; active?: boolean } | null | undefined;
+	installedPlugin: { slug?: string; id?: string } | null | undefined;
 } ): void {
 	const dispatch = useDispatch();
 	const store = useStore();
@@ -35,12 +35,10 @@ export function usePostTransferPluginRecovery( {
 
 			// Gate activation on: the transfer being usable (capability gap); this hook owning activation
 			// (the step-driven flow owns it otherwise); one settled attempt at a time; a bounded budget.
-			// Checked now rather than after the refresh, so a flow that has moved on in the meantime does
-			// not get an activation it no longer owns.
 			if (
 				! canActivate ||
 				! ownsActivation ||
-				! installedPlugin?.id ||
+				! installedPlugin?.slug ||
 				inFlightRef.current ||
 				attemptsRef.current >= MAX_ACTIVATION_ATTEMPTS
 			) {
@@ -51,23 +49,19 @@ export function usePostTransferPluginRecovery( {
 			inFlightRef.current = true;
 			refreshed
 				.then( () => {
-					// Decide from the refreshed list read straight off the store, not from the props this
-					// tick closed over. An endpoint that cannot report the benign already-active case
-					// answers a redundant activation with a plain failure, which leaves `active` false in
-					// the store — so props alone would have this poll spend its whole budget re-activating
-					// a plugin the refresh has already shown to be active.
-					if ( ! slug || isPluginActive( store.getState(), siteId, slug ) ) {
+					// An endpoint with no way to report the benign already-active case answers a redundant
+					// activation with a plain failure, which leaves `active` false in the store. The
+					// refreshed list is what settles it either way.
+					const plugin = getPluginOnSite( store.getState(), siteId, slug );
+					if ( ! plugin || plugin.active ) {
 						return;
 					}
 
 					attemptsRef.current += 1;
-					// Hand over the plugin as the store has it rather than a slug/id pair, so
-					// activatePlugin can apply its own already-active guard too.
-					return Promise.resolve( dispatch( activatePlugin( siteId, installedPlugin ) ) ).finally(
-						() =>
-							// Refresh right away so the now-active plugin is observed immediately, rather than
-							// waiting for the next poll — the caller's redirect is gated on that active state.
-							dispatch( fetchSitePlugins( siteId ) )
+					return Promise.resolve( dispatch( activatePlugin( siteId, plugin ) ) ).finally( () =>
+						// Refresh right away so the now-active plugin is observed immediately, rather than
+						// waiting for the next poll — the caller's redirect is gated on that active state.
+						dispatch( fetchSitePlugins( siteId ) )
 					);
 				} )
 				.finally( () => {

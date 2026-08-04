@@ -249,8 +249,6 @@ export function useProductInstall( {
 			( ! isPluginUploadFlow || pluginUploadComplete )
 		) {
 			if ( ! isTransferredUpload ) {
-				// Hand over the plugin as the store has it rather than a slug/id pair, so activatePlugin
-				// can read `active` off it and skip the request for a plugin that is already active.
 				dispatch( activatePlugin( siteId, installedPlugin ) );
 			}
 			setCurrentStep( 2 );
