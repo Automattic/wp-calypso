@@ -393,6 +393,8 @@ body.js.is-image-studio-open {
 		transition: margin-top 0.3s ease;
 		border-radius: var(--radius-lg, 8px);
 		// The border is token-driven, including its textarea-focused state.
+		// TODO: Add an E2E test covering the borderless composer, focused
+		// state included.
 		--color-input-border: transparent;
 		--color-input-border-focused: transparent;
 		border-color: transparent;
