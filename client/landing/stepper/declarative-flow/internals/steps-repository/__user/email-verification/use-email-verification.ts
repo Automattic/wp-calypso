@@ -1,5 +1,4 @@
-import { fetchUser } from '@automattic/api-core';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	resendAcceptedRetryAfter,
 	resendThrottleRetryAfter,
@@ -7,22 +6,43 @@ import {
 import { useResendCooldown } from 'calypso/dashboard/utils/use-resend-cooldown';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { EVERY_FIVE_SECONDS, useInterval } from 'calypso/lib/interval';
+import {
+	EVERY_MINUTE,
+	EVERY_TEN_SECONDS,
+	EVERY_THIRTY_SECONDS,
+	useInterval,
+} from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
-import { fetchCurrentUser, setUserEmailVerified } from 'calypso/state/current-user/actions';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { gateResendAvailableAt, markResendUnavailableUntil } from './storage';
+import type { TimeoutMS } from 'calypso/types';
 
-// Cross-device confirmation only reaches this tab by polling `/me` (`UserVerificationChecker`
-// covers the same browser instantly). Cap it so a tab left open overnight doesn't poll forever.
-const POLL_LIMIT_MS = 15 * 60 * 1000;
+// Polling is for the confirmation this tab can't otherwise see: `UserVerificationChecker` covers
+// the same browser instantly, and leaving for an inbox hides the tab, which pauses the poll and
+// re-checks on return. What's left is a link opened on another device, where someone is watching
+// this screen for it to resolve — so the opening rate is quick enough not to feel stuck, then
+// backs off rather than stopping, so a link opened an hour later still lands.
+const POLL_SCHEDULE: { after: TimeoutMS; delay: TimeoutMS }[] = [
+	{ after: 0, delay: EVERY_TEN_SECONDS },
+	{ after: 5 * EVERY_MINUTE, delay: EVERY_THIRTY_SECONDS },
+	{ after: 10 * EVERY_MINUTE, delay: EVERY_MINUTE },
+	{ after: 30 * EVERY_MINUTE, delay: 5 * EVERY_MINUTE },
+	{ after: 60 * EVERY_MINUTE, delay: 10 * EVERY_MINUTE },
+];
 
-// `error` (the request failed) is kept distinct from `unconfirmed` so a network failure
-// isn't mistaken for an unverified email.
-type CheckStatus = 'idle' | 'checking' | 'unconfirmed' | 'error';
+function pollDelayAfter( elapsed: number ): TimeoutMS {
+	let delay = POLL_SCHEDULE[ 0 ].delay;
+	for ( const step of POLL_SCHEDULE ) {
+		if ( elapsed >= step.after ) {
+			delay = step.delay;
+		}
+	}
+	return delay;
+}
 
-// `throttled` is distinct from `error` for the same reason: the send was refused, not failed. It
-// says only why the button is held — the countdown says whether it still is.
+// `throttled` is distinct from `error`: the send was refused, not failed. It says only why the
+// button is held — the countdown says whether it still is.
 type SendStatus = 'idle' | 'sending' | 'error' | 'throttled';
 
 export function useEmailVerification( flow: string, scope: string ) {
@@ -36,10 +56,15 @@ export function useEmailVerification( flow: string, scope: string ) {
 		initialDeadline: gateResendAvailableAt( scope ),
 		onHold: ( deadline ) => markResendUnavailableUntil( scope, deadline ),
 	} );
-	const [ isPollingExpired, setIsPollingExpired ] = useState( false );
-	const [ pollWindowKey, setPollWindowKey ] = useState( 0 );
-	const [ checkStatus, setCheckStatus ] = useState< CheckStatus >( 'idle' );
+	const pollStartedAt = useRef( Date.now() );
+	const [ pollDelay, setPollDelay ] = useState< TimeoutMS >( POLL_SCHEDULE[ 0 ].delay );
 	const [ isVisible, setIsVisible ] = useState( () => document.visibilityState === 'visible' );
+
+	// Moves the poll onto the rung its elapsed time has reached. Called from the tick itself and
+	// on return to the tab, which is where a long stretch of not polling gets accounted for.
+	const syncPollDelay = useCallback( () => {
+		setPollDelay( pollDelayAfter( Date.now() - pollStartedAt.current ) );
+	}, [] );
 
 	// The initial email is the activation email from account creation; this only resends.
 	const resend = async () => {
@@ -51,10 +76,9 @@ export function useEmailVerification( flow: string, scope: string ) {
 				throw new Error( 'unsuccessful_response' );
 			}
 			holdResend( resendAcceptedRetryAfter( response ) );
-			// A fresh link restarts the polling window; it may be confirmed long after the last.
-			setIsPollingExpired( false );
-			setPollWindowKey( ( key ) => key + 1 );
-			setCheckStatus( 'idle' );
+			// A fresh link is about to be opened, so poll tightly again from here.
+			pollStartedAt.current = Date.now();
+			setPollDelay( POLL_SCHEDULE[ 0 ].delay );
 			setSendStatus( 'idle' );
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
 				flow,
@@ -83,52 +107,25 @@ export function useEmailVerification( flow: string, scope: string ) {
 			setIsVisible( visible );
 			if ( visible && ! isVerified ) {
 				dispatch( fetchCurrentUser() );
+				syncPollDelay();
 			}
 		};
 		document.addEventListener( 'visibilitychange', onVisibilityChange );
 		return () => document.removeEventListener( 'visibilitychange', onVisibilityChange );
-	}, [ isVerified, dispatch ] );
-
-	useEffect( () => {
-		if ( isVerified ) {
-			return;
-		}
-		const timer = setTimeout( () => setIsPollingExpired( true ), POLL_LIMIT_MS );
-		return () => clearTimeout( timer );
-	}, [ isVerified, pollWindowKey ] );
+	}, [ isVerified, dispatch, syncPollDelay ] );
 
 	useInterval(
-		() => dispatch( fetchCurrentUser() ),
-		isVisible && ! isVerified && ! isPollingExpired && EVERY_FIVE_SECONDS
+		() => {
+			dispatch( fetchCurrentUser() );
+			syncPollDelay();
+		},
+		isVisible && ! isVerified && pollDelay
 	);
-
-	const checkNow = useCallback( async () => {
-		setCheckStatus( 'checking' );
-		// Clear a stale send failure, but not a throttle — that one is still true, and the
-		// button is still counting down against it.
-		setSendStatus( ( status ) => ( status === 'error' ? 'idle' : status ) );
-		recordTracksEvent( 'calypso_signup_email_verification_check_click', { flow } );
-
-		try {
-			// `fetchUser` throws on a failed request, so a network problem can't be
-			// mistaken for an unconfirmed email the way `fetchCurrentUser` would.
-			const { email_verified } = await fetchUser();
-			if ( email_verified ) {
-				dispatch( setUserEmailVerified( true ) );
-			} else {
-				setCheckStatus( 'unconfirmed' );
-			}
-		} catch {
-			setCheckStatus( 'error' );
-		}
-	}, [ dispatch, flow ] );
 
 	return {
 		isVerified,
 		sendStatus,
 		secondsUntilResend,
-		checkStatus,
-		checkNow,
 		resend,
 	};
 }
