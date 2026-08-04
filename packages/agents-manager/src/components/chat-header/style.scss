@@ -89,7 +89,6 @@
 			outline: none;
 		}
 
-		// Disabled items give no focus feedback.
 		&:disabled:focus-visible,
 		&[aria-disabled='true']:focus-visible {
 			outline: none;

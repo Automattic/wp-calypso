@@ -340,9 +340,8 @@ export default function AgentDock( {
 			},
 		].filter( ( option ) => !! option );
 
-		// Sidebar docking only makes sense in wp-admin where a block-editor
-		// sidebar slot exists. On public reader-chat frontends there's no
-		// sidebar to dock into — the click does nothing, so hide the option.
+		// Public reader-chat frontends have no sidebar layout to dock into —
+		// the click would do nothing, so hide the switch option there.
 		const switchOptions = [
 			! isReaderChat &&
 				isDocked && {
