@@ -14,8 +14,11 @@ export const OdieAssistant: React.FC = () => {
 	const { data: currentSupportInteraction, isLoading: isLoadingInteraction } =
 		useCurrentSupportInteraction();
 	const chatHasCSATMessage = hasCSATMessage( chat );
+	// Until the interaction and its history are in, we can't tell a writable chat from a closed
+	// one. Render neither footer rather than guessing and swapping one for the other.
+	const isChatPending =
+		isLoadingInteraction || ( chat?.status === 'loading' && ! chat?.messages?.length );
 	const showClosedConversationFooter =
-		isLoadingInteraction ||
 		chatHasCSATMessage ||
 		interactionHasEnded( currentSupportInteraction ) ||
 		isStaleOdieChat( chat );
@@ -46,14 +49,15 @@ export const OdieAssistant: React.FC = () => {
 			<div className="chat-box-message-container" id="odie-messages-container">
 				<MessagesContainer currentUser={ currentUser } />
 			</div>
-			{ showClosedConversationFooter ? (
-				<ClosedConversationFooter
-					currentInteractionId={ currentUuid }
-					targetInteractionId={ openChatTarget }
-				/>
-			) : (
-				<OdieSendMessageButton />
-			) }
+			{ ! isChatPending &&
+				( showClosedConversationFooter ? (
+					<ClosedConversationFooter
+						currentInteractionId={ currentUuid }
+						targetInteractionId={ openChatTarget }
+					/>
+				) : (
+					<OdieSendMessageButton />
+				) ) }
 		</div>
 	);
 };
