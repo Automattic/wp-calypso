@@ -1,8 +1,8 @@
-import JetpackLogo from '../../marketplace/exclusive-offers/images/jetpack-descriptor.png';
-import PressableLogo from '../../marketplace/exclusive-offers/images/pressable-descriptor.png';
-import VIPLogo from '../../marketplace/exclusive-offers/images/vip-descriptor.png';
-import WooLogo from '../../marketplace/exclusive-offers/images/woo-descriptor.png';
-import WordPressDotComLogo from '../../marketplace/exclusive-offers/images/wordpressdotcom-descriptor.png';
+import JetpackLogo from '../../marketplace/exclusive-offers/images/jetpack-descriptor.svg';
+import PressableLogo from '../../marketplace/exclusive-offers/images/pressable-descriptor.svg';
+import VIPLogo from '../../marketplace/exclusive-offers/images/vip-descriptor.svg';
+import WooLogo from '../../marketplace/exclusive-offers/images/woo-descriptor.svg';
+import WordPressDotComLogo from '../../marketplace/exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import type { ResourceItem } from './types';
 import type { AgencyResource } from '@automattic/api-core';
 import type { ReactNode } from 'react';

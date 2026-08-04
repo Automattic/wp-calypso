@@ -2,12 +2,12 @@ import { __experimentalText as Text, __experimentalHStack as HStack } from '@wor
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import AvalaraLogo from './images/avalara.svg';
-import JetpackLogo from './images/jetpack-descriptor.png';
-import PressableLogo from './images/pressable-descriptor.png';
-import VIPLogo from './images/vip-descriptor.png';
-import WooLogo from './images/woo-descriptor.png';
+import JetpackLogo from './images/jetpack-descriptor.svg';
+import PressableLogo from './images/pressable-descriptor.svg';
+import VIPLogo from './images/vip-descriptor.svg';
+import WooLogo from './images/woo-descriptor.svg';
 import WooPaymentsLogo from './images/woopayments.svg';
-import WordPressDotComLogo from './images/wordpressdotcom-descriptor.png';
+import WordPressDotComLogo from './images/wordpressdotcom-descriptor.svg';
 import type { PartnerOffer } from './types';
 
 // Marketplace constant values inlined from client/a8c-for-agencies so the
