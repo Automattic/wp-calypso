@@ -30,6 +30,8 @@ declare const agentsManagerData:
 			isDevMode?: boolean;
 			/** Simple or WoA. Not yet injected — pending a Jetpack Agents Manager change. */
 			isDotcomSite?: boolean;
+			/** The site's canonical identity, injected server-side. */
+			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;
 	  }

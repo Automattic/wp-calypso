@@ -331,8 +331,11 @@ export default function AgentDock( {
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: 'ai_agent_settings',
 						} );
+						const siteSlug =
+							getAgentsManagerInlineData()?.site?.domain ??
+							window.location.hostname;
 						window.open(
-							`https://my.wordpress.com/sites/${ window.location.hostname }/settings/ai-tools`,
+							`https://my.wordpress.com/sites/${ siteSlug }/settings/ai-tools`,
 							'_blank',
 							'noreferrer'
 						);
