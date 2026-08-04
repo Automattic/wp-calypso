@@ -70,13 +70,15 @@ See the [list of groups](tests_ci.md#featuretest-groups).
 
 ### Save authentication cookies
 
-Specified accounts will be pre-authenticated prior to the main test suite executions and their cookies saved to be re-used until expiry (typically 3 days).
+The `prime-logins` setup project logs in as a list of accounts before the main test suite runs and saves their cookies to be re-used until expiry (typically 3 days). Every project except `authentication` waits for it, so the specs read those cookies instead of logging in themselves.
 
-Specify a list of user accounts found in [Secret Manager](../../../packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
+By default it primes the list in [`setup/prime-logins.setup.ts`](../setup/prime-logins.setup.ts). To prime a different set, name the accounts found in [Secret Manager](../../../packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
 
 ```bash
 export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,atomicUser,defaultUser
 ```
+
+Set it to an empty value to skip priming altogether; whatever needs an account then logs in when it first runs.
 
 ### Use the mobile viewport
 
