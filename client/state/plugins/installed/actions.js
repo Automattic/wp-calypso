@@ -82,18 +82,14 @@ const getPluginHandler = ( siteId, pluginId ) => {
 };
 
 /*
- * Map a plugin from the v1.2 response format to the v1.1 one. The two carry the same
- * values under different keys: v1.2 exposes the plugin file as `name` and the title as
- * `display_name`, where v1.1 calls them `id` and `name`. Everything downstream — the
- * reducer's identity check included — reads the v1.1 shape, which is also what the
- * plugin list is fetched in.
- *
- * v1.2 additionally drops `next_autoupdate`, which nothing reads.
+ * Restate a v1.2 plugin in the v1.1 format. The store is populated from the v1.1 plugin
+ * list and everything downstream — the reducer's identity check included — reads that
+ * shape. v1.2 also drops `next_autoupdate`, which nothing reads.
  */
-const fromApiV1_2 = ( { name, display_name, ...plugin } ) => ( {
+const fromApiV1_2 = ( { name: id, display_name: name, ...plugin } ) => ( {
 	...plugin,
-	id: name,
-	name: display_name,
+	id,
+	name,
 } );
 
 /*
@@ -498,12 +494,6 @@ function installPluginHelper(
 				}
 				return doUpdate( plugin )
 					.then( doActivate )
-					.then( doAutoupdates )
-					.then( successCallback )
-					.catch( errorCallback );
-			}
-			if ( error.name === 'ActivationErrorError' ) {
-				return doUpdate( plugin )
 					.then( doAutoupdates )
 					.then( successCallback )
 					.catch( errorCallback );
