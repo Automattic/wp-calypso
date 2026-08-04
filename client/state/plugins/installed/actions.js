@@ -156,11 +156,7 @@ export function activatePlugin( siteId, plugin ) {
 		const afterActivationCallback = ( error, data ) => {
 			// Sometime data can be empty or the plugin always
 			// return the active state even when the error is empty.
-			// Activation error is ok, because it means the plugin is already active
-			if (
-				( error && error.error !== 'activation_error' ) ||
-				( ! ( data && data.active ) && ! error )
-			) {
+			if ( error || ! ( data && data.active ) ) {
 				dispatch( bumpStat( 'calypso_plugin_activated', 'failed' ) );
 				dispatch(
 					recordTracksEvent( 'calypso_plugin_activated_error', {
@@ -189,10 +185,14 @@ export function activatePlugin( siteId, plugin ) {
 		};
 
 		const errorCallback = ( error ) => {
-			// This error means it's already active.
-			if ( error && error.error === 'activation_error' ) {
-				successCallback( plugin );
+			// `activation_error` wraps both real failures and the benign case where the plugin
+			// is already active. Only endpoints that attach `data.reason` can tell them apart;
+			// without it, assume a real failure rather than reporting a success we can't confirm.
+			if ( error?.data?.reason === 'already_active' ) {
+				successCallback( { ...plugin, active: true } );
+				return;
 			}
+
 			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_FAILURE, error } );
 
 			afterActivationCallback( error, undefined );
@@ -225,10 +225,7 @@ export function deactivatePlugin( siteId, plugin ) {
 		dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST } );
 
 		const afterDeactivationCallback = ( error ) => {
-			// Sometime data can be empty or the plugin always
-			// return the active state even when the error is empty.
-			// Activation error is ok, because it means the plugin is already active
-			if ( error && error.error !== 'deactivation_error' ) {
+			if ( error ) {
 				dispatch( bumpStat( 'calypso_plugin_deactivated', 'failed' ) );
 				dispatch(
 					recordTracksEvent( 'calypso_plugin_deactivated_error', {
@@ -256,10 +253,13 @@ export function deactivatePlugin( siteId, plugin ) {
 		};
 
 		const errorCallback = ( error ) => {
-			// This error means it's already inactive.
-			if ( error && error.error === 'deactivation_error' ) {
-				successCallback( plugin );
+			// See the note in activatePlugin(): `deactivation_error` is just as generic, so the
+			// already-inactive case is only safe to treat as a success when the server says so.
+			if ( error?.data?.reason === 'already_inactive' ) {
+				successCallback( { ...plugin, active: false } );
+				return;
 			}
+
 			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_FAILURE, error } );
 			afterDeactivationCallback( error );
 		};
