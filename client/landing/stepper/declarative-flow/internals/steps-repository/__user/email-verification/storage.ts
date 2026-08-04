@@ -31,28 +31,43 @@ function storageKey( scope: string ): string {
 	return `${ STORAGE_KEY }:${ scope }`;
 }
 
-function read( scope: string ): GateRecord {
-	try {
-		const raw = localStorage.getItem( storageKey( scope ) );
-		if ( ! raw ) {
-			return EMPTY_RECORD;
-		}
-		const record = { ...EMPTY_RECORD, ...( JSON.parse( raw ) as Partial< GateRecord > ) };
-		const isSpent =
-			Date.now() - record.startedAt > ATTEMPT_TTL_MS && record.resendAvailableAt <= Date.now();
-		return isSpent ? EMPTY_RECORD : record;
-	} catch {
+// Storage can be unavailable or full. Without a fallback the view would still be recorded and the
+// confirmation silently wouldn't, since one reports success on a failed write and the other reads
+// back an empty record. This tab's accounting stays intact; cross-tab dedup is best-effort there.
+const memoryRecords = new Map< string, GateRecord >();
+let isStorageUsable = true;
+
+function hydrate( stored: Partial< GateRecord > | undefined ): GateRecord {
+	if ( ! stored ) {
 		return EMPTY_RECORD;
 	}
+	const record = { ...EMPTY_RECORD, ...stored };
+	const isSpent =
+		Date.now() - record.startedAt > ATTEMPT_TTL_MS && record.resendAvailableAt <= Date.now();
+	return isSpent ? EMPTY_RECORD : record;
+}
+
+function read( scope: string ): GateRecord {
+	if ( isStorageUsable ) {
+		try {
+			const raw = localStorage.getItem( storageKey( scope ) );
+			return hydrate( raw ? ( JSON.parse( raw ) as Partial< GateRecord > ) : undefined );
+		} catch {
+			isStorageUsable = false;
+		}
+	}
+	return hydrate( memoryRecords.get( scope ) );
 }
 
 function write( scope: string, record: Partial< GateRecord > ): void {
 	const next = { ...read( scope ), ...record };
 	next.startedAt = next.startedAt || Date.now();
+	memoryRecords.set( scope, next );
 	try {
 		localStorage.setItem( storageKey( scope ), JSON.stringify( next ) );
 	} catch {
-		// Ignore storage failures (private mode, quota); the state just won't persist.
+		// Private mode, quota — this tab keeps the record in memory from here on.
+		isStorageUsable = false;
 	}
 }
 
@@ -69,9 +84,6 @@ export function isFreshSignupAttempt( scope: string ): boolean {
 /**
  * Stamps the gate as shown and reports whether this call was the one that stamped it, so the view
  * event fires once per attempt rather than once per tab.
- *
- * With storage unavailable nothing persists and every call reports true, falling back to once per
- * mount rather than going silent.
  */
 export function markGateShown( scope: string ): boolean {
 	if ( read( scope ).shownAt ) {
@@ -107,4 +119,9 @@ export function markResendUnavailableUntil( scope: string, deadline: number ): v
 // 0 when nothing is stored, which is also right when storage is unavailable: nothing claimed.
 export function gateResendAvailableAt( scope: string ): number {
 	return read( scope ).resendAvailableAt;
+}
+
+// For a tab that wants to notice another tab claiming a lockout, via the `storage` event.
+export function isGateStorageKey( key: string | null, scope: string ): boolean {
+	return key === storageKey( scope );
 }

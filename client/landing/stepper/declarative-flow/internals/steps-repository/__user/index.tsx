@@ -144,11 +144,14 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 	}, [ dispatch, isLoggedIn, navigation, activeScope, gateStatus, gateScopeForUser, flow ] );
 
-	// One retry batch is finite and swallows its failure, so nothing would ask again — an outage
-	// or a slow replication would leave a spinner up for good.
+	// A retry batch is finite and swallows its failure, so without this nothing would ask again.
+	// `createdAccountHere` matters as much as `isLoggedIn`: an account just created isn't logged in
+	// until `/me` answers, which is the request that failed. Plain fetches from here — a batch every
+	// ten seconds is four requests each, aimed at whatever is already struggling.
+	const shouldRetryCurrentUser = ( isLoggedIn || createdAccountHere ) && gateStatus === 'pending';
 	useInterval(
-		() => dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction ),
-		isLoggedIn && gateStatus === 'pending' && EVERY_TEN_SECONDS
+		() => dispatch( fetchCurrentUser() as unknown as AnyAction ),
+		shouldRetryCurrentUser && EVERY_TEN_SECONDS
 	);
 
 	const locale = useFlowLocale();

@@ -33,8 +33,9 @@ const StepRoute = ( { step, flow, renderStep, navigate }: StepRouteProps ) => {
 
 	const loginUrl = useLoginUrlForFlow( { flow } );
 	const shouldAuthUser = step.requiresLoggedInUser && ! userIsLoggedIn;
-	// `pending` counts as well as `gated`: on the first render the user object hasn't arrived, and
-	// letting that through is exactly how an unverified user slips into a protected step.
+	// Being logged in isn't on its own enough to enter a protected step. `pending` counts as well
+	// as `gated`: on the first render the user object hasn't arrived, and letting that through is
+	// how an unverified user gets in. Elsewhere the hook answers `clear` and nothing changes.
 	const { status: emailVerificationStatus } = useEmailVerificationGate( flow.name );
 	const mustVerifyEmail =
 		step.requiresLoggedInUser &&
@@ -56,22 +57,8 @@ const StepRoute = ( { step, flow, renderStep, navigate }: StepRouteProps ) => {
 		}
 	}, [ loginUrl, shouldAuthUser, useBuiltItInAuth ] );
 
-	if ( useBuiltItInAuth && shouldAuthUser && ! userIsLoggedIn ) {
-		// If the current step requires the auth, it should become a next step after the auth.
-		const extraData = {
-			previousStep: stepData?.previousStep,
-			nextStep: step.slug,
-		};
-
-		navigate( PRIVATE_STEPS.USER.slug, extraData, true );
-		return null;
-	}
-
-	// Being logged in is not on its own enough to enter a protected step. Deciding this only
-	// inside the account step would mean anyone re-entering the flow — a new tab, a fresh session,
-	// a bookmarked step — never mounts it and walks straight past the gate. Outside onboarding, or
-	// with the flag off, the hook answers `clear` and nothing here changes.
-	if ( useBuiltItInAuth && mustVerifyEmail ) {
+	if ( useBuiltItInAuth && ( shouldAuthUser || mustVerifyEmail ) ) {
+		// Whichever sent them there, the step they asked for is where they go afterwards.
 		navigate(
 			PRIVATE_STEPS.USER.slug,
 			{ previousStep: stepData?.previousStep, nextStep: step.slug },

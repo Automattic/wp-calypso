@@ -39,6 +39,16 @@ export function useResendCooldown( { initialDeadline = 0, onHold }: Options = {}
 		setSecondsUntilResend( 0 );
 	}, [] );
 
+	// Adopts a deadline claimed elsewhere — another tab, say. Unlike `hold` it doesn't report the
+	// deadline back, so a caller that persists one can sync without writing it again.
+	const adopt = useCallback( ( deadline: number ) => {
+		if ( deadline <= deadlineRef.current ) {
+			return;
+		}
+		deadlineRef.current = deadline;
+		setSecondsUntilResend( cooldownRemainingSeconds( deadline ) );
+	}, [] );
+
 	useInterval( sync, secondsUntilResend > 0 && EVERY_SECOND );
 
 	// Catch up in one step rather than resuming where the suspended timer stopped.
@@ -52,5 +62,5 @@ export function useResendCooldown( { initialDeadline = 0, onHold }: Options = {}
 		return () => document.removeEventListener( 'visibilitychange', onVisibilityChange );
 	}, [ sync ] );
 
-	return { secondsUntilResend, hold, reset };
+	return { secondsUntilResend, hold, reset, adopt };
 }

@@ -15,7 +15,7 @@ import {
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import { gateResendAvailableAt, markResendUnavailableUntil } from './storage';
+import { gateResendAvailableAt, isGateStorageKey, markResendUnavailableUntil } from './storage';
 import type { TimeoutMS } from 'calypso/types';
 
 // A confirmation on another device raises no signal — `UserVerificationChecker` covers the same
@@ -50,10 +50,26 @@ export function useEmailVerification( flow: string, scope: string ) {
 
 	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
 
-	const { secondsUntilResend, hold: holdResend } = useResendCooldown( {
+	const {
+		secondsUntilResend,
+		hold: holdResend,
+		adopt: adoptResendDeadline,
+	} = useResendCooldown( {
 		initialDeadline: gateResendAvailableAt( scope ),
 		onHold: ( deadline ) => markResendUnavailableUntil( scope, deadline ),
 	} );
+
+	// The deadline is only read at mount, so a tab already open when another one resends would go
+	// on offering a button the server is about to refuse.
+	useEffect( () => {
+		const onStorage = ( event: StorageEvent ) => {
+			if ( isGateStorageKey( event.key, scope ) ) {
+				adoptResendDeadline( gateResendAvailableAt( scope ) );
+			}
+		};
+		window.addEventListener( 'storage', onStorage );
+		return () => window.removeEventListener( 'storage', onStorage );
+	}, [ scope, adoptResendDeadline ] );
 	const pollStartedAt = useRef( Date.now() );
 	const [ pollDelay, setPollDelay ] = useState< TimeoutMS >( POLL_SCHEDULE[ 0 ].delay );
 	const [ isVisible, setIsVisible ] = useState( () => document.visibilityState === 'visible' );

@@ -197,6 +197,27 @@ describe( 'account step email verification gate', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
+	// The account exists but `/me` hasn't answered, so Redux doesn't consider anyone logged in yet.
+	// Waiting on `isLoggedIn` to start retrying would strand exactly the user this is built for.
+	it( 'keeps asking for the user after account creation, before anyone is logged in', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		renderUser( makeLoggedOutStore() );
+
+		await user.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
+		// The account-creation fetch is the one that failed; nothing has changed state since.
+		( fetchCurrentUser as jest.Mock ).mockClear();
+
+		act( () => {
+			jest.advanceTimersByTime( 30 * 1000 );
+		} );
+
+		expect( fetchCurrentUser ).toHaveBeenCalled();
+		// Plain, not a four-request batch every ten seconds aimed at an already-struggling `/me`.
+		expect( fetchCurrentUser ).not.toHaveBeenCalledWith( { retry: true } );
+		jest.useRealTimers();
+	} );
+
 	// Confirming elsewhere and coming back finds `/me` already verified, so the gate never opens
 	// to close itself out. The attempt still has to be finished, or it goes unrecorded.
 	it( 'finishes an attempt that was confirmed before the gate could see it', async () => {
