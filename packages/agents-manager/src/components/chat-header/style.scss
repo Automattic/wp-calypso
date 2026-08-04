@@ -65,7 +65,7 @@
 	padding: 0;
 
 	.components-menu-group {
-		padding: 8px;
+		padding: 8px 0;
 
 		// MenuGroup wraps its items in a role="group" container.
 		[role='group'] {
