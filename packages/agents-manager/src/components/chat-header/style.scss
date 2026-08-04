@@ -39,10 +39,8 @@
 		gap: 2px;
 		align-items: center;
 
-		// Excludes DropdownMenu popover items: they render inline on WP's
-		// white popover. `.has-icon` also out-specifies wp's
-		// `.components-button.is-small.has-icon:not(.has-text)` sizing,
-		// which otherwise ties and wins by load order.
+		// Excludes DropdownMenu popover items (they render on WP's white
+		// popover); `.has-icon` out-specifies wp's small icon-button sizing.
 		.components-button.has-icon:not( .components-dropdown-menu__menu-item ) {
 			height: 24px;
 			min-width: 24px;
