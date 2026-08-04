@@ -41,7 +41,7 @@ export default function EventCard( { recordTracksEvent }: EventCardProps ) {
 					</HStack>
 					<VStack spacing={ 4 }>
 						{ description.map( ( paragraph ) => (
-							<Text key={ paragraph } lineHeight="20px">
+							<Text key={ paragraph } size={ 13 } lineHeight="20px">
 								{ paragraph }
 							</Text>
 						) ) }

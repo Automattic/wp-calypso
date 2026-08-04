@@ -38,7 +38,9 @@ function TierFooterSection( {
 				{ label }
 			</Text>
 			<HStack justify="space-between" alignment="center" wrap>
-				<Text lineHeight="20px">{ title }</Text>
+				<Text size={ 13 } lineHeight="20px">
+					{ title }
+				</Text>
 				{ action }
 			</HStack>
 		</VStack>
