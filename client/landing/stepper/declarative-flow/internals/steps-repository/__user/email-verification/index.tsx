@@ -55,13 +55,15 @@ const EmailVerificationGate = ( { flow, scope, isNewSignup, logo }: Props ) => {
 	// The denominator for the clicks and confirmations that follow, and for the drop-offs that
 	// don't. `provider` is `none` when the address has no inbox link.
 	useEffect( () => {
-		if ( markGateShown( scope ) ) {
-			recordTracksEvent( 'calypso_signup_email_verification_view', {
-				flow,
-				provider,
-				is_new_signup: isNewSignup,
-			} );
-		}
+		markGateShown( scope ).then( ( isFirstShowing ) => {
+			if ( isFirstShowing ) {
+				recordTracksEvent( 'calypso_signup_email_verification_view', {
+					flow,
+					provider,
+					is_new_signup: isNewSignup,
+				} );
+			}
+		} );
 	}, [ scope, flow, provider, isNewSignup ] );
 
 	// The gate replaces the account form without a route change, so move focus onto its heading

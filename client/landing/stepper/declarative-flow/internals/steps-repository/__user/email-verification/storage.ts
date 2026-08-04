@@ -77,10 +77,33 @@ function read( scope: string ): GateRecord {
 	return hydrate( stored );
 }
 
-function write( scope: string, record: Partial< GateRecord > ): void {
-	const next = { ...read( scope ), ...record };
-	next.startedAt = next.startedAt || Date.now();
-	persist( scope, next );
+/**
+ * Every mutation, serialized across tabs.
+ *
+ * Read-check-write is three operations, and local storage gives no atomicity between documents, so
+ * two tabs opening the gate or seeing the same confirmation could both find the record untouched
+ * and both act on it. Web Locks makes the sequence exclusive; `mutate` returning null leaves the
+ * record alone. Callers keep navigation outside this — every tab still continues either way.
+ *
+ * Without Web Locks the sequence is unguarded and the counting is best-effort, as it was before.
+ */
+async function updateGateRecord< T >(
+	scope: string,
+	mutate: ( record: GateRecord ) => { changes: Partial< GateRecord > | null; result: T }
+): Promise< T > {
+	const transition = () => {
+		const record = read( scope );
+		const { changes, result } = mutate( record );
+		if ( changes ) {
+			persist( scope, { ...record, ...changes, startedAt: record.startedAt || Date.now() } );
+		}
+		return result;
+	};
+
+	if ( ! navigator.locks ) {
+		return transition();
+	}
+	return navigator.locks.request( `${ STORAGE_KEY }:${ scope }`, transition );
 }
 
 // How long "we just sent an email" stays true: long enough for a signup that detours through
@@ -89,8 +112,11 @@ const FRESH_SIGNUP_WINDOW_MS = 30 * 60 * 1000;
 
 // On the shared record rather than one tab's own, so every tab says the same thing and the view
 // event agrees with the copy.
-export function markFreshSignup( scope: string ): void {
-	write( scope, { freshUntil: Date.now() + FRESH_SIGNUP_WINDOW_MS } );
+export function markFreshSignup( scope: string ): Promise< void > {
+	return updateGateRecord( scope, () => ( {
+		changes: { freshUntil: Date.now() + FRESH_SIGNUP_WINDOW_MS },
+		result: undefined,
+	} ) );
 }
 
 export function isFreshSignup( scope: string ): boolean {
@@ -101,12 +127,12 @@ export function isFreshSignup( scope: string ): boolean {
  * Stamps the gate as shown and reports whether this call was the one that stamped it, so the view
  * event fires once per attempt rather than once per tab.
  */
-export function markGateShown( scope: string ): boolean {
-	if ( read( scope ).shownAt ) {
-		return false;
-	}
-	write( scope, { shownAt: Date.now() } );
-	return true;
+export function markGateShown( scope: string ): Promise< boolean > {
+	return updateGateRecord( scope, ( record ) =>
+		record.shownAt
+			? { changes: null, result: false }
+			: { changes: { shownAt: Date.now() }, result: true }
+	);
 }
 
 /**
@@ -117,19 +143,27 @@ export function markGateShown( scope: string ): boolean {
  * The claim stays rather than being removed, so a late tab finds it taken instead of an empty
  * record it would mistake for a fresh attempt.
  */
-export function claimGateConfirmation( scope: string ): { secondsOnStep: number } | null {
-	const record = read( scope );
-	if ( ! record.shownAt || record.confirmedAt ) {
-		return null;
-	}
-	const now = Date.now();
-	write( scope, { confirmedAt: now } );
-	return { secondsOnStep: Math.round( ( now - record.shownAt ) / 1000 ) };
+export function claimGateConfirmation(
+	scope: string
+): Promise< { secondsOnStep: number } | null > {
+	return updateGateRecord( scope, ( record ) => {
+		if ( ! record.shownAt || record.confirmedAt ) {
+			return { changes: null, result: null };
+		}
+		const now = Date.now();
+		return {
+			changes: { confirmedAt: now },
+			result: { secondsOnStep: Math.round( ( now - record.shownAt ) / 1000 ) },
+		};
+	} );
 }
 
 // Persisted so a reload doesn't forget a lockout and reopen the button into a refusal.
-export function markResendUnavailableUntil( scope: string, deadline: number ): void {
-	write( scope, { resendAvailableAt: deadline } );
+export function markResendUnavailableUntil( scope: string, deadline: number ): Promise< void > {
+	return updateGateRecord( scope, () => ( {
+		changes: { resendAvailableAt: deadline },
+		result: undefined,
+	} ) );
 }
 
 // 0 when nothing is stored, which is also right when storage is unavailable: nothing claimed.

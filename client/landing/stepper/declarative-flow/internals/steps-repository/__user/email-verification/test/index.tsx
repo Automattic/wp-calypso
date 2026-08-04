@@ -137,7 +137,7 @@ describe( 'EmailVerificationGate', () => {
 		expect( screen.queryByText( /We just sent an email/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'leaves resend as the only action for an unrecognized provider', () => {
+	it( 'leaves resend as the only action for an unrecognized provider', async () => {
 		render();
 
 		// `onboarder@example.com` has no known inbox link, and the poll is what resolves the
@@ -145,24 +145,26 @@ describe( 'EmailVerificationGate', () => {
 		expect( screen.queryByRole( 'link', { name: /^Open / } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeVisible();
 		// The cohort still has to be countable, or its confirmations have nothing to divide by.
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_signup_email_verification_view',
-			expect.objectContaining( { flow: FLOW, provider: 'none' } )
+		await waitFor( () =>
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_signup_email_verification_view',
+				expect.objectContaining( { flow: FLOW, provider: 'none' } )
+			)
 		);
 	} );
 
-	it( 'records the view once per gate, not once per mount', () => {
+	it( 'records the view once per gate, not once per mount', async () => {
 		const viewEvents = () =>
 			( recordTracksEvent as jest.Mock ).mock.calls.filter(
 				( [ event ] ) => event === 'calypso_signup_email_verification_view'
 			);
 
 		render().unmount();
-		expect( viewEvents() ).toHaveLength( 1 );
+		await waitFor( () => expect( viewEvents() ).toHaveLength( 1 ) );
 
 		// A refresh lands on the same pending gate; the denominator must not count it twice.
 		render();
-		expect( viewEvents() ).toHaveLength( 1 );
+		await waitFor( () => expect( viewEvents() ).toHaveLength( 1 ) );
 	} );
 
 	it( 'walks down the poll schedule without ever stopping', () => {
