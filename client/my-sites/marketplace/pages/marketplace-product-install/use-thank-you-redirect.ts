@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
+import { clearInstallAnchor, UPLOAD_ANCHOR_SLUG } from './use-install-deadline';
 import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
 
 // The redirect machinery: once a flow completes it fetches the freshest site data, resolves the
@@ -27,6 +28,7 @@ export function useThankYouRedirect( {
 	atomicFlow,
 	automatedTransferStatus,
 	isTransferredUpload,
+	halted = false,
 }: {
 	siteId: number;
 	selectedSiteSlug: string | null;
@@ -41,13 +43,18 @@ export function useThankYouRedirect( {
 	atomicFlow: boolean;
 	automatedTransferStatus: string | null;
 	isTransferredUpload: boolean;
+	/** The wait has been called off — an error screen is up, so nothing here should keep polling. */
+	halted?: boolean;
 } ) {
 	const dispatch = useDispatch();
 
 	// Fetch fresh site data (including admin_url) post-transfer
 	const { data: freshSite } = useQuery( {
 		...siteByIdQuery( siteId ?? 0 ),
-		enabled: !! siteId && ( ! atomicFlow || automatedTransferStatus === transferStates.COMPLETE ),
+		enabled:
+			! halted &&
+			!! siteId &&
+			( ! atomicFlow || automatedTransferStatus === transferStates.COMPLETE ),
 		refetchInterval: ( query ) =>
 			query.state.data && isAtomicTransferredSite( query.state.data ) ? false : 2000,
 		staleTime: 0,
@@ -84,7 +91,7 @@ export function useThankYouRedirect( {
 
 	usePostTransferPluginRecovery( {
 		siteId,
-		enabled: ( isRecoveryFlow || uploadTransferSettled ) && ! pluginActive,
+		enabled: ! halted && ( isRecoveryFlow || uploadTransferSettled ) && ! pluginActive,
 		// isAtomicTransferReady already requires manage_options, which the transfer propagates after
 		// is_wpcom_atomic flips; activating during that gap would fail and burn the retry budget.
 		canActivate: !! isAtomicTransferReady,
@@ -104,24 +111,28 @@ export function useThankYouRedirect( {
 	// is also when the URL below resolves.
 	useEffect( () => {
 		if ( installedPlugin && pluginActive && pluginsUrlFinal ) {
+			clearInstallAnchor( siteId, pluginSlug || UPLOAD_ANCHOR_SLUG );
 			window.location.href = pluginsUrlFinal;
 		}
-	}, [ installedPlugin, pluginActive, pluginsUrlFinal ] );
+	}, [ installedPlugin, pluginActive, pluginsUrlFinal, siteId, pluginSlug ] );
 
 	// Validate theme is already active
 	useEffect( () => {
 		if ( themeSlug && wpOrgTheme && isThemeActive ) {
+			clearInstallAnchor( siteId, themeSlug );
 			page.redirect(
 				`/marketplace/thank-you/${ selectedSiteSlug }?themes=${ themeSlug }&hide-progress-bar`
 			);
 		}
-	}, [ themeSlug, wpOrgTheme, isThemeActive, selectedSiteSlug ] );
+	}, [ themeSlug, wpOrgTheme, isThemeActive, selectedSiteSlug, siteId ] );
 
 	// Polling for theme activation status
 	useInterval(
 		() => {
 			dispatch( requestActiveTheme( siteId ) );
 		},
-		! themeSlug || currentStep === 0 || ( themeSlug && wpOrgTheme && isThemeActive ) ? null : 3000
+		halted || ! themeSlug || currentStep === 0 || ( themeSlug && wpOrgTheme && isThemeActive )
+			? null
+			: 3000
 	);
 }

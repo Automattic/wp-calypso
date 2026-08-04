@@ -25,6 +25,9 @@ export default function ProductInstallErrorView( {
 
 	const uploadPageURL = `/plugins/upload/${ selectedSiteSlug }`;
 	const wpAdminUploadURL = `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload`;
+	const isPluginUploadFlow = ! pluginSlug && ! themeSlug;
+	// The site's own plugin list, which is where an install that finished late will show up.
+	const pluginsPageURL = `/plugins/${ selectedSiteSlug }`;
 
 	switch ( error.type ) {
 		case 'non-installable-plan': {
@@ -94,6 +97,53 @@ export default function ProductInstallErrorView( {
 					secondaryActionURL={ uploadPageURL }
 					action={ translate( 'Re-upload plugin' ) }
 					actionURL={ wpAdminUploadURL }
+				/>
+			);
+		}
+		case 'timeout':
+		case 'transfer-failed': {
+			// This screen also serves themes and zip uploads, so plugin-worded copy and a link to
+			// the plugins list would be wrong for those. Branch on the flow.
+			const isTakingTooLong = error.type === 'timeout';
+			if ( themeSlug ) {
+				return (
+					<EmptyContent
+						title={ null }
+						line={
+							isTakingTooLong
+								? translate(
+										'Installing this theme is taking longer than expected. It may still finish on its own — check your themes in a few minutes.'
+								  )
+								: translate(
+										'We were unable to finish setting up your site for this theme. You can try again, or contact support if it keeps happening.'
+								  )
+						}
+						secondaryAction={ translate( 'Contact support' ) }
+						secondaryActionURL="/help/contact"
+						action={ translate( 'Go to themes' ) }
+						actionURL={ `/themes/${ selectedSiteSlug }` }
+					/>
+				);
+			}
+
+			return (
+				<EmptyContent
+					title={ null }
+					line={
+						isTakingTooLong
+							? translate(
+									'Installing this plugin is taking longer than expected. It may still finish on its own — check your installed plugins in a few minutes.'
+							  )
+							: translate(
+									'We were unable to finish setting up your site for this plugin. You can try again, or contact support if it keeps happening.'
+							  )
+					}
+					secondaryAction={ translate( 'Contact support' ) }
+					secondaryActionURL="/help/contact"
+					action={
+						isPluginUploadFlow ? translate( 'Try uploading again' ) : translate( 'Go to plugins' )
+					}
+					actionURL={ isPluginUploadFlow ? uploadPageURL : pluginsPageURL }
 				/>
 			);
 		}
