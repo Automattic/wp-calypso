@@ -268,6 +268,11 @@ export default function AgentDock( {
 		const showWpAdminLinks = isWpAdmin();
 		const inlineData = getAgentsManagerInlineData();
 		const siteSlug = inlineData?.site?.domain ?? window.location.hostname;
+		// The linked WordPress.com settings page only exists for Simple/WoA
+		// sites. Until the Jetpack package injects `isDotcomSite`, the site
+		// domain covers Simple sites (WoA runs on custom domains and is missed).
+		const isDotcomSite =
+			inlineData?.isDotcomSite ?? siteSlug.endsWith( '.wordpress.com' );
 		const options = [
 			{
 				icon: comment,
@@ -320,13 +325,8 @@ export default function AgentDock( {
 					);
 				},
 			},
-			// Settings additionally require Dotcom hosting: the linked
-			// WordPress.com page only exists for Simple/WoA sites. Until the
-			// Jetpack package injects `isDotcomSite`, the site domain covers
-			// Simple sites (WoA runs on custom domains and is missed).
 			showWpAdminLinks &&
-				( inlineData?.isDotcomSite ??
-					siteSlug.endsWith( '.wordpress.com' ) ) && {
+				isDotcomSite && {
 					icon: cog,
 					title: __( 'AI Agent settings', __i18n_text_domain__ ),
 					onClick: () => {
