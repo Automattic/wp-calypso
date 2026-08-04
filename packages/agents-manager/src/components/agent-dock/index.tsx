@@ -264,9 +264,7 @@ export default function AgentDock( {
 
 	// Narrows falsy entries out of conditional option lists, unlike
 	// `.filter( Boolean )`, which would require an `as` assertion.
-	const isMenuOption = < T, >(
-		option: T | false | undefined
-	): option is T => Boolean( option );
+	const isMenuOption = < T, >( option: T | false | undefined ): option is T => Boolean( option );
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		// Guidelines and settings link to wp-admin/WordPress.com pages that
@@ -277,8 +275,7 @@ export default function AgentDock( {
 		// The linked WordPress.com settings page only exists for Simple/WoA
 		// sites. Until the Jetpack package injects `isDotcomSite`, the site
 		// domain covers Simple sites (WoA runs on custom domains and is missed).
-		const isDotcomSite =
-			inlineData?.isDotcomSite ?? siteSlug.endsWith( '.wordpress.com' );
+		const isDotcomSite = inlineData?.isDotcomSite ?? siteSlug.endsWith( '.wordpress.com' );
 		const options = [
 			{
 				icon: comment,
