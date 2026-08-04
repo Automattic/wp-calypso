@@ -273,9 +273,8 @@ export default function AgentDock( {
 		const inlineData = getAgentsManagerInlineData();
 		const siteSlug = inlineData?.site?.domain ?? window.location.hostname;
 		// The linked WordPress.com settings page only exists for Simple/WoA
-		// sites. Until the Jetpack package injects `isDotcomSite`, the site
-		// domain covers Simple sites (WoA runs on custom domains and is missed).
-		const isDotcomSite = inlineData?.isDotcomSite ?? siteSlug.endsWith( '.wordpress.com' );
+		// sites; the flag ships with this PR via the Jetpack package.
+		const isDotcomSite = inlineData?.isDotcomSite === true;
 		const options = [
 			{
 				icon: comment,

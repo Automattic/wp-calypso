@@ -28,7 +28,7 @@ declare const agentsManagerData:
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
-			/** Simple or WoA. Not yet injected — pending a Jetpack Agents Manager change. */
+			/** Simple or WoA — injected by the Jetpack Agents Manager package. */
 			isDotcomSite?: boolean;
 			/** The site's canonical identity, injected server-side. */
 			site?: { ID?: number; domain?: string };
