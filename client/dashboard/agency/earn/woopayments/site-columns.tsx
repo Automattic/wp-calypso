@@ -1,18 +1,27 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
-import { Button, Popover } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Button,
+	Popover,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import { memo, useState } from 'react';
-import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
-import { A4A_WOOPAYMENTS_SITE_SETUP_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { urlToSlug } from 'calypso/lib/url/http-utils';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { urlToSlug } from '../../../utils/url';
+import type { RecordTracksEvent } from './types';
 import type { WooPaymentsData } from '@automattic/api-core';
 
-import './style.scss';
+import './site-columns.scss';
+
+// Sites that still need setup link out to the classic A4A WooPayments site-setup flow, which has
+// not been ported to the dashboard.
+const A4A_WOOPAYMENTS_SITE_SETUP_LINK = '/woopayments/site-setup';
+
+const EmptyValueIndicator = () => <Text variant="muted">&mdash;</Text>;
 
 interface IneligibleReasonInfo {
 	message: string;
@@ -87,15 +96,19 @@ export const TimeframeCommissionsColumn = memo(
 );
 TimeframeCommissionsColumn.displayName = 'TimeframeCommissionsColumn';
 
-export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; siteId: number } ) => {
-	const dispatch = useDispatch();
-
+export const WooPaymentsStatusColumn = ( {
+	state,
+	siteId,
+	recordTracksEvent,
+}: {
+	state: string;
+	siteId: number;
+	recordTracksEvent: RecordTracksEvent;
+} ) => {
 	if ( ! state ) {
 		return (
 			<Button
-				onClick={ () => {
-					dispatch( recordTracksEvent( 'calypso_a4a_woopayments_setup_in_wp_admin' ) );
-				} }
+				onClick={ () => recordTracksEvent( 'calypso_a4a_woopayments_setup_in_wp_admin' ) }
 				variant="tertiary"
 				href={ `${ A4A_WOOPAYMENTS_SITE_SETUP_LINK }/?site_id=${ siteId }` }
 			>
@@ -127,11 +140,7 @@ export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; sit
 		return null;
 	}
 
-	return (
-		<div className="woopayments-status-column">
-			<Badge intent={ statusProps.statusType }>{ statusProps.statusText }</Badge>
-		</div>
-	);
+	return <Badge intent={ statusProps.statusType }>{ statusProps.statusText }</Badge>;
 };
 
 export const CommissionEligibilityColumn = ( {
@@ -176,8 +185,8 @@ export const CommissionEligibilityColumn = ( {
 	const reasonInfo = getIneligibleReasonInfo( statusProps.ineligibleReason ?? '' );
 
 	const popoverContent = (
-		<div className="woopayments-status-popover">
-			<p className="woopayments-status-popover__text">{ reasonInfo.message }</p>
+		<VStack className="woopayments-status-popover" spacing={ 3 }>
+			<Text>{ reasonInfo.message }</Text>
 			<Button
 				variant="link"
 				className="woopayments-status-popover__link"
@@ -186,17 +195,16 @@ export const CommissionEligibilityColumn = ( {
 			>
 				{ reasonInfo.linkText }
 			</Button>
-		</div>
+		</VStack>
 	);
 
 	return (
-		<div className="woopayments-status-column">
+		<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 			<Badge intent={ statusProps.statusType }>{ statusProps.statusText }</Badge>
 			{ statusProps.showInfoIcon && (
 				<>
 					<Button
 						ref={ setInfoIconAnchor }
-						className="woopayments-status-column__info-icon"
 						aria-label={ __( 'More information about commission eligibility' ) }
 						onClick={ () => setShowPopover( ( visible ) => ! visible ) }
 					>
@@ -204,7 +212,6 @@ export const CommissionEligibilityColumn = ( {
 					</Button>
 					{ showPopover && (
 						<Popover
-							className="woopayments-eligibility-popover"
 							anchor={ infoIconAnchor }
 							placement="bottom"
 							offset={ 12 }
@@ -216,6 +223,6 @@ export const CommissionEligibilityColumn = ( {
 					) }
 				</>
 			) }
-		</div>
+		</HStack>
 	);
 };

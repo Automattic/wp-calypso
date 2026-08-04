@@ -92,6 +92,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		agencyName: initialFormData.agencyName || '',
 		agencyUrl: initialFormData.agencyUrl || '',
 		phoneNumber: initialFormData.phoneNumber || '',
+		phone: initialFormData.phone,
 	} );
 
 	const [ showDuplicateModal, setShowDuplicateModal ] = useState( false );
@@ -110,6 +111,11 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		setFormData( ( prev ) => ( {
 			...prev,
 			phoneNumber: data.phoneNumberFull,
+			phone: {
+				phoneNumberFull: data.phoneNumberFull,
+				phoneNumber: data.phoneNumber,
+				countryCode: data.countryData?.code,
+			},
 		} ) );
 		setPhoneCountryCode( data.phoneNumber && data.countryData?.code ? data.countryData.code : '' );
 	};
@@ -152,7 +158,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 					} )
 				);
 				setIsProceeding( false );
-				onContinue( formData );
+				onContinue( dataToContinue );
 				return;
 			}
 
@@ -201,11 +207,11 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		dispatch( recordTracksEvent( 'calypso_a4a_agency_signup_form_internal_flags_bypass_clicked' ) );
 		setShowDuplicateModal( false );
 		onContinue( {
-			...formData,
+			...dataToContinue,
 			bypass_duplicate_check: true,
 			skip_hubspot: skipHubspot,
 		} as Partial< AgencyDetailsSignupPayload > );
-	}, [ dispatch, formData, onContinue, skipHubspot ] );
+	}, [ dispatch, dataToContinue, onContinue, skipHubspot ] );
 
 	const handleSkipHubspotToggle = useCallback(
 		( checked: boolean ) => {
@@ -362,7 +368,8 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				countrySelectProps={ {
 					id: 'country_code',
 				} }
-				initialCountryCode="US"
+				initialCountryCode={ initialFormData.phone?.countryCode || 'US' }
+				initialPhoneNumber={ initialFormData.phone?.phoneNumber }
 			/>
 
 			<div className="signup-contact-form__tos">
@@ -454,17 +461,18 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				</Modal>
 			) }
 
-			<UserContactSupportModalForm
-				show={ showSupportForm }
-				onClose={ () => setShowSupportForm( false ) }
-				defaultMessage={ supportDefaultMessage as string }
-				anonymousAtSignup={ {
-					name: supportFormName,
-					email: supportFormEmail ?? '',
-					agencyName: formData.agencyName ?? '',
-					agencyUrl: formData.agencyUrl ?? '',
-				} }
-			/>
+			{ showSupportForm && (
+				<UserContactSupportModalForm
+					onClose={ () => setShowSupportForm( false ) }
+					defaultMessage={ supportDefaultMessage as string }
+					anonymousAtSignup={ {
+						name: supportFormName,
+						email: supportFormEmail ?? '',
+						agencyName: formData.agencyName ?? '',
+						agencyUrl: formData.agencyUrl ?? '',
+					} }
+				/>
+			) }
 		</Form>
 	);
 };

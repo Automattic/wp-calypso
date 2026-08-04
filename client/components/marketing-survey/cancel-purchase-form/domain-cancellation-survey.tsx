@@ -28,6 +28,11 @@ interface Props {
 	onClose: () => void;
 	onSurveyComplete: () => void;
 	cancellationInProgress?: boolean;
+	/**
+	 * True once the cancel mutation has already fired at confirm-time, so this
+	 * survey is an optional questionnaire rather than the destructive step.
+	 */
+	cancellationCompleted?: boolean;
 }
 
 interface DomainCancellationReason {
@@ -146,11 +151,13 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 	}, [ selectedReason, cancellationReasons ] );
 
 	const renderButtons = () => {
-		const { disableButtons, cancellationInProgress } = props;
+		const { disableButtons, cancellationInProgress, cancellationCompleted } = props;
 		const disabled = disableButtons || ! selectedReason;
 		const isRemoveIntent = intent === 'remove';
+		// Once the cancellation has already fired, this survey performs nothing
+		// destructive — the buttons should read (and look) like a questionnaire.
 		const getCompleteLabel = () => {
-			if ( ! isSplitEnabled ) {
+			if ( cancellationCompleted || ! isSplitEnabled ) {
 				return translate( 'Submit' );
 			}
 			return isRemoveIntent
@@ -160,29 +167,38 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 		const getCompletingLabel = () =>
 			isRemoveIntent ? translate( 'Completing removal' ) : translate( 'Completing cancellation' );
 		const primaryLabel =
-			isSplitEnabled && cancellationInProgress ? getCompletingLabel() : getCompleteLabel();
+			isSplitEnabled && ! cancellationCompleted && cancellationInProgress
+				? getCompletingLabel()
+				: getCompleteLabel();
 
 		return (
 			<div className="cancel-purchase-form__actions">
 				<div className="cancel-purchase-form__buttons">
 					<Button
 						variant="primary"
-						isDestructive={ isSplitEnabled }
+						isDestructive={ isSplitEnabled && ! cancellationCompleted }
 						isBusy={ cancellationInProgress }
 						disabled={ disabled }
 						onClick={ handleSubmit }
 					>
 						{ primaryLabel }
 					</Button>
-					{ isSplitEnabled && disabled && (
+					{ ( cancellationCompleted || isSplitEnabled ) && disabled && (
 						<Button
 							variant="tertiary"
-							isDestructive
+							isDestructive={ ! cancellationCompleted }
 							isBusy={ cancellationInProgress }
 							disabled={ cancellationInProgress }
 							onClick={ handleSubmit }
 						>
-							{ isRemoveIntent ? translate( 'Skip and remove' ) : translate( 'Skip and cancel' ) }
+							{ ( () => {
+								if ( cancellationCompleted ) {
+									return translate( 'Skip survey' );
+								}
+								return isRemoveIntent
+									? translate( 'Skip and remove' )
+									: translate( 'Skip and cancel' );
+							} )() }
 						</Button>
 					) }
 				</div>

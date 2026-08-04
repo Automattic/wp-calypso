@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
@@ -8,15 +9,28 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useCallback } from 'react';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import wooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/woopayments/logo.svg';
-import { useDispatch } from 'calypso/state';
+import AddWooPaymentsToSite from 'calypso/dashboard/agency/earn/woopayments/add-woopayments-to-site';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import AddWooPaymentsToSite from '../../add-woopayments-to-site';
+
+// The empty state shows before any site has WooPayments, so nothing is excluded from the picker.
+const EXCLUDED_SITE_IDS: number[] = [];
 
 const WooPaymentsDashboardEmptyState = () => {
 	const dispatch = useDispatch();
+	const agencyId = useSelector( getActiveAgencyId ) ?? 0;
 	const { showSupportGuide } = useHelpCenter();
+
+	const recordTracks = useCallback(
+		( eventName: string, properties?: Record< string, unknown > ) => {
+			dispatch( recordTracksEvent( eventName, properties ) );
+		},
+		[ dispatch ]
+	);
 
 	return (
 		<div className="woopayments-dashboard-empty-state__content">
@@ -40,7 +54,12 @@ const WooPaymentsDashboardEmptyState = () => {
 								<Text weight={ 600 }>{ __( 'Add WooPayments to a site for free' ) }</Text>
 								<Text variant="muted">{ __( 'Start by picking the site' ) }</Text>
 							</VStack>
-							<AddWooPaymentsToSite />
+							<AddWooPaymentsToSite
+								agencyId={ agencyId }
+								excludedSiteIds={ EXCLUDED_SITE_IDS }
+								recordTracksEvent={ recordTracks }
+								navigate={ ( url ) => page.redirect( url ) }
+							/>
 						</HStack>
 					</CardBody>
 				</Card>

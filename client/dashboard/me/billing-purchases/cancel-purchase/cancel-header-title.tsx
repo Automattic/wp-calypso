@@ -1,11 +1,12 @@
 import { __ } from '@wordpress/i18n';
-import { DisplayVariant } from '../../../utils/purchase';
+import { CancelIntent, DisplayVariant } from '../../../utils/purchase';
 import { CANCELLATION_OFFER_STEP } from './cancel-purchase-form/steps';
 import { getCancellationHeading } from './get-confirmation-copy';
 import type { Purchase } from '@automattic/api-core';
 
 interface CancelHeaderTitleProps {
 	displayVariant: DisplayVariant;
+	intent: CancelIntent | null;
 	purchase: Purchase;
 	surveyStep?: string;
 	surveyShown?: boolean;
@@ -13,6 +14,7 @@ interface CancelHeaderTitleProps {
 
 export default function CancelHeaderTitle( {
 	displayVariant,
+	intent,
 	purchase,
 	surveyStep,
 	surveyShown,
@@ -20,12 +22,14 @@ export default function CancelHeaderTitle( {
 	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
 		return __( 'Thanks for your feedback' );
 	}
-	// Once the cancel mutation has resolved and the user is on the survey,
-	// the cancellation has already happened — reflect that in the title.
-	if ( surveyShown && displayVariant === 'auto-renew' ) {
+	// Only the cancel intents fire their mutation at confirm-time, so only they
+	// have actually happened by the time the survey renders. Keying on `intent`
+	// rather than `displayVariant` matters because displayVariant falls back to
+	// 'cancel' for no-intent deep links, which still submit at survey-end.
+	if ( surveyShown && intent === 'auto-renew' ) {
 		return __( 'Auto-renew disabled' );
 	}
-	if ( surveyShown && displayVariant === 'cancel' ) {
+	if ( surveyShown && intent === 'cancel' ) {
 		return __( 'Cancellation confirmed' );
 	}
 	return getCancellationHeading( {

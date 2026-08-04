@@ -712,7 +712,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 							disabled={ isCancelling }
 							onClick={ this.onSubmit }
 						>
-							{ translate( 'No, thanks' ) }
+							{ translate( 'Skip survey' ) }
 						</GutenbergButton>
 					) }
 				</>
@@ -792,7 +792,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 						disabled={ isCancelling }
 						onClick={ this.onSubmit }
 					>
-						{ translate( 'No, thanks' ) }
+						{ translate( 'Skip survey' ) }
 					</GutenbergButton>
 				) }
 			</>

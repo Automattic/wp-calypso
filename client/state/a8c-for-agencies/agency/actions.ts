@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 // Required for modular state.
 import 'calypso/state/a8c-for-agencies/init';
-import { A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG } from 'calypso/a8c-for-agencies/sections/partner-directory/lib/lead-matching-visibility';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeActionOptions } from 'calypso/state/notices/types';
 import { APIError, Agency, AgencyThunkAction, UserBillingType } from '../types';
@@ -152,13 +151,6 @@ export function receiveAgencies( agencies: Agency[] ): AgencyThunkAction {
 			// Enable the Partner Directory section
 			if ( ! config.isEnabled( 'a4a-partner-directory' ) && newAgency.partner_directory.allowed ) {
 				config.enable( 'a4a-partner-directory' );
-			}
-
-			if (
-				! config.isEnabled( A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG ) &&
-				newAgency.lead_matching?.allowed === true
-			) {
-				config.enable( A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG );
 			}
 		}
 	};

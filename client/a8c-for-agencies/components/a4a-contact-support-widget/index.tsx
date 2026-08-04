@@ -43,15 +43,16 @@ export default function A4AContactSupportWidget() {
 	return window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT ? (
 		<MigrationContactSupportForm show={ showUserSupportForm } onClose={ onCloseUserSupportForm } />
 	) : (
-		<UserContactSupportModalForm
-			show={ showUserSupportForm }
-			onClose={ onCloseUserSupportForm }
-			defaultMessage={
-				window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT
-					? migrationOfferDefaultMessage
-					: undefined
-			}
-			defaultProduct={ defaultProduct }
-		/>
+		showUserSupportForm && (
+			<UserContactSupportModalForm
+				onClose={ onCloseUserSupportForm }
+				defaultMessage={
+					window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT
+						? migrationOfferDefaultMessage
+						: undefined
+				}
+				defaultProduct={ defaultProduct }
+			/>
+		)
 	);
 }
