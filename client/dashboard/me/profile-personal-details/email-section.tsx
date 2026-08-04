@@ -49,8 +49,6 @@ export default function EmailSection( {
 	onValidationChange,
 }: EmailSectionProps ) {
 	const mutation = cancelPendingEmailChangeMutation();
-	// Also true while the banner's resend or cancellation is running, so the two controls that
-	// offer a cancellation can't both fire, and neither can race a resend.
 	const isEmailWritePending = useIsEmailWritePending();
 
 	const { mutate: cancelPendingEmail } = useMutation( {

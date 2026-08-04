@@ -1,7 +1,8 @@
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { QueryClient, defaultShouldDehydrateQuery, type Query } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
+import { dehydrateOptions } from './dehydrate-options';
 import { startSiteCollisionListener } from './site-collision-listener';
 
 // Open to augmentation: apps consuming this package add their own meta by extending
@@ -73,29 +74,6 @@ let persistence: { userId: number; promise: Promise< void >; disable: () => void
  * Memoized per user, so callers can invoke it freely (e.g. from an effect).
  * While the user is unknown we neither restore nor persist.
  */
-// What is written to storage, and what is left out of it.
-//
-// A paused mutation is persisted by default, but nothing here registers mutation defaults or
-// calls `resumePausedMutations`, so a restored one has no function to run and nothing to resume
-// it. It would sit in the cache as permanently pending, holding any scope it declared and
-// counting towards `useIsMutating` for the rest of the session.
-export const dehydrateOptions = {
-	shouldRedactErrors: () => false,
-	shouldDehydrateMutation: () => false,
-	shouldDehydrateQuery: ( query: Query ) => {
-		const persist = query.meta?.persist;
-		if ( persist === false ) {
-			return false;
-		}
-		// Gate the predicate behind the default check so it is never handed the
-		// data of a query that hasn't succeeded.
-		if ( ! defaultShouldDehydrateQuery( query ) ) {
-			return false;
-		}
-		return typeof persist === 'function' ? persist( query.state.data ) : true;
-	},
-};
-
 export function getPersistQueryClientPromise( userId?: number ): Promise< void > {
 	if ( userId === undefined ) {
 		return Promise.resolve();

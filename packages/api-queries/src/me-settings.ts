@@ -18,14 +18,9 @@ const emailWriteOptions = {
 
 export const emailWriteFilters = { mutationKey: emailWriteOptions.mutationKey };
 
-// `includesEmail` opts a save into the ordering above; callers saving unrelated settings should
-// not queue behind an email resend.
-export const userSettingsMutation = ( {
-	includesEmail = false,
-}: { includesEmail?: boolean } = {} ) =>
+export const userSettingsMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'user-settings-update' },
-		...( includesEmail ? emailWriteOptions : {} ),
 		mutationFn: updateUserSettings,
 		onSuccess: ( newData, variables ) => {
 			queryClient.setQueryData(
@@ -41,6 +36,16 @@ export const userSettingsMutation = ( {
 				clearQueryClient();
 			}
 		},
+	} );
+
+// The same write, for a form that can carry `user_email` and so has to be ordered against the
+// controls above. Its own factory rather than a flag on the one above, so a caller opts in by
+// reaching for it rather than by remembering.
+export const userEmailSettingsMutation = () =>
+	mutationOptions( {
+		...userSettingsMutation(),
+		...emailWriteOptions,
+		meta: { statId: 'user-settings-email-update' },
 	} );
 
 export const cancelPendingEmailChangeMutation = () =>

@@ -1,5 +1,5 @@
 import { QueryClient, dehydrate, onlineManager } from '@tanstack/react-query';
-import { dehydrateOptions } from '../query-client';
+import { dehydrateOptions } from '../dehydrate-options';
 
 describe( 'cache persistence', () => {
 	test( 'persists queries but not a mutation left paused by going offline', async () => {

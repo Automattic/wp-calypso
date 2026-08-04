@@ -1,5 +1,6 @@
 import {
 	isAutomatticianQuery,
+	userEmailSettingsMutation,
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
@@ -37,12 +38,9 @@ export default function PersonalDetailsSection() {
 
 	const snackbar = { success: __( 'Settings saved.' ), error: { source: 'server' as const } };
 	const mutation = useMutation( withSnackbar( userSettingsMutation(), snackbar ) );
-	// Only a save that carries `user_email` is ordered against the resend and cancellation
-	// controls. Kept as its own instance rather than switching one mutation's options, which an
-	// in-flight save would pick up.
-	const emailMutation = useMutation(
-		withSnackbar( userSettingsMutation( { includesEmail: true } ), snackbar )
-	);
+	// Two instances rather than one whose options change with the payload, which a save already
+	// in flight would pick up.
+	const emailMutation = useMutation( withSnackbar( userEmailSettingsMutation(), snackbar ) );
 
 	const data = useMemo( () => ( { ...userSettings, ...edits } ), [ userSettings, edits ] );
 
