@@ -346,7 +346,7 @@ class StatsModule extends Component {
 					toggleControl={ toggleControl }
 					multiHeader={ isAllTime }
 					mainItemLabel={ mainItemLabel }
-					showLeftIcon={ path === 'authors' }
+					showLeftIcon={ path === 'authors' || path === 'videoplays' }
 					listItemClassName={ listItemClassName }
 					hasNoBackground={ hasNoBackground }
 					overlay={
