@@ -34,12 +34,16 @@ const App: React.FC = () => {
 	} );
 
 	const [ currentTheme, setCurrentTheme ] = useState< 'light' | 'dark' >(
-		'light'
+		currentDemo === 'sidebar' ? 'dark' : 'light'
 	);
 
 	// Save to localStorage whenever demo changes
 	useEffect( () => {
 		localStorage.setItem( 'selectedDemo', currentDemo );
+	}, [ currentDemo ] );
+
+	useEffect( () => {
+		setCurrentTheme( currentDemo === 'sidebar' ? 'dark' : 'light' );
 	}, [ currentDemo ] );
 
 	return (
@@ -205,7 +209,9 @@ const App: React.FC = () => {
 			{ currentDemo === 'site-spec' && (
 				<SiteSpecDemo currentTheme={ currentTheme } />
 			) }
-			{ currentDemo === 'sidebar' && <SidebarDemo /> }
+			{ currentDemo === 'sidebar' && (
+				<SidebarDemo currentTheme={ currentTheme } />
+			) }
 		</>
 	);
 };
