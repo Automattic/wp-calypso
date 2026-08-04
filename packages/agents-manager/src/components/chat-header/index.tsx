@@ -3,9 +3,9 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { close, moreVertical, chevronLeft, Icon } from '@wordpress/icons';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
-import { Minimize } from '../icons';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
+import { Minimize } from '../icons';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
