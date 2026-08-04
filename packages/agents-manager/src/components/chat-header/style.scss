@@ -79,7 +79,7 @@
 
 	// The extra `.components-button` out-specifies wp's item padding.
 	.components-button.components-dropdown-menu__menu-item {
-		padding: 6px $grid-unit-10;
+		padding: 6px 8px;
 		border-radius: $radius-medium;
 
 		&:hover:not( :disabled ):not( [aria-disabled='true'] ),
