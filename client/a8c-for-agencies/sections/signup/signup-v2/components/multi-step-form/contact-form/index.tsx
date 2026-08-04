@@ -92,6 +92,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		agencyName: initialFormData.agencyName || '',
 		agencyUrl: initialFormData.agencyUrl || '',
 		phoneNumber: initialFormData.phoneNumber || '',
+		phone: initialFormData.phone,
 	} );
 
 	const [ showDuplicateModal, setShowDuplicateModal ] = useState( false );
@@ -110,6 +111,11 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		setFormData( ( prev ) => ( {
 			...prev,
 			phoneNumber: data.phoneNumberFull,
+			phone: {
+				phoneNumberFull: data.phoneNumberFull,
+				phoneNumber: data.phoneNumber,
+				countryCode: data.countryData?.code,
+			},
 		} ) );
 		setPhoneCountryCode( data.phoneNumber && data.countryData?.code ? data.countryData.code : '' );
 	};
@@ -362,7 +368,8 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				countrySelectProps={ {
 					id: 'country_code',
 				} }
-				initialCountryCode="US"
+				initialCountryCode={ initialFormData.phone?.countryCode || 'US' }
+				initialPhoneNumber={ initialFormData.phone?.phoneNumber }
 			/>
 
 			<div className="signup-contact-form__tos">

@@ -53,7 +53,6 @@ export default function useSubmitSignup() {
 			const data = {
 				...payload,
 				referer,
-				phone: { phoneNumberFull: payload.phoneNumber, phoneNumber: payload.phoneNumber },
 			};
 
 			if ( shouldRedirectToWPCOM ) {
