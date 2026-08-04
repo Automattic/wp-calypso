@@ -9,6 +9,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { getTransferFailureMessage } from '../../../../utils/atomic-transfer-outcome';
 import type { Step } from '../../types';
 import type { AtomicSoftwareStatus, OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
@@ -110,7 +111,7 @@ const BundleInstallPlugins: Step = function BundleInstallPlugins( { navigation }
 						error: 'transfer took too long',
 						code: 'transfer_timeout',
 					} );
-					throw new Error( 'transfer timeout' );
+					throw new Error( getTransferFailureMessage( 'timeout' ) );
 				}
 
 				requestAtomicSoftwareStatus( site.ID, softwareSet );
