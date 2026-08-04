@@ -270,11 +270,14 @@ export default function AgentDock( {
 		// Guidelines and settings link to wp-admin/WordPress.com pages that
 		// Calypso-hosted chats can't resolve.
 		const isInWpAdmin = isWpAdmin();
+
 		const inlineData = getAgentsManagerInlineData();
 		const siteSlug = inlineData?.site?.domain ?? window.location.hostname;
+
 		// The linked WordPress.com settings page only exists for Simple/WoA
 		// sites; the flag ships with this PR via the Jetpack package.
 		const isDotcomSite = inlineData?.isDotcomSite === true;
+
 		const options = [
 			{
 				icon: comment,
