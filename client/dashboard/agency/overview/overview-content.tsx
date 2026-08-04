@@ -1,5 +1,6 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { PendingTierCard, RejectedTierCard } from './application-status-cards';
 import TierOverviewCard from './tier-overview-card';
 import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
 import type { AgencyApprovalStatus } from '@automattic/api-core';
@@ -45,19 +46,24 @@ export default function AgencyOverviewContent( {
 
 	return (
 		<VStack spacing={ spacing } justify="flex-start">
-			<TierOverviewCard
-				tierId={ tierId }
-				influencedRevenue={ influencedRevenue }
-				isPending={ isPending }
-				isRejected={ isRejected }
-				tiersHref={ links.tiers }
-				contactSupportHref={ links.contactSupport }
-				useRouterLink={ useRouterLink }
-				onScheduleCall={ onScheduleCall }
-				isSchedulingCall={ isSchedulingCall }
-				onRelaunchTour={ onRelaunchTour }
-				recordTracksEvent={ recordTracksEvent }
-			/>
+			{ isRejected && <RejectedTierCard contactSupportHref={ links.contactSupport } /> }
+			{ isPending && (
+				<PendingTierCard
+					onRelaunchTour={ onRelaunchTour }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) }
+			{ ! isRejected && ! isPending && (
+				<TierOverviewCard
+					tierId={ tierId }
+					influencedRevenue={ influencedRevenue }
+					tiersHref={ links.tiers }
+					useRouterLink={ useRouterLink }
+					onScheduleCall={ onScheduleCall }
+					isSchedulingCall={ isSchedulingCall }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) }
 		</VStack>
 	);
 }

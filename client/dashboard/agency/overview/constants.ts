@@ -30,7 +30,7 @@ export const TIER_OVERVIEW_CONTENT: Record< AgencyTierType, TierOverviewContent 
 	},
 	'vip-pro-agency-partner': {
 		description: __(
-			'Free agency hosting, a dedicated Partner Manager, priority support, and co-marketing.'
+			'Everything in Pro, plus higher WordPress VIP referral commissions and annual extension credits.'
 		),
 		hasPartnerManager: true,
 	},

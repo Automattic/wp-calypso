@@ -50,9 +50,7 @@ export const agencyQuery = () =>
 			return agency;
 		},
 		// Agency membership rarely changes within a session, so we avoid
-		// refetching on every mount, focus, and route-guard check. Not persisted,
-		// so a page reload always revalidates.
-		meta: { persist: false },
+		// refetching on every mount, focus, and route-guard check.
 		staleTime: 5 * 60 * 1000,
 	} );
 
