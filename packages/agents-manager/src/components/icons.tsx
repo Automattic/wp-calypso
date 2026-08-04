@@ -41,11 +41,7 @@ export const Minimize = ( { size = 24, color = 'currentColor', className }: Icon
 	);
 };
 
-export const SwitchToFloating = ( {
-	size = 24,
-	color = 'currentColor',
-	className,
-}: IconProps ) => {
+export const SwitchToFloating = ( { size = 24, color = 'currentColor', className }: IconProps ) => {
 	return (
 		<SVG
 			className={ className }
@@ -77,11 +73,7 @@ export const SwitchToFloating = ( {
 	);
 };
 
-export const SwitchToSidebar = ( {
-	size = 24,
-	color = 'currentColor',
-	className,
-}: IconProps ) => {
+export const SwitchToSidebar = ( { size = 24, color = 'currentColor', className }: IconProps ) => {
 	return (
 		<SVG
 			className={ className }
@@ -102,4 +94,3 @@ export const SwitchToSidebar = ( {
 		</SVG>
 	);
 };
-
