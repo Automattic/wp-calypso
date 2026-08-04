@@ -171,10 +171,17 @@ export class DomainSearchComponent {
 	}
 
 	/**
-	 * Clicks on the button to use a domain I already own
+	 * Clicks on the button to use a domain I already own.
+	 *
+	 * The CTA has two copy variants depending on state: the top-bar "Use a domain I own"
+	 * link (shown once a search has been performed, or on mobile) and the empty-state card
+	 * "Already have a domain? Bring it over to WordPress.com." Match either.
 	 */
 	async clickUseADomainIAlreadyOwn(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'Use a domain I own' } ).click();
+		await this.page
+			.getByRole( 'button', { name: /Use a domain I own|Already have a domain/ } )
+			.first()
+			.click();
 	}
 
 	/**
