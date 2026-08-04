@@ -1,4 +1,4 @@
-import { Badge } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 import {
 	Card,
 	CardBody,
@@ -135,7 +135,7 @@ export default function AmplifyScoreCard() {
 						<Text as="code" variant="muted" size={ 12 }>
 							{ SAMPLE_URL }
 						</Text>
-						<Badge type="success">{ __( 'Audit complete' ) }</Badge>
+						<Badge intent="success">{ __( 'Audit complete' ) }</Badge>
 					</HStack>
 
 					<ToggleGroupControl

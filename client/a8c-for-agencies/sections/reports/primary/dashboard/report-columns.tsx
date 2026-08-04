@@ -1,9 +1,9 @@
-import { type BadgeType, Tooltip } from '@automattic/components';
+import { Tooltip } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
-import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import { getTimeframeText } from 'calypso/a8c-for-agencies/sections/reports/lib/timeframes';
 import FormattedDate from 'calypso/components/formatted-date';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
@@ -29,10 +29,10 @@ export const ReportStatusColumn = ( { status }: { status: ReportStatus } ) => {
 	const translate = useTranslate();
 
 	const statusConfig = {
-		pending: { type: 'info', text: translate( 'Preparing' ) },
-		processed: { type: 'success', text: translate( 'Ready to send' ) },
-		sent: { type: 'success', text: translate( 'Sent' ) },
-		error: { type: 'error', text: translate( 'Error' ) },
+		pending: { intent: 'info' as const, text: translate( 'Preparing' ) },
+		processed: { intent: 'success' as const, text: translate( 'Ready to send' ) },
+		sent: { intent: 'success' as const, text: translate( 'Sent' ) },
+		error: { intent: 'error' as const, text: translate( 'Error' ) },
 	};
 
 	const config = statusConfig[ status ];
@@ -41,7 +41,7 @@ export const ReportStatusColumn = ( { status }: { status: ReportStatus } ) => {
 		return <EmptyValueIndicator />;
 	}
 
-	return <StatusBadge statusProps={ { children: config.text, type: config.type as BadgeType } } />;
+	return <Badge intent={ config.intent }>{ config.text }</Badge>;
 };
 
 export const ReportDateColumn = ( { date }: { date: number | null } ) => {
