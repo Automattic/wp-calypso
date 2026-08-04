@@ -18,6 +18,7 @@ import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-age
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isWpAdmin } from '../../utils/is-wp-admin';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
@@ -317,20 +318,23 @@ export default function AgentDock( {
 					);
 				},
 			},
-			showWpAdminLinks && {
-				icon: cog,
-				title: __( 'AI Agent settings', __i18n_text_domain__ ),
-				onClick: () => {
-					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
-						type: 'ai_agent_settings',
-					} );
-					window.open(
-						`https://my.wordpress.com/sites/${ window.location.hostname }/settings/ai-tools`,
-						'_blank',
-						'noreferrer'
-					);
+			// Settings additionally require Dotcom hosting: the linked
+			// WordPress.com page only exists for Simple/WoA sites.
+			showWpAdminLinks &&
+				getAgentsManagerInlineData()?.isDotcomSite === true && {
+					icon: cog,
+					title: __( 'AI Agent settings', __i18n_text_domain__ ),
+					onClick: () => {
+						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+							type: 'ai_agent_settings',
+						} );
+						window.open(
+							`https://my.wordpress.com/sites/${ window.location.hostname }/settings/ai-tools`,
+							'_blank',
+							'noreferrer'
+						);
+					},
 				},
-			},
 		].filter( Boolean );
 
 		// Sidebar docking only makes sense in wp-admin where a block-editor
