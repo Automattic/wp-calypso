@@ -34052,6 +34052,7 @@ __metadata:
     postcss: "npm:^8.5.15"
     postcss-cli: "npm:^9.0.1"
     postcss-custom-properties: "npm:^12.1.11"
+    postcss-scss: "npm:^4.0.9"
     prettier: "npm:wp-prettier@3.0.3"
     react: "npm:19.2.7"
     react-dom: "npm:19.2.7"
