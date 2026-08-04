@@ -1,8 +1,8 @@
-import JetpackLogo from '../../marketplace/exclusive-offers/images/jetpack.svg';
-import PressableLogo from '../../marketplace/exclusive-offers/images/pressable.svg';
-import VIPLogo from '../../marketplace/exclusive-offers/images/vip.svg';
-import WooLogo from '../../marketplace/exclusive-offers/images/woo.svg';
-import WordPressDotComLogo from '../../marketplace/exclusive-offers/images/wordpressdotcom.svg';
+import JetpackLogo from '../../marketplace/exclusive-offers/images/jetpack-descriptor.svg';
+import PressableLogo from '../../marketplace/exclusive-offers/images/pressable-descriptor.svg';
+import VIPLogo from '../../marketplace/exclusive-offers/images/vip-descriptor.svg';
+import WooLogo from '../../marketplace/exclusive-offers/images/woo-descriptor.svg';
+import WordPressDotComLogo from '../../marketplace/exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import type { ResourceItem } from './types';
 import type { AgencyResource } from '@automattic/api-core';
 import type { ReactNode } from 'react';
@@ -25,7 +25,7 @@ function getProductLogo( relatedProduct: string ): ReactNode | null {
 		return null;
 	}
 
-	return <img src={ logo.src } alt={ logo.alt } style={ { width: 'auto', height: '16px' } } />;
+	return <img src={ logo.src } alt={ logo.alt } style={ { width: 'auto', height: '24px' } } />;
 }
 
 /**

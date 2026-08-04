@@ -1,0 +1,16 @@
+.exclusive-offers-card-logo {
+	min-block-size: 24px;
+	min-inline-size: 0;
+}
+
+.exclusive-offers-card-logo img {
+	display: block;
+	inline-size: auto;
+	block-size: 24px;
+	max-inline-size: 160px;
+	object-fit: contain;
+}
+
+.exclusive-offers-card-logo img.exclusive-offers-card-logo-compact {
+	block-size: 16px;
+}

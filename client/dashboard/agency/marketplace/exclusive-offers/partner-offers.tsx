@@ -16,6 +16,8 @@ import { filterOptions, partnerOffers } from './constants';
 import type { PartnerOffer, RecordTracksEvent } from './types';
 import type { View, Field } from '@wordpress/dataviews';
 
+import './style.scss';
+
 const VIEW_TERMS_URL = 'https://automattic.com/for-agencies/program-incentives';
 
 const initialView: View = {
@@ -52,7 +54,15 @@ function PartnerOfferCard( {
 			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
 					<HStack>
-						{ item.logo }
+						<HStack
+							className="exclusive-offers-card-logo"
+							spacing={ 0 }
+							justify="flex-start"
+							alignment="center"
+							expanded={ false }
+						>
+							{ item.logo }
+						</HStack>
 						{ offerType?.label && <Badge>{ offerType.label }</Badge> }
 					</HStack>
 					<VStack spacing={ 1 }>
