@@ -29,18 +29,22 @@ const defaultAccountNames: TestAccountName[] = [
  *
  * A build type that runs a narrow group can list just the accounts it needs in
  * AUTHENTICATE_ACCOUNTS, or opt out of priming altogether by setting it to an empty value;
- * the ToS build does the latter. Anything else gets the default list above plus whichever
- * account this environment resolves `accountGivenByEnvironment` to, since the Gutenberg
- * edge, nightly and Atomic builds each run against a different one and it is the busiest
- * account of those runs.
+ * the ToS build does the latter.
+ *
+ * Whichever list is used, the account this environment resolves `accountGivenByEnvironment`
+ * to is added to it: the Gutenberg edge, nightly, CoBlocks and Atomic builds each run
+ * against a different one, and it is the busiest account of those runs. It comes from a
+ * static table, so resolving it here costs nothing.
  */
 function getAccountNamesToPrime(): TestAccountName[] {
+	let accountNames = defaultAccountNames;
+
 	// Read process.env rather than the envVariables getter: the getter returns an empty array
 	// both when the variable is unset and when it is set to an empty value, and those mean
 	// different things here.
 	if ( process.env.AUTHENTICATE_ACCOUNTS !== undefined ) {
 		try {
-			return envVariables.AUTHENTICATE_ACCOUNTS;
+			accountNames = envVariables.AUTHENTICATE_ACCOUNTS;
 		} catch ( error ) {
 			// An unknown account name throws. This runs while the file is being collected, so
 			// letting it escape would fail the run before a single spec starts.
@@ -48,13 +52,17 @@ function getAccountNamesToPrime(): TestAccountName[] {
 		}
 	}
 
-	const accountNames = [ ...defaultAccountNames ];
+	// An empty AUTHENTICATE_ACCOUNTS asks for no priming at all, so don't add back to it.
+	if ( accountNames.length === 0 ) {
+		return [];
+	}
+
 	try {
-		accountNames.push( getTestAccountByFeature( envToFeatureKey( envVariables ) ) );
+		return [ ...accountNames, getTestAccountByFeature( envToFeatureKey( envVariables ) ) ];
 	} catch {
 		// No account is mapped to this environment; whatever needs one logs in inline.
+		return accountNames;
 	}
-	return accountNames;
 }
 
 // Well under the 120s test timeout. A login takes about 5s, so this only trips when

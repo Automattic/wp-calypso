@@ -78,6 +78,8 @@ By default it primes the list in [`setup/prime-logins.setup.ts`](../setup/prime-
 export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,atomicUser,defaultUser
 ```
 
+Either list is primed alongside the account the current environment variables select, the one behind the `accountGivenByEnvironment` fixture.
+
 Set it to an empty value to skip priming altogether; whatever needs an account then logs in when it first runs.
 
 ### Use the mobile viewport
