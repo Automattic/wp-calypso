@@ -196,6 +196,25 @@ describe( 'account step email verification gate', () => {
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
 	} );
 
+	// A phone account is unverified because its address was generated for it, not because a link
+	// is sitting unopened in an inbox. Nothing here would help.
+	it( 'skips the gate for an unverified phone account', async () => {
+		const store = createStore(
+			rootReducer,
+			{
+				currentUser: {
+					id: USER_ID,
+					user: { ID: USER_ID, email: EMAIL, email_verified: false, phone_account: true },
+				},
+			},
+			applyMiddleware( thunkMiddleware )
+		);
+		const { submit } = renderUser( store );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'skips the gate when the flag is off', async () => {
 		mockConfig.enabledFlags.clear();
 		const { submit } = renderUser( makeStore( false ) );

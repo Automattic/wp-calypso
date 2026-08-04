@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useState } from '@wordpress/element';
@@ -24,11 +24,7 @@ import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import {
-	getCurrentUserId,
-	isCurrentUserEmailVerified,
-	isUserLoggedIn,
-} from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from './email-verification';
@@ -36,6 +32,7 @@ import { gateScope } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
+import { useEmailVerificationGate } from './use-email-verification-gate';
 import { useSocialService } from './use-social-service';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
@@ -77,14 +74,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 
-	const gateEnabled =
-		config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW;
-	// `/me` decides this, so the gate holds in any tab or session rather than only the one that
-	// signed up. It reaches email registrations and nothing else: the social endpoint creates
-	// accounts already verified, and phone — the one other unverified path — can't be registered
-	// from Calypso, which only ever posts to /users/new and /users/social/new.
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-	const isGated = gateEnabled && isLoggedIn && ! isEmailVerified;
+	const { isEnabled: gateEnabled, isGated } = useEmailVerificationGate( flow );
 	// Only for the view event, to size the returning-unverified cohort against fresh signups.
 	const [ isNewSignup, setIsNewSignup ] = useState( false );
 	const { socialServiceResponse } = useSocialService();
