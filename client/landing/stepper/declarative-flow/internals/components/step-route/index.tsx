@@ -9,7 +9,6 @@ import SignupHeader from 'calypso/signup/signup-header';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PRIVATE_STEPS } from '../../steps';
-import { useEmailVerificationGate } from '../../steps-repository/__user/use-email-verification-gate';
 import SurveyManager from '../survey-manager';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
 import type { Flow, FlowV2, Navigate, StepperStep } from '../../types';
@@ -33,15 +32,7 @@ const StepRoute = ( { step, flow, renderStep, navigate }: StepRouteProps ) => {
 
 	const loginUrl = useLoginUrlForFlow( { flow } );
 	const shouldAuthUser = step.requiresLoggedInUser && ! userIsLoggedIn;
-	// Being logged in isn't on its own enough to enter a protected step. `pending` counts as well
-	// as `gated`: on the first render the user object hasn't arrived, and letting that through is
-	// how an unverified user gets in. Elsewhere the hook answers `clear` and nothing changes.
-	const { status: emailVerificationStatus } = useEmailVerificationGate( flow.name );
-	const mustVerifyEmail =
-		step.requiresLoggedInUser &&
-		userIsLoggedIn &&
-		( emailVerificationStatus === 'gated' || emailVerificationStatus === 'pending' );
-	const shouldSkipRender = shouldAuthUser || mustVerifyEmail || ! stepContent;
+	const shouldSkipRender = shouldAuthUser || ! stepContent;
 
 	const useBuiltItInAuth = flow.__experimentalUseBuiltinAuth;
 
@@ -57,13 +48,14 @@ const StepRoute = ( { step, flow, renderStep, navigate }: StepRouteProps ) => {
 		}
 	}, [ loginUrl, shouldAuthUser, useBuiltItInAuth ] );
 
-	if ( useBuiltItInAuth && ( shouldAuthUser || mustVerifyEmail ) ) {
-		// Whichever sent them there, the step they asked for is where they go afterwards.
-		navigate(
-			PRIVATE_STEPS.USER.slug,
-			{ previousStep: stepData?.previousStep, nextStep: step.slug },
-			true
-		);
+	if ( useBuiltItInAuth && shouldAuthUser && ! userIsLoggedIn ) {
+		// If the current step requires the auth, it should become a next step after the auth.
+		const extraData = {
+			previousStep: stepData?.previousStep,
+			nextStep: step.slug,
+		};
+
+		navigate( PRIVATE_STEPS.USER.slug, extraData, true );
 		return null;
 	}
 
