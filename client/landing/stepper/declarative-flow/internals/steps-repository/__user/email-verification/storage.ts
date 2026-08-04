@@ -46,7 +46,7 @@ function read( scope: string ): GateRecord {
 	}
 }
 
-function write( scope: string, record: Partial< GateRecord > ): GateRecord {
+function write( scope: string, record: Partial< GateRecord > ): void {
 	const next = { ...read( scope ), ...record };
 	next.startedAt = next.startedAt || Date.now();
 	try {
@@ -54,7 +54,6 @@ function write( scope: string, record: Partial< GateRecord > ): GateRecord {
 	} catch {
 		// Ignore storage failures (private mode, quota); the state just won't persist.
 	}
-	return next;
 }
 
 // Called at account creation, before `/me` has caught up. Records only what the gate can't work
@@ -83,27 +82,21 @@ export function markGateShown( scope: string ): boolean {
 }
 
 /**
- * Claims the confirmation, returning how long the attempt took, or null if another tab claimed it
- * first. Every tab still finishes; only the claimant records the event.
+ * Claims the confirmation, returning how long the attempt took, or null if there is no unfinished
+ * attempt to claim — because no gate was shown, or because another tab got there first. Every tab
+ * still finishes; only the claimant records the event.
  *
  * The claim stays rather than being removed, so a late tab finds it taken instead of an empty
  * record it would mistake for a fresh attempt.
  */
 export function claimGateConfirmation( scope: string ): { secondsOnStep: number } | null {
 	const record = read( scope );
-	if ( record.confirmedAt ) {
+	if ( ! record.shownAt || record.confirmedAt ) {
 		return null;
 	}
 	const now = Date.now();
 	write( scope, { confirmedAt: now } );
-	return { secondsOnStep: Math.round( ( now - ( record.shownAt || now ) ) / 1000 ) };
-}
-
-// Someone who confirms elsewhere and returns finds `/me` already verified, so the gate never
-// mounts to close the attempt out. Whoever notices has to finish it instead.
-export function hasUnfinishedGateAttempt( scope: string ): boolean {
-	const record = read( scope );
-	return !! record.shownAt && ! record.confirmedAt;
+	return { secondsOnStep: Math.round( ( now - record.shownAt ) / 1000 ) };
 }
 
 // Persisted so a reload doesn't forget a lockout and reopen the button into a refusal.

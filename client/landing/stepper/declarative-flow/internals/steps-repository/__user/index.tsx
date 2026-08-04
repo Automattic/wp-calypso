@@ -16,6 +16,7 @@ import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { EVERY_TEN_SECONDS, useInterval } from 'calypso/lib/interval';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
@@ -28,13 +29,8 @@ import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/sel
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from './email-verification';
-import {
-	beginGateAttempt,
-	claimGateConfirmation,
-	gateScope,
-	hasUnfinishedGateAttempt,
-	isFreshSignupAttempt,
-} from './email-verification/storage';
+import { recordGateConfirmation } from './email-verification/confirmation';
+import { beginGateAttempt, gateScope, isFreshSignupAttempt } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
@@ -92,6 +88,15 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	}, [ gateStatus, gateScopeForUser ] );
 	// The latch is set by an effect, so cover the render that opened the gate too.
 	const activeScope = latchedScope ?? ( gateStatus === 'gated' ? gateScopeForUser : null );
+	// `/me` resolving a different user than the one last stored wipes local storage wholesale, so
+	// the attempt record can go missing between account creation and the gate opening. This tab
+	// knows what it did regardless, and puts the record back under the scope it can finally name.
+	const [ createdAccountHere, setCreatedAccountHere ] = useState( false );
+	useEffect( () => {
+		if ( createdAccountHere && activeScope ) {
+			beginGateAttempt( activeScope );
+		}
+	}, [ createdAccountHere, activeScope ] );
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -130,20 +135,21 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		} else if ( gateStatus === 'pending' ) {
 			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
 		} else if ( ! activeScope ) {
-			// The gate never opened, so nothing else will finish the attempt. The claim decides
-			// whether this is the one that records it.
-			if ( gateStatus === 'clear' && hasUnfinishedGateAttempt( gateScopeForUser ) ) {
-				const claim = claimGateConfirmation( gateScopeForUser );
-				if ( claim ) {
-					recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
-						flow,
-						seconds_on_step: claim.secondsOnStep,
-					} );
-				}
+			// Confirmed elsewhere, so the gate never opened to finish the attempt. Only `/me`
+			// saying verified counts — the flag being off is not a confirmation.
+			if ( gateStatus === 'verified' ) {
+				recordGateConfirmation( gateScopeForUser, flow );
 			}
 			navigation.submit?.();
 		}
 	}, [ dispatch, isLoggedIn, navigation, activeScope, gateStatus, gateScopeForUser, flow ] );
+
+	// One retry batch is finite and swallows its failure, so nothing would ask again — an outage
+	// or a slow replication would leave a spinner up for good.
+	useInterval(
+		() => dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction ),
+		isLoggedIn && gateStatus === 'pending' && EVERY_TEN_SECONDS
+	);
 
 	const locale = useFlowLocale();
 
@@ -164,6 +170,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		if ( gateEnabled ) {
 			// Records that an email really was just sent. It does not decide whether the gate opens.
 			beginGateAttempt( gateScope( flow, data.ID ) );
+			setCreatedAccountHere( true );
 			// The activation email from account creation is the one the gate asks for, so the gate
 			// sends nothing on arrival — this only records the send the server just made.
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
@@ -245,7 +252,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			<EmailVerificationGate
 				flow={ flow }
 				scope={ activeScope }
-				isNewSignup={ isFreshSignupAttempt( activeScope ) }
+				isNewSignup={ createdAccountHere || isFreshSignupAttempt( activeScope ) }
 				logo={ topBarLogo }
 				onDone={ () => navigation.submit?.() }
 			/>

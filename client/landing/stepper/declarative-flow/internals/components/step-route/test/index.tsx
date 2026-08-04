@@ -19,6 +19,7 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StepRoute from '../';
+import { useEmailVerificationGate } from '../../../steps-repository/__user/use-email-verification-gate';
 import type {
 	Flow,
 	StepperStep,
@@ -77,20 +78,31 @@ const fakeRenderStep = ( step: StepperStep ) => {
 interface RenderProps {
 	step: StepperStep;
 	renderStep?: ( step: StepperStep ) => JSX.Element | null;
+	flow?: typeof fakeFlow;
+	navigate?: jest.Mock;
 }
 
-const render = ( { step, renderStep = fakeRenderStep }: RenderProps ) => {
+const render = ( {
+	step,
+	renderStep = fakeRenderStep,
+	flow = fakeFlow,
+	navigate = jest.fn(),
+}: RenderProps ) => {
 	return renderWithProvider(
 		<MemoryRouter
 			basename="/setup"
 			initialEntries={ [ '/setup/some-flow/some-step-slug?param=example.com' ] }
 		>
 			<Suspense fallback={ null }>
-				<StepRoute step={ step } flow={ fakeFlow } renderStep={ renderStep } />
+				<StepRoute step={ step } flow={ flow } renderStep={ renderStep } navigate={ navigate } />
 			</Suspense>
 		</MemoryRouter>
 	);
 };
+
+jest.mock( '../../../steps-repository/__user/use-email-verification-gate', () => ( {
+	useEmailVerificationGate: jest.fn( () => ( { status: 'clear' } ) ),
+} ) );
 
 describe( 'StepRoute', () => {
 	// we need to save the original object for later to not affect tests from other files
@@ -106,6 +118,7 @@ describe( 'StepRoute', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		( useEmailVerificationGate as jest.Mock ).mockReturnValue( { status: 'clear' } );
 	} );
 
 	afterAll( () => {
@@ -144,6 +157,26 @@ describe( 'StepRoute', () => {
 			const { getByText } = render( { step: requiresLoginStep } );
 
 			await waitFor( () => expect( getByText( 'Step Content' ) ).toBeInTheDocument() );
+		} );
+
+		// Being logged in isn't enough on its own. Deciding this only inside the account step let
+		// anyone re-entering the flow — a new tab, a fresh session — walk straight past the gate.
+		it( 'routes a logged-in user who still has to verify their email to the account step', () => {
+			( isUserLoggedIn as jest.Mock ).mockReturnValue( true );
+			( useEmailVerificationGate as jest.Mock ).mockReturnValue( { status: 'gated' } );
+			const navigate = jest.fn();
+			const { queryByText } = render( {
+				step: requiresLoginStep,
+				flow: { ...fakeFlow, __experimentalUseBuiltinAuth: true },
+				navigate,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith(
+				'user',
+				expect.objectContaining( { nextStep: requiresLoginStep.slug } ),
+				true
+			);
+			expect( queryByText( 'Step Content' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

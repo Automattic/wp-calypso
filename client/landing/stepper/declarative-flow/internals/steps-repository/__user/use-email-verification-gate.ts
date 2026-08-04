@@ -6,7 +6,10 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 // `pending` is not a kind of `clear`: the user's ID survives a reload but the user object does
 // not, so there is a window where the account is logged in and nothing is known about it. Reading
 // those absent fields as an unverified email opens the gate onto a blank address.
-type GateStatus = 'pending' | 'clear' | 'gated';
+//
+// `verified` is not a kind of `clear` either. Only `/me` saying so means an attempt was actually
+// confirmed; `clear` also covers the flag being off, which is not the same thing at all.
+type GateStatus = 'pending' | 'clear' | 'verified' | 'gated';
 
 interface EmailVerificationGate {
 	// Account creation needs this before `/me` has answered anything.
@@ -31,13 +34,17 @@ export function useEmailVerificationGate( flow: string ): EmailVerificationGate 
 
 	const isEnabled = config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW;
 
+	// Verification is read before enablement, so turning the flag off mid-attempt can't be
+	// mistaken for the user having confirmed.
 	let status: GateStatus = 'clear';
-	if ( isEnabled ) {
-		if ( ! currentUser ) {
-			status = 'pending';
-		} else if ( ! currentUser.email_verified && ! currentUser.phone_account ) {
-			status = 'gated';
-		}
+	if ( currentUser?.email_verified ) {
+		status = 'verified';
+	} else if ( ! isEnabled ) {
+		status = 'clear';
+	} else if ( ! currentUser ) {
+		status = 'pending';
+	} else if ( ! currentUser.phone_account ) {
+		status = 'gated';
 	}
 
 	return { isEnabled, status };

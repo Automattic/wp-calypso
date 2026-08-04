@@ -313,6 +313,31 @@ describe( 'account step email verification gate', () => {
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
 	} );
 
+	// Turning the flag off is not the user having confirmed anything. Recording it as one would
+	// also burn the attempt, so a real confirmation later would go unrecorded.
+	it( 'does not record a confirmation when the flag goes off mid-attempt', async () => {
+		const shown = renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		shown.unmount();
+		jest.clearAllMocks();
+
+		mockConfig.enabledFlags.clear();
+		const off = renderUser( makeStore( false ) );
+		await waitFor( () => expect( recordTracksEvent ).not.toHaveBeenCalled() );
+		off.unmount();
+
+		// And the attempt is still there to be confirmed once the flag comes back.
+		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
+		renderUser( makeStore( true ) );
+
+		await waitFor( () =>
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_signup_email_verification_confirmed',
+				expect.anything()
+			)
+		);
+	} );
+
 	it( 'skips the gate when the flag is off', async () => {
 		mockConfig.enabledFlags.clear();
 		const { submit } = renderUser( makeStore( false ) );

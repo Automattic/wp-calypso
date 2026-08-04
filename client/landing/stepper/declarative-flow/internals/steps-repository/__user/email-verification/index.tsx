@@ -12,8 +12,9 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { recordGateConfirmation } from './confirmation';
 import { getInboxLink } from './inbox-links';
-import { claimGateConfirmation, markGateShown } from './storage';
+import { markGateShown } from './storage';
 import { useEmailVerification } from './use-email-verification';
 
 import './style.scss';
@@ -84,13 +85,7 @@ const EmailVerificationGate = ( { flow, scope, isNewSignup, logo, onDone }: Prop
 		}
 
 		hasSubmitted.current = true;
-		const claim = claimGateConfirmation( scope );
-		if ( claim ) {
-			recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
-				flow,
-				seconds_on_step: claim.secondsOnStep,
-			} );
-		}
+		recordGateConfirmation( scope, flow );
 		onDone();
 	}, [ flow, onDone, scope ] );
 
