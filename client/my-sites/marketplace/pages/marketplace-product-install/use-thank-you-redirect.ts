@@ -36,7 +36,7 @@ export function useThankYouRedirect( {
 	themeSlug: string;
 	wpOrgTheme: { id?: string } | null | undefined;
 	isThemeActive: boolean;
-	installedPlugin: { slug?: string; id?: string } | null | undefined;
+	installedPlugin: { slug?: string; id?: string; active?: boolean } | null | undefined;
 	pluginActive: boolean;
 	atomicFlow: boolean;
 	automatedTransferStatus: string | null;

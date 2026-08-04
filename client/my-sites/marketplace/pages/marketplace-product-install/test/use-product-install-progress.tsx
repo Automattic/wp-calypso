@@ -185,7 +185,12 @@ describe( 'useProductInstall progression', () => {
 			);
 		} );
 		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
-		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, { slug: 'give', id: 'give/give' } );
+		// The plugin goes over as the store has it, `active` included, so activatePlugin can skip the
+		// request for one that is already active.
+		expect( activatePlugin ).toHaveBeenCalledWith(
+			SITE_ID,
+			expect.objectContaining( { slug: 'give', id: 'give/give', active: false } )
+		);
 		expect( result.current.currentStep ).toBe( 2 );
 	} );
 
