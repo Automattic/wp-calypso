@@ -217,6 +217,22 @@ describe( 'EmailVerificationGate', () => {
 		expect( requestsPerRung ).toEqual( [ 30, 10, 20, 10, 20 ] );
 	} );
 
+	it( 'checks on focus, which is all a desktop mail client leaves to go on', () => {
+		jest.useFakeTimers();
+		render();
+		const poll = fetchCurrentUser as jest.Mock;
+
+		// Out to the slowest rung, where the next tick is minutes away.
+		[ 5, 5, 20, 30 ].forEach( ( minutes ) => advance( minutes * MINUTE ) );
+
+		// The tab was never hidden — verifying in another app raises no visibility change.
+		poll.mockClear();
+		act( () => {
+			window.dispatchEvent( new Event( 'focus' ) );
+		} );
+		expect( poll ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'polls at the opening rate again after a resend', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );

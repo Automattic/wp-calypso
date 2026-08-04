@@ -98,18 +98,33 @@ export function useEmailVerification( flow: string, scope: string ) {
 		}
 	};
 
-	// On becoming visible, check `/me` without waiting for the next poll tick.
+	// Coming back to this screen is the strongest signal there is that the link has just been
+	// opened, so check `/me` then rather than waiting for the next tick — which at the slowest
+	// rung is three minutes away. Focus as well as visibility: verifying in a desktop mail client
+	// never hides the tab, so `visibilitychange` alone would miss it. Only `visibilitychange`
+	// owns `isVisible`, since that decides whether the interval runs at all.
 	useEffect( () => {
-		const onVisibilityChange = () => {
-			const visible = document.visibilityState === 'visible';
-			setIsVisible( visible );
-			if ( visible && ! isVerified ) {
+		const checkNow = () => {
+			if ( ! isVerified ) {
+				// Concurrent calls collapse into one request via the in-flight guard in
+				// `fetchCurrentUser`, so overlapping with a visibility change costs nothing.
 				dispatch( fetchCurrentUser() );
 				syncPollDelay();
 			}
 		};
+		const onVisibilityChange = () => {
+			const visible = document.visibilityState === 'visible';
+			setIsVisible( visible );
+			if ( visible ) {
+				checkNow();
+			}
+		};
 		document.addEventListener( 'visibilitychange', onVisibilityChange );
-		return () => document.removeEventListener( 'visibilitychange', onVisibilityChange );
+		window.addEventListener( 'focus', checkNow );
+		return () => {
+			document.removeEventListener( 'visibilitychange', onVisibilityChange );
+			window.removeEventListener( 'focus', checkNow );
+		};
 	}, [ isVerified, dispatch, syncPollDelay ] );
 
 	useInterval(
