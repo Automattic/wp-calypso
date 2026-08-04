@@ -23,7 +23,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.LOCALE", "en")
-		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		// required in the CTRF report
 		param("env.BRANCH_NAME", "%teamcity.build.branch%")
 		param("PROJECT", "desktop")

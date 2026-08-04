@@ -110,8 +110,20 @@ export default defineConfig( {
 			testDir: './setup',
 		},
 		{
+			name: 'prime-logins',
+			testMatch: /prime-logins\.setup\.ts/,
+			testDir: './setup',
+			// Same context as the `chrome` project: priming must look to the backend like
+			// the e2e session it stands in for, down to the user agent suffix.
+			use: withCustomOptions( {
+				...devices[ 'Desktop Chrome HiDPI' ],
+				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
+				viewportName: 'desktop',
+			} ),
+		},
+		{
 			name: 'chrome',
-			dependencies: [ 'mailosaur-usage-check' ],
+			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
 			use: withCustomOptions( {
 				...devices[ 'Desktop Chrome HiDPI' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
@@ -120,7 +132,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'firefox',
-			dependencies: [ 'mailosaur-usage-check' ],
+			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
 			use: withCustomOptions( {
 				...devices[ 'Desktop Firefox' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Firefox' ].userAgent ),
@@ -129,7 +141,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'webkit',
-			dependencies: [ 'mailosaur-usage-check' ],
+			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
 			use: withCustomOptions( {
 				...devices[ 'Desktop Safari' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Safari' ].userAgent ),
@@ -138,7 +150,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'pixel',
-			dependencies: [ 'mailosaur-usage-check' ],
+			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
 			use: withCustomOptions( {
 				...devices[ 'Pixel 7' ],
 				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
@@ -148,7 +160,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'galaxy',
-			dependencies: [ 'mailosaur-usage-check' ],
+			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
 			use: withCustomOptions( {
 				...devices[ 'Galaxy S24' ],
 				userAgent: appendE2EUserAgent( devices[ 'Galaxy S24' ].userAgent ),
@@ -158,7 +170,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'iphone',
-			dependencies: [ 'mailosaur-usage-check' ],
+			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
 			use: withCustomOptions( {
 				...devices[ 'iPhone 15 Pro' ],
 				userAgent: appendE2EUserAgent( devices[ 'iPhone 15 Pro' ].userAgent ),
@@ -168,6 +180,8 @@ export default defineConfig( {
 		},
 		{
 			name: 'authentication',
+			// No 'prime-logins': these specs exercise the login flow itself, so warming
+			// the cookie cache would only add wall clock.
 			dependencies: [ 'mailosaur-usage-check' ],
 			retries: 0,
 			testDir: './specs/authentication',
