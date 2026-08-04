@@ -66,10 +66,6 @@ interface Props {
 	capabilities?: ProviderCapabilities;
 }
 
-// Narrows falsy entries out of conditional option lists, unlike
-// `.filter( Boolean )`, which would require an `as` assertion.
-const isMenuOption = < T, >( option: T | false | undefined ): option is T => Boolean( option );
-
 export default function AgentDock( {
 	emptyViewSuggestions = [],
 	markdownComponents = {},
@@ -342,7 +338,7 @@ export default function AgentDock( {
 					);
 				},
 			},
-		].filter( isMenuOption );
+		].filter( ( option ) => !! option );
 
 		// Sidebar docking only makes sense in wp-admin where a block-editor
 		// sidebar slot exists. On public reader-chat frontends there's no
@@ -373,7 +369,7 @@ export default function AgentDock( {
 						setIsDocked( true );
 					},
 				},
-		].filter( isMenuOption );
+		].filter( ( option ) => !! option );
 
 		// A second control set renders the switch option behind a divider.
 		return switchOptions.length ? [ options, switchOptions ] : [ options ];
