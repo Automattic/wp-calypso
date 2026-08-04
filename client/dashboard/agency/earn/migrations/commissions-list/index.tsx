@@ -1,5 +1,4 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, type ComponentType, type ReactNode, useState } from 'react';
@@ -15,27 +14,6 @@ type ActiveModal =
 	| { kind: 'request-review'; site: TaggedSite }
 	| null;
 
-// `type`/`layout` are the only viewport-dependent parts of the view: a table on
-// desktop, stacked list cards on narrow viewports.
-function responsiveViewParts( isDesktop: boolean ): Pick< View, 'type' | 'layout' > {
-	if ( ! isDesktop ) {
-		return { type: 'list', layout: {} };
-	}
-
-	return {
-		type: 'table',
-		layout: {
-			styles: {
-				site: { width: '40%' },
-				migratedOn: { width: '25%' },
-				reviewStatus: { width: '25%' },
-			},
-		},
-	};
-}
-
-// The stable, user-mutable parts of the view. `type`/`layout` are viewport-derived
-// and applied in `responsiveView`, so the placeholders here are always overridden.
 const INITIAL_VIEW: View = {
 	search: '',
 	filters: [],
@@ -47,7 +25,13 @@ const INITIAL_VIEW: View = {
 	titleField: 'site',
 	fields: [ 'migratedOn', 'reviewStatus' ],
 	type: 'table',
-	layout: {},
+	layout: {
+		styles: {
+			site: { width: '40%' },
+			migratedOn: { width: '25%' },
+			reviewStatus: { width: '25%' },
+		},
+	},
 };
 
 const DefaultTableWrapper = ( { children }: { children: ReactNode } ) => <>{ children }</>;
@@ -69,16 +53,7 @@ export default function MigrationsCommissionsList( {
 	locale: string;
 	TableWrapper?: ComponentType< { children: ReactNode } >;
 } ) {
-	const isDesktop = useViewportMatch( 'large' );
-
 	const [ view, setView ] = useState< View >( INITIAL_VIEW );
-
-	// `type`/`layout` follow the viewport; derive them at render so we don't sync
-	// derived state through an effect. User-driven view changes stay in `view`.
-	const responsiveView: View = useMemo(
-		() => ( { ...view, ...responsiveViewParts( isDesktop ) } ),
-		[ view, isDesktop ]
-	);
 
 	const [ activeModal, setActiveModal ] = useState< ActiveModal >( null );
 
@@ -139,8 +114,8 @@ export default function MigrationsCommissionsList( {
 	);
 
 	const { data, paginationInfo } = useMemo(
-		() => filterSortAndPaginate( items, responsiveView, fields ),
-		[ items, responsiveView, fields ]
+		() => filterSortAndPaginate( items, view, fields ),
+		[ items, view, fields ]
 	);
 
 	return (
@@ -148,14 +123,14 @@ export default function MigrationsCommissionsList( {
 			<TableWrapper>
 				<DataViews
 					data={ data }
-					view={ responsiveView }
+					view={ view }
 					onChangeView={ setView }
 					fields={ fields }
 					searchLabel={ __( 'Search by site' ) }
 					actions={ actions }
 					getItemId={ ( item ) => `${ item.id }` }
 					paginationInfo={ paginationInfo }
-					defaultLayouts={ { table: {}, list: {} } }
+					defaultLayouts={ { table: {} } }
 				>
 					<HStack
 						className="dataviews__view-actions commissions-list__view-actions"
@@ -163,7 +138,7 @@ export default function MigrationsCommissionsList( {
 						alignment="center"
 					>
 						<DataViews.Search />
-						{ isDesktop && <DataViews.ViewConfig /> }
+						<DataViews.ViewConfig />
 					</HStack>
 					<DataViews.Layout />
 					<DataViews.Footer />

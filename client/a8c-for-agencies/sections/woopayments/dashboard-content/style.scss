@@ -13,7 +13,7 @@
 		padding-block-start: 16px;
 		padding-inline: 16px;
 
-		@include break-large {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding-inline: 64px;
 		}
 	}
