@@ -1,11 +1,13 @@
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useCallback, useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-placeholder';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_WOOPAYMENTS_SITE_SETUP_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import MissingPaymentSettingsNotice from 'calypso/a8c-for-agencies/sections/referrals/common/missing-payment-settings-notice';
 import AddWooPaymentsToSite from 'calypso/dashboard/agency/earn/woopayments/add-woopayments-to-site';
 import useWooPaymentsDashboardData from 'calypso/dashboard/agency/earn/woopayments/use-woopayments-dashboard-data';
@@ -98,7 +100,11 @@ const WooPaymentsDashboard = () => {
 									agencyId={ agencyId }
 									excludedSiteIds={ excludedSiteIds }
 									recordTracksEvent={ recordTracks }
-									navigate={ ( url ) => page.redirect( url ) }
+									onSelectSite={ ( siteId ) =>
+										page.redirect(
+											addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, { site_id: siteId } )
+										)
+									}
 								/>
 							) }
 						</div>
