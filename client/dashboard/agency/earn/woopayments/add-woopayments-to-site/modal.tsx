@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -10,27 +9,39 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
-import {
-	A4A_WOOPAYMENTS_SITE_SETUP_LINK,
-	A4A_SITES_LINK,
-} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AddWooPaymentsToSiteTable, { type WooPaymentsSiteItem } from './add-site-table';
+import type { RecordTracksEvent } from '../types';
 
 import './style.scss';
 
-const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
-	const dispatch = useDispatch();
+// Adding WooPayments to a site links out to the classic A4A site-setup flow, which is not part of
+// the dashboard.
+const A4A_WOOPAYMENTS_SITE_SETUP_LINK = '/woopayments/site-setup';
+const A4A_SITES_LINK = '/sites';
 
+interface AddWooPaymentsToSiteModalProps {
+	agencyId: number;
+	excludedSiteIds: number[];
+	recordTracksEvent: RecordTracksEvent;
+	navigate: ( url: string ) => void;
+	onClose: () => void;
+}
+
+export default function AddWooPaymentsToSiteModal( {
+	agencyId,
+	excludedSiteIds,
+	recordTracksEvent,
+	navigate,
+	onClose,
+}: AddWooPaymentsToSiteModalProps ) {
 	const [ selectedSite, setSelectedSite ] = useState< WooPaymentsSiteItem | null >( null );
 
 	const handleAddSite = () => {
 		if ( selectedSite ) {
-			dispatch( recordTracksEvent( 'calypso_a4a_woopayments_add_site_button_click' ) );
-			page.redirect(
+			recordTracksEvent( 'calypso_a4a_woopayments_add_site_confirm_click' );
+			navigate(
 				addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, {
-					site_id: selectedSite?.rawSite.blog_id,
+					site_id: selectedSite.rawSite.blog_id,
 				} )
 			);
 		}
@@ -54,10 +65,8 @@ const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 								<a
 									href={ A4A_SITES_LINK }
 									onClick={ () =>
-										dispatch(
-											recordTracksEvent(
-												'calypso_a4a_woopayments_add_site_modal_sites_dashboard_click'
-											)
+										recordTracksEvent(
+											'calypso_a4a_woopayments_add_site_modal_sites_dashboard_click'
 										)
 									}
 								/>
@@ -66,8 +75,11 @@ const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 					) }
 				</Text>
 				<AddWooPaymentsToSiteTable
-					setSelectedSite={ setSelectedSite }
+					agencyId={ agencyId }
+					excludedSiteIds={ excludedSiteIds }
 					selectedSite={ selectedSite }
+					setSelectedSite={ setSelectedSite }
+					recordTracksEvent={ recordTracksEvent }
 				/>
 			</VStack>
 			<HStack className="woopayments-add-site-modal__footer" justify="flex-end" spacing={ 3 }>
@@ -85,6 +97,4 @@ const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 			</HStack>
 		</Modal>
 	);
-};
-
-export default AddWooPaymentsToSiteModal;
+}

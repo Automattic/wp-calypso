@@ -1,9 +1,17 @@
 import {
+	JetpackLicenseFilter,
+	JetpackLicenseSortField,
+	JetpackLicenseSortDirection,
+} from '@automattic/api-core';
+import {
 	activeAgencyQuery,
 	agencyProductsQuery,
 	agencyQuery,
 	agencyResourcesQuery,
 	agencySiteQuery,
+	agencySitesWithPluginsQuery,
+	agencyWooPaymentsDataQuery,
+	jetpackAgencyLicensesQuery,
 	mcpSettingsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -13,6 +21,7 @@ import {
 	siteSettingsQuery,
 	referralsQuery,
 	referralCommissionPayoutQuery,
+	tipaltiPayeeQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -291,6 +300,31 @@ export const earnWooPaymentsRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'WooPayments' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/woopayments',
+	loader: async () => {
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.id ) {
+			return;
+		}
+		const [ sitesWithPlugins, licenses ] = await Promise.all( [
+			queryClient.ensureQueryData(
+				agencySitesWithPluginsQuery( agency.id, [ 'woocommerce-payments/woocommerce-payments' ] )
+			),
+			queryClient.ensureQueryData(
+				jetpackAgencyLicensesQuery( agency.id, {
+					filter: JetpackLicenseFilter.Attached,
+					search: 'woopayments',
+					sortField: JetpackLicenseSortField.IssuedAt,
+					sortDirection: JetpackLicenseSortDirection.Descending,
+				} )
+			),
+		] );
+		if ( sitesWithPlugins.length > 0 || licenses.length > 0 ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyWooPaymentsDataQuery( agency.id ) ),
+				queryClient.ensureQueryData( tipaltiPayeeQuery( agency.id ) ),
+			] );
+		}
+	},
 } ).lazy( () =>
 	import( '../../agency/earn/woopayments' ).then( ( d ) =>
 		createLazyRoute( 'earn-woopayments' )( { component: d.default } )
