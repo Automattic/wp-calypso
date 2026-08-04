@@ -7,9 +7,7 @@ const STALE_CHAT_THRESHOLD = 24 * 60 * 60 * 1000; // 24 hours
 
 /**
  * An Odie-only chat stops accepting replies once its last message is older than
- * STALE_CHAT_THRESHOLD. Chats handed over to Zendesk are excluded: a Happiness Engineer can
- * legitimately reply days later, and those already age out through AGE_THRESHOLD in
- * `get-open-live-interactions`.
+ * STALE_CHAT_THRESHOLD. Chats handed over to Zendesk are excluded.
  *
  * Odie messages loaded from the server always carry `created_at`; the ones appended locally
  * — the message the user just sent and the bot's reply to it — never do. So a last message
