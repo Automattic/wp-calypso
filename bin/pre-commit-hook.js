@@ -6,6 +6,7 @@ const chalk = require( 'chalk' );
 
 const phpcsPath = getPathForCommand( 'phpcs' );
 const phpcbfPath = getPathForCommand( 'phpcbf' );
+const phpcsExclusions = '--exclude=WordPress.WP.EnqueuedResourceParameters';
 
 // Groups an array's items into an object keyed by the iteratee's return value.
 function groupBy( collection, iteratee ) {
@@ -146,7 +147,11 @@ toPHPCBF.forEach( ( file ) => console.log( `PHPCBF formatting staged file: ${ fi
 if ( toPHPCBF.length ) {
 	if ( phpcs ) {
 		try {
-			execSync( `${ quotedPath( phpcbfPath ) } --standard=WordPress ${ toPHPCBF.join( ' ' ) }` );
+			execSync(
+				`${ quotedPath( phpcbfPath ) } --standard=WordPress ${ phpcsExclusions } ${ toPHPCBF.join(
+					' '
+				) }`
+			);
 		} catch ( error ) {
 			// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
 			// https://github.com/squizlabs/PHP_CodeSniffer/blob/HEAD/src/Runner.php#L210
@@ -207,10 +212,14 @@ if ( toEslint.length ) {
 // and finally PHPCS
 if ( toPHPCS.length ) {
 	if ( phpcs ) {
-		const lintResult = spawnSync( quotedPath( phpcsPath ), [ '--standard=WordPress', ...toPHPCS ], {
-			shell: true,
-			stdio: 'inherit',
-		} );
+		const lintResult = spawnSync(
+			quotedPath( phpcsPath ),
+			[ '--standard=WordPress', phpcsExclusions, ...toPHPCS ],
+			{
+				shell: true,
+				stdio: 'inherit',
+			}
+		);
 
 		if ( lintResult.status ) {
 			linterFailure();
