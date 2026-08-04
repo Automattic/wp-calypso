@@ -189,8 +189,7 @@ export function activatePlugin( siteId, plugin ) {
 			// is already active. Only endpoints that attach `data.reason` can tell them apart;
 			// without it, assume a real failure rather than reporting a success we can't confirm.
 			if ( error?.data?.reason === 'already_active' ) {
-				successCallback( { ...plugin, active: true } );
-				return;
+				return successCallback( { ...plugin, active: true } );
 			}
 
 			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_FAILURE, error } );
@@ -256,8 +255,7 @@ export function deactivatePlugin( siteId, plugin ) {
 			// See the note in activatePlugin(): `deactivation_error` is just as generic, so the
 			// already-inactive case is only safe to treat as a success when the server says so.
 			if ( error?.data?.reason === 'already_inactive' ) {
-				successCallback( { ...plugin, active: false } );
-				return;
+				return successCallback( { ...plugin, active: false } );
 			}
 
 			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_FAILURE, error } );

@@ -320,7 +320,7 @@ describe( 'actions', () => {
 			expect( statBumps( 'calypso_plugin_activated', 'succeeded' ) ).toHaveLength( 0 );
 		} );
 
-		test( 'should dispatch success with the plugin marked active when it is already active', async () => {
+		test( 'should record one success with the plugin marked active when it is already active', async () => {
 			await activatePlugin( 2916284, alreadyActive )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
@@ -330,11 +330,6 @@ describe( 'actions', () => {
 				pluginId: 'alreadyactive/alreadyactive',
 				data: { ...alreadyActive, active: true },
 			} );
-		} );
-
-		test( 'should record one success and no failure when the plugin is already active', async () => {
-			await activatePlugin( 2916284, alreadyActive )( spy, getState );
-
 			expect( spy ).not.toHaveBeenCalledWith(
 				expect.objectContaining( { type: PLUGIN_ACTIVATE_REQUEST_FAILURE } )
 			);
@@ -424,7 +419,7 @@ describe( 'actions', () => {
 			expect( statBumps( 'calypso_plugin_deactivated', 'succeeded' ) ).toHaveLength( 0 );
 		} );
 
-		test( 'should dispatch success with the plugin marked inactive when it is already inactive', async () => {
+		test( 'should record one success with the plugin marked inactive when it is already inactive', async () => {
 			await deactivatePlugin( 2916284, alreadyInactive )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
@@ -434,11 +429,6 @@ describe( 'actions', () => {
 				pluginId: 'alreadyinactive/alreadyinactive',
 				data: { ...alreadyInactive, active: false },
 			} );
-		} );
-
-		test( 'should record one success and no failure when the plugin is already inactive', async () => {
-			await deactivatePlugin( 2916284, alreadyInactive )( spy, getState );
-
 			expect( spy ).not.toHaveBeenCalledWith(
 				expect.objectContaining( { type: PLUGIN_DEACTIVATE_REQUEST_FAILURE } )
 			);
