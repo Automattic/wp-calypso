@@ -9,6 +9,7 @@
  */
 import { isEnabled } from '@automattic/calypso-config';
 import { STAT_TYPE_CLICKS, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from '../../constants';
+import ALL_STATS_NOTICES from '../../stats-notices/all-notice-definitions';
 import { shouldGateStats } from '../use-should-gate-stats';
 import { shouldShowPaywallAfterGracePeriod, shouldShowPaywallNotice } from '../use-stats-purchases';
 
@@ -84,5 +85,26 @@ describe( 'with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
 
 		expect( shouldShowPaywallAfterGracePeriod( paidState, siteId ) ).toBe( false );
 		expect( shouldGateStats( paidState, siteId, STAT_TYPE_CLICKS ) ).toBe( false );
+	} );
+} );
+
+describe( 'commercial upgrade notice with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
+	const commercialNotice = ALL_STATS_NOTICES.find(
+		( notice ) => notice.noticeId === 'commercial_site_upgrade'
+	);
+
+	it( 're-enables the registry entry so the paywall lockout banner can render', () => {
+		expect( commercialNotice?.disabled ).toBe( false );
+		expect(
+			commercialNotice?.isVisibleFunc( {
+				siteId,
+				isOdysseyStats: false,
+				isSiteJetpackNotAtomic: true,
+				isCommercial: true,
+				isVip: false,
+				hasPaidStats: false,
+				showPaywallNotice: true,
+			} )
+		).toBe( true );
 	} );
 } );

@@ -14,7 +14,6 @@ const freeJetpackSite: StatsNoticeProps = {
 	isSiteJetpackNotAtomic: true,
 	isVip: false,
 	hasPaidStats: false,
-	supportCommercialUse: false,
 };
 
 describe( 'free_site_upgrade notice visibility', () => {
@@ -38,6 +37,16 @@ describe( 'free_site_upgrade notice visibility', () => {
 		).toBe( true );
 	} );
 
+	it( 'shows in Odyssey Stats', () => {
+		expect(
+			freeSiteUpgradeNotice?.isVisibleFunc( {
+				...freeJetpackSite,
+				isSiteJetpackNotAtomic: false,
+				isOdysseyStats: true,
+			} )
+		).toBe( true );
+	} );
+
 	it( 'shows for a WPCOM site once it has significant views', () => {
 		const wpcomSite = {
 			...freeJetpackSite,
@@ -48,6 +57,22 @@ describe( 'free_site_upgrade notice visibility', () => {
 			freeSiteUpgradeNotice?.isVisibleFunc( { ...wpcomSite, hasSignificantViews: true } )
 		).toBe( true );
 		expect( freeSiteUpgradeNotice?.isVisibleFunc( wpcomSite ) ).toBe( false );
+	} );
+
+	it( 'defers to the full-size WPCOM upsell and skips P2 and Team51 sites', () => {
+		const wpcomSite = {
+			...freeJetpackSite,
+			isSiteJetpackNotAtomic: false,
+			isWpcom: true,
+			hasSignificantViews: true,
+		};
+		expect( freeSiteUpgradeNotice?.isVisibleFunc( { ...wpcomSite, hasWpcomUpsell: true } ) ).toBe(
+			false
+		);
+		expect( freeSiteUpgradeNotice?.isVisibleFunc( { ...wpcomSite, isP2: true } ) ).toBe( false );
+		expect( freeSiteUpgradeNotice?.isVisibleFunc( { ...wpcomSite, isOwnedByTeam51: true } ) ).toBe(
+			false
+		);
 	} );
 
 	it( 'stays hidden for VIP sites', () => {

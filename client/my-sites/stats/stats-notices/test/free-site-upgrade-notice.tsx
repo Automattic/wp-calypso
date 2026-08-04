@@ -61,9 +61,10 @@ jest.mock( '@automattic/i18n-utils', () => ( {
 	useHasEnTranslation: () => () => true,
 } ) );
 
+const mockUseNoticeVisibilityMutation = jest.fn( () => ( { mutateAsync: jest.fn() } ) );
 jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => ( {
 	__esModule: true,
-	default: () => ( { mutateAsync: jest.fn() } ),
+	default: ( ...args: unknown[] ) => mockUseNoticeVisibilityMutation( ...args ),
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
@@ -95,5 +96,16 @@ describe( 'FreeSiteUpgradeNotice', () => {
 		renderNotice( true );
 
 		expect( screen.getByText( 'Want to get the most out of Jetpack Stats?' ) ).toBeVisible();
+	} );
+
+	it( 'postpones dismissals of its own notice id for a year', () => {
+		renderNotice();
+
+		expect( mockUseNoticeVisibilityMutation ).toHaveBeenCalledWith(
+			123,
+			'free_site_upgrade',
+			'postponed',
+			365 * 24 * 3600
+		);
 	} );
 } );

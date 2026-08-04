@@ -40,8 +40,8 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 		'gdpr_cookie_consent',
 		'client_paid_plan_purchase_success',
 		'client_free_plan_purchase_success',
-		// The disabled `do_you_love_jetpack_stats` and `commercial_site_upgrade` entries
-		// compute to hidden, so their position here is inert.
+		// `commercial_site_upgrade` must stay ahead of `free_site_upgrade`: if the commercial
+		// paywall kill switch is ever flipped back, its lockout banner has to win.
 		'do_you_love_jetpack_stats',
 		'commercial_site_upgrade',
 		'free_site_upgrade',
@@ -69,12 +69,10 @@ export const processConflictNotices = ( notices: Notices ): Notices => {
 };
 
 /**
- * `free_site_upgrade` replaced the `do_you_love_jetpack_stats` and
- * `commercial_site_upgrade` notices, so a site that dismissed or postponed either
- * of them shouldn't meet the successor until that hiding lapses. The server only
- * reports an id as hidden while a dismissal is in effect, so a missing key means
- * "not dismissed". Drop this inheritance if the legacy ids ever leave the server
- * response for another reason.
+ * `free_site_upgrade` replaced the two upsell notices below, so a site that dismissed or
+ * postponed either of them shouldn't meet the successor until that hiding lapses. The server
+ * only reports an id as hidden while a dismissal is in effect, so a missing key means
+ * "not dismissed". Drop this inheritance if the legacy ids ever leave the server response.
  */
 export const normalizeNoticesVisibility = ( payload: Partial< Notices > ): Notices => {
 	const notices = { ...DEFAULT_NOTICES_VISIBILITY, ...payload };

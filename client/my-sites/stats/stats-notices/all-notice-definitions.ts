@@ -1,4 +1,5 @@
 import { NoticeIdType } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { COMMERCIAL_PAYWALL_KILLED } from 'calypso/state/stats/plan-usage/constants';
 import CommercialSiteUpgradeNotice from './commercial-site-upgrade-notice';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
@@ -34,8 +35,6 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: CommercialSiteUpgradeNotice,
 		noticeId: 'commercial_site_upgrade',
-		// Disabled: replaced by `free_site_upgrade`. With the commercial paywall gone,
-		// commercial-flagged sites are upsold under the same rules as everyone else.
 		isVisibleFunc: ( {
 			isOdysseyStats,
 			isWpcom,
@@ -69,12 +68,14 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				!! ( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) && ! hasPaidStats
 			);
 		},
-		disabled: true,
+		// Superseded by `free_site_upgrade` while the commercial paywall stays killed. Flipping
+		// COMMERCIAL_PAYWALL_KILLED re-enables this entry so the paywall lockout variant can
+		// render again — it outranks `free_site_upgrade` in the dashboard_notices conflict group.
+		disabled: COMMERCIAL_PAYWALL_KILLED,
 	},
 	{
 		component: DoYouLoveJetpackStatsNotice,
 		noticeId: 'do_you_love_jetpack_stats',
-		// Disabled: replaced by `free_site_upgrade`.
 		isVisibleFunc: ( {
 			isOdysseyStats,
 			isWpcom,
@@ -106,6 +107,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				! isVip
 			);
 		},
+		// Superseded by `free_site_upgrade`.
 		disabled: true,
 	},
 	{
