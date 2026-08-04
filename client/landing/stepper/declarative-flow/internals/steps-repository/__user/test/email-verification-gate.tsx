@@ -15,7 +15,6 @@ import initialReducer from 'calypso/state/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
-import { beginGate, gateScope } from '../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
@@ -80,7 +79,6 @@ const mockUseAccountCreationExperiment = useAccountCreationExperiment as unknown
 const USER_ID = 1;
 const EMAIL = 'onboarder@example.com';
 const GATE_HEADING = 'Verify your email';
-const SCOPE = gateScope( 'onboarding', USER_ID );
 
 interface ReducerWithAdd {
 	addReducer( keys: string[], reducer: unknown ): ReducerWithAdd;
@@ -120,8 +118,6 @@ const renderUser = ( store: ReturnType< typeof makeStore > ) => {
 describe( 'account step email verification gate', () => {
 	beforeEach( () => {
 		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
-		// Most cases start already past account creation, with the gate open (pending).
-		beginGate( SCOPE );
 		mockUsePartnerBranding.mockReturnValue( {
 			hasCustomBranding: false,
 			partnerConfig: null,
@@ -158,21 +154,21 @@ describe( 'account step email verification gate', () => {
 		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
 	} );
 
-	it( 're-shows the gate after a refresh while it is still pending', async () => {
+	// The point of reading `/me` rather than a marker: a new tab starts with empty storage, and
+	// used to sail straight past the gate.
+	it( 'holds an unverified account with nothing stored at all', async () => {
 		const first = renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 		first.unmount();
+		sessionStorage.clear();
 
-		// A refresh remounts with the pending marker still set (unresolved).
 		const { submit } = renderUser( makeStore( false ) );
 
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'marks the gate pending on email account creation, then shows it once logged in', async () => {
-		// Nothing pending yet; the user has not created an account.
-		sessionStorage.clear();
+	it( 'shows the gate once an email account is created and logged in', async () => {
 		const store = makeLoggedOutStore();
 		const { submit } = renderUser( store );
 
@@ -191,10 +187,10 @@ describe( 'account step email verification gate', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	// Social signups and existing sessions never call `beginGate`; this is what keeps them out.
-	it( 'skips the gate when nothing is pending', async () => {
-		sessionStorage.clear();
-		const { submit } = renderUser( makeStore( false ) );
+	// The whole of what keeps social signups out: the social endpoint creates accounts with
+	// `is_email_unverified => false`, so they arrive here already verified.
+	it( 'skips the gate for a verified account', async () => {
+		const { submit } = renderUser( makeStore( true ) );
 
 		await waitFor( () => expect( submit ).toHaveBeenCalled() );
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();

@@ -24,11 +24,15 @@ import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserId,
+	isCurrentUserEmailVerified,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from './email-verification';
-import { beginGate, gateScope, isGatePending, resolveGate } from './email-verification/storage';
+import { gateScope } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
@@ -75,12 +79,14 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	const gateEnabled =
 		config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW;
-	// The scope of the gate this attempt must clear, or null. In-session state is the source of
-	// truth, so a failed storage write can't skip the gate; storage only restores it on refresh.
-	const [ pendingScope, setPendingScope ] = useState< string | null >( null );
-	const storedScope = gateEnabled ? gateScope( flow, userId ) : null;
-	const activeScope =
-		pendingScope ?? ( storedScope && isGatePending( storedScope ) ? storedScope : null );
+	// `/me` decides this, so the gate holds in any tab or session rather than only the one that
+	// signed up. It reaches email registrations and nothing else: the social endpoint creates
+	// accounts already verified, and phone — the one other unverified path — can't be registered
+	// from Calypso, which only ever posts to /users/new and /users/social/new.
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const isGated = gateEnabled && isLoggedIn && ! isEmailVerified;
+	// Only for the view event, to size the returning-unverified cohort against fresh signups.
+	const [ isNewSignup, setIsNewSignup ] = useState( false );
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -114,12 +120,12 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	useEffect( () => {
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
-		} else if ( ! activeScope ) {
-			// While a gate is active it renders instead and owns the transition via `onDone`,
-			// so this only submits once nothing is pending.
+		} else if ( ! isGated ) {
+			// While the gate is up it renders instead and owns the transition via `onDone`,
+			// so this only submits once the email is verified.
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, activeScope ] );
+	}, [ dispatch, isLoggedIn, navigation, isGated ] );
 
 	const locale = useFlowLocale();
 
@@ -138,11 +144,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 		setSignupIsNewUser( data.ID );
 		if ( gateEnabled ) {
-			// Open the gate. The activation email from signup is the one to confirm, so the gate
-			// sends nothing on arrival — and claims no cooldown, since the server hasn't either.
-			const gateKey = gateScope( flow, data.ID );
-			beginGate( gateKey );
-			setPendingScope( gateKey );
+			setIsNewSignup( true );
+			// The activation email from account creation is the one the gate asks for, so the gate
+			// sends nothing on arrival — this only records the send the server just made.
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
 				flow,
 				is_resend: false,
@@ -217,16 +221,14 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		</>
 	);
 
-	if ( isLoggedIn && activeScope ) {
+	if ( isGated ) {
 		return (
 			<EmailVerificationGate
 				flow={ flow }
-				scope={ activeScope }
+				scope={ gateScope( flow, userId ) }
+				isNewSignup={ isNewSignup }
 				logo={ topBarLogo }
-				onDone={ () => {
-					resolveGate( activeScope );
-					navigation.submit?.();
-				} }
+				onDone={ () => navigation.submit?.() }
 			/>
 		);
 	}

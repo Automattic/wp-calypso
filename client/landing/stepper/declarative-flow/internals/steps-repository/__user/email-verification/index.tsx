@@ -25,13 +25,15 @@ interface Props {
 	flow: string;
 	// Storage scope for this attempt, computed once by the account step.
 	scope: string;
+	// Whether the account was created in this session, as opposed to a returning unverified one.
+	isNewSignup: boolean;
 	// Partner/Woo branding, so the top bar doesn't change when the gate replaces the form.
 	logo?: ReactNode;
 	// Called once the user confirms; the account step owns eligibility and what follows.
 	onDone: () => void;
 }
 
-const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
+const EmailVerificationGate = ( { flow, scope, isNewSignup, logo, onDone }: Props ) => {
 	const { __ } = useI18n();
 	const email = useSelector( getCurrentUserEmail );
 	const { isVerified, sendStatus, secondsUntilResend, resend } = useEmailVerification(
@@ -58,11 +60,17 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 
 	// The denominator for everything that follows: `provider` names which variant was shown
 	// (`none` when the address has no inbox link), and a view with no confirmation is a drop-off.
+	// `is_new_signup` separates the signups this was built for from anyone who arrived unverified
+	// from an earlier one, whose size is otherwise a guess.
 	useEffect( () => {
 		if ( markGateShown( scope ) ) {
-			recordTracksEvent( 'calypso_signup_email_verification_view', { flow, provider } );
+			recordTracksEvent( 'calypso_signup_email_verification_view', {
+				flow,
+				provider,
+				is_new_signup: isNewSignup,
+			} );
 		}
-	}, [ scope, flow, provider ] );
+	}, [ scope, flow, provider, isNewSignup ] );
 
 	// The gate replaces the account form without a route change, so move focus onto its heading
 	// — otherwise it strands on the unmounted submit button and the screen change goes unsaid.

@@ -18,7 +18,6 @@ import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import EmailVerificationGate from '..';
 import { renderStep } from '../../../test/helpers';
-import { beginGate, isGatePending } from '../storage';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 
@@ -68,12 +67,14 @@ const advance = ( ms: number ) =>
 	} );
 
 const render = ( { onDone = jest.fn(), logo }: { onDone?: jest.Mock; logo?: ReactNode } = {} ) => {
-	// The account step opens the gate on account creation; simulate that once.
-	if ( ! isGatePending( SCOPE ) ) {
-		beginGate( SCOPE );
-	}
 	const result = renderStep(
-		<EmailVerificationGate flow={ FLOW } scope={ SCOPE } logo={ logo } onDone={ onDone } />,
+		<EmailVerificationGate
+			flow={ FLOW }
+			scope={ SCOPE }
+			isNewSignup
+			logo={ logo }
+			onDone={ onDone }
+		/>,
 		{
 			initialState: currentUserState( false ),
 		}
@@ -112,14 +113,17 @@ describe( 'EmailVerificationGate', () => {
 	} );
 
 	it( 'offers an inbox button that deep-links to a known provider', async () => {
-		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ jest.fn() } />, {
-			initialState: {
-				currentUser: {
-					id: USER_ID,
-					user: { ID: USER_ID, email: 'onboarder@gmail.com', email_verified: false },
+		renderStep(
+			<EmailVerificationGate flow={ FLOW } scope={ SCOPE } isNewSignup onDone={ jest.fn() } />,
+			{
+				initialState: {
+					currentUser: {
+						id: USER_ID,
+						user: { ID: USER_ID, email: 'onboarder@gmail.com', email_verified: false },
+					},
 				},
-			},
-		} );
+			}
+		);
 
 		const openButton = await screen.findByRole( 'link', { name: 'Open email inbox' } );
 		expect( openButton.getAttribute( 'href' ) ).toContain( 'mail.google.com' );
@@ -178,7 +182,7 @@ describe( 'EmailVerificationGate', () => {
 
 		renderWithProvider(
 			<MemoryRouter>
-				<EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ onDone } />
+				<EmailVerificationGate flow={ FLOW } scope={ SCOPE } isNewSignup onDone={ onDone } />
 			</MemoryRouter>,
 			{ store }
 		);
