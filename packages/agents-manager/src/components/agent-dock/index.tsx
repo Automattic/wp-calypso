@@ -262,6 +262,12 @@ export default function AgentDock( {
 		}
 	};
 
+	// Narrows falsy entries out of conditional option lists, unlike
+	// `.filter( Boolean )`, which would require an `as` assertion.
+	const isMenuOption = < T, >(
+		option: T | false | undefined
+	): option is T => Boolean( option );
+
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		// Guidelines and settings link to wp-admin/WordPress.com pages that
 		// Calypso-hosted chats can't resolve.
@@ -340,7 +346,7 @@ export default function AgentDock( {
 						);
 					},
 				},
-		].filter( Boolean );
+		].filter( isMenuOption );
 
 		// Sidebar docking only makes sense in wp-admin where a block-editor
 		// sidebar slot exists. On public reader-chat frontends there's no
@@ -371,10 +377,10 @@ export default function AgentDock( {
 						setIsDocked( true );
 					},
 				},
-		].filter( Boolean );
+		].filter( isMenuOption );
 
 		// A second control set renders the switch option behind a divider.
-		return ( switchOptions.length ? [ options, switchOptions ] : [ options ] ) as ChatHeaderOptions;
+		return switchOptions.length ? [ options, switchOptions ] : [ options ];
 	};
 
 	const chatHeaderOptions = getChatHeaderOptions();

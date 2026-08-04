@@ -54,7 +54,10 @@
 	}
 
 	// Show the focus ring for keyboard focus only, not pointer clicks.
+	// wp draws the ring via outline or box-shadow depending on the runtime
+	// version, so clear both.
 	.components-button:focus:not( :focus-visible ) {
+		box-shadow: none;
 		outline: none;
 	}
 }
