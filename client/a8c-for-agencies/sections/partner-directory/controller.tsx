@@ -10,7 +10,6 @@ import {
 	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
 	PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 } from './constants';
-import { isLeadMatchingSectionVisible } from './lib/lead-matching-visibility';
 import PartnerDirectory from './partner-directory';
 
 export const partnerDirectoryDashboardContext: Callback = ( context, next ) => {
@@ -19,14 +18,12 @@ export const partnerDirectoryDashboardContext: Callback = ( context, next ) => {
 	const hasDirectoryApproval = agency?.profile?.partner_directory_application?.directories.some(
 		( { status } ) => status === 'approved'
 	);
-	const canAccessLeadMatching = isLeadMatchingSectionVisible();
-
 	const validSections = [
 		PARTNER_DIRECTORY_DASHBOARD_SLUG,
-		// Agency details is hidden if the agency has no directories approved
+		// Agency details and Lead matching are hidden if the agency has no directories approved
 		...( hasDirectoryApproval ? [ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ] : [] ),
 		PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
-		...( canAccessLeadMatching ? [ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG ] : [] ),
+		...( hasDirectoryApproval ? [ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG ] : [] ),
 	];
 
 	const selectedSection = context.params.section ?? PARTNER_DIRECTORY_DASHBOARD_SLUG;
