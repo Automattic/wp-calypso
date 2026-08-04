@@ -111,7 +111,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 
 	const learnMoreLink = isWPCOMSite
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
-		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
+		: 'https://jetpack.com/support/jetpack-stats/free-or-paid/#what-a-paid-plan-adds';
 
 	const paidStatsRemoveHardcoding = hasEnTranslation(
 		'Finesse your scaling-up strategy with detailed insights and data. Upgrade to the %s plan for a richer understanding and smarter decision-making.'
