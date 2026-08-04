@@ -69,8 +69,13 @@ for ( const accountName of new Set( getAccountNamesToPrime() ) ) {
 			// can't be caught here, and a setup project that ends with a failing test makes
 			// Playwright skip every project that depends on it. That would cost the whole
 			// run instead of one account's inline login.
+			const priming = getAccount( page, accountName, { isPriming: true } );
+			// When the deadline wins, the login keeps running until teardown closes the page
+			// and then rejects. Playwright charges an unhandled rejection to the test, which
+			// is the failure the deadline exists to avoid, so keep a handler on it.
+			priming.catch( () => {} );
 			await Promise.race( [
-				getAccount( page, accountName, { isPriming: true } ),
+				priming,
 				new Promise( ( _resolve, reject ) => {
 					timer = setTimeout(
 						() => reject( new Error( `timed out after ${ PRIME_TIMEOUT }ms` ) ),

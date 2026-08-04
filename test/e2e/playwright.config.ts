@@ -113,12 +113,17 @@ export default defineConfig( {
 			name: 'prime-logins',
 			testMatch: /prime-logins\.setup\.ts/,
 			testDir: './setup',
-			// Same context as the `chrome` project: priming must look to the backend like
-			// the e2e session it stands in for, down to the user agent suffix.
+			// Borrows the `chrome` context so the login carries the e2e user agent suffix the
+			// backend expects. The cookies it leaves are per account, not per device, so the
+			// mobile projects reuse them too.
 			use: withCustomOptions( {
 				...devices[ 'Desktop Chrome HiDPI' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
 				viewportName: 'desktop',
+				// A priming failure is swallowed so it can't skip the dependent projects, which
+				// also means the default `on failure` rules would throw the artifacts away.
+				trace: 'on',
+				video: 'on',
 			} ),
 		},
 		{
