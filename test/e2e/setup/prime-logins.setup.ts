@@ -5,7 +5,7 @@ import {
 	type TestAccountName,
 } from '@automattic/calypso-e2e';
 import { getAccount } from '../lib/get-account';
-import { test as setup } from '../lib/pw-base';
+import { fixtureAccounts, test as setup } from '../lib/pw-base';
 
 // Accounts logged in as before the suite starts, so the specs read cookies instead of all
 // logging in at once.
@@ -15,18 +15,11 @@ import { test as setup } from '../lib/pw-base';
 // log in through the UI concurrently, against a calypso.live container that has just been
 // created, which is where most of the CI login timeouts come from.
 //
-// Keep this in step with the account fixtures in ../lib/pw-base.ts. An account missing here
-// still works: getAccount falls back to logging in inline, which is what every account did
-// before this project existed. smsUser is left out on purpose, its 2FA code costs a
-// Mailosaur email and only a couple of specs need it.
+// The account fixtures own this list, so adding a fixture primes it. An account missing from
+// it still works: getAccount falls back to logging in inline, which is what every account did
+// before this project existed.
 const defaultAccountNames: TestAccountName[] = [
-	'atomicUser',
-	'calypsoPreReleaseUser',
-	'defaultUser',
-	'gutenbergSimpleSiteUser',
-	'i18nUser',
-	'p2User',
-	'simpleSiteFreePlanUser',
+	...Object.values( fixtureAccounts ),
 	// Not a fixture, but the account many specs select through a criteria override.
 	'simpleSitePersonalPlanUser',
 ];
