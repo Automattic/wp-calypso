@@ -164,9 +164,7 @@ const CommercialSiteUpgradeNotice = ( {
 		? ( translate( 'You need to upgrade to a commercial license to continue using %(product)s', {
 				args: { product: STATS_PRODUCT_NAME },
 		  } ) as string )
-		: ( translate( 'Do you love %(product)s?', {
-				args: { product: STATS_PRODUCT_NAME },
-		  } ) as string );
+		: translate( 'Unlock premium features' );
 
 	return (
 		<div

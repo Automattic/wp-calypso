@@ -102,9 +102,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 		? ( translate( 'Grow faster with %(product)s', {
 				args: { product: STATS_PRODUCT_NAME },
 		  } ) as string )
-		: ( translate( 'Do you love %(product)s?', {
-				args: { product: STATS_PRODUCT_NAME },
-		  } ) as string );
+		: ( translate( 'Unlock premium features' ) as string );
 	const freeTitle = translate( 'Want to get the most out of %(product)s?', {
 		args: { product: STATS_PRODUCT_NAME },
 	} ) as string;
