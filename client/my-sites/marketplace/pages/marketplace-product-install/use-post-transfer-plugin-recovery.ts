@@ -49,9 +49,8 @@ export function usePostTransferPluginRecovery( {
 			inFlightRef.current = true;
 			refreshed
 				.then( () => {
-					// An endpoint with no way to report the benign already-active case answers a redundant
-					// activation with a plain failure, which leaves `active` false in the store. The
-					// refreshed list is what settles it either way.
+					// An endpoint that cannot report the benign already-active case answers a redundant
+					// activation with a plain failure, which never flips `active`. Only the refresh does.
 					const plugin = getPluginOnSite( store.getState(), siteId, installedPluginSlug );
 					if ( ! plugin || plugin.active ) {
 						return;

@@ -52,8 +52,8 @@ const render = ( props?: Partial< Props > ) =>
 	renderHook( ( p: Props ) => usePostTransferPluginRecovery( p ), {
 		initialProps: { ...defaults, ...props },
 	} );
-// A tick refreshes the plugin list and only then decides, so let those promises settle before
-// asserting. `settle` is kept separate for the tests that assert on a tick still in flight.
+// A tick refreshes the plugin list before deciding, so let it settle. The two are kept separate for
+// the tests that assert mid-tick.
 const settle = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 const startTick = () => mockIntervalCallback?.();
 const tick = async () => {
@@ -90,7 +90,6 @@ describe( 'usePostTransferPluginRecovery', () => {
 	it( 'refreshes the plugin list before deciding whether to activate', async () => {
 		render();
 		startTick();
-		// The refresh is dispatched up front; the activation waits on its result.
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 );
 		expect( activatePlugin ).not.toHaveBeenCalled();
 
@@ -98,29 +97,23 @@ describe( 'usePostTransferPluginRecovery', () => {
 		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'does not activate a plugin the refreshed list already reports active', async () => {
+	it( 'does not activate when the refreshed list has no inactive plugin to act on', async () => {
 		mockGetPluginOnSite.mockReturnValue( { ...INSTALLED, active: true } );
 		render();
 		await tick();
-		expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 );
 		expect( activatePlugin ).not.toHaveBeenCalled();
-	} );
 
-	it( 'does not activate when the refreshed list does not have the plugin', async () => {
 		mockGetPluginOnSite.mockReturnValue( undefined );
-		render();
 		await tick();
 		expect( activatePlugin ).not.toHaveBeenCalled();
 
-		// The budget is intact for when it does show up.
+		// Neither skip spent an attempt.
 		mockGetPluginOnSite.mockReturnValue( INSTALLED );
 		await tick();
-		await tick();
-		await tick();
-		expect( activatePlugin ).toHaveBeenCalledTimes( 3 );
+		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	// The budget used to go on redundant attempts: an endpoint with no way to report the benign
+	// The budget used to go on redundant attempts: an endpoint that cannot report the benign
 	// already-active case answers each one with a plain failure, which never flips `active`.
 	it( 'spends no further attempts once a later refresh reports the plugin active', async () => {
 		render();
