@@ -95,6 +95,7 @@ export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 
 				window.SiteSpec.init( {
 					container: containerEl,
+					// Before ...config so flow configs can override the default.
 					authProvider: calypsoAuthProvider,
 					...config,
 					locale,

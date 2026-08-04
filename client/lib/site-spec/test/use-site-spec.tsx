@@ -5,9 +5,13 @@ import { render, waitFor } from '@testing-library/react';
 import { useSiteSpec } from '../use-site-spec';
 import type { SiteSpecConfig } from '../utils';
 
-jest.mock( '@automattic/agents-manager/src/auth/calypso-auth-provider', () => ( {
-	createCalypsoAuthProvider: jest.fn( () => jest.fn() ),
-} ) );
+jest.mock( '@automattic/agents-manager/src/auth/calypso-auth-provider', () => {
+	const provider = jest.fn();
+	return {
+		createCalypsoAuthProvider: () => provider,
+		mockAuthProvider: provider,
+	};
+} );
 
 jest.mock( '../script-loader', () => ( {
 	loadSiteSpecScriptAndCSS: jest.fn( () => Promise.resolve() ),
@@ -23,19 +27,13 @@ jest.mock( '@automattic/i18n-utils', () => ( {
 	useLocale: () => 'en',
 } ) );
 
-const { createCalypsoAuthProvider } = jest.requireMock(
+const { mockAuthProvider } = jest.requireMock(
 	'@automattic/agents-manager/src/auth/calypso-auth-provider'
 );
 
-function TestComponent( {
-	container,
-	siteSpecConfig,
-}: {
-	container: string;
-	siteSpecConfig?: SiteSpecConfig;
-} ) {
-	useSiteSpec( { container: `#${ container }`, siteSpecConfig } );
-	return <div id={ container } />;
+function TestComponent( { siteSpecConfig }: { siteSpecConfig?: SiteSpecConfig } ) {
+	useSiteSpec( { container: '#site-spec', siteSpecConfig } );
+	return <div id="site-spec" />;
 }
 
 describe( 'useSiteSpec', () => {
@@ -48,30 +46,23 @@ describe( 'useSiteSpec', () => {
 	} );
 
 	it( 'passes the Calypso auth provider to the widget', async () => {
-		render( <TestComponent container="site-spec-auth-default" /> );
+		render( <TestComponent /> );
 
-		await waitFor( () => expect( window.SiteSpec?.init ).toHaveBeenCalled() );
-
-		expect( window.SiteSpec?.init ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				authProvider: createCalypsoAuthProvider.mock.results[ 0 ].value,
-			} )
+		await waitFor( () =>
+			expect( window.SiteSpec?.init ).toHaveBeenCalledWith(
+				expect.objectContaining( { authProvider: mockAuthProvider } )
+			)
 		);
 	} );
 
 	it( 'lets a config-provided auth provider override the default', async () => {
 		const customAuthProvider = jest.fn();
-		render(
-			<TestComponent
-				container="site-spec-auth-custom"
-				siteSpecConfig={ { authProvider: customAuthProvider } }
-			/>
-		);
+		render( <TestComponent siteSpecConfig={ { authProvider: customAuthProvider } } /> );
 
-		await waitFor( () => expect( window.SiteSpec?.init ).toHaveBeenCalled() );
-
-		expect( window.SiteSpec?.init ).toHaveBeenCalledWith(
-			expect.objectContaining( { authProvider: customAuthProvider } )
+		await waitFor( () =>
+			expect( window.SiteSpec?.init ).toHaveBeenCalledWith(
+				expect.objectContaining( { authProvider: customAuthProvider } )
+			)
 		);
 	} );
 } );
