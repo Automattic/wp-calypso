@@ -65,7 +65,7 @@
 	padding: 0;
 
 	.components-menu-group {
-		padding: 6px 16px;
+		padding: 8px;
 
 		// MenuGroup wraps its items in a role="group" container.
 		[role='group'] {
@@ -75,9 +75,12 @@
 		}
 	}
 
-	// The popover is unthemed (always white), so match the hover/focus
-	// state with the light theme's muted color instead of the variable.
-	.components-menu-item__button {
+	// The extra `.components-button` out-specifies wp's item padding; the
+	// popover is unthemed (always white), so the hover/focus state uses the
+	// light theme's muted color instead of the variable.
+	.components-button.components-dropdown-menu__menu-item {
+		padding: 6px 16px;
+
 		&:hover:not( :disabled ),
 		&:focus-visible {
 			background-color: #e9e9e9;
