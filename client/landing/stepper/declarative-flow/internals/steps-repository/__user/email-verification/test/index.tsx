@@ -5,17 +5,8 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { type ReactNode } from 'react';
-import { MemoryRouter } from 'react-router';
-// eslint-disable-next-line no-restricted-imports
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import { thunk as thunkMiddleware } from 'redux-thunk';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import currentUserReducer from 'calypso/state/current-user/reducer';
-import documentHeadReducer from 'calypso/state/document-head/reducer';
-import uiReducer from 'calypso/state/ui/reducer';
-import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import EmailVerificationGate from '..';
 import { renderStep } from '../../../test/helpers';
 
@@ -66,20 +57,14 @@ const advance = ( ms: number ) =>
 		jest.advanceTimersByTime( ms );
 	} );
 
-const render = ( { onDone = jest.fn(), logo }: { onDone?: jest.Mock; logo?: ReactNode } = {} ) => {
+const render = ( { logo }: { logo?: ReactNode } = {} ) => {
 	const result = renderStep(
-		<EmailVerificationGate
-			flow={ FLOW }
-			scope={ SCOPE }
-			isNewSignup
-			logo={ logo }
-			onDone={ onDone }
-		/>,
+		<EmailVerificationGate flow={ FLOW } scope={ SCOPE } isNewSignup logo={ logo } />,
 		{
 			initialState: currentUserState( false ),
 		}
 	);
-	return { ...result, onDone };
+	return result;
 };
 
 describe( 'EmailVerificationGate', () => {
@@ -113,17 +98,14 @@ describe( 'EmailVerificationGate', () => {
 	} );
 
 	it( 'offers an inbox button that deep-links to a known provider', async () => {
-		renderStep(
-			<EmailVerificationGate flow={ FLOW } scope={ SCOPE } isNewSignup onDone={ jest.fn() } />,
-			{
-				initialState: {
-					currentUser: {
-						id: USER_ID,
-						user: { ID: USER_ID, email: 'onboarder@gmail.com', email_verified: false },
-					},
+		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } isNewSignup />, {
+			initialState: {
+				currentUser: {
+					id: USER_ID,
+					user: { ID: USER_ID, email: 'onboarder@gmail.com', email_verified: false },
 				},
-			}
-		);
+			},
+		} );
 
 		const openButton = await screen.findByRole( 'link', { name: 'Open email inbox' } );
 		expect( openButton.getAttribute( 'href' ) ).toContain( 'mail.google.com' );
@@ -140,15 +122,9 @@ describe( 'EmailVerificationGate', () => {
 	} );
 
 	it( 'does not claim to have just sent anything to a returning unverified user', () => {
-		renderStep(
-			<EmailVerificationGate
-				flow={ FLOW }
-				scope={ SCOPE }
-				isNewSignup={ false }
-				onDone={ jest.fn() }
-			/>,
-			{ initialState: currentUserState( false ) }
-		);
+		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } isNewSignup={ false } />, {
+			initialState: currentUserState( false ),
+		} );
 
 		expect( screen.getByText( /Check your inbox for the verification email/ ) ).toBeVisible();
 		expect( screen.queryByText( /We just sent an email/ ) ).not.toBeInTheDocument();
@@ -168,25 +144,6 @@ describe( 'EmailVerificationGate', () => {
 		);
 	} );
 
-	// The confirmation wakes every open tab at once, and each has its own submitted ref. Without a
-	// shared claim that's one view and two confirmations.
-	it( 'records the confirmation once across tabs, while both still continue', async () => {
-		const onDone = jest.fn();
-		const verified = { initialState: currentUserState( true ) };
-		const gate = (
-			<EmailVerificationGate flow={ FLOW } scope={ SCOPE } isNewSignup onDone={ onDone } />
-		);
-
-		renderStep( gate, verified );
-		renderStep( gate, verified );
-
-		await waitFor( () => expect( onDone ).toHaveBeenCalledTimes( 2 ) );
-		const confirmations = ( recordTracksEvent as jest.Mock ).mock.calls.filter(
-			( [ event ] ) => event === 'calypso_signup_email_verification_confirmed'
-		);
-		expect( confirmations ).toHaveLength( 1 );
-	} );
-
 	it( 'records the view once per gate, not once per mount', () => {
 		const viewEvents = () =>
 			( recordTracksEvent as jest.Mock ).mock.calls.filter(
@@ -199,43 +156,6 @@ describe( 'EmailVerificationGate', () => {
 		// A refresh lands on the same pending gate; the denominator must not count it twice.
 		render();
 		expect( viewEvents() ).toHaveLength( 1 );
-	} );
-
-	it( 'finishes as soon as the confirmation lands in another tab', async () => {
-		const onDone = jest.fn();
-		// Only the slices this gate touches, plus the two `DocumentHead` reads.
-		const store = createStore(
-			combineReducers( {
-				currentUser: currentUserReducer,
-				documentHead: documentHeadReducer,
-				ui: uiReducer,
-			} ),
-			currentUserState( false ),
-			applyMiddleware( thunkMiddleware )
-		);
-
-		renderWithProvider(
-			<MemoryRouter>
-				<EmailVerificationGate flow={ FLOW } scope={ SCOPE } isNewSignup onDone={ onDone } />
-			</MemoryRouter>,
-			{ store }
-		);
-
-		expect( onDone ).not.toHaveBeenCalled();
-
-		// What `UserVerificationChecker` lands in the store when the other tab confirms.
-		act( () => {
-			store.dispatch( {
-				type: CURRENT_USER_RECEIVE,
-				user: { ID: USER_ID, email: EMAIL, email_verified: true },
-			} );
-		} );
-
-		await waitFor( () => expect( onDone ).toHaveBeenCalled() );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_signup_email_verification_confirmed',
-			expect.objectContaining( { flow: FLOW } )
-		);
 	} );
 
 	it( 'walks down the poll schedule without ever stopping', () => {

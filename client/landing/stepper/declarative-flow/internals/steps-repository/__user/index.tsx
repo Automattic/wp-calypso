@@ -79,16 +79,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
 	const [ didCreateAccount, setDidCreateAccount ] = useState( false );
-	// `/me` opens the gate but doesn't close it: dropping it the moment `/me` reports verified
-	// carries the step on without the confirmation the gate was about to record.
-	const [ latchedScope, setLatchedScope ] = useState< string | null >( null );
-	useEffect( () => {
-		if ( gateStatus === 'gated' ) {
-			setLatchedScope( ( current ) => current ?? gateScopeForUser );
-		}
-	}, [ gateStatus, gateScopeForUser ] );
-	// The latch is set by an effect, so cover the render that opened the gate too.
-	const activeScope = latchedScope ?? ( gateStatus === 'gated' ? gateScopeForUser : null );
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -124,15 +114,16 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else if ( gateStatus === 'pending' ) {
 			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
-		} else if ( ! activeScope ) {
-			// Confirmed elsewhere, so the gate never opened to finish the attempt. Only `/me`
-			// saying verified counts — the flag being off is not a confirmation.
+		} else if ( gateStatus !== 'gated' ) {
+			// The step owns the whole of finishing; the gate is presentation, and unmounting it is
+			// what this transition looks like. Only `/me` saying verified is a confirmation — the
+			// flag being off is not — and the claim decides which tab records it.
 			if ( gateStatus === 'verified' ) {
 				recordGateConfirmation( gateScopeForUser, flow );
 			}
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, activeScope, gateStatus, gateScopeForUser, flow ] );
+	}, [ dispatch, isLoggedIn, navigation, gateStatus, gateScopeForUser, flow ] );
 
 	// A retry batch is finite and swallows its failure, so nothing would ask again. An account just
 	// created isn't logged in until `/me` answers — the request that failed — so the tab that made
@@ -238,14 +229,13 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		</>
 	);
 
-	if ( activeScope ) {
+	if ( gateStatus === 'gated' ) {
 		return (
 			<EmailVerificationGate
 				flow={ flow }
-				scope={ activeScope }
-				isNewSignup={ isFreshSignup( activeScope ) }
+				scope={ gateScopeForUser }
+				isNewSignup={ isFreshSignup( gateScopeForUser ) }
 				logo={ topBarLogo }
-				onDone={ () => navigation.submit?.() }
 			/>
 		);
 	}

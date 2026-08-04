@@ -236,9 +236,9 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
-	// Abandoning and returning later the same day: the attempt is still live, so the cooldown and
-	// the view stamp survive, but nothing was just sent and the copy shouldn't say so.
-	it( 'records a fresh signup as new, and one returned to in a later session as not', async () => {
+	// The attempt is what the cooldown and the view stamp hang off, so it has to outlive a
+	// session. Freshness must not: nothing was just sent to someone coming back to it.
+	it( 'stops calling a signup fresh once the session that made it has ended', async () => {
 		const store = makeLoggedOutStore();
 		const fresh = renderUser( store );
 
@@ -255,12 +255,21 @@ describe( 'account step email verification gate', () => {
 			'calypso_signup_email_verification_view',
 			expect.objectContaining( { is_new_signup: true } )
 		);
+		expect( screen.getByText( /We just sent an email/ ) ).toBeVisible();
 
-		// Closing the browser and coming back: the attempt outlives the session, freshness doesn't.
+		// Only the session ends. The attempt is untouched, and still holds its view stamp — which
+		// is why this asserts the copy rather than a second view event, there being none.
 		fresh.unmount();
 		sessionStorage.clear();
-		localStorage.clear();
-		jest.clearAllMocks();
+		renderUser( makeStore( false ) );
+
+		expect(
+			await screen.findByText( /Check your inbox for the verification email/ )
+		).toBeVisible();
+		expect( screen.queryByText( /We just sent an email/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'records a returning user with no attempt of their own as not new', async () => {
 		renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 
@@ -270,7 +279,29 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
-	it( 'keeps the gate mounted through the confirmation rather than swapping it out', async () => {
+	// The confirmation wakes every open tab at once, and each finishes on its own. The claim is
+	// what keeps that from being counted more than once between them.
+	it( 'records the confirmation once across tabs, while both still continue', async () => {
+		const a = renderUser( makeStore( false ) );
+		await screen.findAllByRole( 'heading', { name: GATE_HEADING } );
+		const b = renderUser( makeStore( false ) );
+		jest.clearAllMocks();
+
+		a.unmount();
+		b.unmount();
+		const verifiedA = renderUser( makeStore( true ) );
+		const verifiedB = renderUser( makeStore( true ) );
+
+		await waitFor( () => expect( verifiedA.submit ).toHaveBeenCalled() );
+		await waitFor( () => expect( verifiedB.submit ).toHaveBeenCalled() );
+
+		const confirmations = ( recordTracksEvent as jest.Mock ).mock.calls.filter(
+			( [ event ] ) => event === 'calypso_signup_email_verification_confirmed'
+		);
+		expect( confirmations ).toHaveLength( 1 );
+	} );
+
+	it( 'records the confirmation when /me flips while the gate is up', async () => {
 		const store = makeStore( false );
 		renderUser( store );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );

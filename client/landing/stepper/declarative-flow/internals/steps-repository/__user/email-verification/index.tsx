@@ -5,14 +5,13 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { arrowUpRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { formatCooldown } from 'calypso/dashboard/utils/email-verification-resend';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import { recordGateConfirmation } from './confirmation';
 import { getInboxLink } from './inbox-links';
 import { markGateShown } from './storage';
 import { useEmailVerification } from './use-email-verification';
@@ -30,19 +29,13 @@ interface Props {
 	isNewSignup: boolean;
 	// Partner/Woo branding, so the top bar doesn't change when the gate replaces the form.
 	logo?: ReactNode;
-	// Called once the user confirms; the account step owns eligibility and what follows.
-	onDone: () => void;
 }
 
-const EmailVerificationGate = ( { flow, scope, isNewSignup, logo, onDone }: Props ) => {
+const EmailVerificationGate = ( { flow, scope, isNewSignup, logo }: Props ) => {
 	const { __ } = useI18n();
 	const email = useSelector( getCurrentUserEmail );
-	const { isVerified, sendStatus, secondsUntilResend, resend } = useEmailVerification(
-		flow,
-		scope
-	);
+	const { sendStatus, secondsUntilResend, resend } = useEmailVerification( flow, scope );
 
-	const hasSubmitted = useRef( false );
 	const headingRef = useRef< HTMLDivElement >( null );
 	const inboxLink = getInboxLink( email ?? undefined );
 	// A stable dependency: `inboxLink` is a fresh object every render.
@@ -76,24 +69,6 @@ const EmailVerificationGate = ( { flow, scope, isNewSignup, logo, onDone }: Prop
 	useEffect( () => {
 		headingRef.current?.focus();
 	}, [] );
-
-	// The ref keeps one tab from submitting twice; the claim keeps several tabs, all woken by the
-	// same confirmation, from recording it more than once between them.
-	const finish = useCallback( () => {
-		if ( hasSubmitted.current ) {
-			return;
-		}
-
-		hasSubmitted.current = true;
-		recordGateConfirmation( scope, flow );
-		onDone();
-	}, [ flow, onDone, scope ] );
-
-	useEffect( () => {
-		if ( isVerified ) {
-			finish();
-		}
-	}, [ isVerified, finish ] );
 
 	const openInbox = () =>
 		recordTracksEvent( 'calypso_signup_email_verification_open_inbox', {
