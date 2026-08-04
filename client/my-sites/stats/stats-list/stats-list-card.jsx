@@ -15,6 +15,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import OpenLink from './action-link';
 import StatsListActions from './stats-list-actions';
 import StatsListCountryFlag from './stats-list-country-flag';
+import StatsListVideoThumbnail from './stats-list-video-thumbnail';
 
 const StatsListCard = ( {
 	data,
@@ -121,6 +122,8 @@ const StatsListCard = ( {
 		// left icon visible for avatars, contry flags or tags and categories.
 		if ( item?.countryCode ) {
 			leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
+		} else if ( showLeftIcon && moduleType === 'videoplays' ) {
+			leftSideItem = <StatsListVideoThumbnail poster={ item?.icon } />;
 		} else if ( showLeftIcon && item?.icon ) {
 			leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
 		} else if ( Array.isArray( item?.label ) ) {
