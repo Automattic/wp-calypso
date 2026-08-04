@@ -15,7 +15,7 @@ import { tags, test, expect } from '../../lib/pw-base';
  * NOTE: verify this is a suitable owned/registered domain for the test environment before
  * relying on it — the step hits the real domain-availability API.
  */
-const OWNED_DOMAIN = 'example.com';
+const OWNED_DOMAIN = 'dev-testing.com';
 
 /**
  * Shared assertion: from a flow's domain search step, choose "Already have a domain?",
