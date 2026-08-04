@@ -434,6 +434,26 @@ describe( 'AgentDock', () => {
 		expect( screen.queryByText( 'View history' ) ).toBeNull();
 	} );
 
+	it( 'offers the guidelines and settings items only in wp-admin', () => {
+		useWpAdminAgent();
+		document.body.classList.add( 'wp-admin' );
+
+		renderAgentDock();
+
+		expect( screen.getByText( 'Knowledge and memory' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'AI Agent settings' ) ).toBeInTheDocument();
+		document.body.classList.remove( 'wp-admin' );
+	} );
+
+	it( 'omits the guidelines and settings items outside wp-admin', () => {
+		useWpAdminAgent();
+
+		renderAgentDock();
+
+		expect( screen.queryByText( 'Knowledge and memory' ) ).toBeNull();
+		expect( screen.queryByText( 'AI Agent settings' ) ).toBeNull();
+	} );
+
 	it.each( [
 		{
 			isSplitScreen: false,
