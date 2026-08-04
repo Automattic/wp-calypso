@@ -28,11 +28,9 @@ jest.mock( '@wordpress/components', () => ( {
 } ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( '@wordpress/icons', () => ( {
-	backup: 'backup',
 	chevronLeft: 'chevronLeft',
 	close: 'close',
 	Icon: () => null,
-	lineSolid: 'lineSolid',
 	moreVertical: 'moreVertical',
 } ) );
 jest.mock( '@wordpress/data', () => ( {

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import type { AgentsManagerContextType } from '../../contexts';
 
@@ -46,11 +46,11 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( '@wordpress/icons', () => ( {
+	backup: 'backup',
+	cog: 'cog',
 	columns: 'columns',
 	comment: 'comment',
-	drawerRight: 'drawerRight',
-	lineSolid: 'lineSolid',
-	login: 'login',
+	heading: 'heading',
 } ) );
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => mockContext,
@@ -425,7 +425,10 @@ describe( 'AgentDock', () => {
 
 		renderAgentDock();
 
-		expect( screen.getByText( 'View history' ) ).toBeInTheDocument();
+		const options = within( screen.getByTestId( 'orchestrator-chat' ) ).getAllByRole( 'button' );
+
+		expect( options[ 0 ] ).toHaveTextContent( 'New chat' );
+		expect( options[ 1 ] ).toHaveTextContent( 'View history' );
 	} );
 
 	it( 'omits View history from More Options on reader chat', () => {

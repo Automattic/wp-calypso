@@ -18,7 +18,11 @@
 		}
 	}
 
-	&:focus:not( :focus-visible ) {
+	// Show the focus ring for keyboard focus only. `.components-button`
+	// out-specifies wp's same-specificity focus rules regardless of
+	// stylesheet load order; clearing both covers wp versions that draw
+	// the ring via outline or box-shadow.
+	&.components-button:focus:not( :focus-visible ) {
 		box-shadow: none;
 		outline: none;
 	}

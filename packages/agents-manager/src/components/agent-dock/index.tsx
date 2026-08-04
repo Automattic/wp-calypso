@@ -66,6 +66,10 @@ interface Props {
 	capabilities?: ProviderCapabilities;
 }
 
+// Narrows falsy entries out of conditional option lists, unlike
+// `.filter( Boolean )`, which would require an `as` assertion.
+const isMenuOption = < T, >( option: T | false | undefined ): option is T => Boolean( option );
+
 export default function AgentDock( {
 	emptyViewSuggestions = [],
 	markdownComponents = {},
@@ -261,10 +265,6 @@ export default function AgentDock( {
 			navigate( '/chat', { state: { sessionId } } );
 		}
 	};
-
-	// Narrows falsy entries out of conditional option lists, unlike
-	// `.filter( Boolean )`, which would require an `as` assertion.
-	const isMenuOption = < T, >( option: T | false | undefined ): option is T => Boolean( option );
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		// Guidelines and settings are site-based links that Calypso-hosted
