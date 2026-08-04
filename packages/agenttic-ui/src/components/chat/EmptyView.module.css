@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: start;
   justify-content: flex-start;
-  gap: var(--spacing-6);
+  gap: var(--spacing-4);
 }
 
 /* Collapsible spacer: grows to bottom-pin content when it fits, collapses on overflow so the
@@ -14,10 +14,18 @@
 }
 
 .icon {
-  font-size: calc(3 * var(--base-font-size));
-  line-height: 1;
   padding: 0 var(--spacing-4);
   color: var(--color-link);
+}
+
+/* Icons are always SVGs; block display drops the inline baseline gap so the
+   slot measures exactly the icon's height. */
+.icon svg {
+  display: block;
+}
+
+.defaultIcon {
+  color: var(--color-primary);
 }
 
 .heading, .help {

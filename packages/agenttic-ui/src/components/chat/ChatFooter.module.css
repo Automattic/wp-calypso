@@ -1,7 +1,7 @@
 .container {
     background-color: var(--color-popover-muted);
     border-radius: calc( var(--radius-lg) + 1px); /* Accounts for the 1px shadow */
-    border: 1px solid var(--color-muted);
+    border: 1px solid var(--color-input-border);
     color: var(--color-foreground);
     display: flex;
     flex-direction: column;
@@ -9,4 +9,8 @@
     padding: var(--spacing-2);
     position: relative;
     z-index: 10;
+}
+
+.container:has(textarea:focus) {
+    border-color: var(--color-input-border-focused);
 }

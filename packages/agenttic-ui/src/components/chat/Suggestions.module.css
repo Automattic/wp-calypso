@@ -17,6 +17,10 @@
   display: none;
 }
 
+.label {
+  font-size: var(--text-sm);
+}
+
 /* New vertical style - stacked full-width buttons */
 .vertical {
   position: static;

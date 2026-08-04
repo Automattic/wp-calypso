@@ -14,7 +14,9 @@ import {
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import MessageTester from './MessageTester';
 
-const SidebarDemo: React.FC = () => {
+const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
+	currentTheme,
+} ) => {
 	const uploaderRef = useRef<ImageUploaderHandle>( null );
 	const [ uploadedImages, setUploadedImages ] = useState<UploadedImage[]>( [] );
 
@@ -134,7 +136,7 @@ const SidebarDemo: React.FC = () => {
 				.sidebar-demo {
 					display: flex;
 					height: calc(100vh - 30px);
-					background-color: #1e1e1e;
+					background-color: ${ currentTheme === 'dark' ? '#1e1e1e' : '#f0f0f1' };
 					margin-top: 30px;
 				}
 
@@ -170,13 +172,17 @@ const SidebarDemo: React.FC = () => {
 					width: 32px;
 					height: 32px;
 					cursor: pointer;
-					color: #c3c4c7;
+					color: ${ currentTheme === 'dark' ? '#c3c4c7' : '#50575e' };
 					border-radius: 4px;
 				}
 
 				.sidebar-demo__header-button:hover {
-					color: #fff;
-					background: rgba(255, 255, 255, 0.08);
+					color: ${ currentTheme === 'dark' ? '#fff' : '#1e1e1e' };
+					background: ${
+						currentTheme === 'dark'
+							? 'rgba(255, 255, 255, 0.08)'
+							: 'rgba(0, 0, 0, 0.06)'
+					};
 				}
 
 				.sidebar-demo__chat {
@@ -213,7 +219,7 @@ const SidebarDemo: React.FC = () => {
 							clearSuggestions={ clearSuggestions }
 							messageRenderer={ messageRenderer }
 							messagesPosition="bottom"
-							className="agenttic dark"
+							className={ `agenttic ${ currentTheme }` }
 							placeholder="Ask anything..."
 							emptyView={
 								<EmptyView
