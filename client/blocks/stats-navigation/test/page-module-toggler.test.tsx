@@ -91,6 +91,7 @@ describe( 'PageModuleToggler', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
 		expect( getToggle( 'Authors' ) ).toBeChecked();
+		expect( getToggle( 'Search terms' ) ).toBeChecked();
 		expect( getToggle( 'Videos' ) ).toBeChecked();
 
 		rerender(
