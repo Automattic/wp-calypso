@@ -4,7 +4,8 @@ import { logError } from '../helpers/log-error';
 import { store } from '../state';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
-import getUnreadNoteIds from '../state/selectors/get-unread-note-ids';
+import getFilteredNoteIds from '../state/selectors/get-filtered-note-ids';
+import { getFilters } from '../templates/filters';
 import { fetchNote, listNotes, sendLastSeenTime, subscribeToNoteStream } from './wpcom';
 
 const debug = debugFactory( 'notifications:rest-client' );
@@ -32,11 +33,11 @@ export function Client() {
 	// Active tab's server-side filter (e.g. `{ unread: 1 }`), or null for the
 	// unfiltered "all" list. When set, getFilteredNotes fetches matching notes.
 	this.filter = null;
-	this.filteredHasMore = false;
+	// Active tab name; the cache key for its id list and load-more state.
+	this.filterName = 'all';
+	// Per-tab load-more exhaustion, keyed by tab name.
+	this.filteredHasMore = {};
 	this.gettingFilteredNotes = false;
-	// Bumped on every setFilter so an in-flight fetch whose filter was reset
-	// (tab switched away and back) can discard its now-stale response.
-	this.filterGeneration = 0;
 	this.retries = 0;
 	this.subscribeTry = 0;
 	this.subscribeTries = 3;
@@ -415,22 +416,17 @@ function getNotesList() {
 }
 
 /**
- * Set the active server-side filter for the visible tab and (re)fetch.
+ * Set the active tab and (re)fetch its filtered notes.
  *
- * Pass `null` for the unfiltered "all" tab, or a query fragment such as
- * `{ unread: 1 }` for a filtered tab. Switching tabs resets the filtered
- * pagination window and, for a filtered tab, kicks off a fresh fetch so the
- * list reflects the server's filtered results immediately.
- * @param {?Object} filter Query fragment to send to the notes endpoint, or null.
+ * Pass a tab name such as `'unread'` (see getFilters); `'all'` is the unfiltered
+ * list. For a filtered tab this kicks off a fetch; the tab's cached id list is
+ * kept (never cleared here) so a revisit shows its last result while the fetch
+ * refreshes it in the background.
+ * @param {string} filterName Name of the tab to activate.
  */
-function setFilter( filter ) {
-	this.filter = filter ?? null;
-	this.filteredHasMore = false;
-	this.filterGeneration++;
-
-	// Reset the filtered view's id list so the tab doesn't show a stale set
-	// before the fresh fetch lands.
-	store.dispatch( actions.notes.setUnreadNoteIds( [] ) );
+function setFilter( filterName ) {
+	this.filterName = filterName ?? 'all';
+	this.filter = getFilters()[ this.filterName ]?.query ?? null;
 
 	if ( this.filter && this.isVisible ) {
 		this.getFilteredNotes();
@@ -442,19 +438,20 @@ function setFilter( filter ) {
  *
  * Content is added to the shared `allNotes` store (never removed here); the
  * server's answer for which notes belong to the view is kept as an ordered id
- * list (`unreadNoteIds`) that the Unread tab renders looked up in the store.
+ * list (`filteredNoteIds`) that the active filtered tab renders looked up in
+ * the store.
  */
 function getFilteredNotes( before ) {
 	if ( ! this.filter || this.gettingFilteredNotes ) {
 		return;
 	}
 	this.gettingFilteredNotes = true;
-	const generation = this.filterGeneration;
-	// Tag this fetch's loading dispatches with its filter, stable even if the
-	// active filter changes mid-flight.
+	// Tag this fetch's dispatches and cache writes with the tab it was made for,
+	// stable even if the active tab changes mid-flight.
 	const filter = this.filter;
+	const key = this.filterName;
 
-	const unreadIds = getUnreadNoteIds( store.getState() );
+	const filteredIds = getFilteredNoteIds( store.getState(), key ) ?? [];
 
 	const parameters = {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
@@ -462,7 +459,7 @@ function getFilteredNotes( before ) {
 		// slice, capped to what's left under max_limit plus one for the anchor an
 		// inclusive `before` echoes back (de-duped below).
 		number: before
-			? Math.min( settings.increment_limit, settings.max_limit - unreadIds.length + 1 )
+			? Math.min( settings.increment_limit, settings.max_limit - filteredIds.length + 1 )
 			: settings.initial_limit,
 		locale: this.locale,
 		...filter,
@@ -471,15 +468,21 @@ function getFilteredNotes( before ) {
 		parameters.before = before;
 	}
 
-	// Loading state on the first page (the full-panel spinner shows while the list
-	// is empty) and while paging older notes (`before` → the list's load-more
-	// indicator); a steady-state refresh of a non-empty list stays silent.
-	if ( before || unreadIds.length === 0 ) {
-		store.dispatch( actions.ui.loadNotes( { filter } ) );
+	// Loading state on a tab's first-ever fetch (the full-panel spinner shows while
+	// it has no cached list yet) and while paging older notes (`before` → the
+	// list's load-more indicator); a refresh over a cached list stays silent so the
+	// previous result keeps showing.
+	if ( before || getFilteredNoteIds( store.getState(), key ) === undefined ) {
+		store.dispatch( actions.ui.loadNotes( { filter: key } ) );
 	}
 
 	listNotes( parameters, ( error, data ) => {
 		this.gettingFilteredNotes = false;
+
+		// A tab switch while this was in flight left the newly-active tab's own
+		// fetch skipped (this request held the lock); run it once we're done. Its
+		// cached list, if any, keeps showing meanwhile.
+		const activeTabNeedsFetch = this.filter && this.isVisible && this.filterName !== key;
 
 		if ( error ) {
 			logError( error, {
@@ -488,71 +491,62 @@ function getFilteredNotes( before ) {
 				status: error.status,
 				code: error.error,
 			} );
-			// Leave the polling path's state untouched; it will recover on its
-			// own schedule. A retry happens when the user re-enters the tab.
-			store.dispatch( actions.ui.loadedNotes( { filter } ) );
-			return;
-		}
-
-		// The filter was reset (tab switched away and back) while this was in
-		// flight: drop the stale response and refetch the current view, since
-		// setFilter's own fetch was skipped while this request held the lock.
-		if ( generation !== this.filterGeneration ) {
-			if ( this.filter && this.isVisible ) {
-				// The refetch keeps the loading state; don't clear it here.
+			store.dispatch( actions.ui.loadedNotes( { filter: key } ) );
+			if ( activeTabNeedsFetch ) {
 				this.getFilteredNotes();
-			} else {
-				store.dispatch( actions.ui.loadedNotes( { filter } ) );
 			}
 			return;
 		}
 
 		store.dispatch( actions.notes.addNotes( data.notes ) );
 
-		// Guard on the filter so a response landing after a tab switch is ignored,
-		// and so only `unread` writes the unread list.
-		if ( this.filter?.unread ) {
-			const pageIds = data.notes.map( ( note ) => note.id );
-			if ( before ) {
-				// Append the older page to the view's id list, de-duped — a filtered
-				// fetch can return notes an earlier page already loaded.
-				const current = getUnreadNoteIds( store.getState() );
-				const known = new Set( current );
-				const fresh = pageIds.filter( ( id ) => ! known.has( id ) );
-				const appended = current.concat( fresh );
-				store.dispatch( actions.notes.setUnreadNoteIds( appended ) );
+		// Apply the response to the tab it was fetched for (`key`), never the tab
+		// that happens to be active now. A response that lands after a switch away
+		// and back is still that tab's data, so it's stored and shown — not dropped.
+		const pageIds = data.notes.map( ( note ) => note.id );
+		if ( before ) {
+			// Append the older page to the view's id list, de-duped — a filtered
+			// fetch can return notes an earlier page already loaded.
+			const current = getFilteredNoteIds( store.getState(), key ) ?? [];
+			const known = new Set( current );
+			const fresh = pageIds.filter( ( id ) => ! known.has( id ) );
+			const appended = current.concat( fresh );
+			store.dispatch( actions.notes.setFilteredNoteIds( key, appended ) );
 
-				// More only while the page is full, adds new ids (an inclusive
-				// `before` can echo the anchor), and the list is under the cap.
-				this.filteredHasMore =
-					fresh.length > 0 &&
-					data.notes.length >= parameters.number &&
-					appended.length < settings.max_limit;
-			} else {
-				// Merge the head over the list, keeping the older paged-in tail. Drop
-				// within-head ids the server no longer returns (read/deleted elsewhere).
-				const current = getUnreadNoteIds( store.getState() );
-				const serverIdSet = new Set( pageIds );
-				const oldestServerId = pageIds[ pageIds.length - 1 ];
-				const boundary = current.findIndex( ( id ) => id === oldestServerId );
-				const tail = (
-					boundary >= 0 ? current.slice( boundary + 1 ) : current.slice( pageIds.length )
-				).filter( ( id ) => ! serverIdSet.has( id ) );
-				const merged = pageIds.concat( tail );
-				store.dispatch( actions.notes.setUnreadNoteIds( merged ) );
+			// More only while the page is full, adds new ids (an inclusive
+			// `before` can echo the anchor), and the list is under the cap.
+			this.filteredHasMore[ key ] =
+				fresh.length > 0 &&
+				data.notes.length >= parameters.number &&
+				appended.length < settings.max_limit;
+		} else {
+			// Merge the head over the list, keeping the older paged-in tail. Drop
+			// within-head ids the server no longer returns (read/deleted elsewhere).
+			const current = getFilteredNoteIds( store.getState(), key ) ?? [];
+			const serverIdSet = new Set( pageIds );
+			const oldestServerId = pageIds[ pageIds.length - 1 ];
+			const boundary = current.findIndex( ( id ) => id === oldestServerId );
+			const tail = (
+				boundary >= 0 ? current.slice( boundary + 1 ) : current.slice( pageIds.length )
+			).filter( ( id ) => ! serverIdSet.has( id ) );
+			const merged = pageIds.concat( tail );
+			store.dispatch( actions.notes.setFilteredNoteIds( key, merged ) );
 
-				// First page: a full head implies more older notes. Later refreshes keep
-				// the load-more exhaustion state instead of resetting it from the head.
-				this.filteredHasMore =
-					( current.length === 0
-						? data.notes.length >= parameters.number
-						: this.filteredHasMore ) && merged.length < settings.max_limit;
-			}
+			// First page: a full head implies more older notes. Later refreshes keep
+			// the load-more exhaustion state instead of resetting it from the head.
+			this.filteredHasMore[ key ] =
+				( current.length === 0
+					? data.notes.length >= parameters.number
+					: this.filteredHasMore[ key ] ) && merged.length < settings.max_limit;
 		}
 
 		// Clear loading only after the notes and ids are in the store, so the list
 		// never flashes empty between "loaded" and the ids landing.
-		store.dispatch( actions.ui.loadedNotes( { filter } ) );
+		store.dispatch( actions.ui.loadedNotes( { filter: key } ) );
+
+		if ( activeTabNeedsFetch ) {
+			this.getFilteredNotes();
+		}
 	} );
 }
 
@@ -716,13 +710,14 @@ function loadMore() {
 	// Filtered tabs paginate their own window, advancing only while the server
 	// still has matching notes.
 	if ( this.filter ) {
-		if ( this.gettingFilteredNotes || ! this.filteredHasMore ) {
+		const key = this.filterName;
+		if ( this.gettingFilteredNotes || ! this.filteredHasMore[ key ] ) {
 			return;
 		}
 		// Page older notes additively, anchored on the view's oldest. `before` is
 		// epoch seconds, not the ISO timestamp.
-		const unreadIds = getUnreadNoteIds( store.getState() );
-		const oldestId = unreadIds[ unreadIds.length - 1 ];
+		const filteredIds = getFilteredNoteIds( store.getState(), key ) ?? [];
+		const oldestId = filteredIds[ filteredIds.length - 1 ];
 		const oldest = oldestId && getAllNotes( store.getState() ).find( ( n ) => n.id === oldestId );
 		if ( ! oldest ) {
 			return;
@@ -757,9 +752,14 @@ function loadMore() {
 // until then there may be more, capped at max_limit. The note list uses this to
 // keep its optimistic `totalItems` ahead of the scroll window so DataViews
 // keeps advancing it.
-function hasMoreNotes() {
-	if ( this.filter ) {
-		return this.filteredHasMore;
+//
+// Pass the tab being rendered: the component reads this during render, before its
+// effect calls setFilter, so relying on `this.filterName` would return the
+// previous tab's answer on the first render after a switch — stalling DataViews'
+// infinite scroll for good.
+function hasMoreNotes( filterName = this.filterName ) {
+	if ( filterName !== 'all' ) {
+		return this.filteredHasMore[ filterName ] ?? false;
 	}
 	// Measure this view's own window (`noteList`), not the shared store, which a
 	// filtered fetch can inflate to the cap with notes outside this window.
