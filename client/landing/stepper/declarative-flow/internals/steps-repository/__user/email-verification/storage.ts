@@ -67,14 +67,23 @@ function read( scope: string ): GateRecord {
 		}
 	}
 
-	const remembered = memoryRecords.get( scope );
-	if ( ! stored && remembered ) {
-		// Resolving a different user than the one last stored clears browser storage wholesale,
-		// which would reopen a live lockout, recount the view and lose the confirmation.
-		persist( scope, remembered );
-		stored = remembered;
+	const shared = hydrate( stored );
+	if ( shared.startedAt ) {
+		// Snapshot whatever is shared, another tab's writes included — a tab that only ever reads
+		// an attempt would otherwise have nothing to put back, and one that wrote to it earlier
+		// would put back its own older copy.
+		memoryRecords.set( scope, shared );
+		return shared;
 	}
-	return hydrate( stored );
+
+	// Resolving a different user than the one last stored clears browser storage wholesale, which
+	// would reopen a live lockout, recount the view and lose the confirmation.
+	const remembered = hydrate( memoryRecords.get( scope ) );
+	if ( remembered.startedAt ) {
+		persist( scope, remembered );
+		return remembered;
+	}
+	return EMPTY_RECORD;
 }
 
 /**

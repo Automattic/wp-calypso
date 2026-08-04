@@ -106,6 +106,30 @@ describe( 'email verification gate storage', () => {
 		Object.defineProperty( navigator, 'locks', { value: undefined, configurable: true } );
 	} );
 
+	// Only the tab that wrote an attempt used to remember it, so a tab that merely read one — or
+	// wrote to it before another tab did — had nothing, or the wrong thing, to put back.
+	it( 'restores what another tab last wrote, not what this one last wrote', async () => {
+		const scope = nextScope();
+		const key = `onboarding-email-verification-gate:${ scope }`;
+		await markGateShown( scope );
+
+		// What another tab writing to the same attempt leaves behind.
+		const deadline = Date.now() + 5 * 60 * 1000;
+		const fromOtherTab = {
+			...JSON.parse( localStorage.getItem( key ) as string ),
+			resendAvailableAt: deadline,
+		};
+		localStorage.setItem( key, JSON.stringify( fromOtherTab ) );
+
+		// Reading it is all this tab does — no write of its own to remember it by.
+		expect( gateResendAvailableAt( scope ) ).toBe( deadline );
+
+		localStorage.clear();
+
+		expect( gateResendAvailableAt( scope ) ).toBe( deadline );
+		expect( await markGateShown( scope ) ).toBe( false );
+	} );
+
 	// Resolving a different user than the one last stored clears browser storage wholesale. The
 	// tab that owns the attempt still knows it, and must not lose a lockout or recount a view.
 	it( 'puts the attempt back when local storage is cleared underneath it', async () => {
