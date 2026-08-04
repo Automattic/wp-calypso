@@ -43,6 +43,24 @@ test.describe(
 		const accountName = getTestAccountByFeature( features );
 		const testAccount = new TestAccount( accountName );
 
+		test.afterAll( async () => {
+			// Remove only the two responses this run submitted, matched by the
+			// addresses generated above. These sites are shared, so deleting every
+			// response would break any run working through its own at the time.
+			// Without this the spec leaves its submissions behind on every run.
+			const siteID = testAccount.credentials.testSites?.primary.id as number;
+			const client = new RestAPIClient( testAccount.credentials );
+
+			for ( const { email } of [ formData1, formData2 ] ) {
+				try {
+					await client.deleteFeedbackBySearch( siteID, email );
+				} catch {
+					// Teardown must not fail the run: the responses may never have
+					// been created if the test failed before submitting.
+				}
+			}
+		} );
+
 		test( 'As a user, I can submit forms and validate responses in the feedback inbox', async ( {
 			page,
 		} ) => {

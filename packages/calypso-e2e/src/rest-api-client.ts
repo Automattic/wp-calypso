@@ -933,6 +933,46 @@ export class RestAPIClient {
 		return response;
 	}
 
+	/**
+	 * Deletes form responses (feedback entries) matching a search term.
+	 *
+	 * Deliberately scoped by search rather than deleting every response on the
+	 * site. These sites are shared, and a run that wiped the feedback list
+	 * would fail any other run working through its own responses at the time.
+	 * Callers should pass something unique to their run, such as the address
+	 * they submitted the form with.
+	 *
+	 * Feedback cannot be created over REST — the post type sets
+	 * `create_posts => do_not_allow` — so this is cleanup only.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {string} search Search term identifying the caller's own responses.
+	 * @returns {Promise<number>} Count of responses deleted.
+	 */
+	async deleteFeedbackBySearch( siteID: number, search: string ): Promise< number > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const url = this.getRequestURL( '1.1', `/sites/${ siteID }/posts/` );
+		url.searchParams.set( 'type', 'feedback' );
+		url.searchParams.set( 'status', 'any' );
+		url.searchParams.set( 'search', search );
+
+		const response = await this.sendRequest( url, params );
+		const posts = response?.posts ?? [];
+
+		for ( const post of posts ) {
+			await this.deletePost( siteID, post.ID );
+		}
+
+		return posts.length;
+	}
+
 	/* Comments */
 
 	/**
