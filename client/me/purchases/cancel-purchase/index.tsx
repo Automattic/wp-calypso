@@ -302,13 +302,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return true;
 		}
 
-		// Under the split flag, if intent=cancel/auto-renew but auto-renew is
-		// already off (e.g. page refresh after cancel-autorenew mutation),
-		// redirect to Purchase Settings instead of re-showing the confirmation
-		// screen. Bypass when surveyShown is true — the post-mutation survey
-		// should still render within the same session.
+		// If intent=cancel/auto-renew but auto-renew is already off (e.g. page
+		// refresh after the cancel-autorenew mutation), redirect to Purchase
+		// Settings instead of re-showing the confirmation screen. Bypass when
+		// surveyShown is true — the post-mutation survey should still render
+		// within the same session.
 		if (
-			props.isSplitCancelRemoveEnabled &&
 			( props.intent === 'cancel' || props.intent === 'auto-renew' ) &&
 			! purchase.is_auto_renew_enabled &&
 			! this.state.surveyShown
@@ -332,8 +331,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { purchase, siteSlug } = this.props;
 		let redirectPath = this.props.purchaseListUrl ?? purchasesRoot;
 
-		const isAlreadyCancelledForSplitFlag =
-			this.props.isSplitCancelRemoveEnabled &&
+		const isAlreadyCancelled =
 			( this.props.intent === 'cancel' || this.props.intent === 'auto-renew' ) &&
 			purchase &&
 			! purchase.is_auto_renew_enabled;
@@ -341,7 +339,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		if (
 			siteSlug &&
 			purchase &&
-			( isAlreadyCancelledForSplitFlag ||
+			( isAlreadyCancelled ||
 				! canAutoRenewBeTurnedOff( purchase ) ||
 				isDomainTransfer( purchase ) )
 		) {
@@ -460,14 +458,13 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		}
 	};
 
-	// Fire-on-confirm applies to the URL-intent Cancel path only — the user
+	// Fire-on-confirm applies to the Cancel and Auto-renew intents — the user
 	// clicked "Cancel" on Purchase Settings and we want their cancellation to
 	// settle before the survey appears (so the heading reads "Cancellation
 	// confirmed"). Remove (and the no-intent legacy deep link) defer the
 	// mutation to onSurveyComplete, matching trunk's submit-handlers.
 	shouldFireMutationOnConfirm = (): boolean =>
-		this.props.isSplitCancelRemoveEnabled &&
-		( this.props.intent === 'cancel' || this.props.intent === 'auto-renew' );
+		this.props.intent === 'cancel' || this.props.intent === 'auto-renew';
 
 	// Fire the cancel mutation when the user confirms, then advance to the
 	// survey. The success notice is queued with displayOnNextPage so it shows
@@ -1102,6 +1099,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			cancelBundledDomain: this.state.cancelBundledDomain,
 			purchaseListUrl: purchaseListUrl ?? purchasesRoot,
 			displayVariant: this.props.intent ?? undefined,
+			// The dialog products (Jetpack/Akismet/domain) render their survey after
+			// the mutation has already fired, so the dialog must present itself as a
+			// questionnaire rather than offering to cancel a second time.
+			cancellationCompleted: this.state.surveyShown && this.shouldFireMutationOnConfirm(),
 			showMarketplaceDialog: ! isSplitCancelRemoveEnabled,
 			cancelIntentOverride:
 				urlIntentOverride ??
@@ -1455,13 +1456,15 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { blogname: siteName, blog_id: siteId } = purchase;
 
 		const displayVariant = this.getDisplayVariant();
-		// Once the cancel mutation has resolved and the user is on the survey,
-		// the cancellation has already happened — reflect that in the heading.
+		// Only the cancel intents fire their mutation at confirm-time, so only they
+		// have actually happened by the time the survey renders. Keying on `intent`
+		// rather than `displayVariant` matters because displayVariant falls back to
+		// 'cancel' for no-intent deep links, which still submit at survey-end.
 		const heading = ( () => {
-			if ( this.state.surveyShown && displayVariant === 'cancel' ) {
+			if ( this.state.surveyShown && intent === 'cancel' ) {
 				return this.props.translate( 'Cancellation confirmed' );
 			}
-			if ( this.state.surveyShown && displayVariant === 'auto-renew' ) {
+			if ( this.state.surveyShown && intent === 'auto-renew' ) {
 				return this.props.translate( 'Auto-renew disabled' );
 			}
 			return getCancellationHeading( {

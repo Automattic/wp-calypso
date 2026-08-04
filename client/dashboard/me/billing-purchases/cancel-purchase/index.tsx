@@ -558,6 +558,12 @@ function CancelPurchaseInner() {
 	const cancelSearch = useSearch( { from: cancelPurchaseRoute.fullPath } );
 	const intent = getCancelIntentFromSearch( cancelSearch );
 	const displayVariant = getDisplayVariant( intent, flowType );
+	// Fire-on-confirm applies to the Cancel and Auto-renew intents — the user
+	// clicked "Cancel" on Purchase Settings or toggled off auto-renew, and we
+	// want the mutation to settle before the survey appears (so the heading can
+	// read "Cancellation confirmed" / "Auto-renew disabled"). Remove, and the
+	// no-intent legacy deep link, defer the mutation to onSurveyComplete.
+	const fireOnConfirm = intent === 'cancel' || intent === 'auto-renew';
 	const getCancelledSearch = () => ( {
 		cancelled: true as const,
 		...( intent === 'auto-renew' ? { intent: 'auto-renew' as const } : {} ),
@@ -589,7 +595,7 @@ function CancelPurchaseInner() {
 		cancellationOffer,
 		hasQuestionTwo: Boolean( state.questionTwoOrder?.length ),
 		plans,
-		userHasCompletedCancelSurveyForPurchase: isSplitCancelRemoveEnabled
+		userHasCompletedCancelSurveyForPurchase: fireOnConfirm
 			? false
 			: userHasCompletedCancelSurveyForPurchase,
 		isSplitCancelRemoveEnabled,
@@ -1002,14 +1008,6 @@ function CancelPurchaseInner() {
 		}
 	};
 
-	// Fire-on-confirm applies to the URL-intent Cancel and Auto-renew paths —
-	// the user clicked "Cancel" on Purchase Settings or toggled off auto-renew,
-	// and we want the mutation to settle before the survey appears (so the
-	// heading can read "Cancellation confirmed" / "Auto-renew disabled"). Remove
-	// (and the no-intent legacy deep link) defer the mutation to onSurveyComplete.
-	const shouldFireMutationOnConfirm = (): boolean =>
-		isSplitCancelRemoveEnabled && ( intent === 'cancel' || intent === 'auto-renew' );
-
 	const onCancellationComplete = () => {
 		recordTracksEvent( 'calypso_purchases_cancel_form_start', {
 			cancellation_flow: flowType,
@@ -1022,7 +1020,7 @@ function CancelPurchaseInner() {
 		// after it resolves — see fireMutationFromConfirm. Remove (and any non-
 		// intent path) defers to onSurveyComplete and navigates to the survey
 		// synchronously.
-		if ( shouldFireMutationOnConfirm() ) {
+		if ( fireOnConfirm ) {
 			fireMutationFromConfirm( effectiveFlowType, state.cancelBundledDomain ?? false );
 			return;
 		}
@@ -1038,8 +1036,11 @@ function CancelPurchaseInner() {
 		// When the eligibility notice is active and the user clicks the default cancel button
 		// (not the refund link), they're opting for an auto-renew cancellation — no refund, so
 		// no need to ask about the domain. Skip straight to the survey.
-		const skippingDomainOptionsForAutoRenew =
-			isSplitCancelRemoveEnabled && cancelIntent !== 'refund';
+		// Only the cancel intents skip this: their effective flow is always
+		// CANCEL_AUTORENEW, so unbundling the domain can't affect anything. The
+		// no-intent path can still resolve to CANCEL_WITH_REFUND, and intent=remove
+		// can refund a bundled domain — both need the question.
+		const skippingDomainOptionsForAutoRenew = fireOnConfirm && cancelIntent !== 'refund';
 
 		const needsDomainOptions =
 			! skippingDomainOptionsForAutoRenew &&
@@ -1063,7 +1064,7 @@ function CancelPurchaseInner() {
 			const effectiveFlowType = computeEffectiveFlowType( cancelIntent );
 			// See onCancellationComplete for the rationale on why the cancel
 			// intent path defers surveyShown until the mutation resolves.
-			if ( shouldFireMutationOnConfirm() ) {
+			if ( fireOnConfirm ) {
 				setState( ( state ) => ( {
 					...state,
 					cancelIntent,
@@ -1423,7 +1424,7 @@ function CancelPurchaseInner() {
 
 		const effectiveFlowType = computeEffectiveFlowType( state.cancelIntent );
 
-		if ( shouldFireMutationOnConfirm() ) {
+		if ( fireOnConfirm ) {
 			// The mutation already fired at confirm-click via fireMutationFromConfirm.
 			// A refund removes the purchase, so route away like the other removal
 			// paths; disabling auto-renew keeps it, so return to its settings page
@@ -1521,17 +1522,13 @@ function CancelPurchaseInner() {
 			return false;
 		}
 
-		// Under the split flag, if intent=cancel/auto-renew but auto-renew is
-		// already off (e.g. page refresh after the mutation), redirect to
-		// Purchase Settings instead of re-showing the confirmation screen.
-		// Bypass when surveyShown is true — the post-mutation survey should
-		// still render within the same session.
-		const isAlreadyCancelledForSplitFlag =
-			isSplitCancelRemoveEnabled &&
-			( intent === 'cancel' || intent === 'auto-renew' ) &&
-			! purchase.is_auto_renew_enabled;
+		// If intent=cancel/auto-renew but auto-renew is already off (e.g. page
+		// refresh after the mutation), redirect to Purchase Settings instead of
+		// re-showing the confirmation screen. Bypass when surveyShown is true —
+		// the post-mutation survey should still render within the same session.
+		const isAlreadyCancelled = fireOnConfirm && ! purchase.is_auto_renew_enabled;
 
-		if ( isAlreadyCancelledForSplitFlag && ! state.surveyShown ) {
+		if ( isAlreadyCancelled && ! state.surveyShown ) {
 			return false;
 		}
 
@@ -1579,14 +1576,7 @@ function CancelPurchaseInner() {
 		}
 
 		return true;
-	}, [
-		createErrorNotice,
-		intent,
-		isDataLoading,
-		isSplitCancelRemoveEnabled,
-		purchase,
-		state.surveyShown,
-	] );
+	}, [ createErrorNotice, fireOnConfirm, isDataLoading, purchase, state.surveyShown ] );
 
 	const didRunEffect = useRef< boolean >( false );
 
@@ -1684,7 +1674,13 @@ function CancelPurchaseInner() {
 				size="small"
 				header={
 					<PageHeader
-						title={ <CancelHeaderTitle displayVariant={ displayVariant } purchase={ purchase } /> }
+						title={
+							<CancelHeaderTitle
+								displayVariant={ displayVariant }
+								intent={ intent }
+								purchase={ purchase }
+							/>
+						}
 						prefix={ <Breadcrumbs length={ 4 } /> }
 						description={ __( 'Please confirm that you want to remove this domain.' ) }
 					/>
@@ -1717,9 +1713,7 @@ function CancelPurchaseInner() {
 	// Under the split cancel/remove experiment the pre-survey confirmation screen
 	// gates the survey on `confirmationPassed`. Flag-off keeps the legacy
 	// `surveyShown` gate.
-	const atSurvey = Boolean(
-		isSplitCancelRemoveEnabled ? state.confirmationPassed : state.surveyShown
-	);
+	const atSurvey = Boolean( state.confirmationPassed || state.surveyShown );
 	const form = (
 		<CancelPurchaseForm
 			atomicRevertCheckOne={ state.atomicRevertCheckOne }
@@ -1787,6 +1781,7 @@ function CancelPurchaseInner() {
 					title={
 						<CancelHeaderTitle
 							displayVariant={ displayVariant }
+							intent={ intent }
 							purchase={ purchase }
 							surveyStep={ state.surveyStep }
 							surveyShown={ state.surveyShown }

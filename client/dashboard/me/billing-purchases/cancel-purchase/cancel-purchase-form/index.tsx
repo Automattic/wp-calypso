@@ -361,7 +361,7 @@ function StepButtons( {
 						disabled={ isCancelling }
 						onClick={ onSubmit }
 					>
-						{ __( 'No, thanks' ) }
+						{ __( 'Skip survey' ) }
 					</Button>
 				) }
 			</ButtonStack>
@@ -462,7 +462,7 @@ function StepButtons( {
 					disabled={ isCancelling }
 					onClick={ onSubmit }
 				>
-					{ __( 'No, thanks' ) }
+					{ __( 'Skip survey' ) }
 				</Button>
 			) }
 		</ButtonStack>
