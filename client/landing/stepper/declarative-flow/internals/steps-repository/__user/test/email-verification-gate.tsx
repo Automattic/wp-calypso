@@ -19,6 +19,10 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
 
+// A different user per test rather than a shared one: an attempt's record is recoverable from
+// memory by design, so clearing storage isn't what isolates these — a different attempt is.
+let mockUserId = 0;
+
 jest.mock( 'calypso/lib/analytics/tracks' );
 
 // Keep the poll from reaching the network — the gate polls `fetchCurrentUser`.
@@ -64,8 +68,8 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 		<button
 			onClick={ () => {
 				// Production order: goToNextStep fires before onCreateAccountSuccess.
-				goToNextStep?.( { bearer_token: 'test-token', ID: 1 } );
-				onCreateAccountSuccess?.( { ID: 1 } );
+				goToNextStep?.( { bearer_token: 'test-token', ID: mockUserId } );
+				onCreateAccountSuccess?.( { ID: mockUserId } );
 			} }
 		>
 			create-email-account
@@ -78,7 +82,6 @@ const mockConfig = config as unknown as { enabledFlags: Set< string > };
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
 const mockUseAccountCreationExperiment = useAccountCreationExperiment as unknown as jest.Mock;
 
-const USER_ID = 1;
 const EMAIL = 'onboarder@example.com';
 const GATE_HEADING = 'Verify your email';
 
@@ -96,8 +99,8 @@ const makeStore = ( emailVerified: boolean ) =>
 		rootReducer,
 		{
 			currentUser: {
-				id: USER_ID,
-				user: { ID: USER_ID, email: EMAIL, email_verified: emailVerified },
+				id: mockUserId,
+				user: { ID: mockUserId, email: EMAIL, email_verified: emailVerified },
 			},
 		},
 		applyMiddleware( thunkMiddleware )
@@ -119,6 +122,7 @@ const renderUser = ( store: ReturnType< typeof makeStore > ) => {
 
 describe( 'account step email verification gate', () => {
 	beforeEach( () => {
+		mockUserId++;
 		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
 		mockUsePartnerBranding.mockReturnValue( {
 			hasCustomBranding: false,
@@ -151,7 +155,7 @@ describe( 'account step email verification gate', () => {
 		act( () => {
 			store.dispatch( {
 				type: CURRENT_USER_RECEIVE,
-				user: { ID: USER_ID, email: EMAIL, email_verified: true },
+				user: { ID: mockUserId, email: EMAIL, email_verified: true },
 			} );
 		} );
 
@@ -184,7 +188,7 @@ describe( 'account step email verification gate', () => {
 	it( 'neither gates nor continues while the user object is still missing', async () => {
 		const store = createStore(
 			rootReducer,
-			{ currentUser: { id: USER_ID } },
+			{ currentUser: { id: mockUserId } },
 			applyMiddleware( thunkMiddleware )
 		);
 		const { submit } = renderUser( store );
@@ -236,17 +240,20 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
-	// The attempt is what the cooldown and the view stamp hang off, so it has to outlive a
-	// session. Freshness must not: nothing was just sent to someone coming back to it.
-	it( 'stops calling a signup fresh once the session that made it has ended', async () => {
+	// The attempt is what the cooldown and the view stamp hang off, so it outlives a good deal.
+	// "We just sent an email" must not: it stops being true long before the attempt stops being
+	// live, and it's shared across tabs so that every one of them says the same thing.
+	it( 'stops calling a signup fresh once it stops being recent', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		const store = makeLoggedOutStore();
 		const fresh = renderUser( store );
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
 		act( () => {
 			store.dispatch( {
 				type: CURRENT_USER_RECEIVE,
-				user: { ID: USER_ID, email: EMAIL, email_verified: false },
+				user: { ID: mockUserId, email: EMAIL, email_verified: false },
 			} );
 		} );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
@@ -257,10 +264,10 @@ describe( 'account step email verification gate', () => {
 		);
 		expect( screen.getByText( /We just sent an email/ ) ).toBeVisible();
 
-		// Only the session ends. The attempt is untouched, and still holds its view stamp — which
-		// is why this asserts the copy rather than a second view event, there being none.
+		// Coming back later. The attempt is untouched — it still holds its view stamp, which is why
+		// this asserts the copy rather than a second view event, there being none.
 		fresh.unmount();
-		sessionStorage.clear();
+		jest.setSystemTime( Date.now() + 31 * 60 * 1000 );
 		renderUser( makeStore( false ) );
 
 		expect(
@@ -309,7 +316,7 @@ describe( 'account step email verification gate', () => {
 		act( () => {
 			store.dispatch( {
 				type: CURRENT_USER_RECEIVE,
-				user: { ID: USER_ID, email: EMAIL, email_verified: true },
+				user: { ID: mockUserId, email: EMAIL, email_verified: true },
 			} );
 		} );
 
@@ -333,7 +340,7 @@ describe( 'account step email verification gate', () => {
 		act( () => {
 			store.dispatch( {
 				type: CURRENT_USER_RECEIVE,
-				user: { ID: USER_ID, email: EMAIL, email_verified: false },
+				user: { ID: mockUserId, email: EMAIL, email_verified: false },
 			} );
 		} );
 
@@ -357,8 +364,8 @@ describe( 'account step email verification gate', () => {
 			rootReducer,
 			{
 				currentUser: {
-					id: USER_ID,
-					user: { ID: USER_ID, email: EMAIL, email_verified: false, phone_account: true },
+					id: mockUserId,
+					user: { ID: mockUserId, email: EMAIL, email_verified: false, phone_account: true },
 				},
 			},
 			applyMiddleware( thunkMiddleware )

@@ -240,9 +240,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		);
 	}
 
-	// Showing the signup form here would offer account creation to someone who already has one,
-	// and a `/me` that never arrives would leave them on it for good.
-	if ( isLoggedIn && gateStatus === 'pending' ) {
+	// Nobody logged in has any business being offered account creation. They're either waiting on
+	// `/me`, or on the effect above to carry them onward — and letting the form show in between
+	// flashes it, and autofocuses it, in the middle of a successful confirmation.
+	if ( isLoggedIn ) {
 		return <Step.Loading />;
 	}
 

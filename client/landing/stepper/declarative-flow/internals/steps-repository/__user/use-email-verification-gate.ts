@@ -24,7 +24,8 @@ interface EmailVerificationGate {
  * verified, and a phone account's address was generated for it — unverified for a reason the gate
  * has no answer for, since there's no link sitting in an inbox to click.
  *
- * This opens the gate; it doesn't close it. See the latch in the account step.
+ * This opens the gate and closes it: the account step renders the gate while `gated`, and finishes
+ * the attempt when this turns `verified`.
  *
  * The experiment arm joins this expression once the experiment exists, rather than `/me`, so that
  * enrolment happens where the user meets the gate.

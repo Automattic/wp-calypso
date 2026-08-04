@@ -84,7 +84,6 @@ export function useEmailVerification( flow: string, scope: string ) {
 	};
 
 	return {
-		isVerified,
 		sendStatus,
 		secondsUntilResend,
 		resend,

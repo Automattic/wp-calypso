@@ -46,7 +46,10 @@ const currentUserState = ( emailVerified: boolean ) => ( {
 	},
 } );
 
-const SCOPE = `${ FLOW }:${ USER_ID }`;
+// A scope per test rather than a shared one: an attempt's record is recoverable from memory by
+// design, so clearing storage between tests isn't what isolates them — a different attempt is.
+let scopeCounter = 0;
+let SCOPE = '';
 
 const MINUTE = 60 * 1000;
 
@@ -69,6 +72,10 @@ const render = ( { logo }: { logo?: ReactNode } = {} ) => {
 
 describe( 'EmailVerificationGate', () => {
 	beforeAll( () => nock.disableNetConnect() );
+
+	beforeEach( () => {
+		SCOPE = `${ FLOW }:${ USER_ID }:${ ++scopeCounter }`;
+	} );
 
 	afterEach( () => {
 		jest.clearAllMocks();

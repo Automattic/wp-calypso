@@ -2,10 +2,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { claimGateConfirmation } from './storage';
 
 /**
- * Records the confirmation for an attempt, if this caller is the one that claims it.
- *
- * Both the gate and the account step can be the one to notice — the gate while it's mounted, the
- * step when `/me` already read verified on arrival — and several tabs can notice at once.
+ * Records the confirmation for an attempt, if this caller is the one that claims it. Several tabs
+ * can notice the same confirmation at once; only one of them should count it.
  */
 export function recordGateConfirmation( scope: string, flow: string ): void {
 	const claim = claimGateConfirmation( scope );

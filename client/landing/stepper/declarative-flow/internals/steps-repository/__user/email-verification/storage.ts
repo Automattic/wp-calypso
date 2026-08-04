@@ -10,12 +10,19 @@ export function gateScope( flow: string, userId: number | string | null | undefi
 
 interface GateRecord {
 	startedAt: number; // anchors the TTL
+	freshUntil: number; // while this hasn't passed, an email really was just sent
 	shownAt: number;
 	resendAvailableAt: number;
 	confirmedAt: number; // claimed by one tab, so only that one records the confirmation
 }
 
-const EMPTY_RECORD: GateRecord = { startedAt: 0, shownAt: 0, resendAvailableAt: 0, confirmedAt: 0 };
+const EMPTY_RECORD: GateRecord = {
+	startedAt: 0,
+	freshUntil: 0,
+	shownAt: 0,
+	resendAvailableAt: 0,
+	confirmedAt: 0,
+};
 
 // Past this an abandoned attempt stops speaking for the next one.
 const ATTEMPT_TTL_MS = 24 * 60 * 60 * 1000;
@@ -40,54 +47,57 @@ function hydrate( stored: Partial< GateRecord > | undefined ): GateRecord {
 	return isSpent ? EMPTY_RECORD : record;
 }
 
-function read( scope: string ): GateRecord {
-	if ( isStorageUsable ) {
-		try {
-			const raw = localStorage.getItem( storageKey( scope ) );
-			return hydrate( raw ? ( JSON.parse( raw ) as Partial< GateRecord > ) : undefined );
-		} catch {
-			isStorageUsable = false;
-		}
-	}
-	return hydrate( memoryRecords.get( scope ) );
-}
-
-function write( scope: string, record: Partial< GateRecord > ): void {
-	const next = { ...read( scope ), ...record };
-	next.startedAt = next.startedAt || Date.now();
-	memoryRecords.set( scope, next );
+function persist( scope: string, record: GateRecord ): void {
+	memoryRecords.set( scope, record );
 	try {
-		localStorage.setItem( storageKey( scope ), JSON.stringify( next ) );
+		localStorage.setItem( storageKey( scope ), JSON.stringify( record ) );
 	} catch {
 		// Private mode, quota — this tab keeps the record in memory from here on.
 		isStorageUsable = false;
 	}
 }
 
-/**
- * Whether an email was just sent, as against one the user is carrying over from an earlier signup.
- *
- * Session-scoped rather than part of the attempt: an attempt lasts a day, and someone who
- * abandoned this morning and came back after lunch is not owed "we just sent an email". It also
- * outlives the wholesale local-storage clear that resolving a different user than the one last
- * stored performs, which would otherwise take this with it.
- */
-const FRESH_SIGNUP_KEY = `${ STORAGE_KEY }-fresh`;
-
-export function markFreshSignup( scope: string ): void {
-	try {
-		sessionStorage.setItem( `${ FRESH_SIGNUP_KEY }:${ scope }`, '1' );
-	} catch {
-		// Ignore storage failures; the copy just reads as a returning user.
+function read( scope: string ): GateRecord {
+	let stored: Partial< GateRecord > | undefined;
+	if ( isStorageUsable ) {
+		try {
+			const raw = localStorage.getItem( storageKey( scope ) );
+			stored = raw ? ( JSON.parse( raw ) as Partial< GateRecord > ) : undefined;
+		} catch {
+			isStorageUsable = false;
+		}
 	}
+
+	const remembered = memoryRecords.get( scope );
+	if ( ! stored && remembered ) {
+		// Gone from under this tab: resolving a different user than the one last stored clears
+		// browser storage wholesale, which would otherwise reopen a live lockout, count the view
+		// again and lose the confirmation. This tab still knows its own attempt, so put it back.
+		persist( scope, remembered );
+		stored = remembered;
+	}
+	return hydrate( stored );
+}
+
+function write( scope: string, record: Partial< GateRecord > ): void {
+	const next = { ...read( scope ), ...record };
+	next.startedAt = next.startedAt || Date.now();
+	persist( scope, next );
+}
+
+// How long "we just sent an email" stays true. Long enough to cover a signup that detours through
+// checkout, short enough that someone who abandoned this morning isn't told it after lunch — which
+// the attempt's own day-long life is far too generous for.
+const FRESH_SIGNUP_WINDOW_MS = 30 * 60 * 1000;
+
+// Called at account creation, before `/me` has caught up. On the shared record rather than this
+// tab's own, so every tab tells the user the same thing and the view event agrees with the copy.
+export function markFreshSignup( scope: string ): void {
+	write( scope, { freshUntil: Date.now() + FRESH_SIGNUP_WINDOW_MS } );
 }
 
 export function isFreshSignup( scope: string ): boolean {
-	try {
-		return !! sessionStorage.getItem( `${ FRESH_SIGNUP_KEY }:${ scope }` );
-	} catch {
-		return false;
-	}
+	return read( scope ).freshUntil > Date.now();
 }
 
 /**
