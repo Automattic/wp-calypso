@@ -102,3 +102,24 @@ export const SwitchToSidebar = ( {
 		</SVG>
 	);
 };
+
+export const Bookmark = ( {
+	size = 24,
+	color = 'currentColor',
+	className,
+}: IconProps ) => {
+	return (
+		<SVG
+			className={ className }
+			width={ size }
+			height={ size }
+			viewBox="0 0 24 24"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			aria-hidden="true"
+			focusable="false"
+		>
+			<Path d="M6 5V18.5911L12 13.8473L18 18.5911V5H6Z" fill={ color } />
+		</SVG>
+	);
+};
