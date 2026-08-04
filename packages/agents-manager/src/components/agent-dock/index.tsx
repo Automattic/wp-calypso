@@ -18,6 +18,7 @@ import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-age
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { isWpAdmin } from '../../utils/is-wp-admin';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
@@ -262,9 +263,8 @@ export default function AgentDock( {
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		// Guidelines and settings link to wp-admin/WordPress.com pages that
-		// Calypso-hosted chats can't resolve. The body class is core-guaranteed
-		// on every admin screen — the same signal the dock's stylesheets use.
-		const isWpAdmin = document.body.classList.contains( 'wp-admin' );
+		// Calypso-hosted chats can't resolve.
+		const showWpAdminLinks = isWpAdmin();
 		const options = [
 			{
 				icon: comment,
@@ -303,7 +303,7 @@ export default function AgentDock( {
 						setIsSplitScreen( ! isSplitScreen );
 					},
 				},
-			isWpAdmin && {
+			showWpAdminLinks && {
 				icon: heading,
 				title: __( 'Knowledge and memory', __i18n_text_domain__ ),
 				onClick: () => {
@@ -317,7 +317,7 @@ export default function AgentDock( {
 					);
 				},
 			},
-			isWpAdmin && {
+			showWpAdminLinks && {
 				icon: cog,
 				title: __( 'AI Agent settings', __i18n_text_domain__ ),
 				onClick: () => {
