@@ -461,17 +461,18 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				</Modal>
 			) }
 
-			<UserContactSupportModalForm
-				show={ showSupportForm }
-				onClose={ () => setShowSupportForm( false ) }
-				defaultMessage={ supportDefaultMessage as string }
-				anonymousAtSignup={ {
-					name: supportFormName,
-					email: supportFormEmail ?? '',
-					agencyName: formData.agencyName ?? '',
-					agencyUrl: formData.agencyUrl ?? '',
-				} }
-			/>
+			{ showSupportForm && (
+				<UserContactSupportModalForm
+					onClose={ () => setShowSupportForm( false ) }
+					defaultMessage={ supportDefaultMessage as string }
+					anonymousAtSignup={ {
+						name: supportFormName,
+						email: supportFormEmail ?? '',
+						agencyName: formData.agencyName ?? '',
+						agencyUrl: formData.agencyUrl ?? '',
+					} }
+				/>
+			) }
 		</Form>
 	);
 };
