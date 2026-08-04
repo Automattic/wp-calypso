@@ -159,8 +159,14 @@ describe( 'account step email verification gate', () => {
 			} );
 		} );
 
+		// Nothing offers to create an account to someone who has just proved they have one.
+		expect(
+			screen.queryByRole( 'button', { name: 'create-email-account' } )
+		).not.toBeInTheDocument();
+
 		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
-		// The gate owns this event, so it has to still be mounted when the confirmation lands.
+		// The step records this, so it survives the gate unmounting — which is what the transition
+		// looks like now.
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_confirmed',
 			expect.objectContaining( { flow: 'onboarding', seconds_on_step: expect.any( Number ) } )
