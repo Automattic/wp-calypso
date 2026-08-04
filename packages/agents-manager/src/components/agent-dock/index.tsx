@@ -321,7 +321,7 @@ export default function AgentDock( {
 						type: 'ai_agent_settings',
 					} );
 					window.open(
-						`https://wordpress.com/sites/${ window.location.hostname }/settings/ai-tools`,
+						`https://my.wordpress.com/sites/${ window.location.hostname }/settings/ai-tools`,
 						'_blank',
 						'noreferrer'
 					);
