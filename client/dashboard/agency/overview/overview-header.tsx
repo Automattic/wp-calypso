@@ -11,10 +11,7 @@ interface AgencyOverviewHeaderInfoProps {
 	createdAt?: string;
 }
 
-/**
- * The agency's site link and join date. Rendered under the agency name by both
- * hosts: the dashboard's page header and the a8c-for-agencies layout header.
- */
+// Shared between the dashboard PageHeader and the a8c-for-agencies LayoutHeader.
 export function AgencyOverviewHeaderInfo( {
 	url,
 	createdAt,
