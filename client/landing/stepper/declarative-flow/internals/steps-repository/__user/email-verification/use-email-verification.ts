@@ -20,15 +20,15 @@ import type { TimeoutMS } from 'calypso/types';
 
 // Polling is for the confirmation this tab can't otherwise see: `UserVerificationChecker` covers
 // the same browser instantly, and leaving for an inbox hides the tab, which pauses the poll and
-// re-checks on return. What's left is a link opened on another device, where someone is watching
-// this screen for it to resolve — so the opening rate is quick enough not to feel stuck, then
-// backs off rather than stopping, so a link opened an hour later still lands.
+// re-checks on return. What's left is a link opened on another device, which raises no signal at
+// all — polling is the only thing that will notice it. So the rate backs off rather than
+// stopping, and the slowest rung stays short: past it, the wait is time an already-verified
+// person spends looking at a screen that has nothing left to tell them.
 const POLL_SCHEDULE: { after: TimeoutMS; delay: TimeoutMS }[] = [
 	{ after: 0, delay: EVERY_TEN_SECONDS },
 	{ after: 5 * EVERY_MINUTE, delay: EVERY_THIRTY_SECONDS },
 	{ after: 10 * EVERY_MINUTE, delay: EVERY_MINUTE },
-	{ after: 30 * EVERY_MINUTE, delay: 5 * EVERY_MINUTE },
-	{ after: 60 * EVERY_MINUTE, delay: 10 * EVERY_MINUTE },
+	{ after: 30 * EVERY_MINUTE, delay: 3 * EVERY_MINUTE },
 ];
 
 function pollDelayAfter( elapsed: number ): TimeoutMS {

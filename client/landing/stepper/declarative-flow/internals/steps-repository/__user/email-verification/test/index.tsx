@@ -198,9 +198,9 @@ describe( 'EmailVerificationGate', () => {
 			return poll.mock.calls.length;
 		} );
 
-		// Every 10s for five minutes, then 30s, a minute, five minutes, and ten minutes from an
-		// hour on — where a tab left open sits, still able to catch a confirmation from a phone.
-		expect( requestsPerRung ).toEqual( [ 30, 10, 20, 6, 6 ] );
+		// Every 10s for five minutes, then 30s, a minute, and three minutes from half an hour on
+		// — the floor, so a confirmation from a phone is never more than three minutes stale.
+		expect( requestsPerRung ).toEqual( [ 30, 10, 20, 10, 20 ] );
 	} );
 
 	it( 'polls at the opening rate again after a resend', async () => {
