@@ -9,14 +9,14 @@ interface AddWooPaymentsToSiteProps {
 	agencyId: number;
 	excludedSiteIds: number[];
 	recordTracksEvent: RecordTracksEvent;
-	navigate: ( url: string ) => void;
+	onSelectSite: ( siteId: number ) => void;
 }
 
 export default function AddWooPaymentsToSite( {
 	agencyId,
 	excludedSiteIds,
 	recordTracksEvent,
-	navigate,
+	onSelectSite,
 }: AddWooPaymentsToSiteProps ) {
 	const showModal = getQueryArg( window.location.href, 'add-woopayments-to-site' ) === 'true';
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -51,7 +51,7 @@ export default function AddWooPaymentsToSite( {
 					agencyId={ agencyId }
 					excludedSiteIds={ excludedSiteIds }
 					recordTracksEvent={ recordTracksEvent }
-					navigate={ navigate }
+					onSelectSite={ onSelectSite }
 					onClose={ () => setIsOpen( false ) }
 				/>
 			) }

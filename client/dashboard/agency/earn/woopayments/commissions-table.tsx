@@ -29,6 +29,7 @@ interface CommissionsTableProps {
 	isLoadingWooPaymentsData: boolean;
 	recordTracksEvent: RecordTracksEvent;
 	onDownloadReport: ( siteId: number ) => Promise< void >;
+	onContinueSetup: ( siteId: number ) => void;
 }
 
 export default function CommissionsTable( {
@@ -37,6 +38,7 @@ export default function CommissionsTable( {
 	isLoadingWooPaymentsData,
 	recordTracksEvent,
 	onDownloadReport,
+	onContinueSetup,
 }: CommissionsTableProps ) {
 	const [ isGeneratingReport, setIsGeneratingReport ] = useState( false );
 
@@ -120,6 +122,7 @@ export default function CommissionsTable( {
 						state={ item.state }
 						siteId={ item.blogId }
 						recordTracksEvent={ recordTracksEvent }
+						onContinueSetup={ onContinueSetup }
 					/>
 				),
 				enableHiding: false,
@@ -140,7 +143,7 @@ export default function CommissionsTable( {
 				enableSorting: false,
 			},
 		],
-		[ isLoadingWooPaymentsData, woopaymentsData, recordTracksEvent ]
+		[ isLoadingWooPaymentsData, woopaymentsData, recordTracksEvent, onContinueSetup ]
 	);
 
 	const { data, paginationInfo } = useMemo(

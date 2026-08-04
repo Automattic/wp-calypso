@@ -1,6 +1,9 @@
+import page from '@automattic/calypso-router';
 import { useLocale } from '@automattic/i18n-utils';
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useCallback } from 'react';
+import { A4A_WOOPAYMENTS_SITE_SETUP_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import CommissionsTable from 'calypso/dashboard/agency/earn/woopayments/commissions-table';
 import ConsolidatedViews from 'calypso/dashboard/agency/earn/woopayments/consolidated-views';
 import { useDownloadCommissionsReport } from 'calypso/dashboard/agency/earn/woopayments/use-download-commissions-report';
@@ -49,6 +52,9 @@ const WooPaymentsDashboardContent = ( {
 					isLoadingWooPaymentsData={ isLoadingWooPaymentsData }
 					recordTracksEvent={ recordTracks }
 					onDownloadReport={ downloadCommissionsReport }
+					onContinueSetup={ ( siteId ) =>
+						page.redirect( addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, { site_id: siteId } ) )
+					}
 				/>
 			</div>
 		</VStack>

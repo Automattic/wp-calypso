@@ -9,7 +9,9 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useCallback } from 'react';
+import { A4A_WOOPAYMENTS_SITE_SETUP_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import wooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/woopayments/logo.svg';
 import AddWooPaymentsToSite from 'calypso/dashboard/agency/earn/woopayments/add-woopayments-to-site';
@@ -58,7 +60,11 @@ const WooPaymentsDashboardEmptyState = () => {
 								agencyId={ agencyId }
 								excludedSiteIds={ EXCLUDED_SITE_IDS }
 								recordTracksEvent={ recordTracks }
-								navigate={ ( url ) => page.redirect( url ) }
+								onSelectSite={ ( siteId ) =>
+									page.redirect(
+										addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, { site_id: siteId } )
+									)
+								}
 							/>
 						</HStack>
 					</CardBody>
