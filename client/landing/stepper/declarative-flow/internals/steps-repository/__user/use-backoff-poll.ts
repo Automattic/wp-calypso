@@ -55,6 +55,19 @@ export function useBackoffPoll( poll: () => void, isEnabled: boolean ) {
 		setDelay( POLL_SCHEDULE[ 0 ].delay );
 	}, [] );
 
+	// Nothing is listening while disabled, so visibility can have changed unseen — a tab that was
+	// hidden at mount would never poll, one that was visible would poll on in the background. The
+	// elapsed time would also count however long the hook sat idle, landing the first poll on the
+	// slowest rung.
+	useEffect( () => {
+		if ( ! isEnabled ) {
+			return;
+		}
+		startedAt.current = Date.now();
+		setDelay( POLL_SCHEDULE[ 0 ].delay );
+		setIsVisible( document.visibilityState === 'visible' );
+	}, [ isEnabled ] );
+
 	useEffect( () => {
 		if ( ! isEnabled ) {
 			return;

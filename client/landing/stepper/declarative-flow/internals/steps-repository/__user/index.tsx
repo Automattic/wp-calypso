@@ -78,7 +78,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
-	const [ createdScope, setCreatedScope ] = useState< string | null >( null );
+	const [ didCreateAccount, setDidCreateAccount ] = useState( false );
 	// `/me` opens the gate but doesn't close it: dropping it the moment `/me` reports verified
 	// carries the step on without the confirmation the gate was about to record.
 	const [ latchedScope, setLatchedScope ] = useState< string | null >( null );
@@ -136,10 +136,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	// A retry batch is finite and swallows its failure, so nothing would ask again. An account just
 	// created isn't logged in until `/me` answers — the request that failed — so the tab that made
-	// it keeps asking on its own account, holding the scope because there's no user ID yet.
+	// it keeps asking on its own account.
 	useBackoffPoll(
 		() => dispatch( fetchCurrentUser() as unknown as AnyAction ),
-		( isLoggedIn || !! createdScope ) && gateStatus === 'pending'
+		( isLoggedIn || didCreateAccount ) && gateStatus === 'pending'
 	);
 
 	const locale = useFlowLocale();
@@ -160,9 +160,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		setSignupIsNewUser( data.ID );
 		if ( gateEnabled ) {
 			// Records that an email really was just sent. It does not decide whether the gate opens.
-			const created = gateScope( flow, data.ID );
-			markFreshSignup( created );
-			setCreatedScope( created );
+			markFreshSignup( gateScope( flow, data.ID ) );
+			setDidCreateAccount( true );
 			// The activation email from account creation is the one the gate asks for, so the gate
 			// sends nothing on arrival — this only records the send the server just made.
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
