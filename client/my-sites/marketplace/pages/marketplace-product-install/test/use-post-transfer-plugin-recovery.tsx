@@ -46,7 +46,7 @@ const defaults: Props = {
 	enabled: true,
 	canActivate: true,
 	ownsActivation: true,
-	installedPlugin: INSTALLED,
+	installedPluginSlug: INSTALLED.slug,
 };
 const render = ( props?: Partial< Props > ) =>
 	renderHook( ( p: Props ) => usePostTransferPluginRecovery( p ), {
@@ -70,7 +70,7 @@ describe( 'usePostTransferPluginRecovery', () => {
 	} );
 
 	it( 'polls the site plugins on an interval while enabled', async () => {
-		render( { installedPlugin: null } );
+		render( { installedPluginSlug: undefined } );
 		expect( mockIntervalDelay ).toBe( 3000 );
 		await tick();
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 );
@@ -120,10 +120,9 @@ describe( 'usePostTransferPluginRecovery', () => {
 		expect( activatePlugin ).toHaveBeenCalledTimes( 3 );
 	} );
 
-	// An endpoint with no way to report the benign already-active case answers a redundant activation
-	// with a plain failure, leaving the plugin reading inactive in the props this hook was rendered
-	// with. Nothing here rerenders, mirroring that.
-	it( 'stops re-activating once the refreshed list reports active, even while the props say otherwise', async () => {
+	// The budget used to go on redundant attempts: an endpoint with no way to report the benign
+	// already-active case answers each one with a plain failure, which never flips `active`.
+	it( 'spends no further attempts once a later refresh reports the plugin active', async () => {
 		render();
 		await tick();
 		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
@@ -181,7 +180,7 @@ describe( 'usePostTransferPluginRecovery', () => {
 	} );
 
 	it( 'waits to activate until the caller knows which plugin was installed', async () => {
-		const { rerender } = render( { installedPlugin: null } );
+		const { rerender } = render( { installedPluginSlug: undefined } );
 		await tick();
 		expect( activatePlugin ).not.toHaveBeenCalled();
 

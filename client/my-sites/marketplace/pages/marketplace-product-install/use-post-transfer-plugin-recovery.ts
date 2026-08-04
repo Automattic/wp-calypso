@@ -16,13 +16,14 @@ export function usePostTransferPluginRecovery( {
 	enabled,
 	canActivate,
 	ownsActivation,
-	installedPlugin,
+	installedPluginSlug,
 }: {
 	siteId: number;
 	enabled: boolean;
 	canActivate: boolean;
 	ownsActivation: boolean;
-	installedPlugin: { slug?: string; id?: string } | null | undefined;
+	// The slug the plugin installed under, which for a marketplace product is not the route slug.
+	installedPluginSlug: string | undefined;
 } ): void {
 	const dispatch = useDispatch();
 	const store = useStore();
@@ -38,21 +39,20 @@ export function usePostTransferPluginRecovery( {
 			if (
 				! canActivate ||
 				! ownsActivation ||
-				! installedPlugin?.slug ||
+				! installedPluginSlug ||
 				inFlightRef.current ||
 				attemptsRef.current >= MAX_ACTIVATION_ATTEMPTS
 			) {
 				return;
 			}
 
-			const { slug } = installedPlugin;
 			inFlightRef.current = true;
 			refreshed
 				.then( () => {
 					// An endpoint with no way to report the benign already-active case answers a redundant
 					// activation with a plain failure, which leaves `active` false in the store. The
 					// refreshed list is what settles it either way.
-					const plugin = getPluginOnSite( store.getState(), siteId, slug );
+					const plugin = getPluginOnSite( store.getState(), siteId, installedPluginSlug );
 					if ( ! plugin || plugin.active ) {
 						return;
 					}

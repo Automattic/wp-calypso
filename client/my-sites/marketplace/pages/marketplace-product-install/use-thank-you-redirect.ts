@@ -97,7 +97,7 @@ export function useThankYouRedirect( {
 			uploadTransferSettled ||
 			( ! atomicFlow && currentStep === 0 ) ||
 			( atomicFlow && currentStep === 2 ),
-		installedPlugin,
+		installedPluginSlug: installedPlugin?.slug,
 	} );
 	// Every plugin flow lands here the same way: the plugin reads active. For the ones a transfer
 	// drives, that is only true once the transfer is far enough along and the site is reachable, which
