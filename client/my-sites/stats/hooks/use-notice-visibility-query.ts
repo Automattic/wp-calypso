@@ -68,6 +68,23 @@ export const processConflictNotices = ( notices: Notices ): Notices => {
 	return notices;
 };
 
+/**
+ * `free_site_upgrade` replaced the `do_you_love_jetpack_stats` and
+ * `commercial_site_upgrade` notices, so a site that dismissed or postponed either
+ * of them shouldn't meet the successor until that hiding lapses. The server only
+ * reports an id as hidden while a dismissal is in effect, so a missing key means
+ * "not dismissed". Drop this inheritance if the legacy ids ever leave the server
+ * response for another reason.
+ */
+export const normalizeNoticesVisibility = ( payload: Partial< Notices > ): Notices => {
+	const notices = { ...DEFAULT_NOTICES_VISIBILITY, ...payload };
+	notices.free_site_upgrade =
+		notices.free_site_upgrade &&
+		payload.do_you_love_jetpack_stats !== false &&
+		payload.commercial_site_upgrade !== false;
+	return notices;
+};
+
 const queryNotices = async function ( siteId: number | null ): Promise< Notices > {
 	let payload;
 
@@ -81,7 +98,7 @@ const queryNotices = async function ( siteId: number | null ): Promise< Notices 
 		return DEFAULT_NOTICES_VISIBILITY;
 	}
 
-	return { ...DEFAULT_NOTICES_VISIBILITY, ...payload };
+	return normalizeNoticesVisibility( payload );
 };
 
 const useNoticesVisibilityQueryRaw = function < T >(
