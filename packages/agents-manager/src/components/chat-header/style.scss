@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/variables';
+
 .agents-manager-chat-header {
 	width: 100%;
 	display: flex;
@@ -42,8 +44,8 @@
 		// Excludes DropdownMenu popover items (they render on WP's white
 		// popover); `.has-icon` out-specifies wp's small icon-button sizing.
 		.components-button.has-icon:not( .components-dropdown-menu__menu-item ) {
-			height: 24px;
-			min-width: 24px;
+			height: $grid-unit-30;
+			min-width: $grid-unit-30;
 
 			// Override wp's `svg { fill: currentColor }`, which makes the
 			// icons invisible in dark mode.
@@ -72,13 +74,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
-		padding: 8px;
+		padding: $grid-unit-10;
 	}
 
 	// The extra `.components-button` out-specifies wp's item padding.
 	.components-button.components-dropdown-menu__menu-item {
-		padding: 6px 8px;
-		border-radius: 4px;
+		padding: 6px $grid-unit-10;
+		border-radius: $radius-medium;
 
 		&:hover:not( :disabled ):not( [aria-disabled='true'] ),
 		&:focus-visible:not( :disabled ):not( [aria-disabled='true'] ) {
@@ -97,12 +99,12 @@
 
 		// Stretch wp's divider line across the menu's 8px padding.
 		&.has-separator {
-			margin-top: 12px;
+			margin-top: $grid-unit-15;
 
 			&::before {
-				top: -8px;
-				left: -8px;
-				right: -8px;
+				top: -$grid-unit-10;
+				left: -$grid-unit-10;
+				right: -$grid-unit-10;
 			}
 		}
 	}

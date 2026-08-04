@@ -1,5 +1,7 @@
+@import '@wordpress/base-styles/variables';
+
 .agents-manager-copy-action-button {
-	border-radius: 4px;
+	border-radius: $radius-medium;
 
 	svg {
 		width: 28px;
