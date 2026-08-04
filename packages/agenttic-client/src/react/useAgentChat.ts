@@ -6,6 +6,7 @@ import type {
 	Message as ClientMessage,
 	ContentType,
 	ContextProvider,
+	FilePart,
 	TaskUpdate,
 	ToolProvider,
 } from '../client/types/index';
@@ -92,6 +93,7 @@ export interface SubmitOptions {
 	sessionId?: string; // Optional `sessionId` to use for this message (overrides agent's `sessionId`)
 	toolCallId?: string; // Required when type is `tool_result`: the tool call ID to respond to
 	toolId?: string; // Required when type is `tool_result`: the tool ID
+	fileParts?: FilePart[]; // Optional when type is `tool_result`: files (typically images) produced by the tool
 }
 
 // UI Message format (simplified for UI components)
@@ -740,7 +742,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							options!.toolCallId!,
 							options!.toolId!,
 							{ success: true, message },
-							messageOptions
+							messageOptions,
+							options?.fileParts
 					  )
 					: agentManager.sendMessageStream(
 							agentKey,
