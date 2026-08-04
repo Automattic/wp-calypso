@@ -191,71 +191,15 @@ const seriesHex = ( scheme: string, series: 'views' | 'visitors' ) => {
 	return resolved;
 };
 
-const parseLineVisitorsRule = ( root: postcss.Root ) => {
-	let base: string | null = null;
-	const overrides = new Map< string, string >();
-	root.each( ( node ) => {
-		if ( node.type !== 'rule' ) {
-			return;
-		}
-		let value: string | null = null;
-		node.each( ( child ) => {
-			if ( child.type === 'decl' && child.prop === '--chart-line-visitors' ) {
-				value = child.value.trim();
-			}
-		} );
-		if ( ! value ) {
-			return;
-		}
-		for ( const selector of node.selectors ) {
-			if ( selector === ':root' ) {
-				base = value;
-				continue;
-			}
-			const schemeMatch = selector.match( /^\.color-scheme\.is-([\w-]+)$/ );
-			if ( schemeMatch ) {
-				overrides.set( schemeMatch[ 1 ], value );
-			}
-		}
-	} );
-	if ( ! base ) {
-		throw new Error( 'No :root base --chart-line-visitors rule found in chart/style.scss' );
-	}
-	return { base, overrides };
-};
-
-const { base: lineVisitorsBase, overrides: lineVisitorsOverrides } =
-	parseLineVisitorsRule( chartStyleRoot );
-
-const lineVisitorsHex = ( scheme: string ) => {
-	const value = lineVisitorsOverrides.get( scheme ) ?? lineVisitorsBase;
-	const resolved = resolve( value, scheme );
-	if ( ! resolved ) {
-		throw new Error(
-			`Could not resolve --chart-line-visitors (${ value }) for scheme ${ scheme }`
-		);
-	}
-	return resolved;
-};
-
 const schemeNames = [ ...schemes.keys() ];
 
-// These schemes' Views colour is the scheme's raw wp-admin --color-accent
-// highlight rather than a ramp step, so Views itself can fall short of 3:1
-// against the surface. Fixing that is out of scope for STATS-369 — it would
-// replace the scheme's deliberate muted identity with a saturated ramp
-// colour. The pair contrast (Views vs Visitors) is still required to pass.
-const VIEWS_VS_SURFACE_EXEMPT_SCHEMES = [ 'coffee', 'ocean', 'light', 'sunrise', 'ectoplasm' ];
-
-const VISITORS_100_ALLOWED_SCHEMES = [ 'contrast', 'jetpack-cloud' ];
+const VISITORS_100_ALLOWED_SCHEMES = [ 'contrast' ];
 
 const lineChartSource = fs.readFileSync( LINE_CHART, 'utf8' );
 const LINE_CHART_TOKENS = [ ...lineChartSource.matchAll( /useCssVariable\(\s*'(--[\w-]+)'/g ) ].map(
 	( m ) => m[ 1 ]
 );
 const [ LINE_CHART_VIEWS_TOKEN, LINE_CHART_VISITORS_TOKEN ] = LINE_CHART_TOKENS;
-
-const lineViewsHex = ( scheme: string ) => tokenValue( scheme, LINE_CHART_VIEWS_TOKEN );
 
 describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 	it( 'bar chart series read the shared --chart-series custom properties', () => {
@@ -299,9 +243,7 @@ describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 		}
 	);
 
-	it.each(
-		schemeNames.filter( ( scheme ) => ! VIEWS_VS_SURFACE_EXEMPT_SCHEMES.includes( scheme ) )
-	)(
+	it.each( schemeNames )(
 		'bar chart: Views meets the 3:1 contrast rule against the surface in the %s scheme',
 		( scheme ) => {
 			const surface = tokenValue( scheme, '--color-surface' );
@@ -325,45 +267,11 @@ describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 		expect( SERIES.visitorsSwatch ).toBe( SERIES.visitorsBar );
 	} );
 
-	it( 'line chart declares exactly two distinct series colour tokens', () => {
+	it( 'line chart reads the same --chart-series-views and --chart-series-visitors tokens as the bar chart, keeping the shared legend correct', () => {
 		expect( LINE_CHART_TOKENS ).toHaveLength( 2 );
-		expect( LINE_CHART_TOKENS[ 0 ] ).not.toBe( LINE_CHART_TOKENS[ 1 ] );
+		expect( LINE_CHART_VIEWS_TOKEN ).toBe( SERIES.viewsBar );
+		expect( LINE_CHART_VISITORS_TOKEN ).toBe( SERIES.visitorsBar );
 	} );
-
-	it( 'line chart: tokens are entirely separate from the bar chart tokens', () => {
-		expect( LINE_CHART_TOKENS ).not.toContain( SERIES.viewsBar );
-		expect( LINE_CHART_TOKENS ).not.toContain( SERIES.visitorsBar );
-	} );
-
-	it( 'line chart: Visitors token is the dedicated --chart-line-visitors custom property', () => {
-		expect( LINE_CHART_VISITORS_TOKEN ).toBe( '--chart-line-visitors' );
-	} );
-
-	it.each( schemeNames )(
-		'line chart: has an explicit .color-scheme.is-%s rule declaring --chart-line-visitors',
-		( scheme ) => {
-			if ( ! lineVisitorsOverrides.has( scheme ) ) {
-				throw new Error(
-					`.color-scheme.is-${ scheme } has no explicit --chart-line-visitors rule in chart/style.scss. ` +
-						'A scheme cannot rely on the :root fallback: CSS substitutes var() at the element where a custom ' +
-						'property is declared, not where it is used, so --chart-line-visitors declared on :root resolves ' +
-						"--color-accent-dark against :root (the default scheme's ramp), not against this scheme's ramp. " +
-						`Add an explicit .color-scheme.is-${ scheme } rule with the declaration.`
-				);
-			}
-			expect( lineVisitorsOverrides.has( scheme ) ).toBe( true );
-		}
-	);
-
-	it.each( schemeNames )(
-		'line chart: Views and Visitors meet the 3:1 pair-contrast rule against each other in the %s scheme',
-		( scheme ) => {
-			const views = lineViewsHex( scheme );
-			const visitors = lineVisitorsHex( scheme );
-
-			expect( contrast( views, visitors ) ).toBeGreaterThanOrEqual( MIN_RATIO );
-		}
-	);
 
 	it( 'Odyssey widget mini-chart does not override the shared series colours', () => {
 		const source = fs.readFileSync( WIDGET_CHART, 'utf8' );

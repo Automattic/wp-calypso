@@ -11,50 +11,35 @@ $year-bar-chart-border-radius: 4px;
 :root {
 	--chart-series-views: var(--color-accent-40);
 	--chart-series-visitors: var(--color-accent-90);
-	--chart-line-visitors: var(--color-accent-dark);
+}
+
+.color-scheme.is-aquatic,
+.color-scheme.is-blue,
+.color-scheme.is-classic-blue,
+.color-scheme.is-coffee,
+.color-scheme.is-fresh,
+.color-scheme.is-light,
+.color-scheme.is-nightfall,
+.color-scheme.is-ocean,
+.color-scheme.is-powder-snow,
+.color-scheme.is-sakura,
+.color-scheme.is-sunrise,
+.color-scheme.is-sunset {
+	--chart-series-views: var(--color-accent-40);
+	--chart-series-visitors: var(--color-accent-80);
 }
 
 .color-scheme.is-classic-bright,
 .color-scheme.is-classic-dark,
-.color-scheme.is-default,
 .color-scheme.is-global,
+.color-scheme.is-midnight,
 .color-scheme.is-modern {
-	--chart-series-views: var(--color-accent-40);
-	--chart-series-visitors: var(--color-accent-90);
-}
-
-.color-scheme.is-coffee,
-.color-scheme.is-light,
-.color-scheme.is-ocean,
-.color-scheme.is-sunrise {
-	--chart-series-views: var(--color-accent);
-	--chart-series-visitors: var(--color-accent-dark);
-}
-
-.color-scheme.is-ectoplasm {
-	--chart-series-views: var(--color-accent);
+	--chart-series-views: var(--color-accent-30);
 	--chart-series-visitors: var(--color-accent-80);
 }
 
-.color-scheme.is-aquatic,
-.color-scheme.is-classic-blue,
-.color-scheme.is-fresh,
-.color-scheme.is-midnight,
-.color-scheme.is-nightfall,
-.color-scheme.is-powder-snow,
-.color-scheme.is-sakura,
-.color-scheme.is-sunset {
-	--chart-series-views: var(--color-accent);
-	--chart-series-visitors: var(--color-accent-90);
-}
-
-.color-scheme.is-jetpack-cloud {
-	--chart-series-views: var(--color-accent);
-	--chart-series-visitors: var(--color-accent-50);
-}
-
-.color-scheme.is-blue {
-	--chart-series-views: var(--color-accent-50);
+.color-scheme.is-default {
+	--chart-series-views: var(--color-accent-40);
 	--chart-series-visitors: var(--color-accent-90);
 }
 
@@ -63,31 +48,14 @@ $year-bar-chart-border-radius: 4px;
 	--chart-series-visitors: var(--color-accent-100);
 }
 
-.color-scheme.is-aquatic,
-.color-scheme.is-blue,
-.color-scheme.is-classic-blue,
-.color-scheme.is-coffee,
-.color-scheme.is-contrast,
-.color-scheme.is-default,
-.color-scheme.is-ectoplasm,
-.color-scheme.is-fresh,
-.color-scheme.is-jetpack-cloud,
-.color-scheme.is-light,
-.color-scheme.is-nightfall,
-.color-scheme.is-ocean,
-.color-scheme.is-powder-snow,
-.color-scheme.is-sakura,
-.color-scheme.is-sunrise,
-.color-scheme.is-sunset {
-	--chart-line-visitors: var(--color-accent-dark);
+.color-scheme.is-ectoplasm {
+	--chart-series-views: var(--color-accent-50);
+	--chart-series-visitors: var(--color-accent-90);
 }
 
-.color-scheme.is-classic-bright,
-.color-scheme.is-classic-dark,
-.color-scheme.is-global,
-.color-scheme.is-midnight,
-.color-scheme.is-modern {
-	--chart-line-visitors: var(--color-accent-80);
+.color-scheme.is-jetpack-cloud {
+	--chart-series-views: var(--color-accent-30);
+	--chart-series-visitors: var(--color-accent-70);
 }
 
 // Chart
