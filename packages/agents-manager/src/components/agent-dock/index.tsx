@@ -267,8 +267,8 @@ export default function AgentDock( {
 	const isMenuOption = < T, >( option: T | false | undefined ): option is T => Boolean( option );
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
-		// Guidelines and settings link to wp-admin/WordPress.com pages that
-		// Calypso-hosted chats can't resolve.
+		// Guidelines and settings are site-based links that Calypso-hosted
+		// chats can't resolve.
 		const isInWpAdmin = isWpAdmin();
 
 		const inlineData = getAgentsManagerInlineData();
