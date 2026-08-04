@@ -65,7 +65,7 @@
 	padding: 0;
 
 	.components-menu-group {
-		padding: 8px 0;
+		padding: 8px;
 
 		// MenuGroup wraps its items in a role="group" container.
 		[role='group'] {
@@ -79,7 +79,7 @@
 	// popover is unthemed (always white), so the hover/focus state uses the
 	// light theme's muted color instead of the variable.
 	.components-button.components-dropdown-menu__menu-item {
-		padding: 6px 16px;
+		padding: 6px 8px;
 
 		&:hover:not( :disabled ),
 		&:focus-visible {
