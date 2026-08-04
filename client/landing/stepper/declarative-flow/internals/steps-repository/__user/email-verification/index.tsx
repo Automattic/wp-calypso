@@ -13,7 +13,7 @@ import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getInboxLink } from './inbox-links';
-import { gateShownAt, markGateShown } from './storage';
+import { claimGateConfirmation, markGateShown } from './storage';
 import { useEmailVerification } from './use-email-verification';
 
 import './style.scss';
@@ -78,18 +78,22 @@ const EmailVerificationGate = ( { flow, scope, isNewSignup, logo, onDone }: Prop
 		headingRef.current?.focus();
 	}, [] );
 
-	// Covers confirming while the gate is open and mounting already-verified, e.g. a reload
-	// after confirming.
+	// Covers confirming while the gate is open and mounting already-verified, e.g. a reload after
+	// confirming. The ref keeps one tab from submitting twice; the claim keeps several tabs — all
+	// woken by the same confirmation — from recording it more than once between them.
 	const finish = useCallback( () => {
 		if ( hasSubmitted.current ) {
 			return;
 		}
 
 		hasSubmitted.current = true;
-		recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
-			flow,
-			seconds_on_step: Math.round( ( Date.now() - gateShownAt( scope ) ) / 1000 ),
-		} );
+		const claim = claimGateConfirmation( scope );
+		if ( claim ) {
+			recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
+				flow,
+				seconds_on_step: claim.secondsOnStep,
+			} );
+		}
 		onDone();
 	}, [ flow, onDone, scope ] );
 

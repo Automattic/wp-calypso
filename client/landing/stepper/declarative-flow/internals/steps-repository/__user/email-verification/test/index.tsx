@@ -168,6 +168,25 @@ describe( 'EmailVerificationGate', () => {
 		);
 	} );
 
+	// The confirmation wakes every open tab at once, and each has its own submitted ref. Without a
+	// shared claim that's one view and two confirmations.
+	it( 'records the confirmation once across tabs, while both still continue', async () => {
+		const onDone = jest.fn();
+		const verified = { initialState: currentUserState( true ) };
+		const gate = (
+			<EmailVerificationGate flow={ FLOW } scope={ SCOPE } isNewSignup onDone={ onDone } />
+		);
+
+		renderStep( gate, verified );
+		renderStep( gate, verified );
+
+		await waitFor( () => expect( onDone ).toHaveBeenCalledTimes( 2 ) );
+		const confirmations = ( recordTracksEvent as jest.Mock ).mock.calls.filter(
+			( [ event ] ) => event === 'calypso_signup_email_verification_confirmed'
+		);
+		expect( confirmations ).toHaveLength( 1 );
+	} );
+
 	it( 'records the view once per gate, not once per mount', () => {
 		const viewEvents = () =>
 			( recordTracksEvent as jest.Mock ).mock.calls.filter(

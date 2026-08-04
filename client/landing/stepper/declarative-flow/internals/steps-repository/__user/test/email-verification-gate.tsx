@@ -187,9 +187,62 @@ describe( 'account step email verification gate', () => {
 		);
 		const { submit } = renderUser( store );
 
-		await waitFor( () => expect( fetchCurrentUser ).toHaveBeenCalled() );
+		// Retried, because a failed fetch changes no state and would never be asked for again —
+		// leaving a logged-in user looking at a form offering to create the account they have.
+		await waitFor( () => expect( fetchCurrentUser ).toHaveBeenCalledWith( { retry: true } ) );
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'create-email-account' } )
+		).not.toBeInTheDocument();
 		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	// Confirming elsewhere and coming back finds `/me` already verified, so the gate never opens
+	// to close itself out. The attempt still has to be finished, or it goes unrecorded.
+	it( 'finishes an attempt that was confirmed before the gate could see it', async () => {
+		const first = renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		first.unmount();
+		jest.clearAllMocks();
+
+		const { submit } = renderUser( makeStore( true ) );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_confirmed',
+			expect.objectContaining( { flow: 'onboarding' } )
+		);
+	} );
+
+	it( 'records a fresh signup as new, and a returning unverified user as not', async () => {
+		const store = makeLoggedOutStore();
+		const fresh = renderUser( store );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: USER_ID, email: EMAIL, email_verified: false },
+			} );
+		} );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_view',
+			expect.objectContaining( { is_new_signup: true } )
+		);
+
+		// A different user arriving unverified never opened an attempt, so nothing was just sent.
+		fresh.unmount();
+		localStorage.clear();
+		jest.clearAllMocks();
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_view',
+			expect.objectContaining( { is_new_signup: false } )
+		);
 	} );
 
 	it( 'keeps the gate mounted through the confirmation rather than swapping it out', async () => {

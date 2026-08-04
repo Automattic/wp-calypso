@@ -20,7 +20,7 @@ import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import wpcom from 'calypso/lib/wp';
-import { getSignupIsNewUser, setSignupIsNewUser } from 'calypso/signup/storageUtils';
+import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -28,7 +28,13 @@ import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/sel
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from './email-verification';
-import { clearGateMetadata, gateScope } from './email-verification/storage';
+import {
+	beginGateAttempt,
+	claimGateConfirmation,
+	gateScope,
+	hasUnfinishedGateAttempt,
+	isFreshSignupAttempt,
+} from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
@@ -119,14 +125,29 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	useEffect( () => {
 		// `pending` means logged in from a persisted ID with no user object yet, which is not an
-		// answer either way — so ask for one rather than reading the silence as verified.
-		if ( ! isLoggedIn || gateStatus === 'pending' ) {
+		// answer either way — so ask for one rather than reading the silence as verified. Retrying,
+		// because a failed fetch changes no state and would otherwise never be asked again.
+		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
+		} else if ( gateStatus === 'pending' ) {
+			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
 		} else if ( ! activeScope ) {
+			// Someone who confirmed elsewhere and came back finds `/me` already verified, so the
+			// gate never opens to close itself out. Finish the attempt on its behalf — the claim
+			// inside decides whether this is the one that records it.
+			if ( gateStatus === 'clear' && hasUnfinishedGateAttempt( gateScopeForUser ) ) {
+				const claim = claimGateConfirmation( gateScopeForUser );
+				if ( claim ) {
+					recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
+						flow,
+						seconds_on_step: claim.secondsOnStep,
+					} );
+				}
+			}
 			// While the gate is up it renders instead and owns the transition via `onDone`.
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, activeScope, gateStatus ] );
+	}, [ dispatch, isLoggedIn, navigation, activeScope, gateStatus, gateScopeForUser, flow ] );
 
 	const locale = useFlowLocale();
 
@@ -145,6 +166,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 		setSignupIsNewUser( data.ID );
 		if ( gateEnabled ) {
+			// Opens the attempt's record, which is only how the gate later knows an email really was
+			// just sent. It does not decide whether the gate opens — `/me` does.
+			beginGateAttempt( gateScope( flow, data.ID ) );
 			// The activation email from account creation is the one the gate asks for, so the gate
 			// sends nothing on arrival — this only records the send the server just made.
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
@@ -226,14 +250,18 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			<EmailVerificationGate
 				flow={ flow }
 				scope={ activeScope }
-				isNewSignup={ !! getSignupIsNewUser( userId ) }
+				isNewSignup={ isFreshSignupAttempt( activeScope ) }
 				logo={ topBarLogo }
-				onDone={ () => {
-					clearGateMetadata( activeScope );
-					navigation.submit?.();
-				} }
+				onDone={ () => navigation.submit?.() }
 			/>
 		);
+	}
+
+	// Logged in with nothing known about the account yet. Showing the signup form here would offer
+	// account creation to someone who already has one, and a `/me` that never arrives would leave
+	// them on it for good.
+	if ( isLoggedIn && gateStatus === 'pending' ) {
+		return <Step.Loading />;
 	}
 
 	if ( isStepContainerV2 ) {
