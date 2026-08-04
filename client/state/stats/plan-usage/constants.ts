@@ -5,5 +5,7 @@
 // gating and upgrade-notice behaviour in one place, without reverting individual commits.
 //
 // This lives beside the paywall data rather than in `my-sites/stats/constants` so the dependency
-// points down the layer stack, and because the selectors below are the only thing that reads it.
+// points down the layer stack. Read by the selectors below and by the stats notice registry
+// (`my-sites/stats/stats-notices/all-notice-definitions.ts`), which flips the upsell notices
+// between their pre-kill and post-kill sets.
 export const COMMERCIAL_PAYWALL_KILLED = true;

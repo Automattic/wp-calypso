@@ -88,12 +88,12 @@ describe( 'with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
 	} );
 } );
 
-describe( 'commercial upgrade notice with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
-	const commercialNotice = ALL_STATS_NOTICES.find(
-		( notice ) => notice.noticeId === 'commercial_site_upgrade'
-	);
+describe( 'upsell notices with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
+	const findNotice = ( noticeId: string ) =>
+		ALL_STATS_NOTICES.find( ( notice ) => notice.noticeId === noticeId );
 
-	it( 're-enables the registry entry so the paywall lockout banner can render', () => {
+	it( 're-enables the commercial entry so the paywall lockout banner can render', () => {
+		const commercialNotice = findNotice( 'commercial_site_upgrade' );
 		expect( commercialNotice?.disabled ).toBe( false );
 		expect(
 			commercialNotice?.isVisibleFunc( {
@@ -106,5 +106,10 @@ describe( 'commercial upgrade notice with COMMERCIAL_PAYWALL_KILLED flipped back
 				showPaywallNotice: true,
 			} )
 		).toBe( true );
+	} );
+
+	it( 'restores the pre-kill notice set: legacy entries on, their successor off', () => {
+		expect( findNotice( 'do_you_love_jetpack_stats' )?.disabled ).toBe( false );
+		expect( findNotice( 'free_site_upgrade' )?.disabled ).toBe( true );
 	} );
 } );

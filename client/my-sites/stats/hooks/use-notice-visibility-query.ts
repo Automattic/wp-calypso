@@ -40,8 +40,8 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 		'gdpr_cookie_consent',
 		'client_paid_plan_purchase_success',
 		'client_free_plan_purchase_success',
-		// `commercial_site_upgrade` must stay ahead of `free_site_upgrade`: if the commercial
-		// paywall kill switch is ever flipped back, its lockout banner has to win.
+		// The two legacy upsell ids and `free_site_upgrade` are mutually exclusive: their
+		// registry entries are enabled on opposite sides of the commercial paywall kill switch.
 		'do_you_love_jetpack_stats',
 		'commercial_site_upgrade',
 		'free_site_upgrade',

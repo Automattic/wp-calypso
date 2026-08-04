@@ -68,9 +68,9 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				!! ( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) && ! hasPaidStats
 			);
 		},
-		// Superseded by `free_site_upgrade` while the commercial paywall stays killed. Flipping
-		// COMMERCIAL_PAYWALL_KILLED re-enables this entry so the paywall lockout variant can
-		// render again — it outranks `free_site_upgrade` in the dashboard_notices conflict group.
+		// The two legacy upsell notices and their `free_site_upgrade` successor are enabled on
+		// opposite sides of the commercial paywall kill switch, so a single flip restores the
+		// pre-kill notice behaviour, lockout banner included.
 		disabled: COMMERCIAL_PAYWALL_KILLED,
 	},
 	{
@@ -107,8 +107,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				! isVip
 			);
 		},
-		// Superseded by `free_site_upgrade`.
-		disabled: true,
+		disabled: COMMERCIAL_PAYWALL_KILLED,
 	},
 	{
 		component: FreeSiteUpgradeNotice,
@@ -143,7 +142,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				! isVip
 			);
 		},
-		disabled: false,
+		disabled: ! COMMERCIAL_PAYWALL_KILLED,
 	},
 	{
 		component: TierUpgradeNotice,
