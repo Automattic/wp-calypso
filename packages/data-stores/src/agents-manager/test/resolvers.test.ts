@@ -4,6 +4,8 @@ import { setHasLoaded, setIsLoading } from '../actions';
 import { getAgentsManagerState } from '../resolvers';
 
 jest.mock( '../../wpcom-request', () => ( {
+	__esModule: true,
+	default: jest.fn(),
 	canAccessWpcomApis: jest.fn(),
 } ) );
 
@@ -17,18 +19,18 @@ describe( 'Agents Manager resolvers', () => {
 	} );
 
 	it( 'skips persisted state requests when the host opts out', () => {
-		const shouldLoadPersistedState = jest.fn( () => false );
-		const resolver = getAgentsManagerState( shouldLoadPersistedState );
+		const shouldUsePersistedState = jest.fn( () => false );
+		const resolver = getAgentsManagerState( shouldUsePersistedState );
 
 		expect( resolver.next().value ).toEqual( setHasLoaded( true ) );
 		expect( resolver.next().done ).toBe( true );
-		expect( shouldLoadPersistedState ).toHaveBeenCalledTimes( 1 );
+		expect( shouldUsePersistedState ).toHaveBeenCalledTimes( 1 );
 		expect( mockCanAccessWpcomApis ).not.toHaveBeenCalled();
 	} );
 
-	it( 'keeps loading persisted state by default', () => {
+	it( 'loads persisted state when the host opts in', () => {
 		mockCanAccessWpcomApis.mockReturnValue( false );
-		const resolver = getAgentsManagerState();
+		const resolver = getAgentsManagerState( () => true );
 
 		expect( resolver.next().value ).toEqual( setIsLoading( true ) );
 		expect( resolver.next().value ).toEqual(

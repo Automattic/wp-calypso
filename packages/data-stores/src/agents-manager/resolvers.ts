@@ -37,8 +37,8 @@ type AgentsManagerStateResponse = {
 	agents_manager_last_activity?: PerSiteLastActivity;
 };
 
-export function* getAgentsManagerState( shouldLoadPersistedState: () => boolean = () => true ) {
-	if ( ! shouldLoadPersistedState() ) {
+export function* getAgentsManagerState( shouldUsePersistedState: () => boolean ) {
+	if ( ! shouldUsePersistedState() ) {
 		yield setHasLoaded( true );
 		return;
 	}

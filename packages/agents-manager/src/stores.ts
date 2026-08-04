@@ -5,7 +5,7 @@ import { AgentsManager } from '@automattic/data-stores';
 import { isReaderChatHost } from './utils/is-reader-chat-agent';
 
 export const AGENTS_MANAGER_STORE = AgentsManager.register( {
-	shouldLoadPersistedState: () => ! isReaderChatHost(),
+	shouldUsePersistedState: () => ! isReaderChatHost(),
 } );
 
 // Serializes + coalesces concurrent saves so they can't clobber each other on

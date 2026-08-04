@@ -17,16 +17,16 @@ const mockRegister = AgentsManager.register as jest.MockedFunction< typeof Agent
 const mockIsReaderChatHost = isReaderChatHost as jest.MockedFunction< typeof isReaderChatHost >;
 
 describe( 'Agents Manager store', () => {
-	it( 'loads persisted state only for non-Reader Chat hosts', () => {
-		const shouldLoadPersistedState = mockRegister.mock.calls[ 0 ]?.[ 0 ]?.shouldLoadPersistedState;
-		if ( ! shouldLoadPersistedState ) {
+	it( 'uses persisted state only for non-Reader Chat hosts', () => {
+		const shouldUsePersistedState = mockRegister.mock.calls[ 0 ]?.[ 0 ]?.shouldUsePersistedState;
+		if ( ! shouldUsePersistedState ) {
 			throw new Error( 'Expected the store to register a persisted-state callback.' );
 		}
 
 		mockIsReaderChatHost.mockReturnValue( false );
-		expect( shouldLoadPersistedState() ).toBe( true );
+		expect( shouldUsePersistedState() ).toBe( true );
 
 		mockIsReaderChatHost.mockReturnValue( true );
-		expect( shouldLoadPersistedState() ).toBe( false );
+		expect( shouldUsePersistedState() ).toBe( false );
 	} );
 } );

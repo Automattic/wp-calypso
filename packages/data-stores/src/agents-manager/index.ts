@@ -5,6 +5,7 @@ import { isE2ETest } from '../utils';
 import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
+import { setShouldPersistState } from './persist-state';
 import reducer, { State } from './reducer';
 import { getAgentsManagerState } from './resolvers';
 import * as selectors from './selectors';
@@ -15,7 +16,7 @@ export { persistAgentsManagerState } from './persist-state';
 let isRegistered = false;
 
 type RegisterOptions = {
-	shouldLoadPersistedState?: () => boolean;
+	shouldUsePersistedState?: () => boolean;
 };
 
 export function register( options: RegisterOptions = {} ): typeof STORE_KEY {
@@ -24,8 +25,10 @@ export function register( options: RegisterOptions = {} ): typeof STORE_KEY {
 	}
 
 	registerPlugins();
+	const shouldUsePersistedState = options.shouldUsePersistedState ?? ( () => true );
+	setShouldPersistState( shouldUsePersistedState );
 	const resolveAgentsManagerState = function* () {
-		yield* getAgentsManagerState( options.shouldLoadPersistedState );
+		yield* getAgentsManagerState( shouldUsePersistedState );
 	};
 
 	registerStore( STORE_KEY, {
