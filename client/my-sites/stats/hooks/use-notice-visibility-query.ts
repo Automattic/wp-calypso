@@ -11,6 +11,9 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	traffic_page_settings: false,
 	do_you_love_jetpack_stats: false,
 	commercial_site_upgrade: false,
+	// Defaults to hidden until the server includes it in the notices response,
+	// so the client can ship ahead of the WPCOM allow-list change.
+	free_site_upgrade: false,
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
 	gdpr_cookie_consent: false,
@@ -37,8 +40,11 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 		'gdpr_cookie_consent',
 		'client_paid_plan_purchase_success',
 		'client_free_plan_purchase_success',
+		// The disabled `do_you_love_jetpack_stats` and `commercial_site_upgrade` entries
+		// compute to hidden, so their position here is inert.
 		'do_you_love_jetpack_stats',
 		'commercial_site_upgrade',
+		'free_site_upgrade',
 		// TODO: Check if the current usage is over the tier limit inside the isVisibleFunc.
 		'tier_upgrade',
 	],

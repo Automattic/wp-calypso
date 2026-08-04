@@ -15,7 +15,7 @@ import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
-import { STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE } from '../constants';
+import { STATS_FREE_SITE_UPGRADE_NOTICE } from '../constants';
 import { trackStatsAnalyticsEvent } from '../utils';
 import { StatsNoticeProps } from './types';
 
@@ -23,14 +23,10 @@ const HELP_CENTER_STORE = HelpCenter.register();
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	return `/stats/purchase/${ siteId }?from=${ from }-stats-upgrade-notice&productType=commercial`;
+	return `/stats/purchase/${ siteId }?from=${ from }-stats-free-site-upgrade-notice&productType=commercial`;
 };
 
-const DoYouLoveJetpackStatsNotice = ( {
-	siteId,
-	hasFreeStats,
-	isOdysseyStats,
-}: StatsNoticeProps ) => {
+const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -40,17 +36,17 @@ const DoYouLoveJetpackStatsNotice = ( {
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
 		siteId,
-		'do_you_love_jetpack_stats',
+		'free_site_upgrade',
 		'postponed',
-		30 * 24 * 3600
+		365 * 24 * 3600
 	);
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const dismissNotice = () => {
 		recordTracksEvent(
 			isOdysseyStats
-				? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_dismissed'
-				: 'calypso_stats_do_you_love_jetpack_stats_notice_dismissed'
+				? 'jetpack_odyssey_stats_free_site_upgrade_notice_dismissed'
+				: 'calypso_stats_free_site_upgrade_notice_dismissed'
 		);
 
 		setNoticeDismissed( true );
@@ -58,19 +54,19 @@ const DoYouLoveJetpackStatsNotice = ( {
 	};
 
 	const openWPCOMPaidStatsUpsellModal = () => {
-		recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_upgrade_button_clicked' );
-		dispatch( toggleUpsellModal( siteId, STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE ) );
+		recordTracksEvent( 'calypso_stats_free_site_upgrade_notice_upgrade_button_clicked' );
+		dispatch( toggleUpsellModal( siteId, STATS_FREE_SITE_UPGRADE_NOTICE ) );
 	};
 
 	const gotoJetpackStatsProduct = () => {
 		recordTracksEvent(
 			isOdysseyStats
-				? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
-				: 'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
+				? 'jetpack_odyssey_stats_free_site_upgrade_notice_support_button_clicked'
+				: 'calypso_stats_free_site_upgrade_notice_support_button_clicked'
 		);
 
 		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
-			type: 'notice-love-stats',
+			type: 'notice-free-site-upgrade',
 		} );
 
 		// Allow some time for the event to be recorded before redirecting.
@@ -88,8 +84,8 @@ const DoYouLoveJetpackStatsNotice = ( {
 		if ( ! noticeDismissed ) {
 			recordTracksEvent(
 				isOdysseyStats
-					? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_viewed'
-					: 'calypso_stats_do_you_love_jetpack_stats_notice_viewed'
+					? 'jetpack_odyssey_stats_free_site_upgrade_notice_viewed'
+					: 'calypso_stats_free_site_upgrade_notice_viewed'
 			);
 		}
 	}, [ noticeDismissed, isOdysseyStats ] );
@@ -102,16 +98,14 @@ const DoYouLoveJetpackStatsNotice = ( {
 		? ( translate( 'Grow faster with %(product)s', {
 				args: { product: STATS_PRODUCT_NAME },
 		  } ) as string )
-		: ( translate( 'Do you love %(product)s?', {
-				args: { product: STATS_PRODUCT_NAME },
-		  } ) as string );
+		: ( translate( 'Unlock premium features' ) as string );
 	const freeTitle = translate( 'Want to get the most out of %(product)s?', {
 		args: { product: STATS_PRODUCT_NAME },
 	} ) as string;
 
 	const learnMoreLink = isWPCOMSite
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
-		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
+		: 'https://jetpack.com/support/jetpack-stats/free-or-paid/#what-a-paid-plan-adds';
 
 	const paidStatsRemoveHardcoding = hasEnTranslation(
 		'Finesse your scaling-up strategy with detailed insights and data. Upgrade to the %s plan for a richer understanding and smarter decision-making.'
@@ -180,4 +174,4 @@ const DoYouLoveJetpackStatsNotice = ( {
 	);
 };
 
-export default DoYouLoveJetpackStatsNotice;
+export default FreeSiteUpgradeNotice;

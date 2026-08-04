@@ -31,7 +31,7 @@ const CommercialSiteUpgradeNotice = ( {
 		siteId,
 		'commercial_site_upgrade',
 		'postponed',
-		365 * 24 * 3600
+		30 * 24 * 3600
 	);
 
 	// Determine when the paywall will go into effect (if applicable).
@@ -84,7 +84,7 @@ const CommercialSiteUpgradeNotice = ( {
 
 	let learnMoreLink = isWPCOMSite
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
-		: 'https://jetpack.com/support/jetpack-stats/free-or-paid/#what-a-paid-plan-adds';
+		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
 	if ( showPaywallNotice ) {
 		learnMoreLink = 'https://jetpack.com/support/jetpack-stats/free-or-paid/';
@@ -115,32 +115,11 @@ const CommercialSiteUpgradeNotice = ( {
 	// Banner body will show an explict paywall date if provided.
 	let bannerBody = null;
 	if ( ! showPaywallNotice ) {
-		bannerBody = (
-			<>
-				<p>
-					{ translate(
-						'Upgrade to unlock UTM tracking, device stats, and region and city locations, and get priority support.'
-					) }
-				</p>
-				<p>
-					<button
-						type="button"
-						className="notice-banner__action-button"
-						onClick={ gotoJetpackStatsProduct }
-					>
-						{ translate( 'Upgrade my Stats' ) }
-					</button>
-					<a
-						className="notice-banner__action-link"
-						href={ localizeUrl( learnMoreLink ) }
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ translate( 'Learn more' ) }
-						<Icon className="stats-icon" icon={ external } size={ 24 } />
-					</a>
-				</p>
-			</>
+		bannerBody = translate(
+			'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license based on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
+			{
+				components: sharedTranslationComponents,
+			}
 		);
 	} else if ( ! paywallUpgradeDeadlineDate ) {
 		bannerBody = translate(
@@ -164,12 +143,12 @@ const CommercialSiteUpgradeNotice = ( {
 		? ( translate( 'You need to upgrade to a commercial license to continue using %(product)s', {
 				args: { product: STATS_PRODUCT_NAME },
 		  } ) as string )
-		: translate( 'Unlock premium features' );
+		: translate( 'Upgrade to Stats Commercial' );
 
 	return (
 		<div
-			className={ `inner-notice-container ${
-				! isOdysseyStats ? 'inner-notice-container--calypso' : ''
+			className={ `inner-notice-container has-odyssey-stats-bg-color ${
+				! isOdysseyStats && 'inner-notice-container--calypso'
 			}` }
 		>
 			<NoticeBanner

@@ -2,6 +2,7 @@ import { NoticeIdType } from 'calypso/my-sites/stats/hooks/use-notice-visibility
 import CommercialSiteUpgradeNotice from './commercial-site-upgrade-notice';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
+import FreeSiteUpgradeNotice from './free-site-upgrade-notice';
 import GDPRCookieConsentNotice from './gdpr-cookie-consent-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
 import TierUpgradeNotice from './tier-upgrade-notice';
@@ -33,6 +34,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: CommercialSiteUpgradeNotice,
 		noticeId: 'commercial_site_upgrade',
+		// Disabled: replaced by `free_site_upgrade`. With the commercial paywall gone,
+		// commercial-flagged sites are upsold under the same rules as everyone else.
 		isVisibleFunc: ( {
 			isOdysseyStats,
 			isWpcom,
@@ -66,11 +69,12 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				!! ( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) && ! hasPaidStats
 			);
 		},
-		disabled: false,
+		disabled: true,
 	},
 	{
 		component: DoYouLoveJetpackStatsNotice,
 		noticeId: 'do_you_love_jetpack_stats',
+		// Disabled: replaced by `free_site_upgrade`.
 		isVisibleFunc: ( {
 			isOdysseyStats,
 			isWpcom,
@@ -99,6 +103,41 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				! hasPaidStats &&
 				// Show the notice if the site is not commercial.
 				! isCommercial &&
+				! isVip
+			);
+		},
+		disabled: true,
+	},
+	{
+		component: FreeSiteUpgradeNotice,
+		noticeId: 'free_site_upgrade',
+		// With the commercial paywall gone, commercial-flagged sites are upsold under
+		// the same rules as everyone else — being commercial no longer matters here.
+		isVisibleFunc: ( {
+			isOdysseyStats,
+			isWpcom,
+			isVip,
+			isP2,
+			isOwnedByTeam51,
+			hasPaidStats,
+			isSiteJetpackNotAtomic,
+			hasSignificantViews,
+			hasWpcomUpsell,
+		}: StatsNoticeProps ) => {
+			// Disable this notice if the full-size upsell is visible.
+			const showUpgradeNoticeForWpcomSites =
+				isWpcom && ! hasWpcomUpsell && ! isP2 && ! isOwnedByTeam51 && hasSignificantViews;
+
+			// Show the notice if the site is Jetpack or it is Odyssey Stats.
+			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
+			const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
+
+			return !! (
+				( showUpgradeNoticeOnOdyssey ||
+					showUpgradeNoticeForJetpackNotAtomic ||
+					showUpgradeNoticeForWpcomSites ) &&
+				// Show the notice if the site has not purchased the paid stats product.
+				! hasPaidStats &&
 				! isVip
 			);
 		},

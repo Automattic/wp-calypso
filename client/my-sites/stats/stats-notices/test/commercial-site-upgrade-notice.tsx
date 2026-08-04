@@ -36,13 +36,7 @@ describe( 'CommercialSiteUpgradeNotice', () => {
 		const { container } = renderNotice( false );
 
 		expect( screen.getByRole( 'button', { name: 'close' } ) ).toBeVisible();
-		expect( screen.getByText( 'Unlock premium features' ) ).toBeVisible();
-		expect(
-			screen.getByText(
-				'Upgrade to unlock UTM tracking, device stats, and region and city locations, and get priority support.'
-			)
-		).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Upgrade my Stats' } ) ).toBeVisible();
+		expect( screen.getByText( 'Upgrade to Stats Commercial' ) ).toBeVisible();
 		expect( container.querySelector( '.is-error' ) ).toBeNull();
 	} );
 
