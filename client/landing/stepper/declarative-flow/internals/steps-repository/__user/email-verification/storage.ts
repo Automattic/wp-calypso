@@ -1,7 +1,6 @@
 // One gate attempt, keyed by flow and user. Whether the gate opens is not in here — `/me` answers
-// that. This is what an attempt has to remember while it runs, and it lives in local storage
-// because the attempt now spans tabs: a lockout the server is enforcing shouldn't look lifted just
-// because the flow was reopened elsewhere, and a confirmation shouldn't be recorded once per tab.
+// that. Local rather than session storage because an attempt spans tabs, and a lockout or a
+// confirmation counted once per tab is counted wrong.
 
 const STORAGE_KEY = 'onboarding-email-verification-gate';
 
@@ -10,14 +9,11 @@ export function gateScope( flow: string, userId: number | string | null | undefi
 }
 
 interface GateRecord {
-	// Anchors the TTL. Set by whichever of the two openers runs first.
-	startedAt: number;
-	// The account was created during this attempt, so an email really was just sent.
-	isNewSignup: boolean;
+	startedAt: number; // anchors the TTL
+	isNewSignup: boolean; // an email really was just sent, rather than one carried over
 	shownAt: number;
 	resendAvailableAt: number;
-	// Claimed by the first tab to see the confirmation, so only one of them records it.
-	confirmedAt: number;
+	confirmedAt: number; // claimed by one tab, so only that one records the confirmation
 }
 
 const EMPTY_RECORD: GateRecord = {
@@ -28,8 +24,7 @@ const EMPTY_RECORD: GateRecord = {
 	confirmedAt: 0,
 };
 
-// An abandoned attempt leaves its record behind. Past this it stops speaking for the next one —
-// which is what keeps a signup abandoned days ago from still being told an email was just sent.
+// Past this an abandoned attempt stops speaking for the next one.
 const ATTEMPT_TTL_MS = 24 * 60 * 60 * 1000;
 
 function storageKey( scope: string ): string {
@@ -63,24 +58,21 @@ function write( scope: string, record: Partial< GateRecord > ): GateRecord {
 }
 
 // Called at account creation, before `/me` has caught up. Records only what the gate can't work
-// out for itself later — that the email it's asking about was sent moments ago.
+// out later for itself.
 export function beginGateAttempt( scope: string ): void {
 	write( scope, { isNewSignup: true } );
 }
 
-// Whether an email was sent during this attempt, as opposed to one the user arrived already
-// holding from an earlier signup.
 export function isFreshSignupAttempt( scope: string ): boolean {
 	return read( scope ).isNewSignup;
 }
 
 /**
- * Stamps the gate as shown, for the duration metric, and reports whether this call was the one
- * that stamped it — which is what makes the view event fire once per attempt rather than once per
- * tab or mount.
+ * Stamps the gate as shown and reports whether this call was the one that stamped it, so the view
+ * event fires once per attempt rather than once per tab.
  *
- * With storage unavailable nothing persists and every call reports true, so a caller falls back to
- * once per mount rather than going silent.
+ * With storage unavailable nothing persists and every call reports true, falling back to once per
+ * mount rather than going silent.
  */
 export function markGateShown( scope: string ): boolean {
 	if ( read( scope ).shownAt ) {
@@ -91,11 +83,11 @@ export function markGateShown( scope: string ): boolean {
 }
 
 /**
- * Claims the confirmation for this attempt, returning how long it took, or null if another tab
- * claimed it first. Every tab still finishes and moves on; only the claimant records the event.
+ * Claims the confirmation, returning how long the attempt took, or null if another tab claimed it
+ * first. Every tab still finishes; only the claimant records the event.
  *
- * The claim is left in place rather than removed, so a tab arriving late finds it taken instead of
- * an empty record it would mistake for a fresh attempt.
+ * The claim stays rather than being removed, so a late tab finds it taken instead of an empty
+ * record it would mistake for a fresh attempt.
  */
 export function claimGateConfirmation( scope: string ): { secondsOnStep: number } | null {
 	const record = read( scope );
@@ -107,8 +99,8 @@ export function claimGateConfirmation( scope: string ): { secondsOnStep: number 
 	return { secondsOnStep: Math.round( ( now - ( record.shownAt || now ) ) / 1000 ) };
 }
 
-// Whether an attempt is still waiting to be finished — the case where someone confirms elsewhere
-// and comes back to a `/me` that already reads verified, so the gate never mounts to close it out.
+// Someone who confirms elsewhere and returns finds `/me` already verified, so the gate never
+// mounts to close the attempt out. Whoever notices has to finish it instead.
 export function hasUnfinishedGateAttempt( scope: string ): boolean {
 	const record = read( scope );
 	return !! record.shownAt && ! record.confirmedAt;

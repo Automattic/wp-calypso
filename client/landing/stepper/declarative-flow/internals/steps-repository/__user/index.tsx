@@ -82,16 +82,15 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
-	// `/me` opens the gate but doesn't close it. The gate owns the confirmation — recording it and
-	// calling `onDone` — so dropping it the moment `/me` reports verified would carry the step
-	// forward without anything ever noting that it happened.
+	// `/me` opens the gate but doesn't close it: dropping the gate the moment `/me` reports
+	// verified carries the step forward without the confirmation the gate was about to record.
 	const [ latchedScope, setLatchedScope ] = useState< string | null >( null );
 	useEffect( () => {
 		if ( gateStatus === 'gated' ) {
 			setLatchedScope( ( current ) => current ?? gateScopeForUser );
 		}
 	}, [ gateStatus, gateScopeForUser ] );
-	// The latch is set by an effect, so cover the render that opened the gate as well.
+	// The latch is set by an effect, so cover the render that opened the gate too.
 	const activeScope = latchedScope ?? ( gateStatus === 'gated' ? gateScopeForUser : null );
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
@@ -124,17 +123,15 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	}, [ dispatch, wpAccountCreateResponse ] );
 
 	useEffect( () => {
-		// `pending` means logged in from a persisted ID with no user object yet, which is not an
-		// answer either way — so ask for one rather than reading the silence as verified. Retrying,
-		// because a failed fetch changes no state and would otherwise never be asked again.
+		// Retrying while pending, because a failed fetch changes no state and so would never be
+		// asked for again.
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else if ( gateStatus === 'pending' ) {
 			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
 		} else if ( ! activeScope ) {
-			// Someone who confirmed elsewhere and came back finds `/me` already verified, so the
-			// gate never opens to close itself out. Finish the attempt on its behalf — the claim
-			// inside decides whether this is the one that records it.
+			// The gate never opened, so nothing else will finish the attempt. The claim decides
+			// whether this is the one that records it.
 			if ( gateStatus === 'clear' && hasUnfinishedGateAttempt( gateScopeForUser ) ) {
 				const claim = claimGateConfirmation( gateScopeForUser );
 				if ( claim ) {
@@ -144,7 +141,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 					} );
 				}
 			}
-			// While the gate is up it renders instead and owns the transition via `onDone`.
 			navigation.submit?.();
 		}
 	}, [ dispatch, isLoggedIn, navigation, activeScope, gateStatus, gateScopeForUser, flow ] );
@@ -166,8 +162,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 		setSignupIsNewUser( data.ID );
 		if ( gateEnabled ) {
-			// Opens the attempt's record, which is only how the gate later knows an email really was
-			// just sent. It does not decide whether the gate opens — `/me` does.
+			// Records that an email really was just sent. It does not decide whether the gate opens.
 			beginGateAttempt( gateScope( flow, data.ID ) );
 			// The activation email from account creation is the one the gate asks for, so the gate
 			// sends nothing on arrival — this only records the send the server just made.
@@ -257,9 +252,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		);
 	}
 
-	// Logged in with nothing known about the account yet. Showing the signup form here would offer
-	// account creation to someone who already has one, and a `/me` that never arrives would leave
-	// them on it for good.
+	// Showing the signup form here would offer account creation to someone who already has one,
+	// and a `/me` that never arrives would leave them on it for good.
 	if ( isLoggedIn && gateStatus === 'pending' ) {
 		return <Step.Loading />;
 	}

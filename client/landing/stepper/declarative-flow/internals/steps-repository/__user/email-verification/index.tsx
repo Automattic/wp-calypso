@@ -58,10 +58,8 @@ const EmailVerificationGate = ( { flow, scope, isNewSignup, logo, onDone }: Prop
 			  )
 			: __( 'Resend' );
 
-	// The denominator for everything that follows: `provider` names which variant was shown
-	// (`none` when the address has no inbox link), and a view with no confirmation is a drop-off.
-	// `is_new_signup` separates the signups this was built for from anyone who arrived unverified
-	// from an earlier one, whose size is otherwise a guess.
+	// The denominator for the clicks and confirmations that follow, and for the drop-offs that
+	// don't. `provider` is `none` when the address has no inbox link.
 	useEffect( () => {
 		if ( markGateShown( scope ) ) {
 			recordTracksEvent( 'calypso_signup_email_verification_view', {
@@ -78,9 +76,8 @@ const EmailVerificationGate = ( { flow, scope, isNewSignup, logo, onDone }: Prop
 		headingRef.current?.focus();
 	}, [] );
 
-	// Covers confirming while the gate is open and mounting already-verified, e.g. a reload after
-	// confirming. The ref keeps one tab from submitting twice; the claim keeps several tabs — all
-	// woken by the same confirmation — from recording it more than once between them.
+	// The ref keeps one tab from submitting twice; the claim keeps several tabs, all woken by the
+	// same confirmation, from recording it more than once between them.
 	const finish = useCallback( () => {
 		if ( hasSubmitted.current ) {
 			return;
@@ -109,8 +106,7 @@ const EmailVerificationGate = ( { flow, scope, isNewSignup, logo, onDone }: Prop
 			provider: inboxLink?.provider,
 		} );
 
-	// Nothing was sent to someone who arrived here already unverified from an earlier signup, so
-	// they're pointed at the email they were sent then, and at the resend below it.
+	// Nothing was just sent to someone who arrived already unverified from an earlier signup.
 	const subText = useMemo( () => {
 		const text = isNewSignup
 			? sprintf(
