@@ -300,7 +300,6 @@ export default function AgentDock( {
 					},
 				},
 			{
-				// wp's `heading` currently ships this bookmark glyph.
 				icon: heading,
 				title: __( 'Knowledge and memory', __i18n_text_domain__ ),
 				onClick: () => {
