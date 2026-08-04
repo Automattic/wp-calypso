@@ -59,13 +59,6 @@ function installAdminBarTrigger() {
 	document.body.appendChild( el );
 }
 
-// `isReaderChatHost()` reads the agent ID from this global.
-function installReaderChatHost() {
-	( globalThis as { agentsManagerData?: { agentId?: string } } ).agentsManagerData = {
-		agentId: 'reader-chat',
-	};
-}
-
 function installMasterbarTrigger() {
 	const el = document.createElement( 'div' );
 	el.className = 'masterbar__item-agents-manager-ai-chat';
@@ -99,20 +92,6 @@ describe( 'ChatHeader', () => {
 		const { container } = renderChatHeader();
 
 		expect( container.querySelector( '.agents-manager-chat-header__title' ) ).toBeNull();
-	} );
-
-	it( 'shows the history button by default', () => {
-		renderChatHeader();
-
-		expect( screen.getByText( 'View history' ) ).toBeInTheDocument();
-	} );
-
-	it( 'hides the history button on reader-chat hosts', () => {
-		installReaderChatHost();
-
-		renderChatHeader();
-
-		expect( screen.queryByText( 'View history' ) ).toBeNull();
 	} );
 
 	it( 'minimizes the chat when the Minimize button is clicked', () => {

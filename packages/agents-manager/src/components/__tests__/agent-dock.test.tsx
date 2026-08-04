@@ -420,6 +420,20 @@ describe( 'AgentDock', () => {
 		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
 	} );
 
+	it( 'offers View history in More Options after New chat', () => {
+		useWpAdminAgent();
+
+		renderAgentDock();
+
+		expect( screen.getByText( 'View history' ) ).toBeInTheDocument();
+	} );
+
+	it( 'omits View history from More Options on reader chat', () => {
+		renderAgentDock();
+
+		expect( screen.queryByText( 'View history' ) ).toBeNull();
+	} );
+
 	it.each( [
 		{
 			isSplitScreen: false,

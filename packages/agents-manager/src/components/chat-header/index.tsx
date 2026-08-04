@@ -1,12 +1,10 @@
 import { Button, DropdownMenu } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { close, moreVertical, backup, chevronLeft, Icon } from '@wordpress/icons';
-import { useNavigate } from 'react-router-dom';
+import { close, moreVertical, chevronLeft, Icon } from '@wordpress/icons';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { Minimize } from '../icons';
 import { AGENTS_MANAGER_STORE } from '../../stores';
-import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import type { ComponentProps } from 'react';
 import './style.scss';
@@ -23,7 +21,6 @@ interface Props {
 }
 
 export default function ChatHeader( { onClose, options, title, onBack, isDocked }: Props ) {
-	const navigate = useNavigate();
 	const { setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
 	const hasAiChatEntry = useHasAiChatEntryButton();
 
@@ -74,22 +71,6 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					} }
 					toggleProps={ { size: 'small' } }
 				/>
-				{ /*
-				 * Reader chat runs on public blog frontends where session history
-				 * isn't user-accessible (no account, per-visit local storage).
-				 */ }
-				{ ! isReaderChatHost() && (
-					<Button
-						className="agents-manager-chat-header__history-btn"
-						icon={ backup }
-						onClick={ () => {
-							recordAgentsManagerTracksEvent( 'chat_history_open' );
-							navigate( '/history' );
-						} }
-						label={ __( 'View history', __i18n_text_domain__ ) }
-						size="small"
-					/>
-				) }
 				<Button
 					className="agents-manager-chat-header__close-btn"
 					icon={ close }

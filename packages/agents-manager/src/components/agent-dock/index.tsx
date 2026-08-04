@@ -7,7 +7,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { columns, comment } from '@wordpress/icons';
+import { backup, columns, comment } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
@@ -19,7 +19,7 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { persistLastActivity } from '../../utils/persist-last-activity';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import EditorAiChatButton from '../editor-ai-chat-button';
@@ -271,6 +271,16 @@ export default function AgentDock( {
 						type: 'reset_chat',
 					} );
 					navigate( '/' );
+				},
+			},
+			// Reader chat runs on public blog frontends where session history
+			// isn't user-accessible (no account, per-visit local storage).
+			! isReaderChat && {
+				icon: backup,
+				title: __( 'View history', __i18n_text_domain__ ),
+				onClick: () => {
+					recordAgentsManagerTracksEvent( 'chat_history_open' );
+					navigate( '/history' );
 				},
 			},
 			// Split-screen toggle — gated to providers that opt in via
