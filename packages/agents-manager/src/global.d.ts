@@ -28,7 +28,7 @@ declare const agentsManagerData:
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
-			/** Simple or WoA — set server-side via Jetpack's `Host::is_wpcom_platform_site()`. */
+			/** Simple or WoA. Not yet injected — pending a Jetpack Agents Manager change. */
 			isDotcomSite?: boolean;
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;

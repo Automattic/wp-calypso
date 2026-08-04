@@ -319,9 +319,12 @@ export default function AgentDock( {
 				},
 			},
 			// Settings additionally require Dotcom hosting: the linked
-			// WordPress.com page only exists for Simple/WoA sites.
+			// WordPress.com page only exists for Simple/WoA sites. Until the
+			// Jetpack package injects `isDotcomSite`, the hostname fallback
+			// covers Simple sites (WoA runs on custom domains and is missed).
 			showWpAdminLinks &&
-				getAgentsManagerInlineData()?.isDotcomSite === true && {
+				( getAgentsManagerInlineData()?.isDotcomSite ??
+					window.location.hostname.endsWith( '.wordpress.com' ) ) && {
 					icon: cog,
 					title: __( 'AI Agent settings', __i18n_text_domain__ ),
 					onClick: () => {
