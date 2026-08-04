@@ -8,10 +8,7 @@ import A4ALogo, {
 	LOGO_COLOR_SECONDARY,
 } from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { useIsDarkMode } from 'calypso/a8c-for-agencies/hooks/use-is-dark-mode';
-import {
-	AgencyDetailsSignupPayload,
-	SignupFormData,
-} from 'calypso/a8c-for-agencies/sections/signup/types';
+import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useCreateSignupMutation from '../../../hooks/use-create-signup-mutation';
@@ -90,7 +87,7 @@ const MultiStepForm = ( {
 	const dispatch = useDispatch();
 	const isDarkMode = useIsDarkMode();
 
-	const [ formData, setFormData ] = useState< SignupFormData >( {} );
+	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {} );
 
 	const steps: Step[] = [
 		{
@@ -146,12 +143,15 @@ const MultiStepForm = ( {
 	);
 
 	const updateDataAndContinue = useCallback(
-		( data: SignupFormData, nextStep: number, isBlueprintRequested = false ) => {
+		(
+			data: Partial< AgencyDetailsSignupPayload >,
+			nextStep: number,
+			isBlueprintRequested = false
+		) => {
 			const newFormData = { ...formData, ...data };
 			setFormData( newFormData );
 			setCurrentStep( nextStep );
 			if ( nextStep === 6 && signupWithMagicLinkFlow ) {
-				const { phone, ...formValues } = newFormData;
 				const {
 					topPartneringGoal,
 					topYearlyGoal,
@@ -159,8 +159,8 @@ const MultiStepForm = ( {
 					workWithClientsOther,
 					approachAndChallenges,
 					...rest
-				} = formValues;
-				const payload = isBlueprintRequested ? formValues : rest;
+				} = newFormData;
+				const payload = isBlueprintRequested ? newFormData : rest;
 				submitSurvey( { ...payload, initialSource: sourceName } as AgencyDetailsSignupPayload );
 			}
 		},
@@ -174,7 +174,7 @@ const MultiStepForm = ( {
 
 	const onCreateAgency = useCallback(
 		( data: Partial< AgencyDetailsSignupPayload > ) => {
-			const { phone, ...newFormData } = {
+			const newFormData = {
 				...formData,
 				...data,
 				initialSource: sourceName,

@@ -16,10 +16,7 @@ import {
 	isAgencyUrlExists,
 } from 'calypso/a8c-for-agencies/components/form/utils';
 import UserContactSupportModalForm from 'calypso/a8c-for-agencies/components/user-contact-support-modal-form';
-import {
-	AgencyDetailsSignupPayload,
-	SignupFormData,
-} from 'calypso/a8c-for-agencies/sections/signup/types';
+import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -61,8 +58,8 @@ function useSignupContext(): SignupContext | null {
 }
 
 type Props = {
-	onContinue: ( data: SignupFormData ) => void;
-	initialFormData: SignupFormData;
+	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
+	initialFormData: Partial< AgencyDetailsSignupPayload >;
 	withEmail?: boolean;
 };
 
@@ -88,7 +85,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		[ signupContext?.non_unique_domains ]
 	);
 
-	const [ formData, setFormData ] = useState< SignupFormData >( {
+	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
 		firstName: initialFormData.firstName || '',
 		lastName: initialFormData.lastName || '',
 		email: initialFormData.email || '',
@@ -111,19 +108,19 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		phoneNumberFull: string;
 		countryData?: { code: string };
 	} ) => {
-		const countryCode = data.phoneNumber && data.countryData?.code ? data.countryData.code : '';
 		setFormData( ( prev ) => ( {
 			...prev,
 			phoneNumber: data.phoneNumberFull,
 			phone: {
+				phoneNumberFull: data.phoneNumberFull,
 				phoneNumber: data.phoneNumber,
 				countryCode: data.countryData?.code,
 			},
 		} ) );
-		setPhoneCountryCode( countryCode );
+		setPhoneCountryCode( data.phoneNumber && data.countryData?.code ? data.countryData.code : '' );
 	};
 
-	const dataToContinue: SignupFormData = useMemo(
+	const dataToContinue: Partial< AgencyDetailsSignupPayload > = useMemo(
 		() => ( phoneCountryCode ? { ...formData, country: phoneCountryCode } : formData ),
 		[ formData, phoneCountryCode ]
 	);
