@@ -1623,11 +1623,89 @@ describe( 'utils', () => {
 								type: 'link',
 							},
 						],
+						icon: null,
 						label: 'Press This!',
 						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
+						post_id: 111111111,
 						value: 32,
 					},
 				] );
+			} );
+
+			test( 'should map the API poster onto the icon field', () => {
+				expect(
+					normalizers.statsVideoPlays(
+						{
+							date: '2017-01-12',
+							days: {
+								'2017-01-12': {
+									plays: [
+										{
+											plays: 32,
+											post_id: 111111111,
+											title: 'Press This!',
+											url: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+											poster: 'https://videos.files.wordpress.com/abc123/poster.jpg',
+										},
+									],
+								},
+							},
+						},
+						{
+							period: 'day',
+							date: '2017-01-12',
+						},
+						10,
+						{
+							slug: 'en.blog.wordpress.com',
+						}
+					)
+				).toEqual( [
+					{
+						actions: [
+							{
+								data: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+								type: 'link',
+							},
+						],
+						icon: 'https://videos.files.wordpress.com/abc123/poster.jpg',
+						label: 'Press This!',
+						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
+						post_id: 111111111,
+						value: 32,
+					},
+				] );
+			} );
+
+			test( 'should fall back to a null icon when the API sends no poster', () => {
+				const [ item ] = normalizers.statsVideoPlays(
+					{
+						date: '2017-01-12',
+						days: {
+							'2017-01-12': {
+								plays: [
+									{
+										plays: 32,
+										post_id: 111111111,
+										title: 'Press This!',
+										url: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+									},
+								],
+							},
+						},
+					},
+					{
+						period: 'day',
+						date: '2017-01-12',
+					},
+					10,
+					{
+						slug: 'en.blog.wordpress.com',
+					}
+				);
+
+				expect( item.icon ).toBeNull();
+				expect( item.post_id ).toBe( 111111111 );
 			} );
 		} );
 
