@@ -31,7 +31,7 @@ const CommercialSiteUpgradeNotice = ( {
 		siteId,
 		'commercial_site_upgrade',
 		'postponed',
-		30 * 24 * 3600
+		365 * 24 * 3600
 	);
 
 	// Determine when the paywall will go into effect (if applicable).

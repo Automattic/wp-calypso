@@ -42,7 +42,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 		siteId,
 		'do_you_love_jetpack_stats',
 		'postponed',
-		30 * 24 * 3600
+		365 * 24 * 3600
 	);
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 
