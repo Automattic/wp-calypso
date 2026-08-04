@@ -332,7 +332,7 @@ export default function AgentDock( {
 				},
 		].filter( Boolean );
 
-		// A second control group renders the switch option behind a divider.
+		// A second control set renders the switch option behind a divider.
 		return ( switchOptions.length ? [ options, switchOptions ] : [ options ] ) as ChatHeaderOptions;
 	};
 

@@ -59,9 +59,9 @@
 	}
 }
 
-// The dropdown renders a flat item list (control sets only add
-// `has-separator` to an item — there are no MenuGroup wrappers) on WP's
-// unthemed white popover, so states use light-theme colors directly.
+// The dropdown is a flat item list (a second control set only marks its
+// first item with `has-separator`) on WP's unthemed white popover, so
+// states use light-theme colors directly.
 .agents-manager-chat-header__menu-popover .components-popover__content {
 	padding: 0;
 
@@ -86,7 +86,7 @@
 			outline: none;
 		}
 
-		// Disabled items give no focus feedback at all.
+		// Disabled items give no focus feedback.
 		&:disabled:focus-visible,
 		&[aria-disabled='true']:focus-visible {
 			outline: none;
