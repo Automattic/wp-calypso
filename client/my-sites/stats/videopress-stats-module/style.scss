@@ -63,14 +63,16 @@
 			height: 100%;
 			display: flex;
 			align-items: center;
+			gap: 8px;
 			padding-left: 10px;
-			
+
 			a {
 				overflow: hidden;
 				white-space: nowrap;
 				text-overflow: ellipsis;
 				display: block;
 				width: 100%;
+				min-width: 0;
 				cursor: pointer;
 				position: relative;
 				z-index: 1;
@@ -82,6 +84,11 @@
 				&:visited {
 					color: var(--color-text);
 				}
+			}
+
+			.stats-list__video-thumbnail {
+				position: relative;
+				z-index: 1;
 			}
 
 			&::before {
