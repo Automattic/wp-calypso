@@ -48,9 +48,9 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 		}
 
 		.button-module_button:has( .agents-manager-message-action-icon ) {
-			width: $grid-unit-40;
-			height: $grid-unit-40;
-			border-radius: $radius-medium;
+			width: 32px;
+			height: 32px;
+			border-radius: 4px;
 
 			.agents-manager-message-action-icon {
 				width: 28px;
