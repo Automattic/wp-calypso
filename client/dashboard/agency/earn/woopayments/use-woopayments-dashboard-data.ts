@@ -11,9 +11,7 @@ import {
 } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useSelector } from 'calypso/state';
-import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import type { SitesWithWooPaymentsState } from '../types';
+import type { SitesWithWooPaymentsState } from './types';
 import type { JetpackTestConnection, WooPaymentsData } from '@automattic/api-core';
 import type { UseQueryResult } from '@tanstack/react-query';
 
@@ -54,11 +52,9 @@ export interface WooPaymentsDashboardData {
  * Orchestrates the data for the WooPayments commissions dashboard: the WooPayments licenses and
  * plugin sites the agency manages, their connection health, and the commissions data itself.
  */
-export default function useWooPaymentsDashboardData(): WooPaymentsDashboardData {
-	const agencyId = useSelector( getActiveAgencyId );
-
+export default function useWooPaymentsDashboardData( agencyId: number ): WooPaymentsDashboardData {
 	const { data: licenseSites, isLoading: isLoadingLicensesWithWooPayments } = useQuery( {
-		...jetpackAgencyLicensesQuery( agencyId ?? 0, {
+		...jetpackAgencyLicensesQuery( agencyId, {
 			filter: JetpackLicenseFilter.Attached,
 			search: 'woopayments',
 			sortField: JetpackLicenseSortField.IssuedAt,
@@ -75,9 +71,7 @@ export default function useWooPaymentsDashboardData(): WooPaymentsDashboardData 
 	} );
 
 	const { isLoading: isLoadingSitesWithPlugins, data: sitesWithPlugins } = useQuery( {
-		...agencySitesWithPluginsQuery( agencyId ?? 0, [
-			'woocommerce-payments/woocommerce-payments',
-		] ),
+		...agencySitesWithPluginsQuery( agencyId, [ 'woocommerce-payments/woocommerce-payments' ] ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
 	} );
@@ -118,7 +112,7 @@ export default function useWooPaymentsDashboardData(): WooPaymentsDashboardData 
 	const showEmptyState = ! isLoading && ! allSitesWithWooPayments.length;
 
 	const { data: woopaymentsData, isLoading: isLoadingWooPaymentsData } = useQuery( {
-		...agencyWooPaymentsDataQuery( agencyId ?? 0 ),
+		...agencyWooPaymentsDataQuery( agencyId ),
 		enabled: !! agencyId && !! allSitesWithWooPayments.length,
 	} );
 

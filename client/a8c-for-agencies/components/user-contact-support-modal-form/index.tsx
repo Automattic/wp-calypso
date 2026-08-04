@@ -26,7 +26,6 @@ type AnonymousAtSignupData = {
 };
 
 type Props = {
-	show: boolean;
 	onClose?: () => void;
 	defaultMessage?: string;
 	defaultProduct?: string;
@@ -37,7 +36,6 @@ const DEFAULT_MESSAGE_VALUE = '';
 const DEFAULT_PRODUCT_VALUE = 'a4a';
 
 export default function UserContactSupportModalForm( {
-	show,
 	onClose,
 	defaultMessage = DEFAULT_MESSAGE_VALUE,
 	defaultProduct = DEFAULT_PRODUCT_VALUE,
@@ -56,7 +54,7 @@ export default function UserContactSupportModalForm( {
 	const [ email, setEmail ] = useState( anonymousAtSignup?.email ?? user?.email );
 	const [ product, setProduct ] = useState( defaultProduct );
 	const [ pressableContactType, setPressableContactType ] = useState( 'sales' );
-	const [ site, setSite ] = useState( '' );
+	const [ site, setSite ] = useState( anonymousAtSignup?.agencyUrl ?? '' );
 	const [ message, setMessage ] = useState( defaultMessage );
 
 	const isPressableSelected = product === 'pressable';
@@ -67,16 +65,6 @@ export default function UserContactSupportModalForm( {
 	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport( {
 		isSignup: isAnonymousMode,
 	} );
-
-	const resetForm = useCallback( () => {
-		setMessage( defaultMessage );
-		setProduct( defaultProduct );
-		if ( anonymousAtSignup ) {
-			setName( anonymousAtSignup.name );
-			setEmail( anonymousAtSignup.email );
-			setSite( anonymousAtSignup.agencyUrl );
-		}
-	}, [ defaultMessage, defaultProduct, anonymousAtSignup ] );
 
 	const onModalClose = useCallback( () => {
 		onClose?.();
@@ -95,12 +83,6 @@ export default function UserContactSupportModalForm( {
 			onModalClose();
 		}
 	}, [ dispatch, isSubmissionSuccessful, onModalClose, translate ] );
-
-	useEffect( () => {
-		if ( show ) {
-			resetForm();
-		}
-	}, [ defaultMessage, resetForm, show ] );
 
 	const onNameChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setName( event.currentTarget.value );
@@ -173,14 +155,8 @@ export default function UserContactSupportModalForm( {
 	] );
 
 	useEffect( () => {
-		if ( show ) {
-			dispatch( recordTracksEvent( 'calypso_a4a_user_contact_support_form_open' ) );
-		}
-	}, [ dispatch, show ] );
-
-	if ( ! show ) {
-		return null;
-	}
+		dispatch( recordTracksEvent( 'calypso_a4a_user_contact_support_form_open' ) );
+	}, [ dispatch ] );
 
 	return (
 		<Modal
