@@ -11,11 +11,10 @@ export const removeNotes = ( noteIds, isComment = false ) => ( {
 	isComment,
 } );
 
-// Replace one filtered view's id list, keyed by filter. This only sets the list;
-// note content lives in `allNotes` and is unaffected.
-export const setFilteredNoteIds = ( filterKey, noteIds ) => ( {
-	type: types.SET_FILTERED_NOTE_IDS,
-	filterKey,
+// Replace the "Unread" view's id list. This only sets the list; note content
+// lives in `allNotes` and is unaffected.
+export const setUnreadNoteIds = ( noteIds ) => ( {
+	type: types.SET_UNREAD_NOTE_IDS,
 	noteIds,
 } );
 
@@ -80,7 +79,7 @@ export default {
 	removeNotes,
 	resetLocalApproval,
 	resetLocalLike,
-	setFilteredNoteIds,
+	setUnreadNoteIds,
 	spamNote,
 	trashNote,
 };

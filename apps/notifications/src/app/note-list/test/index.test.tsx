@@ -50,16 +50,14 @@ describe( 'NoteList loading state', () => {
 
 	it( 'shows the loader, not the empty message, while a filtered fetch is in flight', () => {
 		const store = initStore();
-		// Settle once with an empty (but fetched) unread list so DataViews has mounted
-		// and shows its empty state.
-		store.dispatch( actions.notes.setFilteredNoteIds( 'unread', [] ) );
+		// Settle once with no notes so DataViews has mounted and shows its empty state.
 		store.dispatch( actions.ui.loadedNotes() );
 		const { container } = renderUnread( store );
 		expect( screen.getByText( "You're all caught up!" ) ).toBeVisible();
 
 		// A filtered fetch begins: loading is true while the data is still empty.
 		act( () => {
-			store.dispatch( actions.ui.loadNotes( { filter: 'unread' } ) );
+			store.dispatch( actions.ui.loadNotes( { filter: { unread: 1 } } ) );
 		} );
 
 		// The "all caught up" message must not show until the fetch settles.
@@ -72,14 +70,13 @@ describe( 'NoteList loading state', () => {
 	// filtered fetch is still in flight (the "loading → empty → list" flash).
 	it( 'keeps the loader when the background poll clears shared loading mid-fetch', () => {
 		const store = initStore();
-		store.dispatch( actions.notes.setFilteredNoteIds( 'unread', [] ) );
 		store.dispatch( actions.ui.loadedNotes() );
 		const { container } = renderUnread( store );
 		expect( screen.getByText( "You're all caught up!" ) ).toBeVisible();
 
 		// The Unread fetch begins.
 		act( () => {
-			store.dispatch( actions.ui.loadNotes( { filter: 'unread' } ) );
+			store.dispatch( actions.ui.loadNotes( { filter: { unread: 1 } } ) );
 		} );
 		expect( screen.queryByText( "You're all caught up!" ) ).not.toBeInTheDocument();
 
@@ -97,18 +94,18 @@ describe( 'NoteList loading state', () => {
 	it( 'keeps DataViews mounted when the Unread list empties mid-fetch', () => {
 		const store = initStore();
 		store.dispatch( actions.notes.addNotes( [ makeNote( 800, 'Unread one' ) ] ) );
-		store.dispatch( actions.notes.setFilteredNoteIds( 'unread', [ 800 ] ) );
+		store.dispatch( actions.notes.setUnreadNoteIds( [ 800 ] ) );
 		store.dispatch( actions.ui.loadedNotes() );
 		const { container } = renderUnread( store );
 
 		const dataViews = container.querySelector( '.dataviews-layout__container' );
 		expect( dataViews ).toBeTruthy();
 
-		// A refetch empties the id list and flips loading on: the list is empty while
+		// A refetch clears the id list and flips loading on: the list is empty while
 		// the request is in flight.
 		act( () => {
-			store.dispatch( actions.notes.setFilteredNoteIds( 'unread', [] ) );
-			store.dispatch( actions.ui.loadNotes( { filter: 'unread' } ) );
+			store.dispatch( actions.notes.setUnreadNoteIds( [] ) );
+			store.dispatch( actions.ui.loadNotes( { filter: { unread: 1 } } ) );
 		} );
 
 		// The same DataViews node is still mounted — it was not swapped for the
@@ -126,7 +123,7 @@ describe( 'NoteList loading state', () => {
 				makeNote( 801, 'Only in cache' ),
 			] )
 		);
-		store.dispatch( actions.notes.setFilteredNoteIds( 'unread', [ 800 ] ) );
+		store.dispatch( actions.notes.setUnreadNoteIds( [ 800 ] ) );
 		store.dispatch( actions.ui.loadedNotes() );
 
 		renderUnread( store );
@@ -142,7 +139,7 @@ describe( 'NoteList loading state', () => {
 		store.dispatch(
 			actions.notes.addNotes( [ makeNote( 800, 'Unread one' ), makeNote( 801, 'Unread two' ) ] )
 		);
-		store.dispatch( actions.notes.setFilteredNoteIds( 'unread', [ 800, 801 ] ) );
+		store.dispatch( actions.notes.setUnreadNoteIds( [ 800, 801 ] ) );
 		store.dispatch( actions.notes.readNote( 800 ) );
 		store.dispatch( actions.ui.loadedNotes() );
 
@@ -157,7 +154,7 @@ describe( 'NoteList loading state', () => {
 		store.dispatch(
 			actions.notes.addNotes( [ makeNote( 810, 'Keep me' ), makeNote( 811, 'Trash me' ) ] )
 		);
-		store.dispatch( actions.notes.setFilteredNoteIds( 'unread', [ 810, 811 ] ) );
+		store.dispatch( actions.notes.setUnreadNoteIds( [ 810, 811 ] ) );
 		store.dispatch( actions.notes.trashNote( 811 ) );
 		store.dispatch( actions.ui.loadedNotes() );
 
@@ -206,17 +203,14 @@ describe( 'NoteList loading state', () => {
 		expect( headers ).toEqual( [ 'Today', 'Older than a month' ] );
 	} );
 
-	it( 'renders the Comments tab from the server filtered id list, not the whole cache', () => {
+	it( 'client-filters the Comments tab from the shared cache', () => {
 		const store = initStore();
-		// Both notes are cached, but only the comment is in the server's filtered id
-		// list for the Comments tab; the like is not, so it must not render.
 		store.dispatch(
 			actions.notes.addNotes( [
 				makeNote( 900, 'A comment', 'comment' ),
 				makeNote( 901, 'A like', 'like' ),
 			] )
 		);
-		store.dispatch( actions.notes.setFilteredNoteIds( 'comments', [ 900 ] ) );
 		store.dispatch( actions.ui.loadedNotes() );
 
 		renderTab( store, 'comments' as FilterName );
@@ -225,11 +219,10 @@ describe( 'NoteList loading state', () => {
 		expect( screen.queryByText( 'A like' ) ).not.toBeInTheDocument();
 	} );
 
-	// Once the filtered fetch is exhausted (no more to page), a background poll must
-	// not flash the spinner over the settled empty message.
-	it( 'keeps the empty message on a settled filtered tab during a refresh', () => {
+	// Once the cache is exhausted (no more to page), a background refresh must not
+	// flash the spinner over the settled empty message.
+	it( 'keeps the empty message on a settled client-filtered tab during a refresh', () => {
 		const store = initStore();
-		store.dispatch( actions.notes.setFilteredNoteIds( 'comments', [] ) );
 		store.dispatch( actions.ui.loadedNotes() );
 		renderTab( store, 'comments' as FilterName ); // client.hasMoreNotes() is false
 		expect( screen.getByText( 'No new comments yet!' ) ).toBeVisible();
@@ -241,9 +234,9 @@ describe( 'NoteList loading state', () => {
 		expect( screen.getByText( 'No new comments yet!' ) ).toBeVisible();
 	} );
 
-	// While a filtered tab still has notes to page, show the spinner rather than
-	// flashing its empty message before matching notes arrive.
-	it( 'shows the loader on a filtered tab while more notes are pageable', () => {
+	// While a client-filtered tab still has cache pages to search, show the spinner
+	// rather than flashing its empty message before matching notes arrive.
+	it( 'shows the loader on a client-filtered tab while the cache still has pages', () => {
 		const store = initStore();
 		store.dispatch( actions.ui.loadedNotes() );
 		const { container } = renderTab( store, 'comments' as FilterName, {
@@ -252,111 +245,6 @@ describe( 'NoteList loading state', () => {
 
 		expect( screen.queryByText( 'No new comments yet!' ) ).not.toBeInTheDocument();
 		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
-	} );
-
-	// A tab that has never been fetched (no cached id list) shows the loader rather
-	// than its empty message, since its first fetch is imminent.
-	it( 'shows the loader on a never-fetched filtered tab', () => {
-		const store = initStore();
-		store.dispatch( actions.ui.loadedNotes() );
-		const { container } = renderTab( store, 'comments' as FilterName );
-
-		expect( screen.queryByText( 'No new comments yet!' ) ).not.toBeInTheDocument();
-		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
-	} );
-
-	// A never-fetched tab must defer DataViews until its first load settles, so it
-	// never mounts mid-load (when DataViews renders no scroll container).
-	it( 'defers mounting DataViews until a filtered tab has loaded', () => {
-		const store = initStore();
-		// Global loading has settled, but this tab has never fetched (no cached list).
-		store.dispatch( actions.ui.loadedNotes() );
-		const { container } = renderTab( store, 'comments' as FilterName );
-
-		// No DataViews yet — the full-panel spinner stands in.
-		expect( container.querySelector( '.dataviews-layout__container' ) ).toBeNull();
-
-		// Its list lands: DataViews mounts, now with the note (so its scroll
-		// container is present).
-		act( () => {
-			store.dispatch( actions.notes.addNotes( [ makeNote( 900, 'A comment', 'comment' ) ] ) );
-			store.dispatch( actions.notes.setFilteredNoteIds( 'comments', [ 900 ] ) );
-		} );
-
-		expect( container.querySelector( '.dataviews-layout__container' ) ).toBeTruthy();
-		expect( screen.getByText( 'A comment' ) ).toBeVisible();
-	} );
-
-	// A tab that settles empty mounts DataViews with its scroll container present
-	// (it binds the listener there); notes arriving later render into that same
-	// container without a remount.
-	it( 'keeps the same DataViews when an empty filtered tab gains its first notes', () => {
-		const store = initStore();
-		store.dispatch( actions.notes.setFilteredNoteIds( 'comments', [] ) );
-		store.dispatch( actions.ui.loadedNotes() );
-		const { container } = renderTab( store, 'comments' as FilterName );
-
-		const emptyDataViews = container.querySelector( '.dataviews-layout__container' );
-		expect( emptyDataViews ).toBeTruthy();
-
-		act( () => {
-			store.dispatch( actions.notes.addNotes( [ makeNote( 900, 'A comment', 'comment' ) ] ) );
-			store.dispatch( actions.notes.setFilteredNoteIds( 'comments', [ 900 ] ) );
-		} );
-
-		expect( screen.getByText( 'A comment' ) ).toBeVisible();
-		expect( container.querySelector( '.dataviews-layout__container' ) ).toBe( emptyDataViews );
-	} );
-
-	// Keep-previous-data: a tab with a cached list renders it immediately, and a
-	// silent refresh (which the client runs without dispatching any loading state
-	// when a cached list already exists) never flashes a loader over it.
-	it( 'renders a tab’s cached notes without a loader during a silent refresh', () => {
-		const store = initStore();
-		store.dispatch( actions.notes.addNotes( [ makeNote( 900, 'A comment', 'comment' ) ] ) );
-		store.dispatch( actions.notes.setFilteredNoteIds( 'comments', [ 900 ] ) );
-		store.dispatch( actions.ui.loadedNotes() );
-
-		const { container } = renderTab( store, 'comments' as FilterName );
-		expect( screen.getByText( 'A comment' ) ).toBeVisible();
-		expect( container.querySelector( '.components-spinner' ) ).toBeFalsy();
-
-		// The refresh lands and re-sets the same list — no loading was ever toggled,
-		// so the notes stay put with no spinner.
-		act( () => {
-			store.dispatch( actions.notes.setFilteredNoteIds( 'comments', [ 900 ] ) );
-		} );
-		expect( screen.getByText( 'A comment' ) ).toBeVisible();
-		expect( container.querySelector( '.components-spinner' ) ).toBeFalsy();
-	} );
-
-	// A cached tab must show its notes on switch-back even while another tab's fetch
-	// still has the shared loading flag on — not the full-panel spinner.
-	it( 'shows a cached tab’s notes while another tab is mid-fetch', () => {
-		const store = initStore();
-		store.dispatch( actions.notes.addNotes( [ makeNote( 900, 'A comment', 'comment' ) ] ) );
-		store.dispatch( actions.notes.setFilteredNoteIds( 'comments', [ 900 ] ) );
-		// Another tab's fetch is in flight, so the shared loading flag is on.
-		store.dispatch( actions.ui.loadNotes( { filter: 'unread' } ) );
-
-		renderTab( store, 'comments' as FilterName );
-
-		expect( screen.getByText( 'A comment' ) ).toBeVisible();
-	} );
-
-	// A cached tab loading more (its own fetch in flight) must keep its rows
-	// rendered, so DataViews mounts loaded and binds its scroll listener — else
-	// load-more dies after switching away and back mid-fetch.
-	it( 'renders a cached tab’s rows while it is loading more', () => {
-		const store = initStore();
-		store.dispatch( actions.notes.addNotes( [ makeNote( 900, 'A comment', 'comment' ) ] ) );
-		store.dispatch( actions.notes.setFilteredNoteIds( 'comments', [ 900 ] ) );
-		// This tab's own fetch is in flight (e.g. paging older notes).
-		store.dispatch( actions.ui.loadNotes( { filter: 'comments' } ) );
-
-		renderTab( store, 'comments' as FilterName );
-
-		expect( screen.getByText( 'A comment' ) ).toBeVisible();
 	} );
 
 	it( 'marks only the open note row with the active highlight', () => {
