@@ -56,7 +56,6 @@ const StatsBenefitsCommercial = () => {
 	const spikeInfoIconRef = useRef( null );
 	const overageInfoIconRef = useRef( null );
 	const trackingInfoIconRef = useRef( null );
-	const commercialInfoIconRef = useRef( null );
 	const customDateRangesInfoIconRef = useRef( null );
 	const deviceAttributesInfoIconRef = useRef( null );
 	const [ spikeInfoShow, setSpikeInfoShow ] = useState( false );
@@ -68,9 +67,6 @@ const StatsBenefitsCommercial = () => {
 	const [ trackingInfoShow, setTrackingInfoShow ] = useState( false );
 	const handleUTMTrackingPopoverOpen = () => setTrackingInfoShow( true );
 	const handleUTMTrackingPopoverClose = () => setTrackingInfoShow( false );
-	const [ commercialInfoShow, setCommercialInfoShow ] = useState( false );
-	const handleCommercialUsePopoverOpen = () => setCommercialInfoShow( true );
-	const handleCommercialUsePopoverClose = () => setCommercialInfoShow( false );
 	const [ customDateRangesInfoShow, setCustomDateRangesInfoShow ] = useState( false );
 	const handleCustomDatesPopoverOpen = () => setCustomDateRangesInfoShow( true );
 	const handleCustomDatesPopoverClose = () => setCustomDateRangesInfoShow( false );
@@ -87,17 +83,6 @@ const StatsBenefitsCommercial = () => {
 				<li>{ translate( 'GDPR compliance' ) }</li>
 				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'Priority support' ) }</li>
-				<li>
-					{ translate( '{{strong}}Commercial use{{/strong}}', {
-						components: { strong: <strong /> },
-					} ) }
-					<Icon
-						icon={ info }
-						ref={ commercialInfoIconRef }
-						onMouseEnter={ handleCommercialUsePopoverOpen }
-						onMouseLeave={ handleCommercialUsePopoverClose }
-					/>
-				</li>
 				<li>
 					{ translate( 'Custom date ranges' ) }
 					<Icon
@@ -182,18 +167,6 @@ const StatsBenefitsCommercial = () => {
 			</Popover>
 			<Popover
 				position="right"
-				isVisible={ commercialInfoShow }
-				context={ commercialInfoIconRef.current }
-				className="stats-purchase__info-popover"
-			>
-				<div className="stats-purchase__info-popover-content">
-					{ translate(
-						'Your Stats license will be valid for commercial use. Any site with commercial activity requires a commercial-use license.'
-					) }
-				</div>
-			</Popover>
-			<Popover
-				position="right"
 				isVisible={ customDateRangesInfoShow }
 				context={ customDateRangesInfoIconRef.current }
 				className="stats-purchase__info-popover"
@@ -232,7 +205,6 @@ const StatsBenefitsPersonal = () => {
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
 				<li>{ translate( 'No UTM tracking' ) }</li>
 				<li>{ translate( 'No access to upcoming advanced features' ) }</li>
-				<li>{ translate( 'No commercial use' ) }</li>
 			</ul>
 		</div>
 	);
@@ -253,7 +225,6 @@ const StatsBenefitsFree = () => {
 				<li>{ translate( 'No UTM tracking' ) }</li>
 				<li>{ translate( 'No access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'No Email support (supported by forum)' ) }</li>
-				<li>{ translate( 'No commercial use' ) }</li>
 			</ul>
 		</div>
 	);
