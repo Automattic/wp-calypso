@@ -23,7 +23,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	return `/stats/purchase/${ siteId }?from=${ from }-stats-upgrade-notice`;
+	return `/stats/purchase/${ siteId }?from=${ from }-stats-upgrade-notice&productType=commercial`;
 };
 
 const DoYouLoveJetpackStatsNotice = ( {
