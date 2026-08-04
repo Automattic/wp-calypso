@@ -5,7 +5,7 @@ import { OdieSendMessageButton } from './components/send-message-input';
 import { useOdieAssistantContext, OdieAssistantProvider } from './context';
 import { useCurrentSupportInteraction } from './data/use-current-support-interaction';
 import { useOpenLiveInteractions } from './hooks/use-open-interaction-status-map';
-import { hasCSATMessage, interactionHasEnded } from './utils';
+import { hasCSATMessage, interactionHasEnded, isStaleOdieChat } from './utils';
 
 import './style.scss';
 
@@ -15,7 +15,10 @@ export const OdieAssistant: React.FC = () => {
 		useCurrentSupportInteraction();
 	const chatHasCSATMessage = hasCSATMessage( chat );
 	const showClosedConversationFooter =
-		isLoadingInteraction || chatHasCSATMessage || interactionHasEnded( currentSupportInteraction );
+		isLoadingInteraction ||
+		chatHasCSATMessage ||
+		interactionHasEnded( currentSupportInteraction ) ||
+		isStaleOdieChat( chat );
 
 	const currentUuid = currentSupportInteraction?.uuid;
 	const { mostRecentSupportInteractionId, openCount } = useOpenLiveInteractions( currentUuid );
