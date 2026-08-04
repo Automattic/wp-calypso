@@ -262,7 +262,8 @@ export default function AgentDock( {
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		// Guidelines and settings link to wp-admin/WordPress.com pages that
-		// Calypso-hosted chats can't resolve.
+		// Calypso-hosted chats can't resolve. The body class is core-guaranteed
+		// on every admin screen — the same signal the dock's stylesheets use.
 		const isWpAdmin = document.body.classList.contains( 'wp-admin' );
 		const options = [
 			{
