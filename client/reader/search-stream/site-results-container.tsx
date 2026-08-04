@@ -67,7 +67,7 @@ export default function SiteResultsContainer( {
 			hasNextPage={ hasNextPage }
 			isLoading={ isLoading }
 			isLoggedIn={ isLoggedIn }
-			fetchNextPage={ () => fetchNextPage() }
+			fetchNextPage={ fetchNextPage }
 		/>
 	);
 }

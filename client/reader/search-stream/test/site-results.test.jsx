@@ -4,6 +4,7 @@
 import { render, screen } from '@testing-library/react';
 import SiteResults from '../site-results';
 
+jest.mock( 'calypso/lib/with-dimensions', () => ( Component ) => Component );
 jest.mock( 'calypso/reader/components/reader-infinite-stream', () => ( props ) => (
 	<div data-testid="infinite-stream" data-item-count={ props.items.length } />
 ) );
@@ -11,7 +12,14 @@ jest.mock( 'calypso/reader/components/reader-infinite-stream', () => ( props ) =
 const NO_SITES = 'No sites found.';
 
 const renderSiteResults = ( props = {} ) =>
-	render( <SiteResults query="cats" searchResults={ undefined } { ...props } /> );
+	render(
+		<SiteResults
+			query="cats"
+			searchResults={ undefined }
+			fetchNextPage={ jest.fn() }
+			{ ...props }
+		/>
+	);
 
 describe( 'SiteResults', () => {
 	it( 'shows loading placeholders (not the empty state) while the first page loads', () => {
