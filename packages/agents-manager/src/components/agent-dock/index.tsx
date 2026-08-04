@@ -274,10 +274,6 @@ export default function AgentDock( {
 		const inlineData = getAgentsManagerInlineData();
 		const siteSlug = inlineData?.site?.domain ?? window.location.hostname;
 
-		// The linked WordPress.com settings page only exists for Simple/WoA
-		// sites; the flag ships with this PR via the Jetpack package.
-		const isDotcomSite = inlineData?.isDotcomSite === true;
-
 		const options = [
 			{
 				icon: comment,
@@ -330,21 +326,22 @@ export default function AgentDock( {
 					);
 				},
 			},
-			isInWpAdmin &&
-				isDotcomSite && {
-					icon: cog,
-					title: __( 'AI Agent settings', __i18n_text_domain__ ),
-					onClick: () => {
-						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
-							type: 'ai_agent_settings',
-						} );
-						window.open(
-							`https://my.wordpress.com/sites/${ siteSlug }/settings/ai-tools`,
-							'_blank',
-							'noreferrer'
-						);
-					},
+			// TODO: Double-check whether this also needs a WP.com-host check —
+			// the linked settings page only exists for Simple/WoA sites.
+			isInWpAdmin && {
+				icon: cog,
+				title: __( 'AI Agent settings', __i18n_text_domain__ ),
+				onClick: () => {
+					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+						type: 'ai_agent_settings',
+					} );
+					window.open(
+						`https://my.wordpress.com/sites/${ siteSlug }/settings/ai-tools`,
+						'_blank',
+						'noreferrer'
+					);
 				},
+			},
 		].filter( isMenuOption );
 
 		// Sidebar docking only makes sense in wp-admin where a block-editor

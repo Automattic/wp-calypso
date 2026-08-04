@@ -434,28 +434,14 @@ describe( 'AgentDock', () => {
 		expect( screen.queryByText( 'View history' ) ).toBeNull();
 	} );
 
-	it( 'offers the guidelines and settings items on Dotcom-hosted wp-admin', () => {
+	it( 'offers the guidelines and settings items on wp-admin', () => {
 		useWpAdminAgent();
 		document.body.classList.add( 'wp-admin' );
-		( globalThis as { agentsManagerData?: { isDotcomSite?: boolean } } ).agentsManagerData =
-			{ isDotcomSite: true };
 
 		renderAgentDock();
 
 		expect( screen.getByText( 'Knowledge and memory' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'AI Agent settings' ) ).toBeInTheDocument();
-		document.body.classList.remove( 'wp-admin' );
-		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
-	} );
-
-	it( 'omits the settings item on self-hosted wp-admin', () => {
-		useWpAdminAgent();
-		document.body.classList.add( 'wp-admin' );
-
-		renderAgentDock();
-
-		expect( screen.getByText( 'Knowledge and memory' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'AI Agent settings' ) ).toBeNull();
 		document.body.classList.remove( 'wp-admin' );
 	} );
 
