@@ -47,8 +47,13 @@
 		}
 	}
 
-	// Classic-only: inset the cog to line up with the 64px table content padding.
+	// Classic-only: align the search toolbar with the consolidated cards /
+	// table inset (16px on small viewports, 64px from break-large).
 	.commissions-list__view-actions {
-		padding-inline: 64px;
+		padding-inline: 16px;
+
+		@include break-large {
+			padding-inline: 64px;
+		}
 	}
 }
