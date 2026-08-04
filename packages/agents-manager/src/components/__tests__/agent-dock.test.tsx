@@ -448,6 +448,20 @@ describe( 'AgentDock', () => {
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
 
+	it( 'offers the settings item when the site domain is on wordpress.com', () => {
+		useWpAdminAgent();
+		document.body.classList.add( 'wp-admin' );
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			site: { domain: 'example.wordpress.com' },
+		};
+
+		renderAgentDock();
+
+		expect( screen.getByText( 'AI Agent settings' ) ).toBeInTheDocument();
+		document.body.classList.remove( 'wp-admin' );
+		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
+	} );
+
 	it( 'omits the settings item on self-hosted wp-admin', () => {
 		useWpAdminAgent();
 		document.body.classList.add( 'wp-admin' );

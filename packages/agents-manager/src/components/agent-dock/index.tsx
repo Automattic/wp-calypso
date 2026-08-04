@@ -266,6 +266,8 @@ export default function AgentDock( {
 		// Guidelines and settings link to wp-admin/WordPress.com pages that
 		// Calypso-hosted chats can't resolve.
 		const showWpAdminLinks = isWpAdmin();
+		const inlineData = getAgentsManagerInlineData();
+		const siteSlug = inlineData?.site?.domain ?? window.location.hostname;
 		const options = [
 			{
 				icon: comment,
@@ -320,20 +322,17 @@ export default function AgentDock( {
 			},
 			// Settings additionally require Dotcom hosting: the linked
 			// WordPress.com page only exists for Simple/WoA sites. Until the
-			// Jetpack package injects `isDotcomSite`, the hostname fallback
-			// covers Simple sites (WoA runs on custom domains and is missed).
+			// Jetpack package injects `isDotcomSite`, the site domain covers
+			// Simple sites (WoA runs on custom domains and is missed).
 			showWpAdminLinks &&
-				( getAgentsManagerInlineData()?.isDotcomSite ??
-					window.location.hostname.endsWith( '.wordpress.com' ) ) && {
+				( inlineData?.isDotcomSite ??
+					siteSlug.endsWith( '.wordpress.com' ) ) && {
 					icon: cog,
 					title: __( 'AI Agent settings', __i18n_text_domain__ ),
 					onClick: () => {
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: 'ai_agent_settings',
 						} );
-						const siteSlug =
-							getAgentsManagerInlineData()?.site?.domain ??
-							window.location.hostname;
 						window.open(
 							`https://my.wordpress.com/sites/${ siteSlug }/settings/ai-tools`,
 							'_blank',
