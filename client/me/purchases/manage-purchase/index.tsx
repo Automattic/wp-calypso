@@ -294,7 +294,7 @@ class ManagePurchase extends Component<
 			return;
 		}
 
-		const options = redirectTo ? { redirectTo } : undefined;
+		const options = { redirectTo, tracksProps: { position: 'manage-purchase' } };
 		const isSitelessRenewal =
 			isAkismetHoldingSitePurchase( purchase ) ||
 			isMarketplaceHoldingSitePurchase( purchase ) ||
@@ -353,6 +353,22 @@ class ManagePurchase extends Component<
 		return domain?.pendingRegistrationAtRegistry ?? false;
 	}
 
+	/**
+	 * The prominent renewal control. Note that the "Renew now" nav item further
+	 * down applies fewer conditions than this, so there are purchases it offers
+	 * to renew that this one does not. Whether that difference is intentional
+	 * isn't clear.
+	 *
+	 * The purchase list applies the same conditions to its own renewal link:
+	 * both the ones below and the ownership and lock checks in the JSX that
+	 * renders this. It copied this control rather than the nav item because the
+	 * purchase list link is prominent in the same way this one is.
+	 *
+	 * The conditions are repeated rather than shared because this page reads the
+	 * raw `@automattic/api-core` purchase while the list still reads the
+	 * camelCase `@automattic/data-stores` one (SHILL-2256), so each side needs
+	 * different field names.
+	 */
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 		if ( ! purchase ) {
@@ -1475,6 +1491,10 @@ class ManagePurchase extends Component<
 				) }
 				{ isProductOwner && ! purchase.is_locked && (
 					<>
+						{ /* Applies fewer conditions than `renderRenewButton` above, which also
+						     rules out partner-managed, non-renewable, site-less and free
+						     Akismet subscriptions. Whether that difference is intentional
+						     isn't clear. */ }
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { defaultI18n } from '@wordpress/i18n';
 import i18n from 'i18n-calypso';
 import MockDate from 'mockdate';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -18,9 +19,10 @@ describe( 'PurchaseItem', () => {
 
 	afterEach( () => {
 		MockDate.reset();
-		// i18n-calypso is a module-level singleton, so translations added by one
-		// test would otherwise change the copy every later test asserts on.
+		// Both i18n libraries are module-level singletons, so translations added
+		// by one test would otherwise change the copy every later test asserts on.
 		i18n.setLocale();
+		defaultI18n.resetLocaleData();
 	} );
 
 	describe( 'a purchase that expired earlier today', () => {
@@ -39,7 +41,11 @@ describe( 'PurchaseItem', () => {
 
 		test( 'should be described with a translated label', () => {
 			const translation = 'Vandaag verlopen';
+			// The expiry copy comes from a helper shared with the dashboard, which
+			// reads @wordpress/i18n. In the app `CalypsoI18nProvider` keeps the two
+			// in step; nothing mounts it here, so both are set directly.
 			i18n.addTranslations( { 'Expired today': [ translation ] } );
+			defaultI18n.setLocaleData( { 'Expired today': [ translation ] } );
 
 			renderWithProvider( <PurchaseItem purchase={ purchase } /> );
 
@@ -112,7 +118,7 @@ describe( 'PurchaseItem', () => {
 		} );
 	} );
 
-	describe( 'a purchase expiring within the next 30 days', () => {
+	describe( 'a purchase expiring soon', () => {
 		const purchase = {
 			productSlug: 'business-bundle',
 			expiryStatus: 'manualRenew',
@@ -124,7 +130,43 @@ describe( 'PurchaseItem', () => {
 		test( 'should count the same calendar days as the date it displays', () => {
 			renderWithProvider( <PurchaseItem purchase={ purchase } /> );
 
-			expect( screen.getByText( /expires in 3 days on/i ) ).toBeInTheDocument();
+			expect( screen.getByText( /expires in 3 days/i ) ).toHaveAttribute(
+				'title',
+				'February 27, 2026'
+			);
+		} );
+	} );
+
+	describe( 'a purchase expiring further out', () => {
+		const purchase = {
+			productSlug: 'business-bundle',
+			expiryStatus: 'manualRenew',
+			subscriptionStatus: 'active',
+			// 45 days out, which the relative-date helpers would round to "1 month".
+			expiryDate: '2026-04-10T12:00:00+00:00',
+		};
+
+		test( 'should count the days exactly rather than rounding to months', () => {
+			renderWithProvider( <PurchaseItem purchase={ purchase } /> );
+
+			expect( screen.getByText( /expires in 45 days/i ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'a purchase expiring beyond the warning window', () => {
+		const purchase = {
+			productSlug: 'business-bundle',
+			expiryStatus: 'manualRenew',
+			subscriptionStatus: 'active',
+			// 90 days out.
+			expiryDate: '2026-05-25T12:00:00+00:00',
+		};
+
+		test( 'should just say when it expires', () => {
+			renderWithProvider( <PurchaseItem purchase={ purchase } /> );
+
+			expect( screen.getByText( /expires on/i ) ).toBeInTheDocument();
+			expect( screen.queryByText( /expires in/i ) ).toBeNull();
 		} );
 	} );
 

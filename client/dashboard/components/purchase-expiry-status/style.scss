@@ -1,0 +1,19 @@
+.purchase-expiry-status__renew-link {
+	// The parent carries the warning and error colors, which the dashboard's
+	// default link styling would otherwise override.
+	color: inherit;
+	text-decoration: underline;
+
+	&:hover,
+	&:focus {
+		color: inherit;
+	}
+
+	svg {
+		// The glyph is inset by a quarter of the icon box on every side, so the
+		// box has to hang below the baseline for the arrow itself to sit near
+		// it. Keep in step with the icon's size.
+		vertical-align: -3.5px;
+		fill: currentColor;
+	}
+}

@@ -258,6 +258,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const hasEnTranslation = useHasEnTranslation();
 	const { user } = useAuth();
 	const isOwner = String( user.ID ) === String( purchase.user_id );
+	// The purchase list gates its renewal link on these same two conditions.
 	const canBeRenewed = purchase.can_explicit_renew && isOwner;
 	const upgradeAction = getHeaderUpgradeAction( purchase );
 	const storageUpgradeUrl = getSitePurchaseStorageUpgradeUrl( purchase );
@@ -294,6 +295,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 				onClick={ () => {
 					recordTracksEvent( 'calypso_purchases_renew_now_click', {
 						product_slug: purchase.product_slug,
+						position: 'purchase-settings',
 					} );
 					renewPurchase( purchase );
 				} }
@@ -577,6 +579,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 
 function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
+	// The purchase list gates its renewal link on these same two conditions.
 	const canBeRenewed =
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
 	const { recordTracksEvent } = useAnalytics();
@@ -595,6 +598,7 @@ function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 					onClick={ () => {
 						recordTracksEvent( 'calypso_purchases_renew_now_click', {
 							product_slug: purchase.product_slug,
+							position: 'purchase-settings',
 						} );
 						renewPurchase( purchase );
 					} }

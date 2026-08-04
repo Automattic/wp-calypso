@@ -37,6 +37,7 @@ import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { addQueryArgs } from 'calypso/lib/url';
 import {
 	isMarketplaceHoldingSitePurchase,
 	isA4AHoldingSitePurchase,
@@ -343,12 +344,13 @@ export function getSubscriptionEndDate( purchase: Purchase ): string {
  * @param {string} siteSlug - the site slug to renew the purchase for
  * @param {Object} [options] - optional information
  * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
+ * @param {string} [options.cancelTo] - Passed as cancel_to in checkout
  * @param {Object} [options.tracksProps] - where was the renew button clicked from
  */
 export function handleRenewNowClick(
 	purchase: Purchase,
 	siteSlug: string,
-	options: { redirectTo?: string; tracksProps?: TracksProps } = {}
+	options: { redirectTo?: string; cancelTo?: string; tracksProps?: TracksProps } = {}
 ) {
 	return ( dispatch: CalypsoDispatch ) => {
 		try {
@@ -379,9 +381,11 @@ export function handleRenewNowClick(
 			let renewalUrl = `/checkout/${ serviceSlug }${ productSlugs[ 0 ] }/renew/${
 				purchaseIds[ 0 ]
 			}/${ siteSlug || '' }`;
-			if ( options.redirectTo ) {
-				renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
-			}
+
+			renewalUrl = addQueryArgs(
+				{ redirect_to: options.redirectTo, cancel_to: options.cancelTo },
+				renewalUrl
+			);
 			debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
 			page(
