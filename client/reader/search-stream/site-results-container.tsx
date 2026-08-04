@@ -27,7 +27,7 @@ export default function SiteResultsContainer( {
 	onReceiveSearchResults,
 }: SiteResultsContainerProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const { data, fetchNextPage, hasNextPage } = useFeedSearchInfiniteQuery( {
+	const { data, fetchNextPage, hasNextPage, isLoading } = useFeedSearchInfiniteQuery( {
 		query,
 		excludeFollowed: false,
 		sort,
@@ -65,6 +65,7 @@ export default function SiteResultsContainer( {
 			sort={ sort }
 			searchResults={ dedupedFeeds }
 			hasNextPage={ hasNextPage }
+			isLoading={ isLoading }
 			isLoggedIn={ isLoggedIn }
 			fetchNextPage={ () => fetchNextPage() }
 		/>
