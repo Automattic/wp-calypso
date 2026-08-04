@@ -92,10 +92,9 @@
 			outline: none;
 		}
 
-		// Stretch wp's divider line across the menu's 8px padding and give
-		// it 8px clearance on both sides.
+		// Stretch wp's divider line across the menu's 8px padding.
 		&.has-separator {
-			margin-top: 11px;
+			margin-top: 12px;
 
 			&::before {
 				top: -8px;
