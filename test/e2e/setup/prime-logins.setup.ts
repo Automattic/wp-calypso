@@ -92,13 +92,18 @@ for ( const accountName of new Set( getAccountNamesToPrime() ) ) {
 				} ),
 			] );
 		} catch ( error ) {
-			const { retry, project } = setup.info();
+			const info = setup.info();
 			// Retrying is worth it, a stuck login usually succeeds second time round. Only
 			// the last attempt has to pass, so the project stays green either way.
-			if ( retry < project.retries ) {
+			if ( info.retry < info.project.retries ) {
 				throw error;
 			}
-			console.warn( `Could not prime login cookies for ${ accountName }: ${ error }` );
+			// Annotate rather than only log: the last attempt passes, so the reports are the
+			// only place a reader would otherwise see nothing at all.
+			info.annotations.push( {
+				type: 'prime-failed',
+				description: `Could not prime login cookies for ${ accountName }: ${ error }`,
+			} );
 		} finally {
 			clearTimeout( timer );
 		}

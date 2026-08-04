@@ -120,10 +120,6 @@ export default defineConfig( {
 				...devices[ 'Desktop Chrome HiDPI' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
 				viewportName: 'desktop',
-				// A priming failure is swallowed so it can't skip the dependent projects, which
-				// also means the default `on failure` rules would throw the artifacts away.
-				trace: 'on',
-				video: 'on',
 			} ),
 		},
 		{
