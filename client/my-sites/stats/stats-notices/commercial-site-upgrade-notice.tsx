@@ -84,7 +84,7 @@ const CommercialSiteUpgradeNotice = ( {
 
 	let learnMoreLink = isWPCOMSite
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
-		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
+		: 'https://jetpack.com/support/jetpack-stats/free-or-paid/#what-a-paid-plan-adds';
 
 	if ( showPaywallNotice ) {
 		learnMoreLink = 'https://jetpack.com/support/jetpack-stats/free-or-paid/';
@@ -115,11 +115,32 @@ const CommercialSiteUpgradeNotice = ( {
 	// Banner body will show an explict paywall date if provided.
 	let bannerBody = null;
 	if ( ! showPaywallNotice ) {
-		bannerBody = translate(
-			'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license based on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
-			{
-				components: sharedTranslationComponents,
-			}
+		bannerBody = (
+			<>
+				<p>
+					{ translate(
+						'Upgrade to unlock UTM tracking, device stats, and region and city locations, and get priority support.'
+					) }
+				</p>
+				<p>
+					<button
+						type="button"
+						className="notice-banner__action-button"
+						onClick={ gotoJetpackStatsProduct }
+					>
+						{ translate( 'Upgrade my Stats' ) }
+					</button>
+					<a
+						className="notice-banner__action-link"
+						href={ localizeUrl( learnMoreLink ) }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ translate( 'Learn more' ) }
+						<Icon className="stats-icon" icon={ external } size={ 24 } />
+					</a>
+				</p>
+			</>
 		);
 	} else if ( ! paywallUpgradeDeadlineDate ) {
 		bannerBody = translate(
@@ -143,7 +164,9 @@ const CommercialSiteUpgradeNotice = ( {
 		? ( translate( 'You need to upgrade to a commercial license to continue using %(product)s', {
 				args: { product: STATS_PRODUCT_NAME },
 		  } ) as string )
-		: translate( 'Upgrade to Stats Commercial' );
+		: ( translate( 'Do you love %(product)s?', {
+				args: { product: STATS_PRODUCT_NAME },
+		  } ) as string );
 
 	return (
 		<div
