@@ -3,6 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
+import { queryClient, userSettingsQuery } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
@@ -143,6 +144,94 @@ describe( '<EmailVerificationBanner>', () => {
 		expect(
 			await screen.findByRole( 'button', { name: 'Resend email (4:00:00)' } )
 		).toBeDisabled();
+	} );
+
+	test( 'a resend cannot put back settings saved while it was in flight', async () => {
+		const user = userEvent.setup();
+		queryClient.setQueryData( userSettingsQuery().queryKey, {
+			...pendingSettings,
+			first_name: 'Jon',
+		} );
+
+		render( <EmailVerificationBanner userSettings={ pendingSettings } isEmailVerified />, {
+			queryClient,
+		} );
+
+		expect( await screen.findByText( 'Verify your email' ) ).toBeVisible();
+
+		// The endpoint answers with the whole account, as it stood before the save below.
+		let deliverReply: () => void;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings', ( body ) => 'user_email' in body )
+			.reply(
+				() =>
+					new Promise( ( resolve ) => {
+						deliverReply = () => resolve( [ 200, { ...pendingSettings, first_name: 'Jon' } ] );
+					} )
+			);
+
+		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
+
+		// An ordinary settings save lands first. It carries no address, so nothing orders it
+		// against the resend.
+		queryClient.setQueryData( userSettingsQuery().queryKey, {
+			...pendingSettings,
+			first_name: 'Jane',
+		} );
+		deliverReply!();
+
+		// The button taking up its wait is what tells us the response has been handled.
+		await waitFor( () =>
+			expect( screen.getByRole( 'button', { name: /Resend email \(/ } ) ).toBeDisabled()
+		);
+		expect(
+			queryClient.getQueryData< UserSettings >( userSettingsQuery().queryKey )?.first_name
+		).toBe( 'Jane' );
+	} );
+
+	test( 'withholds the resend while a cancellation is in flight', async () => {
+		const user = userEvent.setup();
+		queryClient.setQueryData( userSettingsQuery().queryKey, pendingSettings );
+
+		render( <EmailVerificationBanner userSettings={ pendingSettings } isEmailVerified />, {
+			queryClient,
+		} );
+
+		expect( await screen.findByText( 'Verify your email' ) ).toBeVisible();
+
+		let resendReached = false;
+		// Held open so the cancellation is still running while the resend is checked.
+		let deliverCancel: () => void;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings', ( body ) => 'user_email_change_pending' in body )
+			.reply(
+				() =>
+					new Promise( ( resolve ) => {
+						deliverCancel = () =>
+							resolve( [ 200, { ...pendingSettings, user_email_change_pending: false } ] );
+					} )
+			);
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings', ( body ) => 'user_email' in body )
+			.reply( 200, () => {
+				resendReached = true;
+				return pendingSettings;
+			} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Cancel the pending email change' } ) );
+
+		// The other order matters just as much: a resend started here would re-save the address
+		// the cancellation is in the middle of clearing, putting the change straight back.
+		expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeDisabled();
+		deliverCancel!();
+
+		await waitFor( () =>
+			expect(
+				queryClient.getQueryData< UserSettings >( userSettingsQuery().queryKey )
+					?.user_email_change_pending
+			).toBe( false )
+		);
+		expect( resendReached ).toBe( false );
 	} );
 
 	test( 'reports a refused send rather than announcing an email nobody was sent', async () => {
