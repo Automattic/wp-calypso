@@ -15,6 +15,9 @@ const mockUseAgentLayoutManager = jest.fn();
 const mockResumeActiveChat = jest.fn();
 const mockCloseSidebar = jest.fn();
 let mockLayoutIsDocked = false;
+// Overrides the layout mock's `canDock` (which otherwise follows
+// `mockLayoutIsDocked`) so floating-but-dockable states are testable.
+let mockCanDock: boolean | null = null;
 let mockContext: Partial< AgentsManagerContextType > = {};
 let mockAgentsManagerState: {
 	isOpen?: boolean;
@@ -68,7 +71,7 @@ jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) =>
 	return {
 		isDocked: mockLayoutIsDocked,
 		isSidebarOpen: mockLayoutIsDocked && mockAgentsManagerState.isOpen !== false,
-		canDock: mockLayoutIsDocked,
+		canDock: mockCanDock ?? mockLayoutIsDocked,
 		dock: jest.fn(),
 		undock: jest.fn(),
 		openSidebar: jest.fn(),
@@ -109,16 +112,19 @@ jest.mock( '../orchestrator-chat', () => ( {
 		onClose: () => void;
 	} ) => (
 		<div data-testid="orchestrator-chat" data-chat-open={ String( isOpen ) }>
-			{ chatHeaderOptions.flat().map( ( option ) => (
-				<button
-					key={ option.title }
-					type="button"
-					onClick={ option.onClick }
-					disabled={ option.isDisabled }
-				>
-					{ option.title }
-				</button>
-			) ) }
+			{ chatHeaderOptions.map( ( group, groupIndex ) =>
+				group.map( ( option ) => (
+					<button
+						key={ option.title }
+						type="button"
+						data-group={ groupIndex }
+						onClick={ option.onClick }
+						disabled={ option.isDisabled }
+					>
+						{ option.title }
+					</button>
+				) )
+			) }
 			<button onClick={ onExpand }>Expand chat</button>
 			<button onClick={ onClose }>Close chat</button>
 		</div>
@@ -160,8 +166,9 @@ jest.mock( '../support-guides', () => ( {
 } ) );
 
 import AgentDock from '../agent-dock';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 
+const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.Mock;
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.Mock;
 
 function LocationProbe() {
@@ -201,6 +208,7 @@ describe( 'AgentDock', () => {
 		mockHasAdminBar = false;
 		mockShouldUseUnifiedAgent = false;
 		mockLayoutIsDocked = false;
+		mockCanDock = null;
 		mockAgentsManagerState = { isOpen: true, isDocked: false };
 		mockContext = {
 			siteKey: 'site-1',
@@ -455,6 +463,92 @@ describe( 'AgentDock', () => {
 
 		expect( screen.queryByText( 'Knowledge and memory' ) ).toBeNull();
 		expect( screen.queryByText( 'AI Agent settings' ) ).toBeNull();
+	} );
+
+	it( 'navigates to history from More Options', () => {
+		useWpAdminAgent();
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'View history' ) );
+
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith( 'chat_history_open' );
+		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/history' );
+	} );
+
+	it( 'opens the guidelines page from More Options', () => {
+		useWpAdminAgent();
+		document.body.classList.add( 'wp-admin' );
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'Knowledge and memory' ) );
+
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
+			type: 'knowledge_memory',
+		} );
+		expect( openSpy ).toHaveBeenCalledWith(
+			'/wp-admin/options-general.php?page=guidelines-wp-admin',
+			'_blank',
+			'noreferrer'
+		);
+
+		openSpy.mockRestore();
+		document.body.classList.remove( 'wp-admin' );
+	} );
+
+	it( 'opens the AI Agent settings for the inline-data site', () => {
+		useWpAdminAgent();
+		document.body.classList.add( 'wp-admin' );
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			site: { domain: 'example.com' },
+		};
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'AI Agent settings' ) );
+
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
+			type: 'ai_agent_settings',
+		} );
+		expect( openSpy ).toHaveBeenCalledWith(
+			'https://my.wordpress.com/sites/example.com/settings/ai-tools',
+			'_blank',
+			'noreferrer'
+		);
+
+		openSpy.mockRestore();
+		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
+		document.body.classList.remove( 'wp-admin' );
+	} );
+
+	it( 'offers Switch to floating behind the divider while docked', () => {
+		useWpAdminAgent();
+		mockLayoutIsDocked = true;
+
+		renderAgentDock();
+
+		expect( screen.getByText( 'New chat' ) ).toHaveAttribute( 'data-group', '0' );
+		expect( screen.getByText( 'Switch to floating' ) ).toHaveAttribute( 'data-group', '1' );
+		expect( screen.queryByText( 'Switch to sidebar' ) ).toBeNull();
+	} );
+
+	it( 'offers Switch to sidebar while floating and docking is available', () => {
+		useWpAdminAgent();
+		mockCanDock = true;
+
+		renderAgentDock();
+
+		expect( screen.getByText( 'Switch to sidebar' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Switch to floating' ) ).toBeNull();
+	} );
+
+	it( 'omits the switch options on reader chat', () => {
+		mockLayoutIsDocked = true;
+
+		renderAgentDock();
+
+		expect( screen.queryByText( 'Switch to floating' ) ).toBeNull();
+		expect( screen.queryByText( 'Switch to sidebar' ) ).toBeNull();
 	} );
 
 	it.each( [
