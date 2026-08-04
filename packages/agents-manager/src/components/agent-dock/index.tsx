@@ -265,7 +265,7 @@ export default function AgentDock( {
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		// Guidelines and settings link to wp-admin/WordPress.com pages that
 		// Calypso-hosted chats can't resolve.
-		const showWpAdminLinks = isWpAdmin();
+		const isInWpAdmin = isWpAdmin();
 		const inlineData = getAgentsManagerInlineData();
 		const siteSlug = inlineData?.site?.domain ?? window.location.hostname;
 		// The linked WordPress.com settings page only exists for Simple/WoA
@@ -311,7 +311,7 @@ export default function AgentDock( {
 						setIsSplitScreen( ! isSplitScreen );
 					},
 				},
-			showWpAdminLinks && {
+			isInWpAdmin && {
 				icon: heading,
 				title: __( 'Knowledge and memory', __i18n_text_domain__ ),
 				onClick: () => {
@@ -325,7 +325,7 @@ export default function AgentDock( {
 					);
 				},
 			},
-			showWpAdminLinks &&
+			isInWpAdmin &&
 				isDotcomSite && {
 					icon: cog,
 					title: __( 'AI Agent settings', __i18n_text_domain__ ),
