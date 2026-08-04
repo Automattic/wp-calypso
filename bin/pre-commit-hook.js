@@ -6,7 +6,10 @@ const chalk = require( 'chalk' );
 
 const phpcsPath = getPathForCommand( 'phpcs' );
 const phpcbfPath = getPathForCommand( 'phpcbf' );
-const phpcsExclusions = '--exclude=WordPress.WP.EnqueuedResourceParameters';
+// WPCS < 3.4.1 passes untrusted code through eval() in this sniff (GHSA-3pwp-g2mj-5p3v).
+// --no-cache is load-bearing: PHPCS discards all --exclude restrictions when caching is on.
+// Remove both once wp-coding-standards/wpcs >= 3.4.1 is installable.
+const phpcsExclusions = [ '--exclude=WordPress.WP.EnqueuedResourceParameters', '--no-cache' ];
 
 // Groups an array's items into an object keyed by the iteratee's return value.
 function groupBy( collection, iteratee ) {
@@ -148,9 +151,9 @@ if ( toPHPCBF.length ) {
 	if ( phpcs ) {
 		try {
 			execSync(
-				`${ quotedPath( phpcbfPath ) } --standard=WordPress ${ phpcsExclusions } ${ toPHPCBF.join(
+				`${ quotedPath( phpcbfPath ) } --standard=WordPress ${ phpcsExclusions.join(
 					' '
-				) }`
+				) } ${ toPHPCBF.join( ' ' ) }`
 			);
 		} catch ( error ) {
 			// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
@@ -214,7 +217,7 @@ if ( toPHPCS.length ) {
 	if ( phpcs ) {
 		const lintResult = spawnSync(
 			quotedPath( phpcsPath ),
-			[ '--standard=WordPress', phpcsExclusions, ...toPHPCS ],
+			[ '--standard=WordPress', ...phpcsExclusions, ...toPHPCS ],
 			{
 				shell: true,
 				stdio: 'inherit',
