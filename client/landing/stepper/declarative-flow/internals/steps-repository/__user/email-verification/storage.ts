@@ -39,13 +39,24 @@ export function beginGate( scope: string ): void {
 	write( scope, { resendAvailableAt: 0, shownAt: 0 } );
 }
 
-// Stamped when the gate first renders, so the duration metric excludes the token-load and
-// user-hydration wait before it.
-export function markGateShown( scope: string ): void {
+/**
+ * Stamps the gate as shown, so the duration metric excludes the token-load and user-hydration
+ * wait before it, and reports whether this call was the one that stamped it — which is what
+ * makes a per-gate event fire once rather than once per mount.
+ *
+ * True when nothing is stored, so a caller isn't silenced by unavailable storage; it falls back
+ * to once per mount rather than never.
+ */
+export function markGateShown( scope: string ): boolean {
 	const record = read( scope );
-	if ( record && ! record.shownAt ) {
-		write( scope, { ...record, shownAt: Date.now() } );
+	if ( ! record ) {
+		return true;
 	}
+	if ( record.shownAt ) {
+		return false;
+	}
+	write( scope, { ...record, shownAt: Date.now() } );
+	return true;
 }
 
 export function isGatePending( scope: string ): boolean {

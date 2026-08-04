@@ -40,9 +40,10 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 	);
 
 	const hasSubmitted = useRef( false );
-	const hasRecordedView = useRef( false );
 	const headingRef = useRef< HTMLDivElement >( null );
 	const inboxLink = getInboxLink( email ?? undefined );
+	// A stable dependency: `inboxLink` is a fresh object every render.
+	const provider = inboxLink?.provider ?? 'none';
 
 	const title = __( 'Verify your email' );
 
@@ -55,23 +56,13 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 			  )
 			: __( 'Resend' );
 
-	// Stamp the shown-at time now the gate is actually on screen (see storage.ts).
-	useEffect( () => {
-		markGateShown( scope );
-	}, [ scope ] );
-
 	// The denominator for everything that follows: `provider` names which variant was shown
 	// (`none` when the address has no inbox link), and a view with no confirmation is a drop-off.
 	useEffect( () => {
-		if ( hasRecordedView.current ) {
-			return;
+		if ( markGateShown( scope ) ) {
+			recordTracksEvent( 'calypso_signup_email_verification_view', { flow, provider } );
 		}
-		hasRecordedView.current = true;
-		recordTracksEvent( 'calypso_signup_email_verification_view', {
-			flow,
-			provider: inboxLink?.provider ?? 'none',
-		} );
-	}, [ flow, inboxLink ] );
+	}, [ scope, flow, provider ] );
 
 	// The gate replaces the account form without a route change, so move focus onto its heading
 	// — otherwise it strands on the unmounted submit button and the screen change goes unsaid.

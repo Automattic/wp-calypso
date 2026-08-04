@@ -149,6 +149,20 @@ describe( 'EmailVerificationGate', () => {
 		);
 	} );
 
+	it( 'records the view once per gate, not once per mount', () => {
+		const viewEvents = () =>
+			( recordTracksEvent as jest.Mock ).mock.calls.filter(
+				( [ event ] ) => event === 'calypso_signup_email_verification_view'
+			);
+
+		render().unmount();
+		expect( viewEvents() ).toHaveLength( 1 );
+
+		// A refresh lands on the same pending gate; the denominator must not count it twice.
+		render();
+		expect( viewEvents() ).toHaveLength( 1 );
+	} );
+
 	it( 'finishes as soon as the confirmation lands in another tab', async () => {
 		const onDone = jest.fn();
 		// Only the slices this gate touches, plus the two `DocumentHead` reads.
