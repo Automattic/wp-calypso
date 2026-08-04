@@ -1,0 +1,28 @@
+.omnibar__notifications-icon {
+	display: flex;
+}
+
+.omnibar .omnibar__menu .omnibar__notifications-icon svg {
+	width: 33px;
+	height: 33px;
+	position: relative;
+	top: 0.5px;
+
+	@media ( min-width: 782px ) {
+		width: 24px;
+		height: 24px;
+		top: 0;
+	}
+}
+
+.omnibar .omnibar__notifications-unread-dot {
+	fill: var( --studio-wordpress-blue-20, #3858e9 );
+	stroke: var( --omnibar-background );
+	stroke-width: 6%;
+}
+
+.omnibar .omnibar__menu:hover .omnibar__notifications-unread-dot,
+.omnibar .omnibar__menu:focus-visible .omnibar__notifications-unread-dot,
+.omnibar .omnibar__menu:active .omnibar__notifications-unread-dot {
+	stroke: var( --omnibar-menu-active-background );
+}
