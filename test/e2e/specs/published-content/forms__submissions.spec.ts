@@ -185,7 +185,7 @@ test.describe(
 						// there is nothing to wait for. Skip the wait to avoid hanging.
 						await feedbackInboxPage.searchResponses( formData1.email, attempt > 1 );
 						isInSpam =
-							( await feedbackInboxPage.findFolderWithResult( formData1.name ) ) === 'Spam';
+							( await feedbackInboxPage.findFolderWithResult( formData1.email ) ) === 'Spam';
 						return;
 					} catch ( err ) {
 						if ( attempt === MAX_ATTEMPTS ) {
@@ -197,7 +197,7 @@ test.describe(
 
 			await test.step( 'If in Spam, mark first response as not spam', async () => {
 				if ( isInSpam ) {
-					await feedbackInboxPage.viewResponseRowByText( formData1.name );
+					await feedbackInboxPage.viewResponseRowByText( formData1.email );
 					await feedbackInboxPage.clickNotSpamAction();
 				}
 			} );
@@ -209,7 +209,7 @@ test.describe(
 			} );
 
 			await test.step( 'Validate first response data', async () => {
-				await feedbackInboxPage.viewResponseRowByText( formData1.name );
+				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 				await feedbackInboxPage.validateTextInSubmission( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.phone );
@@ -231,7 +231,7 @@ test.describe(
 						await feedbackInboxPage.clearSearch( true );
 						await feedbackInboxPage.searchResponses( formData2.email );
 						isInSpam =
-							( await feedbackInboxPage.findFolderWithResult( formData2.name ) ) === 'Spam';
+							( await feedbackInboxPage.findFolderWithResult( formData2.email ) ) === 'Spam';
 						return;
 					} catch ( err ) {
 						if ( attempt === MAX_ATTEMPTS ) {
@@ -243,7 +243,7 @@ test.describe(
 
 			await test.step( 'If in Spam, mark second response as not spam', async () => {
 				if ( isInSpam ) {
-					await feedbackInboxPage.viewResponseRowByText( formData2.name );
+					await feedbackInboxPage.viewResponseRowByText( formData2.email );
 					await feedbackInboxPage.clickNotSpamAction();
 				}
 			} );
@@ -255,7 +255,7 @@ test.describe(
 			} );
 
 			await test.step( 'Validate second response data', async () => {
-				await feedbackInboxPage.viewResponseRowByText( formData2.name );
+				await feedbackInboxPage.viewResponseRowByText( formData2.email );
 				await feedbackInboxPage.validateTextInSubmission( formData2.name );
 				await feedbackInboxPage.validateTextInSubmission( formData2.email );
 				await feedbackInboxPage.validateTextInSubmission( formData2.phone );
@@ -273,7 +273,7 @@ test.describe(
 			} );
 
 			await test.step( 'Click on first response', async () => {
-				await feedbackInboxPage.viewResponseRowByText( formData1.name );
+				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 			} );
 
 			await test.step( 'Verify first response data is visible', async () => {
@@ -317,11 +317,11 @@ test.describe(
 
 			await test.step( 'Verify Trash action exists in actions menu', async () => {
 				feedbackInboxPage = new FeedbackInboxPage( page );
-				await feedbackInboxPage.verifyActionExistsInMenu( formData1.name, 'Trash' );
+				await feedbackInboxPage.verifyActionExistsInMenu( formData1.email, 'Trash' );
 			} );
 
 			await test.step( 'Ensure first response is opened', async () => {
-				await feedbackInboxPage.viewResponseRowByText( formData1.name );
+				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 			} );
 
 			await test.step( 'Mark first response as unread', async () => {
@@ -347,7 +347,7 @@ test.describe(
 
 			await test.step( 'Verify first response is in Spam', async () => {
 				await feedbackInboxPage.searchResponses( formData1.email );
-				await feedbackInboxPage.viewResponseRowByText( formData1.name );
+				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
 
@@ -361,7 +361,7 @@ test.describe(
 
 			await test.step( 'Verify first response is back in Inbox', async () => {
 				await feedbackInboxPage.searchResponses( formData1.email, true );
-				await feedbackInboxPage.viewResponseRowByText( formData1.name );
+				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
 
@@ -375,7 +375,7 @@ test.describe(
 
 			await test.step( 'Verify first response is in Trash', async () => {
 				await feedbackInboxPage.searchResponses( formData1.email, true );
-				await feedbackInboxPage.viewResponseRowByText( formData1.name );
+				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
 
@@ -389,7 +389,7 @@ test.describe(
 
 			await test.step( 'Verify first response is restored in Inbox', async () => {
 				await feedbackInboxPage.searchResponses( formData1.email, true );
-				await feedbackInboxPage.viewResponseRowByText( formData1.name );
+				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
 		} );
