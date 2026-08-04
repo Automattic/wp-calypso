@@ -16,7 +16,6 @@ import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { EVERY_TEN_SECONDS, useInterval } from 'calypso/lib/interval';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
@@ -30,10 +29,11 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from './email-verification';
 import { recordGateConfirmation } from './email-verification/confirmation';
-import { beginGateAttempt, gateScope, isFreshSignupAttempt } from './email-verification/storage';
+import { gateScope, isFreshSignup, markFreshSignup } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
+import { useBackoffPoll } from './use-backoff-poll';
 import { useEmailVerificationGate } from './use-email-verification-gate';
 import { useSocialService } from './use-social-service';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
@@ -78,8 +78,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
-	// `/me` opens the gate but doesn't close it: dropping the gate the moment `/me` reports
-	// verified carries the step forward without the confirmation the gate was about to record.
+	const [ createdScope, setCreatedScope ] = useState< string | null >( null );
+	// `/me` opens the gate but doesn't close it: dropping it the moment `/me` reports verified
+	// carries the step on without the confirmation the gate was about to record.
 	const [ latchedScope, setLatchedScope ] = useState< string | null >( null );
 	useEffect( () => {
 		if ( gateStatus === 'gated' ) {
@@ -88,15 +89,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	}, [ gateStatus, gateScopeForUser ] );
 	// The latch is set by an effect, so cover the render that opened the gate too.
 	const activeScope = latchedScope ?? ( gateStatus === 'gated' ? gateScopeForUser : null );
-	// `/me` resolving a different user than the one last stored wipes local storage wholesale, so
-	// the attempt record can go missing between account creation and the gate opening. This tab
-	// knows what it did regardless, and puts the record back under the scope it can finally name.
-	const [ createdAccountHere, setCreatedAccountHere ] = useState( false );
-	useEffect( () => {
-		if ( createdAccountHere && activeScope ) {
-			beginGateAttempt( activeScope );
-		}
-	}, [ createdAccountHere, activeScope ] );
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -128,8 +120,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	}, [ dispatch, wpAccountCreateResponse ] );
 
 	useEffect( () => {
-		// Retrying while pending, because a failed fetch changes no state and so would never be
-		// asked for again.
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else if ( gateStatus === 'pending' ) {
@@ -144,14 +134,12 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 	}, [ dispatch, isLoggedIn, navigation, activeScope, gateStatus, gateScopeForUser, flow ] );
 
-	// A retry batch is finite and swallows its failure, so without this nothing would ask again.
-	// `createdAccountHere` matters as much as `isLoggedIn`: an account just created isn't logged in
-	// until `/me` answers, which is the request that failed. Plain fetches from here — a batch every
-	// ten seconds is four requests each, aimed at whatever is already struggling.
-	const shouldRetryCurrentUser = ( isLoggedIn || createdAccountHere ) && gateStatus === 'pending';
-	useInterval(
+	// A retry batch is finite and swallows its failure, so nothing would ask again. An account just
+	// created isn't logged in until `/me` answers — the request that failed — so the tab that made
+	// it keeps asking on its own account, holding the scope because there's no user ID yet.
+	useBackoffPoll(
 		() => dispatch( fetchCurrentUser() as unknown as AnyAction ),
-		shouldRetryCurrentUser && EVERY_TEN_SECONDS
+		( isLoggedIn || !! createdScope ) && gateStatus === 'pending'
 	);
 
 	const locale = useFlowLocale();
@@ -172,8 +160,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		setSignupIsNewUser( data.ID );
 		if ( gateEnabled ) {
 			// Records that an email really was just sent. It does not decide whether the gate opens.
-			beginGateAttempt( gateScope( flow, data.ID ) );
-			setCreatedAccountHere( true );
+			const created = gateScope( flow, data.ID );
+			markFreshSignup( created );
+			setCreatedScope( created );
 			// The activation email from account creation is the one the gate asks for, so the gate
 			// sends nothing on arrival — this only records the send the server just made.
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
@@ -255,7 +244,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			<EmailVerificationGate
 				flow={ flow }
 				scope={ activeScope }
-				isNewSignup={ createdAccountHere || isFreshSignupAttempt( activeScope ) }
+				isNewSignup={ isFreshSignup( activeScope ) }
 				logo={ topBarLogo }
 				onDone={ () => navigation.submit?.() }
 			/>

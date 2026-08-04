@@ -133,6 +133,8 @@ describe( 'account step email verification gate', () => {
 	} );
 
 	afterEach( () => {
+		// A test that fails before restoring them would otherwise time out every test after it.
+		jest.useRealTimers();
 		mockConfig.enabledFlags.clear();
 		localStorage.clear();
 		sessionStorage.clear();
@@ -215,7 +217,6 @@ describe( 'account step email verification gate', () => {
 		expect( fetchCurrentUser ).toHaveBeenCalled();
 		// Plain, not a four-request batch every ten seconds aimed at an already-struggling `/me`.
 		expect( fetchCurrentUser ).not.toHaveBeenCalledWith( { retry: true } );
-		jest.useRealTimers();
 	} );
 
 	// Confirming elsewhere and coming back finds `/me` already verified, so the gate never opens
@@ -235,7 +236,9 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
-	it( 'records a fresh signup as new, and a returning unverified user as not', async () => {
+	// Abandoning and returning later the same day: the attempt is still live, so the cooldown and
+	// the view stamp survive, but nothing was just sent and the copy shouldn't say so.
+	it( 'records a fresh signup as new, and one returned to in a later session as not', async () => {
 		const store = makeLoggedOutStore();
 		const fresh = renderUser( store );
 
@@ -253,8 +256,9 @@ describe( 'account step email verification gate', () => {
 			expect.objectContaining( { is_new_signup: true } )
 		);
 
-		// A different user arriving unverified never opened an attempt, so nothing was just sent.
+		// Closing the browser and coming back: the attempt outlives the session, freshness doesn't.
 		fresh.unmount();
+		sessionStorage.clear();
 		localStorage.clear();
 		jest.clearAllMocks();
 		renderUser( makeStore( false ) );

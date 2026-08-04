@@ -10,19 +10,12 @@ export function gateScope( flow: string, userId: number | string | null | undefi
 
 interface GateRecord {
 	startedAt: number; // anchors the TTL
-	isNewSignup: boolean; // an email really was just sent, rather than one carried over
 	shownAt: number;
 	resendAvailableAt: number;
 	confirmedAt: number; // claimed by one tab, so only that one records the confirmation
 }
 
-const EMPTY_RECORD: GateRecord = {
-	startedAt: 0,
-	isNewSignup: false,
-	shownAt: 0,
-	resendAvailableAt: 0,
-	confirmedAt: 0,
-};
+const EMPTY_RECORD: GateRecord = { startedAt: 0, shownAt: 0, resendAvailableAt: 0, confirmedAt: 0 };
 
 // Past this an abandoned attempt stops speaking for the next one.
 const ATTEMPT_TTL_MS = 24 * 60 * 60 * 1000;
@@ -71,14 +64,30 @@ function write( scope: string, record: Partial< GateRecord > ): void {
 	}
 }
 
-// Called at account creation, before `/me` has caught up. Records only what the gate can't work
-// out later for itself.
-export function beginGateAttempt( scope: string ): void {
-	write( scope, { isNewSignup: true } );
+/**
+ * Whether an email was just sent, as against one the user is carrying over from an earlier signup.
+ *
+ * Session-scoped rather than part of the attempt: an attempt lasts a day, and someone who
+ * abandoned this morning and came back after lunch is not owed "we just sent an email". It also
+ * outlives the wholesale local-storage clear that resolving a different user than the one last
+ * stored performs, which would otherwise take this with it.
+ */
+const FRESH_SIGNUP_KEY = `${ STORAGE_KEY }-fresh`;
+
+export function markFreshSignup( scope: string ): void {
+	try {
+		sessionStorage.setItem( `${ FRESH_SIGNUP_KEY }:${ scope }`, '1' );
+	} catch {
+		// Ignore storage failures; the copy just reads as a returning user.
+	}
 }
 
-export function isFreshSignupAttempt( scope: string ): boolean {
-	return read( scope ).isNewSignup;
+export function isFreshSignup( scope: string ): boolean {
+	try {
+		return !! sessionStorage.getItem( `${ FRESH_SIGNUP_KEY }:${ scope }` );
+	} catch {
+		return false;
+	}
 }
 
 /**
