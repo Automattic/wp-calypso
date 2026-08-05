@@ -110,7 +110,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 	} ) as string;
 
 	const learnMoreLink = isWPCOMSite
-		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
+		? 'https://wordpress.com/support/stats/#upgrade-your-stats'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
 	const paidStatsRemoveHardcoding = hasEnTranslation(
