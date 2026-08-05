@@ -20,8 +20,7 @@ import UserStep from '..';
 import { gateScope, markResendUnavailableUntil } from '../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
 
-// A different user per test rather than a shared one: an attempt's record is recoverable from
-// memory by design, so clearing storage isn't what isolates these — a different attempt is.
+// A different user per test, so each one's isolation is its own rather than teardown's.
 let mockUserId = 0;
 
 jest.mock( 'calypso/lib/analytics/tracks' );

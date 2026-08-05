@@ -10,8 +10,7 @@ import {
 
 const DAY = 24 * 60 * 60 * 1000;
 
-// An attempt's record is recoverable from this tab's memory by design, so clearing storage isn't
-// what separates these tests — a different attempt is.
+// A scope per test, so each one's isolation is its own rather than teardown's.
 let attempt = 0;
 const nextScope = () => `onboarding:${ ++attempt }`;
 
@@ -87,29 +86,21 @@ describe( 'email verification gate storage', () => {
 		expect( gateResendAvailableAt( scope ) ).toBe( long );
 	} );
 
-	// Resolving a different user than the one last stored clears browser storage wholesale. The
-	// harder half is a tab that only ever read the attempt: it has no write of its own to remember
-	// it by, so nothing would be left to put back.
-	it( "puts back an attempt cleared underneath it, including another tab's writes", () => {
+	// The one thing the in-memory copy is for. Nothing is shared between tabs in this state, but a
+	// tab's own attempt still has to hold together.
+	it( 'falls back to what it remembers when storage is unavailable', () => {
 		const scope = nextScope();
-		const key = `onboarding-email-verification-gate:${ scope }`;
 		markGateShown( scope );
+		markResendUnavailableUntil( scope, Date.now() + 5 * 60 * 1000 );
 
-		// What another tab writing to the same attempt leaves behind. This tab only reads it.
-		const deadline = Date.now() + 5 * 60 * 1000;
-		const fromOtherTab = {
-			...JSON.parse( localStorage.getItem( key ) as string ),
-			resendAvailableAt: deadline,
-		};
-		localStorage.setItem( key, JSON.stringify( fromOtherTab ) );
-		expect( gateResendAvailableAt( scope ) ).toBe( deadline );
+		const getItem = jest.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
+			throw new Error( 'unavailable' );
+		} );
 
-		localStorage.clear();
-
-		expect( gateResendAvailableAt( scope ) ).toBe( deadline );
 		expect( markGateShown( scope ) ).toBe( false );
+		expect( gateResendAvailableAt( scope ) ).toBeGreaterThan( Date.now() );
 		expect( claimGateConfirmation( scope ) ).not.toBeNull();
-		// Restored, not merely remembered: another tab reading the same key finds it again.
-		expect( localStorage.getItem( key ) ).toBeTruthy();
+
+		getItem.mockRestore();
 	} );
 } );

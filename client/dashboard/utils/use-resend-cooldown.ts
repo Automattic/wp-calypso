@@ -28,8 +28,11 @@ export function useResendCooldown( { initialDeadline = 0, onHold }: Options = {}
 		setSecondsUntilResend( cooldownRemainingSeconds( deadlineRef.current ) );
 	}, [] );
 
+	// Only ever extends, like `adopt`: a response can arrive after another tab has already
+	// recorded a longer wait, and shortening would reopen the button while the server still
+	// refuses. `reset` is the way to clear one.
 	const hold = useCallback( ( seconds: number ) => {
-		deadlineRef.current = cooldownDeadline( seconds );
+		deadlineRef.current = Math.max( deadlineRef.current, cooldownDeadline( seconds ) );
 		setSecondsUntilResend( cooldownRemainingSeconds( deadlineRef.current ) );
 		onHoldRef.current?.( deadlineRef.current );
 	}, [] );

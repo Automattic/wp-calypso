@@ -23,10 +23,9 @@ function storageKey( scope: string ): string {
 	return `${ STORAGE_KEY }:${ scope }`;
 }
 
-// A tab's own copy, so an attempt survives storage being unavailable or cleared underneath it.
-// Cross-tab agreement is best-effort in that state; this tab's own accounting still adds up.
+// All a tab has where storage is unavailable — private mode, say. Nothing is shared between tabs
+// in that state; this tab's own accounting still adds up.
 const memoryRecords = new Map< string, GateRecord >();
-let isStorageUsable = true;
 
 // Null for an attempt that isn't there, or is old enough to have nothing left to say. Its absence
 // is the answer, rather than any one field being unset — a record can exist before a gate is shown.
@@ -45,39 +44,19 @@ function persist( scope: string, record: GateRecord ): void {
 	try {
 		localStorage.setItem( storageKey( scope ), JSON.stringify( record ) );
 	} catch {
-		// Private mode, quota — this tab keeps the record in memory from here on.
-		isStorageUsable = false;
+		// Private mode, quota — the in-memory copy is what this tab reads back.
 	}
 }
 
 function read( scope: string ): GateRecord {
-	let stored: Partial< GateRecord > | undefined;
-	if ( isStorageUsable ) {
-		try {
-			const raw = localStorage.getItem( storageKey( scope ) );
-			stored = raw ? ( JSON.parse( raw ) as Partial< GateRecord > ) : undefined;
-		} catch {
-			isStorageUsable = false;
-		}
+	try {
+		const raw = localStorage.getItem( storageKey( scope ) );
+		return (
+			hydrate( raw ? ( JSON.parse( raw ) as Partial< GateRecord > ) : undefined ) ?? EMPTY_RECORD
+		);
+	} catch {
+		return hydrate( memoryRecords.get( scope ) ) ?? EMPTY_RECORD;
 	}
-
-	const shared = hydrate( stored );
-	if ( shared ) {
-		// Snapshot whatever is shared, another tab's writes included — a tab that only ever reads
-		// an attempt would otherwise have nothing to put back, and one that wrote to it earlier
-		// would put back its own older copy.
-		memoryRecords.set( scope, shared );
-		return shared;
-	}
-
-	// Resolving a different user than the one last stored clears browser storage wholesale, which
-	// would reopen a live lockout, recount the view and lose the confirmation.
-	const remembered = hydrate( memoryRecords.get( scope ) );
-	if ( remembered ) {
-		persist( scope, remembered );
-		return remembered;
-	}
-	return EMPTY_RECORD;
 }
 
 /**
@@ -138,7 +117,8 @@ export function claimGateConfirmation( scope: string ): { secondsOnStep: number 
 // enforcing.
 export function markResendUnavailableUntil( scope: string, deadline: number ): void {
 	updateGateRecord( scope, ( record ) => ( {
-		changes: { resendAvailableAt: Math.max( record.resendAvailableAt, deadline ) },
+		// Nothing to record if it doesn't extend — and writing it anyway wakes every other tab.
+		changes: deadline > record.resendAvailableAt ? { resendAvailableAt: deadline } : null,
 		result: undefined,
 	} ) );
 }
