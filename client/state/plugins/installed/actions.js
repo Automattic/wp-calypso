@@ -81,6 +81,32 @@ const getPluginHandler = ( siteId, pluginId ) => {
 	return siteHandler.plugin( pluginId );
 };
 
+/*
+ * Restate a v1.2 plugin in the v1.1 format. The store is populated from the v1.1 plugin
+ * list and everything downstream — the reducer's identity check included — reads that
+ * shape. v1.2 also drops `next_autoupdate`, which nothing reads.
+ */
+const fromApiV1_2 = ( { name: id, display_name: name, ...plugin } ) => ( {
+	...plugin,
+	id,
+	name,
+} );
+
+/*
+ * Activation and deactivation go through v1.2, which treats a plugin that is already in
+ * the requested state as a no-op success. v1.1 answers those with an `activation_error` /
+ * `deactivation_error` that is indistinguishable from a genuine failure, so a stale view
+ * of a plugin's state surfaces to the user as an error.
+ *
+ * Note that the query object is consumed (and emptied) by the request layer, so each call
+ * needs its own.
+ */
+const activate = ( siteId, pluginId ) =>
+	getPluginHandler( siteId, pluginId ).activate( { apiVersion: '1.2' } ).then( fromApiV1_2 );
+
+const deactivate = ( siteId, pluginId ) =>
+	getPluginHandler( siteId, pluginId ).deactivate( { apiVersion: '1.2' } ).then( fromApiV1_2 );
+
 /**
  * Helper thunk for recording tracks events and bumping stats for plugin events.
  * Useful to record events and bump stats by following a certain naming pattern.
@@ -185,22 +211,12 @@ export function activatePlugin( siteId, plugin ) {
 		};
 
 		const errorCallback = ( error ) => {
-			// `activation_error` wraps both real failures and the benign case where the plugin
-			// is already active. Only endpoints that attach `data.reason` can tell them apart;
-			// without it, assume a real failure rather than reporting a success we can't confirm.
-			if ( error?.data?.reason === 'already_active' ) {
-				return successCallback( { ...plugin, active: true } );
-			}
-
 			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_FAILURE, error } );
 
 			afterActivationCallback( error, undefined );
 		};
 
-		return getPluginHandler( siteId, pluginId )
-			.activate()
-			.then( successCallback )
-			.catch( errorCallback );
+		return activate( siteId, pluginId ).then( successCallback ).catch( errorCallback );
 	};
 }
 
@@ -252,20 +268,11 @@ export function deactivatePlugin( siteId, plugin ) {
 		};
 
 		const errorCallback = ( error ) => {
-			// See the note in activatePlugin(): `deactivation_error` is just as generic, so the
-			// already-inactive case is only safe to treat as a success when the server says so.
-			if ( error?.data?.reason === 'already_inactive' ) {
-				return successCallback( { ...plugin, active: false } );
-			}
-
 			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_FAILURE, error } );
 			afterDeactivationCallback( error );
 		};
 
-		return getPluginHandler( siteId, pluginId )
-			.deactivate()
-			.then( successCallback )
-			.catch( errorCallback );
+		return deactivate( siteId, pluginId ).then( successCallback ).catch( errorCallback );
 	};
 }
 
@@ -450,7 +457,7 @@ function installPluginHelper(
 
 		const doActivate = function ( pluginData ) {
 			lastStep = 'doActivate';
-			return getPluginHandler( siteId, pluginData.id ).activate();
+			return activate( siteId, pluginData.id );
 		};
 
 		const doUpdate = function ( pluginData ) {
@@ -487,12 +494,6 @@ function installPluginHelper(
 				}
 				return doUpdate( plugin )
 					.then( doActivate )
-					.then( doAutoupdates )
-					.then( successCallback )
-					.catch( errorCallback );
-			}
-			if ( error.name === 'ActivationErrorError' ) {
-				return doUpdate( plugin )
 					.then( doAutoupdates )
 					.then( successCallback )
 					.catch( errorCallback );
@@ -545,7 +546,7 @@ export function removePlugin( siteId, plugin ) {
 
 		const doDeactivate = function ( pluginData ) {
 			if ( pluginData.active ) {
-				return getPluginHandler( siteId, pluginData.id ).deactivate();
+				return deactivate( siteId, pluginData.id );
 			}
 			return Promise.resolve( pluginData );
 		};

@@ -31,6 +31,8 @@ interface ImageStudioData {
 	blogId?: number | string;
 	siteType?: 'simple' | 'atomic' | 'jetpack' | 'wpcom' | 'woa';
 	isA11n?: boolean;
+	// Reported as `agent_version` on Tracks events.
+	version?: string;
 }
 
 declare global {

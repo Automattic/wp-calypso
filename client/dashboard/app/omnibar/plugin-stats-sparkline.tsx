@@ -5,7 +5,7 @@ import { StatsSparkline } from '../../components/stats-sparkline';
 import type { Site } from '@automattic/api-core';
 import type { OmnibarNode } from '@automattic/omnibar';
 
-import './stats-sparkline.scss';
+import './plugin-stats-sparkline.scss';
 
 export function useStatsSparklinePlugin( {
 	siteId,
