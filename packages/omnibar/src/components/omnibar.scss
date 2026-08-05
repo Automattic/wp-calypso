@@ -185,13 +185,25 @@ body:has( .omnibar ) {
 	}
 }
 
-.omnibar .dashicons-search::before {
-	height: 32px;
-	font-size: 32px;
+.omnibar .dashicons-search {
+	height: 46px;
+
+	&::before {
+		height: 46px;
+		font-size: 34px;
+		line-height: 1.38235294;
+		top: 0;
+	}
 
 	@media ( min-width: 782px ) {
 		height: 20px;
-		font-size: 20px;
+
+		&::before {
+			height: 20px;
+			font-size: 20px;
+			line-height: 1;
+			top: 1px;
+		}
 	}
 }
 
