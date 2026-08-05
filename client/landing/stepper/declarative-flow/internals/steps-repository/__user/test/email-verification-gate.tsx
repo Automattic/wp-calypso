@@ -17,6 +17,7 @@ import initialReducer from 'calypso/state/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
+import { gateScope, markResendUnavailableUntil } from '../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
 
 // A different user per test rather than a shared one: an attempt's record is recoverable from
@@ -171,6 +172,42 @@ describe( 'account step email verification gate', () => {
 			'calypso_signup_email_verification_confirmed',
 			expect.objectContaining( { flow: 'onboarding', seconds_on_step: expect.any( Number ) } )
 		);
+	} );
+
+	// The token is loaded and the account exists, but Redux won't call anyone logged in until
+	// `/me` answers — which the code explicitly expects to lag behind a cross-DC signup.
+	it( 'offers no way to authenticate again between creating the account and /me landing', async () => {
+		renderUser( makeLoggedOutStore() );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
+
+		// No second authentication path while the first one is mid-flight.
+		expect(
+			screen.queryByRole( 'button', { name: 'create-email-account' } )
+		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+	} );
+
+	// A stale token can have `/me` resolve someone else entirely, and the gate would otherwise be
+	// the same component instance, still counting down a lockout that was never theirs.
+	it( "does not carry one account's resend lockout over to another", async () => {
+		const store = makeStore( false );
+		await markResendUnavailableUntil(
+			gateScope( 'onboarding', mockUserId ),
+			Date.now() + 5 * 60 * 1000
+		);
+		renderUser( store );
+
+		expect( await screen.findByRole( 'button', { name: /^Resend \(/ } ) ).toBeVisible();
+
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: mockUserId + 1000, email: 'other@example.com', email_verified: false },
+			} );
+		} );
+
+		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeEnabled();
 	} );
 
 	// The user ID is persisted across a reload but the user object is not, so there's a window

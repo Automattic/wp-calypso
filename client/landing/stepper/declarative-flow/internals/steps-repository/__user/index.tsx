@@ -78,6 +78,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
+	// The account exists and its token is loaded, but `/me` hasn't caught up — so nothing here
+	// knows who it is yet, and Redux still reports nobody logged in.
+	const isWaitingForCreatedAccount = !! wpAccountCreateResponse && gateStatus === 'pending';
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -129,7 +132,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// it keeps asking on its own account.
 	useBackoffPoll(
 		() => dispatch( fetchCurrentUser() as unknown as AnyAction ),
-		( isLoggedIn || !! wpAccountCreateResponse ) && gateStatus === 'pending'
+		( isLoggedIn && gateStatus === 'pending' ) || isWaitingForCreatedAccount
 	);
 
 	const locale = useFlowLocale();
@@ -230,6 +233,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	if ( gateStatus === 'gated' ) {
 		return (
 			<EmailVerificationGate
+				// A different account is a different attempt: without this the cooldown, the send
+				// state and the poll's ladder would all carry over to whoever `/me` resolved.
+				key={ gateScopeForUser }
 				flow={ flow }
 				scope={ gateScopeForUser }
 				isNewSignup={ isFreshSignup( gateScopeForUser ) }
@@ -238,10 +244,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		);
 	}
 
-	// Nobody logged in has any business being offered account creation. They're either waiting on
-	// `/me`, or on the effect above to carry them onward — and letting the form show in between
-	// flashes it, and autofocuses it, in the middle of a successful confirmation.
-	if ( isLoggedIn ) {
+	// Nobody with an account has any business being offered another one — including someone whose
+	// account exists but whose `/me` hasn't landed, who would otherwise be looking at live social
+	// buttons and a "See all options" link moments after signing up.
+	if ( isLoggedIn || isWaitingForCreatedAccount ) {
 		return <Step.Loading />;
 	}
 
