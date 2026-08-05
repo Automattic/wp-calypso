@@ -62,7 +62,7 @@ const advance = ( ms: number ) =>
 
 const render = ( { logo }: { logo?: ReactNode } = {} ) => {
 	const result = renderStep(
-		<EmailVerificationGate flow={ FLOW } scope={ SCOPE } isNewSignup logo={ logo } />,
+		<EmailVerificationGate flow={ FLOW } scope={ SCOPE } logo={ logo } />,
 		{
 			initialState: currentUserState( false ),
 		}
@@ -105,7 +105,7 @@ describe( 'EmailVerificationGate', () => {
 	} );
 
 	it( 'offers an inbox button that deep-links to a known provider', async () => {
-		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } isNewSignup />, {
+		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } />, {
 			initialState: {
 				currentUser: {
 					id: USER_ID,
@@ -126,15 +126,6 @@ describe( 'EmailVerificationGate', () => {
 			'calypso_signup_email_verification_open_inbox',
 			expect.objectContaining( { flow: FLOW, provider: 'gmail' } )
 		);
-	} );
-
-	it( 'does not claim to have just sent anything to a returning unverified user', () => {
-		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } isNewSignup={ false } />, {
-			initialState: currentUserState( false ),
-		} );
-
-		expect( screen.getByText( /Check your inbox for the verification email/ ) ).toBeVisible();
-		expect( screen.queryByText( /We just sent an email/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'leaves resend as the only action for an unrecognized provider', () => {

@@ -28,12 +28,7 @@ import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/sel
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from './email-verification';
-import {
-	claimGateConfirmation,
-	gateScope,
-	isFreshSignup,
-	markFreshSignup,
-} from './email-verification/storage';
+import { claimGateConfirmation, gateScope } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
@@ -162,8 +157,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 		setSignupIsNewUser( data.ID );
 		if ( gateEnabled ) {
-			// Records that an email really was just sent. It does not decide whether the gate opens.
-			markFreshSignup( gateScope( flow, data.ID ) );
 			// The activation email from account creation is the one the gate asks for, so the gate
 			// sends nothing on arrival — this only records the send the server just made.
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
@@ -248,7 +241,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				key={ gateScopeForUser }
 				flow={ flow }
 				scope={ gateScopeForUser }
-				isNewSignup={ isFreshSignup( gateScopeForUser ) }
 				logo={ topBarLogo }
 			/>
 		);

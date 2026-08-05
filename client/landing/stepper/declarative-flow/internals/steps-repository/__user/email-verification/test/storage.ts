@@ -4,8 +4,6 @@
 import {
 	claimGateConfirmation,
 	gateResendAvailableAt,
-	isFreshSignup,
-	markFreshSignup,
 	markGateShown,
 	markResendUnavailableUntil,
 } from '../storage';
@@ -74,17 +72,6 @@ describe( 'email verification gate storage', () => {
 
 		expect( markGateShown( scope ) ).toBe( false );
 		expect( gateResendAvailableAt( scope ) ).toBeGreaterThan( Date.now() );
-	} );
-
-	it( 'stops calling a signup fresh well before the attempt itself expires', () => {
-		jest.useFakeTimers();
-		const scope = nextScope();
-
-		markFreshSignup( scope );
-		expect( isFreshSignup( scope ) ).toBe( true );
-
-		jest.setSystemTime( Date.now() + 31 * 60 * 1000 );
-		expect( isFreshSignup( scope ) ).toBe( false );
 	} );
 
 	// Only the tab that wrote an attempt used to remember it, so a tab that merely read one — or

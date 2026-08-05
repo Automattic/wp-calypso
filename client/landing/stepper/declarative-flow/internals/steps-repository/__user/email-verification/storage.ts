@@ -10,19 +10,12 @@ export function gateScope( flow: string, userId: number | string | null | undefi
 
 interface GateRecord {
 	startedAt: number; // anchors the TTL
-	freshUntil: number; // while this hasn't passed, an email really was just sent
 	shownAt: number;
 	resendAvailableAt: number;
 	confirmedAt: number; // claimed by one tab, so only that one records the confirmation
 }
 
-const EMPTY_RECORD: GateRecord = {
-	startedAt: 0,
-	freshUntil: 0,
-	shownAt: 0,
-	resendAvailableAt: 0,
-	confirmedAt: 0,
-};
+const EMPTY_RECORD: GateRecord = { startedAt: 0, shownAt: 0, resendAvailableAt: 0, confirmedAt: 0 };
 
 // Past this an abandoned attempt stops speaking for the next one.
 const ATTEMPT_TTL_MS = 24 * 60 * 60 * 1000;
@@ -104,23 +97,6 @@ function updateGateRecord< T >(
 		persist( scope, { ...record, ...changes, startedAt: record.startedAt || Date.now() } );
 	}
 	return result;
-}
-
-// How long "we just sent an email" stays true: long enough for a signup that detours through
-// checkout, short enough that someone returning hours later isn't told it.
-const FRESH_SIGNUP_WINDOW_MS = 30 * 60 * 1000;
-
-// On the shared record rather than one tab's own, so every tab says the same thing and the view
-// event agrees with the copy.
-export function markFreshSignup( scope: string ): void {
-	updateGateRecord( scope, () => ( {
-		changes: { freshUntil: Date.now() + FRESH_SIGNUP_WINDOW_MS },
-		result: undefined,
-	} ) );
-}
-
-export function isFreshSignup( scope: string ): boolean {
-	return read( scope ).freshUntil > Date.now();
 }
 
 /**

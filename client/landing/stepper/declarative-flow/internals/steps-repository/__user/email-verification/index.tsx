@@ -25,13 +25,11 @@ interface Props {
 	flow: string;
 	// Storage scope for this attempt, computed once by the account step.
 	scope: string;
-	// Whether an email was just sent, as against one carried over from an earlier signup.
-	isNewSignup: boolean;
 	// Partner/Woo branding, so the top bar doesn't change when the gate replaces the form.
 	logo?: ReactNode;
 }
 
-const EmailVerificationGate = ( { flow, scope, isNewSignup, logo }: Props ) => {
+const EmailVerificationGate = ( { flow, scope, logo }: Props ) => {
 	const { __ } = useI18n();
 	const email = useSelector( getCurrentUserEmail );
 	const { sendStatus, secondsUntilResend, resend } = useEmailVerification( flow, scope );
@@ -56,13 +54,9 @@ const EmailVerificationGate = ( { flow, scope, isNewSignup, logo }: Props ) => {
 	// don't. `provider` is `none` when the address has no inbox link.
 	useEffect( () => {
 		if ( markGateShown( scope ) ) {
-			recordTracksEvent( 'calypso_signup_email_verification_view', {
-				flow,
-				provider,
-				is_new_signup: isNewSignup,
-			} );
+			recordTracksEvent( 'calypso_signup_email_verification_view', { flow, provider } );
 		}
-	}, [ scope, flow, provider, isNewSignup ] );
+	}, [ scope, flow, provider ] );
 
 	// The gate replaces the account form without a route change, so move focus onto its heading
 	// — otherwise it strands on the unmounted submit button and the screen change goes unsaid.
@@ -76,26 +70,20 @@ const EmailVerificationGate = ( { flow, scope, isNewSignup, logo }: Props ) => {
 			provider: inboxLink?.provider,
 		} );
 
-	// Nothing was just sent to someone who arrived already unverified from an earlier signup.
-	const subText = useMemo( () => {
-		const text = isNewSignup
-			? sprintf(
+	const subText = useMemo(
+		() =>
+			createInterpolateElement(
+				sprintf(
 					// translators: %s is the email address the verification link was sent to.
 					__(
 						'We just sent an email to <email>%s</email>. Click the link in the email to verify your account.'
 					),
 					email ?? ''
-			  )
-			: sprintf(
-					// translators: %s is the email address the verification link was sent to.
-					__(
-						'Check your inbox for the verification email we sent to <email>%s</email>, or send yourself a new one below.'
-					),
-					email ?? ''
-			  );
-
-		return createInterpolateElement( text, { email: <strong /> } );
-	}, [ __, email, isNewSignup ] );
+				),
+				{ email: <strong /> }
+			),
+		[ __, email ]
+	);
 
 	return (
 		<>

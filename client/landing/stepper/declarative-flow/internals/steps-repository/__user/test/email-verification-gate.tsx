@@ -264,52 +264,6 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
-	// The attempt is what the cooldown and the view stamp hang off, so it outlives a good deal.
-	// "We just sent an email" must not: it stops being true long before the attempt stops being
-	// live, and it's shared across tabs so that every one of them says the same thing.
-	it( 'stops calling a signup fresh once it stops being recent', async () => {
-		jest.useFakeTimers();
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		const store = makeLoggedOutStore();
-		const fresh = renderUser( store );
-
-		await user.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
-		act( () => {
-			store.dispatch( {
-				type: CURRENT_USER_RECEIVE,
-				user: { ID: mockUserId, email: EMAIL, email_verified: false },
-			} );
-		} );
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_signup_email_verification_view',
-			expect.objectContaining( { is_new_signup: true } )
-		);
-		expect( screen.getByText( /We just sent an email/ ) ).toBeVisible();
-
-		// Coming back later. The attempt is untouched — it still holds its view stamp, which is why
-		// this asserts the copy rather than a second view event, there being none.
-		fresh.unmount();
-		jest.setSystemTime( Date.now() + 31 * 60 * 1000 );
-		renderUser( makeStore( false ) );
-
-		expect(
-			await screen.findByText( /Check your inbox for the verification email/ )
-		).toBeVisible();
-		expect( screen.queryByText( /We just sent an email/ ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'records a returning user with no attempt of their own as not new', async () => {
-		renderUser( makeStore( false ) );
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_signup_email_verification_view',
-			expect.objectContaining( { is_new_signup: false } )
-		);
-	} );
-
 	// The confirmation wakes every open tab at once, and each finishes on its own. The claim is
 	// what keeps that from being counted more than once between them.
 	it( 'records the confirmation once across tabs, while both still continue', async () => {
