@@ -24,9 +24,14 @@ export const AgentUIConversationView = forwardRef<
 ) {
 	const { onClose } = useAgentUIContext();
 
-	// Listen for escape key to close the chat
+	// Listen for escape key to close the chat. Overlays that handle Escape
+	// themselves (modals, dialogs, popovers) call preventDefault(), so skip
+	// those presses and let the innermost layer close alone.
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( event.defaultPrevented ) {
+				return;
+			}
 			if ( event.key === 'Escape' && onClose ) {
 				onClose();
 			}
