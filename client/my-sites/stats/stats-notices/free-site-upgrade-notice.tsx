@@ -158,7 +158,7 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 						className="notice-banner__action-link"
 						href={ localizedLearnMoreLink }
 						target="_blank"
-						rel="noreferrer"
+						rel="noopener noreferrer"
 						onClick={ ( event ) => {
 							if ( ! isOdysseyStats && isWPCOMSite ) {
 								event.preventDefault();
