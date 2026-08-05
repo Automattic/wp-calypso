@@ -6,11 +6,11 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { check } from '@wordpress/icons';
+import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
-import SiteIcon from '../site-icon';
 import type { Site } from '@automattic/api-core';
-import './style.scss';
+import './site-dropdown.scss';
 
 interface SiteOption {
 	value: string;

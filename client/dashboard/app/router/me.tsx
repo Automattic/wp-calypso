@@ -1163,8 +1163,8 @@ export const wordpressDefaultsRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../me/wordpress-defaults' ).then( ( d ) =>
-		createLazyRoute( 'wordpress-defaults' )( {
+	import( '../../me/preferences-defaults' ).then( ( d ) =>
+		createLazyRoute( 'preferences-defaults' )( {
 			component: d.default,
 		} )
 	)

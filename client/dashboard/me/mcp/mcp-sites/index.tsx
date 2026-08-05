@@ -20,10 +20,10 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
-import PreferencesLoginSiteDropdown from '../../../components/site-dropdown';
 import SiteIcon from '../../../components/site-icon';
 import { getSiteDisplayName } from '../../../utils/site-name';
 import { getSiteDisplayUrl } from '../../../utils/site-url';
+import PreferencesLoginSiteDropdown from '../../preferences-defaults/site-dropdown';
 import type { Site } from '@automattic/api-core';
 
 export default function McpMcpSites() {
