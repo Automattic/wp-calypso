@@ -222,8 +222,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				isMobileCompactVariant={ isMobileCompactLayout }
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
-				// Same switch that decides whether the gate is shown, so the link in the activation
-				// email can only aim back here for the accounts that will be held here.
 				activationEmailFrom={ gateEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (

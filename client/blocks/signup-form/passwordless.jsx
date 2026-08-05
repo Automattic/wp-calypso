@@ -20,6 +20,7 @@ import { isThrottledError, getThrottledErrorMessage } from 'calypso/lib/signup/i
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SignupSubmitButton from './signup-submit-button';
 
@@ -36,8 +37,7 @@ class PasswordlessSignupForm extends Component {
 		onCreateAccountError: PropTypes.func,
 		onCreateAccountSuccess: PropTypes.func,
 		disableTosText: PropTypes.bool,
-		// Names the caller in the activation email, so the link back can be aimed at where the
-		// account was created rather than the usual destination.
+		// Names the signup's origin to the backend, which aims the activation link on it.
 		activationEmailFrom: PropTypes.string,
 		useConnectScreenActions: PropTypes.bool,
 	};
@@ -73,6 +73,23 @@ class PasswordlessSignupForm extends Component {
 			this.submitTracksEvent( false, { action_message: 'Please provide a valid email address.' } );
 			return;
 		}
+
+		// --- TEMPORARY LOCAL DEV SHORTCUT — remove before merging this PR. ---
+		// `?fake_signup=1` on the onboarding flow skips real account creation and drops
+		// straight onto the email-verification gate with a fake unverified user, so the
+		// gate can be viewed without registering a new account each time. Requires the
+		// `onboarding/email-verification` flag (already on for wpcalypso; locally add
+		// `?flags=onboarding/email-verification`). Resend / re-check won't work against
+		// the fake session — this is only for viewing the screen.
+		if (
+			this.props.flowName === 'onboarding' &&
+			new URLSearchParams( window.location.search ).get( 'fake_signup' )
+		) {
+			this.props.setCurrentUser( { ID: 1, email: this.state.email, email_verified: false } );
+			this.props.onCreateAccountSuccess?.( { ID: 1, email: this.state.email } );
+			return;
+		}
+		// --- end temporary shortcut ---
 
 		// Save form state in a format that is compatible with the standard SignupForm used in the user step.
 		const form = {
@@ -129,8 +146,6 @@ class PasswordlessSignupForm extends Component {
 				is_dev_account: isDevAccount,
 				extra: {
 					has_segmentation_survey: queryArgs.variationName === 'entrepreneur',
-					// Absent unless the caller asks for it, so the activation email keeps its usual
-					// destination for every flow that doesn't need to be returned somewhere.
 					...( activationEmailFrom && { from: activationEmailFrom } ),
 				},
 			};
@@ -411,4 +426,6 @@ export default connect( null, {
 	recordTracksEvent,
 	saveSignupStep,
 	submitCreateAccountStep: submitSignupStep,
+	// TEMPORARY (remove before merging): used by the `?fake_signup=1` dev shortcut.
+	setCurrentUser,
 } )( localize( PasswordlessSignupForm ) );

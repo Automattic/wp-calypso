@@ -207,8 +207,7 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 	} );
 
-	// The email form is rendered from three places here, and the marker has to reach whichever one
-	// the user is looking at — a signup that loses it gets an activation link to somewhere else.
+	// A signup whose form never received it gets an activation link to somewhere else.
 	describe( 'activationEmailFrom', () => {
 		beforeEach( () => ( mockPasswordlessProps.length = 0 ) );
 

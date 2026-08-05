@@ -30,7 +30,7 @@ const mockSendVerificationEmail = (
 	response: { success: boolean; retry_after?: number } = { success: true }
 ) => mockApi().post( '/rest/v1.1/me/send-verification-email' ).reply( 200, response );
 
-// Captures what the resend actually asked for, rather than only that it asked.
+// What the resend asked for, rather than only that it asked.
 const captureSendVerificationEmail = () => {
 	const sent: { from?: string }[] = [];
 	mockApi()
@@ -267,8 +267,7 @@ describe( 'EmailVerificationGate', () => {
 		);
 	} );
 
-	// The backend picks the link's destination from this, so a resend without it sends the user
-	// somewhere other than the flow the gate is holding them in.
+	// A resend without it sends the user somewhere the activation email wouldn't have.
 	it( 'asks for a link back to this flow, the same as the activation email did', async () => {
 		const user = userEvent.setup();
 		const sent = captureSendVerificationEmail();

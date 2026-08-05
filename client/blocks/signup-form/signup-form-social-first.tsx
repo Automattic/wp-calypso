@@ -54,8 +54,6 @@ interface SignupFormSocialFirst {
 	isMobileCompactVariant?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
-	// Forwarded to the email form only. Social accounts arrive already verified, so there is no
-	// activation email for it to aim.
 	activationEmailFrom?: string;
 }
 
@@ -184,8 +182,8 @@ const SignupFormSocialFirst = ( {
 		} );
 	};
 
-	// Shared by the email-first (Woo or experiment) branch and the mobile-compact
-	// branch so the conversion-critical existing-account redirect lives in one place.
+	// Shared by every branch that renders the email form, so the conversion-critical
+	// existing-account redirect lives in one place.
 	const passwordlessFormProps = {
 		stepName,
 		flowName,
@@ -292,15 +290,7 @@ const SignupFormSocialFirst = ( {
 			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
-						stepName={ stepName }
-						flowName={ flowName }
-						activationEmailFrom={ activationEmailFrom }
-						goToNextStep={ goToNextStep }
-						logInUrl={ logInUrl }
-						queryArgs={ queryArgs }
-						labelText={ emailLabelText ?? __( 'Your email' ) }
-						submitButtonLabel={ __( 'Continue' ) }
-						userEmail={ userEmail }
+						{ ...passwordlessFormProps }
 						renderTerms={ renderEmailStepTermsOfService }
 						secondaryFooterButton={
 							backButtonInFooter ? undefined : (
@@ -309,24 +299,6 @@ const SignupFormSocialFirst = ( {
 								</Button>
 							)
 						}
-						passDataToNextStep={ passDataToNextStep }
-						onCreateAccountError={ ( error: { error: string }, email: string ) => {
-							if ( isExistingAccountError( error.error ) ) {
-								window.location.assign(
-									addQueryArgs(
-										{
-											email_address: email,
-											is_signup_existing_account: true,
-											redirect_to: queryArgs?.redirect_to,
-										},
-										logInUrl
-									)
-								);
-							}
-						} }
-						onCreateAccountSuccess={ onCreateAccountSuccess }
-						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
-						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
 					/>
 					{ backButtonInFooter ? (
 						<Button

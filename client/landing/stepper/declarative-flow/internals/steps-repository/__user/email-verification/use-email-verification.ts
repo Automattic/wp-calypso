@@ -20,8 +20,6 @@ type SendStatus = 'idle' | 'sending' | 'error' | 'throttled';
 export function useEmailVerification( flow: string, scope: string ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
-	// A resend has to land the user back here, the same as the activation email account creation
-	// sent — otherwise pressing Resend is how you get sent somewhere else.
 	const sendVerificationEmail = useSendEmailVerification( { from: ACTIVATION_EMAIL_SOURCE } );
 
 	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
