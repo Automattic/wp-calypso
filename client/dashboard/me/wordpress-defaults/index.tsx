@@ -1,5 +1,6 @@
 import {
 	rawUserPreferencesQuery,
+	siteByIdQuery,
 	userPreferencesMutation,
 	userSettingsMutation,
 	userSettingsQuery,
@@ -10,7 +11,7 @@ import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
@@ -20,7 +21,7 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import PreferencesLoginSiteDropdown from '../preferences-primary-site/site-dropdown';
+import PreferencesLoginSiteDropdown from '../../components/site-dropdown';
 
 type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
 
@@ -150,6 +151,21 @@ function PrimarySiteCard() {
 		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 
+	// The site list is filtered, so the saved primary site can be absent from it.
+	// Fetch it by ID so the dropdown always shows what is actually saved.
+	const { data: primarySite } = useQuery( {
+		...siteByIdQuery( primarySiteId ?? 0 ),
+		enabled: !! primarySiteId,
+	} );
+
+	const siteOptions = useMemo( () => {
+		const list = sites ?? [];
+		if ( primarySite && ! list.some( ( site ) => site.ID === primarySite.ID ) ) {
+			return [ primarySite, ...list ];
+		}
+		return list;
+	}, [ sites, primarySite ] );
+
 	const { mutateAsync: saveUserSettings, isPending } = useMutation( userSettingsMutation() );
 
 	const [ formData, setFormData ] = useState< PrimarySiteFormData >( {
@@ -168,7 +184,7 @@ function PrimarySiteCard() {
 				const value = getValue( { item: data } )?.toString( 10 ) ?? '';
 				return (
 					<PreferencesLoginSiteDropdown
-						sites={ sites ?? [] }
+						sites={ siteOptions }
 						isLoading={ isSiteListLoading }
 						value={ value }
 						onChange={ ( newValue ) => {
