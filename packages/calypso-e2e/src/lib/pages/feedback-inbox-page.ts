@@ -483,9 +483,13 @@ export class FeedbackInboxPage {
 	 * @param {number} timeout  How long to wait (ms).
 	 * @returns {boolean} True if the row is visible.
 	 */
-	async hasResponseRow( text: string, timeout = 3000 ): Promise< boolean > {
+	async hasResponseRow( text: string, timeout = 5000 ): Promise< boolean > {
+		// waitFor, not isVisible: isVisible() returns immediately and ignores its
+		// timeout, so callers that check straight after a folder switch would read
+		// the table mid-refetch and conclude the row is absent.
 		return this.getResponseRow( text )
-			.isVisible( { timeout } )
+			.waitFor( { state: 'visible', timeout } )
+			.then( () => true )
 			.catch( () => false );
 	}
 
