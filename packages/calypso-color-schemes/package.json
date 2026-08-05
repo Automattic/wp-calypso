@@ -22,7 +22,7 @@
 		"access": "public"
 	},
 	"scripts": {
-		"clean": "rm -rf js css root-only src/__color-studio",
+		"clean": "rm -rf js css root-only src/__color-studio src/__wp-base-styles",
 		"prepare": "node bin/prepare-sass-assets.js && node bin/build-css.js"
 	},
 	"devDependencies": {
@@ -30,6 +30,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/color-studio": "^4.1.0",
 		"@types/node": "^24.12.2",
+		"@wordpress/base-styles": "^9.1.0",
 		"postcss": "^8.5.15",
 		"postcss-custom-properties": "^12.1.11",
 		"sass": "1.77.8"
