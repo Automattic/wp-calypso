@@ -144,9 +144,18 @@ jest.mock( '../zendesk-chat', () => ( {
 } ) );
 jest.mock( '../agent-history', () => ( {
 	__esModule: true,
-	default: ( { onExpand }: { onExpand: () => void } ) => (
+	default: ( {
+		onExpand,
+		chatHeaderOptions,
+	}: {
+		onExpand: () => void;
+		chatHeaderOptions: { title: string }[][];
+	} ) => (
 		<div data-testid="agent-history">
 			History
+			{ chatHeaderOptions.flat().map( ( option ) => (
+				<button key={ option.title }>{ option.title }</button>
+			) ) }
 			<button onClick={ onExpand }>Expand history</button>
 		</div>
 	),
@@ -443,6 +452,15 @@ describe( 'AgentDock', () => {
 	it( 'omits View history from More Options on reader chat', () => {
 		renderAgentDock();
 
+		expect( screen.queryByText( 'View history' ) ).toBeNull();
+	} );
+
+	it( 'omits View history from More Options while on the history view', () => {
+		useWpAdminAgent();
+
+		renderAgentDock( '/history' );
+
+		expect( screen.getByText( 'New chat' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'View history' ) ).toBeNull();
 	} );
 

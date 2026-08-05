@@ -287,16 +287,17 @@ export default function AgentDock( {
 			},
 			// Reader chat runs on public blog frontends where session history
 			// isn't user-accessible (no account, per-visit local storage).
-			! isReaderChat && {
-				icon: backup,
-				title: __( 'View history', __i18n_text_domain__ ),
-				onClick: () => {
-					recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
-						type: 'view_history',
-					} );
-					navigate( '/history' );
+			! isReaderChat &&
+				pathname !== '/history' && {
+					icon: backup,
+					title: __( 'View history', __i18n_text_domain__ ),
+					onClick: () => {
+						recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
+							type: 'view_history',
+						} );
+						navigate( '/history' );
+					},
 				},
-			},
 			// Split-screen toggle — gated to providers that opt in via
 			// `capabilities.supportsSplitScreen`. Only visible while the
 			// sidebar is docked (at 50vw the floating modal would be redundant).
