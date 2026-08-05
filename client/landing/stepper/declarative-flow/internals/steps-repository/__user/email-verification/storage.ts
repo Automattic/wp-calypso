@@ -1,5 +1,6 @@
-// One session-storage record per gate attempt, keyed by flow and user, so the gate survives a
-// refresh. The record's presence means the gate is pending; resolving removes it.
+// One gate attempt, keyed by flow and user. Whether the gate opens is not in here — `/me` answers
+// that. Local rather than session storage because an attempt spans tabs, and a lockout or a
+// confirmation counted once per tab is counted wrong.
 
 const STORAGE_KEY = 'onboarding-email-verification-gate';
 
@@ -8,82 +9,136 @@ export function gateScope( flow: string, userId: number | string | null | undefi
 }
 
 interface GateRecord {
+	shownAt: number; // when the gate first appeared, which is also when the attempt began
 	resendAvailableAt: number;
-	shownAt: number;
+	confirmedAt: number; // claimed by one tab, so only that one records the confirmation
 }
+
+const EMPTY_RECORD: GateRecord = { shownAt: 0, resendAvailableAt: 0, confirmedAt: 0 };
+
+// Past this an abandoned attempt stops speaking for the next one.
+const ATTEMPT_TTL_MS = 24 * 60 * 60 * 1000;
 
 function storageKey( scope: string ): string {
 	return `${ STORAGE_KEY }:${ scope }`;
 }
 
-function read( scope: string ): GateRecord | null {
-	try {
-		const raw = sessionStorage.getItem( storageKey( scope ) );
-		return raw ? ( JSON.parse( raw ) as GateRecord ) : null;
-	} catch {
+// All a tab has where storage won't hold what it's given — private mode, or a full one. Nothing is
+// shared between tabs for those attempts; this tab's own accounting still adds up.
+const memoryRecords = new Map< string, GateRecord >();
+// Scopes whose last write didn't land. Kept per scope rather than for storage as a whole, so one
+// attempt failing to persist doesn't stop every other one from seeing what other tabs write.
+const unpersisted = new Set< string >();
+
+// Null for an attempt that isn't there, or is old enough to have nothing left to say. Its absence
+// is the answer, rather than any one field being unset — a record can exist before a gate is shown.
+function hydrate( stored: Partial< GateRecord > | undefined ): GateRecord | null {
+	if ( ! stored ) {
 		return null;
 	}
+	const record = { ...EMPTY_RECORD, ...stored };
+	const isSpent =
+		Date.now() - record.shownAt > ATTEMPT_TTL_MS && record.resendAvailableAt <= Date.now();
+	return isSpent ? null : record;
 }
 
-function write( scope: string, record: GateRecord ): void {
+function persist( scope: string, record: GateRecord ): void {
+	memoryRecords.set( scope, record );
 	try {
-		sessionStorage.setItem( storageKey( scope ), JSON.stringify( record ) );
+		localStorage.setItem( storageKey( scope ), JSON.stringify( record ) );
+		unpersisted.delete( scope );
 	} catch {
-		// Ignore storage failures (private mode, quota); the state just won't persist.
+		unpersisted.add( scope );
 	}
 }
 
-// Called at email account creation. No cooldown is claimed: signup's activation email doesn't go
-// through the throttled path, so the server would accept a resend right away.
-export function beginGate( scope: string ): void {
-	write( scope, { resendAvailableAt: 0, shownAt: 0 } );
+function read( scope: string ): GateRecord {
+	// A full quota rejects writes while reads carry on answering, so what's stored is behind what
+	// this tab knows — and trusting it would recount a view and lose a confirmation.
+	if ( unpersisted.has( scope ) ) {
+		return hydrate( memoryRecords.get( scope ) ) ?? EMPTY_RECORD;
+	}
+	try {
+		const raw = localStorage.getItem( storageKey( scope ) );
+		return (
+			hydrate( raw ? ( JSON.parse( raw ) as Partial< GateRecord > ) : undefined ) ?? EMPTY_RECORD
+		);
+	} catch {
+		return hydrate( memoryRecords.get( scope ) ) ?? EMPTY_RECORD;
+	}
 }
 
 /**
- * Stamps the gate as shown, so the duration metric excludes the token-load and user-hydration
- * wait before it, and reports whether this call was the one that stamped it — which is what
- * makes a per-gate event fire once rather than once per mount.
+ * Every mutation, in one place.
  *
- * True when nothing is stored, so a caller isn't silenced by unavailable storage; it falls back
- * to once per mount rather than never.
+ * Read-check-write is three operations and local storage gives no atomicity between documents, so
+ * two tabs acting on the same attempt within a few microseconds of each other can both find it
+ * untouched. The check makes that rare rather than impossible — which is what the rest of Stepper
+ * lives with for its own step events. `mutate` returning null leaves the record alone.
+ */
+function updateGateRecord< T >(
+	scope: string,
+	mutate: ( record: GateRecord ) => { changes: Partial< GateRecord > | null; result: T }
+): T {
+	const record = read( scope );
+	const { changes, result } = mutate( record );
+	if ( changes ) {
+		persist( scope, { ...record, ...changes } );
+	}
+	return result;
+}
+
+/**
+ * Stamps the gate as shown and reports whether this call was the one that stamped it, so the view
+ * event fires once per attempt rather than once per tab.
  */
 export function markGateShown( scope: string ): boolean {
-	const record = read( scope );
-	if ( ! record ) {
-		return true;
-	}
-	if ( record.shownAt ) {
-		return false;
-	}
-	write( scope, { ...record, shownAt: Date.now() } );
-	return true;
+	return updateGateRecord( scope, ( record ) =>
+		record.shownAt
+			? { changes: null, result: false }
+			: { changes: { shownAt: Date.now() }, result: true }
+	);
 }
 
-export function isGatePending( scope: string ): boolean {
-	return read( scope ) !== null;
+/**
+ * Claims the confirmation, returning how long the attempt took, or null if there is no unfinished
+ * attempt to claim — because no gate was shown, or because another tab got there first. Every tab
+ * still finishes; only the claimant records the event.
+ *
+ * The claim stays rather than being removed, so a late tab finds it taken instead of an empty
+ * record it would mistake for a fresh attempt.
+ */
+export function claimGateConfirmation( scope: string ): { secondsOnStep: number } | null {
+	return updateGateRecord( scope, ( record ) => {
+		if ( ! record.shownAt || record.confirmedAt ) {
+			return { changes: null, result: null };
+		}
+		const now = Date.now();
+		return {
+			changes: { confirmedAt: now },
+			result: { secondsOnStep: Math.round( ( now - record.shownAt ) / 1000 ) },
+		};
+	} );
 }
 
-export function resolveGate( scope: string ): void {
-	try {
-		sessionStorage.removeItem( storageKey( scope ) );
-	} catch {
-		// Ignore storage failures; the in-session state has already moved on.
-	}
-}
-
-// Persisted so a reload doesn't forget a lockout and reopen the button into a refusal.
+// Persisted so a reload doesn't forget a lockout and reopen the button into a refusal. Only ever
+// extends: a deadline arriving late or out of order mustn't shorten one the server is still
+// enforcing.
 export function markResendUnavailableUntil( scope: string, deadline: number ): void {
-	const record = read( scope );
-	if ( record ) {
-		write( scope, { ...record, resendAvailableAt: deadline } );
-	}
+	updateGateRecord( scope, ( record ) => ( {
+		// Nothing to record if it doesn't extend — and writing it anyway wakes every other tab.
+		changes: deadline > record.resendAvailableAt ? { resendAvailableAt: deadline } : null,
+		result: undefined,
+	} ) );
 }
 
-export function gateShownAt( scope: string ): number {
-	return read( scope )?.shownAt || Date.now();
-}
-
-// 0 when nothing is stored, which is also right when storage is unavailable: nothing claimed.
+// 0 when there's no attempt to speak of — which is not the same as storage being unavailable, the
+// case a tab's own copy is there to cover.
 export function gateResendAvailableAt( scope: string ): number {
-	return read( scope )?.resendAvailableAt ?? 0;
+	return read( scope ).resendAvailableAt;
+}
+
+// For a tab that wants to notice another tab claiming a lockout, via the `storage` event.
+export function isGateStorageKey( key: string | null, scope: string ): boolean {
+	return key === storageKey( scope );
 }

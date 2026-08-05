@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useState } from '@wordpress/element';
@@ -28,10 +28,12 @@ import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/sel
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from './email-verification';
-import { beginGate, gateScope, isGatePending, resolveGate } from './email-verification/storage';
+import { claimGateConfirmation, gateScope } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
+import { useBackoffPoll } from './use-backoff-poll';
+import { useEmailVerificationGate } from './use-email-verification-gate';
 import { useSocialService } from './use-social-service';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
@@ -73,14 +75,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 
-	const gateEnabled =
-		config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW;
-	// The scope of the gate this attempt must clear, or null. In-session state is the source of
-	// truth, so a failed storage write can't skip the gate; storage only restores it on refresh.
-	const [ pendingScope, setPendingScope ] = useState< string | null >( null );
-	const storedScope = gateEnabled ? gateScope( flow, userId ) : null;
-	const activeScope =
-		pendingScope ?? ( storedScope && isGatePending( storedScope ) ? storedScope : null );
+	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
+	const gateScopeForUser = gateScope( flow, userId );
+	// The account exists and its token is loaded, but `/me` hasn't caught up — so nothing here
+	// knows who it is yet, and Redux still reports nobody logged in.
+	const isWaitingForCreatedAccount = !! wpAccountCreateResponse && gateStatus === 'pending';
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -114,12 +113,32 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	useEffect( () => {
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
-		} else if ( ! activeScope ) {
-			// While a gate is active it renders instead and owns the transition via `onDone`,
-			// so this only submits once nothing is pending.
+		} else if ( gateStatus === 'pending' ) {
+			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
+		} else if ( gateStatus !== 'gated' ) {
+			// The step owns the whole of finishing; the gate is presentation, and unmounting it is
+			// what this transition looks like. Only `/me` saying verified is a confirmation — the
+			// flag being off is not — and the claim decides which of several tabs records it.
+			if ( gateStatus === 'verified' ) {
+				const claim = claimGateConfirmation( gateScopeForUser );
+				if ( claim ) {
+					recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
+						flow,
+						seconds_on_step: claim.secondsOnStep,
+					} );
+				}
+			}
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, activeScope ] );
+	}, [ dispatch, isLoggedIn, navigation, gateStatus, gateScopeForUser, flow ] );
+
+	// A retry batch is finite and swallows its failure, so nothing would ask again. An account just
+	// created isn't logged in until `/me` answers — the request that failed — so the tab that made
+	// it keeps asking on its own account.
+	useBackoffPoll(
+		() => dispatch( fetchCurrentUser() as unknown as AnyAction ),
+		( isLoggedIn && gateStatus === 'pending' ) || isWaitingForCreatedAccount
+	);
 
 	const locale = useFlowLocale();
 
@@ -138,11 +157,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 		setSignupIsNewUser( data.ID );
 		if ( gateEnabled ) {
-			// Open the gate. The activation email from signup is the one to confirm, so the gate
-			// sends nothing on arrival — and claims no cooldown, since the server hasn't either.
-			const gateKey = gateScope( flow, data.ID );
-			beginGate( gateKey );
-			setPendingScope( gateKey );
+			// The activation email from account creation is the one the gate asks for, so the gate
+			// sends nothing on arrival — this only records the send the server just made.
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
 				flow,
 				is_resend: false,
@@ -217,18 +233,24 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		</>
 	);
 
-	if ( isLoggedIn && activeScope ) {
+	if ( gateStatus === 'gated' ) {
 		return (
 			<EmailVerificationGate
+				// A different account is a different attempt: without this the cooldown, the send
+				// state and the poll's ladder would all carry over to whoever `/me` resolved.
+				key={ gateScopeForUser }
 				flow={ flow }
-				scope={ activeScope }
+				scope={ gateScopeForUser }
 				logo={ topBarLogo }
-				onDone={ () => {
-					resolveGate( activeScope );
-					navigation.submit?.();
-				} }
 			/>
 		);
+	}
+
+	// Nobody with an account has any business being offered another one — including someone whose
+	// account exists but whose `/me` hasn't landed, who would otherwise be looking at live social
+	// buttons and a "See all options" link moments after signing up.
+	if ( isLoggedIn || isWaitingForCreatedAccount ) {
+		return <Step.Loading />;
 	}
 
 	if ( isStepContainerV2 ) {

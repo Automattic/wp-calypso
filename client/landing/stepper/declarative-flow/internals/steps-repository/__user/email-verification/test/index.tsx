@@ -5,20 +5,10 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { type ReactNode } from 'react';
-import { MemoryRouter } from 'react-router';
-// eslint-disable-next-line no-restricted-imports
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import { thunk as thunkMiddleware } from 'redux-thunk';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import currentUserReducer from 'calypso/state/current-user/reducer';
-import documentHeadReducer from 'calypso/state/document-head/reducer';
-import uiReducer from 'calypso/state/ui/reducer';
-import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import EmailVerificationGate from '..';
 import { renderStep } from '../../../test/helpers';
-import { beginGate, isGatePending } from '../storage';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 
@@ -56,7 +46,10 @@ const currentUserState = ( emailVerified: boolean ) => ( {
 	},
 } );
 
-const SCOPE = `${ FLOW }:${ USER_ID }`;
+// A scope per test rather than a shared one: an attempt's record is recoverable from memory by
+// design, so clearing storage between tests isn't what isolates them — a different attempt is.
+let scopeCounter = 0;
+let SCOPE = '';
 
 const MINUTE = 60 * 1000;
 
@@ -67,28 +60,28 @@ const advance = ( ms: number ) =>
 		jest.advanceTimersByTime( ms );
 	} );
 
-const render = ( { onDone = jest.fn(), logo }: { onDone?: jest.Mock; logo?: ReactNode } = {} ) => {
-	// The account step opens the gate on account creation; simulate that once.
-	if ( ! isGatePending( SCOPE ) ) {
-		beginGate( SCOPE );
-	}
+const render = ( { logo }: { logo?: ReactNode } = {} ) => {
 	const result = renderStep(
-		<EmailVerificationGate flow={ FLOW } scope={ SCOPE } logo={ logo } onDone={ onDone } />,
+		<EmailVerificationGate flow={ FLOW } scope={ SCOPE } logo={ logo } />,
 		{
 			initialState: currentUserState( false ),
 		}
 	);
-	return { ...result, onDone };
+	return result;
 };
 
 describe( 'EmailVerificationGate', () => {
 	beforeAll( () => nock.disableNetConnect() );
 
+	beforeEach( () => {
+		SCOPE = `${ FLOW }:${ USER_ID }:${ ++scopeCounter }`;
+	} );
+
 	afterEach( () => {
 		jest.clearAllMocks();
 		jest.useRealTimers();
 		nock.cleanAll();
-		sessionStorage.clear();
+		localStorage.clear();
 	} );
 
 	afterAll( () => nock.enableNetConnect() );
@@ -112,7 +105,7 @@ describe( 'EmailVerificationGate', () => {
 	} );
 
 	it( 'offers an inbox button that deep-links to a known provider', async () => {
-		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ jest.fn() } />, {
+		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } />, {
 			initialState: {
 				currentUser: {
 					id: USER_ID,
@@ -161,43 +154,6 @@ describe( 'EmailVerificationGate', () => {
 		// A refresh lands on the same pending gate; the denominator must not count it twice.
 		render();
 		expect( viewEvents() ).toHaveLength( 1 );
-	} );
-
-	it( 'finishes as soon as the confirmation lands in another tab', async () => {
-		const onDone = jest.fn();
-		// Only the slices this gate touches, plus the two `DocumentHead` reads.
-		const store = createStore(
-			combineReducers( {
-				currentUser: currentUserReducer,
-				documentHead: documentHeadReducer,
-				ui: uiReducer,
-			} ),
-			currentUserState( false ),
-			applyMiddleware( thunkMiddleware )
-		);
-
-		renderWithProvider(
-			<MemoryRouter>
-				<EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ onDone } />
-			</MemoryRouter>,
-			{ store }
-		);
-
-		expect( onDone ).not.toHaveBeenCalled();
-
-		// What `UserVerificationChecker` lands in the store when the other tab confirms.
-		act( () => {
-			store.dispatch( {
-				type: CURRENT_USER_RECEIVE,
-				user: { ID: USER_ID, email: EMAIL, email_verified: true },
-			} );
-		} );
-
-		await waitFor( () => expect( onDone ).toHaveBeenCalled() );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_signup_email_verification_confirmed',
-			expect.objectContaining( { flow: FLOW } )
-		);
 	} );
 
 	it( 'walks down the poll schedule without ever stopping', () => {

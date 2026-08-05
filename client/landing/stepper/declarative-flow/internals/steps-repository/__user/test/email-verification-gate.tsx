@@ -8,15 +8,20 @@ import { MemoryRouter } from 'react-router-dom';
 // eslint-disable-next-line no-restricted-imports
 import { applyMiddleware, createStore, type Reducer } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import initialReducer from 'calypso/state/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
-import { beginGate, gateScope } from '../email-verification/storage';
+import { gateScope, markResendUnavailableUntil } from '../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
+
+// A different user per test, so each one's isolation is its own rather than teardown's.
+let mockUserId = 0;
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 
@@ -63,8 +68,8 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 		<button
 			onClick={ () => {
 				// Production order: goToNextStep fires before onCreateAccountSuccess.
-				goToNextStep?.( { bearer_token: 'test-token', ID: 1 } );
-				onCreateAccountSuccess?.( { ID: 1 } );
+				goToNextStep?.( { bearer_token: 'test-token', ID: mockUserId } );
+				onCreateAccountSuccess?.( { ID: mockUserId } );
 			} }
 		>
 			create-email-account
@@ -77,10 +82,8 @@ const mockConfig = config as unknown as { enabledFlags: Set< string > };
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
 const mockUseAccountCreationExperiment = useAccountCreationExperiment as unknown as jest.Mock;
 
-const USER_ID = 1;
 const EMAIL = 'onboarder@example.com';
 const GATE_HEADING = 'Verify your email';
-const SCOPE = gateScope( 'onboarding', USER_ID );
 
 interface ReducerWithAdd {
 	addReducer( keys: string[], reducer: unknown ): ReducerWithAdd;
@@ -96,8 +99,8 @@ const makeStore = ( emailVerified: boolean ) =>
 		rootReducer,
 		{
 			currentUser: {
-				id: USER_ID,
-				user: { ID: USER_ID, email: EMAIL, email_verified: emailVerified },
+				id: mockUserId,
+				user: { ID: mockUserId, email: EMAIL, email_verified: emailVerified },
 			},
 		},
 		applyMiddleware( thunkMiddleware )
@@ -119,9 +122,8 @@ const renderUser = ( store: ReturnType< typeof makeStore > ) => {
 
 describe( 'account step email verification gate', () => {
 	beforeEach( () => {
+		mockUserId++;
 		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
-		// Most cases start already past account creation, with the gate open (pending).
-		beginGate( SCOPE );
 		mockUsePartnerBranding.mockReturnValue( {
 			hasCustomBranding: false,
 			partnerConfig: null,
@@ -135,9 +137,10 @@ describe( 'account step email verification gate', () => {
 	} );
 
 	afterEach( () => {
+		// A test that fails before restoring them would otherwise time out every test after it.
+		jest.useRealTimers();
 		mockConfig.enabledFlags.clear();
 		localStorage.clear();
-		sessionStorage.clear();
 		jest.clearAllMocks();
 	} );
 
@@ -151,39 +154,54 @@ describe( 'account step email verification gate', () => {
 		act( () => {
 			store.dispatch( {
 				type: CURRENT_USER_RECEIVE,
-				user: { ID: USER_ID, email: EMAIL, email_verified: true },
+				user: { ID: mockUserId, email: EMAIL, email_verified: true },
 			} );
 		} );
 
+		// Nothing offers to create an account to someone who has just proved they have one.
+		expect(
+			screen.queryByRole( 'button', { name: 'create-email-account' } )
+		).not.toBeInTheDocument();
+
 		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
+		// The step records this, so it survives the gate unmounting — which is what the transition
+		// looks like now.
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_confirmed',
+			expect.objectContaining( { flow: 'onboarding', seconds_on_step: expect.any( Number ) } )
+		);
 	} );
 
-	it( 're-shows the gate after a refresh while it is still pending', async () => {
-		const first = renderUser( makeStore( false ) );
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-		first.unmount();
-
-		// A refresh remounts with the pending marker still set (unresolved).
-		const { submit } = renderUser( makeStore( false ) );
-
-		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
-		expect( submit ).not.toHaveBeenCalled();
-	} );
-
-	it( 'marks the gate pending on email account creation, then shows it once logged in', async () => {
-		// Nothing pending yet; the user has not created an account.
-		sessionStorage.clear();
+	// One journey, asserted at each point it could go wrong. `/me` lags a cross-DC signup, which
+	// the step's own retry comment calls out, so the window between creating an account and being
+	// told whose it is has to hold up on its own.
+	it( 'carries a new account from the form to the gate', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		const store = makeLoggedOutStore();
 		const { submit } = renderUser( store );
 
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		await user.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
-		// Account creation logs the user in.
+		// Nothing offers a second way in while the first is still landing.
+		expect(
+			screen.queryByRole( 'button', { name: 'create-email-account' } )
+		).not.toBeInTheDocument();
+
+		// The account-creation fetch is the one that can fail, and nothing has changed state
+		// since — so something has to keep asking, plainly rather than in batches of four.
+		( fetchCurrentUser as jest.Mock ).mockClear();
+		act( () => {
+			jest.advanceTimersByTime( 30 * 1000 );
+		} );
+		expect( fetchCurrentUser ).toHaveBeenCalled();
+		expect( fetchCurrentUser ).not.toHaveBeenCalledWith( { retry: true } );
+
 		act( () => {
 			store.dispatch( {
 				type: CURRENT_USER_RECEIVE,
-				user: { ID: USER_ID, email: EMAIL, email_verified: false },
+				user: { ID: mockUserId, email: EMAIL, email_verified: false },
 			} );
 		} );
 
@@ -191,20 +209,107 @@ describe( 'account step email verification gate', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	// Social signups and existing sessions never call `beginGate`; this is what keeps them out.
-	it( 'skips the gate when nothing is pending', async () => {
-		sessionStorage.clear();
-		const { submit } = renderUser( makeStore( false ) );
+	// A stale token can have `/me` resolve someone else entirely, and the gate would otherwise be
+	// the same component instance, still counting down a lockout that was never theirs.
+	it( "does not carry one account's resend lockout over to another", async () => {
+		const store = makeStore( false );
+		markResendUnavailableUntil( gateScope( 'onboarding', mockUserId ), Date.now() + 5 * 60 * 1000 );
+		renderUser( store );
 
-		await waitFor( () => expect( submit ).toHaveBeenCalled() );
-		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		expect( await screen.findByRole( 'button', { name: /^Resend \(/ } ) ).toBeVisible();
+
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: mockUserId + 1000, email: 'other@example.com', email_verified: false },
+			} );
+		} );
+
+		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeEnabled();
 	} );
 
-	it( 'skips the gate when the flag is off', async () => {
-		mockConfig.enabledFlags.clear();
-		const { submit } = renderUser( makeStore( false ) );
+	// The user ID is persisted across a reload but the user object is not, so there's a window
+	// where the account is logged in and nothing is known about it. Reading that as unverified
+	// would open the gate onto a blank address it can't resend to or check.
+	it( 'neither gates nor continues while the user object is still missing', async () => {
+		const store = createStore(
+			rootReducer,
+			{ currentUser: { id: mockUserId } },
+			applyMiddleware( thunkMiddleware )
+		);
+		const { submit } = renderUser( store );
 
-		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+		// Retried, because a failed fetch changes no state and would never be asked for again —
+		// leaving a logged-in user looking at a form offering to create the account they have.
+		await waitFor( () => expect( fetchCurrentUser ).toHaveBeenCalledWith( { retry: true } ) );
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'create-email-account' } )
+		).not.toBeInTheDocument();
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	// Confirming elsewhere and coming back finds `/me` already verified, so the gate never opens
+	// to close itself out. The attempt still has to be finished, or it goes unrecorded.
+	it( 'finishes an attempt that was confirmed before the gate could see it', async () => {
+		const first = renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		first.unmount();
+		jest.clearAllMocks();
+
+		const { submit } = renderUser( makeStore( true ) );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_confirmed',
+			expect.objectContaining( { flow: 'onboarding' } )
+		);
+	} );
+
+	// The confirmation wakes every open tab at once, and each finishes on its own. The claim is
+	// what keeps that from being counted more than once between them.
+	it( 'records the confirmation once across tabs, while both still continue', async () => {
+		const a = renderUser( makeStore( false ) );
+		await screen.findAllByRole( 'heading', { name: GATE_HEADING } );
+		const b = renderUser( makeStore( false ) );
+		jest.clearAllMocks();
+
+		a.unmount();
+		b.unmount();
+		const verifiedA = renderUser( makeStore( true ) );
+		const verifiedB = renderUser( makeStore( true ) );
+
+		await waitFor( () => expect( verifiedA.submit ).toHaveBeenCalled() );
+		await waitFor( () => expect( verifiedB.submit ).toHaveBeenCalled() );
+
+		const confirmations = ( recordTracksEvent as jest.Mock ).mock.calls.filter(
+			( [ event ] ) => event === 'calypso_signup_email_verification_confirmed'
+		);
+		expect( confirmations ).toHaveLength( 1 );
+	} );
+
+	// Turning the flag off is not the user having confirmed anything. Recording it as one would
+	// also burn the attempt, so a real confirmation later would go unrecorded.
+	it( 'does not record a confirmation when the flag goes off mid-attempt', async () => {
+		const shown = renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		shown.unmount();
+		jest.clearAllMocks();
+
+		mockConfig.enabledFlags.clear();
+		const off = renderUser( makeStore( false ) );
+		await waitFor( () => expect( recordTracksEvent ).not.toHaveBeenCalled() );
+		off.unmount();
+
+		// And the attempt is still there to be confirmed once the flag comes back.
+		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
+		renderUser( makeStore( true ) );
+
+		await waitFor( () =>
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_signup_email_verification_confirmed',
+				expect.anything()
+			)
+		);
 	} );
 } );
