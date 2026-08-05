@@ -3,6 +3,10 @@ import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
+// Names this flow to the backend, which routes the activation link on it so a gated user lands
+// back here. Matched as an exact string: changing it here alone sends them somewhere else.
+export const ACTIVATION_EMAIL_SOURCE = 'onboarding-with-email-verification';
+
 // `pending` is not a kind of `clear`: the user's ID survives a reload but the user object does
 // not, so there is a window where the account is logged in and nothing is known about it. Reading
 // those absent fields as an unverified email opens the gate onto a blank address.

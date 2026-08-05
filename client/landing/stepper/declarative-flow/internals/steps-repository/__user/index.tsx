@@ -33,7 +33,7 @@ import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
 import { useBackoffPoll } from './use-backoff-poll';
-import { useEmailVerificationGate } from './use-email-verification-gate';
+import { ACTIVATION_EMAIL_SOURCE, useEmailVerificationGate } from './use-email-verification-gate';
 import { useSocialService } from './use-social-service';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
@@ -222,6 +222,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				isMobileCompactVariant={ isMobileCompactLayout }
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
+				activationEmailFrom={ gateEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm

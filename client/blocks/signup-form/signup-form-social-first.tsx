@@ -54,6 +54,7 @@ interface SignupFormSocialFirst {
 	isMobileCompactVariant?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
+	activationEmailFrom?: string;
 }
 
 const options = {
@@ -112,6 +113,7 @@ const SignupFormSocialFirst = ( {
 	isMobileCompactVariant,
 	allowedSocialServices,
 	customTosElement,
+	activationEmailFrom,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
@@ -180,11 +182,12 @@ const SignupFormSocialFirst = ( {
 		} );
 	};
 
-	// Shared by the email-first (Woo or experiment) branch and the mobile-compact
-	// branch so the conversion-critical existing-account redirect lives in one place.
+	// Shared by every branch that renders the email form, so the conversion-critical
+	// existing-account redirect lives in one place.
 	const passwordlessFormProps = {
 		stepName,
 		flowName,
+		activationEmailFrom,
 		goToNextStep,
 		logInUrl,
 		queryArgs,
@@ -287,14 +290,7 @@ const SignupFormSocialFirst = ( {
 			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
-						stepName={ stepName }
-						flowName={ flowName }
-						goToNextStep={ goToNextStep }
-						logInUrl={ logInUrl }
-						queryArgs={ queryArgs }
-						labelText={ emailLabelText ?? __( 'Your email' ) }
-						submitButtonLabel={ __( 'Continue' ) }
-						userEmail={ userEmail }
+						{ ...passwordlessFormProps }
 						renderTerms={ renderEmailStepTermsOfService }
 						secondaryFooterButton={
 							backButtonInFooter ? undefined : (
@@ -303,24 +299,6 @@ const SignupFormSocialFirst = ( {
 								</Button>
 							)
 						}
-						passDataToNextStep={ passDataToNextStep }
-						onCreateAccountError={ ( error: { error: string }, email: string ) => {
-							if ( isExistingAccountError( error.error ) ) {
-								window.location.assign(
-									addQueryArgs(
-										{
-											email_address: email,
-											is_signup_existing_account: true,
-											redirect_to: queryArgs?.redirect_to,
-										},
-										logInUrl
-									)
-								);
-							}
-						} }
-						onCreateAccountSuccess={ onCreateAccountSuccess }
-						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
-						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
 					/>
 					{ backButtonInFooter ? (
 						<Button
