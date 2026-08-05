@@ -171,11 +171,13 @@ export function requestSite( siteFragment, atomicCapabilitiesRetriesLeft = 3 ) {
 		dispatch( { type: SITE_REQUEST, siteId: siteFragment } );
 
 		const result = doRequest( false ).catch( ( error ) => {
-			// if there is Jetpack JSON API module error, retry with force: 'wpcom'
+			// Missing Jetpack JSON API methods may arrive as ApiNotFoundError, or as
+			// JetpackNotFoundError when WPCOM detects that Jetpack core is not installed.
 			if (
 				( error?.status === 403 &&
 					error?.message === 'API calls to this blog have been disabled.' ) ||
-				( error?.status === 400 && error?.name === 'ApiNotFoundError' )
+				( error?.status === 400 &&
+					( error?.name === 'ApiNotFoundError' || error?.name === 'JetpackNotFoundError' ) )
 			) {
 				return doRequest( true );
 			}
