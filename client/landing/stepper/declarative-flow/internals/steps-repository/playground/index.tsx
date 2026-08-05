@@ -91,7 +91,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 			>
 				<PlaygroundIframe
 					className="playground__onboarding-iframe"
-					playgroundClient={ playgroundClientRef.current }
+					hasPlaygroundClient={ Boolean( playgroundClientRef.current ) }
 					setPlaygroundClient={ setPlaygroundClient }
 				/>
 			</Step.PlaygroundLayout>
