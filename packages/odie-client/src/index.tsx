@@ -5,7 +5,7 @@ import { OdieSendMessageButton } from './components/send-message-input';
 import { useOdieAssistantContext, OdieAssistantProvider } from './context';
 import { useCurrentSupportInteraction } from './data/use-current-support-interaction';
 import { useOpenLiveInteractions } from './hooks/use-open-interaction-status-map';
-import { hasCSATMessage, interactionHasEnded } from './utils';
+import { hasCSATMessage, interactionHasEnded, isStaleOdieChat } from './utils';
 
 import './style.scss';
 
@@ -14,8 +14,14 @@ export const OdieAssistant: React.FC = () => {
 	const { data: currentSupportInteraction, isLoading: isLoadingInteraction } =
 		useCurrentSupportInteraction();
 	const chatHasCSATMessage = hasCSATMessage( chat );
+	// Until the interaction and its history are in, we can't tell a writable chat from a closed
+	// one. Render neither footer rather than guessing and swapping one for the other.
+	const isChatPending =
+		isLoadingInteraction || ( chat?.status === 'loading' && ! chat?.messages?.length );
 	const showClosedConversationFooter =
-		isLoadingInteraction || chatHasCSATMessage || interactionHasEnded( currentSupportInteraction );
+		chatHasCSATMessage ||
+		interactionHasEnded( currentSupportInteraction ) ||
+		isStaleOdieChat( chat );
 
 	const currentUuid = currentSupportInteraction?.uuid;
 	const { mostRecentSupportInteractionId, openCount } = useOpenLiveInteractions( currentUuid );
@@ -43,14 +49,15 @@ export const OdieAssistant: React.FC = () => {
 			<div className="chat-box-message-container" id="odie-messages-container">
 				<MessagesContainer currentUser={ currentUser } />
 			</div>
-			{ showClosedConversationFooter ? (
-				<ClosedConversationFooter
-					currentInteractionId={ currentUuid }
-					targetInteractionId={ openChatTarget }
-				/>
-			) : (
-				<OdieSendMessageButton />
-			) }
+			{ ! isChatPending &&
+				( showClosedConversationFooter ? (
+					<ClosedConversationFooter
+						currentInteractionId={ currentUuid }
+						targetInteractionId={ openChatTarget }
+					/>
+				) : (
+					<OdieSendMessageButton />
+				) ) }
 		</div>
 	);
 };
