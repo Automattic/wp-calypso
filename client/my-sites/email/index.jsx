@@ -65,6 +65,8 @@ export default function () {
 
 	page(
 		paths.getEmailManagementPath( ':site' ),
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/emails', () => isEnabled( 'emails/titan-tiers' ) ),
 		...commonHandlers,
 		controller.emailManagement,
 		makeLayout,
@@ -170,7 +172,8 @@ export default function () {
 		handlers: [
 			setupPreferences,
 			maybeRedirectToMultiSiteDashboard(
-				( params ) => `/emails/choose-email-solution/${ params.domain }`
+				( params ) => `/emails/choose-email-solution/${ params.domain }`,
+				() => isEnabled( 'emails/titan-tiers' )
 			),
 			...commonHandlers,
 			controller.emailManagementPurchaseNewEmailAccount,
