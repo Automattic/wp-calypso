@@ -4,15 +4,104 @@
 
 import * as page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { navigate } from 'calypso/lib/navigate';
 import addQueryArgs from 'calypso/lib/url/add-query-args';
-import { redirectLoggedOut, redirectMyJetpack } from '../index.web';
+import {
+	maybeRedirectToMultiSiteDashboard,
+	redirectLoggedOut,
+	redirectMyJetpack,
+} from '../index.web';
 
 jest.mock( '@automattic/calypso-router' );
 jest.mock( 'wpcom-proxy-request', () => ( {
 	isCookieAuthMissing: jest.fn( () => false ),
 } ) );
+jest.mock( 'calypso/lib/navigate', () => ( { navigate: jest.fn() } ) );
+jest.mock( 'calypso/dashboard/utils/link', () => ( {
+	dashboardLink: jest.fn( ( path ) => `https://my.wordpress.com${ path }` ),
+} ) );
+jest.mock( 'calypso/lib/analytics/mc', () => ( { bumpStat: jest.fn() } ) );
 
 const mockStore = configureStore();
+
+describe( 'maybeRedirectToMultiSiteDashboard', () => {
+	// `config/test.json` enables `dashboard/enable-percentage-rollout`, so the
+	// user ID has to fall outside the cohort (`id % 100 >= 50`, below the
+	// new-user threshold) for enrollment to be driven by the preference alone.
+	const buildContext = ( optIn ) => ( {
+		store: mockStore( {
+			currentUser: { id: 99 },
+			preferences: {
+				remoteValues: optIn ? { 'hosting-dashboard-opt-in': { value: optIn } } : {},
+			},
+		} ),
+		params: { site: 'example.wordpress.com' },
+		query: {},
+		path: '/email/example.wordpress.com',
+	} );
+
+	let next;
+
+	beforeEach( () => {
+		next = jest.fn();
+		navigate.mockClear();
+		dashboardLink.mockClear();
+	} );
+
+	it( 'does not redirect when the flag is disabled and the user is not force-enrolled', () => {
+		const context = buildContext();
+
+		maybeRedirectToMultiSiteDashboard( '/emails', () => false )( context, next );
+
+		expect( navigate ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'redirects when the flag predicate returns true', () => {
+		const context = buildContext();
+
+		maybeRedirectToMultiSiteDashboard( '/emails', () => true )( context, next );
+
+		expect( navigate ).toHaveBeenCalledWith( 'https://my.wordpress.com/emails' );
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'redirects force-enrolled users even when the flag is disabled', () => {
+		const context = buildContext( 'forced-opt-in' );
+
+		maybeRedirectToMultiSiteDashboard( '/emails', () => false )( context, next );
+
+		expect( navigate ).toHaveBeenCalledWith( 'https://my.wordpress.com/emails' );
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not redirect users who merely opted in when the flag is disabled', () => {
+		const context = buildContext( 'opt-in' );
+
+		maybeRedirectToMultiSiteDashboard( '/emails', () => false )( context, next );
+
+		expect( navigate ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'builds the target path from the route params', () => {
+		const context = {
+			...buildContext(),
+			params: { domain: 'example.com', site: 'example.wordpress.com' },
+		};
+
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `/emails/choose-email-solution/${ params.domain }`,
+			() => true
+		)( context, next );
+
+		expect( navigate ).toHaveBeenCalledWith(
+			'https://my.wordpress.com/emails/choose-email-solution/example.com'
+		);
+		expect( next ).not.toHaveBeenCalled();
+	} );
+} );
 
 describe( 'redirectLoggedOut', () => {
 	const originalLocation = Object.getOwnPropertyDescriptor( window, 'location' );
