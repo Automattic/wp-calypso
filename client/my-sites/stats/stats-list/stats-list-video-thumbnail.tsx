@@ -17,7 +17,6 @@ export default function StatsListVideoThumbnail( { poster }: { poster?: string |
 					className="stats-list__video-thumbnail-image"
 					src={ posterUrl }
 					alt=""
-					loading="lazy"
 					onError={ () => setFailedPoster( posterUrl ) }
 				/>
 			) : (
