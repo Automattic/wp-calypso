@@ -62,8 +62,6 @@ jest.mock( '@wordpress/icons', () => ( {
 const defaultProps = {
 	selectedItem: 'traffic',
 	siteId: 123,
-	isTooltipShown: false,
-	onTooltipDismiss: jest.fn(),
 	customToggleIcon: <span>Settings</span>,
 };
 
