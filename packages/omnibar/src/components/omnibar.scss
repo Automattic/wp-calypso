@@ -142,7 +142,8 @@ body:has( .omnibar ) {
 		top: 2px;
 	}
 
-	.dashicons-admin-comments::before {
+	.dashicons-admin-comments::before,
+	.dashicons-search::before {
 		top: 1px;
 	}
 }
@@ -169,7 +170,8 @@ body:has( .omnibar ) {
 	}
 }
 
-.omnibar .dashicons-admin-comments::before {
+.omnibar .dashicons-admin-comments::before,
+.omnibar .dashicons-search::before {
 	height: 34px;
 	font-size: 34px;
 	top: 0.5px;
