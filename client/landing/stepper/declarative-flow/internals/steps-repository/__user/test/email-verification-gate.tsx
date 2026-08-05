@@ -23,6 +23,10 @@ import useAccountCreationExperiment from '../use-account-creation-experiment';
 // A different user per test, so each one's isolation is its own rather than teardown's.
 let mockUserId = 0;
 
+// What the step handed the signup form, so what the activation email will be aimed at can be
+// asserted without reaching into the request the real form would make.
+let activationEmailFromProp: string | undefined;
+
 jest.mock( 'calypso/lib/analytics/tracks' );
 
 // Keep the poll from reaching the network — the gate polls `fetchCurrentUser`.
@@ -61,20 +65,25 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 	default: ( {
 		onCreateAccountSuccess,
 		goToNextStep,
+		activationEmailFrom,
 	}: {
 		onCreateAccountSuccess?: ( data: { ID: number } ) => void;
 		goToNextStep?: ( data: { bearer_token: string; ID: number } ) => void;
-	} ) => (
-		<button
-			onClick={ () => {
-				// Production order: goToNextStep fires before onCreateAccountSuccess.
-				goToNextStep?.( { bearer_token: 'test-token', ID: mockUserId } );
-				onCreateAccountSuccess?.( { ID: mockUserId } );
-			} }
-		>
-			create-email-account
-		</button>
-	),
+		activationEmailFrom?: string;
+	} ) => {
+		activationEmailFromProp = activationEmailFrom;
+		return (
+			<button
+				onClick={ () => {
+					// Production order: goToNextStep fires before onCreateAccountSuccess.
+					goToNextStep?.( { bearer_token: 'test-token', ID: mockUserId } );
+					onCreateAccountSuccess?.( { ID: mockUserId } );
+				} }
+			>
+				create-email-account
+			</button>
+		);
+	},
 	MobileCompactTosNotice: () => null,
 } ) );
 
@@ -137,11 +146,25 @@ describe( 'account step email verification gate', () => {
 	} );
 
 	afterEach( () => {
+		activationEmailFromProp = undefined;
 		// A test that fails before restoring them would otherwise time out every test after it.
 		jest.useRealTimers();
 		mockConfig.enabledFlags.clear();
 		localStorage.clear();
 		jest.clearAllMocks();
+	} );
+
+	// The backend decides the activation link's destination from this, so it has to travel with
+	// exactly the signups that will be held on the gate — and with none of the others, whose email
+	// should keep landing where it always has.
+	it( 'asks for a link back to the flow only when the gate is on', async () => {
+		renderUser( makeLoggedOutStore() ).unmount();
+		expect( activationEmailFromProp ).toBe( 'onboarding-with-email-verification' );
+
+		mockConfig.enabledFlags.clear();
+		renderUser( makeLoggedOutStore() );
+
+		expect( activationEmailFromProp ).toBeUndefined();
 	} );
 
 	it( 'confirmation continues exactly once (no double submit)', async () => {
