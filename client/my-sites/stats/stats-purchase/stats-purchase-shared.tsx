@@ -57,7 +57,7 @@ const StatsBenefitsCommercial = () => {
 	const overageInfoIconRef = useRef( null );
 	const trackingInfoIconRef = useRef( null );
 	const customDateRangesInfoIconRef = useRef( null );
-	const deviceAttributesInfoIconRef = useRef( null );
+	const deviceStatsInfoIconRef = useRef( null );
 	const [ spikeInfoShow, setSpikeInfoShow ] = useState( false );
 	const handleSpikePopoverOpen = () => setSpikeInfoShow( true );
 	const handleSpikePopoverClose = () => setSpikeInfoShow( false );
@@ -70,9 +70,9 @@ const StatsBenefitsCommercial = () => {
 	const [ customDateRangesInfoShow, setCustomDateRangesInfoShow ] = useState( false );
 	const handleCustomDatesPopoverOpen = () => setCustomDateRangesInfoShow( true );
 	const handleCustomDatesPopoverClose = () => setCustomDateRangesInfoShow( false );
-	const [ deviceAttributesInfoShow, setDeviceAttributesInfoShow ] = useState( false );
-	const handleDeviceAttributesPopoverOpen = () => setDeviceAttributesInfoShow( true );
-	const handleDeviceAttributesPopoverClose = () => setDeviceAttributesInfoShow( false );
+	const [ deviceStatsInfoShow, setDeviceStatsInfoShow ] = useState( false );
+	const handleDeviceStatsPopoverOpen = () => setDeviceStatsInfoShow( true );
+	const handleDeviceStatsPopoverClose = () => setDeviceStatsInfoShow( false );
 
 	return (
 		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
@@ -96,9 +96,9 @@ const StatsBenefitsCommercial = () => {
 					{ translate( 'View device stats' ) }
 					<Icon
 						icon={ info }
-						ref={ deviceAttributesInfoIconRef }
-						onMouseEnter={ handleDeviceAttributesPopoverOpen }
-						onMouseLeave={ handleDeviceAttributesPopoverClose }
+						ref={ deviceStatsInfoIconRef }
+						onMouseEnter={ handleDeviceStatsPopoverOpen }
+						onMouseLeave={ handleDeviceStatsPopoverClose }
 					/>
 				</li>
 				<li>
@@ -177,8 +177,8 @@ const StatsBenefitsCommercial = () => {
 			</Popover>
 			<Popover
 				position="right"
-				isVisible={ deviceAttributesInfoShow }
-				context={ deviceAttributesInfoIconRef.current }
+				isVisible={ deviceStatsInfoShow }
+				context={ deviceStatsInfoIconRef.current }
 				className="stats-purchase__info-popover"
 			>
 				<div className="stats-purchase__info-popover-content">
