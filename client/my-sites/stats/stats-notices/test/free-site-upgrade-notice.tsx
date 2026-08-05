@@ -83,7 +83,7 @@ describe( 'FreeSiteUpgradeNotice', () => {
 		expect( screen.getByText( 'Unlock more Stats with a paid plan' ) ).toBeVisible();
 		expect(
 			screen.getByText(
-				'Jetpack Stats is free to keep using. A paid plan adds UTM stats, device stats, and region and city locations.'
+				'Jetpack Stats is free to keep using. A paid plan adds UTM stats, device stats, and region and city stats.'
 			)
 		).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Upgrade' } ) ).toBeVisible();

@@ -132,7 +132,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 	const description = isWPCOMPaidStatsFlow
 		? paidStatsRemoveHardcoding
 		: translate(
-				'Upgrade to unlock UTM tracking, device stats, and region and city locations, and get priority support.'
+				'Upgrade to unlock UTM tracking, device stats, and region and city stats, and get priority support.'
 		  );
 
 	const CTAText = isWPCOMPaidStatsFlow ? translate( 'Upgrade' ) : translate( 'Upgrade my Stats' );

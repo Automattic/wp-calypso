@@ -117,7 +117,7 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 				}
 		  )
 		: translate(
-				'%(product)s is free to keep using. A paid plan adds UTM stats, device stats, and region and city locations.',
+				'%(product)s is free to keep using. A paid plan adds UTM stats, device stats, and region and city stats.',
 				{ args: { product: STATS_PRODUCT_NAME } }
 		  );
 
