@@ -42,21 +42,33 @@ test.describe(
 		const features = envToFeatureKey( envVariables );
 		const accountName = getTestAccountByFeature( features );
 		const testAccount = new TestAccount( accountName );
+		// Held at suite scope so teardown can remove it even when the test fails.
+		let postID: number | undefined;
 
 		test.afterAll( async () => {
-			// Remove only the two responses this run submitted, matched by the
-			// addresses generated above. These sites are shared, so deleting every
-			// response would break any run working through its own at the time.
-			// Without this the spec leaves its submissions behind on every run.
+			// Remove only what this run created — the two responses, matched by the
+			// addresses generated above, and the post carrying the form. These sites
+			// are shared, so deleting every response would break any run working
+			// through its own at the time.
 			const siteID = testAccount.credentials.testSites?.primary.id as number;
-			const client = new RestAPIClient( testAccount.credentials );
+			const client = testAccount.restAPI;
 
 			for ( const { email } of [ formData1, formData2 ] ) {
 				try {
 					await client.deleteFeedbackBySearch( siteID, email );
-				} catch {
-					// Teardown must not fail the run: the responses may never have
-					// been created if the test failed before submitting.
+				} catch ( error ) {
+					// Teardown must not fail the run — the responses may never have been
+					// created if the test failed before submitting — but it must not fail
+					// silently either, or a broken teardown goes unnoticed for months.
+					console.warn( `Could not clean up responses for ${ email }: ${ error }` );
+				}
+			}
+
+			if ( postID ) {
+				try {
+					await client.deletePost( siteID, postID );
+				} catch ( error ) {
+					console.warn( `Could not clean up post ${ postID }: ${ error }` );
 				}
 			}
 		} );
@@ -84,11 +96,12 @@ test.describe(
 						<!-- /wp:jetpack/contact-form -->
 				`;
 
-				restAPIClient = new RestAPIClient( testAccount.credentials );
+				restAPIClient = testAccount.restAPI;
 				newPostDetails = await restAPIClient.createPost(
 					testAccount.credentials.testSites?.primary.id as number,
 					{ title: postTitle, content: postContent }
 				);
+				postID = newPostDetails.ID;
 			} );
 
 			// --- Fill and submit first form ---
@@ -199,9 +212,11 @@ test.describe(
 				const MAX_ATTEMPTS = 3;
 				for ( let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++ ) {
 					try {
-						// Retries re-enter the same search term, so no request is fired and
-						// there is nothing to wait for. Skip the wait to avoid hanging.
-						await feedbackInboxPage.searchResponses( formData1.email, attempt > 1 );
+						// Clear first, so the retry re-enters a changed value and actually
+						// fires a request. Re-filling the identical string produces no input
+						// change, so nothing refetches and the retry waits on stale results.
+						await feedbackInboxPage.clearSearch( true );
+						await feedbackInboxPage.searchResponses( formData1.email );
 						isInSpam =
 							( await feedbackInboxPage.findFolderWithResult( formData1.email ) ) === 'Spam';
 						return;

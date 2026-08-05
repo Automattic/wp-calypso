@@ -60,7 +60,8 @@ export class FeedbackInboxPage {
 	 * Doesn't verify the row is selected, it just makes sure the response
 	 * is visible (inspector on desktop, modal on mobile)
 	 *
-	 * @param {string} text The text to match in the row. Using the name field is a good choice.
+	 * @param {string} text The text to match in the row. Prefer the email address:
+	 * it is what the list was searched by, so it is guaranteed to identify the row.
 	 */
 	async viewResponseRowByText( text: string ): Promise< void > {
 		const responseRowLocator = this.getResponseRow( text );
@@ -200,11 +201,14 @@ export class FeedbackInboxPage {
 				.filter( { hasText: new RegExp( `Folder is:\\s*${ folderName }`, 'i' ) } )
 				.waitFor();
 			// Selecting a folder leaves the popover open over the table, where it
-			// swallows clicks on the rows underneath. Dismiss it before returning.
-			if ( await folderOption.isVisible() ) {
-				await this.page.keyboard.press( 'Escape' );
-				await folderOption.waitFor( { state: 'hidden' } );
-			}
+			// swallows clicks on the rows underneath. Dismiss unconditionally:
+			// isVisible() is point-in-time, so polled mid-transition it reports
+			// false and the popover survives — the state this block exists to
+			// prevent. Escape on an already-closed popover is a no-op.
+			await this.page.keyboard.press( 'Escape' );
+			await folderOption.waitFor( { state: 'hidden' } ).catch( () => {
+				// Already gone, or never opened.
+			} );
 			return;
 		}
 
@@ -226,23 +230,6 @@ export class FeedbackInboxPage {
 	}
 
 	/**
-	 * Reads the result count from the CFM folder filter chip.
-	 *
-	 * The chip reads "Folder is: Inbox (0)", and the count respects the active
-	 * search — CFM refetches `feedback/counts?search=…` on every query.
-	 *
-	 * @returns {Promise<number>} Responses in the selected folder, 0 if unreadable.
-	 */
-	private async getSelectedFolderCount(): Promise< number > {
-		const chipText = await this.page
-			.locator( '.dataviews-filters__summary-chip' )
-			.filter( { hasText: /Folder is:/i } )
-			.textContent();
-		const count = chipText?.match( /\(\s*(\d+)\s*\)/ );
-		return count ? parseInt( count[ 1 ], 10 ) : 0;
-	}
-
-	/**
 	 * Selects the folder that holds the response matching the given text, and
 	 * returns that folder's name.
 	 *
@@ -254,22 +241,24 @@ export class FeedbackInboxPage {
 	 * one holding the match. CFM has no folder tabs — the folder is a DataViews
 	 * filter chip — so there we select each folder in turn and look for the row.
 	 *
-	 * @param {string} text Text identifying the response row, e.g. the name field.
-	 * @returns {Promise<string>} The folder holding the response.
+	 * Deliberately not read from the chip's own count ("Folder is: Inbox (3)").
+	 * That count is only correct once the search-scoped `feedback/counts` refetch
+	 * has landed, and `searchResponses` cannot guarantee it has: its predicate
+	 * matches both the list request and the counts request, so it resolves on
+	 * whichever arrives first. A stale count returns the wrong folder without
+	 * throwing, which hides the failure until several steps later.
+	 *
+	 * @param {string} text Text identifying the response row, e.g. the email address.
+	 * @returns {Promise<'Inbox'|'Spam'>} The folder holding the response.
 	 * @throws If neither Inbox nor Spam holds a matching response.
 	 */
 	async findFolderWithResult( text: string ): Promise< 'Inbox' | 'Spam' > {
 		if ( await this.isCentralFormManagement() ) {
-			// The chip carries a search-scoped count for the selected folder
-			// ("Folder is: Inbox (0)"), so one folder switch answers the question.
-			await this.clickFolderTab( 'Inbox' );
-			if ( ( await this.getSelectedFolderCount() ) > 0 ) {
-				return 'Inbox';
-			}
-
-			await this.clickFolderTab( 'Spam' );
-			if ( ( await this.getSelectedFolderCount() ) > 0 ) {
-				return 'Spam';
+			for ( const folder of [ 'Inbox', 'Spam' ] as const ) {
+				await this.clickFolderTab( folder );
+				if ( await this.hasResponseRow( text ) ) {
+					return folder;
+				}
 			}
 
 			throw new Error( `No response matching "${ text }" found in Inbox or Spam.` );
@@ -503,7 +492,8 @@ export class FeedbackInboxPage {
 	/**
 	 * Opens the actions menu (three dot menu) and verifies the specified action exists.
 	 *
-	 * @param {string} text The text to match in the row. Using the name field is a good choice.
+	 * @param {string} text The text to match in the row. Prefer the email address:
+	 * it is what the list was searched by, so it is guaranteed to identify the row.
 	 * @param {string} actionName The name of the action to verify in the dropdown menu.
 	 */
 	async verifyActionExistsInMenu( text: string, actionName: string ): Promise< void > {

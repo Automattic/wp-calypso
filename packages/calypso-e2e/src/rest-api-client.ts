@@ -960,10 +960,24 @@ export class RestAPIClient {
 
 		const url = this.getRequestURL( '1.1', `/sites/${ siteID }/posts/` );
 		url.searchParams.set( 'type', 'feedback' );
-		url.searchParams.set( 'status', 'any' );
+		// Not `any`: WP_Query excludes statuses registered `exclude_from_search`,
+		// which covers core's `trash` and the `spam` status jetpack-forms registers.
+		// Those are exactly what a failed run leaves behind, since this flow walks a
+		// response through Spam and Trash. Verified against the endpoint: `any`
+		// returned 0 on a site holding 21 trashed responses, `trash` returned all 21.
+		// Unrecognised values are ignored rather than rejected, so listing `spam`
+		// is safe even where it is not a supported filter.
+		url.searchParams.set( 'status', 'publish,draft,pending,private,future,trash,spam' );
 		url.searchParams.set( 'search', search );
 
 		const response = await this.sendRequest( url, params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
 		const posts = response?.posts ?? [];
 
 		for ( const post of posts ) {
