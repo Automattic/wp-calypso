@@ -131,25 +131,18 @@ const StatsPurchasePage = ( {
 	// VIP sites are exempt from being shown this page.
 	const showPurchasePage = noPlanOwned || isForceProductRedirect || allowCommercialTierUpgrade;
 
+	// The paid plan is the default upgrade landing regardless of commercial classification; the
+	// PWYW page is only reachable when explicitly requested via `productType=personal`.
 	const variant = useMemo( () => {
-		let pageVariant = 'personal';
+		let pageVariant = 'commercial';
 		if ( ! showPurchasePage ) {
 			// TODO: Remove the notice page — even a site that already owns a plan will eventually want to upgrade to a higher tier.
 			pageVariant = 'notice';
-		} else if (
-			( ! isForceProductRedirect && ( isCommercial || isCommercialOwned ) ) ||
-			redirectToCommercial
-		) {
-			pageVariant = 'commercial';
+		} else if ( redirectToPersonal ) {
+			pageVariant = 'personal';
 		}
 		return pageVariant;
-	}, [
-		showPurchasePage,
-		isCommercial,
-		isCommercialOwned,
-		redirectToCommercial,
-		isForceProductRedirect,
-	] );
+	}, [ showPurchasePage, redirectToPersonal ] );
 
 	const showNavigation = ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' );
 
@@ -208,7 +201,7 @@ const StatsPurchasePage = ( {
 					! isLoading && showPurchasePage && (
 						<>
 							{
-								// blog is commercial or we are forcing a product - show the commercial purchase page
+								// the default upgrade landing - show the paid plan purchase page
 								variant === 'commercial' && (
 									<div className="stats-purchase-page__notice">
 										<StatsSingleItemPagePurchase
@@ -224,8 +217,7 @@ const StatsPurchasePage = ( {
 								)
 							}
 							{
-								// blog is personal, not identified yet, or we are forcing a product - show the personal purchase page
-								// If user has already got a commercial license, we should not show the PWYW plan.
+								// the personal product was explicitly requested - show the PWYW purchase page
 								variant === 'personal' && (
 									<StatsSingleItemPersonalPurchasePage
 										siteSlug={ siteSlug || '' }

@@ -279,6 +279,15 @@ const StatsCommercialPurchase = ( {
 		setPurchaseTierQuantity( value );
 	}, [] );
 
+	const handleCheckoutPostponed = () => {
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_purchase_commercial_skip_button_clicked` );
+
+		setTimeout( () => {
+			page( `/stats/day/${ siteSlug }` );
+		}, 250 );
+	};
+
 	const isCommercial = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'is_commercial' )
 	) as boolean;
@@ -360,6 +369,9 @@ const StatsCommercialPurchase = ( {
 					}
 				>
 					{ continueButtonText }
+				</ButtonComponent>
+				<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
+					{ translate( 'I will do it later' ) }
 				</ButtonComponent>
 			</div>
 			<div className="stats-purchase-page__footnotes">
