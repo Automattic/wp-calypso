@@ -61,6 +61,7 @@ import {
 	jetpack,
 	jetpackWithSites,
 	jetpackUpdated,
+	inApiV1_2Format,
 } from './fixtures/plugins';
 
 describe( 'actions', () => {
@@ -231,21 +232,25 @@ describe( 'actions', () => {
 		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { active: true } )
-				.reply( 200, { ...akismet, active: true, log: [ 'Plugin activated.' ] } )
-				.post( '/rest/v1.1/sites/2916284/plugins/fake%2Ffake' )
+				.post( '/rest/v1.2/sites/2916284/plugins/akismet%2Fakismet', { active: true } )
+				.reply( 200, inApiV1_2Format( { ...akismet, active: true, log: [ 'Plugin activated.' ] } ) )
+				.post( '/rest/v1.2/sites/2916284/plugins/fake%2Ffake' )
 				.reply( 400, {
 					error: 'activation_error',
 					message: 'Plugin file does not exist.',
 				} )
-				.post( '/rest/v1.1/sites/2916284/plugins/alreadyactive%2Falreadyactive', {
+				.post( '/rest/v1.2/sites/2916284/plugins/alreadyactive%2Falreadyactive', {
 					active: true,
 				} )
-				.reply( 400, {
-					error: 'activation_error',
-					message: 'The Plugin is already active.',
-					data: { reason: 'already_active' },
-				} );
+				.reply(
+					200,
+					inApiV1_2Format( {
+						id: 'alreadyactive/alreadyactive',
+						slug: 'alreadyactive',
+						name: 'Already Active',
+						active: true,
+					} )
+				);
 		} );
 
 		afterAll( () => {
@@ -306,7 +311,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should record one failure and no success when the error carries no reason', async () => {
+		test( 'should record one failure and no success when the request fails', async () => {
 			await activatePlugin( 2916284, {
 				slug: 'fake',
 				id: 'fake/fake',
@@ -328,7 +333,12 @@ describe( 'actions', () => {
 				action: ACTIVATE_PLUGIN,
 				siteId: 2916284,
 				pluginId: 'alreadyactive/alreadyactive',
-				data: { ...alreadyActive, active: true },
+				data: {
+					id: 'alreadyactive/alreadyactive',
+					slug: 'alreadyactive',
+					name: 'Already Active',
+					active: true,
+				},
 			} );
 			expect( spy ).not.toHaveBeenCalledWith(
 				expect.objectContaining( { type: PLUGIN_ACTIVATE_REQUEST_FAILURE } )
@@ -342,21 +352,28 @@ describe( 'actions', () => {
 		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { active: false } )
-				.reply( 200, { ...akismet, active: false, log: [ 'Plugin deactivated.' ] } )
-				.post( '/rest/v1.1/sites/2916284/plugins/fake%2Ffake' )
+				.post( '/rest/v1.2/sites/2916284/plugins/akismet%2Fakismet', { active: false } )
+				.reply(
+					200,
+					inApiV1_2Format( { ...akismet, active: false, log: [ 'Plugin deactivated.' ] } )
+				)
+				.post( '/rest/v1.2/sites/2916284/plugins/fake%2Ffake' )
 				.reply( 400, {
 					error: 'deactivation_error',
 					message: 'Plugin file does not exist.',
 				} )
-				.post( '/rest/v1.1/sites/2916284/plugins/alreadyinactive%2Falreadyinactive', {
+				.post( '/rest/v1.2/sites/2916284/plugins/alreadyinactive%2Falreadyinactive', {
 					active: false,
 				} )
-				.reply( 400, {
-					error: 'deactivation_error',
-					message: 'The Plugin is already deactivated.',
-					data: { reason: 'already_inactive' },
-				} );
+				.reply(
+					200,
+					inApiV1_2Format( {
+						id: 'alreadyinactive/alreadyinactive',
+						slug: 'alreadyinactive',
+						name: 'Already Inactive',
+						active: false,
+					} )
+				);
 		} );
 
 		afterAll( () => {
@@ -406,7 +423,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should record one failure and no success when the error carries no reason', async () => {
+		test( 'should record one failure and no success when the request fails', async () => {
 			await deactivatePlugin( 2916284, { slug: 'fake', id: 'fake/fake', active: true } )(
 				spy,
 				getState
@@ -427,7 +444,12 @@ describe( 'actions', () => {
 				action: DEACTIVATE_PLUGIN,
 				siteId: 2916284,
 				pluginId: 'alreadyinactive/alreadyinactive',
-				data: { ...alreadyInactive, active: false },
+				data: {
+					id: 'alreadyinactive/alreadyinactive',
+					slug: 'alreadyinactive',
+					name: 'Already Inactive',
+					active: false,
+				},
 			} );
 			expect( spy ).not.toHaveBeenCalledWith(
 				expect.objectContaining( { type: PLUGIN_DEACTIVATE_REQUEST_FAILURE } )
@@ -689,6 +711,14 @@ describe( 'actions', () => {
 			},
 		};
 
+		// Installs cleanly, then fails to activate.
+		const unactivatable = {
+			id: 'unactivatable/unactivatable',
+			slug: 'unactivatable',
+			name: 'Unactivatable',
+			active: false,
+		};
+
 		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -698,15 +728,37 @@ describe( 'actions', () => {
 				.reply( 400, {
 					error: 'unknown_plugin',
 					message: 'Plugin file does not exist.',
+				} )
+				.post( '/rest/v1.1/sites/2916284/plugins/install', { slug: 'unactivatable' } )
+				.reply( 200, unactivatable );
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.2/sites/2916284/plugins/unactivatable%2Funactivatable', { active: true } )
+				.reply( 400, {
+					error: 'activation_error',
+					message: 'The plugin generated unexpected output.',
 				} );
+			// Answer the update and autoupdate calls too, so that a caller recovering from the
+			// activation error would reach a success rather than stalling on an unmocked request.
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2916284/plugins/unactivatable%2Funactivatable/update' )
+				.reply( 200, unactivatable )
+				.post( '/rest/v1.1/sites/2916284/plugins/unactivatable%2Funactivatable', {
+					autoupdate: true,
+				} )
+				.reply( 200, { ...unactivatable, autoupdate: true } );
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack', { autoupdate: true } )
 				.reply( 200, { ...jetpackUpdated, autoupdate: true } );
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack', { active: true } )
-				.reply( 200, { ...jetpackUpdated, active: true, log: [ 'Plugin activated.' ] } );
+				.post( '/rest/v1.2/sites/2916284/plugins/jetpack%2Fjetpack', { active: true } )
+				.reply(
+					200,
+					inApiV1_2Format( { ...jetpackUpdated, active: true, log: [ 'Plugin activated.' ] } )
+				);
 		} );
 
 		afterAll( () => {
@@ -749,6 +801,28 @@ describe( 'actions', () => {
 				error: expect.objectContaining( { message: 'Plugin file does not exist.' } ),
 			} );
 		} );
+
+		// On v1.2 an already-active plugin activates successfully, so an activation error is a
+		// genuine failure and must not be reported as an install that worked.
+		test( 'should dispatch fail action when activation fails after the install succeeds', async () => {
+			const response = installPlugin( site.ID, {
+				slug: 'unactivatable',
+				id: 'unactivatable/unactivatable',
+			} )( spy, getState );
+
+			await expect( response ).rejects.toThrow( 'The plugin generated unexpected output.' );
+			expect( spy ).not.toHaveBeenCalledWith(
+				expect.objectContaining( { type: PLUGIN_INSTALL_REQUEST_SUCCESS } )
+			);
+			expect( spy ).toHaveBeenCalledWith( {
+				type: PLUGIN_INSTALL_REQUEST_FAILURE,
+				action: INSTALL_PLUGIN,
+				siteId: 2916284,
+				pluginId: 'unactivatable/unactivatable',
+				data: {},
+				error: expect.objectContaining( { message: 'The plugin generated unexpected output.' } ),
+			} );
+		} );
 	} );
 
 	describe( '#removePlugin()', () => {
@@ -778,8 +852,11 @@ describe( 'actions', () => {
 				.reply( 200, { ...akismet, autoupdate: false } );
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { active: false } )
-				.reply( 200, { ...akismet, active: false, log: [ 'Plugin deactivated.' ] } );
+				.post( '/rest/v1.2/sites/2916284/plugins/akismet%2Fakismet', { active: false } )
+				.reply(
+					200,
+					inApiV1_2Format( { ...akismet, active: false, log: [ 'Plugin deactivated.' ] } )
+				);
 		} );
 
 		afterAll( () => {
