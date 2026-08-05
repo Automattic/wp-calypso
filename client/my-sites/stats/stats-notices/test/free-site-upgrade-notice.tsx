@@ -58,7 +58,6 @@ jest.mock( '@automattic/calypso-config', () => ( {
 
 jest.mock( '@automattic/i18n-utils', () => ( {
 	localizeUrl: ( url: string ) => url,
-	useHasEnTranslation: () => () => true,
 } ) );
 
 const mockUseNoticeVisibilityMutation = jest.fn< { mutateAsync: jest.Mock }, unknown[] >( () => ( {

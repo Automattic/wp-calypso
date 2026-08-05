@@ -4,7 +4,7 @@ import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { HelpCenter } from '@automattic/data-stores';
-import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -28,7 +28,6 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 
 const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const isWPCOMPaidStatsFlow =
 		isEnabled( 'stats/paid-wpcom-v2' ) && isWPCOMSite && ! isOdysseyStats;
@@ -110,24 +109,13 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
 		: 'https://jetpack.com/support/jetpack-stats/free-or-paid/#what-a-paid-plan-adds';
 
-	const paidStatsRemoveHardcoding = hasEnTranslation(
-		'Finesse your scaling-up strategy with detailed insights and data. Upgrade to the %s plan for a richer understanding and smarter decision-making.'
-	)
+	const description = isWPCOMPaidStatsFlow
 		? translate(
 				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to the %s plan for a richer understanding and smarter decision-making.',
 				{
 					args: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
 				}
 		  )
-		: translate(
-				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to a %s plan for a richer understanding and smarter decision-making.',
-				{
-					args: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
-				}
-		  );
-
-	const description = isWPCOMPaidStatsFlow
-		? paidStatsRemoveHardcoding
 		: translate(
 				'Upgrade to unlock UTM tracking, device stats, and region and city locations, and get priority support.'
 		  );
