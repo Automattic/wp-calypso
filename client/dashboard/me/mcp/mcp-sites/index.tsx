@@ -23,7 +23,7 @@ import { SectionHeader } from '../../../components/section-header';
 import SiteIcon from '../../../components/site-icon';
 import { getSiteDisplayName } from '../../../utils/site-name';
 import { getSiteDisplayUrl } from '../../../utils/site-url';
-import PreferencesLoginSiteDropdown from '../../preferences-primary-site/site-dropdown';
+import PreferencesLoginSiteDropdown from '../../preferences-defaults/site-dropdown';
 import type { Site } from '@automattic/api-core';
 
 export default function McpMcpSites() {

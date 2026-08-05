@@ -7,7 +7,7 @@ import { SummaryButtonList } from '../../components/summary-button-list';
 import PreferencesAiMcp from '../preferences-ai-mcp';
 import PreferencesAppearance from '../preferences-appearance';
 import PreferencesBlockedSites from '../preferences-blocked-sites';
-import PreferencesDefaults from '../preferences-defaults';
+import PreferencesDefaultsSummary from '../preferences-defaults/summary';
 import PreferencesLanguage from '../preferences-language';
 import PreferencesNewHostingDashboard from '../preferences-new-hosting-dashboard';
 import PreferencesPrivacy from '../preferences-privacy';
@@ -30,7 +30,7 @@ export default function Preferences() {
 				<PreferencesAppearance />
 				{ isEnabled( 'mcp-settings' ) ? <PreferencesAiMcp /> : null }
 				<PreferencesLanguage />
-				<PreferencesDefaults />
+				<PreferencesDefaultsSummary />
 				<PreferencesPrivacy />
 				{ supports.reader ? <PreferencesBlockedSites /> : null }
 			</SummaryButtonList>

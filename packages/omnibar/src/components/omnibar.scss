@@ -63,6 +63,10 @@ body:has( .omnibar ) {
 			outline: none;
 		}
 
+		&:focus {
+			outline: none;
+		}
+
 		&:focus-visible {
 			box-shadow: inset 0 0 0 2px $omnibar-highlight-color;
 			outline-offset: -2px;
@@ -142,7 +146,8 @@ body:has( .omnibar ) {
 		top: 2px;
 	}
 
-	.dashicons-admin-comments::before {
+	.dashicons-admin-comments::before,
+	.dashicons-search::before {
 		top: 1px;
 	}
 }
@@ -169,7 +174,8 @@ body:has( .omnibar ) {
 	}
 }
 
-.omnibar .dashicons-admin-comments::before {
+.omnibar .dashicons-admin-comments::before,
+.omnibar .dashicons-search::before {
 	height: 34px;
 	font-size: 34px;
 	top: 0.5px;

@@ -295,6 +295,7 @@ export interface CheckoutStepGroupState {
 	stepCompleteCallbackMap: StepCompleteCallbackMap;
 	stepSkipValidationOnSubmitMap: Record< number, boolean >;
 	suppressNextForwardScroll: boolean;
+	hasUserInteractedWithSteps: boolean;
 }
 
 export interface CheckoutStepGroupActions {
@@ -313,6 +314,7 @@ export interface CheckoutStepGroupActions {
 	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;
 	setSuppressNextForwardScroll: ( value: boolean ) => void;
+	setHasUserInteractedWithSteps: ( value: boolean ) => void;
 }
 
 export type TogglePaymentMethod = ( paymentMethodId: string, available: boolean ) => void;

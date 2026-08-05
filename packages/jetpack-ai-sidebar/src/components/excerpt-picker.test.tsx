@@ -7,6 +7,7 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { SUGGESTION_ACTION_COMPLETE_EVENT } from '../utils/suggestion-events';
 import ExcerptPicker from './excerpt-picker';
 
 const mockEditPost = jest.fn();
@@ -69,6 +70,20 @@ describe( 'ExcerptPicker', () => {
 		fireEvent.click( button );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 		expect( onComplete ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'notifies the sidebar when an excerpt is applied', () => {
+		const handleComplete = jest.fn();
+		window.addEventListener( SUGGESTION_ACTION_COMPLETE_EVENT, handleComplete );
+		try {
+			render( <ExcerptPicker excerpts={ excerpts } /> );
+
+			fireEvent.click( screen.getByText( excerpts[ 0 ].excerpt ) );
+
+			expect( handleComplete ).toHaveBeenCalledTimes( 1 );
+		} finally {
+			window.removeEventListener( SUGGESTION_ACTION_COMPLETE_EVENT, handleComplete );
+		}
 	} );
 
 	it( 'renders no options without crashing when the excerpts prop is malformed', () => {

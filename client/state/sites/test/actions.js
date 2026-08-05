@@ -232,6 +232,19 @@ describe( 'actions', () => {
 				.reply( 200, {
 					ID: 8894098,
 					name: 'Some random site I dont have access to',
+				} )
+				.get( '/rest/v1.2/sites/123456789' )
+				.query( { force: 'wpcom' } )
+				.reply( 200, {
+					ID: 123456789,
+					name: 'Jetpack Missing Core Test Site',
+					capabilities: {},
+				} )
+				.get( '/rest/v1.2/sites/123456789' )
+				.reply( 400, {
+					error: 'jetpack_not_found',
+					message:
+						'The Jetpack site is inaccessible or returned an error: server error. requested method jetpack.jsonAPI does not exist.',
 				} );
 		} );
 
@@ -268,6 +281,22 @@ describe( 'actions', () => {
 			expect( spy ).toHaveBeenCalledWith( {
 				type: SITE_REQUEST_SUCCESS,
 				siteId: 8894098,
+			} );
+		} );
+
+		test( 'should retry with force wpcom when Jetpack is missing', async () => {
+			await requestSite( 123456789 )( spy, () => {} );
+
+			expect( spy ).toHaveBeenCalledWith(
+				receiveSite( {
+					ID: 123456789,
+					name: 'Jetpack Missing Core Test Site',
+					capabilities: {},
+				} )
+			);
+			expect( spy ).toHaveBeenCalledWith( {
+				type: SITE_REQUEST_SUCCESS,
+				siteId: 123456789,
 			} );
 		} );
 
