@@ -267,7 +267,6 @@ describe( 'EmailVerificationGate', () => {
 		);
 	} );
 
-	// A resend without it sends the user somewhere the activation email wouldn't have.
 	it( 'asks for a link back to this flow, the same as the activation email did', async () => {
 		const user = userEvent.setup();
 		const sent = captureSendVerificationEmail();

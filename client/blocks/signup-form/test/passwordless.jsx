@@ -104,8 +104,7 @@ describe( 'activation email source', () => {
 		} );
 	} );
 
-	// Every other signup, the control arm included: the activation email keeps its usual
-	// destination, and nothing about this request changes.
+	// The control arm and every other flow, whose email keeps its usual destination.
 	it( 'says nothing about where the signup came from otherwise', async () => {
 		const body = await submitWith( {} );
 

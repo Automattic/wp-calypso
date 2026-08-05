@@ -153,8 +153,7 @@ describe( 'account step email verification gate', () => {
 		jest.clearAllMocks();
 	} );
 
-	// It has to travel with exactly the signups that will be held on the gate, and with no others —
-	// their activation email should keep landing where it always has.
+	// Ungated signups keep the activation email they have always had.
 	it( 'asks for a link back to the flow only when the gate is on', async () => {
 		renderUser( makeLoggedOutStore() ).unmount();
 		expect( activationEmailFromProp ).toBe( 'onboarding-with-email-verification' );
