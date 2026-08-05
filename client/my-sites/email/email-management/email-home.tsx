@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
@@ -7,10 +8,12 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import { navigate } from 'calypso/lib/navigate';
 import { getConfiguredTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
@@ -190,6 +193,13 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 	}
 
 	if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
+		if ( isEnabled( 'emails/titan-tiers' ) ) {
+			navigate(
+				dashboardLink( `/emails/choose-email-solution/${ domainsWithNoEmail[ 0 ].name }` )
+			);
+			return null;
+		}
+
 		return (
 			<EmailProvidersStackedComparisonPage
 				comparisonContext="email-home-single-domain"
