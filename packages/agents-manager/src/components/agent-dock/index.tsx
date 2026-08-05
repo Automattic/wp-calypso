@@ -19,7 +19,6 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
-import { isWpAdmin } from '../../utils/is-wp-admin';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
@@ -263,12 +262,10 @@ export default function AgentDock( {
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
-		// Guidelines and settings are site-based links that Calypso-hosted
-		// chats can't resolve.
-		const isInWpAdmin = isWpAdmin();
-
-		const inlineData = getAgentsManagerInlineData();
-		const siteSlug = inlineData?.site?.domain ?? window.location.hostname;
+		// Only the Jetpack package's wp-admin enqueue injects `site`, so its
+		// domain doubles as the gate for the site-based links that
+		// Calypso-hosted and reader chats can't resolve.
+		const siteDomain = getAgentsManagerInlineData()?.site?.domain;
 
 		const options = [
 			{
@@ -308,7 +305,7 @@ export default function AgentDock( {
 						setIsSplitScreen( ! isSplitScreen );
 					},
 				},
-			isInWpAdmin && {
+			!! siteDomain && {
 				icon: heading,
 				title: __( 'Knowledge and memory', __i18n_text_domain__ ),
 				onClick: () => {
@@ -324,7 +321,7 @@ export default function AgentDock( {
 			},
 			// TODO: Double-check whether this also needs a WP.com-host check —
 			// the linked settings page only exists for Simple/WoA sites.
-			isInWpAdmin && {
+			!! siteDomain && {
 				icon: cog,
 				title: __( 'AI Agent settings', __i18n_text_domain__ ),
 				onClick: () => {
@@ -332,7 +329,7 @@ export default function AgentDock( {
 						type: 'ai_agent_settings',
 					} );
 					window.open(
-						`https://my.wordpress.com/sites/${ siteSlug }/settings/ai-tools`,
+						`https://my.wordpress.com/sites/${ siteDomain }/settings/ai-tools`,
 						'_blank',
 						'noreferrer'
 					);

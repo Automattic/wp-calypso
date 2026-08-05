@@ -209,6 +209,7 @@ describe( 'AgentDock', () => {
 		mockShouldUseUnifiedAgent = false;
 		mockLayoutIsDocked = false;
 		mockCanDock = null;
+		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 		mockAgentsManagerState = { isOpen: true, isDocked: false };
 		mockContext = {
 			siteKey: 'site-1',
@@ -445,18 +446,19 @@ describe( 'AgentDock', () => {
 		expect( screen.queryByText( 'View history' ) ).toBeNull();
 	} );
 
-	it( 'offers the guidelines and settings items on wp-admin', () => {
+	it( 'offers the guidelines and settings items when wp-admin injects the site', () => {
 		useWpAdminAgent();
-		document.body.classList.add( 'wp-admin' );
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			site: { domain: 'example.com' },
+		};
 
 		renderAgentDock();
 
 		expect( screen.getByText( 'Knowledge and memory' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'AI Agent settings' ) ).toBeInTheDocument();
-		document.body.classList.remove( 'wp-admin' );
 	} );
 
-	it( 'omits the guidelines and settings items outside wp-admin', () => {
+	it( 'omits the guidelines and settings items without the injected site', () => {
 		useWpAdminAgent();
 
 		renderAgentDock();
@@ -477,7 +479,9 @@ describe( 'AgentDock', () => {
 
 	it( 'opens the guidelines page from More Options', () => {
 		useWpAdminAgent();
-		document.body.classList.add( 'wp-admin' );
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			site: { domain: 'example.com' },
+		};
 		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
 
 		renderAgentDock();
@@ -493,12 +497,10 @@ describe( 'AgentDock', () => {
 		);
 
 		openSpy.mockRestore();
-		document.body.classList.remove( 'wp-admin' );
 	} );
 
-	it( 'opens the AI Agent settings for the inline-data site', () => {
+	it( 'opens the AI Agent settings for the injected site', () => {
 		useWpAdminAgent();
-		document.body.classList.add( 'wp-admin' );
 		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 			site: { domain: 'example.com' },
 		};
@@ -517,8 +519,6 @@ describe( 'AgentDock', () => {
 		);
 
 		openSpy.mockRestore();
-		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
-		document.body.classList.remove( 'wp-admin' );
 	} );
 
 	it( 'offers Switch to floating behind the divider while docked', () => {

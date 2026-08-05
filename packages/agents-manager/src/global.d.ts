@@ -28,7 +28,7 @@ declare const agentsManagerData:
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
-			/** The site's canonical identity, injected server-side. */
+			/** The site's canonical identity; only the Jetpack package's wp-admin enqueue injects it. */
 			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;
