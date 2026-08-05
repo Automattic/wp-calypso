@@ -28,7 +28,7 @@ export const useUpcomingEvents = () => {
 			{
 				id: 'a4a-wordcamp-us-2026-08-16',
 				date: {
-					from: localizedMoment(),
+					from: moment( '2026-08-16' ),
 					to: moment( '2026-08-19' ),
 				},
 				displayDate: translate( 'August 16th–19th · Phoenix, Arizona' ),
