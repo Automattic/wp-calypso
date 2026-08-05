@@ -687,7 +687,7 @@ export const normalizers = {
 				label: item.title,
 				page: detailPage,
 				value: item.plays,
-				icon: item.poster ?? null,
+				poster: item.poster ?? null,
 				actions: [
 					{
 						type: 'link',
