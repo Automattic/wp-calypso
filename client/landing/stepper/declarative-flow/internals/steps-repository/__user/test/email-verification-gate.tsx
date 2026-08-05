@@ -140,7 +140,7 @@ describe( 'account step email verification gate', () => {
 		// A test that fails before restoring them would otherwise time out every test after it.
 		jest.useRealTimers();
 		mockConfig.enabledFlags.clear();
-		sessionStorage.clear();
+		localStorage.clear();
 		jest.clearAllMocks();
 	} );
 
@@ -266,20 +266,21 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
-	// Within a tab, remounting is a refresh rather than a second confirmation. Across tabs each
-	// counts its own, the way every other Stepper step event does.
-	it( 'records the confirmation once however often the step remounts', async () => {
-		const shown = renderUser( makeStore( false ) );
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-		shown.unmount();
+	// The confirmation wakes every open tab at once, and each finishes on its own. The claim is
+	// what keeps that from being counted more than once between them.
+	it( 'records the confirmation once across tabs, while both still continue', async () => {
+		const a = renderUser( makeStore( false ) );
+		await screen.findAllByRole( 'heading', { name: GATE_HEADING } );
+		const b = renderUser( makeStore( false ) );
 		jest.clearAllMocks();
 
-		const first = renderUser( makeStore( true ) );
-		await waitFor( () => expect( first.submit ).toHaveBeenCalled() );
-		first.unmount();
+		a.unmount();
+		b.unmount();
+		const verifiedA = renderUser( makeStore( true ) );
+		const verifiedB = renderUser( makeStore( true ) );
 
-		const second = renderUser( makeStore( true ) );
-		await waitFor( () => expect( second.submit ).toHaveBeenCalled() );
+		await waitFor( () => expect( verifiedA.submit ).toHaveBeenCalled() );
+		await waitFor( () => expect( verifiedB.submit ).toHaveBeenCalled() );
 
 		const confirmations = ( recordTracksEvent as jest.Mock ).mock.calls.filter(
 			( [ event ] ) => event === 'calypso_signup_email_verification_confirmed'
