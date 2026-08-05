@@ -9,13 +9,12 @@ export function gateScope( flow: string, userId: number | string | null | undefi
 }
 
 interface GateRecord {
-	startedAt: number; // anchors the TTL
-	shownAt: number;
+	shownAt: number; // when the gate first appeared, which is also when the attempt began
 	resendAvailableAt: number;
 	confirmedAt: number; // claimed by one tab, so only that one records the confirmation
 }
 
-const EMPTY_RECORD: GateRecord = { startedAt: 0, shownAt: 0, resendAvailableAt: 0, confirmedAt: 0 };
+const EMPTY_RECORD: GateRecord = { shownAt: 0, resendAvailableAt: 0, confirmedAt: 0 };
 
 // Past this an abandoned attempt stops speaking for the next one.
 const ATTEMPT_TTL_MS = 24 * 60 * 60 * 1000;
@@ -29,14 +28,16 @@ function storageKey( scope: string ): string {
 const memoryRecords = new Map< string, GateRecord >();
 let isStorageUsable = true;
 
-function hydrate( stored: Partial< GateRecord > | undefined ): GateRecord {
+// Null for an attempt that isn't there, or is old enough to have nothing left to say. Its absence
+// is the answer, rather than any one field being unset — a record can exist before a gate is shown.
+function hydrate( stored: Partial< GateRecord > | undefined ): GateRecord | null {
 	if ( ! stored ) {
-		return EMPTY_RECORD;
+		return null;
 	}
 	const record = { ...EMPTY_RECORD, ...stored };
 	const isSpent =
-		Date.now() - record.startedAt > ATTEMPT_TTL_MS && record.resendAvailableAt <= Date.now();
-	return isSpent ? EMPTY_RECORD : record;
+		Date.now() - record.shownAt > ATTEMPT_TTL_MS && record.resendAvailableAt <= Date.now();
+	return isSpent ? null : record;
 }
 
 function persist( scope: string, record: GateRecord ): void {
@@ -61,7 +62,7 @@ function read( scope: string ): GateRecord {
 	}
 
 	const shared = hydrate( stored );
-	if ( shared.startedAt ) {
+	if ( shared ) {
 		// Snapshot whatever is shared, another tab's writes included — a tab that only ever reads
 		// an attempt would otherwise have nothing to put back, and one that wrote to it earlier
 		// would put back its own older copy.
@@ -72,7 +73,7 @@ function read( scope: string ): GateRecord {
 	// Resolving a different user than the one last stored clears browser storage wholesale, which
 	// would reopen a live lockout, recount the view and lose the confirmation.
 	const remembered = hydrate( memoryRecords.get( scope ) );
-	if ( remembered.startedAt ) {
+	if ( remembered ) {
 		persist( scope, remembered );
 		return remembered;
 	}
@@ -94,7 +95,7 @@ function updateGateRecord< T >(
 	const record = read( scope );
 	const { changes, result } = mutate( record );
 	if ( changes ) {
-		persist( scope, { ...record, ...changes, startedAt: record.startedAt || Date.now() } );
+		persist( scope, { ...record, ...changes } );
 	}
 	return result;
 }
