@@ -100,7 +100,7 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 		? ( translate( 'Grow faster with %(product)s', {
 				args: { product: STATS_PRODUCT_NAME },
 		  } ) as string )
-		: ( translate( 'Unlock premium features' ) as string );
+		: ( translate( 'Unlock more Stats with a paid plan' ) as string );
 	const freeTitle = translate( 'Want to get the most out of %(product)s?', {
 		args: { product: STATS_PRODUCT_NAME },
 	} ) as string;
@@ -117,7 +117,8 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 				}
 		  )
 		: translate(
-				'Upgrade to unlock UTM tracking, device stats, and region and city locations, and get priority support.'
+				'%(product)s is free to keep using. A paid plan adds UTM stats, device stats, and region and city locations.',
+				{ args: { product: STATS_PRODUCT_NAME } }
 		  );
 
 	const CTAText = translate( 'Upgrade' );
