@@ -6,9 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
-import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useMemo, useState } from 'react';
-import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
@@ -58,9 +56,6 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		enabled: hydrated && !! siteId,
 	} );
 
-	const isDesktop = useViewportMatch( 'medium' );
-	const siteIconSize = isDesktop ? 20 : 28;
-
 	const baseOmnibarNodes = useMemo( () => {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
 		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedNodes( nodes, supports ) );
@@ -75,16 +70,16 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 			if ( ! result.site ) {
 				result.site = {
 					id: 'site-name',
+					icon: <span className="omnibar__site-icon" />,
 					children: [],
 				};
 			}
 
-			result.site.icon = <SiteIcon site={ site } size={ siteIconSize } />;
 			result.site.title = getSiteDisplayName( site );
 		}
 
 		return result;
-	}, [ dashboardNodes, siteNodes, site, siteIconSize, supports ] );
+	}, [ dashboardNodes, siteNodes, site, supports ] );
 
 	const helpCenterPluginNode = useHelpCenterPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );

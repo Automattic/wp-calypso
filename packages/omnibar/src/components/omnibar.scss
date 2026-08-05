@@ -95,6 +95,20 @@ body:has( .omnibar ) {
 		@media ( min-width: 782px ) {
 			min-width: 0;
 		}
+
+		.omnibar__site-icon {
+			display: block;
+			width: 28px;
+			height: 28px;
+			border-radius: 4px;
+			object-fit: cover;
+
+			@media ( min-width: 782px ) {
+				width: 20px;
+				height: 20px;
+				border-radius: 2px;
+			}
+		}
 	}
 
 	.omnibar__responsive-menu {
@@ -167,6 +181,16 @@ body:has( .omnibar ) {
 			font-size: 20px;
 			text-align: initial;
 		}
+	}
+}
+
+.omnibar .dashicons-admin-home::before {
+	height: 32px;
+	font-size: 32px;
+
+	@media ( min-width: 782px ) {
+		height: 20px;
+		font-size: 20px;
 	}
 }
 
