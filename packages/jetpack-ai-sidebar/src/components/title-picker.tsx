@@ -15,6 +15,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import { notifySuggestionActionComplete } from '../utils/suggestion-events';
 import BaseSuggestionPicker from './base-suggestion-picker';
 
 /**
@@ -50,6 +51,7 @@ export default function TitlePicker( { titles, onComplete }: TitlePickerProps ) 
 	const handleApply = useCallback(
 		( title: string ) => {
 			editPost( { title } );
+			notifySuggestionActionComplete();
 			onComplete?.();
 		},
 		[ editPost, onComplete ]

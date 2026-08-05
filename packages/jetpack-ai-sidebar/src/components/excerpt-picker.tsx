@@ -16,6 +16,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import { notifySuggestionActionComplete } from '../utils/suggestion-events';
 import BaseSuggestionPicker from './base-suggestion-picker';
 
 /**
@@ -49,6 +50,7 @@ export default function ExcerptPicker( { excerpts, onComplete }: ExcerptPickerPr
 	const handleApply = useCallback(
 		( excerpt: string ) => {
 			editPost( { excerpt } );
+			notifySuggestionActionComplete();
 			onComplete?.();
 		},
 		[ editPost, onComplete ]
