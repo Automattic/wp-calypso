@@ -23,9 +23,12 @@ function storageKey( scope: string ): string {
 	return `${ STORAGE_KEY }:${ scope }`;
 }
 
-// All a tab has where storage is unavailable — private mode, say. Nothing is shared between tabs
-// in that state; this tab's own accounting still adds up.
+// All a tab has where storage won't hold what it's given — private mode, or a full one. Nothing is
+// shared between tabs for those attempts; this tab's own accounting still adds up.
 const memoryRecords = new Map< string, GateRecord >();
+// Scopes whose last write didn't land. Kept per scope rather than for storage as a whole, so one
+// attempt failing to persist doesn't stop every other one from seeing what other tabs write.
+const unpersisted = new Set< string >();
 
 // Null for an attempt that isn't there, or is old enough to have nothing left to say. Its absence
 // is the answer, rather than any one field being unset — a record can exist before a gate is shown.
@@ -43,12 +46,18 @@ function persist( scope: string, record: GateRecord ): void {
 	memoryRecords.set( scope, record );
 	try {
 		localStorage.setItem( storageKey( scope ), JSON.stringify( record ) );
+		unpersisted.delete( scope );
 	} catch {
-		// Private mode, quota — the in-memory copy is what this tab reads back.
+		unpersisted.add( scope );
 	}
 }
 
 function read( scope: string ): GateRecord {
+	// A full quota rejects writes while reads carry on answering, so what's stored is behind what
+	// this tab knows — and trusting it would recount a view and lose a confirmation.
+	if ( unpersisted.has( scope ) ) {
+		return hydrate( memoryRecords.get( scope ) ) ?? EMPTY_RECORD;
+	}
 	try {
 		const raw = localStorage.getItem( storageKey( scope ) );
 		return (

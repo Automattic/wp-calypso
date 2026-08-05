@@ -86,6 +86,53 @@ describe( 'email verification gate storage', () => {
 		expect( gateResendAvailableAt( scope ) ).toBe( long );
 	} );
 
+	// The harder half of the same case: a full quota rejects writes while reads keep answering, so
+	// storage confidently returns a record that is behind what this tab knows.
+	it( 'reads what it remembers when its writes are the part that fail', () => {
+		const scope = nextScope();
+		const setItem = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+			throw new Error( 'quota' );
+		} );
+
+		expect( markGateShown( scope ) ).toBe( true );
+		markResendUnavailableUntil( scope, Date.now() + 5 * 60 * 1000 );
+
+		// Reads still work, and would report an attempt that never happened.
+		expect( localStorage.getItem( `onboarding-email-verification-gate:${ scope }` ) ).toBeNull();
+
+		expect( markGateShown( scope ) ).toBe( false );
+		expect( gateResendAvailableAt( scope ) ).toBeGreaterThan( Date.now() );
+		expect( claimGateConfirmation( scope ) ).not.toBeNull();
+
+		setItem.mockRestore();
+	} );
+
+	// Falling back is for as long as it's needed and no longer: a tab that stopped reading shared
+	// storage would stop seeing every other tab, for an attempt that persists again perfectly well.
+	it( 'goes back to shared storage once a write lands again', () => {
+		const scope = nextScope();
+		const key = `onboarding-email-verification-gate:${ scope }`;
+		const setItem = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementationOnce( () => {
+			throw new Error( 'quota' );
+		} );
+
+		markGateShown( scope );
+		markResendUnavailableUntil( scope, Date.now() + 60 * 1000 );
+		setItem.mockRestore();
+
+		// What another tab writing to the same attempt leaves behind.
+		const later = Date.now() + 10 * 60 * 1000;
+		localStorage.setItem(
+			key,
+			JSON.stringify( {
+				...JSON.parse( localStorage.getItem( key ) as string ),
+				resendAvailableAt: later,
+			} )
+		);
+
+		expect( gateResendAvailableAt( scope ) ).toBe( later );
+	} );
+
 	// The one thing the in-memory copy is for. Nothing is shared between tabs in this state, but a
 	// tab's own attempt still has to hold together.
 	it( 'falls back to what it remembers when storage is unavailable', () => {
