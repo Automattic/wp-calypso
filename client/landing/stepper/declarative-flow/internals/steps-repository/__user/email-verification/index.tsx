@@ -27,9 +27,11 @@ interface Props {
 	scope: string;
 	// Partner/Woo branding, so the top bar doesn't change when the gate replaces the form.
 	logo?: ReactNode;
+	// Sends the user back to the account step to correct the address they signed up with.
+	onEditEmail: () => void;
 }
 
-const EmailVerificationGate = ( { flow, scope, logo }: Props ) => {
+const EmailVerificationGate = ( { flow, scope, logo, onEditEmail }: Props ) => {
 	const { __ } = useI18n();
 	const email = useSelector( getCurrentUserEmail );
 	const { sendStatus, secondsUntilResend, resend } = useEmailVerification( flow, scope );
@@ -76,13 +78,24 @@ const EmailVerificationGate = ( { flow, scope, logo }: Props ) => {
 				sprintf(
 					// translators: %s is the email address the verification link was sent to.
 					__(
-						'We just sent an email to <email>%s</email>. Click the link in the email to verify your account.'
+						'We just sent an email to <email>%s</email> (<edit>edit</edit>). Click the link in the email to verify your account.'
 					),
 					email ?? ''
 				),
-				{ email: <strong /> }
+				{
+					email: <strong />,
+					edit: (
+						<Button
+							plain
+							onClick={ () => {
+								recordTracksEvent( 'calypso_signup_email_verification_edit_click', { flow } );
+								onEditEmail();
+							} }
+						/>
+					),
+				}
 			),
-		[ __, email ]
+		[ __, email, flow, onEditEmail ]
 	);
 
 	return (

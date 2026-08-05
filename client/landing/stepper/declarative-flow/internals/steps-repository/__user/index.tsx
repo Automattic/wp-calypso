@@ -1,3 +1,4 @@
+import { updateUserSettings } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
@@ -12,6 +13,7 @@ import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-ov
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import Notice from 'calypso/components/notice';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -24,7 +26,11 @@ import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserEmail,
+	getCurrentUserId,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from './email-verification';
@@ -70,10 +76,15 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const userId = useSelector( getCurrentUserId );
+	const currentEmail = useSelector( getCurrentUserEmail );
 	const queryArgs = useQuery();
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
+	// Set only by the gate's edit link. The account screen is otherwise kept from a user who has an
+	// account; this is the one case where showing it to one is the whole point.
+	const [ isEditingEmail, setIsEditingEmail ] = useState( false );
+	const [ editEmailError, setEditEmailError ] = useState< string | null >( null );
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
@@ -149,6 +160,23 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		from: partnerConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
 	} );
 
+	// Changing an unverified address takes effect immediately and re-sends the activation email, so
+	// there is nothing to confirm and nowhere else to go: the gate re-renders against the corrected
+	// address once `/me` catches up.
+	const updateEmail = async ( email: string ) => {
+		setEditEmailError( null );
+		try {
+			await updateUserSettings( { user_email: email } );
+			dispatch( fetchCurrentUser() as unknown as AnyAction );
+			setIsEditingEmail( false );
+		} catch ( error ) {
+			setEditEmailError(
+				( error as { message?: string } )?.message ??
+					translate( 'We couldn’t update your email address. Please try again.' )
+			);
+		}
+	};
+
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
 	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
@@ -211,8 +239,16 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				socialServiceResponse={ socialServiceResponse }
 				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
-				userEmail={ queryArgs.get( 'user_email' ) || '' }
-				notice={ notice }
+				userEmail={ ( isEditingEmail ? currentEmail : queryArgs.get( 'user_email' ) ) || '' }
+				notice={
+					editEmailError ? (
+						<Notice status="is-error" showDismiss={ false }>
+							{ editEmailError }
+						</Notice>
+					) : (
+						notice
+					)
+				}
 				isSocialFirst
 				onCreateAccountSuccess={ handleCreateAccountSuccess }
 				backButtonInFooter={ ! isStepContainerV2 }
@@ -223,6 +259,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
 				activationEmailFrom={ gateEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
+				onUpdateEmail={ isEditingEmail ? updateEmail : undefined }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm
@@ -234,9 +271,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		</>
 	);
 
-	if ( gateStatus === 'gated' ) {
+	if ( gateStatus === 'gated' && ! isEditingEmail ) {
 		return (
 			<EmailVerificationGate
+				onEditEmail={ () => setIsEditingEmail( true ) }
 				// A different account is a different attempt: without this the cooldown, the send
 				// state and the poll's ladder would all carry over to whoever `/me` resolved.
 				key={ gateScopeForUser }
@@ -250,7 +288,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// Nobody with an account has any business being offered another one — including someone whose
 	// account exists but whose `/me` hasn't landed, who would otherwise be looking at live social
 	// buttons and a "See all options" link moments after signing up.
-	if ( isLoggedIn || isWaitingForCreatedAccount ) {
+	if ( ( isLoggedIn || isWaitingForCreatedAccount ) && ! isEditingEmail ) {
 		return <Step.Loading />;
 	}
 

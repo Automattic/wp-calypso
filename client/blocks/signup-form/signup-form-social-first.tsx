@@ -55,6 +55,7 @@ interface SignupFormSocialFirst {
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 	activationEmailFrom?: string;
+	onUpdateEmail?: ( email: string ) => Promise< void >;
 }
 
 const options = {
@@ -114,6 +115,7 @@ const SignupFormSocialFirst = ( {
 	allowedSocialServices,
 	customTosElement,
 	activationEmailFrom,
+	onUpdateEmail,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
@@ -188,6 +190,7 @@ const SignupFormSocialFirst = ( {
 		stepName,
 		flowName,
 		activationEmailFrom,
+		onUpdateEmail,
 		goToNextStep,
 		logInUrl,
 		queryArgs,
