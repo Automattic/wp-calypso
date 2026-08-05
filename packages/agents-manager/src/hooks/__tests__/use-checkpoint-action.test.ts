@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render, renderHook, screen } from '@testing-library/react';
+import { act, fireEvent, render, renderHook, screen } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import useCheckpointAction from '../use-checkpoint-action';
@@ -68,13 +68,23 @@ describe( 'useCheckpointAction', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
 
-	it( 'shows the resolved edit action for a successful block edit', async () => {
+	it( 'disables Undo after restoring a successful block edit', async () => {
 		let registration: MessageActionsRegistration | undefined;
 		const registerMessageActions = jest.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
 		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
+		let resolveRestore!: () => void;
+		( checkpoint.restoreCheckpoint as jest.Mock ).mockImplementation(
+			() =>
+				new Promise< void >( ( resolve ) => {
+					resolveRestore = resolve;
+				} )
+		);
 		const message = createToolMessage( {
 			toolCallId: 'tool-call-1',
 			data: {
@@ -101,12 +111,71 @@ describe( 'useCheckpointAction', () => {
 		}
 		render( createElement( actions[ 0 ].component, actions[ 0 ].componentProps ) );
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Updated' );
-		fireEvent.click( screen.getByRole( 'button', { name: 'Undo' } ) );
+		const undoButton = screen.getByRole( 'button', { name: 'Undo' } );
+		fireEvent.click( undoButton );
 
 		expect( checkpoint.restoreCheckpoint ).toHaveBeenCalledWith( 'tool-call-1' );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'restore_checkpoint_action', {
 			id: 'tool-call-1',
 		} );
+		expect( undoButton ).toBeDisabled();
+		fireEvent.click( undoButton );
+		expect( checkpoint.restoreCheckpoint ).toHaveBeenCalledTimes( 1 );
+
+		await act( async () => resolveRestore() );
+
+		expect( undoButton ).toBeDisabled();
+	} );
+
+	it( 're-enables Undo when restoring the checkpoint fails', async () => {
+		let registration: MessageActionsRegistration | undefined;
+		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+			registration = nextRegistration;
+		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
+		const checkpoint = createCheckpoint();
+		let rejectRestore!: ( error: Error ) => void;
+		( checkpoint.restoreCheckpoint as jest.Mock )
+			.mockImplementationOnce(
+				() =>
+					new Promise< void >( ( _resolve, reject ) => {
+						rejectRestore = reject;
+					} )
+			)
+			.mockResolvedValueOnce( undefined );
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation();
+		const message = createToolMessage( {
+			toolCallId: 'tool-call-1',
+			data: {
+				result: {
+					success: true,
+					message: 'Corrected the grammar.',
+					outcome: 'updated',
+				},
+			},
+		} );
+
+		renderHook( () => useCheckpointAction( registerMessageActions, checkpoint ) );
+
+		const actions = getActions( registration, message );
+		if ( actions[ 0 ]?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		render( createElement( actions[ 0 ].component, actions[ 0 ].componentProps ) );
+		const undoButton = screen.getByRole( 'button', { name: 'Undo' } );
+		fireEvent.click( undoButton );
+		expect( undoButton ).toBeDisabled();
+
+		await act( async () => rejectRestore( new Error( 'Restore failed' ) ) );
+
+		expect( undoButton ).toBeEnabled();
+		expect( consoleError ).toHaveBeenCalledWith(
+			'[useCheckpointAction] Failed to restore checkpoint:',
+			expect.any( Error )
+		);
+
+		fireEvent.click( undoButton );
+		expect( checkpoint.restoreCheckpoint ).toHaveBeenCalledTimes( 2 );
+		expect( undoButton ).toBeDisabled();
 	} );
 
 	it( 'uses the Jetpack tool call id for its block edit checkpoint', async () => {

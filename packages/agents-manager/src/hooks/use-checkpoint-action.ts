@@ -67,15 +67,21 @@ export default function useCheckpointAction(
 			return [];
 		}
 
-		const restoreCheckpoint = async () => {
+		const restoreCheckpoint = async (): Promise< boolean > => {
 			recordBigSkyTracksEvent( 'restore_checkpoint_action', {
 				id: checkpointInfo.checkpointId,
 			} );
 			try {
-				await checkpointRef.current?.restoreCheckpoint( checkpointInfo.checkpointId );
+				const checkpointToRestore = checkpointRef.current;
+				if ( ! checkpointToRestore ) {
+					return false;
+				}
+				await checkpointToRestore.restoreCheckpoint( checkpointInfo.checkpointId );
+				return true;
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
 				console.error( '[useCheckpointAction] Failed to restore checkpoint:', error );
+				return false;
 			}
 		};
 
@@ -100,7 +106,9 @@ export default function useCheckpointAction(
 					icon: undo,
 					className: 'agents-manager-message-action-icon',
 				} ),
-				onClick: restoreCheckpoint,
+				onClick: async () => {
+					await restoreCheckpoint();
+				},
 				order: 1,
 			},
 		];
