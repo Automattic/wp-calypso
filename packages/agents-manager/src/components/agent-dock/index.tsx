@@ -269,15 +269,16 @@ export default function AgentDock( {
 
 		// Every item fires the unified AM event; items whose Big Sky event
 		// is already live also dual-fire it so those dashboards keep working.
+		const recordMenuItemClick = ( type: string ) =>
+			recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', { type } );
+
 		const options = [
 			{
 				icon: comment,
 				title: __( 'New chat', __i18n_text_domain__ ),
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
 				onClick: () => {
-					recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
-						type: 'reset_chat',
-					} );
+					recordMenuItemClick( 'reset_chat' );
 					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 						type: 'reset_chat',
 					} );
@@ -291,9 +292,7 @@ export default function AgentDock( {
 					icon: backup,
 					title: __( 'View history', __i18n_text_domain__ ),
 					onClick: () => {
-						recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
-							type: 'view_history',
-						} );
+						recordMenuItemClick( 'view_history' );
 						navigate( '/history' );
 					},
 				},
@@ -307,9 +306,7 @@ export default function AgentDock( {
 						? __( 'Exit split screen', __i18n_text_domain__ )
 						: __( 'Split screen sidebar', __i18n_text_domain__ ),
 					onClick: () => {
-						recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
-							type: isSplitScreen ? 'exit_split_screen' : 'split_screen',
-						} );
+						recordMenuItemClick( isSplitScreen ? 'exit_split_screen' : 'split_screen' );
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: isSplitScreen ? 'exit_split_screen' : 'split_screen',
 						} );
@@ -320,9 +317,7 @@ export default function AgentDock( {
 				icon: heading,
 				title: __( 'Knowledge and memory', __i18n_text_domain__ ),
 				onClick: () => {
-					recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
-						type: 'knowledge_memory',
-					} );
+					recordMenuItemClick( 'knowledge_memory' );
 					window.open(
 						'/wp-admin/options-general.php?page=guidelines-wp-admin',
 						'_blank',
@@ -337,9 +332,7 @@ export default function AgentDock( {
 					icon: cog,
 					title: __( 'AI Agent settings', __i18n_text_domain__ ),
 					onClick: () => {
-						recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
-							type: 'ai_agent_settings',
-						} );
+						recordMenuItemClick( 'ai_agent_settings' );
 						window.open(
 							`https://my.wordpress.com/sites/${ siteDomain }/settings/ai-tools`,
 							'_blank',
@@ -357,9 +350,7 @@ export default function AgentDock( {
 					icon: <SwitchToFloating />,
 					title: __( 'Switch to floating', __i18n_text_domain__ ),
 					onClick: () => {
-						recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
-							type: 'undock',
-						} );
+						recordMenuItemClick( 'undock' );
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: 'undock',
 						} );
@@ -373,9 +364,7 @@ export default function AgentDock( {
 					icon: <SwitchToSidebar />,
 					title: __( 'Switch to sidebar', __i18n_text_domain__ ),
 					onClick: () => {
-						recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
-							type: 'dock',
-						} );
+						recordMenuItemClick( 'dock' );
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: 'dock',
 						} );
