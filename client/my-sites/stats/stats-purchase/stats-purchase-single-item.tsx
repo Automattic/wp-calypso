@@ -201,7 +201,7 @@ const useLocalizedStrings = ( isCommercial: boolean ) => {
 	// Page title, info text, and button text depend on isCommercial status of site.
 	if ( isCommercial ) {
 		return {
-			pageTitle: translate( 'Upgrade %(product)s and unlock premium features', {
+			pageTitle: translate( 'Upgrade %(product)s to unlock premium features', {
 				args: { product: STATS_PRODUCT_NAME },
 			} ),
 			infoText: translate(
