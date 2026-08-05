@@ -39,8 +39,8 @@
 		gap: 4px;
 		align-items: center;
 
-		// Excludes DropdownMenu popover items (they render on WP's white
-		// popover); `.has-icon` out-specifies wp's small icon-button sizing.
+		// Excludes DropdownMenu popover items (styled with the menu below);
+		// `.has-icon` out-specifies wp's small icon-button sizing.
 		.components-button.has-icon:not( .components-dropdown-menu__menu-item ) {
 			height: 24px;
 			min-width: 24px;
@@ -62,9 +62,9 @@
 	}
 }
 
-// The dropdown is a flat item list (a second control set only marks its
-// first item with `has-separator`) on WP's unthemed white popover, so
-// states use light-theme colors directly.
+// The dropdown is a flat item list — a second control set only marks its
+// first item with `has-separator`. States use light-theme colors to match
+// WP's default white popover.
 .agents-manager-chat-header__menu-popover .components-popover__content {
 	padding: 0;
 

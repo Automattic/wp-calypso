@@ -268,8 +268,7 @@ export default function AgentDock( {
 		const siteDomain = inlineData?.site?.domain;
 
 		// Every item fires the unified AM event; items whose Big Sky event
-		// already ships in production also fire `recordBigSkyTracksEvent`
-		// so the existing Big Sky dashboards keep working.
+		// is already live also dual-fire it so those dashboards keep working.
 		const options = [
 			{
 				icon: comment,
