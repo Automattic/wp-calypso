@@ -34,11 +34,13 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 		isEnabled( 'stats/paid-wpcom-v2' ) && isWPCOMSite && ! isOdysseyStats;
 	const dispatch = useDispatch();
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
+	// Dismissal is news-based, not time-based: it never returns on a timer, and a future
+	// campaign re-reaches past dismissers by shipping under a fresh notice id.
 	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
 		siteId,
 		'free_site_upgrade',
 		'postponed',
-		365 * 24 * 3600
+		36500 * 24 * 3600
 	);
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 

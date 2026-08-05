@@ -100,14 +100,14 @@ describe( 'FreeSiteUpgradeNotice', () => {
 		expect( screen.getByText( 'Want to get the most out of Jetpack Stats?' ) ).toBeVisible();
 	} );
 
-	it( 'postpones dismissals of its own notice id for a year', () => {
+	it( 'postpones dismissals of its own notice id off any practical timer', () => {
 		renderNotice();
 
 		expect( mockUseNoticeVisibilityMutation ).toHaveBeenCalledWith(
 			123,
 			'free_site_upgrade',
 			'postponed',
-			365 * 24 * 3600
+			36500 * 24 * 3600
 		);
 	} );
 } );
