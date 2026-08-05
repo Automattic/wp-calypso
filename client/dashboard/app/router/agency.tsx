@@ -1,8 +1,10 @@
-import { DotcomFeatures, HostingFeatures, fetchTwoStep } from '@automattic/api-core';
 import {
+	DotcomFeatures,
+	HostingFeatures,
 	JetpackLicenseFilter,
 	JetpackLicenseSortField,
 	JetpackLicenseSortDirection,
+	fetchTwoStep,
 } from '@automattic/api-core';
 import {
 	activeAgencyQuery,
