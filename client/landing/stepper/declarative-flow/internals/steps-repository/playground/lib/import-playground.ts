@@ -9,6 +9,7 @@ const POLL_INTERVAL_MS = 5000;
 // 120 attempts × 5 s = 10 min. Atomic restores typically finish in 2–4 min;
 // 10 min covers worst-case load spikes without leaving users stuck indefinitely.
 const MAX_POLL_ATTEMPTS = 120;
+const EXPORT_DEBUG_OPFS_DIRECTORY = 'playground-exports';
 const EXPORT_EXCLUDE_PATTERNS = [
 	'/*',
 	'!/wp-content/',
@@ -53,7 +54,22 @@ export async function getSiteZip( playgroundSlug: string ) {
 			throw new Error( `No exportable saved Playground found for ${ playgroundSlug }.` );
 		}
 
-		return new File( [ zipBlob ], 'site.zip', { type: 'application/zip' } );
+		const siteZip = new File( [ zipBlob ], 'site.zip', { type: 'application/zip' } );
+		const opfsRoot = await navigator.storage.getDirectory();
+		const exportDirectory = await opfsRoot.getDirectoryHandle( EXPORT_DEBUG_OPFS_DIRECTORY, {
+			create: true,
+		} );
+		const exportFileName = `${ encodeURIComponent( playgroundSlug ) }.zip`;
+		const exportFile = await exportDirectory.getFileHandle( exportFileName, { create: true } );
+		const writable = await exportFile.createWritable();
+
+		await writable.write( siteZip );
+		await writable.close();
+		window.console.log(
+			`Playground export saved to OPFS at /${ EXPORT_DEBUG_OPFS_DIRECTORY }/${ exportFileName }`
+		);
+
+		return siteZip;
 	} finally {
 		apiIframe.remove();
 	}
