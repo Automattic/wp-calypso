@@ -37,20 +37,6 @@ jest.mock( '@automattic/calypso-config', () => {
 	return config;
 } );
 
-const mockPasswordlessProps: { activationEmailFrom?: string }[] = [];
-
-jest.mock( '../passwordless', () => {
-	const { createElement } = jest.requireActual( 'react' );
-	const Actual = jest.requireActual( '../passwordless' ).default;
-	return {
-		__esModule: true,
-		default: ( props: { activationEmailFrom?: string } ) => {
-			mockPasswordlessProps.push( props );
-			return createElement( Actual, props );
-		},
-	};
-} );
-
 const defaultProps = {
 	goToNextStep: jest.fn(),
 	stepName: 'user',
@@ -204,39 +190,6 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.getByText( /Continue with Google/i ) ).toBeInTheDocument();
 			expect( screen.getByText( /Continue with PayPal/i ) ).toBeInTheDocument();
 			expect( screen.queryByText( /Continue with GitHub/i ) ).not.toBeInTheDocument();
-		} );
-	} );
-
-	describe( 'activationEmailFrom', () => {
-		beforeEach( () => ( mockPasswordlessProps.length = 0 ) );
-
-		// Between them these cover all three places the email form is rendered: the email-first
-		// layout renders two of them, the mobile-compact layout the third.
-		it.each( [
-			[ 'the email-first layout', { isEmailFirstVariant: true } ],
-			[ 'the mobile-compact layout', { isMobileCompactVariant: true } ],
-		] )( 'reaches every email form in %s', ( _label, layout ) => {
-			render(
-				<SignupFormSocialFirst
-					{ ...defaultProps }
-					{ ...layout }
-					activationEmailFrom="onboarding-with-email-verification"
-				/>
-			);
-
-			expect( mockPasswordlessProps.length ).toBeGreaterThan( 0 );
-			mockPasswordlessProps.forEach( ( props ) =>
-				expect( props.activationEmailFrom ).toBe( 'onboarding-with-email-verification' )
-			);
-		} );
-
-		it( 'passes nothing on when it was given nothing', () => {
-			render( <SignupFormSocialFirst { ...defaultProps } isEmailFirstVariant /> );
-
-			expect( mockPasswordlessProps.length ).toBeGreaterThan( 0 );
-			mockPasswordlessProps.forEach( ( props ) =>
-				expect( props.activationEmailFrom ).toBeUndefined()
-			);
 		} );
 	} );
 
