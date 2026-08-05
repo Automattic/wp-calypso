@@ -79,4 +79,5 @@ export interface PlaygroundClient {
 	isReady(): Promise< void >;
 	run( options: { code: string } ): Promise< { text: string } >;
 	mountOpfs( options: MountDescriptor ): Promise< void >;
+	writeFile( path: string, data: string | Uint8Array ): Promise< void >;
 }

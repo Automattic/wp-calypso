@@ -84,6 +84,11 @@ export const PlaygroundSetupStep: Step< {
 			return;
 		}
 
+		const playgroundSlug = query.get( 'playground' );
+		if ( ! playgroundSlug ) {
+			return;
+		}
+
 		// When launched from the Playground publish flow (entrepreneur) there is no
 		// surrounding Redux importer machinery to handle the start trigger and
 		// polling — so importPlaygroundSite must block until the import completes.
@@ -94,7 +99,7 @@ export const PlaygroundSetupStep: Step< {
 			const importStartedAt = Date.now();
 			recordTracksEvent( 'calypso_playground_woo_import_started', { site_id: siteId } );
 			try {
-				await importPlaygroundSite( client, siteId, { waitForCompletion: true } );
+				await importPlaygroundSite( playgroundSlug, siteId, { waitForCompletion: true } );
 				recordTracksEvent( 'calypso_playground_woo_import_succeeded', {
 					site_id: siteId,
 					duration_seconds: Math.round( ( Date.now() - importStartedAt ) / 1000 ),
@@ -108,7 +113,7 @@ export const PlaygroundSetupStep: Step< {
 				throw error;
 			}
 		} else {
-			await importPlaygroundSite( client, siteId, { waitForCompletion: false } );
+			await importPlaygroundSite( playgroundSlug, siteId, { waitForCompletion: false } );
 		}
 
 		submit( {

@@ -9,6 +9,13 @@ const POLL_INTERVAL_MS = 5000;
 // 120 attempts × 5 s = 10 min. Atomic restores typically finish in 2–4 min;
 // 10 min covers worst-case load spikes without leaving users stuck indefinitely.
 const MAX_POLL_ATTEMPTS = 120;
+const EXPORT_EXCLUDE_PATTERNS = [
+	'/*',
+	'!/wp-content/',
+	'!/wp-content/**',
+	'/wp-content/db.php',
+	'/wp-content/mu-plugins/',
+];
 
 export class ImportTimeoutError extends Error {
 	constructor() {
@@ -24,21 +31,37 @@ export class ImportFailureError extends Error {
 	}
 }
 
-export async function getSiteZip( playground: PlaygroundClient ) {
-	const { zipWpContent } = await import(
-		/* webpackIgnore: true */ PLAYGROUND_HOST + '/client/index.js'
-	);
-	const zipBytes = await zipWpContent( playground, {
-		selfContained: true,
-	} );
+export async function getSiteZip( playgroundSlug: string ) {
+	const apiIframe = document.createElement( 'iframe' );
+	apiIframe.hidden = true;
+	apiIframe.setAttribute( 'sandbox', 'allow-scripts allow-same-origin' );
+	document.body.appendChild( apiIframe );
 
-	return new File( [ zipBytes ], 'site.zip', { type: 'application/zip' } );
+	try {
+		const { startPlaygroundAPI } = await import(
+			/* webpackIgnore: true */ PLAYGROUND_HOST + '/client/index.js'
+		);
+		const playgroundAPI = await startPlaygroundAPI( {
+			iframe: apiIframe,
+			apiUrl: PLAYGROUND_HOST + '/api.html',
+		} );
+		const zipBlob = await playgroundAPI.exportSavedSiteAsZip( playgroundSlug, {
+			excludePatterns: EXPORT_EXCLUDE_PATTERNS,
+		} );
+
+		if ( ! zipBlob ) {
+			throw new Error( `No exportable saved Playground found for ${ playgroundSlug }.` );
+		}
+
+		return new File( [ zipBlob ], 'site.zip', { type: 'application/zip' } );
+	} finally {
+		apiIframe.remove();
+	}
 }
 
 export async function removeSandboxPlugins( playground: PlaygroundClient ): Promise< void > {
 	// Haydi and wccom-ai-connector are sandbox-only tools — remove them from the
-	// in-memory filesystem before exporting so they don't land on the live site.
-	// The OPFS is read-only at this point (opfs-to-memfs boot) so this is safe.
+	// mounted filesystem before exporting so they don't land on the live site.
 	await playground.run( {
 		code: `<?php
 require_once '/wordpress/wp-load.php';
@@ -80,11 +103,11 @@ foreach ( $plugins as $slug ) {
  * to importerWordpress afterwards — that step's Redux monitoring handles it.
  */
 export async function importPlaygroundSite(
-	playground: PlaygroundClient,
+	playgroundSlug: string,
 	siteId: number,
 	{ waitForCompletion = false }: { waitForCompletion?: boolean } = {}
 ): Promise< string | undefined > {
-	const siteZip = await getSiteZip( playground );
+	const siteZip = await getSiteZip( playgroundSlug );
 
 	const importer = await uploadExportFile( siteId, {
 		importStatus: { importStatus: 'importer-ready-for-upload', siteId, type: 'wordpress' },
