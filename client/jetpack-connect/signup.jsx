@@ -191,8 +191,16 @@ export class JetpackSignup extends Component {
 						plugins: this.props.authQuery.plugins,
 					},
 				} )
-				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
-				.finally( afterSubmit )
+				.then(
+					( result ) => {
+						this.handleUserCreationSuccess( result );
+						afterSubmit();
+					},
+					( error ) => {
+						this.handleUserCreationError( error );
+						afterSubmit( error );
+					}
+				)
 		);
 	};
 

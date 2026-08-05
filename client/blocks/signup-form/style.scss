@@ -105,6 +105,12 @@
 	.validation-fieldset__validation-message {
 		min-height: auto;
 	}
+
+	// The challenge container renders even without a visible challenge; scope
+	// the spacing to `.has-visible-challenge` to avoid a permanent gap.
+	.login__form-blackbox-challenge.has-visible-challenge {
+		margin-block-end: 8px;
+	}
 }
 
 .signup-form__recaptcha-tos {
