@@ -37,6 +37,10 @@ jest.mock( '../utils/block-actions', () => ( {
 	clearActiveBlockFocus: ( ...args: any[] ) => mockClearActiveBlockFocus( ...args ),
 	clearActiveBlockFocusUnlessBlockReferenceClick: ( ...args: any[] ) =>
 		mockClearActiveBlockFocusUnlessBlockReferenceClick( ...args ),
+	// Real implementation: the card must gate Apply on the same count the apply
+	// itself uses, so a stub would hide the mismatch this guards against.
+	countCurrentTextOccurrences:
+		jest.requireActual( '../utils/block-actions' ).countCurrentTextOccurrences,
 	getEditableBlockContent: ( block: any, attributeName?: string, currentText?: string ) => {
 		if ( attributeName ) {
 			return block?.attributes?.[ attributeName ] ?? '';
@@ -611,6 +615,38 @@ describe( 'AiEditorialReview — smoke render', () => {
 		expect( screen.getByTitle( 'Jump to conflicts' ).textContent ).toMatch( /1/ );
 		expect( screen.getByTitle( 'Jump to implications' ).textContent ).toMatch( /1/ );
 		expect( screen.getByTitle( 'Jump to suggested edits' ).textContent ).toMatch( /1/ );
+	} );
+
+	it( 'offers Apply when the model retyped a typographic apostrophe', () => {
+		// The block holds a typographic apostrophe; the model quoted a straight one.
+		// The apply path treats those as equivalent, so the card must not gate the
+		// edit behind "source text changed".
+		mockBlocks = [
+			{
+				clientId: 'b0',
+				name: 'core/paragraph',
+				attributes: { content: 'Whether you\u2019re after a thin, crispy margherita.' },
+			},
+		];
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 0,
+							editable_attribute: 'content',
+							current_text: "Whether you're after a thin",
+							suggested_text: 'Whether you prefer a thin',
+							rationale: 'Concise.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Apply change' } ) ).toBeEnabled();
+		expect( screen.queryByText( 'Manual edit' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not tag a stale AER edit "Manual edit" even when the source text is absent', () => {

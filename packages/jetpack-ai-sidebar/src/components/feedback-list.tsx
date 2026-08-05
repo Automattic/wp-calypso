@@ -30,13 +30,13 @@ import {
 	applyReviewEdit,
 	clearActiveBlockFocus,
 	clearActiveBlockFocusUnlessBlockReferenceClick,
+	countCurrentTextOccurrences,
 	getEditableBlockContent,
 	hasEditableBlockTarget,
 	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
 import {
-	countOccurrences,
 	flattenBlocks,
 	getEditorContentBlocks,
 	type BlockEditorStore,
@@ -189,7 +189,7 @@ function getApplyUnavailableReason(
 		return __( 'Needs manual edit - unsupported edit target.', __i18n_text_domain__ );
 	}
 
-	const occurrences = countOccurrences(
+	const occurrences = countCurrentTextOccurrences(
 		getEditableBlockContent( block, item.editable_attribute, item.current_text ),
 		item.current_text
 	);
@@ -451,7 +451,7 @@ export default function FeedbackList( {
 								const currentTextPresent =
 									!! item.current_text &&
 									!! block &&
-									countOccurrences(
+									countCurrentTextOccurrences(
 										getEditableBlockContent( block, item.editable_attribute, item.current_text ),
 										item.current_text
 									) >= 1;
