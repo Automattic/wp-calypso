@@ -134,6 +134,7 @@ const StatsPurchasePage = ( {
 	const variant = useMemo( () => {
 		let pageVariant = 'personal';
 		if ( ! showPurchasePage ) {
+			// TODO: Remove the notice page — even a site that already owns a plan will eventually want to upgrade to a higher tier.
 			pageVariant = 'notice';
 		} else if (
 			( ! isForceProductRedirect && ( isCommercial || isCommercialOwned ) ) ||
