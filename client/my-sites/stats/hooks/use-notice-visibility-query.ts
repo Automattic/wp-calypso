@@ -7,8 +7,6 @@ export const NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL = 'show_floating_user
 
 const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	opt_in_new_stats: false,
-	traffic_page_highlights_module_settings: false,
-	traffic_page_settings: false,
 	do_you_love_jetpack_stats: false,
 	commercial_site_upgrade: false,
 	// Defaults to hidden until the server includes it in the notices response,
@@ -34,7 +32,6 @@ export type NoticeIdType = keyof Notices;
 // These notices are mutually exclusive, so if one is active, the other should be hidden.
 // The IDs are sorted by priory from high to low.
 const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
-	settings_tool_tips: [ 'traffic_page_settings', 'traffic_page_highlights_module_settings' ],
 	dashboard_notices: [
 		// Set the highest priority to prevent blocking Stats under any circumstances.
 		'gdpr_cookie_consent',
