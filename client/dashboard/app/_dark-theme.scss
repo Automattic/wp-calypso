@@ -478,6 +478,14 @@
 	}
 }
 
+/* Wordmark */
+@mixin dashboard-dark-theme-wordmark {
+	// The wordmark ships with the brand blue baked in, which sits at ~3:1
+	// against the dark sidebar while every other accent is lightened. Follow
+	// the dark accent instead.
+	--dashboard-wordmark__fill: var( --wp-components-color-accent );
+}
+
 /* Modal */
 @mixin dashboard-dark-theme-modal {
 	.components-modal__frame {
@@ -520,4 +528,5 @@
 	@include color-scheme-dark-theme-site-icon;
 	@include dashboard-dark-theme-site-logs-badges;
 	@include color-scheme-dark-theme-summary-button;
+	@include dashboard-dark-theme-wordmark;
 }
