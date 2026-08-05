@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
 	resendAcceptedRetryAfter,
 	resendThrottleRetryAfter,
@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { useBackoffPoll } from '../use-backoff-poll';
-import { gateResendAvailableAt, isGateStorageKey, markResendUnavailableUntil } from './storage';
+import { gateResendAvailableAt, markResendUnavailableUntil } from './storage';
 
 // `throttled` is distinct from `error`: the send was refused, not failed. It says only why the
 // button is held — the countdown says whether it still is.
@@ -23,26 +23,10 @@ export function useEmailVerification( flow: string, scope: string ) {
 
 	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
 
-	const {
-		secondsUntilResend,
-		hold: holdResend,
-		adopt: adoptResendDeadline,
-	} = useResendCooldown( {
+	const { secondsUntilResend, hold: holdResend } = useResendCooldown( {
 		initialDeadline: gateResendAvailableAt( scope ),
 		onHold: ( deadline ) => markResendUnavailableUntil( scope, deadline ),
 	} );
-
-	// The deadline is only read at mount, so a tab already open when another one resends would go
-	// on offering a button the server is about to refuse.
-	useEffect( () => {
-		const onStorage = ( event: StorageEvent ) => {
-			if ( isGateStorageKey( event.key, scope ) ) {
-				adoptResendDeadline( gateResendAvailableAt( scope ) );
-			}
-		};
-		window.addEventListener( 'storage', onStorage );
-		return () => window.removeEventListener( 'storage', onStorage );
-	}, [ scope, adoptResendDeadline ] );
 	// A confirmation on another device raises no signal — `UserVerificationChecker` covers the same
 	// browser — so polling is the only thing that notices it.
 	const { restart: restartPoll } = useBackoffPoll(

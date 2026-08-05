@@ -23,10 +23,10 @@ describe( 'useResendCooldown', () => {
 	// The server is what actually refuses a resend, so the button must not reopen ahead of it. A
 	// tab can adopt a longer wait another tab recorded and only then get its own, shorter answer —
 	// and it sees no storage event for its own write, so nothing would correct it afterwards.
-	test( 'never shortens a wait, whichever way the shorter one arrives', () => {
+	test( 'never shortens a wait already running', () => {
 		const { result } = renderHook( () => useResendCooldown() );
 
-		act( () => result.current.adopt( Date.now() + 4 * 60 * MINUTE ) );
+		act( () => result.current.hold( 4 * 60 * 60 ) );
 		act( () => result.current.hold( 5 * 60 ) );
 
 		expect( result.current.secondsUntilResend ).toBe( 4 * 60 * 60 );
@@ -38,12 +38,6 @@ describe( 'useResendCooldown', () => {
 
 		act( () => result.current.hold( 5 * 60 ) );
 		expect( onHold ).toHaveBeenCalledWith( expect.any( Number ) );
-
-		// Adopting is the listening half: reporting it back would write it again, and the write is
-		// what other tabs are listening for.
-		onHold.mockClear();
-		act( () => result.current.adopt( Date.now() + 10 * MINUTE ) );
-		expect( onHold ).not.toHaveBeenCalled();
 	} );
 
 	test( 'clears a wait when explicitly reset', () => {

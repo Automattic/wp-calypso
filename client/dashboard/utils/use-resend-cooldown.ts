@@ -28,9 +28,8 @@ export function useResendCooldown( { initialDeadline = 0, onHold }: Options = {}
 		setSecondsUntilResend( cooldownRemainingSeconds( deadlineRef.current ) );
 	}, [] );
 
-	// Only ever extends, like `adopt`: a response can arrive after another tab has already
-	// recorded a longer wait, and shortening would reopen the button while the server still
-	// refuses. `reset` is the way to clear one.
+	// Only ever extends: a later response can carry a smaller wait than one already running, and
+	// shortening would reopen the button while the server still refuses. `reset` clears one.
 	const hold = useCallback( ( seconds: number ) => {
 		deadlineRef.current = Math.max( deadlineRef.current, cooldownDeadline( seconds ) );
 		setSecondsUntilResend( cooldownRemainingSeconds( deadlineRef.current ) );
@@ -40,16 +39,6 @@ export function useResendCooldown( { initialDeadline = 0, onHold }: Options = {}
 	const reset = useCallback( () => {
 		deadlineRef.current = 0;
 		setSecondsUntilResend( 0 );
-	}, [] );
-
-	// Adopts a deadline claimed elsewhere — another tab, say. Unlike `hold` it doesn't report the
-	// deadline back, so a caller that persists one can sync without writing it again.
-	const adopt = useCallback( ( deadline: number ) => {
-		if ( deadline <= deadlineRef.current ) {
-			return;
-		}
-		deadlineRef.current = deadline;
-		setSecondsUntilResend( cooldownRemainingSeconds( deadline ) );
 	}, [] );
 
 	useInterval( sync, secondsUntilResend > 0 && EVERY_SECOND );
@@ -65,5 +54,5 @@ export function useResendCooldown( { initialDeadline = 0, onHold }: Options = {}
 		return () => document.removeEventListener( 'visibilitychange', onVisibilityChange );
 	}, [ sync ] );
 
-	return { secondsUntilResend, hold, reset, adopt };
+	return { secondsUntilResend, hold, reset };
 }

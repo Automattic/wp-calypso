@@ -266,21 +266,20 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
-	// The confirmation wakes every open tab at once, and each finishes on its own. The claim is
-	// what keeps that from being counted more than once between them.
-	it( 'records the confirmation once across tabs, while both still continue', async () => {
-		const a = renderUser( makeStore( false ) );
-		await screen.findAllByRole( 'heading', { name: GATE_HEADING } );
-		const b = renderUser( makeStore( false ) );
+	// Within a tab, remounting is a refresh rather than a second confirmation. Across tabs each
+	// counts its own, the way every other Stepper step event does.
+	it( 'records the confirmation once however often the step remounts', async () => {
+		const shown = renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		shown.unmount();
 		jest.clearAllMocks();
 
-		a.unmount();
-		b.unmount();
-		const verifiedA = renderUser( makeStore( true ) );
-		const verifiedB = renderUser( makeStore( true ) );
+		const first = renderUser( makeStore( true ) );
+		await waitFor( () => expect( first.submit ).toHaveBeenCalled() );
+		first.unmount();
 
-		await waitFor( () => expect( verifiedA.submit ).toHaveBeenCalled() );
-		await waitFor( () => expect( verifiedB.submit ).toHaveBeenCalled() );
+		const second = renderUser( makeStore( true ) );
+		await waitFor( () => expect( second.submit ).toHaveBeenCalled() );
 
 		const confirmations = ( recordTracksEvent as jest.Mock ).mock.calls.filter(
 			( [ event ] ) => event === 'calypso_signup_email_verification_confirmed'
