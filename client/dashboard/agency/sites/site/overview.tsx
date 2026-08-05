@@ -29,7 +29,7 @@ export default function AgencySiteOverview() {
 			}
 		>
 			<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 4 : 6 }>
-				{ ! fullSite.is_wpcom_flex && <VisibilityCard site={ fullSite } /> }
+				<VisibilityCard site={ fullSite } />
 				<BackupCard site={ site } />
 				<ScanCard site={ site } siteSlug={ siteSlug } />
 				<PerformanceCard site={ fullSite } />
