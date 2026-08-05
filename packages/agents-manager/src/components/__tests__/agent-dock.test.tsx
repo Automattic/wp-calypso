@@ -472,9 +472,12 @@ describe( 'AgentDock', () => {
 		renderAgentDock( '/history' );
 		fireEvent.click( screen.getByText( 'New chat' ) );
 
-		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith( 'ai_chat_menu_item_click', {
-			type: 'reset_chat',
-		} );
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'ai_chat_more_options_click',
+			{
+				type: 'reset_chat',
+			}
+		);
 		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
 			type: 'reset_chat',
 		} );
@@ -520,9 +523,12 @@ describe( 'AgentDock', () => {
 		renderAgentDock();
 		fireEvent.click( screen.getByText( 'View history' ) );
 
-		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith( 'ai_chat_menu_item_click', {
-			type: 'view_history',
-		} );
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'ai_chat_more_options_click',
+			{
+				type: 'view_history',
+			}
+		);
 		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/history' );
 	} );
 
@@ -536,9 +542,12 @@ describe( 'AgentDock', () => {
 		renderAgentDock();
 		fireEvent.click( screen.getByText( 'Knowledge and memory' ) );
 
-		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith( 'ai_chat_menu_item_click', {
-			type: 'knowledge_memory',
-		} );
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'ai_chat_more_options_click',
+			{
+				type: 'knowledge_memory',
+			}
+		);
 		expect( openSpy ).toHaveBeenCalledWith(
 			'/wp-admin/options-general.php?page=guidelines-wp-admin',
 			'_blank',
@@ -559,9 +568,12 @@ describe( 'AgentDock', () => {
 		renderAgentDock();
 		fireEvent.click( screen.getByText( 'AI Agent settings' ) );
 
-		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith( 'ai_chat_menu_item_click', {
-			type: 'ai_agent_settings',
-		} );
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'ai_chat_more_options_click',
+			{
+				type: 'ai_agent_settings',
+			}
+		);
 		expect( openSpy ).toHaveBeenCalledWith(
 			'https://my.wordpress.com/sites/example.com/settings/ai-tools',
 			'_blank',
@@ -629,7 +641,7 @@ describe( 'AgentDock', () => {
 			fireEvent.click( screen.getByRole( 'button', { name: label } ) );
 
 			expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-				'ai_chat_menu_item_click',
+				'ai_chat_more_options_click',
 				{
 					type,
 				}
