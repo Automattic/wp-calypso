@@ -149,12 +149,14 @@ jest.mock( '../agent-history', () => ( {
 		chatHeaderOptions,
 	}: {
 		onExpand: () => void;
-		chatHeaderOptions: { title: string }[][];
+		chatHeaderOptions: { title: string; onClick?: () => void; isDisabled?: boolean }[][];
 	} ) => (
 		<div data-testid="agent-history">
 			History
 			{ chatHeaderOptions.flat().map( ( option ) => (
-				<button key={ option.title }>{ option.title }</button>
+				<button key={ option.title } onClick={ option.onClick } disabled={ option.isDisabled }>
+					{ option.title }
+				</button>
 			) ) }
 			<button onClick={ onExpand }>Expand history</button>
 		</div>
@@ -462,6 +464,20 @@ describe( 'AgentDock', () => {
 
 		expect( screen.getByText( 'New chat' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'View history' ) ).toBeNull();
+	} );
+
+	it( 'dual-fires the unified and Big Sky events for New chat', () => {
+		useWpAdminAgent();
+
+		renderAgentDock( '/history' );
+		fireEvent.click( screen.getByText( 'New chat' ) );
+
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith( 'ai_chat_menu_item_click', {
+			type: 'reset_chat',
+		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
+			type: 'reset_chat',
+		} );
 	} );
 
 	it( 'offers the guidelines and settings items when wp-admin injects the site', () => {
