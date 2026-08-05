@@ -879,3 +879,57 @@ This mixin generates alias variables for a color palette. For example, the
 		--color-neutral-20: var( --dashboard__text-muted-color );
 	}
 }
+
+// The DataViews filter dropdown ("search widget") comes from the
+// @wordpress/dataviews package, whose CSS prefers --wpds-* tokens with
+// light-only fallbacks. Those tokens are not defined here, so hovered rows
+// fall back to a near-white color-mix and the radio/checkbox indicators to
+// light-mode borders and backgrounds.
+@mixin color-scheme-dark-theme-dataviews-filters-search-widget {
+	.dataviews-filters__search-widget-listitem {
+		color: var( --dashboard__text-color );
+
+		&:hover,
+		&[data-active-item],
+		&:focus {
+			background-color: var( --dashboard-item-selected__background-color );
+		}
+
+		.dataviews-filters__search-widget-listitem-description {
+			color: var( --dashboard-subtle__color );
+		}
+
+		// Scoped to unselected indicators so the accent fill on selected
+		// ones still wins.
+		.dataviews-filters__search-widget-listitem-single-selection:not( .is-selected, :checked ),
+		.dataviews-filters__search-widget-listitem-multi-selection:not( .is-selected, :checked ) {
+			border-color: var( --dashboard-field__border-color );
+			background: var( --dashboard-surface__background-color );
+		}
+	}
+
+	.dataviews-filters__search-widget-filter-combobox-list {
+		border-top-color: var( --dashboard-surface__border-color );
+	}
+
+	.dataviews-filters__search-widget-filter-combobox__wrapper
+		.dataviews-filters__search-widget-filter-combobox__input {
+		&:focus {
+			background: var( --dashboard-surface__background-color );
+		}
+
+		&::placeholder {
+			color: var( --dashboard-subtle__color );
+		}
+	}
+
+	.dataviews-filters__summary-operators-container:has( + .dataviews-filters__search-widget-listbox ),
+	.dataviews-filters__summary-operators-container:has( + .dataviews-filters__search-widget-no-elements ),
+	.dataviews-filters__summary-operators-container:has( + .dataviews-filters__user-input-widget ) {
+		border-bottom-color: var( --dashboard-surface__border-color );
+	}
+
+	.dataviews-filters__summary-operators-container .dataviews-filters__summary-operators-filter-name {
+		color: var( --dashboard-subtle__color );
+	}
+}
