@@ -80,10 +80,10 @@ describe( 'FreeSiteUpgradeNotice', () => {
 		renderNotice();
 
 		expect( screen.getByRole( 'button', { name: 'close' } ) ).toBeVisible();
-		expect( screen.getByText( 'Unlock premium features' ) ).toBeVisible();
+		expect( screen.getByText( 'Unlock more Stats with a paid plan' ) ).toBeVisible();
 		expect(
 			screen.getByText(
-				'Upgrade to unlock UTM tracking, device stats, and region and city locations, and get priority support.'
+				'Jetpack Stats is free to keep using. A paid plan adds UTM stats, device stats, and region and city locations.'
 			)
 		).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Upgrade' } ) ).toBeVisible();
