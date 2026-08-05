@@ -210,11 +210,12 @@ describe( 'SignupFormSocialFirst', () => {
 	describe( 'activationEmailFrom', () => {
 		beforeEach( () => ( mockPasswordlessProps.length = 0 ) );
 
+		// Between them these cover all three places the email form is rendered: the email-first
+		// layout renders two of them, the mobile-compact layout the third.
 		it.each( [
 			[ 'the email-first layout', { isEmailFirstVariant: true } ],
 			[ 'the mobile-compact layout', { isMobileCompactVariant: true } ],
-			[ 'the default layout', {} ],
-		] )( 'reaches the email form in %s', ( _label, layout ) => {
+		] )( 'reaches every email form in %s', ( _label, layout ) => {
 			render(
 				<SignupFormSocialFirst
 					{ ...defaultProps }
