@@ -262,9 +262,8 @@ export default function AgentDock( {
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
-		// Only the Jetpack package's wp-admin enqueue injects `site`, so its
-		// domain doubles as the gate for the site-based links that
-		// Calypso-hosted and reader chats can't resolve.
+		// The server injects `site` on wp-admin only, so its domain gates
+		// the site-based links.
 		const siteDomain = getAgentsManagerInlineData()?.site?.domain;
 
 		const options = [
