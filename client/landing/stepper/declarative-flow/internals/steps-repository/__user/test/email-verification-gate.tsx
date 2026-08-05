@@ -28,6 +28,7 @@ let activationEmailFromProp: string | undefined;
 let signupFormProps: {
 	userEmail?: string;
 	onUpdateEmail?: ( email: string ) => Promise< void >;
+	hideSocialOptions?: boolean;
 } = {};
 
 jest.mock( 'calypso/lib/analytics/tracks' );
@@ -75,15 +76,17 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 		activationEmailFrom,
 		userEmail,
 		onUpdateEmail,
+		hideSocialOptions,
 	}: {
 		onCreateAccountSuccess?: ( data: { ID: number } ) => void;
 		goToNextStep?: ( data: { bearer_token: string; ID: number } ) => void;
 		activationEmailFrom?: string;
 		userEmail?: string;
 		onUpdateEmail?: ( email: string ) => Promise< void >;
+		hideSocialOptions?: boolean;
 	} ) => {
 		activationEmailFromProp = activationEmailFrom;
-		signupFormProps = { userEmail, onUpdateEmail };
+		signupFormProps = { userEmail, onUpdateEmail, hideSocialOptions };
 		return (
 			<>
 				<button
@@ -190,6 +193,8 @@ describe( 'account step email verification gate', () => {
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
 
 		expect( signupFormProps.userEmail ).toBe( EMAIL );
+		// Signing up again is the one thing this screen must not offer someone fixing a typo.
+		expect( signupFormProps.hideSocialOptions ).toBe( true );
 		await user.click( screen.getByRole( 'button', { name: 'submit-email' } ) );
 
 		expect( updateUserSettings ).toHaveBeenCalledWith( { user_email: 'fixed@example.com' } );
