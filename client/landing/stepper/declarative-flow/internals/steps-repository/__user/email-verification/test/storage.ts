@@ -74,6 +74,19 @@ describe( 'email verification gate storage', () => {
 		expect( gateResendAvailableAt( scope ) ).toBeGreaterThan( Date.now() );
 	} );
 
+	// The countdown a tab is showing has to agree with what the server will enforce, so a stale
+	// deadline arriving after a longer one mustn't win.
+	it( 'never shortens a lockout that is already running', () => {
+		const scope = nextScope();
+		markGateShown( scope );
+
+		const long = Date.now() + 4 * 60 * 60 * 1000;
+		markResendUnavailableUntil( scope, long );
+		markResendUnavailableUntil( scope, Date.now() + 5 * 60 * 1000 );
+
+		expect( gateResendAvailableAt( scope ) ).toBe( long );
+	} );
+
 	// Only the tab that wrote an attempt used to remember it, so a tab that merely read one — or
 	// wrote to it before another tab did — had nothing, or the wrong thing, to put back.
 	it( 'restores what another tab last wrote, not what this one last wrote', () => {

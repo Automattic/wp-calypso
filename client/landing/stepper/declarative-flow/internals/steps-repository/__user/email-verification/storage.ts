@@ -133,15 +133,18 @@ export function claimGateConfirmation( scope: string ): { secondsOnStep: number 
 	} );
 }
 
-// Persisted so a reload doesn't forget a lockout and reopen the button into a refusal.
+// Persisted so a reload doesn't forget a lockout and reopen the button into a refusal. Only ever
+// extends: a deadline arriving late or out of order mustn't shorten one the server is still
+// enforcing.
 export function markResendUnavailableUntil( scope: string, deadline: number ): void {
-	updateGateRecord( scope, () => ( {
-		changes: { resendAvailableAt: deadline },
+	updateGateRecord( scope, ( record ) => ( {
+		changes: { resendAvailableAt: Math.max( record.resendAvailableAt, deadline ) },
 		result: undefined,
 	} ) );
 }
 
-// 0 when nothing is stored, which is also right when storage is unavailable: nothing claimed.
+// 0 when there's no attempt to speak of — which is not the same as storage being unavailable, the
+// case a tab's own copy is there to cover.
 export function gateResendAvailableAt( scope: string ): number {
 	return read( scope ).resendAvailableAt;
 }
