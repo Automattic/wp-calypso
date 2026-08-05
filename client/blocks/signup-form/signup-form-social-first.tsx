@@ -56,6 +56,9 @@ interface SignupFormSocialFirst {
 	customTosElement?: JSX.Element;
 	activationEmailFrom?: string;
 	onUpdateEmail?: ( email: string ) => Promise< void >;
+	// Drops both routes from the email screen back to the social one, for a caller whose screen is
+	// about the address rather than about how to sign up.
+	hideSocialOptions?: boolean;
 }
 
 const options = {
@@ -116,6 +119,7 @@ const SignupFormSocialFirst = ( {
 	customTosElement,
 	activationEmailFrom,
 	onUpdateEmail,
+	hideSocialOptions,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
@@ -296,14 +300,14 @@ const SignupFormSocialFirst = ( {
 						{ ...passwordlessFormProps }
 						renderTerms={ renderEmailStepTermsOfService }
 						secondaryFooterButton={
-							backButtonInFooter ? undefined : (
+							backButtonInFooter || hideSocialOptions ? undefined : (
 								<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
 									{ __( 'See all options' ) }
 								</Button>
 							)
 						}
 					/>
-					{ backButtonInFooter ? (
+					{ backButtonInFooter && ! hideSocialOptions ? (
 						<Button
 							onClick={ () => setCurrentStep( 'initial' ) }
 							className="back-button"

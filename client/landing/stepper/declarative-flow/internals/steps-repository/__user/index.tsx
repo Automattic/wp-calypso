@@ -260,6 +260,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				customTosElement={ signupTosElement }
 				activationEmailFrom={ gateEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
 				onUpdateEmail={ isEditingEmail ? updateEmail : undefined }
+				hideSocialOptions={ isEditingEmail }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm

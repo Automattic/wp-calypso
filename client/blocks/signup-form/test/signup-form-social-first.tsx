@@ -193,6 +193,32 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 	} );
 
+	// Both are routes from the email screen back to the social one, and which of the two renders
+	// depends on where the step container puts its back button.
+	describe( 'hideSocialOptions', () => {
+		it.each( [
+			[ 'in the footer', true ],
+			[ 'in the form', false ],
+		] )(
+			'drops the way back to the social screen with the back button %s',
+			( _label, backButtonInFooter ) => {
+				render(
+					<SignupFormSocialFirst
+						{ ...defaultProps }
+						userEmail="typo@example.com"
+						backButtonInFooter={ backButtonInFooter }
+						hideSocialOptions
+					/>
+				);
+
+				expect(
+					screen.queryByRole( 'button', { name: 'See all options' } )
+				).not.toBeInTheDocument();
+				expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+			}
+		);
+	} );
+
 	describe( 'MobileCompactTosNotice', () => {
 		test( 'renders the "options above" copy', () => {
 			render( <MobileCompactTosNotice /> );
