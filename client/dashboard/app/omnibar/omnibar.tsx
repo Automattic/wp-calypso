@@ -10,12 +10,14 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useMemo, useState } from 'react';
 import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useNotificationsPlugin } from './plugin-notifications';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
 import type { User } from '@automattic/api-core';
+import type { OmnibarNode } from '@automattic/omnibar';
 
 const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
 
@@ -31,6 +33,7 @@ function removeUnsupportedDotcomNodes( nodes: AdminBarNode[] ) {
 }
 
 export default function OmnibarContainer( { user }: { user?: User } ) {
+	const { supports } = useAppContext();
 	const [ hydrated, setHydrated ] = useState( false );
 	useEffect( () => {
 		setHydrated( true );
@@ -79,9 +82,12 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	const helpCenterPluginNode = useHelpCenterPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const statsSparklineNode = useStatsSparklinePlugin( { siteId, site } );
-	const siteActions = statsSparklineNode
-		? [ ...( baseOmnibarNodes.siteActions ?? [] ), statsSparklineNode ]
-		: baseOmnibarNodes.siteActions;
+	const siteActions = [ ...( baseOmnibarNodes.siteActions ?? [] ), statsSparklineNode ].filter(
+		// The palette is only mounted where the app supports it, so elsewhere the
+		// admin bar's button would open nothing.
+		( node ): node is OmnibarNode =>
+			!! node && ( node.id !== 'command-palette' || supports.commandPalette )
+	);
 
 	const omnibarNodes = {
 		...baseOmnibarNodes,

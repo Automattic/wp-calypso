@@ -1,3 +1,4 @@
+import { dispatch } from '@wordpress/data';
 import type { AdminBarNode, OmnibarNode, OmnibarNodes } from '../types';
 
 export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[] ): OmnibarNodes {
@@ -45,6 +46,20 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 				omnibarNode.meta = {
 					subtitle: doc.querySelector( '.ab-label' )?.textContent?.trim(),
 				};
+				siteActionNodes.push( omnibarNode );
+				break;
+			}
+			case 'command-palette': {
+				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+				omnibarNode.title = undefined;
+				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
+				omnibarNode.icon = <span className="dashicons-before dashicons-search" />;
+				omnibarNode.meta = {
+					subtitle: doc.querySelector( 'kbd' )?.textContent?.trim(),
+				};
+				// The node points at `#` and relies on an inline onclick handler.
+				omnibarNode.href = undefined;
+				omnibarNode.onClick = () => dispatch( 'core/commands' ).open();
 				siteActionNodes.push( omnibarNode );
 				break;
 			}
