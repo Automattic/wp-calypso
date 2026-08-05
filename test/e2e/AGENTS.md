@@ -141,7 +141,7 @@ test( 'Test', async ( { pageLogin, componentSidebar } ) => {
 
 ### Available Fixtures
 
-**Accounts**: `accountDefaultUser`, `accountGivenByEnvironment`, `accountAtomic`, `accountGutenbergSimple`, `accounti18n`, `accountPreRelease`, `accountSimpleSiteFreePlan`, `accountSMS`
+**Accounts**: one fixture per key of `fixtureAccounts` in [`lib/pw-base.ts`](lib/pw-base.ts), plus `accountGivenByEnvironment` and `accountSMS`. Adding a key there adds the fixture and primes the account before the suite.
 
 **Pages/Components**: Follow naming conventions:
 
