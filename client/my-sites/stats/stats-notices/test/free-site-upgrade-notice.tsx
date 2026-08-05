@@ -87,7 +87,7 @@ describe( 'FreeSiteUpgradeNotice', () => {
 				'Upgrade to unlock UTM tracking, device stats, and region and city locations, and get priority support.'
 			)
 		).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Upgrade my Stats' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Upgrade' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /Learn more/ } ) ).toHaveAttribute(
 			'href',
 			'https://jetpack.com/support/jetpack-stats/free-or-paid/#what-a-paid-plan-adds'

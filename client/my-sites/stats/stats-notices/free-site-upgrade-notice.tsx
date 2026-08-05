@@ -132,7 +132,7 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 				'Upgrade to unlock UTM tracking, device stats, and region and city locations, and get priority support.'
 		  );
 
-	const CTAText = isWPCOMPaidStatsFlow ? translate( 'Upgrade' ) : translate( 'Upgrade my Stats' );
+	const CTAText = translate( 'Upgrade' );
 
 	const localizedLearnMoreLink = localizeUrl( learnMoreLink );
 	const openHelpCenter = () => {
