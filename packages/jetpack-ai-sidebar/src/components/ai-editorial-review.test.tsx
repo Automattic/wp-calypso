@@ -465,6 +465,23 @@ describe( 'AiEditorialReview — smoke render', () => {
 		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
+	it( 'renders an implication that omits affected_blocks', () => {
+		// The tool schema marks affected_blocks required but the tool is not strict,
+		// so the model can omit it. Indexing it directly used to blank the card.
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					implications: [
+						{ change: 'Tone shift', implies: 'May affect downstream FAQ wording.' },
+					] as any,
+				} ) }
+			/>
+		);
+
+		expect( screen.getByText( 'Tone shift' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Affects:' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'does not tag a stale AER edit "Manual edit" even when the source text is absent', () => {
 		// Editor moved to post 999 (stale) AND the current block doesn't contain the
 		// edit's source text — so the frontend reason is truthy. Without the

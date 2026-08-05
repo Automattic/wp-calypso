@@ -73,7 +73,7 @@ interface Conflict {
 interface Implication {
 	change: string;
 	implies: string;
-	affected_blocks: number[];
+	affected_blocks?: number[];
 }
 
 interface SuggestedEdit {
@@ -1389,27 +1389,33 @@ export default function AiEditorialReview( {
 									onToggle={ ( next: boolean ) => setSectionOpen( 'implications', next ) }
 								>
 									<ul>
-										{ implications.map( ( imp, i ) => (
-											<li key={ `imp-${ i }` }>
-												<strong>{ imp.change }</strong> — { imp.implies }
-												{ imp.affected_blocks.length > 0 && (
-													<span className="jetpack-ai-editorial-review__affected-blocks">
-														{ ' ' }
-														{ __( 'Affects:', __i18n_text_domain__ ) }{ ' ' }
-														{ imp.affected_blocks.map( ( b, j ) => (
-															<span key={ `imp-${ i }-aff-${ j }` }>
-																{ j > 0 && ', ' }
-																<BlockRef
-																	index={ b }
-																	blocks={ blocks }
-																	onFocus={ focusCurrentPostBlock }
-																/>
-															</span>
-														) ) }
-													</span>
-												) }
-											</li>
-										) ) }
+										{ implications.map( ( imp, i ) => {
+											// A non-strict payload can omit affected_blocks.
+											const affectedBlocks = Array.isArray( imp.affected_blocks )
+												? imp.affected_blocks
+												: [];
+											return (
+												<li key={ `imp-${ i }` }>
+													<strong>{ imp.change }</strong> — { imp.implies }
+													{ affectedBlocks.length > 0 && (
+														<span className="jetpack-ai-editorial-review__affected-blocks">
+															{ ' ' }
+															{ __( 'Affects:', __i18n_text_domain__ ) }{ ' ' }
+															{ affectedBlocks.map( ( b, j ) => (
+																<span key={ `imp-${ i }-aff-${ j }` }>
+																	{ j > 0 && ', ' }
+																	<BlockRef
+																		index={ b }
+																		blocks={ blocks }
+																		onFocus={ focusCurrentPostBlock }
+																	/>
+																</span>
+															) ) }
+														</span>
+													) }
+												</li>
+											);
+										} ) }
 									</ul>
 								</PanelBody>
 							</div>
