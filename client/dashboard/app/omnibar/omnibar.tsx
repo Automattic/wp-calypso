@@ -16,8 +16,8 @@ import { OmnibarHomeIcon } from './home';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useNotificationsPlugin } from './plugin-notifications';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
+import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
-import type { OmnibarNode } from '@automattic/omnibar';
 
 const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
 
@@ -28,8 +28,15 @@ const UNSUPPORTED_DOTCOM_NODE_IDS = new Set( [
 	'my-wpcom-account',
 ] );
 
-function removeUnsupportedDotcomNodes( nodes: AdminBarNode[] ) {
-	return nodes.filter( ( node ) => ! UNSUPPORTED_DOTCOM_NODE_IDS.has( node.id ) );
+function removeUnsupportedNodes( nodes: AdminBarNode[], supports: AppConfig[ 'supports' ] ) {
+	return nodes.filter( ( node ) => {
+		if ( UNSUPPORTED_DOTCOM_NODE_IDS.has( node.id ) ) {
+			return false;
+		}
+		// The palette is only mounted where the app supports it, so elsewhere the
+		// admin bar's button would open nothing.
+		return node.id !== 'command-palette' || supports.commandPalette;
+	} );
 }
 
 export default function OmnibarContainer( { user }: { user?: User } ) {
@@ -56,7 +63,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 
 	const baseOmnibarNodes = useMemo( () => {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
-		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedDotcomNodes( nodes ) );
+		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedNodes( nodes, supports ) );
 
 		if ( ! result.home ) {
 			result.home = { id: '' };
@@ -77,17 +84,14 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		}
 
 		return result;
-	}, [ dashboardNodes, siteNodes, site, siteIconSize ] );
+	}, [ dashboardNodes, siteNodes, site, siteIconSize, supports ] );
 
 	const helpCenterPluginNode = useHelpCenterPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const statsSparklineNode = useStatsSparklinePlugin( { siteId, site } );
-	const siteActions = [ ...( baseOmnibarNodes.siteActions ?? [] ), statsSparklineNode ].filter(
-		// The palette is only mounted where the app supports it, so elsewhere the
-		// admin bar's button would open nothing.
-		( node ): node is OmnibarNode =>
-			!! node && ( node.id !== 'command-palette' || supports.commandPalette )
-	);
+	const siteActions = statsSparklineNode
+		? [ ...( baseOmnibarNodes.siteActions ?? [] ), statsSparklineNode ]
+		: baseOmnibarNodes.siteActions;
 
 	const omnibarNodes = {
 		...baseOmnibarNodes,

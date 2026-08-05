@@ -145,6 +145,10 @@ body:has( .omnibar ) {
 	.dashicons-admin-comments::before {
 		top: 1px;
 	}
+
+	.dashicons-search::before {
+		top: 3px;
+	}
 }
 
 .omnibar .dashicons-before {

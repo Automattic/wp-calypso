@@ -59,7 +59,7 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 				};
 				// The node points at `#` and relies on an inline onclick handler.
 				omnibarNode.href = undefined;
-				omnibarNode.onClick = () => dispatch( 'core/commands' ).open();
+				omnibarNode.onClick = () => ( dispatch( 'core/commands' ) as { open: () => void } ).open();
 				siteActionNodes.push( omnibarNode );
 				break;
 			}
