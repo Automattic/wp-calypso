@@ -6,6 +6,7 @@ import { handleOnCatch } from '../logger';
 import { startPerformanceTracking } from '../performance-tracking';
 import { createAgencyRoutes } from './agency';
 import { createAgencyClientRoutes } from './agency-client';
+import { createAgencySitesRoutes } from './agency-sites';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
@@ -69,6 +70,10 @@ const createRouteTree = ( config: AppConfig ) => {
 
 	if ( config.supports.agency ) {
 		children.push( ...createAgencyRoutes() );
+	}
+
+	if ( config.supports.agencySites ) {
+		children.push( ...createAgencySitesRoutes() );
 	}
 
 	if ( config.supports.agencyClient ) {

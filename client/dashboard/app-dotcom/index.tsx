@@ -23,6 +23,7 @@ boot( {
 	Logo,
 	supports: {
 		agency: false,
+		agencySites: false,
 		agencyClient: false,
 		sites: true,
 		domains: true,

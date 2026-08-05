@@ -2,7 +2,7 @@ import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useCallback } from 'react';
-import { agencySiteBackupDownloadRoute } from '../../../app/router/agency';
+import { agencySiteBackupDownloadRoute } from '../../../app/router/agency-sites';
 import { BackupDownloadPage } from '../../../sites/backup-download/download-page';
 
 export default function AgencySiteBackupDownload() {

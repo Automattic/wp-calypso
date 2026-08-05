@@ -1,4 +1,4 @@
-import { agencySiteRoute } from '../../../app/router/agency';
+import { agencySiteRoute } from '../../../app/router/agency-sites';
 import { SiteMonitoringContent } from '../../../sites/monitoring';
 
 export default function AgencySiteMonitoring() {

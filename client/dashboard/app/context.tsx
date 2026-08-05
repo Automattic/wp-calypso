@@ -20,7 +20,6 @@ export type AgencySupports = {
 	exclusiveOffers: boolean;
 	learn: boolean;
 	mcp: boolean;
-	sites: boolean;
 	team: boolean;
 	earn: boolean;
 };
@@ -55,6 +54,8 @@ export type AppConfig = {
 	LoadingLogo?: React.FC;
 	supports: {
 		agency: AgencySupports | false;
+		// The agency site routes; A4A-only, an alternative to the shared `sites`.
+		agencySites: boolean;
 		agencyClient: AgencyClientSupports | false;
 		sites: boolean;
 		plugins: boolean;
@@ -103,6 +104,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	LoadingLogo: undefined,
 	supports: {
 		agency: false,
+		agencySites: false,
 		agencyClient: false,
 		sites: false,
 		plugins: false,

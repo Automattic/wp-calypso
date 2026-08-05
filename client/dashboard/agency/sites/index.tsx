@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { agencySitesRoute } from '../../app/router/agency';
+import { agencySitesRoute } from '../../app/router/agency-sites';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
