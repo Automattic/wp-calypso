@@ -7,7 +7,6 @@ import {
 	EXTERNAL_WPCOM_BILLING_HISTORY_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PurchasesSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/purchases';
-import consumeCheckoutReceiptMarker from 'calypso/a8c-for-agencies/sections/marketplace/lib/consume-checkout-receipt-marker';
 import {
 	publicToInternalLicenseFilter,
 	publicToInternalLicenseSortField,
@@ -31,9 +30,6 @@ export const purchasesContext: Callback = () => {
 
 export const licensesContext: Callback = ( context, next ) => {
 	const { s: search, sort_field, sort_direction, page } = context.query;
-
-	consumeCheckoutReceiptMarker( context );
-
 	const filter = publicToInternalLicenseFilter( context.params.filter, LicenseFilter.NotRevoked );
 	const currentPage = parseInt( page ) || 1;
 	const sortField = publicToInternalLicenseSortField( sort_field, LicenseSortField.IssuedAt );
