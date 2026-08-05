@@ -6,10 +6,6 @@
 	gap: 4px;
 	padding-bottom: 4px;
 
-	&:has( .agents-manager-chat-header__title ) {
-		justify-content: space-between;
-	}
-
 	// Full class name (not `&__`) so the compiled descendant selector
 	// out-specifies `.components-button` from @wordpress/components.
 	.agents-manager-chat-header__back-btn {
