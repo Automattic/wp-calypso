@@ -124,6 +124,20 @@ export function useInstallDeadline( {
 		setAnchor( readOrCreateAnchor( siteId, productSlug, Date.now() ) );
 	}, [ enabled, siteId, productSlug, anchor ] );
 
+	// The wait stopped running before it resolved — an error took over, or the authorization behind
+	// it went away. Retire the attempt so re-enabling starts a fresh clock instead of inheriting the
+	// elapsed one. Gated on an armed anchor so a mount that has not started yet leaves a stored
+	// anchor from the attempt it is resuming alone.
+	useEffect( () => {
+		if ( enabled || anchor === null ) {
+			return;
+		}
+		clearInstallAnchor( siteId, productSlug );
+		setAnchor( null );
+		setWitnessedInFlight( false );
+		setHaltedOutcome( null );
+	}, [ enabled, anchor, siteId, productSlug ] );
+
 	const {
 		data: transfer,
 		isFetched,
@@ -131,8 +145,20 @@ export function useInstallDeadline( {
 	} = useQuery( {
 		...siteLatestAtomicTransferQuery( siteId ),
 		enabled: enabled && !! siteId && ! isHalted,
-		refetchInterval: ( query ) =>
-			isSettled( query.state.data as AtomicTransfer | undefined ) ? false : TRANSFER_POLL_MS,
+		refetchInterval: ( query ) => {
+			const latest = query.state.data as AtomicTransfer | undefined;
+			// Stop only once a settled record can be tied to this attempt. An unrelated one — the
+			// previous try's, while this one's transfer does not exist yet — must not end the poll, or
+			// the transfer being waited on is never seen. The deadline still bounds the polling.
+			if (
+				latest &&
+				isSettled( latest ) &&
+				belongsToAttempt( latest, anchor, witnessedInFlight )
+			) {
+				return false;
+			}
+			return TRANSFER_POLL_MS;
+		},
 		// A 404 means this site has never transferred, which is an answer, not an outage.
 		retry: ( count, error ) => ( error as { status?: number } )?.status !== 404 && count < 2,
 	} );
@@ -143,11 +169,23 @@ export function useInstallDeadline( {
 	const isFailedTransfer =
 		isRecentTransfer && FAILED_TRANSFER_STATUSES.has( transfer?.status ?? '' );
 
+	const startedWithThisAttempt =
+		isRecentTransfer && anchor !== null && transferStartedAt >= anchor - PRE_MOUNT_GRACE_MS;
+
+	// Whose transfer this record is. A settled one from before the attempt's grace belongs to a
+	// previous try — on the upload flow no new transfer exists until the upload finishes, so that is
+	// exactly what the endpoint keeps returning meanwhile. One still running is this attempt's: a
+	// previous try's transfer that is still going would be the same transfer.
+	const isThisAttemptsTransfer =
+		isRecentTransfer && ( witnessedInFlight || startedWithThisAttempt || ! isSettled( transfer ) );
+
 	// A transfer newer than the anchor is a new attempt started server-side — a retry after a
 	// failed or timed-out install — so the wait's clock moves to it. Derived rather than set in an
 	// effect, so the deadline below never evaluates against the stale anchor.
 	const effectiveAnchor =
-		anchor !== null && isRecentTransfer && transferStartedAt > anchor ? transferStartedAt : anchor;
+		anchor !== null && isThisAttemptsTransfer && transferStartedAt > anchor
+			? transferStartedAt
+			: anchor;
 
 	// Persist the move so a refresh keeps the newer clock too.
 	useEffect( () => {
@@ -157,22 +195,18 @@ export function useInstallDeadline( {
 	}, [ isHalted, effectiveAnchor, anchor, siteId, productSlug ] );
 
 	useEffect( () => {
-		if ( isRecentTransfer && ! FAILED_TRANSFER_STATUSES.has( transfer?.status ?? '' ) ) {
+		if ( isRecentTransfer && ! isSettled( transfer ) ) {
 			setWitnessedInFlight( true );
 		}
-	}, [ isRecentTransfer, transfer?.status ] );
+	}, [ isRecentTransfer, transfer ] );
 
 	// The wait started at whichever we can see first: the transfer checkout kicked off before this
-	// page existed, or this page's own arrival.
-	const knownStarts = [ effectiveAnchor, isRecentTransfer ? transferStartedAt : null ].filter(
+	// page existed, or this page's own arrival. Only this attempt's transfer may backdate it — a
+	// previous try's would cut the deadline short by however long ago that one started.
+	const knownStarts = [ effectiveAnchor, isThisAttemptsTransfer ? transferStartedAt : null ].filter(
 		( value ): value is number => value !== null
 	);
 	const waitStartedAt = knownStarts.length ? Math.min( ...knownStarts ) : null;
-
-	const startedWithThisAttempt =
-		isRecentTransfer &&
-		effectiveAnchor !== null &&
-		transferStartedAt >= effectiveAnchor - PRE_MOUNT_GRACE_MS;
 
 	const isFailureDetected =
 		enabled && isFailedTransfer && ( witnessedInFlight || startedWithThisAttempt );
@@ -209,4 +243,21 @@ export function useInstallDeadline( {
 
 function isSettled( transfer: AtomicTransfer | undefined ): boolean {
 	return !! transfer && SETTLED_TRANSFER_STATUSES.has( transfer.status );
+}
+
+// Whether a settled transfer record can be read as the outcome of the attempt in progress, rather
+// than a leftover from a previous one. Kept free of hook state so the polling callback can use it.
+function belongsToAttempt(
+	transfer: AtomicTransfer,
+	anchor: number | null,
+	witnessedInFlight: boolean
+): boolean {
+	if ( witnessedInFlight ) {
+		return true;
+	}
+	if ( anchor === null ) {
+		return false;
+	}
+	const startedAt = Date.parse( transfer.created_at );
+	return ! Number.isNaN( startedAt ) && startedAt >= anchor - PRE_MOUNT_GRACE_MS;
 }

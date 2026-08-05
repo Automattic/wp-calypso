@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { act } from '@testing-library/react';
+import { useState } from 'react';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import {
 	INSTALL_DEADLINE_MS,
@@ -23,6 +24,17 @@ const renderDeadline = ( enabled = true ) =>
 	renderHookWithProvider( () =>
 		useInstallDeadline( { siteId: SITE_ID, productSlug: SLUG, enabled } )
 	);
+
+// Lets a test flip `enabled` on a live hook, which is what an async preflight error does.
+const renderSwitchableDeadline = () => {
+	let setEnabled: ( value: boolean ) => void = () => {};
+	const rendered = renderHookWithProvider( () => {
+		const [ enabled, set ] = useState( true );
+		setEnabled = set;
+		return useInstallDeadline( { siteId: SITE_ID, productSlug: SLUG, enabled } );
+	} );
+	return { ...rendered, setEnabled: ( value: boolean ) => act( () => setEnabled( value ) ) };
+};
 
 // Modern fake timers move the wall clock along with the timers, which is what the hook re-reads.
 const advance = async ( ms: number ) => {
@@ -181,6 +193,61 @@ describe( 'useInstallDeadline', () => {
 		await advance( 15000 );
 
 		expect( result.current.hasTransferFailed ).toBe( false );
+		expect( result.current.hasTimedOut ).toBe( false );
+	} );
+
+	// An async preflight error disables the wait mid-flight. The attempt is over, so its elapsed
+	// clock must not be handed to whatever the customer tries next in the same tab.
+	it( 'retires the attempt when the wait is disabled before it resolved', async () => {
+		const { setEnabled } = renderSwitchableDeadline();
+		await advance( INSTALL_DEADLINE_MS - 30000 );
+		setEnabled( false );
+
+		expect(
+			window.sessionStorage.getItem( `marketplace-install-started-at:${ SITE_ID }:${ SLUG }` )
+		).toBeNull();
+
+		const { result } = renderDeadline();
+		await advance( 60000 );
+
+		expect( result.current.hasTimedOut ).toBe( false );
+	} );
+
+	// The previous try's failed transfer is what /latest keeps returning until the upload creates a
+	// new one. Treating it as settled would end the poll, and this attempt's transfer — and its own
+	// failure — would never be seen.
+	it( 'keeps polling past a settled transfer that is not this attempt’s', async () => {
+		mockFetchLatestAtomicTransfer.mockResolvedValue( {
+			status: 'error',
+			created_at: new Date( Date.now() - 3 * 60 * 1000 ).toISOString(),
+		} );
+
+		const { result } = renderDeadline();
+		await advance( 15000 );
+		expect( result.current.hasTransferFailed ).toBe( false );
+
+		const callsBefore = mockFetchLatestAtomicTransfer.mock.calls.length;
+		mockFetchLatestAtomicTransfer.mockResolvedValue( {
+			status: 'active',
+			created_at: new Date( Date.now() ).toISOString(),
+		} );
+		await advance( 30000 );
+
+		expect( mockFetchLatestAtomicTransfer.mock.calls.length ).toBeGreaterThan( callsBefore );
+		expect( result.current.hasTimedOut ).toBe( false );
+	} );
+
+	// A previous try's transfer must not backdate this attempt's clock, or the deadline fires early
+	// by however long ago that one started.
+	it( 'does not backdate the deadline to a previous attempt’s transfer', async () => {
+		mockFetchLatestAtomicTransfer.mockResolvedValue( {
+			status: 'error',
+			created_at: new Date( Date.now() - 4 * 60 * 1000 ).toISOString(),
+		} );
+
+		const { result } = renderDeadline();
+		await advance( 2 * 60 * 1000 );
+
 		expect( result.current.hasTimedOut ).toBe( false );
 	} );
 
