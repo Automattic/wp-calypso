@@ -23,9 +23,11 @@ import {
 	getIsSimpleSite,
 } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { COMMERCIAL_PAYWALL_KILLED } from 'calypso/state/stats/plan-usage/constants';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
 import usePlanUsageQuery, { getUsageLimitStatus } from '../hooks/use-plan-usage-query';
+import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuantity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -472,6 +474,7 @@ const StatsSingleItemPagePurchase = ( {
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const { supportCommercialUse } = useStatsPurchases( siteId );
+	const { isNewSite } = useSiteCompulsoryPlanSelectionQualifiedCheck( siteId );
 
 	return (
 		<>
@@ -486,15 +489,17 @@ const StatsSingleItemPagePurchase = ( {
 					from={ from }
 				/>
 			</StatsSingleItemPagePurchaseFrame>
-			{ ! supportCommercialUse && ! isCommercial && (
-				<StatsSingleItemCard>
-					<StatsCommercialFlowOptOutForm
-						isCommercial={ isCommercial }
-						siteId={ siteId }
-						siteSlug={ siteSlug }
-					/>
-				</StatsSingleItemCard>
-			) }
+			{ ! COMMERCIAL_PAYWALL_KILLED &&
+				! supportCommercialUse &&
+				! ( isNewSite && isCommercial ) && (
+					<StatsSingleItemCard>
+						<StatsCommercialFlowOptOutForm
+							isCommercial={ isCommercial }
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+						/>
+					</StatsSingleItemCard>
+				) }
 		</>
 	);
 };
