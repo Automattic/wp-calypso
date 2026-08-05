@@ -6,6 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
+import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useMemo, useState } from 'react';
 import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
@@ -13,7 +14,6 @@ import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useNotificationsPlugin } from './plugin-notifications';
-import { useSiteSwitcherPlugin } from './plugin-site-switcher';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
 import type { User } from '@automattic/api-core';
 
@@ -48,6 +48,9 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		enabled: hydrated && !! siteId,
 	} );
 
+	const isDesktop = useViewportMatch( 'medium' );
+	const siteIconSize = isDesktop ? 20 : 28;
+
 	const baseOmnibarNodes = useMemo( () => {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
 		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedDotcomNodes( nodes ) );
@@ -66,16 +69,15 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 				};
 			}
 
-			result.site.icon = <SiteIcon site={ site } size={ 20 } />;
+			result.site.icon = <SiteIcon site={ site } size={ siteIconSize } />;
 			result.site.title = getSiteDisplayName( site );
 		}
 
 		return result;
-	}, [ dashboardNodes, siteNodes, site ] );
+	}, [ dashboardNodes, siteNodes, site, siteIconSize ] );
 
 	const helpCenterPluginNode = useHelpCenterPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
-	const siteSwitcherPluginNode = useSiteSwitcherPlugin();
 	const statsSparklineNode = useStatsSparklinePlugin( { siteId, site } );
 	const siteActions = statsSparklineNode
 		? [ ...( baseOmnibarNodes.siteActions ?? [] ), statsSparklineNode ]
@@ -83,7 +85,6 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 
 	const omnibarNodes = {
 		...baseOmnibarNodes,
-		sitePlugins: [ siteSwitcherPluginNode ],
 		siteActions,
 		plugins: [ helpCenterPluginNode, notificationsPluginNode ],
 	};

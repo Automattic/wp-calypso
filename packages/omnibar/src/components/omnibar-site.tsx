@@ -1,4 +1,3 @@
-import { useViewportMatch } from '@wordpress/compose';
 import { Stack } from '@wordpress/ui';
 import { OmnibarMenu } from './omnibar-menu';
 import type { OmnibarNode } from '../types';
@@ -12,21 +11,10 @@ export function OmnibarSiteNode( {
 	pluginNodes?: OmnibarNode[];
 	actionNodes?: OmnibarNode[];
 } ) {
-	const isDesktop = useViewportMatch( 'medium' );
-
-	const siteNode = isDesktop
-		? node
-		: {
-				...node,
-				children: [ ...( node.children || [] ), ...( actionNodes || [] ) ],
-		  };
-
-	const siteActionNodes = isDesktop ? actionNodes : undefined;
-
 	return [
-		<OmnibarMenu key={ siteNode.id } node={ siteNode } style={ { minWidth: 0 } } />,
+		<OmnibarMenu key={ node.id } node={ node } className="omnibar__site" />,
 		pluginNodes && <OmnibarSitePluginsNode key="plugins" nodes={ pluginNodes } />,
-		siteActionNodes && <OmnibarSiteActionsNode key="actions" nodes={ siteActionNodes } />,
+		actionNodes && <OmnibarSiteActionsNode key="actions" nodes={ actionNodes } />,
 	].filter( Boolean );
 }
 
@@ -39,14 +27,11 @@ export function OmnibarSiteActionsNode( { nodes }: { nodes: OmnibarNode[] } ) {
 		<OmnibarMenu
 			key={ node.id }
 			node={ {
-				render: ( { title, meta } ) => (
-					<Stack direction="row" gap="xs" align="center">
-						<span>{ title }</span>
-						{ meta?.subtitle && (
-							<span style={ { opacity: meta.subtitle !== '0' ? undefined : '0.5' } }>
-								{ meta.subtitle }
-							</span>
-						) }
+				render: ( { icon, title, meta } ) => (
+					<Stack direction="row" align="center" className="omnibar__site-action">
+						{ icon }
+						{ title && <span className="omnibar__label">{ title }</span> }
+						{ meta?.subtitle && <span className="omnibar__label">{ meta.subtitle }</span> }
 					</Stack>
 				),
 				...node,

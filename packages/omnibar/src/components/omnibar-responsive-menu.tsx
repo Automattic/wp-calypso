@@ -1,4 +1,3 @@
-import { Icon, menu } from '@wordpress/icons';
 import { Button } from '@wordpress/ui';
 
 import './omnibar-responsive-menu.scss';
@@ -15,7 +14,7 @@ export function OmnibarResponsiveMenu( {
 			aria-label="Menu"
 			onClick={ onClickResponsiveMenu }
 		>
-			<Icon icon={ menu } />
+			<span className="dashicons-before dashicons-menu-alt" />
 		</Button>
 	);
 }
