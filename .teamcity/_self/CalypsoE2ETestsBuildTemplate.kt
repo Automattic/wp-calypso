@@ -23,6 +23,10 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.LOCALE", "en")
+		// No AUTHENTICATE_ACCOUNTS on purpose: setting it replaces the whole list the
+		// prime-logins setup project logs in as, so a value here would skip every account it
+		// doesn't name. Set it only on a build type running a narrow group, or to an empty
+		// value to skip priming. See test/e2e/setup/prime-logins.setup.ts.
 		// required in the CTRF report
 		param("env.BRANCH_NAME", "%teamcity.build.branch%")
 		param("PROJECT", "desktop")
