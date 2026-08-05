@@ -16,8 +16,15 @@ import { ButtonStack } from '../button-stack';
 import { Card, CardBody } from '../card';
 import InlineSupportLink from '../inline-support-link';
 import Notice from '../notice';
+import { getCaContactFormFields, getCaContactFormLayout, hasCaDomain } from './ca-contact-fields';
 import { getContactFormFields } from './contact-form-fields';
 import { mapValidationMessagesToFieldErrors } from './contact-validation-utils';
+import {
+	getFrContactFormFields,
+	getFrContactFormLayout,
+	getFrExtra,
+	hasFrDomain,
+} from './fr-contact-fields';
 import { RegionAddressFieldsLayout } from './region-address-fieldsets';
 import {
 	getUkContactFormFields,
@@ -114,6 +121,9 @@ export default function ContactForm( {
 
 	const needsUkFields = useMemo( () => hasUkDomain( domainNames ), [ domainNames ] );
 	const ukRegistrantType = getUkExtra( normalizedFormData ).registrantType;
+	const needsFrFields = useMemo( () => hasFrDomain( domainNames ), [ domainNames ] );
+	const frRegistrantType = getFrExtra( normalizedFormData ).registrantType;
+	const needsCaFields = useMemo( () => hasCaDomain( domainNames ), [ domainNames ] );
 
 	const fields: Field< DomainContactDetails >[] = useMemo(
 		() => [
@@ -124,6 +134,8 @@ export default function ContactForm( {
 				asyncValidator
 			),
 			...( needsUkFields ? getUkContactFormFields( ukRegistrantType ) : [] ),
+			...( needsFrFields ? getFrContactFormFields( frRegistrantType ) : [] ),
+			...( needsCaFields ? getCaContactFormFields() : [] ),
 		],
 		[
 			countryList,
@@ -132,6 +144,9 @@ export default function ContactForm( {
 			asyncValidator,
 			needsUkFields,
 			ukRegistrantType,
+			needsFrFields,
+			frRegistrantType,
+			needsCaFields,
 		]
 	);
 
@@ -156,6 +171,8 @@ export default function ContactForm( {
 				countryCode: selectedCountryCode,
 			} ),
 			...( needsUkFields ? getUkContactFormLayout( ukRegistrantType ) : [] ),
+			...( needsFrFields ? getFrContactFormLayout( frRegistrantType ) : [] ),
+			...( needsCaFields ? getCaContactFormLayout() : [] ),
 			'optOutTransferLock',
 		],
 	};

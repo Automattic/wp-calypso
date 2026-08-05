@@ -1,5 +1,7 @@
 import {
 	type DomainContactDetails,
+	type DomainContactDetailsExtra,
+	type WhoisContactExtra,
 	type WhoisDataEntry,
 	WhoisType,
 	type Domain,
@@ -13,7 +15,15 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainsContactInfoRoute, domainsIndexRoute } from '../../app/router/domains';
+import {
+	isCaDomain,
+	mapWhoisExtraToCaContactExtra,
+} from '../../components/domain-contact-details-form/ca-contact-fields';
 import ContactForm from '../../components/domain-contact-details-form/contact-form';
+import {
+	isFrDomain,
+	mapWhoisExtraToFrContactExtra,
+} from '../../components/domain-contact-details-form/fr-contact-fields';
 import {
 	isUkDomain,
 	mapWhoisExtraToUkContactExtra,
@@ -89,33 +99,54 @@ export default function DomainsContactInfo() {
 
 		const initialData = aggregateWhoisDataWithMostCommonValues( registrantWhois );
 
-		// Only the .uk domains carry registrant details, so they vote alone. The
-		// loader keeps `whoisData` in `selectedDomains` order, which is what makes
-		// the index check work. Counting the rest in would let their empty values
-		// win the majority and drop a prefill the .uk domains agreed on.
-		const ukRegistrantWhois = whoisData
-			.filter( ( _, index ) => isUkDomain( selectedDomains[ index ] ) )
-			.flat()
-			.filter( ( whois ) => whois.type === WhoisType.REGISTRANT );
+		// Only the matching TLD's domains carry these registrant details, so they
+		// vote alone. The loader keeps `whoisData` in `selectedDomains` order,
+		// which is what makes the index check work. Counting the rest in would let
+		// their empty values win the majority and drop a prefill the matching
+		// domains agreed on.
+		const aggregateExtraForTld = (
+			matchesTld: ( domainName: string ) => boolean
+		): WhoisContactExtra | undefined => {
+			const registrantWhois = whoisData
+				.filter( ( _, index ) => matchesTld( selectedDomains[ index ] ) )
+				.flat()
+				.filter( ( whois ) => whois.type === WhoisType.REGISTRANT );
 
-		// Follow the same most-common-value rule as every other field: when the
-		// selected .uk domains disagree on registrant type there is no single right
-		// answer, so the majority one is offered and the registrant can correct it.
-		const mostCommonExtraValue = ( fieldName: string ) =>
-			mostCommonValueInArray(
-				ukRegistrantWhois.map( ( whois ) => whois.extra?.[ fieldName ] ?? '' )
-			) ?? '';
+			if ( ! registrantWhois.length ) {
+				return undefined;
+			}
 
-		const ukExtra = ukRegistrantWhois.length
-			? mapWhoisExtraToUkContactExtra( {
-					registrant_type: mostCommonExtraValue( 'registrant_type' ),
-					trading_name: mostCommonExtraValue( 'trading_name' ),
-					registration_number: mostCommonExtraValue( 'registration_number' ),
-			  } )
-			: undefined;
+			// Follow the same most-common-value rule as every other field: when the
+			// selected domains disagree on a value there is no single right answer,
+			// so the majority one is offered and the registrant can correct it.
+			const fieldNames = new Set(
+				registrantWhois.flatMap( ( whois ) => Object.keys( whois.extra ?? {} ) )
+			);
+			const aggregated: WhoisContactExtra = {};
+			for ( const fieldName of fieldNames ) {
+				aggregated[ fieldName ] =
+					mostCommonValueInArray(
+						registrantWhois.map( ( whois ) => whois.extra?.[ fieldName ] ?? '' )
+					) ?? '';
+			}
+			return aggregated;
+		};
 
+		const extra: DomainContactDetailsExtra = {};
+		const ukExtra = mapWhoisExtraToUkContactExtra( aggregateExtraForTld( isUkDomain ) );
 		if ( ukExtra ) {
-			initialData.extra = { uk: ukExtra };
+			extra.uk = ukExtra;
+		}
+		const frExtra = mapWhoisExtraToFrContactExtra( aggregateExtraForTld( isFrDomain ) );
+		if ( frExtra ) {
+			extra.fr = frExtra;
+		}
+		const caExtra = mapWhoisExtraToCaContactExtra( aggregateExtraForTld( isCaDomain ) );
+		if ( caExtra ) {
+			extra.ca = caExtra;
+		}
+		if ( Object.keys( extra ).length > 0 ) {
+			initialData.extra = extra;
 		}
 
 		return { initialData, key: JSON.stringify( initialData ) };
