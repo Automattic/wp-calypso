@@ -6,6 +6,7 @@ export interface OmnibarNode {
 	group?: boolean;
 	href?: string;
 	onClick?: () => void;
+	isActive?: boolean;
 	meta?: SiteActionNodeMeta & UserInfoNodeMeta;
 	render?: ( node: OmnibarNode ) => React.ReactNode;
 	children?: OmnibarNode[];

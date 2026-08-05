@@ -21,10 +21,13 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState(
 		!! user?.has_unseen_notes
 	);
+	const [ isPanelOpen, setIsPanelOpen ] = useState( false );
 
 	useOmnibarEvent( 'notificationsUnseenCount', ( count ) =>
 		setHasUnseenNotifications( count > 0 )
 	);
+
+	useOmnibarEvent( 'notificationsOpen', setIsPanelOpen );
 
 	const bellRef = useRef< HTMLSpanElement >( null );
 
@@ -41,6 +44,7 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 				<BellIcon hasUnread={ hasUnseenNotifications } />
 			</span>
 		),
+		isActive: isPanelOpen,
 		onClick: () => omnibarEvents.notifications.emit(),
 	};
 }
