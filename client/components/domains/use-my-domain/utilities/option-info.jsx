@@ -24,9 +24,6 @@ const transferSupported = {
 	get topText() {
 		return __( 'Manage everything in one place.' );
 	},
-	get etaText() {
-		return __( 'May take 5–7 days' );
-	},
 	learnMoreLink: INCOMING_DOMAIN_TRANSFER,
 	get benefits() {
 		return [
@@ -55,9 +52,6 @@ const connectSupported = {
 	},
 	get topText() {
 		return __( 'Use your existing domain with your site.' );
-	},
-	get etaText() {
-		return __( 'May take up to 72 hours' );
 	},
 	learnMoreLink: MAP_EXISTING_DOMAIN,
 	get benefits() {
