@@ -36,7 +36,10 @@ export const useUpcomingEvents = () => {
 				subtitle: translate( 'Automattic for Agencies' ),
 				descriptions: [
 					translate(
-						'The teams behind WordPress.com, Woo, Jetpack, Pressable, and WordPress VIP are heading to Phoenix, and our agency partners get the inside track. Save 25% on your WordCamp ticket with code {{code}}AGENCY25{{/code}}, then join us after hours at Automattic Connect for real talk and good company with our teams, customers, and fellow developers.',
+						'The teams behind WordPress.com, Woo, Jetpack, Pressable, and WordPress VIP are heading to Phoenix, and our agency partners get the inside track.'
+					),
+					translate(
+						'Save 25% on your WordCamp ticket with code {{code}}AGENCY25{{/code}}, then join us after hours at Automattic Connect for real talk and good company with our teams, customers, and fellow developers.',
 						{
 							components: {
 								code: <code />,
