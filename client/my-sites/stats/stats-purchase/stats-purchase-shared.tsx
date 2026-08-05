@@ -93,7 +93,7 @@ const StatsBenefitsCommercial = () => {
 					/>
 				</li>
 				<li>
-					{ translate( 'View device attributes' ) }
+					{ translate( 'View device stats' ) }
 					<Icon
 						icon={ info }
 						ref={ deviceAttributesInfoIconRef }
@@ -182,7 +182,7 @@ const StatsBenefitsCommercial = () => {
 				className="stats-purchase__info-popover"
 			>
 				<div className="stats-purchase__info-popover-content">
-					{ translate( 'Get detailed devices stats for your site visitors.' ) }
+					{ translate( 'Get detailed device stats for your site visitors.' ) }
 				</div>
 			</Popover>
 		</div>
