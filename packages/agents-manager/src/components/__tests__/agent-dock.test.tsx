@@ -542,7 +542,7 @@ describe( 'AgentDock', () => {
 		expect( openSpy ).toHaveBeenCalledWith(
 			'/wp-admin/options-general.php?page=guidelines-wp-admin',
 			'_blank',
-			'noreferrer'
+			'noopener,noreferrer'
 		);
 
 		openSpy.mockRestore();
@@ -565,7 +565,7 @@ describe( 'AgentDock', () => {
 		expect( openSpy ).toHaveBeenCalledWith(
 			'https://my.wordpress.com/sites/example.com/settings/ai-tools',
 			'_blank',
-			'noreferrer'
+			'noopener,noreferrer'
 		);
 
 		openSpy.mockRestore();

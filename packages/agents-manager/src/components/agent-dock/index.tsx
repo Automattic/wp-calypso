@@ -326,7 +326,7 @@ export default function AgentDock( {
 					window.open(
 						'/wp-admin/options-general.php?page=guidelines-wp-admin',
 						'_blank',
-						'noreferrer'
+						'noopener,noreferrer'
 					);
 				},
 			},
@@ -343,7 +343,7 @@ export default function AgentDock( {
 						window.open(
 							`https://my.wordpress.com/sites/${ siteDomain }/settings/ai-tools`,
 							'_blank',
-							'noreferrer'
+							'noopener,noreferrer'
 						);
 					},
 				},
