@@ -218,14 +218,6 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 	}
 
 	if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
-		if ( redirectDomainName ) {
-			return (
-				<LoadingPlaceholder
-					className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
-				/>
-			);
-		}
-
 		return (
 			<EmailProvidersStackedComparisonPage
 				comparisonContext="email-home-single-domain"
