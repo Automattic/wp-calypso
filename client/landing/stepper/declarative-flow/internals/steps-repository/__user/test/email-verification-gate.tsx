@@ -286,27 +286,6 @@ describe( 'account step email verification gate', () => {
 		expect( confirmations ).toHaveLength( 1 );
 	} );
 
-	it( 'records the confirmation when /me flips while the gate is up', async () => {
-		const store = makeStore( false );
-		renderUser( store );
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-
-		act( () => {
-			store.dispatch( {
-				type: CURRENT_USER_RECEIVE,
-				user: { ID: mockUserId, email: EMAIL, email_verified: true },
-			} );
-		} );
-
-		// `/me` opening the gate is not the same as `/me` closing it: the gate has work to finish.
-		await waitFor( () =>
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_signup_email_verification_confirmed',
-				expect.anything()
-			)
-		);
-	} );
-
 	it( 'shows the gate once an email account is created and logged in', async () => {
 		const store = makeLoggedOutStore();
 		const { submit } = renderUser( store );

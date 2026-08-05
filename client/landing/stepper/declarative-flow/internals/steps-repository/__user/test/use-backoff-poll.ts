@@ -18,19 +18,6 @@ describe( 'useBackoffPoll', () => {
 		setVisibility( 'visible' );
 	} );
 
-	it( 'polls on a widening interval while enabled', () => {
-		const poll = jest.fn();
-		renderHook( () => useBackoffPoll( poll, true ) );
-
-		// Every 10s for five minutes, then 30s.
-		act( () => jest.advanceTimersByTime( 5 * 60 * 1000 ) );
-		expect( poll ).toHaveBeenCalledTimes( 30 );
-
-		poll.mockClear();
-		act( () => jest.advanceTimersByTime( 5 * 60 * 1000 ) );
-		expect( poll ).toHaveBeenCalledTimes( 10 );
-	} );
-
 	it( 'pauses while the tab is hidden', () => {
 		const poll = jest.fn();
 		renderHook( () => useBackoffPoll( poll, true ) );

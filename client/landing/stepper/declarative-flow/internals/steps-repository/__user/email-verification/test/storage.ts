@@ -87,43 +87,29 @@ describe( 'email verification gate storage', () => {
 		expect( gateResendAvailableAt( scope ) ).toBe( long );
 	} );
 
-	// Only the tab that wrote an attempt used to remember it, so a tab that merely read one — or
-	// wrote to it before another tab did — had nothing, or the wrong thing, to put back.
-	it( 'restores what another tab last wrote, not what this one last wrote', () => {
+	// Resolving a different user than the one last stored clears browser storage wholesale. The
+	// harder half is a tab that only ever read the attempt: it has no write of its own to remember
+	// it by, so nothing would be left to put back.
+	it( "puts back an attempt cleared underneath it, including another tab's writes", () => {
 		const scope = nextScope();
 		const key = `onboarding-email-verification-gate:${ scope }`;
 		markGateShown( scope );
 
-		// What another tab writing to the same attempt leaves behind.
+		// What another tab writing to the same attempt leaves behind. This tab only reads it.
 		const deadline = Date.now() + 5 * 60 * 1000;
 		const fromOtherTab = {
 			...JSON.parse( localStorage.getItem( key ) as string ),
 			resendAvailableAt: deadline,
 		};
 		localStorage.setItem( key, JSON.stringify( fromOtherTab ) );
-
-		// Reading it is all this tab does — no write of its own to remember it by.
 		expect( gateResendAvailableAt( scope ) ).toBe( deadline );
 
 		localStorage.clear();
 
 		expect( gateResendAvailableAt( scope ) ).toBe( deadline );
 		expect( markGateShown( scope ) ).toBe( false );
-	} );
-
-	// Resolving a different user than the one last stored clears browser storage wholesale. The
-	// tab that owns the attempt still knows it, and must not lose a lockout or recount a view.
-	it( 'puts the attempt back when local storage is cleared underneath it', () => {
-		const scope = nextScope();
-		markGateShown( scope );
-		markResendUnavailableUntil( scope, Date.now() + 5 * 60 * 1000 );
-
-		localStorage.clear();
-
-		expect( markGateShown( scope ) ).toBe( false );
-		expect( gateResendAvailableAt( scope ) ).toBeGreaterThan( Date.now() );
 		expect( claimGateConfirmation( scope ) ).not.toBeNull();
 		// Restored, not merely remembered: another tab reading the same key finds it again.
-		expect( localStorage.getItem( `onboarding-email-verification-gate:${ scope }` ) ).toBeTruthy();
+		expect( localStorage.getItem( key ) ).toBeTruthy();
 	} );
 } );
