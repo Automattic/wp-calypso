@@ -1,26 +1,32 @@
 @import '@wordpress/base-styles/colors';
 
 .site-activity-logs__actor {
-    > [class^="site-activity-logs__actor-icon-"] {
-        border-radius: 50%;
-        height: 24px;
-        width: 24px;
-    }
+	> span {
+		overflow-wrap: anywhere;
+		white-space: normal;
+	}
 
-    .site-activity-logs__actor-icon-server,
-    .site-activity-logs__actor-icon-default {
-        background-color: var(--wp-components-color-gray-300, $gray-300);
-        fill: var(--dashboard__text-muted-color);
-    }
+	> [class*='site-activity-logs__actor-icon-'] {
+		border-radius: 50%;
+		flex-shrink: 0;
+		height: 24px;
+		width: 24px;
+	}
 
-    .site-activity-logs__actor-icon-wordpress {
-        fill: var(--dashboard__text-muted-color);
-    }
+	.site-activity-logs__actor-icon-server,
+	.site-activity-logs__actor-icon-default {
+		background-color: var( --wp-components-color-gray-300, $gray-300 );
+		fill: var( --dashboard__text-muted-color );
+	}
 
-    .site-activity-logs__actor-mcp {
-        display: block;
-        font-size: 0.75rem;
-        color: var(--dashboard__text-muted-color);
-        margin-block-start: 2px;
-    }
+	.site-activity-logs__actor-icon-wordpress {
+		fill: var( --dashboard__text-muted-color );
+	}
+
+	.site-activity-logs__actor-mcp {
+		display: block;
+		font-size: 0.75rem;
+		color: var( --dashboard__text-muted-color );
+		margin-block-start: 2px;
+	}
 }
