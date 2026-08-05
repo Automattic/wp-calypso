@@ -45,6 +45,7 @@ import {
 	rememberSelectedBlock,
 	clearRememberedSelectedBlock,
 	notifyBlockActionComplete,
+	undoBlockEdit,
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
@@ -83,6 +84,15 @@ let wasAgentProcessing = false;
 let pendingBlockShimmerClientId: string | null = null;
 let blockShimmerStartedForRequest = false;
 let suppressCurrentPageContentForNextContext = false;
+
+type BlockEditSnapshot = {
+	clientId: string;
+	contentBefore: string;
+	contentAfter: string;
+	editableAttribute?: string;
+};
+
+const blockEditSnapshots = new Map< string, BlockEditSnapshot >();
 
 /** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
 let suggestionRenderedFiredOnce = false;
@@ -397,6 +407,7 @@ function applySuggestionLimit< T extends { id: string } >(
 
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+const UPDATE_BLOCK_CONTENT_AGENT_TOOL_ID = 'wpcom__update_block_content';
 const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
 const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
 const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_TOOL_ID ];
@@ -631,6 +642,73 @@ function isLegacyShowComponentTool( toolId: string ): boolean {
 	return toolId === LEGACY_SHOW_COMPONENT_TOOL_ID || toolId === LEGACY_SHOW_COMPONENT_ABILITY_NAME;
 }
 
+async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
+	const toolCallId =
+		typeof input?.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
+	const result = await handleUpdateBlockContent( input );
+	if ( result?.success !== true ) {
+		if ( toolCallId ) {
+			blockEditSnapshots.delete( toolCallId );
+		}
+		return result;
+	}
+
+	const outcome =
+		typeof result.contentBefore === 'string' &&
+		typeof result.contentAfter === 'string' &&
+		result.contentBefore === result.contentAfter
+			? 'no-changes'
+			: 'updated';
+
+	if ( toolCallId ) {
+		if (
+			outcome === 'updated' &&
+			typeof result.clientId === 'string' &&
+			typeof result.contentBefore === 'string' &&
+			typeof result.contentAfter === 'string'
+		) {
+			blockEditSnapshots.set( toolCallId, {
+				clientId: result.clientId,
+				contentBefore: result.contentBefore,
+				contentAfter: result.contentAfter,
+				...( typeof result.editableAttribute === 'string' && {
+					editableAttribute: result.editableAttribute,
+				} ),
+			} );
+		} else {
+			blockEditSnapshots.delete( toolCallId );
+		}
+	}
+
+	let message = typeof input?.summary === 'string' ? input.summary.trim() : '';
+	if ( ! message ) {
+		message =
+			outcome === 'updated'
+				? __( 'Updated the selected block.', __i18n_text_domain__ )
+				: __( 'No changes were needed.', __i18n_text_domain__ );
+	}
+	const agentMessage = toolCallId
+		? JSON.stringify( {
+				tool_id: UPDATE_BLOCK_CONTENT_AGENT_TOOL_ID,
+				tool_call_id: toolCallId,
+				data: {
+					result: {
+						success: true,
+						message,
+						outcome,
+					},
+					followUpTasks: false,
+				},
+		  } )
+		: result.agentMessage;
+
+	return {
+		...result,
+		outcome,
+		...( agentMessage && { agentMessage } ),
+	};
+}
+
 export const toolProvider = {
 	/**
 	 * Client-side abilities this provider handles: `wpcom/update-block-content`
@@ -663,7 +741,7 @@ export const toolProvider = {
 				? [
 						{
 							...UPDATE_BLOCK_CONTENT_ABILITY,
-							callback: handleUpdateBlockContent,
+							callback: handleUpdateBlockContentForChat,
 						},
 				  ]
 				: [] ),
@@ -688,8 +766,12 @@ export const toolProvider = {
 	 */
 	async executeAbility( name: string, args: any ): Promise< any > {
 		if ( isUpdateBlockContentTool( name ) ) {
-			const result = await handleUpdateBlockContent( args );
-			return { result, returnToAgent: false };
+			const result = await handleUpdateBlockContentForChat( args );
+			return {
+				result,
+				returnToAgent: false,
+				...( result.agentMessage && { agentMessage: result.agentMessage } ),
+			};
 		}
 
 		if ( isLegacyShowComponentTool( name ) && shouldDelegateLegacyShowComponent( args ) ) {
@@ -847,13 +929,13 @@ export function getChatComponent( type: string ): ComponentType | null {
 
 /**
  * Provider hook consumed by AM's `use-checkpoint-action` so Undo buttons
- * can attach to show-component messages. Snapshots the selected top-level
- * post fields (title by default, excerpt for the excerpt picker) on
+ * can attach to show-component and block-edit messages. Snapshots the selected
+ * top-level post fields (title by default, excerpt for the excerpt picker) on
  * `setCheckpoint(id, fields)` and restores exactly those fields on
  * `restoreCheckpoint(id)` via `core/editor` dispatch — restoring one picker's
- * checkpoint must not clobber another field's later edits. Only title and
- * excerpt are supported: meta (SEO pickers) and block-attribute (image alt
- * text) changes are not checkpointed. Stubs the rest of AM's
+ * checkpoint must not clobber another field's later edits. Block-edit snapshots
+ * are captured by `handleUpdateBlockContentForChat`; meta (SEO pickers) and
+ * image alt text changes are not checkpointed. Stubs the rest of AM's
  * `UseCheckpointReturn` interface — only the three methods above are used on
  * this path.
  * @returns {Object} The checkpoint API AM consumes.
@@ -871,9 +953,20 @@ export function useCheckpoint(): any {
 			postSnapshots.set( id, snapshot );
 		},
 		hasCheckpoint( id: string ): boolean {
-			return postSnapshots.has( id );
+			return postSnapshots.has( id ) || blockEditSnapshots.has( id );
 		},
 		async restoreCheckpoint( id: string ): Promise< void > {
+			const blockEditSnapshot = blockEditSnapshots.get( id );
+			if ( blockEditSnapshot ) {
+				undoBlockEdit(
+					blockEditSnapshot.clientId,
+					blockEditSnapshot.contentBefore,
+					blockEditSnapshot.contentAfter,
+					blockEditSnapshot.editableAttribute
+				);
+				return;
+			}
+
 			const previous = postSnapshots.get( id );
 			if ( previous === undefined ) {
 				return;
@@ -888,7 +981,7 @@ export function useCheckpoint(): any {
 
 	// Return the full shape AM's UseCheckpointReturn expects. Methods we
 	// don't implement are safe no-op stubs — AM only calls the three above
-	// for the show-component / title-picker flow.
+	// for the show-component and block-edit flows.
 	return {
 		...api,
 		getLastEditorState: () => null,
@@ -899,6 +992,7 @@ export function useCheckpoint(): any {
 		getLatestUserMessageId: () => undefined,
 		clearCheckpoint: ( id: string ) => {
 			postSnapshots.delete( id );
+			blockEditSnapshots.delete( id );
 		},
 	};
 }

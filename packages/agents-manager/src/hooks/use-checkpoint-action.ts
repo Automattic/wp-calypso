@@ -1,33 +1,47 @@
-import { createElement, useEffect, useRef } from '@wordpress/element';
+import { createElement, useCallback, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { undo, Icon } from '@wordpress/icons';
+import ResolvedEditAction from '../components/resolved-edit-action';
+import { getApplyBlockEditsOutcome } from '../utils/tool-message-utils';
 import { recordBigSkyTracksEvent } from '../utils/tracks';
 import type { UseCheckpointReturn } from '../utils/load-external-providers';
-import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
+import type { UIMessage, UIMessageAction, UseAgentChatReturn } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
 
 /**
- * Gets the checkpoint ID embedded in a tool message, or an empty string
- * if the message doesn't contain one.
+ * Gets checkpoint details embedded in a tool message.
  *
- * Checkpoint IDs are not available in past or restored conversations
- * because they are only stored in-memory for the current session.
+ * Restored conversations can carry a checkpoint ID, but provider checkpoint
+ * state is session-only; `hasCheckpoint` filters out stale IDs.
  */
-function getCheckpointId( message: UIMessage ): string {
+function getCheckpointInfo(
+	message: UIMessage
+): { checkpointId: string; showResolvedEditAction: boolean } | undefined {
 	const firstPartText = message.content?.[ 0 ]?.text ?? '';
 
 	try {
 		const parsed = JSON.parse( firstPartText );
+		const blockEditOutcome = getApplyBlockEditsOutcome( parsed.tool_id, parsed.data );
 
-		if ( parsed.data?.calypsoCheckpointId ) {
-			return parsed.data.calypsoCheckpointId;
+		if ( blockEditOutcome === 'no-changes' ) {
+			return undefined;
+		}
+
+		const checkpointId =
+			parsed.data?.calypsoCheckpointId ??
+			( blockEditOutcome === 'updated' ? parsed.tool_call_id : undefined );
+		if ( typeof checkpointId === 'string' && checkpointId ) {
+			return {
+				checkpointId,
+				showResolvedEditAction: blockEditOutcome === 'updated',
+			};
 		}
 	} catch {
 		// Not JSON — not a tool message.
 	}
 
-	return '';
+	return undefined;
 }
 
 /**
@@ -36,50 +50,68 @@ function getCheckpointId( message: UIMessage ): string {
 export default function useCheckpointAction(
 	registerMessageActions: RegisterMessageActions,
 	checkpoint?: UseCheckpointReturn
-): void {
+): ( message: UIMessage ) => UIMessageAction[] {
 	// Ref avoids infinite re-renders caused by unstable `checkpoint` reference.
 	const checkpointRef = useRef( checkpoint );
 	checkpointRef.current = checkpoint;
+	const getCheckpointActionsForMessage = useCallback( ( message: UIMessage ): UIMessageAction[] => {
+		const currentCheckpoint = checkpointRef.current;
+
+		if ( ! currentCheckpoint || message.role !== 'agent' ) {
+			return [];
+		}
+
+		const checkpointInfo = getCheckpointInfo( message );
+
+		if ( ! checkpointInfo || ! currentCheckpoint.hasCheckpoint( checkpointInfo.checkpointId ) ) {
+			return [];
+		}
+
+		const restoreCheckpoint = async () => {
+			recordBigSkyTracksEvent( 'restore_checkpoint_action', {
+				id: checkpointInfo.checkpointId,
+			} );
+			try {
+				await checkpointRef.current?.restoreCheckpoint( checkpointInfo.checkpointId );
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.error( '[useCheckpointAction] Failed to restore checkpoint:', error );
+			}
+		};
+
+		if ( checkpointInfo.showResolvedEditAction ) {
+			return [
+				{
+					type: 'component',
+					id: 'checkpoint',
+					label: __( 'Updated and Undo', __i18n_text_domain__ ),
+					component: ResolvedEditAction,
+					componentProps: { onUndo: restoreCheckpoint },
+					order: 1,
+				},
+			];
+		}
+
+		return [
+			{
+				id: 'checkpoint',
+				label: __( 'Undo', __i18n_text_domain__ ),
+				icon: createElement( Icon, {
+					icon: undo,
+					className: 'agents-manager-message-action-icon',
+				} ),
+				onClick: restoreCheckpoint,
+				order: 1,
+			},
+		];
+	}, [] );
 
 	useEffect( () => {
 		registerMessageActions( {
 			id: 'agents-manager-checkpoint',
-			actions: ( message: UIMessage ) => {
-				const currentCheckpoint = checkpointRef.current;
-
-				if ( ! currentCheckpoint || message.role !== 'agent' ) {
-					return [];
-				}
-
-				const checkpointId = getCheckpointId( message );
-
-				if ( ! checkpointId || ! currentCheckpoint.hasCheckpoint( checkpointId ) ) {
-					return [];
-				}
-
-				return [
-					{
-						id: 'checkpoint',
-						label: __( 'Undo', __i18n_text_domain__ ),
-						icon: createElement( Icon, {
-							icon: undo,
-							className: 'agents-manager-message-action-icon',
-						} ),
-						onClick: async () => {
-							recordBigSkyTracksEvent( 'restore_checkpoint_action', {
-								id: checkpointId,
-							} );
-							try {
-								await checkpointRef.current?.restoreCheckpoint( checkpointId );
-							} catch ( error ) {
-								// eslint-disable-next-line no-console
-								console.error( '[useCheckpointAction] Failed to restore checkpoint:', error );
-							}
-						},
-						order: 1,
-					},
-				];
-			},
+			actions: getCheckpointActionsForMessage,
 		} );
-	}, [ registerMessageActions ] );
+	}, [ getCheckpointActionsForMessage, registerMessageActions ] );
+
+	return getCheckpointActionsForMessage;
 }

@@ -75,6 +75,54 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 				fill: var( --color-foreground );
 			}
 		}
+
+		.agents-manager-resolved-edit-action {
+			display: inline-flex;
+			flex: 0 0 100%;
+			align-items: center;
+			gap: 0.25rem;
+
+			&__status,
+			&__undo {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.25rem;
+				min-height: 32px;
+				padding: 0.4rem 0.75rem;
+				border-radius: 4px;
+				font-size: 13px;
+			}
+
+			&__status {
+				background: var( --color-success-background, rgba( 74, 184, 102, 0.2 ) );
+				color: var( --color-success, #4ab866 );
+				font-weight: 600;
+			}
+
+			&__undo {
+				border: 0;
+				background: transparent;
+				color: var( --color-foreground );
+				font-family: inherit;
+				font-weight: 500;
+				cursor: pointer;
+
+				&:hover {
+					background: var( --color-muted );
+				}
+
+				&:focus-visible {
+					background: var( --color-muted );
+					outline: 2px solid var( --wp-admin-theme-color, #3858e9 );
+					outline-offset: 1px;
+				}
+			}
+
+			&__icon {
+				flex: 0 0 auto;
+				fill: currentColor;
+			}
+		}
 	}
 
 	// Prevent content overflow

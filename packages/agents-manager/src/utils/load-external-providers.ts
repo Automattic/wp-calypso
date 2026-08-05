@@ -238,6 +238,59 @@ export function mergeUseSuggestionsHooks(
 	};
 }
 
+/**
+ * Merge provider checkpoint hooks. Each provider owns its own checkpoint store,
+ * so id-based lookups must search every loaded provider. Other methods keep
+ * delegating to the first provider to preserve the previous behavior.
+ */
+export function mergeUseCheckpointHooks(
+	hooks: UseCheckpointHook[]
+): UseCheckpointHook | undefined {
+	if ( hooks.length === 0 ) {
+		return undefined;
+	}
+
+	if ( hooks.length === 1 ) {
+		return hooks[ 0 ];
+	}
+
+	return () => {
+		const instances: Array< Partial< UseCheckpointReturn > | undefined > = hooks.map( ( hook ) =>
+			hook()
+		);
+		const first = instances[ 0 ];
+		const findOwner = ( id: string ) =>
+			instances.find( ( instance ) => instance?.hasCheckpoint?.( id ) );
+
+		return {
+			hasCheckpoint: ( id: string ) =>
+				instances.some( ( instance ) => instance?.hasCheckpoint?.( id ) ),
+			restoreCheckpoint: async ( id: string ) => {
+				await findOwner( id )?.restoreCheckpoint?.( id );
+			},
+			clearCheckpoint: ( id: string ) => {
+				for ( const instance of instances ) {
+					if ( instance?.hasCheckpoint?.( id ) ) {
+						instance.clearCheckpoint?.( id );
+					}
+				}
+			},
+			getLastEditorState: () => first?.getLastEditorState?.(),
+			setCheckpoint: ( id: string, keys?: string[] ) => first?.setCheckpoint?.( id, keys ),
+			addCheckpointKeys: ( id: string, keys: string[] ) => first?.addCheckpointKeys?.( id, keys ),
+			addNewPageToCheckpoint: ( pageId: string ) => first?.addNewPageToCheckpoint?.( pageId ),
+			addPageRenameToCheckpoint: ( pageId: string, oldTitle: string, newTitle: string ) =>
+				first?.addPageRenameToCheckpoint?.( pageId, oldTitle, newTitle ),
+			addPageRemovalToCheckpoint: (
+				pageId: string,
+				pageTitle: string,
+				options?: { shouldRestoreNavigation?: boolean }
+			) => first?.addPageRemovalToCheckpoint?.( pageId, pageTitle, options ),
+			getLatestUserMessageId: () => first?.getLatestUserMessageId?.(),
+		};
+	};
+}
+
 function isRecord( value: unknown ): value is Record< string, unknown > {
 	return typeof value === 'object' && value !== null;
 }
@@ -533,7 +586,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
-	let mergedUseCheckpoint: UseCheckpointHook | undefined;
 	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
@@ -551,6 +603,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+	const allUseCheckpoints: UseCheckpointHook[] = [];
 	const allProviderIds: string[] = [];
 
 	// Load all providers in parallel to avoid serializing network/module fetches.
@@ -607,6 +660,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.getEmptyViewSuggestions ) {
 			allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
 		}
+		if ( module.useCheckpoint ) {
+			allUseCheckpoints.push( module.useCheckpoint );
+		}
 		if ( module.contextProvider ) {
 			allContextProviders.push( module.contextProvider );
 		}
@@ -623,9 +679,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
 			mergedSiteBuildUtils = module.siteBuildUtils;
-		}
-		if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
-			mergedUseCheckpoint = module.useCheckpoint;
 		}
 		if ( module.onTaskUpdate && ! mergedOnTaskUpdate ) {
 			mergedOnTaskUpdate = module.onTaskUpdate;
@@ -735,6 +788,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 	// Merge useSuggestions: combine from all providers, dedupe by id.
 	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
+
+	// Merge useCheckpoint: run every provider's hook, search all stores by id.
+	const mergedUseCheckpoint = mergeUseCheckpointHooks( allUseCheckpoints );
 
 	// Merge getEmptyViewSuggestions: combine from all providers, dedupe by id.
 	if ( allGetEmptyViewSuggestions.length === 1 ) {
