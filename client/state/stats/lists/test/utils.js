@@ -1623,7 +1623,7 @@ describe( 'utils', () => {
 								type: 'link',
 							},
 						],
-						icon: null,
+						poster: null,
 						label: 'Press This!',
 						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
 						post_id: 111111111,
@@ -1632,7 +1632,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			test( 'should map the API poster onto the icon field', () => {
+			test( 'should pass the API poster through', () => {
 				expect(
 					normalizers.statsVideoPlays(
 						{
@@ -1668,7 +1668,7 @@ describe( 'utils', () => {
 								type: 'link',
 							},
 						],
-						icon: 'https://videos.files.wordpress.com/abc123/poster.jpg',
+						poster: 'https://videos.files.wordpress.com/abc123/poster.jpg',
 						label: 'Press This!',
 						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
 						post_id: 111111111,
@@ -1677,7 +1677,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			test( 'should fall back to a null icon when the API sends no poster', () => {
+			test( 'should fall back to a null poster when the API sends none', () => {
 				const [ item ] = normalizers.statsVideoPlays(
 					{
 						date: '2017-01-12',
@@ -1704,7 +1704,7 @@ describe( 'utils', () => {
 					}
 				);
 
-				expect( item.icon ).toBeNull();
+				expect( item.poster ).toBeNull();
 				expect( item.post_id ).toBe( 111111111 );
 			} );
 		} );

@@ -64,7 +64,7 @@
 			display: flex;
 			align-items: center;
 			gap: 8px;
-			padding-left: 10px;
+			padding-inline-start: 10px;
 
 			a {
 				overflow: hidden;
@@ -84,11 +84,6 @@
 				&:visited {
 					color: var(--color-text);
 				}
-			}
-
-			.stats-list__video-thumbnail {
-				position: relative;
-				z-index: 1;
 			}
 
 			&::before {

@@ -122,8 +122,8 @@ const StatsListCard = ( {
 		// left icon visible for avatars, contry flags or tags and categories.
 		if ( item?.countryCode ) {
 			leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
-		} else if ( showLeftIcon && moduleType === 'videoplays' ) {
-			leftSideItem = <StatsListVideoThumbnail poster={ item?.icon } />;
+		} else if ( moduleType === 'videoplays' ) {
+			leftSideItem = <StatsListVideoThumbnail poster={ item?.poster } />;
 		} else if ( showLeftIcon && item?.icon ) {
 			leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
 		} else if ( Array.isArray( item?.label ) ) {
