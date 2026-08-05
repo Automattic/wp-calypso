@@ -147,7 +147,7 @@ body:has( .omnibar ) {
 	}
 
 	.dashicons-search::before {
-		top: 3px;
+		top: 1px;
 	}
 }
 
@@ -182,6 +182,16 @@ body:has( .omnibar ) {
 		height: 20px;
 		font-size: 20px;
 		top: 1px;
+	}
+}
+
+.omnibar .dashicons-search::before {
+	height: 32px;
+	font-size: 32px;
+
+	@media ( min-width: 782px ) {
+		height: 20px;
+		font-size: 20px;
 	}
 }
 
