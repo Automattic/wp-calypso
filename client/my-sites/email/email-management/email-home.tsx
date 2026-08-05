@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
@@ -109,13 +109,14 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
-	const { data: allDomains = [], isLoading: isSiteDomainLoading } = useGetDomainsQuery(
-		selectedSite?.ID ?? null,
-		{
-			refetchOnMount: ! addEmailForwardMutationActive,
-			retry: false,
-		}
-	);
+	const {
+		data: allDomains = [],
+		isLoading: isSiteDomainLoading,
+		isFetching: isSiteDomainFetching,
+	} = useGetDomainsQuery( selectedSite?.ID ?? null, {
+		refetchOnMount: ! addEmailForwardMutationActive,
+		retry: false,
+	} );
 
 	const domains = allDomains.map( createSiteDomainObject );
 	const nonWpcomDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
@@ -125,6 +126,30 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 
 	const isSingleDomainThatHasEmail =
 		domainsWithEmail.length === 1 && domainsWithNoEmail.length === 0;
+
+	// The domains query is persisted to localStorage for up to a week, so the
+	// first render can run on stale data. Waiting for the refetch to settle
+	// avoids sending someone who already bought email off to a purchase page,
+	// which a cross-origin navigation would make unrecoverable.
+	const redirectDomainName =
+		isEnabled( 'emails/titan-tiers' ) &&
+		! selectedDomainName &&
+		! isSiteDomainLoading &&
+		! isSiteDomainFetching &&
+		domainsWithEmail.length < 1 &&
+		domainsWithNoEmail.length === 1
+			? domainsWithNoEmail[ 0 ].name
+			: undefined;
+
+	useEffect( () => {
+		if ( redirectDomainName ) {
+			navigate(
+				dashboardLink(
+					`/emails/choose-email-solution/${ encodeURIComponent( redirectDomainName ) }`
+				)
+			);
+		}
+	}, [ redirectDomainName ] );
 
 	if ( isSiteDomainLoading || ! hasSitesLoaded || ! selectedSite || ! domains ) {
 		return (
@@ -193,11 +218,12 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 	}
 
 	if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
-		if ( isEnabled( 'emails/titan-tiers' ) ) {
-			navigate(
-				dashboardLink( `/emails/choose-email-solution/${ domainsWithNoEmail[ 0 ].name }` )
+		if ( redirectDomainName ) {
+			return (
+				<LoadingPlaceholder
+					className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
+				/>
 			);
-			return null;
 		}
 
 		return (
