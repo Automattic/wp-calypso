@@ -19,6 +19,7 @@ import SeoDescriptionPicker from './components/seo-description-picker';
 import SeoTitlePicker from './components/seo-title-picker';
 import TitlePicker from './components/title-picker';
 import { clearActiveBlockFocus, undoBlockEdit } from './utils/block-actions';
+import { SUGGESTION_ACTION_COMPLETE_EVENT } from './utils/suggestion-events';
 import {
 	applyReviewEdit,
 	findBlockElement,
@@ -2630,6 +2631,35 @@ describe( 'useSuggestions', () => {
 			'Check grammar',
 			'Simplify text',
 		] );
+	} );
+
+	it( 're-shows editor suggestions when a generated title is applied', () => {
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { suggestionId: 'optimize-title' },
+				} )
+			);
+		} );
+
+		let latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions ).toEqual( [] );
+
+		act( () => {
+			window.dispatchEvent( new Event( SUGGESTION_ACTION_COMPLETE_EVENT ) );
+		} );
+
+		latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect(
+			latestSuggestions.map( ( suggestion: { label: string } ) => suggestion.label )
+		).toEqual( [ 'Optimize Title', 'Simple Review', 'Editorial Review' ] );
 	} );
 
 	it( 'keeps block suggestions hidden after a Proofread request finishes', () => {

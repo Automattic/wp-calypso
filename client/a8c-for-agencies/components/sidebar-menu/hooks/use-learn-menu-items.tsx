@@ -53,7 +53,11 @@ const useLearnMenuItems = ( path: string ) => {
 			...( isAiMcpEnabled
 				? [
 						{
-							icon: <BigSkyLogo.CentralLogo heartless size={ 24 } />,
+							icon: (
+								<span className="sidebar__menu-icon">
+									<BigSkyLogo.CentralLogo heartless size={ 24 } fill="currentColor" />
+								</span>
+							),
 							path: A4A_AI_MCP_LINK,
 							link: A4A_AI_MCP_LINK,
 							title: translate( 'AI and MCP' ),
