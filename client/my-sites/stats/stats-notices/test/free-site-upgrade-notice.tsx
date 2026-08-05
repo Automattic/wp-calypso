@@ -61,7 +61,9 @@ jest.mock( '@automattic/i18n-utils', () => ( {
 	useHasEnTranslation: () => () => true,
 } ) );
 
-const mockUseNoticeVisibilityMutation = jest.fn( () => ( { mutateAsync: jest.fn() } ) );
+const mockUseNoticeVisibilityMutation = jest.fn< { mutateAsync: jest.Mock }, unknown[] >( () => ( {
+	mutateAsync: jest.fn(),
+} ) );
 jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockUseNoticeVisibilityMutation( ...args ),
