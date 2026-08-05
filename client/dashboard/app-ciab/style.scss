@@ -37,7 +37,7 @@
 	--dashboard-header__divider-color: #{$gray-900};
 
 	// Menu
-	--dashboard-menu-item__color: #{$gray-700};
+	--dashboard-menu-item__color: var( --wpds-color-fg-interactive-neutral-weak, #707070 );
 	--dashboard-menu-item-active__color: #{$gray-900};
 
 	// Headings
