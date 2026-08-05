@@ -11,9 +11,13 @@ import type { ReactNode } from 'react';
 interface Logo {
 	src: string;
 	alt: string;
+	height?: number;
 }
 
-const AgencyHabits: Logo = { src: AgencyHabitsLogo, alt: 'AgencyHabits' };
+const LOGO_HEIGHT = 24;
+
+// A bare wordmark, not an icon lockup, so it needs its own height to match the cap height.
+const AgencyHabits: Logo = { src: AgencyHabitsLogo, alt: 'AgencyHabits', height: 15 };
 
 /**
  * Resources the API leaves unattributed still have a destination, so fall back to
@@ -50,7 +54,19 @@ function getProductLogo( relatedProduct = '', externalUrl = '' ): ReactNode | nu
 		return null;
 	}
 
-	return <img src={ logo.src } alt={ logo.alt } style={ { width: 'auto', height: '24px' } } />;
+	const height = logo.height ?? LOGO_HEIGHT;
+
+	return (
+		<img
+			src={ logo.src }
+			alt={ logo.alt }
+			style={ {
+				width: 'auto',
+				height: `${ height }px`,
+				marginBlock: `${ ( LOGO_HEIGHT - height ) / 2 }px`,
+			} }
+		/>
+	);
 }
 
 /**
