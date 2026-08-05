@@ -28,6 +28,11 @@ describe( 'normalizeNoticesVisibility', () => {
 		);
 	} );
 
+	it( 'degrades an empty response body to the defaults instead of throwing', () => {
+		expect( normalizeNoticesVisibility( null ) ).toEqual( normalizeNoticesVisibility( {} ) );
+		expect( normalizeNoticesVisibility( undefined ).free_site_upgrade ).toBe( false );
+	} );
+
 	it( 'keeps its own dismissal and the hidden-by-default fallback', () => {
 		expect(
 			normalizeNoticesVisibility( { ...serverSaysVisible, free_site_upgrade: false } )

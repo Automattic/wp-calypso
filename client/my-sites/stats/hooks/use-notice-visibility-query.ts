@@ -74,12 +74,14 @@ export const processConflictNotices = ( notices: Notices ): Notices => {
  * only reports an id as hidden while a dismissal is in effect, so a missing key means
  * "not dismissed". Drop this inheritance if the legacy ids ever leave the server response.
  */
-export const normalizeNoticesVisibility = ( payload: Partial< Notices > ): Notices => {
+export const normalizeNoticesVisibility = (
+	payload: Partial< Notices > | null | undefined
+): Notices => {
 	const notices = { ...DEFAULT_NOTICES_VISIBILITY, ...payload };
 	notices.free_site_upgrade =
 		notices.free_site_upgrade &&
-		payload.do_you_love_jetpack_stats !== false &&
-		payload.commercial_site_upgrade !== false;
+		payload?.do_you_love_jetpack_stats !== false &&
+		payload?.commercial_site_upgrade !== false;
 	return notices;
 };
 

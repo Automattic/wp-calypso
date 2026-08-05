@@ -1,3 +1,4 @@
+import { COMMERCIAL_PAYWALL_KILLED } from 'calypso/state/stats/plan-usage/constants';
 import ALL_STATS_NOTICES from '../all-notice-definitions';
 import type { StatsNoticeProps } from '../types';
 
@@ -17,17 +18,17 @@ const freeJetpackSite: StatsNoticeProps = {
 };
 
 describe( 'free_site_upgrade notice visibility', () => {
-	it( 'is registered and enabled, with the notices it replaces disabled', () => {
+	it( 'is enabled opposite the notices it replaces, keyed to the paywall kill switch', () => {
 		expect( freeSiteUpgradeNotice ).toBeDefined();
-		expect( freeSiteUpgradeNotice?.disabled ).toBe( false );
+		expect( freeSiteUpgradeNotice?.disabled ).toBe( ! COMMERCIAL_PAYWALL_KILLED );
 		expect(
 			ALL_STATS_NOTICES.find( ( notice ) => notice.noticeId === 'do_you_love_jetpack_stats' )
 				?.disabled
-		).toBe( true );
+		).toBe( COMMERCIAL_PAYWALL_KILLED );
 		expect(
 			ALL_STATS_NOTICES.find( ( notice ) => notice.noticeId === 'commercial_site_upgrade' )
 				?.disabled
-		).toBe( true );
+		).toBe( COMMERCIAL_PAYWALL_KILLED );
 	} );
 
 	it( 'shows for a free self-hosted Jetpack site, commercial-flagged or not', () => {

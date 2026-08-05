@@ -50,8 +50,7 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 		);
 
 		setNoticeDismissed( true );
-		// Best-effort: the local state above already hides the notice, and the server rejects
-		// the id until the WPCOM allow-list change ships.
+		// Best-effort: the local state above already hides the notice for this session.
 		postponeNoticeAsync().catch( () => {} );
 	};
 
