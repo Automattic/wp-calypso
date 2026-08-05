@@ -21,3 +21,7 @@
 @import "shared/color-schemes/sunrise";
 @import "shared/color-schemes/sunset";
 @import "shared/color-schemes/jetpack-cloud";
+
+// Core's own per-scheme interactive colour, generated from @wordpress/base-styles.
+// Imported last so it wins over the scheme blocks above.
+@import "__wp-base-styles/admin-theme-colors";
