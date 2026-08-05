@@ -103,7 +103,7 @@ function LandingPageCard() {
 	return (
 		<Card>
 			<CardBody>
-				<form onSubmit={ handleSubmit }>
+				<form onSubmit={ handleSubmit } aria-label={ __( 'Landing page' ) }>
 					<VStack spacing={ 4 }>
 						<SectionHeader
 							level={ 3 }
@@ -225,7 +225,7 @@ function PrimarySiteCard() {
 	return (
 		<Card>
 			<CardBody>
-				<form onSubmit={ handleSubmit }>
+				<form onSubmit={ handleSubmit } aria-label={ __( 'Primary site' ) }>
 					<VStack spacing={ 4 }>
 						<SectionHeader
 							level={ 3 }
