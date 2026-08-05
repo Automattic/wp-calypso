@@ -41,6 +41,7 @@ describe( 'setCheckpoint', () => {
 			{
 				id: 'toolu_1',
 				checkpointKeys: [ 'color' ],
+				createdAt: expect.any( Number ),
 				toolId: 'big_sky__set_styles',
 				summary: 'Applied the Vibrant palette.',
 				themeBeforeUpdate: GLOBAL_STYLES_RECORD,
@@ -76,7 +77,9 @@ describe( 'setCheckpoint', () => {
 
 		setCheckpoint( 'toolu_1', [] );
 
-		expect( getCheckpoints() ).toEqual( [ { id: 'toolu_1', checkpointKeys: [] } ] );
+		expect( getCheckpoints() ).toEqual( [
+			{ id: 'toolu_1', checkpointKeys: [], createdAt: expect.any( Number ) },
+		] );
 	} );
 
 	it( 'stores the checkpoint without a snapshot when there is no edited record', async () => {
@@ -85,7 +88,9 @@ describe( 'setCheckpoint', () => {
 
 		setCheckpoint( 'toolu_1', [] );
 
-		expect( getCheckpoints() ).toEqual( [ { id: 'toolu_1', checkpointKeys: [] } ] );
+		expect( getCheckpoints() ).toEqual( [
+			{ id: 'toolu_1', checkpointKeys: [], createdAt: expect.any( Number ) },
+		] );
 	} );
 
 	it( 'overwrites an existing checkpoint in place', async () => {
@@ -147,6 +152,7 @@ describe( 'getAvailableCheckpoints', () => {
 			{
 				checkpointId: 'toolu_1',
 				checkpointIndex: 0,
+				createdAt: expect.any( Number ),
 				checkpointKeys: [ 'color' ],
 				toolId: 'big_sky__show_component',
 				summary: 'Color picker shown.',
@@ -155,6 +161,7 @@ describe( 'getAvailableCheckpoints', () => {
 			{
 				checkpointId: 'toolu_2',
 				checkpointIndex: 1,
+				createdAt: expect.any( Number ),
 				checkpointKeys: [ 'font' ],
 				toolId: 'big_sky__show_component',
 				isLatestForTool: true,
@@ -162,6 +169,7 @@ describe( 'getAvailableCheckpoints', () => {
 			{
 				checkpointId: 'toolu_3',
 				checkpointIndex: 2,
+				createdAt: expect.any( Number ),
 				checkpointKeys: [],
 				toolId: 'big_sky__restore_checkpoint',
 				requestIntentType: 'redo',

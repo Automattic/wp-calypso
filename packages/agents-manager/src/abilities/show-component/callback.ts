@@ -1,6 +1,6 @@
 import { select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { checkpointKeys, setCheckpoint } from '../../utils/checkpoints';
+import { checkpointKeys, hasCheckpoint, setCheckpoint } from '../../utils/checkpoints';
 import { BIG_SKY_SHOW_COMPONENT_TOOL_ID } from '../../utils/show-component-tools';
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
 import type { AbilityResult } from '../types';
@@ -64,7 +64,10 @@ export async function showComponentCallback( input: ShowComponentInput ): Promis
 		const toolCallId = checkpointKeysForType
 			? getToolCallIdFromConversationHistory( BIG_SKY_SHOW_COMPONENT_TOOL_ID )
 			: null;
-		if ( toolCallId ) {
+		// First write wins: the first snapshot under an id is the pre-pick
+		// state — overwriting it would capture post-pick styles and turn its
+		// undo into a silent no-op.
+		if ( toolCallId && ! hasCheckpoint( toolCallId ) ) {
 			setCheckpoint( toolCallId, checkpointKeysForType, {
 				toolId: BIG_SKY_SHOW_COMPONENT_TOOL_ID,
 				summary: successMessage,

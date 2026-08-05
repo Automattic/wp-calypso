@@ -1,9 +1,11 @@
 import { select } from '@wordpress/data';
 import {
 	getProviderCheckpoint,
+	getProviderCheckpointObservedAt,
 	getProviderCheckpointRecords,
 	getProviderCheckpoints,
 	setProviderCheckpoints,
+	stampProviderCheckpointObservations,
 } from '../provider-checkpoints';
 import type { UseCheckpointReturn } from '../load-external-providers';
 
@@ -100,5 +102,21 @@ describe( 'getProviderCheckpointRecords', () => {
 		mockSelect.mockReturnValue( storeSelect );
 
 		expect( getProviderCheckpointRecords() ).toEqual( [] );
+	} );
+} );
+
+describe( 'stampProviderCheckpointObservations / getProviderCheckpointObservedAt', () => {
+	it( 'keeps the first-seen time across repeated sightings', () => {
+		const now = jest.spyOn( Date, 'now' );
+		now.mockReturnValue( 1000 );
+		stampProviderCheckpointObservations( [ 'toolu_seen' ] );
+		now.mockReturnValue( 2000 );
+		stampProviderCheckpointObservations( [ 'toolu_seen', 'toolu_new' ] );
+
+		expect( getProviderCheckpointObservedAt( 'toolu_seen' ) ).toBe( 1000 );
+		expect( getProviderCheckpointObservedAt( 'toolu_new' ) ).toBe( 2000 );
+		expect( getProviderCheckpointObservedAt( 'toolu_unseen' ) ).toBe( 0 );
+
+		now.mockRestore();
 	} );
 } );

@@ -76,3 +76,23 @@ export function getProviderCheckpointRecords(): ProviderCheckpointRecord[] {
 		( record ): record is ProviderCheckpointRecord => typeof record?.id === 'string'
 	);
 }
+
+// Big Sky's records carry no timestamps, so the loader stamps each id when it
+// is first seen — right after a tool executes, and at each context build as a
+// fallback. Sorting the merged list by these keeps it chronological, so "the
+// most recent checkpoint" means to the agent what it means to the user.
+const firstObservedAt = new Map< string, number >();
+
+export function stampProviderCheckpointObservations( ids: string[] ): void {
+	const now = Date.now();
+	ids.forEach( ( id ) => {
+		if ( ! firstObservedAt.has( id ) ) {
+			firstObservedAt.set( id, now );
+		}
+	} );
+}
+
+/** First-seen time of a provider-held checkpoint id; unseen ids sort oldest. */
+export function getProviderCheckpointObservedAt( id: string ): number {
+	return firstObservedAt.get( id ) ?? 0;
+}

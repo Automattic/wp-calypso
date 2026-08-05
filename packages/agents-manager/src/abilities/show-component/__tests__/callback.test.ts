@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { setCheckpoint } from '../../../utils/checkpoints';
+import { hasCheckpoint, setCheckpoint } from '../../../utils/checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../../utils/tool-call-history';
 import { showComponentCallback } from '../callback';
 import type { ShowComponentInput } from '../callback';
@@ -11,6 +11,7 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 jest.mock( '../../../utils/checkpoints', () => ( {
 	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
+	hasCheckpoint: jest.fn( () => false ),
 	setCheckpoint: jest.fn(),
 } ) );
 jest.mock( '../../../utils/tool-call-history', () => ( {
@@ -82,6 +83,15 @@ describe( 'showComponentCallback', () => {
 	} );
 
 	it( 'skips the checkpoint when the tool call id is unknown', async () => {
+		await showComponentCallback( makeInput() );
+
+		expect( setCheckpoint ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps an existing snapshot instead of overwriting it', async () => {
+		jest.mocked( getToolCallIdFromConversationHistory ).mockReturnValueOnce( 'toolu_9' );
+		jest.mocked( hasCheckpoint ).mockReturnValueOnce( true );
+
 		await showComponentCallback( makeInput() );
 
 		expect( setCheckpoint ).not.toHaveBeenCalled();

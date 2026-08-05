@@ -16,6 +16,11 @@ import { amToolProvider, normalizeAbilityName } from '../abilities';
 import { getAvailableCheckpoints } from './checkpoints';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
+import {
+	getProviderCheckpointObservedAt,
+	getProviderCheckpointRecords,
+	stampProviderCheckpointObservations,
+} from './provider-checkpoints';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type {
 	ToolProvider,
@@ -346,14 +351,35 @@ function withAmCheckpoints(
 				return context;
 			}
 
-			const providerCheckpoints = Array.isArray( context.availableCheckpoints )
+			const providerCheckpoints: { checkpointId?: string }[] = Array.isArray(
+				context.availableCheckpoints
+			)
 				? context.availableCheckpoints
 				: [];
+
+			// Order the merged list chronologically: AM records carry `createdAt`,
+			// provider records sort by when the loader first saw them (the stores
+			// share no clock). The agent picks "the most recent" by position.
+			stampProviderCheckpointObservations(
+				providerCheckpoints
+					.map( ( { checkpointId } ) => checkpointId )
+					.filter( ( id ): id is string => !! id )
+			);
+			const merged = [
+				...providerCheckpoints.map( ( item ) => ( {
+					item,
+					at: getProviderCheckpointObservedAt( item.checkpointId ?? '' ),
+				} ) ),
+				...amCheckpoints.map( ( item ) => ( { item, at: item.createdAt } ) ),
+			];
+			merged.sort( ( a, b ) => a.at - b.at );
+
 			return {
 				...context,
-				availableCheckpoints: [ ...providerCheckpoints, ...amCheckpoints ].map(
-					( item, index ) => ( { ...item, checkpointIndex: index } )
-				),
+				availableCheckpoints: merged.map( ( { item }, index ) => ( {
+					...item,
+					checkpointIndex: index,
+				} ) ),
 			};
 		},
 	};
@@ -666,7 +692,17 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 						( ability ) => ability.name === name || normalizeAbilityName( ability.name ) === name
 					);
 					if ( owns ) {
-						return allToolProviders[ i ].executeAbility( name, args );
+						const result = await allToolProviders[ i ].executeAbility( name, args );
+
+						// TODO (ability-migration): Delete with the provider-checkpoints
+						// bridge. Stamping right after execution times a Big Sky record
+						// within the turn that created it — the context-build stamp
+						// alone would time it one message late.
+						stampProviderCheckpointObservations(
+							getProviderCheckpointRecords().map( ( { id } ) => id )
+						);
+
+						return result;
 					}
 				}
 				throw new Error( `No provider handled ability: ${ name }` );

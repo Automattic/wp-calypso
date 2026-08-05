@@ -9,12 +9,20 @@ import {
 	mergeCapabilitiesInto,
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
+import {
+	getProviderCheckpointObservedAt,
+	getProviderCheckpointRecords,
+} from '../provider-checkpoints';
 import type { Ability } from '../../extension-types';
 import type { ProviderCapabilities, UseSuggestionsHook } from '../load-external-providers';
 
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,
 } );
+jest.mock( '../provider-checkpoints', () => ( {
+	...jest.requireActual( '../provider-checkpoints' ),
+	getProviderCheckpointRecords: jest.fn( () => [] ),
+} ) );
 jest.mock( '../checkpoints', () => ( {
 	RESTORE_CHECKPOINT_TOOL_ID: 'big_sky__restore_checkpoint',
 	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
@@ -195,6 +203,20 @@ describe( 'loadExternalProviders', () => {
 		);
 		expect( firstProvider.executeAbility ).toHaveBeenCalled();
 		expect( secondProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'stamps provider checkpoints at execution time', async () => {
+		const provider = {
+			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'host/edit-thing' ) ] ) ),
+			executeAbility: jest.fn( () => Promise.resolve( { ok: true } ) ),
+		};
+		setAgentsManagerData( { agentProviders: [ { toolProvider: provider } ] } );
+		jest.mocked( getProviderCheckpointRecords ).mockReturnValueOnce( [ { id: 'toolu_mid_turn' } ] );
+
+		const providers = await loadExternalProviders();
+		await providers.toolProvider?.executeAbility( 'host/edit-thing', {} );
+
+		expect( getProviderCheckpointObservedAt( 'toolu_mid_turn' ) ).toBeGreaterThan( 0 );
 	} );
 
 	it( 'executes migrated abilities through AM before any provider copy', async () => {
@@ -441,12 +463,16 @@ describe( 'loadExternalProviders', () => {
 		consoleWarn.mockRestore();
 	} );
 
-	it( 'appends AM checkpoints after the provider checkpoint list', async () => {
-		jest
-			.mocked( getAvailableCheckpoints )
-			.mockReturnValueOnce( [
-				{ checkpointId: 'toolu_am', checkpointIndex: 0, checkpointKeys: [ 'color' ] },
-			] );
+	it( 'lists AM checkpoints created after the provider ones last', async () => {
+		const amCreatedAt = Date.now() + 60_000;
+		jest.mocked( getAvailableCheckpoints ).mockReturnValueOnce( [
+			{
+				checkpointId: 'toolu_am',
+				checkpointIndex: 0,
+				checkpointKeys: [ 'color' ],
+				createdAt: amCreatedAt,
+			},
+		] );
 		setAgentsManagerData( {
 			agentProviders: [
 				{
@@ -469,7 +495,61 @@ describe( 'loadExternalProviders', () => {
 
 		expect( providers.contextProvider?.getClientContext().availableCheckpoints ).toEqual( [
 			{ checkpointId: 'toolu_bsp', checkpointIndex: 0, checkpointKeys: [ 'blocks' ] },
-			{ checkpointId: 'toolu_am', checkpointIndex: 1, checkpointKeys: [ 'color' ] },
+			{
+				checkpointId: 'toolu_am',
+				checkpointIndex: 1,
+				checkpointKeys: [ 'color' ],
+				createdAt: amCreatedAt,
+			},
+		] );
+	} );
+
+	it( 'lists AM checkpoints created before a provider record appeared first', async () => {
+		const amCreatedAt = Date.now() - 60_000;
+		jest.mocked( getAvailableCheckpoints ).mockReturnValueOnce( [
+			{
+				checkpointId: 'toolu_am_early',
+				checkpointIndex: 0,
+				checkpointKeys: [ 'color' ],
+				createdAt: amCreatedAt,
+			},
+		] );
+		setAgentsManagerData( {
+			agentProviders: [
+				{
+					contextProvider: {
+						getClientContext: () => ( {
+							url: 'https://example.com/wp-admin/site-editor.php',
+							pathname: '/wp-admin/site-editor.php',
+							search: '',
+							environment: 'wp-admin',
+							availableCheckpoints: [
+								{
+									checkpointId: 'toolu_bsp_late',
+									checkpointIndex: 0,
+									checkpointKeys: [ 'blocks' ],
+								},
+							],
+						} ),
+					},
+				},
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect(
+			providers.contextProvider
+				?.getClientContext()
+				.availableCheckpoints?.map(
+					( item: { checkpointId?: string; checkpointIndex?: number } ) => [
+						item.checkpointId,
+						item.checkpointIndex,
+					]
+				)
+		).toEqual( [
+			[ 'toolu_am_early', 0 ],
+			[ 'toolu_bsp_late', 1 ],
 		] );
 	} );
 

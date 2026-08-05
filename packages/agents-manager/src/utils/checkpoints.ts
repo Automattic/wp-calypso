@@ -46,6 +46,7 @@ type GlobalStylesSnapshot = {
 export interface CheckpointRecord extends CheckpointMetadata {
 	id: string;
 	checkpointKeys: string[];
+	createdAt: number;
 	themeBeforeUpdate?: GlobalStylesSnapshot;
 }
 
@@ -150,6 +151,7 @@ export function setCheckpoint(
 		...metadata,
 		id,
 		checkpointKeys: keys,
+		createdAt: Date.now(),
 		...( themeBeforeUpdate && { themeBeforeUpdate } ),
 	} );
 }
@@ -187,6 +189,7 @@ export type CheckpointContextItem = CheckpointMetadata & {
 	checkpointId: string;
 	checkpointIndex: number;
 	checkpointKeys: string[];
+	createdAt: number;
 	isLatestForTool?: boolean;
 };
 
