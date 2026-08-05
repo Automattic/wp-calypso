@@ -9,6 +9,7 @@
  */
 import { isEnabled } from '@automattic/calypso-config';
 import { STAT_TYPE_CLICKS, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from '../../constants';
+import ALL_STATS_NOTICES from '../../stats-notices/all-notice-definitions';
 import { shouldGateStats } from '../use-should-gate-stats';
 import { shouldShowPaywallAfterGracePeriod, shouldShowPaywallNotice } from '../use-stats-purchases';
 
@@ -84,5 +85,31 @@ describe( 'with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
 
 		expect( shouldShowPaywallAfterGracePeriod( paidState, siteId ) ).toBe( false );
 		expect( shouldGateStats( paidState, siteId, STAT_TYPE_CLICKS ) ).toBe( false );
+	} );
+} );
+
+describe( 'upsell notices with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
+	const findNotice = ( noticeId: string ) =>
+		ALL_STATS_NOTICES.find( ( notice ) => notice.noticeId === noticeId );
+
+	it( 're-enables the commercial entry so the paywall lockout banner can render', () => {
+		const commercialNotice = findNotice( 'commercial_site_upgrade' );
+		expect( commercialNotice?.disabled ).toBe( false );
+		expect(
+			commercialNotice?.isVisibleFunc( {
+				siteId,
+				isOdysseyStats: false,
+				isSiteJetpackNotAtomic: true,
+				isCommercial: true,
+				isVip: false,
+				hasPaidStats: false,
+				showPaywallNotice: true,
+			} )
+		).toBe( true );
+	} );
+
+	it( 'restores the pre-kill notice set: legacy entries on, their successor off', () => {
+		expect( findNotice( 'do_you_love_jetpack_stats' )?.disabled ).toBe( false );
+		expect( findNotice( 'free_site_upgrade' )?.disabled ).toBe( true );
 	} );
 } );

@@ -23,6 +23,7 @@ import {
 	getIsSimpleSite,
 } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { COMMERCIAL_PAYWALL_KILLED } from 'calypso/state/stats/plan-usage/constants';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
 import usePlanUsageQuery, { getUsageLimitStatus } from '../hooks/use-plan-usage-query';
@@ -200,7 +201,7 @@ const useLocalizedStrings = ( isCommercial: boolean ) => {
 	// Page title, info text, and button text depend on isCommercial status of site.
 	if ( isCommercial ) {
 		return {
-			pageTitle: translate( 'Upgrade and continue using %(product)s', {
+			pageTitle: translate( 'Upgrade %(product)s to unlock premium features', {
 				args: { product: STATS_PRODUCT_NAME },
 			} ),
 			infoText: translate(
@@ -488,15 +489,17 @@ const StatsSingleItemPagePurchase = ( {
 					from={ from }
 				/>
 			</StatsSingleItemPagePurchaseFrame>
-			{ ! supportCommercialUse && ! ( isNewSite && isCommercial ) && (
-				<StatsSingleItemCard>
-					<StatsCommercialFlowOptOutForm
-						isCommercial={ isCommercial }
-						siteId={ siteId }
-						siteSlug={ siteSlug }
-					/>
-				</StatsSingleItemCard>
-			) }
+			{ ! COMMERCIAL_PAYWALL_KILLED &&
+				! supportCommercialUse &&
+				! ( isNewSite && isCommercial ) && (
+					<StatsSingleItemCard>
+						<StatsCommercialFlowOptOutForm
+							isCommercial={ isCommercial }
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+						/>
+					</StatsSingleItemCard>
+				) }
 		</>
 	);
 };
