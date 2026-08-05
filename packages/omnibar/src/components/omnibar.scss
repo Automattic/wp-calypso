@@ -63,6 +63,10 @@ body:has( .omnibar ) {
 			outline: none;
 		}
 
+		&:focus {
+			outline: none;
+		}
+
 		&:focus-visible {
 			box-shadow: inset 0 0 0 2px $omnibar-highlight-color;
 			outline-offset: -2px;
