@@ -450,12 +450,25 @@ describe( 'AgentDock', () => {
 		useWpAdminAgent();
 		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 			site: { domain: 'example.com' },
+			isWpcomPlatform: true,
 		};
 
 		renderAgentDock();
 
 		expect( screen.getByText( 'Knowledge and memory' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'AI Agent settings' ) ).toBeInTheDocument();
+	} );
+
+	it( 'omits the settings item on non-WordPress.com-hosted sites', () => {
+		useWpAdminAgent();
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			site: { domain: 'example.com' },
+		};
+
+		renderAgentDock();
+
+		expect( screen.getByText( 'Knowledge and memory' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'AI Agent settings' ) ).toBeNull();
 	} );
 
 	it( 'omits the guidelines and settings items without the injected site', () => {
@@ -473,7 +486,9 @@ describe( 'AgentDock', () => {
 		renderAgentDock();
 		fireEvent.click( screen.getByText( 'View history' ) );
 
-		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith( 'chat_history_open' );
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith( 'ai_chat_menu_item_click', {
+			type: 'view_history',
+		} );
 		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/history' );
 	} );
 
@@ -487,7 +502,7 @@ describe( 'AgentDock', () => {
 		renderAgentDock();
 		fireEvent.click( screen.getByText( 'Knowledge and memory' ) );
 
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith( 'ai_chat_menu_item_click', {
 			type: 'knowledge_memory',
 		} );
 		expect( openSpy ).toHaveBeenCalledWith(
@@ -503,13 +518,14 @@ describe( 'AgentDock', () => {
 		useWpAdminAgent();
 		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 			site: { domain: 'example.com' },
+			isWpcomPlatform: true,
 		};
 		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
 
 		renderAgentDock();
 		fireEvent.click( screen.getByText( 'AI Agent settings' ) );
 
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith( 'ai_chat_menu_item_click', {
 			type: 'ai_agent_settings',
 		} );
 		expect( openSpy ).toHaveBeenCalledWith(
@@ -578,9 +594,12 @@ describe( 'AgentDock', () => {
 			renderAgentDock( '/chat', { capabilities: { supportsSplitScreen: true } } );
 			fireEvent.click( screen.getByRole( 'button', { name: label } ) );
 
-			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
-				type,
-			} );
+			expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+				'ai_chat_menu_item_click',
+				{
+					type,
+				}
+			);
 			expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( nextState );
 		}
 	);

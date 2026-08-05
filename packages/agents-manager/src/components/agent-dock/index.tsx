@@ -264,14 +264,21 @@ export default function AgentDock( {
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		// The server injects `site` on wp-admin only, so its domain gates
 		// the site-based links.
-		const siteDomain = getAgentsManagerInlineData()?.site?.domain;
+		const inlineData = getAgentsManagerInlineData();
+		const siteDomain = inlineData?.site?.domain;
 
+		// Every item fires the unified AM event; items whose Big Sky event
+		// already ships in production also fire `recordBigSkyTracksEvent`
+		// so the existing Big Sky dashboards keep working.
 		const options = [
 			{
 				icon: comment,
 				title: __( 'New chat', __i18n_text_domain__ ),
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
 				onClick: () => {
+					recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
+						type: 'reset_chat',
+					} );
 					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 						type: 'reset_chat',
 					} );
@@ -284,7 +291,9 @@ export default function AgentDock( {
 				icon: backup,
 				title: __( 'View history', __i18n_text_domain__ ),
 				onClick: () => {
-					recordAgentsManagerTracksEvent( 'chat_history_open' );
+					recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
+						type: 'view_history',
+					} );
 					navigate( '/history' );
 				},
 			},
@@ -298,6 +307,9 @@ export default function AgentDock( {
 						? __( 'Exit split screen', __i18n_text_domain__ )
 						: __( 'Split screen sidebar', __i18n_text_domain__ ),
 					onClick: () => {
+						recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
+							type: isSplitScreen ? 'exit_split_screen' : 'split_screen',
+						} );
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: isSplitScreen ? 'exit_split_screen' : 'split_screen',
 						} );
@@ -308,7 +320,7 @@ export default function AgentDock( {
 				icon: heading,
 				title: __( 'Knowledge and memory', __i18n_text_domain__ ),
 				onClick: () => {
-					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+					recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
 						type: 'knowledge_memory',
 					} );
 					window.open(
@@ -318,22 +330,23 @@ export default function AgentDock( {
 					);
 				},
 			},
-			// TODO: Double-check whether this also needs a WP.com-host check —
-			// the linked settings page only exists for Simple/WoA sites.
-			!! siteDomain && {
-				icon: cog,
-				title: __( 'AI Agent settings', __i18n_text_domain__ ),
-				onClick: () => {
-					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
-						type: 'ai_agent_settings',
-					} );
-					window.open(
-						`https://my.wordpress.com/sites/${ siteDomain }/settings/ai-tools`,
-						'_blank',
-						'noreferrer'
-					);
+			// The linked settings page only exists on WordPress.com-hosted
+			// (Simple/WoA) sites.
+			!! siteDomain &&
+				inlineData?.isWpcomPlatform && {
+					icon: cog,
+					title: __( 'AI Agent settings', __i18n_text_domain__ ),
+					onClick: () => {
+						recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
+							type: 'ai_agent_settings',
+						} );
+						window.open(
+							`https://my.wordpress.com/sites/${ siteDomain }/settings/ai-tools`,
+							'_blank',
+							'noreferrer'
+						);
+					},
 				},
-			},
 		].filter( ( option ) => !! option );
 
 		// Public reader-chat frontends have no sidebar layout to dock into —
@@ -344,6 +357,9 @@ export default function AgentDock( {
 					icon: <SwitchToFloating />,
 					title: __( 'Switch to floating', __i18n_text_domain__ ),
 					onClick: () => {
+						recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
+							type: 'undock',
+						} );
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: 'undock',
 						} );
@@ -357,6 +373,9 @@ export default function AgentDock( {
 					icon: <SwitchToSidebar />,
 					title: __( 'Switch to sidebar', __i18n_text_domain__ ),
 					onClick: () => {
+						recordAgentsManagerTracksEvent( 'ai_chat_menu_item_click', {
+							type: 'dock',
+						} );
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: 'dock',
 						} );
