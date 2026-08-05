@@ -28,7 +28,12 @@ $breakpoint-mobile: 782px; //Mobile size.
 // "Last used" badge is shown — gives the badge breathing room above the input
 // without modifying the global `.form-label-core-styles` rule. Marker class
 // is only set when the badge ships, so default spacing is preserved otherwise.
+// display: flex + align-items: center keeps the badge vertically centered
+// against its sibling, which can be a plain text label or a `Button` (in the
+// password view) — the two don't share a consistent inline baseline.
 .form-label.has-last-used-badge {
+	display: flex;
+	align-items: center;
 	margin-bottom: 8px;
 }
 
