@@ -81,7 +81,7 @@ describe( 'EmailVerificationGate', () => {
 		jest.clearAllMocks();
 		jest.useRealTimers();
 		nock.cleanAll();
-		localStorage.clear();
+		sessionStorage.clear();
 	} );
 
 	afterAll( () => nock.enableNetConnect() );

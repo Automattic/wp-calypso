@@ -17,29 +17,41 @@ interface GateRecord {
 
 const EMPTY_RECORD: GateRecord = { shownAt: 0, resendAvailableAt: 0, confirmedAt: 0 };
 
+// What this tab knows, which is the whole of an attempt now that one belongs to a single tab.
+// Session storage bootstraps it and carries it across a reload, and is allowed to fail: a browser
+// that refuses to persist shouldn't cost a confirmation the tab is otherwise able to record.
+const records = new Map< string, GateRecord >();
+
 function storageKey( scope: string ): string {
 	return `${ STORAGE_KEY }:${ scope }`;
 }
 
 function read( scope: string ): GateRecord {
+	const known = records.get( scope );
+	if ( known ) {
+		return known;
+	}
+
+	let stored = EMPTY_RECORD;
 	try {
 		const raw = sessionStorage.getItem( storageKey( scope ) );
-		return raw
-			? { ...EMPTY_RECORD, ...( JSON.parse( raw ) as Partial< GateRecord > ) }
-			: EMPTY_RECORD;
+		if ( raw ) {
+			stored = { ...EMPTY_RECORD, ...( JSON.parse( raw ) as Partial< GateRecord > ) };
+		}
 	} catch {
-		return EMPTY_RECORD;
+		// Nothing to bootstrap from; this tab starts the attempt fresh.
 	}
+	records.set( scope, stored );
+	return stored;
 }
 
 function write( scope: string, changes: Partial< GateRecord > ): void {
+	const next = { ...read( scope ), ...changes };
+	records.set( scope, next );
 	try {
-		sessionStorage.setItem(
-			storageKey( scope ),
-			JSON.stringify( { ...read( scope ), ...changes } )
-		);
+		sessionStorage.setItem( storageKey( scope ), JSON.stringify( next ) );
 	} catch {
-		// Ignore storage failures (private mode, quota); the state just won't survive a reload.
+		// The attempt holds together for as long as the page does; only a reload loses it.
 	}
 }
 

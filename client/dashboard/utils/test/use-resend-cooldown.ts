@@ -20,9 +20,8 @@ describe( 'useResendCooldown', () => {
 		expect( result.current.secondsUntilResend ).toBe( 3 * 60 );
 	} );
 
-	// The server is what actually refuses a resend, so the button must not reopen ahead of it. A
-	// tab can adopt a longer wait another tab recorded and only then get its own, shorter answer —
-	// and it sees no storage event for its own write, so nothing would correct it afterwards.
+	// The server is what actually refuses a resend, so the button must not reopen ahead of it: a
+	// second answer can carry a smaller wait than the one already running.
 	test( 'never shortens a wait already running', () => {
 		const { result } = renderHook( () => useResendCooldown() );
 

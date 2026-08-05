@@ -58,6 +58,24 @@ describe( 'email verification gate storage', () => {
 		expect( gateResendAvailableAt( scope ) ).toBe( long );
 	} );
 
+	// A browser can refuse to persist at all. That shouldn't cost this page the confirmation it is
+	// otherwise perfectly able to record, nor let a remount count the view twice.
+	it( 'holds the attempt together for the page even when nothing can be written', () => {
+		const scope = nextScope();
+		const setItem = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+			throw new Error( 'denied' );
+		} );
+
+		expect( markGateShown( scope ) ).toBe( true );
+		expect( markGateShown( scope ) ).toBe( false );
+
+		markResendUnavailableUntil( scope, Date.now() + 5 * 60 * 1000 );
+		expect( gateResendAvailableAt( scope ) ).toBeGreaterThan( Date.now() );
+		expect( claimGateConfirmation( scope ) ).not.toBeNull();
+
+		setItem.mockRestore();
+	} );
+
 	it( 'keeps a lockout where a reload can find it', () => {
 		const scope = nextScope();
 		const deadline = Date.now() + 5 * 60 * 1000;

@@ -140,7 +140,7 @@ describe( 'account step email verification gate', () => {
 		// A test that fails before restoring them would otherwise time out every test after it.
 		jest.useRealTimers();
 		mockConfig.enabledFlags.clear();
-		localStorage.clear();
+		sessionStorage.clear();
 		jest.clearAllMocks();
 	} );
 
