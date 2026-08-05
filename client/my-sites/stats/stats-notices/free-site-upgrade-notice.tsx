@@ -40,7 +40,7 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 		siteId,
 		'free_site_upgrade',
 		'postponed',
-		36500 * 24 * 3600
+		3650 * 24 * 3600
 	);
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 

@@ -107,7 +107,7 @@ describe( 'FreeSiteUpgradeNotice', () => {
 			123,
 			'free_site_upgrade',
 			'postponed',
-			36500 * 24 * 3600
+			3650 * 24 * 3600
 		);
 	} );
 } );
