@@ -36,6 +36,9 @@ class PasswordlessSignupForm extends Component {
 		onCreateAccountError: PropTypes.func,
 		onCreateAccountSuccess: PropTypes.func,
 		disableTosText: PropTypes.bool,
+		// Names the caller in the activation email, so the link back can be aimed at where the
+		// account was created rather than the usual destination.
+		activationEmailFrom: PropTypes.string,
 		useConnectScreenActions: PropTypes.bool,
 	};
 
@@ -79,7 +82,7 @@ class PasswordlessSignupForm extends Component {
 			username: '',
 			password: '',
 		};
-		const { flowName, queryArgs = {} } = this.props;
+		const { activationEmailFrom, flowName, queryArgs = {} } = this.props;
 		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
 		const isDevAccount = devAccountLandingPageRefs.includes( queryArgs.ref );
 
@@ -124,7 +127,12 @@ class PasswordlessSignupForm extends Component {
 				} ),
 				anon_id: getTracksAnonymousUserId(),
 				is_dev_account: isDevAccount,
-				extra: { has_segmentation_survey: queryArgs.variationName === 'entrepreneur' },
+				extra: {
+					has_segmentation_survey: queryArgs.variationName === 'entrepreneur',
+					// Absent unless the caller asks for it, so the activation email keeps its usual
+					// destination for every flow that doesn't need to be returned somewhere.
+					...( activationEmailFrom && { from: activationEmailFrom } ),
+				},
 			};
 
 			const { search = '' } = typeof window !== 'undefined' ? window.location : {};

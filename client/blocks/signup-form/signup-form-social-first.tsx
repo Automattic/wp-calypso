@@ -54,6 +54,9 @@ interface SignupFormSocialFirst {
 	isMobileCompactVariant?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
+	// Forwarded to the email form only. Social accounts arrive already verified, so there is no
+	// activation email for it to aim.
+	activationEmailFrom?: string;
 }
 
 const options = {
@@ -112,6 +115,7 @@ const SignupFormSocialFirst = ( {
 	isMobileCompactVariant,
 	allowedSocialServices,
 	customTosElement,
+	activationEmailFrom,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
@@ -185,6 +189,7 @@ const SignupFormSocialFirst = ( {
 	const passwordlessFormProps = {
 		stepName,
 		flowName,
+		activationEmailFrom,
 		goToNextStep,
 		logInUrl,
 		queryArgs,
@@ -289,6 +294,7 @@ const SignupFormSocialFirst = ( {
 					<PasswordlessSignupForm
 						stepName={ stepName }
 						flowName={ flowName }
+						activationEmailFrom={ activationEmailFrom }
 						goToNextStep={ goToNextStep }
 						logInUrl={ logInUrl }
 						queryArgs={ queryArgs }

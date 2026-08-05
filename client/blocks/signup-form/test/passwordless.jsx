@@ -66,3 +66,49 @@ describe( 'createAccountError', () => {
 		} );
 	} );
 } );
+
+describe( 'activation email source', () => {
+	const mockStore = configureStore( [ thunk ] );
+
+	// The response doesn't matter — what is being asserted is what was asked for.
+	const submitWith = async ( props ) => {
+		const sent = [];
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/users/new', ( body ) => {
+				sent.push( body );
+				return true;
+			} )
+			.reply( 500, { error: 'internal_server_error' } );
+
+		render(
+			<Provider store={ mockStore( {} ) }>
+				<PasswordlessSignupForm flowName="onboarding" { ...props } />
+			</Provider>
+		);
+
+		fireEvent.change( screen.getByRole( 'textbox', { name: /email/i } ), {
+			target: { value: 'test@example.com' },
+		} );
+		fireEvent.click( screen.getByRole( 'button', { name: /create your account/i } ) );
+
+		await waitFor( () => expect( sent ).toHaveLength( 1 ) );
+		return sent[ 0 ];
+	};
+
+	it( 'names the caller when given one, without displacing what extra already carries', async () => {
+		const body = await submitWith( { activationEmailFrom: 'onboarding-with-email-verification' } );
+
+		expect( body.extra ).toEqual( {
+			has_segmentation_survey: false,
+			from: 'onboarding-with-email-verification',
+		} );
+	} );
+
+	// Every other signup, the control arm included: the activation email keeps its usual
+	// destination, and nothing about this request changes.
+	it( 'says nothing about where the signup came from otherwise', async () => {
+		const body = await submitWith( {} );
+
+		expect( body.extra ).toEqual( { has_segmentation_survey: false } );
+	} );
+} );

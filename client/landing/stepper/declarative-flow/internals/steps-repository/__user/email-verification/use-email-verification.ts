@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { useBackoffPoll } from '../use-backoff-poll';
+import { ACTIVATION_EMAIL_SOURCE } from '../use-email-verification-gate';
 import { gateResendAvailableAt, markResendUnavailableUntil } from './storage';
 
 // `throttled` is distinct from `error`: the send was refused, not failed. It says only why the
@@ -19,7 +20,9 @@ type SendStatus = 'idle' | 'sending' | 'error' | 'throttled';
 export function useEmailVerification( flow: string, scope: string ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
-	const sendVerificationEmail = useSendEmailVerification();
+	// A resend has to land the user back here, the same as the activation email account creation
+	// sent — otherwise pressing Resend is how you get sent somewhere else.
+	const sendVerificationEmail = useSendEmailVerification( { from: ACTIVATION_EMAIL_SOURCE } );
 
 	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
 

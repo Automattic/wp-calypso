@@ -30,6 +30,18 @@ const mockSendVerificationEmail = (
 	response: { success: boolean; retry_after?: number } = { success: true }
 ) => mockApi().post( '/rest/v1.1/me/send-verification-email' ).reply( 200, response );
 
+// Captures what the resend actually asked for, rather than only that it asked.
+const captureSendVerificationEmail = () => {
+	const sent: { from?: string }[] = [];
+	mockApi()
+		.post( '/rest/v1.1/me/send-verification-email', ( body ) => {
+			sent.push( body );
+			return true;
+		} )
+		.reply( 200, { success: true } );
+	return sent;
+};
+
 const mockSendVerificationEmailThrottled = ( retryAfter: number ) =>
 	mockApi()
 		.post( '/rest/v1.1/me/send-verification-email' )
@@ -253,5 +265,18 @@ describe( 'EmailVerificationGate', () => {
 			'calypso_signup_email_verification_email_sent',
 			expect.objectContaining( { flow: FLOW, is_resend: true } )
 		);
+	} );
+
+	// The backend picks the link's destination from this, so a resend without it sends the user
+	// somewhere other than the flow the gate is holding them in.
+	it( 'asks for a link back to this flow, the same as the activation email did', async () => {
+		const user = userEvent.setup();
+		const sent = captureSendVerificationEmail();
+
+		render();
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+
+		await waitFor( () => expect( sent ).toHaveLength( 1 ) );
+		expect( sent[ 0 ].from ).toBe( 'onboarding-with-email-verification' );
 	} );
 } );
