@@ -142,7 +142,6 @@ describe( 'account step email verification gate', () => {
 		jest.useRealTimers();
 		mockConfig.enabledFlags.clear();
 		localStorage.clear();
-		sessionStorage.clear();
 		jest.clearAllMocks();
 	} );
 

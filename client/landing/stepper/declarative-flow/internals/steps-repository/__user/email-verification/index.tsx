@@ -25,7 +25,7 @@ interface Props {
 	flow: string;
 	// Storage scope for this attempt, computed once by the account step.
 	scope: string;
-	// Whether the account was created in this session, as opposed to a returning unverified one.
+	// Whether an email was just sent, as against one carried over from an earlier signup.
 	isNewSignup: boolean;
 	// Partner/Woo branding, so the top bar doesn't change when the gate replaces the form.
 	logo?: ReactNode;

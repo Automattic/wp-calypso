@@ -28,8 +28,12 @@ import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/sel
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from './email-verification';
-import { recordGateConfirmation } from './email-verification/confirmation';
-import { gateScope, isFreshSignup, markFreshSignup } from './email-verification/storage';
+import {
+	claimGateConfirmation,
+	gateScope,
+	isFreshSignup,
+	markFreshSignup,
+} from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
@@ -119,9 +123,17 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		} else if ( gateStatus !== 'gated' ) {
 			// The step owns the whole of finishing; the gate is presentation, and unmounting it is
 			// what this transition looks like. Only `/me` saying verified is a confirmation — the
-			// flag being off is not — and the claim decides which tab records it.
+			// flag being off is not — and the claim decides which tab records it. Navigation
+			// doesn't wait on that: every tab continues whether or not it was the one counting.
 			if ( gateStatus === 'verified' ) {
-				recordGateConfirmation( gateScopeForUser, flow );
+				claimGateConfirmation( gateScopeForUser ).then( ( claim ) => {
+					if ( claim ) {
+						recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
+							flow,
+							seconds_on_step: claim.secondsOnStep,
+						} );
+					}
+				} );
 			}
 			navigation.submit?.();
 		}
