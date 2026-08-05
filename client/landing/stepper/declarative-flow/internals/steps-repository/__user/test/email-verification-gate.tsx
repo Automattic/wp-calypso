@@ -173,18 +173,41 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
-	// The token is loaded and the account exists, but Redux won't call anyone logged in until
-	// `/me` answers — which the code explicitly expects to lag behind a cross-DC signup.
-	it( 'offers no way to authenticate again between creating the account and /me landing', async () => {
-		renderUser( makeLoggedOutStore() );
+	// One journey, asserted at each point it could go wrong. `/me` lags a cross-DC signup, which
+	// the step's own retry comment calls out, so the window between creating an account and being
+	// told whose it is has to hold up on its own.
+	it( 'carries a new account from the form to the gate', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const store = makeLoggedOutStore();
+		const { submit } = renderUser( store );
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		await user.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
 
-		// No second authentication path while the first one is mid-flight.
+		// Nothing offers a second way in while the first is still landing.
 		expect(
 			screen.queryByRole( 'button', { name: 'create-email-account' } )
 		).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+
+		// The account-creation fetch is the one that can fail, and nothing has changed state
+		// since — so something has to keep asking, plainly rather than in batches of four.
+		( fetchCurrentUser as jest.Mock ).mockClear();
+		act( () => {
+			jest.advanceTimersByTime( 30 * 1000 );
+		} );
+		expect( fetchCurrentUser ).toHaveBeenCalled();
+		expect( fetchCurrentUser ).not.toHaveBeenCalledWith( { retry: true } );
+
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: mockUserId, email: EMAIL, email_verified: false },
+			} );
+		} );
+
+		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+		expect( submit ).not.toHaveBeenCalled();
 	} );
 
 	// A stale token can have `/me` resolve someone else entirely, and the gate would otherwise be
@@ -227,26 +250,6 @@ describe( 'account step email verification gate', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	// The account exists but `/me` hasn't answered, so Redux doesn't consider anyone logged in yet.
-	// Waiting on `isLoggedIn` to start retrying would strand exactly the user this is built for.
-	it( 'keeps asking for the user after account creation, before anyone is logged in', async () => {
-		jest.useFakeTimers();
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		renderUser( makeLoggedOutStore() );
-
-		await user.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
-		// The account-creation fetch is the one that failed; nothing has changed state since.
-		( fetchCurrentUser as jest.Mock ).mockClear();
-
-		act( () => {
-			jest.advanceTimersByTime( 30 * 1000 );
-		} );
-
-		expect( fetchCurrentUser ).toHaveBeenCalled();
-		// Plain, not a four-request batch every ten seconds aimed at an already-struggling `/me`.
-		expect( fetchCurrentUser ).not.toHaveBeenCalledWith( { retry: true } );
-	} );
-
 	// Confirming elsewhere and coming back finds `/me` already verified, so the gate never opens
 	// to close itself out. The attempt still has to be finished, or it goes unrecorded.
 	it( 'finishes an attempt that was confirmed before the gate could see it', async () => {
@@ -284,25 +287,6 @@ describe( 'account step email verification gate', () => {
 			( [ event ] ) => event === 'calypso_signup_email_verification_confirmed'
 		);
 		expect( confirmations ).toHaveLength( 1 );
-	} );
-
-	it( 'shows the gate once an email account is created and logged in', async () => {
-		const store = makeLoggedOutStore();
-		const { submit } = renderUser( store );
-
-		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
-		// Account creation logs the user in.
-		act( () => {
-			store.dispatch( {
-				type: CURRENT_USER_RECEIVE,
-				user: { ID: mockUserId, email: EMAIL, email_verified: false },
-			} );
-		} );
-
-		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
-		expect( submit ).not.toHaveBeenCalled();
 	} );
 
 	// Turning the flag off is not the user having confirmed anything. Recording it as one would
