@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/agenttic-ui",
-	"version": "0.1.82",
+	"version": "0.1.83",
 	"type": "module",
 	"description": "UI components for the Agenttic framework",
 	"main": "dist/index.js",
