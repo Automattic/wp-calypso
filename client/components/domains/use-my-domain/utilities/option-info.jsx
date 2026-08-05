@@ -1,6 +1,7 @@
 import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from '@automattic/urls';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { backup, envelope, globe, shield, wordpress } from '@wordpress/icons';
 import ConnectIcon from '../transfer-or-connect/icons/connect';
 import TransferIcon from '../transfer-or-connect/icons/transfer';
 
@@ -27,9 +28,9 @@ const transferSupported = {
 	learnMoreLink: INCOMING_DOMAIN_TRANSFER,
 	get benefits() {
 		return [
-			__( 'Free domain name renewal for 1 year' ),
-			__( 'Manage everything from WordPress.com' ),
-			__( 'Privacy protection and SSL included' ),
+			{ icon: backup, text: __( 'Free domain name renewal for 1 year' ) },
+			{ icon: wordpress, text: __( 'Manage everything from WordPress.com' ) },
+			{ icon: shield, text: __( 'Privacy protection and SSL included' ) },
 		];
 	},
 };
@@ -56,9 +57,9 @@ const connectSupported = {
 	learnMoreLink: MAP_EXISTING_DOMAIN,
 	get benefits() {
 		return [
-			__( 'Keep your current domain provider' ),
-			__( 'Email and other services stay connected' ),
-			__( 'Privacy protection and SSL included' ),
+			{ icon: globe, text: __( 'Keep your current domain provider' ) },
+			{ icon: envelope, text: __( 'Email and other services stay connected' ) },
+			{ icon: shield, text: __( 'Privacy protection and SSL included' ) },
 		];
 	},
 };
