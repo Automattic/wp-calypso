@@ -123,17 +123,15 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		} else if ( gateStatus !== 'gated' ) {
 			// The step owns the whole of finishing; the gate is presentation, and unmounting it is
 			// what this transition looks like. Only `/me` saying verified is a confirmation — the
-			// flag being off is not — and the claim decides which tab records it. Navigation
-			// doesn't wait on that: every tab continues whether or not it was the one counting.
+			// flag being off is not — and the claim decides which of several tabs records it.
 			if ( gateStatus === 'verified' ) {
-				claimGateConfirmation( gateScopeForUser ).then( ( claim ) => {
-					if ( claim ) {
-						recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
-							flow,
-							seconds_on_step: claim.secondsOnStep,
-						} );
-					}
-				} );
+				const claim = claimGateConfirmation( gateScopeForUser );
+				if ( claim ) {
+					recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
+						flow,
+						seconds_on_step: claim.secondsOnStep,
+					} );
+				}
 			}
 			navigation.submit?.();
 		}

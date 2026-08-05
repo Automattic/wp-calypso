@@ -87,32 +87,23 @@ function read( scope: string ): GateRecord {
 }
 
 /**
- * Every mutation, serialized across tabs.
+ * Every mutation, in one place.
  *
- * Read-check-write is three operations, and local storage gives no atomicity between documents, so
- * two tabs opening the gate or seeing the same confirmation could both find the record untouched
- * and both act on it. Web Locks makes the sequence exclusive; `mutate` returning null leaves the
- * record alone. Callers keep navigation outside this — every tab still continues either way.
- *
- * Without Web Locks the sequence is unguarded and the counting is best-effort, as it was before.
+ * Read-check-write is three operations and local storage gives no atomicity between documents, so
+ * two tabs acting on the same attempt within a few microseconds of each other can both find it
+ * untouched. The check makes that rare rather than impossible — which is what the rest of Stepper
+ * lives with for its own step events. `mutate` returning null leaves the record alone.
  */
-async function updateGateRecord< T >(
+function updateGateRecord< T >(
 	scope: string,
 	mutate: ( record: GateRecord ) => { changes: Partial< GateRecord > | null; result: T }
-): Promise< T > {
-	const transition = () => {
-		const record = read( scope );
-		const { changes, result } = mutate( record );
-		if ( changes ) {
-			persist( scope, { ...record, ...changes, startedAt: record.startedAt || Date.now() } );
-		}
-		return result;
-	};
-
-	if ( ! navigator.locks ) {
-		return transition();
+): T {
+	const record = read( scope );
+	const { changes, result } = mutate( record );
+	if ( changes ) {
+		persist( scope, { ...record, ...changes, startedAt: record.startedAt || Date.now() } );
 	}
-	return navigator.locks.request( `${ STORAGE_KEY }:${ scope }`, transition );
+	return result;
 }
 
 // How long "we just sent an email" stays true: long enough for a signup that detours through
@@ -121,8 +112,8 @@ const FRESH_SIGNUP_WINDOW_MS = 30 * 60 * 1000;
 
 // On the shared record rather than one tab's own, so every tab says the same thing and the view
 // event agrees with the copy.
-export function markFreshSignup( scope: string ): Promise< void > {
-	return updateGateRecord( scope, () => ( {
+export function markFreshSignup( scope: string ): void {
+	updateGateRecord( scope, () => ( {
 		changes: { freshUntil: Date.now() + FRESH_SIGNUP_WINDOW_MS },
 		result: undefined,
 	} ) );
@@ -136,7 +127,7 @@ export function isFreshSignup( scope: string ): boolean {
  * Stamps the gate as shown and reports whether this call was the one that stamped it, so the view
  * event fires once per attempt rather than once per tab.
  */
-export function markGateShown( scope: string ): Promise< boolean > {
+export function markGateShown( scope: string ): boolean {
 	return updateGateRecord( scope, ( record ) =>
 		record.shownAt
 			? { changes: null, result: false }
@@ -152,9 +143,7 @@ export function markGateShown( scope: string ): Promise< boolean > {
  * The claim stays rather than being removed, so a late tab finds it taken instead of an empty
  * record it would mistake for a fresh attempt.
  */
-export function claimGateConfirmation(
-	scope: string
-): Promise< { secondsOnStep: number } | null > {
+export function claimGateConfirmation( scope: string ): { secondsOnStep: number } | null {
 	return updateGateRecord( scope, ( record ) => {
 		if ( ! record.shownAt || record.confirmedAt ) {
 			return { changes: null, result: null };
@@ -168,8 +157,8 @@ export function claimGateConfirmation(
 }
 
 // Persisted so a reload doesn't forget a lockout and reopen the button into a refusal.
-export function markResendUnavailableUntil( scope: string, deadline: number ): Promise< void > {
-	return updateGateRecord( scope, () => ( {
+export function markResendUnavailableUntil( scope: string, deadline: number ): void {
+	updateGateRecord( scope, () => ( {
 		changes: { resendAvailableAt: deadline },
 		result: undefined,
 	} ) );

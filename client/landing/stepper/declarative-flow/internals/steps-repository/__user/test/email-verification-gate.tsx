@@ -191,10 +191,7 @@ describe( 'account step email verification gate', () => {
 	// the same component instance, still counting down a lockout that was never theirs.
 	it( "does not carry one account's resend lockout over to another", async () => {
 		const store = makeStore( false );
-		await markResendUnavailableUntil(
-			gateScope( 'onboarding', mockUserId ),
-			Date.now() + 5 * 60 * 1000
-		);
+		markResendUnavailableUntil( gateScope( 'onboarding', mockUserId ), Date.now() + 5 * 60 * 1000 );
 		renderUser( store );
 
 		expect( await screen.findByRole( 'button', { name: /^Resend \(/ } ) ).toBeVisible();
