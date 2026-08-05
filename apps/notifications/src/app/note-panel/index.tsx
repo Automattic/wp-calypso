@@ -131,7 +131,15 @@ const NotePanel = ( {
 								<Tabs.Tab
 									key={ name }
 									tabId={ name }
-									style={ { fontFamily: 'inherit', fontWeight: 500, lineHeight: '16px' } }
+									style={ {
+										fontFamily: 'inherit',
+										fontWeight: 500,
+										lineHeight: '16px',
+										// Compact padding so all five tabs fit the pane in wider
+										// locales (DE/ES/PT); locales that still overflow fall back
+										// to the TabList's built-in horizontal scroll and fades.
+										paddingInline: '8px',
+									} }
 									ref={ ( element: HTMLButtonElement ) => {
 										tabRefs.current[ name ] = element;
 									} }
