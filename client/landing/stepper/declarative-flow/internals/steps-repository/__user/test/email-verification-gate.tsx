@@ -23,7 +23,6 @@ import useAccountCreationExperiment from '../use-account-creation-experiment';
 // A different user per test, so each one's isolation is its own rather than teardown's.
 let mockUserId = 0;
 
-// What the step handed the signup form.
 let activationEmailFromProp: string | undefined;
 
 jest.mock( 'calypso/lib/analytics/tracks' );
@@ -153,7 +152,6 @@ describe( 'account step email verification gate', () => {
 		jest.clearAllMocks();
 	} );
 
-	// Ungated signups keep the activation email they have always had.
 	it( 'asks for a link back to the flow only when the gate is on', async () => {
 		renderUser( makeLoggedOutStore() ).unmount();
 		expect( activationEmailFromProp ).toBe( 'onboarding-with-email-verification' );

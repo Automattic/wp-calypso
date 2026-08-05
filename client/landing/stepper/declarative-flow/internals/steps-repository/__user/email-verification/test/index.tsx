@@ -30,7 +30,6 @@ const mockSendVerificationEmail = (
 	response: { success: boolean; retry_after?: number } = { success: true }
 ) => mockApi().post( '/rest/v1.1/me/send-verification-email' ).reply( 200, response );
 
-// What the resend asked for, rather than only that it asked.
 const captureSendVerificationEmail = () => {
 	const sent: { from?: string }[] = [];
 	mockApi()

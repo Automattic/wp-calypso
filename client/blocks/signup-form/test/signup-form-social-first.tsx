@@ -207,7 +207,6 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 	} );
 
-	// A signup whose form never received it gets an activation link to somewhere else.
 	describe( 'activationEmailFrom', () => {
 		beforeEach( () => ( mockPasswordlessProps.length = 0 ) );
 
