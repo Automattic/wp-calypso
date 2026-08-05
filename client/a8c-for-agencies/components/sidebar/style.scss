@@ -13,9 +13,9 @@
 	--color-sidebar-text-alternative: var(--color-primary-5);
 	--color-sidebar-gridicon-fill: var(--color-primary-5);
 
-	.sidebar__menu-icon {
+	.sidebar__menu-icon.sidebar__menu-icon.sidebar__menu-icon {
 		margin: 0;
-		max-height: 24px !important;
+		max-height: 24px;
 	}
 
 	.sidebar-v2__navigator-sub-menu .components-navigator-back-button.components-navigator-back-button.components-navigator-back-button {
