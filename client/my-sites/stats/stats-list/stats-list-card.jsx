@@ -119,7 +119,7 @@ const StatsListCard = ( {
 	const generateLeftItem = ( item ) => {
 		let leftSideItem; // undefined value avoids rendering an empty node if nothing generates the output
 
-		// left icon visible for avatars, contry flags or tags and categories.
+		// Left icon is shown for country flags, video thumbnails, avatars, and tag/category icons.
 		if ( item?.countryCode ) {
 			leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
 		} else if ( moduleType === 'videoplays' ) {
