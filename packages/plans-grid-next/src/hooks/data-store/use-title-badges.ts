@@ -6,18 +6,18 @@ import type { TranslateResult } from 'i18n-calypso';
 interface Props {
 	intent?: PlansIntent;
 	planSlugs: PlanSlug[];
-	badgeTextOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 }
 
-const useTitleBadges = ( { intent, planSlugs, badgeTextOverrides }: Props ) => {
+const useTitleBadges = ( { intent, planSlugs, titleBadgeOverrides }: Props ) => {
 	const translate = useTranslate();
 
 	return planSlugs.reduce(
 		( acc, planSlug ) => {
-			if ( badgeTextOverrides?.[ planSlug ] ) {
+			if ( titleBadgeOverrides?.[ planSlug ] ) {
 				return {
 					...acc,
-					[ planSlug ]: badgeTextOverrides[ planSlug ],
+					[ planSlug ]: titleBadgeOverrides[ planSlug ],
 				};
 			}
 

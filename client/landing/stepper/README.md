@@ -390,7 +390,7 @@ flows keep working unchanged:
   `defaultInterval` (seeds the billing term — `monthly` / `yearly` / `2yearly` / `3yearly` —
   while the URL still wins once the user switches), `highlightLabelOverrides` (a
   `{ [PlanSlug]: TranslateResult }` map that re-labels a plan's highlight tag, threaded through
-  `PlansFeaturesMain` into the existing `plans-grid-next` override path), and `badgeTextOverrides`
+  `PlansFeaturesMain` into the existing `plans-grid-next` override path), and `titleBadgeOverrides`
   / `taglineOverrides` (both `{ [PlanSlug]: TranslateResult }` maps — the first overrides a plan's
   `titleBadge`, the pill next to the plan title, resolved in `useTitleBadges`; the second overrides
   a plan's `tagline`, the line under the title, winning over the computed and experiment copy in

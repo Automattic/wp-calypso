@@ -52,7 +52,7 @@ const PlansStepAdaptor: StepType< {
 		hidePlanTypeSelector?: boolean;
 		defaultInterval?: SupportedIntervalTypes;
 		highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
-		badgeTextOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+		titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 		taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 		wrapperProps?: {
 			hideBack?: boolean;
@@ -78,7 +78,7 @@ const PlansStepAdaptor: StepType< {
 		hidePlanTypeSelector: hidePlanTypeSelectorOverride,
 		defaultInterval,
 		highlightLabelOverrides,
-		badgeTextOverrides,
+		titleBadgeOverrides,
 		taglineOverrides,
 	} = props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
@@ -213,7 +213,7 @@ const PlansStepAdaptor: StepType< {
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
 			highlightLabelOverrides={ highlightLabelOverrides }
-			badgeTextOverrides={ badgeTextOverrides }
+			titleBadgeOverrides={ titleBadgeOverrides }
 			taglineOverrides={ taglineOverrides }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {

@@ -24,7 +24,7 @@ describe( 'useTitleBadges', () => {
 		expect(
 			useTitleBadges( {
 				planSlugs: [ BUSINESS, PREMIUM ],
-				badgeTextOverrides: { [ PREMIUM ]: 'Team favorite' },
+				titleBadgeOverrides: { [ PREMIUM ]: 'Team favorite' },
 			} )
 		).toEqual( {
 			[ BUSINESS ]: null,
@@ -45,7 +45,7 @@ describe( 'useTitleBadges', () => {
 			useTitleBadges( {
 				intent: 'plans-woo-hosted',
 				planSlugs: [ BUSINESS ],
-				badgeTextOverrides: { [ BUSINESS ]: 'Best for stores' },
+				titleBadgeOverrides: { [ BUSINESS ]: 'Best for stores' },
 			} )
 		).toEqual( {
 			[ BUSINESS ]: 'Best for stores',

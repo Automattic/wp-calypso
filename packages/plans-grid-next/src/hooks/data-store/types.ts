@@ -30,7 +30,7 @@ export interface UseGridPlansParams {
 	 * Provide a map of plan slug keyed strings to override the title badge (the pill next to the plan
 	 * title). Only rendered by the features grid.
 	 */
-	badgeTextOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	/**
 	 * Provide a map of plan slug keyed strings to override the plan tagline (the line under the plan
 	 * title), winning over the computed and experiment copy. Only rendered by the features grid.

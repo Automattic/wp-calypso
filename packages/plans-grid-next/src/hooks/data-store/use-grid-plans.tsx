@@ -327,7 +327,7 @@ const useGridPlans: UseGridPlansType = ( {
 	siteId,
 	isDisplayingPlansNeededForFeature,
 	highlightLabelOverrides,
-	badgeTextOverrides,
+	titleBadgeOverrides,
 	taglineOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
@@ -386,7 +386,7 @@ const useGridPlans: UseGridPlansType = ( {
 	const titleBadges = useTitleBadges( {
 		intent,
 		planSlugs: planSlugsForIntent,
-		badgeTextOverrides,
+		titleBadgeOverrides,
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package
