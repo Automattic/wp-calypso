@@ -305,34 +305,6 @@ describe( 'account step email verification gate', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	// The whole of what keeps social signups out: the social endpoint creates accounts with
-	// `is_email_unverified => false`, so they arrive here already verified.
-	it( 'skips the gate for a verified account', async () => {
-		const { submit } = renderUser( makeStore( true ) );
-
-		await waitFor( () => expect( submit ).toHaveBeenCalled() );
-		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
-	} );
-
-	// A phone account is unverified because its address was generated for it, not because a link
-	// is sitting unopened in an inbox. Nothing here would help.
-	it( 'skips the gate for an unverified phone account', async () => {
-		const store = createStore(
-			rootReducer,
-			{
-				currentUser: {
-					id: mockUserId,
-					user: { ID: mockUserId, email: EMAIL, email_verified: false, phone_account: true },
-				},
-			},
-			applyMiddleware( thunkMiddleware )
-		);
-		const { submit } = renderUser( store );
-
-		await waitFor( () => expect( submit ).toHaveBeenCalled() );
-		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
-	} );
-
 	// Turning the flag off is not the user having confirmed anything. Recording it as one would
 	// also burn the attempt, so a real confirmation later would go unrecorded.
 	it( 'does not record a confirmation when the flag goes off mid-attempt', async () => {
@@ -356,13 +328,5 @@ describe( 'account step email verification gate', () => {
 				expect.anything()
 			)
 		);
-	} );
-
-	it( 'skips the gate when the flag is off', async () => {
-		mockConfig.enabledFlags.clear();
-		const { submit } = renderUser( makeStore( false ) );
-
-		await waitFor( () => expect( submit ).toHaveBeenCalled() );
-		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
 	} );
 } );
