@@ -136,8 +136,7 @@ const StatsPurchasePage = ( {
 		if ( ! showPurchasePage ) {
 			pageVariant = 'notice';
 		} else if (
-			( ! isForceProductRedirect &&
-				( isCommercial || isCommercial === null || isCommercialOwned ) ) ||
+			( ! isForceProductRedirect && ( isCommercial || isCommercialOwned ) ) ||
 			redirectToCommercial
 		) {
 			pageVariant = 'commercial';
@@ -208,10 +207,8 @@ const StatsPurchasePage = ( {
 					! isLoading && showPurchasePage && (
 						<>
 							{
-								// blog is commercial, we are forcing a product or the site is not identified yet - show the commercial purchase page
-								( ( ! isForceProductRedirect &&
-									( isCommercial || isCommercial === null || isCommercialOwned ) ) ||
-									redirectToCommercial ) && (
+								// blog is commercial or we are forcing a product - show the commercial purchase page
+								variant === 'commercial' && (
 									<div className="stats-purchase-page__notice">
 										<StatsSingleItemPagePurchase
 											siteSlug={ siteSlug ?? '' }
@@ -226,10 +223,9 @@ const StatsPurchasePage = ( {
 								)
 							}
 							{
-								// blog is personal or we are forcing a product - show the personal purchase page
+								// blog is personal, not identified yet, or we are forcing a product - show the personal purchase page
 								// If user has already got a commercial license, we should not show the PWYW plan.
-								( ( ! isForceProductRedirect && isCommercial === false && ! isCommercialOwned ) ||
-									redirectToPersonal ) && (
+								variant === 'personal' && (
 									<StatsSingleItemPersonalPurchasePage
 										siteSlug={ siteSlug || '' }
 										maxSliderPrice={ maxSliderPrice ?? 10 }

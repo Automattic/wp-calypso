@@ -409,7 +409,7 @@ const StatsPersonalPurchase = ( {
 				} ) }
 			</h1>
 			<p>
-				{ translate( 'Help %(product)s with a non-commercial license and get these perks:', {
+				{ translate( 'Help %(product)s and get these perks:', {
 					args: { product: STATS_PRODUCT_NAME },
 				} ) }
 			</p>
