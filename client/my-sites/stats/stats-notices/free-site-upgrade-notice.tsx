@@ -106,7 +106,7 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 	} ) as string;
 
 	const learnMoreLink = isWPCOMSite
-		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
+		? 'https://wordpress.com/support/stats/#upgrade-your-stats'
 		: 'https://jetpack.com/support/jetpack-stats/free-or-paid/#what-a-paid-plan-adds';
 
 	const description = isWPCOMPaidStatsFlow
