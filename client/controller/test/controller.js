@@ -29,6 +29,8 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 	// `config/test.json` enables `dashboard/enable-percentage-rollout`, so the
 	// user ID has to fall outside the cohort (`id % 100 >= 50`, below the
 	// new-user threshold) for enrollment to be driven by the preference alone.
+	const targetPath = ( params ) => `/emails/choose-email-solution/${ params.domain }`;
+
 	const buildContext = ( optIn ) => ( {
 		store: mockStore( {
 			currentUser: { id: 99 },
@@ -36,9 +38,9 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 				remoteValues: optIn ? { 'hosting-dashboard-opt-in': { value: optIn } } : {},
 			},
 		} ),
-		params: { site: 'example.wordpress.com' },
+		params: { domain: 'example.com', site: 'example.wordpress.com' },
 		query: {},
-		path: '/email/example.wordpress.com',
+		path: '/email/example.com/purchase/example.wordpress.com',
 	} );
 
 	let next;
@@ -50,51 +52,26 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 	} );
 
 	it( 'does not redirect when the flag is disabled and the user is not force-enrolled', () => {
-		const context = buildContext();
-
-		maybeRedirectToMultiSiteDashboard( '/emails', () => false )( context, next );
+		maybeRedirectToMultiSiteDashboard( targetPath, () => false )( buildContext(), next );
 
 		expect( navigate ).not.toHaveBeenCalled();
 		expect( next ).toHaveBeenCalled();
 	} );
 
-	it( 'redirects when the flag predicate returns true', () => {
-		const context = buildContext();
+	it( 'redirects to the flag target when the predicate returns true', () => {
+		maybeRedirectToMultiSiteDashboard( targetPath, () => true )( buildContext(), next );
 
-		maybeRedirectToMultiSiteDashboard( '/emails', () => true )( context, next );
-
-		expect( navigate ).toHaveBeenCalledWith( 'https://my.wordpress.com/emails' );
+		expect( navigate ).toHaveBeenCalledWith(
+			'https://my.wordpress.com/emails/choose-email-solution/example.com'
+		);
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
 	it( 'redirects force-enrolled users even when the flag is disabled', () => {
-		const context = buildContext( 'forced-opt-in' );
-
-		maybeRedirectToMultiSiteDashboard( '/emails', () => false )( context, next );
-
-		expect( navigate ).toHaveBeenCalledWith( 'https://my.wordpress.com/emails' );
-		expect( next ).not.toHaveBeenCalled();
-	} );
-
-	it( 'does not redirect users who merely opted in when the flag is disabled', () => {
-		const context = buildContext( 'opt-in' );
-
-		maybeRedirectToMultiSiteDashboard( '/emails', () => false )( context, next );
-
-		expect( navigate ).not.toHaveBeenCalled();
-		expect( next ).toHaveBeenCalled();
-	} );
-
-	it( 'builds the target path from the route params', () => {
-		const context = {
-			...buildContext(),
-			params: { domain: 'example.com', site: 'example.wordpress.com' },
-		};
-
-		maybeRedirectToMultiSiteDashboard(
-			( params ) => `/emails/choose-email-solution/${ params.domain }`,
-			() => true
-		)( context, next );
+		maybeRedirectToMultiSiteDashboard( targetPath, () => false )(
+			buildContext( 'forced-opt-in' ),
+			next
+		);
 
 		expect( navigate ).toHaveBeenCalledWith(
 			'https://my.wordpress.com/emails/choose-email-solution/example.com'

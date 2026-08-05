@@ -65,8 +65,6 @@ export default function () {
 
 	page(
 		paths.getEmailManagementPath( ':site' ),
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/emails', () => isEnabled( 'emails/titan-tiers' ) ),
 		...commonHandlers,
 		controller.emailManagement,
 		makeLayout,
