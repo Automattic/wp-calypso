@@ -8,16 +8,20 @@ import {
 	markResendUnavailableUntil,
 } from '../storage';
 
-const DAY = 24 * 60 * 60 * 1000;
-
 // A scope per test, so each one's isolation is its own rather than teardown's.
 let attempt = 0;
 const nextScope = () => `onboarding:${ ++attempt }`;
+
+const denyWrites = () =>
+	jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+		throw new Error( 'denied' );
+	} );
 
 describe( 'email verification gate storage', () => {
 	afterEach( () => {
 		jest.useRealTimers();
 		localStorage.clear();
+		jest.resetModules();
 	} );
 
 	it( 'stamps the gate as shown for the first caller only', () => {
@@ -33,10 +37,8 @@ describe( 'email verification gate storage', () => {
 		expect( claimGateConfirmation( scope ) ).toBeNull();
 
 		markGateShown( scope );
-		expect( claimGateConfirmation( scope ) ).toEqual( {
-			secondsOnStep: expect.any( Number ),
-		} );
-		// Taken — a second tab noticing the same confirmation gets nothing to record.
+		expect( claimGateConfirmation( scope ) ).toEqual( { secondsOnStep: expect.any( Number ) } );
+		// Already recorded — a remount mustn't count it again.
 		expect( claimGateConfirmation( scope ) ).toBeNull();
 	} );
 
@@ -50,104 +52,111 @@ describe( 'email verification gate storage', () => {
 		expect( claimGateConfirmation( scope )?.secondsOnStep ).toBe( 90 );
 	} );
 
-	it( 'lets an attempt go once it is a day old with no lockout left to honour', () => {
-		jest.useFakeTimers();
-		const scope = nextScope();
-
-		markGateShown( scope );
-		jest.setSystemTime( Date.now() + DAY + 1000 );
-
-		// A fresh attempt, so the next gate's view is counted rather than swallowed by the last.
-		expect( markGateShown( scope ) ).toBe( true );
-	} );
-
-	it( 'keeps an attempt for as long as its lockout has left to run', () => {
-		jest.useFakeTimers();
-		const scope = nextScope();
-
-		markGateShown( scope );
-		markResendUnavailableUntil( scope, Date.now() + DAY + 60 * 60 * 1000 );
-		jest.setSystemTime( Date.now() + DAY + 1000 );
-
-		expect( markGateShown( scope ) ).toBe( false );
-		expect( gateResendAvailableAt( scope ) ).toBeGreaterThan( Date.now() );
-	} );
-
-	// The countdown a tab is showing has to agree with what the server will enforce, so a stale
-	// deadline arriving after a longer one mustn't win.
+	// The countdown a tab shows has to agree with what the server will enforce, so a smaller wait
+	// arriving later mustn't replace one that is still running.
 	it( 'never shortens a lockout that is already running', () => {
 		const scope = nextScope();
-		markGateShown( scope );
-
 		const long = Date.now() + 4 * 60 * 60 * 1000;
+
 		markResendUnavailableUntil( scope, long );
 		markResendUnavailableUntil( scope, Date.now() + 5 * 60 * 1000 );
 
 		expect( gateResendAvailableAt( scope ) ).toBe( long );
 	} );
 
-	// The harder half of the same case: a full quota rejects writes while reads keep answering, so
-	// storage confidently returns a record that is behind what this tab knows.
-	it( 'reads what it remembers when its writes are the part that fail', () => {
+	// Storage can refuse a write outright, and can be cleared out from under an attempt that is
+	// still running. Neither should cost this tab the confirmation it is able to record, nor let a
+	// remount count the view twice.
+	it( 'holds the attempt together for the tab when nothing can be written', () => {
 		const scope = nextScope();
-		const setItem = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
-			throw new Error( 'quota' );
-		} );
+		const denied = denyWrites();
 
 		expect( markGateShown( scope ) ).toBe( true );
-		markResendUnavailableUntil( scope, Date.now() + 5 * 60 * 1000 );
-
-		// Reads still work, and would report an attempt that never happened.
-		expect( localStorage.getItem( `onboarding-email-verification-gate:${ scope }` ) ).toBeNull();
-
 		expect( markGateShown( scope ) ).toBe( false );
+
+		markResendUnavailableUntil( scope, Date.now() + 5 * 60 * 1000 );
 		expect( gateResendAvailableAt( scope ) ).toBeGreaterThan( Date.now() );
 		expect( claimGateConfirmation( scope ) ).not.toBeNull();
+		expect( claimGateConfirmation( scope ) ).toBeNull();
 
-		setItem.mockRestore();
+		denied.mockRestore();
 	} );
 
-	// Falling back is for as long as it's needed and no longer: a tab that stopped reading shared
-	// storage would stop seeing every other tab, for an attempt that persists again perfectly well.
-	it( 'goes back to shared storage once a write lands again', () => {
+	// The lockout is the one thing rewritten during an attempt, so it is the one that can be half
+	// written down — persisted, then extended by a write that storage refuses.
+	it( 'keeps an extension it could not write over the deadline it could', () => {
 		const scope = nextScope();
-		const key = `onboarding-email-verification-gate:${ scope }`;
-		const setItem = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementationOnce( () => {
-			throw new Error( 'quota' );
-		} );
+		const long = Date.now() + 4 * 60 * 60 * 1000;
 
-		markGateShown( scope );
-		markResendUnavailableUntil( scope, Date.now() + 60 * 1000 );
-		setItem.mockRestore();
-
-		// What another tab writing to the same attempt leaves behind.
-		const later = Date.now() + 10 * 60 * 1000;
-		localStorage.setItem(
-			key,
-			JSON.stringify( {
-				...JSON.parse( localStorage.getItem( key ) as string ),
-				resendAvailableAt: later,
-			} )
-		);
-
-		expect( gateResendAvailableAt( scope ) ).toBe( later );
-	} );
-
-	// The one thing the in-memory copy is for. Nothing is shared between tabs in this state, but a
-	// tab's own attempt still has to hold together.
-	it( 'falls back to what it remembers when storage is unavailable', () => {
-		const scope = nextScope();
-		markGateShown( scope );
 		markResendUnavailableUntil( scope, Date.now() + 5 * 60 * 1000 );
+		const denied = denyWrites();
+		markResendUnavailableUntil( scope, long );
 
-		const getItem = jest.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
-			throw new Error( 'unavailable' );
-		} );
+		expect( gateResendAvailableAt( scope ) ).toBe( long );
 
-		expect( markGateShown( scope ) ).toBe( false );
-		expect( gateResendAvailableAt( scope ) ).toBeGreaterThan( Date.now() );
+		denied.mockRestore();
+	} );
+
+	// Reading it back through a fresh module is the whole point: the copy this tab kept in memory
+	// would answer either way, and what a reload or another tab gets is only what was written.
+	it( 'hands a lockout and a claimed attempt to a tab that has neither in memory', async () => {
+		const scope = nextScope();
+		const deadline = Date.now() + 5 * 60 * 1000;
+
+		markResendUnavailableUntil( scope, deadline );
+		markGateShown( scope );
+		claimGateConfirmation( scope );
+
+		jest.resetModules();
+		const reloaded = await import( '../storage' );
+
+		expect( reloaded.gateResendAvailableAt( scope ) ).toBe( deadline );
+		expect( reloaded.markGateShown( scope ) ).toBe( false );
+		expect( reloaded.claimGateConfirmation( scope ) ).toBeNull();
+	} );
+
+	// Local rather than session storage because session storage is copied into a duplicated tab and
+	// restored with a reopened one. Each would inherit the view and claim the confirmation again.
+	it( 'lets only one of two tabs sharing an attempt record it', async () => {
+		const scope = nextScope();
+
+		expect( markGateShown( scope ) ).toBe( true );
+
+		jest.resetModules();
+		const otherTab = await import( '../storage' );
+
+		expect( otherTab.markGateShown( scope ) ).toBe( false );
 		expect( claimGateConfirmation( scope ) ).not.toBeNull();
+		expect( otherTab.claimGateConfirmation( scope ) ).toBeNull();
+	} );
 
-		getItem.mockRestore();
+	// The two halves age out separately, so the attempt a tab is in the middle of isn't retired by
+	// the stale one it couldn't overwrite — which is the case the tab's own copy exists for.
+	it( 'starts a fresh attempt over an expired one it cannot replace', () => {
+		jest.useFakeTimers();
+		const scope = nextScope();
+
+		markGateShown( scope );
+		jest.setSystemTime( Date.now() + 25 * 60 * 60 * 1000 );
+		const denied = denyWrites();
+
+		expect( markGateShown( scope ) ).toBe( true );
+		expect( markGateShown( scope ) ).toBe( false );
+		expect( claimGateConfirmation( scope )?.secondsOnStep ).toBe( 0 );
+
+		denied.mockRestore();
+	} );
+
+	// So an abandoned attempt doesn't suppress the view of the next one, or report the days between
+	// them as time spent on the step.
+	it( 'stops speaking for a later attempt once it is a day old', () => {
+		jest.useFakeTimers();
+		const scope = nextScope();
+
+		markGateShown( scope );
+		jest.setSystemTime( Date.now() + 25 * 60 * 60 * 1000 );
+
+		expect( markGateShown( scope ) ).toBe( true );
+		expect( claimGateConfirmation( scope )?.secondsOnStep ).toBe( 0 );
 	} );
 } );
