@@ -38,15 +38,15 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		case AI_SITE_BUILDER_ONBOARDING_FLOW:
 			return 'plans-ai-assembler-paid-only';
 		case ONBOARDING_FLOW:
+			if ( search.has( 'playground' ) ) {
+				return playgroundPlansIntent( search.get( 'playground' )! );
+			}
 			// The blueprint variation (/setup/onboarding/blueprint) offers paid plans
 			// only — Personal, Premium, Business, Commerce — to match the blueprint
 			// archive it builds from. Reuse the AI-site-builder intent purely for that
 			// plan-tier set (it carries no other AI-assembler behavior).
 			if ( search.has( 'blueprint' ) ) {
 				return 'plans-ai-assembler-paid-only';
-			}
-			if ( search.has( 'playground' ) ) {
-				return playgroundPlansIntent( search.get( 'playground' )! );
 			}
 			if ( search.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF ) {
 				return 'plans-woo-hosting-solutions';
