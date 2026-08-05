@@ -38,22 +38,30 @@ function stored( scope: string ): GateRecord | null {
 	}
 }
 
-// What every tab has put in, with what this one wrote filling in whatever storage no longer has.
-// Empty once the attempt is old enough to have nothing left to say, so an abandoned one stops
+// Empty once an attempt is old enough to have nothing left to say, so an abandoned one stops
 // speaking for the next.
+function unspent( record: GateRecord | null | undefined ): GateRecord {
+	if ( ! record ) {
+		return EMPTY_RECORD;
+	}
+	const isSpent =
+		Date.now() - record.shownAt > ATTEMPT_TTL_MS && record.resendAvailableAt <= Date.now();
+	return isSpent ? EMPTY_RECORD : record;
+}
+
+// What every tab has put in, with what this one wrote filling in whatever storage no longer has.
+// Each is aged out on its own: an attempt this tab started is live whatever it is sitting on top
+// of, and merging first would let a stale timestamp age out the record that replaced it.
 function read( scope: string ): GateRecord {
-	const theirs = stored( scope ) ?? EMPTY_RECORD;
-	const mine = written.get( scope ) ?? EMPTY_RECORD;
-	const record = {
+	const theirs = unspent( stored( scope ) );
+	const mine = unspent( written.get( scope ) );
+	return {
 		// Both stamps are set once and then left, so either copy having one is the answer.
 		shownAt: theirs.shownAt || mine.shownAt,
 		confirmedAt: theirs.confirmedAt || mine.confirmedAt,
 		// The one field that gets rewritten, so the lockout still running is the later of the two.
 		resendAvailableAt: Math.max( theirs.resendAvailableAt, mine.resendAvailableAt ),
 	};
-	const isSpent =
-		Date.now() - record.shownAt > ATTEMPT_TTL_MS && record.resendAvailableAt <= Date.now();
-	return isSpent ? EMPTY_RECORD : record;
 }
 
 function write( scope: string, changes: Partial< GateRecord > ): void {

@@ -130,6 +130,23 @@ describe( 'email verification gate storage', () => {
 		expect( otherTab.claimGateConfirmation( scope ) ).toBeNull();
 	} );
 
+	// The two halves age out separately, so the attempt a tab is in the middle of isn't retired by
+	// the stale one it couldn't overwrite — which is the case the tab's own copy exists for.
+	it( 'starts a fresh attempt over an expired one it cannot replace', () => {
+		jest.useFakeTimers();
+		const scope = nextScope();
+
+		markGateShown( scope );
+		jest.setSystemTime( Date.now() + 25 * 60 * 60 * 1000 );
+		const denied = denyWrites();
+
+		expect( markGateShown( scope ) ).toBe( true );
+		expect( markGateShown( scope ) ).toBe( false );
+		expect( claimGateConfirmation( scope )?.secondsOnStep ).toBe( 0 );
+
+		denied.mockRestore();
+	} );
+
 	// So an abandoned attempt doesn't suppress the view of the next one, or report the days between
 	// them as time spent on the step.
 	it( 'stops speaking for a later attempt once it is a day old', () => {
