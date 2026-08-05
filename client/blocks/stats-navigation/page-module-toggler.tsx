@@ -12,8 +12,6 @@ import { AVAILABLE_PAGE_MODULES, ModuleToggleItem } from './constants';
 
 type PageModuleTogglerProps = {
 	moduleToggles: { [ name: string ]: boolean };
-	isTooltipShown: boolean;
-	onTooltipDismiss: () => void;
 	customToggleIcon?: React.ReactNode;
 	siteId: number;
 	selectedItem: string;
@@ -40,8 +38,6 @@ export default function PageModuleToggler( {
 	selectedItem,
 	moduleToggles,
 	siteId,
-	isTooltipShown,
-	onTooltipDismiss,
 	customToggleIcon = <Icon className="gridicon" icon={ cog } />,
 }: PageModuleTogglerProps ) {
 	const translate = useTranslate();
@@ -63,7 +59,6 @@ export default function PageModuleToggler( {
 	}, [] );
 
 	const toggleSettingsMenu = () => {
-		onTooltipDismiss();
 		setIsSettingsMenuVisible( ( isSettingsMenuVisible ) => {
 			return ! isSettingsMenuVisible;
 		} );
@@ -89,17 +84,6 @@ export default function PageModuleToggler( {
 			>
 				{ customToggleIcon }
 			</button>
-			<Popover
-				className="tooltip tooltip--darker highlight-card-tooltip highlight-card__settings-tooltip"
-				isVisible={ isTooltipShown }
-				position="bottom left"
-				context={ settingsActionElement }
-			>
-				<div className="highlight-card-tooltip-content">
-					<p>{ translate( 'Here’s where you can find all your Jetpack Stats settings.' ) }</p>
-					<button onClick={ onTooltipDismiss }>{ translate( 'Got it' ) }</button>
-				</div>
-			</Popover>
 			<Popover
 				className="tooltip highlight-card-popover page-modules-settings-popover"
 				isVisible={ isSettingsMenuVisible }

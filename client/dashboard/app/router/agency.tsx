@@ -15,16 +15,21 @@ import {
 	mcpSettingsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
+	siteApmAggregateRollingQuery,
+	siteApmDetailQuery,
 	siteBackupsQuery,
 	siteBySlugQuery,
+	sitePerformancePagesQuery,
 	siteScanQuery,
 	siteSettingsQuery,
 	referralsQuery,
 	referralCommissionPayoutQuery,
 	tipaltiPayeeQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
 import type { AgencyCapability } from '@automattic/api-core';
@@ -410,8 +415,33 @@ export const agencySiteRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_managed_sites' },
 	getParentRoute: () => agencyRoute,
 	path: 'sites/$siteSlug',
+	beforeLoad: async ( { cause, params: { siteSlug }, matches } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		let site;
+		try {
+			site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		} catch {
+			// Do nothing and propagate the error through the loader function.
+			return;
+		}
+
+		const siteTypeSupports = getSiteTypeFeatureSupports( site );
+		for ( const match of matches ) {
+			const required = match.staticData?.requiresSiteTypeSupport;
+			if ( required && ! siteTypeSupports[ required ] ) {
+				throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }` } );
+			}
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( agencySiteQuery( siteSlug ) );
+		// The sidebar needs the full site to decide section visibility before first paint.
+		const [ site ] = await Promise.all( [
+			queryClient.ensureQueryData( agencySiteQuery( siteSlug ) ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
 		if ( ! site ) {
 			throw notFound();
 		}
@@ -428,6 +458,10 @@ export const agencySiteRoute = createRoute( {
 const agencySiteOverviewRoute = createRoute( {
 	getParentRoute: () => agencySiteRoute,
 	path: '/',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.prefetchQuery( sitePerformancePagesQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../../agency/sites/site/overview' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-overview' )( {
@@ -611,6 +645,166 @@ export const agencySiteScanHistoryRoute = createRoute( {
 	)
 );
 
+// `/sites/$siteSlug/performance` – layout hosting the Frontend and Backend views
+const agencySitePerformanceRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'performance' },
+	head: () => ( { meta: [ { title: __( 'Performance' ) } ] } ),
+	getParentRoute: () => agencySiteRoute,
+	path: 'performance',
+} ).lazy( () =>
+	import( '../../agency/sites/site/performance' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const agencySitePerformanceIndexRoute = createRoute( {
+	getParentRoute: () => agencySitePerformanceRoute,
+	path: '/',
+	beforeLoad: ( { params: { siteSlug } } ) => {
+		throw dashboardRedirect( { to: `/sites/${ siteSlug }/performance/frontend` } );
+	},
+} );
+
+export const agencySitePerformanceFrontendRoute = createRoute( {
+	head: () => ( {
+		meta: [ { title: isEnabled( 'performance/apm' ) ? __( 'Frontend' ) : undefined } ],
+	} ),
+	getParentRoute: () => agencySitePerformanceRoute,
+	path: 'frontend',
+} ).lazy( () =>
+	import( '../../sites/performance/frontend' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-frontend' )( {
+			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const agencySitePerformanceBackendRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Backend' ) } ] } ),
+	getParentRoute: () => agencySitePerformanceRoute,
+	path: 'backend',
+} );
+
+async function prefetchAgencyApmAggregate( siteSlug: string ) {
+	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } = await import(
+		'../../sites/performance/backend/timeframe'
+	);
+	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
+	await queryClient.ensureQueryData( siteApmAggregateRollingQuery( site.ID, windowSec ) );
+}
+
+export const agencySitePerformanceBackendIndexRoute = createRoute( {
+	getParentRoute: () => agencySitePerformanceBackendRoute,
+	path: '/',
+	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-backend' )( {
+			component: () => (
+				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="overview" />
+			),
+		} )
+	)
+);
+
+export const agencySitePerformanceBackendTransactionsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Transactions' ) } ] } ),
+	getParentRoute: () => agencySitePerformanceBackendRoute,
+	path: 'transactions',
+	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-backend-transactions' )( {
+			component: () => (
+				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="transactions" />
+			),
+		} )
+	)
+);
+
+export const agencySitePerformanceBackendWordPressRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'WordPress' ) } ] } ),
+	getParentRoute: () => agencySitePerformanceBackendRoute,
+	path: 'wordpress',
+	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-backend-wordpress' )( {
+			component: () => (
+				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="wordpress" />
+			),
+		} )
+	)
+);
+
+export const agencySitePerformanceBackendDatabaseRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Database' ) } ] } ),
+	getParentRoute: () => agencySitePerformanceBackendRoute,
+	path: 'database',
+	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-backend-database' )( {
+			component: () => (
+				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="database" />
+			),
+		} )
+	)
+);
+
+export const agencySitePerformanceBackendExternalRequestsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'External requests' ) } ] } ),
+	getParentRoute: () => agencySitePerformanceBackendRoute,
+	path: 'external-requests',
+	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-backend-external-requests' )( {
+			component: () => (
+				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="external-requests" />
+			),
+		} )
+	)
+);
+
+export const agencySitePerformanceBackendRequestDetailRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Request' ) } ] } ),
+	getParentRoute: () => agencySitePerformanceBackendRoute,
+	path: 'requests',
+	validateSearch: ( search ): { method: string; route: string; bucket?: string } => ( {
+		method: typeof search.method === 'string' ? search.method : '',
+		route: typeof search.route === 'string' ? search.route : '',
+		bucket: typeof search.bucket === 'string' ? search.bucket : undefined,
+	} ),
+	loaderDeps: ( { search: { method, route } } ) => ( { method, route } ),
+	loader: async ( { params: { siteSlug }, deps: { method, route } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } = await import(
+			'../../sites/performance/backend/timeframe'
+		);
+		const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
+		await queryClient.ensureQueryData(
+			siteApmDetailQuery( site.ID, { method, route, windowSec } )
+		);
+	},
+} ).lazy( () =>
+	import( '../../sites/performance/backend/request-detail' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-backend-request-detail' )( {
+			component: () => {
+				const { siteSlug } = agencySiteRoute.useParams();
+				const { method, route, bucket } =
+					agencySitePerformanceBackendRequestDetailRoute.useSearch();
+				return (
+					<d.default siteSlug={ siteSlug } method={ method } route={ route } bucket={ bucket } />
+				);
+			},
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
@@ -644,6 +838,18 @@ export const createAgencyRoutes = () => [
 				agencySiteScanIndexRoute,
 				agencySiteScanActiveRoute,
 				agencySiteScanHistoryRoute,
+			] ),
+			agencySitePerformanceRoute.addChildren( [
+				agencySitePerformanceIndexRoute,
+				agencySitePerformanceFrontendRoute,
+				agencySitePerformanceBackendRoute.addChildren( [
+					agencySitePerformanceBackendIndexRoute,
+					agencySitePerformanceBackendTransactionsRoute,
+					agencySitePerformanceBackendWordPressRoute,
+					agencySitePerformanceBackendDatabaseRoute,
+					agencySitePerformanceBackendExternalRequestsRoute,
+					agencySitePerformanceBackendRequestDetailRoute,
+				] ),
 			] ),
 			agencySiteLogsRoute.addChildren( [ agencySiteLogsIndexRoute, agencySiteActivityRoute ] ),
 		] ),

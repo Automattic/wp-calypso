@@ -1,8 +1,9 @@
-import { agencySiteQuery } from '@automattic/api-queries';
+import { agencySiteQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { backup, category, formatListBullets, shield } from '@wordpress/icons';
+import { backup, category, chartBar, formatListBullets, shield } from '@wordpress/icons';
 import { agencySiteRoute } from '../../../app/router/agency';
 import {
 	SidebarBackButton,
@@ -10,11 +11,15 @@ import {
 	SidebarMenu,
 	SidebarMenuItem,
 } from '../../../components/sidebar';
+import { siteTypeSupportsFeature } from '../../../utils/site-type-feature-support';
 import AgencySiteSwitcherItem from './site-switcher-item';
 
 export default function AgencySiteSidebar() {
 	const { siteSlug } = agencySiteRoute.useParams();
 	const { data: site } = useQuery( agencySiteQuery( siteSlug ) );
+	const { data: fullSite } = useQuery( siteBySlugQuery( siteSlug ) );
+	const supportsPerformance = fullSite ? siteTypeSupportsFeature( fullSite, 'performance' ) : false;
+	const isApmEnabled = isEnabled( 'performance/apm' );
 
 	return (
 		<VStack spacing={ 2 }>
@@ -32,6 +37,25 @@ export default function AgencySiteSidebar() {
 						>
 							{ __( 'Overview' ) }
 						</SidebarMenuItem>
+						{ supportsPerformance &&
+							( isApmEnabled ? (
+								<SidebarExpandableMenuItem
+									label={ __( 'Performance' ) }
+									icon={ chartBar }
+									to={ `/sites/${ siteSlug }/performance` }
+								>
+									<SidebarMenuItem to={ `/sites/${ siteSlug }/performance/frontend` }>
+										{ __( 'Frontend' ) }
+									</SidebarMenuItem>
+									<SidebarMenuItem to={ `/sites/${ siteSlug }/performance/backend` }>
+										{ __( 'Backend' ) }
+									</SidebarMenuItem>
+								</SidebarExpandableMenuItem>
+							) : (
+								<SidebarMenuItem icon={ chartBar } to={ `/sites/${ siteSlug }/performance` }>
+									{ __( 'Performance' ) }
+								</SidebarMenuItem>
+							) ) }
 						{ site.has_backup && (
 							<SidebarMenuItem icon={ backup } to={ `/sites/${ siteSlug }/backups` }>
 								{ __( 'Backups' ) }

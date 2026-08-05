@@ -28,8 +28,10 @@ export function useResendCooldown( { initialDeadline = 0, onHold }: Options = {}
 		setSecondsUntilResend( cooldownRemainingSeconds( deadlineRef.current ) );
 	}, [] );
 
+	// Only ever extends: a later response can carry a smaller wait than one already running, and
+	// shortening would reopen the button while the server still refuses. `reset` clears one.
 	const hold = useCallback( ( seconds: number ) => {
-		deadlineRef.current = cooldownDeadline( seconds );
+		deadlineRef.current = Math.max( deadlineRef.current, cooldownDeadline( seconds ) );
 		setSecondsUntilResend( cooldownRemainingSeconds( deadlineRef.current ) );
 		onHoldRef.current?.( deadlineRef.current );
 	}, [] );

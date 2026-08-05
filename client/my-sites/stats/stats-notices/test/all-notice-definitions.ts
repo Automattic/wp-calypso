@@ -17,7 +17,10 @@ const walledJetpackSite: StatsNoticeProps = {
 	supportCommercialUse: false,
 };
 
-describe( 'commercial_site_upgrade notice visibility', () => {
+// Skipped: the notice is disabled in the registry, replaced by `free_site_upgrade`.
+// Kept intact for kill-switch flip-back, alongside the notice itself.
+// eslint-disable-next-line jest/no-disabled-tests
+describe.skip( 'commercial_site_upgrade notice visibility', () => {
 	it( 'is registered and enabled', () => {
 		expect( commercialSiteUpgradeNotice ).toBeDefined();
 		expect( commercialSiteUpgradeNotice?.disabled ).toBe( false );

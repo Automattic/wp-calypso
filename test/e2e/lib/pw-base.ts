@@ -81,6 +81,7 @@ import {
 	SiteSelectComponent,
 	SignupPickPlanPage,
 	TestAccount,
+	TestAccountName,
 	ThemesDetailPage,
 	ThemesPage,
 	UserSignupPage,
@@ -89,7 +90,7 @@ import {
 	UseADomainIOwnPage,
 	SelectItemsComponent,
 } from '@automattic/calypso-e2e';
-import { test as base, expect } from '@playwright/test';
+import { test as base, expect, type Page } from '@playwright/test';
 import {
 	apiCloseAccount,
 	apiWaitForBearerTokenAcceptance,
@@ -107,44 +108,41 @@ export type CustomOptions = {
 	viewportName: string;
 };
 
+/**
+ * Test accounts exposed as a fixture of the same name, logged in on first use.
+ *
+ * The `prime-logins` setup project logs in as each of these before the suite starts, so
+ * an account added here is primed rather than logged in inline. Two accounts are fixtures
+ * without belonging here: `accountGivenByEnvironment`, which resolves at run time, and
+ * `accountSMS`, whose 2FA code costs a Mailosaur email only a couple of specs need.
+ */
+export const fixtureAccounts = {
+	accountAtomic: 'atomicUser',
+	accountDefaultUser: 'defaultUser',
+	accountGutenbergSimple: 'gutenbergSimpleSiteUser',
+	accounti18n: 'i18nUser',
+	accountP2: 'p2User',
+	accountPreRelease: 'calypsoPreReleaseUser',
+	accountSimpleSiteFreePlan: 'simpleSiteFreePlanUser',
+} as const satisfies Record< string, TestAccountName >;
+
+type AccountFixture = (
+	args: { page: Page },
+	use: ( account: TestAccount ) => Promise< void >
+) => Promise< void >;
+
 export const test = base.extend<
 	CustomOptions & {
-		/**
-		 * Test account used to test atomic sites (Business plans)
-		 */
-		accountAtomic: TestAccount;
+		[ K in keyof typeof fixtureAccounts ]: TestAccount;
+	} & {
 		/**
 		 * Test account selected based on the current environment variables.
 		 */
 		accountGivenByEnvironment: TestAccount;
 		/**
-		 * Default test account.
-		 */
-		accountDefaultUser: TestAccount;
-		/**
-		 * Test account with a simple Gutenberg site.
-		 */
-		accountGutenbergSimple: TestAccount;
-		/**
-		 * Test account used for i18n locale switching.
-		 */
-		accounti18n: TestAccount;
-		/**
-		 * Test account used for pre-release testing.
-		 */
-		accountPreRelease: TestAccount;
-		/**
-		 * Test account used to test atomic sites (Business plans)
-		 */
-		accountSimpleSiteFreePlan: TestAccount;
-		/**
 		 * Test account used for SMS-based 2FA.
 		 */
 		accountSMS: TestAccount;
-		/**
-		 * Test account used for P2 tests.
-		 */
-		accountP2: TestAccount;
 		/**
 		 * Client for interacting with emails during tests.
 		 */
@@ -391,41 +389,22 @@ export const test = base.extend<
 
 		await use( page );
 	},
-	accountAtomic: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'atomicUser' );
-		await use( testAccount );
-	},
+	...( Object.fromEntries(
+		Object.entries( fixtureAccounts ).map( ( [ fixtureName, accountName ] ) => [
+			fixtureName,
+			async ( { page }, use ) => {
+				const testAccount = await getAccount( page, accountName );
+				await use( testAccount );
+			},
+		] )
+	) as Record< keyof typeof fixtureAccounts, AccountFixture > ),
 	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		const testAccount = await getAccount( page, accountName );
 		await use( testAccount );
 	},
-	accountDefaultUser: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'defaultUser' );
-		await use( testAccount );
-	},
-	accountGutenbergSimple: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'gutenbergSimpleSiteUser' );
-		await use( testAccount );
-	},
-	accounti18n: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'i18nUser' );
-		await use( testAccount );
-	},
-	accountPreRelease: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'calypsoPreReleaseUser' );
-		await use( testAccount );
-	},
-	accountSimpleSiteFreePlan: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'simpleSiteFreePlanUser' );
-		await use( testAccount );
-	},
 	accountSMS: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'smsUser' );
-		await use( testAccount );
-	},
-	accountP2: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'p2User' );
 		await use( testAccount );
 	},
 	clientEmail: async ( {}, use ) => {
