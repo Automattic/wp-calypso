@@ -119,7 +119,6 @@ export default defineConfig( {
 			use: withCustomOptions( {
 				...devices[ 'Desktop Chrome HiDPI' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
-				viewportName: 'desktop',
 			} ),
 		},
 		{
