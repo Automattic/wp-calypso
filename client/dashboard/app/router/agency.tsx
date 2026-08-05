@@ -886,16 +886,6 @@ const agencySiteSettingsSiteVisibilityRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Site visibility' ) } ] } ),
 	getParentRoute: () => agencySiteSettingsRoute,
 	path: 'site-visibility',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( site.is_wpcom_flex ) {
-			throw redirectAsNotAllowed( { to: agencySiteSettingsRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 	loader: async ( { context, params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
