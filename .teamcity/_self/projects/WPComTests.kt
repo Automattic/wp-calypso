@@ -508,12 +508,10 @@ private object GutenbergPlaywrightTests : BuildType({
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
 		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
 		param("env.E2E_CTRF_APP_NAME", "gutenberg (calypso)")
-		// One value covers every matrix leg, so this is the union: simpleSitePersonalPlanUser
-		// is only reached on the Simple Production leg, and each leg reaches one of the four
-		// site editor accounts.
+		// The Simple Production leg; the others override this through EXTRA_ENV_VARS below.
 		param(
 			"env.AUTHENTICATE_ACCOUNTS",
-			"defaultUser,simpleSitePersonalPlanUser,siteEditorSimpleSiteUser,siteEditorSimpleSiteEdgeUser,siteEditorAtomicSiteUser,siteEditorAtomicSiteEdgeUser"
+			"defaultUser,simpleSitePersonalPlanUser,siteEditorSimpleSiteUser"
 		)
 		password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
 		// Uncomment the following to route it to the test channel, don't forget to change the reference in the exec() calls below, too.
@@ -547,12 +545,15 @@ private object GutenbergPlaywrightTests : BuildType({
 				value("desktop", label = "Desktop"),
 				value("mobile", label = "Mobile"),
 			))
+			// Each leg carries the site editor account its own environment resolves to, which
+			// the prime-logins project cannot derive: the environment key holds no variant.
+			// The Simple Production leg takes the build's own AUTHENTICATE_ACCOUNTS above.
 			param("EXTRA_ENV_VARS", listOf(
 				value("", label = "Simple Production"),
-				value("GUTENBERG_EDGE=true", label = "Simple Edge"),
-				value("TEST_ON_ATOMIC=true,PW_WORKERS=1", label = "Atomic Production"),
-				value("TEST_ON_ATOMIC=true,GUTENBERG_EDGE=true,PW_WORKERS=1", label = "Atomic Edge"),
-				value("TEST_ON_ATOMIC=true,GUTENBERG_NIGHTLY=true,PW_WORKERS=1", label = "Atomic Nightly"),
+				value("GUTENBERG_EDGE=true;AUTHENTICATE_ACCOUNTS=defaultUser,siteEditorSimpleSiteEdgeUser", label = "Simple Edge"),
+				value("TEST_ON_ATOMIC=true;PW_WORKERS=1;AUTHENTICATE_ACCOUNTS=defaultUser,siteEditorAtomicSiteUser", label = "Atomic Production"),
+				value("TEST_ON_ATOMIC=true;GUTENBERG_EDGE=true;PW_WORKERS=1;AUTHENTICATE_ACCOUNTS=defaultUser,siteEditorAtomicSiteEdgeUser", label = "Atomic Edge"),
+				value("TEST_ON_ATOMIC=true;GUTENBERG_NIGHTLY=true;PW_WORKERS=1;AUTHENTICATE_ACCOUNTS=defaultUser,siteEditorAtomicSiteEdgeUser", label = "Atomic Nightly"),
 			))
 		}
 		notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")

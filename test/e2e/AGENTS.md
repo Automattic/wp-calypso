@@ -146,8 +146,10 @@ test( 'Test', async ( { pageLogin, componentSidebar } ) => {
 To see what every build type logs in as before its suite, without starting a build:
 
 ```bash
-cd .teamcity && JAVA_HOME=$(/usr/libexec/java_home -v 17) mvn -q teamcity-configs:generate
-cd test/e2e && node bin/primed-accounts.js
+# From the repository root. Regenerate only after a .teamcity change; the DSL needs JDK 17.
+( cd .teamcity && JAVA_HOME=$(/usr/libexec/java_home -v 17) mvn -q teamcity-configs:generate )
+yarn workspace @automattic/calypso-e2e build
+( cd test/e2e && node bin/primed-accounts.js )
 ```
 
 **Pages/Components**: Follow naming conventions:

@@ -79,6 +79,13 @@ function getConfiguredAccountLists(): Map< string, string > {
 				lists.set( values.length > 1 ? `${ location } [${ index }]` : location, value )
 			);
 		}
+
+		// A matrix leg overrides the parameter through EXTRA_ENV_VARS, so those values never
+		// appear in a param() call.
+		for ( const match of source.matchAll( /AUTHENTICATE_ACCOUNTS=([^";]*)/g ) ) {
+			const line = source.slice( 0, match.index ).split( '\n' ).length;
+			lists.set( `${ path.relative( teamCityRoot, file ) }:${ line }`, match[ 1 ] );
+		}
 	}
 
 	return lists;

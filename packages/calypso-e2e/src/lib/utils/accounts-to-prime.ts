@@ -45,11 +45,12 @@ export function getAccountNamesToPrime(): TestAccountName[] {
 		} catch ( error ) {
 			// An unknown account name throws, and it throws for the whole list rather than the
 			// one bad entry. This runs while a spec file is being collected, so letting it
-			// escape would fail the run before a single test starts. Priming more than the
-			// build needs costs a few logins; priming less costs the concurrent logins the
-			// prime-logins project exists to prevent, so fall back to the full list.
+			// escape would fail the run before a single test starts. Fall back to the account
+			// this environment resolves to, appended below, and nothing else: the default list
+			// is Simple site accounts, which on an Atomic or Jetpack build would be logins no
+			// spec uses while the ones it does use stay unprimed.
 			console.warn( `Ignoring AUTHENTICATE_ACCOUNTS: ${ error }` );
-			accountNames = DEFAULT_ACCOUNTS_TO_PRIME;
+			accountNames = [];
 		}
 	}
 

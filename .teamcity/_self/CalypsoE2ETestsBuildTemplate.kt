@@ -165,9 +165,14 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			name = "Set extra environment variables"
 			id = "set_extra_env_vars"
 			scriptContent = """
-				# Parse EXTRA_ENV_VARS param (comma-separated KEY=value pairs) and set as TeamCity env params
+				# Parse EXTRA_ENV_VARS param (KEY=value pairs) and set as TeamCity env params.
+				# Pairs are separated by semicolons so that a value can hold a comma, as
+				# AUTHENTICATE_ACCOUNTS does; a value with no semicolon keeps the older
+				# comma-separated form, so a saved custom run still parses.
 				if [[ -n "%EXTRA_ENV_VARS%" ]]; then
-					IFS=',' read -ra ENV_PAIRS <<< "%EXTRA_ENV_VARS%"
+					SEPARATOR=','
+					[[ "%EXTRA_ENV_VARS%" == *";"* ]] && SEPARATOR=';'
+					IFS="${'$'}SEPARATOR" read -ra ENV_PAIRS <<< "%EXTRA_ENV_VARS%"
 					for pair in "${'$'}{ENV_PAIRS[@]}"; do
 						KEY="${'$'}{pair%%=*}"
 						VALUE="${'$'}{pair#*=}"
@@ -195,10 +200,12 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				fi
 				echo "Playwright grep flag: ${'$'}{GREP_FLAG:-(none, running all tests)}"
 
-				# AUTHENTICATE_ACCOUNTS names the accounts this build's group logs in as. With
-				# no grep the run is the whole suite, so hand priming back its own default list
-				# rather than the group's; unset, not empty, which asks for no priming at all.
-				if [[ -z "${'$'}GREP_FLAG" ]]; then
+				# AUTHENTICATE_ACCOUNTS names the accounts this build's group logs in as, so it
+				# is wrong for a build type whose group was adapted away to run everything: hand
+				# priming back its own default list instead. Only that adaptation clears the
+				# flag; a build type selecting its specs through PROJECT leaves TEST_GROUP empty
+				# on purpose and keeps its list.
+				if [[ "%IGNORE_TEST_GROUP_FOR_E2E_CHANGES%" == "true" && -z "${'$'}GREP_FLAG" ]]; then
 					echo "No test group: priming the default accounts instead of AUTHENTICATE_ACCOUNTS"
 					unset AUTHENTICATE_ACCOUNTS
 				fi

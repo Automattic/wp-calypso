@@ -87,16 +87,22 @@ function readLegs( params, source ) {
 }
 
 /**
- * Applies an EXTRA_ENV_VARS value the way the template's own build step does: comma-separated
- * KEY=value pairs, each becoming an environment variable for the run.
+ * Applies an EXTRA_ENV_VARS value the way the template's own build step does: KEY=value pairs
+ * separated by semicolons, or by commas when the value holds no semicolon. Keep this in step
+ * with that script, or the report describes a run that never happens.
  */
 function applyExtraEnvVars( env, value ) {
-	for ( const pair of ( value ?? '' ).split( ',' ) ) {
+	for ( const pair of ( value ?? '' ).split( value?.includes( ';' ) ? ';' : ',' ) ) {
 		const [ name, ...rest ] = pair.split( '=' );
 		if ( name && rest.length && RELEVANT.includes( name ) ) {
 			env[ name ] = rest.join( '=' );
 		}
 	}
+}
+
+if ( ! fs.existsSync( configsRoot ) ) {
+	console.error( `No generated configs under ${ configsRoot }. See the header of this file.` );
+	process.exit( 1 );
 }
 
 const files = findXml( configsRoot );
@@ -125,8 +131,13 @@ for ( const file of files ) {
 	const inherited = templateRefs.flatMap( ( ref ) => [ ...( templates.get( ref ) ?? [] ) ] );
 	const merged = new Map( [ ...inherited, ...params ] );
 
-	// Build types that never reach the prime-logins project have nothing to report.
-	if ( ! merged.has( 'env.AUTHENTICATE_ACCOUNTS' ) ) {
+	// A build type reaches the prime-logins project by running the suite, not by setting the
+	// parameter: one that sets nothing primes the default list, and is the one most worth
+	// reporting. The authentication project depends on no priming, so it stays out.
+	const runsPlaywright =
+		/yarn test:pw:/.test( source ) ||
+		templateRefs.some( ( ref ) => /E2ETestsBuildTemplate$/.test( ref ) );
+	if ( ! runsPlaywright || merged.get( 'PROJECT' ) === 'authentication' ) {
 		continue;
 	}
 
@@ -156,7 +167,9 @@ for ( const file of files ) {
 		rows.push( {
 			buildType: path.basename( file, '.xml' ).replace( /^RootProjectId_/, '' ),
 			leg: leg ? leg.label : '',
-			configured: merged.get( 'env.AUTHENTICATE_ACCOUNTS' ),
+			// What this leg ends up with, which is not the build's own parameter when
+			// EXTRA_ENV_VARS overrides it.
+			configured: env.AUTHENTICATE_ACCOUNTS,
 			primed,
 		} );
 	}
