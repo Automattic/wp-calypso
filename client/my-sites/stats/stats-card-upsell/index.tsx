@@ -39,8 +39,9 @@ const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteId, butt
 	useEffect( () => {
 		trackStatsAnalyticsEvent( 'stats_card_upsell_view', {
 			stat_type: statType,
+			blog_id: siteId,
 		} );
-	}, [ statType ] );
+	}, [ statType, siteId ] );
 
 	return (
 		<UpsellComponent

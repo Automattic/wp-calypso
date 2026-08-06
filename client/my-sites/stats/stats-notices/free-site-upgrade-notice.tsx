@@ -87,10 +87,11 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 			recordTracksEvent(
 				isOdysseyStats
 					? 'jetpack_odyssey_stats_free_site_upgrade_notice_viewed'
-					: 'calypso_stats_free_site_upgrade_notice_viewed'
+					: 'calypso_stats_free_site_upgrade_notice_viewed',
+				{ blog_id: siteId }
 			);
 		}
-	}, [ noticeDismissed, isOdysseyStats ] );
+	}, [ noticeDismissed, isOdysseyStats, siteId ] );
 
 	if ( noticeDismissed ) {
 		return null;

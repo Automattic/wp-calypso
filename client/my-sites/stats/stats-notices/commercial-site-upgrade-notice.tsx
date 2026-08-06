@@ -71,12 +71,16 @@ const CommercialSiteUpgradeNotice = ( {
 	useEffect( () => {
 		if ( ! noticeDismissed ) {
 			if ( isOdysseyStats ) {
-				recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_viewed' );
+				recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_viewed', {
+					blog_id: siteId,
+				} );
 			} else {
-				recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_viewed' );
+				recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_viewed', {
+					blog_id: siteId,
+				} );
 			}
 		}
-	}, [ noticeDismissed, isOdysseyStats ] );
+	}, [ noticeDismissed, isOdysseyStats, siteId ] );
 
 	if ( noticeDismissed ) {
 		return null;

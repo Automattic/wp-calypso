@@ -205,6 +205,7 @@ class StatsPeriodNavigation extends PureComponent {
 		recordTracksEvent( `${ event_from }_stats_date_range_navigation`, {
 			range_in_days: dateRange.daysInRange,
 			direction: previousOrNext ? 'previous' : 'next',
+			blog_id: this.props.siteId,
 		} );
 
 		const navigationStart = momentSiteZone( dateRange.chartStart );

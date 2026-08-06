@@ -9,7 +9,13 @@ import { StatsQueryType } from '../types';
 import { UrlGeoMode, OPTION_KEYS } from './types';
 import useOptionLabels from './use-option-labels';
 
-function LocationsNavTabs( { query }: { query: StatsQueryType & { geoMode?: UrlGeoMode } } ) {
+function LocationsNavTabs( {
+	query,
+	givenSiteId,
+}: {
+	query: StatsQueryType & { geoMode?: UrlGeoMode };
+	givenSiteId?: number;
+} ) {
 	const optionLabels = useOptionLabels();
 	const tabPanelTabs = useMemo( () => {
 		return Object.entries( optionLabels ).map( ( [ key, item ] ) => {
@@ -37,6 +43,7 @@ function LocationsNavTabs( { query }: { query: StatsQueryType & { geoMode?: UrlG
 				if ( tab?.path ) {
 					trackStatsAnalyticsEvent( 'stats_locations_module_menu_clicked', {
 						stat_type: tab.feature,
+						blog_id: givenSiteId,
 					} );
 					page( tab.path );
 				}
