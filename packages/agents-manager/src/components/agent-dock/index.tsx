@@ -87,13 +87,21 @@ export default function AgentDock( {
 		window.__agentsManagerActions?.desktopMediaQuery
 	);
 	const [ isOrchestratorChatEmpty, setIsOrchestratorChatEmpty ] = useState( true );
-	const { setIsOpen, setIsDocked, setIsMinimized, setIsSplitScreen } =
-		useDispatch( AGENTS_MANAGER_STORE );
+	const {
+		setIsOpen,
+		setIsDocked,
+		setIsMinimized,
+		setIsSplitScreen,
+		setFloatingPosition,
+		setFreeDragPosition,
+		setFloatingSize,
+	} = useDispatch( AGENTS_MANAGER_STORE );
 	const {
 		isOpen: isPersistedOpen,
 		isDocked: isPersistedDocked,
 		isMinimized,
 		isSplitScreen,
+		floatingPosition,
 	} = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -141,8 +149,30 @@ export default function AgentDock( {
 		onDock: () => {
 			recordBigSkyTracksEvent( 'ai_chat_docked' );
 		},
-		onUndock: () => {
+		onUndock: ( isResponsiveUndock ) => {
 			recordBigSkyTracksEvent( 'ai_chat_undocked' );
+
+			// The responsive undock opens the chat at the right corner (where
+			// the sidebar was) at the default size — persist that as the new
+			// floating state. Manual pop-outs keep the persisted values.
+			if ( ! isResponsiveUndock ) {
+				return;
+			}
+
+			if ( floatingPosition !== 'right' ) {
+				setFloatingPosition( 'right' );
+			}
+
+			setFreeDragPosition( null );
+			setFloatingSize( null );
+
+			// `agenttic-ui` seeds its side from this key ahead of `initialChatPosition`.
+			// Keep in sync with `STORAGE_KEY` in `agenttic-ui/src/utils/chatStorage.ts`.
+			try {
+				localStorage.setItem( 'agenttic-chat-position', 'right' );
+			} catch {
+				// `localStorage` unavailable.
+			}
 		},
 		isSplitScreen,
 	} );

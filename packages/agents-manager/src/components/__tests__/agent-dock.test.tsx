@@ -11,6 +11,9 @@ const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
 const mockSetIsMinimized = jest.fn();
 const mockSetIsSplitScreen = jest.fn();
+const mockSetFloatingPosition = jest.fn();
+const mockSetFreeDragPosition = jest.fn();
+const mockSetFloatingSize = jest.fn();
 const mockUseAgentLayoutManager = jest.fn();
 const mockResumeActiveChat = jest.fn();
 const mockCloseSidebar = jest.fn();
@@ -21,6 +24,7 @@ let mockAgentsManagerState: {
 	isDocked?: boolean;
 	isMinimized?: boolean;
 	isSplitScreen?: boolean;
+	floatingPosition?: 'left' | 'right';
 } = { isOpen: true, isDocked: false };
 let mockHasAdminBar = false;
 let mockShouldUseUnifiedAgent = false;
@@ -41,6 +45,9 @@ jest.mock( '@wordpress/data', () => ( {
 		setIsDocked: mockSetIsDocked,
 		setIsMinimized: mockSetIsMinimized,
 		setIsSplitScreen: mockSetIsSplitScreen,
+		setFloatingPosition: mockSetFloatingPosition,
+		setFreeDragPosition: mockSetFreeDragPosition,
+		setFloatingSize: mockSetFloatingSize,
 	} ),
 	useSelect: () => mockAgentsManagerState,
 } ) );
@@ -453,4 +460,43 @@ describe( 'AgentDock', () => {
 			expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( nextState );
 		}
 	);
+
+	it( 'persists the right-side default floating state on the responsive undock', () => {
+		useWpAdminAgent();
+		mockAgentsManagerState = { isOpen: true, isDocked: true, floatingPosition: 'left' };
+
+		renderAgentDock();
+		const { onUndock } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
+		act( () => onUndock( true ) );
+
+		expect( mockSetFloatingPosition ).toHaveBeenCalledWith( 'right' );
+		expect( mockSetFreeDragPosition ).toHaveBeenCalledWith( null );
+		expect( mockSetFloatingSize ).toHaveBeenCalledWith( null );
+		expect( localStorage.getItem( 'agenttic-chat-position' ) ).toBe( 'right' );
+	} );
+
+	it( 'skips the position save when the persisted side is already right', () => {
+		useWpAdminAgent();
+		mockAgentsManagerState = { isOpen: true, isDocked: true, floatingPosition: 'right' };
+
+		renderAgentDock();
+		const { onUndock } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
+		act( () => onUndock( true ) );
+
+		expect( mockSetFloatingPosition ).not.toHaveBeenCalled();
+		expect( mockSetFreeDragPosition ).toHaveBeenCalledWith( null );
+	} );
+
+	it( 'leaves the floating state alone on a manual undock', () => {
+		useWpAdminAgent();
+		mockAgentsManagerState = { isOpen: true, isDocked: true, floatingPosition: 'left' };
+
+		renderAgentDock();
+		const { onUndock } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
+		act( () => onUndock( false ) );
+
+		expect( mockSetFloatingPosition ).not.toHaveBeenCalled();
+		expect( mockSetFreeDragPosition ).not.toHaveBeenCalled();
+		expect( mockSetFloatingSize ).not.toHaveBeenCalled();
+	} );
 } );

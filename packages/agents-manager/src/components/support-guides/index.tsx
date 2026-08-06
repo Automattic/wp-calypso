@@ -1,5 +1,4 @@
 import { AgentUI } from '@automattic/agenttic-ui';
-import { AgentsManagerSelect } from '@automattic/data-stores';
 import {
 	Button,
 	SearchControl,
@@ -9,13 +8,12 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { Link, useLocation } from 'react-router-dom';
+import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import useHelpSearchQuery from '../../hooks/use-help-search-query';
-import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import './style.scss';
 
@@ -120,12 +118,7 @@ export default function SupportGuides( {
 	const [ searchInput, setSearchInput, debouncedSearchInput ] = useDebouncedInput(
 		state?.searchQuery ?? ''
 	);
-	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
-		useDispatch( AGENTS_MANAGER_STORE );
-	const { floatingPosition, freeDragPosition, floatingSize } = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
+	const floatingPanelProps = useFloatingPanelProps();
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
 	const closedChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
@@ -133,12 +126,10 @@ export default function SupportGuides( {
 
 	return (
 		<AgentUI.Container
-			initialChatPosition={ floatingPosition }
-			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			initialFreeDragPosition={ freeDragPosition ?? undefined }
-			onFreeDragEnd={ setFreeDragPosition }
-			defaultSize={ floatingSize ?? undefined }
-			onResizeEnd={ setFloatingSize }
+			// Remount on dock/undock so the floating panel re-seeds — the seed
+			// props are read at mount only.
+			key={ isDocked ? 'embedded' : 'floating' }
+			{ ...floatingPanelProps }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }

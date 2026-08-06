@@ -23,7 +23,7 @@ function App() {
 			sidebarContainer: '.sidebar-container',
 			defaultOpen: true,
 			onDock: () => console.log( 'Docked!' ),
-			onUndock: () => console.log( 'Undocked!' ),
+			onUndock: ( isResponsiveUndock ) => console.log( 'Undocked!', { isResponsiveUndock } ),
 		} );
 
 	const handleClose = () => {
@@ -131,7 +131,7 @@ The hook accepts a single options object. All properties are optional.
 
 - **`onDock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches to docked (sidebar) mode.
 
-- **`onUndock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches to floating (undocked) mode.
+- **`onUndock`** (`( isResponsiveUndock: boolean ) => void`, default: `() => {}`) - Callback fired when the chat switches to floating (undocked) mode. `isResponsiveUndock` is `true` when the undock was forced by the viewport narrowing below `desktopMediaQuery`, rather than by the user or the fullscreen gate.
 
 - **`isSplitScreen`** (`boolean`, default: `false`) - When `true`, the hook toggles an `is-split-screen` modifier class on the sidebar container so consumer SCSS can opt into a wider docked layout (e.g. `--am-sidebar-width: 50vw`).
 
@@ -151,4 +151,4 @@ The hook returns an object with the following properties:
 
 - **`closeSidebar`** (`() => void`) - Closes the sidebar. Only works when docked on desktop. No-op when `isReady` is `false` or `sidebarContainer` is not found.
 
-- **`createAgentPortal`** (`(children: React.ReactNode) => React.ReactNode | React.ReactPortal`) - Creates a React Portal for the chat UI. When docked, wraps children in a portal rendered inside the sidebar element and adds a FAB (floating action button) to reopen the sidebar when closed. When undocked, returns children in a portal without the FAB. Returns `null` if the portal element is not yet created (first render only).
+- **`createAgentPortal`** (`(children: React.ReactNode) => React.ReactNode | React.ReactPortal`) - Creates a React Portal for the chat UI. When docked, wraps children in a portal rendered inside the sidebar element and adds a FAB (floating action button) to reopen the sidebar when closed. When undocked, returns children in a portal without the FAB. Returns `null` if the portal element is not yet created (first render only). Portal children can read whether the chat is floating only because the viewport is below `desktopMediaQuery` (while the docked preference is on) via `useIsResponsiveUndocked()` from `./responsive-undock-context` — e.g. to seed the floating panel at the sidebar's edge on the responsive switch.

@@ -1,13 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, render as renderComponent, screen } from '@testing-library/react';
 import useAgentLayoutManager from '../use-agent-layout-manager/index';
+import { useIsResponsiveUndocked } from '../use-agent-layout-manager/responsive-undock-context';
 
 // Stub out viewport/responsive deps so `canDock` depends only on the hook's
-// own logic (viewport is always desktop).
+// own logic (viewport defaults to desktop).
+let mockIsDesktop = true;
 jest.mock( '@wordpress/compose', () => ( {
-	useMediaQuery: () => true,
+	useMediaQuery: () => mockIsDesktop,
 } ) );
 jest.mock( '@wordpress/components', () => ( {
 	Button: () => null,
@@ -56,6 +58,7 @@ beforeEach( () => {
 	// Reset before each test (not after) so RTL's auto-cleanup disconnects the
 	// observer first — otherwise this body mutation re-renders outside `act()`.
 	document.body.className = '';
+	mockIsDesktop = true;
 	container = document.createElement( 'div' );
 	document.body.appendChild( container );
 } );
@@ -210,5 +213,45 @@ describe( 'useAgentLayoutManager — split-screen class', () => {
 
 		act( () => unmount() );
 		expect( container.classList.contains( SPLIT_SCREEN_CLASS ) ).toBe( false );
+	} );
+} );
+
+describe( 'useAgentLayoutManager — responsive undock', () => {
+	it( 'provides the flag to portal children', () => {
+		function Probe() {
+			return <span data-testid="flag">{ String( useIsResponsiveUndocked() ) }</span>;
+		}
+		function Host() {
+			const { createAgentPortal } = useAgentLayoutManager( { sidebarContainer: container } );
+			return <>{ createAgentPortal( <Probe /> ) }</>;
+		}
+
+		const view = renderComponent( <Host /> );
+		expect( screen.getByTestId( 'flag' ).textContent ).toBe( 'false' );
+
+		mockIsDesktop = false;
+		view.rerender( <Host /> );
+		expect( screen.getByTestId( 'flag' ).textContent ).toBe( 'true' );
+	} );
+
+	it( 'flags only the undock forced by the desktop media query', async () => {
+		const onUndock = jest.fn();
+		const { result, rerender } = render( { onUndock } );
+
+		// Viewport narrows below the desktop query while docked.
+		mockIsDesktop = false;
+		rerender( { onUndock } );
+		expect( onUndock ).toHaveBeenLastCalledWith( true );
+
+		// Re-dock, then close the fullscreen gate: not a viewport switch.
+		mockIsDesktop = true;
+		rerender( { onUndock } );
+		await setBodyClass( EDITOR_BODY_CLASSES[ 0 ], true );
+		expect( onUndock ).toHaveBeenLastCalledWith( false );
+		await setBodyClass( EDITOR_BODY_CLASSES[ 0 ], false );
+
+		// A manual undock is not a viewport switch.
+		act( () => result.current.undock() );
+		expect( onUndock ).toHaveBeenLastCalledWith( false );
 	} );
 } );

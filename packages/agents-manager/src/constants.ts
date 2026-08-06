@@ -5,3 +5,7 @@ export const ORCHESTRATOR_AGENT_ID = 'wp-orchestrator';
 export const UNIFIED_CHAT_AGENT_ID = 'wpcom-workflow-unified_chat';
 
 export const LOCAL_TOOL_RUNNING_MESSAGE = 'local_tool_running';
+
+// Free-drag seed far past the right edge — `agenttic-ui` clamps it into the
+// inset viewport, landing the floating panel exactly at the right corner.
+export const FLOATING_RIGHT_CORNER_SEED = { x: Number.MAX_SAFE_INTEGER, y: 0 };

@@ -10,6 +10,7 @@ import type { ComponentProps, ReactNode, Ref } from 'react';
 
 const mockSetFloatingPosition = jest.fn();
 const mockContainerProps = jest.fn();
+const mockContainerMounts = jest.fn();
 const mockInputProps = jest.fn();
 const mockImageUploaderProps = jest.fn();
 const mockHasAiChatEntry = jest.fn();
@@ -36,6 +37,9 @@ jest.mock(
 			) => void;
 		} ) {
 			mockContainerProps( { floatingChatState } );
+			React.useEffect( () => {
+				mockContainerMounts();
+			}, [] );
 			return (
 				<div>
 					{ emptyView }
@@ -212,8 +216,8 @@ jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
 
 import AgentChat from '../agent-chat';
 
-function renderAgentChat( props: Partial< ComponentProps< typeof AgentChat > > = {} ) {
-	return render(
+function getAgentChatElement( props: Partial< ComponentProps< typeof AgentChat > > = {} ) {
+	return (
 		<AgentChat
 			messages={ [] }
 			suggestions={ [] }
@@ -232,6 +236,10 @@ function renderAgentChat( props: Partial< ComponentProps< typeof AgentChat > > =
 			{ ...props }
 		/>
 	);
+}
+
+function renderAgentChat( props: Partial< ComponentProps< typeof AgentChat > > = {} ) {
+	return render( getAgentChatElement( props ) );
 }
 
 describe( 'AgentChat', () => {
@@ -521,5 +529,17 @@ describe( 'AgentChat', () => {
 		renderAgentChat( { isOpen: false } );
 
 		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'minimized' } );
+	} );
+
+	it( 'remounts the container only when the dock state changes', () => {
+		const { rerender } = renderAgentChat( { isDocked: false } );
+		expect( mockContainerMounts ).toHaveBeenCalledTimes( 1 );
+
+		// The remount re-applies the mount-only position/size seeds.
+		rerender( getAgentChatElement( { isDocked: true } ) );
+		expect( mockContainerMounts ).toHaveBeenCalledTimes( 2 );
+
+		rerender( getAgentChatElement( { isDocked: true, isOpen: true } ) );
+		expect( mockContainerMounts ).toHaveBeenCalledTimes( 2 );
 	} );
 } );
