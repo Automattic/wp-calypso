@@ -6,7 +6,7 @@ import { debounce } from '@wordpress/compose';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, cloneElement, isValidElement } from 'react';
 import { connect } from 'react-redux';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -38,6 +38,13 @@ class PasswordlessSignupForm extends Component {
 		disableTosText: PropTypes.bool,
 		// Names the signup's origin to the backend, which aims the activation link on it.
 		activationEmailFrom: PropTypes.string,
+		// Replaces account creation with a change to the account the caller already has, and
+		// reports its own failures. `cancel` is the only way off the screen it makes, so the two
+		// travel together.
+		emailUpdate: PropTypes.shape( {
+			submit: PropTypes.func.isRequired,
+			cancel: PropTypes.func.isRequired,
+		} ),
 		// Replaces account creation with a change to the account the caller already has, and
 		// reports its own failures.
 		onUpdateEmail: PropTypes.func,
@@ -80,6 +87,19 @@ class PasswordlessSignupForm extends Component {
 			this.setState( { isSubmitting: true } );
 			await this.props.onUpdateEmail( this.state.email.trim() );
 			this.setState( { isSubmitting: false } );
+			return;
+		}
+
+		if ( this.props.emailUpdate ) {
+			this.setState( { isSubmitting: true } );
+			try {
+				await this.props.emailUpdate.submit( this.state.email.trim() );
+			} catch {
+				// The caller reports its own failures. This only keeps one it didn't from leaving
+				// the screen disabled with nothing to press.
+			} finally {
+				this.setState( { isSubmitting: false } );
+			}
 			return;
 		}
 
@@ -324,6 +344,14 @@ class PasswordlessSignupForm extends Component {
 		this.props.onInputBlur?.( event );
 	};
 
+	// The secondary action leaves the screen, and a write already in flight would land anyway.
+	secondaryFooterButton() {
+		const { secondaryFooterButton } = this.props;
+		return this.state.isSubmitting && isValidElement( secondaryFooterButton )
+			? cloneElement( secondaryFooterButton, { disabled: true } )
+			: secondaryFooterButton;
+	}
+
 	renderNotice() {
 		return (
 			<Notice showDismiss={ false } status="is-error">
@@ -352,7 +380,7 @@ class PasswordlessSignupForm extends Component {
 						primaryLoading={ isSubmitting }
 						primaryDisabled={ isPrimaryDisabled }
 					/>
-					{ this.props.secondaryFooterButton }
+					{ this.secondaryFooterButton() }
 				</>
 			);
 		}
@@ -362,7 +390,7 @@ class PasswordlessSignupForm extends Component {
 				<SignupSubmitButton isBusy={ isSubmitting } isDisabled={ isPrimaryDisabled }>
 					{ submitButtonText }
 				</SignupSubmitButton>
-				{ this.props.secondaryFooterButton }
+				{ this.secondaryFooterButton() }
 			</LoggedOutFormFooter>
 		);
 	}
@@ -398,7 +426,7 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.props.secondaryFooterButton ? (
+					{ this.secondaryFooterButton() ? (
 						<>
 							{ this.formFooter() }
 							{ terms }

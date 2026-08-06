@@ -208,7 +208,7 @@ describe( 'SignupFormSocialFirst', () => {
 					{ ...defaultProps }
 					{ ...layout }
 					userEmail="typo@example.com"
-					onUpdateEmail={ jest.fn() }
+					emailUpdate={ { submit: jest.fn(), cancel: jest.fn() } }
 				/>
 			);
 
@@ -222,7 +222,7 @@ describe( 'SignupFormSocialFirst', () => {
 				<SignupFormSocialFirst
 					{ ...defaultProps }
 					userEmail="typo@example.com"
-					onUpdateEmail={ () => new Promise< void >( () => {} ) }
+					emailUpdate={ { submit: () => new Promise< void >( () => {} ), cancel: jest.fn() } }
 				/>
 			);
 
@@ -231,14 +231,75 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( await screen.findByRole( 'button', { name: 'Updating…' } ) ).toBeVisible();
 		} );
 
+		// The screen has no other screen to be on, however it was reached.
+		it( 'shows the email field when it was given no address to start from', () => {
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					emailUpdate={ { submit: jest.fn(), cancel: jest.fn() } }
+				/>
+			);
+
+			expect(
+				screen.getByRole( 'textbox' ).closest( '.signup-form-social-first-screen' )
+			).toHaveClass( 'visible' );
+		} );
+
+		// Outside the screen it lands in a grid row of its own, beneath the field, the footer and
+		// the terms — which is where a failed update would explain itself.
+		it( 'puts what the caller has to say above the form it is about', () => {
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="typo@example.com"
+					notice={ <div>That address is already in use.</div> }
+					emailUpdate={ { submit: jest.fn(), cancel: jest.fn() } }
+				/>
+			);
+
+			const screenEl = screen.getByRole( 'textbox' ).closest( '.signup-form-social-first-screen' );
+			expect( screenEl ).toContainElement( screen.getByText( 'That address is already in use.' ) );
+		} );
+
+		// It leaves the screen, and a write already in flight would land anyway.
+		it( 'holds the way back shut while a change is being written', async () => {
+			const cancel = jest.fn();
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="typo@example.com"
+					emailUpdate={ { submit: () => new Promise< void >( () => {} ), cancel } }
+				/>
+			);
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+			await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+
+			expect( cancel ).not.toHaveBeenCalled();
+		} );
+
+		// Otherwise a refusal leaves the field and the button disabled with no way to try again.
+		it( 'gives the screen back when the change is refused', async () => {
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="typo@example.com"
+					emailUpdate={ { submit: () => Promise.reject( new Error( 'nope' ) ), cancel: jest.fn() } }
+				/>
+			);
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( await screen.findByRole( 'button', { name: 'Continue' } ) ).toBeEnabled();
+		} );
+
 		it( 'offers a way back to whoever opened it', async () => {
 			const onCancelEmailUpdate = jest.fn();
 			render(
 				<SignupFormSocialFirst
 					{ ...defaultProps }
 					userEmail="typo@example.com"
-					onUpdateEmail={ jest.fn() }
-					onCancelEmailUpdate={ onCancelEmailUpdate }
+					emailUpdate={ { submit: jest.fn(), cancel: onCancelEmailUpdate } }
 				/>
 			);
 

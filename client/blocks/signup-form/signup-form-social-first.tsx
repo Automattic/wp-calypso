@@ -57,10 +57,12 @@ interface SignupFormSocialFirst {
 	activationEmailFrom?: string;
 	// Replaces account creation with a change to the account the caller already has. Its presence
 	// makes this an email-only screen: every route to signing up again is dropped, since taking
-	// one would make the second account the caller is here to avoid.
-	onUpdateEmail?: ( email: string ) => Promise< void >;
-	// Without it there is no way off an email-only screen but submitting it.
-	onCancelEmailUpdate?: () => void;
+	// one would make the second account the caller is here to avoid. `cancel` is then the only way
+	// off that screen, so it isn't separately optional.
+	emailUpdate?: {
+		submit: ( email: string ) => Promise< void >;
+		cancel: () => void;
+	};
 }
 
 const options = {
@@ -120,11 +122,13 @@ const SignupFormSocialFirst = ( {
 	allowedSocialServices,
 	customTosElement,
 	activationEmailFrom,
-	onUpdateEmail,
-	onCancelEmailUpdate,
+	emailUpdate,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
-	const isEmailOnly = Boolean( onUpdateEmail );
+	const isEmailOnly = Boolean( emailUpdate );
+	// Not `currentStep`, which is fixed at mount from the address it was given: an email-only
+	// screen has no other screen to be on, whenever it is switched into and whatever it starts with.
+	const activeStep = isEmailOnly ? 'email' : currentStep;
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
@@ -193,7 +197,7 @@ const SignupFormSocialFirst = ( {
 	// to handle the visibility of the steps while preserving their layout properties and avoiding shifts.
 	const getVisibilityClassName = ( step: Screen ) => {
 		return clsx( 'signup-form-social-first-screen', {
-			visible: currentStep === step,
+			visible: activeStep === step,
 		} );
 	};
 
@@ -203,7 +207,7 @@ const SignupFormSocialFirst = ( {
 		stepName,
 		flowName,
 		activationEmailFrom,
-		onUpdateEmail,
+		emailUpdate,
 		goToNextStep,
 		logInUrl,
 		queryArgs,
@@ -231,9 +235,9 @@ const SignupFormSocialFirst = ( {
 	};
 
 	let secondaryFooterButton;
-	if ( isEmailOnly ) {
-		secondaryFooterButton = onCancelEmailUpdate && (
-			<Button onClick={ onCancelEmailUpdate } icon={ chevronLeft }>
+	if ( emailUpdate ) {
+		secondaryFooterButton = (
+			<Button onClick={ emailUpdate.cancel } icon={ chevronLeft }>
 				{ __( 'Cancel' ) }
 			</Button>
 		);
@@ -292,9 +296,7 @@ const SignupFormSocialFirst = ( {
 		<div className="signup-form signup-form-social-first">
 			{ /* Not merely hidden: an unrendered screen can't be tabbed into, and doesn't leave the
 			     one guarantee this mode makes resting on a stylesheet. */ }
-			{ isEmailOnly ? (
-				notice
-			) : (
+			{ ! isEmailOnly && (
 				<div className={ getVisibilityClassName( 'initial' ) }>
 					{ notice }
 					{ renderTermsOfService() }
@@ -325,6 +327,7 @@ const SignupFormSocialFirst = ( {
 				</div>
 			) }
 			<div className={ getVisibilityClassName( 'email' ) }>
+				{ isEmailOnly && notice }
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
 						{ ...passwordlessFormProps }
