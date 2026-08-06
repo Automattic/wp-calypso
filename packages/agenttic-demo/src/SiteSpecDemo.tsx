@@ -1,13 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useAgentChat } from '@automattic/agenttic-client';
-import type { ContextProvider } from '@automattic/agenttic-client';
-import { AgentUI, createMessageRenderer } from '@automattic/agenttic-ui';
+import React, { useCallback, useMemo } from 'react';
+import { AgentUI } from '@automattic/agenttic-ui';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import MessageTester from './MessageTester';
-import {
-	getClientContext,
-	getClientTools,
-} from '@automattic/agenttic-client/mocks';
+import { ViewTools } from './playground/PlaygroundShell';
+import { useDemoChat } from './hooks/useDemoChat';
 
 /**
  * Site Spec Demo
@@ -19,48 +15,26 @@ import {
  *
  * This uses the EXACT same pattern as site-spec-chat.tsx to ensure
  * any regressions in the horizontal layout are caught.
+ *
+ * The theme prop is intentionally unused: this demo ships its own fixed
+ * gradient look.
  */
-const SiteSpecDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
-	currentTheme,
-} ) => {
-	const [ contextProvider ] = useState< ContextProvider >( () => ( {
-		getClientContext,
-	} ) );
-
-	const addMessageRef = useRef< ( ( message: any ) => void ) | null >( null );
-
-	const toolProvider = useMemo(
-		() =>
-			getClientTools( ( message ) => {
-				if ( addMessageRef.current ) {
-					addMessageRef.current( message );
-				}
-			} ),
-		[]
-	);
-
+const SiteSpecDemo: React.FC< { currentTheme: 'light' | 'dark' } > = () => {
 	const {
 		messages,
 		isProcessing,
 		error,
-		onSubmit,
 		suggestions,
 		clearSuggestions,
 		addMessage,
 		loadMessages,
 		abortCurrentRequest,
-	} = useAgentChat( {
-		agentId: 'test',
-		agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
+		messageRenderer,
+		handleSubmit,
+	} = useDemoChat( {
 		sessionId: 'dev-session-sitespec',
-		contextProvider,
-		toolProvider,
 		enableStreaming: true,
 	} );
-
-	useEffect( () => {
-		addMessageRef.current = addMessage;
-	}, [ addMessage ] );
 
 	// Default suggestions matching site-spec style
 	const defaultPromptSuggestions: Suggestion[] = useMemo(
@@ -103,47 +77,21 @@ const SiteSpecDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 		return defaultPromptSuggestions;
 	}, [ suggestions, defaultPromptSuggestions ] );
 
-	const handleSubmit = useCallback(
-		async ( message: string ) => {
-			await onSubmit( message );
-			clearSuggestions();
-		},
-		[ onSubmit, clearSuggestions ]
-	);
-
 	const handleSuggestionSelect = useCallback( ( message: string ) => {
 		console.log( 'Selected suggestion:', message );
 	}, [] );
-
-	const messageRenderer = useMemo(
-		() =>
-			createMessageRenderer( {
-				extensions: {
-					charts: { enabled: true },
-					gfm: { enabled: true },
-				},
-				enableStreaming: true,
-			} ),
-		[]
-	);
 
 	const isOnboarding = messages.length === 0;
 
 	return (
 		<>
-			<div
-				style={ {
-					position: 'fixed',
-					top: '0',
-					right: '0',
-					display: 'flex',
-					flexWrap: 'wrap',
-					gap: '2px',
-					zIndex: 10000,
-				} }
-			>
-				<MessageTester addMessage={ addMessage } onClear={ () => loadMessages( [] ) } />
-			</div>
+			<ViewTools>
+				<MessageTester
+					addMessage={ addMessage }
+					loadMessages={ loadMessages }
+					onClear={ () => loadMessages( [] ) }
+				/>
+			</ViewTools>
 			<style>
 				{ `
 				.site-spec-demo {
@@ -151,8 +99,9 @@ const SiteSpecDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 					flex-direction: column;
 					align-items: center;
 					justify-content: center;
-					min-height: 100vh;
-					padding: 60px 24px 24px;
+					min-height: 100%;
+					padding: 24px;
+					box-sizing: border-box;
 					background: linear-gradient(180deg, #1a0dab 0%, #3023d8 100%);
 				}
 
