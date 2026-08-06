@@ -7,7 +7,6 @@ import {
 	A4A_MARKETPLACE_ASSIGN_LICENSE_LINK,
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
-	A4A_SITES_LINK_NEEDS_SETUP,
 	EXTERNAL_PRESSABLE_AUTH_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
@@ -23,6 +22,8 @@ import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selec
 import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import CreateSiteButton from '../create-site-button';
+import useCreateSiteFromLicense from '../hooks/use-create-site-from-license';
 import useLicenseDownloadUrlMutation from '../revoke-license-dialog/hooks/use-license-download-url-mutation';
 import type { LicenseSubscription } from 'calypso/state/partner-portal/types';
 
@@ -71,9 +72,14 @@ export default function LicenseDetailsActions( {
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
 	const downloadUrl = useLicenseDownloadUrlMutation( licenseKey );
 
-	const redirectUrl = isWPCOMHostingLicense
-		? A4A_SITES_LINK_NEEDS_SETUP
-		: addQueryArgs( { key: licenseKey }, A4A_MARKETPLACE_ASSIGN_LICENSE_LINK );
+	const assignLicenseUrl = addQueryArgs( { key: licenseKey }, A4A_MARKETPLACE_ASSIGN_LICENSE_LINK );
+
+	const {
+		onCreateSite,
+		isProvisioning,
+		isLoading: isLoadingPendingSites,
+		modal: siteConfigurationsModal,
+	} = useCreateSiteFromLicense( licenseKey );
 
 	const openRevokeDialog = useCallback( () => {
 		setRevokeDialog( true );
@@ -182,11 +188,27 @@ export default function LicenseDetailsActions( {
 
 			{ ! isPressableAddonLicense &&
 				licenseState === LicenseState.Detached &&
-				licenseType === LicenseType.Partner && (
-					<Button compact primary className="license-details__assign-button" href={ redirectUrl }>
-						{ isWPCOMHostingLicense ? translate( 'Create site' ) : translate( 'Assign license' ) }
+				licenseType === LicenseType.Partner &&
+				( isWPCOMHostingLicense ? (
+					<CreateSiteButton
+						className="license-details__assign-button"
+						primary
+						isProvisioning={ isProvisioning }
+						isLoading={ isLoadingPendingSites }
+						onCreateSite={ onCreateSite }
+					/>
+				) : (
+					<Button
+						compact
+						primary
+						className="license-details__assign-button"
+						href={ assignLicenseUrl }
+					>
+						{ translate( 'Assign license' ) }
 					</Button>
-				) }
+				) ) }
+
+			{ siteConfigurationsModal }
 
 			{ revokeDialog && (
 				<CancelLicenseFeedbackModal
