@@ -137,7 +137,7 @@ describe( 'email update mode', () => {
 		const store = mockStore( {} );
 		render(
 			<Provider store={ store }>
-				<PasswordlessSignupForm emailUpdate={ { submit: jest.fn(), cancel: jest.fn() } } />
+				<PasswordlessSignupForm onUpdateEmail={ jest.fn() } />
 			</Provider>
 		);
 

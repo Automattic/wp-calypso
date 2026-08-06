@@ -223,8 +223,6 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
 		} );
 
-		// The compact layout puts the social form on the same page rather than a screen behind, so
-		// it is the one layout where email-only has to mean a different layout.
 		it( 'takes the standard layout rather than the compact one that shows social', () => {
 			renderUpdating( { isMobileCompactVariant: true } );
 
@@ -248,8 +246,6 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( await screen.findByRole( 'button', { name: 'Updating…' } ) ).toBeVisible();
 		} );
 
-		// The form owns whether its own action is busy; only the caller knows whether a write is on
-		// its way, and leaving wouldn't call one back.
 		it( 'holds the way back shut when the caller says a change is on its way', async () => {
 			const cancel = jest.fn();
 			renderUpdating( { emailUpdate: { submit: jest.fn(), cancel, cancelDisabled: true } } );
@@ -269,7 +265,14 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( cancel ).toHaveBeenCalled();
 		} );
 
-		// Both otherwise sit on the screen this mode never shows.
+		it( 'shows the email screen even when it was given no address to start from', () => {
+			renderUpdating( { userEmail: '' } );
+
+			expect(
+				screen.getByRole( 'textbox' ).closest( '.signup-form-social-first-screen' )
+			).toHaveClass( 'visible' );
+		} );
+
 		it( 'shows what the caller has to say, and a partner its own terms', () => {
 			renderUpdating( {
 				notice: <div>That address is already in use.</div>,
@@ -280,8 +283,13 @@ describe( 'SignupFormSocialFirst', () => {
 				screen.getByRole( 'textbox' ).closest( '.signup-form-social-first-screen' ) as HTMLElement
 			);
 			expect( emailScreen.getByText( 'That address is already in use.' ) ).toBeVisible();
-			expect( emailScreen.getByText( 'Partner terms apply.' ) ).toBeVisible();
 			expect( emailScreen.queryByText( /By clicking "Continue,"/ ) ).not.toBeInTheDocument();
+
+			// Partner copy points at the options below it, so it can't sit under them.
+			const terms = emailScreen.getByText( 'Partner terms apply.' );
+			expect(
+				terms.compareDocumentPosition( screen.getByRole( 'button', { name: 'Continue' } ) )
+			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
 		} );
 
 		// Otherwise a refusal leaves the field and the button with nothing to press.
@@ -296,7 +304,6 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 	} );
 
-	// What this mode must not change: every other caller keeps the way back it had.
 	it.each( [
 		[ true, 'Back', 'See all options' ],
 		[ false, 'See all options', 'Back' ],

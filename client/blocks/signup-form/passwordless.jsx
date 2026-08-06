@@ -37,13 +37,8 @@ class PasswordlessSignupForm extends Component {
 		onCreateAccountSuccess: PropTypes.func,
 		disableTosText: PropTypes.bool,
 		// Replaces account creation with a change to the account the caller already has, and
-		// reports its own failures. `cancel` is the way off the screen that leaves in its place,
-		// so the two travel together. Cancel is shut for as long as `submit` is pending — a caller
-		// that waits on anything after the write should resolve first and wait separately.
-		emailUpdate: PropTypes.shape( {
-			submit: PropTypes.func.isRequired,
-			cancel: PropTypes.func.isRequired,
-		} ),
+		// reports its own failures.
+		onUpdateEmail: PropTypes.func,
 		// Names the signup's origin to the backend, which aims the activation link on it.
 		activationEmailFrom: PropTypes.string,
 		useConnectScreenActions: PropTypes.bool,
@@ -77,7 +72,7 @@ class PasswordlessSignupForm extends Component {
 				errorMessages: [ this.props.translate( 'Please provide a valid email address.' ) ],
 				isSubmitting: false,
 			} );
-			if ( ! this.props.emailUpdate ) {
+			if ( ! this.props.onUpdateEmail ) {
 				this.submitTracksEvent( false, {
 					action_message: 'Please provide a valid email address.',
 				} );
@@ -85,10 +80,10 @@ class PasswordlessSignupForm extends Component {
 			return;
 		}
 
-		if ( this.props.emailUpdate ) {
+		if ( this.props.onUpdateEmail ) {
 			this.setState( { isSubmitting: true } );
 			try {
-				await this.props.emailUpdate.submit( this.state.email.trim() );
+				await this.props.onUpdateEmail( this.state.email.trim() );
 			} catch {
 				// The caller reports its own failures. This only keeps one it didn't from leaving
 				// the screen disabled with nothing to press.

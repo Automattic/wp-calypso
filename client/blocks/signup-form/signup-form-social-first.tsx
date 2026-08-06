@@ -55,14 +55,13 @@ interface SignupFormSocialFirst {
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 	activationEmailFrom?: string;
-	// Replaces account creation with a change to the account the caller already has. The email
-	// screen is already only the email field, so all this mode does is take away the way back to
-	// the social one and put `cancel` in its place — the caller's own way out.
+	// Replaces account creation with a change to the account the caller already has, making this an
+	// email-only screen: the way back to the social one gives way to `cancel`, and nothing else
+	// offers a second account.
 	emailUpdate?: {
 		submit: ( email: string ) => Promise< void >;
 		cancel: () => void;
-		// The write itself can't be called back, so the caller shuts this while one is on its way.
-		// Whatever it goes on to wait for afterwards is its own business, and leaving is allowed.
+		// A write on its way can't be called back, so the caller shuts this while one is.
 		cancelDisabled?: boolean;
 	};
 }
@@ -127,6 +126,8 @@ const SignupFormSocialFirst = ( {
 	emailUpdate,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
+	// No other screen to be on, whatever the caller was given to start from.
+	const visibleStep = emailUpdate ? 'email' : currentStep;
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
@@ -179,25 +180,23 @@ const SignupFormSocialFirst = ( {
 	};
 
 	const renderEmailStepTermsOfService = () => {
-		// Partner legal copy is otherwise only on the screen this mode never shows, so its users
-		// would be given WordPress.com's terms in place of the ones they were meant to see.
-		const terms =
-			emailUpdate && customTosElement
-				? customTosElement
-				: createInterpolateElement(
-						__(
-							'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-						),
-						options
-				  );
-		return <p className="signup-form-social-first__email-tos-link">{ terms }</p>;
+		return (
+			<p className="signup-form-social-first__email-tos-link">
+				{ createInterpolateElement(
+					__(
+						'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+				) }
+			</p>
+		);
 	};
 
 	// This component uses a technique from this video https://www.youtube.com/watch?v=8327_1PINWI
 	// to handle the visibility of the steps while preserving their layout properties and avoiding shifts.
 	const getVisibilityClassName = ( step: Screen ) => {
 		return clsx( 'signup-form-social-first-screen', {
-			visible: currentStep === step,
+			visible: visibleStep === step,
 		} );
 	};
 
@@ -230,13 +229,10 @@ const SignupFormSocialFirst = ( {
 		},
 		onCreateAccountSuccess,
 		inputPlaceholder: isGravatar ? __( 'Enter your email address' ) : undefined,
-		emailUpdate,
-		// The one moment the button says what it is doing, so it mustn't say account creation.
+		onUpdateEmail: emailUpdate?.submit,
 		submitButtonLoadingLabel,
 	};
 
-	// Signing up again is the one thing this screen mustn't offer a caller changing an address, so
-	// the way back to the social options gives way to the caller's own.
 	let secondaryFooterButton;
 	if ( emailUpdate ) {
 		secondaryFooterButton = (
@@ -270,9 +266,7 @@ const SignupFormSocialFirst = ( {
 		</p>
 	);
 
-	// This layout has no screens to be on — it puts the social form and the email one on the same
-	// page — so a caller changing an address takes the standard one, where the email screen is
-	// already only the field.
+	// This layout has no screens: it puts the social form and the email one on the same page.
 	if ( isMobileCompactVariant && ! emailUpdate ) {
 		// In-form ToS: partner branding wins via customTosElement (rendered by
 		// renderTermsOfService); otherwise the compact "options above" notice.
@@ -334,10 +328,15 @@ const SignupFormSocialFirst = ( {
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
 				{ emailUpdate && notice }
+				{ /* Partner copy points at the options below it, and the form puts what it is given
+				     after the footer whenever there is a secondary action. */ }
+				{ emailUpdate && customTosElement && renderTermsOfService() }
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
 						{ ...passwordlessFormProps }
-						renderTerms={ renderEmailStepTermsOfService }
+						renderTerms={
+							emailUpdate && customTosElement ? undefined : renderEmailStepTermsOfService
+						}
 						secondaryFooterButton={ secondaryFooterButton }
 					/>
 					{ backButtonInFooter && ! emailUpdate ? (
