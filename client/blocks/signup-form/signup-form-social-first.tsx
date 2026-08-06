@@ -56,14 +56,9 @@ interface SignupFormSocialFirst {
 	customTosElement?: JSX.Element;
 	activationEmailFrom?: string;
 	// Replaces account creation with a change to the account the caller already has, making this an
-	// email-only screen: the way back to the social one gives way to `cancel`, and nothing else
-	// offers a second account.
-	emailUpdate?: {
-		submit: ( email: string ) => Promise< void >;
-		cancel: () => void;
-		// A write on its way can't be called back, so the caller shuts this while one is.
-		cancelDisabled?: boolean;
-	};
+	// email-only screen: nothing on it offers a second account. Submitting the address unchanged is
+	// how the caller gets its user back, so there is nothing else to leave by.
+	onUpdateEmail?: ( email: string ) => Promise< void >;
 }
 
 const options = {
@@ -123,20 +118,17 @@ const SignupFormSocialFirst = ( {
 	allowedSocialServices,
 	customTosElement,
 	activationEmailFrom,
-	emailUpdate,
+	onUpdateEmail,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	// No other screen to be on, whatever the caller was given to start from.
-	const visibleStep = emailUpdate ? 'email' : currentStep;
-	// The one legal copy or the other, never both: whichever renders here has to be the one the
-	// form is then told not to render again.
-	const showsPartnerTerms = Boolean( emailUpdate && customTosElement );
+	const visibleStep = onUpdateEmail ? 'email' : currentStep;
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
 	let submitButtonLoadingLabel;
-	if ( emailUpdate ) {
+	if ( onUpdateEmail ) {
 		submitButtonLoadingLabel = __( 'Updating…' );
 	} else if ( isGravatar ) {
 		submitButtonLoadingLabel = __( 'Continue' );
@@ -183,6 +175,10 @@ const SignupFormSocialFirst = ( {
 	};
 
 	const renderEmailStepTermsOfService = () => {
+		// Partner legal copy is otherwise only on the screen this mode never shows.
+		if ( onUpdateEmail && customTosElement ) {
+			return <p className="signup-form-social-first__email-tos-link">{ customTosElement }</p>;
+		}
 		return (
 			<p className="signup-form-social-first__email-tos-link">
 				{ createInterpolateElement(
@@ -232,22 +228,12 @@ const SignupFormSocialFirst = ( {
 		},
 		onCreateAccountSuccess,
 		inputPlaceholder: isGravatar ? __( 'Enter your email address' ) : undefined,
-		onUpdateEmail: emailUpdate?.submit,
+		onUpdateEmail,
 		submitButtonLoadingLabel,
 	};
 
 	let secondaryFooterButton;
-	if ( emailUpdate ) {
-		secondaryFooterButton = (
-			<Button
-				onClick={ emailUpdate.cancel }
-				disabled={ emailUpdate.cancelDisabled }
-				icon={ chevronLeft }
-			>
-				{ __( 'Cancel' ) }
-			</Button>
-		);
-	} else if ( ! backButtonInFooter ) {
+	if ( ! onUpdateEmail && ! backButtonInFooter ) {
 		secondaryFooterButton = (
 			<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
 				{ __( 'See all options' ) }
@@ -270,7 +256,7 @@ const SignupFormSocialFirst = ( {
 	);
 
 	// This layout has no screens: it puts the social form and the email one on the same page.
-	if ( isMobileCompactVariant && ! emailUpdate ) {
+	if ( isMobileCompactVariant && ! onUpdateEmail ) {
 		// In-form ToS: partner branding wins via customTosElement (rendered by
 		// renderTermsOfService); otherwise the compact "options above" notice.
 		const inFormTosElement = customTosElement ? renderTermsOfService() : <MobileCompactTosNotice />;
@@ -303,7 +289,7 @@ const SignupFormSocialFirst = ( {
 		<div className="signup-form signup-form-social-first">
 			{ /* Not merely hidden: it stacks in the same grid cell, and the email-first variants mount
 			     a second `signup-email` input on it that steals the visible label and the focus. */ }
-			{ ! emailUpdate && (
+			{ ! onUpdateEmail && (
 				<div className={ getVisibilityClassName( 'initial' ) }>
 					{ notice }
 					{ renderTermsOfService() }
@@ -334,17 +320,14 @@ const SignupFormSocialFirst = ( {
 				</div>
 			) }
 			<div className={ getVisibilityClassName( 'email' ) }>
-				{ emailUpdate && notice }
-				{ /* Partner copy points at the options below it, and the form puts what it is given
-				     after the footer whenever there is a secondary action. */ }
-				{ showsPartnerTerms && renderTermsOfService() }
+				{ onUpdateEmail && notice }
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
 						{ ...passwordlessFormProps }
-						renderTerms={ showsPartnerTerms ? undefined : renderEmailStepTermsOfService }
+						renderTerms={ renderEmailStepTermsOfService }
 						secondaryFooterButton={ secondaryFooterButton }
 					/>
-					{ backButtonInFooter && ! emailUpdate ? (
+					{ backButtonInFooter && ! onUpdateEmail ? (
 						<Button
 							onClick={ () => setCurrentStep( 'initial' ) }
 							className="back-button"
