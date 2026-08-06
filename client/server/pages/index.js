@@ -28,13 +28,17 @@ import {
 	CIAB_DASHBOARD_SECTION_DEFINITION,
 	CIAB_DASHBOARD_SECTION_PATHS,
 } from 'calypso/dashboard/app-ciab/section';
-import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
+import {
+	buildDotcomDashboardLink,
+	isAllowedDotcomDashboardHostname,
+} from 'calypso/dashboard/app-dotcom/routing';
 import {
 	DOTCOM_DASHBOARD_SECTION_DEFINITION,
 	DOTCOM_DASHBOARD_SECTION_PATHS,
 } from 'calypso/dashboard/app-dotcom/section';
 import { A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
+import { wpcomLink } from 'calypso/dashboard/utils/link';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
@@ -1212,6 +1216,62 @@ function wpcomPages( app ) {
 	} );
 }
 
+/**
+ * Resolve the counterpart origin's `/logout` URL for the cross-origin data clear.
+ *
+ * `Clear-Site-Data` for "storage"/"cache" is scoped to the origin that returns
+ * it, and the classic Calypso app and the Dashboard are served from separate
+ * origins (e.g. wordpress.com vs. my.wordpress.com). To clear both, `/logout`
+ * embeds the counterpart origin's `/logout?embed=1` in a hidden iframe. Returns
+ * `null` when there is no distinct counterpart (e.g. single-origin calypso.live).
+ */
+function getCounterpartLogoutUrl( req ) {
+	if ( req.hostname.endsWith( '.calypso.live' ) ) {
+		return null;
+	}
+
+	if ( isAllowedDotcomDashboardHostname( req.hostname ) ) {
+		// On the Dashboard host, the classic Calypso origin is the counterpart.
+		// `wpcomLink` resolves it from the `wpcom_url` config (wordpress.com in
+		// production, the local Calypso dev server in development).
+		return wpcomLink( '/logout?embed=1' );
+	}
+
+	if ( [ 'wordpress.com', 'calypso.localhost' ].includes( req.hostname ) ) {
+		return buildDotcomDashboardLink( '/logout?embed=1' );
+	}
+
+	return null;
+}
+
+/**
+ * Resolve the destination `/logout` sends the user to once data is cleared.
+ *
+ * Honors a `redirect_to` query param, but only for same-origin destinations —
+ * returned as a relative path so the client-side redirect can never leave this
+ * origin (guards against open redirects). Anything else falls back to `/log-in`.
+ */
+function getLogoutRedirectTo( req ) {
+	const target = req.query.redirect_to;
+	if ( typeof target !== 'string' || ! target ) {
+		return '/log-in';
+	}
+
+	const host = req.get( 'host' );
+	try {
+		const resolved = new URL( target, `https://${ host }` );
+		const destination = resolved.pathname + resolved.search + resolved.hash;
+		// Reject cross-origin and protocol-relative (`//host`) destinations.
+		if ( resolved.host === host && ! destination.startsWith( '//' ) ) {
+			return destination;
+		}
+	} catch {
+		// Fall through to the default.
+	}
+
+	return '/log-in';
+}
+
 export default function pages() {
 	const app = express();
 
@@ -1223,6 +1283,30 @@ export default function pages() {
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
 	app.use( middlewareUnsupportedBrowser() );
+
+	// `/logout` clears browser-stored site data for the current origin via the
+	// `Clear-Site-Data` response header, then best-effort clears the counterpart
+	// origin (classic Calypso <-> Dashboard) through a hidden iframe before
+	// redirecting to the login page. Actual session invalidation is handled by the
+	// client logout flow. Registered before section routing so it responds on both
+	// the classic Calypso and Dashboard hostnames.
+	app.get( '/logout', ( req, res ) => {
+		res.set( 'Clear-Site-Data', '"storage", "cache", "cookies"' );
+
+		if ( req.query.embed ) {
+			// Loaded inside the counterpart origin's iframe: this response only needs
+			// to carry the header, so render an empty page and stop here.
+			res.send( renderJsx( 'logout', { embed: true } ) );
+			return;
+		}
+
+		res.send(
+			renderJsx( 'logout', {
+				iframeSrc: getCounterpartLogoutUrl( req ),
+				redirectTo: getLogoutRedirectTo( req ),
+			} )
+		);
+	} );
 
 	if ( ! ( isJetpackCloud() || isA8CForAgencies() || isDashboardEnv() ) ) {
 		wpcomPages( app );
