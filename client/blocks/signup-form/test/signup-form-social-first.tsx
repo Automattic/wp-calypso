@@ -226,13 +226,7 @@ describe( 'SignupFormSocialFirst', () => {
 		it( 'takes the standard layout rather than the compact one that shows social', () => {
 			renderUpdating( { isMobileCompactVariant: true } );
 
-			// The compact layout has no screens and no Cancel; the standard one keeps social on the
-			// screen it isn't showing.
-			expect(
-				screen
-					.getAllByRole( 'button', { name: /Continue with/ } )[ 0 ]
-					.closest( '.signup-form-social-first-screen' )
-			).not.toHaveClass( 'visible' );
+			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
 		} );
 
@@ -263,6 +257,19 @@ describe( 'SignupFormSocialFirst', () => {
 			await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
 
 			expect( cancel ).toHaveBeenCalled();
+		} );
+
+		// The email-first variants mount a second form on the social screen, which shares the
+		// visible one's input id and its autofocus.
+		it( 'mounts the email field once, with nothing to sign up with', () => {
+			renderUpdating( {
+				isEmailFirstVariant: true,
+				customTosElement: <span>Partner terms apply.</span>,
+			} );
+
+			expect( screen.getAllByRole( 'textbox' ) ).toHaveLength( 1 );
+			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
+			expect( screen.getAllByText( 'Partner terms apply.' ) ).toHaveLength( 1 );
 		} );
 
 		it( 'shows the email screen even when it was given no address to start from', () => {

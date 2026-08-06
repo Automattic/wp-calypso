@@ -298,34 +298,38 @@ const SignupFormSocialFirst = ( {
 
 	return (
 		<div className="signup-form signup-form-social-first">
-			<div className={ getVisibilityClassName( 'initial' ) }>
-				{ ! emailUpdate && notice }
-				{ renderTermsOfService() }
-				{ emailLoginBlock && ! isEmailAtBottom && (
-					<>
-						{ emailLoginBlock }
-						<FormDivider isHorizontal />
-					</>
-				) }
-				<SocialSignupForm
-					handleResponse={ handleSocialResponse }
-					setCurrentStep={ setCurrentStep }
-					socialServiceResponse={ socialServiceResponse }
-					redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
-					disableTosText
-					compact
-					isSocialFirst={ isSocialFirst }
-					shouldShowEmailButton={ ! isEmailFirstVariant }
-					allowedSocialServices={ allowedSocialServices }
-				/>
-				{ emailLoginBlock && isEmailAtBottom && (
-					<>
-						<FormDivider isHorizontal />
-						{ emailLoginBlock }
-					</>
-				) }
-				{ isEmailFirstVariant && loginLinkParagraph }
-			</div>
+			{ /* Not merely hidden: it stacks in the same grid cell, and the email-first variants mount
+			     a second `signup-email` input on it that steals the visible label and the focus. */ }
+			{ ! emailUpdate && (
+				<div className={ getVisibilityClassName( 'initial' ) }>
+					{ notice }
+					{ renderTermsOfService() }
+					{ emailLoginBlock && ! isEmailAtBottom && (
+						<>
+							{ emailLoginBlock }
+							<FormDivider isHorizontal />
+						</>
+					) }
+					<SocialSignupForm
+						handleResponse={ handleSocialResponse }
+						setCurrentStep={ setCurrentStep }
+						socialServiceResponse={ socialServiceResponse }
+						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
+						disableTosText
+						compact
+						isSocialFirst={ isSocialFirst }
+						shouldShowEmailButton={ ! isEmailFirstVariant }
+						allowedSocialServices={ allowedSocialServices }
+					/>
+					{ emailLoginBlock && isEmailAtBottom && (
+						<>
+							<FormDivider isHorizontal />
+							{ emailLoginBlock }
+						</>
+					) }
+					{ isEmailFirstVariant && loginLinkParagraph }
+				</div>
+			) }
 			<div className={ getVisibilityClassName( 'email' ) }>
 				{ emailUpdate && notice }
 				{ /* Partner copy points at the options below it, and the form puts what it is given
