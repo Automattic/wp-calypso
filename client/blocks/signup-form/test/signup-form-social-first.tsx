@@ -261,8 +261,25 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screenEl ).toContainElement( screen.getByText( 'That address is already in use.' ) );
 		} );
 
-		// It leaves the screen, and a write already in flight would land anyway.
-		it( 'holds the way back shut while a change is being written', async () => {
+		// Only the caller can tell a write in flight from what it waits for afterwards, so it says
+		// when there is nothing to go back to yet.
+		it( 'holds the way back shut when the caller says to', async () => {
+			const cancel = jest.fn();
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="typo@example.com"
+					emailUpdate={ { submit: jest.fn(), cancel, cancelDisabled: true } }
+				/>
+			);
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+
+			expect( cancel ).not.toHaveBeenCalled();
+		} );
+
+		// The way off the screen for a caller whose wait outlives its write.
+		it( 'leaves the way back open while a change is in flight', async () => {
 			const cancel = jest.fn();
 			render(
 				<SignupFormSocialFirst
@@ -273,9 +290,9 @@ describe( 'SignupFormSocialFirst', () => {
 			);
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-			await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
 
-			expect( cancel ).not.toHaveBeenCalled();
+			expect( cancel ).toHaveBeenCalled();
 		} );
 
 		// Otherwise a refusal leaves the field and the button disabled with no way to try again.
@@ -307,6 +324,20 @@ describe( 'SignupFormSocialFirst', () => {
 
 			expect( onCancelEmailUpdate ).toHaveBeenCalled();
 		} );
+	} );
+
+	it( 'keeps an ordinary signup able to leave while its request is running', async () => {
+		render(
+			<SignupFormSocialFirst
+				{ ...defaultProps }
+				userEmail="new@example.com"
+				backButtonInFooter={ false }
+			/>
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( screen.getByRole( 'button', { name: 'See all options' } ) ).toBeEnabled();
 	} );
 
 	// One expression picks between these three and the Cancel above, so an ordinary signup has to

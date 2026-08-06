@@ -110,3 +110,26 @@ describe( 'activation email source', () => {
 		expect( body.extra ).toEqual( { has_segmentation_survey: false } );
 	} );
 } );
+
+describe( 'email update mode', () => {
+	const mockStore = configureStore( [ thunk ] );
+
+	// A second typo while correcting the first is not a signup that failed, and the signup funnel
+	// shouldn't carry it.
+	it( 'records no signup failure when a correction is invalid', () => {
+		const store = mockStore( {} );
+		render(
+			<Provider store={ store }>
+				<PasswordlessSignupForm emailUpdate={ { submit: jest.fn(), cancel: jest.fn() } } />
+			</Provider>
+		);
+
+		fireEvent.change( screen.getByRole( 'textbox', { name: /email/i } ), {
+			target: { value: 'still-not-an-email' },
+		} );
+		fireEvent.click( screen.getByRole( 'button', { name: /create your account/i } ) );
+
+		expect( screen.getByText( /valid email address/i ) ).toBeInTheDocument();
+		expect( store.getActions() ).toHaveLength( 0 );
+	} );
+} );

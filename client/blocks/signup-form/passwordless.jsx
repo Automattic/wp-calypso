@@ -6,7 +6,7 @@ import { debounce } from '@wordpress/compose';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, cloneElement, isValidElement } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -45,9 +45,6 @@ class PasswordlessSignupForm extends Component {
 			submit: PropTypes.func.isRequired,
 			cancel: PropTypes.func.isRequired,
 		} ),
-		// Replaces account creation with a change to the account the caller already has, and
-		// reports its own failures.
-		onUpdateEmail: PropTypes.func,
 		useConnectScreenActions: PropTypes.bool,
 	};
 
@@ -79,14 +76,11 @@ class PasswordlessSignupForm extends Component {
 				errorMessages: [ this.props.translate( 'Please provide a valid email address.' ) ],
 				isSubmitting: false,
 			} );
-			this.submitTracksEvent( false, { action_message: 'Please provide a valid email address.' } );
-			return;
-		}
-
-		if ( this.props.onUpdateEmail ) {
-			this.setState( { isSubmitting: true } );
-			await this.props.onUpdateEmail( this.state.email.trim() );
-			this.setState( { isSubmitting: false } );
+			if ( ! this.props.emailUpdate ) {
+				this.submitTracksEvent( false, {
+					action_message: 'Please provide a valid email address.',
+				} );
+			}
 			return;
 		}
 
@@ -344,14 +338,6 @@ class PasswordlessSignupForm extends Component {
 		this.props.onInputBlur?.( event );
 	};
 
-	// The secondary action leaves the screen, and a write already in flight would land anyway.
-	secondaryFooterButton() {
-		const { secondaryFooterButton } = this.props;
-		return this.state.isSubmitting && isValidElement( secondaryFooterButton )
-			? cloneElement( secondaryFooterButton, { disabled: true } )
-			: secondaryFooterButton;
-	}
-
 	renderNotice() {
 		return (
 			<Notice showDismiss={ false } status="is-error">
@@ -380,7 +366,7 @@ class PasswordlessSignupForm extends Component {
 						primaryLoading={ isSubmitting }
 						primaryDisabled={ isPrimaryDisabled }
 					/>
-					{ this.secondaryFooterButton() }
+					{ this.props.secondaryFooterButton }
 				</>
 			);
 		}
@@ -390,7 +376,7 @@ class PasswordlessSignupForm extends Component {
 				<SignupSubmitButton isBusy={ isSubmitting } isDisabled={ isPrimaryDisabled }>
 					{ submitButtonText }
 				</SignupSubmitButton>
-				{ this.secondaryFooterButton() }
+				{ this.props.secondaryFooterButton }
 			</LoggedOutFormFooter>
 		);
 	}
@@ -426,7 +412,7 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.secondaryFooterButton() ? (
+					{ this.props.secondaryFooterButton ? (
 						<>
 							{ this.formFooter() }
 							{ terms }

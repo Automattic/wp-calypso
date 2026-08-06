@@ -62,6 +62,9 @@ interface SignupFormSocialFirst {
 	emailUpdate?: {
 		submit: ( email: string ) => Promise< void >;
 		cancel: () => void;
+		// Only the caller can tell a write still in flight — which cancelling wouldn't call back —
+		// from whatever it goes on to wait for afterwards, which cancelling should always leave.
+		cancelDisabled?: boolean;
 	};
 }
 
@@ -237,7 +240,11 @@ const SignupFormSocialFirst = ( {
 	let secondaryFooterButton;
 	if ( emailUpdate ) {
 		secondaryFooterButton = (
-			<Button onClick={ emailUpdate.cancel } icon={ chevronLeft }>
+			<Button
+				onClick={ emailUpdate.cancel }
+				disabled={ emailUpdate.cancelDisabled }
+				icon={ chevronLeft }
+			>
 				{ __( 'Cancel' ) }
 			</Button>
 		);
