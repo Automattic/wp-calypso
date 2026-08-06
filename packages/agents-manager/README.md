@@ -82,11 +82,17 @@ See `src/hooks/custom-actions/README.md` for details.
 
 The host page URL can carry these query parameters:
 
-| Parameter | Description                                                                                                                                                   |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ai-open` | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied. |
-| `agent`   | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`).                                                                             |
-| `version` | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                           |
+| Parameter             | Description                                                                                                                                                                                                                                                                      |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ai-open`             | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied.                                                                                                                    |
+| `agent`               | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`).                                                                                                                                                                                                |
+| `version`             | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                                                                                                                                              |
+| `force-unified-agent` | `force-unified-agent=1` treats the user as eligible for the unified experience, so the sidebar mounts in local Calypso without the account opt-in. Ignored outside `localhost`, `*.localhost`, `*.jurassic.tube` and `*.jurassic.ninja`. Sticky for the session; `=0` clears it. |
+
+Eligibility normally comes from the server (`/agents-manager/state?key=unified_ai_chat`),
+which resolves an account opt-in — see `should_use_unified_experience()` in Jetpack's
+`class-agents-manager.php`. `force-unified-agent` only decides whether the sidebar
+mounts; it does not grant the agent backend anything.
 
 ## API Reference
 

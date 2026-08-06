@@ -1,5 +1,6 @@
 import { useQuery, type QueryClient } from '@tanstack/react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { hasForcedUnifiedAgent } from '../utils/force-unified-agent';
 import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
 
 interface AgentsManagerStateResponse {
@@ -26,6 +27,12 @@ export function useUnifiedAiChat( enabled = true, queryClient?: QueryClient ) {
 		{
 			queryKey: [ 'unified-ai-chat' ],
 			queryFn: async () => {
+				// 0. Local-development override (`?force-unified-agent=1`), so the
+				// sidebar is reachable while working on it without the account opt-in.
+				if ( hasForcedUnifiedAgent() ) {
+					return true;
+				}
+
 				// 1. Check inline script first (available on wp-admin via Jetpack's Agents Manager)
 				const inlineValue = getAgentsManagerInlineData()?.useUnifiedExperience;
 				if ( inlineValue !== undefined ) {
