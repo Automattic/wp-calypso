@@ -1,6 +1,6 @@
 import { siteLaunchpadQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { lockOutline, published } from '@wordpress/icons';
 import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
 import { useExperiment } from 'calypso/lib/explat';
@@ -83,7 +83,12 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 				value: completedTasks,
 				max: numberOfTasks,
 				label: `${ completedTasks }/${ numberOfTasks }`,
-				ariaLabel: __( 'Steps to launch your site' ),
+				ariaValueText: sprintf(
+					/* translators: %1$d: number of completed steps, %2$d: total number of steps. e.g. "2 of 5 steps complete" */
+					__( '%1$d of %2$d steps complete' ),
+					completedTasks,
+					numberOfTasks
+				),
 				...( isLaunchpadCompleted && { variant: 'success' as const } ),
 			} }
 		/>

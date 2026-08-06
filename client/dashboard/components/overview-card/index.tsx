@@ -11,6 +11,7 @@ import {
 import { isRTL, __ } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useId } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
 import { isOnboardingUrl, isRelativeUrl } from '../../utils/url';
@@ -29,7 +30,7 @@ export interface OverviewCardProps {
 		value: number;
 		max: number;
 		label: string;
-		ariaLabel?: string;
+		ariaValueText?: string;
 		variant?: ComponentProps< typeof CircularProgressBar >[ 'variant' ];
 	};
 	intent?: 'activate' | 'upsell' | 'success' | 'warning' | 'error';
@@ -75,6 +76,7 @@ export default function OverviewCard( {
 	onClick,
 }: OverviewCardProps ) {
 	const { recordTracksEvent } = useAnalytics();
+	const descriptionId = useId();
 
 	const renderHeading = () => {
 		if ( isLoading ) {
@@ -165,6 +167,7 @@ export default function OverviewCard( {
 							{ renderHeading() }
 						</Heading>
 						<Text
+							id={ descriptionId }
 							intent={ intent === 'warning' || intent === 'error' ? intent : undefined }
 							variant={ intent === 'warning' || intent === 'error' ? undefined : 'muted' }
 							lineHeight="16px"
@@ -177,7 +180,8 @@ export default function OverviewCard( {
 			</VStack>
 			{ progress && (
 				<CircularProgressBar
-					ariaLabel={ progress.ariaLabel }
+					ariaLabelledBy={ description ? descriptionId : undefined }
+					ariaValueText={ progress.ariaValueText }
 					currentStep={ progress.value }
 					numberOfSteps={ progress.max }
 					size={ 80 }
