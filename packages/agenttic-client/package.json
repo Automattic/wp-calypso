@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/agenttic-client",
-	"version": "0.1.84",
+	"version": "0.1.85",
 	"type": "module",
 	"description": "A TypeScript client library for connection to the Automattic agent framework.",
 	"main": "dist/index.js",
