@@ -83,6 +83,7 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 				value: completedTasks,
 				max: numberOfTasks,
 				label: `${ completedTasks }/${ numberOfTasks }`,
+				ariaLabel: __( 'Steps to launch your site' ),
 				...( isLaunchpadCompleted && { variant: 'success' as const } ),
 			} }
 		/>

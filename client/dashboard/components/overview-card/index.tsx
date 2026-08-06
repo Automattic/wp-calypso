@@ -29,6 +29,7 @@ export interface OverviewCardProps {
 		value: number;
 		max: number;
 		label: string;
+		ariaLabel?: string;
 		variant?: ComponentProps< typeof CircularProgressBar >[ 'variant' ];
 	};
 	intent?: 'activate' | 'upsell' | 'success' | 'warning' | 'error';
@@ -176,7 +177,7 @@ export default function OverviewCard( {
 			</VStack>
 			{ progress && (
 				<CircularProgressBar
-					ariaLabel={ __( 'Steps to launch your site' ) }
+					ariaLabel={ progress.ariaLabel }
 					currentStep={ progress.value }
 					numberOfSteps={ progress.max }
 					size={ 80 }
