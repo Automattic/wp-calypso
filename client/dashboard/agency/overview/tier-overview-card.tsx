@@ -17,7 +17,7 @@ interface TierOverviewCardProps {
 	tierId?: AgencyTierType;
 	influencedRevenue: number;
 	tiersHref: string;
-	useRouterLink?: boolean;
+	shouldUseRouterLink?: boolean;
 	onScheduleCall?: () => void;
 	isSchedulingCall?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
@@ -37,8 +37,10 @@ function TierFooterSection( {
 			<Text variant="muted" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
 				{ label }
 			</Text>
-			<HStack justify="space-between" alignment="center">
-				<Text lineHeight="20px">{ title }</Text>
+			<HStack justify="space-between" alignment="center" wrap>
+				<Text size={ 13 } lineHeight="20px">
+					{ title }
+				</Text>
 				{ action }
 			</HStack>
 		</VStack>
@@ -49,7 +51,7 @@ export default function TierOverviewCard( {
 	tierId,
 	influencedRevenue,
 	tiersHref,
-	useRouterLink,
+	shouldUseRouterLink,
 	onScheduleCall,
 	isSchedulingCall,
 	recordTracksEvent,
@@ -70,7 +72,7 @@ export default function TierOverviewCard( {
 			heading={ tier.name }
 			description={ content.description }
 			link={ tiersHref }
-			useRouterLink={ useRouterLink }
+			shouldUseRouterLink={ shouldUseRouterLink }
 			tracksId="agency-overview-tier"
 			bottom={
 				<VStack spacing={ 4 }>

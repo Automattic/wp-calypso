@@ -50,7 +50,7 @@ export interface OverviewCardProps {
 	upsellFeatureId?: string;
 
 	/** Set to false in apps outside the dashboard's TanStack Router, so relative links render as plain anchors. */
-	useRouterLink?: boolean;
+	shouldUseRouterLink?: boolean;
 
 	bottom?: ReactNode;
 	onClick?: () => void;
@@ -69,7 +69,7 @@ export default function OverviewCard( {
 	externalLink: externalLinkProp,
 	tracksId,
 	upsellFeatureId,
-	useRouterLink = true,
+	shouldUseRouterLink = true,
 	bottom,
 	onClick,
 }: OverviewCardProps ) {
@@ -105,7 +105,7 @@ export default function OverviewCard( {
 	} else if ( isOnboarding ) {
 		plainAnchorLink = link;
 	} else if ( isRelativeLink ) {
-		if ( useRouterLink ) {
+		if ( shouldUseRouterLink ) {
 			relativeLink = link;
 		} else {
 			plainAnchorLink = link;

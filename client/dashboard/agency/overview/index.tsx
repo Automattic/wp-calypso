@@ -10,6 +10,7 @@ import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import { formatDate } from '../../utils/datetime';
 import { useScheduleCall } from '../tiers/use-schedule-call';
+import { PROGRAM_INCENTIVES_URL } from './constants';
 import AgencyOverviewContent from './overview-content';
 
 // TODO: the MSD dashboard has no contact-support entry point yet. This matches the
@@ -38,6 +39,7 @@ function AgencyOverviewDescription( { url, createdAt }: { url?: string; createdA
 export default function AgencyOverview() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { recordTracksEvent } = useAnalytics();
+	const agencyId = agency?.id ?? 0;
 	const approvalStatus = agency?.approval_status;
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
 
@@ -62,12 +64,30 @@ export default function AgencyOverview() {
 				message={ __( 'You don’t have permission to view the requested page.' ) }
 			/>
 			<AgencyOverviewContent
+				agencyId={ agencyId }
 				tierId={ agency.tier?.id }
 				influencedRevenue={ agency.influenced_revenue ?? 0 }
 				approvalStatus={ approvalStatus }
+				capabilities={ agency.user?.capabilities }
 				links={ {
 					tiers: '/agency/tiers',
+					referrals: '/earn/referrals',
+					woopayments: '/earn/woopayments',
 					contactSupport: CONTACT_SUPPORT_URL,
+					helpful: [
+						{
+							// TODO: wire up once the MSD dashboard has a contact-support entry
+							// point (see CONTACT_SUPPORT_URL above).
+							id: 'contact-support',
+							label: __( 'Contact sales & support' ),
+						},
+						{
+							id: 'program-incentives',
+							label: __( 'Program incentive details' ),
+							href: PROGRAM_INCENTIVES_URL,
+							isExternal: true,
+						},
+					],
 				} }
 				onScheduleCall={ scheduleCall }
 				isSchedulingCall={ isSchedulingCall }
