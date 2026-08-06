@@ -97,13 +97,28 @@ const siteMigration: FlowV2< typeof initialize > = {
 	},
 	useAssertConditions(): AssertConditionResult {
 		const { isAdmin } = useIsSiteAdmin();
+		const { get } = useFlowState();
+		const entryPoint =
+			get( 'flow' )?.entryPoint ?? new URLSearchParams( window.location.search ).get( 'ref' );
+		const isStaticSiteImportStep = [
+			STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug,
+			STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_PROGRESS.slug,
+		].some( ( step ) => window.location.pathname.endsWith( `/${ step }` ) );
+		const canUseStaticSiteImport =
+			entryPoint === 'move-lp' && config.isEnabled( 'migration/static-site-import' );
+		const shouldBlockStaticSiteImport = isStaticSiteImportStep && ! canUseStaticSiteImport;
 
 		useEffect( () => {
 			if ( isAdmin === false ) {
 				window.location.assign( '/start' );
+			} else if ( shouldBlockStaticSiteImport ) {
+				window.location.assign( '/setup/site-migration' );
 			}
-		}, [ isAdmin ] );
+		}, [ isAdmin, shouldBlockStaticSiteImport ] );
 
+		if ( shouldBlockStaticSiteImport ) {
+			return { state: AssertConditionState.FAILURE, message: 'Static site import is unavailable.' };
+		}
 		return { state: AssertConditionState.SUCCESS };
 	},
 
@@ -171,9 +186,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 									} )
 								);
 							}
-							return navigate(
-								paths.staticSiteImportReviewPath( { siteId, siteSlug, from } )
-							);
+							return navigate( paths.staticSiteImportReviewPath( { siteId, siteSlug, from } ) );
 						}
 
 						if ( userHasOtherWPComSites ) {
@@ -251,9 +264,11 @@ const siteMigration: FlowV2< typeof initialize > = {
 								( providedDependencies?.queryParams as { [ key: string ]: string } ) || {};
 
 							Object.keys( newQueryParams ).forEach( ( key ) => {
-								newQueryParams[ key ]
-									? urlQueryParams.set( key, newQueryParams[ key ] )
-									: urlQueryParams.delete( key );
+								if ( newQueryParams[ key ] ) {
+									urlQueryParams.set( key, newQueryParams[ key ] );
+								} else {
+									urlQueryParams.delete( key );
+								}
 							} );
 
 							const queryParams = Object.fromEntries( urlQueryParams );

@@ -53,12 +53,12 @@ const StaticSiteImportProgress: StepType = function () {
 	}, [ approve, savedSession?.approved, session.data, set, siteId ] );
 
 	const state = session.data?.state;
-	const title =
-		state === 'finished'
-			? translate( 'Your site import is complete' )
-			: state === 'failed'
-				? translate( 'Your site import could not be completed' )
-				: translate( 'Your site import is underway' );
+	let title = translate( 'Your site import is underway' );
+	if ( state === 'finished' ) {
+		title = translate( 'Your site import is complete' );
+	} else if ( state === 'failed' ) {
+		title = translate( 'Your site import could not be completed' );
+	}
 
 	return (
 		<>
@@ -72,7 +72,9 @@ const StaticSiteImportProgress: StepType = function () {
 					<CardBody>
 						{ ! session.data && ! session.error && <Spinner /> }
 						{ state === 'finished' && <p>{ translate( 'Your imported content is ready.' ) }</p> }
-						{ state === 'failed' && <p>{ translate( 'Please try again later or contact support.' ) }</p> }
+						{ state === 'failed' && (
+							<p>{ translate( 'Please try again later or contact support.' ) }</p>
+						) }
 						{ state && ! [ 'finished', 'failed' ].includes( state ) && <ProgressBar /> }
 						{ session.error && <p>{ translate( 'We could not check your import status.' ) }</p> }
 					</CardBody>

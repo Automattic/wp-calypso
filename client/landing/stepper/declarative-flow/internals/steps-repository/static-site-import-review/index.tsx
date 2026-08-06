@@ -1,7 +1,7 @@
 import { Step } from '@automattic/onboarding';
 import { Button, Card, CardBody, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
@@ -33,16 +33,19 @@ const StaticSiteImportReview: StepType< {
 	const error = sessionQuery.error ?? createSession.error;
 	const creationRequested = useRef( false );
 
-	const submitSession = ( action: 'created' | 'approved', importSession: NonNullable< typeof session > ) =>
-		navigation.submit( {
-			action,
-			sessionId: importSession.session_id,
-			planHash: importSession.plan_hash,
-			status: importSession.status,
-			state: importSession.state,
-			sourceDigest: importSession.source_digest,
-			previewSummary: importSession.preview_summary,
-		} );
+	const submitSession = useCallback(
+		( action: 'created' | 'approved', importSession: NonNullable< typeof session > ) =>
+			navigation.submit( {
+				action,
+				sessionId: importSession.session_id,
+				planHash: importSession.plan_hash,
+				status: importSession.status,
+				state: importSession.state,
+				sourceDigest: importSession.source_digest,
+				previewSummary: importSession.preview_summary,
+			} ),
+		[ navigation ]
+	);
 
 	useEffect( () => {
 		if (
@@ -54,9 +57,12 @@ const StaticSiteImportReview: StepType< {
 			! session
 		) {
 			creationRequested.current = true;
-			createSession.mutate( { siteId, sourceUrl }, {
-				onSuccess: ( created ) => submitSession( 'created', created ),
-			} );
+			createSession.mutate(
+				{ siteId, sourceUrl },
+				{
+					onSuccess: ( created ) => submitSession( 'created', created ),
+				}
+			);
 		}
 	}, [ createSession, session, sessionId, siteId, sourceUrl, submitSession ] );
 

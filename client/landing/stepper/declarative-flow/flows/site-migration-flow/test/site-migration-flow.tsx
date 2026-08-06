@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import config from '@automattic/calypso-config';
+import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -60,7 +60,9 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	beforeEach( () => {
-		( window.location.assign as jest.Mock ).mockClear();
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
+		} );
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
 		( useIsSiteAdmin as jest.Mock ).mockReturnValue( {
 			isAdmin: true,
@@ -126,6 +128,55 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getAssertionConditionResult() ).toEqual( { state: 'success' } );
+		} );
+
+		it( 'blocks a direct static import review URL when the feature is disabled', () => {
+			Object.defineProperty( window, 'location', {
+				value: {
+					...originalLocation,
+					pathname: `/setup/site-migration/${ STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug }`,
+					search: '?ref=move-lp',
+					assign: jest.fn(),
+					replace: jest.fn(),
+				},
+			} );
+			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+
+			runUseAssertionCondition( {
+				currentStep: STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug,
+			} );
+
+			expect( getAssertionConditionResult() ).toEqual( {
+				state: 'failure',
+				message: 'Static site import is unavailable.',
+			} );
+			expect( window.location.assign ).toHaveBeenCalledWith( '/setup/site-migration' );
+		} );
+
+		it( 'blocks a direct static import progress URL without the move-lp entry', () => {
+			jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation( ( flag ) => flag === 'migration/static-site-import' );
+			Object.defineProperty( window, 'location', {
+				value: {
+					...originalLocation,
+					pathname: `/setup/site-migration/${ STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_PROGRESS.slug }`,
+					search: '',
+					assign: jest.fn(),
+					replace: jest.fn(),
+				},
+			} );
+			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+
+			runUseAssertionCondition( {
+				currentStep: STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_PROGRESS.slug,
+			} );
+
+			expect( getAssertionConditionResult() ).toEqual( {
+				state: 'failure',
+				message: 'Static site import is unavailable.',
+			} );
+			expect( window.location.assign ).toHaveBeenCalledWith( '/setup/site-migration' );
 		} );
 	} );
 
@@ -347,9 +398,9 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			it( 'routes the deliberate move-lp entry through the existing upgrade boundary when enabled', () => {
-				jest.spyOn( config, 'isEnabled' ).mockImplementation( ( flag ) =>
-					flag === 'migration/static-site-import'
-				);
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/static-site-import' );
 				jest.mocked( useFlowState ).mockReturnValue( {
 					get: jest.fn().mockReturnValue( { entryPoint: 'move-lp' } ),
 					set: jest.fn(),
@@ -798,9 +849,9 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			it( 'returns from checkout to static site import review for the enabled move-lp path', () => {
-				jest.spyOn( config, 'isEnabled' ).mockImplementation( ( flag ) =>
-					flag === 'migration/static-site-import'
-				);
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/static-site-import' );
 				jest.mocked( useFlowState ).mockReturnValue( {
 					get: jest.fn().mockReturnValue( { entryPoint: 'move-lp' } ),
 					set: jest.fn(),

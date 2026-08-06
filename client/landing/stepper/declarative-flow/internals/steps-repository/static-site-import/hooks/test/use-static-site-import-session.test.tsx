@@ -16,7 +16,9 @@ jest.mock( 'calypso/lib/wp', () => ( {
 } ) );
 
 const wrapper = ( { children }: React.PropsWithChildren ) => (
-	<QueryClientProvider client={ new QueryClient( { defaultOptions: { queries: { retry: false } } } ) }>
+	<QueryClientProvider
+		client={ new QueryClient( { defaultOptions: { queries: { retry: false } } } ) }
+	>
 		{ children }
 	</QueryClientProvider>
 );
@@ -36,7 +38,9 @@ describe( 'static site import session API', () => {
 		} );
 		const { result } = renderHook( useCreateStaticSiteImportSession, { wrapper } );
 
-		await act( () => result.current.mutateAsync( { siteId: 123, sourceUrl: 'https://source.test' } ) );
+		await act( () =>
+			result.current.mutateAsync( { siteId: 123, sourceUrl: 'https://source.test' } )
+		);
 
 		expect( wpcom.req.post ).toHaveBeenCalledWith( {
 			path: '/sites/123/static-site-import-session',

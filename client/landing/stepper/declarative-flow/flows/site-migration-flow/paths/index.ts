@@ -46,7 +46,6 @@ export const siteCreationPath = buildPathHelper<
 			from?: string | null;
 			platform: ImporterPlatform;
 			ssh?: string;
-			staticSiteImport?: string;
 			host?: string;
 		};
 	},
@@ -116,6 +115,7 @@ export const upgradePlanPath = buildPathHelper<
 			destination?: string;
 			how?: string;
 			ssh?: string;
+			staticSiteImport?: string;
 			host?: string;
 		};
 	},

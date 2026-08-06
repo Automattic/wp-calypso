@@ -2,14 +2,19 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import StaticSiteImportProgress from '../index';
 import {
 	useApproveStaticSiteImportSession,
 	useStaticSiteImportSession,
 } from '../../static-site-import/hooks/use-static-site-import-session';
+import StaticSiteImportProgress from '../index';
 
-const mutate = jest.fn();
-const set = jest.fn();
+const mockMutate = jest.fn();
+const mockSet = jest.fn();
+const progressProps = {
+	navigation: { submit: jest.fn() },
+	stepName: 'static-site-import-progress',
+	flow: 'site-migration',
+};
 
 jest.mock( '@automattic/onboarding', () => ( {
 	Step: {
@@ -33,41 +38,48 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( { siteId: 123 } ),
 } ) );
 jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
-	useFlowState: () => ( { get: () => undefined, set } ),
+	useFlowState: () => ( { get: () => undefined, set: mockSet } ),
 } ) );
 jest.mock( '../../static-site-import/hooks/use-static-site-import-session' );
 
 describe( 'StaticSiteImportProgress', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		jest.mocked( useApproveStaticSiteImportSession ).mockReturnValue( { mutate } as never );
+		jest
+			.mocked( useApproveStaticSiteImportSession )
+			.mockReturnValue( { mutate: mockMutate } as never );
 	} );
 
 	it( 'approves a preview-ready session once across rerenders', () => {
 		jest.mocked( useStaticSiteImportSession ).mockReturnValue( {
-			data: { session_id: 'session-1', plan_hash: 'hash-1', status: 'pending', state: 'preview_ready' },
+			data: {
+				session_id: 'session-1',
+				plan_hash: 'hash-1',
+				status: 'pending',
+				state: 'preview_ready',
+			},
 		} as never );
 
-		const { rerender } = render( <StaticSiteImportProgress /> );
-		rerender( <StaticSiteImportProgress /> );
+		const { rerender } = render( <StaticSiteImportProgress { ...progressProps } /> );
+		rerender( <StaticSiteImportProgress { ...progressProps } /> );
 
-		expect( mutate ).toHaveBeenCalledTimes( 1 );
-		expect( mutate ).toHaveBeenCalledWith(
+		expect( mockMutate ).toHaveBeenCalledTimes( 1 );
+		expect( mockMutate ).toHaveBeenCalledWith(
 			{ siteId: 123, sessionId: 'session-1', planHash: 'hash-1' },
 			expect.any( Object )
 		);
 	} );
 
 	it.each( [
-		[ 'finished', 'Your site import is complete' ],
-		[ 'failed', 'Your site import could not be completed' ],
-	] as const )( 'renders %s as a terminal state', ( state, heading ) => {
+		[ 'finished', 'Your imported content is ready.' ],
+		[ 'failed', 'Please try again later or contact support.' ],
+	] as const )( 'renders %s as a terminal state', ( state, message ) => {
 		jest.mocked( useStaticSiteImportSession ).mockReturnValue( {
 			data: { session_id: 'session-1', status: state, state },
 		} as never );
 
-		render( <StaticSiteImportProgress /> );
+		render( <StaticSiteImportProgress { ...progressProps } /> );
 
-		expect( screen.getByRole( 'heading', { name: heading } ) ).toBeVisible();
+		expect( screen.getByText( message ) ).toBeVisible();
 	} );
 } );
