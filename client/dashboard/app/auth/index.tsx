@@ -65,8 +65,6 @@ function trackAuthBounceLoop() {
 	}
 }
 
-// Checks that what is stored in sessionStorage matches the AuthBounceRecord
-// shape we expect.
 function isAuthBounceRecord( value: unknown ): value is AuthBounceRecord {
 	return (
 		typeof value === 'object' &&
