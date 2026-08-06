@@ -17,6 +17,20 @@ const reducers = {
 	ui: uiReducer,
 };
 
+// The deadline hook has its own suite; here we only assert how this hook arms it.
+type DeadlineArgs = { siteId: number; productSlug: string; enabled: boolean };
+
+const mockUseInstallDeadline = jest.fn( ( args: DeadlineArgs ) => ( {
+	hasTimedOut: false,
+	hasTransferFailed: false,
+	receivedEnabled: args.enabled,
+} ) );
+
+jest.mock( '../use-install-deadline', () => ( {
+	...jest.requireActual( '../use-install-deadline' ),
+	useInstallDeadline: ( args: DeadlineArgs ) => mockUseInstallDeadline( args ),
+} ) );
+
 const SITE_ID = 1;
 
 const renderProductInstall = (
@@ -47,6 +61,24 @@ type PluginStatuses = {
 };
 const activationOf = ( store: { getState: () => PluginStatuses } ) =>
 	store.getState().plugins.installed.status?.[ SITE_ID ]?.[ 'uploaded/uploaded' ]?.action;
+
+// The browser is still sending the file: the upload is in progress and nothing has landed yet.
+const uploadInFlight = () => ( {
+	ui: { selectedSiteId: SITE_ID },
+	sites: { items: { [ SITE_ID ]: { ID: SITE_ID, options: { is_automated_transfer: true } } } },
+	marketplace: {
+		purchaseFlow: {
+			primaryDomain: 'example.wordpress.com',
+			pluginInstallationStatus: 'in-progress',
+		},
+	},
+	plugins: {
+		upload: {
+			inProgress: { [ SITE_ID ]: true },
+			progressPercent: { [ SITE_ID ]: 12 },
+		},
+	},
+} );
 
 const withUploadError = ( uploadError: object ) => ( {
 	ui: { selectedSiteId: SITE_ID },
@@ -147,5 +179,25 @@ describe( 'useProductInstall', () => {
 				expect( result.current.error ).toEqual( { type: 'rejected-upload', reason } );
 			}
 		);
+
+		// The upload page sends the customer here as soon as the upload starts. Counting that time
+		// against a deadline calibrated for server-side transfers would fail a large file on a slow
+		// connection — an install that was going to succeed.
+		it( 'leaves the deadline disarmed while the browser is still sending the upload', () => {
+			renderProductInstall( {}, uploadInFlight() );
+
+			expect( mockUseInstallDeadline ).toHaveBeenCalled();
+			expect( mockUseInstallDeadline.mock.calls.at( -1 )?.[ 0 ] ).toMatchObject( {
+				enabled: false,
+			} );
+		} );
+
+		it( 'arms the deadline once the upload has landed', () => {
+			renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+
+			expect( mockUseInstallDeadline.mock.calls.at( -1 )?.[ 0 ] ).toMatchObject( {
+				enabled: true,
+			} );
+		} );
 	} );
 } );

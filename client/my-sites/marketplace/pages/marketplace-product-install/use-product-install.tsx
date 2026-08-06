@@ -316,10 +316,15 @@ export function useProductInstall( {
 		return null;
 	} )();
 
+	// The upload flow reaches this page the moment the upload starts, not when it finishes, and
+	// how long the browser takes to send the file is the customer's bandwidth rather than anything
+	// this deadline is calibrated for. Start the clock once the file is up.
+	const isUploadStillSending = isPluginUploadFlow && ! pluginUploadComplete;
+
 	const { hasTimedOut, hasTransferFailed } = useInstallDeadline( {
 		siteId,
 		productSlug: pluginSlug || themeSlug || UPLOAD_ANCHOR_SLUG,
-		enabled: !! siteId && ! preflightError,
+		enabled: !! siteId && ! preflightError && ! isUploadStillSending,
 	} );
 
 	// Which error screen to show, in priority order, or null for none. The presentational mapping
@@ -332,8 +337,7 @@ export function useProductInstall( {
 		error = { type: 'timeout' };
 	}
 
-	// This page had no failure instrumentation at all, so a stuck install was only visible as a
-	// customer refreshing the same URL. Record the two outcomes the deadline makes observable.
+	// Reported once per outcome, so a re-render behind the error screen does not re-send it.
 	const reportedOutcomeRef = useRef< string | null >( null );
 	useEffect( () => {
 		let outcome = null;

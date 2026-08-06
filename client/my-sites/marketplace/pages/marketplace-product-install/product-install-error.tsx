@@ -1,9 +1,14 @@
 import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { clearPluginUpload } from 'calypso/state/plugins/upload/actions';
 import { getTheme } from 'calypso/state/themes/selectors';
-import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import ThemeDirectInstall from './theme-direct-install';
 import type { ProductInstallError } from './use-product-install';
 
@@ -19,9 +24,18 @@ export default function ProductInstallErrorView( {
 	onActivateTheme: () => void;
 } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId ) as number;
 	const wpOrgTheme = useSelector( ( state ) => getTheme( state, 'wporg', themeSlug ) );
+
+	// The abandoned attempt is still marked in progress, and the upload page clears that state only
+	// when it isn't — and hides its drop zone meanwhile. Retire it here or the retry lands on a page
+	// that cannot accept a file.
+	const onRetryUpload = () => {
+		dispatch( clearPluginUpload( siteId ) );
+	};
 
 	const uploadPageURL = `/plugins/upload/${ selectedSiteSlug }`;
 	const wpAdminUploadURL = `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload`;
@@ -144,6 +158,7 @@ export default function ProductInstallErrorView( {
 						isPluginUploadFlow ? translate( 'Try uploading again' ) : translate( 'Go to plugins' )
 					}
 					actionURL={ isPluginUploadFlow ? uploadPageURL : pluginsPageURL }
+					actionCallback={ isPluginUploadFlow ? onRetryUpload : undefined }
 				/>
 			);
 		}
