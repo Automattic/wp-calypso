@@ -321,7 +321,7 @@ export function useProductInstall( {
 	// this deadline is calibrated for. Start the clock once the file is up.
 	const isUploadStillSending = isPluginUploadFlow && ! pluginUploadComplete;
 
-	const { hasTimedOut, hasTransferFailed } = useInstallDeadline( {
+	const { hasTimedOut, hasTransferFailed, diagnostics } = useInstallDeadline( {
 		siteId,
 		enabled: !! siteId && ! preflightError && ! isUploadStillSending,
 	} );
@@ -336,8 +336,12 @@ export function useProductInstall( {
 		error = { type: 'timeout' };
 	}
 
-	// Reported once per outcome, so a re-render behind the error screen does not re-send it.
+	// Reported once per outcome, so a re-render behind the error screen does not re-send it. The
+	// diagnostics ride along because nothing else records why a wait ended: whether a transfer was
+	// even involved, where it stalled, and whether the backend had already called it stuck.
 	const reportedOutcomeRef = useRef< string | null >( null );
+	const diagnosticsRef = useRef( diagnostics );
+	diagnosticsRef.current = diagnostics;
 	useEffect( () => {
 		let outcome = null;
 		if ( hasTransferFailed ) {
@@ -355,11 +359,18 @@ export function useProductInstall( {
 			product_slug: pluginSlug || themeSlug || null,
 			site_id: siteId,
 			current_step: currentStep,
+			// Which path the site took, so a timeout on an in-place install is distinguishable from
+			// one on a transfer — they are different failures with the same screen.
+			install_strategy: installStrategy,
+			is_atomic_flow: atomicFlow,
+			...diagnosticsRef.current,
 		} );
 	}, [
 		hasTimedOut,
 		hasTransferFailed,
 		themeSlug,
+		installStrategy,
+		atomicFlow,
 		isPluginUploadFlow,
 		pluginSlug,
 		siteId,

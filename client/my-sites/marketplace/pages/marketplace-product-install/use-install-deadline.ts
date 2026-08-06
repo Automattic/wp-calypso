@@ -30,6 +30,17 @@ const isSettled = ( status?: string ) => !! status && SETTLED_STATUSES.includes(
 
 type HaltedOutcome = 'timeout' | 'transfer-failed';
 
+export type InstallWaitDiagnostics = {
+	has_transfer: boolean;
+	transfer_status: string | null;
+	transfer_age_seconds: number | null;
+	transfer_is_stuck: boolean | null;
+	transfer_in_lossless_revert: boolean | null;
+	waited_seconds: number;
+	anchored_to: 'transfer' | 'wait_start';
+	deadline_seconds: number;
+};
+
 /**
  * Bounds the wait on this page and reports a transfer that has genuinely failed.
  *
@@ -46,6 +57,7 @@ type HaltedOutcome = 'timeout' | 'transfer-failed';
 export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabled: boolean } ): {
 	hasTimedOut: boolean;
 	hasTransferFailed: boolean;
+	diagnostics: InstallWaitDiagnostics;
 } {
 	const [ now, setNow ] = useState( () => Date.now() );
 	const [ waitBeganAt, setWaitBeganAt ] = useState( () => Date.now() );
@@ -127,8 +139,25 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 
 	useInterval( () => setNow( Date.now() ), enabled && ! isHalted ? TICK_MS : null );
 
+	// What the wait could see when it ended. `is_stuck` is the server's own verdict on the same
+	// question this hook answers — in flight and older than its threshold — so recording both says
+	// whether five minutes is measuring what the backend's thirty are.
+	const transferAgeMs = transfer?.created_at ? now - Date.parse( transfer.created_at ) : null;
+	const diagnostics: InstallWaitDiagnostics = {
+		has_transfer: !! transfer,
+		transfer_status: transfer?.status ?? null,
+		transfer_age_seconds: transferAgeMs === null ? null : Math.round( transferAgeMs / 1000 ),
+		transfer_is_stuck: transfer?.is_stuck ?? null,
+		transfer_in_lossless_revert: transfer?.in_lossless_revert ?? null,
+		waited_seconds: Math.round( ( now - waitStartedAt ) / 1000 ),
+		// Whether the durable anchor did any work, or the clock fell back to this page's own arrival.
+		anchored_to: isInFlight ? 'transfer' : 'wait_start',
+		deadline_seconds: Math.round( INSTALL_DEADLINE_MS / 1000 ),
+	};
+
 	return {
 		hasTimedOut: haltedOutcome === 'timeout' || isDeadlineExceeded,
 		hasTransferFailed: haltedOutcome === 'transfer-failed' || hasTransferFailed,
+		diagnostics,
 	};
 }
