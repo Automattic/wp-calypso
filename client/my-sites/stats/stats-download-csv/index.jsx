@@ -16,6 +16,7 @@ import {
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getStatsCsvFileName } from './get-stats-csv-filename';
 
 import './style.scss';
 
@@ -53,16 +54,9 @@ class StatsDownloadCsv extends Component {
 
 	downloadCsv = ( event ) => {
 		event.preventDefault();
-		const { siteSlug, path, period, data, headers } = this.props;
+		const { siteSlug, path, period, query, data, headers } = this.props;
 
-		const fileName =
-			[
-				siteSlug,
-				path,
-				period.period,
-				period.startOf.format( 'L' ),
-				period.endOf.format( 'L' ),
-			].join( '-' ) + '.csv';
+		const fileName = getStatsCsvFileName( { siteSlug, path, period, query } );
 
 		this.props.recordGoogleEvent( 'Stats', 'CSV Download ' + titlecase( path ) );
 
