@@ -76,7 +76,9 @@ export type {
 	UseAgentChatConfig,
 	UseAgentChatReturn,
 	UIMessage,
+	UIMessageAction,
 	Suggestion,
+	SuggestionOption,
 	SubmitOptions,
 } from './react/useAgentChat';
 
@@ -127,3 +129,6 @@ export {
 	isOdieBotId,
 } from './react/odieConfig';
 export type { OdieBotConfig } from './react/odieConfig';
+
+// Agents API REST adapter for WordPress-native chat surfaces.
+export * from './agents-api';

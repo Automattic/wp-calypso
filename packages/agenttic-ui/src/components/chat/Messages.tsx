@@ -5,6 +5,7 @@ import type { Message as MessageType } from '../../types';
 import { cn } from '../../utils/classNames';
 import { useAutoScroll } from '../../hooks/useAutoScroll';
 import { Message } from './Message';
+import { SourcesCard } from '../sources';
 import styles from './Messages.module.css';
 import { ThinkingMessage } from './ThinkingMessage';
 import { getVisibleMessages } from '../../utils/message-helpers';
@@ -19,6 +20,7 @@ interface MessagesProps {
 	thinkingMessage?: string;
 	className?: string;
 	messagesPosition?: 'top' | 'bottom';
+	showAgentIcon?: boolean;
 }
 
 export function Messages( {
@@ -29,6 +31,7 @@ export function Messages( {
 	messageRenderer,
 	thinkingMessage,
 	messagesPosition = 'top',
+	showAgentIcon,
 }: MessagesProps ) {
 	const scrollAreaRef = useRef< HTMLDivElement >( null );
 
@@ -36,12 +39,6 @@ export function Messages( {
 	const visibleMessages = getVisibleMessages( messages );
 
 	useAutoScroll( { scrollAreaRef, visibleMessages } );
-
-	// Check if we have an agent message being streamed
-	// If so, hide the thinking indicator since content is arriving
-	const hasAgentResponse =
-		visibleMessages.length > 0 &&
-		visibleMessages[ visibleMessages.length - 1 ].role === 'agent';
 
 	const liveRegionText = useMemo( () => {
 		// Find the last agent message
@@ -64,12 +61,26 @@ export function Messages( {
 	// Debounce live region updates to prevent repeated announcements during streaming
 	const [ announcedText ] = useDebounce( liveRegionText, 1000 );
 
+	// Hide the indicator only while text is actively arriving, not just because
+	// an agent message exists. We compare current agent text to its 1s debounced
+	// shadow: equal means streaming has paused (indicator visible during tool-call
+	// gaps); unequal means deltas are flowing (indicator hidden). The 1s window
+	// is chosen to comfortably exceed typical inter-delta cadence (~430ms) so
+	// the indicator does not flicker during steady streaming.
+	const isAgentTextStreaming = liveRegionText !== announcedText;
+
 	if ( visibleMessages.length === 0 && ! isProcessing ) {
 		if ( emptyView ) {
 			return (
 				<div
 					data-slot="messages"
-					className={ `${ styles.container } ${ styles.emptyState }` }
+					className={ cn(
+						styles.container,
+						styles.emptyState,
+						messagesPosition === 'bottom'
+							? styles.bottomMessages
+							: ''
+					) }
 					ref={ scrollAreaRef }
 				>
 					{ emptyView }
@@ -104,14 +115,31 @@ export function Messages( {
 				ref={ scrollAreaRef }
 			>
 				<AnimatePresence mode="popLayout">
-					{ visibleMessages.map( ( message ) => (
-						<Message
-							key={ message.reactKey || message.id }
-							message={ message }
-							messageRenderer={ messageRenderer }
-						/>
-					) ) }
-					{ isProcessing && ! hasAgentResponse && (
+					{ visibleMessages.flatMap( ( message ) => {
+						const nodes = [
+							<Message
+								key={ message.reactKey || message.id }
+								message={ message }
+								messageRenderer={ messageRenderer }
+								showAgentIcon={ showAgentIcon }
+							/>,
+						];
+						if (
+							message.role === 'agent' &&
+							message.sources?.length
+						) {
+							nodes.push(
+								<SourcesCard
+									key={ `${
+										message.reactKey || message.id
+									}-sources` }
+									sources={ message.sources }
+								/>
+							);
+						}
+						return nodes;
+					} ) }
+					{ isProcessing && ! isAgentTextStreaming && (
 						<ThinkingMessage content={ thinkingMessage } />
 					) }
 					{ error && (

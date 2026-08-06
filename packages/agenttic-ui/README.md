@@ -139,6 +139,64 @@ The `onTypingStatusChange` callback is triggered when the typing status changes.
 
 ## Architecture
 
+### Portable Question Choices
+
+Agentic question renderers should use a portable question payload so product
+agents can ask lightweight structured questions inline in chat without coupling
+the UI to one product or workflow.
+
+```ts
+interface QuestionPrompt {
+	question: string;
+	choices: QuestionChoice[];
+	allow_freeform?: boolean;
+	freeform_label?: string;
+	freeform_placeholder?: string;
+}
+
+interface QuestionChoice {
+	label: string;
+	message?: string;
+	description?: string;
+	presentation?: {
+		swatches?: string[];
+		font_sample?: {
+			heading?: string;
+			body?: string;
+			heading_font?: string;
+			body_font?: string;
+		};
+		image?: {
+			url: string;
+			alt?: string;
+		};
+		layout_hint?: string;
+	};
+}
+```
+
+All `presentation` fields are optional. Renderers should fall back to the choice
+label and description when presentation metadata is absent or unsupported.
+
+`QuestionCard` uses CSS Modules internally. Consumers that need product-level
+design-system overrides should target the stable data hooks instead of generated
+class names:
+
+```css
+[data-agenttic-question-card] [data-slot="choice"] {
+	/* Product choice styles. */
+}
+
+[data-agenttic-question-card] [data-slot="presentation"] {
+	/* Product presentation layout. */
+}
+```
+
+Supported slots include `card`, `question`, `choices`, `choice`, `label`,
+`description`, `presentation`, `swatches`, `swatch`, `font-sample`,
+`font-heading`, `font-body`, `image`, `layout-hint`, `freeform`,
+`freeform-label`, `freeform-input`, and `freeform-submit`.
+
 ### AgentUI Components
 
 **AgentUI** - Convenience wrapper with default layout
@@ -166,8 +224,10 @@ interface AgentUIProps {
 	variant?: 'floating' | 'embedded';
 	placeholder?: string | string[];
 	triggerIcon?: React.ReactNode;
+	triggerTitle?: string; // Title shown next to the icon in the `minimized` state (defaults to `Ask AI`)
 	notice?: NoticeConfig;
 	emptyView?: React.ReactNode;
+	showAgentIcon?: boolean; // Show an avatar next to agent text responses (default false). See "Agent Avatar".
 
 	// Chat state management (floating variant)
 	floatingChatState?: ChatState;
@@ -335,6 +395,30 @@ const mixedMessage = {
 // The context content will be filtered out, only "Here are your analytics" is visible
 ```
 
+### Agent Avatar
+
+Set `showAgentIcon` on the chat to render an avatar next to the agent's spoken
+responses. It is **off by default**, so existing embeds are unaffected.
+
+The avatar only appears when **all** of these hold for a message:
+
+1. `showAgentIcon` is enabled on the chat (`<AgentUI showAgentIcon />`, or the
+   prop on `<Chat>` — see note below).
+2. The message's own `showIcon: true` flag is set.
+3. The message is from the agent (`role: 'agent'`).
+4. The message has at least one non-empty `text` content block.
+
+Condition 4 means component-only messages (pickers, confirmations) and
+context/data blocks intentionally show no avatar, so the icon sits next to what
+the agent _said_, not next to UI it surfaced. A common gotcha: turning on
+`showAgentIcon` but seeing no avatar usually means the messages are missing
+`showIcon: true`.
+
+> **Note:** the composable `AgentUIContainer` path reads `showAgentIcon` from
+> context, so nested `Messages`/`Message` inherit it automatically. The
+> monolithic `<Chat>` component is prop-driven — pass `showAgentIcon` to it
+> explicitly (same as `messageRenderer`).
+
 ### Custom Message Renderer
 
 ```tsx
@@ -363,6 +447,17 @@ const [ chatState, setChatState ] = useState< ChatState >( 'collapsed' );
 />;
 ```
 
+The `minimized` state docks a bar to the bottom edge showing the trigger icon
+and a title (`triggerTitle`, defaults to `Ask AI`); clicking it expands the chat:
+
+```tsx
+<AgentUI
+	variant="floating"
+	floatingChatState="minimized"
+	triggerTitle="Ask AI"
+/>;
+```
+
 ## Hooks
 
 ### useChat
@@ -371,7 +466,7 @@ Manages floating chat state:
 
 ```tsx
 const {
-	state, // 'collapsed' | 'compact' | 'expanded'
+	state, // 'collapsed' | 'minimized' | 'compact' | 'expanded'
 	setState,
 	isOpen, // boolean
 	open, // () => void
@@ -443,7 +538,7 @@ interface NoticeConfig {
 	onDismiss?: () => void;
 }
 
-type ChatState = 'collapsed' | 'compact' | 'expanded';
+type ChatState = 'collapsed' | 'minimized' | 'compact' | 'expanded';
 ```
 
 ## Styling

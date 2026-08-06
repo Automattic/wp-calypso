@@ -4,10 +4,16 @@ import styles from './MessageActions.module.css';
 
 interface MessageActionsProps {
 	message: Message;
+	actions?: MessageAction[];
 }
 
-export function MessageActions( { message }: MessageActionsProps ) {
-	if ( ! message.actions || message.actions.length === 0 ) {
+export function MessageActions( {
+	message,
+	actions: actionsProp,
+}: MessageActionsProps ) {
+	const actions = actionsProp || message.actions;
+
+	if ( ! actions || actions.length === 0 ) {
 		return null;
 	}
 
@@ -18,7 +24,7 @@ export function MessageActions( { message }: MessageActionsProps ) {
 			role="toolbar"
 			aria-label="Message actions"
 		>
-			{ message.actions.map( ( action: MessageAction ) => {
+			{ actions.map( ( action: MessageAction ) => {
 				if ( action.type === 'component' ) {
 					const ActionComponent = action.component;
 					return (

@@ -5,6 +5,10 @@ import { fastSpring } from '../animations';
 import { type ActionButton, ChatInput } from './ChatInput';
 import { Notice } from './Notice';
 import { Suggestions } from './Suggestions';
+import {
+	ComplianceDisclosure,
+	DefaultComplianceDisclosure,
+} from './ComplianceDisclosure';
 import styles from './ChatFooter.module.css';
 
 interface ChatFooterProps {
@@ -13,7 +17,7 @@ interface ChatFooterProps {
 	onInputChange: ( value: string ) => void;
 	onSubmit: () => void;
 	onKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
-	textareaRef: React.RefObject< HTMLTextAreaElement >;
+	textareaRef: React.RefObject< HTMLTextAreaElement | null >;
 	placeholder?: string | string[];
 	isProcessing: boolean;
 	onStop?: () => void;
@@ -38,6 +42,11 @@ interface ChatFooterProps {
 	// Custom actions
 	customActions?: ActionButton[];
 	actionOrder?: 'before-submit' | 'after-submit';
+
+	// AI-interaction disclosure shown below the input box (EU AI Act Art.
+	// 50(1)). Defaults to a generic sentence with a guidelines link; pass
+	// `false` to hide or a node to override.
+	complianceDisclosure?: React.ReactNode | false;
 }
 
 export function ChatFooter( {
@@ -58,12 +67,10 @@ export function ChatFooter( {
 	focusOnMount,
 	customActions,
 	actionOrder,
+	complianceDisclosure = <DefaultComplianceDisclosure />,
 }: ChatFooterProps ) {
 	const handleSuggestionSubmit = useCallback(
-		(
-			selectedSuggestion: Suggestion,
-			availableSuggestions: Suggestion[]
-		) => {
+		( selectedSuggestion: Suggestion ) => {
 			const value = selectedSuggestion.prompt ?? selectedSuggestion.label;
 			onInputChange( value );
 			clearSuggestions?.();
@@ -71,46 +78,51 @@ export function ChatFooter( {
 		[ onInputChange, clearSuggestions ]
 	);
 	return (
-		<motion.div
-			data-slot="chat-footer"
-			className={ styles.container }
-			initial={ { opacity: 0, scale: 1 } }
-			animate={ { opacity: 1, scale: 1 } }
-			transition={ { ...fastSpring } }
-		>
-			{ ! inputValue && (
-				<Suggestions
-					suggestions={ suggestions }
-					onSubmit={ handleSuggestionSubmit }
+		<>
+			<motion.div
+				data-slot="chat-footer"
+				className={ styles.container }
+				initial={ { opacity: 0, scale: 1 } }
+				animate={ { opacity: 1, scale: 1 } }
+				transition={ { ...fastSpring } }
+			>
+				{ ! inputValue && (
+					<Suggestions
+						suggestions={ suggestions }
+						onSubmit={ handleSuggestionSubmit }
+					/>
+				) }
+				{ notice && (
+					<Notice
+						icon={ notice.icon }
+						message={ notice.message }
+						action={ notice.action }
+						dismissible={ notice.dismissible }
+						onDismiss={ notice.onDismiss }
+						status={ notice.status }
+					/>
+				) }
+				<ChatInput
+					value={ inputValue }
+					onChange={ onInputChange }
+					onSubmit={ onSubmit }
+					onKeyDown={ onKeyDown }
+					textareaRef={ textareaRef }
+					placeholder={ placeholder }
+					isProcessing={ isProcessing }
+					onStop={ onStop }
+					fromCompact={ fromCompact }
+					onExpand={ onExpand }
+					showExpandButton={ false }
+					focusOnMount={ focusOnMount }
+					customActions={ customActions }
+					actionOrder={ actionOrder }
+					disabled={ disabled }
 				/>
-			) }
-			{ notice && (
-				<Notice
-					icon={ notice.icon }
-					message={ notice.message }
-					action={ notice.action }
-					dismissible={ notice.dismissible }
-					onDismiss={ notice.onDismiss }
-					status={ notice.status }
-				/>
-			) }
-			<ChatInput
-				value={ inputValue }
-				onChange={ onInputChange }
-				onSubmit={ onSubmit }
-				onKeyDown={ onKeyDown }
-				textareaRef={ textareaRef }
-				placeholder={ placeholder }
-				isProcessing={ isProcessing }
-				onStop={ onStop }
-				fromCompact={ fromCompact }
-				onExpand={ onExpand }
-				showExpandButton={ false }
-				focusOnMount={ focusOnMount }
-				customActions={ customActions }
-				actionOrder={ actionOrder }
-				disabled={ disabled }
-			/>
-		</motion.div>
+			</motion.div>
+			<ComplianceDisclosure>
+				{ complianceDisclosure }
+			</ComplianceDisclosure>
+		</>
 	);
 }

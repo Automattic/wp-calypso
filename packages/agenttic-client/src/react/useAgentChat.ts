@@ -6,15 +6,39 @@ import type {
 	Message as ClientMessage,
 	ContentType,
 	ContextProvider,
+	TaskUpdate,
 	ToolProvider,
 } from '../client/types/index';
 import { useMessageActions } from '../message-actions/useMessageActions';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { logger } from '../client/utils/logger';
+import { useRegenerate } from './useRegenerate';
 
 // Utility function to sort UI messages by timestamp
 const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
 	return [ ...messages ].sort( ( a, b ) => a.timestamp - b.timestamp );
+};
+
+/**
+ * Select the UI-only messages to keep when reconciling against client history.
+ *
+ * UI-only messages are those present in the UI but absent from the agent's
+ * client history — typically content injected by tools (e.g. a rendered
+ * component). They are kept across a reconcile so they don't disappear when
+ * the turn completes. User messages are excluded because the server echoes
+ * them back with different IDs, so keeping the local copy would duplicate them.
+ *
+ * @param uiMessages       - Current UI messages
+ * @param clientMessageIds - IDs present in the agent's client history
+ * @return The UI-only messages that should be preserved
+ */
+export const filterUiOnlyMessages = (
+	uiMessages: UIMessage[],
+	clientMessageIds: Set< string >
+): UIMessage[] => {
+	return uiMessages.filter(
+		( msg ) => ! clientMessageIds.has( msg.id ) && msg.role !== 'user'
+	);
 };
 
 /**
@@ -40,11 +64,18 @@ const createImageComponent = ( url: string, maxWidth = '40%' ) => ( {
 } );
 
 // Re-export types that will be used by consumers
+export interface SuggestionOption {
+	id: string;
+	label: string;
+	value: string; // Appended to the parent suggestion's prompt with boundary whitespace normalized
+}
+
 export interface Suggestion {
 	id: string;
 	label: string;
 	prompt?: string;
 	action?: () => boolean | Promise< boolean >;
+	options?: SuggestionOption[]; // When present, renders as a dropdown picker
 }
 
 // Image data with optional metadata (e.g., WordPress attachment ID)
@@ -147,7 +178,8 @@ export interface UseMessageActionsReturn {
 }
 
 // Transform client message (with parts) to UI message (with content)
-const transformClientMessageToUI = (
+// Exported for unit tests; not re-exported from the package entry.
+export const transformClientMessageToUI = (
 	clientMessage: ClientMessage,
 	messageActionsRegistrations: MessageActionsRegistration[] = []
 ): UIMessage | null => {
@@ -165,70 +197,83 @@ const transformClientMessageToUI = (
 		return null; // Don't show tool-related messages in UI
 	}
 
-	const content = clientMessage.parts.map( ( part ) => {
-		if ( part.type === 'text' ) {
-			// Check metadata for content type (e.g., 'text', 'context')
-			const contentType =
-				( part.metadata?.contentType as ContentType | undefined ) ||
-				'text';
-			return {
-				type: contentType,
-				text: part.text,
-			};
-		}
-		if ( part.type === 'file' ) {
-			// Convert file parts to component for rendering
-			// Prefer uri; fall back to base64 data URL if mimeType and bytes are available
-			const imageUrl =
-				part.file.uri ||
-				( part.file.mimeType && part.file.bytes
-					? `data:${ part.file.mimeType };base64,${ part.file.bytes }`
-					: undefined );
-			if ( imageUrl ) {
-				return createImageComponent( imageUrl );
-			}
-		}
-		if ( part.type === 'data' ) {
-			// Handle data parts that might contain component information
-			const data = part.data as any;
-			if ( data.component && data.componentProps ) {
+	const content = clientMessage.parts
+		.map( ( part ) => {
+			if ( part.type === 'text' ) {
+				// Check metadata for content type (e.g., `text`, `context`)
+				const contentType =
+					( part.metadata?.contentType as ContentType | undefined ) ||
+					'text';
 				return {
-					type: 'component' as const,
-					component: data.component,
-					componentProps: data.componentProps,
+					type: contentType,
+					text: part.text,
 				};
 			}
-			// Preserve data parts with forward_to_human_support flag (and similar flags)
-			// so consumers can check for them programmatically
-			if (
-				data.flags &&
-				typeof data.flags === 'object' &&
-				'forward_to_human_support' in data.flags
-			) {
-				return {
-					type: 'data' as const,
-					data,
-				};
+			if ( part.type === 'file' ) {
+				// Convert `file` parts to component for rendering
+				// Prefer `uri`; fall back to base64 data URL if `mimeType` and `bytes` are available
+				const imageUrl =
+					part.file.uri ||
+					( part.file.mimeType && part.file.bytes
+						? `data:${ part.file.mimeType };base64,${ part.file.bytes }`
+						: undefined );
+				if ( imageUrl ) {
+					return createImageComponent( imageUrl );
+				}
 			}
-			// Preserve data parts with sources array for article references
-			if ( Array.isArray( data.sources ) && data.sources.length > 0 ) {
-				return {
-					type: 'data' as const,
-					data,
-				};
+			if ( part.type === 'data' ) {
+				// Handle `data` parts that might contain `component` information
+				const data = part.data as any;
+				if ( data.component && data.componentProps ) {
+					return {
+						type: 'component' as const,
+						component: data.component,
+						componentProps: data.componentProps,
+					};
+				}
+				// Preserve `data` parts with `forward_to_human_support` flag (and similar flags)
+				// so consumers can check for them programmatically
+				if (
+					data.flags &&
+					typeof data.flags === 'object' &&
+					'forward_to_human_support' in data.flags
+				) {
+					return {
+						type: 'data' as const,
+						data,
+					};
+				}
+				// Preserve `data` parts with `sources` array for article references
+				if (
+					Array.isArray( data.sources ) &&
+					data.sources.length > 0
+				) {
+					return {
+						type: 'data' as const,
+						data,
+					};
+				}
+				// Unknown `data` shapes are internal metadata. Drop them so
+				// they don't show up as raw JSON. Add a handler above to
+				// render a new shape.
+				logger( 'Dropping unrecognized data part', data );
+				return null;
 			}
-			// For other data parts, convert to text
+			// Handle other part types as needed
 			return {
 				type: 'text' as const,
-				text: JSON.stringify( data ),
+				text: '[Unsupported content]',
 			};
-		}
-		// Handle other part types as needed
-		return {
-			type: 'text' as const,
-			text: '[Unsupported content]',
-		};
-	} );
+		} )
+		.filter(
+			( item ): item is NonNullable< typeof item > => item !== null
+		);
+
+	// Drop messages with nothing to show. Keeping them would add empty
+	// entries to the list and throw off message counts.
+	if ( content.length === 0 ) {
+		return null;
+	}
 
 	// Extract timestamp from message metadata or use current time as fallback
 	const timestamp =
@@ -300,6 +345,8 @@ export interface UseAgentChatConfig {
 	toolProvider?: ToolProvider;
 	authProvider?: AuthProvider;
 	enableStreaming?: boolean; // Enable token-by-token streaming
+	// Observe every raw TaskUpdate yielded by the stream before built-in UI handling.
+	onTaskUpdate?: ( update: TaskUpdate ) => void | Promise< void >;
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
 }
@@ -325,6 +372,12 @@ export interface UseAgentChatReturn {
 	) => void;
 	unregisterMessageActions: ( id: string ) => void;
 	clearAllMessageActions: () => void;
+	// Returns the regenerate handler for an eligible assistant message (or the
+	// latest eligible one when no message is given), or null when regeneration
+	// isn't possible. Consumers build the action spec (label, icon, order, …).
+	getRegenerateHandler: (
+		message?: UIMessage
+	) => ( () => Promise< void > ) | null;
 
 	// Tool integration
 	addMessage: ( message: UIMessage ) => void;
@@ -337,7 +390,7 @@ export interface UseAgentChatReturn {
 }
 
 // Internal state interface
-interface AgentChatState {
+export interface AgentChatState {
 	clientMessages: ClientMessage[];
 	uiMessages: UIMessage[];
 	isProcessing: boolean;
@@ -345,6 +398,20 @@ interface AgentChatState {
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
+}
+
+export interface InternalSubmitOptions {
+	initialClientMessages?: ClientMessage[];
+	initialUiMessages?: UIMessage[];
+	messageOverride?: ClientMessage;
+	preserveUiOnlyMessages?: boolean;
+	// History to replace before sending. Applied inside the guarded send so a
+	// no-op (concurrent send) never truncates and any failure restores.
+	truncateHistoryTo?: ClientMessage[];
+	restoreOnError?: {
+		clientMessages: ClientMessage[];
+		uiMessages: UIMessage[];
+	};
 }
 
 /**
@@ -386,6 +453,18 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 	// Guard against concurrent sends racing on `conversationHistory`
 	const isSendingRef = useRef( false );
+
+	const stateRef = useRef( state );
+	useEffect( () => {
+		stateRef.current = state;
+	}, [ state ] );
+
+	// Keep the raw task-update observer fresh without reinitializing the agent
+	// or changing the stable onSubmit callback identity.
+	const onTaskUpdateRef = useRef( config.onTaskUpdate );
+	useEffect( () => {
+		onTaskUpdateRef.current = config.onTaskUpdate;
+	}, [ config.onTaskUpdate ] );
 
 	// Use a ref to always have access to the latest registrations
 	const registrationsRef = useRef( registrations );
@@ -491,11 +570,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.odieBotId,
 		config.credentials,
 		isValidConfig,
+		transformMessages,
 	] );
 
 	// Send message function
-	const onSubmit = useCallback(
-		async ( message: string, options?: SubmitOptions ) => {
+	const sendMessage = useCallback(
+		async (
+			message: string,
+			options?: SubmitOptions,
+			internalOptions?: InternalSubmitOptions
+		) => {
 			if ( ! isValidConfig ) {
 				throw new Error( 'Invalid agent configuration' );
 			}
@@ -519,6 +603,44 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
+			const preserveUiOnlyMessages =
+				internalOptions?.preserveUiOnlyMessages ?? true;
+			const restoreMessagesOnError = async (
+				error: string | null
+			): Promise< boolean > => {
+				const restoreOnError = internalOptions?.restoreOnError;
+
+				if ( ! restoreOnError ) {
+					return false;
+				}
+
+				// The restore must never throw: a failure here would mask the
+				// original error and leave `isProcessing` stuck. Surface the
+				// original error regardless of whether persistence succeeds.
+				try {
+					await agentManager.replaceMessages(
+						agentKey,
+						restoreOnError.clientMessages
+					);
+				} catch ( restoreError ) {
+					logger(
+						'Failed to restore conversation history after a failed send',
+						restoreError
+					);
+				}
+
+				setState( ( prev ) => ( {
+					...prev,
+					clientMessages: restoreOnError.clientMessages,
+					uiMessages: restoreOnError.uiMessages,
+					isProcessing: false,
+					progressMessage: null,
+					progressPhase: null,
+					error,
+				} ) );
+
+				return true;
+			};
 
 			// Capture timestamp once for consistency
 			const messageTimestamp = Date.now();
@@ -526,28 +648,42 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			// Create user message immediately for UI (skipped for tool results)
 			if ( ! isToolResult ) {
 				const contentType = ( options?.type || 'text' ) as ContentType;
-				const userMessage: UIMessage = {
-					id: `user-${ messageTimestamp }`,
-					role: 'user',
-					content: [
-						{ type: contentType, text: message },
-						// Map image URLs to component content parts
-						...( options?.imageUrls?.map( ( imageData ) => {
-							const url =
-								typeof imageData === 'string'
-									? imageData
-									: imageData.url;
-							return createImageComponent( url );
-						} ) ?? [] ),
-					],
-					timestamp: messageTimestamp,
-					archived: options?.archived ?? false,
-					showIcon: false,
-				};
+				const userMessage = internalOptions?.messageOverride
+					? transformClientMessageToUI(
+							internalOptions.messageOverride,
+							[]
+					  )
+					: ( {
+							id: `user-${ messageTimestamp }`,
+							role: 'user',
+							content: [
+								{ type: contentType, text: message },
+								// Map image URLs to component content parts
+								...( options?.imageUrls?.map( ( imageData ) => {
+									const url =
+										typeof imageData === 'string'
+											? imageData
+											: imageData.url;
+									return createImageComponent( url );
+								} ) ?? [] ),
+							],
+							timestamp: messageTimestamp,
+							archived: options?.archived ?? false,
+							showIcon: false,
+					  } as UIMessage );
 
 				setState( ( prev ) => ( {
 					...prev,
-					uiMessages: [ ...prev.uiMessages, userMessage ],
+					clientMessages:
+						internalOptions?.initialClientMessages ??
+						prev.clientMessages,
+					uiMessages: userMessage
+						? [
+								...( internalOptions?.initialUiMessages ??
+									prev.uiMessages ),
+								userMessage,
+						  ]
+						: internalOptions?.initialUiMessages ?? prev.uiMessages,
 					isProcessing: true,
 					error: null,
 				} ) );
@@ -560,6 +696,15 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			}
 
 			try {
+				// Truncate history inside the guarded send so a concurrent
+				// no-op leaves history intact and any failure is restored.
+				if ( internalOptions?.truncateHistoryTo ) {
+					await agentManager.replaceMessages(
+						agentKey,
+						internalOptions.truncateHistoryTo
+					);
+				}
+
 				// Track streaming message for incremental updates
 				let streamingMessageId: string | null = null;
 				let finalMessageAdded = false;
@@ -582,6 +727,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					messageOptions.imageUrls = options.imageUrls;
 				}
 
+				if ( internalOptions?.messageOverride ) {
+					messageOptions.message = internalOptions.messageOverride;
+				}
+
 				// Use `sendToolResult` for tool results (cleans up duplicate results
 				// from conversation history and sends a `ToolResultDataPart` message),
 				// otherwise use regular `sendMessageStream`.
@@ -600,6 +749,17 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					  );
 
 				for await ( const update of stream ) {
+					if ( onTaskUpdateRef.current ) {
+						try {
+							await onTaskUpdateRef.current( update );
+						} catch ( observerError ) {
+							logger(
+								'Error in onTaskUpdate callback: %O',
+								observerError
+							);
+						}
+					}
+
 					// Update progress message and phase if present
 					if ( update.progressMessage || update.progressPhase ) {
 						setState( ( prev ) => ( {
@@ -652,6 +812,18 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 										: msg
 								),
 							} ) );
+						}
+
+						// Close the streaming bubble after a non-final text-bearing
+						// status event. Each TaskStatusUpdateEvent carrying text
+						// represents a completed model utterance — the agent server
+						// guarantees the next deltas will not extend that message —
+						// so we rotate to a fresh bubble. This preserves the preamble
+						// when the model says something before tool calls and a
+						// separate final answer afterward; without rotation the
+						// post-preamble deltas would overwrite the preamble bubble.
+						if ( update.kind === 'status' ) {
+							streamingMessageId = null;
 						}
 					}
 
@@ -708,11 +880,21 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 									agentManager.getConversationHistory(
 										agentKey
 									);
+								const clientMessageIds = new Set(
+									updatedClientHistory.map(
+										( msg ) => msg.messageId
+									)
+								);
+								const nextUIMessages = preserveUiOnlyMessages
+									? updatedMessages
+									: updatedMessages.filter( ( msg ) =>
+											clientMessageIds.has( msg.id )
+									  );
 
 								return {
 									...prev,
 									clientMessages: updatedClientHistory,
-									uiMessages: updatedMessages,
+									uiMessages: nextUIMessages,
 									isProcessing: false,
 									progressMessage: null,
 									progressPhase: null,
@@ -757,11 +939,12 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						const clientMessageIds = new Set(
 							updatedClientHistory.map( ( msg ) => msg.messageId )
 						);
-						const uiOnlyMessages = filteredMessages.filter(
-							( msg ) =>
-								! clientMessageIds.has( msg.id ) &&
-								msg.role !== 'user'
-						);
+						const uiOnlyMessages = preserveUiOnlyMessages
+							? filterUiOnlyMessages(
+									filteredMessages,
+									clientMessageIds
+							  )
+							: [];
 
 						// Merge client-based messages with UI-only component messages and sort by timestamp
 						const mergedUIMessages = sortUIMessagesByTime( [
@@ -783,13 +966,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// Handle AbortError specially - it's not really an error, just user cancellation
 				if ( error instanceof Error && error.name === 'AbortError' ) {
 					logger( 'Request was aborted by user' );
-					setState( ( prev ) => ( {
-						...prev,
-						isProcessing: false,
-						progressMessage: null,
-						progressPhase: null,
-						error: null, // Don't show error for user-initiated abort
-					} ) );
+					const restored = await restoreMessagesOnError( null );
+					if ( ! restored ) {
+						setState( ( prev ) => ( {
+							...prev,
+							isProcessing: false,
+							progressMessage: null,
+							progressPhase: null,
+							error: null, // Don't show error for user-initiated abort
+						} ) );
+					}
 					return; // Don't re-throw AbortError
 				}
 
@@ -797,19 +983,28 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					error instanceof Error
 						? error.message
 						: 'Failed to send message';
-				setState( ( prev ) => ( {
-					...prev,
-					isProcessing: false,
-					progressMessage: null,
-					progressPhase: null,
-					error: errorMessage,
-				} ) );
+				const restored = await restoreMessagesOnError( errorMessage );
+				if ( ! restored ) {
+					setState( ( prev ) => ( {
+						...prev,
+						isProcessing: false,
+						progressMessage: null,
+						progressPhase: null,
+						error: errorMessage,
+					} ) );
+				}
 				throw error;
 			} finally {
 				isSendingRef.current = false;
 			}
 		},
 		[ agentConfig.agentId, isValidConfig ]
+	);
+
+	const onSubmit = useCallback(
+		( message: string, options?: SubmitOptions ) =>
+			sendMessage( message, options ),
+		[ sendMessage ]
 	);
 
 	// Add message function - for tools to directly add UI messages
@@ -835,9 +1030,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		} ) );
 	}, [] );
 
-	// Re-transform messages when registrations change
+	// Re-transform messages when registrations change so newly registered
+	// actions are resolved onto existing messages.
 	useEffect( () => {
 		setState( ( prev ) => {
+			// A send owns the optimistic user message until it reconciles, so
+			// rebuilding here mid-flight would drop it. Let the send settle.
+			if ( isSendingRef.current ) {
+				return prev;
+			}
+
 			// Don't update if we have no client messages
 			if ( prev.clientMessages.length === 0 ) {
 				return prev;
@@ -864,7 +1066,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				] ),
 			};
 		} );
-	}, [ registrations ] );
+	}, [ registrations, transformMessages ] );
 
 	// Create abort function - delegates to agent manager
 	const abortCurrentRequest = useCallback( () => {
@@ -899,8 +1101,17 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				uiMessages,
 			} ) );
 		},
-		[ agentConfig.agentId, isValidConfig ]
+		[ agentConfig.agentId, isValidConfig, transformMessages ]
 	);
+
+	const { getRegenerateHandler } = useRegenerate( {
+		agentId: agentConfig.agentId,
+		isValidConfig,
+		isSendingRef,
+		stateRef,
+		transformMessages,
+		sendMessage,
+	} );
 
 	return {
 		// AgentUI props
@@ -920,6 +1131,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		registerMessageActions,
 		unregisterMessageActions,
 		clearAllMessageActions,
+		getRegenerateHandler,
 
 		// Tool integration
 		addMessage,

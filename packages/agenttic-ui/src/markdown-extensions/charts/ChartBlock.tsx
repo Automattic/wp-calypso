@@ -2,7 +2,6 @@
  * External dependencies
  */
 import type { DataPointDate, SeriesData } from '@automattic/charts';
-import type { RenderTooltipParams } from '@visx/xychart/lib/components/Tooltip';
 import type { FC } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
@@ -11,7 +10,7 @@ import { __, sprintf } from '@wordpress/i18n';
  * Internal dependencies
  */
 import type { ChartData, ChartDataPoint, ChartExtensionConfig } from '../types';
-import type { CurrencyOptions } from './BaseChart';
+import type { ChartTooltipParams, CurrencyOptions } from './BaseChart';
 import { BarChart } from './BarChart';
 import { ChartError } from './ChartError';
 import { ChartErrorBoundary } from './ChartErrorBoundary';
@@ -78,7 +77,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 	const resizeObserverRef = useRef< ResizeObserver | null >( null );
 
 	const customRenderTooltip = useCallback(
-		( params: RenderTooltipParams< DataPointDate > ) => {
+		( params: ChartTooltipParams ) => {
 			const { tooltipData } = params;
 			const nearestDatum = tooltipData?.nearestDatum?.datum;
 

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/agenttic-client",
-	"version": "0.1.63",
+	"version": "0.1.84",
 	"type": "module",
 	"description": "A TypeScript client library for connection to the Automattic agent framework.",
 	"main": "dist/index.js",
@@ -14,6 +14,10 @@
 		"./mocks": {
 			"types": "./dist/mocks/index.d.ts",
 			"import": "./dist/mocks/index.js"
+		},
+		"./agents-api": {
+			"types": "./dist/agents-api/index.d.ts",
+			"import": "./dist/agents-api/index.js"
 		}
 	},
 	"files": [
@@ -47,6 +51,7 @@
 	"devDependencies": {
 		"@wordpress/api-fetch": "^7.0.0",
 		"autoprefixer": "^10.4.0",
+		"react": "^18.0.0",
 		"typescript": "^5.0.0",
 		"unified": "^11.0.5",
 		"vite": "^5.0.0",
@@ -54,15 +59,14 @@
 		"vitest": "^1.0.0"
 	},
 	"dependencies": {
-		"@types/react": "^18.0.0",
-		"react": "^18.0.0"
+		"@types/react": "^18.0.0 || ^19.0.0"
 	},
 	"optionalDependencies": {
 		"marked": "^16.2.1"
 	},
 	"peerDependencies": {
 		"@wordpress/api-fetch": "^6.0.0 || ^7.0.0",
-		"react": "^18.0.0"
+		"react": "^18.0.0 || ^19.0.0"
 	},
 	"peerDependenciesMeta": {
 		"@wordpress/api-fetch": {

@@ -14,6 +14,7 @@ export function AgentUIMessages( { className }: AgentUIMessagesProps = {} ) {
 		emptyView,
 		messageRenderer,
 		messagesPosition,
+		showAgentIcon,
 		thinkingMessage,
 	} = useAgentUIContext();
 
@@ -27,6 +28,7 @@ export function AgentUIMessages( { className }: AgentUIMessagesProps = {} ) {
 			thinkingMessage={ thinkingMessage }
 			className={ className }
 			messagesPosition={ messagesPosition }
+			showAgentIcon={ showAgentIcon }
 		/>
 	);
 }

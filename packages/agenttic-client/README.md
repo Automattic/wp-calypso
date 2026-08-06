@@ -166,6 +166,7 @@ const {
 	registerSuggestions, // (suggestions: Suggestion[]) => void
 	registerMarkdownComponents, // (components: MarkdownComponents) => void
 	registerMessageActions, // (registration: MessageActionsRegistration) => void
+	getRegenerateHandler, // (message?: UIMessage) => (() => Promise<void>) | null
 
 	// Utilities
 	messageRenderer, // React component for markdown rendering
@@ -394,8 +395,7 @@ try {
 Add interactive buttons to agent messages:
 
 ```typescript
-const { registerMessageActions, createFeedbackActions } =
-	useAgentChat( config );
+const { registerMessageActions, getRegenerateHandler } = useAgentChat( config );
 
 // Built-in feedback actions
 registerMessageActions(
@@ -420,6 +420,35 @@ registerMessageActions( {
 		},
 	],
 } );
+
+// Add regenerate to each eligible assistant message. The hook supplies the
+// behavior; you own the action spec (label, icon, order), so strings stay in
+// your i18n layer and the icon matches your design.
+//
+// `getRegenerateHandler` returns a handler whenever the message is eligible,
+// regardless of processing state (clicking mid-request is a safe no-op). If you
+// want to hide or disable regenerate while a response streams, gate on
+// `isProcessing` yourself (e.g. `disabled: isProcessing`).
+registerMessageActions( {
+	id: 'regenerate',
+	actions: ( message ) => {
+		const onRegenerate = getRegenerateHandler( message );
+		return onRegenerate
+			? [
+					{
+						id: 'regenerate',
+						label: __( 'Regenerate' ),
+						tooltip: __( 'Regenerate response' ),
+						icon: <RegenerateAltIcon />,
+						onClick: onRegenerate,
+					},
+			  ]
+			: [];
+	},
+} );
+
+// Or render regenerate elsewhere, targeting the latest eligible assistant message.
+const onRegenerate = getRegenerateHandler();
 ```
 
 ### Markdown Extensions

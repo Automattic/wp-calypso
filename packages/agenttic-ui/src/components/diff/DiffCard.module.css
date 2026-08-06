@@ -1,0 +1,127 @@
+.card {
+	background: var(--color-background);
+	border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-sm);
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-3);
+	padding: var(--spacing-4);
+}
+
+.isResolved {
+	opacity: 0.85;
+}
+
+.title {
+	color: var(--color-foreground);
+	font-size: var(--text-base);
+	font-weight: var(--font-weight-semibold);
+	line-height: var(--text-base--line-height);
+	margin: 0;
+}
+
+.summary {
+	color: var(--color-muted-foreground);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	margin: 0;
+}
+
+.body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-2);
+}
+
+.change {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-1);
+}
+
+.changeLabel {
+	color: var(--color-muted-foreground);
+	font-size: var(--text-xs);
+	font-weight: var(--font-weight-medium);
+	line-height: var(--text-xs--line-height);
+}
+
+.diff {
+	background: color-mix(in srgb, var(--color-foreground) 4%, transparent);
+	border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+	border-radius: var(--radius-md);
+	color: var(--color-foreground);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	margin: 0;
+	overflow-x: auto;
+	padding: var(--spacing-3);
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.removed {
+	background: var(--color-error-background);
+	border-color: color-mix(in srgb, var(--color-error) 30%, transparent);
+}
+
+.added {
+	background: var(--color-success-background);
+	border-color: color-mix(in srgb, var(--color-success) 30%, transparent);
+}
+
+.resolution {
+	color: var(--color-muted-foreground);
+	font-size: var(--text-sm);
+	font-weight: var(--font-weight-medium);
+	line-height: var(--text-sm--line-height);
+	margin: 0;
+}
+
+.actions {
+	display: flex;
+	gap: var(--spacing-2);
+}
+
+.action {
+	border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+	border-radius: var(--radius-md);
+	cursor: pointer;
+	font-size: var(--text-sm);
+	font-weight: var(--font-weight-semibold);
+	line-height: var(--text-sm--line-height);
+	padding: var(--spacing-2) var(--spacing-4);
+	transition: var(--transition-colors);
+}
+
+.action:focus-visible {
+	outline: 2px solid var(--color-ring);
+	outline-offset: 2px;
+}
+
+.action:disabled {
+	cursor: default;
+	opacity: 0.66;
+}
+
+.accept {
+	background: var(--color-primary);
+	border-color: var(--color-primary);
+	color: var(--color-primary-foreground);
+}
+
+.accept:hover:not(:disabled) {
+	box-shadow: var(--shadow-outline-strong);
+}
+
+.reject {
+	background: var(--color-background);
+	color: var(--color-foreground);
+}
+
+.reject:hover:not(:disabled) {
+	border-color: var(--color-ring);
+	box-shadow: var(--shadow-outline);
+}

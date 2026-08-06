@@ -44,7 +44,19 @@ export { EmptyView } from './components/chat/EmptyView';
 export { CollapsedView } from './components/views/CollapsedView';
 export { CompactView } from './components/views/CompactView';
 export { ConversationView } from './components/views/ConversationView';
+export { MinimizedView } from './components/views/MinimizedView';
 export { ImageRenderer } from './components/chat/ImageRenderer';
+export { QuestionCard } from './components/question';
+export type { QuestionCardProps } from './components/question';
+export { SourcesCard } from './components/sources';
+export type { SourcesCardProps } from './components/sources';
+export { DiffCard } from './components/diff';
+export type {
+	DiffCardProps,
+	DiffCardChange,
+	DiffCardContent,
+	DiffDecision,
+} from './components/diff';
 
 // Hooks
 export { useChat } from './hooks/useChat';
@@ -58,6 +70,7 @@ export { ThumbsDownIcon } from './components/icons/ThumbsDownIcon';
 export { CopyIcon } from './components/icons/CopyIcon';
 export { StylesIcon } from './components/icons/StylesIcon';
 export { BigSkyIcon } from './components/icons/BigSkyIcon';
+export { AssistantAvatarIcon } from './components/icons/AssistantAvatarIcon';
 export { StopIcon } from './components/icons/StopIcon';
 export { XIcon } from './components/icons/XIcon';
 export { ArrowUpIcon } from './components/icons/ArrowUpIcon';
@@ -65,6 +78,7 @@ export { ChevronUpIcon } from './components/icons/ChevronUpIcon';
 export { ZoomIcon } from './components/icons/ZoomIcon';
 export { ZoomIconFilled } from './components/icons/ZoomIconFilled';
 export { RegenerateIcon } from './components/icons/RegenerateIcon';
+export { RegenerateAltIcon } from './components/icons/RegenerateAltIcon';
 export { PlusIcon } from './components/icons/PlusIcon';
 export { AltIcon } from './components/icons/AltIcon';
 export { BlurIcon } from './components/icons/BlurIcon';

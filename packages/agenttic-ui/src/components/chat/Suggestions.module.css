@@ -17,6 +17,10 @@
   display: none;
 }
 
+.label {
+  font-size: var(--text-sm);
+}
+
 /* New vertical style - stacked full-width buttons */
 .vertical {
   position: static;
@@ -35,6 +39,19 @@
     border: 1px solid var(--color-muted);
     border-radius: 0;
     box-shadow: none;
+
+    .suggestion-content--with-description {
+      display: flex;
+      flex-direction: column;
+
+      .label {
+        font-weight: var(--font-weight-semibold);
+      }
+
+      .description {
+        color: var(--color-muted-foreground);
+      }
+    }
 
     &:hover {
       box-shadow: none;

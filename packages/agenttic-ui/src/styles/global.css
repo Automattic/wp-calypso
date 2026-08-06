@@ -31,6 +31,7 @@
 		[data-slot="messages"],
 		[data-slot="chat-input"],
 		[data-slot="chat-footer"],
+		[data-slot="chat-compliance-disclosure"],
 		[data-slot="chat-header"] [data-slot="button"] {
 			cursor: default;
 		}

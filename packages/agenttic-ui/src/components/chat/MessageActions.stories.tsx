@@ -62,8 +62,9 @@ export const FeedbackExample: Story = {
 			const [ , forceUpdate ] = useState( {} );
 
 			// Create feedback manager with ref to maintain instance
-			const feedbackManagerRef =
-				useRef< ReturnType< typeof createFeedbackActions > >();
+			const feedbackManagerRef = useRef< ReturnType<
+				typeof createFeedbackActions
+			> | null >( null );
 			if ( ! feedbackManagerRef.current ) {
 				feedbackManagerRef.current = createFeedbackActions( {
 					onFeedback: async (

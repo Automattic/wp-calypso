@@ -20,7 +20,7 @@ const Button = React.forwardRef< HTMLButtonElement, ButtonProps >(
 			icon,
 			children,
 			asChild = false,
-			pressed = false,
+			pressed,
 			...props
 		},
 		ref
@@ -45,6 +45,8 @@ const Button = React.forwardRef< HTMLButtonElement, ButtonProps >(
 					pressed ? styles.pressed : undefined,
 					className
 				) }
+				// Only toggle buttons set `pressed`; omit aria-pressed otherwise
+				// so momentary actions aren't announced as toggles.
 				aria-pressed={ pressed }
 				{ ...props }
 			>

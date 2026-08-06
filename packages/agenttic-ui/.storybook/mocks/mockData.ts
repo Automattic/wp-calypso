@@ -101,6 +101,17 @@ export const mockSuggestions: Suggestion[] = [
 		label: 'Site performance',
 		prompt: 'How is my site performing this month?',
 	},
+	{
+		id: 'suggest-5',
+		label: 'Change tone to',
+		prompt: 'Change the tone of this content to ',
+		options: [
+			{ id: 'tone-formal', label: 'Formal', value: 'formal' },
+			{ id: 'tone-casual', label: 'Casual', value: 'casual' },
+			{ id: 'tone-friendly', label: 'Friendly', value: 'friendly' },
+			{ id: 'tone-funny', label: 'Funny', value: 'funny' },
+		],
+	},
 ];
 
 export const getRegisteredSuggestionsForContext = (

@@ -11,7 +11,7 @@ interface InputHandlers {
 	onInputChange: ( value: string ) => void;
 	onSubmit: () => void;
 	onKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
-	textareaRef: React.RefObject< HTMLTextAreaElement >;
+	textareaRef: React.RefObject< HTMLTextAreaElement | null >;
 	placeholder?: string | string[];
 	isProcessing: boolean;
 	onStop?: () => void;
@@ -45,6 +45,9 @@ interface ConversationViewProps extends InputHandlers {
 	// Markdown configuration
 	messageRenderer?: ComponentType< { children: string } >;
 
+	// Render an avatar next to agent text responses (defaults to off)
+	showAgentIcon?: boolean;
+
 	// Focus on mount
 	focusOnMount?: boolean;
 }
@@ -69,11 +72,17 @@ export function ConversationView( {
 	suggestions,
 	clearSuggestions,
 	messageRenderer,
+	showAgentIcon,
 	focusOnMount = false,
 }: ConversationViewProps ) {
-	// Listen for escape key to close the chat
+	// Listen for escape key to close the chat. Overlays that handle Escape
+	// themselves (modals, dialogs, popovers) call preventDefault(), so skip
+	// those presses and let the innermost layer close alone.
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( event.defaultPrevented ) {
+				return;
+			}
 			if ( event.key === 'Escape' && onClose ) {
 				onClose();
 			}
@@ -97,6 +106,7 @@ export function ConversationView( {
 				error={ error }
 				emptyView={ emptyView }
 				messageRenderer={ messageRenderer }
+				showAgentIcon={ showAgentIcon }
 			/>
 			<ChatFooter
 				inputValue={ inputValue }

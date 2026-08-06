@@ -18,7 +18,7 @@ export interface AgentUIContextValue {
 	inputValue: string;
 	setInputValue: ( value: string ) => void;
 	clearInput: () => void;
-	textareaRef: React.RefObject< HTMLTextAreaElement >;
+	textareaRef: React.RefObject< HTMLTextAreaElement | null >;
 	handleKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 
 	// Actions
@@ -32,6 +32,7 @@ export interface AgentUIContextValue {
 	emptyView?: React.ReactNode;
 	messageRenderer?: ComponentType< { children: string } >;
 	messagesPosition?: 'top' | 'bottom';
+	showAgentIcon?: boolean;
 
 	// Floating chat specific
 	floatingChatState?: ChatState;
@@ -47,6 +48,7 @@ export interface AgentUIContextValue {
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
 	) => void;
+	reportSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 
 	// Notice
 	notice?: NoticeConfig;

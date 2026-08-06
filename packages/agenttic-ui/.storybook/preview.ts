@@ -39,8 +39,39 @@ const preview: Preview = {
       },
     },
   },
+  globalTypes: {
+    theme: {
+      description: 'Agenttic color theme',
+      defaultValue: 'light',
+      toolbar: {
+        title: 'Theme',
+        icon: 'contrast',
+        items: [
+          { value: 'light', title: 'Light', icon: 'sun' },
+          { value: 'dark', title: 'Dark', icon: 'moon' },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
   decorators: [
-    (Story: any) => React.createElement('div', { className: 'agenttic' }, React.createElement(Story)),
+    (Story: any, context: any) => {
+      const isDark = context.globals.theme === 'dark';
+      return React.createElement(
+        'div',
+        {
+          // Tokens flip under `.agenttic.dark`; paint the surface so the
+          // dark background is actually visible behind the story.
+          className: isDark ? 'agenttic dark' : 'agenttic',
+          style: {
+            background: 'var(--color-background)',
+            color: 'var(--color-foreground)',
+            minHeight: '100vh',
+          },
+        },
+        React.createElement(Story)
+      );
+    },
   ],
 };
 

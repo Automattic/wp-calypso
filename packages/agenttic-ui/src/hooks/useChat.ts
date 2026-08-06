@@ -11,7 +11,7 @@ export function useChat( chatState?: ChatState ): UseChatReturn {
 		}
 	}, [ chatState ] );
 
-	const isOpen = state !== 'collapsed' && state !== 'compact';
+	const isOpen = state === 'expanded';
 
 	const open = useCallback( () => {
 		setState( 'expanded' );

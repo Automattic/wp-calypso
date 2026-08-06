@@ -55,6 +55,7 @@ import { AgentUIInputToolbar } from './composable/AgentUIInputToolbar';
  * @param props                   - UI-only props for chat interface
  * @param props.variant
  * @param props.triggerIcon
+ * @param props.triggerTitle
  * @param props.placeholder
  * @param props.notice
  * @param props.onOpen

@@ -3,12 +3,57 @@ import type { ComponentType } from 'react';
 import type { ChatPosition } from '../utils/chatStorage';
 
 // Define UI-specific types locally
+export interface ChatSize {
+	width: number;
+	height: number;
+}
+
+// Per-side gap (px) between the viewport edges and the floating panel's
+// allowed area. See AgentUIProps.boundaryInset.
+export interface BoundaryInsets {
+	top: number;
+	right: number;
+	bottom: number;
+	left: number;
+}
+
+export interface SuggestionOption {
+	id: string;
+	label: string;
+	value: string; // Appended to the parent suggestion's prompt with boundary whitespace normalized
+}
+
 export interface Suggestion {
 	id: string;
 	label: string;
+	description?: string;
 	prompt?: string;
 	action?: () => boolean | Promise< boolean >;
 	autoSubmit?: boolean; // When true, clicking the suggestion automatically submits it to the LLM
+	options?: SuggestionOption[]; // When present, renders as a dropdown picker
+}
+
+export interface QuestionChoice {
+	label: string;
+	message?: string;
+	description?: string;
+	presentation?: unknown;
+}
+
+export interface QuestionPrompt {
+	question: string;
+	choices: QuestionChoice[];
+}
+
+// Agent message source/citation. Mirrors AgentsApiSource from
+// @automattic/agenttic-client so the UI package stays free of agent
+// communication imports.
+export interface AgentSource {
+	id?: string;
+	title?: string;
+	url?: string;
+	label?: string;
+	metadata?: Record< string, unknown >;
 }
 
 export interface Message {
@@ -28,6 +73,7 @@ export interface Message {
 	actions?: MessageAction[];
 	disabled?: boolean;
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
+	sources?: AgentSource[]; // Agent message sources/citations rendered beneath the body
 }
 
 export interface MessageActionButton {
@@ -62,13 +108,14 @@ export interface AgentUIProps {
 	messages: Message[];
 	isProcessing: boolean;
 	error?: string | null;
-	onSubmit: ( message: string ) => void | Promise< void >;
+	onSubmit: ( message: string, files?: File[] ) => void | Promise< void >;
 
 	// UI-specific props
 	className?: string;
 	style?: React.CSSProperties;
 	variant?: 'floating' | 'embedded';
 	triggerIcon?: React.ReactNode;
+	triggerTitle?: string; // Title shown next to the icon in the 'minimized' state (defaults to 'Ask AI')
 	placeholder?: string | string[];
 	notice?: NoticeConfig;
 	onOpen?: () => void;
@@ -83,8 +130,13 @@ export interface AgentUIProps {
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
 	) => void;
+	onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 	messageRenderer?: ComponentType< { children: string } >;
 	messagesPosition?: 'top' | 'bottom';
+	// Render an avatar next to agent text responses. Defaults to false; when
+	// false no icon is shown, preserving the prior behaviour. Individual
+	// messages still control eligibility via their `showIcon` flag.
+	showAgentIcon?: boolean;
 	expandOnClick?: boolean;
 	expandOnHover?: boolean;
 
@@ -94,6 +146,21 @@ export interface AgentUIProps {
 
 	// Drag and drop props
 	draggableStates?: ChatState[]; // Specify which chat states allow dragging (defaults to ['expanded'] for backward compatibility)
+	boundaryInset?: number | Partial< BoundaryInsets >; // Gap (px) between the viewport edges and the floating panel's allowed area (anchor, drag and resize bounds). A number applies to all sides; an object overrides per side. Every side defaults to 16. E.g. { top: 80 } keeps the panel out from under a fixed header
+	freeDrag?: boolean; // Keep the panel where dropped instead of snapping to a corner (position is ephemeral, resets on reload/resize)
+	initialFreeDragPosition?: { x: number; y: number }; // Seed the free-drag pixel position on mount (only applied when freeDrag is on)
+	onFreeDragEnd?: ( position: { x: number; y: number } ) => void; // Reports the dropped free-drag pixel position so consumers can persist it
+
+	// Resize props (honored only for variant="floating" in the expanded state).
+	// The package stays stateless about persistence: defaultSize seeds the
+	// initial size, onResizeEnd reports the committed size for the consumer to persist.
+	resizable?: boolean | 'horizontal' | 'vertical'; // Enable resize of the expanded floating panel. true = both axes (all 8 handles), 'horizontal' = width only (left/right edges), 'vertical' = height only (top/bottom edges), false/omitted = off (defaults to false)
+	defaultSize?: ChatSize; // Uncontrolled seed; falls back to { width: COMPACT_WIDTH, height: EXPANDED_HEIGHT }
+	size?: ChatSize; // Controlled size; when set, the panel reconciles to it (animating when expanded). Undefined = uncontrolled defaultSize path
+	minSize?: Partial< ChatSize >; // Floor; defaults to { width: 372, height: 520 } (today's size)
+	maxSize?: Partial< ChatSize >; // Ceiling; clamped to the live constraint box. Defaults to the box itself
+	onResize?: ( size: ChatSize ) => void; // Fires every pointermove frame for live reflow only — do NOT persist from here
+	onResizeEnd?: ( size: ChatSize ) => void; // Fires once on pointer-up with the final committed size (the persistence hook)
 
 	// i18n
 	locale?: string; // Language locale (e.g., 'es', 'fr', 'de-DE'). Defaults to 'en'
@@ -111,6 +178,10 @@ export interface AgentUIProps {
 
 	// Typing status callback
 	onTypingStatusChange?: ( isTyping: boolean ) => void;
+
+	// Optional attachment controls for embedded consumers.
+	allowAttachments?: boolean;
+	acceptedFileTypes?: string[];
 }
 
 export interface NoticeConfig {
@@ -130,7 +201,7 @@ export interface ChatProps extends AgentUIProps {
 	floatingChatState?: ChatState;
 }
 
-export type ChatState = 'collapsed' | 'compact' | 'expanded';
+export type ChatState = 'collapsed' | 'minimized' | 'compact' | 'expanded';
 
 // Hook Types
 export interface UseChatReturn {
@@ -147,7 +218,7 @@ export interface UseInputReturn {
 	value: string;
 	setValue: ( value: string ) => void;
 	clear: () => void;
-	textareaRef: React.RefObject< HTMLTextAreaElement >;
+	textareaRef: React.RefObject< HTMLTextAreaElement | null >;
 	handleKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 	adjustHeight: () => void;
 }

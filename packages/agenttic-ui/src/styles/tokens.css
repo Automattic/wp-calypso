@@ -12,6 +12,8 @@
   --color-primary-foreground: var(--color-white);
   --color-muted: #E9E9E9;
   --color-muted-foreground: #757575;
+  --color-input-border: #E3E3E3;
+  --color-input-border-focused: #DDDDDD;
   --color-ring: var(--color-primary);
   --color-success-background: #F1F7F1;
   --color-success: var(--color-foreground);
@@ -79,6 +81,8 @@
   --color-popover-muted: #2F2F2F;
   --color-muted: #464646;
   --color-muted-foreground: #8F8F8F;
+  --color-input-border: #3D3D3D;
+  --color-input-border-focused: #4F4F4F;
   --color-success-background: #1F2E1F;
   --color-warning-background: #2E281F;
   --color-error-background: #2E1F1F;

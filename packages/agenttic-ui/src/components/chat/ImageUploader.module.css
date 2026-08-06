@@ -41,6 +41,10 @@
 	border-radius: 4px;
 }
 
+.clickAreaDisabled {
+	cursor: default;
+}
+
 .draggingMessage {
 	padding: 60px 24px;
 	text-align: center;
@@ -73,7 +77,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 16px;
-	padding: 0;
+	padding: 0 4px;
 }
 
 .previewItem {
@@ -129,6 +133,14 @@
 	opacity: 1;
 }
 
+.removeButton:disabled {
+	pointer-events: none;
+}
+
+.previewItem:hover .removeButton:disabled {
+	opacity: 0;
+}
+
 .removeButton:focus-visible {
 	outline: 2px solid var(--color-primary);
 	outline-offset: 2px;
@@ -139,7 +151,6 @@
 	height: 48px;
 	object-fit: cover;
 	border-radius: 6px;
-	flex-shrink: 0;
 }
 
 .previewMeta {
@@ -166,20 +177,45 @@
 	font-weight: 400;
 }
 
+.uploadingItem,
+.uploadingItem:active {
+	cursor: default;
+}
+
 .uploadingIndicator {
-	width: 100%;
-	height: 100%;
+	width: 48px;
+	height: 48px;
+	flex-shrink: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: var(--color-muted);
+	/* Solid neutral: reads on light and dark surfaces, unlike a translucent scrim */
+	background-color: #3c3c3c;
+	border-radius: 6px;
+}
+
+.thumbnail {
+	position: relative;
+	width: 48px;
+	height: 48px;
+	flex-shrink: 0;
+}
+
+.uploadingOverlay {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: rgba(0, 0, 0, 0.4);
+	border-radius: 6px;
 }
 
 .spinner {
-	width: 32px;
-	height: 32px;
-	border: 3px solid var(--color-muted);
-	border-top-color: var(--color-primary);
+	width: 20px;
+	height: 20px;
+	border: 2px solid rgba(255, 255, 255, 0.35);
+	border-top-color: #fff;
 	border-radius: 50%;
 	animation: spin 0.8s linear infinite;
 }

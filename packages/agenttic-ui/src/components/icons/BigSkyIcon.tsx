@@ -1,12 +1,21 @@
 import type { BaseIconProps } from './types';
 
-export function BigSkyIcon( { className, size = 24 }: BaseIconProps ) {
+interface BigSkyIconProps extends BaseIconProps {
+	/** Crops the canvas to the glyph (its tips span 4–20) so it renders edge-to-edge. */
+	fullBleed?: boolean;
+}
+
+export function BigSkyIcon( {
+	className,
+	size = 24,
+	fullBleed = false,
+}: BigSkyIconProps ) {
 	return (
 		<svg
 			className={ className }
 			width={ size }
 			height={ size }
-			viewBox="0 0 24 24"
+			viewBox={ fullBleed ? '4 4 16 16' : '0 0 24 24' }
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 		>

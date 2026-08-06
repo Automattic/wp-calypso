@@ -5,10 +5,10 @@ import {
 	type BaseChartProps as AutomatticBaseChartProps,
 	type DataPointDate,
 	defaultTheme,
+	type RenderTooltipParams,
 	type SeriesData,
 	ThemeProvider,
 } from '@automattic/charts';
-import type { RenderTooltipParams } from '@visx/xychart/lib/components/Tooltip';
 import type { FC } from 'react';
 import React, { useMemo } from 'react';
 
@@ -23,13 +23,13 @@ export interface CurrencyOptions {
 	symbolPosition: 'left' | 'right';
 }
 
+export type ChartTooltipParams = RenderTooltipParams< DataPointDate >;
+
 export interface BaseChartProps
 	extends Omit< AutomatticBaseChartProps< SeriesData[] >, 'data' > {
 	data: SeriesData[];
 	currency?: CurrencyOptions;
-	renderTooltip?: (
-		params: RenderTooltipParams< DataPointDate >
-	) => React.ReactNode;
+	renderTooltip?: ( params: ChartTooltipParams ) => React.ReactNode;
 	error?: {
 		message: string;
 		details?: string;

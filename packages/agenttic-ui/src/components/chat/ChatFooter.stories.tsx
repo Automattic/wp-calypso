@@ -212,6 +212,51 @@ export const WithSuggestions: Story = {
 	},
 };
 
+const dropdownSuggestions: Suggestion[] = [
+	{
+		id: '1',
+		label: 'Website Performance',
+		prompt: 'How can I improve my website performance?',
+	},
+	{
+		id: '2',
+		label: 'Change tone to',
+		prompt: 'Change the tone of this content to ',
+		options: [
+			{ id: 'tone-formal', label: 'Formal', value: 'formal' },
+			{ id: 'tone-casual', label: 'Casual', value: 'casual' },
+			{ id: 'tone-friendly', label: 'Friendly', value: 'friendly' },
+			{ id: 'tone-funny', label: 'Funny', value: 'funny' },
+		],
+	},
+	{
+		id: '3',
+		label: 'Translate to',
+		prompt: 'Translate this page to ',
+		options: [
+			{ id: 'lang-es', label: 'Spanish', value: 'Spanish' },
+			{ id: 'lang-fr', label: 'French', value: 'French' },
+			{ id: 'lang-de', label: 'German', value: 'German' },
+		],
+	},
+];
+
+export const WithDropdownSuggestions: Story = {
+	render: ( args ) => <ChatFooterWrapper { ...args } />,
+	args: {
+		...Default.args,
+		inputValue: '',
+		suggestions: dropdownSuggestions,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: 'Suggestions can include a dropdown picker. Clicking a dropdown suggestion opens a list of options that complete the prompt.',
+			},
+		},
+	},
+};
+
 export const Processing: Story = {
 	render: ( args ) => <ChatFooterWrapper { ...args } />,
 	args: {

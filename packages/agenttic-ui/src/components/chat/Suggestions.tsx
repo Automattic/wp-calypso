@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAgentUIContext } from '../../context/AgentUIContext.tsx';
 import type { Suggestion } from '../../types';
 import { cn } from '../../utils/classNames';
 import { Button } from '../ui/button';
+import { SuggestionDropdown } from './SuggestionDropdown';
 import { fastSpringWithDelay } from '../animations';
 import styles from './Suggestions.module.css';
 
@@ -18,6 +19,7 @@ export interface SuggestionsProps {
 	visible?: boolean;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
+	onDropdownOpenChange?: ( open: boolean ) => void;
 	translateY?: string | number;
 }
 
@@ -29,9 +31,10 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 	visible = true,
 	onMouseEnter,
 	onMouseLeave,
+	onDropdownOpenChange,
 	translateY = '-100%',
 } ) => {
-	const { variant } = useAgentUIContext();
+	const { variant, reportSuggestionsRendered } = useAgentUIContext();
 
 	// Limit suggestions for floating layout to prevent overflow
 	const internalSuggestions = useMemo(
@@ -39,6 +42,14 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 			variant === 'floating' ? suggestions?.slice( 0, 3 ) : suggestions,
 		[ suggestions, variant ]
 	);
+
+	// Report the set actually rendered — after truncation, only while visible.
+	// The container dedups across instance swaps, so this is intentionally dumb.
+	useEffect( () => {
+		if ( visible && internalSuggestions?.length ) {
+			reportSuggestionsRendered?.( internalSuggestions );
+		}
+	}, [ visible, internalSuggestions, reportSuggestionsRendered ] );
 
 	const handleSuggestionClick = async (
 		selectedSuggestion: Suggestion,
@@ -80,32 +91,83 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 					onMouseLeave={ onMouseLeave }
 				>
 					{ internalSuggestions.map(
-						( suggestion: Suggestion, index: number ) => (
-							<motion.div
-								key={ suggestion.id }
-								initial={ { opacity: 0, y: 10 } }
-								animate={ { opacity: 1, y: 0 } }
-								exit={ { opacity: 0, y: 10 } }
-								transition={ {
-									...fastSpringWithDelay,
-									delay: index * 0.05,
-								} }
-							>
-								<Button
-									onClick={ ( e ) => {
-										e.stopPropagation();
-										handleSuggestionClick(
-											suggestion,
-											internalSuggestions
-										);
+						( suggestion: Suggestion, index: number ) => {
+							const isEligibleForDescription =
+								!! suggestion.description &&
+								layout !== 'horizontal';
+
+							return (
+								<motion.div
+									key={ suggestion.id }
+									initial={ { opacity: 0, y: 10 } }
+									animate={ { opacity: 1, y: 0 } }
+									exit={ { opacity: 0, y: 10 } }
+									transition={ {
+										...fastSpringWithDelay,
+										delay: index * 0.05,
 									} }
-									variant="outline"
-									className={ styles.button }
 								>
-									{ suggestion.label }
-								</Button>
-							</motion.div>
-						)
+									{ suggestion.options &&
+									suggestion.options.length > 0 ? (
+										<SuggestionDropdown
+											suggestion={ suggestion }
+											onSelect={ handleSuggestionClick }
+											availableSuggestions={
+												internalSuggestions
+											}
+											onOpenChange={
+												onDropdownOpenChange
+											}
+											showDescription={
+												isEligibleForDescription
+											}
+										/>
+									) : (
+										<Button
+											onClick={ ( e ) => {
+												e.stopPropagation();
+												handleSuggestionClick(
+													suggestion,
+													internalSuggestions
+												);
+											} }
+											variant="outline"
+											className={ styles.button }
+										>
+											<div
+												className={ cn(
+													styles[
+														'suggestion-content'
+													],
+													isEligibleForDescription
+														? styles[
+																'suggestion-content--with-description'
+														  ]
+														: ''
+												) }
+											>
+												<span
+													className={ styles.label }
+												>
+													{ suggestion.label }
+												</span>
+												{ isEligibleForDescription && (
+													<span
+														className={
+															styles.description
+														}
+													>
+														{
+															suggestion.description
+														}
+													</span>
+												) }
+											</div>
+										</Button>
+									) }
+								</motion.div>
+							);
+						}
 					) }
 				</motion.div>
 			) }

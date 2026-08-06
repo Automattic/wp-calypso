@@ -2,16 +2,30 @@
   display: flex;
   flex-direction: column;
   align-items: start;
-  justify-content: end;
-  height: 100%;
-  gap: var(--spacing-6);
+  justify-content: flex-start;
+  gap: var(--spacing-4);
+}
+
+/* Collapsible spacer: grows to bottom-pin content when it fits, collapses on overflow so the
+   agent icon/greeting stay in frame and the rest scrolls off the bottom (short floating panels). */
+.container::before {
+  content: "";
+  flex: 1 0 0;
 }
 
 .icon {
-  font-size: calc(3 * var(--base-font-size));
-  line-height: 1;
   padding: 0 var(--spacing-4);
   color: var(--color-link);
+}
+
+/* Icons are always SVGs; block display drops the inline baseline gap so the
+   slot measures exactly the icon's height. */
+.icon svg {
+  display: block;
+}
+
+.defaultIcon {
+  color: var(--color-primary);
 }
 
 .heading, .help {
@@ -21,11 +35,9 @@
   color: var(--color-foreground);
   margin: 0;
   padding: var(--spacing) var(--spacing-4);
-  max-width: 400px;
 }
 
 .suggestionsWrapper {
   width: 100%;
-  max-width: 500px;
   position: relative;
 }

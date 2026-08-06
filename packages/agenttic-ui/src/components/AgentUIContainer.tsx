@@ -1,57 +1,29 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-	animate,
-	AnimatePresence,
-	motion,
-	type PanInfo,
-	useDragControls,
-	useMotionValue,
-} from 'framer-motion';
-import { DRAG_CONSTANTS, STYLE_CONSTANTS } from '../utils/constants';
+import { AnimatePresence, motion } from 'framer-motion';
+import { STYLE_CONSTANTS } from '../utils/constants';
 import { loadAgentticTranslations } from '../utils/translation-loader';
 import { useChat } from '../hooks/useChat';
 import { useInput } from '../hooks/useInput';
+import { useFloatingPanel } from '../hooks/useFloatingPanel';
+import { useBoundaryInsets } from '../hooks/useBoundaryInsets';
 import { useWindowFocusStatus } from '../hooks/useWindowFocusStatus';
 import type { AgentUIProps, Suggestion } from '../types';
 import { cn } from '../utils/classNames';
-import {
-	type ChatPosition,
-	getChatPosition,
-	setChatPosition,
-} from '../utils/chatStorage';
 import { morphSpring } from './animations';
 import {
 	type AgentUIContextValue,
 	AgentUIProvider,
 } from '../context/AgentUIContext';
+import { DragOverlay } from './DragOverlay';
+import { ResizeHandles } from './ResizeHandles';
 import { CollapsedView } from './views/CollapsedView';
 import { CompactView } from './views/CompactView';
+import { MinimizedView } from './views/MinimizedView';
 import styles from './chat/Chat.module.css';
 import { __, sprintf } from '@wordpress/i18n';
 
 interface AgentUIContainerProps extends AgentUIProps {
 	children: React.ReactNode;
-}
-
-function DragOverlay() {
-	return (
-		<div
-			style={ {
-				position: 'fixed',
-				top: 0,
-				left: 0,
-				right: 0,
-				bottom: 0,
-				zIndex: 9999,
-				cursor: 'grabbing',
-				pointerEvents: 'auto',
-				userSelect: 'none',
-				WebkitUserSelect: 'none',
-				MozUserSelect: 'none',
-				msUserSelect: 'none',
-			} }
-		/>
-	);
 }
 
 export function AgentUIContainer( {
@@ -62,6 +34,7 @@ export function AgentUIContainer( {
 	onSubmit,
 	variant = 'floating',
 	triggerIcon,
+	triggerTitle,
 	placeholder,
 	notice,
 	onOpen,
@@ -73,8 +46,10 @@ export function AgentUIContainer( {
 	suggestions,
 	clearSuggestions,
 	onSuggestionClick,
+	onSuggestionsRendered,
 	messageRenderer,
 	messagesPosition,
+	showAgentIcon,
 	className,
 	inputValue: controlledInputValue,
 	onInputChange: controlledOnInputChange,
@@ -88,6 +63,17 @@ export function AgentUIContainer( {
 	initialChatPosition,
 	onChatPositionChange,
 	onTypingStatusChange,
+	freeDrag = false,
+	initialFreeDragPosition,
+	onFreeDragEnd,
+	boundaryInset,
+	resizable = false,
+	defaultSize,
+	size,
+	minSize,
+	maxSize,
+	onResize,
+	onResizeEnd,
 }: AgentUIContainerProps ) {
 	// Determine if input is controlled or uncontrolled
 	const isControlled = controlledInputValue !== undefined;
@@ -113,8 +99,6 @@ export function AgentUIContainer( {
 
 	// Track animation state
 	const [ isAnimating, setIsAnimating ] = useState( false );
-
-	const [ isDragging, setIsDragging ] = useState( false );
 
 	// Track typing status for callback
 	const [ isInputFocused, setIsInputFocused ] = useState( false );
@@ -204,24 +188,73 @@ export function AgentUIContainer( {
 	} );
 
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
-	const [ currentSide, setCurrentSide ] = useState< ChatPosition >(
-		getChatPosition( initialChatPosition )
-	);
 	const compactRef = useRef< HTMLDivElement >( null );
-	const constraintsRef = useRef< HTMLDivElement >( null );
-	const chatRef = useRef< HTMLDivElement >( null );
 
-	// Motion values for programmatic control
-	// Initialize position based on saved side (right-aligned needs offset)
-	const initialX =
-		currentSide === 'right'
-			? window.innerWidth -
-			  STYLE_CONSTANTS.COMPACT_WIDTH -
-			  STYLE_CONSTANTS.VIEWPORT_OFFSET * 2
-			: 0;
-	const x = useMotionValue( initialX );
-	const y = useMotionValue( 0 );
-	const dragControls = useDragControls();
+	const insets = useBoundaryInsets( boundaryInset );
+
+	// Drag + resize compose here (see useFloatingPanel for the seam).
+	const {
+		x,
+		y,
+		currentSide,
+		isDragging,
+		dragControls,
+		chatRef,
+		constraintsRef,
+		handlePointerDown,
+		handleDragStart,
+		handleDragEnd,
+		width,
+		height,
+		isResizing,
+		getHeightForState,
+		handleResizePointerDown,
+	} = useFloatingPanel( {
+		resizable,
+		defaultSize,
+		size,
+		minSize,
+		maxSize,
+		chatState: chat.state,
+		compactHeight,
+		freeDrag,
+		initialFreeDragPosition,
+		initialChatPosition,
+		onChatPositionChange,
+		onFreeDragEnd,
+		onResize,
+		onResizeEnd,
+		insets,
+	} );
+
+	// Dedup-aware reporter for the actually-rendered suggestion set. Owned here so
+	// dedup survives the AnimatePresence instance swap between compact and expanded.
+	const onSuggestionsRenderedRef = useRef( onSuggestionsRendered );
+	onSuggestionsRenderedRef.current = onSuggestionsRendered;
+
+	const lastReportedKeyRef = useRef( '' );
+
+	// The ONLY reset: data-level clear, so identical ids returning later count fresh.
+	const hasSuggestions = !! suggestions?.length;
+	useEffect( () => {
+		if ( ! hasSuggestions ) {
+			lastReportedKeyRef.current = '';
+		}
+	}, [ hasSuggestions ] );
+
+	// Stable ( empty deps ) so it never retriggers consumers' effects.
+	const reportSuggestionsRendered = useCallback( ( shown: Suggestion[] ) => {
+		const key = shown.length
+			? JSON.stringify( shown.map( ( suggestion ) => suggestion.id ) )
+			: '';
+
+		if ( ! key || key === lastReportedKeyRef.current ) {
+			return;
+		}
+
+		lastReportedKeyRef.current = key;
+		onSuggestionsRenderedRef.current?.( shown );
+	}, [] );
 
 	// Handle suggestion submission
 	const handleSuggestionSubmit = useCallback(
@@ -284,19 +317,6 @@ export function AgentUIContainer( {
 		return true;
 	}, [ inputValue, chatRef ] );
 
-	const getHeightForState = useCallback(
-		( state: string ) => {
-			if ( state === 'collapsed' ) {
-				return STYLE_CONSTANTS.COLLAPSED_SIZE;
-			}
-			if ( state === 'compact' ) {
-				return compactHeight;
-			}
-			return STYLE_CONSTANTS.EXPANDED_HEIGHT;
-		},
-		[ compactHeight ]
-	);
-
 	// Handle hover to show compact view
 	const handleHover = useCallback( () => {
 		if ( ! expandOnHover ) {
@@ -316,7 +336,7 @@ export function AgentUIContainer( {
 				timeoutRefs.current.add( timeoutId );
 			}
 		}
-	}, [ chat, shouldAutoCollapse ] );
+	}, [ chat, shouldAutoCollapse, expandOnHover ] );
 
 	// Handle auto-collapse - return to initial state if no input value and not focused
 	const handleAutoCollapse = useCallback( () => {
@@ -364,112 +384,6 @@ export function AgentUIContainer( {
 		}
 	}, [ input, chat, onClose ] );
 
-	// Calculate snap position based on current side
-	const calculateSnapPosition = useCallback(
-		( side?: 'left' | 'right' ) => {
-			if ( ! chatRef.current || ! constraintsRef.current ) {
-				return null;
-			}
-
-			const elementBox = chatRef.current.getBoundingClientRect();
-			const constraintBox =
-				constraintsRef.current.getBoundingClientRect();
-
-			// Calculate base position (without transforms)
-			const style = window.getComputedStyle( chatRef.current );
-			const transformMatrix = new DOMMatrixReadOnly( style.transform );
-			const baseX = elementBox.x - transformMatrix.e;
-			const baseY = elementBox.y - transformMatrix.f;
-
-			// Use provided side or fall back to current side
-			const targetSide = side ?? currentSide;
-
-			// Calculate current height based on chat state
-			const currentHeight = getHeightForState( chat.state );
-
-			// Calculate target position
-			const targetX =
-				targetSide === 'left'
-					? constraintBox.left
-					: constraintBox.right - STYLE_CONSTANTS.COMPACT_WIDTH;
-			const targetY = constraintBox.bottom - currentHeight;
-
-			return {
-				x: targetX - baseX,
-				y: targetY - baseY,
-			};
-		},
-		[ currentSide, chat.state, getHeightForState ]
-	);
-
-	// Handle pointer down to control drag initiation
-	const handlePointerDown = useCallback(
-		( event: React.PointerEvent< HTMLDivElement > ) => {
-			const target = event.target as HTMLElement;
-
-			// Check if the target element is from an iframe.
-			const isFromIframe = target.ownerDocument !== document;
-
-			if ( isFromIframe ) {
-				return; // Don't start drag for iframe content clicks.
-			}
-
-			// Don't drag if clicking inside non-draggable areas
-			const isNonDraggable = target.closest(
-				DRAG_CONSTANTS.NON_DRAGGABLE_SELECTORS
-			);
-
-			if ( ! isNonDraggable ) {
-				// Prevent text selection during drag
-				event.preventDefault();
-				dragControls.start( event.nativeEvent );
-			}
-		},
-		[ dragControls ]
-	);
-
-	const handleDragStart = useCallback( () => {
-		setIsDragging( true );
-	}, [] );
-
-	// Handle drag end with snap functionality
-	const handleDragEnd = useCallback(
-		( _event: any, info: PanInfo ) => {
-			setIsDragging( false );
-
-			// Determine which side based on drop position
-			// For true 50/50 split, account for the chat widget's width
-			const dropX = info.point.x;
-			const chatWidth = STYLE_CONSTANTS.COMPACT_WIDTH;
-			const viewportMidpointX = ( window.innerWidth - chatWidth ) / 2;
-			const isLeft = dropX < viewportMidpointX;
-			const newSide = isLeft ? 'left' : 'right';
-
-			if ( currentSide !== newSide ) {
-				setCurrentSide( newSide );
-				setChatPosition( newSide );
-				onChatPositionChange?.( newSide );
-			}
-
-			// Calculate snap position using the new side immediately
-			const position = calculateSnapPosition( newSide );
-			if ( ! position ) {
-				return;
-			}
-
-			// Animate to snap position using motion values
-			animate( x, position.x, {
-				...DRAG_CONSTANTS.SPRING_CONFIG,
-				velocity: info.velocity.x * DRAG_CONSTANTS.VELOCITY_MULTIPLIER,
-			} );
-			animate( y, position.y, {
-				...DRAG_CONSTANTS.SPRING_CONFIG,
-				velocity: info.velocity.y * DRAG_CONSTANTS.VELOCITY_MULTIPLIER,
-			} );
-		},
-		[ x, y, calculateSnapPosition, onChatPositionChange, currentSide ]
-	);
-
 	// Track previous state for animation purposes
 	const prevStateRef = useRef( chat.state );
 	const fromCompact =
@@ -480,23 +394,6 @@ export function AgentUIContainer( {
 		clearAllTimeouts();
 		prevStateRef.current = chat.state;
 	}, [ chat.state, clearAllTimeouts ] );
-
-	// Handle window resize to maintain bottom positioning
-	useEffect( () => {
-		const handleResize = () => {
-			const position = calculateSnapPosition();
-			if ( ! position ) {
-				return;
-			}
-
-			// Update motion values directly (no animation during resize)
-			x.set( position.x );
-			y.set( position.y );
-		};
-
-		window.addEventListener( 'resize', handleResize );
-		return () => window.removeEventListener( 'resize', handleResize );
-	}, [ chat.state, x, y, calculateSnapPosition ] );
 
 	// Cleanup timeouts on unmount
 	useEffect( () => {
@@ -512,9 +409,9 @@ export function AgentUIContainer( {
 	// Measure the compact view height
 	useEffect( () => {
 		if ( chat.state === 'compact' && compactRef.current ) {
-			const height =
+			const measured =
 				compactRef.current.scrollHeight + STYLE_CONSTANTS.PADDING;
-			setCompactHeight( height );
+			setCompactHeight( measured );
 		}
 	}, [ chat.state, input.value ] );
 
@@ -573,6 +470,7 @@ export function AgentUIContainer( {
 		emptyView: computedEmptyView,
 		messageRenderer,
 		messagesPosition,
+		showAgentIcon,
 
 		// Floating chat specific
 		floatingChatState: chat.state,
@@ -585,6 +483,7 @@ export function AgentUIContainer( {
 		suggestions,
 		clearSuggestions,
 		handleSuggestionSubmit,
+		reportSuggestionsRendered,
 
 		// Notice
 		notice: computedNotice,
@@ -624,16 +523,18 @@ export function AgentUIContainer( {
 	}
 
 	// Floating variant
+	const showResizeHandles = resizable && chat.state === 'expanded';
+
 	return (
 		<AgentUIProvider value={ contextValue }>
 			<div
 				ref={ constraintsRef }
 				style={ {
 					position: 'fixed',
-					top: STYLE_CONSTANTS.VIEWPORT_OFFSET,
-					left: STYLE_CONSTANTS.VIEWPORT_OFFSET,
-					right: STYLE_CONSTANTS.VIEWPORT_OFFSET,
-					bottom: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					top: insets.top,
+					left: insets.left,
+					right: insets.right,
+					bottom: insets.bottom,
 					pointerEvents: 'none',
 				} }
 			/>
@@ -655,37 +556,58 @@ export function AgentUIContainer( {
 				dragListener={ false }
 				dragConstraints={ isDragging ? constraintsRef : false }
 				dragMomentum={ false }
-				dragElastic={ 0.1 }
+				dragElastic={ freeDrag ? 0 : 0.1 }
 				dragTransition={ { power: 0.1, timeConstant: 100 } }
 				onDragStart={ handleDragStart }
 				onDragEnd={ handleDragEnd }
 				onPointerDown={ handlePointerDown }
+				// Glide the dock offset between states; `initial={ false }` skips it on mount.
+				initial={ false }
+				animate={ {
+					bottom: chat.state === 'minimized' ? 0 : insets.bottom,
+				} }
+				transition={ morphSpring }
 				style={ {
 					x,
 					y,
-					bottom: STYLE_CONSTANTS.VIEWPORT_OFFSET,
-					left: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					left: insets.left,
 					cursor: draggableStates.includes( chat.state )
 						? 'grab'
 						: 'default',
 				} }
 			>
 				<motion.div
-					layout
+					// `layout` fights manual width/height writes during resize, so
+					// disable it while a resize gesture is active
+					layout={ ! ( resizable && isResizing ) }
 					className={ styles.content }
 					initial={ false }
 					animate={ {
-						width:
-							chat.state === 'collapsed'
-								? STYLE_CONSTANTS.COLLAPSED_SIZE
-								: STYLE_CONSTANTS.COMPACT_WIDTH,
-						height: getHeightForState( chat.state ),
+						// When resizable, size is owned by the width/height motion
+						// values (driven imperatively); keep it out of animate here.
+						...( resizable
+							? {}
+							: {
+									width:
+										chat.state === 'collapsed'
+											? STYLE_CONSTANTS.COLLAPSED_SIZE
+											: STYLE_CONSTANTS.COMPACT_WIDTH,
+									height: getHeightForState( chat.state ),
+							  } ),
 						x:
 							chat.state === 'collapsed' &&
 							currentSide === 'right'
 								? STYLE_CONSTANTS.COMPACT_WIDTH -
 								  STYLE_CONSTANTS.COLLAPSED_SIZE
 								: 0,
+						borderBottomLeftRadius:
+							chat.state === 'minimized'
+								? 0
+								: STYLE_CONSTANTS.BORDER_RADIUS,
+						borderBottomRightRadius:
+							chat.state === 'minimized'
+								? 0
+								: STYLE_CONSTANTS.BORDER_RADIUS,
 						transition: input.value.trim()
 							? { duration: 0 }
 							: morphSpring,
@@ -693,7 +615,9 @@ export function AgentUIContainer( {
 					onAnimationStart={ () => setIsAnimating( true ) }
 					onAnimationComplete={ () => setIsAnimating( false ) }
 					style={ {
-						borderRadius: STYLE_CONSTANTS.BORDER_RADIUS,
+						borderTopLeftRadius: STYLE_CONSTANTS.BORDER_RADIUS,
+						borderTopRightRadius: STYLE_CONSTANTS.BORDER_RADIUS,
+						...( resizable ? { width, height } : {} ),
 					} }
 				>
 					<AnimatePresence mode="wait">
@@ -703,6 +627,15 @@ export function AgentUIContainer( {
 								icon={ triggerIcon }
 								onClick={ handleOpen }
 								onHover={ handleHover }
+								focusOnMount={ wasClickedToClose.current }
+							/>
+						) }
+						{ chat.state === 'minimized' && (
+							<MinimizedView
+								key="minimized"
+								icon={ triggerIcon }
+								title={ triggerTitle }
+								onClick={ handleOpen }
 								focusOnMount={ wasClickedToClose.current }
 							/>
 						) }
@@ -735,6 +668,12 @@ export function AgentUIContainer( {
 						{ chat.state === 'expanded' && children }
 					</AnimatePresence>
 				</motion.div>
+				{ showResizeHandles && (
+					<ResizeHandles
+						resizable={ resizable }
+						onPointerDown={ handleResizePointerDown }
+					/>
+				) }
 			</motion.div>
 		</AgentUIProvider>
 	);

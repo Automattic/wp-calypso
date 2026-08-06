@@ -232,6 +232,7 @@ export interface TaskStatus {
 	message?: Message;
 	timestamp?: string;
 	error?: JsonRpcError;
+	final?: boolean;
 }
 
 export interface Artifact {
@@ -265,7 +266,9 @@ export type SendMessageResponse = JsonRpcResponse< Task >;
 
 // Events for streaming responses
 export interface TaskStatusUpdateEvent {
-	id: string;
+	id?: string;
+	taskId?: string;
+	sessionId?: string;
 	status: TaskStatus;
 	final?: boolean;
 }
@@ -330,6 +333,9 @@ export interface TaskUpdate {
 	agentMessage?: Message; // Optional separate agent message for when returnToAgent is false
 	progressMessage?: string; // Optional progress message extracted from progress parts
 	progressPhase?: string; // Optional phase from progress parts (e.g. 'uploading', 'thinking')
+	// Wire source: 'delta' (message/delta) or 'status' (TaskStatusUpdateEvent).
+	// Non-final text-bearing 'status' updates mark utterance boundaries.
+	kind?: 'delta' | 'status';
 }
 
 export interface Client {

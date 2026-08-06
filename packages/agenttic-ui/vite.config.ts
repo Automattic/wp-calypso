@@ -6,9 +6,20 @@ import { libInjectCss } from 'vite-plugin-lib-inject-css';
 export default defineConfig( {
 	build: {
 		lib: {
-			entry: resolve( __dirname, 'src/index.ts' ),
+			entry: {
+				index: resolve( __dirname, 'src/index.ts' ),
+				'embedded-agent-ui': resolve(
+					__dirname,
+					'src/embedded-agent-ui.ts'
+				),
+				'embedded-agent-ui.css': resolve(
+					__dirname,
+					'src/embedded-agent-ui.css'
+				),
+				'global.css': resolve( __dirname, 'src/styles/global.css' ),
+			},
 			name: 'AgentticUI',
-			fileName: 'index',
+			fileName: ( format, entryName ) => `${ entryName }.js`,
 			formats: [ 'es' ],
 		},
 		rollupOptions: {
@@ -19,10 +30,9 @@ export default defineConfig( {
 				'react/jsx-runtime',
 				'@automattic/agenttic-client',
 				'@automattic/charts',
-				'@floating-ui/react-dom',
+				'@radix-ui/react-popover',
 				'@radix-ui/react-scroll-area',
 				'@radix-ui/react-slot',
-				'@visx/xychart',
 				'@wordpress/i18n',
 				'class-variance-authority',
 				'clsx',
