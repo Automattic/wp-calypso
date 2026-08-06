@@ -174,13 +174,20 @@ $data-view-border-color: #f1f1f1;
 			}
 		}
 
+		.step-section-item__heading {
+			@include break-large {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			}
+		}
+
+		// Boxless wrapper: the base 30% width no longer constrains the badge,
+		// so the payment status is not truncated.
 		.step-section-item__status.is-large-screen {
 			@include break-large {
-				display: inline-flex;
-				position: relative;
-				left: 8px;
+				display: contents;
 			}
-
 		}
 	}
 }

@@ -136,6 +136,7 @@ export default function WPCOMPlanSelector( {
 							},
 							count: ownedPlans,
 							comment: '%(count)s is the number of WordPress.com sites owned by the user',
+							textOnly: true,
 						} ) }
 					</Badge>
 				) }

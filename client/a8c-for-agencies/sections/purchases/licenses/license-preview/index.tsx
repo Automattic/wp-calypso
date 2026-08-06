@@ -191,6 +191,7 @@ export default function LicensePreview( {
 				args: {
 					quantity,
 				},
+				textOnly: true,
 			} ) }
 		</Badge>
 	);
