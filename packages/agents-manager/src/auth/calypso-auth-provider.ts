@@ -86,19 +86,23 @@ async function requestJWTToken(
 	siteId?: string | number,
 	useCachedToken = true
 ): Promise< TokenData | null > {
+	// Use provided siteId or fallback to window
+	const effectiveSiteId = siteId || window.Jetpack_Editor_Initial_State?.wpcomBlogId;
+
 	// Check for cached token
 	if ( useCachedToken ) {
 		const cached = getCachedJwtToken( JWT_TOKEN_ID );
-		if ( cached ) {
+		if (
+			cached &&
+			( ! effectiveSiteId || String( effectiveSiteId ) === String( cached.blogId ) )
+		) {
 			return cached;
 		}
 	}
 
 	const apiNonce = window.JP_CONNECTION_INITIAL_STATE?.apiNonce;
-	// Use provided siteId or fallback to window
-	const effectiveSiteId = siteId || window.Jetpack_Editor_Initial_State?.wpcomBlogId;
 
-	let data: { token: string; blog_id: string } = {
+	let data: { token: string; blog_id: string | number } = {
 		token: '',
 		blog_id: '',
 	};
@@ -106,14 +110,14 @@ async function requestJWTToken(
 	try {
 		if ( canAccessWpcomApis() ) {
 			// WordPress.com simple site — use /ai/jwt (supports user-only and site-scoped tokens)
-			data = await apiFetch< { token: string; blog_id: string } >( {
+			data = await apiFetch< { token: string; blog_id: string | number } >( {
 				path: '/wpcom/v2/ai/jwt',
 				method: 'POST',
 				data: effectiveSiteId ? { blog_id: Number( effectiveSiteId ) } : {},
 			} );
 		} else {
 			// Jetpack-connected site
-			data = await apiFetch< { token: string; blog_id: string } >( {
+			data = await apiFetch< { token: string; blog_id: string | number } >( {
 				path: '/jetpack/v4/jetpack-ai-jwt?_cacheBuster=' + Date.now(),
 				credentials: 'same-origin',
 				headers: {
@@ -132,7 +136,7 @@ async function requestJWTToken(
 
 	const newTokenData: TokenData = {
 		token: data.token,
-		blogId: data.blog_id || '',
+		blogId: data.blog_id ? String( data.blog_id ) : '',
 		expire: Date.now() + JWT_TOKEN_EXPIRATION_TIME,
 	};
 
