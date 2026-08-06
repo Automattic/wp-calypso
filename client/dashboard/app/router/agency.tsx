@@ -805,6 +805,20 @@ export const agencySitePerformanceBackendRequestDetailRoute = createRoute( {
 	)
 );
 
+// `/sites/$siteSlug/monitoring` – server stats detailed view (WP.com sites only)
+export const agencySiteMonitoringRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'monitoring' },
+	head: () => ( { meta: [ { title: __( 'Monitoring' ) } ] } ),
+	getParentRoute: () => agencySiteRoute,
+	path: 'monitoring',
+} ).lazy( () =>
+	import( '../../agency/sites/site/monitoring' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-monitoring' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
@@ -851,6 +865,7 @@ export const createAgencyRoutes = () => [
 					agencySitePerformanceBackendRequestDetailRoute,
 				] ),
 			] ),
+			agencySiteMonitoringRoute,
 			agencySiteLogsRoute.addChildren( [ agencySiteLogsIndexRoute, agencySiteActivityRoute ] ),
 		] ),
 	] ),
