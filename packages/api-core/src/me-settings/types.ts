@@ -69,6 +69,11 @@ export interface UserSettings {
 	is_passwordless_user: boolean;
 	tracks_opt_out: boolean;
 	user_email: string;
+	/**
+	 * True when mail to the account email address is hard bouncing. Absent until the wpcom
+	 * /me/settings change deploys, so always read it as a boolean.
+	 */
+	user_email_bouncing?: boolean;
 	user_login: string;
 	user_URL: string;
 	last_admin_activity_timestamp: number | string;
