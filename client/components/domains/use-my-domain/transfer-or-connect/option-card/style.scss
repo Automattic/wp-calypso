@@ -56,14 +56,15 @@
 	&__title {
 		font-size: $font-title-small;
 		font-weight: 500;
-		line-height: 1.3;
+		line-height: 24px;
 		color: var(--color-text);
 	}
 
 	&__top-text {
-		margin-block-start: 4px;
-		font-size: $font-body-small;
-		line-height: 1.4;
+		margin-block-start: 8px;
+		font-size: $font-body-extra-small;
+		font-weight: 400;
+		line-height: 16px;
 		color: var(--color-text-subtle);
 	}
 
@@ -82,14 +83,22 @@
 	}
 
 	&__benefit-icon {
+		display: inline-flex;
 		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		width: 20px;
+		height: 20px;
 		color: var(--color-neutral-40);
-		fill: currentColor;
+
+		svg {
+			fill: currentColor;
+		}
 	}
 
 	&__benefit-text {
-		font-size: $font-body-small;
-		line-height: 1.4;
+		font-size: $font-body-extra-small;
+		line-height: 16px;
 		color: var(--color-text);
 	}
 

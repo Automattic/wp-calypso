@@ -29,7 +29,7 @@ const transferSupported = {
 	get benefits() {
 		return [
 			{ icon: backup, text: __( 'Free domain name renewal for 1 year' ) },
-			{ icon: wordpress, text: __( 'Manage everything from WordPress.com' ) },
+			{ icon: wordpress, text: __( 'Manage everything from WordPress.com' ), iconSize: 16 },
 			{ icon: shield, text: __( 'Privacy protection and SSL included' ) },
 		];
 	},

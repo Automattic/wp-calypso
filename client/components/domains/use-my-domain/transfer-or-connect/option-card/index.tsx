@@ -7,6 +7,7 @@ import './style.scss';
 
 interface OptionCardBenefit {
 	icon: ReactElement;
+	iconSize?: number;
 	text: ReactNode;
 }
 
@@ -54,7 +55,9 @@ export function OptionCard( {
 				<span className="option-card__benefits">
 					{ benefits.map( ( benefit, index ) => (
 						<span className="option-card__benefit" key={ 'benefit-' + index }>
-							<Icon className="option-card__benefit-icon" icon={ benefit.icon } size={ 24 } />
+							<span className="option-card__benefit-icon">
+								<Icon icon={ benefit.icon } size={ benefit.iconSize ?? 20 } />
+							</span>
 							<span className="option-card__benefit-text">{ benefit.text }</span>
 						</span>
 					) ) }

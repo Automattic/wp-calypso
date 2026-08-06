@@ -21,3 +21,7 @@
 		}
 	}
 }
+
+.use-my-domain:has(.domain-transfer-or-connect--redesign) .step-container-v2__content-wrapper {
+	gap: 2rem;
+}
