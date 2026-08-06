@@ -21,7 +21,7 @@ built for the already-logged-in case.
 
 ## Source param
 
-The picker links here with a `source` token (e.g. `/setup/write-new-site?source=write-editor`).
+The picker links here with a `source` token (e.g. `/setup/write-new-site?source=write_editor`).
 Stepper preserves the query string across steps, so the flow forwards `source`
 into the final editor redirect (`…admin.php?page=write&source={source}`). The
 Write editor (`jetpack-mu-wpcom` `write.php`) reads `source` for its back-button

@@ -16,7 +16,7 @@ const writeNewSite: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	initialize,
 	useStepNavigation( _currentStepSlug, navigate ) {
-		// The picker links here with a `source` (e.g. `?source=write-editor`). Stepper
+		// The picker links here with a `source` (e.g. `?source=write_editor`). Stepper
 		// preserves the query string across steps, so it is still present here. Forward
 		// it into the Write editor, which reads `source` for its back button and Tracks.
 		const source = useQuery().get( 'source' );

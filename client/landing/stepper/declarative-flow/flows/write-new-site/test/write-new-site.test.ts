@@ -97,7 +97,7 @@ describe( 'write-new-site flow', () => {
 	} );
 
 	it( 'forwards the source query param into the Write editor redirect and tracks event', async () => {
-		mockSearch = 'source=write-editor';
+		mockSearch = 'source=write_editor';
 
 		const { result } = submitFor( 'processing', {
 			processingResult: ProcessingResult.SUCCESS,
@@ -107,11 +107,11 @@ describe( 'write-new-site flow', () => {
 		await result;
 
 		expect( window.location.assign ).toHaveBeenCalledWith(
-			'https://example.wordpress.com/wp-admin/admin.php?page=write&source=write-editor'
+			'https://example.wordpress.com/wp-admin/admin.php?page=write&source=write_editor'
 		);
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_write_new_site_flow_site_created', {
 			site_id: 99,
-			source: 'write-editor',
+			source: 'write_editor',
 		} );
 	} );
 
