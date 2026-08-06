@@ -30,6 +30,10 @@
 		cursor: default;
 	}
 
+	&:disabled:not( .option-card--is-placeholder ) {
+		opacity: 0.5;
+	}
+
 	&__header {
 		display: flex;
 		flex-direction: column;

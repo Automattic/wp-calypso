@@ -44,9 +44,7 @@ export function OptionCard( {
 			<span className="option-card__header">
 				<span className="option-card__header-top">
 					<span className="option-card__illustration">{ illustration }</span>
-					{ isActionable && (
-						<Icon className="option-card__chevron" icon={ chevronRight } size={ 24 } />
-					) }
+					<Icon className="option-card__chevron" icon={ chevronRight } size={ 24 } />
 				</span>
 				<span className="option-card__title">{ titleText }</span>
 				<span className="option-card__top-text">{ topText }</span>
