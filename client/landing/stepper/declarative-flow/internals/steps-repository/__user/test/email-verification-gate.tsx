@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { updateUserSettings } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -24,8 +25,13 @@ import useAccountCreationExperiment from '../use-account-creation-experiment';
 let mockUserId = 0;
 
 let activationEmailFromProp: string | undefined;
+let signupFormProps: { userEmail?: string } = {};
 
 jest.mock( 'calypso/lib/analytics/tracks' );
+jest.mock( '@automattic/api-core', () => ( {
+	...jest.requireActual( '@automattic/api-core' ),
+	updateUserSettings: jest.fn( () => Promise.resolve( {} ) ),
+} ) );
 
 // Keep the poll from reaching the network — the gate polls `fetchCurrentUser`.
 jest.mock( 'calypso/state/current-user/actions', () => ( {
@@ -64,22 +70,31 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 		onCreateAccountSuccess,
 		goToNextStep,
 		activationEmailFrom,
+		userEmail,
+		onUpdateEmail,
 	}: {
 		onCreateAccountSuccess?: ( data: { ID: number } ) => void;
 		goToNextStep?: ( data: { bearer_token: string; ID: number } ) => void;
 		activationEmailFrom?: string;
+		userEmail?: string;
+		onUpdateEmail?: ( email: string ) => Promise< void >;
 	} ) => {
 		activationEmailFromProp = activationEmailFrom;
+		signupFormProps = { userEmail };
 		return (
-			<button
-				onClick={ () => {
-					// Production order: goToNextStep fires before onCreateAccountSuccess.
-					goToNextStep?.( { bearer_token: 'test-token', ID: mockUserId } );
-					onCreateAccountSuccess?.( { ID: mockUserId } );
-				} }
-			>
-				create-email-account
-			</button>
+			<>
+				<button onClick={ () => onUpdateEmail?.( 'fixed@example.com' ) }>submit-changed</button>
+				<button onClick={ () => onUpdateEmail?.( userEmail as string ) }>submit-unchanged</button>
+				<button
+					onClick={ () => {
+						// Production order: goToNextStep fires before onCreateAccountSuccess.
+						goToNextStep?.( { bearer_token: 'test-token', ID: mockUserId } );
+						onCreateAccountSuccess?.( { ID: mockUserId } );
+					} }
+				>
+					create-email-account
+				</button>
+			</>
 		);
 	},
 	MobileCompactTosNotice: () => null,
@@ -145,6 +160,7 @@ describe( 'account step email verification gate', () => {
 
 	afterEach( () => {
 		activationEmailFromProp = undefined;
+		signupFormProps = {};
 		// A test that fails before restoring them would otherwise time out every test after it.
 		jest.useRealTimers();
 		mockConfig.enabledFlags.clear();
@@ -160,6 +176,42 @@ describe( 'account step email verification gate', () => {
 		renderUser( makeLoggedOutStore() );
 
 		expect( activationEmailFromProp ).toBeUndefined();
+	} );
+
+	// The gate is a dead end for a mistyped address, so edit hands it back to the account screen
+	// carrying the address to fix, and what that screen submits changes the account.
+	it( 'hands a mistyped address back to the account screen to be updated', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		expect( signupFormProps.userEmail ).toBe( EMAIL );
+
+		// The gate's own poll went with it, and a confirmation landing elsewhere still has to
+		// release whoever is sitting in the editor.
+		( fetchCurrentUser as jest.Mock ).mockClear();
+		act( () => jest.advanceTimersByTime( 10 * 1000 ) );
+		expect( fetchCurrentUser ).toHaveBeenCalled();
+
+		await user.click( screen.getByRole( 'button', { name: 'submit-changed' } ) );
+
+		expect( updateUserSettings ).toHaveBeenCalledWith( { user_email: 'fixed@example.com' } );
+	} );
+
+	// Submitting it unchanged asks for nothing, so it is the way back rather than a write.
+	it( 'returns to the gate without writing when the address is unchanged', async () => {
+		const user = userEvent.setup();
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'submit-unchanged' } ) );
+
+		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+		expect( updateUserSettings ).not.toHaveBeenCalled();
 	} );
 
 	it( 'confirmation continues exactly once (no double submit)', async () => {
