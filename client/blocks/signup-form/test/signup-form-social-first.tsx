@@ -231,7 +231,6 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( await screen.findByRole( 'button', { name: 'Updating…' } ) ).toBeVisible();
 		} );
 
-		// The screen has no other screen to be on, however it was reached.
 		it( 'shows the email field when it was given no address to start from', () => {
 			render(
 				<SignupFormSocialFirst
@@ -261,6 +260,22 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screenEl ).toContainElement( screen.getByText( 'That address is already in use.' ) );
 		} );
 
+		// Partner legal copy lives on the screen this mode doesn't render, so it has to be carried
+		// over rather than replaced by WordPress.com's.
+		it( "keeps a partner's own terms rather than the generic ones", () => {
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="typo@example.com"
+					customTosElement={ <span>Partner terms apply.</span> }
+					emailUpdate={ { submit: jest.fn(), cancel: jest.fn() } }
+				/>
+			);
+
+			expect( screen.getByText( 'Partner terms apply.' ) ).toBeVisible();
+			expect( screen.queryByText( /By clicking "Continue,"/ ) ).not.toBeInTheDocument();
+		} );
+
 		// Only the caller can tell a write in flight from what it waits for afterwards, so it says
 		// when there is nothing to go back to yet.
 		it( 'holds the way back shut when the caller says to', async () => {
@@ -278,7 +293,6 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( cancel ).not.toHaveBeenCalled();
 		} );
 
-		// The way off the screen for a caller whose wait outlives its write.
 		it( 'leaves the way back open while a change is in flight', async () => {
 			const cancel = jest.fn();
 			render(
@@ -295,7 +309,6 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( cancel ).toHaveBeenCalled();
 		} );
 
-		// Otherwise a refusal leaves the field and the button disabled with no way to try again.
 		it( 'gives the screen back when the change is refused', async () => {
 			render(
 				<SignupFormSocialFirst

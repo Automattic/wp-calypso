@@ -136,11 +136,11 @@ const SignupFormSocialFirst = ( {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
-	let emailOnlyOrGravatarLoadingLabel;
+	let submitButtonLoadingLabel;
 	if ( isEmailOnly ) {
-		emailOnlyOrGravatarLoadingLabel = __( 'Updating…' );
+		submitButtonLoadingLabel = __( 'Updating…' );
 	} else if ( isGravatar ) {
-		emailOnlyOrGravatarLoadingLabel = __( 'Continue' );
+		submitButtonLoadingLabel = __( 'Continue' );
 	}
 
 	const renderTermsOfService = () => {
@@ -186,12 +186,16 @@ const SignupFormSocialFirst = ( {
 	const renderEmailStepTermsOfService = () => {
 		return (
 			<p className="signup-form-social-first__email-tos-link">
-				{ createInterpolateElement(
-					__(
-						'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-					),
-					options
-				) }
+				{ /* Partner legal copy otherwise appears only on the screen an email-only caller
+				     doesn't render, so its users would be shown WordPress.com's terms instead. */ }
+				{ isEmailOnly && customTosElement
+					? customTosElement
+					: createInterpolateElement(
+							__(
+								'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+							),
+							options
+					  ) }
 			</p>
 		);
 	};
@@ -234,7 +238,7 @@ const SignupFormSocialFirst = ( {
 		},
 		onCreateAccountSuccess,
 		inputPlaceholder: isGravatar ? __( 'Enter your email address' ) : undefined,
-		submitButtonLoadingLabel: emailOnlyOrGravatarLoadingLabel,
+		submitButtonLoadingLabel,
 	};
 
 	let secondaryFooterButton;
