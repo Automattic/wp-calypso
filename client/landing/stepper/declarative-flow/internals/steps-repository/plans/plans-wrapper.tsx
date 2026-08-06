@@ -187,8 +187,12 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
-		if ( isDomainAndPlanFlow( flowName ) ) {
+		if ( isDomainAndPlanFlow( flowName ) && domainCartItem?.meta ) {
 			return __( 'Your domain name is ready' );
+		}
+
+		if ( isDomainAndPlanFlow( flowName ) ) {
+			return __( 'Choose the perfect plan' );
 		}
 
 		if ( isNewsletterFlow( flowName ) ) {
