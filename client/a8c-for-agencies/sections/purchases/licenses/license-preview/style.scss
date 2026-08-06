@@ -178,6 +178,12 @@ button.button.is-borderless.license-bundle-dropdown__button {
 	}
 }
 
+// Boxless wrapper: the row's `> *` cell rules (overflow: hidden) hit this
+// wrapper instead of the badge container, so wide badges are not clipped.
+.license-list-item > div.license-preview__badge-container-wrapper {
+	display: contents;
+}
+
 .license-preview__migration-badge {
 	cursor: pointer;
 }

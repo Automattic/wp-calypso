@@ -1,4 +1,5 @@
-import { Badge, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';

@@ -49,8 +49,7 @@ $woocommerce-purple-50: #720EEC;
 	}
 }
 
-.badge.overview__featured-woopayments-badge {
-	display: inline-block;
+.overview__featured-woopayments .overview__featured-woopayments-badge {
 	background-color: var(--color-surface);
 	color: $woocommerce-purple-50;
 	text-transform: uppercase;

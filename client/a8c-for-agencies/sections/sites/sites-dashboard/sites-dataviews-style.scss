@@ -37,11 +37,6 @@
 	@include heading-medium;
 	margin-inline-end: 16px;
 
-	.status-badge {
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 12px;
-	}
-
 	.sites-dataviews__site-development-badge {
 		margin-block-start: 4px;
 	}
