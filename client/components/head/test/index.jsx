@@ -35,4 +35,10 @@ describe( 'Head', () => {
 			document.querySelector( `link[rel="prefetch"][href="${ restProxyHref }"]` )
 		).toBeNull();
 	} );
+
+	test( 'should not include maximum-scale in viewport meta', () => {
+		render( <Head /> );
+		const viewport = document.querySelector( 'meta[name="viewport"]' );
+		expect( viewport?.getAttribute( 'content' ) ).not.toContain( 'maximum-scale' );
+	} );
 } );
