@@ -15,9 +15,9 @@ import { fixtureAccounts, test as setup } from '../lib/pw-base';
 // log in through the UI concurrently, against a calypso.live container that has just been
 // created, which is where most of the CI login timeouts come from.
 //
-// The account fixtures own this list, so adding a fixture primes it. An account missing from
-// it still works: getAccount falls back to logging in inline, which is what every account did
-// before this project existed.
+// Every CI build type names the accounts its group logs in as, so this list only applies to
+// a local run. An account missing from it still works: getAccount falls back to logging in
+// inline, which is what every account did before this project existed.
 const defaultAccountNames: TestAccountName[] = [
 	...Object.values( fixtureAccounts ),
 	// Not a fixture, but the account many specs select through a criteria override.
@@ -27,14 +27,12 @@ const defaultAccountNames: TestAccountName[] = [
 /**
  * Returns the accounts to log in as before the suite starts.
  *
- * A build type that runs a narrow group can list just the accounts it needs in
- * AUTHENTICATE_ACCOUNTS, or opt out of priming altogether by setting it to an empty value;
- * the ToS build does the latter.
- *
- * Whichever list is used, the account this environment resolves `accountGivenByEnvironment`
- * to is added to it: the Gutenberg edge, nightly, CoBlocks and Atomic builds each run
- * against a different one, and it is the busiest account of those runs. It comes from a
- * static table, so resolving it here costs nothing.
+ * AUTHENTICATE_ACCOUNTS names the accounts a build type's group logs in as ON TOP OF the
+ * one this environment resolves `accountGivenByEnvironment` to, which is always added: the
+ * Gutenberg edge, nightly, CoBlocks and Atomic builds each run against a different one, and
+ * it is the busiest account of those runs. It comes from a static table, so resolving it
+ * here costs nothing. A group that needs no other account sets the variable to an empty
+ * value.
  */
 function getAccountNamesToPrime(): TestAccountName[] {
 	let accountNames = defaultAccountNames;
@@ -46,30 +44,40 @@ function getAccountNamesToPrime(): TestAccountName[] {
 		try {
 			accountNames = envVariables.AUTHENTICATE_ACCOUNTS;
 		} catch ( error ) {
-			// An unknown account name throws. This runs while the file is being collected, so
-			// letting it escape would fail the run before a single spec starts.
+			// An unknown account name throws, and it throws for the whole list rather than the
+			// one bad entry. This runs while the file is being collected, so letting it escape
+			// would fail the run before a single spec starts. Priming more than the build needs
+			// costs a few logins; priming less costs the concurrent logins this project exists
+			// to prevent, so fall back to the full list.
 			console.warn( `Ignoring AUTHENTICATE_ACCOUNTS: ${ error }` );
+			accountNames = defaultAccountNames;
 		}
 	}
 
-	// An empty AUTHENTICATE_ACCOUNTS asks for no priming at all, so don't add back to it.
-	if ( accountNames.length === 0 ) {
-		return [];
-	}
-
 	try {
-		return [ ...accountNames, getTestAccountByFeature( envToFeatureKey( envVariables ) ) ];
+		accountNames = [ ...accountNames, getTestAccountByFeature( envToFeatureKey( envVariables ) ) ];
 	} catch {
 		// No account is mapped to this environment; whatever needs one logs in inline.
-		return accountNames;
 	}
+
+	// Naming the account this environment resolves to is one login, not two: a build type
+	// lists it when the specs use it directly, and the append above covers it either way.
+	return [ ...new Set( accountNames ) ];
 }
 
 // Well under the 120s test timeout. A login takes about 5s, so this only trips when
 // something is badly wrong, and it leaves room for the retry to still finish in time.
 const PRIME_TIMEOUT = 30 * 1000;
 
-for ( const accountName of new Set( getAccountNamesToPrime() ) ) {
+const accountNamesToPrime = getAccountNamesToPrime();
+
+// The tests below report each account separately. Name the whole list once as well, so a
+// build log answers what this build type asked for without reading its TeamCity parameters.
+console.log(
+	`Priming login cookies for: ${ accountNamesToPrime.join( ', ' ) || '(no accounts)' }`
+);
+
+for ( const accountName of accountNamesToPrime ) {
 	setup( `prime login cookies: ${ accountName }`, async ( { page } ) => {
 		let timer: NodeJS.Timeout | undefined;
 		try {

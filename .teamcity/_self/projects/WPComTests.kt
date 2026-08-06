@@ -23,6 +23,13 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.exec
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.matrix
 
+// Accounts the @jetpack-wpcom-integration specs log in as on top of the one the run's own
+// environment resolves to, which the prime-logins setup project adds by itself. On Simple
+// that is the Blaze spec's free plan site plus the site editor's own staging site; on Atomic
+// both of those resolve to the account the environment already gives us.
+const val jetpackWpcomIntegrationSimpleAccounts = "simpleSiteFreePlanUser,jetpackStagingFseUser"
+const val jetpackWpcomIntegrationAtomicAccounts = ""
+
 object WPComTests : Project({
 	id("WPComTests")
 	name = "WPCom Tests"
@@ -109,7 +116,17 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				checked = "true",
 				unchecked = "false"
 			)
-			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser,gutenbergAtomicSiteUser,gutenbergAtomicSiteEdgeUser,gutenbergAtomicSiteEdgeNightliesUser")
+			// The account this build runs against is added by the prime-logins project itself.
+			// On top of it the @gutenberg specs log in as defaultUser to read a published post
+			// as a second user, as the site editor account for this leg (the environment key
+			// carries no variant, so that one is never derived), and, on stable Gutenberg on a
+			// Simple site only, resolve their criteria overrides to simpleSitePersonalPlanUser.
+			param("env.AUTHENTICATE_ACCOUNTS", when {
+				atomic && (edge || nightly) -> "defaultUser,siteEditorAtomicSiteEdgeUser"
+				atomic -> "defaultUser,siteEditorAtomicSiteUser"
+				edge || nightly -> "defaultUser,siteEditorSimpleSiteEdgeUser"
+				else -> "defaultUser,simpleSitePersonalPlanUser,siteEditorSimpleSiteUser"
+			})
 			if (atomic) {
 				param("env.TEST_ON_ATOMIC", "true")
 				// Overrides the inherited max workers settings and sets it to not run any tests in parallel.
@@ -200,6 +217,7 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			calypsoBaseUrlParam()
 			param("env.VIEWPORT_NAME", "$targetDevice")
 			param("env.JETPACK_TARGET", "wpcom-deployment")
+			param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationSimpleAccounts)
 		}
 
 		steps {
@@ -263,6 +281,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.VIEWPORT_NAME", "$targetDevice")
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 			param("env.TEST_ON_ATOMIC", "true")
+			param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 		}
 
 		steps {
@@ -338,6 +357,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 			param("env.TEST_ON_ATOMIC", "true")
 			param("env.ATOMIC_VARIATION", "mixed")
+			param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 		}
 
 		steps {
@@ -488,7 +508,13 @@ private object GutenbergPlaywrightTests : BuildType({
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
 		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
 		param("env.E2E_CTRF_APP_NAME", "gutenberg (calypso)")
-		param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,simpleSitePersonalPlanUser,gutenbergAtomicSiteUser,gutenbergAtomicSiteEdgeUser,gutenbergAtomicSiteEdgeNightliesUser")
+		// One value covers every matrix leg, so this is the union: simpleSitePersonalPlanUser
+		// is only reached on the Simple Production leg, and each leg reaches one of the four
+		// site editor accounts.
+		param(
+			"env.AUTHENTICATE_ACCOUNTS",
+			"defaultUser,simpleSitePersonalPlanUser,siteEditorSimpleSiteUser,siteEditorSimpleSiteEdgeUser,siteEditorAtomicSiteUser,siteEditorAtomicSiteEdgeUser"
+		)
 		password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
 		// Uncomment the following to route it to the test channel, don't forget to change the reference in the exec() calls below, too.
 		// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (par of Gutenbot).
@@ -553,6 +579,7 @@ private object JetpackE2ETestsBuildTemplate : Template({
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
 		param("env.E2E_CTRF_APP_NAME", "jetpack (calypso)")
 		param("env.JETPACK_TARGET", "wpcom-deployment")
+		param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationSimpleAccounts)
 	}
 
 	features {
@@ -601,6 +628,7 @@ private object JetpackAtomicE2ETests : BuildType({
 		param("PROJECT", "desktop")
 		param("env.TEST_ON_ATOMIC", "true")
 		param("env.PW_WORKERS", "5")
+		param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 	}
 
 	features {
@@ -630,5 +658,6 @@ private object JetpackAtomicSmokeE2ETests : BuildType({
 		param("env.TEST_ON_ATOMIC", "true")
 		param("env.PW_WORKERS", "14")
 		param("env.ATOMIC_VARIATION", "mixed")
+		param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 	}
 })

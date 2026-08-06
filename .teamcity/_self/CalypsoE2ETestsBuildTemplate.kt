@@ -23,10 +23,11 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.LOCALE", "en")
-		// No AUTHENTICATE_ACCOUNTS on purpose: setting it replaces the whole list the
-		// prime-logins setup project logs in as, so a value here would skip every account it
-		// doesn't name. Set it only on a build type running a narrow group, or to an empty
-		// value to skip priming. See test/e2e/setup/prime-logins.setup.ts.
+		// No AUTHENTICATE_ACCOUNTS here on purpose: it names the accounts the prime-logins
+		// setup project logs in as beyond the one the environment resolves to, and that is per
+		// test group, not per template. A build type running a group should set it; leaving it
+		// unset primes every account any group uses, which is safe but slower. See
+		// test/e2e/setup/prime-logins.setup.ts.
 		// required in the CTRF report
 		param("env.BRANCH_NAME", "%teamcity.build.branch%")
 		param("PROJECT", "desktop")
@@ -193,6 +194,14 @@ object CalypsoE2ETestsBuildTemplate : Template({
 					GREP_FLAG=""
 				fi
 				echo "Playwright grep flag: ${'$'}{GREP_FLAG:-(none, running all tests)}"
+
+				# AUTHENTICATE_ACCOUNTS names the accounts this build's group logs in as. With
+				# no grep the run is the whole suite, so hand priming back its own default list
+				# rather than the group's; unset, not empty, which asks for no priming at all.
+				if [[ -z "${'$'}GREP_FLAG" ]]; then
+					echo "No test group: priming the default accounts instead of AUTHENTICATE_ACCOUNTS"
+					unset AUTHENTICATE_ACCOUNTS
+				fi
 
 				cd test/e2e
 				# Clear any stale teardown-leak markers from a reused checkout before this run.

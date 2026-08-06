@@ -141,7 +141,7 @@ test( 'Test', async ( { pageLogin, componentSidebar } ) => {
 
 ### Available Fixtures
 
-**Accounts**: one fixture per key of `fixtureAccounts` in [`lib/pw-base.ts`](lib/pw-base.ts), plus `accountGivenByEnvironment` and `accountSMS`. Adding a key there adds the fixture and primes the account before the suite.
+**Accounts**: one fixture per key of `fixtureAccounts` in [`lib/pw-base.ts`](lib/pw-base.ts), plus `accountGivenByEnvironment` and `accountSMS`. Declaring an account fixture logs in as it, whether or not the test body uses it, so take only the ones the test needs. To have a build log in as an account before the suite instead of during it, add it to that build type's `AUTHENTICATE_ACCOUNTS` parameter; see [`setup/prime-logins.setup.ts`](setup/prime-logins.setup.ts).
 
 **Pages/Components**: Follow naming conventions:
 
