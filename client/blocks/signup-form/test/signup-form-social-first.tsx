@@ -286,11 +286,13 @@ describe( 'SignupFormSocialFirst', () => {
 				customTosElement: <span>Partner terms apply.</span>,
 			} );
 
-			const emailScreen = within(
-				screen.getByRole( 'textbox' ).closest( '.signup-form-social-first-screen' ) as HTMLElement
-			);
+			const emailScreenEl = screen
+				.getByRole( 'textbox' )
+				.closest( '.signup-form-social-first-screen' ) as HTMLElement;
+			const emailScreen = within( emailScreenEl );
 			expect( emailScreen.getByText( 'That address is already in use.' ) ).toBeVisible();
-			expect( emailScreen.queryByText( /By clicking "Continue,"/ ) ).not.toBeInTheDocument();
+			// On text content: the generic terms are split across links, so no node holds the phrase.
+			expect( emailScreenEl ).not.toHaveTextContent( 'By clicking' );
 
 			// Partner copy points at the options below it, so it can't sit under them.
 			const terms = emailScreen.getByText( 'Partner terms apply.' );
