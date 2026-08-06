@@ -28,11 +28,13 @@ let mockUserId = 0;
 let activationEmailFromProp: string | undefined;
 let signupFormProps: { userEmail?: string; notice?: unknown } = {};
 let mockHeldEmail: string | null = null;
+let mockSocialNotice: ReactNode = <div>That account already exists. Log in instead.</div>;
+let mockHeldWrite: Promise< unknown > | null = null;
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 jest.mock( '@automattic/api-core', () => ( {
 	...jest.requireActual( '@automattic/api-core' ),
-	updateUserSettings: jest.fn( () => Promise.resolve( {} ) ),
+	updateUserSettings: jest.fn( () => mockHeldWrite ?? Promise.resolve( {} ) ),
 } ) );
 
 // Keep the poll from reaching the network — the gate polls `fetchCurrentUser`.
@@ -61,7 +63,7 @@ jest.mock( '../use-social-service', () => ( {
 jest.mock( '../handle-social-response', () => ( {
 	useHandleSocialResponse: () => ( {
 		handleSocialResponse: jest.fn(),
-		notice: <div>That account already exists. Log in instead.</div>,
+		notice: mockSocialNotice,
 		accountCreateResponse: undefined,
 	} ),
 } ) );
@@ -93,6 +95,14 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 			<>
 				{ notice as ReactNode }
 				<button onClick={ () => onUpdateEmail?.( 'fixed@example.com' ) }>submit-changed</button>
+				<button
+					onClick={ () => {
+						mockHeldWrite = new Promise( () => {} );
+						onUpdateEmail?.( 'slow@example.com' );
+					} }
+				>
+					submit-slow
+				</button>
 				<button onClick={ () => onUpdateEmail?.( mockHeldEmail as string ) }>
 					submit-unchanged
 				</button>
@@ -142,10 +152,10 @@ const makeStore = ( emailVerified: boolean ) =>
 const makeLoggedOutStore = () =>
 	createStore( rootReducer, { currentUser: {} }, applyMiddleware( thunkMiddleware ) );
 
-const renderUser = ( store: ReturnType< typeof makeStore > ) => {
+const renderUser = ( store: ReturnType< typeof makeStore >, url = '/onboarding/user' ) => {
 	const submit = jest.fn();
 	const { unmount } = renderWithProvider(
-		<MemoryRouter initialEntries={ [ '/onboarding/user' ] }>
+		<MemoryRouter initialEntries={ [ url ] }>
 			<UserStep flow="onboarding" stepName="user" navigation={ { submit } } />
 		</MemoryRouter>,
 		{ store }
@@ -173,6 +183,8 @@ describe( 'account step email verification gate', () => {
 		activationEmailFromProp = undefined;
 		signupFormProps = {};
 		mockHeldEmail = null;
+		mockHeldWrite = null;
+		mockSocialNotice = <div>That account already exists. Log in instead.</div>;
 		// A test that fails before restoring them would otherwise time out every test after it.
 		jest.useRealTimers();
 		mockConfig.enabledFlags.clear();
@@ -196,7 +208,7 @@ describe( 'account step email verification gate', () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		const store = makeStore( false );
-		renderUser( store );
+		const { submit } = renderUser( store );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
@@ -219,6 +231,16 @@ describe( 'account step email verification gate', () => {
 		// to the one `/me` still reports, and then nothing would ever move. It says so rather than
 		// looking live and doing nothing.
 		expect( screen.getByRole( 'button', { name: 'edit' } ) ).toBeDisabled();
+
+		// The account reporting the replaced address as verified says nothing about the one it now
+		// has, so it can't be what carries the account through.
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: mockUserId, email: EMAIL, email_verified: true },
+			} );
+		} );
+		expect( submit ).not.toHaveBeenCalled();
 
 		// `/me` resolving a different account is a case this step already handles, and an address
 		// held over that would be offered to whoever it resolved.
@@ -306,6 +328,40 @@ describe( 'account step email verification gate', () => {
 		} );
 
 		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+	} );
+
+	// A write already on its way can't be called back, so leaving before it lands would carry the
+	// account past the gate on a verification about the address it is replacing.
+	it( 'offers no way out while a change is on its way', async () => {
+		const user = userEvent.setup();
+		const store = makeStore( false );
+		const { submit } = renderUser( store );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'submit-slow' } ) );
+
+		expect( screen.queryByRole( 'button', { name: /back/i } ) ).not.toBeInTheDocument();
+
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: mockUserId, email: EMAIL, email_verified: true },
+			} );
+		} );
+
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	// It is fixed and full-screen, so it would sit over the field.
+	it( 'keeps the one-tap overlay off the editor', async () => {
+		const user = userEvent.setup();
+		mockSocialNotice = undefined;
+		renderUser( makeStore( false ), '/onboarding/user?oneTapAuth=true' );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		expect( document.querySelector( '.one-tap-auth-loader-overlay' ) ).not.toBeInTheDocument();
 	} );
 
 	// A refusal leaves an address in the field that isn't the one the editor opened with, so
