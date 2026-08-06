@@ -3,6 +3,7 @@ import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import {
+	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -21,7 +22,7 @@ interface ReferralEarningsCardProps {
 	locked?: boolean;
 	lockedNote?: string;
 	referralsHref: string;
-	useRouterLink?: boolean;
+	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
@@ -29,20 +30,20 @@ function ReferralEarningsEmptyState( {
 	locked,
 	lockedNote,
 	referralsHref,
-	useRouterLink,
+	shouldUseRouterLink,
 	recordTracksEvent,
 }: {
 	locked?: boolean;
 	lockedNote?: string;
 	referralsHref: string;
-	useRouterLink?: boolean;
+	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 } ) {
 	return (
 		<VStack spacing={ 4 }>
-			<Text size={ 15 } weight={ 500 } lineHeight="20px" as="h2">
+			<Heading level={ 2 } size={ 15 } weight={ 500 } lineHeight="20px">
 				{ __( 'Referral earnings' ) }
-			</Text>
+			</Heading>
 			<Text variant="muted" lineHeight="20px">
 				{ __(
 					'Earn 20% recurring commissions on hosting and 50% on plugins when you refer clients through your dashboard.'
@@ -59,7 +60,7 @@ function ReferralEarningsEmptyState( {
 						size="compact"
 						variant="secondary"
 						href={ referralsHref }
-						useRouterLink={ useRouterLink }
+						shouldUseRouterLink={ shouldUseRouterLink }
 						onClick={ () =>
 							recordTracksEvent?.( 'calypso_a4a_overview_referrals_make_referral_click' )
 						}
@@ -72,12 +73,14 @@ function ReferralEarningsEmptyState( {
 	);
 }
 
+// Not OverviewCard: it renders the whole card as a single link, while this card
+// needs inline actions and non-interactive stat rows.
 export default function ReferralEarningsCard( {
 	agencyId,
 	locked,
 	lockedNote,
 	referralsHref,
-	useRouterLink,
+	shouldUseRouterLink,
 	recordTracksEvent,
 }: ReferralEarningsCardProps ) {
 	const { data: referrals = [], isLoading: isLoadingReferrals } = useQuery( {
@@ -102,7 +105,7 @@ export default function ReferralEarningsCard( {
 						locked={ locked }
 						lockedNote={ lockedNote }
 						referralsHref={ referralsHref }
-						useRouterLink={ useRouterLink }
+						shouldUseRouterLink={ shouldUseRouterLink }
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				</CardBody>
@@ -118,9 +121,9 @@ export default function ReferralEarningsCard( {
 		<Card>
 			<CardBody>
 				<VStack spacing={ 4 }>
-					<Text size={ 15 } weight={ 500 } lineHeight="20px" as="h2">
+					<Heading level={ 2 } size={ 15 } weight={ 500 } lineHeight="20px">
 						{ __( 'Referral earnings' ) }
-					</Text>
+					</Heading>
 					<HStack spacing={ 2 } justify="flex-start" alignment="baseline" expanded={ false }>
 						<Text size={ 20 } weight={ 500 } lineHeight="24px">
 							{ isLoading ? (
@@ -152,7 +155,7 @@ export default function ReferralEarningsCard( {
 							size="compact"
 							variant="secondary"
 							href={ referralsHref }
-							useRouterLink={ useRouterLink }
+							shouldUseRouterLink={ shouldUseRouterLink }
 							onClick={ () =>
 								recordTracksEvent?.( 'calypso_a4a_overview_referrals_view_details_click' )
 							}

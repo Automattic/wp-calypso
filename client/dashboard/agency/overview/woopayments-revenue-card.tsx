@@ -3,6 +3,7 @@ import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import {
+	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -23,7 +24,7 @@ interface WooPaymentsRevenueCardProps {
 	locked?: boolean;
 	lockedNote?: string;
 	woopaymentsHref: string;
-	useRouterLink?: boolean;
+	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
@@ -31,13 +32,13 @@ function WooPaymentsEmptyState( {
 	locked,
 	lockedNote,
 	woopaymentsHref,
-	useRouterLink,
+	shouldUseRouterLink,
 	recordTracksEvent,
 }: {
 	locked?: boolean;
 	lockedNote?: string;
 	woopaymentsHref: string;
-	useRouterLink?: boolean;
+	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 } ) {
 	return (
@@ -67,7 +68,7 @@ function WooPaymentsEmptyState( {
 							size="compact"
 							variant="secondary"
 							href={ woopaymentsHref }
-							useRouterLink={ useRouterLink }
+							shouldUseRouterLink={ shouldUseRouterLink }
 							onClick={ () =>
 								recordTracksEvent?.( 'calypso_a4a_overview_woopayments_connect_store_click' )
 							}
@@ -81,12 +82,14 @@ function WooPaymentsEmptyState( {
 	);
 }
 
+// Not OverviewCard: it renders the whole card as a single link, while this card
+// needs inline actions and non-interactive stat rows.
 export default function WooPaymentsRevenueCard( {
 	agencyId,
 	locked,
 	lockedNote,
 	woopaymentsHref,
-	useRouterLink,
+	shouldUseRouterLink,
 	recordTracksEvent,
 }: WooPaymentsRevenueCardProps ) {
 	const { storeCount, isLoading: isLoadingStoreCount } = useWooPaymentsStoreCount(
@@ -112,7 +115,7 @@ export default function WooPaymentsRevenueCard( {
 				locked={ locked }
 				lockedNote={ lockedNote }
 				woopaymentsHref={ woopaymentsHref }
-				useRouterLink={ useRouterLink }
+				shouldUseRouterLink={ shouldUseRouterLink }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		);
@@ -125,9 +128,9 @@ export default function WooPaymentsRevenueCard( {
 		<Card>
 			<CardBody>
 				<VStack spacing={ 4 }>
-					<Text size={ 15 } weight={ 500 } lineHeight="20px" as="h2">
+					<Heading level={ 2 } size={ 15 } weight={ 500 } lineHeight="20px">
 						{ __( 'WooPayments revenue' ) }
-					</Text>
+					</Heading>
 					<HStack spacing={ 2 } justify="flex-start" alignment="baseline" expanded={ false }>
 						<Text size={ 20 } weight={ 500 } lineHeight="24px">
 							{ isLoading ? (
@@ -153,7 +156,7 @@ export default function WooPaymentsRevenueCard( {
 							size="compact"
 							variant="secondary"
 							href={ woopaymentsHref }
-							useRouterLink={ useRouterLink }
+							shouldUseRouterLink={ shouldUseRouterLink }
 							onClick={ () =>
 								recordTracksEvent?.( 'calypso_a4a_overview_woopayments_view_details_click' )
 							}

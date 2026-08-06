@@ -17,7 +17,7 @@ interface TierOverviewCardProps {
 	tierId?: AgencyTierType;
 	influencedRevenue: number;
 	tiersHref: string;
-	useRouterLink?: boolean;
+	shouldUseRouterLink?: boolean;
 	onScheduleCall?: () => void;
 	isSchedulingCall?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
@@ -51,7 +51,7 @@ export default function TierOverviewCard( {
 	tierId,
 	influencedRevenue,
 	tiersHref,
-	useRouterLink,
+	shouldUseRouterLink,
 	onScheduleCall,
 	isSchedulingCall,
 	recordTracksEvent,
@@ -72,7 +72,7 @@ export default function TierOverviewCard( {
 			heading={ tier.name }
 			description={ content.description }
 			link={ tiersHref }
-			useRouterLink={ useRouterLink }
+			shouldUseRouterLink={ shouldUseRouterLink }
 			tracksId="agency-overview-tier"
 			bottom={
 				<VStack spacing={ 4 }>

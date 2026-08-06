@@ -16,13 +16,15 @@ export interface FeaturedEvent {
 	description: string[];
 	ctaLabel: string;
 	url: string;
+	/** ISO date the card stops showing itself, typically the day after the event. */
+	endsAt: string;
 }
 
 /**
  * The event promoted on the agency overview, curated by hand.
  *
- * Replace the whole object when the next event comes round, and set it to `null`
- * in between — the card hides itself rather than advertising a past event. The
+ * Replace the whole object when the next event comes round — the card hides
+ * itself once `endsAt` passes rather than advertising a past event. The
  * legacy list lives in client/a8c-for-agencies/sections/overview/body/events.
  */
 export const FEATURED_EVENT: FeaturedEvent | null = {
@@ -42,4 +44,5 @@ export const FEATURED_EVENT: FeaturedEvent | null = {
 	],
 	ctaLabel: __( 'Get your spot!' ),
 	url: 'https://us.wordcamp.org/2026/',
+	endsAt: '2026-08-20',
 };

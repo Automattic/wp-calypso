@@ -68,6 +68,7 @@ export default function AgencyOverview() {
 				tierId={ agency.tier?.id }
 				influencedRevenue={ agency.influenced_revenue ?? 0 }
 				approvalStatus={ approvalStatus }
+				capabilities={ agency.user?.capabilities }
 				links={ {
 					tiers: '/agency/tiers',
 					referrals: '/earn/referrals',

@@ -8,7 +8,7 @@ export interface HelpfulLink {
 	id: string;
 	label: string;
 	href?: string;
-	/** Opens in a new tab. `SummaryButton` has no `target`, so the click is handled here. */
+	/** Opens the link in a new tab. */
 	isExternal?: boolean;
 	onClick?: () => void;
 }
@@ -32,23 +32,13 @@ export default function HelpfulLinksCard( { links, recordTracksEvent }: HelpfulL
 						)
 					}
 					href={ link.href }
+					target={ link.isExternal ? '_blank' : undefined }
+					rel={ link.isExternal ? 'noreferrer' : undefined }
 					showArrow={ false }
-					onClick={ ( event ) => {
+					onClick={ () => {
 						recordTracksEvent?.( 'calypso_a4a_overview_helpful_link_click', {
 							link_id: link.id,
 						} );
-						// Leave modifier clicks to the browser so they keep their native
-						// new-tab and new-window behavior.
-						if (
-							link.isExternal &&
-							link.href &&
-							! event.metaKey &&
-							! event.ctrlKey &&
-							! event.shiftKey
-						) {
-							event.preventDefault();
-							window.open( link.href, '_blank', 'noreferrer' );
-						}
 						link.onClick?.();
 					} }
 				/>

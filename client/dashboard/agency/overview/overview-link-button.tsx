@@ -12,7 +12,7 @@ interface OverviewLinkButtonProps {
 	 * Set to false in apps without the dashboard's TanStack Router, so the button
 	 * renders a plain anchor for the host app's own router to pick up.
 	 */
-	useRouterLink?: boolean;
+	shouldUseRouterLink?: boolean;
 }
 
 export default function OverviewLinkButton( {
@@ -21,9 +21,9 @@ export default function OverviewLinkButton( {
 	variant,
 	size,
 	onClick,
-	useRouterLink = true,
+	shouldUseRouterLink = true,
 }: OverviewLinkButtonProps ) {
-	if ( useRouterLink ) {
+	if ( shouldUseRouterLink ) {
 		return (
 			<RouterLinkButton to={ href } variant={ variant } size={ size } onClick={ onClick }>
 				{ children }

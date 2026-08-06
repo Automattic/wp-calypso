@@ -11,6 +11,10 @@ import type { HelpfulLink } from './helpful-links-card';
 import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
 import type { AgencyApprovalStatus } from '@automattic/api-core';
 
+// The WooPayments routes gate on the referrals capability too (see
+// a8c-for-agencies/lib/permission.ts), so one capability locks both earning cards.
+const REFERRALS_CAPABILITY = 'a4a_read_referrals';
+
 export interface AgencyOverviewLinks {
 	tiers: string;
 	referrals: string;
@@ -25,8 +29,10 @@ export interface AgencyOverviewContentProps {
 	influencedRevenue: number;
 	/** Agencies predating the field report an empty string and are treated as approved. */
 	approvalStatus?: AgencyApprovalStatus | '';
+	/** The current user's agency capabilities; the earning cards lock without referrals access. */
+	capabilities?: string[];
 	links: AgencyOverviewLinks;
-	useRouterLink?: boolean;
+	shouldUseRouterLink?: boolean;
 	onScheduleCall?: () => void;
 	isSchedulingCall?: boolean;
 	onRelaunchTour?: () => void;
@@ -43,8 +49,9 @@ export default function AgencyOverviewContent( {
 	tierId,
 	influencedRevenue,
 	approvalStatus,
+	capabilities,
 	links,
-	useRouterLink,
+	shouldUseRouterLink,
 	onScheduleCall,
 	isSchedulingCall,
 	onRelaunchTour,
@@ -54,8 +61,9 @@ export default function AgencyOverviewContent( {
 	const spacing = isSmallViewport ? 4 : 6;
 	const isPending = approvalStatus === 'pending';
 	const isRejected = approvalStatus === 'rejected';
+	const canAccessEarnings = ! capabilities || capabilities.includes( REFERRALS_CAPABILITY );
 	// A rejection is already spelled out by the tier card, so only pending accounts get the note.
-	const isLocked = isPending || isRejected;
+	const isLocked = isPending || isRejected || ! canAccessEarnings;
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
 
 	return (
@@ -73,7 +81,7 @@ export default function AgencyOverviewContent( {
 						tierId={ tierId }
 						influencedRevenue={ influencedRevenue }
 						tiersHref={ links.tiers }
-						useRouterLink={ useRouterLink }
+						shouldUseRouterLink={ shouldUseRouterLink }
 						onScheduleCall={ onScheduleCall }
 						isSchedulingCall={ isSchedulingCall }
 						recordTracksEvent={ recordTracksEvent }
@@ -84,7 +92,7 @@ export default function AgencyOverviewContent( {
 					locked={ isLocked }
 					lockedNote={ lockedNote }
 					referralsHref={ links.referrals }
-					useRouterLink={ useRouterLink }
+					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 				<WooPaymentsRevenueCard
@@ -92,7 +100,7 @@ export default function AgencyOverviewContent( {
 					locked={ isLocked }
 					lockedNote={ lockedNote }
 					woopaymentsHref={ links.woopayments }
-					useRouterLink={ useRouterLink }
+					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			</VStack>

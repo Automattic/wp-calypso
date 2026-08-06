@@ -1,5 +1,6 @@
 import {
 	Button,
+	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -15,7 +16,7 @@ interface EventCardProps {
 }
 
 export default function EventCard( { recordTracksEvent }: EventCardProps ) {
-	if ( ! FEATURED_EVENT ) {
+	if ( ! FEATURED_EVENT || new Date() >= new Date( FEATURED_EVENT.endsAt ) ) {
 		return null;
 	}
 
@@ -31,9 +32,9 @@ export default function EventCard( { recordTracksEvent }: EventCardProps ) {
 							<Text variant="muted" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
 								{ when }
 							</Text>
-							<Text size={ 15 } weight={ 500 } lineHeight="20px" as="h2">
+							<Heading level={ 2 } size={ 15 } weight={ 500 } lineHeight="20px">
 								{ title }
-							</Text>
+							</Heading>
 							<Text variant="muted" size={ 12 } lineHeight="16px">
 								{ subtitle }
 							</Text>
