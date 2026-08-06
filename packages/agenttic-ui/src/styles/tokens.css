@@ -25,6 +25,7 @@
 
   /* === TYPOGRAPHY === */
   --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --font-weight-medium: 450;
   --font-weight-semibold: 500;
   --font-weight-bold: 600;

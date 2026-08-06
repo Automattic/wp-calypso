@@ -88,6 +88,41 @@ const PRESETS: Preset[] = [
 			'\n```',
 	},
 	{
+		label: 'Code Blocks',
+		role: 'agent',
+		text: `Inline code like \`wp_get_current_user()\` should sit on its own surface, distinct from prose.
+
+A short fenced block:
+
+\`\`\`javascript
+const greeting = 'Hello, world!';
+console.log( greeting );
+\`\`\`
+
+A long single line that must scroll horizontally instead of widening the bubble:
+
+\`\`\`sql
+SELECT p.ID, p.post_title, p.post_date, u.display_name FROM wp_posts AS p INNER JOIN wp_users AS u ON u.ID = p.post_author WHERE p.post_status = 'publish' AND p.post_type = 'post' ORDER BY p.post_date DESC LIMIT 20;
+\`\`\`
+
+Unlabeled block with no language:
+
+\`\`\`
+$ pnpm install
+$ pnpm dev
+\`\`\`
+
+Inline code inside a list and a table:
+
+1. Run \`pnpm build\` first
+2. Then \`pnpm test\`
+
+| Token | Value |
+|-------|-------|
+| \`--color-muted\` | code surface |
+| \`--font-mono\` | code family |`,
+	},
+	{
 		label: 'Rich Markdown',
 		role: 'agent',
 		text: `## Getting Started
