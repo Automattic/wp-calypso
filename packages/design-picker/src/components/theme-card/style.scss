@@ -324,7 +324,7 @@ $theme-card-info-margin-top: 16px;
 .theme-card__image-overlay {
 	--wpds-color-stroke-focus: var( --studio-white );
 	align-items: center;
-	background: color-mix( in srgb, var( --studio-black ) 60%, transparent );
+	background: color-mix( in srgb, var( --studio-black ) 70%, transparent );
 	display: flex;
 	gap: 8px;
 	inset: 0;
