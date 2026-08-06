@@ -1,4 +1,4 @@
-import { Icon } from '@wordpress/components';
+import { Icon, type IconType } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import type { ReactNode, ReactElement } from 'react';
@@ -6,7 +6,7 @@ import type { ReactNode, ReactElement } from 'react';
 import './style.scss';
 
 interface OptionCardBenefit {
-	icon: ReactElement;
+	icon: IconType;
 	iconSize?: number;
 	text: ReactNode;
 }
