@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SignupFormSocialFirst, {
 	MobileCompactTosNotice,
 } from 'calypso/blocks/signup-form/signup-form-social-first';
@@ -192,6 +193,81 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.queryByText( /Continue with GitHub/i ) ).not.toBeInTheDocument();
 		} );
 	} );
+
+	// Three routes lead back to signing up: the two ways to the social screen, whichever the step
+	// container's back button leaves showing, and the mobile-compact layout, which renders the
+	// social form outright.
+	describe( 'email-only mode', () => {
+		it.each( [
+			[ 'the back button in the footer', { backButtonInFooter: true } ],
+			[ 'the back button in the form', { backButtonInFooter: false } ],
+			[ 'the mobile-compact layout', { isMobileCompactVariant: true } ],
+		] )( 'offers no way to sign up again with %s', ( _label, layout ) => {
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					{ ...layout }
+					userEmail="typo@example.com"
+					onUpdateEmail={ jest.fn() }
+				/>
+			);
+
+			expect( screen.queryByRole( 'button', { name: 'See all options' } ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'says it is updating, not signing up, while the request is in flight', async () => {
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="typo@example.com"
+					onUpdateEmail={ () => new Promise< void >( () => {} ) }
+				/>
+			);
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( await screen.findByRole( 'button', { name: 'Updating…' } ) ).toBeVisible();
+		} );
+
+		it( 'offers a way back to whoever opened it', async () => {
+			const onCancelEmailUpdate = jest.fn();
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="typo@example.com"
+					onUpdateEmail={ jest.fn() }
+					onCancelEmailUpdate={ onCancelEmailUpdate }
+				/>
+			);
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+
+			expect( onCancelEmailUpdate ).toHaveBeenCalled();
+		} );
+	} );
+
+	// One expression picks between these three and the Cancel above, so an ordinary signup has to
+	// keep being offered whichever of them it was offered before.
+	it.each( [
+		[ true, 'Back', 'See all options' ],
+		[ false, 'See all options', 'Back' ],
+	] )(
+		'keeps the way to the social screen for an ordinary signup, back button in footer: %s',
+		( backButtonInFooter, shown, hidden ) => {
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="new@example.com"
+					backButtonInFooter={ backButtonInFooter }
+				/>
+			);
+
+			expect( screen.getByRole( 'button', { name: shown } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: hidden } ) ).not.toBeInTheDocument();
+		}
+	);
 
 	describe( 'MobileCompactTosNotice', () => {
 		test( 'renders the "options above" copy', () => {

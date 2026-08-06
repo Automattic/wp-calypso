@@ -38,6 +38,9 @@ class PasswordlessSignupForm extends Component {
 		disableTosText: PropTypes.bool,
 		// Names the signup's origin to the backend, which aims the activation link on it.
 		activationEmailFrom: PropTypes.string,
+		// Replaces account creation with a change to the account the caller already has, and
+		// reports its own failures.
+		onUpdateEmail: PropTypes.func,
 		useConnectScreenActions: PropTypes.bool,
 	};
 
@@ -70,6 +73,13 @@ class PasswordlessSignupForm extends Component {
 				isSubmitting: false,
 			} );
 			this.submitTracksEvent( false, { action_message: 'Please provide a valid email address.' } );
+			return;
+		}
+
+		if ( this.props.onUpdateEmail ) {
+			this.setState( { isSubmitting: true } );
+			await this.props.onUpdateEmail( this.state.email.trim() );
+			this.setState( { isSubmitting: false } );
 			return;
 		}
 
