@@ -64,7 +64,7 @@ interface CandidateResolution {
 
 interface Conflict {
 	subject: string;
-	positions: ReviewerPosition[];
+	positions?: ReviewerPosition[];
 	guideline_anchor: string | null;
 	recommended_resolution: string;
 	candidate_resolutions?: CandidateResolution[];
@@ -84,7 +84,7 @@ interface SuggestedEdit {
 	suggested_text: string;
 	suggested_text_html?: string;
 	rationale: string;
-	supported_by_reviewers: string[];
+	supported_by_reviewers?: string[];
 	requires_manual?: boolean;
 	/** Optional short editorial category for the card badge (e.g. "Tone"). */
 	feedback_category?: string;
@@ -196,6 +196,15 @@ function formatRelativeTime( timestamp: number ): string {
 		_n( '%d day ago', '%d days ago', days, __i18n_text_domain__ ),
 		days
 	);
+}
+
+/**
+ * Model-supplied list fields are typed as required by the tool schema, but the
+ * provider drops `strict`, so any of them can arrive missing or malformed.
+ * Reading `.length` or `.map` off one that did unmounts the whole card.
+ */
+function toList< T >( value: T[] | undefined ): T[] {
+	return Array.isArray( value ) ? value : [];
 }
 
 function getGuidelineCategoryLabel( category: GuidelineViolation[ 'category' ] ): string {
@@ -1282,7 +1291,7 @@ export default function AiEditorialReview( {
 													) }
 												</header>
 												<ul className="jetpack-ai-editorial-review__positions">
-													{ conflict.positions.map( ( pos, j ) => (
+													{ toList( conflict.positions ).map( ( pos, j ) => (
 														<li
 															className="jetpack-ai-editorial-review__position"
 															key={ `pos-${ i }-${ j }` }
@@ -1391,9 +1400,7 @@ export default function AiEditorialReview( {
 									<ul>
 										{ implications.map( ( imp, i ) => {
 											// A non-strict payload can omit affected_blocks.
-											const affectedBlocks = Array.isArray( imp.affected_blocks )
-												? imp.affected_blocks
-												: [];
+											const affectedBlocks = toList( imp.affected_blocks );
 											return (
 												<li key={ `imp-${ i }` }>
 													<strong>{ imp.change }</strong> — { imp.implies }
@@ -1515,11 +1522,12 @@ export default function AiEditorialReview( {
 													element: 'text',
 												} );
 											}
+											const supportedByReviewers = toList( edit.supported_by_reviewers );
 											const footer =
-												edit.supported_by_reviewers.length > 0 ? (
+												supportedByReviewers.length > 0 ? (
 													<p className="jetpack-ai-editorial-review__reviewers">
 														{ __( 'Requested by:', __i18n_text_domain__ ) }{ ' ' }
-														{ edit.supported_by_reviewers.map( ( r, j ) => (
+														{ supportedByReviewers.map( ( r, j ) => (
 															<span key={ `edit-${ i }-rev-${ j }` }>
 																{ j > 0 && ' ' }
 																<ReviewerChip

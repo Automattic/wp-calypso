@@ -465,6 +465,43 @@ describe( 'AiEditorialReview — smoke render', () => {
 		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
+	it( 'renders a conflict that omits positions', () => {
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					conflicts: [
+						{
+							subject: 'Tone of the opening',
+							guideline_anchor: null,
+							recommended_resolution: 'Use neutral phrasing.',
+						},
+					] as any,
+				} ) }
+			/>
+		);
+
+		expect( screen.getByText( 'Tone of the opening' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a suggested edit that omits supported_by_reviewers', () => {
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							suggested_text: 'voted on Tuesday',
+							rationale: 'Concise.',
+						},
+					] as any,
+				} ) }
+			/>
+		);
+
+		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
+	} );
+
 	it( 'renders an implication that omits affected_blocks', () => {
 		// The tool schema marks affected_blocks required but the tool is not strict,
 		// so the model can omit it. Indexing it directly used to blank the card.
