@@ -1,4 +1,3 @@
-import { updateUserSettings } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
@@ -14,7 +13,6 @@ import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
-import Notice from 'calypso/components/notice';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -85,25 +83,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
-	// Correcting an address passes through three states, and telling them apart is what keeps the
-	// account from leaving on a verification that no longer describes it. Scoped throughout, since
-	// `/me` resolving a different account is a case this step already handles — the gate is keyed
-	// on the same scope for it.
-	type EmailCorrection =
-		// The field is open and nothing has been asked of the account yet.
-		| { phase: 'editing'; scope: string; startedFrom: string; error?: string }
-		// A write is on its way. It can't be called back, and what it will do isn't known yet.
-		| { phase: 'writing'; scope: string; startedFrom: string }
-		// Written, but `/me` hasn't said so. Until it does, everything the account reports —
-		// including whether it is verified — is about the address this one replaced.
-		| { phase: 'settling'; scope: string; email: string; replacing: string };
-
-	const [ correction, setCorrection ] = useState< EmailCorrection | null >( null );
-	const ours = correction?.scope === gateScopeForUser ? correction : null;
-	const isEditingEmail = ours?.phase === 'editing' || ours?.phase === 'writing';
-	// Nothing may act on what `/me` says while any of this is outstanding.
-	const isCorrectionPending = ours !== null;
-	const verifyingEmail = ( ours?.phase === 'settling' ? ours.email : currentEmail ) ?? '';
+	// Scoped, because `/me` resolving a different account is a case this step already handles — the
+	// gate is keyed on the same scope for it. An editor left open across that would offer one
+	// account's address to another.
+	const [ editing, setEditing ] = useState< { scope: string; startedFrom: string } | null >( null );
+	const isEditingEmail = editing?.scope === gateScopeForUser;
 	// The account exists and its token is loaded, but `/me` hasn't caught up — so nothing here
 	// knows who it is yet, and Redux still reports nobody logged in.
 	const isWaitingForCreatedAccount = !! wpAccountCreateResponse && gateStatus === 'pending';
@@ -142,7 +126,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else if ( gateStatus === 'pending' ) {
 			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
-		} else if ( gateStatus !== 'gated' && ! isCorrectionPending ) {
+		} else if ( gateStatus !== 'gated' && ! isEditingEmail ) {
 			// The step owns the whole of finishing; the gate is presentation, and unmounting it is
 			// what this transition looks like. Only `/me` saying verified is a confirmation — the
 			// flag being off is not — and the claim decides which of several tabs records it.
@@ -157,15 +141,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			}
 			navigation.submit?.();
 		}
-	}, [
-		dispatch,
-		isLoggedIn,
-		navigation,
-		gateStatus,
-		gateScopeForUser,
-		flow,
-		isCorrectionPending,
-	] );
+	}, [ dispatch, isLoggedIn, navigation, gateStatus, gateScopeForUser, flow, isEditingEmail ] );
 
 	// A retry batch is finite and swallows its failure, so nothing would ask again. An account just
 	// created isn't logged in until `/me` answers — the request that failed — so the tab that made
@@ -174,7 +150,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		() => dispatch( fetchCurrentUser() as unknown as AnyAction ),
 		( isLoggedIn && gateStatus === 'pending' ) ||
 			isWaitingForCreatedAccount ||
-			( isCorrectionPending && gateStatus !== 'gated' ) ||
 			( isEditingEmail && gateStatus === 'gated' )
 	);
 
@@ -190,51 +165,19 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// Submitting the address unchanged asks for nothing, so it is also how the user gets back to
 	// the gate. Changing it takes effect at once and re-sends the activation email, leaving nothing
 	// for them to confirm.
-	// Only the session that asked may close or answer to itself; anything older has been overtaken.
-	const inScope = ( scope: string, next: ( current: EmailCorrection ) => EmailCorrection | null ) =>
-		setCorrection( ( current ) => ( current?.scope === scope ? next( current ) : current ) );
+	const closeEditor = ( scope: string ) =>
+		setEditing( ( current ) => ( current?.scope === scope ? null : current ) );
 
-	const closeEditor = ( scope: string ) => inScope( scope, () => null );
-
+	// Submitting the address unchanged asks for nothing, so it is the way back to the gate.
+	// Changing it does nothing yet: what writes it is a change of its own.
 	const updateEmail = async ( email: string ) => {
-		const scope = gateScopeForUser;
-		const replacing = currentEmail ?? '';
-		const startedFrom = ours?.phase === 'editing' ? ours.startedFrom : '';
-		// Submitting it unchanged asks for nothing, so it is also how the user gets back.
-		if ( email === startedFrom ) {
-			closeEditor( scope );
-			return;
-		}
-		inScope( scope, () => ( { phase: 'writing', scope, startedFrom } ) );
-		try {
-			await updateUserSettings( { user_email: email } );
-			inScope( scope, ( current ) =>
-				current.phase === 'writing' ? { phase: 'settling', scope, email, replacing } : current
-			);
-			dispatch( fetchCurrentUser() as unknown as AnyAction );
-		} catch ( error ) {
-			const message =
-				( error as { message?: string } )?.message ??
-				translate( 'We couldn’t update your email address. Please try again.' );
-			inScope( scope, ( current ) =>
-				current.phase === 'writing'
-					? { phase: 'editing', scope, startedFrom, error: message }
-					: current
-			);
+		if ( email === editing?.startedFrom ) {
+			closeEditor( gateScopeForUser );
 		}
 	};
 
-	// Any movement in what the account reports means the held address has served its purpose —
-	// whether that is the address as submitted, one the backend tidied, or a later change from
-	// somewhere else. Waiting for an exact match would hold a stale one for good if it never came.
-	useEffect( () => {
-		setCorrection( ( current ) =>
-			current?.phase === 'settling' && current.replacing !== currentEmail ? null : current
-		);
-	}, [ currentEmail ] );
-
 	const beginEmailEdit = () =>
-		setCorrection( { phase: 'editing', scope: gateScopeForUser, startedFrom: verifyingEmail } );
+		setEditing( { scope: gateScopeForUser, startedFrom: currentEmail ?? '' } );
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
@@ -301,17 +244,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				socialServiceResponse={ socialServiceResponse }
 				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
-				userEmail={ ( isEditingEmail ? verifyingEmail : queryArgs.get( 'user_email' ) ) || '' }
-				notice={
-					isEditingEmail
-						? ours?.phase === 'editing' &&
-						  !! ours.error && (
-								<Notice status="is-error" showDismiss={ false }>
-									{ ours.error }
-								</Notice>
-						  )
-						: notice
-				}
+				userEmail={ ( isEditingEmail ? currentEmail : queryArgs.get( 'user_email' ) ) || '' }
+				notice={ isEditingEmail ? false : notice }
 				isSocialFirst
 				onCreateAccountSuccess={ handleCreateAccountSuccess }
 				backButtonInFooter={ ! isStepContainerV2 }
@@ -338,8 +272,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		return (
 			<EmailVerificationGate
 				onEditEmail={ beginEmailEdit }
-				editDisabled={ isCorrectionPending }
-				email={ verifyingEmail }
+				email={ currentEmail ?? '' }
 				// A different account is a different attempt: without this the cooldown, the send
 				// state and the poll's ladder would all carry over to whoever `/me` resolved.
 				key={ gateScopeForUser }
@@ -385,7 +318,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		// left an address in the field that submitting no longer gets the user out of.
 		let backButton;
 		if ( isEditingEmail ) {
-			backButton = ours?.phase === 'editing' && (
+			backButton = (
 				<Step.BackButton
 					onClick={ () => closeEditor( gateScopeForUser ) }
 					enableTracksEvent={ false }

@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { updateUserSettings } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -29,13 +28,8 @@ let activationEmailFromProp: string | undefined;
 let signupFormProps: { userEmail?: string; notice?: unknown } = {};
 let mockHeldEmail: string | null = null;
 let mockSocialNotice: ReactNode = <div>That account already exists. Log in instead.</div>;
-let mockHeldWrite: Promise< unknown > | null = null;
 
 jest.mock( 'calypso/lib/analytics/tracks' );
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
-	updateUserSettings: jest.fn( () => mockHeldWrite ?? Promise.resolve( {} ) ),
-} ) );
 
 // Keep the poll from reaching the network — the gate polls `fetchCurrentUser`.
 jest.mock( 'calypso/state/current-user/actions', () => ( {
@@ -94,15 +88,6 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 		return (
 			<>
 				{ notice as ReactNode }
-				<button onClick={ () => onUpdateEmail?.( 'fixed@example.com' ) }>submit-changed</button>
-				<button
-					onClick={ () => {
-						mockHeldWrite = new Promise( () => {} );
-						onUpdateEmail?.( 'slow@example.com' );
-					} }
-				>
-					submit-slow
-				</button>
 				<button onClick={ () => onUpdateEmail?.( mockHeldEmail as string ) }>
 					submit-unchanged
 				</button>
@@ -183,7 +168,6 @@ describe( 'account step email verification gate', () => {
 		activationEmailFromProp = undefined;
 		signupFormProps = {};
 		mockHeldEmail = null;
-		mockHeldWrite = null;
 		mockSocialNotice = <div>That account already exists. Log in instead.</div>;
 		// A test that fails before restoring them would otherwise time out every test after it.
 		jest.useRealTimers();
@@ -200,59 +184,6 @@ describe( 'account step email verification gate', () => {
 		renderUser( makeLoggedOutStore() );
 
 		expect( activationEmailFromProp ).toBeUndefined();
-	} );
-
-	// The gate is a dead end for a mistyped address, so edit hands it back to the account screen
-	// carrying the address to fix, and what that screen submits changes the account.
-	it( 'hands a mistyped address back to the account screen to be updated', async () => {
-		jest.useFakeTimers();
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		const store = makeStore( false );
-		const { submit } = renderUser( store );
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-
-		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
-
-		expect( signupFormProps.userEmail ).toBe( EMAIL );
-
-		// The gate's own poll went with it, and a confirmation landing elsewhere still has to
-		// release whoever is sitting in the editor.
-		( fetchCurrentUser as jest.Mock ).mockClear();
-		act( () => jest.advanceTimersByTime( 10 * 1000 ) );
-		expect( fetchCurrentUser ).toHaveBeenCalled();
-
-		await user.click( screen.getByRole( 'button', { name: 'submit-changed' } ) );
-
-		expect( updateUserSettings ).toHaveBeenCalledWith( { user_email: 'fixed@example.com' } );
-		expect( screen.getByText( 'fixed@example.com' ) ).toBeVisible();
-		expect( screen.queryByText( EMAIL ) ).not.toBeInTheDocument();
-
-		// A second correction started before the first is acknowledged could set the address back
-		// to the one `/me` still reports, and then nothing would ever move. It says so rather than
-		// looking live and doing nothing.
-		expect( screen.getByRole( 'button', { name: 'edit' } ) ).toBeDisabled();
-
-		// The account reporting the replaced address as verified says nothing about the one it now
-		// has, so it can't be what carries the account through.
-		act( () => {
-			store.dispatch( {
-				type: CURRENT_USER_RECEIVE,
-				user: { ID: mockUserId, email: EMAIL, email_verified: true },
-			} );
-		} );
-		expect( submit ).not.toHaveBeenCalled();
-
-		// `/me` resolving a different account is a case this step already handles, and an address
-		// held over that would be offered to whoever it resolved.
-		act( () => {
-			store.dispatch( {
-				type: CURRENT_USER_RECEIVE,
-				user: { ID: mockUserId + 1, email: 'someone@else.example', email_verified: false },
-			} );
-		} );
-
-		expect( screen.getByText( 'someone@else.example' ) ).toBeVisible();
-		expect( screen.queryByText( 'fixed@example.com' ) ).not.toBeInTheDocument();
 	} );
 
 	// The editor belongs to the account it was opened for, not to the step.
@@ -275,72 +206,38 @@ describe( 'account step email verification gate', () => {
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 	} );
 
-	// Another tab can correct the same account while this editor is open. Submitting what it still
-	// holds would otherwise write that correction back.
-	it( 'does not resubmit the address it opened with after it changes elsewhere', async () => {
+	// The gate is a dead end for a mistyped address, so edit hands it back to the account screen
+	// carrying the address to fix.
+	it( 'hands the address back to the account screen to be corrected', async () => {
 		const user = userEvent.setup();
-		const store = makeStore( false );
-		renderUser( store );
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		expect( signupFormProps.userEmail ).toBe( EMAIL );
+	} );
+
+	// Submitting it unchanged asks for nothing, so it is the way back.
+	it( 'returns to the gate when the address is submitted unchanged', async () => {
+		const user = userEvent.setup();
+		renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
 
-		act( () => {
-			store.dispatch( {
-				type: CURRENT_USER_RECEIVE,
-				user: { ID: mockUserId, email: 'corrected@elsewhere.example', email_verified: false },
-			} );
-		} );
 		await user.click( screen.getByRole( 'button', { name: 'submit-unchanged' } ) );
 
-		expect( updateUserSettings ).not.toHaveBeenCalled();
+		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 	} );
 
-	// While an address has been written but not reported back, everything `/me` says concerns the
-	// one it replaced — including that it was verified, which is not a fact about this account's
-	// address any more.
-	it( 'does not continue on a verification that belongs to a replaced address', async () => {
+	// Verification arriving while the field is open would take the user out of it mid-correction.
+	it( 'does not continue while the account screen is open', async () => {
 		const user = userEvent.setup();
 		const store = makeStore( false );
 		const { submit } = renderUser( store );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
-
-		const verifyOldAddress = () =>
-			act( () => {
-				store.dispatch( {
-					type: CURRENT_USER_RECEIVE,
-					user: { ID: mockUserId, email: EMAIL, email_verified: true },
-				} );
-			} );
-
-		verifyOldAddress();
-		expect( submit ).not.toHaveBeenCalled();
-
-		await user.click( screen.getByRole( 'button', { name: 'submit-changed' } ) );
-		verifyOldAddress();
-		expect( submit ).not.toHaveBeenCalled();
-
-		act( () => {
-			store.dispatch( {
-				type: CURRENT_USER_RECEIVE,
-				user: { ID: mockUserId, email: 'fixed@example.com', email_verified: true },
-			} );
-		} );
-
-		await waitFor( () => expect( submit ).toHaveBeenCalled() );
-	} );
-
-	// A write already on its way can't be called back, so leaving before it lands would carry the
-	// account past the gate on a verification about the address it is replacing.
-	it( 'offers no way out while a change is on its way', async () => {
-		const user = userEvent.setup();
-		const store = makeStore( false );
-		const { submit } = renderUser( store );
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
-		await user.click( screen.getByRole( 'button', { name: 'submit-slow' } ) );
-
-		expect( screen.queryByRole( 'button', { name: /back/i } ) ).not.toBeInTheDocument();
 
 		act( () => {
 			store.dispatch( {
@@ -387,19 +284,6 @@ describe( 'account step email verification gate', () => {
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
 
 		expect( screen.queryByText( /Log in instead/ ) ).not.toBeInTheDocument();
-	} );
-
-	// Submitting it unchanged asks for nothing, so it is the way back rather than a write.
-	it( 'returns to the gate without writing when the address is unchanged', async () => {
-		const user = userEvent.setup();
-		renderUser( makeStore( false ) );
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
-
-		await user.click( screen.getByRole( 'button', { name: 'submit-unchanged' } ) );
-
-		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
-		expect( updateUserSettings ).not.toHaveBeenCalled();
 	} );
 
 	it( 'confirmation continues exactly once (no double submit)', async () => {
