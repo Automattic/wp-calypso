@@ -24,7 +24,7 @@ const BOOTSTRAP_ERROR_MESSAGE = 'Failed to bootstrap user object';
 
 const AUTH_BOUNCE_COUNT_KEY = 'wpcom_auth_bounce_count';
 
-const AUTH_LOOP_WINDOW_MS = 10 * 1000;
+const AUTH_LOOP_WINDOW_MS = 30 * 1000;
 
 // Cap the reported loop count (reported as "10+") so a runaway loop can't
 // inflate stat cardinality.
