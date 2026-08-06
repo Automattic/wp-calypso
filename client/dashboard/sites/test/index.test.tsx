@@ -5,9 +5,20 @@
 import { startSiteCollisionListener } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../app/context';
 import { render } from '../../test-utils';
 import Sites from '../index';
+import type { AppConfig } from '../../app/context';
 import type { Site, User } from '@automattic/api-core';
+
+// The account-email-bouncing notice only renders where the dashboard variant supports /me.
+const configWithMeSupport: AppConfig = {
+	...APP_CONTEXT_DEFAULT_CONFIG,
+	supports: {
+		...APP_CONTEXT_DEFAULT_CONFIG.supports,
+		me: { billing: { monetizeSubscriptions: true }, security: { sshKey: true }, apps: true },
+	},
+};
 
 const mockSites = [
 	{
@@ -39,6 +50,17 @@ function mockSitesEndpoint( sites: Site[] ) {
 		.reply( 200, { sites, total: sites.length } );
 }
 
+// Registered per test rather than persisted in beforeEach: nock matches interceptors in
+// registration order, so a persistent one would always beat a per-test override.
+function mockUserSettings( { isBouncing }: { isBouncing: boolean } ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/settings' )
+		.query( true )
+		.reply( 200, { user_email: 'owner@example.com', user_email_bouncing: isBouncing } );
+}
+
+const BOUNCING_NOTICE_TITLE = 'Your account email isn’t receiving our messages';
+
 describe( '<Sites>', () => {
 	beforeEach( () => {
 		nock( 'https://public-api.wordpress.com' )
@@ -54,6 +76,7 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'renders Add new site button', async () => {
+		mockUserSettings( { isBouncing: false } );
 		mockSitesEndpoint( mockSites );
 		render( <Sites />, {
 			user: {
@@ -64,7 +87,51 @@ describe( '<Sites>', () => {
 		expect( await screen.findByRole( 'button', { name: 'Add new site' } ) ).toBeVisible();
 	} );
 
+	test( 'shows the bouncing-email notice at the top of the sites list', async () => {
+		mockUserSettings( { isBouncing: true } );
+		mockSitesEndpoint( mockSites );
+
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+			} as User,
+			config: configWithMeSupport,
+		} );
+
+		expect( await screen.findByText( BOUNCING_NOTICE_TITLE ) ).toBeVisible();
+	} );
+
+	test( 'hides the bouncing-email notice when the account email is fine', async () => {
+		mockUserSettings( { isBouncing: false } );
+		mockSitesEndpoint( mockSites );
+
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+			} as User,
+			config: configWithMeSupport,
+		} );
+
+		await screen.findByRole( 'button', { name: 'Add new site' } );
+		expect( screen.queryByText( BOUNCING_NOTICE_TITLE ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'hides the bouncing-email notice in variants without /me support', async () => {
+		mockUserSettings( { isBouncing: true } );
+		mockSitesEndpoint( mockSites );
+
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+			} as User,
+		} );
+
+		await screen.findByRole( 'button', { name: 'Add new site' } );
+		expect( screen.queryByText( BOUNCING_NOTICE_TITLE ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'renders empty state when the user has no sites', async () => {
+		mockUserSettings( { isBouncing: false } );
 		mockSitesEndpoint( mockSites );
 		render( <Sites />, {
 			user: {
@@ -80,6 +147,7 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'collision listener rewrites wpcom site slug when it collides with a Jetpack site', async () => {
+		mockUserSettings( { isBouncing: false } );
 		mockSitesEndpoint( [
 			{
 				ID: 10,
@@ -150,6 +218,7 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'renders DataViews when the user has sites', async () => {
+		mockUserSettings( { isBouncing: false } );
 		mockSitesEndpoint( mockSites );
 		render( <Sites />, {
 			user: {

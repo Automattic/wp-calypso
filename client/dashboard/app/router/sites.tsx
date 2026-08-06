@@ -89,6 +89,9 @@ export const sitesRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// The bouncing-account-email notice reads this. Prefetched so the banner is settled
+			// before first paint instead of popping in. See client/dashboard/sites/AGENTS.md.
+			queryClient.ensureQueryData( userSettingsQuery() ),
 		] );
 	},
 } );
