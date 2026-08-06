@@ -268,23 +268,39 @@ describe( 'account step email verification gate', () => {
 		expect( updateUserSettings ).not.toHaveBeenCalled();
 	} );
 
-	// Verifying the old address mid-correction would carry the account past the gate, and the
-	// address it is about to be given is not the one that was verified.
-	it( 'does not continue while the editor is open', async () => {
+	// While an address has been written but not reported back, everything `/me` says concerns the
+	// one it replaced — including that it was verified, which is not a fact about this account's
+	// address any more.
+	it( 'does not continue on a verification that belongs to a replaced address', async () => {
 		const user = userEvent.setup();
 		const store = makeStore( false );
 		const { submit } = renderUser( store );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
 
+		const verifyOldAddress = () =>
+			act( () => {
+				store.dispatch( {
+					type: CURRENT_USER_RECEIVE,
+					user: { ID: mockUserId, email: EMAIL, email_verified: true },
+				} );
+			} );
+
+		verifyOldAddress();
+		expect( submit ).not.toHaveBeenCalled();
+
+		await user.click( screen.getByRole( 'button', { name: 'submit-changed' } ) );
+		verifyOldAddress();
+		expect( submit ).not.toHaveBeenCalled();
+
 		act( () => {
 			store.dispatch( {
 				type: CURRENT_USER_RECEIVE,
-				user: { ID: mockUserId, email: EMAIL, email_verified: true },
+				user: { ID: mockUserId, email: 'fixed@example.com', email_verified: true },
 			} );
 		} );
 
-		expect( submit ).not.toHaveBeenCalled();
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
 	} );
 
 	// A stored social failure carries a log-in link, which is a way past the gate.

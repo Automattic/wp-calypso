@@ -81,19 +81,18 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
-	const [ editEmailError, setEditEmailError ] = useState< {
-		scope: string;
-		message: string;
-	} | null >( null );
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
 	// Both are scoped, because `/me` resolving a different account is a case this step already
 	// handles — the gate is keyed on the same scope for it. An editor left open across that, or an
 	// address held over it, would offer one account's address to another.
-	const [ editing, setEditing ] = useState< { scope: string; startedFrom: string } | null >( null );
+	const [ editing, setEditing ] = useState< {
+		scope: string;
+		startedFrom: string;
+		error?: string;
+	} | null >( null );
 	const isEditingEmail = editing?.scope === gateScopeForUser;
-	const editorError = editEmailError?.scope === gateScopeForUser ? editEmailError.message : null;
 	// What `/me` will report once it catches up. Its refresh coalesces with a poll already running
 	// and reports no failure of its own, so the gate can't be handed back the address it just left.
 	const [ accepted, setAccepted ] = useState< {
@@ -101,8 +100,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		email: string;
 		replacing: string;
 	} | null >( null );
-	const verifyingEmail =
-		( accepted?.scope === gateScopeForUser ? accepted.email : currentEmail ) ?? '';
+	// An address written but not yet reported back. While there is one, everything `/me` says about
+	// this account concerns the address it replaced — including whether it is verified, which is why
+	// nothing may act on that until it clears.
+	const awaitingRefresh = accepted?.scope === gateScopeForUser;
+	const verifyingEmail = ( awaitingRefresh ? accepted.email : currentEmail ) ?? '';
 	// The account exists and its token is loaded, but `/me` hasn't caught up — so nothing here
 	// knows who it is yet, and Redux still reports nobody logged in.
 	const isWaitingForCreatedAccount = !! wpAccountCreateResponse && gateStatus === 'pending';
@@ -141,7 +143,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else if ( gateStatus === 'pending' ) {
 			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
-		} else if ( gateStatus !== 'gated' && ! isEditingEmail ) {
+		} else if ( gateStatus !== 'gated' && ! isEditingEmail && ! awaitingRefresh ) {
 			// The step owns the whole of finishing; the gate is presentation, and unmounting it is
 			// what this transition looks like. Only `/me` saying verified is a confirmation — the
 			// flag being off is not — and the claim decides which of several tabs records it.
@@ -156,7 +158,16 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			}
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, gateStatus, gateScopeForUser, flow, isEditingEmail ] );
+	}, [
+		dispatch,
+		isLoggedIn,
+		navigation,
+		gateStatus,
+		gateScopeForUser,
+		flow,
+		isEditingEmail,
+		awaitingRefresh,
+	] );
 
 	// A retry batch is finite and swallows its failure, so nothing would ask again. An account just
 	// created isn't logged in until `/me` answers — the request that failed — so the tab that made
@@ -165,6 +176,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		() => dispatch( fetchCurrentUser() as unknown as AnyAction ),
 		( isLoggedIn && gateStatus === 'pending' ) ||
 			isWaitingForCreatedAccount ||
+			awaitingRefresh ||
 			( isEditingEmail && gateStatus === 'gated' )
 	);
 
@@ -186,7 +198,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const updateEmail = async ( email: string ) => {
 		const scope = gateScopeForUser;
 		const replacing = currentEmail ?? '';
-		setEditEmailError( null );
 		if ( email === editing?.startedFrom ) {
 			closeEditor( scope );
 			return;
@@ -199,12 +210,12 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 			closeEditor( scope );
 		} catch ( error ) {
-			setEditEmailError( {
-				scope,
-				message:
-					( error as { message?: string } )?.message ??
-					translate( 'We couldn’t update your email address. Please try again.' ),
-			} );
+			const message =
+				( error as { message?: string } )?.message ??
+				translate( 'We couldn’t update your email address. Please try again.' );
+			setEditing( ( current ) =>
+				current?.scope === scope ? { ...current, error: message } : current
+			);
 		}
 	};
 
@@ -217,10 +228,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 	}, [ accepted, currentEmail ] );
 
-	const beginEmailEdit = () => {
-		setEditEmailError( null );
+	const beginEmailEdit = () =>
 		setEditing( { scope: gateScopeForUser, startedFrom: verifyingEmail } );
-	};
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
@@ -287,9 +296,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				userEmail={ ( isEditingEmail ? verifyingEmail : queryArgs.get( 'user_email' ) ) || '' }
 				notice={
 					isEditingEmail
-						? !! editorError && (
+						? !! editing?.error && (
 								<Notice status="is-error" showDismiss={ false }>
-									{ editorError }
+									{ editing.error }
 								</Notice>
 						  )
 						: notice
