@@ -12,15 +12,17 @@ import {
 import type { Step as StepType } from '../../types';
 
 const StaticSiteImportReview: StepType< {
-	submits: {
-		action: 'created' | 'approved';
-		sessionId: string;
-		planHash?: string;
-		status: string;
-		state: string;
-		sourceDigest?: string;
-		previewSummary?: Record< string, number >;
-	};
+	submits:
+		| {
+				action: 'created' | 'approved';
+				sessionId: string;
+				planHash?: string;
+				status: string;
+				state: string;
+				sourceDigest?: string;
+				previewSummary?: Record< string, number >;
+		  }
+		| { action: 'content-fallback' };
 } > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const { siteId } = useSiteData();
@@ -31,6 +33,10 @@ const StaticSiteImportReview: StepType< {
 	const createSession = useCreateStaticSiteImportSession();
 	const session = sessionId ? sessionQuery.data : createSession.data;
 	const error = sessionQuery.error ?? createSession.error;
+	const errorCode =
+		( error as { code?: string; error?: string } | null )?.code ??
+		( error as { error?: string } | null )?.error;
+	const contentFallbackRequired = errorCode === 'static_site_import_content_fallback_required';
 	const creationRequested = useRef( false );
 
 	const submitSession = useCallback(
@@ -85,8 +91,24 @@ const StaticSiteImportReview: StepType< {
 				<Card>
 					<CardBody>
 						{ ! session && ! error && <Spinner /> }
-						{ error && (
+						{ error && ! contentFallbackRequired && (
 							<p>{ translate( 'We could not prepare your site import. Please try again.' ) }</p>
+						) }
+						{ contentFallbackRequired && (
+							<>
+								<p>
+									{ translate(
+										'This site loads its content with JavaScript, so a whole-site import is not available. You can still import its content.'
+									) }
+								</p>
+								<Button
+									variant="primary"
+									data-testid="static-site-import-content-fallback"
+									onClick={ () => navigation.submit( { action: 'content-fallback' } ) }
+								>
+									{ translate( 'Import content instead' ) }
+								</Button>
+							</>
 						) }
 						{ session && (
 							<>

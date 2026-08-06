@@ -66,6 +66,33 @@ if ( process.env.STATIC_SITE_IMPORT_E2E ) {
 					await expect( page.getByText( 'Your site import is complete' ) ).toBeVisible();
 				} );
 			} );
+
+			test( 'offers the classified content importer for a JavaScript-rendered source', async ( {
+				accountDefaultUser,
+				page,
+			} ) => {
+				await accountDefaultUser.authenticate( page );
+				await page.context().route( '**/wpcom/v2/sites/*/static-site-import-session**', ( route ) =>
+					route.fulfill( {
+						status: 422,
+						contentType: 'application/json',
+						body: JSON.stringify( {
+							code: 'static_site_import_content_fallback_required',
+							message: 'This source requires the content import path.',
+							data: { status: 422, reason: 'client_rendered' },
+						} ),
+					} )
+				);
+				const siteSlug = accountDefaultUser.getSiteURL( { protocol: false } );
+				await page.goto(
+					`/setup/site-migration/static-site-import-review?siteSlug=${ siteSlug }&from=https%3A%2F%2Fapp.example&platform=wix&ref=move-lp`
+				);
+				await expect(
+					page.getByText( 'This site loads its content with JavaScript' )
+				).toBeVisible();
+				await page.getByTestId( 'static-site-import-content-fallback' ).click();
+				await expect( page ).toHaveURL( /\/setup\/site-setup\/importerWix/ );
+			} );
 		}
 	);
 }

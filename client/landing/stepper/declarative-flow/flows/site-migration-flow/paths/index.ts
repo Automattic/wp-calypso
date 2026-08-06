@@ -117,6 +117,7 @@ export const upgradePlanPath = buildPathHelper<
 			ssh?: string;
 			staticSiteImport?: string;
 			host?: string;
+			platform?: ImporterPlatform;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
@@ -237,6 +238,7 @@ export const staticSiteImportReviewPath = buildPathHelper<
 			siteId?: number | string;
 			siteSlug?: string;
 			from?: string | null;
+			platform?: ImporterPlatform;
 			staticSiteImportSessionId?: string;
 		};
 	},

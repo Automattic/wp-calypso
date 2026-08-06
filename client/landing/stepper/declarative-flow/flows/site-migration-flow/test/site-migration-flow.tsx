@@ -397,7 +397,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'routes the deliberate move-lp entry through the existing upgrade boundary when enabled', () => {
+			it( 'routes a classified non-WordPress move-lp source through SSI when enabled', () => {
 				jest
 					.spyOn( config, 'isEnabled' )
 					.mockImplementation( ( flag ) => flag === 'migration/static-site-import' );
@@ -409,7 +409,7 @@ describe( 'Site Migration Flow', () => {
 
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
-					dependencies: { from: 'https://example-to-be-migrated.com', platform: 'wordpress' },
+					dependencies: { from: 'https://example-to-be-migrated.com', platform: 'wix' },
 					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 				} );
 
@@ -420,6 +420,33 @@ describe( 'Site Migration Flow', () => {
 						siteSlug: 'example.wordpress.com',
 						from: 'https://example-to-be-migrated.com',
 						staticSiteImport: 'true',
+						platform: 'wix',
+					},
+				} );
+			} );
+
+			it( 'keeps a detected WordPress source on the existing migration path', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/static-site-import' );
+				jest.mocked( useFlowState ).mockReturnValue( {
+					get: jest.fn().mockReturnValue( { entryPoint: 'move-lp' } ),
+					set: jest.fn(),
+					sessionId: '123',
+				} );
+
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: { from: 'https://wordpress-source.test', platform: 'wordpress' },
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'https://wordpress-source.test',
 					},
 				} );
 			} );
@@ -866,12 +893,13 @@ describe( 'Site Migration Flow', () => {
 						siteId: 123,
 						from: 'https://site-to-be-migrated.com',
 						staticSiteImport: 'true',
+						platform: 'wix',
 					},
 				} );
 
 				expect( goToCheckout ).toHaveBeenCalledWith(
 					expect.objectContaining( {
-						destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com&siteId=123&staticSiteImport=true`,
+						destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com&siteId=123&staticSiteImport=true&platform=wix`,
 					} )
 				);
 			} );

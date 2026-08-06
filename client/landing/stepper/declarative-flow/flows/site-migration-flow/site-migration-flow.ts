@@ -172,7 +172,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 					const hasDestinationSite = hasSite( siteId, siteSlug );
 					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 					const canUseStaticSiteImport =
-						entryPoint === 'move-lp' && config.isEnabled( 'migration/static-site-import' );
+						entryPoint === 'move-lp' &&
+						config.isEnabled( 'migration/static-site-import' ) &&
+						platform !== 'wordpress';
 
 					if ( canUseStaticSiteImport && from ) {
 						if ( hasDestinationSite ) {
@@ -183,10 +185,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 										siteSlug,
 										from,
 										staticSiteImport: 'true',
+										platform,
 									} )
 								);
 							}
-							return navigate( paths.staticSiteImportReviewPath( { siteId, siteSlug, from } ) );
+							return navigate(
+								paths.staticSiteImportReviewPath( { siteId, siteSlug, from, platform } )
+							);
 						}
 
 						if ( userHasOtherWPComSites ) {
@@ -291,7 +296,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 							const canUseStaticSiteImport =
 								entryPoint === 'move-lp' &&
 								config.isEnabled( 'migration/static-site-import' ) &&
-								Boolean( fromQueryParam );
+								Boolean( fromQueryParam ) &&
+								platformQueryParam !== 'wordpress';
 
 							if ( canUseStaticSiteImport ) {
 								if ( ! selectedSiteCanInstallPlugins ) {
@@ -301,6 +307,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 											siteSlug,
 											from: fromQueryParam,
 											staticSiteImport: 'true',
+											platform: platformQueryParam,
 										} )
 									);
 								}
@@ -309,6 +316,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 										siteId,
 										siteSlug,
 										from: fromQueryParam,
+										platform: platformQueryParam,
 									} )
 								);
 							}
@@ -442,7 +450,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 					if (
 						entryPoint === 'move-lp' &&
 						config.isEnabled( 'migration/static-site-import' ) &&
-						fromQueryParam
+						fromQueryParam &&
+						platformQueryParam !== 'wordpress'
 					) {
 						return replace(
 							paths.upgradePlanPath( {
@@ -450,6 +459,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								siteSlug,
 								from: fromQueryParam,
 								staticSiteImport: 'true',
+								platform: platformQueryParam,
 							} )
 						);
 					}
@@ -584,6 +594,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								siteId,
 								host: hostQueryParam,
 								staticSiteImport: isStaticSiteImport ? 'true' : undefined,
+								platform: isStaticSiteImport ? platformQueryParam : undefined,
 							},
 							`/setup/${ flowPath }/${ redirectAfterCheckout }`
 						);
@@ -612,7 +623,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					if ( isStaticSiteImport ) {
 						return navigate(
-							paths.staticSiteImportReviewPath( { siteId, siteSlug, from: fromQueryParam } )
+							paths.staticSiteImportReviewPath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+								platform: platformQueryParam,
+							} )
 						);
 					}
 
@@ -890,6 +906,20 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 				case STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug: {
 					const staticSiteImport = providedDependencies;
+					if ( staticSiteImport.action === 'content-fallback' ) {
+						if ( isPlatformImportable( platformQueryParam ) && fromQueryParam ) {
+							return exitFlow( getFullImporterUrl( platformQueryParam, siteSlug, fromQueryParam ) );
+						}
+						return exitFlow(
+							paths.siteSetupImportListPath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+								origin: STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug,
+								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+							} )
+						);
+					}
 					set( 'staticSiteImport', staticSiteImport );
 					if ( staticSiteImport.action === 'created' ) {
 						return replace(
@@ -897,6 +927,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								siteId,
 								siteSlug,
 								from: fromQueryParam,
+								platform: platformQueryParam,
 								staticSiteImportSessionId: staticSiteImport.sessionId,
 							} )
 						);
