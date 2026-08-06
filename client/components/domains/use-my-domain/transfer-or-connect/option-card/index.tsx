@@ -1,4 +1,10 @@
-import { Icon, type IconType } from '@wordpress/components';
+import { Card } from '@automattic/components';
+import {
+	Icon,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	type IconType,
+} from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import type { ReactNode, ReactElement } from 'react';
@@ -33,34 +39,37 @@ export function OptionCard( {
 	const isActionable = !! onSelect && ! isPlaceholder;
 
 	return (
-		<button
+		<Card
+			tagName="button"
 			type="button"
+			onClick={ onSelect }
+			disabled={ disabled || ! isActionable }
 			className={ clsx( 'option-card', {
 				'option-card--is-placeholder': isPlaceholder,
 			} ) }
-			onClick={ onSelect }
-			disabled={ disabled || ! isActionable }
 		>
-			<span className="option-card__header">
-				<span className="option-card__header-top">
+			<VStack as="span" spacing={ 4 } className="option-card__header">
+				<HStack as="span" justify="space-between">
 					<span className="option-card__illustration">{ illustration }</span>
 					<Icon className="option-card__chevron" icon={ chevronRight } size={ 24 } />
-				</span>
-				<span className="option-card__title">{ titleText }</span>
-				<span className="option-card__top-text">{ topText }</span>
-			</span>
+				</HStack>
+				<VStack as="span" spacing={ 2 }>
+					<span className="option-card__title">{ titleText }</span>
+					<span className="option-card__top-text">{ topText }</span>
+				</VStack>
+			</VStack>
 			{ benefits && (
-				<span className="option-card__benefits">
+				<VStack as="span" spacing={ 3 } className="option-card__benefits">
 					{ benefits.map( ( benefit, index ) => (
-						<span className="option-card__benefit" key={ 'benefit-' + index }>
+						<HStack as="span" justify="flex-start" spacing={ 3 } key={ 'benefit-' + index }>
 							<span className="option-card__benefit-icon">
 								<Icon icon={ benefit.icon } size={ benefit.iconSize ?? 20 } />
 							</span>
 							<span className="option-card__benefit-text">{ benefit.text }</span>
-						</span>
+						</HStack>
 					) ) }
-				</span>
+				</VStack>
 			) }
-		</button>
+		</Card>
 	);
 }
