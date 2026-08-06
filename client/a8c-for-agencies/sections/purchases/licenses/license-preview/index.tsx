@@ -40,6 +40,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import usePaymentMethod from '../../payment-methods/hooks/use-payment-method';
+import CreateSiteButton from '../create-site-button';
+import useCreateSiteFromLicense from '../hooks/use-create-site-from-license';
 import LicenseDetails from '../license-details';
 import BundleDetails from '../license-details/bundle-details';
 import LicensesOverviewContext from '../licenses-overview/context';
@@ -140,17 +142,25 @@ export default function LicensePreview( {
 	}, [ dispatch, translate ] );
 
 	const { paymentMethodRequired } = usePaymentMethod();
+	const {
+		onCreateSite,
+		isProvisioning,
+		isLoading: isLoadingPendingSites,
+		modal: siteConfigurationsModal,
+	} = useCreateSiteFromLicense( licenseKey );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl && ! isPressableLicense ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
-	const assign = useCallback( () => {
-		const redirectUrl = isWPCOMLicense
-			? A4A_SITES_LINK_NEEDS_SETUP
-			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
-		if ( paymentMethodRequired && ! referral ) {
+	// Returns true when the action can't proceed, having told the agency why.
+	const isBlockedByMissingPaymentMethod = useCallback(
+		( returnUrl: string ) => {
+			if ( ! paymentMethodRequired || referral ) {
+				return false;
+			}
+
 			const noticeLinkHref = addQueryArgs(
 				{
-					return: redirectUrl,
+					return: returnUrl,
 				},
 				'/purchases/payment-methods/add'
 			);
@@ -166,11 +176,28 @@ export default function LicensePreview( {
 			);
 
 			dispatch( errorNotice( errorMessage ) );
+			return true;
+		},
+		[ dispatch, paymentMethodRequired, referral, translate ]
+	);
+
+	const assign = useCallback( () => {
+		const redirectUrl = addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
+
+		if ( isBlockedByMissingPaymentMethod( redirectUrl ) ) {
 			return;
 		}
 
 		page( redirectUrl );
-	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, referral, translate, dispatch ] );
+	}, [ isBlockedByMissingPaymentMethod, licenseKey ] );
+
+	const createSite = useCallback( () => {
+		if ( isBlockedByMissingPaymentMethod( A4A_SITES_LINK_NEEDS_SETUP ) ) {
+			return;
+		}
+
+		onCreateSite();
+	}, [ isBlockedByMissingPaymentMethod, onCreateSite ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
@@ -316,16 +343,26 @@ export default function LicensePreview( {
 							{ ! domain && licenseState === LicenseState.Detached && ! isPressableAddonLicense && (
 								<span className="license-preview__unassigned">
 									<Badge intent="warning">{ translate( 'Unassigned' ) }</Badge>
-									{ licenseType === LicenseType.Partner && ! isPressableAddonLicense && (
-										<Button
-											className="license-preview__assign-button"
-											borderless
-											compact
-											onClick={ assign }
-										>
-											{ isWPCOMLicense ? translate( 'Create site' ) : translate( 'Assign' ) }
-										</Button>
-									) }
+									{ licenseType === LicenseType.Partner &&
+										! isPressableAddonLicense &&
+										( isWPCOMLicense ? (
+											<CreateSiteButton
+												className="license-preview__assign-button"
+												borderless
+												isProvisioning={ isProvisioning }
+												isLoading={ isLoadingPendingSites }
+												onCreateSite={ createSite }
+											/>
+										) : (
+											<Button
+												className="license-preview__assign-button"
+												borderless
+												compact
+												onClick={ assign }
+											>
+												{ translate( 'Assign' ) }
+											</Button>
+										) ) }
 								</span>
 							) }
 							{ revokedAt && (
@@ -433,6 +470,7 @@ export default function LicensePreview( {
 						isDevSite={ isDevelopmentSite }
 					/>
 				) ) }
+			{ siteConfigurationsModal }
 		</div>
 	);
 }
