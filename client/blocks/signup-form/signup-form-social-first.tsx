@@ -128,6 +128,9 @@ const SignupFormSocialFirst = ( {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	// No other screen to be on, whatever the caller was given to start from.
 	const visibleStep = emailUpdate ? 'email' : currentStep;
+	// The one legal copy or the other, never both: whichever renders here has to be the one the
+	// form is then told not to render again.
+	const showsPartnerTerms = Boolean( emailUpdate && customTosElement );
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
@@ -334,13 +337,11 @@ const SignupFormSocialFirst = ( {
 				{ emailUpdate && notice }
 				{ /* Partner copy points at the options below it, and the form puts what it is given
 				     after the footer whenever there is a secondary action. */ }
-				{ emailUpdate && customTosElement && renderTermsOfService() }
+				{ showsPartnerTerms && renderTermsOfService() }
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
 						{ ...passwordlessFormProps }
-						renderTerms={
-							emailUpdate && customTosElement ? undefined : renderEmailStepTermsOfService
-						}
+						renderTerms={ showsPartnerTerms ? undefined : renderEmailStepTermsOfService }
 						secondaryFooterButton={ secondaryFooterButton }
 					/>
 					{ backButtonInFooter && ! emailUpdate ? (
