@@ -93,22 +93,6 @@ function sortMessagesByTimestamp( messages: ZendeskMessage[] ) {
 	} );
 }
 
-/**
- * Zendesk can emit more than one CSAT prompt for the same conversation. They are all rendered with
- * the same copy, so every extra one reads as a duplicate and lets the user submit conflicting
- * ratings for a single ticket. Only the most recent prompt is kept.
- * @param messages - Messages sorted by timestamp.
- */
-function dropSupersededCSATMessages( messages: ZendeskMessage[] ) {
-	const lastCSATMessage = messages
-		.filter( ( message ) => message.metadata?.type === 'csat' )
-		.at( -1 );
-
-	return messages.filter(
-		( message ) => message.metadata?.type !== 'csat' || message === lastCSATMessage
-	);
-}
-
 function useSmooch( enabled = true, integrationKey?: string ) {
 	const queryClient = useQueryClient();
 	const { data: authData, isFetching: isAuthenticatingZendeskMessaging } =
@@ -408,9 +392,7 @@ export const useManagedZendeskChat = ( {
 	);
 
 	const agentticMessages = useMemo( () => {
-		const rawMessages = dropSupersededCSATMessages(
-			sortMessagesByTimestamp( conversation?.messages ?? [] )
-		);
+		const rawMessages = sortMessagesByTimestamp( conversation?.messages ?? [] );
 		const chatSessionId = conversation?.metadata?.chat_session_id;
 		const ratingMessage = rawMessages.find( ( msg ) => msg.metadata?.rated === true );
 		const hasRated = ratingMessage !== undefined;
