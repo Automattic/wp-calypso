@@ -50,6 +50,7 @@ describe( '<AuthProvider> stats', () => {
 	afterEach( () => {
 		config.disable( 'wpcom-user-bootstrap' );
 		delete window.currentUser;
+		window.sessionStorage.clear();
 	} );
 
 	test( 'bumps a success stat when the bootstrapped user is available', async () => {
@@ -98,6 +99,60 @@ describe( '<AuthProvider> stats', () => {
 			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:unauthorized' )
 		);
 		expect( window.location.href ).toContain( '/log-in?redirect_to=' );
+	} );
+
+	test( 'does not bump a loop stat on the first bounce', async () => {
+		config.enable( 'wpcom-user-bootstrap' );
+
+		renderAuth();
+
+		await waitFor( () =>
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:bootstrap' )
+		);
+		expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-auth-loop', expect.anything() );
+	} );
+
+	test( 'bumps a loop stat with the bounce count when a bounce repeats within the loop window', async () => {
+		config.enable( 'wpcom-user-bootstrap' );
+		window.sessionStorage.setItem(
+			'wpcom_auth_bounce_count',
+			JSON.stringify( { count: 1, at: Date.now() } )
+		);
+
+		renderAuth();
+
+		await waitFor( () =>
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth-loop', '2' )
+		);
+	} );
+
+	test( 'caps the loop stat count', async () => {
+		config.enable( 'wpcom-user-bootstrap' );
+		window.sessionStorage.setItem(
+			'wpcom_auth_bounce_count',
+			JSON.stringify( { count: 20, at: Date.now() } )
+		);
+
+		renderAuth();
+
+		await waitFor( () =>
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth-loop', '10+' )
+		);
+	} );
+
+	test( 'does not bump a loop stat when the previous bounce is outside the loop window', async () => {
+		config.enable( 'wpcom-user-bootstrap' );
+		window.sessionStorage.setItem(
+			'wpcom_auth_bounce_count',
+			JSON.stringify( { count: 5, at: Date.now() - 60 * 1000 } )
+		);
+
+		renderAuth();
+
+		await waitFor( () =>
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:bootstrap' )
+		);
+		expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-auth-loop', expect.anything() );
 	} );
 
 	test( 'bumps a bounce stat when the session expires mid-app', async () => {

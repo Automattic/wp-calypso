@@ -22,6 +22,60 @@ export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
 const BOOTSTRAP_ERROR_MESSAGE = 'Failed to bootstrap user object';
 
+const AUTH_BOUNCE_COUNT_KEY = 'wpcom_auth_bounce_count';
+
+const AUTH_LOOP_WINDOW_MS = 30 * 1000;
+
+// Cap the reported loop count (reported as "10+") so a runaway loop can't
+// inflate stat cardinality.
+const AUTH_LOOP_MAX_COUNT = 10;
+
+interface AuthBounceRecord {
+	count: number;
+	at: number;
+}
+
+// bumpStat when we have a login redirect loop.
+// We track the time of the last bounce, and if it was within a window we count
+// it towards our loop count. This is more reliable than clearing the counter on
+// successful auth, because how do we know when it is safe to clear the count?
+// It could be that immediately after successful auth, the very next API returns
+// 401 and causes a bounce, yet we would have already cleared the count.
+function trackAuthBounceLoop() {
+	try {
+		const now = Date.now();
+		const storedRecord: unknown = JSON.parse(
+			window.sessionStorage.getItem( AUTH_BOUNCE_COUNT_KEY ) ?? 'null'
+		);
+		const previousRecord = isAuthBounceRecord( storedRecord ) ? storedRecord : null;
+		const withinWindow = previousRecord !== null && now - previousRecord.at < AUTH_LOOP_WINDOW_MS;
+		const count = withinWindow ? previousRecord.count + 1 : 1;
+
+		window.sessionStorage.setItem(
+			AUTH_BOUNCE_COUNT_KEY,
+			JSON.stringify( { count, at: now } satisfies AuthBounceRecord )
+		);
+
+		if ( count >= 2 ) {
+			const value = count >= AUTH_LOOP_MAX_COUNT ? `${ AUTH_LOOP_MAX_COUNT }+` : String( count );
+			bumpStat( 'dashboard-auth-loop', value );
+		}
+	} catch {
+		// sessionStorage can be unavailable in private contexts or JSON.parse may fail.
+	}
+}
+
+function isAuthBounceRecord( value: unknown ): value is AuthBounceRecord {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		'count' in value &&
+		typeof value.count === 'number' &&
+		'at' in value &&
+		typeof value.at === 'number'
+	);
+}
+
 function getOAuthAuthorizeUrl( {
 	state,
 	next = '',
@@ -138,6 +192,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			authErrorHandled.current = true;
 
 			bumpStat( 'dashboard-auth', `bounce:${ reason }` );
+			trackAuthBounceLoop();
 
 			if ( config.isEnabled( 'oauth' ) ) {
 				const state = crypto.randomUUID();
