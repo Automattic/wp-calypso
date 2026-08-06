@@ -231,8 +231,9 @@ describe( 'account step email verification gate', () => {
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 	} );
 
-	// Verification arriving while the field is open would take the user out of it mid-correction.
-	it( 'does not continue while the account screen is open', async () => {
+	// Confirming in another tab settles what the account screen was opened to change, so there is
+	// nothing left to correct and no reason to hold the user there.
+	it( 'continues when the address is confirmed while the account screen is open', async () => {
 		const user = userEvent.setup();
 		const store = makeStore( false );
 		const { submit } = renderUser( store );
@@ -246,7 +247,7 @@ describe( 'account step email verification gate', () => {
 			} );
 		} );
 
-		expect( submit ).not.toHaveBeenCalled();
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
 	} );
 
 	// It is fixed and full-screen, so it would sit over the field.
