@@ -333,6 +333,7 @@ describe( 'DomainConnectionVerification', () => {
 					domainData={ createMockDomain( {
 						primary_domain: false,
 						can_set_as_primary: true,
+						ssl_status: 'active',
 					} ) }
 				/>
 			);
@@ -341,6 +342,24 @@ describe( 'DomainConnectionVerification', () => {
 
 			expect( screen.getByText( 'Set example.com as your primary site address' ) ).toBeVisible();
 		} );
+
+		test.each( [ 'pending', 'newly_registered', 'inactive' ] as const )(
+			'does not display "Recommended" section when SSL is not active (ssl_status: %s)',
+			( sslStatus ) => {
+				render(
+					<DomainConnectionVerification
+						{ ...defaultProps }
+						domainData={ createMockDomain( {
+							primary_domain: false,
+							can_set_as_primary: true,
+							ssl_status: sslStatus,
+						} ) }
+					/>
+				);
+
+				expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
+			}
+		);
 
 		test( 'does not display "Recommended" section when domain is not primary and cannot be set as primary', () => {
 			render(
