@@ -51,6 +51,7 @@ export function ProductFilterSelect( { label, options, selectedOptions, onOption
 			</Button>
 
 			<PopoverMenu
+				className="product-filter-select__menu"
 				context={ buttonRef.current }
 				isVisible={ openDropdown }
 				onClose={ () => setOpenDropdown( false ) }
