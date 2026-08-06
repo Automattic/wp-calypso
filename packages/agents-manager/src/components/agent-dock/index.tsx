@@ -153,9 +153,8 @@ export default function AgentDock( {
 		onUndock: ( isResponsiveUndock ) => {
 			recordBigSkyTracksEvent( 'ai_chat_undocked' );
 
-			// The responsive undock opens the chat at the right corner (where
-			// the sidebar was) at the default size — persist that as the new
-			// floating state. Manual pop-outs keep the persisted values.
+			// The responsive undock opens right at the default size; persist that
+			// as the new floating state. Manual pop-outs keep the persisted values.
 			if ( ! isResponsiveUndock ) {
 				return;
 			}

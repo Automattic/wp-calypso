@@ -45,8 +45,7 @@ export default function AgentHistory( {
 
 	return (
 		<AgentUI.Container
-			// Remount on dock/undock so the floating panel re-seeds — the seed
-			// props are read at mount only.
+			// Remount on dock/undock so the mount-only seed props re-apply.
 			key={ isDocked ? 'embedded' : 'floating' }
 			{ ...floatingPanelProps }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
