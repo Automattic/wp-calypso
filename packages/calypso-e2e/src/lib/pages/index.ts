@@ -26,6 +26,8 @@ export * from './login-page';
 export * from './marketing-page';
 export * from './media-page';
 export * from './my-home-page';
+export * from './newsletter-goals-page';
+export * from './newsletter-setup-page';
 export * from './p2-page';
 export * from './pages-page';
 export * from './people-page';
