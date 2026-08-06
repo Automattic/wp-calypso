@@ -6,6 +6,8 @@ export interface OmnibarNode {
 	group?: boolean;
 	href?: string;
 	onClick?: () => void;
+	/** Highlights the button as active (e.g. while its related panel is open and hovered). */
+	isActive?: boolean;
 	meta?: SiteActionNodeMeta & UserInfoNodeMeta;
 	render?: ( node: OmnibarNode ) => React.ReactNode;
 	children?: OmnibarNode[];

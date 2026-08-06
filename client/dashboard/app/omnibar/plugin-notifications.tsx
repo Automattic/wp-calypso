@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { omnibarEvents, useOmnibarEvent } from './events';
+import { useElementIsHovered } from './use-element-is-hovered';
 import type { User } from '@automattic/api-core';
 import type { OmnibarNode } from '@automattic/omnibar';
 
@@ -21,10 +22,15 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState(
 		!! user?.has_unseen_notes
 	);
+	const [ isOpen, setIsOpen ] = useState( false );
 
 	useOmnibarEvent( 'notificationsUnseenCount', ( count ) =>
 		setHasUnseenNotifications( count > 0 )
 	);
+	useOmnibarEvent( 'notificationsOpen', setIsOpen );
+
+	const isHovered = useElementIsHovered( '.dashboard-notifications__popover' );
+	const isActive = isOpen && isHovered;
 
 	const bellRef = useRef< HTMLSpanElement >( null );
 
@@ -41,6 +47,7 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 				<BellIcon hasUnread={ hasUnseenNotifications } />
 			</span>
 		),
+		isActive,
 		onClick: () => omnibarEvents.notifications.emit(),
 	};
 }

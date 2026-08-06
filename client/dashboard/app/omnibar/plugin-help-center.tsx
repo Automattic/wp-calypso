@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useHelpCenter } from '../help-center';
+import { useElementIsHovered } from './use-element-is-hovered';
 import type { OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-help-center.scss';
@@ -24,10 +25,14 @@ function HelpIcon() {
 
 export function useHelpCenterPlugin(): OmnibarNode {
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
+	const isHovered = useElementIsHovered( '.help-center__container' );
+	const isActive = isHelpCenterShown && isHovered;
+
 	return {
 		id: 'help-center',
 		label: __( 'Help' ),
 		icon: <HelpIcon />,
+		isActive,
 		onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
 	};
 }

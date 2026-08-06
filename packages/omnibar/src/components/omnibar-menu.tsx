@@ -67,7 +67,9 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 
 export function OmnibarMenu( { node, className }: { node: OmnibarNode; className?: string } ) {
 	const label = node.title || node.label || '';
-	const menuClassName = className ? `omnibar__menu ${ className }` : 'omnibar__menu';
+	const menuClassName = [ 'omnibar__menu', className, node.isActive && 'is-active' ]
+		.filter( Boolean )
+		.join( ' ' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const triggerRef = useRef< HTMLElement >( null );
 	const popoverRef = useRef< HTMLElement >( null );

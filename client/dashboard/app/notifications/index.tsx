@@ -148,6 +148,7 @@ export default function Notifications( {
 	return (
 		<Dropdown
 			popoverProps={ {
+				className: 'dashboard-notifications__popover',
 				placement: 'bottom-start',
 				offset: 8,
 				focusOnMount: true,
