@@ -14,7 +14,7 @@ function LocationsNavTabs( {
 	givenSiteId,
 }: {
 	query: StatsQueryType & { geoMode?: UrlGeoMode };
-	givenSiteId?: number;
+	givenSiteId: number;
 } ) {
 	const optionLabels = useOptionLabels();
 	const tabPanelTabs = useMemo( () => {
