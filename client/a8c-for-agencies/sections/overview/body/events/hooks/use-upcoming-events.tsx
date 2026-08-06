@@ -7,6 +7,7 @@ import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketp
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
 import WordCampAsia2026Image from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-asia2026-compliment-image.svg';
 import WordCampAsia2026Logo from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-asia2026-image.svg';
+import WordCampUS2026Logo from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-us2026-image.webp';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -24,6 +25,47 @@ export const useUpcomingEvents = () => {
 
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
+			{
+				id: 'a4a-wordcamp-us-2026-08-16',
+				date: {
+					from: moment( '2026-08-16' ),
+					to: moment( '2026-08-19' ),
+				},
+				displayDate: translate( 'August 16th–19th · Phoenix, Arizona' ),
+				title: translate( 'Meet us at WordCamp US 2026' ),
+				subtitle: translate( 'Automattic for Agencies' ),
+				descriptions: [
+					translate(
+						'The teams behind WordPress.com, Woo, Jetpack, Pressable, and WordPress VIP are heading to Phoenix, and our agency partners get the inside track.'
+					),
+					translate(
+						'Save 25% on your WordCamp ticket with code {{code}}AGENCY25{{/code}}, then join us after hours at Automattic Connect for real talk and good company with our teams, customers, and fellow developers.',
+						{
+							components: {
+								code: <code />,
+							},
+						}
+					),
+				],
+				ctas: [
+					{
+						variant: 'primary',
+						label: translate( 'Get 25% off tickets' ),
+						url: 'https://us.wordcamp.org/2026/tickets/',
+						isExternal: true,
+						trackEventName: 'calypso_a4a_overview_events_wordcamp_us_2026_tickets_click',
+					},
+					{
+						variant: 'secondary',
+						label: translate( 'Join Automattic Connect' ),
+						url: 'https://luma.com/icioyddp?tk=sigiZu',
+						isExternal: true,
+						trackEventName: 'calypso_a4a_overview_events_wordcamp_us_2026_automattic_connect_click',
+					},
+				],
+				logoUrl: WordCampUS2026Logo,
+				dateClassName: 'a4a-event__date--wordcamp',
+			},
 			{
 				id: 'a4a-wordcamp-2026-event-2026-02-17',
 				date: {
