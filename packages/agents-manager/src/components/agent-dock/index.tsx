@@ -9,6 +9,7 @@ import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { columns, comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { AGENTTIC_CHAT_POSITION_STORAGE_KEY } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
@@ -166,10 +167,8 @@ export default function AgentDock( {
 			setFreeDragPosition( null );
 			setFloatingSize( null );
 
-			// `agenttic-ui` seeds its side from this key ahead of `initialChatPosition`.
-			// Keep in sync with `STORAGE_KEY` in `agenttic-ui/src/utils/chatStorage.ts`.
 			try {
-				localStorage.setItem( 'agenttic-chat-position', 'right' );
+				localStorage.setItem( AGENTTIC_CHAT_POSITION_STORAGE_KEY, 'right' );
 			} catch {
 				// `localStorage` unavailable.
 			}
