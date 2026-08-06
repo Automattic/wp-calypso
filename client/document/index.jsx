@@ -16,6 +16,7 @@ import EnvironmentBadge, {
 	ReactQueryDevtoolsHelper,
 	RtlCssDisabledHelper,
 	StoreSandboxHelper,
+	BlackboxHelper,
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -71,6 +72,7 @@ class Document extends Component {
 			sectionGroup,
 			sectionName,
 			storeSandboxHelper,
+			blackboxHelper,
 			target,
 			user,
 			useTranslationChunks,
@@ -236,6 +238,7 @@ class Document extends Component {
 							{ featuresHelper && <FeaturesHelper /> }
 							{ authHelper && <AuthHelper /> }
 							{ storeSandboxHelper && <StoreSandboxHelper /> }
+							{ blackboxHelper && <BlackboxHelper /> }
 							{ isRtlCssDisabled && <RtlCssDisabledHelper /> }
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
