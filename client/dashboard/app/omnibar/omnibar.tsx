@@ -4,6 +4,7 @@ import {
 	siteAdminBarQuery,
 	siteByIdQuery,
 } from '@automattic/api-queries';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
@@ -97,7 +98,13 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	if ( ! hydrated ) {
 		return <InitialOmnibar user={ user } />;
 	}
-	return <Omnibar nodes={ omnibarNodes } onClickResponsiveMenu={ onClickResponsiveMenu } />;
+	return (
+		<Omnibar
+			nodes={ omnibarNodes }
+			onClickResponsiveMenu={ onClickResponsiveMenu }
+			className={ isSupportSession() ? 'is-support-session' : undefined }
+		/>
+	);
 }
 
 export function InitialOmnibar( { user }: { user?: User } ) {

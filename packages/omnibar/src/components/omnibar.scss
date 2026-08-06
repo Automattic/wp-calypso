@@ -4,6 +4,13 @@
 body:has( .omnibar ) {
 	--omnibar-height: #{$omnibar-height-mobile};
 	--masterbar-height: var( --omnibar-height );
+	--omnibar-background: #{$omnibar-base-color};
+	--omnibar-menu-active-background: #{$omnibar-submenu-background};
+	--omnibar-submenu-background: #{$omnibar-submenu-background};
+	--omnibar-text-color: #{$omnibar-text-color};
+	--omnibar-highlight-color: #{$omnibar-highlight-color};
+	--omnibar-submenu-highlight-color: #{$omnibar-highlight-color};
+	--omnibar-avatar-ring-color: #{$omnibar-avatar-ring-color};
 
 	@media ( min-width: 782px ) {
 		--omnibar-height: #{$omnibar-height};
@@ -11,9 +18,6 @@ body:has( .omnibar ) {
 }
 
 .omnibar {
-	--omnibar-background: #{$omnibar-base-color};
-	--omnibar-menu-active-background: #{$omnibar-submenu-background};
-
 	background-color: var( --omnibar-background );
 	min-height: var( --omnibar-height );
 	height: var( --omnibar-height );
@@ -42,7 +46,7 @@ body:has( .omnibar ) {
 		height: var( --omnibar-height );
 		min-width: 52px;
 		padding: 0;
-		color: $omnibar-text-color;
+		color: var( --omnibar-text-color );
 		background-color: transparent;
 		font-family: inherit;
 		font-size: $omnibar-font-size;
@@ -58,7 +62,7 @@ body:has( .omnibar ) {
 		&:active,
 		&[aria-expanded='true'] {
 			background-color: var( --omnibar-menu-active-background );
-			color: $omnibar-text-color;
+			color: var( --omnibar-text-color );
 			box-shadow: none;
 			outline: none;
 		}
@@ -68,7 +72,7 @@ body:has( .omnibar ) {
 		}
 
 		&:focus-visible {
-			box-shadow: inset 0 0 0 2px $omnibar-highlight-color;
+			box-shadow: inset 0 0 0 2px var( --omnibar-highlight-color );
 			outline-offset: -2px;
 		}
 
@@ -219,12 +223,14 @@ body:has( .omnibar ) {
 	// All colors used by the Menu's internal Emotion styles read from these
 	// CSS custom properties (see node_modules/@wordpress/components/src/menu/styles.ts).
 	// Setting them here re-skins the entire popover without specificity wars.
-	--wp-components-color-background: #{$omnibar-submenu-background};
-	--wp-components-color-foreground: #{$omnibar-text-color};
+	--wp-components-color-background: var( --omnibar-submenu-background );
+	--wp-components-color-foreground: var( --omnibar-text-color );
 	--wp-components-color-accent: transparent; // hover/active item bg
-	--wp-components-color-accent-inverted: #{$omnibar-highlight-color}; // hover/active item text
+	--wp-components-color-accent-inverted: var(
+		--omnibar-submenu-highlight-color
+	); // hover/active item text
 	--wp-components-color-gray-100: transparent; // submenu-trigger-open bg
-	--wp-components-color-gray-700: #{$omnibar-text-color}; // prefix / suffix text
+	--wp-components-color-gray-700: var( --omnibar-text-color ); // prefix / suffix text
 
 	// Padding, border-radius, and the elevation portion of the popover's
 	// box-shadow are hardcoded (not tokens). Class is doubled to outrank
