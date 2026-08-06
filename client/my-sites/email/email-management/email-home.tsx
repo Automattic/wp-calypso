@@ -131,25 +131,30 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 	// first render can run on stale data. Waiting for the refetch to settle
 	// avoids sending someone who already bought email off to a purchase page,
 	// which a cross-origin navigation would make unrecoverable.
-	const redirectDomainName =
+	const canRedirectToDashboard =
 		isEnabled( 'emails/titan-tiers' ) &&
 		! selectedDomainName &&
 		! isSiteDomainLoading &&
-		! isSiteDomainFetching &&
-		domainsWithEmail.length < 1 &&
-		domainsWithNoEmail.length === 1
-			? domainsWithNoEmail[ 0 ].name
-			: undefined;
+		! isSiteDomainFetching;
+
+	let dashboardRedirectPath: string | undefined;
+	if ( canRedirectToDashboard ) {
+		if ( nonWpcomDomains.length < 1 ) {
+			// No custom domain to buy email for, so land on the emails index,
+			// which prompts for a domain first.
+			dashboardRedirectPath = '/emails';
+		} else if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
+			dashboardRedirectPath = `/emails/choose-email-solution/${ encodeURIComponent(
+				domainsWithNoEmail[ 0 ].name
+			) }`;
+		}
+	}
 
 	useEffect( () => {
-		if ( redirectDomainName ) {
-			navigate(
-				dashboardLink(
-					`/emails/choose-email-solution/${ encodeURIComponent( redirectDomainName ) }`
-				)
-			);
+		if ( dashboardRedirectPath ) {
+			navigate( dashboardLink( dashboardRedirectPath ) );
 		}
-	}, [ redirectDomainName ] );
+	}, [ dashboardRedirectPath ] );
 
 	if ( isSiteDomainLoading || ! hasSitesLoaded || ! selectedSite || ! domains ) {
 		return (
