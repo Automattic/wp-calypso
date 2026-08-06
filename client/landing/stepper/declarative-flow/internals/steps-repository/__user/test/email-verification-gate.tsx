@@ -215,6 +215,11 @@ describe( 'account step email verification gate', () => {
 		expect( screen.getByText( 'fixed@example.com' ) ).toBeVisible();
 		expect( screen.queryByText( EMAIL ) ).not.toBeInTheDocument();
 
+		// A second correction started before the first is acknowledged could set the address back
+		// to the one `/me` still reports, and then nothing would ever move.
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+		expect( screen.getByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+
 		// `/me` resolving a different account is a case this step already handles, and an address
 		// held over that would be offered to whoever it resolved.
 		act( () => {

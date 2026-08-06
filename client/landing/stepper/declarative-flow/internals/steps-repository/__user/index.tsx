@@ -11,6 +11,7 @@ import { AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-overlay';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Notice from 'calypso/components/notice';
@@ -176,7 +177,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		() => dispatch( fetchCurrentUser() as unknown as AnyAction ),
 		( isLoggedIn && gateStatus === 'pending' ) ||
 			isWaitingForCreatedAccount ||
-			awaitingRefresh ||
+			( awaitingRefresh && gateStatus !== 'gated' ) ||
 			( isEditingEmail && gateStatus === 'gated' )
 	);
 
@@ -202,6 +203,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			closeEditor( scope );
 			return;
 		}
+		setEditing( ( current ) =>
+			current?.scope === scope ? { ...current, error: undefined } : current
+		);
 		try {
 			await updateUserSettings( { user_email: email } );
 			// Tagged with the account it was written for, so a response landing after `/me` has
@@ -228,8 +232,12 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 	}, [ accepted, currentEmail ] );
 
-	const beginEmailEdit = () =>
+	const beginEmailEdit = () => {
+		if ( awaitingRefresh ) {
+			return;
+		}
 		setEditing( { scope: gateScopeForUser, startedFrom: verifyingEmail } );
+	};
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
@@ -282,6 +290,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// customTosElement would double-wrap it in <p>.
 	const stepContent = (
 		<>
+			{ isEditingEmail && <DocumentHead title={ translate( 'Create your account' ) } /> }
 			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
 			<SignupFormSocialFirst
 				stepName={ stepName }
