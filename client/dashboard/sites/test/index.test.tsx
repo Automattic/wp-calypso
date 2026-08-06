@@ -201,8 +201,11 @@ describe( '<Sites>', () => {
 
 	test.each( [
 		'my-first-site.wordpress.com',
+		'my-first-site.wordpress.com/',
 		'https://my-first-site.wordpress.com',
+		'https://my-first-site.wordpress.com/',
 		'http://my-first-site.wordpress.com',
+		'http://my-first-site.wordpress.com/',
 	] )( 'normalizes the site search query for %s', async ( search ) => {
 		const user = userEvent.setup();
 		mockSitesEndpoint( mockSites );
