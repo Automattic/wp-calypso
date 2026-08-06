@@ -256,6 +256,12 @@ export class FeedbackInboxPage {
 		if ( await this.isCentralFormManagement() ) {
 			for ( const folder of [ 'Inbox', 'Spam' ] as const ) {
 				await this.clickFolderTab( folder );
+				// Changing folder refetches without the search term — the request is
+				// `status=spam` with no `search=`, so the list comes back unfiltered and
+				// the row is only findable if it happens to be on the first page. Re-apply
+				// the search. Clear first: refilling the identical value fires no request.
+				await this.clearSearch( true );
+				await this.searchResponses( text );
 				if ( await this.hasResponseRow( text ) ) {
 					return folder;
 				}
