@@ -81,7 +81,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
-	const [ editEmailError, setEditEmailError ] = useState< string | null >( null );
+	const [ editEmailError, setEditEmailError ] = useState< {
+		scope: string;
+		message: string;
+	} | null >( null );
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
@@ -90,6 +93,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// address held over it, would offer one account's address to another.
 	const [ editingScope, setEditingScope ] = useState< string | null >( null );
 	const isEditingEmail = editingScope === gateScopeForUser;
+	const editorError = editEmailError?.scope === gateScopeForUser ? editEmailError.message : null;
 	// What `/me` will report once it catches up. Its refresh coalesces with a poll already running
 	// and reports no failure of its own, so the gate can't be handed back the address it just left.
 	const [ accepted, setAccepted ] = useState< { scope: string; email: string } | null >( null );
@@ -185,12 +189,14 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			// resolved a different one is ignored rather than shown as its address.
 			setAccepted( { scope, email } );
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
-			setEditingScope( null );
+			setEditingScope( ( current ) => ( current === scope ? null : current ) );
 		} catch ( error ) {
-			setEditEmailError(
-				( error as { message?: string } )?.message ??
-					translate( 'We couldn’t update your email address. Please try again.' )
-			);
+			setEditEmailError( {
+				scope,
+				message:
+					( error as { message?: string } )?.message ??
+					translate( 'We couldn’t update your email address. Please try again.' ),
+			} );
 		}
 	};
 
@@ -273,9 +279,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				userEmail={ ( isEditingEmail ? verifyingEmail : queryArgs.get( 'user_email' ) ) || '' }
 				notice={
 					isEditingEmail
-						? !! editEmailError && (
+						? !! editorError && (
 								<Notice status="is-error" showDismiss={ false }>
-									{ editEmailError }
+									{ editorError }
 								</Notice>
 						  )
 						: notice
@@ -413,7 +419,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				isWideLayout={ false }
 				isFullLayout
 				isLargeSkipLayout={ false }
-				hideBack={ ! navigation.goBack || isEditingEmail }
+				hideBack={ ! navigation.goBack }
 				goBack={ navigation.goBack }
 				stepContent={
 					<>
