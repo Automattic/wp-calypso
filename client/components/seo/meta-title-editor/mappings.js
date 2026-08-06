@@ -50,7 +50,7 @@ const mergeStringPieces = ( a, b ) => ( {
  * @returns {Array} List of native format pieces
  */
 export const rawToNative = ( list ) =>
-	list.map( ( p ) =>
+	( Array.isArray( list ) ? list : [] ).map( ( p ) =>
 		'string' === p.type ? { type: 'string', value: p.value } : { type: camelCase( p.value ) }
 	);
 
@@ -74,7 +74,7 @@ export const nativeToRaw = compose(
 			return [ ...format, piece ];
 		}, [] ),
 	( list ) =>
-		list.map( ( p ) => ( {
+		( Array.isArray( list ) ? list : [] ).map( ( p ) => ( {
 			type: p.type === 'string' ? 'string' : 'token',
 			value: p?.value ?? snakeCase( p.type ),
 		} ) )
