@@ -283,7 +283,7 @@ export default function BillingDragonCheckout( {
 		<CheckoutErrorBoundary
 			errorMessage={ translate( 'Sorry, there was an error loading the checkout page.' ) }
 		>
-			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
+			<CalypsoShoppingCartProvider dismissErrorNoticesOnUnmount shouldShowPersistentErrors>
 				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
 					<BillingDragonCheckoutContent
 						cartItems={ cartItems }

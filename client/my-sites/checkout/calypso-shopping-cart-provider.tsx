@@ -6,11 +6,12 @@ import { cartManagerClient } from './cart-manager-client';
 // A convenience wrapper around ShoppingCartProvider to set the necessary props
 // for calypso and to display error and success messages returned from calls to
 // the cart endpoint.
-// eslint-disable-next-line @typescript-eslint/ban-types
 export default function CalypsoShoppingCartProvider( {
 	children,
+	dismissErrorNoticesOnUnmount,
 	shouldShowPersistentErrors,
 }: PropsWithChildren< {
+	dismissErrorNoticesOnUnmount?: boolean;
 	/**
 	 * Persistent errors like "Purchases are disabled for this site" are returned
 	 * during cart fetch (regular cart errors are transient and only are returned
@@ -29,7 +30,10 @@ export default function CalypsoShoppingCartProvider( {
 
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient } options={ options }>
-			<CartMessages shouldShowPersistentErrors={ shouldShowPersistentErrors } />
+			<CartMessages
+				dismissErrorNoticesOnUnmount={ dismissErrorNoticesOnUnmount }
+				shouldShowPersistentErrors={ shouldShowPersistentErrors }
+			/>
 			{ children }
 		</ShoppingCartProvider>
 	);
