@@ -6,10 +6,11 @@ if ( process.env.STATIC_SITE_IMPORT_E2E ) {
 		{ tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS ] },
 		() => {
 			test( 'reviews, approves, and observes a mocked import session without production writes', async ( {
+				accountDefaultUser,
 				page,
-				sitePublic,
 			} ) => {
 				let approved = false;
+				await accountDefaultUser.authenticate( page );
 				await page
 					.context()
 					.route( '**/wpcom/v2/sites/*/static-site-import-session**', async ( route ) => {
@@ -49,8 +50,9 @@ if ( process.env.STATIC_SITE_IMPORT_E2E ) {
 					} );
 
 				await test.step( 'Given a mocked static import preview', async () => {
+					const siteSlug = accountDefaultUser.getSiteURL( { protocol: false } );
 					await page.goto(
-						`/setup/site-migration/static-site-import-review?siteId=${ sitePublic.blog_details.blogid }&siteSlug=${ sitePublic.blog_details.site_slug }&from=https%3A%2F%2Fsource.example&ref=move-lp`
+						`/setup/site-migration/static-site-import-review?siteSlug=${ siteSlug }&from=https%3A%2F%2Fsource.example&ref=move-lp`
 					);
 					await expect( page.getByText( 'Your import preview is ready.' ) ).toBeVisible();
 				} );
