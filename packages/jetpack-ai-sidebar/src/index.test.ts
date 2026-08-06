@@ -2927,6 +2927,7 @@ describe( 'toolProvider', () => {
 	} );
 
 	afterEach( () => {
+		jest.useRealTimers();
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
 	} );
@@ -3007,6 +3008,42 @@ describe( 'toolProvider', () => {
 			] );
 			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
 				'original block content'
+			);
+			checkpoint.clearCheckpoint( 'call-update-block' );
+		} );
+
+		it( 'surfaces a failed block checkpoint restore', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				summary: 'Corrected the grammar in the selected paragraph.',
+				toolCallId: 'call-update-block',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content = 'A later block edit.';
+
+			await expect( checkpoint.restoreCheckpoint( 'call-update-block' ) ).rejects.toThrow(
+				'Failed to restore block edit checkpoint.'
+			);
+			expect( blockUpdates ).toEqual( [
+				{
+					clientId: '550e8400-e29b-41d4-a716-446655440000',
+					attrs: { content: 'Corrected block content.' },
+				},
+			] );
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'A later block edit.'
 			);
 			checkpoint.clearCheckpoint( 'call-update-block' );
 		} );

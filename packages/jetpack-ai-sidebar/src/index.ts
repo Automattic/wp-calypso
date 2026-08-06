@@ -958,12 +958,15 @@ export function useCheckpoint(): any {
 		async restoreCheckpoint( id: string ): Promise< void > {
 			const blockEditSnapshot = blockEditSnapshots.get( id );
 			if ( blockEditSnapshot ) {
-				undoBlockEdit(
+				const didRestore = undoBlockEdit(
 					blockEditSnapshot.clientId,
 					blockEditSnapshot.contentBefore,
 					blockEditSnapshot.contentAfter,
 					blockEditSnapshot.editableAttribute
 				);
+				if ( ! didRestore ) {
+					throw new Error( 'Failed to restore block edit checkpoint.' );
+				}
 				return;
 			}
 

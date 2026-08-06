@@ -94,8 +94,8 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 			}
 
 			&__status {
-				background: rgba( 74, 184, 102, 0.2 );
-				color: #4ab866;
+				background: var( --color-success-background );
+				color: var( --color-success );
 				font-weight: 600;
 			}
 
