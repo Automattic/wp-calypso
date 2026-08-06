@@ -24,6 +24,7 @@ import {
 	getFrContactFormLayout,
 	getFrExtra,
 	hasFrDomain,
+	withFrOrganizationValidation,
 } from './fr-contact-fields';
 import { RegionAddressFieldsLayout } from './region-address-fieldsets';
 import {
@@ -125,8 +126,8 @@ export default function ContactForm( {
 	const frRegistrantType = getFrExtra( normalizedFormData ).registrantType;
 	const needsCaFields = useMemo( () => hasCaDomain( domainNames ), [ domainNames ] );
 
-	const fields: Field< DomainContactDetails >[] = useMemo(
-		() => [
+	const fields: Field< DomainContactDetails >[] = useMemo( () => {
+		const composedFields = [
 			...getContactFormFields(
 				countryList ?? [],
 				statesList ?? [],
@@ -136,19 +137,19 @@ export default function ContactForm( {
 			...( needsUkFields ? getUkContactFormFields( ukRegistrantType ) : [] ),
 			...( needsFrFields ? getFrContactFormFields( frRegistrantType ) : [] ),
 			...( needsCaFields ? getCaContactFormFields() : [] ),
-		],
-		[
-			countryList,
-			statesList,
-			selectedCountryCode,
-			asyncValidator,
-			needsUkFields,
-			ukRegistrantType,
-			needsFrFields,
-			frRegistrantType,
-			needsCaFields,
-		]
-	);
+		];
+		return needsFrFields ? withFrOrganizationValidation( composedFields ) : composedFields;
+	}, [
+		countryList,
+		statesList,
+		selectedCountryCode,
+		asyncValidator,
+		needsUkFields,
+		ukRegistrantType,
+		needsFrFields,
+		frRegistrantType,
+		needsCaFields,
+	] );
 
 	const form = {
 		layout: { type: 'regular' as const },

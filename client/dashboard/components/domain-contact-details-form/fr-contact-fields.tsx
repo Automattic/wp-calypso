@@ -95,6 +95,11 @@ function setFrExtra(
  * one is present, whatever the registrant type. A value left behind by an
  * earlier selection could fail validation with no control on screen to correct
  * it.
+ *
+ * The contact's organization name is cleared too: AFNIC decides whether a `.fr`
+ * registrant is a legal entity by the contact carrying an organization, not by
+ * the registrant type we store, so an individual with an organization name
+ * would still be registered as a legal entity — one with no SIREN or VAT.
  */
 function setFrRegistrantType(
 	item: DomainContactDetails,
@@ -103,6 +108,7 @@ function setFrRegistrantType(
 	const { registrantVatId, sirenSiret, trademarkNumber, ...rest } = getFrExtra( item );
 
 	return {
+		...( 'individual' === registrantType && item.organization ? { organization: '' } : {} ),
 		extra: {
 			...item.extra,
 			fr: {
@@ -118,6 +124,48 @@ function setFrRegistrantType(
 			},
 		},
 	};
+}
+
+/**
+ * The error shown on the organization field when a `.fr` individual registrant
+ * has one, and null otherwise.
+ *
+ * Guards the state setFrRegistrantType's clearing cannot reach: the registrant
+ * typing an organization back in after selecting the individual type. Left
+ * alone, that combination registers the contact as a legal entity at AFNIC.
+ */
+export function validateFrOrganization( data: DomainContactDetails ): string | null {
+	if ( 'individual' === getFrExtra( data ).registrantType && data.organization ) {
+		return __(
+			'An individual .fr registrant cannot have an organization. Clear this field, or choose the company or organization option.'
+		);
+	}
+	return null;
+}
+
+/**
+ * Layers the `.fr` individual-registrant rule onto the shared organization
+ * field, ahead of whatever validation the field already carries.
+ */
+export function withFrOrganizationValidation(
+	fields: Field< DomainContactDetails >[]
+): Field< DomainContactDetails >[] {
+	return fields.map( ( field ) => {
+		if ( field.id !== 'organization' ) {
+			return field;
+		}
+
+		const baseCustom = field.isValid?.custom;
+
+		return {
+			...field,
+			isValid: {
+				...field.isValid,
+				custom: async ( data, normalizedField ) =>
+					validateFrOrganization( data ) ?? ( await baseCustom?.( data, normalizedField ) ) ?? null,
+			},
+		};
+	} );
 }
 
 export function hasFrOrganizationFields( registrantType?: string ) {

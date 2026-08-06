@@ -5,6 +5,8 @@ import {
 	hasFrDomain,
 	isFrDomain,
 	mapWhoisExtraToFrContactExtra,
+	validateFrOrganization,
+	withFrOrganizationValidation,
 } from '../fr-contact-fields';
 import type { DomainContactDetails } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -150,6 +152,46 @@ describe( 'getFrContactFormFields', () => {
 		} );
 	} );
 
+	it( 'clears the organization name when the registrant switches to individual', () => {
+		const item: DomainContactDetails = {
+			optOutTransferLock: false,
+			organization: 'Some organization name',
+			extra: { fr: { registrantType: 'organization' } },
+		};
+
+		const registrantType = fieldById(
+			getFrContactFormFields( 'organization' ),
+			FR_FIELD_IDS.registrantType
+		);
+
+		// AFNIC decides legal-entity status by the contact carrying an organization,
+		// so leaving the name behind would register the individual as a legal entity.
+		expect( registrantType?.setValue?.( { item, value: 'individual' } ) ).toEqual( {
+			organization: '',
+			extra: { fr: { registrantType: 'individual' } },
+		} );
+	} );
+
+	it( 'leaves the organization name alone for other registrant type changes', () => {
+		const item: DomainContactDetails = {
+			optOutTransferLock: false,
+			organization: 'Some organization name',
+			extra: { fr: { registrantType: 'individual' } },
+		};
+
+		const registrantType = fieldById(
+			getFrContactFormFields( 'individual' ),
+			FR_FIELD_IDS.registrantType
+		);
+
+		expect( registrantType?.setValue?.( { item, value: 'organization' } ) ).toEqual( {
+			extra: { fr: { registrantType: 'organization' } },
+		} );
+		expect( registrantType?.setValue?.( { item, value: '' } ) ).toEqual( {
+			extra: { fr: { registrantType: '' } },
+		} );
+	} );
+
 	it( 'keeps the organization values when the registrant switches back to organization', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
@@ -216,6 +258,86 @@ describe( 'getFrContactFormFields', () => {
 		expect( pattern.test( '' ) ).toBe( true );
 		expect( pattern.test( '12345678' ) ).toBe( false );
 		expect( pattern.test( '0123456789' ) ).toBe( false );
+	} );
+} );
+
+describe( 'validateFrOrganization', () => {
+	it( 'rejects an organization name on an individual registrant', () => {
+		expect(
+			validateFrOrganization( {
+				optOutTransferLock: false,
+				organization: 'Some organization name',
+				extra: { fr: { registrantType: 'individual' } },
+			} )
+		).toEqual( expect.any( String ) );
+	} );
+
+	it( 'accepts an individual registrant with no organization name', () => {
+		expect(
+			validateFrOrganization( {
+				optOutTransferLock: false,
+				organization: '',
+				extra: { fr: { registrantType: 'individual' } },
+			} )
+		).toBeNull();
+	} );
+
+	it( 'accepts an organization registrant with an organization name', () => {
+		expect(
+			validateFrOrganization( {
+				optOutTransferLock: false,
+				organization: 'Some organization name',
+				extra: { fr: { registrantType: 'organization' } },
+			} )
+		).toBeNull();
+	} );
+
+	it( 'accepts an organization name while no registrant type is selected', () => {
+		expect(
+			validateFrOrganization( {
+				optOutTransferLock: false,
+				organization: 'Some organization name',
+			} )
+		).toBeNull();
+	} );
+} );
+
+describe( 'withFrOrganizationValidation', () => {
+	const normalizedField = {} as Parameters<
+		NonNullable< NonNullable< Field< DomainContactDetails >[ 'isValid' ] >[ 'custom' ] >
+	>[ 1 ];
+
+	it( 'layers the rule onto the organization field and keeps its existing validator', async () => {
+		const baseCustom = jest.fn().mockResolvedValue( 'base error' );
+		const fields = withFrOrganizationValidation( [
+			{ id: 'organization', type: 'text', isValid: { custom: baseCustom } },
+			{ id: 'email', type: 'email' },
+		] );
+
+		const conflicted: DomainContactDetails = {
+			optOutTransferLock: false,
+			organization: 'Some organization name',
+			extra: { fr: { registrantType: 'individual' } },
+		};
+		await expect( fields[ 0 ].isValid?.custom?.( conflicted, normalizedField ) ).resolves.toEqual(
+			expect.any( String )
+		);
+		expect( baseCustom ).not.toHaveBeenCalled();
+
+		const fine: DomainContactDetails = {
+			optOutTransferLock: false,
+			organization: 'Some organization name',
+			extra: { fr: { registrantType: 'organization' } },
+		};
+		await expect( fields[ 0 ].isValid?.custom?.( fine, normalizedField ) ).resolves.toBe(
+			'base error'
+		);
+	} );
+
+	it( 'leaves other fields untouched', () => {
+		const emailField = { id: 'email', type: 'email' } as Field< DomainContactDetails >;
+
+		expect( withFrOrganizationValidation( [ emailField ] )[ 0 ] ).toBe( emailField );
 	} );
 } );
 
