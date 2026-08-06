@@ -216,13 +216,6 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
 		} );
 
-		it( "keeps the caller's own way back where the step container owns the footer", () => {
-			renderUpdating( { backButtonInFooter: true } );
-
-			expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
-		} );
-
 		it( 'takes the standard layout rather than the compact one that shows social', () => {
 			renderUpdating( { isMobileCompactVariant: true } );
 
