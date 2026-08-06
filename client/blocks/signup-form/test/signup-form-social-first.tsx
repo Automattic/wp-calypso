@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SignupFormSocialFirst, {
 	MobileCompactTosNotice,
 } from 'calypso/blocks/signup-form/signup-form-social-first';
@@ -192,6 +193,124 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.queryByText( /Continue with GitHub/i ) ).not.toBeInTheDocument();
 		} );
 	} );
+
+	describe( 'emailUpdate', () => {
+		const renderUpdating = ( props = {} ) =>
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="typo@example.com"
+					onUpdateEmail={ jest.fn() }
+					{ ...props }
+				/>
+			);
+
+		beforeEach( () => jest.clearAllMocks() );
+
+		// Which of the two would otherwise render depends on where the step container puts its back
+		// button, so neither may.
+		it.each( [
+			[ 'the footer', true ],
+			[ 'the form', false ],
+		] )(
+			'offers no way back to signing up with the back button in %s',
+			( _label, backButtonInFooter ) => {
+				renderUpdating( { backButtonInFooter } );
+
+				expect(
+					screen.queryByRole( 'button', { name: 'See all options' } )
+				).not.toBeInTheDocument();
+				expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+			}
+		);
+
+		it( 'takes the standard layout rather than the compact one that shows social', () => {
+			renderUpdating( { isMobileCompactVariant: true } );
+
+			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'textbox' ) ).toBeVisible();
+		} );
+
+		it( 'says it is updating, not signing up, while the request is in flight', async () => {
+			renderUpdating( {
+				onUpdateEmail: () => new Promise< void >( () => {} ),
+			} );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( await screen.findByRole( 'button', { name: 'Updating…' } ) ).toBeVisible();
+		} );
+
+		it( 'mounts the email field once, with nothing to sign up with', () => {
+			renderUpdating( {
+				isEmailFirstVariant: true,
+				customTosElement: <span>Partner terms apply.</span>,
+			} );
+
+			expect( screen.getAllByRole( 'textbox' ) ).toHaveLength( 1 );
+			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
+			expect( screen.getAllByText( 'Partner terms apply.' ) ).toHaveLength( 1 );
+		} );
+
+		it( 'shows the email screen even when it was given no address to start from', () => {
+			renderUpdating( { userEmail: '' } );
+
+			expect(
+				screen.getByRole( 'textbox' ).closest( '.signup-form-social-first-screen' )
+			).toHaveClass( 'visible' );
+		} );
+
+		it( 'shows what the caller has to say, and a partner its own terms', () => {
+			renderUpdating( {
+				notice: <div>That address is already in use.</div>,
+				customTosElement: <span>Partner terms apply.</span>,
+			} );
+
+			const emailScreenEl = screen
+				.getByRole( 'textbox' )
+				.closest( '.signup-form-social-first-screen' ) as HTMLElement;
+			const emailScreen = within( emailScreenEl );
+			expect( emailScreen.getByText( 'That address is already in use.' ) ).toBeVisible();
+			// On text content: the generic terms are split across links, so no node holds the phrase.
+			expect( emailScreenEl ).not.toHaveTextContent( 'By clicking' );
+
+			// Partner copy points at the options below it, so it can't sit under them.
+			const terms = emailScreen.getByText( 'Partner terms apply.' );
+			expect(
+				terms.compareDocumentPosition( screen.getByRole( 'button', { name: 'Continue' } ) )
+			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+		} );
+
+		// Otherwise a refusal leaves the field and the button with nothing to press.
+		it( 'gives the screen back when the change is refused', async () => {
+			renderUpdating( {
+				onUpdateEmail: () => Promise.reject( new Error( 'nope' ) ),
+			} );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( await screen.findByRole( 'button', { name: 'Continue' } ) ).toBeEnabled();
+		} );
+	} );
+
+	it.each( [
+		[ true, 'Back', 'See all options' ],
+		[ false, 'See all options', 'Back' ],
+	] )(
+		'leaves an ordinary signup its own way back, footer: %s',
+		( backButtonInFooter, shown, hidden ) => {
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="new@example.com"
+					backButtonInFooter={ backButtonInFooter }
+				/>
+			);
+
+			expect( screen.getByRole( 'button', { name: shown } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: hidden } ) ).not.toBeInTheDocument();
+		}
+	);
 
 	describe( 'MobileCompactTosNotice', () => {
 		test( 'renders the "options above" copy', () => {

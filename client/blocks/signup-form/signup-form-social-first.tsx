@@ -55,6 +55,10 @@ interface SignupFormSocialFirst {
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 	activationEmailFrom?: string;
+	// Replaces account creation with a change to the account the caller already has, making this an
+	// email-only screen: nothing on it offers a second account. Submitting the address unchanged is
+	// how the caller gets its user back, so there is nothing else to leave by.
+	onUpdateEmail?: ( email: string ) => Promise< void >;
 }
 
 const options = {
@@ -114,12 +118,19 @@ const SignupFormSocialFirst = ( {
 	allowedSocialServices,
 	customTosElement,
 	activationEmailFrom,
+	onUpdateEmail,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
+	let submitButtonLoadingLabel;
+	if ( onUpdateEmail ) {
+		submitButtonLoadingLabel = __( 'Updating…' );
+	} else if ( isGravatar ) {
+		submitButtonLoadingLabel = __( 'Continue' );
+	}
 
 	const renderTermsOfService = () => {
 		// Custom ToS element takes priority (from partner branding)
@@ -162,6 +173,10 @@ const SignupFormSocialFirst = ( {
 	};
 
 	const renderEmailStepTermsOfService = () => {
+		// Partner legal copy is otherwise only on the screen this mode never shows.
+		if ( onUpdateEmail && customTosElement ) {
+			return <p className="signup-form-social-first__email-tos-link">{ customTosElement }</p>;
+		}
 		return (
 			<p className="signup-form-social-first__email-tos-link">
 				{ createInterpolateElement(
@@ -211,7 +226,8 @@ const SignupFormSocialFirst = ( {
 		},
 		onCreateAccountSuccess,
 		inputPlaceholder: isGravatar ? __( 'Enter your email address' ) : undefined,
-		submitButtonLoadingLabel: isGravatar ? __( 'Continue' ) : undefined,
+		onUpdateEmail,
+		submitButtonLoadingLabel,
 	};
 
 	const emailLoginBlock = isEmailFirstVariant ? (
@@ -227,6 +243,25 @@ const SignupFormSocialFirst = ( {
 			} ) }
 		</p>
 	);
+
+	// Only the email field, and no way from it to a second account: no social form, nothing that
+	// returns to one, and no other screen mounted — the signup screen stacks in the same grid cell
+	// and the email-first variants mount a second `signup-email` input on it.
+	if ( onUpdateEmail ) {
+		return (
+			<div className="signup-form signup-form-social-first">
+				<div className={ clsx( 'signup-form-social-first-screen', 'visible' ) }>
+					{ notice }
+					<div className="signup-form-social-first-email">
+						<PasswordlessSignupForm
+							{ ...passwordlessFormProps }
+							renderTerms={ renderEmailStepTermsOfService }
+						/>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	if ( isMobileCompactVariant ) {
 		// In-form ToS: partner branding wins via customTosElement (rendered by
