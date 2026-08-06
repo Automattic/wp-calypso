@@ -4,11 +4,7 @@
 import { act } from '@testing-library/react';
 import { useState } from 'react';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
-import {
-	INSTALL_DEADLINE_MS,
-	clearInstallAnchor,
-	useInstallDeadline,
-} from '../use-install-deadline';
+import { INSTALL_DEADLINE_MS, useInstallDeadline } from '../use-install-deadline';
 
 const mockFetchLatestAtomicTransfer = jest.fn();
 
@@ -18,20 +14,35 @@ jest.mock( '@automattic/api-core', () => ( {
 } ) );
 
 const SITE_ID = 1;
-const SLUG = 'js-composer';
+
+const transfer = ( {
+	id = 10,
+	status,
+	agoMs = 0,
+}: {
+	id?: number;
+	status: string;
+	agoMs?: number;
+} ) => ( {
+	atomic_transfer_id: id,
+	blog_id: SITE_ID,
+	status,
+	created_at: new Date( Date.now() - agoMs ).toISOString(),
+	is_stuck: false,
+	is_stuck_reset: false,
+	in_lossless_revert: false,
+} );
 
 const renderDeadline = ( enabled = true ) =>
-	renderHookWithProvider( () =>
-		useInstallDeadline( { siteId: SITE_ID, productSlug: SLUG, enabled } )
-	);
+	renderHookWithProvider( () => useInstallDeadline( { siteId: SITE_ID, enabled } ) );
 
-// Lets a test flip `enabled` on a live hook, which is what an async preflight error does.
+// Lets a test flip `enabled`, which is what an async preflight error does to a live wait.
 const renderSwitchableDeadline = () => {
 	let setEnabled: ( value: boolean ) => void = () => {};
 	const rendered = renderHookWithProvider( () => {
 		const [ enabled, set ] = useState( true );
 		setEnabled = set;
-		return useInstallDeadline( { siteId: SITE_ID, productSlug: SLUG, enabled } );
+		return useInstallDeadline( { siteId: SITE_ID, enabled } );
 	} );
 	return { ...rendered, setEnabled: ( value: boolean ) => act( () => setEnabled( value ) ) };
 };
@@ -46,8 +57,7 @@ const advance = async ( ms: number ) => {
 describe( 'useInstallDeadline', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
-		jest.setSystemTime( new Date( '2026-08-03T12:00:00Z' ) );
-		window.sessionStorage.clear();
+		jest.setSystemTime( new Date( '2026-08-06T12:00:00Z' ) );
 		mockFetchLatestAtomicTransfer.mockRejectedValue(
 			Object.assign( new Error( '404' ), { status: 404 } )
 		);
@@ -57,90 +67,31 @@ describe( 'useInstallDeadline', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'does not time out while the wait is still within the deadline', async () => {
+	it( 'does not time out inside the deadline', async () => {
 		const { result } = renderDeadline();
-
 		await advance( INSTALL_DEADLINE_MS - 10000 );
-
 		expect( result.current.hasTimedOut ).toBe( false );
 	} );
 
-	it( 'times out once the wait passes the deadline', async () => {
+	it( 'times out once the deadline passes', async () => {
 		const { result } = renderDeadline();
-
 		await advance( INSTALL_DEADLINE_MS + 10000 );
-
 		expect( result.current.hasTimedOut ).toBe( true );
-	} );
-
-	// Refreshing is the natural reaction to a bar that has stopped moving, and a mount-anchored
-	// timer would hand the customer a fresh five minutes every time they did it.
-	it( 'keeps the deadline across a remount, so a refresh cannot restart the clock', async () => {
-		const first = renderDeadline();
-		await advance( INSTALL_DEADLINE_MS - 10000 );
-		first.unmount();
-
-		const { result } = renderDeadline();
-		await advance( 20000 );
-
-		expect( result.current.hasTimedOut ).toBe( true );
-	} );
-
-	it( 'starts a fresh clock once the previous attempt is retired', async () => {
-		const first = renderDeadline();
-		await advance( INSTALL_DEADLINE_MS - 10000 );
-		first.unmount();
-		clearInstallAnchor( SITE_ID, SLUG );
-
-		const { result } = renderDeadline();
-		await advance( 20000 );
-
-		expect( result.current.hasTimedOut ).toBe( false );
 	} );
 
 	it( 'stays disarmed when the wait is not running', async () => {
 		const { result } = renderDeadline( false );
-
 		await advance( INSTALL_DEADLINE_MS * 2 );
-
 		expect( result.current.hasTimedOut ).toBe( false );
 		expect( result.current.hasTransferFailed ).toBe( false );
 	} );
 
-	it( 'reports a current transfer that failed', async () => {
-		mockFetchLatestAtomicTransfer.mockResolvedValue( {
-			status: 'error',
-			created_at: new Date( Date.now() - 30000 ).toISOString(),
-		} );
-
-		const { result } = renderDeadline();
-		await advance( 15000 );
-
-		expect( result.current.hasTransferFailed ).toBe( true );
-	} );
-
-	// The trap the persisted Redux slice falls into: an old transfer's failure is not evidence
-	// about the install running now.
-	it( 'ignores a failure from a transfer too old to belong to this attempt', async () => {
-		mockFetchLatestAtomicTransfer.mockResolvedValue( {
-			status: 'error',
-			created_at: new Date( Date.now() - 6 * 60 * 60 * 1000 ).toISOString(),
-		} );
-
-		const { result } = renderDeadline();
-		await advance( 15000 );
-
-		expect( result.current.hasTransferFailed ).toBe( false );
-		expect( result.current.hasTimedOut ).toBe( false );
-	} );
-
-	// Checkout starts the transfer server-side, so the wait the customer sees began before the page
-	// they are looking at ever mounted.
-	it( 'counts the wait from the transfer the checkout already started', async () => {
-		mockFetchLatestAtomicTransfer.mockResolvedValue( {
-			status: 'active',
-			created_at: new Date( Date.now() - ( INSTALL_DEADLINE_MS - 20000 ) ).toISOString(),
-		} );
+	// The transfer checkout started is the thing being waited on, and the server's own record of
+	// when it began is what a refresh cannot reset.
+	it( 'counts the wait from a running transfer that started before this page', async () => {
+		mockFetchLatestAtomicTransfer.mockResolvedValue(
+			transfer( { status: 'active', agoMs: INSTALL_DEADLINE_MS - 20000 } )
+		);
 
 		const { result } = renderDeadline();
 		await advance( 30000 );
@@ -148,126 +99,68 @@ describe( 'useInstallDeadline', () => {
 		expect( result.current.hasTimedOut ).toBe( true );
 	} );
 
-	// A retry after a timed-out attempt must not inherit the old clock: the anchor is retired when
-	// the wait is called off, so the next mount starts fresh.
-	it( 'starts a fresh clock for a retry after the wait was called off', async () => {
-		const first = renderDeadline();
-		await advance( INSTALL_DEADLINE_MS + 10000 );
-		expect( first.result.current.hasTimedOut ).toBe( true );
-		first.unmount();
-
-		const { result } = renderDeadline();
-		await advance( 20000 );
-
-		expect( result.current.hasTimedOut ).toBe( false );
-	} );
-
-	// A retry whose transfer is already visible server-side moves the clock to it, even if a stale
-	// anchor from the previous attempt survived.
-	it( 'moves the clock to a newer transfer instead of a stale anchor', async () => {
-		window.sessionStorage.setItem(
-			`marketplace-install-started-at:${ SITE_ID }:${ SLUG }`,
-			String( Date.now() - ( INSTALL_DEADLINE_MS + 60000 ) )
-		);
-		mockFetchLatestAtomicTransfer.mockResolvedValue( {
-			status: 'active',
-			created_at: new Date( Date.now() - 30000 ).toISOString(),
-		} );
-
-		const { result } = renderDeadline();
-		await advance( 15000 );
-
-		expect( result.current.hasTimedOut ).toBe( false );
-	} );
-
-	// On the upload flow the new transfer is not created until the upload finishes, so early polls
-	// still return the previous attempt's failed transfer. It is recent, but it is not this
-	// attempt's failure. (Three minutes old: beyond the pre-mount grace, within the deadline.)
-	it( 'does not report a recent failure from the previous attempt as this attempt failing', async () => {
-		mockFetchLatestAtomicTransfer.mockResolvedValue( {
-			status: 'error',
-			created_at: new Date( Date.now() - 3 * 60 * 1000 ).toISOString(),
-		} );
-
-		const { result } = renderDeadline();
-		await advance( 15000 );
-
-		expect( result.current.hasTransferFailed ).toBe( false );
-		expect( result.current.hasTimedOut ).toBe( false );
-	} );
-
-	// An async preflight error disables the wait mid-flight. The attempt is over, so its elapsed
-	// clock must not be handed to whatever the customer tries next in the same tab.
-	it( 'retires the attempt when the wait is disabled before it resolved', async () => {
-		const { setEnabled } = renderSwitchableDeadline();
-		await advance( INSTALL_DEADLINE_MS - 30000 );
-		setEnabled( false );
-
-		expect(
-			window.sessionStorage.getItem( `marketplace-install-started-at:${ SITE_ID }:${ SLUG }` )
-		).toBeNull();
-
-		const { result } = renderDeadline();
-		await advance( 60000 );
-
-		expect( result.current.hasTimedOut ).toBe( false );
-	} );
-
-	// The previous try's failed transfer is what /latest keeps returning until the upload creates a
-	// new one. Treating it as settled would end the poll, and this attempt's transfer — and its own
-	// failure — would never be seen.
-	it( 'keeps polling past a settled transfer that is not this attempt’s', async () => {
-		mockFetchLatestAtomicTransfer.mockResolvedValue( {
-			status: 'error',
-			created_at: new Date( Date.now() - 3 * 60 * 1000 ).toISOString(),
-		} );
-
-		const { result } = renderDeadline();
-		await advance( 15000 );
-		expect( result.current.hasTransferFailed ).toBe( false );
-
-		const callsBefore = mockFetchLatestAtomicTransfer.mock.calls.length;
-		mockFetchLatestAtomicTransfer.mockResolvedValue( {
-			status: 'active',
-			created_at: new Date( Date.now() ).toISOString(),
-		} );
-		await advance( 30000 );
-
-		expect( mockFetchLatestAtomicTransfer.mock.calls.length ).toBeGreaterThan( callsBefore );
-		expect( result.current.hasTimedOut ).toBe( false );
-	} );
-
-	// A previous try's transfer must not backdate this attempt's clock, or the deadline fires early
-	// by however long ago that one started.
-	it( 'does not backdate the deadline to a previous attempt’s transfer', async () => {
-		mockFetchLatestAtomicTransfer.mockResolvedValue( {
-			status: 'error',
-			created_at: new Date( Date.now() - 4 * 60 * 1000 ).toISOString(),
-		} );
-
-		const { result } = renderDeadline();
-		await advance( 2 * 60 * 1000 );
-
-		expect( result.current.hasTimedOut ).toBe( false );
-	} );
-
-	// ...but once this mount has watched that transfer running, its failure is this attempt's.
-	it( 'reports a failure after watching the transfer run', async () => {
-		mockFetchLatestAtomicTransfer.mockResolvedValue( {
-			status: 'active',
-			created_at: new Date( Date.now() - 3 * 60 * 1000 ).toISOString(),
-		} );
-
+	it( 'reports a transfer that errored after this wait watched it running', async () => {
+		mockFetchLatestAtomicTransfer.mockResolvedValue( transfer( { status: 'active' } ) );
 		const { result, rerender } = renderDeadline();
-		await advance( 15000 );
+		await advance( 6000 );
 
-		mockFetchLatestAtomicTransfer.mockResolvedValue( {
-			status: 'error',
-			created_at: new Date( Date.now() - 3 * 60 * 1000 ).toISOString(),
-		} );
+		mockFetchLatestAtomicTransfer.mockResolvedValue( transfer( { status: 'error' } ) );
 		rerender();
-		await advance( 15000 );
+		await advance( 6000 );
 
 		expect( result.current.hasTransferFailed ).toBe( true );
+	} );
+
+	// The endpoint returns the site's latest transfer, not ours. On the upload flow no new transfer
+	// exists until the upload finishes, so the previous attempt's failure is what comes back.
+	it( 'ignores a failed transfer this wait never watched running', async () => {
+		mockFetchLatestAtomicTransfer.mockResolvedValue(
+			transfer( { id: 99, status: 'error', agoMs: 3 * 60 * 1000 } )
+		);
+
+		const { result } = renderDeadline();
+		await advance( 10000 );
+
+		expect( result.current.hasTransferFailed ).toBe( false );
+	} );
+
+	// Attribution is by transfer id, so a revert of a different transfer is not this wait's failure.
+	it( 'ignores a revert of a transfer other than the one being watched', async () => {
+		mockFetchLatestAtomicTransfer.mockResolvedValue( transfer( { id: 10, status: 'active' } ) );
+		const { result, rerender } = renderDeadline();
+		await advance( 6000 );
+
+		mockFetchLatestAtomicTransfer.mockResolvedValue(
+			transfer( { id: 77, status: 'reverted', agoMs: 60000 } )
+		);
+		rerender();
+		await advance( 6000 );
+
+		expect( result.current.hasTransferFailed ).toBe( false );
+	} );
+
+	it( 'reports a revert of the transfer it watched running', async () => {
+		mockFetchLatestAtomicTransfer.mockResolvedValue( transfer( { id: 10, status: 'active' } ) );
+		const { result, rerender } = renderDeadline();
+		await advance( 6000 );
+
+		mockFetchLatestAtomicTransfer.mockResolvedValue( transfer( { id: 10, status: 'reverted' } ) );
+		rerender();
+		await advance( 6000 );
+
+		expect( result.current.hasTransferFailed ).toBe( true );
+	} );
+
+	// An async preflight error takes over mid-wait. The attempt is over, so whatever the customer
+	// tries next must not inherit its elapsed clock.
+	it( 'starts a fresh clock when the wait is disabled and then resumes', async () => {
+		const { result, setEnabled } = renderSwitchableDeadline();
+		await advance( INSTALL_DEADLINE_MS - 20000 );
+
+		setEnabled( false );
+		setEnabled( true );
+		await advance( 40000 );
+
+		expect( result.current.hasTimedOut ).toBe( false );
 	} );
 } );

@@ -40,7 +40,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import { chooseInstallStrategy } from './install-strategy';
 import { useDelayedCondition } from './use-delayed-condition';
-import { useInstallDeadline, UPLOAD_ANCHOR_SLUG } from './use-install-deadline';
+import { useInstallDeadline } from './use-install-deadline';
 import useMarketplaceAdditionalSteps from './use-marketplace-additional-steps';
 import { useThankYouRedirect } from './use-thank-you-redirect';
 
@@ -323,7 +323,6 @@ export function useProductInstall( {
 
 	const { hasTimedOut, hasTransferFailed } = useInstallDeadline( {
 		siteId,
-		productSlug: pluginSlug || themeSlug || UPLOAD_ANCHOR_SLUG,
 		enabled: !! siteId && ! preflightError && ! isUploadStillSending,
 	} );
 

@@ -14,6 +14,11 @@ export type AtomicTransferStatus =
 	| 'cleanup';
 
 export interface AtomicTransfer {
+	atomic_transfer_id: number;
+	blog_id: number;
 	status: AtomicTransferStatus;
 	created_at: string;
+	is_stuck: boolean;
+	is_stuck_reset: boolean;
+	in_lossless_revert: boolean;
 }

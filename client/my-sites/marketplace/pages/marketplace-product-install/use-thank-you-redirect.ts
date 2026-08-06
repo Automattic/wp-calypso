@@ -8,7 +8,6 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
-import { clearInstallAnchor, UPLOAD_ANCHOR_SLUG } from './use-install-deadline';
 import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
 
 // The redirect machinery: once a flow completes it fetches the freshest site data, resolves the
@@ -111,7 +110,6 @@ export function useThankYouRedirect( {
 	// is also when the URL below resolves.
 	useEffect( () => {
 		if ( installedPlugin && pluginActive && pluginsUrlFinal ) {
-			clearInstallAnchor( siteId, pluginSlug || UPLOAD_ANCHOR_SLUG );
 			window.location.href = pluginsUrlFinal;
 		}
 	}, [ installedPlugin, pluginActive, pluginsUrlFinal, siteId, pluginSlug ] );
@@ -119,7 +117,6 @@ export function useThankYouRedirect( {
 	// Validate theme is already active
 	useEffect( () => {
 		if ( themeSlug && wpOrgTheme && isThemeActive ) {
-			clearInstallAnchor( siteId, themeSlug );
 			page.redirect(
 				`/marketplace/thank-you/${ selectedSiteSlug }?themes=${ themeSlug }&hide-progress-bar`
 			);
