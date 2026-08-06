@@ -39,7 +39,7 @@ function renderAuth() {
 	};
 }
 
-describe( '<AuthProvider>', () => {
+describe( '<AuthProvider> stats', () => {
 	beforeEach( () => {
 		Object.defineProperty( window, 'location', {
 			writable: true,
@@ -59,7 +59,7 @@ describe( '<AuthProvider>', () => {
 		renderAuth();
 
 		expect( await screen.findByText( 'signed in' ) ).toBeVisible();
-		expect( mockedBumpStat ).toHaveBeenCalledWith( 'hd-auth', 'success:bootstrap' );
+		expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'success:bootstrap' );
 	} );
 
 	test( 'bumps a bounce stat and redirects to login when the bootstrapped user is missing', async () => {
@@ -68,7 +68,7 @@ describe( '<AuthProvider>', () => {
 		renderAuth();
 
 		await waitFor( () =>
-			expect( mockedBumpStat ).toHaveBeenCalledWith( 'hd-auth', 'bounce:bootstrap' )
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:bootstrap' )
 		);
 		expect( window.location.href ).toContain( '/log-in?redirect_to=' );
 		expect( screen.queryByText( 'signed in' ) ).not.toBeInTheDocument();
@@ -83,7 +83,7 @@ describe( '<AuthProvider>', () => {
 		renderAuth();
 
 		expect( await screen.findByText( 'signed in' ) ).toBeVisible();
-		expect( mockedBumpStat ).toHaveBeenCalledWith( 'hd-auth', 'success:fetch' );
+		expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'success:fetch' );
 	} );
 
 	test( 'bumps a bounce stat and redirects to login when fetching the user is unauthorized', async () => {
@@ -95,7 +95,7 @@ describe( '<AuthProvider>', () => {
 		renderAuth();
 
 		await waitFor( () =>
-			expect( mockedBumpStat ).toHaveBeenCalledWith( 'hd-auth', 'bounce:unauthorized' )
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:unauthorized' )
 		);
 		expect( window.location.href ).toContain( '/log-in?redirect_to=' );
 	} );
@@ -117,7 +117,7 @@ describe( '<AuthProvider>', () => {
 		).rejects.toBe( error );
 
 		await waitFor( () =>
-			expect( mockedBumpStat ).toHaveBeenCalledWith( 'hd-auth', 'bounce:expired' )
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:expired' )
 		);
 	} );
 } );

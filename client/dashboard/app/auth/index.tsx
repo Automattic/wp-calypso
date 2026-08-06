@@ -137,7 +137,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 
 			authErrorHandled.current = true;
 
-			bumpStat( 'hd-auth', `bounce:${ reason }` );
+			bumpStat( 'dashboard-auth', `bounce:${ reason }` );
 
 			if ( config.isEnabled( 'oauth' ) ) {
 				const state = crypto.randomUUID();
@@ -202,7 +202,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 
 			if ( ! successStatBumped.current ) {
 				successStatBumped.current = true;
-				bumpStat( 'hd-auth', shouldUseBootstrap() ? 'success:bootstrap' : 'success:fetch' );
+				bumpStat( 'dashboard-auth', shouldUseBootstrap() ? 'success:bootstrap' : 'success:fetch' );
 			}
 		}
 	}, [ user ] );
