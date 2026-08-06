@@ -121,8 +121,6 @@ const SignupFormSocialFirst = ( {
 	onUpdateEmail,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
-	// No other screen to be on, whatever the caller was given to start from.
-	const visibleStep = onUpdateEmail ? 'email' : currentStep;
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
@@ -195,7 +193,7 @@ const SignupFormSocialFirst = ( {
 	// to handle the visibility of the steps while preserving their layout properties and avoiding shifts.
 	const getVisibilityClassName = ( step: Screen ) => {
 		return clsx( 'signup-form-social-first-screen', {
-			visible: visibleStep === step,
+			visible: currentStep === step,
 		} );
 	};
 
@@ -232,15 +230,6 @@ const SignupFormSocialFirst = ( {
 		submitButtonLoadingLabel,
 	};
 
-	let secondaryFooterButton;
-	if ( ! onUpdateEmail && ! backButtonInFooter ) {
-		secondaryFooterButton = (
-			<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
-				{ __( 'See all options' ) }
-			</Button>
-		);
-	}
-
 	const emailLoginBlock = isEmailFirstVariant ? (
 		<div className="signup-form-social-first-email">
 			<PasswordlessSignupForm { ...passwordlessFormProps } />
@@ -255,8 +244,26 @@ const SignupFormSocialFirst = ( {
 		</p>
 	);
 
-	// This layout has no screens: it puts the social form and the email one on the same page.
-	if ( isMobileCompactVariant && ! onUpdateEmail ) {
+	// Only the email field, and no way from it to a second account: no social form, nothing that
+	// returns to one, and no other screen mounted — the signup screen stacks in the same grid cell
+	// and the email-first variants mount a second `signup-email` input on it.
+	if ( onUpdateEmail ) {
+		return (
+			<div className="signup-form signup-form-social-first">
+				<div className={ clsx( 'signup-form-social-first-screen', 'visible' ) }>
+					{ notice }
+					<div className="signup-form-social-first-email">
+						<PasswordlessSignupForm
+							{ ...passwordlessFormProps }
+							renderTerms={ renderEmailStepTermsOfService }
+						/>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	if ( isMobileCompactVariant ) {
 		// In-form ToS: partner branding wins via customTosElement (rendered by
 		// renderTermsOfService); otherwise the compact "options above" notice.
 		const inFormTosElement = customTosElement ? renderTermsOfService() : <MobileCompactTosNotice />;
@@ -287,47 +294,48 @@ const SignupFormSocialFirst = ( {
 
 	return (
 		<div className="signup-form signup-form-social-first">
-			{ /* Not merely hidden: it stacks in the same grid cell, and the email-first variants mount
-			     a second `signup-email` input on it that steals the visible label and the focus. */ }
-			{ ! onUpdateEmail && (
-				<div className={ getVisibilityClassName( 'initial' ) }>
-					{ notice }
-					{ renderTermsOfService() }
-					{ emailLoginBlock && ! isEmailAtBottom && (
-						<>
-							{ emailLoginBlock }
-							<FormDivider isHorizontal />
-						</>
-					) }
-					<SocialSignupForm
-						handleResponse={ handleSocialResponse }
-						setCurrentStep={ setCurrentStep }
-						socialServiceResponse={ socialServiceResponse }
-						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
-						disableTosText
-						compact
-						isSocialFirst={ isSocialFirst }
-						shouldShowEmailButton={ ! isEmailFirstVariant }
-						allowedSocialServices={ allowedSocialServices }
-					/>
-					{ emailLoginBlock && isEmailAtBottom && (
-						<>
-							<FormDivider isHorizontal />
-							{ emailLoginBlock }
-						</>
-					) }
-					{ isEmailFirstVariant && loginLinkParagraph }
-				</div>
-			) }
+			<div className={ getVisibilityClassName( 'initial' ) }>
+				{ notice }
+				{ renderTermsOfService() }
+				{ emailLoginBlock && ! isEmailAtBottom && (
+					<>
+						{ emailLoginBlock }
+						<FormDivider isHorizontal />
+					</>
+				) }
+				<SocialSignupForm
+					handleResponse={ handleSocialResponse }
+					setCurrentStep={ setCurrentStep }
+					socialServiceResponse={ socialServiceResponse }
+					redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
+					disableTosText
+					compact
+					isSocialFirst={ isSocialFirst }
+					shouldShowEmailButton={ ! isEmailFirstVariant }
+					allowedSocialServices={ allowedSocialServices }
+				/>
+				{ emailLoginBlock && isEmailAtBottom && (
+					<>
+						<FormDivider isHorizontal />
+						{ emailLoginBlock }
+					</>
+				) }
+				{ isEmailFirstVariant && loginLinkParagraph }
+			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
-				{ onUpdateEmail && notice }
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
 						{ ...passwordlessFormProps }
 						renderTerms={ renderEmailStepTermsOfService }
-						secondaryFooterButton={ secondaryFooterButton }
+						secondaryFooterButton={
+							backButtonInFooter ? undefined : (
+								<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
+									{ __( 'See all options' ) }
+								</Button>
+							)
+						}
 					/>
-					{ backButtonInFooter && ! onUpdateEmail ? (
+					{ backButtonInFooter ? (
 						<Button
 							onClick={ () => setCurrentStep( 'initial' ) }
 							className="back-button"
