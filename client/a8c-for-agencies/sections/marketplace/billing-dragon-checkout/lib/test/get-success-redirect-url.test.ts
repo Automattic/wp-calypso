@@ -20,4 +20,26 @@ describe( 'getSuccessRedirectUrl', () => {
 			`receipt_id=${ RECEIPT_ID_PLACEHOLDER }`
 		);
 	} );
+
+	it( 'sends WordPress.com purchases to the needs setup page with the purchased plan', () => {
+		expect(
+			getSuccessRedirectUrl( 'https://agencies.automattic.com', false, 'wpcom-hosting-business' )
+		).toBe(
+			'https://agencies.automattic.com/sites/need-setup?wpcom_creator_purchased=wpcom-hosting-business'
+		);
+	} );
+
+	it( 'keeps the receipt ID placeholder alongside the purchased plan', () => {
+		expect(
+			getSuccessRedirectUrl( 'https://agencies.automattic.com', true, 'wpcom-hosting-business' )
+		).toBe(
+			'https://agencies.automattic.com/sites/need-setup?wpcom_creator_purchased=wpcom-hosting-business&receipt_id=:receiptId'
+		);
+	} );
+
+	it( 'falls back to the licenses URL when no WordPress.com plan was purchased', () => {
+		expect( getSuccessRedirectUrl( 'https://agencies.automattic.com', false, null ) ).toBe(
+			'https://agencies.automattic.com/purchases/licenses'
+		);
+	} );
 } );
