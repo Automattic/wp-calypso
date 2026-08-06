@@ -16,10 +16,16 @@ import { fixtureAccounts, test as setup } from '../lib/pw-base';
 // created, which is where most of the CI login timeouts come from.
 //
 // Every CI build type names the accounts its group logs in as, so this list only applies to
-// a local run. An account missing from it still works: getAccount falls back to logging in
-// inline, which is what every account did before this project existed.
+// a local run and to a CI run with no test group. An account missing from it still works:
+// getAccount falls back to logging in inline, which is what every account did before this
+// project existed.
+//
+// Only accounts more than one spec file logs in as are worth listing. Playwright runs a file
+// in a single worker, so an account reached from one file is never raced: priming it just
+// moves its login earlier, and when that login is broken the build pays for it twice.
+const singleSpecAccounts: TestAccountName[] = [ 'p2User', 'i18nUser' ];
 const defaultAccountNames: TestAccountName[] = [
-	...Object.values( fixtureAccounts ),
+	...Object.values( fixtureAccounts ).filter( ( name ) => ! singleSpecAccounts.includes( name ) ),
 	// Not a fixture, but the account many specs select through a criteria override.
 	'simpleSitePersonalPlanUser',
 ];
