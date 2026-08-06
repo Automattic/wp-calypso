@@ -1,7 +1,10 @@
 import { dispatch } from '@wordpress/data';
-import type { AdminBarNode, OmnibarNode, OmnibarNodes } from '../types';
+import type { AdminBarNode, OmnibarNode, OmnibarNodeBuilders, OmnibarNodes } from '../types';
 
-export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[] ): OmnibarNodes {
+export function buildOmnibarNodesFromAdminBarNodes(
+	adminBarNodes: AdminBarNode[],
+	builders?: OmnibarNodeBuilders
+): OmnibarNodes {
 	const omnibarNodes: OmnibarNodes = {};
 	const siteActionNodes: OmnibarNode[] = [];
 
@@ -13,6 +16,10 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 			href: node.href,
 			group: node.group,
 		};
+
+		if ( node.meta?.class?.split( ' ' ).includes( 'ab-sub-secondary' ) ) {
+			omnibarNode.variant = 'secondary';
+		}
 
 		switch ( node.id ) {
 			case 'wp-logo':
@@ -113,6 +120,11 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 				};
 				break;
 			}
+		}
+
+		const builder = builders?.[ node.id ];
+		if ( builder ) {
+			Object.assign( omnibarNode, builder( node ) );
 		}
 
 		nodeMap.set( node.id, omnibarNode );

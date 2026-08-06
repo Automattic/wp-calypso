@@ -5,6 +5,8 @@ import { useRef, useState } from 'react';
 import { OmnibarNodeContent } from './omnibar-node';
 import type { OmnibarNode } from '../types';
 
+import './omnibar-menu.scss';
+
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
 	'@wordpress/components'
@@ -54,7 +56,12 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 				</Menu.Group>
 			) }
 			{ groups.map( ( group ) => (
-				<Menu.Group key={ group.id }>
+				<Menu.Group
+					key={ group.id }
+					className={
+						group.variant ? `omnibar__menu-group is-${ group.variant }` : 'omnibar__menu-group'
+					}
+				>
 					{ group.title && <Menu.GroupLabel>{ group.title }</Menu.GroupLabel> }
 					{ ( group.children || [] ).map( ( item ) => (
 						<OmnibarMenuItem key={ item.id } node={ item } />
@@ -89,7 +96,7 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 	}
 
 	const handleMouseLeave = ( event: React.MouseEvent ) => {
-		const movingTo = event.relatedTarget as Node | null;
+		const movingTo = event.relatedTarget instanceof Node ? event.relatedTarget : null;
 		if (
 			! triggerRef.current?.contains( movingTo ) &&
 			! popoverRef.current?.contains( movingTo )
