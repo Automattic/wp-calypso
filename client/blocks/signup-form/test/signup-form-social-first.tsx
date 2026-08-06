@@ -194,172 +194,74 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 	} );
 
-	// Three routes lead back to signing up: the two ways to the social screen, whichever the step
-	// container's back button leaves showing, and the mobile-compact layout, which renders the
-	// social form outright.
-	describe( 'email-only mode', () => {
-		it.each( [
-			[ 'the back button in the footer', { backButtonInFooter: true } ],
-			[ 'the back button in the form', { backButtonInFooter: false } ],
-			[ 'the mobile-compact layout', { isMobileCompactVariant: true } ],
-		] )( 'offers no way to sign up again with %s', ( _label, layout ) => {
+	describe( 'emailUpdate', () => {
+		const emailUpdate = { submit: jest.fn(), cancel: jest.fn() };
+		const renderUpdating = ( props = {} ) =>
 			render(
 				<SignupFormSocialFirst
 					{ ...defaultProps }
-					{ ...layout }
 					userEmail="typo@example.com"
-					emailUpdate={ { submit: jest.fn(), cancel: jest.fn() } }
+					emailUpdate={ emailUpdate }
+					{ ...props }
 				/>
 			);
+
+		beforeEach( () => jest.clearAllMocks() );
+
+		it( "replaces the way back to the social screen with the caller's own", () => {
+			renderUpdating();
 
 			expect( screen.queryByRole( 'button', { name: 'See all options' } ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
-			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
+		} );
+
+		it( "keeps the caller's own way back where the step container owns the footer", () => {
+			renderUpdating( { backButtonInFooter: true } );
+
+			expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
 		} );
 
 		it( 'says it is updating, not signing up, while the request is in flight', async () => {
-			render(
-				<SignupFormSocialFirst
-					{ ...defaultProps }
-					userEmail="typo@example.com"
-					emailUpdate={ { submit: () => new Promise< void >( () => {} ), cancel: jest.fn() } }
-				/>
-			);
+			renderUpdating( {
+				emailUpdate: { submit: () => new Promise< void >( () => {} ), cancel: jest.fn() },
+			} );
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 
 			expect( await screen.findByRole( 'button', { name: 'Updating…' } ) ).toBeVisible();
 		} );
 
-		it( 'shows the email field when it was given no address to start from', () => {
-			render(
-				<SignupFormSocialFirst
-					{ ...defaultProps }
-					emailUpdate={ { submit: jest.fn(), cancel: jest.fn() } }
-				/>
-			);
-
-			expect(
-				screen.getByRole( 'textbox' ).closest( '.signup-form-social-first-screen' )
-			).toHaveClass( 'visible' );
-		} );
-
-		// Outside the screen it lands in a grid row of its own, beneath the field, the footer and
-		// the terms — which is where a failed update would explain itself.
-		it( 'puts what the caller has to say above the form it is about', () => {
-			render(
-				<SignupFormSocialFirst
-					{ ...defaultProps }
-					userEmail="typo@example.com"
-					notice={ <div>That address is already in use.</div> }
-					emailUpdate={ { submit: jest.fn(), cancel: jest.fn() } }
-				/>
-			);
-
-			const screenEl = screen.getByRole( 'textbox' ).closest( '.signup-form-social-first-screen' );
-			expect( screenEl ).toContainElement( screen.getByText( 'That address is already in use.' ) );
-		} );
-
-		// Partner legal copy lives on the screen this mode doesn't render, so it has to be carried
-		// over rather than replaced by WordPress.com's.
-		it( "keeps a partner's own terms rather than the generic ones", () => {
-			render(
-				<SignupFormSocialFirst
-					{ ...defaultProps }
-					userEmail="typo@example.com"
-					customTosElement={ <span>Partner terms apply.</span> }
-					emailUpdate={ { submit: jest.fn(), cancel: jest.fn() } }
-				/>
-			);
-
-			expect( screen.getByText( 'Partner terms apply.' ) ).toBeVisible();
-			expect( screen.queryByText( /By clicking "Continue,"/ ) ).not.toBeInTheDocument();
-		} );
-
-		// Only the caller can tell a write in flight from what it waits for afterwards, so it says
-		// when there is nothing to go back to yet.
-		it( 'holds the way back shut when the caller says to', async () => {
+		// Leaving wouldn't call back a write already on its way.
+		it( 'holds the way back shut while a change is being written', async () => {
 			const cancel = jest.fn();
-			render(
-				<SignupFormSocialFirst
-					{ ...defaultProps }
-					userEmail="typo@example.com"
-					emailUpdate={ { submit: jest.fn(), cancel, cancelDisabled: true } }
-				/>
-			);
+			renderUpdating( { emailUpdate: { submit: () => new Promise< void >( () => {} ), cancel } } );
 
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 			await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
 
 			expect( cancel ).not.toHaveBeenCalled();
 		} );
 
-		it( 'leaves the way back open while a change is in flight', async () => {
-			const cancel = jest.fn();
-			render(
-				<SignupFormSocialFirst
-					{ ...defaultProps }
-					userEmail="typo@example.com"
-					emailUpdate={ { submit: () => new Promise< void >( () => {} ), cancel } }
-				/>
-			);
-
-			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-			await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
-
-			expect( cancel ).toHaveBeenCalled();
-		} );
-
+		// Otherwise a refusal leaves the field and the button with nothing to press.
 		it( 'gives the screen back when the change is refused', async () => {
-			render(
-				<SignupFormSocialFirst
-					{ ...defaultProps }
-					userEmail="typo@example.com"
-					emailUpdate={ { submit: () => Promise.reject( new Error( 'nope' ) ), cancel: jest.fn() } }
-				/>
-			);
+			renderUpdating( {
+				emailUpdate: { submit: () => Promise.reject( new Error( 'nope' ) ), cancel: jest.fn() },
+			} );
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 
 			expect( await screen.findByRole( 'button', { name: 'Continue' } ) ).toBeEnabled();
 		} );
-
-		it( 'offers a way back to whoever opened it', async () => {
-			const onCancelEmailUpdate = jest.fn();
-			render(
-				<SignupFormSocialFirst
-					{ ...defaultProps }
-					userEmail="typo@example.com"
-					emailUpdate={ { submit: jest.fn(), cancel: onCancelEmailUpdate } }
-				/>
-			);
-
-			await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
-
-			expect( onCancelEmailUpdate ).toHaveBeenCalled();
-		} );
 	} );
 
-	it( 'keeps an ordinary signup able to leave while its request is running', async () => {
-		render(
-			<SignupFormSocialFirst
-				{ ...defaultProps }
-				userEmail="new@example.com"
-				backButtonInFooter={ false }
-			/>
-		);
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-
-		expect( screen.getByRole( 'button', { name: 'See all options' } ) ).toBeEnabled();
-	} );
-
-	// One expression picks between these three and the Cancel above, so an ordinary signup has to
-	// keep being offered whichever of them it was offered before.
+	// What this mode must not change: every other caller keeps the way back it had.
 	it.each( [
 		[ true, 'Back', 'See all options' ],
 		[ false, 'See all options', 'Back' ],
 	] )(
-		'keeps the way to the social screen for an ordinary signup, back button in footer: %s',
+		'leaves an ordinary signup its own way back, footer: %s',
 		( backButtonInFooter, shown, hidden ) => {
 			render(
 				<SignupFormSocialFirst

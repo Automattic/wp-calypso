@@ -114,6 +114,23 @@ describe( 'activation email source', () => {
 describe( 'email update mode', () => {
 	const mockStore = configureStore( [ thunk ] );
 
+	const renderWith = ( props ) =>
+		render(
+			<Provider store={ mockStore( {} ) }>
+				<PasswordlessSignupForm
+					secondaryFooterButton={ <button type="button">Go back</button> }
+					{ ...props }
+				/>
+			</Provider>
+		);
+
+	const submit = async () => {
+		fireEvent.change( screen.getByRole( 'textbox', { name: /email/i } ), {
+			target: { value: 'test@example.com' },
+		} );
+		fireEvent.click( screen.getByRole( 'button', { name: /create your account/i } ) );
+	};
+
 	// A second typo while correcting the first is not a signup that failed, and the signup funnel
 	// shouldn't carry it.
 	it( 'records no signup failure when a correction is invalid', () => {
@@ -131,5 +148,22 @@ describe( 'email update mode', () => {
 
 		expect( screen.getByText( /valid email address/i ) ).toBeInTheDocument();
 		expect( store.getActions() ).toHaveLength( 0 );
+	} );
+
+	// What this mode must not change: an ordinary signup keeps its way back while it waits.
+	it( 'leaves an ordinary signup its way back while the account is being created', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/users/new' )
+			.delay( 10000 )
+			.reply( 200, {} );
+
+		renderWith( {} );
+		await submit();
+
+		await waitFor( () =>
+			expect( screen.getByRole( 'button', { name: /creating your account/i } ) ).toBeDisabled()
+		);
+		expect( screen.getByRole( 'button', { name: 'Go back' } ) ).toBeEnabled();
+		nock.cleanAll();
 	} );
 } );

@@ -55,16 +55,12 @@ interface SignupFormSocialFirst {
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 	activationEmailFrom?: string;
-	// Replaces account creation with a change to the account the caller already has. Its presence
-	// makes this an email-only screen: every route to signing up again is dropped, since taking
-	// one would make the second account the caller is here to avoid. `cancel` is then the only way
-	// off that screen, so it isn't separately optional.
+	// Replaces account creation with a change to the account the caller already has. The email
+	// screen is already only the email field, so all this mode does is take away the way back to
+	// the social one and put `cancel` in its place — the caller's own way out.
 	emailUpdate?: {
 		submit: ( email: string ) => Promise< void >;
 		cancel: () => void;
-		// Only the caller can tell a write still in flight — which cancelling wouldn't call back —
-		// from whatever it goes on to wait for afterwards, which cancelling should always leave.
-		cancelDisabled?: boolean;
 	};
 }
 
@@ -128,16 +124,12 @@ const SignupFormSocialFirst = ( {
 	emailUpdate,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
-	const isEmailOnly = Boolean( emailUpdate );
-	// Not `currentStep`, which is fixed at mount from the address it was given: an email-only
-	// screen has no other screen to be on, whenever it is switched into and whatever it starts with.
-	const activeStep = isEmailOnly ? 'email' : currentStep;
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
 	let submitButtonLoadingLabel;
-	if ( isEmailOnly ) {
+	if ( emailUpdate ) {
 		submitButtonLoadingLabel = __( 'Updating…' );
 	} else if ( isGravatar ) {
 		submitButtonLoadingLabel = __( 'Continue' );
@@ -186,16 +178,12 @@ const SignupFormSocialFirst = ( {
 	const renderEmailStepTermsOfService = () => {
 		return (
 			<p className="signup-form-social-first__email-tos-link">
-				{ /* Partner legal copy otherwise appears only on the screen an email-only caller
-				     doesn't render, so its users would be shown WordPress.com's terms instead. */ }
-				{ isEmailOnly && customTosElement
-					? customTosElement
-					: createInterpolateElement(
-							__(
-								'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-							),
-							options
-					  ) }
+				{ createInterpolateElement(
+					__(
+						'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+				) }
 			</p>
 		);
 	};
@@ -204,7 +192,7 @@ const SignupFormSocialFirst = ( {
 	// to handle the visibility of the steps while preserving their layout properties and avoiding shifts.
 	const getVisibilityClassName = ( step: Screen ) => {
 		return clsx( 'signup-form-social-first-screen', {
-			visible: activeStep === step,
+			visible: currentStep === step,
 		} );
 	};
 
@@ -214,7 +202,6 @@ const SignupFormSocialFirst = ( {
 		stepName,
 		flowName,
 		activationEmailFrom,
-		emailUpdate,
 		goToNextStep,
 		logInUrl,
 		queryArgs,
@@ -238,17 +225,17 @@ const SignupFormSocialFirst = ( {
 		},
 		onCreateAccountSuccess,
 		inputPlaceholder: isGravatar ? __( 'Enter your email address' ) : undefined,
+		emailUpdate,
+		// The one moment the button says what it is doing, so it mustn't say account creation.
 		submitButtonLoadingLabel,
 	};
 
+	// Signing up again is the one thing this screen mustn't offer a caller changing an address, so
+	// the way back to the social options gives way to the caller's own.
 	let secondaryFooterButton;
 	if ( emailUpdate ) {
 		secondaryFooterButton = (
-			<Button
-				onClick={ emailUpdate.cancel }
-				disabled={ emailUpdate.cancelDisabled }
-				icon={ chevronLeft }
-			>
+			<Button onClick={ emailUpdate.cancel } icon={ chevronLeft }>
 				{ __( 'Cancel' ) }
 			</Button>
 		);
@@ -274,7 +261,7 @@ const SignupFormSocialFirst = ( {
 		</p>
 	);
 
-	if ( isMobileCompactVariant && ! isEmailOnly ) {
+	if ( isMobileCompactVariant ) {
 		// In-form ToS: partner branding wins via customTosElement (rendered by
 		// renderTermsOfService); otherwise the compact "options above" notice.
 		const inFormTosElement = customTosElement ? renderTermsOfService() : <MobileCompactTosNotice />;
@@ -305,47 +292,42 @@ const SignupFormSocialFirst = ( {
 
 	return (
 		<div className="signup-form signup-form-social-first">
-			{ /* Not merely hidden: an unrendered screen can't be tabbed into, and doesn't leave the
-			     one guarantee this mode makes resting on a stylesheet. */ }
-			{ ! isEmailOnly && (
-				<div className={ getVisibilityClassName( 'initial' ) }>
-					{ notice }
-					{ renderTermsOfService() }
-					{ emailLoginBlock && ! isEmailAtBottom && (
-						<>
-							{ emailLoginBlock }
-							<FormDivider isHorizontal />
-						</>
-					) }
-					<SocialSignupForm
-						handleResponse={ handleSocialResponse }
-						setCurrentStep={ setCurrentStep }
-						socialServiceResponse={ socialServiceResponse }
-						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
-						disableTosText
-						compact
-						isSocialFirst={ isSocialFirst }
-						shouldShowEmailButton={ ! isEmailFirstVariant }
-						allowedSocialServices={ allowedSocialServices }
-					/>
-					{ emailLoginBlock && isEmailAtBottom && (
-						<>
-							<FormDivider isHorizontal />
-							{ emailLoginBlock }
-						</>
-					) }
-					{ isEmailFirstVariant && loginLinkParagraph }
-				</div>
-			) }
+			<div className={ getVisibilityClassName( 'initial' ) }>
+				{ notice }
+				{ renderTermsOfService() }
+				{ emailLoginBlock && ! isEmailAtBottom && (
+					<>
+						{ emailLoginBlock }
+						<FormDivider isHorizontal />
+					</>
+				) }
+				<SocialSignupForm
+					handleResponse={ handleSocialResponse }
+					setCurrentStep={ setCurrentStep }
+					socialServiceResponse={ socialServiceResponse }
+					redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
+					disableTosText
+					compact
+					isSocialFirst={ isSocialFirst }
+					shouldShowEmailButton={ ! isEmailFirstVariant }
+					allowedSocialServices={ allowedSocialServices }
+				/>
+				{ emailLoginBlock && isEmailAtBottom && (
+					<>
+						<FormDivider isHorizontal />
+						{ emailLoginBlock }
+					</>
+				) }
+				{ isEmailFirstVariant && loginLinkParagraph }
+			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
-				{ isEmailOnly && notice }
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
 						{ ...passwordlessFormProps }
 						renderTerms={ renderEmailStepTermsOfService }
 						secondaryFooterButton={ secondaryFooterButton }
 					/>
-					{ backButtonInFooter && ! isEmailOnly ? (
+					{ backButtonInFooter && ! emailUpdate ? (
 						<Button
 							onClick={ () => setCurrentStep( 'initial' ) }
 							className="back-button"
