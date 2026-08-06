@@ -187,7 +187,8 @@ describe( 'account step email verification gate', () => {
 	it( 'hands a mistyped address back to the account screen to be updated', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		renderUser( makeStore( false ) );
+		const store = makeStore( false );
+		renderUser( store );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
@@ -205,6 +206,38 @@ describe( 'account step email verification gate', () => {
 		expect( updateUserSettings ).toHaveBeenCalledWith( { user_email: 'fixed@example.com' } );
 		expect( screen.getByText( 'fixed@example.com' ) ).toBeVisible();
 		expect( screen.queryByText( EMAIL ) ).not.toBeInTheDocument();
+
+		// `/me` resolving a different account is a case this step already handles, and an address
+		// held over that would be offered to whoever it resolved.
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: mockUserId + 1, email: 'someone@else.example', email_verified: false },
+			} );
+		} );
+
+		expect( screen.getByText( 'someone@else.example' ) ).toBeVisible();
+		expect( screen.queryByText( 'fixed@example.com' ) ).not.toBeInTheDocument();
+	} );
+
+	// The editor belongs to the account it was opened for, not to the step.
+	it( 'closes the editor when `/me` resolves someone else', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const store = makeStore( false );
+		renderUser( store );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: mockUserId + 1, email: 'someone@else.example', email_verified: false },
+			} );
+		} );
+
+		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 	} );
 
 	// A stored social failure carries a log-in link, which is a way past the gate.

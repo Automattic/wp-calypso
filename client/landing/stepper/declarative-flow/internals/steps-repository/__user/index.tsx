@@ -81,17 +81,20 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
-	// Set only by the gate's edit link. The account screen is otherwise kept from anyone who has an
-	// account; this is the one case where showing it to one is the point.
-	const [ isEditingEmail, setIsEditingEmail ] = useState( false );
 	const [ editEmailError, setEditEmailError ] = useState< string | null >( null );
-	// What `/me` will report once it catches up. Its refresh coalesces with a poll already running
-	// and reports no failure of its own, so the gate can't be handed back the address it just left.
-	const [ acceptedEmail, setAcceptedEmail ] = useState< string | null >( null );
-	const verifyingEmail = acceptedEmail ?? currentEmail ?? '';
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
+	// Both are scoped, because `/me` resolving a different account is a case this step already
+	// handles — the gate is keyed on the same scope for it. An editor left open across that, or an
+	// address held over it, would offer one account's address to another.
+	const [ editingScope, setEditingScope ] = useState< string | null >( null );
+	const isEditingEmail = editingScope === gateScopeForUser;
+	// What `/me` will report once it catches up. Its refresh coalesces with a poll already running
+	// and reports no failure of its own, so the gate can't be handed back the address it just left.
+	const [ accepted, setAccepted ] = useState< { scope: string; email: string } | null >( null );
+	const verifyingEmail =
+		( accepted?.scope === gateScopeForUser ? accepted.email : currentEmail ) ?? '';
 	// The account exists and its token is loaded, but `/me` hasn't caught up — so nothing here
 	// knows who it is yet, and Redux still reports nobody logged in.
 	const isWaitingForCreatedAccount = !! wpAccountCreateResponse && gateStatus === 'pending';
@@ -170,16 +173,19 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// the gate. Changing it takes effect at once and re-sends the activation email, leaving nothing
 	// for them to confirm.
 	const updateEmail = async ( email: string ) => {
+		const scope = gateScopeForUser;
 		setEditEmailError( null );
 		if ( email === verifyingEmail ) {
-			setIsEditingEmail( false );
+			setEditingScope( null );
 			return;
 		}
 		try {
 			await updateUserSettings( { user_email: email } );
-			setAcceptedEmail( email );
+			// Tagged with the account it was written for, so a response landing after `/me` has
+			// resolved a different one is ignored rather than shown as its address.
+			setAccepted( { scope, email } );
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
-			setIsEditingEmail( false );
+			setEditingScope( null );
 		} catch ( error ) {
 			setEditEmailError(
 				( error as { message?: string } )?.message ??
@@ -188,9 +194,17 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 	};
 
+	// Once the account reports it, it has nothing left to say — and holding it any longer would
+	// override a change made anywhere else. A scope that no longer matches is already ignored above.
+	useEffect( () => {
+		if ( accepted?.email === currentEmail ) {
+			setAccepted( null );
+		}
+	}, [ accepted, currentEmail ] );
+
 	const beginEmailEdit = () => {
 		setEditEmailError( null );
-		setIsEditingEmail( true );
+		setEditingScope( gateScopeForUser );
 	};
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
@@ -246,6 +260,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		<>
 			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
 			<SignupFormSocialFirst
+				key={ isEditingEmail ? gateScopeForUser : undefined }
 				stepName={ stepName }
 				flowName={ flow }
 				goToNextStep={ setWpAccountCreateResponse }
