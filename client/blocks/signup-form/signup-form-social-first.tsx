@@ -261,7 +261,10 @@ const SignupFormSocialFirst = ( {
 		</p>
 	);
 
-	if ( isMobileCompactVariant ) {
+	// This layout has no screens to be on — it puts the social form and the email one on the same
+	// page — so a caller changing an address takes the standard one, where the email screen is
+	// already only the field.
+	if ( isMobileCompactVariant && ! emailUpdate ) {
 		// In-form ToS: partner branding wins via customTosElement (rendered by
 		// renderTermsOfService); otherwise the compact "options above" notice.
 		const inFormTosElement = customTosElement ? renderTermsOfService() : <MobileCompactTosNotice />;

@@ -223,6 +223,21 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
 		} );
 
+		// The compact layout puts the social form on the same page rather than a screen behind, so
+		// it is the one layout where email-only has to mean a different layout.
+		it( 'takes the standard layout rather than the compact one that shows social', () => {
+			renderUpdating( { isMobileCompactVariant: true } );
+
+			// The compact layout has no screens and no Cancel; the standard one keeps social on the
+			// screen it isn't showing.
+			expect(
+				screen
+					.getAllByRole( 'button', { name: /Continue with/ } )[ 0 ]
+					.closest( '.signup-form-social-first-screen' )
+			).not.toHaveClass( 'visible' );
+			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
+		} );
+
 		it( 'says it is updating, not signing up, while the request is in flight', async () => {
 			renderUpdating( {
 				emailUpdate: { submit: () => new Promise< void >( () => {} ), cancel: jest.fn() },
