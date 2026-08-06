@@ -22,6 +22,12 @@ interface UseBlackboxProtectionOptions {
 	 * `getSessionId` is a no-op so no SDK load/collect happens.
 	 */
 	feature: string;
+	/**
+	 * Keep Blackbox off while the host form is mounted but not the active
+	 * surface (e.g. hidden behind another step). No collect happens and no
+	 * challenge can render until this flips back to false.
+	 */
+	suspended?: boolean;
 }
 
 const noopGetSessionId = () => Promise.resolve( undefined );
@@ -31,8 +37,10 @@ const noopGetSessionId = () => Promise.resolve( undefined );
  */
 export function useBlackboxProtection( {
 	feature,
+	suspended,
 }: UseBlackboxProtectionOptions ): BlackboxProtection {
 	const enabled =
+		! suspended &&
 		!! config( 'blackbox_api_key' ) &&
 		config.isEnabled( 'blackbox' ) &&
 		config.isEnabled( feature );

@@ -234,7 +234,10 @@ const SignupFormSocialFirst = ( {
 
 	const emailLoginBlock = isEmailFirstVariant ? (
 		<div className="signup-form-social-first-email">
-			<PasswordlessSignupForm { ...passwordlessFormProps } />
+			<PasswordlessSignupForm
+				{ ...passwordlessFormProps }
+				blackboxSuspended={ currentStep !== 'initial' }
+			/>
 		</div>
 	) : null;
 
@@ -251,6 +254,7 @@ const SignupFormSocialFirst = ( {
 		<div className="signup-form-social-first-email">
 			<PasswordlessSignupForm
 				{ ...passwordlessFormProps }
+				blackboxSuspended={ currentStep !== 'email' }
 				renderTerms={ renderEmailStepTermsOfService }
 				// Partner copy is positionally worded — Woo's says "the options below".
 				termsAfterActions={ ! showsPartnerTerms }
