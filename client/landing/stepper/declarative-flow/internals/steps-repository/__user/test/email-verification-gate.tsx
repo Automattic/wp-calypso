@@ -216,9 +216,9 @@ describe( 'account step email verification gate', () => {
 		expect( screen.queryByText( EMAIL ) ).not.toBeInTheDocument();
 
 		// A second correction started before the first is acknowledged could set the address back
-		// to the one `/me` still reports, and then nothing would ever move.
-		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
-		expect( screen.getByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+		// to the one `/me` still reports, and then nothing would ever move. It says so rather than
+		// looking live and doing nothing.
+		expect( screen.getByRole( 'button', { name: 'edit' } ) ).toBeDisabled();
 
 		// `/me` resolving a different account is a case this step already handles, and an address
 		// held over that would be offered to whoever it resolved.
@@ -306,6 +306,20 @@ describe( 'account step email verification gate', () => {
 		} );
 
 		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+	} );
+
+	// A refusal leaves an address in the field that isn't the one the editor opened with, so
+	// submitting it unchanged is no longer the way back.
+	it( 'offers a way back to the gate from the editor', async () => {
+		const user = userEvent.setup();
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: /back/i } ) );
+
+		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 	} );
 
 	// A stored social failure carries a log-in link, which is a way past the gate.

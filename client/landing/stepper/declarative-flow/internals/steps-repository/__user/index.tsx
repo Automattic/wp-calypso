@@ -232,12 +232,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 	}, [ accepted, currentEmail ] );
 
-	const beginEmailEdit = () => {
-		if ( awaitingRefresh ) {
-			return;
-		}
+	const beginEmailEdit = () =>
 		setEditing( { scope: gateScopeForUser, startedFrom: verifyingEmail } );
-	};
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
@@ -338,6 +334,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		return (
 			<EmailVerificationGate
 				onEditEmail={ beginEmailEdit }
+				editDisabled={ awaitingRefresh }
 				email={ verifyingEmail }
 				// A different account is a different attempt: without this the cooldown, the send
 				// state and the poll's ladder would all carry over to whoever `/me` resolved.
@@ -380,14 +377,19 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			</>
 		);
 
+		// Leaving the flow while the gate is owed would walk past it, and a refused correction has
+		// left an address in the field that submitting no longer gets the user out of.
+		let backButton;
+		if ( isEditingEmail ) {
+			backButton = <Step.BackButton onClick={ () => closeEditor( gateScopeForUser ) } />;
+		} else if ( navigation.goBack ) {
+			backButton = <Step.BackButton onClick={ navigation.goBack } />;
+		}
+
 		const topBar = (
 			<Step.TopBar
 				logo={ topBarLogo }
-				leftElement={
-					navigation.goBack && ! isEditingEmail ? (
-						<Step.BackButton onClick={ navigation.goBack } />
-					) : undefined
-				}
+				leftElement={ backButton }
 				rightElement={
 					hideLoginLink || isEmailFirstVariant || isEditingEmail ? null : (
 						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
