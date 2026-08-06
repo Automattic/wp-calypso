@@ -2,15 +2,23 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+.product-filter-container {
+	display: none;
+
+	@include break-large {
+		display: flex;
+		flex-direction: row;
+		gap: 8px;
+	}
+}
+
 .product-filter {
 	max-height: 33px;
 	max-width: 33px;
 }
 
-.product-filter-container {
-	display: flex;
-	flex-direction: row;
-	gap: 8px;
+.product-filter__group {
+	padding: 8px;
 }
 
 .product-filter-button {
@@ -49,6 +57,18 @@
 	}
 }
 
-.product-filter__group {
-	padding: 8px;
+.product-filter-select__menu .popover__menu-item.popover__menu-item.popover__menu-item {
+	&:focus,
+	&:focus-visible,
+	&:hover {
+		background: none;
+		color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		svg {
+			fill: var(--color-accent-60);
+		}
+	}
+
+	&:focus-visible {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+	}
 }
