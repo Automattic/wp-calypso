@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	planMatches,
 	isBloggerPlan,
@@ -9,7 +8,6 @@ import {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 } from '@automattic/calypso-products';
-import { getCalypsoUrl } from '@automattic/calypso-url';
 import { Button, Card, Gridicon, PlanPrice } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import clsx from 'clsx';
@@ -20,7 +18,7 @@ import { connect } from 'react-redux';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs, toCalypsoHref } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -29,23 +27,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import './style.scss';
 
 const noop = () => {};
-
-// In wp-admin (Odyssey) a root-relative href is a Calypso route, which the
-// browser would resolve against the site's own domain — a 404. Point it at
-// Calypso absolutely there; getCalypsoUrl() falls back to
-// https://wordpress.com when the current origin isn't a Calypso one, as in
-// wp-admin. Everywhere else (Calypso proper, Jetpack Cloud) this is a no-op.
-export function toCalypsoHref( href ) {
-	if (
-		href &&
-		href.startsWith( '/' ) &&
-		! href.startsWith( '//' ) &&
-		config.isEnabled( 'is_odyssey' )
-	) {
-		return getCalypsoUrl() + href;
-	}
-	return href;
-}
 
 export class Banner extends Component {
 	static propTypes = {
@@ -124,25 +105,27 @@ export class Banner extends Component {
 	getHref() {
 		const { canUserUpgrade, feature, href, plan, siteSlug, customerType } = this.props;
 
+		let computedHref = href;
+
 		if ( ! href && siteSlug && canUserUpgrade ) {
-			if ( customerType ) {
-				return toCalypsoHref( `/plans/${ siteSlug }?customerType=${ customerType }` );
-			}
 			const baseUrl = `/plans/${ siteSlug }`;
-			if ( feature || plan ) {
-				return toCalypsoHref(
-					addQueryArgs(
-						{
-							feature,
-							plan,
-						},
-						baseUrl
-					)
+
+			if ( customerType ) {
+				computedHref = `${ baseUrl }?customerType=${ customerType }`;
+			} else if ( feature || plan ) {
+				computedHref = addQueryArgs(
+					{
+						feature,
+						plan,
+					},
+					baseUrl
 				);
+			} else {
+				computedHref = baseUrl;
 			}
-			return toCalypsoHref( baseUrl );
 		}
-		return toCalypsoHref( href );
+
+		return toCalypsoHref( computedHref );
 	}
 
 	handleClick = ( e ) => {

@@ -8,7 +8,7 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 import config from '@automattic/calypso-config';
-import { toCalypsoHref } from '../index';
+import toCalypsoHref from '../to-calypso-href';
 
 const enableOdyssey = ( enabled ) =>
 	config.isEnabled.mockImplementation( ( flag ) => flag === 'is_odyssey' && enabled );
