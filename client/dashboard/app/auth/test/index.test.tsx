@@ -109,29 +109,36 @@ describe( '<AuthProvider> stats', () => {
 		await waitFor( () =>
 			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:bootstrap' )
 		);
-		expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-auth', 'loop' );
+		expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-auth-loop', expect.anything() );
 	} );
 
-	test( 'bumps a loop stat when a bounce repeats without a successful auth in between', async () => {
+	test( 'bumps a loop stat with the bounce count when a bounce repeats within the loop window', async () => {
 		config.enable( 'wpcom-user-bootstrap' );
-		window.sessionStorage.setItem( 'wpcom_auth_bounce_count', '1' );
-
-		renderAuth();
-
-		await waitFor( () => expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'loop' ) );
-	} );
-
-	test( 'resets the bounce count when auth succeeds', async () => {
-		config.enable( 'wpcom-user-bootstrap' );
-		window.currentUser = testUser;
-		window.sessionStorage.setItem( 'wpcom_auth_bounce_count', '1' );
-
-		renderAuth();
-
-		expect( await screen.findByText( 'signed in' ) ).toBeVisible();
-		await waitFor( () =>
-			expect( window.sessionStorage.getItem( 'wpcom_auth_bounce_count' ) ).toBeNull()
+		window.sessionStorage.setItem(
+			'wpcom_auth_bounce_count',
+			JSON.stringify( { count: 1, at: Date.now() } )
 		);
+
+		renderAuth();
+
+		await waitFor( () =>
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth-loop', '2' )
+		);
+	} );
+
+	test( 'does not bump a loop stat when the previous bounce is outside the loop window', async () => {
+		config.enable( 'wpcom-user-bootstrap' );
+		window.sessionStorage.setItem(
+			'wpcom_auth_bounce_count',
+			JSON.stringify( { count: 5, at: Date.now() - 60 * 1000 } )
+		);
+
+		renderAuth();
+
+		await waitFor( () =>
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:bootstrap' )
+		);
+		expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-auth-loop', expect.anything() );
 	} );
 
 	test( 'bumps a bounce stat when the session expires mid-app', async () => {
