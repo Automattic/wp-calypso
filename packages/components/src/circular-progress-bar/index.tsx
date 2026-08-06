@@ -13,7 +13,8 @@ const CircularProgressBar = ( {
 	showProgressText = true,
 	customText,
 	variant,
-	ariaLabel,
+	ariaLabelledBy,
+	ariaValueText,
 }: {
 	currentStep: number | null;
 	numberOfSteps: number | null;
@@ -24,7 +25,8 @@ const CircularProgressBar = ( {
 	showProgressText?: boolean;
 	customText?: ReactNode;
 	variant?: 'success';
-	ariaLabel?: string;
+	ariaLabelledBy?: string;
+	ariaValueText?: string;
 } ) => {
 	const SIZE = size;
 	const RADIUS = SIZE / 2 - strokeWidth / 2;
@@ -40,7 +42,8 @@ const CircularProgressBar = ( {
 			aria-valuemin={ 0 }
 			aria-valuemax={ numberOfSteps }
 			aria-valuenow={ currentStep }
-			aria-label={ ariaLabel }
+			aria-valuetext={ ariaValueText }
+			aria-labelledby={ ariaLabelledBy }
 			className={ clsx( 'circular__progress-bar', {
 				'desktop-scaling': enableDesktopScaling,
 				'is-success': variant === 'success',
