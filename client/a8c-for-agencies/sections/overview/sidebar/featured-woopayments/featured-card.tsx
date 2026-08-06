@@ -17,7 +17,7 @@ const WooPaymentsFeaturedCard = ( { onDismiss, onClick }: Props ) => {
 	return (
 		<Card className="overview__featured-woopayments">
 			<div className="overview__featured-woopayments-top">
-				<Badge className="overview__featured-woopayments-badge">{ translate( 'Featured' ) }</Badge>
+				<Badge>{ translate( 'Featured' ) }</Badge>
 
 				<Button
 					className="overview__featured-dismiss-button"
