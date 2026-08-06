@@ -5,6 +5,7 @@ import { useDispatch } from 'calypso/state';
 import { removeNotice } from 'calypso/state/notices/actions';
 import type { ResponseCartMessage } from '@automattic/shopping-cart';
 
+// Match CartMessages' grouped coupon ID so cleanup removes the notice that was actually created.
 function getNoticeId( message: ResponseCartMessage ): string {
 	switch ( message.code ) {
 		case 'coupon-not-found':
