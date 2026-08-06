@@ -17,6 +17,7 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { MissingPaymentSettingsNotice } from '../referrals/common/missing-payment-settings-notice';
 import useHasCommissionActivity from '../referrals/common/missing-payment-settings-notice/use-has-commission-activity';
@@ -35,6 +36,10 @@ export default function Overview() {
 	const agency = useSelector( getActiveAgency );
 	const locale = useSelector( getCurrentUserLocale );
 	const showAgencyHeader = isRevamp && !! agency;
+	// The revamped overview renders pending and rejected applications as tier-card
+	// states, so the approval banner is redundant here; the approved welcome
+	// banner has no card equivalent and stays. Other pages keep the banner.
+	const showApprovalNotice = ! isRevamp || agency?.approval_status === ApprovalStatus.APPROVED;
 
 	const { hasActivity, isLoading: isLoadingActivity } = useHasCommissionActivity();
 
@@ -42,7 +47,7 @@ export default function Overview() {
 		<Layout title={ title } wide>
 			<LayoutTop>
 				{ ! isLoadingActivity && hasActivity && <MissingPaymentSettingsNotice /> }
-				<A4AAgencyApprovalNotice />
+				{ showApprovalNotice && <A4AAgencyApprovalNotice /> }
 				<PressableUsageLimitNotice />
 				<PaymentRiskNoticeBanner source="overview" />
 

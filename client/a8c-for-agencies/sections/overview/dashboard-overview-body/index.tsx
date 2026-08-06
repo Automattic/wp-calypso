@@ -11,16 +11,12 @@ import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
 import { PROGRAM_INCENTIVES_URL } from 'calypso/dashboard/agency/overview/constants';
 import AgencyOverviewContent from 'calypso/dashboard/agency/overview/overview-content';
 import { useDispatch, useSelector } from 'calypso/state';
-import {
-	getActiveAgency,
-	getActiveAgencyId,
-} from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export default function DashboardOverviewBody() {
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
-	const agencyId = useSelector( getActiveAgencyId );
 	const approvalStatus = agency?.approval_status;
 
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall();
@@ -32,13 +28,17 @@ export default function DashboardOverviewBody() {
 		[ dispatch ]
 	);
 
+	const handleRelaunchTour = useCallback( () => {
+		window.location.hash = ONBOARDING_TOUR_HASH;
+	}, [] );
+
 	if ( ! agency ) {
 		return null;
 	}
 
 	return (
 		<AgencyOverviewContent
-			agencyId={ agencyId ?? 0 }
+			agencyId={ agency.id }
 			tierId={ agency.tier?.id }
 			influencedRevenue={ agency.influenced_revenue ?? 0 }
 			approvalStatus={ approvalStatus }
@@ -57,9 +57,7 @@ export default function DashboardOverviewBody() {
 					{
 						id: 'relaunch-welcome-tour',
 						label: __( 'Relaunch welcome tour' ),
-						onClick: () => {
-							window.location.hash = ONBOARDING_TOUR_HASH;
-						},
+						onClick: handleRelaunchTour,
 					},
 					{
 						id: 'program-incentives',
@@ -72,9 +70,7 @@ export default function DashboardOverviewBody() {
 			shouldUseRouterLink={ false }
 			onScheduleCall={ scheduleCall }
 			isSchedulingCall={ isSchedulingCall }
-			onRelaunchTour={ () => {
-				window.location.hash = ONBOARDING_TOUR_HASH;
-			} }
+			onRelaunchTour={ handleRelaunchTour }
 			recordTracksEvent={ handleRecordTracksEvent }
 		/>
 	);
