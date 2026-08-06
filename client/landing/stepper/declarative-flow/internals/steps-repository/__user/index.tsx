@@ -91,12 +91,16 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// Both are scoped, because `/me` resolving a different account is a case this step already
 	// handles — the gate is keyed on the same scope for it. An editor left open across that, or an
 	// address held over it, would offer one account's address to another.
-	const [ editingScope, setEditingScope ] = useState< string | null >( null );
-	const isEditingEmail = editingScope === gateScopeForUser;
+	const [ editing, setEditing ] = useState< { scope: string; startedFrom: string } | null >( null );
+	const isEditingEmail = editing?.scope === gateScopeForUser;
 	const editorError = editEmailError?.scope === gateScopeForUser ? editEmailError.message : null;
 	// What `/me` will report once it catches up. Its refresh coalesces with a poll already running
 	// and reports no failure of its own, so the gate can't be handed back the address it just left.
-	const [ accepted, setAccepted ] = useState< { scope: string; email: string } | null >( null );
+	const [ accepted, setAccepted ] = useState< {
+		scope: string;
+		email: string;
+		replacing: string;
+	} | null >( null );
 	const verifyingEmail =
 		( accepted?.scope === gateScopeForUser ? accepted.email : currentEmail ) ?? '';
 	// The account exists and its token is loaded, but `/me` hasn't caught up — so nothing here
@@ -137,7 +141,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else if ( gateStatus === 'pending' ) {
 			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
-		} else if ( gateStatus !== 'gated' ) {
+		} else if ( gateStatus !== 'gated' && ! isEditingEmail ) {
 			// The step owns the whole of finishing; the gate is presentation, and unmounting it is
 			// what this transition looks like. Only `/me` saying verified is a confirmation — the
 			// flag being off is not — and the claim decides which of several tabs records it.
@@ -152,7 +156,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			}
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, gateStatus, gateScopeForUser, flow ] );
+	}, [ dispatch, isLoggedIn, navigation, gateStatus, gateScopeForUser, flow, isEditingEmail ] );
 
 	// A retry batch is finite and swallows its failure, so nothing would ask again. An account just
 	// created isn't logged in until `/me` answers — the request that failed — so the tab that made
@@ -176,20 +180,24 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// Submitting the address unchanged asks for nothing, so it is also how the user gets back to
 	// the gate. Changing it takes effect at once and re-sends the activation email, leaving nothing
 	// for them to confirm.
+	const closeEditor = ( scope: string ) =>
+		setEditing( ( current ) => ( current?.scope === scope ? null : current ) );
+
 	const updateEmail = async ( email: string ) => {
 		const scope = gateScopeForUser;
+		const replacing = currentEmail ?? '';
 		setEditEmailError( null );
-		if ( email === verifyingEmail ) {
-			setEditingScope( null );
+		if ( email === editing?.startedFrom ) {
+			closeEditor( scope );
 			return;
 		}
 		try {
 			await updateUserSettings( { user_email: email } );
 			// Tagged with the account it was written for, so a response landing after `/me` has
 			// resolved a different one is ignored rather than shown as its address.
-			setAccepted( { scope, email } );
+			setAccepted( { scope, email, replacing } );
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
-			setEditingScope( ( current ) => ( current === scope ? null : current ) );
+			closeEditor( scope );
 		} catch ( error ) {
 			setEditEmailError( {
 				scope,
@@ -200,17 +208,18 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 	};
 
-	// Once the account reports it, it has nothing left to say — and holding it any longer would
-	// override a change made anywhere else. A scope that no longer matches is already ignored above.
+	// Any movement in what the account reports means this has served its purpose — whether that is
+	// the address as submitted, one the backend tidied, or a later change from somewhere else.
+	// Waiting for an exact match would hold a stale address for good if it never came.
 	useEffect( () => {
-		if ( accepted?.email === currentEmail ) {
+		if ( accepted && accepted.replacing !== currentEmail ) {
 			setAccepted( null );
 		}
 	}, [ accepted, currentEmail ] );
 
 	const beginEmailEdit = () => {
 		setEditEmailError( null );
-		setEditingScope( gateScopeForUser );
+		setEditing( { scope: gateScopeForUser, startedFrom: verifyingEmail } );
 	};
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
@@ -266,7 +275,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		<>
 			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
 			<SignupFormSocialFirst
-				key={ isEditingEmail ? gateScopeForUser : undefined }
 				stepName={ stepName }
 				flowName={ flow }
 				goToNextStep={ setWpAccountCreateResponse }

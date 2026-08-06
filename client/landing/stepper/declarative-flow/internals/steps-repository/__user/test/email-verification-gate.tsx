@@ -27,6 +27,7 @@ let mockUserId = 0;
 
 let activationEmailFromProp: string | undefined;
 let signupFormProps: { userEmail?: string; notice?: unknown } = {};
+let mockHeldEmail: string | null = null;
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 jest.mock( '@automattic/api-core', () => ( {
@@ -84,11 +85,17 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 	} ) => {
 		activationEmailFromProp = activationEmailFrom;
 		signupFormProps = { userEmail, notice };
+		// The real form takes its address once, on mount, and keeps it however the prop moves.
+		if ( mockHeldEmail === null ) {
+			mockHeldEmail = userEmail ?? '';
+		}
 		return (
 			<>
 				{ notice as ReactNode }
 				<button onClick={ () => onUpdateEmail?.( 'fixed@example.com' ) }>submit-changed</button>
-				<button onClick={ () => onUpdateEmail?.( userEmail as string ) }>submit-unchanged</button>
+				<button onClick={ () => onUpdateEmail?.( mockHeldEmail as string ) }>
+					submit-unchanged
+				</button>
 				<button
 					onClick={ () => {
 						// Production order: goToNextStep fires before onCreateAccountSuccess.
@@ -165,6 +172,7 @@ describe( 'account step email verification gate', () => {
 	afterEach( () => {
 		activationEmailFromProp = undefined;
 		signupFormProps = {};
+		mockHeldEmail = null;
 		// A test that fails before restoring them would otherwise time out every test after it.
 		jest.useRealTimers();
 		mockConfig.enabledFlags.clear();
@@ -238,6 +246,45 @@ describe( 'account step email verification gate', () => {
 		} );
 
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+	} );
+
+	// Another tab can correct the same account while this editor is open. Submitting what it still
+	// holds would otherwise write that correction back.
+	it( 'does not resubmit the address it opened with after it changes elsewhere', async () => {
+		const user = userEvent.setup();
+		const store = makeStore( false );
+		renderUser( store );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: mockUserId, email: 'corrected@elsewhere.example', email_verified: false },
+			} );
+		} );
+		await user.click( screen.getByRole( 'button', { name: 'submit-unchanged' } ) );
+
+		expect( updateUserSettings ).not.toHaveBeenCalled();
+	} );
+
+	// Verifying the old address mid-correction would carry the account past the gate, and the
+	// address it is about to be given is not the one that was verified.
+	it( 'does not continue while the editor is open', async () => {
+		const user = userEvent.setup();
+		const store = makeStore( false );
+		const { submit } = renderUser( store );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: mockUserId, email: EMAIL, email_verified: true },
+			} );
+		} );
+
+		expect( submit ).not.toHaveBeenCalled();
 	} );
 
 	// A stored social failure carries a log-in link, which is a way past the gate.
