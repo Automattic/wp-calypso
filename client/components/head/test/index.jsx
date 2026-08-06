@@ -35,4 +35,18 @@ describe( 'Head', () => {
 			document.querySelector( `link[rel="prefetch"][href="${ restProxyHref }"]` )
 		).toBeNull();
 	} );
+
+	test( 'should block zoom via maximum-scale by default', () => {
+		render( <Head /> );
+		expect( document.querySelector( 'meta[name="viewport"]' )?.getAttribute( 'content' ) ).toBe(
+			'width=device-width, initial-scale=1, maximum-scale=1'
+		);
+	} );
+
+	test( 'should allow zoom by dropping maximum-scale when allowZoom is set', () => {
+		render( <Head allowZoom /> );
+		expect( document.querySelector( 'meta[name="viewport"]' )?.getAttribute( 'content' ) ).toBe(
+			'width=device-width, initial-scale=1'
+		);
+	} );
 } );
