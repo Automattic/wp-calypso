@@ -3,7 +3,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT } from '@automattic/urls';
 import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -24,10 +24,8 @@ function CartMessage( { message }: { message: ResponseCartMessage } ) {
 }
 
 export default function CartMessages( {
-	dismissErrorNoticesOnUnmount,
 	shouldShowPersistentErrors,
 }: {
-	dismissErrorNoticesOnUnmount?: boolean;
 	/**
 	 * Persistent errors like "Purchases are disabled for this site" are returned
 	 * during cart fetch (regular cart errors are transient and only are returned
@@ -38,32 +36,14 @@ export default function CartMessages( {
 	shouldShowPersistentErrors?: boolean;
 } ): null {
 	const cartKey = useCartKey();
-	const {
-		clearMessages,
-		responseCart: cart,
-		isLoading: isLoadingCart,
-	} = useShoppingCart( cartKey );
+	const { responseCart: cart, isLoading: isLoadingCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
-	const clearMessagesRef = useRef( clearMessages );
-	const dismissErrorNoticesOnUnmountRef = useRef( dismissErrorNoticesOnUnmount );
-	const displayedErrorNoticeIds = useRef( new Set< string >() );
-	const reduxDispatchRef = useRef( reduxDispatch );
-
-	clearMessagesRef.current = clearMessages;
-	dismissErrorNoticesOnUnmountRef.current = dismissErrorNoticesOnUnmount;
-	reduxDispatchRef.current = reduxDispatch;
 
 	const showErrorMessages = useCallback(
 		( messages: ResponseCartMessage[] ) => {
-			const noticeIds = showMessages( messages, reduxDispatch, 'error', {
-				isPersistent: ! dismissErrorNoticesOnUnmount,
-			} );
-
-			if ( dismissErrorNoticesOnUnmount ) {
-				noticeIds.forEach( ( noticeId ) => displayedErrorNoticeIds.current.add( noticeId ) );
-			}
+			showMessages( messages, reduxDispatch, 'error' );
 		},
-		[ dismissErrorNoticesOnUnmount, reduxDispatch ]
+		[ reduxDispatch ]
 	);
 
 	const showSuccessMessages = useCallback(
@@ -72,21 +52,6 @@ export default function CartMessages( {
 		},
 		[ reduxDispatch ]
 	);
-
-	useEffect( () => {
-		const noticeIds = displayedErrorNoticeIds.current;
-
-		return () => {
-			if ( ! dismissErrorNoticesOnUnmountRef.current ) {
-				return;
-			}
-
-			noticeIds.forEach( ( noticeId ) => {
-				reduxDispatchRef.current( removeNotice( noticeId ) );
-			} );
-			void clearMessagesRef.current().catch( () => undefined );
-		};
-	}, [] );
 
 	useDisplayCartMessages( {
 		cart,
@@ -238,24 +203,20 @@ function getNoticeIdForMessage( message: ResponseCartMessage ): string {
 function showMessages(
 	messages: ResponseCartMessage[],
 	reduxDispatch: CalypsoDispatch,
-	messageType: 'error' | 'success',
-	options?: { isPersistent?: boolean }
-): string[] {
+	messageType: 'error' | 'success'
+): void {
 	const messageActionCreator = messageType === 'error' ? errorNotice : successNotice;
-	const noticeIds = messages.map( getNoticeIdForMessage );
 	// Remove previous messages that match the codes we are about to display
-	noticeIds.map( ( noticeId ) => {
-		reduxDispatch( removeNotice( noticeId ) );
+	messages.map( ( message ) => {
+		reduxDispatch( removeNotice( getNoticeIdForMessage( message ) ) );
 	} );
 
-	messages.map( ( message, index ) => {
+	messages.map( ( message ) => {
 		reduxDispatch(
 			messageActionCreator( <CartMessage message={ message } />, {
-				isPersistent: options?.isPersistent ?? messageType === 'error',
-				id: noticeIds[ index ],
+				isPersistent: messageType === 'error',
+				id: getNoticeIdForMessage( message ),
 			} )
 		);
 	} );
-
-	return noticeIds;
 }
