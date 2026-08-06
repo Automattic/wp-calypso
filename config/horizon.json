@@ -91,6 +91,7 @@
 		"me/legacy-contact": false,
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
+		"migration/static-site-import": false,
 		"nav-redesign/2026": false,
 		"nav-redesign/2026-variant-2": false,
 		"oauth/unified-experience": false,

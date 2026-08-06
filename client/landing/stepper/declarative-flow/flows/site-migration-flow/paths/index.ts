@@ -46,6 +46,7 @@ export const siteCreationPath = buildPathHelper<
 			from?: string | null;
 			platform: ImporterPlatform;
 			ssh?: string;
+			staticSiteImport?: string;
 			host?: string;
 		};
 	},
@@ -229,6 +230,29 @@ export const sshInProgressPath = buildPathHelper<
 	},
 	typeof STEPS.SITE_MIGRATION_SSH_IN_PROGRESS.slug
 >( STEPS.SITE_MIGRATION_SSH_IN_PROGRESS.slug );
+
+export const staticSiteImportReviewPath = buildPathHelper<
+	{
+		queryParams: {
+			siteId?: number | string;
+			siteSlug?: string;
+			from?: string | null;
+			staticSiteImportSessionId?: string;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug
+>( STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug );
+
+export const staticSiteImportProgressPath = buildPathHelper<
+	{
+		queryParams: {
+			siteId?: number | string;
+			siteSlug?: string;
+			staticSiteImportSessionId: string;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_PROGRESS.slug
+>( STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_PROGRESS.slug );
 
 export const identifyPath = buildPathHelper<
 	{

@@ -77,6 +77,7 @@
 		"me/account-close": true,
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
+		"migration/static-site-import": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
 		"onboarding/email-verification": false,

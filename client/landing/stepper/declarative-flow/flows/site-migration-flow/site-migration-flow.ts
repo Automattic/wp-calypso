@@ -53,6 +53,8 @@ const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_SSH_VERIFICATION,
 	STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS,
 	STEPS.SITE_MIGRATION_SSH_IN_PROGRESS,
+	STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW,
+	STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_PROGRESS,
 	STEPS.PICK_SITE,
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
@@ -118,7 +120,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const platformQueryParam = ( urlQueryParams.get( 'platform' ) ||
 			'unknown' ) as ImporterPlatform;
 		const hostQueryParam = urlQueryParams.get( 'host' ) || undefined;
-		const { get, sessionId } = useFlowState();
+		const { get, set, sessionId } = useFlowState();
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
 		const entryPoint = get( 'flow' )?.entryPoint;
 		const canInstallPlugins = site?.plan?.features?.active.includes( 'install-plugins' ) ?? false;
@@ -154,6 +156,32 @@ const siteMigration: FlowV2< typeof initialize > = {
 					};
 					const hasDestinationSite = hasSite( siteId, siteSlug );
 					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
+					const canUseStaticSiteImport =
+						entryPoint === 'move-lp' && config.isEnabled( 'migration/static-site-import' );
+
+					if ( canUseStaticSiteImport && from ) {
+						if ( hasDestinationSite ) {
+							if ( ! canInstallPlugins ) {
+								return navigate(
+									paths.upgradePlanPath( {
+										siteId,
+										siteSlug,
+										from,
+										staticSiteImport: 'true',
+									} )
+								);
+							}
+							return navigate(
+								paths.staticSiteImportReviewPath( { siteId, siteSlug, from } )
+							);
+						}
+
+						if ( userHasOtherWPComSites ) {
+							return navigate( paths.sitePickerPath( { from, platform } ) );
+						}
+
+						return navigate( paths.siteCreationPath( { from, platform } ) );
+					}
 
 					// Check if hosting provider is supported for SSH migration
 					const isHostingSupported = isHostingSupportedForSSHMigration( host );
@@ -245,6 +273,30 @@ const siteMigration: FlowV2< typeof initialize > = {
 								selectedSite?.plan?.features?.active.includes( 'install-plugins' ) ?? false;
 							const detectedHost = providedDependencies.host as string | undefined;
 							const host = detectedHost || hostQueryParam;
+							const canUseStaticSiteImport =
+								entryPoint === 'move-lp' &&
+								config.isEnabled( 'migration/static-site-import' ) &&
+								Boolean( fromQueryParam );
+
+							if ( canUseStaticSiteImport ) {
+								if ( ! selectedSiteCanInstallPlugins ) {
+									return navigate(
+										paths.upgradePlanPath( {
+											siteId,
+											siteSlug,
+											from: fromQueryParam,
+											staticSiteImport: 'true',
+										} )
+									);
+								}
+								return navigate(
+									paths.staticSiteImportReviewPath( {
+										siteId,
+										siteSlug,
+										from: fromQueryParam,
+									} )
+								);
+							}
 
 							// Check if this is an SSH migration flow
 							// Either from ssh=true param OR from move-lp with supported hosting and English locale
@@ -372,6 +424,21 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					recordSignupComplete( { siteId } );
 
+					if (
+						entryPoint === 'move-lp' &&
+						config.isEnabled( 'migration/static-site-import' ) &&
+						fromQueryParam
+					) {
+						return replace(
+							paths.upgradePlanPath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+								staticSiteImport: 'true',
+							} )
+						);
+					}
+
 					// Check if this is an SSH migration flow (ssh=true is already set in URL from PICK_SITE)
 					if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
 						return replace(
@@ -481,9 +548,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					const isStaticSiteImport =
+						urlQueryParams.get( 'staticSiteImport' ) === 'true' &&
+						config.isEnabled( 'migration/static-site-import' ) &&
+						entryPoint === 'move-lp';
 					if ( providedDependencies?.goToCheckout ) {
 						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
-						if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
+						if ( isStaticSiteImport ) {
+							redirectAfterCheckout = STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug;
+						} else if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
 							// Redirect to verification first to obtain transferId before share-access
 							redirectAfterCheckout = STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug;
 						} else if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
@@ -495,6 +568,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								from: fromQueryParam,
 								siteId,
 								host: hostQueryParam,
+								staticSiteImport: isStaticSiteImport ? 'true' : undefined,
 							},
 							`/setup/${ flowPath }/${ redirectAfterCheckout }`
 						);
@@ -518,6 +592,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 								from: fromQueryParam,
 								host: hostQueryParam,
 							} )
+						);
+					}
+
+					if ( isStaticSiteImport ) {
+						return navigate(
+							paths.staticSiteImportReviewPath( { siteId, siteSlug, from: fromQueryParam } )
 						);
 					}
 
@@ -791,6 +871,28 @@ const siteMigration: FlowV2< typeof initialize > = {
 						default:
 							return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
 					}
+				}
+
+				case STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug: {
+					const staticSiteImport = providedDependencies;
+					set( 'staticSiteImport', staticSiteImport );
+					if ( staticSiteImport.action === 'created' ) {
+						return replace(
+							paths.staticSiteImportReviewPath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+								staticSiteImportSessionId: staticSiteImport.sessionId,
+							} )
+						);
+					}
+					return navigate(
+						paths.staticSiteImportProgressPath( {
+							siteId,
+							siteSlug,
+							staticSiteImportSessionId: staticSiteImport.sessionId,
+						} )
+					);
 				}
 			}
 		};

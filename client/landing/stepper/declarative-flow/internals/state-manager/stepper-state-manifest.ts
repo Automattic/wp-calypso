@@ -10,6 +10,15 @@ export type StepperMiscellaneousFields = Partial< {
 	flow: {
 		entryPoint: string;
 	};
+	staticSiteImport: {
+		sessionId: string;
+		planHash?: string;
+		status: string;
+		state: string;
+		sourceDigest?: string;
+		previewSummary?: Record< string, number >;
+		approved?: boolean;
+	};
 	site: CreatedSite;
 } >;
 
