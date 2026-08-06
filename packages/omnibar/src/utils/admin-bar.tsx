@@ -19,9 +19,23 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 				omnibarNodes.home = omnibarNode;
 				omnibarNodes.home.title = undefined;
 				break;
-			case 'site-name':
+			case 'site-name': {
+				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+				const siteIcon = doc.querySelector( 'img' );
+				const siteIconSrc = siteIcon?.getAttribute( 'src' );
+				omnibarNode.icon = siteIconSrc ? (
+					<img
+						className="omnibar__site-icon"
+						src={ siteIconSrc }
+						srcSet={ siteIcon?.getAttribute( 'srcset' ) || '' }
+						alt={ siteIcon?.getAttribute( 'alt' ) || '' }
+					/>
+				) : (
+					<span className="dashicons-before dashicons-admin-home" />
+				);
 				omnibarNodes.site = omnibarNode;
 				break;
+			}
 			case 'new-content': {
 				omnibarNode.icon = <span className="dashicons-before dashicons-plus" />;
 				siteActionNodes.push( omnibarNode );

@@ -1,17 +1,6 @@
-@import '@wordpress/base-styles/variables';
-
 #wpcom-omnibar {
 	position: fixed;
 	top: 0;
 	inset-inline: 0;
 	z-index: 999;
-}
-
-.omnibar .site-icon,
-.omnibar .site-letter {
-	border-radius: $radius-medium;
-
-	@media ( min-width: 782px ) {
-		border-radius: $radius-small;
-	}
 }
