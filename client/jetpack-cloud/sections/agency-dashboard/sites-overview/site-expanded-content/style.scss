@@ -315,12 +315,14 @@ $color-yellow: var(--studio-yellow-50);
  * Opted into via the `showSummary` prop, so the compact dashboard card is unaffected.
  */
 .site-expanded-content__monitor-activity-detailed {
+	container-type: inline-size;
+
 	.expanded-card__header {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: baseline;
 		justify-content: space-between;
-		gap: 8px;
+		gap: 4px 8px;
 		overflow: visible;
 	}
 
@@ -330,30 +332,31 @@ $color-yellow: var(--studio-yellow-50);
 	}
 
 	.site-expanded-content__monitor-summary {
+		--monitor-stat-gutter: 24px;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
 		gap: 16px;
 		margin-block-end: 20px;
+		overflow: hidden;
 	}
 
+	// Pulled back over one gutter so the divider opening each row — wrapped rows
+	// included — lands outside the summary and is clipped rather than left dangling.
 	.site-expanded-content__monitor-stats {
 		display: flex;
 		flex-wrap: wrap;
 		row-gap: 8px;
+		margin-inline-start: calc(-1px - var(--monitor-stat-gutter));
 	}
 
-	// Trailing dividers keep every stat flush with the card edge when the row wraps.
 	.site-expanded-content__monitor-stat {
-		padding-inline-end: 24px;
-		margin-inline-end: 24px;
-		border-inline-end: 1px solid var(--studio-gray-5);
+		padding-inline: var(--monitor-stat-gutter);
+		border-inline-start: 1px solid var(--studio-gray-5);
 
 		&:last-child {
 			padding-inline-end: 0;
-			margin-inline-end: 0;
-			border-inline-end: none;
 		}
 	}
 
@@ -398,14 +401,16 @@ $color-yellow: var(--studio-yellow-50);
 	}
 
 	.site-expanded-content__chart {
+		--monitor-bar-height: 48px;
+		--monitor-bar-gap: 4px;
+
 		.chart__bars {
-			gap: 4px;
+			gap: var(--monitor-bar-gap);
 			overflow: hidden;
 		}
 
 		.chart .chart__bar {
-			height: 48px;
-			gap: 4px;
+			height: var(--monitor-bar-height);
 
 			.chart__bar-section {
 				inset-inline: 0;
@@ -415,7 +420,7 @@ $color-yellow: var(--studio-yellow-50);
 
 			// The compact card renders downtime as a thin marker; here it is a full-height block.
 			&.site-expanded-content__chart-bar-is-downtime {
-				height: 48px !important;
+				height: var(--monitor-bar-height) !important;
 				position: static !important;
 			}
 		}
@@ -459,6 +464,25 @@ $color-yellow: var(--studio-yellow-50);
 		&.is-not-monitored {
 			background-color: var(--studio-gray-0);
 			border: 1px solid var(--studio-gray-5);
+		}
+	}
+
+	@container (max-width: 480px) {
+		.site-expanded-content__monitor-summary {
+			--monitor-stat-gutter: 16px;
+		}
+
+		.site-expanded-content__monitor-stat-value {
+			@include heading-x-large;
+		}
+
+		.site-expanded-content__chart {
+			--monitor-bar-height: 32px;
+			--monitor-bar-gap: 2px;
+		}
+
+		.site-expanded-content__monitor-legend {
+			gap: 8px 16px;
 		}
 	}
 }
