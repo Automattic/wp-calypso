@@ -37,13 +37,14 @@ export function OptionCard( {
 	topText,
 }: OptionCardProps ) {
 	const isActionable = !! onSelect && ! isPlaceholder;
+	const isDisabled = disabled || ! isActionable;
 
 	return (
 		<Card
 			tagName="button"
 			type="button"
 			onClick={ onSelect }
-			disabled={ disabled || ! isActionable }
+			disabled={ isDisabled }
 			className={ clsx( 'option-card', {
 				'option-card--is-placeholder': isPlaceholder,
 			} ) }
@@ -51,7 +52,9 @@ export function OptionCard( {
 			<VStack as="span" spacing={ 4 } className="option-card__header">
 				<HStack as="span" justify="space-between">
 					<span className="option-card__illustration">{ illustration }</span>
-					<Icon className="option-card__chevron" icon={ chevronRight } size={ 24 } />
+					{ ! isDisabled && (
+						<Icon className="option-card__chevron" icon={ chevronRight } size={ 24 } />
+					) }
 				</HStack>
 				<VStack as="span" spacing={ 2 }>
 					<span className="option-card__title">{ titleText }</span>
