@@ -945,9 +945,13 @@ export class RestAPIClient {
 	 * Feedback cannot be created over REST — the post type sets
 	 * `create_posts => do_not_allow` — so this is cleanup only.
 	 *
+	 * Individual delete failures are reported and skipped rather than thrown, so
+	 * one bad response cannot strand the rest.
+	 *
 	 * @param {number} siteID Target site ID.
 	 * @param {string} search Search term identifying the caller's own responses.
-	 * @returns {Promise<number>} Count of responses deleted.
+	 * @returns {Promise<number>} Count of responses actually deleted.
+	 * @throws If the listing request itself fails.
 	 */
 	async deleteFeedbackBySearch( siteID: number, search: string ): Promise< number > {
 		const params: RequestParams = {
@@ -958,33 +962,62 @@ export class RestAPIClient {
 			},
 		};
 
-		const url = this.getRequestURL( '1.1', `/sites/${ siteID }/posts/` );
-		url.searchParams.set( 'type', 'feedback' );
-		// Not `any`: WP_Query excludes statuses registered `exclude_from_search`,
-		// which covers core's `trash` and the `spam` status jetpack-forms registers.
-		// Those are exactly what a failed run leaves behind, since this flow walks a
-		// response through Spam and Trash. Verified against the endpoint: `any`
-		// returned 0 on a site holding 21 trashed responses, `trash` returned all 21.
-		// Unrecognised values are ignored rather than rejected, so listing `spam`
-		// is safe even where it is not a supported filter.
-		url.searchParams.set( 'status', 'publish,draft,pending,private,future,trash,spam' );
-		url.searchParams.set( 'search', search );
+		const buildURL = ( page: number ): URL => {
+			const url = this.getRequestURL( '1.1', `/sites/${ siteID }/posts/` );
+			url.searchParams.set( 'type', 'feedback' );
+			// Not `any`: WP_Query excludes statuses registered `exclude_from_search`,
+			// which covers core's `trash` and the `spam` status jetpack-forms registers.
+			// Those are exactly what a failed run leaves behind, since this flow walks a
+			// response through Spam and Trash. Verified against the endpoint: `any`
+			// returned 0 on a site holding 21 trashed responses, `trash` returned all 21.
+			// Unrecognised values are ignored rather than rejected, so listing `spam`
+			// is safe even where it is not a supported filter.
+			url.searchParams.set( 'status', 'publish,draft,pending,private,future,trash,spam' );
+			url.searchParams.set( 'search', search );
+			url.searchParams.set( 'number', '100' );
+			url.searchParams.set( 'page', String( page ) );
+			return url;
+		};
 
-		const response = await this.sendRequest( url, params );
+		let deleted = 0;
 
-		if ( response.hasOwnProperty( 'error' ) ) {
-			throw new Error(
-				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
-			);
+		// Paginate: a caller passing a unique term expects one or two matches, but
+		// nothing enforces that, and a single page would silently leave the rest.
+		for ( let page = 1; ; page++ ) {
+			const response = await this.sendRequest( buildURL( page ), params );
+
+			if ( response.hasOwnProperty( 'error' ) ) {
+				throw new Error(
+					`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+				);
+			}
+
+			const posts = response?.posts ?? [];
+			if ( ! posts.length ) {
+				return deleted;
+			}
+
+			for ( const post of posts ) {
+				try {
+					await this.deletePost( siteID, post.ID );
+					deleted++;
+				} catch ( error ) {
+					// deletePost throws, which would abandon every remaining response.
+					// Report and continue: partial cleanup beats none. TeamCity service
+					// message format so CI can collect these; it must not contain quotes.
+					const message = `Could not delete feedback ${ post.ID } on site ${ siteID }: ${ error }`
+						.replace( /'/g, '' )
+						.replace( /[|[\]]/g, ' ' );
+					// eslint-disable-next-line no-console
+					console.log( `##teamcity[message text='${ message }' status='WARNING']` );
+				}
+			}
+
+			// A short page means there is nothing after it.
+			if ( posts.length < 100 ) {
+				return deleted;
+			}
 		}
-
-		const posts = response?.posts ?? [];
-
-		for ( const post of posts ) {
-			await this.deletePost( siteID, post.ID );
-		}
-
-		return posts.length;
 	}
 
 	/* Comments */
