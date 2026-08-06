@@ -74,7 +74,7 @@ const getFetchPaginatedSitesOptions = (
 		// Exclude staging sites from the standalone dashboard list; the classic
 		// Calypso backport keeps them (the API includes them by default).
 		...( ! isDashboardBackport() && { include_staging: false } ),
-		search: view.search,
+		search: view.search?.replace( /^https?:\/\//i, '' ),
 		sort_field: view.sort?.field,
 		sort_direction: view.sort?.direction,
 		page: view.page,

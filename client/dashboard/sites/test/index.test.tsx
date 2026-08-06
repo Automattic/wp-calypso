@@ -4,6 +4,7 @@
 
 import { startSiteCollisionListener } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../test-utils';
 import Sites from '../index';
@@ -39,8 +40,26 @@ function mockSitesEndpoint( sites: Site[] ) {
 		.reply( 200, { sites, total: sites.length } );
 }
 
+function mockSitesSearchEndpoint( sites: Site[] ) {
+	const searches: string[] = [];
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( '/rest/v1.3/me/sites' )
+		.query( ( query ) => {
+			if ( typeof query.search !== 'string' ) {
+				return false;
+			}
+			searches.push( query.search );
+			return true;
+		} )
+		.reply( 200, { sites, total: sites.length } );
+	return searches;
+}
+
 describe( '<Sites>', () => {
 	beforeEach( () => {
+		window.history.replaceState( {}, '', '/' );
+
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/read/teams' )
 			.query( true )
@@ -178,5 +197,29 @@ describe( '<Sites>', () => {
 		expect( row2[ 0 ] ).toHaveTextContent( 'my-second-site.wordpress.com' );
 		expect( row2[ 1 ] ).toHaveTextContent( 'Coming soon' );
 		expect( row2[ 2 ] ).toHaveTextContent( 'Free' );
+	} );
+
+	test.each( [
+		'my-first-site.wordpress.com',
+		'https://my-first-site.wordpress.com',
+		'http://my-first-site.wordpress.com',
+	] )( 'normalizes the site search query for %s', async ( search ) => {
+		const user = userEvent.setup();
+		mockSitesEndpoint( mockSites );
+		const searches = mockSitesSearchEndpoint( [ mockSites[ 0 ] ] );
+
+		render( <Sites />, {
+			user: {
+				site_count: 13,
+			} as User,
+		} );
+
+		await screen.findByRole( 'table' );
+		const searchInput = screen.getByRole( 'searchbox' );
+		await user.type( searchInput, search );
+
+		await waitFor( () => expect( searches ).toContain( 'my-first-site.wordpress.com' ) );
+		expect( searchInput ).toHaveValue( search );
+		expect( screen.getByText( 'My First Site' ) ).toBeVisible();
 	} );
 } );
