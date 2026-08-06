@@ -60,7 +60,13 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 	diagnostics: InstallWaitDiagnostics;
 } {
 	const [ now, setNow ] = useState( () => Date.now() );
-	const [ waitBeganAt, setWaitBeganAt ] = useState( () => Date.now() );
+	// Null while the wait is not running. The clock is stamped when it starts, never while it is
+	// stopped, so time spent waiting for something else — a browser upload finishing — is not
+	// charged to it. Nothing is evaluated until this commits, so no render can time out on the
+	// previous attempt's stamp.
+	const [ waitBeganAt, setWaitBeganAt ] = useState< number | null >( () =>
+		enabled ? Date.now() : null
+	);
 	const [ haltedOutcome, setHaltedOutcome ] = useState< HaltedOutcome | null >( null );
 	const [ failureSeen, setFailureSeen ] = useState( false );
 
@@ -69,23 +75,29 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 	const seenInFlightId = useRef< number | undefined >( undefined );
 
 	const isHalted = haltedOutcome !== null;
+	const isRunning = enabled && waitBeganAt !== null;
 
-	// The wait stopped before it resolved — an error took over, or its authorization went away.
-	// Retire the attempt so re-enabling starts a fresh clock rather than inheriting the elapsed one.
 	useEffect( () => {
-		if ( enabled ) {
-			return;
+		if ( enabled && waitBeganAt === null ) {
+			// Starting, or resuming after whatever stopped it. Either way this is a fresh attempt.
+			isRevertOfThisTransfer.current = createRevertedTransferWatcher();
+			seenInFlightId.current = undefined;
+			setHaltedOutcome( null );
+			setFailureSeen( false );
+			setWaitBeganAt( Date.now() );
+		} else if ( ! enabled && waitBeganAt !== null ) {
+			// The wait stopped before it resolved — an error took over, or its authorization went
+			// away. Retire it so the clock restarts rather than counting the gap.
+			setWaitBeganAt( null );
 		}
-		isRevertOfThisTransfer.current = createRevertedTransferWatcher();
-		seenInFlightId.current = undefined;
-		setWaitBeganAt( Date.now() );
-		setHaltedOutcome( null );
-		setFailureSeen( false );
-	}, [ enabled ] );
+	}, [ enabled, waitBeganAt ] );
 
-	const { data: transfer, isFetched } = useQuery( {
+	// `isFetchedAfterMount`, not `isFetched`: the latter is satisfied by whatever this query already
+	// had in cache, which for a long-lived page can be a transfer snapshot old enough to blow the
+	// deadline the moment this mounts — latching a timeout on an install that has since completed.
+	const { data: transfer, isFetchedAfterMount } = useQuery( {
 		...siteLatestAtomicTransferQuery( siteId ),
-		enabled: enabled && !! siteId && ! isHalted,
+		enabled: isRunning && !! siteId && ! isHalted,
 		refetchInterval: ( query ) => {
 			const latest = query.state.data as AtomicTransfer | undefined;
 			// A settled record only ends the poll once it is this wait's. Otherwise it is the previous
@@ -102,7 +114,7 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 	const isInFlight = !! transfer && ! isSettled( transfer.status );
 
 	useEffect( () => {
-		if ( ! transfer ) {
+		if ( ! transfer || waitBeganAt === null ) {
 			return;
 		}
 		const reverted = isRevertOfThisTransfer.current( transfer );
@@ -120,14 +132,23 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 	// A live transfer is the thing being waited on, so it owns the clock; its start survives a
 	// refresh where a mount-anchored timer would not.
 	const transferStartedAt = isInFlight ? Date.parse( transfer.created_at ) : NaN;
-	const waitStartedAt = Number.isNaN( transferStartedAt )
-		? waitBeganAt
-		: Math.min( transferStartedAt, waitBeganAt );
+	const waitStartedAt =
+		waitBeganAt === null
+			? null
+			: Math.min(
+					Number.isNaN( transferStartedAt ) ? waitBeganAt : transferStartedAt,
+					waitBeganAt
+			  );
 
-	const hasTransferFailed = enabled && failureSeen;
-	// Waits for the first answer, so a mount cannot time out before it knows what it is waiting on.
+	const hasTransferFailed = isRunning && failureSeen;
+	// Gated on a fetch this mount saw complete, so neither a stale cache entry nor a wait that has
+	// not started yet can time out before there is anything to time out on.
 	const isDeadlineExceeded =
-		enabled && isFetched && ! hasTransferFailed && now - waitStartedAt > INSTALL_DEADLINE_MS;
+		isRunning &&
+		isFetchedAfterMount &&
+		! hasTransferFailed &&
+		waitStartedAt !== null &&
+		now - waitStartedAt > INSTALL_DEADLINE_MS;
 
 	useEffect( () => {
 		if ( hasTransferFailed ) {
@@ -137,7 +158,7 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 		}
 	}, [ hasTransferFailed, isDeadlineExceeded ] );
 
-	useInterval( () => setNow( Date.now() ), enabled && ! isHalted ? TICK_MS : null );
+	useInterval( () => setNow( Date.now() ), isRunning && ! isHalted ? TICK_MS : null );
 
 	// What the wait could see when it ended. `is_stuck` is the server's own verdict on the same
 	// question this hook answers — in flight and older than its threshold — so recording both says
@@ -149,7 +170,7 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 		transfer_age_seconds: transferAgeMs === null ? null : Math.round( transferAgeMs / 1000 ),
 		transfer_is_stuck: transfer?.is_stuck ?? null,
 		transfer_in_lossless_revert: transfer?.in_lossless_revert ?? null,
-		waited_seconds: Math.round( ( now - waitStartedAt ) / 1000 ),
+		waited_seconds: waitStartedAt === null ? 0 : Math.round( ( now - waitStartedAt ) / 1000 ),
 		// Whether the durable anchor did any work, or the clock fell back to this page's own arrival.
 		anchored_to: isInFlight ? 'transfer' : 'wait_start',
 		deadline_seconds: Math.round( INSTALL_DEADLINE_MS / 1000 ),

@@ -316,10 +316,11 @@ export function useProductInstall( {
 		return null;
 	} )();
 
-	// The upload flow reaches this page the moment the upload starts, not when it finishes, and
-	// how long the browser takes to send the file is the customer's bandwidth rather than anything
-	// this deadline is calibrated for. Start the clock once the file is up.
-	const isUploadStillSending = isPluginUploadFlow && ! pluginUploadComplete;
+	// The upload flow reaches this page the moment the upload starts, not when it finishes, and how
+	// long the browser takes to send the file is the customer's bandwidth rather than anything this
+	// deadline is calibrated for. Gate on the transmitted bytes alone: `pluginUploadComplete` would
+	// also wait out the install or transfer the upload triggers, which is the very wait to bound.
+	const isUploadStillSending = isPluginUploadFlow && pluginUploadProgress < 100;
 
 	const { hasTimedOut, hasTransferFailed, diagnostics } = useInstallDeadline( {
 		siteId,

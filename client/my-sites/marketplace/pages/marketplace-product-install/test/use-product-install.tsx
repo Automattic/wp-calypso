@@ -80,6 +80,26 @@ const uploadInFlight = () => ( {
 	},
 } );
 
+// The bytes are up but the transfer they kicked off is still running, so the upload slice stays in
+// progress and no plugin id exists yet.
+const uploadTransferring = () => ( {
+	ui: { selectedSiteId: SITE_ID },
+	sites: { items: { [ SITE_ID ]: { ID: SITE_ID, options: { is_automated_transfer: true } } } },
+	marketplace: {
+		purchaseFlow: {
+			primaryDomain: 'example.wordpress.com',
+			pluginInstallationStatus: 'in-progress',
+		},
+	},
+	plugins: {
+		upload: {
+			inProgress: { [ SITE_ID ]: true },
+			progressPercent: { [ SITE_ID ]: 100 },
+			uploadMethod: { [ SITE_ID ]: 'transfer' },
+		},
+	},
+} );
+
 const withUploadError = ( uploadError: object ) => ( {
 	ui: { selectedSiteId: SITE_ID },
 	plugins: { upload: { uploadError: { [ SITE_ID ]: uploadError } } },
@@ -194,6 +214,18 @@ describe( 'useProductInstall', () => {
 
 		it( 'arms the deadline once the upload has landed', () => {
 			renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+
+			expect( mockUseInstallDeadline.mock.calls.at( -1 )?.[ 0 ] ).toMatchObject( {
+				enabled: true,
+			} );
+		} );
+
+		// A zip that triggers a transfer keeps the upload marked in progress for the whole transfer,
+		// so waiting for the upload to be "complete" would leave the transfer — the thing actually
+		// worth bounding — with no deadline at all. The transmitted bytes are the only signal that
+		// separates the customer's bandwidth from our wait.
+		it( 'arms the deadline once the bytes are sent, even while the transfer runs on', () => {
+			renderProductInstall( {}, uploadTransferring() );
 
 			expect( mockUseInstallDeadline.mock.calls.at( -1 )?.[ 0 ] ).toMatchObject( {
 				enabled: true,

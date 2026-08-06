@@ -1,8 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { act } from '@testing-library/react';
-import { useState } from 'react';
+import { siteLatestAtomicTransferQuery } from '@automattic/api-queries';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, renderHook } from '@testing-library/react';
+import React, { useState } from 'react';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { INSTALL_DEADLINE_MS, useInstallDeadline } from '../use-install-deadline';
 
@@ -160,6 +162,44 @@ describe( 'useInstallDeadline', () => {
 		setEnabled( false );
 		setEnabled( true );
 		await advance( 40000 );
+
+		expect( result.current.hasTimedOut ).toBe( false );
+	} );
+
+	// The wait is disabled for as long as the browser is sending a large upload. That time belongs
+	// to the customer's connection, so the clock must start when the wait does, not carry the gap.
+	it( 'does not charge time spent disabled to the wait that follows it', async () => {
+		const { result, setEnabled } = renderSwitchableDeadline();
+		setEnabled( false );
+
+		await advance( INSTALL_DEADLINE_MS * 2 );
+		setEnabled( true );
+		await advance( 20000 );
+
+		expect( result.current.hasTimedOut ).toBe( false );
+	} );
+
+	// A page that has been open a while can hold a transfer snapshot older than the deadline. Acting
+	// on it would time out an install that has since finished, and the outcome latches.
+	it( 'ignores a cached transfer until a fetch of its own has landed', async () => {
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { retry: false } },
+		} );
+		queryClient.setQueryData(
+			siteLatestAtomicTransferQuery( SITE_ID ).queryKey,
+			transfer( { status: 'active', agoMs: INSTALL_DEADLINE_MS * 2 } )
+		);
+		// Whatever this mount asks for comes back settled: the install finished while the page sat.
+		mockFetchLatestAtomicTransfer.mockResolvedValue( transfer( { status: 'completed' } ) );
+
+		const wrapper = ( { children }: { children: React.ReactNode } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+		const { result } = renderHook( () => useInstallDeadline( { siteId: SITE_ID, enabled: true } ), {
+			wrapper,
+		} );
+
+		await advance( 100 );
 
 		expect( result.current.hasTimedOut ).toBe( false );
 	} );
