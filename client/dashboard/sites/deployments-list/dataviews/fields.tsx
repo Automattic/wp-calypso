@@ -1,5 +1,5 @@
 import { Badge } from '@automattic/ui';
-import { Link } from '@tanstack/react-router';
+import { Link, useParams } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
@@ -10,8 +10,8 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useLocale } from '../../../app/locale';
-import { siteRoute, siteSettingsRepositoriesManageRoute } from '../../../app/router/sites';
 import TimeSince from '../../../components/time-since';
+import { getSiteRepositoryConfigurationURL } from '../../../utils/site-url';
 import { BranchDisplay } from '../branch-display';
 import { DeploymentStatusBadge, DeploymentStatusValue } from '../deployment-status-badge';
 import { getDeploymentTimeTooltipText } from '../get-deployment-time-tooltip-text';
@@ -30,7 +30,7 @@ export function useFields( {
 	userNameOptions = [],
 }: FilterOptions ): Field< DeploymentRunWithDeploymentInfo >[] {
 	const locale = useLocale();
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	return useMemo(
 		() => [
 			{
@@ -48,10 +48,7 @@ export function useFields( {
 					const [ , repo ] = item.repository_name.split( '/' );
 
 					return (
-						<Link
-							to={ siteSettingsRepositoriesManageRoute.fullPath }
-							params={ { siteSlug, deploymentId: item.code_deployment_id } }
-						>
+						<Link to={ getSiteRepositoryConfigurationURL( siteSlug, item.code_deployment_id ) }>
 							{ repo }
 						</Link>
 					);

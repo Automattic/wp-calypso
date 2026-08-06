@@ -10,7 +10,7 @@ import {
 	useQueryClient,
 	type UseQueryResult,
 } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link, useParams, useSearch } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -19,16 +19,12 @@ import { Icon, seen } from '@wordpress/icons';
 import { useState, useMemo, useCallback, type ReactNode } from 'react';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import {
-	siteRoute,
-	siteSettingsRepositoriesRoute,
-	siteDeploymentsListRoute,
-} from '../../app/router/sites';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
+import { getSiteSettingsRepositoriesURL } from '../../utils/site-url';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS, useFields } from './dataviews';
 import { DeploymentLogsModalContent } from './deployment-logs/deployment-logs-modal-content';
 import { TriggerDeploymentModalForm } from './trigger-deployment-modal-form';
@@ -46,9 +42,7 @@ function DeploymentsEmptyState( { view, siteSlug }: { view: View; siteSlug: stri
 			'Deployments from your <repositoriesLink>connected repositories</repositoriesLink> will appear here.'
 		),
 		{
-			repositoriesLink: (
-				<Link to={ siteSettingsRepositoriesRoute.fullPath } params={ { siteSlug } } />
-			),
+			repositoriesLink: <Link to={ getSiteSettingsRepositoriesURL( siteSlug ) } />,
 		}
 	);
 
@@ -72,8 +66,8 @@ function DeploymentsEmptyState( { view, siteSlug }: { view: View; siteSlug: stri
 }
 
 function DeploymentsList() {
-	const { siteSlug } = siteRoute.useParams();
-	const currentSearchParams = siteDeploymentsListRoute.useSearch();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
+	const currentSearchParams = useSearch( { strict: false } );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const queryClient = useQueryClient();
 	const [ isModalTriggerDeploymentOpen, setIsModalTriggerDeploymentOpen ] = useState( false );
@@ -197,8 +191,7 @@ function DeploymentsList() {
 					actions={
 						<>
 							<RouterLinkButton
-								to={ siteSettingsRepositoriesRoute.fullPath }
-								params={ { siteSlug } }
+								to={ getSiteSettingsRepositoriesURL( siteSlug ) }
 								variant="secondary"
 								__next40pxDefaultSize
 							>
