@@ -186,8 +186,8 @@ describe( 'account step email verification gate', () => {
 		expect( activationEmailFromProp ).toBeUndefined();
 	} );
 
-	// The editor belongs to the account it was opened for, not to the step.
-	it( 'closes the editor when `/me` resolves someone else', async () => {
+	// It belongs to the account the gate handed back, not to the step.
+	it( 'returns to the gate when `/me` resolves someone else', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		const store = makeStore( false );
@@ -250,7 +250,7 @@ describe( 'account step email verification gate', () => {
 	} );
 
 	// It is fixed and full-screen, so it would sit over the field.
-	it( 'keeps the one-tap overlay off the editor', async () => {
+	it( 'keeps the one-tap overlay off the account screen', async () => {
 		const user = userEvent.setup();
 		mockSocialNotice = undefined;
 		renderUser( makeStore( false ), '/onboarding/user?oneTapAuth=true' );
@@ -261,9 +261,9 @@ describe( 'account step email verification gate', () => {
 		expect( document.querySelector( '.one-tap-auth-loader-overlay' ) ).not.toBeInTheDocument();
 	} );
 
-	// A refusal leaves an address in the field that isn't the one the editor opened with, so
-	// submitting it unchanged is no longer the way back.
-	it( 'offers a way back to the gate from the editor', async () => {
+	// Submitting unchanged is one way back, and Back is the other — the address in the field may
+	// no longer be the one it was opened with.
+	it( 'offers a way back to the gate from the account screen', async () => {
 		const user = userEvent.setup();
 		renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
@@ -276,7 +276,7 @@ describe( 'account step email verification gate', () => {
 	} );
 
 	// A stored social failure carries a log-in link, which is a way past the gate.
-	it( 'keeps an earlier social failure out of the editor', async () => {
+	it( 'keeps an earlier social failure off the account screen', async () => {
 		const user = userEvent.setup();
 		renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );

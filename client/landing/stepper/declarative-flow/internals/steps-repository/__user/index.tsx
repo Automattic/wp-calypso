@@ -83,11 +83,13 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
-	// Scoped, because `/me` resolving a different account is a case this step already handles — the
-	// gate is keyed on the same scope for it. An editor left open across that would offer one
-	// account's address to another.
-	const [ editing, setEditing ] = useState< { scope: string; startedFrom: string } | null >( null );
-	const isEditingEmail = editing?.scope === gateScopeForUser;
+	// The gate hands the user back here to change the address it named, remembering which account
+	// that was for — `/me` resolving a different one is a case this step already handles, and the
+	// gate is keyed on the same scope for it — and which address they were sent back with.
+	const [ correcting, setCorrecting ] = useState< { scope: string; address: string } | null >(
+		null
+	);
+	const isCorrectingAddress = correcting?.scope === gateScopeForUser;
 	// The account exists and its token is loaded, but `/me` hasn't caught up — so nothing here
 	// knows who it is yet, and Redux still reports nobody logged in.
 	const isWaitingForCreatedAccount = !! wpAccountCreateResponse && gateStatus === 'pending';
@@ -126,7 +128,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else if ( gateStatus === 'pending' ) {
 			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
-		} else if ( gateStatus !== 'gated' && ! isEditingEmail ) {
+		} else if ( gateStatus !== 'gated' && ! isCorrectingAddress ) {
 			// The step owns the whole of finishing; the gate is presentation, and unmounting it is
 			// what this transition looks like. Only `/me` saying verified is a confirmation — the
 			// flag being off is not — and the claim decides which of several tabs records it.
@@ -141,7 +143,15 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			}
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, gateStatus, gateScopeForUser, flow, isEditingEmail ] );
+	}, [
+		dispatch,
+		isLoggedIn,
+		navigation,
+		gateStatus,
+		gateScopeForUser,
+		flow,
+		isCorrectingAddress,
+	] );
 
 	// A retry batch is finite and swallows its failure, so nothing would ask again. An account just
 	// created isn't logged in until `/me` answers — the request that failed — so the tab that made
@@ -150,7 +160,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		() => dispatch( fetchCurrentUser() as unknown as AnyAction ),
 		( isLoggedIn && gateStatus === 'pending' ) ||
 			isWaitingForCreatedAccount ||
-			( isEditingEmail && gateStatus === 'gated' )
+			( isCorrectingAddress && gateStatus === 'gated' )
 	);
 
 	const locale = useFlowLocale();
@@ -165,19 +175,19 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// Submitting the address unchanged asks for nothing, so it is also how the user gets back to
 	// the gate. Changing it takes effect at once and re-sends the activation email, leaving nothing
 	// for them to confirm.
-	const closeEditor = ( scope: string ) =>
-		setEditing( ( current ) => ( current?.scope === scope ? null : current ) );
+	const returnToGate = ( scope: string ) =>
+		setCorrecting( ( current ) => ( current?.scope === scope ? null : current ) );
 
-	// Submitting the address unchanged asks for nothing, so it is the way back to the gate.
-	// Changing it does nothing yet: what writes it is a change of its own.
-	const updateEmail = async ( email: string ) => {
-		if ( email === editing?.startedFrom ) {
-			closeEditor( gateScopeForUser );
+	// Submitted unchanged, there is nothing being asked for and the user is already where they
+	// need to be, so this takes them back. Writing a changed one is a change of its own.
+	const handleEmailSubmit = async ( email: string ) => {
+		if ( email === correcting?.address ) {
+			returnToGate( gateScopeForUser );
 		}
 	};
 
-	const beginEmailEdit = () =>
-		setEditing( { scope: gateScopeForUser, startedFrom: currentEmail ?? '' } );
+	const beginCorrection = () =>
+		setCorrecting( { scope: gateScopeForUser, address: currentEmail ?? '' } );
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
@@ -230,8 +240,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// customTosElement would double-wrap it in <p>.
 	const stepContent = (
 		<>
-			{ isEditingEmail && <DocumentHead title={ translate( 'Create your account' ) } /> }
-			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && ! isEditingEmail && (
+			{ isCorrectingAddress && <DocumentHead title={ translate( 'Create your account' ) } /> }
+			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && ! isCorrectingAddress && (
 				<OneTapAuthLoaderOverlay />
 			) }
 			<SignupFormSocialFirst
@@ -244,8 +254,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				socialServiceResponse={ socialServiceResponse }
 				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
-				userEmail={ ( isEditingEmail ? currentEmail : queryArgs.get( 'user_email' ) ) || '' }
-				notice={ isEditingEmail ? false : notice }
+				userEmail={ ( isCorrectingAddress ? currentEmail : queryArgs.get( 'user_email' ) ) || '' }
+				notice={ isCorrectingAddress ? false : notice }
 				isSocialFirst
 				onCreateAccountSuccess={ handleCreateAccountSuccess }
 				backButtonInFooter={ ! isStepContainerV2 }
@@ -256,7 +266,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
 				activationEmailFrom={ gateEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
-				onUpdateEmail={ isEditingEmail ? updateEmail : undefined }
+				onUpdateEmail={ isCorrectingAddress ? handleEmailSubmit : undefined }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm
@@ -268,10 +278,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		</>
 	);
 
-	if ( gateStatus === 'gated' && ! isEditingEmail ) {
+	if ( gateStatus === 'gated' && ! isCorrectingAddress ) {
 		return (
 			<EmailVerificationGate
-				onEditEmail={ beginEmailEdit }
+				onEditEmail={ beginCorrection }
 				email={ currentEmail ?? '' }
 				// A different account is a different attempt: without this the cooldown, the send
 				// state and the poll's ladder would all carry over to whoever `/me` resolved.
@@ -286,7 +296,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// Nobody with an account has any business being offered another one — including someone whose
 	// account exists but whose `/me` hasn't landed, who would otherwise be looking at live social
 	// buttons and a "See all options" link moments after signing up.
-	if ( ( isLoggedIn || isWaitingForCreatedAccount ) && ! isEditingEmail ) {
+	if ( ( isLoggedIn || isWaitingForCreatedAccount ) && ! isCorrectingAddress ) {
 		return <Step.Loading />;
 	}
 
@@ -314,13 +324,13 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			</>
 		);
 
-		// Leaving the flow while the gate is owed would walk past it, and a refused correction has
-		// left an address in the field that submitting no longer gets the user out of.
+		// Leaving the flow would walk past a gate the user is still owed, so while the account
+		// screen is up this returns to it instead.
 		let backButton;
-		if ( isEditingEmail ) {
+		if ( isCorrectingAddress ) {
 			backButton = (
 				<Step.BackButton
-					onClick={ () => closeEditor( gateScopeForUser ) }
+					onClick={ () => returnToGate( gateScopeForUser ) }
 					enableTracksEvent={ false }
 				/>
 			);
@@ -333,7 +343,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				logo={ topBarLogo }
 				leftElement={ backButton }
 				rightElement={
-					hideLoginLink || isEmailFirstVariant || isEditingEmail ? null : (
+					hideLoginLink || isEmailFirstVariant || isCorrectingAddress ? null : (
 						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
 					)
 				}

@@ -30,18 +30,9 @@ interface Props {
 	email: string;
 	// Returns to the account step to correct the address this was sent to.
 	onEditEmail: () => void;
-	// There is nothing to correct until the account has reported the last change.
-	editDisabled?: boolean;
 }
 
-const EmailVerificationGate = ( {
-	flow,
-	scope,
-	logo,
-	email,
-	onEditEmail,
-	editDisabled,
-}: Props ) => {
+const EmailVerificationGate = ( { flow, scope, logo, email, onEditEmail }: Props ) => {
 	const { __ } = useI18n();
 	const { sendStatus, secondsUntilResend, resend } = useEmailVerification( flow, scope );
 
@@ -94,7 +85,6 @@ const EmailVerificationGate = ( {
 			edit: (
 				<WPButton
 					variant="link"
-					disabled={ editDisabled }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_signup_email_verification_edit_click', { flow } );
 						onEditEmail();
