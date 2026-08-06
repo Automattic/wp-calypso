@@ -20,12 +20,13 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
 import { gateScope, markResendUnavailableUntil } from '../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
+import type { ReactNode } from 'react';
 
 // A different user per test, so each one's isolation is its own rather than teardown's.
 let mockUserId = 0;
 
 let activationEmailFromProp: string | undefined;
-let signupFormProps: { userEmail?: string } = {};
+let signupFormProps: { userEmail?: string; notice?: unknown } = {};
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 jest.mock( '@automattic/api-core', () => ( {
@@ -59,7 +60,7 @@ jest.mock( '../use-social-service', () => ( {
 jest.mock( '../handle-social-response', () => ( {
 	useHandleSocialResponse: () => ( {
 		handleSocialResponse: jest.fn(),
-		notice: undefined,
+		notice: <div>That account already exists. Log in instead.</div>,
 		accountCreateResponse: undefined,
 	} ),
 } ) );
@@ -72,17 +73,20 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 		activationEmailFrom,
 		userEmail,
 		onUpdateEmail,
+		notice,
 	}: {
 		onCreateAccountSuccess?: ( data: { ID: number } ) => void;
 		goToNextStep?: ( data: { bearer_token: string; ID: number } ) => void;
 		activationEmailFrom?: string;
 		userEmail?: string;
 		onUpdateEmail?: ( email: string ) => Promise< void >;
+		notice?: unknown;
 	} ) => {
 		activationEmailFromProp = activationEmailFrom;
-		signupFormProps = { userEmail };
+		signupFormProps = { userEmail, notice };
 		return (
 			<>
+				{ notice as ReactNode }
 				<button onClick={ () => onUpdateEmail?.( 'fixed@example.com' ) }>submit-changed</button>
 				<button onClick={ () => onUpdateEmail?.( userEmail as string ) }>submit-unchanged</button>
 				<button
@@ -199,6 +203,19 @@ describe( 'account step email verification gate', () => {
 		await user.click( screen.getByRole( 'button', { name: 'submit-changed' } ) );
 
 		expect( updateUserSettings ).toHaveBeenCalledWith( { user_email: 'fixed@example.com' } );
+		expect( screen.getByText( 'fixed@example.com' ) ).toBeVisible();
+		expect( screen.queryByText( EMAIL ) ).not.toBeInTheDocument();
+	} );
+
+	// A stored social failure carries a log-in link, which is a way past the gate.
+	it( 'keeps an earlier social failure out of the editor', async () => {
+		const user = userEvent.setup();
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		expect( screen.queryByText( /Log in instead/ ) ).not.toBeInTheDocument();
 	} );
 
 	// Submitting it unchanged asks for nothing, so it is the way back rather than a write.

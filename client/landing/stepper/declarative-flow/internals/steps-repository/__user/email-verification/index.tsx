@@ -1,17 +1,15 @@
 import { Button } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Button as WPButton, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { arrowUpRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { formatCooldown } from 'calypso/dashboard/utils/email-verification-resend';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getInboxLink } from './inbox-links';
 import { markGateShown } from './storage';
 import { useEmailVerification } from './use-email-verification';
@@ -27,17 +25,19 @@ interface Props {
 	scope: string;
 	// Partner/Woo branding, so the top bar doesn't change when the gate replaces the form.
 	logo?: ReactNode;
+	// The address the activation email went to, which after a correction is the one just accepted
+	// rather than the one `/me` still reports.
+	email: string;
 	// Returns to the account step to correct the address this was sent to.
 	onEditEmail: () => void;
 }
 
-const EmailVerificationGate = ( { flow, scope, logo, onEditEmail }: Props ) => {
+const EmailVerificationGate = ( { flow, scope, logo, email, onEditEmail }: Props ) => {
 	const { __ } = useI18n();
-	const email = useSelector( getCurrentUserEmail );
 	const { sendStatus, secondsUntilResend, resend } = useEmailVerification( flow, scope );
 
 	const headingRef = useRef< HTMLDivElement >( null );
-	const inboxLink = getInboxLink( email ?? undefined );
+	const inboxLink = getInboxLink( email );
 	// A stable dependency: `inboxLink` is a fresh object every render.
 	const provider = inboxLink?.provider ?? 'none';
 
@@ -72,30 +72,26 @@ const EmailVerificationGate = ( { flow, scope, logo, onEditEmail }: Props ) => {
 			provider: inboxLink?.provider,
 		} );
 
-	const subText = useMemo(
-		() =>
-			createInterpolateElement(
-				sprintf(
-					// translators: %s is the email address the verification link was sent to.
-					__(
-						'We just sent an email to <email>%s</email> (<edit>edit</edit>). Click the link in the email to verify your account.'
-					),
-					email ?? ''
-				),
-				{
-					email: <strong />,
-					edit: (
-						<Button
-							plain
-							onClick={ () => {
-								recordTracksEvent( 'calypso_signup_email_verification_edit_click', { flow } );
-								onEditEmail();
-							} }
-						/>
-					),
-				}
+	const subText = createInterpolateElement(
+		sprintf(
+			// translators: %s is the email address the verification link was sent to.
+			__(
+				'We just sent an email to <email>%s</email> (<edit>edit</edit>). Click the link in the email to verify your account.'
 			),
-		[ __, email, flow, onEditEmail ]
+			email
+		),
+		{
+			email: <strong />,
+			edit: (
+				<WPButton
+					variant="link"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_signup_email_verification_edit_click', { flow } );
+						onEditEmail();
+					} }
+				/>
+			),
+		}
 	);
 
 	return (

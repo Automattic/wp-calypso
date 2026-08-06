@@ -85,6 +85,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// account; this is the one case where showing it to one is the point.
 	const [ isEditingEmail, setIsEditingEmail ] = useState( false );
 	const [ editEmailError, setEditEmailError ] = useState< string | null >( null );
+	// What `/me` will report once it catches up. Its refresh coalesces with a poll already running
+	// and reports no failure of its own, so the gate can't be handed back the address it just left.
+	const [ acceptedEmail, setAcceptedEmail ] = useState< string | null >( null );
+	const verifyingEmail = acceptedEmail ?? currentEmail ?? '';
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
@@ -166,13 +170,14 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// the gate. Changing it takes effect at once and re-sends the activation email, leaving nothing
 	// for them to confirm.
 	const updateEmail = async ( email: string ) => {
-		if ( email === currentEmail ) {
+		setEditEmailError( null );
+		if ( email === verifyingEmail ) {
 			setIsEditingEmail( false );
 			return;
 		}
-		setEditEmailError( null );
 		try {
 			await updateUserSettings( { user_email: email } );
+			setAcceptedEmail( email );
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 			setIsEditingEmail( false );
 		} catch ( error ) {
@@ -181,6 +186,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 					translate( 'We couldn’t update your email address. Please try again.' )
 			);
 		}
+	};
+
+	const beginEmailEdit = () => {
+		setEditEmailError( null );
+		setIsEditingEmail( true );
 	};
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
@@ -235,11 +245,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const stepContent = (
 		<>
 			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
-			{ editEmailError && (
-				<Notice status="is-error" showDismiss={ false }>
-					{ editEmailError }
-				</Notice>
-			) }
 			<SignupFormSocialFirst
 				stepName={ stepName }
 				flowName={ flow }
@@ -250,8 +255,16 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				socialServiceResponse={ socialServiceResponse }
 				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
-				userEmail={ ( isEditingEmail ? currentEmail : queryArgs.get( 'user_email' ) ) || '' }
-				notice={ notice }
+				userEmail={ ( isEditingEmail ? verifyingEmail : queryArgs.get( 'user_email' ) ) || '' }
+				notice={
+					isEditingEmail
+						? !! editEmailError && (
+								<Notice status="is-error" showDismiss={ false }>
+									{ editEmailError }
+								</Notice>
+						  )
+						: notice
+				}
 				isSocialFirst
 				onCreateAccountSuccess={ handleCreateAccountSuccess }
 				backButtonInFooter={ ! isStepContainerV2 }
@@ -277,7 +290,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	if ( gateStatus === 'gated' && ! isEditingEmail ) {
 		return (
 			<EmailVerificationGate
-				onEditEmail={ () => setIsEditingEmail( true ) }
+				onEditEmail={ beginEmailEdit }
+				email={ verifyingEmail }
 				// A different account is a different attempt: without this the cooldown, the send
 				// state and the poll's ladder would all carry over to whoever `/me` resolved.
 				key={ gateScopeForUser }
