@@ -1,5 +1,6 @@
 import { WRITE_NEW_SITE_FLOW } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useQuery } from '../../../hooks/use-query';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
@@ -15,6 +16,11 @@ const writeNewSite: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	initialize,
 	useStepNavigation( _currentStepSlug, navigate ) {
+		// The picker links here with a `source` (e.g. `?source=write-editor`). Stepper
+		// preserves the query string across steps, so it is still present here. Forward
+		// it into the Write editor, which reads `source` for its back button and Tracks.
+		const source = useQuery().get( 'source' );
+
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
@@ -35,9 +41,16 @@ const writeNewSite: FlowV2< typeof initialize > = {
 
 					recordTracksEvent( 'calypso_write_new_site_flow_site_created', {
 						site_id: siteId,
+						source,
 					} );
 
-					window.location.assign( `https://${ siteSlug }/wp-admin/admin.php?page=write` );
+					const params = new URLSearchParams( { page: 'write' } );
+					if ( source ) {
+						params.set( 'source', source );
+					}
+					window.location.assign(
+						`https://${ siteSlug }/wp-admin/admin.php?${ params.toString() }`
+					);
 					return;
 				}
 

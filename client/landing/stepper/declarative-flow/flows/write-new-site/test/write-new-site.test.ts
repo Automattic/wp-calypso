@@ -5,12 +5,18 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import writeNewSite from '../write-new-site';
 
+let mockSearch = '';
+
 jest.mock( '@automattic/onboarding', () => ( {
 	WRITE_NEW_SITE_FLOW: 'write-new-site',
 } ) );
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
+} ) );
+
+jest.mock( '../../../../hooks/use-query', () => ( {
+	useQuery: () => new URLSearchParams( mockSearch ),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/utils/steps-with-required-login', () => ( {
@@ -39,6 +45,7 @@ describe( 'write-new-site flow', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockSearch = '';
 		Object.defineProperty( window, 'location', {
 			value: { assign: jest.fn(), replace: jest.fn() },
 			writable: true,
@@ -85,6 +92,26 @@ describe( 'write-new-site flow', () => {
 		);
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_write_new_site_flow_site_created', {
 			site_id: 99,
+			source: null,
+		} );
+	} );
+
+	it( 'forwards the source query param into the Write editor redirect and tracks event', async () => {
+		mockSearch = 'source=write-editor';
+
+		const { result } = submitFor( 'processing', {
+			processingResult: ProcessingResult.SUCCESS,
+			siteId: 99,
+			siteSlug: 'example.wordpress.com',
+		} );
+		await result;
+
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'https://example.wordpress.com/wp-admin/admin.php?page=write&source=write-editor'
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_write_new_site_flow_site_created', {
+			site_id: 99,
+			source: 'write-editor',
 		} );
 	} );
 

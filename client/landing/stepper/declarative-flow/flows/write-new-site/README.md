@@ -19,6 +19,18 @@ built for the already-logged-in case.
 3. Redirect the user to the Write editor of the new site:
    `https://{newSlug}/wp-admin/admin.php?page=write`.
 
+## Source param
+
+The picker links here with a `source` token (e.g. `/setup/write-new-site?source=write-editor`).
+Stepper preserves the query string across steps, so the flow forwards `source`
+into the final editor redirect (`…admin.php?page=write&source={source}`). The
+Write editor (`jetpack-mu-wpcom` `write.php`) reads `source` for its back-button
+destination and `wpcom_write_editor_open` Tracks event. `source` is also added
+to this flow's `calypso_write_new_site_flow_site_created` event.
+
+Signup attribution (`ref`) is captured automatically by Stepper's signup Tracks
+and does not need to be forwarded to the editor.
+
 ## Testing instructions
 
 1. While logged in, visit `/setup/write-new-site`.
