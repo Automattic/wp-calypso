@@ -26,6 +26,10 @@ const AUTH_BOUNCE_COUNT_KEY = 'wpcom_auth_bounce_count';
 
 const AUTH_LOOP_WINDOW_MS = 10 * 1000;
 
+// Cap the reported loop count (reported as "10+") so a runaway loop can't
+// inflate stat cardinality.
+const AUTH_LOOP_MAX_COUNT = 10;
+
 interface AuthBounceRecord {
 	count: number;
 	at: number;
@@ -53,7 +57,8 @@ function trackAuthBounceLoop() {
 		);
 
 		if ( count >= 2 ) {
-			bumpStat( 'dashboard-auth-loop', String( count ) );
+			const value = count >= AUTH_LOOP_MAX_COUNT ? `${ AUTH_LOOP_MAX_COUNT }+` : String( count );
+			bumpStat( 'dashboard-auth-loop', value );
 		}
 	} catch {
 		// sessionStorage can be unavailable in private contexts or JSON.parse may fail.

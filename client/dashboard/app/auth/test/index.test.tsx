@@ -126,6 +126,20 @@ describe( '<AuthProvider> stats', () => {
 		);
 	} );
 
+	test( 'caps the loop stat count', async () => {
+		config.enable( 'wpcom-user-bootstrap' );
+		window.sessionStorage.setItem(
+			'wpcom_auth_bounce_count',
+			JSON.stringify( { count: 20, at: Date.now() } )
+		);
+
+		renderAuth();
+
+		await waitFor( () =>
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth-loop', '10+' )
+		);
+	} );
+
 	test( 'does not bump a loop stat when the previous bounce is outside the loop window', async () => {
 		config.enable( 'wpcom-user-bootstrap' );
 		window.sessionStorage.setItem(
