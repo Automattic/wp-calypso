@@ -176,6 +176,7 @@ export default function OverviewCard( {
 			</VStack>
 			{ progress && (
 				<CircularProgressBar
+					ariaLabel={ __( 'Steps to launch your site' ) }
 					currentStep={ progress.value }
 					numberOfSteps={ progress.max }
 					size={ 80 }
