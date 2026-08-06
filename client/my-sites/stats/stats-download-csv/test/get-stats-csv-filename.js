@@ -65,6 +65,19 @@ describe( 'getStatsCsvFileName', () => {
 		);
 	} );
 
+	it( 'omits the period and date segments when includeDates is false', () => {
+		const period = {
+			period: 'day',
+			startOf: moment( '2026-08-06' ),
+			endOf: moment( '2026-08-06' ),
+		};
+		const query = { quantity: 30 };
+
+		expect(
+			getStatsCsvFileName( { siteSlug, path: 'emails', period, query, includeDates: false } )
+		).toBe( 'mercantile.wordpress.org-emails.csv' );
+	} );
+
 	it( 'falls back to period bounds when query is omitted', () => {
 		const period = {
 			period: 'week',

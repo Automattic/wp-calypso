@@ -33,6 +33,7 @@ class StatsDownloadCsv extends Component {
 		hideIfNoData: PropTypes.bool,
 		headers: PropTypes.array,
 		rowModifierFn: PropTypes.func,
+		includeDates: PropTypes.bool,
 	};
 
 	processExportData = ( data ) => {
@@ -54,9 +55,9 @@ class StatsDownloadCsv extends Component {
 
 	downloadCsv = ( event ) => {
 		event.preventDefault();
-		const { siteSlug, path, period, query, data, headers } = this.props;
+		const { siteSlug, path, period, query, data, headers, includeDates } = this.props;
 
-		const fileName = getStatsCsvFileName( { siteSlug, path, period, query } );
+		const fileName = getStatsCsvFileName( { siteSlug, path, period, query, includeDates } );
 
 		this.props.recordGoogleEvent( 'Stats', 'CSV Download ' + titlecase( path ) );
 
