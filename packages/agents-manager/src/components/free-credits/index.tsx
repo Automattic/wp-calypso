@@ -1,7 +1,6 @@
-import { Button } from '@wordpress/components';
+import { Notice, QuestionCard } from '@automattic/agenttic-ui';
 import { useSyncExternalStore } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, cautionFilled } from '@wordpress/icons';
 import clsx from 'clsx';
 import { AI } from '../icons';
 import {
@@ -30,6 +29,8 @@ interface FreeCredits extends FreeCreditsState {
 /** Below this share of the allowance the surfaces switch to their warning tone. */
 const LOW_BALANCE_RATIO = 0.25;
 
+const noop = () => {};
+
 export function useFreeCredits(): FreeCredits {
 	const state = useSyncExternalStore(
 		subscribeToFreeCredits,
@@ -50,20 +51,15 @@ interface UpgradeProps {
 	onUpgrade?: () => void;
 }
 
-function UpgradeButton( {
-	onUpgrade,
-	variant = 'primary',
-}: UpgradeProps & { variant?: 'primary' | 'link' } ) {
-	return (
-		<Button
-			className="agents-manager-free-credits__upgrade"
-			variant={ variant }
-			size="small"
-			onClick={ onUpgrade }
-		>
-			{ __( 'Upgrade', __i18n_text_domain__ ) }
-		</Button>
-	);
+function upgradeAction( onUpgrade?: () => void ) {
+	return { label: __( 'Upgrade', __i18n_text_domain__ ), onClick: onUpgrade ?? noop };
+}
+
+function balanceStatus( { isExhausted, isLow }: Pick< FreeCredits, 'isExhausted' | 'isLow' > ) {
+	if ( isExhausted ) {
+		return 'error' as const;
+	}
+	return isLow ? ( 'warning' as const ) : undefined;
 }
 
 /**
@@ -97,8 +93,8 @@ export function FreeCreditsPill() {
 }
 
 /**
- * Persistent strip above the composer. Steps down to a warning tone as the
- * balance runs low, and yields to `FreeCreditsExhausted` at zero.
+ * Persistent balance strip above the composer, using the chat's own notice
+ * treatment. Yields to `FreeCreditsExhausted` at zero.
  */
 export function FreeCreditsBanner( { onUpgrade }: UpgradeProps ) {
 	const { remaining, total, isExhausted, isLow, hasSurface } = useFreeCredits();
@@ -108,91 +104,71 @@ export function FreeCreditsBanner( { onUpgrade }: UpgradeProps ) {
 	}
 
 	return (
-		<div
-			className={ clsx( 'agents-manager-free-credits-banner', {
-				'is-low': isLow,
-				'is-exhausted': isExhausted,
-			} ) }
-		>
-			<span className="agents-manager-free-credits-banner__label">
-				{ isExhausted
+		<Notice
+			className="agents-manager-free-credits-banner"
+			status={ balanceStatus( { isExhausted, isLow } ) }
+			icon={ <AI size={ 16 } /> }
+			message={
+				isExhausted
 					? __( 'No free requests left this month.', __i18n_text_domain__ )
 					: sprintf(
 							/* translators: %1$d is the remaining free AI requests, %2$d the monthly allowance. */
 							__( '%1$d of %2$d free requests left', __i18n_text_domain__ ),
 							remaining,
 							total
-					  ) }
-			</span>
-			<UpgradeButton onUpgrade={ onUpgrade } variant="link" />
-		</div>
+					  )
+			}
+			action={ upgradeAction( onUpgrade ) }
+		/>
 	);
 }
 
 /**
  * Empty-view card that states the allowance before the first message, where
- * there is room for a meter and a full sentence.
+ * there is room for a full sentence. Built on the chat's own question card so
+ * the frame and the action match every other card in the conversation.
  */
 export function FreeCreditsCard( { onUpgrade }: UpgradeProps ) {
-	const { remaining, total, isExhausted, isLow, hasSurface } = useFreeCredits();
+	const { remaining, isExhausted, hasSurface } = useFreeCredits();
 
 	if ( ! hasSurface( 'card' ) ) {
 		return null;
 	}
 
-	const usedRatio = total > 0 ? ( total - remaining ) / total : 1;
-
 	return (
-		<section
-			className={ clsx( 'agents-manager-free-credits-card', {
-				'is-low': isLow,
-				'is-exhausted': isExhausted,
-			} ) }
-		>
-			<header className="agents-manager-free-credits-card__header">
-				<AI size={ 20 } />
-				<h3 className="agents-manager-free-credits-card__title">
-					{ isExhausted
-						? __( 'You’ve used all your free requests', __i18n_text_domain__ )
-						: sprintf(
-								/* translators: %d is the number of free AI requests remaining. */
-								__( '%d free requests left', __i18n_text_domain__ ),
-								remaining
-						  ) }
-				</h3>
-			</header>
-			<div
-				className="agents-manager-free-credits-card__meter"
-				role="progressbar"
-				aria-valuemin={ 0 }
-				aria-valuemax={ total }
-				aria-valuenow={ remaining }
-				aria-label={ __( 'Free requests remaining', __i18n_text_domain__ ) }
-			>
-				<div
-					className="agents-manager-free-credits-card__meter-fill"
-					style={ { inlineSize: `${ Math.round( usedRatio * 100 ) }%` } }
-				/>
-			</div>
-			<p className="agents-manager-free-credits-card__description">
-				{ isExhausted
-					? __(
-							'Upgrade Jetpack AI to keep going — your allowance also refreshes next month.',
-							__i18n_text_domain__
-					  )
-					: __(
-							'Every request across Jetpack’s AI-powered features draws from this monthly allowance.',
-							__i18n_text_domain__
-					  ) }
-			</p>
-			<UpgradeButton onUpgrade={ onUpgrade } />
-		</section>
+		<QuestionCard
+			className="agents-manager-free-credits-card"
+			prompt={ {
+				question: isExhausted
+					? __( 'You’ve used all your free requests', __i18n_text_domain__ )
+					: sprintf(
+							/* translators: %d is the number of free AI requests remaining. */
+							__( '%d free requests left', __i18n_text_domain__ ),
+							remaining
+					  ),
+				choices: [
+					{
+						label: __( 'Upgrade Jetpack AI', __i18n_text_domain__ ),
+						description: isExhausted
+							? __(
+									'Keep going now — your free allowance also refreshes next month.',
+									__i18n_text_domain__
+							  )
+							: __(
+									'Every request across Jetpack’s AI-powered features draws from this monthly allowance.',
+									__i18n_text_domain__
+							  ),
+					},
+				],
+			} }
+			onAnswer={ () => onUpgrade?.() }
+		/>
 	);
 }
 
 /**
- * Zero-balance gate rendered in place of the composer. This is the conversion
- * moment, so it takes the full footer rather than sharing it with the input.
+ * Zero-balance gate above the composer. This is the conversion moment, so it
+ * takes the chat's error notice rather than the neutral balance strip.
  */
 export function FreeCreditsExhausted( { onUpgrade }: UpgradeProps ) {
 	const { isExhausted, hasSurface } = useFreeCredits();
@@ -202,20 +178,15 @@ export function FreeCreditsExhausted( { onUpgrade }: UpgradeProps ) {
 	}
 
 	return (
-		<div className="agents-manager-free-credits-exhausted" role="status">
-			<Icon className="agents-manager-free-credits-exhausted__icon" icon={ cautionFilled } />
-			<div className="agents-manager-free-credits-exhausted__body">
-				<p className="agents-manager-free-credits-exhausted__title">
-					{ __( 'You’re out of free requests', __i18n_text_domain__ ) }
-				</p>
-				<p className="agents-manager-free-credits-exhausted__description">
-					{ __(
-						'Upgrade Jetpack AI to keep chatting, or wait for your allowance to refresh next month.',
-						__i18n_text_domain__
-					) }
-				</p>
-			</div>
-			<UpgradeButton onUpgrade={ onUpgrade } />
-		</div>
+		<Notice
+			className="agents-manager-free-credits-exhausted"
+			status="error"
+			icon={ <AI size={ 16 } /> }
+			message={ __(
+				'You’re out of free requests. Upgrade to keep chatting.',
+				__i18n_text_domain__
+			) }
+			action={ upgradeAction( onUpgrade ) }
+		/>
 	);
 }

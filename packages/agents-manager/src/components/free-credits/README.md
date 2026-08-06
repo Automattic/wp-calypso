@@ -9,12 +9,17 @@ exactly as it does today by default.
 
 ## Surfaces
 
-| Surface     | Where it renders                    | Reads best for                                     |
-| ----------- | ----------------------------------- | -------------------------------------------------- |
-| `pill`      | Chat header, next to the actions    | Always-visible count with no room for copy         |
-| `banner`    | Chat footer, above the composer     | Persistent balance while chatting                  |
-| `card`      | Empty view, under the suggestions   | Setting expectations before the first message      |
-| `exhausted` | Chat footer, replaces the composer  | The zero-balance upgrade moment                    |
+| Surface     | Built from                | Where it renders                  | Reads best for                                |
+| ----------- | ------------------------- | --------------------------------- | --------------------------------------------- |
+| `pill`      | bespoke (no primitive)    | Chat header, next to the actions  | Always-visible count with no room for copy    |
+| `banner`    | agenttic `Notice`         | Chat footer, above the composer   | Persistent balance while chatting             |
+| `card`      | agenttic `QuestionCard`   | Empty view, under the suggestions | Setting expectations before the first message |
+| `exhausted` | agenttic `Notice` (error) | Chat footer, gates the composer   | The zero-balance upgrade moment               |
+
+Three of the four are agenttic components, so they inherit the chat's frames,
+buttons and `.agenttic.dark` docked palette for free. Only the pill is bespoke
+— agenttic exposes no badge primitive — and it is built from the same tokens.
+Nothing here declares a literal colour.
 
 `banner` hides itself at zero when `exhausted` is on, so the two don't stack.
 While gated, the composer stays mounted but read-only — unmounting it resets
@@ -22,11 +27,11 @@ agenttic's input state.
 
 ## URL params
 
-| Param              | Meaning                                                     |
-| ------------------ | ----------------------------------------------------------- |
+| Param              | Meaning                                                             |
+| ------------------ | ------------------------------------------------------------------- |
 | `ai-credits`       | Credits remaining. Any `ai-credits*` param turns the experiment on. |
-| `ai-credits-total` | Monthly allowance. Defaults to 20.                          |
-| `ai-credits-ui`    | Comma-separated surfaces, or `all` / `none`. Defaults to all. |
+| `ai-credits-total` | Monthly allowance. Defaults to 20.                                  |
+| `ai-credits-ui`    | Comma-separated surfaces, or `all` / `none`. Defaults to all.       |
 
 ```
 ?ai-credits=12                          # all four surfaces, 12 of 20 left
@@ -61,3 +66,6 @@ Replace `readInitialState()` in `store.ts` with the entitlement source and drop
 the URL/session seeding. The surfaces themselves only read `remaining`, `total`
 and `surfaces`, and take an optional `onUpgrade` handler that currently does
 nothing — wire it to checkout.
+
+Spending is wired in `AgentChat`'s submit handler purely so the states can be
+watched changing; the real balance should come from the server.

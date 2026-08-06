@@ -1,8 +1,61 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order -- jest.mock calls must precede imports */
 
 import { act, render, screen } from '@testing-library/react';
+
+// `@automattic/agenttic-ui` can't be resolved by Jest, so stand in for the two
+// components these surfaces are built from. The mocks keep the parts the
+// assertions rely on: the notice's message/status/action and the card's
+// question and choices.
+jest.mock(
+	'@automattic/agenttic-ui',
+	() => {
+		const React = jest.requireActual< typeof import('react') >( 'react' );
+
+		function Notice( {
+			message,
+			status,
+			action,
+		}: {
+			message: string;
+			status?: string;
+			action?: { label: string; onClick: () => void };
+		} ) {
+			return (
+				<div data-testid="notice" data-status={ status ?? 'default' }>
+					<span>{ message }</span>
+					{ action && <button onClick={ action.onClick }>{ action.label }</button> }
+				</div>
+			);
+		}
+
+		function QuestionCard( {
+			prompt,
+			onAnswer,
+		}: {
+			prompt: { question: string; choices: { label: string; description?: string }[] };
+			onAnswer: ( answer: string, choice: unknown ) => void;
+		} ) {
+			return (
+				<div data-testid="question-card">
+					<h3>{ prompt.question }</h3>
+					{ prompt.choices.map( ( choice ) => (
+						<button key={ choice.label } onClick={ () => onAnswer( choice.label, choice ) }>
+							{ choice.label }
+							<span>{ choice.description }</span>
+						</button>
+					) ) }
+				</div>
+			);
+		}
+
+		return { Notice, QuestionCard };
+	},
+	{ virtual: true }
+);
+
 import {
 	consumeFreeCredit,
 	resetFreeCredits,
@@ -43,7 +96,8 @@ describe( 'free credits surfaces', () => {
 		renderSurfaces( { enabled: false, remaining: 5 } );
 
 		expect( screen.queryByText( /free requests/i ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'notice' ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'question-card' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows every surface when all are enabled', () => {
@@ -52,21 +106,33 @@ describe( 'free credits surfaces', () => {
 		expect( screen.getByTitle( '5 of 20 free requests left this month' ) ).toBeVisible();
 		expect( screen.getByText( '5 of 20 free requests left' ) ).toBeVisible();
 		expect( screen.getByText( '5 free requests left' ) ).toBeVisible();
-		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '5' );
+		expect( screen.getByTestId( 'question-card' ) ).toBeVisible();
 	} );
 
 	it( 'limits rendering to the requested surfaces', () => {
 		renderSurfaces( { remaining: 5, surfaces: [ 'pill' ] } );
 
 		expect( screen.getByTitle( '5 of 20 free requests left this month' ) ).toBeVisible();
-		expect( screen.queryByText( '5 of 20 free requests left' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'progressbar' ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'notice' ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'question-card' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'marks the balance notice as a warning when running low', () => {
+		renderSurfaces( { remaining: 3, surfaces: [ 'banner' ] } );
+
+		expect( screen.getByTestId( 'notice' ) ).toHaveAttribute( 'data-status', 'warning' );
+	} );
+
+	it( 'leaves the balance notice unstyled while the balance is healthy', () => {
+		renderSurfaces( { remaining: 12, surfaces: [ 'banner' ] } );
+
+		expect( screen.getByTestId( 'notice' ) ).toHaveAttribute( 'data-status', 'default' );
 	} );
 
 	it( 'replaces the banner with the upgrade gate at zero', () => {
 		renderSurfaces( { remaining: 0 } );
 
-		expect( screen.getByText( 'You’re out of free requests' ) ).toBeVisible();
+		expect( screen.getByText( /You’re out of free requests/ ) ).toBeVisible();
 		expect( screen.queryByText( /\d+ of \d+ free requests left$/ ) ).not.toBeInTheDocument();
 	} );
 
@@ -74,7 +140,7 @@ describe( 'free credits surfaces', () => {
 		renderSurfaces( { remaining: 0, surfaces: [ 'banner' ] } );
 
 		expect( screen.getByText( 'No free requests left this month.' ) ).toBeVisible();
-		expect( screen.queryByText( 'You’re out of free requests' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /You’re out of free requests/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'counts down and reaches the gate as credits are spent', () => {
@@ -84,7 +150,7 @@ describe( 'free credits surfaces', () => {
 		expect( screen.getByText( '1 of 20 free requests left' ) ).toBeVisible();
 
 		act( () => consumeFreeCredit() );
-		expect( screen.getByText( 'You’re out of free requests' ) ).toBeVisible();
+		expect( screen.getByText( /You’re out of free requests/ ) ).toBeVisible();
 
 		act( () => resetFreeCredits() );
 		expect( screen.getByText( '20 of 20 free requests left' ) ).toBeVisible();

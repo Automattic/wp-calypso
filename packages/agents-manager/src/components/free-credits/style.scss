@@ -1,189 +1,52 @@
-// Shared palette for the four free-credit surfaces. Overridden wholesale in
-// the docked (dark) sidebar below, so each block only styles layout.
-.agents-manager-free-credits-pill,
-.agents-manager-free-credits-banner,
-.agents-manager-free-credits-card,
-.agents-manager-free-credits-exhausted {
-	--am-credits-fg: #1e1e1e;
-	--am-credits-muted: #5f5a52;
-	--am-credits-surface: rgba(30, 30, 30, 0.04);
-	--am-credits-border: rgba(30, 30, 30, 0.12);
-	--am-credits-accent: #3858e9;
-	--am-credits-warning: #b26200;
-	--am-credits-alert: #b32d2e;
-
-	&.is-low {
-		--am-credits-accent: var(--am-credits-warning);
-	}
-
-	&.is-exhausted {
-		--am-credits-accent: var(--am-credits-alert);
-	}
-}
-
-.agents-manager-free-credits__upgrade.components-button {
-	flex-shrink: 0;
-}
+// These surfaces render inside `.agenttic`, so they inherit the chat's design
+// tokens — including the `.agenttic.dark` docked palette. Style with those
+// tokens only; a literal colour here would not follow the theme.
+//
+// The banner, the gate and the card are agenttic components (`Notice`,
+// `QuestionCard`) and carry their own styling. Only the header pill is bespoke
+// — agenttic exposes no badge primitive — so it is built from the same tokens.
 
 .agents-manager-free-credits-pill {
 	display: inline-flex;
 	align-items: center;
-	gap: 2px;
-	padding: 2px 8px 2px 4px;
-	border: 1px solid var(--am-credits-border);
-	border-radius: 16px;
-	color: var(--am-credits-fg);
-	font-size: 12px;
-	line-height: 20px;
+	gap: var(--spacing-1);
+	padding: 0 var(--spacing-2);
+	border-radius: var(--radius-full);
+	background-color: var(--color-muted);
+	color: var(--color-foreground);
+	font-size: var(--text-xs);
+	line-height: calc(var(--spacing) * 6);
 	white-space: nowrap;
 
 	svg {
-		fill: var(--am-credits-accent);
+		fill: var(--color-primary);
 	}
 
 	&__count {
-		font-weight: 600;
+		font-weight: var(--font-weight-bold);
 		font-variant-numeric: tabular-nums;
 	}
 
-	&.is-low,
+	&.is-low {
+		background-color: var(--color-warning-background);
+	}
+
 	&.is-exhausted {
-		color: var(--am-credits-accent);
-		border-color: currentColor;
-	}
-}
+		background-color: var(--color-error-background);
+		color: var(--color-error);
 
-.agents-manager-free-credits-banner {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 8px;
-	margin: 0 16px 8px;
-	padding: 6px 8px 6px 12px;
-	border: 1px solid var(--am-credits-border);
-	border-radius: 8px;
-	background: var(--am-credits-surface);
-
-	&__label {
-		color: var(--am-credits-muted);
-		font-size: 12px;
-		line-height: 20px;
-	}
-
-	&.is-low &__label,
-	&.is-exhausted &__label {
-		color: var(--am-credits-accent);
-		font-weight: 600;
+		svg {
+			fill: var(--color-error);
+		}
 	}
 }
 
 .agents-manager-free-credits-card {
-	margin: 16px;
-	padding: 16px;
-	border: 1px solid var(--am-credits-border);
-	border-radius: 16px;
-	color: var(--am-credits-fg);
-	text-align: start;
-
-	&__header {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-
-		svg {
-			fill: var(--am-credits-accent);
-			flex-shrink: 0;
-		}
-	}
-
-	&__title {
-		margin: 0;
-		font-size: 14px;
-		font-weight: 600;
-		line-height: 20px;
-	}
-
-	&__meter {
-		height: 4px;
-		margin: 12px 0;
-		border-radius: 2px;
-		background: var(--am-credits-surface);
-		overflow: hidden;
-	}
-
-	&__meter-fill {
-		height: 100%;
-		background: var(--am-credits-accent);
-		transition: inline-size 0.3s cubic-bezier(0, 0, 0.2, 1);
-	}
-
-	&__description {
-		margin: 0 0 12px;
-		color: var(--am-credits-muted);
-		font-size: 12px;
-		line-height: 18px;
-	}
-}
-
-.agents-manager-free-credits-exhausted {
-	display: flex;
-	align-items: flex-start;
-	gap: 8px;
-	margin: 0 16px 12px;
-	padding: 12px;
-	border: 1px solid var(--am-credits-accent);
-	border-radius: 16px;
-	color: var(--am-credits-fg);
-
-	&__icon {
-		flex-shrink: 0;
-		fill: var(--am-credits-accent);
-	}
-
-	&__body {
-		flex-grow: 1;
-		min-width: 0;
-	}
-
-	&__title {
-		margin: 0;
-		font-size: 13px;
-		font-weight: 600;
-		line-height: 18px;
-	}
-
-	&__description {
-		margin: 4px 0 0;
-		color: var(--am-credits-muted);
-		font-size: 12px;
-		line-height: 18px;
-	}
+	margin: var(--spacing-4);
 }
 
 // The composer stays mounted while gated (unmounting it resets agenttic's
-// input state), so dim it to read as unavailable behind the upgrade panel.
+// input state), so dim it to read as unavailable behind the upgrade notice.
 .agents-manager-credits-gated [data-slot="chat-input"] {
 	opacity: 0.5;
-}
-
-// The docked sidebar renders on a dark surface.
-.agenttic.dark {
-	.agents-manager-free-credits-pill,
-	.agents-manager-free-credits-banner,
-	.agents-manager-free-credits-card,
-	.agents-manager-free-credits-exhausted {
-		--am-credits-fg: #e8e6e1;
-		--am-credits-muted: #a7a29a;
-		--am-credits-surface: rgba(255, 255, 255, 0.08);
-		--am-credits-border: rgba(255, 255, 255, 0.14);
-		--am-credits-accent: #8c9eff;
-		--am-credits-warning: #f0b849;
-		--am-credits-alert: #f86368;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.agents-manager-free-credits-card__meter-fill {
-		transition: none;
-	}
 }
