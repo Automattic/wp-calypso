@@ -11,7 +11,7 @@ import { StatsNoticeProps } from './types';
 const getStatsPurchaseURL = ( siteId: number | null ) => {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?productType=personal&from=${ from }-free-stats-purchase-success-notice`;
+	const purchasePath = `/stats/purchase/${ siteId }?productType=commercial&from=${ from }-free-stats-purchase-success-notice`;
 
 	return purchasePath;
 };
@@ -23,9 +23,11 @@ const handleUpgradeClick = (
 ) => {
 	event.preventDefault();
 
-	isOdysseyStats
-		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_success_banner_upgrade_clicked' )
-		: recordTracksEvent( 'calypso_stats_purchase_success_banner_upgrade_clicked' );
+	recordTracksEvent(
+		isOdysseyStats
+			? 'jetpack_odyssey_stats_purchase_success_banner_upgrade_clicked'
+			: 'calypso_stats_purchase_success_banner_upgrade_clicked'
+	);
 
 	setTimeout( () => page( upgradeUrl ), 250 );
 };
