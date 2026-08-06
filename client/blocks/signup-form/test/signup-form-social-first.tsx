@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SignupFormSocialFirst, {
 	MobileCompactTosNotice,
@@ -248,15 +248,40 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( await screen.findByRole( 'button', { name: 'Updating…' } ) ).toBeVisible();
 		} );
 
-		// Leaving wouldn't call back a write already on its way.
-		it( 'holds the way back shut while a change is being written', async () => {
+		// The form owns whether its own action is busy; only the caller knows whether a write is on
+		// its way, and leaving wouldn't call one back.
+		it( 'holds the way back shut when the caller says a change is on its way', async () => {
+			const cancel = jest.fn();
+			renderUpdating( { emailUpdate: { submit: jest.fn(), cancel, cancelDisabled: true } } );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+
+			expect( cancel ).not.toHaveBeenCalled();
+		} );
+
+		it( 'leaves the way back open otherwise', async () => {
 			const cancel = jest.fn();
 			renderUpdating( { emailUpdate: { submit: () => new Promise< void >( () => {} ), cancel } } );
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 			await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
 
-			expect( cancel ).not.toHaveBeenCalled();
+			expect( cancel ).toHaveBeenCalled();
+		} );
+
+		// Both otherwise sit on the screen this mode never shows.
+		it( 'shows what the caller has to say, and a partner its own terms', () => {
+			renderUpdating( {
+				notice: <div>That address is already in use.</div>,
+				customTosElement: <span>Partner terms apply.</span>,
+			} );
+
+			const emailScreen = within(
+				screen.getByRole( 'textbox' ).closest( '.signup-form-social-first-screen' ) as HTMLElement
+			);
+			expect( emailScreen.getByText( 'That address is already in use.' ) ).toBeVisible();
+			expect( emailScreen.getByText( 'Partner terms apply.' ) ).toBeVisible();
+			expect( emailScreen.queryByText( /By clicking "Continue,"/ ) ).not.toBeInTheDocument();
 		} );
 
 		// Otherwise a refusal leaves the field and the button with nothing to press.

@@ -6,7 +6,7 @@ import { debounce } from '@wordpress/compose';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, cloneElement, isValidElement } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -339,13 +339,6 @@ class PasswordlessSignupForm extends Component {
 		this.props.onInputBlur?.( event );
 	};
 
-	secondaryFooterButton() {
-		const { emailUpdate, secondaryFooterButton } = this.props;
-		return emailUpdate && this.state.isSubmitting && isValidElement( secondaryFooterButton )
-			? cloneElement( secondaryFooterButton, { disabled: true } )
-			: secondaryFooterButton;
-	}
-
 	renderNotice() {
 		return (
 			<Notice showDismiss={ false } status="is-error">
@@ -374,7 +367,7 @@ class PasswordlessSignupForm extends Component {
 						primaryLoading={ isSubmitting }
 						primaryDisabled={ isPrimaryDisabled }
 					/>
-					{ this.secondaryFooterButton() }
+					{ this.props.secondaryFooterButton }
 				</>
 			);
 		}
@@ -384,7 +377,7 @@ class PasswordlessSignupForm extends Component {
 				<SignupSubmitButton isBusy={ isSubmitting } isDisabled={ isPrimaryDisabled }>
 					{ submitButtonText }
 				</SignupSubmitButton>
-				{ this.secondaryFooterButton() }
+				{ this.props.secondaryFooterButton }
 			</LoggedOutFormFooter>
 		);
 	}
@@ -420,7 +413,7 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.secondaryFooterButton() ? (
+					{ this.props.secondaryFooterButton ? (
 						<>
 							{ this.formFooter() }
 							{ terms }

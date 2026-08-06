@@ -61,6 +61,9 @@ interface SignupFormSocialFirst {
 	emailUpdate?: {
 		submit: ( email: string ) => Promise< void >;
 		cancel: () => void;
+		// The write itself can't be called back, so the caller shuts this while one is on its way.
+		// Whatever it goes on to wait for afterwards is its own business, and leaving is allowed.
+		cancelDisabled?: boolean;
 	};
 }
 
@@ -176,16 +179,18 @@ const SignupFormSocialFirst = ( {
 	};
 
 	const renderEmailStepTermsOfService = () => {
-		return (
-			<p className="signup-form-social-first__email-tos-link">
-				{ createInterpolateElement(
-					__(
-						'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-					),
-					options
-				) }
-			</p>
-		);
+		// Partner legal copy is otherwise only on the screen this mode never shows, so its users
+		// would be given WordPress.com's terms in place of the ones they were meant to see.
+		const terms =
+			emailUpdate && customTosElement
+				? customTosElement
+				: createInterpolateElement(
+						__(
+							'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+						),
+						options
+				  );
+		return <p className="signup-form-social-first__email-tos-link">{ terms }</p>;
 	};
 
 	// This component uses a technique from this video https://www.youtube.com/watch?v=8327_1PINWI
@@ -235,7 +240,11 @@ const SignupFormSocialFirst = ( {
 	let secondaryFooterButton;
 	if ( emailUpdate ) {
 		secondaryFooterButton = (
-			<Button onClick={ emailUpdate.cancel } icon={ chevronLeft }>
+			<Button
+				onClick={ emailUpdate.cancel }
+				disabled={ emailUpdate.cancelDisabled }
+				icon={ chevronLeft }
+			>
 				{ __( 'Cancel' ) }
 			</Button>
 		);
@@ -296,7 +305,7 @@ const SignupFormSocialFirst = ( {
 	return (
 		<div className="signup-form signup-form-social-first">
 			<div className={ getVisibilityClassName( 'initial' ) }>
-				{ notice }
+				{ ! emailUpdate && notice }
 				{ renderTermsOfService() }
 				{ emailLoginBlock && ! isEmailAtBottom && (
 					<>
@@ -324,6 +333,7 @@ const SignupFormSocialFirst = ( {
 				{ isEmailFirstVariant && loginLinkParagraph }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
+				{ emailUpdate && notice }
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
 						{ ...passwordlessFormProps }
