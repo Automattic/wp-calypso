@@ -5,6 +5,7 @@ import {
 	isPurchaseOneTimePurchase,
 } from '@automattic/api-core';
 import {
+	findPlansKeys,
 	getAkismetPro500ProductDisplayName,
 	getJetpackProductsDisplayNames,
 	getPlan,
@@ -29,12 +30,14 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
+	TYPE_PERSONAL,
 	TYPE_PRO,
 } from '@automattic/calypso-products';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import i18n from 'i18n-calypso';
 import moment from 'moment';
 import {
+	hasAmountAvailableToRefund,
 	isA4AHoldingSitePurchase,
 	isAgencyPartnerType,
 	isMarketplaceHoldingSitePurchase,
@@ -200,6 +203,18 @@ export function isWithinIntroductoryOfferPeriod( purchase: Purchase ): boolean {
 	return purchase.introductory_offer?.is_within_period ?? false;
 }
 
+export function isIntroductoryOfferFreeTrial( purchase: Purchase ): boolean {
+	return purchase.introductory_offer?.cost_per_interval === 0;
+}
+
+export function mightStillAutoRenew( purchase: Purchase ): boolean {
+	return purchase.might_still_auto_renew;
+}
+
+export function getPartnerName( purchase: Purchase ): string | null {
+	return isPartnerPurchase( purchase ) ? purchase.partner_name ?? null : null;
+}
+
 export function canEditPaymentDetails( purchase: Purchase ): boolean {
 	return (
 		// Normally a purchase past its expiry date can't have its payment details
@@ -351,14 +366,6 @@ export function getRenewalPriceInSmallestUnit( purchase: Purchase ): number {
 	return purchase.sale_amount_integer || purchase.price_integer;
 }
 
-export function isRefundable( purchase: Purchase ): boolean {
-	return purchase.is_refundable && purchase.product_type !== 'saas_plugin';
-}
-
-export function hasAmountAvailableToRefund( purchase: Purchase ): boolean {
-	return isRefundable( purchase ) && purchase.refund_amount > 0;
-}
-
 export function canAutoRenewBeTurnedOff( purchase: Purchase ): boolean {
 	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
@@ -373,6 +380,21 @@ export function canAutoRenewBeTurnedOff( purchase: Purchase ): boolean {
 	}
 
 	return purchase.is_auto_renew_enabled;
+}
+
+export function getDowngradePlanFromPurchase( purchase: Purchase ) {
+	const plan = getPlan( purchase.product_slug );
+	if ( ! plan ) {
+		return null;
+	}
+
+	const newPlanKeys = findPlansKeys( {
+		group: plan.group,
+		type: TYPE_PERSONAL,
+		term: plan.term,
+	} );
+
+	return getPlan( newPlanKeys[ 0 ] );
 }
 
 export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {

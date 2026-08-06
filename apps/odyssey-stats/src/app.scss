@@ -104,6 +104,14 @@
 		&.is-primary {
 			color: var(--studio-white);
 			background: var(--studio-black);
+			border-color: var(--studio-black);
+
+			&:hover:not(.is-busy),
+			&:focus {
+				color: var(--studio-white);
+				background: $emerald-hover-color;
+				border-color: $emerald-hover-color;
+			}
 		}
 
 		// Use `transparent` styling as secondary styles

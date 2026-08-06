@@ -5,14 +5,15 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { arrowUpRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { formatCooldown } from 'calypso/dashboard/utils/email-verification-resend';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getInboxLink } from './inbox-links';
-import { gateShownAt, markGateShown } from './storage';
+import { markGateShown } from './storage';
 import { useEmailVerification } from './use-email-verification';
 
 import './style.scss';
@@ -26,53 +27,42 @@ interface Props {
 	scope: string;
 	// Partner/Woo branding, so the top bar doesn't change when the gate replaces the form.
 	logo?: ReactNode;
-	// Called once the user confirms; the account step owns eligibility and what follows.
-	onDone: () => void;
 }
 
-const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
+const EmailVerificationGate = ( { flow, scope, logo }: Props ) => {
 	const { __ } = useI18n();
 	const email = useSelector( getCurrentUserEmail );
-	const { isVerified, isSending, hasSendError, secondsUntilResend, checkStatus, checkNow, resend } =
-		useEmailVerification( flow, scope );
+	const { sendStatus, secondsUntilResend, resend } = useEmailVerification( flow, scope );
 
-	const hasSubmitted = useRef( false );
 	const headingRef = useRef< HTMLDivElement >( null );
 	const inboxLink = getInboxLink( email ?? undefined );
+	// A stable dependency: `inboxLink` is a fresh object every render.
+	const provider = inboxLink?.provider ?? 'none';
 
 	const title = __( 'Verify your email' );
 
-	// Stamp the shown-at time now the gate is actually on screen (see storage.ts).
+	const resendLabel =
+		secondsUntilResend > 0
+			? sprintf(
+					// translators: %s is a countdown to when the email can be resent, e.g. 4:59.
+					__( 'Resend (%s)' ),
+					formatCooldown( secondsUntilResend )
+			  )
+			: __( 'Resend' );
+
+	// The denominator for the clicks and confirmations that follow, and for the drop-offs that
+	// don't. `provider` is `none` when the address has no inbox link.
 	useEffect( () => {
-		markGateShown( scope );
-	}, [ scope ] );
+		if ( markGateShown( scope ) ) {
+			recordTracksEvent( 'calypso_signup_email_verification_view', { flow, provider } );
+		}
+	}, [ scope, flow, provider ] );
 
 	// The gate replaces the account form without a route change, so move focus onto its heading
 	// — otherwise it strands on the unmounted submit button and the screen change goes unsaid.
 	useEffect( () => {
 		headingRef.current?.focus();
 	}, [] );
-
-	// Covers confirming while the gate is open and mounting already-verified, e.g. a reload
-	// after confirming.
-	const finish = useCallback( () => {
-		if ( hasSubmitted.current ) {
-			return;
-		}
-
-		hasSubmitted.current = true;
-		recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
-			flow,
-			seconds_on_step: Math.round( ( Date.now() - gateShownAt( scope ) ) / 1000 ),
-		} );
-		onDone();
-	}, [ flow, onDone, scope ] );
-
-	useEffect( () => {
-		if ( isVerified ) {
-			finish();
-		}
-	}, [ isVerified, finish ] );
 
 	const openInbox = () =>
 		recordTracksEvent( 'calypso_signup_email_verification_open_inbox', {
@@ -129,55 +119,38 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 
 					<VStack spacing={ 3 }>
 						{ /* Calypso's Button, not the Step.* ones: the design follows its outline, radius,
-						   and weight. A known provider gets an inbox deep link — confirming there
-						   resolves the gate by polling; the rest get a manual re-check. */ }
-						{ inboxLink ? (
-							<Button primary href={ inboxLink.url } target="_blank" onClick={ openInbox }>
-								{ __( 'Open email inbox' ) }
-								<Icon icon={ arrowUpRight } size={ 16 } fill="currentColor" />
-							</Button>
-						) : (
+						   and weight. A known provider gets an inbox deep link; confirming there — or
+						   anywhere else — resolves the gate by polling, so nothing else is needed. */ }
+						{ inboxLink && (
 							<Button
 								primary
-								onClick={ checkNow }
-								busy={ checkStatus === 'checking' }
-								disabled={ checkStatus === 'checking' }
+								href={ inboxLink.url }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ openInbox }
 							>
-								{ __( 'I’ve confirmed my email' ) }
+								{ __( 'Open email inbox' ) }
+								<Icon icon={ arrowUpRight } size={ 16 } fill="currentColor" />
 							</Button>
 						) }
 
 						<Button
 							onClick={ resend }
-							disabled={ isSending || secondsUntilResend > 0 }
-							busy={ isSending }
+							disabled={ sendStatus === 'sending' || secondsUntilResend > 0 }
+							busy={ sendStatus === 'sending' }
 						>
-							{ secondsUntilResend > 0
-								? sprintf(
-										// translators: %d is the number of seconds until the email can be resent.
-										__( 'Resend in %ds' ),
-										secondsUntilResend
-								  )
-								: __( 'Resend' ) }
+							{ resendLabel }
 						</Button>
 
-						{ checkStatus === 'unconfirmed' && (
-							<p className="onboarding-email-verification__notice" role="status">
-								{ __(
-									'We haven’t received your confirmation yet. Open the link in your inbox, then try again.'
-								) }
-							</p>
-						) }
-
-						{ checkStatus === 'error' && (
-							<p className="onboarding-email-verification__notice is-error" role="alert">
-								{ __( 'We couldn’t check right now. Please try again in a moment.' ) }
-							</p>
-						) }
-
-						{ hasSendError && (
+						{ sendStatus === 'error' && (
 							<p className="onboarding-email-verification__notice is-error" role="alert">
 								{ __( 'We couldn’t send the email. Please try again in a moment.' ) }
+							</p>
+						) }
+
+						{ sendStatus === 'throttled' && secondsUntilResend > 0 && (
+							<p className="onboarding-email-verification__notice" role="status">
+								{ __( 'Too many attempts. Please wait before trying again.' ) }
 							</p>
 						) }
 					</VStack>

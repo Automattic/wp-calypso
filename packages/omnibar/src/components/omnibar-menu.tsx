@@ -1,6 +1,7 @@
 import { privateApis } from '@wordpress/components';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Button } from '@wordpress/ui';
+import { useRef, useState } from 'react';
 import { OmnibarNodeContent } from './omnibar-node';
 import type { OmnibarNode } from '../types';
 
@@ -64,16 +65,21 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 	);
 }
 
-export function OmnibarMenu( { node, style }: { node: OmnibarNode; style?: React.CSSProperties } ) {
+export function OmnibarMenu( { node, className }: { node: OmnibarNode; className?: string } ) {
 	const label = node.title || node.label || '';
+	const menuClassName = className ? `omnibar__menu ${ className }` : 'omnibar__menu';
+	const [ isOpen, setIsOpen ] = useState( false );
+	const triggerRef = useRef< HTMLElement >( null );
+	const popoverRef = useRef< HTMLElement >( null );
+	const closedByPointerRef = useRef( false );
 
 	if ( ! node.children ) {
 		return (
 			<Button
 				variant="unstyled"
-				className="omnibar__menu"
-				style={ style }
+				className={ menuClassName }
 				render={ node.href ? <a href={ node.href } /> : undefined }
+				nativeButton={ ! node.href }
 				onClick={ node.onClick }
 				aria-label={ label }
 			>
@@ -82,16 +88,46 @@ export function OmnibarMenu( { node, style }: { node: OmnibarNode; style?: React
 		);
 	}
 
+	const handleMouseLeave = ( event: React.MouseEvent ) => {
+		const movingTo = event.relatedTarget as Node | null;
+		if (
+			! triggerRef.current?.contains( movingTo ) &&
+			! popoverRef.current?.contains( movingTo )
+		) {
+			closedByPointerRef.current = true;
+			setIsOpen( false );
+		}
+	};
+
+	const handleOpenChange = ( open: boolean ) => {
+		if ( open ) {
+			closedByPointerRef.current = false;
+		}
+		setIsOpen( open );
+	};
+
 	return (
-		<Menu>
+		<Menu open={ isOpen } onOpenChange={ handleOpenChange }>
 			<Menu.TriggerButton
+				ref={ triggerRef }
+				onMouseEnter={ () => setIsOpen( true ) }
+				onMouseLeave={ handleMouseLeave }
+				aria-expanded={ isOpen }
 				render={
-					<Button variant="unstyled" className="omnibar__menu" style={ style } aria-label={ label }>
+					<Button variant="unstyled" className={ menuClassName } aria-label={ label }>
 						<OmnibarNodeContent node={ node } />
 					</Button>
 				}
 			/>
-			<Menu.Popover className="omnibar__popover" gutter={ 0 } overflowPadding={ 0 }>
+			<Menu.Popover
+				ref={ popoverRef }
+				className="omnibar__popover"
+				gutter={ 0 }
+				overflowPadding={ 0 }
+				modal={ false }
+				autoFocusOnHide={ () => ! closedByPointerRef.current }
+				onMouseLeave={ handleMouseLeave }
+			>
 				<OmnibarMenuContent nodes={ node.children } />
 			</Menu.Popover>
 		</Menu>

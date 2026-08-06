@@ -1,3 +1,4 @@
+import { getPurchasePayment, isPurchaseOneTimePurchase } from '@automattic/api-core';
 import {
 	isDomainTransfer,
 	isDomainRegistration,
@@ -10,6 +11,7 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 	getPlan,
+	is100Year,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
@@ -17,9 +19,9 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { getPaymentMethodImageURL, razorpayImage as upiImage } from '@automattic/wpcom-checkout';
 import { ExternalLink, Button } from '@wordpress/components';
-import { Icon, cautionFilled as warningIcon } from '@wordpress/icons';
+import { Icon, arrowUpRight, cautionFilled as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { fixMe, localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
@@ -30,8 +32,27 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getCalendarDaysUntil, getRelativeDayString } from 'calypso/dashboard/utils/datetime';
+import {
+	EXPIRY_ERROR_DAYS,
+	EXPIRY_WARNING_DAYS,
+	isA4ABillingDragonPurchase,
+	isA4AHoldingSitePurchase,
+	isAkismetHoldingSitePurchase,
+	isJetpackHoldingSitePurchase,
+	isMarketplaceHoldingSitePurchase,
+	isPartnerPurchase,
+	isTransferredOwnership,
+} from 'calypso/dashboard/utils/purchase';
+import {
+	getExpiredCopy,
+	getExpiredRenewalTitle,
+	getExpiringSoonCopy,
+	getExpiringSoonRenewalTitle,
+} from 'calypso/dashboard/utils/purchase-expiry-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { handleRenewNowClick } from 'calypso/lib/purchases';
+import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import {
 	getDisplayName,
 	isExpiredOrRemoved,
@@ -39,9 +60,8 @@ import {
 	isExpiring,
 	isRechargeable,
 	isIncludedWithPlan,
-	isOneTimePurchase,
-	isPartnerPurchase,
-	isRecentMonthlyPurchase,
+	isRenewable,
+	isCloseToExpiration,
 	isRenewingBeforeExpiration,
 	isRemoved,
 	purchaseType,
@@ -53,22 +73,18 @@ import {
 	hasPaymentMethod,
 	isPaidWithCredits,
 	mightStillAutoRenew,
-} from 'calypso/lib/purchases';
+} from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import { getSite } from 'calypso/state/sites/selectors';
-import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
-import {
-	isJetpackHoldingSitePurchase,
-	isAkismetHoldingSitePurchase,
-	isMarketplaceHoldingSitePurchase,
-	isA4AHoldingSitePurchase,
-	isA4ABillingDragonPurchase,
-} from '../utils';
 import OwnerInfo from './owner-info';
-import type { Purchases, SiteDetails } from '@automattic/data-stores';
+import type { Purchase } from '@automattic/api-core';
+import type { SiteDetails } from '@automattic/data-stores';
 import 'calypso/me/purchases/style.scss';
 import type { Site } from 'calypso/blocks/site-icon';
+import type { ExpiryStatusCopy } from 'calypso/dashboard/utils/purchase-expiry-copy';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 import type { AppState } from 'calypso/types';
 import type { LocalizeProps } from 'i18n-calypso';
@@ -81,7 +97,7 @@ interface PurchaseItemPropsPlaceholder {
 
 interface PurchaseItemProps {
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	site?: SiteDetails | null | undefined;
 	slug?: string;
 	showSite?: boolean;
@@ -89,7 +105,7 @@ interface PurchaseItemProps {
 	isJetpack?: boolean;
 	isDisconnectedSite?: boolean;
 	isBackupMethodAvailable?: boolean;
-	transferredOwnershipPurchases?: Purchases.Purchase[];
+	transferredOwnershipPurchases?: Purchase[];
 }
 
 interface PurchaseItemPropsConnected {
@@ -114,7 +130,7 @@ export function PurchaseItemSiteIcon( {
 	purchase,
 	iconUrl,
 }: {
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	site?: Site | null | undefined;
 	isDisconnectedSite?: boolean;
 	iconUrl?: string | null;
@@ -129,7 +145,7 @@ export function PurchaseItemSiteIcon( {
 		);
 	}
 	if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
-		if ( purchase.productSlug.startsWith( 'passport' ) ) {
+		if ( purchase.product_slug.startsWith( 'passport' ) ) {
 			content = (
 				<div className="purchase-item__static-icon">
 					<img src={ passportIcon } alt="Passport icon" />
@@ -169,14 +185,14 @@ export function PurchaseItemProduct( {
 	showSite,
 	isDisconnectedSite,
 }: {
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	site?: SiteDetails | null | undefined;
 	translate: LocalizeProps[ 'translate' ];
 	slug?: string | number | null;
 	showSite?: boolean;
 	isDisconnectedSite?: boolean;
 } ) {
-	if ( purchase.isAttachedToHoldingSite ) {
+	if ( purchase.is_attached_to_holding_site ) {
 		return null;
 	}
 
@@ -313,18 +329,146 @@ export function PurchaseItemProduct( {
 	return productType;
 }
 
+/**
+ * The expiry status of a subscription that is close to expiring or has already
+ * expired: colored to draw attention, and linked to renewal checkout where
+ * renewing is something the viewer can act on right now.
+ *
+ * Expiry further off than the warning window is not urgent, and is rendered as
+ * plain text by the caller rather than through here.
+ */
+function UrgentExpiryStatus( {
+	purchase,
+	copy,
+	hasExpired,
+	untranslatedFallbackText,
+	isDisconnectedSite,
+	impression,
+}: {
+	purchase: Purchase;
+	copy: ExpiryStatusCopy;
+
+	/**
+	 * Whether `copy` describes a lapsed subscription rather than one still
+	 * heading for expiry. Taken from the caller because that is decided by the
+	 * subscription's status, which can disagree with its date in both
+	 * directions — and the tooltip has to read the same way the status does.
+	 */
+	hasExpired: boolean;
+
+	/**
+	 * Wording for locales that have no translation for `copy` yet. A `ReactNode`
+	 * because that older sentence interpolates the date into an element. Both
+	 * this and `copy.text`'s nullability go away once the copy is translated.
+	 */
+	untranslatedFallbackText?: React.ReactNode;
+	isDisconnectedSite?: boolean;
+
+	/** Rendered alongside the status, but outside the renewal link. */
+	impression: React.ReactNode;
+} ) {
+	const dispatch = useDispatch();
+	const moment = useLocalizedMoment();
+	const currentUserId = useSelector( getCurrentUserId );
+	const expiry = moment( purchase.expiry_date );
+	const className =
+		copy.intent === 'error' ? 'purchase-item__is-error' : 'purchase-item__is-warning';
+	const expiryText = copy.text ?? untranslatedFallbackText;
+
+	// The same conditions as `renderRenewButton` in `manage-purchase/index.tsx`:
+	// both the ones inside it and the ownership and lock checks in the JSX that
+	// renders it. That page also has a "Renew now" nav item which applies fewer
+	// conditions, and it isn't clear whether the difference between the two is
+	// intentional; these were copied from the header control because the link
+	// below is prominent in the same way that one is.
+	const canRenewNow =
+		( ! isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) &&
+		isRenewable( purchase ) &&
+		( ! isDisconnectedSite ||
+			isAkismetHoldingSitePurchase( purchase ) ||
+			isMarketplaceHoldingSitePurchase( purchase ) ||
+			isA4ABillingDragonPurchase( purchase ) ) &&
+		! isAkismetFreeProduct( purchase ) &&
+		! ( is100Year( purchase ) && ! isCloseToExpiration( purchase ) ) &&
+		purchase.can_explicit_renew &&
+		purchase.user_id === currentUserId &&
+		! purchase.is_locked;
+
+	// How close to expiry a subscription has to be before renewal is worth
+	// offering. A monthly subscription is never far from expiring, so the annual
+	// window would ask for a renewal within days of the purchase; it gets the
+	// last week instead. Anything already past its expiry date is inside either.
+	const renewalWindowDays =
+		purchase.bill_period_days === PLAN_MONTHLY_PERIOD ? EXPIRY_ERROR_DAYS : EXPIRY_WARNING_DAYS;
+	const daysUntilExpiry = getCalendarDaysUntil( expiry.toDate() );
+	const isRenewalWorthOffering = canRenewNow && daysUntilExpiry <= renewalWindowDays;
+
+	if ( ! isRenewalWorthOffering ) {
+		return (
+			<span className={ className } title={ expiry.format( 'LL' ) }>
+				{ expiryText }
+				{ impression }
+			</span>
+		);
+	}
+
+	const renewalTitle = hasExpired
+		? getExpiredRenewalTitle( expiry.format( 'LL' ) )
+		: getExpiringSoonRenewalTitle( expiry.format( 'LL' ) );
+
+	return (
+		<span className={ className }>
+			<button
+				className="purchase-item__expiry-link"
+				// On the button rather than the wrapper, so that it describes the
+				// control to a screen reader as well as showing on hover.
+				title={ renewalTitle ?? expiry.format( 'LL' ) }
+				onClick={ ( event ) => {
+					event.preventDefault();
+					event.stopPropagation();
+					// Come back to the list afterwards, whether the renewal goes
+					// through or is abandoned, since that is where they were.
+					// Absolute, since checkout runs on wordpress.com and the purchase
+					// listing page can run on other hosts like Jetpack Cloud and A4A.
+					const backUrl = window.location.href;
+					dispatch(
+						// Temporary bridge (SHILL-2256): handleRenewNowClick still expects
+						// the camelCase Purchase. Remove once it reads the raw shape.
+						handleRenewNowClick(
+							createPurchaseObject(
+								purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
+							),
+							purchase.site_slug ?? '',
+							{
+								redirectTo: backUrl,
+								cancelTo: backUrl,
+								tracksProps: { position: 'purchase-list' },
+							}
+						)
+					);
+				} }
+			>
+				{ expiryText }
+				<Icon icon={ arrowUpRight } size={ 18 } />
+			</button>
+			{ impression }
+		</span>
+	);
+}
+
 export function PurchaseItemStatus( {
 	purchase,
 	translate,
 	moment,
 	isDisconnectedSite,
 }: {
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
 	isDisconnectedSite?: boolean;
 } ) {
-	const expiry = moment( purchase.expiryDate );
+	const expiry = moment( purchase.expiry_date );
+
 	// @todo: There isn't currently a way to get the taxName based on the
 	// country. The country is not included in the purchase information
 	// envelope. We should add this information so we can utilize useTaxName
@@ -386,7 +530,7 @@ export function PurchaseItemStatus( {
 			);
 		}
 
-		if ( purchase.isJetpackPlanOrProduct ) {
+		if ( purchase.is_jetpack_plan_or_product ) {
 			return (
 				<span className="purchase-item__is-error">
 					{ translate( 'Disconnected from WordPress.com' ) }
@@ -418,12 +562,12 @@ export function PurchaseItemStatus( {
 		);
 	}
 
-	if ( purchase.isInAppPurchase && purchase.iapPurchaseManagementLink ) {
+	if ( purchase.is_iap_purchase && purchase.iap_purchase_management_link ) {
 		return translate(
 			'This product is an in-app purchase. You can manage it from within {{managePurchase}}the app store{{/managePurchase}}.',
 			{
 				components: {
-					managePurchase: <a href={ purchase.iapPurchaseManagementLink } />,
+					managePurchase: <a href={ purchase.iap_purchase_management_link } />,
 				},
 			}
 		);
@@ -440,7 +584,7 @@ export function PurchaseItemStatus( {
 				{
 					args: {
 						date: expiry.format( 'LL' ),
-						amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+						amount: formatCurrency( purchase.price_integer, purchase.currency_code, {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ),
@@ -472,8 +616,8 @@ export function PurchaseItemStatus( {
 		);
 	}
 
-	if ( isRenewingBeforeExpiration( purchase ) && purchase.renewDate ) {
-		const renewDate = moment( purchase.renewDate );
+	if ( isRenewingBeforeExpiration( purchase ) && purchase.renew_date ) {
+		const renewDate = moment( purchase.renew_date );
 
 		if ( creditCardHasAlreadyExpired( purchase ) ) {
 			return (
@@ -506,9 +650,9 @@ export function PurchaseItemStatus( {
 		// When a downgrade is scheduled for the next renewal, the plan won't simply
 		// renew at its current price — it changes to a lower-tier plan. Say so instead
 		// of the usual "Renews ... on <date>" line.
-		if ( purchase.isDelayedDowngradePending ) {
-			const targetPlanName = purchase.delayedDowngradeToProductSlug
-				? getPlan( purchase.delayedDowngradeToProductSlug )?.getTitle()
+		if ( purchase.is_delayed_downgrade_pending ) {
+			const targetPlanName = purchase.delayed_downgrade_to_product_slug
+				? getPlan( purchase.delayed_downgrade_to_product_slug )?.getTitle()
 				: null;
 			if ( targetPlanName ) {
 				return translate( 'Changing to %(plan)s on {{span}}%(date)s{{/span}}', {
@@ -531,10 +675,10 @@ export function PurchaseItemStatus( {
 			} );
 		}
 
-		if ( purchase.billPeriodDays ) {
+		if ( purchase.bill_period_days ) {
 			const translateOptions = {
 				args: {
-					amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+					amount: formatCurrency( purchase.price_integer, purchase.currency_code, {
 						isSmallestUnit: true,
 						stripZeros: true,
 					} ),
@@ -546,7 +690,7 @@ export function PurchaseItemStatus( {
 					span: <span className="purchase-item__date" />,
 				},
 			};
-			switch ( purchase.billPeriodDays ) {
+			switch ( purchase.bill_period_days ) {
 				case PLAN_MONTHLY_PERIOD:
 					return translate(
 						'Renews monthly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
@@ -574,7 +718,7 @@ export function PurchaseItemStatus( {
 			'Renews at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
 			{
 				args: {
-					amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+					amount: formatCurrency( purchase.price_integer, purchase.currency_code, {
 						isSmallestUnit: true,
 						stripZeros: true,
 					} ),
@@ -590,52 +734,42 @@ export function PurchaseItemStatus( {
 	}
 
 	if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
-		const expiresOnText = translate( 'Expires on {{span}}%s{{/span}}', {
-			args: expiry.format( 'LL' ),
-			components: {
-				span: <span className="purchase-item__date" />,
-			},
-		} );
-		const daysUntilExpiry = getCalendarDaysUntil( expiry.toDate() );
+		const copy = getExpiringSoonCopy( expiry.toDate() );
 
-		// Covers both "later today" and a purchase whose expiry date has passed
-		// but which the backend still reports as expiring.
-		if ( daysUntilExpiry <= 0 ) {
-			return (
-				<span className="purchase-item__is-error">
-					{ fixMe( {
-						text: 'Expires today',
-						newCopy: translate( 'Expires today' ),
-						oldCopy: expiresOnText,
-					} ) }
-					<TrackImpression warning="purchase-expiring" />
-				</span>
-			);
+		if ( ! copy ) {
+			return translate( 'Expires on {{span}}%s{{/span}}', {
+				args: expiry.format( 'LL' ),
+				components: {
+					span: <span className="purchase-item__date" />,
+				},
+			} );
 		}
 
-		if ( daysUntilExpiry <= 30 && ! isRecentMonthlyPurchase( purchase ) ) {
-			const expiryClass =
-				daysUntilExpiry <= 7 ? 'purchase-item__is-error' : 'purchase-item__is-warning';
+		// Only reached where the day-count copy has no translation yet. Delete
+		// this and the prop it is passed to once it does; see `getExpiringSoonCopy`.
+		const untranslatedFallbackText = translate(
+			'Expires %(timeUntilExpiry)s on {{span}}%(date)s{{/span}}',
+			{
+				args: {
+					timeUntilExpiry: getRelativeDayString( expiry.toDate(), 'upcoming' ),
+					date: expiry.format( 'LL' ),
+				},
+				components: {
+					span: <span className="purchase-item__date" />,
+				},
+			}
+		);
 
-			return (
-				<span className={ expiryClass }>
-					{ translate( 'Expires %(timeUntilExpiry)s on {{span}}%(date)s{{/span}}', {
-						args: {
-							// The branch above already excludes today and past dates, but
-							// the clamp keeps that guarantee local to this call.
-							timeUntilExpiry: getRelativeDayString( expiry.toDate(), 'upcoming' ),
-							date: expiry.format( 'LL' ),
-						},
-						components: {
-							span: <span className="purchase-item__date" />,
-						},
-					} ) }
-					<TrackImpression warning="purchase-expiring" />
-				</span>
-			);
-		}
-
-		return expiresOnText;
+		return (
+			<UrgentExpiryStatus
+				purchase={ purchase }
+				copy={ copy }
+				hasExpired={ false }
+				untranslatedFallbackText={ untranslatedFallbackText }
+				isDisconnectedSite={ isDisconnectedSite }
+				impression={ <TrackImpression warning="purchase-expiring" /> }
+			/>
+		);
 	}
 
 	if ( isExpiredOrRemoved( purchase ) ) {
@@ -645,24 +779,14 @@ export function PurchaseItemStatus( {
 			} );
 		}
 
-		// getCalendarDaysUntil counts forward, so this is negative once the expiry
-		// date has passed. Anything else means the expiry lands today or later —
-		// later being a purchase removed ahead of its expiry date — and both read
-		// as "Expired today" rather than "Expired in 3 days".
-		const expiredBeforeToday = getCalendarDaysUntil( expiry.toDate() ) < 0;
-		const expiredTodayText = translate( 'Expired today' );
-		const expiredFromNowText = translate( 'Expired %(timeSinceExpiry)s', {
-			args: {
-				timeSinceExpiry: getRelativeDayString( expiry.toDate(), 'past' ),
-			},
-			context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
-		} );
-
 		return (
-			<span className="purchase-item__is-error">
-				{ expiredBeforeToday ? expiredFromNowText : expiredTodayText }
-				<TrackImpression warning="purchase-expired" />
-			</span>
+			<UrgentExpiryStatus
+				purchase={ purchase }
+				copy={ getExpiredCopy( expiry.toDate() ) }
+				hasExpired
+				isDisconnectedSite={ isDisconnectedSite }
+				impression={ <TrackImpression warning="purchase-expired" /> }
+			/>
 		);
 	}
 
@@ -671,7 +795,7 @@ export function PurchaseItemStatus( {
 	}
 
 	if (
-		( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) &&
+		( isPurchaseOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) &&
 		! isDomainTransfer( purchase )
 	) {
 		return translate( 'Never Expires' );
@@ -685,7 +809,7 @@ export function PurchaseItemPaymentMethod( {
 	translate,
 	isDisconnectedSite,
 }: {
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	translate: LocalizeProps[ 'translate' ];
 	isDisconnectedSite?: boolean;
 } ) {
@@ -697,7 +821,7 @@ export function PurchaseItemPaymentMethod( {
 		return translate( 'Included with Plan' );
 	}
 
-	if ( purchase.isInAppPurchase ) {
+	if ( purchase.is_iap_purchase ) {
 		return (
 			<div>
 				<span>{ translate( 'In-App Purchase' ) }</span>
@@ -723,7 +847,7 @@ export function PurchaseItemPaymentMethod( {
 	};
 
 	if (
-		purchase.isAutoRenewEnabled &&
+		purchase.is_auto_renew_enabled &&
 		( ! hasPaymentMethod( purchase ) || isPaidWithCredits( purchase ) ) &&
 		! isExpiredWithNoAutoRenewAttemptsLeft( purchase ) &&
 		! isPartnerPurchase( purchase ) &&
@@ -736,7 +860,7 @@ export function PurchaseItemPaymentMethod( {
 						variant="link"
 						size="compact"
 						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) =>
-							goToAddPaymentMethod( e, purchase.siteId, purchase.id )
+							goToAddPaymentMethod( e, purchase.blog_id, purchase.ID )
 						}
 					>
 						{ translate( 'Add payment method' ) }
@@ -750,7 +874,7 @@ export function PurchaseItemPaymentMethod( {
 		! isAkismetFreeProduct( purchase ) &&
 		! isRechargeable( purchase ) &&
 		hasPaymentMethod( purchase ) && // why does it check for payment method type but shows missing method?
-		purchase.isAutoRenewEnabled
+		purchase.is_auto_renew_enabled
 	) {
 		return (
 			<div className="purchase-item__no-payment-method">
@@ -761,10 +885,12 @@ export function PurchaseItemPaymentMethod( {
 	}
 
 	if ( mightStillAutoRenew( purchase ) ) {
-		if ( purchase.payment.type === 'credit_card' && purchase.payment.creditCard ) {
-			const paymentMethodType = purchase.payment.creditCard.displayBrand
-				? purchase.payment.creditCard.displayBrand
-				: purchase.payment.creditCard.type || purchase.payment.paymentPartner || '';
+		const payment = getPurchasePayment( purchase );
+
+		if ( payment.type === 'credit_card' && payment.creditCard ) {
+			const paymentMethodType = payment.creditCard.displayBrand
+				? payment.creditCard.displayBrand
+				: payment.creditCard.type || '';
 
 			return (
 				<>
@@ -773,19 +899,17 @@ export function PurchaseItemPaymentMethod( {
 						alt={ paymentMethodType }
 						className="purchase-item__payment-method-card"
 					/>
-					{ purchase.payment.creditCard.number }
+					{ payment.creditCard.number }
 				</>
 			);
 		}
 
-		if ( purchase.payment.type === 'paypal' ) {
-			return (
-				<img src={ payPalImage } alt={ purchase.payment.type } className="purchase-item__paypal" />
-			);
+		if ( payment.type === 'paypal' ) {
+			return <img src={ payPalImage } alt={ payment.type } className="purchase-item__paypal" />;
 		}
 
-		if ( purchase.payment.type === 'upi' ) {
-			return <img src={ upiImage } alt={ purchase.payment.type } />;
+		if ( payment.type === 'upi' ) {
+			return <img src={ upiImage } alt={ payment.type } />;
 		}
 
 		return null;
@@ -839,7 +963,7 @@ class PurchaseItem extends Component<
 		} = this.props;
 
 		const isOwnershipTransferred = isTransferredOwnership(
-			purchase.id,
+			purchase.ID,
 			transferredOwnershipPurchases
 		);
 
@@ -922,7 +1046,7 @@ class PurchaseItem extends Component<
 		} );
 
 		const isOwnershipTransferred = isTransferredOwnership(
-			purchase.id,
+			purchase.ID,
 			transferredOwnershipPurchases
 		);
 
@@ -935,14 +1059,14 @@ class PurchaseItem extends Component<
 			// WPCOM generated temporary site, which is created during the siteless checkout flow. (currently Jetpack & Akismet can have siteless purchases).
 			if (
 				! isDisconnectedSite ||
-				purchase.isJetpackPlanOrProduct ||
-				purchase.isAttachedToHoldingSite ||
+				purchase.is_jetpack_plan_or_product ||
+				purchase.is_attached_to_holding_site ||
 				isA4ABillingDragonPurchase( purchase )
 			) {
 				onClick = () => {
 					window.scrollTo( 0, 0 );
 				};
-				href = getManagePurchaseUrlFor( slug, purchase.id );
+				href = getManagePurchaseUrlFor( slug, purchase.ID );
 			}
 		}
 

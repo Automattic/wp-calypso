@@ -5,10 +5,7 @@ import { renderHook, act } from '@testing-library/react';
 import useAgentLayoutManager from '../use-agent-layout-manager/index';
 
 // Stub out viewport/responsive deps so `canDock` depends only on the hook's
-// own logic (viewport is always desktop, window is always tall enough).
-jest.mock( '@automattic/viewport', () => ( {
-	useWindowDimensions: () => ( { width: 1920, height: 1080 } ),
-} ) );
+// own logic (viewport is always desktop).
 jest.mock( '@wordpress/compose', () => ( {
 	useMediaQuery: () => true,
 } ) );
@@ -20,10 +17,8 @@ jest.mock( '@wordpress/element', () => ( {
 	createPortal: ( children: React.ReactNode ) => children,
 } ) );
 
-const CLOSING_CLASS = 'agents-manager-sidebar-container--closing';
 const OPEN_CLASS = 'agents-manager-sidebar-container--sidebar-open';
 const SPLIT_SCREEN_CLASS = 'is-split-screen';
-const TRANSITION_MS = 200;
 const DOCK_OPEN_DELAY_MS = 100;
 
 const FULLSCREEN_BODY_CLASS = 'is-fullscreen-mode';
@@ -116,64 +111,6 @@ describe( 'useAgentLayoutManager — open / close', () => {
 		act( () => result.current.openSidebar() );
 		expect( container.classList.contains( OPEN_CLASS ) ).toBe( true );
 		expect( result.current.isSidebarOpen ).toBe( true );
-	} );
-
-	it( 'adds --closing when closing an open sidebar, and removes it after the transition', () => {
-		const { result } = render();
-
-		act( () => result.current.closeSidebar() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( true );
-
-		act( () => jest.advanceTimersByTime( TRANSITION_MS ) );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
-	} );
-
-	it( 'does not add --closing when the sidebar was already closed', () => {
-		const { result } = render();
-
-		act( () => result.current.closeSidebar() );
-		act( () => jest.runAllTimers() );
-
-		act( () => result.current.closeSidebar() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
-	} );
-
-	it( 'cancels the --closing transition when openSidebar() interrupts it', () => {
-		const { result } = render();
-
-		act( () => result.current.closeSidebar() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( true );
-
-		act( () => result.current.openSidebar() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
-		expect( container.classList.contains( OPEN_CLASS ) ).toBe( true );
-
-		// The pending removal must not fire after the class is already gone.
-		act( () => jest.advanceTimersByTime( TRANSITION_MS ) );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
-	} );
-
-	it( 'cancels the --closing transition when undocking interrupts it', () => {
-		const { result } = render();
-
-		act( () => result.current.closeSidebar() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( true );
-
-		act( () => result.current.undock() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
-
-		act( () => jest.advanceTimersByTime( TRANSITION_MS ) );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
-	} );
-
-	it( 'removes --closing on unmount', () => {
-		const { result, unmount } = render();
-
-		act( () => result.current.closeSidebar() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( true );
-
-		act( () => unmount() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
 	} );
 
 	it( 'cancels the pending dock-open when the layout undocks before it fires', async () => {

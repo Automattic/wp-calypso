@@ -19,11 +19,84 @@
 	}
 }
 
+/* Command Palette */
+@mixin dashboard-dark-theme-command-palette {
+	.commands-command-menu__header-search-icon {
+		fill: var( --dashboard__text-color );
+	}
+
+	.commands-command-menu__header .components-button {
+		border-color: var( --dashboard-field__border-color );
+	}
+
+	.commands-command-menu__container {
+		[cmdk-input] {
+			background: transparent;
+			color: var( --dashboard__text-color );
+
+			&::placeholder {
+				color: var( --dashboard__text-muted-color );
+			}
+		}
+
+		[cmdk-item] {
+			color: var( --dashboard__text-color );
+
+			&[aria-disabled='true'] {
+				color: var( --dashboard__text-muted-color );
+			}
+
+			svg {
+				fill: currentColor;
+			}
+
+			&[aria-selected='true'] > div,
+			&:active > div {
+				color: var( --wp-components-color-foreground-inverted );
+			}
+		}
+
+		[cmdk-root] > [cmdk-list] {
+			&:has( [cmdk-group-items]:not( :empty ) ),
+			&:has( [cmdk-empty] ) {
+				border-top-color: var( --dashboard-surface__border-color );
+			}
+
+			[cmdk-group-heading] {
+				color: var( --dashboard__text-color );
+			}
+		}
+
+		[cmdk-empty] {
+			color: var( --dashboard__text-color );
+		}
+	}
+
+	.commands-command-menu__item-category {
+		color: var( --dashboard__text-muted-color );
+	}
+
+	.commands-command-menu__container
+		[cmdk-item][aria-selected='true']
+		.commands-command-menu__item-category,
+	.commands-command-menu__container [cmdk-item]:active .commands-command-menu__item-category {
+		color: var( --wp-components-color-foreground-inverted );
+	}
+}
+
 /* Card */
 @mixin dashboard-dark-theme-card {
 	@include color-scheme-dark-theme-card;
 
 	.components-surface.components-card.dashboard-notice {
+		// White would be wrong here. Use a grey slightly lighter than the notice,
+		// so the button still stands out from it.
+		--dashboard-notice-action__background-color: color-mix(
+			in srgb,
+			var( --dashboard-surface__background-color ) 90%,
+			var( --dashboard__text-color )
+		);
+
 		&.is-info {
 			background-color: color-mix(
 				in srgb,
@@ -428,6 +501,7 @@
 	@include dashboard-dark-theme-breadcrumbs;
 	@include dashboard-dark-theme-callout;
 	@include dashboard-dark-theme-card;
+	@include dashboard-dark-theme-command-palette;
 	@include dashboard-dark-theme-dataviews;
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-emails;

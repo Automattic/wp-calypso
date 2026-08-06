@@ -1,13 +1,5 @@
-$omnibar-height: 32px;
-$omnibar-height-mobile: 46px;
-$omnibar-font-size: 13px;
-
-// Modern color scheme variables
-$omnibar-base-color: #1e1e1e;
-$omnibar-submenu-background: #0c0c0c;
-$omnibar-text-color: #fff;
-$omnibar-submenu-text-color: #bcbcbc;
-$omnibar-highlight-color: #7b90ff;
+@import url( //s0.wp.com/wp-includes/css/dashicons.min.css?v=20250127 );
+@import './variables';
 
 body:has( .omnibar ) {
 	--omnibar-height: #{$omnibar-height-mobile};
@@ -19,7 +11,10 @@ body:has( .omnibar ) {
 }
 
 .omnibar {
-	background-color: $omnibar-base-color;
+	--omnibar-background: #{$omnibar-base-color};
+	--omnibar-menu-active-background: #{$omnibar-submenu-background};
+
+	background-color: var( --omnibar-background );
 	min-height: var( --omnibar-height );
 	height: var( --omnibar-height );
 	display: flex;
@@ -32,13 +27,21 @@ body:has( .omnibar ) {
 		display: flex;
 		align-items: center;
 		margin-inline-start: auto;
+
+		.omnibar__menu {
+			@media ( min-width: 782px ) {
+				padding-inline: 8px;
+			}
+		}
 	}
 
 	.omnibar__menu {
 		display: inline-flex;
 		align-items: center;
+		justify-content: center;
 		height: var( --omnibar-height );
-		padding: 0 12px;
+		min-width: 52px;
+		padding: 0;
 		color: $omnibar-text-color;
 		background-color: transparent;
 		font-family: inherit;
@@ -51,23 +54,141 @@ body:has( .omnibar ) {
 		cursor: pointer;
 
 		&:hover,
-		&:focus,
+		&:focus-visible,
 		&:active,
 		&[aria-expanded='true'] {
-			background-color: $omnibar-submenu-background;
+			background-color: var( --omnibar-menu-active-background );
 			color: $omnibar-text-color;
 			box-shadow: none;
 			outline: none;
 		}
 
+		&:focus {
+			outline: none;
+		}
+
+		&:focus-visible {
+			box-shadow: inset 0 0 0 2px $omnibar-highlight-color;
+			outline-offset: -2px;
+		}
+
 		svg {
 			fill: currentColor;
+			width: 32px;
+			height: 32px;
+
+			@media ( min-width: 782px ) {
+				width: 24px;
+				height: 24px;
+			}
 		}
 
 		@media ( min-width: 782px ) {
-			padding: 0 8px;
+			min-width: auto;
+			padding-inline: 7px 8px;
 		}
 	}
+
+	.omnibar__home {
+		@media ( min-width: 782px ) {
+			padding-inline-start: 8px;
+		}
+	}
+
+	.omnibar__site {
+		@media ( min-width: 782px ) {
+			min-width: 0;
+		}
+	}
+
+	.omnibar__responsive-menu {
+		min-width: 53px;
+
+		.dashicons-before::before {
+			padding-inline-end: 3px;
+		}
+	}
+
+	.omnibar__label {
+		display: none;
+
+		@media ( min-width: 782px ) {
+			display: revert;
+		}
+	}
+
+	.omnibar__site-action,
+	.omnibar__node-content {
+		gap: 6px;
+	}
+}
+
+.omnibar,
+.omnibar__popover {
+	.dashicons-before {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 20px;
+
+		&::before {
+			position: relative;
+			width: 20px;
+			height: 20px;
+			font-size: 20px;
+			line-height: 1;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+		}
+	}
+
+	.dashicons-plus::before {
+		top: 2px;
+	}
+
+	.dashicons-admin-comments::before,
+	.dashicons-search::before {
+		top: 1px;
+	}
+}
+
+.omnibar .dashicons-before {
+	height: 40px;
+
+	&::before {
+		width: 52px;
+		height: 40px;
+		font-size: 40px;
+		text-align: center;
+	}
+
+	@media ( min-width: 782px ) {
+		height: 20px;
+
+		&::before {
+			width: 20px;
+			height: 20px;
+			font-size: 20px;
+			text-align: initial;
+		}
+	}
+}
+
+.omnibar .dashicons-admin-comments::before,
+.omnibar .dashicons-search::before {
+	height: 34px;
+	font-size: 34px;
+	top: 0.5px;
+
+	@media ( min-width: 782px ) {
+		height: 20px;
+		font-size: 20px;
+		top: 1px;
+	}
+}
+
+.omnibar .dashicons-menu-alt::before {
+	top: 0.5px;
 }
 
 .omnibar__popover {

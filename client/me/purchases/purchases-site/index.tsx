@@ -1,3 +1,4 @@
+import { getPurchasePayment } from '@automattic/api-core';
 import {
 	isJetpackPlan,
 	isJetpackProduct,
@@ -10,8 +11,9 @@ import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import PurchaseItem from '../purchase-item';
+import type { Purchase } from '@automattic/api-core';
 import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
-import type { Purchase, GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
+import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 
 import './style.scss';
 
@@ -66,13 +68,15 @@ export default function PurchasesSite(
 
 			{ purchases.map( ( purchase ) => {
 				const isBackupMethodAvailable = cards.some(
-					( card ) => card.stored_details_id !== purchase.payment.storedDetailsId && card.is_backup
+					( card ) =>
+						card.stored_details_id !== getPurchasePayment( purchase ).storedDetailsId &&
+						card.is_backup
 				);
 
 				return (
 					<PurchaseItem
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-						key={ purchase.id }
+						key={ purchase.ID }
 						slug={ slug }
 						isDisconnectedSite={ ! site }
 						purchase={ purchase }

@@ -6,7 +6,7 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
-.main.hosting-dashboard-layout.sites-dashboard {
+.is-section-a8c-for-agencies-sites .main.hosting-dashboard-layout.sites-dashboard {
 	.hosting-dashboard-layout-column {
 		.hosting-dashboard-layout-column__container {
 			display: flex;
@@ -237,45 +237,6 @@
 				}
 
 				.dataviews-view-list__fields {
-					display: flex;
-					justify-content: space-between;
-				}
-
-				/* This styling is a bit of a hack: To make the site name clickable area larger, will need
-				 * to hide the other fields when in preview mode.
-				 */
-				.dataviews-view-list__field {
-					// Hide the field except first (Site name) and last (actions menu)
-					&:not( :first-child ):not( :last-child ) {
-						display: none;
-					}
-
-					// Force the site name to take up the full width
-					&:first-child {
-						flex-grow: 1;
-
-						.sites-dataviews__site {
-							width: 100%;
-							justify-content: flex-start;
-						}
-					}
-				}
-
-				// Ideally instead of reusing the site name full field
-				// We should be setting a media field and a primary field.
-				.dataviews-view-list__media-wrapper {
-					display: none;
-				}
-				.dataviews-view-list__primary-field {
-					display: none;
-				}
-
-				.sites-overview__stats-trend,
-				.sites-overview__column-action-button,
-				.sites-overview__row-status,
-				.toggle-activate-monitoring__toggle-button,
-				.sites-dataviews__favorite-btn-wrapper,
-				.sites-overview__boost-score {
 					display: none;
 				}
 
@@ -575,6 +536,9 @@
 		color: var( --color-accent-5 );
 	}
 	.sites-overview__stats-trend {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		padding: 0 8px 0 4px;
 	}
 	.sites-overview__stats-trend__up,

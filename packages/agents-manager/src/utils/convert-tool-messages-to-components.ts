@@ -243,6 +243,7 @@ export default function convertToolMessagesToComponents( {
 							...props,
 							...( summaryText && { summary: summaryText } ),
 							contentType,
+							...( isStale && { isMessageStale: true } ),
 						},
 					},
 				],

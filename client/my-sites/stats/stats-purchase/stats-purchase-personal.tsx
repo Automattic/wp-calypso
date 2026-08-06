@@ -104,7 +104,7 @@ const PersonalPurchase = ( {
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
-					'To unlock UTM tracking, device attribution, commercial use and more, {{Button}}upgrade to a commercial license{{/Button}}.',
+					'To unlock device stats, region and city stats and UTM tracking, {{Button}}upgrade to a paid plan{{/Button}}.',
 					{
 						components: {
 							Button: <Button variant="link" href="#" onClick={ handleClick } />,
@@ -258,10 +258,10 @@ function StatsBenefitsListing( {
 					{ translate( 'No UTM tracking for your marketing campaigns' ) }
 				</li>
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-					{ translate( 'No granular location stats' ) }
+					{ translate( 'No region and city stats' ) }
 				</li>
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-					{ translate( 'No device attribution' ) }
+					{ translate( 'No device stats' ) }
 				</li>
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
 					{ translate( 'No access to upcoming advanced features' ) }

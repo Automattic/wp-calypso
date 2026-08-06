@@ -10,6 +10,7 @@ const mockAbortCurrentRequest = jest.fn();
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
 const mockSetIsMinimized = jest.fn();
+const mockSetIsSplitScreen = jest.fn();
 const mockUseAgentLayoutManager = jest.fn();
 const mockResumeActiveChat = jest.fn();
 const mockCloseSidebar = jest.fn();
@@ -19,6 +20,7 @@ let mockAgentsManagerState: {
 	isOpen?: boolean;
 	isDocked?: boolean;
 	isMinimized?: boolean;
+	isSplitScreen?: boolean;
 } = { isOpen: true, isDocked: false };
 let mockHasAdminBar = false;
 let mockShouldUseUnifiedAgent = false;
@@ -38,6 +40,7 @@ jest.mock( '@wordpress/data', () => ( {
 		setIsOpen: mockSetIsOpen,
 		setIsDocked: mockSetIsDocked,
 		setIsMinimized: mockSetIsMinimized,
+		setIsSplitScreen: mockSetIsSplitScreen,
 	} ),
 	useSelect: () => mockAgentsManagerState,
 } ) );
@@ -100,13 +103,22 @@ jest.mock( '../orchestrator-chat', () => ( {
 		onExpand,
 		onClose,
 	}: {
-		chatHeaderOptions: { title: string }[];
+		chatHeaderOptions: { title: string; onClick?: () => void; isDisabled?: boolean }[];
 		isOpen: boolean;
 		onExpand: () => void;
 		onClose: () => void;
 	} ) => (
 		<div data-testid="orchestrator-chat" data-chat-open={ String( isOpen ) }>
-			{ chatHeaderOptions.map( ( option ) => option.title ).join( '|' ) }
+			{ chatHeaderOptions.map( ( option ) => (
+				<button
+					key={ option.title }
+					type="button"
+					onClick={ option.onClick }
+					disabled={ option.isDisabled }
+				>
+					{ option.title }
+				</button>
+			) ) }
 			<button onClick={ onExpand }>Expand chat</button>
 			<button onClick={ onClose }>Close chat</button>
 		</div>
@@ -157,10 +169,13 @@ function LocationProbe() {
 	return <div data-testid="location">{ pathname }</div>;
 }
 
-function renderAgentDock( initialEntry = '/chat' ) {
+function renderAgentDock(
+	initialEntry = '/chat',
+	props: React.ComponentProps< typeof AgentDock > = {}
+) {
 	return render(
 		<MemoryRouter initialEntries={ [ initialEntry ] }>
-			<AgentDock />
+			<AgentDock { ...props } />
 			<LocationProbe />
 		</MemoryRouter>
 	);
@@ -404,4 +419,38 @@ describe( 'AgentDock', () => {
 
 		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
 	} );
+
+	it.each( [
+		{
+			isSplitScreen: false,
+			label: 'Split screen sidebar',
+			type: 'split_screen',
+			nextState: true,
+		},
+		{
+			isSplitScreen: true,
+			label: 'Exit split screen',
+			type: 'exit_split_screen',
+			nextState: false,
+		},
+	] )(
+		'tracks selecting $label from More Options',
+		( { isSplitScreen, label, type, nextState } ) => {
+			useWpAdminAgent();
+			mockLayoutIsDocked = true;
+			mockAgentsManagerState = {
+				isOpen: true,
+				isDocked: true,
+				isSplitScreen,
+			};
+
+			renderAgentDock( '/chat', { capabilities: { supportsSplitScreen: true } } );
+			fireEvent.click( screen.getByRole( 'button', { name: label } ) );
+
+			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
+				type,
+			} );
+			expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( nextState );
+		}
+	);
 } );

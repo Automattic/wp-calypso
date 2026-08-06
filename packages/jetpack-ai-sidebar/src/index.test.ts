@@ -19,6 +19,7 @@ import SeoDescriptionPicker from './components/seo-description-picker';
 import SeoTitlePicker from './components/seo-title-picker';
 import TitlePicker from './components/title-picker';
 import { clearActiveBlockFocus, undoBlockEdit } from './utils/block-actions';
+import { SUGGESTION_ACTION_COMPLETE_EVENT } from './utils/suggestion-events';
 import {
 	applyReviewEdit,
 	findBlockElement,
@@ -61,11 +62,6 @@ const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
 const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
-const AI_EDITORIAL_REVIEW_CONTRACT_ENTRY = {
-	id: 'ai-editorial-review-contract',
-	type: 'ai-editorial-review-contract',
-	data: { version: 2 },
-};
 
 function appendRootBlockListLayout( doc: Document = document ): HTMLElement {
 	const layout = doc.createElement( 'div' );
@@ -356,7 +352,7 @@ describe( 'contextProvider.getClientContext', () => {
 		mockSelectedBlock = null;
 	} );
 
-	it( 'advertises AI Editorial Review contract version 2 alongside selected block context', () => {
+	it( 'provides selected block context when no block is selected', () => {
 		installPostTypeMock( 'post' );
 
 		expect( contextProvider.getClientContext().contextEntries ).toEqual( [
@@ -365,40 +361,10 @@ describe( 'contextProvider.getClientContext', () => {
 				type: 'selected-block-content',
 				data: null,
 			},
-			AI_EDITORIAL_REVIEW_CONTRACT_ENTRY,
 		] );
 	} );
 
-	it( 'advertises the contract independently of AI Editorial Review availability', () => {
-		installAiEditorialReviewData( { aiEditorialReview: false } );
-		expect( contextProvider.getClientContext().contextEntries ).toContainEqual(
-			AI_EDITORIAL_REVIEW_CONTRACT_ENTRY
-		);
-
-		delete ( globalThis as any ).agentsManagerData;
-		expect( contextProvider.getClientContext().contextEntries ).toContainEqual(
-			AI_EDITORIAL_REVIEW_CONTRACT_ENTRY
-		);
-	} );
-
-	it( 'returns one fresh contract entry with every client context', () => {
-		const firstEntries = contextProvider.getClientContext().contextEntries;
-		const secondEntries = contextProvider.getClientContext().contextEntries;
-
-		expect( firstEntries ).not.toBe( secondEntries );
-		expect(
-			firstEntries.filter(
-				( entry: { id: string } ) => entry.id === AI_EDITORIAL_REVIEW_CONTRACT_ENTRY.id
-			)
-		).toHaveLength( 1 );
-		expect(
-			secondEntries.filter(
-				( entry: { id: string } ) => entry.id === AI_EDITORIAL_REVIEW_CONTRACT_ENTRY.id
-			)
-		).toHaveLength( 1 );
-	} );
-
-	it( 'keeps selected block content beside the contract entry', () => {
+	it( 'provides the selected block content', () => {
 		mockSelectedBlock = {
 			clientId: 'selected-block',
 			name: 'core/paragraph',
@@ -412,7 +378,6 @@ describe( 'contextProvider.getClientContext', () => {
 				type: 'selected-block-content',
 				data: { content: 'Selected paragraph' },
 			},
-			AI_EDITORIAL_REVIEW_CONTRACT_ENTRY,
 		] );
 	} );
 
@@ -440,8 +405,8 @@ describe( 'getChatComponent', () => {
 		expect( getChatComponent( 'ai-editorial-review' ) ).toBe( AiEditorialReview );
 	} );
 
-	it( 'does not register the legacy AI Editorial Review component type', () => {
-		expect( getChatComponent( 'review-mediation' ) ).toBeNull();
+	it( 'returns null for an unknown component type', () => {
+		expect( getChatComponent( 'unregistered-component' ) ).toBeNull();
 	} );
 
 	it( 'returns PostFeedback for type "post-feedback"', () => {
@@ -1861,7 +1826,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
-	it( 'returns one canonical AI Editorial Review suggestion with the existing UX label', () => {
+	it( 'returns one AI Editorial Review suggestion with the existing UX label', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 
@@ -2668,6 +2633,35 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
+	it( 're-shows editor suggestions when a generated title is applied', () => {
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { suggestionId: 'optimize-title' },
+				} )
+			);
+		} );
+
+		let latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions ).toEqual( [] );
+
+		act( () => {
+			window.dispatchEvent( new Event( SUGGESTION_ACTION_COMPLETE_EVENT ) );
+		} );
+
+		latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect(
+			latestSuggestions.map( ( suggestion: { label: string } ) => suggestion.label )
+		).toEqual( [ 'Optimize Title', 'Simple Review', 'Editorial Review' ] );
+	} );
+
 	it( 'keeps block suggestions hidden after a Proofread request finishes', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installPostTypeMock( 'post' );
@@ -2813,7 +2807,6 @@ describe( 'contextProvider', () => {
 		const feedbackContext = contextProvider.getClientContext();
 		expect( feedbackContext.currentPageContent ).toEqual( [] );
 		expect( feedbackContext.jetpackAi ).toBeUndefined();
-		expect( feedbackContext.contextEntries ).toContainEqual( AI_EDITORIAL_REVIEW_CONTRACT_ENTRY );
 		expect( contextProvider.getClientContext().currentPageContent ).toHaveLength( 1 );
 		expect( contextProvider.getClientContext().jetpackAi ).toBeUndefined();
 	} );
@@ -3167,22 +3160,19 @@ describe( 'toolProvider', () => {
 		it.each( [
 			[ 'Jetpack AI', SHOW_COMPONENT_TOOL_ID ],
 			[ 'legacy Big Sky', LEGACY_SHOW_COMPONENT_TOOL_ID ],
-		] )(
-			'rejects the old AI Editorial Review type through the %s tool',
-			async ( _label, toolId ) => {
-				const { result } = ( await toolProvider.executeAbility( toolId, {
-					type: 'review-mediation',
-					props: {},
-				} ) ) as any;
+		] )( 'rejects an unknown component type through the %s tool', async ( _label, toolId ) => {
+			const { result } = ( await toolProvider.executeAbility( toolId, {
+				type: 'unregistered-component',
+				props: {},
+			} ) ) as any;
 
-				expect( result ).toMatchObject( {
-					success: false,
-					error: 'show-component: no component registered for type "review-mediation"',
-					returnToAgent: false,
-				} );
-				expect( result.agentMessage ).toBeUndefined();
-			}
-		);
+			expect( result ).toMatchObject( {
+				success: false,
+				error: 'show-component: no component registered for type "unregistered-component"',
+				returnToAgent: false,
+			} );
+			expect( result.agentMessage ).toBeUndefined();
+		} );
 
 		it( 'delegates non-Jetpack legacy show-component calls to Big Sky', async () => {
 			const args = {

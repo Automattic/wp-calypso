@@ -1,6 +1,8 @@
 @import "@automattic/typography/styles/variables";
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "calypso/dashboard/app-dotcom/style.scss";
+@import "calypso/dashboard/app/wp-components-overrides.scss";
 
 .manage-purchase > button.card,
 .manage-purchase > a.card,
@@ -49,14 +51,6 @@
 		.manage-purchase__detail,
 		.manage-purchase__detail .user {
 			opacity: 0.7;
-		}
-	}
-
-	&.is-expired + .calypso-notice {
-		margin-top: -10px;
-
-		@include breakpoint-deprecated( '>480px' ) {
-			margin-top: -16px;
 		}
 	}
 
@@ -409,6 +403,16 @@
 	&.is-expiring .manage-purchase__detail-date-span {
 		color: var( --studio-red );
 	}
+
+	// Use the same tokens the dashboard Notice does, so these and the notice are
+	// literally the same color rather than two hand-matched hexes.
+	&.is-expiring-warning {
+		color: var( --dashboard__foreground-color-warning );
+	}
+
+	&.is-expiring-error {
+		color: var( --dashboard__foreground-color-error );
+	}
 }
 
 .manage-purchase__renewal-text {
@@ -427,29 +431,14 @@
 	margin-bottom: 6px;
 }
 
-.manage-purchase__delayed-downgrade-pending-notice.calypso-notice,
-.manage-purchase__expiring-credit-card-notice.calypso-notice,
-.manage-purchase__other-renewable-purchases-notice.calypso-notice,
-.manage-purchase__purchase-expiring-notice.calypso-notice {
-	// Inset the notice to match its neighbors. width:auto is required: the base
-	// .calypso-notice is width:100% border-box, so margin-inline alone overflows.
-	width: auto;
+// Match the spacing of the cards below, which are full-width with their own
+// internal padding. The notice pads its own contents too, so only the gap
+// underneath needs setting here.
+.manage-purchase__notices .dashboard-notice {
 	margin-bottom: 10px;
-	margin-inline: 16px;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		margin-bottom: 16px;
-		margin-inline: 24px;
-	}
-
-	// On mobile, drop the action onto its own full-width row instead of cramming
-	// it inline beside the notice text (same idiom as step-wrapper's header).
-	@include breakpoint-deprecated( '<660px' ) {
-		flex-wrap: wrap;
-
-		.calypso-notice__action {
-			flex-basis: 100%;
-		}
 	}
 }
 

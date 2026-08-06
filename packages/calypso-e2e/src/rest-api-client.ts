@@ -155,6 +155,21 @@ export class RestAPIClient {
 	}
 
 	/**
+	 * Returns the store sandbox cookie header.
+	 *
+	 * E2E purchases are made in the browser with the `store_sandbox` cookie set
+	 * (see `BrowserManager.setStoreCookie`), which routes the request to the
+	 * sandboxed store and its own ownership registry. Store-facing REST calls
+	 * made from Node must carry the same cookie, or they read the production
+	 * store and see none of the purchases the tests created.
+	 *
+	 * @returns {string} Cookie header string.
+	 */
+	private getStoreSandboxCookieHeader(): string {
+		return `store_sandbox=${ SecretsManager.secrets.storeSandboxCookieValue }`;
+	}
+
+	/**
 	 * Returns a fully constructed URL object pointing to the request endpoint.
 	 *
 	 * @param {EndpointVersions} version Version of the API to use.
@@ -632,24 +647,29 @@ export class RestAPIClient {
 	/* Purchases */
 
 	/**
-	 * Returns all purchases belonging to the authenticated user.
+	 * Returns purchases belonging to the authenticated user.
 	 *
 	 * Discovery is bearer-scoped and needs no site ID, so it works even when the
-	 * test failed before a site slug/ID was known.
+	 * test failed before a site slug/ID was known. Pass `siteId` to scope the
+	 * listing to one site: the long-lived shared accounts have accumulated enough
+	 * sandbox purchases that the unscoped listing times out at the gateway.
 	 *
+	 * @param {number|string} [siteId] List only this site's purchases.
 	 * @returns {Promise<AllPurchasesResponse>} Array of the user's purchases.
 	 * @throws {Error} If the API responded with an error.
 	 */
-	async getAllPurchases(): Promise< AllPurchasesResponse > {
+	async getAllPurchases( siteId?: number | string ): Promise< AllPurchasesResponse > {
 		const params: RequestParams = {
 			method: 'get',
 			headers: {
 				Authorization: await this.getAuthorizationHeader( 'bearer' ),
 				'Content-Type': this.getContentTypeHeader( 'json' ),
+				Cookie: this.getStoreSandboxCookieHeader(),
 			},
 		};
 
-		const response = await this.sendRequest( this.getRequestURL( '1.2', '/me/purchases' ), params );
+		const endpoint = siteId === undefined ? '/me/purchases' : `/sites/${ siteId }/purchases`;
+		const response = await this.sendRequest( this.getRequestURL( '1.2', endpoint ), params );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
@@ -677,6 +697,7 @@ export class RestAPIClient {
 			headers: {
 				Authorization: await this.getAuthorizationHeader( 'bearer' ),
 				'Content-Type': this.getContentTypeHeader( 'json' ),
+				Cookie: this.getStoreSandboxCookieHeader(),
 			},
 			body: JSON.stringify( body ),
 		};
@@ -700,7 +721,7 @@ export class RestAPIClient {
 	 * @throws {Error} If listing purchases responded with an error.
 	 */
 	async cancelAtomicPlan( siteId?: number | string ): Promise< any | null > {
-		const purchases = await this.getAllPurchases();
+		const purchases = await this.getAllPurchases( siteId );
 
 		const plan = purchases.find(
 			( purchase ) =>

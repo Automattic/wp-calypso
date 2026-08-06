@@ -11,6 +11,11 @@
 // https://wordpress.github.io/gutenberg/?path=/docs/components-progressbar--docs#with-custom-width
 .agency-tiers-influenced-revenue-bar {
 	width: 100%;
+
+	// ProgressBar has no colour prop: its track and indicator both derive from
+	// `--wp-components-color-foreground`, so rebind it here to keep the override
+	// scoped to the bar.
+	--wp-components-color-foreground: var(--wp-admin-theme-color);
 }
 
 // Wrapper provides the gradient fade — must sit outside the scroll container

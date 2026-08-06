@@ -5,6 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
+import { isEligibleForPlanExpiryNotice } from '../../../components/plan-expiry-notice';
 import { getCalendarDaysUntil, getRelativeDayString } from '../../../utils/datetime';
 import {
 	isIncludedWithPlan,
@@ -40,6 +41,13 @@ export function shouldShowExpiringNotice(
 	}
 
 	if ( purchase.is_hundred_year_domain ) {
+		return false;
+	}
+
+	// PlanExpiryNotice owns this scenario for the plans it covers. When it
+	// stays quiet for one of them that is a decision, not a gap, so we must
+	// not fall back on this weaker message.
+	if ( isEligibleForPlanExpiryNotice( currentPurchase ) ) {
 		return false;
 	}
 

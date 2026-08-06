@@ -1,3 +1,4 @@
+import { dispatch } from '@wordpress/data';
 import type { AdminBarNode, OmnibarNode, OmnibarNodes } from '../types';
 
 export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[] ): OmnibarNodes {
@@ -22,12 +23,15 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 				omnibarNodes.site = omnibarNode;
 				break;
 			case 'new-content': {
+				omnibarNode.icon = <span className="dashicons-before dashicons-plus" />;
 				siteActionNodes.push( omnibarNode );
 				break;
 			}
 			case 'comments': {
-				omnibarNode.title = 'Comments';
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+				omnibarNode.title = undefined;
+				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
+				omnibarNode.icon = <span className="dashicons-before dashicons-admin-comments" />;
 				omnibarNode.meta = {
 					subtitle: doc.querySelector( '.pending-count' )?.textContent?.trim(),
 				};
@@ -35,11 +39,27 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 				break;
 			}
 			case 'updates': {
-				omnibarNode.title = 'Updates';
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+				omnibarNode.title = undefined;
+				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
+				omnibarNode.icon = <span className="dashicons-before dashicons-update" />;
 				omnibarNode.meta = {
 					subtitle: doc.querySelector( '.ab-label' )?.textContent?.trim(),
 				};
+				siteActionNodes.push( omnibarNode );
+				break;
+			}
+			case 'command-palette': {
+				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+				omnibarNode.title = undefined;
+				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
+				omnibarNode.icon = <span className="dashicons-before dashicons-search" />;
+				omnibarNode.meta = {
+					subtitle: doc.querySelector( 'kbd' )?.textContent?.trim(),
+				};
+				// The node points at `#` and relies on an inline onclick handler.
+				omnibarNode.href = undefined;
+				omnibarNode.onClick = () => ( dispatch( 'core/commands' ) as { open: () => void } ).open();
 				siteActionNodes.push( omnibarNode );
 				break;
 			}

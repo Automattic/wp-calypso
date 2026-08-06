@@ -37,15 +37,17 @@ export default function DevToolsContent() {
 
 	return (
 		<>
-			<Spacer className="dev-tools-overview__intro" marginBottom={ 12 }>
-				<Text size={ 15 }>
-					{ preventWidows(
-						__(
-							'Build and ship client work faster with local development and automated deploys. Test ideas and demo progress to clients with disposable environments that need no cleanup.'
-						)
-					) }
-				</Text>
-			</Spacer>
+			<div className="dev-tools-overview__intro">
+				<Spacer marginBottom={ 0 } style={ { maxWidth: '650px' } }>
+					<Text size={ 15 }>
+						{ preventWidows(
+							__(
+								'Build and ship client work faster with local development and automated deploys. Test ideas and demo progress to clients with disposable environments that need no cleanup.'
+							)
+						) }
+					</Text>
+				</Spacer>
+			</div>
 
 			<DevToolSection
 				name={ __( 'WordPress Studio' ) }

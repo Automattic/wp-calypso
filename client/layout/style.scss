@@ -612,8 +612,7 @@ body.is-mobile-app-view {
 
 // These surfaces float the nav over their hero, so don't reserve its space.
 .layout.is-section-patterns:has( .x-nav--2026-redesign ) .layout__header-section,
-.layout.is-theme-showcase-modern:has( .x-nav--2026-redesign ) .layout__header-section,
-.layout.is-section-plugins:not( .is-logged-in ):has( .x-nav--2026-redesign ) .layout__header-section {
+.layout.is-section-themes.is-theme-showcase-modern:has( .x-nav--2026-redesign ) .layout__header-section,
+.layout.is-section-plugins:not( .is-logged-in ):has( .plugins-browser ):has( .x-nav--2026-redesign ) .layout__header-section {
 	min-height: 0;
 }
-

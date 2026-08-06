@@ -49,6 +49,9 @@ export interface OverviewCardProps {
 
 	upsellFeatureId?: string;
 
+	/** Set to false in apps outside the dashboard's TanStack Router, so relative links render as plain anchors. */
+	useRouterLink?: boolean;
+
 	bottom?: ReactNode;
 	onClick?: () => void;
 }
@@ -66,6 +69,7 @@ export default function OverviewCard( {
 	externalLink: externalLinkProp,
 	tracksId,
 	upsellFeatureId,
+	useRouterLink = true,
 	bottom,
 	onClick,
 }: OverviewCardProps ) {
@@ -93,15 +97,19 @@ export default function OverviewCard( {
 	const isRelativeLink = link && isRelativeUrl( link ) && ! isOnboarding;
 
 	let relativeLink: string | undefined = undefined;
-	let onboardingLink: string | undefined = undefined;
+	let plainAnchorLink: string | undefined = undefined;
 	let externalLink: string | undefined = undefined;
 
 	if ( externalLinkProp ) {
 		externalLink = externalLinkProp;
 	} else if ( isOnboarding ) {
-		onboardingLink = link;
+		plainAnchorLink = link;
 	} else if ( isRelativeLink ) {
-		relativeLink = link;
+		if ( useRouterLink ) {
+			relativeLink = link;
+		} else {
+			plainAnchorLink = link;
+		}
 	} else {
 		externalLink = link;
 	}
@@ -127,7 +135,7 @@ export default function OverviewCard( {
 							{ title }
 						</Text>
 					</HStack>
-					{ ( relativeLink || onboardingLink ) && ! progress && (
+					{ ( relativeLink || plainAnchorLink ) && ! progress && (
 						<Icon
 							className="dashboard-overview-card__link-icon"
 							icon={ isRTL() ? chevronLeft : chevronRight }
@@ -211,10 +219,10 @@ export default function OverviewCard( {
 			);
 		}
 
-		if ( onboardingLink ) {
+		if ( plainAnchorLink ) {
 			return (
 				<a
-					href={ onboardingLink }
+					href={ plainAnchorLink }
 					className="dashboard-overview-card__link"
 					onClick={ handleClick }
 				>

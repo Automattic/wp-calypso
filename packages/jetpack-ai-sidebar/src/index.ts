@@ -24,6 +24,7 @@ import ImageAltTextPicker from './components/image-alt-text-picker';
 import './components/image-alt-text-picker.scss';
 import PostFeedback from './components/post-feedback';
 import Proofread from './components/proofread';
+import './components/split-screen-guide.scss';
 import SeoDescriptionPicker from './components/seo-description-picker';
 import SeoTitlePicker from './components/seo-title-picker';
 import './components/base-suggestion-picker.scss';
@@ -57,6 +58,7 @@ import {
 	isOptimizeTitleSuggestionEnabled,
 	isSeoSuggestionsEnabled,
 } from './utils/preview-features';
+import { SUGGESTION_ACTION_COMPLETE_EVENT } from './utils/suggestion-events';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
@@ -801,11 +803,6 @@ export const contextProvider = {
 					type: 'selected-block-content',
 					data: selectedBlockContent ? { content: selectedBlockContent } : null,
 				},
-				{
-					id: 'ai-editorial-review-contract',
-					type: 'ai-editorial-review-contract',
-					data: { version: 2 },
-				},
 			],
 		};
 	},
@@ -1159,8 +1156,8 @@ export const capabilities = {
  * Block-aware dynamic suggestions for the AM sidebar.
  *
  * Returns contextual suggestions based on the selected block type.
- * Hides after a suggestion is clicked, then restores block suggestions only
- * after a block action completes.
+ * Hides after a suggestion is clicked, then restores suggestions after a
+ * suggestion action completes.
  * @returns {Object} Object containing a suggestions array.
  */
 export function useSuggestions(
@@ -1203,6 +1200,17 @@ export function useSuggestions(
 		window.addEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick, true );
 		return () => {
 			window.removeEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick, true );
+		};
+	}, [] );
+
+	useEffect( () => {
+		const handleSuggestionActionComplete = () => setHidden( false );
+		window.addEventListener( SUGGESTION_ACTION_COMPLETE_EVENT, handleSuggestionActionComplete );
+		return () => {
+			window.removeEventListener(
+				SUGGESTION_ACTION_COMPLETE_EVENT,
+				handleSuggestionActionComplete
+			);
 		};
 	}, [] );
 

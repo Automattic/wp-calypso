@@ -11,8 +11,16 @@ jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', (
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( { resetOnboardStore: jest.fn() } ),
-	useSelect: jest.fn(),
+	useSelect: jest.fn( () => ( {} ) ),
 	resolveSelect: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+	useQuery: jest.fn( () => new URLSearchParams( '' ) ),
+} ) );
+
+jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
+	useFlowLocale: jest.fn( () => 'en' ),
 } ) );
 
 jest.mock( 'calypso/state', () => ( {
@@ -42,7 +50,7 @@ jest.mock( '@automattic/data-stores', () => ( {} ) );
 jest.mock(
 	'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification',
 	() => ( {
-		usePurchasePlanNotification: jest.fn(),
+		usePurchasePlanNotification: jest.fn( () => ( { setShouldShowNotification: jest.fn() } ) ),
 	} )
 );
 
@@ -90,5 +98,52 @@ describe( 'onboarding flow side effects', () => {
 		renderSideEffect( 'domains' );
 
 		expect( clearSessionStorageQuery ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'onboarding flow use-my-domain navigation', () => {
+	const submitUseMyDomain = ( providedDependencies: Record< string, unknown > ) => {
+		const navigate = jest.fn();
+		const { result } = renderHook( () =>
+			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
+			onboarding.useStepNavigation.call(
+				onboarding,
+				'use-my-domain' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
+				navigate
+			)
+		);
+
+		result.current.submit?.( {
+			slug: 'use-my-domain',
+			providedDependencies,
+		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
+
+		return { navigate };
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	// Regression: the destination must be the bare `use-my-domain` slug. A leading
+	// slash makes navigate() pass `/use-my-domain` as the router step param, which
+	// doesn't match a step and drops the user back on the domains step.
+	it( 'navigates to the use-my-domain step (no leading slash) when a mode and domain are submitted', () => {
+		const { navigate } = submitUseMyDomain( {
+			mode: 'transfer-or-connect',
+			domain: 'example.com',
+		} );
+
+		expect( navigate ).toHaveBeenCalledTimes( 1 );
+
+		const destination = navigate.mock.calls[ 0 ][ 0 ] as string;
+		expect( destination.startsWith( '/' ) ).toBe( false );
+
+		const [ pathname, queryString ] = destination.split( '?' );
+		expect( pathname ).toBe( 'use-my-domain' );
+
+		const query = new URLSearchParams( queryString );
+		expect( query.get( 'step' ) ).toBe( 'transfer-or-connect' );
+		expect( query.get( 'initialQuery' ) ).toBe( 'example.com' );
 	} );
 } );

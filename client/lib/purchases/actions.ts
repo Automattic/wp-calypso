@@ -1,3 +1,4 @@
+import { removePurchase as removePurchaseRequest } from '@automattic/api-core';
 import { userPurchasesQuery } from '@automattic/api-queries';
 import debugFactory from 'debug';
 import wpcom from 'calypso/lib/wp';
@@ -40,7 +41,7 @@ interface SurveyResponse {
 // through `@automattic/api-queries` (e.g. the manage-purchase page) won't see the
 // change until their queries are refetched. Invalidate the `[ 'upgrades' ]` root
 // key on the app's query client to cover every purchase query at once.
-function invalidatePurchaseQueries() {
+export function invalidatePurchaseQueries() {
 	getCalypsoQueryClient()?.invalidateQueries( userPurchasesQuery() );
 }
 
@@ -112,6 +113,17 @@ export async function cancelAndRefundPurchaseAsync(
 	} );
 	invalidatePurchaseQueries();
 	return response;
+}
+
+/**
+ * Wraps the api-core mutator so the removal invalidates the app's query client
+ * too. `removePurchaseMutation` in `@automattic/api-queries` invalidates the
+ * api-queries singleton instead, which is a different client from the one the
+ * legacy pages render against.
+ */
+export async function removePurchaseAsync( purchaseId: number ): Promise< void > {
+	await removePurchaseRequest( purchaseId );
+	invalidatePurchaseQueries();
 }
 
 export const submitSurvey =

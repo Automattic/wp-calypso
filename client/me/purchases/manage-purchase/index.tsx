@@ -62,6 +62,7 @@ import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
+import { Button as WPButton } from '@wordpress/components';
 import { check, column, Icon, payment, reusableBlock, tool, trash, cloud } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
@@ -78,9 +79,9 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import Notice from 'calypso/dashboard/components/notice';
+import { hasPlanExpiryNotice } from 'calypso/dashboard/components/plan-expiry-notice';
 import {
 	getCancelButtonCopy,
 	getRemoveButtonCopy,
@@ -88,6 +89,7 @@ import {
 import { getPlanChangeAction } from 'calypso/dashboard/me/billing-purchases/purchase-settings/get-plan-change-action';
 import {
 	getPurchaseCancellationFlowType,
+	hasAmountAvailableToRefund,
 	isA4ABillingDragonPurchase,
 	isA4AHoldingSitePurchase,
 	isAkismetHoldingSitePurchase,
@@ -147,7 +149,6 @@ import {
 	getDisplayName,
 	getName,
 	getRenewalPriceInSmallestUnit,
-	hasAmountAvailableToRefund,
 	hasPaymentMethod,
 	isCloseToExpiration,
 	isExpiredAndInGracePeriod,
@@ -293,7 +294,7 @@ class ManagePurchase extends Component<
 			return;
 		}
 
-		const options = redirectTo ? { redirectTo } : undefined;
+		const options = { redirectTo, tracksProps: { position: 'manage-purchase' } };
 		const isSitelessRenewal =
 			isAkismetHoldingSitePurchase( purchase ) ||
 			isMarketplaceHoldingSitePurchase( purchase ) ||
@@ -352,6 +353,22 @@ class ManagePurchase extends Component<
 		return domain?.pendingRegistrationAtRegistry ?? false;
 	}
 
+	/**
+	 * The prominent renewal control. Note that the "Renew now" nav item further
+	 * down applies fewer conditions than this, so there are purchases it offers
+	 * to renew that this one does not. Whether that difference is intentional
+	 * isn't clear.
+	 *
+	 * The purchase list applies the same conditions to its own renewal link:
+	 * both the ones below and the ownership and lock checks in the JSX that
+	 * renders this. It copied this control rather than the nav item because the
+	 * purchase list link is prominent in the same way this one is.
+	 *
+	 * The conditions are repeated rather than shared because this page reads the
+	 * raw `@automattic/api-core` purchase while the list still reads the
+	 * camelCase `@automattic/data-stores` one (SHILL-2256), so each side needs
+	 * different field names.
+	 */
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 		if ( ! purchase ) {
@@ -916,9 +933,7 @@ class ManagePurchase extends Component<
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
 				purchase={ purchase }
-				linkedPurchases={ this.getActiveMarketplaceSubscriptions().map( ( p ) =>
-					createPurchaseObject( p as unknown as Parameters< typeof createPurchaseObject >[ 0 ] )
-				) }
+				linkedPurchases={ this.getActiveMarketplaceSubscriptions() }
 				isVisible={ this.state.isCancelSurveyVisible }
 				onClose={ this.closeDialog }
 				onSurveyComplete={ this.cancelSubscription }
@@ -1412,15 +1427,7 @@ class ManagePurchase extends Component<
 		return (
 			<Fragment>
 				{ ( this.props.showHeader ?? true ) && (
-					// Temporary bridge (SHILL-2256): PurchaseSiteHeader still expects the
-					// camelCase Purchase. Remove once it reads the raw shape.
-					<PurchaseSiteHeader
-						siteId={ siteId }
-						name={ siteName }
-						purchase={ createPurchaseObject(
-							purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-						) }
-					/>
+					<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
 				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
@@ -1455,7 +1462,7 @@ class ManagePurchase extends Component<
 								) }
 							</div>
 						</div>
-						{ isProductOwner && ! purchase.is_locked && (
+						{ isProductOwner && ! purchase.is_locked && ! hasPlanExpiryNotice( purchase ) && (
 							<div className="manage-purchase__renew-upgrade-buttons">
 								{ this.renderUpgradeButton( preventRenewal ) }
 								{ this.renderStorageUpgradeButton( preventRenewal ) }
@@ -1484,6 +1491,10 @@ class ManagePurchase extends Component<
 				) }
 				{ isProductOwner && ! purchase.is_locked && (
 					<>
+						{ /* Applies fewer conditions than `renderRenewButton` above, which also
+						     rules out partner-managed, non-renewable, site-less and free
+						     Akismet subscriptions. Whether that difference is intentional
+						     isn't clear. */ }
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&
@@ -1582,36 +1593,48 @@ class ManagePurchase extends Component<
 				>
 					{ this.props.cardTitle || titles.managePurchase }
 				</HeaderCake>
-				{ showExpiryNotice ? (
-					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-						<NoticeAction href={ `/plans/${ siteSlug || '' }` }>
-							{ translate( 'View plans' ) }
-						</NoticeAction>
-					</Notice>
-				) : (
-					<PurchaseNotice
-						isDataLoading={ this.isDataLoading( this.props ) }
-						handleRenew={ this.handleRenew }
-						handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
-						selectedSite={ site }
+				<div className="manage-purchase__notices">
+					{ showExpiryNotice ? (
+						<Notice
+							variant="info"
+							actions={
+								<WPButton variant="secondary" href={ `/plans/${ siteSlug || '' }` }>
+									{ translate( 'View plans' ) }
+								</WPButton>
+							}
+						>
+							<PlanRenewalMessage />
+						</Notice>
+					) : (
+						<PurchaseNotice
+							isDataLoading={ this.isDataLoading( this.props ) }
+							handleRenew={ this.handleRenew }
+							handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
+							selectedSite={ site }
+							purchase={ purchase }
+							purchaseAttachedTo={ purchaseAttachedTo }
+							renewableSitePurchases={ renewableSitePurchases }
+							changePaymentMethodPath={ changePaymentMethodPath }
+							viewOtherPlansUrl={ this.buildPlanChangeAction()?.href }
+							renewReturnUrl={ ( getManagePurchaseUrlFor ?? managePurchase )(
+								siteSlug,
+								purchase.ID
+							) }
+							getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
+							isProductOwner={ isProductOwner ?? false }
+							willAtomicSiteRevert={ willAtomicSiteRevert }
+							getAddNewPaymentMethodUrlFor={
+								getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
+							}
+						/>
+					) }
+					<PlanOverlapNotice
+						isSiteLevel={ this.props.isSiteLevel ?? false }
+						selectedSiteId={ this.props.selectedSiteId ?? 0 }
+						siteId={ this.props.siteId ?? 0 }
 						purchase={ purchase }
-						purchaseAttachedTo={ purchaseAttachedTo }
-						renewableSitePurchases={ renewableSitePurchases }
-						changePaymentMethodPath={ changePaymentMethodPath }
-						getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
-						isProductOwner={ isProductOwner ?? false }
-						willAtomicSiteRevert={ willAtomicSiteRevert }
-						getAddNewPaymentMethodUrlFor={
-							getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
-						}
 					/>
-				) }
-				<PlanOverlapNotice
-					isSiteLevel={ this.props.isSiteLevel ?? false }
-					selectedSiteId={ this.props.selectedSiteId ?? 0 }
-					siteId={ this.props.siteId ?? 0 }
-					purchase={ purchase }
-				/>
+				</div>
 				{ this.renderPurchaseDetail( preventRenewal ) }
 			</Fragment>
 		);

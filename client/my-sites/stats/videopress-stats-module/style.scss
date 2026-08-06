@@ -1,5 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
 
 .videopress-stats-module__grid {
 	display: grid;
@@ -132,6 +133,11 @@
 	padding: 0;
 	border-radius: 4px;
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
+
+	// Go square-cornered at mobile, matching the other stats modules there.
+	@media (max-width: $break-small) {
+		border-radius: 0;
+	}
 	
 	.videopress-stats-module__grid {
 		margin: 0;

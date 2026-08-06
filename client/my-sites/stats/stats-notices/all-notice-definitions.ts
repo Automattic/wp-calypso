@@ -1,7 +1,9 @@
 import { NoticeIdType } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { COMMERCIAL_PAYWALL_KILLED } from 'calypso/state/stats/plan-usage/constants';
 import CommercialSiteUpgradeNotice from './commercial-site-upgrade-notice';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
+import FreeSiteUpgradeNotice from './free-site-upgrade-notice';
 import GDPRCookieConsentNotice from './gdpr-cookie-consent-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
 import TierUpgradeNotice from './tier-upgrade-notice';
@@ -66,7 +68,10 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				!! ( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) && ! hasPaidStats
 			);
 		},
-		disabled: false,
+		// The two legacy upsell notices and their `free_site_upgrade` successor are enabled on
+		// opposite sides of the commercial paywall kill switch, so a single flip restores the
+		// pre-kill notice behaviour, lockout banner included.
+		disabled: COMMERCIAL_PAYWALL_KILLED,
 	},
 	{
 		component: DoYouLoveJetpackStatsNotice,
@@ -102,7 +107,42 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				! isVip
 			);
 		},
-		disabled: false,
+		disabled: COMMERCIAL_PAYWALL_KILLED,
+	},
+	{
+		component: FreeSiteUpgradeNotice,
+		noticeId: 'free_site_upgrade',
+		// With the commercial paywall gone, commercial-flagged sites are upsold under
+		// the same rules as everyone else — being commercial no longer matters here.
+		isVisibleFunc: ( {
+			isOdysseyStats,
+			isWpcom,
+			isVip,
+			isP2,
+			isOwnedByTeam51,
+			hasPaidStats,
+			isSiteJetpackNotAtomic,
+			hasSignificantViews,
+			hasWpcomUpsell,
+		}: StatsNoticeProps ) => {
+			// Disable this notice if the full-size upsell is visible.
+			const showUpgradeNoticeForWpcomSites =
+				isWpcom && ! hasWpcomUpsell && ! isP2 && ! isOwnedByTeam51 && hasSignificantViews;
+
+			// Show the notice if the site is Jetpack or it is Odyssey Stats.
+			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
+			const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
+
+			return !! (
+				( showUpgradeNoticeOnOdyssey ||
+					showUpgradeNoticeForJetpackNotAtomic ||
+					showUpgradeNoticeForWpcomSites ) &&
+				// Show the notice if the site has not purchased the paid stats product.
+				! hasPaidStats &&
+				! isVip
+			);
+		},
+		disabled: ! COMMERCIAL_PAYWALL_KILLED,
 	},
 	{
 		component: TierUpgradeNotice,

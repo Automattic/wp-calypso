@@ -39,8 +39,16 @@ export const MailboxForm = ( {
 } ) => {
 	const { domainName } = useDomainFromUrlParam();
 
-	const [ isPasswordResetEmailVisible, setIsPasswordResetEmailVisible ] = useState( false );
+	const [ isPasswordResetEmailVisible, setIsPasswordResetEmailVisible ] = useState(
+		() => ! mailboxEntity.getFieldValue< string >( FIELD_PASSWORD_RESET_EMAIL )
+	);
 	const [ isPasswordVisible, setIsPasswordVisible ] = useState( false );
+
+	// Never leave this field collapsed while it holds an error, otherwise submit
+	// fails validation with nothing on screen to explain why.
+	const showPasswordResetEmailField =
+		isPasswordResetEmailVisible ||
+		Boolean( mailboxEntity.getFieldError( FIELD_PASSWORD_RESET_EMAIL ) );
 
 	const onRequestFieldValidation = ( field: MailboxFormFieldBase< string > ) =>
 		mailboxEntity.validateField( field.fieldName );
@@ -152,7 +160,7 @@ export const MailboxForm = ( {
 					onChange={ changeHandler }
 				/>
 
-				{ ! isPasswordResetEmailVisible && (
+				{ ! showPasswordResetEmailField && (
 					<Text variant="muted">
 						{ createInterpolateElement(
 							sprintf(
@@ -183,7 +191,7 @@ export const MailboxForm = ( {
 				) }
 			</VStack>
 
-			{ isPasswordResetEmailVisible && (
+			{ showPasswordResetEmailField && (
 				<MailboxInput
 					fieldName={ FIELD_PASSWORD_RESET_EMAIL }
 					mailboxEntity={ mailboxEntity }

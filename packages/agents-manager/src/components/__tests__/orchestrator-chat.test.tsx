@@ -359,7 +359,7 @@ describe( 'OrchestratorChat', () => {
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
 	} );
 
-	it( 'dispatches and tracks the canonical AI Editorial Review suggestion ID once', () => {
+	it( 'dispatches and tracks the AI Editorial Review suggestion ID once', () => {
 		const listener = jest.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 		const suggestion = {

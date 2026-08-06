@@ -8,6 +8,56 @@
 $bar-chart-border-radius: 2px;
 $year-bar-chart-border-radius: 4px;
 
+:root {
+	--chart-series-views: var(--color-accent-40);
+	--chart-series-visitors: var(--color-accent-90);
+}
+
+.color-scheme.is-aquatic,
+.color-scheme.is-blue,
+.color-scheme.is-classic-blue,
+.color-scheme.is-coffee,
+.color-scheme.is-fresh,
+.color-scheme.is-light,
+.color-scheme.is-nightfall,
+.color-scheme.is-ocean,
+.color-scheme.is-powder-snow,
+.color-scheme.is-sakura,
+.color-scheme.is-sunrise,
+.color-scheme.is-sunset {
+	--chart-series-views: var(--color-accent-40);
+	--chart-series-visitors: var(--color-accent-80);
+}
+
+.color-scheme.is-classic-bright,
+.color-scheme.is-classic-dark,
+.color-scheme.is-global,
+.color-scheme.is-midnight,
+.color-scheme.is-modern {
+	--chart-series-views: var(--color-accent-30);
+	--chart-series-visitors: var(--color-accent-80);
+}
+
+.color-scheme.is-default {
+	--chart-series-views: var(--color-accent-40);
+	--chart-series-visitors: var(--color-accent-90);
+}
+
+.color-scheme.is-contrast {
+	--chart-series-views: var(--color-accent-50);
+	--chart-series-visitors: var(--color-accent-100);
+}
+
+.color-scheme.is-ectoplasm {
+	--chart-series-views: var(--color-accent-50);
+	--chart-series-visitors: var(--color-accent-90);
+}
+
+.color-scheme.is-jetpack-cloud {
+	--chart-series-views: var(--color-accent-30);
+	--chart-series-visitors: var(--color-accent-70);
+}
+
 // Chart
 // Life is a statistical anomaly
 
@@ -203,7 +253,7 @@ $y-axis-padding: 0 20px;
 
 .chart__bar-section {
 	display: inline-block;
-	background-color: var(--color-accent);
+	background-color: var(--chart-series-views);
 	position: absolute;
 	right: 16%; // 1
 	bottom: 0; // 1
@@ -218,7 +268,7 @@ $y-axis-padding: 0 20px;
 }
 
 .chart__bar-section-inner {
-	background-color: var(--color-accent-dark);
+	background-color: var(--chart-series-visitors);
 	position: absolute;
 	right: 23.33%;
 	bottom: 0;
@@ -286,14 +336,14 @@ $y-axis-padding: 0 20px;
 	.chart__legend-color {
 		width: 20px;
 		height: 20px;
-		background: var(--color-accent);
+		background: var(--chart-series-views);
 		display: inline-block;
 		border-radius: 4px;
 		vertical-align: top;
 		margin: 0 8px 0 0;
 
 		&.is-secondary {
-			background: var(--color-accent-dark);
+			background: var(--chart-series-visitors);
 		}
 	}
 

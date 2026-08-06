@@ -83,7 +83,7 @@ const CommercialSiteUpgradeNotice = ( {
 	}
 
 	let learnMoreLink = isWPCOMSite
-		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
+		? 'https://wordpress.com/support/stats/#upgrade-your-stats'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
 	if ( showPaywallNotice ) {

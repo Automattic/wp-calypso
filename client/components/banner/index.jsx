@@ -78,6 +78,7 @@ export class Banner extends Component {
 		showLinkIcon: PropTypes.bool,
 		extraContent: PropTypes.node,
 		isBusy: PropTypes.bool,
+		isCallToActionDisabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -100,6 +101,7 @@ export class Banner extends Component {
 		tracksDismissName: 'calypso_banner_dismiss',
 		isSiteWPForTeams: false,
 		isBusy: false,
+		isCallToActionDisabled: false,
 	};
 
 	getHref() {
@@ -258,6 +260,7 @@ export class Banner extends Component {
 			tracksImpressionProperties,
 			extraContent,
 			isBusy,
+			isCallToActionDisabled,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
@@ -331,6 +334,7 @@ export class Banner extends Component {
 									primary={ primaryButton }
 									target={ target }
 									busy={ isBusy }
+									disabled={ isCallToActionDisabled }
 								>
 									{ callToAction }
 								</Button>

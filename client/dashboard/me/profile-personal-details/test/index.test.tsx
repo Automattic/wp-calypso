@@ -254,6 +254,42 @@ describe( '<PersonalDetailsSection>', () => {
 			} );
 		} );
 
+		test( 'holds back the email field cancellation while the banner is resending', async () => {
+			const user = userEvent.setup();
+			const pending = {
+				...settings,
+				user_email_change_pending: true,
+				new_user_email: 'pending@example.com',
+			} as unknown as UserSettings;
+			mockUserSettings( pending );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			// Held open so the resend is still running while the cancellation is checked.
+			let deliverResend: () => void;
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings', ( body ) => 'user_email' in body )
+				.reply(
+					() =>
+						new Promise( ( resolve ) => {
+							deliverResend = () => resolve( [ 200, pending ] );
+						} )
+				);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Resend email' } ) );
+
+			// The banner and the email field each offer a cancellation and neither can see the
+			// other's state, so a resend re-saving the pending address has to lock both.
+			const cancelLink = screen.getByRole( 'button', {
+				name: 'Cancel the pending email change.',
+			} );
+			expect( cancelLink ).toBeDisabled();
+			deliverResend!();
+
+			await waitFor( () => expect( cancelLink ).toBeEnabled() );
+		} );
+
 		test( 'warns when the account email uses a custom domain and no recovery method is set', async () => {
 			mockUserSettings( {
 				...settings,

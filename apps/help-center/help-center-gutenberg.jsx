@@ -250,9 +250,15 @@ function HelpCenterContent() {
 		/>
 	);
 
-	const botProps = helpCenterData.isCommerceGarden
-		? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
-		: {};
+	const customProps = {};
+
+	if ( helpCenterData?.newInteractionsBotSlug ) {
+		customProps.newInteractionsBotSlug = helpCenterData.newInteractionsBotSlug;
+	}
+
+	if ( helpCenterData?.newLoggedOutInteractionsBotSlug ) {
+		customProps.newLoggedOutInteractionsBotSlug = helpCenterData.newLoggedOutInteractionsBotSlug;
+	}
 
 	return (
 		<>
@@ -272,7 +278,7 @@ function HelpCenterContent() {
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
 				product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
-				{ ...botProps }
+				{ ...customProps }
 			/>
 		</>
 	);

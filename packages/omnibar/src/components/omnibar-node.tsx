@@ -7,9 +7,15 @@ export function OmnibarNodeContent( { node }: { node: OmnibarNode } ) {
 	}
 	if ( node.icon && node.title ) {
 		return (
-			<Stack direction="row" gap="sm" align="center" style={ { minWidth: 0 } }>
+			<Stack
+				direction="row"
+				align="center"
+				className="omnibar__node-content"
+				style={ { minWidth: 0 } }
+			>
 				<span style={ { flexShrink: 0 } }>{ node.icon }</span>
 				<span
+					className="omnibar__label"
 					style={ {
 						overflow: 'hidden',
 						textOverflow: 'ellipsis',

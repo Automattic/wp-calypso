@@ -11,6 +11,9 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	traffic_page_settings: false,
 	do_you_love_jetpack_stats: false,
 	commercial_site_upgrade: false,
+	// Defaults to hidden until the server includes it in the notices response,
+	// so the client can ship ahead of the WPCOM allow-list change.
+	free_site_upgrade: false,
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
 	gdpr_cookie_consent: false,
@@ -37,8 +40,11 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 		'gdpr_cookie_consent',
 		'client_paid_plan_purchase_success',
 		'client_free_plan_purchase_success',
+		// The two legacy upsell ids and `free_site_upgrade` are mutually exclusive: their
+		// registry entries are enabled on opposite sides of the commercial paywall kill switch.
 		'do_you_love_jetpack_stats',
 		'commercial_site_upgrade',
+		'free_site_upgrade',
 		// TODO: Check if the current usage is over the tier limit inside the isVisibleFunc.
 		'tier_upgrade',
 	],
@@ -62,6 +68,23 @@ export const processConflictNotices = ( notices: Notices ): Notices => {
 	return notices;
 };
 
+/**
+ * `free_site_upgrade` replaced the two upsell notices below, so a site that dismissed or
+ * postponed either of them shouldn't meet the successor until that hiding lapses. The server
+ * only reports an id as hidden while a dismissal is in effect, so a missing key means
+ * "not dismissed". Drop this inheritance if the legacy ids ever leave the server response.
+ */
+export const normalizeNoticesVisibility = (
+	payload: Partial< Notices > | null | undefined
+): Notices => {
+	const notices = { ...DEFAULT_NOTICES_VISIBILITY, ...payload };
+	notices.free_site_upgrade =
+		notices.free_site_upgrade &&
+		payload?.do_you_love_jetpack_stats !== false &&
+		payload?.commercial_site_upgrade !== false;
+	return notices;
+};
+
 const queryNotices = async function ( siteId: number | null ): Promise< Notices > {
 	let payload;
 
@@ -75,7 +98,7 @@ const queryNotices = async function ( siteId: number | null ): Promise< Notices 
 		return DEFAULT_NOTICES_VISIBILITY;
 	}
 
-	return { ...DEFAULT_NOTICES_VISIBILITY, ...payload };
+	return normalizeNoticesVisibility( payload );
 };
 
 const useNoticesVisibilityQueryRaw = function < T >(

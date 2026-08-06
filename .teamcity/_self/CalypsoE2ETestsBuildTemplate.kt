@@ -23,7 +23,10 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.LOCALE", "en")
-		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
+		// No AUTHENTICATE_ACCOUNTS on purpose: setting it replaces the whole list the
+		// prime-logins setup project logs in as, so a value here would skip every account it
+		// doesn't name. Set it only on a build type running a narrow group, or to an empty
+		// value to skip priming. See test/e2e/setup/prime-logins.setup.ts.
 		// required in the CTRF report
 		param("env.BRANCH_NAME", "%teamcity.build.branch%")
 		param("PROJECT", "desktop")
@@ -217,6 +220,18 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				# check would find nothing and pass a leaking run green. Markers are named
 				# account-*.json wherever they land.
 				MARKERS=${'$'}( find test/e2e/output -name 'account-*.json' 2>/dev/null || true )
+				# The end-of-run reaper clears a record once its account is closed or
+				# written out as a marker above. A record still here means that never
+				# happened - the reaper did not run (aborted run, crashed worker), timed
+				# out, or could not record the leak - so the account is still open.
+				# Count only: these records hold bearer tokens and must not be echoed
+				# into the build log.
+				PENDING=${'$'}( find test/e2e/.teardown-pending -name 'pending-*.json' 2>/dev/null || true )
+				if [ -n "${'$'}PENDING" ]; then
+					PENDING_COUNT=${'$'}( printf '%s\n' "${'$'}PENDING" | wc -l | tr -d ' ' )
+					echo "E2E TEARDOWN LEAK - ${'$'}PENDING_COUNT deferred account close(s) were not completed."
+					echo "##teamcity[buildProblem description='E2E teardown leak: ${'$'}PENDING_COUNT deferred close(s) not completed' identity='e2e_teardown_pending']"
+				fi
 				if [ -n "${'$'}MARKERS" ]; then
 					COUNT=${'$'}( printf '%s\n' "${'$'}MARKERS" | wc -l | tr -d ' ' )
 					echo "E2E TEARDOWN LEAK - the following test users were not closed (their blogs leak with them):"

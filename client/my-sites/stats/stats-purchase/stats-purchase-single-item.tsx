@@ -23,7 +23,7 @@ import {
 	getIsSimpleSite,
 } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
-import { JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } from '../const';
+import { COMMERCIAL_PAYWALL_KILLED } from 'calypso/state/stats/plan-usage/constants';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
 import usePlanUsageQuery, { getUsageLimitStatus } from '../hooks/use-plan-usage-query';
@@ -201,17 +201,13 @@ const useLocalizedStrings = ( isCommercial: boolean ) => {
 	// Page title, info text, and button text depend on isCommercial status of site.
 	if ( isCommercial ) {
 		return {
-			pageTitle: translate( 'Upgrade and continue using %(product)s', {
+			pageTitle: translate( 'Upgrade %(product)s to unlock premium features', {
 				args: { product: STATS_PRODUCT_NAME },
 			} ),
 			infoText: translate(
-				'To continue using Stats and access its newest premium features you need to get a commercial license. {{link}}Learn more about this update{{/link}}.',
+				'Unlock UTM stats, device stats, and region and city stats with a paid plan.',
 				{
-					comment: '{{link}} links to explainer post on Jetpack blog.',
-					components: {
-						link: <a href={ JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } />,
-					},
-					context: 'Stats: Descriptive text in the commercial purchase flow',
+					context: 'Stats: Descriptive text in the purchase flow',
 				}
 			),
 			continueButtonText: translate( 'Upgrade now and continue' ),
@@ -221,7 +217,7 @@ const useLocalizedStrings = ( isCommercial: boolean ) => {
 	return {
 		pageTitle: translate( 'Simple, yet powerful stats to grow your site' ),
 		infoText: translate(
-			'%(product)s makes it easy to see how your site is doing. No data science skills needed. Start with a commercial license and get premium access to:',
+			'%(product)s makes it easy to see how your site is doing. No data science skills needed. Start with a paid plan and get premium access to:',
 			{ args: { product: STATS_PRODUCT_NAME } }
 		),
 		continueButtonText: translate( 'Get Stats to grow my site' ),
@@ -282,6 +278,15 @@ const StatsCommercialPurchase = ( {
 	const handleSliderChanged = useCallback( ( value: number ) => {
 		setPurchaseTierQuantity( value );
 	}, [] );
+
+	const handleCheckoutPostponed = () => {
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_purchase_commercial_skip_button_clicked` );
+
+		setTimeout( () => {
+			page( `/stats/day/${ siteSlug }` );
+		}, 250 );
+	};
 
 	const isCommercial = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'is_commercial' )
@@ -365,6 +370,9 @@ const StatsCommercialPurchase = ( {
 				>
 					{ continueButtonText }
 				</ButtonComponent>
+				<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
+					{ translate( 'I will do it later' ) }
+				</ButtonComponent>
 			</div>
 			<div className="stats-purchase-page__footnotes">
 				<p>{ translate( '(*) 14-day money-back guarantee' ) }</p>
@@ -413,7 +421,7 @@ const StatsPersonalPurchase = ( {
 				} ) }
 			</h1>
 			<p>
-				{ translate( 'Help %(product)s with a non-commercial license and get these perks:', {
+				{ translate( 'Help %(product)s and get these perks:', {
 					args: { product: STATS_PRODUCT_NAME },
 				} ) }
 			</p>
@@ -493,15 +501,17 @@ const StatsSingleItemPagePurchase = ( {
 					from={ from }
 				/>
 			</StatsSingleItemPagePurchaseFrame>
-			{ ! supportCommercialUse && ! ( isNewSite && isCommercial ) && (
-				<StatsSingleItemCard>
-					<StatsCommercialFlowOptOutForm
-						isCommercial={ isCommercial }
-						siteId={ siteId }
-						siteSlug={ siteSlug }
-					/>
-				</StatsSingleItemCard>
-			) }
+			{ ! COMMERCIAL_PAYWALL_KILLED &&
+				! supportCommercialUse &&
+				! ( isNewSite && isCommercial ) && (
+					<StatsSingleItemCard>
+						<StatsCommercialFlowOptOutForm
+							isCommercial={ isCommercial }
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+						/>
+					</StatsSingleItemCard>
+				) }
 		</>
 	);
 };

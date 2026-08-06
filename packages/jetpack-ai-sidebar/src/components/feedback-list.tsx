@@ -45,6 +45,7 @@ import {
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
 import { type BlockSnapshot } from './block-ref';
 import ReviewCard, { type ReviewCardRow } from './review-card';
+import SplitScreenGuide from './split-screen-guide';
 
 export interface FeedbackListItem {
 	title: string;
@@ -81,10 +82,14 @@ export type EditorPostId = number | string;
  * come from the show-component payload; everything here is flow configuration.
  */
 export interface FeedbackListProps {
+	/** Existing show-component type used to segment guide tracking. */
+	componentType: string;
 	summary: string;
 	items?: FeedbackListItem[];
 	sections?: FeedbackListSection[];
 	postId?: EditorPostId;
+	/** Whether the containing chat message is no longer interactive. */
+	isMessageStale?: boolean;
 	/** Title used when the flow provides flat items rather than sections. */
 	sectionFallbackTitle: string;
 	/** Warning shown when the reviewed post no longer matches the editor. */
@@ -203,10 +208,12 @@ function getApplyUnavailableReason(
  * @returns React element.
  */
 export default function FeedbackList( {
+	componentType,
 	summary,
 	items,
 	sections,
 	postId,
+	isMessageStale = false,
 	sectionFallbackTitle,
 	staleWarning,
 	failureMessage,
@@ -396,6 +403,7 @@ export default function FeedbackList( {
 			className={ `${ CLASS_PREFIX }${ isPostStale ? ' is-post-stale' : '' }` }
 			onMouseDownCapture={ handleRootMouseDown }
 		>
+			<SplitScreenGuide componentType={ componentType } isStale={ isMessageStale || isPostStale } />
 			{ isPostStale && (
 				<p className={ `${ CLASS_PREFIX }__stale-warning` } role="note">
 					{ staleWarning }

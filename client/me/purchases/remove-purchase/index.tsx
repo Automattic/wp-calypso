@@ -28,7 +28,6 @@ import {
 	isAkismetHoldingSitePurchase,
 	isJetpackHoldingSitePurchase,
 } from 'calypso/dashboard/utils/purchase';
-import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -318,7 +317,7 @@ class RemovePurchase extends Component< RemovePurchaseProps, RemovePurchaseState
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
 				purchase={ purchase }
-				linkedPurchases={ activeSubscriptions?.map( createPurchaseObject ) }
+				linkedPurchases={ activeSubscriptions }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onSurveyComplete={ this.removePurchase }

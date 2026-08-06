@@ -41,8 +41,8 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/agenttic-client": "^0.1.80",
-		"@automattic/agenttic-ui": "^0.1.80",
+		"@automattic/agenttic-client": "^0.1.83",
+		"@automattic/agenttic-ui": "^0.1.83",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
@@ -50,7 +50,6 @@
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/support-articles": "workspace:^",
 		"@automattic/urls": "workspace:^",
-		"@automattic/viewport": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "^7.48.0",

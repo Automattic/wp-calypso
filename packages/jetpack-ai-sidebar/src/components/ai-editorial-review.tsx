@@ -40,6 +40,7 @@ import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
 import BlockRef, { getBlockTypeName, type BlockSnapshot } from './block-ref';
 import ReviewCard, { ReviewCardActions, type ReviewCardRow } from './review-card';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
+import SplitScreenGuide from './split-screen-guide';
 
 /**
  * Types mirroring the wpcom `AI_Editorial_Review_Ability` structured output.
@@ -109,6 +110,8 @@ interface AiEditorialReviewProps {
 	review_context?: ReviewContext;
 	/** Source post the review was generated for. Used to detect navigation to a different post. */
 	postId?: EditorPostId;
+	/** Whether the containing chat message is no longer interactive. */
+	isMessageStale?: boolean;
 	/**
 	 * Server-built map keyed by reviewer display name. Optional — older
 	 * reviews or the empty-state payload may omit it; consumers degrade
@@ -306,6 +309,7 @@ export default function AiEditorialReview( {
 	guideline_violations,
 	review_context,
 	postId,
+	isMessageStale = false,
 	reviewers_metadata,
 	cached_at,
 }: AiEditorialReviewProps ) {
@@ -991,6 +995,10 @@ export default function AiEditorialReview( {
 			aria-disabled={ isPostStale || undefined }
 			onMouseDownCapture={ handleRootMouseDown }
 		>
+			<SplitScreenGuide
+				componentType="ai-editorial-review"
+				isStale={ isMessageStale || isPostStale }
+			/>
 			{ isPostStale && (
 				<p className="jetpack-ai-editorial-review__stale-warning" role="note">
 					{ __(

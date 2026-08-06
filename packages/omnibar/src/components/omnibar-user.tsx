@@ -10,6 +10,7 @@ export function OmnibarUserNode( { node }: { node: OmnibarNode } ) {
 
 	return (
 		<OmnibarMenu
+			className="omnibar__user-menu"
 			node={ {
 				...node,
 				render: ( { title, icon } ) => {
@@ -18,7 +19,7 @@ export function OmnibarUserNode( { node }: { node: OmnibarNode } ) {
 						return userAvatar;
 					}
 					return (
-						<Stack direction="row" gap="xs" align="center">
+						<Stack direction="row" align="center" className="omnibar__user-label">
 							<span>{ title }</span>
 							{ userAvatar }
 						</Stack>

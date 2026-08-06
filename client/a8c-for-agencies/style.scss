@@ -91,32 +91,13 @@
 }
 
 .theme-a8c-for-agencies {
+	// Keep wrapped text from stranding a single word on the last line. This is
+	// inherited, so it reaches components borrowed from other clients too.
+	text-wrap: pretty;
 
-	.components-button:not( .dataviews-view-table-header-button ),
-	.button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		white-space: nowrap;
-
-		@include heading-medium;
-
-		box-sizing: border-box;
-		border-radius: 4px;
-
-		fill: var(--color-accent-100);
-
-		&:hover,
-		&:focus-visible {
-			background-color: var(--color-accent-0);
-		}
-
-		&.is-borderless.is-primary.is-active,
-		&.is-borderless.is-primary:active,
-		&.is-borderless.is-primary:focus,
-		&.is-borderless.is-primary:hover {
-			color: var(--color-primary-60);
-		}
+	// `pretty` only fixes the last line. Short blocks need every line evened out.
+	:is(h1, h2, h3, h4, h5, h6, li, td, th, dd, figcaption) {
+		text-wrap: balance;
 	}
 
 	.button.split-button__toggle {

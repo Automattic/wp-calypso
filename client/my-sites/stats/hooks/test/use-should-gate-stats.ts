@@ -1,6 +1,14 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
-import { STAT_TYPE_CLICKS, STATS_TYPE_DEVICE_STATS } from '../../constants';
+import {
+	STAT_TYPE_CLICKS,
+	STAT_TYPE_TOP_POSTS,
+	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
+	STATS_FEATURE_DOWNLOAD_CSV,
+	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
+	STATS_FEATURE_UTM_STATS,
+	STATS_TYPE_DEVICE_STATS,
+} from '../../constants';
 import { shouldGateStats } from '../use-should-gate-stats';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -302,6 +310,53 @@ describe( 'shouldGateStats in Calypso', () => {
 		const isGatedStats = shouldGateStats( mockState, siteId, jetpackStatsAdvancedStatType );
 		expect( isGatedStats ).toBe( false );
 	} );
+
+	// The WPCOM paywall is a separate code path keyed off site features, and must not be
+	// affected by the Jetpack commercial paywall kill switch (STATS-387). A commercial flag
+	// and a paywall sticker on the site are irrelevant here.
+	it.each( [
+		[ 'Simple', false, false ],
+		[ 'Atomic', true, true ],
+	] )(
+		'should keep gating stats for a %s site carrying a paywall sticker',
+		( _, jetpack, atomic ) => {
+			const mockState = {
+				sites: {
+					features: {
+						[ siteId ]: {
+							data: {
+								active: [],
+							},
+						},
+					},
+					items: {
+						[ siteId ]: {
+							jetpack,
+							options: {
+								is_wpcom_atomic: atomic,
+								is_commercial: true,
+							},
+						},
+					},
+				},
+				purchases: {
+					data: [],
+				},
+				stats: {
+					planUsage: {
+						data: {
+							[ siteId ]: {
+								should_show_paywall: true,
+							},
+						},
+					},
+				},
+			};
+
+			expect( shouldGateStats( mockState, siteId, gatedStatType ) ).toBe( true );
+			expect( shouldGateStats( mockState, siteId, notGatedStatType ) ).toBe( false );
+		}
+	);
 } );
 
 describe( 'shouldGateStats in Odyssey stats', () => {
@@ -348,41 +403,91 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 		expect( isGatedStats ).toBe( false );
 	} );
 
-	it( 'should gate basic stats for commercial jetpack sites having 1k views count without Stats commercial purchase', () => {
-		const mockState = {
-			sites: {
-				features: {
-					[ siteId ]: {
-						data: {
-							active: [],
-						},
+	// The switch is applied on read, so the store holds exactly what the API said for a site
+	// carrying the paywall sticker.
+	const walledCommercialSiteState = {
+		sites: {
+			features: {
+				[ siteId ]: {
+					data: {
+						active: [],
 					},
 				},
+			},
+			items: {
+				[ siteId ]: {
+					jetpack: true,
+					options: {
+						is_wpcom_atomic: false,
+						is_commercial: true,
+					},
+				},
+			},
+		},
+		purchases: {
+			data: [],
+		},
+		stats: {
+			planUsage: {
+				data: {
+					[ siteId ]: { should_show_paywall: true, paywall_date_from: '2026-07-14' },
+				},
+			},
+		},
+	};
+
+	// Everything the commercial paywall used to take away, itemised so a regression names itself.
+	it.each( [
+		[ 'basic modules', STAT_TYPE_TOP_POSTS ],
+		[ 'clicks', gatedStatType ],
+		[ 'date controls', STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS ],
+		[ 'interval dropdowns', STATS_FEATURE_INTERVAL_DROPDOWN_WEEK ],
+		[ 'CSV export', STATS_FEATURE_DOWNLOAD_CSV ],
+	] )(
+		'should not gate %s for commercial jetpack sites past the paywall threshold (STATS-387)',
+		( _, statType ) => {
+			expect( shouldGateStats( walledCommercialSiteState, siteId, statType ) ).toBe( false );
+		}
+	);
+
+	// Advanced stats are paid for every Jetpack site, commercial or not, so lifting the
+	// commercial paywall must not open them.
+	it.each( [
+		[ 'devices', STATS_TYPE_DEVICE_STATS ],
+		[ 'UTM', STATS_FEATURE_UTM_STATS ],
+	] )(
+		'should still gate advanced %s stats for commercial jetpack sites past the paywall threshold',
+		( _, statType ) => {
+			expect( shouldGateStats( walledCommercialSiteState, siteId, statType ) ).toBe( true );
+		}
+	);
+
+	it( 'should not gate anything for a VIP site past the paywall threshold', () => {
+		const vipState = {
+			...walledCommercialSiteState,
+			sites: {
+				...walledCommercialSiteState.sites,
 				items: {
 					[ siteId ]: {
 						jetpack: true,
-						options: {
-							is_wpcom_atomic: false,
-							is_commercial: true,
-						},
-					},
-				},
-			},
-			purchases: {
-				data: [],
-			},
-			stats: {
-				planUsage: {
-					data: {
-						[ siteId ]: {
-							should_show_paywall: true,
-						},
+						options: { is_wpcom_atomic: false, is_commercial: true, is_vip: true },
 					},
 				},
 			},
 		};
-		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
-		expect( isGatedStats ).toBe( true );
+
+		expect( shouldGateStats( vipState, siteId, gatedStatType ) ).toBe( false );
+		expect( shouldGateStats( vipState, siteId, jetpackStatsAdvancedStatType ) ).toBe( false );
+	} );
+
+	// The case the kill switch must leave alone: commercial, unpaid, but never past the threshold.
+	it( 'should treat commercial jetpack sites below the paywall threshold exactly as before', () => {
+		const belowThresholdState = { ...walledCommercialSiteState, stats: { planUsage: {} } };
+
+		expect( shouldGateStats( belowThresholdState, siteId, gatedStatType ) ).toBe( false );
+		expect( shouldGateStats( belowThresholdState, siteId, jetpackStatsAdvancedStatType ) ).toBe(
+			true
+		);
 	} );
 
 	it( 'should gate advanced stats for non-commercial jetpack sites without Stats commercial purchase', () => {

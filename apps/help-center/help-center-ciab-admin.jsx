@@ -45,9 +45,6 @@ function useCurrentRoute() {
 
 function HelpCenterWithRouteTracking( { HelpCenter } ) {
 	const currentRoute = useCurrentRoute();
-	const botProps = helpCenterData.isCommerceGarden
-		? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
-		: {};
 
 	return (
 		<HelpCenter
@@ -60,7 +57,8 @@ function HelpCenterWithRouteTracking( { HelpCenter } ) {
 			handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
 			product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
 			currentRoute={ currentRoute }
-			{ ...botProps }
+			newInteractionsBotSlug={ helpCenterData.newInteractionsBotSlug }
+			newLoggedOutInteractionsBotSlug={ helpCenterData.newLoggedOutInteractionsBotSlug }
 		/>
 	);
 }

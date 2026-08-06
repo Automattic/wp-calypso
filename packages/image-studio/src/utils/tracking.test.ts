@@ -281,6 +281,68 @@ describe( 'recordImageStudioEvent — is_test property', () => {
 	} );
 } );
 
+describe( 'recordImageStudioEvent — unified AI property standards', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+		delete ( window as any ).imageStudioData;
+	} );
+
+	afterEach( () => {
+		delete ( window as any ).imageStudioData;
+	} );
+
+	it( 'should identify the product with agent_name', () => {
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( { agent_name: 'image_studio' } )
+		);
+	} );
+
+	it( 'should send the session under both ai_session_id and sessionid', () => {
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( {
+				ai_session_id: 'test-session-id',
+				sessionid: 'test-session-id',
+			} )
+		);
+	} );
+
+	it( 'should include agent_version from imageStudioData', () => {
+		( window as any ).imageStudioData = { version: '15.9' };
+
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( { agent_version: '15.9' } )
+		);
+	} );
+
+	it( 'should send agent_version as none rather than omitting it when unavailable', () => {
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( { agent_version: 'none' } )
+		);
+	} );
+
+	it( 'should let a caller-supplied property win over the defaults', () => {
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		const call = recordTracksEventMock.mock.calls[ 0 ];
+		expect( call[ 1 ] ).toMatchObject( { mode: 'edit' } );
+	} );
+} );
+
 describe( 'reel share tracking helpers', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();

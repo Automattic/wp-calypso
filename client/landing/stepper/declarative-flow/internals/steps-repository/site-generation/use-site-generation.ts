@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { logBuildWowEvent } from 'calypso/landing/stepper/utils/build-wow';
-import { getStepIndexForStatus, pollForBuildWowStatus } from './build-status-poller';
+import { getStepIndexForProgress, pollForBuildProgress } from './build-progress-poller';
+import { pollForBuildWowStatus } from './build-status-poller';
 
 export type SiteGenerationStep = {
 	id: string;
@@ -16,7 +17,6 @@ export type SiteGenerationState = {
 	steps: SiteGenerationStep[];
 };
 
-const STEP_DELAYS = [ 20000, 50000, 90000, 140000 ];
 const GENERATION_TIMEOUT_MS = 30 * 60 * 1000;
 
 function getStepsWithProgress(
@@ -44,27 +44,21 @@ export function useSiteGeneration( {
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >;
 } ): SiteGenerationState {
 	const [ activeStepIndex, setActiveStepIndex ] = useState( 0 );
-	const [ statusStepIndex, setStatusStepIndex ] = useState( -1 );
 	const [ hasTimedOut, setHasTimedOut ] = useState( false );
 	const hasRequiredParameters = Boolean( siteIdentifier && editorUrl );
-	const stepCount = steps.length;
 
 	useEffect( () => {
 		if ( ! siteIdentifier || ! editorUrl || hasTimedOut ) {
 			return;
 		}
 
-		const progressTimeouts = STEP_DELAYS.map( ( delay, index ) =>
-			window.setTimeout(
-				() => setActiveStepIndex( ( previous ) => Math.max( previous, index + 1 ) ),
-				delay
-			)
-		);
+		const stepIds = steps.map( ( step ) => step.id );
+
 		const generationTimeout = window.setTimeout(
 			() => setHasTimedOut( true ),
 			GENERATION_TIMEOUT_MS
 		);
-		const stopPolling = pollForBuildWowStatus( {
+		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
 			onReady: () => window.location.assign( editorUrl ),
 			// A failed build is logged for us but never surfaced as an error: the
@@ -77,23 +71,39 @@ export function useSiteGeneration( {
 				} );
 				setHasTimedOut( true );
 			},
-			onProgress: ( status ) =>
-				setStatusStepIndex( ( previous ) =>
-					Math.max( previous, getStepIndexForStatus( status, stepCount ) ?? -1 )
-				),
 			onRequestError: ( reason ) =>
 				logBuildWowEvent( 'site_generation_status_request_failed', {
 					site_identifier: siteIdentifier,
 					error: reason,
 				} ),
 		} );
+		// `let` so onProgress below can stop its own poller; the callback only
+		// ever fires after pollForBuildProgress has returned.
+		let stopProgressPolling = () => {};
+		stopProgressPolling = pollForBuildProgress( {
+			siteIdentifier,
+			onProgress: ( response ) => {
+				const stepIndex = getStepIndexForProgress( response, stepIds );
+				if ( stepIndex === null ) {
+					return;
+				}
+				// Monotonic floor: the backend can reset or reorder the recorded
+				// history (heartbeats, requeues), and the UI must never move back.
+				setActiveStepIndex( ( previous ) => Math.max( previous, stepIndex ) );
+				// The last milestone is as far as this poller can advance the UI;
+				// from here readiness comes from the build-status poller alone.
+				if ( stepIndex >= stepIds.length - 1 ) {
+					stopProgressPolling();
+				}
+			},
+		} );
 
 		return () => {
-			progressTimeouts.forEach( window.clearTimeout );
 			window.clearTimeout( generationTimeout );
-			stopPolling();
+			stopStatusPolling();
+			stopProgressPolling();
 		};
-	}, [ editorUrl, siteIdentifier, hasTimedOut, stepCount ] );
+	}, [ editorUrl, hasTimedOut, siteIdentifier, steps ] );
 
 	let failureReason: SiteGenerationFailureReason | undefined;
 	if ( ! hasRequiredParameters ) {
@@ -102,19 +112,9 @@ export function useSiteGeneration( {
 		failureReason = 'timed-out';
 	}
 
-	// Real delivery-phase statuses drive the progress ahead of the fixed timers,
-	// never behind them, so the display only ever moves forward (keeping the
-	// designed step labels as-is). Clamped because STEP_DELAYS can outrun a step
-	// list shorter than its own length, which would leave every step complete and
-	// none active.
-	const effectiveActiveIndex = Math.min(
-		stepCount - 1,
-		Math.max( activeStepIndex, statusStepIndex )
-	);
-
 	return {
 		status: failureReason ? 'failed' : 'working',
 		failureReason,
-		steps: getStepsWithProgress( steps, effectiveActiveIndex ),
+		steps: getStepsWithProgress( steps, Math.min( steps.length - 1, activeStepIndex ) ),
 	};
 }

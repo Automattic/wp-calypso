@@ -189,6 +189,20 @@ export const billingHistoryIndexRoute = createRoute( {
 	path: '/',
 	loader: () => {
 		queryClient.prefetchQuery( userReceiptsQuery() );
+		queryClient.prefetchQuery( allSitesQuery() );
+	},
+	validateSearch: (
+		search
+	): {
+		page?: number;
+		search?: string;
+		site?: number;
+	} => {
+		return {
+			page: typeof search.page === 'number' ? search.page : undefined,
+			search: typeof search.search === 'string' ? search.search : undefined,
+			site: typeof search.site === 'number' ? search.site : undefined,
+		};
 	},
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
@@ -1149,8 +1163,8 @@ export const wordpressDefaultsRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../me/wordpress-defaults' ).then( ( d ) =>
-		createLazyRoute( 'wordpress-defaults' )( {
+	import( '../../me/preferences-defaults' ).then( ( d ) =>
+		createLazyRoute( 'preferences-defaults' )( {
 			component: d.default,
 		} )
 	)
