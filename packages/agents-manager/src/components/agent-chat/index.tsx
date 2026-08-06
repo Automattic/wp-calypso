@@ -10,7 +10,7 @@ import {
 	type UploadedImage,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useMemo, useRef } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
@@ -25,6 +25,14 @@ import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
+import {
+	consumeFreeCredit,
+	registerFreeCreditsExperimentApi,
+	useFreeCredits,
+	FreeCreditsBanner,
+	FreeCreditsCard,
+	FreeCreditsExhausted,
+} from '../free-credits';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
 import getSuggestionClickPayload from './get-suggestion-click-payload';
@@ -105,6 +113,11 @@ interface Props {
 	 * hide it on surfaces that connect the user to a human (e.g. Zendesk).
 	 */
 	complianceDisclosure?: React.ReactNode | false;
+	/**
+	 * Free-credit surfaces (presentation experiment). Pass `false` on chats
+	 * that don't draw on the AI allowance, e.g. Zendesk's human support.
+	 */
+	showFreeCredits?: boolean;
 	/** Called when a context card action button is clicked. */
 	onContextCardAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
 	/** Called when a context card's dismiss button is clicked. */
@@ -181,6 +194,7 @@ export default function AgentChat( {
 	onCancelFeedback = () => {},
 	alternativeFooter,
 	complianceDisclosure,
+	showFreeCredits = true,
 	onContextCardAction,
 	onContextCardDismiss,
 }: Props ) {
@@ -192,6 +206,23 @@ export default function AgentChat( {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+
+	const { isExhausted, hasSurface } = useFreeCredits();
+	const isCreditGated = showFreeCredits && isExhausted && hasSurface( 'exhausted' );
+
+	useEffect( () => registerFreeCreditsExperimentApi(), [] );
+
+	// Spending happens here rather than in the send pipeline so the experiment
+	// stays confined to presentation.
+	const handleSubmit = useCallback< NonNullable< Props[ 'onSubmit' ] > >(
+		( message, files ) => {
+			if ( showFreeCredits ) {
+				consumeFreeCredit();
+			}
+			return onSubmit?.( message, files );
+		},
+		[ onSubmit, showFreeCredits ]
+	);
 
 	const mergedComponents = useMemo(
 		() => ( { a: CustomALink, ...markdownComponents } ),
@@ -295,12 +326,15 @@ export default function AgentChat( {
 			onFreeDragEnd={ setFreeDragPosition }
 			defaultSize={ floatingSize ?? undefined }
 			onResizeEnd={ setFloatingSize }
-			className={ clsx( 'agenttic', { dark: isDocked } ) }
+			className={ clsx( 'agenttic', {
+				dark: isDocked,
+				'agents-manager-credits-gated': isCreditGated,
+			} ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
 			thinkingMessage={ thinkingMessage ?? undefined }
 			error={ error }
-			onSubmit={ onSubmit }
+			onSubmit={ handleSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			freeDrag={ ! isDocked }
 			resizable={ ! isDocked }
@@ -321,19 +355,27 @@ export default function AgentChat( {
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
 				) : (
-					<GroupedEmptyView
-						heading={ getEmptyViewHeading() }
-						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
-						suggestions={ emptyViewSuggestions }
-						groupWritingSuggestions={ groupWritingSuggestions }
-						onSuggestionClick={ onSuggestionClick }
-						icon={ <AI size={ 32 } /> }
-					/>
+					<>
+						<GroupedEmptyView
+							heading={ getEmptyViewHeading() }
+							help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
+							suggestions={ emptyViewSuggestions }
+							groupWritingSuggestions={ groupWritingSuggestions }
+							onSuggestionClick={ onSuggestionClick }
+							icon={ <AI size={ 32 } /> }
+						/>
+						{ showFreeCredits && <FreeCreditsCard /> }
+					</>
 				)
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
-				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
+				<ChatHeader
+					onClose={ onClose }
+					options={ chatHeaderOptions }
+					isDocked={ isDocked }
+					showFreeCredits={ showFreeCredits }
+				/>
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
@@ -347,6 +389,7 @@ export default function AgentChat( {
 					<AgentUI.Footer complianceDisclosure={ complianceDisclosure }>
 						<AgentUI.Suggestions />
 						<AgentUI.Notice />
+						{ showFreeCredits && <FreeCreditsBanner /> }
 						{ imageUpload && (
 							<ImageUploader
 								ref={ imageUploaderRef }
@@ -366,13 +409,14 @@ export default function AgentChat( {
 							/>
 						) }
 						<SelectedBlock />
+						{ showFreeCredits && <FreeCreditsExhausted /> }
 						{ /* `readOnly` (not `disabled`) so the stop button stays active while a batch uploads. */ }
 						<AgentUI.Input
 							imageUploaderRef={
 								imageUpload ? ( imageUploaderRef as RefObject< ImageUploaderHandle > ) : undefined
 							}
-							imageUploadDisabled={ imageUpload?.isUploadingImages }
-							readOnly={ imageUpload?.isUploadingImages }
+							imageUploadDisabled={ imageUpload?.isUploadingImages || isCreditGated }
+							readOnly={ imageUpload?.isUploadingImages || isCreditGated }
 							disabled={ imageUpload?.pendingImages?.length ? false : undefined }
 						/>
 					</AgentUI.Footer>

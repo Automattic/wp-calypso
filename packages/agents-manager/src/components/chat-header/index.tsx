@@ -7,6 +7,7 @@ import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
+import { FreeCreditsPill } from '../free-credits';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -19,9 +20,18 @@ interface Props {
 	onBack?: () => void;
 	/** Effective docked state (`canDock && isDocked`), not the stored preference. */
 	isDocked: boolean;
+	/** Free-credit balance chip (presentation experiment). */
+	showFreeCredits?: boolean;
 }
 
-export default function ChatHeader( { onClose, options, title, onBack, isDocked }: Props ) {
+export default function ChatHeader( {
+	onClose,
+	options,
+	title,
+	onBack,
+	isDocked,
+	showFreeCredits = true,
+}: Props ) {
 	const navigate = useNavigate();
 	const { setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
 	const hasAiChatEntry = useHasAiChatEntryButton();
@@ -49,6 +59,7 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 				</div>
 			) }
 			<div className="agents-manager-chat-header__actions">
+				{ showFreeCredits && <FreeCreditsPill /> }
 				<DropdownMenu
 					className="agents-manager-chat-header__more-options"
 					controls={ options }

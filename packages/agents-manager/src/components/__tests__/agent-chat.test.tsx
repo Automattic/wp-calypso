@@ -195,6 +195,14 @@ jest.mock( '../feedback-input', () => ( {
 jest.mock( '../icons', () => ( {
 	AI: () => null,
 } ) );
+jest.mock( '../free-credits', () => ( {
+	useFreeCredits: () => ( { isExhausted: false, hasSurface: () => false } ),
+	consumeFreeCredit: jest.fn(),
+	registerFreeCreditsExperimentApi: jest.fn(),
+	FreeCreditsBanner: () => null,
+	FreeCreditsCard: () => null,
+	FreeCreditsExhausted: () => null,
+} ) );
 jest.mock( '../selected-block', () => ( {
 	__esModule: true,
 	default: () => null,

@@ -111,8 +111,10 @@ export default function ZendeskChat( {
 			acceptedImageFileTypes={ supportedImageTypes }
 			alternativeFooter={ hasInteractionEnded ? <ConcludedConversationFooter /> : undefined }
 			// Zendesk conversations connect the user to a human Happiness
-			// Engineer, so the "You're chatting with AI" disclosure must not show.
+			// Engineer, so the "You're chatting with AI" disclosure must not show,
+			// and the conversation draws on no AI allowance.
 			complianceDisclosure={ false }
+			showFreeCredits={ false }
 		/>
 	);
 }

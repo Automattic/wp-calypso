@@ -138,6 +138,8 @@ interface AgentsManagerActions {
  */
 interface Window {
 	__agentsManagerActions?: AgentsManagerActions;
+	/** Console handle for the free-credit presentation experiment (UI-only, no backend). */
+	__agentsManagerFreeCredits?: import('./components/free-credits/store').FreeCreditsExperimentApi;
 	/** Big Sky injects this on editor surfaces. Narrowed to the fields AM consumes. */
 	bigSkyInitialState?: {
 		bigSkyVersion?: string;
