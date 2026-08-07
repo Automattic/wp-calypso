@@ -89,6 +89,23 @@ function updateSessionIdInLocalStorage(
 }
 
 /**
+ * Notify the consumer of a session ID change. Consumer errors are logged,
+ * never thrown — they must not break the message flow.
+ * @param onSessionIdChange - The consumer callback, if configured
+ * @param sessionId         - The new session ID
+ */
+function notifySessionIdChange(
+	onSessionIdChange: ( ( sessionId: string ) => void ) | undefined,
+	sessionId: string
+): void {
+	try {
+		onSessionIdChange?.( sessionId );
+	} catch ( error ) {
+		log( 'Error in onSessionIdChange callback: %O', error );
+	}
+}
+
+/**
  * Resolve any promises in conversation history messages
  * @param conversationHistory - Array of messages that may contain tool results with promises
  * @return Updated conversation history with resolved promises
@@ -136,6 +153,8 @@ export interface AgentManagerConfig extends ClientConfig {
 	sessionId?: string;
 	/** localStorage key where sessionId is persisted (for cache) */
 	sessionIdStorageKey?: string;
+	/** Called when the server assigns a new session ID or changes the current one */
+	onSessionIdChange?: ( sessionId: string ) => void;
 }
 
 /**
@@ -146,6 +165,7 @@ interface ManagedAgent {
 	sessionId: string | null;
 	conversationStorageKey?: string;
 	sessionIdStorageKey?: string;
+	onSessionIdChange?: ( sessionId: string ) => void;
 	storageConfig: ConversationStorageConfig;
 	conversationHistory: Message[];
 	currentAbortController: AbortController | null;
@@ -265,6 +285,7 @@ function createAgentManager(): AgentManager {
 				sessionId,
 				conversationStorageKey,
 				sessionIdStorageKey,
+				onSessionIdChange: config.onSessionIdChange,
 				storageConfig,
 				conversationHistory,
 				currentAbortController: null,
@@ -321,6 +342,13 @@ function createAgentManager(): AgentManager {
 				// Always update the sessionId for consistency, even if unchanged
 				// (this is a simple assignment and keeps code straightforward)
 				managedAgent.sessionId = task.sessionId;
+
+				if ( oldSessionId !== task.sessionId ) {
+					notifySessionIdChange(
+						managedAgent.onSessionIdChange,
+						task.sessionId
+					);
+				}
 
 				// Update localStorage only when sessionId actually changes
 				// This handles the temp -> stable session ID transition
@@ -530,16 +558,17 @@ function createAgentManager(): AgentManager {
 							typeof imageData === 'string'
 								? imageData
 								: imageData.url;
-						const metadata =
+						const imageMetadata =
 							typeof imageData === 'string'
 								? undefined
 								: imageData.metadata;
 
 						// Get mimeType from metadata if available, otherwise default to image/jpeg
 						const mimeType =
-							( metadata?.fileType as string ) || 'image/jpeg';
+							( imageMetadata?.fileType as string ) ||
+							'image/jpeg';
 						const fileName =
-							( metadata?.fileName as string ) || 'image';
+							( imageMetadata?.fileName as string ) || 'image';
 
 						return {
 							type: 'file',
@@ -548,7 +577,7 @@ function createAgentManager(): AgentManager {
 								mimeType,
 								uri: url,
 							},
-							metadata,
+							metadata: imageMetadata,
 						};
 					}
 				);
@@ -586,6 +615,13 @@ function createAgentManager(): AgentManager {
 					// Always update the sessionId for consistency, even if unchanged
 					// (this is a simple assignment and keeps code straightforward)
 					managedAgent.sessionId = update.sessionId;
+
+					if ( oldSessionId !== update.sessionId ) {
+						notifySessionIdChange(
+							managedAgent.onSessionIdChange,
+							update.sessionId
+						);
+					}
 
 					// Update localStorage only when sessionId actually changes
 					// This handles two scenarios:

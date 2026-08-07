@@ -67,6 +67,25 @@ const adminSession = useAgentChat( {
 // Each will have independent conversation history
 ```
 
+### Observing Session ID Changes
+
+The server may assign or change the session ID — e.g. a new chat receives its
+ID on the first response. Pass `onSessionIdChange` to be notified so the app
+can persist it:
+
+```typescript
+const chat = useAgentChat( {
+	agentId: 'agent-1',
+	sessionId: '', // Empty for a new chat; the server assigns one
+	onSessionIdChange: ( sessionId ) => {
+		sessionStorage.setItem( 'my-session-key', sessionId );
+	},
+} );
+```
+
+The callback fires only when the ID actually changes, and errors it throws are
+logged without breaking the message flow.
+
 ### Manual Storage Operations
 
 ```typescript

@@ -343,6 +343,8 @@ export interface UseAgentChatConfig {
 	agentUrl: string;
 	sessionId: string;
 	sessionIdStorageKey?: string;
+	/** Called when the server assigns a new session ID or changes the current one */
+	onSessionIdChange?: ( sessionId: string ) => void;
 	contextProvider?: ContextProvider;
 	toolProvider?: ToolProvider;
 	authProvider?: AuthProvider;
@@ -505,6 +507,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					agentUrl: agentConfig.agentUrl,
 					sessionId: agentConfig.sessionId, // Can be empty for new chats
 					sessionIdStorageKey: agentConfig.sessionIdStorageKey,
+					onSessionIdChange: config.onSessionIdChange,
 					contextProvider:
 						config.contextProvider || createNoOpContextProvider(),
 					toolProvider:
@@ -565,6 +568,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		agentConfig.agentId,
 		agentConfig.agentUrl,
 		agentConfig.sessionIdStorageKey,
+		config.onSessionIdChange,
 		config.contextProvider,
 		config.toolProvider,
 		config.authProvider,
