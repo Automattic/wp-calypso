@@ -47,8 +47,8 @@ export default function CommissionsTable( {
 		search: '',
 		filters: [],
 		sort: { field: '', direction: 'asc' },
+		titleField: 'site',
 		fields: [
-			'site',
 			'transactions',
 			'commissionsPaid',
 			'timeframeCommissions',
