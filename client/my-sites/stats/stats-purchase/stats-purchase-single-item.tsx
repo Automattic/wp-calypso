@@ -29,6 +29,7 @@ import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-
 import usePlanUsageQuery, { getUsageLimitStatus } from '../hooks/use-plan-usage-query';
 import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
+import useDismissPricingGrid from '../pricing-grid/hooks/use-dismiss-pricing-grid';
 import { StatsCommercialUpgradeSlider, getTierQuantity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import {
@@ -279,6 +280,25 @@ const StatsCommercialPurchase = ( {
 		setPurchaseTierQuantity( value );
 	}, [] );
 
+	const dismissPricingGrid = useDismissPricingGrid( siteId );
+
+	const handleCheckoutPostponed = () => {
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_purchase_commercial_skip_button_clicked`, {
+			blog_id: siteId,
+		} );
+
+		// Skipping is the visitor's plan decision — made on a page that shows the full
+		// paid pitch — so the pricing grid mustn't take over the dashboard afterwards,
+		// regardless of how they got here. On sites where the grid never shows this is
+		// a harmless no-op.
+		dismissPricingGrid();
+
+		setTimeout( () => {
+			page( `/stats/day/${ siteSlug }` );
+		}, 250 );
+	};
+
 	const isCommercial = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'is_commercial' )
 	) as boolean;
@@ -361,6 +381,9 @@ const StatsCommercialPurchase = ( {
 				>
 					{ continueButtonText }
 				</ButtonComponent>
+				<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
+					{ translate( 'I will do it later' ) }
+				</ButtonComponent>
 			</div>
 			<div className="stats-purchase-page__footnotes">
 				<p>{ translate( '(*) 14-day money-back guarantee' ) }</p>
@@ -396,7 +419,9 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial` );
+		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial`, {
+			blog_id: siteId,
+		} );
 
 		page( `/stats/purchase/${ siteSlug }?productType=commercial&from=switch-from-personal` );
 	};
@@ -409,7 +434,7 @@ const StatsPersonalPurchase = ( {
 				} ) }
 			</h1>
 			<p>
-				{ translate( 'Help %(product)s with a non-commercial license and get these perks:', {
+				{ translate( 'Help %(product)s and get these perks:', {
 					args: { product: STATS_PRODUCT_NAME },
 				} ) }
 			</p>
@@ -553,7 +578,9 @@ function StatsCommercialFlowOptOutForm( {
 
 	const handleSwitchToPersonalClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked` );
+		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked`, {
+			blog_id: siteId,
+		} );
 		setTimeout(
 			() =>
 				page( `/stats/purchase/${ siteSlug }?productType=personal&from=switch-from-commercial` ),
@@ -563,7 +590,9 @@ function StatsCommercialFlowOptOutForm( {
 
 	const handleRequestUpdateClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked` );
+		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked`, {
+			blog_id: siteId,
+		} );
 
 		// For Jetpack sites, open the Jetpack support form. Do not prefill.
 		if ( isJetpackSupport ) {

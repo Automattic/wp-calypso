@@ -1,5 +1,3 @@
-@import '@wordpress/base-styles/variables';
-
 #wpcom-omnibar {
 	position: fixed;
 	top: 0;
@@ -7,11 +5,11 @@
 	z-index: 999;
 }
 
-.omnibar .site-icon,
-.omnibar .site-letter {
-	border-radius: $radius-medium;
-
-	@media ( min-width: 782px ) {
-		border-radius: $radius-small;
-	}
+body:has( .omnibar.is-support-session ) {
+	--omnibar-background: #b26200;
+	--omnibar-menu-active-background: #8a4d00;
+	--omnibar-submenu-background: #8a4d00;
+	--omnibar-highlight-color: #fff;
+	--omnibar-submenu-highlight-color: #ffbf86;
+	--omnibar-avatar-ring-color: #8a4d00;
 }

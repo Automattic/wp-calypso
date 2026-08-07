@@ -1219,7 +1219,7 @@ export default function CheckoutMainContent( {
 
 /**
  * Styles for the mobile sticky order summary experiment
- * (`calypso_mobile_checkout_sticky_summary_v1`).
+ * (`calypso_mobile_checkout_sticky_summary_v1_1`).
  *
  * Interpolated last in `StepContainerV2CheckoutFixer` so that for a user
  * enrolled in both this and the checkout UI redesign, these rules win the

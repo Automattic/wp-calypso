@@ -188,7 +188,7 @@ function getMessagePrettifier(
 }
 
 // Use this to group messages so that they will replace existing messages with the same id
-function getNoticeIdForMessage( message: ResponseCartMessage ): string {
+export function getNoticeIdForMessage( message: ResponseCartMessage ): string {
 	switch ( message.code ) {
 		case 'coupon-not-found':
 		case 'coupon-removed':

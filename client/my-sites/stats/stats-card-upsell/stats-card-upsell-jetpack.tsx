@@ -35,10 +35,11 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteId, statTyp
 
 		// publish an event
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_${ tracksEvent }` );
+		recordTracksEvent( `${ event_from }_${ tracksEvent }`, { blog_id: siteId } );
 		// publish new unified upgrade event
 		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
 			type: statType,
+			blog_id: siteId,
 		} );
 
 		// redirect to the Purchase page

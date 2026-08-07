@@ -4,11 +4,10 @@ import {
 	siteAdminBarQuery,
 	siteByIdQuery,
 } from '@automattic/api-queries';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
-import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useMemo, useState } from 'react';
-import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
@@ -16,8 +15,10 @@ import { OmnibarHomeIcon } from './home';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useNotificationsPlugin } from './plugin-notifications';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
+import { buildWpcomAccountNode } from './plugin-wpcom-account';
 import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
+import type { OmnibarNodeBuilders } from '@automattic/omnibar';
 
 const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
 
@@ -25,8 +26,11 @@ const UNSUPPORTED_DOTCOM_NODE_IDS = new Set( [
 	'site-plan',
 	'site-plan-badge',
 	'site-status-badge',
-	'my-wpcom-account',
 ] );
+
+const DOTCOM_NODE_BUILDERS: OmnibarNodeBuilders = {
+	'my-wpcom-account': buildWpcomAccountNode,
+};
 
 function removeUnsupportedNodes( nodes: AdminBarNode[], supports: AppConfig[ 'supports' ] ) {
 	return nodes.filter( ( node ) => {
@@ -58,12 +62,12 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		enabled: hydrated && !! siteId,
 	} );
 
-	const isDesktop = useViewportMatch( 'medium' );
-	const siteIconSize = isDesktop ? 20 : 28;
-
 	const baseOmnibarNodes = useMemo( () => {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
-		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedNodes( nodes, supports ) );
+		const result = buildOmnibarNodesFromAdminBarNodes(
+			removeUnsupportedNodes( nodes, supports ),
+			DOTCOM_NODE_BUILDERS
+		);
 
 		if ( ! result.home ) {
 			result.home = { id: '' };
@@ -75,16 +79,16 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 			if ( ! result.site ) {
 				result.site = {
 					id: 'site-name',
+					icon: <span className="omnibar__site-icon" />,
 					children: [],
 				};
 			}
 
-			result.site.icon = <SiteIcon site={ site } size={ siteIconSize } />;
 			result.site.title = getSiteDisplayName( site );
 		}
 
 		return result;
-	}, [ dashboardNodes, siteNodes, site, siteIconSize, supports ] );
+	}, [ dashboardNodes, siteNodes, site, supports ] );
 
 	const helpCenterPluginNode = useHelpCenterPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
@@ -102,7 +106,13 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	if ( ! hydrated ) {
 		return <InitialOmnibar user={ user } />;
 	}
-	return <Omnibar nodes={ omnibarNodes } onClickResponsiveMenu={ onClickResponsiveMenu } />;
+	return (
+		<Omnibar
+			nodes={ omnibarNodes }
+			onClickResponsiveMenu={ onClickResponsiveMenu }
+			className={ isSupportSession() ? 'is-support-session' : undefined }
+		/>
+	);
 }
 
 export function InitialOmnibar( { user }: { user?: User } ) {

@@ -8,6 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
 import useStatsPurchases from 'calypso/my-sites/stats/hooks/use-stats-purchases';
+import useDismissPricingGrid from 'calypso/my-sites/stats/pricing-grid/hooks/use-dismiss-pricing-grid';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
@@ -85,9 +86,19 @@ const PersonalPurchase = ( {
 		} );
 	};
 
+	const dismissPricingGrid = useDismissPricingGrid( siteId );
+
 	const handleCheckoutPostponed = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked` );
+		recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked`, {
+			blog_id: siteId,
+		} );
+
+		// Skipping is the visitor's plan decision — made on a page that shows the full
+		// paid pitch — so the pricing grid mustn't take over the dashboard afterwards,
+		// regardless of how they got here. On sites where the grid never shows this is
+		// a harmless no-op.
+		dismissPricingGrid();
 
 		// redirect to the Traffic page
 		setTimeout( () => {
@@ -104,7 +115,7 @@ const PersonalPurchase = ( {
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
-					'To unlock UTM tracking, device stats and more, {{Button}}upgrade to a paid plan{{/Button}}.',
+					'To unlock device stats, region and city stats and UTM tracking, {{Button}}upgrade to a paid plan{{/Button}}.',
 					{
 						components: {
 							Button: <Button variant="link" href="#" onClick={ handleClick } />,

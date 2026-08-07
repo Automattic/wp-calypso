@@ -61,6 +61,7 @@ function CheckoutV2( { siteSlug, planSlug }: CheckoutV2Props ) {
 					}
 					siteSlug={ siteSlug }
 					planSlug={ planSlug }
+					shouldClearCartOnSuccess={ selectedProductsBySlug.length === 0 }
 				/>
 			</LayoutBody>
 		</Layout>

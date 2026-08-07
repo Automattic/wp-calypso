@@ -152,6 +152,10 @@ export type Message = {
 	content: ReactNode;
 	context?: Context;
 	displayName?: string;
+	/**
+	 * Set on messages originating from Zendesk, where it holds the Smooch message id.
+	 */
+	id?: string;
 	internal_message_id?: string;
 	message_id?: number;
 	meta?: Record< string, string >;

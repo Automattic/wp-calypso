@@ -16,15 +16,20 @@ import './styles.scss';
 const getStatsPurchaseURL = ( siteId, productType = 'commercial' ) =>
 	`/stats/purchase/${ siteId }?productType=${ productType }`;
 
-const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
+const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats, siteId ) => {
 	event.preventDefault();
 
 	isOdysseyStats
-		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_summary_screen_upgrade_clicked' )
-		: recordTracksEvent( 'calypso_stats_purchase_summary_screen_upgrade_clicked' );
+		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_summary_screen_upgrade_clicked', {
+				blog_id: siteId,
+		  } )
+		: recordTracksEvent( 'calypso_stats_purchase_summary_screen_upgrade_clicked', {
+				blog_id: siteId,
+		  } );
 
 	trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
 		type: 'summary-screen',
+		blog_id: siteId,
 	} );
 
 	setTimeout( () => page( upgradeUrl ), 250 );
@@ -94,7 +99,12 @@ const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 			<Button
 				variant="primary"
 				onClick={ ( e ) =>
-					handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'commercial' ), isOdysseyStats )
+					handleUpgradeClick(
+						e,
+						getStatsPurchaseURL( siteId, 'commercial' ),
+						isOdysseyStats,
+						siteId
+					)
 				}
 			>
 				{ translate( 'Upgrade my Stats' ) }
@@ -136,7 +146,7 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 			<Button
 				variant="primary"
 				onClick={ ( e ) =>
-					handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'personal' ), isOdysseyStats )
+					handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'personal' ), isOdysseyStats, siteId )
 				}
 			>
 				{ translate( 'Upgrade my Stats' ) }

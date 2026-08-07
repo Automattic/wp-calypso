@@ -118,8 +118,18 @@ function clusterMessagesBySender( messages: Message[] ) {
 
 	const groups = [ currentGroup ];
 
-	for ( const message of sortMessagesByTimestamp( messages ) ) {
+	const sortedMessages = sortMessagesByTimestamp( messages );
+	const lastCSATMessage = sortedMessages.filter( isCSATMessage ).at( -1 );
+
+	for ( const message of sortedMessages ) {
 		if ( EXCLUDED_MESSAGE_ROLES.includes( getPresentedRole( message ) as any ) ) {
+			continue;
+		}
+
+		// Zendesk can emit more than one CSAT prompt for the same conversation. They are all rendered
+		// with the same copy, so every extra one reads as a duplicate and lets the user submit
+		// conflicting ratings for a single ticket. Only the most recent prompt is kept.
+		if ( isCSATMessage( message ) && message !== lastCSATMessage ) {
 			continue;
 		}
 

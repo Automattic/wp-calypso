@@ -11,7 +11,7 @@ import { StatsNoticeProps } from './types';
 const getStatsPurchaseURL = ( siteId: number | null ) => {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?productType=personal&from=${ from }-free-stats-purchase-success-notice`;
+	const purchasePath = `/stats/purchase/${ siteId }?productType=commercial&from=${ from }-free-stats-purchase-success-notice`;
 
 	return purchasePath;
 };
@@ -19,13 +19,17 @@ const getStatsPurchaseURL = ( siteId: number | null ) => {
 const handleUpgradeClick = (
 	event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
 	upgradeUrl: string,
-	isOdysseyStats: boolean
+	isOdysseyStats: boolean,
+	siteId: number | null
 ) => {
 	event.preventDefault();
 
-	isOdysseyStats
-		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_success_banner_upgrade_clicked' )
-		: recordTracksEvent( 'calypso_stats_purchase_success_banner_upgrade_clicked' );
+	recordTracksEvent(
+		isOdysseyStats
+			? 'jetpack_odyssey_stats_purchase_success_banner_upgrade_clicked'
+			: 'calypso_stats_purchase_success_banner_upgrade_clicked',
+		{ blog_id: siteId }
+	);
 
 	setTimeout( () => page( upgradeUrl ), 250 );
 };
@@ -76,7 +80,7 @@ const FreePlanPurchaseSuccessJetpackStatsNotice = ( {
 							jetpackStatsProductLink: (
 								<a
 									onClick={ ( e ) =>
-										handleUpgradeClick( e, getStatsPurchaseURL( siteId ), isOdysseyStats )
+										handleUpgradeClick( e, getStatsPurchaseURL( siteId ), isOdysseyStats, siteId )
 									}
 									className="notice-banner__action-link notice-banner__action-link--inline"
 									href={ getStatsPurchaseURL( siteId ) }

@@ -1,7 +1,10 @@
 import { dispatch } from '@wordpress/data';
-import type { AdminBarNode, OmnibarNode, OmnibarNodes } from '../types';
+import type { AdminBarNode, OmnibarNode, OmnibarNodeBuilders, OmnibarNodes } from '../types';
 
-export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[] ): OmnibarNodes {
+export function buildOmnibarNodesFromAdminBarNodes(
+	adminBarNodes: AdminBarNode[],
+	builders?: OmnibarNodeBuilders
+): OmnibarNodes {
 	const omnibarNodes: OmnibarNodes = {};
 	const siteActionNodes: OmnibarNode[] = [];
 
@@ -14,14 +17,32 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 			group: node.group,
 		};
 
+		if ( node.meta?.class?.split( ' ' ).includes( 'ab-sub-secondary' ) ) {
+			omnibarNode.variant = 'secondary';
+		}
+
 		switch ( node.id ) {
 			case 'wp-logo':
 				omnibarNodes.home = omnibarNode;
 				omnibarNodes.home.title = undefined;
 				break;
-			case 'site-name':
+			case 'site-name': {
+				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+				const siteIcon = doc.querySelector( 'img' );
+				const siteIconSrc = siteIcon?.getAttribute( 'src' );
+				omnibarNode.icon = siteIconSrc ? (
+					<img
+						className="omnibar__site-icon"
+						src={ siteIconSrc }
+						srcSet={ siteIcon?.getAttribute( 'srcset' ) || '' }
+						alt={ siteIcon?.getAttribute( 'alt' ) || '' }
+					/>
+				) : (
+					<span className="dashicons-before dashicons-admin-home" />
+				);
 				omnibarNodes.site = omnibarNode;
 				break;
+			}
 			case 'new-content': {
 				omnibarNode.icon = <span className="dashicons-before dashicons-plus" />;
 				siteActionNodes.push( omnibarNode );
@@ -99,6 +120,11 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 				};
 				break;
 			}
+		}
+
+		const builder = builders?.[ node.id ];
+		if ( builder ) {
+			Object.assign( omnibarNode, builder( node ) );
 		}
 
 		nodeMap.set( node.id, omnibarNode );

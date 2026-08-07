@@ -93,12 +93,6 @@ $data-view-border-color: #f1f1f1;
 		max-width: 700px;
 	}
 
-	// DataViews hides table row actions until the row is hovered or focused.
-	// Opening a referral is the point of the row, so keep the action visible.
-	.dataviews-view-table tr .dataviews-item-actions .components-button:not(.dataviews-all-actions-button) {
-		opacity: 1;
-	}
-
 	// Scoped to the list column so the detail view's cards keep their own inset.
 	.referrals-layout__column .referrals-consolidated-views {
 		// The HStack is `width: 100%` and content-box, so the inline padding would

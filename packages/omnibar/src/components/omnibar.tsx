@@ -7,9 +7,13 @@ import type { OmnibarProps } from '../types';
 
 import './omnibar.scss';
 
-export function Omnibar( { nodes, onClickResponsiveMenu }: OmnibarProps ) {
+export function Omnibar( { nodes, onClickResponsiveMenu, className }: OmnibarProps ) {
 	return (
-		<div className="omnibar" role="navigation" aria-label="Toolbar">
+		<div
+			className={ className ? `omnibar ${ className }` : 'omnibar' }
+			role="navigation"
+			aria-label="Toolbar"
+		>
 			{ onClickResponsiveMenu && (
 				<OmnibarResponsiveMenu onClickResponsiveMenu={ onClickResponsiveMenu } />
 			) }

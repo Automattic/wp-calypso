@@ -6,5 +6,6 @@ export interface AdminBarNode {
 	group: boolean;
 	meta?: {
 		menu_title?: string;
+		class?: string;
 	};
 }

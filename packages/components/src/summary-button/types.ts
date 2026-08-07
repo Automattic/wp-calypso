@@ -30,6 +30,15 @@ export interface SummaryButtonProps {
 	 */
 	href?: string;
 	/**
+	 * The anchor `target` attribute, forwarded to the underlying element when
+	 * an `href` is given.
+	 */
+	target?: string;
+	/**
+	 * The anchor `rel` attribute, forwarded alongside `target`.
+	 */
+	rel?: string;
+	/**
 	 * A callback to handle clicking an item.
 	 */
 	onClick?: React.MouseEventHandler;
