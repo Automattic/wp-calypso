@@ -1,0 +1,31 @@
+.omnibar__popover {
+	.omnibar__wpcom-account {
+		display: block;
+		box-sizing: border-box;
+		width: 100%;
+		height: 34px;
+		padding: 0 14px;
+		margin-block: 6px;
+		border-radius: 2px;
+		background-color: var( --studio-wordpress-blue-50, #3858e9 );
+		color: var( --omnibar-text-color );
+		line-height: 32px;
+		text-align: center;
+
+		svg {
+			position: relative;
+			top: -1px;
+			margin-inline: -2px -4px;
+			fill: currentColor;
+			vertical-align: middle;
+			transform: scale( 0.8 );
+		}
+	}
+
+	[role='menuitem']:hover,
+	[role='menuitem'][data-active-item] {
+		.omnibar__wpcom-account {
+			background-color: #4664eb;
+		}
+	}
+}

@@ -1,15 +1,23 @@
+import type { AdminBarNode } from './admin-bar';
+
 export interface OmnibarNode {
 	id: string;
 	title?: string;
 	label?: string;
 	icon?: React.ReactElement;
 	group?: boolean;
+	variant?: 'secondary';
 	href?: string;
 	onClick?: () => void;
 	meta?: SiteActionNodeMeta & UserInfoNodeMeta;
 	render?: ( node: OmnibarNode ) => React.ReactNode;
 	children?: OmnibarNode[];
 }
+
+export type OmnibarNodeBuilders = Record<
+	string,
+	( adminBarNode: AdminBarNode ) => Partial< OmnibarNode >
+>;
 
 export interface SiteActionNodeMeta {
 	subtitle?: string;

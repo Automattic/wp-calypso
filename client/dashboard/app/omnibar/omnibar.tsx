@@ -15,8 +15,10 @@ import { OmnibarHomeIcon } from './home';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useNotificationsPlugin } from './plugin-notifications';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
+import { buildWpcomAccountNode } from './plugin-wpcom-account';
 import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
+import type { OmnibarNodeBuilders } from '@automattic/omnibar';
 
 const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
 
@@ -24,8 +26,11 @@ const UNSUPPORTED_DOTCOM_NODE_IDS = new Set( [
 	'site-plan',
 	'site-plan-badge',
 	'site-status-badge',
-	'my-wpcom-account',
 ] );
+
+const DOTCOM_NODE_BUILDERS: OmnibarNodeBuilders = {
+	'my-wpcom-account': buildWpcomAccountNode,
+};
 
 function removeUnsupportedNodes( nodes: AdminBarNode[], supports: AppConfig[ 'supports' ] ) {
 	return nodes.filter( ( node ) => {
@@ -59,7 +64,10 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 
 	const baseOmnibarNodes = useMemo( () => {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
-		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedNodes( nodes, supports ) );
+		const result = buildOmnibarNodesFromAdminBarNodes(
+			removeUnsupportedNodes( nodes, supports ),
+			DOTCOM_NODE_BUILDERS
+		);
 
 		if ( ! result.home ) {
 			result.home = { id: '' };
