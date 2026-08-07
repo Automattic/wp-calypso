@@ -1196,6 +1196,279 @@ describe( 'Client', () => {
 		} );
 	} );
 
+	describe( 'Tool result file parts', () => {
+		it( 'sends `__file_parts` from a tool result on the continuation request', async () => {
+			const screenshot = {
+				type: 'file' as const,
+				file: {
+					name: 'shot.png',
+					mimeType: 'image/png',
+					bytes: 'aGVsbG8=',
+				},
+			};
+
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [
+						{
+							id: 'capture_screenshot',
+							name: 'Capture Screenshot',
+							description: 'Captures a screenshot',
+							input_schema: { type: 'object', properties: {} },
+						},
+					];
+				},
+				async executeTool() {
+					return {
+						result: { success: true },
+						returnToAgent: true,
+						__file_parts: [ screenshot ],
+					};
+				},
+			};
+
+			const encoder = new TextEncoder();
+
+			// Agent asks for the tool.
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: new ReadableStream( {
+					start( controller ) {
+						controller.enqueue(
+							encoder.encode(
+								`data: ${ JSON.stringify( {
+									jsonrpc: '2.0',
+									id: 'test-request-id',
+									result: {
+										id: 'test-task-id',
+										status: {
+											state: 'input-required',
+											message: {
+												messageId: 'agent-message-1',
+												role: 'agent',
+												kind: 'message',
+												parts: [
+													{
+														type: 'data',
+														data: {
+															toolCallId:
+																'call-1',
+															toolId: 'capture_screenshot',
+															arguments: {},
+														},
+													},
+												],
+											},
+										},
+									},
+								} ) }\n\n`
+							)
+						);
+						setTimeout( () => controller.close(), 10 );
+					},
+				} ),
+			} );
+
+			// Continuation completes the task.
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: new ReadableStream( {
+					start( controller ) {
+						controller.enqueue(
+							encoder.encode(
+								`data: ${ JSON.stringify( {
+									jsonrpc: '2.0',
+									id: 'test-request-id-2',
+									result: {
+										type: 'TaskStatusUpdateEvent',
+										taskId: 'test-task-id',
+										status: {
+											state: 'completed',
+											message: {
+												role: 'agent',
+												kind: 'message',
+												parts: [
+													{
+														type: 'text',
+														text: 'Done!',
+													},
+												],
+											},
+											final: true,
+										},
+									},
+								} ) }\n\n`
+							)
+						);
+						setTimeout( () => controller.close(), 10 );
+					},
+				} ),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			for await ( const update of client.sendMessageStream( {
+				message: createTextMessage( 'Take a screenshot' ),
+			} ) ) {
+				void update;
+			}
+
+			expect( mockFetch ).toHaveBeenCalledTimes( 2 );
+
+			const continuationBody = JSON.parse(
+				mockFetch.mock.calls[ 1 ][ 1 ].body
+			);
+			const toolResultPart = continuationBody.params.message.parts.find(
+				( p: any ) =>
+					p.type === 'data' &&
+					p.data?.toolCallId === 'call-1' &&
+					'result' in p.data
+			);
+
+			expect( toolResultPart ).toBeDefined();
+			expect( toolResultPart.data.__file_parts ).toEqual( [
+				screenshot,
+			] );
+		} );
+
+		it( 'omits `__file_parts` for tools that return no files', async () => {
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [
+						{
+							id: 'plain_tool',
+							name: 'Plain Tool',
+							description: 'Returns no files',
+							input_schema: { type: 'object', properties: {} },
+						},
+					];
+				},
+				async executeTool() {
+					return { result: { success: true }, returnToAgent: true };
+				},
+			};
+
+			const encoder = new TextEncoder();
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: new ReadableStream( {
+					start( controller ) {
+						controller.enqueue(
+							encoder.encode(
+								`data: ${ JSON.stringify( {
+									jsonrpc: '2.0',
+									id: 'test-request-id',
+									result: {
+										id: 'test-task-id',
+										status: {
+											state: 'input-required',
+											message: {
+												messageId: 'agent-message-1',
+												role: 'agent',
+												kind: 'message',
+												parts: [
+													{
+														type: 'data',
+														data: {
+															toolCallId:
+																'call-1',
+															toolId: 'plain_tool',
+															arguments: {},
+														},
+													},
+												],
+											},
+										},
+									},
+								} ) }\n\n`
+							)
+						);
+						setTimeout( () => controller.close(), 10 );
+					},
+				} ),
+			} );
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: new ReadableStream( {
+					start( controller ) {
+						controller.enqueue(
+							encoder.encode(
+								`data: ${ JSON.stringify( {
+									jsonrpc: '2.0',
+									id: 'test-request-id-2',
+									result: {
+										type: 'TaskStatusUpdateEvent',
+										taskId: 'test-task-id',
+										status: {
+											state: 'completed',
+											message: {
+												role: 'agent',
+												kind: 'message',
+												parts: [
+													{
+														type: 'text',
+														text: 'Done!',
+													},
+												],
+											},
+											final: true,
+										},
+									},
+								} ) }\n\n`
+							)
+						);
+						setTimeout( () => controller.close(), 10 );
+					},
+				} ),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			for await ( const update of client.sendMessageStream( {
+				message: createTextMessage( 'Run the tool' ),
+			} ) ) {
+				void update;
+			}
+
+			const continuationBody = JSON.parse(
+				mockFetch.mock.calls[ 1 ][ 1 ].body
+			);
+			const toolResultPart = continuationBody.params.message.parts.find(
+				( p: any ) =>
+					p.type === 'data' &&
+					p.data?.toolCallId === 'call-1' &&
+					'result' in p.data
+			);
+
+			expect( toolResultPart ).toBeDefined();
+			expect( toolResultPart.data ).not.toHaveProperty( '__file_parts' );
+		} );
+	} );
+
 	describe( 'SSE error handling', () => {
 		it( 'should throw error when SSE event contains error field', async () => {
 			const encoder = new TextEncoder();

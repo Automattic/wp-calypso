@@ -312,7 +312,7 @@ async function executeToolCallBatch(
 				messageId,
 				toolCallId as string
 			);
-			const { result, returnToAgent, agentMessage } =
+			const { result, returnToAgent, agentMessage, fileParts } =
 				processToolExecutionResult( executionResult );
 
 			if ( returnToAgent ) {
@@ -327,7 +327,9 @@ async function executeToolCallBatch(
 				createToolResultDataPart(
 					toolCallId as string,
 					toolId as string,
-					result
+					result,
+					undefined,
+					fileParts
 				)
 			);
 		} catch ( error ) {
@@ -681,8 +683,12 @@ async function* processAgentResponseStream(
 							update.status?.message?.messageId,
 							toolCallId as string
 						);
-						const { result, returnToAgent, agentMessage } =
-							processToolExecutionResult( executionResult );
+						const {
+							result,
+							returnToAgent,
+							agentMessage,
+							fileParts,
+						} = processToolExecutionResult( executionResult );
 
 						// Mark that at least one tool wants to return to agent
 						if ( returnToAgent ) {
@@ -732,7 +738,9 @@ async function* processAgentResponseStream(
 						const toolResult = createToolResultDataPart(
 							toolCallId as string,
 							toolId as string,
-							result
+							result,
+							undefined,
+							fileParts
 						);
 
 						toolResults.push( toolResult );
@@ -1175,8 +1183,12 @@ export function createClient( config: ClientConfig ): Client {
 							toolId as string,
 							args
 						);
-						const { result, returnToAgent, agentMessage } =
-							processToolExecutionResult( executionResult );
+						const {
+							result,
+							returnToAgent,
+							agentMessage,
+							fileParts,
+						} = processToolExecutionResult( executionResult );
 
 						// Mark that at least one tool wants to return to agent
 						if ( returnToAgent ) {
@@ -1193,7 +1205,9 @@ export function createClient( config: ClientConfig ): Client {
 						const toolResult = createToolResultDataPart(
 							toolCallId as string,
 							toolId as string,
-							result
+							result,
+							undefined,
+							fileParts
 						);
 
 						toolResults.push( toolResult );

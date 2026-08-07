@@ -3,6 +3,7 @@ import type {
 	AbilityDataPart,
 	ClientContext,
 	ContextDataPart,
+	FilePart,
 	JsonRpcId,
 	Message,
 	MessageSendParams,
@@ -226,12 +227,16 @@ export function extractToolCallsFromMessage(
  * @param toolId
  * @param result
  * @param error
+ * @param fileParts  Files (typically images) produced by the tool. Emitted as
+ *                   `__file_parts` alongside `result`; omitted when empty so
+ *                   file-less results keep their existing payload shape.
  */
 export function createToolResultDataPart(
 	toolCallId: string,
 	toolId: string,
 	result?: unknown,
-	error?: string
+	error?: string,
+	fileParts?: FilePart[]
 ): ToolResultDataPart {
 	return {
 		type: 'data',
@@ -239,6 +244,7 @@ export function createToolResultDataPart(
 			toolCallId,
 			toolId,
 			result,
+			...( fileParts?.length ? { __file_parts: fileParts } : {} ),
 		},
 		metadata: error ? { error } : undefined,
 	};
@@ -309,6 +315,7 @@ export function processToolExecutionResult( executionResult: any ): {
 	result: any;
 	returnToAgent: boolean;
 	agentMessage?: string;
+	fileParts?: FilePart[];
 } {
 	// Check if result is a ToolExecutionResult object
 	if (
@@ -316,10 +323,18 @@ export function processToolExecutionResult( executionResult: any ): {
 		typeof executionResult === 'object' &&
 		'result' in executionResult
 	) {
+		// `__file_parts` is the canonical key (it matches the wire), but accept
+		// a camelCased `fileParts` too: an untyped tool returning the wrong
+		// spelling would otherwise drop its images behind a success-shaped
+		// result, which is the exact silent failure this feature exists to fix.
+		const fileParts =
+			executionResult.__file_parts ?? executionResult.fileParts;
+
 		return {
 			result: executionResult.result,
 			returnToAgent: executionResult.returnToAgent !== false, // Default to true
 			agentMessage: executionResult.agentMessage, // Pass through agentMessage if present
+			fileParts: Array.isArray( fileParts ) ? fileParts : undefined,
 		};
 	}
 

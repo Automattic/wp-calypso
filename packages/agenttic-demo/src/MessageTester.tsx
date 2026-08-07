@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import type { Message as ClientMessage } from '@automattic/agenttic-client';
+import { ToolDropdown } from './playground/ToolDropdown';
 
 interface MessageTesterProps {
 	addMessage: ( message: any ) => void;
@@ -87,6 +88,41 @@ const PRESETS: Preset[] = [
 			'\n```',
 	},
 	{
+		label: 'Code Blocks',
+		role: 'agent',
+		text: `Inline code like \`wp_get_current_user()\` should sit on its own surface, distinct from prose.
+
+A short fenced block:
+
+\`\`\`javascript
+const greeting = 'Hello, world!';
+console.log( greeting );
+\`\`\`
+
+A long single line that must scroll horizontally instead of widening the bubble:
+
+\`\`\`sql
+SELECT p.ID, p.post_title, p.post_date, u.display_name FROM wp_posts AS p INNER JOIN wp_users AS u ON u.ID = p.post_author WHERE p.post_status = 'publish' AND p.post_type = 'post' ORDER BY p.post_date DESC LIMIT 20;
+\`\`\`
+
+Unlabeled block with no language:
+
+\`\`\`
+$ pnpm install
+$ pnpm dev
+\`\`\`
+
+Inline code inside a list and a table:
+
+1. Run \`pnpm build\` first
+2. Then \`pnpm test\`
+
+| Token | Value |
+|-------|-------|
+| \`--color-muted\` | code surface |
+| \`--font-mono\` | code family |`,
+	},
+	{
 		label: 'Rich Markdown',
 		role: 'agent',
 		text: `## Getting Started
@@ -116,27 +152,13 @@ That's it for now. Let me know if you have questions!`,
 	},
 ];
 
-const buttonStyle: React.CSSProperties = {
-	padding: '8px 10px',
-	background: '#007cba',
-	color: '#fff',
-	cursor: 'pointer',
-	fontSize: '12px',
-	fontFamily: 'monospace',
-	textTransform: 'uppercase',
-	border: 'none',
-	marginInline: '10px',
-};
-
 const MessageTester: React.FC< MessageTesterProps > = ( {
 	addMessage,
 	loadMessages,
 	onClear,
 } ) => {
-	const [ isOpen, setIsOpen ] = useState( false );
 	const [ role, setRole ] = useState< 'user' | 'agent' >( 'agent' );
 	const [ text, setText ] = useState( '' );
-	const dropdownRef = useRef< HTMLDivElement >( null );
 	const presets = loadMessages ? [ REGENERATE_PRESET, ...PRESETS ] : PRESETS;
 
 	const injectMessage = useCallback(
@@ -167,90 +189,25 @@ const MessageTester: React.FC< MessageTesterProps > = ( {
 				if ( loadMessages ) {
 					void loadMessages( preset.createMessages() );
 				}
-				setIsOpen( false );
 				return;
 			}
 
 			injectMessage( preset.role, preset.text );
-			setIsOpen( false );
 		},
 		[ injectMessage, loadMessages ]
 	);
 
-	useEffect( () => {
-		if ( ! isOpen ) {
-			return;
-		}
-
-		const handleClickOutside = ( e: MouseEvent ) => {
-			if (
-				dropdownRef.current &&
-				! dropdownRef.current.contains( e.target as Node )
-			) {
-				setIsOpen( false );
-			}
-		};
-
-		const handleEscape = ( e: KeyboardEvent ) => {
-			if ( e.key === 'Escape' ) {
-				setIsOpen( false );
-			}
-		};
-
-		document.addEventListener( 'mousedown', handleClickOutside );
-		document.addEventListener( 'keydown', handleEscape );
-		return () => {
-			document.removeEventListener( 'mousedown', handleClickOutside );
-			document.removeEventListener( 'keydown', handleEscape );
-		};
-	}, [ isOpen ] );
-
 	return (
-		<div ref={ dropdownRef } style={ { position: 'relative' } }>
-			<button
-				onClick={ () => setIsOpen( ! isOpen ) }
-				style={ buttonStyle }
-			>
-				Messages { isOpen ? '\u25B4' : '\u25BE' }
-			</button>
-
-			{ isOpen && (
-				<div
-					style={ {
-						position: 'absolute',
-						top: '100%',
-						right: 0,
-						width: '320px',
-						background: '#fff',
-						border: '1px solid #ccc',
-						borderRadius: '4px',
-						boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-						zIndex: 10001,
-						padding: '12px',
-						fontFamily: 'monospace',
-						fontSize: '12px',
-					} }
-				>
-					<div
-						style={ {
-							display: 'flex',
-							gap: '8px',
-							marginBottom: '8px',
-						} }
-					>
+		<ToolDropdown label="Messages">
+			{ ( { close } ) => (
+				<div className="message-tester">
+					<div className="message-tester__row">
 						<select
+							className="message-tester__select"
 							value={ role }
 							onChange={ ( e ) =>
 								setRole( e.target.value as 'user' | 'agent' )
 							}
-							style={ {
-								padding: '4px 8px',
-								fontSize: '12px',
-								fontFamily: 'monospace',
-								border: '1px solid #ccc',
-								borderRadius: '3px',
-								background: '#fff',
-							} }
 						>
 							<option value="agent">Agent</option>
 							<option value="user">User</option>
@@ -258,92 +215,45 @@ const MessageTester: React.FC< MessageTesterProps > = ( {
 					</div>
 
 					<textarea
+						className="message-tester__textarea"
 						value={ text }
 						onChange={ ( e ) => setText( e.target.value ) }
 						placeholder="Type your message... (supports markdown)"
-						style={ {
-							width: '100%',
-							height: '80px',
-							padding: '8px',
-							fontSize: '12px',
-							fontFamily: 'monospace',
-							border: '1px solid #ccc',
-							borderRadius: '3px',
-							resize: 'vertical',
-							boxSizing: 'border-box',
-						} }
 					/>
 
-					<div
-						style={ {
-							display: 'flex',
-							justifyContent: 'flex-end',
-							gap: '4px',
-							marginTop: '8px',
-						} }
-					>
+					<div className="message-tester__actions">
 						{ onClear && (
 							<button
+								type="button"
+								className="playground-tool is-accent"
 								onClick={ onClear }
-								style={ {
-									...buttonStyle,
-									background: '#d63638',
-								} }
 							>
 								Clear Chat
 							</button>
 						) }
 						<button
+							type="button"
+							className="playground-tool"
 							onClick={ handleSubmit }
 							disabled={ ! text.trim() }
-							style={ {
-								...buttonStyle,
-								opacity: text.trim() ? 1 : 0.5,
-								cursor: text.trim() ? 'pointer' : 'not-allowed',
-							} }
 						>
 							Send
 						</button>
 					</div>
 
-					<div
-						style={ {
-							borderTop: '1px solid #eee',
-							marginTop: '12px',
-							paddingTop: '8px',
-						} }
-					>
-						<div
-							style={ {
-								fontSize: '10px',
-								textTransform: 'uppercase',
-								color: '#999',
-								marginBottom: '6px',
-								letterSpacing: '0.5px',
-							} }
-						>
+					<div className="message-tester__presets">
+						<div className="message-tester__presets-label">
 							Presets
 						</div>
-						<div
-							style={ {
-								display: 'flex',
-								gap: '4px',
-								flexWrap: 'wrap',
-							} }
-						>
+						<div className="message-tester__presets-list">
 							{ presets.map( ( preset ) => (
 								<button
+									type="button"
 									key={ preset.label }
-									onClick={ () => handlePreset( preset ) }
-									style={ {
-										padding: '3px 8px',
-										fontSize: '11px',
-										fontFamily: 'monospace',
-										background: '#f0f0f0',
-										border: '1px solid #ddd',
-										borderRadius: '3px',
-										cursor: 'pointer',
-										color: '#333',
+									className="playground-tool"
+									onClick={ () => {
+										handlePreset( preset );
+										close();
 									} }
 								>
 									{ preset.label }
@@ -353,7 +263,7 @@ const MessageTester: React.FC< MessageTesterProps > = ( {
 					</div>
 				</div>
 			) }
-		</div>
+		</ToolDropdown>
 	);
 };
 

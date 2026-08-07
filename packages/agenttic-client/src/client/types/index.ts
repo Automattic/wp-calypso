@@ -91,6 +91,13 @@ export interface ToolResultDataPart extends DataPart {
 		toolCallId: string;
 		toolId: string;
 		result?: unknown;
+		/**
+		 * Files (typically images) produced by the tool alongside its result.
+		 * Snake-cased to match the server-side wire convention; the key is
+		 * omitted entirely when the tool produced no files, so results that
+		 * don't carry files keep their existing shape.
+		 */
+		__file_parts?: FilePart[];
 	};
 }
 
@@ -371,6 +378,7 @@ export interface ToolExecutionResult {
 	result: any;
 	returnToAgent?: boolean; // Default: true - whether to automatically send result back to agent
 	agentMessage?: string; // Optional: custom agent message to add to conversation history
+	__file_parts?: FilePart[]; // Optional: files (typically images) produced by the tool, sent alongside the result
 }
 
 export interface ToolProvider {
