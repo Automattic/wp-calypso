@@ -109,7 +109,7 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 			'-',
 			'_'
 		);
-		recordTracksEvent( tracksEventName );
+		recordTracksEvent( tracksEventName, { blog_id: selectedSiteId } );
 	};
 
 	const pagerDidSelectPage = ( index ) => setDotPagerIndex( index );
