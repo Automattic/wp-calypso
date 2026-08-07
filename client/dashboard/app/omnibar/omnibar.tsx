@@ -12,6 +12,7 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
+import { useAiChatPlugin } from './plugin-ai-chat';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useNotificationsPlugin } from './plugin-notifications';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
@@ -91,6 +92,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	}, [ dashboardNodes, siteNodes, site, supports ] );
 
 	const helpCenterPluginNode = useHelpCenterPlugin();
+	const aiChatPluginNode = useAiChatPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const statsSparklineNode = useStatsSparklinePlugin( { siteId, site } );
 	const siteActions = statsSparklineNode
@@ -100,7 +102,11 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	const omnibarNodes = {
 		...baseOmnibarNodes,
 		siteActions,
-		plugins: [ helpCenterPluginNode, notificationsPluginNode ],
+		plugins: [
+			...( supports.help ? [ helpCenterPluginNode ] : [] ),
+			...( supports.help && aiChatPluginNode ? [ aiChatPluginNode ] : [] ),
+			...( supports.notifications ? [ notificationsPluginNode ] : [] ),
+		],
 	};
 
 	if ( ! hydrated ) {
