@@ -172,9 +172,11 @@ const SignupFormSocialFirst = ( {
 		);
 	};
 
+	// Partner legal copy is otherwise only on the screen this mode never shows.
+	const showsPartnerTerms = Boolean( onUpdateEmail && customTosElement );
+
 	const renderEmailStepTermsOfService = () => {
-		// Partner legal copy is otherwise only on the screen this mode never shows.
-		if ( onUpdateEmail && customTosElement ) {
+		if ( showsPartnerTerms ) {
 			return <p className="signup-form-social-first__email-tos-link">{ customTosElement }</p>;
 		}
 		return (
@@ -244,6 +246,35 @@ const SignupFormSocialFirst = ( {
 		</p>
 	);
 
+	// Editing an address has no second account to offer, so it drops both routes to one.
+	const emailScreen = (
+		<div className="signup-form-social-first-email">
+			<PasswordlessSignupForm
+				{ ...passwordlessFormProps }
+				renderTerms={ renderEmailStepTermsOfService }
+				// Partner copy is positionally worded — Woo's says "the options below" — so it
+				// cannot be last. Correcting the wording needs the partner's own legal review.
+				termsBeforeActions={ showsPartnerTerms }
+				secondaryFooterButton={
+					onUpdateEmail || backButtonInFooter ? undefined : (
+						<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
+							{ __( 'See all options' ) }
+						</Button>
+					)
+				}
+			/>
+			{ ! onUpdateEmail && backButtonInFooter ? (
+				<Button
+					onClick={ () => setCurrentStep( 'initial' ) }
+					className="back-button"
+					variant="link"
+				>
+					<span>{ __( 'Back' ) }</span>
+				</Button>
+			) : null }
+		</div>
+	);
+
 	// Only the email field, and no way from it to a second account: no social form, nothing that
 	// returns to one, and no other screen mounted — the signup screen stacks in the same grid cell
 	// and the email-first variants mount a second `signup-email` input on it.
@@ -252,16 +283,7 @@ const SignupFormSocialFirst = ( {
 			<div className="signup-form signup-form-social-first">
 				<div className={ clsx( 'signup-form-social-first-screen', 'visible' ) }>
 					{ notice }
-					<div className="signup-form-social-first-email">
-						<PasswordlessSignupForm
-							{ ...passwordlessFormProps }
-							renderTerms={ renderEmailStepTermsOfService }
-							// Partner copy is positionally worded — Woo's says "the options below" —
-							// so it cannot be last. It is still wrong here, since this screen has no
-							// options at all; correcting it needs the partner's own legal review.
-							termsBeforeActions={ Boolean( customTosElement ) }
-						/>
-					</div>
+					{ emailScreen }
 				</div>
 			</div>
 		);
@@ -326,30 +348,7 @@ const SignupFormSocialFirst = ( {
 				) }
 				{ isEmailFirstVariant && loginLinkParagraph }
 			</div>
-			<div className={ getVisibilityClassName( 'email' ) }>
-				<div className="signup-form-social-first-email">
-					<PasswordlessSignupForm
-						{ ...passwordlessFormProps }
-						renderTerms={ renderEmailStepTermsOfService }
-						secondaryFooterButton={
-							backButtonInFooter ? undefined : (
-								<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
-									{ __( 'See all options' ) }
-								</Button>
-							)
-						}
-					/>
-					{ backButtonInFooter ? (
-						<Button
-							onClick={ () => setCurrentStep( 'initial' ) }
-							className="back-button"
-							variant="link"
-						>
-							<span>{ __( 'Back' ) }</span>
-						</Button>
-					) : null }
-				</div>
-			</div>
+			<div className={ getVisibilityClassName( 'email' ) }>{ emailScreen }</div>
 		</div>
 	);
 };
