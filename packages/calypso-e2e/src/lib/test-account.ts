@@ -83,6 +83,10 @@ export class TestAccount {
 		const loginPage = new LoginPage( page );
 
 		await loginPage.visit();
+		// The SMS is sent while the credentials are being submitted, so the search
+		// window has to open before that. The slack absorbs clock skew between this
+		// machine and the timestamps Mailosaur stamps on arrival.
+		const smsSearchFrom = new Date( Date.now() - 10 * 1000 );
 		await loginPage.logInWithCredentials( this.credentials.username, this.credentials.password );
 
 		// Handle possible 2FA.
@@ -90,7 +94,7 @@ export class TestAccount {
 			return await loginPage.submitVerificationCode( this.getTOTP() );
 		}
 		if ( this.credentials.smsNumber ) {
-			return await loginPage.submitVerificationCode( await this.getSMSOTP() );
+			return await loginPage.submitVerificationCode( await this.getSMSOTP( smsSearchFrom ) );
 		}
 	}
 
@@ -143,10 +147,13 @@ export class TestAccount {
 	/**
 	 * Retrives the SMS-based One-Time Password from Mailosaur.
 	 *
+	 * @param {Date} receivedAfter Earliest point the search should look at. Take it
+	 * before submitting the credentials: the SMS can land before this method is
+	 * reached, and a message outside the window is invisible for the rest of the run.
 	 * @returns {string} SMS 2FA value.
 	 * @throws {Error} If EmailClient is unable to obtain the 2FA code.
 	 */
-	async getSMSOTP(): Promise< string > {
+	async getSMSOTP( receivedAfter: Date ): Promise< string > {
 		if ( ! this.credentials.smsNumber ) {
 			throw new Error( `User ${ this.credentials.username } has no SMS 2FA.` );
 		}
@@ -155,8 +162,9 @@ export class TestAccount {
 		const message = await emailClient.getLastMatchingMessage( {
 			inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
 			sentTo: this.credentials.smsNumber.number,
-			body: 'WordPress.com verification code',
-			receivedAfter: new Date( Date.now() - 10 * 1000 ), // Last 10 seconds
+			// The sender rewrites the dot in the brand name, so anchor past it.
+			body: 'com verification code',
+			receivedAfter,
 		} );
 		return emailClient.get2FACodeFromMessage( message );
 	}
