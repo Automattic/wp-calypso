@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 
-jest.mock( '@automattic/calypso-sentry', () => ( {
-	captureMessage: jest.fn(),
+jest.mock( '../../analytics', () => ( {
+	bumpStat: jest.fn(),
 } ) );
 
 const trueInsertBefore = Node.prototype.insertBefore;
@@ -21,10 +21,10 @@ async function freshInstall() {
 	jest.resetModules();
 	Node.prototype.insertBefore = trueInsertBefore;
 	Node.prototype.removeChild = trueRemoveChild;
-	const { captureMessage } = await import( '@automattic/calypso-sentry' );
+	const { bumpStat } = await import( '../../analytics' );
 	const { installDomMutationGuard } = await import( '../index' );
 	installDomMutationGuard();
-	return jest.mocked( captureMessage );
+	return jest.mocked( bumpStat );
 }
 
 afterEach( () => {
@@ -35,7 +35,7 @@ afterEach( () => {
 
 describe( 'installDomMutationGuard', () => {
 	test( 'inserts normally and does not report when the reference node is a child', async () => {
-		const captureMessage = await freshInstall();
+		const bumpStat = await freshInstall();
 
 		const parent = document.createElement( 'div' );
 		const reference = document.createElement( 'span' );
@@ -46,11 +46,11 @@ describe( 'installDomMutationGuard', () => {
 
 		expect( newNode.parentNode ).toBe( parent );
 		expect( newNode.nextSibling ).toBe( reference );
-		expect( captureMessage ).not.toHaveBeenCalled();
+		expect( bumpStat ).not.toHaveBeenCalled();
 	} );
 
 	test( 'appends when the reference node is null (native behavior preserved)', async () => {
-		const captureMessage = await freshInstall();
+		const bumpStat = await freshInstall();
 
 		const parent = document.createElement( 'div' );
 		const existing = document.createElement( 'span' );
@@ -60,11 +60,11 @@ describe( 'installDomMutationGuard', () => {
 		parent.insertBefore( newNode, null );
 
 		expect( parent.lastChild ).toBe( newNode );
-		expect( captureMessage ).not.toHaveBeenCalled();
+		expect( bumpStat ).not.toHaveBeenCalled();
 	} );
 
 	test( 'no-ops insertBefore when the reference node was reparented, instead of throwing', async () => {
-		const captureMessage = await freshInstall();
+		const bumpStat = await freshInstall();
 
 		const parent = document.createElement( 'div' );
 		const reference = document.createElement( 'span' );
@@ -81,15 +81,12 @@ describe( 'installDomMutationGuard', () => {
 
 		expect( result! ).toBe( newNode );
 		expect( newNode.parentNode ).toBeNull();
-		expect( captureMessage ).toHaveBeenCalledTimes( 1 );
-		expect( captureMessage ).toHaveBeenCalledWith( expect.any( String ), {
-			level: 'warning',
-			tags: { dom_mutation_guard: 'insertBefore' },
-		} );
+		expect( bumpStat ).toHaveBeenCalledTimes( 1 );
+		expect( bumpStat ).toHaveBeenCalledWith( 'dashboard-dom-mutation-guard', 'insertBefore' );
 	} );
 
 	test( 'removes normally and does not report when the child belongs to the parent', async () => {
-		const captureMessage = await freshInstall();
+		const bumpStat = await freshInstall();
 
 		const parent = document.createElement( 'div' );
 		const child = document.createElement( 'span' );
@@ -99,11 +96,11 @@ describe( 'installDomMutationGuard', () => {
 
 		expect( child.parentNode ).toBeNull();
 		expect( parent.childNodes ).toHaveLength( 0 );
-		expect( captureMessage ).not.toHaveBeenCalled();
+		expect( bumpStat ).not.toHaveBeenCalled();
 	} );
 
 	test( 'no-ops removeChild when the child is not a child of the parent, instead of throwing', async () => {
-		const captureMessage = await freshInstall();
+		const bumpStat = await freshInstall();
 
 		const parent = document.createElement( 'div' );
 		const stray = document.createElement( 'span' );
@@ -114,15 +111,12 @@ describe( 'installDomMutationGuard', () => {
 		} ).not.toThrow();
 
 		expect( result! ).toBe( stray );
-		expect( captureMessage ).toHaveBeenCalledTimes( 1 );
-		expect( captureMessage ).toHaveBeenCalledWith( expect.any( String ), {
-			level: 'warning',
-			tags: { dom_mutation_guard: 'removeChild' },
-		} );
+		expect( bumpStat ).toHaveBeenCalledTimes( 1 );
+		expect( bumpStat ).toHaveBeenCalledWith( 'dashboard-dom-mutation-guard', 'removeChild' );
 	} );
 
-	test( 'reports at most once per session across multiple suppressed operations', async () => {
-		const captureMessage = await freshInstall();
+	test( 'bumps the stat only once per operation per session', async () => {
+		const bumpStat = await freshInstall();
 
 		const parent = document.createElement( 'div' );
 		const reference = document.createElement( 'span' );
@@ -130,8 +124,8 @@ describe( 'installDomMutationGuard', () => {
 		createFontElement().appendChild( reference );
 
 		parent.insertBefore( document.createElement( 'em' ), reference );
-		parent.removeChild( document.createElement( 'i' ) );
+		parent.insertBefore( document.createElement( 'i' ), reference );
 
-		expect( captureMessage ).toHaveBeenCalledTimes( 1 );
+		expect( bumpStat ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

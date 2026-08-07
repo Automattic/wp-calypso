@@ -1,4 +1,4 @@
-import { captureMessage } from '@automattic/calypso-sentry';
+import { bumpStat } from '../analytics';
 
 /**
  * Guards React against third-party DOM mutation.
@@ -17,19 +17,16 @@ import { captureMessage } from '@automattic/calypso-sentry';
  * visual glitch. See https://github.com/facebook/react/issues/11538.
  */
 
-let hasReported = false;
+const reported = new Set< string >();
 
-// One event per session is enough to measure how often the guard fires without
-// flooding Sentry (which itself only loads for a sample of requests).
+// Bump a stat once per operation per session so we can watch how often the guard
+// fires. This is a counter, not an error, so it goes to stats rather than Sentry.
 function reportOnce( operation: 'insertBefore' | 'removeChild' ) {
-	if ( hasReported ) {
+	if ( reported.has( operation ) ) {
 		return;
 	}
-	hasReported = true;
-	captureMessage( 'DOM mutation guard suppressed a React reconciliation crash', {
-		level: 'warning',
-		tags: { dom_mutation_guard: operation },
-	} );
+	reported.add( operation );
+	bumpStat( 'dashboard-dom-mutation-guard', operation );
 }
 
 export function installDomMutationGuard() {
