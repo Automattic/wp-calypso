@@ -253,13 +253,10 @@ const SignupFormSocialFirst = ( {
 				<div className={ clsx( 'signup-form-social-first-screen', 'visible' ) }>
 					{ notice }
 					<div className="signup-form-social-first-email">
-						{ /* Placed here rather than handed to the form, which puts terms wherever its
-						     footer isn't — a rule about a button, not about the copy. Partner copy
-						     points at the options below it; the generic names the button, so it
-						     belongs under it. */ }
-						{ customTosElement && renderEmailStepTermsOfService() }
-						<PasswordlessSignupForm { ...passwordlessFormProps } />
-						{ ! customTosElement && renderEmailStepTermsOfService() }
+						<PasswordlessSignupForm
+							{ ...passwordlessFormProps }
+							renderTerms={ renderEmailStepTermsOfService }
+						/>
 					</div>
 				</div>
 			</div>
