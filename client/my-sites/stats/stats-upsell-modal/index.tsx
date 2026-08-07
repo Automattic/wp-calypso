@@ -50,6 +50,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 		closeModal();
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_modal_submit`, {
 			stat_type: statType,
+			blog_id: selectedSiteId,
 		} );
 		const checkoutProductUrl = new URL(
 			`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }`
@@ -64,6 +65,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 				eventName={ `${ eventPrefix }_stats_upsell_modal_view` }
 				eventProperties={ {
 					stat_type: statType,
+					blog_id: selectedSiteId,
 				} }
 			/>
 			<Button

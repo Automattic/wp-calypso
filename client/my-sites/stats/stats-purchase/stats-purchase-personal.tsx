@@ -87,7 +87,9 @@ const PersonalPurchase = ( {
 
 	const handleCheckoutPostponed = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked` );
+		recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked`, {
+			blog_id: siteId,
+		} );
 
 		// redirect to the Traffic page
 		setTimeout( () => {
