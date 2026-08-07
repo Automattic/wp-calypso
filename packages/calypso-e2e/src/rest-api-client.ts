@@ -1,5 +1,6 @@
 import fs from 'fs';
 import FormData from 'form-data';
+import { detectThrottle, raiseFlag } from './lib/throttle-flags';
 import { SecretsManager } from './secrets';
 import {
 	BearerTokenErrorResponse,
@@ -269,6 +270,10 @@ export class RestAPIClient {
 		};
 
 		const response = await this.sendRequest( this.getRequestURL( '1.1', '/sites/new' ), params );
+		const throttle = detectThrottle( response );
+		if ( throttle ) {
+			await raiseFlag( throttle.id, throttle.durationMs );
+		}
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(

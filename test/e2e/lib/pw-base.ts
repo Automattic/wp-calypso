@@ -89,6 +89,8 @@ import {
 	PlansPage,
 	UseADomainIOwnPage,
 	SelectItemsComponent,
+	detectThrottle,
+	raiseFlag,
 } from '@automattic/calypso-e2e';
 import { test as base, expect, type Page } from '@playwright/test';
 import {
@@ -130,6 +132,39 @@ type AccountFixture = (
 	args: { page: Page },
 	use: ( account: TestAccount ) => Promise< void >
 ) => Promise< void >;
+
+/**
+ * Records a throttle whenever wpcom rate-limits one of the endpoints the suite
+ * depends on, including calls the app makes in the background.
+ *
+ * Recording only: nothing is skipped or failed on the strength of a flag yet.
+ * The URL and status are filtered first so that only a handful of responses are
+ * ever read. The body is never logged — a 4xx from `/users/new` or `/sites/new`
+ * carries the credentials of the user being created.
+ */
+function watchForThrottle( page: Page ): void {
+	page.on( 'response', async ( response ) => {
+		const url = response.url();
+		const status = response.status();
+		if (
+			status < 400 ||
+			status >= 500 ||
+			! /\/(?:sites\/new|users\/new|domains\/suggestions|[^/]+\/is-available)(?:[/?]|$)/.test( url )
+		) {
+			return;
+		}
+
+		try {
+			const throttle = detectThrottle( { url, status, body: await response.text() } );
+			if ( throttle ) {
+				console.warn( `[e2e-throttle] ${ throttle.id } for ${ throttle.durationMs }ms: ${ url }` );
+				await raiseFlag( throttle.id, throttle.durationMs );
+			}
+		} catch {
+			// Detection never fails a test.
+		}
+	} );
+}
 
 export const test = base.extend<
 	CustomOptions & {
@@ -387,6 +422,8 @@ export const test = base.extend<
 			await useBlackboxTestKeyForCollect( page );
 		}
 
+		watchForThrottle( page );
+
 		await use( page );
 	},
 	...( Object.fromEntries(
@@ -556,6 +593,7 @@ export const test = base.extend<
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
 		await incognitoPage.spawn();
+		watchForThrottle( incognitoPage.getPage() );
 		await use( incognitoPage );
 		await incognitoPage.close();
 	},

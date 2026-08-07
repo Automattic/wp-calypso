@@ -1,3 +1,6 @@
+import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { describe, expect, test, jest } from '@jest/globals';
 import nock from 'nock';
 import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
@@ -195,5 +198,29 @@ describe( 'RestAPIClient: createSite', function () {
 				wpcom_public_coming_soon: 1,
 			},
 		} );
+	} );
+
+	test( 'A throttled response raises a flag and still fails the call', async function () {
+		const flagsDir = path.join( tmpdir(), `rest-api-throttle-${ process.pid }` );
+		process.env.E2E_THROTTLE_FLAGS_DIR = flagsDir;
+		nock( requestURL.origin ).post( requestURL.pathname ).reply( 403, {
+			error: 'throttled',
+			message: 'Limit reached. You can try again in 10 minutes.',
+		} );
+
+		// Detection records the throttle; it does not change how the call fails.
+		await expect(
+			restAPIClient.createSite( { name: 'fake_blog_name', title: 'fake_blog_title' } )
+		).rejects.toThrow();
+
+		const file = path.join( flagsDir, `${ process.pid }.json` );
+		expect( existsSync( file ) ).toBe( true );
+		expect( JSON.parse( readFileSync( file, 'utf8' ) )[ 0 ] ).toMatchObject( {
+			id: 'signup',
+			durationMs: 600_000,
+		} );
+
+		rmSync( flagsDir, { recursive: true, force: true } );
+		delete process.env.E2E_THROTTLE_FLAGS_DIR;
 	} );
 } );
