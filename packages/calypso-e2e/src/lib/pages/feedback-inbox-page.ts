@@ -206,9 +206,7 @@ export class FeedbackInboxPage {
 			// false and the popover survives — the state this block exists to
 			// prevent. Escape on an already-closed popover is a no-op.
 			await this.page.keyboard.press( 'Escape' );
-			await folderOption.waitFor( { state: 'hidden' } ).catch( () => {
-				// Already gone, or never opened.
-			} );
+			await folderOption.waitFor( { state: 'hidden', timeout: 5000 } );
 			return;
 		}
 
