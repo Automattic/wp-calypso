@@ -8,9 +8,11 @@ body:has( .omnibar ) {
 	--omnibar-menu-active-background: #{$omnibar-submenu-background};
 	--omnibar-submenu-background: #{$omnibar-submenu-background};
 	--omnibar-text-color: #{$omnibar-text-color};
+	--omnibar-submenu-text-color: #{$omnibar-submenu-text-color};
 	--omnibar-highlight-color: #{$omnibar-highlight-color};
 	--omnibar-submenu-highlight-color: #{$omnibar-highlight-color};
 	--omnibar-avatar-ring-color: #{$omnibar-avatar-ring-color};
+	--omnibar-secondary-group-background: #{$omnibar-secondary-group-background};
 
 	@media ( min-width: 782px ) {
 		--omnibar-height: #{$omnibar-height};
@@ -217,34 +219,4 @@ body:has( .omnibar ) {
 
 .omnibar .dashicons-menu-alt::before {
 	top: 0.5px;
-}
-
-.omnibar__popover {
-	// All colors used by the Menu's internal Emotion styles read from these
-	// CSS custom properties (see node_modules/@wordpress/components/src/menu/styles.ts).
-	// Setting them here re-skins the entire popover without specificity wars.
-	--wp-components-color-background: var( --omnibar-submenu-background );
-	--wp-components-color-foreground: var( --omnibar-text-color );
-	--wp-components-color-accent: transparent; // hover/active item bg
-	--wp-components-color-accent-inverted: var(
-		--omnibar-submenu-highlight-color
-	); // hover/active item text
-	--wp-components-color-gray-100: transparent; // submenu-trigger-open bg
-	--wp-components-color-gray-700: var( --omnibar-text-color ); // prefix / suffix text
-
-	// Padding, border-radius, and the elevation portion of the popover's
-	// box-shadow are hardcoded (not tokens). Class is doubled to outrank
-	// Emotion's auto-generated selector at the popover level.
-	&.omnibar__popover {
-		border-radius: 0;
-		box-shadow: none;
-	}
-
-	[role='menuitem'],
-	[role='menuitemradio'],
-	[role='menuitemcheckbox'] {
-		border-radius: 0;
-		grid-template-columns: minmax( 0, max-content ) 1fr;
-		padding-inline: 6px;
-	}
 }

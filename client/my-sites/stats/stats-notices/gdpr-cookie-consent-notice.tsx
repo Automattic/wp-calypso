@@ -23,9 +23,10 @@ const GDPRCookieConsentNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 	);
 
 	const dismissNotice = () => {
-		isOdysseyStats
-			? recordTracksEvent( 'jetpack_odyssey_stats_gdpr_cookie_consent_notice_dismissed' )
-			: recordTracksEvent( 'calypso_stats_gdpr_cookie_consent_notice_dismissed' );
+		const event = isOdysseyStats
+			? 'jetpack_odyssey_stats_gdpr_cookie_consent_notice_dismissed'
+			: 'calypso_stats_gdpr_cookie_consent_notice_dismissed';
+		recordTracksEvent( event, { blog_id: siteId } );
 
 		setNoticeDismissed( true );
 		postponeNoticeAsync();

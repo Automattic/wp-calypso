@@ -1,6 +1,6 @@
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from '../../wpcom-request';
-import { persistAgentsManagerState } from '../persist-state';
+import { persistAgentsManagerState, setShouldPersistState } from '../persist-state';
 
 jest.mock( '@wordpress/api-fetch', () => ( {
 	__esModule: true,
@@ -23,9 +23,20 @@ const tick = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 describe( 'persistAgentsManagerState', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		setShouldPersistState( () => true );
 		mockCanAccess.mockReturnValue( true );
 		mockRequest.mockResolvedValue( undefined );
 		mockApiFetch.mockResolvedValue( undefined );
+	} );
+
+	it( 'skips save requests when the host opts out of persisted state', () => {
+		setShouldPersistState( () => false );
+
+		persistAgentsManagerState( { agents_manager_router_history: 'a' } );
+
+		expect( mockCanAccess ).not.toHaveBeenCalled();
+		expect( mockRequest ).not.toHaveBeenCalled();
+		expect( mockApiFetch ).not.toHaveBeenCalled();
 	} );
 
 	it( 'sends a single save as one wpcom request', async () => {

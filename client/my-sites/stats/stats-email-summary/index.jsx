@@ -79,6 +79,7 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 			path="emails"
 			query={ query }
 			period={ period }
+			includeDates={ false }
 			headers={ [ 'title', 'opens_rate', 'unique_clicks', 'link' ] }
 			rowModifierFn={ ( row, data ) => {
 				if ( ! Array.isArray( row ) || row.length === 0 ) {

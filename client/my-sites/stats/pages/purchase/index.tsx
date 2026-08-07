@@ -7,7 +7,7 @@ import page from '@automattic/calypso-router';
 import { ProductsList } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -70,6 +70,8 @@ const StatsPurchasePage = ( {
 		}
 	}, [ siteSlug, isVip ] );
 
+	const hasTrackedUpgradeSource = useRef( false );
+
 	useEffect( () => {
 		// Scroll to top on page load
 		window.scrollTo( 0, 0 );
@@ -91,10 +93,13 @@ const StatsPurchasePage = ( {
 				break;
 		}
 
-		if ( triggeredEvent ) {
-			recordTracksEvent( triggeredEvent );
+		// Wait for the selected site to resolve so the event carries a real
+		// blog_id, and fire at most once per page load.
+		if ( triggeredEvent && siteId && ! hasTrackedUpgradeSource.current ) {
+			hasTrackedUpgradeSource.current = true;
+			recordTracksEvent( triggeredEvent, { blog_id: siteId } );
 		}
-	}, [ siteSlug, query, query?.from ] );
+	}, [ siteSlug, query, query?.from, siteId ] );
 
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )

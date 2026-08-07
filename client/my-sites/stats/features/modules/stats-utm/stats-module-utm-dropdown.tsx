@@ -15,6 +15,7 @@ interface UTMDropdownProps {
 	onSelect: ( key: string ) => void;
 	selectOptions: Record< string, { selectLabel: string; isGrouped?: boolean } >;
 	selected: keyof typeof SELECTED_OPTION_KEYS;
+	siteId: number;
 }
 
 const BASE_CLASS_NAME = 'stats-utm-picker';
@@ -25,6 +26,7 @@ const UTMDropdown: React.FC< UTMDropdownProps > = ( {
 	onSelect,
 	selectOptions,
 	selected, // which option is indicated as selected
+	siteId,
 } ) => {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const infoReferenceElement = useRef( null );
@@ -35,7 +37,7 @@ const UTMDropdown: React.FC< UTMDropdownProps > = ( {
 
 		if ( ! popoverOpened ) {
 			// record an event for opening the date picker
-			recordTracksEvent( `${ event_from }_stats_utm_dropdown_opened` );
+			recordTracksEvent( `${ event_from }_stats_utm_dropdown_opened`, { blog_id: siteId } );
 		}
 
 		togglePopoverOpened( ! popoverOpened );
@@ -48,6 +50,7 @@ const UTMDropdown: React.FC< UTMDropdownProps > = ( {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_utm_dropdown_option_selected`, {
 			option: key,
+			blog_id: siteId,
 		} );
 
 		togglePopoverOpened( false );

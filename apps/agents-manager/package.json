@@ -31,7 +31,6 @@
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",
-		"@automattic/block-notes": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/image-studio": "workspace:^",
 		"@automattic/jetpack-ai-sidebar": "workspace:^",

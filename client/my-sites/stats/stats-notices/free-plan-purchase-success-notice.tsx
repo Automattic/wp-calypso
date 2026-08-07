@@ -19,14 +19,16 @@ const getStatsPurchaseURL = ( siteId: number | null ) => {
 const handleUpgradeClick = (
 	event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
 	upgradeUrl: string,
-	isOdysseyStats: boolean
+	isOdysseyStats: boolean,
+	siteId: number | null
 ) => {
 	event.preventDefault();
 
 	recordTracksEvent(
 		isOdysseyStats
 			? 'jetpack_odyssey_stats_purchase_success_banner_upgrade_clicked'
-			: 'calypso_stats_purchase_success_banner_upgrade_clicked'
+			: 'calypso_stats_purchase_success_banner_upgrade_clicked',
+		{ blog_id: siteId }
 	);
 
 	setTimeout( () => page( upgradeUrl ), 250 );
@@ -78,7 +80,7 @@ const FreePlanPurchaseSuccessJetpackStatsNotice = ( {
 							jetpackStatsProductLink: (
 								<a
 									onClick={ ( e ) =>
-										handleUpgradeClick( e, getStatsPurchaseURL( siteId ), isOdysseyStats )
+										handleUpgradeClick( e, getStatsPurchaseURL( siteId ), isOdysseyStats, siteId )
 									}
 									className="notice-banner__action-link notice-banner__action-link--inline"
 									href={ getStatsPurchaseURL( siteId ) }

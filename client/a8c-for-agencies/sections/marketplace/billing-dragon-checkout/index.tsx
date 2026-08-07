@@ -17,6 +17,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import CartMessageCleanup from './cart-message-cleanup';
 import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
 import getSuccessRedirectUrl from './lib/get-success-redirect-url';
@@ -284,6 +285,7 @@ export default function BillingDragonCheckout( {
 			errorMessage={ translate( 'Sorry, there was an error loading the checkout page.' ) }
 		>
 			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
+				<CartMessageCleanup />
 				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
 					<BillingDragonCheckoutContent
 						cartItems={ cartItems }
