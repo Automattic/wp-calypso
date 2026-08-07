@@ -30,9 +30,9 @@ export const DomainExpiryField = ( {
 
 	if ( domain.expiry === null ) {
 		if ( domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS ) {
-			return __( 'Free forever' );
+			return <span>{ __( 'Free forever' ) }</span>;
 		}
-		return '-';
+		return <span>-</span>;
 	}
 
 	const renewLabel = domain.auto_renewing
