@@ -3,7 +3,7 @@ import { MessagesClusterizer } from '../messages-cluster/messages-cluster';
 import type { Message } from '../../../types';
 
 jest.mock( '../../../utils', () => ( {
-	isCSATMessage: () => false,
+	isCSATMessage: ( message: Message ) => message?.metadata?.type === 'csat',
 } ) );
 
 jest.mock( '../../../utils/csat', () => ( {
@@ -46,6 +46,20 @@ const createBusinessMessage = ( {
 	metadata: agentId ? { '__zendesk_msg.agent.id': agentId } : {},
 } );
 
+const createCSATMessage = ( {
+	content,
+	received,
+}: {
+	content: string;
+	received: number;
+} ): Message => ( {
+	content,
+	received,
+	role: 'business',
+	type: 'message',
+	metadata: { type: 'csat' },
+} );
+
 describe( 'MessagesClusterizer', () => {
 	beforeEach( () => {
 		let nextId = 0;
@@ -80,5 +94,37 @@ describe( 'MessagesClusterizer', () => {
 
 		expect( screen.getByText( 'WordPress.com' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Jetpack' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders only the most recent CSAT prompt when Zendesk sends more than one', () => {
+		render(
+			<MessagesClusterizer
+				messages={ [
+					createCSATMessage( { content: 'First CSAT prompt', received: 1 } ),
+					createCSATMessage( { content: 'Second CSAT prompt', received: 2 } ),
+				] }
+			/>
+		);
+
+		expect( screen.queryByText( 'First CSAT prompt' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Second CSAT prompt' ) ).toBeInTheDocument();
+	} );
+
+	it( 'keeps non-CSAT messages sent after a CSAT prompt', () => {
+		render(
+			<MessagesClusterizer
+				messages={ [
+					createCSATMessage( { content: 'CSAT prompt', received: 1 } ),
+					createBusinessMessage( {
+						content: 'Follow-up message',
+						displayName: 'WordPress.com',
+						received: 2,
+					} ),
+				] }
+			/>
+		);
+
+		expect( screen.getByText( 'CSAT prompt' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Follow-up message' ) ).toBeInTheDocument();
 	} );
 } );
