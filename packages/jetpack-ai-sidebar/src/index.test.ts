@@ -2935,6 +2935,20 @@ describe( 'toolProvider', () => {
 			expect( typeof updateBlock?.callback ).toBe( 'function' );
 		} );
 
+		it( 'documents the completed-edit summary contract in the update-block-content schema', async () => {
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find( ( a: any ) => a.name === 'wpcom/update-block-content' );
+			const summaryDescription = updateBlock?.input_schema?.properties?.summary?.description;
+
+			expect( updateBlock ).toBeDefined();
+			expect( summaryDescription ).toContain( 'concrete completed edit' );
+			expect( summaryDescription ).toContain( 'language of the current user message' );
+			expect( summaryDescription ).toContain( 'name the exact corrections' );
+			expect( summaryDescription ).toContain( 'Changed "stuffs" to "stuff".' );
+			expect( summaryDescription ).toContain( 'no changes were needed' );
+			expect( summaryDescription ).not.toContain( 'brief user-friendly description' );
+		} );
+
 		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
 			const args = {
 				type: 'color-picker',
