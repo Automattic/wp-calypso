@@ -108,6 +108,7 @@ interface FeedbackPanelProps {
 	onDismissPanel: () => void;
 	onLeaveReview: () => void;
 	onSendFeedback: () => void;
+	siteId: number;
 }
 
 function FeedbackPanel( {
@@ -115,6 +116,7 @@ function FeedbackPanel( {
 	onDismissPanel,
 	onLeaveReview,
 	onSendFeedback,
+	siteId,
 }: FeedbackPanelProps ) {
 	const translate = useTranslate();
 	const [ animationClassName, setAnimationClassName ] = useState(
@@ -122,18 +124,18 @@ function FeedbackPanel( {
 	);
 
 	const handleDismissPanel = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_DISMISS_FLOATING_PANEL );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_DISMISS_FLOATING_PANEL, { blog_id: siteId } );
 		setAnimationClassName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
 		onDismissPanel();
 	};
 
 	const handleLeaveReviewFromPanel = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_PANEL );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_PANEL, { blog_id: siteId } );
 		onLeaveReview();
 	};
 
 	const handleSendFeedbackFromPanel = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_PANEL );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_PANEL, { blog_id: siteId } );
 		onSendFeedback();
 	};
 
@@ -167,30 +169,31 @@ function FeedbackPanel( {
 interface FeedbackCardProps {
 	onLeaveReview: () => void;
 	onSendFeedback: () => void;
+	siteId: number;
 }
 
-function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
+function FeedbackCard( { onLeaveReview, onSendFeedback, siteId }: FeedbackCardProps ) {
 	const [ hasFiredViewEvent, setHasFiredViewEvent ] = useState( false );
 	const inlineFeedbackCardRef = useRef( null );
 	const isVisible = useOnScreen( inlineFeedbackCardRef );
 
 	useEffect( () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD );
-	}, [] );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD, { blog_id: siteId } );
+	}, [ siteId ] );
 
 	useEffect( () => {
 		if ( isVisible && ! hasFiredViewEvent ) {
-			trackStatsAnalyticsEvent( TRACKS_EVENT_DID_VIEW_FEEDBACK_CARD );
+			trackStatsAnalyticsEvent( TRACKS_EVENT_DID_VIEW_FEEDBACK_CARD, { blog_id: siteId } );
 			setHasFiredViewEvent( true );
 		}
-	}, [ isVisible, hasFiredViewEvent ] );
+	}, [ isVisible, hasFiredViewEvent, siteId ] );
 
 	const handleLeaveReviewFromCard = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD, { blog_id: siteId } );
 		onLeaveReview();
 	};
 	const handleSendFeedbackFromCard = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD, { blog_id: siteId } );
 		onSendFeedback();
 	};
 
@@ -214,10 +217,10 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		if ( ! isPending && ! isError && shouldShowFeedbackPanel ) {
 			setTimeout( () => {
 				setIsFloatingPanelOpen( true );
-				trackStatsAnalyticsEvent( TRACKS_EVENT_VIEW_FLOATING_PANEL );
+				trackStatsAnalyticsEvent( TRACKS_EVENT_VIEW_FLOATING_PANEL, { blog_id: siteId } );
 			}, FEEDBACK_PANEL_PRESENTATION_DELAY );
 		}
-	}, [ isPending, isError, shouldShowFeedbackPanel ] );
+	}, [ isPending, isError, shouldShowFeedbackPanel, siteId ] );
 
 	const dismissPanelWithDelay = () => {
 		// Allows the animation to run first.
@@ -243,12 +246,17 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 
 	return (
 		<div className="stats-feedback-container">
-			<FeedbackCard onLeaveReview={ handleLeaveReview } onSendFeedback={ handleSendFeedback } />
+			<FeedbackCard
+				onLeaveReview={ handleLeaveReview }
+				onSendFeedback={ handleSendFeedback }
+				siteId={ siteId }
+			/>
 			<FeedbackPanel
 				isOpen={ isFloatingPanelOpen }
 				onDismissPanel={ handleDismissPanel }
 				onLeaveReview={ handleLeaveReview }
 				onSendFeedback={ handleSendFeedback }
+				siteId={ siteId }
 			/>
 		</div>
 	);

@@ -208,11 +208,14 @@ const gotoCheckoutPage = ( {
 	}
 
 	// Keeping the event for data continuity
-	recordTracksEvent( `calypso_stats_${ eventName }_purchase_button_clicked` );
+	recordTracksEvent( `calypso_stats_${ eventName }_purchase_button_clicked`, {
+		blog_id: siteId,
+	} );
 	// Add parameters to the event
 	trackStatsAnalyticsEvent( 'stats_purchase_button_clicked', {
 		type,
 		quantity,
+		blog_id: siteId,
 	} );
 
 	const redirectUrl = getRedirectUrl( { type, adminUrl, redirectUri, siteSlug } );
