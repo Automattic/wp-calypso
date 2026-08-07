@@ -1,4 +1,4 @@
-[← Setup](./setup.md) | [Top](./../README.md) | [Running tests on your machine →](./tests_local.md)
+[← Documentation index](./overview.md)
 
 # Test Environment
 

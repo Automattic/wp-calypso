@@ -1,4 +1,4 @@
-[<-- Test Environment](./test_environment.md) | [Top](./../README.md) | [Running tests on CI -->](./tests_ci.md)
+[← Documentation index](./overview.md)
 
 # Running tests on your machine
 
@@ -9,6 +9,8 @@
   - [Running tests](#running-tests)
     - [Individual spec files](#individual-spec-files)
     - [Test tag](#test-tag)
+    - [Suite scripts](#suite-scripts)
+    - [Running from the Playwright VSCode extension](#running-from-the-playwright-vscode-extension)
   - [Advanced techniques](#advanced-techniques)
     - [Save authentication cookies](#save-authentication-cookies)
     - [Use the mobile viewport](#use-the-mobile-viewport)
@@ -64,6 +66,44 @@ yarn workspace wp-e2e-tests test:pw:calypso-pr
 ```
 
 See the [list of tags](tests_ci.md#featuretest-tags).
+
+### Suite scripts
+
+Each of these greps a tag, or pins a viewport, so you do not have to:
+
+| Script                       | Runs                                                                 |
+| ---------------------------- | -------------------------------------------------------------------- |
+| `test:pw:desktop`            | the desktop viewport only.                                            |
+| `test:pw:mobile`             | the mobile viewport only.                                             |
+| `test:pw:calypso-pr`         | the specs run for every commit to a feature branch.                   |
+| `test:pw:calypso-release`    | the specs run for every PR merged into `trunk`.                       |
+| `test:pw:dashboard-pr`       | the Dashboard specs run for every commit to a feature branch.         |
+| `test:pw:authentication`     | login, 2FA and security key specs.                                    |
+| `test:pw:a8c-for-agencies`   | the A8C for Agencies specs.                                           |
+| `test:pw:i18n`               | the internationalization specs.                                       |
+| `test:pw:p2`                 | the P2 specs.                                                         |
+
+### Running from the Playwright VSCode extension
+
+Once you have installed the [Playwright VSCode extension](./setup.md), you can run and debug
+specs from the extension pane or from the spec file itself.
+
+![Run and Debug Tests](./files/run-debug-tests.webp)
+
+To set environment variables for the extension, such as `CALYPSO_BASE_URL`:
+
+1. "View -> Extensions"
+2. Locate Playwright and click "Settings"
+3. Locate `Playwright: Env` and "Edit in settings.json"
+4. Add or update any environment variables under `playwright.env`:
+
+```
+"playwright.env": {
+  "CALYPSO_BASE_URL": "http://calypso.localhost:3000"
+},
+```
+
+![Playwright VSCode Extension Settings](./files/pw-extensionsettings.webp)
 
 ## Advanced techniques
 

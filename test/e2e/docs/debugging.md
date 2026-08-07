@@ -1,4 +1,4 @@
-[← Style Guide](./style_guide.md) | [Top](./../README.md) | [Troubleshooting →](./troubleshooting.md)
+[← Documentation index](./overview.md)
 
 # Debugging
 

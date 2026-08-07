@@ -1,4 +1,4 @@
-Return to [Top Page](../README.md).
+[← Documentation index](./overview.md)
 
 # Config Values
 

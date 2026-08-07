@@ -1,3 +1,5 @@
+[← Documentation index](./overview.md)
+
 # Playwright Test Setup
 
 ## Table of contents
@@ -17,7 +19,7 @@
   - [Run tests](#run-tests)
   - [Playwright VSCode extension](#install-and-use-playwright-vscode-extension)
 - Related
-  - [Decrypt test environment](../docs/test_environment.md)
+  - [Decrypt test environment](./test_environment.md)
 
 ## Quick start macOS
 
@@ -75,7 +77,7 @@ export E2E_SECRETS_KEY='your-calypso-e2e-config-decode-key-here'
 ```
 
 10. Decrypt the secrets file to access sensitive configuration required for running tests.  
-    See [Decrypt](../docs/test_environment.md) for more details.
+    See [Decrypt](./test_environment.md) for more details.
 
 ```bash
 yarn workspace wp-e2e-tests decrypt-secrets

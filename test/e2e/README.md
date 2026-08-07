@@ -2,20 +2,19 @@
 
 Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Automattic/wp-calypso) client and WordPress.com.
 
-Tests run on Playwright Test. See the [framework documentation](docs-new/overview.md).
-
-The pages under `docs/` predate the migration off the Jest runner; treat `docs-new/` as authoritative for anything about writing or running a spec.
+Tests run on Playwright Test. See the [documentation index](docs/overview.md) for the full list
+of pages.
 
 ## Resources
 
-- [Overview](docs/overview.md)
 - [Setup](docs/setup.md)
 - [Test Environment](docs/test_environment.md)
 - [Running tests on your machine](docs/tests_local.md)
 - [Running tests on CI](docs/tests_ci.md)
-- [Writing tests](docs-new/new_style_guide.md)
+- [Writing tests](docs/writing_tests.md)
 - [Library objects](docs/library_objects.md)
 - [Style Guide](docs/style_guide.md)
+- [Custom fixtures](docs/custom_fixtures.md)
 - [Patterns, Tricks, and Gotchas](docs/patterns_tricks_gotchas.md)
 - [Debugging](docs/debugging.md)
 - [Troubleshooting](docs/troubleshooting.md)
@@ -113,7 +112,7 @@ CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests tes
 
 ## Contribute to E2E tests
 
-Please refer to the [Writing Tests](docs-new/new_style_guide.md) and [Style Guide](docs/style_guide.md) pages.
+Please refer to the [Writing Tests](docs/writing_tests.md) and [Style Guide](docs/style_guide.md) pages.
 
 ## Troubleshooting
 

@@ -4,17 +4,17 @@
 
 Full documentation is available in:
 
-- docs-new/ - Playwright Test framework documentation
-- docs/ - predates the migration off the Jest runner; only tests_ci.md, tests_local.md, test_environment.md, environment_variables.md and config_values.md still describe reality
+- docs/ - Playwright Test framework documentation; docs/overview.md indexes every page
 
 Key docs to reference:
 
-- docs-new/overview.md
-- docs-new/setup.md
-- docs-new/running_debugging_tests.md
-- docs-new/creating_reliable_tests.md
-- docs-new/new_style_guide.md
-- docs-new/custom_fixtures.md
+- docs/overview.md
+- docs/setup.md
+- docs/tests_local.md
+- docs/writing_tests.md
+- docs/creating_reliable_tests.md
+- docs/style_guide.md
+- docs/custom_fixtures.md
 
 ## Framework
 
@@ -22,7 +22,7 @@ Every spec runs on Playwright Test.
 
 - Test files: `test/e2e/specs/**/*.spec.ts`
 - Examples: `specs/tools/import__sites-squarespace.spec.ts`, `specs/tools/marketing__seo.spec.ts`
-- Documentation: docs-new/
+- Documentation: docs/
 
 ## Running Tests
 
