@@ -1,9 +1,16 @@
 import { dispatch } from '@wordpress/data';
-import type { AdminBarNode, OmnibarNode, OmnibarNodeBuilders, OmnibarNodes } from '../types';
+import type {
+	AdminBarNode,
+	OmnibarHrefResolver,
+	OmnibarNode,
+	OmnibarNodeBuilders,
+	OmnibarNodes,
+} from '../types';
 
 export function buildOmnibarNodesFromAdminBarNodes(
 	adminBarNodes: AdminBarNode[],
-	builders?: OmnibarNodeBuilders
+	builders?: OmnibarNodeBuilders,
+	resolveHref?: OmnibarHrefResolver
 ): OmnibarNodes {
 	const omnibarNodes: OmnibarNodes = {};
 	const siteActionNodes: OmnibarNode[] = [];
@@ -13,7 +20,7 @@ export function buildOmnibarNodesFromAdminBarNodes(
 		const omnibarNode: OmnibarNode = {
 			id: node.id,
 			title: node.meta?.menu_title || node.title || '',
-			href: node.href,
+			href: node.href && resolveHref ? resolveHref( node.href ) : node.href,
 			group: node.group,
 		};
 

@@ -8,7 +8,7 @@ export interface OmnibarNode {
 	group?: boolean;
 	variant?: 'secondary';
 	href?: string;
-	onClick?: () => void;
+	onClick?: ( event: React.MouseEvent ) => void;
 	interactive?: boolean;
 	meta?: SiteActionNodeMeta & UserInfoNodeMeta;
 	render?: ( node: OmnibarNode ) => React.ReactNode;
@@ -19,6 +19,8 @@ export type OmnibarNodeBuilders = Record<
 	string,
 	( adminBarNode: AdminBarNode ) => Partial< OmnibarNode >
 >;
+
+export type OmnibarHrefResolver = ( href: string ) => string;
 
 export interface SiteActionNodeMeta {
 	subtitle?: string;
