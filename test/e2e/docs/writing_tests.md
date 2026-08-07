@@ -110,34 +110,21 @@ describe( DataHelper.createSuiteTitle( 'Search: Preview' ), function () {
 1. Create a TypeScript file with the following naming structure.
 
 ```
-test/e2e/specs/<major_feature>/<major_feature>__<sub_feature>.ts
+test/e2e/specs/<major_feature>/<major_feature>__<sub_feature>.spec.ts
 ```
 
 2. Import the boilerplate.
 
 ```typescript
-import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { tags, test } from '../../lib/pw-base';
 ```
 
 3. Assign test tag(s). See [Feature/Test tags](./tests_ci.md#featuretest-tags)
 
-```typescript
-/**
- * @group calypso-pr
- * @group gutenberg
- * ...more as required.
- */
-```
-
-4. Define a top-level `describe` block.
-
-As per the [Style Guide](./style_guide.md#only-one-top-level-describe-block), there should only be one top-level `describe` block in a spec file.
-
-Using the `DataHelper.createSuiteTitle()` function, define a short, descriptive name for the overall suite:
+4. Define a top-level `test.describe` block with a short, descriptive name and the tags that select which CI builds run the spec:
 
 ```typescript
-describe( DataHelper.createSuiteTitle( '<major_feature>: <sub_feature>' ), function () {
+test.describe( '<major_feature>: <sub_feature>', { tag: [ tags.CALYPSO_PR, tags.GUTENBERG ] }, () => {
 	...
 } );
 ```
