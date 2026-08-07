@@ -338,30 +338,25 @@ const DomainSearchStep: StepType< {
 		return true;
 	}, [ flow, isCiab, site, sourceSlug ] );
 
+	// The slots have to be left out entirely rather than render nothing: the results
+	// page keys its mobile sticky banner off `BeforeResults` being present, and that
+	// banner carries its own "free domain with a paid plan" copy.
 	const slots = useMemo( () => {
+		if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
+			return {};
+		}
+
 		return {
-			BeforeResults: () => {
-				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
-					return null;
-				}
-
-				return (
-					<FreeDomainForAYearPromo
-						isCiab={ isCiab }
-						title={ freeDomainPromoTitle }
-						subtitle={ freeDomainPromoSubtitle }
-					/>
-				);
-			},
-			BeforeFullCartItems: () => {
-				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
-					return null;
-				}
-
-				// The textOnly variant has a single-paragraph layout (no title/subtitle pair),
-				// so the promo title/subtitle props don't apply here.
-				return <FreeDomainForAYearPromo textOnly isCiab={ isCiab } />;
-			},
+			BeforeResults: () => (
+				<FreeDomainForAYearPromo
+					isCiab={ isCiab }
+					title={ freeDomainPromoTitle }
+					subtitle={ freeDomainPromoSubtitle }
+				/>
+			),
+			// The textOnly variant has a single-paragraph layout (no title/subtitle pair),
+			// so the promo title/subtitle props don't apply here.
+			BeforeFullCartItems: () => <FreeDomainForAYearPromo textOnly isCiab={ isCiab } />,
 		};
 	}, [
 		isFirstDomainFreeForFirstYear,
