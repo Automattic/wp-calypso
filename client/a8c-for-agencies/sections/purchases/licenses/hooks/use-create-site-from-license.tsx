@@ -30,6 +30,11 @@ export default function useCreateSiteFromLicense( licenseKey: string ): CreateSi
 
 	const onCreateSite = useCallback( () => {
 		if ( ! pendingSiteId ) {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_licenses_create_site_redirect_needs_setup', {
+					license_key: licenseKey,
+				} )
+			);
 			page( A4A_SITES_LINK_NEEDS_SETUP );
 			return;
 		}
