@@ -163,17 +163,13 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		from: partnerConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
 	} );
 
-	// Submitting the address unchanged asks for nothing, so it is also how the user gets back to
-	// the gate. Changing it takes effect at once and re-sends the activation email, leaving nothing
-	// for them to confirm.
-	const returnToGate = ( scope: string ) =>
-		setEditing( ( current ) => ( current?.scope === scope ? null : current ) );
+	const returnToGate = () => setEditing( null );
 
 	// Submitted unchanged, nothing is being asked for and the user is already where they need to
 	// be. Writing a changed one is a change of its own.
 	const updateEmail = async ( email: string ) => {
 		if ( email === activeEdit?.startedFrom ) {
-			returnToGate( gateScopeForUser );
+			returnToGate();
 		}
 	};
 
@@ -319,12 +315,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		// screen is up this returns to it instead.
 		let backButton;
 		if ( isEditingEmail ) {
-			backButton = (
-				<Step.BackButton
-					onClick={ () => returnToGate( gateScopeForUser ) }
-					enableTracksEvent={ false }
-				/>
-			);
+			backButton = <Step.BackButton onClick={ returnToGate } enableTracksEvent={ false } />;
 		} else if ( navigation.goBack ) {
 			backButton = <Step.BackButton onClick={ navigation.goBack } />;
 		}

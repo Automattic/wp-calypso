@@ -85,12 +85,19 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 		if ( mockHeldEmail === null ) {
 			mockHeldEmail = userEmail ?? '';
 		}
+		if ( onUpdateEmail ) {
+			return (
+				<>
+					{ notice as ReactNode }
+					<button onClick={ () => onUpdateEmail( mockHeldEmail as string ) }>
+						submit-unchanged
+					</button>
+				</>
+			);
+		}
 		return (
 			<>
 				{ notice as ReactNode }
-				<button onClick={ () => onUpdateEmail?.( mockHeldEmail as string ) }>
-					submit-unchanged
-				</button>
 				<button
 					onClick={ () => {
 						// Production order: goToNextStep fires before onCreateAccountSuccess.
