@@ -537,6 +537,8 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
     "@types/node": "npm:^24.12.2"
+    "@wordpress/base-styles": "npm:^9.1.0"
+    chroma-js: "npm:^2.6.0"
     postcss: "npm:^8.5.15"
     postcss-custom-properties: "npm:^12.1.11"
     sass: "npm:1.77.8"
