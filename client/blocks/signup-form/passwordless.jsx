@@ -36,8 +36,7 @@ class PasswordlessSignupForm extends Component {
 		onCreateAccountError: PropTypes.func,
 		onCreateAccountSuccess: PropTypes.func,
 		disableTosText: PropTypes.bool,
-		// Terms follow the action they describe, unless the copy is written to precede it.
-		termsBeforeActions: PropTypes.bool,
+		termsAfterActions: PropTypes.bool,
 		// Replaces account creation with a change to the account the caller already has, and
 		// reports its own failures.
 		onUpdateEmail: PropTypes.func,
@@ -410,9 +409,9 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.props.termsBeforeActions && terms }
+					{ ! this.props.termsAfterActions && terms }
 					{ this.formFooter() }
-					{ ! this.props.termsBeforeActions && terms }
+					{ this.props.termsAfterActions && terms }
 				</LoggedOutForm>
 			</div>
 		);

@@ -252,9 +252,8 @@ const SignupFormSocialFirst = ( {
 			<PasswordlessSignupForm
 				{ ...passwordlessFormProps }
 				renderTerms={ renderEmailStepTermsOfService }
-				// Partner copy is positionally worded — Woo's says "the options below" — so it
-				// cannot be last. Correcting the wording needs the partner's own legal review.
-				termsBeforeActions={ showsPartnerTerms }
+				// Partner copy is positionally worded — Woo's says "the options below".
+				termsAfterActions={ ! showsPartnerTerms }
 				secondaryFooterButton={
 					onUpdateEmail || backButtonInFooter ? undefined : (
 						<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
