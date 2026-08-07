@@ -29,6 +29,7 @@ import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-
 import usePlanUsageQuery, { getUsageLimitStatus } from '../hooks/use-plan-usage-query';
 import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
+import useDismissPricingGrid from '../pricing-grid/hooks/use-dismiss-pricing-grid';
 import { StatsCommercialUpgradeSlider, getTierQuantity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import {
@@ -279,11 +280,19 @@ const StatsCommercialPurchase = ( {
 		setPurchaseTierQuantity( value );
 	}, [] );
 
+	const dismissPricingGrid = useDismissPricingGrid( siteId );
+
 	const handleCheckoutPostponed = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_skip_button_clicked`, {
 			blog_id: siteId,
 		} );
+
+		// Skipping is the visitor's plan decision — made on a page that shows the full
+		// paid pitch — so the pricing grid mustn't take over the dashboard afterwards,
+		// regardless of how they got here. On sites where the grid never shows this is
+		// a harmless no-op.
+		dismissPricingGrid();
 
 		setTimeout( () => {
 			page( `/stats/day/${ siteSlug }` );
