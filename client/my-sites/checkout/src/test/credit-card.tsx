@@ -186,8 +186,10 @@ describe( 'Credit card payment method', () => {
 		// Try to submit the form
 		await user.click( await screen.findByText( activePayButtonText ) );
 
-		// Verify the error message overlay appears
-		const element = await screen.findByText( /Something seems to be missing/i );
+		// Verify the error message overlay appears and names the empty field
+		const element = await screen.findByText(
+			/Please fill out the required fields:.*Security code/i
+		);
 		expect( element ).not.toBeFalsy();
 	} );
 } );

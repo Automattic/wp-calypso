@@ -8,6 +8,7 @@ import {
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useDispatch } from 'react-redux';
@@ -18,7 +19,7 @@ import { useVgsFormValidation } from '../../hooks/use-vgs-form-validation';
 import { logStashEvent } from '../../lib/analytics';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
-import type { CardFieldState, CardStoreType } from './types';
+import type { CardElementType, CardFieldState, CardStoreType } from './types';
 import type { ProcessPayment } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
 
@@ -207,21 +208,42 @@ function isCreditCardFormValid(
 ) {
 	debug( 'validating credit card fields for partner', paymentPartner );
 
-	function setFieldsError() {
+	// Names the fields the notice is complaining about. A zero-total cart still
+	// collects card details so a recurring subscription has a payment method
+	// for renewal, which is surprising enough on its own — leaving the reason
+	// unnamed on top of that gives the shopper nothing to act on.
+	function setFieldsError( fieldLabels: string[] ) {
+		if ( ! fieldLabels.length ) {
+			setDisplayFieldsError(
+				__( 'Something seems to be missing — please fill out all the required fields.' )
+			);
+			return;
+		}
 		setDisplayFieldsError(
-			__( 'Something seems to be missing — please fill out all the required fields.' )
+			sprintf(
+				/* translators: %s is a comma-separated list of payment form field names, e.g. "Card number, Security code" */
+				__( 'Please fill out the required fields: %s' ),
+				fieldLabels.join( ', ' )
+			)
 		);
 	}
 
 	switch ( paymentPartner ) {
 		case 'stripe': {
+			const cardElementLabels: Record< CardElementType, string > = {
+				cardNumber: __( 'Card number' ),
+				cardExpiry: __( 'Expiry date' ),
+				cardCvc: __( 'Security code' ),
+			};
+			const missingFieldLabels: string[] = [];
+
 			const fields = selectors.getFields( store.getState() );
 			const cardholderName = fields.cardholderName;
 			if ( ! cardholderName?.value?.length ) {
 				// Touch the field so it displays a validation error
 				store.dispatch( actions.setFieldValue( 'cardholderName', '' ) );
 				store.dispatch( actions.setFieldError( 'cardholderName', __( 'This field is required' ) ) );
-				setFieldsError();
+				missingFieldLabels.push( __( 'Cardholder name' ) );
 			}
 			const errors = selectors.getCardDataErrors( store.getState() );
 			const incompleteFieldKeys = selectors.getIncompleteFieldKeys( store.getState() );
@@ -232,9 +254,17 @@ function isCreditCardFormValid(
 				incompleteFieldKeys.map( ( key ) =>
 					store.dispatch( actions.setCardDataError( key, __( 'This field is required' ) ) )
 				);
-				setFieldsError();
+				// List the labels in the order the fields appear in the form, not
+				// the order the store happens to report them in.
+				missingFieldLabels.push(
+					...( Object.keys( cardElementLabels ) as CardElementType[] )
+						.filter( ( key ) => incompleteFieldKeys.includes( key ) )
+						.map( ( key ) => cardElementLabels[ key ] )
+				);
 			}
 			if ( areThereErrors || ! cardholderName?.value?.length || incompleteFieldKeys.length > 0 ) {
+				// One notice for the whole form, rather than one per failing group.
+				setFieldsError( missingFieldLabels );
 				debug( 'card info is not valid', { errors, incompleteFieldKeys, cardholderName } );
 
 				return false;
@@ -274,8 +304,10 @@ function isCreditCardFormValid(
 			if ( ! isValid ) {
 				// Unlike the stripe branch above, nothing here previously
 				// surfaced an error notice or scrolled the invalid fields
-				// into view, so the button appeared to do nothing.
-				setFieldsError();
+				// into view, so the button appeared to do nothing. requiredFields
+				// holds raw keys like 'street-number' rather than translated
+				// labels, so this keeps the generic notice.
+				setFieldsError( [] );
 			}
 
 			debug( 'ebanx validation - cardholder name and contact details', {
