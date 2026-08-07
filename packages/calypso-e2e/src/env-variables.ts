@@ -301,7 +301,9 @@ function getAtomicVariationInMixedRun() {
 		'private',
 		'ecomm-plan',
 	];
-	// Rotate the variation by day while ensuring failed retries use the same variation.
+	// The goal here is controlled randomness to include multiple variations within a single run.
+	// By using the current day of the month and the test file name hash, we can get a
+	// lot of variation throughout the week while also ensuring the same variation is used on a failed retry.
 	const currentDayOfMonth = new Date().getDate();
 	const variationIndex = currentDayOfMonth % allVariations.length;
 	return allVariations[ variationIndex ];
