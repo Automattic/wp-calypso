@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -330,6 +331,7 @@ const HomeContent = ( {
 
 	return (
 		<div className="customer-home__main">
+			{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
