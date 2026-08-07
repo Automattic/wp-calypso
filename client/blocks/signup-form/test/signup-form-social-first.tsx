@@ -194,6 +194,22 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 	} );
 
+	// A secondary action in the footer used to push the terms below the button, so the
+	// disclosure could be skipped past on the one screen that has both.
+	it( 'shows the email terms before the button even when the footer carries a second action', () => {
+		render( <SignupFormSocialFirst { ...defaultProps } backButtonInFooter={ false } /> );
+
+		const terms = document.querySelector(
+			'.signup-form-social-first__email-tos-link'
+		) as HTMLElement;
+		const submit = terms
+			.closest( '.signup-form-social-first-email' )!
+			.querySelector( 'button[type="submit"]' ) as HTMLElement;
+
+		expect( screen.getByRole( 'button', { name: 'See all options' } ) ).toBeVisible();
+		expect( terms ).toAppearBefore( submit );
+	} );
+
 	describe( 'emailUpdate', () => {
 		const renderUpdating = ( props = {} ) =>
 			render(
@@ -231,15 +247,6 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.getByRole( 'textbox' ) ).toBeVisible();
 		} );
 
-		it( 'puts the terms under the action they name', () => {
-			renderUpdating();
-			expect(
-				screen
-					.getByRole( 'button', { name: 'Continue' } )
-					.compareDocumentPosition( screen.getByText( /agree to our/ ) )
-			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
-		} );
-
 		it( 'says it is updating, not signing up, while the request is in flight', async () => {
 			renderUpdating( {
 				onUpdateEmail: () => new Promise< void >( () => {} ),
@@ -251,10 +258,14 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 
 		it( 'mounts the email field once, with nothing to sign up with', () => {
-			renderUpdating( { isEmailFirstVariant: true } );
+			renderUpdating( {
+				isEmailFirstVariant: true,
+				customTosElement: <span>Partner terms apply.</span>,
+			} );
 
 			expect( screen.getAllByRole( 'textbox' ) ).toHaveLength( 1 );
 			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
+			expect( screen.getAllByText( 'Partner terms apply.' ) ).toHaveLength( 1 );
 		} );
 
 		it( 'shows the email screen even when it was given no address to start from', () => {
@@ -265,7 +276,7 @@ describe( 'SignupFormSocialFirst', () => {
 			).toHaveClass( 'visible' );
 		} );
 
-		it( "shows what the caller has to say, and keeps its own terms over a partner's", () => {
+		it( 'shows what the caller has to say, and a partner its own terms', () => {
 			renderUpdating( {
 				notice: <div>That address is already in use.</div>,
 				customTosElement: <span>Partner terms apply.</span>,
@@ -276,11 +287,14 @@ describe( 'SignupFormSocialFirst', () => {
 				.closest( '.signup-form-social-first-screen' ) as HTMLElement;
 			const emailScreen = within( emailScreenEl );
 			expect( emailScreen.getByText( 'That address is already in use.' ) ).toBeVisible();
-			// Partner terms describe agreeing by picking one of several options, which this
-			// screen does not offer, and which the account was already created by agreeing to.
-			expect( emailScreen.queryByText( 'Partner terms apply.' ) ).not.toBeInTheDocument();
 			// On text content: the generic terms are split across links, so no node holds the phrase.
-			expect( emailScreenEl ).toHaveTextContent( 'By clicking' );
+			expect( emailScreenEl ).not.toHaveTextContent( 'By clicking' );
+
+			// Partner copy points at the options below it, so it can't sit under them.
+			const terms = emailScreen.getByText( 'Partner terms apply.' );
+			expect(
+				terms.compareDocumentPosition( screen.getByRole( 'button', { name: 'Continue' } ) )
+			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
 		} );
 
 		// Otherwise a refusal leaves the field and the button with nothing to press.

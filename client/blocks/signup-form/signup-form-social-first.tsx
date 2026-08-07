@@ -173,6 +173,10 @@ const SignupFormSocialFirst = ( {
 	};
 
 	const renderEmailStepTermsOfService = () => {
+		// Partner legal copy is otherwise only on the screen this mode never shows.
+		if ( onUpdateEmail && customTosElement ) {
+			return <p className="signup-form-social-first__email-tos-link">{ customTosElement }</p>;
+		}
 		return (
 			<p className="signup-form-social-first__email-tos-link">
 				{ createInterpolateElement(
