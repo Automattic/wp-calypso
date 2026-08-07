@@ -58,10 +58,12 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 			onClose();
 
 			if ( isDirectClose ) {
-				trackStatsAnalyticsEvent( 'stats_feedback_action_directly_close_form_modal' );
+				trackStatsAnalyticsEvent( 'stats_feedback_action_directly_close_form_modal', {
+					blog_id: siteId,
+				} );
 			}
 		},
-		[ onClose ]
+		[ onClose, siteId ]
 	);
 
 	const onFormSubmit = useCallback( () => {
@@ -79,8 +81,9 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 
 		trackStatsAnalyticsEvent( 'stats_feedback_action_submit_form', {
 			feedback: content,
+			blog_id: siteId,
 		} );
-	}, [ content, submitFeedback ] );
+	}, [ content, submitFeedback, siteId ] );
 
 	useEffect( () => {
 		if ( isSubmissionSuccessful ) {

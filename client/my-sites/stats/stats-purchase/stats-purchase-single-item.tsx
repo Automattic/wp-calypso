@@ -284,7 +284,9 @@ const StatsCommercialPurchase = ( {
 
 	const handleCheckoutPostponed = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_commercial_skip_button_clicked` );
+		recordTracksEvent( `${ event_from }_stats_purchase_commercial_skip_button_clicked`, {
+			blog_id: siteId,
+		} );
 
 		// Skipping is the visitor's plan decision — made on a page that shows the full
 		// paid pitch — so the pricing grid mustn't take over the dashboard afterwards,
@@ -417,7 +419,9 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial` );
+		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial`, {
+			blog_id: siteId,
+		} );
 
 		page( `/stats/purchase/${ siteSlug }?productType=commercial&from=switch-from-personal` );
 	};
@@ -574,7 +578,9 @@ function StatsCommercialFlowOptOutForm( {
 
 	const handleSwitchToPersonalClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked` );
+		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked`, {
+			blog_id: siteId,
+		} );
 		setTimeout(
 			() =>
 				page( `/stats/purchase/${ siteSlug }?productType=personal&from=switch-from-commercial` ),
@@ -584,7 +590,9 @@ function StatsCommercialFlowOptOutForm( {
 
 	const handleRequestUpdateClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked` );
+		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked`, {
+			blog_id: siteId,
+		} );
 
 		// For Jetpack sites, open the Jetpack support form. Do not prefill.
 		if ( isJetpackSupport ) {

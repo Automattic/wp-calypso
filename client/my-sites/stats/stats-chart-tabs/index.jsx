@@ -161,7 +161,9 @@ class StatModuleChartTabs extends Component {
 		}
 
 		// Record the chart type change event
-		this.props.recordTracksEvent( CHART_TYPE_EVENTS[ event_from ][ newType ] );
+		this.props.recordTracksEvent( CHART_TYPE_EVENTS[ event_from ][ newType ], {
+			blog_id: siteId,
+		} );
 	};
 
 	formatLineChartTimeTick = ( date ) => {

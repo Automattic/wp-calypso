@@ -27,6 +27,7 @@ const StatsCardUpdateJetpackVersion: React.FC< Props > = ( { className, siteId, 
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_${ tracksEvent }`, {
 			module: statType,
+			blog_id: siteId,
 		} );
 
 		// redirect to the Plugins page

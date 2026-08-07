@@ -90,7 +90,9 @@ const PersonalPurchase = ( {
 
 	const handleCheckoutPostponed = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked` );
+		recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked`, {
+			blog_id: siteId,
+		} );
 
 		// Skipping is the visitor's plan decision — made on a page that shows the full
 		// paid pitch — so the pricing grid mustn't take over the dashboard afterwards,
