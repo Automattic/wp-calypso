@@ -1,4 +1,5 @@
 import { useSelector } from 'calypso/state';
+import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import useStatsPurchases from '../../hooks/use-stats-purchases';
 
@@ -16,6 +17,12 @@ const LAUNCH_DATE = Date.parse( '2026-08-07T00:00:00Z' );
 export default function useIsPricingGridEligible( siteId: number | null ) {
 	const { hasAnyPlan, isLoading: isLoadingPurchases } = useStatsPurchases( siteId );
 
+	// A failed purchases fetch reads as "loaded, no plan" upstream (FETCH_FAILED marks
+	// the store loaded with an empty list), which would show the grid to a site that
+	// does hold a plan. Treat the error as "plan state unknown" and fall back to the
+	// dashboard instead.
+	const purchasesError = useSelector( getPurchasesError );
+
 	// `created_at` is the wpcom shadow blog's `wp_blogs.registered` — the closest thing
 	// to a first-connection date the sites payload exposes. It matches the connection
 	// moment when registration created the row, but a reused pre-existing row keeps its
@@ -32,7 +39,7 @@ export default function useIsPricingGridEligible( siteId: number | null ) {
 	const isNewConnection = Number.isFinite( connectedAtMs ) && connectedAtMs >= LAUNCH_DATE;
 
 	return {
-		isEligible: isNewConnection && ! hasAnyPlan,
+		isEligible: isNewConnection && ! hasAnyPlan && ! purchasesError,
 		isNewConnection,
 		// The date check needs no fetch, so only newly connected sites ever wait.
 		isLoading: isNewConnection && isLoadingPurchases,

@@ -286,10 +286,11 @@
 	line-height: 24px;
 
 	// Same threshold the is-viewport-large class flips at (WP `large` breakpoint).
+	// Diverges from the jetpack component's `nowrap; overflow: hidden` here: this is
+	// the Terms of Service disclosure, and locales that run longer than English (DE,
+	// PT) must wrap rather than lose the end of the sentence.
 	@media (min-width: 960px) {
 		padding-left: var(--padding);
 		padding-right: var(--padding);
-		white-space: nowrap;
-		overflow: hidden;
 	}
 }
