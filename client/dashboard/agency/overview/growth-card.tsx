@@ -194,21 +194,37 @@ function getAgencyContent( links: GrowthCardLinks ): GrowthContent {
 	};
 }
 
-function getProContent( links: GrowthCardLinks, growRevenueItem?: GrowthItem ): GrowthContent {
+function getProContent(
+	links: GrowthCardLinks,
+	influencedRevenue: number,
+	hasWooPaymentsStores?: boolean
+): GrowthContent {
+	// While the store count loads, hold the row rather than flashing the wrong one.
+	let wooPaymentsItem: GrowthItem | null = null;
+	if ( hasWooPaymentsStores === true ) {
+		wooPaymentsItem = getGrowRevenueItem(
+			TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
+			influencedRevenue,
+			links
+		);
+	} else if ( hasWooPaymentsStores === false ) {
+		wooPaymentsItem = {
+			id: 'set-up-woopayments',
+			icon: payment,
+			title: __( 'Set up WooPayments on your client stores' ),
+			description: __( '$1 of IAR for every $100 in sales · earn 0.05% TPV' ),
+			actionLabel: __( 'Set up' ),
+			href: links.woopayments,
+		};
+	}
+
 	return {
 		title: __( 'Grow toward Premier' ),
 		description: __(
 			'Premier unlocks Marketing Development Funds and a Parse.ly trial. It takes more than revenue.'
 		),
 		items: [
-			growRevenueItem ?? {
-				id: 'set-up-woopayments',
-				icon: payment,
-				title: __( 'Set up WooPayments on your client stores' ),
-				description: __( '$1 of IAR for every $100 in sales · earn 0.05% TPV' ),
-				actionLabel: __( 'Set up' ),
-				href: links.woopayments,
-			},
+			...( wooPaymentsItem ? [ wooPaymentsItem ] : [] ),
 			{
 				id: 'enterprise-projects',
 				icon: chartBar,
@@ -283,8 +299,8 @@ function getContent(
 	isPending: boolean,
 	tierLevel: number,
 	links: GrowthCardLinks,
-	hasWooPaymentsStores: boolean,
 	influencedRevenue: number,
+	hasWooPaymentsStores?: boolean,
 	hasPartnerDirectoryListing?: boolean
 ): GrowthContent {
 	if ( isPending ) {
@@ -294,16 +310,7 @@ function getContent(
 		return getPremierContent( links, hasPartnerDirectoryListing );
 	}
 	if ( tierLevel >= 2 ) {
-		return getProContent(
-			links,
-			hasWooPaymentsStores
-				? getGrowRevenueItem(
-						TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
-						influencedRevenue,
-						links
-				  )
-				: undefined
-		);
+		return getProContent( links, influencedRevenue, hasWooPaymentsStores );
 	}
 	if ( tierLevel >= 1 ) {
 		return getAgencyContent( links );
@@ -311,12 +318,6 @@ function getContent(
 	return getEmergingContent( links );
 }
 
-/**
- * The “grow toward the next tier” module of the Overview screen. Its goal and
- * actions adapt to the agency’s account state: pending accounts get a “while
- * you wait” list, each tier points at the moves that unlock the next one, and
- * Premier (top tier) shifts to getting the most out of its benefits.
- */
 function GrowthItemIcon( { icon }: { icon: JSX.Element } ) {
 	return (
 		<div
@@ -338,6 +339,12 @@ function GrowthItemIcon( { icon }: { icon: JSX.Element } ) {
 	);
 }
 
+/**
+ * The “grow toward the next tier” module of the Overview screen. Its goal and
+ * actions adapt to the agency’s account state: pending accounts get a “while
+ * you wait” list, each tier points at the moves that unlock the next one, and
+ * Premier (top tier) shifts to getting the most out of its benefits.
+ */
 export default function GrowthCard( {
 	agencyId,
 	isPending,
@@ -351,13 +358,25 @@ export default function GrowthCard( {
 }: GrowthCardProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const tier = getCurrentAgencyTier( tierId );
-	const { storeCount } = useWooPaymentsStoreCount( agencyId, ! isPending && canAccessEarnings );
+	const tierLevel = tier?.level ?? 0;
+	// Only the Pro/VIP content swaps a row on the store count, so don't fire the
+	// lookup for other tiers.
+	const needsStoreCount = ! isPending && canAccessEarnings && tierLevel >= 2 && tierLevel < 4;
+	const { storeCount, isLoading: isLoadingStoreCount } = useWooPaymentsStoreCount(
+		agencyId,
+		needsStoreCount
+	);
+	// undefined = still loading; getProContent holds the row until it resolves.
+	let hasWooPaymentsStores: boolean | undefined = false;
+	if ( needsStoreCount ) {
+		hasWooPaymentsStores = isLoadingStoreCount ? undefined : storeCount > 0;
+	}
 	const content = getContent(
 		!! isPending,
-		tier?.level ?? 0,
+		tierLevel,
 		links,
-		storeCount > 0,
 		influencedRevenue,
+		hasWooPaymentsStores,
 		hasPartnerDirectoryListing
 	);
 
