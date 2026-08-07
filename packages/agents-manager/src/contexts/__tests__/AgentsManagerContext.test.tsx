@@ -3,13 +3,13 @@
  */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
+import { saveSessionId, setSessionSiteKey } from '../../utils/agent-session';
 import {
 	AgentsManagerContextProvider,
 	useAgentsManagerContext,
 	type AgentsManagerContextProviderProps,
 	type AgentsManagerContextType,
 } from '../AgentsManagerContext';
-import { saveSessionId, setSessionSiteKey } from '../../utils/agent-session';
 
 // Test component that displays `context` values
 function ContextConsumer() {
