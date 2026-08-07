@@ -9,6 +9,8 @@ import writeOn, { ANON_DRAFT_STORAGE_KEY, MAX_DRAFT_SIZE } from '../write-on';
 
 const mockIsEnabled = jest.fn( ( flag: string ) => flag === 'calypso/write-on-flow' );
 
+let mockSearch = '';
+
 jest.mock( '@automattic/calypso-config', () => {
 	const fn = Object.assign( ( key: string ) => key, {
 		isEnabled: ( flag: string ) => mockIsEnabled( flag ),
@@ -37,6 +39,10 @@ jest.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
 } ) );
 
+jest.mock( '../../../../hooks/use-query', () => ( {
+	useQuery: () => new URLSearchParams( mockSearch ),
+} ) );
+
 jest.mock( 'calypso/landing/stepper/utils/steps-with-required-login', () => ( {
 	stepsWithRequiredLogin: ( steps: unknown ) => steps,
 } ) );
@@ -62,6 +68,7 @@ describe( 'write-on flow', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockSearch = '';
 		mockIsEnabled.mockImplementation( ( flag: string ) => flag === 'calypso/write-on-flow' );
 		window.localStorage.clear();
 		Object.defineProperty( window, 'location', {
@@ -134,6 +141,44 @@ describe( 'write-on flow', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_write_on_draft_transfer_succeeded', {
 			site_id: 99,
 		} );
+	} );
+
+	it( 'forwards the source query param into the Write editor redirect', async () => {
+		mockSearch = 'source=post_new';
+		window.localStorage.setItem(
+			ANON_DRAFT_STORAGE_KEY,
+			JSON.stringify( { title: 'My title', content: '<p>Body</p>', ts: 1 } )
+		);
+		wpcomPostMock.mockResolvedValue( { ID: 42 } );
+
+		await submitFor( 'processing', {
+			processingResult: ProcessingResult.SUCCESS,
+			siteId: 99,
+			siteSlug: 'example.wordpress.com',
+		} );
+
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'https://example.wordpress.com/wp-admin/admin.php?page=write&post=42&source=post_new'
+		);
+	} );
+
+	it( 'sanitizes the source query param to match the anon funnel before forwarding', async () => {
+		mockSearch = 'source=Post_New%21';
+		window.localStorage.setItem(
+			ANON_DRAFT_STORAGE_KEY,
+			JSON.stringify( { title: 'My title', content: '<p>Body</p>', ts: 1 } )
+		);
+		wpcomPostMock.mockResolvedValue( { ID: 42 } );
+
+		await submitFor( 'processing', {
+			processingResult: ProcessingResult.SUCCESS,
+			siteId: 99,
+			siteSlug: 'example.wordpress.com',
+		} );
+
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'https://example.wordpress.com/wp-admin/admin.php?page=write&post=42&source=post_new'
+		);
 	} );
 
 	it( 'preserves the localStorage draft, logs to logstash, and lands on the site home when the POST fails', async () => {
