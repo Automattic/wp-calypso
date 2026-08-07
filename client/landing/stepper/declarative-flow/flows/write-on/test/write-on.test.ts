@@ -37,6 +37,10 @@ jest.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
 } ) );
 
+jest.mock( '../../../../hooks/use-query', () => ( {
+	useQuery: () => new URLSearchParams(),
+} ) );
+
 jest.mock( 'calypso/landing/stepper/utils/steps-with-required-login', () => ( {
 	stepsWithRequiredLogin: ( steps: unknown ) => steps,
 } ) );

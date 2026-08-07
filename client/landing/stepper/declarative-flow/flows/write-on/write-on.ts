@@ -8,6 +8,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
@@ -79,6 +80,11 @@ const writeOn: FlowV2< typeof initialize > = {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const hasRunEntryChecks = useRef( false );
 
+		// The anon entry point links here with a `source` (e.g. `?source=post_new`).
+		// Stepper preserves the query string across steps, so it is still present at
+		// entry — carry it into the funnel's Tracks events for attribution.
+		const source = useQuery().get( 'source' );
+
 		// Entry checks must fire at most once per mount. Re-running them on a
 		// later isLoggedIn flip (e.g. mid-signup) would redirect the user out of
 		// the flow during the auth round-trip.
@@ -110,14 +116,19 @@ const writeOn: FlowV2< typeof initialize > = {
 
 			recordTracksEvent( 'calypso_write_on_flow_entered', {
 				draft_size: draft.title.length + draft.content.length,
+				source,
 			} );
 
 			if ( draft.title ) {
 				setSiteTitle( draft.title );
 			}
-		}, [ currentStepSlug, isLoggedIn, setSiteTitle ] );
+		}, [ currentStepSlug, isLoggedIn, setSiteTitle, source ] );
 	},
 	useStepNavigation( currentStepSlug, navigate ) {
+		// Same `source` the entry point carried in — forward it into the Write
+		// editor so its back button and Tracks stay attributed to the funnel.
+		const source = useQuery().get( 'source' );
+
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
@@ -153,8 +164,12 @@ const writeOn: FlowV2< typeof initialize > = {
 							site_id: siteId,
 						} );
 
+						const params = new URLSearchParams( { page: 'write', post: String( post.ID ) } );
+						if ( source ) {
+							params.set( 'source', source );
+						}
 						window.location.assign(
-							`https://${ siteSlug }/wp-admin/admin.php?page=write&post=${ post.ID }`
+							`https://${ siteSlug }/wp-admin/admin.php?${ params.toString() }`
 						);
 					} catch ( error ) {
 						// Surfacing the failure to the user is handled upstream by
