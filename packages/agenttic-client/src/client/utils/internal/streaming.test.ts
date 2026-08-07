@@ -616,18 +616,16 @@ describe( 'parseSSEStream', () => {
 						final: true,
 						message: {
 							kind: 'message',
-							messageId: 'resp-block-notes',
+							messageId: 'resp-site-title',
 							role: 'agent',
 							parts: [
 								{
 									type: 'data',
 									data: {
-										toolCallId: 'call-block-notes',
-										toolId: 'big_sky__block_notes',
+										toolCallId: 'call-site-title',
+										toolId: 'wpcom__site_title',
 										arguments: {
-											operation: 'reply',
-											blockNoteId: 6,
-											notes: 'Looks good.',
+											title: 'Example Site',
 										},
 									},
 								},
@@ -655,10 +653,9 @@ describe( 'parseSSEStream', () => {
 						{
 							type: 'data',
 							data: {
-								toolId: 'big_sky__block_notes',
+								toolId: 'wpcom__site_title',
 								arguments: {
-									operation: 'reply',
-									blockNoteId: 6,
+									title: 'Example Site',
 								},
 							},
 						},
@@ -689,10 +686,9 @@ describe( 'parseSSEStream', () => {
 								type: 'data',
 								data: {
 									toolCallId: 'call-undelimited',
-									toolId: 'big_sky__block_notes',
+									toolId: 'wpcom__site_title',
 									arguments: {
-										operation: 'get',
-										blockNoteId: 17,
+										title: 'Example Site',
 									},
 								},
 							},
@@ -720,7 +716,7 @@ describe( 'parseSSEStream', () => {
 							type: 'data',
 							data: {
 								toolCallId: 'call-undelimited',
-								toolId: 'big_sky__block_notes',
+								toolId: 'wpcom__site_title',
 							},
 						},
 					],
@@ -750,10 +746,9 @@ describe( 'parseSSEStream', () => {
 								type: 'data',
 								data: {
 									toolCallId: 'call-leading-space',
-									toolId: 'big_sky__block_notes',
+									toolId: 'wpcom__site_title',
 									arguments: {
-										operation: 'get',
-										blockNoteId: 22,
+										title: 'Example Site',
 									},
 								},
 							},
@@ -783,7 +778,7 @@ describe( 'parseSSEStream', () => {
 							type: 'data',
 							data: {
 								toolCallId: 'call-leading-space',
-								toolId: 'big_sky__block_notes',
+								toolId: 'wpcom__site_title',
 							},
 						},
 					],
@@ -811,10 +806,9 @@ describe( 'parseSSEStream', () => {
 								type: 'data',
 								data: {
 									toolCallId: 'call-open-undelimited',
-									toolId: 'big_sky__block_notes',
+									toolId: 'wpcom__site_title',
 									arguments: {
-										operation: 'reply',
-										blockNoteId: 18,
+										title: 'Example Site',
 									},
 								},
 							},
