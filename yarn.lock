@@ -1919,7 +1919,7 @@ __metadata:
     autosize: "npm:^6.0.1"
     classnames: "npm:^2.5.1"
     clsx: "npm:^2.1.1"
-    dompurify: "npm:3.4.12"
+    dompurify: "npm:3.4.13"
     framer-motion: "npm:^12.23.12"
     jest: "npm:^29.7.0"
     react: "npm:^18.3.1"
@@ -2750,7 +2750,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.48.0"
     "@wordpress/url": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
-    dompurify: "npm:3.4.12"
+    dompurify: "npm:3.4.13"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-router-dom: "npm:7.18.0"
@@ -14674,7 +14674,7 @@ __metadata:
     deep-freeze: "npm:^0.0.1"
     deepmerge: "npm:^4.3.1"
     diff: "npm:^4.0.2"
-    dompurify: "npm:3.4.12"
+    dompurify: "npm:3.4.13"
     draft-js: "patch:draft-js@npm%3A0.11.7#~/.yarn/patches/draft-js-npm-0.11.7-ea66f83002.patch"
     duplicate-package-checker-webpack-plugin: "npm:^3.0.0"
     email-validator: "npm:^2.0.4"
@@ -17099,6 +17099,18 @@ __metadata:
     "@types/trusted-types":
       optional: true
   checksum: 127a13817353d4e20e75a991a9022a04c3af12af7479f68e2b8bee6dbc7330a96edfb8f4ebff96f4f0f24cd43e8dbba46214131f510c3aa87a843bd8b610d0ab
+  languageName: node
+  linkType: hard
+
+"dompurify@npm:3.4.13":
+  version: 3.4.13
+  resolution: "dompurify@npm:3.4.13"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.7"
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 9c2a1a71e1a1d8b77953db7a39ffc935ef4ed4f10fe40770232128c2cbfd4c3dc677d3d7bae51eb24cc52d9ff3548612dc540ecb4343e89b26e809d2be2e0cfe
   languageName: node
   linkType: hard
 
