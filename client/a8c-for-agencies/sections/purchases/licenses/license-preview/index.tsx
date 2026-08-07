@@ -13,7 +13,6 @@ import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
 import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import {
-	A4A_SITES_LINK_NEEDS_SETUP,
 	A4A_FEEDBACK_LINK,
 	A4A_LICENSES_LINK,
 	EXTERNAL_PRESSABLE_AUTH_URL,
@@ -192,7 +191,7 @@ export default function LicensePreview( {
 	}, [ isBlockedByMissingPaymentMethod, licenseKey ] );
 
 	const createSite = useCallback( () => {
-		if ( isBlockedByMissingPaymentMethod( A4A_SITES_LINK_NEEDS_SETUP ) ) {
+		if ( isBlockedByMissingPaymentMethod( A4A_LICENSES_LINK ) ) {
 			return;
 		}
 
