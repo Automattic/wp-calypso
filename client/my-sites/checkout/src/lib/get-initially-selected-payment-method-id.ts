@@ -7,15 +7,14 @@ import type { ResponseCart } from '@automattic/shopping-cart';
  * Decide which payment method should be selected when checkout first renders.
  *
  * Returning undefined leaves the choice to `selectFirstAvailablePaymentMethod`,
- * which picks whatever comes first in the available list — the credit card.
+ * which picks whatever comes first in the available list.
  */
 export function getInitiallySelectedPaymentMethodId(
 	responseCart: ResponseCart,
 	paymentMethods: Pick< PaymentMethod, 'id' >[]
 ): string | undefined {
-	const storedDetailsId = responseCart.products.find( ( product ) =>
-		Boolean( product.stored_details_id )
-	)?.stored_details_id;
+	const storedDetailsId = responseCart.products.find( ( product ) => product.stored_details_id )
+		?.stored_details_id;
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 
 	const preferredIds = [

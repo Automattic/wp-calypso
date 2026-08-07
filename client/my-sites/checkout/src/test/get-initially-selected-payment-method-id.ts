@@ -8,15 +8,10 @@ const paymentMethod = ( id: string ) => ( { id } );
 // would therefore win "first available method" for a zero-total cart.
 const cardThenFree = [ paymentMethod( 'card' ), paymentMethod( 'free-purchase' ) ];
 
-const cart = ( totalCostInteger: number, storedDetailsId?: string ) => ( {
+const cart = ( totalCostInteger: number, storedDetailsId = '' ) => ( {
 	...getEmptyResponseCart(),
 	total_cost_integer: totalCostInteger,
-	products: [
-		{
-			...getEmptyResponseCartProduct(),
-			...( storedDetailsId && { stored_details_id: storedDetailsId } ),
-		},
-	],
+	products: [ { ...getEmptyResponseCartProduct(), stored_details_id: storedDetailsId } ],
 } );
 
 describe( 'getInitiallySelectedPaymentMethodId', () => {
