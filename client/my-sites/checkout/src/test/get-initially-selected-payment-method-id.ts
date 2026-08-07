@@ -1,10 +1,8 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
 import { getInitiallySelectedPaymentMethodId } from '../lib/get-initially-selected-payment-method-id';
-import type { PaymentMethod } from '@automattic/composite-checkout';
 
-// Only the id is read by the function under test.
-const paymentMethod = ( id: string ) => ( { id } ) as PaymentMethod;
+const paymentMethod = ( id: string ) => ( { id } );
 
 // Mirrors production ordering, where the card sits ahead of free-purchase and
 // would therefore win "first available method" for a zero-total cart.
