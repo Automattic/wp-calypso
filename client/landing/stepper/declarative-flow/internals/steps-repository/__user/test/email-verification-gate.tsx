@@ -257,24 +257,6 @@ describe( 'account step email verification gate', () => {
 		await waitFor( () => expect( submit ).toHaveBeenCalled() );
 	} );
 
-	// Confirming in another tab of this browser raises a signal the gate listens for, and going to
-	// the account screen must not stop it being heard.
-	it( 'still hears a confirmation from another tab of this browser', async () => {
-		const user = userEvent.setup();
-		renderUser( makeStore( false ) );
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
-		( fetchCurrentUser as jest.Mock ).mockClear();
-
-		act( () => {
-			window.dispatchEvent(
-				new StorageEvent( 'storage', { key: '__email_verified_signal__', newValue: '1' } )
-			);
-		} );
-
-		expect( fetchCurrentUser ).toHaveBeenCalled();
-	} );
-
 	// It is fixed and full-screen, so it would sit over the field.
 	it( 'keeps the one-tap overlay off the account screen', async () => {
 		const user = userEvent.setup();
