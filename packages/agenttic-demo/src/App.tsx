@@ -1,212 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import EmbeddedDemo from './EmbeddedDemo';
-import FloatingDemo from './FloatingDemo';
-import FloatingCompactDemo from './FloatingCompactDemo';
-import SiteSpecDemo from './SiteSpecDemo';
-import SidebarDemo from './SidebarDemo';
+import PlaygroundShell from './playground/PlaygroundShell';
+import { DEMOS } from './playground/demos';
+
+// The sidebar demo mimics the wp-admin editor sidebar, which is dark.
+const themeForDemo = ( demoId: string ): 'light' | 'dark' =>
+	demoId === 'sidebar' ? 'dark' : 'light';
 
 const App: React.FC = () => {
-	const [ currentDemo, setCurrentDemo ] = useState<
-		| 'embedded'
-		| 'floating'
-		| 'floating-minimized'
-		| 'floating-compact'
-		| 'site-spec'
-		| 'sidebar'
-	>( () => {
-		// Get saved demo from localStorage or default to 'embedded'
+	const [ currentDemoId, setCurrentDemoId ] = useState< string >( () => {
 		const saved = localStorage.getItem( 'selectedDemo' );
-		if (
-			saved === 'floating' ||
-			saved === 'floating-minimized' ||
-			saved === 'floating-compact' ||
-			saved === 'site-spec' ||
-			saved === 'sidebar'
-		) {
-			return saved as
-				| 'floating'
-				| 'floating-minimized'
-				| 'floating-compact'
-				| 'site-spec'
-				| 'sidebar';
-		}
-		return 'embedded';
+		return DEMOS.some( ( demo ) => demo.id === saved )
+			? ( saved as string )
+			: DEMOS[ 0 ].id;
 	} );
 
 	const [ currentTheme, setCurrentTheme ] = useState< 'light' | 'dark' >(
-		'light'
+		() => themeForDemo( currentDemoId )
 	);
 
-	// Save to localStorage whenever demo changes
 	useEffect( () => {
-		localStorage.setItem( 'selectedDemo', currentDemo );
-	}, [ currentDemo ] );
+		localStorage.setItem( 'selectedDemo', currentDemoId );
+	}, [ currentDemoId ] );
+
+	// Switching demos resets to that demo's preferred theme; the toolbar
+	// toggle still overrides it for the current view.
+	useEffect( () => {
+		setCurrentTheme( themeForDemo( currentDemoId ) );
+	}, [ currentDemoId ] );
+
+	const currentDemo =
+		DEMOS.find( ( demo ) => demo.id === currentDemoId ) ?? DEMOS[ 0 ];
+	const DemoComponent = currentDemo.component;
 
 	return (
-		<>
-			<div
-				style={ {
-					position: 'fixed',
-					top: '0',
-					left: '0',
-					display: 'flex',
-					zIndex: 1000,
-				} }
-			>
-				<button
-					onClick={ () => setCurrentDemo( 'embedded' ) }
-					style={ {
-						padding: '8px 10px',
-						background:
-							currentDemo === 'embedded' ? '#000' : 'white',
-						color: currentDemo === 'embedded' ? 'white' : '#000',
-						cursor: 'pointer',
-						fontSize: '12px',
-						fontFamily: 'monospace',
-						textTransform: 'uppercase',
-					} }
-				>
-					Embedded
-				</button>
-				<button
-					onClick={ () => setCurrentDemo( 'floating' ) }
-					style={ {
-						padding: '8px 10px',
-						background:
-							currentDemo === 'floating' ? '#000' : 'white',
-						color: currentDemo === 'floating' ? 'white' : '#000',
-						cursor: 'pointer',
-						fontSize: '12px',
-						fontFamily: 'monospace',
-						textTransform: 'uppercase',
-					} }
-				>
-					Floating
-				</button>
-				<button
-					onClick={ () => setCurrentDemo( 'floating-minimized' ) }
-					style={ {
-						padding: '8px 10px',
-						background:
-							currentDemo === 'floating-minimized'
-								? '#000'
-								: 'white',
-						color:
-							currentDemo === 'floating-minimized'
-								? 'white'
-								: '#000',
-						cursor: 'pointer',
-						fontSize: '12px',
-						fontFamily: 'monospace',
-						textTransform: 'uppercase',
-					} }
-				>
-					Minimized
-				</button>
-				<button
-					onClick={ () => setCurrentDemo( 'floating-compact' ) }
-					style={ {
-						padding: '8px 10px',
-						background:
-							currentDemo === 'floating-compact'
-								? '#000'
-								: 'white',
-						color:
-							currentDemo === 'floating-compact'
-								? 'white'
-								: '#000',
-						cursor: 'pointer',
-						fontSize: '12px',
-						fontFamily: 'monospace',
-						textTransform: 'uppercase',
-					} }
-				>
-					Compact
-				</button>
-				<button
-					onClick={ () => setCurrentDemo( 'site-spec' ) }
-					style={ {
-						padding: '8px 10px',
-						background:
-							currentDemo === 'site-spec' ? '#000' : 'white',
-						color: currentDemo === 'site-spec' ? 'white' : '#000',
-						cursor: 'pointer',
-						fontSize: '12px',
-						fontFamily: 'monospace',
-						textTransform: 'uppercase',
-					} }
-				>
-					Site Spec
-				</button>
-				<button
-					onClick={ () => setCurrentDemo( 'sidebar' ) }
-					style={ {
-						padding: '8px 10px',
-						background:
-							currentDemo === 'sidebar' ? '#000' : 'white',
-						color: currentDemo === 'sidebar' ? 'white' : '#000',
-						cursor: 'pointer',
-						fontSize: '12px',
-						fontFamily: 'monospace',
-						textTransform: 'uppercase',
-					} }
-				>
-					Sidebar
-				</button>
-				<div style={ { marginLeft: '30px' } }>
-					<button
-						onClick={ () => setCurrentTheme( 'dark' ) }
-						style={ {
-							padding: '8px 10px',
-							background:
-								currentTheme === 'dark' ? '#000' : 'white',
-							color: currentTheme === 'dark' ? 'white' : '#000',
-							cursor: 'pointer',
-							fontSize: '12px',
-							fontFamily: 'monospace',
-							textTransform: 'uppercase',
-						} }
-					>
-						DARK THEME
-					</button>
-					<button
-						onClick={ () => setCurrentTheme( 'light' ) }
-						style={ {
-							padding: '8px 10px',
-							background:
-								currentTheme === 'light' ? '#000' : 'white',
-							color: currentTheme === 'light' ? 'white' : '#000',
-							cursor: 'pointer',
-							fontSize: '12px',
-							fontFamily: 'monospace',
-							textTransform: 'uppercase',
-						} }
-					>
-						LIGHT THEME
-					</button>
-				</div>
-			</div>
-			{ currentDemo === 'embedded' && (
-				<EmbeddedDemo currentTheme={ currentTheme } />
-			) }
-			{ currentDemo === 'floating' && (
-				<FloatingDemo currentTheme={ currentTheme } />
-			) }
-			{ currentDemo === 'floating-minimized' && (
-				<FloatingDemo
-					currentTheme={ currentTheme }
-					floatingChatState="minimized"
-					triggerTitle="Ask AI"
-				/>
-			) }
-			{ currentDemo === 'floating-compact' && (
-				<FloatingCompactDemo currentTheme={ currentTheme } />
-			) }
-			{ currentDemo === 'site-spec' && (
-				<SiteSpecDemo currentTheme={ currentTheme } />
-			) }
-			{ currentDemo === 'sidebar' && <SidebarDemo /> }
-		</>
+		<PlaygroundShell
+			demos={ DEMOS }
+			currentDemoId={ currentDemo.id }
+			onSelectDemo={ setCurrentDemoId }
+			currentTheme={ currentTheme }
+			onThemeChange={ setCurrentTheme }
+		>
+			<DemoComponent
+				key={ currentDemo.id }
+				currentTheme={ currentTheme }
+				{ ...currentDemo.props }
+			/>
+		</PlaygroundShell>
 	);
 };
 

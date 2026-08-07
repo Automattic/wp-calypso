@@ -11,6 +11,7 @@ import { CopyIcon } from './CopyIcon';
 import { ImageIcon } from './ImageIcon';
 import { LayoutIcon } from './LayoutIcon';
 import { PageIcon } from './PageIcon';
+import { PlusIcon } from './PlusIcon';
 import { RegenerateIcon } from './RegenerateIcon';
 import { StopIcon } from './StopIcon';
 import { StylesIcon } from './StylesIcon';
@@ -150,6 +151,15 @@ export const Layout: Story = {
 export const Page: Story = {
 	render: ( args ) => (
 		<PageIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const Plus: Story = {
+	render: ( args ) => (
+		<PlusIcon size={ args.size } className={ args.className } />
 	),
 	args: {
 		size: 24,

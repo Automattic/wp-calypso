@@ -178,7 +178,8 @@ export interface AgentManager {
 		toolCallId: string,
 		toolId: string,
 		result: unknown,
-		options?: Partial< SendMessageParams >
+		options?: Partial< SendMessageParams >,
+		fileParts?: FilePart[]
 	) => AsyncIterable< TaskUpdate >;
 	resetConversation: ( key: string ) => Promise< void >;
 	replaceMessages: ( key: string, messages: Message[] ) => Promise< void >;
@@ -760,13 +761,16 @@ function createAgentManager(): AgentManager {
 		 * @param toolId     - The tool ID
 		 * @param result     - The tool result payload
 		 * @param options    - Optional send message params
+		 * @param fileParts  - Optional files (typically images) produced by the
+		 *                   tool, sent as `__file_parts` alongside the result
 		 */
 		async *sendToolResult(
 			key: string,
 			toolCallId: string,
 			toolId: string,
 			result: unknown,
-			options: Partial< SendMessageParams > = {}
+			options: Partial< SendMessageParams > = {},
+			fileParts?: FilePart[]
 		): AsyncIterable< TaskUpdate > {
 			const managedAgent = agents.get( key );
 			if ( ! managedAgent ) {
@@ -795,7 +799,13 @@ function createAgentManager(): AgentManager {
 					role: 'user',
 					kind: 'message',
 					parts: [
-						createToolResultDataPart( toolCallId, toolId, result ),
+						createToolResultDataPart(
+							toolCallId,
+							toolId,
+							result,
+							undefined,
+							fileParts
+						),
 					],
 					messageId: generateMessageId(),
 				},
