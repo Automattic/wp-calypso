@@ -231,6 +231,24 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.getByRole( 'textbox' ) ).toBeVisible();
 		} );
 
+		// The generic terms name the button, so they read correctly under it — and moving them there
+		// must not take the partner's copy, which points at what follows it.
+		it( 'puts the generic terms under the action, and a partner its own above', () => {
+			renderUpdating();
+			const generic = screen.getByRole( 'button', { name: 'Continue' } );
+			expect( generic.compareDocumentPosition( screen.getByText( /agree to our/ ) ) ).toBe(
+				Node.DOCUMENT_POSITION_FOLLOWING
+			);
+
+			renderUpdating( { customTosElement: <span>Partner terms apply.</span> } );
+			const partner = screen.getAllByText( 'Partner terms apply.' )[ 0 ];
+			expect(
+				partner.compareDocumentPosition(
+					screen.getAllByRole( 'button', { name: 'Continue' } )[ 1 ]
+				)
+			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+		} );
+
 		it( 'says it is updating, not signing up, while the request is in flight', async () => {
 			renderUpdating( {
 				onUpdateEmail: () => new Promise< void >( () => {} ),
