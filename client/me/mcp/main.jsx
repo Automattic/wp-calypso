@@ -119,7 +119,7 @@ function McpComponent( { path } ) {
 			},
 			{
 				onSuccess: () => {
-					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { path, enabled } );
 				},
 			}
 		);
