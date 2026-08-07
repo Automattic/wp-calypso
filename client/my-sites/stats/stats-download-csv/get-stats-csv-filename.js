@@ -21,13 +21,16 @@ export function getStatsCsvFileName( { siteSlug, path, period, query, includeDat
 		return [ siteSlug, path ].join( '-' ) + '.csv';
 	}
 
-	const hasCustomDateRange = Boolean( query?.start_date && query?.date );
+	const dateLocale = period.startOf.locale();
+	const customStart = query?.start_date ? moment( query.start_date, 'YYYY-MM-DD', true ) : null;
+	const customEnd = query?.date ? moment( query.date, 'YYYY-MM-DD', true ) : null;
+	const hasCustomDateRange = Boolean( customStart?.isValid() && customEnd?.isValid() );
 
 	const startDate = hasCustomDateRange
-		? moment( query.start_date, 'YYYY-MM-DD' ).format( 'L' )
+		? customStart.locale( dateLocale ).format( 'L' )
 		: period.startOf.format( 'L' );
 	const endDate = hasCustomDateRange
-		? moment( query.date, 'YYYY-MM-DD' ).format( 'L' )
+		? customEnd.locale( dateLocale ).format( 'L' )
 		: period.endOf.format( 'L' );
 
 	if ( hasCustomDateRange ) {

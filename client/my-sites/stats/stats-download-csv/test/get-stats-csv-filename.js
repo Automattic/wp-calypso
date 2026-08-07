@@ -4,9 +4,15 @@ import { getStatsCsvFileName } from '../get-stats-csv-filename';
 describe( 'getStatsCsvFileName', () => {
 	const siteSlug = 'mercantile.wordpress.org';
 	const path = 'posts';
+	let previousLocale;
 
 	beforeAll( () => {
+		previousLocale = moment.locale();
 		moment.locale( 'en' );
+	} );
+
+	afterAll( () => {
+		moment.locale( previousLocale );
 	} );
 
 	it( 'uses the selected custom date range for multi-month exports (STATS-420)', () => {
@@ -59,6 +65,24 @@ describe( 'getStatsCsvFileName', () => {
 		const query = {
 			period: 'month',
 			date: '2026-01-31',
+		};
+
+		expect( getStatsCsvFileName( { siteSlug, path, period, query } ) ).toBe(
+			'mercantile.wordpress.org-posts-month-01/01/2026-01/31/2026.csv'
+		);
+	} );
+
+	it( 'falls back to period bounds when custom range dates are invalid', () => {
+		const period = {
+			period: 'month',
+			startOf: moment( '2026-01-01' ),
+			endOf: moment( '2026-01-31' ),
+		};
+		const query = {
+			period: 'day',
+			start_date: 'not-a-date',
+			date: '2026-08-06',
+			summarize: 1,
 		};
 
 		expect( getStatsCsvFileName( { siteSlug, path, period, query } ) ).toBe(
