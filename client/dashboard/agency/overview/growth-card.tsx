@@ -153,7 +153,7 @@ function getEmergingContent( links: GrowthCardLinks ): GrowthContent {
 	};
 }
 
-function getAgencyContent( links: GrowthCardLinks, growRevenueItem?: GrowthItem ): GrowthContent {
+function getAgencyContent( links: GrowthCardLinks ): GrowthContent {
 	return {
 		title: __( 'Grow toward Pro Partner' ),
 		description: sprintf(
@@ -174,7 +174,7 @@ function getAgencyContent( links: GrowthCardLinks, growRevenueItem?: GrowthItem 
 				actionLabel: __( 'Refer' ),
 				href: links.referrals,
 			},
-			growRevenueItem ?? {
+			{
 				id: 'set-up-woopayments',
 				icon: currencyDollar,
 				title: __( 'Set up WooPayments for client stores' ),
@@ -301,16 +301,7 @@ function getContent(
 		);
 	}
 	if ( tierLevel >= 1 ) {
-		return getAgencyContent(
-			links,
-			hasWooPaymentsStores
-				? getGrowRevenueItem(
-						TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ],
-						influencedRevenue,
-						links
-				  )
-				: undefined
-		);
+		return getAgencyContent( links );
 	}
 	return getEmergingContent( links );
 }
