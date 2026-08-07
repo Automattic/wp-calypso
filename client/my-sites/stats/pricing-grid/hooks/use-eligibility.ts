@@ -20,7 +20,10 @@ export default function useIsPricingGridEligible( siteId: number | null ) {
 	// A failed purchases fetch reads as "loaded, no plan" upstream (FETCH_FAILED marks
 	// the store loaded with an empty list), which would show the grid to a site that
 	// does hold a plan. Treat the error as "plan state unknown" and fall back to the
-	// dashboard instead.
+	// dashboard instead. The field is shared across all purchases actions (user-level
+	// fetches and removals set it too, and it only clears on the next successful
+	// fetch), so this occasionally withholds the grid on an unrelated error — still
+	// fail-closed, never the reverse.
 	const purchasesError = useSelector( getPurchasesError );
 
 	// `created_at` is the wpcom shadow blog's `wp_blogs.registered` — the closest thing
