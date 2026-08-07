@@ -88,7 +88,6 @@ const sessionId = window.__agentsManagerActions.getSessionId();
 window.__agentsManagerActions.setChatOpen( true );
 window.__agentsManagerActions.setChatDocked( true );
 window.__agentsManagerActions.setChatCompactMode( true );
-// Chat stays visible; only the composer is disabled.
 window.__agentsManagerActions.setChatEnabled( false );
 window.__agentsManagerActions.setChatDesktopMediaQuery( '(min-width: 1200px)' );
 
