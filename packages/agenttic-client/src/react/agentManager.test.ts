@@ -340,6 +340,137 @@ describe( 'agentManager', () => {
 		} );
 	} );
 
+	describe( 'onSessionIdChange', () => {
+		it( 'should fire when the server assigns a session ID', async () => {
+			const onSessionIdChange = vi.fn();
+			await agentManager.createAgent( 'test-key', {
+				...testConfig,
+				onSessionIdChange,
+			} );
+			mockClient.sendMessage.mockResolvedValue( {
+				...mockTask,
+				sessionId: 'server-session',
+			} );
+
+			await agentManager.sendMessage( 'test-key', 'Hello' );
+
+			expect( onSessionIdChange ).toHaveBeenCalledWith(
+				'server-session'
+			);
+		} );
+
+		it( 'should fire when the session ID changes', async () => {
+			const onSessionIdChange = vi.fn();
+			await agentManager.createAgent( 'test-key', {
+				...testConfig,
+				sessionId: 'old-session',
+				onSessionIdChange,
+			} );
+			mockClient.sendMessage.mockResolvedValue( {
+				...mockTask,
+				sessionId: 'new-session',
+			} );
+
+			await agentManager.sendMessage( 'test-key', 'Hello' );
+
+			expect( onSessionIdChange ).toHaveBeenCalledWith( 'new-session' );
+		} );
+
+		it( 'should not fire when the session ID is unchanged', async () => {
+			const onSessionIdChange = vi.fn();
+			await agentManager.createAgent( 'test-key', {
+				...testConfig,
+				sessionId: 'same-session',
+				onSessionIdChange,
+			} );
+			mockClient.sendMessage.mockResolvedValue( {
+				...mockTask,
+				sessionId: 'same-session',
+			} );
+
+			await agentManager.sendMessage( 'test-key', 'Hello' );
+
+			expect( onSessionIdChange ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should fire once for streamed updates carrying the same session ID', async () => {
+			const onSessionIdChange = vi.fn();
+			await agentManager.createAgent( 'test-key', {
+				...testConfig,
+				onSessionIdChange,
+			} );
+			const mockUpdates: TaskUpdate[] = [
+				{
+					id: 'task-123',
+					sessionId: 'stream-session',
+					status: { state: 'working', message: mockAgentMessage },
+					final: false,
+					text: 'Hello back!',
+				},
+				{
+					id: 'task-123',
+					sessionId: 'stream-session',
+					status: { state: 'completed', message: mockAgentMessage },
+					final: true,
+					text: 'Hello back!',
+				},
+			];
+			mockClient.sendMessageStream.mockImplementation(
+				async function* () {
+					for ( const update of mockUpdates ) {
+						yield update;
+					}
+				}
+			);
+
+			// Consume the stream so the updates are processed.
+			for await ( const update of agentManager.sendMessageStream(
+				'test-key',
+				'Hello'
+			) ) {
+				void update;
+			}
+
+			expect( onSessionIdChange ).toHaveBeenCalledTimes( 1 );
+			expect( onSessionIdChange ).toHaveBeenCalledWith(
+				'stream-session'
+			);
+		} );
+
+		it( 'should not fail the send when the callback throws', async () => {
+			const onSessionIdChange = vi.fn( () => {
+				throw new Error( 'consumer bug' );
+			} );
+			await agentManager.createAgent( 'test-key', {
+				...testConfig,
+				onSessionIdChange,
+			} );
+			mockClient.sendMessage.mockResolvedValue( {
+				...mockTask,
+				sessionId: 'server-session',
+			} );
+
+			const task = await agentManager.sendMessage( 'test-key', 'Hello' );
+
+			expect( task.sessionId ).toBe( 'server-session' );
+			expect( onSessionIdChange ).toHaveBeenCalledWith(
+				'server-session'
+			);
+		} );
+
+		it( 'should not fire for app-driven updateSessionId calls', async () => {
+			const onSessionIdChange = vi.fn();
+			await agentManager.createAgent( 'test-key', {
+				...testConfig,
+				onSessionIdChange,
+			} );
+
+			agentManager.updateSessionId( 'test-key', 'app-session' );
+
+			expect( onSessionIdChange ).not.toHaveBeenCalled();
+		} );
+	} );
+
 	describe( 'sendMessageStream', () => {
 		beforeEach( async () => {
 			await agentManager.createAgent( 'test-key', testConfig );
