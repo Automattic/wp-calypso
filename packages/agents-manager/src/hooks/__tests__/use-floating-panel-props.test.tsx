@@ -22,10 +22,10 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'automattic/agents-manager' } ) );
 
-function render( isResponsiveUndocked: boolean ) {
-	return renderHook( () => useFloatingPanelProps(), {
+function render( isResponsiveUndocked: boolean, isDocked = false ) {
+	return renderHook( () => useFloatingPanelProps( isDocked ), {
 		wrapper: ( { children } ) => (
-			<ResponsiveUndockContext.Provider value={ isResponsiveUndocked }>
+			<ResponsiveUndockContext.Provider value={ { isResponsiveUndocked, undockCount: 2 } }>
 				{ children }
 			</ResponsiveUndockContext.Provider>
 		),
@@ -41,12 +41,17 @@ describe( 'useFloatingPanelProps', () => {
 		};
 	} );
 
+	it( 'keys the container by dock state and responsive undocks', () => {
+		expect( render( false, true ).result.current.containerKey ).toBe( 'embedded' );
+		expect( render( false, false ).result.current.containerKey ).toBe( 'floating-2' );
+	} );
+
 	it( 'restores the persisted values by default', () => {
 		const { result } = render( false );
 
-		expect( result.current.initialChatPosition ).toBe( 'left' );
-		expect( result.current.initialFreeDragPosition ).toEqual( { x: 10, y: -20 } );
-		expect( result.current.defaultSize ).toEqual( { width: 500, height: 600 } );
+		expect( result.current.containerProps.initialChatPosition ).toBe( 'left' );
+		expect( result.current.containerProps.initialFreeDragPosition ).toEqual( { x: 10, y: -20 } );
+		expect( result.current.containerProps.defaultSize ).toEqual( { width: 500, height: 600 } );
 	} );
 
 	it( 'falls back to undefined when nothing is persisted', () => {
@@ -57,8 +62,8 @@ describe( 'useFloatingPanelProps', () => {
 		};
 		const { result } = render( false );
 
-		expect( result.current.initialFreeDragPosition ).toBeUndefined();
-		expect( result.current.defaultSize ).toBeUndefined();
+		expect( result.current.containerProps.initialFreeDragPosition ).toBeUndefined();
+		expect( result.current.containerProps.defaultSize ).toBeUndefined();
 	} );
 
 	it( 'seeds the right corner at the default size on the responsive undock', () => {
@@ -70,16 +75,18 @@ describe( 'useFloatingPanelProps', () => {
 		};
 		const { result } = render( true );
 
-		expect( result.current.initialChatPosition ).toBe( 'right' );
-		expect( result.current.initialFreeDragPosition ).toBe( FLOATING_RIGHT_CORNER_SEED );
-		expect( result.current.defaultSize ).toBeUndefined();
+		expect( result.current.containerProps.initialChatPosition ).toBe( 'right' );
+		expect( result.current.containerProps.initialFreeDragPosition ).toBe(
+			FLOATING_RIGHT_CORNER_SEED
+		);
+		expect( result.current.containerProps.defaultSize ).toBeUndefined();
 	} );
 
 	it( 'keeps a drag/resize made while responsive-undocked across remounts', () => {
 		const { result } = render( true );
 
-		expect( result.current.initialChatPosition ).toBe( 'left' );
-		expect( result.current.initialFreeDragPosition ).toEqual( { x: 10, y: -20 } );
-		expect( result.current.defaultSize ).toEqual( { width: 500, height: 600 } );
+		expect( result.current.containerProps.initialChatPosition ).toBe( 'left' );
+		expect( result.current.containerProps.initialFreeDragPosition ).toEqual( { x: 10, y: -20 } );
+		expect( result.current.containerProps.defaultSize ).toEqual( { width: 500, height: 600 } );
 	} );
 } );

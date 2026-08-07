@@ -106,6 +106,7 @@ export default function useAgentLayoutManager( {
 	const isResponsiveUndocked = !! isDocked && ! isDesktop;
 	const isDesktopRef = useRef( isDesktop );
 	isDesktopRef.current = isDesktop;
+	const [ responsiveUndockCount, setResponsiveUndockCount ] = useState( 0 );
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
@@ -187,7 +188,15 @@ export default function useAgentLayoutManager( {
 			setIsSidebarOpen( false );
 
 			// Docked preference still on + non-desktop viewport = responsive undock.
-			onUndockRef.current( !! isDocked && ! isDesktopRef.current );
+			const isResponsiveUndock = !! isDocked && ! isDesktopRef.current;
+
+			// The bump flips the floating panels' `key`, remounting them after the
+			// `onUndock` reset so they re-seed at the right corner before paint.
+			if ( isResponsiveUndock ) {
+				setResponsiveUndockCount( ( count ) => count + 1 );
+			}
+
+			onUndockRef.current( isResponsiveUndock );
 		}
 	}, [ container, isDocked, isReady, shouldRenderSidebar ] );
 
@@ -311,6 +320,11 @@ export default function useAgentLayoutManager( {
 		setIsDocked( false );
 	}, [ container, isReady ] );
 
+	const responsiveUndock = useMemo(
+		() => ( { isResponsiveUndocked, undockCount: responsiveUndockCount } ),
+		[ isResponsiveUndocked, responsiveUndockCount ]
+	);
+
 	const createAgentPortal = useCallback(
 		( children: React.ReactNode ) => {
 			if ( ! isPortalReady || ! portalRef.current ) {
@@ -318,7 +332,7 @@ export default function useAgentLayoutManager( {
 			}
 
 			return createPortal(
-				<ResponsiveUndockContext.Provider value={ isResponsiveUndocked }>
+				<ResponsiveUndockContext.Provider value={ responsiveUndock }>
 					{ shouldRenderSidebar ? (
 						<>
 							{ children }
@@ -336,7 +350,7 @@ export default function useAgentLayoutManager( {
 				portalRef.current
 			);
 		},
-		[ handleOpenSidebar, isResponsiveUndocked, isPortalReady, shouldRenderSidebar ]
+		[ handleOpenSidebar, responsiveUndock, isPortalReady, shouldRenderSidebar ]
 	);
 
 	return {

@@ -184,7 +184,7 @@ export default function AgentChat( {
 }: Props ) {
 	const conversationViewRef = useRef< HTMLDivElement >( null );
 	const imageUploaderRef = useRef< ImageUploaderHandle >( null );
-	const floatingPanelProps = useFloatingPanelProps();
+	const { containerKey, containerProps } = useFloatingPanelProps( isDocked );
 
 	const mergedComponents = useMemo(
 		() => ( { a: CustomALink, ...markdownComponents } ),
@@ -282,9 +282,8 @@ export default function AgentChat( {
 
 	return (
 		<AgentUI.Container
-			// Remount on dock/undock so the mount-only seed props re-apply.
-			key={ isDocked ? 'embedded' : 'floating' }
-			{ ...floatingPanelProps }
+			key={ containerKey }
+			{ ...containerProps }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }

@@ -3,7 +3,7 @@
  */
 import { renderHook, act, render as renderComponent, screen } from '@testing-library/react';
 import useAgentLayoutManager from '../use-agent-layout-manager/index';
-import { useIsResponsiveUndocked } from '../use-agent-layout-manager/responsive-undock-context';
+import { useResponsiveUndock } from '../use-agent-layout-manager/responsive-undock-context';
 
 // Stub out viewport/responsive deps so `canDock` depends only on the hook's
 // own logic (viewport defaults to desktop).
@@ -217,9 +217,10 @@ describe( 'useAgentLayoutManager — split-screen class', () => {
 } );
 
 describe( 'useAgentLayoutManager — responsive undock', () => {
-	it( 'provides the flag to portal children', () => {
+	it( 'provides the flag and a per-undock counter to portal children', () => {
 		function Probe() {
-			return <span data-testid="flag">{ String( useIsResponsiveUndocked() ) }</span>;
+			const { isResponsiveUndocked, undockCount } = useResponsiveUndock();
+			return <span data-testid="flag">{ `${ isResponsiveUndocked }-${ undockCount }` }</span>;
 		}
 		function Host() {
 			const { createAgentPortal } = useAgentLayoutManager( { sidebarContainer: container } );
@@ -227,11 +228,20 @@ describe( 'useAgentLayoutManager — responsive undock', () => {
 		}
 
 		const view = renderComponent( <Host /> );
-		expect( screen.getByTestId( 'flag' ).textContent ).toBe( 'false' );
+		expect( screen.getByTestId( 'flag' ).textContent ).toBe( 'false-0' );
 
 		mockIsDesktop = false;
 		view.rerender( <Host /> );
-		expect( screen.getByTestId( 'flag' ).textContent ).toBe( 'true' );
+		expect( screen.getByTestId( 'flag' ).textContent ).toBe( 'true-1' );
+
+		mockIsDesktop = true;
+		view.rerender( <Host /> );
+		expect( screen.getByTestId( 'flag' ).textContent ).toBe( 'false-1' );
+
+		// The next responsive undock bumps the counter again.
+		mockIsDesktop = false;
+		view.rerender( <Host /> );
+		expect( screen.getByTestId( 'flag' ).textContent ).toBe( 'true-2' );
 	} );
 
 	it( 'flags only the undock forced by the desktop media query', async () => {

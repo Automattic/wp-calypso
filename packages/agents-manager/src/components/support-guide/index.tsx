@@ -36,7 +36,7 @@ export default function SupportGuide( {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const { state } = useLocation();
-	const floatingPanelProps = useFloatingPanelProps();
+	const { containerKey, containerProps } = useFloatingPanelProps( isDocked );
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
 	const closedChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
@@ -56,9 +56,8 @@ export default function SupportGuide( {
 
 	return (
 		<AgentUI.Container
-			// Remount on dock/undock so the mount-only seed props re-apply.
-			key={ isDocked ? 'embedded' : 'floating' }
-			{ ...floatingPanelProps }
+			key={ containerKey }
+			{ ...containerProps }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }

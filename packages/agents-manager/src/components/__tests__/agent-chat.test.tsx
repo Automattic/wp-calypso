@@ -215,6 +215,7 @@ jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
 } ) );
 
 import AgentChat from '../agent-chat';
+import { ResponsiveUndockContext } from '../../hooks/use-agent-layout-manager/responsive-undock-context';
 
 function getAgentChatElement( props: Partial< ComponentProps< typeof AgentChat > > = {} ) {
 	return (
@@ -540,6 +541,20 @@ describe( 'AgentChat', () => {
 		expect( mockContainerMounts ).toHaveBeenCalledTimes( 2 );
 
 		rerender( getAgentChatElement( { isDocked: true, isOpen: true } ) );
+		expect( mockContainerMounts ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'remounts the container when a responsive undock bumps the counter', () => {
+		const withUndockCount = ( undockCount: number ) => (
+			<ResponsiveUndockContext.Provider value={ { isResponsiveUndocked: true, undockCount } }>
+				{ getAgentChatElement() }
+			</ResponsiveUndockContext.Provider>
+		);
+
+		const { rerender } = render( withUndockCount( 1 ) );
+		expect( mockContainerMounts ).toHaveBeenCalledTimes( 1 );
+
+		rerender( withUndockCount( 2 ) );
 		expect( mockContainerMounts ).toHaveBeenCalledTimes( 2 );
 	} );
 } );
