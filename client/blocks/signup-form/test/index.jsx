@@ -2,22 +2,21 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import oauth2ClientsReducer from 'calypso/state/oauth2-clients/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import SignupForm from '../index';
 
-jest.mock( 'calypso/lib/oauth2-clients', () => ( {
-	...jest.requireActual( 'calypso/lib/oauth2-clients' ),
-	isGravatarOAuth2Client: () => true,
-} ) );
-
 describe( 'SignupForm', () => {
-	// Gravatar's screen is the one place terms come first, and the only caller that
-	// asks for it; every other screen takes the default.
+	// Gravatar's screen is the only caller that wants its terms first; every other
+	// screen takes the default, so nothing else would notice this being dropped.
 	it( 'keeps the Gravatar terms above the button', () => {
 		renderWithProvider( <SignupForm />, {
-			initialState: { ui: { section: { name: 'signup' } } },
-			reducers: { ui: uiReducer },
+			initialState: {
+				ui: { section: { name: 'signup' } },
+				oauth2Clients: { ui: { currentClientId: 1854 }, items: { 1854: { id: 1854 } } },
+			},
+			reducers: { ui: uiReducer, oauth2Clients: oauth2ClientsReducer },
 		} );
 
 		expect(
