@@ -4,6 +4,7 @@
 import config from '@automattic/calypso-config';
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useViewportMatch } from '@wordpress/compose';
 import { MemoryRouter } from 'react-router-dom';
 // eslint-disable-next-line no-restricted-imports
 import { applyMiddleware, createStore, type Reducer } from 'redux';
@@ -50,6 +51,10 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 jest.mock( 'calypso/lib/partner-branding', () => ( { usePartnerBranding: jest.fn() } ) );
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
+} ) );
 jest.mock( '../use-account-creation-experiment', () => jest.fn() );
 jest.mock( '../use-social-service', () => ( {
 	useSocialService: () => ( { socialServiceResponse: undefined } ),
@@ -157,6 +162,7 @@ const renderUser = ( store: ReturnType< typeof makeStore >, url = '/onboarding/u
 
 describe( 'account step email verification gate', () => {
 	beforeEach( () => {
+		( useViewportMatch as unknown as jest.Mock ).mockReturnValue( false );
 		mockUserId++;
 		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
 		mockUsePartnerBranding.mockReturnValue( {
@@ -258,6 +264,21 @@ describe( 'account step email verification gate', () => {
 		} );
 
 		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+	} );
+
+	// The compact frame pins a ToS the standard form doesn't render, and offers to start a site.
+	it( 'leaves the compact mobile frame behind on the account screen', async () => {
+		const user = userEvent.setup();
+		( useViewportMatch as unknown as jest.Mock ).mockImplementation(
+			( breakpoint: string, operator?: string ) => breakpoint === 'small' && operator === '<'
+		);
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+		expect( document.querySelector( '.step-container-v2--user-mobile' ) ).not.toBeInTheDocument();
 	} );
 
 	// It is fixed and full-screen, so it would sit over the field.

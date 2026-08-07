@@ -207,9 +207,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// Thumb-friendly compact layout for mobile signup. Woo referrers keep their
 	// permanent email-first treatment and partner-branded flows keep their own
 	// SSO providers, ToS, and heading copy — both are excluded so the compact
-	// layout never overrides them.
+	// layout never overrides them. So is the screen the gate hands back, which the
+	// form renders in its standard shape: the compact frame pins a ToS that isn't
+	// there, and its heading offers to start a site rather than fix an address.
 	const isMobileCompactLayout =
-		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig;
+		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig && ! isEditingEmail;
 
 	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
 	// Partner branding always wins: isMobileCompactLayout is already false whenever
