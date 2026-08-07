@@ -190,6 +190,7 @@ const StatsModuleUTM = ( {
 				onSelect={ setSelectedOption }
 				selectOptions={ optionLabels }
 				selected={ selectedOption }
+				siteId={ siteId }
 			/>
 		</div>
 	);
