@@ -186,6 +186,13 @@ export class FeedbackInboxPage {
 			const folderChip = this.page.locator( '.dataviews-filters__summary-chip' ).filter( {
 				hasText: /Folder is:/i,
 			} );
+
+			// If the chip text includes the folder name, we're already on the correct folder.
+			const chipText = await folderChip.textContent();
+			if ( chipText?.includes( folderName ) ) {
+				return;
+			}
+
 			const folderOption = this.page.getByRole( 'option', {
 				name: new RegExp( folderName, 'i' ),
 			} );
