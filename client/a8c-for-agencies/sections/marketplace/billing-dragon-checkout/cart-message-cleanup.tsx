@@ -1,22 +1,9 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useEffect, useRef } from 'react';
+import { getNoticeIdForMessage } from 'calypso/my-sites/checkout/cart/cart-messages';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { removeNotice } from 'calypso/state/notices/actions';
-import type { ResponseCartMessage } from '@automattic/shopping-cart';
-
-// Match CartMessages' grouped coupon ID so cleanup removes the notice that was actually created.
-function getNoticeId( message: ResponseCartMessage ): string {
-	switch ( message.code ) {
-		case 'coupon-not-found':
-		case 'coupon-removed':
-		case 'coupon-removed-invalid':
-		case 'coupon-applied':
-			return 'coupon-message';
-		default:
-			return message.code;
-	}
-}
 
 export default function CartMessageCleanup(): null {
 	const cartKey = useCartKey();
@@ -40,7 +27,7 @@ export default function CartMessageCleanup(): null {
 			...( responseCart.messages?.persistent_errors ?? [] ),
 		];
 
-		errors.forEach( ( message ) => noticeIds.current.add( getNoticeId( message ) ) );
+		errors.forEach( ( message ) => noticeIds.current.add( getNoticeIdForMessage( message ) ) );
 	}, [ responseCart.messages ] );
 
 	useEffect( () => {
