@@ -307,7 +307,9 @@ class StatsPeriodNavigation extends PureComponent {
 			return;
 		}
 
-		events.forEach( ( event ) => recordTracksEvent( event.name, event.params ) );
+		events.forEach( ( event ) =>
+			recordTracksEvent( event.name, { blog_id: this.props.siteId, ...event.params } )
+		);
 		this.props.toggleUpsellModal( this.props.siteId, statType );
 	};
 

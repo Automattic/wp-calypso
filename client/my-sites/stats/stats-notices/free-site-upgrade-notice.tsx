@@ -47,7 +47,8 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 		recordTracksEvent(
 			isOdysseyStats
 				? 'jetpack_odyssey_stats_free_site_upgrade_notice_dismissed'
-				: 'calypso_stats_free_site_upgrade_notice_dismissed'
+				: 'calypso_stats_free_site_upgrade_notice_dismissed',
+			{ blog_id: siteId }
 		);
 
 		setNoticeDismissed( true );
@@ -56,7 +57,9 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 	};
 
 	const openWPCOMPaidStatsUpsellModal = () => {
-		recordTracksEvent( 'calypso_stats_free_site_upgrade_notice_upgrade_button_clicked' );
+		recordTracksEvent( 'calypso_stats_free_site_upgrade_notice_upgrade_button_clicked', {
+			blog_id: siteId,
+		} );
 		dispatch( toggleUpsellModal( siteId, STATS_FREE_SITE_UPGRADE_NOTICE ) );
 	};
 
@@ -64,11 +67,13 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 		recordTracksEvent(
 			isOdysseyStats
 				? 'jetpack_odyssey_stats_free_site_upgrade_notice_support_button_clicked'
-				: 'calypso_stats_free_site_upgrade_notice_support_button_clicked'
+				: 'calypso_stats_free_site_upgrade_notice_support_button_clicked',
+			{ blog_id: siteId }
 		);
 
 		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
 			type: 'notice-free-site-upgrade',
+			blog_id: siteId,
 		} );
 
 		// Allow some time for the event to be recorded before redirecting.

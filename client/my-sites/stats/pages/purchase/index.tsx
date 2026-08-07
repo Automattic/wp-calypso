@@ -92,9 +92,9 @@ const StatsPurchasePage = ( {
 		}
 
 		if ( triggeredEvent ) {
-			recordTracksEvent( triggeredEvent );
+			recordTracksEvent( triggeredEvent, { blog_id: siteId } );
 		}
-	}, [ siteSlug, query, query?.from ] );
+	}, [ siteSlug, query, query?.from, siteId ] );
 
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )

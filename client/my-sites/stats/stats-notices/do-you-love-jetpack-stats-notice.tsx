@@ -50,7 +50,8 @@ const DoYouLoveJetpackStatsNotice = ( {
 		recordTracksEvent(
 			isOdysseyStats
 				? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_dismissed'
-				: 'calypso_stats_do_you_love_jetpack_stats_notice_dismissed'
+				: 'calypso_stats_do_you_love_jetpack_stats_notice_dismissed',
+			{ blog_id: siteId }
 		);
 
 		setNoticeDismissed( true );
@@ -58,7 +59,9 @@ const DoYouLoveJetpackStatsNotice = ( {
 	};
 
 	const openWPCOMPaidStatsUpsellModal = () => {
-		recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_upgrade_button_clicked' );
+		recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_upgrade_button_clicked', {
+			blog_id: siteId,
+		} );
 		dispatch( toggleUpsellModal( siteId, STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE ) );
 	};
 
@@ -66,11 +69,13 @@ const DoYouLoveJetpackStatsNotice = ( {
 		recordTracksEvent(
 			isOdysseyStats
 				? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
-				: 'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
+				: 'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked',
+			{ blog_id: siteId }
 		);
 
 		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
 			type: 'notice-love-stats',
+			blog_id: siteId,
 		} );
 
 		// Allow some time for the event to be recorded before redirecting.
