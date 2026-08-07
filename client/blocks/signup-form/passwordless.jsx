@@ -39,6 +39,9 @@ class PasswordlessSignupForm extends Component {
 		// Replaces account creation with a change to the account the caller already has, and
 		// reports its own failures.
 		onUpdateEmail: PropTypes.func,
+		// Puts the terms under the actions rather than above them, for copy that names the button
+		// rather than pointing at what follows it.
+		termsAfterActions: PropTypes.bool,
 		// Names the signup's origin to the backend, which aims the activation link on it.
 		activationEmailFrom: PropTypes.string,
 		useConnectScreenActions: PropTypes.bool,
@@ -408,7 +411,7 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.props.secondaryFooterButton ? (
+					{ this.props.secondaryFooterButton || this.props.termsAfterActions ? (
 						<>
 							{ this.formFooter() }
 							{ terms }

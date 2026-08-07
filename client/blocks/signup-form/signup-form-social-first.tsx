@@ -227,6 +227,9 @@ const SignupFormSocialFirst = ( {
 		onCreateAccountSuccess,
 		inputPlaceholder: isGravatar ? __( 'Enter your email address' ) : undefined,
 		onUpdateEmail,
+		// Partner copy points at the options below it, so only the generic terms, which name the
+		// button instead, can sit under it.
+		termsAfterActions: Boolean( onUpdateEmail ) && ! customTosElement,
 		submitButtonLoadingLabel,
 	};
 

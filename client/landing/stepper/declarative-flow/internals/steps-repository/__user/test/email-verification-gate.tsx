@@ -148,7 +148,7 @@ const renderUser = ( store: ReturnType< typeof makeStore >, url = '/onboarding/u
 	const submit = jest.fn();
 	const { unmount } = renderWithProvider(
 		<MemoryRouter initialEntries={ [ url ] }>
-			<UserStep flow="onboarding" stepName="user" navigation={ { submit } } />
+			<UserStep flow="onboarding" stepName="user" navigation={ { submit, goBack: jest.fn() } } />
 		</MemoryRouter>,
 		{ store }
 	);
@@ -224,6 +224,9 @@ describe( 'account step email verification gate', () => {
 
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
 		expect( signupFormProps.userEmail ).toBe( EMAIL );
+		// Continue already returns to the gate when the address is unchanged; a second way out
+		// reads as a choice the user doesn't have.
+		expect( screen.queryByRole( 'button', { name: /back/i } ) ).not.toBeInTheDocument();
 	} );
 
 	// Submitting it unchanged asks for nothing, so it is the way back.
@@ -267,20 +270,6 @@ describe( 'account step email verification gate', () => {
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
 
 		expect( document.querySelector( '.one-tap-auth-loader-overlay' ) ).not.toBeInTheDocument();
-	} );
-
-	// Submitting unchanged is one way back, and Back is the other — the address in the field may
-	// no longer be the one it was opened with.
-	it( 'offers a way back to the gate from the account screen', async () => {
-		const user = userEvent.setup();
-		renderUser( makeStore( false ) );
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
-		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
-
-		await user.click( screen.getByRole( 'button', { name: /back/i } ) );
-
-		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 	} );
 
 	// A stored social failure carries a log-in link, which is a way past the gate.

@@ -311,14 +311,12 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			</>
 		);
 
-		// Leaving the flow would walk past a gate the user is still owed, so while the account
-		// screen is up this returns to it instead.
-		let backButton;
-		if ( isEditingEmail ) {
-			backButton = <Step.BackButton onClick={ returnToGate } enableTracksEvent={ false } />;
-		} else if ( navigation.goBack ) {
-			backButton = <Step.BackButton onClick={ navigation.goBack } />;
-		}
+		// Leaving the flow would walk past a gate the user is still owed, and Continue is already
+		// the way back from the account screen.
+		const backButton =
+			navigation.goBack && ! isEditingEmail ? (
+				<Step.BackButton onClick={ navigation.goBack } />
+			) : undefined;
 
 		const topBar = (
 			<Step.TopBar
