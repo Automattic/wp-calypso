@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { Notices } from './use-notice-visibility-query';
 
@@ -27,10 +27,20 @@ export default function useNoticeVisibilityMutation(
 	status: Status = 'dismissed',
 	postponedFor = 0
 ) {
+	const queryClient = useQueryClient();
 	return useMutation( {
 		mutationKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
 		mutationFn: () => dismissNotice( siteId, noticeId, status, postponedFor ),
 		retry: 1,
 		retryDelay: 3 * 1000, // 3 seconds
+		// Mutation-level rather than per-call: query-core only runs mutate()'s own
+		// callbacks while the calling component is still mounted, and consumers may
+		// navigate away before the retry succeeds. Not awaited, so callers chaining
+		// on mutateAsync() don't also wait out the refetch.
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
+			} );
+		},
 	} );
 }

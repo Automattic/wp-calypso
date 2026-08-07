@@ -97,17 +97,13 @@ const PersonalPurchase = ( {
 		// Skipping is the visitor's plan decision — made on a page that shows the full
 		// paid pitch — so the pricing grid mustn't take over the dashboard afterwards,
 		// regardless of how they got here. On sites where the grid never shows this is
-		// a harmless no-op. Awaited so the gate's refetch on the destination route
-		// can't read the pre-dismissal state — but capped, so a hanging request (the
-		// mutation retries once after 3s) can't leave the button looking dead; past
-		// the cap the request stays in flight and navigation proceeds.
-		Promise.race( [
-			dismissPricingGrid().catch( () => null ),
-			new Promise( ( resolve ) => setTimeout( resolve, 2000 ) ),
-		] ).then( () => {
-			// redirect to the Traffic page
+		// a harmless no-op.
+		dismissPricingGrid();
+
+		// redirect to the Traffic page
+		setTimeout( () => {
 			page( `/stats/day/${ siteSlug }` );
-		} );
+		}, 250 );
 	};
 
 	return (

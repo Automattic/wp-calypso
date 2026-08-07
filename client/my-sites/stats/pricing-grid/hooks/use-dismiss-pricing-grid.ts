@@ -9,13 +9,12 @@ export const PRICING_GRID_REFERRER = 'jetpack-stats-pricing-grid';
 /**
  * Returns a function that records the pricing grid dismissal server-side and
  * patches the cached notices in place, so the gate sees the choice on SPA route
- * changes without waiting for a refetch. The returned promise settles with the
- * server round-trip: callers that navigate to a route where the gate refetches
- * should await it, or a slow POST can lose the race against the gate's GET and
- * re-render the grid. (The cache patch alone can't cover that — the raw notices
- * entry may be absent when the purchase page was reached directly or outlived
- * the cache's gcTime, and fabricating a full notices object would feed the
- * other notice consumers made-up server state.)
+ * changes without waiting for a refetch. The patch can't cover every path — the
+ * raw notices entry may be absent when the purchase page was reached directly —
+ * but the round-trip needn't be awaited: the mutation invalidates the notices
+ * query on success, so a gate that fetched pre-dismissal state self-corrects
+ * once the POST lands. A rejection (after the mutation's own retry) is
+ * swallowed here — a dismissal that ultimately fails just re-shows the grid.
  *
  * Only a plan decision dismisses: "Start for free" on the grid, or "I will do
  * it later" on the purchase page. Merely reaching the purchase page does not —
@@ -30,11 +29,10 @@ export default function useDismissPricingGrid( siteId: number | null ) {
 	);
 
 	return useCallback( () => {
-		const request = recordDismissal();
+		recordDismissal().catch( () => null );
 		queryClient.setQueryData(
 			[ 'stats', 'notices-visibility', 'raw', siteId ],
 			( notices: Notices | undefined ) => notices && { ...notices, pricing_grid: false }
 		);
-		return request;
 	}, [ recordDismissal, queryClient, siteId ] );
 }
