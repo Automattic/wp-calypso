@@ -6,6 +6,8 @@
 	gap: 4px;
 	padding-bottom: 4px;
 
+	// Full class name (not `&__`) so the compiled descendant selector
+	// out-specifies `.components-button` from @wordpress/components.
 	.agents-manager-chat-header__back-btn {
 		padding: 0;
 
@@ -13,10 +15,6 @@
 		&:hover:not( :disabled ) {
 			color: var( --color-foreground );
 		}
-	}
-
-	&:has( .agents-manager-chat-header__title ) {
-		justify-content: space-between;
 	}
 
 	&__title {
@@ -34,31 +32,73 @@
 
 	&__actions {
 		display: flex;
-		gap: 8px;
+		gap: 4px;
 		align-items: center;
-		padding-block: 2px;
-	}
 
-	&__more-options,
-	&__history-btn,
-	&__close-btn {
-		// Increase specificity to override .components-button svg { fill: currentColor }
-		// from @wordpress/components, which makes SVGs invisible in dark mode.
-		// Descendant selector handles DropdownMenu (class on wrapper div),
-		// compound selector handles Button (class directly on element).
-		//
-		// Exclude DropdownMenu popover items: they render inline on WP's white
-		// popover, so the white fill would hide them. Keep currentColor.
-		&.components-button,
-		.components-button:not( .components-dropdown-menu__menu-item ) {
+		// Excludes DropdownMenu popover items (styled with the menu below);
+		// `.has-icon` out-specifies wp's small icon-button sizing.
+		.components-button.has-icon:not( .components-dropdown-menu__menu-item ) {
+			height: 24px;
+			min-width: 24px;
+
+			// Override wp's `svg { fill: currentColor }`, which makes the
+			// icons invisible in dark mode.
 			svg {
 				fill: var( --color-foreground );
 			}
 		}
 	}
 
-	&__close-btn svg {
-		width: 20px;
-		height: 20px;
+	// Show the focus ring for keyboard focus only, not pointer clicks.
+	// wp draws the ring via outline or box-shadow depending on the runtime
+	// version, so clear both.
+	.components-button:focus:not( :focus-visible ) {
+		box-shadow: none;
+		outline: none;
+	}
+}
+
+// The dropdown is a flat item list — a second control set only marks its
+// first item with `has-separator`. States use light-theme colors to match
+// WP's default white popover.
+.agents-manager-chat-header__menu-popover .components-popover__content {
+	padding: 0;
+
+	.components-dropdown-menu__menu {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		padding: 8px;
+	}
+
+	// The extra `.components-button` out-specifies wp's item padding.
+	.components-button.components-dropdown-menu__menu-item {
+		padding: 6px 8px;
+		border-radius: 4px;
+
+		&:hover:not( :disabled ):not( [aria-disabled='true'] ),
+		&:focus-visible:not( :disabled ):not( [aria-disabled='true'] ) {
+			background-color: #e9e9e9;
+			// Keep wp's resting label color instead of its hover tint.
+			color: var( --wp-components-color-foreground, #1e1e1e );
+			// The background is the focus indicator; drop wp's ring.
+			outline: none;
+		}
+
+		&:disabled:focus-visible,
+		&[aria-disabled='true']:focus-visible {
+			outline: none;
+		}
+
+		// Stretch wp's divider line across the menu's 8px padding.
+		&.has-separator {
+			margin-top: 12px;
+
+			&::before {
+				top: -8px;
+				left: -8px;
+				right: -8px;
+			}
+		}
 	}
 }

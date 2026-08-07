@@ -1,13 +1,29 @@
 .agents-manager-copy-action-button {
-	svg path {
-		fill: var( --color-muted-foreground );
+	border-radius: 4px;
+
+	svg {
+		width: 28px;
+		height: 28px;
+
+		path {
+			fill: var( --color-muted-foreground );
+		}
 	}
 
-	&:hover:not( :disabled ) svg path {
-		fill: var( --color-foreground );
+	&:hover:not( :disabled ) {
+		background-color: var( --color-muted );
+
+		svg path {
+			fill: var( --color-foreground );
+		}
 	}
 
-	&:focus:not( :focus-visible ) {
-		box-shadow: none !important;
+	// Show the focus ring for keyboard focus only. `.components-button`
+	// out-specifies wp's same-specificity focus rules regardless of
+	// stylesheet load order; clearing both covers wp versions that draw
+	// the ring via outline or box-shadow.
+	&.components-button:focus:not( :focus-visible ) {
+		box-shadow: none;
+		outline: none;
 	}
 }
