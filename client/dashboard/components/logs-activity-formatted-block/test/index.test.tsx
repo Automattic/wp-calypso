@@ -245,13 +245,28 @@ describe( 'Person blocks', () => {
 		renderFormatted( {
 			type: 'person',
 			siteId: 'site_id',
+			userId: 123,
 			name: 'tony',
 			children: [ 'Tony Stark' ],
 		} );
 
 		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/people/edit/site_id/tony' );
+		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/people/edit/site_id/user/123' );
 		expect( link.querySelector( 'strong' ) ).toHaveTextContent( 'Tony Stark' );
+	} );
+
+	test( 'keeps legacy name-based people editor links', () => {
+		renderFormatted( {
+			type: 'person',
+			siteId: 'site_id',
+			name: 'tony',
+			children: [ 'Tony Stark' ],
+		} );
+
+		expect( screen.getByRole( 'link' ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/people/edit/site_id/tony'
+		);
 	} );
 
 	test.each( [
