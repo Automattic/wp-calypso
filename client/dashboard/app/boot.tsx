@@ -10,6 +10,7 @@ import wpcom from 'calypso/lib/wp';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from './auth';
 import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
+import { installDomMutationGuard } from './dom-mutation-guard';
 import Layout from './layout';
 import { omnibarEvents } from './omnibar/events';
 import limitTotalSnackbars from './snackbars/limit-total-snackbars';
@@ -34,6 +35,7 @@ function boot( config: AppConfig ) {
 	loadPreferencesHelper();
 	limitTotalSnackbars();
 	initSentry();
+	installDomMutationGuard();
 
 	const rootElement = document.getElementById( 'wpcom' );
 	if ( rootElement === null ) {
