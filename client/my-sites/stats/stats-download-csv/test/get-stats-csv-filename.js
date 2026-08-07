@@ -12,6 +12,7 @@ describe( 'getStatsCsvFileName', () => {
 	it( 'uses the selected custom date range for multi-month exports (STATS-420)', () => {
 		// Period object still reflects a single month unit around the start date,
 		// which previously produced filenames like posts-month-01/01/2026-01/31/2026.
+		// query.period is forced to 'day' for custom ranges and is omitted from the filename.
 		const period = {
 			period: 'month',
 			startOf: moment( '2026-01-01' ),
@@ -25,7 +26,7 @@ describe( 'getStatsCsvFileName', () => {
 		};
 
 		expect( getStatsCsvFileName( { siteSlug, path, period, query } ) ).toBe(
-			'mercantile.wordpress.org-posts-day-01/01/2026-08/06/2026.csv'
+			'mercantile.wordpress.org-posts-01/01/2026-08/06/2026.csv'
 		);
 	} );
 
@@ -45,7 +46,7 @@ describe( 'getStatsCsvFileName', () => {
 		};
 
 		expect( getStatsCsvFileName( { siteSlug, path, period, query } ) ).toBe(
-			'mercantile.wordpress.org-posts-day-01/01/2026-01/31/2026.csv'
+			'mercantile.wordpress.org-posts-01/01/2026-01/31/2026.csv'
 		);
 	} );
 

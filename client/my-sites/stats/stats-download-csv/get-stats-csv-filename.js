@@ -4,7 +4,9 @@ import moment from 'moment';
  * Builds the CSV export filename so it matches the data selection.
  *
  * When a custom date range query is present (`start_date` + `date`), those dates
- * and the query period are used. Otherwise the legacy period object bounds are used.
+ * are used and the period segment is omitted (query.period is forced to `day` for
+ * API reasons and is not meaningful in the filename). Otherwise the legacy period
+ * object label and bounds are used.
  * @param {Object} options
  * @param {string} options.siteSlug Site slug used as the filename prefix.
  * @param {string} options.path Stats module path segment (e.g. "posts").
@@ -20,7 +22,6 @@ export function getStatsCsvFileName( { siteSlug, path, period, query, includeDat
 	}
 
 	const hasCustomDateRange = Boolean( query?.start_date && query?.date );
-	const periodLabel = hasCustomDateRange && query.period ? query.period : period.period;
 
 	const startDate = hasCustomDateRange
 		? moment( query.start_date, 'YYYY-MM-DD' ).format( 'L' )
@@ -29,5 +30,9 @@ export function getStatsCsvFileName( { siteSlug, path, period, query, includeDat
 		? moment( query.date, 'YYYY-MM-DD' ).format( 'L' )
 		: period.endOf.format( 'L' );
 
-	return [ siteSlug, path, periodLabel, startDate, endDate ].join( '-' ) + '.csv';
+	if ( hasCustomDateRange ) {
+		return [ siteSlug, path, startDate, endDate ].join( '-' ) + '.csv';
+	}
+
+	return [ siteSlug, path, period.period, startDate, endDate ].join( '-' ) + '.csv';
 }
