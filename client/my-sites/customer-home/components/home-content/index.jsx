@@ -254,7 +254,12 @@ const HomeContent = ( {
 			isFetchingDomainDiagnostics ||
 			! emailDnsDiagnostics ||
 			emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ||
-			emailDnsDiagnostics.all_essential_email_dns_records_are_correct
+			emailDnsDiagnostics.all_essential_email_dns_records_are_correct ||
+			// When WordPress.com controls the domain's DNS and can restore the records
+			// automatically, don't alarm the user on the dashboard. The Diagnostics card
+			// in domain settings still surfaces the issue with a one-click fix.
+			( emailDnsDiagnostics.is_using_wpcom_name_servers &&
+				emailDnsDiagnostics.should_offer_automatic_fixes )
 		) {
 			return null;
 		}
