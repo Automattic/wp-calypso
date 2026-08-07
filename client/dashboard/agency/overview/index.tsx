@@ -60,6 +60,7 @@ export default function AgencyOverview() {
 				hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
 				links={ {
 					tiers: '/agency/tiers',
+					sites: '/sites',
 					referrals: '/earn/referrals',
 					woopayments: '/earn/woopayments',
 					marketplace: '/marketplace/exclusive-offers',

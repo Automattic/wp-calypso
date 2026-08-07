@@ -28,7 +28,7 @@ import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
 
 type GrowthCardLinks = Pick<
 	AgencyOverviewLinks,
-	'tiers' | 'referrals' | 'woopayments' | 'marketplace' | 'partnerDirectory'
+	'tiers' | 'sites' | 'referrals' | 'woopayments' | 'marketplace' | 'partnerDirectory'
 >;
 
 interface GrowthItem {
@@ -239,20 +239,25 @@ function getPremierContent(
 		title: __( 'Get the most from Premier' ),
 		description: __( 'You’re Premier — make sure you’re getting leads and using every benefit.' ),
 		items: [
-			...( hasPartnerDirectoryListing
-				? []
-				: [
-						{
-							id: 'partner-directory',
-							icon: globe,
-							title: __( 'Get listed in the Partner Directory' ),
-							description: __(
-								'Receive vetted leads across WordPress.com, Woo, Jetpack & Pressable'
-							),
-							actionLabel: __( 'Set up listing' ),
-							href: links.partnerDirectory,
-						},
-				  ] ),
+			hasPartnerDirectoryListing
+				? {
+						id: 'move-client-sites',
+						icon: globe,
+						title: __( 'Move more client sites to Automattic hosting' ),
+						description: __( '20% recurring on every renewal · grows IAR' ),
+						actionLabel: __( 'Review sites' ),
+						href: links.sites,
+				  }
+				: {
+						id: 'partner-directory',
+						icon: globe,
+						title: __( 'Get listed in the Partner Directory' ),
+						description: __(
+							'Receive vetted leads across WordPress.com, Woo, Jetpack & Pressable'
+						),
+						actionLabel: __( 'Set up listing' ),
+						href: links.partnerDirectory,
+				  },
 			{
 				id: 'set-up-woopayments',
 				icon: payment,

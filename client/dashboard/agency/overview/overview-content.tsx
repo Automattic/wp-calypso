@@ -18,6 +18,7 @@ const REFERRALS_CAPABILITY = 'a4a_read_referrals';
 
 export interface AgencyOverviewLinks {
 	tiers: string;
+	sites: string;
 	referrals: string;
 	woopayments: string;
 	marketplace: string;
