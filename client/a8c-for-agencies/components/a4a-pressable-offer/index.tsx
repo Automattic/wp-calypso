@@ -88,7 +88,7 @@ const PressableOffer = () => {
 						<SimpleList
 							items={ [
 								translate(
-									'{{b}}6 Months Free on Annual Plans:{{/b}} Purchase a 12-month plan and receive a 50% discount on the upfront cost.',
+									'{{b}}6 months free on annual plans:{{/b}} Purchase a 12-month plan and receive a 50% discount on the upfront cost.',
 									{
 										components: {
 											b: <b />,
@@ -96,7 +96,7 @@ const PressableOffer = () => {
 									}
 								),
 								translate(
-									'{{b}}3 Months Free on Monthly Plans:{{/b}} Choose a monthly billing cycle and receive savings equal to 3 free months (applied as a discount evenly across the first 12 invoices).',
+									'{{b}}3 months free on monthly plans:{{/b}} Choose a monthly billing cycle and receive savings equal to 3 free months (applied as a discount evenly across the first 12 invoices).',
 									{
 										components: {
 											b: <b />,
@@ -104,7 +104,7 @@ const PressableOffer = () => {
 									}
 								),
 								translate(
-									'{{b}}Automattic for Agencies Exclusive:{{/b}} As a partner, you can unlock these savings on Pressable’s full Signature Plan suite in addition to Premium plans.',
+									'{{b}}Automattic for Agencies exclusive:{{/b}} As a partner, you can unlock these savings on Pressable’s full Signature Plan suite in addition to Premium plans.',
 									{
 										components: {
 											b: <b />,
