@@ -1,4 +1,4 @@
-import { bumpStat } from '../analytics';
+import { bumpStat } from './analytics';
 
 /**
  * Page translators (Google Translate) and extensions rewrite text nodes React
