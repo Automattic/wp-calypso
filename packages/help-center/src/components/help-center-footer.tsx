@@ -92,7 +92,6 @@ export const HelpCenterContactButton = () => {
 					variant="secondary"
 					className="button help-center-contact-page__button"
 					disabled={ isResolvingHumanRoute }
-					isBusy={ isResolvingHumanRoute }
 					accessibleWhenDisabled
 					__next40pxDefaultSize
 				>
