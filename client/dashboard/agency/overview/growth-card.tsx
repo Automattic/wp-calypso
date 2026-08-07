@@ -261,7 +261,7 @@ function getPremierContent(
 				? {
 						id: 'move-client-sites',
 						icon: globe,
-						title: __( 'Move more client sites to Automattic hosting' ),
+						title: __( 'Move sites to Automattic hosting' ),
 						description: __( '20% recurring on every renewal · grows IAR' ),
 						actionLabel: __( 'Review sites' ),
 						href: links.sites,
