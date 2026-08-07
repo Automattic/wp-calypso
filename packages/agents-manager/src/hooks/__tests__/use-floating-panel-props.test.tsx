@@ -62,10 +62,24 @@ describe( 'useFloatingPanelProps', () => {
 	} );
 
 	it( 'seeds the right corner at the default size on the responsive undock', () => {
+		// The responsive-undock transition clears the session values.
+		mockAgentsManagerState = {
+			floatingPosition: 'left',
+			freeDragPosition: null,
+			floatingSize: null,
+		};
 		const { result } = render( true );
 
 		expect( result.current.initialChatPosition ).toBe( 'right' );
 		expect( result.current.initialFreeDragPosition ).toBe( FLOATING_RIGHT_CORNER_SEED );
 		expect( result.current.defaultSize ).toBeUndefined();
+	} );
+
+	it( 'keeps a drag/resize made while responsive-undocked across remounts', () => {
+		const { result } = render( true );
+
+		expect( result.current.initialChatPosition ).toBe( 'left' );
+		expect( result.current.initialFreeDragPosition ).toEqual( { x: 10, y: -20 } );
+		expect( result.current.defaultSize ).toEqual( { width: 500, height: 600 } );
 	} );
 } );

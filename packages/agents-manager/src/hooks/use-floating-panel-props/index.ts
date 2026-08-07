@@ -8,7 +8,8 @@ import type { AgentsManagerSelect } from '@automattic/data-stores';
  * Position/size wiring for a floating `AgentUI.Container`: mount-time seeds
  * and their change handlers, backed by the Agents Manager store. On the
  * responsive undock the panel opens at the right corner (where the sidebar
- * was) at the default size; otherwise the persisted values are restored.
+ * was) at the default size; a drag or resize made while undocked takes back
+ * over. Otherwise the persisted values are restored.
  */
 export default function useFloatingPanelProps() {
 	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
@@ -19,14 +20,19 @@ export default function useFloatingPanelProps() {
 	}, [] );
 	const isResponsiveUndocked = useIsResponsiveUndocked();
 
+	// The responsive-undock transition clears the session values (see
+	// `AgentDock`), so one being set means the user repositioned since —
+	// keep it across remounts (route changes, close/reopen).
+	const seedRightCorner = isResponsiveUndocked && ! freeDragPosition;
+
 	return {
-		initialChatPosition: isResponsiveUndocked ? 'right' : floatingPosition,
+		initialChatPosition: seedRightCorner ? 'right' : floatingPosition,
 		onChatPositionChange: setFloatingPosition,
-		initialFreeDragPosition: isResponsiveUndocked
+		initialFreeDragPosition: seedRightCorner
 			? FLOATING_RIGHT_CORNER_SEED
 			: freeDragPosition ?? undefined,
 		onFreeDragEnd: setFreeDragPosition,
-		defaultSize: isResponsiveUndocked ? undefined : floatingSize ?? undefined,
+		defaultSize: floatingSize ?? undefined,
 		onResizeEnd: setFloatingSize,
 	};
 }
