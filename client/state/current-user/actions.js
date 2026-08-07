@@ -63,7 +63,18 @@ export function fetchCurrentUser( { retry = false } = {} ) {
 export function redirectToLogout( postLogoutRedirectUrl ) {
 	return async ( dispatch, getState ) => {
 		const userData = getCurrentUser( getState() );
-		const logoutUrl = getLogoutUrl( userData, postLogoutRedirectUrl );
+
+		// Route the post-logout redirect through `/me/logout` so the browser's stored
+		// site data (storage, cache, cookies) is cleared via the `Clear-Site-Data`
+		// response header once the WP.com session has been invalidated. Ordering
+		// matters: the logout nonce is validated against the live session, so the
+		// data clear must run on the way back, not before. The caller's requested
+		// destination is preserved via `/me/logout`'s own `redirect_to`.
+		const clearSiteDataUrl = new URL( '/me/logout', window.location.origin );
+		if ( postLogoutRedirectUrl ) {
+			clearSiteDataUrl.searchParams.set( 'redirect_to', postLogoutRedirectUrl );
+		}
+		const logoutUrl = getLogoutUrl( userData, clearSiteDataUrl.href );
 
 		// Clear any data stored locally within the user data module or localStorage
 		disablePersistence();

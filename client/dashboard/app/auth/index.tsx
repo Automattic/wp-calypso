@@ -240,8 +240,12 @@ export async function logout( user: User ): Promise< void > {
 	//    ignoring the user's API-provided logout URL.
 	// 3. user.logout_URL: the WP.com logout URL from the /me API response.
 	// 4. Fallback: the static logout_url from config, or the dashboard root.
+	// OAuth dashboards with no static logout_url switch accounts through the
+	// OAuth flow, which manages its own redirect.
+	const isOAuthLogout = config.isEnabled( 'oauth' ) && ! configLogoutUrl;
+
 	let logoutUrl = '';
-	if ( config.isEnabled( 'oauth' ) && ! configLogoutUrl ) {
+	if ( isOAuthLogout ) {
 		const state = crypto.randomUUID();
 		sessionStorage.setItem( 'wpcom_oauth_state', state );
 
@@ -252,6 +256,17 @@ export async function logout( user: User ): Promise< void > {
 		logoutUrl = user.logout_URL;
 	} else {
 		logoutUrl = configLogoutUrl || window.location.origin;
+	}
+
+	// Point the logout URL's redirect at `/me/logout` so, after the WP.com session
+	// is invalidated, the browser lands there and clears its stored site data via
+	// the `Clear-Site-Data` header before reaching the login page. Ordering
+	// matters: the logout nonce is validated against the live session, so the
+	// clear must run on the way back, not before.
+	if ( ! isOAuthLogout ) {
+		const url = new URL( logoutUrl, window.location.origin );
+		url.searchParams.set( 'redirect_to', new URL( '/me/logout', window.location.origin ).href );
+		logoutUrl = url.href;
 	}
 
 	disablePersistQueryClient();

@@ -28,13 +28,17 @@ import {
 	CIAB_DASHBOARD_SECTION_DEFINITION,
 	CIAB_DASHBOARD_SECTION_PATHS,
 } from 'calypso/dashboard/app-ciab/section';
-import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
+import {
+	buildDotcomDashboardLink,
+	isAllowedDotcomDashboardHostname,
+} from 'calypso/dashboard/app-dotcom/routing';
 import {
 	DOTCOM_DASHBOARD_SECTION_DEFINITION,
 	DOTCOM_DASHBOARD_SECTION_PATHS,
 } from 'calypso/dashboard/app-dotcom/section';
 import { A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
+import { wpcomLink } from 'calypso/dashboard/utils/link';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
@@ -1212,6 +1216,102 @@ function wpcomPages( app ) {
 	} );
 }
 
+/**
+ * Resolve the counterpart origin's `/me/logout` URL for the cross-origin clear.
+ *
+ * `Clear-Site-Data` only clears the origin that returns it, and Calypso and the
+ * Dashboard are separate origins. Returns `null` when there is no counterpart.
+ */
+function getCounterpartLogoutUrl( req ) {
+	if ( req.hostname.endsWith( '.calypso.live' ) ) {
+		return null;
+	}
+
+	if ( isAllowedDotcomDashboardHostname( req.hostname ) ) {
+		// `wpcomLink` resolves the classic origin from the `wpcom_url` config.
+		return wpcomLink( '/me/logout?embed=1' );
+	}
+
+	if ( [ 'wordpress.com', 'calypso.localhost' ].includes( req.hostname ) ) {
+		return buildDotcomDashboardLink( '/me/logout?embed=1' );
+	}
+
+	return null;
+}
+
+/**
+ * Resolve where `/me/logout` sends the user once data is cleared.
+ *
+ * Same-origin destinations are returned as a relative path. A few external hosts
+ * are allowed too, because logout flows legitimately end off-site — `wp-login.php`
+ * already accepts these, and dropping them would strand those flows on `/log-in`.
+ * Anything else falls back to `/log-in` rather than becoming an open redirect.
+ */
+const LOGOUT_REDIRECT_HOSTS = [ 'woocommerce.com', 'jetpack.com' ];
+
+function getLogoutRedirectTo( req ) {
+	const target = req.query.redirect_to;
+	if ( typeof target !== 'string' || ! target ) {
+		return '/log-in';
+	}
+
+	const host = req.get( 'host' );
+	try {
+		const resolved = new URL( target, `https://${ host }` );
+		const destination = resolved.pathname + resolved.search + resolved.hash;
+		// Reject protocol-relative (`//host`) destinations, which would otherwise
+		// read as a relative path.
+		if ( resolved.host === host && ! destination.startsWith( '//' ) ) {
+			return destination;
+		}
+
+		if ( resolved.protocol === 'https:' && LOGOUT_REDIRECT_HOSTS.includes( resolved.host ) ) {
+			return resolved.href;
+		}
+	} catch {
+		// Fall through to the default.
+	}
+
+	return '/log-in';
+}
+
+/**
+ * Whether this request should be answered with `Clear-Site-Data`.
+ *
+ * The browser honors the header even on a response it refuses to render, so
+ * framing controls can't gate it — any site could point an `<img>` at this route
+ * and wipe a visitor's data. Check the requester instead.
+ *
+ * Fails closed for the header only: the page still renders and redirects.
+ */
+function shouldClearSiteData( req, counterpartUrl ) {
+	// Matches `clearQueryClient` — the support user's token lives in this
+	// origin's sessionStorage.
+	if ( req.context?.isSupportSession ) {
+		return false;
+	}
+
+	const dest = req.get( 'sec-fetch-dest' );
+
+	if ( ! req.query.embed ) {
+		// Rules out `<img>` and `fetch()`. A cross-site navigation still qualifies,
+		// but that is a visible page load.
+		return dest === 'document' && req.get( 'sec-fetch-mode' ) === 'navigate';
+	}
+
+	// `Origin` is not sent on GET navigations, so the referrer identifies the
+	// embedder; the top-level response pins `Referrer-Policy` so it arrives.
+	if ( dest !== 'iframe' || ! counterpartUrl ) {
+		return false;
+	}
+
+	try {
+		return new URL( req.get( 'referer' ) ).origin === new URL( counterpartUrl ).origin;
+	} catch {
+		return false;
+	}
+}
+
 export default function pages() {
 	const app = express();
 
@@ -1223,6 +1323,46 @@ export default function pages() {
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
 	app.use( middlewareUnsupportedBrowser() );
+
+	// Clears this origin via `Clear-Site-Data`, then the counterpart origin
+	// through a hidden iframe, before redirecting to the login page. Session
+	// invalidation is the client logout flow's job. Registered before section
+	// routing so it responds on both hostnames.
+	app.get( '/me/logout', ( req, res ) => {
+		const counterpartUrl = getCounterpartLogoutUrl( req );
+		const cleared = shouldClearSiteData( req, counterpartUrl );
+
+		if ( cleared ) {
+			res.set( 'Clear-Site-Data', '"storage", "cache", "cookies"' );
+		}
+
+		if ( req.query.embed ) {
+			// Only the counterpart may frame this. `frame-ancestors` rather than
+			// `X-Frame-Options`, which can't express a cross-origin allowlist —
+			// and which this route avoids only by running before the section
+			// middleware that sets it.
+			const embedder = counterpartUrl ? new URL( counterpartUrl ).origin : null;
+			res.set( 'Content-Security-Policy', `frame-ancestors ${ embedder ?? "'none'" }` );
+			res.send( renderJsx( 'logout', { embed: true, cleared, embedderOrigin: embedder } ) );
+			return;
+		}
+
+		// Never framed. `Referrer-Policy` is pinned so the iframe below carries
+		// this origin as its referrer, which is what authorizes its clear.
+		res.set( {
+			'Content-Security-Policy': "frame-ancestors 'none'",
+			'Referrer-Policy': 'strict-origin',
+		} );
+		res.send(
+			renderJsx( 'logout', {
+				// No counterpart frame during a support session — neither origin is cleared.
+				iframeSrc: req.context?.isSupportSession ? null : counterpartUrl,
+				redirectTo: getLogoutRedirectTo( req ),
+				statsEnabled: !! config( 'mc_analytics_enabled' ),
+				supportSession: !! req.context?.isSupportSession,
+			} )
+		);
+	} );
 
 	if ( ! ( isJetpackCloud() || isA8CForAgencies() || isDashboardEnv() ) ) {
 		wpcomPages( app );

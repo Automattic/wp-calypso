@@ -1376,6 +1376,188 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /me/logout', () => {
+		const CLEAR_SITE_DATA = '"storage", "cache", "cookies"';
+
+		// The route reads request headers via `req.get`, and Express derives
+		// `req.hostname` from the Host header.
+		const logoutRequest = ( { url = '/me/logout', query = {}, headers = {}, cookies } = {} ) => {
+			const allHeaders = { host: 'wordpress.com', ...headers };
+			return {
+				url,
+				query,
+				headers: allHeaders,
+				...( cookies ? { cookies } : {} ),
+				get: jest.fn( ( name ) => allHeaders[ name.toLowerCase() ] ),
+			};
+		};
+
+		const navigation = ( extra = {} ) =>
+			logoutRequest( {
+				headers: { 'sec-fetch-dest': 'document', 'sec-fetch-mode': 'navigate' },
+				...extra,
+			} );
+
+		const clearHeaderCalls = ( response ) =>
+			response.setHeader.mock.calls.filter( ( [ name ] ) => name === 'Clear-Site-Data' );
+
+		beforeEach( () => {
+			app.withRenderJSX( 'content' );
+		} );
+
+		it( 'clears site data for a top-level navigation', async () => {
+			const { response } = await app.run( { request: navigation() } );
+
+			expect( response.setHeader ).toHaveBeenCalledWith( 'Clear-Site-Data', CLEAR_SITE_DATA );
+		} );
+
+		it( 'withholds the header for non-navigation requests', async () => {
+			// An <img> or fetch() pointed at this route: the browser honors
+			// Clear-Site-Data on any response it fetches, so this is the gate that
+			// stops an unrelated site wiping a visitor's data.
+			for ( const dest of [ 'image', 'empty', 'script' ] ) {
+				const { response } = await app.run( {
+					request: logoutRequest( { headers: { 'sec-fetch-dest': dest } } ),
+				} );
+
+				expect( clearHeaderCalls( response ) ).toHaveLength( 0 );
+			}
+		} );
+
+		it( 'clears site data for an embed framed by the counterpart origin', async () => {
+			const { response } = await app.run( {
+				request: logoutRequest( {
+					query: { embed: '1' },
+					headers: {
+						'sec-fetch-dest': 'iframe',
+						referer: 'https://my.wordpress.com/me/logout',
+					},
+				} ),
+			} );
+
+			expect( response.setHeader ).toHaveBeenCalledWith( 'Clear-Site-Data', CLEAR_SITE_DATA );
+		} );
+
+		it( 'withholds the header for an embed framed by anyone else', async () => {
+			const { response } = await app.run( {
+				request: logoutRequest( {
+					query: { embed: '1' },
+					headers: { 'sec-fetch-dest': 'iframe', referer: 'https://evil.example/' },
+				} ),
+			} );
+
+			expect( clearHeaderCalls( response ) ).toHaveLength( 0 );
+		} );
+
+		it( 'withholds the header when the embed has no referrer at all', async () => {
+			const { response } = await app.run( {
+				request: logoutRequest( {
+					query: { embed: '1' },
+					headers: { 'sec-fetch-dest': 'iframe' },
+				} ),
+			} );
+
+			expect( clearHeaderCalls( response ) ).toHaveLength( 0 );
+		} );
+
+		it( 'leaves support sessions alone', async () => {
+			// The support user's token lives in this origin's sessionStorage.
+			const { response } = await app.run( {
+				request: navigation( { cookies: { support_session_id: 'abc' } } ),
+			} );
+
+			expect( clearHeaderCalls( response ) ).toHaveLength( 0 );
+		} );
+
+		it( 'leaves support sessions alone on the embed variant too', async () => {
+			const { response } = await app.run( {
+				request: logoutRequest( {
+					query: { embed: '1' },
+					cookies: { support_session_id: 'abc' },
+					headers: {
+						'sec-fetch-dest': 'iframe',
+						referer: 'https://my.wordpress.com/me/logout',
+					},
+				} ),
+			} );
+
+			expect( clearHeaderCalls( response ) ).toHaveLength( 0 );
+		} );
+
+		it( 'forbids framing the top-level page', async () => {
+			const { response } = await app.run( { request: navigation() } );
+
+			expect( response.setHeader ).toHaveBeenCalledWith(
+				'Content-Security-Policy',
+				"frame-ancestors 'none'"
+			);
+		} );
+
+		it( 'pins the referrer policy so the embed request can be authorized', async () => {
+			const { response } = await app.run( { request: navigation() } );
+
+			expect( response.setHeader ).toHaveBeenCalledWith( 'Referrer-Policy', 'strict-origin' );
+		} );
+
+		it( 'does not set X-Frame-Options', async () => {
+			// The counterpart embeds this cross-origin, which SAMEORIGIN forbids. The
+			// route escapes that header only by being registered before the section
+			// middleware that sets it — moving it below would silently break the
+			// cross-origin clear.
+			const { response } = await app.run( {
+				request: logoutRequest( {
+					query: { embed: '1' },
+					headers: {
+						'sec-fetch-dest': 'iframe',
+						referer: 'https://my.wordpress.com/me/logout',
+					},
+				} ),
+			} );
+
+			expect( response.setHeader ).not.toHaveBeenCalledWith( 'X-Frame-Options', expect.anything() );
+		} );
+
+		it( 'honors a same-origin redirect_to', async () => {
+			await app.run( { request: navigation( { query: { redirect_to: '/me/account' } } ) } );
+
+			expect( app.getMocks().renderJsx ).toHaveBeenCalledWith(
+				'logout',
+				expect.objectContaining( { redirectTo: '/me/account' } )
+			);
+		} );
+
+		it.each( [
+			[ 'woocommerce.com', 'https://woocommerce.com/start/' ],
+			[ 'jetpack.com', 'https://jetpack.com/pricing/' ],
+		] )( 'honors an allowlisted %s redirect_to', async ( _label, redirect_to ) => {
+			// Logout flows legitimately end off-site; dropping these strands them.
+			await app.run( { request: navigation( { query: { redirect_to } } ) } );
+
+			expect( app.getMocks().renderJsx ).toHaveBeenCalledWith(
+				'logout',
+				expect.objectContaining( { redirectTo: redirect_to } )
+			);
+		} );
+
+		it.each( [
+			[ 'cross-origin', 'https://evil.example/steal' ],
+			[ 'protocol-relative', '//evil.example/steal' ],
+			[ 'javascript:', 'javascript:alert(1)' ], // eslint-disable-line no-script-url
+			// Near-misses on the allowlist: substring and subdomain tricks.
+			[ 'suffixed host', 'https://woocommerce.com.evil.example/start/' ],
+			[ 'subdomain of an allowed host', 'https://evil.woocommerce.com/start/' ],
+			[ 'allowed host over http', 'http://woocommerce.com/start/' ],
+			[ 'allowed host as userinfo', 'https://woocommerce.com@evil.example/' ],
+		] )( 'falls back to /log-in for a %s redirect_to', async ( _label, redirect_to ) => {
+			await app.run( { request: navigation( { query: { redirect_to } } ) } );
+
+			expect( app.getMocks().renderJsx ).toHaveBeenCalledWith(
+				'logout',
+				expect.objectContaining( { redirectTo: '/log-in' } )
+			);
+		} );
+	} );
+
 	describe( 'Route /browsehappy', () => {
 		beforeEach( () => {
 			app.withRenderJSX( 'content' );
