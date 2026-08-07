@@ -120,7 +120,7 @@ import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 ```
 
-3. Assign test group(s). See [Feature/Test groups](./tests_ci.md#featuretest-groups)
+3. Assign test tag(s). See [Feature/Test tags](./tests_ci.md#featuretest-tags)
 
 ```typescript
 /**

@@ -5,7 +5,7 @@
 <!-- TOC -->
 
 - [Running tests on CI](#running-tests-on-ci)
-  - [Feature/Test groups](#featuretest-groups)
+  - [Feature/Test tags](#featuretest-tags)
   - [Feature branch](#feature-branch)
   - [Trunk](#trunk)
   - [Scheduled build configurations](#scheduled-build-configurations)
@@ -31,14 +31,16 @@ The following tags are used by a build configuration as of this time:
 | `@calypso-release`           | Run for every PR merged into `trunk` in this repository.                                                                          |
 | `@dashboard-pr`              | Dashboard-focused specs run for every commit to any feature branch.                                                               |
 | `@a8c-for-agencies`          | Specs for the A8C for Agencies client.                                                                                            |
+| `@authentication`            | Login, 2FA and security key specs.                                                                                                |
 | `@gutenberg`                 | Editor-focused specs run on regular cadence.                                                                                      |
 | `@i18n`                      | Specs verifying internationalized strings.                                                                                        |
 | `@p2`                        | Specs for the internal P2 system.                                                                                                 |
 | `@legal`                     | Specs for the marketing and legal team.                                                                                           |
 | `@jetpack-wpcom-integration` | Specs for testing Jetpack's deployment on WPCOM.                                                                                  |
-| `@jetpack-remote-site`       | Specs for testing a remote, connected site through Calypso. ENV var `JETPACK_TARGET` should be set to `remote-site` for this run. |
 
 The remaining tags in `lib/pw-base.ts` group specs without selecting a build of their own.
+That includes `@jetpack-remote-site`: no build greps it, so a spec carrying only that
+tag never runs on CI.
 
 ## Feature branch
 

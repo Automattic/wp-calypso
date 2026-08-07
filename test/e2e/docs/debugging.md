@@ -8,7 +8,6 @@
   - [Playwright native tools](#playwright-native-tools)
   - [Debug instance](#debug-instance)
   - [Playwright Developer Console and Gutenberg iFrame](#playwright-developer-console-and-gutenberg-iframe)
-  - [VSCode Debugger and Jest](#vscode-debugger-and-jest)
 
 <!-- /TOC -->
 
@@ -53,11 +52,3 @@ To be able to interact with elements of the iFramed editor:
 3. immediately below the top bar, click on the dropdown with text `top`
 4. select option `post-new.php`
 5. try selecting an element on page.
-
-## VSCode Debugger and Jest
-
-Jest documentation on setting up VSCode debugger can be found [here](https://jestjs.io/docs/troubleshooting#debugging-in-vs-code).
-
-If using VSCode, setting up the debugger using the attaching method is often easier (as opposed to directly launching Jest in the `launch.json`). The attach configuration gives you more control over which script you want to run.
-
-The e2e tests use the Jest binary that is installed at the root level of the repo. Put all together, if you were currently in the `e2e` directory, the command to run a single spec would look like:

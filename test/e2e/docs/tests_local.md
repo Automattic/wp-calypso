@@ -8,7 +8,7 @@
   - [Prerequisites](#prerequisites)
   - [Running tests](#running-tests)
     - [Individual spec files](#individual-spec-files)
-    - [Test Group](#test-group)
+    - [Test tag](#test-tag)
   - [Advanced techniques](#advanced-techniques)
     - [Save authentication cookies](#save-authentication-cookies)
     - [Use the mobile viewport](#use-the-mobile-viewport)
@@ -47,24 +47,23 @@ yarn workspace wp-e2e-tests build --watch
 Specify the file(s) directly:
 
 ```bash
-yarn test -- <path_to-File_1> <path_to_file_2>
+yarn playwright test <path_to_file_1> <path_to_file_2>
 ```
 
-### Test Group
+### Test tag
 
-We use [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups) to group and run suites of specs.
-
-Use the `--group` arg to provide a suite to test `Jest`. For example, to run all specs that are executed on CI for a commit:
+Specs are grouped by the tags declared on their `test.describe` block. Use Playwright's
+`--grep` to run a suite. For example, to run all specs that are executed on CI for a commit:
 
 ```bash
 # If within test/e2e directory
-yarn test --group=calypso-pr
+yarn test:pw:calypso-pr
 
 # If at repo root
-yarn workspace wp-e2e-tests test --group=calypso-pr
+yarn workspace wp-e2e-tests test:pw:calypso-pr
 ```
 
-See the [list of groups](tests_ci.md#featuretest-groups).
+See the [list of tags](tests_ci.md#featuretest-tags).
 
 ## Advanced techniques
 
@@ -92,14 +91,14 @@ By default, tests run against the `desktop` viewport size, approximately 1920x10
 To launch a spec with mobile viewport:
 
 ```bash
-yarn test:mobile -- <path_to_spec>
+yarn test:pw:mobile <path_to_spec>
 ```
 
 To use the manual method, either:
 
 a. set the viewport size to persist in the shell: `export VIEWPORT_NAME=<viewport>`
 
-b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn jest <test_path>`
+b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn playwright test <test_path>`
 
 ### Target a different environment
 
@@ -115,7 +114,7 @@ By default these tests target <http://calypso.localhost:3000>. To target a webap
 
    a. set the variable to persist in the shell: `export CALYPSO_BASE_URL=<url>`
 
-   b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn jest <test_path>`
+   b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn playwright test <test_path>`
 
 <img alt="Local Calypso Webapp" src="https://cldup.com/1WwDmUXWen.png" />
 <sup><center>Example: webapp running on localhost.</center></sup>
@@ -126,8 +125,6 @@ Refer to the [Debugging](debugging.md) page for techniques on running a test in 
 
 #### Notes on TypeScript
 
-Because Jest, the test runner, is already configured to use Babel as a transpiler before executing scripts, there is no extra pre-build command you need to execute to run TypeScript test scripts. You can simply just have Jest run all the scripts in the `specs` directory, and it will automatically take care of running both `.js` and `.ts` files.
+Playwright Test transpiles TypeScript specs itself, so there is no extra pre-build command needed to run them.
 
-Please note: [Babel does not do type-checking as it runs](https://jestjs.io/docs/getting-started#using-typescript), so if you want to do a specific type-check for your test scripts, you can use the local `tsconfig.json` by running `yarn tsc --project ./tsconfig.json`. This type-checking step is run as part of the Jest CI script, so all types will be checked before tests are run on TeamCity.
-
-The local `tsconfig.json` also adds global Jest typings, so you do **not** need to explicitly import `describe` or `it` into your TypeScript testing files—this applies only if your `tsconfig.json` is correctly referenced and up-to-date; users with custom setups should ensure their configuration includes Jest typings.
+It does not type-check as it runs. To type-check the specs, use the local `tsconfig.json`: `yarn tsc --project ./tsconfig.json`.

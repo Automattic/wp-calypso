@@ -21,7 +21,7 @@ Most non-sensitive runtime configuration comes from environment variables. All o
 For example:
 
 ```
-VIEWPORT_NAME=mobile yarn jest specs/<etc>
+VIEWPORT_NAME=mobile yarn playwright test specs/<etc>
 ```
 
 The list of supported environment variables are found in [`env-variables.ts`](../../../packages/calypso-e2e/src/env-variables.ts). This file also adds static type checking and is the most up-to-date resource. The [Environment Variables](./environment_variables.md) page may be out of date but will contain explanations of what the individual variables mean.

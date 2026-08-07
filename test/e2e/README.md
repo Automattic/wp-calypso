@@ -2,9 +2,9 @@
 
 Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Automattic/wp-calypso) client and WordPress.com.
 
-Tests were originally written using Playwright + Jest, and are now being migrated to Playwright Test.
+Tests run on Playwright Test. See the [framework documentation](docs-new/overview.md).
 
-To understand the new Playwright Test framework see the [new documentation](docs-new/overview.md).
+The pages under `docs/` predate the migration off the Jest runner; treat `docs-new/` as authoritative for anything about writing or running a spec.
 
 ## Resources
 
@@ -102,13 +102,13 @@ yarn workspace wp-e2e-tests build --watch
 12. run tests.
 
 ```bash
-yarn workspace wp-e2e-tests test -- <test_path>
+yarn workspace wp-e2e-tests playwright test <test_path>
 ```
 
 By default this should run on `http://calypso.localhost:3000`, if you wish to run on another environment such as `https://wpcalypso.wordpress.com` you can set an environment variable:
 
 ```bash
-CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests test -- <test_path>
+CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests playwright test <test_path>
 ```
 
 ## Contribute to E2E tests
