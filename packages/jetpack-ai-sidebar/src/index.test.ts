@@ -2969,7 +2969,7 @@ describe( 'toolProvider', () => {
 			const pending = updateBlock.callback( {
 				clientId: '550e8400-e29b-41d4-a716-446655440000',
 				content: 'Corrected block content.',
-				summary: 'Corrected the grammar in the selected paragraph.',
+				summary: 'Changed "stuffs" to "stuff".',
 				toolCallId: 'call-update-block',
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
@@ -2987,7 +2987,7 @@ describe( 'toolProvider', () => {
 				data: {
 					result: {
 						success: true,
-						message: 'Corrected the grammar in the selected paragraph.',
+						message: 'Changed "stuffs" to "stuff".',
 						outcome: 'updated',
 					},
 					followUpTasks: false,
@@ -3024,7 +3024,7 @@ describe( 'toolProvider', () => {
 			const pending = updateBlock.callback( {
 				clientId: '550e8400-e29b-41d4-a716-446655440000',
 				content: 'Corrected block content.',
-				summary: 'Corrected the grammar in the selected paragraph.',
+				summary: 'Changed "stuffs" to "stuff".',
 				toolCallId: 'call-update-block',
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
@@ -3060,7 +3060,7 @@ describe( 'toolProvider', () => {
 			const pending = updateBlock.callback( {
 				clientId: '550e8400-e29b-41d4-a716-446655440000',
 				content: 'original block content',
-				summary: 'Proofread the selected paragraph.',
+				summary: 'No changes were needed.',
 				toolCallId: 'call-no-block-change',
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
@@ -3082,6 +3082,20 @@ describe( 'toolProvider', () => {
 			} );
 			expect( blockUpdates ).toEqual( [] );
 			expect( checkpoint.hasCheckpoint( 'call-no-block-change' ) ).toBe( false );
+		} );
+
+		it( 'documents the completed-edit summary contract in the update-block-content schema', async () => {
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find( ( a: any ) => a.name === 'wpcom/update-block-content' );
+			const summaryDescription = updateBlock?.input_schema?.properties?.summary?.description;
+
+			expect( updateBlock ).toBeDefined();
+			expect( summaryDescription ).toContain( 'concrete completed edit' );
+			expect( summaryDescription ).toContain( 'language of the current user message' );
+			expect( summaryDescription ).toContain( 'name the exact corrections' );
+			expect( summaryDescription ).toContain( 'Changed "stuffs" to "stuff".' );
+			expect( summaryDescription ).toContain( 'no changes were needed' );
+			expect( summaryDescription ).not.toContain( 'brief user-friendly description' );
 		} );
 
 		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
