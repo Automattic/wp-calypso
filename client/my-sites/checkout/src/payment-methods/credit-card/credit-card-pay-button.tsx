@@ -188,9 +188,6 @@ export default function CreditCardPayButton( {
 	);
 }
 
-// Order the missing-field notice follows, matching the form layout.
-const CARD_ELEMENT_ORDER: CardElementType[] = [ 'cardNumber', 'cardExpiry', 'cardCvc' ];
-
 function isCreditCardFormValid(
 	store: CardStoreType,
 	paymentPartner: string,
@@ -222,6 +219,7 @@ function isCreditCardFormValid(
 
 	switch ( paymentPartner ) {
 		case 'stripe': {
+			// Declared in form order, which is the order the notice lists them in.
 			// Keep in sync with the labels rendered by credit-card-number-field,
 			// credit-card-expiry-field and credit-card-cvv-field — the notice is
 			// only useful if it names the fields the way the form does.
@@ -250,9 +248,9 @@ function isCreditCardFormValid(
 					store.setCardDataError( key, __( 'This field is required' ) )
 				);
 				missingFieldLabels.push(
-					...CARD_ELEMENT_ORDER.filter( ( key ) => incompleteFieldKeys.includes( key ) ).map(
-						( key ) => cardElementLabels[ key ]
-					)
+					...Object.entries( cardElementLabels )
+						.filter( ( [ key ] ) => incompleteFieldKeys.includes( key as CardElementType ) )
+						.map( ( [ , label ] ) => label )
 				);
 			}
 			if ( areThereErrors || ! cardholderName?.value?.length || incompleteFieldKeys.length > 0 ) {
