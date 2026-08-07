@@ -133,6 +133,48 @@ function isFinalTaskUpdate( result: {
 }
 
 /**
+ * How long to keep processing delta events before yielding to the browser for
+ * a paint. Keeps live token streaming smooth while letting an already-buffered
+ * backlog drain in a handful of frames instead of one delta per frame.
+ */
+const DELTA_PACING_FRAME_BUDGET_MS = 16;
+
+/**
+ * Upper bound on a single pacing wait. `requestAnimationFrame` can be
+ * throttled or paused entirely (hidden tabs, occluded windows, battery
+ * saver); without this cap a fully-received answer can take minutes to
+ * finish rendering.
+ */
+const DELTA_PACING_MAX_FRAME_WAIT_MS = 50;
+
+/**
+ * Wait for the next animation frame, but never longer than
+ * `DELTA_PACING_MAX_FRAME_WAIT_MS`.
+ */
+function waitForNextFrame(): Promise< void > {
+	return new Promise< void >( ( resolve ) => {
+		let settled = false;
+		// The timeout callback cannot fire before `rafId` below is
+		// initialized: timers only run after the current task completes.
+		const timeoutId = setTimeout( () => {
+			settled = true;
+			if ( typeof cancelAnimationFrame !== 'undefined' ) {
+				cancelAnimationFrame( rafId );
+			}
+			resolve();
+		}, DELTA_PACING_MAX_FRAME_WAIT_MS );
+		const rafId = requestAnimationFrame( () => {
+			if ( settled ) {
+				return;
+			}
+			settled = true;
+			clearTimeout( timeoutId );
+			resolve();
+		} );
+	} );
+}
+
+/**
  * Parse SSE stream and yield task updates
  * Handles delta messages, regular task updates, and JSON-RPC responses
  * @param stream  - The readable stream to parse
@@ -148,6 +190,8 @@ export async function* parseSSEStream(
 	let buffer = '';
 	const accumulator = new DeltaAccumulator();
 	let currentTaskId: string | null = null;
+	let hasProcessedDelta = false;
+	let lastFrameYieldTime = 0;
 
 	const processEvents = async function* (
 		events: Record< string, any >[]
@@ -155,15 +199,23 @@ export async function* parseSSEStream(
 		for ( let i = 0; i < events.length; i++ ) {
 			const event = events[ i ];
 
-			// Pace delta messages for smoother rendering (only delay between deltas, not first one)
+			// Pace delta messages for smoother rendering, but only when the
+			// processing budget since the last frame yield is exhausted —
+			// never one frame per delta, and never delaying the first delta.
 			if (
-				i > 0 &&
 				event.method === 'message/delta' &&
 				typeof requestAnimationFrame !== 'undefined'
 			) {
-				await new Promise( ( resolve ) => {
-					requestAnimationFrame( () => resolve( undefined ) );
-				} );
+				if ( ! hasProcessedDelta ) {
+					lastFrameYieldTime = Date.now();
+				} else if (
+					Date.now() - lastFrameYieldTime >=
+					DELTA_PACING_FRAME_BUDGET_MS
+				) {
+					await waitForNextFrame();
+					lastFrameYieldTime = Date.now();
+				}
+				hasProcessedDelta = true;
 			}
 
 			if ( event.error ) {
