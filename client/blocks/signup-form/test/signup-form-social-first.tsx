@@ -231,6 +231,24 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.getByRole( 'textbox' ) ).toBeVisible();
 		} );
 
+		// Terms follow the actions they describe. Partner copy is the exception, because it points
+		// at the options below it rather than naming the button.
+		it( 'puts the generic terms under the action, and a partner its own above', () => {
+			renderUpdating();
+			expect(
+				screen
+					.getByRole( 'button', { name: 'Continue' } )
+					.compareDocumentPosition( screen.getByText( /agree to our/ ) )
+			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+
+			renderUpdating( { customTosElement: <span>Partner terms apply.</span> } );
+			expect(
+				screen
+					.getAllByText( 'Partner terms apply.' )[ 0 ]
+					.compareDocumentPosition( screen.getAllByRole( 'button', { name: 'Continue' } )[ 1 ] )
+			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+		} );
+
 		it( 'says it is updating, not signing up, while the request is in flight', async () => {
 			renderUpdating( {
 				onUpdateEmail: () => new Promise< void >( () => {} ),
