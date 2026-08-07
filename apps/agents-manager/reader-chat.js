@@ -41,6 +41,9 @@ function recordTracksEvent( eventName, props ) {
 }
 
 const queryClient = new QueryClient();
+// Agenttic 0.1.80 uses --color-muted for outgoing-message bubbles and defaults
+// that token to this value in global.css. Keep this fallback aligned on upgrade.
+const AGENTTIC_DEFAULT_MUTED_COLOR = '#e9e9e9';
 
 /**
  * Reset inherited styles from the host theme. Blog themes often set a
@@ -60,9 +63,9 @@ function injectScopedReset() {
 		#jetpack-reader-chat *,
 		.agents-manager-chat,
 		.agents-manager-chat *,
-		.components-popover,
-		.components-popover * {
-			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif !important;
+		.agents-manager-chat-header__menu-popover,
+		.agents-manager-chat-header__menu-popover * {
+			font-family: var( --reader-chat-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif ) !important;
 		}
 		/*
 		 * Form controls don't inherit font-family by default — browsers
@@ -107,9 +110,9 @@ function injectScopedReset() {
 		}
 		#jetpack-reader-chat,
 		.agents-manager-chat {
-			font-size: 16px !important;
+			font-size: var( --base-font-size, 16px ) !important;
 			line-height: 1.5 !important;
-			color: #1e1e1e !important;
+			color: var( --color-foreground, #1e1e1e ) !important;
 		}
 		/*
 		 * The .agenttic widget's sizes are derived from --base-font-size. Some blog
@@ -119,6 +122,19 @@ function injectScopedReset() {
 		 */
 		.agents-manager-chat .agenttic {
 			--base-font-size: 16px !important;
+		}
+		/*
+		 * Agenttic uses --color-muted as the outgoing-message bubble fill.
+		 * Site Chat maps the selected outline color to that token, so the
+		 * bubble needs its own foreground rather than the panel foreground.
+		 */
+		.agents-manager-chat [data-slot="message"][data-role="user"] {
+			--color-foreground: var( --reader-chat-user-message-foreground, #1f1f1f );
+			--color-link: var( --reader-chat-user-message-foreground, #1f1f1f );
+		}
+		.agents-manager-chat [data-slot="message"][data-role="user"] a {
+			text-decoration: underline !important;
+			text-underline-offset: 2px !important;
 		}
 		.agents-manager-chat .components-button {
 			-webkit-appearance: none !important;
@@ -152,15 +168,25 @@ function injectScopedReset() {
 		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon:not(.components-dropdown-menu__menu-item):hover:not(:disabled):not([aria-disabled="true"]),
 		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]),
 		.agents-manager-chat .agents-manager-zoom-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]) {
-			background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;
+			background: var( --reader-chat-control-hover, var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) ) !important;
 		}
 		.agents-manager-chat-header__menu-popover {
-			--color-foreground: #1e1e1e;
-			--color-muted: rgba( 0, 0, 0, 0.06 );
-			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif !important;
+			--reader-chat-menu-background: #ffffff;
+			--reader-chat-menu-foreground: #1e1e1e;
+			--reader-chat-menu-focus: #3858e9;
+			--reader-chat-menu-hover: #f0f0f0;
 			font-size: 13px !important;
 			line-height: 1.4 !important;
-			color: var( --color-foreground, #1e1e1e ) !important;
+			color: var( --reader-chat-menu-foreground ) !important;
+			z-index: 2147483647 !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-popover__content {
+			box-sizing: border-box !important;
+			padding: 4px !important;
+			background: var( --reader-chat-menu-background ) !important;
+			border: 1px solid color-mix( in srgb, var( --reader-chat-menu-foreground ) 24%, var( --reader-chat-menu-background ) ) !important;
+			border-radius: 6px !important;
+			box-shadow: 0 4px 14px rgba( 0, 0, 0, 0.18 ) !important;
 		}
 		.agents-manager-chat-header__menu-popover .components-button,
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item {
@@ -169,7 +195,7 @@ function injectScopedReset() {
 			background: transparent !important;
 			border: 0 !important;
 			box-shadow: none !important;
-			color: var( --color-foreground, #1e1e1e ) !important;
+			color: var( --reader-chat-menu-foreground ) !important;
 			font-family: inherit !important;
 			font-size: inherit !important;
 			font-weight: 400 !important;
@@ -197,60 +223,34 @@ function injectScopedReset() {
 			max-width: none !important;
 		}
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:hover:not(:disabled):not([aria-disabled="true"]) {
-			background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;
+			background: var( --reader-chat-menu-hover ) !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:active:not(:disabled):not([aria-disabled="true"]) {
+			background: color-mix( in srgb, var( --reader-chat-menu-foreground ) 20%, var( --reader-chat-menu-background ) ) !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:focus-visible {
+			outline: 2px solid var( --reader-chat-menu-focus ) !important;
+			outline-offset: -2px !important;
 		}
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item[aria-disabled="true"],
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:disabled {
 			background: transparent !important;
-			color: var( --color-foreground, #1e1e1e ) !important;
+			color: var( --reader-chat-menu-foreground ) !important;
 			cursor: default !important;
 			opacity: 0.5 !important;
 		}
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item svg {
 			fill: currentColor !important;
 		}
-		/*
-		 * wp-components dropdown/menu fix: the popover is portalled to body
-		 * and the theme's global CSS doesn't always include the full
-		 * components-dropdown-menu rules. Items default to display: inline-block
-		 * via .components-button and end up flowing horizontally. Force them
-		 * block and give the menu a usable layout.
-		 */
-		/*
-		 * Popover itself has z-index: auto by default — sits behind the
-		 * chat container's stacking context. Force it above everything
-		 * so the menu is actually visible when opened.
-		 */
-		.components-popover {
-			z-index: 2147483647 !important;
-		}
-		.components-dropdown-menu__menu {
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu {
 			display: flex !important;
 			flex-direction: column !important;
 			min-width: 200px !important;
-			padding: 4px !important;
-			background: #ffffff !important;
-			border: 1px solid #dddddd !important;
-			border-radius: 4px !important;
-			box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
-		}
-		.components-dropdown-menu__menu-item {
-			display: flex !important;
-			align-items: center !important;
-			gap: 8px !important;
-			width: 100% !important;
-			padding: 8px 12px !important;
+			padding: 0 !important;
 			background: transparent !important;
 			border: 0 !important;
-			text-align: left !important;
-			cursor: pointer !important;
-		}
-		.components-dropdown-menu__menu-item:hover {
-			background: #f0f0f0 !important;
-		}
-		.components-dropdown-menu__menu-item[aria-disabled="true"] {
-			opacity: 0.5 !important;
-			cursor: default !important;
+			border-radius: 4px !important;
+			box-shadow: none !important;
 		}
 		/*
 		 * Move reader-chat launcher and panel to the bottom-left.
@@ -266,15 +266,212 @@ function injectScopedReset() {
 			right: auto !important;
 		}
 		.agents-manager-chat--undocked [data-slot="chat-footer"] > [data-slot="suggestions"] button {
-			background: #ffffff !important;
+			background: var( --color-background, #ffffff ) !important;
 		}
 
 	`;
 	document.head.appendChild( style );
 }
 
+/**
+ * Normalize a color before it is written into the public-page style element.
+ * @param {string} value Candidate hex color.
+ * @returns {string} A normalized hex color, or an empty string.
+ */
+function normalizeHexColor( value ) {
+	return typeof value === 'string' && /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test( value )
+		? value.toLowerCase()
+		: '';
+}
+
+/**
+ * Normalize a server-resolved theme font stack before writing it to CSS.
+ * Keep this aligned with Jetpack's get_site_font_family() and settings preview.
+ * @param {string} value Candidate font-family value.
+ * @returns {string} A safe font-family value, or an empty string.
+ */
+function normalizeFontFamily( value ) {
+	return typeof value === 'string' &&
+		value.trim() &&
+		value.trim().length <= 200 &&
+		! value.includes( '/' ) &&
+		! value.includes( '\\' ) &&
+		! /[;{}()\r\n\f]/.test( value )
+		? value.trim()
+		: '';
+}
+
+/**
+ * Return a color that meets the requested contrast against a background.
+ * Black and white are the final candidates because one of them always reaches
+ * at least 4.5:1 against an opaque color.
+ * @param {string} background      Background hex color.
+ * @param {string} preferred       Preferred foreground hex color.
+ * @param {number} minimumContrast Required contrast ratio.
+ * @returns {string} Accessible foreground color.
+ */
+function getAccessibleColor( background, preferred = '', minimumContrast = 4.5 ) {
+	const normalizedBackground = normalizeHexColor( background );
+	const normalizedPreferred = normalizeHexColor( preferred );
+	if ( ! normalizedBackground ) {
+		return normalizedPreferred;
+	}
+
+	const expandHex = ( color ) =>
+		color.length === 4
+			? `#${ color[ 1 ] }${ color[ 1 ] }${ color[ 2 ] }${ color[ 2 ] }${ color[ 3 ] }${ color[ 3 ] }`
+			: color;
+	const luminance = ( color ) => {
+		const expanded = expandHex( color );
+		const channels = [ 1, 3, 5 ].map( ( offset ) => {
+			const channel = Number.parseInt( expanded.slice( offset, offset + 2 ), 16 ) / 255;
+			return channel <= 0.04045 ? channel / 12.92 : ( ( channel + 0.055 ) / 1.055 ) ** 2.4;
+		} );
+		return 0.2126 * channels[ 0 ] + 0.7152 * channels[ 1 ] + 0.0722 * channels[ 2 ];
+	};
+	const contrast = ( first, second ) => {
+		const firstLuminance = luminance( first );
+		const secondLuminance = luminance( second );
+		return (
+			( Math.max( firstLuminance, secondLuminance ) + 0.05 ) /
+			( Math.min( firstLuminance, secondLuminance ) + 0.05 )
+		);
+	};
+
+	if (
+		normalizedPreferred &&
+		contrast( normalizedBackground, normalizedPreferred ) >= minimumContrast
+	) {
+		return normalizedPreferred;
+	}
+
+	return contrast( normalizedBackground, '#000000' ) >= contrast( normalizedBackground, '#ffffff' )
+		? '#000000'
+		: '#ffffff';
+}
+
+/**
+ * Apply Site Chat appearance settings as agenttic-ui design tokens.
+ *
+ * The chat panel is portalled to `body`, and Agenttic defines its defaults on
+ * `.agenttic`, so the allowlisted values target both elements directly. Text
+ * is derived from the background instead of owner-selected, keeping normal
+ * text at 4.5:1 contrast or better. The variables are deliberately not set on
+ * `:root`, where they would also restyle the host blog theme.
+ * @param {Object} brand The brand object from JetpackReaderChatConfig.
+ */
+function injectBrandTokens( brand ) {
+	if ( document.getElementById( 'jetpack-reader-chat-brand' ) ) {
+		return;
+	}
+
+	const accent = normalizeHexColor( brand?.accent );
+	const background = normalizeHexColor( brand?.background );
+	const outline = normalizeHexColor( brand?.outline );
+	const fontFamilies = {
+		serif: 'Georgia, Cambria, "Times New Roman", Times, serif',
+	};
+	const usesSiteFont = brand?.fontFamily === 'site';
+	const siteFontFamily = normalizeFontFamily( brand?.siteFontFamily );
+	let fontFamily = '';
+	if ( usesSiteFont ) {
+		fontFamily = siteFontFamily;
+	} else if ( Object.prototype.hasOwnProperty.call( fontFamilies, brand?.fontFamily ) ) {
+		fontFamily = fontFamilies[ brand.fontFamily ];
+	}
+	const foreground = background ? getAccessibleColor( background ) : '';
+	const mutedForeground = background
+		? getAccessibleColor( background, foreground === '#000000' ? '#595959' : '#d6d6d6' )
+		: '';
+	const menuBackground = background || '#ffffff';
+	const menuForeground = getAccessibleColor( menuBackground, '#1e1e1e' );
+	const menuFocus = getAccessibleColor( menuBackground, accent || '#3858e9', 3 );
+	const userMessageForeground = getAccessibleColor(
+		outline || AGENTTIC_DEFAULT_MUTED_COLOR,
+		'#1f1f1f'
+	);
+	const declarations = [];
+
+	if ( background || outline ) {
+		declarations.push( `--reader-chat-user-message-foreground: ${ userMessageForeground }` );
+	}
+
+	if ( accent ) {
+		declarations.push( `--color-primary: ${ accent }` );
+		declarations.push(
+			`--color-primary-foreground: ${ normalizeHexColor( brand?.accentForeground ) || '#ffffff' }`
+		);
+	}
+	if ( background ) {
+		declarations.push( `--color-background: ${ background }` );
+		declarations.push( `--color-popover: ${ background }` );
+		declarations.push(
+			`--color-popover-muted: color-mix(in srgb, ${ background } 80%, ${
+				outline || 'var(--color-muted, #e9e9e9)'
+			})`
+		);
+		declarations.push( `--color-foreground: ${ foreground }` );
+		declarations.push( `--color-muted-foreground: ${ mutedForeground }` );
+	}
+	if ( outline ) {
+		declarations.push( `--color-muted: ${ outline }` );
+	}
+	if ( fontFamily ) {
+		declarations.push( `--font-sans: ${ fontFamily }` );
+		declarations.push( `--reader-chat-font-family: ${ fontFamily }` );
+	}
+
+	if ( declarations.length === 0 && ! usesSiteFont ) {
+		return;
+	}
+
+	const tokenRule = declarations.length
+		? `
+		#jetpack-reader-chat,
+		.agents-manager-chat,
+		.agents-manager-chat .agenttic,
+		.agents-manager-sidebar-fab,
+		.agents-manager-chat-header__menu-popover {
+			${ declarations.join( ';\n\t\t\t' ) };
+		}`
+		: '';
+	const siteFontRule = usesSiteFont
+		? `
+		#jetpack-reader-chat,
+		#jetpack-reader-chat *,
+		.agents-manager-chat,
+		.agents-manager-chat *,
+		.agents-manager-chat-header__menu-popover,
+		.agents-manager-chat-header__menu-popover * {
+			font-family: ${
+				siteFontFamily ? 'var( --reader-chat-font-family, inherit )' : 'inherit'
+			} !important;
+		}`
+		: '';
+	const style = document.createElement( 'style' );
+	style.id = 'jetpack-reader-chat-brand';
+	style.textContent = `
+		${ tokenRule }
+		${ siteFontRule }
+		.agents-manager-chat-header__menu-popover {
+			--reader-chat-menu-background: ${ menuBackground };
+			--reader-chat-menu-foreground: ${ menuForeground };
+			--reader-chat-menu-focus: ${ menuFocus };
+			--reader-chat-menu-hover: color-mix( in srgb, ${ menuForeground } 14%, ${ menuBackground } );
+		}
+		.agents-manager-chat {
+			--reader-chat-control-hover: color-mix( in srgb, ${ menuForeground } 14%, ${ menuBackground } );
+		}
+		.agents-manager-brand-logo {
+			object-fit: contain;
+		}
+	`;
+	document.head.appendChild( style );
+}
+
 // Read config injected by PHP.
 const readerConfig = window.JetpackReaderChatConfig || {};
+const readerBrand = readerConfig.brand || {};
 const readerAgentId = readerConfig.agentId || 'reader-chat';
 const readerSiteId = normalizeReaderSiteId( readerConfig.siteId );
 const readerCurrentPost = getReaderCurrentPost( readerConfig );
@@ -291,6 +488,13 @@ window.agentsManagerData.emptyViewHeading = getReaderEmptyViewHeading( readerCon
 window.agentsManagerData.currentPost = readerCurrentPost;
 window.agentsManagerData.siteName = readerConfig.siteName || '';
 window.agentsManagerData.siteUrl = readerConfig.siteUrl || '';
+
+// Site Chat brand kit. Jetpack omits keys that resolve to nothing, and an
+// older cached copy of this bundle may run against PHP that sends no brand at
+// all — so both sides degrade to the unbranded look rather than throwing.
+window.agentsManagerData.brandName = readerBrand.name || '';
+window.agentsManagerData.brandLogoUrl = readerBrand.logoUrl || '';
+window.agentsManagerData.emptyViewHelp = readerBrand.help || '';
 
 /**
  * Build fallback suggested prompts based on the current page context.
@@ -392,6 +596,12 @@ function getReaderCurrentPost( config ) {
 }
 
 function getReaderEmptyViewHeading( config ) {
+	// An owner-set greeting wins; otherwise stay contextual to the page.
+	const greeting = config?.brand?.greeting;
+	if ( greeting ) {
+		return greeting;
+	}
+
 	return getReaderCurrentPost( config )
 		? 'Ask me anything about this post.'
 		: 'Ask me anything about this blog.';
@@ -896,7 +1106,6 @@ function setupFollowupChips() {
  * Checks current state first (covers a relaunch where the panel is
  * already open), then watches the shared store for isOpen turning
  * true. Fires at most once.
- *
  * @param {Function} onFirstOpen    Callback to run on the first open.
  * @param {Object}   deps           Store accessors, injectable for tests.
  * @param {Function} deps.select    @wordpress/data select.
@@ -1109,6 +1318,7 @@ function ReaderChatApp() {
 const container = document.getElementById( 'jetpack-reader-chat' );
 if ( container ) {
 	injectScopedReset();
+	injectBrandTokens( readerBrand );
 	setupFollowupChips();
 	setupTracksEvents();
 	setupCollapsedLauncherPointerFallback();
@@ -1150,6 +1360,8 @@ export {
 	normalizeReaderSiteId,
 	decodeHtmlEntities,
 	getReaderEmptyViewHeading,
+	getAccessibleColor,
+	injectBrandTokens,
 	getReaderClientContext,
 	normalizeSuggestions,
 	parseSuggestionsResponse,
