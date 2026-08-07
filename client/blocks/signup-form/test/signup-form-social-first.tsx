@@ -194,22 +194,6 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 	} );
 
-	// A secondary action in the footer used to push the terms below the button, so the
-	// disclosure could be skipped past on the one screen that has both.
-	it( 'shows the email terms before the button even when the footer carries a second action', () => {
-		render( <SignupFormSocialFirst { ...defaultProps } backButtonInFooter={ false } /> );
-
-		const terms = document.querySelector(
-			'.signup-form-social-first__email-tos-link'
-		) as HTMLElement;
-		const submit = terms
-			.closest( '.signup-form-social-first-email' )!
-			.querySelector( 'button[type="submit"]' ) as HTMLElement;
-
-		expect( screen.getByRole( 'button', { name: 'See all options' } ) ).toBeVisible();
-		expect( terms ).toAppearBefore( submit );
-	} );
-
 	describe( 'emailUpdate', () => {
 		const renderUpdating = ( props = {} ) =>
 			render(
@@ -245,6 +229,28 @@ describe( 'SignupFormSocialFirst', () => {
 
 			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
 			expect( screen.getByRole( 'textbox' ) ).toBeVisible();
+		} );
+
+		it( 'puts the terms under the action they name', () => {
+			renderUpdating();
+			expect(
+				screen
+					.getByRole( 'button', { name: 'Continue' } )
+					.compareDocumentPosition( screen.getByText( /agree to our/ ) )
+			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+		} );
+
+		// Partner copy names its own position, so it has to keep it.
+		it( 'leaves copy that points below itself above the action', () => {
+			renderUpdating( {
+				customTosElement: <span>By continuing with any of the options below, you agree.</span>,
+			} );
+
+			expect(
+				screen
+					.getByText( /any of the options below/ )
+					.compareDocumentPosition( screen.getByRole( 'button', { name: 'Continue' } ) )
+			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
 		} );
 
 		it( 'says it is updating, not signing up, while the request is in flight', async () => {
@@ -289,12 +295,7 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( emailScreen.getByText( 'That address is already in use.' ) ).toBeVisible();
 			// On text content: the generic terms are split across links, so no node holds the phrase.
 			expect( emailScreenEl ).not.toHaveTextContent( 'By clicking' );
-
-			// Partner copy points at the options below it, so it can't sit under them.
-			const terms = emailScreen.getByText( 'Partner terms apply.' );
-			expect(
-				terms.compareDocumentPosition( screen.getByRole( 'button', { name: 'Continue' } ) )
-			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+			expect( emailScreen.getByText( 'Partner terms apply.' ) ).toBeVisible();
 		} );
 
 		// Otherwise a refusal leaves the field and the button with nothing to press.

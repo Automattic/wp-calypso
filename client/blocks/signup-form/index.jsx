@@ -760,6 +760,7 @@ class SignupForm extends Component {
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
+						termsBeforeActions
 						disableTosText={ this.props.disableTosText }
 						submitForm={ this.handlePasswordlessSubmit }
 						logInUrl={ logInUrl }
