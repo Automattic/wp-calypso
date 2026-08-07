@@ -178,18 +178,37 @@ describe( 'Credit card payment method', () => {
 
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
 
-		// Partially fill the form, leaving security code field empty
+		// Fill in the cardholder name only. Typing into the Stripe elements does
+		// not mark them complete here (they never really run in this test, so
+		// only CompleteCreditCardFields can flip that), so all three stay empty.
 		await user.type( screen.getAllByLabelText( /Cardholder name/i )[ 1 ], customerName );
-		await user.type( screen.getByLabelText( /Card number/i ), cardNumber );
-		await user.type( screen.getByLabelText( /Expiry date/i ), cardExpiry );
 
 		// Try to submit the form
 		await user.click( await screen.findByText( activePayButtonText ) );
 
-		// Verify the error message overlay appears and names the empty field
+		// Verify the error message overlay appears and names every empty field,
+		// in the order the fields appear in the form.
 		const element = await screen.findByText(
-			/Please fill out the required fields:.*Security code/i
+			'Please fill out the required fields: Card number, Expiry date, and Security code'
 		);
 		expect( element ).not.toBeFalsy();
+	} );
+
+	it( 'names the cardholder name in the error message when only that field is empty', async () => {
+		const user = userEvent.setup();
+		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		render( <TestWrapper paymentProcessors={ { card: processorFunction } }></TestWrapper> );
+
+		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
+
+		// Complete the card fields but leave the cardholder name empty.
+		await user.click( await screen.findByText( 'Mark credit fields as complete' ) );
+		await user.click( await screen.findByText( activePayButtonText ) );
+
+		const element = await screen.findByText(
+			'Please fill out the required fields: Cardholder name'
+		);
+		expect( element ).not.toBeFalsy();
+		expect( processorFunction ).not.toHaveBeenCalled();
 	} );
 } );

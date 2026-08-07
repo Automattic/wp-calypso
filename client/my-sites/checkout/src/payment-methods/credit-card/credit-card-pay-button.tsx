@@ -11,6 +11,7 @@ import { useState, useEffect } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -200,6 +201,9 @@ export default function CreditCardPayButton( {
 	);
 }
 
+// Order the missing-field notice follows, matching the form layout.
+const CARD_ELEMENT_ORDER: CardElementType[] = [ 'cardNumber', 'cardExpiry', 'cardCvc' ];
+
 function isCreditCardFormValid(
 	store: CardStoreType,
 	paymentPartner: string,
@@ -208,11 +212,9 @@ function isCreditCardFormValid(
 ) {
 	debug( 'validating credit card fields for partner', paymentPartner );
 
-	// Names the fields the notice is complaining about. A zero-total cart still
-	// collects card details so a recurring subscription has a payment method
-	// for renewal, which is surprising enough on its own — leaving the reason
-	// unnamed on top of that gives the shopper nothing to act on.
-	function setFieldsError( fieldLabels: string[] ) {
+	// Builds the "fill out these fields" notice, naming each missing field.
+	// Falls back to a generic message when no labels are available.
+	function setFieldsError( fieldLabels: string[] = [] ) {
 		if ( ! fieldLabels.length ) {
 			setDisplayFieldsError(
 				__( 'Something seems to be missing — please fill out all the required fields.' )
@@ -223,13 +225,19 @@ function isCreditCardFormValid(
 			sprintf(
 				/* translators: %s is a comma-separated list of payment form field names, e.g. "Card number, Security code" */
 				__( 'Please fill out the required fields: %s' ),
-				fieldLabels.join( ', ' )
+				new Intl.ListFormat( i18n.getLocaleSlug() ?? 'en', {
+					style: 'long',
+					type: 'conjunction',
+				} ).format( fieldLabels )
 			)
 		);
 	}
 
 	switch ( paymentPartner ) {
 		case 'stripe': {
+			// Keep in sync with the labels rendered by credit-card-number-field,
+			// credit-card-expiry-field and credit-card-cvv-field — the notice is
+			// only useful if it names the fields the way the form does.
 			const cardElementLabels: Record< CardElementType, string > = {
 				cardNumber: __( 'Card number' ),
 				cardExpiry: __( 'Expiry date' ),
@@ -254,16 +262,13 @@ function isCreditCardFormValid(
 				incompleteFieldKeys.map( ( key ) =>
 					store.dispatch( actions.setCardDataError( key, __( 'This field is required' ) ) )
 				);
-				// List the labels in the order the fields appear in the form, not
-				// the order the store happens to report them in.
 				missingFieldLabels.push(
-					...( Object.keys( cardElementLabels ) as CardElementType[] )
-						.filter( ( key ) => incompleteFieldKeys.includes( key ) )
-						.map( ( key ) => cardElementLabels[ key ] )
+					...CARD_ELEMENT_ORDER.filter( ( key ) => incompleteFieldKeys.includes( key ) ).map(
+						( key ) => cardElementLabels[ key ]
+					)
 				);
 			}
 			if ( areThereErrors || ! cardholderName?.value?.length || incompleteFieldKeys.length > 0 ) {
-				// One notice for the whole form, rather than one per failing group.
 				setFieldsError( missingFieldLabels );
 				debug( 'card info is not valid', { errors, incompleteFieldKeys, cardholderName } );
 
@@ -303,11 +308,12 @@ function isCreditCardFormValid(
 
 			if ( ! isValid ) {
 				// Unlike the stripe branch above, nothing here previously
-				// surfaced an error notice or scrolled the invalid fields
-				// into view, so the button appeared to do nothing. requiredFields
-				// holds raw keys like 'street-number' rather than translated
-				// labels, so this keeps the generic notice.
-				setFieldsError( [] );
+				// surfaced an error notice, so the button appeared to do
+				// nothing. requiredFields holds raw keys like 'street-number';
+				// their labels live in country-specific-payment-fields.tsx under
+				// a different i18n system, so naming them is left for a follow-up
+				// and this shows the generic notice.
+				setFieldsError();
 			}
 
 			debug( 'ebanx validation - cardholder name and contact details', {
