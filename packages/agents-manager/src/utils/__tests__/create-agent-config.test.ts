@@ -15,6 +15,7 @@ import { createAgentConfig } from '../create-agent-config';
 import { canConnectToZendesk } from '../can-connect-to-zendesk';
 import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
+import { getSessionId } from '../agent-session';
 
 const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
 const mockCreateCalypsoAuthProvider = createCalypsoAuthProvider as jest.Mock;
@@ -57,6 +58,18 @@ describe( 'createAgentConfig', () => {
 		expect( context ).not.toHaveProperty( 'currentPost' );
 		expect( context ).not.toHaveProperty( 'siteName' );
 		expect( context ).not.toHaveProperty( 'siteUrl' );
+	} );
+
+	it( 'saves server-assigned session IDs as the tab session via onSessionIdChange', async () => {
+		sessionStorage.clear();
+
+		const config = await createAgentConfig( {
+			sessionId: '',
+			agentId: 'wp-orchestrator',
+		} );
+		config.onSessionIdChange?.( 'server-session-id' );
+
+		expect( getSessionId( 'wp-orchestrator' ) ).toBe( 'server-session-id' );
 	} );
 
 	it( 'adds reader page context for Reader Chat agents', async () => {

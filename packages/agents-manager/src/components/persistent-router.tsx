@@ -7,7 +7,8 @@ interface Props {
 }
 
 /**
- * A router like MemoryRouter, but it persists the history to the server using user preferences.
+ * A router like MemoryRouter, but it persists the history to `sessionStorage`,
+ * so each tab restores its own routes.
  */
 export const PersistentRouter = ( { children, siteKey }: Props ) => {
 	const { history, state } = usePersistedHistory( siteKey );

@@ -17,9 +17,9 @@ import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
+import { saveSessionId } from '../../utils/agent-session';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
-import { persistLastActivity } from '../../utils/persist-last-activity';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -80,7 +80,7 @@ export default function AgentDock( {
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { siteKey, agentConfig } = useAgentsManagerContext();
+	const { agentConfig } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -258,9 +258,12 @@ export default function AgentDock( {
 		} else {
 			const sessionId = conversation.session_id || '';
 
-			persistLastActivity( siteKey );
+			if ( sessionId ) {
+				saveSessionId( sessionId, agentConfig?.agentId );
+			}
+
 			handleAbort();
-			navigate( '/chat', { state: { sessionId } } );
+			navigate( '/chat' );
 		}
 	};
 

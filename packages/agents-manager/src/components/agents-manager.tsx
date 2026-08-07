@@ -13,7 +13,7 @@ import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import { useOpenChatUrlParam } from '../hooks/use-open-chat-url-param';
 import { AGENTS_MANAGER_STORE } from '../stores';
-import { clearSessionId, getOrCreateSessionId } from '../utils/agent-session';
+import { clearSessionId, getOrCreateSessionId, getSessionId } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
@@ -59,8 +59,8 @@ export default function AgentsManager( {
 	zendeskSmoochIntegrationKey,
 	zendeskTicketProductFieldValue,
 }: AgentsManagerProps ): JSX.Element | null {
-	// Wait for the store to load before rendering PersistentRouter
-	// This ensures router history is restored from persisted state
+	// Wait for the store to load so persisted UI state (open/docked/minimized)
+	// is restored before the dock first renders.
 	const { hasLoaded: isStoreReady } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -98,6 +98,23 @@ export default function AgentsManager( {
 	);
 }
 
+/**
+ * Resolve the session to resume from this tab's stored session — the single
+ * source of truth; conversation switches save it before navigating here.
+ * Reader chat pre-generates one (blog frontends reload on every navigation);
+ * other agents get theirs from the server via `onSessionIdChange`.
+ * Empty means a new chat.
+ */
+function resolveTabSessionId( isNewChat: boolean, agentId?: string ): string {
+	if ( isNewChat ) {
+		return '';
+	}
+	if ( isReaderChatAgent( agentId ) ) {
+		return getOrCreateSessionId( agentId );
+	}
+	return getSessionId( agentId );
+}
+
 // Separate component that uses hooks within `PersistentRouter` context
 function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Element | null {
 	const { site, sectionName, currentRoute, agentConfig, setAgentConfig } =
@@ -113,18 +130,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
 
-	// Restore the session ID. Priority:
-	//   1. Router state (calypso navigation carries sessionId on resume).
-	//   2. localStorage (reader-chat on blog frontends, where there's no
-	//      router state on fresh page loads). We persist client-side so
-	//      the same session_id flows with every request.
-	//   3. Generate a new client-side UUID, persist, and use it.
-	// This is more robust than relying on agenttic-client's own sessionIdStorageKey
-	// write — that fires after the server returns a sessionId, which can be
-	// skipped if the response shape doesn't match what the client parses.
-	const sessionId =
-		( ! isNewChat && state?.sessionId ) ||
-		( isReaderChatAgent( agentId ) ? getOrCreateSessionId( isNewChat, agentId ) : '' );
+	const sessionId = resolveTabSessionId( isNewChat, agentId );
 
 	useEffect( () => {
 		// Wait for the agent config to stabilize before initializing.
@@ -142,7 +148,6 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 					agentManager.removeAgent( agentId );
 				}
 
-				// Clear stored session ID
 				clearSessionId( agentId );
 				// Clear route state to prevent repeated new chat initialization
 				navigate( '/chat', { replace: true } );

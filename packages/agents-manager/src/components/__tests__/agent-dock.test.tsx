@@ -12,7 +12,7 @@ const mockSetIsDocked = jest.fn();
 const mockSetIsMinimized = jest.fn();
 const mockSetIsSplitScreen = jest.fn();
 const mockUseAgentLayoutManager = jest.fn();
-const mockResumeActiveChat = jest.fn();
+const mockResumeChat = jest.fn();
 const mockCloseSidebar = jest.fn();
 let mockLayoutIsDocked = false;
 // Overrides the layout mock's `canDock` (which otherwise follows
@@ -87,9 +87,6 @@ jest.mock( '../../hooks/use-should-use-unified-agent', () => ( {
 	useShouldUseUnifiedAgent: () => mockShouldUseUnifiedAgent,
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
-jest.mock( '../../utils/persist-last-activity', () => ( {
-	persistLastActivity: jest.fn(),
-} ) );
 jest.mock( '../agent-dock/style.scss', () => ( {} ) );
 jest.mock( '../editor-ai-chat-button', () => ( {
 	__esModule: true,
@@ -147,9 +144,11 @@ jest.mock( '../agent-history', () => ( {
 	__esModule: true,
 	default: ( {
 		onExpand,
+		onSelectConversation,
 		chatHeaderOptions,
 	}: {
 		onExpand: () => void;
+		onSelectConversation: ( conversation: { session_id: string } ) => void;
 		chatHeaderOptions: { title: string; onClick?: () => void; isDisabled?: boolean }[][];
 	} ) => (
 		<div data-testid="agent-history">
@@ -160,6 +159,9 @@ jest.mock( '../agent-history', () => ( {
 				</button>
 			) ) }
 			<button onClick={ onExpand }>Expand history</button>
+			<button onClick={ () => onSelectConversation( { session_id: 'conversation-session-id' } ) }>
+				Select conversation
+			</button>
 		</div>
 	),
 } ) );
@@ -178,6 +180,7 @@ jest.mock( '../support-guides', () => ( {
 } ) );
 
 import AgentDock from '../agent-dock';
+import { getSessionId } from '../../utils/agent-session';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 
 const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.Mock;
@@ -208,8 +211,8 @@ function useWpAdminAgent() {
 		agentConfig: {
 			agentId: 'wp-orchestrator',
 		},
-		getActiveSessionId: () => 'session-123',
-		resumeActiveChat: mockResumeActiveChat,
+		getTabSessionId: () => 'session-123',
+		resumeChat: mockResumeChat,
 		zendeskConversationTags: [],
 	} as unknown as Partial< AgentsManagerContextType >;
 }
@@ -229,8 +232,8 @@ describe( 'AgentDock', () => {
 			agentConfig: {
 				agentId: 'reader-chat',
 			},
-			getActiveSessionId: () => 'session-123',
-			resumeActiveChat: mockResumeActiveChat,
+			getTabSessionId: () => 'session-123',
+			resumeChat: mockResumeChat,
 			zendeskConversationTags: [],
 		} as unknown as Partial< AgentsManagerContextType >;
 	} );
@@ -292,7 +295,7 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Expand history' ) );
 
 		// Expanding restores the last view instead of jumping back to the chat.
-		expect( mockResumeActiveChat ).not.toHaveBeenCalled();
+		expect( mockResumeChat ).not.toHaveBeenCalled();
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
 	} );
 
@@ -317,7 +320,7 @@ describe( 'AgentDock', () => {
 		renderAgentDock( '/support-guides' );
 		fireEvent.click( screen.getByText( 'Expand guides' ) );
 
-		expect( mockResumeActiveChat ).not.toHaveBeenCalled();
+		expect( mockResumeChat ).not.toHaveBeenCalled();
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
 	} );
 
@@ -531,6 +534,18 @@ describe( 'AgentDock', () => {
 			}
 		);
 		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/history' );
+	} );
+
+	it( 'selecting a past conversation saves it as the tab session and opens the chat', () => {
+		sessionStorage.clear();
+		useWpAdminAgent();
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'View history' ) );
+		fireEvent.click( screen.getByText( 'Select conversation' ) );
+
+		expect( getSessionId() ).toBe( 'conversation-session-id' );
+		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/chat' );
 	} );
 
 	it( 'opens the guidelines page from More Options', () => {

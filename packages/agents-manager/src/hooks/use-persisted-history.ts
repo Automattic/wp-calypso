@@ -1,37 +1,46 @@
-import {
-	AgentsManagerSelect,
-	PerSiteRouterHistory,
-	SingleRouterHistory,
-} from '@automattic/data-stores';
-import { select as storeSelect, useSelect } from '@wordpress/data';
 import { useState, useLayoutEffect, useCallback, useMemo } from '@wordpress/element';
 import { Action, Location } from 'history';
-import { AGENTS_MANAGER_STORE, persistAgentsManagerState } from '../stores';
 import { generateUUID } from '../utils/generate-uuid';
 
-const DEFAULT_INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
+// Navigation history persists to `sessionStorage`, keyed per site, so each
+// tab restores its own routes across page loads.
+const STORAGE_KEY = 'agents-manager-router-history';
 
-/**
- * Get the inactivity timeout in milliseconds.
- * Supports a `?inactivity_timeout` query parameter override for testing (value in ms).
- */
-function getInactivityTimeoutMs(): number {
-	const param = new URLSearchParams( window.location.search ).get( 'inactivity_timeout' );
-	const parsed = param ? Number( param ) : NaN;
-	return parsed > 0 ? parsed : DEFAULT_INACTIVITY_TIMEOUT_MS;
+interface StoredHistory {
+	entries: Location[];
+	index: number;
 }
 
-export interface HistoryEvent {
+function readStoredHistory( siteKey: string ): StoredHistory | undefined {
+	try {
+		const map = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
+		return map[ siteKey ];
+	} catch {
+		return undefined;
+	}
+}
+
+function writeStoredHistory( siteKey: string, history: StoredHistory ): void {
+	try {
+		const map = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
+		map[ siteKey ] = history;
+		sessionStorage.setItem( STORAGE_KEY, JSON.stringify( map ) );
+	} catch {
+		// ignore
+	}
+}
+
+interface HistoryEvent {
 	action: Action;
 	location: Location;
 }
 
-type PersistCallback = ( historyData: SingleRouterHistory ) => void;
+type PersistCallback = ( historyData: StoredHistory ) => void;
 
 /**
  * This is a custom implementation of the MemoryHistory class from the history package.
  * It is used to persist the navigation history of the agents manager.
- * It persists the history to the server via a callback provided by the hook.
+ * It persists the history via a callback provided by the hook.
  */
 class MemoryHistory {
 	private entries: Location[] = [];
@@ -50,8 +59,6 @@ class MemoryHistory {
 		this.push = this.push.bind( this );
 		this.replace = this.replace.bind( this );
 		this.go = this.go.bind( this );
-		this.goBack = this.goBack.bind( this );
-		this.goForward = this.goForward.bind( this );
 		this.listen = this.listen.bind( this );
 		this.createLocation = this.createLocation.bind( this );
 	}
@@ -107,14 +114,6 @@ class MemoryHistory {
 		}
 	}
 
-	goBack() {
-		this.go( -1 );
-	}
-
-	goForward() {
-		this.go( 1 );
-	}
-
 	listen( listener: ( event: HistoryEvent ) => void ) {
 		this.listeners.push( listener );
 		return () => {
@@ -145,48 +144,14 @@ class MemoryHistory {
 	}
 }
 
-/**
- * Read the full router history map from the store (synchronous, outside React).
- */
-function getFullRouterHistory(): PerSiteRouterHistory | undefined {
-	return (
-		storeSelect( AGENTS_MANAGER_STORE ) as unknown as AgentsManagerSelect
-	 ).getAgentsManagerState().routerHistory;
-}
-
 export const usePersistedHistory = ( siteKey: string ) => {
-	const { persistedHistory, lastActive } = useSelect(
-		( select ) => {
-			const store = select( AGENTS_MANAGER_STORE ) as unknown as AgentsManagerSelect;
-			return {
-				persistedHistory: store.getRouterHistory( siteKey ),
-				lastActive: store.getLastActivity( siteKey ),
-			};
-		},
-		[ siteKey ]
-	);
+	// Read once per site; local navigations persist without re-triggering,
+	// so `useLocation().state` (e.g. `conversationId`) is correct immediately.
+	const persistedHistory = useMemo( () => readStoredHistory( siteKey ), [ siteKey ] );
 
-	// Skip restoring history if the site has been inactive beyond the timeout.
-	const isStale = lastActive ? Date.now() - lastActive > getInactivityTimeoutMs() : false;
-	const activeHistory = useMemo( () => {
-		// Staleness only blocks restoration of an old chat. Other routes
-		// (/history, /post, etc.) restore normally even when stale.
-		const lastPath = persistedHistory?.entries?.[ persistedHistory.index ]?.pathname;
-		if ( isStale && lastPath === '/chat' ) {
-			// eslint-disable-next-line no-console
-			console.log( `[AgentsManager] Active chat expired for site key "${ siteKey }"` );
-			return;
-		}
-		return persistedHistory;
-	}, [ isStale, persistedHistory, siteKey ] );
-
-	// Build history from persisted data. Recreated when `activeHistory` changes,
-	// so `useLocation().state` (e.g., `sessionId`) is correct immediately.
-	// Safe to use `activeHistory` as dep directly because the store is only
-	// populated once from the server — local navigations don't update it.
 	const history = useMemo(
-		() => new MemoryHistory( activeHistory?.entries, activeHistory?.index ),
-		[ activeHistory ]
+		() => new MemoryHistory( persistedHistory?.entries, persistedHistory?.index ),
+		[ persistedHistory ]
 	);
 
 	const [ state, setState ] = useState< HistoryEvent >( () => ( {
@@ -194,14 +159,8 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		location: history.location,
 	} ) );
 
-	// Create a persist callback that merges with existing per-site histories.
 	const persistHistory = useCallback(
-		( historyData: SingleRouterHistory ) => {
-			const fullMap = getFullRouterHistory() || {};
-			persistAgentsManagerState( {
-				agents_manager_router_history: { ...fullMap, [ siteKey ]: historyData },
-			} );
-		},
+		( historyData: StoredHistory ) => writeStoredHistory( siteKey, historyData ),
 		[ siteKey ]
 	);
 

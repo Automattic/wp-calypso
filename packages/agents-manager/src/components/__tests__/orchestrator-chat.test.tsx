@@ -176,8 +176,7 @@ jest.mock( 'react-router-dom', () => ( {
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( {
 		agentConfig: { agentId: 'wp-orchestrator' },
-		getActiveSessionId: () => 'session-id',
-		siteKey: 'site-1',
+		getTabSessionId: () => 'session-id',
 	} ),
 } ) );
 jest.mock( '../../hooks/custom-actions', () => ( {
@@ -188,8 +187,10 @@ jest.mock( '../../utils/tracks', () => ( {
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
 jest.mock( '../../hooks/use-abilities-registration', () => () => {} );
-jest.mock( '../../hooks/use-conversation', () => () => mockUseConversation() );
-jest.mock( '../../hooks/use-save-new-chat-route', () => () => {} );
+jest.mock(
+	'../../hooks/use-conversation',
+	() => ( config: unknown ) => mockUseConversation( config )
+);
 jest.mock( '../../hooks/use-checkpoint-action', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockUseCheckpointAction( ...args ),
@@ -209,7 +210,6 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
-jest.mock( '../../utils/agent-session', () => ( { markSessionUsed: jest.fn() } ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
 	default: ( { messages }: { messages: unknown[] } ) => messages,
@@ -222,14 +222,12 @@ jest.mock( '../../utils/external-context', () => ( {
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatAgent: () => mockIsReaderChatAgent(),
 } ) );
-jest.mock( '../../utils/persist-last-activity', () => ( {
-	persistLastActivity: jest.fn(),
-} ) );
 jest.mock( '../agent-chat', () => ( {
 	__esModule: true,
 	default: ( props: unknown ) => mockAgentChat( props as Parameters< typeof mockAgentChat >[ 0 ] ),
 } ) );
 
+import { getSessionId } from '../../utils/agent-session';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
 
@@ -339,6 +337,20 @@ describe( 'OrchestratorChat', () => {
 		mockIsReaderChatAgent.mockReturnValue( false );
 		mockSelectedBlockType = undefined;
 		mockBlockEditorStoreThrows = false;
+		sessionStorage.clear();
+	} );
+
+	it( 'saves the server’s canonical session ID as the tab session', () => {
+		render( chat() );
+
+		const { onSuccess } = mockUseConversation.mock.calls.at( -1 )![ 0 ] as {
+			onSuccess: ( messages: unknown[], sessionId: string ) => void;
+		};
+		act( () => {
+			onSuccess( [], 'canonical-session-id' );
+		} );
+
+		expect( getSessionId( 'wp-orchestrator' ) ).toBe( 'canonical-session-id' );
 	} );
 
 	it( 'dispatches the inline suggestion event when an Agenttic suggestion is clicked', () => {
