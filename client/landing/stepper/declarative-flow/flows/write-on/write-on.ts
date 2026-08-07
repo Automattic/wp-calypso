@@ -59,6 +59,14 @@ function clearAnonDraft() {
 	}
 }
 
+// Normalize the funnel `source` to [a-z0-9_-], lowercased first — kept identical
+// to the anon funnel's reader (wpcom's write-editor-anon.php / jetpack's view.js,
+// both mirroring PHP sanitize_key) so the whole journey reports one consistent
+// value. Empty string when absent, so callers can omit the prop entirely.
+function sanitizeSource( raw: string | null ): string {
+	return ( raw || '' ).toLowerCase().replace( /[^a-z0-9_-]/g, '' );
+}
+
 function initialize() {
 	// The flag is a kill switch for the flow. When it is off, redirect to the
 	// standard onboarding flow so there is nothing to land users on.
@@ -83,7 +91,7 @@ const writeOn: FlowV2< typeof initialize > = {
 		// The anon entry point links here with a `source` (e.g. `?source=post_new`).
 		// Stepper preserves the query string across steps, so it is still present at
 		// entry — carry it into the funnel's Tracks events for attribution.
-		const source = useQuery().get( 'source' );
+		const source = sanitizeSource( useQuery().get( 'source' ) );
 
 		// Entry checks must fire at most once per mount. Re-running them on a
 		// later isLoggedIn flip (e.g. mid-signup) would redirect the user out of
@@ -116,7 +124,7 @@ const writeOn: FlowV2< typeof initialize > = {
 
 			recordTracksEvent( 'calypso_write_on_flow_entered', {
 				draft_size: draft.title.length + draft.content.length,
-				source,
+				...( source ? { source } : {} ),
 			} );
 
 			if ( draft.title ) {
@@ -127,7 +135,7 @@ const writeOn: FlowV2< typeof initialize > = {
 	useStepNavigation( currentStepSlug, navigate ) {
 		// Same `source` the entry point carried in — forward it into the Write
 		// editor so its back button and Tracks stay attributed to the funnel.
-		const source = useQuery().get( 'source' );
+		const source = sanitizeSource( useQuery().get( 'source' ) );
 
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;

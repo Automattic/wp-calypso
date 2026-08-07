@@ -162,6 +162,25 @@ describe( 'write-on flow', () => {
 		);
 	} );
 
+	it( 'sanitizes the source query param to match the anon funnel before forwarding', async () => {
+		mockSearch = 'source=Post_New%21';
+		window.localStorage.setItem(
+			ANON_DRAFT_STORAGE_KEY,
+			JSON.stringify( { title: 'My title', content: '<p>Body</p>', ts: 1 } )
+		);
+		wpcomPostMock.mockResolvedValue( { ID: 42 } );
+
+		await submitFor( 'processing', {
+			processingResult: ProcessingResult.SUCCESS,
+			siteId: 99,
+			siteSlug: 'example.wordpress.com',
+		} );
+
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'https://example.wordpress.com/wp-admin/admin.php?page=write&post=42&source=post_new'
+		);
+	} );
+
 	it( 'preserves the localStorage draft, logs to logstash, and lands on the site home when the POST fails', async () => {
 		window.localStorage.setItem(
 			ANON_DRAFT_STORAGE_KEY,
