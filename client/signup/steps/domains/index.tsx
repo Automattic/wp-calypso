@@ -87,8 +87,19 @@ const DomainSearchUI = (
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
+	// The Gravatar offer links here with the full domain it advertised (e.g. `example.link`).
+	// Searching for that verbatim returns a single exact match at its undiscounted price and
+	// hides the other TLDs the offer covers, so search on the name alone instead.
+	const initialQuery = useMemo( () => {
+		if ( isDomainForGravatarFlow( flowName ) ) {
+			return queryObject.new?.split( '.' )[ 0 ];
+		}
+
+		return queryObject.new;
+	}, [ flowName, queryObject.new ] );
+
 	const { query, setQuery, clearQuery } = useQueryHandler( {
-		initialQuery: queryObject.new,
+		initialQuery,
 		currentSiteUrl,
 	} );
 

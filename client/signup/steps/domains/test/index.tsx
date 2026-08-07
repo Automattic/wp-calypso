@@ -10,15 +10,17 @@ jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
 	WPCOMDomainSearch: jest.fn().mockReturnValue( null ),
 } ) );
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
-	useQueryHandler: () => ( { query: '', setQuery: jest.fn(), clearQuery: jest.fn() } ),
+	useQueryHandler: jest.fn( () => ( { query: '', setQuery: jest.fn(), clearQuery: jest.fn() } ) ),
 } ) );
 
 import React from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DomainSearchStep from '../';
 
 const mockWPCOMDomainSearch = WPCOMDomainSearch as jest.Mock;
+const mockUseQueryHandler = useQueryHandler as jest.Mock;
 
 const domainItem = { meta: 'example.com', product_slug: 'domain_reg' };
 
@@ -135,5 +137,36 @@ describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 			} )
 		);
 		expect( goToNextStep ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'DomainSearchStep — Gravatar domain prefill', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockWPCOMDomainSearch.mockReturnValue( null );
+	} );
+
+	it( 'strips the TLD from the prefilled query so every included TLD stays visible', () => {
+		renderWithProvider(
+			<DomainSearchStep
+				{ ...baseProps }
+				flowName="domain-for-gravatar"
+				queryObject={ { new: 'example.link' } }
+			/>
+		);
+
+		expect( mockUseQueryHandler ).toHaveBeenCalledWith(
+			expect.objectContaining( { initialQuery: 'example' } )
+		);
+	} );
+
+	it( 'leaves the prefilled query untouched in other flows', () => {
+		renderWithProvider(
+			<DomainSearchStep { ...baseProps } queryObject={ { new: 'example.link' } } />
+		);
+
+		expect( mockUseQueryHandler ).toHaveBeenCalledWith(
+			expect.objectContaining( { initialQuery: 'example.link' } )
+		);
 	} );
 } );
