@@ -12,6 +12,10 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	// Defaults to hidden until the server includes it in the notices response,
 	// so the client can ship ahead of the WPCOM allow-list change.
 	free_site_upgrade: false,
+	// The server reports this id (true until a dismissal is in effect), so the
+	// default only covers request failures: the grid stays hidden rather than
+	// rendering without a working dismissal round-trip.
+	pricing_grid: false,
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
 	gdpr_cookie_consent: false,
