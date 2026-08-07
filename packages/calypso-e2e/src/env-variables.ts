@@ -1,5 +1,4 @@
 /* eslint-disable jsdoc/require-jsdoc */
-import crypto from 'crypto';
 import path from 'path';
 import { getMag16Locales, getViewports } from './data-helper';
 import { TEST_ACCOUNT_NAMES } from './secrets';
@@ -302,18 +301,10 @@ function getAtomicVariationInMixedRun() {
 		'private',
 		'ecomm-plan',
 	];
-	// The goal here is controlled randomness to include multiple variations within a single run.
-	// By using the current day of the month and the test file name hash, we can get a
-	// lot of variation throughout the week while also ensuring the same variation is used on a failed retry.
+	// Rotate the variation by day while ensuring failed retries use the same variation.
 	const currentDayOfMonth = new Date().getDate();
-	const currentTestFileName = global.testFileName || '';
-	const fileHash = hashTestFileName( currentTestFileName );
-	const variationIndex = ( currentDayOfMonth + fileHash ) % allVariations.length;
+	const variationIndex = currentDayOfMonth % allVariations.length;
 	return allVariations[ variationIndex ];
-}
-
-function hashTestFileName( testFileName: string ): number {
-	return Math.abs( crypto.createHash( 'md5' ).update( testFileName ).digest().readInt8() );
 }
 
 function castAsNumber( name: string, value: string ): number {
