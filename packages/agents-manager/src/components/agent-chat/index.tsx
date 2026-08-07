@@ -99,8 +99,8 @@ interface Props {
 	onCancelFeedback?: () => void;
 	/** Alternative footer to render instead of the default footer. */
 	alternativeFooter?: React.ReactNode;
-	/** Disables the composer: grayed input, typing and submission blocked. */
-	composerDisabled?: boolean;
+	/** Disables the chat input: grayed out, typing and submission blocked. */
+	isChatInputDisabled?: boolean;
 	/**
 	 * AI-interaction disclosure shown below the input (EU AI Act Art. 50(1)).
 	 * Defaults to the shared "You're chatting with AI" line; pass `false` to
@@ -175,7 +175,7 @@ export default function AgentChat( {
 	onTypingStatusChange,
 	inputValue,
 	onInputChange,
-	composerDisabled,
+	isChatInputDisabled,
 	isCompactMode = false,
 	imageUpload,
 	acceptedImageFileTypes = DEFAULT_ACCEPTED_IMAGE_TYPES,
@@ -370,16 +370,16 @@ export default function AgentChat( {
 						) }
 						<SelectedBlock />
 						{ /* `readOnly` (not `disabled`) so the stop button stays active while a batch uploads. */ }
-						{ /* `composerDisabled` must win over the pending-images `false` — a
+						{ /* `isChatInputDisabled` must win over the pending-images `false` — a
 						     non-operational chat stays disabled regardless of upload state. */ }
 						<AgentUI.Input
 							imageUploaderRef={
 								imageUpload ? ( imageUploaderRef as RefObject< ImageUploaderHandle > ) : undefined
 							}
-							imageUploadDisabled={ composerDisabled || imageUpload?.isUploadingImages }
+							imageUploadDisabled={ isChatInputDisabled || imageUpload?.isUploadingImages }
 							readOnly={ imageUpload?.isUploadingImages }
 							disabled={
-								composerDisabled || ( imageUpload?.pendingImages?.length ? false : undefined )
+								isChatInputDisabled || ( imageUpload?.pendingImages?.length ? false : undefined )
 							}
 						/>
 					</AgentUI.Footer>

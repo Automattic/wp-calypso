@@ -341,7 +341,7 @@ export default function AgentDock( {
 			siteBuildUtils={ siteBuildUtils }
 			useCheckpoint={ useCheckpoint }
 			capabilities={ capabilities }
-			composerDisabled={ ! isChatEnabled }
+			isChatInputDisabled={ ! isChatEnabled }
 			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>
 	);
