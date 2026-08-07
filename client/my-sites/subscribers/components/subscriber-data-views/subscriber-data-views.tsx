@@ -331,7 +331,10 @@ export default function SubscriberDataViews( {
 
 	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : JetpackEmptyListView;
 	const shouldShowLaunchpad =
-		! isLoading && ! searchTerm && ( ! grandTotal || ( grandTotal === 1 && isOwnerSubscribed ) );
+		! isLoading &&
+		! searchTerm &&
+		filters.includes( SubscribersFilterBy.All ) &&
+		( ! denominator || ( denominator === 1 && isOwnerSubscribed ) );
 
 	/**
 	 * Read page from URL when component mounts or URL changes.
