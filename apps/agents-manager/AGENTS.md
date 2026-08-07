@@ -27,4 +27,4 @@ The `--sync` flag syncs bundles to `widgets.wp.com/agents-manager/` on your sand
 ## Pitfalls
 
 - **`wp-admin` entry point is dual-mode**: It renders full UI when `#agents-manager-masterbar` exists, otherwise runs headless (for Image Studio shared use). This is not obvious from the filename.
-- **`image-studio` and `block-notes` are separate bundles**: They're built here but are independent features, not part of the main Agents Manager UI.
+- **`image-studio` is a separate bundle**: It's built here but is an independent feature, not part of the main Agents Manager UI.
