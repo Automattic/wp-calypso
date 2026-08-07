@@ -4,6 +4,8 @@ import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a
 import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import {
 	A4A_AGENCY_TIER_LINK,
+	A4A_MARKETPLACE_PRODUCTS_LINK,
+	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_REFERRALS_DASHBOARD,
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -18,6 +20,10 @@ export default function DashboardOverviewBody() {
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
 	const approvalStatus = agency?.approval_status;
+	const hasPartnerDirectoryListing =
+		!! agency?.profile?.partner_directory_application?.directories.some(
+			( { status } ) => status === 'approved'
+		);
 
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall();
 
@@ -43,10 +49,13 @@ export default function DashboardOverviewBody() {
 			influencedRevenue={ agency.influenced_revenue ?? 0 }
 			approvalStatus={ approvalStatus }
 			capabilities={ agency.user?.capabilities }
+			hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
 			links={ {
 				tiers: A4A_AGENCY_TIER_LINK,
 				referrals: A4A_REFERRALS_DASHBOARD,
 				woopayments: A4A_WOOPAYMENTS_LINK,
+				marketplace: A4A_MARKETPLACE_PRODUCTS_LINK,
+				partnerDirectory: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 				contactSupport: CONTACT_URL_HASH_FRAGMENT,
 				helpful: [
 					{

@@ -1,0 +1,427 @@
+import { formatCurrency } from '@automattic/number-formatters';
+import { Button, Icon } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
+import { __, sprintf } from '@wordpress/i18n';
+import {
+	chartBar,
+	currencyDollar,
+	globe,
+	help,
+	payment,
+	people,
+	store,
+	trendingUp,
+} from '@wordpress/icons';
+import { Fragment } from 'react';
+import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
+import { IconListItem } from '../../components/icon-list/icon-list-item';
+import { SectionHeader } from '../../components/section-header';
+import { TARGET_INFLUENCED_REVENUE } from '../tiers/constants';
+import getCurrentAgencyTier from '../tiers/get-current-agency-tier';
+import { PARTNER_PROGRAM_GUIDE_URL, PROGRAM_INCENTIVES_URL } from './constants';
+import NewTabLabel from './new-tab-label';
+import OverviewLinkButton from './overview-link-button';
+import useWooPaymentsStoreCount from './use-woopayments-store-count';
+import type { AgencyOverviewLinks } from './overview-content';
+import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
+
+type GrowthCardLinks = Pick<
+	AgencyOverviewLinks,
+	'tiers' | 'referrals' | 'woopayments' | 'marketplace' | 'partnerDirectory'
+>;
+
+interface GrowthItem {
+	id: string;
+	icon: JSX.Element;
+	title: string;
+	description: string;
+	actionLabel: string;
+	href: string;
+	isExternal?: boolean;
+}
+
+interface GrowthContent {
+	title: string;
+	description?: string;
+	items: GrowthItem[];
+}
+
+interface GrowthCardProps {
+	agencyId: number;
+	/** Shows the “While you wait” variant for accounts still under review. */
+	isPending?: boolean;
+	/** Disables the WooPayments store lookup for users without earnings access. */
+	canAccessEarnings?: boolean;
+	/** Hides Premier’s “get listed” move once the agency has an approved listing. */
+	hasPartnerDirectoryListing?: boolean;
+	tierId?: AgencyTierType;
+	influencedRevenue: number;
+	links: GrowthCardLinks;
+	shouldUseRouterLink?: boolean;
+	recordTracksEvent?: RecordTracksEvent;
+}
+
+/**
+ * Replaces the “set up WooPayments” move once the agency already has
+ * WooPayments stores — the next best move then is growing IAR itself.
+ */
+function getGrowRevenueItem(
+	target: number,
+	influencedRevenue: number,
+	links: GrowthCardLinks
+): GrowthItem {
+	return {
+		id: 'grow-influenced-revenue',
+		icon: trendingUp,
+		title: sprintf(
+			/* translators: %s is the influenced revenue target, e.g. $250,000 */
+			__( 'Grow influenced revenue to %s' ),
+			formatCurrency( target, 'USD', { stripZeros: true } )
+		),
+		description: sprintf(
+			/* translators: %s is the remaining influenced revenue to reach the target, e.g. $171,600 */
+			__( '%s to go — move client sites to Automattic hosting & set up WooPayments' ),
+			formatCurrency( Math.max( target - influencedRevenue, 0 ), 'USD', { stripZeros: true } )
+		),
+		actionLabel: __( 'Review' ),
+		href: links.tiers,
+	};
+}
+
+function getPendingContent( links: GrowthCardLinks ): GrowthContent {
+	return {
+		title: __( 'While you wait' ),
+		items: [
+			{
+				id: 'program-guide',
+				icon: help,
+				title: __( 'Read the partner program guide' ),
+				description: __( 'Learn how tiers, IAR and benefits work' ),
+				actionLabel: __( 'Read' ),
+				href: PARTNER_PROGRAM_GUIDE_URL,
+				isExternal: true,
+			},
+			{
+				id: 'explore-marketplace',
+				icon: store,
+				title: __( 'Explore the Marketplace' ),
+				description: __( 'Browse 60+ products you’ll be able to resell' ),
+				actionLabel: __( 'Explore' ),
+				href: links.marketplace,
+			},
+		],
+	};
+}
+
+function getEmergingContent( links: GrowthCardLinks ): GrowthContent {
+	return {
+		title: __( 'Grow toward Agency Partner' ),
+		description: sprintf(
+			/* translators: %s is the influenced revenue target, e.g. $1,200 */
+			__(
+				'Reach %s to become an Agency Partner — unlocks directory listings and a partner badge.'
+			),
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'agency-partner' ], 'USD', { stripZeros: true } )
+		),
+		items: [
+			{
+				id: 'refer-hosting',
+				icon: globe,
+				title: __( 'Refer a client to WordPress.com or Pressable hosting' ),
+				description: __( 'Their spend counts toward IAR · you earn 20% recurring' ),
+				actionLabel: __( 'Refer' ),
+				href: links.referrals,
+			},
+			{
+				id: 'recommend-plan',
+				icon: currencyDollar,
+				title: __( 'Recommend a Jetpack or WooCommerce plan' ),
+				description: __( 'Counts toward IAR · 50% recurring on renewals' ),
+				actionLabel: __( 'Recommend' ),
+				href: links.marketplace,
+			},
+			{
+				id: 'browse-marketplace',
+				icon: store,
+				title: __( 'Buy & resell from the Marketplace' ),
+				description: __( '60+ products at up to 80% off — purchases count toward IAR' ),
+				actionLabel: __( 'Browse' ),
+				href: links.marketplace,
+			},
+		],
+	};
+}
+
+function getAgencyContent( links: GrowthCardLinks, growRevenueItem?: GrowthItem ): GrowthContent {
+	return {
+		title: __( 'Grow toward Pro Partner' ),
+		description: sprintf(
+			/* translators: %s is the influenced revenue target, e.g. $5,000 */
+			__(
+				'Reach %s to become a Pro Partner — unlocks free agency hosting, a dedicated Partner Manager, and priority support.'
+			),
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ], 'USD', {
+				stripZeros: true,
+			} )
+		),
+		items: [
+			{
+				id: 'refer-hosting',
+				icon: globe,
+				title: __( 'Refer more sites to WordPress.com or Pressable hosting' ),
+				description: __( 'Their spend counts toward IAR · you earn 20% recurring' ),
+				actionLabel: __( 'Refer' ),
+				href: links.referrals,
+			},
+			growRevenueItem ?? {
+				id: 'set-up-woopayments',
+				icon: currencyDollar,
+				title: __( 'Set up WooPayments for client stores' ),
+				description: __( '$1 of IAR for every $100 in sales · earn 0.05% TPV' ),
+				actionLabel: __( 'Set up' ),
+				href: links.woopayments,
+			},
+			{
+				id: 'recommend-plan',
+				icon: store,
+				title: __( 'Recommend Jetpack & WooCommerce plans' ),
+				description: __( 'Counts toward IAR · 50% recurring on renewals' ),
+				actionLabel: __( 'Recommend' ),
+				href: links.marketplace,
+			},
+		],
+	};
+}
+
+function getProContent( links: GrowthCardLinks, growRevenueItem?: GrowthItem ): GrowthContent {
+	return {
+		title: __( 'Grow toward Premier' ),
+		description: __(
+			'Premier unlocks Marketing Development Funds and a Parse.ly trial. It takes more than revenue.'
+		),
+		items: [
+			growRevenueItem ?? {
+				id: 'set-up-woopayments',
+				icon: payment,
+				title: __( 'Set up WooPayments on your client stores' ),
+				description: __( '$1 of IAR for every $100 in sales · earn 0.05% TPV' ),
+				actionLabel: __( 'Set up' ),
+				href: links.woopayments,
+			},
+			{
+				id: 'enterprise-projects',
+				icon: chartBar,
+				title: __( 'Deliver 3 enterprise-scale projects' ),
+				description: __( 'Or onboard 3 shared anchor customers' ),
+				actionLabel: __( 'Learn more' ),
+				href: PROGRAM_INCENTIVES_URL,
+				isExternal: true,
+			},
+			{
+				id: 'certify-developers',
+				icon: people,
+				title: __( 'Certify 30% of your developers' ),
+				description: __( 'Across Automattic certifications' ),
+				actionLabel: __( 'Start' ),
+				href: PROGRAM_INCENTIVES_URL,
+				isExternal: true,
+			},
+		],
+	};
+}
+
+function getPremierContent(
+	links: GrowthCardLinks,
+	hasPartnerDirectoryListing?: boolean
+): GrowthContent {
+	return {
+		title: __( 'Get the most from Premier' ),
+		description: __( 'You’re Premier — make sure you’re getting leads and using every benefit.' ),
+		items: [
+			...( hasPartnerDirectoryListing
+				? []
+				: [
+						{
+							id: 'partner-directory',
+							icon: globe,
+							title: __( 'Get listed in the Partner Directory' ),
+							description: __(
+								'Receive vetted leads across WordPress.com, Woo, Jetpack & Pressable'
+							),
+							actionLabel: __( 'Set up listing' ),
+							href: links.partnerDirectory,
+						},
+				  ] ),
+			{
+				id: 'set-up-woopayments',
+				icon: payment,
+				title: __( 'Set up WooPayments on more stores' ),
+				description: __( '$1 IAR per $100 in sales' ),
+				actionLabel: __( 'Set up' ),
+				href: links.woopayments,
+			},
+			{
+				id: 'marketing-development-funds',
+				icon: currencyDollar,
+				title: __( 'Use your Marketing Development Funds' ),
+				description: __( 'Premier benefit — co-fund campaigns' ),
+				actionLabel: __( 'Learn more' ),
+				href: PROGRAM_INCENTIVES_URL,
+				isExternal: true,
+			},
+		],
+	};
+}
+
+function getContent(
+	isPending: boolean,
+	tierLevel: number,
+	links: GrowthCardLinks,
+	hasWooPaymentsStores: boolean,
+	influencedRevenue: number,
+	hasPartnerDirectoryListing?: boolean
+): GrowthContent {
+	if ( isPending ) {
+		return getPendingContent( links );
+	}
+	if ( tierLevel >= 4 ) {
+		return getPremierContent( links, hasPartnerDirectoryListing );
+	}
+	if ( tierLevel >= 2 ) {
+		return getProContent(
+			links,
+			hasWooPaymentsStores
+				? getGrowRevenueItem(
+						TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
+						influencedRevenue,
+						links
+				  )
+				: undefined
+		);
+	}
+	if ( tierLevel >= 1 ) {
+		return getAgencyContent(
+			links,
+			hasWooPaymentsStores
+				? getGrowRevenueItem(
+						TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ],
+						influencedRevenue,
+						links
+				  )
+				: undefined
+		);
+	}
+	return getEmergingContent( links );
+}
+
+/**
+ * The “grow toward the next tier” module of the Overview screen. Its goal and
+ * actions adapt to the agency’s account state: pending accounts get a “while
+ * you wait” list, each tier points at the moves that unlock the next one, and
+ * Premier (top tier) shifts to getting the most out of its benefits.
+ */
+function GrowthItemIcon( { icon }: { icon: JSX.Element } ) {
+	return (
+		<div
+			aria-hidden="true"
+			style={ {
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				flexShrink: 0,
+				width: '48px',
+				height: '48px',
+				borderRadius: '4px',
+				background: 'var(--color-gray-100)',
+				color: 'var(--color-gray-700)',
+			} }
+		>
+			<Icon icon={ icon } size={ 28 } />
+		</div>
+	);
+}
+
+export default function GrowthCard( {
+	agencyId,
+	isPending,
+	canAccessEarnings = true,
+	hasPartnerDirectoryListing,
+	tierId,
+	influencedRevenue,
+	links,
+	shouldUseRouterLink,
+	recordTracksEvent,
+}: GrowthCardProps ) {
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const tier = getCurrentAgencyTier( tierId );
+	const { storeCount } = useWooPaymentsStoreCount( agencyId, ! isPending && canAccessEarnings );
+	const content = getContent(
+		!! isPending,
+		tier?.level ?? 0,
+		links,
+		storeCount > 0,
+		influencedRevenue,
+		hasPartnerDirectoryListing
+	);
+
+	return (
+		<Card>
+			<CardHeader>
+				<SectionHeader level={ 3 } title={ content.title } description={ content.description } />
+			</CardHeader>
+			{ content.items.map( ( item, index ) => {
+				const handleClick = () =>
+					recordTracksEvent?.( 'calypso_a4a_overview_growth_action_click', {
+						action_id: item.id,
+						agency_tier: tier?.id,
+					} );
+
+				return (
+					<Fragment key={ item.id }>
+						{ index > 0 && <CardDivider style={ { borderColor: 'var(--color-gray-100)' } } /> }
+						<CardBody>
+							<IconListItem
+								title={ item.title }
+								description={ item.description }
+								decoration={ ! isSmallViewport && <GrowthItemIcon icon={ item.icon } /> }
+								layout={ isSmallViewport ? 'stacked' : 'inline' }
+								suffix={
+									<ButtonStack
+										justify={ isSmallViewport ? 'flex-start' : 'flex-end' }
+										expanded={ isSmallViewport }
+										style={ { flexShrink: 0 } }
+										as="span"
+									>
+										{ item.isExternal ? (
+											<Button
+												size="compact"
+												variant="secondary"
+												href={ item.href }
+												target="_blank"
+												rel="noreferrer"
+												onClick={ handleClick }
+											>
+												<NewTabLabel>{ item.actionLabel }</NewTabLabel>
+											</Button>
+										) : (
+											<OverviewLinkButton
+												size="compact"
+												variant="secondary"
+												href={ item.href }
+												shouldUseRouterLink={ shouldUseRouterLink }
+												onClick={ handleClick }
+											>
+												{ item.actionLabel }
+											</OverviewLinkButton>
+										) }
+									</ButtonStack>
+								}
+							/>
+						</CardBody>
+					</Fragment>
+				);
+			} ) }
+		</Card>
+	);
+}
