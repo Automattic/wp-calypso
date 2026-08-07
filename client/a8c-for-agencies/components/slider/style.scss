@@ -17,8 +17,20 @@
 
 .a4a-slider__input {
 	position: relative;
+	isolation: isolate;
 	flex-grow: 1;
 	margin-block-start: -16px;
+
+	&::before {
+		content: "";
+		position: absolute;
+		inset-block-start: 22px;
+		inset-inline: 0;
+		min-height: 6px;
+		background: var(--color-primary-5);
+		border-radius: 4px;
+		pointer-events: none;
+	}
 
 	@include break-medium {
 		margin-block-start: 0;
@@ -28,6 +40,8 @@
 .a4a-slider__input [type="range"] {
 	-webkit-appearance: none;
 	appearance: none;
+	position: relative;
+	z-index: 3;
 	background: transparent;
 	height: 50px;
 	width: 100%;
@@ -43,7 +57,7 @@
 	}
 
 	@mixin slider-track-style {
-		background: var(--color-primary-5);
+		background: transparent;
 		height: 6px;
 		border-radius: 4px;
 	}
@@ -80,6 +94,7 @@
 
 .a4a-slider__marker-container {
 	position: relative;
+	z-index: 4;
 	margin-block-start: -24px;
 	display: flex;
 	align-items: flex-start;
