@@ -37,7 +37,10 @@ export type NoticeIdType = keyof Notices;
 // The IDs are sorted by priory from high to low.
 const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 	dashboard_notices: [
-		// Set the highest priority to prevent blocking Stats under any circumstances.
+		// Highest priority: while the pricing grid is undismissed it replaces the
+		// dashboard outright, so no other dashboard notice should fire alongside it.
+		'pricing_grid',
+		// Set the highest priority among banners to prevent blocking Stats under any circumstances.
 		'gdpr_cookie_consent',
 		'client_paid_plan_purchase_success',
 		'client_free_plan_purchase_success',
