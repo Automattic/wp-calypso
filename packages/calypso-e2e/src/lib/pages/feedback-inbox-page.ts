@@ -201,12 +201,26 @@ export class FeedbackInboxPage {
 			if ( ! ( await folderOption.isVisible() ) ) {
 				await folderChip.click();
 			}
+
+			const status =
+				folderName.toLowerCase() === 'inbox' ? 'draft,publish' : folderName.toLowerCase();
+			const listResponse = this.page.waitForResponse(
+				( response ) =>
+					( response.url().includes( '/wp-json/wp/v2/feedback' ) ||
+						!! response.url().match( /\/wp\/v2\/sites\/[0-9]+\/feedback/ ) ) &&
+					// The counts request shares the path and would resolve this early.
+					! response.url().includes( '/counts' ) &&
+					response.url().includes( `status=${ encodeURIComponent( status ) }` )
+			);
 			await folderOption.click();
 			// Wait for the chip text to reflect the selected folder.
 			await this.page
 				.locator( '.dataviews-filters__summary-chip' )
 				.filter( { hasText: new RegExp( `Folder is:\\s*${ folderName }`, 'i' ) } )
 				.waitFor();
+
+			await listResponse;
+
 			// Selecting a folder leaves the popover open over the table, where it
 			// swallows clicks on the rows underneath. Dismiss unconditionally:
 			// isVisible() is point-in-time, so polled mid-transition it reports
