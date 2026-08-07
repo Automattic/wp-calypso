@@ -4,6 +4,7 @@
 import config from '@automattic/calypso-config';
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useViewportMatch } from '@wordpress/compose';
 import { MemoryRouter } from 'react-router-dom';
 // eslint-disable-next-line no-restricted-imports
 import { applyMiddleware, createStore, type Reducer } from 'redux';
@@ -19,11 +20,15 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
 import { gateScope, markResendUnavailableUntil } from '../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
+import type { ReactNode } from 'react';
 
 // A different user per test, so each one's isolation is its own rather than teardown's.
 let mockUserId = 0;
 
 let activationEmailFromProp: string | undefined;
+let signupFormProps: { userEmail?: string; notice?: unknown } = {};
+let mockHeldEmail: string | null = null;
+let mockSocialNotice: ReactNode = <div>That account already exists. Log in instead.</div>;
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 
@@ -46,6 +51,10 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 jest.mock( 'calypso/lib/partner-branding', () => ( { usePartnerBranding: jest.fn() } ) );
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
+} ) );
 jest.mock( '../use-account-creation-experiment', () => jest.fn() );
 jest.mock( '../use-social-service', () => ( {
 	useSocialService: () => ( { socialServiceResponse: undefined } ),
@@ -53,7 +62,7 @@ jest.mock( '../use-social-service', () => ( {
 jest.mock( '../handle-social-response', () => ( {
 	useHandleSocialResponse: () => ( {
 		handleSocialResponse: jest.fn(),
-		notice: undefined,
+		notice: mockSocialNotice,
 		accountCreateResponse: undefined,
 	} ),
 } ) );
@@ -64,22 +73,46 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 		onCreateAccountSuccess,
 		goToNextStep,
 		activationEmailFrom,
+		userEmail,
+		onUpdateEmail,
+		notice,
 	}: {
 		onCreateAccountSuccess?: ( data: { ID: number } ) => void;
 		goToNextStep?: ( data: { bearer_token: string; ID: number } ) => void;
 		activationEmailFrom?: string;
+		userEmail?: string;
+		onUpdateEmail?: ( email: string ) => Promise< void >;
+		notice?: unknown;
 	} ) => {
 		activationEmailFromProp = activationEmailFrom;
+		signupFormProps = { userEmail, notice };
+		// The real form takes its address once, on mount, and keeps it however the prop moves.
+		if ( mockHeldEmail === null ) {
+			mockHeldEmail = userEmail ?? '';
+		}
+		if ( onUpdateEmail ) {
+			return (
+				<>
+					{ notice as ReactNode }
+					<button onClick={ () => onUpdateEmail( mockHeldEmail as string ) }>
+						submit-unchanged
+					</button>
+				</>
+			);
+		}
 		return (
-			<button
-				onClick={ () => {
-					// Production order: goToNextStep fires before onCreateAccountSuccess.
-					goToNextStep?.( { bearer_token: 'test-token', ID: mockUserId } );
-					onCreateAccountSuccess?.( { ID: mockUserId } );
-				} }
-			>
-				create-email-account
-			</button>
+			<>
+				{ notice as ReactNode }
+				<button
+					onClick={ () => {
+						// Production order: goToNextStep fires before onCreateAccountSuccess.
+						goToNextStep?.( { bearer_token: 'test-token', ID: mockUserId } );
+						onCreateAccountSuccess?.( { ID: mockUserId } );
+					} }
+				>
+					create-email-account
+				</button>
+			</>
 		);
 	},
 	MobileCompactTosNotice: () => null,
@@ -116,11 +149,11 @@ const makeStore = ( emailVerified: boolean ) =>
 const makeLoggedOutStore = () =>
 	createStore( rootReducer, { currentUser: {} }, applyMiddleware( thunkMiddleware ) );
 
-const renderUser = ( store: ReturnType< typeof makeStore > ) => {
+const renderUser = ( store: ReturnType< typeof makeStore >, url = '/onboarding/user' ) => {
 	const submit = jest.fn();
 	const { unmount } = renderWithProvider(
-		<MemoryRouter initialEntries={ [ '/onboarding/user' ] }>
-			<UserStep flow="onboarding" stepName="user" navigation={ { submit } } />
+		<MemoryRouter initialEntries={ [ url ] }>
+			<UserStep flow="onboarding" stepName="user" navigation={ { submit, goBack: jest.fn() } } />
 		</MemoryRouter>,
 		{ store }
 	);
@@ -129,6 +162,7 @@ const renderUser = ( store: ReturnType< typeof makeStore > ) => {
 
 describe( 'account step email verification gate', () => {
 	beforeEach( () => {
+		( useViewportMatch as unknown as jest.Mock ).mockReturnValue( false );
 		mockUserId++;
 		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
 		mockUsePartnerBranding.mockReturnValue( {
@@ -145,6 +179,9 @@ describe( 'account step email verification gate', () => {
 
 	afterEach( () => {
 		activationEmailFromProp = undefined;
+		signupFormProps = {};
+		mockHeldEmail = null;
+		mockSocialNotice = <div>That account already exists. Log in instead.</div>;
 		// A test that fails before restoring them would otherwise time out every test after it.
 		jest.useRealTimers();
 		mockConfig.enabledFlags.clear();
@@ -160,6 +197,111 @@ describe( 'account step email verification gate', () => {
 		renderUser( makeLoggedOutStore() );
 
 		expect( activationEmailFromProp ).toBeUndefined();
+	} );
+
+	// It belongs to the account the gate handed back, not to the step.
+	it( 'returns to the gate when `/me` resolves someone else', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const store = makeStore( false );
+		renderUser( store );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: mockUserId + 1, email: 'someone@else.example', email_verified: false },
+			} );
+		} );
+
+		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+	} );
+
+	// The gate is a dead end for a mistyped address, so edit hands it back to the account screen
+	// carrying the address to fix.
+	it( 'hands the address back to the account screen to be corrected', async () => {
+		const user = userEvent.setup();
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		expect( signupFormProps.userEmail ).toBe( EMAIL );
+		// Continue already returns to the gate when the address is unchanged; a second way out
+		// reads as a choice the user doesn't have.
+		expect( screen.queryByRole( 'button', { name: /back/i } ) ).not.toBeInTheDocument();
+	} );
+
+	// Submitting it unchanged asks for nothing, so it is the way back.
+	it( 'returns to the gate when the address is submitted unchanged', async () => {
+		const user = userEvent.setup();
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'submit-unchanged' } ) );
+
+		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+	} );
+
+	// Confirming in another tab settles what the account screen was opened to change, so there is
+	// nothing left to correct and no reason to hold the user there.
+	it( 'continues when the address is confirmed while the account screen is open', async () => {
+		const user = userEvent.setup();
+		const store = makeStore( false );
+		const { submit } = renderUser( store );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: mockUserId, email: EMAIL, email_verified: true },
+			} );
+		} );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+	} );
+
+	// The compact frame pins a ToS the standard form doesn't render, and offers to start a site.
+	it( 'leaves the compact mobile frame behind on the account screen', async () => {
+		const user = userEvent.setup();
+		( useViewportMatch as unknown as jest.Mock ).mockImplementation(
+			( breakpoint: string, operator?: string ) => breakpoint === 'small' && operator === '<'
+		);
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+		expect( document.querySelector( '.step-container-v2--user-mobile' ) ).not.toBeInTheDocument();
+	} );
+
+	// It is fixed and full-screen, so it would sit over the field.
+	it( 'keeps the one-tap overlay off the account screen', async () => {
+		const user = userEvent.setup();
+		mockSocialNotice = undefined;
+		renderUser( makeStore( false ), '/onboarding/user?oneTapAuth=true' );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		expect( document.querySelector( '.one-tap-auth-loader-overlay' ) ).not.toBeInTheDocument();
+	} );
+
+	// A stored social failure carries a log-in link, which is a way past the gate.
+	it( 'keeps an earlier social failure off the account screen', async () => {
+		const user = userEvent.setup();
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		expect( screen.queryByText( /Log in instead/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'confirmation continues exactly once (no double submit)', async () => {
