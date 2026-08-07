@@ -1,6 +1,8 @@
 import { PRODUCT_JETPACK_STATS_YEARLY } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { ProductsList } from '@automattic/data-stores';
 import { getCurrencyObject } from '@automattic/number-formatters';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, ExternalLink } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
@@ -15,6 +17,7 @@ import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { Notices } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import './style.scss';
 
 const TRACKS_REFERRER = 'jetpack-stats-pricing-grid';
@@ -50,6 +53,7 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 	const isLg = useViewportMatch( 'large' );
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const queryClient = useQueryClient();
 	const { mutate: recordDismissal } = useNoticeVisibilityMutation(
 		siteId,
 		'pricing_grid',
@@ -135,7 +139,22 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 
 	const dismiss = () => {
 		recordDismissal();
+		// The mutation doesn't touch the notices query cache, so update it in place:
+		// the gate re-reads it on SPA route changes (e.g. returning from the purchase
+		// page via "I will do it later") and must see the grid as already dismissed.
+		queryClient.setQueryData(
+			[ 'stats', 'notices-visibility', 'raw', siteId ],
+			( notices: Notices | undefined ) => notices && { ...notices, pricing_grid: false }
+		);
 		onDismiss?.();
+	};
+
+	// Navigate programmatically rather than via href: the wp-admin shim intercepts
+	// anchor clicks inside #wpcom with a jQuery handler registered before React
+	// mounts, so an onClick on a link Button never runs and the dismissal is lost.
+	const goToPurchase = () => {
+		dismiss();
+		page( `/stats/purchase/${ siteSlug }?from=${ TRACKS_REFERRER }` );
 	};
 
 	const renderPrice = ( value: number, currency: string, hidePriceFraction: boolean ) => {
@@ -250,8 +269,7 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 										<Button
 											className="stats-pricing-grid__cta"
 											variant="primary"
-											href={ `/stats/purchase/${ siteSlug }?from=${ TRACKS_REFERRER }` }
-											onClick={ dismiss }
+											onClick={ goToPurchase }
 										>
 											{ paidLabel }
 										</Button>
