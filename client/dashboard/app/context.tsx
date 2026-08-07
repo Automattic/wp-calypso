@@ -60,7 +60,6 @@ export type AppConfig = {
 		plugins: boolean;
 		domains: boolean;
 		emails: boolean;
-		themes: boolean;
 		reader: boolean;
 		help: boolean;
 		notifications: boolean;
@@ -108,7 +107,6 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		plugins: false,
 		domains: false,
 		emails: false,
-		themes: false,
 		reader: false,
 		help: false,
 		notifications: false,
