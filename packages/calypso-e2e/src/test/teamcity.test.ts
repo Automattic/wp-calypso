@@ -138,6 +138,20 @@ describe( 'tagOwnBuild', () => {
 		}
 	} );
 
+	test( 'a request that never settles is abandoned, not left hanging', async () => {
+		writeProperties( completeProperties() );
+		jest.spyOn( globalThis, 'fetch' ).mockImplementation(
+			( _url, init ) =>
+				new Promise( ( _resolve, reject ) => {
+					( init as RequestInit ).signal?.addEventListener( 'abort', () =>
+						reject( new Error( 'aborted' ) )
+					);
+				} )
+		);
+
+		await expect( tagOwnBuild( 'throttle-signup-123', 10 ) ).resolves.toBeNull();
+	} );
+
 	test( 'a non-200 response is reported as a status, not thrown', async () => {
 		writeProperties( completeProperties() );
 		jest

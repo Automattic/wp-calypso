@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globa
 import * as teamcity from '../lib/teamcity';
 import {
 	detectThrottle,
+	flushRaisedFlags,
 	formatFlagTag,
 	mergeFlags,
 	parseBanDurationMs,
@@ -61,6 +62,19 @@ describe( 'raiseFlag', () => {
 		const file = path.join( dir, `${ process.pid }.json` );
 		expect( JSON.parse( readFileSync( file, 'utf8' ) )[ 0 ].expiresAtMs ).toBe( 601_000 );
 		expect( tagOwnBuild ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'a failed tag never reaches the test, before or during the flush', async () => {
+		tagOwnBuild.mockRejectedValue( new Error( 'TeamCity is down' ) );
+
+		await expect( raiseFlag( 'signup' ) ).resolves.toBeUndefined();
+		await expect( flushRaisedFlags() ).resolves.toBeUndefined();
+		// The local record still landed: only the tag was lost.
+		expect( readLocalActiveSlugs().has( 'signup' ) ).toBe( true );
+	} );
+
+	test( 'flushing with nothing raised is a no-op', async () => {
+		await expect( flushRaisedFlags() ).resolves.toBeUndefined();
 	} );
 
 	test( 'an unwritable directory is reported, never thrown', async () => {

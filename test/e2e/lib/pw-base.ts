@@ -90,6 +90,7 @@ import {
 	UseADomainIOwnPage,
 	SelectItemsComponent,
 	detectThrottle,
+	flushRaisedFlags,
 	raiseFlag,
 } from '@automattic/calypso-e2e';
 import { test as base, expect, type Page } from '@playwright/test';
@@ -425,6 +426,8 @@ export const test = base.extend<
 		watchForThrottle( page );
 
 		await use( page );
+
+		await flushRaisedFlags();
 	},
 	...( Object.fromEntries(
 		Object.entries( fixtureAccounts ).map( ( [ fixtureName, accountName ] ) => [
@@ -595,6 +598,7 @@ export const test = base.extend<
 		await incognitoPage.spawn();
 		watchForThrottle( incognitoPage.getPage() );
 		await use( incognitoPage );
+		await flushRaisedFlags();
 		await incognitoPage.close();
 	},
 	pageJetpackTraffic: async ( { page }, use ) => {

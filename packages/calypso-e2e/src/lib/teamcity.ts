@@ -131,7 +131,7 @@ function authorization( context: BuildContext ): string {
  * Errors are swallowed rather than rethrown or logged: a fetch error can carry
  * request context, and callers must never be tempted to print it.
  */
-export async function tagOwnBuild( tag: string ): Promise< number | null > {
+export async function tagOwnBuild( tag: string, timeoutMs = 2_000 ): Promise< number | null > {
 	const context = readBuildContext();
 	if ( ! context ) {
 		return null;
@@ -147,6 +147,9 @@ export async function tagOwnBuild( tag: string ): Promise< number | null > {
 					Authorization: authorization( context ),
 				},
 				body: tag,
+				// Bounded: a test waits for this during teardown, and a request
+				// that never settles would time the test out.
+				signal: AbortSignal.timeout( timeoutMs ),
 			}
 		);
 		return response.status;

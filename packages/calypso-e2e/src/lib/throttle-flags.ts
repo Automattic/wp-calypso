@@ -31,6 +31,8 @@ const FALLBACK_DURATIONS: Record< ThrottleId, number > = {
 
 const TAG_PATTERN = new RegExp( `^throttle-(${ THROTTLE_IDS.join( '|' ) })-(\\d+)$` );
 
+const pendingTags = new Set< Promise< unknown > >();
+
 /**
  * Where this process writes its own flags. One file per PID, so workers never
  * contend.
@@ -187,7 +189,21 @@ export async function raiseFlag( id: ThrottleId, durationMs?: number ): Promise<
 		return;
 	}
 
-	await tagOwnBuild( formatFlagTag( raised ) );
+	const tagging = tagOwnBuild( formatFlagTag( raised ) ).catch( () => null );
+	pendingTags.add( tagging );
+	await tagging.finally( () => pendingTags.delete( tagging ) );
+}
+
+/**
+ * Waits for the tags of flags raised so far to reach TeamCity.
+ *
+ * A flag raised by the response listener has no test awaiting it, so without
+ * this the tag can be dropped when the test ends. Settles rather than rejects,
+ * and each tag request is bounded, so waiting on this can neither fail a test
+ * nor hang one.
+ */
+export async function flushRaisedFlags(): Promise< void > {
+	await Promise.allSettled( [ ...pendingTags ] );
 }
 
 /**
