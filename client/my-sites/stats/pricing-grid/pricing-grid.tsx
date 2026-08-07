@@ -8,9 +8,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { Icon, check, closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -50,6 +52,10 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const dismissPricingGrid = useDismissPricingGrid( siteId );
+
+	useEffect( () => {
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_view', { blog_id: siteId } );
+	}, [ siteId ] );
 
 	const product = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
@@ -130,6 +136,7 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 
 	// Starting for free is a plan choice: record the dismissal and reveal the dashboard.
 	const startForFree = () => {
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_free_cta_clicked', { blog_id: siteId } );
 		dismissPricingGrid();
 		onDismiss?.();
 	};
@@ -140,6 +147,7 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 	// programmatically rather than via href so the link also works under Odyssey's
 	// hashbang routing when the wp-admin click shim doesn't apply (e.g. middle-click).
 	const goToPurchase = () => {
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_paid_cta_clicked', { blog_id: siteId } );
 		page( `/stats/purchase/${ siteSlug }?from=${ PRICING_GRID_REFERRER }` );
 	};
 
