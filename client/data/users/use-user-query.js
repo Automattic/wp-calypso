@@ -11,11 +11,9 @@ export const getCacheKey = ( siteId, userIdentifier ) => [
 ];
 
 const useUserQuery = ( siteId, userIdentifier, queryOptions = {} ) => {
-	const userPath = getUserPath( userIdentifier );
-
 	return useQuery( {
-		queryKey: [ 'user', siteId, userPath ],
-		queryFn: () => wpcom.req.get( `/sites/${ siteId }/users/${ userPath }` ),
+		queryKey: getCacheKey( siteId, userIdentifier ),
+		queryFn: () => wpcom.req.get( `/sites/${ siteId }/users/${ getUserPath( userIdentifier ) }` ),
 		...queryOptions,
 	} );
 };
