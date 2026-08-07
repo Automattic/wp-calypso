@@ -1,4 +1,4 @@
-[← Writing tests](./writing_tests.md) | [Top](../README.md) | [Style Guide →](./style_guide.md)
+[← Writing tests](../docs-new/new_style_guide.md) | [Top](../README.md) | [Style Guide →](./style_guide.md)
 
 # Library Objects
 

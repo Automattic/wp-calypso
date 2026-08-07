@@ -13,7 +13,7 @@ The pages under `docs/` predate the migration off the Jest runner; treat `docs-n
 - [Test Environment](docs/test_environment.md)
 - [Running tests on your machine](docs/tests_local.md)
 - [Running tests on CI](docs/tests_ci.md)
-- [Writing tests](docs/writing_tests.md)
+- [Writing tests](docs-new/new_style_guide.md)
 - [Library objects](docs/library_objects.md)
 - [Style Guide](docs/style_guide.md)
 - [Patterns, Tricks, and Gotchas](docs/patterns_tricks_gotchas.md)
@@ -102,18 +102,18 @@ yarn workspace wp-e2e-tests build --watch
 12. run tests.
 
 ```bash
-yarn workspace wp-e2e-tests playwright test <test_path>
+yarn workspace wp-e2e-tests test:pw -- <test_path>
 ```
 
 By default this should run on `http://calypso.localhost:3000`, if you wish to run on another environment such as `https://wpcalypso.wordpress.com` you can set an environment variable:
 
 ```bash
-CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests playwright test <test_path>
+CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests test:pw -- <test_path>
 ```
 
 ## Contribute to E2E tests
 
-Please refer to the [Writing Tests](docs/writing_tests.md) and [Style Guide](docs/style_guide.md) pages.
+Please refer to the [Writing Tests](docs-new/new_style_guide.md) and [Style Guide](docs/style_guide.md) pages.
 
 ## Troubleshooting
 

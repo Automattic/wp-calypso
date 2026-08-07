@@ -1,4 +1,4 @@
-[<-- Running tests on your machine](./tests_local.md) | [Top](./../README.md) | [Writing Tests -->](./writing_tests.md)
+[<-- Running tests on your machine](./tests_local.md) | [Top](./../README.md) | [Writing Tests -->](../docs-new/new_style_guide.md)
 
 # Running tests on CI
 

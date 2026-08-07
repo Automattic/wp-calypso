@@ -1,6 +1,6 @@
 # Overview
 
-This documentation supports the migration of Playwright Test specifications from the old Playwright + Jest framework.
+This documentation covers writing, running, and maintaining the Playwright Test specifications.
 
 ## Documentation Pages
 

@@ -47,7 +47,7 @@ yarn workspace wp-e2e-tests build --watch
 Specify the file(s) directly:
 
 ```bash
-yarn playwright test <path_to_file_1> <path_to_file_2>
+yarn test:pw -- <path_to_file_1> <path_to_file_2>
 ```
 
 ### Test tag
@@ -98,7 +98,7 @@ To use the manual method, either:
 
 a. set the viewport size to persist in the shell: `export VIEWPORT_NAME=<viewport>`
 
-b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn playwright test <test_path>`
+b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn test:pw -- <test_path>`
 
 ### Target a different environment
 
@@ -114,7 +114,7 @@ By default these tests target <http://calypso.localhost:3000>. To target a webap
 
    a. set the variable to persist in the shell: `export CALYPSO_BASE_URL=<url>`
 
-   b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn playwright test <test_path>`
+   b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn test:pw -- <test_path>`
 
 <img alt="Local Calypso Webapp" src="https://cldup.com/1WwDmUXWen.png" />
 <sup><center>Example: webapp running on localhost.</center></sup>
