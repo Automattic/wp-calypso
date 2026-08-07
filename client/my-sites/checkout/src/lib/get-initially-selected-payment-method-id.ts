@@ -11,7 +11,7 @@ import type { ResponseCart } from '@automattic/shopping-cart';
  */
 export function getInitiallySelectedPaymentMethodId(
 	responseCart: ResponseCart,
-	paymentMethods: PaymentMethod[]
+	paymentMethods: Pick< PaymentMethod, 'id' >[]
 ): string | undefined {
 	const storedDetailsId = responseCart.products.find( ( product ) =>
 		Boolean( product.stored_details_id )
