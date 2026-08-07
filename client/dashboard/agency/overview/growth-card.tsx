@@ -128,7 +128,7 @@ function getEmergingContent( links: GrowthCardLinks ): GrowthContent {
 			{
 				id: 'refer-hosting',
 				icon: globe,
-				title: __( 'Refer a client to WordPress.com or Pressable hosting' ),
+				title: __( 'Refer a client' ),
 				description: __( 'Their spend counts toward IAR · you earn 20% recurring' ),
 				actionLabel: __( 'Refer' ),
 				href: links.referrals,
@@ -136,7 +136,7 @@ function getEmergingContent( links: GrowthCardLinks ): GrowthContent {
 			{
 				id: 'recommend-plan',
 				icon: currencyDollar,
-				title: __( 'Recommend a Jetpack or WooCommerce plan' ),
+				title: __( 'Recommend a plan' ),
 				description: __( 'Counts toward IAR · 50% recurring on renewals' ),
 				actionLabel: __( 'Recommend' ),
 				href: links.marketplace,
@@ -169,7 +169,7 @@ function getAgencyContent( links: GrowthCardLinks ): GrowthContent {
 			{
 				id: 'refer-hosting',
 				icon: globe,
-				title: __( 'Refer more sites to WordPress.com or Pressable hosting' ),
+				title: __( 'Refer more sites' ),
 				description: __( 'Their spend counts toward IAR · you earn 20% recurring' ),
 				actionLabel: __( 'Refer' ),
 				href: links.referrals,
@@ -177,7 +177,7 @@ function getAgencyContent( links: GrowthCardLinks ): GrowthContent {
 			{
 				id: 'set-up-woopayments',
 				icon: currencyDollar,
-				title: __( 'Set up WooPayments for client stores' ),
+				title: __( 'Set up WooPayments' ),
 				description: __( '$1 of IAR for every $100 in sales · earn 0.05% TPV' ),
 				actionLabel: __( 'Set up' ),
 				href: links.woopayments,
@@ -185,7 +185,7 @@ function getAgencyContent( links: GrowthCardLinks ): GrowthContent {
 			{
 				id: 'recommend-plan',
 				icon: store,
-				title: __( 'Recommend Jetpack & WooCommerce plans' ),
+				title: __( 'Recommend plans' ),
 				description: __( 'Counts toward IAR · 50% recurring on renewals' ),
 				actionLabel: __( 'Recommend' ),
 				href: links.marketplace,
@@ -211,7 +211,7 @@ function getProContent(
 		wooPaymentsItem = {
 			id: 'set-up-woopayments',
 			icon: payment,
-			title: __( 'Set up WooPayments on your client stores' ),
+			title: __( 'Set up WooPayments' ),
 			description: __( '$1 of IAR for every $100 in sales · earn 0.05% TPV' ),
 			actionLabel: __( 'Set up' ),
 			href: links.woopayments,
