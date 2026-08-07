@@ -66,9 +66,9 @@ describe( 'useRelatedPosts', () => {
 			wrapper: getWrapper(),
 		} );
 
-		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
-		await waitFor( () => expect( result.current.posts ).toBeUndefined() );
-		expect( result.current.isError ).toBe( true );
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
+		expect( scope.isDone() ).toBe( true );
+		expect( result.current.posts ).toBeUndefined();
 	} );
 
 	it( 'returns an empty posts array when the request succeeds with no related posts', async () => {
