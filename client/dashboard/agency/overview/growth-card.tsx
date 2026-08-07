@@ -219,9 +219,9 @@ function getProContent(
 	}
 
 	return {
-		title: __( 'Grow toward Premier' ),
+		title: __( 'Grow toward Premier Partner' ),
 		description: __(
-			'Premier unlocks Marketing Development Funds and a Parse.ly trial. It takes more than revenue.'
+			'The Premier Partner tier unlocks Marketing Development Funds and a Parse.ly trial. It takes more than revenue.'
 		),
 		items: [
 			...( wooPaymentsItem ? [ wooPaymentsItem ] : [] ),
@@ -253,7 +253,9 @@ function getPremierContent(
 ): GrowthContent {
 	return {
 		title: __( 'Get the most from Premier' ),
-		description: __( 'You’re Premier — make sure you’re getting leads and using every benefit.' ),
+		description: __(
+			'You’re a Premier Partner — make sure you’re getting leads and using every benefit.'
+		),
 		items: [
 			hasPartnerDirectoryListing
 				? {
