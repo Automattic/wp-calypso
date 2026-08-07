@@ -1,0 +1,26 @@
+.omnibar__popover {
+	[role='menuitem']:has( .omnibar__site-badge ),
+	.omnibar__menu-static-item:has( .omnibar__site-badge ) {
+		min-width: 260px;
+	}
+
+	.omnibar__site-badge {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		width: 100%;
+	}
+
+	.omnibar__site-badge-value {
+		box-sizing: border-box;
+		flex-shrink: 0;
+		padding-inline: 8px;
+		border-radius: 2px;
+		background-color: rgba( 255, 255, 255, 0.15 );
+		color: var( --omnibar-text-color );
+		font-size: 12px;
+		line-height: 20px;
+	}
+}

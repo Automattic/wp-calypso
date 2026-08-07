@@ -1,3 +1,5 @@
+@import './variables';
+
 .omnibar__popover {
 	// All colors used by the Menu's internal Emotion styles read from these
 	// CSS custom properties (see node_modules/@wordpress/components/src/menu/styles.ts).
@@ -28,9 +30,28 @@
 		padding-inline: 10px;
 	}
 
+	.omnibar__menu-static-item {
+		box-sizing: border-box;
+		grid-column: 1 / -1;
+		display: grid;
+		grid-template-columns: minmax( 0, max-content ) 1fr;
+		align-items: center;
+		min-height: 32px;
+		padding-block: 4px;
+		padding-inline: 10px;
+		color: var( --omnibar-text-color );
+		font-size: $omnibar-font-size;
+		line-height: 20px;
+
+		> * {
+			grid-column: 2;
+		}
+	}
+
 	.omnibar__menu-group.is-secondary {
 		grid-column: 1 / -1;
 		margin-block-start: 8px;
+		padding-block: 4px;
 		background-color: var( --omnibar-secondary-group-background );
 
 		&:first-child {
