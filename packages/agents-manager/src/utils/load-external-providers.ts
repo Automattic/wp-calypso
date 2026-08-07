@@ -126,12 +126,6 @@ export interface ProviderCapabilities {
 	supportsSplitScreen?: boolean;
 	/** Adds Agenttic's built-in regenerate action to agent messages when true. */
 	supportsRegenerateAction?: boolean;
-	/**
-	 * Disables the chat composer (grayed input, submission blocked) when true.
-	 * For chats that should be visible but non-operational — e.g. a provider
-	 * whose backend requires a connection the site does not have yet.
-	 */
-	composerDisabled?: boolean;
 }
 
 /**
@@ -150,9 +144,6 @@ export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilitie
 	}
 	if ( caps.supportsRegenerateAction === true ) {
 		merged.supportsRegenerateAction = true;
-	}
-	if ( caps.composerDisabled === true ) {
-		merged.composerDisabled = true;
 	}
 }
 

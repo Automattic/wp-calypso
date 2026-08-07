@@ -341,6 +341,7 @@ export default function AgentDock( {
 			siteBuildUtils={ siteBuildUtils }
 			useCheckpoint={ useCheckpoint }
 			capabilities={ capabilities }
+			composerDisabled={ ! isChatEnabled }
 			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>
 	);
@@ -390,12 +391,6 @@ export default function AgentDock( {
 			chatHeaderOptions={ chatHeaderOptions }
 		/>
 	);
-
-	// When the chat is disabled there's nothing to open, so render nothing — the editor
-	// entry-point buttons would otherwise be dead.
-	if ( ! isChatEnabled ) {
-		return null;
-	}
 
 	return (
 		<>

@@ -185,6 +185,8 @@ interface Props {
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
 	capabilities?: ProviderCapabilities;
+	/** Renders the chat with a disabled composer. Driven by `setChatEnabled( false )`. */
+	composerDisabled?: boolean;
 	/** Called when the has-messages state changes. */
 	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
@@ -207,6 +209,7 @@ export default function OrchestratorChat( {
 	siteBuildUtils,
 	useCheckpoint,
 	capabilities,
+	composerDisabled,
 	onHasMessagesChange,
 }: Props ) {
 	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
@@ -1016,7 +1019,7 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
-			composerDisabled={ capabilities?.composerDisabled === true }
+			composerDisabled={ composerDisabled }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }

@@ -21,7 +21,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `getCurrentRoute`          | `() => string`                                          | The chat's current route, e.g. `/chat`, `/history`, `/support-guides`.    |
 | `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat. Opening also expands it from the minimized bar.   |
 | `setChatDocked`            | `(isDocked: boolean) => void`                           | Dock or undock the chat.                                                  |
-| `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable or disable chat rendering.                                         |
+| `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable the chat, or disable its composer while leaving the chat visible.  |
 | `setChatCompactMode`       | `(isCompact: boolean) => void`                          | Toggle compact mode (undocked only).                                      |
 | `setChatDesktopMediaQuery` | `(query: string) => void`                               | Media query used to decide whether the chat can dock into the sidebar.    |
 | `setChatInput` \*          | `(value: string) => void`                               | Set the chat input value and focus it.                                    |
@@ -74,7 +74,7 @@ Pre-set these on `window.__agentsManagerActions` **before** Agents Manager mount
 | Property            | Type      | Default     | Description                              |
 | ------------------- | --------- | ----------- | ---------------------------------------- |
 | `isCompactMode`     | `boolean` | `false`     | Initial compact mode state.              |
-| `isChatEnabled`     | `boolean` | `true`      | Initial chat rendering state.            |
+| `isChatEnabled`     | `boolean` | `true`      | Initial chat enabled state.              |
 | `desktopMediaQuery` | `string`  | `undefined` | Initial media query for sidebar docking. |
 
 ## Examples
@@ -88,6 +88,7 @@ const sessionId = window.__agentsManagerActions.getSessionId();
 window.__agentsManagerActions.setChatOpen( true );
 window.__agentsManagerActions.setChatDocked( true );
 window.__agentsManagerActions.setChatCompactMode( true );
+// Chat stays visible; only the composer is disabled.
 window.__agentsManagerActions.setChatEnabled( false );
 window.__agentsManagerActions.setChatDesktopMediaQuery( '(min-width: 1200px)' );
 

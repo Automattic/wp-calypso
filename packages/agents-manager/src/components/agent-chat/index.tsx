@@ -101,8 +101,8 @@ interface Props {
 	alternativeFooter?: React.ReactNode;
 	/**
 	 * Disables the composer: grayed input, typing and submission blocked.
-	 * Driven by the `composerDisabled` provider capability for chats that are
-	 * visible but non-operational (e.g. awaiting a site connection).
+	 * Driven by `setChatEnabled( false )` for chats that are visible but
+	 * non-operational (e.g. awaiting a site connection).
 	 */
 	composerDisabled?: boolean;
 	/**
