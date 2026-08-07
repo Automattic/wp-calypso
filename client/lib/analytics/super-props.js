@@ -37,7 +37,7 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 	}
 
 	const explicitBlogId = getExplicitBlogId( eventProperties );
-	const path = eventProperties.path ?? getCurrentRoute( state );
+const path = eventProperties.path ?? getCurrentRoute( state ) ?? '';
 	const omitSelectedSite =
 		( ! eventProperties.force_site_id && shouldReportOmitBlogId( path ) ) ||
 		path.startsWith( '/reader' ); // Reader events need to track the blog that is being read, not the user's selected site
