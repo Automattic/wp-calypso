@@ -107,6 +107,14 @@ describe( 'analytics super props', () => {
 		);
 	} );
 
+	test( 'keeps selected-site behavior when current route is unavailable', () => {
+		getCurrentRoute.mockReturnValue( null );
+
+		const superProps = getSuperProps( reduxStore )( {} );
+
+		expect( superProps.blog_id ).toBe( selectedSite.ID );
+	} );
+
 	test( 'ignores invalid explicit blog_id', () => {
 		const superProps = getSuperProps( reduxStore )( { blog_id: 0 } );
 
