@@ -114,10 +114,24 @@ describe( '<McpOverview>', () => {
 		);
 	} );
 
-	test( 'shows Starter prompts as disabled for now', () => {
+	test( 'links Starter prompts to its screen once MCP access is enabled', () => {
 		render(
 			<McpOverview
 				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'link', { name: /^Starter prompts/ } ) ).toHaveAttribute(
+			'href',
+			'/resources/ai-mcp/prompts'
+		);
+	} );
+
+	test( 'disables Starter prompts until MCP access is enabled', () => {
+		render(
+			<McpOverview
+				settings={ settings( false, [ ability( 'get-site-health', true ) ] ) }
 				onSave={ jest.fn() }
 			/>
 		);

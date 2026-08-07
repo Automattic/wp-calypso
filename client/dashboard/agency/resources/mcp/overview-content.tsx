@@ -10,6 +10,7 @@ import type { MouseEvent } from 'react';
 
 const MCP_TOOLS_PATH = '/resources/ai-mcp/tools';
 const MCP_CONNECT_PATH = '/resources/ai-mcp/connect';
+const MCP_PROMPTS_PATH = '/resources/ai-mcp/prompts';
 
 function getReadBadge( abilities: McpAvailableAbility[] ) {
 	if ( abilities.length === 0 ) {
@@ -41,6 +42,7 @@ interface McpOverviewProps {
 	recordTracksEvent?: RecordTracksEvent;
 	toolsPath?: string;
 	connectPath?: string;
+	promptsPath?: string;
 	onNavigate?: ( path: string ) => void;
 }
 
@@ -52,6 +54,7 @@ export default function McpOverview( {
 	recordTracksEvent = () => {},
 	toolsPath = MCP_TOOLS_PATH,
 	connectPath = MCP_CONNECT_PATH,
+	promptsPath = MCP_PROMPTS_PATH,
 	onNavigate,
 }: McpOverviewProps ) {
 	const handleNavClick =
@@ -129,7 +132,8 @@ export default function McpOverview( {
 						title={ __( 'Starter prompts' ) }
 						description={ __( 'Ready-made prompts to copy into your connected assistant.' ) }
 						decoration={ <Icon icon={ listView } size={ 24 } /> }
-						disabled
+						href={ promptsPath }
+						onClick={ handleNavClick( promptsPath, 'calypso_a4a_ai_mcp_starter_prompts_click' ) }
 					/>
 				</>
 			) }
