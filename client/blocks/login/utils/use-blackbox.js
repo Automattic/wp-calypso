@@ -1,6 +1,5 @@
-import config from '@automattic/calypso-config';
 import { useEffect, useState } from 'react';
-import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { getBlackboxApiKey, loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
 
 // Give the SDK a short window to synchronously or near-synchronously start a challenge
 // after configure(), avoiding a brief enabled submit button while the widget initializes.
@@ -84,7 +83,7 @@ export function useBlackbox( { containerRef, enabled } ) {
 
 			try {
 				window.Blackbox.configure( {
-					apiKey: config( 'blackbox_api_key' ),
+					apiKey: getBlackboxApiKey(),
 					challengeContainer: containerRef.current,
 					// Fill the login form column so the challenge lines up with the
 					// input above and the full-width Continue button below.
