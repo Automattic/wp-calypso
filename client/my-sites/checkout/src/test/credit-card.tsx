@@ -187,7 +187,9 @@ describe( 'Credit card payment method', () => {
 		await user.click( await screen.findByText( activePayButtonText ) );
 
 		// Verify the error message overlay appears and names every empty field,
-		// in the order the fields appear in the form.
+		// in the order the fields appear in the form. The store reports them in
+		// a different order (cardNumber, cardCvc, cardExpiry), so this also
+		// covers the reordering.
 		const element = await screen.findByText(
 			'Please fill out the required fields: Card number, Expiry date, and Security code'
 		);
