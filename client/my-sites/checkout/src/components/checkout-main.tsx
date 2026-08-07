@@ -36,8 +36,6 @@ import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
-import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
-import { existingPayPalPPCPPrefix } from '../hooks/use-create-payment-methods/use-create-existing-paypal-ppcp';
 import useCreatePaymentSubmittedAndProcessingCallback from '../hooks/use-create-payment-submitted-and-processing-callback';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
@@ -53,6 +51,7 @@ import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
+import { getInitiallySelectedPaymentMethodId } from '../lib/get-initially-selected-payment-method-id';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
@@ -72,9 +71,8 @@ import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	CheckoutPageErrorCallback,
 	PaymentEventCallbackArguments,
-	PaymentMethod,
 } from '@automattic/composite-checkout';
-import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CheckoutPaymentMethodSlug, SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
@@ -999,34 +997,4 @@ function getAnalyticsPath(
 	}
 
 	return { analyticsPath, analyticsProps };
-}
-
-function getInitiallySelectedPaymentMethodId(
-	responseCart: ResponseCart,
-	paymentMethods: PaymentMethod[]
-): string | undefined {
-	const firstRenewalWithPaymentMethod = responseCart.products.find( ( product ) =>
-		Boolean( product.stored_details_id )
-	);
-	if ( ! firstRenewalWithPaymentMethod ) {
-		return undefined;
-	}
-	// Check for existing card first
-	let matchingCheckoutPaymentMethod = paymentMethods.find(
-		( method ) =>
-			method.id === `${ existingCardPrefix }${ firstRenewalWithPaymentMethod.stored_details_id }`
-	);
-	if ( matchingCheckoutPaymentMethod ) {
-		return matchingCheckoutPaymentMethod.id;
-	}
-	// Check for existing PayPal PPCP
-	matchingCheckoutPaymentMethod = paymentMethods.find(
-		( method ) =>
-			method.id ===
-			`${ existingPayPalPPCPPrefix }${ firstRenewalWithPaymentMethod.stored_details_id }`
-	);
-	if ( matchingCheckoutPaymentMethod ) {
-		return matchingCheckoutPaymentMethod.id;
-	}
-	return undefined;
 }
