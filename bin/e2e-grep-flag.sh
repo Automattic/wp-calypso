@@ -15,11 +15,9 @@ set -o pipefail
 # Prints the flag to stdout: "--grep=<value>", or "" to run every test.
 #
 #   - no test/e2e or packages/calypso-e2e change -> keep TEST_GROUP
-#   - documentation and Jest-only files do not affect Playwright selection
-#   - a changed E2E file is neither a Playwright spec nor a legacy Jest spec (POM, util,
-#     config, fixtures, production packages/calypso-e2e code) -> clear the group, run all tests
-#   - only legacy Jest specs changed (test/e2e/specs/**/*__*.ts) -> keep TEST_GROUP;
-#     these run via the Jest runner, not test:pw, so they don't affect Playwright selection
+#   - documentation and package unit-test files do not affect Playwright selection
+#   - a changed E2E file is not a Playwright spec (POM, util, config, fixtures,
+#     production packages/calypso-e2e code) -> clear the group, run all tests
 #   - Playwright specs changed (test/e2e/specs/**/*.spec.ts) -> run TEST_GROUP plus those specs
 #     in a single pass. Playwright's `--grep` matches the spec path relative to test/e2e/specs/,
 #     so a test selected by both the tag and a changed path runs once.
@@ -39,26 +37,20 @@ compute_flag() {
 		return 0
 	fi
 
-	# Documentation and Jest-only infrastructure cannot affect Playwright.
-	relevant_changed="$(grep -vE '^(test/e2e/|packages/calypso-e2e/).*\.md$|^test/e2e/jest\.config\.js$|^test/e2e/jest-helpers/|^packages/calypso-e2e/jest\.config\.js$|^packages/calypso-e2e/src/(jest-playwright-config|test)/' <<<"$e2e_changed" || true)"
+	# Documentation and package unit-test files cannot affect Playwright.
+	relevant_changed="$(grep -vE '^(test/e2e/|packages/calypso-e2e/).*\.md$|^packages/calypso-e2e/jest\.config\.js$|^packages/calypso-e2e/src/test/' <<<"$e2e_changed" || true)"
 	if [[ -z "$relevant_changed" ]]; then
 		[[ -n "$group" ]] && printf -- '--grep=%s' "$group"
 		return 0
 	fi
 
-	# Runtime helpers and configuration can affect any test, so run everything. Legacy Jest
-	# specs are identified by their *__*.ts convention; other .ts files under specs are helpers.
-	if grep -qvE '^test/e2e/specs/.*(\.spec\.ts|__[^/]*\.ts)$' <<<"$relevant_changed"; then
+	# Runtime helpers and configuration can affect any test, so run everything.
+	if grep -qvE '^test/e2e/specs/.*\.spec\.ts$' <<<"$relevant_changed"; then
 		return 0
 	fi
 
-	# Only Playwright or legacy Jest specs changed. Legacy Jest specs run under Jest, not test:pw,
-	# so keep the group and add just the changed Playwright specs (if any).
+	# Only Playwright specs changed, so keep the group and add their paths.
 	pw_specs="$(grep -E '^test/e2e/specs/.*\.spec\.ts$' <<<"$relevant_changed" || true)"
-	if [[ -z "$pw_specs" ]]; then
-		[[ -n "$group" ]] && printf -- '--grep=%s' "$group"
-		return 0
-	fi
 
 	# With no group set the build already runs everything, so keep clear.
 	if [[ -z "$group" ]]; then
@@ -93,7 +85,6 @@ self_test() {
 
 	local PW=test/e2e/specs/tools/import__sites-squarespace.spec.ts
 	local PW2=test/e2e/specs/tools/import__sites-wordpress.spec.ts
-	local JEST=test/e2e/specs/blocks/blocks__core.ts
 	local POM=test/e2e/lib/pages/some-page.ts
 	local SHARED=test/e2e/specs/shared/login.ts
 	local PW_GREP='--grep=@calypso-pr|(^|\s)tools/import__sites-squarespace\.spec\.ts'
@@ -111,8 +102,8 @@ self_test() {
 	check "fixture clears group"        "" "test/e2e/fixtures/site.ts"
 	check "flow clears group"           "" "test/e2e/flows/signup.ts"
 	check "shared spec helper clears"   "" "$SHARED"
-	check "single Jest spec keeps group" "--grep=@calypso-pr" "$JEST"
-	check "two Jest specs keep group"    "--grep=@calypso-pr" $'test/e2e/specs/blocks/blocks__core.ts\ntest/e2e/specs/me/me__account.ts'
+	check "non-spec file clears group"   "" "test/e2e/specs/blocks/blocks__core.ts"
+	check "double-underscore helper clears group" "" "test/e2e/specs/shared/api__close-account.ts"
 	check "single PW spec unions path"  "$PW_GREP" "$PW"
 	check "two PW specs union all" \
 		'--grep=@calypso-pr|(^|\s)tools/import__sites-squarespace\.spec\.ts|(^|\s)tools/import__sites-wordpress\.spec\.ts' \
@@ -120,17 +111,13 @@ self_test() {
 
 	# Playwright-irrelevant E2E changes.
 	check "E2E docs keep group" "--grep=@calypso-pr" $'test/e2e/README.md\npackages/calypso-e2e/docs/setup.md'
-	check "Jest config keeps group" "--grep=@calypso-pr" $'test/e2e/jest.config.js\npackages/calypso-e2e/jest.config.js'
-	check "Jest helpers keep group" "--grep=@calypso-pr" "test/e2e/jest-helpers/setup.ts"
+	check "package Jest config keeps group" "--grep=@calypso-pr" "packages/calypso-e2e/jest.config.js"
 	check "package unit tests keep group" "--grep=@calypso-pr" "packages/calypso-e2e/src/test/foo.test.ts"
-	check "Jest Playwright config keeps group" "--grep=@calypso-pr" "packages/calypso-e2e/src/jest-playwright-config/index.ts"
 	check "ignored files + PW union path" "$PW_GREP" $'test/e2e/README.md\npackages/calypso-e2e/src/test/foo.test.ts\ntest/e2e/specs/tools/import__sites-squarespace.spec.ts'
 
 	# Mix-and-match.
-	check "PW + Jest unions PW only"        "$PW_GREP" $'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/specs/blocks/blocks__core.ts'
 	check "PW + POM clears group"           "" $'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/lib/pages/some-page.ts'
-	check "Jest + POM clears group"         "" $'test/e2e/specs/blocks/blocks__core.ts\ntest/e2e/lib/pages/some-page.ts'
-	check "PW + Jest + POM clears group"    "" $'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/specs/blocks/blocks__core.ts\ntest/e2e/lib/pages/some-page.ts'
+	check "PW + non-spec clears group"      "" $'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/specs/blocks/blocks__core.ts'
 	check "ignored + runtime clears group"  "" $'test/e2e/README.md\npackages/calypso-e2e/src/lib/foo.ts'
 
 	# Group edge cases.
