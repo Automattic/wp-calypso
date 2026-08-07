@@ -8,8 +8,6 @@ import type { RecordTracksEvent } from './types';
 import type { McpAvailableAbility, McpSettings, McpSettingsUpdate } from '@automattic/api-core';
 import type { MouseEvent } from 'react';
 
-import './style.scss';
-
 const MCP_TOOLS_PATH = '/resources/ai-mcp/tools';
 const MCP_CONNECT_PATH = '/resources/ai-mcp/connect';
 
