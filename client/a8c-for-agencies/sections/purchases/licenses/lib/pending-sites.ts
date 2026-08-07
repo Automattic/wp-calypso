@@ -1,7 +1,7 @@
 export type PendingSite = {
 	id: number;
-	features: {
-		wpcom_atomic: {
+	features?: {
+		wpcom_atomic?: {
 			license_key: string;
 			state: string;
 		};

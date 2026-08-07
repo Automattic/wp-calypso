@@ -36,11 +36,11 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
+import { infoNotice } from 'calypso/state/notices/actions';
 import { getSite } from 'calypso/state/sites/selectors';
-import usePaymentMethod from '../../payment-methods/hooks/use-payment-method';
 import CreateSiteButton from '../create-site-button';
 import useCreateSiteFromLicense from '../hooks/use-create-site-from-license';
+import usePaymentMethodGate from '../hooks/use-payment-method-gate';
 import LicenseDetails from '../license-details';
 import BundleDetails from '../license-details/bundle-details';
 import LicensesOverviewContext from '../licenses-overview/context';
@@ -140,45 +140,15 @@ export default function LicensePreview( {
 		dispatch( recordTracksEvent( 'calypso_a4a_license_list_copy_license_click' ) );
 	}, [ dispatch, translate ] );
 
-	const { paymentMethodRequired } = usePaymentMethod();
+	const isBlockedByMissingPaymentMethod = usePaymentMethodGate( !! referral );
 	const {
 		onCreateSite,
 		isProvisioning,
 		isLoading: isLoadingPendingSites,
 		modal: siteConfigurationsModal,
-	} = useCreateSiteFromLicense( licenseKey );
+	} = useCreateSiteFromLicense( licenseKey, !! referral );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl && ! isPressableLicense ? getUrlParts( siteUrl ).hostname || siteUrl : '';
-
-	// Returns true when the action can't proceed, having told the agency why.
-	const isBlockedByMissingPaymentMethod = useCallback(
-		( returnUrl: string ) => {
-			if ( ! paymentMethodRequired || referral ) {
-				return false;
-			}
-
-			const noticeLinkHref = addQueryArgs(
-				{
-					return: returnUrl,
-				},
-				'/purchases/payment-methods/add'
-			);
-			const errorMessage = translate(
-				'A primary payment method is required.{{br/}} ' +
-					'{{a}}Try adding a new payment method{{/a}} or contact support.',
-				{
-					components: {
-						a: <a href={ noticeLinkHref } />,
-						br: <br />,
-					},
-				}
-			);
-
-			dispatch( errorNotice( errorMessage ) );
-			return true;
-		},
-		[ dispatch, paymentMethodRequired, referral, translate ]
-	);
 
 	const assign = useCallback( () => {
 		const redirectUrl = addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
@@ -189,14 +159,6 @@ export default function LicensePreview( {
 
 		page( redirectUrl );
 	}, [ isBlockedByMissingPaymentMethod, licenseKey ] );
-
-	const createSite = useCallback( () => {
-		if ( isBlockedByMissingPaymentMethod( A4A_LICENSES_LINK ) ) {
-			return;
-		}
-
-		onCreateSite();
-	}, [ isBlockedByMissingPaymentMethod, onCreateSite ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
@@ -350,7 +312,7 @@ export default function LicensePreview( {
 												borderless
 												isProvisioning={ isProvisioning }
 												isLoading={ isLoadingPendingSites }
-												onCreateSite={ createSite }
+												onCreateSite={ onCreateSite }
 											/>
 										) : (
 											<Button

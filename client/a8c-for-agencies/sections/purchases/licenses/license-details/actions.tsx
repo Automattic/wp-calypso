@@ -79,7 +79,7 @@ export default function LicenseDetailsActions( {
 		isProvisioning,
 		isLoading: isLoadingPendingSites,
 		modal: siteConfigurationsModal,
-	} = useCreateSiteFromLicense( licenseKey );
+	} = useCreateSiteFromLicense( licenseKey, isClientLicense );
 
 	const openRevokeDialog = useCallback( () => {
 		setRevokeDialog( true );
