@@ -99,11 +99,7 @@ interface Props {
 	onCancelFeedback?: () => void;
 	/** Alternative footer to render instead of the default footer. */
 	alternativeFooter?: React.ReactNode;
-	/**
-	 * Disables the composer: grayed input, typing and submission blocked.
-	 * Driven by `setChatEnabled( false )` for chats that are visible but
-	 * non-operational (e.g. awaiting a site connection).
-	 */
+	/** Disables the composer: grayed input, typing and submission blocked. */
 	composerDisabled?: boolean;
 	/**
 	 * AI-interaction disclosure shown below the input (EU AI Act Art. 50(1)).
