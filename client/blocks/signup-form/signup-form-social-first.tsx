@@ -256,6 +256,10 @@ const SignupFormSocialFirst = ( {
 						<PasswordlessSignupForm
 							{ ...passwordlessFormProps }
 							renderTerms={ renderEmailStepTermsOfService }
+							// Partner copy is positionally worded — Woo's says "the options below" —
+							// so it cannot be last. It is still wrong here, since this screen has no
+							// options at all; correcting it needs the partner's own legal review.
+							termsBeforeActions={ Boolean( customTosElement ) }
 						/>
 					</div>
 				</div>

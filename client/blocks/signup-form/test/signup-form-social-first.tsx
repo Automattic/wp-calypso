@@ -240,6 +240,19 @@ describe( 'SignupFormSocialFirst', () => {
 			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
 		} );
 
+		// Partner copy names its own position, so it has to keep it.
+		it( 'leaves copy that points below itself above the action', () => {
+			renderUpdating( {
+				customTosElement: <span>By continuing with any of the options below, you agree.</span>,
+			} );
+
+			expect(
+				screen
+					.getByText( /any of the options below/ )
+					.compareDocumentPosition( screen.getByRole( 'button', { name: 'Continue' } ) )
+			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+		} );
+
 		it( 'says it is updating, not signing up, while the request is in flight', async () => {
 			renderUpdating( {
 				onUpdateEmail: () => new Promise< void >( () => {} ),

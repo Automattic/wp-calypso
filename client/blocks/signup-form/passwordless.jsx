@@ -36,8 +36,7 @@ class PasswordlessSignupForm extends Component {
 		onCreateAccountError: PropTypes.func,
 		onCreateAccountSuccess: PropTypes.func,
 		disableTosText: PropTypes.bool,
-		// Terms follow the actions they describe. Gravatar's own screen puts them first, and says
-		// so rather than being told apart by whichever prop happens to differ.
+		// Terms follow the action they describe, unless the copy is written to precede it.
 		termsBeforeActions: PropTypes.bool,
 		// Replaces account creation with a change to the account the caller already has, and
 		// reports its own failures.
@@ -411,17 +410,9 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.props.termsBeforeActions ? (
-						<>
-							{ terms }
-							{ this.formFooter() }
-						</>
-					) : (
-						<>
-							{ this.formFooter() }
-							{ terms }
-						</>
-					) }
+					{ this.props.termsBeforeActions && terms }
+					{ this.formFooter() }
+					{ ! this.props.termsBeforeActions && terms }
 				</LoggedOutForm>
 			</div>
 		);
