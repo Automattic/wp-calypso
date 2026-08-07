@@ -14,7 +14,18 @@ interface StoredHistory {
 function readStoredHistory( siteKey: string ): StoredHistory | undefined {
 	try {
 		const map = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
-		return map[ siteKey ];
+		const history = map[ siteKey ];
+		// Corrupted storage must fall back to a fresh history — a malformed
+		// shape here would crash the router.
+		const isValidHistory =
+			Array.isArray( history?.entries ) &&
+			history.entries.every(
+				( entry: Location | undefined ) => typeof entry?.pathname === 'string'
+			) &&
+			Number.isInteger( history.index ) &&
+			history.index >= 0 &&
+			history.index < history.entries.length;
+		return isValidHistory ? history : undefined;
 	} catch {
 		return undefined;
 	}

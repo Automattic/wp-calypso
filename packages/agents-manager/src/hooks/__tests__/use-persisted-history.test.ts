@@ -75,8 +75,19 @@ describe( 'usePersistedHistory', () => {
 		expect( stored[ 'site-2' ].entries[ 1 ].pathname ).toBe( '/history' );
 	} );
 
-	it( 'falls back to the default root entry when the stored data is malformed', () => {
-		sessionStorage.setItem( STORAGE_KEY, 'not-valid-json' );
+	it.each( [
+		[ 'unparseable JSON', 'not-valid-json' ],
+		[ 'entries is not an array', JSON.stringify( { 'site-1': { entries: 'nope', index: 0 } } ) ],
+		[
+			'index is out of range',
+			JSON.stringify( { 'site-1': { entries: [ entry( '/chat' ) ], index: 5 } } ),
+		],
+		[
+			'an entry has no pathname',
+			JSON.stringify( { 'site-1': { entries: [ { search: '' } ], index: 0 } } ),
+		],
+	] )( 'falls back to the default root entry when the stored data is %s', ( _label, stored ) => {
+		sessionStorage.setItem( STORAGE_KEY, stored );
 
 		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
 
