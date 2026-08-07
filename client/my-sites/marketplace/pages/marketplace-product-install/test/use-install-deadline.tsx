@@ -81,6 +81,15 @@ describe( 'useInstallDeadline', () => {
 		expect( result.current.hasTimedOut ).toBe( true );
 	} );
 
+	it( 'times out when the transfer lookup never settles', async () => {
+		mockFetchLatestAtomicTransfer.mockReturnValue( new Promise( () => undefined ) );
+
+		const { result } = renderDeadline();
+		await advance( INSTALL_DEADLINE_MS + 10000 );
+
+		expect( result.current.hasTimedOut ).toBe( true );
+	} );
+
 	it( 'stays disarmed when the wait is not running', async () => {
 		const { result } = renderDeadline( false );
 		await advance( INSTALL_DEADLINE_MS * 2 );

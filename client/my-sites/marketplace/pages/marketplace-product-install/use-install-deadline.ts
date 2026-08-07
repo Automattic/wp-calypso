@@ -95,7 +95,11 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 	// `isFetchedAfterMount`, not `isFetched`: the latter is satisfied by whatever this query already
 	// had in cache, which for a long-lived page can be a transfer snapshot old enough to blow the
 	// deadline the moment this mounts — latching a timeout on an install that has since completed.
-	const { data: transfer, isFetchedAfterMount } = useQuery( {
+	const {
+		data: transfer,
+		isFetchedAfterMount,
+		isSuccess,
+	} = useQuery( {
 		...siteLatestAtomicTransferQuery( siteId ),
 		enabled: isRunning && !! siteId && ! isHalted,
 		refetchInterval: ( query ) => {
@@ -112,6 +116,7 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 	} );
 
 	const isInFlight = !! transfer && ! isSettled( transfer.status );
+	const hasFreshInFlightTransfer = isFetchedAfterMount && isSuccess && isInFlight;
 
 	useEffect( () => {
 		if ( ! transfer || waitBeganAt === null ) {
@@ -131,7 +136,7 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 
 	// A live transfer is the thing being waited on, so it owns the clock; its start survives a
 	// refresh where a mount-anchored timer would not.
-	const transferStartedAt = isInFlight ? Date.parse( transfer.created_at ) : NaN;
+	const transferStartedAt = hasFreshInFlightTransfer ? Date.parse( transfer.created_at ) : NaN;
 	const waitStartedAt =
 		waitBeganAt === null
 			? null
@@ -141,11 +146,10 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 			  );
 
 	const hasTransferFailed = isRunning && failureSeen;
-	// Gated on a fetch this mount saw complete, so neither a stale cache entry nor a wait that has
-	// not started yet can time out before there is anything to time out on.
+	// Query freshness controls the transfer anchor above, not whether the deadline runs. Otherwise
+	// an offline or indefinitely pending lookup would leave the wait unbounded.
 	const isDeadlineExceeded =
 		isRunning &&
-		isFetchedAfterMount &&
 		! hasTransferFailed &&
 		waitStartedAt !== null &&
 		now - waitStartedAt > INSTALL_DEADLINE_MS;
@@ -172,7 +176,7 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 		transfer_in_lossless_revert: transfer?.in_lossless_revert ?? null,
 		waited_seconds: waitStartedAt === null ? 0 : Math.round( ( now - waitStartedAt ) / 1000 ),
 		// Whether the durable anchor did any work, or the clock fell back to this page's own arrival.
-		anchored_to: isInFlight ? 'transfer' : 'wait_start',
+		anchored_to: hasFreshInFlightTransfer ? 'transfer' : 'wait_start',
 		deadline_seconds: Math.round( INSTALL_DEADLINE_MS / 1000 ),
 	};
 
