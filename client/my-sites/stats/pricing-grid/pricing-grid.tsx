@@ -136,9 +136,12 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 	const freeLabel = String( translate( 'Start for free' ) );
 
 	// Starting for free is a plan choice: record the dismissal and reveal the dashboard.
+	// The reveal is same-route (the gate's local state plus the cache patch), so the
+	// server round-trip isn't awaited here — only swallowed to avoid an unhandled
+	// rejection; the mutation's own retry covers transient failures.
 	const startForFree = () => {
 		trackStatsAnalyticsEvent( 'stats_pricing_grid_free_cta_clicked', { blog_id: siteId } );
-		dismissPricingGrid();
+		dismissPricingGrid().catch( () => null );
 		onDismiss?.();
 	};
 
