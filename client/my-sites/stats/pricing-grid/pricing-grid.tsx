@@ -2,7 +2,6 @@ import { PRODUCT_JETPACK_STATS_YEARLY } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { ProductsList } from '@automattic/data-stores';
 import { getCurrencyObject } from '@automattic/number-formatters';
-import { useQueryClient } from '@tanstack/react-query';
 import { Button, ExternalLink } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
@@ -12,15 +11,12 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
-import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { Notices } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import useDismissPricingGrid, { PRICING_GRID_REFERRER } from './hooks/use-dismiss-pricing-grid';
 import './style.scss';
-
-const TRACKS_REFERRER = 'jetpack-stats-pricing-grid';
 
 interface PlanValue {
 	isIncluded: boolean;
@@ -53,12 +49,7 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 	const isLg = useViewportMatch( 'large' );
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const queryClient = useQueryClient();
-	const { mutate: recordDismissal } = useNoticeVisibilityMutation(
-		siteId,
-		'pricing_grid',
-		'dismissed'
-	);
+	const dismissPricingGrid = useDismissPricingGrid( siteId );
 
 	const product = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
@@ -137,24 +128,19 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 	const paidLabel = String( translate( 'Get Paid Stats' ) );
 	const freeLabel = String( translate( 'Start for free' ) );
 
-	const dismiss = () => {
-		recordDismissal();
-		// The mutation doesn't touch the notices query cache, so update it in place:
-		// the gate re-reads it on SPA route changes (e.g. returning from the purchase
-		// page via "I will do it later") and must see the grid as already dismissed.
-		queryClient.setQueryData(
-			[ 'stats', 'notices-visibility', 'raw', siteId ],
-			( notices: Notices | undefined ) => notices && { ...notices, pricing_grid: false }
-		);
+	// Starting for free is a plan choice: record the dismissal and reveal the dashboard.
+	const startForFree = () => {
+		dismissPricingGrid();
 		onDismiss?.();
 	};
 
-	// Navigate programmatically rather than via href: the wp-admin shim intercepts
-	// anchor clicks inside #wpcom with a jQuery handler registered before React
-	// mounts, so an onClick on a link Button never runs and the dismissal is lost.
+	// Deliberately not a dismissal: heading to the purchase page is not a plan choice
+	// yet, so an abandoned checkout brings the visitor back to the grid; the purchase
+	// page's "I will do it later" records the dismissal instead. Navigate
+	// programmatically rather than via href so the link also works under Odyssey's
+	// hashbang routing when the wp-admin click shim doesn't apply (e.g. middle-click).
 	const goToPurchase = () => {
-		dismiss();
-		page( `/stats/purchase/${ siteSlug }?from=${ TRACKS_REFERRER }` );
+		page( `/stats/purchase/${ siteSlug }?from=${ PRICING_GRID_REFERRER }` );
 	};
 
 	const renderPrice = ( value: number, currency: string, hidePriceFraction: boolean ) => {
@@ -290,7 +276,7 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 										<Button
 											className="stats-pricing-grid__cta"
 											variant="secondary"
-											onClick={ dismiss }
+											onClick={ startForFree }
 										>
 											{ freeLabel }
 										</Button>

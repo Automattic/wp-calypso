@@ -8,6 +8,9 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
 import useStatsPurchases from 'calypso/my-sites/stats/hooks/use-stats-purchases';
+import useDismissPricingGrid, {
+	PRICING_GRID_REFERRER,
+} from 'calypso/my-sites/stats/pricing-grid/hooks/use-dismiss-pricing-grid';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
@@ -85,9 +88,17 @@ const PersonalPurchase = ( {
 		} );
 	};
 
+	const dismissPricingGrid = useDismissPricingGrid( siteId );
+
 	const handleCheckoutPostponed = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked` );
+
+		// Skipping is the visitor's plan decision: the pricing grid that sent them here
+		// (undismissed while checkout was merely in progress) mustn't take over again.
+		if ( from === PRICING_GRID_REFERRER ) {
+			dismissPricingGrid();
+		}
 
 		// redirect to the Traffic page
 		setTimeout( () => {

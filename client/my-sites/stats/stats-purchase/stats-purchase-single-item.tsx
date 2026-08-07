@@ -29,6 +29,9 @@ import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-
 import usePlanUsageQuery, { getUsageLimitStatus } from '../hooks/use-plan-usage-query';
 import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
+import useDismissPricingGrid, {
+	PRICING_GRID_REFERRER,
+} from '../pricing-grid/hooks/use-dismiss-pricing-grid';
 import { StatsCommercialUpgradeSlider, getTierQuantity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import {
@@ -279,9 +282,17 @@ const StatsCommercialPurchase = ( {
 		setPurchaseTierQuantity( value );
 	}, [] );
 
+	const dismissPricingGrid = useDismissPricingGrid( siteId );
+
 	const handleCheckoutPostponed = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_skip_button_clicked` );
+
+		// Skipping is the visitor's plan decision: the pricing grid that sent them here
+		// (undismissed while checkout was merely in progress) mustn't take over again.
+		if ( from === PRICING_GRID_REFERRER ) {
+			dismissPricingGrid();
+		}
 
 		setTimeout( () => {
 			page( `/stats/day/${ siteSlug }` );
