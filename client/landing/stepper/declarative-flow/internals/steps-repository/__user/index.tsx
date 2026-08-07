@@ -20,6 +20,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
+import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import wpcom from 'calypso/lib/wp';
 import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
@@ -227,7 +228,15 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// customTosElement would double-wrap it in <p>.
 	const stepContent = (
 		<>
-			{ isEditingEmail && <DocumentHead title={ translate( 'Create your account' ) } /> }
+			{ isEditingEmail && (
+				<>
+					<DocumentHead title={ translate( 'Create your account' ) } />
+					{ /* The gate carries this, and going to the account screen leaves it behind — so a
+					     confirmation in another tab of this browser would wait for the poll, which by
+					     then may be minutes apart. */ }
+					<UserVerificationChecker />
+				</>
+			) }
 			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && ! isEditingEmail && (
 				<OneTapAuthLoaderOverlay />
 			) }
