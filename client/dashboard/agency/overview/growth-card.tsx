@@ -53,7 +53,7 @@ interface GrowthCardProps {
 	isPending?: boolean;
 	/** Disables the WooPayments store lookup for users without earnings access. */
 	canAccessEarnings?: boolean;
-	/** Hides Premier’s “get listed” move once the agency has an approved listing. */
+	/** Swaps Premier’s “get listed” move for moving more sites once the agency has an approved listing. */
 	hasPartnerDirectoryListing?: boolean;
 	tierId?: AgencyTierType;
 	influencedRevenue: number;
@@ -389,7 +389,8 @@ export default function GrowthCard( {
 				const handleClick = () =>
 					recordTracksEvent?.( 'calypso_a4a_overview_growth_action_click', {
 						action_id: item.id,
-						agency_tier: tier?.id,
+						// Pending accounts have no tier yet, so don't report the default one.
+						agency_tier: isPending ? undefined : tier?.id,
 					} );
 
 				return (
