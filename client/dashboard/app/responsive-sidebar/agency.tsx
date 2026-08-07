@@ -83,7 +83,7 @@ export default function AgencySidebar() {
 						<SidebarMenuItem to="/resources/learn">{ __( 'Learn' ) }</SidebarMenuItem>
 					) }
 					{ canAccessMcp && (
-						<SidebarMenuItem to="/resources/ai-mcp">{ __( 'MCP' ) }</SidebarMenuItem>
+						<SidebarMenuItem to="/resources/ai-mcp">{ __( 'AI and MCP' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }

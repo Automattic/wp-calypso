@@ -189,7 +189,7 @@ const ensureMcpSettings = async () => {
 
 export const mcpRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
-	head: () => ( { meta: [ { title: __( 'MCP' ) } ] } ),
+	head: () => ( { meta: [ { title: __( 'AI and MCP' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'resources/ai-mcp',
 	beforeLoad: async ( { cause } ) => {
