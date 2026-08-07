@@ -35,12 +35,14 @@ export type NoticeIdType = keyof Notices;
 
 // These notices are mutually exclusive, so if one is active, the other should be hidden.
 // The IDs are sorted by priory from high to low.
+// `pricing_grid` is deliberately NOT in this group even though the grid trumps every
+// notice: it replaces the whole dashboard, so StatsNotices never mounts alongside it
+// and no suppression is needed. Listing it here would instead suppress every other
+// notice on all the sites that never see the grid (pre-launch sites, sites with
+// plans), since the server reports the id as visible until a dismissal is recorded.
 const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 	dashboard_notices: [
-		// Highest priority: while the pricing grid is undismissed it replaces the
-		// dashboard outright, so no other dashboard notice should fire alongside it.
-		'pricing_grid',
-		// Set the highest priority among banners to prevent blocking Stats under any circumstances.
+		// Set the highest priority to prevent blocking Stats under any circumstances.
 		'gdpr_cookie_consent',
 		'client_paid_plan_purchase_success',
 		'client_free_plan_purchase_success',
