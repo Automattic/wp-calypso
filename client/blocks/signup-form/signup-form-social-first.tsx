@@ -256,9 +256,6 @@ const SignupFormSocialFirst = ( {
 						<PasswordlessSignupForm
 							{ ...passwordlessFormProps }
 							renderTerms={ renderEmailStepTermsOfService }
-							// Partner copy points at the options below it; the generic names the
-							// button, so it reads under it.
-							termsBeforeActions={ Boolean( customTosElement ) }
 						/>
 					</div>
 				</div>

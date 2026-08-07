@@ -231,21 +231,12 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.getByRole( 'textbox' ) ).toBeVisible();
 		} );
 
-		// Terms follow the actions they describe. Partner copy is the exception, because it points
-		// at the options below it rather than naming the button.
-		it( 'puts the generic terms under the action, and a partner its own above', () => {
+		it( 'puts the terms under the action they name', () => {
 			renderUpdating();
 			expect(
 				screen
 					.getByRole( 'button', { name: 'Continue' } )
 					.compareDocumentPosition( screen.getByText( /agree to our/ ) )
-			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
-
-			renderUpdating( { customTosElement: <span>Partner terms apply.</span> } );
-			expect(
-				screen
-					.getAllByText( 'Partner terms apply.' )[ 0 ]
-					.compareDocumentPosition( screen.getAllByRole( 'button', { name: 'Continue' } )[ 1 ] )
 			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
 		} );
 
@@ -291,12 +282,7 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( emailScreen.getByText( 'That address is already in use.' ) ).toBeVisible();
 			// On text content: the generic terms are split across links, so no node holds the phrase.
 			expect( emailScreenEl ).not.toHaveTextContent( 'By clicking' );
-
-			// Partner copy points at the options below it, so it can't sit under them.
-			const terms = emailScreen.getByText( 'Partner terms apply.' );
-			expect(
-				terms.compareDocumentPosition( screen.getByRole( 'button', { name: 'Continue' } ) )
-			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+			expect( emailScreen.getByText( 'Partner terms apply.' ) ).toBeVisible();
 		} );
 
 		// Otherwise a refusal leaves the field and the button with nothing to press.
