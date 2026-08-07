@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
@@ -7,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import useChatStatus from '../hooks/use-chat-status';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import './notices.scss';
 import { HELP_CENTER_STORE } from '../stores';
 
@@ -16,6 +16,7 @@ export const BlockedZendeskNotice: React.FC = () => {
 	const { isEligibleForChat } = useChatStatus();
 	const featureConfig = useFeatureConfig();
 	const { setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );
+	const recordTracksEvent = useHelpCenterTracksEvent();
 
 	const willShowNotice =
 		! canConnectToZendesk && ( isEligibleForChat || featureConfig.chat.hasPremiumSupport );
@@ -28,7 +29,7 @@ export const BlockedZendeskNotice: React.FC = () => {
 				section: sectionName,
 			} );
 		}
-	}, [ willShowNotice, sectionName ] );
+	}, [ recordTracksEvent, willShowNotice, sectionName ] );
 
 	if ( ! willShowNotice ) {
 		return null;

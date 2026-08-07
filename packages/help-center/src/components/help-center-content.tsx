@@ -2,7 +2,6 @@
 /**
  * External Dependencies
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterArticle } from '@automattic/support-articles';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -16,6 +15,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus } from '../hooks';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterChat } from './help-center-chat';
 import { HelpCenterChatHistory } from './help-center-chat-history';
@@ -83,6 +83,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const { sectionName, site } = useHelpCenterContext();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 	const featureConfig = useFeatureConfig();
 	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
 	const { forceEmailSupport } = useChatStatus();
@@ -110,7 +111,13 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			location: 'help-center',
 			is_free_user: ! isUserEligibleForPaidSupport,
 		} );
-	}, [ location.pathname, location.search, sectionName, isUserEligibleForPaidSupport ] );
+	}, [
+		location.pathname,
+		location.search,
+		sectionName,
+		isUserEligibleForPaidSupport,
+		recordTracksEvent,
+	] );
 
 	useEffect( () => {
 		if ( navigateToRoute?.route ) {

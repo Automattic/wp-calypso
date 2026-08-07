@@ -2,7 +2,6 @@
 /**
  * External Dependencies
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { FormInputValidation } from '@automattic/components';
@@ -28,6 +27,7 @@ import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useSiteAnalysis } from '../data/use-site-analysis';
 import { useSubmitTicketMutation } from '../data/use-submit-support-ticket';
 import { useUserSites } from '../data/use-user-sites';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { queryClient } from '../query-client';
 import { HELP_CENTER_STORE } from '../stores';
 import { SearchResult } from '../types';
@@ -89,16 +89,6 @@ export const HelpCenterContactForm = () => {
 		useDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
-		const supportVariation = 'SUPPORT_TICKET';
-		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
-			support_variation: supportVariation,
-			force_site_id: true,
-			location: 'help-center',
-			section: sectionName,
-		} );
-	}, [ sectionName ] );
-
-	useEffect( () => {
 		if ( userWithNoSites ) {
 			setIsSelfDeclaredSite( true );
 		}
@@ -145,6 +135,17 @@ export const HelpCenterContactForm = () => {
 	} else {
 		supportSite = site as HelpCenterSite;
 	}
+	const recordTracksEvent = useHelpCenterTracksEvent( { explicitSiteId: supportSite?.ID } );
+
+	useEffect( () => {
+		const supportVariation = 'SUPPORT_TICKET';
+		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
+			support_variation: supportVariation,
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+		} );
+	}, [ recordTracksEvent, sectionName ] );
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
@@ -190,7 +191,7 @@ export const HelpCenterContactForm = () => {
 
 			navigate( `/post/?${ params }` );
 		},
-		[ debouncedMessage, navigate ]
+		[ debouncedMessage, navigate, recordTracksEvent ]
 	);
 
 	// this indicates the user was happy with the GPT response

@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { TimeSince } from '@automattic/components';
 import SummaryButton from '@automattic/components/src/summary-button';
 import { __ } from '@wordpress/i18n';
@@ -8,21 +7,15 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useGetHistoryChats } from '../hooks';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { getChatLinkFromConversation, getLastMessage } from './utils';
 import './help-center-recent-conversations.scss';
-
-const trackContactButtonClicked = ( sectionName: string ) => {
-	recordTracksEvent( 'calypso_inlinehelp_support_chat_message_click', {
-		force_site_id: true,
-		location: 'help-center',
-		section: sectionName,
-	} );
-};
 
 const HelpCenterRecentConversations: React.FC = () => {
 	const { recentConversations } = useGetHistoryChats();
 	const navigate = useNavigate();
 	const { sectionName } = useHelpCenterContext();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 
 	if ( ! recentConversations?.length ) {
 		return null;
@@ -82,7 +75,11 @@ const HelpCenterRecentConversations: React.FC = () => {
 				</div>
 			}
 			onClick={ () => {
-				trackContactButtonClicked( sectionName );
+				recordTracksEvent( 'calypso_inlinehelp_support_chat_message_click', {
+					force_site_id: true,
+					location: 'help-center',
+					section: sectionName,
+				} );
 				navigate( chatLink );
 			} }
 		/>

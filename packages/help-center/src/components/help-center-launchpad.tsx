@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
 import { useLaunchpad } from '@automattic/data-stores';
@@ -7,6 +6,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { useSiteSlug } from '../hooks/use-site-slug';
 
 const getEnvironmentHostname = () => {
@@ -30,6 +30,7 @@ export const HelpCenterLaunchpad = () => {
 	const { sectionName, site } = useHelpCenterContext();
 	const siteIntent = site?.options.site_intent;
 	const siteSlug = useSiteSlug();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 
 	const { data } = useLaunchpad( siteSlug, siteIntent );
 	const totalLaunchpadSteps = data?.checklist?.length || 4;

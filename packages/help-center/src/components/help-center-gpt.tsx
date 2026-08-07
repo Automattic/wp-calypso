@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import styled from '@emotion/styled';
@@ -13,6 +12,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import stripTags from 'striptags';
 import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useTyper } from '../hooks';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
 import HelpCenterSearchResults from './help-center-search-results';
 import type { JetpackSearchAIResult } from '../data/use-jetpack-search-ai';
@@ -72,6 +72,7 @@ const handleContentClick = ( event: React.MouseEvent ) => {
 export function HelpCenterGPT( { onResponseReceived, redirectToArticle }: Props ) {
 	const { __ } = useI18n();
 	const [ feedbackGiven, setFeedbackGiven ] = useState< boolean >( false );
+	const recordTracksEvent = useHelpCenterTracksEvent();
 
 	// Report loading state up.
 	const { message } = useSelect( ( select ) => {
@@ -111,7 +112,7 @@ export function HelpCenterGPT( { onResponseReceived, redirectToArticle }: Props 
 
 			onResponseReceived( data );
 		}
-	}, [ data ] );
+	}, [ data, onResponseReceived, recordTracksEvent ] );
 
 	const loadingMessages: string[] = [
 		__( 'Finding relevant support documentation…', __i18n_text_domain__ ),

@@ -10,6 +10,7 @@ import {
 import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
+import { addOdieSiteContext } from '../utils/tracks';
 import type {
 	Chat,
 	Message,
@@ -130,13 +131,19 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 */
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
-			recordTracksEvent( `calypso_odie_${ eventName }`, {
-				...properties,
-				chat_id: mainChatState?.odieId,
-				bot_name_slug: newInteractionsBotSlug,
-			} );
+			recordTracksEvent(
+				`calypso_odie_${ eventName }`,
+				addOdieSiteContext(
+					{
+						...properties,
+						chat_id: mainChatState?.odieId,
+						bot_name_slug: newInteractionsBotSlug,
+					},
+					selectedSiteId
+				)
+			);
 		},
-		[ newInteractionsBotSlug, mainChatState ]
+		[ newInteractionsBotSlug, mainChatState, selectedSiteId ]
 	);
 
 	const clearChat = useCallback( () => {

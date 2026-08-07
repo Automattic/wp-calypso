@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
 import { isZendeskIntroMessage } from '@automattic/odie-client/src/utils/csat';
@@ -17,14 +16,18 @@ import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus } from '../hooks';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
 import type { ZendeskMessage } from '@automattic/zendesk-client';
 
+type RecordTracksEvent = ReturnType< typeof useHelpCenterTracksEvent >;
+
 const initSmooch = async (
 	jwt: string,
 	externalId: string,
-	queryClient: QueryClient
+	queryClient: QueryClient,
+	recordTracksEvent: RecordTracksEvent
 ): Promise< void > => {
 	const isTestMode = isTestModeEnvironment();
 
@@ -82,6 +85,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const { isEligibleForChat } = useChatStatus();
 	const queryClient = useQueryClient();
 	const { currentUser } = useHelpCenterContext();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 	const smoochRef = useRef< HTMLDivElement >( null );
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
 	const {
@@ -146,12 +150,12 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const disconnectedListener = useCallback( () => {
 		setZendeskConnectionStatus( 'disconnected' );
 		recordTracksEvent( 'calypso_smooch_messenger_disconnected' );
-	}, [ setZendeskConnectionStatus ] );
+	}, [ recordTracksEvent, setZendeskConnectionStatus ] );
 
 	const reconnectingListener = useCallback( () => {
 		setZendeskConnectionStatus( 'reconnecting' );
 		recordTracksEvent( 'calypso_smooch_messenger_reconnecting' );
-	}, [ setZendeskConnectionStatus ] );
+	}, [ recordTracksEvent, setZendeskConnectionStatus ] );
 
 	const typingStartListener = useCallback(
 		( { conversation }: ConversationData ) => {
@@ -173,7 +177,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			setZendeskConnectionStatus( 'connected' );
 			recordTracksEvent( 'calypso_smooch_messenger_connected' );
 		}
-	}, [ setZendeskConnectionStatus, connectionStatus ] );
+	}, [ connectionStatus, recordTracksEvent, setZendeskConnectionStatus ] );
 
 	const clientIdListener = useCallback(
 		( message: ZendeskMessage ) => {
@@ -214,7 +218,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 				// Read the JWT from the ref so we always use the freshest token without
 				// this effect needing to re-run (and destroy + reinit Smooch) on every
 				// JWT rotation. Rotations are handled by Smooch's onInvalidAuth delegate.
-				await initSmooch( authJwtRef.current!, authExternalId, queryClient );
+				await initSmooch( authJwtRef.current!, authExternalId, queryClient, recordTracksEvent );
 
 				if ( isCancelled ) {
 					return;
@@ -262,6 +266,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		authExternalId,
 		setIsChatLoaded,
 		queryClient,
+		recordTracksEvent,
 	] );
 
 	useEffect( () => {

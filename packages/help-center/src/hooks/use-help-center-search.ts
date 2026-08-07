@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useDispatch } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -7,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { preventWidows } from 'calypso/lib/formatting';
 import { HELP_CENTER_STORE } from '../stores';
 import { SearchResult } from '../types';
+import { useHelpCenterTracksEvent } from './use-help-center-tracks-event';
 
 export const useHelpCenterSearch = ( onSearchChange?: ( query: string ) => void ) => {
 	const navigate = useNavigate();
@@ -15,6 +15,7 @@ export const useHelpCenterSearch = ( onSearchChange?: ( query: string ) => void 
 	const query = params.get( 'query' );
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 	const { setSubject, setMessage } = useDispatch( HELP_CENTER_STORE );
+	const recordTracksEvent = useHelpCenterTracksEvent();
 
 	// when the user sets the search query, let's also populate the email subject and body
 	// for later in case they subject the same query via email
@@ -70,7 +71,7 @@ export const useHelpCenterSearch = ( onSearchChange?: ( query: string ) => void 
 
 			navigate( `/post/?${ params }` );
 		},
-		[ navigate, searchQuery ]
+		[ navigate, recordTracksEvent, searchQuery ]
 	);
 
 	return {

@@ -2,7 +2,6 @@
 /**
  * External Dependencies
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import OdieAssistantProvider, { OdieAssistant } from '@automattic/odie-client';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect } from '@wordpress/element';
@@ -10,6 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useShouldUseWapuu } from '../hooks';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import type { JSX } from 'react';
 import './help-center-chat.scss';
 
@@ -41,6 +41,10 @@ export function HelpCenterChat( {
 	const userFieldMessage = params.get( 'userFieldMessage' );
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
+	const requestedSiteId = Number( siteId ) || Number( site?.ID );
+	const selectedSiteId =
+		Number.isInteger( requestedSiteId ) && requestedSiteId > 0 ? requestedSiteId : undefined;
+	const recordTracksEvent = useHelpCenterTracksEvent( { explicitSiteId: selectedSiteId } );
 	const externalChatProvider = params.get( 'externalChatProvider' );
 	const externalChatId = params.get( 'externalChatId' );
 
@@ -56,7 +60,7 @@ export function HelpCenterChat( {
 			} );
 			navigate( '/' );
 		}
-	}, [ navigate, preventOdieAccess ] );
+	}, [ navigate, preventOdieAccess, recordTracksEvent ] );
 
 	return (
 		<OdieAssistantProvider
@@ -66,7 +70,7 @@ export function HelpCenterChat( {
 			currentUser={ currentUser }
 			canConnectToZendesk={ canConnectToZendesk }
 			isLoadingCanConnectToZendesk={ isLoading }
-			selectedSiteId={ Number( siteId ) || ( site?.ID as number ) }
+			selectedSiteId={ selectedSiteId }
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }

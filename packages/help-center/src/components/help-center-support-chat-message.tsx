@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gravatar, TimeSince, WordPressLogo } from '@automattic/components';
 import { WapuuAvatar } from '@automattic/odie-client/src/assets';
 import { chevronRight, Icon } from '@wordpress/icons';
@@ -8,19 +7,12 @@ import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useGetHistoryChats } from '../hooks';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { getChatLinkFromConversation } from './utils';
 import type { OdieConversation, OdieMessage } from '@automattic/odie-client';
 import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
 
 import './help-center-support-chat-message.scss';
-
-const trackContactButtonClicked = ( sectionName: string ) => {
-	recordTracksEvent( 'calypso_inlinehelp_support_chat_message_click', {
-		force_site_id: true,
-		location: 'help-center',
-		section: sectionName,
-	} );
-};
 
 export const HelpCenterSupportChatMessage = ( {
 	message,
@@ -36,6 +28,7 @@ export const HelpCenterSupportChatMessage = ( {
 } ) => {
 	const { __ } = useI18n();
 	const { currentUser } = useHelpCenterContext();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 	const { received, role, text, altText } = message;
 	const messageText =
 		'metadata' in message && message.metadata?.type === 'csat'
@@ -136,7 +129,11 @@ export const HelpCenterSupportChatMessage = ( {
 		<Link
 			to={ chatLink }
 			onClick={ () => {
-				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
+				recordTracksEvent( 'calypso_inlinehelp_support_chat_message_click', {
+					force_site_id: true,
+					location: 'help-center',
+					section: sectionName || helpCenterContextSectionName,
+				} );
 			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
 				'is-unread-message': hasUnreadMessages,
