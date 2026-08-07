@@ -99,7 +99,8 @@ fun BuildSteps.runTaggedPlaywrightSpecs(
 			cd test/e2e
 
 			# Clear any prior report so a runner crash can't be masked by a stale file.
-			rm -f $reportFile
+			# The import rule matches results*.xml, so clear the unsuffixed name too.
+			rm -f output/results.xml $reportFile
 
 			# Swallow the exit code so later steps still run; failed tests fail
 			# the build through the JUnit report.
