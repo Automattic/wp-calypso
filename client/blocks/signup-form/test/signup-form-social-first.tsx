@@ -240,19 +240,6 @@ describe( 'SignupFormSocialFirst', () => {
 			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
 		} );
 
-		// Partner copy names its own position, so it has to keep it.
-		it( 'leaves copy that points below itself above the action', () => {
-			renderUpdating( {
-				customTosElement: <span>By continuing with any of the options below, you agree.</span>,
-			} );
-
-			expect(
-				screen
-					.getByText( /any of the options below/ )
-					.compareDocumentPosition( screen.getByRole( 'button', { name: 'Continue' } ) )
-			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
-		} );
-
 		it( 'says it is updating, not signing up, while the request is in flight', async () => {
 			renderUpdating( {
 				onUpdateEmail: () => new Promise< void >( () => {} ),
@@ -264,14 +251,10 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 
 		it( 'mounts the email field once, with nothing to sign up with', () => {
-			renderUpdating( {
-				isEmailFirstVariant: true,
-				customTosElement: <span>Partner terms apply.</span>,
-			} );
+			renderUpdating( { isEmailFirstVariant: true } );
 
 			expect( screen.getAllByRole( 'textbox' ) ).toHaveLength( 1 );
 			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
-			expect( screen.getAllByText( 'Partner terms apply.' ) ).toHaveLength( 1 );
 		} );
 
 		it( 'shows the email screen even when it was given no address to start from', () => {
@@ -282,7 +265,7 @@ describe( 'SignupFormSocialFirst', () => {
 			).toHaveClass( 'visible' );
 		} );
 
-		it( 'shows what the caller has to say, and a partner its own terms', () => {
+		it( "shows what the caller has to say, and keeps its own terms over a partner's", () => {
 			renderUpdating( {
 				notice: <div>That address is already in use.</div>,
 				customTosElement: <span>Partner terms apply.</span>,
@@ -293,9 +276,11 @@ describe( 'SignupFormSocialFirst', () => {
 				.closest( '.signup-form-social-first-screen' ) as HTMLElement;
 			const emailScreen = within( emailScreenEl );
 			expect( emailScreen.getByText( 'That address is already in use.' ) ).toBeVisible();
+			// Partner terms describe agreeing by picking one of several options, which this
+			// screen does not offer, and which the account was already created by agreeing to.
+			expect( emailScreen.queryByText( 'Partner terms apply.' ) ).not.toBeInTheDocument();
 			// On text content: the generic terms are split across links, so no node holds the phrase.
-			expect( emailScreenEl ).not.toHaveTextContent( 'By clicking' );
-			expect( emailScreen.getByText( 'Partner terms apply.' ) ).toBeVisible();
+			expect( emailScreenEl ).toHaveTextContent( 'By clicking' );
 		} );
 
 		// Otherwise a refusal leaves the field and the button with nothing to press.

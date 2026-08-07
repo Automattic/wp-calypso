@@ -36,7 +36,7 @@ class PasswordlessSignupForm extends Component {
 		onCreateAccountError: PropTypes.func,
 		onCreateAccountSuccess: PropTypes.func,
 		disableTosText: PropTypes.bool,
-		// Terms follow the action they describe, unless the copy is written to precede it.
+		// Terms follow the action they describe. Gravatar's screen puts them first.
 		termsBeforeActions: PropTypes.bool,
 		// Replaces account creation with a change to the account the caller already has, and
 		// reports its own failures.

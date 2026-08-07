@@ -173,10 +173,6 @@ const SignupFormSocialFirst = ( {
 	};
 
 	const renderEmailStepTermsOfService = () => {
-		// Partner legal copy is otherwise only on the screen this mode never shows.
-		if ( onUpdateEmail && customTosElement ) {
-			return <p className="signup-form-social-first__email-tos-link">{ customTosElement }</p>;
-		}
 		return (
 			<p className="signup-form-social-first__email-tos-link">
 				{ createInterpolateElement(
@@ -256,10 +252,6 @@ const SignupFormSocialFirst = ( {
 						<PasswordlessSignupForm
 							{ ...passwordlessFormProps }
 							renderTerms={ renderEmailStepTermsOfService }
-							// Partner copy is positionally worded — Woo's says "the options below" —
-							// so it cannot be last. It is still wrong here, since this screen has no
-							// options at all; correcting it needs the partner's own legal review.
-							termsBeforeActions={ Boolean( customTosElement ) }
 						/>
 					</div>
 				</div>
