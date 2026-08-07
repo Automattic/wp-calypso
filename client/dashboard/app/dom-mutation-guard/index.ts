@@ -1,20 +1,13 @@
 import { bumpStat } from '../analytics';
 
 /**
- * Guards React against third-party DOM mutation.
+ * Page translators (Google Translate) and extensions rewrite text nodes React
+ * manages, so React's cached references get reparented and its commit-phase
+ * `insertBefore`/`removeChild` throw `NotFoundError`, crashing the whole tree
+ * (Sentry CALYPSO-3G00). These guards no-op the reparented case instead.
  *
- * Browser page-translation (Google Translate, Edge) and extensions such as
- * Grammarly rewrite the text nodes React manages — wrapping them in `<font>`
- * tags, or splitting and relocating them. React still holds references to the
- * original nodes and later calls `parent.insertBefore( newNode, ref )` or
- * `parent.removeChild( child )` against a node whose parent has since changed.
- * The browser then throws `NotFoundError: ... not a child of this node` from
- * the commit phase, which escapes error boundaries and tears down the whole
- * React tree (Sentry CALYPSO-3G00 / CALYPSO-1WJF).
- *
- * These guards make the two operations no-op when the reference/child node has
- * been reparented, turning a hard crash into an occasional, self-correcting
- * visual glitch. See https://github.com/facebook/react/issues/11538.
+ * This is a well known issue in React, and this snippet comes from there.
+ * See https://github.com/facebook/react/issues/11538.
  */
 
 const reported = new Set< string >();
