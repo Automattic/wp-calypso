@@ -84,7 +84,7 @@ export default function McpRead() {
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_read_tool_toggled', {
-						tool_id: toolId,
+						ability_name: toolId,
 						enabled,
 						group: groupName ?? 'other',
 					} );
