@@ -84,7 +84,7 @@ export default function McpWrite() {
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_write_tool_toggled', {
-						tool_id: toolId,
+						ability_name: toolId,
 						enabled,
 						group: groupName ?? 'other',
 					} );

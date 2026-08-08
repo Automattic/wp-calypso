@@ -133,7 +133,7 @@ export default function McpToolsSubpage( {
 				onSuccess: () => {
 					recordTracksEvent( tracksEvents.toolToggled, {
 						path,
-						tool_id: toolId,
+						ability_name: toolId,
 						enabled,
 						group: groupName ?? 'other',
 					} );
