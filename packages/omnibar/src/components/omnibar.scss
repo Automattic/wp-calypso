@@ -62,6 +62,7 @@ body:has( .omnibar ) {
 		&:hover,
 		&:focus-visible,
 		&:active,
+		&.is-active,
 		&[aria-expanded='true'] {
 			background-color: var( --omnibar-menu-active-background );
 			color: var( --omnibar-text-color );

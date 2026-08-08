@@ -23,6 +23,7 @@
 
 .omnibar .omnibar__menu:hover .omnibar__notifications-unread-dot,
 .omnibar .omnibar__menu:focus-visible .omnibar__notifications-unread-dot,
-.omnibar .omnibar__menu:active .omnibar__notifications-unread-dot {
+.omnibar .omnibar__menu:active .omnibar__notifications-unread-dot,
+.omnibar .omnibar__menu.is-active .omnibar__notifications-unread-dot {
 	stroke: var( --omnibar-menu-active-background );
 }
