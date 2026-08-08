@@ -61,6 +61,7 @@ export default function ZendeskChat( {
 		zendeskSmoochIntegrationKey,
 		zendeskTicketProductFieldValue,
 	} = useAgentsManagerContext();
+	const blogId = Number( site?.ID );
 	const siteUrl = getSiteUrl( site );
 	const conversationTicketFields = useMemo(
 		() =>
@@ -84,6 +85,7 @@ export default function ZendeskChat( {
 		notice,
 		hasInteractionEnded,
 	} = useManagedZendeskChat( {
+		blogId: Number.isInteger( blogId ) && blogId > 0 ? blogId : undefined,
 		conversationTags: zendeskConversationTags,
 		conversationTicketFields,
 		smoochIntegrationKey: zendeskSmoochIntegrationKey,
