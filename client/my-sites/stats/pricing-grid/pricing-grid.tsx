@@ -137,7 +137,10 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 
 	// Starting for free is a plan choice: record the dismissal and reveal the dashboard.
 	const startForFree = () => {
-		trackStatsAnalyticsEvent( 'stats_pricing_grid_free_cta_clicked', { blog_id: siteId } );
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_free_cta_clicked', {
+			blog_id: siteId,
+			cta: 'free',
+		} );
 		dismissPricingGrid();
 		onDismiss?.();
 	};
@@ -148,7 +151,10 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 	// programmatically rather than via href so the link also works under Odyssey's
 	// hashbang routing when the wp-admin click shim doesn't apply (e.g. middle-click).
 	const goToPurchase = () => {
-		trackStatsAnalyticsEvent( 'stats_pricing_grid_paid_cta_clicked', { blog_id: siteId } );
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_paid_cta_clicked', {
+			blog_id: siteId,
+			cta: 'paid',
+		} );
 		page( `/stats/purchase/${ siteSlug }?from=${ PRICING_GRID_REFERRER }` );
 	};
 
