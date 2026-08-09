@@ -31,6 +31,7 @@ function getEmailVerificationParams() {
 			isEmailVerificationComplete: false,
 			emailChangeFailed: false,
 			emailVerificationFailed: false,
+			emailChangeError: null,
 		};
 	}
 	const params = new URLSearchParams( window.location.search );
@@ -42,6 +43,7 @@ function getEmailVerificationParams() {
 		isEmailVerificationComplete: verified === '1',
 		emailChangeFailed: newEmailResult === '0',
 		emailVerificationFailed: verified === '0',
+		emailChangeError: params.get( 'new_email_error' ),
 	};
 }
 
@@ -49,9 +51,21 @@ function getEmailVerificationParams() {
 function cleanUpEmailVerificationParams() {
 	const params = new URLSearchParams( window.location.search );
 	params.delete( 'new_email_result' );
+	params.delete( 'new_email_error' );
 	params.delete( 'verified' );
 	const newUrl = window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 	window.history.replaceState( {}, '', newUrl );
+}
+
+// An unrecognised or absent reason falls back to the generic message, so the server can start
+// sending one without waiting on this.
+function emailChangeFailureMessage( emailChangeError: string | null ) {
+	if ( emailChangeError === 'email_in_use' ) {
+		return __(
+			'That email address is already used by another WordPress.com account. Try a different address.'
+		);
+	}
+	return __( 'The email verification link is invalid or has expired. Please request a new one.' );
 }
 
 interface EmailVerificationBannerProps {
@@ -71,6 +85,7 @@ export default function EmailVerificationBanner( {
 		isEmailVerificationComplete,
 		emailChangeFailed,
 		emailVerificationFailed,
+		emailChangeError,
 	} = getEmailVerificationParams();
 
 	const [ showSuccessNotice, setShowSuccessNotice ] = useState( () => {
@@ -110,10 +125,7 @@ export default function EmailVerificationBanner( {
 	useEffect( () => {
 		// Handle error cases
 		if ( emailChangeFailed || emailVerificationFailed ) {
-			createErrorNotice(
-				__( 'The email verification link is invalid or has expired. Please request a new one.' ),
-				{ type: 'snackbar' }
-			);
+			createErrorNotice( emailChangeFailureMessage( emailChangeError ), { type: 'snackbar' } );
 		}
 
 		// Clean up URL params if any verification params were present
@@ -131,6 +143,7 @@ export default function EmailVerificationBanner( {
 		isEmailVerificationComplete,
 		emailChangeFailed,
 		emailVerificationFailed,
+		emailChangeError,
 	] );
 
 	// One mutation per endpoint: TanStack hands a request in flight whatever options the latest
