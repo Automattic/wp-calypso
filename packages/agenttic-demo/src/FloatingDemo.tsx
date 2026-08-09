@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { UIMessage } from '@automattic/agenttic-client';
 import { AgentUI, CopyIcon, EmptyView } from '@automattic/agenttic-ui';
-import type { ChatState } from '@automattic/agenttic-ui';
+import type { ChatState, LayoutCommand } from '@automattic/agenttic-ui';
 
 import MessageTester from './MessageTester';
 import {
@@ -86,6 +86,9 @@ const FloatingDemo: React.FC< {
 	const resizableLabel = RESIZABLE_LABELS.get( resizableMode );
 	const [ chatSize, setChatSize ] = useState<
 		{ width: number; height: number } | undefined
+	>( undefined );
+	const [ layoutCommand, setLayoutCommand ] = useState<
+		LayoutCommand | undefined
 	>( undefined );
 
 	const defaultSuggestions = useMemo(
@@ -207,6 +210,19 @@ const FloatingDemo: React.FC< {
 						Grow (controlled)
 					</ToolButton>
 				) }
+				{ /* Layout-command exerciser: each click bumps `id`, snapping the
+					   panel to the right corner at the default size. */ }
+				<ToolButton
+					onClick={ () =>
+						setLayoutCommand( ( prev ) => ( {
+							id: ( prev?.id ?? 0 ) + 1,
+							side: 'right',
+							resetSize: true,
+						} ) )
+					}
+				>
+					Snap Right
+				</ToolButton>
 				{ /* Live size readout for verifying resize clamping */ }
 				{ resizableMode && chatSize && (
 					<span className="playground-status">
@@ -228,6 +244,7 @@ const FloatingDemo: React.FC< {
 				onSubmit={ handleSubmit }
 				onStop={ abortCurrentRequest }
 				variant="floating"
+				initialChatPosition="left"
 				floatingChatState={ floatingChatState }
 				triggerTitle={ triggerTitle }
 				boundaryInset={ { top: headerHeight + 16 } }
@@ -244,6 +261,7 @@ const FloatingDemo: React.FC< {
 				resizable={ resizableMode }
 				defaultSize={ { width: 372, height: 520 } }
 				size={ chatSize }
+				layoutCommand={ layoutCommand }
 				onResize={ setChatSize }
 				onResizeEnd={ setChatSize }
 				onSuggestionsRendered={ ( shown ) => console.log( shown ) }

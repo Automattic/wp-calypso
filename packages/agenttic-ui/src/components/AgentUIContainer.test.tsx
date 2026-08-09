@@ -341,6 +341,7 @@ function ResizableContainer( {
 			isProcessing={ false }
 			onSubmit={ () => {} }
 			variant={ variant }
+			initialChatPosition="left"
 			floatingChatState={ state }
 			resizable={ resizable }
 			defaultSize={ defaultSize }

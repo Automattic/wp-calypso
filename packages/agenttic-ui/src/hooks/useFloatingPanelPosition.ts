@@ -10,10 +10,9 @@ import { morphSpring } from '../components/animations';
 import {
 	type ChatPosition,
 	clampFreeDragPosition,
-	getChatPosition,
+	DEFAULT_CHAT_POSITION,
 	getCornerSnapPosition,
-	setChatPosition,
-} from '../utils/chatStorage';
+} from '../utils/chatPosition';
 import type { BoundaryInsets, ChatSize, ChatState } from '../types';
 
 export interface UseFloatingPanelPositionArgs {
@@ -55,6 +54,9 @@ export interface UseFloatingPanelPositionResult {
 	// `deltaWidth` is the frame-width change (NEW − OLD) supplied by the caller
 	// that knows both values; it defaults to 0 (a pure re-clamp, no edge shift).
 	repositionForResize: ( deltaWidth?: number ) => void;
+	// Docks the panel at the given side's corner, persisting like a drag-end
+	// (`onChatPositionChange` on a side change, `onFreeDragEnd` in free drag).
+	snapToSide: ( side: ChatPosition ) => void;
 }
 
 // Owns the drag/snap/free-drag concern: the x/y position motion values, snapped
@@ -74,8 +76,8 @@ export function useFloatingPanelPosition( {
 	insets = DEFAULT_BOUNDARY_INSETS,
 }: UseFloatingPanelPositionArgs ): UseFloatingPanelPositionResult {
 	const [ isDragging, setIsDragging ] = useState( false );
-	const [ currentSide, setCurrentSide ] = useState< ChatPosition >( () =>
-		getChatPosition( initialChatPosition )
+	const [ currentSide, setCurrentSide ] = useState< ChatPosition >(
+		initialChatPosition ?? DEFAULT_CHAT_POSITION
 	);
 
 	const constraintsRef = useRef< HTMLDivElement >( null );
@@ -146,7 +148,6 @@ export function useFloatingPanelPosition( {
 
 			if ( currentSide !== newSide ) {
 				setCurrentSide( newSide );
-				setChatPosition( newSide );
 				onChatPositionChange?.( newSide );
 			}
 
@@ -217,7 +218,6 @@ export function useFloatingPanelPosition( {
 
 		if ( currentSide !== newSide ) {
 			setCurrentSide( newSide );
-			setChatPosition( newSide );
 			onChatPositionChange?.( newSide );
 		}
 
@@ -370,6 +370,52 @@ export function useFloatingPanelPosition( {
 		[ isDragging, computeReconciledPosition, x, y ]
 	);
 
+	// No-op mid-drag: a command must never fight an active gesture.
+	const snapToSide = useCallback(
+		( side: ChatPosition ) => {
+			if ( isDragging ) {
+				return;
+			}
+
+			if ( currentSide !== side ) {
+				setCurrentSide( side );
+				onChatPositionChange?.( side );
+			}
+
+			// The snap replaces any minimize-stashed offset.
+			stashedFreeDragYRef.current = null;
+
+			// Keep the header reachable on viewports shorter than the panel
+			// (the same floor the drag paths apply).
+			const target = calculateSnapPosition( side );
+			const minY =
+				insets.top +
+				insets.bottom +
+				getPanelSize().height -
+				window.innerHeight;
+			const targetY = Math.max( minY, target.y );
+
+			animate( x, target.x, morphSpring );
+			animate( y, targetY, morphSpring );
+
+			if ( freeDrag ) {
+				onFreeDragEnd?.( { x: target.x, y: targetY } );
+			}
+		},
+		[
+			isDragging,
+			currentSide,
+			onChatPositionChange,
+			calculateSnapPosition,
+			getPanelSize,
+			insets,
+			x,
+			y,
+			freeDrag,
+			onFreeDragEnd,
+		]
+	);
+
 	// Boundary insets can change at runtime (e.g. a fixed header appearing or
 	// growing). Same order as the window-resize handler — clamp the committed
 	// size into the new box first, then re-clamp/re-snap the position — but
@@ -420,5 +466,6 @@ export function useFloatingPanelPosition( {
 		handleDragEnd,
 		calculateSnapPosition,
 		repositionForResize,
+		snapToSide,
 	};
 }

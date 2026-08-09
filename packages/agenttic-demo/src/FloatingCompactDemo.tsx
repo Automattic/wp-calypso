@@ -106,6 +106,7 @@ const FloatingCompactDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 				onSubmit={ handleSubmit }
 				onStop={ abortCurrentRequest }
 				variant="floating"
+				initialChatPosition="left"
 				floatingChatState="compact"
 				boundaryInset={ { top: headerHeight + 16 } }
 				draggableStates={ [ 'collapsed', 'compact', 'expanded' ] }

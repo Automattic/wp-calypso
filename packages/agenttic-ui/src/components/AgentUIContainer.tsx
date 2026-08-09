@@ -62,6 +62,7 @@ export function AgentUIContainer( {
 	thinkingMessage,
 	initialChatPosition,
 	onChatPositionChange,
+	layoutCommand,
 	onTypingStatusChange,
 	freeDrag = false,
 	initialFreeDragPosition,
@@ -224,6 +225,7 @@ export function AgentUIContainer( {
 		onFreeDragEnd,
 		onResize,
 		onResizeEnd,
+		layoutCommand,
 		insets,
 	} );
 

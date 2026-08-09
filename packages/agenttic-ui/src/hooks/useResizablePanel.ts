@@ -114,6 +114,9 @@ export interface UseResizablePanelResult {
 	// the corrected size to the motion values + ref. The drag hook's window-resize
 	// handler calls this before re-clamping position.
 	clampToViewport: () => void;
+	// Commits the built-in default size (`layoutCommand.resetSize`); returns it,
+	// or null when resizing is off or a gesture is active.
+	resetToDefaultSize: () => ChatSize | null;
 	getHeightForState: ( state: string ) => number;
 	handleResizePointerDown: (
 		event: React.PointerEvent< HTMLDivElement >
@@ -253,6 +256,29 @@ export function useResizablePanel( {
 			expandedSizeRef.current = clamped;
 		}
 	}, [ resizable, chatState, clampSize, width, height ] );
+
+	// Commit the built-in default size (for `layoutCommand.resetSize`), animating
+	// when expanded — other states keep their fixed footprint and pick the new
+	// size up on the next expand. Returns the committed size, or null when
+	// resizing is off or a gesture owns the motion values.
+	const resetToDefaultSize = useCallback( (): ChatSize | null => {
+		if ( ! resizable || resizingRef.current ) {
+			return null;
+		}
+
+		const target = clampSize( {
+			width: STYLE_CONSTANTS.COMPACT_WIDTH,
+			height: STYLE_CONSTANTS.EXPANDED_HEIGHT,
+		} );
+		expandedSizeRef.current = target;
+
+		if ( chatState === 'expanded' ) {
+			animate( width, target.width, morphSpring );
+			animate( height, target.height, morphSpring );
+		}
+
+		return target;
+	}, [ resizable, clampSize, chatState, width, height ] );
 
 	// The pointer loop attaches its listeners once per gesture, so anything they
 	// close over is frozen at pointerdown. Read the render-dependent pieces
@@ -482,11 +508,14 @@ export function useResizablePanel( {
 
 		const target = clampSize( size );
 
-		// Feedback guard: bail on the onResizeEnd→parent→size echo that lands here
-		// with size already at target, so we never re-animate the committed size.
+		// Feedback guard: bail on the onResizeEnd→parent→size echo. Compare the
+		// COMMITTED size — the motion values lag mid-animation (e.g. a command's
+		// size reset) and would misread the echo as a new size.
 		if (
-			Math.round( width.get() ) === Math.round( target.width ) &&
-			Math.round( height.get() ) === Math.round( target.height )
+			Math.round( expandedSizeRef.current.width ) ===
+				Math.round( target.width ) &&
+			Math.round( expandedSizeRef.current.height ) ===
+				Math.round( target.height )
 		) {
 			expandedSizeRef.current = target;
 			return;
@@ -527,6 +556,7 @@ export function useResizablePanel( {
 		getPanelSize,
 		clampSize,
 		clampToViewport,
+		resetToDefaultSize,
 		getHeightForState,
 		handleResizePointerDown,
 	};
