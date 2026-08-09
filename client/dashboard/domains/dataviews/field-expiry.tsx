@@ -29,10 +29,12 @@ export const DomainExpiryField = ( {
 	}
 
 	if ( domain.expiry === null ) {
+		// Wrapping span are a work around to an issue where Google Translate crashes the page.
+		// A known React issue: react/react#11538
 		if ( domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS ) {
-			return __( 'Free forever' );
+			return <span>{ __( 'Free forever' ) }</span>;
 		}
-		return '-';
+		return <span>-</span>;
 	}
 
 	const renewLabel = domain.auto_renewing
