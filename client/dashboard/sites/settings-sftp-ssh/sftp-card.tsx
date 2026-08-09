@@ -5,7 +5,6 @@ import {
 	__experimentalVStack as VStack,
 	BaseControl,
 	Button,
-	Tooltip,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
@@ -167,14 +166,22 @@ export default function SftpCard( {
 		return () => window.clearTimeout( timeoutId );
 	}, [ isResetPasswordRateLimited ] );
 
+	const resetPasswordLabel = __( 'Reset password' );
+	const resetPasswordDescription = isResetPasswordRateLimited
+		? __( 'You reset the password recently. Please wait a minute and try again.' )
+		: undefined;
 	const resetPasswordButton = (
 		<Button
 			variant="secondary"
 			isBusy={ mutation.isPending }
 			disabled={ mutation.isPending || isResetPasswordRateLimited }
+			accessibleWhenDisabled
+			label={ resetPasswordLabel }
+			description={ resetPasswordDescription }
+			showTooltip={ isResetPasswordRateLimited }
 			onClick={ () => setShowResetPasswordConfirmDialog( true ) }
 		>
-			{ __( 'Reset password' ) }
+			{ resetPasswordLabel }
 		</Button>
 	);
 
@@ -200,20 +207,7 @@ export default function SftpCard( {
 						form={ form }
 						onChange={ noop }
 					/>
-					<ButtonStack justify="flex-start">
-						{ isResetPasswordRateLimited ? (
-							<Tooltip
-								text={ __(
-									'You reset the password recently. Please wait a minute and try again.'
-								) }
-								placement="top"
-							>
-								<div>{ resetPasswordButton }</div>
-							</Tooltip>
-						) : (
-							resetPasswordButton
-						) }
-					</ButtonStack>
+					<ButtonStack justify="flex-start">{ resetPasswordButton }</ButtonStack>
 				</VStack>
 			</CardBody>
 			<ConfirmDialog

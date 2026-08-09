@@ -36,10 +36,13 @@ describe( '<SftpCard>', () => {
 
 		await waitFor( () => expect( resetRequest.isDone() ).toBe( true ) );
 
-		const resetButton = screen.getByRole( 'button', { name: 'Reset password' } );
-		expect( resetButton ).toBeDisabled();
+		const resetButton = screen.getByRole( 'button', {
+			name: 'Reset password',
+			description: 'You reset the password recently. Please wait a minute and try again.',
+		} );
+		expect( resetButton ).toHaveAttribute( 'aria-disabled', 'true' );
 
-		await user.hover( resetButton.parentElement as HTMLElement );
+		await user.hover( resetButton );
 		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
 			'You reset the password recently. Please wait a minute and try again.'
 		);
