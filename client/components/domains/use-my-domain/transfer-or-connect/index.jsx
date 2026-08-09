@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { OptionContent } from 'calypso/components/option-content';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
@@ -22,6 +21,7 @@ import {
 	getOptionInfo,
 	connectDomainAction,
 } from '../utilities';
+import { OptionCard } from './option-card';
 
 import './style.scss';
 
@@ -128,7 +128,7 @@ function DomainTransferOrConnect( {
 			{ selectedSite?.ID && <QuerySitePlans siteId={ selectedSite.ID } /> }
 			<Card className={ baseClassName + '__content' }>
 				{ content.map( ( optionProps, index ) => (
-					<OptionContent
+					<OptionCard
 						isPlaceholder={ isFetching }
 						key={ 'option-' + index }
 						disabled={ actionClicked }
