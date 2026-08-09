@@ -59,65 +59,22 @@ function parseAdminSchemes( source ) {
 	return schemes;
 }
 
-// The Stats surfaces in Calypso: `.stats-main` is the root rendered by
-// client/my-sites/stats/components/stats-main, and `.store-stats` is Store Stats, which reuses the
-// same chart and controls under its own root.
-const CALYPSO_STATS_ROOTS = [ '.stats-main', '.store-stats' ];
-
-// Stats modals, popovers and tooltips render at the document root, outside those subtrees, so they
-// need the token too. The list matches the portal roots apps/odyssey-stats/webpack-css-scope.js
-// already recognises. They are qualified with `.is-section-stats` — the class Calypso puts on
-// <body> for the section — because the roots themselves are generic: an unqualified `.popover`
-// would recolour every popover in Calypso. Keep this in step with the same list in
-// client/my-sites/stats/components/stats-main/style.scss.
-const CALYPSO_PORTAL_ROOTS = [
-	'.popover',
-	'[data-base-ui-portal]',
-	'.components-modal__screen-overlay',
-	'.components-popover__fallback-container',
-	'[data-wp-compat-overlay-slot]',
-	'.ReactModalPortal',
-];
-
-// The Odyssey surfaces that carry the scheme class themselves. `.stats-main` is the Stats root, and
-// the <body> child is the portal wrapper Odyssey's RootChild tags with the scheme
-// (apps/odyssey-stats/src/components/root-child.tsx) — popovers and dialogs mount there, outside the
-// Stats root, so they need the rule separately. Neither can match in Calypso: `useWPAdminTheme`
-// returns a scheme class only in wp-admin, so Calypso's Stats root has a bare `color-scheme` and its
-// portal wrapper has no class at all. Anchoring the wrapper with `body >` also keeps Odyssey's CSS
-// scoping from prefixing it, which would ask a <body> child to be a descendant of the Stats mount
-// (see `exclude` in apps/odyssey-stats/webpack-css-scope.js).
-const ODYSSEY_ROOTS = [ '.stats-main.color-scheme', 'body > .color-scheme' ];
-
-// The Calypso and Odyssey rules are mutually exclusive for the reason above: in Calypso the scheme
-// class sits on <body> and the Stats surfaces are descendants, while in Odyssey it sits on the
-// surfaces themselves and <body> belongs to wp-admin. Odyssey inherits rather than restating the
-// colour so Stats matches whatever that site's WordPress actually ships, which may differ from our
-// bundled base-styles. Store Stats is absent from the Odyssey roots — it does not exist there.
+// Anchored to `body` so these rules apply in Calypso only, where the scheme class sits on <body>
+// and everything else — Stats, Store Stats, and the popovers and modals that portal to the document
+// root — is a descendant. Odyssey puts the scheme class on nested elements instead and leaves
+// <body> to wp-admin, which already defines the token; with the alias gone from the partials those
+// elements no longer set it, so Odyssey inherits the value its own WordPress ships. Emitting a bare
+// `.color-scheme.is-<scheme>` selector would match them and clobber it, which is the original bug.
 function buildAdminThemeColors( schemes ) {
 	const blocks = REQUIRED_SCHEMES.map( ( name ) => {
 		const hex = schemes[ name ];
-		const calypsoSelector = [
-			`body.is-${ name } :is(${ CALYPSO_STATS_ROOTS.join( ', ' ) })`,
-			`body.is-${ name }.is-section-stats :is(${ CALYPSO_PORTAL_ROOTS.join( ', ' ) })`,
-		].join( ',\n' );
-		const odysseyBlocks = ODYSSEY_ROOTS.map( ( root ) =>
-			[
-				`${ root }.is-${ name } {`,
-				'\t--wp-admin-theme-color: inherit;',
-				'\t--wp-admin-theme-color-darker-10: inherit;',
-				'\t--wp-admin-theme-color-darker-20: inherit;',
-				'}',
-			].join( '\n' )
-		);
 
 		return [
-			`${ calypsoSelector } {`,
+			`body.color-scheme.is-${ name } {`,
 			`\t--wp-admin-theme-color: ${ hex };`,
 			`\t--wp-admin-theme-color-darker-10: #{color.adjust(${ hex }, $lightness: -5%)};`,
 			`\t--wp-admin-theme-color-darker-20: #{color.adjust(${ hex }, $lightness: -10%)};`,
 			'}',
-			...odysseyBlocks,
 		].join( '\n' );
 	} );
 
