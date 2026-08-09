@@ -129,4 +129,8 @@ Created this definition in color-studio to generate 0-100 shades:
 	--color-navredesign-sidebar-menu-selected-text: var(--theme-text-color);
 	--color-navredesign-sidebar-submenu-hover-text: var(--theme-highlight-color);
 	--color-navredesign-sidebar-submenu-selected-hover-text: var(--theme-highlight-color);
+
+	/* Gutenberg components */
+	--wp-admin-theme-color: var(--color-accent);
+	--wp-admin-theme-color-darker-20: var(--color-accent-60);
 }

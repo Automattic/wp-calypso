@@ -59,8 +59,12 @@ function parseAdminSchemes( source ) {
 	return schemes;
 }
 
-// Scoped to `body` so these rules apply in Calypso only. In Odyssey the scheme class sits on a
-// nested element and wp-admin owns <body>, so Stats inherits core's own value instead.
+// Both rules target `.stats-main`, the Stats root rendered by
+// client/my-sites/stats/components/stats-main. They are mutually exclusive: `useWPAdminTheme`
+// only returns an `is-<scheme>` class in wp-admin, so in Calypso the scheme class sits on <body>
+// and the Stats root is a descendant, while in Odyssey it sits on the Stats root itself and
+// <body> belongs to wp-admin. Odyssey inherits rather than restating the colour so Stats matches
+// whatever that site's WordPress actually ships, which may differ from our bundled base-styles.
 function generateAdminThemeColors() {
 	const source = readFileSync( require.resolve( '@wordpress/base-styles/_mixins.scss' ), 'utf8' );
 	const schemes = parseAdminSchemes( source );
@@ -68,10 +72,15 @@ function generateAdminThemeColors() {
 	const blocks = REQUIRED_SCHEMES.map( ( name ) => {
 		const hex = schemes[ name ];
 		return [
-			`body.color-scheme.is-${ name } {`,
+			`body.is-${ name } .stats-main {`,
 			`\t--wp-admin-theme-color: ${ hex };`,
 			`\t--wp-admin-theme-color-darker-10: #{color.adjust(${ hex }, $lightness: -5%)};`,
 			`\t--wp-admin-theme-color-darker-20: #{color.adjust(${ hex }, $lightness: -10%)};`,
+			'}',
+			`.stats-main.color-scheme.is-${ name } {`,
+			'\t--wp-admin-theme-color: inherit;',
+			'\t--wp-admin-theme-color-darker-10: inherit;',
+			'\t--wp-admin-theme-color-darker-20: inherit;',
 			'}',
 		].join( '\n' );
 	} );
