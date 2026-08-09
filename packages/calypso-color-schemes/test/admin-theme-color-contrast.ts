@@ -13,7 +13,7 @@ const MIN_RATIO = 4.5;
 // removed here as base-styles is bumped — never added to without discussion.
 const KNOWN_BELOW_AA = [ 'light', 'midnight', 'ocean', 'sunrise' ];
 
-const getSchemes = () =>
+const getSchemes = (): Record< string, string > =>
 	parseAdminSchemes(
 		fs.readFileSync( require.resolve( '@wordpress/base-styles/_mixins.scss' ), 'utf8' )
 	);

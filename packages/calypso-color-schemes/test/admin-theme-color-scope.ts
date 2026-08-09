@@ -2,40 +2,37 @@
  * @jest-environment node
  */
 import fs from 'fs';
-import path from 'path';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { parseAdminSchemes, buildAdminThemeColors } = require( '../bin/prepare-sass-assets' );
 
-const GENERATED = path.join(
-	__dirname,
-	'..',
-	'src',
-	'__wp-base-styles',
-	'_admin-theme-colors.scss'
-);
+// Built here rather than read from src/__wp-base-styles, which is generated and git-ignored:
+// that file survives branch switches, so asserting against it fails for reasons unrelated to
+// the code under test.
+const generated = (): string =>
+	buildAdminThemeColors(
+		parseAdminSchemes(
+			fs.readFileSync( require.resolve( '@wordpress/base-styles/_mixins.scss' ), 'utf8' )
+		)
+	);
 
-const read = () => fs.readFileSync( GENERATED, 'utf8' );
+const selectors = (): string[] =>
+	generated()
+		.split( '\n' )
+		.filter( ( line ) => line.trim().endsWith( '{' ) && ! line.startsWith( '@' ) )
+		.map( ( line ) => line.replace( '{', '' ).trim() );
 
 describe( 'admin theme colour scoping', () => {
 	it( 'confines every rule to the Stats root', () => {
-		const selectors = read()
-			.split( '\n' )
-			.filter( ( line ) => line.trim().endsWith( '{' ) && ! line.startsWith( '@' ) )
-			.map( ( line ) => line.replace( '{', '' ).trim() );
-
-		expect( selectors.length ).toBeGreaterThan( 0 );
-		selectors.forEach( ( selector ) => {
+		expect( selectors().length ).toBeGreaterThan( 0 );
+		selectors().forEach( ( selector ) => {
 			expect( selector ).toContain( '.stats-main' );
 		} );
 	} );
 
 	it( 'never sets the token on <body>, which would reach the whole of Calypso', () => {
-		const selectors = read()
-			.split( '\n' )
-			.filter( ( line ) => line.trim().endsWith( '{' ) && ! line.startsWith( '@' ) )
-			.map( ( line ) => line.replace( '{', '' ).trim() );
-
 		// `body.is-<scheme> .stats-main` is fine — the declaration lands on the descendant.
-		// `body…{` with no descendant would apply the colour document-wide.
-		selectors
+		// A `body…{` selector with no descendant would apply the colour document-wide.
+		selectors()
 			.filter( ( selector ) => selector.startsWith( 'body' ) )
 			.forEach( ( selector ) => {
 				expect( selector ).toMatch( /^body[^ ]* \.stats-main$/ );
@@ -45,7 +42,7 @@ describe( 'admin theme colour scoping', () => {
 	it( 'inherits rather than restating the colour on the Odyssey Stats root', () => {
 		// In wp-admin the surrounding page already defines the token, and that value is
 		// authoritative for the site's WordPress version — restating our own would drift.
-		const odysseyBlock = read().match( /\.stats-main\.color-scheme\.is-coffee \{([^}]*)\}/ );
+		const odysseyBlock = generated().match( /\.stats-main\.color-scheme\.is-coffee \{([^}]*)\}/ );
 
 		expect( odysseyBlock ).not.toBeNull();
 		expect( odysseyBlock?.[ 1 ] ).toContain( '--wp-admin-theme-color: inherit;' );
