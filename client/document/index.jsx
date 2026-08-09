@@ -25,6 +25,7 @@ import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { InterimOmnibar } from 'calypso/dashboard/app/interim-omnibar/interim-omnibar';
 import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
+import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
 import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
 import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
@@ -115,6 +116,11 @@ class Document extends Component {
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
 
+		const isDashboardSection =
+			sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
+			sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name ||
+			sectionName === A4A_DASHBOARD_SECTION_DEFINITION.name;
+
 		const isDashboardOmnibarPage =
 			( isDashboardEnv() || env === 'development' ) &&
 			( sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
@@ -155,6 +161,7 @@ class Document extends Component {
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
 					faviconUrl={ headFaviconUrl }
+					allowZoom={ isDashboardSection }
 					// Firefox can reuse the anonymous REST proxy prefetch after login; see https://github.com/Automattic/wp-calypso/pull/111842.
 					shouldPrefetchRestProxy={ ! app?.isFirefox }
 				>
