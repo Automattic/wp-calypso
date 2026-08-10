@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { describeBuildContext, readProperty, tagOwnBuild } from '../lib/teamcity';
+import { readProperty, tagOwnBuild } from '../lib/teamcity';
 
 const PASSWORD = 'sUp3r-s3cr3t-t0k3n';
 
@@ -68,12 +68,6 @@ describe( 'fail-open', () => {
 	test( 'no properties file: reports nothing, tags nothing, never throws', async () => {
 		const fetchSpy = jest.spyOn( globalThis, 'fetch' );
 
-		expect( describeBuildContext() ).toEqual( {
-			propertiesFile: false,
-			serverUrl: null,
-			buildId: null,
-			credentials: false,
-		} );
 		await expect( tagOwnBuild( 'throttle-signup' ) ).resolves.toBeNull();
 		expect( fetchSpy ).not.toHaveBeenCalled();
 	} );
@@ -82,7 +76,6 @@ describe( 'fail-open', () => {
 		writeProperties( 'teamcity.build.id=18847887\n' );
 		const fetchSpy = jest.spyOn( globalThis, 'fetch' );
 
-		expect( describeBuildContext().credentials ).toBe( false );
 		await expect( tagOwnBuild( 'throttle-signup' ) ).resolves.toBeNull();
 		expect( fetchSpy ).not.toHaveBeenCalled();
 	} );
@@ -91,7 +84,6 @@ describe( 'fail-open', () => {
 		process.env.TEAMCITY_BUILD_PROPERTIES_FILE = path.join( dir, 'does-not-exist' );
 		const fetchSpy = jest.spyOn( globalThis, 'fetch' );
 
-		expect( describeBuildContext().credentials ).toBe( false );
 		await expect( tagOwnBuild( 'throttle-signup' ) ).resolves.toBeNull();
 		expect( fetchSpy ).not.toHaveBeenCalled();
 	} );
@@ -159,18 +151,5 @@ describe( 'tagOwnBuild', () => {
 			.mockResolvedValue( new Response( 'Access denied', { status: 403 } ) );
 
 		await expect( tagOwnBuild( 'throttle-signup-123' ) ).resolves.toBe( 403 );
-	} );
-
-	test( 'the non-secret summary never carries a credential', () => {
-		writeProperties( completeProperties() );
-
-		const summary = describeBuildContext();
-		expect( summary ).toEqual( {
-			propertiesFile: true,
-			serverUrl: 'https://teamcity.example.com',
-			buildId: '18847887',
-			credentials: true,
-		} );
-		expect( JSON.stringify( summary ) ).not.toContain( PASSWORD );
 	} );
 } );

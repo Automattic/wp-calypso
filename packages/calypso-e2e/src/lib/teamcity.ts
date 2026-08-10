@@ -16,8 +16,6 @@ interface BuildContext {
 	password: string;
 }
 
-let cachedTags: { atMs: number; tags: string[] | null } | null = null;
-
 /**
  * Reads a single key out of `java.util.Properties.store()` output.
  *
@@ -98,25 +96,6 @@ function readBuildContext(): BuildContext | null {
 }
 
 /**
- * Non-secret summary of what this process can see, for diagnosing fail-open.
- * Never returns a credential — only whether one was found.
- */
-export function describeBuildContext(): {
-	propertiesFile: boolean;
-	serverUrl: string | null;
-	buildId: string | null;
-	credentials: boolean;
-} {
-	const context = readBuildContext();
-	return {
-		propertiesFile: Boolean( process.env.TEAMCITY_BUILD_PROPERTIES_FILE ),
-		serverUrl: context?.serverUrl ?? null,
-		buildId: context?.buildId ?? null,
-		credentials: context !== null,
-	};
-}
-
-/**
  * Builds the Basic auth header. Kept private: the encoded form is derived from
  * the token, and TeamCity masks only the raw value in build logs.
  */
@@ -159,75 +138,90 @@ export async function tagOwnBuild( tag: string, timeoutMs = 2_000 ): Promise< nu
 }
 
 /**
- * Every tag on the most recent builds of a project.
+ * Renders a timestamp the way a build locator's `sinceDate` expects it.
+ */
+function locatorDate( ms: number ): string {
+	return `${ new Date( ms )
+		.toISOString()
+		.replace( /[-:]/g, '' )
+		.replace( /\.\d{3}Z$/, '' ) }+0000`;
+}
+
+/**
+ * The ids of recent builds in the project carrying a tag, newest first.
  *
  * `personal`, `branch` and `state` must all be given: TeamCity's default filter
- * would otherwise drop personal builds, non-default branches and running
- * builds — which between them are most of the builds we need to hear from.
- *
- * The result is memoised per process (one Playwright worker) so that several
- * gated suites in the same worker share one request. A failure is cached the
- * same way, so an unreachable server costs one attempt per window rather than
- * one per suite. Returns null when there is nothing to read from, which callers
- * treat as "nothing is throttled".
+ * would otherwise drop personal builds, non-default branches and running builds
+ * — which between them are most of the builds we need to hear from, the running
+ * ones especially. Returns null when there is nothing to ask, or when the ask
+ * failed; callers treat both as "no throttle".
  */
-export async function fetchProjectBuildTags( {
-	project = process.env.E2E_THROTTLE_PROJECT || 'calypso_WebApp',
-	count = 30,
-	ttlMs = 30_000,
-	timeoutMs = 2_000,
-	nowMs = Date.now(),
-}: {
-	project?: string;
-	count?: number;
-	ttlMs?: number;
-	timeoutMs?: number;
-	nowMs?: number;
-} = {} ): Promise< string[] | null > {
-	if ( cachedTags && nowMs - cachedTags.atMs < ttlMs ) {
-		return cachedTags.tags;
-	}
-
+export async function fetchBuildsByTag(
+	tag: string,
+	{
+		sinceMs,
+		project = process.env.E2E_THROTTLE_PROJECT || 'calypso',
+		count = 20,
+		timeoutMs = 5_000,
+	}: { sinceMs: number; project?: string; count?: number; timeoutMs?: number }
+): Promise< number[] | null > {
 	const context = readBuildContext();
 	if ( ! context ) {
-		// A local run: cheap to re-check, and nothing to cache.
 		return null;
 	}
 
-	const locator = `affectedProject:(id:${ project }),personal:any,branch:default:any,state:any,count:${ count }`;
-	let tags: string[] | null = null;
+	const locator =
+		`affectedProject:(id:${ project }),tag:${ tag },sinceDate:${ locatorDate( sinceMs ) },` +
+		`personal:any,branch:default:any,state:any,count:${ count }`;
 
 	try {
 		const response = await fetch(
 			`${ context.serverUrl }/app/rest/builds?locator=${ encodeURIComponent(
 				locator
-			) }&fields=build(tags(tag(name)))`,
+			) }&fields=build(id)`,
 			{
 				headers: { Accept: 'application/json', Authorization: authorization( context ) },
 				signal: AbortSignal.timeout( timeoutMs ),
 			}
 		);
-		if ( response.ok ) {
-			const body = ( await response.json() ) as {
-				build?: { tags?: { tag?: { name?: string }[] } }[];
-			};
-			tags = ( body.build ?? [] ).flatMap( ( build ) =>
-				( build.tags?.tag ?? [] )
-					.map( ( tag ) => tag.name )
-					.filter( ( name ): name is string => typeof name === 'string' )
-			);
+		if ( ! response.ok ) {
+			return null;
 		}
+		const body = ( await response.json() ) as { build?: { id?: number }[] };
+		return ( body.build ?? [] )
+			.map( ( build ) => build.id )
+			.filter( ( id ): id is number => typeof id === 'number' );
 	} catch {
-		tags = null;
+		return null;
 	}
-
-	cachedTags = { atMs: nowMs, tags };
-	return tags;
 }
 
 /**
- * Drops the memoised tags. For tests: a worker never needs this.
+ * A build's log as text, or null when it cannot be read.
+ *
+ * There is no REST endpoint for logs and no way to ask for part of one, so this
+ * pulls the whole thing. Only ever called for a build already known to carry a
+ * throttle tag, which is normally none of them.
  */
-export function resetProjectBuildTagCache(): void {
-	cachedTags = null;
+export async function fetchBuildLog(
+	buildId: number,
+	timeoutMs = 10_000
+): Promise< string | null > {
+	const context = readBuildContext();
+	if ( ! context ) {
+		return null;
+	}
+
+	try {
+		const response = await fetch(
+			`${ context.serverUrl }/downloadBuildLog.html?buildId=${ buildId }`,
+			{
+				headers: { Authorization: authorization( context ) },
+				signal: AbortSignal.timeout( timeoutMs ),
+			}
+		);
+		return response.ok ? await response.text() : null;
+	} catch {
+		return null;
+	}
 }

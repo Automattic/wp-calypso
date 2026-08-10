@@ -1,6 +1,4 @@
-import { mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
-import path from 'node:path';
-import { fetchProjectBuildTags, tagOwnBuild } from './teamcity';
+import { fetchBuildLog, fetchBuildsByTag, tagOwnBuild } from './teamcity';
 
 export const THROTTLE_IDS = [ 'signup', 'domain-suggestions', 'domain-availability' ] as const;
 export type ThrottleId = ( typeof THROTTLE_IDS )[ number ];
@@ -29,117 +27,73 @@ const FALLBACK_DURATIONS: Record< ThrottleId, number > = {
 	'domain-availability': 60_000,
 };
 
-const TAG_PATTERN = new RegExp( `^throttle-(${ THROTTLE_IDS.join( '|' ) })-(\\d+)$` );
-
-const pendingTags = new Set< Promise< unknown > >();
+/**
+ * How far back a tag is worth reading. Longer than the longest ban we know of,
+ * so a tag older than this cannot still be in force.
+ */
+const TAG_WINDOW_MS = 2 * 60 * 60 * 1000;
 
 /**
- * Where this process writes its own flags. One file per PID, so workers never
- * contend.
+ * What this worker has already raised. One entry per id: a worker that has seen
+ * a throttle does not need to ask again, and does not re-tag or re-report.
  */
-function flagsDir(): string {
-	return (
-		process.env.E2E_THROTTLE_FLAGS_DIR || path.resolve( process.cwd(), 'output/throttle-flags' )
-	);
+const raisedHere = new Map< ThrottleId, ThrottleFlag >();
+
+/**
+ * Forgets what this worker has raised. For tests: a worker never needs this.
+ */
+export function resetRaisedThrottles(): void {
+	raisedHere.clear();
 }
 
 /**
- * Narrows an unknown value to a flag.
+ * The build tag for a throttle. Generic by design: a tag is written and read
+ * back instantly, and keeping the vocabulary to one string per id means a
+ * reader can find every affected build with a single `tag:` locator.
  */
-function isFlag( value: unknown ): value is ThrottleFlag {
-	if ( ! value || typeof value !== 'object' ) {
-		return false;
-	}
-	const flag = value as Partial< ThrottleFlag >;
-	return (
-		THROTTLE_IDS.includes( flag.id as ThrottleId ) &&
-		Number.isFinite( flag.raisedAtMs ) &&
-		Number.isFinite( flag.durationMs ) &&
-		Number.isFinite( flag.expiresAtMs )
-	);
+export function throttleTag( id: ThrottleId ): string {
+	return `throttle-${ id }`;
 }
 
 /**
- * Parses a flag file's contents, discarding anything malformed.
+ * The variable the pre-flight check writes and workers read.
  */
-function parseFlags( value: string ): ThrottleFlag[] {
-	try {
-		const parsed: unknown = JSON.parse( value );
-		return Array.isArray( parsed ) ? parsed.filter( isFlag ) : [];
-	} catch {
-		return [];
-	}
+export function throttleEnvVar( id: ThrottleId ): string {
+	return `THROTTLE_${ id.toUpperCase().replace( /-/g, '_' ) }_EXPIRATION`;
 }
 
-/**
- * Reads one flag file, treating an unreadable file as empty.
- */
-function readFileFlags( file: string ): ThrottleFlag[] {
-	try {
-		return parseFlags( readFileSync( file, 'utf8' ) );
-	} catch {
-		return [];
-	}
-}
+const LINE_PATTERN = /\[e2e-throttle] type=([a-z-]+) start=(\d+) duration=(\d+) end=(\d+)/;
 
 /**
- * Reads every flag this build's workers have written.
- */
-function readLocalFlags(): ThrottleFlag[] {
-	const dir = flagsDir();
-	try {
-		return readdirSync( dir )
-			.filter( ( file ) => file.endsWith( '.json' ) )
-			.flatMap( ( file ) => readFileFlags( path.join( dir, file ) ) );
-	} catch {
-		return [];
-	}
-}
-
-/**
- * Drops expired flags and keeps the longest-lived one per id.
- */
-export function mergeFlags(
-	flags: readonly ThrottleFlag[],
-	nowMs: number = Date.now()
-): ThrottleFlag[] {
-	const active = new Map< ThrottleId, ThrottleFlag >();
-	for ( const flag of flags ) {
-		if ( ! isFlag( flag ) || flag.expiresAtMs <= nowMs ) {
-			continue;
-		}
-		const current = active.get( flag.id );
-		if ( ! current || flag.expiresAtMs > current.expiresAtMs ) {
-			active.set( flag.id, flag );
-		}
-	}
-	return [ ...active.values() ].sort( ( left, right ) => left.id.localeCompare( right.id ) );
-}
-
-/**
- * Renders a flag as a TeamCity build tag.
- */
-export function formatFlagTag( flag: ThrottleFlag ): string {
-	return `throttle-${ flag.id }-${ flag.expiresAtMs }`;
-}
-
-/**
- * Reads a flag back from a build tag, or null if the tag is not one of ours.
+ * Renders a flag as the log line that carries what the tag cannot.
  *
- * The shape is matched strictly rather than by prefix: unrelated tags starting
- * with `throttle-` must not be mistaken for flags. A tag carries no raise time,
- * so it is reconstructed from the fallback duration; only the id and the expiry
- * are ever used.
+ * The tag says only that a build hit this throttle; TeamCity stamps no time on
+ * it and exposes build statistics only once a build has finished. This line is
+ * in the build log the moment it is printed, so it is the one place a peer can
+ * read the ban's length while the build that hit it is still running.
  */
-export function parseFlagTag( tag: string ): ThrottleFlag | null {
-	const match = TAG_PATTERN.exec( tag );
+export function formatThrottleLine( flag: ThrottleFlag ): string {
+	return `[e2e-throttle] type=${ flag.id } start=${ flag.raisedAtMs } duration=${ flag.durationMs } end=${ flag.expiresAtMs }`;
+}
+
+/**
+ * Reads a flag back out of a build log line, ignoring anything else.
+ */
+export function parseThrottleLine( line: string ): ThrottleFlag | null {
+	const match = LINE_PATTERN.exec( line );
 	if ( ! match ) {
 		return null;
 	}
 	const id = match[ 1 ] as ThrottleId;
-	const expiresAtMs = Number( match[ 2 ] );
-	const durationMs = FALLBACK_DURATIONS[ id ];
-	return { id, raisedAtMs: expiresAtMs - durationMs, durationMs, expiresAtMs };
+	if ( ! THROTTLE_IDS.includes( id ) ) {
+		return null;
+	}
+	return {
+		id,
+		raisedAtMs: Number( match[ 2 ] ),
+		durationMs: Number( match[ 3 ] ),
+		expiresAtMs: Number( match[ 4 ] ),
+	};
 }
 
 /**
@@ -155,81 +109,173 @@ export function parseBanDurationMs( text: string ): number | null {
 }
 
 /**
- * Records a throttle locally and, on CI, tags the build so other builds see it.
+ * Records a throttle this worker just hit: tags the build and prints the line.
  *
- * The local file lands first and synchronously: workers in this build share a
- * filesystem, so that is the fastest path to them. Re-raising an id that is
- * already active in this process is a no-op, so a ban is never extended by our
- * own bookkeeping.
+ * Both happen at once, because both are readable at once — a tag POST is in the
+ * database when it returns, and a log line is queryable a second later. The
+ * first raise in a worker does the work; later ones are dropped, so a build with
+ * N workers writes at most N tags and N lines per id rather than one per
+ * throttled request. Never throws: a build that cannot be tagged still runs.
  */
 export async function raiseFlag( id: ThrottleId, durationMs?: number ): Promise< void > {
 	const nowMs = Date.now();
-	const dir = flagsDir();
-	const file = path.join( dir, `${ process.pid }.json` );
-	const tmp = `${ file }.tmp`;
-	let raised: ThrottleFlag | null = null;
-
-	try {
-		const existing = mergeFlags( readFileFlags( file ), nowMs );
-		if ( existing.some( ( flag ) => flag.id === id ) ) {
-			return;
-		}
-
-		const duration = durationMs && durationMs > 0 ? durationMs : FALLBACK_DURATIONS[ id ];
-		raised = { id, raisedAtMs: nowMs, durationMs: duration, expiresAtMs: nowMs + duration };
-
-		mkdirSync( dir, { recursive: true } );
-		writeFileSync( tmp, JSON.stringify( mergeFlags( [ ...existing, raised ] ) ) + '\n' );
-		renameSync( tmp, file );
-	} catch ( error ) {
-		try {
-			rmSync( tmp, { force: true } );
-		} catch {}
-		console.warn( `Failed to record E2E throttle flag ${ id }: ${ error }` );
+	const known = raisedHere.get( id );
+	if ( known && known.expiresAtMs > nowMs ) {
 		return;
 	}
 
-	const tagging = tagOwnBuild( formatFlagTag( raised ) ).catch( () => null );
-	pendingTags.add( tagging );
-	await tagging.finally( () => pendingTags.delete( tagging ) );
+	const duration = durationMs && durationMs > 0 ? durationMs : FALLBACK_DURATIONS[ id ];
+	const flag: ThrottleFlag = {
+		id,
+		raisedAtMs: nowMs,
+		durationMs: duration,
+		expiresAtMs: nowMs + duration,
+	};
+	raisedHere.set( id, flag );
+
+	console.warn( formatThrottleLine( flag ) );
+
+	try {
+		const status = await tagOwnBuild( throttleTag( id ) );
+		// A refusal is otherwise indistinguishable from a tagged build: the status
+		// is all we may print, never the error, which can carry a header derived
+		// from the build token.
+		if ( status !== null && ( status < 200 || status >= 300 ) ) {
+			console.warn( `TeamCity refused the ${ id } throttle tag with status ${ status }.` );
+		}
+	} catch {
+		// Recording a throttle never fails the test that found it.
+	}
 }
 
 /**
- * Waits for the tags of flags raised so far to reach TeamCity.
+ * When a throttle lifts, or null when it is not in force.
  *
- * A flag raised by the response listener has no test awaiting it, so without
- * this the tag can be dropped when the test ends. Settles rather than rejects,
- * and each tag request is bounded, so waiting on this can neither fail a test
- * nor hang one.
+ * Two sources, nearest first: what this worker has hit itself, then what the
+ * pre-flight check found on other builds before the run started. Neither sees a
+ * ban another worker in this build hit after the run began — by design, that
+ * worker finds it the same way, by hitting it.
  */
-export async function flushRaisedFlags(): Promise< void > {
-	await Promise.allSettled( [ ...pendingTags ] );
+export function throttleExpiry( id: ThrottleId, nowMs: number = Date.now() ): number | null {
+	return activeThrottle( id, nowMs )?.expiresAtMs ?? null;
 }
 
 /**
- * Slugs throttled according to this build's own workers. Synchronous and free,
- * so it suits a per-test check.
- */
-export function readLocalActiveSlugs( nowMs: number = Date.now() ): Set< ThrottleId > {
-	return new Set( mergeFlags( readLocalFlags(), nowMs ).map( ( flag ) => flag.id ) );
-}
-
-/**
- * Slugs throttled according to this build and every recent build in the
- * project. Costs one memoised request, so it suits a per-suite check.
+ * The throttle in force and what is known about it.
  *
- * If the project cannot be read the local view stands on its own: an unknown
- * remote state means "not throttled", never "wait".
+ * A throttle this worker raised carries its length; one published by the
+ * pre-flight check carries only an expiry, since that is all a build tag and a
+ * peer's log line can be reduced to.
  */
-export async function readActiveSlugs( nowMs: number = Date.now() ): Promise< Set< ThrottleId > > {
-	const tags = await fetchProjectBuildTags();
-	const remote = ( tags ?? [] )
-		.map( parseFlagTag )
-		.filter( ( flag ): flag is ThrottleFlag => flag !== null );
+function activeThrottle(
+	id: ThrottleId,
+	nowMs: number
+): { expiresAtMs: number; durationMs?: number } | null {
+	const raised = raisedHere.get( id );
+	if ( raised && raised.expiresAtMs > nowMs ) {
+		return raised;
+	}
 
-	return new Set(
-		mergeFlags( [ ...readLocalFlags(), ...remote ], nowMs ).map( ( flag ) => flag.id )
+	const value = process.env[ throttleEnvVar( id ) ];
+	const expiresAtMs = value ? Number( value ) : NaN;
+	return Number.isFinite( expiresAtMs ) && expiresAtMs > nowMs ? { expiresAtMs } : null;
+}
+
+/**
+ * Whether a throttle is in force.
+ */
+export function isThrottled( id: ThrottleId, nowMs?: number ): boolean {
+	return throttleExpiry( id, nowMs ) !== null;
+}
+
+/**
+ * Rounds a span to whatever unit reads plainly in a log line.
+ */
+function approximately( ms: number ): string {
+	if ( ms >= 60_000 ) {
+		const minutes = Math.round( ms / 60_000 );
+		return `~${ minutes } minute${ minutes === 1 ? '' : 's' }`;
+	}
+	const seconds = Math.max( 1, Math.round( ms / 1_000 ) );
+	return `~${ seconds } second${ seconds === 1 ? '' : 's' }`;
+}
+
+/**
+ * Reports that a call is about to run into a throttle we already know about.
+ *
+ * Reporting only: the call goes ahead. This PR proves the flag is raised and
+ * read back correctly, and what a build does about it — skip, fail, wait — is a
+ * later decision. The line is deliberately not the one `parseThrottleLine`
+ * reads, so a build cannot re-report a peer's ban as its own.
+ */
+export function debugThrottle( id: ThrottleId, nowMs: number = Date.now() ): void {
+	const active = activeThrottle( id, nowMs );
+	if ( ! active ) {
+		return;
+	}
+
+	const duration =
+		active.durationMs === undefined
+			? 'unknown duration'
+			: `${ active.durationMs }ms (${ approximately( active.durationMs ) })`;
+
+	console.warn(
+		`[e2e-throttle-debug] ${ id } is throttled: ${ duration }, ` +
+			`${ approximately( active.expiresAtMs - nowMs ) } left, until ${ new Date(
+				active.expiresAtMs
+			).toISOString() }.`
 	);
+}
+
+/**
+ * The latest expiry each throttle carries across the project's recent builds.
+ *
+ * Fails open in both directions the design allows for and neither is retried:
+ * builds we cannot list count as no throttle at all, and a build whose log we
+ * cannot read, or whose log carries no line, counts as throttled for the
+ * documented length starting now — the conservative reading, since the tag is
+ * proof the ban happened and only its timing is missing.
+ */
+export async function readActiveThrottles(
+	nowMs: number = Date.now()
+): Promise< Record< ThrottleId, number | null > > {
+	const entries = await Promise.all(
+		THROTTLE_IDS.map( async ( id ) => [ id, await readActiveThrottle( id, nowMs ) ] as const )
+	);
+	return Object.fromEntries( entries ) as Record< ThrottleId, number | null >;
+}
+
+/**
+ * The furthest expiry one throttle carries across the builds tagged with it.
+ */
+async function readActiveThrottle( id: ThrottleId, nowMs: number ): Promise< number | null > {
+	const builds = await fetchBuildsByTag( throttleTag( id ), { sinceMs: nowMs - TAG_WINDOW_MS } );
+	if ( ! builds || builds.length === 0 ) {
+		return null;
+	}
+
+	let latest = 0;
+	for ( const buildId of builds ) {
+		const log = await fetchBuildLog( buildId );
+		const flag = log ? latestFlagInLog( log, id ) : null;
+		latest = Math.max( latest, flag ? flag.expiresAtMs : nowMs + FALLBACK_DURATIONS[ id ] );
+	}
+	return latest > nowMs ? latest : null;
+}
+
+/**
+ * The longest-lived flag of one id in a build log. A build's workers each print
+ * their own line, so there is rarely only one.
+ */
+function latestFlagInLog( log: string, id: ThrottleId ): ThrottleFlag | null {
+	let latest: ThrottleFlag | null = null;
+	for ( const line of log.split( '\n' ) ) {
+		const flag = parseThrottleLine( line );
+		if ( flag && flag.id === id && ( ! latest || flag.expiresAtMs > latest.expiresAtMs ) ) {
+			latest = flag;
+		}
+	}
+	return latest;
 }
 
 /**
@@ -264,6 +310,10 @@ export function detectThrottle( responseOrError: unknown ): ThrottleDetection | 
  * `/sites/new` and `/users/new` wrap their throttle check in
  * `trap_wp_die( 'throttled' )`; `/domains/suggestions` and `.../is-available`
  * name themselves.
+ *
+ * The endpoint is read before the generic code, not after: a domain endpoint
+ * can answer with the bare `throttled` too, and mapping that to signup would
+ * record an hour-long ban on the one endpoint that is not banned.
  */
 function detectThrottleId( text: string ): ThrottleId | null {
 	if ( /domain_availability_throttle/i.test( text ) ) {
@@ -272,11 +322,16 @@ function detectThrottleId( text: string ): ThrottleId | null {
 	if ( /domain_suggestions_throttled/i.test( text ) ) {
 		return 'domain-suggestions';
 	}
-	if ( /(?:^|[^a-z0-9_])throttled(?:$|[^a-z0-9_])/i.test( text ) ) {
-		return 'signup';
+
+	const throttled = /(?:^|[^a-z0-9_])throttled(?:$|[^a-z0-9_])/i.test( text );
+	if ( ! throttled && ! /limit reached/i.test( text ) ) {
+		return null;
 	}
-	if ( /is-available/i.test( text ) && /limit reached/i.test( text ) ) {
+	if ( /is-available/i.test( text ) ) {
 		return 'domain-availability';
 	}
-	return null;
+	if ( /domains\/suggestions/i.test( text ) ) {
+		return 'domain-suggestions';
+	}
+	return throttled ? 'signup' : null;
 }
