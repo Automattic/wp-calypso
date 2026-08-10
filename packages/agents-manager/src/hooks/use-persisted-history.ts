@@ -71,6 +71,8 @@ class MemoryHistory {
 		this.push = this.push.bind( this );
 		this.replace = this.replace.bind( this );
 		this.go = this.go.bind( this );
+		this.back = this.back.bind( this );
+		this.forward = this.forward.bind( this );
 		this.listen = this.listen.bind( this );
 		this.createLocation = this.createLocation.bind( this );
 	}
@@ -125,6 +127,14 @@ class MemoryHistory {
 			this.index = newIndex;
 			this.notifyListeners( Action.Pop );
 		}
+	}
+
+	back() {
+		this.go( -1 );
+	}
+
+	forward() {
+		this.go( 1 );
 	}
 
 	listen( listener: ( event: HistoryEvent ) => void ) {

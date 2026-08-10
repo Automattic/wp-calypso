@@ -62,6 +62,25 @@ describe( 'usePersistedHistory', () => {
 		} );
 	} );
 
+	it( 'navigates back and forward through the tab history', () => {
+		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
+
+		act( () => {
+			result.current.history.push( entry( '/chat' ) as Location );
+		} );
+		act( () => {
+			result.current.history.back();
+		} );
+
+		expect( result.current.history.location.pathname ).toBe( '/' );
+
+		act( () => {
+			result.current.history.forward();
+		} );
+
+		expect( result.current.history.location.pathname ).toBe( '/chat' );
+	} );
+
 	it( 'merges with other sites when persisting', () => {
 		storeHistory( 'site-1', [ entry( '/' ), entry( '/chat' ) ], 1 );
 
