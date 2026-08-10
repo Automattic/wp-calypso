@@ -211,9 +211,9 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// `groupBy` forces DataViews' list layout off its infinite-scroll path, which
 	// is the only path that renders its built-in load-more spinner — so we render
 	// our own at the foot of the list. Key it on "more to load" rather than the
-	// in-flight fetch so it's already present when the bottom scrolls into view,
-	// not a beat later once `loadMore` dispatches. An empty list uses the `empty`
-	// slot above instead.
+	// in-flight fetch so its space is already reserved when the bottom scrolls
+	// into view, and the list doesn't shift once `loadMore` dispatches. An empty
+	// list uses the `empty` slot above instead.
 	const showLoadMore = hasMoreNotes && data.length > 0;
 
 	// Full-panel spinner until this tab's first load settles; after that DataViews
@@ -268,7 +268,18 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 				{ showLoadMore && (
 					// DataViews suppresses its own load-more spinner when notes are
 					// grouped, so this stands in for it, pinned below the list rows.
-					<VStack alignment="center" style={ { flexShrink: 0, padding: '12px 0' } }>
+					// Kept mounted so its height stays reserved, but only visible while
+					// a fetch is in flight — otherwise it reads as a list stuck loading
+					// whenever the foot sits above the fold.
+					<VStack
+						alignment="center"
+						style={ {
+							flexShrink: 0,
+							padding: '12px 0',
+							visibility: tab.isLoading ? 'visible' : 'hidden',
+						} }
+						aria-hidden={ ! tab.isLoading }
+					>
 						<Spinner />
 					</VStack>
 				) }
