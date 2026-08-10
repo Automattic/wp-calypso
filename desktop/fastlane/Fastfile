@@ -40,37 +40,6 @@ before_all do
   # locally, it has no effect so it's safe to run it before all lanes.
   setup_ci
 
-  # The macOS 26 Buildkite VM image doesn't ship the "Developer ID
-  # Certification Authority" intermediate that issues our Developer ID
-  # Application cert. Without that intermediate available in any keychain
-  # in the search list, `security` can't build the chain
-  # `Developer ID App → Developer ID CA G2 → Apple Root` and reports
-  # the identity as `CSSMERR_TP_NOT_TRUSTED`. `electron-builder` then
-  # silently skips signing and the build "passes" with unsigned
-  # binaries that Apple's notary service later rejects.
-  #
-  # `fastlane match` only installs the leaf cert; it relies on the OS
-  # to provide the CA chain. Fetch and install the missing intermediate
-  # into the temp keychain `setup_ci` just created.
-  #
-  # Gated to CI to mirror `setup_ci`'s own no-op-locally behaviour —
-  # we don't want to touch a developer's keychain config when running
-  # lanes from their machine.
-  if FastlaneCore::Helper.is_ci?
-    cert_path = File.join(Dir.tmpdir, 'DeveloperIDG2CA.cer')
-    sh(
-      'curl',
-      '-fsSL',
-      'https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer',
-      '-o',
-      cert_path
-    )
-    import_certificate(
-      certificate_path: cert_path,
-      keychain_name: 'fastlane_tmp_keychain'
-    )
-  end
-
   EnvManager.set_up(env_file_name: ENV_FILE_NAME)
 end
 
@@ -101,6 +70,19 @@ platform :mac do
     )
   end
 
+  # Verify that the .app bundles electron-builder produced are signed with our
+  # Developer ID and carry a notarization ticket.
+  #
+  lane :verify_code_signing do
+    app_paths = Dir[ File.join( PROJECT_ROOT_FOLDER, 'release', 'mac*', '*.app' ) ]
+    UI.user_error!( 'No .app artifacts found to verify code signing.' ) if app_paths.empty?
+
+    macos_verify_code_signing(
+      artifact_path: app_paths,
+      expected_authority: "Developer ID Application: Automattic, Inc. (#{TEAM_ID})"
+    )
+  end
+
   # Notarize and staple the .dmg artifacts produced by electron-builder.
   #
   # The `.app` is notarized and stapled earlier, in electron-builder's
@@ -113,7 +95,10 @@ platform :mac do
 
     api_key = app_store_connect_api_key
 
-    Dir[File.join(PROJECT_ROOT_FOLDER, 'release', '**', '*.dmg')].each do |path|
+    dmg_paths = Dir[File.join(PROJECT_ROOT_FOLDER, 'release', '**', '*.dmg')]
+    UI.user_error!('No .dmg artifacts found to notarize.') if dmg_paths.empty?
+
+    dmg_paths.each do |path|
       notarize(
         bundle_id: 'com.automattic.wordpress',
         package: path,
@@ -121,5 +106,9 @@ platform :mac do
         print_log: true
       )
     end
+
+    # `electron-builder` only signs the app inside a dmg, not the dmg itself, 
+    # so the stapled ticket is all there is to check here.
+    macos_verify_code_signing(artifact_path: dmg_paths)
   end
 end

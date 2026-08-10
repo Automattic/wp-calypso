@@ -45,6 +45,9 @@ echo "RELEASE_BUILD=$RELEASE_BUILD"
 echo "--- Building the app"
 yarn run ci:build-mac
 
+echo "--- :lock: Verifying code signing"
+bundle exec fastlane verify_code_signing
+
 echo "--- Running E2E smoke tests"
 yarn run test:e2e
 
