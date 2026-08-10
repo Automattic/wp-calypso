@@ -254,11 +254,26 @@ describe( 'account step email verification gate', () => {
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 	} );
 
-	it( 'writes a corrected address and waits on that one instead', async () => {
+	// The address does not move until the confirmation is opened, so the gate has to name where
+	// that confirmation went rather than what the account still holds.
+	it( 'asks for a corrected address and waits on that one instead', async () => {
 		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email: EMAIL } );
 		const scope = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/settings', ( body ) => body.user_email === CORRECTED_EMAIL )
-			.reply( 200, { user_email: CORRECTED_EMAIL } );
+			.post(
+				'/rest/v1.1/me/settings',
+				( body ) =>
+					body.user_email === CORRECTED_EMAIL &&
+					body.user_email_change_requested_from === 'onboarding-with-email-verification'
+			)
+			.reply( 200, {} );
+		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
+			user_email: EMAIL,
+			user_email_change_pending: true,
+			new_user_email: CORRECTED_EMAIL,
+		} );
 		renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
@@ -267,9 +282,8 @@ describe( 'account step email verification gate', () => {
 
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 		expect( scope.isDone() ).toBe( true );
-		// The gate names the address from the user, so it has to be read again to name the new one.
-		expect( fetchCurrentUser ).toHaveBeenCalled();
-		// An activation email has just gone out, so offering Resend would only be refused.
+		expect( await screen.findByText( CORRECTED_EMAIL, { exact: false } ) ).toBeVisible();
+		// A confirmation has just gone out, so offering Resend would only be refused.
 		expect( await screen.findByRole( 'button', { name: /^Resend \(/ } ) ).toBeVisible();
 	} );
 

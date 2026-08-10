@@ -1,5 +1,7 @@
+import { userSettingsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { Step, StepContainer } from '@automattic/onboarding';
+import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useState } from '@wordpress/element';
@@ -172,6 +174,15 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		scope: gateScopeForUser,
 	} );
 
+	// A correction is confirmed at the new address rather than applied on the spot, so until then
+	// the account still holds the mistyped one and only the settings know where to look.
+	const { data: userSettings } = useDataQuery( {
+		...userSettingsQuery(),
+		enabled: gateEnabled,
+	} );
+	const awaitingEmail =
+		( userSettings?.user_email_change_pending && userSettings?.new_user_email ) || currentEmail;
+
 	// Submitted unchanged, nothing is being asked for and the user is already where they need to
 	// be. Writing a changed one is a change of its own.
 	const updateEmail = async ( email: string ) => {
@@ -184,7 +195,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	};
 
 	const beginEmailEdit = () =>
-		setEditing( { scope: gateScopeForUser, startedFrom: currentEmail ?? '' } );
+		setEditing( { scope: gateScopeForUser, startedFrom: awaitingEmail ?? '' } );
 
 	const updateErrorNotice = updateError ? (
 		<Notice variant="error">{ updateError }</Notice>
@@ -287,7 +298,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		return (
 			<EmailVerificationGate
 				onEditEmail={ beginEmailEdit }
-				email={ currentEmail ?? '' }
+				email={ awaitingEmail ?? '' }
 				// A different account is a different attempt: without this the cooldown, the send
 				// state and the poll's ladder would all carry over to whoever `/me` resolved.
 				key={ gateScopeForUser }
