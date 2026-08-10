@@ -134,7 +134,7 @@ To launch a spec with mobile viewport:
 yarn test:pw:mobile <path_to_spec>
 ```
 
-To run against another device, pass `--project` — `pixel`, `galaxy` and `iphone` are mobile, `chrome`, `firefox` and `webkit` desktop: `yarn playwright test --project=galaxy <path_to_spec>`.
+To run against another device, pass `--project` from the list above: `yarn playwright test --project=galaxy <path_to_spec>`.
 
 ### Target a different environment
 
