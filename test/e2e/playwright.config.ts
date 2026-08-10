@@ -116,6 +116,11 @@ export default defineConfig( {
 			testDir: './setup',
 		},
 		{
+			name: 'throttle-check',
+			testMatch: /throttle-check\.setup\.ts/,
+			testDir: './setup',
+		},
+		{
 			name: 'prime-logins',
 			testMatch: /prime-logins\.setup\.ts/,
 			testDir: './setup',
@@ -129,7 +134,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'chrome',
-			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
 			use: withCustomOptions( {
 				...devices[ 'Desktop Chrome HiDPI' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
@@ -138,7 +143,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'mobile',
-			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
 			use: withCustomOptions( {
 				...devices[ 'Pixel 7' ],
 				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
@@ -150,7 +155,7 @@ export default defineConfig( {
 			name: 'authentication',
 			// No 'prime-logins': these specs exercise the login flow itself, so warming
 			// the cookie cache would only add wall clock.
-			dependencies: [ 'mailosaur-usage-check' ],
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 			retries: 0,
 			testDir: './specs/authentication',
 			use: loginBrowserUse,

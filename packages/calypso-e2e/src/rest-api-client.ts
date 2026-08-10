@@ -1,6 +1,6 @@
 import fs from 'fs';
 import FormData from 'form-data';
-import { detectThrottle, raiseFlag } from './lib/throttle-flags';
+import { debugThrottle, detectThrottle, raiseFlag } from './lib/throttle-flags';
 import { SecretsManager } from './secrets';
 import {
 	BearerTokenErrorResponse,
@@ -67,6 +67,16 @@ type RequestParams = Pick< RequestInit, 'method' | 'headers' | 'body' >;
 
 export const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
 const REST_API_BASE_URL = 'https://public-api.wordpress.com';
+
+/**
+ * Records a throttle if this response or error signals one. Never throws.
+ */
+async function recordThrottle( responseOrError: unknown ): Promise< void > {
+	const throttle = detectThrottle( responseOrError );
+	if ( throttle ) {
+		await raiseFlag( throttle.id, throttle.durationMs );
+	}
+}
 
 /**
  * Client to interact with the WordPress.com REST API.
@@ -248,6 +258,8 @@ export class RestAPIClient {
 	 * @throws {ErrorResponse} If API responded with an error.
 	 */
 	async createSite( newSiteParams: NewSiteParams ): Promise< NewSiteResponse > {
+		debugThrottle( 'signup' );
+
 		const body = {
 			client_id: SecretsManager.secrets.calypsoOauthApplication.client_id,
 			client_secret: SecretsManager.secrets.calypsoOauthApplication.client_secret,
@@ -269,11 +281,17 @@ export class RestAPIClient {
 			body: JSON.stringify( body ),
 		};
 
-		const response = await this.sendRequest( this.getRequestURL( '1.1', '/sites/new' ), params );
-		const throttle = detectThrottle( response );
-		if ( throttle ) {
-			await raiseFlag( throttle.id, throttle.durationMs );
+		let response;
+		try {
+			response = await this.sendRequest( this.getRequestURL( '1.1', '/sites/new' ), params );
+		} catch ( error ) {
+			// The edge limiter can answer with something `sendRequest` cannot
+			// parse, so the throttle reaches us as a thrown error rather than a
+			// response body. Recorded either way, and rethrown untouched.
+			await recordThrottle( error );
+			throw error;
 		}
+		await recordThrottle( response );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(

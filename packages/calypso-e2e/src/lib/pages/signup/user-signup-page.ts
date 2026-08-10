@@ -1,5 +1,6 @@
 import { Page, Locator, Frame } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
+import { debugThrottle } from '../../throttle-flags';
 import type { NewSiteResponse, NewUserResponse } from '../../../types/rest-api-client.types';
 
 /**
@@ -244,6 +245,8 @@ export class UserSignupPage {
 	 * @returns Response from the REST API.
 	 */
 	async signup( email: string, username: string, password: string ): Promise< NewUserResponse > {
+		debugThrottle( 'signup' );
+
 		await this.waitForSignupForm();
 		await this.emailInput.fill( email );
 		await this.usernameInput.fill( username );
@@ -266,6 +269,8 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupWithEmail( email: string ): Promise< NewUserResponse > {
+		debugThrottle( 'signup' );
+
 		// Staging occasionally serves a transient upstream 5xx (502/503/504) for
 		// the signup page or the /users/new? POST. The form then never loads or
 		// the response is never ok, so the attempt fails. In the common case

@@ -90,7 +90,6 @@ import {
 	UseADomainIOwnPage,
 	SelectItemsComponent,
 	detectThrottle,
-	flushRaisedFlags,
 	raiseFlag,
 } from '@automattic/calypso-e2e';
 import { test as base, expect, type Page } from '@playwright/test';
@@ -134,37 +133,62 @@ type AccountFixture = (
 	use: ( account: TestAccount ) => Promise< void >
 ) => Promise< void >;
 
+const WPCOM_HOST = /^https?:\/\/([^/]*\.)?wordpress\.com(?::\d+)?\//;
+const THROTTLED_ENDPOINT =
+	/\/(?:sites\/new|users\/new|domains\/suggestions|[^/]+\/is-available)(?:[/?]|$)/;
+
+const pendingWatchers = new Set< Promise< unknown > >();
+
 /**
  * Records a throttle whenever wpcom rate-limits one of the endpoints the suite
  * depends on, including calls the app makes in the background.
  *
- * Recording only: nothing is skipped or failed on the strength of a flag yet.
- * The URL and status are filtered first so that only a handful of responses are
- * ever read. The body is never logged — a 4xx from `/users/new` or `/sites/new`
- * carries the credentials of the user being created.
+ * The host and path are filtered first so that only a handful of responses are
+ * ever read. The status cannot be filtered on: Calypso reaches these endpoints
+ * through `http_envelope`, so a throttled call still answers 200 and carries
+ * the refusal in its body. The body is never logged — a failed `/users/new` or
+ * `/sites/new` carries the credentials of the user being created.
  */
 function watchForThrottle( page: Page ): void {
-	page.on( 'response', async ( response ) => {
+	page.on( 'response', ( response ) => {
 		const url = response.url();
 		const status = response.status();
-		if (
-			status < 400 ||
-			status >= 500 ||
-			! /\/(?:sites\/new|users\/new|domains\/suggestions|[^/]+\/is-available)(?:[/?]|$)/.test( url )
-		) {
+		if ( status >= 500 || ! WPCOM_HOST.test( url ) || ! THROTTLED_ENDPOINT.test( url ) ) {
 			return;
 		}
 
-		try {
-			const throttle = detectThrottle( { url, status, body: await response.text() } );
-			if ( throttle ) {
-				console.warn( `[e2e-throttle] ${ throttle.id } for ${ throttle.durationMs }ms: ${ url }` );
-				await raiseFlag( throttle.id, throttle.durationMs );
+		const pending = ( async () => {
+			try {
+				const body = await response.text();
+				// An enveloped success carries no error key, and a domain search
+				// result can hold anything a caller typed — including our own
+				// tokens — so it is never handed to detection.
+				if ( status < 400 && ! /"error"\s*:/.test( body ) ) {
+					return;
+				}
+				const throttle = detectThrottle( { url, status, body } );
+				if ( throttle ) {
+					await raiseFlag( throttle.id, throttle.durationMs );
+				}
+			} catch {
+				// Detection never fails a test.
 			}
-		} catch {
-			// Detection never fails a test.
-		}
+		} )();
+		pendingWatchers.add( pending );
+		void pending.finally( () => pendingWatchers.delete( pending ) );
 	} );
+}
+
+/**
+ * Settles the listeners still reading a response.
+ *
+ * A listener raises its flag with no test awaiting it, so without this a worker
+ * can exit between detecting a throttle and tagging the build for it. Settles
+ * rather than rejects, and the tag request is bounded, so waiting here can
+ * neither fail a test nor hang one.
+ */
+async function flushThrottleWatchers(): Promise< void > {
+	await Promise.allSettled( [ ...pendingWatchers ] );
 }
 
 export const test = base.extend<
@@ -427,7 +451,7 @@ export const test = base.extend<
 
 		await use( page );
 
-		await flushRaisedFlags();
+		await flushThrottleWatchers();
 	},
 	...( Object.fromEntries(
 		Object.entries( fixtureAccounts ).map( ( [ fixtureName, accountName ] ) => [
@@ -598,7 +622,7 @@ export const test = base.extend<
 		await incognitoPage.spawn();
 		watchForThrottle( incognitoPage.getPage() );
 		await use( incognitoPage );
-		await flushRaisedFlags();
+		await flushThrottleWatchers();
 		await incognitoPage.close();
 	},
 	pageJetpackTraffic: async ( { page }, use ) => {

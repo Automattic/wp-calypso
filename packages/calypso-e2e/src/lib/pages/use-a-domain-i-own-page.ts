@@ -1,4 +1,5 @@
 import { Locator, Page } from 'playwright';
+import { debugThrottle } from '../throttle-flags';
 
 const selectors = {
 	ownedDomainInput: '.use-my-domain__domain-input-fieldset input',
@@ -95,6 +96,8 @@ export class UseADomainIOwnPage {
 	 * @param domainName Domain name to fill in the input
 	 */
 	async fillUseDomainIOwnInput( domainName: string ): Promise< void > {
+		debugThrottle( 'domain-availability' );
+
 		const searchAndPressEnter = async () => {
 			const input = this.getContainer().locator( '.use-my-domain__domain-input input' );
 			await input.fill( domainName );
