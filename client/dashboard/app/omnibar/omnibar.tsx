@@ -8,6 +8,7 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
+import { wpcomLink } from '../../utils/link';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
@@ -36,6 +37,27 @@ function removeUnsupportedNodes( nodes: AdminBarNode[], supports: AppConfig[ 'su
 	return nodes.filter( ( node ) => node.id !== 'command-palette' || supports.commandPalette );
 }
 
+function createHrefResolver( adminUrl?: string ) {
+	return ( href: string ) => {
+		let url;
+		try {
+			url = new URL( href, adminUrl );
+		} catch {
+			return href;
+		}
+
+		const path = url.pathname + url.search + url.hash;
+
+		if ( url.host === 'my.wordpress.com' ) {
+			return path;
+		}
+		if ( url.host === 'wordpress.com' ) {
+			return wpcomLink( path );
+		}
+		return url.href;
+	};
+}
+
 export default function OmnibarContainer( { user }: { user?: User } ) {
 	const { supports } = useAppContext();
 	const [ hydrated, setHydrated ] = useState( false );
@@ -59,7 +81,8 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
 		const result = buildOmnibarNodesFromAdminBarNodes(
 			removeUnsupportedNodes( nodes, supports ),
-			DOTCOM_NODE_BUILDERS
+			DOTCOM_NODE_BUILDERS,
+			createHrefResolver( siteNodes ? site?.options?.admin_url : undefined )
 		);
 
 		if ( ! result.home ) {

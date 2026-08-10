@@ -121,15 +121,30 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 		setIsOpen( open );
 	};
 
+	const handleTouchEnd = ( event: React.TouchEvent ) => {
+		if ( ! node.href ) {
+			return;
+		}
+		event.preventDefault();
+		setIsOpen( ( open ) => ! open );
+	};
+
 	return (
 		<Menu open={ isOpen } onOpenChange={ handleOpenChange }>
 			<Menu.TriggerButton
 				ref={ triggerRef }
 				onMouseEnter={ () => setIsOpen( true ) }
 				onMouseLeave={ handleMouseLeave }
+				onTouchEnd={ handleTouchEnd }
 				aria-expanded={ isOpen }
 				render={
-					<Button variant="unstyled" className={ menuClassName } aria-label={ label }>
+					<Button
+						variant="unstyled"
+						className={ menuClassName }
+						aria-label={ label }
+						render={ node.href ? <a href={ node.href } /> : undefined }
+						nativeButton={ ! node.href }
+					>
 						<OmnibarNodeContent node={ node } />
 					</Button>
 				}
