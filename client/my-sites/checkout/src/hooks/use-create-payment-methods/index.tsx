@@ -505,20 +505,25 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
+	// In Germany, PayPal is the preferred option, so we display it before
+	// credit cards. See https://wp.me/pxLjZ-9aA
+	const shouldPreferPayPal = currentTaxCountryCode?.toUpperCase() === 'DE';
+	const payPalMethods = [ paypalExpressMethod, paypalPPCPMethod ];
+	const cardAndPayPalMethods = shouldPreferPayPal
+		? [ ...payPalMethods, stripeMethod, freePaymentMethod ]
+		: [ stripeMethod, freePaymentMethod, ...payPalMethods ];
+
 	// The order of this array is the order that Payment Methods will be
 	// displayed in Checkout, although not all payment methods here will be
 	// listed; the list of allowed payment methods is returned by the shopping
 	// cart which will be used to filter this list in
 	// `filterAppropriatePaymentMethods()`.
-	let paymentMethods = [
+	return [
 		...existingCardMethods,
 		...existingPayPalPPCPMethods,
 		applePayMethod,
 		googlePayMethod,
-		stripeMethod,
-		freePaymentMethod,
-		paypalExpressMethod,
-		paypalPPCPMethod,
+		...cardAndPayPalMethods,
 		idealMethod,
 		blikMethod,
 		sofortMethod,
@@ -531,31 +536,4 @@ export default function useCreatePaymentMethods( {
 		bancontactMethod,
 		stripeUpiMethod,
 	].filter( isValueTruthy );
-
-	// In Germany, PayPal is the preferred option, so we display it before
-	// credit cards. See https://wp.me/pxLjZ-9aA
-	if ( currentTaxCountryCode?.toUpperCase() === 'DE' ) {
-		paymentMethods = [
-			...existingCardMethods,
-			...existingPayPalPPCPMethods,
-			applePayMethod,
-			googlePayMethod,
-			paypalExpressMethod,
-			paypalPPCPMethod,
-			stripeMethod,
-			freePaymentMethod,
-			idealMethod,
-			sofortMethod,
-			pixMethod,
-			pixAutomaticoMethod,
-			alipayMethod,
-			p24Method,
-			epsMethod,
-			wechatMethod,
-			bancontactMethod,
-			stripeUpiMethod,
-		].filter( isValueTruthy );
-	}
-
-	return paymentMethods;
 }
