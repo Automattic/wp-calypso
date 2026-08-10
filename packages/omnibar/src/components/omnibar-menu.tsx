@@ -27,6 +27,14 @@ function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
 		);
 	}
 
+	if ( node.interactive === false ) {
+		return (
+			<div className="omnibar__menu-static-item">
+				<OmnibarNodeContent node={ node } />
+			</div>
+		);
+	}
+
 	return (
 		<Menu.Item render={ node.href ? <a href={ node.href } /> : undefined } onClick={ node.onClick }>
 			<OmnibarNodeContent node={ node } />

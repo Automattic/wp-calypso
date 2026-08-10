@@ -15,6 +15,7 @@ import { OmnibarHomeIcon } from './home';
 import { useAiChatPlugin } from './plugin-ai-chat';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useNotificationsPlugin } from './plugin-notifications';
+import { buildSiteBadgeNode } from './plugin-site-badges';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
 import { buildWpcomAccountNode } from './plugin-wpcom-account';
 import type { AppConfig } from '../context';
@@ -23,25 +24,16 @@ import type { OmnibarNodeBuilders } from '@automattic/omnibar';
 
 const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
 
-const UNSUPPORTED_DOTCOM_NODE_IDS = new Set( [
-	'site-plan',
-	'site-plan-badge',
-	'site-status-badge',
-] );
-
 const DOTCOM_NODE_BUILDERS: OmnibarNodeBuilders = {
 	'my-wpcom-account': buildWpcomAccountNode,
+	'site-plan-badge': buildSiteBadgeNode,
+	'site-status-badge': buildSiteBadgeNode,
 };
 
 function removeUnsupportedNodes( nodes: AdminBarNode[], supports: AppConfig[ 'supports' ] ) {
-	return nodes.filter( ( node ) => {
-		if ( UNSUPPORTED_DOTCOM_NODE_IDS.has( node.id ) ) {
-			return false;
-		}
-		// The palette is only mounted where the app supports it, so elsewhere the
-		// admin bar's button would open nothing.
-		return node.id !== 'command-palette' || supports.commandPalette;
-	} );
+	// The palette is only mounted where the app supports it, so elsewhere the
+	// admin bar's button would open nothing.
+	return nodes.filter( ( node ) => node.id !== 'command-palette' || supports.commandPalette );
 }
 
 export default function OmnibarContainer( { user }: { user?: User } ) {
