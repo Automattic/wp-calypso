@@ -523,6 +523,7 @@ export default function useCreatePaymentMethods( {
 		...existingPayPalPPCPMethods,
 		applePayMethod,
 		googlePayMethod,
+		stripeUpiMethod,
 		...cardAndPayPalMethods,
 		idealMethod,
 		blikMethod,
@@ -534,6 +535,5 @@ export default function useCreatePaymentMethods( {
 		epsMethod,
 		wechatMethod,
 		bancontactMethod,
-		stripeUpiMethod,
 	].filter( isValueTruthy );
 }
