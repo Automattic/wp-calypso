@@ -42,7 +42,7 @@ function writeStoredHistory( siteKey: string, history: StoredHistory ): void {
 	}
 }
 
-interface HistoryEvent {
+export interface HistoryEvent {
 	action: Action;
 	location: Location;
 }
