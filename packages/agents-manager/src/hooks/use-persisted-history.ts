@@ -74,6 +74,7 @@ class MemoryHistory {
 		this.listen = this.listen.bind( this );
 		this.createLocation = this.createLocation.bind( this );
 	}
+
 	get length(): number {
 		return this.entries.length;
 	}
