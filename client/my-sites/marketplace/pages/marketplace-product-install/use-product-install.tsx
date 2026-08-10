@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useSelector, useDispatch } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -336,6 +337,27 @@ export function useProductInstall( {
 	if ( ! error && hasTimedOut ) {
 		error = { type: 'timeout' };
 	}
+
+	// The product is on the site and switched on: the wait is over, whatever the redirect below does
+	// next. Retiring it here rather than on unmount is what separates a finished install from a
+	// closed tab — the plugin flow leaves by full-page navigation, which React never sees.
+	const hasSucceeded = themeSlug ? isThemeActive : !! installedPlugin && pluginActive;
+
+	// Whether anyone is still watching. The wait stops being one the moment it resolves, either into
+	// an error screen or into a success on its way out.
+	useWaitHeartbeat( {
+		surface: 'marketplace_install',
+		enabled: !! siteId && ! isUploadStillSending && ! error && ! hasSucceeded,
+		properties: {
+			flow: installFlowName( { themeSlug, isPluginUploadFlow } ),
+			product_slug: pluginSlug || themeSlug || null,
+			site_id: siteId,
+			current_step: currentStep,
+			install_strategy: installStrategy,
+			is_atomic_flow: atomicFlow,
+			outcome: error?.type ?? ( hasSucceeded ? 'succeeded' : null ),
+		},
+	} );
 
 	// Reported once per outcome, so a re-render behind the error screen does not re-send it. The
 	// diagnostics ride along because nothing else records why a wait ended: whether a transfer was

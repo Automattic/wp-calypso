@@ -19,6 +19,7 @@ import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-recor
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useInterval } from 'calypso/lib/interval';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
@@ -116,6 +117,17 @@ const ProcessingStep: StepType< {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgressTitle(),
 		[]
 	);
+
+	// Only a step with something to wait on is a wait. A flow that reaches here with no pending
+	// action resolves in the same tick, and beating for it would bury the real waits in noise.
+	useWaitHeartbeat( {
+		surface: 'stepper_processing',
+		enabled: typeof action === 'function' && ! hasActionSuccessfullyRun,
+		properties: {
+			flow,
+			previous_step: props.data?.previousStep ?? null,
+		},
+	} );
 
 	const getCurrentMessage = () => {
 		return props.title || progressTitle || loadingMessages[ currentMessageIndex ]?.title;

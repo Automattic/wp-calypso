@@ -3,6 +3,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import Loading from 'calypso/components/loading';
+import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useInterval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
@@ -27,6 +28,21 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 	const dispatch = useDispatch();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const transfer = useSelector( ( state ) => getAtomicTransfer( state, siteId ) );
+
+	// This screen is only mounted while the transfer runs, but it stays up for a beat after the
+	// transfer settles while the redirect resolves — that tail is not wait the customer is enduring.
+	const isTransferSettled =
+		transfer?.status === transferStates.COMPLETED || transfer?.status === transferStates.ERROR;
+
+	useWaitHeartbeat( {
+		surface: 'checkout_thank_you_transfer',
+		enabled: ! isTransferSettled,
+		properties: {
+			site_id: siteId,
+			order_id: orderId,
+			transfer_status: transfer?.status ?? null,
+		},
+	} );
 
 	const steps = React.useRef< string[] >( [
 		__( 'Setting up your site' ),
@@ -110,7 +126,7 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 		<Loading
 			title={ steps.current[ currentStep ] }
 			progress={ progressValue }
-			// translators: these are progress steps. Example: Step 1 of 3
+			/* translators: %(currentStep)d is the step now running and %(totalSteps)d the number of steps in total. Example: Step 1 of 3 */
 			subtitle={ sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
 				currentStep: currentStep + 1,
 				totalSteps,
