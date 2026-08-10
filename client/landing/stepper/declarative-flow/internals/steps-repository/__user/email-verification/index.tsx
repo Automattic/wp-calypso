@@ -10,7 +10,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { formatCooldown } from 'calypso/dashboard/utils/email-verification-resend';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { useIsEmailChangePending } from '../use-email-change-request';
+import { useIsEmailWriteInFlight } from '../use-email-change-request';
 import { getInboxLink } from './inbox-links';
 import { markGateShown } from './storage';
 import { useEmailVerification } from './use-email-verification';
@@ -33,9 +33,10 @@ interface Props {
 	onEditEmail: () => void;
 	// Set while a correction is waiting to be confirmed, which changes what resending has to do.
 	pendingEmail?: string;
-	// False until whether one is waiting has been established, since a resend before then would
-	// go to the address a correction was made to get away from.
-	knowsWhereToResend?: boolean;
+	// Whether the address above is the one being waited on, or is standing in until the settings
+	// answer. What would go somewhere on its strength waits for it — correcting it does not, since
+	// a correction of the wrong address asks for no change and is answered as none.
+	addressSettled: boolean;
 }
 
 const EmailVerificationGate = ( {
@@ -45,10 +46,10 @@ const EmailVerificationGate = ( {
 	email,
 	onEditEmail,
 	pendingEmail,
-	knowsWhereToResend = true,
+	addressSettled,
 }: Props ) => {
 	const { __ } = useI18n();
-	const isChangePending = useIsEmailChangePending();
+	const isWriteInFlight = useIsEmailWriteInFlight();
 	const { sendStatus, secondsUntilResend, resend } = useEmailVerification(
 		flow,
 		scope,
@@ -106,7 +107,7 @@ const EmailVerificationGate = ( {
 					variant="link"
 					// A correction submitted now would queue behind the send, and a reload while it
 					// waited would leave the address written down with nothing able to carry it out.
-					disabled={ isChangePending }
+					disabled={ isWriteInFlight }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_signup_email_verification_edit_click', { flow } );
 						onEditEmail();
@@ -152,7 +153,7 @@ const EmailVerificationGate = ( {
 						{ /* Calypso's Button, not the Step.* ones: the design follows its outline, radius,
 						   and weight. A known provider gets an inbox deep link; confirming there — or
 						   anywhere else — resolves the gate by polling, so nothing else is needed. */ }
-						{ inboxLink && (
+						{ inboxLink && addressSettled && (
 							<Button
 								primary
 								href={ inboxLink.url }
@@ -168,10 +169,10 @@ const EmailVerificationGate = ( {
 						<Button
 							onClick={ resend }
 							disabled={
-								isChangePending ||
+								isWriteInFlight ||
 								sendStatus === 'sending' ||
 								secondsUntilResend > 0 ||
-								! knowsWhereToResend
+								! addressSettled
 							}
 							busy={ sendStatus === 'sending' }
 						>

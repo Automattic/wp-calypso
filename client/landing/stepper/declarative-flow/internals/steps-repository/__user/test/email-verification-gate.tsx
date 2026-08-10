@@ -337,6 +337,7 @@ describe( 'account step email verification gate', () => {
 
 		renderWithProvider(
 			<EmailVerificationGate
+				addressSettled
 				flow="onboarding"
 				scope={ gateScope( 'onboarding', mockUserId ) }
 				email={ CORRECTED_EMAIL }
@@ -361,6 +362,7 @@ describe( 'account step email verification gate', () => {
 
 		renderWithProvider(
 			<EmailVerificationGate
+				addressSettled
 				flow="onboarding"
 				scope={ gateScope( 'onboarding', mockUserId ) }
 				email={ CORRECTED_EMAIL }
@@ -390,6 +392,7 @@ describe( 'account step email verification gate', () => {
 
 		renderWithProvider(
 			<EmailVerificationGate
+				addressSettled
 				flow="onboarding"
 				scope={ gateScope( 'onboarding', mockUserId ) }
 				email={ CORRECTED_EMAIL }

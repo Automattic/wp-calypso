@@ -21,7 +21,7 @@ export const PENDING_CHANGE_RESEND_SECONDS = 15 * 60;
  * left able to carry it out. Asked globally because the gate remounts when `/me` resolves someone
  * else, which forgets anything a single instance was keeping.
  */
-export function useIsEmailChangePending() {
+export function useIsEmailWriteInFlight() {
 	return useIsMutating( emailWriteFilters ) > 0;
 }
 

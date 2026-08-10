@@ -196,7 +196,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const awaitingEmail = pendingEmail ?? currentEmail;
 	// A correction made in an earlier session is invisible until the settings answer, and the
 	// address standing in for it meanwhile is the mistyped one it was made to get away from.
-	const knowsWhereToResend = Boolean( requestedEmail ) || settingsRead;
+	const addressSettled = Boolean( requestedEmail ) || settingsRead;
 
 	// Submitted unchanged, nothing is being asked for and the user is already where they need to
 	// be. Writing a changed one is a change of its own.
@@ -215,7 +215,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	};
 
 	const updateErrorNotice = updateError ? (
-		<Notice variant="error">{ updateError }</Notice>
+		// Inserted after the fact, in answer to something the reader did, so it is spoken rather
+		// than only shown.
+		<div role="alert">
+			<Notice variant="error">{ updateError }</Notice>
+		</div>
 	) : (
 		( false as const )
 	);
@@ -317,7 +321,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				onEditEmail={ beginEmailEdit }
 				email={ awaitingEmail ?? '' }
 				pendingEmail={ pendingEmail }
-				knowsWhereToResend={ knowsWhereToResend }
+				addressSettled={ addressSettled }
 				// A different account is a different attempt: without this the cooldown, the send
 				// state and the poll's ladder would all carry over to whoever `/me` resolved.
 				key={ gateScopeForUser }
