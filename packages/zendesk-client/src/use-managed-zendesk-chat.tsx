@@ -4,7 +4,7 @@ import {
 	ThumbsDownIcon,
 	ThumbsUpIcon,
 } from '@automattic/agenttic-ui';
-import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
+import { getValidBlogId, recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import {
 	useCallback,
@@ -102,11 +102,9 @@ type SmoochSiteEntry = { siteId: number | string | undefined };
 const smoochSiteEntries = new Set< SmoochSiteEntry >();
 
 function getSmoochSiteId() {
-	let siteId: number | string | undefined;
+	let siteId: number | undefined;
 	for ( const entry of smoochSiteEntries ) {
-		if ( entry.siteId !== undefined ) {
-			siteId = entry.siteId;
-		}
+		siteId = getValidBlogId( entry.siteId ) ?? siteId;
 	}
 	return siteId;
 }

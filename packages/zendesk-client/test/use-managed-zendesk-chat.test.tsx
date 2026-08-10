@@ -317,6 +317,27 @@ describe( 'useManagedZendeskChat', () => {
 			list.unmount();
 		} );
 
+		it( 'keeps a valid owner site when another owner has an unusable one', async () => {
+			const wrapper = makeWrapper();
+
+			const list = renderHook( () => useGetZendeskConversations( true, undefined, 456 ), {
+				wrapper,
+			} );
+			await waitFor( () => expect( smooch.init ).toHaveBeenCalled() );
+
+			renderHook( () => useManagedZendeskChat( { siteId: 0 } ), { wrapper } );
+			await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
+
+			await triggerAuthError();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_auth_error', {
+				blog_id: 456,
+				site_context_source: 'chat_site',
+			} );
+
+			list.unmount();
+		} );
+
 		it( 'omits the site once every owner has unmounted', async () => {
 			const wrapper = makeWrapper();
 
