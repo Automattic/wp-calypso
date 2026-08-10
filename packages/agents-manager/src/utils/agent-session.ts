@@ -74,6 +74,7 @@ export function getOrCreateSessionId( agentId?: string ): string {
 	if ( existing ) {
 		return existing;
 	}
+
 	const newId = generateUUID();
 	saveSessionId( newId, agentId );
 	return newId;

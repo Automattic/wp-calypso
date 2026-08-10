@@ -15,6 +15,7 @@ function readStoredHistory( siteKey: string ): StoredHistory | undefined {
 	try {
 		const map = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
 		const history = map[ siteKey ];
+
 		// Corrupted storage must fall back to a fresh history — a malformed
 		// shape here would crash the router.
 		const isValidHistory =
