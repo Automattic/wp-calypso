@@ -15,6 +15,7 @@ import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import { useAiChatPlugin } from './plugin-ai-chat';
 import { useHelpCenterPlugin } from './plugin-help-center';
+import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
 import { useNotificationsPlugin } from './plugin-notifications';
 import { useReaderPlugin } from './plugin-reader';
 import { buildSiteBadgeNode } from './plugin-site-badges';
@@ -111,6 +112,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	const helpCenterPluginNode = useHelpCenterPlugin();
 	const aiChatPluginNode = useAiChatPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
+	const languageSwitcherNode = useLanguageSwitcherPlugin( { user } );
 	const statsSparklineNode = useStatsSparklinePlugin( { siteId, site } );
 	const siteActions = statsSparklineNode
 		? [ ...( baseOmnibarNodes.siteActions ?? [] ), statsSparklineNode ]
@@ -120,6 +122,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		...baseOmnibarNodes,
 		siteActions,
 		plugins: [
+			...( languageSwitcherNode ? [ languageSwitcherNode ] : [] ),
 			...( supports.reader ? [ readerPluginNode ] : [] ),
 			...( supports.help ? [ helpCenterPluginNode ] : [] ),
 			...( supports.help && aiChatPluginNode ? [ aiChatPluginNode ] : [] ),

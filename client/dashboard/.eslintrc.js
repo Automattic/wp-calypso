@@ -72,6 +72,7 @@ module.exports = {
 							'!@automattic/agents-manager',
 							'!@automattic/i18n-utils',
 							'!@automattic/languages',
+							'!@automattic/language-picker',
 							'!@automattic/load-script',
 							'!@automattic/number-formatters',
 							'!@automattic/search',
