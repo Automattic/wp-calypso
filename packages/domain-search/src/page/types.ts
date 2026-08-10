@@ -165,6 +165,15 @@ export interface DomainSearchProps {
 	config?: Partial< DomainSearchConfig >;
 }
 
+/**
+ * A suggestion the user tried to add that the registry can't sell right now.
+ * Stamped with the query it was raised under so a new search drops it.
+ */
+export interface BlockedSuggestion {
+	query: string;
+	availability: DomainAvailability;
+}
+
 export interface DomainSearchContextType
 	extends Omit<
 		DomainSearchProps,
@@ -176,6 +185,8 @@ export interface DomainSearchContextType
 	openFullCart: () => void;
 	query: string;
 	setQuery: ( query: string ) => void;
+	blockedSuggestion: BlockedSuggestion | null;
+	setBlockedSuggestion: ( blockedSuggestion: BlockedSuggestion | null ) => void;
 	filter: FilterState;
 	setFilter: ( filter: FilterState ) => void;
 	resetFilter: () => void;

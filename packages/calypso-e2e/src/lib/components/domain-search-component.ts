@@ -41,16 +41,21 @@ const summarizeCartResponse = async ( response: Response ): Promise< CartRespons
 	try {
 		const body = await response.json();
 
-		if ( Array.isArray( body?.products ) ) {
-			diagnostic.products = body.products
+		// Cart requests are made with ?http_envelope=1, which nests the real payload
+		// under `body` and always returns HTTP 200 — so a rejected add still looks
+		// like a success at the transport level, and its reason only appears here.
+		const payload = body?.body ?? body;
+
+		if ( Array.isArray( payload?.products ) ) {
+			diagnostic.products = payload.products
 				.map( ( product: { product_slug?: string; meta?: string } ) =>
 					[ product.product_slug, product.meta ].filter( Boolean ).join( ':' )
 				)
 				.slice( 0, 5 );
 		}
 
-		if ( Array.isArray( body?.messages?.errors ) ) {
-			diagnostic.errors = body.messages.errors
+		if ( Array.isArray( payload?.messages?.errors ) ) {
+			diagnostic.errors = payload.messages.errors
 				.map( ( error: { code?: string; message?: string } ) =>
 					[ error.code, error.message ].filter( Boolean ).join( ': ' )
 				)

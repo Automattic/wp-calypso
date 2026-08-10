@@ -76,6 +76,7 @@ export const SearchNotice = () => {
 		queries,
 		events,
 		currentSiteUrl,
+		blockedSuggestion,
 		config: { includeOwnedDomainInSuggestions },
 	} = useDomainSearch();
 	const { error: suggestionError } = useQuery( queries.domainSuggestions( query ) );
@@ -84,6 +85,18 @@ export const SearchNotice = () => {
 	);
 
 	const notice = useMemo( () => {
+		// A suggestion the user tried to add but the registry can't sell right now
+		// (e.g. the TLD is in maintenance). Takes precedence: it's the result of an
+		// explicit action, unlike the passive notice about the searched query.
+		if ( blockedSuggestion && blockedSuggestion.query === query ) {
+			return getAvailabilityNotice(
+				blockedSuggestion.availability.domain_name,
+				blockedSuggestion.availability,
+				events,
+				currentSiteUrl
+			);
+		}
+
 		if (
 			! availability ||
 			shouldHideAvailabilityNotice( availability, includeOwnedDomainInSuggestions )
@@ -99,7 +112,14 @@ export const SearchNotice = () => {
 		}
 
 		return getAvailabilityNotice( query, availability, events, currentSiteUrl );
-	}, [ query, availability, events, currentSiteUrl, includeOwnedDomainInSuggestions ] );
+	}, [
+		query,
+		availability,
+		events,
+		currentSiteUrl,
+		includeOwnedDomainInSuggestions,
+		blockedSuggestion,
+	] );
 
 	const errorMessage = suggestionError?.message ?? availabilityError?.message;
 

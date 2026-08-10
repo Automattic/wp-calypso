@@ -10,7 +10,7 @@ import {
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { isBlogSubdomainQuery } from '../helpers';
 import { DEFAULT_FILTER } from './constants';
-import { type DomainSearchProps, type DomainSearchContextType } from './types';
+import type { BlockedSuggestion, DomainSearchProps, DomainSearchContextType } from './types';
 
 const noop = () => {};
 
@@ -66,6 +66,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	openFullCart: () => {},
 	query: '',
 	setQuery: () => {},
+	blockedSuggestion: null,
+	setBlockedSuggestion: () => {},
 	config: {
 		vendor: 'variation2_front',
 		skippable: false,
@@ -116,6 +118,7 @@ export const useDomainSearchContextValue = ( {
 
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ filter, setFilter ] = useState( DEFAULT_FILTER );
+	const [ blockedSuggestion, setBlockedSuggestion ] = useState< BlockedSuggestion | null >( null );
 
 	const closeFullCart = useCallback( () => {
 		setIsFullCartOpen( false );
@@ -236,6 +239,8 @@ export const useDomainSearchContextValue = ( {
 					normalizedEvents.onQueryChange( normalizedQuery );
 				}
 			},
+			blockedSuggestion,
+			setBlockedSuggestion,
 			slots,
 			currentSiteUrl,
 			filter,
@@ -261,5 +266,6 @@ export const useDomainSearchContextValue = ( {
 		normalizedConfig,
 		filter,
 		setFilter,
+		blockedSuggestion,
 	] );
 };

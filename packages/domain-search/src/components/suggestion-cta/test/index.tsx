@@ -11,6 +11,7 @@ import { mockGetAvailabilityQuery } from '../../../test-helpers/queries/availabi
 import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
 import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
 import { DomainSuggestionsList } from '../../../ui';
+import { SearchNotice } from '../../search-notice';
 
 describe( 'DomainSuggestionCTA', () => {
 	describe( 'Add to cart cta', () => {
@@ -621,6 +622,49 @@ describe( 'DomainSuggestionCTA', () => {
 				expect( successCta ).toHaveClass( 'is-busy' );
 			} );
 		} );
+	} );
+
+	it( 'explains why a suggestion cannot be added when its TLD is in maintenance', async () => {
+		const user = userEvent.setup();
+
+		mockGetSuggestionsQuery( {
+			params: { query: 'test-maintenance' },
+			suggestions: [ buildSuggestion( { domain_name: 'test-maintenance.blog' } ) ],
+		} );
+
+		mockGetAvailabilityQuery( {
+			params: { domainName: 'test-maintenance.blog' },
+			availability: buildAvailability( {
+				domain_name: 'test-maintenance.blog',
+				tld: 'blog',
+				status: DomainAvailabilityStatus.MAINTENANCE,
+			} ),
+		} );
+
+		const onAddDomainToCart = jest.fn();
+
+		render(
+			<TestDomainSearchWithSuggestions query="test-maintenance" events={ { onAddDomainToCart } }>
+				<SearchNotice />
+				<DomainSuggestionsList>
+					<DomainSuggestionCTA domainName="test-maintenance.blog" />
+				</DomainSuggestionsList>
+			</TestDomainSearchWithSuggestions>
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: 'Add to cart' } ) );
+
+		const [ notice ] = await screen.findAllByText(
+			/are undergoing maintenance\. Please try a different extension/
+		);
+
+		expect( notice ).toBeVisible();
+
+		// The cart rejects these outright, so the add is never attempted.
+		expect( onAddDomainToCart ).not.toHaveBeenCalled();
+		expect( screen.getByRole( 'button', { name: 'Add to cart' } ) ).not.toHaveClass(
+			'is-destructive'
+		);
 	} );
 
 	it( 'allows contacting support if the premium domain is too expensive', async () => {

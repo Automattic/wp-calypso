@@ -4,6 +4,7 @@ import { envelope } from '@wordpress/icons';
 import { useState } from 'react';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
 import { useSuggestion } from '../../hooks/use-suggestion';
+import { UNAVAILABLE_FOR_PURCHASE_STATUSES } from '../../page/constants';
 import { useDomainSearch } from '../../page/context';
 import {
 	DomainSearchTrademarkClaimsModal,
@@ -17,7 +18,7 @@ export interface DomainSuggestionCTAProps {
 }
 
 export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) => {
-	const { cart, events, queries } = useDomainSearch();
+	const { cart, events, queries, query, setBlockedSuggestion } = useDomainSearch();
 	const suggestion = useSuggestion( domainName );
 
 	const queryClient = useQueryClient();
@@ -37,6 +38,8 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 			mutationId,
 		},
 		mutationFn: async ( { acceptedTrademarkClaim }: { acceptedTrademarkClaim: boolean } ) => {
+			setBlockedSuggestion( null );
+
 			if ( acceptedTrademarkClaim ) {
 				events.onTrademarkClaimsNoticeAccepted( suggestion );
 				await cart.onAddItem( suggestion );
@@ -48,6 +51,11 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 			);
 
 			events.onDomainAddAvailabilityPreCheck( availability, domainName, suggestion.vendor );
+
+			if ( UNAVAILABLE_FOR_PURCHASE_STATUSES.includes( availability.status ) ) {
+				setBlockedSuggestion( { query, availability } );
+				return;
+			}
 
 			if ( ! availability.trademark_claims_notice_info ) {
 				await cart.onAddItem( suggestion );
