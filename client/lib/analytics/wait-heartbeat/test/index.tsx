@@ -210,6 +210,28 @@ describe( 'useWaitHeartbeat', () => {
 		}
 	} );
 
+	// A caller that shadows one of these would break the correlation every query depends on, and do
+	// it silently.
+	it( 'does not let the caller overwrite the fields identifying the wait', async () => {
+		renderHeartbeat( {
+			enabled: true,
+			properties: {
+				surface: 'not_a_surface',
+				wait_id: 'not-a-wait-id',
+				waited_seconds: 9999,
+				is_visible: 'nonsense',
+			},
+		} );
+		await advance( 21 * 1000 );
+
+		for ( const [ , properties ] of mockRecordTracksEvent.mock.calls ) {
+			expect( properties ).toMatchObject( { surface: 'marketplace_install' } );
+			expect( ( properties as Record< string, unknown > ).wait_id ).not.toBe( 'not-a-wait-id' );
+			expect( ( properties as Record< string, unknown > ).waited_seconds ).not.toBe( 9999 );
+			expect( ( properties as Record< string, unknown > ).is_visible ).toBe( true );
+		}
+	} );
+
 	// The outcome is only known on the render that ends the wait, so the closing event has to read
 	// the context of that render rather than the one the wait started with.
 	it( 'closes with the context as it stands at the end', async () => {

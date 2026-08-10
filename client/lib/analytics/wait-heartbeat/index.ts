@@ -112,6 +112,10 @@ export function useWaitHeartbeat( {
 				wait.visibleMs + ( wait.visibleSince === null ? 0 : now - wait.visibleSince );
 
 			recordTracksEvent( name, {
+				...propertiesRef.current,
+				// Spread after the caller's context, never before: a surface that happened to pass its
+				// own `surface` or `wait_id` would silently break the correlation every query here
+				// depends on. The hook owns these.
 				surface,
 				wait_id: wait.id,
 				waited_seconds: Math.round( ( now - wait.startedAt ) / 1000 ),
@@ -119,7 +123,6 @@ export function useWaitHeartbeat( {
 				is_visible: wait.visibleSince !== null,
 				heartbeat_count: wait.beats,
 				seconds_since_previous: Math.round( ( now - wait.lastEventAt ) / 1000 ),
-				...propertiesRef.current,
 				...extra,
 			} );
 			wait.lastEventAt = now;
