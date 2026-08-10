@@ -315,6 +315,8 @@ describe( 'account step email verification gate', () => {
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 		expect( screen.getByText( EMAIL, { exact: false } ) ).toBeVisible();
 		expect( screen.queryByText( CORRECTED_EMAIL, { exact: false } ) ).not.toBeInTheDocument();
+		// Nothing went out, so nothing is waited on.
+		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeEnabled() );
 	} );
 
 	// The dedicated endpoint mails whatever the account holds, which during a correction is the
@@ -396,6 +398,11 @@ describe( 'account step email verification gate', () => {
 
 		expect( await screen.findByText( /already being used/ ) ).toBeVisible();
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		// A refusal names the address of a change already pending, which stays on screen.
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_update_failed',
+			{ flow: 'onboarding' }
+		);
 	} );
 
 	// Confirming in another tab settles what the account screen was opened to change, so there is
