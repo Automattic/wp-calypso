@@ -292,6 +292,9 @@ describe( 'account step email verification gate', () => {
 		renderUser( makeStore( false ) );
 
 		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeDisabled();
+		// The inbox it would open is the one the correction was made to get away from.
+		expect( screen.queryByRole( 'link', { name: /Open email inbox/ } ) ).not.toBeInTheDocument();
+
 		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeEnabled() );
 	} );
 
@@ -451,7 +454,10 @@ describe( 'account step email verification gate', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'submit-corrected' } ) );
 
-		expect( await screen.findByText( /already being used/ ) ).toBeVisible();
+		const refusal = await screen.findByText( /already being used/ );
+		expect( refusal ).toBeVisible();
+		// Inserted after the fact, so it has to be spoken as well as shown.
+		expect( refusal.closest( '[role="alert"]' ) ).not.toBeNull();
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
 		// A refusal names the address of a change already pending, which stays on screen.
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
