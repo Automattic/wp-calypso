@@ -50,9 +50,8 @@ export interface HistoryEvent {
 type PersistCallback = ( historyData: StoredHistory ) => void;
 
 /**
- * This is a custom implementation of the MemoryHistory class from the history package.
- * It is used to persist the navigation history of the agents manager.
- * It persists the history via a callback provided by the hook.
+ * A custom implementation of the `history` package's MemoryHistory that
+ * reports every navigation through a persist callback provided by the hook.
  */
 class MemoryHistory {
 	private entries: Location[] = [];
@@ -103,7 +102,7 @@ class MemoryHistory {
 		const location = this.createLocation( path.pathname + path.search + path.hash, state );
 		this.entries = this.entries.slice( 0, this.index + 1 );
 		this.entries.push( location );
-		// Limit the number of entries to 50 to avoid the history getting too long.
+		// Cap the history at 50 entries.
 		if ( this.entries.length > 50 ) {
 			this.entries.shift();
 			this.entries.shift();
@@ -168,10 +167,9 @@ class MemoryHistory {
 }
 
 export const usePersistedHistory = ( siteKey: string ) => {
-	// Read once per site, and key the instance on `siteKey` so every site switch
-	// gets a fresh history — even between sites with nothing stored. Local
-	// navigations persist without re-triggering, so `useLocation().state`
-	// (e.g. `conversationId`) is correct immediately.
+	// Read once and key on `siteKey`: every site switch gets a fresh instance —
+	// even between sites with nothing stored — while later navigations persist
+	// to storage without recreating it.
 	const history = useMemo( () => {
 		const persisted = readStoredHistory( siteKey );
 		return new MemoryHistory( persisted?.entries, persisted?.index );

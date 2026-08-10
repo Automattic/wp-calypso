@@ -17,6 +17,7 @@ function storeHistory( siteKey: string, entries: ReturnType< typeof entry >[], i
 
 describe( 'usePersistedHistory', () => {
 	afterEach( () => {
+		jest.restoreAllMocks();
 		sessionStorage.clear();
 	} );
 
@@ -45,7 +46,7 @@ describe( 'usePersistedHistory', () => {
 		expect( result.current.history.location.pathname ).toBe( '/' );
 	} );
 
-	it( 'starts fresh when switching to a site with no stored history', () => {
+	it( 'switches trails per site: a new site starts fresh, switching back restores', () => {
 		const { result, rerender } = renderHook(
 			( { siteKey }: { siteKey: string } ) => usePersistedHistory( siteKey ),
 			{ initialProps: { siteKey: 'site-1' } }
@@ -59,6 +60,10 @@ describe( 'usePersistedHistory', () => {
 
 		expect( result.current.history.length ).toBe( 1 );
 		expect( result.current.history.location.pathname ).toBe( '/' );
+
+		rerender( { siteKey: 'site-1' } );
+
+		expect( result.current.history.location.pathname ).toBe( '/history' );
 	} );
 
 	it( 'persists navigations, including route state', () => {
@@ -90,11 +95,51 @@ describe( 'usePersistedHistory', () => {
 
 		expect( result.current.history.location.pathname ).toBe( '/' );
 
+		// `back()` at the start of the trail is a no-op.
+		act( () => {
+			result.current.history.back();
+		} );
+
+		expect( result.current.history.location.pathname ).toBe( '/' );
+
 		act( () => {
 			result.current.history.forward();
 		} );
 
 		expect( result.current.history.location.pathname ).toBe( '/chat' );
+	} );
+
+	it( 'replaces the current entry without growing the trail', () => {
+		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
+
+		act( () => {
+			result.current.history.push( entry( '/chat' ) as Location );
+		} );
+		act( () => {
+			result.current.history.replace( entry( '/zendesk' ) as Location );
+		} );
+
+		expect( result.current.history.length ).toBe( 2 );
+		expect( result.current.history.location.pathname ).toBe( '/zendesk' );
+
+		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
+		expect( stored[ 'site-1' ].entries[ 1 ].pathname ).toBe( '/zendesk' );
+	} );
+
+	it( 'caps the trail at 50 entries, keeping the root entry first', () => {
+		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
+
+		act( () => {
+			for ( let i = 0; i < 60; i++ ) {
+				result.current.history.push( entry( `/page-${ i }` ) as Location );
+			}
+		} );
+
+		expect( result.current.history.length ).toBe( 50 );
+		expect( result.current.history.location.pathname ).toBe( '/page-59' );
+
+		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
+		expect( stored[ 'site-1' ].entries[ 0 ].pathname ).toBe( '/' );
 	} );
 
 	it( 'merges with other sites when persisting', () => {
@@ -108,6 +153,20 @@ describe( 'usePersistedHistory', () => {
 		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
 		expect( stored[ 'site-1' ].entries ).toHaveLength( 2 );
 		expect( stored[ 'site-2' ].entries[ 1 ].pathname ).toBe( '/history' );
+	} );
+
+	it( 'keeps navigating when persisting fails', () => {
+		jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+			throw new Error( 'quota exceeded' );
+		} );
+
+		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
+
+		act( () => {
+			result.current.history.push( entry( '/chat' ) as Location );
+		} );
+
+		expect( result.current.history.location.pathname ).toBe( '/chat' );
 	} );
 
 	it.each( [
