@@ -270,8 +270,10 @@ export default function StylesPreview( { type, variation }: Props ) {
 
 	const [ throttledWidth, setThrottledWidthState ] = useState< number | undefined >();
 	const setThrottledWidth = useThrottle( setThrottledWidthState, 250 );
-	const containerResizeRef = useResizeObserver( ( [ entry ] ) =>
-		setThrottledWidth( entry.contentRect.width )
+	// Zero widths come from hidden containers (e.g. off-page picker cards) —
+	// keeping the last real measurement lets a reveal repaint without resizing.
+	const containerResizeRef = useResizeObserver(
+		( [ entry ] ) => entry.contentRect.width && setThrottledWidth( entry.contentRect.width )
 	);
 	const [ ratioState, setRatioState ] = useState< number >();
 

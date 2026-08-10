@@ -54,6 +54,10 @@ const manyVariations = Array.from( { length: 9 }, ( _, index ) => ( {
 	styles: {},
 } ) );
 
+// Off-page cards stay mounted and hide via the `hidden` attribute.
+const visibleVariations = () =>
+	screen.getAllByTestId( 'variation' ).filter( ( el ) => ! el.closest( '[hidden]' ) );
+
 describe( 'VariationPicker', () => {
 	beforeEach( () => {
 		mockWidth = null;
@@ -71,7 +75,7 @@ describe( 'VariationPicker', () => {
 			/>
 		);
 
-		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 6 );
+		expect( visibleVariations() ).toHaveLength( 6 );
 		expect(
 			container.querySelector( '.agents-manager-variation-picker__arrows' )
 		).toBeInTheDocument();
@@ -89,7 +93,7 @@ describe( 'VariationPicker', () => {
 			/>
 		);
 
-		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 9 );
+		expect( visibleVariations() ).toHaveLength( 9 );
 		expect(
 			container.querySelector( '.agents-manager-variation-picker__arrows' )
 		).not.toBeInTheDocument();
@@ -109,7 +113,7 @@ describe( 'VariationPicker', () => {
 			/>
 		);
 
-		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( shown );
+		expect( visibleVariations() ).toHaveLength( shown );
 	} );
 
 	it( 'never pages below the given page size when wider', () => {
@@ -123,7 +127,7 @@ describe( 'VariationPicker', () => {
 			/>
 		);
 
-		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 8 );
+		expect( visibleVariations() ).toHaveLength( 8 );
 	} );
 
 	it( 'recovers from a stale page position when resizing widens the grid', () => {
@@ -135,9 +139,10 @@ describe( 'VariationPicker', () => {
 		};
 		const { container, rerender } = render( <VariationPicker { ...props } /> );
 
-		// Page to 2/2 while narrow — only the last two options remain.
+		// Page to 2/2 while narrow — the last window clamps to a full page
+		// (overlapping the first), keeping the grid height stable.
 		fireEvent.click( container.querySelectorAll( 'button' )[ 1 ] );
-		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 2 );
+		expect( visibleVariations() ).toHaveLength( 4 );
 
 		// 460px → 3 columns → all six fit one page; nothing stays stranded.
 		// Real resizes re-render through the observer's state; the static mock
@@ -145,7 +150,7 @@ describe( 'VariationPicker', () => {
 		mockWidth = 460;
 		rerender( <VariationPicker { ...props } activeVariationTitle="Variation 1" /> );
 
-		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 6 );
+		expect( visibleVariations() ).toHaveLength( 6 );
 		expect(
 			container.querySelector( '.agents-manager-variation-picker__arrows' )
 		).not.toBeInTheDocument();
@@ -193,7 +198,7 @@ describe( 'VariationPicker', () => {
 		);
 
 		// 3 variations fit inside the default page of 4 — all render, no arrows.
-		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 3 );
+		expect( visibleVariations() ).toHaveLength( 3 );
 	} );
 
 	it( 'displays the correct number of variations', () => {
@@ -206,8 +211,7 @@ describe( 'VariationPicker', () => {
 			/>
 		);
 
-		const displayedVariations = screen.getAllByTestId( 'variation' );
-		expect( displayedVariations ).toHaveLength( 3 );
+		expect( visibleVariations() ).toHaveLength( 3 );
 	} );
 
 	it( 'renders no variations or arrows when the list is empty', () => {

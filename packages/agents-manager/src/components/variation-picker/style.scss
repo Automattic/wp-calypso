@@ -1,6 +1,7 @@
 .agents-manager-variation-picker {
-	// Caps the picker at four columns — the width tiers in `index.tsx` rely on it.
-	max-width: 640px;
+	// Caps the picker width so cards keep a readable size in wide views; the
+	// show-all tier in `index.tsx` engages from four columns (584px) up.
+	max-width: 960px;
 
 	&__grid {
 		.block-editor-iframe__scale-container {
@@ -36,6 +37,10 @@
 	}
 
 	&__preview {
+		// The preview is a fixed 200×80 design scaled to the column width, so
+		// CSS owns the cell height — cards never reflow while the iframe
+		// inside measures and scales.
+		aspect-ratio: 200 / 80;
 		outline: var( --color-muted ) solid 1px;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;

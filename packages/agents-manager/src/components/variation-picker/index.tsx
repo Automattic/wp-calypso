@@ -23,8 +23,8 @@ const GRID_GAP = 8;
 // Rows per page when the width fits more than the narrow two columns.
 const PAGE_ROWS = 2;
 
-// The most columns possible under the 640px width cap — at full width every
-// option renders without pagination.
+// From four columns up (584px) the picker shows every option without
+// pagination; wider views just add columns, capped by the stylesheet.
 const FULL_WIDTH_COLUMNS = 4;
 
 // As many card-sized columns as fit, but at least 2 — `min()` caps the track
@@ -59,9 +59,9 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 	// Resizing can shrink the page count under `pageIndex` — clamp so no
 	// options get stranded behind a hidden pager.
 	const page = Math.min( pageIndex, totalPages - 1 );
-	const first = page * perPage;
-
-	const variationsToShow = showAll ? variations : variations.slice( first, first + perPage );
+	// The last window clamps to a full page (overlapping the previous one when
+	// the count is not divisible), so flipping never changes the grid height.
+	const first = Math.min( page * perPage, Math.max( 0, variations.length - perPage ) );
 
 	return (
 		<div className="agents-manager-variation-picker" ref={ resizeRef }>
@@ -71,13 +71,16 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 					templateColumns={ GRID_TEMPLATE_COLUMNS }
 					className="agents-manager-variation-picker__grid"
 				>
-					{ variationsToShow.map( ( variation, index ) => (
+					{ /* Every option stays mounted and off-page cards hide via the
+					   `hidden` attribute — remounting on page flips would reboot
+					   the preview iframes with a visible flash. */ }
+					{ variations.map( ( variation, index ) => (
 						// An empty `text` disables the tooltip for non-font types.
 						<Tooltip
 							key={ variation.title ?? index }
 							text={ type === 'font' ? variation.title : '' }
 						>
-							<div>
+							<div hidden={ ! showAll && ( index < first || index >= first + perPage ) }>
 								<Variation
 									variation={ variation }
 									type={ type }
