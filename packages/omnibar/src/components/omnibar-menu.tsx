@@ -28,7 +28,7 @@ function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
 	}
 
 	return (
-		<Menu.Item render={ node.href ? <a href={ node.href } /> : undefined }>
+		<Menu.Item render={ node.href ? <a href={ node.href } /> : undefined } onClick={ node.onClick }>
 			<OmnibarNodeContent node={ node } />
 		</Menu.Item>
 	);

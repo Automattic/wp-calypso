@@ -1,4 +1,8 @@
-import { AGENTS_MANAGER_STORE } from '@automattic/agents-manager';
+import {
+	AGENTS_MANAGER_STORE,
+	closeAgentsManagerChat,
+	openAgentsManagerChat,
+} from '@automattic/agents-manager';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -6,7 +10,6 @@ import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from '../item';
 import BigSkyIcon from './big-sky-icon';
-import { closeAgentsManagerChat, openAgentsManagerChat } from './chat-actions';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
 
