@@ -103,10 +103,15 @@ type EditorPostId = number | string;
 
 interface AiEditorialReviewProps {
 	summary: string;
-	conflicts: Conflict[];
-	implications: Implication[];
-	suggested_edits: SuggestedEdit[];
-	guideline_violations: GuidelineViolation[];
+	/**
+	 * The list props mirror required tool-schema fields, but chat history
+	 * re-renders payloads produced before the server-side guards existed, so
+	 * each one can arrive missing or null. Normalised through toList().
+	 */
+	conflicts?: Conflict[] | null;
+	implications?: Implication[] | null;
+	suggested_edits?: SuggestedEdit[] | null;
+	guideline_violations?: GuidelineViolation[] | null;
 	review_context?: ReviewContext;
 	/** Source post the review was generated for. Used to detect navigation to a different post. */
 	postId?: EditorPostId;
@@ -200,11 +205,12 @@ function formatRelativeTime( timestamp: number ): string {
 
 /**
  * Model-supplied list fields are typed as required by the tool schema, but the
- * provider drops `strict`, so any of them can arrive missing or malformed.
- * Reading `.length` or `.map` off one that did unmounts the whole card.
+ * provider drops `strict`, so any of them can arrive missing, null, or with
+ * null items inside an otherwise valid list. Reading `.length`, `.map`, or a
+ * property off one of those unmounts the whole card.
  */
-function toList< T >( value: T[] | undefined ): T[] {
-	return Array.isArray( value ) ? value : [];
+function toList< T >( value: ( T | null )[] | null | undefined ): T[] {
+	return Array.isArray( value ) ? value.filter( ( item ): item is T => item != null ) : [];
 }
 
 function getGuidelineCategoryLabel( category: GuidelineViolation[ 'category' ] ): string {
@@ -312,16 +318,25 @@ function getConflictApplyUnavailableReason(
  */
 export default function AiEditorialReview( {
 	summary,
-	conflicts,
-	implications,
-	suggested_edits,
-	guideline_violations,
+	conflicts: conflictsProp,
+	implications: implicationsProp,
+	suggested_edits: suggestedEditsProp,
+	guideline_violations: guidelineViolationsProp,
 	review_context,
 	postId,
 	isMessageStale = false,
 	reviewers_metadata,
 	cached_at,
 }: AiEditorialReviewProps ) {
+	// Normalised once per payload; useMemo keeps each list's identity stable
+	// across renders for the hooks that list them as dependencies.
+	const conflicts = useMemo( () => toList( conflictsProp ), [ conflictsProp ] );
+	const implications = useMemo( () => toList( implicationsProp ), [ implicationsProp ] );
+	const suggested_edits = useMemo( () => toList( suggestedEditsProp ), [ suggestedEditsProp ] );
+	const guideline_violations = useMemo(
+		() => toList( guidelineViolationsProp ),
+		[ guidelineViolationsProp ]
+	);
 	// Review actions are only safe when the result can be tied to the current editor entity.
 	const currentPostId = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as WpCurrentPostStore;
@@ -756,20 +771,25 @@ export default function AiEditorialReview( {
 	);
 
 	// ---------- Bulk apply ----------
+	const findApplicableAiCandidate = useCallback(
+		( conflict: Conflict ) =>
+			toList( conflict.candidate_resolutions ).find(
+				( c ) =>
+					c.source === 'ai' &&
+					! getBlockEditDisabledReason( c.block_index, c.current_text, c.editable_attribute )
+			),
+		[ getBlockEditDisabledReason ]
+	);
+
 	const pendingAiConflictCount = useMemo( () => {
 		return conflicts.reduce( ( acc, conflict, i ) => {
 			const status = conflictStatuses[ i ] ?? 'pending';
 			if ( status !== 'pending' && status !== 'failed' ) {
 				return acc;
 			}
-			const aiCandidate = conflict.candidate_resolutions?.find(
-				( c ) =>
-					c.source === 'ai' &&
-					! getBlockEditDisabledReason( c.block_index, c.current_text, c.editable_attribute )
-			);
-			return aiCandidate ? acc + 1 : acc;
+			return findApplicableAiCandidate( conflict ) ? acc + 1 : acc;
 		}, 0 );
-	}, [ conflicts, conflictStatuses, getBlockEditDisabledReason ] );
+	}, [ conflicts, conflictStatuses, findApplicableAiCandidate ] );
 
 	const pendingEditCount = useMemo( () => {
 		return suggested_edits.reduce( ( acc, edit, i ) => {
@@ -822,11 +842,7 @@ export default function AiEditorialReview( {
 				if ( status !== 'pending' && status !== 'failed' ) {
 					continue;
 				}
-				const aiCandidate = conflicts[ i ].candidate_resolutions?.find(
-					( c ) =>
-						c.source === 'ai' &&
-						! getBlockEditDisabledReason( c.block_index, c.current_text, c.editable_attribute )
-				);
+				const aiCandidate = findApplicableAiCandidate( conflicts[ i ] );
 				if ( ! aiCandidate ) {
 					continue;
 				}
@@ -933,6 +949,7 @@ export default function AiEditorialReview( {
 		suggested_edits,
 		editStatuses,
 		applyTextToBlock,
+		findApplicableAiCandidate,
 		fireItemAction,
 		getBlockEditDisabledReason,
 		isLatestPostContextStale,
@@ -1155,7 +1172,7 @@ export default function AiEditorialReview( {
 								>
 									{ conflicts.map( ( conflict, i ) => {
 										const status = conflictStatuses[ i ] ?? 'pending';
-										const candidates = conflict.candidate_resolutions ?? [];
+										const candidates = toList( conflict.candidate_resolutions );
 										const getCandidateDisabledReason = ( candidate: CandidateResolution ) =>
 											getBlockEditDisabledReason(
 												candidate.block_index,

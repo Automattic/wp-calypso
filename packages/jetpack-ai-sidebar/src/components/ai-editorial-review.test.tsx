@@ -519,6 +519,100 @@ describe( 'AiEditorialReview — smoke render', () => {
 		expect( screen.queryByText( 'Affects:' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'renders a payload whose list fields are null', () => {
+		// Destructuring defaults would not catch this: an explicit null is not
+		// undefined, so `= []` never fires.
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					conflicts: null as any,
+					implications: null as any,
+					suggested_edits: null as any,
+					guideline_violations: null as any,
+				} ) }
+			/>
+		);
+
+		expect(
+			screen.getByText( 'Two reviewers disagree on the procedural framing.' )
+		).toBeInTheDocument();
+		expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'drops null items from every model-supplied list and renders the rest', () => {
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					conflicts: [
+						null,
+						{
+							subject: 'Procedural framing',
+							positions: [ null, { reviewer: 'Marcus', position: 'Soften.' } ],
+							guideline_anchor: null,
+							recommended_resolution: 'Use neutral phrasing.',
+							candidate_resolutions: [
+								null,
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: 1,
+									current_text: 'voted last Tuesday',
+									text: 'voted on Tuesday',
+									rationale: '',
+								},
+							],
+						},
+					] as any,
+					implications: [
+						null,
+						{
+							change: 'Tone shift',
+							implies: 'May affect downstream FAQ wording.',
+							affected_blocks: [ null, 1 ],
+						},
+					] as any,
+					suggested_edits: [
+						null,
+						{
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							suggested_text: 'voted on Tuesday',
+							rationale: 'Concise.',
+							supported_by_reviewers: [ null, {}, 'Priya' ],
+						},
+					] as any,
+					guideline_violations: [
+						null,
+						{
+							category: 'copy',
+							block_name: null,
+							guideline_quote: 'Avoid passive voice.',
+							block_index: 1,
+							violating_text: 'was voted upon',
+							issue: 'Passive voice detected.',
+						},
+					] as any,
+				} ) }
+			/>
+		);
+
+		// Every real item renders.
+		expect( screen.getByText( 'Procedural framing' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Soften.' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Apply AI change' } ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Tone shift' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Affects:' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Priya' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Passive voice detected.' ) ).toBeInTheDocument();
+
+		// The null entries are not counted by the stats chips.
+		expect( screen.getByTitle( 'Jump to conflicts' ).textContent ).toMatch( /1/ );
+		expect( screen.getByTitle( 'Jump to implications' ).textContent ).toMatch( /1/ );
+		expect( screen.getByTitle( 'Jump to suggested edits' ).textContent ).toMatch( /1/ );
+	} );
+
 	it( 'does not tag a stale AER edit "Manual edit" even when the source text is absent', () => {
 		// Editor moved to post 999 (stale) AND the current block doesn't contain the
 		// edit's source text — so the frontend reason is truthy. Without the
