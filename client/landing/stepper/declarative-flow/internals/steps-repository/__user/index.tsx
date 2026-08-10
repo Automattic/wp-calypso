@@ -235,7 +235,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		if ( ! ( 'ID' in data ) ) {
 			return;
 		}
-		setCreatedUserId( data.ID );
+		setCreatedUserId( data.ID ?? null );
 		setSignupIsNewUser( data.ID );
 		if ( gateEnabled ) {
 			// The activation email from account creation is the one the gate asks for, so the gate
