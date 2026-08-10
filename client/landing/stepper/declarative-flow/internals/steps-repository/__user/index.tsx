@@ -188,11 +188,18 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isAccountFromThisSession =
 		createdUserId !== null && String( createdUserId ) === String( userId );
 	const settings = userSettingsQuery();
-	const { data: userSettings, isSuccess: settingsRead } = useDataQuery( {
+	const {
+		data: userSettings,
+		isSuccess: settingsRead,
+		isError: settingsUnavailable,
+	} = useDataQuery( {
 		...settings,
 		queryKey: [ ...settings.queryKey, gateScopeForUser ],
 		enabled: gateStatus === 'gated' && ! isAccountFromThisSession,
 		meta: { persist: false },
+		// Kept trying, so a read that fails is a wait rather than a dead end. Focus does the same,
+		// but only for someone who leaves and comes back.
+		refetchInterval: ( query ) => ( query.state.status === 'error' ? 15000 : false ),
 	} );
 	const pendingEmail =
 		requestedEmail ??
@@ -322,6 +329,12 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	);
 
 	if ( gateStatus === 'gated' && ! isEditingEmail ) {
+		// Naming an address before knowing it names the one a correction was made to get away
+		// from. An account made here has none to find, so only someone returning waits.
+		if ( ! addressSettled && ! settingsUnavailable ) {
+			return <Step.Loading />;
+		}
+
 		return (
 			<EmailVerificationGate
 				onEditEmail={ beginEmailEdit }

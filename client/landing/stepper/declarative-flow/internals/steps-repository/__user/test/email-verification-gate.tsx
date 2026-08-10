@@ -163,6 +163,12 @@ const renderUser = (
 	queryClient?: QueryClient
 ) => {
 	const submit = jest.fn();
+	// The gate asks where a correction is before naming an address. Declared last, so a test with
+	// something particular to say about the settings is matched on its own first.
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( '/rest/v1.1/me/settings' )
+		.reply( 200, { user_email: EMAIL } );
 	const { unmount } = renderWithProvider(
 		<MemoryRouter initialEntries={ [ url ] }>
 			<UserStep flow="onboarding" stepName="user" navigation={ { submit, goBack: jest.fn() } } />
@@ -281,18 +287,21 @@ describe( 'account step email verification gate', () => {
 		} );
 	} );
 
-	// A correction made in an earlier session is only in the settings, so until those answer the
-	// address on screen is the mistyped one, and resending would send there.
-	it( 'will not resend until it knows where a resend would go', async () => {
+	// Naming the address before it is known names the one a correction was made to get away from.
+	it( 'names no address until it knows which one', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/settings' )
 			.delay( 50 )
-			.reply( 200, { user_email: EMAIL } );
+			.reply( 200, {
+				user_email: EMAIL,
+				user_email_change_pending: true,
+				new_user_email: CORRECTED_EMAIL,
+			} );
 
 		renderUser( makeStore( false ) );
 
-		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeDisabled();
-		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeEnabled() );
+		expect( screen.queryByText( EMAIL, { exact: false } ) ).not.toBeInTheDocument();
+		expect( await screen.findByText( CORRECTED_EMAIL, { exact: false } ) ).toBeVisible();
 	} );
 
 	// Submitting the address the account already holds asks for no change, and is answered without
