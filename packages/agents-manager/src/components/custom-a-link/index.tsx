@@ -31,8 +31,8 @@ export default function CustomALink( {
 				// Open support article links in the post view.
 				if ( isSupportArticle ) {
 					e.preventDefault();
-					// Mark the chat origin (or forward zendesk state) so the post
-					// view's back button returns to the right place.
+					// Mark the chat origin (or forward the existing state) so the
+					// post view's back button returns to the right place.
 					navigate( `/post?link=${ encodeURIComponent( transformedHref ) }`, {
 						state: isFromOrchestrator ? { from: FROM_CHAT } : state,
 					} );
