@@ -5,6 +5,7 @@ import config from '@automattic/calypso-config';
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
+import nock from 'nock';
 import { MemoryRouter } from 'react-router-dom';
 // eslint-disable-next-line no-restricted-imports
 import { applyMiddleware, createStore, type Reducer } from 'redux';
@@ -21,6 +22,8 @@ import UserStep from '..';
 import { gateScope, markResendUnavailableUntil } from '../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
 import type { ReactNode } from 'react';
+
+const CORRECTED_EMAIL = 'corrected@example.com';
 
 // A different user per test, so each one's isolation is its own rather than teardown's.
 let mockUserId = 0;
@@ -96,6 +99,9 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 					{ notice as ReactNode }
 					<button onClick={ () => onUpdateEmail( mockHeldEmail as string ) }>
 						submit-unchanged
+					</button>
+					<button onClick={ () => onUpdateEmail( CORRECTED_EMAIL ).catch( () => {} ) }>
+						submit-corrected
 					</button>
 				</>
 			);
@@ -187,6 +193,7 @@ describe( 'account step email verification gate', () => {
 		mockConfig.enabledFlags.clear();
 		localStorage.clear();
 		jest.clearAllMocks();
+		nock.cleanAll();
 	} );
 
 	it( 'asks for a link back to the flow only when the gate is on', async () => {
@@ -245,6 +252,39 @@ describe( 'account step email verification gate', () => {
 		await user.click( screen.getByRole( 'button', { name: 'submit-unchanged' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+	} );
+
+	it( 'writes a corrected address and waits on that one instead', async () => {
+		const user = userEvent.setup();
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings', ( body ) => body.user_email === CORRECTED_EMAIL )
+			.reply( 200, { user_email: CORRECTED_EMAIL } );
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'submit-corrected' } ) );
+
+		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+		expect( scope.isDone() ).toBe( true );
+		// The gate names the address from the user, so it has to be read again to name the new one.
+		expect( fetchCurrentUser ).toHaveBeenCalled();
+	} );
+
+	// Otherwise a refusal leaves the user on a screen that looks like it did nothing.
+	it( 'keeps the account screen and says why when the address is refused', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 400, { message: 'That e-mail address is already being used.' } );
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'submit-corrected' } ) );
+
+		expect( await screen.findByText( /already being used/ ) ).toBeVisible();
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
 	} );
 
 	// Confirming in another tab settles what the account screen was opened to change, so there is

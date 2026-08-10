@@ -13,6 +13,7 @@ import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import Notice from 'calypso/dashboard/components/notice';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -40,6 +41,7 @@ import useAccountCreationExperiment from './use-account-creation-experiment';
 import { useBackoffPoll } from './use-backoff-poll';
 import { ACTIVATION_EMAIL_SOURCE, useEmailVerificationGate } from './use-email-verification-gate';
 import { useSocialService } from './use-social-service';
+import { useUpdateEmail } from './use-update-email';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
 import './style.scss';
@@ -165,16 +167,30 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	const returnToGate = () => setEditing( null );
 
+	const { updateEmail: writeEmail, error: updateError } = useUpdateEmail( {
+		flow,
+		scope: gateScopeForUser,
+	} );
+
 	// Submitted unchanged, nothing is being asked for and the user is already where they need to
 	// be. Writing a changed one is a change of its own.
 	const updateEmail = async ( email: string ) => {
 		if ( email === activeEdit?.startedFrom ) {
 			returnToGate();
+			return;
 		}
+		await writeEmail( email );
+		returnToGate();
 	};
 
 	const beginEmailEdit = () =>
 		setEditing( { scope: gateScopeForUser, startedFrom: currentEmail ?? '' } );
+
+	const updateErrorNotice = updateError ? (
+		<Notice variant="error">{ updateError }</Notice>
+	) : (
+		( false as const )
+	);
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
@@ -244,7 +260,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
 				userEmail={ ( activeEdit?.startedFrom ?? queryArgs.get( 'user_email' ) ) || '' }
-				notice={ isEditingEmail ? false : notice }
+				notice={ isEditingEmail ? updateErrorNotice : notice }
 				isSocialFirst
 				onCreateAccountSuccess={ handleCreateAccountSuccess }
 				backButtonInFooter={ ! isStepContainerV2 }
