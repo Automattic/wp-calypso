@@ -12,7 +12,7 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 import { useBackoffPoll } from '../use-backoff-poll';
 import { PENDING_CHANGE_RESEND_SECONDS, useEmailChangeRequest } from '../use-email-change-request';
 import { ACTIVATION_EMAIL_SOURCE } from '../use-email-verification-gate';
-import { gateResendAvailableAt, markResendUnavailableUntil } from './storage';
+import { gateResendAvailableAt, markResendUnavailableUntil, pendingChangeScope } from './storage';
 
 // `throttled` is distinct from `error`: the send was refused, not failed. It says only why the
 // button is held — the countdown says whether it still is.
@@ -28,10 +28,20 @@ export function useEmailVerification( flow: string, scope: string, pendingEmail?
 
 	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
 
-	const { secondsUntilResend, hold: holdResend } = useResendCooldown( {
+	// One wait per path. The server limits them separately, and a wait only ever lengthens, so a
+	// long one earned against the address being left would otherwise outlast the correction that
+	// was made to escape it.
+	const originalCooldown = useResendCooldown( {
 		initialDeadline: gateResendAvailableAt( scope ),
 		onHold: ( deadline ) => markResendUnavailableUntil( scope, deadline ),
 	} );
+	const pendingCooldown = useResendCooldown( {
+		initialDeadline: gateResendAvailableAt( pendingChangeScope( scope ) ),
+		onHold: ( deadline ) => markResendUnavailableUntil( pendingChangeScope( scope ), deadline ),
+	} );
+	const { secondsUntilResend, hold: holdResend } = pendingEmail
+		? pendingCooldown
+		: originalCooldown;
 	// A confirmation on another device raises no signal — `UserVerificationChecker` covers the same
 	// browser — so polling is the only thing that notices it.
 	const { restart: restartPoll } = useBackoffPoll(

@@ -404,6 +404,27 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
+	// Resending at a mistyped address is what earns a long wait, and correcting it is what the
+	// wait would otherwise outlast.
+	it( 'does not carry a wait earned at the old address over to the corrected one', async () => {
+		const user = userEvent.setup();
+		markResendUnavailableUntil(
+			gateScope( 'onboarding', mockUserId ),
+			Date.now() + 4 * 60 * 60 * 1000
+		);
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 200, { new_user_email: CORRECTED_EMAIL, user_email_change_pending: true } );
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'submit-corrected' } ) );
+
+		// Fifteen minutes, not four hours.
+		expect( await screen.findByRole( 'button', { name: /^Resend \(1[0-5]:/ } ) ).toBeVisible();
+	} );
+
 	// This one shares no scope, so it is only known to the gate itself.
 	it( 'will not take a correction while an ordinary resend is still going', async () => {
 		const user = userEvent.setup();

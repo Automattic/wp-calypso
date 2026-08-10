@@ -176,16 +176,18 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		requestedEmail,
 	} = useUpdateEmail( { flow, scope: gateScopeForUser } );
 
-	// Where a pending correction is: `/me` still reports the address being left.
+	// Where a pending correction is: `/me` still reports the address being left. An account made
+	// here cannot have one, so it is not asked for.
 	//
 	// Asked under this account and kept out of storage, because signup starts logged out and the
-	// cache this would persist into is the one every later signup in the browser opens. Prefix
-	// invalidation still matches the longer key.
+	// cache this would persist into is the one every later signup in the browser opens.
+	// It was just created, so nothing can have been asked of it before now.
+	const isAccountFromThisSession = Boolean( wpAccountCreateResponse );
 	const settings = userSettingsQuery();
 	const { data: userSettings, isSuccess: settingsRead } = useDataQuery( {
 		...settings,
 		queryKey: [ ...settings.queryKey, gateScopeForUser ],
-		enabled: gateStatus === 'gated',
+		enabled: gateStatus === 'gated' && ! isAccountFromThisSession,
 		meta: { persist: false },
 	} );
 	const pendingEmail =
@@ -195,7 +197,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const awaitingEmail = pendingEmail ?? currentEmail;
 	// A correction made in an earlier session is invisible until the settings answer, and the
 	// address standing in for it meanwhile is the mistyped one it was made to get away from.
-	const addressSettled = Boolean( requestedEmail ) || settingsRead;
+	const addressSettled = isAccountFromThisSession || Boolean( requestedEmail ) || settingsRead;
 
 	// Submitted unchanged, nothing is being asked for and the user is already where they need to
 	// be. Writing a changed one is a change of its own.

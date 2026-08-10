@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getInboxLink } from './email-verification/inbox-links';
-import { markResendUnavailableUntil } from './email-verification/storage';
+import { markResendUnavailableUntil, pendingChangeScope } from './email-verification/storage';
 import { PENDING_CHANGE_RESEND_SECONDS, useEmailChangeRequest } from './use-email-change-request';
 
 /**
@@ -38,7 +38,10 @@ export function useUpdateEmail( { flow, scope }: { flow: string; scope: string }
 
 		setRequested( { scope, email: accepted.new_user_email } );
 		// A confirmation has just gone out, and another cannot be sent until the server's window.
-		markResendUnavailableUntil( scope, Date.now() + PENDING_CHANGE_RESEND_SECONDS * 1000 );
+		markResendUnavailableUntil(
+			pendingChangeScope( scope ),
+			Date.now() + PENDING_CHANGE_RESEND_SECONDS * 1000
+		);
 		// The gate's view event is stamped once, against whatever address it opened on, so this is
 		// what a corrected address's funnel counts from.
 		recordTracksEvent( 'calypso_signup_email_verification_email_update_requested', {
