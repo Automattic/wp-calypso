@@ -4,6 +4,7 @@
 
 import {
 	bigSkyPluginQuery,
+	isAutomatticianQuery,
 	queryClient,
 	siteBySlugQuery,
 	sitePostByEmailSettingsQuery,
@@ -74,6 +75,7 @@ function seedQueries(
 				: [],
 		},
 	} as UserSettings );
+	queryClient.setQueryData( isAutomatticianQuery().queryKey, { number: 0, teams: [] } );
 	if ( seedPostByEmailSettings ) {
 		queryClient.setQueryData( sitePostByEmailSettingsQuery( activeSite ).queryKey, {
 			post_by_email_address: postByEmailAddress,
