@@ -1,0 +1,61 @@
+.card {
+	background: var(--color-background);
+	border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-sm);
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-2);
+	padding: var(--spacing-3);
+}
+
+.heading {
+	color: var(--color-muted-foreground);
+	font-size: var(--text-sm);
+	font-weight: var(--font-weight-semibold);
+	line-height: var(--text-sm--line-height);
+	margin: 0;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-2);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.item {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-1);
+}
+
+.title {
+	color: var(--color-foreground);
+	font-size: var(--text-sm);
+	font-weight: var(--font-weight-medium);
+	line-height: var(--text-sm--line-height);
+	text-decoration: none;
+	word-break: break-word;
+}
+
+a.title:hover,
+a.title:focus-visible {
+	color: var(--color-primary);
+	text-decoration: underline;
+}
+
+a.title:focus-visible {
+	outline: 2px solid var(--color-ring);
+	outline-offset: 2px;
+}
+
+.label {
+	color: var(--color-muted-foreground);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}

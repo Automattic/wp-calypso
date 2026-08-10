@@ -1,0 +1,31 @@
+.button {
+	border-radius: var(--radius-lg);
+	height: var(--spacing-10);
+	width: 100%;
+	justify-content: flex-start;
+	gap: var(--spacing-2);
+	padding: 0 var(--spacing-2);
+}
+
+/* Brand-colored leading icon, matching the floating (`collapsed`) trigger. */
+.button svg:not(.chevron),
+.button:hover:not(:disabled) svg:not(.chevron) {
+	color: var(--color-primary);
+}
+
+/* Trailing chevron is a secondary affordance, so keep it muted. */
+.button .chevron,
+.button:hover:not(:disabled) .chevron {
+	color: var(--color-muted-foreground);
+}
+
+/* Fill the space between the icon and chevron, truncating long titles. */
+.title {
+	flex: 1;
+	min-width: 0;
+	font-size: var(--text-base);
+	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
