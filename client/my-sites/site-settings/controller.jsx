@@ -62,7 +62,10 @@ export function legacyRedirects( context, next ) {
 
 	if ( section === 'account' && context.query.new_email_result ) {
 		return page.redirect(
-			addQueryArgs( '/me/account', { new_email_result: context.query.new_email_result } )
+			addQueryArgs( '/me/account', {
+				new_email_result: context.query.new_email_result,
+				new_email_error: context.query.new_email_error,
+			} )
 		);
 	}
 
