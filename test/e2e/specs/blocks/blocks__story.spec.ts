@@ -32,7 +32,7 @@ test.describe(
 
 			await test.step( 'Given I am authenticated', async () => {
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 
 				for ( const path of [ TEST_IMAGE_PATH, ALT_TEST_IMAGE_PATH ] ) {
 					const testFile = await MediaHelper.createTestFile( path );
@@ -51,8 +51,7 @@ test.describe(
 			await test.step( 'When I add Story block', async () => {
 				await pageEditor.addBlockFromSidebar(
 					StoryBlock.blockName,
-					StoryBlock.blockEditorSelector,
-					{ noSearch: true }
+					StoryBlock.blockEditorSelector
 				);
 			} );
 

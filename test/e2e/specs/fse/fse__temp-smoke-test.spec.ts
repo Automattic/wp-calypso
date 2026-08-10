@@ -57,6 +57,11 @@ test.describe(
 			},
 		] );
 
+		test.skip(
+			envVariables.TEST_ON_ATOMIC && envVariables.ATOMIC_VARIATION === 'private',
+			'Private Atomic site cannot reach Site Editor through the Calypso sidebar setup'
+		);
+
 		test( 'As a user, I can navigate to the Full Site Editor and load the editor canvas', async ( {
 			page,
 		} ) => {

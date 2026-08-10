@@ -33,7 +33,7 @@ test.describe(
 				editorPage = new EditorPage( page );
 
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 				siteSlug = testAccount.getSiteURL( { protocol: false } );
 			} );
 

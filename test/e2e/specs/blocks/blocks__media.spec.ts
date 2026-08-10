@@ -67,7 +67,7 @@ test.describe(
 				};
 
 				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'Start new post', async () => {
