@@ -64,6 +64,20 @@ function parseAdminSchemes( source ) {
 // same chart and controls under its own root.
 const CALYPSO_STATS_ROOTS = [ '.stats-main', '.store-stats' ];
 
+// Stats modals, popovers and tooltips render at the document root, outside those subtrees, so they
+// need the token too. The list matches the portal roots apps/odyssey-stats/webpack-css-scope.js
+// already recognises. They are qualified with `.is-section-stats` — the class Calypso puts on
+// <body> for the section — because the roots themselves are generic: an unqualified `.popover`
+// would recolour every popover in Calypso. Keep this in step with the same list in
+// client/my-sites/stats/components/stats-main/style.scss.
+const CALYPSO_PORTAL_ROOTS = [
+	'.popover',
+	'[data-base-ui-portal]',
+	'.components-modal__screen-overlay',
+	'.components-popover__fallback-container',
+	'.ReactModalPortal',
+];
+
 // The two rules per scheme are mutually exclusive: `useWPAdminTheme` only returns an
 // `is-<scheme>` class in wp-admin, so in Calypso the scheme class sits on <body> and the Stats root
 // is a descendant, while in Odyssey it sits on the Stats root itself and <body> belongs to
@@ -73,9 +87,10 @@ const CALYPSO_STATS_ROOTS = [ '.stats-main', '.store-stats' ];
 function buildAdminThemeColors( schemes ) {
 	const blocks = REQUIRED_SCHEMES.map( ( name ) => {
 		const hex = schemes[ name ];
-		const calypsoSelector = CALYPSO_STATS_ROOTS.map(
-			( root ) => `body.is-${ name } ${ root }`
-		).join( ',\n' );
+		const calypsoSelector = [
+			`body.is-${ name } :is(${ CALYPSO_STATS_ROOTS.join( ', ' ) })`,
+			`body.is-${ name }.is-section-stats :is(${ CALYPSO_PORTAL_ROOTS.join( ', ' ) })`,
+		].join( ',\n' );
 
 		return [
 			`${ calypsoSelector } {`,

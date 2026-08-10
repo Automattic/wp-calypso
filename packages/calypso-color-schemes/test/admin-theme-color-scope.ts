@@ -15,29 +15,63 @@ const generated = (): string =>
 		)
 	);
 
+// Selector lines are the unindented ones: declarations are tab-indented, and splitting on braces
+// would break on the `}` inside Sass interpolations like `#{color.adjust(…)}`. A group can span
+// several lines, so join them before splitting on the commas that separate selectors.
 const selectors = (): string[] =>
 	generated()
 		.split( '\n' )
-		.filter( ( line ) => line.trim().endsWith( '{' ) && ! line.startsWith( '@' ) )
-		.map( ( line ) => line.replace( '{', '' ).trim() );
+		.filter(
+			( line ) =>
+				line.trim() &&
+				! /^[\s}]/.test( line ) &&
+				! line.startsWith( '//' ) &&
+				! line.startsWith( '@' )
+		)
+		.join( ' ' )
+		.replace( /\{/g, ',' )
+		.split( /,(?![^(]*\))/ )
+		.map( ( selector ) => selector.replace( /\s+/g, ' ' ).trim() )
+		.filter( Boolean );
 
 const STATS_ROOTS = [ '.stats-main', '.store-stats' ];
+const PORTAL_ROOTS = [
+	'.popover',
+	'[data-base-ui-portal]',
+	'.components-modal__screen-overlay',
+	'.components-popover__fallback-container',
+	'.ReactModalPortal',
+];
+
+const targetsPortal = ( selector: string ) => PORTAL_ROOTS.some( ( r ) => selector.includes( r ) );
 
 describe( 'admin theme colour scoping', () => {
-	it( 'confines every rule to a Stats root', () => {
+	it( 'confines every rule to a Stats surface', () => {
 		expect( selectors().length ).toBeGreaterThan( 0 );
 		selectors().forEach( ( selector ) => {
-			expect( STATS_ROOTS.some( ( root ) => selector.includes( root ) ) ).toBe( true );
+			const onStatsRoot = STATS_ROOTS.some( ( root ) => selector.includes( root ) );
+			expect( onStatsRoot || targetsPortal( selector ) ).toBe( true );
 		} );
 	} );
 
-	it( 'never sets the token on <body>, which would reach the whole of Calypso', () => {
-		// `body.is-<scheme> .stats-main` is fine — the declaration lands on the descendant.
-		// A `body…{` selector with no descendant would apply the colour document-wide.
+	it( 'qualifies the generic portal roots with the Stats section', () => {
+		// `.popover` and friends are used throughout Calypso. Without `.is-section-stats` these
+		// rules would recolour every popover and modal in the product.
+		const portalSelectors = selectors().filter( targetsPortal );
+
+		expect( portalSelectors.length ).toBeGreaterThan( 0 );
+		portalSelectors.forEach( ( selector ) => {
+			expect( selector ).toContain( '.is-section-stats' );
+		} );
+	} );
+
+	it( 'never sets the token on <body> itself, which would reach the whole of Calypso', () => {
+		// A body-anchored selector must have a descendant part, so the declaration lands inside
+		// Stats rather than on the document.
 		selectors()
 			.filter( ( selector ) => selector.startsWith( 'body' ) )
 			.forEach( ( selector ) => {
-				expect( selector ).toMatch( /^body[^ ]* (\.stats-main|\.store-stats)$/ );
+				expect( selector ).toMatch( /^body\S* \S/ );
 			} );
 	} );
 

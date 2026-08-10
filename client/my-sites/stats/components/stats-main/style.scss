@@ -1,5 +1,19 @@
 @import "calypso/my-sites/stats/interactive-colors";
 
-.stats-main {
+// Stats modals, popovers and tooltips render at the document root, outside .stats-main, so the
+// overrides have to reach them separately. The roots match the portal list in
+// packages/calypso-color-schemes/bin/prepare-sass-assets.js, which puts the token on the same
+// elements — keep the two in step. They are qualified with `.is-section-stats`, the class Calypso
+// puts on <body> for the section, because the roots are generic: an unqualified `.popover` would
+// recolour every popover in Calypso.
+.stats-main,
+body.is-section-stats
+	:is(
+		.popover,
+		[data-base-ui-portal],
+		.components-modal__screen-overlay,
+		.components-popover__fallback-container,
+		.ReactModalPortal
+	) {
 	@include stats-interactive-colors;
 }
