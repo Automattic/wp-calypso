@@ -188,8 +188,8 @@ export class FeedbackInboxPage {
 			} );
 
 			// If the chip text includes the folder name, we're already on the correct folder.
-			const chipText = await folderChip.textContent();
-			if ( chipText?.includes( folderName ) ) {
+			const chipText = ( await folderChip.textContent() )?.toLowerCase();
+			if ( chipText?.includes( folderName.toLowerCase() ) ) {
 				return;
 			}
 
