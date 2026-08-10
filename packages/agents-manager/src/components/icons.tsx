@@ -72,25 +72,3 @@ export const SwitchToFloating = ( { size = 24, color = 'currentColor', className
 		</SVG>
 	);
 };
-
-export const SwitchToSidebar = ( { size = 24, color = 'currentColor', className }: IconProps ) => {
-	return (
-		<SVG
-			className={ className }
-			width={ size }
-			height={ size }
-			viewBox="0 0 24 24"
-			fill="none"
-			xmlns="http://www.w3.org/2000/svg"
-			aria-hidden="true"
-			focusable="false"
-		>
-			<Path
-				fillRule="evenodd"
-				clipRule="evenodd"
-				d="M18 4H6C4.9 4 4 4.9 4 6V18C4 19.1 4.9 20 6 20H18C19.1 20 20 19.1 20 18V6C20 4.9 19.1 4 18 4ZM11.25 18.5H6C5.7 18.5 5.5 18.3 5.5 18V6C5.5 5.7 5.7 5.5 6 5.5H11.25V18.5ZM18.5 18C18.5 18.3 18.3 18.5 18 18.5H12.75V5.5H18C18.3 5.5 18.5 5.7 18.5 6V18Z"
-				fill={ color }
-			/>
-		</SVG>
-	);
-};
