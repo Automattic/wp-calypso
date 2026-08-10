@@ -517,10 +517,6 @@ describe( 'account step email verification gate', () => {
 					body.user_email_change_requested_from === 'onboarding-with-email-verification'
 			)
 			.reply( 200, { new_user_email: CORRECTED_EMAIL, user_email_change_pending: true } );
-		// Answering from behind, which is what keeping the accepted address is for.
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/settings' )
-			.reply( 200, { user_email: EMAIL } );
 		renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
@@ -529,7 +525,10 @@ describe( 'account step email verification gate', () => {
 
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 		expect( scope.isDone() ).toBe( true );
-		expect( await screen.findByText( CORRECTED_EMAIL, { exact: false } ) ).toBeVisible();
+		const named = await screen.findByText( CORRECTED_EMAIL, { exact: false } );
+		expect( named ).toBeVisible();
+		// It replaces an address already read out, so it has to say so.
+		expect( named.closest( '[aria-live="polite"]' ) ).not.toBeNull();
 		// A confirmation has just gone out, so offering Resend would only be refused.
 		expect( await screen.findByRole( 'button', { name: /^Resend \(/ } ) ).toBeVisible();
 	} );

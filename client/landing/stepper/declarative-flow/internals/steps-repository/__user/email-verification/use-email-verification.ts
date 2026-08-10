@@ -18,6 +18,14 @@ import { gateResendAvailableAt, markResendUnavailableUntil, pendingChangeScope }
 // button is held — the countdown says whether it still is.
 type SendStatus = 'idle' | 'sending' | 'error' | 'throttled';
 
+// Kept across reloads, so a wait the server is still enforcing survives one.
+function usePersistedCooldown( scope: string ) {
+	return useResendCooldown( {
+		initialDeadline: gateResendAvailableAt( scope ),
+		onHold: ( deadline ) => markResendUnavailableUntil( scope, deadline ),
+	} );
+}
+
 // `pendingEmail` is set while a correction waits to be confirmed, when the dedicated endpoint
 // would mail the address being left rather than the one waiting.
 export function useEmailVerification( flow: string, scope: string, pendingEmail?: string ) {
@@ -31,14 +39,8 @@ export function useEmailVerification( flow: string, scope: string, pendingEmail?
 	// One wait per path. The server limits them separately, and a wait only ever lengthens, so a
 	// long one earned against the address being left would otherwise outlast the correction that
 	// was made to escape it.
-	const originalCooldown = useResendCooldown( {
-		initialDeadline: gateResendAvailableAt( scope ),
-		onHold: ( deadline ) => markResendUnavailableUntil( scope, deadline ),
-	} );
-	const pendingCooldown = useResendCooldown( {
-		initialDeadline: gateResendAvailableAt( pendingChangeScope( scope ) ),
-		onHold: ( deadline ) => markResendUnavailableUntil( pendingChangeScope( scope ), deadline ),
-	} );
+	const originalCooldown = usePersistedCooldown( scope );
+	const pendingCooldown = usePersistedCooldown( pendingChangeScope( scope ) );
 	const { secondsUntilResend, hold: holdResend } = pendingEmail
 		? pendingCooldown
 		: originalCooldown;
