@@ -169,19 +169,29 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	const returnToGate = () => setEditing( null );
 
-	const { updateEmail: writeEmail, error: updateError } = useUpdateEmail( {
-		flow,
-		scope: gateScopeForUser,
-	} );
+	const {
+		updateEmail: writeEmail,
+		error: updateError,
+		forget: forgetUpdateError,
+		requestedEmail,
+	} = useUpdateEmail( { flow, scope: gateScopeForUser } );
 
 	// A correction is confirmed at the new address rather than applied on the spot, so until then
 	// the account still holds the mistyped one and only the settings know where to look.
+	//
+	// Asked for under this account and kept out of storage. Signup starts logged out, so the cache
+	// this would otherwise persist into is the one every later signup in the browser opens, and it
+	// would be answering for whoever settings were last read for. Prefix invalidation still matches.
 	const { data: userSettings } = useDataQuery( {
 		...userSettingsQuery(),
-		enabled: gateEnabled,
+		queryKey: [ ...userSettingsQuery().queryKey, gateScopeForUser ],
+		enabled: gateStatus === 'gated',
+		meta: { persist: false },
 	} );
 	const awaitingEmail =
-		( userSettings?.user_email_change_pending && userSettings?.new_user_email ) || currentEmail;
+		requestedEmail ||
+		( userSettings?.user_email_change_pending && userSettings?.new_user_email ) ||
+		currentEmail;
 
 	// Submitted unchanged, nothing is being asked for and the user is already where they need to
 	// be. Writing a changed one is a change of its own.
@@ -194,8 +204,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		returnToGate();
 	};
 
-	const beginEmailEdit = () =>
+	const beginEmailEdit = () => {
+		forgetUpdateError();
 		setEditing( { scope: gateScopeForUser, startedFrom: awaitingEmail ?? '' } );
+	};
 
 	const updateErrorNotice = updateError ? (
 		<Notice variant="error">{ updateError }</Notice>
@@ -299,6 +311,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			<EmailVerificationGate
 				onEditEmail={ beginEmailEdit }
 				email={ awaitingEmail ?? '' }
+				pendingEmail={ awaitingEmail !== currentEmail ? awaitingEmail : undefined }
 				// A different account is a different attempt: without this the cooldown, the send
 				// state and the poll's ladder would all carry over to whoever `/me` resolved.
 				key={ gateScopeForUser }

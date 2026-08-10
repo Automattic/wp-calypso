@@ -30,11 +30,24 @@ interface Props {
 	email: string;
 	// Returns to the account step to correct the address this was sent to.
 	onEditEmail: () => void;
+	// Set while a correction is waiting to be confirmed, which changes what resending has to do.
+	pendingEmail?: string;
 }
 
-const EmailVerificationGate = ( { flow, scope, logo, email, onEditEmail }: Props ) => {
+const EmailVerificationGate = ( {
+	flow,
+	scope,
+	logo,
+	email,
+	onEditEmail,
+	pendingEmail,
+}: Props ) => {
 	const { __ } = useI18n();
-	const { sendStatus, secondsUntilResend, resend } = useEmailVerification( flow, scope );
+	const { sendStatus, secondsUntilResend, resend } = useEmailVerification(
+		flow,
+		scope,
+		pendingEmail
+	);
 
 	const headingRef = useRef< HTMLDivElement >( null );
 	const inboxLink = getInboxLink( email );

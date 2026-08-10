@@ -1,5 +1,8 @@
+import { userEmailSettingsMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import {
+	RESEND_MIN_INTERVAL_SECONDS,
 	resendAcceptedRetryAfter,
 	resendThrottleRetryAfter,
 } from 'calypso/dashboard/utils/email-verification-resend';
@@ -17,10 +20,15 @@ import { gateResendAvailableAt, markResendUnavailableUntil } from './storage';
 // button is held — the countdown says whether it still is.
 type SendStatus = 'idle' | 'sending' | 'error' | 'throttled';
 
-export function useEmailVerification( flow: string, scope: string ) {
+// `pendingEmail` is set while a correction waits to be confirmed. The account still holds the old
+// address until then, so the dedicated endpoint would mail that one.
+export function useEmailVerification( flow: string, scope: string, pendingEmail?: string ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const sendVerificationEmail = useSendEmailVerification( { from: ACTIVATION_EMAIL_SOURCE } );
+	// Asking for the pending change again is what sends its confirmation again; there is no
+	// endpoint that resends one.
+	const { mutateAsync: askAgain } = useMutation( userEmailSettingsMutation() );
 
 	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
 
@@ -40,11 +48,19 @@ export function useEmailVerification( flow: string, scope: string ) {
 		setSendStatus( 'sending' );
 
 		try {
-			const response = await sendVerificationEmail();
-			if ( ! response?.success ) {
-				throw new Error( 'unsuccessful_response' );
+			if ( pendingEmail ) {
+				await askAgain( {
+					user_email: pendingEmail,
+					user_email_change_requested_from: ACTIVATION_EMAIL_SOURCE,
+				} );
+				holdResend( RESEND_MIN_INTERVAL_SECONDS );
+			} else {
+				const response = await sendVerificationEmail();
+				if ( ! response?.success ) {
+					throw new Error( 'unsuccessful_response' );
+				}
+				holdResend( resendAcceptedRetryAfter( response ) );
 			}
-			holdResend( resendAcceptedRetryAfter( response ) );
 			// A fresh link is about to be opened, so poll tightly again from here.
 			restartPoll();
 			setSendStatus( 'idle' );
