@@ -59,17 +59,26 @@ function parseAdminSchemes( source ) {
 	return schemes;
 }
 
-// Both rules target `.stats-main`, the Stats root rendered by
-// client/my-sites/stats/components/stats-main. They are mutually exclusive: `useWPAdminTheme`
-// only returns an `is-<scheme>` class in wp-admin, so in Calypso the scheme class sits on <body>
-// and the Stats root is a descendant, while in Odyssey it sits on the Stats root itself and
-// <body> belongs to wp-admin. Odyssey inherits rather than restating the colour so Stats matches
-// whatever that site's WordPress actually ships, which may differ from our bundled base-styles.
+// The Stats surfaces in Calypso: `.stats-main` is the root rendered by
+// client/my-sites/stats/components/stats-main, and `.store-stats` is Store Stats, which reuses the
+// same chart and controls under its own root.
+const CALYPSO_STATS_ROOTS = [ '.stats-main', '.store-stats' ];
+
+// The two rules per scheme are mutually exclusive: `useWPAdminTheme` only returns an
+// `is-<scheme>` class in wp-admin, so in Calypso the scheme class sits on <body> and the Stats root
+// is a descendant, while in Odyssey it sits on the Stats root itself and <body> belongs to
+// wp-admin. Odyssey inherits rather than restating the colour so Stats matches whatever that site's
+// WordPress actually ships, which may differ from our bundled base-styles. Only `.stats-main` needs
+// the Odyssey rule — Store Stats does not exist there.
 function buildAdminThemeColors( schemes ) {
 	const blocks = REQUIRED_SCHEMES.map( ( name ) => {
 		const hex = schemes[ name ];
+		const calypsoSelector = CALYPSO_STATS_ROOTS.map(
+			( root ) => `body.is-${ name } ${ root }`
+		).join( ',\n' );
+
 		return [
-			`body.is-${ name } .stats-main {`,
+			`${ calypsoSelector } {`,
 			`\t--wp-admin-theme-color: ${ hex };`,
 			`\t--wp-admin-theme-color-darker-10: #{color.adjust(${ hex }, $lightness: -5%)};`,
 			`\t--wp-admin-theme-color-darker-20: #{color.adjust(${ hex }, $lightness: -10%)};`,

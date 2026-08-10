@@ -21,11 +21,13 @@ const selectors = (): string[] =>
 		.filter( ( line ) => line.trim().endsWith( '{' ) && ! line.startsWith( '@' ) )
 		.map( ( line ) => line.replace( '{', '' ).trim() );
 
+const STATS_ROOTS = [ '.stats-main', '.store-stats' ];
+
 describe( 'admin theme colour scoping', () => {
-	it( 'confines every rule to the Stats root', () => {
+	it( 'confines every rule to a Stats root', () => {
 		expect( selectors().length ).toBeGreaterThan( 0 );
 		selectors().forEach( ( selector ) => {
-			expect( selector ).toContain( '.stats-main' );
+			expect( STATS_ROOTS.some( ( root ) => selector.includes( root ) ) ).toBe( true );
 		} );
 	} );
 
@@ -35,7 +37,7 @@ describe( 'admin theme colour scoping', () => {
 		selectors()
 			.filter( ( selector ) => selector.startsWith( 'body' ) )
 			.forEach( ( selector ) => {
-				expect( selector ).toMatch( /^body[^ ]* \.stats-main$/ );
+				expect( selector ).toMatch( /^body[^ ]* (\.stats-main|\.store-stats)$/ );
 			} );
 	} );
 
