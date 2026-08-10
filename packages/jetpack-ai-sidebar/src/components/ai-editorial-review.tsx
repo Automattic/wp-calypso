@@ -64,7 +64,7 @@ interface CandidateResolution {
 
 interface Conflict {
 	subject: string;
-	positions: ReviewerPosition[];
+	positions?: ReviewerPosition[];
 	guideline_anchor: string | null;
 	recommended_resolution: string;
 	candidate_resolutions?: CandidateResolution[];
@@ -73,7 +73,7 @@ interface Conflict {
 interface Implication {
 	change: string;
 	implies: string;
-	affected_blocks: number[];
+	affected_blocks?: number[];
 }
 
 interface SuggestedEdit {
@@ -84,7 +84,7 @@ interface SuggestedEdit {
 	suggested_text: string;
 	suggested_text_html?: string;
 	rationale: string;
-	supported_by_reviewers: string[];
+	supported_by_reviewers?: string[];
 	requires_manual?: boolean;
 	/** Optional short editorial category for the card badge (e.g. "Tone"). */
 	feedback_category?: string;
@@ -103,10 +103,15 @@ type EditorPostId = number | string;
 
 interface AiEditorialReviewProps {
 	summary: string;
-	conflicts: Conflict[];
-	implications: Implication[];
-	suggested_edits: SuggestedEdit[];
-	guideline_violations: GuidelineViolation[];
+	/**
+	 * The list props mirror required tool-schema fields, but chat history
+	 * re-renders payloads produced before the server-side guards existed, so
+	 * each one can arrive missing or null. Normalised through toList().
+	 */
+	conflicts?: Conflict[] | null;
+	implications?: Implication[] | null;
+	suggested_edits?: SuggestedEdit[] | null;
+	guideline_violations?: GuidelineViolation[] | null;
 	review_context?: ReviewContext;
 	/** Source post the review was generated for. Used to detect navigation to a different post. */
 	postId?: EditorPostId;
@@ -196,6 +201,16 @@ function formatRelativeTime( timestamp: number ): string {
 		_n( '%d day ago', '%d days ago', days, __i18n_text_domain__ ),
 		days
 	);
+}
+
+/**
+ * Model-supplied list fields are typed as required by the tool schema, but the
+ * provider drops `strict`, so any of them can arrive missing, null, or with
+ * null items inside an otherwise valid list. Reading `.length`, `.map`, or a
+ * property off one of those unmounts the whole card.
+ */
+function toList< T >( value: ( T | null )[] | null | undefined ): T[] {
+	return Array.isArray( value ) ? value.filter( ( item ): item is T => item != null ) : [];
 }
 
 function getGuidelineCategoryLabel( category: GuidelineViolation[ 'category' ] ): string {
@@ -303,16 +318,25 @@ function getConflictApplyUnavailableReason(
  */
 export default function AiEditorialReview( {
 	summary,
-	conflicts,
-	implications,
-	suggested_edits,
-	guideline_violations,
+	conflicts: conflictsProp,
+	implications: implicationsProp,
+	suggested_edits: suggestedEditsProp,
+	guideline_violations: guidelineViolationsProp,
 	review_context,
 	postId,
 	isMessageStale = false,
 	reviewers_metadata,
 	cached_at,
 }: AiEditorialReviewProps ) {
+	// Normalised once per payload; useMemo keeps each list's identity stable
+	// across renders for the hooks that list them as dependencies.
+	const conflicts = useMemo( () => toList( conflictsProp ), [ conflictsProp ] );
+	const implications = useMemo( () => toList( implicationsProp ), [ implicationsProp ] );
+	const suggested_edits = useMemo( () => toList( suggestedEditsProp ), [ suggestedEditsProp ] );
+	const guideline_violations = useMemo(
+		() => toList( guidelineViolationsProp ),
+		[ guidelineViolationsProp ]
+	);
 	// Review actions are only safe when the result can be tied to the current editor entity.
 	const currentPostId = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as WpCurrentPostStore;
@@ -747,20 +771,25 @@ export default function AiEditorialReview( {
 	);
 
 	// ---------- Bulk apply ----------
+	const findApplicableAiCandidate = useCallback(
+		( conflict: Conflict ) =>
+			toList( conflict.candidate_resolutions ).find(
+				( c ) =>
+					c.source === 'ai' &&
+					! getBlockEditDisabledReason( c.block_index, c.current_text, c.editable_attribute )
+			),
+		[ getBlockEditDisabledReason ]
+	);
+
 	const pendingAiConflictCount = useMemo( () => {
 		return conflicts.reduce( ( acc, conflict, i ) => {
 			const status = conflictStatuses[ i ] ?? 'pending';
 			if ( status !== 'pending' && status !== 'failed' ) {
 				return acc;
 			}
-			const aiCandidate = conflict.candidate_resolutions?.find(
-				( c ) =>
-					c.source === 'ai' &&
-					! getBlockEditDisabledReason( c.block_index, c.current_text, c.editable_attribute )
-			);
-			return aiCandidate ? acc + 1 : acc;
+			return findApplicableAiCandidate( conflict ) ? acc + 1 : acc;
 		}, 0 );
-	}, [ conflicts, conflictStatuses, getBlockEditDisabledReason ] );
+	}, [ conflicts, conflictStatuses, findApplicableAiCandidate ] );
 
 	const pendingEditCount = useMemo( () => {
 		return suggested_edits.reduce( ( acc, edit, i ) => {
@@ -813,11 +842,7 @@ export default function AiEditorialReview( {
 				if ( status !== 'pending' && status !== 'failed' ) {
 					continue;
 				}
-				const aiCandidate = conflicts[ i ].candidate_resolutions?.find(
-					( c ) =>
-						c.source === 'ai' &&
-						! getBlockEditDisabledReason( c.block_index, c.current_text, c.editable_attribute )
-				);
+				const aiCandidate = findApplicableAiCandidate( conflicts[ i ] );
 				if ( ! aiCandidate ) {
 					continue;
 				}
@@ -924,6 +949,7 @@ export default function AiEditorialReview( {
 		suggested_edits,
 		editStatuses,
 		applyTextToBlock,
+		findApplicableAiCandidate,
 		fireItemAction,
 		getBlockEditDisabledReason,
 		isLatestPostContextStale,
@@ -1146,7 +1172,7 @@ export default function AiEditorialReview( {
 								>
 									{ conflicts.map( ( conflict, i ) => {
 										const status = conflictStatuses[ i ] ?? 'pending';
-										const candidates = conflict.candidate_resolutions ?? [];
+										const candidates = toList( conflict.candidate_resolutions );
 										const getCandidateDisabledReason = ( candidate: CandidateResolution ) =>
 											getBlockEditDisabledReason(
 												candidate.block_index,
@@ -1282,7 +1308,7 @@ export default function AiEditorialReview( {
 													) }
 												</header>
 												<ul className="jetpack-ai-editorial-review__positions">
-													{ conflict.positions.map( ( pos, j ) => (
+													{ toList( conflict.positions ).map( ( pos, j ) => (
 														<li
 															className="jetpack-ai-editorial-review__position"
 															key={ `pos-${ i }-${ j }` }
@@ -1389,27 +1415,31 @@ export default function AiEditorialReview( {
 									onToggle={ ( next: boolean ) => setSectionOpen( 'implications', next ) }
 								>
 									<ul>
-										{ implications.map( ( imp, i ) => (
-											<li key={ `imp-${ i }` }>
-												<strong>{ imp.change }</strong> — { imp.implies }
-												{ imp.affected_blocks.length > 0 && (
-													<span className="jetpack-ai-editorial-review__affected-blocks">
-														{ ' ' }
-														{ __( 'Affects:', __i18n_text_domain__ ) }{ ' ' }
-														{ imp.affected_blocks.map( ( b, j ) => (
-															<span key={ `imp-${ i }-aff-${ j }` }>
-																{ j > 0 && ', ' }
-																<BlockRef
-																	index={ b }
-																	blocks={ blocks }
-																	onFocus={ focusCurrentPostBlock }
-																/>
-															</span>
-														) ) }
-													</span>
-												) }
-											</li>
-										) ) }
+										{ implications.map( ( imp, i ) => {
+											// A non-strict payload can omit affected_blocks.
+											const affectedBlocks = toList( imp.affected_blocks );
+											return (
+												<li key={ `imp-${ i }` }>
+													<strong>{ imp.change }</strong> — { imp.implies }
+													{ affectedBlocks.length > 0 && (
+														<span className="jetpack-ai-editorial-review__affected-blocks">
+															{ ' ' }
+															{ __( 'Affects:', __i18n_text_domain__ ) }{ ' ' }
+															{ affectedBlocks.map( ( b, j ) => (
+																<span key={ `imp-${ i }-aff-${ j }` }>
+																	{ j > 0 && ', ' }
+																	<BlockRef
+																		index={ b }
+																		blocks={ blocks }
+																		onFocus={ focusCurrentPostBlock }
+																	/>
+																</span>
+															) ) }
+														</span>
+													) }
+												</li>
+											);
+										} ) }
 									</ul>
 								</PanelBody>
 							</div>
@@ -1509,11 +1539,12 @@ export default function AiEditorialReview( {
 													element: 'text',
 												} );
 											}
+											const supportedByReviewers = toList( edit.supported_by_reviewers );
 											const footer =
-												edit.supported_by_reviewers.length > 0 ? (
+												supportedByReviewers.length > 0 ? (
 													<p className="jetpack-ai-editorial-review__reviewers">
 														{ __( 'Requested by:', __i18n_text_domain__ ) }{ ' ' }
-														{ edit.supported_by_reviewers.map( ( r, j ) => (
+														{ supportedByReviewers.map( ( r, j ) => (
 															<span key={ `edit-${ i }-rev-${ j }` }>
 																{ j > 0 && ' ' }
 																<ReviewerChip
