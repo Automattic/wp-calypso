@@ -1,0 +1,438 @@
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook, act } from '@testing-library/react';
+import { dispatch } from '@wordpress/data';
+import { isEditorPage } from '../../utils/is-editor-page';
+import { LEGACY_CSS_END, LEGACY_CSS_START } from '../../utils/legacy-style-variation-css';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import useStyles, { resetLegacyCssSessionFlag } from '../use-styles';
+
+jest.mock( '../../utils/is-editor-page', () => ( {
+	isEditorPage: jest.fn( () => true ),
+} ) );
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
+} ) );
+
+const mockEditEntityRecord = jest.fn();
+let mockGlobalStylesId: string | null = 'global-styles-1';
+const makeRecord = () => ( {
+	settings: { color: { palette: { theme: [ { slug: 'primary', color: '#000' } ] } } },
+	styles: {
+		color: { text: '#000', background: '#fff' },
+		elements: {
+			button: {
+				border: { radius: '4px', color: 'red' },
+				spacing: { padding: '8px' },
+				color: { background: '#fff', text: '#000' },
+			} as Record< string, unknown >,
+		},
+	},
+} );
+let mockCurrentRecord = makeRecord();
+
+jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+jest.mock( '@wordpress/data', () => ( {
+	dispatch: jest.fn(),
+	useSelect: ( callback: ( select: ( store: string ) => unknown ) => unknown ) =>
+		callback( () => ( {
+			__experimentalGetCurrentGlobalStylesId: () => mockGlobalStylesId,
+			getEditedEntityRecord: () => ( mockGlobalStylesId ? mockCurrentRecord : null ),
+		} ) ),
+	useDispatch: () => ( { editEntityRecord: mockEditEntityRecord } ),
+} ) );
+
+const addLegacyCssToRecord = () => {
+	mockCurrentRecord.styles = {
+		...mockCurrentRecord.styles,
+		css: `${ LEGACY_CSS_START }\nh1 {font-family:x !important;}\n${ LEGACY_CSS_END }`,
+	} as unknown as ReturnType< typeof makeRecord >[ 'styles' ];
+};
+
+describe( 'useStyles', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		( isEditorPage as jest.Mock ).mockReturnValue( true );
+		mockGlobalStylesId = 'global-styles-1';
+		mockCurrentRecord = makeRecord();
+		resetLegacyCssSessionFlag();
+	} );
+
+	it( 'does not apply off the editor page', () => {
+		( isEditorPage as jest.Mock ).mockReturnValue( false );
+		const { result } = renderHook( () => useStyles() );
+
+		let applied: boolean | undefined;
+		act( () => {
+			applied = result.current( { title: 'Bold', styles: {} } );
+		} );
+
+		expect( applied ).toBe( false );
+		expect( mockEditEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	it( 'merges variation into global styles', () => {
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current( {
+				title: 'Bold',
+				settings: { color: { palette: { theme: [ { slug: 'accent', color: '#f00' } ] } } },
+				styles: { color: { text: '#111', background: '#eee' } },
+			} );
+		} );
+
+		expect( mockEditEntityRecord ).toHaveBeenCalledWith(
+			'root',
+			'globalStyles',
+			'global-styles-1',
+			expect.objectContaining( {
+				settings: { color: { palette: { theme: [ { slug: 'accent', color: '#f00' } ] } } },
+				styles: expect.objectContaining( {
+					color: { text: '#111', background: '#eee' },
+				} ),
+			} )
+		);
+	} );
+
+	it( 'keeps current settings when variation has no settings', () => {
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current( { title: 'Minimal', styles: { color: { text: '#222' } } } );
+		} );
+
+		expect( mockEditEntityRecord ).toHaveBeenCalledWith(
+			'root',
+			'globalStyles',
+			'global-styles-1',
+			expect.objectContaining( {
+				settings: mockCurrentRecord.settings,
+			} )
+		);
+	} );
+
+	it( 'does nothing and reports it when global styles ID is missing', () => {
+		mockGlobalStylesId = null;
+		const { result } = renderHook( () => useStyles() );
+
+		let applied;
+		act( () => {
+			applied = result.current( { title: 'Test' } );
+		} );
+
+		expect( applied ).toBe( false );
+		expect( mockEditEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	it( 'replaces the button border wholesale instead of key-merging it', () => {
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current( {
+				title: 'Sharp',
+				styles: { elements: { button: { border: { width: '2px', style: 'solid' } } } },
+			} );
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.elements.button.border ).toEqual( { width: '2px', style: 'solid' } );
+	} );
+
+	it( 'resets button border and spacing before merging a button variation', () => {
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{ title: 'Pill', styles: { elements: { button: { border: { radius: '100px' } } } } },
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.elements.button ).toEqual( {
+			border: { radius: '100px' },
+			color: { background: '#fff', text: '#000' },
+		} );
+	} );
+
+	it( 'stashes the previous button color when applying an outline variation', () => {
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{
+					title: 'Rounded, Outline',
+					styles: {
+						elements: {
+							button: {
+								border: { radius: '100px', width: '2px' },
+								color: {
+									background: 'transparent !important',
+									text: 'currentColor !important',
+								},
+							},
+						},
+					},
+				},
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.elements.button.buttonColor ).toEqual( {
+			background: '#fff',
+			text: '#000',
+		} );
+		expect( merged.styles.elements.button.color ).toEqual( {
+			background: 'transparent !important',
+			text: 'currentColor !important',
+		} );
+	} );
+
+	it( 'strips the applied typography before merging a font variation', () => {
+		mockCurrentRecord = {
+			settings: { typography: { fluid: true } },
+			styles: {
+				typography: { fontFamily: 'Old' },
+				elements: { h1: { typography: { fontWeight: '700' }, color: { text: '#111' } } },
+			},
+		} as unknown as ReturnType< typeof makeRecord >;
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{
+					title: 'Modern Sans',
+					settings: { typography: { fontFamilies: { theme: [ { name: 'Inter' } ] } } },
+					styles: { elements: { h1: { typography: { fontFamily: 'Inter' } } } },
+				} as never,
+				'font'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.settings.typography ).toEqual( {
+			fontFamilies: { theme: [ { name: 'Inter' } ] },
+		} );
+		expect( merged.styles.typography ).toBeUndefined();
+		expect( merged.styles.elements.h1 ).toEqual( {
+			color: { text: '#111' },
+			typography: { fontFamily: 'Inter' },
+		} );
+	} );
+
+	it( 'mirrors button styles onto the subscriptions block with !important', () => {
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{
+					title: 'Pill',
+					styles: {
+						elements: {
+							button: {
+								border: { radius: '100px' },
+								spacing: { padding: { left: '2rem', right: '2rem', top: '1rem' } },
+							},
+						},
+					},
+				},
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		const mirrored = merged.styles.blocks[ 'jetpack/subscriptions' ].elements.button;
+		expect( mirrored.border ).toEqual( { radius: '100px !important' } );
+		// Vertical padding is not mirrored — it would break the input height.
+		expect( mirrored.spacing.padding ).toEqual( {
+			left: '2rem !important',
+			right: '2rem !important',
+		} );
+	} );
+
+	it( 'keeps the original stash across consecutive outline picks', () => {
+		mockCurrentRecord.styles.elements.button = {
+			border: { radius: '100px' },
+			color: { background: 'transparent !important', text: 'currentColor !important' },
+			buttonColor: { background: '#fff', text: '#000' },
+		};
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{
+					title: 'Square, Outline',
+					styles: {
+						elements: {
+							button: {
+								border: { width: '2px' },
+								color: {
+									background: 'transparent !important',
+									text: 'currentColor !important',
+								},
+							},
+						},
+					},
+				},
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.elements.button.buttonColor ).toEqual( {
+			background: '#fff',
+			text: '#000',
+		} );
+	} );
+
+	it( 'replaces a stale subscriptions mirror instead of merging into it', () => {
+		mockCurrentRecord.styles = {
+			...mockCurrentRecord.styles,
+			blocks: {
+				'jetpack/subscriptions': { elements: { button: { color: { text: 'stale !important' } } } },
+			},
+		} as unknown as ReturnType< typeof makeRecord >[ 'styles' ];
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{ title: 'Pill', styles: { elements: { button: { border: { radius: '100px' } } } } },
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.blocks[ 'jetpack/subscriptions' ].elements ).toEqual( {
+			button: { border: { radius: '100px !important' } },
+		} );
+	} );
+
+	it( 'clears block-variation button styles on a button pick', () => {
+		mockCurrentRecord.styles = {
+			...mockCurrentRecord.styles,
+			blocks: {
+				'core/group': {
+					variations: {
+						fancy: { elements: { button: { border: { radius: '9px' }, color: { text: '#111' } } } },
+					},
+				},
+			},
+		} as unknown as ReturnType< typeof makeRecord >[ 'styles' ];
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{ title: 'Pill', styles: { elements: { button: { border: { radius: '100px' } } } } },
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.blocks[ 'core/group' ].variations.fancy.elements.button ).toEqual( {
+			color: { text: '#111' },
+		} );
+	} );
+
+	it( 'does not apply a button variation settings object', () => {
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{
+					title: 'Pill',
+					settings: { color: { palette: { theme: [ { slug: 'sneaky', color: '#bad' } ] } } },
+					styles: { elements: { button: { border: { radius: '100px' } } } },
+				},
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.settings ).toEqual( mockCurrentRecord.settings );
+	} );
+
+	it( 'strips block-level typography on a font pick', () => {
+		mockCurrentRecord.styles = {
+			...mockCurrentRecord.styles,
+			blocks: {
+				'core/quote': { typography: { fontStyle: 'italic' }, color: { text: '#222' } },
+			},
+		} as unknown as ReturnType< typeof makeRecord >[ 'styles' ];
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current( { title: 'Modern Sans', styles: {} }, 'font' );
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.blocks[ 'core/quote' ] ).toEqual( { color: { text: '#222' } } );
+	} );
+
+	it( 'records legacy CSS telemetry once per session on a font pick', () => {
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		addLegacyCssToRecord();
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current( { title: 'Modern Sans', styles: {} }, 'font' );
+			result.current( { title: 'Serif', styles: {} }, 'font' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'legacy_css_found', {
+			block_count: 1,
+		} );
+		expect( warn ).toHaveBeenCalled();
+	} );
+
+	it( 'forwards legacy CSS blocks to the provider store dialog when registered', () => {
+		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const setLegacyCssBlocks = jest.fn();
+		( dispatch as jest.Mock ).mockReturnValue( { setLegacyCssBlocks } );
+		addLegacyCssToRecord();
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current( { title: 'Modern Sans', styles: {} }, 'font' );
+		} );
+
+		expect( dispatch ).toHaveBeenCalledWith( 'ai-assembler' );
+		expect( setLegacyCssBlocks ).toHaveBeenCalledWith( [
+			expect.objectContaining( { text: expect.stringContaining( LEGACY_CSS_START ) } ),
+		] );
+	} );
+
+	it( 'does not scan for legacy CSS on non-font picks', () => {
+		addLegacyCssToRecord();
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current( { title: 'Pill', styles: {} }, 'button' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'restores the stashed button color when leaving an outline variation', () => {
+		mockCurrentRecord.styles.elements.button = {
+			border: { radius: '100px' },
+			color: { background: 'transparent !important', text: 'currentColor !important' },
+			buttonColor: { background: '#fff', text: '#000' },
+		};
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{ title: 'Square', styles: { elements: { button: { border: { radius: '0' } } } } },
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.elements.button.color ).toEqual( { background: '#fff', text: '#000' } );
+		expect( merged.styles.elements.button.border ).toEqual( { radius: '0' } );
+	} );
+} );

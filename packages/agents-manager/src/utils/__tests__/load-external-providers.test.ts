@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { showComponentAbility } from '../../abilities/show-component';
 import {
 	loadExternalProviders,
 	mergeCapabilitiesInto,
@@ -24,31 +25,23 @@ function createAbility( name: string ): Ability {
 }
 
 describe( 'mergeCapabilitiesInto', () => {
-	it( 'is a no-op when capabilities is undefined', () => {
-		const merged: ProviderCapabilities = {};
-		mergeCapabilitiesInto( merged, undefined );
-		expect( merged ).toEqual( {} );
-	} );
+	it.each( [ undefined, null, 'oops', 42 ] )(
+		'is a no-op for non-object capabilities: %p',
+		( capabilities ) => {
+			const merged: ProviderCapabilities = {};
+			mergeCapabilitiesInto( merged, capabilities );
+			expect( merged ).toEqual( {} );
+		}
+	);
 
-	it( 'is a no-op when capabilities is null or not an object', () => {
-		const merged: ProviderCapabilities = {};
-		mergeCapabilitiesInto( merged, null );
-		mergeCapabilitiesInto( merged, 'oops' );
-		mergeCapabilitiesInto( merged, 42 );
-		expect( merged ).toEqual( {} );
-	} );
-
-	it( 'sets supportsSplitScreen when the provider declares it', () => {
-		const merged: ProviderCapabilities = {};
-		mergeCapabilitiesInto( merged, { supportsSplitScreen: true } );
-		expect( merged.supportsSplitScreen ).toBe( true );
-	} );
-
-	it( 'sets supportsRegenerateAction when the provider declares it', () => {
-		const merged: ProviderCapabilities = {};
-		mergeCapabilitiesInto( merged, { supportsRegenerateAction: true } );
-		expect( merged.supportsRegenerateAction ).toBe( true );
-	} );
+	it.each( [ 'supportsSplitScreen', 'supportsRegenerateAction' ] as const )(
+		'sets %s when the provider declares it',
+		( flag ) => {
+			const merged: ProviderCapabilities = {};
+			mergeCapabilitiesInto( merged, { [ flag ]: true } );
+			expect( merged[ flag ] ).toBe( true );
+		}
+	);
 
 	it( 'leaves supportsSplitScreen unset when the provider declares false', () => {
 		const merged: ProviderCapabilities = {};
@@ -97,6 +90,7 @@ describe( 'mergeCapabilitiesInto', () => {
 
 describe( 'loadExternalProviders', () => {
 	afterEach( () => {
+		window.history.replaceState( {}, '', '/' );
 		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
 		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
@@ -115,10 +109,13 @@ describe( 'loadExternalProviders', () => {
 		expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
 	} );
 
-	it( 'treats malformed agentProviders data as no providers', async () => {
-		setAgentsManagerData( {
-			agentProviders: 'not-an-array',
-		} );
+	// With nothing configured, even `amToolProvider` stays absent — picker
+	// surfaces always register at least one external provider.
+	it.each( [
+		[ 'not an array', 'not-an-array' ],
+		[ 'an empty array', [] ],
+	] )( 'resolves to no providers when agentProviders is %s', async ( _case, agentProviders ) => {
+		setAgentsManagerData( { agentProviders } );
 
 		await expect( loadExternalProviders() ).resolves.toEqual( {} );
 	} );
@@ -141,6 +138,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			showComponentAbility,
 			createAbility( 'host/navigate' ),
 			createAbility( 'woocommerce/get-products' ),
 		] );
@@ -169,6 +167,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			showComponentAbility,
 			createAbility( 'shared/action' ),
 		] );
 		await expect( providers.toolProvider?.executeAbility( 'shared/action', {} ) ).resolves.toEqual(
@@ -178,6 +177,88 @@ describe( 'loadExternalProviders', () => {
 		);
 		expect( firstProvider.executeAbility ).toHaveBeenCalled();
 		expect( secondProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'executes migrated abilities through AM before any provider copy', async () => {
+		const bigSkyProvider = {
+			getAbilities: jest.fn( () =>
+				Promise.resolve( [ createAbility( 'big-sky/show-component' ) ] )
+			),
+			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
+		};
+		setAgentsManagerData( { agentProviders: [ { toolProvider: bigSkyProvider } ] } );
+
+		const providers = await loadExternalProviders();
+		const result = ( await providers.toolProvider?.executeAbility( 'big_sky__show_component', {
+			type: 'color-picker',
+			props: { variations: [] },
+		} ) ) as { result?: { success?: boolean } };
+
+		expect( result?.result?.success ).toBe( true );
+		expect( bigSkyProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'flips execution to the provider copy with `?am_abilities=0`', async () => {
+		window.history.replaceState( {}, '', '/?am_abilities=0' );
+		const bigSkyProvider = {
+			getAbilities: jest.fn( () =>
+				Promise.resolve( [ createAbility( 'big-sky/show-component' ) ] )
+			),
+			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
+		};
+		setAgentsManagerData( { agentProviders: [ { toolProvider: bigSkyProvider } ] } );
+
+		const providers = await loadExternalProviders();
+
+		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			createAbility( 'big-sky/show-component' ),
+		] );
+		await expect(
+			providers.toolProvider?.executeAbility( 'big_sky__show_component', {} )
+		).resolves.toEqual( { handledBy: 'big-sky' } );
+		expect( bigSkyProvider.executeAbility ).toHaveBeenCalled();
+	} );
+
+	it( 'keeps the remaining abilities when a provider fails to list its own', async () => {
+		const consoleWarn = jest.spyOn( console, 'warn' ).mockImplementation();
+		const failingProvider = {
+			getAbilities: jest.fn( () => Promise.reject( new Error( 'Provider is not ready.' ) ) ),
+			executeAbility: jest.fn(),
+		};
+		const workingProvider = {
+			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'host/navigate' ) ] ) ),
+			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'host' } ) ),
+		};
+		setAgentsManagerData( {
+			agentProviders: [ { toolProvider: failingProvider }, { toolProvider: workingProvider } ],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			showComponentAbility,
+			createAbility( 'host/navigate' ),
+		] );
+		expect( consoleWarn ).toHaveBeenCalledWith(
+			'[AgentsManager] Failed to load abilities from provider:',
+			expect.any( Error )
+		);
+		consoleWarn.mockRestore();
+	} );
+
+	it( 'rejects execution when no provider handles the ability', async () => {
+		const provider = {
+			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'host/navigate' ) ] ) ),
+			executeAbility: jest.fn(),
+		};
+		setAgentsManagerData( { agentProviders: [ { toolProvider: provider } ] } );
+
+		const providers = await loadExternalProviders();
+
+		await expect(
+			providers.toolProvider?.executeAbility( 'unknown__ability', {} )
+		).rejects.toThrow( 'No provider handled ability: unknown__ability' );
+		expect( provider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
 	it( 'returns valid IDs for loaded providers and ignores missing, empty, and duplicate IDs', async () => {
@@ -398,21 +479,69 @@ describe( 'loadExternalProviders', () => {
 		expect( wooCode ).toHaveBeenCalled();
 	} );
 
-	it( 'resolves abilities registered after load time (queried live, not snapshotted)', async () => {
-		// Big Sky registers its editor abilities (e.g. big-sky/apply-block-edits)
-		// from a React effect that runs after the chat UI mounts, which is after
-		// loadExternalProviders() has run. The merged tool provider must query
-		// each provider's abilities live so those late registrations are visible,
-		// matching the single-provider path and agenttic-client's "callbacks are
-		// called fresh each time" contract. A list snapshotted at load time would
-		// never see them, so the agent's calls to those abilities would silently
-		// never dispatch.
-		const createAbility = ( name: string ) => ( {
-			name,
-			label: name,
-			description: `${ name } description`,
-			category: 'test',
+	it( 'resolves chat components through providers until one matches', async () => {
+		const TitlePicker = () => null;
+		const hostComponents = jest.fn( () => null );
+		const wooComponents = jest.fn( ( type: string ) =>
+			type === 'title-picker' ? TitlePicker : null
+		);
+		setAgentsManagerData( {
+			agentProviders: [ { getChatComponent: hostComponents }, { getChatComponent: wooComponents } ],
 		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.getChatComponent?.( 'title-picker' ) ).toBe( TitlePicker );
+		expect( providers.getChatComponent?.( 'chat-suggestions' ) ).toBeNull();
+	} );
+
+	it( 'uses the first provider for singleton exports', async () => {
+		const firstOnTaskUpdate = jest.fn();
+		const firstUseCheckpoint = jest.fn();
+		setAgentsManagerData( {
+			agentProviders: [
+				{ onTaskUpdate: firstOnTaskUpdate, useCheckpoint: firstUseCheckpoint },
+				{ onTaskUpdate: jest.fn(), useCheckpoint: jest.fn() },
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.onTaskUpdate ).toBe( firstOnTaskUpdate );
+		expect( providers.useCheckpoint ).toBe( firstUseCheckpoint );
+	} );
+
+	it( 'merges empty view suggestions from multiple providers and dedupes by id', async () => {
+		setAgentsManagerData( {
+			agentProviders: [
+				{
+					getEmptyViewSuggestions: () => [
+						{ id: 'shared', label: 'First shared', prompt: 'First shared prompt.' },
+						{ id: 'first-only', label: 'First only', prompt: 'First only prompt.' },
+					],
+				},
+				{
+					getEmptyViewSuggestions: () => [
+						{ id: 'shared', label: 'Second shared', prompt: 'Second shared prompt.' },
+						{ id: 'second-only', label: 'Second only', prompt: 'Second only prompt.' },
+					],
+				},
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.getEmptyViewSuggestions?.() ).toEqual( [
+			{ id: 'shared', label: 'First shared', prompt: 'First shared prompt.' },
+			{ id: 'first-only', label: 'First only', prompt: 'First only prompt.' },
+			{ id: 'second-only', label: 'Second only', prompt: 'Second only prompt.' },
+		] );
+	} );
+
+	it( 'resolves abilities registered after load time (queried live, not snapshotted)', async () => {
+		// Big Sky registers its editor abilities from a React effect that runs
+		// after `loadExternalProviders()` — the merged provider must query each
+		// provider live, or those late registrations would never dispatch.
 		let editorAbilityRegistered = false;
 		const bigSkyProvider = {
 			getAbilities: jest.fn( () =>
@@ -426,22 +555,15 @@ describe( 'loadExternalProviders', () => {
 			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'wpcom/manage-site' ) ] ) ),
 			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'wpcom' } ) ),
 		};
-		const agentsManagerData = {
+		setAgentsManagerData( {
 			agentProviders: [ { toolProvider: bigSkyProvider }, { toolProvider: otherProvider } ],
-		};
-		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
-			agentsManagerData;
-		( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData =
-			agentsManagerData;
+		} );
 
-		// loadExternalProviders() queries getAbilities() here, before the editor
-		// ability is registered.
 		const providers = await loadExternalProviders();
-
-		// The editor ability registers later, once the chat UI has mounted.
 		editorAbilityRegistered = true;
 
 		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			showComponentAbility,
 			createAbility( 'big-sky/apply-block-edits' ),
 			createAbility( 'wpcom/manage-site' ),
 		] );

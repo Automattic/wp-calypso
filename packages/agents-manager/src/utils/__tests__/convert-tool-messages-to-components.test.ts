@@ -1,4 +1,3 @@
-/* eslint-disable import/order -- mocks must be registered before importing the converter */
 function mockEscalationButton() {
 	return null;
 }
@@ -15,11 +14,14 @@ jest.mock(
 jest.mock( '../../components/escalation-button', () => ( {
 	EscalationButton: mockEscalationButton,
 } ) );
-jest.mock( '../is-editor-page' );
+jest.mock( '../../components/button-picker', () => ( { __esModule: true, default: jest.fn() } ) );
+jest.mock( '../../components/color-picker', () => ( { __esModule: true, default: jest.fn() } ) );
+jest.mock( '../../components/font-picker', () => ( { __esModule: true, default: jest.fn() } ) );
 
-import UnavailableToolMessage from '../../components/unavailable-tool-message';
+import ButtonPicker from '../../components/button-picker';
+import ColorPicker from '../../components/color-picker';
+import FontPicker from '../../components/font-picker';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
-import { isEditorPage } from '../is-editor-page';
 import {
 	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
 	JETPACK_AI_SHOW_COMPONENT_TOOL_ID,
@@ -50,7 +52,8 @@ const createToolMessage = (
 
 describe( 'convertToolMessagesToComponents', () => {
 	beforeEach( () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( true );
+		jest.clearAllMocks();
+		window.history.replaceState( {}, '', '/' );
 	} );
 
 	it( 'passes through user messages unchanged', () => {
@@ -151,6 +154,24 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'renders the provider component for a migrated type with `?am_abilities=0`', () => {
+		window.history.replaceState( {}, '', '/?am_abilities=0' );
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+			type: 'color-picker',
+			props: { variations: [] },
+			isCurrent: true,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( getChatComponent ).toHaveBeenCalledWith( 'color-picker' );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+	} );
+
 	it( 'renders legacy Big Sky show-component messages during migration', () => {
 		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
@@ -206,7 +227,38 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].suppressThinking ).toBe( false );
 	} );
 
-	it( 'filters out unregistered components', () => {
+	it( 'renders the provider pattern picker disabled for history rows', () => {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+			type: 'pattern-picker',
+			props: { patterns: [] },
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+		// History rows carry no `isCurrent`, so the message renders inert.
+		expect( result[ 0 ].disabled ).toBe( true );
+	} );
+
+	it( 'renders the notice for prototype-member component types', () => {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+			type: 'toString',
+			props: { name: 'test' },
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'This option is no longer available.' },
+		] );
+	} );
+
+	it( 'renders a short notice when no component resolves on either side', () => {
 		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'unknown-component',
 		} );
@@ -217,7 +269,10 @@ describe( 'convertToolMessagesToComponents', () => {
 			getChatComponent,
 		} );
 
-		expect( result ).toEqual( [] );
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'This option is no longer available.' },
+		] );
 	} );
 
 	it( 'renders consecutive follow-up pickers as components', () => {
@@ -239,25 +294,11 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result.map( ( message ) => message.id ) ).toEqual( [ 'msg-1', 'msg-2' ] );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
 		expect( result[ 1 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+		// Message actions are resolved before conversion and must survive it.
+		expect( result[ 0 ].actions ).toEqual( actions );
 	} );
 
-	it( 'renders `UnavailableToolMessage` when not on an editor page', () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( false );
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, { type: 'my-component' } );
-
-		const result = convertToolMessagesToComponents( {
-			messages: [ message ],
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'component',
-			component: UnavailableToolMessage,
-			componentProps: { type: 'picker' },
-		} );
-	} );
-
-	it( 'renders `UnavailableToolMessage` for the start-over tool', () => {
+	it( 'renders the start-over notice for the legacy start-over tool', () => {
 		const message = createToolMessage( 'big_sky__client_assistants', {
 			assistantId: 'big-sky-site-admin',
 		} );
@@ -267,10 +308,9 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 
 		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'component',
-			component: UnavailableToolMessage,
-			componentProps: { type: 'start-over' },
+		expect( result[ 0 ].content[ 0 ] ).toEqual( {
+			type: 'text',
+			text: 'To start over, please send your request again.',
 		} );
 	} );
 
@@ -538,6 +578,12 @@ describe( 'convertToolMessagesToComponents', () => {
 			disabled: false,
 		},
 		{
+			name: 'stays enabled when a number `postId` matches a string `currentPostId`',
+			data: { type: 'my-component', isCurrent: true, postId: 10 },
+			currentPostId: '10',
+			disabled: false,
+		},
+		{
 			name: 'stays enabled when `postId` is missing from the tool message',
 			data: { type: 'my-component', isCurrent: true },
 			currentPostId: 20,
@@ -603,4 +649,95 @@ describe( 'convertToolMessagesToComponents', () => {
 			expect( componentProps?.isMessageStale === true ).toBe( disabled );
 		}
 	);
+
+	describe( 'AM-owned components', () => {
+		it.each( [
+			[ 'button-picker', ButtonPicker ],
+			[ 'color-picker', ColorPicker ],
+			[ 'font-picker', FontPicker ],
+		] )( 'resolves %s to its AM component', ( type, expected ) => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type,
+				props: { variations: [] },
+				isCurrent: true,
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+				type: 'component',
+				component: expected,
+			} );
+		} );
+
+		it( 'passes props without `contentType`', () => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type: 'color-picker',
+				props: { variations: [ { title: 'Bold' } ] },
+				isCurrent: true,
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			expect( result[ 0 ].content[ 0 ].componentProps ).toEqual( {
+				variations: [ { title: 'Bold' } ],
+			} );
+		} );
+
+		it( 'renders the stored summary for deprecated component types', () => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type: 'pattern-picker',
+				props: { layouts: [] },
+				summary: 'Here are some layouts to choose from.',
+				isCurrent: true,
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Here are some layouts to choose from.' },
+			] );
+			expect( result[ 0 ].suppressThinking ).toBe( true );
+		} );
+
+		it( 'renders a short notice for deprecated component types without a summary', () => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type: 'unknown',
+				props: {},
+				isCurrent: true,
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'This option is no longer available.' },
+			] );
+		} );
+
+		it( 'does not call `getChatComponent`', () => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type: 'color-picker',
+				props: { variations: [] },
+				isCurrent: true,
+			} );
+			const getChatComponent = jest.fn().mockReturnValue( jest.fn() );
+
+			convertToolMessagesToComponents( {
+				messages: [ message ],
+				getChatComponent,
+			} );
+
+			expect( getChatComponent ).not.toHaveBeenCalled();
+		} );
+	} );
 } );

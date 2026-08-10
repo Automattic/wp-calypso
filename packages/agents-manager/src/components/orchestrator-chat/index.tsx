@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
+import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
 import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
@@ -22,7 +23,6 @@ import { useImageUpload } from '../../hooks/use-image-upload';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
-import useZoomAction from '../../hooks/use-zoom-action';
 import { markSessionUsed } from '../../utils/agent-session';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
@@ -173,8 +173,8 @@ interface Props {
 	isCompactMode: boolean;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
-	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
-	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** The external providers' abilities-setup hook (e.g. Big Sky, jetpack-ai-sidebar). Invoked after custom actions registration. */
+	useProviderAbilitiesSetup?: AbilitiesSetupHook;
 	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
@@ -201,7 +201,7 @@ export default function OrchestratorChat( {
 	markdownExtensions,
 	isCompactMode,
 	useNavigationContinuation,
-	useAbilitiesSetup,
+	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
 	siteBuildUtils,
@@ -462,9 +462,6 @@ export default function OrchestratorChat( {
 
 	// Add a "Copy" action on plain-text agent messages.
 	const getCopyActionsForMessage = useCopyAction();
-
-	// Register zoom-in/zoom-out actions on agent messages.
-	useZoomAction( registerMessageActions );
 
 	// Register a "Sources" action on agent messages with sources data.
 	useSourcesAction( registerMessageActions, ! isReaderChat );
@@ -762,9 +759,14 @@ export default function OrchestratorChat( {
 	);
 
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
-	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
-	// The hook is stable as `OrchestratorChat` only renders after external providers have been loaded.
-	useAbilitiesSetup?.( {
+	// Provides chat action handlers to the external providers' ability setups
+	// (Big Sky, jetpack-ai-sidebar) — permanent provider infrastructure. The hook
+	// is stable as `OrchestratorChat` only renders after providers have loaded.
+	// TODO (ability-migration): After Big Sky's abilities migrate, prune this object to
+	// the fields other providers consume (jetpack-ai-sidebar reads only
+	// `clearSuggestions` and `isProcessing`) and drop the `BigSkyMessage`
+	// conversion.
+	useProviderAbilitiesSetup?.( {
 		addMessage: ( message: BigSkyMessage ) => {
 			// Transform Big Sky message format to `UIMessage` format and add to chat.
 			addMessage( convertBigSkyMessageToUIMessage( message ) );
@@ -809,6 +811,8 @@ export default function OrchestratorChat( {
 		setIsBuildingSite,
 		setThinkingMessage,
 	} );
+
+	useAbilitiesRegistration();
 
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		let currentMessages: AgentsManagerUIMessage[] = messages;
@@ -872,10 +876,6 @@ export default function OrchestratorChat( {
 		currentMessages = currentMessages.map( ( message ) => {
 			const traceId = getTraceIdForMessage( message.id );
 			const messageWithTraceId = traceId ? { ...message, traceId } : message;
-
-			if ( message.id.endsWith( '-next-step' ) ) {
-				return messageWithTraceId;
-			}
 
 			const directActions = [
 				...getFeedbackActionsForMessage( message ),
