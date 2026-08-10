@@ -182,16 +182,18 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// Asked for under this account and kept out of storage. Signup starts logged out, so the cache
 	// this would otherwise persist into is the one every later signup in the browser opens, and it
 	// would be answering for whoever settings were last read for. Prefix invalidation still matches.
+	const settings = userSettingsQuery();
 	const { data: userSettings } = useDataQuery( {
-		...userSettingsQuery(),
-		queryKey: [ ...userSettingsQuery().queryKey, gateScopeForUser ],
+		...settings,
+		queryKey: [ ...settings.queryKey, gateScopeForUser ],
 		enabled: gateStatus === 'gated',
 		meta: { persist: false },
 	} );
-	const awaitingEmail =
-		requestedEmail ||
-		( userSettings?.user_email_change_pending && userSettings?.new_user_email ) ||
-		currentEmail;
+	const pendingEmail =
+		requestedEmail ??
+		( userSettings?.user_email_change_pending ? userSettings.new_user_email : undefined );
+	// Both the address the gate names and the one a resend goes to, so they cannot disagree.
+	const awaitingEmail = pendingEmail ?? currentEmail;
 
 	// Submitted unchanged, nothing is being asked for and the user is already where they need to
 	// be. Writing a changed one is a change of its own.
@@ -311,7 +313,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			<EmailVerificationGate
 				onEditEmail={ beginEmailEdit }
 				email={ awaitingEmail ?? '' }
-				pendingEmail={ awaitingEmail !== currentEmail ? awaitingEmail : undefined }
+				pendingEmail={ pendingEmail }
 				// A different account is a different attempt: without this the cooldown, the send
 				// state and the poll's ladder would all carry over to whoever `/me` resolved.
 				key={ gateScopeForUser }

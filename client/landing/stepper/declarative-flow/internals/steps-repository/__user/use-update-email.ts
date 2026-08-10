@@ -1,10 +1,10 @@
-import { userEmailSettingsMutation, userSettingsQuery } from '@automattic/api-queries';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { userSettingsQuery } from '@automattic/api-queries';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { RESEND_MIN_INTERVAL_SECONDS } from 'calypso/dashboard/utils/email-verification-resend';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { markResendUnavailableUntil } from './email-verification/storage';
-import { ACTIVATION_EMAIL_SOURCE } from './use-email-verification-gate';
+import { useEmailChangeRequest } from './use-email-change-request';
 
 /**
  * Asks for a corrected address on the account the gate is holding, for a user who mistyped theirs.
@@ -18,18 +18,13 @@ export function useUpdateEmail( { flow, scope }: { flow: string; scope: string }
 	// read back, so a settings request that fails or answers from behind does not leave the gate
 	// naming an address the account has already been asked to leave.
 	const [ requested, setRequested ] = useState< { scope: string; email: string } | null >( null );
-	const { mutateAsync, error, reset } = useMutation( userEmailSettingsMutation() );
+	const { request, error, reset } = useEmailChangeRequest();
 
 	const updateEmail = async ( email: string ) => {
 		let accepted;
 
 		try {
-			accepted = await mutateAsync( {
-				user_email: email,
-				// Recorded against the pending change, so confirming it returns here rather than
-				// landing on account settings.
-				user_email_change_requested_from: ACTIVATION_EMAIL_SOURCE,
-			} );
+			accepted = await request( email );
 		} catch ( failure ) {
 			recordTracksEvent( 'calypso_signup_email_verification_email_update_failed', {
 				flow,

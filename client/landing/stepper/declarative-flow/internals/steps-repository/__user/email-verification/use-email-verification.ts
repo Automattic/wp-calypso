@@ -1,5 +1,3 @@
-import { userEmailSettingsMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import {
 	RESEND_MIN_INTERVAL_SECONDS,
@@ -13,6 +11,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { useBackoffPoll } from '../use-backoff-poll';
+import { useEmailChangeRequest } from '../use-email-change-request';
 import { ACTIVATION_EMAIL_SOURCE } from '../use-email-verification-gate';
 import { gateResendAvailableAt, markResendUnavailableUntil } from './storage';
 
@@ -26,9 +25,7 @@ export function useEmailVerification( flow: string, scope: string, pendingEmail?
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const sendVerificationEmail = useSendEmailVerification( { from: ACTIVATION_EMAIL_SOURCE } );
-	// Asking for the pending change again is what sends its confirmation again; there is no
-	// endpoint that resends one.
-	const { mutateAsync: askAgain } = useMutation( userEmailSettingsMutation() );
+	const { request: askAgain } = useEmailChangeRequest();
 
 	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
 
@@ -49,10 +46,7 @@ export function useEmailVerification( flow: string, scope: string, pendingEmail?
 
 		try {
 			if ( pendingEmail ) {
-				await askAgain( {
-					user_email: pendingEmail,
-					user_email_change_requested_from: ACTIVATION_EMAIL_SOURCE,
-				} );
+				await askAgain( pendingEmail );
 				holdResend( RESEND_MIN_INTERVAL_SECONDS );
 			} else {
 				const response = await sendVerificationEmail();
