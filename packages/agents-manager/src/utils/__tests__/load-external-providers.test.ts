@@ -1,14 +1,38 @@
 /**
  * @jest-environment jsdom
  */
+import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { showComponentAbility } from '../../abilities/show-component';
+import { getAvailableCheckpoints } from '../checkpoints';
 import {
 	loadExternalProviders,
 	mergeCapabilitiesInto,
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
+import {
+	getProviderCheckpointObservedAt,
+	getProviderCheckpointRecords,
+} from '../provider-checkpoints';
 import type { Ability } from '../../extension-types';
 import type { ProviderCapabilities, UseSuggestionsHook } from '../load-external-providers';
+
+jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
+	virtual: true,
+} );
+jest.mock( '../provider-checkpoints', () => ( {
+	...jest.requireActual( '../provider-checkpoints' ),
+	getProviderCheckpointRecords: jest.fn( () => [] ),
+} ) );
+jest.mock( '../checkpoints', () => ( {
+	RESTORE_CHECKPOINT_TOOL_ID: 'big_sky__restore_checkpoint',
+	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
+	clearCheckpoint: jest.fn(),
+	getAvailableCheckpoints: jest.fn( () => [] ),
+	getCheckpoints: jest.fn( () => [] ),
+	hasCheckpoint: jest.fn(),
+	restoreCheckpoint: jest.fn(),
+	setCheckpoint: jest.fn(),
+} ) );
 
 function setAgentsManagerData( data: Record< string, unknown > ) {
 	( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData = data;
@@ -138,6 +162,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			restoreCheckpointAbility,
 			showComponentAbility,
 			createAbility( 'host/navigate' ),
 			createAbility( 'woocommerce/get-products' ),
@@ -167,6 +192,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			restoreCheckpointAbility,
 			showComponentAbility,
 			createAbility( 'shared/action' ),
 		] );
@@ -177,6 +203,20 @@ describe( 'loadExternalProviders', () => {
 		);
 		expect( firstProvider.executeAbility ).toHaveBeenCalled();
 		expect( secondProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'stamps provider checkpoints at execution time', async () => {
+		const provider = {
+			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'host/edit-thing' ) ] ) ),
+			executeAbility: jest.fn( () => Promise.resolve( { ok: true } ) ),
+		};
+		setAgentsManagerData( { agentProviders: [ { toolProvider: provider } ] } );
+		jest.mocked( getProviderCheckpointRecords ).mockReturnValueOnce( [ { id: 'toolu_mid_turn' } ] );
+
+		const providers = await loadExternalProviders();
+		await providers.toolProvider?.executeAbility( 'host/edit-thing', {} );
+
+		expect( getProviderCheckpointObservedAt( 'toolu_mid_turn' ) ).toBeGreaterThan( 0 );
 	} );
 
 	it( 'executes migrated abilities through AM before any provider copy', async () => {
@@ -236,6 +276,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			restoreCheckpointAbility,
 			showComponentAbility,
 			createAbility( 'host/navigate' ),
 		] );
@@ -422,6 +463,123 @@ describe( 'loadExternalProviders', () => {
 		consoleWarn.mockRestore();
 	} );
 
+	it( 'lists AM checkpoints created after the provider ones last', async () => {
+		const amCreatedAt = Date.now() + 60_000;
+		jest.mocked( getAvailableCheckpoints ).mockReturnValueOnce( [
+			{
+				checkpointId: 'toolu_am',
+				checkpointIndex: 0,
+				checkpointKeys: [ 'color' ],
+				createdAt: amCreatedAt,
+			},
+		] );
+		setAgentsManagerData( {
+			agentProviders: [
+				{
+					contextProvider: {
+						getClientContext: () => ( {
+							url: 'https://example.com/wp-admin/site-editor.php',
+							pathname: '/wp-admin/site-editor.php',
+							search: '',
+							environment: 'wp-admin',
+							availableCheckpoints: [
+								{ checkpointId: 'toolu_bsp', checkpointIndex: 0, checkpointKeys: [ 'blocks' ] },
+							],
+						} ),
+					},
+				},
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.contextProvider?.getClientContext().availableCheckpoints ).toEqual( [
+			{ checkpointId: 'toolu_bsp', checkpointIndex: 0, checkpointKeys: [ 'blocks' ] },
+			{
+				checkpointId: 'toolu_am',
+				checkpointIndex: 1,
+				checkpointKeys: [ 'color' ],
+				createdAt: amCreatedAt,
+			},
+		] );
+	} );
+
+	it( 'lists AM checkpoints created before a provider record appeared first', async () => {
+		const amCreatedAt = Date.now() - 60_000;
+		jest.mocked( getAvailableCheckpoints ).mockReturnValueOnce( [
+			{
+				checkpointId: 'toolu_am_early',
+				checkpointIndex: 0,
+				checkpointKeys: [ 'color' ],
+				createdAt: amCreatedAt,
+			},
+		] );
+		setAgentsManagerData( {
+			agentProviders: [
+				{
+					contextProvider: {
+						getClientContext: () => ( {
+							url: 'https://example.com/wp-admin/site-editor.php',
+							pathname: '/wp-admin/site-editor.php',
+							search: '',
+							environment: 'wp-admin',
+							availableCheckpoints: [
+								{
+									checkpointId: 'toolu_bsp_late',
+									checkpointIndex: 0,
+									checkpointKeys: [ 'blocks' ],
+								},
+							],
+						} ),
+					},
+				},
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect(
+			providers.contextProvider
+				?.getClientContext()
+				.availableCheckpoints?.map(
+					( item: { checkpointId?: string; checkpointIndex?: number } ) => [
+						item.checkpointId,
+						item.checkpointIndex,
+					]
+				)
+		).toEqual( [
+			[ 'toolu_am_early', 0 ],
+			[ 'toolu_bsp_late', 1 ],
+		] );
+	} );
+
+	it( 'leaves the provider checkpoint list untouched when AM has none', async () => {
+		const providerCheckpoints = [
+			{ checkpointId: 'toolu_bsp', checkpointIndex: 0, checkpointKeys: [ 'blocks' ] },
+		];
+		setAgentsManagerData( {
+			agentProviders: [
+				{
+					contextProvider: {
+						getClientContext: () => ( {
+							url: 'https://example.com/wp-admin/site-editor.php',
+							pathname: '/wp-admin/site-editor.php',
+							search: '',
+							environment: 'wp-admin',
+							availableCheckpoints: providerCheckpoints,
+						} ),
+					},
+				},
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.contextProvider?.getClientContext().availableCheckpoints ).toEqual(
+			providerCheckpoints
+		);
+	} );
+
 	it( 'merges markdown components and extensions from multiple providers', async () => {
 		const hostStrong = jest.fn( () => ( { type: 'strong', props: { provider: 'host' } } ) );
 		const wooTable = jest.fn( () => ( { type: 'table', props: { provider: 'woo' } } ) );
@@ -563,6 +721,7 @@ describe( 'loadExternalProviders', () => {
 		editorAbilityRegistered = true;
 
 		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			restoreCheckpointAbility,
 			showComponentAbility,
 			createAbility( 'big-sky/apply-block-edits' ),
 			createAbility( 'wpcom/manage-site' ),

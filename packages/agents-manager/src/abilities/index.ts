@@ -6,13 +6,14 @@ import {
 } from '@wordpress/abilities';
 import isAmAbilitiesDisabled from '../utils/is-am-abilities-disabled';
 import { BIG_SKY_ABILITY_CATEGORY } from './constants';
+import { restoreCheckpointAbility } from './restore-checkpoint';
 import { showComponentAbility } from './show-component';
 import type { ToolProvider } from '../extension-types';
 import type { Ability } from './types';
 
 // AM-owned abilities. Migrating an ability from Big Sky = add its folder
 // under `abilities/` and list it here.
-const AM_ABILITIES: Ability[] = [ showComponentAbility ];
+const AM_ABILITIES: Ability[] = [ restoreCheckpointAbility, showComponentAbility ];
 
 // The agent routes tool calls with `/` → `__` and `-` → `_`.
 export const normalizeAbilityName = ( name: string ) =>
@@ -31,13 +32,19 @@ const getOwnedAbilities = () => ( isAmAbilitiesDisabled() ? [] : AM_ABILITIES );
 export const amToolProvider: ToolProvider = {
 	getAbilities: async () => getOwnedAbilities(),
 	executeAbility: async ( name: string, args: unknown ) => {
-		const ability = getOwnedAbilities().find(
-			( candidate ) => candidate.name === name || normalizeAbilityName( candidate.name ) === name
-		);
-		if ( ! ability?.callback ) {
-			throw new Error( `Agents Manager does not own the ability: ${ name }` );
+		try {
+			const ability = getOwnedAbilities().find(
+				( candidate ) => candidate.name === name || normalizeAbilityName( candidate.name ) === name
+			);
+			if ( ! ability?.callback ) {
+				throw new Error( `Agents Manager does not own the ability: ${ name }` );
+			}
+			return await ( ability.callback as ( input: unknown ) => Promise< unknown > )( args );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( `[AgentsManager] Ability "${ name }" failed:`, error );
+			throw error;
 		}
-		return ( ability.callback as ( input: unknown ) => Promise< unknown > )( args );
 	},
 };
 

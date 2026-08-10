@@ -1,0 +1,98 @@
+import { select } from '@wordpress/data';
+import type { UseCheckpointReturn } from './load-external-providers';
+
+// TODO (ability-migration): Delete this bridge once the last checkpoint-writing
+// Big Sky ability migrates — every checkpoint then lives in AM's own store.
+/**
+ * Bridge to the provider's checkpoint store. While Big Sky still executes some
+ * mutating tools, their checkpoints live in its store — `restore-checkpoint`
+ * delegates ids AM does not hold here, so no undo is lost mid-migration. The
+ * chat mount keeps the provider's `useCheckpoint` API registered; ability
+ * callbacks are plain functions and cannot call the hook themselves.
+ */
+
+let providerCheckpoints: UseCheckpointReturn | undefined;
+
+export function setProviderCheckpoints( checkpoints: UseCheckpointReturn | undefined ): void {
+	providerCheckpoints = checkpoints;
+}
+
+export function getProviderCheckpoints(): UseCheckpointReturn | undefined {
+	return providerCheckpoints;
+}
+
+// Big Sky's wp.data store — read directly because the provider's
+// `useCheckpoint` export has no record accessor.
+const PROVIDER_STORE_NAME = 'ai-assembler';
+
+export interface ProviderCheckpoint {
+	checkpointKeys: string[];
+	pageRename?: { pageId: string | number; oldTitle: string; newTitle: string };
+	navigationRecords?: Record< string, unknown >;
+}
+
+export interface ProviderCheckpointRecord {
+	id: string;
+	toolId?: string;
+	requestIntentType?: string;
+}
+
+type ProviderStoreRecord = Partial< ProviderCheckpointRecord & ProviderCheckpoint >;
+
+type ProviderStoreSelect = {
+	getCheckpoints?: () => ProviderStoreRecord[] | undefined;
+};
+
+function getProviderStoreRecords(): ProviderStoreRecord[] {
+	return (
+		( select( PROVIDER_STORE_NAME ) as ProviderStoreSelect | undefined )?.getCheckpoints?.() ?? []
+	);
+}
+
+/**
+ * The restore-relevant fields of a provider-held checkpoint, or `null` when
+ * the record is unreadable or keyless — Big Sky writes keyless checkpoints
+ * for some entity edits, and those restore via its legacy full-snapshot path.
+ */
+export function getProviderCheckpoint( id: string ): ProviderCheckpoint | null {
+	const checkpoint = getProviderStoreRecords().find( ( record ) => record?.id === id );
+	if ( ! Array.isArray( checkpoint?.checkpointKeys ) || ! checkpoint.checkpointKeys.length ) {
+		return null;
+	}
+
+	return {
+		checkpointKeys: checkpoint.checkpointKeys,
+		...( checkpoint.pageRename && { pageRename: checkpoint.pageRename } ),
+		...( checkpoint.navigationRecords && { navigationRecords: checkpoint.navigationRecords } ),
+	};
+}
+
+/**
+ * Identity fields of every provider-held checkpoint — lets the restore sweep
+ * clear stale reciprocals from Big Sky's store too.
+ */
+export function getProviderCheckpointRecords(): ProviderCheckpointRecord[] {
+	return getProviderStoreRecords().filter(
+		( record ): record is ProviderCheckpointRecord => typeof record?.id === 'string'
+	);
+}
+
+// Big Sky's records carry no timestamps, so the loader stamps each id when it
+// is first seen — right after a tool executes, and at each context build as a
+// fallback. Sorting the merged list by these keeps it chronological, so "the
+// most recent checkpoint" means to the agent what it means to the user.
+const firstObservedAt = new Map< string, number >();
+
+export function stampProviderCheckpointObservations( ids: string[] ): void {
+	const now = Date.now();
+	ids.forEach( ( id ) => {
+		if ( ! firstObservedAt.has( id ) ) {
+			firstObservedAt.set( id, now );
+		}
+	} );
+}
+
+/** First-seen time of a provider-held checkpoint id; unseen ids sort oldest. */
+export function getProviderCheckpointObservedAt( id: string ): number {
+	return firstObservedAt.get( id ) ?? 0;
+}

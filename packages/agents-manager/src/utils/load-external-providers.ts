@@ -13,8 +13,14 @@
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import { amToolProvider, normalizeAbilityName } from '../abilities';
+import { getAvailableCheckpoints } from './checkpoints';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
+import {
+	getProviderCheckpointObservedAt,
+	getProviderCheckpointRecords,
+	stampProviderCheckpointObservations,
+} from './provider-checkpoints';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type {
 	ToolProvider,
@@ -106,7 +112,7 @@ export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentTyp
  */
 export type UseCheckpointReturn = {
 	getLastEditorState: () => unknown;
-	setCheckpoint: ( id: string, keys?: string[] ) => void;
+	setCheckpoint: ( id: string, keys?: string[], metadata?: Record< string, unknown > ) => void;
 	addCheckpointKeys: ( id: string, keys: string[] ) => void;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
 	addNewPageToCheckpoint: ( pageId: string ) => void;
@@ -116,6 +122,7 @@ export type UseCheckpointReturn = {
 		pageTitle: string,
 		options?: { shouldRestoreNavigation?: boolean }
 	) => void;
+	addNavigationToCheckpoint?: ( id: string, navigationId: string ) => void;
 	getLatestUserMessageId: () => string | undefined;
 	clearCheckpoint: ( userMessageId: string ) => void;
 	hasCheckpoint: ( id: string ) => boolean;
@@ -319,6 +326,62 @@ function getFallbackClientContext(): ClientContextType {
 		pathname: location.pathname,
 		search: location.search,
 		environment: 'wp-admin',
+	};
+}
+
+// TODO (ability-migration): Remove the merge once Big Sky deletes its
+// checkpoint context feed — AM's list then stands alone.
+/**
+ * Appends AM's checkpoints to the provider-advertised `availableCheckpoints`,
+ * so the agent sees every restorable id — the provider's (restored through
+ * the provider-checkpoints bridge) and AM's own.
+ */
+function withAmCheckpoints(
+	contextProvider: ContextProvider | undefined
+): ContextProvider | undefined {
+	if ( ! contextProvider ) {
+		return undefined;
+	}
+
+	return {
+		getClientContext: () => {
+			const context = contextProvider.getClientContext();
+			const amCheckpoints = getAvailableCheckpoints();
+			if ( ! amCheckpoints.length ) {
+				return context;
+			}
+
+			const providerCheckpoints: { checkpointId?: string }[] = Array.isArray(
+				context.availableCheckpoints
+			)
+				? context.availableCheckpoints
+				: [];
+
+			// Order the merged list chronologically: AM records carry `createdAt`,
+			// provider records sort by when the loader first saw them (the stores
+			// share no clock). The agent picks "the most recent" by position.
+			stampProviderCheckpointObservations(
+				providerCheckpoints
+					.map( ( { checkpointId } ) => checkpointId )
+					.filter( ( id ): id is string => !! id )
+			);
+			const merged = [
+				...providerCheckpoints.map( ( item ) => ( {
+					item,
+					at: getProviderCheckpointObservedAt( item.checkpointId ?? '' ),
+				} ) ),
+				...amCheckpoints.map( ( item ) => ( { item, at: item.createdAt } ) ),
+			];
+			merged.sort( ( a, b ) => a.at - b.at );
+
+			return {
+				...context,
+				availableCheckpoints: merged.map( ( { item }, index ) => ( {
+					...item,
+					checkpointIndex: index,
+				} ) ),
+			};
+		},
 	};
 }
 
@@ -577,7 +640,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 	}
 
-	const mergedContextProvider = mergeContextProviders( allContextProviders );
+	const mergedContextProvider = withAmCheckpoints( mergeContextProviders( allContextProviders ) );
 	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
 	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );
 
@@ -629,7 +692,17 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 						( ability ) => ability.name === name || normalizeAbilityName( ability.name ) === name
 					);
 					if ( owns ) {
-						return allToolProviders[ i ].executeAbility( name, args );
+						const result = await allToolProviders[ i ].executeAbility( name, args );
+
+						// TODO (ability-migration): Delete with the provider-checkpoints
+						// bridge. Stamping right after execution times a Big Sky record
+						// within the turn that created it — the context-build stamp
+						// alone would time it one message late.
+						stampProviderCheckpointObservations(
+							getProviderCheckpointRecords().map( ( { id } ) => id )
+						);
+
+						return result;
 					}
 				}
 				throw new Error( `No provider handled ability: ${ name }` );
