@@ -278,6 +278,7 @@ describe( 'useManagedZendeskChat', () => {
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_auth_error', {
 				blog_id: 123,
+				site_context_source: 'chat_site',
 			} );
 		} );
 
@@ -291,6 +292,7 @@ describe( 'useManagedZendeskChat', () => {
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_auth_error', {
 				blog_id: 456,
+				site_context_source: 'chat_site',
 			} );
 		} );
 
@@ -310,6 +312,7 @@ describe( 'useManagedZendeskChat', () => {
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_auth_error', {
 				blog_id: 456,
+				site_context_source: 'chat_site',
 			} );
 
 			list.unmount();
@@ -326,7 +329,9 @@ describe( 'useManagedZendeskChat', () => {
 
 			await triggerAuthError();
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_auth_error', {} );
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_auth_error', {
+				site_context_source: 'none',
+			} );
 		} );
 	} );
 } );

@@ -17,12 +17,11 @@ export function getHelpCenterTracksProperties(
 	properties: TracksProperties = {},
 	{ explicitSiteId, siteId, primarySiteId, usePrimarySiteId = false }: SiteContext = {}
 ): TracksProperties {
-	return withSiteContext(
-		properties,
-		explicitSiteId,
-		siteId,
-		usePrimarySiteId ? primarySiteId : undefined
-	);
+	return withSiteContext( properties, [
+		[ 'explicit', explicitSiteId ],
+		[ 'help_center_context', siteId ],
+		[ 'primary_site', usePrimarySiteId ? primarySiteId : undefined ],
+	] );
 }
 
 export function recordHelpCenterTracksEvent(

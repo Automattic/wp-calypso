@@ -7,18 +7,23 @@ describe( 'getHelpCenterTracksProperties', () => {
 				{ source: 'odie' },
 				{ explicitSiteId: 11, siteId: 22, primarySiteId: 33, usePrimarySiteId: true }
 			)
-		).toEqual( { source: 'odie', blog_id: 11 } );
+		).toEqual( { source: 'odie', blog_id: 11, site_context_source: 'explicit' } );
 	} );
 
 	test( 'uses Help Center context site', () => {
-		expect( getHelpCenterTracksProperties( {}, { siteId: 22 } ) ).toEqual( { blog_id: 22 } );
+		expect( getHelpCenterTracksProperties( {}, { siteId: 22 } ) ).toEqual( {
+			blog_id: 22,
+			site_context_source: 'help_center_context',
+		} );
 	} );
 
 	test( 'uses primary site only when enabled', () => {
 		expect(
 			getHelpCenterTracksProperties( {}, { primarySiteId: 33, usePrimarySiteId: true } )
-		).toEqual( { blog_id: 33 } );
-		expect( getHelpCenterTracksProperties( {}, { primarySiteId: 33 } ) ).toEqual( {} );
+		).toEqual( { blog_id: 33, site_context_source: 'primary_site' } );
+		expect( getHelpCenterTracksProperties( {}, { primarySiteId: 33 } ) ).toEqual( {
+			site_context_source: 'none',
+		} );
 	} );
 
 	test( 'never lets a caller blog_id stand in for the support site', () => {
@@ -26,27 +31,34 @@ describe( 'getHelpCenterTracksProperties', () => {
 		// own blog, say — which is not the site the support session is about.
 		expect(
 			getHelpCenterTracksProperties( { blog_id: 44, source: 'article' }, { siteId: 22 } )
-		).toEqual( { blog_id: 22, source: 'article' } );
+		).toEqual( { blog_id: 22, source: 'article', site_context_source: 'help_center_context' } );
 		expect( getHelpCenterTracksProperties( { blog_id: 44, source: 'article' } ) ).toEqual( {
 			source: 'article',
+			site_context_source: 'none',
 		} );
 	} );
 
 	test( 'preserves caller properties other than blog_id', () => {
 		expect(
 			getHelpCenterTracksProperties( { source: 'article', post_id: 7 }, { siteId: 22 } )
-		).toEqual( { source: 'article', post_id: 7, blog_id: 22 } );
+		).toEqual( {
+			source: 'article',
+			post_id: 7,
+			blog_id: 22,
+			site_context_source: 'help_center_context',
+		} );
 	} );
 
 	test( 'replaces an invalid caller blog_id with valid site context', () => {
 		expect( getHelpCenterTracksProperties( { blog_id: 0 }, { siteId: 22 } ) ).toEqual( {
 			blog_id: 22,
+			site_context_source: 'help_center_context',
 		} );
 	} );
 
 	test( 'omits blog_id when no valid site exists', () => {
 		expect(
 			getHelpCenterTracksProperties( { blog_id: Number.NaN, source: 'global' }, { siteId: null } )
-		).toEqual( { source: 'global' } );
+		).toEqual( { source: 'global', site_context_source: 'none' } );
 	} );
 } );

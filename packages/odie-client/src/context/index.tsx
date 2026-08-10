@@ -138,7 +138,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 						chat_id: mainChatState?.odieId,
 						bot_name_slug: newInteractionsBotSlug,
 					},
-					selectedSiteId
+					[ [ 'selected_site', selectedSiteId ] ]
 				)
 			);
 		},

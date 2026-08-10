@@ -15,38 +15,62 @@ describe( 'getValidBlogId', () => {
 } );
 
 describe( 'withSiteContext', () => {
-	test( 'attaches the first valid candidate as blog_id', () => {
-		expect( withSiteContext( { source: 'chat' }, undefined, 0, 123, 456 ) ).toEqual( {
-			source: 'chat',
-			blog_id: 123,
-		} );
+	test( 'attaches the first usable candidate and names it', () => {
+		expect(
+			withSiteContext( { source: 'chat' }, [
+				[ 'explicit', undefined ],
+				[ 'help_center_context', 0 ],
+				[ 'primary_site', 123 ],
+			] )
+		).toEqual( { source: 'chat', blog_id: 123, site_context_source: 'primary_site' } );
+	} );
+
+	test( 'prefers the earlier candidate when several are usable', () => {
+		expect(
+			withSiteContext( {}, [
+				[ 'explicit', 123 ],
+				[ 'primary_site', 456 ],
+			] )
+		).toEqual( { blog_id: 123, site_context_source: 'explicit' } );
 	} );
 
 	test( 'preserves other caller properties', () => {
-		expect( withSiteContext( { source: 'chat', queued_messages: 2 }, 123 ) ).toEqual( {
+		expect(
+			withSiteContext( { source: 'chat', queued_messages: 2 }, [ [ 'chat_site', 123 ] ] )
+		).toEqual( {
 			source: 'chat',
 			queued_messages: 2,
 			blog_id: 123,
+			site_context_source: 'chat_site',
 		} );
 	} );
 
-	test( 'omits blog_id when no candidate is usable', () => {
-		expect( withSiteContext( { source: 'chat' }, 0, Number.NaN, null, undefined ) ).toEqual( {
+	test( 'reports none, and omits blog_id, when no candidate is usable', () => {
+		expect(
+			withSiteContext( { source: 'chat' }, [
+				[ 'explicit', 0 ],
+				[ 'primary_site', Number.NaN ],
+			] )
+		).toEqual( { source: 'chat', site_context_source: 'none' } );
+		expect( withSiteContext( { source: 'chat' }, [] ) ).toEqual( {
 			source: 'chat',
+			site_context_source: 'none',
 		} );
 	} );
 
 	test( 'never lets a caller-supplied blog_id stand in for the site', () => {
-		expect( withSiteContext( { source: 'chat', blog_id: 999 }, 123 ) ).toEqual( {
+		expect( withSiteContext( { source: 'chat', blog_id: 999 }, [ [ 'chat_site', 123 ] ] ) ).toEqual(
+			{ source: 'chat', blog_id: 123, site_context_source: 'chat_site' }
+		);
+		expect( withSiteContext( { source: 'chat', blog_id: 999 }, [] ) ).toEqual( {
 			source: 'chat',
-			blog_id: 123,
+			site_context_source: 'none',
 		} );
-		expect( withSiteContext( { source: 'chat', blog_id: 999 } ) ).toEqual( { source: 'chat' } );
 	} );
 
 	test( 'does not mutate the caller properties', () => {
 		const properties = { source: 'chat', blog_id: 999 };
-		withSiteContext( properties, 123 );
+		withSiteContext( properties, [ [ 'chat_site', 123 ] ] );
 		expect( properties ).toEqual( { source: 'chat', blog_id: 999 } );
 	} );
 } );

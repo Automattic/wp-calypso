@@ -154,7 +154,7 @@ function useSmooch( enabled = true, integrationKey?: string ) {
 					async onInvalidAuth() {
 						recordTracksEvent(
 							'calypso_smooch_messenger_auth_error',
-							withSiteContext( {}, getSmoochSiteId() )
+							withSiteContext( {}, [ [ 'chat_site', getSmoochSiteId() ] ] )
 						);
 
 						await queryClient.invalidateQueries( {
@@ -323,12 +323,18 @@ export const useManagedZendeskChat = ( {
 	const disconnectedListener = useCallback( () => {
 		hadDisconnectRef.current = true;
 		setConnectionStatus( 'disconnected' );
-		recordTracksEvent( 'calypso_smooch_messenger_disconnected', withSiteContext( {}, siteId ) );
+		recordTracksEvent(
+			'calypso_smooch_messenger_disconnected',
+			withSiteContext( {}, [ [ 'chat_site', siteId ] ] )
+		);
 	}, [ setConnectionStatus, siteId ] );
 
 	const reconnectingListener = useCallback( () => {
 		setConnectionStatus( 'reconnecting' );
-		recordTracksEvent( 'calypso_smooch_messenger_reconnecting', withSiteContext( {}, siteId ) );
+		recordTracksEvent(
+			'calypso_smooch_messenger_reconnecting',
+			withSiteContext( {}, [ [ 'chat_site', siteId ] ] )
+		);
 	}, [ setConnectionStatus, siteId ] );
 
 	const typingStartListener = useCallback(
@@ -349,7 +355,10 @@ export const useManagedZendeskChat = ( {
 		// We don't want a "connected" status on page load, it's only useful as a sign of a recovered connection.
 		if ( connectionStatus ) {
 			setConnectionStatus( 'connected' );
-			recordTracksEvent( 'calypso_smooch_messenger_connected', withSiteContext( {}, siteId ) );
+			recordTracksEvent(
+				'calypso_smooch_messenger_connected',
+				withSiteContext( {}, [ [ 'chat_site', siteId ] ] )
+			);
 		}
 	}, [ setConnectionStatus, connectionStatus, siteId ] );
 
@@ -731,7 +740,10 @@ export const useManagedZendeskChat = ( {
 						// eslint-disable-next-line no-console
 						console.error( 'Error uploading Zendesk chat attachments', error );
 						try {
-							recordTracksEvent( 'zendesk_chat_file_upload_failed', withSiteContext( {}, siteId ) );
+							recordTracksEvent(
+								'zendesk_chat_file_upload_failed',
+								withSiteContext( {}, [ [ 'chat_site', siteId ] ] )
+							);
 						} catch {
 							// Swallow analytics errors to avoid affecting user flow.
 						}
@@ -785,7 +797,7 @@ export const useManagedZendeskChat = ( {
 			if ( queue.length > 0 ) {
 				recordTracksEvent(
 					'calypso_smooch_messenger_queue_flushed',
-					withSiteContext( { queued_messages: queue.length }, siteId )
+					withSiteContext( { queued_messages: queue.length }, [ [ 'chat_site', siteId ] ] )
 				);
 			}
 
