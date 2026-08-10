@@ -32,7 +32,7 @@ export class SilentErrorBoundary extends Component<
 
 	componentDidCatch( error: Error, errorInfo: ErrorInfo ) {
 		captureException( error, {
-			tags: { calypso_section: 'dashboard', ...this.props.sentryTags },
+			tags: { ...this.props.sentryTags, calypso_section: 'dashboard' },
 			extra: { componentStack: errorInfo.componentStack },
 		} );
 	}
