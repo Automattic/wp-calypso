@@ -19,6 +19,7 @@ import initialReducer from 'calypso/state/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
+import EmailVerificationGate from '../email-verification';
 import { gateScope, markResendUnavailableUntil } from '../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
 import type { ReactNode } from 'react';
@@ -254,6 +255,39 @@ describe( 'account step email verification gate', () => {
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 	} );
 
+	// The dedicated endpoint mails whatever the account holds, which during a correction is the
+	// address the gate has stopped naming — so it would promise one and send the other.
+	it( 'resends the confirmation to the corrected address, not the one it replaced', async () => {
+		const user = userEvent.setup();
+		const resent = nock( 'https://public-api.wordpress.com' )
+			.post(
+				'/rest/v1.1/me/settings',
+				( body ) =>
+					body.user_email === CORRECTED_EMAIL &&
+					body.user_email_change_requested_from === 'onboarding-with-email-verification'
+			)
+			.reply( 200, {} );
+		const activation = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/send-verification-email' )
+			.reply( 200, { success: true } );
+
+		renderWithProvider(
+			<EmailVerificationGate
+				flow="onboarding"
+				scope={ gateScope( 'onboarding', mockUserId ) }
+				email={ CORRECTED_EMAIL }
+				pendingEmail={ CORRECTED_EMAIL }
+				onEditEmail={ jest.fn() }
+			/>,
+			{ store: makeStore( false ) }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+
+		await waitFor( () => expect( resent.isDone() ).toBe( true ) );
+		expect( activation.isDone() ).toBe( false );
+	} );
+
 	// The address does not move until the confirmation is opened, so the gate has to name where
 	// that confirmation went rather than what the account still holds.
 	it( 'asks for a corrected address and waits on that one instead', async () => {
@@ -268,12 +302,11 @@ describe( 'account step email verification gate', () => {
 					body.user_email === CORRECTED_EMAIL &&
 					body.user_email_change_requested_from === 'onboarding-with-email-verification'
 			)
-			.reply( 200, {} );
-		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
-			user_email: EMAIL,
-			user_email_change_pending: true,
-			new_user_email: CORRECTED_EMAIL,
-		} );
+			.reply( 200, { new_user_email: CORRECTED_EMAIL, user_email_change_pending: true } );
+		// Answering from behind, which is what keeping the accepted address is for.
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email: EMAIL } );
 		renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
