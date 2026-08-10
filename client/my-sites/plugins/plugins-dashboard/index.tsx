@@ -42,10 +42,9 @@ import {
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithJetpackPlugin from 'calypso/state/selectors/get-selected-or-all-sites-with-jetpack-plugin';
-import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PluginActionName, PluginActions, Site } from '../hooks/types';
 import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
 import PluginAvailableOnSitesList from '../plugin-management-v2/plugin-details-v2/plugin-available-on-sites-list';
@@ -64,7 +63,6 @@ type ActionCallbacks = Record< PluginActionName, PluginActionCallback >;
 
 interface PluginsDashboardProps {
 	pluginSlug: string;
-	siteSlug?: string;
 	showOnlyUpdates?: boolean;
 	doSearch: ( query: string ) => void; // prop coming from UrlSearch
 	search: string | undefined;
@@ -87,7 +85,6 @@ interface PluginsDashboardProps {
 
 const PluginsDashboard = ( {
 	pluginSlug,
-	siteSlug,
 	showOnlyUpdates = false,
 	doSearch,
 	search: searchTerm,
@@ -96,14 +93,11 @@ const PluginsDashboard = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isJetpackCloudOrA8CForAgencies = isJetpackCloud() || isA8CForAgencies();
-	const availableSites = useSelector( ( state ) =>
-		isA8CForAgencies() ? getSelectedOrAllSitesWithJetpackPlugin( state ) : getSites( state )
+	const allSites = useSelector( ( state ) =>
+		isA8CForAgencies()
+			? getSelectedOrAllSitesWithJetpackPlugin( state )
+			: getSelectedOrAllSites( state )
 	);
-	const selectedSite = useSelector( getSelectedSite );
-	let allSites = availableSites;
-	if ( siteSlug ) {
-		allSites = selectedSite ? [ selectedSite ] : [];
-	}
 	const siteIds = siteObjectsToSiteIds( allSites ) ?? [];
 	const wporgPlugins = useSelector( ( state ) => getAllWporgPlugins( state ) );
 	const isLoading = useSelector(
@@ -135,14 +129,15 @@ const PluginsDashboard = ( {
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, pluginSlug )
 	);
-	allSites.sort( orderByAtomic );
-	const sitesToShow = allSites.filter(
-		( item ): item is SiteDetails =>
-			item !== null &&
-			item !== undefined &&
-			! item?.options?.is_domain_only &&
-			! item?.options?.is_wpforteams_site
-	);
+	const sitesToShow = allSites
+		.filter(
+			( item ): item is SiteDetails =>
+				item !== null &&
+				item !== undefined &&
+				! item?.options?.is_domain_only &&
+				! item?.options?.is_wpforteams_site
+		)
+		.sort( orderByAtomic );
 
 	const sitesWithoutPluginAvailable = sitesToShow.filter(
 		( site ) =>
@@ -355,6 +350,9 @@ const PluginsDashboard = ( {
 				</LayoutTop>
 
 				<PluginsListDataViews
+					// The dashboard survives page.js navigations, so reset the view when the route
+					// switches between the "updates only" and the unfiltered plugin list.
+					key={ showOnlyUpdates ? 'updates' : 'all' }
 					pluginSlug={ pluginSlug }
 					currentPlugins={ currentPlugins }
 					initialSearch={ searchTerm }

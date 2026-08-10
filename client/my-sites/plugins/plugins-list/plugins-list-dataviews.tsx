@@ -104,15 +104,7 @@ export default function PluginsListDataViews( {
 		};
 	} );
 
-	const [ isFilteringUpdates, setIsFilteringUpdates ] = useState( showOnlyUpdates );
-
-	useEffect( () => {
-		setDataViewsState( ( currentState ) => ( {
-			...currentState,
-			filters: showOnlyUpdates ? getUpdateFilters() : [],
-			page: 1,
-		} ) );
-	}, [ showOnlyUpdates ] );
+	const [ isFilteringUpdates, setIsFilteringUpdates ] = useState( false );
 
 	useEffect( () => {
 		// Sets the correct fields when route changes or viewport changes

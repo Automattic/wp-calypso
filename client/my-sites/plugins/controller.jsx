@@ -109,7 +109,6 @@ export function renderPluginsDashboard( context, next ) {
 	context.primary = (
 		<PluginsDashboard
 			pluginSlug={ context.params.slug }
-			siteSlug={ context.params.site }
 			showOnlyUpdates={ context.query?.updates === '1' }
 		/>
 	);
