@@ -32,7 +32,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `removeContextCard`        | `(id: string) => void`                                  | Remove a card.                                                            |
 | `setSiteEditorAction`      | `(name, value) => void`                                 | Record a Site Editor action (name → value) for the chat to read.          |
 | `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).   |
-| `resumeChat`               | `() => void`                                            | Reopen the chat, resuming the active conversation (not a new one).        |
+| `resumeChat`               | `() => void`                                            | Reopen the chat, resuming this tab's conversation (not a new one).        |
 | `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                  |
 
 \* Available only while the chat panel is mounted. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
@@ -93,12 +93,12 @@ window.__agentsManagerActions.setChatDesktopMediaQuery( '(min-width: 1200px)' );
 
 // Navigate within the chat
 window.__agentsManagerActions.chatNavigate( '/chat', {
-	state: { sessionId: '123' },
+	state: { isNewChat: true },
 	replace: true,
 } );
 window.__agentsManagerActions.chatNavigate( '/history' );
 
-// Reopen the chat, resuming the active conversation
+// Reopen the chat, resuming this tab's conversation
 window.__agentsManagerActions.resumeChat();
 
 // Attach context to the next chat message

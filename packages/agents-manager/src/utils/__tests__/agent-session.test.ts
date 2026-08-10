@@ -10,8 +10,8 @@ import {
 	getOrCreateSessionId,
 } from '../agent-session';
 
-// The `ORCHESTRATOR_AGENT_ID` constant ('wp-orchestrator') falls back to the base
-// key internally. Reference it here so tests don't hard-code the mapping silently.
+// Sessions for the `ORCHESTRATOR_AGENT_ID` agent ('wp-orchestrator') use the
+// unsuffixed base key. Reference it here so tests don't hard-code the mapping silently.
 const ORCHESTRATOR_AGENT_ID = 'wp-orchestrator';
 
 // jsdom's `crypto` object does not expose `randomUUID`. Polyfill it so spyOn

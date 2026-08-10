@@ -102,7 +102,8 @@ export default function AgentsManager( {
  * Resolve the session to resume from this tab's stored session — the single
  * source of truth; conversation switches save it before navigating here.
  * Reader chat pre-generates one (blog frontends reload on every navigation);
- * other agents get theirs from the server via `onSessionIdChange`.
+ * other agents get theirs from the server (`onSessionIdChange`, plus the
+ * chat's canonical-ID sync).
  * Empty means a new chat.
  */
 function resolveTabSessionId( isNewChat: boolean, agentId?: string ): string {
