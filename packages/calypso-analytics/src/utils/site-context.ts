@@ -1,17 +1,9 @@
 type TracksProperties = Record< string, unknown >;
 
-/**
- * A candidate site paired with the name of the resolution step that produced it, so
- * the winning step can be reported alongside the site itself.
- */
 export type SiteCandidate = readonly [ source: string, siteId: unknown ];
 
 export const NO_SITE_CONTEXT = 'none';
 
-/**
- * Narrows a candidate site to a usable Tracks `blog_id`, rejecting the values that
- * reach analytics as "no site" in practice: 0, negatives, NaN, null and undefined.
- */
 export function getValidBlogId( value: unknown ): number | undefined {
 	const blogId = Number( value );
 
@@ -19,18 +11,9 @@ export function getValidBlogId( value: unknown ): number | undefined {
 }
 
 /**
- * Attaches the first usable site among `candidates` as `blog_id`, leaving every other
- * caller-supplied property untouched.
- *
- * Callers pass their candidates in priority order, most specific first. A `blog_id`
- * already present in `properties` is deliberately not treated as a candidate: it means
- * whatever the caller happened to put in the payload, which is not necessarily the site
- * the event is about, so surfaces that know their site should pass it explicitly.
- *
- * `site_context_source` names the step that supplied the site, or `none` when no
- * candidate was usable. Coverage of `blog_id` alone cannot tell a site that was known
- * from one that was guessed by a broad fallback, and those carry very different
- * confidence — reporting the source keeps that distinction measurable.
+ * Attaches the first valid site in `candidates` (highest priority first) as `blog_id`, and
+ * its label as `site_context_source`. A `blog_id` already in `properties` is dropped, not
+ * used: it is whatever the caller put there, not necessarily the site the event is about.
  */
 export function withSiteContext(
 	properties: TracksProperties,

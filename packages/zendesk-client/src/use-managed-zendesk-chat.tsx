@@ -93,11 +93,10 @@ function sortMessagesByTimestamp( messages: ZendeskMessage[] ) {
 	} );
 }
 
-// Smooch is a singleton and its auth delegate is registered once, by whichever hook
-// initialises it first — the chat or the conversation list. The site therefore belongs to
-// the singleton rather than to any one hook instance: every owner registers the site it
-// knows, and the delegate resolves the current one when the event fires. Registering
-// rather than assigning keeps a still-mounted owner's site alive when another unmounts.
+// Smooch is a singleton whose auth delegate is installed once, by whichever hook mounts
+// first, so the site belongs to the singleton rather than to one hook instance. Every owner
+// registers its own entry, which keeps a still-mounted owner's site alive when another
+// unmounts.
 type SmoochSiteEntry = { siteId: number | string | undefined };
 
 const smoochSiteEntries = new Set< SmoochSiteEntry >();
@@ -847,8 +846,7 @@ export const useGetZendeskConversations = (
 	// (Smooch is a singleton): listing conversations must target the same integration
 	// the chat created them on.
 	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch( enabled, smoochIntegrationKey );
-	// This hook can be the only Smooch owner on screen (history, escalation), so it has
-	// to supply the site too or the delegate it installs reports events without one.
+	// Can be the only Smooch owner on screen (history, escalation), so it registers a site too.
 	useSmoochSiteContext( siteId );
 	return { conversations: Smooch?.getConversations() ?? [], isLoading: isSettingUpSmooch };
 };

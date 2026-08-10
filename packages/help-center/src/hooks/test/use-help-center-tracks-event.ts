@@ -27,8 +27,6 @@ describe( 'getHelpCenterTracksProperties', () => {
 	} );
 
 	test( 'never lets a caller blog_id stand in for the support site', () => {
-		// A blog_id in the payload means whatever the caller put there — a search result's
-		// own blog, say — which is not the site the support session is about.
 		expect(
 			getHelpCenterTracksProperties( { blog_id: 44, source: 'article' }, { siteId: 22 } )
 		).toEqual( { blog_id: 22, source: 'article', site_context_source: 'help_center_context' } );

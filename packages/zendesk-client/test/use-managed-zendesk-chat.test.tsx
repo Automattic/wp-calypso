@@ -245,9 +245,8 @@ describe( 'useManagedZendeskChat', () => {
 	} );
 
 	describe( 'site context on Smooch auth errors', () => {
-		// Smooch is a singleton shared through one query cache, so whichever hook mounts
-		// first is the one that installs the auth delegate. The site has to survive that,
-		// whichever owner happens to win and whichever one unmounts later.
+		// Smooch is a singleton, so the site must survive whichever hook installs the auth
+		// delegate and whichever one unmounts later.
 		function makeWrapper() {
 			const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 			return ( { children }: { children: React.ReactNode } ) => (

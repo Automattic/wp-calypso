@@ -51,8 +51,7 @@ export const useHelpCenterSearch = ( onSearchChange?: ( query: string ) => void 
 					location: 'help-center',
 					result_url: result.link,
 					post_id: result.post_id,
-					// The blog hosting the support article, not the site the user needs help
-					// with — `blog_id` is reserved for the latter.
+					// Article blog, not the site the user needs help with.
 					article_blog_id: result.blog_id,
 				};
 				recordTracksEvent( 'calypso_inlinehelp_article_no_postid_redirect', tracksData );
