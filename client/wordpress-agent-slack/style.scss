@@ -1,0 +1,45 @@
+.wordpress-agent-slack {
+	.wp-block-notice,
+	.components-notice {
+		margin-block-end: 16px;
+	}
+}
+
+.wordpress-agent-slack__heading,
+.wordpress-agent-slack__connection,
+.wordpress-agent-slack__pairing {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+
+	h2,
+	h3,
+	p {
+		margin: 0;
+	}
+
+	p {
+		margin-block-start: 4px;
+		color: var(--color-text-subtle);
+	}
+}
+
+.wordpress-agent-slack__heading {
+	margin-block: 24px 16px;
+}
+
+.wordpress-agent-slack__loading {
+	display: flex;
+	justify-content: center;
+	padding-block: 48px;
+}
+
+@media ( max-width: 480px ) {
+	.wordpress-agent-slack__heading,
+	.wordpress-agent-slack__connection,
+	.wordpress-agent-slack__pairing {
+		align-items: stretch;
+		flex-direction: column;
+	}
+}
