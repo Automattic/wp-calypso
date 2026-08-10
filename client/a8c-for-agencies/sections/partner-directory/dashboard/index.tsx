@@ -84,12 +84,12 @@ const PartnerDirectoryDashboard = () => {
 			closed: {
 				key: 'closed',
 				label: translate( 'Closed' ),
-				intent: 'info',
+				intent: 'default',
 			},
 			unknown: {
 				key: 'unknown',
 				label: '-',
-				intent: 'info',
+				intent: 'default',
 			},
 		};
 	}, [ translate ] );
