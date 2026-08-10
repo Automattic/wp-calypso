@@ -269,6 +269,8 @@ describe( 'account step email verification gate', () => {
 		expect( scope.isDone() ).toBe( true );
 		// The gate names the address from the user, so it has to be read again to name the new one.
 		expect( fetchCurrentUser ).toHaveBeenCalled();
+		// An activation email has just gone out, so offering Resend would only be refused.
+		expect( await screen.findByRole( 'button', { name: /^Resend \(/ } ) ).toBeVisible();
 	} );
 
 	// Otherwise a refusal leaves the user on a screen that looks like it did nothing.
