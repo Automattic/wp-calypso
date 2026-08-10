@@ -140,8 +140,7 @@ both a mobile and desktop viewport.
 
 The viewports used for mobile and desktop testing are fixed and based on user data and
 important Calypso breakpoints. Whether the mobile or desktop viewport is used is controlled by
-an environment variable, `VIEWPORT_NAME`. For more information on supported environment
-variables, see the [Environment Variables](./environment_variables.md) page.
+the Playwright project the spec runs under; see [Use the mobile viewport](./tests_local.md#use-the-mobile-viewport).
 
 If a page requires different selectors or actions based on the viewport, those differences
 should be handled in the library object methods and abstracted away from the specs as much as
