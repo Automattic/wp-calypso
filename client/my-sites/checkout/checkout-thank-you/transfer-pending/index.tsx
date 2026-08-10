@@ -29,20 +29,12 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const transfer = useSelector( ( state ) => getAtomicTransfer( state, siteId ) );
 
-	// This screen is only mounted while the transfer runs, but it stays up for a beat after the
-	// transfer settles while the redirect resolves — that tail is not wait the customer is enduring.
-	// Latched for the same reason the marketplace one is: a settled transfer does not unsettle, and a
-	// refetch that momentarily reads empty would open a second wait on the way out.
-	const isTransferSettledRef = React.useRef( false );
-	isTransferSettledRef.current =
-		isTransferSettledRef.current ||
-		transfer?.status === transferStates.COMPLETED ||
-		transfer?.status === transferStates.ERROR;
-	const isTransferSettled = isTransferSettledRef.current;
-
+	// A completed transfer is not the end of the wait: the parent keeps this screen up until it has
+	// also verified that WooCommerce finished installing. Being mounted is the condition, so the wait
+	// runs for as long as this component does and `transfer_status` says how it ended.
 	useWaitHeartbeat( {
 		surface: 'checkout_thank_you_transfer',
-		enabled: ! isTransferSettled,
+		enabled: true,
 		properties: {
 			site_id: siteId,
 			order_id: orderId,

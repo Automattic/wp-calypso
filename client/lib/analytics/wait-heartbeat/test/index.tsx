@@ -185,6 +185,51 @@ describe( 'useWaitHeartbeat', () => {
 		} );
 	} );
 
+	// The back-forward cache freezes the document rather than tearing it down, and the customer can
+	// come back to a wait that is still running.
+	it( 'keeps the wait open when the page is only frozen', () => {
+		renderHeartbeat();
+		act( () => {
+			const event = new Event( 'pagehide' ) as PageTransitionEvent;
+			Object.defineProperty( event, 'persisted', { value: true } );
+			window.dispatchEvent( event );
+		} );
+
+		expect( eventsNamed( 'calypso_transfer_wait_ended' ) ).toHaveLength( 0 );
+	} );
+
+	// Not every browser fires `visibilitychange` on the way back, so without this the return from the
+	// cache would be invisible and the gap unbounded.
+	it( 'marks the return from the cache', async () => {
+		renderHeartbeat();
+		setVisibility( 'hidden' );
+		await advance( 30 * 1000 );
+		setVisibility( 'visible' );
+		mockRecordTracksEvent.mockClear();
+
+		act( () => {
+			const event = new Event( 'pageshow' ) as PageTransitionEvent;
+			Object.defineProperty( event, 'persisted', { value: true } );
+			window.dispatchEvent( event );
+		} );
+
+		expect( eventsNamed( 'calypso_transfer_wait_heartbeat' ) ).toHaveLength( 0 );
+
+		setVisibility( 'hidden' );
+		Object.defineProperty( document, 'visibilityState', { value: 'visible', configurable: true } );
+		mockRecordTracksEvent.mockClear();
+		act( () => {
+			const event = new Event( 'pageshow' ) as PageTransitionEvent;
+			Object.defineProperty( event, 'persisted', { value: true } );
+			window.dispatchEvent( event );
+		} );
+
+		expect( propsOf( 'calypso_transfer_wait_heartbeat' )[ 0 ] ).toMatchObject( {
+			trigger: 'visibility',
+			is_visible: true,
+		} );
+	} );
+
 	// Otherwise one wait would be counted twice: once on the way out of the page, once on unmount.
 	it( 'closes the bracket only once', () => {
 		const { unmount } = renderHeartbeat();

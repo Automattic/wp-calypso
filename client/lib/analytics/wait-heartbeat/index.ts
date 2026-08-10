@@ -74,7 +74,7 @@ type Wait = {
  * silently assumed to be regular.
  *
  * A wait ends explicitly or not at all. `..._ended` fires once per wait, from whichever comes
- * first: the caller retiring it, the cap, or `pagehide`. That last one is best effort — delivery
+ * first: the caller retiring it, the cap, or the page being torn down. That last one is best effort — delivery
  * during unload is not guaranteed — so callers whose flow finishes in a full-page redirect must
  * retire the wait themselves on success, before navigating. Without that a completed install is
  * indistinguishable from someone closing the tab.
@@ -190,13 +190,35 @@ export function useWaitHeartbeat( {
 
 		// `pagehide` rather than `beforeunload`: it fires for the bfcache path too, and is the only
 		// chance to close a bracket a full-page navigation would otherwise leave open.
-		const onPageHide = () => endWait( 'page_hidden' );
+		//
+		// A persisted one is not that: the document is frozen, not torn down, and can come back to a
+		// wait that is still running. Ending it there would retire a wait the customer returns to and
+		// leave the restored screen beating for nobody. It is the hidden case, which the pair above
+		// already covers — visible time stops, the gap reads as censored.
+		const onPageHide = ( event: PageTransitionEvent ) => {
+			if ( event.persisted ) {
+				return;
+			}
+			endWait( 'page_hidden' );
+		};
+
+		// Not every browser fires `visibilitychange` on the way out of the back-forward cache, so this
+		// is the fallback that marks the return. Skipped when the pair above already did.
+		const onPageShow = ( event: PageTransitionEvent ) => {
+			const wait = waitRef.current;
+			if ( ! event.persisted || ! wait || wait.hasEnded || wait.visibleSince !== null ) {
+				return;
+			}
+			onVisibilityChange();
+		};
 
 		document.addEventListener( 'visibilitychange', onVisibilityChange );
 		window.addEventListener( 'pagehide', onPageHide );
+		window.addEventListener( 'pageshow', onPageShow );
 		return () => {
 			document.removeEventListener( 'visibilitychange', onVisibilityChange );
 			window.removeEventListener( 'pagehide', onPageHide );
+			window.removeEventListener( 'pageshow', onPageShow );
 		};
 	}, [ enabled, emit, endWait ] );
 
