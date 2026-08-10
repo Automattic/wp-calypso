@@ -8,6 +8,13 @@ export const BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE = '1';
 // Reuse the flow that already hosts the AI site-spec step.
 const BLUEPRINT_ARCHIVE_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
 
+export function getStandaloneBlueprintArchiveSlug(
+	blueprint: string | null,
+	playgroundId: string | null
+): string | null {
+	return playgroundId ? null : blueprint;
+}
+
 type ImportStatusResponse = {
 	importId?: string | null;
 	siteId?: number | null;

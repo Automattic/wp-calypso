@@ -33,7 +33,10 @@ import { isPlanProductFree } from '../../../../../../packages/data-stores/src/pl
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
-import { getBlueprintArchiveSiteSpecUrl } from '../../../utils/blueprint-archive-import';
+import {
+	getBlueprintArchiveSiteSpecUrl,
+	getStandaloneBlueprintArchiveSlug,
+} from '../../../utils/blueprint-archive-import';
 import {
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
@@ -100,6 +103,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		const playgroundId = queryParams.get( 'playground' );
+		const blueprintArchiveSlug = getStandaloneBlueprintArchiveSlug( blueprint, playgroundId );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -127,12 +131,12 @@ const onboarding: FlowV2< typeof initialize > = {
 				// setup-your-site-ai chooser. Land on the AI site-spec, which kicks off
 				// the background transfer-to-Atomic + blueprint-archive import and, on
 				// confirm, polls the import and redirects to the Atomic Site Editor.
-				if ( blueprint ) {
+				if ( blueprintArchiveSlug ) {
 					return [
 						getBlueprintArchiveSiteSpecUrl( {
 							siteSlug: providedDependencies.siteSlug as string,
 							siteId: providedDependencies.siteId as number,
-							blueprintSlug: blueprint,
+							blueprintSlug: blueprintArchiveSlug,
 							ref: refParameter,
 						} ),
 						null,
@@ -421,7 +425,7 @@ const onboarding: FlowV2< typeof initialize > = {
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 									// Blueprint archive flow goes straight from checkout to the AI
 									// site-spec (no post-checkout-onboarding hop, no chooser).
-									redirect_to: blueprint ? destination : redirectTo,
+									redirect_to: blueprintArchiveSlug ? destination : redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
@@ -433,7 +437,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( blueprint ) {
+						} else if ( blueprintArchiveSlug ) {
 							// Blueprint archive flow never shows the setup-your-site-ai chooser;
 							// go straight to the AI site-spec destination.
 							window.location.replace( destination );
