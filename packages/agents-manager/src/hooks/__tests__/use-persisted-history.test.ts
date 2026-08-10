@@ -45,6 +45,22 @@ describe( 'usePersistedHistory', () => {
 		expect( result.current.history.location.pathname ).toBe( '/' );
 	} );
 
+	it( 'starts fresh when switching to a site with no stored history', () => {
+		const { result, rerender } = renderHook(
+			( { siteKey }: { siteKey: string } ) => usePersistedHistory( siteKey ),
+			{ initialProps: { siteKey: 'site-1' } }
+		);
+
+		act( () => {
+			result.current.history.push( entry( '/history' ) as Location );
+		} );
+
+		rerender( { siteKey: 'site-2' } );
+
+		expect( result.current.history.length ).toBe( 1 );
+		expect( result.current.history.location.pathname ).toBe( '/' );
+	} );
+
 	it( 'persists navigations, including route state', () => {
 		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
 

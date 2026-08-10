@@ -168,14 +168,14 @@ class MemoryHistory {
 }
 
 export const usePersistedHistory = ( siteKey: string ) => {
-	// Read once per site; local navigations persist without re-triggering,
-	// so `useLocation().state` (e.g. `conversationId`) is correct immediately.
-	const persistedHistory = useMemo( () => readStoredHistory( siteKey ), [ siteKey ] );
-
-	const history = useMemo(
-		() => new MemoryHistory( persistedHistory?.entries, persistedHistory?.index ),
-		[ persistedHistory ]
-	);
+	// Read once per site, and key the instance on `siteKey` so every site switch
+	// gets a fresh history — even between sites with nothing stored. Local
+	// navigations persist without re-triggering, so `useLocation().state`
+	// (e.g. `conversationId`) is correct immediately.
+	const history = useMemo( () => {
+		const persisted = readStoredHistory( siteKey );
+		return new MemoryHistory( persisted?.entries, persisted?.index );
+	}, [ siteKey ] );
 
 	const [ state, setState ] = useState< HistoryEvent >( () => ( {
 		action: history.action,
