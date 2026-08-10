@@ -1,5 +1,5 @@
-import { userEmailSettingsMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import { emailWriteFilters, userEmailSettingsMutation } from '@automattic/api-queries';
+import { useIsMutating, useMutation } from '@tanstack/react-query';
 import { ACTIVATION_EMAIL_SOURCE } from './use-email-verification-gate';
 
 /**
@@ -15,13 +15,27 @@ import { ACTIVATION_EMAIL_SOURCE } from './use-email-verification-gate';
 // without sending, so offering to resend sooner offers something that cannot happen.
 export const PENDING_CHANGE_RESEND_SECONDS = 15 * 60;
 
+/**
+ * Whether one is in flight, wherever it was started. They share a scope, so a second would wait
+ * behind the first, and a reload while it waited would leave its address written down with nothing
+ * left able to carry it out. Asked globally because the gate remounts when `/me` resolves someone
+ * else, which forgets anything a single instance was keeping.
+ */
+export function useIsEmailChangePending() {
+	return useIsMutating( emailWriteFilters ) > 0;
+}
+
 export function useEmailChangeRequest() {
-	const mutation = useMutation( { ...userEmailSettingsMutation(), networkMode: 'always' } );
+	const { mutateAsync, error, reset } = useMutation( {
+		...userEmailSettingsMutation(),
+		networkMode: 'always',
+	} );
 
 	return {
-		...mutation,
+		error,
+		reset,
 		request: ( email: string ) =>
-			mutation.mutateAsync( {
+			mutateAsync( {
 				user_email: email,
 				// Recorded against the pending change, so confirming it returns to the flow rather
 				// than landing on account settings.

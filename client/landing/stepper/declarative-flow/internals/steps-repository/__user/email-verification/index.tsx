@@ -10,6 +10,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { formatCooldown } from 'calypso/dashboard/utils/email-verification-resend';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { useIsEmailChangePending } from '../use-email-change-request';
 import { getInboxLink } from './inbox-links';
 import { markGateShown } from './storage';
 import { useEmailVerification } from './use-email-verification';
@@ -47,6 +48,7 @@ const EmailVerificationGate = ( {
 	knowsWhereToResend = true,
 }: Props ) => {
 	const { __ } = useI18n();
+	const isChangePending = useIsEmailChangePending();
 	const { sendStatus, secondsUntilResend, resend } = useEmailVerification(
 		flow,
 		scope,
@@ -104,7 +106,7 @@ const EmailVerificationGate = ( {
 					variant="link"
 					// A correction submitted now would queue behind the send, and a reload while it
 					// waited would leave the address written down with nothing able to carry it out.
-					disabled={ sendStatus === 'sending' }
+					disabled={ isChangePending }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_signup_email_verification_edit_click', { flow } );
 						onEditEmail();
@@ -166,7 +168,10 @@ const EmailVerificationGate = ( {
 						<Button
 							onClick={ resend }
 							disabled={
-								sendStatus === 'sending' || secondsUntilResend > 0 || ! knowsWhereToResend
+								isChangePending ||
+								sendStatus === 'sending' ||
+								secondsUntilResend > 0 ||
+								! knowsWhereToResend
 							}
 							busy={ sendStatus === 'sending' }
 						>

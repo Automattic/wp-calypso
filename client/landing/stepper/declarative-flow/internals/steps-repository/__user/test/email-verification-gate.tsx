@@ -380,19 +380,20 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
-	// Both go through one scope, so a correction submitted now would queue behind the send.
-	it( 'will not take a correction while a resend is still going', async () => {
+	// Both go through one scope, so a correction submitted now would queue behind the resend.
+	it( 'will not take a correction while a change request is still going', async () => {
 		const user = userEvent.setup();
 		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/send-verification-email' )
+			.post( '/rest/v1.1/me/settings' )
 			.delay( 100 )
-			.reply( 200, { success: true } );
+			.reply( 200, {} );
 
 		renderWithProvider(
 			<EmailVerificationGate
 				flow="onboarding"
 				scope={ gateScope( 'onboarding', mockUserId ) }
-				email={ EMAIL }
+				email={ CORRECTED_EMAIL }
+				pendingEmail={ CORRECTED_EMAIL }
 				onEditEmail={ jest.fn() }
 			/>,
 			{ store: makeStore( false ) }
