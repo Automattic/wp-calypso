@@ -7,7 +7,6 @@ import {
 import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useMemo, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
@@ -22,7 +21,6 @@ import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
-import { saveSessionId } from '../../utils/agent-session';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
 } from '../../utils/convert-tool-messages-to-components';
@@ -217,7 +215,6 @@ export default function OrchestratorChat( {
 }: Props ) {
 	const { agentConfig, getTabSessionId } = useAgentsManagerContext();
 
-	const navigate = useNavigate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
@@ -403,11 +400,11 @@ export default function OrchestratorChat( {
 			// Make sure future messages go to the right session
 			getAgentManager().updateSessionId( agentConfig!.agentId, serverSessionId );
 
-			// Sync the tab's stored session with the server's canonical ID; the
-			// navigation re-initializes the `agentConfig` with it.
+			// Persist the server's canonical ID as this tab's session through the
+			// config's callback: it writes under the site the config was created
+			// for and announces the ID, so no re-initialization is needed.
 			if ( agentConfig!.sessionId !== serverSessionId ) {
-				saveSessionId( serverSessionId, agentConfig!.agentId );
-				navigate( '/chat', { replace: true } );
+				agentConfig!.onSessionIdChange?.( serverSessionId );
 			}
 		},
 	} );

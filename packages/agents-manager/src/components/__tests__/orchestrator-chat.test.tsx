@@ -173,12 +173,18 @@ jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( 'react-router-dom', () => ( {
 	useNavigate: () => jest.fn(),
 } ) );
-jest.mock( '../../contexts', () => ( {
-	useAgentsManagerContext: () => ( {
-		agentConfig: { agentId: 'wp-orchestrator' },
-		getTabSessionId: () => 'session-id',
-	} ),
-} ) );
+jest.mock( '../../contexts', () => {
+	const { saveSessionId } = jest.requireActual( '../../utils/agent-session' );
+	return {
+		useAgentsManagerContext: () => ( {
+			agentConfig: {
+				agentId: 'wp-orchestrator',
+				onSessionIdChange: ( sessionId: string ) => saveSessionId( sessionId, 'wp-orchestrator' ),
+			},
+			getTabSessionId: () => 'session-id',
+		} ),
+	};
+} );
 jest.mock( '../../hooks/custom-actions', () => ( {
 	useRegisterCustomActions: () => {},
 } ) );
