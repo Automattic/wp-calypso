@@ -65,9 +65,11 @@
 				background-color: var( --color-muted );
 			}
 
-			// Hide the ring after mouse clicks but keep the keyboard focus ring.
+			// Hide the ring after mouse clicks but keep the keyboard focus ring —
+			// `box-shadow` is the Button ring, `outline` covers host admin styles.
 			&:focus:not( :focus-visible ) {
 				box-shadow: none;
+				outline: none;
 			}
 		}
 	}
