@@ -281,6 +281,42 @@ describe( 'account step email verification gate', () => {
 		} );
 	} );
 
+	// A correction made in an earlier session is only in the settings, so until those answer the
+	// address on screen is the mistyped one, and resending would send there.
+	it( 'will not resend until it knows where a resend would go', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.delay( 50 )
+			.reply( 200, { user_email: EMAIL } );
+
+		renderUser( makeStore( false ) );
+
+		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeDisabled();
+		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeEnabled() );
+	} );
+
+	// Submitting the address the account already holds asks for no change, and is answered without
+	// anything being sent.
+	it( 'does not claim a confirmation for a change that was not made', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email: EMAIL } );
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email: EMAIL } );
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'submit-corrected' } ) );
+
+		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+		expect( screen.getByText( EMAIL, { exact: false } ) ).toBeVisible();
+		expect( screen.queryByText( CORRECTED_EMAIL, { exact: false } ) ).not.toBeInTheDocument();
+	} );
+
 	// The dedicated endpoint mails whatever the account holds, which during a correction is the
 	// address the gate has stopped naming — so it would promise one and send the other.
 	it( 'resends the confirmation to the corrected address, not the one it replaced', async () => {
@@ -488,6 +524,10 @@ describe( 'account step email verification gate', () => {
 	// the same component instance, still counting down a lockout that was never theirs.
 	it( "does not carry one account's resend lockout over to another", async () => {
 		const store = makeStore( false );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email: EMAIL } );
 		markResendUnavailableUntil( gateScope( 'onboarding', mockUserId ), Date.now() + 5 * 60 * 1000 );
 		renderUser( store );
 
@@ -500,7 +540,7 @@ describe( 'account step email verification gate', () => {
 			} );
 		} );
 
-		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeEnabled();
+		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeEnabled() );
 	} );
 
 	// The user ID is persisted across a reload but the user object is not, so there's a window

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-	RESEND_MIN_INTERVAL_SECONDS,
 	resendAcceptedRetryAfter,
 	resendThrottleRetryAfter,
 } from 'calypso/dashboard/utils/email-verification-resend';
@@ -11,7 +10,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { useBackoffPoll } from '../use-backoff-poll';
-import { useEmailChangeRequest } from '../use-email-change-request';
+import { PENDING_CHANGE_RESEND_SECONDS, useEmailChangeRequest } from '../use-email-change-request';
 import { ACTIVATION_EMAIL_SOURCE } from '../use-email-verification-gate';
 import { gateResendAvailableAt, markResendUnavailableUntil } from './storage';
 
@@ -47,7 +46,7 @@ export function useEmailVerification( flow: string, scope: string, pendingEmail?
 		try {
 			if ( pendingEmail ) {
 				await askAgain( pendingEmail );
-				holdResend( RESEND_MIN_INTERVAL_SECONDS );
+				holdResend( PENDING_CHANGE_RESEND_SECONDS );
 			} else {
 				const response = await sendVerificationEmail();
 				if ( ! response?.success ) {

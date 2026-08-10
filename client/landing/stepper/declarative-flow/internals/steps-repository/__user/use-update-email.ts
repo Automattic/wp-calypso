@@ -1,10 +1,9 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { RESEND_MIN_INTERVAL_SECONDS } from 'calypso/dashboard/utils/email-verification-resend';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { markResendUnavailableUntil } from './email-verification/storage';
-import { useEmailChangeRequest } from './use-email-change-request';
+import { PENDING_CHANGE_RESEND_SECONDS, useEmailChangeRequest } from './use-email-change-request';
 
 /**
  * Asks for a corrected address on the account the gate is holding, for a user who mistyped theirs.
@@ -26,18 +25,24 @@ export function useUpdateEmail( { flow, scope }: { flow: string; scope: string }
 		try {
 			accepted = await request( email );
 		} catch ( failure ) {
-			recordTracksEvent( 'calypso_signup_email_verification_email_update_failed', {
-				flow,
-				error: failure instanceof Error ? failure.message : String( failure ),
-			} );
+			// Not the server's message: it names the address of a change already pending, which
+			// has no business in analytics.
+			recordTracksEvent( 'calypso_signup_email_verification_email_update_failed', { flow } );
 			throw failure;
 		}
 
-		setRequested( { scope, email: accepted?.new_user_email || email } );
+		// Accepted is not sent. Submitting the address the account already holds asks for no
+		// change, and answers success without mailing anything, so only a change the response
+		// reports as pending is one the gate can go on to wait for.
+		if ( ! accepted?.user_email_change_pending || ! accepted?.new_user_email ) {
+			return;
+		}
+
+		setRequested( { scope, email: accepted.new_user_email } );
 		// Only to reconcile a reload; nothing here waits on it.
 		queryClient.invalidateQueries( { queryKey: userSettingsQuery().queryKey } );
-		// A confirmation has just gone out, so the gate opens with the same wait a send leaves.
-		markResendUnavailableUntil( scope, Date.now() + RESEND_MIN_INTERVAL_SECONDS * 1000 );
+		// A confirmation has just gone out, and another cannot be sent until the server's window.
+		markResendUnavailableUntil( scope, Date.now() + PENDING_CHANGE_RESEND_SECONDS * 1000 );
 		recordTracksEvent( 'calypso_signup_email_verification_email_update_requested', { flow } );
 	};
 

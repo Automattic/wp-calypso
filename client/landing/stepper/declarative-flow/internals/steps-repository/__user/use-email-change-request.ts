@@ -11,6 +11,10 @@ import { ACTIVATION_EMAIL_SOURCE } from './use-email-verification-gate';
  * the address in it, and restored without the function that would carry it out, where it holds up
  * every later attempt in its own scope.
  */
+// The server suppresses a repeat of the same pending address for this long, answering success
+// without sending, so offering to resend sooner offers something that cannot happen.
+export const PENDING_CHANGE_RESEND_SECONDS = 15 * 60;
+
 export function useEmailChangeRequest() {
 	const mutation = useMutation( { ...userEmailSettingsMutation(), networkMode: 'always' } );
 

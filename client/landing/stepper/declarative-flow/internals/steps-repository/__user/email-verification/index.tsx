@@ -32,6 +32,9 @@ interface Props {
 	onEditEmail: () => void;
 	// Set while a correction is waiting to be confirmed, which changes what resending has to do.
 	pendingEmail?: string;
+	// False until whether one is waiting has been established, since a resend before then would
+	// go to the address a correction was made to get away from.
+	knowsWhereToResend?: boolean;
 }
 
 const EmailVerificationGate = ( {
@@ -41,6 +44,7 @@ const EmailVerificationGate = ( {
 	email,
 	onEditEmail,
 	pendingEmail,
+	knowsWhereToResend = true,
 }: Props ) => {
 	const { __ } = useI18n();
 	const { sendStatus, secondsUntilResend, resend } = useEmailVerification(
@@ -158,7 +162,9 @@ const EmailVerificationGate = ( {
 
 						<Button
 							onClick={ resend }
-							disabled={ sendStatus === 'sending' || secondsUntilResend > 0 }
+							disabled={
+								sendStatus === 'sending' || secondsUntilResend > 0 || ! knowsWhereToResend
+							}
 							busy={ sendStatus === 'sending' }
 						>
 							{ resendLabel }

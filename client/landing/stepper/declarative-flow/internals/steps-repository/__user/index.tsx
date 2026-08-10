@@ -183,7 +183,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// this would otherwise persist into is the one every later signup in the browser opens, and it
 	// would be answering for whoever settings were last read for. Prefix invalidation still matches.
 	const settings = userSettingsQuery();
-	const { data: userSettings } = useDataQuery( {
+	const { data: userSettings, isSuccess: settingsRead } = useDataQuery( {
 		...settings,
 		queryKey: [ ...settings.queryKey, gateScopeForUser ],
 		enabled: gateStatus === 'gated',
@@ -194,6 +194,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		( userSettings?.user_email_change_pending ? userSettings.new_user_email : undefined );
 	// Both the address the gate names and the one a resend goes to, so they cannot disagree.
 	const awaitingEmail = pendingEmail ?? currentEmail;
+	// A correction made in an earlier session is invisible until the settings answer, and the
+	// address standing in for it meanwhile is the mistyped one it was made to get away from.
+	const knowsWhereToResend = Boolean( requestedEmail ) || settingsRead;
 
 	// Submitted unchanged, nothing is being asked for and the user is already where they need to
 	// be. Writing a changed one is a change of its own.
@@ -314,6 +317,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				onEditEmail={ beginEmailEdit }
 				email={ awaitingEmail ?? '' }
 				pendingEmail={ pendingEmail }
+				knowsWhereToResend={ knowsWhereToResend }
 				// A different account is a different attempt: without this the cooldown, the send
 				// state and the poll's ladder would all carry over to whoever `/me` resolved.
 				key={ gateScopeForUser }
