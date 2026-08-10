@@ -10,6 +10,7 @@ import { closeSmall } from '@wordpress/icons';
 import { useState, useContext, useEffect } from 'react';
 import { CardBody } from '../../card';
 import { SectionHeader } from '../../section-header';
+import { SilentErrorBoundary } from '../../silent-error-boundary';
 import { GuidedTourContext } from '../context';
 import type { ComponentProps, CSSProperties } from 'react';
 
@@ -46,24 +47,34 @@ const useAsyncElement = (
 	return asyncElement;
 };
 
-/**
- * Renders a single step in a guided tour.
- */
-export function GuidedTourStep( {
-	id,
-	target,
-	selector,
-	placement,
-	inline,
-	popoverStyle,
-}: {
+interface GuidedTourStepProps {
 	id: string;
 	target?: HTMLElement | null;
 	selector?: string;
 	placement?: ComponentProps< typeof Popover >[ 'placement' ];
 	inline?: boolean;
 	popoverStyle?: CSSProperties;
-} ) {
+}
+
+/**
+ * Renders a single step in a guided tour.
+ */
+export function GuidedTourStep( props: GuidedTourStepProps ) {
+	return (
+		<SilentErrorBoundary sentryTags={ { feature: 'guided-tour' } }>
+			<GuidedTourStepContents { ...props } />
+		</SilentErrorBoundary>
+	);
+}
+
+function GuidedTourStepContents( {
+	id,
+	target,
+	selector,
+	placement,
+	inline,
+	popoverStyle,
+}: GuidedTourStepProps ) {
 	const {
 		guidedTours,
 		currentStep,
