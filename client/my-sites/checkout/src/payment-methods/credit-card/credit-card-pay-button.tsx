@@ -307,10 +307,9 @@ function isCreditCardFormValid(
 			if ( ! isValid ) {
 				// Unlike the stripe branch above, nothing here previously
 				// surfaced an error notice, so the button appeared to do
-				// nothing. requiredFields holds raw keys like 'street-number';
-				// their labels live in country-specific-payment-fields.tsx under
-				// a different i18n system, so naming them is left for a follow-up
-				// and this shows the generic notice.
+				// nothing. requiredFields holds raw keys like 'street-number'
+				// rather than labels, so this shows the generic notice; naming
+				// them is left for a follow-up.
 				setFieldsError();
 			}
 
