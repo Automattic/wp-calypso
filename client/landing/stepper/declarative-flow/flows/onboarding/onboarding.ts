@@ -433,9 +433,6 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( diyLaunchpad ) {
-							// The diy-launchpad cohort skips the AI/manual chooser and lands straight in Site Setup.
-							window.location.replace( destination );
 						} else if ( blueprint ) {
 							// Blueprint archive flow never shows the setup-your-site-ai chooser;
 							// go straight to the AI site-spec destination.
