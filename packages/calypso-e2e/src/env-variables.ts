@@ -1,7 +1,7 @@
 /* eslint-disable jsdoc/require-jsdoc */
 import crypto from 'crypto';
 import path from 'path';
-import { getMag16Locales, getViewports } from './data-helper';
+import { getViewports } from './data-helper';
 import { TEST_ACCOUNT_NAMES } from './secrets';
 import { SupportedEnvVariables, JetpackTarget, AtomicVariation } from './types/env-variables.types';
 import { TestAccountName } from '.';
@@ -23,8 +23,6 @@ class EnvVariables implements SupportedEnvVariables {
 		PARTNER_DIRECTORY_BASE_URL: 'https://wordpress.com/development-services',
 		RETRY_COUNT: 0,
 		RUN_ID: '',
-		SLOW_MO: 0,
-		TEST_LOCALES: [ ...getMag16Locales() ],
 		TEST_ON_ATOMIC: false,
 		TIMEOUT: 15000,
 		VIEWPORT_NAME: 'desktop',
@@ -45,29 +43,6 @@ class EnvVariables implements SupportedEnvVariables {
 			);
 		}
 		return value;
-	}
-
-	get TEST_LOCALES(): string[] {
-		const value = process.env.TEST_LOCALES;
-		if ( ! value ) {
-			return this._defaultEnvVariables.TEST_LOCALES;
-		}
-
-		const parsedLocales = value.split( ',' );
-		const supportedValues = getMag16Locales() as ReadonlyArray< string >;
-		if ( ! parsedLocales.every( ( v ) => supportedValues.includes( v ) ) ) {
-			throw new Error(
-				`Unknown TEST_LOCALES value: ${ value }.\nSupported values: ${ supportedValues.join(
-					' | '
-				) }`
-			);
-		}
-		return parsedLocales;
-	}
-
-	get SLOW_MO(): number {
-		const value = process.env.SLOW_MO;
-		return value ? castAsNumber( 'SLOW_MO', value ) : this._defaultEnvVariables.SLOW_MO;
 	}
 
 	get TIMEOUT(): number {

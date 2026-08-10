@@ -1,7 +1,6 @@
 import { TestAccountName } from '../';
 
 export type ViewportName = string;
-export type TestLocales = string[];
 export type JetpackTarget = 'remote-site' | 'wpcom-production' | 'wpcom-deployment';
 export type AtomicVariation =
 	| 'default'
@@ -28,8 +27,6 @@ export interface SupportedEnvVariables {
 	readonly PARTNER_DIRECTORY_BASE_URL: string;
 	readonly RETRY_COUNT: number;
 	readonly RUN_ID: string;
-	readonly SLOW_MO: number;
-	readonly TEST_LOCALES: TestLocales;
 	readonly TEST_ON_ATOMIC: boolean;
 	readonly TIMEOUT: number;
 	readonly MAILOSAUR_LIMIT_REACHED: boolean;
