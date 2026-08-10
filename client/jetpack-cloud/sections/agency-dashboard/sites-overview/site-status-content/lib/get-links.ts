@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { AllowedTypes } from '../../types';
 
@@ -65,6 +66,14 @@ const getLinks = (
 			break;
 		}
 		case 'plugin': {
+			// A4A has no per-site plugin management yet, so agencies go to wp-admin — the same
+			// destination as the Plugins tab of the site preview pane.
+			if ( isA8CForAgencies() ) {
+				link = `${ siteUrlWithScheme }/wp-admin/plugins.php`;
+				isExternalLink = true;
+				break;
+			}
+
 			link = `/plugins/manage/${ siteUrlWithMultiSiteSupport }${
 				status === 'warning' ? '?updates=1' : ''
 			}`;
