@@ -71,17 +71,17 @@ See the [list of tags](tests_ci.md#featuretest-tags).
 
 Each of these greps a tag, or pins a viewport, so you do not have to:
 
-| Script                       | Runs                                                                 |
-| ---------------------------- | -------------------------------------------------------------------- |
-| `test:pw:desktop`            | the desktop viewport only.                                            |
-| `test:pw:mobile`             | the mobile viewport only.                                             |
-| `test:pw:calypso-pr`         | the specs run for every commit to a feature branch.                   |
-| `test:pw:calypso-release`    | the specs run for every PR merged into `trunk`.                       |
-| `test:pw:dashboard-pr`       | the Dashboard specs run for every commit to a feature branch.         |
-| `test:pw:authentication`     | login, 2FA and security key specs.                                    |
-| `test:pw:a8c-for-agencies`   | the A8C for Agencies specs.                                           |
-| `test:pw:i18n`               | the internationalization specs.                                       |
-| `test:pw:p2`                 | the P2 specs.                                                         |
+| Script                     | Runs                                                          |
+| -------------------------- | ------------------------------------------------------------- |
+| `test:pw:desktop`          | the desktop viewport only.                                    |
+| `test:pw:mobile`           | the mobile viewport only.                                     |
+| `test:pw:calypso-pr`       | the specs run for every commit to a feature branch.           |
+| `test:pw:calypso-release`  | the specs run for every PR merged into `trunk`.               |
+| `test:pw:dashboard-pr`     | the Dashboard specs run for every commit to a feature branch. |
+| `test:pw:authentication`   | login, 2FA and security key specs.                            |
+| `test:pw:a8c-for-agencies` | the A8C for Agencies specs.                                   |
+| `test:pw:i18n`             | the internationalization specs.                               |
+| `test:pw:p2`               | the P2 specs.                                                 |
 
 ### Running from the Playwright VSCode extension
 
