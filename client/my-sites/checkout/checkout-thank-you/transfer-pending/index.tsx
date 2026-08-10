@@ -31,8 +31,14 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 
 	// This screen is only mounted while the transfer runs, but it stays up for a beat after the
 	// transfer settles while the redirect resolves — that tail is not wait the customer is enduring.
-	const isTransferSettled =
-		transfer?.status === transferStates.COMPLETED || transfer?.status === transferStates.ERROR;
+	// Latched for the same reason the marketplace one is: a settled transfer does not unsettle, and a
+	// refetch that momentarily reads empty would open a second wait on the way out.
+	const isTransferSettledRef = React.useRef( false );
+	isTransferSettledRef.current =
+		isTransferSettledRef.current ||
+		transfer?.status === transferStates.COMPLETED ||
+		transfer?.status === transferStates.ERROR;
+	const isTransferSettled = isTransferSettledRef.current;
 
 	useWaitHeartbeat( {
 		surface: 'checkout_thank_you_transfer',

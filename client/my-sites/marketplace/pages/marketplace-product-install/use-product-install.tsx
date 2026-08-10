@@ -341,7 +341,14 @@ export function useProductInstall( {
 	// The product is on the site and switched on: the wait is over, whatever the redirect below does
 	// next. Retiring it here rather than on unmount is what separates a finished install from a
 	// closed tab — the plugin flow leaves by full-page navigation, which React never sees.
-	const hasSucceeded = themeSlug ? isThemeActive : !! installedPlugin && pluginActive;
+	//
+	// Latched, because an install does not un-succeed. The plugin list refetches while the redirect
+	// resolves, and the gap where it reads empty would otherwise close this wait and open a second
+	// one that lives for a second.
+	const hasSucceededRef = useRef( false );
+	hasSucceededRef.current =
+		hasSucceededRef.current || ( themeSlug ? isThemeActive : !! installedPlugin && pluginActive );
+	const hasSucceeded = hasSucceededRef.current;
 
 	// Whether anyone is still watching. The wait stops being one the moment it resolves, either into
 	// an error screen or into a success on its way out.
