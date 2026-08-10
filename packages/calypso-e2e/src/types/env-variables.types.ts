@@ -15,8 +15,6 @@ export type AtomicVariation =
 
 export interface SupportedEnvVariables {
 	readonly A8C_FOR_AGENCIES_URL: string;
-	readonly ALLURE_RESULTS_PATH: string;
-	readonly ARTIFACTS_PATH: string;
 	readonly ATOMIC_VARIATION: AtomicVariation;
 	readonly AUTHENTICATE_ACCOUNTS: TestAccountName[];
 	readonly BROWSER_NAME: string;

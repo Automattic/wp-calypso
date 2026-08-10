@@ -8,8 +8,6 @@ import { TestAccountName } from '.';
 class EnvVariables implements SupportedEnvVariables {
 	private _defaultEnvVariables: SupportedEnvVariables = {
 		A8C_FOR_AGENCIES_URL: 'https://agencies.automattic.com',
-		ALLURE_RESULTS_PATH: '',
-		ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 		ATOMIC_VARIATION: 'default',
 		AUTHENTICATE_ACCOUNTS: [],
 		BROWSER_NAME: 'chromium',
@@ -129,11 +127,6 @@ class EnvVariables implements SupportedEnvVariables {
 	get COOKIES_PATH(): string {
 		const value = process.env.COOKIES_PATH;
 		return value ? value : this._defaultEnvVariables.COOKIES_PATH;
-	}
-
-	get ARTIFACTS_PATH(): string {
-		const value = process.env.ARTIFACTS_PATH;
-		return value ? value : this._defaultEnvVariables.ARTIFACTS_PATH;
 	}
 
 	get TEST_ON_ATOMIC(): boolean {
@@ -258,11 +251,6 @@ class EnvVariables implements SupportedEnvVariables {
 	get BROWSER_NAME(): string {
 		const value = process.env.BROWSER_NAME;
 		return value ? value : this._defaultEnvVariables.BROWSER_NAME;
-	}
-
-	get ALLURE_RESULTS_PATH(): string {
-		const value = process.env.ALLURE_RESULTS_PATH;
-		return value ? value : this._defaultEnvVariables.ALLURE_RESULTS_PATH;
 	}
 
 	get RUN_ID(): string {
