@@ -115,6 +115,14 @@ export function markResendUnavailableUntil( scope: string, deadline: number ): v
 	}
 }
 
+/**
+ * The same attempt, counted for the other path. A wait only lengthens, so one earned against the
+ * address being left would otherwise be inherited by the correction made to escape it.
+ */
+export function pendingChangeScope( scope: string ): string {
+	return `${ scope }:pending-change`;
+}
+
 export function gateResendAvailableAt( scope: string ): number {
 	return read( scope ).resendAvailableAt;
 }

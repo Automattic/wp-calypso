@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
+import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
+import nock from 'nock';
 import { MemoryRouter } from 'react-router-dom';
 // eslint-disable-next-line no-restricted-imports
 import { applyMiddleware, createStore, type Reducer } from 'redux';
@@ -18,9 +20,12 @@ import initialReducer from 'calypso/state/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
+import EmailVerificationGate from '../email-verification';
 import { gateScope, markResendUnavailableUntil } from '../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
 import type { ReactNode } from 'react';
+
+const CORRECTED_EMAIL = 'corrected@example.com';
 
 // A different user per test, so each one's isolation is its own rather than teardown's.
 let mockUserId = 0;
@@ -97,6 +102,9 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 					<button onClick={ () => onUpdateEmail( mockHeldEmail as string ) }>
 						submit-unchanged
 					</button>
+					<button onClick={ () => onUpdateEmail( CORRECTED_EMAIL ).catch( () => {} ) }>
+						submit-corrected
+					</button>
 				</>
 			);
 		}
@@ -149,13 +157,17 @@ const makeStore = ( emailVerified: boolean ) =>
 const makeLoggedOutStore = () =>
 	createStore( rootReducer, { currentUser: {} }, applyMiddleware( thunkMiddleware ) );
 
-const renderUser = ( store: ReturnType< typeof makeStore >, url = '/onboarding/user' ) => {
+const renderUser = (
+	store: ReturnType< typeof makeStore >,
+	url = '/onboarding/user',
+	queryClient?: QueryClient
+) => {
 	const submit = jest.fn();
 	const { unmount } = renderWithProvider(
 		<MemoryRouter initialEntries={ [ url ] }>
 			<UserStep flow="onboarding" stepName="user" navigation={ { submit, goBack: jest.fn() } } />
 		</MemoryRouter>,
-		{ store }
+		{ store, ...( queryClient && { queryClient } ) }
 	);
 	return { submit, unmount };
 };
@@ -187,6 +199,7 @@ describe( 'account step email verification gate', () => {
 		mockConfig.enabledFlags.clear();
 		localStorage.clear();
 		jest.clearAllMocks();
+		nock.cleanAll();
 	} );
 
 	it( 'asks for a link back to the flow only when the gate is on', async () => {
@@ -245,6 +258,282 @@ describe( 'account step email verification gate', () => {
 		await user.click( screen.getByRole( 'button', { name: 'submit-unchanged' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+	} );
+
+	// Signup starts logged out, so an unscoped settings read would be persisted into the cache
+	// every later signup in the browser opens, and would answer them with this account's.
+	it( 'keeps the settings it reads to this account, and out of storage', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email: EMAIL } );
+		const queryClient = new QueryClient();
+
+		renderUser( makeStore( false ), '/onboarding/user', queryClient );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		await waitFor( () => {
+			const settings = queryClient
+				.getQueryCache()
+				.findAll()
+				.find( ( query ) => query.queryKey[ 0 ] === 'me' && query.queryKey[ 1 ] === 'settings' );
+			expect( settings?.queryKey ).toContain( gateScope( 'onboarding', mockUserId ) );
+			expect( settings?.meta?.persist ).toBe( false );
+		} );
+	} );
+
+	// A correction made in an earlier session is only in the settings, so until those answer the
+	// address on screen is the mistyped one, and resending would send there.
+	it( 'will not resend until it knows where a resend would go', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.delay( 50 )
+			.reply( 200, { user_email: EMAIL } );
+
+		renderUser( makeStore( false ) );
+
+		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeDisabled();
+		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeEnabled() );
+	} );
+
+	// Submitting the address the account already holds asks for no change, and is answered without
+	// anything being sent.
+	it( 'does not claim a confirmation for a change that was not made', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email: EMAIL } );
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email: EMAIL } );
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'submit-corrected' } ) );
+
+		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+		expect( screen.getByText( EMAIL, { exact: false } ) ).toBeVisible();
+		expect( screen.queryByText( CORRECTED_EMAIL, { exact: false } ) ).not.toBeInTheDocument();
+		// Nothing went out, so nothing is waited on and nothing is counted.
+		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeEnabled() );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_update_requested',
+			expect.anything()
+		);
+	} );
+
+	// The dedicated endpoint mails whatever the account holds, which during a correction is the
+	// address the gate has stopped naming — so it would promise one and send the other.
+	it( 'resends the confirmation to the corrected address, not the one it replaced', async () => {
+		const user = userEvent.setup();
+		const resent = nock( 'https://public-api.wordpress.com' )
+			.post(
+				'/rest/v1.1/me/settings',
+				( body ) =>
+					body.user_email === CORRECTED_EMAIL &&
+					body.user_email_change_requested_from === 'onboarding-with-email-verification'
+			)
+			.reply( 200, {} );
+		const activation = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/send-verification-email' )
+			.reply( 200, { success: true } );
+
+		renderWithProvider(
+			<EmailVerificationGate
+				addressSettled
+				flow="onboarding"
+				scope={ gateScope( 'onboarding', mockUserId ) }
+				email={ CORRECTED_EMAIL }
+				pendingEmail={ CORRECTED_EMAIL }
+				onEditEmail={ jest.fn() }
+			/>,
+			{ store: makeStore( false ) }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+
+		await waitFor( () => expect( resent.isDone() ).toBe( true ) );
+		expect( activation.isDone() ).toBe( false );
+	} );
+
+	// The inbox it offers is the one the correction was made to get away from.
+	it( 'offers no inbox while the address is still standing in', async () => {
+		const settled = ( addressSettled: boolean ) =>
+			renderWithProvider(
+				<EmailVerificationGate
+					addressSettled={ addressSettled }
+					flow="onboarding"
+					scope={ gateScope( 'onboarding', mockUserId ) }
+					email="onboarder@gmail.com"
+					onEditEmail={ jest.fn() }
+				/>,
+				{ store: makeStore( false ) }
+			);
+
+		const { unmount } = settled( false );
+		expect( screen.queryByRole( 'link', { name: /Open email inbox/ } ) ).not.toBeInTheDocument();
+		unmount();
+
+		settled( true );
+		expect( await screen.findByRole( 'link', { name: /Open email inbox/ } ) ).toBeVisible();
+	} );
+
+	// A refusal from the settings endpoint names the address of a change already pending.
+	it( 'keeps a refused resend of a pending change out of analytics', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/me/settings' ).reply( 400, {
+			message: 'You have a pending email change to someone@example.com. Please wait.',
+		} );
+
+		renderWithProvider(
+			<EmailVerificationGate
+				addressSettled
+				flow="onboarding"
+				scope={ gateScope( 'onboarding', mockUserId ) }
+				email={ CORRECTED_EMAIL }
+				pendingEmail={ CORRECTED_EMAIL }
+				onEditEmail={ jest.fn() }
+			/>,
+			{ store: makeStore( false ) }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+
+		await waitFor( () =>
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_signup_email_verification_email_send_failed',
+				expect.objectContaining( { error: 'pending_change_request_failed' } )
+			)
+		);
+	} );
+
+	// The shortcut that skips the settings read belongs to the account this step created. A stale
+	// token can leave `/me` resolving another, which may have a correction waiting from before.
+	it( 'still looks for a correction when `/me` resolves an account it did not create', async () => {
+		const user = userEvent.setup();
+		const other = mockUserId + 1;
+		const settings = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, {
+				user_email: 'someone@else.example',
+				user_email_change_pending: true,
+				new_user_email: CORRECTED_EMAIL,
+			} );
+		const store = makeLoggedOutStore();
+		renderUser( store );
+
+		// The account this step made, then a different one resolving over it.
+		await user.click( await screen.findByRole( 'button', { name: 'create-email-account' } ) );
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: other, email: 'someone@else.example', email_verified: false },
+			} );
+		} );
+
+		await waitFor( () => expect( settings.isDone() ).toBe( true ) );
+		expect( await screen.findByText( CORRECTED_EMAIL, { exact: false } ) ).toBeVisible();
+	} );
+
+	// Resending at a mistyped address is what earns a long wait, and correcting it is what the
+	// wait would otherwise outlast.
+	it( 'does not carry a wait earned at the old address over to the corrected one', async () => {
+		const user = userEvent.setup();
+		markResendUnavailableUntil(
+			gateScope( 'onboarding', mockUserId ),
+			Date.now() + 4 * 60 * 60 * 1000
+		);
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 200, { new_user_email: CORRECTED_EMAIL, user_email_change_pending: true } );
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'submit-corrected' } ) );
+
+		// Fifteen minutes, not four hours.
+		expect( await screen.findByRole( 'button', { name: /^Resend \(1[0-5]:/ } ) ).toBeVisible();
+	} );
+
+	// This one shares no scope, so it is only known to the gate itself.
+	it( 'will not take a correction while an ordinary resend is still going', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/send-verification-email' )
+			.delay( 100 )
+			.reply( 200, { success: true } );
+
+		renderWithProvider(
+			<EmailVerificationGate
+				addressSettled
+				flow="onboarding"
+				scope={ gateScope( 'onboarding', mockUserId ) }
+				email={ EMAIL }
+				onEditEmail={ jest.fn() }
+			/>,
+			{ store: makeStore( false ) }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+
+		expect( screen.getByRole( 'button', { name: 'edit' } ) ).toBeDisabled();
+	} );
+
+	// The address does not move until the confirmation is opened, so the gate has to name where
+	// that confirmation went rather than what the account still holds.
+	it( 'asks for a corrected address and waits on that one instead', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email: EMAIL } );
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post(
+				'/rest/v1.1/me/settings',
+				( body ) =>
+					body.user_email === CORRECTED_EMAIL &&
+					body.user_email_change_requested_from === 'onboarding-with-email-verification'
+			)
+			.reply( 200, { new_user_email: CORRECTED_EMAIL, user_email_change_pending: true } );
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'submit-corrected' } ) );
+
+		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+		expect( scope.isDone() ).toBe( true );
+		const named = await screen.findByText( CORRECTED_EMAIL, { exact: false } );
+		expect( named ).toBeVisible();
+		// It replaces an address already read out, so it has to say so.
+		expect( named.closest( '[aria-live="polite"]' ) ).not.toBeNull();
+		// A confirmation has just gone out, so offering Resend would only be refused.
+		expect( await screen.findByRole( 'button', { name: /^Resend \(/ } ) ).toBeVisible();
+	} );
+
+	// Otherwise a refusal leaves the user on a screen that looks like it did nothing.
+	it( 'keeps the account screen and says why when the address is refused', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 400, { message: 'That e-mail address is already being used.' } );
+		renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'submit-corrected' } ) );
+
+		const refusal = await screen.findByText( /already being used/ );
+		expect( refusal ).toBeVisible();
+		// Inserted after the fact, so it has to be spoken as well as shown.
+		expect( refusal.closest( '[role="alert"]' ) ).not.toBeNull();
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		// A refusal names the address of a change already pending, which stays on screen.
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_update_failed',
+			{ flow: 'onboarding' }
+		);
 	} );
 
 	// Confirming in another tab settles what the account screen was opened to change, so there is
@@ -373,6 +662,10 @@ describe( 'account step email verification gate', () => {
 	// the same component instance, still counting down a lockout that was never theirs.
 	it( "does not carry one account's resend lockout over to another", async () => {
 		const store = makeStore( false );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email: EMAIL } );
 		markResendUnavailableUntil( gateScope( 'onboarding', mockUserId ), Date.now() + 5 * 60 * 1000 );
 		renderUser( store );
 
@@ -385,7 +678,7 @@ describe( 'account step email verification gate', () => {
 			} );
 		} );
 
-		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeEnabled();
+		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeEnabled() );
 	} );
 
 	// The user ID is persisted across a reload but the user object is not, so there's a window
