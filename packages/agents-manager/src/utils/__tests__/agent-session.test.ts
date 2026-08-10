@@ -28,6 +28,10 @@ beforeEach( () => {
 	setSessionSiteKey( 'no-site' );
 } );
 
+afterEach( () => {
+	jest.restoreAllMocks();
+} );
+
 describe( 'saveSessionId / getSessionId', () => {
 	it( 'round-trips a session ID', () => {
 		saveSessionId( 'session-abc' );
@@ -57,6 +61,21 @@ describe( 'saveSessionId / getSessionId', () => {
 		);
 	} );
 
+	it( 'degrades gracefully when sessionStorage is unavailable', () => {
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const throwBlocked = () => {
+			throw new Error( 'blocked' );
+		};
+		jest.spyOn( Storage.prototype, 'getItem' ).mockImplementation( throwBlocked );
+		jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( throwBlocked );
+		jest.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( throwBlocked );
+
+		expect( getSessionId() ).toBe( '' );
+		expect( () => saveSessionId( 'session-abc' ) ).not.toThrow();
+		expect( () => clearSessionId() ).not.toThrow();
+		expect( consoleError ).toHaveBeenCalledTimes( 3 );
+	} );
+
 	it( 'scopes sessions per site', () => {
 		setSessionSiteKey( '123' );
 		saveSessionId( 'site-123-session' );
@@ -84,10 +103,6 @@ describe( 'clearSessionId', () => {
 describe( 'getOrCreateSessionId', () => {
 	beforeEach( () => {
 		ensureCryptoRandomUUID();
-	} );
-
-	afterEach( () => {
-		jest.restoreAllMocks();
 	} );
 
 	it( 'returns an existing session without creating a new one', () => {

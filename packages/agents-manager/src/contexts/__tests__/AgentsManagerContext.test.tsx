@@ -10,6 +10,7 @@ import {
 	type AgentsManagerContextProviderProps,
 	type AgentsManagerContextType,
 } from '../AgentsManagerContext';
+import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 // Test component that displays `context` values
 function ContextConsumer() {
@@ -184,6 +185,34 @@ describe( 'AgentsManagerContext', () => {
 			);
 
 			expect( screen.getByTestId( 'tabSessionId' ).textContent ).toBe( 'session-site-456' );
+		} );
+
+		it( 'reads the session for the configured agent', () => {
+			saveSessionId( 'reader-session', 'reader-chat' );
+
+			function AgentConfigProbe() {
+				const { setAgentConfig } = useAgentsManagerContext();
+				return (
+					<button
+						onClick={ () => setAgentConfig( { agentId: 'reader-chat' } as UseAgentChatConfig ) }
+					>
+						set-agent
+					</button>
+				);
+			}
+
+			render(
+				<MemoryRouter>
+					<AgentsManagerContextProvider value={ { sectionName: 'wp-admin', siteKey: 'no-site' } }>
+						<AgentConfigProbe />
+						<ContextConsumer />
+					</AgentsManagerContextProvider>
+				</MemoryRouter>
+			);
+
+			fireEvent.click( screen.getByText( 'set-agent' ) );
+
+			expect( screen.getByTestId( 'tabSessionId' ).textContent ).toBe( 'reader-session' );
 		} );
 	} );
 } );
