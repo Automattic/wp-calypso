@@ -169,18 +169,17 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		? { ...paginationInfo, totalItems: paginationInfo.totalItems + NOTES_PER_PAGE }
 		: paginationInfo;
 
-	const loadMoreRef = useRef< HTMLDivElement >( null );
-
 	const infiniteScrollHandler = useCallback( () => {
 		if ( ! isLoading ) {
 			client?.loadMore();
 		}
 	}, [ client, isLoading ] );
 
-	// Fetch pages until the window is filled (a network page can be smaller), so
-	// there are enough notes to render before any of this is on screen.
+	// Fetch pages until the window is filled (a network page can be smaller), so a
+	// short list still overflows the panel and gets a scrollbar to drive more.
 	// Depend on `cachedNoteIds` by reference, not length: a same-length refresh must
-	// still re-run this to retry a `loadMore` the client's in-flight lock had blocked.
+	// still re-run this to retry a `loadMore` the client's in-flight lock had
+	// blocked — else a switch back to a short cached tab strands it with no scrollbar.
 	useEffect( () => {
 		if ( startPosition + NOTES_PER_PAGE > visibleNotes.length && ! isLoading && hasMoreNotes ) {
 			infiniteScrollHandler();
@@ -194,26 +193,8 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		infiniteScrollHandler,
 	] );
 
-	// From then on, load more whenever the foot of the list is on screen — which
-	// covers both scrolling to the bottom and a list too short to scroll at all.
-	// An already-intersecting sentinel only reports again on a fresh observer, so
-	// re-observe as the notes change.
-	useEffect( () => {
-		const sentinel = loadMoreRef.current;
-		if ( ! sentinel ) {
-			return;
-		}
-		const observer = new IntersectionObserver( ( [ entry ] ) => {
-			if ( entry.isIntersecting ) {
-				infiniteScrollHandler();
-			}
-		} );
-		observer.observe( sentinel );
-		return () => observer.disconnect();
-	}, [ visibleNotes.length, cachedNoteIds, hasMoreNotes, infiniteScrollHandler ] );
-
-	// DataViews advances `startPosition` as the user scrolls, moving the rendered
-	// window over the notes the effect above has loaded.
+	// DataViews drives infinite scroll by advancing `startPosition`; the effect
+	// above reacts to that and loads more as the window nears the loaded notes.
 	const handleChangeView = useCallback( ( nextView: View ) => setView( nextView ), [] );
 
 	const noteListRef = useRef< HTMLObjectElement >( null );
@@ -291,7 +272,6 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 					// a fetch is in flight — otherwise it reads as a list stuck loading
 					// whenever the foot sits above the fold.
 					<VStack
-						ref={ loadMoreRef }
 						alignment="center"
 						style={ {
 							flexShrink: 0,
