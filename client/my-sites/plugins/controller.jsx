@@ -106,7 +106,12 @@ export function plugins( context, next ) {
 }
 
 export function renderPluginsDashboard( context, next ) {
-	context.primary = <PluginsDashboard pluginSlug={ context.params.slug } />;
+	context.primary = (
+		<PluginsDashboard
+			pluginSlug={ context.params.slug }
+			showOnlyUpdates={ context.query?.updates === '1' }
+		/>
+	);
 	next();
 }
 

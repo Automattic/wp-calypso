@@ -26,10 +26,19 @@ interface Props {
 	pluginSlug: string | null;
 	currentPlugins: Array< Plugin >;
 	initialSearch?: string;
+	showOnlyUpdates?: boolean;
 	isLoading: boolean;
 	onSearch?: ( search: string ) => void;
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
 }
+
+const getUpdateFilters = (): NonNullable< DataViewsState[ 'filters' ] > => [
+	{
+		field: 'status',
+		operator: 'isAny',
+		value: [ PLUGINS_STATUS.UPDATE ],
+	},
+];
 
 const openPluginSitesPane = ( plugin: Plugin ) => {
 	recordTracksEvent( 'calypso_plugins_list_open_plugin_sites_pane', {
@@ -42,6 +51,7 @@ export default function PluginsListDataViews( {
 	pluginSlug,
 	currentPlugins,
 	initialSearch,
+	showOnlyUpdates = false,
 	isLoading,
 	onSearch,
 	bulkActionDialog,
@@ -67,6 +77,7 @@ export default function PluginsListDataViews( {
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => {
 		return {
 			...initialDataViewsState,
+			filters: showOnlyUpdates ? getUpdateFilters() : [],
 			perPage: 15,
 			search: initialSearch,
 			fields: [ 'sites', 'update' ],
@@ -130,13 +141,7 @@ export default function PluginsListDataViews( {
 						} else {
 							setDataViewsState( {
 								...dataViewsState,
-								filters: [
-									{
-										field: 'status',
-										operator: 'isAny',
-										value: [ PLUGINS_STATUS.UPDATE ],
-									},
-								],
+								filters: getUpdateFilters(),
 								page: 1,
 							} );
 						}
