@@ -110,7 +110,7 @@ describe( '<SiteTable>', () => {
 			plugin: {
 				updates: pluginUpdates.length,
 				type: 'plugin',
-				value: `${ pluginUpdates.length } ${ translate( 'Available' ) }`,
+				value: `${ pluginUpdates.length } Updates`,
 				status: 'warning',
 			},
 		},
@@ -190,8 +190,8 @@ describe( '<SiteTable>', () => {
 
 		const pluginEle = getByTestId( `row-${ blogId }-plugin` );
 		expect( pluginEle.getAttribute( 'href' ) ).toEqual(
-			`/plugins/updates/${ urlToSlug( siteUrl ) }`
+			`/plugins/manage/${ urlToSlug( siteUrl ) }?updates=1`
 		);
-		expect( getByText( `${ pluginUpdates.length } Available` ) ).toBeInTheDocument();
+		expect( getByText( `${ pluginUpdates.length } Updates` ) ).toBeInTheDocument();
 	} );
 } );
