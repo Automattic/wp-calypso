@@ -22,6 +22,13 @@ describe( 'getPlansIntent', () => {
 		it( 'does not force the paid-only intent for a plain onboarding flow', () => {
 			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBeNull();
 		} );
+
+		it( 'prefers the playground intent when both playground and blueprint params are present', () => {
+			// The Playground flow enters via /setup/onboarding/playground/?blueprint=<id>,
+			// so its users reach the plans step carrying BOTH params. Playground must win.
+			window.history.replaceState( {}, '', '/?blueprint=123&playground=abc' );
+			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-playground' );
+		} );
 	} );
 
 	describe( 'plan-upgrade flow (dashboard "Change plan" downgrade entry point)', () => {
