@@ -260,8 +260,8 @@ function SiteOverview( {
 					{ site.__inaccessible_jetpack_error && (
 						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />
 					) }
-					{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
 					{ !! getEmailBlock( site ) && <EmailBlockNotice site={ site } /> }
+					{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
 				</SitesNoticeArbiter>
 			}
 		>
