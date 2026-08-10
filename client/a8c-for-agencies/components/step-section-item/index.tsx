@@ -1,9 +1,8 @@
-import { Button, Badge } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import React, { type JSX } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
-import StatusBadge from './status-badge';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
@@ -15,7 +14,7 @@ interface StepSectionItemProps {
 	heading: string;
 	description: TranslateResult;
 	buttonProps?: React.ComponentProps< typeof Button >;
-	statusProps?: React.ComponentProps< typeof Badge > & { tooltip?: string };
+	status?: React.ReactNode;
 	className?: string;
 	iconClassName?: string;
 	stepNumber?: number;
@@ -27,14 +26,12 @@ export default function StepSectionItem( {
 	heading,
 	description,
 	buttonProps,
-	statusProps,
+	status,
 	className,
 	iconClassName,
 	stepNumber,
 	children,
 }: StepSectionItemProps ) {
-	const status = <StatusBadge statusProps={ statusProps } />;
-
 	return (
 		<div className={ clsx( 'step-section-item', className ) }>
 			{ icon && (
@@ -44,14 +41,10 @@ export default function StepSectionItem( {
 			) }
 			{ stepNumber && <span className="step-section-item__step-number">{ stepNumber }</span> }
 			<div className="step-section-item__content">
-				{ statusProps && (
-					<div className="step-section-item__status is-small-screen">{ status }</div>
-				) }
+				{ status && <div className="step-section-item__status is-small-screen">{ status }</div> }
 				<div className="step-section-item__heading">
 					{ heading }
-					{ statusProps && (
-						<div className="step-section-item__status is-large-screen">{ status }</div>
-					) }
+					{ status && <div className="step-section-item__status is-large-screen">{ status }</div> }
 				</div>
 				<div className="step-section-item__description">{ preventWidows( description ) }</div>
 			</div>

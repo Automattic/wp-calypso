@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Badge } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 import { chevronLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
@@ -21,7 +21,7 @@ export default function ReportsSidebar( { path }: Props ) {
 			title={
 				<div className="sidebar-menu-item__title-with-badge">
 					<span>{ translate( 'Reports' ) }</span>
-					<Badge type="info">{ translate( 'Beta' ) }</Badge>
+					<Badge>{ translate( 'Beta' ) }</Badge>
 				</div>
 			}
 			backButtonProps={ {

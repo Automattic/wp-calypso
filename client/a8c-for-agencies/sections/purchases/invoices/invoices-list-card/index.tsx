@@ -1,13 +1,13 @@
-import { Badge, Button } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
+import { Badge } from '@automattic/ui';
 import { useTranslate } from 'i18n-calypso';
-import { memo } from 'react';
+import { memo, ComponentProps } from 'react';
 import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import FormattedDate from 'calypso/components/formatted-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import usePayInvoiceMutation from '../hooks/use-pay-invoice-mutation';
 import InvoicesListRow from '../invoices-list-row';
-import type { BadgeType } from '@automattic/components';
 import type { Invoice } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
@@ -18,32 +18,32 @@ function InvoicesListCard( { id, number, dueDate, status, total, currency, pdfUr
 	const dueDateMoment = moment( dueDate );
 	const payInvoice = usePayInvoiceMutation();
 
-	let badgeType: BadgeType = 'info';
+	let badgeIntent: ComponentProps< typeof Badge >[ 'intent' ] = 'default';
 	let badgeLabel = translate( 'Draft' );
 
 	switch ( status ) {
 		case 'open':
-			badgeType = 'info-blue';
+			badgeIntent = 'info';
 			badgeLabel = translate( 'Open' );
 
 			if ( dueDateMoment.isBefore( moment() ) ) {
-				badgeType = 'warning';
+				badgeIntent = 'warning';
 				badgeLabel = translate( 'Past due' );
 			}
 			break;
 
 		case 'paid':
-			badgeType = 'success';
+			badgeIntent = 'success';
 			badgeLabel = translate( 'Paid' );
 			break;
 
 		case 'uncollectible':
-			badgeType = 'error';
+			badgeIntent = 'error';
 			badgeLabel = translate( 'Uncollectible' );
 			break;
 
 		case 'void':
-			badgeType = 'info';
+			badgeIntent = 'default';
 			badgeLabel = translate( 'Void' );
 			break;
 	}
@@ -56,7 +56,7 @@ function InvoicesListCard( { id, number, dueDate, status, total, currency, pdfUr
 				{ ! dueDate && <EmptyValueIndicator /> }
 			</div>
 			<div>
-				<Badge type={ badgeType }>{ badgeLabel }</Badge>
+				<Badge intent={ badgeIntent }>{ badgeLabel }</Badge>
 			</div>
 			<div>{ formatCurrency( total, currency.toUpperCase() ) }</div>
 			<div className="invoices-list-card__actions">
