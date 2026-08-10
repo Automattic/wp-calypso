@@ -404,6 +404,30 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
+	// This one shares no scope, so it is only known to the gate itself.
+	it( 'will not take a correction while an ordinary resend is still going', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/send-verification-email' )
+			.delay( 100 )
+			.reply( 200, { success: true } );
+
+		renderWithProvider(
+			<EmailVerificationGate
+				addressSettled
+				flow="onboarding"
+				scope={ gateScope( 'onboarding', mockUserId ) }
+				email={ EMAIL }
+				onEditEmail={ jest.fn() }
+			/>,
+			{ store: makeStore( false ) }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+
+		expect( screen.getByRole( 'button', { name: 'edit' } ) ).toBeDisabled();
+	} );
+
 	// Both go through one scope, so a correction submitted now would queue behind the resend.
 	it( 'will not take a correction while a change request is still going', async () => {
 		const user = userEvent.setup();
