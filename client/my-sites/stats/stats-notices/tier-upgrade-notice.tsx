@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
@@ -82,11 +83,7 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats, isOverLimit }: StatsNotice
 							components: {
 								p: <p />,
 								jetpackStatsProductLink: (
-									<button
-										type="button"
-										className="notice-banner__action-button"
-										onClick={ gotoJetpackStatsProduct }
-									/>
+									<Button variant="primary" onClick={ gotoJetpackStatsProduct } />
 								),
 							},
 						}

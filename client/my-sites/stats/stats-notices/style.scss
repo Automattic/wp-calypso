@@ -25,11 +25,11 @@
 			font-size: $font-body-small;
 		}
 
-		.notice-banner__action-button {
-			background-color: var(--color-accent);
-			border-color: var(--color-accent);
-			color: var(--color-text-inverted);
-			border-radius: 2px;
+		// The action button is a @wordpress/components Button, which brings its own colours from
+		// --wp-admin-theme-color. Only the spacing the notice layout expects is set here — it used
+		// to come from the shared .notice-banner__action-button rules.
+		.components-button.is-primary {
+			margin-top: 20px;
 		}
 
 		.notice-banner {

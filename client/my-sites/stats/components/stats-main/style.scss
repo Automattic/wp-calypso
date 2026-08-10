@@ -21,4 +21,21 @@
 		--wp-components-color-accent: var(--wp-admin-theme-color);
 		--wp-components-color-accent-darker-20: var(--wp-admin-theme-color-darker-20);
 	}
+
+	// Calypso controls that derive their colours from --color-accent. Re-pointing the variable on
+	// each one covers whichever property it happens to use — background, text or border — without
+	// restating them here. Charts and data visualisation are deliberately absent: the decorative
+	// accent is the right colour there.
+	//
+	// Links are absent too. They resolve --color-link rather than --color-accent, and wp-admin
+	// keeps links a scheme-independent blue rather than tinting them with the theme colour, so
+	// following it here would diverge from the admin UI this work exists to match.
+	//
+	// Each entry is a bridge until its control moves to a design-system equivalent, at which point
+	// the line can go — the Stats notice buttons were migrated that way and needed no entry.
+	.stats-tab,
+	.segmented-control__item {
+		--color-accent: var(--wp-admin-theme-color);
+		--color-accent-60: var(--wp-admin-theme-color-darker-20);
+	}
 }

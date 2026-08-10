@@ -5,6 +5,7 @@ import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -162,9 +163,9 @@ const DoYouLoveJetpackStatsNotice = ( {
 			>
 				<p key="desc">{ description }</p>
 				<p key="cta">
-					<button type="button" className="notice-banner__action-button" onClick={ handleCTAClick }>
+					<Button variant="primary" onClick={ handleCTAClick }>
 						{ CTAText }
-					</button>
+					</Button>
 					<a
 						className="notice-banner__action-link"
 						href={ localizedLearnMoreLink }
