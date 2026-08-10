@@ -197,8 +197,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		queryKey: [ ...settings.queryKey, gateScopeForUser ],
 		enabled: gateStatus === 'gated' && ! isAccountFromThisSession,
 		meta: { persist: false },
-		// Kept trying, so a read that fails is a wait rather than a dead end. Focus does the same,
-		// but only for someone who leaves and comes back.
+		// Reaching the gate matters more than reaching it with an answer, so this gives up early
+		// and keeps trying from there. Focus retries too, but only for someone who leaves.
+		retry: 1,
 		refetchInterval: ( query ) => ( query.state.status === 'error' ? 15000 : false ),
 	} );
 	const pendingEmail =

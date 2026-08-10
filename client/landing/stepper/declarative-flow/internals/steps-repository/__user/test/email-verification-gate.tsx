@@ -287,6 +287,21 @@ describe( 'account step email verification gate', () => {
 		} );
 	} );
 
+	// Waiting on an answer that is not coming would be a worse dead end than the one it avoids.
+	it( 'shows the gate anyway when it cannot find out', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.times( 2 )
+			.reply( 500 );
+
+		renderUser( makeStore( false ) );
+
+		// Past the one retry it makes before giving up.
+		expect(
+			await screen.findByRole( 'heading', { name: GATE_HEADING }, { timeout: 5000 } )
+		).toBeVisible();
+	} );
+
 	// Naming the address before it is known names the one a correction was made to get away from.
 	it( 'names no address until it knows which one', async () => {
 		nock( 'https://public-api.wordpress.com' )
