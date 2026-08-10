@@ -788,6 +788,12 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 				// the all-sites redirect below would drop the user onto the slug-less
 				// no-site renewal route. Let checkout render with the slug intact and
 				// handle its own missing-site state instead. See CHE-512.
+				//
+				// Clear any stale selection first: unlike the redirect branch below
+				// (which re-enters siteSelection with no fragment and clears it there),
+				// this path calls next() directly, so a selectedSiteId left over from a
+				// prior SPA navigation would otherwise leak into checkout.
+				dispatch( setAllSitesSelected() );
 				next();
 			} else {
 				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.

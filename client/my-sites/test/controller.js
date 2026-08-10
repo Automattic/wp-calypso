@@ -6,7 +6,7 @@ import page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import * as pageView from 'calypso/lib/analytics/page-view';
-import { PREFERENCES_SET } from 'calypso/state/action-types';
+import { PREFERENCES_SET, SELECTED_SITE_SET } from 'calypso/state/action-types';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	updateRecentSitesPreferences,
@@ -387,11 +387,11 @@ describe( 'siteSelection — site fetch failure fallback', () => {
 	// matching site (empty `sites.items`, so `getSiteId` returns null) and
 	// requestSite rejects, so `freshSiteId` ends up falsy and the middleware
 	// reaches its fallback branch.
-	const buildContext = ( { path, pathname, querystring, siteFragment } ) => {
+	const buildContext = ( { path, pathname, querystring, siteFragment, selectedSiteId = null } ) => {
 		const store = mockStore( {
 			currentUser: { id: 12345, user: { site_count: 3, visible_site_count: 2 } },
 			sites: { items: {} },
-			ui: {},
+			ui: { selectedSiteId },
 		} );
 		const context = {
 			store,
@@ -440,6 +440,31 @@ describe( 'siteSelection — site fetch failure fallback', () => {
 		siteSelection( context, next );
 		await flushPromises();
 
+		expect( redirect ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'clears a stale selectedSiteId before rendering checkout when the site fetch fails', async () => {
+		const siteFragment = 'ecommercesite.wpcomstaging.com';
+		const pathname = `/checkout/ecommerce-bundle/renew/1252758/${ siteFragment }`;
+		const querystring = 'cancel_to=%2Fplans&redirect_to=%2Fplans';
+		const context = buildContext( {
+			path: `${ pathname }?${ querystring }`,
+			pathname,
+			querystring,
+			siteFragment,
+			// A prior SPA navigation left an unrelated site selected.
+			selectedSiteId: 999,
+		} );
+		const next = jest.fn();
+
+		siteSelection( context, next );
+		await flushPromises();
+
+		expect( context.store.getActions() ).toContainEqual( {
+			type: SELECTED_SITE_SET,
+			siteId: null,
+		} );
 		expect( redirect ).not.toHaveBeenCalled();
 		expect( next ).toHaveBeenCalledTimes( 1 );
 	} );
