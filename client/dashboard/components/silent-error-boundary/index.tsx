@@ -5,24 +5,20 @@ import type { ReactNode, ErrorInfo } from 'react';
 interface SilentErrorBoundaryProps {
 	children: ReactNode;
 	/**
-	 * What to render once a child has thrown. Defaults to nothing, so the
-	 * subtree simply disappears.
-	 */
-	fallback?: ReactNode;
-	/**
 	 * Extra Sentry tags to attach to the reported error, e.g.
 	 * `{ feature: 'guided-tour' }`.
 	 */
-	tags?: Record< string, string >;
+	sentryTags?: Record< string, string >;
 }
 
 /**
- * Contains a non-critical piece of UI so that an error thrown while it renders
- * cannot take down the surrounding page: the subtree is replaced with
- * `fallback` (nothing by default) while the error is still forwarded to Sentry.
+ * Wrap a non-critical piece of UI so that an error thrown while it renders
+ * cannot take down the surrounding page: the subtree renders nothing while the
+ * error is still forwarded to Sentry.
  *
- * Only wrap UI that is safe to lose. Primary content should surface its error
- * to the router's error page instead of being silently swallowed here.
+ * Only wrap UI that is safe to lose. Primary content should at least surface
+ * its error to the router's error page, unless it can be caught somewhere more
+ * appropriate.
  */
 export class SilentErrorBoundary extends Component<
 	SilentErrorBoundaryProps,
@@ -36,15 +32,12 @@ export class SilentErrorBoundary extends Component<
 
 	componentDidCatch( error: Error, errorInfo: ErrorInfo ) {
 		captureException( error, {
-			tags: { calypso_section: 'dashboard', ...this.props.tags },
+			tags: { calypso_section: 'dashboard', ...this.props.sentryTags },
 			extra: { componentStack: errorInfo.componentStack },
 		} );
 	}
 
 	render() {
-		if ( this.state.hasError ) {
-			return this.props.fallback ?? null;
-		}
-		return this.props.children;
+		return this.state.hasError ? null : this.props.children;
 	}
 }

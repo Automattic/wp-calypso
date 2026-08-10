@@ -58,13 +58,10 @@ interface GuidedTourStepProps {
 
 /**
  * Renders a single step in a guided tour.
- *
- * An error inside a popup should never take down the surrounding page, so the
- * step is wrapped in a boundary that drops the popup and reports to Sentry.
  */
 export function GuidedTourStep( props: GuidedTourStepProps ) {
 	return (
-		<SilentErrorBoundary tags={ { feature: 'guided-tour' } }>
+		<SilentErrorBoundary sentryTags={ { feature: 'guided-tour' } }>
 			<GuidedTourStepContents { ...props } />
 		</SilentErrorBoundary>
 	);
