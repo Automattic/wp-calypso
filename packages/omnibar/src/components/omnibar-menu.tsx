@@ -27,7 +27,7 @@ function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
 		);
 	}
 
-	if ( node.interactive === false ) {
+	if ( node.disabled ) {
 		return (
 			<div className="omnibar__menu-static-item">
 				<OmnibarNodeContent node={ node } />
@@ -82,19 +82,23 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 
 export function OmnibarMenu( { node, className }: { node: OmnibarNode; className?: string } ) {
 	const label = node.title || node.label || '';
-	const menuClassName = className ? `omnibar__menu ${ className }` : 'omnibar__menu';
+	const menuClassName = [ 'omnibar__menu', className, node.className ]
+		.filter( Boolean )
+		.join( ' ' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const triggerRef = useRef< HTMLElement >( null );
 	const popoverRef = useRef< HTMLElement >( null );
 	const closedByPointerRef = useRef( false );
 
 	if ( ! node.children ) {
+		const isLink = !! node.href && ! node.disabled;
 		return (
 			<Button
 				variant="unstyled"
 				className={ menuClassName }
-				render={ node.href ? <a href={ node.href } /> : undefined }
-				nativeButton={ ! node.href }
+				render={ isLink ? <a href={ node.href } /> : undefined }
+				nativeButton={ ! isLink }
+				disabled={ node.disabled }
 				onClick={ node.onClick }
 				aria-label={ label }
 			>

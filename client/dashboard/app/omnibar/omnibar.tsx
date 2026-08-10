@@ -16,6 +16,7 @@ import { OmnibarHomeIcon } from './home';
 import { useAiChatPlugin } from './plugin-ai-chat';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
+import { useLaunchSitePlugin } from './plugin-launch-site';
 import { useNotificationsPlugin } from './plugin-notifications';
 import { useReaderPlugin } from './plugin-reader';
 import { buildSiteBadgeNode } from './plugin-site-badges';
@@ -114,9 +115,12 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const languageSwitcherNode = useLanguageSwitcherPlugin( { user } );
 	const statsSparklineNode = useStatsSparklinePlugin( { siteId, site } );
-	const siteActions = statsSparklineNode
-		? [ ...( baseOmnibarNodes.siteActions ?? [] ), statsSparklineNode ]
-		: baseOmnibarNodes.siteActions;
+	const launchSiteNode = useLaunchSitePlugin( { site } );
+	const siteActions = [
+		...( baseOmnibarNodes.siteActions ?? [] ),
+		statsSparklineNode,
+		launchSiteNode,
+	].filter( ( node ) => node !== undefined );
 
 	const omnibarNodes = {
 		...baseOmnibarNodes,
