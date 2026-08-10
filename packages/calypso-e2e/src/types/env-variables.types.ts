@@ -24,7 +24,6 @@ export interface SupportedEnvVariables {
 	readonly DASHBOARD_BASE_URL: string;
 	readonly GUTENBERG_EDGE: boolean;
 	readonly GUTENBERG_NIGHTLY: boolean;
-	readonly HEADLESS: boolean;
 	readonly JETPACK_TARGET: JetpackTarget;
 	readonly PARTNER_DIRECTORY_BASE_URL: string;
 	readonly RETRY_COUNT: number;

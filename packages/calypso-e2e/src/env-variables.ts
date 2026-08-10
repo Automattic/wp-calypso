@@ -18,7 +18,6 @@ class EnvVariables implements SupportedEnvVariables {
 		DASHBOARD_BASE_URL: `http://my.localhost:${ process.env.PORT || 3000 }`,
 		GUTENBERG_EDGE: false,
 		GUTENBERG_NIGHTLY: false,
-		HEADLESS: false,
 		MAILOSAUR_LIMIT_REACHED: false,
 		JETPACK_TARGET: 'wpcom-production',
 		PARTNER_DIRECTORY_BASE_URL: 'https://wordpress.com/development-services',
@@ -64,11 +63,6 @@ class EnvVariables implements SupportedEnvVariables {
 			);
 		}
 		return parsedLocales;
-	}
-
-	get HEADLESS(): boolean {
-		const value = process.env.HEADLESS;
-		return value ? castAsBoolean( 'HEADLESS', value ) : this._defaultEnvVariables.HEADLESS;
 	}
 
 	get SLOW_MO(): number {

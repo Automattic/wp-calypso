@@ -34,7 +34,6 @@ fun BuildSteps.prepareE2eEnvironment(): ScriptBuildStep {
 fun ParametrizedWithType.defaultE2eParams() {
     param("env.NODE_CONFIG_ENV", "test")
     param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
-    param("env.HEADLESS", "true")
     param("env.LOCALE", "en")
 	param("env.DEBUG", "")
 }
