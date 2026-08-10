@@ -40,6 +40,7 @@ const PORTAL_ROOTS = [
 	'[data-base-ui-portal]',
 	'.components-modal__screen-overlay',
 	'.components-popover__fallback-container',
+	'[data-wp-compat-overlay-slot]',
 	'.ReactModalPortal',
 ];
 
