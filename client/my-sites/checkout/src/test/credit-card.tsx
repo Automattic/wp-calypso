@@ -43,7 +43,7 @@ jest.mock( '@stripe/react-stripe-js', () => {
 	return { ...stripe, useElements: mockUseElements };
 } );
 
-function TestWrapper( { paymentProcessors = undefined } ) {
+function TestWrapper( { paymentProcessors = undefined, additionalMethodArgs = undefined } ) {
 	const [ store ] = useState( () => createTestReduxStore() );
 	const [ queryClient ] = useState( () => new QueryClient() );
 	const [ testRegistry ] = useState( () => createRegistry( {} ) );
@@ -52,16 +52,19 @@ function TestWrapper( { paymentProcessors = undefined } ) {
 		<RegistryProvider value={ testRegistry }>
 			<ReduxProvider store={ store }>
 				<QueryClientProvider client={ queryClient }>
-					<TestWrapperInner paymentProcessors={ paymentProcessors } />
+					<TestWrapperInner
+						paymentProcessors={ paymentProcessors }
+						additionalMethodArgs={ additionalMethodArgs }
+					/>
 				</QueryClientProvider>
 			</ReduxProvider>
 		</RegistryProvider>
 	);
 }
 
-function TestWrapperInner( { paymentProcessors = undefined } ) {
+function TestWrapperInner( { paymentProcessors = undefined, additionalMethodArgs = undefined } ) {
 	const creditCardStore = useCreateCreditCardStore();
-	const paymentMethod = useCreateCreditCardMethod( creditCardStore );
+	const paymentMethod = useCreateCreditCardMethod( creditCardStore, additionalMethodArgs );
 	return (
 		<>
 			<GlobalNotices />
@@ -87,7 +90,7 @@ const cardNumber = '4242424242424242';
 const cardExpiry = '05/99';
 const cardCvv = '123';
 const activePayButtonText = 'Complete Checkout';
-function useCreateCreditCardMethod( store: CardStoreType, additionalArgs = {} ) {
+function useCreateCreditCardMethod( store: CardStoreType, additionalArgs = undefined ) {
 	const [ method ] = useState( () =>
 		createCreditCardMethod( {
 			store,
@@ -209,6 +212,27 @@ describe( 'Credit card payment method', () => {
 
 		const element = await screen.findByText(
 			'Please fill out the required fields: Cardholder name'
+		);
+		expect( element ).not.toBeFalsy();
+		expect( processorFunction ).not.toHaveBeenCalled();
+	} );
+
+	it( 'names the missing billing fields when using Ebanx', async () => {
+		const user = userEvent.setup();
+		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		render(
+			<TestWrapper
+				paymentProcessors={ { card: processorFunction } }
+				additionalMethodArgs={ { shouldUseEbanx: true } }
+			/>
+		);
+
+		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
+		await user.click( await screen.findByText( activePayButtonText ) );
+
+		// Every billing field is empty, so all of them are named, in form order.
+		const element = await screen.findByText(
+			'Please fill out the required fields: Cardholder name, Taxpayer Identification Number, Phone, Address, Street Number, City, State, and Postal Code'
 		);
 		expect( element ).not.toBeFalsy();
 		expect( processorFunction ).not.toHaveBeenCalled();

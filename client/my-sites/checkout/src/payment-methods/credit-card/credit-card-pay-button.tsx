@@ -285,33 +285,34 @@ function isCreditCardFormValid(
 			// VGS card fields validation is handled separately via useVgsFormValidation hook
 			// which checks the VGS form state directly
 			let isValid = true;
-			const requiredFields = [
-				'cardholderName',
-				'state',
-				'city',
-				'postal-code',
-				'address-1',
-				'street-number',
-				'phone-number',
-				'document',
-			];
+			// The required fields, in the order the form renders them, mapped to
+			// the labels it renders them under. Keep in sync with
+			// country-specific-payment-fields.tsx and credit-card-fields.tsx:
+			// the notice is only useful if it names the fields the way the form
+			// does.
+			const requiredFieldLabels: Record< string, string > = {
+				cardholderName: __( 'Cardholder name' ),
+				document: __( 'Taxpayer Identification Number' ),
+				'phone-number': __( 'Phone' ),
+				'address-1': __( 'Address' ),
+				'street-number': __( 'Street Number' ),
+				city: __( 'City' ),
+				state: __( 'State' ),
+				'postal-code': __( 'Postal Code' ),
+			};
+			const missingFieldLabels: string[] = [];
 
-			requiredFields.forEach( ( fieldName ) => {
+			Object.entries( requiredFieldLabels ).forEach( ( [ fieldName, label ] ) => {
 				const fieldValue = rawState[ fieldName ]?.value;
 				if ( ! fieldValue || fieldValue.trim() === '' ) {
 					isValid = false;
 					store.dispatch( actions.setFieldError( fieldName, __( 'This field is required' ) ) );
+					missingFieldLabels.push( label );
 				}
 			} );
 
 			if ( ! isValid ) {
-				// Unlike the stripe branch above, nothing here previously
-				// surfaced an error notice or scrolled the invalid fields
-				// into view, so the button appeared to do nothing.
-				// requiredFields holds raw keys like 'street-number' rather
-				// than labels, so this stays generic; naming them is
-				// follow-up work.
-				setFieldsError();
+				setFieldsError( missingFieldLabels );
 			}
 
 			debug( 'ebanx validation - cardholder name and contact details', {
