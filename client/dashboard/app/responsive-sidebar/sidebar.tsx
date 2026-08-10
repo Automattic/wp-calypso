@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
+import { envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
 import ReferralSidebar from '../../agency/earn/referrals/referral-sidebar';
 import AgencySiteSidebar from '../../agency/sites/site-sidebar';
@@ -97,11 +97,6 @@ function PrimaryMenuSidebar() {
 						{ __( 'Browse plugins' ) }
 					</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
-			) }
-			{ supports.themes && (
-				<SidebarMenuItem icon={ brush } href={ wpcomLink( '/themes' ) }>
-					{ __( 'Themes' ) }
-				</SidebarMenuItem>
 			) }
 		</SidebarMenu>
 	);
