@@ -42,6 +42,21 @@
 		--color-accent: var(--wp-admin-theme-color);
 	}
 
+	// The `primary` variant of SegmentedControl colours its focus, hover and adjacent-item border
+	// from --color-primary rather than --color-accent, in packages/components. Stats restates the
+	// resting selected state in --color-accent and so reaches it, but not those three, which stay
+	// on the scheme's primary — and the hover rule is qualified with `.notouch`, putting it out of
+	// specificity reach of anything declared here. Re-pointing the variable is what lets those
+	// rules resolve the admin theme colour without having to out-rank them.
+	//
+	// The shades map by role, not by name: the component uses `-light` for hover and `-dark` for
+	// focus, where a design-system button darkens for both.
+	.segmented-control.is-primary .segmented-control__item {
+		--color-primary: var(--wp-admin-theme-color);
+		--color-primary-light: var(--wp-admin-theme-color-darker-10);
+		--color-primary-dark: var(--wp-admin-theme-color-darker-20);
+	}
+
 	// The legend checkbox is styled to read as a pair with the chart type toggle beside it, and
 	// resolves --wp-components-color-accent to do so. That variable is only ever set on
 	// .components-button, so on a checkbox it falls through to the accent and the pair drifts
