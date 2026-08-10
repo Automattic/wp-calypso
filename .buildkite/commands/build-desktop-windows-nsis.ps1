@@ -86,6 +86,9 @@ function Assert-Signed {
 
 Write-Output "--- :mag: Verifying signatures on packed binaries"
 $unpacked = @(Get-ChildItem -Path release -Directory -Filter 'win*-unpacked')
+if ($unpacked.Count -eq 0) {
+    throw "No win*-unpacked directory in desktop/release - native-binary signing was never verified."
+}
 foreach ($dir in $unpacked) {
     $binaries = @(Get-ChildItem -Path $dir.FullName -Recurse -Include '*.exe', '*.node', '*.dll' -File)
     Assert-Signed -Binaries $binaries -Label $dir.Name
