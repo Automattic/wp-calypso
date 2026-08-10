@@ -1,0 +1,28 @@
+// Keep the button in blueberry whatever the bar's palette is, as wp-admin does.
+.omnibar .omnibar__menu.omnibar__launch-site {
+	background-color: var( --studio-wordpress-blue-50, #3858e9 );
+
+	&:hover:not( [aria-disabled='true'] ),
+	&:focus-visible:not( [aria-disabled='true'] ),
+	&:active:not( [aria-disabled='true'] ) {
+		background-color: #4664eb;
+	}
+
+	&[aria-disabled='true'] {
+		cursor: default;
+	}
+
+	svg {
+		width: 28px;
+		height: 28px;
+
+		@media ( min-width: 782px ) {
+			width: 15px;
+			height: 15px;
+		}
+	}
+
+	@media ( max-width: 480px ) {
+		display: none;
+	}
+}

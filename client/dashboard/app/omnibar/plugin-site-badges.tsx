@@ -17,7 +17,7 @@ export function buildSiteBadgeNode( adminBarNode: AdminBarNode ): Partial< Omnib
 	return {
 		title: undefined,
 		href,
-		interactive: !! href,
+		disabled: ! href,
 		render: () => (
 			<span className="omnibar__site-badge">
 				<span className="omnibar__site-badge-label">{ label }</span>

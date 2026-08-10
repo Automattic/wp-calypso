@@ -9,7 +9,8 @@ export interface OmnibarNode {
 	variant?: 'secondary';
 	href?: string;
 	onClick?: ( event: React.MouseEvent ) => void;
-	interactive?: boolean;
+	disabled?: boolean;
+	className?: string;
 	meta?: SiteActionNodeMeta & UserInfoNodeMeta;
 	render?: ( node: OmnibarNode ) => React.ReactNode;
 	children?: OmnibarNode[];
