@@ -67,8 +67,11 @@ export function useEmailVerification( flow: string, scope: string, pendingEmail?
 				holdResend( retryAfter );
 			}
 			setSendStatus( retryAfter !== null ? 'throttled' : 'error' );
-			// Unchanged for ordinary failures, so their existing aggregation isn't split.
-			const failure = error instanceof Error ? error.message : String( error );
+			// Unchanged for the dedicated endpoint, so its existing aggregation isn't split. A
+			// refusal from the other names the address of a change already pending, which has no
+			// business in analytics.
+			const reported = error instanceof Error ? error.message : String( error );
+			const failure = pendingEmail ? 'pending_change_request_failed' : reported;
 			recordTracksEvent( 'calypso_signup_email_verification_email_send_failed', {
 				flow,
 				is_resend: true,

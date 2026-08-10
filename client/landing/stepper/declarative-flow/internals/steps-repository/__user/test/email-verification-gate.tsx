@@ -352,6 +352,57 @@ describe( 'account step email verification gate', () => {
 		expect( activation.isDone() ).toBe( false );
 	} );
 
+	// A refusal from the settings endpoint names the address of a change already pending.
+	it( 'keeps a refused resend of a pending change out of analytics', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/me/settings' ).reply( 400, {
+			message: 'You have a pending email change to someone@example.com. Please wait.',
+		} );
+
+		renderWithProvider(
+			<EmailVerificationGate
+				flow="onboarding"
+				scope={ gateScope( 'onboarding', mockUserId ) }
+				email={ CORRECTED_EMAIL }
+				pendingEmail={ CORRECTED_EMAIL }
+				onEditEmail={ jest.fn() }
+			/>,
+			{ store: makeStore( false ) }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+
+		await waitFor( () =>
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_signup_email_verification_email_send_failed',
+				expect.objectContaining( { error: 'pending_change_request_failed' } )
+			)
+		);
+	} );
+
+	// Both go through one scope, so a correction submitted now would queue behind the send.
+	it( 'will not take a correction while a resend is still going', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/send-verification-email' )
+			.delay( 100 )
+			.reply( 200, { success: true } );
+
+		renderWithProvider(
+			<EmailVerificationGate
+				flow="onboarding"
+				scope={ gateScope( 'onboarding', mockUserId ) }
+				email={ EMAIL }
+				onEditEmail={ jest.fn() }
+			/>,
+			{ store: makeStore( false ) }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+
+		expect( screen.getByRole( 'button', { name: 'edit' } ) ).toBeDisabled();
+	} );
+
 	// The address does not move until the confirmation is opened, so the gate has to name where
 	// that confirmation went rather than what the account still holds.
 	it( 'asks for a corrected address and waits on that one instead', async () => {

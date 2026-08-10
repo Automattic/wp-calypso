@@ -102,6 +102,9 @@ const EmailVerificationGate = ( {
 			edit: (
 				<WPButton
 					variant="link"
+					// A correction submitted now would queue behind the send, and a reload while it
+					// waited would leave the address written down with nothing able to carry it out.
+					disabled={ sendStatus === 'sending' }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_signup_email_verification_edit_click', { flow } );
 						onEditEmail();
