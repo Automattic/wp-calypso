@@ -163,4 +163,4 @@ Refer to the [Debugging](debugging.md) page for techniques on running a test in 
 
 Playwright Test transpiles TypeScript specs itself, so there is no extra pre-build command needed to run them.
 
-It does not type-check as it runs. To type-check the specs, use the local `tsconfig.json`: `yarn tsc --project ./tsconfig.json`.
+It does not type-check as it runs. To type-check the specs, run `yarn tsc --noEmit --project test/e2e/tsconfig.json` from the repo root.
