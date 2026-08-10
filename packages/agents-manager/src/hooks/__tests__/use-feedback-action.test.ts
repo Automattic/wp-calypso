@@ -138,8 +138,7 @@ describe( 'useFeedbackAction', () => {
 				initialProps: defaultConfig,
 			} );
 
-			// Provide a new getTabSessionId reference to simulate the real
-			// useCallback behavior where agentConfig change creates a new callback.
+			// The hook must react to a new `getTabSessionId` reference from the provider.
 			const newGetTabSessionId = jest.fn().mockReturnValue( 'new-session' );
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, sessionId: 'new-session' },
