@@ -11,6 +11,7 @@ import type { HelpCenterCTAVariant } from '../help-center-cta';
 
 const mockRecordTracksEvent = jest.fn();
 jest.mock( '@automattic/calypso-analytics', () => ( {
+	...jest.requireActual( '@automattic/calypso-analytics' ),
 	recordTracksEvent: ( ...args: unknown[] ) => mockRecordTracksEvent( ...args ),
 } ) );
 

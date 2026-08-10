@@ -21,10 +21,21 @@ describe( 'getHelpCenterTracksProperties', () => {
 		expect( getHelpCenterTracksProperties( {}, { primarySiteId: 33 } ) ).toEqual( {} );
 	} );
 
-	test( 'preserves a valid caller blog_id and other properties', () => {
+	test( 'never lets a caller blog_id stand in for the support site', () => {
+		// A blog_id in the payload means whatever the caller put there — a search result's
+		// own blog, say — which is not the site the support session is about.
 		expect(
 			getHelpCenterTracksProperties( { blog_id: 44, source: 'article' }, { siteId: 22 } )
-		).toEqual( { blog_id: 44, source: 'article' } );
+		).toEqual( { blog_id: 22, source: 'article' } );
+		expect( getHelpCenterTracksProperties( { blog_id: 44, source: 'article' } ) ).toEqual( {
+			source: 'article',
+		} );
+	} );
+
+	test( 'preserves caller properties other than blog_id', () => {
+		expect(
+			getHelpCenterTracksProperties( { source: 'article', post_id: 7 }, { siteId: 22 } )
+		).toEqual( { source: 'article', post_id: 7, blog_id: 22 } );
 	} );
 
 	test( 'replaces an invalid caller blog_id with valid site context', () => {

@@ -47,6 +47,7 @@ jest.mock( 'smooch', () => ( {
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
+	...jest.requireActual( '@automattic/calypso-analytics' ),
 	recordTracksEvent: jest.fn(),
 } ) );
 

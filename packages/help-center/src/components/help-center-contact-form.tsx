@@ -171,7 +171,9 @@ export const HelpCenterContactForm = () => {
 					location: 'help-center',
 					result_url: result.link,
 					post_id: result.post_id,
-					blog_id: result.blog_id,
+					// The blog hosting the support article, not the site the user needs help
+					// with — `blog_id` is reserved for the latter.
+					article_blog_id: result.blog_id,
 				};
 				recordTracksEvent( 'calypso_inlinehelp_article_no_postid_redirect', tracksData );
 				window.open( result.link, '_blank' );

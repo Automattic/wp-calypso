@@ -32,5 +32,6 @@ export {
 	getNewRailcarId,
 } from './train-tracks';
 export { getConnectionSpeedData } from './utils/connection-speed-data';
+export { getValidBlogId, withSiteContext } from './utils/site-context';
 
 export type { Railcar } from './train-tracks';

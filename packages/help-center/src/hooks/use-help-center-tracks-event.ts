@@ -1,4 +1,4 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useCallback, useRef } from '@wordpress/element';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 
@@ -13,29 +13,16 @@ type SiteContext = {
 
 type Options = Pick< SiteContext, 'explicitSiteId' | 'usePrimarySiteId' >;
 
-function getValidBlogId( value: unknown ): number | undefined {
-	const blogId = Number( value );
-
-	return Number.isInteger( blogId ) && blogId > 0 ? blogId : undefined;
-}
-
 export function getHelpCenterTracksProperties(
 	properties: TracksProperties = {},
 	{ explicitSiteId, siteId, primarySiteId, usePrimarySiteId = false }: SiteContext = {}
 ): TracksProperties {
-	const blogId =
-		getValidBlogId( properties.blog_id ) ??
-		getValidBlogId( explicitSiteId ) ??
-		getValidBlogId( siteId ) ??
-		( usePrimarySiteId ? getValidBlogId( primarySiteId ) : undefined );
-	const eventProperties = { ...properties };
-
-	delete eventProperties.blog_id;
-	if ( blogId ) {
-		eventProperties.blog_id = blogId;
-	}
-
-	return eventProperties;
+	return withSiteContext(
+		properties,
+		explicitSiteId,
+		siteId,
+		usePrimarySiteId ? primarySiteId : undefined
+	);
 }
 
 export function recordHelpCenterTracksEvent(

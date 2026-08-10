@@ -312,7 +312,9 @@ function HelpSearchResults( {
 		const eventData = {
 			link,
 			post_id,
-			blog_id,
+			// The blog hosting the support article, not the site the user needs help with —
+			// `blog_id` is reserved for the latter.
+			article_blog_id: blog_id,
 			source,
 			search_term: searchQuery,
 			location,

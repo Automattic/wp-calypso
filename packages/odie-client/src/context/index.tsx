@@ -1,4 +1,4 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,6 @@ import {
 import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
-import { addOdieSiteContext } from '../utils/tracks';
 import type {
 	Chat,
 	Message,
@@ -133,7 +132,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
 			recordTracksEvent(
 				`calypso_odie_${ eventName }`,
-				addOdieSiteContext(
+				withSiteContext(
 					{
 						...properties,
 						chat_id: mainChatState?.odieId,
