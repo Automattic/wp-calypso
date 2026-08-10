@@ -50,7 +50,7 @@ export interface HistoryEvent {
 type PersistCallback = ( historyData: StoredHistory ) => void;
 
 /**
- * A custom implementation of the `history` package's MemoryHistory that
+ * A custom implementation of the `history` package's `MemoryHistory` that
  * reports every navigation through a persist callback provided by the hook.
  */
 class MemoryHistory {
