@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import DOMPurify from 'dompurify';
+import { isCsatTriggerMessage, isZendeskSurveyMessage } from './util';
 import type { MessageType, ZendeskMessage } from './types';
 import type { ReactNode } from 'react';
 
@@ -85,9 +86,16 @@ function getContentMessage( message: ZendeskMessage ): ReactNode {
 			messageContent = __( 'Message content not supported', __i18n_text_domain__ );
 	}
 
-	if ( message?.metadata?.type === 'csat' && message.actions?.length ) {
+	if ( isCsatTriggerMessage( message ) && message.actions?.length ) {
 		messageContent = __(
 			'Please help us improve. How would you rate your support experience?',
+			__i18n_text_domain__
+		);
+	}
+
+	if ( isZendeskSurveyMessage( message ) && message.actions?.length ) {
+		messageContent = __(
+			'Please help us improve. How would you rate the support you received?',
 			__i18n_text_domain__
 		);
 	}

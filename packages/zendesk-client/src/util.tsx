@@ -140,6 +140,21 @@ export const getBadRatingReasons = () => {
 };
 
 /**
+ * A CSAT trigger message is a WPCOM-configured Zendesk message flagged with metadata.type
+ * 'csat', prompting the responder to rate their support experience via our own thumbs-up/down
+ * UI (as opposed to a `zd:surveys` message, which is Zendesk's native CSAT Survey feature).
+ */
+export const isCsatTriggerMessage = ( message: Pick< ZendeskMessage, 'metadata' > ) =>
+	message?.metadata?.type === 'csat';
+
+/**
+ * A CSAT Survey message is delivered via Zendesk's native Surveys feature, identified by its
+ * `source.type`. See https://developer.zendesk.com/api-reference/ticketing/ticket-management/csat_survey_responses/
+ */
+export const isZendeskSurveyMessage = ( message: Pick< ZendeskMessage, 'source' > ) =>
+	message?.source?.type === 'zd:surveys';
+
+/**
  * Converts a ZendeskMessage to the agenttic-ui Message interface format
  * Used for components that require the standardized Message interface
  * @param message - The Zendesk message to convert

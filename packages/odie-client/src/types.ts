@@ -212,6 +212,7 @@ export type MessageAction = {
 	metadata: ChatFeedbackActions;
 	label: string;
 	onClick: () => void;
+	uri?: string;
 };
 
 export type OdieMessage = {
