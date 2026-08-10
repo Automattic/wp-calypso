@@ -12,7 +12,7 @@ import SimpleList from '../simple-list';
 import './style.scss';
 
 const PRESSABLE_Q3_2026_DEADLINE = new Date( '2026-09-30T23:59:59.999Z' );
-const FULL_TERMS_URL = 'https://pressable.com/legal/hosting-promotion-terms/';
+const FULL_TERMS_URL = 'https://pressable.com/legal/late-summer-promotion-terms-and-conditions/';
 
 const PressableOffer = () => {
 	const translate = useTranslate();

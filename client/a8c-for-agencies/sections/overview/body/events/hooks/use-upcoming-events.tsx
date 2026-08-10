@@ -140,7 +140,7 @@ export const useUpcomingEvents = () => {
 								{
 									variant: 'secondary',
 									label: translate( 'See full terms' ),
-									url: 'https://pressable.com/legal/hosting-promotion-terms/',
+									url: 'https://pressable.com/legal/late-summer-promotion-terms-and-conditions/',
 									isExternal: true,
 									trackEventName:
 										'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_see_full_terms_click',
