@@ -36,9 +36,6 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	font-family: $font-sf-pro-display;
 }
 
-// Links deliberately keep the default blue rather than being tinted with the admin colour scheme's
-// accent. wp-admin does the same — every scheme but modern serves the same link colour — and on
-// low-contrast schemes the accent failed WCAG AA badly: on coffee it was 2.29:1 against white.
 
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
