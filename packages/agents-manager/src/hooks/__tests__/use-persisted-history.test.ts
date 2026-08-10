@@ -142,6 +142,19 @@ describe( 'usePersistedHistory', () => {
 		expect( stored[ 'site-1' ].entries[ 0 ].pathname ).toBe( '/' );
 	} );
 
+	it( 'shrinks an oversized restored trail back to the 50-entry cap on push', () => {
+		const oversized = Array.from( { length: 60 }, ( _, i ) => entry( `/page-${ i }` ) );
+		storeHistory( 'site-1', oversized, 59 );
+
+		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
+		act( () => {
+			result.current.history.push( entry( '/chat' ) as Location );
+		} );
+
+		expect( result.current.history.length ).toBe( 50 );
+		expect( result.current.history.location.pathname ).toBe( '/chat' );
+	} );
+
 	it( 'merges with other sites when persisting', () => {
 		storeHistory( 'site-1', [ entry( '/' ), entry( '/chat' ) ], 1 );
 

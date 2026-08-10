@@ -102,15 +102,14 @@ class MemoryHistory {
 		const location = this.createLocation( path.pathname + path.search + path.hash, state );
 		this.entries = this.entries.slice( 0, this.index + 1 );
 		this.entries.push( location );
-		// Cap the history at 50 entries.
-		if ( this.entries.length > 50 ) {
+		// Cap the history at 50 entries, dropping the oldest ones while
+		// keeping the start at root so the back button always works.
+		while ( this.entries.length > 50 ) {
 			this.entries.shift();
 			this.entries.shift();
-			// Keep the start at root so the back button always works.
 			this.entries.unshift( this.createLocation( '/' ) );
-		} else {
-			this.index++;
 		}
+		this.index = this.entries.length - 1;
 		this.notifyListeners( Action.Push );
 	}
 
