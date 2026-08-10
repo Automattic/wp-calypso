@@ -102,10 +102,9 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	}, [ navigate ] );
 
 	// Publish the resolved agent id and session site scope for non-React callers.
-	// Written in render (not a useEffect) so they land in the same render that sets
-	// `agentConfig`, before the chat tree mounts and reads them from event handlers;
-	// a useEffect runs post-commit and could lag a synchronous child interaction.
-	// The writes are idempotent, so safe in render.
+	// Written in render, not a `useEffect`: children read these during their own
+	// render, and event handlers can fire before effects run. The writes are
+	// idempotent, so re-running in render is safe.
 	setResolvedAgentId( agentConfig?.agentId );
 	setSessionSiteKey( value.siteKey );
 

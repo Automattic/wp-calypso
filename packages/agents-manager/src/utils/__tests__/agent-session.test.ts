@@ -10,7 +10,7 @@ import {
 	getOrCreateSessionId,
 } from '../agent-session';
 
-// The ORCHESTRATOR_AGENT_ID constant ('wp-orchestrator') falls back to the base
+// The `ORCHESTRATOR_AGENT_ID` constant ('wp-orchestrator') falls back to the base
 // key internally. Reference it here so tests don't hard-code the mapping silently.
 const ORCHESTRATOR_AGENT_ID = 'wp-orchestrator';
 

@@ -404,7 +404,7 @@ export default function OrchestratorChat( {
 			getAgentManager().updateSessionId( agentConfig!.agentId, serverSessionId );
 
 			// Sync the tab's stored session with the server's canonical ID; the
-			// navigation re-initializes the agent config with it.
+			// navigation re-initializes the `agentConfig` with it.
 			if ( agentConfig!.sessionId !== serverSessionId ) {
 				saveSessionId( serverSessionId, agentConfig!.agentId );
 				navigate( '/chat', { replace: true } );
