@@ -1,4 +1,3 @@
-import { captureException } from '@automattic/calypso-sentry';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -8,11 +7,12 @@ import {
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
-import { Component, useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { CardBody } from '../../card';
 import { SectionHeader } from '../../section-header';
+import { SilentErrorBoundary } from '../../silent-error-boundary';
 import { GuidedTourContext } from '../context';
-import type { ComponentProps, CSSProperties, ReactNode, ErrorInfo } from 'react';
+import type { ComponentProps, CSSProperties } from 'react';
 
 // This hook will return the async element matching the target selector.
 // After timeout has passed, it will return null.
@@ -56,39 +56,17 @@ interface GuidedTourStepProps {
 	popoverStyle?: CSSProperties;
 }
 
-// An error inside a tour popup should never take down the surrounding page.
-// This boundary swallows the popup's render, keeping the page alive, while
-// still forwarding the error to Sentry so it stays visible.
-class GuidedTourStepErrorBoundary extends Component<
-	{ children: ReactNode },
-	{ hasError: boolean }
-> {
-	state = { hasError: false };
-
-	static getDerivedStateFromError() {
-		return { hasError: true };
-	}
-
-	componentDidCatch( error: Error, errorInfo: ErrorInfo ) {
-		captureException( error, {
-			tags: { calypso_section: 'dashboard', feature: 'guided-tour' },
-			extra: { componentStack: errorInfo.componentStack },
-		} );
-	}
-
-	render() {
-		return this.state.hasError ? null : this.props.children;
-	}
-}
-
 /**
  * Renders a single step in a guided tour.
+ *
+ * An error inside a popup should never take down the surrounding page, so the
+ * step is wrapped in a boundary that drops the popup and reports to Sentry.
  */
 export function GuidedTourStep( props: GuidedTourStepProps ) {
 	return (
-		<GuidedTourStepErrorBoundary>
+		<SilentErrorBoundary tags={ { feature: 'guided-tour' } }>
 			<GuidedTourStepContents { ...props } />
-		</GuidedTourStepErrorBoundary>
+		</SilentErrorBoundary>
 	);
 }
 
