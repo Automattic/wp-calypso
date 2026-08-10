@@ -409,8 +409,11 @@ export function Visibility( {
 } ) {
 	const visibilityLabels = getVisibilityLabels();
 	return (
-		<VStack spacing={ 1 }>
-			<span>{ visibilityLabels[ visibility ] }</span>
+		<VStack spacing={ 0 }>
+			{ /* DataViews' cell box, so the value lines up with single-line cells. */ }
+			<div className="dataviews-view-table__cell-content-wrapper">
+				{ visibilityLabels[ visibility ] }
+			</div>
 			{ /* We don't want to show LaunchNag if there is any pending status. */ }
 			{ ! status && ! isLaunched && <SiteLaunchNag siteSlug={ siteSlug } /> }
 		</VStack>
@@ -444,8 +447,8 @@ export function Plan( {
 
 	if ( nag.isExpired ) {
 		return (
-			<VStack spacing={ 1 }>
-				<Text intent="error">
+			<VStack spacing={ 0 }>
+				<Text className="dataviews-view-table__cell-content-wrapper" intent="error">
 					{ sprintf(
 						/* translators: %s: plan name */
 						__( '%s-expired' ),
