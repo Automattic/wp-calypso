@@ -52,10 +52,12 @@ describe( 'win.sign callback', () => {
 		jest.dontMock( '../../bin/windows-signing-core' );
 	} );
 
+	const mockSigner = { kind: 'azure' };
+
 	function loadSignWithMockedCore() {
 		jest.resetModules();
 		jest.doMock( '../../bin/windows-signing-core', () => ( {
-			resolveSigner: jest.fn(),
+			resolveSigner: jest.fn( () => mockSigner ),
 			signFile: jest.fn(),
 		} ) );
 		return {
@@ -79,10 +81,11 @@ describe( 'win.sign callback', () => {
 		expect( core.signFile ).not.toHaveBeenCalled();
 	} );
 
-	it( 'signs the SHA256 pass on CI', async () => {
+	it( 'signs the SHA256 pass on CI with the resolved signer', async () => {
 		process.env.CI = 'true';
 		const { core, sign } = loadSignWithMockedCore();
 		await sign( { path: 'app.exe', hash: 'sha256' } );
-		expect( core.signFile ).toHaveBeenCalledWith( undefined, 'app.exe' );
+		expect( core.resolveSigner ).toHaveBeenCalled();
+		expect( core.signFile ).toHaveBeenCalledWith( mockSigner, 'app.exe' );
 	} );
 } );
