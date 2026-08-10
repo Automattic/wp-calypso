@@ -500,13 +500,15 @@
 	color: var(--color-warning-50);
 }
 
-.sites-overview__warning-link,
-.sites-overview__warning-link:visited,
-.sites-overview__warning-link:hover,
-.sites-overview__warning-link:focus,
-.sites-overview__warning-link:active {
-	color: var(--color-warning-50);
-	text-decoration-color: currentColor;
+// Mirrors the A4A rule in sections/sites/sites-dashboard/style.scss. The hover underline sits on
+// the value so it picks up the status color; on the anchor it would resolve to the link blue.
+.sites-overview__row-status > a {
+	text-decoration: none;
+
+	&:hover > *,
+	&:focus-visible > * {
+		text-decoration: underline;
+	}
 }
 
 .sites-overview__failed {

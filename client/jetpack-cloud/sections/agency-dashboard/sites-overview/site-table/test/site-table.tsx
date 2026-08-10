@@ -110,7 +110,7 @@ describe( '<SiteTable>', () => {
 			plugin: {
 				updates: pluginUpdates.length,
 				type: 'plugin',
-				value: `${ pluginUpdates.length } ${ translate( 'Updates' ) }`,
+				value: `${ pluginUpdates.length } Updates`,
 				status: 'warning',
 			},
 		},
@@ -192,7 +192,6 @@ describe( '<SiteTable>', () => {
 		expect( pluginEle.getAttribute( 'href' ) ).toEqual(
 			`/plugins/manage/${ urlToSlug( siteUrl ) }?updates=1`
 		);
-		expect( pluginEle ).toHaveClass( 'sites-overview__warning-link' );
 		expect( getByText( `${ pluginUpdates.length } Updates` ) ).toBeInTheDocument();
 	} );
 } );
