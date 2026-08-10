@@ -98,7 +98,6 @@ describe( 'useFloatingPanelPosition', () => {
 	let harness: ReturnType< typeof renderHook >;
 
 	beforeEach( () => {
-		localStorage.clear();
 		window.innerWidth = 1280;
 		window.innerHeight = 1024;
 		animateSpy.mockClear();
@@ -107,7 +106,6 @@ describe( 'useFloatingPanelPosition', () => {
 	afterEach( async () => {
 		await harness.unmount();
 		vi.restoreAllMocks();
-		localStorage.clear();
 	} );
 
 	it( 'calculateSnapPosition docks the right side analytically (DOM-free)', async () => {

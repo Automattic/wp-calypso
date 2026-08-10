@@ -78,7 +78,6 @@ describe( 'useFloatingPanel', () => {
 	let harness: ReturnType< typeof renderHook >;
 
 	beforeEach( () => {
-		localStorage.clear();
 		// jsdom defaults to 1024x768; pin so the constraint box is deterministic.
 		window.innerWidth = 1280;
 		window.innerHeight = 1024;
@@ -87,7 +86,6 @@ describe( 'useFloatingPanel', () => {
 	afterEach( async () => {
 		await harness.unmount();
 		vi.restoreAllMocks();
-		localStorage.clear();
 	} );
 
 	const startResize = (
@@ -184,5 +182,135 @@ describe( 'useFloatingPanel', () => {
 
 		expect( onResizeEnd ).toHaveBeenCalledTimes( 1 );
 		expect( onFreeDragEnd ).not.toHaveBeenCalled();
+	} );
+
+	it( 'executes a layout command only when `id` changes, never on mount', async () => {
+		const onChatPositionChange = vi.fn();
+		const onFreeDragEnd = vi.fn();
+		const onResizeEnd = vi.fn();
+		const args: Args = {
+			freeDrag: true,
+			resizable: true,
+			defaultSize: DEFAULT_SIZE,
+			initialChatPosition: 'left',
+			onChatPositionChange,
+			onFreeDragEnd,
+			onResizeEnd,
+			layoutCommand: { id: 0, side: 'right', resetSize: true },
+		};
+		harness = renderHook( args );
+		await harness.render();
+
+		// A command present at mount does not execute — mount uses the seeds.
+		expect( onChatPositionChange ).not.toHaveBeenCalled();
+		expect( onResizeEnd ).not.toHaveBeenCalled();
+
+		// Same id: still no execution.
+		await harness.render();
+		expect( onChatPositionChange ).not.toHaveBeenCalled();
+
+		args.layoutCommand = { id: 1, side: 'right', resetSize: true };
+		await harness.render();
+
+		// Size resets to the built-in default, then the panel docks at the right
+		// corner — both reported through the standard persistence callbacks.
+		expect( onResizeEnd ).toHaveBeenCalledWith( {
+			width: 372,
+			height: 520,
+		} );
+		expect( onChatPositionChange ).toHaveBeenCalledWith( 'right' );
+		const cornerX = window.innerWidth - 372 - 16 - 16;
+		expect( onFreeDragEnd ).toHaveBeenCalledWith( { x: cornerX, y: 0 } );
+		expect( ( harness.captured.current as Result ).currentSide ).toBe(
+			'right'
+		);
+	} );
+
+	it( 'drops a command whole during an active gesture', async () => {
+		const onChatPositionChange = vi.fn();
+		const onResizeEnd = vi.fn();
+		const args: Args = {
+			freeDrag: true,
+			resizable: true,
+			initialChatPosition: 'left',
+			onChatPositionChange,
+			onResizeEnd,
+			layoutCommand: { id: 0, side: 'right', resetSize: true },
+		};
+		harness = renderHook( args );
+		await harness.render();
+
+		await act( async () => {
+			harness.captured.current?.handleDragStart();
+		} );
+
+		args.layoutCommand = { id: 1, side: 'right', resetSize: true };
+		await harness.render();
+
+		expect( onChatPositionChange ).not.toHaveBeenCalled();
+		expect( onResizeEnd ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps the snapped panel header reachable on short viewports', async () => {
+		window.innerHeight = 400;
+		const onFreeDragEnd = vi.fn();
+		const args: Args = {
+			freeDrag: true,
+			initialChatPosition: 'left',
+			onFreeDragEnd,
+			layoutCommand: { id: 0, side: 'right' },
+		};
+		harness = renderHook( args );
+		await harness.render();
+
+		args.layoutCommand = { id: 1, side: 'right' };
+		await harness.render();
+
+		// minY = top + bottom insets + panel height − viewport height.
+		const minY = 16 + 16 + 520 - 400;
+		const cornerX = window.innerWidth - 372 - 16 - 16;
+		expect( onFreeDragEnd ).toHaveBeenCalledWith( { x: cornerX, y: minY } );
+	} );
+
+	it( 'keeps the command snap when a controlled-size parent echoes the reset', async () => {
+		// Controlled-size consumers echo `onResizeEnd` back through `size`;
+		// the echo must not move the in-flight snap.
+		const args: Args = {
+			freeDrag: true,
+			resizable: true,
+			size: { width: 600, height: 700 },
+			initialChatPosition: 'left',
+			onResizeEnd: ( committed ) => {
+				args.size = committed;
+			},
+			layoutCommand: { id: 0, side: 'right', resetSize: true },
+		};
+
+		// Inert springs so the motion values only move when set explicitly.
+		const { animate } = await import( 'framer-motion' );
+		const animateMock = animate as ReturnType< typeof vi.fn >;
+		animateMock.mockImplementation( () => ( { stop: () => {} } ) );
+
+		harness = renderHook( args );
+		await harness.render();
+
+		// The size springs are mid-flight at the resized size when the echo lands.
+		harness.captured.current?.width.set( 600 );
+		harness.captured.current?.height.set( 700 );
+		animateMock.mockClear();
+
+		args.layoutCommand = { id: 1, side: 'right', resetSize: true };
+		await harness.render();
+		// The echo (`args.size` set by onResizeEnd) lands on this render.
+		await harness.render();
+
+		const xTargets = animateMock.mock.calls
+			.filter( ( call ) => call[ 0 ] === harness.captured.current?.x )
+			.map( ( call ) => call[ 1 ] );
+		const cornerX = window.innerWidth - 372 - 16 - 16;
+		expect( xTargets ).toContain( cornerX );
+		expect( xTargets ).toEqual(
+			xTargets.filter( ( target ) => target === cornerX )
+		);
 	} );
 } );

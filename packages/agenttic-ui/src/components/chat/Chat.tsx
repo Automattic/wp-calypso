@@ -46,6 +46,7 @@ export function Chat( {
 	boundaryInset,
 	initialChatPosition,
 	onChatPositionChange,
+	layoutCommand,
 	resizable = false,
 	defaultSize,
 	size,
@@ -134,6 +135,7 @@ export function Chat( {
 		onFreeDragEnd,
 		onResize,
 		onResizeEnd,
+		layoutCommand,
 		insets,
 	} );
 

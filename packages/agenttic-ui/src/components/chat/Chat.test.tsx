@@ -209,6 +209,7 @@ function ResizableContainer( {
 				isProcessing={ false }
 				onSubmit={ () => {} }
 				variant={ variant }
+				initialChatPosition="left"
 				floatingChatState={ state }
 				resizable={ resizable }
 				defaultSize={ defaultSize }
@@ -561,8 +562,6 @@ describe( 'Chat drag-end side persistence', () => {
 	let root: Root;
 
 	beforeEach( () => {
-		// currentSide seeds from localStorage; start each test from a known 'left'.
-		localStorage.clear();
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 		root = createRoot( container );
@@ -574,7 +573,6 @@ describe( 'Chat drag-end side persistence', () => {
 		} );
 		container.remove();
 		floatingDragProps.current = null;
-		localStorage.clear();
 	} );
 
 	// Renders expanded ( the only state with drag wired ) so onDragEnd is captured.
@@ -589,6 +587,7 @@ describe( 'Chat drag-end side persistence', () => {
 						isProcessing={ false }
 						onSubmit={ () => {} }
 						variant="floating"
+						initialChatPosition="left"
 						floatingChatState="expanded"
 						onChatPositionChange={ onChatPositionChange }
 					/>

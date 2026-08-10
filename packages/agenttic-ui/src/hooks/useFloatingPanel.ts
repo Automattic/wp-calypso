@@ -1,11 +1,16 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useMotionValue } from 'framer-motion';
 import {
 	type ChatPosition,
-	getChatPosition,
+	DEFAULT_CHAT_POSITION,
 	getInitialChatPosition,
-} from '../utils/chatStorage';
-import type { BoundaryInsets, ChatSize, ChatState } from '../types';
+} from '../utils/chatPosition';
+import type {
+	BoundaryInsets,
+	ChatSize,
+	ChatState,
+	LayoutCommand,
+} from '../types';
 import { DEFAULT_BOUNDARY_INSETS } from '../utils/constants';
 import { useResizablePanel } from './useResizablePanel';
 import { useFloatingPanelPosition } from './useFloatingPanelPosition';
@@ -25,6 +30,7 @@ export interface UseFloatingPanelArgs {
 	onFreeDragEnd?: ( position: { x: number; y: number } ) => void;
 	onResize?: ( size: ChatSize ) => void;
 	onResizeEnd?: ( size: ChatSize ) => void;
+	layoutCommand?: LayoutCommand;
 	// Per-side viewport insets (resolved boundaryInset).
 	insets?: BoundaryInsets;
 }
@@ -49,12 +55,13 @@ export function useFloatingPanel( {
 	onFreeDragEnd,
 	onResize,
 	onResizeEnd,
+	layoutCommand,
 	insets = DEFAULT_BOUNDARY_INSETS,
 }: UseFloatingPanelArgs ) {
 	// Seed the shared x/y so a persisted free-drag position (or right-corner dock)
 	// applies on mount. Lazy: useMotionValue only reads its argument on the first
-	// render, so computing this per render paid a discarded localStorage read each
-	// time. defaultSize only drives the corner seed when the panel actually mounts
+	// render, so the seed is computed once. defaultSize only drives the corner
+	// seed when the panel actually mounts
 	// at that size (resizable AND starting expanded) — every other mount renders
 	// the fixed compact footprint, and a 600-wide seed would dock a 372-wide
 	// launcher 228px off its corner.
@@ -64,7 +71,7 @@ export function useFloatingPanel( {
 		return getInitialChatPosition( {
 			freeDrag,
 			initialFreeDragPosition,
-			side: getChatPosition( initialChatPosition ),
+			side: initialChatPosition ?? DEFAULT_CHAT_POSITION,
 			width: mountsAtCustomSize ? defaultSize?.width : undefined,
 			height: mountsAtCustomSize ? defaultSize?.height : undefined,
 			insets,
@@ -121,6 +128,40 @@ export function useFloatingPanel( {
 	useLayoutEffect( () => {
 		repositionForResizeRef.current = position.repositionForResize;
 	}, [ position.repositionForResize ] );
+
+	// One-shot layout command: executes only when `id` changes — never on mount
+	// (mount uses the seeds). Size resets first so the corner snap positions the
+	// new frame; both fire the standard persistence callbacks.
+	const lastLayoutCommandIdRef = useRef( layoutCommand?.id );
+	useEffect( () => {
+		if (
+			! layoutCommand ||
+			layoutCommand.id === lastLayoutCommandIdRef.current
+		) {
+			return;
+		}
+
+		lastLayoutCommandIdRef.current = layoutCommand.id;
+
+		// Never fight an active gesture — drop the command whole rather than
+		// half-applying it.
+		if ( position.isDragging || resize.isResizing ) {
+			return;
+		}
+
+		if ( layoutCommand.resetSize ) {
+			const committedSize = resize.resetToDefaultSize();
+			if ( committedSize ) {
+				onResizeEnd?.( committedSize );
+			}
+		}
+
+		position.snapToSide( layoutCommand.side );
+
+		// `id` is the trigger; the other command fields come from the same
+		// render, and the memoized sub-hook methods' deps cover their reads.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ layoutCommand?.id ] );
 
 	return {
 		// Position / drag

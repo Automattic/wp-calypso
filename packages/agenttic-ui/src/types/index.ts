@@ -1,8 +1,21 @@
 // UI package should not import agent communication types
 import type { ComponentType } from 'react';
-import type { ChatPosition } from '../utils/chatStorage';
+import type { ChatPosition } from '../utils/chatPosition';
 
 // Define UI-specific types locally
+
+// One-shot layout command for the floating panel. Executes when `id` changes
+// (never on mount — mount uses the seed props), docking the panel at `side`'s
+// corner and, with `resetSize`, restoring the built-in default size. Fires the
+// same persistence callbacks as user gestures, so consumer-persisted state
+// stays in sync. `id` must be monotonic for the panel's lifetime — keep the
+// counter in state that survives the issuing component's remounts.
+export interface LayoutCommand {
+	id: number;
+	side: ChatPosition;
+	resetSize?: boolean;
+}
+
 export interface ChatSize {
 	width: number;
 	height: number;
@@ -175,6 +188,7 @@ export interface AgentUIProps {
 	// Chat position props
 	initialChatPosition?: ChatPosition;
 	onChatPositionChange?: ( position: ChatPosition ) => void;
+	layoutCommand?: LayoutCommand; // One-shot reposition of the floating panel; executes when `id` changes (see LayoutCommand)
 
 	// Typing status callback
 	onTypingStatusChange?: ( isTyping: boolean ) => void;

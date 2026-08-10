@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { getInitialChatPosition } from '../chatStorage';
+import { getInitialChatPosition } from '../chatPosition';
 import { STYLE_CONSTANTS } from '../constants';
 
 const { COMPACT_WIDTH, VIEWPORT_OFFSET, EXPANDED_HEIGHT } = STYLE_CONSTANTS;
