@@ -327,6 +327,8 @@ const useGridPlans: UseGridPlansType = ( {
 	siteId,
 	isDisplayingPlansNeededForFeature,
 	highlightLabelOverrides,
+	titleBadgeOverrides,
+	taglineOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 	useFocusedNewCopyTaglines,
@@ -384,6 +386,7 @@ const useGridPlans: UseGridPlansType = ( {
 	const titleBadges = useTitleBadges( {
 		intent,
 		planSlugs: planSlugsForIntent,
+		titleBadgeOverrides,
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package
@@ -527,6 +530,11 @@ const useGridPlans: UseGridPlansType = ( {
 						? translate( 'Publish securely at enterprise scale.' )
 						: existingTagline;
 			}
+		}
+
+		// Per-flow tagline override wins over the computed/experiment copy above.
+		if ( taglineOverrides?.[ planSlug ] ) {
+			tagline = taglineOverrides[ planSlug ];
 		}
 
 		// The enterprise plan isn't returned by the plans endpoint, so it has no
