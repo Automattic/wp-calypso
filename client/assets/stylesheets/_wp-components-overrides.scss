@@ -28,35 +28,45 @@
 	justify-content: center;
 }
 
-/* Default */
+/* Default ----------------------------------------------------------------------------- *
+ * `--wp-admin-theme-color`, not `--color-accent`. The two are the same for every scheme
+ * without a wp-admin counterpart, but for the eight that mirror one, the accent is
+ * wp-admin's decorative `$highlight-color` while the theme colour is the curated value core
+ * publishes for UI you click — on coffee, 10.2:1 against white text rather than 2.29:1.
+ *
+ * These declarations sit on the button rather than on a root, so nothing further up the tree
+ * can reach them. That is why pointing them at the accent shadowed the theme colour outright:
+ * @wordpress/components resolves its accent as
+ * `var(--wp-components-color-accent, var(--wp-admin-theme-color, …))`, and the first variable
+ * wins. Per-product overrides below still take precedence — they are more specific. */
 .components-button.is-primary:not(.is-destructive) {
 	// Background color, focus ring color
-	--wp-components-color-accent: var(--color-accent);
+	--wp-components-color-accent: var(--wp-admin-theme-color);
 	// Text color
 	--wp-components-color-accent-inverted: var(--color-text-inverted);
 	// Hover background color
-	--wp-components-color-accent-darker-10: var(--color-accent-60);
+	--wp-components-color-accent-darker-10: var(--wp-admin-theme-color-darker-10);
 	// Active and busy states background color
-	--wp-components-color-accent-darker-20: var(--color-accent-60);
+	--wp-components-color-accent-darker-20: var(--wp-admin-theme-color-darker-20);
 }
 
 .components-button.is-secondary:not(.is-destructive) {
 	// Text color, border color, focus ring color, hover background color tint
-	--wp-components-color-accent: var(--color-accent);
+	--wp-components-color-accent: var(--wp-admin-theme-color);
 	// Hover text color, border color
-	--wp-components-color-accent-darker-20: var(--color-accent-60);
+	--wp-components-color-accent-darker-20: var(--wp-admin-theme-color-darker-20);
 }
 
 .components-button.is-tertiary:not(.is-destructive) {
 	// Text color, focus ring color, active background color tint
-	--wp-components-color-accent: var(--color-accent);
+	--wp-components-color-accent: var(--wp-admin-theme-color);
 	// Hover text color
-	--wp-components-color-accent-darker-20: var(--color-accent-60);
+	--wp-components-color-accent-darker-20: var(--wp-admin-theme-color-darker-20);
 }
 
 .components-button.is-link:not(.is-destructive) {
 	// Text color, focus ring color
-	--wp-components-color-accent: var(--color-accent);
+	--wp-components-color-accent: var(--wp-admin-theme-color);
 }
 
 /*
@@ -224,12 +234,13 @@
 	}
 }
 
-/* @wordpress/components ButtonGroup overrides ---------------------------------------- */
+/* @wordpress/components ButtonGroup overrides ---------------------------------------- *
+ * Follows the fill set above, so the outline and the selected button stay one colour. */
 .components-button-group {
 	.components-button {
 		&,
 		&.is-primary {
-			box-shadow: inset 0 0 0 1px var(--color-accent-60);
+			box-shadow: inset 0 0 0 1px var(--wp-admin-theme-color);
 		}
 	}
 }
@@ -265,8 +276,8 @@
 		padding: 6px;
 
 		&:checked {
-			border-color: var(--color-accent);
-			background-color: var(--color-accent);
+			border-color: var(--wp-admin-theme-color);
+			background-color: var(--wp-admin-theme-color);
 		}
 	}
 }

@@ -58,4 +58,30 @@ describe( 'admin theme colour scoping', () => {
 			expect( partial ).toContain( '--wp-admin-theme-color: var(--color-accent)' );
 		} );
 	} );
+
+	it( 'aliases all three shades wherever it aliases any', () => {
+		// The button overrides resolve the two darker shades as well as the base. A scheme that
+		// aliased only some would fall back to whichever ancestor last declared the rest — in
+		// practice `:root`, whose accent is not that scheme's — so hover and active states would
+		// silently pick up the wrong colour. Substitution happens where the property is declared,
+		// so each shade has to be declared in the same block as the accent it derives from.
+		fs.readdirSync( SCHEME_DIR )
+			.filter( ( file ) => file.endsWith( '.scss' ) )
+			.forEach( ( file ) => {
+				const partial = fs.readFileSync( path.join( SCHEME_DIR, file ), 'utf8' );
+
+				if ( ! partial.includes( '--wp-admin-theme-color:' ) ) {
+					return;
+				}
+
+				expect( [ file, partial.includes( '--wp-admin-theme-color-darker-10:' ) ] ).toEqual( [
+					file,
+					true,
+				] );
+				expect( [ file, partial.includes( '--wp-admin-theme-color-darker-20:' ) ] ).toEqual( [
+					file,
+					true,
+				] );
+			} );
+	} );
 } );
