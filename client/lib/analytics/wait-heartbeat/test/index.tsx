@@ -160,6 +160,21 @@ describe( 'useWaitHeartbeat', () => {
 		} );
 	} );
 
+	// The count is an ordinal for the beats of one wait. Skipping the visibility ones would repeat a
+	// number across two events, in exactly the hidden and throttled cases this exists to measure.
+	it( 'numbers every beat, whatever triggered it', async () => {
+		renderHeartbeat();
+		await advance( 21 * 1000 );
+		setVisibility( 'hidden' );
+		setVisibility( 'visible' );
+		await advance( 20 * 1000 );
+
+		const counts = propsOf( 'calypso_transfer_wait_heartbeat' ).map(
+			( properties ) => properties.heartbeat_count
+		);
+		expect( counts ).toEqual( [ 1, 2, 3, 4 ] );
+	} );
+
 	// A wait screen left in a forgotten tab would otherwise beat for as long as the tab lives.
 	it( 'stops beating once the cap is passed', async () => {
 		renderHeartbeat();

@@ -31,10 +31,12 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 
 	// A completed transfer is not the end of the wait: the parent keeps this screen up until it has
 	// also verified that WooCommerce finished installing. Being mounted is the condition, so the wait
-	// runs for as long as this component does and `transfer_status` says how it ended.
+	// runs for as long as this component does and `transfer_status` says how it ended. The site is
+	// still the exception — the parent renders this screen before site data has necessarily arrived,
+	// and passes 0 until it has.
 	useWaitHeartbeat( {
 		surface: 'checkout_thank_you_transfer',
-		enabled: true,
+		enabled: !! siteId,
 		properties: {
 			site_id: siteId,
 			order_id: orderId,

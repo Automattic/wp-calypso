@@ -185,6 +185,7 @@ export function useWaitHeartbeat( {
 				wait.visibleMs += now - wait.visibleSince;
 				wait.visibleSince = null;
 			}
+			wait.beats += 1;
 			emit( 'calypso_transfer_wait_heartbeat', { trigger: 'visibility' as BeatTrigger } );
 		};
 
