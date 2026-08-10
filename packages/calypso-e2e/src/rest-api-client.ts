@@ -1007,7 +1007,8 @@ export class RestAPIClient {
 					// message format so CI can collect these; it must not contain quotes.
 					const message = `Could not delete feedback ${ post.ID } on site ${ siteID }: ${ error }`
 						.replace( /'/g, '' )
-						.replace( /[|[\]]/g, ' ' );
+						.replace( /[|[\]]/g, ' ' )
+						.replace( /\s+/g, ' ' );
 					// eslint-disable-next-line no-console
 					console.log( `##teamcity[message text='${ message }' status='WARNING']` );
 				}
