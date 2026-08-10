@@ -1,4 +1,5 @@
 /* eslint-disable jsdoc/require-jsdoc */
+import crypto from 'crypto';
 import path from 'path';
 import { getMag16Locales, getViewports } from './data-helper';
 import { TEST_ACCOUNT_NAMES } from './secrets';
@@ -279,6 +280,50 @@ class EnvVariables implements SupportedEnvVariables {
 	}
 }
 
+type PlaywrightGlobals = {
+	currentlyLoadingFileSuite: () => { location?: { file?: string } } | undefined;
+	currentTestInfo: () => { file?: string } | null;
+};
+
+let playwrightGlobals: PlaywrightGlobals | undefined;
+
+// Playwright tracks the spec file it is loading, and the test it is running, in a module it does
+// not re-export, so this reaches for it by path. Specs need it at module scope, where they pick
+// their test account and build their suite title, and `test.info()` does not exist yet. Loaded
+// lazily to keep importing this module runner-neutral.
+function getPlaywrightGlobals(): PlaywrightGlobals {
+	if ( ! playwrightGlobals ) {
+		const globalsPath = path.join(
+			path.dirname( require.resolve( 'playwright/package.json' ) ),
+			'lib',
+			'common',
+			'globals.js'
+		);
+
+		try {
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
+			playwrightGlobals = require( globalsPath ) as PlaywrightGlobals;
+		} catch {
+			// Failing here is deliberate. Falling back to a spec-independent variation would put
+			// every spec in the run on one Atomic site, which is the whole point of the indirection.
+			throw new Error(
+				`ATOMIC_VARIATION=mixed needs ${ globalsPath }, which this Playwright version does not provide.\nSet a concrete variation, or point getPlaywrightGlobals at the new location.`
+			);
+		}
+	}
+
+	return playwrightGlobals;
+}
+
+// Basename rather than full path, so a variation does not depend on the agent's checkout directory.
+function hashSpecFile( specFile: string ): number {
+	return Math.abs(
+		crypto.createHash( 'md5' ).update( path.basename( specFile ) ).digest().readInt8()
+	);
+}
+
+const mixedRunVariations = new Map< string, AtomicVariation >();
+
 function getAtomicVariationInMixedRun() {
 	const allVariations: AtomicVariation[] = [
 		'default',
@@ -289,12 +334,20 @@ function getAtomicVariationInMixedRun() {
 		'private',
 		'ecomm-plan',
 	];
-	// The goal here is controlled randomness to include multiple variations within a single run.
-	// By using the current day of the month and the test file name hash, we can get a
-	// lot of variation throughout the week while also ensuring the same variation is used on a failed retry.
-	const currentDayOfMonth = new Date().getDate();
-	const variationIndex = currentDayOfMonth % allVariations.length;
-	return allVariations[ variationIndex ];
+	const globals = getPlaywrightGlobals();
+	const specFile =
+		globals.currentlyLoadingFileSuite()?.location?.file ?? globals.currentTestInfo()?.file ?? '';
+
+	// Keyed by spec file so a single run spreads across variations, and memoised so a spec keeps the
+	// one it was collected with: its account and suite title are fixed when the file loads, its skip
+	// guards run much later, and a run crossing midnight must not leave those two disagreeing.
+	if ( ! mixedRunVariations.has( specFile ) ) {
+		const variationIndex =
+			( new Date().getDate() + hashSpecFile( specFile ) ) % allVariations.length;
+		mixedRunVariations.set( specFile, allVariations[ variationIndex ] );
+	}
+
+	return mixedRunVariations.get( specFile ) as AtomicVariation;
 }
 
 function castAsNumber( name: string, value: string ): number {

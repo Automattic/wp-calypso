@@ -1,4 +1,5 @@
-import { afterAll, beforeEach, describe, expect, test } from '@jest/globals';
+import path from 'path';
+import { afterAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import envVariables from '../env-variables';
 
 const URL_ENV_VARS = [
@@ -55,6 +56,95 @@ describe( 'EnvVariables Tests', function () {
 			process.env[ name ] = 'not-a-url';
 
 			expect( () => envVariables[ name ] ).toThrow( `Invalid ${ name } value` );
+		} );
+	} );
+
+	describe( 'Test: a mixed Atomic run spreads variations across spec files', function () {
+		const ambient = process.env.ATOMIC_VARIATION;
+		const globalsPath = path.join(
+			path.dirname( require.resolve( 'playwright/package.json' ) ),
+			'lib',
+			'common',
+			'globals.js'
+		);
+		// Every spec that reads the variation on a private site, plus a few that do not, so the
+		// assertions below run against the real spread of names rather than invented ones.
+		const SPEC_FILES = [
+			'blocks__jetpack-forms.spec.ts',
+			'blocks__jetpack-media.spec.ts',
+			'blocks__jetpack-other.spec.ts',
+			'blocks__jetpack-earn.spec.ts',
+			'editor__post-basic-flow.spec.ts',
+			'forms__submissions.spec.ts',
+			'jetpack__dashboard-smoke.spec.ts',
+			'social__editor-features.spec.ts',
+			'stats.spec.ts',
+		];
+
+		let loadingFile = '';
+
+		beforeEach( function () {
+			jest.resetModules();
+			jest.doMock( globalsPath, function () {
+				return {
+					currentlyLoadingFileSuite: () => ( { location: { file: loadingFile } } ),
+					currentTestInfo: () => null,
+				};
+			} );
+		} );
+
+		afterAll( function () {
+			jest.useRealTimers();
+			jest.resetModules();
+			if ( ambient === undefined ) {
+				delete process.env.ATOMIC_VARIATION;
+			} else {
+				process.env.ATOMIC_VARIATION = ambient;
+			}
+		} );
+
+		/**
+		 * Resolves the variation one spec file would get, reloading the module so the case starts
+		 * without the memoised variations of the last one.
+		 */
+		function variationFor( specFile: string ) {
+			loadingFile = `/checkout/test/e2e/specs/${ specFile }`;
+			process.env.ATOMIC_VARIATION = 'mixed';
+
+			let variation;
+			jest.isolateModules( function () {
+				// eslint-disable-next-line @typescript-eslint/no-require-imports
+				variation = require( '../env-variables' ).default.ATOMIC_VARIATION;
+			} );
+			return variation;
+		}
+
+		test( 'one run covers more than one variation', function () {
+			jest.useFakeTimers();
+			jest.setSystemTime( new Date( '2026-08-10T09:00:00Z' ) );
+
+			expect( new Set( SPEC_FILES.map( variationFor ) ).size ).toBeGreaterThan( 1 );
+		} );
+
+		// The account and suite title are fixed at load, the skip guards run much later. A run that
+		// crosses midnight must not leave those two pointing at different sites.
+		test( 'a spec keeps its variation when the clock rolls over to the next day', function () {
+			jest.useFakeTimers();
+			jest.setSystemTime( new Date( '2026-08-10T23:59:00Z' ) );
+
+			loadingFile = '/checkout/test/e2e/specs/forms__submissions.spec.ts';
+			process.env.ATOMIC_VARIATION = 'mixed';
+
+			jest.isolateModules( function () {
+				// eslint-disable-next-line @typescript-eslint/no-require-imports
+				const envVars = require( '../env-variables' ).default;
+				const resolved = envVars.ATOMIC_VARIATION;
+
+				jest.setSystemTime( new Date( '2026-08-11T00:01:00Z' ) );
+
+				expect( envVars.ATOMIC_VARIATION ).toBe( resolved );
+				expect( resolved ).not.toBe( 'mixed' );
+			} );
 		} );
 	} );
 } );
