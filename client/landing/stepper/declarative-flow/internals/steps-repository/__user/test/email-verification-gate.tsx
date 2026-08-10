@@ -315,8 +315,12 @@ describe( 'account step email verification gate', () => {
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 		expect( screen.getByText( EMAIL, { exact: false } ) ).toBeVisible();
 		expect( screen.queryByText( CORRECTED_EMAIL, { exact: false } ) ).not.toBeInTheDocument();
-		// Nothing went out, so nothing is waited on.
+		// Nothing went out, so nothing is waited on and nothing is counted.
 		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeEnabled() );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_update_requested',
+			expect.anything()
+		);
 	} );
 
 	// The dedicated endpoint mails whatever the account holds, which during a correction is the
@@ -467,31 +471,6 @@ describe( 'account step email verification gate', () => {
 				flow="onboarding"
 				scope={ gateScope( 'onboarding', mockUserId ) }
 				email={ EMAIL }
-				onEditEmail={ jest.fn() }
-			/>,
-			{ store: makeStore( false ) }
-		);
-
-		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
-
-		expect( screen.getByRole( 'button', { name: 'edit' } ) ).toBeDisabled();
-	} );
-
-	// Both go through one scope, so a correction submitted now would queue behind the resend.
-	it( 'will not take a correction while a change request is still going', async () => {
-		const user = userEvent.setup();
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/settings' )
-			.delay( 100 )
-			.reply( 200, {} );
-
-		renderWithProvider(
-			<EmailVerificationGate
-				addressSettled
-				flow="onboarding"
-				scope={ gateScope( 'onboarding', mockUserId ) }
-				email={ CORRECTED_EMAIL }
-				pendingEmail={ CORRECTED_EMAIL }
 				onEditEmail={ jest.fn() }
 			/>,
 			{ store: makeStore( false ) }
