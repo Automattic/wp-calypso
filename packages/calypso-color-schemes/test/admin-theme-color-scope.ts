@@ -35,7 +35,7 @@ const selectors = (): string[] =>
 		.filter( Boolean );
 
 const STATS_ROOTS = [ '.stats-main', '.store-stats' ];
-const PORTAL_ROOTS = [
+const CALYPSO_PORTAL_ROOTS = [
 	'.popover',
 	'[data-base-ui-portal]',
 	'.components-modal__screen-overlay',
@@ -43,26 +43,45 @@ const PORTAL_ROOTS = [
 	'[data-wp-compat-overlay-slot]',
 	'.ReactModalPortal',
 ];
+const ODYSSEY_PORTAL_ROOT = 'body > .color-scheme';
 
-const targetsPortal = ( selector: string ) => PORTAL_ROOTS.some( ( r ) => selector.includes( r ) );
+const targetsCalypsoPortal = ( selector: string ) =>
+	CALYPSO_PORTAL_ROOTS.some( ( r ) => selector.includes( r ) );
 
 describe( 'admin theme colour scoping', () => {
 	it( 'confines every rule to a Stats surface', () => {
 		expect( selectors().length ).toBeGreaterThan( 0 );
 		selectors().forEach( ( selector ) => {
 			const onStatsRoot = STATS_ROOTS.some( ( root ) => selector.includes( root ) );
-			expect( onStatsRoot || targetsPortal( selector ) ).toBe( true );
+			const onPortal =
+				targetsCalypsoPortal( selector ) || selector.startsWith( ODYSSEY_PORTAL_ROOT );
+			expect( onStatsRoot || onPortal ).toBe( true );
 		} );
 	} );
 
-	it( 'qualifies the generic portal roots with the Stats section', () => {
+	it( 'qualifies the generic Calypso portal roots with the Stats section', () => {
 		// `.popover` and friends are used throughout Calypso. Without `.is-section-stats` these
 		// rules would recolour every popover and modal in the product.
-		const portalSelectors = selectors().filter( targetsPortal );
+		const portalSelectors = selectors().filter( targetsCalypsoPortal );
 
 		expect( portalSelectors.length ).toBeGreaterThan( 0 );
 		portalSelectors.forEach( ( selector ) => {
 			expect( selector ).toContain( '.is-section-stats' );
+		} );
+	} );
+
+	it( 'reaches the Odyssey portal wrapper without matching Calypso', () => {
+		// Odyssey's RootChild tags a <body> child with the scheme class; Calypso's portal wrapper is
+		// a bare div and its <body> carries the class instead, so the child combinator is what keeps
+		// the rule out of Calypso. Without it, `.color-scheme.is-<scheme>` would match Calypso's
+		// <body> and hand the whole product `inherit`.
+		const wrapperSelectors = selectors().filter( ( selector ) =>
+			selector.startsWith( ODYSSEY_PORTAL_ROOT )
+		);
+
+		expect( wrapperSelectors.length ).toBeGreaterThan( 0 );
+		wrapperSelectors.forEach( ( selector ) => {
+			expect( selector ).toMatch( /^body > \.color-scheme\.is-[\w-]+$/ );
 		} );
 	} );
 
@@ -76,13 +95,18 @@ describe( 'admin theme colour scoping', () => {
 			} );
 	} );
 
-	it( 'inherits rather than restating the colour on the Odyssey Stats root', () => {
-		// In wp-admin the surrounding page already defines the token, and that value is
-		// authoritative for the site's WordPress version — restating our own would drift.
-		const odysseyBlock = generated().match( /\.stats-main\.color-scheme\.is-coffee \{([^}]*)\}/ );
+	it.each( [ '.stats-main.color-scheme.is-coffee', 'body > .color-scheme.is-coffee' ] )(
+		'inherits rather than restating the colour on the Odyssey root %s',
+		( root ) => {
+			// In wp-admin the surrounding page already defines the token, and that value is
+			// authoritative for the site's WordPress version — restating our own would drift.
+			const block = generated().match(
+				new RegExp( `${ root.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' ) } \\{([^}]*)\\}` )
+			);
 
-		expect( odysseyBlock ).not.toBeNull();
-		expect( odysseyBlock?.[ 1 ] ).toContain( '--wp-admin-theme-color: inherit;' );
-		expect( odysseyBlock?.[ 1 ] ).not.toMatch( /#[0-9a-f]{6}/i );
-	} );
+			expect( block ).not.toBeNull();
+			expect( block?.[ 1 ] ).toContain( '--wp-admin-theme-color: inherit;' );
+			expect( block?.[ 1 ] ).not.toMatch( /#[0-9a-f]{6}/i );
+		}
+	);
 } );

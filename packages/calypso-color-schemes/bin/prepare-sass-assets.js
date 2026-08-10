@@ -79,12 +79,21 @@ const CALYPSO_PORTAL_ROOTS = [
 	'.ReactModalPortal',
 ];
 
-// The two rules per scheme are mutually exclusive: `useWPAdminTheme` only returns an
-// `is-<scheme>` class in wp-admin, so in Calypso the scheme class sits on <body> and the Stats root
-// is a descendant, while in Odyssey it sits on the Stats root itself and <body> belongs to
-// wp-admin. Odyssey inherits rather than restating the colour so Stats matches whatever that site's
-// WordPress actually ships, which may differ from our bundled base-styles. Only `.stats-main` needs
-// the Odyssey rule — Store Stats does not exist there.
+// The Odyssey surfaces that carry the scheme class themselves. `.stats-main` is the Stats root, and
+// the <body> child is the portal wrapper Odyssey's RootChild tags with the scheme
+// (apps/odyssey-stats/src/components/root-child.tsx) — popovers and dialogs mount there, outside the
+// Stats root, so they need the rule separately. Neither can match in Calypso: `useWPAdminTheme`
+// returns a scheme class only in wp-admin, so Calypso's Stats root has a bare `color-scheme` and its
+// portal wrapper has no class at all. Anchoring the wrapper with `body >` also keeps Odyssey's CSS
+// scoping from prefixing it, which would ask a <body> child to be a descendant of the Stats mount
+// (see `exclude` in apps/odyssey-stats/webpack-css-scope.js).
+const ODYSSEY_ROOTS = [ '.stats-main.color-scheme', 'body > .color-scheme' ];
+
+// The Calypso and Odyssey rules are mutually exclusive for the reason above: in Calypso the scheme
+// class sits on <body> and the Stats surfaces are descendants, while in Odyssey it sits on the
+// surfaces themselves and <body> belongs to wp-admin. Odyssey inherits rather than restating the
+// colour so Stats matches whatever that site's WordPress actually ships, which may differ from our
+// bundled base-styles. Store Stats is absent from the Odyssey roots — it does not exist there.
 function buildAdminThemeColors( schemes ) {
 	const blocks = REQUIRED_SCHEMES.map( ( name ) => {
 		const hex = schemes[ name ];
@@ -92,6 +101,15 @@ function buildAdminThemeColors( schemes ) {
 			`body.is-${ name } :is(${ CALYPSO_STATS_ROOTS.join( ', ' ) })`,
 			`body.is-${ name }.is-section-stats :is(${ CALYPSO_PORTAL_ROOTS.join( ', ' ) })`,
 		].join( ',\n' );
+		const odysseyBlocks = ODYSSEY_ROOTS.map( ( root ) =>
+			[
+				`${ root }.is-${ name } {`,
+				'\t--wp-admin-theme-color: inherit;',
+				'\t--wp-admin-theme-color-darker-10: inherit;',
+				'\t--wp-admin-theme-color-darker-20: inherit;',
+				'}',
+			].join( '\n' )
+		);
 
 		return [
 			`${ calypsoSelector } {`,
@@ -99,11 +117,7 @@ function buildAdminThemeColors( schemes ) {
 			`\t--wp-admin-theme-color-darker-10: #{color.adjust(${ hex }, $lightness: -5%)};`,
 			`\t--wp-admin-theme-color-darker-20: #{color.adjust(${ hex }, $lightness: -10%)};`,
 			'}',
-			`.stats-main.color-scheme.is-${ name } {`,
-			'\t--wp-admin-theme-color: inherit;',
-			'\t--wp-admin-theme-color-darker-10: inherit;',
-			'\t--wp-admin-theme-color-darker-20: inherit;',
-			'}',
+			...odysseyBlocks,
 		].join( '\n' );
 	} );
 

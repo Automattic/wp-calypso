@@ -1,11 +1,20 @@
 @import "calypso/my-sites/stats/interactive-colors";
 
 // Stats modals, popovers and tooltips render at the document root, outside .stats-main, so the
-// overrides have to reach them separately. The roots match the portal list in
+// overrides have to reach them separately, in both environments. Correcting
+// `--wp-admin-theme-color` on these roots is not enough on its own — the accent that
+// client/assets/stylesheets/_wp-components-overrides.scss pins on every button ships in Odyssey too.
+//
+// In Calypso the roots match the portal list in
 // packages/calypso-color-schemes/bin/prepare-sass-assets.js, which puts the token on the same
 // elements — keep the two in step. They are qualified with `.is-section-stats`, the class Calypso
 // puts on <body> for the section, because the roots are generic: an unqualified `.popover` would
 // recolour every popover in Calypso.
+//
+// Odyssey portals into a single <body> child instead, tagged by its own RootChild
+// (apps/odyssey-stats/src/components/root-child.tsx). Calypso's portal wrapper is a bare div and its
+// <body> carries the class rather than a child, so `body > .color-scheme` picks out the Odyssey one
+// alone.
 .stats-main,
 body.is-section-stats
 	:is(
@@ -15,6 +24,7 @@ body.is-section-stats
 		.components-popover__fallback-container,
 		[data-wp-compat-overlay-slot],
 		.ReactModalPortal
-	) {
+	),
+body > .color-scheme {
 	@include stats-interactive-colors;
 }
