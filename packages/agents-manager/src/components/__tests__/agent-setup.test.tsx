@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- `AgentsManager` must be imported after `jest.mock` */
-import { act, render, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 
 const mockAgentManager = {
 	hasAgent: jest.fn( () => false ),
@@ -46,7 +46,14 @@ jest.mock( '../../utils/load-external-providers', () => ( {
 jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {
 	useEmptyViewSuggestions: () => [],
 } ) );
-jest.mock( '../agent-dock', () => ( { __esModule: true, default: () => null } ) );
+jest.mock( '../agent-dock', () => {
+	const { useAgentsManagerContext } = jest.requireActual( '../../contexts' );
+	function MockAgentDock() {
+		const { agentConfig } = useAgentsManagerContext();
+		return <div data-testid="published-session">{ agentConfig?.sessionId ?? '' }</div>;
+	}
+	return { __esModule: true, default: MockAgentDock };
+} );
 
 import AgentsManager from '../agents-manager';
 import { saveSessionId, setSessionSiteKey } from '../../utils/agent-session';
@@ -102,6 +109,35 @@ describe( 'AgentSetup', () => {
 		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
 			expect.objectContaining( { sessionId: 'session-selected' } )
 		);
+	} );
+
+	it( 'ignores a superseded initialization that resolves after a site switch', async () => {
+		setSessionSiteKey( '111' );
+		saveSessionId( 'session-a' );
+		setSessionSiteKey( '222' );
+		saveSessionId( 'session-b' );
+
+		let resolveSiteA!: () => void;
+		mockCreateAgentConfig.mockImplementationOnce(
+			( { sessionId, agentId }: { sessionId: string; agentId: string } ) =>
+				new Promise( ( resolve ) => {
+					resolveSiteA = () => resolve( { agentId, sessionId } );
+				} )
+		);
+
+		const { rerender } = render( manager( 111 ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		rerender( manager( 222 ) );
+
+		await waitFor( () =>
+			expect( screen.getByTestId( 'published-session' ).textContent ).toBe( 'session-b' )
+		);
+
+		act( () => resolveSiteA() );
+		await act( async () => {} );
+
+		expect( screen.getByTestId( 'published-session' ).textContent ).toBe( 'session-b' );
 	} );
 
 	it( 'discards the previous agent and its announced session on a site switch', async () => {

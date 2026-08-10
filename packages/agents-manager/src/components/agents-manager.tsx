@@ -143,6 +143,10 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			return;
 		}
 
+		// A dep change supersedes this run mid-await — a stale initialization
+		// must not navigate or publish its config over the newer run's.
+		let isSuperseded = false;
+
 		// Abort the agent's in-flight request, remove it, and forget its
 		// announced session.
 		async function discardAgent(): Promise< void > {
@@ -163,11 +167,20 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			if ( previousSiteIdRef.current !== site?.ID ) {
 				previousSiteIdRef.current = site?.ID;
 				await discardAgent();
+
+				if ( isSuperseded ) {
+					return;
+				}
 			}
 
 			// Handle new chat: clear existing session and navigate to clean state
 			if ( isNewChat ) {
 				await discardAgent();
+
+				if ( isSuperseded ) {
+					return;
+				}
+
 				clearSessionId( agentId );
 				// Clear route state to prevent repeated new chat initialization
 				navigate( '/chat', { replace: true } );
@@ -190,6 +203,10 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			if ( ! providers ) {
 				providers = await loadExternalProviders();
 				loadedProvidersRef.current = providers;
+
+				if ( isSuperseded ) {
+					return;
+				}
 			}
 
 			const siteId = typeof site?.ID === 'number' ? site.ID : undefined;
@@ -207,10 +224,18 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 				onTaskUpdate: providers.onTaskUpdate,
 			} );
 
+			if ( isSuperseded ) {
+				return;
+			}
+
 			setAgentConfig( config );
 		}
 
 		initializeAgent();
+
+		return () => {
+			isSuperseded = true;
+		};
 	}, [
 		agentId,
 		currentRoute,
