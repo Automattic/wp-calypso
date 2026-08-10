@@ -95,7 +95,8 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 		return getSessionId( agentConfig?.agentId );
 	}, [ agentConfig?.agentId ] );
 
-	// `AgentSetup` resumes this tab's stored session.
+	// `AgentSetup` resolves this tab's stored session, so navigating is all a
+	// resume needs.
 	const resumeChat = useCallback( () => {
 		navigate( '/chat' );
 	}, [ navigate ] );
