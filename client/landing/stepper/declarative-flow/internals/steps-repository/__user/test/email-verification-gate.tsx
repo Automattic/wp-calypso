@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
+import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
@@ -156,13 +157,17 @@ const makeStore = ( emailVerified: boolean ) =>
 const makeLoggedOutStore = () =>
 	createStore( rootReducer, { currentUser: {} }, applyMiddleware( thunkMiddleware ) );
 
-const renderUser = ( store: ReturnType< typeof makeStore >, url = '/onboarding/user' ) => {
+const renderUser = (
+	store: ReturnType< typeof makeStore >,
+	url = '/onboarding/user',
+	queryClient?: QueryClient
+) => {
 	const submit = jest.fn();
 	const { unmount } = renderWithProvider(
 		<MemoryRouter initialEntries={ [ url ] }>
 			<UserStep flow="onboarding" stepName="user" navigation={ { submit, goBack: jest.fn() } } />
 		</MemoryRouter>,
-		{ store }
+		{ store, ...( queryClient && { queryClient } ) }
 	);
 	return { submit, unmount };
 };
@@ -253,6 +258,27 @@ describe( 'account step email verification gate', () => {
 		await user.click( screen.getByRole( 'button', { name: 'submit-unchanged' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+	} );
+
+	// Signup starts logged out, so an unscoped settings read would be persisted into the cache
+	// every later signup in the browser opens, and would answer them with this account's.
+	it( 'keeps the settings it reads to this account, and out of storage', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email: EMAIL } );
+		const queryClient = new QueryClient();
+
+		renderUser( makeStore( false ), '/onboarding/user', queryClient );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		await waitFor( () => {
+			const settings = queryClient
+				.getQueryCache()
+				.findAll()
+				.find( ( query ) => query.queryKey[ 0 ] === 'me' && query.queryKey[ 1 ] === 'settings' );
+			expect( settings?.queryKey ).toContain( gateScope( 'onboarding', mockUserId ) );
+			expect( settings?.meta?.persist ).toBe( false );
+		} );
 	} );
 
 	// The dedicated endpoint mails whatever the account holds, which during a correction is the
