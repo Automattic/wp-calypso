@@ -57,6 +57,8 @@ const EmailVerificationGate = ( {
 	);
 
 	const headingRef = useRef< HTMLDivElement >( null );
+	// Either kind of send: one shares a mutation scope, the other is only known to this component.
+	const isSending = isWriteInFlight || sendStatus === 'sending';
 	const inboxLink = getInboxLink( email );
 	// A stable dependency: `inboxLink` is a fresh object every render.
 	const provider = inboxLink?.provider ?? 'none';
@@ -107,7 +109,7 @@ const EmailVerificationGate = ( {
 					variant="link"
 					// A correction submitted now would queue behind the send, and a reload while it
 					// waited would leave the address written down with nothing able to carry it out.
-					disabled={ isWriteInFlight }
+					disabled={ isSending }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_signup_email_verification_edit_click', { flow } );
 						onEditEmail();
@@ -168,12 +170,7 @@ const EmailVerificationGate = ( {
 
 						<Button
 							onClick={ resend }
-							disabled={
-								isWriteInFlight ||
-								sendStatus === 'sending' ||
-								secondsUntilResend > 0 ||
-								! addressSettled
-							}
+							disabled={ isSending || secondsUntilResend > 0 || ! addressSettled }
 							busy={ sendStatus === 'sending' }
 						>
 							{ resendLabel }

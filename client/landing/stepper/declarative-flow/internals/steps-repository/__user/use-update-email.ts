@@ -1,7 +1,6 @@
-import { userSettingsQuery } from '@automattic/api-queries';
-import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getInboxLink } from './email-verification/inbox-links';
 import { markResendUnavailableUntil } from './email-verification/storage';
 import { PENDING_CHANGE_RESEND_SECONDS, useEmailChangeRequest } from './use-email-change-request';
 
@@ -12,7 +11,6 @@ import { PENDING_CHANGE_RESEND_SECONDS, useEmailChangeRequest } from './use-emai
  * both makes the change and verifies the account — which is what returns the user to the flow.
  */
 export function useUpdateEmail( { flow, scope }: { flow: string; scope: string } ) {
-	const queryClient = useQueryClient();
 	// What the server accepted, which is what the gate goes on to wait for. Held here rather than
 	// read back, so a settings request that fails or answers from behind does not leave the gate
 	// naming an address the account has already been asked to leave.
@@ -39,11 +37,14 @@ export function useUpdateEmail( { flow, scope }: { flow: string; scope: string }
 		}
 
 		setRequested( { scope, email: accepted.new_user_email } );
-		// Only to reconcile a reload; nothing here waits on it.
-		queryClient.invalidateQueries( { queryKey: userSettingsQuery().queryKey } );
 		// A confirmation has just gone out, and another cannot be sent until the server's window.
 		markResendUnavailableUntil( scope, Date.now() + PENDING_CHANGE_RESEND_SECONDS * 1000 );
-		recordTracksEvent( 'calypso_signup_email_verification_email_update_requested', { flow } );
+		// The gate's view event is stamped once, against whatever address it opened on, so this is
+		// what a corrected address's funnel counts from.
+		recordTracksEvent( 'calypso_signup_email_verification_email_update_requested', {
+			flow,
+			provider: getInboxLink( accepted.new_user_email )?.provider ?? 'none',
+		} );
 	};
 
 	return {

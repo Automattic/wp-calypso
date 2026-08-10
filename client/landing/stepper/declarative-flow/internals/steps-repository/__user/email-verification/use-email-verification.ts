@@ -18,8 +18,8 @@ import { gateResendAvailableAt, markResendUnavailableUntil } from './storage';
 // button is held — the countdown says whether it still is.
 type SendStatus = 'idle' | 'sending' | 'error' | 'throttled';
 
-// `pendingEmail` is set while a correction waits to be confirmed. The account still holds the old
-// address until then, so the dedicated endpoint would mail that one.
+// `pendingEmail` is set while a correction waits to be confirmed, when the dedicated endpoint
+// would mail the address being left rather than the one waiting.
 export function useEmailVerification( flow: string, scope: string, pendingEmail?: string ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );

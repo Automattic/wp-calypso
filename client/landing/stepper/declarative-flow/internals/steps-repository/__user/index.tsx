@@ -176,12 +176,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		requestedEmail,
 	} = useUpdateEmail( { flow, scope: gateScopeForUser } );
 
-	// A correction is confirmed at the new address rather than applied on the spot, so until then
-	// the account still holds the mistyped one and only the settings know where to look.
+	// Where a pending correction is: `/me` still reports the address being left.
 	//
-	// Asked for under this account and kept out of storage. Signup starts logged out, so the cache
-	// this would otherwise persist into is the one every later signup in the browser opens, and it
-	// would be answering for whoever settings were last read for. Prefix invalidation still matches.
+	// Asked under this account and kept out of storage, because signup starts logged out and the
+	// cache this would persist into is the one every later signup in the browser opens. Prefix
+	// invalidation still matches the longer key.
 	const settings = userSettingsQuery();
 	const { data: userSettings, isSuccess: settingsRead } = useDataQuery( {
 		...settings,
@@ -221,7 +220,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			<Notice variant="error">{ updateError }</Notice>
 		</div>
 	) : (
-		( false as const )
+		false
 	);
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings

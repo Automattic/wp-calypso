@@ -3,9 +3,14 @@ import { useIsMutating, useMutation } from '@tanstack/react-query';
 import { ACTIVATION_EMAIL_SOURCE } from './use-email-verification-gate';
 
 /**
- * Asks for an address, which is also what sends its confirmation again — there is no endpoint that
- * resends one — so correcting an address and resending its confirmation are the same request, and
- * have to stay the same request.
+ * Asks the server for an address. What it does with that is worth knowing wherever it is called:
+ *
+ * - The address does not move. A confirmation goes to the new one, and opening that both makes the
+ *   change and verifies the account. Until then `/me` still reports the old address.
+ * - Asking again is the only way to send the confirmation again; there is no endpoint that resends
+ *   one. So a correction and a resend are the same request.
+ * - A repeat of the same address inside fifteen minutes is answered success without sending.
+ * - A refusal names the address of a change already pending, so its message stays on screen.
  *
  * It fails offline rather than waiting for a connection. A waiting one is written to storage with
  * the address in it, and restored without the function that would carry it out, where it holds up
