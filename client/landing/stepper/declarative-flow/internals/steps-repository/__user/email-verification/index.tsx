@@ -147,7 +147,14 @@ const EmailVerificationGate = ( {
 				}
 			>
 				<VStack spacing={ 8 }>
-					<p className="onboarding-email-verification__sub-text" id={ SUB_TEXT_ID }>
+					{ /* The address can be replaced once the settings answer, after this has been read
+					   out and focus has moved on. */ }
+					<p
+						className="onboarding-email-verification__sub-text"
+						id={ SUB_TEXT_ID }
+						aria-live="polite"
+						aria-atomic="true"
+					>
 						{ subText }
 					</p>
 

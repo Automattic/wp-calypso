@@ -84,6 +84,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
+	const [ createdUserId, setCreatedUserId ] = useState< number | string | null >( null );
 
 	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
 	const gateScopeForUser = gateScope( flow, userId );
@@ -181,8 +182,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	//
 	// Asked under this account and kept out of storage, because signup starts logged out and the
 	// cache this would persist into is the one every later signup in the browser opens.
-	// It was just created, so nothing can have been asked of it before now.
-	const isAccountFromThisSession = Boolean( wpAccountCreateResponse );
+	// Only for the account this step created. A stale token can leave `/me` resolving a different
+	// one, which this step handles and which may have a correction waiting from before.
+	// Compared as strings: the two arrive by different routes and need not agree on their type.
+	const isAccountFromThisSession =
+		createdUserId !== null && String( createdUserId ) === String( userId );
 	const settings = userSettingsQuery();
 	const { data: userSettings, isSuccess: settingsRead } = useDataQuery( {
 		...settings,
@@ -231,6 +235,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		if ( ! ( 'ID' in data ) ) {
 			return;
 		}
+		setCreatedUserId( data.ID );
 		setSignupIsNewUser( data.ID );
 		if ( gateEnabled ) {
 			// The activation email from account creation is the one the gate asks for, so the gate

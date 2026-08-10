@@ -404,6 +404,34 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
+	// The shortcut that skips the settings read belongs to the account this step created. A stale
+	// token can leave `/me` resolving another, which may have a correction waiting from before.
+	it( 'still looks for a correction when `/me` resolves an account it did not create', async () => {
+		const user = userEvent.setup();
+		const other = mockUserId + 1;
+		const settings = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, {
+				user_email: 'someone@else.example',
+				user_email_change_pending: true,
+				new_user_email: CORRECTED_EMAIL,
+			} );
+		const store = makeLoggedOutStore();
+		renderUser( store );
+
+		// The account this step made, then a different one resolving over it.
+		await user.click( await screen.findByRole( 'button', { name: 'create-email-account' } ) );
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: other, email: 'someone@else.example', email_verified: false },
+			} );
+		} );
+
+		await waitFor( () => expect( settings.isDone() ).toBe( true ) );
+		expect( await screen.findByText( CORRECTED_EMAIL, { exact: false } ) ).toBeVisible();
+	} );
+
 	// Resending at a mistyped address is what earns a long wait, and correcting it is what the
 	// wait would otherwise outlast.
 	it( 'does not carry a wait earned at the old address over to the corrected one', async () => {
