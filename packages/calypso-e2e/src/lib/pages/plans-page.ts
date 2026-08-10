@@ -26,14 +26,9 @@ const selectors = {
 	},
 	addOnComboboxButton: 'button[role="combobox"]',
 	addOnComboboxOption: ( addOn: string ) => `[role="option"]:has-text("${ addOn }")`,
-	selectPlanButton: ( name: Plans ) => {
-		if ( name === 'Free' ) {
-			// Free plan is a pseudo-button presented as a
-			// link.
-			return `button:text-matches("${ name }", "i"):visible`;
-		}
-		return `button.is-${ name.toLowerCase() }-plan:visible`;
-	},
+	// Match on the plan class, never the button text: the domain step's skip button reads
+	// "Start Free" and stays mounted while the plans step renders.
+	selectPlanButton: ( name: Plans ) => `button.is-${ name.toLowerCase() }-plan:visible`,
 
 	// Navigation
 	mobileNavTabsToggle: 'button.section-nav__mobile-header',
