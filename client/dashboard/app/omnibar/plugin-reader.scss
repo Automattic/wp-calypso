@@ -1,3 +1,9 @@
+.omnibar .omnibar__reader {
+	@media ( max-width: 360px ) {
+		display: none;
+	}
+}
+
 .omnibar .omnibar__menu svg.omnibar__reader-icon {
 	width: 36px;
 	height: auto;
