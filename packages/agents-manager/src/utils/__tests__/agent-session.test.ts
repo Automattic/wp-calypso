@@ -74,6 +74,19 @@ describe( 'saveSessionId / getSessionId', () => {
 		expect( () => saveSessionId( 'session-abc' ) ).not.toThrow();
 		expect( () => clearSessionId() ).not.toThrow();
 		expect( consoleError ).toHaveBeenCalledTimes( 3 );
+
+		// A stable '' instead of a fresh UUID per call, so the agent is not
+		// re-initialized on every render.
+		expect( getOrCreateSessionId( 'reader-chat' ) ).toBe( '' );
+	} );
+
+	it( 'writes under an explicit site scope when one is passed', () => {
+		saveSessionId( 'session-abc', undefined, '111' );
+
+		expect( getSessionId() ).toBe( '' );
+
+		setSessionSiteKey( '111' );
+		expect( getSessionId() ).toBe( 'session-abc' );
 	} );
 
 	it( 'scopes sessions per site', () => {

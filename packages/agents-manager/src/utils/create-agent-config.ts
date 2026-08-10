@@ -7,7 +7,8 @@
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
-import { saveSessionId } from './agent-session';
+import { getSessionSiteKey, saveSessionId } from './agent-session';
+import { setAnnouncedSessionId } from './announced-sessions';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
 import { isReaderChatAgent } from './is-reader-chat-agent';
@@ -252,12 +253,19 @@ export async function createAgentConfig(
 		onTaskUpdate,
 	} = options;
 
+	// The callback below can fire while a response is still streaming, after
+	// the tab has switched sites — write under the site it was created for.
+	const sessionSiteKey = getSessionSiteKey();
+
 	const config: UseAgentChatConfig = {
 		agentId,
 		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId,
 		// Persist server-assigned session IDs as this tab's session.
-		onSessionIdChange: ( newSessionId ) => saveSessionId( newSessionId, agentId ),
+		onSessionIdChange: ( newSessionId ) => {
+			saveSessionId( newSessionId, agentId, sessionSiteKey );
+			setAnnouncedSessionId( newSessionId, agentId );
+		},
 		authProvider: createCalypsoAuthProvider( siteId, {
 			logWpcomJwtFailure: ! isReaderChatAgent( agentId ),
 		} ),

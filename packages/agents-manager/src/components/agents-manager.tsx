@@ -14,6 +14,7 @@ import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import { useOpenChatUrlParam } from '../hooks/use-open-chat-url-param';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId, getOrCreateSessionId, getSessionId } from '../utils/agent-session';
+import { clearAnnouncedSessionId, getAnnouncedSessionId } from '../utils/announced-sessions';
 import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
@@ -121,6 +122,9 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	const { site, sectionName, currentRoute, agentConfig, setAgentConfig } =
 		useAgentsManagerContext();
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
+	const agentConfigRef = useRef( agentConfig );
+	agentConfigRef.current = agentConfig;
+	const previousSiteIdRef = useRef( site?.ID );
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
 
@@ -139,19 +143,45 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			return;
 		}
 
+		// Abort the agent's in-flight request, remove it, and forget its
+		// announced session.
+		async function discardAgent(): Promise< void > {
+			const agentManager = getAgentManager();
+
+			if ( agentManager.hasAgent( agentId ) ) {
+				await agentManager.abortCurrentRequest( agentId );
+				agentManager.removeAgent( agentId );
+			}
+
+			clearAnnouncedSessionId( agentId );
+		}
+
 		async function initializeAgent(): Promise< void > {
+			// A site switch is a context switch: drop the previous site's agent
+			// so its still-streaming response can't write into this site's
+			// session or transcript, then initialize from this site's session.
+			if ( previousSiteIdRef.current !== site?.ID ) {
+				previousSiteIdRef.current = site?.ID;
+				await discardAgent();
+			}
+
 			// Handle new chat: clear existing session and navigate to clean state
 			if ( isNewChat ) {
-				const agentManager = getAgentManager();
-
-				if ( agentManager.hasAgent( agentId ) ) {
-					await agentManager.abortCurrentRequest( agentId );
-					agentManager.removeAgent( agentId );
-				}
-
+				await discardAgent();
 				clearSessionId( agentId );
 				// Clear route state to prevent repeated new chat initialization
 				navigate( '/chat', { replace: true } );
+				return;
+			}
+
+			// The tab session catching up to the session the live agent already
+			// announced is not a conversation switch — re-initializing would
+			// make `useConversation` refetch and clobber the running chat.
+			if (
+				agentConfigRef.current?.agentId === agentId &&
+				sessionId &&
+				sessionId === getAnnouncedSessionId( agentId )
+			) {
 				return;
 			}
 

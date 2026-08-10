@@ -22,9 +22,17 @@ export function setSessionSiteKey( siteKey: string ): void {
 	activeSiteKey = siteKey;
 }
 
-function getTabSessionKey( agentId?: string ): string {
+/**
+ * Get the current site scope, e.g. to capture it in a callback that may fire
+ * after the tab has switched sites.
+ */
+export function getSessionSiteKey(): string {
+	return activeSiteKey;
+}
+
+function getTabSessionKey( agentId?: string, siteKey: string = activeSiteKey ): string {
 	const agentSuffix = agentId && agentId !== ORCHESTRATOR_AGENT_ID ? `-${ agentId }` : '';
-	return `${ SESSION_STORAGE_KEY }${ agentSuffix }-${ activeSiteKey }`;
+	return `${ SESSION_STORAGE_KEY }${ agentSuffix }-${ siteKey }`;
 }
 
 /**
@@ -41,11 +49,12 @@ export function getSessionId( agentId?: string ): string {
 }
 
 /**
- * Save the given session ID as this tab's session.
+ * Save the given session ID as this tab's session. Pass `siteKey` to write
+ * under a specific site scope instead of the current one.
  */
-export function saveSessionId( sessionId: string, agentId?: string ): void {
+export function saveSessionId( sessionId: string, agentId?: string, siteKey?: string ): void {
 	try {
-		sessionStorage.setItem( getTabSessionKey( agentId ), sessionId );
+		sessionStorage.setItem( getTabSessionKey( agentId, siteKey ), sessionId );
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[agent-session] Error saving session ID:', error );
@@ -75,7 +84,9 @@ export function getOrCreateSessionId( agentId?: string ): string {
 		return existing;
 	}
 
-	const newId = generateUUID();
-	saveSessionId( newId, agentId );
-	return newId;
+	saveSessionId( generateUUID(), agentId );
+
+	// Read back so unavailable storage yields a stable '' instead of a fresh
+	// UUID per call, which would re-initialize the agent on every render.
+	return getSessionId( agentId );
 }

@@ -11,11 +11,12 @@ jest.mock( '../can-connect-to-zendesk', () => ( {
 } ) );
 
 import { DOLLY_AGENT_ID } from '../../constants';
+import { clearAnnouncedSessionId, getAnnouncedSessionId } from '../announced-sessions';
 import { createAgentConfig } from '../create-agent-config';
 import { canConnectToZendesk } from '../can-connect-to-zendesk';
 import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
-import { getSessionId } from '../agent-session';
+import { getSessionId, setSessionSiteKey } from '../agent-session';
 
 const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
 const mockCreateCalypsoAuthProvider = createCalypsoAuthProvider as jest.Mock;
@@ -36,6 +37,9 @@ describe( 'createAgentConfig', () => {
 			.agentsManagerData;
 		document.body.className = '';
 		clearSiteEditorActions();
+		clearAnnouncedSessionId();
+		sessionStorage.clear();
+		setSessionSiteKey( 'no-site' );
 	} );
 
 	it( 'does not add reader page context for regular agents', async () => {
@@ -70,6 +74,36 @@ describe( 'createAgentConfig', () => {
 		config.onSessionIdChange?.( 'server-session-id' );
 
 		expect( getSessionId( 'wp-orchestrator' ) ).toBe( 'server-session-id' );
+	} );
+
+	it( 'persists announced sessions under the site the config was created for', async () => {
+		setSessionSiteKey( '111' );
+		const config = await createAgentConfig( {
+			sessionId: '',
+			agentId: 'wp-orchestrator',
+		} );
+
+		setSessionSiteKey( '456' );
+		config.onSessionIdChange?.( 'server-session-id' );
+
+		expect( getSessionId() ).toBe( '' );
+		setSessionSiteKey( '111' );
+		expect( getSessionId() ).toBe( 'server-session-id' );
+	} );
+
+	it( 'records announced sessions for catch-up detection', async () => {
+		const config = await createAgentConfig( {
+			sessionId: '',
+			agentId: 'wp-orchestrator',
+		} );
+		config.onSessionIdChange?.( 'server-session-id' );
+
+		expect( getAnnouncedSessionId( 'wp-orchestrator' ) ).toBe( 'server-session-id' );
+		expect( getAnnouncedSessionId() ).toBe( 'server-session-id' );
+
+		clearAnnouncedSessionId( 'wp-orchestrator' );
+
+		expect( getAnnouncedSessionId( 'wp-orchestrator' ) ).toBeUndefined();
 	} );
 
 	it( 'adds reader page context for Reader Chat agents', async () => {
