@@ -3,10 +3,7 @@ import { getHelpCenterTracksProperties } from '../use-help-center-tracks-event';
 describe( 'getHelpCenterTracksProperties', () => {
 	test( 'uses site explicitly selected for support flow', () => {
 		expect(
-			getHelpCenterTracksProperties(
-				{ source: 'odie' },
-				{ explicitSiteId: 11, siteId: 22, primarySiteId: 33, usePrimarySiteId: true }
-			)
+			getHelpCenterTracksProperties( { source: 'odie' }, { explicitSiteId: 11, siteId: 22 } )
 		).toEqual( { source: 'odie', blog_id: 11, site_context_source: 'explicit' } );
 	} );
 
@@ -17,13 +14,8 @@ describe( 'getHelpCenterTracksProperties', () => {
 		} );
 	} );
 
-	test( 'uses primary site only when enabled', () => {
-		expect(
-			getHelpCenterTracksProperties( {}, { primarySiteId: 33, usePrimarySiteId: true } )
-		).toEqual( { blog_id: 33, site_context_source: 'primary_site' } );
-		expect( getHelpCenterTracksProperties( {}, { primarySiteId: 33 } ) ).toEqual( {
-			site_context_source: 'none',
-		} );
+	test( 'reports no site when the Help Center has none', () => {
+		expect( getHelpCenterTracksProperties( {}, {} ) ).toEqual( { site_context_source: 'none' } );
 	} );
 
 	test( 'never lets a caller blog_id stand in for the support site', () => {

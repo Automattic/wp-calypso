@@ -7,20 +7,17 @@ type TracksProperties = Record< string, unknown >;
 type SiteContext = {
 	explicitSiteId?: unknown;
 	siteId?: unknown;
-	primarySiteId?: unknown;
-	usePrimarySiteId?: boolean;
 };
 
-type Options = Pick< SiteContext, 'explicitSiteId' | 'usePrimarySiteId' >;
+type Options = Pick< SiteContext, 'explicitSiteId' >;
 
 export function getHelpCenterTracksProperties(
 	properties: TracksProperties = {},
-	{ explicitSiteId, siteId, primarySiteId, usePrimarySiteId = false }: SiteContext = {}
+	{ explicitSiteId, siteId }: SiteContext = {}
 ): TracksProperties {
 	return withSiteContext( properties, [
 		[ 'explicit', explicitSiteId ],
 		[ 'help_center_context', siteId ],
-		[ 'primary_site', usePrimarySiteId ? primarySiteId : undefined ],
 	] );
 }
 
@@ -32,19 +29,11 @@ export function recordHelpCenterTracksEvent(
 	recordTracksEvent( eventName, getHelpCenterTracksProperties( properties, siteContext ) );
 }
 
-export function useHelpCenterTracksEvent( {
-	explicitSiteId,
-	usePrimarySiteId = false,
-}: Options = {} ) {
-	const { site, primarySiteId } = useHelpCenterContext();
+export function useHelpCenterTracksEvent( { explicitSiteId }: Options = {} ) {
+	const { site } = useHelpCenterContext();
 	const siteId = site?.ID;
 	const siteContextRef = useRef< SiteContext >( {} );
-	siteContextRef.current = {
-		explicitSiteId,
-		siteId,
-		primarySiteId,
-		usePrimarySiteId,
-	};
+	siteContextRef.current = { explicitSiteId, siteId };
 
 	return useCallback( ( eventName: string, properties: TracksProperties = {} ) => {
 		recordHelpCenterTracksEvent( eventName, properties, siteContextRef.current );
