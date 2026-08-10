@@ -306,10 +306,11 @@ function isCreditCardFormValid(
 
 			if ( ! isValid ) {
 				// Unlike the stripe branch above, nothing here previously
-				// surfaced an error notice, so the button appeared to do
-				// nothing. requiredFields holds raw keys like 'street-number'
-				// rather than labels, so this shows the generic notice; naming
-				// them is left for a follow-up.
+				// surfaced an error notice or scrolled the invalid fields
+				// into view, so the button appeared to do nothing.
+				// requiredFields holds raw keys like 'street-number' rather
+				// than labels, so this stays generic; naming them is
+				// follow-up work.
 				setFieldsError();
 			}
 
