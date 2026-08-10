@@ -1,0 +1,12 @@
+// wp-admin sizes this glyph to 30px below 782px and 24px above it. The viewBox
+// matches wp-admin's markup too, so the star lands on the same pixels; only the
+// mobile value has to override the omnibar's shared 32px icon size.
+.omnibar .omnibar__menu svg.omnibar__ai-chat-icon {
+	width: 30px;
+	height: 30px;
+
+	@media ( min-width: 782px ) {
+		width: 24px;
+		height: 24px;
+	}
+}

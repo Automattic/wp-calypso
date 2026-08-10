@@ -16,6 +16,7 @@ import { OmnibarHomeIcon } from './home';
 import { useAiChatPlugin } from './plugin-ai-chat';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useNotificationsPlugin } from './plugin-notifications';
+import { useReaderPlugin } from './plugin-reader';
 import { buildSiteBadgeNode } from './plugin-site-badges';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
 import { buildWpcomAccountNode } from './plugin-wpcom-account';
@@ -106,6 +107,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		return result;
 	}, [ dashboardNodes, siteNodes, site, supports ] );
 
+	const readerPluginNode = useReaderPlugin();
 	const helpCenterPluginNode = useHelpCenterPlugin();
 	const aiChatPluginNode = useAiChatPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
@@ -118,6 +120,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		...baseOmnibarNodes,
 		siteActions,
 		plugins: [
+			...( supports.reader ? [ readerPluginNode ] : [] ),
 			...( supports.help ? [ helpCenterPluginNode ] : [] ),
 			...( supports.help && aiChatPluginNode ? [ aiChatPluginNode ] : [] ),
 			...( supports.notifications ? [ notificationsPluginNode ] : [] ),

@@ -1,0 +1,8 @@
+.omnibar .omnibar__menu svg.omnibar__reader-icon {
+	width: 36px;
+	height: auto;
+
+	@media ( min-width: 782px ) {
+		width: 24px;
+	}
+}
