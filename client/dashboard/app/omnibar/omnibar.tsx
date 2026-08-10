@@ -115,7 +115,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const languageSwitcherNode = useLanguageSwitcherPlugin( { user } );
 	const statsSparklineNode = useStatsSparklinePlugin( { siteId, site } );
-	const launchSiteNode = useLaunchSitePlugin( { site } );
+	const { node: launchSiteNode, modal: launchSiteModal } = useLaunchSitePlugin( { site } );
 	const siteActions = [
 		...( baseOmnibarNodes.siteActions ?? [] ),
 		statsSparklineNode,
@@ -138,11 +138,14 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		return <InitialOmnibar user={ user } />;
 	}
 	return (
-		<Omnibar
-			nodes={ omnibarNodes }
-			onClickResponsiveMenu={ onClickResponsiveMenu }
-			className={ isSupportSession() ? 'is-support-session' : undefined }
-		/>
+		<>
+			<Omnibar
+				nodes={ omnibarNodes }
+				onClickResponsiveMenu={ onClickResponsiveMenu }
+				className={ isSupportSession() ? 'is-support-session' : undefined }
+			/>
+			{ launchSiteModal }
+		</>
 	);
 }
 
