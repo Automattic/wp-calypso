@@ -38,4 +38,21 @@
 		--color-accent: var(--wp-admin-theme-color);
 		--color-accent-60: var(--wp-admin-theme-color-darker-20);
 	}
+
+	// The legend checkbox is styled to read as a pair with the chart type toggle beside it, and
+	// resolves --wp-components-color-accent to do so. That variable is only ever set on
+	// .components-button, so on a checkbox it falls through to the accent and the pair drifts
+	// apart. Setting it here restores the intended match.
+	.chart__legend-checkbox {
+		--wp-components-color-accent: var(--wp-admin-theme-color);
+	}
+
+	// The button-group outline is pinned to --color-accent-60, which leaves it a different colour
+	// from the selected button's background now that the fill follows the admin theme.
+	.components-button-group .components-button {
+		&,
+		&.is-primary {
+			box-shadow: inset 0 0 0 1px var(--wp-admin-theme-color);
+		}
+	}
 }
