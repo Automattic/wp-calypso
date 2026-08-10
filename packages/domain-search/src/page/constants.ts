@@ -9,9 +9,12 @@ export const DEFAULT_FILTER: FilterState = {
 // The registry can't sell these right now, and the shopping cart rejects them
 // with a generic "invalid product" error that tells the user nothing. Block the
 // add and show the availability notice, which explains the actual reason.
+//
+// Every status here must produce a notice from getAvailabilityNotice — blocking
+// a status it returns null for would leave the button doing nothing at all.
+// get-availability-notice's test enforces that.
 export const UNAVAILABLE_FOR_PURCHASE_STATUSES: DomainAvailabilityStatus[] = [
 	DomainAvailabilityStatus.MAINTENANCE,
-	DomainAvailabilityStatus.TLD_NOT_SUPPORTED_TEMPORARILY,
 	DomainAvailabilityStatus.PURCHASES_DISABLED,
 ];
 
