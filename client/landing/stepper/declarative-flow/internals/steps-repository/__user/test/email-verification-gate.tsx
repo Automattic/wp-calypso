@@ -292,9 +292,6 @@ describe( 'account step email verification gate', () => {
 		renderUser( makeStore( false ) );
 
 		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeDisabled();
-		// The inbox it would open is the one the correction was made to get away from.
-		expect( screen.queryByRole( 'link', { name: /Open email inbox/ } ) ).not.toBeInTheDocument();
-
 		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeEnabled() );
 	} );
 
@@ -354,6 +351,28 @@ describe( 'account step email verification gate', () => {
 
 		await waitFor( () => expect( resent.isDone() ).toBe( true ) );
 		expect( activation.isDone() ).toBe( false );
+	} );
+
+	// The inbox it offers is the one the correction was made to get away from.
+	it( 'offers no inbox while the address is still standing in', async () => {
+		const settled = ( addressSettled: boolean ) =>
+			renderWithProvider(
+				<EmailVerificationGate
+					addressSettled={ addressSettled }
+					flow="onboarding"
+					scope={ gateScope( 'onboarding', mockUserId ) }
+					email="onboarder@gmail.com"
+					onEditEmail={ jest.fn() }
+				/>,
+				{ store: makeStore( false ) }
+			);
+
+		const { unmount } = settled( false );
+		expect( screen.queryByRole( 'link', { name: /Open email inbox/ } ) ).not.toBeInTheDocument();
+		unmount();
+
+		settled( true );
+		expect( await screen.findByRole( 'link', { name: /Open email inbox/ } ) ).toBeVisible();
 	} );
 
 	// A refusal from the settings endpoint names the address of a change already pending.
