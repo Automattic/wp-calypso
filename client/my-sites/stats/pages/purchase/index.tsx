@@ -119,17 +119,13 @@ const StatsPurchasePage = ( {
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
-	const redirectToCommercial = query?.productType === 'commercial'; // allow multiple visit to upgrade commercial tier.
-	// `productType=personal` always lands on the PWYW page, including for sites that already own
-	// PWYW — they can raise their contribution, and `disableFreeProduct` below keeps the free tier
-	// out of reach for them.
-	const redirectToPersonal = query?.productType === 'personal' && ! redirectToCommercial;
 	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
 
-	// The paid plan is the default upgrade landing regardless of commercial classification; the
-	// PWYW page is only reachable when explicitly requested via `productType=personal`. Sites that
-	// already own a plan land here too, so they can move up a tier.
-	const variant = redirectToPersonal ? 'personal' : 'commercial';
+	// The paid plan is the default landing, including for sites that already own one so they can
+	// move up a tier. The PWYW page is reachable only on explicit request, and then for owners too
+	// — they can raise their contribution, while `disableFreeProduct` below keeps the free tier out
+	// of reach for them.
+	const variant = query?.productType === 'personal' ? 'personal' : 'commercial';
 
 	const showNavigation = ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' );
 
