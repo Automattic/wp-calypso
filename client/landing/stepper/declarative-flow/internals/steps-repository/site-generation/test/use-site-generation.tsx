@@ -202,6 +202,7 @@ describe( 'useSiteGeneration', () => {
 	} );
 
 	it( 'keeps the earliest active-step start time when progress history is reordered', () => {
+		jest.setSystemTime( 1723032220000 );
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
@@ -233,6 +234,37 @@ describe( 'useSiteGeneration', () => {
 		} );
 
 		expect( result.current.steps[ 1 ].startedAt ).toBe( 1723032170000 );
+	} );
+
+	it( 'falls back to local time when the reported start is implausible', () => {
+		jest.setSystemTime( 1723032220000 );
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		const { onProgress } = progressPollMock.mock.calls[ 0 ][ 0 ];
+
+		// Far enough in the past that the build would already have timed out.
+		act( () => {
+			onProgress( {
+				current: 'theme-json',
+				history: [ { status: 'theme-json', timestamp: 1600000000 } ],
+			} );
+		} );
+		expect( result.current.steps[ 1 ].startedAt ).toBe( 1723032220000 );
+
+		// A start time the client's clock has not reached yet.
+		act( () => {
+			onProgress( {
+				current: 'assemble-pages',
+				history: [ { status: 'assemble-pages', timestamp: 1823032220 } ],
+			} );
+		} );
+		expect( result.current.steps[ 3 ].startedAt ).toBe( 1723032220000 );
 	} );
 
 	it( 'stops progress polling once the last milestone is reached', () => {

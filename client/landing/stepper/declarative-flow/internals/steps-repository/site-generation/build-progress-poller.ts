@@ -69,6 +69,15 @@ const TOOL_MILESTONES: Record< string, string > = Object.fromEntries(
 	)
 );
 
+// A missing timestamp is reported inconsistently across the pipeline (absent,
+// null, or 0). Anything but a positive number would anchor the elapsed clock to
+// the epoch, so it is treated as "unknown" instead.
+function getUnixSeconds( timestamp: number | null | undefined ): number | undefined {
+	return typeof timestamp === 'number' && Number.isFinite( timestamp ) && timestamp > 0
+		? timestamp
+		: undefined;
+}
+
 export function getStepProgress(
 	response: BuildProgressResponse,
 	stepIds: string[]
@@ -79,7 +88,7 @@ export function getStepProgress(
 	// history instead of the most recent entry.
 	const recordedEntries = [
 		...( response.history ?? [] ),
-		{ status: response.current, timestamp: response.last_update ?? undefined },
+		{ status: response.current, timestamp: response.last_update },
 	];
 	let furthestIndex = -1;
 	for ( const { status: toolId } of recordedEntries ) {
@@ -94,8 +103,9 @@ export function getStepProgress(
 
 	const milestoneTimestamps = recordedEntries.flatMap( ( { status: toolId, timestamp } ) => {
 		const milestone = toolId ? TOOL_MILESTONES[ toolId ] : undefined;
-		return milestone && stepIds.indexOf( milestone ) === furthestIndex && timestamp !== undefined
-			? [ timestamp ]
+		const recordedAt = getUnixSeconds( timestamp );
+		return milestone && stepIds.indexOf( milestone ) === furthestIndex && recordedAt !== undefined
+			? [ recordedAt ]
 			: [];
 	} );
 

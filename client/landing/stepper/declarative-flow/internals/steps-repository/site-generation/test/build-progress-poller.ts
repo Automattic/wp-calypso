@@ -60,6 +60,19 @@ describe( 'getStepProgress', () => {
 			)
 		).toEqual( { stepIndex: 1, startedAt: 1723032170000 } );
 	} );
+
+	it( 'ignores absent, null, and zero timestamps instead of anchoring to the epoch', () => {
+		expect(
+			getStepProgress(
+				{
+					current: 'theme-json',
+					last_update: null,
+					history: [ { status: 'design-direction', timestamp: 0 }, { status: 'theme-json' } ],
+				},
+				stepIds
+			)
+		).toEqual( { stepIndex: 1, startedAt: undefined } );
+	} );
 } );
 
 describe( 'pollForBuildProgress', () => {

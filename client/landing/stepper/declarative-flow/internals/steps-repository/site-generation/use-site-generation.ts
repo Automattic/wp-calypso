@@ -20,6 +20,17 @@ export type SiteGenerationState = {
 
 const GENERATION_TIMEOUT_MS = 30 * 60 * 1000;
 
+// Step start times come from the server, but the elapsed clock ticks on
+// Date.now(). A skewed client clock would freeze the counter at zero or inflate
+// it, so an implausible server value falls back to local time.
+function getPlausibleStart( startedAt: number | undefined ): number {
+	const now = Date.now();
+	if ( startedAt === undefined || startedAt > now || now - startedAt > GENERATION_TIMEOUT_MS ) {
+		return now;
+	}
+	return startedAt;
+}
+
 function getStepsWithProgress(
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >,
 	activeStepIndex: number,
@@ -104,15 +115,12 @@ export function useSiteGeneration( {
 					if ( progress.stepIndex === previous.stepIndex ) {
 						return {
 							...previous,
-							startedAt:
-								progress.startedAt !== undefined
-									? Math.min( previous.startedAt, progress.startedAt )
-									: previous.startedAt,
+							startedAt: Math.min( previous.startedAt, getPlausibleStart( progress.startedAt ) ),
 						};
 					}
 					return {
 						stepIndex: progress.stepIndex,
-						startedAt: progress.startedAt ?? Date.now(),
+						startedAt: getPlausibleStart( progress.startedAt ),
 					};
 				} );
 				// The last milestone is as far as this poller can advance the UI;
