@@ -832,13 +832,7 @@ class ReaderStream extends Component {
 		// `items`, and replacing them with an empty state throws away what the
 		// user was reading.
 		if ( this.props.error && ! items.length ) {
-			body = (
-				<StreamError
-					onTryAgain={ this.tryAgain }
-					streamKey={ streamKey }
-					context={ this.state.selectedTab }
-				/>
-			);
+			body = <StreamError onTryAgain={ this.tryAgain } streamKey={ streamKey } />;
 		}
 
 		return (

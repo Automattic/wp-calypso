@@ -183,16 +183,16 @@ export const useInfiniteStream = ( {
 		const pages = query.data?.pages ?? [];
 		const collected: StreamItem[] = [];
 		// Stream endpoints can return the same post in more than one page, so we need to deduplicate them here.
-		const uniqueItem = new Set< string >();
+		const uniqueItems = new Set< string >();
 		for ( const page of pages ) {
 			const { streamItems } = normalizeStreamPage( page as ReadStreamResponse, streamType );
 			for ( const item of streamItems ) {
 				const id = keyToString( item );
 				if ( id !== null ) {
-					if ( uniqueItem.has( id ) ) {
+					if ( uniqueItems.has( id ) ) {
 						continue;
 					}
-					uniqueItem.add( id );
+					uniqueItems.add( id );
 				}
 				collected.push( item );
 			}
