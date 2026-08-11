@@ -59,7 +59,7 @@ function PreLaunchModalPreview( { siteName, domain, planName, isLaunching }: Pre
 						style={ { background: 'linear-gradient(135deg, #3858e9, #8c46ff)' } }
 					/>
 					<VStack spacing={ 1 } className="site-launch-pre-launch-modal__meta">
-						<Text weight={ 600 } truncate>
+						<Text size={ 16 } weight={ 400 } truncate>
 							{ siteName }
 						</Text>
 						<HStack spacing={ 2 } justify="flex-start" alignment="center">

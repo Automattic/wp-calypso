@@ -109,7 +109,7 @@ export default function SiteLaunchModal( props: SiteLaunchModalProps ) {
 							</div>
 						) }
 						<VStack spacing={ 1 } className="site-launch-pre-launch-modal__meta">
-							<Text weight={ 600 } truncate>
+							<Text size={ 16 } weight={ 400 } truncate>
 								{ site.name }
 							</Text>
 							<HStack spacing={ 2 } justify="flex-start" alignment="center">
