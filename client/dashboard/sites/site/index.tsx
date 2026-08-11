@@ -8,7 +8,7 @@ import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
 import FlashMessage from '../../components/flash-message';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { canManageSite } from '../features';
-import SiteLaunchCelebrationModal from '../site-launch-celebration-modal';
+import SiteLaunchCelebrationModal from '../site-launch-modal';
 
 function Site() {
 	const { siteSlug } = siteRoute.useParams();
