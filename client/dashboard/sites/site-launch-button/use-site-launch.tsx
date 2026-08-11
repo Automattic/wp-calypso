@@ -13,7 +13,7 @@ import {
 	isSitePlanBigSkyTrial,
 	isSitePlanPaid,
 } from '../plans';
-import SiteLaunchModal from '../site-launch-modal/site-launch-modal';
+import SiteLaunchModal from '../site-launch-modal';
 import type { Site } from '@automattic/api-core';
 
 export type A4aLaunchModalComponent = ComponentType< {
