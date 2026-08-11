@@ -370,6 +370,9 @@ export default function AgentChat( {
 						) }
 						<SelectedBlock />
 						{ /* `readOnly` (not `disabled`) so the stop button stays active while a batch uploads. */ }
+						{ /* Disabling the input takes BOTH props: agenttic forwards `readOnly` to the
+						     textarea but consumes `disabled` only to gate the submit button and
+						     Enter-to-submit. `disabled` alone leaves the field typeable. */ }
 						{ /* `isChatInputDisabled` must win over the pending-images `false` — a
 						     non-operational chat stays disabled regardless of upload state. */ }
 						<AgentUI.Input
@@ -377,7 +380,7 @@ export default function AgentChat( {
 								imageUpload ? ( imageUploaderRef as RefObject< ImageUploaderHandle > ) : undefined
 							}
 							imageUploadDisabled={ isChatInputDisabled || imageUpload?.isUploadingImages }
-							readOnly={ imageUpload?.isUploadingImages }
+							readOnly={ isChatInputDisabled || imageUpload?.isUploadingImages }
 							disabled={
 								isChatInputDisabled || ( imageUpload?.pendingImages?.length ? false : undefined )
 							}
