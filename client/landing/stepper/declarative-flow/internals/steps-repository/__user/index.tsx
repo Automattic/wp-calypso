@@ -270,11 +270,14 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	// Existing users land here and sign up again rather than log in, and a top-bar "Log in" reads as
 	// page furniture at the moment they need it. Below the buttons it answers the question they are
-	// actually asking. Two layouts keep the top bar instead: the compact mobile one, which has no
-	// room for the line and whose top bar is the whole affordance, and the email-edit screen, which
-	// has no second account to offer at all. V1 is left alone as the retiring layout.
+	// actually asking.
+	//
+	// Desktop only. Below 960px signup and login both keep the top-right link they have today, and
+	// moving just one of them would introduce a third pattern rather than remove one. The email-edit
+	// screen is excluded as well, having no second account to offer, and V1 is left alone as the
+	// retiring layout.
 	const showsInFormLoginLink =
-		isStepContainerV2 && ! isMobileCompactLayout && ! isEditingEmail && ! hideLoginLink;
+		isStepContainerV2 && isLargeViewport && ! isEditingEmail && ! hideLoginLink;
 
 	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
 	// Partner branding always wins: isMobileCompactLayout is already false whenever

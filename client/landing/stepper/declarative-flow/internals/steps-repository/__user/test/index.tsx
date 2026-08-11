@@ -23,12 +23,26 @@ import UserStep, { type UserStepAccepts } from '..';
 const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
 
-// Drives isMobileViewport = useViewportMatch( 'small', '<' ). Every other call
-// (e.g. useViewportMatch( 'large' )) resolves to false, i.e. not a wide viewport.
-const setViewport = ( { isMobile }: { isMobile: boolean } ) =>
-	mockUseViewportMatch.mockImplementation( ( breakpoint: string, operator?: string ) =>
-		breakpoint === 'small' && operator === '<' ? isMobile : false
-	);
+// Drives the two breakpoints the step reads: isMobileViewport = useViewportMatch( 'small', '<' )
+// at 660px, and isLargeViewport = useViewportMatch( 'large' ) at 960px. `isLarge` defaults to the
+// opposite of `isMobile` so the common cases stay one argument; pass both to reach the band in
+// between, where the layout is the standard one but the login link has not moved yet.
+const setViewport = ( {
+	isMobile,
+	isLarge = ! isMobile,
+}: {
+	isMobile: boolean;
+	isLarge?: boolean;
+} ) =>
+	mockUseViewportMatch.mockImplementation( ( breakpoint: string, operator?: string ) => {
+		if ( breakpoint === 'small' && operator === '<' ) {
+			return isMobile;
+		}
+		if ( breakpoint === 'large' ) {
+			return isLarge;
+		}
+		return false;
+	} );
 
 const noPartnerBranding = {
 	hasCustomBranding: false,
@@ -163,6 +177,17 @@ describe( 'User email signup step', () => {
 
 		it( 'leaves the compact mobile layout on its top-bar link', () => {
 			setViewport( { isMobile: true } );
+
+			const { container } = renderUserStep();
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+		} );
+
+		it( 'leaves the band between the breakpoints on its top-bar link', () => {
+			// Wide enough for the standard layout, not wide enough to be a desktop. Login keeps
+			// its top-right link below 960px, so signup has to as well or the two diverge.
+			setViewport( { isMobile: false, isLarge: false } );
 
 			const { container } = renderUserStep();
 

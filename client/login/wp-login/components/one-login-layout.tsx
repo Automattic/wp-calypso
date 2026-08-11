@@ -131,13 +131,28 @@ const OneLoginLayout = ( {
 	};
 
 	const topBar = (): JSX.Element => {
-		// On the main login view the route to signup moves down to the footer, matching where
-		// signup puts its route to login, and password recovery takes the slot it vacates.
-		// Everywhere else (2FA, magic login, the OAuth2 screen) the top bar is unchanged: those
-		// are mid-flow screens with no lost-password link to promote.
-		const rightElement = (
+		const signupOrLoginLink = isSectionSignup ? <LoginLink /> : <SignUpLink />;
+
+		// On the main login view, desktop moves the route to signup down to the footer, matching
+		// where signup puts its route to login, and password recovery takes the slot it vacates.
+		// Below 960px nothing moves: both screens keep the top-right link they have today.
+		//
+		// Both are rendered and chosen in CSS rather than by a viewport hook, because this page is
+		// server-rendered: a hook has no viewport on the server, so it would render the mobile
+		// arrangement and then visibly jump on hydration for every desktop visitor. The hidden one
+		// is `display: none`, so it stays out of the accessibility tree either way.
+		//
+		// Everywhere else (2FA, magic login, the OAuth2 screen) no lostPasswordLink is passed and
+		// this collapses to exactly what it rendered before.
+		const rightElement = lostPasswordLink ? (
 			<nav className="wp-login__one-login-layout-top-right">
-				{ lostPasswordLink ?? ( isSectionSignup ? <LoginLink /> : <SignUpLink /> ) }
+				<span className="wp-login__top-right-desktop">{ lostPasswordLink }</span>
+				<span className="wp-login__top-right-mobile">{ signupOrLoginLink }</span>
+				{ noThanksRedirectUrl && <NoThanksLink /> }
+			</nav>
+		) : (
+			<nav className="wp-login__one-login-layout-top-right">
+				{ signupOrLoginLink }
 				{ noThanksRedirectUrl && <NoThanksLink /> }
 			</nav>
 		);
