@@ -33,6 +33,15 @@ export interface CSATFormProps {
 	 * preceding message) and would otherwise show it twice. Set this to show it anyway.
 	 */
 	showRatingMessageWithPreDeterminedScore?: boolean;
+	/**
+	 * Options for the "bad" score's reason dropdown. Defaults to the static WPCOM reason
+	 * taxonomy (used by the ticket_id-based flow). Pass this explicitly -- even as an empty
+	 * array while real options are still loading -- for a caller whose reasons come from
+	 * somewhere else (e.g. a CSAT Survey's own closed-ended question options); an empty array
+	 * intentionally does NOT fall back to the static list, since those codes wouldn't mean
+	 * anything to that caller's backend.
+	 */
+	reasonOptions?: { label: string; value: string }[];
 }
 
 export const CSATForm = ( {
@@ -43,6 +52,7 @@ export const CSATForm = ( {
 	onFormHidden,
 	className,
 	showRatingMessageWithPreDeterminedScore,
+	reasonOptions: reasonOptionsProp,
 }: CSATFormProps ) => {
 	const [ score, setScore ] = useState( preDeterminedScore );
 	const [ comment, setComment ] = useState( '' );
@@ -55,7 +65,7 @@ export const CSATForm = ( {
 	// block a fast double-click. The ref updates synchronously and is shared across both closures.
 	const isSubmittingScoreRef = useRef( false );
 	const feedbackRef = useRef< HTMLDivElement | null >( null );
-	const badRatingReasons = getBadRatingReasons();
+	const reasonOptions = reasonOptionsProp ?? getBadRatingReasons();
 
 	const { isPending: isSubmittingRateChat, mutateAsync: rateChat } = useRateChat();
 	const isSubmitting = isSubmittingRateChat || isSubmittingComment || isSubmittingScore;
@@ -176,7 +186,7 @@ export const CSATForm = ( {
 									className="zendesk-csat-form__reason"
 									label={ __( 'Reason' ) }
 									value={ reason }
-									options={ badRatingReasons }
+									options={ reasonOptions }
 									onChange={ ( value ) => setReason( value ) }
 									__next40pxDefaultSize
 								/>

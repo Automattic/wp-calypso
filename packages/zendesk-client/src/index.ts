@@ -8,6 +8,7 @@ export {
 export { useZendeskMessagingAvailability } from './use-zendesk-messaging-availability';
 export { useRateChat } from './use-rate-chat';
 export { useRateSurveyResponse } from './use-rate-survey-response';
+export type { SurveyReasonOption, SurveyReasonQuestion } from './use-rate-survey-response';
 export { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 export { useAttachFileToConversation } from './use-attach-file';
 export { useGetUnreadConversations } from './use-get-unread-conversations';

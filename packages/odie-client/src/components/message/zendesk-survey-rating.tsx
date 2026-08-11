@@ -1,18 +1,16 @@
 import {
 	CSATForm,
-	getBadRatingReasons,
 	isTestModeEnvironment,
 	useRateSurveyResponse,
+	type SurveyReasonQuestion,
 } from '@automattic/zendesk-client';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useOdieAssistantContext } from '../../context';
 import { useSurveyResponseRating } from '../../hooks';
 import type { MessageAction } from '../../types';
 
-function parseSurveyResponseUri(
-	uri: string
-): { id: string; accessToken: string; zendeskOrigin: string } | null {
+function parseSurveyResponseUri( uri: string ): { id: string; accessToken: string } | null {
 	try {
 		const url = new URL( uri );
 		const id = url.pathname.split( '/' ).filter( Boolean ).pop();
@@ -22,7 +20,7 @@ function parseSurveyResponseUri(
 			return null;
 		}
 
-		return { id, accessToken, zendeskOrigin: url.hostname };
+		return { id, accessToken };
 	} catch {
 		return null;
 	}
@@ -38,6 +36,10 @@ export const ZendeskSurveyRating = ( { action }: { action: MessageAction } ) => 
 	const { __ } = useI18n();
 	const { rating, recoveredRating, isDismissed, persistRating, persistDismissed } =
 		useSurveyResponseRating( parsed?.id ?? '', chat.conversationId );
+	// The survey's real closed-ended "reason" question, learned from the rating submission's
+	// response (see rate_survey_response() on the backend) -- there's no way to know it before
+	// that first round-trip, so the reason dropdown starts empty and fills in once it resolves.
+	const [ reasonQuestion, setReasonQuestion ] = useState< SurveyReasonQuestion >( null );
 
 	if ( ! parsed ) {
 		return null;
@@ -45,34 +47,29 @@ export const ZendeskSurveyRating = ( { action }: { action: MessageAction } ) => 
 
 	const onSendFeedback = async ( score: 'good' | 'bad' ): Promise< void > => {
 		persistRating( score );
-		await rateSurveyResponse( {
+		const result = await rateSurveyResponse( {
 			survey_response_id: parsed.id,
 			access_token: parsed.accessToken,
-			zendesk_origin: parsed.zendeskOrigin,
 			score,
 			test_mode: isTestModeEnvironment(),
 		} );
+
+		if ( result.reason_question ) {
+			setReasonQuestion( result.reason_question );
+		}
 	};
 
 	const onSendComment = async (
 		comment: string,
-		reasonId: string,
+		reasonOptionId: string,
 		score: 'good' | 'bad'
 	): Promise< void > => {
-		// This survey's actual closed-ended "reason" question has its own Zendesk-generated
-		// option ids, which don't match our static reason codes -- fold the label into the
-		// free-text comment instead of guessing at a mismatched structured answer.
-		const reasonLabel = reasonId
-			? getBadRatingReasons().find( ( reason ) => reason.value === reasonId )?.label
-			: undefined;
-		const combinedComment = [ reasonLabel, comment ].filter( Boolean ).join( ' - ' );
-
 		await rateSurveyResponse( {
 			survey_response_id: parsed.id,
 			access_token: parsed.accessToken,
-			zendesk_origin: parsed.zendeskOrigin,
 			score,
-			comment: combinedComment || undefined,
+			comment: comment || undefined,
+			reason_option_id: reasonOptionId || undefined,
 			test_mode: isTestModeEnvironment(),
 		} );
 	};
@@ -101,6 +98,14 @@ export const ZendeskSurveyRating = ( { action }: { action: MessageAction } ) => 
 			ticketId={ null }
 			preDeterminedScore={ recoveredRating }
 			showRatingMessageWithPreDeterminedScore
+			// Explicitly [] (not undefined) so CSATForm doesn't fall back to its static reason
+			// codes -- those belong to the ticket-based flow and don't exist on this survey.
+			reasonOptions={
+				reasonQuestion?.options.map( ( option ) => ( {
+					label: option.label,
+					value: option.id,
+				} ) ) ?? []
+			}
 			onSendFeedback={ onSendFeedback }
 			onSendComment={ onSendComment }
 			onFormHidden={ persistDismissed }
