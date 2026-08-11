@@ -4,12 +4,18 @@ import {
 	fetchAgencyScheduleCallLink,
 	fetchAgencyMcpSettings,
 	updateAgencyMcpSettings,
+	updateAgencyPartnerDirectoryApplication,
 	fetchTipaltiIFrameUrl,
 	fetchTipaltiPayee,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
-import type { Agency, McpSettings, McpSettingsUpdate } from '@automattic/api-core';
+import type {
+	Agency,
+	AgencyPartnerDirectoryApplicationUpdate,
+	McpSettings,
+	McpSettingsUpdate,
+} from '@automattic/api-core';
 
 // Mirror the server's response shape so the optimistic snapshot matches what
 // onSuccess later writes.
@@ -107,6 +113,16 @@ export const tipaltiPayeeQuery = ( agencyId: number ) =>
 		queryKey: [ 'agency', agencyId, 'tipalti-payee' ] as const,
 		queryFn: () => fetchTipaltiPayee( agencyId ),
 		enabled: !! agencyId,
+	} );
+
+export const agencyPartnerDirectoryApplicationMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-pd-application-update' },
+		mutationFn: ( update: AgencyPartnerDirectoryApplicationUpdate ) =>
+			updateAgencyPartnerDirectoryApplication( agencyId, update ),
+		onSuccess: ( agency: Agency ) => {
+			queryClient.setQueryData( activeAgencyQuery().queryKey, agency );
+		},
 	} );
 
 export const mcpSettingsQuery = ( agencyId: number ) =>
