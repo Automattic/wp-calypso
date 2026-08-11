@@ -124,6 +124,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	const agentConfigRef = useRef( agentConfig );
 	agentConfigRef.current = agentConfig;
 	const previousSiteIdRef = useRef( site?.ID );
+	const wasChatViewShowingRef = useRef( false );
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
 
@@ -149,6 +150,9 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		// A dep change supersedes this run mid-await — a stale initialization
 		// must not navigate or publish its config over the newer run's.
 		let isSuperseded = false;
+
+		const isReturningToChatView = isChatViewShowing && ! wasChatViewShowingRef.current;
+		wasChatViewShowingRef.current = isChatViewShowing;
 
 		// Abort the agent's in-flight request, remove it, and forget its
 		// announced session.
@@ -197,13 +201,13 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 				return;
 			}
 
-			// The tab session catching up to the session the live agent already
-			// announced is not a conversation switch. While the chat view is
-			// showing, re-initializing would make `useConversation` refetch and
-			// clobber the running chat — the config aligns on the next navigation
-			// away instead, so the chat view never remounts with a stale session.
+			// Tab storage catching up to the announced live session is not a
+			// conversation switch. Re-initializing a continuously showing chat
+			// view would refetch and clobber the running chat — skip, and align
+			// the config on the next navigation (away or arriving back) instead.
 			if (
 				isChatViewShowing &&
+				! isReturningToChatView &&
 				currentConfig?.agentId === agentId &&
 				sessionId &&
 				sessionId === getAnnouncedSessionId( agentId )

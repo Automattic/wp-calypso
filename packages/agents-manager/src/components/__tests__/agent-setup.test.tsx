@@ -56,6 +56,7 @@ jest.mock( '../agent-dock', () => {
 			<>
 				<div data-testid="published-session">{ agentConfig?.sessionId ?? '' }</div>
 				<button onClick={ () => navigate( '/history' ) }>go-history</button>
+				<button onClick={ () => navigate( '/chat' ) }>go-chat</button>
 			</>
 		);
 	}
@@ -121,6 +122,37 @@ describe( 'AgentSetup', () => {
 		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
 			expect.objectContaining( { sessionId: 'session-live' } )
 		);
+	} );
+
+	it( 'realigns on returning to the chat view when the alignment was superseded', async () => {
+		render( manager( 111 ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		saveSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live' );
+
+		let resolveAlignment!: () => void;
+		mockCreateAgentConfig.mockImplementationOnce(
+			( { sessionId, agentId }: { sessionId: string; agentId: string } ) =>
+				new Promise( ( resolve ) => {
+					resolveAlignment = () => resolve( { agentId, sessionId } );
+				} )
+		);
+
+		fireEvent.click( screen.getByText( 'go-history' ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
+
+		fireEvent.click( screen.getByText( 'go-chat' ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 3 ) );
+		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { sessionId: 'session-live' } )
+		);
+
+		act( () => resolveAlignment() );
+		await act( async () => {} );
+
+		expect( screen.getByTestId( 'published-session' ).textContent ).toBe( 'session-live' );
 	} );
 
 	it( 're-initializes for a session that was not announced (conversation switch)', async () => {
