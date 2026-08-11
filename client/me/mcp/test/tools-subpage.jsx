@@ -12,12 +12,16 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 } ) );
 
 jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn( () => null );
+	const config = jest.fn( ( key ) => ( key === 'env_id' ? 'production' : null ) );
 	config.isEnabled = jest.fn( () => true );
 	return config;
 } );
 
 jest.mock( '@automattic/api-queries', () => ( {
+	isAutomatticianQuery: () => ( {
+		queryKey: [ 'read', 'teams' ],
+		queryFn: async () => true,
+	} ),
 	sitesQuery: () => ( {
 		queryKey: [ 'sites' ],
 		queryFn: async () => ( { sites: [] } ),
@@ -116,6 +120,8 @@ describe( 'client/me/mcp/tools-subpage Tracks payloads', () => {
 					ability_name: 'wpcom-mcp/posts-list',
 					enabled: true,
 					group: 'other',
+					is_a11n: 'true',
+					is_test: 'false',
 				} )
 			)
 		);
@@ -141,6 +147,8 @@ describe( 'client/me/mcp/tools-subpage Tracks payloads', () => {
 					ability_name: 'wpcom-mcp/posts-list',
 					enabled: true,
 					group: 'other',
+					is_a11n: 'true',
+					is_test: 'false',
 				} )
 			)
 		);

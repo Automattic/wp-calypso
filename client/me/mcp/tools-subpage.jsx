@@ -27,6 +27,7 @@ import { filterVisibleTools } from './categories';
 import { getOverridesToMatch, groupIntentKey } from './group-intents';
 import { groupToolsByGroup, groupToolsBySubCategory } from './groups';
 import { useMcpPageChrome } from './mcp-page-header';
+import { useMcpTracksAudienceProps } from './tracks';
 import { getAccountMcpAbilities, getGroupDescriptors } from './utils';
 
 import './style.scss';
@@ -75,6 +76,7 @@ export default function McpToolsSubpage( {
 	const [ reauthRequired, setReauthRequired ] = useState( false );
 	const openGroupsRef = useRef( new Set() );
 	const [ openGroups, setOpenGroups ] = useState( () => openGroupsRef.current );
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 
 	const tracksEvents = TRACKS_EVENTS[ toolCategory ];
 
@@ -87,6 +89,7 @@ export default function McpToolsSubpage( {
 		}
 		setOpenGroups( new Set( openGroupsRef.current ) );
 		recordTracksEvent( tracksEvents.groupToggled, {
+			...tracksAudienceProps,
 			path,
 			group: groupName ?? 'other',
 			is_open: willBeOpen,
@@ -132,6 +135,7 @@ export default function McpToolsSubpage( {
 			{
 				onSuccess: () => {
 					recordTracksEvent( tracksEvents.toolToggled, {
+						...tracksAudienceProps,
 						path,
 						ability_name: toolId,
 						enabled,
@@ -163,7 +167,12 @@ export default function McpToolsSubpage( {
 			},
 			{
 				onSuccess: () => {
-					recordTracksEvent( tracksEvents.enableAllToggled, { path, enabled, scope: 'page' } );
+					recordTracksEvent( tracksEvents.enableAllToggled, {
+						...tracksAudienceProps,
+						path,
+						enabled,
+						scope: 'page',
+					} );
 				},
 			}
 		);
@@ -196,6 +205,7 @@ export default function McpToolsSubpage( {
 			{
 				onSuccess: () => {
 					recordTracksEvent( tracksEvents.enableAllToggled, {
+						...tracksAudienceProps,
 						path,
 						enabled,
 						scope: 'group',

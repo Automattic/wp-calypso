@@ -37,6 +37,7 @@ import {
 	termDescription,
 } from '@wordpress/icons';
 import { useState } from 'react';
+import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
 	getSiteContextToolIds,
@@ -319,6 +320,7 @@ function EmailAssistantCard( {
 
 export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: pluginStatus } = useSuspenseQuery( bigSkyPluginQuery( site.ID ) );
 
@@ -390,6 +392,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_site_toggled', {
+						...tracksAudienceProps,
 						enabled,
 						site_id: site.ID,
 					} );
