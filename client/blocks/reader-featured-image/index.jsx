@@ -176,7 +176,14 @@ const ReaderFeaturedImage = ( {
 			featuredImageStyle.background = 'var(--studio-gray-0)';
 		}
 
-		children = <img src={ safeCssUrl } alt={ translate( 'Featured image' ) } />;
+		// Since there is no children in props, we need to create a new image tag to ensure the correct size is rendered
+		children = (
+			<img
+				src={ safeCssUrl }
+				alt={ translate( 'Featured image' ) }
+				style={ { height: containerHeight } }
+			/>
+		);
 	}
 
 	const classNames = clsx( className, 'reader-featured-image' );
