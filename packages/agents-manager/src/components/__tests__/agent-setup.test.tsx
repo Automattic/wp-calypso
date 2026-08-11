@@ -57,6 +57,9 @@ jest.mock( '../agent-dock', () => {
 				<div data-testid="published-session">{ agentConfig?.sessionId ?? '' }</div>
 				<button onClick={ () => navigate( '/history' ) }>go-history</button>
 				<button onClick={ () => navigate( '/chat' ) }>go-chat</button>
+				<button onClick={ () => navigate( '/chat', { state: { isNewChat: true } } ) }>
+					go-new-chat
+				</button>
 			</>
 		);
 	}
@@ -64,7 +67,7 @@ jest.mock( '../agent-dock', () => {
 } );
 
 import AgentsManager from '../agents-manager';
-import { saveSessionId, setSessionSiteKey } from '../../utils/agent-session';
+import { getSessionId, saveSessionId, setSessionSiteKey } from '../../utils/agent-session';
 import {
 	clearAnnouncedSessionId,
 	getAnnouncedSessionId,
@@ -122,6 +125,39 @@ describe( 'AgentSetup', () => {
 		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
 			expect.objectContaining( { sessionId: 'session-live' } )
 		);
+	} );
+
+	it( 'does not re-initialize when returning with an aligned config', async () => {
+		render( manager( 111 ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		saveSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live' );
+
+		fireEvent.click( screen.getByText( 'go-history' ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
+
+		fireEvent.click( screen.getByText( 'go-chat' ) );
+
+		await act( async () => {} );
+		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 );
+		expect( screen.getByTestId( 'published-session' ).textContent ).toBe( 'session-live' );
+	} );
+
+	it( 'clears the session and announcement on a new chat', async () => {
+		render( manager( 111 ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		saveSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live' );
+		mockAgentManager.hasAgent.mockReturnValue( true );
+
+		fireEvent.click( screen.getByText( 'go-new-chat' ) );
+
+		await waitFor( () => expect( mockAgentManager.removeAgent ).toHaveBeenCalled() );
+		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();
+		expect( getSessionId() ).toBe( '' );
+		expect( getAnnouncedSessionId() ).toBeUndefined();
 	} );
 
 	it( 'realigns on returning to the chat view when the alignment was superseded', async () => {
