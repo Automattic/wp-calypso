@@ -134,13 +134,13 @@ export function useWaitHeartbeat( {
 	);
 
 	const endWait = useCallback(
-		( reason: EndReason ) => {
+		( reason: EndReason, extra?: Record< string, unknown > ) => {
 			const wait = waitRef.current;
 			if ( ! wait || wait.hasEnded ) {
 				return;
 			}
 			wait.hasEnded = true;
-			emit( 'calypso_transfer_wait_ended', { reason } );
+			emit( 'calypso_transfer_wait_ended', { reason, ...extra } );
 			setIsBeating( false );
 		},
 		[ emit ]
@@ -190,9 +190,11 @@ export function useWaitHeartbeat( {
 				wait.visibleSince = null;
 			}
 			// A tab hidden past the cap comes back to a wait that should already be closed: its timers
-			// were suspended, so this is the first chance to notice.
+			// were suspended, so this is the first chance to notice. `waited_seconds` is then the full
+			// stretch the tab sat there rather than the cap, which is true but not comparable with the
+			// waits the interval closed — hence the flag to tell the two apart.
 			if ( isPastCap( wait, now ) ) {
-				endWait( 'capped' );
+				endWait( 'capped', { capped_on_return: true } );
 				return;
 			}
 			wait.beats += 1;
@@ -216,10 +218,11 @@ export function useWaitHeartbeat( {
 			endWait( 'page_hidden' );
 		};
 
-		// The matching guarantee on the way back out.
+		// The matching guarantee on the way back out. Restored is not the same as looked at — a tab can
+		// come out of the cache still in the background — so the document is what decides.
 		const onPageShow = ( event: PageTransitionEvent ) => {
 			if ( event.persisted ) {
-				markVisibility( true );
+				markVisibility( isDocumentVisible() );
 			}
 		};
 

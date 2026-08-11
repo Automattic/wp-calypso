@@ -253,6 +253,24 @@ describe( 'useWaitHeartbeat', () => {
 		);
 	} );
 
+	// Coming out of the cache is not the same as being looked at: a tab can be restored while still
+	// in the background.
+	it( 'does not count the frozen stretch as visible when it comes back hidden', async () => {
+		renderHeartbeat();
+		await advance( 10 * 1000 );
+		setVisibility( 'hidden' );
+		await advance( 30 * 1000 );
+		pageTransition( 'pageshow', true );
+		setVisibility( 'visible' );
+		await advance( 20 * 1000 );
+
+		const beats = propsOf( 'calypso_transfer_wait_heartbeat' );
+		expect( beats[ beats.length - 1 ] ).toMatchObject( {
+			waited_seconds: 60,
+			visible_seconds: 30,
+		} );
+	} );
+
 	// A tab hidden past the cap has had its timers suspended, so coming back is the first chance to
 	// notice the wait should already be closed.
 	it( 'closes a wait that comes back from beyond the cap', () => {
@@ -266,7 +284,12 @@ describe( 'useWaitHeartbeat', () => {
 		setVisibility( 'visible' );
 
 		expect( eventsNamed( 'calypso_transfer_wait_heartbeat' ) ).toHaveLength( 0 );
-		expect( propsOf( 'calypso_transfer_wait_ended' )[ 0 ] ).toMatchObject( { reason: 'capped' } );
+		// Flagged, because `waited_seconds` here is the whole time the tab sat there rather than the
+		// cap, and comparing it with the waits the interval closed would inflate the tail.
+		expect( propsOf( 'calypso_transfer_wait_ended' )[ 0 ] ).toMatchObject( {
+			reason: 'capped',
+			capped_on_return: true,
+		} );
 	} );
 
 	// Otherwise one wait would be counted twice: once on the way out of the page, once on unmount.
