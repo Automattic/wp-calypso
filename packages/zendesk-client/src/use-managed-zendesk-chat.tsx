@@ -109,6 +109,28 @@ function getSmoochSiteId() {
 	return siteId;
 }
 
+type TracksProperties = Record< string, unknown >;
+
+/**
+ * Records against the site the singleton currently knows. Used from the Smooch delegate,
+ * which is installed outside React and so cannot read a hook.
+ */
+function recordWithSmoochSite( eventName: string, properties: TracksProperties = {} ) {
+	recordTracksEvent(
+		eventName,
+		withSiteContext( properties, [ [ 'chat_site', getSmoochSiteId() ] ] )
+	);
+}
+
+/** Records against the site this hook instance was given. */
+function useZendeskTracksEvent( siteId: number | string | undefined ) {
+	return useCallback(
+		( eventName: string, properties: TracksProperties = {} ) =>
+			recordTracksEvent( eventName, withSiteContext( properties, [ [ 'chat_site', siteId ] ] ) ),
+		[ siteId ]
+	);
+}
+
 function useSmoochSiteContext( siteId: number | string | undefined ) {
 	const entryRef = useRef< SmoochSiteEntry >( { siteId } );
 	entryRef.current.siteId = siteId;
@@ -149,10 +171,7 @@ function useSmooch( enabled = true, integrationKey?: string ) {
 				integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : integrationId,
 				delegate: {
 					async onInvalidAuth() {
-						recordTracksEvent(
-							'calypso_smooch_messenger_auth_error',
-							withSiteContext( {}, [ [ 'chat_site', getSmoochSiteId() ] ] )
-						);
+						recordWithSmoochSite( 'calypso_smooch_messenger_auth_error' );
 
 						await queryClient.invalidateQueries( {
 							queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode, false ],
@@ -278,6 +297,7 @@ export const useManagedZendeskChat = ( {
 	const connectionStatusRef = useRef( connectionStatus );
 	connectionStatusRef.current = connectionStatus;
 	const hadDisconnectRef = useRef( false );
+	const recordZendeskTracksEvent = useZendeskTracksEvent( siteId );
 
 	const connectionNotice = useConnectionStatusNotice( connectionStatus, true );
 
@@ -320,19 +340,13 @@ export const useManagedZendeskChat = ( {
 	const disconnectedListener = useCallback( () => {
 		hadDisconnectRef.current = true;
 		setConnectionStatus( 'disconnected' );
-		recordTracksEvent(
-			'calypso_smooch_messenger_disconnected',
-			withSiteContext( {}, [ [ 'chat_site', siteId ] ] )
-		);
-	}, [ setConnectionStatus, siteId ] );
+		recordZendeskTracksEvent( 'calypso_smooch_messenger_disconnected' );
+	}, [ setConnectionStatus, recordZendeskTracksEvent ] );
 
 	const reconnectingListener = useCallback( () => {
 		setConnectionStatus( 'reconnecting' );
-		recordTracksEvent(
-			'calypso_smooch_messenger_reconnecting',
-			withSiteContext( {}, [ [ 'chat_site', siteId ] ] )
-		);
-	}, [ setConnectionStatus, siteId ] );
+		recordZendeskTracksEvent( 'calypso_smooch_messenger_reconnecting' );
+	}, [ setConnectionStatus, recordZendeskTracksEvent ] );
 
 	const typingStartListener = useCallback(
 		( { conversation }: ConversationData ) => {
@@ -352,12 +366,9 @@ export const useManagedZendeskChat = ( {
 		// We don't want a "connected" status on page load, it's only useful as a sign of a recovered connection.
 		if ( connectionStatus ) {
 			setConnectionStatus( 'connected' );
-			recordTracksEvent(
-				'calypso_smooch_messenger_connected',
-				withSiteContext( {}, [ [ 'chat_site', siteId ] ] )
-			);
+			recordZendeskTracksEvent( 'calypso_smooch_messenger_connected' );
 		}
-	}, [ setConnectionStatus, connectionStatus, siteId ] );
+	}, [ setConnectionStatus, connectionStatus, recordZendeskTracksEvent ] );
 
 	const navigate = useNavigate();
 
@@ -737,10 +748,7 @@ export const useManagedZendeskChat = ( {
 						// eslint-disable-next-line no-console
 						console.error( 'Error uploading Zendesk chat attachments', error );
 						try {
-							recordTracksEvent(
-								'zendesk_chat_file_upload_failed',
-								withSiteContext( {}, [ [ 'chat_site', siteId ] ] )
-							);
+							recordZendeskTracksEvent( 'zendesk_chat_file_upload_failed' );
 						} catch {
 							// Swallow analytics errors to avoid affecting user flow.
 						}
@@ -760,7 +768,7 @@ export const useManagedZendeskChat = ( {
 			clientId,
 			Smooch,
 			attachFileToConversation,
-			siteId,
+			recordZendeskTracksEvent,
 		]
 	);
 
@@ -792,17 +800,16 @@ export const useManagedZendeskChat = ( {
 			}
 
 			if ( queue.length > 0 ) {
-				recordTracksEvent(
-					'calypso_smooch_messenger_queue_flushed',
-					withSiteContext( { queued_messages: queue.length }, [ [ 'chat_site', siteId ] ] )
-				);
+				recordZendeskTracksEvent( 'calypso_smooch_messenger_queue_flushed', {
+					queued_messages: queue.length,
+				} );
 			}
 
 			return Smooch.getConversationById( conversationId ).then( setConversation );
 		};
 
 		flushAndResync();
-	}, [ connectionStatus, Smooch, conversation?.id, siteId ] );
+	}, [ connectionStatus, Smooch, conversation?.id, recordZendeskTracksEvent ] );
 
 	useEffect( () => {
 		return () => {
