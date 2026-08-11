@@ -120,9 +120,10 @@ const StatsPurchasePage = ( {
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
 	const redirectToCommercial = query?.productType === 'commercial'; // allow multiple visit to upgrade commercial tier.
-	// Redirect to personal is there is the query param is set, the site doesn't have personal license yet, and it's not redirecting to commercial
-	const redirectToPersonal =
-		query?.productType === 'personal' && ! isPWYWOwned && ! redirectToCommercial;
+	// `productType=personal` always lands on the PWYW page, including for sites that already own
+	// PWYW — they can raise their contribution, and `disableFreeProduct` below keeps the free tier
+	// out of reach for them.
+	const redirectToPersonal = query?.productType === 'personal' && ! redirectToCommercial;
 	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
 
 	// The paid plan is the default upgrade landing regardless of commercial classification; the
