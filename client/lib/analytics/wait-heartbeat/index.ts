@@ -29,6 +29,9 @@ const HEARTBEAT_CAP_MS = 15 * 60 * 1000;
 const isDocumentVisible = () =>
 	typeof document === 'undefined' || document.visibilityState !== 'hidden';
 
+const isPastCap = ( wait: { startedAt: number }, now: number ) =>
+	now - wait.startedAt >= HEARTBEAT_CAP_MS;
+
 /**
  * Prefers `crypto.randomUUID`, falling back for environments that lack it (jest defaults among
  * them). Only collision resistance matters here — this correlates one wait's events, nothing more.
@@ -172,45 +175,52 @@ export function useWaitHeartbeat( {
 			return;
 		}
 
-		// The only marker a throttled or suspended background timer cannot swallow.
-		const onVisibilityChange = () => {
+		// The only marker a throttled or suspended background timer cannot swallow, so every route into
+		// and out of hiding goes through here rather than trusting one event to fire.
+		const markVisibility = ( isVisible: boolean ) => {
 			const wait = waitRef.current;
-			if ( ! wait || wait.hasEnded ) {
+			if ( ! wait || wait.hasEnded || isVisible === ( wait.visibleSince !== null ) ) {
 				return;
 			}
 			const now = Date.now();
-			if ( isDocumentVisible() ) {
+			if ( wait.visibleSince === null ) {
 				wait.visibleSince = now;
-			} else if ( wait.visibleSince !== null ) {
+			} else {
 				wait.visibleMs += now - wait.visibleSince;
 				wait.visibleSince = null;
+			}
+			// A tab hidden past the cap comes back to a wait that should already be closed: its timers
+			// were suspended, so this is the first chance to notice.
+			if ( isPastCap( wait, now ) ) {
+				endWait( 'capped' );
+				return;
 			}
 			wait.beats += 1;
 			emit( 'calypso_transfer_wait_heartbeat', { trigger: 'visibility' as BeatTrigger } );
 		};
+
+		const onVisibilityChange = () => markVisibility( isDocumentVisible() );
 
 		// `pagehide` rather than `beforeunload`: it fires for the bfcache path too, and is the only
 		// chance to close a bracket a full-page navigation would otherwise leave open.
 		//
 		// A persisted one is not that: the document is frozen, not torn down, and can come back to a
 		// wait that is still running. Ending it there would retire a wait the customer returns to and
-		// leave the restored screen beating for nobody. It is the hidden case, which the pair above
-		// already covers — visible time stops, the gap reads as censored.
+		// leave the restored screen beating for nobody. It is the hidden case instead — and the one
+		// browser event guaranteed to fire on the way in, where `visibilitychange` is not.
 		const onPageHide = ( event: PageTransitionEvent ) => {
 			if ( event.persisted ) {
+				markVisibility( false );
 				return;
 			}
 			endWait( 'page_hidden' );
 		};
 
-		// Not every browser fires `visibilitychange` on the way out of the back-forward cache, so this
-		// is the fallback that marks the return. Skipped when the pair above already did.
+		// The matching guarantee on the way back out.
 		const onPageShow = ( event: PageTransitionEvent ) => {
-			const wait = waitRef.current;
-			if ( ! event.persisted || ! wait || wait.hasEnded || wait.visibleSince !== null ) {
-				return;
+			if ( event.persisted ) {
+				markVisibility( true );
 			}
-			onVisibilityChange();
 		};
 
 		document.addEventListener( 'visibilitychange', onVisibilityChange );
@@ -229,7 +239,7 @@ export function useWaitHeartbeat( {
 			if ( ! wait || wait.hasEnded ) {
 				return;
 			}
-			if ( Date.now() - wait.startedAt >= HEARTBEAT_CAP_MS ) {
+			if ( isPastCap( wait, Date.now() ) ) {
 				endWait( 'capped' );
 				return;
 			}

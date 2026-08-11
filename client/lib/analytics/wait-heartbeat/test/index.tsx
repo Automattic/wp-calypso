@@ -34,6 +34,13 @@ const setVisibility = ( state: 'visible' | 'hidden' ) => {
 	} );
 };
 
+const pageTransition = ( name: 'pagehide' | 'pageshow', persisted: boolean ) =>
+	act( () => {
+		const event = new Event( name ) as PageTransitionEvent;
+		Object.defineProperty( event, 'persisted', { value: persisted } );
+		window.dispatchEvent( event );
+	} );
+
 const renderHeartbeat = ( initialProps: Props = { enabled: true } ) =>
 	renderHook(
 		( props: Props ) => useWaitHeartbeat( { surface: 'marketplace_install', ...props } ),
@@ -191,9 +198,7 @@ describe( 'useWaitHeartbeat', () => {
 	// The plugin flow leaves by full-page navigation, which never unmounts anything.
 	it( 'closes the bracket when the page goes away', () => {
 		renderHeartbeat();
-		act( () => {
-			window.dispatchEvent( new Event( 'pagehide' ) );
-		} );
+		pageTransition( 'pagehide', false );
 
 		expect( propsOf( 'calypso_transfer_wait_ended' )[ 0 ] ).toMatchObject( {
 			reason: 'page_hidden',
@@ -204,53 +209,70 @@ describe( 'useWaitHeartbeat', () => {
 	// come back to a wait that is still running.
 	it( 'keeps the wait open when the page is only frozen', () => {
 		renderHeartbeat();
-		act( () => {
-			const event = new Event( 'pagehide' ) as PageTransitionEvent;
-			Object.defineProperty( event, 'persisted', { value: true } );
-			window.dispatchEvent( event );
-		} );
+		pageTransition( 'pagehide', true );
 
 		expect( eventsNamed( 'calypso_transfer_wait_ended' ) ).toHaveLength( 0 );
 	} );
 
-	// Not every browser fires `visibilitychange` on the way back, so without this the return from the
-	// cache would be invisible and the gap unbounded.
-	it( 'marks the return from the cache', async () => {
+	// Not every browser fires `visibilitychange` around the cache, and the pair below is the only one
+	// guaranteed to. Without it the frozen stretch would count as visible and the return go unmarked.
+	it( 'brackets the frozen stretch when no visibility event fires', async () => {
 		renderHeartbeat();
+		await advance( 10 * 1000 );
+		pageTransition( 'pagehide', true );
+		await advance( 30 * 1000 );
+		pageTransition( 'pageshow', true );
+		await advance( 20 * 1000 );
+
+		const beats = propsOf( 'calypso_transfer_wait_heartbeat' );
+		expect( beats[ 0 ] ).toMatchObject( { trigger: 'visibility', is_visible: false } );
+		expect( beats[ beats.length - 1 ] ).toMatchObject( {
+			waited_seconds: 60,
+			visible_seconds: 30,
+		} );
+	} );
+
+	// Otherwise the browser that already fired it would have the stretch banked twice over.
+	it( 'does not double up when the browser fires both', async () => {
+		renderHeartbeat();
+		await advance( 10 * 1000 );
 		setVisibility( 'hidden' );
+		pageTransition( 'pagehide', true );
 		await advance( 30 * 1000 );
 		setVisibility( 'visible' );
-		mockRecordTracksEvent.mockClear();
+		pageTransition( 'pageshow', true );
+		await advance( 20 * 1000 );
 
-		act( () => {
-			const event = new Event( 'pageshow' ) as PageTransitionEvent;
-			Object.defineProperty( event, 'persisted', { value: true } );
-			window.dispatchEvent( event );
+		const beats = propsOf( 'calypso_transfer_wait_heartbeat' );
+		expect( beats[ beats.length - 1 ] ).toMatchObject( {
+			waited_seconds: 60,
+			visible_seconds: 30,
 		} );
+		expect( beats.filter( ( properties ) => properties.trigger === 'visibility' ) ).toHaveLength(
+			2
+		);
+	} );
+
+	// A tab hidden past the cap has had its timers suspended, so coming back is the first chance to
+	// notice the wait should already be closed.
+	it( 'closes a wait that comes back from beyond the cap', () => {
+		renderHeartbeat();
+		setVisibility( 'hidden' );
+		mockRecordTracksEvent.mockClear();
+		// The clock moves but the timers do not, which is the whole point: a suspended interval never
+		// runs to notice the cap.
+		jest.setSystemTime( Date.now() + 20 * 60 * 1000 );
+
+		setVisibility( 'visible' );
 
 		expect( eventsNamed( 'calypso_transfer_wait_heartbeat' ) ).toHaveLength( 0 );
-
-		setVisibility( 'hidden' );
-		Object.defineProperty( document, 'visibilityState', { value: 'visible', configurable: true } );
-		mockRecordTracksEvent.mockClear();
-		act( () => {
-			const event = new Event( 'pageshow' ) as PageTransitionEvent;
-			Object.defineProperty( event, 'persisted', { value: true } );
-			window.dispatchEvent( event );
-		} );
-
-		expect( propsOf( 'calypso_transfer_wait_heartbeat' )[ 0 ] ).toMatchObject( {
-			trigger: 'visibility',
-			is_visible: true,
-		} );
+		expect( propsOf( 'calypso_transfer_wait_ended' )[ 0 ] ).toMatchObject( { reason: 'capped' } );
 	} );
 
 	// Otherwise one wait would be counted twice: once on the way out of the page, once on unmount.
 	it( 'closes the bracket only once', () => {
 		const { unmount } = renderHeartbeat();
-		act( () => {
-			window.dispatchEvent( new Event( 'pagehide' ) );
-		} );
+		pageTransition( 'pagehide', false );
 		unmount();
 
 		expect( eventsNamed( 'calypso_transfer_wait_ended' ) ).toHaveLength( 1 );
