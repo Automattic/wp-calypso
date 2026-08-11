@@ -83,47 +83,55 @@ describe( 'receiveStatus', () => {
 		jest.runAllTimers();
 
 		expect( dispatch ).toHaveBeenCalledTimes( 2 );
-		expect( dispatch ).toHaveBeenCalledWith(
-			fetchAutomatedTransferStatus( siteId, expect.any( Number ) )
-		);
+		expect( dispatch ).toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
 	} );
 
-	test( 'should start a deadline for a new poll chain', () => {
-		const now = 1000000;
-		jest.setSystemTime( now );
+	test( 'should keep polling until the deadline arrives', () => {
+		const start = 1000000;
+		jest.setSystemTime( start );
 		const dispatch = jest.fn();
 
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS - 1 );
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 		jest.runAllTimers();
 
-		expect( dispatch ).toHaveBeenCalledWith(
-			fetchAutomatedTransferStatus( siteId, now + TRANSFER_STATUS_POLL_DEADLINE_MS )
+		expect( dispatch ).toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
+		expect( dispatch ).not.toHaveBeenCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
 		);
 	} );
 
-	test( 'should carry the deadline through a poll chain', () => {
-		const pollDeadline = 2000000;
-		jest.setSystemTime( 1000000 );
-		const dispatch = jest.fn();
-
-		receiveStatus( { siteId, pollDeadline }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.runAllTimers();
-
-		expect( dispatch ).toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId, pollDeadline ) );
-	} );
-
 	test( 'should set client timeout when the deadline expires', () => {
-		const pollDeadline = 1000000;
-		jest.setSystemTime( pollDeadline );
+		const start = 1000000;
+		jest.setSystemTime( start );
 		const dispatch = jest.fn();
 
-		receiveStatus( { siteId, pollDeadline }, IN_PROGRESS_RESPONSE )( dispatch );
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 
 		expect( dispatch ).toHaveBeenLastCalledWith(
 			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
 		);
+	} );
+
+	test( 'should not let a poll scheduled by an ended wait time out the next one', () => {
+		const start = 1000000;
+		jest.setSystemTime( start );
+		const dispatch = jest.fn();
+
+		// A wait runs long, then ends.
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS - 1 );
+		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
+
+		// A poll it had already scheduled lands afterwards, during a new wait.
+		jest.runAllTimers();
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+
 		expect( dispatch ).not.toHaveBeenCalledWith(
-			fetchAutomatedTransferStatus( siteId, pollDeadline )
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
 		);
 	} );
 
@@ -135,10 +143,13 @@ describe( 'receiveStatus', () => {
 		transferStates.CONFLICTS,
 		transferStates.REVERTED,
 	] )( 'should prefer the settled status %s over an expired deadline', ( status ) => {
-		jest.setSystemTime( 1000000 );
+		const start = 1000000;
+		jest.setSystemTime( start );
 		const dispatch = jest.fn();
 
-		receiveStatus( { siteId, pollDeadline: 999999 }, settledResponse( status ) )( dispatch );
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
+		receiveStatus( { siteId }, settledResponse( status ) )( dispatch );
 
 		expect( dispatch ).not.toHaveBeenCalledWith(
 			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
@@ -157,18 +168,16 @@ describe( 'receiveStatus', () => {
 		receiveStatus( { siteId }, settledResponse( status ) )( dispatch );
 		jest.runAllTimers();
 
-		expect( dispatch ).not.toHaveBeenCalledWith(
-			fetchAutomatedTransferStatus( siteId, expect.any( Number ) )
-		);
+		expect( dispatch ).not.toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
 	} );
 
-	test( 'should apply the deadline to requests that carry none', () => {
+	test( 'should bound a wait across requests that each look like a fresh start', () => {
 		const start = 1000000;
 		jest.setSystemTime( start );
 		const dispatch = jest.fn();
 
-		// Consumers re-dispatch without a deadline whenever the status changes. That must not
-		// open a fresh window, or the wait is never bounded.
+		// Consumers re-dispatch on every status change. Each of those must join the wait already
+		// in progress rather than opening a fresh window, or the wait is never bounded.
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );

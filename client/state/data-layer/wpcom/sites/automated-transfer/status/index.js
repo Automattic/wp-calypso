@@ -26,9 +26,10 @@ const settledStates = [
 	transferStates.REVERTED,
 ];
 
-// The deadline belongs to the wait, not to a single request. Consumers re-dispatch a
-// deadline-less fetch every time the status changes, so without an anchor per site each
-// response would open a fresh window and the deadline would never arrive.
+// The deadline belongs to the wait, not to a single request: consumers re-dispatch a fetch
+// every time the status changes, and each of those would otherwise open a fresh window. It
+// is held here rather than carried on the action so a poll scheduled by a wait that has
+// since ended cannot apply its expired deadline to whatever is running now.
 const pollDeadlines = new Map();
 
 export const clearPollDeadlines = () => pollDeadlines.clear();
@@ -44,7 +45,7 @@ export const requestStatus = ( action ) =>
 	);
 
 export const receiveStatus =
-	( { siteId, pollDeadline }, { status, uploaded_plugin_slug } ) =>
+	( { siteId }, { status, uploaded_plugin_slug } ) =>
 	( dispatch ) => {
 		const pluginId = uploaded_plugin_slug;
 
@@ -53,14 +54,11 @@ export const receiveStatus =
 		if ( settledStates.includes( status ) ) {
 			pollDeadlines.delete( siteId );
 		} else {
-			const deadline =
-				pollDeadline ??
-				pollDeadlines.get( siteId ) ??
-				Date.now() + TRANSFER_STATUS_POLL_DEADLINE_MS;
+			const deadline = pollDeadlines.get( siteId ) ?? Date.now() + TRANSFER_STATUS_POLL_DEADLINE_MS;
 
 			if ( Date.now() < deadline ) {
 				pollDeadlines.set( siteId, deadline );
-				setTimeout( dispatch, POLL_INTERVAL_MS, fetchAutomatedTransferStatus( siteId, deadline ) );
+				setTimeout( dispatch, POLL_INTERVAL_MS, fetchAutomatedTransferStatus( siteId ) );
 			} else {
 				pollDeadlines.delete( siteId );
 				dispatch( setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, pluginId ) );

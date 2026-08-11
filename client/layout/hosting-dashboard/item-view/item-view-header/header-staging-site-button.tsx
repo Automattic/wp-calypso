@@ -115,21 +115,26 @@ export default function HeaderStagingSiteButton( {
 		}
 	}, [ __, dispatch, queryClient, siteId, isStagingSiteReady, stagingSite ] );
 
+	const hasTransferTimedOut = transferStatus === transferStates.CLIENT_TIMEOUT;
+
+	// The staging site itself already exists by this point, so the status is left alone: clearing
+	// it would hide the entry point entirely, and the transfer may still finish on the server.
 	useEffect( () => {
-		if ( transferStatus !== transferStates.CLIENT_TIMEOUT ) {
+		if ( ! hasTransferTimedOut ) {
 			return;
 		}
 
-		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.UNSET ) );
 		dispatch(
 			errorNotice(
-				__( 'Adding the staging site is taking longer than expected. Please try again.' ),
+				__(
+					'Adding the staging site is taking longer than expected. It may still finish — reload the page to check.'
+				),
 				{
 					id: stagingSiteAddFailureNoticeId,
 				}
 			)
 		);
-	}, [ __, dispatch, siteId, transferStatus ] );
+	}, [ __, dispatch, hasTransferTimedOut ] );
 
 	const removeAllNotices = useCallback( () => {
 		dispatch( removeNotice( 'staging-site-add-success' ) );
@@ -192,7 +197,8 @@ export default function HeaderStagingSiteButton( {
 
 	const hasCompletedLoading = ! isLoadingQuotaValidation;
 	const isAddingStagingSite =
-		isLoadingAddStagingSite || ( isCreatingStagingSite && ! isCreatedStagingSite );
+		isLoadingAddStagingSite ||
+		( isCreatingStagingSite && ! isCreatedStagingSite && ! hasTransferTimedOut );
 
 	let disabledReason: string | undefined;
 	if ( ! hasCompletedLoading ) {
@@ -211,7 +217,7 @@ export default function HeaderStagingSiteButton( {
 		);
 	} else if ( transferStatus === transferStates.RELOCATING_REVERT ) {
 		disabledReason = __( 'We are deleting your staging site.' );
-	} else if ( transferStatus === transferStates.CLIENT_TIMEOUT ) {
+	} else if ( hasTransferTimedOut ) {
 		disabledReason = __( 'Adding the staging site is taking longer than expected.' );
 	}
 
