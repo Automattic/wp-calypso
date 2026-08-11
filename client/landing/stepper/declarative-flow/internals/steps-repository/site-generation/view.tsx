@@ -130,7 +130,11 @@ function ErrorCanvas( {
 	let description = translate( 'The site or editor destination is missing from this page.' );
 	let actionLabel = translate( 'Reload' );
 
-	if ( failureReason === 'timed-out' ) {
+	if ( failureReason === 'build-failed' ) {
+		title = translate( 'We couldn’t finish building your site' );
+		description = translate( 'Your brief is saved, so you can safely try again.' );
+		actionLabel = translate( 'Try again' );
+	} else if ( failureReason === 'timed-out' ) {
 		title = translate( 'This is taking longer than expected' );
 		description = translate( 'Your brief is saved.' );
 		actionLabel = translate( 'Check again' );

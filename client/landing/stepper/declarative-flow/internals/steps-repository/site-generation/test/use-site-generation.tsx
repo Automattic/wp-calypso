@@ -93,7 +93,7 @@ describe( 'useSiteGeneration', () => {
 		expect( stopStatusPolling ).toHaveBeenCalled();
 	} );
 
-	it( 'shows the calm fallback (never an error) when the backend reports a failed build', () => {
+	it( 'reports a build failure separately from a client timeout', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
@@ -108,7 +108,7 @@ describe( 'useSiteGeneration', () => {
 		} );
 
 		expect( result.current.status ).toBe( 'failed' );
-		expect( result.current.failureReason ).toBe( 'timed-out' );
+		expect( result.current.failureReason ).toBe( 'build-failed' );
 		expect( logMock ).toHaveBeenCalledWith( 'site_generation_failed', {
 			status: 'failed:build_wow_theme_activation_failed',
 			site_identifier: '123',

@@ -10,7 +10,7 @@ export type SiteGenerationStep = {
 	startedAt?: number;
 };
 
-export type SiteGenerationFailureReason = 'missing-parameters' | 'timed-out';
+export type SiteGenerationFailureReason = 'build-failed' | 'missing-parameters' | 'timed-out';
 
 export type SiteGenerationState = {
 	status: 'working' | 'failed';
@@ -53,32 +53,31 @@ export function useSiteGeneration( {
 		stepIndex: 0,
 		startedAt: Date.now(),
 	} ) );
-	const [ hasTimedOut, setHasTimedOut ] = useState( false );
+	const [ runtimeFailureReason, setRuntimeFailureReason ] = useState<
+		Exclude< SiteGenerationFailureReason, 'missing-parameters' > | undefined
+	>();
 	const hasRequiredParameters = Boolean( siteIdentifier && editorUrl );
 
 	useEffect( () => {
-		if ( ! siteIdentifier || ! editorUrl || hasTimedOut ) {
+		if ( ! siteIdentifier || ! editorUrl || runtimeFailureReason ) {
 			return;
 		}
 
 		const stepIds = steps.map( ( step ) => step.id );
 
 		const generationTimeout = window.setTimeout(
-			() => setHasTimedOut( true ),
+			() => setRuntimeFailureReason( 'timed-out' ),
 			GENERATION_TIMEOUT_MS
 		);
 		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
 			onReady: () => window.location.assign( editorUrl ),
-			// A failed build is logged for us but never surfaced as an error: the
-			// user only ever sees the calm "your brief is saved, check again" state
-			// instead of a dead end.
 			onFailed: ( status ) => {
 				logBuildWowEvent( 'site_generation_failed', {
 					status,
 					site_identifier: siteIdentifier,
 				} );
-				setHasTimedOut( true );
+				setRuntimeFailureReason( 'build-failed' );
 			},
 			onRequestError: ( reason ) =>
 				logBuildWowEvent( 'site_generation_status_request_failed', {
@@ -129,14 +128,11 @@ export function useSiteGeneration( {
 			stopStatusPolling();
 			stopProgressPolling();
 		};
-	}, [ editorUrl, hasTimedOut, siteIdentifier, steps ] );
+	}, [ editorUrl, runtimeFailureReason, siteIdentifier, steps ] );
 
-	let failureReason: SiteGenerationFailureReason | undefined;
-	if ( ! hasRequiredParameters ) {
-		failureReason = 'missing-parameters';
-	} else if ( hasTimedOut ) {
-		failureReason = 'timed-out';
-	}
+	const failureReason: SiteGenerationFailureReason | undefined = ! hasRequiredParameters
+		? 'missing-parameters'
+		: runtimeFailureReason;
 
 	return {
 		status: failureReason ? 'failed' : 'working',

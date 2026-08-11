@@ -69,4 +69,38 @@ describe( 'SiteGenerationView', () => {
 			jest.useRealTimers();
 		}
 	} );
+
+	it( 'distinguishes a failed build from a timeout', () => {
+		const onRetry = jest.fn();
+		const { getByRole, getByText, rerender } = render(
+			<SiteGenerationView
+				onRetry={ onRetry }
+				state={ {
+					status: 'failed',
+					failureReason: 'build-failed',
+					steps: [ { id: 'preparing', label: 'Preparing the site', status: 'active' } ],
+				} }
+			/>
+		);
+
+		expect(
+			getByRole( 'heading', { name: 'We couldn’t finish building your site' } )
+		).toBeVisible();
+		expect( getByText( 'Your brief is saved, so you can safely try again.' ) ).toBeVisible();
+		expect( getByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+
+		rerender(
+			<SiteGenerationView
+				onRetry={ onRetry }
+				state={ {
+					status: 'failed',
+					failureReason: 'timed-out',
+					steps: [ { id: 'preparing', label: 'Preparing the site', status: 'active' } ],
+				} }
+			/>
+		);
+
+		expect( getByRole( 'heading', { name: 'This is taking longer than expected' } ) ).toBeVisible();
+		expect( getByRole( 'button', { name: 'Check again' } ) ).toBeVisible();
+	} );
 } );
