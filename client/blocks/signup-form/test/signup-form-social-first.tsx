@@ -111,15 +111,26 @@ describe( 'SignupFormSocialFirst', () => {
 	} );
 
 	describe( 'email button icon', () => {
-		test( 'uses the mail icon, not the WordPress logo, so email reads as a peer of the social options', () => {
+		test( 'uses the envelope icon, not the WordPress logo, so email reads as a peer of the social options', () => {
 			render( <SignupFormSocialFirst { ...defaultProps } /> );
 
 			const emailButton = screen.getByText( /Continue with email/i ).closest( 'button' );
 			expect( emailButton ).toBeInTheDocument();
-			expect( emailButton?.querySelector( '.social-icons__mail' ) ).toBeInTheDocument();
+			expect( emailButton?.querySelector( '.social-icons__envelope' ) ).toBeInTheDocument();
 			// The logo renders with the bare `social-icons` class, so count the icons to catch a
 			// regression that leaves both in the button.
 			expect( emailButton?.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
+		} );
+
+		test( 'carries the enabled-state class the disabled styling keys off', () => {
+			render( <SignupFormSocialFirst { ...defaultProps } /> );
+
+			const icon = screen
+				.getByText( /Continue with email/i )
+				.closest( 'button' )
+				?.querySelector( '.social-icons__envelope' );
+			expect( icon ).toHaveClass( 'social-icons', 'social-icons--enabled' );
+			expect( icon ).not.toHaveClass( 'social-icons--disabled' );
 		} );
 	} );
 
