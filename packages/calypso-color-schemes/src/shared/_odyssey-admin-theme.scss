@@ -14,10 +14,18 @@
 // prefixing it, which would ask a <body> child to be a descendant of the Stats mount — see
 // `exclude` in apps/odyssey-stats/webpack-css-scope.js.
 //
-// Only the eight schemes that mirror a wp-admin one are listed: the rest have no counterpart for
-// wp-admin to have set a value for.
+// Only the schemes wp-admin ships are listed: the WordPress.com-only ones have no counterpart for
+// wp-admin to have set a value for, so there is nothing to hand back.
+//
+// `fresh` is in the list even though `@wordpress/base-styles` has no `admin-scheme()` block for it —
+// core treats it as the `:root` default rather than a named scheme. wp-admin still puts
+// `admin-color-fresh` on <body>, `useWPAdminTheme` still turns that into `is-fresh`, and
+// `_fresh.scss` still aliases the token, so without it the *default* scheme — the one most Odyssey
+// installs run — would keep overriding wp-admin.
+//
 // Quoted so Sass reads `blue` as a scheme name rather than a colour.
-$wp-admin-schemes: "blue", "coffee", "ectoplasm", "light", "midnight", "modern", "ocean", "sunrise";
+$wp-admin-schemes: "blue", "coffee", "ectoplasm", "fresh", "light", "midnight", "modern", "ocean",
+	"sunrise";
 $odyssey-roots: ".stats-main.color-scheme", ".stats-widget-content.color-scheme",
 	"body > .color-scheme";
 
