@@ -16,7 +16,6 @@ export interface SupportedEnvVariables {
 	readonly A8C_FOR_AGENCIES_URL: string;
 	readonly ATOMIC_VARIATION: AtomicVariation;
 	readonly AUTHENTICATE_ACCOUNTS: TestAccountName[];
-	readonly BROWSER_NAME: string;
 	readonly CALYPSO_BASE_URL: string;
 	readonly COBLOCKS_EDGE: boolean;
 	readonly COOKIES_PATH: string;
@@ -25,7 +24,6 @@ export interface SupportedEnvVariables {
 	readonly GUTENBERG_NIGHTLY: boolean;
 	readonly JETPACK_TARGET: JetpackTarget;
 	readonly PARTNER_DIRECTORY_BASE_URL: string;
-	readonly RETRY_COUNT: number;
 	readonly RUN_ID: string;
 	readonly TEST_ON_ATOMIC: boolean;
 	readonly TIMEOUT: number;

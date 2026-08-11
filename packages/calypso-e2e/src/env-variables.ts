@@ -11,7 +11,6 @@ class EnvVariables implements SupportedEnvVariables {
 		A8C_FOR_AGENCIES_URL: 'https://agencies.automattic.com',
 		ATOMIC_VARIATION: 'default',
 		AUTHENTICATE_ACCOUNTS: [],
-		BROWSER_NAME: 'chromium',
 		CALYPSO_BASE_URL: `http://calypso.localhost:${ process.env.PORT || 3000 }`,
 		COBLOCKS_EDGE: false,
 		COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
@@ -21,7 +20,6 @@ class EnvVariables implements SupportedEnvVariables {
 		MAILOSAUR_LIMIT_REACHED: false,
 		JETPACK_TARGET: 'wpcom-production',
 		PARTNER_DIRECTORY_BASE_URL: 'https://wordpress.com/development-services',
-		RETRY_COUNT: 0,
 		RUN_ID: '',
 		TEST_ON_ATOMIC: false,
 		TIMEOUT: 15000,
@@ -218,11 +216,6 @@ class EnvVariables implements SupportedEnvVariables {
 		return this.getValidatedUrlEnvVar( 'WPCOM_BASE_URL' );
 	}
 
-	get BROWSER_NAME(): string {
-		const value = process.env.BROWSER_NAME;
-		return value ? value : this._defaultEnvVariables.BROWSER_NAME;
-	}
-
 	get RUN_ID(): string {
 		const value = process.env.RUN_ID;
 		// Support our Jetpack "mixed" atomic test strategy.
@@ -232,11 +225,6 @@ class EnvVariables implements SupportedEnvVariables {
 			return `Atomic: ${ this.ATOMIC_VARIATION }`;
 		}
 		return value ? value : this._defaultEnvVariables.RUN_ID;
-	}
-
-	get RETRY_COUNT(): number {
-		const value = process.env.RETRY_COUNT;
-		return value ? castAsNumber( 'RETRY_COUNT', value ) : this._defaultEnvVariables.RETRY_COUNT;
 	}
 
 	validate() {
