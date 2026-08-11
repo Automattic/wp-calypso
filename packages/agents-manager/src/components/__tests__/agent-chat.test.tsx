@@ -3,7 +3,7 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { ComponentProps, ReactNode, Ref } from 'react';
@@ -195,9 +195,10 @@ jest.mock( '../feedback-input', () => ( {
 jest.mock( '../icons', () => ( {
 	AI: () => null,
 } ) );
+const mockSelectedBlock = jest.fn( () => null );
 jest.mock( '../selected-block', () => ( {
 	__esModule: true,
-	default: () => null,
+	default: mockSelectedBlock,
 } ) );
 jest.mock( '../../utils/is-plugin-compass-agent', () => ( {
 	isPluginCompassHost: () => false,
@@ -239,6 +240,19 @@ describe( 'AgentChat', () => {
 		jest.clearAllMocks();
 		mockHasAiChatEntry.mockReturnValue( false );
 		document.body.className = '';
+	} );
+
+	it( 'renders the selected-block chip only on editor pages', async () => {
+		document.body.classList.add( 'post-php', 'post-type-post' );
+		renderAgentChat();
+		await waitFor( () => expect( mockSelectedBlock ).toHaveBeenCalled() );
+
+		mockSelectedBlock.mockClear();
+		document.body.className = '';
+		renderAgentChat();
+		// The lazy chunk resolves in a microtask — flush before asserting absence.
+		await act( () => Promise.resolve() );
+		expect( mockSelectedBlock ).not.toHaveBeenCalled();
 	} );
 
 	const imageUpload = ( isUploadingImages: boolean ) =>

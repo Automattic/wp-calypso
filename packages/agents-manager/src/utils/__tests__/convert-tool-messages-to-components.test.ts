@@ -14,10 +14,21 @@ jest.mock(
 jest.mock( '../../components/escalation-button', () => ( {
 	EscalationButton: mockEscalationButton,
 } ) );
-jest.mock( '../../components/button-picker', () => ( { __esModule: true, default: jest.fn() } ) );
-jest.mock( '../../components/color-picker', () => ( { __esModule: true, default: jest.fn() } ) );
-jest.mock( '../../components/font-picker', () => ( { __esModule: true, default: jest.fn() } ) );
+jest.mock( '../../components/button-picker', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+} ) );
+jest.mock( '../../components/color-picker', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+} ) );
+jest.mock( '../../components/font-picker', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+} ) );
 
+import { render, waitFor } from '@testing-library/react';
+import { createElement } from '@wordpress/element';
 import ButtonPicker from '../../components/button-picker';
 import ColorPicker from '../../components/color-picker';
 import FontPicker from '../../components/font-picker';
@@ -651,11 +662,13 @@ describe( 'convertToolMessagesToComponents', () => {
 	);
 
 	describe( 'AM-owned components', () => {
+		// The AM components are lazy wrappers, so the assertion renders the
+		// resolved component and waits for the picker chunk to arrive.
 		it.each( [
 			[ 'button-picker', ButtonPicker ],
 			[ 'color-picker', ColorPicker ],
 			[ 'font-picker', FontPicker ],
-		] )( 'resolves %s to its AM component', ( type, expected ) => {
+		] )( 'resolves %s to its AM component', async ( type, picker ) => {
 			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
 				type,
 				props: { variations: [] },
@@ -666,10 +679,14 @@ describe( 'convertToolMessagesToComponents', () => {
 				messages: [ message ],
 			} );
 
-			expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-				type: 'component',
-				component: expected,
-			} );
+			const content = result[ 0 ].content[ 0 ] as {
+				type: string;
+				component: React.ComponentType;
+			};
+			expect( content.type ).toBe( 'component' );
+
+			render( createElement( content.component ) );
+			await waitFor( () => expect( picker ).toHaveBeenCalled() );
 		} );
 
 		it( 'passes props without `contentType`', () => {

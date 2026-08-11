@@ -19,13 +19,13 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import lazyComponent from '../../utils/lazy-component';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
-import SelectedBlock from '../selected-block';
 import getSuggestionClickPayload from './get-suggestion-click-payload';
 import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
@@ -109,6 +109,12 @@ interface Props {
 	/** Called when a context card's dismiss button is clicked. */
 	onContextCardDismiss?: ( card: ExternalContextCard ) => void;
 }
+
+// Carries the block-editor stack, so it loads on demand — and only on editor
+// pages, keeping the chunk out of every other chat.
+const SelectedBlock = lazyComponent(
+	() => import( /* webpackChunkName: "am-selected-block" */ '../selected-block' )
+);
 
 const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 	'image/jpeg',
@@ -363,7 +369,7 @@ export default function AgentChat( {
 								dropZoneRef={ conversationViewRef as RefObject< HTMLElement > }
 							/>
 						) }
-						<SelectedBlock />
+						{ isEditorPage() && <SelectedBlock /> }
 						{ /* `readOnly` (not `disabled`) so the stop button stays active while a batch uploads. */ }
 						<AgentUI.Input
 							imageUploaderRef={
