@@ -123,18 +123,16 @@ Set it to an empty value to skip priming altogether; whatever needs an account t
 
 ### Use the mobile viewport
 
-By default, tests run against the `desktop` viewport size, approximately 1920x1080. The following projects are currently supported:
+By default, tests run against the `desktop` viewport size, approximately 1920x1080. Two projects run specs:
 
-- desktop: `chrome`, `firefox`, `webkit`
-- mobile: `pixel`, `galaxy`, `iphone`
+- `chrome`: Desktop Chrome HiDPI, the `desktop` viewport.
+- `mobile`: Pixel 7, the `mobile` viewport. Specs tagged `@desktop-only` are skipped.
 
 To launch a spec with mobile viewport:
 
 ```bash
 yarn test:pw:mobile <path_to_spec>
 ```
-
-To run against another device, pass `--project` from the list above: `yarn playwright test --project=galaxy <path_to_spec>`.
 
 ### Target a different environment
 
