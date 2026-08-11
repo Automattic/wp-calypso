@@ -1,27 +1,14 @@
+import { WordPressWordmark } from '@automattic/components';
+import { sparkles } from '@automattic/components/src/icons';
 import { Button, Icon, Notice } from '@wordpress/components';
-import { wordpress } from '@wordpress/icons';
+import { check, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import type { SiteGenerationFailureReason, SiteGenerationState } from './use-site-generation';
 
 const WordPressMark = () => <Icon className="site-generation__wordpress-mark" icon={ wordpress } />;
 
 const CheckmarkIcon = (
-	<svg
-		aria-hidden="true"
-		className="site-build-progress__check"
-		fill="none"
-		height="12"
-		viewBox="0 0 12 12"
-		width="12"
-	>
-		<path
-			d="M10 3L4.5 8.5L2 6"
-			stroke="currentColor"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			strokeWidth="2"
-		/>
-	</svg>
+	<Icon aria-hidden="true" className="site-build-progress__check" icon={ check } size={ 12 } />
 );
 
 function BuildVisualization() {
@@ -195,6 +182,9 @@ export function SiteGenerationView( {
 	return (
 		<main className="site-generation" data-generation-view={ state.status }>
 			<section className="site-generation__editor" aria-label={ translate( 'Site generation' ) }>
+				<div aria-label="WordPress.com" className="site-generation__brand" role="img">
+					<WordPressWordmark className="site-generation__brand-logo" color="currentColor" />
+				</div>
 				<div className="site-generation__canvas">
 					{ state.status === 'failed' ? (
 						<ErrorCanvas
@@ -206,13 +196,18 @@ export function SiteGenerationView( {
 					) }
 				</div>
 			</section>
-			<aside className="site-generation__sidebar">
-				<header className="site-generation__sidebar-header">
-					<div className="site-generation__assistant-title">
-						<WordPressMark />
-						<span>{ translate( 'AI Site Builder' ) }</span>
-					</div>
-				</header>
+			<aside
+				aria-label={ translate( 'Site generation progress' ) }
+				className="site-generation__sidebar"
+			>
+				<div className="site-generation__sidebar-header">
+					<Icon
+						aria-hidden="true"
+						className="site-generation__assistant-icon"
+						icon={ sparkles }
+						size={ 32 }
+					/>
+				</div>
 				<div className="site-generation__conversation">
 					<p className="site-generation__conversation-message">
 						{ translate( 'Your site is being prepared. You can follow its progress here.' ) }
