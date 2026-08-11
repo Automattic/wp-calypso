@@ -8,22 +8,25 @@
 // carries a bare `color-scheme` and the portal wrapper no class at all — neither selector below can
 // match there, and Calypso is left exactly as it was.
 //
-// The two roots are the Stats mount and the <body> child that Odyssey's own RootChild tags with the
-// scheme (apps/odyssey-stats/src/components/root-child.tsx), where popovers and dialogs render.
-// `body >` on the second one also keeps Odyssey's CSS scoping from prefixing it, which would ask a
-// <body> child to be a descendant of the Stats mount — see `exclude` in
-// apps/odyssey-stats/webpack-css-scope.js.
+// The three roots are the Stats mount, the dashboard widget's own mount, and the <body> child that
+// Odyssey's RootChild tags with the scheme (apps/odyssey-stats/src/components/root-child.tsx), where
+// popovers and dialogs render. `body >` on the last one also keeps Odyssey's CSS scoping from
+// prefixing it, which would ask a <body> child to be a descendant of the Stats mount — see
+// `exclude` in apps/odyssey-stats/webpack-css-scope.js.
 //
 // Only the eight schemes that mirror a wp-admin one are listed: the rest have no counterpart for
 // wp-admin to have set a value for.
 // Quoted so Sass reads `blue` as a scheme name rather than a colour.
 $wp-admin-schemes: "blue", "coffee", "ectoplasm", "light", "midnight", "modern", "ocean", "sunrise";
+$odyssey-roots: ".stats-main.color-scheme", ".stats-widget-content.color-scheme",
+	"body > .color-scheme";
 
 @each $scheme in $wp-admin-schemes {
-	.stats-main.color-scheme.is-#{$scheme},
-	body > .color-scheme.is-#{$scheme} {
-		--wp-admin-theme-color: inherit;
-		--wp-admin-theme-color-darker-10: inherit;
-		--wp-admin-theme-color-darker-20: inherit;
+	@each $root in $odyssey-roots {
+		#{$root}.is-#{$scheme} {
+			--wp-admin-theme-color: inherit;
+			--wp-admin-theme-color-darker-10: inherit;
+			--wp-admin-theme-color-darker-20: inherit;
+		}
 	}
 }
