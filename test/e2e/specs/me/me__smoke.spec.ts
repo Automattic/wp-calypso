@@ -6,7 +6,7 @@ import { expect, tags, test } from '../../lib/pw-base';
  *
  * See: https://github.com/Automattic/wp-calypso/issues/76266
  */
-test.describe( 'Me: Smoke Test', { tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE ] }, () => {
+test.describe( 'Me: Smoke Test', { tag: [ tags.DASHBOARD_PR, tags.CALYPSO_RELEASE ] }, () => {
 	test( 'Navigate to Me pages', async ( {
 		accountGivenByEnvironment,
 		clientRestAPI,
