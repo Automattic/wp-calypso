@@ -14,10 +14,10 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 const { Menu } = unlock( privateApis );
 
 function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
-	if ( node.children ) {
+	if ( node.children?.length ) {
 		return (
 			<Menu>
-				<Menu.SubmenuTriggerItem>
+				<Menu.SubmenuTriggerItem tabbable>
 					<OmnibarNodeContent node={ node } />
 				</Menu.SubmenuTriggerItem>
 				<Menu.Popover className="omnibar__popover">
@@ -36,7 +36,11 @@ function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
 	}
 
 	return (
-		<Menu.Item render={ node.href ? <a href={ node.href } /> : undefined } onClick={ node.onClick }>
+		<Menu.Item
+			tabbable
+			render={ node.href ? <a href={ node.href } /> : undefined }
+			onClick={ node.onClick }
+		>
 			<OmnibarNodeContent node={ node } />
 		</Menu.Item>
 	);
@@ -48,7 +52,9 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 
 	for ( const node of nodes ) {
 		if ( node.group ) {
-			groups.push( node );
+			if ( node.children?.length ) {
+				groups.push( node );
+			}
 		} else {
 			ungroupedItems.push( node );
 		}
@@ -89,8 +95,17 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 	const triggerRef = useRef< HTMLElement >( null );
 	const popoverRef = useRef< HTMLElement >( null );
 	const closedByPointerRef = useRef( false );
+	const openedByKeyboardRef = useRef( false );
 
-	if ( ! node.children ) {
+	const setPopoverRef = ( element: HTMLElement | null ) => {
+		popoverRef.current = element;
+		if ( element && openedByKeyboardRef.current ) {
+			openedByKeyboardRef.current = false;
+			element.querySelector< HTMLElement >( '[role="menuitem"]' )?.focus();
+		}
+	};
+
+	if ( ! node.children?.length ) {
 		const isLink = !! node.href && ! node.disabled;
 		return (
 			<Button
@@ -133,6 +148,15 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 		setIsOpen( ( open ) => ! open );
 	};
 
+	const handleKeyDown = ( event: React.KeyboardEvent ) => {
+		if ( ! node.href || ( event.key !== 'Enter' && event.key !== ' ' ) ) {
+			return;
+		}
+		event.preventDefault();
+		openedByKeyboardRef.current = ! isOpen;
+		setIsOpen( ( open ) => ! open );
+	};
+
 	return (
 		<Menu open={ isOpen } onOpenChange={ handleOpenChange }>
 			<Menu.TriggerButton
@@ -140,6 +164,7 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 				onMouseEnter={ () => setIsOpen( true ) }
 				onMouseLeave={ handleMouseLeave }
 				onTouchEnd={ handleTouchEnd }
+				onKeyDown={ handleKeyDown }
 				aria-expanded={ isOpen }
 				render={
 					<Button
@@ -154,7 +179,7 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 				}
 			/>
 			<Menu.Popover
-				ref={ popoverRef }
+				ref={ setPopoverRef }
 				className="omnibar__popover"
 				gutter={ 0 }
 				overflowPadding={ 0 }
