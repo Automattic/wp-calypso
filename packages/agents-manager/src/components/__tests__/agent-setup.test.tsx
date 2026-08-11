@@ -234,6 +234,21 @@ describe( 'AgentSetup', () => {
 		expect( screen.getByTestId( 'published-session' ).textContent ).toBe( 'session-b' );
 	} );
 
+	it( 'discards the agent when the session scope changes without a site change', async () => {
+		const site = { ID: 111, domain: 'example.com' };
+		const { rerender } = render(
+			<AgentsManager sectionName="wp-admin" site={ site } currentSiteId={ 111 } />
+		);
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		mockAgentManager.hasAgent.mockReturnValue( true );
+
+		rerender( <AgentsManager sectionName="wp-admin" site={ site } currentSiteId={ undefined } /> );
+
+		await waitFor( () => expect( mockAgentManager.removeAgent ).toHaveBeenCalled() );
+		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();
+	} );
+
 	it( 'discards the previous agent and its announced session on a site switch', async () => {
 		const { rerender } = render( manager( 111 ) );
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );

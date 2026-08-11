@@ -118,12 +118,12 @@ function resolveTabSessionId( isNewChat: boolean, agentId?: string ): string {
 
 // Separate component that uses hooks within `PersistentRouter` context
 function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Element | null {
-	const { site, sectionName, currentRoute, agentConfig, setAgentConfig } =
+	const { site, siteKey, sectionName, currentRoute, agentConfig, setAgentConfig } =
 		useAgentsManagerContext();
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const agentConfigRef = useRef( agentConfig );
 	agentConfigRef.current = agentConfig;
-	const previousSiteIdRef = useRef( site?.ID );
+	const previousSiteKeyRef = useRef( siteKey );
 	const wasChatViewShowingRef = useRef( false );
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
@@ -168,11 +168,12 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		}
 
 		async function initializeAgent(): Promise< void > {
-			// A site switch is a context switch: drop the previous site's agent
-			// so its still-streaming response can't write into this site's
-			// session or transcript, then initialize from this site's session.
-			if ( previousSiteIdRef.current !== site?.ID ) {
-				previousSiteIdRef.current = site?.ID;
+			// A session-scope switch (`siteKey`, which keys the tab's storage) is
+			// a context switch: drop the previous scope's agent so its
+			// still-streaming response can't write into this scope's session or
+			// transcript, then initialize from this scope's session.
+			if ( previousSiteKeyRef.current !== siteKey ) {
+				previousSiteKeyRef.current = siteKey;
 				await discardAgent();
 
 				if ( isSuperseded ) {
@@ -264,6 +265,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		sectionName,
 		setAgentConfig,
 		site?.ID,
+		siteKey,
 		hostAgentId,
 		version,
 	] );
