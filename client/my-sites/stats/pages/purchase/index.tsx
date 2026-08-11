@@ -122,10 +122,10 @@ const StatsPurchasePage = ( {
 	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
 
 	// The paid plan is the default landing, including for sites that already own one so they can
-	// move up a tier. The PWYW page is reachable only on explicit request, and then for owners too
-	// — they can raise their contribution, while `disableFreeProduct` below keeps the free tier out
-	// of reach for them.
-	const variant = query?.productType === 'personal' ? 'personal' : 'commercial';
+	// move up a tier. The PWYW page is reachable only on explicit request, and only for sites that
+	// don't already have it — an existing PWYW owner is sent to the paid plan instead, since that
+	// is the only upgrade left to offer them.
+	const variant = query?.productType === 'personal' && ! isPWYWOwned ? 'personal' : 'commercial';
 
 	const showNavigation = ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' );
 
