@@ -1,9 +1,10 @@
+/* eslint-disable no-restricted-imports */
 import { useCallback } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useNavigate } from 'react-router-dom';
 import { preventWidows } from 'calypso/lib/formatting';
-import type { SearchResult } from '../types';
 import { useHelpCenterTracksEvent } from './use-help-center-tracks-event';
+import type { SearchResult } from '../types';
 
 type Options = {
 	/** Query that produced the result, recorded on the event and carried into the article view. */
