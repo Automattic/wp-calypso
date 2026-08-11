@@ -177,10 +177,14 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct =
 	},
 	hidePrice: true,
 
-	// The Stats PWYW product in the Plans grid is shown as `Stats` but also referred to `Stats (Personal)`,
-	// which aligns with the naming in packages/calypso-products/src/translations.tsx.
-	displayName: translate( 'Stats (Personal)' ),
-	shortName: translate( 'Stats (Personal)' ),
+	displayName: translate( 'Stats (Supporter)', {
+		comment:
+			'"Supporter" is the pay-what-you-want Jetpack Stats tier, where the customer chooses their own price to support the project.',
+	} ),
+	shortName: translate( 'Stats (Supporter)', {
+		comment:
+			'"Supporter" is the pay-what-you-want Jetpack Stats tier, where the customer chooses their own price to support the project.',
+	} ),
 	productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	costProductSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	term: TERM_ANNUALLY,

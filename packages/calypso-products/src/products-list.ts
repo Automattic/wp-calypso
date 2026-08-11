@@ -972,7 +972,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_BI_YEARLY,
 		product_alias: PRODUCT_JETPACK_STATS_BI_YEARLY_10K,
 		type: PRODUCT_JETPACK_STATS_BI_YEARLY,
@@ -984,7 +984,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_BI_YEARLY,
 	},
 	[ PRODUCT_JETPACK_STATS_BI_YEARLY_10K ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_BI_YEARLY,
 		product_alias: PRODUCT_JETPACK_STATS_BI_YEARLY_10K,
 		type: PRODUCT_JETPACK_STATS_BI_YEARLY,
@@ -996,7 +996,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_BI_YEARLY,
 	},
 	[ PRODUCT_JETPACK_STATS_BI_YEARLY_100K ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_BI_YEARLY,
 		product_alias: PRODUCT_JETPACK_STATS_BI_YEARLY_100K,
 		type: PRODUCT_JETPACK_STATS_BI_YEARLY,
@@ -1008,7 +1008,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_BI_YEARLY,
 	},
 	[ PRODUCT_JETPACK_STATS_BI_YEARLY_250K ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_BI_YEARLY,
 		product_alias: PRODUCT_JETPACK_STATS_BI_YEARLY_250K,
 		type: PRODUCT_JETPACK_STATS_BI_YEARLY,
@@ -1020,7 +1020,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_BI_YEARLY,
 	},
 	[ PRODUCT_JETPACK_STATS_BI_YEARLY_500K ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_BI_YEARLY,
 		product_alias: PRODUCT_JETPACK_STATS_BI_YEARLY_500K,
 		type: PRODUCT_JETPACK_STATS_BI_YEARLY,
@@ -1032,7 +1032,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_BI_YEARLY,
 	},
 	[ PRODUCT_JETPACK_STATS_BI_YEARLY_1M ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_BI_YEARLY,
 		product_alias: PRODUCT_JETPACK_STATS_BI_YEARLY_1M,
 		type: PRODUCT_JETPACK_STATS_BI_YEARLY,
@@ -1044,7 +1044,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_BI_YEARLY,
 	},
 	[ PRODUCT_JETPACK_STATS_YEARLY ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_YEARLY,
 		product_alias: PRODUCT_JETPACK_STATS_YEARLY_10K,
 		type: PRODUCT_JETPACK_STATS_YEARLY,
@@ -1056,7 +1056,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_YEARLY,
 	},
 	[ PRODUCT_JETPACK_STATS_YEARLY_10K ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_YEARLY,
 		product_alias: PRODUCT_JETPACK_STATS_YEARLY_10K,
 		type: PRODUCT_JETPACK_STATS_YEARLY,
@@ -1068,7 +1068,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_YEARLY,
 	},
 	[ PRODUCT_JETPACK_STATS_YEARLY_100K ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_YEARLY,
 		product_alias: PRODUCT_JETPACK_STATS_YEARLY_100K,
 		type: PRODUCT_JETPACK_STATS_YEARLY,
@@ -1080,7 +1080,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_YEARLY,
 	},
 	[ PRODUCT_JETPACK_STATS_YEARLY_250K ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_YEARLY,
 		product_alias: PRODUCT_JETPACK_STATS_YEARLY_250K,
 		type: PRODUCT_JETPACK_STATS_YEARLY,
@@ -1092,7 +1092,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_YEARLY,
 	},
 	[ PRODUCT_JETPACK_STATS_YEARLY_500K ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_YEARLY,
 		product_alias: PRODUCT_JETPACK_STATS_YEARLY_500K,
 		type: PRODUCT_JETPACK_STATS_YEARLY,
@@ -1104,7 +1104,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_YEARLY,
 	},
 	[ PRODUCT_JETPACK_STATS_YEARLY_1M ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_YEARLY,
 		product_alias: PRODUCT_JETPACK_STATS_YEARLY_1M,
 		type: PRODUCT_JETPACK_STATS_YEARLY,
@@ -1116,7 +1116,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_YEARLY,
 	},
 	[ PRODUCT_JETPACK_STATS_MONTHLY ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_MONTHLY,
 		product_alias: PRODUCT_JETPACK_STATS_MONTHLY_10K,
 		type: PRODUCT_JETPACK_STATS_MONTHLY,
@@ -1128,7 +1128,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_STATS_MONTHLY_10K ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_MONTHLY,
 		product_alias: PRODUCT_JETPACK_STATS_MONTHLY_10K,
 		type: PRODUCT_JETPACK_STATS_MONTHLY,
@@ -1140,7 +1140,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_STATS_MONTHLY_100K ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_MONTHLY,
 		product_alias: PRODUCT_JETPACK_STATS_MONTHLY_100K,
 		type: PRODUCT_JETPACK_STATS_MONTHLY,
@@ -1152,7 +1152,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_STATS_MONTHLY_250K ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_MONTHLY,
 		product_alias: PRODUCT_JETPACK_STATS_MONTHLY_250K,
 		type: PRODUCT_JETPACK_STATS_MONTHLY,
@@ -1164,7 +1164,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_STATS_MONTHLY_500K ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_MONTHLY,
 		product_alias: PRODUCT_JETPACK_STATS_MONTHLY_500K,
 		type: PRODUCT_JETPACK_STATS_MONTHLY,
@@ -1176,7 +1176,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_STATS_MONTHLY_1M ]: {
-		product_name: translate( 'Stats (Commercial use)' ),
+		product_name: translate( 'Stats' ),
 		product_slug: PRODUCT_JETPACK_STATS_MONTHLY,
 		product_alias: PRODUCT_JETPACK_STATS_MONTHLY_1M,
 		type: PRODUCT_JETPACK_STATS_MONTHLY,
@@ -1188,7 +1188,10 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_STATS_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: {
-		product_name: translate( 'Stats (Personal use)' ),
+		product_name: translate( 'Stats (Supporter)', {
+			comment:
+				'"Supporter" is the pay-what-you-want Jetpack Stats tier, where the customer chooses their own price to support the project.',
+		} ),
 		product_slug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 		type: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 		term: TERM_ANNUALLY,
