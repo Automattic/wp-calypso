@@ -13,6 +13,7 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const { getAccountNamesToPrime } = require( '@automattic/calypso-e2e' );
+const { scripts } = require( '../package.json' );
 
 const configsRoot = path.resolve( __dirname, '../../../.teamcity/target/generated-configs' );
 
@@ -26,6 +27,30 @@ const RELEVANT = [
 	'JETPACK_TARGET',
 	'ATOMIC_VARIATION',
 ];
+
+/**
+ * Whether a build type's accounts come from AUTHENTICATE_ACCOUNTS, which is what the resolver
+ * below answers for. Only the projects sharing `prime-logins` do; the rest name their accounts
+ * in their own `accountsToPrime`, and `playwright test --project=<name> --list` reports those.
+ *
+ * A build type can also leave PROJECT to the template default or set it per matrix leg, as
+ * `matrix.value.PROJECT.N`; both run a device project, so an absent PROJECT is reported.
+ */
+function usesAuthenticateAccounts( project ) {
+	if ( ! project ) {
+		return true;
+	}
+
+	const script = scripts[ `test:pw:${ project }` ];
+	if ( script === undefined ) {
+		// `yarn test:pw:%PROJECT%` is what the build step runs, so this build type cannot
+		// start. Worth more than being quietly left out of the table.
+		console.warn( `No test:pw:${ project } script: nothing can run PROJECT=${ project }.` );
+		return false;
+	}
+
+	return /--project=(chrome|mobile)\b/.test( script );
+}
 
 /**
  * Lists every generated XML file under a directory.
@@ -133,11 +158,11 @@ for ( const file of files ) {
 
 	// A build type reaches the prime-logins project by running the suite, not by setting the
 	// parameter: one that sets nothing primes the default list, and is the one most worth
-	// reporting. The authentication project depends on no priming, so it stays out.
+	// reporting.
 	const runsPlaywright =
 		/yarn test:pw:/.test( source ) ||
 		templateRefs.some( ( ref ) => /E2ETestsBuildTemplate$/.test( ref ) );
-	if ( ! runsPlaywright || merged.get( 'PROJECT' ) === 'authentication' ) {
+	if ( ! runsPlaywright || ! usesAuthenticateAccounts( merged.get( 'PROJECT' ) ) ) {
 		continue;
 	}
 

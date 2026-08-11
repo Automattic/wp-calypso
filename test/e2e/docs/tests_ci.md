@@ -21,6 +21,8 @@
 Each test file (referred to as `spec`) is assigned at least one group.
 This ensures that [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups) is able to locate and run the appropriate set of test specs for the build configuration. **Failure to add a group will result in the spec not running as part of CI.**
 
+Some suites are selected by a Playwright project instead, which takes every spec under a directory. `i18n`, `p2` and `authentication` work that way: a spec added to `specs/i18n`, `specs/p2` or `specs/authentication` runs whether or not it carries the group tag. See the `projects` in [`playwright.config.ts`](../playwright.config.ts).
+
 The following groups are available as of this time:
 
 | Group                       | Remarks                                                                                                                           |
@@ -29,8 +31,8 @@ The following groups are available as of this time:
 | `calypso-release`           | Run for every PR merged into `trunk` in this repository.                                                                          |
 | `gutenberg`                 | Editor-focused specs run on regular cadence.                                                                                      |
 | `coblocks`                  | Block-focused specs for our fork of [CoBlocks](https://wordpress.org/plugins/coblocks/).                                          |
-| `i18n`                      | Specs verifying internationalized strings.                                                                                        |
-| `p2`                        | Specs for the internal P2 system.                                                                                                 |
+| `i18n`                      | Specs verifying internationalized strings. Selected by directory, not by this tag.                                                |
+| `p2`                        | Specs for the internal P2 system. Selected by directory, not by this tag.                                                         |
 | `quarantined`               | Specs that need additional work.                                                                                                  |
 | `legal`                     | Specs for the marketing and legal team.                                                                                           |
 | `jetpack-wpcom-integration` | Specs for testing Jetpack's deployment on WPCOM.                                                                                  |

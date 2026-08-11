@@ -70,9 +70,15 @@ See the [list of groups](tests_ci.md#featuretest-groups).
 
 ### Save authentication cookies
 
-The `prime-logins` setup project logs in as a list of accounts before the main test suite runs and saves their cookies to be re-used until expiry (typically 3 days). Every project except `authentication` waits for it, so the specs read those cookies instead of logging in themselves.
+A priming setup project logs in as a list of accounts before the main test suite runs and saves their cookies to be re-used until expiry (typically 3 days), so the specs read those cookies instead of logging in themselves.
 
-By default it primes the list in [`setup/prime-logins.setup.ts`](../setup/prime-logins.setup.ts). To prime a different set, name the accounts found in [Secret Manager](../../../packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
+[`setup/prime-logins.setup.ts`](../setup/prime-logins.setup.ts) declares one login per known account; which of them a project performs is its own business. A suite project names them in its `accountsToPrime`, and `--list` reports the result:
+
+```bash
+yarn playwright test --project=p2 --list
+```
+
+The `chrome` and `mobile` projects instead share the `prime-logins` project, whose list comes from `AUTHENTICATE_ACCOUNTS`. To prime a different set for those, name the accounts found in [Secret Manager](../../../packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
 
 ```bash
 export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,atomicUser,defaultUser

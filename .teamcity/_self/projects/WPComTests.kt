@@ -411,7 +411,6 @@ private object I18NTests : BuildType({
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
 		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
 		param("env.E2E_CTRF_APP_NAME", "i18n (calypso)")
-		param("env.AUTHENTICATE_ACCOUNTS", "i18nUser")
 	}
 
 	features {
@@ -456,7 +455,6 @@ private object P2E2ETests : BuildType({
 		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
 		param("env.E2E_CTRF_APP_NAME", "p2 (calypso)")
-		param("env.AUTHENTICATE_ACCOUNTS", "p2User")
 	}
 
 	features {

@@ -106,15 +106,30 @@ export type CustomOptions = {
 	 * Set per-project in playwright.config.ts. Valid values: 'desktop' | 'mobile' | 'tablet'.
 	 */
 	viewportName: string;
+	/**
+	 * Accounts the project logs in as before its specs start, so their workers read the
+	 * cookie cache instead of logging in at once. Set per-project in playwright.config.ts,
+	 * which turns it into the setup project the suite depends on.
+	 */
+	accountsToPrime: readonly TestAccountName[];
 };
+
+/**
+ * Title of the login `setup/prime-logins.setup.ts` declares for an account, which a priming
+ * project greps for to select the accounts it wants. Shared so the two cannot drift: a title
+ * no project matches primes nothing and reports no error.
+ */
+export const primeLoginTitle = ( accountName: TestAccountName ) =>
+	`prime login cookies: ${ accountName }`;
 
 /**
  * Test accounts exposed as a fixture of the same name, logged in on first use.
  *
- * The `prime-logins` setup project logs in as each of these before the suite starts, so
- * an account added here is primed rather than logged in inline. Two accounts are fixtures
- * without belonging here: `accountGivenByEnvironment`, which resolves at run time, and
- * `accountSMS`, whose 2FA code costs a Mailosaur email only a couple of specs need.
+ * A priming setup project logs in as some of these before the suite starts, so they are
+ * primed rather than logged in inline; which ones is the `accountsToPrime` of the project
+ * that depends on it. Two accounts are fixtures without belonging here:
+ * `accountGivenByEnvironment`, which resolves at run time, and `accountSMS`, whose 2FA code
+ * costs a Mailosaur email only a couple of specs need.
  */
 export const fixtureAccounts = {
 	accountAtomic: 'atomicUser',
@@ -371,6 +386,7 @@ export const test = base.extend<
 	}
 >( {
 	viewportName: [ 'desktop', { option: true } ],
+	accountsToPrime: [ [], { option: true } ],
 	page: async ( { page, viewportName }, use, testInfo ) => {
 		// Set process.env.VIEWPORT_NAME so page objects/components can access it via envVariables.
 		process.env.VIEWPORT_NAME = viewportName;

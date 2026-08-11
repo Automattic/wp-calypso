@@ -1,6 +1,6 @@
-import { getAccountNamesToPrime } from '@automattic/calypso-e2e';
+import { TEST_ACCOUNT_NAMES } from '@automattic/calypso-e2e';
 import { getAccount } from '../lib/get-account';
-import { test as setup } from '../lib/pw-base';
+import { primeLoginTitle, test as setup } from '../lib/pw-base';
 
 // Accounts logged in as before the suite starts, so the specs read cookies instead of all
 // logging in at once.
@@ -10,26 +10,17 @@ import { test as setup } from '../lib/pw-base';
 // log in through the UI concurrently, against a calypso.live container that has just been
 // created, which is where most of the CI login timeouts come from.
 //
-// Which accounts those are comes from AUTHENTICATE_ACCOUNTS and the run's own environment;
-// getAccountNamesToPrime owns that, so `test/e2e/bin/primed-accounts.js` can report what
-// each build type primes without starting a build. An account it leaves out still works:
-// getAccount falls back to logging in inline, which is what every account did before this
-// project existed.
+// This file declares one login per known account; which of them a run performs is the
+// `accountsToPrime` of the project that depends on it. `yarn playwright test
+// --project=<suite> --list` reports what the suite primes. An account no project names still
+// works: getAccount falls back to logging in inline.
 
 // Well under the 120s test timeout. A login takes about 5s, so this only trips when
 // something is badly wrong, and it leaves room for the retry to still finish in time.
 const PRIME_TIMEOUT = 30 * 1000;
 
-const accountNamesToPrime = getAccountNamesToPrime();
-
-// The tests below report each account separately. Name the whole list once as well, so a
-// build log answers what this build type asked for without reading its TeamCity parameters.
-console.log(
-	`Priming login cookies for: ${ accountNamesToPrime.join( ', ' ) || '(no accounts)' }`
-);
-
-for ( const accountName of accountNamesToPrime ) {
-	setup( `prime login cookies: ${ accountName }`, async ( { page } ) => {
+for ( const accountName of TEST_ACCOUNT_NAMES ) {
+	setup( primeLoginTitle( accountName ), async ( { page } ) => {
 		let timer: NodeJS.Timeout | undefined;
 		try {
 			// Race our own deadline: Playwright's test timeout aborts from the outside and
