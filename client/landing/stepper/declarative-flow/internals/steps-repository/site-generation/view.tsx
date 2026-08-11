@@ -11,6 +11,10 @@ const CheckmarkIcon = (
 	<Icon aria-hidden="true" className="site-build-progress__check" icon={ check } size={ 12 } />
 );
 
+function ActiveIndicator() {
+	return <span className="site-build-progress__activity" />;
+}
+
 function BuildVisualization() {
 	return (
 		<div className="site-generation__build-visual" aria-hidden="true">
@@ -104,52 +108,37 @@ function ErrorCanvas( {
 
 function BuildProgress( { state }: { state: SiteGenerationState } ) {
 	const translate = useTranslate();
-	const visibleSteps = state.steps.filter( ( step ) => step.status !== 'pending' );
-	const items =
-		visibleSteps.length > 0
-			? visibleSteps
-			: [
-					{
-						id: 'starting',
-						label: translate( 'Starting site generation' ),
-						status: 'active' as const,
-					},
-			  ];
 	const hasFailed = state.status === 'failed';
 
 	return (
 		<div className="site-build-progress">
 			<div className="site-build-progress__header">
-				<span className="site-build-progress__title">{ translate( 'Generating your site' ) }</span>
+				<span className="site-build-progress__title" id="site-generation-progress-title">
+					{ translate( 'Generating your site' ) }
+				</span>
 			</div>
-			<ul aria-live="polite" className="site-build-progress__list">
-				{ items.map( ( item, index ) => {
-					const isInProgress = item.status !== 'complete';
-					let indicator = CheckmarkIcon;
-					if ( isInProgress ) {
-						indicator = hasFailed ? (
-							<span aria-hidden="true">…</span>
-						) : (
-							<div className="site-build-progress__spinner" />
-						);
-					}
-
+			<ul
+				aria-labelledby="site-generation-progress-title"
+				aria-live="polite"
+				className="site-build-progress__list"
+			>
+				{ state.steps.map( ( item, index ) => {
+					const nextStepStatus = state.steps[ index + 1 ]?.status;
+					const nextStepIsReached = nextStepStatus === 'done' || nextStepStatus === 'active';
 					return (
 						<li
 							aria-current={ item.status === 'active' ? 'step' : undefined }
-							className={ `site-build-progress__item ${
-								isInProgress ? 'site-build-progress__item--in-progress' : ''
-							}` }
-							data-last={ index === items.length - 1 }
+							className={ `site-build-progress__item site-build-progress__item--${ item.status }` }
+							data-last={ index === state.steps.length - 1 }
+							data-next-reached={ nextStepIsReached }
 							key={ item.id }
 						>
 							<div
 								aria-hidden="true"
-								className={ `site-build-progress__indicator site-build-progress__indicator--${
-									item.status === 'complete' ? 'completed' : 'loading'
-								}` }
+								className={ `site-build-progress__indicator site-build-progress__indicator--${ item.status }` }
 							>
-								{ indicator }
+								{ item.status === 'done' && CheckmarkIcon }
+								{ item.status === 'active' && ! hasFailed && <ActiveIndicator /> }
 							</div>
 							<span className="site-build-progress__text">{ item.label }</span>
 						</li>

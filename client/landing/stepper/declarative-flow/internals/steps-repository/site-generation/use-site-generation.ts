@@ -6,7 +6,7 @@ import { pollForBuildWowStatus } from './build-status-poller';
 export type SiteGenerationStep = {
 	id: string;
 	label: string;
-	status: 'pending' | 'active' | 'complete';
+	status: 'idle' | 'active' | 'done';
 };
 
 export type SiteGenerationFailureReason = 'missing-parameters' | 'timed-out';
@@ -24,9 +24,9 @@ function getStepsWithProgress(
 	activeStepIndex: number
 ): SiteGenerationStep[] {
 	return steps.map( ( step, index ) => {
-		let status: SiteGenerationStep[ 'status' ] = 'pending';
+		let status: SiteGenerationStep[ 'status' ] = 'idle';
 		if ( index < activeStepIndex ) {
-			status = 'complete';
+			status = 'done';
 		} else if ( index === activeStepIndex ) {
 			status = 'active';
 		}

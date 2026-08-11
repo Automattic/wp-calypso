@@ -168,35 +168,35 @@ describe( 'useSiteGeneration', () => {
 			onProgress( { current: 'theme-json' } );
 		} );
 		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
-			'complete',
+			'done',
 			'active',
-			'pending',
-			'pending',
-			'pending',
-			'pending',
+			'idle',
+			'idle',
+			'idle',
+			'idle',
 		] );
 
 		act( () => {
 			onProgress( { current: 'assemble-pages' } );
 		} );
 		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
-			'complete',
-			'complete',
-			'complete',
+			'done',
+			'done',
+			'done',
 			'active',
-			'pending',
-			'pending',
+			'idle',
+			'idle',
 		] );
 
 		act( () => {
 			onProgress( { current: 'generate' } );
 		} );
 		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
-			'complete',
-			'complete',
-			'complete',
-			'complete',
-			'complete',
+			'done',
+			'done',
+			'done',
+			'done',
+			'done',
 			'active',
 		] );
 	} );
