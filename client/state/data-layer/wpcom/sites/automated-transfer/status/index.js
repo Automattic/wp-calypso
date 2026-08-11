@@ -45,22 +45,33 @@ export const requestStatus = ( action ) =>
 	);
 
 export const receiveStatus =
-	( { siteId }, { status, uploaded_plugin_slug } ) =>
+	( { siteId }, { status, uploaded_plugin_slug, transfer_id: transferId } ) =>
 	( dispatch ) => {
 		const pluginId = uploaded_plugin_slug;
+		const isSettled = settledStates.includes( status );
+		const stored = pollDeadlines.get( siteId );
+		const recorded = stored?.transferId === transferId ? stored : undefined;
+
+		// Once a wait has run out of time it stays that way until the transfer actually ends.
+		// Otherwise the next status fetch — and several screens keep fetching — would replace
+		// the error with a spinner and start the five minutes over, indefinitely.
+		if ( recorded?.hasTimedOut && ! isSettled ) {
+			dispatch( setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, pluginId ) );
+			return;
+		}
 
 		dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
 
-		if ( settledStates.includes( status ) ) {
+		if ( isSettled ) {
 			pollDeadlines.delete( siteId );
 		} else {
-			const deadline = pollDeadlines.get( siteId ) ?? Date.now() + TRANSFER_STATUS_POLL_DEADLINE_MS;
+			const deadline = recorded?.deadline ?? Date.now() + TRANSFER_STATUS_POLL_DEADLINE_MS;
 
 			if ( Date.now() < deadline ) {
-				pollDeadlines.set( siteId, deadline );
+				pollDeadlines.set( siteId, { transferId, deadline } );
 				setTimeout( dispatch, POLL_INTERVAL_MS, fetchAutomatedTransferStatus( siteId ) );
 			} else {
-				pollDeadlines.delete( siteId );
+				pollDeadlines.set( siteId, { transferId, deadline, hasTimedOut: true } );
 				dispatch( setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, pluginId ) );
 			}
 		}

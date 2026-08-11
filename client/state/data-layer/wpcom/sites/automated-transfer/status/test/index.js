@@ -25,12 +25,14 @@ const IN_PROGRESS_RESPONSE = {
 	blog_id: 1916284,
 	status: 'uploading',
 	uploaded_plugin_slug: 'hello-dolly',
+	transfer_id: 1,
 };
 
 const settledResponse = ( status ) => ( {
 	blog_id: 1916284,
 	status,
 	uploaded_plugin_slug: 'hello-dolly',
+	transfer_id: 1,
 } );
 
 describe( 'requestStatus', () => {
@@ -114,6 +116,63 @@ describe( 'receiveStatus', () => {
 		expect( dispatch ).toHaveBeenLastCalledWith(
 			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
 		);
+	} );
+
+	test( 'should stay timed out rather than reopening the window', () => {
+		const start = 1000000;
+		jest.setSystemTime( start );
+		const dispatch = jest.fn();
+
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+		jest.runAllTimers();
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+
+		// Screens keep fetching after the error appears; none of those may revive the wait.
+		dispatch.mockClear();
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+		jest.runAllTimers();
+
+		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+		expect( dispatch ).toHaveBeenCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
+		);
+	} );
+
+	test( 'should let the transfer finishing clear a timed-out wait', () => {
+		const start = 1000000;
+		jest.setSystemTime( start );
+		const dispatch = jest.fn();
+
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+
+		dispatch.mockClear();
+		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.COMPLETE, 'hello-dolly' )
+		);
+	} );
+
+	test( 'should not apply a deadline left behind by a previous transfer', () => {
+		const start = 1000000;
+		jest.setSystemTime( start );
+		const dispatch = jest.fn();
+
+		// A wait whose polling died at the HTTP layer leaves its deadline behind.
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+
+		// Much later, a genuinely new transfer starts. It must get its own five minutes.
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
+		receiveStatus( { siteId }, { ...IN_PROGRESS_RESPONSE, transfer_id: 2 } )( dispatch );
+		jest.runAllTimers();
+
+		expect( dispatch ).not.toHaveBeenCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
+		);
+		expect( dispatch ).toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
 	} );
 
 	test( 'should not let a poll scheduled by an ended wait time out the next one', () => {

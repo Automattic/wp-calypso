@@ -20,11 +20,15 @@ const reducers = {
 // The deadline hook has its own suite; here we only assert how this hook arms it.
 type DeadlineArgs = { siteId: number; productSlug: string; enabled: boolean };
 
-const mockUseInstallDeadline = jest.fn( ( args: DeadlineArgs ) => ( {
-	hasTimedOut: false,
-	hasTransferFailed: false,
-	receivedEnabled: args.enabled,
-} ) );
+const deadlineVerdict =
+	( verdict: { hasTimedOut: boolean; hasTransferFailed: boolean } ) => ( args: DeadlineArgs ) => ( {
+		...verdict,
+		receivedEnabled: args.enabled,
+	} );
+
+const noDeadlineVerdict = deadlineVerdict( { hasTimedOut: false, hasTransferFailed: false } );
+
+const mockUseInstallDeadline = jest.fn( noDeadlineVerdict );
 
 jest.mock( '../use-install-deadline', () => ( {
 	...jest.requireActual( '../use-install-deadline' ),
@@ -168,6 +172,10 @@ describe( 'useProductInstall', () => {
 	} );
 
 	describe( 'error', () => {
+		afterEach( () => {
+			mockUseInstallDeadline.mockImplementation( noDeadlineVerdict );
+		} );
+
 		it( 'has no error before any grace period elapses', () => {
 			const { result } = renderProductInstall( { pluginSlug: 'give' } );
 			expect( result.current.error ).toBeNull();
@@ -199,6 +207,26 @@ describe( 'useProductInstall', () => {
 				expect( result.current.error ).toEqual( { type: 'rejected-upload', reason } );
 			}
 		);
+
+		it( 'reports the dedicated timeout error when the wait runs out', () => {
+			mockUseInstallDeadline.mockImplementation(
+				deadlineVerdict( { hasTimedOut: true, hasTransferFailed: false } )
+			);
+
+			const { result } = renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+
+			expect( result.current.error ).toEqual( { type: 'timeout' } );
+		} );
+
+		it( 'reports the transfer failure ahead of a timeout', () => {
+			mockUseInstallDeadline.mockImplementation(
+				deadlineVerdict( { hasTimedOut: true, hasTransferFailed: true } )
+			);
+
+			const { result } = renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+
+			expect( result.current.error ).toEqual( { type: 'transfer-failed' } );
+		} );
 
 		// The upload page sends the customer here as soon as the upload starts. Counting that time
 		// against a deadline calibrated for server-side transfers would fail a large file on a slow
