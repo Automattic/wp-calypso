@@ -336,7 +336,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 		id("WPComTests_jetpack_atomic_build_smoke_e2e_$targetDevice")
 		uuid = buildUuid
 		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
-		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations."
+		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. Each build takes the next Atomic environment variation."
 
 		artifactRules = defaultE2eArtifactRules();
 
@@ -353,6 +353,9 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 			param("env.TEST_ON_ATOMIC", "true")
 			param("env.ATOMIC_VARIATION", "mixed")
+			// Which variation "mixed" resolves to. The counter rises by one per build, so
+			// consecutive builds walk the variations.
+			param("env.ATOMIC_VARIATION_INDEX", "%build.counter%")
 			param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 		}
 
@@ -653,6 +656,9 @@ private object JetpackAtomicSmokeE2ETests : BuildType({
 		param("env.TEST_ON_ATOMIC", "true")
 		param("env.PW_WORKERS", "14")
 		param("env.ATOMIC_VARIATION", "mixed")
+		// Which variation "mixed" resolves to. The counter rises by one per build, so
+		// consecutive builds walk the variations.
+		param("env.ATOMIC_VARIATION_INDEX", "%build.counter%")
 		param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 	}
 })

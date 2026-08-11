@@ -1,6 +1,5 @@
-import path from 'path';
-import { afterAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import envVariables from '../env-variables';
+import { afterAll, beforeEach, describe, expect, test } from '@jest/globals';
+import envVariables, { ATOMIC_VARIATIONS } from '../env-variables';
 
 const URL_ENV_VARS = [
 	'A8C_FOR_AGENCIES_URL',
@@ -59,92 +58,70 @@ describe( 'EnvVariables Tests', function () {
 		} );
 	} );
 
-	describe( 'Test: a mixed Atomic run spreads variations across spec files', function () {
-		const ambient = process.env.ATOMIC_VARIATION;
-		const globalsPath = path.join(
-			path.dirname( require.resolve( 'playwright/package.json' ) ),
-			'lib',
-			'common',
-			'globals.js'
-		);
-		// Every spec that reads the variation on a private site, plus a few that do not, so the
-		// assertions below run against the real spread of names rather than invented ones.
-		const SPEC_FILES = [
-			'blocks__jetpack-forms.spec.ts',
-			'blocks__jetpack-media.spec.ts',
-			'blocks__jetpack-other.spec.ts',
-			'blocks__jetpack-earn.spec.ts',
-			'editor__post-basic-flow.spec.ts',
-			'forms__submissions.spec.ts',
-			'jetpack__dashboard-smoke.spec.ts',
-			'social__editor-features.spec.ts',
-			'stats.spec.ts',
-		];
-
-		let loadingFile = '';
+	describe( 'Test: a mixed Atomic run picks its variation from the run counter', function () {
+		const ambientVariation = process.env.ATOMIC_VARIATION;
+		const ambientIndex = process.env.ATOMIC_VARIATION_INDEX;
+		const VARIATION_COUNT = ATOMIC_VARIATIONS.length;
 
 		beforeEach( function () {
-			jest.resetModules();
-			jest.doMock( globalsPath, function () {
-				return {
-					currentlyLoadingFileSuite: () => ( { location: { file: loadingFile } } ),
-					currentTestInfo: () => null,
-				};
-			} );
+			process.env.ATOMIC_VARIATION = 'mixed';
 		} );
 
 		afterAll( function () {
-			jest.useRealTimers();
-			jest.resetModules();
-			if ( ambient === undefined ) {
-				delete process.env.ATOMIC_VARIATION;
-			} else {
-				process.env.ATOMIC_VARIATION = ambient;
-			}
+			restore( 'ATOMIC_VARIATION', ambientVariation );
+			restore( 'ATOMIC_VARIATION_INDEX', ambientIndex );
 		} );
 
 		/**
-		 * Resolves the variation one spec file would get, reloading the module so the case starts
-		 * without the memoised variations of the last one.
+		 * Restores an environment variable, which Jest workers carry into the next test file.
 		 */
-		function variationFor( specFile: string ) {
-			loadingFile = `/checkout/test/e2e/specs/${ specFile }`;
-			process.env.ATOMIC_VARIATION = 'mixed';
-
-			let variation;
-			jest.isolateModules( function () {
-				// eslint-disable-next-line @typescript-eslint/no-require-imports
-				variation = require( '../env-variables' ).default.ATOMIC_VARIATION;
-			} );
-			return variation;
+		function restore( name: string, ambient: string | undefined ) {
+			if ( ambient === undefined ) {
+				delete process.env[ name ];
+			} else {
+				process.env[ name ] = ambient;
+			}
 		}
 
-		test( 'one run covers more than one variation', function () {
-			jest.useFakeTimers();
-			jest.setSystemTime( new Date( '2026-08-10T09:00:00Z' ) );
+		/**
+		 * Resolves the variation the given run counter gets.
+		 */
+		function variationFor( runIndex: number ) {
+			process.env.ATOMIC_VARIATION_INDEX = String( runIndex );
+			return envVariables.ATOMIC_VARIATION;
+		}
 
-			expect( new Set( SPEC_FILES.map( variationFor ) ).size ).toBeGreaterThan( 1 );
+		test( 'consecutive runs walk every variation', function () {
+			const variations = Array.from( { length: VARIATION_COUNT }, ( _value, index ) =>
+				variationFor( 100 + index )
+			);
+
+			expect( new Set( variations ).size ).toBe( VARIATION_COUNT );
+			expect( variations ).not.toContain( 'mixed' );
 		} );
 
-		// The account and suite title are fixed at load, the skip guards run much later. A run that
-		// crosses midnight must not leave those two pointing at different sites.
-		test( 'a spec keeps its variation when the clock rolls over to the next day', function () {
-			jest.useFakeTimers();
-			jest.setSystemTime( new Date( '2026-08-10T23:59:00Z' ) );
-
-			loadingFile = '/checkout/test/e2e/specs/forms__submissions.spec.ts';
-			process.env.ATOMIC_VARIATION = 'mixed';
-
-			jest.isolateModules( function () {
-				// eslint-disable-next-line @typescript-eslint/no-require-imports
-				const envVars = require( '../env-variables' ).default;
-				const resolved = envVars.ATOMIC_VARIATION;
-
-				jest.setSystemTime( new Date( '2026-08-11T00:01:00Z' ) );
-
-				expect( envVars.ATOMIC_VARIATION ).toBe( resolved );
-				expect( resolved ).not.toBe( 'mixed' );
-			} );
+		// Every read within a run has to agree: a spec picks its account and builds its suite
+		// title when Playwright collects it, and resolves its skip guards in the worker.
+		test( 'the same run counter always resolves to the same variation', function () {
+			expect( variationFor( 12 ) ).toBe( variationFor( 12 ) );
+			expect( variationFor( 12 + VARIATION_COUNT ) ).toBe( variationFor( 12 ) );
 		} );
+
+		test( 'a run with no counter still resolves to a variation', function () {
+			delete process.env.ATOMIC_VARIATION_INDEX;
+
+			expect( envVariables.ATOMIC_VARIATION ).toBe( 'default' );
+		} );
+
+		// A counter that is not a whole number leaves no variation to run against, so it has to
+		// stop the run rather than resolve to undefined.
+		test.each( [ 'today', 'Infinity', '1e999' ] )(
+			'the counter %p is rejected',
+			function ( value ) {
+				process.env.ATOMIC_VARIATION_INDEX = value;
+
+				expect( () => envVariables.ATOMIC_VARIATION ).toThrow( 'ATOMIC_VARIATION_INDEX' );
+			}
+		);
 	} );
 } );

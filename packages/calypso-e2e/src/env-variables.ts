@@ -1,10 +1,21 @@
 /* eslint-disable jsdoc/require-jsdoc */
-import crypto from 'crypto';
 import path from 'path';
 import { getViewports } from './data-helper';
 import { TEST_ACCOUNT_NAMES } from './secrets';
 import { SupportedEnvVariables, JetpackTarget, AtomicVariation } from './types/env-variables.types';
 import { TestAccountName } from '.';
+
+// The concrete variations, in the order a mixed run walks them. `mixed` is not one of them: it
+// is the request to pick one.
+export const ATOMIC_VARIATIONS: AtomicVariation[] = [
+	'default',
+	'php-old',
+	'php-new',
+	'wp-beta',
+	'wp-previous',
+	'private',
+	'ecomm-plan',
+];
 
 class EnvVariables implements SupportedEnvVariables {
 	private _defaultEnvVariables: SupportedEnvVariables = {
@@ -110,16 +121,7 @@ class EnvVariables implements SupportedEnvVariables {
 			return this._defaultEnvVariables.ATOMIC_VARIATION;
 		}
 
-		const supportedValues: AtomicVariation[] = [
-			'default',
-			'php-old',
-			'php-new',
-			'wp-beta',
-			'wp-previous',
-			'private',
-			'ecomm-plan',
-			'mixed',
-		];
+		const supportedValues: AtomicVariation[] = [ ...ATOMIC_VARIATIONS, 'mixed' ];
 		if ( ! supportedValues.includes( value as AtomicVariation ) ) {
 			throw new Error(
 				`Unknown ATOMIC_VARIATION value: ${ value }.\nSupported values: ${ supportedValues.join(
@@ -237,79 +239,26 @@ class EnvVariables implements SupportedEnvVariables {
 	}
 }
 
-type PlaywrightGlobals = {
-	currentlyLoadingFileSuite: () => { location?: { file?: string } } | undefined;
-	currentTestInfo: () => { file?: string } | null;
-};
-
-let playwrightGlobals: PlaywrightGlobals | undefined;
-
-// Playwright tracks the spec file it is loading, and the test it is running, in a module it does
-// not re-export, so this reaches for it by path. Specs need it at module scope, where they pick
-// their test account and build their suite title, and `test.info()` does not exist yet. Loaded
-// lazily to keep importing this module runner-neutral.
-function getPlaywrightGlobals(): PlaywrightGlobals {
-	if ( ! playwrightGlobals ) {
-		const globalsPath = path.join(
-			path.dirname( require.resolve( 'playwright/package.json' ) ),
-			'lib',
-			'common',
-			'globals.js'
+// Keyed on the run rather than on anything a spec can see: a spec resolves its variation once
+// when Playwright collects it and again in the worker that runs it, and the two must agree, or
+// the worker declares a different suite than was collected.
+function getAtomicVariationInMixedRun(): AtomicVariation {
+	const value = process.env.ATOMIC_VARIATION_INDEX;
+	if ( ! value ) {
+		console.warn(
+			`ATOMIC_VARIATION=mixed without ATOMIC_VARIATION_INDEX: running on ${ ATOMIC_VARIATIONS[ 0 ] }. Set the index to pick another variation.`
 		);
-
-		try {
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			playwrightGlobals = require( globalsPath ) as PlaywrightGlobals;
-		} catch {
-			// Failing here is deliberate. Falling back to a spec-independent variation would put
-			// every spec in the run on one Atomic site, which is the whole point of the indirection.
-			throw new Error(
-				`ATOMIC_VARIATION=mixed needs ${ globalsPath }, which this Playwright version does not provide.\nSet a concrete variation, or point getPlaywrightGlobals at the new location.`
-			);
-		}
+		return ATOMIC_VARIATIONS[ 0 ];
 	}
 
-	return playwrightGlobals;
-}
+	const runIndex = castAsNumber( 'ATOMIC_VARIATION_INDEX', value );
 
-// Basename rather than full path, so a variation does not depend on the agent's checkout directory.
-function hashSpecFile( specFile: string ): number {
-	return Math.abs(
-		crypto.createHash( 'md5' ).update( path.basename( specFile ) ).digest().readInt8()
-	);
-}
-
-const mixedRunVariations = new Map< string, AtomicVariation >();
-
-function getAtomicVariationInMixedRun() {
-	const allVariations: AtomicVariation[] = [
-		'default',
-		'php-old',
-		'php-new',
-		'wp-beta',
-		'wp-previous',
-		'private',
-		'ecomm-plan',
-	];
-	const globals = getPlaywrightGlobals();
-	const specFile =
-		globals.currentlyLoadingFileSuite()?.location?.file ?? globals.currentTestInfo()?.file ?? '';
-
-	// Keyed by spec file so a single run spreads across variations, and memoised so a spec keeps the
-	// one it was collected with: its account and suite title are fixed when the file loads, its skip
-	// guards run much later, and a run crossing midnight must not leave those two disagreeing.
-	if ( ! mixedRunVariations.has( specFile ) ) {
-		const variationIndex =
-			( new Date().getDate() + hashSpecFile( specFile ) ) % allVariations.length;
-		mixedRunVariations.set( specFile, allVariations[ variationIndex ] );
-	}
-
-	return mixedRunVariations.get( specFile ) as AtomicVariation;
+	return ATOMIC_VARIATIONS[ Math.abs( Math.trunc( runIndex ) ) % ATOMIC_VARIATIONS.length ];
 }
 
 function castAsNumber( name: string, value: string ): number {
 	const output = Number( value );
-	if ( Number.isNaN( output ) ) {
+	if ( ! Number.isFinite( output ) ) {
 		throw new Error( `Incorrect type of the ${ name } variable - expecting number` );
 	}
 	return output;

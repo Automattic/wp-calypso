@@ -7,12 +7,13 @@
  * Generate the configs first; the DSL needs a JDK the plugin supports:
  *
  *   cd .teamcity && JAVA_HOME=$(/usr/libexec/java_home -v 17) mvn -q teamcity-configs:generate
+ *   yarn workspace @automattic/calypso-e2e build
  *
  * Then, from test/e2e:  node bin/primed-accounts.js
  */
 const fs = require( 'fs' );
 const path = require( 'path' );
-const { getAccountNamesToPrime } = require( '@automattic/calypso-e2e' );
+const { ATOMIC_VARIATIONS, getAccountNamesToPrime } = require( '@automattic/calypso-e2e' );
 
 const configsRoot = path.resolve( __dirname, '../../../.teamcity/target/generated-configs' );
 
@@ -80,6 +81,18 @@ function readLegs( params, source ) {
 	for ( const [ , value ] of source.matchAll( /export ATOMIC_VARIATION='([^']+)'/g ) ) {
 		if ( ! legs.some( ( leg ) => leg.value === value ) ) {
 			legs.push( { name: 'env.ATOMIC_VARIATION', value, label: value } );
+		}
+	}
+
+	// A mixed build resolves to one variation per run, chosen by a build counter no report can
+	// know. Show what each run primes instead of picking one.
+	if ( params.get( 'env.ATOMIC_VARIATION' ) === 'mixed' ) {
+		for ( const variation of ATOMIC_VARIATIONS ) {
+			legs.push( {
+				name: 'env.ATOMIC_VARIATION',
+				value: variation,
+				label: `mixed: ${ variation }`,
+			} );
 		}
 	}
 
