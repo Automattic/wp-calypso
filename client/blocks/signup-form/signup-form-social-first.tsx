@@ -53,6 +53,12 @@ interface SignupFormSocialFirst {
 	isEmailFirstVariant?: boolean;
 	isEmailAtBottom?: boolean;
 	isMobileCompactVariant?: boolean;
+	/**
+	 * Answers "I already have an account" below the buttons instead of in the top bar, where the
+	 * link sits among the page furniture and gets read as chrome. The email-first variants render
+	 * it regardless, having always carried their own.
+	 */
+	showLoginLink?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 	activationEmailFrom?: string;
@@ -120,6 +126,7 @@ const SignupFormSocialFirst = ( {
 	isEmailFirstVariant,
 	isEmailAtBottom,
 	isMobileCompactVariant,
+	showLoginLink,
 	allowedSocialServices,
 	customTosElement,
 	activationEmailFrom,
@@ -359,7 +366,7 @@ const SignupFormSocialFirst = ( {
 						{ emailLoginBlock }
 					</>
 				) }
-				{ isEmailFirstVariant && loginLinkParagraph }
+				{ ( isEmailFirstVariant || showLoginLink ) && loginLinkParagraph }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>{ emailScreen }</div>
 		</div>
