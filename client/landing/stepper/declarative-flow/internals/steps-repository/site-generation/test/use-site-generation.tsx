@@ -201,6 +201,40 @@ describe( 'useSiteGeneration', () => {
 		] );
 	} );
 
+	it( 'keeps the earliest active-step start time when progress history is reordered', () => {
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		const { onProgress } = progressPollMock.mock.calls[ 0 ][ 0 ];
+		act( () => {
+			onProgress( {
+				current: 'theme-json',
+				last_update: 1723032195,
+				history: [
+					{ status: 'design-direction', timestamp: 1723032170 },
+					{ status: 'theme-json', timestamp: 1723032195 },
+				],
+			} );
+		} );
+
+		expect( result.current.steps[ 1 ].startedAt ).toBe( 1723032170000 );
+
+		act( () => {
+			onProgress( {
+				current: 'design-direction',
+				last_update: 1723032210,
+				history: [ { status: 'theme-json', timestamp: 1723032195 } ],
+			} );
+		} );
+
+		expect( result.current.steps[ 1 ].startedAt ).toBe( 1723032170000 );
+	} );
+
 	it( 'stops progress polling once the last milestone is reached', () => {
 		const stopProgressPolling = jest.fn();
 		progressPollMock.mockReturnValue( stopProgressPolling );

@@ -2,29 +2,28 @@
  * @jest-environment jsdom
  */
 
-import { getStepIndexForProgress, pollForBuildProgress } from '../build-progress-poller';
+import { getStepProgress, pollForBuildProgress } from '../build-progress-poller';
 
-describe( 'getStepIndexForProgress', () => {
+describe( 'getStepProgress', () => {
 	const stepIds = [ 'preparing', 'designing', 'building', 'images', 'polishing', 'publishing' ];
+	const getStepIndex = ( response: Parameters< typeof getStepProgress >[ 0 ] ) =>
+		getStepProgress( response, stepIds )?.stepIndex ?? null;
 
 	it( 'maps persisted workflow events to their matching UI steps', () => {
-		expect( getStepIndexForProgress( { current: 'site-spec' }, stepIds ) ).toBe( 0 );
-		expect( getStepIndexForProgress( { current: 'theme-json+page-plan' }, stepIds ) ).toBe( 1 );
-		expect( getStepIndexForProgress( { current: 'header-hero' }, stepIds ) ).toBe( 2 );
-		expect( getStepIndexForProgress( { current: 'assemble-pages' }, stepIds ) ).toBe( 3 );
-		expect( getStepIndexForProgress( { current: 'generate-images' }, stepIds ) ).toBe( 4 );
-		expect( getStepIndexForProgress( { current: 'generate' }, stepIds ) ).toBe( 5 );
+		expect( getStepIndex( { current: 'site-spec' } ) ).toBe( 0 );
+		expect( getStepIndex( { current: 'theme-json+page-plan' } ) ).toBe( 1 );
+		expect( getStepIndex( { current: 'header-hero' } ) ).toBe( 2 );
+		expect( getStepIndex( { current: 'assemble-pages' } ) ).toBe( 3 );
+		expect( getStepIndex( { current: 'generate-images' } ) ).toBe( 4 );
+		expect( getStepIndex( { current: 'generate' } ) ).toBe( 5 );
 	} );
 
 	it( 'uses the furthest recognized event when the current event is internal', () => {
 		expect(
-			getStepIndexForProgress(
-				{
-					current: 'prepare',
-					history: [ { status: 'theme-json' }, { status: 'prepare' } ],
-				},
-				stepIds
-			)
+			getStepIndex( {
+				current: 'prepare',
+				history: [ { status: 'theme-json' }, { status: 'prepare' } ],
+			} )
 		).toBe( 1 );
 	} );
 
@@ -32,20 +31,34 @@ describe( 'getStepIndexForProgress', () => {
 		// The backend refreshes a repeated step's timestamp, so a long-running
 		// early tool can reappear at the end of the history after later steps.
 		expect(
-			getStepIndexForProgress(
-				{
-					current: 'theme-json',
-					history: [ { status: 'generate-images' }, { status: 'theme-json' } ],
-				},
-				stepIds
-			)
+			getStepIndex( {
+				current: 'theme-json',
+				history: [ { status: 'generate-images' }, { status: 'theme-json' } ],
+			} )
 		).toBe( 4 );
 	} );
 
 	it( 'returns null when the response has no recognized progress', () => {
-		expect( getStepIndexForProgress( { current: 'done' }, stepIds ) ).toBeNull();
-		expect( getStepIndexForProgress( { current: 'fail' }, stepIds ) ).toBeNull();
-		expect( getStepIndexForProgress( {}, stepIds ) ).toBeNull();
+		expect( getStepIndex( { current: 'done' } ) ).toBeNull();
+		expect( getStepIndex( { current: 'fail' } ) ).toBeNull();
+		expect( getStepIndex( {} ) ).toBeNull();
+	} );
+
+	it( 'returns the earliest timestamp recorded for the active milestone', () => {
+		expect(
+			getStepProgress(
+				{
+					current: 'theme-json',
+					last_update: 1723032195,
+					history: [
+						{ status: 'site-spec', timestamp: 1723032000 },
+						{ status: 'design-direction', timestamp: 1723032170 },
+						{ status: 'theme-json', timestamp: 1723032195 },
+					],
+				},
+				stepIds
+			)
+		).toEqual( { stepIndex: 1, startedAt: 1723032170000 } );
 	} );
 } );
 
