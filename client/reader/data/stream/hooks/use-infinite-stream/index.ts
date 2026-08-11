@@ -217,6 +217,16 @@ export const useInfiniteStream = ( {
 		queryClient.invalidateQueries( { queryKey, refetchType: 'none' } );
 	}, [ queryClient, queryKey ] );
 
+	// `cancelRefetch` defaults to true, which aborts an in-flight page request and
+	// starts another. `<InfiniteList>` gates on `fetchingNextPage`, a React prop
+	// that only flips after a commit, so its rAF-driven scroll check can call this
+	// again before the guard catches up — firing several identical requests for the
+	// same page. `false` makes a repeat call join the in-flight promise instead.
+	const { fetchNextPage: fetchNextStreamPage } = query;
+	const fetchNextPage = useCallback( () => {
+		fetchNextStreamPage( { cancelRefetch: false } );
+	}, [ fetchNextStreamPage ] );
+
 	return {
 		items,
 		posts,
@@ -228,7 +238,7 @@ export const useInfiniteStream = ( {
 		hasNextPage: !! query.hasNextPage,
 		lastPage: ! query.hasNextPage && ! query.isFetchingNextPage && query.isFetched,
 		error: query.error,
-		fetchNextPage: query.fetchNextPage,
+		fetchNextPage,
 		refetch: query.refetch,
 		invalidate,
 	};
