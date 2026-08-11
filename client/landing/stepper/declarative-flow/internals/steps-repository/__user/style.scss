@@ -10,6 +10,13 @@ $gray-50: #646970;
 $breakpoint-mobile: 660px;
 
 .step-route.user {
+	// The stepper default is 3rem, the login page's content wrapper uses 2rem, and a
+	// user moving between the two screens sees the form jump. Match login. Scoped to
+	// this step so the rest of the stepper keeps the default.
+	.step-container-v2__content-wrapper {
+		gap: 2rem;
+	}
+
 	.form-fieldset {
 		margin-bottom: 8px;
 	}

@@ -4,16 +4,14 @@ import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { type JSX } from 'react';
-import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useLoginContext } from 'calypso/login/login-context';
-import { useDispatch, useSelector } from 'calypso/state';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { useSelector } from 'calypso/state';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
+import useSignupLink from '../hooks/use-signup-link';
 import HeadingLogo from './heading-logo';
 import './one-login-layout.scss';
 
@@ -46,6 +44,12 @@ interface OneLoginLayoutProps {
 	isSectionSignup?: boolean;
 	loginUrl?: string;
 	isLostPasswordView?: boolean;
+	/**
+	 * Takes the top-right slot when provided, displacing the "Create an account" link, which the
+	 * main login view moves to its footer. Pass it only from views that actually offer password
+	 * recovery: mid-flow screens like 2FA have none and keep the signup link up there.
+	 */
+	lostPasswordLink?: JSX.Element | null;
 	noThanksRedirectUrl?: string;
 	/**
 	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`. Defaults to 6.
@@ -84,6 +88,7 @@ const OneLoginLayout = ( {
 	isSectionSignup,
 	loginUrl,
 	isLostPasswordView,
+	lostPasswordLink,
 	noThanksRedirectUrl,
 	columnWidth,
 	showLogo = true,
@@ -98,41 +103,31 @@ const OneLoginLayout = ( {
 	// For logged-in users, use their user locale setting. For logged-out users, use URL locale.
 	const locale = isLoggedIn && userLocale ? userLocale : urlLocale;
 	const currentRoute = useSelector( getCurrentRoute );
-	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWooJPC = useSelector( isWooJPCFlow );
-	const dispatch = useDispatch();
 	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
 	const validatedHeadingText = ensureHeadingProvided( headingText );
 	const { topBarLogo, hasCustomBranding } = usePartnerBranding();
+	const signupLink = useSignupLink( { signupUrl: signupUrlProp, origin: 'login-layout' } );
 
-	const renderSignUpLink = () => {
-		// use '?signup_url' if explicitly passed as URL query param
-		const signupUrl: string = signupUrlProp
-			? window.location.origin + pathWithLeadingSlash( signupUrlProp )
-			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale );
-
-		const handleClick = ( event: React.MouseEvent< HTMLElement > ) => {
-			recordTracksEvent( 'calypso_login_sign_up_link_click', { origin: 'login-layout' } );
-
-			if ( isLoggedIn ) {
-				event.preventDefault();
-				dispatch( redirectToLogout( signupUrl ) );
-			}
-		};
-
+	const SignUpLink = () => {
 		if ( isLostPasswordView ) {
 			return null;
 		}
 
 		return (
-			<Step.LinkButton href={ signupUrl } key="sign-up-link" onClick={ handleClick } rel="external">
+			<Step.LinkButton
+				href={ signupLink.href }
+				key="sign-up-link"
+				onClick={ signupLink.onClick }
+				rel="external"
+			>
 				{ translate( 'Create an account' ) }
 			</Step.LinkButton>
 		);
 	};
 
-	const renderLoginLink = () => {
+	const LoginLink = () => {
 		if ( ! loginUrl ) {
 			return null;
 		}
@@ -144,7 +139,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const renderNoThanksLink = () => {
+	const NoThanksLink = () => {
 		if ( ! noThanksRedirectUrl ) {
 			return null;
 		}
@@ -180,10 +175,14 @@ const OneLoginLayout = ( {
 	};
 
 	const topBar = (): JSX.Element => {
+		// On the main login view the route to signup moves down to the footer, matching where
+		// signup puts its route to login, and password recovery takes the slot it vacates.
+		// Everywhere else (2FA, magic login, the OAuth2 screen) the top bar is unchanged: those
+		// are mid-flow screens with no lost-password link to promote.
 		const rightElement = (
 			<nav className="wp-login__one-login-layout-top-right">
-				{ isSectionSignup ? renderLoginLink() : renderSignUpLink() }
-				{ renderNoThanksLink() }
+				{ lostPasswordLink ?? ( isSectionSignup ? <LoginLink /> : <SignUpLink /> ) }
+				{ noThanksRedirectUrl && <NoThanksLink /> }
 			</nav>
 		);
 
