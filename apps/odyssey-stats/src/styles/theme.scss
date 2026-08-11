@@ -8,9 +8,20 @@
 
 // wp-admin sets the interactive colour on <body>, and Calypso's scheme blocks alias it to the
 // decorative accent on whatever carries `color-scheme is-<scheme>` — which in Odyssey is a nested
-// element, not <body>. Hand it back on the roots this entry renders: the Stats mount, and the <body>
-// child that RootChild tags with the scheme, where popovers and dialogs go.
-@include odyssey-admin-theme-handback( ".stats-main.color-scheme", "body > .color-scheme" );
+// element, not <body>. Every element `useWPAdminTheme` tags needs the property handed back, or it
+// re-shadows the value for everything inside it: the Stats mount, the <body> child RootChild tags
+// for popovers and dialogs, and three components that tag themselves — the interval dropdown's
+// panel, the UTM builder's modal overlay and the infotip popup.
+//
+// The last three are anchored on `body` because they portal out of the Stats mount, so the CSS
+// scoping would otherwise prefix them into rules asking each element to be its own ancestor.
+@include odyssey-admin-theme-handback(
+	".stats-main.color-scheme",
+	"body > .color-scheme",
+	"body .stats-interval-dropdown__container.color-scheme",
+	"body .stats-utm-builder__overlay.color-scheme",
+	"body .stats-infotip__popup.color-scheme"
+);
 
 // Stats Dashboard, and Stats popups including the date range picker and tooltips.
 //
