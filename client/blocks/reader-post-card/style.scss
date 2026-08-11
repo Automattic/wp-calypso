@@ -529,6 +529,21 @@
 	align-self: center;
 }
 
+.reader-post-card__freshly-pressed-badge {
+	display: inline-flex;
+	align-items: center;
+	width: fit-content;
+	max-width: 100%;
+	margin-bottom: 6px;
+	border-radius: 4px;
+	padding: 0 9px 2px;
+	background-color: var(--color-neutral-0);
+	color: var(--color-neutral-70);
+	font-size: 12px;
+	line-height: 1.6;
+	overflow-wrap: anywhere;
+}
+
 .reader-post-card__byline .site-icon {
 	flex-shrink: 0;
 	margin: 0 12px 0 0;
