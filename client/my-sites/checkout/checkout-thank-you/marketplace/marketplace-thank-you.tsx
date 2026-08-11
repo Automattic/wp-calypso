@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
@@ -105,6 +106,7 @@ const MarketplaceThankYou = ( {
 		( ! hasThemes || isLoadedThemes );
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
+	const isTransferTimedOut = transferStatus === transferStates.CLIENT_TIMEOUT;
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
@@ -128,6 +130,11 @@ const MarketplaceThankYou = ( {
 	} );
 	// Set progressbar (currentStep) depending on transfer/plugin status.
 	useEffect( () => {
+		if ( isTransferTimedOut ) {
+			setShowProgressBar( false );
+			return;
+		}
+
 		// We don't want to show the progress bar again when it is hidden.
 		if ( ! showProgressBar ) {
 			return;
@@ -143,6 +150,7 @@ const MarketplaceThankYou = ( {
 	}, [
 		setShowProgressBar,
 		showProgressBar,
+		isTransferTimedOut,
 		isPageReady,
 		pluginSlugs.length,
 		themeSlugs.length,
@@ -177,7 +185,7 @@ const MarketplaceThankYou = ( {
 				` }
 			/>
 			<MarketplaceGoBackSection pluginSlugs={ pluginSlugs } themeSlugs={ themeSlugs } />
-			{ showProgressBar && (
+			{ showProgressBar && ! isTransferTimedOut && (
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				<div className="marketplace-plugin-install__root">
 					<MarketplaceProgressBar
@@ -187,7 +195,16 @@ const MarketplaceThankYou = ( {
 					/>
 				</div>
 			) }
-			{ ! showProgressBar && (
+			{ isTransferTimedOut && (
+				<Main className="marketplace-thank-you__container">
+					<Notice
+						status="is-error"
+						showDismiss={ false }
+						text={ translate( 'Setting up your site is taking longer than expected.' ) }
+					/>
+				</Main>
+			) }
+			{ ! showProgressBar && ! isTransferTimedOut && (
 				<Main className="marketplace-thank-you__container">
 					<ThankYouV2
 						title={ title }

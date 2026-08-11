@@ -115,6 +115,22 @@ export default function HeaderStagingSiteButton( {
 		}
 	}, [ __, dispatch, queryClient, siteId, isStagingSiteReady, stagingSite ] );
 
+	useEffect( () => {
+		if ( transferStatus !== transferStates.CLIENT_TIMEOUT ) {
+			return;
+		}
+
+		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.UNSET ) );
+		dispatch(
+			errorNotice(
+				__( 'Adding the staging site is taking longer than expected. Please try again.' ),
+				{
+					id: stagingSiteAddFailureNoticeId,
+				}
+			)
+		);
+	}, [ __, dispatch, siteId, transferStatus ] );
+
 	const removeAllNotices = useCallback( () => {
 		dispatch( removeNotice( 'staging-site-add-success' ) );
 		dispatch( removeNotice( stagingSiteAddFailureNoticeId ) );
@@ -139,7 +155,7 @@ export default function HeaderStagingSiteButton( {
 				);
 				dispatch(
 					errorNotice(
-						// translators: "reason" is why adding the staging site failed.
+						// translators: %(reason)s is why adding the staging site failed.
 						sprintf( __( 'Failed to add staging site: %(reason)s' ), { reason: error.message } ),
 						{
 							id: stagingSiteAddFailureNoticeId,
@@ -195,6 +211,8 @@ export default function HeaderStagingSiteButton( {
 		);
 	} else if ( transferStatus === transferStates.RELOCATING_REVERT ) {
 		disabledReason = __( 'We are deleting your staging site.' );
+	} else if ( transferStatus === transferStates.CLIENT_TIMEOUT ) {
+		disabledReason = __( 'Adding the staging site is taking longer than expected.' );
 	}
 
 	return (

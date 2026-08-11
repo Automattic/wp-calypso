@@ -3,8 +3,9 @@ import {
 	fetchAutomatedTransferStatus,
 	setAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { requestStatus, receiveStatus } from '../';
+import { requestStatus, receiveStatus, TRANSFER_STATUS_POLL_DEADLINE_MS } from '../';
 
 const siteId = 1916284;
 
@@ -18,6 +19,12 @@ const COMPLETE_RESPONSE = {
 const IN_PROGRESS_RESPONSE = {
 	blog_id: 1916284,
 	status: 'uploading',
+	uploaded_plugin_slug: 'hello-dolly',
+};
+
+const ERROR_RESPONSE = {
+	blog_id: 1916284,
+	status: 'error',
 	uploaded_plugin_slug: 'hello-dolly',
 };
 
@@ -39,6 +46,9 @@ describe( 'requestStatus', () => {
 describe( 'receiveStatus', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
+	} );
+	afterEach( () => {
+		jest.useRealTimers();
 	} );
 
 	test( 'should dispatch set status action', () => {
@@ -62,12 +72,66 @@ describe( 'receiveStatus', () => {
 	} );
 
 	test( 'should request status again if not complete', () => {
-		jest.useFakeTimers();
 		const dispatch = jest.fn();
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 		jest.runAllTimers();
 
 		expect( dispatch ).toHaveBeenCalledTimes( 2 );
-		expect( dispatch ).toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
+		expect( dispatch ).toHaveBeenCalledWith(
+			fetchAutomatedTransferStatus( siteId, expect.any( Number ) )
+		);
 	} );
+
+	test( 'should start a deadline for a new poll chain', () => {
+		const now = 1000000;
+		jest.setSystemTime( now );
+		const dispatch = jest.fn();
+
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+		jest.runAllTimers();
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			fetchAutomatedTransferStatus( siteId, now + TRANSFER_STATUS_POLL_DEADLINE_MS )
+		);
+	} );
+
+	test( 'should carry the deadline through a poll chain', () => {
+		const pollDeadline = 2000000;
+		jest.setSystemTime( 1000000 );
+		const dispatch = jest.fn();
+
+		receiveStatus( { siteId, pollDeadline }, IN_PROGRESS_RESPONSE )( dispatch );
+		jest.runAllTimers();
+
+		expect( dispatch ).toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId, pollDeadline ) );
+	} );
+
+	test( 'should set client timeout when the deadline expires', () => {
+		const pollDeadline = 1000000;
+		jest.setSystemTime( pollDeadline );
+		const dispatch = jest.fn();
+
+		receiveStatus( { siteId, pollDeadline }, IN_PROGRESS_RESPONSE )( dispatch );
+
+		expect( dispatch ).toHaveBeenLastCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
+		);
+		expect( dispatch ).not.toHaveBeenCalledWith(
+			fetchAutomatedTransferStatus( siteId, pollDeadline )
+		);
+	} );
+
+	test.each( [ COMPLETE_RESPONSE, ERROR_RESPONSE ] )(
+		'should prefer terminal status over an expired deadline',
+		( response ) => {
+			jest.setSystemTime( 1000000 );
+			const dispatch = jest.fn();
+
+			receiveStatus( { siteId, pollDeadline: 999999 }, response )( dispatch );
+
+			expect( dispatch ).not.toHaveBeenCalledWith(
+				setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
+			);
+		}
+	);
 } );

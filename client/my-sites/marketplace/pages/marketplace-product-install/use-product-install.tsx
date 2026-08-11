@@ -309,7 +309,9 @@ export function useProductInstall( {
 		if (
 			pluginUploadError ||
 			pluginInstallStatus?.error ||
-			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
+			( atomicFlow &&
+				( automatedTransferStatus === transferStates.FAILURE ||
+					automatedTransferStatus === transferStates.CLIENT_TIMEOUT ) )
 		) {
 			return { type: 'generic' };
 		}

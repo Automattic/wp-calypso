@@ -31,11 +31,13 @@ export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => (
 /**
  * Query the automated transfer status of a given site.
  * @param {number} siteId The id of the site to query.
+ * @param {number} [pollDeadline] Optional wall-clock deadline for the current poll chain.
  * @returns {Object} An action object
  */
-export const fetchAutomatedTransferStatus = ( siteId ) => ( {
+export const fetchAutomatedTransferStatus = ( siteId, pollDeadline ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST,
 	siteId,
+	pollDeadline,
 } );
 
 /**
