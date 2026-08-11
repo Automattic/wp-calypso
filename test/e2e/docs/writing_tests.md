@@ -130,8 +130,9 @@ Prefer a [fixture](./custom_fixtures.md) over a hook: fixtures only run for the 
 declare them, and they tear themselves down.
 
 Where a hook is genuinely needed, Playwright provides `test.beforeAll`, `test.beforeEach`,
-`test.afterEach` and `test.afterAll`. Note that `beforeAll` runs once per worker, not once per
-file, so anything it creates is shared by every test that worker runs.
+`test.afterEach` and `test.afterAll`. Note that `beforeAll` runs once per file rather than once
+per test, and again when the file is retried in another worker, so whatever it creates has to
+survive being shared by that file's tests and being created a second time.
 
 ## Viewports
 
