@@ -130,6 +130,10 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	// Detect new chat requests via `state.isNewChat` on the `/chat` route.
 	const isNewChat = pathname.startsWith( '/chat' ) && !! state?.isNewChat;
 
+	// Where the conversation view (and its `useConversation` fetch) is mounted;
+	// '/' only exists transiently before the catch-all redirects to the chat.
+	const isChatViewShowing = pathname.startsWith( '/chat' ) || pathname === '/';
+
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
@@ -186,11 +190,21 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 				return;
 			}
 
+			const currentConfig = agentConfigRef.current;
+
+			// Already aligned with this tab's session — nothing to initialize.
+			if ( currentConfig?.agentId === agentId && currentConfig.sessionId === sessionId ) {
+				return;
+			}
+
 			// The tab session catching up to the session the live agent already
-			// announced is not a conversation switch — re-initializing would
-			// make `useConversation` refetch and clobber the running chat.
+			// announced is not a conversation switch. While the chat view is
+			// showing, re-initializing would make `useConversation` refetch and
+			// clobber the running chat — the config aligns on the next navigation
+			// away instead, so the chat view never remounts with a stale session.
 			if (
-				agentConfigRef.current?.agentId === agentId &&
+				isChatViewShowing &&
+				currentConfig?.agentId === agentId &&
 				sessionId &&
 				sessionId === getAnnouncedSessionId( agentId )
 			) {
@@ -239,6 +253,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		agentId,
 		currentRoute,
 		isAgentConfigLoading,
+		isChatViewShowing,
 		isNewChat,
 		navigate,
 		sessionId,

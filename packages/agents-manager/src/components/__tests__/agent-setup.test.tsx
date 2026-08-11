@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- `AgentsManager` must be imported after `jest.mock` */
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 const mockAgentManager = {
 	hasAgent: jest.fn( () => false ),
@@ -48,9 +48,16 @@ jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {
 } ) );
 jest.mock( '../agent-dock', () => {
 	const { useAgentsManagerContext } = jest.requireActual( '../../contexts' );
+	const { useNavigate } = jest.requireActual( 'react-router-dom' );
 	function MockAgentDock() {
 		const { agentConfig } = useAgentsManagerContext();
-		return <div data-testid="published-session">{ agentConfig?.sessionId ?? '' }</div>;
+		const navigate = useNavigate();
+		return (
+			<>
+				<div data-testid="published-session">{ agentConfig?.sessionId ?? '' }</div>
+				<button onClick={ () => navigate( '/history' ) }>go-history</button>
+			</>
+		);
 	}
 	return { __esModule: true, default: MockAgentDock };
 } );
@@ -95,6 +102,25 @@ describe( 'AgentSetup', () => {
 
 		await act( async () => {} );
 		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'aligns the config with the announced session when leaving the chat view', async () => {
+		const { rerender } = render( manager( 111 ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		saveSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live' );
+		rerender( manager( 111 ) );
+
+		await act( async () => {} );
+		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
+
+		fireEvent.click( screen.getByText( 'go-history' ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
+		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { sessionId: 'session-live' } )
+		);
 	} );
 
 	it( 're-initializes for a session that was not announced (conversation switch)', async () => {
