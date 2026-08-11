@@ -16,7 +16,7 @@ import { createAgentConfig } from '../create-agent-config';
 import { canConnectToZendesk } from '../can-connect-to-zendesk';
 import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
-import { getSessionId, setSessionSiteKey } from '../agent-session';
+import { getSessionId } from '../agent-session';
 
 const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
 const mockCreateCalypsoAuthProvider = createCalypsoAuthProvider as jest.Mock;
@@ -40,7 +40,6 @@ describe( 'createAgentConfig', () => {
 		clearAnnouncedSessionId( 'wp-orchestrator', 'no-site' );
 		clearAnnouncedSessionId( 'wp-orchestrator', '111' );
 		sessionStorage.clear();
-		setSessionSiteKey( 'no-site' );
 	} );
 
 	it( 'does not add reader page context for regular agents', async () => {

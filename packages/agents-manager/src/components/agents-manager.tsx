@@ -107,7 +107,11 @@ export default function AgentsManager( {
  * other agents get theirs from the server via `onSessionIdChange`.
  * Empty means a new chat.
  */
-function resolveTabSessionId( isNewChat: boolean, siteKey: string, agentId?: string ): string {
+function resolveTabSessionId(
+	isNewChat: boolean,
+	agentId: string | undefined,
+	siteKey: string
+): string {
 	if ( isNewChat ) {
 		return '';
 	}
@@ -149,7 +153,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
 
-	const sessionId = resolveTabSessionId( isNewChat, siteKey, agentId );
+	const sessionId = resolveTabSessionId( isNewChat, agentId, siteKey );
 
 	useEffect( () => {
 		// Wait for the agent config to stabilize before initializing.

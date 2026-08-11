@@ -256,10 +256,8 @@ export default function AgentDock( {
 			}
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
-			const sessionId = conversation.session_id || '';
-
-			if ( sessionId ) {
-				saveSessionId( sessionId, agentConfig?.agentId, siteKey );
+			if ( conversation.session_id ) {
+				saveSessionId( conversation.session_id, agentConfig?.agentId, siteKey );
 			}
 
 			handleAbort();
