@@ -5,7 +5,12 @@ import {
 } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { requestStatus, receiveStatus, TRANSFER_STATUS_POLL_DEADLINE_MS } from '../';
+import {
+	requestStatus,
+	receiveStatus,
+	clearPollDeadlines,
+	TRANSFER_STATUS_POLL_DEADLINE_MS,
+} from '../';
 
 const siteId = 1916284;
 
@@ -22,11 +27,11 @@ const IN_PROGRESS_RESPONSE = {
 	uploaded_plugin_slug: 'hello-dolly',
 };
 
-const ERROR_RESPONSE = {
+const settledResponse = ( status ) => ( {
 	blog_id: 1916284,
-	status: 'error',
+	status,
 	uploaded_plugin_slug: 'hello-dolly',
-};
+} );
 
 describe( 'requestStatus', () => {
 	test( 'should dispatch an http request', () => {
@@ -46,6 +51,7 @@ describe( 'requestStatus', () => {
 describe( 'receiveStatus', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
+		clearPollDeadlines();
 	} );
 	afterEach( () => {
 		jest.useRealTimers();
@@ -121,17 +127,71 @@ describe( 'receiveStatus', () => {
 		);
 	} );
 
-	test.each( [ COMPLETE_RESPONSE, ERROR_RESPONSE ] )(
-		'should prefer terminal status over an expired deadline',
-		( response ) => {
-			jest.setSystemTime( 1000000 );
-			const dispatch = jest.fn();
+	test.each( [
+		transferStates.COMPLETE,
+		transferStates.COMPLETED,
+		transferStates.ERROR,
+		transferStates.FAILURE,
+		transferStates.CONFLICTS,
+		transferStates.REVERTED,
+	] )( 'should prefer the settled status %s over an expired deadline', ( status ) => {
+		jest.setSystemTime( 1000000 );
+		const dispatch = jest.fn();
 
-			receiveStatus( { siteId, pollDeadline: 999999 }, response )( dispatch );
+		receiveStatus( { siteId, pollDeadline: 999999 }, settledResponse( status ) )( dispatch );
 
-			expect( dispatch ).not.toHaveBeenCalledWith(
-				setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
-			);
-		}
-	);
+		expect( dispatch ).not.toHaveBeenCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
+		);
+	} );
+
+	test.each( [
+		transferStates.COMPLETED,
+		transferStates.FAILURE,
+		transferStates.CONFLICTS,
+		transferStates.REVERTED,
+	] )( 'should stop polling on the settled status %s', ( status ) => {
+		jest.setSystemTime( 1000000 );
+		const dispatch = jest.fn();
+
+		receiveStatus( { siteId }, settledResponse( status ) )( dispatch );
+		jest.runAllTimers();
+
+		expect( dispatch ).not.toHaveBeenCalledWith(
+			fetchAutomatedTransferStatus( siteId, expect.any( Number ) )
+		);
+	} );
+
+	test( 'should apply the deadline to requests that carry none', () => {
+		const start = 1000000;
+		jest.setSystemTime( start );
+		const dispatch = jest.fn();
+
+		// Consumers re-dispatch without a deadline whenever the status changes. That must not
+		// open a fresh window, or the wait is never bounded.
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+
+		expect( dispatch ).toHaveBeenLastCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
+		);
+	} );
+
+	test( 'should give a later wait a fresh deadline once one has settled', () => {
+		const start = 1000000;
+		jest.setSystemTime( start );
+		const dispatch = jest.fn();
+
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
+
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+		jest.runAllTimers();
+
+		expect( dispatch ).not.toHaveBeenCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
+		);
+	} );
 } );
