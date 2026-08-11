@@ -20,6 +20,9 @@ storybook-static/
 
 # Built packages
 /packages/*/dist/
+/packages/agenttic-demo/dist-demo/
+# Downloaded from GlotPress during the agenttic-ui build
+/packages/agenttic-ui/languages/wpcom-agenttic-*.jed.json
 packages/calypso-color-schemes/src/__color-studio
 packages/calypso-color-schemes/css
 packages/calypso-color-schemes/js
