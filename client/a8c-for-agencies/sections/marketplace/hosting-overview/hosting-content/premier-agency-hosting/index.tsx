@@ -136,7 +136,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 					translate( 'VaultPress Backup w/ 1TB storage' ),
 					translate( 'Scan w/ WAF' ),
 					translate( 'Akismet Anti-spam w/ 60k API calls/mo' ),
-					translate( 'Stats w/ 100k views/mo (Commercial use)' ),
+					translate( 'Stats w/ 100k views/mo' ),
 					translate( 'VideoPress w/ 1TB storage' ),
 					translate( 'Boost w/ Auto CSS Generation' ),
 					translate( 'Social Advanced w/ unlimited shares' ),
