@@ -2794,7 +2794,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.29.7, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.16.0, @babel/core@npm:^7.18.9, @babel/core@npm:^7.24.4, @babel/core@npm:^7.26.0, @babel/core@npm:^7.27.1":
+"@babel/core@npm:7.29.7, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.18.9, @babel/core@npm:^7.24.4, @babel/core@npm:^7.26.0, @babel/core@npm:^7.27.1":
   version: 7.29.7
   resolution: "@babel/core@npm:7.29.7"
   dependencies:
@@ -13805,7 +13805,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-dynamic-import-node@npm:^2.3.0, babel-plugin-dynamic-import-node@npm:^2.3.3":
+"babel-plugin-dynamic-import-node@npm:^2.3.3":
   version: 2.3.3
   resolution: "babel-plugin-dynamic-import-node@npm:2.3.3"
   dependencies:
@@ -18385,13 +18385,6 @@ __metadata:
   bin:
     eslint: bin/eslint.js
   checksum: 1955067c2d991f0c84f4c4abfafe31bb47fa3b717a7fd3e43fe1e511c6f859d7700cbca969f85661dc4c130f7aeced5e5444884314198a54428f5e5141db9337
-  languageName: node
-  linkType: hard
-
-"esm@npm:^3.2.25":
-  version: 3.2.25
-  resolution: "esm@npm:3.2.25"
-  checksum: 8e60e8075506a7ce28681c30c8f54623fe18a251c364cd481d86719fc77f58aa055b293d80632d9686d5408aaf865ffa434897dc9fd9153c8b3f469fad23f094
   languageName: node
   linkType: hard
 
@@ -27045,7 +27038,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.2.4, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.4.21, postcss@npm:^8.4.33, postcss@npm:^8.5.15, postcss@npm:^8.5.3":
+"postcss@npm:^8.2.4, postcss@npm:^8.3.5, postcss@npm:^8.4.21, postcss@npm:^8.4.33, postcss@npm:^8.5.15, postcss@npm:^8.5.3":
   version: 8.5.24
   resolution: "postcss@npm:8.5.24"
   dependencies:
@@ -33457,7 +33450,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5, webpack@npm:^5.102.1, webpack@npm:^5.63.0, webpack@npm:^5.99.8":
+"webpack@npm:5, webpack@npm:^5.102.1, webpack@npm:^5.99.8":
   version: 5.104.1
   resolution: "webpack@npm:5.104.1"
   dependencies:
@@ -33921,29 +33914,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wp-e2e-tests@workspace:test/e2e"
   dependencies:
-    "@automattic/calypso-babel-config": "workspace:^"
-    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-e2e": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/languages": "workspace:^"
-    "@babel/core": "npm:^7.16.0"
     "@playwright/browser-chromium": "npm:1.57.0"
     "@playwright/test": "npm:1.57.0"
     "@types/archiver": "npm:^5.3.1"
     archiver: "npm:^5.3.0"
-    asana-phrase: "npm:^0.0.8"
-    babel-plugin-dynamic-import-node: "npm:^2.3.0"
     dotenv: "npm:^9.0.2"
     eslint: "npm:^8.34.0"
     eslint-plugin-playwright: "npm:^2.10.1"
-    esm: "npm:^3.2.25"
     form-data: "npm:^4.0.6"
     mailosaur: "npm:^8.4.0"
     playwright: "npm:1.57.0"
     playwright-ctrf-json-reporter: "npm:^0.0.27"
-    postcss: "npm:^8.3.11"
-    webpack: "npm:^5.63.0"
   languageName: unknown
   linkType: soft
 
