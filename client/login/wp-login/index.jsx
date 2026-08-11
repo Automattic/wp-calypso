@@ -169,54 +169,70 @@ export class Login extends Component {
 		return <LocaleSuggestions locale={ locale } path={ path } />;
 	}
 
+	handleLostPasswordClick = ( event ) => {
+		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+		page(
+			login( {
+				redirectTo: this.props.redirectTo,
+				locale: this.props.locale,
+				action:
+					this.props.isWooJPC || this.props.isJetpack ? 'jetpack/lostpassword' : 'lostpassword',
+				oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+				from: this.props.currentQuery?.from,
+			} )
+		);
+	};
+
+	/**
+	 * Where "Lost your password?" goes, shared by its footer and top-bar copies.
+	 *
+	 * Jetpack, Woo and OAuth2 sign-ins stay on the Calypso screen: it carries the
+	 * passwordless magic-link branch and the client context, and wp-login.php has neither.
+	 */
+	getLostPasswordLinkProps() {
+		const keepCalypsoForm =
+			this.props.isWooJPC || this.props.isJetpack || !! this.props.oauth2Client;
+
+		if ( keepCalypsoForm ) {
+			return { href: '/', onClick: this.handleLostPasswordClick };
+		}
+
+		return {
+			// No redirect_to. wp-login.php honours it in place of checkemail=confirm, and
+			// the recovery-email and SMS steps hang off checkemail=confirm.
+			href: lostPassword( { locale: this.props.locale } ),
+			rel: 'external',
+			onClick: () => this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' ),
+		};
+	}
+
+	/**
+	 * The footer's copy, which is where this link lives below 960px.
+	 */
 	getLostPasswordLink() {
 		if ( this.props.twoFactorAuthType ) {
 			return null;
 		}
 
-		// Jetpack, Woo and OAuth2 sign-ins stay on the Calypso screen: it carries the
-		// passwordless magic-link branch and the client context, and wp-login.php has neither.
-		const keepCalypsoForm =
-			this.props.isWooJPC || this.props.isJetpack || !! this.props.oauth2Client;
+		return (
+			<a className="one-login__footer-link" { ...this.getLostPasswordLinkProps() }>
+				{ this.props.translate( 'Lost your password?' ) }
+			</a>
+		);
+	}
 
-		// Rendered into the top bar, so it takes the same treatment as the link it replaces
-		// there rather than the footer's, which is a different colour and weight.
-		if ( ! keepCalypsoForm ) {
-			return (
-				<Step.LinkButton
-					// No redirect_to. wp-login.php honours it in place of checkemail=confirm, and
-					// the recovery-email and SMS steps hang off checkemail=confirm.
-					href={ lostPassword( { locale: this.props.locale } ) }
-					rel="external"
-					onClick={ () =>
-						this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' )
-					}
-				>
-					{ this.props.translate( 'Lost your password?' ) }
-				</Step.LinkButton>
-			);
+	/**
+	 * The same link for the desktop top bar, where it takes that slot's treatment rather than the
+	 * footer's lighter one. Only one of the two is ever visible: see one-login-layout.scss.
+	 */
+	getLostPasswordTopBarLink() {
+		if ( this.props.twoFactorAuthType ) {
+			return null;
 		}
 
 		return (
-			<Step.LinkButton
-				href="/"
-				onClick={ ( event ) => {
-					event.preventDefault();
-					this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
-					page(
-						login( {
-							redirectTo: this.props.redirectTo,
-							locale: this.props.locale,
-							action:
-								this.props.isWooJPC || this.props.isJetpack
-									? 'jetpack/lostpassword'
-									: 'lostpassword',
-							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							from: this.props.currentQuery?.from,
-						} )
-					);
-				} }
-			>
+			<Step.LinkButton { ...this.getLostPasswordLinkProps() }>
 				{ this.props.translate( 'Lost your password?' ) }
 			</Step.LinkButton>
 		);
@@ -307,6 +323,7 @@ export class Login extends Component {
 						<OneLoginFooter
 							isLoginView={ isLoginView }
 							signupUrl={ signupUrl }
+							lostPasswordLink={ this.getLostPasswordLink() }
 							loginLink={ this.getLoginLink() }
 							supportLink={ this.getSupportLink() }
 						/>
@@ -412,10 +429,10 @@ export class Login extends Component {
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
-						// Only the main login view swaps its top-right link: it is the one that pairs
-						// with signup, and the one whose footer now carries the route to signup.
-						// getLostPasswordLink() is already null under 2FA, so those keep the top bar.
-						lostPasswordLink={ isLoginView ? this.getLostPasswordLink() : undefined }
+						// Only the main login view swaps its top-right link, and only on desktop: it is
+						// the one that pairs with signup, and the one whose footer carries the route
+						// to signup there. Already null under 2FA, so those keep the top bar too.
+						lostPasswordLink={ isLoginView ? this.getLostPasswordTopBarLink() : undefined }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 						notice={ notices }
