@@ -39,9 +39,11 @@ $jp-gray: #dcdcde;
 	}
 }
 
-// Use base component styling of `@wordpress/components/Button`. Colours are left to the component,
-// which resolves them from `--wp-components-color-accent` and so follows the admin theme like every
-// other button in the widget.
+// Use base component styling of `@wordpress/components/Button`, with the fill stated rather than
+// left to the component. `wp-components` — which carries both the button's own colours and the
+// admin theme colour they resolve from — is loaded by `AppBoot`, not by this entry, so a site with
+// neither WP 7.0 nor a recent `jetpack-stats-admin` has none of it. Naming the colours here, with
+// the accent as the fallback, keeps these buttons filled on those sites and themed everywhere else.
 .components-button.jetpack-emerald-button {
 	font-weight: 600;
 
@@ -49,9 +51,27 @@ $jp-gray: #dcdcde;
 		box-shadow: none;
 	}
 
-	&.is-secondary.is-busy {
-		background: $jp-gray;
-		color: var(--studio-gray-20);
-		border: 1px solid transparent;
+	&.is-primary {
+		color: var(--color-text-inverted);
+		background: var(--wp-admin-theme-color, var(--color-accent));
+
+		&:hover:not(.is-busy) {
+			background: var(--wp-admin-theme-color-darker-10, var(--color-accent-60));
+		}
+	}
+
+	&.is-secondary {
+		color: var(--wp-admin-theme-color, var(--color-accent));
+
+		&:hover:not(.is-busy) {
+			color: var(--wp-admin-theme-color-darker-10, var(--color-accent-60));
+			background: var(--studio-gray-0);
+		}
+
+		&.is-busy {
+			background: $jp-gray;
+			color: var(--studio-gray-20);
+			border: 1px solid transparent;
+		}
 	}
 }

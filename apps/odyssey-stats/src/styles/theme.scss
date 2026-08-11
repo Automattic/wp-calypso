@@ -1,4 +1,5 @@
 @import "variables";
+@import "calypso/my-sites/stats/interactive-colors";
 
 .jp-stats-dashboard {
 	@include odyssey-stats-base-vars;
@@ -9,4 +10,13 @@
 // Stats popups including date range picker and tooltips etc.
 .popover.color-scheme {
 	--wp-components-color-accent: var(--color-accent);
+}
+
+// A @wordpress/components Modal puts its overlay on <body> with no scheme class, so the Stats
+// upsell and feedback modals sit outside every root the interactive colours are applied at. Anchored
+// on `body` so the CSS scoping leaves it alone: the overlay is a <body> child, and prefixing would
+// ask it to be a descendant of the Stats mount. Calypso covers the same overlay from
+// client/my-sites/stats/components/stats-main/style.scss, qualified with `.is-section-stats`.
+body .components-modal__screen-overlay {
+	@include stats-interactive-colors;
 }
