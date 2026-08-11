@@ -28,7 +28,12 @@ export default function ResolvedEditAction( { onUndo }: ResolvedEditActionProps 
 
 	return (
 		<div className="agents-manager-resolved-edit-action">
-			<span className="agents-manager-resolved-edit-action__status" role="status">
+			<span
+				className={ `agents-manager-resolved-edit-action__status${
+					isReverted ? ' agents-manager-resolved-edit-action__status--reverted' : ''
+				}` }
+				role="status"
+			>
 				<Icon className="agents-manager-resolved-edit-action__icon" icon={ check } size={ 20 } />
 				{ isReverted
 					? __( 'Reverted', __i18n_text_domain__ )

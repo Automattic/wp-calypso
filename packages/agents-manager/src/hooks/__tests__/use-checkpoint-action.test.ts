@@ -112,6 +112,7 @@ describe( 'useCheckpointAction', () => {
 		render( createElement( actions[ 0 ].component, actions[ 0 ].componentProps ) );
 		const status = screen.getByRole( 'status' );
 		expect( status ).toHaveTextContent( 'Updated' );
+		expect( status ).not.toHaveClass( 'agents-manager-resolved-edit-action__status--reverted' );
 		const undoButton = screen.getByRole( 'button', { name: 'Undo' } );
 		fireEvent.click( undoButton );
 
@@ -121,6 +122,7 @@ describe( 'useCheckpointAction', () => {
 		} );
 		expect( undoButton ).toBeDisabled();
 		expect( status ).toHaveTextContent( 'Updated' );
+		expect( status ).not.toHaveClass( 'agents-manager-resolved-edit-action__status--reverted' );
 		fireEvent.click( undoButton );
 		expect( checkpoint.restoreCheckpoint ).toHaveBeenCalledTimes( 1 );
 
@@ -128,6 +130,7 @@ describe( 'useCheckpointAction', () => {
 
 		expect( undoButton ).toBeDisabled();
 		expect( status ).toHaveTextContent( 'Reverted' );
+		expect( status ).toHaveClass( 'agents-manager-resolved-edit-action__status--reverted' );
 	} );
 
 	it( 're-enables Undo when restoring the checkpoint fails', async () => {
@@ -173,6 +176,7 @@ describe( 'useCheckpointAction', () => {
 
 		expect( undoButton ).toBeEnabled();
 		expect( status ).toHaveTextContent( 'Updated' );
+		expect( status ).not.toHaveClass( 'agents-manager-resolved-edit-action__status--reverted' );
 		expect( consoleError ).toHaveBeenCalledWith(
 			'[useCheckpointAction] Failed to restore checkpoint:',
 			expect.any( Error )
