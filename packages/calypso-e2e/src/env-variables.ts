@@ -233,6 +233,11 @@ class EnvVariables implements SupportedEnvVariables {
 	validate() {
 		for ( const property in this._defaultEnvVariables ) {
 			const envVarName = property as keyof SupportedEnvVariables;
+			// An unknown account name only costs the run its pre-suite logins, and
+			// `getAccountNamesToPrime` degrades on purpose rather than failing the suite.
+			if ( envVarName === 'AUTHENTICATE_ACCOUNTS' ) {
+				continue;
+			}
 			// Access each property
 			// Any validation errors within the getter will throw an exception here.
 			void this[ envVarName ];
