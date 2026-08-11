@@ -49,8 +49,10 @@ yarn workspace wp-e2e-tests build --watch
 Specify the file(s) directly:
 
 ```bash
-yarn test:pw -- <path_to_file_1> <path_to_file_2>
+yarn test:pw -- <path_to_file_1> <path_to_file_2> --reporter=list
 ```
+
+`--reporter=list` keeps a failing run from opening the HTML report and holding the terminal. Drop it, then `yarn playwright show-report`, when you want that report. Every command below takes it too.
 
 ### Test tag
 
@@ -59,10 +61,10 @@ Specs are grouped by the tags declared on their `test.describe` block. Use Playw
 
 ```bash
 # If within test/e2e directory
-yarn test:pw:calypso-pr
+yarn test:pw:calypso-pr --reporter=list
 
 # If at repo root
-yarn workspace wp-e2e-tests test:pw:calypso-pr
+yarn workspace wp-e2e-tests test:pw:calypso-pr --reporter=list
 ```
 
 See the [list of tags](tests_ci.md#featuretest-tags).
@@ -131,7 +133,7 @@ By default, tests run against the `desktop` viewport size, approximately 1920x10
 To launch a spec with mobile viewport:
 
 ```bash
-yarn test:pw:mobile <path_to_spec>
+yarn test:pw:mobile <path_to_spec> --reporter=list
 ```
 
 ### Target a different environment
@@ -148,7 +150,7 @@ By default these tests target <http://calypso.localhost:3000>. To target a webap
 
    a. set the variable to persist in the shell: `export CALYPSO_BASE_URL=<url>`
 
-   b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn test:pw -- <test_path>`
+   b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn test:pw -- <test_path> --reporter=list`
 
 <img alt="Local Calypso Webapp" src="https://cldup.com/1WwDmUXWen.png" />
 <sup><center>Example: webapp running on localhost.</center></sup>

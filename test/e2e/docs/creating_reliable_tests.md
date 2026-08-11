@@ -15,7 +15,7 @@
 For example, running this test 100 times should result in 100 passes if the test is reliable, which is a good indication that the test is repeatable and reliable.
 
 ```
-yarn test:pw ./specs/dashboard/dashboard__authentication.spec.ts --repeat-each=100
+yarn test:pw ./specs/dashboard/dashboard__authentication.spec.ts --repeat-each=100 --reporter=list
 
 Running 100 tests using 10 workers
   100 passed (1.7m)
