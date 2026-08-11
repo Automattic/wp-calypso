@@ -195,9 +195,10 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			}
 
 			const currentConfig = agentConfigRef.current;
+			const isSameAgent = currentConfig?.agentId === agentId;
 
 			// Already aligned with this tab's session — nothing to initialize.
-			if ( currentConfig?.agentId === agentId && currentConfig.sessionId === sessionId ) {
+			if ( isSameAgent && currentConfig?.sessionId === sessionId ) {
 				return;
 			}
 
@@ -206,10 +207,9 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			// view would refetch and clobber the running chat — skip, and align
 			// the config on the next navigation (away or arriving back) instead.
 			if (
+				isSameAgent &&
 				isChatViewShowing &&
 				! isReturningToChatView &&
-				currentConfig?.agentId === agentId &&
-				sessionId &&
 				sessionId === getAnnouncedSessionId( agentId )
 			) {
 				return;
