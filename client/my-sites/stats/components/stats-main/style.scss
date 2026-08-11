@@ -1,23 +1,33 @@
 @import "calypso/my-sites/stats/interactive-colors";
 
 // Stats modals, popovers and tooltips render at the document root, outside .stats-main, so the
-// overrides have to reach them separately. Correcting `--wp-admin-theme-color` on those roots would
-// not be enough on its own — the accent that
+// overrides have to reach them separately, in both environments. Correcting
+// `--wp-admin-theme-color` on these roots is not enough on its own — the accent that
 // client/assets/stylesheets/_wp-components-overrides.scss pins on every button ships in Odyssey too.
 //
-// Odyssey portals into a single <body> child, tagged with the scheme by its own RootChild
+// In Calypso the roots match the portal list in
+// packages/calypso-color-schemes/bin/prepare-sass-assets.js, which puts the token on the same
+// elements — keep the two in step. They are qualified with `.is-section-stats`, the class Calypso
+// puts on <body> for the section, because the roots are generic: an unqualified `.popover` would
+// recolour every popover in Calypso, and every Modal in the product carries
+// `.components-modal__screen-overlay`.
+//
+// Odyssey portals into a single <body> child instead, tagged by its own RootChild
 // (apps/odyssey-stats/src/components/root-child.tsx). Calypso's portal wrapper is a bare div and its
 // <body> carries the class rather than a child, so `body > .color-scheme` picks out the Odyssey one
-// alone.
-//
-// `@wordpress/components` Modal is a third case: its overlay goes to <body> as a bare
-// `.components-modal__screen-overlay` with no scheme class, so neither of the others reaches the
-// Stats upsell and feedback modals. That root is generic — every Modal in the product carries it —
-// so it is qualified with `.is-section-stats`, the class Calypso puts on <body> for the section.
-// wp-admin's <body> has no such class, so Odyssey covers the same overlay from its own
-// apps/odyssey-stats/src/styles/theme.scss, where the rule cannot reach the rest of the product.
+// alone. The Modal overlay is the exception there — it has no scheme class, so wp-admin's <body>
+// gives it nothing to match, and Odyssey covers it from its own
+// apps/odyssey-stats/src/styles/theme.scss.
 .stats-main,
-body > .color-scheme,
-body.is-section-stats .components-modal__screen-overlay {
+body.is-section-stats
+	:is(
+		.popover,
+		[data-base-ui-portal],
+		.components-modal__screen-overlay,
+		.components-popover__fallback-container,
+		[data-wp-compat-overlay-slot],
+		.ReactModalPortal
+	),
+body > .color-scheme {
 	@include stats-interactive-colors;
 }
