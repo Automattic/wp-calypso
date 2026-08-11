@@ -86,10 +86,11 @@ fun BuildSteps.runTaggedPlaywrightSpecs(
 	val reportIdentitySuffix = reportSuffix.replace( Regex( "\\W" ), "_" )
 	// Playwright empties the output and HTML report directories as each run starts, so in a loop
 	// only the last run's traces, videos and screenshots would reach the artifact. Name each run's
-	// after its report.
+	// after its report. The traces go straight to their directory rather than moving afterwards:
+	// the JUnit report records each attachment where it was written.
+	val outputFlag = if ( reportSuffix.isEmpty() ) "" else " --output=output/test-results-$reportSuffix"
 	val keepArtifacts = if ( reportSuffix.isEmpty() ) "" else """
-rm -rf output/test-results-$reportSuffix output/html-$reportSuffix
-if [[ -d output/test-results ]]; then mv output/test-results output/test-results-$reportSuffix; fi
+rm -rf output/html-$reportSuffix
 if [[ -d output/html ]]; then mv output/html output/html-$reportSuffix; fi
 """.trim()
 
@@ -111,7 +112,7 @@ if [[ -d output/html ]]; then mv output/html output/html-$reportSuffix; fi
 
 			# Swallow the exit code so later steps still run; failed tests fail
 			# the build through the JUnit report.
-			PLAYWRIGHT_JUNIT_OUTPUT_FILE=$reportFile yarn test:pw:$targetDevice --grep=$tag || true
+			PLAYWRIGHT_JUNIT_OUTPUT_FILE=$reportFile yarn test:pw:$targetDevice --grep=$tag$outputFlag || true
 
 			$keepArtifacts
 
