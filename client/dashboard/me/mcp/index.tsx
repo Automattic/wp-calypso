@@ -5,6 +5,7 @@ import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/
 import { __, sprintf } from '@wordpress/i18n';
 import { seen, pencil, notAllowed, connection, globe } from '@wordpress/icons';
 import { getOverridesToMatch, groupIntentKey } from '../../../me/mcp/group-intents';
+import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
@@ -72,6 +73,7 @@ function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 
 function McpComponent() {
 	const { recordTracksEvent } = useAnalytics();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
@@ -130,7 +132,10 @@ function McpComponent() {
 			} as any,
 			{
 				onSuccess: () => {
-					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', {
+						...tracksAudienceProps,
+						enabled,
+					} );
 				},
 			}
 		);
@@ -153,7 +158,10 @@ function McpComponent() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_mcp_view" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_mcp_view"
+				properties={ tracksAudienceProps }
+			/>
 			<VStack spacing={ 4 }>
 				<Card>
 					<CardBody>
