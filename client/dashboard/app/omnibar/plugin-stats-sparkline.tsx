@@ -31,6 +31,7 @@ export function useStatsSparklinePlugin( {
 		id: 'stats',
 		href: `${ adminUrl }admin.php?page=stats`,
 		label,
+		className: 'omnibar__stats-sparkline',
 		render: () => (
 			<>
 				<StatsSparkline hourlyViews={ hourlyViews } />

@@ -26,6 +26,7 @@ export function useReaderPlugin(): OmnibarNode {
 		id: 'reader',
 		title: __( 'Reader' ),
 		icon: <ReaderIcon />,
+		className: 'omnibar__reader',
 		href: wpcomLink( '/reader' ),
 		onClick: () => recordTracksEvent( 'calypso_masterbar_reader_clicked' ),
 	};
