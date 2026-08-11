@@ -233,6 +233,8 @@ step" → Worked example** section of [`README.md`](README.md); the tables below
 | `hideFreePlan`, `hideEnterprisePlan`, `hidePersonalPlan`, `hidePremiumPlan`, `hideEcommercePlan`, `hidePlanTypeSelector` | `boolean`                     | Hide a specific plan / the plan-type selector (each OR-ed over the computed default) |
 | `defaultInterval`                                                                                     | `'monthly'\|'yearly'\|'2yearly'\|'3yearly'`     | Seeds the billing term (the URL still wins once the user switches)               |
 | `highlightLabelOverrides`                                                                             | `{ [PlanSlug]?: TranslateResult }`              | Re-labels a plan's highlight tag (top pill)                                       |
+| `titleBadgeOverrides`                                                                                 | `{ [PlanSlug]?: TranslateResult }`              | Re-labels the badge next to a plan's title (features grid only)                  |
+| `taglineOverrides`                                                                                    | `{ [PlanSlug]?: TranslateResult }`              | Overrides a plan's tagline, winning over computed and experiment copy (features grid only) |
 | `wrapperProps.hideBack`                                                                               | `boolean`                                       | Hides the back button                                                            |
 | `wrapperProps.goBack`                                                                                 | `() => void`                                    | Custom back button handler                                                       |
 
