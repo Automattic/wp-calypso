@@ -398,7 +398,7 @@ export function getDowngradePlanFromPurchase( purchase: Purchase ) {
 }
 
 export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
-	return purchase.is_within_initial_refund_window && ! isExpiredOrRemoved( purchase );
+	return purchase.is_refundable && ! isExpiredOrRemoved( purchase );
 }
 
 export function getDisplayName( purchase: Purchase ): TranslateResult {
