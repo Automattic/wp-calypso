@@ -879,6 +879,12 @@ const sections = [
 		group: 'a8c-for-agencies',
 	},
 	{
+		name: 'a8c-for-agencies-themes',
+		paths: [ '/themes' ],
+		module: 'calypso/a8c-for-agencies/sections/themes',
+		group: 'a8c-for-agencies',
+	},
+	{
 		name: 'a8c-for-agencies-marketplace',
 		paths: [
 			'/marketplace',
