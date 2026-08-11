@@ -3,6 +3,7 @@ import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
@@ -28,6 +29,7 @@ import type { Site } from '@automattic/api-core';
 
 export default function McpMcpSites() {
 	const { recordTracksEvent } = useAnalytics();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const { queries } = useAppContext();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const sitesQueryResult = useQuery(
@@ -87,7 +89,7 @@ export default function McpMcpSites() {
 			} as any,
 			{
 				onSuccess: () => {
-					recordTracksEvent( eventName, { site_id: siteId } );
+					recordTracksEvent( eventName, { ...tracksAudienceProps, site_id: siteId } );
 				},
 			}
 		);
@@ -102,7 +104,10 @@ export default function McpMcpSites() {
 			} as any,
 			{
 				onSuccess: () => {
-					recordTracksEvent( 'calypso_dashboard_mcp_site_removed', { site_id: siteId } );
+					recordTracksEvent( 'calypso_dashboard_mcp_site_removed', {
+						...tracksAudienceProps,
+						site_id: siteId,
+					} );
 				},
 			}
 		);
@@ -144,7 +149,10 @@ export default function McpMcpSites() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_mcp_mcp_sites_view" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_mcp_mcp_sites_view"
+				properties={ tracksAudienceProps }
+			/>
 			<VStack spacing={ 8 }>
 				<Card>
 					<CardBody>
