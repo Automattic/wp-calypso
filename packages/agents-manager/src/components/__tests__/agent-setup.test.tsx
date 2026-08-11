@@ -99,7 +99,9 @@ describe( 'AgentSetup', () => {
 		mockIsOpen = true;
 		mockHasAiChatEntry = false;
 		sessionStorage.clear();
-		clearAnnouncedSessionId();
+		clearAnnouncedSessionId( undefined, '111' );
+		clearAnnouncedSessionId( undefined, '222' );
+		clearAnnouncedSessionId( undefined, 'no-site' );
 		setSessionSiteKey( 'no-site' );
 	} );
 
@@ -110,7 +112,7 @@ describe( 'AgentSetup', () => {
 		// The server assigns a session mid-conversation: the config's callback
 		// saves it and announces it, without any navigation.
 		saveSessionId( 'session-live' );
-		setAnnouncedSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live', undefined, '111' );
 
 		rerender( manager( 111 ) );
 
@@ -123,7 +125,7 @@ describe( 'AgentSetup', () => {
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
 
 		saveSessionId( 'session-live' );
-		setAnnouncedSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live', undefined, '111' );
 		rerender( manager( 111 ) );
 
 		await act( async () => {} );
@@ -142,7 +144,7 @@ describe( 'AgentSetup', () => {
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
 
 		saveSessionId( 'session-live' );
-		setAnnouncedSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live', undefined, '111' );
 
 		fireEvent.click( screen.getByText( 'go-history' ) );
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
@@ -159,7 +161,7 @@ describe( 'AgentSetup', () => {
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
 
 		saveSessionId( 'session-live' );
-		setAnnouncedSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live', undefined, '111' );
 		mockAgentManager.removeAgent.mockImplementation( () => {
 			mockAgentManager.hasAgent.mockReturnValue( false );
 			return true;
@@ -170,7 +172,7 @@ describe( 'AgentSetup', () => {
 		await waitFor( () => expect( mockAgentManager.removeAgent ).toHaveBeenCalled() );
 		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();
 		expect( getSessionId() ).toBe( '' );
-		expect( getAnnouncedSessionId() ).toBeUndefined();
+		expect( getAnnouncedSessionId( undefined, '111' ) ).toBeUndefined();
 
 		// A fresh config must publish even though it matches the cleared session,
 		// or `useAgentChat` never recreates the removed agent.
@@ -186,7 +188,7 @@ describe( 'AgentSetup', () => {
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
 
 		saveSessionId( 'session-live' );
-		setAnnouncedSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live', undefined, '111' );
 
 		mockIsOpen = false;
 		rerender( manager( 111 ) );
@@ -208,7 +210,7 @@ describe( 'AgentSetup', () => {
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
 
 		saveSessionId( 'session-live' );
-		setAnnouncedSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live', undefined, '111' );
 
 		let resolveAlignment!: () => void;
 		mockCreateAgentConfig.mockImplementationOnce(
@@ -296,13 +298,13 @@ describe( 'AgentSetup', () => {
 		const { rerender } = render( manager( 111 ) );
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
 
-		setAnnouncedSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live', undefined, '111' );
 		mockAgentManager.hasAgent.mockReturnValue( true );
 
 		rerender( manager( 222 ) );
 
 		await waitFor( () => expect( mockAgentManager.removeAgent ).toHaveBeenCalled() );
 		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();
-		expect( getAnnouncedSessionId() ).toBeUndefined();
+		expect( getAnnouncedSessionId( undefined, '111' ) ).toBeUndefined();
 	} );
 } );

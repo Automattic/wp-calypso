@@ -164,9 +164,9 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		const isReturningToChatView = isChatViewShowing && ! wasChatViewShowingRef.current;
 		wasChatViewShowingRef.current = isChatViewShowing;
 
-		// Abort the agent's in-flight request, remove it, and forget its
-		// announced session.
-		async function discardAgent(): Promise< void > {
+		// Abort the agent's in-flight request, remove it, and forget the
+		// announcement under the scope the agent belonged to.
+		async function discardAgent( scopeKey: string ): Promise< void > {
 			const agentManager = getAgentManager();
 
 			if ( agentManager.hasAgent( agentId ) ) {
@@ -174,7 +174,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 				agentManager.removeAgent( agentId );
 			}
 
-			clearAnnouncedSessionId( agentId );
+			clearAnnouncedSessionId( agentId, scopeKey );
 		}
 
 		async function initializeAgent(): Promise< void > {
@@ -183,8 +183,9 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			// still-streaming response can't write into this scope's session or
 			// transcript, then initialize from this scope's session.
 			if ( previousSiteKeyRef.current !== siteKey ) {
+				const previousSiteKey = previousSiteKeyRef.current;
 				previousSiteKeyRef.current = siteKey;
-				await discardAgent();
+				await discardAgent( previousSiteKey );
 
 				if ( isSuperseded ) {
 					return;
@@ -193,7 +194,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 
 			// Handle new chat: clear existing session and navigate to clean state
 			if ( isNewChat ) {
-				await discardAgent();
+				await discardAgent( siteKey );
 
 				if ( isSuperseded ) {
 					return;
@@ -228,7 +229,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 				isSameAgent &&
 				isChatViewShowing &&
 				! isReturningToChatView &&
-				sessionId === getAnnouncedSessionId( agentId )
+				sessionId === getAnnouncedSessionId( agentId, siteKey )
 			) {
 				return;
 			}

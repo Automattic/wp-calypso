@@ -37,7 +37,8 @@ describe( 'createAgentConfig', () => {
 			.agentsManagerData;
 		document.body.className = '';
 		clearSiteEditorActions();
-		clearAnnouncedSessionId();
+		clearAnnouncedSessionId( 'wp-orchestrator', 'no-site' );
+		clearAnnouncedSessionId( 'wp-orchestrator', '111' );
 		sessionStorage.clear();
 		setSessionSiteKey( 'no-site' );
 	} );
@@ -98,12 +99,12 @@ describe( 'createAgentConfig', () => {
 		} );
 		config.onSessionIdChange?.( 'server-session-id' );
 
-		expect( getAnnouncedSessionId( 'wp-orchestrator' ) ).toBe( 'server-session-id' );
-		expect( getAnnouncedSessionId() ).toBe( 'server-session-id' );
+		expect( getAnnouncedSessionId( 'wp-orchestrator', 'no-site' ) ).toBe( 'server-session-id' );
+		expect( getAnnouncedSessionId( undefined, 'no-site' ) ).toBe( 'server-session-id' );
 
-		clearAnnouncedSessionId( 'wp-orchestrator' );
+		clearAnnouncedSessionId( 'wp-orchestrator', 'no-site' );
 
-		expect( getAnnouncedSessionId( 'wp-orchestrator' ) ).toBeUndefined();
+		expect( getAnnouncedSessionId( 'wp-orchestrator', 'no-site' ) ).toBeUndefined();
 	} );
 
 	it( 'adds reader page context for Reader Chat agents', async () => {

@@ -265,7 +265,7 @@ export async function createAgentConfig(
 		// Persist server-assigned session IDs as this tab's session.
 		onSessionIdChange: ( newSessionId ) => {
 			saveSessionId( newSessionId, agentId, sessionSiteKey );
-			setAnnouncedSessionId( newSessionId, agentId );
+			setAnnouncedSessionId( newSessionId, agentId, sessionSiteKey );
 		},
 		authProvider: createCalypsoAuthProvider( siteId, {
 			logWpcomJwtFailure: ! isReaderChatAgent( agentId ),
