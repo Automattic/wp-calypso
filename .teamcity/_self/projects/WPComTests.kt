@@ -336,7 +336,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 		id("WPComTests_jetpack_atomic_build_smoke_e2e_$targetDevice")
 		uuid = buildUuid
 		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
-		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. Each build takes the next Atomic environment variation."
+		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. The Atomic environment variation follows the calypso revision under test, so builds on the same revision repeat it."
 
 		artifactRules = defaultE2eArtifactRules();
 
@@ -354,7 +354,8 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.TEST_ON_ATOMIC", "true")
 			param("env.ATOMIC_VARIATION", "mixed")
 			// What "mixed" resolves against. Keyed on the commit so a re-run of a failed build
-			// repeats the variation that failed.
+			// repeats the variation that failed. This build has no VCS trigger, so every build
+			// on an unchanged calypso revision repeats it too: reproducibility over coverage.
 			param("env.ATOMIC_VARIATION_KEY", "%build.vcs.number%")
 			param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 		}
