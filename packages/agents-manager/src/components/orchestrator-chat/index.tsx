@@ -51,6 +51,7 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
+	TransformMessages,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
@@ -182,6 +183,8 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
+	/** Rewrite the transcript before it is displayed. See `TransformMessages`. */
+	transformMessages?: TransformMessages;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
@@ -208,6 +211,7 @@ export default function OrchestratorChat( {
 	useSuggestions,
 	getChatComponent,
 	siteBuildUtils,
+	transformMessages,
 	useCheckpoint,
 	capabilities,
 	isChatInputDisabled,
@@ -829,6 +833,14 @@ export default function OrchestratorChat( {
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		let currentMessages: AgentsManagerUIMessage[] = messages;
 
+		// Let the provider rewrite the transcript first, while the messages are
+		// still the raw ones. Applied on every render over the whole list, so a
+		// message restored from conversation history is presented the same way as
+		// one that was just sent.
+		if ( transformMessages ) {
+			currentMessages = transformMessages( currentMessages );
+		}
+
 		currentMessages = currentMessages.filter(
 			( message ) =>
 				! deletedMessageIds.has( message.id ) &&
@@ -945,6 +957,7 @@ export default function OrchestratorChat( {
 		retainedShowComponentMessages,
 		siteBuildUtils,
 		thinkingMessage,
+		transformMessages,
 	] );
 
 	// Notify parent when has-messages state changes.
