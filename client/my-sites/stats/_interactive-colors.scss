@@ -62,6 +62,15 @@
 		}
 	}
 
+	// A day outside the band takes that same tint on hover, but with a white numeral, which reads
+	// at 2.23:1 against it. Keeping the numeral dark puts it at 5.76:1 and leaves the tint alone.
+	.date-range__picker .DayPicker-Day:not(.DayPicker-Day--range) .date-picker__day {
+		&:hover,
+		&:focus {
+			color: var(--color-text);
+		}
+	}
+
 	// The shortcut list beside the calendar tints its hover and selected rows from the 0 and 5
 	// steps of the scale, which the admin theme colour has no equivalent of, so both are mixed.
 	.date-range-picker-shortcuts__shortcut {
