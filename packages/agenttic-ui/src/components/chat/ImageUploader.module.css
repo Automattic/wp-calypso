@@ -110,7 +110,7 @@
 	border-radius: 50%;
 	border: none;
 	background-color: var(--color-popover-muted, #2F2F2F);
-	color: white;
+	color: #fff;
 	font-size: 16px;
 	line-height: 1;
 	cursor: pointer;
@@ -156,7 +156,7 @@
 .previewMeta {
 	display: flex;
 	flex-direction: column;
-	gap: 0px;
+	gap: 0;
 	flex: 1;
 	min-width: 0;
 }

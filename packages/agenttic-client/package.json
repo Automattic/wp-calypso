@@ -3,6 +3,15 @@
 	"version": "0.1.86",
 	"type": "module",
 	"description": "A TypeScript client library for connection to the Automattic agent framework.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/agenttic-client"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
 	"main": "dist/index.js",
 	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -25,14 +34,15 @@
 		"README.md"
 	],
 	"scripts": {
-		"build": "pnpm run clean && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"build": "yarn run clean && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"prepare": "yarn run build",
 		"dev": "vite build --watch",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",
 		"lint": "wp-scripts lint-js src --ext .ts,.tsx",
 		"lint:fix": "wp-scripts lint-js src --ext .ts,.tsx --fix",
 		"test": "vitest run",
-		"prepublishOnly": "pnpm run build"
+		"prepublishOnly": "yarn run build"
 	},
 	"keywords": [
 		"agent2agent",
@@ -43,7 +53,7 @@
 		"agent",
 		"protocol"
 	],
-	"author": "Automattic",
+	"author": "Automattic Inc.",
 	"license": "MIT",
 	"engines": {
 		"node": ">=20.0.0"
@@ -74,7 +84,6 @@
 		}
 	},
 	"publishConfig": {
-		"access": "public",
-		"branch": "trunk"
+		"access": "public"
 	}
 }

@@ -97,7 +97,7 @@ function notifySessionIdChange(
 /**
  * Resolve any promises in conversation history messages
  * @param conversationHistory - Array of messages that may contain tool results with promises
- * @return Updated conversation history with resolved promises
+ * @returns Updated conversation history with resolved promises
  */
 async function resolvePromisesInConversationHistory(
 	conversationHistory: Message[]

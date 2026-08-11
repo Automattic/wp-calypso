@@ -31,7 +31,7 @@ const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
  *
  * @param uiMessages       - Current UI messages
  * @param clientMessageIds - IDs present in the agent's client history
- * @return The UI-only messages that should be preserved
+ * @returns The UI-only messages that should be preserved
  */
 export const filterUiOnlyMessages = (
 	uiMessages: UIMessage[],

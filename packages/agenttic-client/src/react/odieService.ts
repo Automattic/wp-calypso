@@ -127,7 +127,7 @@ export async function loadChatFromServer(
  * @param botId           - The bot ID to get conversations for
  * @param config          - Service configuration (omit botId, will use parameter)
  * @param useFirstMessage - If `true`, show first message as preview; if `false`, show last message (default: `false`)
- * @return Array of conversation list items
+ * @returns Array of conversation list items
  */
 export async function listConversationsFromServer(
 	botId: string,

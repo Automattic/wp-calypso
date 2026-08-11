@@ -315,6 +315,10 @@ module.exports = {
 					// These files don't have GPL license
 					files: [
 						'./desktop/package.json',
+						// Published to npm as MIT before moving into this repo.
+						'./packages/agenttic-client/package.json',
+						'./packages/agenttic-demo/package.json',
+						'./packages/agenttic-ui/package.json',
 						'./packages/material-design-icons/package.json',
 						'./packages/wpcom-proxy-request/package.json',
 						'./packages/wpcom-xhr-request/package.json',

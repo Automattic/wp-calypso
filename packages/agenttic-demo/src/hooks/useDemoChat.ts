@@ -5,7 +5,7 @@ import { createMessageRenderer } from '@automattic/agenttic-ui';
 import { getClientContext, getClientTools } from '@automattic/agenttic-client/mocks';
 
 // Chart styles are required by the `charts` markdown extension enabled below.
-import '../../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
+import '../../../agenttic-ui/src/markdown-extensions/charts/charts.css';
 
 interface UseDemoChatOptions {
 	sessionId: string;

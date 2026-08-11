@@ -7,7 +7,7 @@ import { createAbilityDataPart, createContextDataPart, createToolDataPart } from
  *
  * @param message      - The message to enhance
  * @param toolProvider - Optional tool provider to get tools and abilities from
- * @return Promise resolving to the enhanced message
+ * @returns Promise resolving to the enhanced message
  */
 export async function enhanceMessageWithTools(
 	message: Message,
@@ -57,7 +57,7 @@ export async function enhanceMessageWithTools(
  *
  * @param message         - The message to enhance
  * @param contextProvider - Optional context provider to get context from
- * @return The enhanced message
+ * @returns The enhanced message
  */
 export function enhanceMessageWithContext(
 	message: Message,
@@ -90,7 +90,7 @@ export function enhanceMessageWithContext(
  * @param message         - The message to enhance
  * @param toolProvider    - Optional tool provider to get tools from
  * @param contextProvider - Optional context provider to get context from
- * @return Promise resolving to the enhanced message
+ * @returns Promise resolving to the enhanced message
  */
 export async function enhanceMessage(
 	message: Message,

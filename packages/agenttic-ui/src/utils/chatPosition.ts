@@ -24,7 +24,7 @@ export const DEFAULT_CHAT_POSITION: ChatPosition = 'right';
  * @param width      - Panel width
  * @param height     - Panel height
  * @param insets     - Per-side viewport insets (boundaryInset)
- * @return The clamped { x, y } pixel offset
+ * @returns The clamped { x, y } pixel offset
  */
 export function clampFreeDragPosition(
 	{ x, y }: { x: number; y: number },
@@ -51,7 +51,7 @@ export function clampFreeDragPosition(
  * @param side       - The corner side to dock to
  * @param panelWidth - Panel width
  * @param insets     - Per-side viewport insets (boundaryInset)
- * @return The docked { x, y } transform offset
+ * @returns The docked { x, y } transform offset
  */
 export function getCornerSnapPosition(
 	side: 'left' | 'right',
@@ -78,7 +78,7 @@ export function getCornerSnapPosition(
  * @param options.width                   - Panel width (defaults to COMPACT_WIDTH)
  * @param options.height                  - Panel height (defaults to EXPANDED_HEIGHT)
  * @param options.insets                  - Per-side viewport insets (boundaryInset)
- * @return The initial { x, y } pixel position
+ * @returns The initial { x, y } pixel position
  */
 export function getInitialChatPosition( {
 	freeDrag,

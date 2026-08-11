@@ -34,7 +34,7 @@ export interface RequestConfig {
  *
  * @param agentUrl - Base agent URL (required)
  * @param agentId  - Agent ID to append to the URL
- * @return Full agent URL
+ * @returns Full agent URL
  */
 function constructAgentUrl( agentUrl: string, agentId: string ): string {
 	return `${ agentUrl }/${ agentId }`;
@@ -71,7 +71,7 @@ function logRequest( method: string, url: string, headers: Record< string, strin
  *
  * @param authProvider - Optional auth provider
  * @param isStreaming  - Whether this is a streaming request
- * @return Promise resolving to headers object
+ * @returns Promise resolving to headers object
  */
 async function getHeaders(
 	authProvider?: AuthProvider,
@@ -98,7 +98,7 @@ async function getHeaders(
  *
  * @param signal1 - First abort signal
  * @param signal2 - Second abort signal (optional)
- * @return Combined abort signal
+ * @returns Combined abort signal
  */
 function combineSignals( signal1: AbortSignal, signal2?: AbortSignal ): AbortSignal {
 	if ( ! signal2 ) {
@@ -140,7 +140,7 @@ function combineSignals( signal1: AbortSignal, signal2?: AbortSignal ): AbortSig
  * @param body        - Request body
  * @param signal      - Abort signal
  * @param credentials - Optional fetch credentials mode
- * @return Basic fetch options
+ * @returns Basic fetch options
  */
 function createFetchOptions(
 	headers: Record< string, string >,
@@ -169,7 +169,7 @@ function createFetchOptions(
  * @param toolProvider     - Optional tool provider
  * @param contextProvider  - Optional context provider
  * @param defaultSessionId - Default session ID
- * @return Promise resolving to prepared request data
+ * @returns Promise resolving to prepared request data
  */
 export async function prepareRequest(
 	params: SendMessageParams,
@@ -180,7 +180,7 @@ export async function prepareRequest(
 	defaultSessionId?: string
 ) {
 	const { message, sessionId, taskId, metadata } = params;
-	const { agentId, agentUrl, authProvider, proxy } = config;
+	const { agentId, agentUrl, authProvider } = config;
 	const { isStreaming = false, enableTokenStreaming = false } = options;
 
 	const effectiveSessionId = sessionId || defaultSessionId;
@@ -232,7 +232,7 @@ export async function prepareRequest(
  * @param preparedRequest - Prepared request data
  * @param config          - Request configuration
  * @param options         - Request options (including external abort signal)
- * @return Promise resolving to the response task
+ * @returns Promise resolving to the response task
  */
 export async function executeRequest(
 	preparedRequest: Awaited< ReturnType< typeof prepareRequest > >,
@@ -289,7 +289,7 @@ export async function executeRequest(
  * @param preparedRequest - Prepared request data
  * @param config          - Request configuration
  * @param options         - Request options (including external abort signal)
- * @return Async iterable of task updates
+ * @returns Async iterable of task updates
  */
 export async function* executeStreamingRequest(
 	preparedRequest: Awaited< ReturnType< typeof prepareRequest > >,

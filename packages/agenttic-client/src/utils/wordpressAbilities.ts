@@ -19,7 +19,7 @@ interface AbilityTool extends Tool {
  * Convert a single WordPress Ability to an Agenttic Tool.
  *
  * @param ability The WordPress Ability to convert
- * @return The converted Tool object
+ * @returns The converted Tool object
  */
 export function convertAbilityToTool( ability: Ability ): AbilityTool {
 	// Provide a default input schema if none is defined, since Tool requires it but ability does not
@@ -49,7 +49,7 @@ export function convertAbilityToTool( ability: Ability ): AbilityTool {
  * Convert an array of WordPress Abilities to Agenttic Tools.
  *
  * @param abilities Array of WordPress Abilities
- * @return Array of converted Tool objects
+ * @returns Array of converted Tool objects
  */
 export function convertAbilitiesToTools( abilities: Ability[] ): Tool[] {
 	return abilities.map( convertAbilityToTool );
@@ -59,7 +59,7 @@ export function convertAbilitiesToTools( abilities: Ability[] ): Tool[] {
  * Check if a tool was converted from a WordPress Ability.
  *
  * @param tool The tool to check
- * @return True if the tool originated from a WordPress Ability
+ * @returns True if the tool originated from a WordPress Ability
  */
 export function isWordPressAbility( tool: any ): tool is AbilityTool {
 	return tool?._source === 'wordpress-ability';

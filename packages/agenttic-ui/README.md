@@ -591,19 +591,19 @@ import {
 
 ```bash
 # Build the package
-pnpm build
+yarn build
 
 # Run in development mode
-pnpm dev
+yarn dev
 
 # Run tests
-pnpm test
+yarn test
 
 # Type checking
-pnpm type-check
+yarn type-check
 
 # Start Storybook
-pnpm storybook
+yarn storybook
 ```
 
 ## Integration with agenttic-client

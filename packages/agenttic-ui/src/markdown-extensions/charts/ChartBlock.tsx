@@ -62,9 +62,8 @@ interface ProcessedChartData {
  * @param root0
  * @param root0.data
  * @param root0.className
- * @param root0.config
  */
-export const ChartBlock: FC< ChartBlockProps > = ( { data, className = '', config } ) => {
+export const ChartBlock: FC< ChartBlockProps > = ( { data, className = '' } ) => {
 	const [ error, setError ] = useState< ChartErrorState | null >( null );
 	const [ chartData, setChartData ] = useState< ProcessedChartData | null >( null );
 	const [ containerWidth, setContainerWidth ] = useState< number >( 300 );
@@ -257,7 +256,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( { data, className = '', confi
 			};
 
 			setChartData( processedData );
-		} catch ( parseError ) {
+		} catch ( _parseError ) {
 			setError( {
 				message: __( 'Failed to parse chart data as JSON', 'a8c-agenttic' ),
 				details: `Input data: ${ data }`,

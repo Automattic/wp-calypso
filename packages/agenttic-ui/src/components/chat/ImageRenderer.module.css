@@ -7,9 +7,7 @@
 
 .imageButton {
 	position: relative;
-	border: none;
 	background: none;
-	padding: 0;
 	cursor: pointer;
 	border-radius: calc(var(--radius-sm) + 1px);
 	overflow: hidden;

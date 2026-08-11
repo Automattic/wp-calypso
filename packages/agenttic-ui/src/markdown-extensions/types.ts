@@ -17,9 +17,7 @@ export interface MarkdownExtensionConfigBase {
  * Configuration for chart extension
  */
 export interface ChartExtensionConfig extends MarkdownExtensionConfigBase {
-	config?: {
-		// Chart-specific options
-	};
+	config?: Record< string, unknown >;
 }
 
 /**
@@ -27,9 +25,7 @@ export interface ChartExtensionConfig extends MarkdownExtensionConfigBase {
  * Enables tables, strikethrough, task lists, and other GFM features
  */
 export interface GfmExtensionConfig extends MarkdownExtensionConfigBase {
-	config?: {
-		// GFM-specific options could be added here
-	};
+	config?: Record< string, unknown >;
 }
 
 /**

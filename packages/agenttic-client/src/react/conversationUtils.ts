@@ -6,7 +6,7 @@ import { generateMessageId } from '../client/utils/core';
  * This helps avoid storing history data parts in conversation history
  *
  * @param message - The message to extract new content from
- * @return A clean message with only new content parts
+ * @returns A clean message with only new content parts
  */
 export function extractNewContentFromMessage( message: Message ): Message {
 	const newParts = message.parts.filter( ( part ) => {
@@ -70,7 +70,7 @@ export function extractNewContentFromMessage( message: Message ): Message {
  * Convert conversation messages to data parts for history
  *
  * @param conversationMessages - Array of previous conversation messages
- * @return Array of data parts representing conversation history
+ * @returns Array of data parts representing conversation history
  */
 export function conversationMessagesToDataParts(
 	conversationMessages: Message[]
@@ -132,7 +132,7 @@ export interface ImageData {
  * @param text                 - The user text message to send
  * @param conversationMessages - Array of previous conversation messages
  * @param imageUrls            - Array of image URLs or image objects with metadata
- * @return Message with history and current text
+ * @returns Message with history and current text
  */
 export function createTextMessageWithHistory(
 	text: string,
@@ -183,7 +183,7 @@ export function createTextMessageWithHistory(
  * Extract tool results from a message
  *
  * @param message - The message to check for tool results
- * @return Array of tool result parts
+ * @returns Array of tool result parts
  */
 export function extractToolResultsFromMessage( message?: Message ): DataPart[] {
 	if ( ! message?.parts ) {
@@ -206,7 +206,7 @@ export function extractToolResultsFromMessage( message?: Message ): DataPart[] {
  * is plain prose, not JSON — is ignored.
  *
  * @param message - The message to inspect.
- * @return True when the first text part is a `{ tool_id, ... }` JSON payload.
+ * @returns True when the first text part is a `{ tool_id, ... }` JSON payload.
  */
 export function messageCarriesToolPayload( message?: Message ): boolean {
 	const text = message?.parts?.find( ( part ): part is TextPart => part.type === 'text' )?.text;

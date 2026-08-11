@@ -1,23 +1,37 @@
-// Inherits Calypso's root config. Two deviations, both about the move itself:
-//
-// 1. The upstream config extended `plugin:@wordpress/eslint-plugin/recommended`.
-//    Calypso pins @wordpress/eslint-plugin ^25, where that path resolves to a
-//    flat config and blows up under ESLINT_USE_FLAT_CONFIG=false. Calypso's own
-//    root config reaches the eslintrc-format rules via the `/eslintrc` subpath,
-//    so inheriting it is enough.
-// 2. This code was formatted with stock prettier; Calypso runs wp-prettier,
-//    which adds paren spacing. Enforcing it here would mean reformatting the
-//    whole package in the commit that moves it. Deferred to a follow-up.
+// Inherits Calypso's root config. The upstream config extended
+// `plugin:@wordpress/eslint-plugin/recommended`, which resolves to a flat config under Calypso's
+// pinned v25 and crashes eslintrc mode; Calypso's root already provides those rules.
 module.exports = {
 	rules: {
+		// This package was formatted with stock prettier, Calypso runs wp-prettier (paren spacing).
+		// Reformatting is a pending follow-up; see AGENTS.md.
 		'prettier/prettier': 'off',
 		'import/order': 'off',
 		'@wordpress/i18n-text-domain': [ 'error', { allowedTextDomain: 'a8c-agenttic' } ],
+		// Off upstream too; the remaining calls are deliberate error-boundary diagnostics.
+		'no-console': 'off',
+		'@typescript-eslint/no-unused-vars': [
+			'error',
+			{
+				argsIgnorePattern: '^_',
+				varsIgnorePattern: '^_',
+				caughtErrorsIgnorePattern: '^_',
+				ignoreRestSiblings: true,
+			},
+		],
 	},
 	overrides: [
 		{
 			files: [ '**/*.stories.*', '**/stories/**', '**/__stories__/**' ],
 			rules: {
+				'no-console': 'off',
+			},
+		},
+		{
+			// Node build scripts, not browser code.
+			files: [ 'scripts/**' ],
+			rules: {
+				'import/no-nodejs-modules': 'off',
 				'no-console': 'off',
 			},
 		},

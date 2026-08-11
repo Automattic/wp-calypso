@@ -24,7 +24,7 @@ export const DEFAULT_BOUNDARY_INSETS: BoundaryInsets = {
  * 16px default; undefined returns the shared default object.
  *
  * @param inset - The consumer-supplied boundaryInset prop
- * @return The resolved per-side insets
+ * @returns The resolved per-side insets
  */
 export function resolveBoundaryInset( inset?: number | Partial< BoundaryInsets > ): BoundaryInsets {
 	if ( inset === undefined ) {

@@ -28,9 +28,9 @@ export function handleRequestError(
  * Validate HTTP response and throw if not ok
  *
  * @param response  - The HTTP response
- * @param operation - Description of the operation
+ * @param _operation - Description of the operation
  */
-export function validateHttpResponse( response: Response, operation: string = 'request' ): void {
+export function validateHttpResponse( response: Response, _operation: string = 'request' ): void {
 	if ( ! response.ok ) {
 		throw new Error( `HTTP error! status: ${ response.status }` );
 	}
@@ -41,7 +41,7 @@ export function validateHttpResponse( response: Response, operation: string = 'r
  *
  * @param data      - The JSON-RPC response
  * @param operation - Description of the operation
- * @return The validated result
+ * @returns The validated result
  */
 export function validateJsonRpcResponse< T >(
 	data: JsonRpcResponse< T >,
@@ -79,12 +79,12 @@ export function validateStreamingResponse(
  * Create timeout handler with abort controller
  *
  * @param timeout   - Timeout in milliseconds
- * @param operation - Description of the operation
- * @return Timeout handler object
+ * @param _operation - Description of the operation
+ * @returns Timeout handler object
  */
 export function createTimeoutHandler(
 	timeout: number,
-	operation: string = 'request'
+	_operation: string = 'request'
 ): { timeoutId: number; controller: AbortController } {
 	const controller = new AbortController();
 	const timeoutId = setTimeout( () => controller.abort(), timeout ) as unknown as number;

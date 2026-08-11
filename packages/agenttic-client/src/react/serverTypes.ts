@@ -3,7 +3,7 @@
  * Maps to odie-assistant.php endpoints on WordPress.com
  */
 
-import type { DataPart, FilePart, Message, Part, TextPart } from '../client/types/index';
+import type { FilePart, Message, Part, TextPart } from '../client/types/index';
 import { generateMessageId } from '../client/utils/core';
 
 /**

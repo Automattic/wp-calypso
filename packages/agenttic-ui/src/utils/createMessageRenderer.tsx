@@ -56,7 +56,7 @@ interface CreateMessageRendererOptions {
 /**
  * Creates a message renderer component with pre-configured markdown settings
  * @param options - Configuration options for markdown rendering
- * @return A React component that renders markdown with the specified configuration
+ * @returns A React component that renders markdown with the specified configuration
  */
 export function createMessageRenderer(
 	options: CreateMessageRendererOptions = {}

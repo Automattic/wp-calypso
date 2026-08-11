@@ -216,7 +216,7 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { current
 								onFilesSelected={ handleFilesSelected }
 								onRemoveImage={ handleRemoveImage }
 								acceptedFileTypes={ [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ] }
-								showFileMetadata={ true }
+								showFileMetadata
 							/>
 							<AgentUI.Input />
 							<AgentUI.InputToolbar label="Custom Toolbar">

@@ -158,6 +158,7 @@ const ImagePreviewItem = memo(
 		);
 	}
 );
+ImagePreviewItem.displayName = 'ImagePreviewItem';
 
 export interface ImageUploaderHandle {
 	openFileDialog: () => void;

@@ -15,7 +15,7 @@ export type GetClientContextCallback = () => ClientContext;
  * is sent to the agent.
  *
  * @param getClientContextCallback - Function that returns fresh client context data
- * @return ContextProvider instance or undefined if no callback provided
+ * @returns ContextProvider instance or undefined if no callback provided
  */
 export function useClientContext(
 	getClientContextCallback?: GetClientContextCallback

@@ -72,7 +72,7 @@ export function Notice( {
 				<div>
 					<Markdown
 						allowedElements={ [ 'p', 'strong', 'em', 'a', 'br' ] }
-						unwrapDisallowed={ true }
+						unwrapDisallowed
 						components={ {
 							a: ( { node, ...props } ) => (
 								<a { ...props } target="_blank" rel="noopener noreferrer">

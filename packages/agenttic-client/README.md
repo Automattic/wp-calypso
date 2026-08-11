@@ -563,14 +563,14 @@ type ToolProvider = {
 
 ```bash
 # Build the package
-pnpm build
+yarn build
 
 # Run tests
-pnpm test
+yarn test
 
 # Type checking
-pnpm type-check
+yarn type-check
 
 # Lint
-pnpm lint
+yarn lint
 ```

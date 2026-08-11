@@ -119,7 +119,7 @@ export function createPresentQuestionRenderer( {
 	answered = false,
 	answeredChoice,
 }: PresentQuestionRendererOptions ): AgentsApiToolRenderers[ string ] {
-	return ( group ) => {
+	return function PresentQuestionRenderer( group ) {
 		const prompt = normalizePresentQuestionPrompt( group.result?.result ?? group.call?.args );
 
 		if ( ! prompt ) {

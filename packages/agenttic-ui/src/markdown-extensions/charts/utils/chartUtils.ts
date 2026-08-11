@@ -9,7 +9,7 @@ import type { SeriesData } from '@automattic/charts';
  * @param charWidth   - Average character width for calculations
  * @param padding     - Additional padding
  * @param labelLength - Optional label length for custom calculations
- * @return Calculated bottom margin
+ * @returns Calculated bottom margin
  */
 export const calculateBottomMargin = (
 	minMargin: number = 80,
@@ -24,7 +24,7 @@ export const calculateBottomMargin = (
 /**
  * Parse date value to Date object, handling timezone correctly for YYYY-MM-DD format
  * @param dateValue - Date value to parse (Date object or string)
- * @return Parsed Date object or null if invalid
+ * @returns Parsed Date object or null if invalid
  */
 const parseDate = ( dateValue: Date | string ): Date | null => {
 	if ( dateValue instanceof Date ) {
@@ -44,7 +44,7 @@ const parseDate = ( dateValue: Date | string ): Date | null => {
 /**
  * Generate time axis configuration for charts with date data
  * @param data - Chart series data
- * @return Axis configuration object
+ * @returns Axis configuration object
  */
 export const getTimeAxisConfig = ( data: SeriesData[] ) => {
 	// Collect all date points from all series
@@ -135,7 +135,7 @@ export const getTimeAxisConfig = ( data: SeriesData[] ) => {
  * @param customMargin.right  - Right margin override
  * @param customMargin.bottom - Bottom margin override
  * @param customMargin.left   - Left margin override
- * @return Complete margin configuration
+ * @returns Complete margin configuration
  */
 export const getDefaultChartMargins = ( customMargin?: {
 	top?: number;

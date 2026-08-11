@@ -21,7 +21,7 @@ export interface FeedbackActionsManager {
  * Creates a stateful feedback actions manager that tracks feedback state internally
  *
  * @param config - Configuration for feedback actions
- * @return FeedbackActionsManager with methods to get actions and manage state
+ * @returns FeedbackActionsManager with methods to get actions and manage state
  */
 export const createFeedbackActions = ( config: FeedbackActionsConfig ): FeedbackActionsManager => {
 	const baseCondition = config.condition || ( () => true );

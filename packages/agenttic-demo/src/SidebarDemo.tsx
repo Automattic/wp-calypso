@@ -210,7 +210,7 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { currentT
 										onFilesSelected={ handleFilesSelected }
 										onRemoveImage={ handleRemoveImage }
 										acceptedFileTypes={ [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ] }
-										showFileMetadata={ true }
+										showFileMetadata
 									/>
 									<AgentUI.Input imageUploaderRef={ uploaderRef } />
 								</AgentUI.Footer>

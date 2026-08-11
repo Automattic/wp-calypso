@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React from 'react';
 import { Chat } from '../chat/Chat';
 // MockProviders removed - use direct props for stories
 import type { Message } from '../../types';

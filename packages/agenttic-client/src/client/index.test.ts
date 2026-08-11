@@ -235,7 +235,7 @@ describe( 'Client', () => {
 						},
 					];
 				},
-				async executeTool( toolId: string, args: any, messageId?: string, toolCallId?: string ) {
+				async executeTool( toolId: string, args: any, messageId?: string, _toolCallId?: string ) {
 					capturedMessageId = messageId;
 					return { result: 'tool executed' };
 				},
@@ -390,7 +390,7 @@ describe( 'Client', () => {
 						},
 					];
 				},
-				async executeTool( toolId: string, args: any, messageId?: string, toolCallId?: string ) {
+				async executeTool( toolId: string, args: any, messageId?: string, _toolCallId?: string ) {
 					capturedMessageId = messageId;
 					return { result: 'tool executed' };
 				},
@@ -545,7 +545,7 @@ describe( 'Client', () => {
 						},
 					];
 				},
-				async executeTool( toolId: string, args: any, messageId?: string, toolCallId?: string ) {
+				async executeTool( toolId: string, args: any, messageId?: string, _toolCallId?: string ) {
 					capturedMessageIds.push( messageId );
 					return { result: 'tool executed' };
 				},
@@ -1418,7 +1418,7 @@ describe( 'Client', () => {
 				body: new ReadableStream( {
 					start( controller ) {
 						controller.enqueue(
-							encoder.encode( `data: {"error":{"message":"API rate limit exceeded"}}\n\n` )
+							encoder.encode( 'data: {"error":{"message":"API rate limit exceeded"}}\n\n' )
 						);
 						controller.close();
 					},
@@ -1431,7 +1431,7 @@ describe( 'Client', () => {
 				const stream = client.sendMessageStream( {
 					message: createTextMessage( 'Hello' ),
 				} );
-				for await ( const update of stream ) {
+				for await ( const _update of stream ) {
 					// Should throw before yielding any updates
 				}
 			} ).rejects.toThrow( 'Streaming error: API rate limit exceeded' );

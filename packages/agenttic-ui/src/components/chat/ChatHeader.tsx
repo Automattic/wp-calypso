@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Button } from '../ui/button';
 import { XIcon } from '../icons/XIcon';
 import { fastSpring } from '../animations';
+import { cn } from '../../utils/classNames';
 import styles from './ChatHeader.module.css';
 import { __ } from '@wordpress/i18n';
 
@@ -15,7 +16,7 @@ export function ChatHeader( { onClose, className }: ChatHeaderProps ) {
 		<motion.div
 			data-slot="chat-header"
 			data-draggable="true"
-			className={ styles.container }
+			className={ cn( styles.container, className ) }
 			initial={ { opacity: 0 } }
 			animate={ { opacity: 1 } }
 			transition={ { ...fastSpring, delay: 0.1 } }

@@ -56,7 +56,7 @@ interface UseRegenerateReturn {
  * @param root0.stateRef          - Ref holding the latest chat state
  * @param root0.transformMessages - Converts client messages to UI messages
  * @param root0.sendMessage       - The hook's guarded send function
- * @return Regenerate handler accessor for the chat
+ * @returns Regenerate handler accessor for the chat
  */
 export function useRegenerate( {
 	agentId,

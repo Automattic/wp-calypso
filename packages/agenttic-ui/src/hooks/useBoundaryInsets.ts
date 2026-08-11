@@ -9,7 +9,7 @@ import { resolveBoundaryInset } from '../utils/constants';
  * and re-fire the hooks/effects that depend on it.
  *
  * @param inset - The consumer-supplied boundaryInset prop
- * @return The resolved, identity-stable per-side insets
+ * @returns The resolved, identity-stable per-side insets
  */
 export function useBoundaryInsets( inset?: number | Partial< BoundaryInsets > ): BoundaryInsets {
 	const resolved = resolveBoundaryInset( inset );

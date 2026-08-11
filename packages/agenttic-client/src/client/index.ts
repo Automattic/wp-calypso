@@ -39,7 +39,7 @@ const DEFAULT_TIMEOUT = 120000;
  * Convert an ability name to the identifier used for OpenAI tool calls.
  *
  * @param abilityName - The WordPress ability name
- * @return The sanitized tool identifier
+ * @returns The sanitized tool identifier
  */
 function sanitizeAbilityName( abilityName: string ): string {
 	return abilityName.replace( /\//g, '__' ).replace( /-/g, '_' );
@@ -57,7 +57,7 @@ function sanitizeAbilityName( abilityName: string ): string {
  * @param args         - Arguments to pass to the tool/ability
  * @param messageId    - Optional message ID for context
  * @param toolCallId   - Optional tool call ID for tracking
- * @return Promise resolving to tool execution result
+ * @returns Promise resolving to tool execution result
  */
 async function executeToolOrAbility(
 	toolProvider: any,
@@ -154,7 +154,7 @@ const toolResultPromises = new Map< string, { promise: Promise< any >; resolvedV
  * Check if any tool calls in a message have matching callbacks
  * @param toolProvider - The tool provider to check
  * @param message      - The message containing tool calls
- * @return Promise resolving to boolean indicating if any tools can be executed
+ * @returns Promise resolving to boolean indicating if any tools can be executed
  */
 async function hasMatchingToolCallbacks( toolProvider: any, message: Message ): Promise< boolean > {
 	if ( ! toolProvider || ! message ) {
@@ -213,7 +213,7 @@ function clearToolResultPromises(): void {
 /**
  * Update tool results with resolved promise values if they've resolved
  * @param toolResults - Array of tool results that may have corresponding resolved promises
- * @return Updated tool results with resolved values where available
+ * @returns Updated tool results with resolved values where available
  */
 function updateToolResultsWithResolvedPromises( toolResults: any[] ): any[] {
 	return toolResults.map( ( toolResult ) => {
@@ -311,7 +311,7 @@ async function executeToolCallBatch(
  * Extract conversation history from a message's data parts
  *
  * @param message - The message to extract conversation history from
- * @return Array of conversation messages reconstructed from data parts
+ * @returns Array of conversation messages reconstructed from data parts
  */
 export function extractConversationHistory( message: Message ): Message[] {
 	const conversationMessages: Message[] = [];
@@ -367,7 +367,7 @@ export function extractConversationHistory( message: Message ): Message[] {
  * Convert conversation history back to data parts
  *
  * @param conversationHistory - Array of conversation messages to convert
- * @return Array of data parts representing the conversation history
+ * @returns Array of data parts representing the conversation history
  */
 function conversationHistoryToDataParts(
 	conversationHistory: Message[]
@@ -405,7 +405,7 @@ function conversationHistoryToDataParts(
  * @param contextProvider - Context provider for message enhancement
  * @param sessionId       - Session identifier
  * @param abortSignal     - Optional abort signal
- * @return Promise resolving to updated task
+ * @returns Promise resolving to updated task
  */
 async function continueTask(
 	taskId: string,
@@ -448,7 +448,7 @@ async function continueTask(
  * @param abortSignal          - Optional abort signal
  * @param requestOptions       - Optional additional request options
  * @param newConversationParts
- * @return AsyncIterable of task updates
+ * @returns AsyncIterable of task updates
  */
 async function continueTaskStreamed(
 	taskId: string,
@@ -515,7 +515,7 @@ async function continueTaskStreamed(
  * @param newConversationParts - Array to track conversation parts for history
  * @param abortSignal          - Optional abort signal
  * @param requestOptions       - Optional additional request options
- * @return AsyncIterable of task updates
+ * @returns AsyncIterable of task updates
  */
 async function* processAgentResponseStream(
 	stream: AsyncIterable< TaskUpdate >,

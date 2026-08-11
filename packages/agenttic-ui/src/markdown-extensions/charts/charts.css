@@ -77,7 +77,7 @@
 		max-width: 120px;
 		min-width: auto;
 		background: rgba(0, 0, 0, 0.8);
-		color: white;
+		color: #fff;
 		padding: var(--spacing-2) var(--spacing-4) var(--spacing-2) var(--spacing-2);
 		border-radius: var(--radius-sm);
 		box-shadow: var(--shadow-sm);
@@ -113,7 +113,7 @@
 	.chart-tooltip-value {
 		font-weight: var(--font-weight-semibold);
 		font-size: 11px;
-		color: white;
+		color: #fff;
 		text-align: right;
 	}
 

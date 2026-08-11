@@ -17,7 +17,7 @@ interface TranslationConfig {
  *
  * @param locale - Language locale (e.g., 'es', 'fr', 'de-DE')
  * @param config - Translation configuration
- * @return boolean - Success status
+ * @returns boolean - Success status
  */
 function loadJSONFromLocal( locale: string, config: TranslationConfig ): boolean {
 	const { domain = 'a8c-agenttic' } = config;
@@ -76,7 +76,7 @@ function loadJSONFromLocal( locale: string, config: TranslationConfig ): boolean
  *
  * @param locale - Language locale (e.g., 'es', 'fr', 'de-DE'). Defaults to en.
  * @param config - Translation configuration
- * @return boolean - Success status
+ * @returns boolean - Success status
  */
 export function loadAgentticTranslations(
 	locale: string = 'en',

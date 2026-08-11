@@ -49,7 +49,6 @@ export function CompactView( {
 	actionOrder,
 	onStop,
 	suggestions,
-	clearSuggestions,
 	handleSuggestionSubmit,
 	expandOnClick = false,
 }: CompactViewProps ) {

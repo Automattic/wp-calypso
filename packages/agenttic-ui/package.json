@@ -2,7 +2,16 @@
 	"name": "@automattic/agenttic-ui",
 	"version": "0.1.86",
 	"type": "module",
-	"description": "UI components for the Agenttic framework",
+	"description": "UI components for the Agenttic framework.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/agenttic-ui"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
 	"main": "dist/index.js",
 	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -24,17 +33,18 @@
 		"README.md"
 	],
 	"scripts": {
-		"build": "pnpm run clean && pnpm i18n:download-json && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"build": "yarn run clean && yarn run i18n:download-json && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"prepare": "yarn run build",
 		"dev": "vite",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",
 		"lint": "wp-scripts lint-js src --ext .ts,.tsx",
 		"lint:fix": "wp-scripts lint-js src --ext .ts,.tsx --fix",
 		"test": "vitest run",
-		"prepublishOnly": "pnpm run build",
+		"prepublishOnly": "yarn run build",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build -o storybook-static",
-		"i18n:download-json": "../../scripts/download-translation-files.js"
+		"i18n:download-json": "./scripts/download-translation-files.js"
 	},
 	"keywords": [
 		"agenttic",
@@ -45,7 +55,7 @@
 		"ai",
 		"agent"
 	],
-	"author": "Automattic",
+	"author": "Automattic Inc.",
 	"license": "MIT",
 	"engines": {
 		"node": ">=20.0.0"
@@ -103,8 +113,7 @@
 		"react-dom": "^18.0.0 || ^19.0.0"
 	},
 	"publishConfig": {
-		"access": "public",
-		"branch": "trunk"
+		"access": "public"
 	},
 	"overrides": {
 		"esbuild": "0.24.0"

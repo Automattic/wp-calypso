@@ -33,7 +33,7 @@ export interface UseClientToolsWithAbilitiesConfig {
  * @param root0.getClientTools - Function to get tools
  * @param root0.executeTool    - Function to execute tools
  * @param root0.getAbilities   - Function to get abilities
- * @return ToolProvider instance or undefined
+ * @returns ToolProvider instance or undefined
  */
 function useToolProviderFromConfig( {
 	getClientTools,
@@ -114,7 +114,7 @@ function useToolProviderFromConfig( {
  *
  * @param getClientTools - Function that returns available tools as an array of Tool objects
  * @param executeTool    - Function that executes a tool with the arguments returned by the agent
- * @return ToolProvider instance or undefined if no getClientTools callback provided
+ * @returns ToolProvider instance or undefined if no getClientTools callback provided
  *
  * @example
  * ```typescript
@@ -144,7 +144,7 @@ export function useClientTools(
  * that executes them using the WordPress Abilities API.
  *
  * @param getAbilities - Function to fetch WordPress Abilities from @wordpress/abilities
- * @return ToolProvider instance or undefined if no abilities callback provided
+ * @returns ToolProvider instance or undefined if no abilities callback provided
  *
  * @example
  * ```typescript
@@ -170,7 +170,7 @@ export function useClientAbilities( getAbilities: GetAbilitiesCallback ): ToolPr
  * and WordPress Abilities.
  *
  * @param config - Configuration object with tools and abilities
- * @return ToolProvider instance or undefined if no tools/abilities provided
+ * @returns ToolProvider instance or undefined if no tools/abilities provided
  *
  * @example
  * ```typescript

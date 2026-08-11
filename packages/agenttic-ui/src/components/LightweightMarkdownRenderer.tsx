@@ -10,7 +10,7 @@ function getSafeHref( href: string ): string | undefined {
 
 function renderInlineMarkdown( text: string ): React.ReactNode[] {
 	const nodes: React.ReactNode[] = [];
-	const pattern = /(\[[^\]]+\]\([^\)]+\)|`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_)/g;
+	const pattern = /(\[[^\]]+\]\([^)]+\)|`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_)/g;
 	let lastIndex = 0;
 	let match: RegExpExecArray | null;
 
@@ -21,7 +21,7 @@ function renderInlineMarkdown( text: string ): React.ReactNode[] {
 
 		const token = match[ 0 ];
 		const key = `${ match.index }-${ token }`;
-		const link = token.match( /^\[([^\]]+)\]\(([^\)]+)\)$/ );
+		const link = token.match( /^\[([^\]]+)\]\(([^)]+)\)$/ );
 		if ( link ) {
 			const href = getSafeHref( link[ 2 ] );
 			nodes.push(

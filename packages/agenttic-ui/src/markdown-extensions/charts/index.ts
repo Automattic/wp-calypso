@@ -16,7 +16,7 @@ type ChartConfig = ChartExtensionConfig[ 'config' ];
 /**
  * Create a chart block component that handles code blocks with language="chart"
  * @param config - Optional configuration for the chart extension
- * @return A react-markdown code component that renders charts
+ * @returns A react-markdown code component that renders charts
  */
 export function createChartBlock( config?: ChartConfig ) {
 	return function ChartCodeBlock( props: CodeProps ) {

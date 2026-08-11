@@ -54,6 +54,9 @@ checkstyle.xml
 /client/server/devdocs/proptypes-index.json
 /client/languages/languages-meta.json
 
+# Downloaded from GlotPress by agenttic-ui's i18n:download-json
+/packages/agenttic-ui/languages/wpcom-agenttic-*.jed.json
+
 *.rdb
 *.db
 

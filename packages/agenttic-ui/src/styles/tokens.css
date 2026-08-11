@@ -3,7 +3,7 @@
   --base-font-size: 1rem;
 
   /* === COLORS === */
-  --color-white: #FFFFFF;
+  --color-white: #fff;
   --color-background: #FCFCFC;
   --color-foreground: #1F1F1F;
   --color-popover: #FCFCFC;
@@ -13,7 +13,7 @@
   --color-muted: #E9E9E9;
   --color-muted-foreground: #757575;
   --color-input-border: #E3E3E3;
-  --color-input-border-focused: #DDDDDD;
+  --color-input-border-focused: #ddd;
   --color-ring: var(--color-primary);
   --color-success-background: #F1F7F1;
   --color-success: var(--color-foreground);
@@ -76,7 +76,7 @@
 /* Dark mode */
 .agenttic.dark {
   --color-background: #1F1F1F;
-  --color-foreground: #FFFFFF;
+  --color-foreground: #fff;
   --color-popover: #1F1F1F;
   --color-popover-muted: #2F2F2F;
   --color-muted: #464646;

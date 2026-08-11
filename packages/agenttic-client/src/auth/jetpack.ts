@@ -67,7 +67,7 @@ function isSimpleSite(): boolean {
  * Request a JWT token from Jetpack for API authentication
  * @param errorHandler   - Function to handle and format error messages
  * @param useCachedToken - Whether to use cached token if available and valid
- * @return Token data with JWT token and blog ID, or null on failure
+ * @returns Token data with JWT token and blog ID, or null on failure
  */
 export async function requestJetpackToken(
 	errorHandler: JetpackErrorHandler,
@@ -175,7 +175,7 @@ export async function requestJetpackToken(
  * ```
  *
  * @param errorHandler - Function to handle and format error messages
- * @return Authentication provider function that returns headers with JWT token
+ * @returns Authentication provider function that returns headers with JWT token
  */
 export const createJetpackAuthProvider = ( errorHandler: JetpackErrorHandler ): AuthProvider => {
 	return async (): Promise< Record< string, string > > => {

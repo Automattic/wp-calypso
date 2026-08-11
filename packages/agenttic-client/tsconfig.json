@@ -16,6 +16,11 @@
 		"verbatimModuleSyntax": false,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
+		"composite": true,
+		"emitDeclarationOnly": true,
+		// Without this, tsc implicitly loads every @types/* hoisted into the
+		// monorepo root, several of which this package cannot resolve.
+		"types": [],
 		"outDir": "dist",
 		"rootDir": "src",
 		"declaration": true,

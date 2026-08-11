@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { act } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi, type MockedFunction } from 'vitest';
 import { type UseAgentChatReturn, useAgentChat } from '../useAgentChat';
 import { getAgentManager } from '../agentManager';
