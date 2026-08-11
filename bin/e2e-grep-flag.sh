@@ -38,7 +38,7 @@ compute_flag() {
 	fi
 
 	# Documentation and package unit-test files cannot affect Playwright.
-	relevant_changed="$(grep -vE '^(test/e2e/|packages/calypso-e2e/).*\.md$|^packages/calypso-e2e/jest\.config\.js$|^packages/calypso-e2e/src/test/' <<<"$e2e_changed" || true)"
+	relevant_changed="$(grep -vE '^(test/e2e/|packages/calypso-e2e/)(.*\.md$|docs/)|^packages/calypso-e2e/jest\.config\.js$|^packages/calypso-e2e/src/test/' <<<"$e2e_changed" || true)"
 	if [[ -z "$relevant_changed" ]]; then
 		[[ -n "$group" ]] && printf -- '--grep=%s' "$group"
 		return 0
@@ -111,6 +111,7 @@ self_test() {
 
 	# Playwright-irrelevant E2E changes.
 	check "E2E docs keep group" "--grep=@calypso-pr" $'test/e2e/README.md\npackages/calypso-e2e/docs/setup.md'
+	check "docs image keeps group" "--grep=@calypso-pr" "test/e2e/docs/files/PWT-extension.webp"
 	check "package Jest config keeps group" "--grep=@calypso-pr" "packages/calypso-e2e/jest.config.js"
 	check "package unit tests keep group" "--grep=@calypso-pr" "packages/calypso-e2e/src/test/foo.test.ts"
 	check "ignored files + PW union path" "$PW_GREP" $'test/e2e/README.md\npackages/calypso-e2e/src/test/foo.test.ts\ntest/e2e/specs/tools/import__sites-squarespace.spec.ts'
