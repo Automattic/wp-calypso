@@ -1,8 +1,9 @@
 import './style.scss';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isDefaultLocale } from '@automattic/i18n-utils';
 import { times } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
@@ -35,6 +36,7 @@ import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
@@ -93,6 +95,31 @@ const useStreamRenderAnalytics = ( pages, streamKey ) => {
 			}
 		}
 	}, [ pages, streamKey, streamType, dispatch ] );
+};
+
+/**
+ * Report stream errors to Tracks and show a notice to the user.
+ */
+const useStreamErrorReporting = ( error, streamKey ) => {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
+	React.useEffect( () => {
+		if ( ! error ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_reader_stream_error', {
+			stream_key: streamKey,
+			path: window.location.pathname,
+		} );
+
+		if ( error.message ) {
+			dispatch(
+				errorNotice( translate( 'Stream error: %s', { args: error.message } ), { duration: 3000 } )
+			);
+		}
+	}, [ error, streamKey, dispatch, translate ] );
 };
 
 class ReaderStream extends Component {
@@ -718,7 +745,8 @@ class ReaderStream extends Component {
 						key={ this.props.streamKey }
 						ref={ this.setListContext }
 						items={ items }
-						lastPage={ lastPage }
+						// Avoid re-requests if the last page was already reached or if there was an error.
+						lastPage={ lastPage || !! this.props.error }
 						fetchingNextPage={ isRequesting }
 						guessedItemHeight={ GUESSED_POST_HEIGHT }
 						fetchNextPage={ this.fetchNextPage }
@@ -799,12 +827,15 @@ class ReaderStream extends Component {
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 
-		if ( this.props.error ) {
+		// Only take over the panel when there is nothing to preserve. A failed
+		// `fetchNextPage` still leaves every successfully loaded page in
+		// `items`, and replacing them with an empty state throws away what the
+		// user was reading.
+		if ( this.props.error && ! items.length ) {
 			body = (
 				<StreamError
 					onTryAgain={ this.tryAgain }
 					streamKey={ streamKey }
-					error={ this.props.error }
 					context={ this.state.selectedTab }
 				/>
 			);
@@ -864,6 +895,7 @@ const withStreamPosts = ( WrappedComponent ) =>
 
 		useStreamRenderAnalytics( streamPostsQuery.pages, props.streamKey );
 		useStreamRenderAnalytics( recsStreamPostsQuery.pages, props.recsStreamKey );
+		useStreamErrorReporting( streamPostsQuery.error, props.streamKey );
 
 		const items = React.useMemo( () => {
 			const withRecommendations =
