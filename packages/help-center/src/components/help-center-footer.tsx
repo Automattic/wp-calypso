@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { Button, CardFooter } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -8,6 +7,7 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSiteConnectionHealth } from '../data/use-site-connection-health';
 import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useGetHistoryChats, useStillNeedHelpURL } from '../hooks';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
 import { getChatLinkFromConversation } from './utils';
 
@@ -30,6 +30,7 @@ export const HelpCenterContactButton = () => {
 		[]
 	);
 	const { recentConversations } = useGetHistoryChats();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 
 	const showContactHumanButton = isOdieRoute && isEligibleForChat && isSiteUnreachable;
 	const isResolvingHumanRoute =

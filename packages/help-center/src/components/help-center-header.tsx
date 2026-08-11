@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useGetHistoryChats } from '@automattic/help-center/src/hooks/use-get-history-chats';
 import { useCurrentSupportInteraction } from '@automattic/odie-client/src/data/use-current-support-interaction';
 import {
@@ -27,6 +26,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
 import { ZendeskStagingBadge } from './help-center-zendesk-staging-badge';
@@ -56,6 +56,7 @@ const EllipsisMenu = () => {
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
 	const { currentUser } = useHelpCenterContext();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 	const isLoggedIn = !! currentUser?.ID;
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
