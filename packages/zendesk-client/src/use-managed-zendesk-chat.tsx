@@ -204,6 +204,7 @@ function sendMessage(
 }
 
 type ManagedZendeskChatOptions = {
+	blogId?: number;
 	conversationTags?: string[];
 	conversationTicketFields?: ZendeskTicketFields;
 	/** Index into `SMOOCH_INTEGRATION_ID_CUSTOM` selecting a dedicated Smooch integration (e.g. `woo`). */
@@ -221,6 +222,7 @@ type ManagedZendeskChatOptions = {
  * - sendMessage: A function to send a message to the conversation.
  */
 export const useManagedZendeskChat = ( {
+	blogId,
 	conversationTags = EMPTY_ARRAY,
 	conversationTicketFields = EMPTY_TICKET_FIELDS,
 	smoochIntegrationKey,
@@ -240,6 +242,8 @@ export const useManagedZendeskChat = ( {
 	const [ pendingImages, setPendingImages ] = useState< ZendeskImagePreview[] >( [] );
 	const refetchTimeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 	const messageQueueRef = useRef< QueuedMessage[] >( [] );
+	const blogIdRef = useRef( blogId );
+	blogIdRef.current = blogId;
 	const connectionStatusRef = useRef( connectionStatus );
 	connectionStatusRef.current = connectionStatus;
 	const hadDisconnectRef = useRef( false );
@@ -282,11 +286,16 @@ export const useManagedZendeskChat = ( {
 
 	const disconnectedListener = useCallback( () => {
 		hadDisconnectRef.current = true;
+		connectionStatusRef.current = 'disconnected';
 		setConnectionStatus( 'disconnected' );
-		recordTracksEvent( 'calypso_smooch_messenger_disconnected' );
+		recordTracksEvent(
+			'calypso_smooch_messenger_disconnected',
+			blogIdRef.current ? { blog_id: blogIdRef.current } : undefined
+		);
 	}, [ setConnectionStatus ] );
 
 	const reconnectingListener = useCallback( () => {
+		connectionStatusRef.current = 'reconnecting';
 		setConnectionStatus( 'reconnecting' );
 		recordTracksEvent( 'calypso_smooch_messenger_reconnecting' );
 	}, [ setConnectionStatus ] );
@@ -307,11 +316,15 @@ export const useManagedZendeskChat = ( {
 	const connectedListener = useCallback( () => {
 		// We only want to revert the connection status to connected if it was disconnected before.
 		// We don't want a "connected" status on page load, it's only useful as a sign of a recovered connection.
-		if ( connectionStatus ) {
+		if ( connectionStatusRef.current ) {
+			connectionStatusRef.current = 'connected';
 			setConnectionStatus( 'connected' );
-			recordTracksEvent( 'calypso_smooch_messenger_connected' );
+			recordTracksEvent(
+				'calypso_smooch_messenger_connected',
+				blogIdRef.current ? { blog_id: blogIdRef.current } : undefined
+			);
 		}
-	}, [ setConnectionStatus, connectionStatus ] );
+	}, [ setConnectionStatus ] );
 
 	const navigate = useNavigate();
 

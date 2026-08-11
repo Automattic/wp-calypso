@@ -1,8 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Smooch from 'smooch';
 import { useManagedZendeskChat } from '../src/use-managed-zendesk-chat';
@@ -98,12 +99,25 @@ const smooch = Smooch as unknown as {
 	createConversation: jest.Mock;
 	getConversationById: jest.Mock;
 	loadConversation: jest.Mock;
+	on: jest.Mock;
+	off: jest.Mock;
 };
+
+const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
+
+function getSmoochListener( eventName: string ) {
+	const listener = smooch.on.mock.calls.find(
+		( [ registeredEvent ] ) => registeredEvent === eventName
+	)?.[ 1 ];
+	expect( listener ).toBeDefined();
+	return listener as () => void;
+}
 
 function renderUseManagedZendeskChat( {
 	conversationId,
 	conversationTags = [],
 	conversationTicketFields,
+	blogId,
 	startedFromAiChatId,
 	startedFromChatSessionId,
 	startedFromMessageId,
@@ -114,6 +128,7 @@ function renderUseManagedZendeskChat( {
 		string | number,
 		string | number | boolean | null | undefined
 	>;
+	blogId?: number;
 	startedFromAiChatId?: number;
 	startedFromChatSessionId?: string;
 	startedFromMessageId?: string;
@@ -136,8 +151,14 @@ function renderUseManagedZendeskChat( {
 	};
 
 	return renderHook(
-		() => useManagedZendeskChat( { conversationTags, conversationTicketFields } ),
+		( { currentBlogId }: { currentBlogId?: number } ) =>
+			useManagedZendeskChat( {
+				conversationTags,
+				conversationTicketFields,
+				blogId: currentBlogId,
+			} ),
 		{
+			initialProps: { currentBlogId: blogId },
 			wrapper: ( { children } ) => (
 				<QueryClientProvider client={ queryClient }>
 					<MemoryRouter initialEntries={ [ initialEntry ] }>{ children }</MemoryRouter>
@@ -236,5 +257,66 @@ describe( 'useManagedZendeskChat', () => {
 		);
 
 		expect( smooch.createConversation ).not.toHaveBeenCalled();
+	} );
+
+	it( 'adds the support site ID to connection lifecycle events', async () => {
+		const { result } = renderUseManagedZendeskChat( {
+			conversationId: 'conversation-1',
+			blogId: 123,
+		} );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		const disconnectedListener = getSmoochListener( 'disconnected' );
+		const connectedListener = getSmoochListener( 'connected' );
+
+		await act( async () => {
+			disconnectedListener();
+			connectedListener();
+			await Promise.resolve();
+		} );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_disconnected', {
+			blog_id: 123,
+		} );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_connected', {
+			blog_id: 123,
+		} );
+	} );
+
+	it( 'records lifecycle events without site properties when no support site is provided', async () => {
+		const { result } = renderUseManagedZendeskChat( { conversationId: 'conversation-1' } );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		const disconnectedListener = getSmoochListener( 'disconnected' );
+
+		act( () => disconnectedListener() );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_smooch_messenger_disconnected',
+			undefined
+		);
+	} );
+
+	it( 'uses the current support site without re-registering listeners', async () => {
+		const { result, rerender } = renderUseManagedZendeskChat( {
+			conversationId: 'conversation-1',
+			blogId: 123,
+		} );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		const disconnectedListener = getSmoochListener( 'disconnected' );
+		const connectedListener = getSmoochListener( 'connected' );
+		const registrationCount = smooch.on.mock.calls.length;
+		const removalCount = smooch.off.mock.calls.length;
+
+		rerender( { currentBlogId: 456 } );
+
+		expect( getSmoochListener( 'disconnected' ) ).toBe( disconnectedListener );
+		expect( getSmoochListener( 'connected' ) ).toBe( connectedListener );
+		expect( smooch.on ).toHaveBeenCalledTimes( registrationCount );
+		expect( smooch.off ).toHaveBeenCalledTimes( removalCount );
+
+		act( () => disconnectedListener() );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_disconnected', {
+			blog_id: 456,
+		} );
 	} );
 } );
