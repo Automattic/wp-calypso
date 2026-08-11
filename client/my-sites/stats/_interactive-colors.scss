@@ -42,6 +42,41 @@
 		--color-accent: var(--wp-admin-theme-color);
 	}
 
+	// The endpoint pills of the selected range fill from --color-accent and carry white text, which
+	// the decorative accent renders at 2.29:1. The band between them mixes 40% of
+	// --color-accent-light and follows so the two read as one selection.
+	.date-range__picker {
+		--color-accent: var(--wp-admin-theme-color);
+		--color-accent-light: var(--wp-admin-theme-color-darker-10);
+	}
+
+	// A day inside the band has no hover circle of its own: the band sets the day background to
+	// transparent at a higher specificity than the hover it would come from. Giving it the solid
+	// colour puts the circle back and carries the white numeral at 10.2:1, where the band's own
+	// tint reaches 2.23:1. The colour is restated with it so the pair cannot drift apart.
+	.date-range__picker .DayPicker-Day--range:not(.DayPicker-Day--outside) .date-picker__day {
+		&:hover,
+		&:focus {
+			background-color: var(--wp-admin-theme-color);
+			color: var(--color-text-inverted);
+		}
+	}
+
+	// The shortcut list beside the calendar tints its hover and selected rows from the 0 and 5
+	// steps of the scale, which the admin theme colour has no equivalent of, so both are mixed.
+	.date-range-picker-shortcuts__shortcut {
+		--color-accent-0: color-mix(in srgb, var(--wp-admin-theme-color) 6%, transparent);
+		--color-accent-5: color-mix(in srgb, var(--wp-admin-theme-color) 12%, transparent);
+	}
+
+	// The date inputs draw their focus border from --color-primary and the ring around it from the
+	// 10 and 20 steps. The admin theme colour has no such steps, so the ring is mixed from it.
+	.date-range__date-input .form-text-input {
+		--color-primary: var(--wp-admin-theme-color);
+		--color-primary-10: color-mix(in srgb, var(--wp-admin-theme-color) 20%, transparent);
+		--color-primary-20: color-mix(in srgb, var(--wp-admin-theme-color) 30%, transparent);
+	}
+
 	// The `primary` variant of SegmentedControl colours its focus, hover and adjacent-item border
 	// from --color-primary rather than --color-accent, in packages/components. Stats restates the
 	// resting selected state in --color-accent and so reaches it, but not those three, which stay
