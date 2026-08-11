@@ -59,7 +59,10 @@ test.describe(
 			pageImportLetsFindYourSite,
 			sitePublic,
 		} ) => {
-			const squarespaceSiteURL = 'https://example.squarespace.com/';
+			// example.squarespace.com stopped responding (connections hang, so the
+			// analyze-url endpoint returns a 500). Squarespace's own homepage is a
+			// Squarespace-platform site the analyzer detects reliably.
+			const squarespaceSiteURL = 'https://www.squarespace.com/';
 
 			await test.step( 'When I visit the "Let\'s find your site" page as coming from the wp-admin Tools > Import page', async function () {
 				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug );
