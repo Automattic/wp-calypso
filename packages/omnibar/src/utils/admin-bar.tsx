@@ -52,6 +52,7 @@ export function buildOmnibarNodesFromAdminBarNodes(
 			}
 			case 'new-content': {
 				omnibarNode.icon = <span className="dashicons-before dashicons-plus" />;
+				omnibarNode.className = 'omnibar__new-content';
 				siteActionNodes.push( omnibarNode );
 				break;
 			}
@@ -71,6 +72,7 @@ export function buildOmnibarNodesFromAdminBarNodes(
 				omnibarNode.title = undefined;
 				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
 				omnibarNode.icon = <span className="dashicons-before dashicons-update" />;
+				omnibarNode.className = 'omnibar__updates';
 				omnibarNode.meta = {
 					subtitle: doc.querySelector( '.ab-label' )?.textContent?.trim(),
 				};
