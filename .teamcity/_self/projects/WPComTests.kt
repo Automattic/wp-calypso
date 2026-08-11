@@ -353,9 +353,9 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 			param("env.TEST_ON_ATOMIC", "true")
 			param("env.ATOMIC_VARIATION", "mixed")
-			// Which variation "mixed" resolves to. The counter rises by one per build, so
-			// consecutive builds walk the variations.
-			param("env.ATOMIC_VARIATION_INDEX", "%build.counter%")
+			// What "mixed" resolves against. Keyed on the commit so a re-run of a failed build
+			// repeats the variation that failed.
+			param("env.ATOMIC_VARIATION_KEY", "%build.vcs.number%")
 			param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 		}
 
@@ -656,9 +656,9 @@ private object JetpackAtomicSmokeE2ETests : BuildType({
 		param("env.TEST_ON_ATOMIC", "true")
 		param("env.PW_WORKERS", "14")
 		param("env.ATOMIC_VARIATION", "mixed")
-		// Which variation "mixed" resolves to. The counter rises by one per build, so
-		// consecutive builds walk the variations.
-		param("env.ATOMIC_VARIATION_INDEX", "%build.counter%")
+		// What "mixed" resolves against. Keyed on the commit so a re-run of a failed build
+		// repeats the variation that failed.
+		param("env.ATOMIC_VARIATION_KEY", "%build.vcs.number%")
 		param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 	}
 })

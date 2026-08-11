@@ -58,9 +58,9 @@ describe( 'EnvVariables Tests', function () {
 		} );
 	} );
 
-	describe( 'Test: a mixed Atomic run picks its variation from the run counter', function () {
+	describe( 'Test: a mixed Atomic run picks its variation from the run key', function () {
 		const ambientVariation = process.env.ATOMIC_VARIATION;
-		const ambientIndex = process.env.ATOMIC_VARIATION_INDEX;
+		const ambientKey = process.env.ATOMIC_VARIATION_KEY;
 		const VARIATION_COUNT = ATOMIC_VARIATIONS.length;
 
 		beforeEach( function () {
@@ -69,7 +69,7 @@ describe( 'EnvVariables Tests', function () {
 
 		afterAll( function () {
 			restore( 'ATOMIC_VARIATION', ambientVariation );
-			restore( 'ATOMIC_VARIATION_INDEX', ambientIndex );
+			restore( 'ATOMIC_VARIATION_KEY', ambientKey );
 		} );
 
 		/**
@@ -84,16 +84,23 @@ describe( 'EnvVariables Tests', function () {
 		}
 
 		/**
-		 * Resolves the variation the given run counter gets.
+		 * Resolves the variation the given commit SHA gets.
 		 */
-		function variationFor( runIndex: number ) {
-			process.env.ATOMIC_VARIATION_INDEX = String( runIndex );
+		function variationFor( sha: string ) {
+			process.env.ATOMIC_VARIATION_KEY = sha;
 			return envVariables.ATOMIC_VARIATION;
 		}
 
-		test( 'consecutive runs walk every variation', function () {
-			const variations = Array.from( { length: VARIATION_COUNT }, ( _value, index ) =>
-				variationFor( 100 + index )
+		/**
+		 * Builds a commit SHA out of a counter.
+		 */
+		function sha( index: number ) {
+			return index.toString( 16 ).padStart( 40, '0' );
+		}
+
+		test( 'consecutive commits cover every variation', function () {
+			const variations = Array.from( { length: 30 }, ( _value, index ) =>
+				variationFor( sha( index ) )
 			);
 
 			expect( new Set( variations ).size ).toBe( VARIATION_COUNT );
@@ -101,27 +108,18 @@ describe( 'EnvVariables Tests', function () {
 		} );
 
 		// Every read within a run has to agree: a spec picks its account and builds its suite
-		// title when Playwright collects it, and resolves its skip guards in the worker.
-		test( 'the same run counter always resolves to the same variation', function () {
-			expect( variationFor( 12 ) ).toBe( variationFor( 12 ) );
-			expect( variationFor( 12 + VARIATION_COUNT ) ).toBe( variationFor( 12 ) );
+		// title when Playwright collects it, and resolves its skip guards in the worker. The same
+		// holds across builds, so a re-run retests the variation that failed.
+		test( 'the same commit always resolves to the same variation', function () {
+			expect( variationFor( sha( 12 ) ) ).toBe( variationFor( sha( 12 ) ) );
 		} );
 
-		test( 'a run with no counter still resolves to a variation', function () {
-			delete process.env.ATOMIC_VARIATION_INDEX;
+		// Silently running `default` would leave the other variations untested for as long as the
+		// key is missing, so a mixed run without one has to stop.
+		test( 'a run with no key stops the run', function () {
+			delete process.env.ATOMIC_VARIATION_KEY;
 
-			expect( envVariables.ATOMIC_VARIATION ).toBe( 'default' );
+			expect( () => envVariables.ATOMIC_VARIATION ).toThrow( 'ATOMIC_VARIATION_KEY' );
 		} );
-
-		// A counter that is not a whole number leaves no variation to run against, so it has to
-		// stop the run rather than resolve to undefined.
-		test.each( [ 'today', 'Infinity', '1e999' ] )(
-			'the counter %p is rejected',
-			function ( value ) {
-				process.env.ATOMIC_VARIATION_INDEX = value;
-
-				expect( () => envVariables.ATOMIC_VARIATION ).toThrow( 'ATOMIC_VARIATION_INDEX' );
-			}
-		);
 	} );
 } );

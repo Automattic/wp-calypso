@@ -84,8 +84,8 @@ function readLegs( params, source ) {
 		}
 	}
 
-	// A mixed build resolves to one variation per run, chosen by a build counter no report can
-	// know. Show what each run primes instead of picking one.
+	// A mixed build resolves to one variation per run, chosen by the commit no report can know.
+	// Show what each run primes instead of picking one.
 	if ( params.get( 'env.ATOMIC_VARIATION' ) === 'mixed' ) {
 		for ( const variation of ATOMIC_VARIATIONS ) {
 			legs.push( {

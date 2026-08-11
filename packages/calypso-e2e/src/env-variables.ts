@@ -1,12 +1,13 @@
 /* eslint-disable jsdoc/require-jsdoc */
+import crypto from 'crypto';
 import path from 'path';
 import { getViewports } from './data-helper';
 import { TEST_ACCOUNT_NAMES } from './secrets';
 import { SupportedEnvVariables, JetpackTarget, AtomicVariation } from './types/env-variables.types';
 import { TestAccountName } from '.';
 
-// The concrete variations, in the order a mixed run walks them. `mixed` is not one of them: it
-// is the request to pick one.
+// The concrete variations a mixed run picks from. `mixed` is not one of them: it is the request
+// to pick one.
 export const ATOMIC_VARIATIONS: AtomicVariation[] = [
 	'default',
 	'php-old',
@@ -243,17 +244,19 @@ class EnvVariables implements SupportedEnvVariables {
 // when Playwright collects it and again in the worker that runs it, and the two must agree, or
 // the worker declares a different suite than was collected.
 function getAtomicVariationInMixedRun(): AtomicVariation {
-	const value = process.env.ATOMIC_VARIATION_INDEX;
+	const value = process.env.ATOMIC_VARIATION_KEY;
 	if ( ! value ) {
-		console.warn(
-			`ATOMIC_VARIATION=mixed without ATOMIC_VARIATION_INDEX: running on ${ ATOMIC_VARIATIONS[ 0 ] }. Set the index to pick another variation.`
+		throw new Error(
+			`ATOMIC_VARIATION=mixed requires ATOMIC_VARIATION_KEY: set it to the commit SHA, or set ATOMIC_VARIATION to one of ${ ATOMIC_VARIATIONS.join(
+				' | '
+			) }.`
 		);
-		return ATOMIC_VARIATIONS[ 0 ];
 	}
 
-	const runIndex = castAsNumber( 'ATOMIC_VARIATION_INDEX', value );
+	// Hashed, not counted: a re-run of the same commit has to repeat the variation that failed.
+	const hash = crypto.createHash( 'md5' ).update( value ).digest().readUInt8( 0 );
 
-	return ATOMIC_VARIATIONS[ Math.abs( Math.trunc( runIndex ) ) % ATOMIC_VARIATIONS.length ];
+	return ATOMIC_VARIATIONS[ hash % ATOMIC_VARIATIONS.length ];
 }
 
 function castAsNumber( name: string, value: string ): number {
