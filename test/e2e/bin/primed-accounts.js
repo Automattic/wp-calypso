@@ -62,7 +62,7 @@ function readParams( source ) {
  * something the resolver never reads, such as the viewport, collapses to one entry.
  */
 function readLegs( params, source ) {
-	const legs = [];
+	let legs = [];
 
 	for ( const [ key, value ] of params ) {
 		const match = key.match( /^matrix\.value\.(.+)\.(\d+)$/ );
@@ -73,26 +73,27 @@ function readLegs( params, source ) {
 		}
 
 		const label = params.get( `matrix.label.${ name }.${ match[ 2 ] }` ) ?? value;
-		legs.push( { name, value, label } );
+		legs.push( { label, overrides: { [ name ]: value } } );
+	}
+
+	// A mixed build resolves to one variation per run, chosen by the commit no report can know.
+	// Show what each run primes instead of picking one, on top of whatever else the build fans
+	// out over: leave a leg on `mixed` and the resolver has no variation to answer for.
+	if ( params.get( 'env.ATOMIC_VARIATION' ) === 'mixed' ) {
+		const base = legs.length ? legs : [ { label: '', overrides: {} } ];
+		legs = base.flatMap( ( leg ) =>
+			ATOMIC_VARIATIONS.map( ( variation ) => ( {
+				label: [ leg.label, `mixed: ${ variation }` ].filter( Boolean ).join( ', ' ),
+				overrides: { ...leg.overrides, 'env.ATOMIC_VARIATION': variation },
+			} ) )
+		);
 	}
 
 	// The Jetpack Atomic deployment builds loop the variations inside their steps, so the
 	// parameters alone would report only the first of seven runs.
 	for ( const [ , value ] of source.matchAll( /export ATOMIC_VARIATION='([^']+)'/g ) ) {
-		if ( ! legs.some( ( leg ) => leg.value === value ) ) {
-			legs.push( { name: 'env.ATOMIC_VARIATION', value, label: value } );
-		}
-	}
-
-	// A mixed build resolves to one variation per run, chosen by the commit no report can know.
-	// Show what each run primes instead of picking one.
-	if ( params.get( 'env.ATOMIC_VARIATION' ) === 'mixed' ) {
-		for ( const variation of ATOMIC_VARIATIONS ) {
-			legs.push( {
-				name: 'env.ATOMIC_VARIATION',
-				value: variation,
-				label: `mixed: ${ variation }`,
-			} );
+		if ( ! legs.some( ( leg ) => leg.overrides[ 'env.ATOMIC_VARIATION' ] === value ) ) {
+			legs.push( { label: value, overrides: { 'env.ATOMIC_VARIATION': value } } );
 		}
 	}
 
@@ -158,15 +159,12 @@ for ( const file of files ) {
 		const env = { ...process.env };
 		for ( const name of RELEVANT ) {
 			delete env[ name ];
-			const value = leg && leg.name === `env.${ name }` ? leg.value : merged.get( `env.${ name }` );
+			const value = leg?.overrides[ `env.${ name }` ] ?? merged.get( `env.${ name }` );
 			if ( value !== undefined ) {
 				env[ name ] = value;
 			}
 		}
-		applyExtraEnvVars(
-			env,
-			leg && leg.name === 'EXTRA_ENV_VARS' ? leg.value : merged.get( 'EXTRA_ENV_VARS' )
-		);
+		applyExtraEnvVars( env, leg?.overrides.EXTRA_ENV_VARS ?? merged.get( 'EXTRA_ENV_VARS' ) );
 
 		const original = process.env;
 		process.env = env;
