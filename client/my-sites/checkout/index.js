@@ -16,6 +16,7 @@ import {
 	checkoutJetpackSiteless,
 	checkoutMarketplaceSiteless,
 	checkoutUnifiedSiteless,
+	checkoutWpcomSiteless,
 	checkoutA4ASiteless,
 	checkoutRenewalBySubscriptionId,
 	checkoutThankYou,
@@ -216,6 +217,17 @@ export default function () {
 		setLocaleMiddleware(),
 		noSite,
 		checkoutUnifiedSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	// WordPress.com siteless checkout is logged-in only, so it keeps redirectLoggedOut.
+	page(
+		'/checkout/wpcom/:productSlug',
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutWpcomSiteless,
 		makeLayout,
 		clientRender
 	);
