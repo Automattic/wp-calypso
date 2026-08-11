@@ -22,7 +22,6 @@ Getting set up:
 - [Setup](./setup.md)
 - [Test environment](./test_environment.md)
 - [Environment variables](./environment_variables.md)
-- [Config values](./config_values.md)
 
 Running specs:
 

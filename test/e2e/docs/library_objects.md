@@ -42,7 +42,51 @@ Components represent a sub-portion of the page, and are typically shared across 
 
 The SidebarComponent, as an example, encapsulates element selectors and actions for only the Sidebar, leaving interactions on the main content pane for the respective Page objects.
 
-TODO: include example of component using new framework
+```typescript
+const selectors = {
+	sidebar: '.sidebar',
+	linkWithText: ( text: string ) => `a:has-text("${ text }")`,
+};
+
+/**
+ * Component representing the sidebar on the dashboard of WPCOM.
+ */
+export class SidebarComponent {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
+	/**
+	 * Navigates to the given (sub)item of the sidebar menu.
+	 *
+	 * @param {string} item Plaintext representation of the top level heading.
+	 * @param {string} subitem Plaintext representation of the child level heading.
+	 */
+	async navigate( item: string, subitem?: string ): Promise< void > {
+		await this.page.locator( selectors.sidebar ).waitFor();
+		// ...
+	}
+}
+```
+
+Then in a test spec (using a custom fixture)
+
+```typescript
+test( 'As a user, I can reach the Posts list from the sidebar', async ( {
+	componentSidebar,
+} ) => {
+	await test.step( 'When I select "Posts" in the sidebar', async function () {
+		await componentSidebar.navigate( 'Posts' );
+	} );
+} );
+```
 
 ---
 
