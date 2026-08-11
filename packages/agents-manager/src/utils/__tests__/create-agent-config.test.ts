@@ -51,6 +51,7 @@ describe( 'createAgentConfig', () => {
 
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
 			agentId: 'wp-orchestrator',
 		} );
 		const context = config.contextProvider?.getClientContext();
@@ -69,26 +70,12 @@ describe( 'createAgentConfig', () => {
 
 		const config = await createAgentConfig( {
 			sessionId: '',
+			sessionSiteKey: 'no-site',
 			agentId: 'wp-orchestrator',
 		} );
 		config.onSessionIdChange?.( 'server-session-id' );
 
 		expect( getSessionId( 'wp-orchestrator' ) ).toBe( 'server-session-id' );
-	} );
-
-	it( 'persists announced sessions under the site the config was created for', async () => {
-		setSessionSiteKey( '111' );
-		const config = await createAgentConfig( {
-			sessionId: '',
-			agentId: 'wp-orchestrator',
-		} );
-
-		setSessionSiteKey( '456' );
-		config.onSessionIdChange?.( 'server-session-id' );
-
-		expect( getSessionId() ).toBe( '' );
-		setSessionSiteKey( '111' );
-		expect( getSessionId() ).toBe( 'server-session-id' );
 	} );
 
 	it( 'persists announced sessions under an explicit sessionSiteKey', async () => {
@@ -106,6 +93,7 @@ describe( 'createAgentConfig', () => {
 	it( 'records announced sessions for catch-up detection', async () => {
 		const config = await createAgentConfig( {
 			sessionId: '',
+			sessionSiteKey: 'no-site',
 			agentId: 'wp-orchestrator',
 		} );
 		config.onSessionIdChange?.( 'server-session-id' );
@@ -128,6 +116,7 @@ describe( 'createAgentConfig', () => {
 
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
 			agentId: 'reader-chat',
 		} );
 		const context = config.contextProvider?.getClientContext();
@@ -153,6 +142,7 @@ describe( 'createAgentConfig', () => {
 
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
 			agentId: 'reader-chat',
 		} );
 		const context = config.contextProvider?.getClientContext();
@@ -163,6 +153,7 @@ describe( 'createAgentConfig', () => {
 	it( 'adds site editor constructor arguments from the host environment', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
 			agentId: DOLLY_AGENT_ID,
 			environment: 'site-editor',
 			version: '1.2.3',
@@ -182,6 +173,7 @@ describe( 'createAgentConfig', () => {
 	it( 'adds site editor constructor arguments when the route is site-editor.php', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
 			agentId: DOLLY_AGENT_ID,
 			currentRoute: '/wp-admin/site-editor.php',
 		} );
@@ -199,6 +191,7 @@ describe( 'createAgentConfig', () => {
 	it( 'adds loaded provider IDs to default client context', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
 			agentId: DOLLY_AGENT_ID,
 			providerIds: [ 'jetpack-ai-sidebar', 'woocommerce-ai' ],
 		} );
@@ -216,6 +209,7 @@ describe( 'createAgentConfig', () => {
 
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
 			agentId: DOLLY_AGENT_ID,
 		} );
 		const context = config.contextProvider?.getClientContext();
@@ -234,6 +228,7 @@ describe( 'createAgentConfig', () => {
 
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
 			siteId: 987,
 			agentId: DOLLY_AGENT_ID,
 			environment: 'site-editor',

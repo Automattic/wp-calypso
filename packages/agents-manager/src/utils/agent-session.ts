@@ -22,14 +22,6 @@ export function setSessionSiteKey( siteKey: string ): void {
 	activeSiteKey = siteKey;
 }
 
-/**
- * Get the current site scope, e.g. to capture it in a callback that may fire
- * after the tab has switched sites.
- */
-export function getSessionSiteKey(): string {
-	return activeSiteKey;
-}
-
 function getTabSessionKey( agentId?: string, siteKey: string = activeSiteKey ): string {
 	const agentSuffix = agentId && agentId !== ORCHESTRATOR_AGENT_ID ? `-${ agentId }` : '';
 	return `${ SESSION_STORAGE_KEY }${ agentSuffix }-${ siteKey }`;

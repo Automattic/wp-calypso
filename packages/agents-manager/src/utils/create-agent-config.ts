@@ -7,7 +7,7 @@
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
-import { getSessionSiteKey, saveSessionId } from './agent-session';
+import { saveSessionId } from './agent-session';
 import { setAnnouncedSessionId } from './announced-sessions';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
@@ -18,8 +18,8 @@ import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/
 
 export interface CreateAgentConfigOptions {
 	sessionId: string;
-	/** Site scope for session writes. Defaults to the current module scope. */
-	sessionSiteKey?: string;
+	/** Site scope for session writes, captured at creation for async callbacks. */
+	sessionSiteKey: string;
 	siteId?: number;
 	currentRoute?: string;
 	toolProvider?: ToolProvider;
@@ -244,6 +244,9 @@ export async function createAgentConfig(
 ): Promise< UseAgentChatConfig > {
 	const {
 		sessionId,
+		// The callback below can fire while a response is still streaming, after
+		// the tab has switched sites — it writes under this captured site scope.
+		sessionSiteKey,
 		siteId,
 		currentRoute,
 		toolProvider,
@@ -254,10 +257,6 @@ export async function createAgentConfig(
 		version,
 		onTaskUpdate,
 	} = options;
-
-	// The callback below can fire while a response is still streaming, after
-	// the tab has switched sites — write under the site it was created for.
-	const sessionSiteKey = options.sessionSiteKey ?? getSessionSiteKey();
 
 	const config: UseAgentChatConfig = {
 		agentId,
