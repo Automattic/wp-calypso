@@ -1,5 +1,6 @@
 @import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .site-generation {
 	// Gutenberg editor-chrome colors with no color-studio token equivalent.
@@ -8,31 +9,44 @@
 	--site-generation-color-surface-muted: #e2e4e7;
 	--site-generation-color-notice-surface: #24272b;
 	--site-generation-color-frame-muted: #8f8f8f;
-	--site-generation-sidebar-width: 350px;
 	position: fixed;
 	z-index: 1000000;
 	inset: 0;
 	display: flex;
+	flex-direction: column;
 	box-sizing: border-box;
-	width: 100vw;
+	width: 100%;
 	height: 100vh;
-	min-height: 620px;
+	height: 100dvh;
+	min-height: 0;
 	background: var( --site-generation-color-frame );
 	color: var( --site-generation-color-frame );
 	font-family: $sans;
-	overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
+	overscroll-behavior-y: contain;
+
+	@include break-medium {
+		flex-direction: row;
+		overflow: hidden;
+	}
 }
 
 .site-generation__editor {
 	display: flex;
-	flex: 1;
+	flex: none;
 	flex-direction: column;
+	width: 100%;
 	min-width: 0;
-	margin-block: 16px;
-	margin-inline: 16px 8px;
+	min-height: 0;
 	background: var( --site-generation-color-surface );
-	border-radius: 8px;
-	overflow: hidden;
+	overflow: visible;
+
+	@include break-medium {
+		flex: 1;
+		width: auto;
+		overflow: hidden;
+	}
 }
 
 .site-generation__brand {
@@ -43,9 +57,15 @@
 	justify-content: space-between;
 	box-sizing: border-box;
 	width: 100%;
-	margin: 0 0 24px;
-	padding: 20px 24px 0;
+	margin: 0;
+	padding-block: calc( 20px + env( safe-area-inset-top ) ) 20px;
+	padding-inline: 20px;
 	color: var( --site-generation-color-frame );
+
+	@include break-medium {
+		margin-block-end: 24px;
+		padding: 20px 24px 0;
+	}
 }
 
 .site-generation__brand-logo {
@@ -62,14 +82,20 @@
 }
 .site-generation__canvas {
 	display: flex;
-	flex: 1;
+	flex: none;
 	align-items: center;
 	justify-content: center;
 	box-sizing: border-box;
 	width: 100%;
 	min-height: 0;
-	padding: 32px clamp( 20px, 4vw, 64px );
-	overflow: auto;
+	padding: 24px 20px 28px;
+	overflow: visible;
+
+	@include break-medium {
+		flex: 1;
+		padding: 32px clamp( 20px, 4vw, 64px );
+		overflow: auto;
+	}
 }
 
 .site-generation__waiting {
@@ -77,14 +103,23 @@
 	flex-direction: column;
 	align-items: center;
 	width: min( 720px, 100% );
-	transform: translateY( clamp( -36px, -3vh, -20px ) );
 	text-align: center;
+
+	@include break-medium {
+		transform: translateY( clamp( -36px, -3vh, -20px ) );
+	}
 }
 
 .site-generation__build-visual {
 	position: relative;
-	width: min( 600px, 100% );
-	margin-block-end: 40px;
+	width: clamp( 220px, 68vw, 420px );
+	max-width: 100%;
+	margin-block-end: 24px;
+
+	@include break-medium {
+		width: min( 600px, 100% );
+		margin-block-end: 40px;
+	}
 }
 
 .site-generation__page-preview {
@@ -283,21 +318,42 @@
 
 .site-generation__sidebar {
 	display: flex;
+	flex: none;
 	flex-direction: column;
 	box-sizing: border-box;
-	width: var( --site-generation-sidebar-width );
-	height: 100%;
-	padding-block: 16px 12px;
-	padding-inline: 8px 0;
+	width: 100%;
+	height: auto;
+	min-height: 0;
+	padding-block: 28px calc( 24px + env( safe-area-inset-bottom ) );
+	padding-inline: 20px;
 	color: var( --site-generation-color-surface );
+
+	@include break-medium {
+		width: 310px;
+		height: 100%;
+		padding-block: 32px 12px;
+		padding-inline: 12px;
+	}
+
+	@include break-large {
+		width: 328px;
+		padding-block-start: 48px;
+		padding-inline: 20px 16px;
+	}
 }
 
 .site-generation__sidebar-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	height: 38px;
+	height: 32px;
 	margin-block-end: 20px;
+	padding: 0;
+
+	@include break-medium {
+		height: 38px;
+		padding-inline: 8px;
+	}
 }
 
 .site-generation__assistant-icon {
@@ -306,22 +362,36 @@
 }
 
 .site-generation__conversation {
-	flex: 1;
-	padding: 8px;
-	overflow: auto;
+	flex: none;
+	padding: 0;
+	overflow: visible;
 	font-size: $font-body-small;
 	line-height: 1.5;
+
+	@include break-medium {
+		flex: 1;
+		padding: 8px;
+		overflow: auto;
+	}
 }
 .site-generation__conversation-message {
-	margin: 0 0 28px;
+	margin: 0 0 24px;
 	color: var( --site-generation-color-surface );
+
+	@include break-medium {
+		margin-block-end: 28px;
+	}
 }
 .site-build-progress {
 	box-sizing: border-box;
 	margin-block: 8px 0;
 	margin-inline: 0;
 	padding-block: 8px 0;
-	padding-inline: 8px;
+	padding-inline: 0;
+
+	@include break-medium {
+		padding-inline: 8px;
+	}
 }
 
 .site-build-progress__header {
@@ -347,8 +417,12 @@
 	position: relative;
 	display: flex;
 	align-items: center;
-	gap: 15px;
+	gap: 12px;
 	padding-block-end: 10px;
+
+	@include break-mobile {
+		gap: 15px;
+	}
 
 	&::before {
 		position: absolute;
@@ -497,45 +571,15 @@
 		display: none;
 	}
 }
-@media ( max-width: 900px ) {
-	.site-generation {
-		--site-generation-sidebar-width: 310px;
-	}
-	.site-generation__editor {
-		margin-block: 8px;
-		margin-inline: 8px 4px;
-	}
-	.site-generation__sidebar {
-		padding-block: 8px;
-		padding-inline: 4px 8px;
-	}
-}
-
-@media ( max-width: 680px ) {
-	.site-generation {
-		display: block;
-		overflow: auto;
-	}
-	.site-generation__editor {
-		height: 55vh;
-		min-height: 420px;
-		margin: 8px;
-	}
-	.site-generation__waiting {
-		transform: none;
-	}
-	.site-generation__build-visual {
-		width: clamp( 220px, 68vw, 420px );
-		margin-block-end: 24px;
-	}
-	.site-generation__sidebar {
-		width: 100%;
-		height: 520px;
-		padding: 16px;
-	}
-}
-
+// A short landscape viewport needs the same graceful compression as other
+// full-screen Stepper surfaces. The canvas remains scrollable if translated
+// copy or browser chrome leaves less room than expected.
 @media ( max-height: #{ $break-small } ) and ( orientation: landscape ) {
+	.site-generation__brand {
+		margin-block-end: 0;
+		padding-block-start: calc( 12px + env( safe-area-inset-top ) );
+	}
+
 	.site-generation__canvas {
 		padding-block: 16px;
 	}
@@ -557,5 +601,13 @@
 
 	.site-generation__waiting-description {
 		font-size: $font-body-small;
+	}
+
+	.site-generation__sidebar {
+		padding-block: 16px calc( 8px + env( safe-area-inset-bottom ) );
+	}
+
+	.site-generation__sidebar-header {
+		margin-block-end: 8px;
 	}
 }
