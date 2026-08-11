@@ -320,10 +320,6 @@ ul.module-tabs {
 		z-index: 0;
 	}
 
-	.components-button.is-primary:focus:not(:disabled) {
-		box-shadow: none;
-	}
-
 	.components-button.is-compact.has-icon:not(.has-text) {
 		width: 44px;
 	}

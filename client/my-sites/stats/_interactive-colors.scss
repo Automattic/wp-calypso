@@ -67,9 +67,12 @@
 
 	// The button-group outline is pinned to --color-accent-60, which does not match the selected
 	// button's fill. Follow the fill so the outline and the button it surrounds are one colour.
+	//
+	// Held off while focused: @wordpress/components draws its focus ring on this same property, and
+	// this selector would otherwise outrank it and leave grouped buttons with no focus indicator.
 	.components-button-group .components-button {
-		&,
-		&.is-primary {
+		&:not(:focus),
+		&.is-primary:not(:focus) {
 			box-shadow: inset 0 0 0 1px var(--wp-admin-theme-color);
 		}
 	}
