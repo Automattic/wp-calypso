@@ -44,6 +44,9 @@ export const UsernameOrEmailButton = ( {
 					size={ 20 }
 				/>
 			) : (
+				// 20 to match the other icons' box. The glyph is scaled up in CSS rather than by
+				// raising this number, because the label's negative margin is tuned to a 20px box:
+				// a bigger box shifts the text out of line with the buttons above it.
 				<Icon
 					icon={ envelope }
 					size={ 20 }
