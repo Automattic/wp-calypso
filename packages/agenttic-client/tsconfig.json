@@ -16,13 +16,18 @@
 		"verbatimModuleSyntax": false,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
+		"composite": true,
 		"outDir": "dist",
 		"rootDir": "src",
 		"declaration": true,
 		"declarationMap": true,
+		"emitDeclarationOnly": true,
 		"sourceMap": true,
 		"jsx": "react-jsx",
-		"jsxImportSource": "react"
+		"jsxImportSource": "react",
+		// Calypso's hoisted node_modules exposes every @types/* package to this
+		// project; without this the compiler pulls in unrelated global types.
+		"types": []
 	},
 	"include": [ "src/**/*" ],
 	"exclude": [ "dist", "node_modules", "**/*.test.ts" ]

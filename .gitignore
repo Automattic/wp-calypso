@@ -67,7 +67,11 @@ cover.html
 /apps/*/build/
 /apps/*/types/
 /packages/*/dist/
+/packages/agenttic-demo/dist-demo/
 /build-tools/dist/
+
+# Translation files downloaded from GlotPress at build time
+/packages/agenttic-ui/languages/wpcom-agenttic-*.jed.json
 /apps/*/.cache/
 /packages/*/.cache/
 /desktop/.cache/

@@ -591,19 +591,19 @@ import {
 
 ```bash
 # Build the package
-pnpm build
+yarn workspace @automattic/agenttic-ui run build
 
 # Run in development mode
-pnpm dev
+yarn workspace @automattic/agenttic-ui run dev
 
 # Run tests
-pnpm test
+yarn workspace @automattic/agenttic-ui run test
 
 # Type checking
-pnpm type-check
+yarn workspace @automattic/agenttic-ui run type-check
 
 # Start Storybook
-pnpm storybook
+yarn workspace @automattic/agenttic-ui run storybook
 ```
 
 ## Integration with agenttic-client

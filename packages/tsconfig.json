@@ -8,6 +8,8 @@
 	"references": [
 		{ "path": "./accessible-focus" },
 		{ "path": "./agents-manager" },
+		{ "path": "./agenttic-client" },
+		{ "path": "./agenttic-ui" },
 		{ "path": "./api-core" },
 		{ "path": "./api-queries" },
 		{ "path": "./block-renderer" },

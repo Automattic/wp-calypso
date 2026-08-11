@@ -563,14 +563,14 @@ type ToolProvider = {
 
 ```bash
 # Build the package
-pnpm build
+yarn workspace @automattic/agenttic-client run build
 
 # Run tests
-pnpm test
+yarn workspace @automattic/agenttic-client run test
 
 # Type checking
-pnpm type-check
+yarn workspace @automattic/agenttic-client run type-check
 
 # Lint
-pnpm lint
+yarn workspace @automattic/agenttic-client run lint
 ```
