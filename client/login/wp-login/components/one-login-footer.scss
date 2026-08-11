@@ -49,4 +49,20 @@
 			font-size: inherit;
 		}
 	}
+
+	// Mirrors the signup page's "Have an account? Log in" line, so the switch between the
+	// two screens reads as one control in one place. Font family is left to inherit rather
+	// than copying signup's hardcoded "SF Pro Text": that resolves to the same face on
+	// Apple platforms, and to a better fallback everywhere else.
+	.one-login__footer-signup {
+		margin: 0;
+		font-size: 0.875rem;
+		line-height: 20px;
+		color: var( --studio-gray-60, #50575e );
+
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
 }

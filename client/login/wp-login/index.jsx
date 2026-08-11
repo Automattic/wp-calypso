@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Step } from '@automattic/onboarding';
 import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -171,9 +172,10 @@ export class Login extends Component {
 			return null;
 		}
 
+		// Rendered into the top bar, so it takes the same treatment as the link it replaces
+		// there rather than the footer's, which is a different colour and weight.
 		return (
-			<a
-				className="one-login__footer-link"
+			<Step.LinkButton
 				href="/"
 				onClick={ ( event ) => {
 					event.preventDefault();
@@ -193,7 +195,7 @@ export class Login extends Component {
 				} }
 			>
 				{ this.props.translate( 'Lost your password?' ) }
-			</a>
+			</Step.LinkButton>
 		);
 	}
 
@@ -281,7 +283,7 @@ export class Login extends Component {
 					) : (
 						<OneLoginFooter
 							isLoginView={ isLoginView }
-							lostPasswordLink={ this.getLostPasswordLink() }
+							signupUrl={ signupUrl }
 							loginLink={ this.getLoginLink() }
 							supportLink={ this.getSupportLink() }
 						/>
@@ -325,6 +327,7 @@ export class Login extends Component {
 			isGenericOauth,
 			isGravPoweredClient,
 			isJetpack,
+			isLoginView,
 			action,
 			partnerConfig,
 		} = this.props;
@@ -378,6 +381,10 @@ export class Login extends Component {
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
+						// Only the main login view swaps its top-right link: it is the one that pairs
+						// with signup, and the one whose footer now carries the route to signup.
+						// getLostPasswordLink() is already null under 2FA, so those keep the top bar.
+						lostPasswordLink={ isLoginView ? this.getLostPasswordLink() : undefined }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 					>
