@@ -229,11 +229,14 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			// conversation switch. Re-initializing a continuously showing chat
 			// view would refetch and clobber the running chat — skip, and align
 			// the config on the next navigation (away or arriving back) instead.
+			// A late stream event can announce after its agent was discarded, so
+			// the skip also requires the agent to still exist.
 			if (
 				isSameAgent &&
 				isChatViewShowing &&
 				! isReturningToChatView &&
-				sessionId === getAnnouncedSessionId( agentId, siteKey )
+				sessionId === getAnnouncedSessionId( agentId, siteKey ) &&
+				getAgentManager().hasAgent( agentId )
 			) {
 				return;
 			}

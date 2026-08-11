@@ -182,6 +182,24 @@ describe( 'AgentSetup', () => {
 		);
 	} );
 
+	it( 're-initializes on catch-up when the agent no longer exists', async () => {
+		const { rerender } = render( manager( 111 ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		// A late stream event can announce a session after its agent was
+		// discarded — the announcement must not suppress the re-initialization.
+		saveSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live', undefined, '111' );
+		mockAgentManager.hasAgent.mockReturnValue( false );
+
+		rerender( manager( 111 ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
+		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { sessionId: 'session-live' } )
+		);
+	} );
+
 	it( 'realigns when the chat is closed and reopened without a route change', async () => {
 		mockHasAiChatEntry = true;
 		const { rerender } = render( manager( 111 ) );
