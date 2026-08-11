@@ -19,13 +19,13 @@ import {
 	applyReviewEdit,
 	clearActiveBlockFocus,
 	clearActiveBlockFocusUnlessBlockReferenceClick,
+	countCurrentTextOccurrences,
 	getEditableBlockContent,
 	hasEditableBlockTarget,
 	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
 import {
-	countOccurrences,
 	flattenBlocks,
 	getEditorContentBlocks,
 	type BlockEditorStore,
@@ -260,7 +260,7 @@ function getTextTargetDisabledReason(
 	if ( ! hasEditableBlockTarget( block, editableAttribute, currentText ) ) {
 		return __( 'Needs manual edit — unsupported edit target', __i18n_text_domain__ );
 	}
-	const occurrences = countOccurrences(
+	const occurrences = countCurrentTextOccurrences(
 		getEditableBlockContent( block, editableAttribute, currentText ),
 		currentText
 	);
@@ -1483,7 +1483,7 @@ export default function AiEditorialReview( {
 											const currentTextPresent =
 												!! edit.current_text &&
 												!! targetBlock &&
-												countOccurrences(
+												countCurrentTextOccurrences(
 													getEditableBlockContent(
 														targetBlock,
 														edit.editable_attribute,

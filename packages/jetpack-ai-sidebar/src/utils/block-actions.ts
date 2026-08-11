@@ -446,7 +446,12 @@ function normaliseQuotationMarks( text: string ): string {
 	return text.replace( /[\u2018\u2019]/g, "'" ).replace( /[\u201c\u201d]/g, '"' );
 }
 
-function countCurrentTextOccurrences( source: string, currentText: string ): number {
+/**
+ * Count the spans of block content currentText could replace. Exported so the
+ * review cards gate the Apply control on the same count the apply itself uses;
+ * a stricter gate disables edits that would have applied cleanly.
+ */
+export function countCurrentTextOccurrences( source: string, currentText: string ): number {
 	return countOccurrences(
 		normaliseQuotationMarks( source ),
 		normaliseQuotationMarks( currentText )
