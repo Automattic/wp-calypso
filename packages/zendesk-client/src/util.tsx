@@ -155,6 +155,26 @@ export const isZendeskSurveyMessage = ( message: Pick< ZendeskMessage, 'source' 
 	message?.source?.type === 'zd:surveys';
 
 /**
+ * Extracts a CSAT Survey Response's id from its action `uri` (the last path segment). Returns
+ * null if `uri` isn't a valid URL -- callers should treat that the same as "no survey response".
+ */
+export const getZendeskSurveyResponseId = ( uri: string ): string | null => {
+	try {
+		return new URL( uri ).pathname.split( '/' ).filter( Boolean ).pop() ?? null;
+	} catch {
+		return null;
+	}
+};
+
+/**
+ * The conversation metadata key a CSAT Survey Response's rating is persisted under (see
+ * useSurveyResponseRating in @automattic/odie-client). Shared so any other reader of a
+ * conversation's metadata -- e.g. a chat history list -- derives the same key.
+ */
+export const getSurveyResponseRatingMetadataKey = ( surveyResponseId: string ) =>
+	`zd_survey_rating_${ surveyResponseId }`;
+
+/**
  * Converts a ZendeskMessage to the agenttic-ui Message interface format
  * Used for components that require the standardized Message interface
  * @param message - The Zendesk message to convert

@@ -1,6 +1,11 @@
 /* eslint-disable no-restricted-imports */
 import { Gravatar, TimeSince, WordPressLogo } from '@automattic/components';
 import { WapuuAvatar } from '@automattic/odie-client/src/assets';
+import {
+	getSurveyResponseRatingMetadataKey,
+	getZendeskSurveyResponseId,
+	isZendeskSurveyMessage,
+} from '@automattic/zendesk-client';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -30,13 +35,38 @@ export const HelpCenterSupportChatMessage = ( {
 	const { currentUser } = useHelpCenterContext();
 	const recordTracksEvent = useHelpCenterTracksEvent();
 	const { received, role, text, altText } = message;
-	const messageText =
-		'metadata' in message && message.metadata?.type === 'csat'
-			? __(
-					'Please help us improve. How would you rate your support experience?',
-					__i18n_text_domain__
-			  )
-			: text;
+
+	// The rated outcome of a `zd:surveys` CSAT Survey Response, if this conversation has one and
+	// it's already been rated -- persisted on the conversation's own metadata by
+	// useSurveyResponseRating (in @automattic/odie-client), keyed by survey_response_id.
+	const conversationMessages: ( OdieMessage | ZendeskMessage )[] = conversation.messages;
+	const surveyMessage = conversationMessages.find(
+		( conversationMessage ): conversationMessage is ZendeskMessage =>
+			'source' in conversationMessage &&
+			isZendeskSurveyMessage( conversationMessage as ZendeskMessage )
+	);
+	const surveyResponseId = surveyMessage?.actions?.[ 0 ]?.uri
+		? getZendeskSurveyResponseId( surveyMessage.actions[ 0 ].uri )
+		: null;
+	const surveyRating = surveyResponseId
+		? ( conversation as ZendeskConversation ).metadata?.[
+				getSurveyResponseRatingMetadataKey( surveyResponseId )
+		  ]
+		: undefined;
+
+	let messageText: string | undefined;
+	if ( surveyRating === 'good' ) {
+		messageText = __( 'Good 👍', __i18n_text_domain__ );
+	} else if ( surveyRating === 'bad' ) {
+		messageText = __( 'Needs improvement 👎', __i18n_text_domain__ );
+	} else if ( 'metadata' in message && message.metadata?.type === 'csat' ) {
+		messageText = __(
+			'Please help us improve. How would you rate your support experience?',
+			__i18n_text_domain__
+		);
+	} else {
+		messageText = text;
+	}
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
 	const { supportInteractions } = useGetHistoryChats();

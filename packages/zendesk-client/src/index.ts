@@ -20,6 +20,8 @@ export {
 	getBadRatingReasons,
 	isCsatTriggerMessage,
 	isZendeskSurveyMessage,
+	getZendeskSurveyResponseId,
+	getSurveyResponseRatingMetadataKey,
 } from './util';
 
 export {

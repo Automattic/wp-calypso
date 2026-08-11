@@ -1,3 +1,4 @@
+import { getSurveyResponseRatingMetadataKey } from '@automattic/zendesk-client';
 import { useCallback, useEffect, useState } from 'react';
 import Smooch from 'smooch';
 
@@ -22,7 +23,7 @@ export const useSurveyResponseRating = (
 		undefined
 	);
 	const [ isDismissed, setIsDismissed ] = useState( false );
-	const ratingKey = `zd_survey_rating_${ surveyResponseId }`;
+	const ratingKey = getSurveyResponseRatingMetadataKey( surveyResponseId );
 	const dismissedKey = `zd_survey_dismissed_${ surveyResponseId }`;
 
 	useEffect( () => {
