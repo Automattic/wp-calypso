@@ -323,6 +323,11 @@ export function useProductInstall( {
 	// also wait out the install or transfer the upload triggers, which is the very wait to bound.
 	const isUploadStillSending = isPluginUploadFlow && pluginUploadProgress < 100;
 
+	// The Redux status poller bounds the same wait from the other side, so honour its verdict
+	// alongside this screen's own deadline rather than treating it as an unexplained failure.
+	const hasTransferTimedOut =
+		atomicFlow && automatedTransferStatus === transferStates.CLIENT_TIMEOUT;
+
 	const { hasTimedOut, hasTransferFailed, diagnostics } = useInstallDeadline( {
 		siteId,
 		enabled: !! siteId && ! preflightError && ! isUploadStillSending,
@@ -334,7 +339,7 @@ export function useProductInstall( {
 	if ( ! error && hasTransferFailed ) {
 		error = { type: 'transfer-failed' };
 	}
-	if ( ! error && hasTimedOut ) {
+	if ( ! error && ( hasTimedOut || hasTransferTimedOut ) ) {
 		error = { type: 'timeout' };
 	}
 
@@ -376,7 +381,7 @@ export function useProductInstall( {
 		let outcome = null;
 		if ( hasTransferFailed ) {
 			outcome = 'transfer_failed';
-		} else if ( hasTimedOut ) {
+		} else if ( hasTimedOut || hasTransferTimedOut ) {
 			outcome = 'timeout';
 		}
 		if ( ! outcome || reportedOutcomeRef.current === outcome ) {
@@ -397,6 +402,7 @@ export function useProductInstall( {
 		} );
 	}, [
 		hasTimedOut,
+		hasTransferTimedOut,
 		hasTransferFailed,
 		themeSlug,
 		installStrategy,
