@@ -12,6 +12,7 @@ import {
 } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post/cache';
+import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from '../../build-query-params';
 import { extractPageHandle, normalizeStreamPage } from '../../normalization';
@@ -181,9 +182,18 @@ export const useInfiniteStream = ( {
 	const items: StreamItem[] = useMemo( () => {
 		const pages = query.data?.pages ?? [];
 		const collected: StreamItem[] = [];
+		// Stream endpoints can return the same post in more than one page, so we need to deduplicate them here.
+		const uniqueItem = new Set< string >();
 		for ( const page of pages ) {
 			const { streamItems } = normalizeStreamPage( page as ReadStreamResponse, streamType );
 			for ( const item of streamItems ) {
+				const id = keyToString( item );
+				if ( id !== null ) {
+					if ( uniqueItem.has( id ) ) {
+						continue;
+					}
+					uniqueItem.add( id );
+				}
 				collected.push( item );
 			}
 		}
