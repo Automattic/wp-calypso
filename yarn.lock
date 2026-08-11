@@ -2343,6 +2343,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/support-articles@workspace:packages/support-articles"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft

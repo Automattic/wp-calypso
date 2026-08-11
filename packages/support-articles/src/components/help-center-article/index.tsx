@@ -1,4 +1,4 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useEffect, createInterpolateElement, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useSearchParams } from 'react-router-dom';
@@ -17,11 +17,14 @@ export const HelpCenterArticle = ( {
 	currentSiteDomain,
 	isEligibleForChat,
 	forceEmailSupport,
+	siteId,
 }: {
 	sectionName: string;
 	currentSiteDomain?: string;
 	isEligibleForChat: boolean;
 	forceEmailSupport: boolean;
+	/** Site the support session is about, attached as `blog_id` on Tracks events. */
+	siteId?: number | string;
 } ) => {
 	const [ searchParams ] = useSearchParams();
 	const postUrl = searchParams.get( 'link' ) || '';
@@ -56,20 +59,24 @@ export const HelpCenterArticle = ( {
 
 	useEffect( () => {
 		if ( post ) {
-			const tracksData = {
-				force_site_id: true,
-				location: 'help-center',
-				section: sectionName,
-				result_url: post.URL,
-				post_id: post.ID,
-				blog_id: post.site_ID,
-				search_query: query,
-				article_source: post.source,
-			};
+			const tracksData = withSiteContext(
+				{
+					force_site_id: true,
+					location: 'help-center',
+					section: sectionName,
+					result_url: post.URL,
+					post_id: post.ID,
+					// Article blog, not the site the user needs help with.
+					article_blog_id: post.site_ID,
+					search_query: query,
+					article_source: post.source,
+				},
+				[ [ 'support_site', siteId ] ]
+			);
 
 			recordTracksEvent( 'calypso_helpcenter_article_viewed', tracksData );
 		}
-	}, [ post, query, sectionName ] );
+	}, [ post, query, sectionName, siteId ] );
 
 	// Trigger event for each section scrolled into view
 	useEffect( () => {
@@ -78,14 +85,18 @@ export const HelpCenterArticle = ( {
 				( entries ) => {
 					entries.forEach( ( entry ) => {
 						if ( entry.isIntersecting ) {
-							const tracksData = {
-								force_site_id: true,
-								location: 'help-center',
-								post_url: post?.URL,
-								post_id: post?.ID,
-								blog_id: post?.site_ID,
-								section_id: entry?.target?.id,
-							};
+							const tracksData = withSiteContext(
+								{
+									force_site_id: true,
+									location: 'help-center',
+									post_url: post?.URL,
+									post_id: post?.ID,
+									// Article blog, not the site the user needs help with.
+									article_blog_id: post?.site_ID,
+									section_id: entry?.target?.id,
+								},
+								[ [ 'support_site', siteId ] ]
+							);
 							recordTracksEvent( 'calypso_helpcenter_article_section_view', tracksData );
 							observer.unobserve( entry.target ); // Unobserve after first intersection
 						}
@@ -101,7 +112,7 @@ export const HelpCenterArticle = ( {
 				observer.disconnect();
 			};
 		}
-	}, [ elementRef, post?.ID, post?.URL, post?.site_ID ] );
+	}, [ elementRef, post?.ID, post?.URL, post?.site_ID, siteId ] );
 
 	return (
 		<div className="help-center-article" ref={ elementRef }>

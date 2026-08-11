@@ -68,6 +68,24 @@ describe( 'withSiteContext', () => {
 		} );
 	} );
 
+	test( 'drops force_site_id when no site resolved, so super props cannot backfill one', () => {
+		expect( withSiteContext( { force_site_id: true, source: 'article' }, [] ) ).toEqual( {
+			source: 'article',
+			site_context_source: 'none',
+		} );
+	} );
+
+	test( 'keeps force_site_id when a site resolved', () => {
+		expect(
+			withSiteContext( { force_site_id: true, source: 'article' }, [ [ 'chat_site', 123 ] ] )
+		).toEqual( {
+			force_site_id: true,
+			source: 'article',
+			blog_id: 123,
+			site_context_source: 'chat_site',
+		} );
+	} );
+
 	test( 'does not mutate the caller properties', () => {
 		const properties = { source: 'chat', blog_id: 999 };
 		withSiteContext( properties, [ [ 'chat_site', 123 ] ] );
