@@ -14,9 +14,9 @@ export const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 let activeSiteKey = 'no-site';
 
 /**
- * Set the site scope for the storage key. Called by the host before any
- * session read, so callers without React context (e.g. tracks) resolve
- * the same key.
+ * Set the site scope for the storage key. Published by the hosts on commit
+ * for callers without React context (e.g. tracks); React callers pass their
+ * scope explicitly instead.
  */
 export function setSessionSiteKey( siteKey: string ): void {
 	activeSiteKey = siteKey;
@@ -36,11 +36,12 @@ function getTabSessionKey( agentId?: string, siteKey: string = activeSiteKey ): 
 }
 
 /**
- * Get this tab's session ID, or an empty string if none exists.
+ * Get this tab's session ID, or an empty string if none exists. Pass `siteKey`
+ * to read a specific site scope instead of the current one.
  */
-export function getSessionId( agentId?: string ): string {
+export function getSessionId( agentId?: string, siteKey?: string ): string {
 	try {
-		return sessionStorage.getItem( getTabSessionKey( agentId ) ) || '';
+		return sessionStorage.getItem( getTabSessionKey( agentId, siteKey ) ) || '';
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[agent-session] Error loading session ID:', error );
@@ -64,9 +65,9 @@ export function saveSessionId( sessionId: string, agentId?: string, siteKey?: st
 /**
  * Clear the stored session to start a new chat.
  */
-export function clearSessionId( agentId?: string ): void {
+export function clearSessionId( agentId?: string, siteKey?: string ): void {
 	try {
-		sessionStorage.removeItem( getTabSessionKey( agentId ) );
+		sessionStorage.removeItem( getTabSessionKey( agentId, siteKey ) );
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[agent-session] Error clearing session ID:', error );
@@ -78,15 +79,15 @@ export function clearSessionId( agentId?: string ): void {
  * Used by reader chat, where blog frontends reload on every navigation and
  * the orchestrator honors client-generated session IDs.
  */
-export function getOrCreateSessionId( agentId?: string ): string {
-	const existing = getSessionId( agentId );
+export function getOrCreateSessionId( agentId?: string, siteKey?: string ): string {
+	const existing = getSessionId( agentId, siteKey );
 	if ( existing ) {
 		return existing;
 	}
 
-	saveSessionId( generateUUID(), agentId );
+	saveSessionId( generateUUID(), agentId, siteKey );
 
 	// Read back so unavailable storage yields a stable '' instead of a fresh
 	// UUID per call, which would re-initialize the agent on every render.
-	return getSessionId( agentId );
+	return getSessionId( agentId, siteKey );
 }

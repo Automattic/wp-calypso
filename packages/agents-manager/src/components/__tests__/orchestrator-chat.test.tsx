@@ -7,6 +7,8 @@ import type { Suggestion } from '@automattic/agenttic-ui';
 import type { ComponentProps } from 'react';
 
 const mockUseAgentChat = jest.fn();
+const mockUpdateSessionId = jest.fn();
+let mockManagerHasAgent = true;
 const mockUseRegenerateAction = jest.fn();
 const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
@@ -147,7 +149,8 @@ jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
 		getAgentManager: () => ( {
-			updateSessionId: jest.fn(),
+			updateSessionId: mockUpdateSessionId,
+			hasAgent: () => mockManagerHasAgent,
 		} ),
 		useAgentChat: () => mockUseAgentChat(),
 	} ),
@@ -344,6 +347,22 @@ describe( 'OrchestratorChat', () => {
 		mockSelectedBlockType = undefined;
 		mockBlockEditorStoreThrows = false;
 		sessionStorage.clear();
+		mockManagerHasAgent = true;
+	} );
+
+	it( 'ignores a conversation result for a discarded agent', () => {
+		mockManagerHasAgent = false;
+		render( chat() );
+
+		const { onSuccess } = mockUseConversation.mock.calls.at( -1 )![ 0 ] as {
+			onSuccess: ( messages: unknown[], sessionId: string ) => void;
+		};
+		act( () => {
+			onSuccess( [], 'canonical-session-id' );
+		} );
+
+		expect( mockUpdateSessionId ).not.toHaveBeenCalled();
+		expect( getSessionId( 'wp-orchestrator' ) ).toBe( '' );
 	} );
 
 	it( 'saves the server’s canonical session ID as the tab session', () => {

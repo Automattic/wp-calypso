@@ -544,7 +544,7 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'View history' ) );
 		fireEvent.click( screen.getByText( 'Select conversation' ) );
 
-		expect( getSessionId() ).toBe( 'conversation-session-id' );
+		expect( getSessionId( undefined, 'site-1' ) ).toBe( 'conversation-session-id' );
 		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/chat' );
 	} );
 

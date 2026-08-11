@@ -18,6 +18,8 @@ import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/
 
 export interface CreateAgentConfigOptions {
 	sessionId: string;
+	/** Site scope for session writes. Defaults to the current module scope. */
+	sessionSiteKey?: string;
 	siteId?: number;
 	currentRoute?: string;
 	toolProvider?: ToolProvider;
@@ -255,7 +257,7 @@ export async function createAgentConfig(
 
 	// The callback below can fire while a response is still streaming, after
 	// the tab has switched sites — write under the site it was created for.
-	const sessionSiteKey = getSessionSiteKey();
+	const sessionSiteKey = options.sessionSiteKey ?? getSessionSiteKey();
 
 	const config: UseAgentChatConfig = {
 		agentId,

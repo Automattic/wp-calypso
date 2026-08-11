@@ -80,10 +80,11 @@ describe( 'saveSessionId / getSessionId', () => {
 		expect( getOrCreateSessionId( 'reader-chat' ) ).toBe( '' );
 	} );
 
-	it( 'writes under an explicit site scope when one is passed', () => {
+	it( 'reads and writes under an explicit site scope when one is passed', () => {
 		saveSessionId( 'session-abc', undefined, '111' );
 
 		expect( getSessionId() ).toBe( '' );
+		expect( getSessionId( undefined, '111' ) ).toBe( 'session-abc' );
 
 		setSessionSiteKey( '111' );
 		expect( getSessionId() ).toBe( 'session-abc' );

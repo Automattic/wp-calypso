@@ -395,10 +395,17 @@ export default function OrchestratorChat( {
 				return;
 			}
 
+			// The agent may have been discarded (e.g. a site switch) while this
+			// fetch was in flight — its result belongs to the previous scope.
+			const agentManager = getAgentManager();
+			if ( ! agentManager.hasAgent( agentConfig!.agentId ) ) {
+				return;
+			}
+
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
 			// Make sure future messages go to the right session
-			getAgentManager().updateSessionId( agentConfig!.agentId, serverSessionId );
+			agentManager.updateSessionId( agentConfig!.agentId, serverSessionId );
 
 			// Persist the server's canonical ID as this tab's session through the
 			// config's callback: it writes under the site the config was created

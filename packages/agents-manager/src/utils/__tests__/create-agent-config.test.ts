@@ -91,6 +91,18 @@ describe( 'createAgentConfig', () => {
 		expect( getSessionId() ).toBe( 'server-session-id' );
 	} );
 
+	it( 'persists announced sessions under an explicit sessionSiteKey', async () => {
+		const config = await createAgentConfig( {
+			sessionId: '',
+			sessionSiteKey: '111',
+			agentId: 'wp-orchestrator',
+		} );
+		config.onSessionIdChange?.( 'server-session-id' );
+
+		expect( getSessionId( undefined, '111' ) ).toBe( 'server-session-id' );
+		expect( getSessionId() ).toBe( '' );
+	} );
+
 	it( 'records announced sessions for catch-up detection', async () => {
 		const config = await createAgentConfig( {
 			sessionId: '',

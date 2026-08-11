@@ -80,7 +80,7 @@ export default function AgentDock( {
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { agentConfig } = useAgentsManagerContext();
+	const { agentConfig, siteKey } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -259,7 +259,7 @@ export default function AgentDock( {
 			const sessionId = conversation.session_id || '';
 
 			if ( sessionId ) {
-				saveSessionId( sessionId, agentConfig?.agentId );
+				saveSessionId( sessionId, agentConfig?.agentId, siteKey );
 			}
 
 			handleAbort();

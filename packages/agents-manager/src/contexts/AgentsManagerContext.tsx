@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useState } from '@wordpress/element';
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useLayoutEffect,
+	useState,
+} from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
 import { getSessionId, setSessionSiteKey } from '../utils/agent-session';
 import { setResolvedAgentId } from '../utils/resolved-agent-id';
@@ -92,8 +98,8 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	const navigate = useNavigate();
 
 	const getTabSessionId = useCallback( () => {
-		return getSessionId( agentConfig?.agentId );
-	}, [ agentConfig?.agentId ] );
+		return getSessionId( agentConfig?.agentId, value.siteKey );
+	}, [ agentConfig?.agentId, value.siteKey ] );
 
 	// `AgentSetup` resolves this tab's stored session, so navigating is all a
 	// resume needs.
@@ -101,12 +107,13 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 		navigate( '/chat' );
 	}, [ navigate ] );
 
-	// Publish the resolved agent id and session site scope for non-React callers.
-	// Written in render, not a `useEffect`: children read these during their own
-	// render, and event handlers can fire before effects run. The writes are
-	// idempotent, so re-running in render is safe.
-	setResolvedAgentId( agentConfig?.agentId );
-	setSessionSiteKey( value.siteKey );
+	// Publish the resolved agent id and session site scope for non-React callers
+	// (e.g. tracks), which fire from event handlers after commit. React callers
+	// receive both explicitly, so no render-phase module writes are needed.
+	useLayoutEffect( () => {
+		setResolvedAgentId( agentConfig?.agentId );
+		setSessionSiteKey( value.siteKey );
+	}, [ agentConfig?.agentId, value.siteKey ] );
 
 	return (
 		<AgentsManagerContext.Provider

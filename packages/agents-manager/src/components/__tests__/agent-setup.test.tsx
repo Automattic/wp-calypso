@@ -5,10 +5,12 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 const mockAgentManager = {
-	hasAgent: jest.fn( () => false ),
+	hasAgent: jest.fn( () => true ),
 	abortCurrentRequest: jest.fn(),
 	removeAgent: jest.fn(),
 };
+let mockIsOpen = true;
+let mockHasAiChatEntry = false;
 const mockCreateAgentConfig = jest.fn(
 	async ( { sessionId, agentId }: { sessionId: string; agentId: string } ) => ( {
 		agentId,
@@ -23,7 +25,13 @@ jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: () => mockA
 jest.mock( '@automattic/data-stores', () => ( {} ), { virtual: true } );
 
 // Simulate `store` ready so the component renders
-jest.mock( '@wordpress/data', () => ( { useSelect: () => ( { hasLoaded: true } ) } ) );
+jest.mock( '@wordpress/data', () => ( {
+	useSelect: () => ( { hasLoaded: true, isOpen: mockIsOpen } ),
+} ) );
+jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
+	__esModule: true,
+	default: () => mockHasAiChatEntry,
+} ) );
 jest.mock( '@tanstack/react-query', () => ( {
 	QueryClient: jest.fn(),
 	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
@@ -87,7 +95,9 @@ function manager( siteId: number ) {
 describe( 'AgentSetup', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockAgentManager.hasAgent.mockReturnValue( false );
+		mockAgentManager.hasAgent.mockReturnValue( true );
+		mockIsOpen = true;
+		mockHasAiChatEntry = false;
 		sessionStorage.clear();
 		clearAnnouncedSessionId();
 		setSessionSiteKey( 'no-site' );
@@ -144,13 +154,16 @@ describe( 'AgentSetup', () => {
 		expect( screen.getByTestId( 'published-session' ).textContent ).toBe( 'session-live' );
 	} );
 
-	it( 'clears the session and announcement on a new chat', async () => {
+	it( 'clears the session, announcement, and recreates the agent on a new chat', async () => {
 		render( manager( 111 ) );
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
 
 		saveSessionId( 'session-live' );
 		setAnnouncedSessionId( 'session-live' );
-		mockAgentManager.hasAgent.mockReturnValue( true );
+		mockAgentManager.removeAgent.mockImplementation( () => {
+			mockAgentManager.hasAgent.mockReturnValue( false );
+			return true;
+		} );
 
 		fireEvent.click( screen.getByText( 'go-new-chat' ) );
 
@@ -158,6 +171,36 @@ describe( 'AgentSetup', () => {
 		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();
 		expect( getSessionId() ).toBe( '' );
 		expect( getAnnouncedSessionId() ).toBeUndefined();
+
+		// A fresh config must publish even though it matches the cleared session,
+		// or `useAgentChat` never recreates the removed agent.
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
+		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { sessionId: '' } )
+		);
+	} );
+
+	it( 'realigns when the chat is closed and reopened without a route change', async () => {
+		mockHasAiChatEntry = true;
+		const { rerender } = render( manager( 111 ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		saveSessionId( 'session-live' );
+		setAnnouncedSessionId( 'session-live' );
+
+		mockIsOpen = false;
+		rerender( manager( 111 ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
+		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { sessionId: 'session-live' } )
+		);
+
+		mockIsOpen = true;
+		rerender( manager( 111 ) );
+
+		await act( async () => {} );
+		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'realigns on returning to the chat view when the alignment was superseded', async () => {

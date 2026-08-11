@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AgentsManagerContextProvider, useAgentsManagerContext } from '../contexts';
 import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
+import useHasAiChatEntryButton from '../hooks/use-has-ai-chat-entry-button';
 import { useOpenChatUrlParam } from '../hooks/use-open-chat-url-param';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId, getOrCreateSessionId, getSessionId } from '../utils/agent-session';
@@ -106,14 +107,14 @@ export default function AgentsManager( {
  * other agents get theirs from the server via `onSessionIdChange`.
  * Empty means a new chat.
  */
-function resolveTabSessionId( isNewChat: boolean, agentId?: string ): string {
+function resolveTabSessionId( isNewChat: boolean, siteKey: string, agentId?: string ): string {
 	if ( isNewChat ) {
 		return '';
 	}
 	if ( isReaderChatAgent( agentId ) ) {
-		return getOrCreateSessionId( agentId );
+		return getOrCreateSessionId( agentId, siteKey );
 	}
-	return getSessionId( agentId );
+	return getSessionId( agentId, siteKey );
 }
 
 // Separate component that uses hooks within `PersistentRouter` context
@@ -131,15 +132,24 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	// Detect new chat requests via `state.isNewChat` on the `/chat` route.
 	const isNewChat = pathname.startsWith( '/chat' ) && !! state?.isNewChat;
 
+	// Mirrors `AgentDock`'s visibility: with an AI entry button the chat
+	// unmounts on close, so closing must count as leaving the chat view.
+	const { isOpen } = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
+	const hasAiChatEntry = useHasAiChatEntryButton();
+	const isChatVisible = !! isOpen || ! hasAiChatEntry;
+
 	// Where the conversation view (and its `useConversation` fetch) is mounted;
 	// '/' only exists transiently before the catch-all redirects to the chat.
-	const isChatViewShowing = pathname.startsWith( '/chat' ) || pathname === '/';
+	const isChatViewShowing = ( pathname.startsWith( '/chat' ) || pathname === '/' ) && isChatVisible;
 
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
 
-	const sessionId = resolveTabSessionId( isNewChat, agentId );
+	const sessionId = resolveTabSessionId( isNewChat, siteKey, agentId );
 
 	useEffect( () => {
 		// Wait for the agent config to stabilize before initializing.
@@ -189,7 +199,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 					return;
 				}
 
-				clearSessionId( agentId );
+				clearSessionId( agentId, siteKey );
 				// Clear route state to prevent repeated new chat initialization
 				navigate( '/chat', { replace: true } );
 				return;
@@ -199,7 +209,14 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			const isSameAgent = currentConfig?.agentId === agentId;
 
 			// Already aligned with this tab's session — nothing to initialize.
-			if ( isSameAgent && currentConfig?.sessionId === sessionId ) {
+			// The agent must actually exist: after a new-chat teardown the config
+			// can match while the agent is gone, and only a fresh config makes
+			// `useAgentChat` recreate it.
+			if (
+				isSameAgent &&
+				currentConfig?.sessionId === sessionId &&
+				getAgentManager().hasAgent( agentId )
+			) {
 				return;
 			}
 
@@ -231,6 +248,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 
 			const config = await createAgentConfig( {
 				sessionId,
+				sessionSiteKey: siteKey,
 				siteId,
 				currentRoute,
 				toolProvider: providers.toolProvider,
