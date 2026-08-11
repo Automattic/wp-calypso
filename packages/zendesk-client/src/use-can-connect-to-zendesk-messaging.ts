@@ -19,7 +19,8 @@ type ReportingState = {
 /**
  * Keyed on the cached query rather than the client, so the state dies with the query it
  * describes. An evicted query comes back as a fresh instance whose update counters restart
- * at zero, and reusing the old state would read that as a repeat and stay silent.
+ * at zero, and reusing the old state would read that as a repeat and stay silent. A reset
+ * keeps the instance and rewinds the counters, which the resolution key handles instead.
  *
  * Module-scoped because every observer of one query has to share it; a ref would be
  * per-component, which is the duplication this guards against.
@@ -66,7 +67,10 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 	} );
 
 	useEffect( () => {
-		const cachedQuery = queryClient.getQueryCache().find( { queryKey: QUERY_KEY } );
+		// `exact`, because the default is a prefix match: a query keyed
+		// `[ 'canConnectToZendesk', siteId ]` would match too, and which one comes back
+		// depends on cache iteration order.
+		const cachedQuery = queryClient.getQueryCache().find( { queryKey: QUERY_KEY, exact: true } );
 
 		if ( ! cachedQuery ) {
 			return;
@@ -88,11 +92,18 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 			return;
 		}
 
-		// The update counters are per-query and monotonic. Timestamps are neither: two
-		// resolutions inside one millisecond collapse, and `errorUpdatedAt` is recomputed per
-		// observer whenever `select` throws.
-		const { dataUpdateCount, errorUpdateCount } = cachedQuery.state;
-		const resolutionKey = `${ query.status }:${ dataUpdateCount }:${ errorUpdateCount }`;
+		// All five come off the cache entry, not the observer snapshot, so they describe one
+		// resolution. The counters separate two resolutions landing in the same millisecond;
+		// the timestamps separate resolutions either side of a `resetQueries`, which rewinds
+		// the counters on the same Query object.
+		const { dataUpdateCount, errorUpdateCount, dataUpdatedAt, errorUpdatedAt } = cachedQuery.state;
+		const resolutionKey = [
+			query.status,
+			dataUpdateCount,
+			errorUpdateCount,
+			dataUpdatedAt,
+			errorUpdatedAt,
+		].join( ':' );
 
 		if ( reportingState.lastResolutionKey === resolutionKey ) {
 			return;
@@ -118,6 +129,10 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 			failure_count: failureCount,
 			reporting_version: REPORTING_VERSION,
 		} );
+		// The two timestamps look redundant next to `fetchStatus`, which already cycles on
+		// every network refetch. They are what re-runs this for a resolution that leaves
+		// `fetchStatus` untouched: a manual `setQueryData`, or the refetch that follows a
+		// `resetQueries` and lands on the counters it started from.
 	}, [
 		query.data,
 		query.dataUpdatedAt,

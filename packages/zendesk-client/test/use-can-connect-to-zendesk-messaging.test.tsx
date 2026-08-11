@@ -234,6 +234,38 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 		expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 2 );
 	} );
 
+	it( 'reports both of two identical consecutive errors', async () => {
+		fetchMock.mockRejectedValue( new Error( 'Zendesk unavailable' ) );
+		const queryClient = makeQueryClient();
+		const { result } = renderHook( () => useCanConnectToZendeskMessaging(), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		await waitFor( () => expect( result.current.isError ).toBe( true ), { timeout: 5000 } );
+
+		await act( async () => {
+			await result.current.refetch();
+		} );
+
+		await waitFor( () => expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 2 ) );
+		expect( getEventCalls( ERROR_EVENT ) ).toHaveLength( 2 );
+	}, 15000 );
+
+	it( 'reports again after the query is reset', async () => {
+		const queryClient = makeQueryClient();
+		const wrapper = makeWrapper( queryClient );
+		const { result } = renderHook( () => useCanConnectToZendeskMessaging(), { wrapper } );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+		await act( async () => {
+			await queryClient.resetQueries( { queryKey: [ 'canConnectToZendesk' ], exact: true } );
+		} );
+
+		await waitFor( () => expect( fetchMock ).toHaveBeenCalledTimes( 2 ) );
+		await waitFor( () => expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 2 ) );
+	} );
+
 	it( 'reports independently for separate query clients', async () => {
 		const first = renderHook( () => useCanConnectToZendeskMessaging(), {
 			wrapper: makeWrapper( makeQueryClient() ),
