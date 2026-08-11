@@ -27,22 +27,9 @@ const CheckmarkIcon = (
 	</svg>
 );
 
-function BuildVisualization( { state }: { state: SiteGenerationState } ) {
-	const translate = useTranslate();
-	const activeStep = state.steps.find( ( step ) => step.status === 'active' );
-	const statusLabel = activeStep?.label ?? translate( 'Starting site generation' );
-
+function BuildVisualization() {
 	return (
 		<div className="site-generation__build-visual" aria-hidden="true">
-			<div className="site-generation__build-status">
-				<span className="site-generation__activity-grid">
-					{ Array.from( { length: 9 }, ( _, index ) => (
-						<span className="site-generation__activity-dot" key={ index } />
-					) ) }
-				</span>
-				<span>{ statusLabel }</span>
-				<span className="site-generation__live-dot" />
-			</div>
 			<div className="site-generation__page-preview">
 				<div className="site-generation__preview-bar">
 					<WordPressMark />
@@ -76,12 +63,12 @@ function BuildVisualization( { state }: { state: SiteGenerationState } ) {
 	);
 }
 
-function WaitingCanvas( { state }: { state: SiteGenerationState } ) {
+function WaitingCanvas() {
 	const translate = useTranslate();
 
 	return (
 		<div className="site-generation__waiting">
-			<BuildVisualization state={ state } />
+			<BuildVisualization />
 			<div className="site-generation__waiting-copy">
 				<h1 className="site-generation__waiting-title">
 					{ translate( 'We’re building your site' ) }
@@ -220,7 +207,7 @@ export function SiteGenerationView( {
 							onRetry={ onRetry }
 						/>
 					) : (
-						<WaitingCanvas state={ state } />
+						<WaitingCanvas />
 					) }
 				</div>
 			</section>
