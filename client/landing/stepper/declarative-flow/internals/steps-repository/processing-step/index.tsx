@@ -19,6 +19,7 @@ import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-recor
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useInterval } from 'calypso/lib/interval';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
@@ -117,6 +118,25 @@ const ProcessingStep: StepType< {
 		[]
 	);
 
+	// How the wait ended is known only inside the callback that ends it, and that callback submits —
+	// navigating away in the same tick, with no render in between to carry the outcome. Mutating the
+	// object the heartbeat is already holding is what gets it onto the closing event.
+	const waitProperties = useRef< Record< string, unknown > >( {
+		flow,
+		previous_step: props.data?.previousStep ?? null,
+		outcome: null,
+	} ).current;
+	waitProperties.flow = flow;
+	waitProperties.previous_step = props.data?.previousStep ?? null;
+
+	// Only a step with something to wait on is a wait. A flow that reaches here with no pending
+	// action resolves in the same tick, and beating for it would bury the real waits in noise.
+	useWaitHeartbeat( {
+		surface: 'stepper_processing',
+		enabled: typeof action === 'function' && ! hasActionSuccessfullyRun,
+		properties: waitProperties,
+	} );
+
 	const getCurrentMessage = () => {
 		return props.title || progressTitle || loadingMessages[ currentMessageIndex ]?.title;
 	};
@@ -137,9 +157,11 @@ const ProcessingStep: StepType< {
 					// that is frozen from before we called action().
 					// We can now get the most up to date values from hooks inside the flow creating submit(),
 					// including the values that were updated during the action() running.
+					waitProperties.outcome = 'success';
 					setDestinationState( destination );
 					setHasActionSuccessfullyRun( true );
 				} catch ( e: any ) {
+					waitProperties.outcome = 'failure';
 					// eslint-disable-next-line no-console
 					console.error( 'ProcessingStep failed:', e );
 					captureFlowException( e );
