@@ -192,6 +192,48 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 		await waitFor( () => expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 2 ) );
 	} );
 
+	it( 'keeps the retry count on a refetch that recovered', async () => {
+		const queryClient = makeQueryClient();
+		const { result } = renderHook( () => useCanConnectToZendeskMessaging(), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+		fetchMock
+			.mockRejectedValueOnce( new Error( 'Zendesk unavailable' ) )
+			.mockRejectedValueOnce( new Error( 'Zendesk unavailable' ) )
+			.mockResolvedValue( makeResponse( true ) );
+
+		await act( async () => {
+			await result.current.refetch();
+		} );
+
+		await waitFor( () => expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 2 ) );
+		expect( getEventCalls( REQUEST_EVENT )[ 1 ][ 1 ] ).toEqual( {
+			status: 'success',
+			status_text: undefined,
+			failure_count: 2,
+			reporting_version: REPORTING_VERSION,
+		} );
+	} );
+
+	it( 'reports again after the query is evicted from the cache', async () => {
+		const queryClient = makeQueryClient();
+		const wrapper = makeWrapper( queryClient );
+		const first = renderHook( () => useCanConnectToZendeskMessaging(), { wrapper } );
+
+		await waitFor( () => expect( first.result.current.isSuccess ).toBe( true ) );
+		first.unmount();
+		queryClient.removeQueries( { queryKey: [ 'canConnectToZendesk' ] } );
+
+		const second = renderHook( () => useCanConnectToZendeskMessaging(), { wrapper } );
+		await waitFor( () => expect( second.result.current.isSuccess ).toBe( true ) );
+
+		expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+		expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 2 );
+	} );
+
 	it( 'reports independently for separate query clients', async () => {
 		const first = renderHook( () => useCanConnectToZendeskMessaging(), {
 			wrapper: makeWrapper( makeQueryClient() ),

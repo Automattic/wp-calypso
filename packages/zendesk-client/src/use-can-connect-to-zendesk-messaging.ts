@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { hashKey, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from '@wordpress/element';
-import type { QueryClient } from '@tanstack/react-query';
+import type { Query } from '@tanstack/react-query';
 
 const QUERY_KEY = [ 'canConnectToZendesk' ];
 
@@ -17,24 +17,21 @@ type ReportingState = {
 };
 
 /**
- * Module-scoped because every observer of the same query has to share it. A ref would be
+ * Keyed on the cached query rather than the client, so the state dies with the query it
+ * describes. An evicted query comes back as a fresh instance whose update counters restart
+ * at zero, and reusing the old state would read that as a repeat and stay silent.
+ *
+ * Module-scoped because every observer of one query has to share it; a ref would be
  * per-component, which is the duplication this guards against.
  */
-const reportingStates = new WeakMap< QueryClient, Map< string, ReportingState > >();
+const reportingStates = new WeakMap< Query, ReportingState >();
 
-function getReportingState( queryClient: QueryClient, queryKeyHash: string ): ReportingState {
-	let byQueryKey = reportingStates.get( queryClient );
-
-	if ( ! byQueryKey ) {
-		byQueryKey = new Map();
-		reportingStates.set( queryClient, byQueryKey );
-	}
-
-	let state = byQueryKey.get( queryKeyHash );
+function getReportingState( cachedQuery: Query ): ReportingState {
+	let state = reportingStates.get( cachedQuery );
 
 	if ( ! state ) {
 		state = { peakFailureCount: 0 };
-		byQueryKey.set( queryKeyHash, state );
+		reportingStates.set( cachedQuery, state );
 	}
 
 	return state;
@@ -69,25 +66,33 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 	} );
 
 	useEffect( () => {
-		const reportingState = getReportingState( queryClient, hashKey( QUERY_KEY ) );
+		const cachedQuery = queryClient.getQueryCache().find( { queryKey: QUERY_KEY } );
 
-		if ( query.status === 'pending' ) {
+		if ( ! cachedQuery ) {
+			return;
+		}
+
+		const reportingState = getReportingState( cachedQuery );
+
+		if ( query.fetchStatus !== 'idle' ) {
 			// A success resets `failureCount` to 0, so retries that ended in recovery are only
-			// visible while the query is still in flight.
+			// visible while the fetch is still running. A refetch over cached data keeps
+			// `status` at 'success' throughout, which is why this tracks `fetchStatus`.
 			reportingState.peakFailureCount = Math.max(
 				reportingState.peakFailureCount,
 				query.failureCount
 			);
+		}
+
+		if ( query.status === 'pending' ) {
 			return;
 		}
 
 		// The update counters are per-query and monotonic. Timestamps are neither: two
 		// resolutions inside one millisecond collapse, and `errorUpdatedAt` is recomputed per
 		// observer whenever `select` throws.
-		const queryState = queryClient.getQueryState( QUERY_KEY );
-		const resolutionKey = `${ query.status }:${ queryState?.dataUpdateCount ?? 0 }:${
-			queryState?.errorUpdateCount ?? 0
-		}`;
+		const { dataUpdateCount, errorUpdateCount } = cachedQuery.state;
+		const resolutionKey = `${ query.status }:${ dataUpdateCount }:${ errorUpdateCount }`;
 
 		if ( reportingState.lastResolutionKey === resolutionKey ) {
 			return;
@@ -119,6 +124,7 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 		query.error?.message,
 		query.errorUpdatedAt,
 		query.failureCount,
+		query.fetchStatus,
 		query.status,
 		queryClient,
 	] );
