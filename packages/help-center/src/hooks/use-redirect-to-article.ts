@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-imports */
 import { useCallback } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useNavigate } from 'react-router-dom';
