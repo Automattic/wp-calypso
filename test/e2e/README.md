@@ -2,23 +2,7 @@
 
 Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Automattic/wp-calypso) client and WordPress.com.
 
-Tests run on Playwright Test. See the [documentation index](docs/overview.md) for the full list
-of pages.
-
-## Resources
-
-- [Setup](docs/setup.md)
-- [Test Environment](docs/test_environment.md)
-- [Running tests on your machine](docs/tests_local.md)
-- [Running tests on CI](docs/tests_ci.md)
-- [Writing tests](docs/writing_tests.md)
-- [Library objects](docs/library_objects.md)
-- [Style Guide](docs/style_guide.md)
-- [Custom fixtures](docs/custom_fixtures.md)
-- [Patterns, Tricks, and Gotchas](docs/patterns_tricks_gotchas.md)
-- [Debugging](docs/debugging.md)
-- [Troubleshooting](docs/troubleshooting.md)
-- [Environment Variable](docs/environment_variables.md)
+Tests run on Playwright Test. The [documentation index](docs/overview.md) lists every page.
 
 ## Prerequisites
 
@@ -30,85 +14,7 @@ Calypso E2E requires the following:
 
 ## Quick start
 
-1. install `homebrew`.
-
-```bash
-mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
-```
-
-2. install `nvm`.
-
-```bash
-brew install nvm
-```
-
-3. install the required nodeJS version.
-
-```bash
-nvm install <node_version>
-```
-
-4. use the installed nodeJS version.
-
-```bash
-nvm use <node_version>
-```
-
-5. enable `yarn` package manager.
-
-```bash
-corepack enable
-```
-
-6. clone this repository
-
-```bash
-git clone https://github.com/Automattic/wp-calypso.git
-```
-
-7. navigate to the cloned directory.
-
-```bash
-cd wp-calypso
-```
-
-_From this point on, all commands are executed within the `wp-calypso` root directory._
-
-8. install project dependencies.
-
-```bash
-yarn install
-```
-
-9. obtain the secrets decryption key.
-
-```bash
-export E2E_SECRETS_KEY='<Calypso E2E Config decode key from the Automattic secret store>'
-```
-
-10. [decrypt](docs/test_environment.md) the secrets file.
-
-```bash
-yarn workspace wp-e2e-tests decrypt-secrets
-```
-
-11. transpile the packages.
-
-```bash
-yarn workspace wp-e2e-tests build --watch
-```
-
-12. run tests.
-
-```bash
-yarn workspace wp-e2e-tests test:pw -- <test_path>
-```
-
-By default this should run on `http://calypso.localhost:3000`, if you wish to run on another environment such as `https://wpcalypso.wordpress.com` you can set an environment variable:
-
-```bash
-CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests test:pw -- <test_path>
-```
+Follow [Setup](docs/setup.md), then [Running tests on your machine](docs/tests_local.md).
 
 ## Contribute to E2E tests
 
