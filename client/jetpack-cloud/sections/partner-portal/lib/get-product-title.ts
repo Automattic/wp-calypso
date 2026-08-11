@@ -9,7 +9,8 @@ export default function getProductTitle( product: string, removeVariant: boolean
 		return 'AI';
 	}
 
-	if ( product.startsWith( 'Jetpack Stats' ) ) {
+	// The store catalog renamed this product; both names are served until the rename ships (STATS-426).
+	if ( 'Jetpack Stats (Paid)' === product || 'Jetpack Stats (Commercial license)' === product ) {
 		return 'Stats';
 	}
 
