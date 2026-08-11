@@ -10,7 +10,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { copy, globe, wordpress } from '@wordpress/icons';
+import { copy, globe, payment } from '@wordpress/icons';
 import { useState, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
@@ -117,7 +117,7 @@ export default function SiteLaunchModal( props: SiteLaunchModalProps ) {
 								<Text truncate>{ siteDomain }</Text>
 							</HStack>
 							<HStack spacing={ 2 } justify="flex-start" alignment="center">
-								<Icon icon={ wordpress } size={ 20 } />
+								<Icon icon={ payment } size={ 20 } />
 								<Text truncate>{ planName }</Text>
 							</HStack>
 						</VStack>
