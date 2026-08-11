@@ -98,8 +98,12 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 			if ( ! result.site ) {
 				result.site = {
 					id: 'site-name',
-					icon: <span className="omnibar__site-icon" />,
-					children: [],
+					icon: site.icon?.img ? (
+						<img className="omnibar__site-icon" src={ site.icon.img } alt="" />
+					) : (
+						<span className="dashicons-before dashicons-admin-home" />
+					),
+					href: site.URL,
 				};
 			}
 

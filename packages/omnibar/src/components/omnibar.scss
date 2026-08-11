@@ -72,9 +72,14 @@ body:has( .omnibar ) {
 		&:active,
 		&[aria-expanded='true'] {
 			background-color: var( --omnibar-menu-active-background );
-			color: var( --omnibar-text-color );
+			color: var( --omnibar-highlight-color );
 			box-shadow: none;
 			outline: none;
+
+			.dashicons-before,
+			svg {
+				color: var( --omnibar-highlight-color );
+			}
 		}
 
 		&:focus {
