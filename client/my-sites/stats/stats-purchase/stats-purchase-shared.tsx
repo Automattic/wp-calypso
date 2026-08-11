@@ -206,21 +206,4 @@ const StatsSingleItemPagePurchaseFrame = ( {
 	);
 };
 
-const StatsSingleItemCard = ( { children }: { children: React.ReactNode } ) => {
-	return (
-		<div className={ clsx( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
-			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
-				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
-					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--single` }>{ children }</div>
-				</div>
-			</Card>
-		</div>
-	);
-};
-
-export {
-	StatsCommercialPriceDisplay,
-	StatsBenefitsCommercial,
-	StatsSingleItemPagePurchaseFrame,
-	StatsSingleItemCard,
-};
+export { StatsCommercialPriceDisplay, StatsBenefitsCommercial, StatsSingleItemPagePurchaseFrame };

@@ -56,9 +56,6 @@ const PersonalPurchase = ( {
 	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
-	// The opt-out form on the commercial page already collects this same pledge (and only lets the
-	// user through once all four boxes are checked), so don't make them repeat it here.
-	const hasConfirmedNonCommercialUsage = from === 'switch-from-commercial';
 
 	const continueButtonText = translate( 'Contribute now and continue' );
 
@@ -135,7 +132,7 @@ const PersonalPurchase = ( {
 				onSliderChange={ handleSliderChanged }
 			/>
 
-			{ subscriptionValue === 0 && ! hasConfirmedNonCommercialUsage && (
+			{ subscriptionValue === 0 && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist` }>
 					<p>
 						<strong>
@@ -193,8 +190,7 @@ const PersonalPurchase = ( {
 						variant="primary"
 						primary={ isWPCOMSite ? true : undefined }
 						disabled={
-							! hasConfirmedNonCommercialUsage &&
-							( ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked )
+							! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
 						}
 						onClick={ () =>
 							gotoCheckoutPage( {
