@@ -89,10 +89,17 @@ import {
 	PlansPage,
 	UseADomainIOwnPage,
 	SelectItemsComponent,
-	detectThrottle,
-	raiseFlag,
+	THROTTLE_IDS,
+	debugThrottle,
+	recordThrottle,
 } from '@automattic/calypso-e2e';
-import { test as base, expect, type Page } from '@playwright/test';
+import {
+	test as base,
+	expect,
+	type BrowserContext,
+	type Page,
+	type Response,
+} from '@playwright/test';
 import {
 	apiCloseAccount,
 	apiWaitForBearerTokenAcceptance,
@@ -101,6 +108,7 @@ import {
 import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
 import { snoozeAccountRecoveryInterstitial } from './dashboard-helpers';
 import { getAccount } from './get-account';
+import { withDeadline } from './with-deadline';
 
 export type CustomOptions = {
 	/**
@@ -137,58 +145,87 @@ const WPCOM_HOST = /^https?:\/\/([^/]*\.)?wordpress\.com(?::\d+)?\//;
 const THROTTLED_ENDPOINT =
 	/\/(?:sites\/new|users\/new|domains\/suggestions|[^/]+\/is-available)(?:[/?]|$)/;
 
-const pendingWatchers = new Set< Promise< unknown > >();
+// The response event fires on headers, and `response.text()` has no deadline of
+// its own, so without these a stalled body would hang the teardown that waits
+// for it. The flush covers a body read and one tag POST, which is what has to
+// land before a worker exits; a second tag attempt falls to the next detection
+// rather than to this teardown, which is charged to the test's own timeout and
+// must not fail a spec that had already passed.
+const BODY_TIMEOUT = 2 * 1000;
+const FLUSH_TIMEOUT = 5 * 1000;
 
 /**
  * Records a throttle whenever wpcom rate-limits one of the endpoints the suite
  * depends on, including calls the app makes in the background.
  *
+ * Watches the whole context, not one page: a signup popup or a tab a spec opens
+ * reaches the same endpoints, and the context reports for all of them.
+ *
  * The host and path are filtered first so that only a handful of responses are
- * ever read. The status cannot be filtered on: Calypso reaches these endpoints
- * through `http_envelope`, so a throttled call still answers 200 and carries
- * the refusal in its body. The body is never logged — a failed `/users/new` or
- * `/sites/new` carries the credentials of the user being created.
+ * ever read. A 4xx or 5xx is always read — the edge limiter refuses with a 5xx
+ * of its own — and a success only when Calypso asked for the answer to be
+ * enveloped, which is how a refusal comes back as a 200. The body is never
+ * logged: a failed `/users/new` or `/sites/new` carries the credentials of the
+ * user being created.
+ *
+ * Reports a throttle already known when the context is handed over, so a worker
+ * states a ban at the first test that runs after it becomes known rather than
+ * before every call that might run into it, and returns the teardown for these
+ * listeners: a listener raises its flag with no test awaiting it, so without it
+ * a worker can exit between detecting a throttle and tagging the build for it.
  */
-function watchForThrottle( page: Page ): void {
-	page.on( 'response', ( response ) => {
+function watchForThrottle( context: BrowserContext ): () => Promise< void > {
+	const pending = new Set< Promise< unknown > >();
+
+	THROTTLE_IDS.forEach( ( id ) => debugThrottle( id ) );
+
+	const onResponse = ( response: Response ) => {
 		const url = response.url();
 		const status = response.status();
-		if ( status >= 500 || ! WPCOM_HOST.test( url ) || ! THROTTLED_ENDPOINT.test( url ) ) {
+		if (
+			! WPCOM_HOST.test( url ) ||
+			! THROTTLED_ENDPOINT.test( url ) ||
+			( status < 400 && ! /[?&]http_envelope=1/.test( url ) )
+		) {
 			return;
 		}
 
-		const pending = ( async () => {
+		const reading = ( async () => {
 			try {
-				const body = await response.text();
+				const body = await withDeadline( response.text(), BODY_TIMEOUT );
 				// An enveloped success carries no error key, and a domain search
 				// result can hold anything a caller typed — including our own
 				// tokens — so it is never handed to detection.
 				if ( status < 400 && ! /"error"\s*:/.test( body ) ) {
 					return;
 				}
-				const throttle = detectThrottle( { url, status, body } );
-				if ( throttle ) {
-					await raiseFlag( throttle.id, throttle.durationMs );
-				}
+				await recordThrottle( { url, status, body } );
 			} catch {
 				// Detection never fails a test.
 			}
 		} )();
-		pendingWatchers.add( pending );
-		void pending.finally( () => pendingWatchers.delete( pending ) );
-	} );
-}
+		pending.add( reading );
+		void reading.finally( () => pending.delete( reading ) );
+	};
+	context.on( 'response', onResponse );
 
-/**
- * Settles the listeners still reading a response.
- *
- * A listener raises its flag with no test awaiting it, so without this a worker
- * can exit between detecting a throttle and tagging the build for it. Settles
- * rather than rejects, and the tag request is bounded, so waiting here can
- * neither fail a test nor hang one.
- */
-async function flushThrottleWatchers(): Promise< void > {
-	await Promise.allSettled( [ ...pendingWatchers ] );
+	return async () => {
+		// Off first: a response arriving while this drains would start a read
+		// nothing is waiting for, and print its line into the next test.
+		context.off( 'response', onResponse );
+
+		// A listener can be mid-read when the test ends, so settle until the set
+		// is empty rather than settling a snapshot of it. Raced rather than
+		// checked between rounds: this runs inside the test's own timeout, and a
+		// lost flag costs a peer build a warning where an overrun costs this
+		// build a spec that had already passed.
+		const drain = ( async () => {
+			while ( pending.size ) {
+				await Promise.allSettled( [ ...pending ] );
+			}
+		} )();
+		await withDeadline( drain, FLUSH_TIMEOUT ).catch( () => {} );
+	};
 }
 
 export const test = base.extend<
@@ -447,7 +484,7 @@ export const test = base.extend<
 			await useBlackboxTestKeyForCollect( page );
 		}
 
-		watchForThrottle( page );
+		const flushThrottleWatchers = watchForThrottle( page.context() );
 
 		await use( page );
 
@@ -620,7 +657,7 @@ export const test = base.extend<
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
 		await incognitoPage.spawn();
-		watchForThrottle( incognitoPage.getPage() );
+		const flushThrottleWatchers = watchForThrottle( incognitoPage.getPage().context() );
 		await use( incognitoPage );
 		await flushThrottleWatchers();
 		await incognitoPage.close();

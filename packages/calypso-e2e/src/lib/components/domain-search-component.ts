@@ -1,6 +1,5 @@
 import { Locator, Page, Response } from 'playwright';
 import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
-import { debugThrottle } from '../throttle-flags';
 
 type CartResponseDiagnostic = {
 	method: string;
@@ -104,8 +103,6 @@ export class DomainSearchComponent {
 	 * @param {string} keyword Keyword to use in domain search.
 	 */
 	async search( keyword: string ): Promise< void > {
-		debugThrottle( 'domain-suggestions' );
-
 		const container = this.getContainer();
 
 		/**

@@ -1,4 +1,4 @@
-import { describe, expect, test, jest } from '@jest/globals';
+import { afterEach, describe, expect, test, jest } from '@jest/globals';
 import nock from 'nock';
 import * as teamcity from '../lib/teamcity';
 import { resetRaisedThrottles } from '../lib/throttle-flags';
@@ -199,9 +199,21 @@ describe( 'RestAPIClient: createSite', function () {
 		} );
 	} );
 
+	let tagOwnBuild: jest.SpiedFunction< typeof teamcity.tagOwnBuild >;
+	let warn: jest.SpiedFunction< typeof console.warn >;
+
+	// Restores only what the test below spies on: the file-level
+	// `SecretsManager.secrets` spy is what lets every test here run without a
+	// decrypted secrets file, and `restoreAllMocks` would take it with it.
+	afterEach( () => {
+		tagOwnBuild?.mockRestore();
+		warn?.mockRestore();
+		resetRaisedThrottles();
+	} );
+
 	test( 'A throttled response raises a flag and still fails the call', async function () {
-		const tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+		warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 		nock( requestURL.origin ).post( requestURL.pathname ).reply( 403, {
 			error: 'throttled',
 			message: 'Limit reached. You can try again in 10 minutes.',
@@ -215,8 +227,5 @@ describe( 'RestAPIClient: createSite', function () {
 		expect( tagOwnBuild ).toHaveBeenCalledWith( 'throttle-signup' );
 		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'type=signup' ) );
 		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'duration=600000' ) );
-
-		resetRaisedThrottles();
-		jest.restoreAllMocks();
 	} );
 } );

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import FormData from 'form-data';
-import { debugThrottle, detectThrottle, raiseFlag } from './lib/throttle-flags';
+import { debugThrottle, recordThrottle } from './lib/throttle-flags';
 import { SecretsManager } from './secrets';
 import {
 	BearerTokenErrorResponse,
@@ -67,16 +67,6 @@ type RequestParams = Pick< RequestInit, 'method' | 'headers' | 'body' >;
 
 export const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
 const REST_API_BASE_URL = 'https://public-api.wordpress.com';
-
-/**
- * Records a throttle if this response or error signals one. Never throws.
- */
-async function recordThrottle( responseOrError: unknown ): Promise< void > {
-	const throttle = detectThrottle( responseOrError );
-	if ( throttle ) {
-		await raiseFlag( throttle.id, throttle.durationMs );
-	}
-}
 
 /**
  * Client to interact with the WordPress.com REST API.

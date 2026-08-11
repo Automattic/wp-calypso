@@ -2,7 +2,13 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { readProperty, tagOwnBuild } from '../lib/teamcity';
+import {
+	fetchBuildLog,
+	fetchBuildsByTag,
+	parseBuildDate,
+	readProperty,
+	tagOwnBuild,
+} from '../lib/teamcity';
 
 const PASSWORD = 'sUp3r-s3cr3t-t0k3n';
 
@@ -42,7 +48,7 @@ afterEach( () => {
 } );
 
 describe( 'readProperty', () => {
-	test( 'unescapes the forms java.util.Properties.store() emits', () => {
+	test( 'unescapes what java.util.Properties.store() escapes in a value', () => {
 		const contents = [
 			'teamcity.auth.userId=TeamCityBuildId\\=18847887',
 			'teamcity.serverUrl=https\\://teamcity.example.com',
@@ -80,12 +86,64 @@ describe( 'fail-open', () => {
 		expect( fetchSpy ).not.toHaveBeenCalled();
 	} );
 
-	test( 'unreadable properties file: no credentials, no request', async () => {
+	test( 'unreadable properties file: no request, and the caller is told', async () => {
 		process.env.TEAMCITY_BUILD_PROPERTIES_FILE = path.join( dir, 'does-not-exist' );
 		const fetchSpy = jest.spyOn( globalThis, 'fetch' );
 
-		await expect( tagOwnBuild( 'throttle-signup' ) ).resolves.toBeNull();
+		// Unlike a local run, this build may be taggable a moment later.
+		await expect( tagOwnBuild( 'throttle-signup' ) ).rejects.toThrow(
+			'The TeamCity build properties file could not be read.'
+		);
 		expect( fetchSpy ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'fetchBuildsByTag', () => {
+	test( 'reads the finish dates TeamCity renders, and takes a running build as unfinished', async () => {
+		writeProperties( completeProperties() );
+		jest.spyOn( globalThis, 'fetch' ).mockResolvedValue(
+			Response.json( {
+				build: [
+					{ id: 11, finishDate: '20260810T124500+0000' },
+					{ id: 22, finishDate: '20260810T144500+0200' },
+					{ id: 33 },
+				],
+			} )
+		);
+
+		await expect( fetchBuildsByTag( 'throttle-signup', { sinceMs: 0 } ) ).resolves.toEqual( [
+			{ id: 11, finishedAtMs: Date.parse( '2026-08-10T12:45:00Z' ) },
+			{ id: 22, finishedAtMs: Date.parse( '2026-08-10T12:45:00Z' ) },
+			{ id: 33, finishedAtMs: null },
+		] );
+	} );
+
+	test( 'a refused lookup is reported, not read as no throttle', async () => {
+		writeProperties( completeProperties() );
+		jest
+			.spyOn( globalThis, 'fetch' )
+			.mockResolvedValue( new Response( 'Access denied', { status: 403 } ) );
+
+		// A credential that may not query other builds must not look like a quiet day.
+		await expect( fetchBuildsByTag( 'throttle-signup', { sinceMs: 0 } ) ).rejects.toThrow( '403' );
+	} );
+
+	test( 'no TeamCity build around it is nothing to ask, not a failure', async () => {
+		await expect( fetchBuildsByTag( 'throttle-signup', { sinceMs: 0 } ) ).resolves.toBeNull();
+	} );
+
+	test( 'a refused log read is reported, not read as an empty log', async () => {
+		writeProperties( completeProperties() );
+		jest
+			.spyOn( globalThis, 'fetch' )
+			.mockResolvedValue( new Response( 'Access denied', { status: 401 } ) );
+
+		await expect( fetchBuildLog( 11 ) ).rejects.toThrow( '401' );
+	} );
+
+	test( 'anything but a date is no date at all', () => {
+		expect( parseBuildDate( undefined ) ).toBeNull();
+		expect( parseBuildDate( 'running' ) ).toBeNull();
 	} );
 } );
 
@@ -123,7 +181,9 @@ describe( 'tagOwnBuild', () => {
 			jest.spyOn( console, method ).mockImplementation( () => undefined )
 		);
 
-		await expect( tagOwnBuild( 'throttle-signup-123' ) ).resolves.toBeNull();
+		await expect( tagOwnBuild( 'throttle-signup-123' ) ).rejects.toThrow(
+			'The TeamCity tag request failed.'
+		);
 
 		for ( const spy of consoleSpies ) {
 			expect( spy ).not.toHaveBeenCalled();
@@ -141,7 +201,9 @@ describe( 'tagOwnBuild', () => {
 				} )
 		);
 
-		await expect( tagOwnBuild( 'throttle-signup-123', 10 ) ).resolves.toBeNull();
+		await expect( tagOwnBuild( 'throttle-signup-123', 10 ) ).rejects.toThrow(
+			'The TeamCity tag request failed.'
+		);
 	} );
 
 	test( 'a non-200 response is reported as a status, not thrown', async () => {
