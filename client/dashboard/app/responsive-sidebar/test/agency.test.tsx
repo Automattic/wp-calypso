@@ -12,6 +12,7 @@ import type { AgencySupports } from '../../context';
 const agencySupports: AgencySupports = {
 	overview: true,
 	tiers: true,
+	partnerDirectory: true,
 	exclusiveOffers: true,
 	learn: true,
 	mcp: true,
@@ -31,7 +32,14 @@ function mockAgency( capabilities: string[] ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/wpcom/v2/agency' )
-		.reply( 200, [ { id: 1, mcp: { allowed: true }, user: { capabilities } } ] );
+		.reply( 200, [
+			{
+				id: 1,
+				mcp: { allowed: true },
+				partner_directory: { allowed: true, directories: [] },
+				user: { capabilities },
+			},
+		] );
 }
 
 async function renderSidebar( capabilities: string[] ) {
@@ -93,6 +101,24 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.getByRole( 'link', { name: 'Payout settings' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Referrals' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link', { name: 'WooPayments' } ) ).not.toBeInTheDocument();
+	} );
+
+	// Partner Directory is gated by both an agency flag
+	// (`partner_directory.allowed`) and a capability. `mockAgency` always
+	// reports the flag on, so these cases isolate the capability gate.
+	test( 'shows Partner Directory when the user holds the partner directory capability', async () => {
+		await renderSidebar( [ 'a4a_read_partner_directory' ] );
+
+		expect( screen.getByRole( 'button', { name: 'Agency' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Partner Directory' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Tiers' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'hides Partner Directory when the user lacks the partner directory capability', async () => {
+		await renderSidebar( [ 'a4a_read_agency_tier' ] );
+
+		expect( screen.getByRole( 'link', { name: 'Tiers' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Partner Directory' } ) ).not.toBeInTheDocument();
 	} );
 
 	// MCP is the one item gated by both a tier flag (`mcp.allowed`) and a
