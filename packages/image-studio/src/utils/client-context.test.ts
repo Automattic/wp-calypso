@@ -35,12 +35,13 @@ jest.mock( '../stores/video-studio', () => ( {
 import { getClientContext } from './client-context';
 
 interface ImageStoreSelectors {
-	getImageStudioAttachmentId?: () => number | null;
+	getImageStudioAttachmentId?: () => number | null | undefined;
 	getIsImageStudioOpen?: () => boolean;
 	getSelectedStyle?: () => string | null;
 	getSelectedAspectRatio?: () => string | null;
 	getEntryPoint?: () => string | null;
 	getBlockType?: () => string | null;
+	getAnnotatedAttachmentIds?: () => number[];
 }
 
 interface VideoStoreSelectors {
@@ -100,6 +101,7 @@ describe( 'getClientContext', () => {
 				getSelectedAspectRatio: () => '16:9',
 				getEntryPoint: () => 'media_library',
 				getBlockType: () => null,
+				getAnnotatedAttachmentIds: () => [],
 			},
 			videoStudio: {
 				getSelectedStyle: () => null,
@@ -112,6 +114,7 @@ describe( 'getClientContext', () => {
 		expect( ctx.imageStudio ).toMatchObject( {
 			isOpen: true,
 			id: 42,
+			isAnnotated: false,
 			style: 'cinematic',
 			aspect_ratio: '16:9',
 			entryPoint: 'media_library',
@@ -129,6 +132,7 @@ describe( 'getClientContext', () => {
 				getSelectedAspectRatio: () => '9:16',
 				getEntryPoint: () => 'post_editor_feature_clip',
 				getBlockType: () => null,
+				getAnnotatedAttachmentIds: () => [ 42 ],
 			},
 			videoStudio: {
 				getSelectedStyle: () => 'cinematic',
@@ -149,7 +153,56 @@ describe( 'getClientContext', () => {
 		expect( ctx.videoStudio ).not.toHaveProperty( 'aspect_ratio' );
 		// Tone has been collapsed into style; the videoStudio payload no longer carries it.
 		expect( ctx.videoStudio ).not.toHaveProperty( 'tone' );
+		expect( ctx.videoStudio ).not.toHaveProperty( 'isAnnotated' );
 	} );
+
+	it( 'emits true when the current image attachment is annotated', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => 42,
+				getIsImageStudioOpen: () => true,
+				getEntryPoint: () => 'media_library',
+				getAnnotatedAttachmentIds: () => [ 42 ],
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.imageStudio?.isAnnotated ).toBe( true );
+	} );
+
+	it( 'emits false when a different image attachment is annotated', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => 42,
+				getIsImageStudioOpen: () => true,
+				getEntryPoint: () => 'media_library',
+				getAnnotatedAttachmentIds: () => [ 41, 43 ],
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.imageStudio?.isAnnotated ).toBe( false );
+	} );
+
+	it.each( [ undefined, null ] )(
+		'emits false when the image attachment ID is %s',
+		( attachmentId ) => {
+			setupSelect( {
+				imageStudio: {
+					getImageStudioAttachmentId: () => attachmentId,
+					getIsImageStudioOpen: () => true,
+					getEntryPoint: () => 'media_library',
+					getAnnotatedAttachmentIds: () => [ 42 ],
+				},
+			} );
+
+			const ctx = getClientContext();
+
+			expect( ctx.imageStudio?.isAnnotated ).toBe( false );
+		}
+	);
 
 	it( 'includes the current post title in the videoStudio payload when available', () => {
 		setupSelect( {

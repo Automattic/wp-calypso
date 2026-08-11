@@ -24,6 +24,7 @@ export interface ImageStudioMetadata {
 export interface ImageStudioData {
 	isOpen: boolean;
 	id: number | null;
+	isAnnotated: boolean;
 	style?: string;
 	aspect_ratio?: string;
 	metadata: ImageStudioMetadata;
@@ -299,9 +300,12 @@ function detectImageEntity(): DetectedEntity | null {
 			return { videoStudio, isOpen, isVideo: true };
 		}
 
+		const annotatedAttachmentIds = storeSelect.getAnnotatedAttachmentIds?.() || [];
 		const imageStudio: ImageStudioData = {
 			isOpen,
 			id: attachmentId,
+			isAnnotated:
+				typeof attachmentId === 'number' && annotatedAttachmentIds.includes( attachmentId ),
 			entryPoint, // 'editor_block' | 'media_library' | etc.
 			blockType, // 'core/image' | etc.
 			metadata,
