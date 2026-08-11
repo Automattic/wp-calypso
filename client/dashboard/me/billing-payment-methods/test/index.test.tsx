@@ -49,11 +49,20 @@ function mockDelete( status = 200, body: object = {} ) {
 		.reply( status, body );
 }
 
+const expectedProperties = {
+	payment_partner: 'stripe',
+	is_backup: false,
+	is_expired: false,
+};
+
 async function openRemoveDialog( user: ReturnType< typeof userEvent.setup > ) {
 	await waitFor( () => expect( screen.getByText( '****4242' ) ).toBeVisible() );
 
 	await user.click( screen.getByRole( 'button', { name: 'Actions' } ) );
 	await user.click( screen.getByRole( 'menuitem', { name: 'Remove payment method' } ) );
+}
+
+async function confirmRemoveDialog( user: ReturnType< typeof userEvent.setup > ) {
 	await user.click( screen.getByRole( 'button', { name: 'Remove payment method' } ) );
 }
 
@@ -72,13 +81,13 @@ describe( 'PaymentMethods', () => {
 		const { recordTracksEvent } = render( <PaymentMethods /> );
 
 		await openRemoveDialog( user );
+		await confirmRemoveDialog( user );
 
 		await waitFor( () => {
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_payment_method_delete', {
-				payment_partner: 'stripe',
-				is_backup: false,
-				is_expired: false,
-			} );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_payment_method_delete',
+				expectedProperties
+			);
 		} );
 	} );
 
@@ -91,14 +100,13 @@ describe( 'PaymentMethods', () => {
 		const { recordTracksEvent } = render( <PaymentMethods /> );
 
 		await openRemoveDialog( user );
+		await confirmRemoveDialog( user );
 
 		await waitFor( () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_dashboard_payment_method_delete_failure',
 				expect.objectContaining( {
-					payment_partner: 'stripe',
-					is_backup: false,
-					is_expired: false,
+					...expectedProperties,
 					error_message: expect.any( String ),
 				} )
 			);

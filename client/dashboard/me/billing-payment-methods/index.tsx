@@ -39,6 +39,12 @@ import { PaymentMethodEditDialog } from './payment-method-edit-dialog';
 import type { StoredPaymentMethod } from '@automattic/api-core';
 import type { View, Fields, SortDirection, Action } from '@wordpress/dataviews';
 
+const getDeleteEventProperties = ( paymentMethod: StoredPaymentMethod ) => ( {
+	payment_partner: paymentMethod.payment_partner,
+	is_backup: paymentMethod.is_backup,
+	is_expired: paymentMethod.is_expired,
+} );
+
 const paymentMethodWideFields = [ 'expiry', 'billing-address', 'backup', 'tax-info' ];
 const paymentMethodDesktopFields = [ 'expiry', 'billing-address' ];
 const paymentMethodMobileFields: string[] = [];
@@ -165,6 +171,10 @@ export default function PaymentMethods() {
 			},
 			callback: ( items ) => {
 				const item = items[ 0 ];
+				recordTracksEvent(
+					'calypso_dashboard_payment_method_delete_click',
+					getDeleteEventProperties( item )
+				);
 				setRemoveDialogPaymentMethod( item );
 			},
 		},
@@ -232,11 +242,11 @@ export default function PaymentMethods() {
 						isVisible={ Boolean( removeDialogPaymentMethod ) }
 						paymentMethod={ removeDialogPaymentMethod }
 						onConfirm={ () => {
-							const eventProperties = {
-								payment_partner: removeDialogPaymentMethod.payment_partner,
-								is_backup: removeDialogPaymentMethod.is_backup,
-								is_expired: removeDialogPaymentMethod.is_expired,
-							};
+							const eventProperties = getDeleteEventProperties( removeDialogPaymentMethod );
+							recordTracksEvent(
+								'calypso_dashboard_payment_method_delete_confirm_click',
+								eventProperties
+							);
 							deletePaymentMethod( removeDialogPaymentMethod.stored_details_id, {
 								onSuccess: () => {
 									recordTracksEvent( 'calypso_dashboard_payment_method_delete', eventProperties );
