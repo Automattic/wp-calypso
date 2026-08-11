@@ -5,7 +5,11 @@ import {
 	openAgentsManagerChat,
 	useShouldUseUnifiedAgent,
 } from '@automattic/agents-manager';
+import { omnibarSiteIdQuery } from '@automattic/api-queries';
+// eslint-disable-next-line no-restricted-imports -- Help Center host events need explicit site attribution.
+import { withSiteContext } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { Icon, backup, comment, page, rss, video } from '@wordpress/icons';
 import { useAnalytics } from '../analytics';
@@ -46,6 +50,7 @@ function menuIcon( icon: JSX.Element ) {
 function handleMenuClick(
 	recordTracksEvent: RecordTracksEvent,
 	destination: string,
+	omnibarSiteId: number | null | undefined,
 	isExternal = false
 ) {
 	// Re-clicking the current route closes the chat; external links never do.
@@ -64,11 +69,16 @@ function handleMenuClick(
 	}
 
 	if ( isClosing ) {
-		recordTracksEvent( 'calypso_inlinehelp_close', {
-			force_site_id: true,
-			location: 'help-center',
-			section: 'dashboard',
-		} );
+		recordTracksEvent(
+			'calypso_inlinehelp_close',
+			withSiteContext(
+				{
+					location: 'help-center',
+					section: 'dashboard',
+				},
+				[ [ 'omnibar', omnibarSiteId ] ]
+			)
+		);
 		closeAgentsManagerChat();
 		return;
 	}
@@ -77,15 +87,23 @@ function handleMenuClick(
 	// other items open the chat at their own route.
 	openAgentsManagerChat( destination === '/chat' ? undefined : destination );
 
-	recordTracksEvent( 'calypso_inlinehelp_show', {
-		force_site_id: true,
-		location: 'help-center',
-		section: 'dashboard',
-		destination,
-	} );
+	recordTracksEvent(
+		'calypso_inlinehelp_show',
+		withSiteContext(
+			{
+				location: 'help-center',
+				section: 'dashboard',
+				destination,
+			},
+			[ [ 'omnibar', omnibarSiteId ] ]
+		)
+	);
 }
 
-function getAgentsManagerMenuNodes( recordTracksEvent: RecordTracksEvent ): OmnibarNode[] {
+function getAgentsManagerMenuNodes(
+	recordTracksEvent: RecordTracksEvent,
+	omnibarSiteId: number | null | undefined
+): OmnibarNode[] {
 	return [
 		{
 			id: 'help-chat',
@@ -95,13 +113,13 @@ function getAgentsManagerMenuNodes( recordTracksEvent: RecordTracksEvent ): Omni
 					id: 'chat-support',
 					title: __( 'Chat support' ),
 					icon: menuIcon( comment ),
-					onClick: () => handleMenuClick( recordTracksEvent, '/chat' ),
+					onClick: () => handleMenuClick( recordTracksEvent, '/chat', omnibarSiteId ),
 				},
 				{
 					id: 'chat-history',
 					title: __( 'Chat history' ),
 					icon: menuIcon( backup ),
-					onClick: () => handleMenuClick( recordTracksEvent, '/history' ),
+					onClick: () => handleMenuClick( recordTracksEvent, '/history', omnibarSiteId ),
 				},
 			],
 		},
@@ -114,7 +132,7 @@ function getAgentsManagerMenuNodes( recordTracksEvent: RecordTracksEvent ): Omni
 					id: 'support-guides',
 					title: __( 'Support guides' ),
 					icon: menuIcon( page ),
-					onClick: () => handleMenuClick( recordTracksEvent, '/support-guides' ),
+					onClick: () => handleMenuClick( recordTracksEvent, '/support-guides', omnibarSiteId ),
 				},
 				{
 					id: 'courses',
@@ -124,6 +142,7 @@ function getAgentsManagerMenuNodes( recordTracksEvent: RecordTracksEvent ): Omni
 						handleMenuClick(
 							recordTracksEvent,
 							localizeUrl( 'https://wordpress.com/support/courses/' ),
+							omnibarSiteId,
 							true
 						),
 				},
@@ -135,6 +154,7 @@ function getAgentsManagerMenuNodes( recordTracksEvent: RecordTracksEvent ): Omni
 						handleMenuClick(
 							recordTracksEvent,
 							localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
+							omnibarSiteId,
 							true
 						),
 				},
@@ -147,13 +167,14 @@ export function useHelpCenterPlugin(): OmnibarNode {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
+	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
 
 	if ( shouldUseUnifiedAgent ) {
 		return {
 			id: 'help-center',
 			label: __( 'Help' ),
 			icon: <HelpIcon />,
-			children: getAgentsManagerMenuNodes( recordTracksEvent ),
+			children: getAgentsManagerMenuNodes( recordTracksEvent, omnibarSiteId ),
 		};
 	}
 
