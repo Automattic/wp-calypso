@@ -39,7 +39,9 @@ $jp-gray: #dcdcde;
 	}
 }
 
-// Use base component styling of `@wordpress/components/Button`
+// Use base component styling of `@wordpress/components/Button`. Colours are left to the component,
+// which resolves them from `--wp-components-color-accent` and so follows the admin theme like every
+// other button in the widget.
 .components-button.jetpack-emerald-button {
 	font-weight: 600;
 
@@ -47,29 +49,9 @@ $jp-gray: #dcdcde;
 		box-shadow: none;
 	}
 
-	&.is-primary {
-		color: var(--studio-white);
-		background: var(--studio-black);
-
-		&:hover:not(.is-busy) {
-			background: $emerald-hover-color;
-		}
-	}
-
-	// Use secondary styles (previously transparent)
-	&.is-secondary {
-		color: var(--studio-black);
-		background: inset 0 0 0 1.5px var(--studio-white);
-
-		&:hover:not(.is-busy) {
-			color: var(--studio-black);
-			background: var(--studio-gray-0);
-		}
-
-		&.is-busy {
-			background: $jp-gray;
-			color: var(--studio-gray-20);
-			border: 1px solid transparent;
-		}
+	&.is-secondary.is-busy {
+		background: $jp-gray;
+		color: var(--studio-gray-20);
+		border: 1px solid transparent;
 	}
 }

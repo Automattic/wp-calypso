@@ -36,7 +36,7 @@
 	// would diverge from the admin UI this work exists to match.
 	//
 	// Each entry is a bridge until its control moves to a design-system equivalent, at which point
-	// the line can go — the Stats notice buttons were migrated that way and needed no entry.
+	// the line can go.
 	.stats-tab,
 	.segmented-control__item {
 		--color-accent: var(--wp-admin-theme-color);
@@ -65,8 +65,8 @@
 		--wp-components-color-accent: var(--wp-admin-theme-color);
 	}
 
-	// The button-group outline is pinned to --color-accent-60, which leaves it a different colour
-	// from the selected button's background now that the fill follows the admin theme.
+	// The button-group outline is pinned to --color-accent-60, which does not match the selected
+	// button's fill. Follow the fill so the outline and the button it surrounds are one colour.
 	.components-button-group .components-button {
 		&,
 		&.is-primary {

@@ -1,12 +1,12 @@
 // wp-admin publishes its own interactive colour on <body> — `--wp-admin-theme-color` and its two
 // darker shades — and that value is authoritative for the site's WordPress version. The scheme
-// blocks above alias all three to `--color-accent`, wp-admin's decorative `$highlight-color`, and
-// in Odyssey they match on a nested element rather than on <body>, so Stats was overriding a
-// correct value with a lower-contrast one.
+// blocks above alias all three to `--color-accent`, wp-admin's decorative `$highlight-color`, and in
+// Odyssey they match on a nested element rather than on <body>. Handing the property back with
+// `inherit` lets the value wp-admin set on <body> reach Stats again.
 //
 // `useWPAdminTheme` only returns an `is-<scheme>` class in wp-admin, so in Calypso the Stats root
-// carries a bare `color-scheme` and the portal wrapper no class at all — neither selector below can
-// match there, and Calypso is left exactly as it was.
+// carries a bare `color-scheme` and the portal wrapper no class at all — none of the selectors below
+// can match there.
 //
 // The three roots are the Stats mount, the dashboard widget's own mount, and the <body> child that
 // Odyssey's RootChild tags with the scheme (apps/odyssey-stats/src/components/root-child.tsx), where
@@ -18,10 +18,10 @@
 // wp-admin to have set a value for, so there is nothing to hand back.
 //
 // `fresh` is in the list even though `@wordpress/base-styles` has no `admin-scheme()` block for it —
-// core treats it as the `:root` default rather than a named scheme. wp-admin still puts
-// `admin-color-fresh` on <body>, `useWPAdminTheme` still turns that into `is-fresh`, and
-// `_fresh.scss` still aliases the token, so without it the *default* scheme — the one most Odyssey
-// installs run — would keep overriding wp-admin.
+// core treats it as the `:root` default rather than a named scheme. wp-admin puts
+// `admin-color-fresh` on <body>, `useWPAdminTheme` turns that into `is-fresh`, and `_fresh.scss`
+// aliases the token, so leaving it out would exempt the default scheme — the one most Odyssey
+// installs run.
 //
 // Quoted so Sass reads `blue` as a scheme name rather than a colour.
 $wp-admin-schemes: "blue", "coffee", "ectoplasm", "fresh", "light", "midnight", "modern", "ocean",

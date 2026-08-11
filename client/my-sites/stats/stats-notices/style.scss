@@ -25,9 +25,8 @@
 			font-size: $font-body-small;
 		}
 
-		// The action button is a @wordpress/components Button, which brings its own colours from
-		// --wp-admin-theme-color. Only the spacing the notice layout expects is set here — it used
-		// to come from the shared .notice-banner__action-button rules.
+		// The action button brings its own colours from --wp-admin-theme-color, so only the spacing
+		// the notice layout expects is set here.
 		.components-button.is-primary {
 			margin-top: 20px;
 		}

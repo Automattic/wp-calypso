@@ -1,6 +1,5 @@
 import { Button as CalypsoButton } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import clsx from 'clsx';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -19,9 +18,6 @@ const StatsButton: React.FC< StatsButtonProps > = ( { children, primary, ...rest
 	if ( primary ) {
 		return (
 			<ButtonComponent
-				className={ clsx( {
-					[ 'jetpack-emerald-button' ]: ! isWPCOMSite,
-				} ) }
 				variant="primary"
 				primary={ isWPCOMSite ? true : undefined }
 				isBusy={ rest.busy }

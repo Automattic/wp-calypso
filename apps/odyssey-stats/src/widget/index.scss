@@ -43,14 +43,13 @@ $segmentedControlItemBorderRadius: 4px;
 		height: 36px;
 		min-width: 259px;
 
-		// The base component's hover is gated behind `.notouch`, which Calypso only puts on the
-		// document it controls — the Stats page has it, the wp-admin dashboard this widget lives
-		// in does not. So the selected item would never respond to the pointer here. Restate it
-		// ungated, on the shade a design-system button darkens to.
+		// The base component gates its hover behind `.notouch`, which Calypso only puts on the
+		// document it controls — the Stats page has it, the wp-admin dashboard this widget lives in
+		// does not — so the selected item needs its own ungated rule to respond to the pointer. The
+		// shade is the one a design-system button darkens to.
 		//
 		// `:focus` is the opposite case: the base component darkens it to `--color-primary-dark`
-		// without the `.notouch` gate, so it does fire here. Keep it flat, as before, now that
-		// the colour it lands on follows the admin theme.
+		// with no `.notouch` gate, so it does fire here. This widget keeps focus flat.
 		&.is-primary .segmented-control__item.is-selected .segmented-control__link {
 			&:hover {
 				background-color: var(--wp-admin-theme-color-darker-10);
