@@ -1,4 +1,4 @@
-import { DataHelper } from '@automattic/calypso-e2e';
+import { snoozeAccountRecoveryInterstitial } from '../../lib/dashboard-helpers';
 import { expect, tags, test } from '../../lib/pw-base';
 
 /**
@@ -7,42 +7,41 @@ import { expect, tags, test } from '../../lib/pw-base';
  * See: https://github.com/Automattic/wp-calypso/issues/76266
  */
 test.describe( 'Me: Smoke Test', { tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE ] }, () => {
-	test( 'Navigate to Me pages', async ( { accountGivenByEnvironment, page } ) => {
+	test( 'Navigate to Me pages', async ( {
+		accountGivenByEnvironment,
+		clientRestAPI,
+		componentDashboardMeSidebar,
+		page,
+		pageDashboard,
+	} ) => {
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-			await accountGivenByEnvironment.authenticate( page );
+			await snoozeAccountRecoveryInterstitial( clientRestAPI );
+			// Skip waiting for Calypso sidebar — we navigate to the dashboard immediately after.
+			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
 		} );
 
 		await test.step( 'When I navigate to /me', async function () {
-			await page.goto( DataHelper.getCalypsoURL( 'me' ) );
+			await pageDashboard.visitPath( 'me' );
+			await pageDashboard.dismissWelcomeModal();
 		} );
 
 		const meEndpoints = [
-			{ target: 'Account Settings', endpoint: 'account' },
-			{ target: 'Purchases', endpoint: 'purchases' },
-			{ target: 'Security', endpoint: 'security' },
-			{ target: 'Privacy', endpoint: 'privacy' },
-			{ target: 'Notification Settings', endpoint: 'notifications' },
-			{ target: 'Blocked Sites', endpoint: 'site-blocks' },
-		];
+			'Account',
+			'Preferences',
+			'Billing',
+			'Security',
+			'Notifications',
+			'Apps',
+		] as const;
 
-		for ( const { target, endpoint } of meEndpoints ) {
+		for ( const target of meEndpoints ) {
 			await test.step( `Then I can navigate to Me > ${ target }`, async function () {
-				const viewportSize = page.viewportSize();
-				const isMobile = viewportSize && viewportSize.width < 782;
+				await componentDashboardMeSidebar.openMobileMenu();
+				await componentDashboardMeSidebar.navigate( target );
 
-				// Expand the mobile menu if necessary.
-				if ( isMobile ) {
-					await page.locator( 'button[data-tip-target="mobile-menu"]' ).click();
-				}
-
-				await page
-					.getByRole( 'navigation' )
-					.getByRole( 'link', { name: target, exact: true } )
-					.click();
-
-				await expect( page ).toHaveURL( new RegExp( endpoint ) );
+				await expect( page ).toHaveURL( new RegExp( `/me/${ target.toLowerCase() }` ) );
 				await expect(
-					page.getByRole( 'main' ).getByRole( 'heading', { name: target } )
+					page.getByRole( 'main' ).getByRole( 'heading', { name: target, exact: true, level: 1 } )
 				).toBeVisible();
 			} );
 		}
