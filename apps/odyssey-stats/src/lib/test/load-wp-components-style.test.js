@@ -145,3 +145,46 @@ describe( 'isProvidedByWpAdmin — malformed or missing data fails safe toward l
 		expect( isProvidedByWpAdmin() ).toBe( false );
 	} );
 } );
+
+describe( 'isProvidedByWpAdmin — screens that ship no site data', () => {
+	afterEach( () => {
+		config.mockReset();
+	} );
+
+	/**
+	 * The pre-connection pricing screen has no blog id and no initial state, so both signals
+	 * arrive at the top level of the config instead of nested under the site's options.
+	 *
+	 * @param {Object} values Top-level config values.
+	 */
+	function mockTopLevel( values ) {
+		config.mockImplementation( ( key ) => {
+			if ( key in values ) {
+				return values[ key ];
+			}
+			// The real config throws on an unknown key in development builds.
+			throw new ReferenceError( `Could not find config value for key '${ key }'` );
+		} );
+	}
+
+	it( 'reads software_version from the top level', () => {
+		mockTopLevel( { software_version: '7.0.3' } );
+		expect( isProvidedByWpAdmin() ).toBe( true );
+	} );
+
+	it( 'reads stats_admin_version from the top level', () => {
+		mockTopLevel( { stats_admin_version: '0.32.0' } );
+		expect( isProvidedByWpAdmin() ).toBe( true );
+	} );
+
+	it( 'loads our copy when neither top-level signal holds', () => {
+		mockTopLevel( { software_version: '6.9', stats_admin_version: '0.31.11' } );
+		expect( isProvidedByWpAdmin() ).toBe( false );
+	} );
+
+	it( 'survives a payload with no blog id and no initial state', () => {
+		// Reading these keys used to throw and take the whole screen down with it.
+		mockTopLevel( {} );
+		expect( isProvidedByWpAdmin() ).toBe( false );
+	} );
+} );

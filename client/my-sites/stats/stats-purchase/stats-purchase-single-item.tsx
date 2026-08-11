@@ -54,6 +54,17 @@ interface StatsCommercialPurchaseProps {
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
+	/**
+	 * Replace what "I will do it later" does. The default returns to the site's own dashboard
+	 * and records the dismissal server-side, neither of which a site without a WordPress.com
+	 * connection can do.
+	 */
+	onPostpone?: () => void;
+	/**
+	 * Runs immediately before leaving for checkout. Lets a caller record the choice while the
+	 * page is still alive, since the redirect that follows cancels anything still in flight.
+	 */
+	onBeforeCheckout?: () => void;
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -232,6 +243,8 @@ const StatsCommercialPurchase = ( {
 	from,
 	adminUrl,
 	redirectUri,
+	onPostpone,
+	onBeforeCheckout,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -288,6 +301,11 @@ const StatsCommercialPurchase = ( {
 			blog_id: siteId,
 			from,
 		} );
+
+		if ( onPostpone ) {
+			onPostpone();
+			return;
+		}
 
 		// Skipping is the visitor's plan decision — made on a page that shows the full
 		// paid pitch — so the pricing grid mustn't take over the dashboard afterwards,
@@ -365,8 +383,10 @@ const StatsCommercialPurchase = ( {
 					variant="primary"
 					primary={ isWPCOMSite ? true : undefined }
 					disabled={ ! haveTiers || needsConnectionForUpgrade }
-					onClick={ () =>
-						gotoCheckoutPage( {
+					onClick={ () => {
+						onBeforeCheckout?.();
+
+						return gotoCheckoutPage( {
 							from,
 							type: 'commercial',
 							siteSlug,
@@ -377,8 +397,8 @@ const StatsCommercialPurchase = ( {
 							quantity: purchaseTierQuantity,
 							isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
 							isSiteFullyConnected: !! connectionStatus?.isSiteFullyConnected,
-						} )
-					}
+						} );
+					} }
 				>
 					{ continueButtonText }
 				</ButtonComponent>
@@ -766,4 +786,10 @@ function StatsCommercialFlowOptOutForm( {
 	);
 }
 
-export { StatsSingleItemPagePurchase, StatsSingleItemPersonalPurchasePage };
+export {
+	StatsSingleItemPagePurchase,
+	StatsSingleItemPersonalPurchasePage,
+	// Exported for the pre-connection pricing screen, which composes the same commercial pitch
+	// into its own frame rather than the site-scoped purchase page.
+	StatsCommercialPurchase,
+};

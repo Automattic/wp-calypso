@@ -55,6 +55,7 @@ module.exports = {
 	entry: {
 		build: path.join( __dirname, 'src', 'app' ),
 		'widget-loader': path.join( __dirname, 'src', 'widget-loader' ),
+		pricing: path.join( __dirname, 'src', 'pricing' ),
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: sourceMap,

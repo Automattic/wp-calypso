@@ -1,6 +1,7 @@
 @import "variables";
+@import "mounts";
 
-.jp-stats-dashboard {
+#{$stats-app-mounts} {
 	@include odyssey-stats-base-vars;
 }
 

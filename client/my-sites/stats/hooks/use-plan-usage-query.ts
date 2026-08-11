@@ -70,5 +70,8 @@ export default function usePlanUsageQuery(
 		queryKey: [ 'stats', 'usage', 'query', siteId ],
 		queryFn: () => queryPlanUsage( siteId ),
 		select: selectPlanUsage,
+		// A site with no WordPress.com connection has no ID and no recorded usage, so the
+		// request could only ever 404. Callers already treat missing usage as "no tiers used".
+		enabled: !! siteId,
 	} );
 }

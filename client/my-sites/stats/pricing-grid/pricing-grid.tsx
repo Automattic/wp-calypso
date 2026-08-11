@@ -36,6 +36,17 @@ interface Feature {
 interface PricingGridProps {
 	/** Called when the visitor picks a plan, so the host can reveal the dashboard. */
 	onDismiss?: () => void;
+	/**
+	 * Replace the free CTA's behaviour. A site with no WordPress.com connection has no
+	 * dashboard to reveal and no notice to dismiss, so the pre-connection screen sends the
+	 * visitor into the connection flow instead.
+	 */
+	onSelectFree?: () => void;
+	/**
+	 * Replace the paid CTA's behaviour. The default route is site-scoped, which a site with
+	 * no connection cannot form: it has no site slug yet.
+	 */
+	onSelectPaid?: () => void;
 }
 
 /**
@@ -45,7 +56,7 @@ interface PricingGridProps {
  * to the Search one. Gating lives in `gate.tsx`; by the time this renders the site
  * is known to be eligible and undismissed.
  */
-export default function PricingGrid( { onDismiss }: PricingGridProps ) {
+export default function PricingGrid( { onDismiss, onSelectFree, onSelectPaid }: PricingGridProps ) {
 	const translate = useTranslate();
 	// Same breakpoint the jetpack-components PricingTable uses via useViewportMatch.
 	const isLg = useViewportMatch( 'large' );
@@ -141,6 +152,12 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 			blog_id: siteId,
 			cta: 'free',
 		} );
+
+		if ( onSelectFree ) {
+			onSelectFree();
+			return;
+		}
+
 		dismissPricingGrid();
 		onDismiss?.();
 	};
@@ -155,6 +172,12 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 			blog_id: siteId,
 			cta: 'paid',
 		} );
+
+		if ( onSelectPaid ) {
+			onSelectPaid();
+			return;
+		}
+
 		page( `/stats/purchase/${ siteSlug }?from=${ PRICING_GRID_REFERRER }` );
 	};
 

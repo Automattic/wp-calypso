@@ -1,0 +1,9 @@
+// Every wp-admin element the full Stats app mounts on: the dashboard entry and the
+// pre-connection pricing entry. Both need the same wp-admin resets, and the stylesheets that
+// carry those resets are hand-scoped rather than machine-prefixed (see `ignoreFiles` in
+// webpack-css-scope.js), so they cannot pick a new mount up on their own.
+//
+// A new entry point has to be added here *and* to `prefix`/`entryPointRoots` in
+// webpack-css-scope.js. The dashboard widget is deliberately absent: it ships its own
+// stylesheets and shares none of these rules.
+$stats-app-mounts: ".jp-stats-dashboard, .jp-stats-pricing";

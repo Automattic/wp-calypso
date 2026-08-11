@@ -60,6 +60,12 @@ const getStatsCheckoutURL = (
 			// We know the site and we're in Calypso
 			checkoutType = siteSlug; // go to normal checkout (with site and user context (logged-in))
 		}
+	} else if ( isFromWpAdmin ) {
+		// A site with no WordPress.com connection has no ID to scope checkout with, but it does
+		// know its own address. Buy first and let the return leg register the site, link the
+		// user and attach the licence in one pass.
+		isSitelessCheckout = true;
+		checkoutType = 'jetpack';
 	} else {
 		// We don't know the site and we're in Calypso
 		checkoutType = 'jetpack'; // go to siteless checkout

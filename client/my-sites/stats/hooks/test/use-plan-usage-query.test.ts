@@ -1,4 +1,26 @@
-import { getUsageLimitStatus, PlanUsage } from '../use-plan-usage-query';
+/**
+ * @jest-environment jsdom
+ */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
+import { createElement } from 'react';
+import wpcom from 'calypso/lib/wp';
+import usePlanUsageQuery, { getUsageLimitStatus, PlanUsage } from '../use-plan-usage-query';
+
+jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn() } } ) );
+
+const get = wpcom.req.get as jest.Mock;
+
+const renderUsageQuery = ( siteId: number | null ) => {
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false } },
+	} );
+
+	return renderHook( () => usePlanUsageQuery( siteId ), {
+		wrapper: ( { children } ) =>
+			createElement( QueryClientProvider, { client: queryClient }, children ),
+	} );
+};
 
 const buildUsage = ( viewsLimit: number, viewsCount: number ): PlanUsage =>
 	( {
@@ -47,5 +69,29 @@ describe( 'getUsageLimitStatus', () => {
 			isNearLimit: false,
 			isOverLimit: false,
 		} );
+	} );
+} );
+
+describe( 'usePlanUsageQuery', () => {
+	afterEach( () => get.mockReset() );
+
+	it( 'does not ask for usage on a site that has no id', () => {
+		// A site with no WordPress.com connection has no id and no recorded usage, so the
+		// request could only ever 404 — and it fires on the pre-connection pricing screen,
+		// where nothing can answer it.
+		renderUsageQuery( null );
+
+		expect( get ).not.toHaveBeenCalled();
+	} );
+
+	it( 'asks for usage once the site has an id', async () => {
+		get.mockResolvedValue( { views_limit: 10000 } );
+
+		renderUsageQuery( 1234 );
+
+		await waitFor( () => expect( get ).toHaveBeenCalled() );
+		expect( get ).toHaveBeenCalledWith(
+			expect.objectContaining( { path: '/sites/1234/jetpack-stats/usage' } )
+		);
 	} );
 } );

@@ -43,6 +43,20 @@ function isAtLeast( version: unknown, minimum: string ): boolean {
 }
 
 /**
+ * `config()` throws on an unknown key in development builds, and not every entry point ships
+ * every key — the pre-connection pricing screen has no blog ID or initial state to report. A
+ * missing key has to read as "no signal", not as a boot failure.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- config values are untyped.
+function readConfig( key: string ): any {
+	try {
+		return config( key );
+	} catch {
+		return undefined;
+	}
+}
+
+/**
  * Whether wp-admin already serves `@wordpress/components`' base CSS, making our own copy redundant.
  *
  * Two independent signals, either one sufficient:
@@ -59,12 +73,22 @@ function isAtLeast( version: unknown, minimum: string ): boolean {
  * renders unstyled.
  */
 export function isProvidedByWpAdmin(): boolean {
+	// Both signals are served at the top level of the config. The nested read stays as a
+	// fallback: the JS ships from a CDN and can run against a `stats-admin` old enough to
+	// place them only inside the dashboard's `intial_state`.
 	const siteOptions =
-		config( 'intial_state' )?.sites?.items?.[ config( 'blog_id' ) as number ]?.options ?? {};
+		readConfig( 'intial_state' )?.sites?.items?.[ readConfig( 'blog_id' ) as number ]?.options ??
+		{};
 
 	return (
-		isAtLeast( siteOptions.stats_admin_version, STATS_ADMIN_VERSION_WITH_WP_COMPONENTS_DEP ) ||
-		isAtLeast( siteOptions.software_version, WP_VERSION_WITH_GLOBAL_WP_COMPONENTS )
+		isAtLeast(
+			readConfig( 'stats_admin_version' ) ?? siteOptions.stats_admin_version,
+			STATS_ADMIN_VERSION_WITH_WP_COMPONENTS_DEP
+		) ||
+		isAtLeast(
+			readConfig( 'software_version' ) ?? siteOptions.software_version,
+			WP_VERSION_WITH_GLOBAL_WP_COMPONENTS
+		)
 	);
 }
 

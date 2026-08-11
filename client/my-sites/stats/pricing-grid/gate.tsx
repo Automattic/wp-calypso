@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -14,6 +15,27 @@ const loadPricingGrid = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-stats-pricing-grid" */ './pricing-grid'
 	);
+
+/**
+ * Whether the visitor already picked a plan on the pre-connection pricing screen, which asks
+ * the same question this grid does. Recorded on the site rather than on WordPress.com,
+ * because the choice is made before the site has a blog ID to key it against. A site
+ * connected by any other route never sets it, so it still gets the grid.
+ *
+ * Read defensively: the key ships with every Odyssey screen, but `config()` throws on an
+ * unknown key in development builds and this component lives in shared Calypso code.
+ *
+ * Exported for tests: it is the whole suppression rule, and getting it wrong in either
+ * direction is costly — too eager and a site never sees the grid, too shy and a visitor is
+ * asked to pick a plan twice.
+ */
+export function hasChosenBeforeConnecting(): boolean {
+	try {
+		return !! config( 'stats_pricing_choice_recorded' );
+	} catch {
+		return false;
+	}
+}
 
 /**
  * Replaces the Stats dashboard with the pricing grid for newly connected sites
@@ -35,7 +57,7 @@ function PricingGridGate( { children }: { children: ReactNode } ) {
 		isNewConnection
 	);
 
-	if ( ! isNewConnection || hasChosen ) {
+	if ( ! isNewConnection || hasChosen || hasChosenBeforeConnecting() ) {
 		return <>{ children }</>;
 	}
 

@@ -15,4 +15,11 @@ module.exports = [
 		path: path.join( __dirname, 'dist/widget-loader.min.js' ),
 		limit: '10 KiB',
 	},
+	{
+		// The pre-connection pricing screen. It shares the dashboard's component tree but
+		// carries none of the reporting views, so it should stay well under that budget —
+		// a jump towards it means the screen has started pulling in dashboard code.
+		path: path.join( __dirname, 'dist/pricing.min.js' ),
+		limit: '230 KiB',
+	},
 ];

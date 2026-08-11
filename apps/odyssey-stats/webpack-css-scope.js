@@ -7,7 +7,8 @@
  * real plugin instead of a hand-copied stand-in that can drift from what actually ships.
  */
 
-// .jp-stats-dashboard: normal content. .jp-stats-widget: the WP-Admin dashboard widget's mount.
+// .jp-stats-dashboard: normal content. .jp-stats-pricing: the pre-connection pricing screen's
+// mount. .jp-stats-widget: the WP-Admin dashboard widget's mount.
 // The rest are portal roots: .color-scheme/.ReactModalPortal (Popover/Dialog),
 // [data-base-ui-portal]/[data-wp-compat-overlay-slot] (@wordpress/ui), .components-modal__screen-overlay
 // (@wordpress/components Modal), .components-popover__fallback-container (@wordpress/components
@@ -15,7 +16,7 @@
 // .web-preview (the post-preview modal, RootChild-portaled into a classless document.body div —
 // the modal's own root rules are `exclude`d below for the same reason).
 const prefix =
-	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .components-popover__fallback-container, .jp-stats-widget, .web-preview)';
+	':where(.jp-stats-dashboard, .jp-stats-pricing, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .components-popover__fallback-container, .jp-stats-widget, .web-preview)';
 
 // `prefix` roots that are always document.body-appended and never nested inside another root, so
 // self-nesting them under `prefix` is always dead — unlike the portal roots below, which routinely
@@ -23,6 +24,7 @@ const prefix =
 // without flagging legitimate portal-root nesting as a false positive.
 const entryPointRoots = [
 	'.jp-stats-dashboard',
+	'.jp-stats-pricing',
 	'.jp-stats-widget',
 	'.components-popover__fallback-container',
 	'.web-preview',
@@ -65,6 +67,9 @@ const exclude = [
 	// .jp-stats-dashboard styling itself or descendants (wp-admin.scss). Compound forms too, e.g.
 	// `.jp-stats-dashboard.theme-default .focus-content`.
 	/^\.jp-stats-dashboard(?![\w-])/,
+	// .jp-stats-pricing likewise: the same hand-scoped stylesheets target both mounts through
+	// `$stats-app-mounts` (src/styles/mounts.scss).
+	/^\.jp-stats-pricing(?![\w-])/,
 	// .jp-stats-widget styling itself (widget/index.scss). Compound forms too, e.g.
 	// `.jp-stats-widget.is-ready` or `.jp-stats-widget :hover`.
 	/^\.jp-stats-widget(?![\w-])/,
