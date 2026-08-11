@@ -84,6 +84,14 @@ fun BuildSteps.runTaggedPlaywrightSpecs(
 	val envVarExport = additionalEnvVars.map { ( key, value ) -> "export $key='$value'" }.joinToString( separator = "\n" )
 	val reportFile = if ( reportSuffix.isEmpty() ) "output/results.xml" else "output/results-$reportSuffix.xml"
 	val reportIdentitySuffix = reportSuffix.replace( Regex( "\\W" ), "_" )
+	// Playwright empties the output and HTML report directories as each run starts, so in a loop
+	// only the last run's traces, videos and screenshots would reach the artifact. Name each run's
+	// after its report.
+	val keepArtifacts = if ( reportSuffix.isEmpty() ) "" else """
+rm -rf output/test-results-$reportSuffix output/html-$reportSuffix
+if [[ -d output/test-results ]]; then mv output/test-results output/test-results-$reportSuffix; fi
+if [[ -d output/html ]]; then mv output/html output/html-$reportSuffix; fi
+""".trim()
 
 	return bashNodeScript {
 		name = stepName
@@ -104,6 +112,8 @@ fun BuildSteps.runTaggedPlaywrightSpecs(
 			# Swallow the exit code so later steps still run; failed tests fail
 			# the build through the JUnit report.
 			PLAYWRIGHT_JUNIT_OUTPUT_FILE=$reportFile yarn test:pw:$targetDevice --grep=$tag || true
+
+			$keepArtifacts
 
 			# A runner crash that produced no report must not pass silently.
 			if [[ ! -f $reportFile ]]; then
