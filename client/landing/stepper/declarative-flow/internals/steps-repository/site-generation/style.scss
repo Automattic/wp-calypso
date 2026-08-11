@@ -407,6 +407,18 @@
 	font-weight: 500;
 }
 
+.site-build-progress__announcement {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	border: 0;
+	clip-path: inset( 50% );
+	overflow: hidden;
+	white-space: nowrap;
+}
+
 .site-build-progress .site-build-progress__list {
 	margin: 0;
 	padding: 0;

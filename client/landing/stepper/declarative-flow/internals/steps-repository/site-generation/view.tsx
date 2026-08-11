@@ -159,6 +159,9 @@ function ErrorCanvas( {
 function BuildProgress( { state }: { state: SiteGenerationState } ) {
 	const translate = useTranslate();
 	const hasFailed = state.status === 'failed';
+	// Every step is rendered up front, so the list itself never changes text as
+	// progress advances. This carries the announcement instead.
+	const activeStep = state.steps.find( ( step ) => step.status === 'active' );
 
 	return (
 		<div className="site-build-progress">
@@ -167,11 +170,10 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 					{ translate( 'Generating your site' ) }
 				</span>
 			</div>
-			<ul
-				aria-labelledby="site-generation-progress-title"
-				aria-live="polite"
-				className="site-build-progress__list"
-			>
+			<p className="site-build-progress__announcement" role="status">
+				{ ! hasFailed && activeStep?.label }
+			</p>
+			<ul aria-labelledby="site-generation-progress-title" className="site-build-progress__list">
 				{ state.steps.map( ( item, index ) => {
 					const nextStepStatus = state.steps[ index + 1 ]?.status;
 					const nextStepIsReached = nextStepStatus === 'done' || nextStepStatus === 'active';

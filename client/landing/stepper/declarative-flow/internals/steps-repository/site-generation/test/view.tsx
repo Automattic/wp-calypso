@@ -4,6 +4,7 @@
 
 import { act, render } from '@testing-library/react';
 import { SiteGenerationView } from '../view';
+import type { SiteGenerationStep } from '../use-site-generation';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: ( Component: unknown ) => Component,
@@ -102,5 +103,50 @@ describe( 'SiteGenerationView', () => {
 
 		expect( getByRole( 'heading', { name: 'This is taking longer than expected' } ) ).toBeVisible();
 		expect( getByRole( 'button', { name: 'Check again' } ) ).toBeVisible();
+	} );
+
+	it( 'announces the active step, since the step list itself never changes text', () => {
+		const labels = [ 'Preparing the site', 'Choosing the design', 'Building the pages' ];
+		const steps = ( activeIndex: number ) =>
+			labels.map( ( label, index ) => {
+				let status: SiteGenerationStep[ 'status' ] = 'idle';
+				if ( index < activeIndex ) {
+					status = 'done';
+				} else if ( index === activeIndex ) {
+					status = 'active';
+				}
+				return { id: `step-${ index }`, label, status };
+			} );
+
+		const { getAllByRole, getByRole, rerender } = render(
+			<SiteGenerationView
+				onRetry={ jest.fn() }
+				state={ { status: 'working', steps: steps( 0 ) } }
+			/>
+		);
+
+		expect( getByRole( 'status' ) ).toHaveTextContent( 'Preparing the site' );
+
+		rerender(
+			<SiteGenerationView
+				onRetry={ jest.fn() }
+				state={ { status: 'working', steps: steps( 2 ) } }
+			/>
+		);
+
+		expect( getByRole( 'status' ) ).toHaveTextContent( 'Building the pages' );
+
+		rerender(
+			<SiteGenerationView
+				onRetry={ jest.fn() }
+				state={ { status: 'failed', failureReason: 'build-failed', steps: steps( 2 ) } }
+			/>
+		);
+
+		expect(
+			getAllByRole( 'status' ).some(
+				( region ) => region.textContent?.includes( 'Building the pages' )
+			)
+		).toBe( false );
 	} );
 } );
