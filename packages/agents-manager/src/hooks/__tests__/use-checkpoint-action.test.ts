@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { act, fireEvent, render, renderHook, screen } from '@testing-library/react';
+import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import useCheckpointAction from '../use-checkpoint-action';
@@ -72,7 +72,7 @@ describe( 'useCheckpointAction', () => {
 		jest.restoreAllMocks();
 	} );
 
-	it( 'disables Undo after restoring a successful block edit', async () => {
+	it( 'shows Reverted and disables Undo after restoring a successful block edit', async () => {
 		let registration: MessageActionsRegistration | undefined;
 		const registerMessageActions = jest.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
@@ -110,7 +110,8 @@ describe( 'useCheckpointAction', () => {
 			throw new Error( 'Expected a component action.' );
 		}
 		render( createElement( actions[ 0 ].component, actions[ 0 ].componentProps ) );
-		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Updated' );
+		const status = screen.getByRole( 'status' );
+		expect( status ).toHaveTextContent( 'Updated' );
 		const undoButton = screen.getByRole( 'button', { name: 'Undo' } );
 		fireEvent.click( undoButton );
 
@@ -119,12 +120,14 @@ describe( 'useCheckpointAction', () => {
 			id: 'tool-call-1',
 		} );
 		expect( undoButton ).toBeDisabled();
+		expect( status ).toHaveTextContent( 'Updated' );
 		fireEvent.click( undoButton );
 		expect( checkpoint.restoreCheckpoint ).toHaveBeenCalledTimes( 1 );
 
 		await act( async () => resolveRestore() );
 
 		expect( undoButton ).toBeDisabled();
+		expect( status ).toHaveTextContent( 'Reverted' );
 	} );
 
 	it( 're-enables Undo when restoring the checkpoint fails', async () => {
@@ -161,6 +164,7 @@ describe( 'useCheckpointAction', () => {
 			throw new Error( 'Expected a component action.' );
 		}
 		render( createElement( actions[ 0 ].component, actions[ 0 ].componentProps ) );
+		const status = screen.getByRole( 'status' );
 		const undoButton = screen.getByRole( 'button', { name: 'Undo' } );
 		fireEvent.click( undoButton );
 		expect( undoButton ).toBeDisabled();
@@ -168,6 +172,7 @@ describe( 'useCheckpointAction', () => {
 		await act( async () => rejectRestore( new Error( 'Restore failed' ) ) );
 
 		expect( undoButton ).toBeEnabled();
+		expect( status ).toHaveTextContent( 'Updated' );
 		expect( consoleError ).toHaveBeenCalledWith(
 			'[useCheckpointAction] Failed to restore checkpoint:',
 			expect.any( Error )
@@ -176,6 +181,7 @@ describe( 'useCheckpointAction', () => {
 		fireEvent.click( undoButton );
 		expect( checkpoint.restoreCheckpoint ).toHaveBeenCalledTimes( 2 );
 		expect( undoButton ).toBeDisabled();
+		await waitFor( () => expect( status ).toHaveTextContent( 'Reverted' ) );
 	} );
 
 	it( 'uses the Jetpack tool call id for its block edit checkpoint', async () => {
@@ -213,6 +219,7 @@ describe( 'useCheckpointAction', () => {
 
 		expect( checkpoint.hasCheckpoint ).toHaveBeenCalledWith( 'jetpack-tool-call-1' );
 		expect( checkpoint.restoreCheckpoint ).toHaveBeenCalledWith( 'jetpack-tool-call-1' );
+		await waitFor( () => expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Reverted' ) );
 	} );
 
 	it( 'does not show Undo for a successful no-op block edit', () => {
