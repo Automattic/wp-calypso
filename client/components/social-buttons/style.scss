@@ -19,6 +19,15 @@
 		fill: inherit;
 	}
 
+	// WPDS icons carry no fill of their own, so `inherit` above resolves to the
+	// initial black and they render heavier than the label beside them. Opt them
+	// onto `currentColor` so they track the label, including when the button
+	// disables. Scoped by class rather than applied to every `> svg`: the brand
+	// marks inherit deliberately, their fills being their own.
+	> svg.social-icons__envelope {
+		fill: currentColor;
+	}
+
 	> span {
 		font-feature-settings: "clig" off, "liga" off;
 		margin-inline: -20px auto;

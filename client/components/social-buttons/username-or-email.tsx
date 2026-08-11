@@ -1,8 +1,8 @@
 import { WordPressLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Icon, envelope } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import MailIcon from 'calypso/components/social-icons/mail';
 import { useSelector } from 'calypso/state';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 
@@ -44,7 +44,14 @@ export const UsernameOrEmailButton = ( {
 					size={ 20 }
 				/>
 			) : (
-				<MailIcon width="20" height="20" isDisabled={ isDisabled } />
+				<Icon
+					icon={ envelope }
+					size={ 20 }
+					className={ clsx( 'social-icons', 'social-icons__envelope', {
+						'social-icons--disabled': isDisabled,
+						'social-icons--enabled': ! isDisabled,
+					} ) }
+				/>
 			) }
 			<span className="social-buttons__service-name">{ __( 'Continue with email' ) }</span>
 		</Button>
