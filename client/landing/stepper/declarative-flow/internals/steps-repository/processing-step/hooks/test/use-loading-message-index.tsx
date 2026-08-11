@@ -68,6 +68,21 @@ describe( 'useLoadingMessageIndex', () => {
 		expect( result.current ).toBe( 1 );
 	} );
 
+	test( 'keeps moving when a message that is not the last one has an unusable duration', () => {
+		const badDurations: LoadingMessage[] = [
+			{ title: 'First', duration: Infinity },
+			{ title: 'Second', duration: 0 },
+			{ title: 'Third', duration: Infinity },
+		];
+		const { result } = renderHook( () => useLoadingMessageIndex( badDurations ) );
+
+		act( () => void jest.advanceTimersByTime( 5000 ) );
+		expect( result.current ).toBe( 1 );
+
+		act( () => void jest.advanceTimersByTime( 5000 ) );
+		expect( result.current ).toBe( 2 );
+	} );
+
 	test( 'never returns a negative index for an empty list', () => {
 		const { result } = renderHook( () => useLoadingMessageIndex( [] ) );
 

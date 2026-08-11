@@ -37,11 +37,11 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 
 	if ( flow && isTransferringHostedSiteCreationFlow( flow ) ) {
 		return [
-			{ title: __( 'Preparing your new server' ), duration: 15000 },
-			{ title: __( 'Installing WordPress' ), duration: 10000 },
-			{ title: __( 'Copying your site' ), duration: 20000 },
-			{ title: __( 'Securing your connection' ), duration: 15000 },
-			{ title: __( 'Distributing your site worldwide' ), duration: 20000 },
+			{ title: __( 'Preparing your new server' ), duration: 14000 },
+			{ title: __( 'Installing WordPress' ), duration: 6000 },
+			{ title: __( 'Copying your site' ), duration: 9000 },
+			{ title: __( 'Securing your connection' ), duration: 5000 },
+			{ title: __( 'Distributing your site worldwide' ), duration: 6000 },
 			{ title: __( 'Finishing up — this can take a few minutes' ), duration: Infinity },
 		];
 	}
