@@ -47,6 +47,38 @@ describe( 'getStepIndexForProgress', () => {
 		expect( getStepIndexForProgress( { current: 'fail' }, stepIds ) ).toBeNull();
 		expect( getStepIndexForProgress( {}, stepIds ) ).toBeNull();
 	} );
+
+	it( 'prefers the server-interpreted milestone over the local map', () => {
+		// The server computes the milestone from the same full history with the
+		// map that lives next to the pipeline, so it wins even when the local
+		// map would say otherwise (e.g. a step this client build has never
+		// heard of).
+		expect(
+			getStepIndexForProgress(
+				{
+					current: 'a-step-this-client-does-not-know',
+					milestone: 'polishing',
+					history: [ { status: 'theme-json' } ],
+				},
+				stepIds
+			)
+		).toBe( 4 );
+	} );
+
+	it( 'falls back to the local map when the milestone is absent or unrecognized', () => {
+		// Older servers don't send the field; a newer server could one day send
+		// a milestone id this client build predates. Both degrade to the local
+		// scan instead of breaking.
+		expect( getStepIndexForProgress( { milestone: null, current: 'header-hero' }, stepIds ) ).toBe(
+			2
+		);
+		expect(
+			getStepIndexForProgress(
+				{ milestone: 'a-milestone-from-the-future', current: 'header-hero' },
+				stepIds
+			)
+		).toBe( 2 );
+	} );
 } );
 
 describe( 'pollForBuildProgress', () => {

@@ -4,18 +4,19 @@ const BUILD_TERMINAL_STATUSES = new Set( [ 'done', 'fail' ] );
 
 export type BuildProgressResponse = {
 	current?: string | null;
+	milestone?: string | null;
 	history?: Array< {
 		status?: string;
 	} >;
 };
 
-// Coarse UI milestones for the persisted pipeline step ids. This map chases
-// backend pipeline internals across a repo boundary, so it will lag when steps
-// are inserted or renamed upstream — an unmapped id degrades to the previous
-// milestone, never to breakage. The server owns two sibling maps over the same
-// step stream (Builder_Progress_Reader::MILESTONE_LABELS and the Big Sky
-// editor's toolId labels); the durable fix is the endpoint serving interpreted
-// milestones so the client stops tracking pipeline internals.
+// FALLBACK map of coarse UI milestones for the persisted pipeline step ids,
+// used only against servers that don't send the interpreted `milestone` field
+// yet. The endpoint now serves that field (Builder_Progress_Reader::
+// PIPELINE_MILESTONES, BIGR-809) from the repo the pipeline is vendored into,
+// so a step inserted or renamed upstream lands with its milestone in the same
+// deploy. Delete this map once the field has been in production long enough
+// that no older server can answer the poll.
 const MILESTONE_TOOLS: Record< string, string[] > = {
 	preparing: [ 'scaffold-theme', 'scaffold-plugin', 'refine-prompt', 'site-spec' ],
 	designing: [
@@ -66,6 +67,16 @@ export function getStepIndexForProgress(
 	response: BuildProgressResponse,
 	stepIds: string[]
 ): number | null {
+	// The server-interpreted milestone is authoritative when recognized: it is
+	// computed from the same full history by the map that lives next to the
+	// pipeline. The local scan below only serves servers not sending it yet.
+	if ( typeof response.milestone === 'string' ) {
+		const serverIndex = stepIds.indexOf( response.milestone );
+		if ( serverIndex !== -1 ) {
+			return serverIndex;
+		}
+	}
+
 	// The backend refreshes a repeated step's timestamp (heartbeat), so history
 	// order does not track milestone order — a long-running tool can resurface
 	// after later steps. Take the furthest recognized milestone across the whole
