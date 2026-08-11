@@ -21,7 +21,3 @@
 @import "shared/color-schemes/sunrise";
 @import "shared/color-schemes/sunset";
 @import "shared/color-schemes/jetpack-cloud";
-
-// Hands the interactive colour back to wp-admin on the Odyssey Stats roots.
-// Imported last so it wins over the scheme blocks above.
-@import "shared/odyssey-admin-theme";

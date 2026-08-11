@@ -1,7 +1,18 @@
+@import "admin-theme-handback";
+
+// The widget mount carries `color-scheme is-<scheme>` too, so it needs the same handback the app
+// roots get before anything below can resolve the admin theme colour.
+@include odyssey-admin-theme-handback( ".stats-widget-content.color-scheme" );
+
+// The three shades Calypso controls resolve for their interactive states follow the colour wp-admin
+// publishes for interactive UI, so the widget agrees with the admin screen around it. `-light` is
+// the component's hover slot and `-dark` its active one, which is why they map to the darker shades
+// rather than by name. The numeric scale below stays on the accent: it is used for surfaces and
+// tints, where the decorative colour is the right one.
 .stats-widget-content.color-scheme {
-	--color-primary: var(--color-accent);
-	--color-primary-dark: var(--color-accent-dark);
-	--color-primary-light: var(--color-accent-light);
+	--color-primary: var(--wp-admin-theme-color, var(--color-accent));
+	--color-primary-dark: var(--wp-admin-theme-color-darker-20, var(--color-accent-dark));
+	--color-primary-light: var(--wp-admin-theme-color-darker-10, var(--color-accent-light));
 	--color-primary-0: var(--color-accent-0);
 	--color-primary-5: var(--color-accent-5);
 	--color-primary-10: var(--color-accent-10);
