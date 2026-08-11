@@ -22,6 +22,12 @@ type EndReason = 'stopped' | 'capped' | 'page_hidden';
 
 const HEARTBEAT_MS = 20 * 1000;
 
+// Most waits resolve inside a minute, so the close cadence above is spent where it earns something.
+// Past this the wait is already unusual, and one beat a minute still places the moment someone left
+// well inside the window that matters — the same rate a browser throttles a hidden tab to anyway.
+const SLOW_HEARTBEAT_AFTER_MS = 2 * 60 * 1000;
+const SLOW_HEARTBEAT_MS = 60 * 1000;
+
 // A wait screen left open in a forgotten tab would beat indefinitely. Past this nobody is waiting
 // in any sense this signal can use, so close the wait rather than inflate the tail.
 const HEARTBEAT_CAP_MS = 15 * 60 * 1000;
@@ -242,8 +248,16 @@ export function useWaitHeartbeat( {
 			if ( ! wait || wait.hasEnded ) {
 				return;
 			}
-			if ( isPastCap( wait, Date.now() ) ) {
+			const now = Date.now();
+			if ( isPastCap( wait, now ) ) {
 				endWait( 'capped' );
+				return;
+			}
+			// The timer keeps its short period and the cadence is decided here, so a wait that slows
+			// down does not have to tear down and rebuild its interval to do it.
+			const cadence =
+				now - wait.startedAt < SLOW_HEARTBEAT_AFTER_MS ? HEARTBEAT_MS : SLOW_HEARTBEAT_MS;
+			if ( now - wait.lastEventAt < cadence - HEARTBEAT_MS / 2 ) {
 				return;
 			}
 			wait.beats += 1;

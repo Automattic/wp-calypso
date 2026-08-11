@@ -182,6 +182,20 @@ describe( 'useWaitHeartbeat', () => {
 		expect( counts ).toEqual( [ 1, 2, 3, 4 ] );
 	} );
 
+	// Close beats earn their keep while a wait could still resolve normally. After that they are
+	// mostly repeating themselves, on the two surfaces that see the most traffic.
+	it( 'slows down once a wait is running long', async () => {
+		renderHeartbeat();
+		await advance( 2 * 60 * 1000 );
+		const beatsWhileFast = eventsNamed( 'calypso_transfer_wait_heartbeat' ).length;
+
+		await advance( 2 * 60 * 1000 );
+		const beatsAfter = eventsNamed( 'calypso_transfer_wait_heartbeat' ).length - beatsWhileFast;
+
+		expect( beatsWhileFast ).toBe( 5 );
+		expect( beatsAfter ).toBe( 2 );
+	} );
+
 	// A wait screen left in a forgotten tab would otherwise beat for as long as the tab lives.
 	it( 'stops beating once the cap is passed', async () => {
 		renderHeartbeat();
