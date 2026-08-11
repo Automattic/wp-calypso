@@ -57,9 +57,10 @@ export type UserStepAccepts = {
 	headerText?: string;
 	subHeaderText?: string;
 	/**
-	 * Hides the top-level "Log in" link (V2 top bar / V1 footer). The email-first
-	 * account-step variant keeps its own in-form "Have an account? Log in" link.
-	 * Existing users can still sign in via the social / email buttons either way.
+	 * Drops the step's own "Log in" link, wherever that layout puts it: the V2 top bar, the V1
+	 * footer, or the line below the buttons. The email-first account-step variant keeps its
+	 * in-form link regardless. Existing users can still sign in via the social / email buttons
+	 * either way.
 	 */
 	hideLoginLink?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
@@ -267,6 +268,14 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isMobileCompactLayout =
 		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig && ! isEditingEmail;
 
+	// Existing users land here and sign up again rather than log in, and a top-bar "Log in" reads as
+	// page furniture at the moment they need it. Below the buttons it answers the question they are
+	// actually asking. Two layouts keep the top bar instead: the compact mobile one, which has no
+	// room for the line and whose top bar is the whole affordance, and the email-edit screen, which
+	// has no second account to offer at all. V1 is left alone as the retiring layout.
+	const showsInFormLoginLink =
+		isStepContainerV2 && ! isMobileCompactLayout && ! isEditingEmail && ! hideLoginLink;
+
 	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
 	// Partner branding always wins: isMobileCompactLayout is already false whenever
 	// partnerConfig is set, so the ! partnerConfig check here is belt-and-suspenders
@@ -306,6 +315,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				isEmailFirstVariant={ isEmailFirstVariant }
 				isEmailAtBottom={ isEmailAtBottom }
 				isMobileCompactVariant={ isMobileCompactLayout }
+				showLoginLink={ showsInFormLoginLink }
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
 				activationEmailFrom={ gateEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
@@ -381,7 +391,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				logo={ topBarLogo }
 				leftElement={ backButton }
 				rightElement={
-					hideLoginLink || isEmailFirstVariant || isEditingEmail ? null : (
+					hideLoginLink || isEmailFirstVariant || isEditingEmail || showsInFormLoginLink ? null : (
 						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
 					)
 				}

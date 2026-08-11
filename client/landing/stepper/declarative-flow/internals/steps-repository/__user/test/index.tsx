@@ -146,4 +146,35 @@ describe( 'User email signup step', () => {
 			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
 		} );
 	} );
+
+	describe( 'login link placement', () => {
+		const loginLinkSelector = '.signup-form-social-first__login-link';
+
+		it( 'answers "Have an account?" below the buttons rather than in the top bar', () => {
+			const { container } = renderUserStep();
+
+			expect( container.querySelector( loginLinkSelector ) ).toBeInTheDocument();
+			// One route to logging in, not two: the top bar no longer carries its own.
+			expect( screen.getAllByRole( 'link', { name: 'Log in' } ) ).toHaveLength( 1 );
+			expect(
+				screen.getByRole( 'link', { name: 'Log in' } ).closest( loginLinkSelector )
+			).toBeInTheDocument();
+		} );
+
+		it( 'leaves the compact mobile layout on its top-bar link', () => {
+			setViewport( { isMobile: true } );
+
+			const { container } = renderUserStep();
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+		} );
+
+		it( 'drops the link entirely when hideLoginLink is set', () => {
+			const { container } = renderUserStep( '/onboarding/user', { hideLoginLink: true } );
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'link', { name: 'Log in' } ) ).not.toBeInTheDocument();
+		} );
+	} );
 } );
