@@ -26,6 +26,13 @@
 		--wp-components-color-accent-darker-20: var(--wp-admin-theme-color-darker-20);
 	}
 
+	// Calypso's own Button takes the same two roles from --color-accent that a design-system primary
+	// takes from the components accent: the resting fill, and a darker shade on hover.
+	.button.is-primary {
+		--color-accent: var(--wp-admin-theme-color);
+		--color-accent-60: var(--wp-admin-theme-color-darker-10);
+	}
+
 	// Calypso controls that derive their colours from --color-accent. Re-pointing the variable on
 	// each one covers whichever property it happens to use — background, text or border — without
 	// restating them here. Charts and data visualisation are deliberately absent: the decorative
