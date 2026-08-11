@@ -1,0 +1,576 @@
+# @automattic/agenttic-client
+
+A TypeScript client library for connecting to the Automattic agent framework with React hooks and component integration.
+
+Original based on the A2A (Agent2Agent), but it has morphed to meet our internal needs so there is no longer a direct relationship to that protocol.
+
+## Installation
+
+```bash
+npm install @automattic/agenttic-client
+```
+
+## Key Features
+
+-   React hooks for agent communication (`useAgentChat`, `useClientContext`, `useClientTools`, `useClientAbilities`)
+-   Streaming and non-streaming responses
+-   Tool execution system with automatic handling
+-   Compatibility with [WordPress Abilities API](https://github.com/WordPress/abilities-api)
+-   Context injection for each message
+-   Conversation persistence and management
+-   Request cancellation with abort controllers
+-   TypeScript support
+-   Message actions and markdown rendering
+
+## Quick Start
+
+### Basic Chat Integration
+
+```typescript
+import { useAgentChat } from '@automattic/agenttic-client';
+
+function ChatComponent() {
+  const {
+    messages,
+    isProcessing,
+    error,
+    onSubmit,
+    registerSuggestions,
+    registerMarkdownComponents
+  } = useAgentChat({
+    agentId: 'big-sky',
+    sessionId: 'my-session-123',
+    authProvider: async () => ({ Authorization: 'Bearer your-token' })
+  });
+
+  return (
+    <div>
+      {messages.map(msg => (
+        <div key={msg.id} className={msg.role}>
+          {msg.content.map(content => content.text).join('')}
+        </div>
+      ))}
+      <input
+        onKeyDown={(e) => e.key === 'Enter' && onSubmit(e.target.value)}
+        disabled={isProcessing}
+      />
+      {error && <div>Error: {error}</div>}
+    </div>
+  );
+}
+```
+
+### With Tools and Context
+
+```typescript
+import { useAgentChat, useClientTools, useClientContext } from '@automattic/agenttic-client';
+
+function AdvancedChatComponent() {
+  const contextProvider = useClientContext(() => ({
+    page: window.location.href,
+    timestamp: Date.now(),
+    userRole: getCurrentUserRole()
+  }));
+
+  const toolProvider = useClientTools(
+    async () => [
+      {
+        id: 'calculator',
+        name: 'Calculator',
+        description: 'Perform mathematical calculations',
+        input_schema: {
+          type: 'object',
+          properties: {
+            expression: { type: 'string' }
+          },
+          required: ['expression']
+        }
+      }
+    ],
+    async (toolId, args) => {
+      if (toolId === 'calculator') {
+        return { result: calc(args.expression)};
+      }
+    }
+  );
+
+  const chat = useAgentChat({
+    agentId: 'big-sky',
+    contextProvider,
+    toolProvider,
+    authProvider: async () => ({ Authorization: 'Bearer token' })
+  });
+
+  return <ChatInterface {...chat} />;
+}
+```
+
+### With Abilities
+
+WordPress Abilities API integration allows you to expose WordPress capabilities as tools to agents.
+
+```typescript
+import { useAgentChat, useClientAbilities } from '@automattic/agenttic-client';
+import { getAbilities, executeAbility } from '@wordpress/abilities';
+
+function WordPressChat() {
+  const [abilities, setAbilities] = useState([]);
+
+  useEffect(() => {
+    getAbilities().then(setAbilities);
+  }, []);
+
+  const toolProvider = useClientAbilities(abilities, executeAbility);
+
+  const chat = useAgentChat({
+    agentId: 'wp-assistant',
+    toolProvider,
+    authProvider: async () => ({ Authorization: 'Bearer token' })
+  });
+
+  return <ChatInterface {...chat} />;
+}
+```
+
+You can also combine regular tools with abilities using `useClientToolsWithAbilities`:
+
+```typescript
+const toolProvider = useClientToolsWithAbilities( {
+	getClientTools: async () => myCustomTools,
+	executeTool: async ( toolId, args ) => {
+		/* execute custom tools */
+	},
+	abilities,
+	executeAbility,
+} );
+```
+
+## Core APIs
+
+### useAgentChat Hook
+
+The primary hook for chat functionality, providing everything needed for a complete chat interface.
+
+```typescript
+const {
+	// Chat state
+	messages, // UIMessage[] - formatted for display
+	isProcessing, // boolean - request in progress
+	error, // string | null - last error
+
+	// Core methods
+	onSubmit, // (message: string) => Promise<void>
+	abortCurrentRequest, // () => void - cancel in-flight request
+
+	// Configuration
+	registerSuggestions, // (suggestions: Suggestion[]) => void
+	registerMarkdownComponents, // (components: MarkdownComponents) => void
+	registerMessageActions, // (registration: MessageActionsRegistration) => void
+	getRegenerateHandler, // (message?: UIMessage) => (() => Promise<void>) | null
+
+	// Utilities
+	messageRenderer, // React component for markdown rendering
+	addMessage, // (message: UIMessage) => void
+} = useAgentChat( config );
+```
+
+**Config Options:**
+
+-   `agentId: string` - Required. Agent identifier
+-   `agentUrl?: string` - Agent endpoint URL (defaults to WordPress.com)
+-   `sessionId?: string` - Session ID for conversation persistence
+-   `contextProvider?: ContextProvider` - Dynamic context injection
+-   `toolProvider?: ToolProvider` - Tool execution capabilities
+-   `authProvider?: AuthProvider` - Authentication headers
+
+### useClientContext Hook
+
+Provides dynamic context that refreshes with each message.
+
+```typescript
+const contextProvider = useClientContext( () => ( {
+	currentPage: {
+		url: window.location.href,
+		title: document.title,
+		selectedText: getSelection(),
+	},
+	user: {
+		role: getUserRole(),
+		permissions: getPermissions(),
+	},
+	timestamp: Date.now(),
+} ) );
+```
+
+### useClientTools Hook
+
+Enables agents to execute tools in your application.
+
+```typescript
+const toolProvider = useClientTools(
+	// Define available tools
+	async () => [
+		{
+			id: 'file-reader',
+			name: 'File Reader',
+			description: 'Read file contents',
+			input_schema: {
+				type: 'object',
+				properties: {
+					path: { type: 'string' },
+				},
+				required: [ 'path' ],
+			},
+		},
+	],
+	// Execute tool calls
+	async ( toolId, args ) => {
+		if ( toolId === 'file-reader' ) {
+			return { content: await readFile( args.path ) };
+		}
+		throw new Error( `Unknown tool: ${ toolId }` );
+	}
+);
+```
+
+### useClientAbilities Hook
+
+Converts WordPress Abilities to Agenttic tools automatically.
+
+```typescript
+import { getAbilities, executeAbility } from '@wordpress/abilities';
+
+const abilities = await getAbilities();
+const toolProvider = useClientAbilities( abilities, executeAbility );
+```
+
+WordPress Abilities can be:
+
+-   **Server-side**: Executed via REST API (no `callback` property)
+-   **Client-side**: Executed in browser (has `callback` function)
+
+The API handles both types automatically, routing execution appropriately.
+
+### useClientToolsWithAbilities Hook
+
+Combines regular tools and WordPress Abilities in a single provider.
+
+```typescript
+import { getAbilities, executeAbility } from '@wordpress/abilities';
+
+const abilities = await getAbilities();
+const toolProvider = useClientToolsWithAbilities( {
+	getClientTools: async () => [
+		// Your regular tools
+		{ id: 'calculator', name: 'Calculator' /* ... */ },
+	],
+	executeTool: async ( toolId, args ) => {
+		// Handle regular tool execution
+	},
+	abilities,
+	executeAbility,
+} );
+```
+
+### createClient Function
+
+Low-level client for direct communication without React.
+
+```typescript
+import { createClient } from '@automattic/agenttic-client';
+
+const client = createClient({
+  agentId: 'big-sky',
+  authProvider: async () => ({ Authorization: 'Bearer token' }),
+  toolProvider: {
+    getAvailableTools: async () => [...],
+    executeTool: async (toolId, args) => ({ result: '...' })
+  }
+});
+
+// Non-streaming
+const task = await client.sendMessage({
+  message: createTextMessage('Hello'),
+  sessionId: 'session-123'
+});
+
+// Streaming
+for await (const update of client.sendMessageStream({
+  message: createTextMessage('Hello'),
+  sessionId: 'session-123'
+})) {
+  console.log(update.text);
+  if (update.final) break;
+}
+
+// With abort control
+const abortController = new AbortController();
+const task = await client.sendMessage({
+  message: createTextMessage('Hello'),
+  sessionId: 'session-123',
+  abortSignal: abortController.signal
+});
+
+// Cancel the request
+abortController.abort();
+```
+
+### Agent Manager
+
+Functional singleton for managing multiple agent instances.
+
+```typescript
+import { getAgentManager } from '@automattic/agenttic-client';
+
+const manager = getAgentManager();
+
+// Create agent
+await manager.createAgent( 'my-agent', {
+	agentId: 'big-sky',
+	sessionId: 'session-123',
+	contextProvider,
+	toolProvider,
+} );
+
+// Send messages
+const task = await manager.sendMessage( 'my-agent', 'Hello' );
+
+// Streaming
+for await ( const update of manager.sendMessageStream( 'my-agent', 'Hello' ) ) {
+	console.log( update );
+}
+
+// Manage conversation
+const history = manager.getConversationHistory( 'my-agent' );
+await manager.resetConversation( 'my-agent' );
+```
+
+## Additional Features
+
+### Request Cancellation
+
+Cancel in-flight requests using the built-in abort functionality:
+
+```typescript
+const { abortCurrentRequest, isProcessing } = useAgentChat( config );
+
+// Cancel current request
+if ( isProcessing ) {
+	abortCurrentRequest();
+}
+```
+
+For low-level client usage, use `AbortController`:
+
+```typescript
+import {
+	createClient,
+	createAbortController,
+} from '@automattic/agenttic-client';
+
+const client = createClient( config );
+const abortController = createAbortController();
+
+// Start a request with abort signal
+const requestPromise = client.sendMessage( {
+	message: createTextMessage( 'Hello' ),
+	abortSignal: abortController.signal,
+} );
+
+// Cancel the request
+abortController.abort();
+
+// Handle cancellation
+try {
+	await requestPromise;
+} catch ( error ) {
+	if ( error.name === 'AbortError' ) {
+		console.log( 'Request was cancelled' );
+	}
+}
+```
+
+### Message Actions
+
+Add interactive buttons to agent messages:
+
+```typescript
+const { registerMessageActions, getRegenerateHandler } = useAgentChat( config );
+
+// Built-in feedback actions
+registerMessageActions(
+	createFeedbackActions( {
+		onFeedback: async ( messageId, feedback ) => {
+			console.log( `${ feedback } feedback for ${ messageId }` );
+		},
+		icons: { up: '👍', down: '👎' },
+	} )
+);
+
+// Custom actions
+registerMessageActions( {
+	id: 'copy-actions',
+	actions: [
+		{
+			id: 'copy',
+			label: 'Copy',
+			icon: '📋',
+			onClick: ( message ) =>
+				navigator.clipboard.writeText( message.content[ 0 ].text ),
+		},
+	],
+} );
+
+// Add regenerate to each eligible assistant message. The hook supplies the
+// behavior; you own the action spec (label, icon, order), so strings stay in
+// your i18n layer and the icon matches your design.
+//
+// `getRegenerateHandler` returns a handler whenever the message is eligible,
+// regardless of processing state (clicking mid-request is a safe no-op). If you
+// want to hide or disable regenerate while a response streams, gate on
+// `isProcessing` yourself (e.g. `disabled: isProcessing`).
+registerMessageActions( {
+	id: 'regenerate',
+	actions: ( message ) => {
+		const onRegenerate = getRegenerateHandler( message );
+		return onRegenerate
+			? [
+					{
+						id: 'regenerate',
+						label: __( 'Regenerate' ),
+						tooltip: __( 'Regenerate response' ),
+						icon: <RegenerateAltIcon />,
+						onClick: onRegenerate,
+					},
+			  ]
+			: [];
+	},
+} );
+
+// Or render regenerate elsewhere, targeting the latest eligible assistant message.
+const onRegenerate = getRegenerateHandler();
+```
+
+### Markdown Extensions
+
+Extend markdown rendering with custom components:
+
+```typescript
+import { BarChart, LineChart } from '@automattic/agenttic-client';
+
+const { registerMarkdownComponents, registerMarkdownExtensions } = useAgentChat(config);
+// Register chart components
+registerMarkdownComponents( {
+  // Custom heading styles
+  h1: ({ children }) => (
+    <h1 className="text-2xl font-bold text-brand">{children}</h1>
+  ),
+  // Custom code blocks with syntax highlighting
+  code: ({ children, className }) => (
+    <SyntaxHighlighter language={className}>
+    {children}
+    </SyntaxHighlighter>
+  ),
+  // Custom link handling
+  a: ({ href, children }) => (
+    <a href={href} target="_blank" rel="noopener">
+    {children} ↗
+    </a>
+  ),
+  blockquote: ( { children, ...props } ) => (
+    <blockquote
+      { ...props }
+      style={ {
+        borderLeft: '4px solid #007cba',
+        backgroundColor: '#f0f8ff',
+        margin: '16px 0',
+        padding: '12px 16px',
+        fontStyle: 'italic',
+        borderRadius: '0 4px 4px 0',
+      } }
+    >
+      { children }
+    </blockquote>
+  ),
+});
+
+// Register custom extensions
+registerMarkdownExtensions({
+  charts: {
+    BarChart,
+    LineChart
+  }
+});
+```
+
+### Conversation Suggestions
+
+Provide suggested prompts to users:
+
+```typescript
+const { registerSuggestions, clearSuggestions } = useAgentChat( config );
+
+registerSuggestions( [
+	{
+		id: '1',
+		label: 'Help me write code',
+		prompt: 'Can you help me write a function?',
+	},
+	{
+		id: '2',
+		label: 'Explain this error',
+		prompt: 'What does this error mean?',
+	},
+] );
+```
+
+## Type Definitions
+
+```typescript
+interface UIMessage {
+	id: string;
+	role: 'user' | 'agent';
+	content: Array< {
+		type: 'text' | 'image_url' | 'component';
+		text?: string;
+		image_url?: string;
+		component?: React.ComponentType;
+	} >;
+	timestamp: number;
+	actions?: UIMessageAction[];
+}
+
+interface Tool {
+	id: string;
+	name: string;
+	description: string;
+	input_schema: {
+		type: 'object';
+		properties: Record< string, any >;
+		required?: string[];
+	};
+}
+
+type AuthProvider = () => Promise< Record< string, string > >;
+type ContextProvider = { getClientContext: () => any };
+type ToolProvider = {
+	getAvailableTools: () => Promise< Tool[] >;
+	executeTool: ( toolId: string, args: any ) => Promise< any >;
+};
+```
+
+## Development
+
+```bash
+# Build the package
+pnpm build
+
+# Run tests
+pnpm test
+
+# Type checking
+pnpm type-check
+
+# Lint
+pnpm lint
+```
