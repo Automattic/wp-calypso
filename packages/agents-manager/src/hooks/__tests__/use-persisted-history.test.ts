@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act } from '@testing-library/react';
+import { render, renderHook, act } from '@testing-library/react';
+import { createElement, useLayoutEffect } from 'react';
 import { usePersistedHistory } from '../use-persisted-history';
 import type { Location } from 'history';
 
@@ -44,6 +45,24 @@ describe( 'usePersistedHistory', () => {
 
 		expect( result.current.history.length ).toBe( 1 );
 		expect( result.current.history.location.pathname ).toBe( '/' );
+	} );
+
+	it( 'exposes the new site’s location in the same commit as its history', () => {
+		storeHistory( 'site-1', [ entry( '/' ), entry( '/chat' ) ], 1 );
+
+		const commits: Array< [ string, string ] > = [];
+		function Probe( { siteKey }: { siteKey: string } ) {
+			const { history, state } = usePersistedHistory( siteKey );
+			useLayoutEffect( () => {
+				commits.push( [ history.location.pathname, state.location.pathname ] );
+			} );
+			return null;
+		}
+
+		const { rerender } = render( createElement( Probe, { siteKey: 'site-1' } ) );
+		rerender( createElement( Probe, { siteKey: 'site-2' } ) );
+
+		expect( commits.every( ( [ h, s ] ) => h === s ) ).toBe( true );
 	} );
 
 	it( 'switches trails per site: a new site starts fresh, switching back restores', () => {

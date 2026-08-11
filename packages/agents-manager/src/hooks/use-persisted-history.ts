@@ -179,15 +179,22 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		location: history.location,
 	} ) );
 
+	// Derive `state` in render when the instance changes (e.g. a site switch),
+	// so the router never commits the new history with the old site's location.
+	const [ previousHistory, setPreviousHistory ] = useState( history );
+	if ( previousHistory !== history ) {
+		setPreviousHistory( history );
+		setState( { action: history.action, location: history.location } );
+	}
+
 	const persistHistory = useCallback(
 		( historyData: StoredHistory ) => writeStoredHistory( siteKey, historyData ),
 		[ siteKey ]
 	);
 
-	// Sync `state`, persist callback, and listener when `history` instance changes.
+	// Wire the persist callback and listener when the `history` instance changes.
 	useLayoutEffect( () => {
 		history.setOnPersist( persistHistory );
-		setState( { action: history.action, location: history.location } );
 		return history.listen( setState );
 	}, [ history, persistHistory ] );
 
