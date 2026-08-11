@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import LaunchSiteComponent from '../index';
@@ -55,10 +54,37 @@ describe( 'LaunchSiteComponent', () => {
 		expect(
 			screen.getByText( 'You can not launch your site without a paid eCommerce plan.' )
 		).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Back to dashboard' } ) ).toHaveAttribute(
+		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Go back' } ) ).toHaveAttribute(
 			'href',
 			'/home/example.wordpress.com'
+		);
+	} );
+
+	it( 'sends the user back to where the launch flow was started from', () => {
+		renderStep( {
+			signupDependencies: {
+				siteSlug: 'example.wordpress.com',
+				back_to: '/sites/example.wordpress.com/settings',
+			},
+			step: { stepName: 'launch', status: 'invalid', errors: { message: 'Nope.' } },
+		} );
+
+		expect( screen.getByRole( 'link', { name: 'Go back' } ) ).toHaveAttribute(
+			'href',
+			'/sites/example.wordpress.com/settings'
+		);
+	} );
+
+	it( 'sends the user back to wp-admin when the flow was started from there', () => {
+		renderStep( {
+			signupDependencies: { siteSlug: 'example.wordpress.com', refParameter: 'wp-admin' },
+			step: { stepName: 'launch', status: 'invalid', errors: { message: 'Nope.' } },
+		} );
+
+		expect( screen.getByRole( 'link', { name: 'Go back' } ) ).toHaveAttribute(
+			'href',
+			'https://example.wordpress.com/wp-admin'
 		);
 	} );
 
@@ -78,23 +104,8 @@ describe( 'LaunchSiteComponent', () => {
 		renderStep( { step: { stepName: 'launch', status: 'invalid', errors: {} } } );
 
 		expect(
-			screen.getByText( 'Something went wrong and we couldn’t launch your site. Please try again.' )
+			screen.getByText( 'Something went wrong and we couldn’t launch your site.' )
 		).toBeVisible();
-	} );
-
-	it( 'submits exactly one new attempt per "Try again" click', async () => {
-		const user = userEvent.setup();
-		const goToNextStep = jest.fn();
-		renderStep( {
-			goToNextStep,
-			step: { stepName: 'launch', status: 'invalid', errors: { message: 'Nope.' } },
-		} );
-
-		await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
-
-		expect( submitSignupStep ).toHaveBeenCalledTimes( 1 );
-		expect( submitSignupStep ).toHaveBeenCalledWith( { stepName: 'launch' } );
-		expect( goToNextStep ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it.each( [ 'pending', 'processing', 'completed' ] )(

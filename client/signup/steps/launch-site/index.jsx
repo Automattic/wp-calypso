@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { getLaunchReturnUrl } from 'calypso/signup/config/flows';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
@@ -24,28 +25,20 @@ class LaunchSiteComponent extends Component {
 		const status = this.props.step?.status;
 
 		if ( ! status || status === 'in-progress' ) {
-			this.launchSite();
+			const { flowName, stepName } = this.props;
+
+			this.props.submitSignupStep( { stepName } );
+			this.props.goToNextStep( flowName );
 		}
 	}
 
-	launchSite = () => {
-		const { flowName, stepName } = this.props;
-
-		this.props.submitSignupStep( { stepName } );
-		this.props.goToNextStep( flowName );
-	};
-
 	renderErrorContent() {
 		const { signupDependencies, translate } = this.props;
-		const siteSlug = signupDependencies?.siteSlug;
 
 		return (
 			<div className="launch-site__actions">
-				<Button primary onClick={ this.launchSite }>
-					{ translate( 'Try again' ) }
-				</Button>
-				<Button href={ siteSlug ? `/home/${ siteSlug }` : '/home' }>
-					{ translate( 'Back to dashboard' ) }
+				<Button primary href={ getLaunchReturnUrl( signupDependencies ?? {} ) }>
+					{ translate( 'Go back' ) }
 				</Button>
 			</div>
 		);
@@ -61,7 +54,7 @@ class LaunchSiteComponent extends Component {
 		const headerText = translate( 'We couldn’t launch your site' );
 		const message =
 			getErrorMessage( step ) ||
-			translate( 'Something went wrong and we couldn’t launch your site. Please try again.' );
+			translate( 'Something went wrong and we couldn’t launch your site.' );
 
 		return (
 			<StepWrapper
@@ -73,6 +66,7 @@ class LaunchSiteComponent extends Component {
 				fallbackHeaderText={ headerText }
 				subHeaderText={ message }
 				fallbackSubHeaderText={ message }
+				hideBack
 				hideSkip
 				stepContent={ this.renderErrorContent() }
 			/>
