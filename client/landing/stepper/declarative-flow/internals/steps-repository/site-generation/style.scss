@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/breakpoints';
+
 .site-generation {
 	// Gutenberg editor-chrome colors with no color-studio token equivalent.
 	--site-generation-color-frame: #1e1e1e;
@@ -53,13 +55,14 @@
 	flex-direction: column;
 	align-items: center;
 	width: min( 720px, 100% );
+	transform: translateY( clamp( -36px, -3vh, -20px ) );
 	text-align: center;
 }
 
 .site-generation__build-visual {
 	position: relative;
-	width: min( 580px, 100% );
-	margin-block-end: 34px;
+	width: min( 600px, 100% );
+	margin-block-end: 40px;
 }
 
 .site-generation__page-preview {
@@ -485,9 +488,32 @@
 		min-height: 420px;
 		margin: 8px;
 	}
+	.site-generation__waiting {
+		transform: none;
+	}
+	.site-generation__build-visual {
+		width: clamp( 220px, 68vw, 420px );
+		margin-block-end: 24px;
+	}
 	.site-generation__sidebar {
 		width: 100%;
 		height: 520px;
 		padding: 16px;
+	}
+}
+
+@media ( max-height: #{ $break-small } ) and ( orientation: landscape ) {
+	.site-generation__canvas {
+		padding-block: 16px;
+	}
+
+	.site-generation__waiting {
+		transform: none;
+	}
+
+	.site-generation__build-visual {
+		width: min( 360px, 82vh, 100% );
+		width: min( 360px, 82dvh, 100% );
+		margin-block-end: 16px;
 	}
 }
