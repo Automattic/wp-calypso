@@ -177,14 +177,8 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct =
 	},
 	hidePrice: true,
 
-	displayName: translate( 'Stats (Supporter)', {
-		comment:
-			'"Supporter" is the pay-what-you-want Jetpack Stats tier, where the customer chooses their own price to support the project.',
-	} ),
-	shortName: translate( 'Stats (Supporter)', {
-		comment:
-			'"Supporter" is the pay-what-you-want Jetpack Stats tier, where the customer chooses their own price to support the project.',
-	} ),
+	displayName: translate( 'Stats (Name your price)' ),
+	shortName: translate( 'Stats (Name your price)' ),
 	productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	costProductSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	term: TERM_ANNUALLY,
