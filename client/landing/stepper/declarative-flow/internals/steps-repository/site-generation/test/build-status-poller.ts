@@ -325,4 +325,76 @@ describe( 'pollForBuildWowStatus', () => {
 
 		expect( fetchStatus ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	it( 'reports every ui block to onUpdate, including the terminal one', async () => {
+		const fetchStatus = jest
+			.fn()
+			.mockResolvedValueOnce( {
+				build_status: '',
+				ui: { state: 'generating', steps: [ { id: 'pages', label: 'Building', state: 'active' } ] },
+			} )
+			.mockResolvedValueOnce( {
+				build_status: 'live',
+				ui: { state: 'ready', is_terminal: true, steps: [] },
+			} );
+		const onUpdate = jest.fn();
+		const onReady = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady,
+			onFailed: jest.fn(),
+			onUpdate,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 1000 );
+
+		expect( onUpdate ).toHaveBeenCalledTimes( 2 );
+		expect( onUpdate.mock.calls[ 0 ][ 0 ].state ).toBe( 'generating' );
+		expect( onReady ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'trusts the server ui verdict even without a raw build_status', async () => {
+		const fetchStatus = jest.fn().mockResolvedValue( { ui: { state: 'failed', can_retry: true } } );
+		const onFailed = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady: jest.fn(),
+			onFailed,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+
+		expect( onFailed ).toHaveBeenCalledWith( 'failed:unknown' );
+		await jest.advanceTimersByTimeAsync( 5000 );
+		expect( fetchStatus ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'keeps working against a backend without the ui block', async () => {
+		const fetchStatus = jest
+			.fn()
+			.mockResolvedValueOnce( { build_status: 'delivering' } )
+			.mockResolvedValueOnce( { build_status: 'live' } );
+		const onUpdate = jest.fn();
+		const onReady = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady,
+			onFailed: jest.fn(),
+			onUpdate,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 1000 );
+
+		expect( onUpdate ).not.toHaveBeenCalled();
+		expect( onReady ).toHaveBeenCalledTimes( 1 );
+	} );
 } );

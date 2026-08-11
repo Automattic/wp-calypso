@@ -12,6 +12,10 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const query = useMemo( () => new URLSearchParams( window.location.search ), [] );
 	const siteIdentifier = query.get( 'siteId' ) || query.get( 'siteSlug' );
 	const editorUrl = getSafeEditorUrl( query.get( 'editorUrl' ) );
+	// Fallback checklist only: the server-computed ui.steps from the status
+	// endpoint is authoritative (labels included, already localized). This
+	// list covers the moments before the first response arrives, and backends
+	// that do not send the ui block yet.
 	const steps = useMemo(
 		() => [
 			{ id: 'preparing', label: translate( 'Preparing your site' ) },
