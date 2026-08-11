@@ -3,9 +3,6 @@ import { wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import type { SiteGenerationFailureReason, SiteGenerationState } from './use-site-generation';
 
-// Email notifications are out of MVP scope. The copy is kept so it can be switched back on.
-const HAS_EMAIL_NOTIFICATIONS: boolean = false;
-
 const WordPressMark = () => <Icon className="site-generation__wordpress-mark" icon={ wordpress } />;
 
 const CheckmarkIcon = (
@@ -75,7 +72,7 @@ function WaitingCanvas() {
 				</h1>
 				<p className="site-generation__waiting-description">
 					{ translate(
-						'This can take a few minutes. We’ll keep you updated as your site comes together.'
+						'This can take a few minutes. We’ll take you to the editor when your site is ready.'
 					) }
 				</p>
 			</div>
@@ -98,9 +95,7 @@ function ErrorCanvas( {
 
 	if ( failureReason === 'timed-out' ) {
 		title = translate( 'This is taking longer than expected' );
-		description = HAS_EMAIL_NOTIFICATIONS
-			? translate( 'Your brief is saved. We’ll email you when your site is ready.' )
-			: translate( 'Your brief is saved.' );
+		description = translate( 'Your brief is saved.' );
 		actionLabel = translate( 'Check again' );
 	}
 
@@ -224,11 +219,6 @@ export function SiteGenerationView( {
 					</p>
 					<BuildProgress state={ state } />
 				</div>
-				{ HAS_EMAIL_NOTIFICATIONS && (
-					<p className="site-generation__completion-note">
-						{ translate( 'We’ll email you when your site is ready.' ) }
-					</p>
-				) }
 			</aside>
 		</main>
 	);

@@ -432,16 +432,6 @@
 	color: var( --studio-gray-10 );
 }
 
-.site-generation__completion-note {
-	margin-block: 12px 4px;
-	margin-inline: 8px;
-	padding-block-start: 12px;
-	border-block-start: 1px solid var( --studio-gray-70 );
-	color: var( --studio-gray-20 );
-	font-size: $font-body-extra-small;
-	line-height: 1.5;
-}
-
 @keyframes site-generation-shimmer {
 	0%,
 	100% {
