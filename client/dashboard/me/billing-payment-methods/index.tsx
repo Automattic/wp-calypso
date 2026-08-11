@@ -21,6 +21,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { info, cautionFilled as warning } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { addPaymentMethodRoute } from '../../app/router/me';
@@ -104,6 +105,7 @@ export default function PaymentMethods() {
 		userPaymentMethodDeleteQuery()
 	);
 	const { mutate: setPaymentMethodTaxInfo } = useMutation( userPaymentMethodSetTaxInfoQuery() );
+	const { recordTracksEvent } = useAnalytics();
 	const paymentMethodFields = getFields( {
 		isUpdatingPaymentMethods,
 		isSettingPaymentMethodBackup,
@@ -230,11 +232,21 @@ export default function PaymentMethods() {
 						isVisible={ Boolean( removeDialogPaymentMethod ) }
 						paymentMethod={ removeDialogPaymentMethod }
 						onConfirm={ () => {
+							const eventProperties = {
+								payment_partner: removeDialogPaymentMethod.payment_partner,
+								is_backup: removeDialogPaymentMethod.is_backup,
+								is_expired: removeDialogPaymentMethod.is_expired,
+							};
 							deletePaymentMethod( removeDialogPaymentMethod.stored_details_id, {
 								onSuccess: () => {
+									recordTracksEvent( 'calypso_dashboard_payment_method_delete', eventProperties );
 									createSuccessNotice( __( 'Payment method deleted.' ), { type: 'snackbar' } );
 								},
-								onError: () => {
+								onError: ( error ) => {
+									recordTracksEvent( 'calypso_dashboard_payment_method_delete_failure', {
+										...eventProperties,
+										error_message: error.message,
+									} );
 									createErrorNotice( __( 'Failed to delete payment method.' ), {
 										type: 'snackbar',
 									} );
