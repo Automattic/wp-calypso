@@ -3,17 +3,18 @@
  */
 import {
 	getSiteSubscriptionsQueryKey,
+	getStreamInfiniteQueryKey,
 	type SiteSubscriptionsInfiniteData,
 } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
-import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
+import { ANALYTICS_EVENT_RECORD, NOTICE_CREATE } from 'calypso/state/action-types';
 import Stream from '../index';
 import type { SiteSubscriptionItem } from '@automattic/api-core';
 import type { ReactNode } from 'react';
@@ -558,5 +559,55 @@ describe( 'Stream — keyboard navigation', () => {
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 
 		expect( unlikeScope.isDone() ).toBe( false );
+	} );
+} );
+
+describe( 'Stream — failure after posts have loaded', () => {
+	const streamQueryKey = getStreamInfiniteQueryKey( {
+		streamKey: 'likes',
+		feedId: null,
+		localeSlug: null,
+		startDate: null,
+	} );
+
+	function mockLikesFailure() {
+		return nock( BASE )
+			.get( LIKES_PATH )
+			.query( ( q: Record< string, string | string[] | undefined > ) => q.number === '4' )
+			.reply( 500, { error: 'kaboom', message: 'Stream unavailable' } );
+	}
+
+	async function renderThenFail() {
+		mockLikesEndpoint( [ apiPost( 10 ), apiPost( 20 ) ] );
+		const utils = renderStream();
+		await waitFor( () => expect( screen.getByTestId( 'post-10' ) ).toBeVisible() );
+
+		mockLikesFailure();
+		await act( async () => {
+			await utils.queryClient.refetchQueries( { queryKey: streamQueryKey } );
+		} );
+		// `refetchQueries` resolves before the observer notification reaches the
+		// component, so assertions have to wait for the error to actually land.
+		await waitFor( () =>
+			expect( utils.queryClient.getQueryState( streamQueryKey )?.status ).toBe( 'error' )
+		);
+		return utils;
+	}
+
+	it( 'keeps the loaded posts on screen instead of swapping in the error state', async () => {
+		const { actions } = await renderThenFail();
+
+		// The notice is the observable signal that the container processed the error; without it the list could be intact simply because nothing failed.
+		await waitFor( () =>
+			expect(
+				actions.find( ( action ) => ( action as { type?: string } ).type === NOTICE_CREATE )
+			).toMatchObject( {
+				notice: { status: 'is-error', text: 'Stream error: Stream unavailable' },
+			} )
+		);
+
+		expect( screen.getByTestId( 'infinite-list' ) ).toBeVisible();
+		expect( screen.getByTestId( 'post-10' ) ).toBeVisible();
+		expect( screen.getByTestId( 'post-20' ) ).toBeVisible();
 	} );
 } );
