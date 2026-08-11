@@ -4,9 +4,16 @@ const BUILD_TERMINAL_STATUSES = new Set( [ 'done', 'fail' ] );
 
 export type BuildProgressResponse = {
 	current?: string | null;
+	last_update?: number | null;
 	history?: Array< {
 		status?: string;
+		timestamp?: number;
 	} >;
+};
+
+export type StepProgress = {
+	stepIndex: number;
+	startedAt?: number;
 };
 
 // Coarse UI milestones for the persisted pipeline step ids. This map chases
@@ -62,26 +69,41 @@ const TOOL_MILESTONES: Record< string, string > = Object.fromEntries(
 	)
 );
 
-export function getStepIndexForProgress(
+export function getStepProgress(
 	response: BuildProgressResponse,
 	stepIds: string[]
-): number | null {
+): StepProgress | null {
 	// The backend refreshes a repeated step's timestamp (heartbeat), so history
 	// order does not track milestone order — a long-running tool can resurface
 	// after later steps. Take the furthest recognized milestone across the whole
 	// history instead of the most recent entry.
-	const recordedStatuses = [
-		...( response.history ?? [] ).map( ( entry ) => entry.status ),
-		response.current,
+	const recordedEntries = [
+		...( response.history ?? [] ),
+		{ status: response.current, timestamp: response.last_update ?? undefined },
 	];
 	let furthestIndex = -1;
-	for ( const toolId of recordedStatuses ) {
+	for ( const { status: toolId } of recordedEntries ) {
 		const milestone = toolId ? TOOL_MILESTONES[ toolId ] : undefined;
 		if ( milestone ) {
 			furthestIndex = Math.max( furthestIndex, stepIds.indexOf( milestone ) );
 		}
 	}
-	return furthestIndex === -1 ? null : furthestIndex;
+	if ( furthestIndex === -1 ) {
+		return null;
+	}
+
+	const milestoneTimestamps = recordedEntries.flatMap( ( { status: toolId, timestamp } ) => {
+		const milestone = toolId ? TOOL_MILESTONES[ toolId ] : undefined;
+		return milestone && stepIds.indexOf( milestone ) === furthestIndex && timestamp !== undefined
+			? [ timestamp ]
+			: [];
+	} );
+
+	return {
+		stepIndex: furthestIndex,
+		startedAt:
+			milestoneTimestamps.length > 0 ? Math.min( ...milestoneTimestamps ) * 1000 : undefined,
+	};
 }
 
 type FetchProgress = (

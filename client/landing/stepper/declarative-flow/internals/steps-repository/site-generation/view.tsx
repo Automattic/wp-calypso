@@ -3,6 +3,7 @@ import { sparkles } from '@automattic/components/src/icons';
 import { Button, Icon, Notice } from '@wordpress/components';
 import { check, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import type { SiteGenerationFailureReason, SiteGenerationState } from './use-site-generation';
 
 const WordPressMark = () => <Icon className="site-generation__wordpress-mark" icon={ wordpress } />;
@@ -13,6 +14,51 @@ const CheckmarkIcon = (
 
 function ActiveIndicator() {
 	return <span className="site-build-progress__activity" />;
+}
+
+function getElapsedDuration( startedAt: number, now: number ) {
+	const totalSeconds = Math.max( 0, Math.floor( ( now - startedAt ) / 1000 ) );
+	return {
+		minutes: Math.floor( totalSeconds / 60 ),
+		seconds: totalSeconds % 60,
+	};
+}
+
+function ElapsedTime( { startedAt }: { startedAt: number } ) {
+	const translate = useTranslate();
+	const [ now, setNow ] = useState( Date.now() );
+
+	useEffect( () => {
+		setNow( Date.now() );
+		const interval = window.setInterval( () => setNow( Date.now() ), 1000 );
+
+		return () => window.clearInterval( interval );
+	}, [ startedAt ] );
+
+	const { minutes, seconds } = getElapsedDuration( startedAt, now );
+	const elapsedTime =
+		minutes > 0
+			? translate( '%(minutes)dm %(seconds)ds', {
+					args: { minutes, seconds },
+					comment: 'Short elapsed duration. “m” means minutes and “s” means seconds.',
+			  } )
+			: translate( '%(seconds)ds', {
+					args: { seconds },
+					comment: 'Short elapsed duration. “s” means seconds.',
+			  } );
+	const elapsedTimeLabel = translate( 'Elapsed time: %(elapsedTime)s', {
+		args: { elapsedTime: String( elapsedTime ) },
+	} );
+
+	return (
+		<span
+			aria-label={ String( elapsedTimeLabel ) }
+			aria-live="off"
+			className="site-build-progress__elapsed"
+		>
+			{ elapsedTime }
+		</span>
+	);
 }
 
 function BuildVisualization() {
@@ -141,6 +187,9 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 								{ item.status === 'active' && ! hasFailed && <ActiveIndicator /> }
 							</div>
 							<span className="site-build-progress__text">{ item.label }</span>
+							{ item.status === 'active' && ! hasFailed && item.startedAt !== undefined && (
+								<ElapsedTime startedAt={ item.startedAt } />
+							) }
 						</li>
 					);
 				} ) }

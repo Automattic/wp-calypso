@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { logBuildWowEvent } from 'calypso/landing/stepper/utils/build-wow';
-import { getStepIndexForProgress, pollForBuildProgress } from './build-progress-poller';
+import { getStepProgress, pollForBuildProgress } from './build-progress-poller';
 import { pollForBuildWowStatus } from './build-status-poller';
 
 export type SiteGenerationStep = {
 	id: string;
 	label: string;
 	status: 'idle' | 'active' | 'done';
+	startedAt?: number;
 };
 
 export type SiteGenerationFailureReason = 'missing-parameters' | 'timed-out';
@@ -21,7 +22,8 @@ const GENERATION_TIMEOUT_MS = 30 * 60 * 1000;
 
 function getStepsWithProgress(
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >,
-	activeStepIndex: number
+	activeStepIndex: number,
+	activeStepStartedAt: number
 ): SiteGenerationStep[] {
 	return steps.map( ( step, index ) => {
 		let status: SiteGenerationStep[ 'status' ] = 'idle';
@@ -30,7 +32,11 @@ function getStepsWithProgress(
 		} else if ( index === activeStepIndex ) {
 			status = 'active';
 		}
-		return { ...step, status };
+		return {
+			...step,
+			status,
+			startedAt: status === 'active' ? activeStepStartedAt : undefined,
+		};
 	} );
 }
 
@@ -43,7 +49,10 @@ export function useSiteGeneration( {
 	editorUrl: string | null;
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >;
 } ): SiteGenerationState {
-	const [ activeStepIndex, setActiveStepIndex ] = useState( 0 );
+	const [ activeProgress, setActiveProgress ] = useState( () => ( {
+		stepIndex: 0,
+		startedAt: Date.now(),
+	} ) );
 	const [ hasTimedOut, setHasTimedOut ] = useState( false );
 	const hasRequiredParameters = Boolean( siteIdentifier && editorUrl );
 
@@ -83,16 +92,33 @@ export function useSiteGeneration( {
 		stopProgressPolling = pollForBuildProgress( {
 			siteIdentifier,
 			onProgress: ( response ) => {
-				const stepIndex = getStepIndexForProgress( response, stepIds );
-				if ( stepIndex === null ) {
+				const progress = getStepProgress( response, stepIds );
+				if ( progress === null ) {
 					return;
 				}
 				// Monotonic floor: the backend can reset or reorder the recorded
 				// history (heartbeats, requeues), and the UI must never move back.
-				setActiveStepIndex( ( previous ) => Math.max( previous, stepIndex ) );
+				setActiveProgress( ( previous ) => {
+					if ( progress.stepIndex < previous.stepIndex ) {
+						return previous;
+					}
+					if ( progress.stepIndex === previous.stepIndex ) {
+						return {
+							...previous,
+							startedAt:
+								progress.startedAt !== undefined
+									? Math.min( previous.startedAt, progress.startedAt )
+									: previous.startedAt,
+						};
+					}
+					return {
+						stepIndex: progress.stepIndex,
+						startedAt: progress.startedAt ?? Date.now(),
+					};
+				} );
 				// The last milestone is as far as this poller can advance the UI;
 				// from here readiness comes from the build-status poller alone.
-				if ( stepIndex >= stepIds.length - 1 ) {
+				if ( progress.stepIndex >= stepIds.length - 1 ) {
 					stopProgressPolling();
 				}
 			},
@@ -115,6 +141,10 @@ export function useSiteGeneration( {
 	return {
 		status: failureReason ? 'failed' : 'working',
 		failureReason,
-		steps: getStepsWithProgress( steps, Math.min( steps.length - 1, activeStepIndex ) ),
+		steps: getStepsWithProgress(
+			steps,
+			Math.min( steps.length - 1, activeProgress.stepIndex ),
+			activeProgress.startedAt
+		),
 	};
 }
