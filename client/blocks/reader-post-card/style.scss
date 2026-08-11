@@ -542,6 +542,10 @@
 	font-size: 12px;
 	line-height: 1.6;
 	overflow-wrap: anywhere;
+
+	@include ui-mixins.when-dark-theme {
+		background-color: var(--color-border-subtle);
+	}
 }
 
 .reader-post-card__byline .site-icon {
