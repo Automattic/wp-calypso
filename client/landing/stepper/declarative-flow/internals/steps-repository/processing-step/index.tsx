@@ -20,11 +20,11 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
-import { useInterval } from 'calypso/lib/interval';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { ProcessingResult } from './constants';
+import { useLoadingMessageIndex } from './hooks/use-loading-message-index';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
@@ -67,12 +67,12 @@ const ProcessingStep: StepType< {
 	const { __ } = useI18n();
 	const loadingMessages = useProcessingLoadingMessages( flow );
 
-	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
 	const [ hasEmptyActionRun, setHasEmptyActionRun ] = useState( false );
 	const [ destinationState, setDestinationState ] = useState<
 		{ siteCreated?: boolean } | undefined
 	>( {} );
+	const safeMessageIndex = useLoadingMessageIndex( loadingMessages );
 
 	/**
 	 * There is a long-term bug here that the `submit` function will be called multiple times if we
@@ -97,13 +97,6 @@ const ProcessingStep: StepType< {
 	const isSubmittedRef = useRef( false );
 
 	const recordSignupComplete = useRecordSignupComplete( flow );
-
-	useInterval(
-		() => {
-			setCurrentMessageIndex( ( s ) => ( s + 1 ) % loadingMessages.length );
-		},
-		loadingMessages[ currentMessageIndex ]?.duration
-	);
 
 	const action = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPendingAction(),
@@ -138,7 +131,7 @@ const ProcessingStep: StepType< {
 	} );
 
 	const getCurrentMessage = () => {
-		return props.title || progressTitle || loadingMessages[ currentMessageIndex ]?.title;
+		return props.title || progressTitle || loadingMessages[ safeMessageIndex ]?.title;
 	};
 
 	const captureFlowException = useCaptureFlowException( props.flow, 'ProcessingStep' );
@@ -234,7 +227,7 @@ const ProcessingStep: StepType< {
 	}, [ hasActionSuccessfullyRun, recordSignupComplete, flow ] );
 
 	const getSubtitle = () => {
-		return props.subtitle || loadingMessages[ currentMessageIndex ]?.subtitle;
+		return props.subtitle || loadingMessages[ safeMessageIndex ]?.subtitle;
 	};
 
 	const flowName = props.flow || '';
