@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useEffect, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import Notice from '../../components/notice';
@@ -16,6 +17,19 @@ export function getEmailBlock( site: Site ): AtomicEmailBlock | null {
 export function EmailBlockNotice( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { setOpenOdieWithContext } = useHelpCenter();
+	const hasRecordedImpression = useRef( false );
+
+	// The arbiter only renders the winning candidate, so this counts notices
+	// actually shown, not sites eligible to show one.
+	useEffect( () => {
+		if ( hasRecordedImpression.current ) {
+			return;
+		}
+		hasRecordedImpression.current = true;
+		recordTracksEvent( 'calypso_dashboard_email_block_notice_impression', {
+			site_id: site.ID,
+		} );
+	}, [ recordTracksEvent, site.ID ] );
 
 	const handleContactClick = () => {
 		recordTracksEvent( 'calypso_dashboard_email_block_notice_contact_click', {

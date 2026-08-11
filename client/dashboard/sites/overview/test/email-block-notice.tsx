@@ -27,16 +27,24 @@ describe( 'getEmailBlock', () => {
 	} );
 } );
 
-test( 'renders a non-dismissible error notice with a contact action', () => {
-	render(
-		<EmailBlockNotice
-			site={ createSite( {
-				status: 'blocked',
-				reason: 'Too many bounces, sender blocked',
-				expires_on: '2026-09-01 00:00:00',
-			} ) }
-		/>
+const blockedSite = createSite( {
+	status: 'blocked',
+	reason: 'Too many bounces, sender blocked',
+	expires_on: '2026-09-01 00:00:00',
+} );
+
+test( 'records one impression when the notice is shown', () => {
+	const { recordTracksEvent } = render( <EmailBlockNotice site={ blockedSite } /> );
+
+	expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+	expect( recordTracksEvent ).toHaveBeenCalledWith(
+		'calypso_dashboard_email_block_notice_impression',
+		{ site_id: 123 }
 	);
+} );
+
+test( 'renders a non-dismissible error notice with a contact action', () => {
+	render( <EmailBlockNotice site={ blockedSite } /> );
 
 	expect( screen.getByText( 'Your site can’t send email' ) ).toBeVisible();
 	expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
