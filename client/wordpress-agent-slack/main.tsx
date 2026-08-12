@@ -2,11 +2,16 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Card, CardBody, Notice, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import wpcom from 'calypso/lib/wp';
+import {
+	getCurrentUserDisplayName,
+	getCurrentUserName,
+} from 'calypso/state/current-user/selectors';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -42,6 +47,12 @@ export default function WordPressAgentSlackPage( {
 	slackStatus,
 }: WordPressAgentSlackPageProps ) {
 	const translate = useTranslate();
+	const displayName = useSelector( getCurrentUserDisplayName );
+	const userLogin = useSelector( getCurrentUserName );
+	const username =
+		displayName && userLogin && displayName !== userLogin
+			? `${ displayName } (@${ userLogin })`
+			: displayName || userLogin;
 	const [ connections, setConnections ] = useState< SlackConnection[] >( [] );
 	const [ loading, setLoading ] = useState( true );
 	const [ action, setAction ] = useState< string | null >( null );
@@ -136,6 +147,11 @@ export default function WordPressAgentSlackPage( {
 	};
 
 	const title = translate( 'WordPress Agent for Slack' );
+	const pairingTitle = username
+		? translate( 'Connect this Slack account to your WordPress.com account %(username)s?', {
+				args: { username },
+		  } )
+		: translate( 'Connect this Slack account to your WordPress.com account?' );
 	let connectionsContent: ReactNode;
 	if ( loading ) {
 		connectionsContent = (
@@ -214,7 +230,7 @@ export default function WordPressAgentSlackPage( {
 				<Card>
 					<CardBody className="wordpress-agent-slack__pairing">
 						<div>
-							<h2>{ translate( 'Connect this Slack account?' ) }</h2>
+							<h2>{ pairingTitle }</h2>
 							<p>
 								{ translate(
 									'WordPress Agent will use your WordPress.com account and sites when you message it in this Slack workspace.'
