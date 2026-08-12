@@ -63,3 +63,11 @@
 .site-launch-pre-launch-modal__meta {
 	min-width: 0;
 }
+
+.site-launch-pre-launch-modal__launching {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	// Match the confirmation body height so the modal keeps its size while launching.
+	min-block-size: 240px;
+}

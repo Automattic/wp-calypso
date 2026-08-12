@@ -209,7 +209,7 @@ describe( '<SiteLaunchModal variant="pre-launch">', () => {
 		expect( onLaunch ).not.toHaveBeenCalled();
 	} );
 
-	test( 'disables the launch button while launching', async () => {
+	test( 'shows the launching state instead of the confirmation while launching', async () => {
 		render(
 			<SiteLaunchModal
 				variant="pre-launch"
@@ -221,6 +221,7 @@ describe( '<SiteLaunchModal variant="pre-launch">', () => {
 			/>
 		);
 
-		expect( await screen.findByRole( 'button', { name: 'Yes, launch site!' } ) ).toBeDisabled();
+		expect( await screen.findByRole( 'dialog', { name: 'Launching site…' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Yes, launch site!' } ) ).not.toBeInTheDocument();
 	} );
 } );
