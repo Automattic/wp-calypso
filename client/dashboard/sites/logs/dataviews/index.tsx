@@ -1,7 +1,7 @@
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { useSearch } from '@tanstack/react-router';
 import { ToggleControl, Button, Spinner } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { View, Filter, Field } from '@wordpress/dataviews';
@@ -60,11 +60,13 @@ function SiteLogsDataViews( {
 	onAutoRefreshRequest,
 	site,
 }: SiteLogsDataViewsProps & { logType: typeof LogType.PHP | typeof LogType.SERVER } ) {
-	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
-	const search = router.state.location.search;
+	// The validated route search (not the raw location search), so values
+	// canonicalized by `validateSearch` (e.g. severity casing) are what the
+	// filters and the URL sync consume.
+	const search = useSearch( { strict: false } );
 	const rafIdRef = useRef< number | null >( null );
 	const dataviewsRef = useRef< HTMLDivElement | null >( null );
 	const {

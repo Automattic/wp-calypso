@@ -325,13 +325,17 @@ export const siteLogsPhpRoute = createRoute( {
 	path: 'php',
 	loader: loadSiteLogsRoute,
 	validateSearch: ( search ): { severity?: string } => {
-		// Accepts a comma-separated list; tolerates '+'-encoded spaces, which
-		// decodeURIComponent (used by the router's search parser) leaves as-is.
-		const severity = String( search.severity ?? '' )
+		// Accepts a comma-separated list, canonicalized case-insensitively.
+		// Tolerates '+'-encoded spaces, which decodeURIComponent (used by the
+		// router's search parser) leaves as-is.
+		const values = String( search.severity ?? '' )
 			.replace( /\+/g, ' ' )
 			.split( ',' )
-			.filter( ( value ) => VALUES_SEVERITY.some( ( v ) => v === value ) )
-			.join( ',' );
+			.map( ( value ) =>
+				VALUES_SEVERITY.find( ( v ) => v.toLowerCase() === value.trim().toLowerCase() )
+			)
+			.filter( ( value ): value is ( typeof VALUES_SEVERITY )[ number ] => value !== undefined );
+		const severity = Array.from( new Set( values ) ).join( ',' );
 		return { severity: severity || undefined };
 	},
 } ).lazy( () =>
