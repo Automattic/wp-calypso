@@ -61,15 +61,6 @@ export default function ContactList( {
 		}
 	}, [ type, translate ] );
 
-	const showAddButton = useMemo( () => {
-		switch ( type ) {
-			case 'sms':
-				return items.length < 1;
-			default:
-				return true;
-		}
-	}, [ items.length, type ] );
-
 	const showSMSCounter = type === 'sms' && items.length > 0 && !! settings;
 
 	const isA4AEnvironment = isA8CForAgencies();
@@ -94,23 +85,21 @@ export default function ContactList( {
 					/>
 				) ) }
 
-				{ showAddButton && (
-					<div className="contact-list__action">
-						<Button
-							compact
-							className="contact-list__action-button"
-							onClick={ onAddContact }
-							disabled={ restriction !== 'none' }
-						>
-							<Icon size={ 18 } icon={ plus } />
-							{ addButtonLabel }
-						</Button>
+				<div className="contact-list__action">
+					<Button
+						compact
+						className="contact-list__action-button"
+						onClick={ onAddContact }
+						disabled={ restriction !== 'none' }
+					>
+						<Icon size={ 18 } icon={ plus } />
+						{ addButtonLabel }
+					</Button>
 
-						<FeatureRestrictionBadge restriction={ restriction } />
-					</div>
-				) }
+					<FeatureRestrictionBadge restriction={ restriction } />
+				</div>
 
-				{ showAddButton && restriction === 'upgrade_required' && type === 'email' && (
+				{ restriction === 'upgrade_required' && type === 'email' && (
 					<div className="contact-list__upgrade-message">
 						{ translate( 'Multiple email recipients is part of the Basic plan.' ) }
 						{ ! isA4AEnvironment && <UpgradeLink isInline /> }

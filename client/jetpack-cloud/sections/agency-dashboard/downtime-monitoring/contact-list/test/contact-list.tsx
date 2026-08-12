@@ -133,13 +133,17 @@ describe( 'ContactList', () => {
 		expect( screen.getByText( /you need at least one phone number/i ) ).toBeInTheDocument();
 	} );
 
-	it( 'should not render the add phone number button if there is one contact added', () => {
+	it( 'should keep the add phone number button visible if there is one contact added', () => {
 		const mockedOnAction = jest.fn();
 		render( <ContactList onAction={ mockedOnAction } type="sms" items={ mockedPhoneItems } />, {
 			wrapper: Wrapper,
 		} );
 
-		expect( screen.queryByRole( 'button', { name: /Add phone number/i } ) ).not.toBeInTheDocument();
+		const addButton = screen.getByRole( 'button', { name: /Add phone number/i } );
+		expect( addButton ).toBeVisible();
+		fireEvent.click( addButton );
+		expect( mockedOnAction ).toHaveBeenCalledTimes( 1 );
+
 		expect( screen.queryByText( /you need at least one phone number/i ) ).not.toBeInTheDocument();
 	} );
 } );
