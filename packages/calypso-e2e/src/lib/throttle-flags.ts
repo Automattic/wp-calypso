@@ -18,14 +18,15 @@ export interface ThrottleDetection {
 
 /**
  * Used when the response does not say how long the ban lasts. wpcom's own
- * message carries the number whenever it knows it, so these are the floor, not
- * the source of truth: `signup` bans for 60 minutes on the public tier and 10
- * on an a8c IP, and `is-available` never states a duration at all.
+ * message carries the number whenever it knows it, so these are reached only
+ * when the message does not carry one. `signup` bans for 10 minutes on an
+ * Automattic IP, where CI runs; `is-available` never states a duration and its
+ * limiter counts over a sliding hour.
  */
 const FALLBACK_DURATIONS: Record< ThrottleId, number > = {
-	signup: 3_600_000,
+	signup: 600_000,
 	'domain-suggestions': 60_000,
-	'domain-availability': 60_000,
+	'domain-availability': 3_600_000,
 };
 
 /**
@@ -256,9 +257,12 @@ async function tagOnce( id: ThrottleId ): Promise< void > {
 
 /**
  * Records a throttle if this response or error signals one. Never throws.
+ *
+ * The endpoint is given separately by callers whose payload does not carry it:
+ * what a bare `throttled` code means depends on which endpoint answered with it.
  */
-export async function recordThrottle( responseOrError: unknown ): Promise< void > {
-	const throttle = detectThrottle( responseOrError );
+export async function recordThrottle( responseOrError: unknown, url?: string ): Promise< void > {
+	const throttle = detectThrottle( responseOrError, url );
 	if ( throttle ) {
 		await raiseFlag( throttle.id, throttle.durationMs );
 	}
@@ -457,9 +461,10 @@ export function flagsInLog( log: string | null ): Map< ThrottleId, ThrottleFlag 
 
 /**
  * Maps a response or error to the throttle it signals, with the ban length the
- * server stated where it stated one.
+ * server stated where it stated one. `url` is folded into what is matched, for
+ * callers holding an endpoint their payload does not name.
  */
-export function detectThrottle( responseOrError: unknown ): ThrottleDetection | null {
+export function detectThrottle( responseOrError: unknown, url?: string ): ThrottleDetection | null {
 	let text: string;
 	try {
 		if ( responseOrError instanceof Error ) {
@@ -474,7 +479,7 @@ export function detectThrottle( responseOrError: unknown ): ThrottleDetection | 
 		return null;
 	}
 
-	const id = detectThrottleId( text );
+	const id = detectThrottleId( url ? `${ url } ${ text }` : text );
 	if ( ! id ) {
 		return null;
 	}
@@ -507,7 +512,8 @@ function detectThrottleId( text: string ): ThrottleId | null {
 	// about its own upstream, not a ban on us.
 	const page = /<!doctype|<html/i.test( text );
 	const throttled = ! page && /(?:^|[^a-z0-9_])throttled(?:$|[^a-z0-9_])/i.test( text );
-	if ( ! throttled && ! /limit reached/i.test( text ) ) {
+	const limitReached = /limit reached/i.test( text );
+	if ( ! throttled && ! limitReached ) {
 		return null;
 	}
 
@@ -517,7 +523,14 @@ function detectThrottleId( text: string ): ThrottleId | null {
 	if ( /domains\/suggestions/i.test( text ) ) {
 		return 'domain-suggestions';
 	}
-	// Nothing names the endpoint, so signup has to be carried by wpcom's own
-	// voice: the code, or the message that always says when to come back.
-	return throttled || /try again/i.test( text ) ? 'signup' : null;
+	// `throttled` also wraps a Blackbox block on `/users/new`, which refuses one
+	// signup attempt rather than banning the IP, so the code alone settles it only
+	// on `/sites/new`, where nothing else raises it. Everywhere else it takes
+	// wpcom's own ban sentence, which always says when to come back — and which is
+	// translated, so a ban stated in another language is read from the code and the
+	// endpoint or not at all.
+	if ( throttled && /sites\/new/i.test( text ) ) {
+		return 'signup';
+	}
+	return limitReached && parseBanDurationMs( text ) !== null ? 'signup' : null;
 }

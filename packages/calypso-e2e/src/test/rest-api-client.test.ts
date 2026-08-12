@@ -228,4 +228,18 @@ describe( 'RestAPIClient: createSite', function () {
 		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'type=signup' ) );
 		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'duration=600000' ) );
 	} );
+
+	test( 'A throttled response is recognised without the sentence too', async function () {
+		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+		warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		nock( requestURL.origin ).post( requestURL.pathname ).reply( 403, { error: 'throttled' } );
+
+		// The code alone settles it on this endpoint, and only the caller knows
+		// which endpoint answered: the body does not carry it.
+		await expect(
+			restAPIClient.createSite( { name: 'fake_blog_name', title: 'fake_blog_title' } )
+		).rejects.toThrow( 'throttled' );
+
+		expect( tagOwnBuild ).toHaveBeenCalledWith( 'throttle-signup' );
+	} );
 } );

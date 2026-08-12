@@ -271,17 +271,21 @@ export class RestAPIClient {
 			body: JSON.stringify( body ),
 		};
 
+		const url = this.getRequestURL( '1.1', '/sites/new' );
+
 		let response;
 		try {
-			response = await this.sendRequest( this.getRequestURL( '1.1', '/sites/new' ), params );
+			response = await this.sendRequest( url, params );
 		} catch ( error ) {
-			// The edge limiter can answer with something `sendRequest` cannot
-			// parse, so the throttle reaches us as a thrown error rather than a
-			// response body. Recorded either way, and rethrown untouched.
-			await recordThrottle( error );
+			// A refusal that is not JSON is something `sendRequest` cannot parse, so
+			// the throttle reaches us as a thrown error rather than a response body.
+			// Recorded either way, and rethrown untouched. The endpoint travels
+			// alongside: neither shape names it, and a bare `throttled` code means
+			// nothing without it.
+			await recordThrottle( error, url.href );
 			throw error;
 		}
-		await recordThrottle( response );
+		await recordThrottle( response, url.href );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
