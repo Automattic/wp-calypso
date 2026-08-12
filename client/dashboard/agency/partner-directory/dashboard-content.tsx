@@ -52,6 +52,12 @@ interface Props {
 	openSupportGuide?: ( url: string ) => void;
 }
 
+/**
+ * Shared by the dashboard snackbar and the classic app's success notice so
+ * the two hosts can't drift apart.
+ */
+export const getProfileSavedMessage = () => __( 'Your profile has been saved!' );
+
 export default function PartnerDirectoryDashboardContent( {
 	agency,
 	recordTracksEvent,
@@ -65,7 +71,7 @@ export default function PartnerDirectoryDashboardContent( {
 
 	const { mutate: publishProfile, isPending: isPublishingProfile } = useMutation(
 		withSnackbar( agencyPartnerDirectoryApplicationMutation( agency?.id ?? 0 ), {
-			success: __( 'Your profile has been saved!' ),
+			success: getProfileSavedMessage(),
 			error: __( 'Failed to publish your profile.' ),
 		} )
 	);
@@ -74,16 +80,17 @@ export default function PartnerDirectoryDashboardContent( {
 	const isProfileComplete = isAgencyProfileComplete( profile );
 	const isCompleted = isApplicationCompleted( application );
 
-	const directoryStatuses: DirectoryStatus[] =
-		application?.directories.map( ( { directory, status } ) => ( {
-			directory,
-			badge: getDirectoryStatusBadge( status ),
-		} ) ) ?? [];
+	const directories = application?.directories ?? [];
 
-	const hasDirectoryApproval = directoryStatuses.some( ( { badge } ) => badge.key === 'approved' );
+	const directoryStatuses: DirectoryStatus[] = directories.map( ( { directory, status } ) => ( {
+		directory,
+		badge: getDirectoryStatusBadge( status ),
+	} ) );
+
+	const hasDirectoryApproval = directories.some( ( { status } ) => status === 'approved' );
 	// The "not approved" popover only auto-opens for a single, unambiguous rejection.
 	const showPopoverOnLoad =
-		directoryStatuses.filter( ( { badge } ) => badge.key === 'rejected' ).length === 1;
+		directories.filter( ( { status } ) => status === 'rejected' ).length === 1;
 
 	const onApplyNowClick = () => {
 		recordTracksEvent( 'calypso_partner_directory_dashboard_apply_now_click' );
@@ -112,7 +119,7 @@ export default function PartnerDirectoryDashboardContent( {
 			{
 				services: profile.listing_details.services ?? [],
 				products: profile.listing_details.products ?? [],
-				directories: application.directories.map( ( { directory, urls, note } ) => ( {
+				directories: directories.map( ( { directory, urls, note } ) => ( {
 					directory,
 					urls,
 					note,
@@ -201,16 +208,15 @@ export default function PartnerDirectoryDashboardContent( {
 										</VStack>
 									) : (
 										<VStack spacing={ 1 } alignment="flex-start" as="span">
+											{ /* No auto-open here: it would cover the congratulations screen. */ }
 											<StatusBadge
 												badge={ badge }
-												showPopoverOnLoad={ showPopoverOnLoad }
+												showPopoverOnLoad={ false }
 												expertiseUrl={ expertiseUrl }
 												recordTracksEvent={ recordTracksEvent }
 											/>
 											{ badge.key === 'approved' && ! brandMeta.isAvailable && (
-												<Text variant="muted">
-													{ __( 'This Partner Directory is launching soon.' ) }
-												</Text>
+												<Text>{ __( 'This Partner Directory is launching soon.' ) }</Text>
 											) }
 										</VStack>
 									)
@@ -266,7 +272,7 @@ export default function PartnerDirectoryDashboardContent( {
 							<Button
 								variant={ applicationWasSubmitted ? 'secondary' : 'primary' }
 								href={ expertiseUrl }
-								onClick={ onApplyNowClick }
+								onClick={ applicationWasSubmitted ? onEditExpertiseClick : onApplyNowClick }
 							>
 								{ applicationWasSubmitted ? __( 'Edit expertise' ) : __( 'Apply now' ) }
 							</Button>
@@ -300,14 +306,12 @@ export default function PartnerDirectoryDashboardContent( {
 						title={ __( 'New clients will find you' ) }
 						description={
 							<VStack spacing={ 1 } as="span">
-								<Text variant="muted">
+								<Text>
 									{ __(
 										'Your agency will appear in the Partner Directories you select and get approved for, including WordPress.com, Woo.com, Pressable.com, and Jetpack.com.'
 									) }
 								</Text>
-								<Text variant="muted">
-									{ __( 'These Partner Directories are launching soon.' ) }
-								</Text>
+								<Text>{ __( 'These Partner Directories are launching soon.' ) }</Text>
 							</VStack>
 						}
 						actions={
