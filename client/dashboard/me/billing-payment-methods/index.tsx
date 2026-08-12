@@ -39,7 +39,12 @@ import { PaymentMethodEditDialog } from './payment-method-edit-dialog';
 import type { StoredPaymentMethod } from '@automattic/api-core';
 import type { View, Fields, SortDirection, Action } from '@wordpress/dataviews';
 
-const getDeleteEventProperties = ( paymentMethod: StoredPaymentMethod ) => ( {
+interface ChangeBackupArgs {
+	paymentMethod: StoredPaymentMethod;
+	isBackup: boolean;
+}
+
+const getPaymentMethodEventProperties = ( paymentMethod: StoredPaymentMethod ) => ( {
 	payment_partner: paymentMethod.payment_partner,
 	is_backup: paymentMethod.is_backup,
 	is_expired: paymentMethod.is_expired,
@@ -112,10 +117,53 @@ export default function PaymentMethods() {
 	);
 	const { mutate: setPaymentMethodTaxInfo } = useMutation( userPaymentMethodSetTaxInfoQuery() );
 	const { recordTracksEvent } = useAnalytics();
+	const recordActionClick = (
+		paymentMethod: StoredPaymentMethod,
+		action: string,
+		source: 'actions-menu' | 'toggle' = 'actions-menu'
+	) => {
+		recordTracksEvent( 'calypso_dashboard_payment_method_action_click', {
+			...getPaymentMethodEventProperties( paymentMethod ),
+			action,
+			source,
+		} );
+	};
+	const changePaymentMethodBackup = ( {
+		paymentMethod,
+		isBackup,
+		source,
+	}: {
+		paymentMethod: StoredPaymentMethod;
+		isBackup: boolean;
+		source: 'actions-menu' | 'toggle';
+	} ) => {
+		recordActionClick( paymentMethod, isBackup ? 'enable-backup' : 'disable-backup', source );
+		// Unlike the click event above, these describe the state being saved, not
+		// the state the payment method was in when the user acted.
+		const eventProperties = {
+			...getPaymentMethodEventProperties( paymentMethod ),
+			is_backup: isBackup,
+		};
+		setPaymentMethodBackup(
+			{ ...paymentMethod, is_backup: isBackup },
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_payment_method_set_backup', eventProperties );
+				},
+				onError: ( error ) => {
+					recordTracksEvent( 'calypso_dashboard_payment_method_set_backup_failure', {
+						...eventProperties,
+						error_message: error.message,
+					} );
+				},
+			}
+		);
+	};
 	const paymentMethodFields = getFields( {
 		isUpdatingPaymentMethods,
 		isSettingPaymentMethodBackup,
-		setPaymentMethodBackup,
+		onChangeBackup: ( { paymentMethod, isBackup }: ChangeBackupArgs ) =>
+			changePaymentMethodBackup( { paymentMethod, isBackup, source: 'toggle' } ),
 	} );
 	const { data: filteredPaymentMethods, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( paymentMethods, currentView, paymentMethodFields );
@@ -132,9 +180,10 @@ export default function PaymentMethods() {
 			},
 			callback: ( items ) => {
 				const item = items[ 0 ];
-				setPaymentMethodBackup( {
-					...item,
-					is_backup: true,
+				changePaymentMethodBackup( {
+					paymentMethod: item,
+					isBackup: true,
+					source: 'actions-menu',
 				} );
 			},
 		},
@@ -149,9 +198,10 @@ export default function PaymentMethods() {
 			},
 			callback: ( items ) => {
 				const item = items[ 0 ];
-				setPaymentMethodBackup( {
-					...item,
-					is_backup: false,
+				changePaymentMethodBackup( {
+					paymentMethod: item,
+					isBackup: false,
+					source: 'actions-menu',
 				} );
 			},
 		},
@@ -160,6 +210,7 @@ export default function PaymentMethods() {
 			label: __( 'Edit billing information' ),
 			callback: ( items ) => {
 				const item = items[ 0 ];
+				recordActionClick( item, 'edit-billing-address' );
 				setEditDialogPaymentMethod( item );
 			},
 		},
@@ -171,10 +222,7 @@ export default function PaymentMethods() {
 			},
 			callback: ( items ) => {
 				const item = items[ 0 ];
-				recordTracksEvent(
-					'calypso_dashboard_payment_method_delete_click',
-					getDeleteEventProperties( item )
-				);
+				recordActionClick( item, 'remove' );
 				setRemoveDialogPaymentMethod( item );
 			},
 		},
@@ -193,6 +241,7 @@ export default function PaymentMethods() {
 							__next40pxDefaultSize
 							variant="primary"
 							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_payment_method_add_click' );
 								navigate( { to: addPaymentMethodRoute.to } );
 							} }
 						>
@@ -221,13 +270,34 @@ export default function PaymentMethods() {
 					<PaymentMethodEditDialog
 						paymentMethod={ editAddressDialogPaymentMethod }
 						isVisible={ Boolean( editAddressDialogPaymentMethod ) }
-						onCancel={ () => setEditDialogPaymentMethod( undefined ) }
+						onCancel={ () => {
+							recordTracksEvent(
+								'calypso_dashboard_payment_method_edit_billing_address_cancel_click',
+								getPaymentMethodEventProperties( editAddressDialogPaymentMethod )
+							);
+							setEditDialogPaymentMethod( undefined );
+						} }
 						onConfirm={ ( data ) => {
+							const eventProperties = getPaymentMethodEventProperties(
+								editAddressDialogPaymentMethod
+							);
+							recordTracksEvent(
+								'calypso_dashboard_payment_method_edit_billing_address_save_click',
+								eventProperties
+							);
 							setPaymentMethodTaxInfo( data, {
 								onSuccess: () => {
+									recordTracksEvent(
+										'calypso_dashboard_payment_method_edit_billing_address',
+										eventProperties
+									);
 									createSuccessNotice( __( 'Billing address updated.' ), { type: 'snackbar' } );
 								},
 								onError: ( error ) => {
+									recordTracksEvent(
+										'calypso_dashboard_payment_method_edit_billing_address_failure',
+										{ ...eventProperties, error_message: error.message }
+									);
 									createErrorNotice( error?.message || __( 'Failed to update billing address.' ), {
 										type: 'snackbar',
 									} );
@@ -242,7 +312,7 @@ export default function PaymentMethods() {
 						isVisible={ Boolean( removeDialogPaymentMethod ) }
 						paymentMethod={ removeDialogPaymentMethod }
 						onConfirm={ () => {
-							const eventProperties = getDeleteEventProperties( removeDialogPaymentMethod );
+							const eventProperties = getPaymentMethodEventProperties( removeDialogPaymentMethod );
 							recordTracksEvent(
 								'calypso_dashboard_payment_method_delete_confirm_click',
 								eventProperties
@@ -264,7 +334,13 @@ export default function PaymentMethods() {
 							} );
 							setRemoveDialogPaymentMethod( undefined );
 						} }
-						onCancel={ () => setRemoveDialogPaymentMethod( undefined ) }
+						onCancel={ () => {
+							recordTracksEvent(
+								'calypso_dashboard_payment_method_delete_cancel_click',
+								getPaymentMethodEventProperties( removeDialogPaymentMethod )
+							);
+							setRemoveDialogPaymentMethod( undefined );
+						} }
 					/>
 				) }
 			</div>
@@ -275,13 +351,11 @@ export default function PaymentMethods() {
 function getFields( {
 	isUpdatingPaymentMethods,
 	isSettingPaymentMethodBackup,
-	setPaymentMethodBackup,
+	onChangeBackup,
 }: {
 	isUpdatingPaymentMethods: boolean;
 	isSettingPaymentMethodBackup: boolean;
-	setPaymentMethodBackup: (
-		paymentMethod: Pick< StoredPaymentMethod, 'stored_details_id' | 'is_backup' >
-	) => void;
+	onChangeBackup: ( args: ChangeBackupArgs ) => void;
 } ): Fields< StoredPaymentMethod > {
 	return [
 		{
@@ -383,10 +457,7 @@ function getFields( {
 							! isCreditCard( item ) || isSettingPaymentMethodBackup || isUpdatingPaymentMethods
 						}
 						onChange={ () => {
-							setPaymentMethodBackup( {
-								...item,
-								is_backup: ! item.is_backup,
-							} );
+							onChangeBackup( { paymentMethod: item, isBackup: ! item.is_backup } );
 						} }
 					/>
 				);
