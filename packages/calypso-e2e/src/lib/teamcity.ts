@@ -110,7 +110,10 @@ function loadBuildContext( file: string | undefined ): BuildContext | null {
 	const password = lookup( 'teamcity.auth.password' );
 
 	if ( ! serverUrl || ! buildId || ! user || ! password ) {
-		return null;
+		// A build whose properties name no credentials is an agent configured
+		// differently from the rest, not a laptop. Answering "no build here" would
+		// let every lookup it makes read as a quiet day for the whole project.
+		throw new Error( 'The TeamCity build properties file carries no credentials.' );
 	}
 	return { serverUrl, buildId, user, password };
 }

@@ -78,11 +78,15 @@ describe( 'fail-open', () => {
 		expect( fetchSpy ).not.toHaveBeenCalled();
 	} );
 
-	test( 'properties file missing keys: no credentials, no request', async () => {
+	test( 'properties file missing keys: no request, and the caller is told', async () => {
 		writeProperties( 'teamcity.build.id=18847887\n' );
 		const fetchSpy = jest.spyOn( globalThis, 'fetch' );
 
-		await expect( tagOwnBuild( 'throttle-signup' ) ).resolves.toBeNull();
+		// An agent whose properties name no credentials must not read like a
+		// laptop: every lookup it makes would otherwise pass for a quiet day.
+		await expect( tagOwnBuild( 'throttle-signup' ) ).rejects.toThrow(
+			'The TeamCity build properties file carries no credentials.'
+		);
 		expect( fetchSpy ).not.toHaveBeenCalled();
 	} );
 
