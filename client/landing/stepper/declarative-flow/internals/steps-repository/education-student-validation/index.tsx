@@ -8,7 +8,7 @@ import { HelpCenter } from '@automattic/data-stores';
 import { Step } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { globe, help, Icon, lock, pencil } from '@wordpress/icons';
+import { help } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -94,19 +94,16 @@ const EducationStudentValidation: StepType< {
 	const programSteps = [
 		{
 			number: '01',
-			icon: lock,
 			title: __( 'Enter your invite code' ),
 			description: __( 'Use the code your instructor sent over to get started.' ),
 		},
 		{
 			number: '02',
-			icon: globe,
 			title: __( 'Name your site' ),
 			description: __( 'Pick a domain name and set up your site in a couple of clicks.' ),
 		},
 		{
 			number: '03',
-			icon: pencil,
 			title: __( 'Start publishing' ),
 			description: __(
 				'Whatever you build here is yours to keep. Your site stays live after the course ends.'
@@ -147,6 +144,7 @@ const EducationStudentValidation: StepType< {
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
 				columnWidth={ 8 }
+				headingColumnWidth={ 8 }
 				topBar={
 					<Step.TopBar
 						logo={
@@ -175,28 +173,8 @@ const EducationStudentValidation: StepType< {
 						<Step.Heading align="center" text={ title } subText={ subText } />
 					</div>
 				}
-				verticalAlign="center"
 				className="education-student-validation"
 			>
-				<ol className="education-student-validation__steps">
-					{ programSteps.map( ( programStep ) => (
-						<li key={ programStep.number } className="education-student-validation__step">
-							<div className="education-student-validation__step-marker" aria-hidden="true">
-								<span className="education-student-validation__step-number">
-									{ programStep.number }
-								</span>
-								<span className="education-student-validation__step-rule" />
-							</div>
-							<div className="education-student-validation__step-icon">
-								<Icon icon={ programStep.icon } size={ 22 } />
-							</div>
-							<h3 className="education-student-validation__step-title">{ programStep.title }</h3>
-							<p className="education-student-validation__step-description">
-								{ programStep.description }
-							</p>
-						</li>
-					) ) }
-				</ol>
 				<form className="education-student-validation__form" onSubmit={ onSubmit }>
 					<div className="education-student-validation__field">
 						<FormLabel htmlFor={ INPUT_ID }>{ __( 'Invitation code' ) }</FormLabel>
@@ -228,6 +206,19 @@ const EducationStudentValidation: StepType< {
 					</Step.PrimaryButton>
 					<p className="education-student-validation__enroll-note">{ enrollNote }</p>
 				</form>
+				<ol className="education-student-validation__steps">
+					{ programSteps.map( ( programStep ) => (
+						<li key={ programStep.number } className="education-student-validation__step">
+							<span className="education-student-validation__step-number" aria-hidden="true">
+								{ programStep.number }
+							</span>
+							<h3 className="education-student-validation__step-title">{ programStep.title }</h3>
+							<p className="education-student-validation__step-description">
+								{ programStep.description }
+							</p>
+						</li>
+					) ) }
+				</ol>
 			</Step.CenteredColumnLayout>
 		</>
 	);
