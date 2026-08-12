@@ -1381,6 +1381,36 @@ describe( 'OrchestratorChat', () => {
 		} );
 	} );
 
+	it( 'does not expose provider metering admission on Reader Chat', () => {
+		const providerAdmission = {
+			submitBlocked: true,
+			onBlockedSubmit: jest.fn(),
+			notice: { message: 'No AI requests remaining' },
+		};
+		const useSubmissionAdmission = jest.fn( () => providerAdmission );
+		mockIsReaderChatAgent.mockReturnValue( true );
+
+		render( chat( { useSubmissionAdmission } ) );
+
+		expect( useSubmissionAdmission ).toHaveBeenCalledTimes( 1 );
+		expect( mockAgentChat.mock.calls.at( -1 )![ 0 ] ).toEqual(
+			expect.objectContaining( { submissionAdmission: undefined } )
+		);
+	} );
+
+	it( 'keeps provider metering admission on editor agents', () => {
+		const providerAdmission = {
+			submitBlocked: true,
+			onBlockedSubmit: jest.fn(),
+		};
+
+		render( chat( { useSubmissionAdmission: () => providerAdmission } ) );
+
+		expect( mockAgentChat.mock.calls.at( -1 )![ 0 ] ).toEqual(
+			expect.objectContaining( { submissionAdmission: providerAdmission } )
+		);
+	} );
+
 	it( 'allows an admitted tool-result continuation while new user turns are blocked', async () => {
 		const { onSubmit } = mockUseAgentChat();
 		const refreshAfterTurn = jest.fn().mockResolvedValue( undefined );

@@ -170,19 +170,24 @@ describe( 'loadExternalProviders', () => {
 		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
 
-	it( 'does not merge external editor providers into Reader Chat', async () => {
-		const agentsManagerData = {
-			agentId: 'reader-chat',
-			agentProviders: [ 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs' ],
-		};
-		setAgentsManagerData( agentsManagerData );
+	it.each( [ 'reader-chat', 'p2-reader-chat' ] )(
+		'does not merge external editor providers or metering into %s',
+		async ( agentId ) => {
+			const agentsManagerData = {
+				agentId,
+				agentProviders: [ 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs' ],
+			};
+			setAgentsManagerData( agentsManagerData );
 
-		const providers = await loadExternalProviders();
+			const providers = await loadExternalProviders();
 
-		expect( providers.toolProvider ).toBeUndefined();
-		expect( providers.contextProvider ).toBeUndefined();
-		expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
-	} );
+			expect( providers.toolProvider ).toBeUndefined();
+			expect( providers.contextProvider ).toBeUndefined();
+			expect( providers.useSubmissionAdmission ).toBeUndefined();
+			expect( providers.clientStateDataPartAdapter ).toBeUndefined();
+			expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
+		}
+	);
 
 	// With nothing configured, even `amToolProvider` stays absent — picker
 	// surfaces always register at least one external provider.

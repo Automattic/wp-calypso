@@ -791,12 +791,14 @@ export default function OrchestratorChat( {
 			}
 		},
 	} );
-	const submissionAdmission = useSubmissionAdmission?.( {
+	const providerSubmissionAdmission = useSubmissionAdmission?.( {
 		messages,
 		error: protocolError ?? error,
 		dispatchRevision,
 		historyRevision,
 	} );
+	// Reader Chat has its own Search quota and must not inherit Jetpack AI admission UI.
+	const submissionAdmission = isReaderChat ? undefined : providerSubmissionAdmission;
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
