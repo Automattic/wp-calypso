@@ -189,47 +189,6 @@ const StatsBenefitsCommercial = () => {
 	);
 };
 
-const StatsBenefitsPersonal = () => {
-	const translate = useTranslate();
-
-	return (
-		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
-				<li>{ translate( 'Real-time data on visitors' ) }</li>
-				<li>{ translate( 'Traffic stats and trends for posts and pages' ) }</li>
-				<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
-				<li>{ translate( 'GDPR compliance' ) }</li>
-				{ /** TODO: check sub price for validation -  will need support added to use-stats-purchases hook */ }
-				<li>{ translate( 'Email support' ) }</li>
-			</ul>
-			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
-				<li>{ translate( 'No UTM tracking' ) }</li>
-				<li>{ translate( 'No access to upcoming advanced features' ) }</li>
-			</ul>
-		</div>
-	);
-};
-
-const StatsBenefitsFree = () => {
-	const translate = useTranslate();
-
-	return (
-		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
-				<li>{ translate( 'Real-time data on visitors' ) }</li>
-				<li>{ translate( 'Traffic stats and trends for posts and pages' ) }</li>
-				<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
-				<li>{ translate( 'GDPR compliance' ) }</li>
-			</ul>
-			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
-				<li>{ translate( 'No UTM tracking' ) }</li>
-				<li>{ translate( 'No access to upcoming advanced features' ) }</li>
-				<li>{ translate( 'No Email support (supported by forum)' ) }</li>
-			</ul>
-		</div>
-	);
-};
-
 const StatsSingleItemPagePurchaseFrame = ( {
 	children,
 }: StatsSingleItemPagePurchaseFrameProps ) => {
@@ -247,23 +206,4 @@ const StatsSingleItemPagePurchaseFrame = ( {
 	);
 };
 
-const StatsSingleItemCard = ( { children }: { children: React.ReactNode } ) => {
-	return (
-		<div className={ clsx( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
-			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
-				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
-					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--single` }>{ children }</div>
-				</div>
-			</Card>
-		</div>
-	);
-};
-
-export {
-	StatsCommercialPriceDisplay,
-	StatsBenefitsCommercial,
-	StatsBenefitsPersonal,
-	StatsBenefitsFree,
-	StatsSingleItemPagePurchaseFrame,
-	StatsSingleItemCard,
-};
+export { StatsCommercialPriceDisplay, StatsBenefitsCommercial, StatsSingleItemPagePurchaseFrame };

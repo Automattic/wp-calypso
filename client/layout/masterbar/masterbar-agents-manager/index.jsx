@@ -1,4 +1,10 @@
-import { AGENTS_MANAGER_STORE } from '@automattic/agents-manager';
+import {
+	AGENTS_MANAGER_STORE,
+	closeAgentsManagerChat,
+	getAgentsManagerChatRoute,
+	isAgentsManagerChatVisible,
+	openAgentsManagerChat,
+} from '@automattic/agents-manager';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSelect as useDateStoreSelect } from '@wordpress/data';
@@ -7,12 +13,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from '../item';
-import {
-	closeAgentsManagerChat,
-	getAgentsManagerChatRoute,
-	isAgentsManagerChatVisible,
-	openAgentsManagerChat,
-} from './chat-actions';
 import HelpIcon from './help-icon';
 import './style.scss';
 

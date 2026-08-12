@@ -2302,6 +2302,28 @@ describe( 'useSuggestions', () => {
 		}
 	);
 
+	it( 'keeps post-level suggestions in the empty view only', () => {
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
+		installPostTypeMock( 'post' );
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestCall = onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ];
+		expect( latestCall?.[ 0 ] ).toEqual( [] );
+		expect( latestCall?.[ 1 ] ).toBe( false );
+
+		const emptyViewLabels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+		expect( emptyViewLabels ).toContain( 'Optimize Title' );
+		expect( emptyViewLabels ).toContain( 'Editorial Review' );
+
+		// The rendered event fires once per page load (module-level guard), so
+		// only the first render with the chip available can assert it — which is
+		// this test: every earlier test either selects a block or uses an
+		// unsupported post type.
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toHaveLength( 1 );
+	} );
+
 	it( 'keeps selected-block suggestions on template entities', () => {
 		installAiEditorialReviewData();
 		mockCurrentPostType = 'wp_template';
@@ -2370,7 +2392,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'shows editor-level suggestions after the selected-block chip is cleared', () => {
+	it( 'returns no suggestions after the selected-block chip is cleared', () => {
 		installAiEditorialReviewData();
 		const block = { clientId: 'b-clear', name: 'core/paragraph' };
 		mockSelectedBlock = block;
@@ -2393,10 +2415,7 @@ describe( 'useSuggestions', () => {
 
 		latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'Simple Review',
-			'Editorial Review',
-		] );
+		expect( latestSuggestions ).toEqual( [] );
 	} );
 
 	it( 'tracks rendered image block transformation suggestions', () => {
@@ -2436,13 +2455,14 @@ describe( 'useSuggestions', () => {
 		expect( latestSuggestions ).toEqual( [] );
 	} );
 
-	it( 'shows review suggestions at post level regardless of the block transformations feature', () => {
+	it( 'keeps review suggestions in the empty view regardless of the block transformations feature', () => {
 		( globalThis as any ).agentsManagerData = {
 			jetpackAiSidebar: {
 				enabled: true,
 				features: { aiEditorialReview: true },
 			},
 		};
+		installPostTypeMock( 'post' );
 		mockSelectedBlock = null;
 		const onSuggestions = jest.fn();
 
@@ -2450,7 +2470,8 @@ describe( 'useSuggestions', () => {
 
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+		expect( latestSuggestions ).toEqual( [] );
+		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).toEqual( [
 			'Editorial Review',
 		] );
 	} );
@@ -2633,7 +2654,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 're-shows editor suggestions when a generated title is applied', () => {
+	it( 'keeps hook suggestions empty at post level after a generated title is applied', () => {
 		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
 		const onSuggestions = jest.fn();
 
@@ -2657,9 +2678,7 @@ describe( 'useSuggestions', () => {
 
 		latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect(
-			latestSuggestions.map( ( suggestion: { label: string } ) => suggestion.label )
-		).toEqual( [ 'Optimize Title', 'Simple Review', 'Editorial Review' ] );
+		expect( latestSuggestions ).toEqual( [] );
 	} );
 
 	it( 'keeps block suggestions hidden after a Proofread request finishes', () => {

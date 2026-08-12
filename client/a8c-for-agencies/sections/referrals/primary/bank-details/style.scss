@@ -26,10 +26,9 @@ $iframe-background-color: #f7f7f7;
 .bank-details__status {
 	@include body-large;
 	color: var(--color-accent-80);
-
-	.badge {
-		margin-inline-start: 6px;
-	}
+	display: flex;
+	align-items: center;
+	gap: 6px;
 }
 
 .referrals-overview__link {

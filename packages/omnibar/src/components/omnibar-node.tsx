@@ -13,7 +13,7 @@ export function OmnibarNodeContent( { node }: { node: OmnibarNode } ) {
 				className="omnibar__node-content"
 				style={ { minWidth: 0 } }
 			>
-				<span style={ { flexShrink: 0 } }>{ node.icon }</span>
+				<span style={ { display: 'flex', flexShrink: 0 } }>{ node.icon }</span>
 				<span
 					className="omnibar__label"
 					style={ {

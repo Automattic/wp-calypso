@@ -143,15 +143,13 @@ function injectScopedReset() {
 			margin: 0 !important;
 		}
 		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon:not(.components-dropdown-menu__menu-item),
-		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon,
-		.agents-manager-chat .agents-manager-zoom-action-button.components-button.has-icon {
+		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon {
 			height: 32px !important;
 			padding: 6px !important;
 			width: 32px !important;
 		}
 		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon:not(.components-dropdown-menu__menu-item):hover:not(:disabled):not([aria-disabled="true"]),
-		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]),
-		.agents-manager-chat .agents-manager-zoom-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]) {
+		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]) {
 			background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;
 		}
 		.agents-manager-chat-header__menu-popover {

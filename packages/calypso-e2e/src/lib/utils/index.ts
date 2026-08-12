@@ -1,6 +1,7 @@
 /* Utilities */
 export * from './validate-translations';
 export * from './get-test-account-by-feature';
+export * from './accounts-to-prime';
 export * from './translate';
 export * from './social-connections-manager';
 

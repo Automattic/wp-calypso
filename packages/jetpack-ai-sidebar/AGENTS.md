@@ -63,7 +63,7 @@ On the client, `handleShowComponent`:
 3. Returns `{ agentMessage: JSON.stringify({ tool_id, data }) }`. agenttic-client re-emits this as an `{ role: 'agent', parts: [text] }` message.
 4. AM's `convert-tool-messages-to-components` matches the tool_id, calls `getChatComponent(data.type)`, and replaces the text content with a component render. Because the original message had text content, AgentChat renders its action bar (thumbs, Undo) on the resulting bubble.
 
-Jetpack show-component messages currently set `hideZoomAction: true` so AM's zoom action button stays hidden for these chat components.
+Jetpack show-component messages still send `hideZoomAction: true`, but AM's zoom action was removed — the flag is write-only legacy, kept only until the provider payload cleanup lands.
 
 The provider temporarily accepts legacy `big_sky__show_component` executions for Jetpack-owned component types during the migration, but new Jetpack AI component responses should use `jetpack_ai__show_component`. Unknown legacy component types should remain owned by the provider that registered them.
 

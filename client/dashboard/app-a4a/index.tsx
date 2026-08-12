@@ -35,7 +35,6 @@ boot( {
 		sites: false,
 		domains: false,
 		emails: false,
-		themes: false,
 		reader: false,
 		help: true,
 		notifications: false,

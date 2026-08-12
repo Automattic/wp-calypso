@@ -24,6 +24,7 @@ body:has( .omnibar ) {
 	min-height: var( --omnibar-height );
 	height: var( --omnibar-height );
 	display: flex;
+	position: relative;
 	padding: 0;
 	margin: 0;
 	font-size: $omnibar-font-size;
@@ -33,6 +34,13 @@ body:has( .omnibar ) {
 		display: flex;
 		align-items: center;
 		margin-inline-start: auto;
+
+		@media ( max-width: 480px ) {
+			position: absolute;
+			top: 0;
+			inset-inline-end: 0;
+			background: var( --omnibar-background );
+		}
 
 		.omnibar__menu {
 			@media ( min-width: 782px ) {
@@ -64,9 +72,14 @@ body:has( .omnibar ) {
 		&:active,
 		&[aria-expanded='true'] {
 			background-color: var( --omnibar-menu-active-background );
-			color: var( --omnibar-text-color );
+			color: var( --omnibar-highlight-color );
 			box-shadow: none;
 			outline: none;
+
+			.dashicons-before,
+			svg {
+				color: var( --omnibar-highlight-color );
+			}
 		}
 
 		&:focus {
@@ -79,6 +92,7 @@ body:has( .omnibar ) {
 		}
 
 		svg {
+			display: block;
 			fill: currentColor;
 			width: 32px;
 			height: 32px;
@@ -94,6 +108,13 @@ body:has( .omnibar ) {
 			padding-inline: 7px 8px;
 		}
 	}
+
+	.omnibar__responsive-menu {
+		.dashicons-before::before {
+			padding-inline: 1px;
+		}
+	}
+
 
 	.omnibar__home {
 		@media ( min-width: 782px ) {
@@ -121,11 +142,15 @@ body:has( .omnibar ) {
 		}
 	}
 
-	.omnibar__responsive-menu {
-		min-width: 53px;
+	.omnibar__updates {
+		@media ( max-width: 600px ) {
+			display: none;
+		}
+	}
 
-		.dashicons-before::before {
-			padding-inline-end: 3px;
+	.omnibar__new-content {
+		@media ( max-width: 480px ) {
+			display: none;
 		}
 	}
 
@@ -215,8 +240,4 @@ body:has( .omnibar ) {
 		font-size: 20px;
 		top: 1px;
 	}
-}
-
-.omnibar .dashicons-menu-alt::before {
-	top: 0.5px;
 }

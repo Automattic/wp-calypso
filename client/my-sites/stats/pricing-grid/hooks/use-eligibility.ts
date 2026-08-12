@@ -1,5 +1,7 @@
 import { useSelector } from 'calypso/state';
+import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
+import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import useStatsPurchases from '../../hooks/use-stats-purchases';
 
 /**
@@ -9,12 +11,28 @@ import useStatsPurchases from '../../hooks/use-stats-purchases';
 const LAUNCH_DATE = Date.parse( '2026-08-07T00:00:00Z' );
 
 /**
- * Whether the pricing grid applies to this site: a newly connected site that hasn't
- * picked a Stats plan yet. Bundled plans (Complete, Growth, Business) count as having
- * one, which is why this defers to `useStatsPurchases` rather than scanning products.
+ * Whether the pricing grid applies to this site: a newly connected site, other than a
+ * WordPress.com Simple one, that hasn't picked a Stats plan yet. Bundled plans
+ * (Complete, Growth, Business) count as having one, which is why this defers to
+ * `useStatsPurchases` rather than scanning products.
  */
 export default function useIsPricingGridEligible( siteId: number | null ) {
 	const { hasAnyPlan, isLoading: isLoadingPurchases } = useStatsPurchases( siteId );
+
+	// Simple sites upgrade through WP.com plans, prompted inside the Stats dashboard
+	// itself, so the Jetpack Stats products this grid sells are not their upgrade path.
+	// Odyssey serves Simple Classic's wp-admin as well, so being an Odyssey route says
+	// nothing about the site type on its own.
+	const isSimpleSite = useSelector( ( state ) => !! getIsSimpleSite( state, siteId ) );
+
+	// A failed purchases fetch reads as "loaded, no plan" upstream (FETCH_FAILED marks
+	// the store loaded with an empty list), which would show the grid to a site that
+	// does hold a plan. Treat the error as "plan state unknown" and fall back to the
+	// dashboard instead. The field is shared across all purchases actions (user-level
+	// fetches and removals set it too, and it only clears on the next successful
+	// fetch), so this occasionally withholds the grid on an unrelated error — still
+	// fail-closed, never the reverse.
+	const purchasesError = useSelector( getPurchasesError );
 
 	// `created_at` is the wpcom shadow blog's `wp_blogs.registered` — the closest thing
 	// to a first-connection date the sites payload exposes. It matches the connection
@@ -31,10 +49,13 @@ export default function useIsPricingGridEligible( siteId: number | null ) {
 			: Date.parse( String( connectedAt ?? '' ) );
 	const isNewConnection = Number.isFinite( connectedAtMs ) && connectedAtMs >= LAUNCH_DATE;
 
+	// Both checks read site data the store already holds, so ruling a site out here costs
+	// nothing — only an applicable site goes on to wait for its purchases.
+	const isApplicable = isNewConnection && ! isSimpleSite;
+
 	return {
-		isEligible: isNewConnection && ! hasAnyPlan,
-		isNewConnection,
-		// The date check needs no fetch, so only newly connected sites ever wait.
-		isLoading: isNewConnection && isLoadingPurchases,
+		isEligible: isApplicable && ! hasAnyPlan && ! purchasesError,
+		isApplicable,
+		isLoading: isApplicable && isLoadingPurchases,
 	};
 }

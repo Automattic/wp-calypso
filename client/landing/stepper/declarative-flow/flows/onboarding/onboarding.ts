@@ -100,6 +100,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		const playgroundId = queryParams.get( 'playground' );
+		const buildDest = queryParams.get( 'build_dest' );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -123,11 +124,17 @@ const onboarding: FlowV2< typeof initialize > = {
 					return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 				}
 
-				// Blueprint archive flow: skip the Playground-based importer and the
-				// setup-your-site-ai chooser. Land on the AI site-spec, which kicks off
-				// the background transfer-to-Atomic + blueprint-archive import and, on
-				// confirm, polls the import and redirects to the Atomic Site Editor.
-				if ( blueprint ) {
+				const params: Record< string, string | number > = {
+					siteSlug: providedDependencies.siteSlug as string,
+					siteId: providedDependencies.siteId as number,
+				};
+
+				// build_dest=wow: skip the Playground-based importer and land on the AI
+				// site-spec, which kicks off the background transfer-to-Atomic +
+				// blueprint-archive import and, on confirm, polls the import and
+				// redirects to the Site Editor. The blueprint step already verified the
+				// archive exists (and stripped build_dest when it does not).
+				if ( blueprint && buildDest === 'wow' ) {
 					return [
 						getBlueprintArchiveSiteSpecUrl( {
 							siteSlug: providedDependencies.siteSlug as string,
@@ -140,11 +147,11 @@ const onboarding: FlowV2< typeof initialize > = {
 					];
 				}
 
-				const params: Record< string, string | number > = {
-					siteSlug: providedDependencies.siteSlug as string,
-					siteId: providedDependencies.siteId as number,
-					playground: playgroundId as string,
-				};
+				if ( blueprint ) {
+					params.blueprint = blueprint;
+				} else if ( playgroundId ) {
+					params.playground = playgroundId;
+				}
 
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
@@ -419,9 +426,9 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// Blueprint archive flow goes straight from checkout to the AI
-									// site-spec (no post-checkout-onboarding hop, no chooser).
-									redirect_to: blueprint ? destination : redirectTo,
+									// build_dest=wow goes straight from checkout to the AI site-spec
+									// (no post-checkout-onboarding hop, no chooser).
+									redirect_to: blueprint && buildDest === 'wow' ? destination : redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
@@ -433,12 +440,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( diyLaunchpad ) {
-							// The diy-launchpad cohort skips the AI/manual chooser and lands straight in Site Setup.
-							window.location.replace( destination );
-						} else if ( blueprint ) {
-							// Blueprint archive flow never shows the setup-your-site-ai chooser;
-							// go straight to the AI site-spec destination.
+						} else if ( blueprint && buildDest === 'wow' ) {
+							// build_dest=wow never shows the setup-your-site-ai chooser; go
+							// straight to the AI site-spec destination.
 							window.location.replace( destination );
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&

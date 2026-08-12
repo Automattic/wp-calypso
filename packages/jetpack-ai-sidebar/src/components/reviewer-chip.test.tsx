@@ -101,4 +101,18 @@ describe( 'ReviewerChip', () => {
 		);
 		expect( container.querySelector( '.jetpack-ai-reviewer-chip.is-pill' ) ).not.toBeNull();
 	} );
+
+	// The name comes straight from model output, which is not guaranteed to
+	// honour the tool schema: a list item can be null or the wrong type.
+	it.each( [
+		[ 'null', null ],
+		[ 'undefined', undefined ],
+		[ 'an object', {} ],
+		[ 'a number', 7 ],
+		[ 'an empty string', '' ],
+		[ 'whitespace-only', '   ' ],
+	] )( 'renders nothing when name is %s', ( _label, name ) => {
+		const { container } = render( <ReviewerChip name={ name as unknown as string } /> );
+		expect( container ).toBeEmptyDOMElement();
+	} );
 } );

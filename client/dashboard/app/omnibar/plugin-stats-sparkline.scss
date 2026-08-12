@@ -2,6 +2,12 @@
 	vertical-align: middle;
 }
 
+.omnibar .omnibar__stats-sparkline {
+	@media ( max-width: 781px ) {
+		display: none;
+	}
+}
+
 .omnibar .omnibar__menu svg.wpcom-stats-sparkline {
 	width: auto;
 	height: auto;

@@ -135,7 +135,11 @@ function BlockingHoldNotice( {
 }
 
 function TransferFailureNotice( { transferStatus, productName }: TransferFailureNoticeProps ) {
-	if ( transferStatus !== transferStates.FAILURE && transferStatus !== transferStates.ERROR ) {
+	if (
+		transferStatus !== transferStates.FAILURE &&
+		transferStatus !== transferStates.ERROR &&
+		transferStatus !== transferStates.CLIENT_TIMEOUT
+	) {
 		return null;
 	}
 

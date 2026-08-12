@@ -223,6 +223,12 @@
 					@include breakpoint-deprecated( "<660px" ) {
 						width: auto !important;
 						height: 300px !important;
+
+						img {
+							width: 100% !important;
+							height: 100% !important;
+							object-fit: contain;
+						}
 					}
 
 					@include breakpoint-deprecated( "<480px" ) {

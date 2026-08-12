@@ -122,6 +122,18 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 		expect( compiled ).toMatch( /^\.stats-widget-content\.color-scheme/m );
 	} );
 
+	it( 'leaves the widget root unprefixed when compounded with a scheme, as the admin-theme handback is', () => {
+		// The handback rule targets the widget's own root, so prefixing it would ask that element to
+		// be its own descendant and the rule would die silently. Asserted separately from the bare
+		// compound above: an exempt pattern anchored at `.color-scheme` alone still passes that one.
+		const compiled = compile(
+			'.stats-widget-content.color-scheme.is-coffee { --wp-admin-theme-color: inherit; }'
+		);
+
+		expect( compiled ).not.toContain( ':where(' );
+		expect( compiled ).toMatch( /^\.stats-widget-content\.color-scheme\.is-coffee/m );
+	} );
+
 	it( 'scopes content inside a @wordpress/components Popover fallback container, mirroring the modal/widget mounts', () => {
 		const compiled = compile( '.card { color: rgb(4, 5, 6); }' );
 		document.body.innerHTML =

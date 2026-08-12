@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -105,13 +106,7 @@ const CommercialSiteUpgradeNotice = ( {
 	const sharedTranslationComponents = {
 		p: <p />,
 		b: <strong />,
-		jetpackStatsProductLink: (
-			<button
-				type="button"
-				className="notice-banner__action-button"
-				onClick={ gotoJetpackStatsProduct }
-			/>
-		),
+		jetpackStatsProductLink: <Button variant="primary" onClick={ gotoJetpackStatsProduct } />,
 		commercialUpgradeLink: (
 			<a
 				className="notice-banner__action-link"

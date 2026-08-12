@@ -74,6 +74,7 @@ const advance = ( ms: number ) =>
 const render = ( { logo }: { logo?: ReactNode } = {} ) => {
 	const result = renderStep(
 		<EmailVerificationGate
+			addressSettled
 			flow={ FLOW }
 			scope={ SCOPE }
 			logo={ logo }
@@ -124,6 +125,7 @@ describe( 'EmailVerificationGate', () => {
 	it( 'offers an inbox button that deep-links to a known provider', async () => {
 		renderStep(
 			<EmailVerificationGate
+				addressSettled
 				flow={ FLOW }
 				scope={ SCOPE }
 				onEditEmail={ jest.fn() }

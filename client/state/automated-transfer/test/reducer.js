@@ -2,6 +2,7 @@ import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
+	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { transferStates } from '../constants';
@@ -42,7 +43,7 @@ describe( 'state', () => {
 				const SITE_ID = 12345;
 				const AT_STATE = {
 					[ SITE_ID ]: {
-						status: 'backfilling',
+						status: transferStates.BACKFILLING,
 						eligibility: {
 							eligibilityHolds: [],
 							eligibilityWarnings: [],
@@ -58,10 +59,36 @@ describe( 'state', () => {
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'fetchingStatus' );
 
 				const deserialized = deserialize( reducer, AT_STATE );
-				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'status' );
+				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'status', transferStates.BACKFILLING );
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'eligibility' );
 				// The non-persisted property has default value, persisted value is ignored
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'fetchingStatus', false );
+			} );
+
+			test( 'should not persist the client timeout status', () => {
+				const SITE_ID = 12345;
+				const AT_STATE = {
+					[ SITE_ID ]: {
+						status: transferStates.CLIENT_TIMEOUT,
+						eligibility: {
+							eligibilityHolds: [],
+							eligibilityWarnings: [],
+							lastUpdate: 1000000000,
+						},
+					},
+				};
+
+				const serialized = serialize( reducer, AT_STATE ).root();
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'status', null );
+			} );
+
+			test( 'should set client timeout status', () => {
+				expect(
+					status( null, {
+						type: SET_STATUS,
+						status: transferStates.CLIENT_TIMEOUT,
+					} )
+				).toBe( transferStates.CLIENT_TIMEOUT );
 			} );
 		} );
 	} );

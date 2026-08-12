@@ -37,12 +37,12 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 
 	if ( flow && isTransferringHostedSiteCreationFlow( flow ) ) {
 		return [
-			{ title: __( 'Laying the foundations' ), duration: 5000 },
-			{ title: __( 'Warming up CPUs' ), duration: 3000 },
-			{ title: __( 'Installing WordPress' ), duration: 3000 },
-			{ title: __( 'Securing your data' ), duration: 5000 },
-			{ title: __( 'Distributing your site worldwide' ), duration: 5000 },
-			{ title: __( 'Closing the loop' ), duration: Infinity },
+			{ title: __( 'Preparing your new server' ), duration: 14000 },
+			{ title: __( 'Installing WordPress' ), duration: 6000 },
+			{ title: __( 'Copying your site' ), duration: 9000 },
+			{ title: __( 'Securing your connection' ), duration: 5000 },
+			{ title: __( 'Distributing your site worldwide' ), duration: 6000 },
+			{ title: __( 'Finishing up — this can take a few minutes' ), duration: Infinity },
 		];
 	}
 
@@ -52,6 +52,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 			{ title: __( 'Securing your data' ), duration: 4500 },
 			{ title: __( 'Enabling encryption' ), duration: 5000 },
 			{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
+			{ title: __( 'Finishing up — this can take a few minutes' ), duration: Infinity },
 		];
 	}
 
@@ -62,6 +63,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 				{ title: __( 'Enabling encryption' ), duration: 3000 },
 				{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
 				{ title: __( 'Closing the loop' ), duration: 4000 },
+				{ title: __( 'Finishing up — this can take a few minutes' ), duration: Infinity },
 			];
 			break;
 		case SiteIntent.Sell:
@@ -71,6 +73,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 				{ title: __( 'Enabling encryption' ), duration: 3000 },
 				{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
 				{ title: __( 'Closing the loop' ), duration: 5000 },
+				{ title: __( 'Finishing up — this can take a few minutes' ), duration: Infinity },
 			];
 			break;
 		default:
@@ -85,6 +88,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 				{ title: __( 'Optimizing your content' ), duration: 6000 },
 				{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
 				{ title: __( 'Closing the loop' ), duration: 5000 },
+				{ title: __( 'Finishing up — this can take a few minutes' ), duration: Infinity },
 			];
 			break;
 	}
