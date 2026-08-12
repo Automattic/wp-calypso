@@ -12,6 +12,11 @@ export {
 } from './utils/get-tracking-prefs';
 export type { TrackingPrefs } from './utils/get-tracking-prefs';
 export { default as setTrackingPrefs } from './utils/set-tracking-prefs';
+export {
+	DEFAULT_GOOGLE_CONSENT_MODE_SIGNALS,
+	getGoogleConsentModeSignals,
+} from './utils/google-consent-mode';
+export type { GoogleConsentModeSignals, GoogleConsentModeValue } from './utils/google-consent-mode';
 export { default as isRegionInStsZone } from './utils/is-region-in-sts-zone';
 export { isRegionInCcpaZone, isCountryInGdprZone } from './utils/geo-privacy';
 export {

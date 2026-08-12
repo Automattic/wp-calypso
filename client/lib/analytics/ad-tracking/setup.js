@@ -3,6 +3,7 @@ import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
+import { initializeGoogleTag, updateGoogleConsentMode } from './consent-mode';
 import {
 	ADROLL_PAGEVIEW_PIXEL_URL_1,
 	ADROLL_PAGEVIEW_PIXEL_URL_2,
@@ -317,20 +318,7 @@ function setupOpenAIGlobal() {
 	window.oaiq = q;
 }
 function setupGtag() {
-	if ( window.dataLayer && window.gtag ) {
-		return;
-	}
-	window.dataLayer = window.dataLayer || [];
-	window.gtag = function () {
-		window.dataLayer.push( arguments );
-	};
-	window.gtag( 'js', new Date() );
-	window.gtag( 'consent', 'default', {
-		ad_storage: 'granted',
-		analytics_storage: 'granted',
-		ad_user_data: 'granted',
-		ad_personalization: 'granted',
-	} );
+	initializeGoogleTag();
 }
 
 function setupWpcomGoogleAdsGtag() {
@@ -350,6 +338,8 @@ function setupWpcomFloodlightGtag() {
 }
 
 function setupGtmGtag() {
+	updateGoogleConsentMode();
+
 	if ( isAkismetCheckout() ) {
 		window.dataLayer = window.dataLayer || [];
 		window.dataLayer.push( { 'gtm.start': new Date().getTime(), event: 'gtm.js' } );
