@@ -123,8 +123,7 @@ describe( 'tracks wrappers', () => {
 				surface: 'editor',
 				is_test: true,
 			} );
-			// `is_a11n` is an unresolved seam — present but undefined for now.
-			expect( props ).toHaveProperty( 'is_a11n', undefined );
+			expect( props ).not.toHaveProperty( 'is_a11n' );
 		} );
 
 		it( 'uses the reader-chat surface token off the editor', () => {
@@ -138,6 +137,54 @@ describe( 'tracks wrappers', () => {
 			recordAgentsManagerTracksEvent( 'chat_minimize' );
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		} );
+	} );
+
+	describe( 'is_a11n', () => {
+		const recorders = [
+			[ 'Big Sky', recordBigSkyTracksEvent ],
+			[ 'Agents Manager', recordAgentsManagerTracksEvent ],
+		] as const;
+
+		it.each( recorders )(
+			'%s recorder injects true when the server identifies Automattician traffic',
+			( _name, recordEvent ) => {
+				( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+					isDevMode: true,
+					isA11n: true,
+				};
+
+				recordEvent( 'x' );
+
+				expect( lastEventProps().is_a11n ).toBe( true );
+			}
+		);
+
+		it.each( recorders )(
+			'%s recorder injects false when the server identifies non-Automattician traffic',
+			( _name, recordEvent ) => {
+				( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+					isDevMode: false,
+					isA11n: false,
+				};
+
+				recordEvent( 'x' );
+
+				expect( lastEventProps().is_a11n ).toBe( false );
+			}
+		);
+
+		it.each( recorders )(
+			'%s recorder omits the property when the server payload has no identity signal',
+			( _name, recordEvent ) => {
+				( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+					isDevMode: false,
+				};
+
+				recordEvent( 'x' );
+
+				expect( lastEventProps() ).not.toHaveProperty( 'is_a11n' );
+			}
+		);
 	} );
 
 	describe( 'is_test (getIsTest)', () => {

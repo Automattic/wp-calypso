@@ -28,6 +28,8 @@ declare const agentsManagerData:
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
+			/** Whether the current request is attributed to an Automattician for tracking. */
+			isA11n?: boolean;
 			/** Whether the site is WordPress.com-hosted (Simple/WoA). */
 			isWpcomPlatform?: boolean;
 			/** The site's canonical identity; injected on wp-admin only. */

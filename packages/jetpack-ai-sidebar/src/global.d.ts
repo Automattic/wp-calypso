@@ -25,6 +25,8 @@ declare const __i18n_text_domain__: string;
 declare const agentsManagerData:
 	| {
 			isDevMode?: boolean;
+			/** Whether the current request is attributed to an Automattician for tracking. */
+			isA11n?: boolean;
 			jetpackAiSidebar?: {
 				enabled: boolean;
 				features?: {

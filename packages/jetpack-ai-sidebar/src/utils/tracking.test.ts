@@ -57,7 +57,10 @@ type WindowWithAgentsManagerActions = Window & {
 describe( 'Jetpack AI sidebar tracking', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		( globalThis as Record< string, unknown > ).agentsManagerData = { isDevMode: false };
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			isDevMode: false,
+			isA11n: false,
+		};
 		window.bigSkyInitialState = {
 			isFreeTrial: '',
 			currentScreen: { screen: 'post' },
@@ -91,6 +94,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 				block_type: 'core/paragraph',
 				surface: 'jetpack_ai_sidebar',
 				sessionid: 'test-session-id',
+				is_a11n: false,
 			}
 		);
 		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
@@ -103,6 +107,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 			component_type: 'post-feedback',
 			guide_variant: 'inline_action_card',
 			is_test: false,
+			is_a11n: false,
 			post_type: 'post',
 			screen: 'post',
 			sessionid: 'test-session-id',
@@ -122,6 +127,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 				component_type: 'ai-editorial-review',
 				guide_variant: 'inline_action_card',
 				is_test: false,
+				is_a11n: false,
 				post_type: 'post',
 				screen: 'post',
 				sessionid: 'test-session-id',
@@ -131,6 +137,36 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
 			allowPostType: true,
 		} );
+	} );
+
+	it( 'uses the server-provided Automattician tracking value', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			isDevMode: false,
+			isA11n: true,
+		};
+
+		trackBlockTransformationSuggestionRendered( {
+			suggestionId: 'check-grammar',
+			suggestionType: 'text',
+			blockType: 'core/paragraph',
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_rendered',
+			expect.objectContaining( { is_a11n: true } )
+		);
+	} );
+
+	it( 'omits is_a11n when the server payload predates the signal', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = { isDevMode: false };
+
+		trackBlockTransformationSuggestionRendered( {
+			suggestionId: 'check-grammar',
+			suggestionType: 'text',
+			blockType: 'core/paragraph',
+		} );
+
+		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'is_a11n' );
 	} );
 
 	it( 'uses Agents Manager test and Big Sky free-trial and screen context', () => {

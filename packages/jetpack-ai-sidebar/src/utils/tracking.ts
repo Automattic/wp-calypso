@@ -61,11 +61,19 @@ function getIsTest(): boolean {
 	return typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.isDevMode;
 }
 
+/** Reads the optional server-provided Automattician tracking signal. */
+function getIsA11n(): boolean | undefined {
+	const isA11n = typeof agentsManagerData !== 'undefined' ? agentsManagerData?.isA11n : undefined;
+	return typeof isA11n === 'boolean' ? isA11n : undefined;
+}
+
 function recordTracksEvent( eventName: string, properties: TrackProperties = {} ): void {
 	const sessionId = getSessionId();
+	const isA11n = getIsA11n();
 	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, {
 		...properties,
 		...( sessionId ? { sessionid: sessionId } : {} ),
+		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 	} );
 }
 
