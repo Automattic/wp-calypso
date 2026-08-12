@@ -47,6 +47,11 @@ interface StatsCommercialPurchaseProps {
 	 * can do.
 	 */
 	onPostpone?: () => void;
+	/**
+	 * Replaces the label that goes with `onPostpone`. A site that is not connected yet has
+	 * something to do before it can come back to this, so it is not simply putting it off.
+	 */
+	postponeLabel?: string;
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -217,6 +222,7 @@ const StatsCommercialPurchase = ( {
 	adminUrl,
 	redirectUri,
 	onPostpone,
+	postponeLabel,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -373,7 +379,7 @@ const StatsCommercialPurchase = ( {
 					{ continueButtonText }
 				</ButtonComponent>
 				<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
-					{ translate( 'I will do it later' ) }
+					{ postponeLabel ?? translate( 'I will do it later' ) }
 				</ButtonComponent>
 			</div>
 			<div className="stats-purchase-page__footnotes">

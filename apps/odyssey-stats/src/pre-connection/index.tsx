@@ -112,6 +112,10 @@ export default function PreConnection() {
 								adminUrl={ getWpAdminUrl() }
 								redirectUri={ STATS_ADMIN_PATH }
 								from={ PRICING_GRID_REFERRER }
+								// Nobody is putting anything off here. The site still has no account
+								// attached, and connecting one is what stands between this visitor and
+								// the free plan they just settled for.
+								postponeLabel={ String( translate( 'Connect my site' ) ) }
 								onPostpone={ () => {
 									window.location.href = authorizeUrl;
 								} }
