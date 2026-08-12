@@ -32,7 +32,7 @@ const UpsellStatsCard = ( { site }: Props ) => {
 		[ translate ]
 	);
 	const footerText = translate(
-		'Commercial sites require a paid plan, which you can purchase at a discount within {{a}}the marketplace{{/a}}.',
+		'A paid plan is required, which you can purchase at a discount within {{a}}the marketplace{{/a}}.',
 		{
 			components: {
 				a: <a href="/marketplace/products?search_query=stats" />,
