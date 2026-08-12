@@ -34,6 +34,14 @@ function buildFixture( compiledCss ) {
 }
 
 describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
+	// Each case injects compiled CSS into document.head and leaves markup in document.body. Without
+	// this, a rule anchored on a bare class (`.date-range__picker`) outlives its test and can style
+	// a later fixture, making the result depend on execution order.
+	afterEach( () => {
+		document.head.querySelectorAll( 'style' ).forEach( ( style ) => style.remove() );
+		document.body.innerHTML = '';
+	} );
+
 	it( 'scopes a shared component selector under both .jp-stats-dashboard and .jp-stats-widget, but not outside either', () => {
 		// Distinctive non-default color, so a passing assertion actually proves the rule applied.
 		const compiled = compile( '.card { color: rgb(1, 2, 3); }', {
@@ -137,11 +145,6 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 	it.each( [ 'body>.color-scheme', 'body > .color-scheme' ] )(
 		'leaves `%s` unprefixed whether or not Sass emitted the combinator with spaces',
 		( selector ) => {
-			// client/my-sites/stats/components/stats-main/style.scss applies the Stats interactive
-			// colours at `body > .color-scheme` to reach the single body child Odyssey's RootChild
-			// portals into. Prefixing asks <body> to be a descendant of .color-scheme — which is
-			// itself in `prefix` — so the rule dies and the date range picker keeps the decorative
-			// accent. The compressed form is the one that shipped broken.
 			const compiled = compile( `${ selector } { --color-accent: rgb(7, 8, 9); }` );
 
 			expect( compiled ).not.toContain( ':where(' );
@@ -158,6 +161,20 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 
 		expect( getComputedStyle( document.getElementById( 'picker' ) ).color ).toBe( 'rgb(7, 8, 9)' );
 	} );
+
+	// theme.scss hands `--wp-admin-theme-color` back to wp-admin on the portalled scheme root, once
+	// per scheme. These share the `body>` anchor with the picker rule, so they were dead for the
+	// same reason — and they cover every @wordpress/components control in a portal, not one widget.
+	it.each( [ 'is-coffee', 'is-light', 'is-sunrise' ] )(
+		'leaves the %s admin-theme handback on the portalled scheme root unprefixed',
+		( scheme ) => {
+			const compiled = compile(
+				`body>.color-scheme.${ scheme } { --wp-admin-theme-color: inherit; }`
+			);
+
+			expect( compiled ).not.toContain( ':where(' );
+		}
+	);
 
 	it( 'scopes content inside a @wordpress/components Popover fallback container, mirroring the modal/widget mounts', () => {
 		const compiled = compile( '.card { color: rgb(4, 5, 6); }' );

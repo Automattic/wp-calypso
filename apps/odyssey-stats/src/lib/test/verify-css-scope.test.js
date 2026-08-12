@@ -149,6 +149,30 @@ describe( 'verify-css-scope findScopeFailures', () => {
 		expect( findScopeFailures( css ) ).toEqual( [] );
 	} );
 
+	it( 'flags `:is(html,body)` — every branch is a root anchor, so the whole group is dead', () => {
+		const css = `
+			${ PREFIX } :is(html,body) .card{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [
+			expect.stringContaining( 'anchored on :is(html,body)' ),
+		] );
+	} );
+
+	it( 'does not flag a mixed group like `:is(.foo,body)` — only one branch is dead, and the rule must stay scoped', () => {
+		// Excluding this from prefixing to save the `body` branch would ship `.foo .card`
+		// unscoped into wp-admin. A dead branch is the lesser problem.
+		const css = `
+			${ PREFIX } :is(.foo,body) .card{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [] );
+	} );
+
 	it( 'does not flag a class merely containing a root tag name, such as .components-panel__body', () => {
 		const css = `
 			${ PREFIX } .components-panel__body .card{color:red}

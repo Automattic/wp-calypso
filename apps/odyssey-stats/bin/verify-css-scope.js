@@ -129,13 +129,41 @@ function getDocumentRootAnchorsAfterPrefix( selector ) {
 			const isRootTag = node.type === 'tag' && DOCUMENT_ROOT_TAGS.includes( node.value );
 			const isRootPseudo = node.type === 'pseudo' && node.value === ':root';
 
-			if ( isRootTag || isRootPseudo ) {
+			if ( isRootTag || isRootPseudo || isAllRootMatchesPseudo( node ) ) {
 				anchors.push( node.toString() );
 			}
 		}
 	} ).processSync( selector );
 
 	return anchors;
+}
+
+/**
+ * True for a matches-any pseudo whose every branch is a document-root anchor, e.g.
+ * `:is(html,body)`. Such a group is dead under the prefix for the same reason a bare `body` is.
+ *
+ * Deliberately requires *every* branch. In a mixed group like `:is(.foo,body) .bar`, only the
+ * `body` branch dies — `.foo .bar` still matches, and it is a generic selector that must stay
+ * scoped. Flagging the rule would invite excluding it from prefixing, which would leak `.foo .bar`
+ * into wp-admin. A dead branch is a smaller problem than an unscoped one.
+ */
+function isAllRootMatchesPseudo( node ) {
+	if ( node.type !== 'pseudo' || ! [ ':is', ':where', ':matches' ].includes( node.value ) ) {
+		return false;
+	}
+	if ( node.nodes.length === 0 ) {
+		return false;
+	}
+
+	return node.nodes.every( ( branch ) => {
+		const branchNodes = branch.nodes.filter( ( child ) => child.type !== 'combinator' );
+		return (
+			branchNodes.length === 1 &&
+			( ( branchNodes[ 0 ].type === 'tag' &&
+				DOCUMENT_ROOT_TAGS.includes( branchNodes[ 0 ].value ) ) ||
+				( branchNodes[ 0 ].type === 'pseudo' && branchNodes[ 0 ].value === ':root' ) )
+		);
+	} );
 }
 
 /**
