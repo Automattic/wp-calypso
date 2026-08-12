@@ -162,8 +162,8 @@ const FLUSH_TIMEOUT = 7 * 1000;
  * reaches the same endpoints, and the context reports for all of them.
  *
  * The host and path are filtered first so that only a handful of responses are
- * ever read. A 4xx or 5xx is always read — the edge limiter refuses with a 5xx
- * of its own — and a success only when Calypso asked for the answer to be
+ * ever read. Anything from 400 up is read — wpcom refuses these four with a 403
+ * or a 429 — and a success only when Calypso asked for the answer to be
  * enveloped, which is how a refusal comes back as a 200. The body is never
  * logged: a failed `/users/new` or `/sites/new` carries the credentials of the
  * user being created.
