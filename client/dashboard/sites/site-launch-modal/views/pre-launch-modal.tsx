@@ -33,7 +33,7 @@ export default function PreLaunchModal( {
 	return (
 		<Modal
 			className="site-launch-pre-launch-modal"
-		 isLaunching ? __( 'Launching site…' ) : __( 'Launching makes your site public' ) }
+			title={ isLaunching ? __( 'Launching site…' ) : __( 'Launching makes your site public' ) }
 			size="medium"
 			onRequestClose={ onClose }
 		>

@@ -58,7 +58,7 @@ describe( '<SiteLaunchModal variant="pre-launch">', () => {
 		);
 
 		expect(
-			await screen.findByRole( 'dialog', { name: 'Launching makes your site public.' } )
+			await screen.findByRole( 'dialog', { name: 'Launching makes your site public' } )
 		).toBeVisible();
 		expect( screen.getByText( 'Kaonashi' ) ).toBeVisible();
 		expect( await screen.findByText( 'kaonashi.com' ) ).toBeVisible();
