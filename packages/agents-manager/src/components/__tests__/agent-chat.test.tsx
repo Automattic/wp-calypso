@@ -274,6 +274,43 @@ describe( 'AgentChat', () => {
 		);
 	} );
 
+	it( 'blocks typing as well as sending when the chat input is disabled', () => {
+		// Both props are required: agenttic forwards `readOnly` to the textarea
+		// but consumes `disabled` only for the submit button and Enter-to-submit,
+		// so `disabled` on its own leaves the field typeable.
+		renderAgentChat( { isOpen: true, isChatInputDisabled: true } );
+
+		expect( mockInputProps ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				readOnly: true,
+				disabled: true,
+				imageUploadDisabled: true,
+			} )
+		);
+	} );
+
+	it( 'keeps the chat input disabled while images are pending', () => {
+		// The pending-images branch passes `disabled: false` to keep the composer
+		// live mid-upload; a non-operational chat has to win over it.
+		renderAgentChat( {
+			isOpen: true,
+			isChatInputDisabled: true,
+			imageUpload: {
+				pendingImages: [ { id: 'p1' } ],
+				uploadingImages: [],
+				isUploadingImages: false,
+				handleFilesSelected: jest.fn(),
+				handleRemoveImage: jest.fn(),
+				uploadImagesToWordPress: jest.fn(),
+				abortUpload: jest.fn( () => false ),
+			} as never,
+		} );
+
+		expect( mockInputProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { readOnly: true, disabled: true } )
+		);
+	} );
+
 	it( 'forwards empty view suggestion clicks to the shared suggestion handler', async () => {
 		const user = userEvent.setup();
 		const suggestion = {

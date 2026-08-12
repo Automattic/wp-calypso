@@ -98,6 +98,8 @@ interface Props {
 	onCancelFeedback?: () => void;
 	/** Alternative footer to render instead of the default footer. */
 	alternativeFooter?: React.ReactNode;
+	/** Disables the chat input: grayed out, typing and submission blocked. */
+	isChatInputDisabled?: boolean;
 	/**
 	 * AI-interaction disclosure shown below the input (EU AI Act Art. 50(1)).
 	 * Defaults to the shared "You're chatting with AI" line; pass `false` to
@@ -172,6 +174,7 @@ export default function AgentChat( {
 	onTypingStatusChange,
 	inputValue,
 	onInputChange,
+	isChatInputDisabled,
 	isCompactMode = false,
 	imageUpload,
 	acceptedImageFileTypes = DEFAULT_ACCEPTED_IMAGE_TYPES,
@@ -365,13 +368,20 @@ export default function AgentChat( {
 						) }
 						<SelectedBlock />
 						{ /* `readOnly` (not `disabled`) so the stop button stays active while a batch uploads. */ }
+						{ /* Disabling the input takes BOTH props: agenttic forwards `readOnly` to the
+						     textarea but consumes `disabled` only to gate the submit button and
+						     Enter-to-submit. `disabled` alone leaves the field typeable. */ }
+						{ /* `isChatInputDisabled` must win over the pending-images `false` — a
+						     non-operational chat stays disabled regardless of upload state. */ }
 						<AgentUI.Input
 							imageUploaderRef={
 								imageUpload ? ( imageUploaderRef as RefObject< ImageUploaderHandle > ) : undefined
 							}
-							imageUploadDisabled={ imageUpload?.isUploadingImages }
-							readOnly={ imageUpload?.isUploadingImages }
-							disabled={ imageUpload?.pendingImages?.length ? false : undefined }
+							imageUploadDisabled={ isChatInputDisabled || imageUpload?.isUploadingImages }
+							readOnly={ isChatInputDisabled || imageUpload?.isUploadingImages }
+							disabled={
+								isChatInputDisabled || ( imageUpload?.pendingImages?.length ? false : undefined )
+							}
 						/>
 					</AgentUI.Footer>
 				) }
