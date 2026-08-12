@@ -33,7 +33,10 @@ import { isPlanProductFree } from '../../../../../../packages/data-stores/src/pl
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
-import { getBlueprintArchiveSiteSpecUrl } from '../../../utils/blueprint-archive-import';
+import {
+	getBlueprintArchiveSiteSpecUrl,
+	getStandaloneBlueprintArchiveSlug,
+} from '../../../utils/blueprint-archive-import';
 import {
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
@@ -101,6 +104,11 @@ const onboarding: FlowV2< typeof initialize > = {
 
 		const playgroundId = queryParams.get( 'playground' );
 		const buildDest = queryParams.get( 'build_dest' );
+		const blueprintArchiveSlug = getStandaloneBlueprintArchiveSlug(
+			blueprint,
+			playgroundId,
+			buildDest
+		);
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -119,7 +127,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				const isFree =
 					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
 
-				if ( isFree && ! blueprint ) {
+				if ( isFree && playgroundId ) {
 					// Redirect free plan users to a home page
 					return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 				}
@@ -134,12 +142,12 @@ const onboarding: FlowV2< typeof initialize > = {
 				// blueprint-archive import and, on confirm, polls the import and
 				// redirects to the Site Editor. The blueprint step already verified the
 				// archive exists (and stripped build_dest when it does not).
-				if ( blueprint && buildDest === 'wow' ) {
+				if ( blueprintArchiveSlug ) {
 					return [
 						getBlueprintArchiveSiteSpecUrl( {
 							siteSlug: providedDependencies.siteSlug as string,
 							siteId: providedDependencies.siteId as number,
-							blueprintSlug: blueprint,
+							blueprintSlug: blueprintArchiveSlug,
 							ref: refParameter,
 						} ),
 						null,
@@ -147,10 +155,10 @@ const onboarding: FlowV2< typeof initialize > = {
 					];
 				}
 
-				if ( blueprint ) {
-					params.blueprint = blueprint;
-				} else if ( playgroundId ) {
+				if ( playgroundId ) {
 					params.playground = playgroundId;
+				} else if ( blueprint ) {
+					params.blueprint = blueprint;
 				}
 
 				return [
@@ -428,7 +436,7 @@ const onboarding: FlowV2< typeof initialize > = {
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 									// build_dest=wow goes straight from checkout to the AI site-spec
 									// (no post-checkout-onboarding hop, no chooser).
-									redirect_to: blueprint && buildDest === 'wow' ? destination : redirectTo,
+									redirect_to: blueprintArchiveSlug ? destination : redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
@@ -440,7 +448,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( blueprint && buildDest === 'wow' ) {
+						} else if ( blueprintArchiveSlug ) {
 							// build_dest=wow never shows the setup-your-site-ai chooser; go
 							// straight to the AI site-spec destination.
 							window.location.replace( destination );
