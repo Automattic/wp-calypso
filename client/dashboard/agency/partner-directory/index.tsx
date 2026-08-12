@@ -2,6 +2,7 @@ import { activeAgencyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
+import { useHelpCenter } from '../../app/help-center';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import PartnerDirectoryDashboardContent from './dashboard-content';
@@ -17,6 +18,12 @@ const PROFILE_URL = '/partner-directory/agency-details';
 export default function AgencyPartnerDirectory() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { recordTracksEvent } = useAnalytics();
+	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
+
+	const openSupportGuide = ( link: string ) => {
+		setShowHelpCenter( true );
+		setNavigateToRoute( '/post?link=' + encodeURIComponent( link ) );
+	};
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Partner Directory' ) } /> }>
@@ -26,6 +33,7 @@ export default function AgencyPartnerDirectory() {
 					recordTracksEvent={ recordTracksEvent }
 					expertiseUrl={ EXPERTISE_URL }
 					profileUrl={ PROFILE_URL }
+					openSupportGuide={ openSupportGuide }
 				/>
 			) }
 		</PageLayout>

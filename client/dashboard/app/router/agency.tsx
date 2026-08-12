@@ -149,6 +149,16 @@ export const agencyPartnerDirectoryRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'agency/partner-directory',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.partner_directory?.allowed ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
 	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
 } ).lazy( () =>
 	import( '../../agency/partner-directory' ).then( ( d ) =>

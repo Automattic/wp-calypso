@@ -66,6 +66,7 @@ export default function PartnerDirectoryDashboardContent( {
 	const { mutate: publishProfile, isPending: isPublishingProfile } = useMutation(
 		withSnackbar( agencyPartnerDirectoryApplicationMutation( agency?.id ?? 0 ), {
 			success: __( 'Your profile has been saved!' ),
+			error: __( 'Failed to publish your profile.' ),
 		} )
 	);
 
