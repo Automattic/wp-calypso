@@ -82,13 +82,13 @@ export class TestAccount {
 	 * `SidebarComponent.navigate`.
 	 *
 	 * `Promise.any` resolves on the first shell to appear and rejects only if both
-	 * fail, so a broken login still surfaces as a failure.
+	 * fail, so a broken login still surfaces as a failure. Neither branch is gated
+	 * on the `load` event here: the dashboard branch settles as soon as its main
+	 * landmark is in the DOM, and the classic branch waits for `load` itself.
 	 *
 	 * @param {Page} page Page object.
 	 */
 	private static async waitForAppShell( page: Page ): Promise< void > {
-		await page.waitForLoadState( 'load', { timeout: 20 * 1000 } );
-
 		try {
 			await Promise.any( [
 				new SidebarComponent( page ).waitForSidebarInitialization(),
