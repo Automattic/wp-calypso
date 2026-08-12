@@ -1,8 +1,9 @@
-import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
-import PartnerDirectoryDashboardContent from 'calypso/dashboard/agency/partner-directory/dashboard-content';
+import PartnerDirectoryDashboardContent, {
+	getProfileSavedMessage,
+} from 'calypso/dashboard/agency/partner-directory/dashboard-content';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -17,7 +18,6 @@ import {
 import './style.scss';
 
 const PartnerDirectoryDashboard = () => {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { showSupportGuide } = useHelpCenter();
 
@@ -34,9 +34,9 @@ const PartnerDirectoryDashboard = () => {
 		( response: unknown ) => {
 			// The endpoint returns the full agency, so mirror it into the store.
 			dispatch( setActiveAgency( { ...agency, ...( response as Agency ) } ) );
-			dispatch( successNotice( translate( 'Your profile has been saved!' ), { duration: 6000 } ) );
+			dispatch( successNotice( getProfileSavedMessage(), { duration: 6000 } ) );
 		},
-		[ agency, translate, dispatch ]
+		[ agency, dispatch ]
 	);
 
 	// We want to scroll to the top of the page when the component is rendered
