@@ -40,6 +40,7 @@ export default function () {
 	page(
 		WORDPRESS_AGENT_SLACK_PATH,
 		setupPreferences,
+		controller.sidebar,
 		wordpressAgentSlack,
 		makeLayout,
 		clientRender

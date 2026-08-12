@@ -1,7 +1,49 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/typography/styles/variables';
+@import '@automattic/components/src/styles/typography';
+
 .wordpress-agent-slack {
 	.wp-block-notice,
 	.components-notice {
 		margin-block-end: 16px;
+	}
+}
+
+.navigation-header.wordpress-agent-slack__header {
+	@include break-small {
+		margin-top: 50px;
+	}
+
+	.formatted-header__title {
+		padding-bottom: 8px;
+		font-family: $brand-serif;
+		font-size: rem( 44px );
+		line-height: 52px;
+		letter-spacing: 0.2px;
+		text-align: center;
+		word-break: break-word;
+	}
+
+	.formatted-header__subtitle {
+		font-family: $font-sf-pro-text;
+		font-size: rem( 16px );
+		line-height: 24px;
+		letter-spacing: -0.32px;
+		text-align: center;
+	}
+
+	@media ( max-width: $break-medium ) {
+		padding: 40px 32px 24px;
+
+		.formatted-header__title {
+			font-size: rem( 32px );
+		}
+
+		.formatted-header__subtitle {
+			display: block;
+			font-size: rem( 14px );
+		}
 	}
 }
 
@@ -21,7 +63,7 @@
 
 	p {
 		margin-block-start: 4px;
-		color: var(--color-text-subtle);
+		color: var( --color-text-subtle );
 	}
 }
 

@@ -201,8 +201,10 @@ export default function WordPressAgentSlackPage( {
 				title="Me > Get Apps > WordPress Agent"
 			/>
 			<NavigationHeader
+				navigationItems={ [] }
 				title={ title }
-				subtitle={ translate( 'Connect WordPress.com to Slack.' ) }
+				subtitle={ translate( 'Connect your WordPress.com account and sites to Slack.' ) }
+				className="wordpress-agent-slack__header"
 			/>
 
 			{ slackStatus === 'connected' && (
