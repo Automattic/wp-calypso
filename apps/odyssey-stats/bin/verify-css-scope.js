@@ -5,7 +5,7 @@
  * left unscoped), not silently dead — checked here against the real `dist/*.css` output, not the
  * hand-written strings css-scope.test.js runs the plugin against.
  *
- * Three checks:
+ * Four checks:
  * 1. The prefix reaches the compiled output at all (catches the scoping step silently no-op'ing).
  * 2. Every root in `prefix` is classified in `entryPointRoots` or `portalRoots` — otherwise a new
  *    root added to `prefix` without also classifying it would silently skip check 3 below.
@@ -13,6 +13,16 @@
  *    `:where(<roots>) X` where X's compound contains one of them. That's always dead: those roots
  *    are placed directly on the page and never nested inside another root, so they can never
  *    satisfy the ancestor requirement the prefix just added. This is the STATS-368 failure mode.
+ * 4. No compiled rule prefixes a selector anchored on the document root — `html`, `body` or
+ *    `:root`. The prefix makes everything a descendant of a mount point, and those three never
+ *    are, so the rule is dead. `exclude` exists to keep them unprefixed; this catches the case
+ *    where a pattern there fails to match the selector as Sass actually emitted it.
+ *
+ * Check 4 is deliberately structural rather than re-running `exclude` against the compiled
+ * selector. Re-running it could never fail: the plugin already tested those same patterns against
+ * that same string, so a pattern that missed at build time misses here too. Asking "is this
+ * selector anchored somewhere the prefix can never reach" is independent of how `exclude` is
+ * written, which is the whole point — it catches gaps in `exclude` rather than trusting it.
  *
  * Check 3 only covers `entryPointRoots`, not every `prefix` selector: portal roots (`.color-scheme`
  * etc.) are routinely, correctly nested *inside* `.jp-stats-dashboard`/`.jp-stats-widget`, so
@@ -98,6 +108,36 @@ function getCompoundAfterPrefix( selector ) {
 	return compoundNodes;
 }
 
+// Selectors that can never be a descendant of anything, so prefixing them always kills the rule.
+const DOCUMENT_ROOT_TAGS = [ 'html', 'body' ];
+
+/**
+ * Given a rule selector starting with the `:where(<roots>)` prefix, returns any document-root
+ * anchors (`html`, `body`, `:root`) appearing after it. Top level only — a `body` inside an
+ * `:is()`/`:where()` argument list is a different question and not necessarily dead.
+ */
+function getDocumentRootAnchorsAfterPrefix( selector ) {
+	const anchors = [];
+	let sawWhere = false;
+
+	selectorParser( ( selectors ) => {
+		for ( const node of selectors.first.nodes ) {
+			if ( ! sawWhere ) {
+				sawWhere = node.type === 'pseudo' && node.value === ':where';
+				continue;
+			}
+			const isRootTag = node.type === 'tag' && DOCUMENT_ROOT_TAGS.includes( node.value );
+			const isRootPseudo = node.type === 'pseudo' && node.value === ':root';
+
+			if ( isRootTag || isRootPseudo ) {
+				anchors.push( node.toString() );
+			}
+		}
+	} ).processSync( selector );
+
+	return anchors;
+}
+
 /**
  * Given compiled CSS text, returns human-readable failure messages (empty when everything's fine).
  * Split from `run()` so it's unit-testable against hand-written CSS without a real `dist/` build.
@@ -167,6 +207,19 @@ function findScopeFailures(
 						`(Jetpack's PHP places ${ selfNestedRoot } directly on the page — it never has a ` +
 						'matching ancestor). Add an `exclude` entry for it in webpack-css-scope.js — this ' +
 						'is the STATS-368 failure mode.'
+				);
+			}
+
+			const rootAnchors = getDocumentRootAnchorsAfterPrefix( selector );
+
+			if ( rootAnchors.length > 0 ) {
+				failures.push(
+					`Dead rule found: \`${ selector.trim() }\` was prefixed despite being anchored on ` +
+						`${ rootAnchors.join( ', ' ) }, which the prefix requires to be a descendant of a ` +
+						'mount point. Nothing is a descendant of the document root, so the rule can never ' +
+						'match. `exclude` in webpack-css-scope.js is meant to keep it unprefixed — check ' +
+						'that its pattern matches the selector as Sass emits it, including without spaces ' +
+						'around combinators (`body>.x`, not just `body > .x`).'
 				);
 			}
 		}

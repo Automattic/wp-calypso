@@ -107,6 +107,58 @@ describe( 'verify-css-scope findScopeFailures', () => {
 		] );
 	} );
 
+	it( 'flags a prefixed `body>` selector — the compressed form that shipped dead', () => {
+		// The real regression: stats-main/style.scss applies the Stats interactive colours at
+		// `body > .color-scheme` to reach the body child Odyssey's RootChild portals into. Sass
+		// emitted it without spaces, `exclude` only recognised the spaced form, and the rule was
+		// prefixed into something that can never match.
+		const css = `
+			${ PREFIX } body>.color-scheme .date-range__picker{--color-accent:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [
+			expect.stringContaining( 'was prefixed despite being anchored on body' ),
+		] );
+	} );
+
+	it.each( [ 'html.rtl .card', 'body.is-section-stats .card', ':root .card', '.foo body .card' ] )(
+		'flags `%s` when prefixed, whatever the combinator or position',
+		( selector ) => {
+			const css = `
+				${ PREFIX } ${ selector }{color:red}
+				.jp-stats-dashboard{--sidebar-width-max:160px}
+				.jp-stats-widget{background:#fff}
+			`;
+
+			expect( findScopeFailures( css ) ).toEqual( [
+				expect.stringContaining( 'the prefix requires to be a descendant of a mount point' ),
+			] );
+		}
+	);
+
+	it( 'does not flag a document-root selector that was correctly left unprefixed', () => {
+		const css = `
+			body>.color-scheme .date-range__picker{--color-accent:red}
+			${ PREFIX } .card{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [] );
+	} );
+
+	it( 'does not flag a class merely containing a root tag name, such as .components-panel__body', () => {
+		const css = `
+			${ PREFIX } .components-panel__body .card{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [] );
+	} );
+
 	it( 'is unaffected by minification stripping whitespace after commas in :where(...)', () => {
 		const minifiedPrefix = PREFIX.replace( /,\s+/g, ',' );
 		const css = `
