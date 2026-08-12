@@ -145,9 +145,7 @@ describe( 'useCheckpointAction', () => {
 		fireEvent.click( undoButton );
 
 		expect( checkpoint.restoreCheckpoint ).toHaveBeenCalledWith( 'tool-call-1' );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'restore_checkpoint_action', {
-			id: 'tool-call-1',
-		} );
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
 		expect( undoButton ).toBeDisabled();
 		expect( status ).toHaveTextContent( 'Updated' );
 		expect( within( status ).getByTestId( 'icon-check' ) ).toBeInTheDocument();
@@ -157,6 +155,11 @@ describe( 'useCheckpointAction', () => {
 
 		await act( async () => resolveRestore() );
 
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'restore_checkpoint_action', {
+			id: 'tool-call-1',
+			outcome: 'success',
+		} );
 		expect( undoButton ).toBeDisabled();
 		expect( status ).toHaveTextContent( 'Reverted' );
 		expect( within( status ).getByTestId( 'icon-closeSmall' ) ).toBeInTheDocument();
@@ -204,6 +207,11 @@ describe( 'useCheckpointAction', () => {
 
 		await act( async () => rejectRestore( new Error( 'Restore failed' ) ) );
 
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'restore_checkpoint_action', {
+			id: 'tool-call-1',
+			outcome: 'failed',
+		} );
 		expect( undoButton ).toBeEnabled();
 		expect( status ).toHaveTextContent( 'Updated' );
 		expect( status ).not.toHaveClass( 'agents-manager-resolved-edit-action__status--reverted' );
@@ -216,6 +224,11 @@ describe( 'useCheckpointAction', () => {
 		expect( checkpoint.restoreCheckpoint ).toHaveBeenCalledTimes( 2 );
 		expect( undoButton ).toBeDisabled();
 		await waitFor( () => expect( status ).toHaveTextContent( 'Reverted' ) );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 2 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'restore_checkpoint_action', {
+			id: 'tool-call-1',
+			outcome: 'success',
+		} );
 	} );
 
 	it( 'uses the Jetpack tool call id for its block edit checkpoint', async () => {

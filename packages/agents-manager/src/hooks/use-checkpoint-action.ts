@@ -68,20 +68,24 @@ export default function useCheckpointAction(
 		}
 
 		const restoreCheckpoint = async (): Promise< boolean > => {
-			recordBigSkyTracksEvent( 'restore_checkpoint_action', {
-				id: checkpointInfo.checkpointId,
-			} );
+			let outcome: 'success' | 'failed' = 'failed';
 			try {
 				const checkpointToRestore = checkpointRef.current;
 				if ( ! checkpointToRestore ) {
 					return false;
 				}
 				await checkpointToRestore.restoreCheckpoint( checkpointInfo.checkpointId );
+				outcome = 'success';
 				return true;
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
 				console.error( '[useCheckpointAction] Failed to restore checkpoint:', error );
 				return false;
+			} finally {
+				recordBigSkyTracksEvent( 'restore_checkpoint_action', {
+					id: checkpointInfo.checkpointId,
+					outcome,
+				} );
 			}
 		};
 
