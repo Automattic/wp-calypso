@@ -122,6 +122,7 @@ const mockAgentChat = jest.fn(
 				Click auto-submit suggestion
 			</button>
 			<button onClick={ () => onInputChange?.( 'Describe these images' ) }>Type message</button>
+			<button onClick={ () => onInputChange?.( '' ) }>Clear message</button>
 			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit message</button>
 			<button onClick={ () => onAbort?.() }>Stop</button>
 			{ error && <div data-testid="chat-error">{ error }</div> }
@@ -655,6 +656,43 @@ describe( 'OrchestratorChat', () => {
 		expect( screen.getByText( 'Customize colors' ) ).toBeTruthy();
 		expect( screen.getByText( 'Change page layout' ) ).toBeTruthy();
 		expect( screen.getByText( 'Dynamic action' ) ).toBeTruthy();
+	} );
+
+	it( 'hides all suggestions while the user types and restores them when cleared', () => {
+		const emptySuggestions: Suggestion[] = [
+			{ id: 'change-page-layout', label: 'Change page layout', prompt: 'Change page layout' },
+		];
+		const writingSuggestions: Suggestion[] = [
+			{ id: 'proofread-content', label: 'Proofread', prompt: 'Proofread this page' },
+		];
+
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				suggestions: writingSuggestions,
+			} )
+		);
+
+		render(
+			chat( {
+				emptyViewSuggestions: emptySuggestions,
+				useSuggestions: () => ( { suggestions: writingSuggestions } ),
+			} )
+		);
+
+		expect( screen.getByText( 'Change page layout' ) ).toBeTruthy();
+		expect( screen.getByText( 'Proofread' ) ).toBeTruthy();
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+
+		fireEvent.click( screen.getByText( 'Type message' ) );
+
+		expect( screen.queryByText( 'Change page layout' ) ).toBeNull();
+		expect( screen.queryByText( 'Proofread' ) ).toBeNull();
+
+		fireEvent.click( screen.getByText( 'Clear message' ) );
+
+		expect( screen.getByText( 'Change page layout' ) ).toBeTruthy();
+		expect( screen.getByText( 'Proofread' ) ).toBeTruthy();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'replaces provider empty-view suggestions with contextual dynamic suggestions', () => {

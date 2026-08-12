@@ -949,18 +949,15 @@ export default function OrchestratorChat( {
 		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
 
 	// Determine which suggestions to show following Big Sky's logic:
-	// - Empty chat: show provider empty-view chips plus dynamic chips.
-	// - Active chat/input: show dynamic suggestions only.
+	// - Empty input and chat: show provider empty-view chips plus dynamic chips.
+	// - Empty input and active chat: show dynamic suggestions only.
+	// - Non-empty input: hide empty-view suggestions while AgentUI hides active-chat suggestions.
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
-	if ( ! suggestionsVisible ) {
-		// Minimized/collapsed: the chat renders no suggestions, so leave the list
+	if ( ! suggestionsVisible || inputValue.length > 0 ) {
+		// Hidden or actively composing: the chat renders no suggestions, so leave the list
 		// empty to avoid firing chat_suggestions_rendered for hidden chips.
 		displayedEmptyViewSuggestions = [];
-	} else if (
-		! isLoadingConversation &&
-		displayedMessages.length === 0 &&
-		inputValue.length === 0
-	) {
+	} else if ( ! isLoadingConversation && displayedMessages.length === 0 ) {
 		// Prefer the registered store, but fall back to the live `useSuggestions`
 		// output when the store is empty. Clicking a suggestion calls
 		// `clearSuggestions()`, which empties the store, and the re-registration
