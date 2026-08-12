@@ -17,6 +17,13 @@ interface BuildContext {
 }
 
 /**
+ * How long a tag POST may take. A test's teardown waits for it, twice over when
+ * a refusal is retried, so it is chosen against that budget rather than passed
+ * in by whoever calls.
+ */
+const TAG_TIMEOUT_MS = 2_000;
+
+/**
  * Reads a single key out of `java.util.Properties.store()` output.
  *
  * That writer always uses `=` as the separator, escapes `=`, `:`, `\` and
@@ -136,7 +143,7 @@ function authorization( context: BuildContext ): string {
  * The original error never leaves this module — it can carry request context,
  * and a caller must never be tempted to print it.
  */
-export async function tagOwnBuild( tag: string, timeoutMs = 2_000 ): Promise< number | null > {
+export async function tagOwnBuild( tag: string ): Promise< number | null > {
 	const context = readBuildContext();
 	if ( ! context ) {
 		return null;
@@ -154,7 +161,7 @@ export async function tagOwnBuild( tag: string, timeoutMs = 2_000 ): Promise< nu
 				body: tag,
 				// Bounded: a test waits for this during teardown, and a request
 				// that never settles would time the test out.
-				signal: AbortSignal.timeout( timeoutMs ),
+				signal: AbortSignal.timeout( TAG_TIMEOUT_MS ),
 			}
 		);
 		return response.status;

@@ -196,18 +196,16 @@ describe( 'tagOwnBuild', () => {
 
 	test( 'a request that never settles is abandoned, not left hanging', async () => {
 		writeProperties( completeProperties() );
-		jest.spyOn( globalThis, 'fetch' ).mockImplementation(
-			( _url, init ) =>
-				new Promise( ( _resolve, reject ) => {
-					( init as RequestInit ).signal?.addEventListener( 'abort', () =>
-						reject( new Error( 'aborted' ) )
-					);
-				} )
-		);
+		// What the deadline does to it, without waiting out the deadline.
+		const fetchSpy = jest
+			.spyOn( globalThis, 'fetch' )
+			.mockRejectedValue( new Error( 'The operation was aborted due to timeout' ) );
 
-		await expect( tagOwnBuild( 'throttle-signup-123', 10 ) ).rejects.toThrow(
+		await expect( tagOwnBuild( 'throttle-signup-123' ) ).rejects.toThrow(
 			'The TeamCity tag request failed.'
 		);
+		// The deadline is the caller's, not the request's: nothing else stops it.
+		expect( ( fetchSpy.mock.calls[ 0 ][ 1 ] as RequestInit ).signal ).toBeDefined();
 	} );
 
 	test( 'a non-200 response is reported as a status, not thrown', async () => {
