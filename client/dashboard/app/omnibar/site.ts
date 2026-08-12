@@ -8,7 +8,7 @@ import {
 } from '@automattic/api-queries';
 import calypsoConfig from '@automattic/calypso-config';
 import { useMutation } from '@tanstack/react-query';
-import { useRouter, useRouterState } from '@tanstack/react-router';
+import { useRouter } from '@tanstack/react-router';
 import { removeQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -30,18 +30,6 @@ async function ensureSite( siteId: number | undefined ) {
 	} catch {
 		return undefined;
 	}
-}
-
-/**
- * The site the current route resolved. `useSyncOmnibarSite` publishes
- * asynchronously, so this is the only site available on the first render.
- */
-export function useRouteSiteId() {
-	return useRouterState( {
-		select: ( state ) =>
-			state.matches.findLast( ( match ) => !! ( match.loaderData as { site?: Site } )?.site )
-				?.loaderData?.site?.ID,
-	} );
 }
 
 /**
@@ -73,6 +61,15 @@ export function useSyncOmnibarSite() {
 				( router.state.location.search as Record< string, string | undefined > ).origin_site_id
 			);
 			const originSiteId = originSiteIdParam > 0 ? originSiteIdParam : undefined;
+
+			// The route already knows its site, and everything below is async: publish it
+			// now so consumers reading this as shared state — the omnibar itself, and the
+			// site attribution on the events it records — don't spend the resolution
+			// window on the previously visited site, or on no site at all.
+			if ( routeSite && isMemberOfSite( routeSite ) ) {
+				queryClient.cancelQueries( { queryKey: omnibarSiteIdQuery().queryKey } );
+				queryClient.setQueryData( omnibarSiteIdQuery().queryKey, () => routeSite.ID );
+			}
 
 			let recentSiteIds: number[];
 			try {

@@ -2,16 +2,49 @@
  * @jest-environment jsdom
  */
 import { omnibarSiteIdQuery, queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
-import { act, waitFor } from '@testing-library/react';
+import {
+	Outlet,
+	RouterProvider,
+	createRootRoute,
+	createRoute,
+	createRouter,
+} from '@tanstack/react-router';
+import { act, render as testingLibraryRender, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import { AUTH_QUERY_KEY } from '../../auth';
 import { useSyncOmnibarSite } from '../site';
-import type { User, UserPreferences } from '@automattic/api-core';
+import type { Site, User, UserPreferences } from '@automattic/api-core';
 
 function OmnibarProbe() {
 	useSyncOmnibarSite();
 	return null;
+}
+
+// The shared `render()` has no route loader, so a site-bearing route needs its own router.
+function renderRouterWithSiteRoute( site: Site ) {
+	function RootComponent() {
+		useSyncOmnibarSite();
+		return <Outlet />;
+	}
+
+	const rootRoute = createRootRoute( { component: RootComponent } );
+	const indexRoute = createRoute( {
+		getParentRoute: () => rootRoute,
+		path: '/',
+		component: () => <div>home</div>,
+	} );
+	const siteRoute = createRoute( {
+		getParentRoute: () => rootRoute,
+		path: '/sites/$slug',
+		loader: () => ( { site } ),
+		component: () => <div>site</div>,
+	} );
+	const router = createRouter( { routeTree: rootRoute.addChildren( [ indexRoute, siteRoute ] ) } );
+
+	testingLibraryRender( <RouterProvider router={ router } /> );
+
+	return router;
 }
 
 // Flush pending microtasks/effects so a hypothetical re-triggered write would fire.
@@ -76,6 +109,39 @@ describe( 'useSyncOmnibarSite', () => {
 
 		// The omnibar still resolves to the primary blog and publishes it as shared state.
 		expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBe( 123 );
+	} );
+
+	test( 'publishes the route site before the asynchronous candidates resolve', async () => {
+		queryClient.setQueryData( AUTH_QUERY_KEY, { ID: 1, primary_blog: 123 } as User );
+		// The site the omnibar was showing before this navigation.
+		queryClient.setQueryData( omnibarSiteIdQuery().queryKey, 111 );
+
+		// Reading preferences fails, so the resolution that awaits them bails out and
+		// anything published here can only have come from the route.
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/preferences' )
+			.reply( 403, { error: 'unauthorized' } );
+
+		const router = renderRouterWithSiteRoute( { ID: 456, capabilities: {} } as Site );
+		await waitFor( () => expect( document.body.textContent ).toContain( 'home' ) );
+
+		router.navigate( { to: '/sites/$slug', params: { slug: 'foo' } } );
+		await waitFor( () => expect( document.body.textContent ).toContain( 'site' ) );
+
+		// Events recorded in this window — a Help click right after landing — must
+		// attribute the site being visited, not the one left behind.
+		await waitFor( () =>
+			expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBe( 456 )
+		);
+		await waitFor( () =>
+			expect( queryClient.getQueryState( rawUserPreferencesQuery().queryKey )?.status ).toBe(
+				'error'
+			)
+		);
+		await flush();
+
+		expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBe( 456 );
 	} );
 
 	test( 'does not attempt a write when reading preferences fails', async () => {
