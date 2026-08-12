@@ -55,7 +55,8 @@ export function saveSessionId( sessionId: string, agentId?: string, siteKey?: st
 }
 
 /**
- * Clear the stored session to start a new chat.
+ * Clear the stored session to start a new chat. Pass `siteKey` to clear a
+ * specific site scope instead of the current one.
  */
 export function clearSessionId( agentId?: string, siteKey?: string ): void {
 	try {
