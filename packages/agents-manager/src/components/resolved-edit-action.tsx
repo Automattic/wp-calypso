@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { check, Icon, undo } from '@wordpress/icons';
+import { check, closeSmall, Icon, undo } from '@wordpress/icons';
 
 type ResolvedEditActionProps = {
 	onUndo: () => Promise< boolean >;
@@ -34,7 +34,11 @@ export default function ResolvedEditAction( { onUndo }: ResolvedEditActionProps 
 				}` }
 				role="status"
 			>
-				<Icon className="agents-manager-resolved-edit-action__icon" icon={ check } size={ 20 } />
+				<Icon
+					className="agents-manager-resolved-edit-action__icon"
+					icon={ isReverted ? closeSmall : check }
+					size={ 20 }
+				/>
 				{ isReverted
 					? __( 'Reverted', __i18n_text_domain__ )
 					: __( 'Updated', __i18n_text_domain__ ) }

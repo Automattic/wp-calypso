@@ -1,7 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
+import {
+	act,
+	fireEvent,
+	render,
+	renderHook,
+	screen,
+	waitFor,
+	within,
+} from '@testing-library/react';
 import { createElement } from '@wordpress/element';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import useCheckpointAction from '../use-checkpoint-action';
@@ -11,6 +19,25 @@ import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client'
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 } ) );
+jest.mock( '@wordpress/icons', () => {
+	const { createElement: mockCreateElement } = jest.requireActual( '@wordpress/element' );
+
+	return {
+		check: 'check',
+		closeSmall: 'closeSmall',
+		undo: 'undo',
+		Icon: ( { className, icon }: { className?: string; icon: unknown } ) => {
+			if ( typeof icon !== 'string' ) {
+				throw new Error( 'Unexpected unmocked icon' );
+			}
+
+			return mockCreateElement( 'span', {
+				className,
+				'data-testid': `icon-${ icon }`,
+			} );
+		},
+	};
+} );
 
 type MessageActionsRegistration = Parameters< UseAgentChatReturn[ 'registerMessageActions' ] >[ 0 ];
 
@@ -112,6 +139,7 @@ describe( 'useCheckpointAction', () => {
 		render( createElement( actions[ 0 ].component, actions[ 0 ].componentProps ) );
 		const status = screen.getByRole( 'status' );
 		expect( status ).toHaveTextContent( 'Updated' );
+		expect( within( status ).getByTestId( 'icon-check' ) ).toBeInTheDocument();
 		expect( status ).not.toHaveClass( 'agents-manager-resolved-edit-action__status--reverted' );
 		const undoButton = screen.getByRole( 'button', { name: 'Undo' } );
 		fireEvent.click( undoButton );
@@ -122,6 +150,7 @@ describe( 'useCheckpointAction', () => {
 		} );
 		expect( undoButton ).toBeDisabled();
 		expect( status ).toHaveTextContent( 'Updated' );
+		expect( within( status ).getByTestId( 'icon-check' ) ).toBeInTheDocument();
 		expect( status ).not.toHaveClass( 'agents-manager-resolved-edit-action__status--reverted' );
 		fireEvent.click( undoButton );
 		expect( checkpoint.restoreCheckpoint ).toHaveBeenCalledTimes( 1 );
@@ -130,6 +159,7 @@ describe( 'useCheckpointAction', () => {
 
 		expect( undoButton ).toBeDisabled();
 		expect( status ).toHaveTextContent( 'Reverted' );
+		expect( within( status ).getByTestId( 'icon-closeSmall' ) ).toBeInTheDocument();
 		expect( status ).toHaveClass( 'agents-manager-resolved-edit-action__status--reverted' );
 	} );
 
