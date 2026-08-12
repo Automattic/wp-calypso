@@ -180,6 +180,11 @@ interface TrackSplitScreenGuideOptions {
 	componentType: string;
 }
 
+interface TrackJetpackAiUpgradeOptions {
+	placement: 'jetpack-ai-sidebar-quota-notice' | 'jetpack-ai-sidebar-blocked-submit';
+	requestsCount: number | null;
+}
+
 function getSplitScreenGuideProperties( {
 	componentType,
 }: TrackSplitScreenGuideOptions ): TrackProperties {
@@ -211,4 +216,20 @@ export function trackSplitScreenGuideRendered( options: TrackSplitScreenGuideOpt
  */
 export function trackSplitScreenGuideClick( options: TrackSplitScreenGuideOptions ): void {
 	recordTracksEvent( 'ai_split_screen_guide_click', getSplitScreenGuideProperties( options ) );
+}
+
+/**
+ * Tracks navigation from the sidebar to the Jetpack AI upgrade flow.
+ * @param options               - Tracking options.
+ * @param options.placement     - Sidebar interaction that opened the upgrade flow.
+ * @param options.requestsCount - Current request count when the server provides it.
+ */
+export function trackJetpackAiUpgrade( {
+	placement,
+	requestsCount,
+}: TrackJetpackAiUpgradeOptions ): void {
+	recordTracksEvent( 'ai_upgrade_button', {
+		placement,
+		...( requestsCount !== null ? { requests_count: requestsCount } : {} ),
+	} );
 }
