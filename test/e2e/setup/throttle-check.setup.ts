@@ -16,8 +16,9 @@ import type { ThrottleId } from '@automattic/calypso-e2e';
  */
 
 // Comfortably under the 120s test timeout, and over what the lookup's own
-// bounds add up to.
-const CHECK_TIMEOUT = 90 * 1000;
+// bounds add up to. The margin matters: every project in the suite depends on
+// this one, so a test Playwright times out from the outside costs the whole run.
+const CHECK_TIMEOUT = 45 * 1000;
 
 setup( 'check active wpcom throttles', async () => {
 	let active: Partial< Record< ThrottleId, number | null > > = {};

@@ -397,7 +397,7 @@ describe( 'readActiveThrottles', () => {
 		fetchBuildsByTag.mockImplementation( async ( tag ) =>
 			tag === 'throttle-signup' ? [ taggedBuild( 11, NOW - 60_000 ), taggedBuild( 22, NOW ) ] : null
 		);
-		// The first read spends this id's whole share of the budget.
+		// The first read spends the whole budget.
 		fetchBuildLog.mockImplementation( async () => {
 			clock += 60_000;
 			return 'a log with nothing of ours in it';
@@ -422,25 +422,23 @@ describe( 'readActiveThrottles', () => {
 		expect( ( await readActiveThrottles() ).signup ).toBe( 1_600_000 );
 	} );
 
-	test( 'a build one id had no time for is still read when the next id asks', async () => {
+	test( 'the id that asks first may spend the whole budget, not a share of it', async () => {
 		let clock = NOW;
 		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
-		fetchBuildsByTag.mockImplementation( async ( tag ) => {
-			if ( tag === 'throttle-signup' ) {
-				return [ taggedBuild( 11 ), taggedBuild( 22 ) ];
-			}
-			return tag === 'throttle-domain-suggestions' ? [ taggedBuild( 22 ) ] : null;
-		} );
-		// Each read spends a whole id's share of the budget.
+		fetchBuildsByTag.mockImplementation( async ( tag ) =>
+			tag === 'throttle-signup' ? [ taggedBuild( 11 ), taggedBuild( 22 ) ] : null
+		);
+		// A read costs more than a third of the budget and less than all of it, so
+		// the second build is only reached if signup was not held to a third.
 		fetchBuildLog.mockImplementation( async ( buildId ) => {
-			clock += 20_000;
+			clock += 8_000;
 			return buildId === 22
-				? '[e2e-throttle] type=domain-suggestions start=1 duration=2 end=1600000'
+				? '[e2e-throttle] type=signup start=1 duration=2 end=1600000'
 				: 'a log with nothing of ours in it';
 		} );
 
-		// Build 22 is out of time under signup, and read under domain-suggestions.
-		expect( ( await readActiveThrottles( NOW ) )[ 'domain-suggestions' ] ).toBe( 1_600_000 );
+		expect( ( await readActiveThrottles( NOW ) ).signup ).toBe( 1_600_000 );
+		expect( fetchBuildLog ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	test( 'a build tagged for more than one throttle has its log read once', async () => {

@@ -42,8 +42,12 @@ const TAG_WINDOW_MS = 6 * 60 * 60 * 1000;
  * to stay under the deadline the pre-flight check wraps the call in. Builds come
  * newest first, so what a spent budget drops is the oldest and least likely to
  * still be in force.
+ *
+ * Kept short because the check runs once per `playwright test` invocation, and a
+ * build that runs the suite several times over — the Atomic variations do —
+ * pays it every time, inside one execution timeout.
  */
-const LOG_BUDGET_MS = 45_000;
+const LOG_BUDGET_MS = 20_000;
 
 /**
  * What this worker has already raised. One entry per id: a worker that has seen
@@ -361,20 +365,22 @@ export async function readActiveThrottles(
 	// Null is "we did not read it", which is not the same as reading it and
 	// finding nothing: the caller still has the tag, and the tag is what the
 	// fallback rests on.
+	//
+	// One clock for the whole read, not a share each: the loop below is
+	// sequential, so a per-id share would stop the first id short while the ids
+	// after it, which may have no tagged build at all, keep time they cannot
+	// spend. The ids that come first are the ones with the longest bans.
+	const until = Date.now() + LOG_BUDGET_MS;
 	const flags = new Map< number, Promise< Map< ThrottleId, ThrottleFlag > | null > >();
 	const unread = Promise.resolve( null );
-	// By id and build, not by build: a log read for one id and skipped for
-	// another still left that other one short.
-	const skipped = new Set< string >();
-	const readFlags = ( buildId: number, until: number, id: ThrottleId ) => {
+	const skipped = new Set< number >();
+	const readFlags = ( buildId: number ) => {
 		const known = flags.get( buildId );
 		if ( known ) {
 			return known;
 		}
-		// Not cached: this id ran out of time for it, and the next one may not
-		// have, so the log is still worth reading when its turn comes.
 		if ( Date.now() >= until ) {
-			skipped.add( `${ id }:${ buildId }` );
+			skipped.add( buildId );
 			return unread;
 		}
 		const reading = fetchBuildLog( buildId )
@@ -387,25 +393,14 @@ export async function readActiveThrottles(
 		return reading;
 	};
 
-	// An equal share of whatever is left when the id's turn comes: an id with no
-	// tagged builds hands its time to the ones that have them, and the whole read
-	// still ends on the one clock the setup project's deadline is set against.
-	const overall = Date.now() + LOG_BUDGET_MS;
 	const active = {} as Record< ThrottleId, number | null >;
-	for ( const [ index, { id, builds } ] of listed.entries() ) {
-		const until = Date.now() + ( overall - Date.now() ) / ( listed.length - index );
-		active[ id ] = await furthestExpiry( id, nowMs, builds, ( buildId: number ) =>
-			readFlags( buildId, until, id )
-		);
+	for ( const { id, builds } of listed ) {
+		active[ id ] = await furthestExpiry( id, nowMs, builds, readFlags );
 	}
-
-	// Counted by id and build, reported by build: an id that lost a log to the
-	// clock is worth saying out loud, but the number is logs, not lookups.
-	const dropped = new Set( [ ...skipped ].map( ( key ) => key.slice( key.indexOf( ':' ) + 1 ) ) )
-		.size;
 
 	// Said out loud: an id whose builds all went unread reads exactly like an id
 	// with nothing to report, and a reader has no other way to tell them apart.
+	const dropped = skipped.size;
 	if ( dropped ) {
 		console.warn(
 			`Ran out of time to read ${ dropped } tagged build log(s). What they carry is not in this report.`
