@@ -9,7 +9,7 @@ import { ORCHESTRATOR_AGENT_ID } from '../constants';
 import { generateUUID } from './generate-uuid';
 
 /** Base storage key; `getTabSessionKey` scopes it per agent and per site. */
-export const SESSION_STORAGE_KEY = 'agents-manager-session-id';
+const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 
 let activeSiteKey = 'no-site';
 

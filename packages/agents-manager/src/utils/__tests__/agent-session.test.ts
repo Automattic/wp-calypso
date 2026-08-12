@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import {
-	SESSION_STORAGE_KEY,
 	setSessionSiteKey,
 	getSessionId,
 	saveSessionId,
@@ -37,7 +36,7 @@ describe( 'saveSessionId / getSessionId', () => {
 		saveSessionId( 'session-abc' );
 
 		expect( getSessionId() ).toBe( 'session-abc' );
-		expect( sessionStorage.getItem( `${ SESSION_STORAGE_KEY }-no-site` ) ).toBe( 'session-abc' );
+		expect( sessionStorage.getItem( 'agents-manager-session-id-no-site' ) ).toBe( 'session-abc' );
 	} );
 
 	it( 'returns empty string when nothing is stored', () => {
@@ -56,7 +55,7 @@ describe( 'saveSessionId / getSessionId', () => {
 
 		expect( getSessionId() ).toBe( 'orchestrator-session' );
 		expect( getSessionId( 'reader-chat' ) ).toBe( 'reader-session' );
-		expect( sessionStorage.getItem( `${ SESSION_STORAGE_KEY }-reader-chat-no-site` ) ).toBe(
+		expect( sessionStorage.getItem( 'agents-manager-session-id-reader-chat-no-site' ) ).toBe(
 			'reader-session'
 		);
 	} );

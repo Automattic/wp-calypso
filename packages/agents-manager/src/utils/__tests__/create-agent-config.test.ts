@@ -11,7 +11,6 @@ jest.mock( '../can-connect-to-zendesk', () => ( {
 } ) );
 
 import { DOLLY_AGENT_ID } from '../../constants';
-import { clearAnnouncedSessionId, getAnnouncedSessionId } from '../announced-sessions';
 import { createAgentConfig } from '../create-agent-config';
 import { canConnectToZendesk } from '../can-connect-to-zendesk';
 import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
@@ -37,8 +36,6 @@ describe( 'createAgentConfig', () => {
 			.agentsManagerData;
 		document.body.className = '';
 		clearSiteEditorActions();
-		clearAnnouncedSessionId( 'wp-orchestrator', 'no-site' );
-		clearAnnouncedSessionId( 'wp-orchestrator', '111' );
 		sessionStorage.clear();
 	} );
 
@@ -78,7 +75,7 @@ describe( 'createAgentConfig', () => {
 		expect( getSessionId( 'wp-orchestrator' ) ).toBe( 'server-session-id' );
 	} );
 
-	it( 'persists announced sessions under an explicit sessionSiteKey', async () => {
+	it( 'persists server-assigned sessions under an explicit sessionSiteKey', async () => {
 		const config = await createAgentConfig( {
 			sessionId: '',
 			sessionSiteKey: '111',
@@ -88,22 +85,6 @@ describe( 'createAgentConfig', () => {
 
 		expect( getSessionId( undefined, '111' ) ).toBe( 'server-session-id' );
 		expect( getSessionId() ).toBe( '' );
-	} );
-
-	it( 'records announced sessions for catch-up detection', async () => {
-		const config = await createAgentConfig( {
-			sessionId: '',
-			sessionSiteKey: 'no-site',
-			agentId: 'wp-orchestrator',
-		} );
-		config.onSessionIdChange?.( 'server-session-id' );
-
-		expect( getAnnouncedSessionId( 'wp-orchestrator', 'no-site' ) ).toBe( 'server-session-id' );
-		expect( getAnnouncedSessionId( undefined, 'no-site' ) ).toBe( 'server-session-id' );
-
-		clearAnnouncedSessionId( 'wp-orchestrator', 'no-site' );
-
-		expect( getAnnouncedSessionId( 'wp-orchestrator', 'no-site' ) ).toBeUndefined();
 	} );
 
 	it( 'adds reader page context for Reader Chat agents', async () => {

@@ -8,7 +8,6 @@
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { saveSessionId } from './agent-session';
-import { setAnnouncedSessionId } from './announced-sessions';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
 import { isReaderChatAgent } from './is-reader-chat-agent';
@@ -263,10 +262,7 @@ export async function createAgentConfig(
 		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId,
 		// Persist server-assigned session IDs as this tab's session.
-		onSessionIdChange: ( newSessionId ) => {
-			saveSessionId( newSessionId, agentId, sessionSiteKey );
-			setAnnouncedSessionId( newSessionId, agentId, sessionSiteKey );
-		},
+		onSessionIdChange: ( newSessionId ) => saveSessionId( newSessionId, agentId, sessionSiteKey ),
 		authProvider: createCalypsoAuthProvider( siteId, {
 			logWpcomJwtFailure: ! isReaderChatAgent( agentId ),
 		} ),

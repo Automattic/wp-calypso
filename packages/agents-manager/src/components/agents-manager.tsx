@@ -15,7 +15,6 @@ import useHasAiChatEntryButton from '../hooks/use-has-ai-chat-entry-button';
 import { useOpenChatUrlParam } from '../hooks/use-open-chat-url-param';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId, getOrCreateSessionId, getSessionId } from '../utils/agent-session';
-import { clearAnnouncedSessionId, getAnnouncedSessionId } from '../utils/announced-sessions';
 import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
@@ -168,17 +167,14 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		const isReturningToChatView = isChatViewShowing && ! wasChatViewShowingRef.current;
 		wasChatViewShowingRef.current = isChatViewShowing;
 
-		// Abort the agent's in-flight request, remove it, and forget the
-		// announcement under the scope the agent belonged to.
-		async function discardAgent( scopeKey: string ): Promise< void > {
+		// Abort the agent's in-flight request and remove it.
+		async function discardAgent(): Promise< void > {
 			const agentManager = getAgentManager();
 
 			if ( agentManager.hasAgent( agentId ) ) {
 				await agentManager.abortCurrentRequest( agentId );
 				agentManager.removeAgent( agentId );
 			}
-
-			clearAnnouncedSessionId( agentId, scopeKey );
 		}
 
 		async function initializeAgent(): Promise< void > {
@@ -187,9 +183,8 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			// still-streaming response can't write into this scope's session or
 			// transcript, then initialize from this scope's session.
 			if ( previousSiteKeyRef.current !== siteKey ) {
-				const previousSiteKey = previousSiteKeyRef.current;
 				previousSiteKeyRef.current = siteKey;
-				await discardAgent( previousSiteKey );
+				await discardAgent();
 
 				if ( isSuperseded ) {
 					return;
@@ -198,7 +193,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 
 			// Handle new chat: clear existing session and navigate to clean state
 			if ( isNewChat ) {
-				await discardAgent( siteKey );
+				await discardAgent();
 
 				if ( isSuperseded ) {
 					return;
@@ -212,32 +207,22 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 
 			const currentConfig = agentConfigRef.current;
 			const isSameAgent = currentConfig?.agentId === agentId;
+			// A live agent is required to skip: after a teardown the config can
+			// still match while the agent is gone, and only a fresh config makes
+			// `useAgentChat` recreate it.
+			const hasLiveAgent = getAgentManager().hasAgent( agentId );
 
 			// Already aligned with this tab's session — nothing to initialize.
-			// The agent must actually exist: after a new-chat teardown the config
-			// can match while the agent is gone, and only a fresh config makes
-			// `useAgentChat` recreate it.
-			if (
-				isSameAgent &&
-				currentConfig?.sessionId === sessionId &&
-				getAgentManager().hasAgent( agentId )
-			) {
+			if ( isSameAgent && currentConfig?.sessionId === sessionId && hasLiveAgent ) {
 				return;
 			}
 
-			// Tab storage catching up to the announced live session is not a
-			// conversation switch. Re-initializing a continuously showing chat
-			// view would refetch and clobber the running chat — skip, and align
-			// the config on the next navigation (away or arriving back) instead.
-			// A late stream event can announce after its agent was discarded, so
-			// the skip also requires the agent to still exist.
-			if (
-				isSameAgent &&
-				isChatViewShowing &&
-				! isReturningToChatView &&
-				sessionId === getAnnouncedSessionId( agentId, siteKey ) &&
-				getAgentManager().hasAgent( agentId )
-			) {
+			// The running conversation wins while the chat view stays shown: the
+			// only thing that writes a session in that window is the agent's own
+			// `onSessionIdChange` (every user-driven switch navigates first), and
+			// re-initializing would refetch and clobber the live transcript.
+			// Storage is honored on the next navigation — away, or back to here.
+			if ( isSameAgent && isChatViewShowing && ! isReturningToChatView && hasLiveAgent ) {
 				return;
 			}
 
@@ -292,7 +277,6 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		setAgentConfig,
 		site?.ID,
 		siteKey,
-		hostAgentId,
 		version,
 	] );
 

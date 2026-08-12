@@ -408,8 +408,8 @@ export default function OrchestratorChat( {
 			agentManager.updateSessionId( agentConfig!.agentId, serverSessionId );
 
 			// Persist the server's canonical ID as this tab's session through the
-			// config's callback: it writes under the site the config was created
-			// for and announces the ID, so no re-initialization is needed.
+			// config's callback, so it writes under the site the config was
+			// created for.
 			if ( agentConfig!.sessionId !== serverSessionId ) {
 				agentConfig!.onSessionIdChange?.( serverSessionId );
 			}
