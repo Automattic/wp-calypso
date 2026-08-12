@@ -155,7 +155,7 @@ export class TestAccount {
 		const message = await emailClient.getLastMatchingMessage( {
 			inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
 			sentTo: this.credentials.smsNumber.number,
-			body: 'WordPress,com verification code', // The `,` here is temporary and intentional, see 232569-ghe-Automattic/wpcom
+			body: 'WordPress.com verification code',
 			receivedAfter: new Date( Date.now() - 10 * 1000 ), // Last 10 seconds
 		} );
 		return emailClient.get2FACodeFromMessage( message );
