@@ -57,7 +57,9 @@ const ignoreFiles = [
 // the rule would just go dead. Leave them unscoped instead.
 const exclude = [
 	/^:root(?![\w-])/, // :root, :root[data-theme=dark] .foo
-	/(^|[\s,])(html|body)(?=$|[\s.[:#,])/, // html.rtl, body.lockscroll
+	// The lookahead has to accept combinators as well as whitespace: Sass emits `body > .x`
+	// compressed as `body>.x`, and without `>+~` here that form slips through and gets prefixed.
+	/(^|[\s,])(html|body)(?=$|[\s.[:#,>+~])/, // html.rtl, body.lockscroll, body>.color-scheme
 	/^\.rtl(?![\w-])/, // .rtl button
 	/^:lang\(/, // :lang(he) .rtl
 	/^\[lang/, // [lang*=fr] .wp-brand-font

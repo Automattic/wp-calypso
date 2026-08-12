@@ -134,6 +134,31 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 		expect( compiled ).toMatch( /^\.stats-widget-content\.color-scheme\.is-coffee/m );
 	} );
 
+	it.each( [ 'body>.color-scheme', 'body > .color-scheme' ] )(
+		'leaves `%s` unprefixed whether or not Sass emitted the combinator with spaces',
+		( selector ) => {
+			// client/my-sites/stats/components/stats-main/style.scss applies the Stats interactive
+			// colours at `body > .color-scheme` to reach the single body child Odyssey's RootChild
+			// portals into. Prefixing asks <body> to be a descendant of .color-scheme — which is
+			// itself in `prefix` — so the rule dies and the date range picker keeps the decorative
+			// accent. The compressed form is the one that shipped broken.
+			const compiled = compile( `${ selector } { --color-accent: rgb(7, 8, 9); }` );
+
+			expect( compiled ).not.toContain( ':where(' );
+		}
+	);
+
+	it( 'keeps a rule anchored on the Odyssey portal root applying to elements inside it', () => {
+		const compiled = compile( 'body>.color-scheme .date-range__picker { color: rgb(7, 8, 9); }' );
+		document.body.innerHTML =
+			'<div class="color-scheme is-coffee"><div class="date-range__picker" id="picker"></div></div>';
+		const style = document.createElement( 'style' );
+		style.textContent = compiled;
+		document.head.appendChild( style );
+
+		expect( getComputedStyle( document.getElementById( 'picker' ) ).color ).toBe( 'rgb(7, 8, 9)' );
+	} );
+
 	it( 'scopes content inside a @wordpress/components Popover fallback container, mirroring the modal/widget mounts', () => {
 		const compiled = compile( '.card { color: rgb(4, 5, 6); }' );
 		document.body.innerHTML =
