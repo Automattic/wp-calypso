@@ -231,14 +231,35 @@ describe( 'raiseFlag', () => {
 		warn.mockClear();
 		await raiseFlag( 'signup' );
 
-		// The line stays as printed: a peer must not read the ban restarting.
-		expect(
-			warn.mock.calls.filter( ( [ line ] ) => /^\[e2e-throttle]/.test( String( line ) ) )
-		).toHaveLength( 0 );
+		// The later expiry is published, not just held: a peer reads the line and
+		// nothing else, so a ban pushed out in silence is a ban a peer sits out
+		// early.
+		expect( warn ).toHaveBeenCalledWith(
+			'[e2e-throttle] type=signup start=1500000 duration=600000 end=2100000'
+		);
 		expect( reported( 'signup', clock + 599_000 ) ).toContain( 'signup is throttled' );
 	} );
 
-	test( 'the same ban hit twice is stated once', async () => {
+	test( 'a ban restated no more than ten times over its length', async () => {
+		let clock = NOW;
+		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
+
+		// What a keystroke-per-request endpoint does to a log: a refusal every
+		// 100ms for the length of the ban, which is 600 of them.
+		for ( let refusal = 0; refusal < 600; refusal++ ) {
+			await raiseFlag( 'domain-suggestions' );
+			clock += 100;
+		}
+
+		const lines = warn.mock.calls.filter( ( [ line ] ) =>
+			/^\[e2e-throttle]/.test( String( line ) )
+		);
+		expect( lines ).toHaveLength( 10 );
+		// Still the ban this worker believes in, whatever was published.
+		expect( reported( 'domain-suggestions' ) ).toContain( '~60 seconds left' );
+	} );
+
+	test( 'the same ban hit twice in a tick is stated once', async () => {
 		await raiseFlag( 'domain-suggestions' );
 		warn.mockClear();
 

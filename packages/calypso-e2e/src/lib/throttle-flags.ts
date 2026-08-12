@@ -149,12 +149,10 @@ function flagFromMatch( match: RegExpMatchArray ): ThrottleFlag | null {
  * Records a throttle this worker just hit: tags the build and prints the line.
  *
  * Both happen at once, because both are readable at once — a tag POST is in the
- * database when it returns, and a log line is queryable a second later. The line
- * is printed once per ban: a ban of the same id is the same length every time,
- * and a second line would show a peer the ban restarting. The tag is retried
- * until it lands or is refused often enough to be settled: an untagged build
- * leaves its line where no peer can find it. Never throws: a build that cannot
- * be tagged still runs, and still knows about the ban itself.
+ * database when it returns, and a log line is queryable a second later. The tag
+ * is retried until it lands or is refused often enough to be settled: an untagged
+ * build leaves its line where no peer can find it. Never throws: a build that
+ * cannot be tagged still runs, and still knows about the ban itself.
  */
 export async function raiseFlag( id: ThrottleId ): Promise< void > {
 	const nowMs = Date.now();
@@ -164,15 +162,17 @@ export async function raiseFlag( id: ThrottleId ): Promise< void > {
 	const known = raisedHere.get( id );
 	const live = known && known.expiresAtMs > nowMs ? known : null;
 
-	if ( ! live ) {
+	// Refused again while the ban is in force: coming back early lengthens it, so
+	// the expiry moves out, and the line is the only place a peer can read that.
+	// Restated as the ban ages rather than on every refusal: the endpoints that
+	// answer one refusal per keystroke would otherwise print a line each, so a
+	// peer's copy of the expiry is at most a tenth of a ban behind this worker's.
+	if ( live && nowMs - live.raisedAtMs < duration / 10 ) {
+		raisedHere.set( id, { ...live, expiresAtMs } );
+	} else {
 		const flag: ThrottleFlag = { id, raisedAtMs: nowMs, durationMs: duration, expiresAtMs };
 		raisedHere.set( id, flag );
 		console.warn( formatThrottleLine( flag ) );
-	} else if ( expiresAtMs > live.expiresAtMs ) {
-		// Refused again while the ban is still in force: wpcom says coming back
-		// early lengthens it, so the expiry moves out. The line does not, for the
-		// reason above.
-		raisedHere.set( id, { ...live, expiresAtMs } );
 	}
 
 	if ( tagSettled.has( id ) ) {
