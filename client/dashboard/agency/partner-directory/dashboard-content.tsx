@@ -49,14 +49,16 @@ interface Props {
 	expertiseUrl: string;
 	profileUrl: string;
 	onPublishSuccess?: ( agency: Agency ) => void;
+	onPublishError?: () => void;
 	openSupportGuide?: ( url: string ) => void;
 }
 
-/**
- * Shared by the dashboard snackbar and the classic app's success notice so
- * the two hosts can't drift apart.
+/*
+ * Shared by the dashboard snackbar and the classic app's notices so the two
+ * hosts can't drift apart.
  */
-export const getProfileSavedMessage = () => __( 'Your profile has been saved!' );
+export const getProfilePublishedMessage = () => __( 'Profile published.' );
+export const getProfilePublishFailedMessage = () => __( 'Failed to publish your profile.' );
 
 export default function PartnerDirectoryDashboardContent( {
 	agency,
@@ -64,6 +66,7 @@ export default function PartnerDirectoryDashboardContent( {
 	expertiseUrl,
 	profileUrl,
 	onPublishSuccess,
+	onPublishError,
 	openSupportGuide,
 }: Props ) {
 	const profile = agency?.profile;
@@ -71,8 +74,8 @@ export default function PartnerDirectoryDashboardContent( {
 
 	const { mutate: publishProfile, isPending: isPublishingProfile } = useMutation(
 		withSnackbar( agencyPartnerDirectoryApplicationMutation( agency?.id ?? 0 ), {
-			success: getProfileSavedMessage(),
-			error: __( 'Failed to publish your profile.' ),
+			success: getProfilePublishedMessage(),
+			error: getProfilePublishFailedMessage(),
 		} )
 	);
 
@@ -129,6 +132,7 @@ export default function PartnerDirectoryDashboardContent( {
 			},
 			{
 				onSuccess: ( updatedAgency ) => onPublishSuccess?.( updatedAgency ),
+				onError: () => onPublishError?.(),
 			}
 		);
 	};

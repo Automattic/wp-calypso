@@ -5,15 +5,16 @@ import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { a4aLink } from '../../utils/link';
 import PartnerDirectoryDashboardContent from './dashboard-content';
 
 /*
  * TODO: The expertise and profile forms are not migrated to the dashboard yet,
- * so these point at the A4A app routes, which don't resolve here. Update them
- * once those screens are migrated.
+ * so these link to the classic A4A app. Switch to dashboard routes once those
+ * screens are migrated.
  */
-const EXPERTISE_URL = '/partner-directory/agency-expertise';
-const PROFILE_URL = '/partner-directory/agency-details';
+const EXPERTISE_URL = a4aLink( '/partner-directory/agency-expertise' );
+const PROFILE_URL = a4aLink( '/partner-directory/agency-details' );
 
 export default function AgencyPartnerDirectory() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
