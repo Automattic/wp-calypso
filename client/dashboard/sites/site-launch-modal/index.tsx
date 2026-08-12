@@ -8,6 +8,7 @@ import SitePreview from '../site-preview';
 import CelebrationModal from './views/celebration-modal';
 import PreLaunchModal from './views/pre-launch-modal';
 import type { Site } from '@automattic/api-core';
+
 import './styles.scss';
 
 const PREVIEW_BASE_WIDTH = 1200;
