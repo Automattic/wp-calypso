@@ -687,10 +687,7 @@ describe( 'loadExternalProviders', () => {
 	it( 'uses the first provider for onTaskUpdate', async () => {
 		const firstOnTaskUpdate = jest.fn();
 		setAgentsManagerData( {
-			agentProviders: [
-				{ onTaskUpdate: firstOnTaskUpdate },
-				{ onTaskUpdate: jest.fn() },
-			],
+			agentProviders: [ { onTaskUpdate: firstOnTaskUpdate }, { onTaskUpdate: jest.fn() } ],
 		} );
 
 		const providers = await loadExternalProviders();
