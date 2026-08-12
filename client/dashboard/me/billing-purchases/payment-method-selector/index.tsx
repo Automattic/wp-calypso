@@ -19,7 +19,8 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import clsx from 'clsx';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { Card, CardBody } from '../../../components/card';
 import { Notice } from '../../../components/notice';
 import { creditCardHasAlreadyExpired, isAkismetProduct } from '../../../utils/purchase';
@@ -32,7 +33,44 @@ import {
 import getPaymentMethodIdFromPayment from './get-payment-method-id-from-payment';
 import TosText from './tos-text';
 import type { Purchase } from '@automattic/api-core';
-import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { PaymentMethod, PaymentProcessorProp } from '@automattic/composite-checkout';
+
+/**
+ * Adding a payment method and reassigning one to an existing subscription are
+ * different user intents that happen to share this component, so they get
+ * distinct events rather than one event with a flag.
+ */
+function getEventNames( isPurchaseAssignment: boolean ) {
+	return isPurchaseAssignment
+		? {
+				success: 'calypso_dashboard_purchase_payment_method_change',
+				failure: 'calypso_dashboard_purchase_payment_method_change_failure',
+		  }
+		: {
+				success: 'calypso_dashboard_payment_method_add',
+				failure: 'calypso_dashboard_payment_method_add_failure',
+		  };
+}
+
+/**
+ * The submit button belongs to composite-checkout, which does not report which
+ * payment method was submitted to the provider's completion callbacks. Record it
+ * as each processor runs so the outcome events can name it.
+ */
+function withProcessorTracking(
+	processors: PaymentProcessorProp,
+	submittedPaymentProcessorId: { current: string }
+): PaymentProcessorProp {
+	return Object.fromEntries(
+		Object.entries( processors ).map( ( [ processorId, processor ] ) => [
+			processorId,
+			( data: unknown ) => {
+				submittedPaymentProcessorId.current = processorId;
+				return processor( data );
+			},
+		] )
+	);
+}
 
 /**
  * A component to handle assigning payment methods to existing subscriptions.
@@ -51,6 +89,9 @@ export function PaymentMethodSelector( {
 	const { createSuccessNotice, createErrorNotice, createInfoNotice } = useDispatch( noticesStore );
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase );
 	const { stripe, stripeConfiguration } = useStripe();
+	const { recordTracksEvent } = useAnalytics();
+	const eventNames = getEventNames( Boolean( purchase ) );
+	const submittedPaymentProcessorId = useRef( '' );
 
 	const { mutateAsync: assignPaymentMethod } = useMutation( assignPaymentMethodMutation() );
 	const { mutateAsync: createPayPalAgreement } = useMutation( createPayPalAgreementMutation() );
@@ -70,14 +111,25 @@ export function PaymentMethodSelector( {
 	}, [ createInfoNotice ] );
 
 	const handleChangeError = useCallback(
-		( { transactionError }: { transactionError: string | null } ) => {
+		( {
+			transactionError,
+			paymentMethodId,
+		}: {
+			transactionError: string | null;
+			paymentMethodId: string | null | undefined;
+		} ) => {
+			recordTracksEvent( eventNames.failure, {
+				payment_processor: submittedPaymentProcessorId.current,
+				payment_method_id: paymentMethodId,
+				error_message: transactionError,
+			} );
 			createErrorNotice(
 				transactionError ||
 					__( 'There was a problem assigning that payment method. Please try again.' ),
 				{ type: 'snackbar' }
 			);
 		},
-		[ createErrorNotice ]
+		[ createErrorNotice, recordTracksEvent, eventNames.failure ]
 	);
 
 	const showSuccessMessage = useCallback(
@@ -94,6 +146,9 @@ export function PaymentMethodSelector( {
 	return (
 		<CheckoutProvider
 			onPaymentComplete={ () => {
+				recordTracksEvent( eventNames.success, {
+					payment_processor: submittedPaymentProcessorId.current,
+				} );
 				onPaymentSelectComplete( {
 					successCallback,
 					showSuccessMessage,
@@ -103,28 +158,31 @@ export function PaymentMethodSelector( {
 			onPaymentRedirect={ showRedirectMessage }
 			onPaymentError={ handleChangeError }
 			paymentMethods={ paymentMethods }
-			paymentProcessors={ {
-				'existing-card': ( data: unknown ) =>
-					assignExistingCardProcessor( purchase, data, assignPaymentMethod ),
-				'existing-card-ebanx': ( data: unknown ) =>
-					assignExistingCardProcessor( purchase, data, assignPaymentMethod ),
-				'existing-paypal-ppcp': ( data: unknown ) =>
-					assignExistingPayPalPPCPProcessor( purchase, data, assignPaymentMethod ),
-				card: ( data: unknown ) =>
-					assignNewCardProcessor(
-						{
-							purchase,
-							stripe,
-							stripeConfiguration,
-							createStripeSetupIntent,
-							saveCreditCard,
-							updateCreditCard,
-						},
-						data
-					),
-				'paypal-express': ( data: unknown ) =>
-					assignPayPalProcessor( purchase, data, createPayPalAgreement ),
-			} }
+			paymentProcessors={ withProcessorTracking(
+				{
+					'existing-card': ( data: unknown ) =>
+						assignExistingCardProcessor( purchase, data, assignPaymentMethod ),
+					'existing-card-ebanx': ( data: unknown ) =>
+						assignExistingCardProcessor( purchase, data, assignPaymentMethod ),
+					'existing-paypal-ppcp': ( data: unknown ) =>
+						assignExistingPayPalPPCPProcessor( purchase, data, assignPaymentMethod ),
+					card: ( data: unknown ) =>
+						assignNewCardProcessor(
+							{
+								purchase,
+								stripe,
+								stripeConfiguration,
+								createStripeSetupIntent,
+								saveCreditCard,
+								updateCreditCard,
+							},
+							data
+						),
+					'paypal-express': ( data: unknown ) =>
+						assignPayPalProcessor( purchase, data, createPayPalAgreement ),
+				},
+				submittedPaymentProcessorId
+			) }
 			initiallySelectedPaymentMethodId={ getInitiallySelectedPaymentMethodId(
 				currentlyAssignedPaymentMethodId,
 				paymentMethods
