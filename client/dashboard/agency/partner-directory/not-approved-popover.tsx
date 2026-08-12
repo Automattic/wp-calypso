@@ -41,7 +41,12 @@ export default function NotApprovedPopover( {
 	const [ showPopover, setShowPopover ] = useState( false );
 
 	const queryClient = useQueryClient();
-	const { data: preferenceDismissed } = useQuery( userPreferenceQuery( PREFERENCE_NAME ) );
+	const { data: preferenceDismissed } = useQuery( {
+		...userPreferenceQuery( PREFERENCE_NAME ),
+		// The dismissal only ever changes through this popover, so avoid
+		// refetching the preferences on every visit to the screen.
+		staleTime: 5 * 60 * 1000,
+	} );
 	const { mutate: savePreference } = useMutation( userPreferenceMutation( PREFERENCE_NAME ) );
 
 	const popoverDismissed = !! preferenceDismissed;
