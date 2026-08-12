@@ -190,6 +190,11 @@ export async function raiseFlag( id: ThrottleId, durationMs?: number ): Promise<
 		const flag: ThrottleFlag = { id, raisedAtMs: nowMs, durationMs: duration, expiresAtMs };
 		raisedHere.set( id, flag );
 		console.warn( formatThrottleLine( flag ) );
+	} else if ( expiresAtMs > live.expiresAtMs ) {
+		// Refused again while the ban is still in force: wpcom's own message says
+		// coming back early lengthens it, so the expiry moves out. The line does
+		// not, for the reason above.
+		raisedHere.set( id, { ...live, expiresAtMs } );
 	}
 
 	if ( tagSettled.has( id ) ) {

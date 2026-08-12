@@ -236,6 +236,22 @@ describe( 'raiseFlag', () => {
 		expect( reported( 'domain-suggestions' ) ).toContain( '~30 minutes left' );
 	} );
 
+	test( 'a ban refused again before it lapses runs from the later refusal', async () => {
+		let clock = NOW;
+		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
+
+		await raiseFlag( 'signup', 600_000 );
+		clock += 500_000;
+		warn.mockClear();
+		await raiseFlag( 'signup', 600_000 );
+
+		// The line stays as printed: a peer must not read the ban restarting.
+		expect(
+			warn.mock.calls.filter( ( [ line ] ) => /^\[e2e-throttle]/.test( String( line ) ) )
+		).toHaveLength( 0 );
+		expect( reported( 'signup', clock + 599_000 ) ).toContain( 'signup is throttled' );
+	} );
+
 	test( 'a later response stating a shorter ban does not cut the first short', async () => {
 		await raiseFlag( 'domain-suggestions', 1_800_000 );
 		warn.mockClear();
