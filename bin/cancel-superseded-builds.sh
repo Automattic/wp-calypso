@@ -109,6 +109,12 @@ cancel_superseded() {
 	fi
 
 	local endpoint locator response classified unresolved otherbranch id error
+	local cancelled=0
+
+	# Announce the search and count the result: without them a run that cancelled nothing
+	# and a run that failed to reach the server both produce a silent, identical log.
+	echo "Looking for builds superseded by #${number:-$self} on $branch ($build_type at $revision)."
+
 	for endpoint in builds buildQueue; do
 		locator="$(build_locator "$endpoint" "$build_type" "$branch")"
 
@@ -156,10 +162,13 @@ cancel_superseded() {
 					--output /dev/null "$server/app/rest/$endpoint/id:$id" 2>&1
 			)"; then
 				echo "Did not cancel build $id (a sibling leg may have got there first): $error"
+			else
+				cancelled=$((cancelled + 1))
 			fi
 		done < <(printf '%s' "$classified" | awk '$1 == "obsolete" { print $2 }')
 	done
 
+	echo "Cancelled $cancelled build(s)."
 	return 0
 }
 
