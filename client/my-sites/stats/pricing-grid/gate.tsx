@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -6,6 +6,7 @@ import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notic
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageLoading from '../pages/shared/page-loading';
+import useDismissPricingGrid, { PLAN_CHOSEN_QUERY_ARG } from './hooks/use-dismiss-pricing-grid';
 import useIsPricingGridEligible from './hooks/use-eligibility';
 import type { Callback } from '@automattic/calypso-router';
 import type { ReactNode } from 'react';
@@ -14,6 +15,22 @@ const loadPricingGrid = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-stats-pricing-grid" */ './pricing-grid'
 	);
+
+/**
+ * Whether the visitor already answered the plan question on Odyssey's pre-connection screen, which
+ * asks exactly what this gate asks — but before the site had a blog id to record the answer
+ * against, so the answer travels back as a query arg on the page the connection flow lands on.
+ *
+ * Exported for tests: too eager and a site never sees the grid, too shy and it is asked twice.
+ */
+export function hasChosenBeforeConnecting(): boolean {
+	return new URLSearchParams( window.location.search ).get( PLAN_CHOSEN_QUERY_ARG ) === '1';
+}
+
+// The query arg is gone on the next visit, so the choice has to be recorded server-side once the
+// site finally has an id. Module-scoped rather than a ref: the gate remounts on every route change
+// away from and back to the traffic page, and one POST per page load is enough.
+let hasRecordedChoiceBeforeConnecting = false;
 
 /**
  * Replaces the Stats dashboard with the pricing grid for newly connected sites
@@ -26,7 +43,8 @@ function PricingGridGate( { children }: { children: ReactNode } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	// Choosing a plan swaps the dashboard in immediately; the server-side dismissal
 	// catches up in the background and keeps the grid away on later visits.
-	const [ hasChosen, setHasChosen ] = useState( false );
+	const [ hasChosen, setHasChosen ] = useState( hasChosenBeforeConnecting );
+	const dismissPricingGrid = useDismissPricingGrid( siteId );
 
 	const { isEligible, isApplicable, isLoading } = useIsPricingGridEligible( siteId );
 	const { data: isVisible, isLoading: isLoadingVisibility } = useNoticeVisibilityQuery(
@@ -34,6 +52,15 @@ function PricingGridGate( { children }: { children: ReactNode } ) {
 		'pricing_grid',
 		isApplicable
 	);
+
+	useEffect( () => {
+		if ( ! siteId || hasRecordedChoiceBeforeConnecting || ! hasChosenBeforeConnecting() ) {
+			return;
+		}
+
+		hasRecordedChoiceBeforeConnecting = true;
+		dismissPricingGrid();
+	}, [ siteId, dismissPricingGrid ] );
 
 	if ( ! isApplicable || hasChosen ) {
 		return <>{ children }</>;
