@@ -74,6 +74,22 @@ describe( 'useHelpCenterSite', () => {
 		expect( result.current.site ).toBe( primarySite );
 	} );
 
+	it( 'reports the candidates in the same priority as the resolved site', () => {
+		window.history.replaceState( {}, '', '/?siteId=2' );
+		mockGetSelectedSite.mockReturnValue( selectedSite );
+		mockGetSite.mockReturnValue( urlParamSite );
+		mockGetPrimarySiteSlug.mockReturnValue( 'primary-site' );
+		mockGetSiteBySlug.mockReturnValue( primarySite );
+
+		const { result } = renderHookWithProvider( () => useHelpCenterSite() );
+
+		expect( result.current.siteCandidates ).toEqual( [
+			[ 'calypso_selected_site', 1 ],
+			[ 'calypso_url_param_site', 2 ],
+			[ 'calypso_primary_site', 3 ],
+		] );
+	} );
+
 	it( 'returns no site when no candidate resolves', () => {
 		const { result } = renderHookWithProvider( () => useHelpCenterSite() );
 

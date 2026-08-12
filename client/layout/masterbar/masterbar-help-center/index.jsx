@@ -25,7 +25,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 const MasterbarHelpCenter = ( { tooltip } ) => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
-	const { selectedSite, urlParamSite, primarySite } = useHelpCenterSite();
+	const { siteCandidates } = useHelpCenterSite();
 	const isNotificationsOpen = useSelector( ( state ) => getIsNotificationsOpen( state ) );
 	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
@@ -56,11 +56,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					is_menu_panel_enabled: isMenuPanelExperimentEnabled,
 					is_assignment_loaded: ! isLoadingExperimentAssignment,
 				},
-				[
-					[ 'calypso_selected_site', selectedSite?.ID ],
-					[ 'calypso_url_param_site', urlParamSite?.ID ],
-					[ 'calypso_primary_site', primarySite?.ID ],
-				]
+				siteCandidates
 			)
 		);
 	};
@@ -75,11 +71,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					location: 'help-center',
 					section: sectionName,
 				},
-				[
-					[ 'calypso_selected_site', selectedSite?.ID ],
-					[ 'calypso_url_param_site', urlParamSite?.ID ],
-					[ 'calypso_primary_site', primarySite?.ID ],
-				]
+				siteCandidates
 			)
 		);
 
@@ -108,11 +100,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 							location: 'help-center',
 							section: sectionName,
 						},
-						[
-							[ 'calypso_selected_site', selectedSite?.ID ],
-							[ 'calypso_url_param_site', urlParamSite?.ID ],
-							[ 'calypso_primary_site', primarySite?.ID ],
-						]
+						siteCandidates
 					)
 				);
 				setShowHelpCenter( false );
@@ -131,11 +119,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 						section: sectionName,
 						destination,
 					},
-					[
-						[ 'calypso_selected_site', selectedSite?.ID ],
-						[ 'calypso_url_param_site', urlParamSite?.ID ],
-						[ 'calypso_primary_site', primarySite?.ID ],
-					]
+					siteCandidates
 				)
 			);
 		}

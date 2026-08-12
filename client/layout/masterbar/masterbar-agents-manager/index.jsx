@@ -20,7 +20,7 @@ import './style.scss';
 const MasterbarAgentsManager = ( { tooltip } ) => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
-	const { selectedSite, urlParamSite, primarySite } = useHelpCenterSite();
+	const { siteCandidates } = useHelpCenterSite();
 
 	const agentsManagerVisible = useDateStoreSelect(
 		( select ) => select( AGENTS_MANAGER_STORE ).getAgentsManagerState().isOpen,
@@ -37,11 +37,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 					is_menu_panel_enabled: true,
 					is_assignment_loaded: true,
 				},
-				[
-					[ 'calypso_selected_site', selectedSite?.ID ],
-					[ 'calypso_url_param_site', urlParamSite?.ID ],
-					[ 'calypso_primary_site', primarySite?.ID ],
-				]
+				siteCandidates
 			)
 		);
 	};
@@ -69,11 +65,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 						location: 'help-center',
 						section: sectionName,
 					},
-					[
-						[ 'calypso_selected_site', selectedSite?.ID ],
-						[ 'calypso_url_param_site', urlParamSite?.ID ],
-						[ 'calypso_primary_site', primarySite?.ID ],
-					]
+					siteCandidates
 				)
 			);
 			return closeAgentsManagerChat();
@@ -91,11 +83,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 					section: sectionName,
 					destination,
 				},
-				[
-					[ 'calypso_selected_site', selectedSite?.ID ],
-					[ 'calypso_url_param_site', urlParamSite?.ID ],
-					[ 'calypso_primary_site', primarySite?.ID ],
-				]
+				siteCandidates
 			)
 		);
 	};

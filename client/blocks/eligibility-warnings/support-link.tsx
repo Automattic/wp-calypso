@@ -21,7 +21,7 @@ const SupportLink = ( {
 	onShowHelpAssistant?: () => void;
 } & LocalizeProps ) => {
 	const sectionName = useSelector( getSectionName );
-	const { selectedSite, urlParamSite, primarySite } = useHelpCenterSite();
+	const { siteCandidates } = useHelpCenterSite();
 	const { show, isMinimized } = useDateStoreSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -47,11 +47,7 @@ const SupportLink = ( {
 						location: 'help-center',
 						section: sectionName,
 					},
-					[
-						[ 'calypso_selected_site', selectedSite?.ID ],
-						[ 'calypso_url_param_site', urlParamSite?.ID ],
-						[ 'calypso_primary_site', primarySite?.ID ],
-					]
+					siteCandidates
 				)
 			);
 		}
@@ -65,9 +61,7 @@ const SupportLink = ( {
 		show,
 		setShowHelpCenter,
 		sectionName,
-		selectedSite?.ID,
-		urlParamSite?.ID,
-		primarySite?.ID,
+		siteCandidates,
 		isMinimized,
 		setIsMinimized,
 	] );
