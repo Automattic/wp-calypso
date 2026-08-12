@@ -19,6 +19,9 @@ const IMAGE_STUDIO_STORE = 'image-studio';
 /** Mirrors ImageStudioEntryPoint.EditorSidebar, duplicated to avoid a package dependency. */
 const EDITOR_SIDEBAR_ENTRY_POINT = 'editor_sidebar';
 
+/** Mirrors ImageStudioEntryPoint.JetpackAIFeaturedImage, duplicated to avoid a package dependency. */
+const FEATURED_IMAGE_ENTRY_POINT = 'jetpack_ai_featured_image';
+
 export type ImageStudioMode = 'edit' | 'generate';
 
 /** The subset of the Image Studio image payload written back to the block. */
@@ -93,6 +96,39 @@ export function openImageStudioForBlock( block: any, mode: ImageStudioMode ): bo
 		EDITOR_SIDEBAR_ENTRY_POINT,
 		block.name
 	);
+
+	return true;
+}
+
+/**
+ * Opens Image Studio in generate mode, writing the result back as the
+ * post's featured image on close.
+ * @returns Whether Image Studio was opened.
+ */
+export function openImageStudioForFeaturedImage(): boolean {
+	const imageStudioActions = getImageStudioActions();
+
+	if ( ! imageStudioActions ) {
+		return false;
+	}
+
+	const handleClose = ( image: ImageStudioImage | null ) => {
+		const editor = dispatch( 'core/editor' ) as {
+			editPost: ( edits: Record< string, unknown > ) => void;
+		};
+
+		// A null image means the user removed it; clear the featured image.
+		if ( image === null ) {
+			editor.editPost( { featured_media: 0 } );
+			return;
+		}
+
+		if ( image?.id ) {
+			editor.editPost( { featured_media: image.id } );
+		}
+	};
+
+	imageStudioActions.openImageStudio( undefined, handleClose, FEATURED_IMAGE_ENTRY_POINT );
 
 	return true;
 }

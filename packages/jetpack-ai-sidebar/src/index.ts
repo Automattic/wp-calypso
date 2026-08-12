@@ -49,7 +49,11 @@ import {
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
-import { isImageStudioAvailable, openImageStudioForBlock } from './utils/image-studio';
+import {
+	isImageStudioAvailable,
+	openImageStudioForBlock,
+	openImageStudioForFeaturedImage,
+} from './utils/image-studio';
 import {
 	isAiEditorialReviewEnabled,
 	isBlockTransformationsEnabled,
@@ -109,6 +113,24 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 		__i18n_text_domain__
 	),
 	prompt: __( 'Optimize the title of this post', __i18n_text_domain__ ),
+};
+
+/**
+ * Post-level suggestion that opens Image Studio directly instead of routing
+ * through the agent — same "action instead of prompt" escape hatch the
+ * block-level generate-image/edit-image suggestions use. Always opens in
+ * generate mode: it creates a new image and overwrites whatever featured
+ * image is currently set, it does not pre-load the existing one for editing.
+ */
+const GENERATE_FEATURED_IMAGE_SUGGESTION = {
+	id: 'generate-featured-image',
+	label: __( 'Generate Featured Image', __i18n_text_domain__ ),
+	description: __(
+		'Create a new image with Image Studio and set it as the featured image.',
+		__i18n_text_domain__
+	),
+	prompt: '',
+	action: () => ! openImageStudioForFeaturedImage(),
 };
 
 /**
@@ -343,6 +365,7 @@ function getPostLevelSuggestions(
 
 	return [
 		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
+		...( isImageStudioAvailable() ? [ GENERATE_FEATURED_IMAGE_SUGGESTION ] : [] ),
 		...( isExcerptSuggestionAvailable( currentPostType, supportsExcerpt )
 			? [ GENERATE_EXCERPT_SUGGESTION ]
 			: [] ),
@@ -1012,6 +1035,7 @@ export function getEmptyViewSuggestions(): Array< {
 	description?: string;
 	prompt?: string;
 	options?: SuggestionOption[];
+	action?: () => boolean | Promise< boolean >;
 } > {
 	return getPostLevelSuggestions( getCurrentEditorPostType() );
 }

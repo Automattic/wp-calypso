@@ -58,6 +58,7 @@ let mockSelectedBlock: any = null;
 let mockCurrentPostType: string | undefined = 'post';
 let mockBlocksByClientId: Record< string, any > = {};
 let mockEditorBlocks: any[] = [];
+let mockImageStudioActions: { openImageStudio: jest.Mock } | null = null;
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
@@ -143,6 +144,9 @@ jest.mock( '@wordpress/data', () => ( {
 				selectBlock: mockSelectBlock,
 				clearSelectedBlock: mockClearSelectedBlock,
 			};
+		}
+		if ( store === 'image-studio' ) {
+			return mockImageStudioActions ?? {};
 		}
 		return {};
 	} ),
@@ -1819,6 +1823,7 @@ describe( 'getEmptyViewSuggestions', () => {
 	afterEach( () => {
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
+		mockImageStudioActions = null;
 	} );
 
 	it( 'hides post suggestions without a sidebar config', () => {
@@ -2091,6 +2096,55 @@ describe( 'getEmptyViewSuggestions', () => {
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
 		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'shows Generate Featured Image when Image Studio is available', () => {
+		installPostTypeMock( 'post' );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const chip = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-featured-image'
+		);
+
+		expect( chip?.label ).toBe( 'Generate Featured Image' );
+		expect( chip?.prompt ).toBe( '' );
+		expect( typeof chip?.action ).toBe( 'function' );
+	} );
+
+	it( 'hides Generate Featured Image when Image Studio is not available', () => {
+		installPostTypeMock( 'post' );
+		mockImageStudioActions = null;
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image for unsupported post-level entities', () => {
+		installPostTypeMock( 'wp_template', 123 );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( "invoking the suggestion's action opens Image Studio and does not submit a prompt", () => {
+		installPostTypeMock( 'post' );
+		const openImageStudio = jest.fn();
+		mockImageStudioActions = { openImageStudio };
+
+		const chip = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-featured-image'
+		);
+		const shouldSubmitPrompt = chip?.action?.();
+
+		expect( openImageStudio ).toHaveBeenCalledWith(
+			undefined,
+			expect.any( Function ),
+			'jetpack_ai_featured_image'
+		);
+		expect( shouldSubmitPrompt ).toBe( false );
 	} );
 
 	it( 'shows the SEO Enhancer dropdown when the seoSuggestions feature is enabled', () => {
