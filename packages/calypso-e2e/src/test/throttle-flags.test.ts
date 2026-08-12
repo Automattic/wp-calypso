@@ -431,6 +431,31 @@ describe( 'readActiveThrottles', () => {
 		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'Ran out of time to read 1' ) );
 	} );
 
+	test( 'the longest ban is read before the budget can run out', async () => {
+		let clock = NOW;
+		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
+		fetchBuildsByTag.mockImplementation( async ( tag ) => {
+			// The one with the longest ban is still running, so its log line is the
+			// only thing that can speak for it.
+			if ( tag === 'throttle-domain-availability' ) {
+				return [ taggedBuild( 11 ) ];
+			}
+			return tag === 'throttle-signup' ? [ taggedBuild( 22, NOW - 60_000 ) ] : null;
+		} );
+		// One read is all there is time for.
+		fetchBuildLog.mockImplementation( async ( buildId ) => {
+			clock += 60_000;
+			return buildId === 11
+				? '[e2e-throttle] type=domain-availability start=1 duration=2 end=5000000'
+				: '[e2e-throttle] type=signup start=1 duration=2 end=1600000';
+		} );
+
+		const active = await readActiveThrottles( NOW );
+
+		expect( fetchBuildLog ).toHaveBeenCalledTimes( 1 );
+		expect( active[ 'domain-availability' ] ).toBe( 5_000_000 );
+	} );
+
 	test( 'one unreadable build does not throw away what the others said', async () => {
 		fetchBuildsByTag.mockImplementation( async ( tag ) =>
 			tag === 'throttle-signup' ? [ taggedBuild( 11 ), taggedBuild( 22 ) ] : null
@@ -485,25 +510,12 @@ describe( 'readActiveThrottles', () => {
 
 describe( 'detectThrottle', () => {
 	test.each( [
-		[
-			{ error: 'throttled', message: 'Limit reached. You can try again in 10 minutes.' },
-			'signup',
-		],
-		// A refusal that is not JSON reaches `sendRequest` as an unparseable body,
-		// so it arrives as the message alone rather than as a code.
-		[
-			new Error( 'Failed to parse JSON: Limit reached. You can try again in 60 minutes.' ),
-			'signup',
-		],
+		[ { url: '/rest/v1.1/sites/new', status: 403, body: '{"error":"throttled"}' }, 'signup' ],
 		[
 			{ error: 'domain_suggestions_throttled', message: 'You can try again in 1 minute.' },
 			'domain-suggestions',
 		],
 		[ { error: 'domain_availability_throttle', message: 'Limit reached.' }, 'domain-availability' ],
-		[
-			{ url: '/domains/example/is-available', status: 429, body: 'Limit reached.' },
-			'domain-availability',
-		],
 		// The endpoint wins over the generic code: this is not a signup ban.
 		[
 			{ url: '/domains/example/is-available', status: 429, body: '{"error":"throttled"}' },
@@ -517,27 +529,29 @@ describe( 'detectThrottle', () => {
 		expect( detectThrottle( value ) ).toEqual( expected );
 	} );
 
-	test( 'a Blackbox block is not an IP ban', () => {
-		expect( detectThrottle( { error: 'throttled' } ) ).toBeNull();
+	test( 'a message with no code behind it is not a ban', () => {
+		// wpcom renders the message in whatever locale the caller asked for, so
+		// nothing here reads it. Only the code and the endpoint decide.
 		expect(
 			detectThrottle( {
-				url: 'https://public-api.wordpress.com/rest/v1.1/users/new',
-				status: 403,
-				body: '{"error":"throttled","message":"Too many attempts. Please wait a moment and try again."}',
+				url: '/domains/example/is-available',
+				status: 429,
+				body: 'Limit reached.',
 			} )
 		).toBeNull();
 	} );
 
-	test( 'the same code on /sites/new is, whatever language it came in', () => {
-		// Nothing else raises `throttled` there, so the sentence is not needed —
-		// which is what a ban stated in another language comes down to.
+	test( 'nothing /users/new answers is taken as a ban', () => {
+		// An IP ban and a Blackbox block, which refuses one attempt rather than the
+		// address, arrive there in the same envelope. Nothing is lost by waiting
+		// for `/sites/new`: the ban is on the address, and a run inside one meets
+		// it there too, every time it makes a site.
+		const users = 'https://public-api.wordpress.com/rest/v1.1/users/new';
+
+		expect( detectThrottle( { error: 'throttled' } ) ).toBeNull();
 		expect(
-			detectThrottle( {
-				url: 'https://public-api.wordpress.com/rest/v1.1/sites/new',
-				status: 403,
-				body: '{"error":"throttled","message":"Límite alcanzado."}',
-			} )
-		).toBe( 'signup' );
+			detectThrottle( { url: users, status: 403, body: '{"error":"throttled"}' } )
+		).toBeNull();
 	} );
 
 	test( 'an endpoint the payload does not name is taken from the caller', () => {
@@ -558,14 +572,6 @@ describe( 'detectThrottle', () => {
 		[
 			{
 				url: 'https://public-api.wordpress.com/rest/v1.1/sites/new',
-				status: 403,
-				body: '{"error":"throttled","message":"Limit reached. You can try again in 10 minutes. Trying again before that will only increase the time you have to wait before the ban is lifted."}',
-			},
-			'signup',
-		],
-		[
-			{
-				url: 'https://public-api.wordpress.com/rest/v1.1/users/new',
 				status: 403,
 				body: '{"error":"throttled","message":"Limit reached. You can try again in 10 minutes. Trying again before that will only increase the time you have to wait before the ban is lifted."}',
 			},
@@ -606,16 +612,18 @@ describe( 'detectThrottle', () => {
 		).toBeNull();
 	} );
 
-	test( 'the page wp_die draws for the same ban is one', () => {
-		// What `sendRequest` hands on when the refusal is not JSON at all.
+	test( 'a page is never a ban, whatever it says', () => {
+		// wpcom refuses these four in the JSON envelope `trap_wp_die` renders. What
+		// `sendRequest` hands on as an unparseable page came from something else.
 		expect(
 			detectThrottle(
 				new Error(
 					'Failed to parse JSON: <!DOCTYPE html><html><body><h1>Limit reached.</h1>' +
 						'<p>You can try again in 60 minutes.</p></body></html>'
-				)
+				),
+				'https://public-api.wordpress.com/rest/v1.1/sites/new'
 			)
-		).toBe( 'signup' );
+		).toBeNull();
 	} );
 
 	test( 'a page that merely reads "limit reached" is not a ban', () => {
@@ -627,10 +635,10 @@ describe( 'detectThrottle', () => {
 	test( 'the length wpcom states is not the length recorded', async () => {
 		// The map is the source of truth: the sentence is translated, and only two
 		// of the three endpoints put a number in it at all.
-		await recordThrottle( {
-			error: 'throttled',
-			message: 'Limit reached. You can try again in 60 minutes.',
-		} );
+		await recordThrottle(
+			{ error: 'throttled', message: 'Limit reached. You can try again in 60 minutes.' },
+			'https://public-api.wordpress.com/rest/v1.1/sites/new'
+		);
 
 		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'duration=600000' ) );
 	} );

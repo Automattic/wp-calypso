@@ -355,7 +355,14 @@ export async function readActiveThrottles(
 	// One clock for the whole read, not a share each: the loop below is
 	// sequential, so a per-id share would stop the first id short while the ids
 	// after it, which may have no tagged build at all, keep time they cannot
-	// spend. The ids that come first are the ones with the longest bans.
+	// spend. Which makes the order the budget is spent in matter, so it is taken
+	// from the ban lengths rather than from however `THROTTLE_IDS` is written: an
+	// id still in force hours from now has more to lose from running out of time
+	// than one whose ban is a minute old and already over. A running build leaves
+	// no finish date to fall back on either, so for that id an unread log is the
+	// whole answer.
+	listed.sort( ( a, b ) => BAN_DURATIONS[ b.id ] - BAN_DURATIONS[ a.id ] );
+
 	const until = Date.now() + LOG_BUDGET_MS;
 	const flags = new Map< number, Promise< Map< ThrottleId, ThrottleFlag > | null > >();
 	const unread = Promise.resolve( null );
@@ -461,15 +468,17 @@ export function detectThrottle( responseOrError: unknown, url?: string ): Thrott
 }
 
 /**
- * The error codes wpcom returns for each throttled endpoint.
+ * The endpoint and the error code, and nothing else.
+ *
+ * Never the message: wpcom translates it into the locale the caller asked for,
+ * so matching on it works in English and quietly stops working everywhere else.
+ * Codes and paths are the same in every language.
  *
  * `/sites/new` and `/users/new` wrap their throttle check in
  * `trap_wp_die( 'throttled' )`; `/domains/suggestions` and `.../is-available`
- * name themselves.
- *
- * The endpoint is read before the generic code, not after: a domain endpoint
- * can answer with the bare `throttled` too, and mapping that to signup would
- * record an hour-long ban on the one endpoint that is not banned.
+ * name themselves. The named codes are read first: a domain endpoint can answer
+ * with the bare `throttled` too, and reading that as signup would record the
+ * longest ban we know of against an endpoint that is not banned.
  */
 function detectThrottleId( text: string ): ThrottleId | null {
 	if ( /domain_availability_throttle/i.test( text ) ) {
@@ -479,15 +488,11 @@ function detectThrottleId( text: string ): ThrottleId | null {
 		return 'domain-suggestions';
 	}
 
-	// wpcom refuses in one of two voices: the `throttled` code in a JSON answer,
-	// or the sentence `security.php` renders, which always says when to come back
-	// and reaches us as a page whenever `wp_die` drew it. A gateway page is a
-	// third voice, and the word alone in one of those is that gateway talking
-	// about its own upstream, not a ban on us.
+	// A gateway page carrying the word is that gateway talking about its own
+	// upstream, not wpcom refusing us. wpcom's own refusal is the JSON envelope
+	// `trap_wp_die` renders, never a page.
 	const page = /<!doctype|<html/i.test( text );
-	const throttled = ! page && /(?:^|[^a-z0-9_])throttled(?:$|[^a-z0-9_])/i.test( text );
-	const limitReached = /limit reached/i.test( text );
-	if ( ! throttled && ! limitReached ) {
+	if ( page || ! /(?:^|[^a-z0-9_])throttled(?:$|[^a-z0-9_])/i.test( text ) ) {
 		return null;
 	}
 
@@ -497,13 +502,10 @@ function detectThrottleId( text: string ): ThrottleId | null {
 	if ( /domains\/suggestions/i.test( text ) ) {
 		return 'domain-suggestions';
 	}
-	// `throttled` also wraps a Blackbox block on `/users/new`, which refuses one
-	// signup attempt rather than banning the IP, so the code alone settles it only
-	// on `/sites/new`, where nothing else raises it. Everywhere else it takes the
-	// sentence a real ban opens with, both halves of it: a Blackbox block asks you
-	// to wait a moment, and the words on their own are something a page can say.
-	if ( throttled && /sites\/new/i.test( text ) ) {
-		return 'signup';
-	}
-	return limitReached && /you can try again/i.test( text ) ? 'signup' : null;
+	// `/users/new` wraps a Blackbox block in this same code, and that refuses one
+	// attempt rather than banning the address, so the code alone settles it only
+	// on `/sites/new`, where nothing else raises it. Little is lost: the ban is on
+	// the address, not the endpoint, and a run inside one reaches `/sites/new`
+	// too, every time it makes a site.
+	return /sites\/new/i.test( text ) ? 'signup' : null;
 }
