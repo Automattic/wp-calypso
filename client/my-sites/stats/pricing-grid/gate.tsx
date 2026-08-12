@@ -18,9 +18,9 @@ const loadPricingGrid = () =>
 /**
  * Replaces the Stats dashboard with the pricing grid for newly connected sites
  * that haven't picked a plan yet. Everyone else falls straight through to the
- * dashboard: the connection-date check is synchronous against site options, so
- * established sites never wait on the purchase and notice lookups this gate
- * needs before it can decide.
+ * dashboard: the connection-date and site-type checks are synchronous against
+ * site options, so those sites never wait on the purchase and notice lookups
+ * this gate needs before it can decide.
  */
 function PricingGridGate( { children }: { children: ReactNode } ) {
 	const siteId = useSelector( getSelectedSiteId );
@@ -28,14 +28,14 @@ function PricingGridGate( { children }: { children: ReactNode } ) {
 	// catches up in the background and keeps the grid away on later visits.
 	const [ hasChosen, setHasChosen ] = useState( false );
 
-	const { isEligible, isNewConnection, isLoading } = useIsPricingGridEligible( siteId );
+	const { isEligible, isApplicable, isLoading } = useIsPricingGridEligible( siteId );
 	const { data: isVisible, isLoading: isLoadingVisibility } = useNoticeVisibilityQuery(
 		siteId,
 		'pricing_grid',
-		isNewConnection
+		isApplicable
 	);
 
-	if ( ! isNewConnection || hasChosen ) {
+	if ( ! isApplicable || hasChosen ) {
 		return <>{ children }</>;
 	}
 
