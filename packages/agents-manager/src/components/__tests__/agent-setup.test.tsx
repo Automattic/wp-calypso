@@ -298,6 +298,20 @@ describe( 'AgentSetup', () => {
 		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();
 	} );
 
+	it( 'discards the previous agent when remounting on a different site', async () => {
+		const { unmount } = render( manager( 111 ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		// Hosts drop the whole tree on some routes; the agent manager outlives it.
+		unmount();
+		mockAgentManager.hasAgent.mockReturnValue( true );
+
+		render( manager( 222 ) );
+
+		await waitFor( () => expect( mockAgentManager.removeAgent ).toHaveBeenCalled() );
+		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();
+	} );
+
 	it( 'discards the previous agent on a site switch', async () => {
 		const { rerender } = render( manager( 111 ) );
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );

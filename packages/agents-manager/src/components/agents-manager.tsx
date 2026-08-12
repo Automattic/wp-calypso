@@ -49,6 +49,11 @@ const queryClient = new QueryClient();
 // every render and retrigger downstream conversation effects.
 const EMPTY_ARRAY: string[] = [];
 
+// The scope the live agent was initialized for. Module-level like the agent
+// manager itself, so a host that unmounts and remounts this tree (Calypso does
+// on some routes) still discards when the remount lands on a different site.
+let lastInitializedSiteKey: string | undefined;
+
 export default function AgentsManager( {
 	sectionName,
 	currentUser,
@@ -127,7 +132,6 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const agentConfigRef = useRef( agentConfig );
 	agentConfigRef.current = agentConfig;
-	const previousSiteKeyRef = useRef( siteKey );
 	const wasChatViewShowingRef = useRef( false );
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
@@ -182,8 +186,10 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			// a context switch: drop the previous scope's agent so its
 			// still-streaming response can't write into this scope's session or
 			// transcript, then initialize from this scope's session.
-			if ( previousSiteKeyRef.current !== siteKey ) {
-				previousSiteKeyRef.current = siteKey;
+			const previousSiteKey = lastInitializedSiteKey;
+			lastInitializedSiteKey = siteKey;
+
+			if ( previousSiteKey !== undefined && previousSiteKey !== siteKey ) {
 				await discardAgent();
 
 				if ( isSuperseded ) {
