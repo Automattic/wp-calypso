@@ -11,19 +11,14 @@ export interface ThrottleFlag {
 	expiresAtMs: number;
 }
 
-export interface ThrottleDetection {
-	id: ThrottleId;
-	durationMs: number;
-}
-
 /**
- * Used when the response does not say how long the ban lasts. wpcom's own
- * message carries the number whenever it knows it, so these are reached only
- * when the message does not carry one. `signup` bans for 10 minutes on an
- * Automattic IP, where CI runs; `is-available` never states a duration and its
- * limiter counts over a sliding hour.
+ * How long each ban lasts. The answer is not asked how long it lasts: it says so
+ * only sometimes, in a translated sentence, and these are the numbers wpcom
+ * enforces from an Automattic IP, which is where CI runs. `signup` bans for 10
+ * minutes there; `domain-suggestions` for one; `is-available` states nothing at
+ * all and its limiter counts over a sliding hour.
  */
-const FALLBACK_DURATIONS: Record< ThrottleId, number > = {
+const BAN_DURATIONS: Record< ThrottleId, number > = {
 	signup: 600_000,
 	'domain-suggestions': 60_000,
 	'domain-availability': 3_600_000,
@@ -151,50 +146,32 @@ function flagFromMatch( match: RegExpMatchArray ): ThrottleFlag | null {
 }
 
 /**
- * Reads the ban length wpcom states in its own throttle message.
- *
- * `security.php` renders "Limit reached. You can try again in %d minutes", so
- * the server is the authority on how long to stay away. Returns null when the
- * message carries no number, as `is-available` does, or one no ban would state:
- * every wpcom throttle is minutes or hours, and the number ends up in a `Date`.
- */
-export function parseBanDurationMs( text: string ): number | null {
-	const match = /try again in (\d+) minutes?/i.exec( text );
-	const ms = match ? Number( match[ 1 ] ) * 60_000 : 0;
-	return ms > 0 && ms <= 24 * 60 * 60_000 ? ms : null;
-}
-
-/**
  * Records a throttle this worker just hit: tags the build and prints the line.
  *
  * Both happen at once, because both are readable at once — a tag POST is in the
- * database when it returns, and a log line is queryable a second later. A line
- * is printed for the first ban of an id and again only if a later response
- * states a longer one, since the line is all a peer gets. The tag is retried
+ * database when it returns, and a log line is queryable a second later. The line
+ * is printed once per ban: a ban of the same id is the same length every time,
+ * and a second line would show a peer the ban restarting. The tag is retried
  * until it lands or is refused often enough to be settled: an untagged build
  * leaves its line where no peer can find it. Never throws: a build that cannot
  * be tagged still runs, and still knows about the ban itself.
  */
-export async function raiseFlag( id: ThrottleId, durationMs?: number ): Promise< void > {
+export async function raiseFlag( id: ThrottleId ): Promise< void > {
 	const nowMs = Date.now();
-	const duration = durationMs && durationMs > 0 ? durationMs : FALLBACK_DURATIONS[ id ];
+	const duration = BAN_DURATIONS[ id ];
 	const expiresAtMs = nowMs + duration;
 
 	const known = raisedHere.get( id );
 	const live = known && known.expiresAtMs > nowMs ? known : null;
 
-	// Lengths, not expiries: the same ban hit again a second later would compute
-	// a later expiry, and republishing it would show a peer the ban restarting.
-	// The first refusal often states no length and falls back to the floor, and a
-	// later one can state the real ban, which is the number worth publishing.
-	if ( ! live || duration > live.durationMs ) {
+	if ( ! live ) {
 		const flag: ThrottleFlag = { id, raisedAtMs: nowMs, durationMs: duration, expiresAtMs };
 		raisedHere.set( id, flag );
 		console.warn( formatThrottleLine( flag ) );
 	} else if ( expiresAtMs > live.expiresAtMs ) {
-		// Refused again while the ban is still in force: wpcom's own message says
-		// coming back early lengthens it, so the expiry moves out. The line does
-		// not, for the reason above.
+		// Refused again while the ban is still in force: wpcom says coming back
+		// early lengthens it, so the expiry moves out. The line does not, for the
+		// reason above.
 		raisedHere.set( id, { ...live, expiresAtMs } );
 	}
 
@@ -262,9 +239,9 @@ async function tagOnce( id: ThrottleId ): Promise< void > {
  * what a bare `throttled` code means depends on which endpoint answered with it.
  */
 export async function recordThrottle( responseOrError: unknown, url?: string ): Promise< void > {
-	const throttle = detectThrottle( responseOrError, url );
-	if ( throttle ) {
-		await raiseFlag( throttle.id, throttle.durationMs );
+	const id = detectThrottle( responseOrError, url );
+	if ( id ) {
+		await raiseFlag( id );
 	}
 }
 
@@ -434,7 +411,7 @@ async function furthestExpiry(
 		// did read and found nothing in leaves. Not reading is less information, so
 		// it cannot yield a weaker answer than reading.
 		const flag = ( await readFlags( build.id ) )?.get( id );
-		const assumed = build.finishedAtMs === null ? 0 : build.finishedAtMs + FALLBACK_DURATIONS[ id ];
+		const assumed = build.finishedAtMs === null ? 0 : build.finishedAtMs + BAN_DURATIONS[ id ];
 		latest = Math.max( latest, flag ? flag.expiresAtMs : assumed );
 	}
 	return latest > nowMs ? latest : null;
@@ -460,11 +437,12 @@ export function flagsInLog( log: string | null ): Map< ThrottleId, ThrottleFlag 
 }
 
 /**
- * Maps a response or error to the throttle it signals, with the ban length the
- * server stated where it stated one. `url` is folded into what is matched, for
- * callers holding an endpoint their payload does not name.
+ * The throttle a response or error signals, or null for one that signals none.
+ * How long it lasts is `BAN_DURATIONS`, not anything read here. `url` is folded
+ * into what is matched, for callers holding an endpoint their payload does not
+ * name.
  */
-export function detectThrottle( responseOrError: unknown, url?: string ): ThrottleDetection | null {
+export function detectThrottle( responseOrError: unknown, url?: string ): ThrottleId | null {
 	let text: string;
 	try {
 		if ( responseOrError instanceof Error ) {
@@ -479,11 +457,7 @@ export function detectThrottle( responseOrError: unknown, url?: string ): Thrott
 		return null;
 	}
 
-	const id = detectThrottleId( url ? `${ url } ${ text }` : text );
-	if ( ! id ) {
-		return null;
-	}
-	return { id, durationMs: parseBanDurationMs( text ) ?? FALLBACK_DURATIONS[ id ] };
+	return detectThrottleId( url ? `${ url } ${ text }` : text );
 }
 
 /**
@@ -525,12 +499,11 @@ function detectThrottleId( text: string ): ThrottleId | null {
 	}
 	// `throttled` also wraps a Blackbox block on `/users/new`, which refuses one
 	// signup attempt rather than banning the IP, so the code alone settles it only
-	// on `/sites/new`, where nothing else raises it. Everywhere else it takes
-	// wpcom's own ban sentence, which always says when to come back — and which is
-	// translated, so a ban stated in another language is read from the code and the
-	// endpoint or not at all.
+	// on `/sites/new`, where nothing else raises it. Everywhere else it takes the
+	// sentence a real ban opens with, both halves of it: a Blackbox block asks you
+	// to wait a moment, and the words on their own are something a page can say.
 	if ( throttled && /sites\/new/i.test( text ) ) {
 		return 'signup';
 	}
-	return limitReached && parseBanDurationMs( text ) !== null ? 'signup' : null;
+	return limitReached && /you can try again/i.test( text ) ? 'signup' : null;
 }
