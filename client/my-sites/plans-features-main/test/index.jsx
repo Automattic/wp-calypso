@@ -281,6 +281,70 @@ describe( 'PlansFeaturesMain', () => {
 			);
 		} );
 
+		test( 'withholds a recovered default grid while a new site tailored intent settles', async () => {
+			let siteMetaProcessing = false;
+			const observedGridRequests = [];
+			useIntentFromSiteMeta.mockImplementation( () => ( {
+				processing: siteMetaProcessing,
+				intent: 'plans-newsletter',
+			} ) );
+			useGridPlansForFeaturesGrid.mockImplementation( ( { intent, siteId } ) => {
+				observedGridRequests.push( { intent, siteId } );
+				if ( siteId === 1 && intent === 'plans-newsletter' ) {
+					return [];
+				}
+				if ( siteId === 1 ) {
+					return [ { planSlug: PLAN_BUSINESS } ];
+				}
+				if ( intent === 'plans-newsletter' ) {
+					return [ { planSlug: PLAN_PREMIUM } ];
+				}
+				return [ { planSlug: PLAN_ECOMMERCE } ];
+			} );
+			const onReady = jest.fn();
+			const renderSiblingWhenLoaded = jest.fn( () => <div data-testid="loaded-sibling" /> );
+			const renderComponent = ( siteId ) => (
+				<PlansFeaturesMain
+					{ ...props }
+					enableClassicPlansEmptyGridRecovery
+					siteId={ siteId }
+					onReady={ onReady }
+					renderSiblingWhenLoaded={ renderSiblingWhenLoaded }
+				/>
+			);
+			const { rerender } = renderWithProvider( renderComponent( 1 ) );
+
+			await waitFor( () =>
+				expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+					JSON.stringify( [ PLAN_BUSINESS ] )
+				)
+			);
+			expect( screen.getByTestId( 'loaded-sibling' ) ).toBeVisible();
+			expect( onReady ).toHaveBeenCalledTimes( 1 );
+
+			siteMetaProcessing = true;
+			rerender( renderComponent( 2 ) );
+
+			expect( screen.queryByTestId( 'plan-features' ) ).not.toBeInTheDocument();
+			expect( screen.queryByTestId( 'loaded-sibling' ) ).not.toBeInTheDocument();
+			expect( onReady ).toHaveBeenCalledTimes( 1 );
+
+			siteMetaProcessing = false;
+			rerender( renderComponent( 2 ) );
+
+			await waitFor( () =>
+				expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+					JSON.stringify( [ PLAN_PREMIUM ] )
+				)
+			);
+			expect( screen.getByTestId( 'loaded-sibling' ) ).toBeVisible();
+			expect( onReady ).toHaveBeenCalledTimes( 2 );
+			expect( observedGridRequests[ observedGridRequests.length - 1 ] ).toEqual( {
+				intent: 'plans-newsletter',
+				siteId: 2,
+			} );
+		} );
+
 		test( 're-evaluates the tailored grid when selected-plan context changes after recovery', async () => {
 			useIntentFromSiteMeta.mockReturnValue( {
 				processing: false,

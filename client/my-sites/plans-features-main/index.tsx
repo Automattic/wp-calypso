@@ -658,6 +658,17 @@ const PlansFeaturesMain = ( {
 			intentFromSiteMeta.intent !== defaultWpcomPlansIntent
 	);
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
+	const isAutomaticDefaultPlansRecoveryResetPending = Boolean(
+		enableClassicPlansEmptyGridRecovery &&
+			automaticDefaultPlansRecoveryContext &&
+			automaticDefaultPlansRecoveryContext !== currentAutomaticRecoveryContext &&
+			! forceDefaultPlans &&
+			! intentFromProps &&
+			! planFromUpsells &&
+			intentFromSiteMeta.intent &&
+			intentFromSiteMeta.intent !== defaultWpcomPlansIntent &&
+			intent === defaultWpcomPlansIntent
+	);
 	/**
 	 * Keep the `useEffect` here strictly about intent resolution.
 	 * This is fairly critical logic and may generate side effects if not handled properly.
@@ -1293,6 +1304,7 @@ const PlansFeaturesMain = ( {
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
 		! shouldStartAutomaticDefaultPlansRecovery &&
+		! isAutomaticDefaultPlansRecoveryResetPending &&
 		! resolvedSubdomainName.isLoading &&
 		! isRenewalPricingExperimentLoading &&
 		! isPlansGridRedesignExperimentLoading;
