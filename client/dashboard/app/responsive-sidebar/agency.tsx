@@ -5,7 +5,6 @@ import { home, globe, layout, pages, tag, currencyDollar, people } from '@wordpr
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { useAppContext } from '../context';
 import {
-	agencySitesRoute,
 	agencyTeamRoute,
 	agencyTiersRoute,
 	earnMigrationsRoute,
@@ -18,6 +17,7 @@ import {
 	learnRoute,
 	mcpRoute,
 } from '../router/agency';
+import { agencySitesRoute } from '../router/agency-sites';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export default function AgencySidebar() {
@@ -51,7 +51,7 @@ export default function AgencySidebar() {
 			<SidebarMenuItem icon={ home } to="/overview">
 				{ __( 'Home' ) }
 			</SidebarMenuItem>
-			{ supports.agency.sites && canAccess( agencySitesRoute ) && (
+			{ supports.agencySites && canAccess( agencySitesRoute ) && (
 				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }
 				</SidebarMenuItem>

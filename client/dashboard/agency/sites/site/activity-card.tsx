@@ -1,6 +1,6 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { agencySiteRoute } from '../../../app/router/agency';
+import { agencySiteRoute } from '../../../app/router/agency-sites';
 import LatestActivityCard from '../../../sites/overview-latest-activity-card';
 
 export default function ActivityCard() {

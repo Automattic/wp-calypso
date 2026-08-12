@@ -9,7 +9,7 @@ import {
 	agencySiteBackupDetailRoute,
 	agencySiteBackupRestoreRoute,
 	agencySiteBackupDownloadRoute,
-} from '../../../app/router/agency';
+} from '../../../app/router/agency-sites';
 import { BackupsPage, type BackupsNavigation } from '../../../sites/backups/backups-page';
 
 export default function AgencySiteBackupsListPage() {

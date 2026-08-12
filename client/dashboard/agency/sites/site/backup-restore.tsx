@@ -2,7 +2,7 @@ import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import { agencySiteBackupRestoreRoute } from '../../../app/router/agency';
+import { agencySiteBackupRestoreRoute } from '../../../app/router/agency-sites';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { BackupRestoreFlow } from '../../../sites/backup-restore/flow';

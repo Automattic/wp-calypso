@@ -4,7 +4,7 @@ import { Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, backup as backupIcon } from '@wordpress/icons';
-import { agencySiteRoute } from '../../../app/router/agency';
+import { agencySiteRoute } from '../../../app/router/agency-sites';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';

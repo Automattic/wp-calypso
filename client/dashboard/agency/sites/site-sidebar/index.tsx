@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, category, chartBar, formatListBullets, pending, shield } from '@wordpress/icons';
-import { agencySiteRoute } from '../../../app/router/agency';
+import { agencySiteRoute } from '../../../app/router/agency-sites';
 import {
 	SidebarBackButton,
 	SidebarExpandableMenuItem,

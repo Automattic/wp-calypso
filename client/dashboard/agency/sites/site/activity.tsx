@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useDateRange } from '../../../app/hooks/use-date-range';
 import { useSiteTimezoneWithJetpackFallback } from '../../../app/hooks/use-site-timezone';
 import { useLocale } from '../../../app/locale';
-import { agencySiteActivityRoute, agencySiteRoute } from '../../../app/router/agency';
+import { agencySiteActivityRoute, agencySiteRoute } from '../../../app/router/agency-sites';
 import { Card, CardBody } from '../../../components/card';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { PageHeader } from '../../../components/page-header';

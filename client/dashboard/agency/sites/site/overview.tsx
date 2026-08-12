@@ -2,7 +2,7 @@ import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { agencySiteRoute } from '../../../app/router/agency';
+import { agencySiteRoute } from '../../../app/router/agency-sites';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import PerformanceCard from '../../../sites/overview-performance-card';
