@@ -84,12 +84,13 @@ test.describe.fixme(
 
 		test( 'As a site owner, I can revoke a pending invite so that the invitation link becomes invalid', async ( {
 			page,
-			componentSidebar,
 			clientEmail,
 			pageIncognito,
 			pagePeople,
 			accountDefaultUser,
 		} ) => {
+			const siteSlug = accountDefaultUser.getSiteURL( { protocol: false } );
+
 			await test.step( 'Given I create an invite via REST API', async function () {
 				const restAPIClient = new RestAPIClient( credentials );
 
@@ -121,7 +122,7 @@ test.describe.fixme(
 			} );
 
 			await test.step( 'When I navigate to Users > All Users', async function () {
-				await componentSidebar.navigate( 'Users', 'All Users' );
+				await pagePeople.visit( siteSlug );
 			} );
 
 			await test.step( 'Then I can see the invite is pending', async function () {

@@ -36,19 +36,20 @@ test.describe(
 
 		test( 'As a WordPress.com user, I can invite a new user to my site, they can accept the invite and sign up, then I can remove them', async ( {
 			page,
-			componentSidebar,
 			clientEmail,
 			pageIncognito,
 			pagePeople,
 			pageAddPeople,
 			accountPreRelease,
 		} ) => {
+			const siteSlug = accountPreRelease.getSiteURL( { protocol: false } );
+
 			await test.step( 'Given I am logged in as a site owner', async function () {
 				await accountPreRelease.authenticate( page );
 			} );
 
 			await test.step( 'When I navigate to Users > All Users', async function () {
-				await componentSidebar.navigate( 'Users', 'All Users' );
+				await pagePeople.visit( siteSlug );
 			} );
 
 			await test.step( `And I invite a new user with role ${ role }`, async function () {
@@ -61,7 +62,7 @@ test.describe(
 			} );
 
 			await test.step( 'When I navigate to Users > All Users', async function () {
-				await componentSidebar.navigate( 'Users', 'All Users' );
+				await pagePeople.visit( siteSlug );
 				await pagePeople.clickViewAllIfAvailable();
 			} );
 
@@ -121,7 +122,7 @@ test.describe(
 			} );
 
 			await test.step( 'When I navigate back to Users > All Users', async function () {
-				await componentSidebar.navigate( 'Users', 'All Users' );
+				await pagePeople.visit( siteSlug );
 			} );
 
 			await test.step( 'Then I can see the invited user part of the team', async function () {

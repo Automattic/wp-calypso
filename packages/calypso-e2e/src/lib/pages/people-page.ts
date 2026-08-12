@@ -1,4 +1,5 @@
 import { Page, Locator } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 
 export type PeoplePageTabs = 'Users' | 'Followers' | 'Email Followers' | 'Invites';
@@ -39,6 +40,15 @@ export class PeoplePage {
 	 */
 	getPage(): Page {
 		return this.page;
+	}
+
+	/**
+	 * Visits the Users > All Users page for a site.
+	 *
+	 * @param {string} siteSlug Site slug, without protocol.
+	 */
+	async visit( siteSlug: string ): Promise< void > {
+		await this.page.goto( getCalypsoURL( `people/team/${ siteSlug }` ) );
 	}
 
 	/**
@@ -205,7 +215,7 @@ export class PeoplePage {
 	 * the user in the team members list and clicking their profile link.
 	 *
 	 * Callers must navigate to the Users > All Users page before calling
-	 * this method (e.g. via componentSidebar.navigate).
+	 * this method (e.g. via `visit`).
 	 *
 	 * @param username Username of the team member.
 	 */
