@@ -1,12 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
-import clsx from 'clsx';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'calypso/state';
-import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { trackStatsAnalyticsEvent } from '../utils';
 import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
@@ -19,7 +17,6 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteId, statTyp
 	const copyText = getUpsellCopy( statType );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const tracksEvent = `${ statType }_upgrade_clicked`;
 
 	const onClick = () => {
@@ -52,13 +49,7 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteId, statTyp
 			onClick={ onClick }
 			copyText={ copyText }
 			buttonComponent={
-				<Button
-					className={ clsx( {
-						[ 'jetpack-emerald-button' ]: ! isWPCOMSite,
-					} ) }
-					onClick={ onClick }
-					primary
-				>
+				<Button variant="primary" onClick={ onClick }>
 					{ translate( 'Upgrade' ) }
 				</Button>
 			}

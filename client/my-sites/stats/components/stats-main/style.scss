@@ -1,0 +1,23 @@
+@import "calypso/my-sites/stats/interactive-colors";
+
+// Stats modals, popovers and tooltips render at the document root, outside .stats-main, so the
+// overrides have to reach them separately. Correcting `--wp-admin-theme-color` on those roots would
+// not be enough on its own — the accent that
+// client/assets/stylesheets/_wp-components-overrides.scss pins on every button ships in Odyssey too.
+//
+// Odyssey portals into a single <body> child, tagged with the scheme by its own RootChild
+// (apps/odyssey-stats/src/components/root-child.tsx). Calypso's portal wrapper is a bare div and its
+// <body> carries the class rather than a child, so `body > .color-scheme` picks out the Odyssey one
+// alone.
+//
+// `@wordpress/components` Modal is a third case: its overlay goes to <body> as a bare
+// `.components-modal__screen-overlay` with no scheme class, so neither of the others reaches the
+// Stats upsell and feedback modals. That root is generic — every Modal in the product carries it —
+// so it is qualified with `.is-section-stats`, the class Calypso puts on <body> for the section.
+// wp-admin's <body> has no such class, so Odyssey covers the same overlay from its own
+// apps/odyssey-stats/src/styles/theme.scss, where the rule cannot reach the rest of the product.
+.stats-main,
+body > .color-scheme,
+body.is-section-stats .components-modal__screen-overlay {
+	@include stats-interactive-colors;
+}
