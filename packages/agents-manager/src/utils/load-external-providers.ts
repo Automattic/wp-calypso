@@ -32,7 +32,7 @@ import type {
 	BigSkyMessage,
 } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
+import type { MarkdownComponents, MarkdownExtensions, NoticeConfig } from '@automattic/agenttic-ui';
 import type { ReactNode } from 'react';
 
 /**
@@ -154,6 +154,29 @@ export interface ProviderCapabilities {
 	supportsRegenerateAction?: boolean;
 }
 
+export interface SubmissionAdmission {
+	/** Blocks new user-authored turns. Tool-result continuations bypass this hook. */
+	submitBlocked: boolean;
+	onBlockedSubmit: ( message?: string ) => void;
+	/** Refreshes authoritative provider state after a dispatched turn settles. */
+	refreshAfterTurn?: ( dispatchRevision?: number ) => Promise< void >;
+	/** Persistent provider-owned notice rendered in the compose area. */
+	notice?: NoticeConfig;
+}
+
+export type UseSubmissionAdmissionHook = ( props: {
+	messages: UIMessage[];
+	error: unknown;
+	/** Increments immediately before each request is dispatched to the agent. */
+	dispatchRevision: number;
+	/** Increments when persisted conversation history replaces the live transcript. */
+	historyRevision: number;
+} ) => SubmissionAdmission;
+
+export type ClientStateDataPartAdapter = (
+	data: Record< string, unknown >
+) => Record< string, unknown > | undefined;
+
 /**
  * OR-merge a provider's `capabilities` into the running map. Works on both
  * plain objects and lazy Proxies (probed by direct key access, not iteration).
@@ -200,6 +223,10 @@ export interface LoadedProviders {
 	transformMessages?: TransformMessages;
 	siteBuildUtils?: SiteBuildUtils;
 	useCheckpoint?: UseCheckpointHook;
+	/** Provider-owned admission and metering state for new user-authored turns. */
+	useSubmissionAdmission?: UseSubmissionAdmissionHook;
+	/** Maps a provider's terminal DataParts into Agenttic's generic client state. */
+	clientStateDataPartAdapter?: ClientStateDataPartAdapter;
 	/**
 	 * Streamed task-update callback, forwarded to useAgentChat's `onTaskUpdate`.
 	 * Lets a provider react to streamed tool-argument deltas as they arrive — e.g.
@@ -611,6 +638,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
+	let mergedUseSubmissionAdmission: UseSubmissionAdmissionHook | undefined;
+	let mergedClientStateDataPartAdapter: ClientStateDataPartAdapter | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
 	let mergedSuppressEmptyViewDefaults = false;
@@ -710,6 +739,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.onTaskUpdate && ! mergedOnTaskUpdate ) {
 			mergedOnTaskUpdate = module.onTaskUpdate;
+		}
+		if ( module.useSubmissionAdmission && ! mergedUseSubmissionAdmission ) {
+			mergedUseSubmissionAdmission = module.useSubmissionAdmission;
+		}
+		if ( module.clientStateDataPartAdapter && ! mergedClientStateDataPartAdapter ) {
+			mergedClientStateDataPartAdapter = module.clientStateDataPartAdapter;
 		}
 
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
@@ -873,6 +908,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		transformMessages: mergedTransformMessages,
 		siteBuildUtils: mergedSiteBuildUtils,
 		useCheckpoint: mergedUseCheckpoint,
+		useSubmissionAdmission: mergedUseSubmissionAdmission,
+		clientStateDataPartAdapter: mergedClientStateDataPartAdapter,
 		// Match peer fields: undefined when no provider opted in.
 		capabilities: Object.keys( mergedCapabilities ).length ? mergedCapabilities : undefined,
 		suppressEmptyViewDefaults: mergedSuppressEmptyViewDefaults ? true : undefined,

@@ -255,7 +255,16 @@ const mockAgentChat = jest.fn(
 				Click auto-submit suggestion
 			</button>
 			<button onClick={ () => onInputChange?.( 'Describe these images' ) }>Type message</button>
-			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit message</button>
+			<button
+				onClick={ () => {
+					// Match Agenttic UI 0.1.87, which clears the controlled draft before
+					// invoking its submit callback.
+					onInputChange?.( '' );
+					onSubmit( 'Describe these images' );
+				} }
+			>
+				Submit message
+			</button>
 			<button onClick={ () => onAbort?.() }>Stop</button>
 			{ error && <div data-testid="chat-error">{ error }</div> }
 			<div data-testid="input-value">{ inputValue }</div>
@@ -416,6 +425,8 @@ import {
 	startNewUserRequest,
 } from '../../utils/canvas-binding';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { persistLastActivity } from '../../utils/persist-last-activity';
+import { removeExternalContextCard } from '../../utils/external-context';
 import OrchestratorChat from '../orchestrator-chat';
 
 const chat = ( props: Partial< ComponentProps< typeof OrchestratorChat > > = {} ) => (
@@ -1183,14 +1194,197 @@ describe( 'OrchestratorChat', () => {
 
 	it( 'sends the message directly when no images are pending', async () => {
 		const { onSubmit } = mockUseAgentChat();
+		const refreshAfterTurn = jest.fn().mockResolvedValue( undefined );
 
-		render( chat() );
+		render(
+			chat( {
+				useSubmissionAdmission: () => ( {
+					submitBlocked: false,
+					onBlockedSubmit: jest.fn(),
+					refreshAfterTurn,
+				} ),
+			} )
+		);
 
 		fireEvent.click( screen.getByText( 'Submit message' ) );
 
 		await waitFor( () => {
 			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
+			expect( refreshAfterTurn ).toHaveBeenCalledTimes( 1 );
 		} );
+		expect( refreshAfterTurn ).toHaveBeenCalledWith( 1 );
+		expect( onSubmit.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			refreshAfterTurn.mock.invocationCallOrder[ 0 ]
+		);
+	} );
+
+	it( 'refreshes quota after a rejected dispatch and keeps the draft', async () => {
+		const refreshAfterTurn = jest.fn().mockResolvedValue( undefined );
+		const { onSubmit } = mockUseAgentChat();
+		onSubmit.mockRejectedValue( new Error( 'Quota rejected' ) );
+
+		render(
+			chat( {
+				useSubmissionAdmission: () => ( {
+					submitBlocked: false,
+					onBlockedSubmit: jest.fn(),
+					refreshAfterTurn,
+				} ),
+			} )
+		);
+		fireEvent.click( screen.getByText( 'Type message' ) );
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		await waitFor( () => expect( refreshAfterTurn ).toHaveBeenCalledTimes( 1 ) );
+		expect( screen.getByTestId( 'input-value' ) ).toHaveTextContent( 'Describe these images' );
+	} );
+
+	it( 'blocks before uploads, Tracks, persistence, and dispatch while preserving the draft', async () => {
+		const onBlockedSubmit = jest.fn();
+		const uploadImagesToWordPress = jest.fn();
+		const { onSubmit } = mockUseAgentChat();
+		mockUseImageUpload.mockReturnValue(
+			createImageUpload( {
+				pendingImages: [ { id: 'p1' } ],
+				uploadImagesToWordPress,
+			} )
+		);
+
+		render(
+			chat( {
+				useSubmissionAdmission: () => ( {
+					submitBlocked: true,
+					onBlockedSubmit,
+				} ),
+			} )
+		);
+		fireEvent.click( screen.getByText( 'Type message' ) );
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		await waitFor( () => expect( onBlockedSubmit ).toHaveBeenCalled() );
+		expect( screen.getByTestId( 'input-value' ) ).toHaveTextContent( 'Describe these images' );
+		expect( uploadImagesToWordPress ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'chat_input_send_message',
+			expect.anything()
+		);
+		expect( persistLastActivity ).not.toHaveBeenCalled();
+		expect( onSubmit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'blocks context-card submission before removing the card or dispatching', () => {
+		const onBlockedSubmit = jest.fn();
+		const { onSubmit } = mockUseAgentChat();
+		render(
+			chat( {
+				useSubmissionAdmission: () => ( {
+					submitBlocked: true,
+					onBlockedSubmit,
+				} ),
+			} )
+		);
+		const { onContextCardAction } = mockAgentChat.mock.calls.at( -1 )![ 0 ] as unknown as {
+			onContextCardAction: (
+				card: { id: string },
+				action: { type: 'submit'; prompt: string }
+			) => void;
+		};
+
+		act( () => {
+			onContextCardAction(
+				{ id: 'card-1' },
+				{ type: 'submit', prompt: 'Use this linked context' }
+			);
+		} );
+
+		expect( onBlockedSubmit ).toHaveBeenCalledWith( 'Use this linked context' );
+		expect( removeExternalContextCard ).not.toHaveBeenCalled();
+		expect( onSubmit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not run auto-submit suggestion side effects after Agenttic blocks it', () => {
+		const listener = jest.fn();
+		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
+		render(
+			chat( {
+				useSubmissionAdmission: () => ( {
+					submitBlocked: true,
+					onBlockedSubmit: jest.fn(),
+				} ),
+			} )
+		);
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+
+		fireEvent.click( screen.getByText( 'Click auto-submit suggestion' ) );
+
+		expect( listener ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
+		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
+	it( 'passes Agenttic protocol error data to provider admission', () => {
+		const protocolError = {
+			code: -32000,
+			data: { code: 'jetpack_ai_quota_exhausted' },
+		};
+		const useSubmissionAdmission = jest.fn( () => ( {
+			submitBlocked: true,
+			onBlockedSubmit: jest.fn(),
+		} ) );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { error: 'Generic error', protocolError } )
+		);
+
+		render( chat( { useSubmissionAdmission } ) );
+
+		expect( useSubmissionAdmission ).toHaveBeenCalledWith( {
+			dispatchRevision: 0,
+			messages: [],
+			error: protocolError,
+			historyRevision: 0,
+		} );
+	} );
+
+	it( 'allows an admitted tool-result continuation while new user turns are blocked', async () => {
+		const { onSubmit } = mockUseAgentChat();
+		const refreshAfterTurn = jest.fn().mockResolvedValue( undefined );
+		let continuationSent = false;
+		const useNavigationContinuation: NonNullable<
+			ComponentProps< typeof OrchestratorChat >[ 'useNavigationContinuation' ]
+		> = ( { sendToolResult } ) => {
+			if ( continuationSent ) {
+				return;
+			}
+			continuationSent = true;
+			void sendToolResult( {
+				toolCallId: 'tool-call-1',
+				toolId: 'jetpack-ai/proofread',
+				message: 'Tool completed',
+				sessionId: 'session-id',
+			} );
+		};
+
+		render(
+			chat( {
+				useNavigationContinuation,
+				useSubmissionAdmission: () => ( {
+					submitBlocked: true,
+					onBlockedSubmit: jest.fn(),
+					refreshAfterTurn,
+				} ),
+			} )
+		);
+
+		await waitFor( () =>
+			expect( onSubmit ).toHaveBeenCalledWith( 'Tool completed', {
+				type: 'tool_result',
+				toolCallId: 'tool-call-1',
+				toolId: 'jetpack-ai/proofread',
+				sessionId: 'session-id',
+			} )
+		);
+		expect( refreshAfterTurn ).toHaveBeenCalledTimes( 1 );
+		expect( refreshAfterTurn ).toHaveBeenCalledWith( 1 );
 	} );
 
 	it( 'fires `file_upload_success` after images upload on send, with the uploaded media count', async () => {

@@ -7,12 +7,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { withJetpackAiToolbarButton } from './block-toolbar-extension';
 
-jest.mock( '@automattic/components', () => ( {
-	BigSkyLogo: {
-		CentralLogo: () => <svg data-testid="big-sky-logo" />,
-	},
-} ) );
-
 jest.mock( '@wordpress/block-editor', () => ( {
 	BlockControls: ( { children, group }: { children: React.ReactNode; group?: string } ) => (
 		<div data-group={ group } data-testid="block-controls">
@@ -135,7 +129,9 @@ describe( 'withJetpackAiToolbarButton', () => {
 			expect( screen.getByTestId( 'block-edit' ) ).toHaveTextContent( name );
 			expect( screen.getByTestId( 'block-controls' ) ).toHaveAttribute( 'data-group', 'default' );
 			expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toBeInTheDocument();
-			expect( screen.getByTestId( 'big-sky-logo' ) ).toBeInTheDocument();
+			expect(
+				screen.getByRole( 'button', { name: 'Ask AI' } ).querySelector( 'svg' )
+			).not.toBeNull();
 		}
 	);
 

@@ -22,6 +22,8 @@ export const getEmptyViewSuggestions = lazy( 'getEmptyViewSuggestions' );
 export const useSuggestions = lazy( 'useSuggestions' );
 export const useAbilitiesSetup = lazy( 'useAbilitiesSetup' );
 export const useCheckpoint = lazy( 'useCheckpoint' );
+export const useSubmissionAdmission = lazy( 'useSubmissionAdmission' );
+export const clientStateDataPartAdapter = lazy( 'clientStateDataPartAdapter' );
 
 // toolProvider and contextProvider are objects, not functions — use getters.
 export const toolProvider = new Proxy(

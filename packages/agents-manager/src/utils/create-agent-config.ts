@@ -6,13 +6,14 @@
  */
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
-import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
+import { JETPACK_AI_AGENT_URL, ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
+import type { ClientStateDataPartAdapter } from './load-external-providers';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
 export interface CreateAgentConfigOptions {
@@ -37,6 +38,8 @@ export interface CreateAgentConfigOptions {
 	 * paint streamed page-design markup into the editor as it arrives.
 	 */
 	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
+	/** Provider adapter for product-specific terminal DataParts. */
+	clientStateDataPartAdapter?: ClientStateDataPartAdapter;
 }
 
 /**
@@ -258,11 +261,20 @@ export async function createAgentConfig(
 		agentId = ORCHESTRATOR_AGENT_ID,
 		version,
 		onTaskUpdate,
+		clientStateDataPartAdapter,
 	} = options;
 
-	const config: UseAgentChatConfig = {
+	const config: UseAgentChatConfig & {
+		clientStateDataPartAdapter?: ClientStateDataPartAdapter;
+	} = {
 		agentId,
-		agentUrl: ORCHESTRATOR_AGENT_URL,
+		agentUrl:
+			agentId === ORCHESTRATOR_AGENT_ID &&
+			[ 'gutenberg', 'site-editor' ].includes( environment ) &&
+			typeof agentsManagerData !== 'undefined' &&
+			agentsManagerData?.jetpackAiMeteringEnabled === true
+				? JETPACK_AI_AGENT_URL
+				: ORCHESTRATOR_AGENT_URL,
 		sessionId,
 		// Persist server-assigned session IDs as this tab's session.
 		onSessionIdChange: ( newSessionId ) =>
@@ -271,6 +283,7 @@ export async function createAgentConfig(
 			logWpcomJwtFailure: ! isReaderChatAgent( agentId ),
 		} ),
 		enableStreaming: true,
+		clientStateDataPartAdapter,
 	};
 
 	if ( onTaskUpdate ) {

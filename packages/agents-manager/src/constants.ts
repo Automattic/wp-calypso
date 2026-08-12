@@ -1,6 +1,7 @@
 export const API_BASE_URL = 'https://public-api.wordpress.com';
 
 export const ORCHESTRATOR_AGENT_URL = `${ API_BASE_URL }/wpcom/v2/ai/agent`;
+export const JETPACK_AI_AGENT_URL = `${ API_BASE_URL }/wpcom/v2/ai/jetpack-agent`;
 export const ORCHESTRATOR_AGENT_ID = 'wp-orchestrator';
 export const DOLLY_AGENT_ID = 'dolly';
 export const UNIFIED_CHAT_AGENT_ID = 'wpcom-workflow-unified_chat';

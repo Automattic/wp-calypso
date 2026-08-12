@@ -195,6 +195,21 @@ describe( 'loadExternalProviders', () => {
 		await expect( loadExternalProviders() ).resolves.toEqual( {} );
 	} );
 
+	it( 'keeps the first client-state adapter', async () => {
+		const firstAdapter = jest.fn( () => ( { quota: 'first' } ) );
+		const secondAdapter = jest.fn( () => ( { quota: 'second' } ) );
+		setAgentsManagerData( {
+			agentProviders: [
+				{ clientStateDataPartAdapter: firstAdapter },
+				{ clientStateDataPartAdapter: secondAdapter },
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.clientStateDataPartAdapter ).toBe( firstAdapter );
+	} );
+
 	it( 'merges abilities from multiple tool providers and dispatches execution to the owner', async () => {
 		const firstProvider = {
 			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'host/navigate' ) ] ) ),

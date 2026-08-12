@@ -25,6 +25,12 @@ declare const agentsManagerData:
 			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
+			/** Strict provider URL used only by the writing-only Gutenberg entry. */
+			jetpackAiWritingProviderUrl?: string;
+			/** Server-owned mode gate. False for the full WordPress Agent entitlement. */
+			jetpackAiMeteringEnabled?: boolean;
+			/** Optional canonical quota snapshot injected by the server. */
+			jetpackAiQuota?: unknown;
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
