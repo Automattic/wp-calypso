@@ -12,6 +12,31 @@ export interface ThrottleFlag {
 }
 
 /**
+ * Where each throttle is answered. One list, so the browser watcher filters on
+ * what detection maps and an endpoint added here reaches both rather than being
+ * read by one and dropped by the other.
+ *
+ * `/users/new` is deliberately absent: nothing said there can be classified, so
+ * there is no reason to read a body that carries a new user's credentials.
+ *
+ * The tail matches a path in a URL and a path in a payload that has been through
+ * `JSON.stringify` alike, and keeps `/sites/newsletter` from reading as a signup.
+ */
+const THROTTLED_PATHS: Record< ThrottleId, RegExp > = {
+	signup: /sites\/new(?:[/?"\s]|$)/i,
+	'domain-suggestions': /domains\/suggestions(?:[/?"\s]|$)/i,
+	'domain-availability': /[^/]+\/is-available(?:[/?"\s]|$)/i,
+};
+
+/**
+ * Whether a URL is one of the endpoints a throttle is ever answered on. For
+ * callers that decide whether a response is worth reading at all.
+ */
+export function mayBeThrottled( url: string ): boolean {
+	return Object.values( THROTTLED_PATHS ).some( ( path ) => path.test( url ) );
+}
+
+/**
  * How long each ban lasts. The answer is not asked how long it lasts: it says so
  * only sometimes, in a translated sentence, and these are the numbers wpcom
  * enforces from an Automattic IP, which is where CI runs. `signup` bans for 10
@@ -62,6 +87,10 @@ const tagSettled = new Set< ThrottleId >();
 /**
  * How many times a tag is worth trying. A refusal is usually a permission, not
  * a blip, and every retry is a request a test's teardown waits on.
+ *
+ * Per worker, which is as far as a count in a module can reach: a build running
+ * a worker per core spends this many attempts in each of them. Bounded either
+ * way, and the tag only has to land once for the build to be findable.
  */
 const TAG_ATTEMPTS = 3;
 const tagAttempts = new Map< ThrottleId, number >();
@@ -316,18 +345,23 @@ export function debugThrottle( id: ThrottleId, nowMs: number = Date.now() ): voi
 /**
  * The latest expiry each throttle carries across the project's recent builds.
  *
+ * Three answers per id, not two: a number is a ban that reaches that far, null is
+ * a look that found none, and a missing key is a look that could not be taken.
+ * The last is the one worth having — a refused lookup, or a tagged build still
+ * running whose log there was no time to read, leaves a ban that may well be in
+ * force, and a caller must be able to tell that from a quiet project.
+ *
  * A finished build whose log carries no line counts as throttled for the
  * documented length from when it finished — the latest moment it could have
- * raised the flag. A running build with no line yields nothing: it could have
- * raised the flag at any point, so assuming "from now" would republish the same
- * ban, always an hour fresh, for as long as that build runs. A build whose log
- * we did not read yields nothing either, and says so. Nothing is retried, and an
- * id that cannot be looked up at all is reported and skipped rather than taking
- * the other two down with it.
+ * raised the flag. A running build whose log we did read and found nothing in
+ * yields nothing: it could raise the flag at any point, and assuming "from now"
+ * would republish the same ban, always fresh, for as long as that build runs.
+ * Nothing is retried, and an id that cannot be looked up is reported and left out
+ * rather than taking the other two down with it.
  */
 export async function readActiveThrottles(
 	nowMs: number = Date.now()
-): Promise< Record< ThrottleId, number | null > > {
+): Promise< Partial< Record< ThrottleId, number | null > > > {
 	// The tag lookups are small and independent, and they run before the clock
 	// below starts: a slow one would otherwise spend the budget the log reads
 	// need, and the ids at the end of the list would read nothing.
@@ -335,10 +369,14 @@ export async function readActiveThrottles(
 		THROTTLE_IDS.map( async ( id ) => {
 			try {
 				const sinceMs = nowMs - TAG_WINDOW_MS;
-				return { id, builds: await fetchBuildsByTag( throttleTag( id ), { sinceMs } ) };
+				return {
+					id,
+					builds: await fetchBuildsByTag( throttleTag( id ), { sinceMs } ),
+					looked: true,
+				};
 			} catch ( error ) {
 				console.warn( `Could not read what other builds hit for ${ id }: ${ error }` );
-				return { id, builds: null };
+				return { id, builds: null, looked: false };
 			}
 		} )
 	);
@@ -386,13 +424,19 @@ export async function readActiveThrottles(
 		return reading;
 	};
 
-	const active = {} as Record< ThrottleId, number | null >;
-	for ( const { id, builds } of listed ) {
-		active[ id ] = await furthestExpiry( id, nowMs, builds, readFlags );
+	const active: Partial< Record< ThrottleId, number | null > > = {};
+	for ( const { id, builds, looked } of listed ) {
+		if ( ! looked ) {
+			continue;
+		}
+		const { expiresAtMs, answered } = await furthestExpiry( id, nowMs, builds, readFlags );
+		if ( answered ) {
+			active[ id ] = expiresAtMs;
+		}
 	}
 
-	// Said out loud: an id whose builds all went unread reads exactly like an id
-	// with nothing to report, and a reader has no other way to tell them apart.
+	// Said out loud as well as left out of the report: the count is the only place
+	// a reader learns how much of the project went unlooked-at.
 	const dropped = skipped.size;
 	if ( dropped ) {
 		console.warn(
@@ -403,25 +447,40 @@ export async function readActiveThrottles(
 }
 
 /**
- * The furthest expiry one throttle carries across the builds tagged with it.
+ * The furthest expiry one throttle carries across the builds tagged with it, and
+ * whether that is an answer at all.
  */
 async function furthestExpiry(
 	id: ThrottleId,
 	nowMs: number,
 	builds: TaggedBuild[] | null,
 	readFlags: ( buildId: number ) => Promise< Map< ThrottleId, ThrottleFlag > | null >
-): Promise< number | null > {
+): Promise< { expiresAtMs: number | null; answered: boolean } > {
 	let latest = 0;
+	let answered = true;
 	for ( const build of builds ?? [] ) {
 		// A log we did not read leaves the tag, which is proof the ban happened,
 		// and the finish date, which bounds when: exactly what a build whose log we
 		// did read and found nothing in leaves. Not reading is less information, so
 		// it cannot yield a weaker answer than reading.
-		const flag = ( await readFlags( build.id ) )?.get( id );
+		const read = await readFlags( build.id );
+		const flag = read?.get( id );
 		const assumed = build.finishedAtMs === null ? 0 : build.finishedAtMs + BAN_DURATIONS[ id ];
 		latest = Math.max( latest, flag ? flag.expiresAtMs : assumed );
+
+		// Except when the build is still running, where the finish date that bounds
+		// it does not exist yet. Then an unread log is not less information, it is
+		// none, and the tag says the ban is recent enough to still be on.
+		if ( ! read && build.finishedAtMs === null ) {
+			answered = false;
+		}
 	}
-	return latest > nowMs ? latest : null;
+
+	// A ban another build did state stands whatever this one hid: what we could
+	// not read can only push an expiry further out, never bring it closer, so it
+	// is only worth admitting to when the answer would otherwise be "none".
+	const expiresAtMs = latest > nowMs ? latest : null;
+	return { expiresAtMs, answered: answered || expiresAtMs !== null };
 }
 
 /**
@@ -488,18 +547,19 @@ function detectThrottleId( text: string ): ThrottleId | null {
 		return 'domain-suggestions';
 	}
 
-	// A gateway page carrying the word is that gateway talking about its own
-	// upstream, not wpcom refusing us. wpcom's own refusal is the JSON envelope
-	// `trap_wp_die` renders, never a page.
-	const page = /<!doctype|<html/i.test( text );
-	if ( page || ! /(?:^|[^a-z0-9_])throttled(?:$|[^a-z0-9_])/i.test( text ) ) {
+	// The code as the envelope carries it, `"error":"throttled"`, escaped or not
+	// depending on how many times the answer has been through `JSON.stringify`.
+	// The bare word is something anything between us and wpcom can say about its
+	// own upstream, in a page or in a line of plain text, and a gateway having a
+	// bad minute is not a ban on this address.
+	if ( ! /\\?"error\\?"\s*:\s*\\?"throttled\\?"/i.test( text ) ) {
 		return null;
 	}
 
-	if ( /is-available/i.test( text ) ) {
+	if ( THROTTLED_PATHS[ 'domain-availability' ].test( text ) ) {
 		return 'domain-availability';
 	}
-	if ( /domains\/suggestions/i.test( text ) ) {
+	if ( THROTTLED_PATHS[ 'domain-suggestions' ].test( text ) ) {
 		return 'domain-suggestions';
 	}
 	// `/users/new` wraps a Blackbox block in this same code, and that refuses one
@@ -507,5 +567,5 @@ function detectThrottleId( text: string ): ThrottleId | null {
 	// on `/sites/new`, where nothing else raises it. Little is lost: the ban is on
 	// the address, not the endpoint, and a run inside one reaches `/sites/new`
 	// too, every time it makes a site.
-	return /sites\/new/i.test( text ) ? 'signup' : null;
+	return THROTTLED_PATHS.signup.test( text ) ? 'signup' : null;
 }

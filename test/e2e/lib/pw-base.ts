@@ -91,6 +91,7 @@ import {
 	SelectItemsComponent,
 	THROTTLE_IDS,
 	debugThrottle,
+	mayBeThrottled,
 	recordThrottle,
 } from '@automattic/calypso-e2e';
 import {
@@ -142,8 +143,6 @@ type AccountFixture = (
 ) => Promise< void >;
 
 const WPCOM_HOST = /^https?:\/\/([^/]*\.)?wordpress\.com(?::\d+)?\//;
-const THROTTLED_ENDPOINT =
-	/\/(?:sites\/new|users\/new|domains\/suggestions|[^/]+\/is-available)(?:[/?]|$)/;
 
 // The response event fires on headers, and `response.text()` has no deadline of
 // its own, so without these a stalled body would hang the teardown that waits
@@ -162,11 +161,12 @@ const FLUSH_TIMEOUT = 7 * 1000;
  * reaches the same endpoints, and the context reports for all of them.
  *
  * The host and path are filtered first so that only a handful of responses are
- * ever read. Anything from 400 up is read — wpcom refuses these four with a 403
- * or a 429 — and a success only when Calypso asked for the answer to be
- * enveloped, which is how a refusal comes back as a 200. The body is never
- * logged: a failed `/users/new` or `/sites/new` carries the credentials of the
- * user being created.
+ * ever read, and the path comes from detection itself: an endpoint nothing can be
+ * concluded about is one whose body is better left unread. Anything from 400 up
+ * is read — wpcom refuses these with a 403 or a 429 — and a success only when
+ * Calypso asked for the answer to be enveloped, which is how a refusal comes back
+ * as a 200. The body is never logged: a failed `/sites/new` carries the
+ * credentials of the user it was creating a site for.
  *
  * Reports a throttle already known when the context is handed over, so a worker
  * states a ban at the first test that runs after it becomes known rather than
@@ -184,7 +184,7 @@ function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 		const status = response.status();
 		if (
 			! WPCOM_HOST.test( url ) ||
-			! THROTTLED_ENDPOINT.test( url ) ||
+			! mayBeThrottled( url ) ||
 			( status < 400 && ! /[?&]http_envelope=1/.test( url ) )
 		) {
 			return;

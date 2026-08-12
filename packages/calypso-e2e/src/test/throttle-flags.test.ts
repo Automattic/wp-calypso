@@ -354,7 +354,7 @@ describe( 'readActiveThrottles', () => {
 		expect( fetchBuildsByTag ).toHaveBeenCalledTimes( 3 );
 	} );
 
-	test( 'a refused lookup is reported, and keeps what the other ids found', async () => {
+	test( 'a refused lookup is left out, and keeps what the other ids found', async () => {
 		fetchBuildsByTag.mockImplementation( async ( tag ) => {
 			if ( tag === 'throttle-domain-suggestions' ) {
 				throw new Error( 'status 403' );
@@ -363,12 +363,31 @@ describe( 'readActiveThrottles', () => {
 		} );
 		fetchBuildLog.mockResolvedValue( '[e2e-throttle] type=signup start=1 duration=2 end=1600000' );
 
+		// Absent, not null: the id TeamCity refused is one this run cannot speak
+		// for, and null is this run saying it looked and found nothing.
 		expect( await readActiveThrottles() ).toEqual( {
 			signup: 1_600_000,
-			'domain-suggestions': null,
 			'domain-availability': null,
 		} );
 		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( '403' ) );
+	} );
+
+	test( 'a running build whose log went unread is not called clear', async () => {
+		let clock = NOW;
+		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
+		fetchBuildsByTag.mockImplementation( async ( tag ) =>
+			tag === 'throttle-domain-availability' ? [ taggedBuild( 11 ), taggedBuild( 22 ) ] : null
+		);
+		// The first read spends the budget, so the second build goes unread.
+		fetchBuildLog.mockImplementation( async () => {
+			clock += 60_000;
+			return 'a log with nothing of ours in it';
+		} );
+
+		// Still running, so there is no finish date to date a ban from, and the tag
+		// says one happened inside the window. Nothing can be concluded, and saying
+		// "clear" would be a conclusion.
+		expect( 'domain-availability' in ( await readActiveThrottles( NOW ) ) ).toBe( false );
 	} );
 
 	test( 'a tagged build with no readable line bans from when that build finished', async () => {

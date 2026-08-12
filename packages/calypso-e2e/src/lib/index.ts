@@ -10,6 +10,7 @@ export * from './utils';
 export {
 	THROTTLE_IDS,
 	debugThrottle,
+	mayBeThrottled,
 	readActiveThrottles,
 	recordThrottle,
 	throttleEnvVar,

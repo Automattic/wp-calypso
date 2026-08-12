@@ -15,10 +15,13 @@ import type { ThrottleId } from '@automattic/calypso-e2e';
  * hits it records it for itself and tags the build for everyone else.
  */
 
-// Comfortably under the 120s test timeout, and over what the lookup's own
-// bounds add up to. The margin matters: every project in the suite depends on
-// this one, so a test Playwright times out from the outside costs the whole run.
-const CHECK_TIMEOUT = 45 * 1000;
+// Comfortably under the 120s test timeout, and clear of what the lookup's own
+// bounds add up to: 5s of tag lookups, then a 20s log budget which a read already
+// begun may overrun by its own 20s. A deadline set at that sum would fire on the
+// answer rather than after it. The margin matters both ways: every project in the
+// suite depends on this one, so a test Playwright times out from the outside
+// costs the whole run.
+const CHECK_TIMEOUT = 60 * 1000;
 
 setup( 'check active wpcom throttles', async () => {
 	let active: Partial< Record< ThrottleId, number | null > > | null = null;
@@ -44,6 +47,13 @@ setup( 'check active wpcom throttles', async () => {
 
 	for ( const id of THROTTLE_IDS ) {
 		const expiresAtMs = active[ id ];
+		// An id the lookup could not answer for is left unset, which is a worker
+		// reading "never checked". Publishing the empty string for it would be this
+		// project saying it looked, which is the one thing it must not say when a
+		// build it could not read may be sitting in a ban right now.
+		if ( expiresAtMs === undefined ) {
+			continue;
+		}
 		// Empty rather than absent, so a worker reads "checked, not throttled"
 		// rather than "never checked".
 		process.env[ throttleEnvVar( id ) ] = expiresAtMs ? String( expiresAtMs ) : '';
