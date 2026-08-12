@@ -7,20 +7,12 @@
  * REST API directly, against the same state blob that package reads.
  */
 
-interface ConnectionStatus {
-	isActive?: boolean;
-	isRegistered?: boolean;
-	isUserConnected?: boolean;
-	hasConnectedOwner?: boolean;
-	offlineMode?: boolean;
-}
-
 interface ConnectionInitialState {
 	apiRoot: string;
 	apiNonce: string;
 	registrationNonce?: string;
-	connectionStatus?: ConnectionStatus;
 	siteSuffix?: string;
+	isOfflineMode?: boolean;
 }
 
 declare global {
@@ -38,8 +30,14 @@ function getInitialState(): ConnectionInitialState | undefined {
 	return window.JP_CONNECTION_INITIAL_STATE;
 }
 
-export function getConnectionStatus(): ConnectionStatus {
-	return getInitialState()?.connectionStatus ?? {};
+/**
+ * Whether the site is in offline mode, and so can never reach WordPress.com to be registered.
+ *
+ * Read from the top-level flag rather than `connectionStatus.offlineMode`, which is an object
+ * describing which of the several offline-mode signals fired, and so is always truthy.
+ */
+export function isOfflineMode(): boolean {
+	return getInitialState()?.isOfflineMode ?? false;
 }
 
 /**

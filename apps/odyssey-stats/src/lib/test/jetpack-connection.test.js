@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getConnectionStatus, getSiteSuffix, registerSite } from '../jetpack-connection';
+import { getSiteSuffix, isOfflineMode, registerSite } from '../jetpack-connection';
 
 const REDIRECT_URI = 'admin.php?page=stats';
 
@@ -9,7 +9,14 @@ const INITIAL_STATE = {
 	apiRoot: 'https://example.com/wp-json/',
 	apiNonce: 'api-nonce',
 	registrationNonce: 'registration-nonce',
-	connectionStatus: { isRegistered: false, isUserConnected: false, offlineMode: false },
+	// Verbatim from `Connection\Initial_State`: `connectionStatus.offlineMode` is an object
+	// describing which signal fired, so only the top-level flag answers the question.
+	connectionStatus: {
+		isRegistered: false,
+		isUserConnected: false,
+		offlineMode: { isActive: false, constant: false, url: false, filter: false },
+	},
+	isOfflineMode: false,
 	siteSuffix: 'example.com',
 };
 
@@ -26,17 +33,30 @@ afterEach( () => {
 } );
 
 describe( 'connection state readers', () => {
-	it( 'reports the printed connection status', () => {
-		expect( getConnectionStatus() ).toEqual( INITIAL_STATE.connectionStatus );
+	it( 'reports the printed connection state', () => {
 		expect( getSiteSuffix() ).toBe( 'example.com' );
+		expect( isOfflineMode() ).toBe( false );
+	} );
+
+	it( 'reads a site that really is offline as offline', () => {
+		window.JP_CONNECTION_INITIAL_STATE.isOfflineMode = true;
+
+		expect( isOfflineMode() ).toBe( true );
+	} );
+
+	it( 'does not mistake the offline-mode detail object for the answer', () => {
+		// It is always present and always truthy, including on a site that is perfectly online.
+		expect( window.JP_CONNECTION_INITIAL_STATE.connectionStatus.offlineMode ).toBeTruthy();
+
+		expect( isOfflineMode() ).toBe( false );
 	} );
 
 	it( 'reads as "nothing known" when Jetpack prints no state at all', () => {
 		// An older Jetpack serving this bundle from the CDN does not print the blob.
 		delete window.JP_CONNECTION_INITIAL_STATE;
 
-		expect( getConnectionStatus() ).toEqual( {} );
 		expect( getSiteSuffix() ).toBe( '' );
+		expect( isOfflineMode() ).toBe( false );
 	} );
 } );
 

@@ -14,7 +14,7 @@ import { StatsSingleItemPagePurchaseFrame } from 'calypso/my-sites/stats/stats-p
 import { StatsCommercialPurchase } from 'calypso/my-sites/stats/stats-purchase/stats-purchase-single-item';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { getConnectionStatus, getSiteSuffix, registerSite } from '../lib/jetpack-connection';
+import { getSiteSuffix, isOfflineMode, registerSite } from '../lib/jetpack-connection';
 import getWpAdminUrl from '../lib/selectors/get-wp-admin-url';
 
 const STATS_ADMIN_PATH = 'admin.php?page=stats';
@@ -43,7 +43,6 @@ export default function PreConnection() {
 	const product = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
 	);
-	const { offlineMode } = getConnectionStatus();
 
 	const connect = async () => {
 		setError( null );
@@ -82,7 +81,7 @@ export default function PreConnection() {
 	};
 
 	const renderStep = () => {
-		if ( offlineMode ) {
+		if ( isOfflineMode() ) {
 			return (
 				<StatsMain fullWidthLayout>
 					<Notice status="warning" isDismissible={ false }>
