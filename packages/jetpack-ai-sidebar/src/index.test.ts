@@ -327,15 +327,11 @@ function installAiEditorialReviewData( features: Record< string, boolean > = {} 
 function SuggestionsProbe( {
 	onSuggestions,
 	maxSuggestions,
-	suggestionsVisible = true,
 }: {
 	onSuggestions: ( suggestions: any[], replaceEmptyViewSuggestions?: boolean ) => void;
 	maxSuggestions?: number;
-	suggestionsVisible?: boolean;
 } ) {
-	const { suggestions, replaceEmptyViewSuggestions } = useSuggestions( maxSuggestions, {
-		suggestionsVisible,
-	} );
+	const { suggestions, replaceEmptyViewSuggestions } = useSuggestions( maxSuggestions );
 	React.useEffect( () => {
 		onSuggestions( suggestions, replaceEmptyViewSuggestions );
 	}, [ onSuggestions, replaceEmptyViewSuggestions, suggestions ] );
@@ -2181,25 +2177,6 @@ describe( 'useSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'does not track rendered suggestions when the suggestions are not visible', () => {
-		installAiEditorialReviewData();
-		mockSelectedBlock = { clientId: 'b-hidden', name: 'core/paragraph' };
-		const onSuggestions = jest.fn();
-
-		render( React.createElement( SuggestionsProbe, { onSuggestions, suggestionsVisible: false } ) );
-
-		const latestSuggestions =
-			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'Translate content',
-			'Change tone',
-			'Check grammar',
-			'Simplify text',
-		] );
-		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
-	} );
-
 	it( 'shows only block-specific suggestions when a block is selected', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
@@ -2216,44 +2193,6 @@ describe( 'useSuggestions', () => {
 			'Simplify text',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'translate',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'change-tone',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'check-grammar',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'simplify-text',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-		] );
 	} );
 
 	it( 'replaces editor-level empty-view suggestions when a block is selected', () => {
@@ -2360,35 +2299,6 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 		] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'translate',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'change-tone',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'check-grammar',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-		] );
 	} );
 
 	it( 'returns no suggestions after the selected-block chip is cleared', () => {
@@ -2430,17 +2340,6 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Generate alt text',
-		] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'generate-alt-text',
-					suggestion_type: 'image',
-					block_type: 'core/image',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
 		] );
 	} );
 
@@ -2543,7 +2442,6 @@ describe( 'useSuggestions', () => {
 
 		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_click' ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
 	} );
 
 	it( 'exposes tone and language dropdown options on the block suggestions', () => {

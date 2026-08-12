@@ -11,11 +11,7 @@ jest.mock( '@wordpress/data', () => ( {
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
-import {
-	trackBlockTransformationSuggestionRendered,
-	trackSplitScreenGuideClick,
-	trackSplitScreenGuideRendered,
-} from './tracking';
+import { trackSplitScreenGuideClick, trackSplitScreenGuideRendered } from './tracking';
 
 const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 	typeof recordTracksEvent
@@ -79,27 +75,6 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		delete ( window as WindowWithAgentsManagerActions ).__agentsManagerActions;
 	} );
 
-	it( 'tracks block transformation suggestion exposure with stable metadata', () => {
-		trackBlockTransformationSuggestionRendered( {
-			suggestionId: 'check-grammar',
-			suggestionType: 'text',
-			blockType: 'core/paragraph',
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_block_transformation_suggestion_rendered',
-			{
-				suggestion_id: 'check-grammar',
-				suggestion_type: 'text',
-				block_type: 'core/paragraph',
-				surface: 'jetpack_ai_sidebar',
-				sessionid: 'test-session-id',
-				is_a11n: false,
-			}
-		);
-		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
-	} );
-
 	it( 'tracks split-screen guide clicks with stable component metadata', () => {
 		trackSplitScreenGuideClick( { componentType: 'post-feedback' } );
 
@@ -145,14 +120,10 @@ describe( 'Jetpack AI sidebar tracking', () => {
 			isA11n: true,
 		};
 
-		trackBlockTransformationSuggestionRendered( {
-			suggestionId: 'check-grammar',
-			suggestionType: 'text',
-			blockType: 'core/paragraph',
-		} );
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
 
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_block_transformation_suggestion_rendered',
+			'jetpack_ai_split_screen_guide_click',
 			expect.objectContaining( { is_a11n: true } )
 		);
 	} );
@@ -160,11 +131,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 	it( 'omits is_a11n when the server payload predates the signal', () => {
 		( globalThis as Record< string, unknown > ).agentsManagerData = { isDevMode: false };
 
-		trackBlockTransformationSuggestionRendered( {
-			suggestionId: 'check-grammar',
-			suggestionType: 'text',
-			blockType: 'core/paragraph',
-		} );
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
 
 		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'is_a11n' );
 	} );

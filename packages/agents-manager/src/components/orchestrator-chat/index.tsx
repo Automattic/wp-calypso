@@ -995,24 +995,37 @@ export default function OrchestratorChat( {
 
 	// Track when a set of suggestions is rendered — the dynamic block-context
 	// suggestions or, on an empty chat, the empty-view starter chips. Mirrors
-	// Big Sky, which tracked the empty view too. Dedupe on the rendered ids so
-	// re-renders with the same set don't re-fire; a set that empties and returns
-	// to the same content isn't re-tracked.
+	// Big Sky, which tracked the empty view too. Dedupe on the rendered ids and
+	// block context so the same actions appearing for a different block type are
+	// tracked as a distinct exposure.
 	const displayedSuggestionIds = displayedEmptyViewSuggestions.map( ( s ) => s.id ).join( '|' );
-	const lastTrackedSuggestionsRef = useRef< string | null >( null );
+	const renderedSuggestionsBlockType =
+		selectedBlockType &&
+		displayedEmptyViewSuggestions.length > 0 &&
+		displayedEmptyViewSuggestions.every( ( suggestion ) =>
+			contextualSuggestionIds.has( suggestion.id )
+		)
+			? selectedBlockType
+			: undefined;
+	const renderedSuggestionsKey = JSON.stringify( [
+		displayedSuggestionIds,
+		renderedSuggestionsBlockType ?? null,
+	] );
+	const lastTrackedSuggestionsKeyRef = useRef< string | null >( null );
 	useEffect( () => {
 		if ( displayedEmptyViewSuggestions.length === 0 ) {
 			return;
 		}
-		if ( lastTrackedSuggestionsRef.current !== displayedSuggestionIds ) {
+		if ( lastTrackedSuggestionsKeyRef.current !== renderedSuggestionsKey ) {
 			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
 				suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
+				...( renderedSuggestionsBlockType ? { block_type: renderedSuggestionsBlockType } : {} ),
 			} );
-			lastTrackedSuggestionsRef.current = displayedSuggestionIds;
+			lastTrackedSuggestionsKeyRef.current = renderedSuggestionsKey;
 		}
-		// `displayedEmptyViewSuggestions` identity is unstable; key on its ids.
+		// `displayedEmptyViewSuggestions` identity is unstable; key on its ids and block context.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ displayedSuggestionIds ] );
+	}, [ renderedSuggestionsKey ] );
 
 	return (
 		<AgentChat

@@ -77,14 +77,6 @@ function recordTracksEvent( eventName: string, properties: TrackProperties = {} 
 	} );
 }
 
-export type BlockTransformationSuggestionType = 'text' | 'image';
-
-interface TrackBlockTransformationSuggestionOptions {
-	suggestionId: string;
-	suggestionType: BlockTransformationSuggestionType;
-	blockType: string;
-}
-
 interface TrackSplitScreenGuideOptions {
 	componentType: string;
 }
@@ -102,26 +94,6 @@ function getSplitScreenGuideProperties( {
 		session_type: bigSky.sessionType,
 		screen: bigSky.screen,
 	};
-}
-
-/**
- * Tracks a block transformation suggestion appearing for a selected block.
- * @param options                - Tracking options
- * @param options.suggestionId   - Stable suggestion identifier.
- * @param options.suggestionType - Transformation category.
- * @param options.blockType      - Core block type the suggestion applies to.
- */
-export function trackBlockTransformationSuggestionRendered( {
-	suggestionId,
-	suggestionType,
-	blockType,
-}: TrackBlockTransformationSuggestionOptions ): void {
-	recordTracksEvent( 'ai_block_transformation_suggestion_rendered', {
-		suggestion_id: suggestionId,
-		suggestion_type: suggestionType,
-		block_type: blockType,
-		surface: 'jetpack_ai_sidebar',
-	} );
 }
 
 /**
