@@ -65,6 +65,16 @@ test.describe(
 			await test.step( 'Authenticate and setup the test', async () => {
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
+
+				// This spec asserts on classic Calypso navigation, so it has to start from
+				// a classic Calypso page. `/` no longer serves one: the hosting dashboard
+				// rollout lands every account in the dashboard instead. My Home is where
+				// these accounts used to land, so it is the closest equivalent.
+				await page.goto(
+					DataHelper.getCalypsoURL(
+						`/home/${ DataHelper.getAccountSiteURL( accountName, { protocol: false } ) }`
+					)
+				);
 			} );
 
 			await test.step( 'Navigate to Full Site Editor', async () => {

@@ -7,7 +7,6 @@ test.describe(
 		test( 'As a gutenberg simple site user, I can preview a different theme on my site', async ( {
 			page,
 			accountGutenbergSimple,
-			componentSidebar,
 			componentSiteSelect,
 			pageThemes,
 			pageThemeDetails,
@@ -23,7 +22,7 @@ test.describe(
 			} );
 
 			await test.step( 'When I navigate to Appearance > Themes', async function () {
-				await componentSidebar.navigate( 'Appearance', 'Themes' );
+				await pageThemes.visitShowcase( testAccountSiteDomain );
 			} );
 
 			await test.step( `And I choose the test site ${ testAccountSiteDomain } if the site selector is shown`, async function () {
