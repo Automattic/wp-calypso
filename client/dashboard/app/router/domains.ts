@@ -130,7 +130,6 @@ export const domainRoute = createRoute( {
 	loader: async ( { params: { domainName }, location } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
-		const isTransferSubRoute = location.pathname.includes( '/transfer' );
 		const isContactInfoSubRoute = location.pathname.includes( '/contact-info' );
 		const isDnsSubRoute = location.pathname.includes( '/dns' );
 		const isContactVerificationSubRoute = location.pathname.includes( '/contact-verification' );
@@ -142,21 +141,6 @@ export const domainRoute = createRoute( {
 		// throw error and handle it with the global error boundary
 		if ( isNameServersSubRoute ) {
 			checkDomainNameServersPermissions( domain );
-		}
-
-		if ( isTransferSubRoute ) {
-			try {
-				checkDomainTransferPermissions( domain );
-			} catch ( error ) {
-				dispatch( noticesStore ).createWarningNotice(
-					__( 'You do not have permission to transfer this domain.' ),
-					{ type: 'snackbar' }
-				);
-				throw dashboardRedirect( {
-					to: '/domains/$domainName',
-					params: { domainName },
-				} );
-			}
 		}
 
 		if ( isContactInfoSubRoute ) {
@@ -580,6 +564,28 @@ export const domainTransferRoute = createRoute( {
 	} ),
 	getParentRoute: () => domainRoute,
 	path: 'transfer',
+	beforeLoad: async ( { params: { domainName }, cause } ) => {
+		// Preloads run whenever a link to this route is hovered, so they must
+		// stay free of side effects like notices and redirects.
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+
+		try {
+			checkDomainTransferPermissions( domain );
+		} catch {
+			dispatch( noticesStore ).createWarningNotice(
+				__( 'You do not have permission to transfer this domain.' ),
+				{ type: 'snackbar' }
+			);
+			throw dashboardRedirect( {
+				to: '/domains/$domainName',
+				params: { domainName },
+			} );
+		}
+	},
 } );
 
 export const domainTransferIndexRoute = createRoute( {
