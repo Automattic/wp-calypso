@@ -85,6 +85,10 @@ export interface SiteSpecConfig {
 			items?: Array< {
 				label: string;
 				prompt: string;
+				// `label` and `prompt` are translated, so these two carry the
+				// locale-independent identity into `chat_suggestion_click`.
+				id?: string;
+				labelEn?: string;
 			} >;
 		};
 
@@ -199,6 +203,9 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 	const ref = new URLSearchParams( window.location.search ).get( 'ref' );
 
 	return {
+		// Needed for `tracking`: without it the widget falls back to its own
+		// default of `enabled: false` and this flow reports no events at all.
+		...getDefaultSiteSpecConfig(),
 		buildSiteUrl: '/setup/ai-site-builder/?create_garden_site=1&trigger_backend_build=0&spec_id=',
 		backButton: {
 			enabled: ref === 'new-site-popover' || ref === 'start-store',
@@ -238,6 +245,8 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 				enabled: true,
 				items: [
 					{
+						id: 'take_bookings_for_a_hair_salon',
+						labelEn: 'Take bookings for a hair salon',
 						label: __( 'Take bookings for a hair salon' ),
 						prompt: __(
 							'Create a sleek, modern website for a trendy, fashion-forward hair salon. Use a charcoal gray and soft white palette with vibrant, polished accents. Highlight the salon’s unique skills and craftsmanship. Write stylish, engaging, confident copy. Design with a clean, elegant sans-serif font similar to Bonita. Emphasize bold visuals, refined layouts, and a premium, contemporary feel.',
@@ -245,6 +254,8 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 						),
 					},
 					{
+						id: 'offer_personal_training_sessions',
+						labelEn: 'Offer personal training sessions',
 						label: __( 'Offer personal training sessions' ),
 						prompt: __(
 							'Create a high-intensity website for a fitness instructor focused on driving session bookings. Use a deep red and charcoal gray palette with bold, dynamic visuals and powerful layouts. Write urgent, inspiring, direct copy that pushes action. Highlight transformation, strength, and results. Use a bold, energetic sans-serif font similar to Jumpshot. Feature strong CTAs, motion-inspired sections, and an aggressive, performance-driven feel.',
@@ -252,6 +263,8 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 						),
 					},
 					{
+						id: 'create_an_online_plant_shop',
+						labelEn: 'Create an online plant shop',
 						label: __( 'Create an online plant shop' ),
 						prompt: __(
 							'Create an eco-friendly website for a plant store that showcases a wide range of beautiful greenery and botanical products. Use a forest green and warm beige palette with natural, earthy, calming visuals. Write nurturing, informative, organic copy that builds trust and inspires mindful living. Use a nature-inspired script like Mollani or a clean, friendly sans-serif like Plantae. Design a fresh, minimal layout that feels grounded and vibrant.',
@@ -259,6 +272,8 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 						),
 					},
 					{
+						id: 'sell_handmade_jewelry',
+						labelEn: 'Sell handmade jewelry',
 						label: __( 'Sell handmade jewelry' ),
 						prompt: __(
 							'Create an elegant eCommerce website for a handmade, one-of-a-kind jewelry store focused on driving online purchases. Use a deep brown and metallic gold palette with rustic, intricate, refined visuals. Write personal, inviting, and distinctive copy that highlights craftsmanship and authenticity. Use a delicate script like Parisienne or a sophisticated serif like Cormorant Garamond. Feature rich product imagery, warm storytelling, and clear purchase CTAs.',
@@ -266,6 +281,8 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 						),
 					},
 					{
+						id: 'rent_out_photography_equipment',
+						labelEn: 'Rent out photography equipment',
 						label: __( 'Rent out photography equipment' ),
 						prompt: __(
 							'Create a high-tech, modern photography equipment rental website with a sleek, minimalist, futuristic aesthetic. Use charcoal gray, black, white, cool blue, and electric yellow/green accents. Apply informative, precise copy and clean, technical fonts like Kyrial Sans Pro or Zyphor. Design the site to encourage users to rent equipment.',

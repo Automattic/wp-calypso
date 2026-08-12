@@ -16,6 +16,8 @@ export const VEGA_AGENT_ID = 'vega-site-spec';
 function getVegaPrimaryChips() {
 	return [
 		{
+			id: 'share_my_art',
+			labelEn: 'Share my art',
 			label: __( 'Share my art', 'site-spec' ),
 			prompt: __(
 				'Share my art online. I want a place where people can see my work, get a feel for my style, and reach out if they want to buy or commission something.',
@@ -23,6 +25,8 @@ function getVegaPrimaryChips() {
 			),
 		},
 		{
+			id: 'get_new_clients',
+			labelEn: 'Get new clients',
 			label: __( 'Get new clients', 'site-spec' ),
 			prompt: __(
 				'Get new clients. I want a site that explains what I do, shows the kind of work I’ve done, and makes it easy for the right people to get in touch.',
@@ -30,6 +34,8 @@ function getVegaPrimaryChips() {
 			),
 		},
 		{
+			id: 'attract_locals',
+			labelEn: 'Attract locals',
 			label: __( 'Attract locals', 'site-spec' ),
 			prompt: __(
 				'Attract locals. I want a site that shows what we do, when we’re open, where to find us, and gets people excited to come by — with a simple way to reach out or book if they need to.',
@@ -37,6 +43,8 @@ function getVegaPrimaryChips() {
 			),
 		},
 		{
+			id: 'grow_an_audience_for_my_writing',
+			labelEn: 'Grow an audience for my writing',
 			label: __( 'Grow an audience for my writing', 'site-spec' ),
 			prompt: __(
 				'Grow an audience for my writing. I want a home for my posts, a way for readers to subscribe, and a short intro so visitors know whose work they’re reading.',
@@ -44,6 +52,8 @@ function getVegaPrimaryChips() {
 			),
 		},
 		{
+			id: 'tell_the_story_of_my_cause',
+			labelEn: 'Tell the story of my cause',
 			label: __( 'Tell the story of my cause', 'site-spec' ),
 			prompt: __(
 				'Tell the story of my cause — what I stand for, the change I am trying to make, and the ways people can help or get involved.',
@@ -51,6 +61,8 @@ function getVegaPrimaryChips() {
 			),
 		},
 		{
+			id: 'keep_a_creative_outlet',
+			labelEn: 'Keep a creative outlet',
 			label: __( 'Keep a creative outlet', 'site-spec' ),
 			prompt: __(
 				'Keep a creative outlet. I’d like a low-pressure home for whatever I’m working on — notes, photos, side projects — somewhere that feels like mine.',
@@ -58,6 +70,8 @@ function getVegaPrimaryChips() {
 			),
 		},
 		{
+			id: 'be_findable_online',
+			labelEn: 'Be findable online',
 			label: __( 'Be findable online', 'site-spec' ),
 			prompt: __(
 				'Be findable online. I want a simple page that says who I am, what I do, and how to get in touch, so the right people can find me when they search.',
