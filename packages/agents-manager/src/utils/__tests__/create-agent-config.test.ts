@@ -214,6 +214,43 @@ describe( 'createAgentConfig', () => {
 		);
 	} );
 
+	it( 'forwards the provider client-state adapter to Agenttic', async () => {
+		const clientStateDataPartAdapter = jest.fn( () => ( { quota: 'exhausted' } ) );
+		const config = ( await createAgentConfig( {
+			sessionId: 'session-1',
+			clientStateDataPartAdapter,
+		} ) ) as { clientStateDataPartAdapter?: typeof clientStateDataPartAdapter };
+
+		expect( config.clientStateDataPartAdapter ).toBe( clientStateDataPartAdapter );
+	} );
+
+	it( 'uses the dedicated Jetpack endpoint for a server-metered editor site', async () => {
+		setAgentsManagerData( { jetpackAiMeteringEnabled: true } );
+
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			agentId: 'wp-orchestrator',
+			environment: 'gutenberg',
+		} );
+
+		expect( config.agentUrl ).toBe( 'https://public-api.wordpress.com/wpcom/v2/ai/jetpack-agent' );
+	} );
+
+	it.each( [
+		[ 'a non-editor surface', 'wp-admin', true ],
+		[ 'an unmetered editor site', 'gutenberg', false ],
+	] )( 'keeps the shared Agent endpoint for %s', async ( _label, environment, meteringEnabled ) => {
+		setAgentsManagerData( { jetpackAiMeteringEnabled: meteringEnabled } );
+
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			agentId: 'wp-orchestrator',
+			environment,
+		} );
+
+		expect( config.agentUrl ).toBe( 'https://public-api.wordpress.com/wpcom/v2/ai/agent' );
+	} );
+
 	it( 'merges site editor actions into default client context', async () => {
 		setSiteEditorAction( 'colorPickerItemSelected', 'Ruby' );
 

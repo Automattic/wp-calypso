@@ -3,8 +3,6 @@ import ChatResponseRenderedTracker, {
 	createChatResponseActionCallback,
 } from '../components/chat-response-tracking';
 import { EscalationButton } from '../components/escalation-button';
-import isAmAbilitiesDisabled from './is-am-abilities-disabled';
-import lazyComponent from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
 import {
 	APPLY_BLOCK_EDITS_TOOL_ID,
@@ -14,7 +12,6 @@ import {
 	isDisplayableToolMessageTool,
 } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
-import type { ShowComponentType } from '../abilities/show-component';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 export interface AgentsManagerUIMessage extends UIMessage {
@@ -24,33 +21,10 @@ export interface AgentsManagerUIMessage extends UIMessage {
 	suppressThinking?: boolean;
 }
 
-// AM-owned components by `ShowComponentType`. These take precedence over
-// provider components — AM is the single source of truth for each migrated type.
-//
-// The pickers carry the block-editor preview stack, so they load on demand:
-// a picker row fetches its chunk when it first renders, and other chats never
-// download it.
-const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
-	'button-picker': lazyComponent(
-		() => import( /* webpackChunkName: "am-button-picker" */ '../components/button-picker' )
-	),
-	'color-picker': lazyComponent(
-		() => import( /* webpackChunkName: "am-color-picker" */ '../components/color-picker' )
-	),
-	'font-picker': lazyComponent(
-		() => import( /* webpackChunkName: "am-font-picker" */ '../components/font-picker' )
-	),
-};
-
-function getAmComponent( type: string ): React.ComponentType | null {
-	// Own-property check so degenerate types (e.g. `toString`) can't resolve
-	// to `Object.prototype` members.
-	return Object.hasOwn( AM_COMPONENTS, type ) ? AM_COMPONENTS[ type as ShowComponentType ] : null;
-}
-
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
+	getAmChatComponent?: GetChatComponent;
 	currentPostId?: number | string;
 }
 
@@ -220,6 +194,7 @@ function followsTerminalApplyBlockEditsOutcome(
 export default function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
+	getAmChatComponent,
 	currentPostId,
 }: Options ): AgentsManagerUIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
@@ -295,7 +270,7 @@ export default function convertToolMessagesToComponents( {
 					: undefined;
 			// The testing switch flips rendering to the provider components too,
 			// so the comparison covers the whole flow.
-			const amComponent = isAmAbilitiesDisabled() ? null : getAmComponent( contentType );
+			const amComponent = getAmChatComponent?.( contentType );
 			// AM components take precedence; other types resolve through the external
 			// providers (e.g. jetpack-ai-sidebar's title pickers) via `getChatComponent`.
 			const Component = amComponent ?? getChatComponent?.( contentType );

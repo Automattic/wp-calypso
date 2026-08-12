@@ -18,6 +18,8 @@ import {
 	getEmptyViewSuggestions,
 	useSuggestions,
 	useCheckpoint,
+	useSubmissionAdmission,
+	jetpackAiClientStateDataPartAdapter,
 	capabilities,
 	registerBlockEditorFilters,
 } from '@automattic/jetpack-ai-sidebar';
@@ -36,5 +38,7 @@ window.__JetpackAIProvider = {
 	getEmptyViewSuggestions,
 	useSuggestions,
 	useCheckpoint,
+	useSubmissionAdmission,
+	clientStateDataPartAdapter: jetpackAiClientStateDataPartAdapter,
 	capabilities,
 };

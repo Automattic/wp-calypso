@@ -14,21 +14,22 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
 import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
-import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import lazyComponent from '../../utils/lazy-component';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
-import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
+import ChatHeaderView, { type Options as ChatHeaderOptions } from '../chat-header/view';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
+import { AgentticContainer } from './agenttic-container-adapter';
 import getSuggestionClickPayload from './get-suggestion-click-payload';
 import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
+import type { SubmissionAdmission } from '../../utils/load-external-providers';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
 import type { ComponentProps, RefObject } from 'react';
 
@@ -108,6 +109,10 @@ interface Props {
 	onContextCardAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
 	/** Called when a context card's dismiss button is clicked. */
 	onContextCardDismiss?: ( card: ExternalContextCard ) => void;
+	/** Provider-owned quota admission state and optional compose-area notice. */
+	submissionAdmission?: SubmissionAdmission;
+	/** Whether the host has a separate button that can reopen a closed chat. */
+	hasAiChatEntry?: boolean;
 }
 
 // Carries the block-editor stack, so it loads on demand — and only on editor
@@ -189,6 +194,8 @@ export default function AgentChat( {
 	complianceDisclosure,
 	onContextCardAction,
 	onContextCardDismiss,
+	submissionAdmission,
+	hasAiChatEntry = false,
 }: Props ) {
 	const conversationViewRef = useRef< HTMLDivElement >( null );
 	const imageUploaderRef = useRef< ImageUploaderHandle >( null );
@@ -223,7 +230,7 @@ export default function AgentChat( {
 	);
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
-	let floatingChatState: ChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
+	let floatingChatState: ChatState = hasAiChatEntry ? 'minimized' : 'collapsed';
 	if ( isOpen ) {
 		floatingChatState = 'expanded';
 	} else if ( isCompactMode ) {
@@ -289,7 +296,7 @@ export default function AgentChat( {
 	}, [ trackImageUpload ] );
 
 	return (
-		<AgentUI.Container
+		<AgentticContainer
 			{ ...floatingPanelProps }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
@@ -297,6 +304,8 @@ export default function AgentChat( {
 			thinkingMessage={ thinkingMessage ?? undefined }
 			error={ error }
 			onSubmit={ onSubmit }
+			submitBlocked={ submissionAdmission?.submitBlocked }
+			onBlockedSubmit={ submissionAdmission?.onBlockedSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			freeDrag={ ! isDocked }
 			resizable={ ! isDocked }
@@ -312,7 +321,7 @@ export default function AgentChat( {
 			onInputChange={ onInputChange }
 			messagesPosition="bottom"
 			expandOnHover={ false }
-			notice={ notice }
+			notice={ submissionAdmission?.notice ?? notice }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
@@ -328,7 +337,12 @@ export default function AgentChat( {
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
-				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
+				<ChatHeaderView
+					onClose={ onClose }
+					options={ chatHeaderOptions }
+					isDocked={ isDocked }
+					hasAiChatEntry={ hasAiChatEntry }
+				/>
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
@@ -380,6 +394,6 @@ export default function AgentChat( {
 					</AgentUI.Footer>
 				) }
 			</AgentUI.ConversationView>
-		</AgentUI.Container>
+		</AgentticContainer>
 	);
 }

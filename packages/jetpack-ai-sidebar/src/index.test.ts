@@ -9,6 +9,7 @@
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, fireEvent, render } from '@testing-library/react';
+import { dispatch } from '@wordpress/data';
 import React from 'react';
 import AiEditorialReview from './components/ai-editorial-review';
 import ExcerptPicker from './components/excerpt-picker';
@@ -28,9 +29,11 @@ import {
 	getEmptyViewSuggestions,
 	contextProvider,
 	toolProvider,
+	writingOnlyToolProvider,
 	useAbilitiesSetup,
 	useCheckpoint,
 	useSuggestions,
+	useWritingOnlySuggestions,
 } from './index';
 
 Element.prototype.scrollIntoView = jest.fn();
@@ -406,6 +409,18 @@ function feedbackOptionPrompt( optionId: string ): string | undefined {
 	return getEmptyViewSuggestions()
 		.find( ( suggestion ) => suggestion.id === 'get-feedback' )
 		?.options?.find( ( option: { id: string } ) => option.id === optionId )?.value;
+}
+
+function WritingOnlySuggestionsProbe( {
+	onSuggestions,
+}: {
+	onSuggestions: ( suggestions: any[] ) => void;
+} ) {
+	const { suggestions } = useWritingOnlySuggestions();
+	React.useEffect( () => {
+		onSuggestions( suggestions );
+	}, [ onSuggestions, suggestions ] );
+	return null;
 }
 
 function getTracksCalls( eventName: string ) {
@@ -2552,6 +2567,27 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
+	it( 'does not expose Image Studio actions in writing-only mode', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b-image', name: 'core/image', attributes: { id: 10 } };
+		const openImageStudio = jest.fn();
+		jest
+			.mocked( dispatch )
+			.mockImplementationOnce( ( store: string ) =>
+				store === 'image-studio' ? { openImageStudio } : {}
+			);
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( WritingOnlySuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.id ) ).toEqual( [
+			'generate-alt-text',
+		] );
+		expect( openImageStudio ).not.toHaveBeenCalled();
+	} );
+
 	it( 'hides review suggestions when a block is selected and block transformations are disabled', () => {
 		installAiEditorialReviewData( { blockTransformations: false } );
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
@@ -3888,6 +3924,72 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId.length ).toBeGreaterThan( 0 );
 		} );
 	} );
+} );
+
+describe( 'writingOnlyToolProvider', () => {
+	beforeEach( () => {
+		( window as any ).wp = {
+			abilities: {
+				getAbilities: jest
+					.fn()
+					.mockResolvedValue( [
+						{ name: 'jetpack-ai/generate-excerpt' },
+						{ name: 'jetpack-ai/client-forged-writing-tool' },
+						{ name: 'big-sky/update-page' },
+						{ name: 'wpcom/block-editing' },
+						{ name: 'wpcom/rewrite-content' },
+						{ name: 'core/delete-site' },
+					] ),
+				executeAbility: jest.fn(),
+			},
+		};
+	} );
+
+	afterEach( () => {
+		delete ( window as any ).wp;
+	} );
+
+	it( 'advertises only Jetpack writing abilities and the local block-update bridge', async () => {
+		const names = ( await writingOnlyToolProvider.getAbilities() ).map(
+			( ability: any ) => ability.name
+		);
+
+		expect( names ).toEqual(
+			expect.arrayContaining( [
+				'jetpack-ai/generate-excerpt',
+				'jetpack-ai/show-component',
+				'wpcom/update-block-content',
+			] )
+		);
+		expect( names ).not.toContain( 'jetpack-ai/client-forged-writing-tool' );
+		expect( names ).not.toContain( 'big-sky/show-component' );
+		expect( names ).not.toContain( 'big-sky/update-page' );
+		expect( names ).not.toContain( 'wpcom/block-editing' );
+		expect( names ).not.toContain( 'wpcom/rewrite-content' );
+		expect( names ).not.toContain( 'core/delete-site' );
+	} );
+
+	it( 'does not resolve structural editor components through show-component', async () => {
+		await expect(
+			writingOnlyToolProvider.executeAbility( 'jetpack-ai/show-component', {
+				type: 'color-picker',
+			} )
+		).resolves.toMatchObject( {
+			result: { success: false, error: expect.stringContaining( 'no component registered' ) },
+			returnToAgent: false,
+		} );
+		expect( ( window as any ).wp.abilities.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [ 'big-sky/update-page', 'jetpack-ai/client-forged-writing-tool' ] )(
+		'rejects %s outside the writing allowlist',
+		async ( abilityName ) => {
+			await expect( writingOnlyToolProvider.executeAbility( abilityName, {} ) ).rejects.toThrow(
+				'not available in Jetpack AI writing mode'
+			);
+			expect( ( window as any ).wp.abilities.executeAbility ).not.toHaveBeenCalled();
+		}
+	);
 } );
 
 describe( 'useCheckpoint', () => {

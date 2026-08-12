@@ -45,6 +45,7 @@ import ChatResponseRenderedTracker from '../../components/chat-response-tracking
 import ColorPicker from '../../components/color-picker';
 import FontPicker from '../../components/font-picker';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
+import { getAmChatComponent } from '../get-am-chat-component';
 import {
 	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
 	JETPACK_AI_SHOW_COMPONENT_TOOL_ID,
@@ -190,6 +191,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
+			getAmChatComponent,
 		} );
 
 		expect( result ).toHaveLength( 1 );
@@ -231,6 +233,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
+			getAmChatComponent,
 		} );
 
 		expect( getChatComponent ).toHaveBeenCalledWith( 'color-picker' );
@@ -957,6 +960,7 @@ describe( 'convertToolMessagesToComponents', () => {
 
 			const result = convertToolMessagesToComponents( {
 				messages: [ message ],
+				getAmChatComponent,
 			} );
 
 			const content = result[ 0 ].content[ 0 ] as {
@@ -978,6 +982,7 @@ describe( 'convertToolMessagesToComponents', () => {
 
 			const result = convertToolMessagesToComponents( {
 				messages: [ message ],
+				getAmChatComponent,
 			} );
 
 			expect( result[ 0 ].content[ 0 ].componentProps ).toEqual( {
@@ -1032,6 +1037,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			convertToolMessagesToComponents( {
 				messages: [ message ],
 				getChatComponent,
+				getAmChatComponent,
 			} );
 
 			expect( getChatComponent ).not.toHaveBeenCalled();
