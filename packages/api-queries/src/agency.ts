@@ -118,8 +118,15 @@ export const tipaltiPayeeQuery = ( agencyId: number ) =>
 export const agencyPartnerDirectoryApplicationMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-pd-application-update' },
-		mutationFn: ( update: AgencyPartnerDirectoryApplicationUpdate ) =>
-			updateAgencyPartnerDirectoryApplication( agencyId, update ),
+		mutationFn: async ( update: AgencyPartnerDirectoryApplicationUpdate ) => {
+			const agency = await updateAgencyPartnerDirectoryApplication( agencyId, update );
+			// A 2xx without the saved application means the write didn't take;
+			// surface it as an error instead of reporting success.
+			if ( ! agency?.profile?.partner_directory_application?.status ) {
+				throw new Error( 'The response did not include the saved application.' );
+			}
+			return agency;
+		},
 		onSuccess: ( agency: Agency ) => {
 			// Merge rather than replace: the PUT response may omit fields the
 			// GET provides (e.g. `user.capabilities`), which gate routes and menus.
