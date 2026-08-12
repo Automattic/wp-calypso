@@ -87,8 +87,8 @@ describe( 'SiteGenerationView', () => {
 		expect(
 			getByRole( 'heading', { name: 'We couldn’t finish building your site' } )
 		).toBeVisible();
-		expect( getByText( 'Your brief is saved, so you can safely try again.' ) ).toBeVisible();
-		expect( getByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+		expect( getByText( 'Start a new site brief to try building it again.' ) ).toBeVisible();
+		expect( getByRole( 'button', { name: 'Start over' } ) ).toBeVisible();
 
 		rerender(
 			<SiteGenerationView

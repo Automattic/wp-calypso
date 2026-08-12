@@ -149,9 +149,7 @@ export function pollForBuildProgress( {
 		requestTimeoutMs,
 		onResponse: ( response ) => {
 			reportSafely( () => onProgress( response ) );
-			// Readiness and failure are owned by the build-status poller. These
-			// values only stop progress polling after the final history has been
-			// reported.
+			// Report terminal responses before stopping so consumers can distinguish failure.
 			const status = typeof response.current === 'string' ? response.current : undefined;
 			if ( status && BUILD_TERMINAL_STATUSES.has( status ) ) {
 				return 'stop';

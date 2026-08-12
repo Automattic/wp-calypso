@@ -132,8 +132,8 @@ function ErrorCanvas( {
 
 	if ( failureReason === 'build-failed' ) {
 		title = translate( 'We couldn’t finish building your site' );
-		description = translate( 'Your brief is saved, so you can safely try again.' );
-		actionLabel = translate( 'Try again' );
+		description = translate( 'Start a new site brief to try building it again.' );
+		actionLabel = translate( 'Start over' );
 	} else if ( failureReason === 'timed-out' ) {
 		title = translate( 'This is taking longer than expected' );
 		description = translate( 'Your brief is saved.' );

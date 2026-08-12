@@ -300,6 +300,7 @@ const SiteSpec: StepType = function SiteSpec() {
 					throw new Error( 'Build-wow response is missing the Site Editor URL.' );
 				}
 
+				const ref = queryParams.get( 'ref' );
 				const source = queryParams.get( 'source' );
 				const destination = addQueryArgs( response.site_editor_url, {
 					spec_id: specId,
@@ -321,6 +322,8 @@ const SiteSpec: StepType = function SiteSpec() {
 					siteSlug: buildWowSiteIdentifier,
 					specId,
 					editorUrl: destination,
+					...( ref ? { ref } : {} ),
+					...( source ? { source } : {} ),
 				} );
 			} catch ( error ) {
 				logBuildWowEvent(

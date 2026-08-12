@@ -80,28 +80,30 @@ export function useSiteGeneration( {
 			() => setRuntimeFailureReason( 'timed-out' ),
 			GENERATION_TIMEOUT_MS
 		);
+		const handleBuildFailure = ( status: string ) => {
+			logBuildWowEvent( 'site_generation_failed', {
+				status,
+				site_identifier: siteIdentifier,
+			} );
+			setRuntimeFailureReason( 'build-failed' );
+		};
 		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
 			onReady: () => window.location.assign( editorUrl ),
-			onFailed: ( status ) => {
-				logBuildWowEvent( 'site_generation_failed', {
-					status,
-					site_identifier: siteIdentifier,
-				} );
-				setRuntimeFailureReason( 'build-failed' );
-			},
+			onFailed: handleBuildFailure,
 			onRequestError: ( reason ) =>
 				logBuildWowEvent( 'site_generation_status_request_failed', {
 					site_identifier: siteIdentifier,
 					error: reason,
 				} ),
 		} );
-		// `let` so onProgress below can stop its own poller; the callback only
-		// ever fires after pollForBuildProgress has returned.
-		let stopProgressPolling = () => {};
-		stopProgressPolling = pollForBuildProgress( {
+		const stopProgressPolling = pollForBuildProgress( {
 			siteIdentifier,
 			onProgress: ( response ) => {
+				if ( response.current === 'fail' ) {
+					handleBuildFailure( response.current );
+					return;
+				}
 				const progress = getStepProgress( response, stepIds );
 				if ( progress === null ) {
 					return;
@@ -123,11 +125,6 @@ export function useSiteGeneration( {
 						startedAt: getPlausibleStart( progress.startedAt ),
 					};
 				} );
-				// The last milestone is as far as this poller can advance the UI;
-				// from here readiness comes from the build-status poller alone.
-				if ( progress.stepIndex >= stepIds.length - 1 ) {
-					stopProgressPolling();
-				}
 			},
 		} );
 

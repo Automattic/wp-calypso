@@ -115,6 +115,35 @@ describe( 'useSiteGeneration', () => {
 		} );
 	} );
 
+	it( 'fails when the progress endpoint reports a terminal failure', () => {
+		const stopProgressPolling = jest.fn();
+		const stopStatusPolling = jest.fn();
+		progressPollMock.mockReturnValue( stopProgressPolling );
+		statusPollMock.mockReturnValue( stopStatusPolling );
+
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		const { onProgress } = progressPollMock.mock.calls[ 0 ][ 0 ];
+		act( () => {
+			onProgress( { current: 'fail' } );
+		} );
+
+		expect( result.current.status ).toBe( 'failed' );
+		expect( result.current.failureReason ).toBe( 'build-failed' );
+		expect( logMock ).toHaveBeenCalledWith( 'site_generation_failed', {
+			status: 'fail',
+			site_identifier: '123',
+		} );
+		expect( stopProgressPolling ).toHaveBeenCalled();
+		expect( stopStatusPolling ).toHaveBeenCalled();
+	} );
+
 	it( 'redirects only when the build status poller reports that the site is ready', () => {
 		// The stub is scoped here because this is the only test that asserts on
 		// window.location.assign.
@@ -267,11 +296,13 @@ describe( 'useSiteGeneration', () => {
 		expect( result.current.steps[ 3 ].startedAt ).toBe( 1723032220000 );
 	} );
 
-	it( 'stops progress polling once the last milestone is reached', () => {
+	it( 'keeps polling after the last milestone so a later failure is surfaced', () => {
 		const stopProgressPolling = jest.fn();
+		const stopStatusPolling = jest.fn();
 		progressPollMock.mockReturnValue( stopProgressPolling );
+		statusPollMock.mockReturnValue( stopStatusPolling );
 
-		renderHook( () =>
+		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
 				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
@@ -288,7 +319,14 @@ describe( 'useSiteGeneration', () => {
 		act( () => {
 			onProgress( { current: 'generate' } );
 		} );
+		expect( stopProgressPolling ).not.toHaveBeenCalled();
+
+		act( () => {
+			onProgress( { current: 'fail' } );
+		} );
+		expect( result.current.failureReason ).toBe( 'build-failed' );
 		expect( stopProgressPolling ).toHaveBeenCalled();
+		expect( stopStatusPolling ).toHaveBeenCalled();
 	} );
 
 	it( 'never moves progress backwards when statuses arrive out of order', () => {
