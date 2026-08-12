@@ -255,12 +255,6 @@
 		margin: 0 8px 0 0;
 	}
 
-	.components-checkbox-control__input[type="checkbox"]:checked,
-	.components-checkbox-control__input[type="checkbox"]:indeterminate {
-		background: var(--color-primary-50);
-		border-color: var(--color-primary-50);
-	}
-
 	.components-checkbox-control__input[type="checkbox"]:focus {
 		box-shadow: none;
 		outline: none;
