@@ -858,6 +858,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@automattic/checkout@workspace:packages/checkout":
+  version: 0.0.0-use.local
+  resolution: "@automattic/checkout@workspace:packages/checkout"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    eslint: "npm:^9.0.0"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^6.0.3"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/color-studio@npm:^4.1.0":
   version: 4.1.0
   resolution: "@automattic/color-studio@npm:4.1.0"

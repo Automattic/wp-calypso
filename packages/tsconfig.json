@@ -20,6 +20,7 @@
 		{ "path": "./calypso-paypal" },
 		{ "path": "./calypso-stripe" },
 		{ "path": "./calypso-url" },
+		{ "path": "./checkout" },
 		{ "path": "./posthog" },
 		{ "path": "./components" },
 		{ "path": "./composite-checkout" },
