@@ -134,6 +134,7 @@ export interface PlansFeaturesMainProps {
 	intent?: PlansIntent | null;
 	isInSiteDashboard?: boolean;
 	isInSignup?: boolean;
+	enableClassicPlansEmptyGridRecovery?: boolean;
 	isCustomDomainAllowedOnFreePlan?: boolean;
 	plansWithScroll?: boolean;
 	customerType?: string;
@@ -255,6 +256,7 @@ const PlansFeaturesMain = ( {
 	hideUnavailableFeatures = false,
 	isInSiteDashboard = false,
 	isInSignup = false,
+	enableClassicPlansEmptyGridRecovery = false,
 	isCustomDomainAllowedOnFreePlan = false,
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
@@ -622,6 +624,38 @@ const PlansFeaturesMain = ( {
 	const planFromUpsells = usePlanFromUpsells();
 	const defaultWpcomPlansIntent = useDefaultWpcomPlansIntent();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
+	const [ automaticDefaultPlansRecoveryContext, setAutomaticDefaultPlansRecoveryContext ] =
+		useState< string | null >( null );
+	const currentAutomaticRecoveryContext = useMemo(
+		() =>
+			JSON.stringify( {
+				siteId,
+				intent: intentFromSiteMeta.intent,
+				term,
+				isInSiteDashboard,
+				hideFreePlan,
+				hidePersonalPlan,
+				hidePremiumPlan,
+				hideBusinessPlan,
+				hideEcommercePlan,
+				hideEnterprisePlan,
+			} ),
+		[
+			siteId,
+			intentFromSiteMeta.intent,
+			term,
+			isInSiteDashboard,
+			hideFreePlan,
+			hidePersonalPlan,
+			hidePremiumPlan,
+			hideBusinessPlan,
+			hideEcommercePlan,
+			hideEnterprisePlan,
+		]
+	);
+	const isAutomaticDefaultPlansRecoveryActive =
+		enableClassicPlansEmptyGridRecovery &&
+		automaticDefaultPlansRecoveryContext === currentAutomaticRecoveryContext;
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 	/**
 	 * Keep the `useEffect` here strictly about intent resolution.
@@ -642,11 +676,23 @@ const PlansFeaturesMain = ( {
 			const resolvedIntent = planFromUpsells
 				? defaultWpcomPlansIntent
 				: intentFromProps || intentFromSiteMeta.intent || defaultWpcomPlansIntent;
+			const effectiveIntent =
+				isAutomaticDefaultPlansRecoveryActive &&
+				! intentFromProps &&
+				! planFromUpsells &&
+				intentFromSiteMeta.intent &&
+				intentFromSiteMeta.intent !== defaultWpcomPlansIntent
+					? defaultWpcomPlansIntent
+					: resolvedIntent;
 
 			// Always update intent when intent is not set.
 			// When the escape hatch is used (forceDefaultPlans), do not override with intentFromProps.
-			if ( ! intent || ( ! forceDefaultPlans && intentFromProps !== intent ) ) {
-				setIntent( resolvedIntent );
+			if (
+				! intent ||
+				isAutomaticDefaultPlansRecoveryActive ||
+				( ! forceDefaultPlans && intentFromProps !== intent )
+			) {
+				setIntent( effectiveIntent );
 			}
 		}
 	}, [
@@ -657,6 +703,7 @@ const PlansFeaturesMain = ( {
 		forceDefaultPlans,
 		intentFromSiteMeta.processing,
 		defaultWpcomPlansIntent,
+		isAutomaticDefaultPlansRecoveryActive,
 	] );
 
 	const isDisplayingPlansNeededForFeature =
@@ -922,6 +969,31 @@ const PlansFeaturesMain = ( {
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
+
+	const shouldStartAutomaticDefaultPlansRecovery = Boolean(
+		enableClassicPlansEmptyGridRecovery &&
+			! forceDefaultPlans &&
+			! intentFromProps &&
+			! planFromUpsells &&
+			intentFromSiteMeta.intent &&
+			intentFromSiteMeta.intent !== defaultWpcomPlansIntent &&
+			intent === intentFromSiteMeta.intent &&
+			gridPlansForFeaturesGridRaw !== null &&
+			gridPlansForFeaturesGridRaw.length === 0
+	);
+
+	useEffect( () => {
+		if (
+			shouldStartAutomaticDefaultPlansRecovery &&
+			automaticDefaultPlansRecoveryContext !== currentAutomaticRecoveryContext
+		) {
+			setAutomaticDefaultPlansRecoveryContext( currentAutomaticRecoveryContext );
+		}
+	}, [
+		shouldStartAutomaticDefaultPlansRecovery,
+		automaticDefaultPlansRecoveryContext,
+		currentAutomaticRecoveryContext,
+	] );
 
 	const isIndiaA4A = useIsIndiaA4A();
 
@@ -1223,6 +1295,7 @@ const PlansFeaturesMain = ( {
 
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
+		! shouldStartAutomaticDefaultPlansRecovery &&
 		! resolvedSubdomainName.isLoading &&
 		! isRenewalPricingExperimentLoading &&
 		! isPlansGridRedesignExperimentLoading;

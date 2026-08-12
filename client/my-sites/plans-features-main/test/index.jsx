@@ -3,19 +3,24 @@
  */
 
 jest.mock( 'calypso/components/marketing-message', () => () => null );
-jest.mock( '@automattic/plans-grid-next', () => ( {
-	...jest.requireActual( '@automattic/plans-grid-next' ),
-	FeaturesGrid: ( { gridPlans } ) => (
-		<div data-testid="plan-features">
-			<div data-testid="visible-plans">
-				{ JSON.stringify( gridPlans.map( ( { planSlug } ) => planSlug ) ) }
+jest.mock( '@automattic/plans-grid-next', () => {
+	const actual = jest.requireActual( '@automattic/plans-grid-next' );
+
+	return {
+		...actual,
+		FeaturesGrid: ( { gridPlans } ) => (
+			<div data-testid="plan-features">
+				<div data-testid="visible-plans">
+					{ JSON.stringify( gridPlans.map( ( { planSlug } ) => planSlug ) ) }
+				</div>
 			</div>
-		</div>
-	),
-	PlanTypeSelector: () => <div>PlanTypeSelector</div>,
-	usePlanFeaturesForGridPlans: jest.fn(),
-	useRestructuredPlanFeaturesForComparisonGrid: jest.fn(),
-} ) );
+		),
+		PlanTypeSelector: () => <div>PlanTypeSelector</div>,
+		useGridPlansForFeaturesGrid: jest.fn( actual.useGridPlansForFeaturesGrid ),
+		usePlanFeaturesForGridPlans: jest.fn(),
+		useRestructuredPlanFeaturesForComparisonGrid: jest.fn(),
+	};
+} );
 jest.mock( '../hooks/use-plan-intent-from-site-meta', () => jest.fn() );
 jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( {
 	wpcomFreeDomainSuggestion: { isLoading: false, result: { domain_name: 'suggestion.com' } },
@@ -78,7 +83,9 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { screen } from '@testing-library/react';
+import { useGridPlansForFeaturesGrid } from '@automattic/plans-grid-next';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -114,6 +121,7 @@ describe( 'PlansFeaturesMain', () => {
 			data: emptyPlansIndexForMockedFeatures,
 		} ) );
 		Plans.usePricingMetaForGridPlans.mockImplementation( () => emptyPlansIndexForMockedFeatures );
+		Plans.useCurrentPlan.mockReturnValue( undefined );
 		usePlansGridRedesignExperiment.mockImplementation( () => ( {
 			isLoading: false,
 			variant: 'control',
@@ -123,6 +131,9 @@ describe( 'PlansFeaturesMain', () => {
 			showWooCommerceBottomCard: false,
 			isExperimentEligible: false,
 		} ) );
+		useGridPlansForFeaturesGrid.mockImplementation(
+			jest.requireActual( '@automattic/plans-grid-next' ).useGridPlansForFeaturesGrid
+		);
 	} );
 
 	describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
@@ -155,6 +166,213 @@ describe( 'PlansFeaturesMain', () => {
 			renderWithProvider( <PlansFeaturesMain { ...props } /> );
 			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
 				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] )
+			);
+		} );
+
+		test( 'recovers an empty Newsletter site-meta grid with default plans when enabled', () => {
+			useIntentFromSiteMeta.mockImplementation( () => ( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} ) );
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...props }
+					enableClassicPlansEmptyGridRecovery
+					hideFreePlan
+					hidePersonalPlan
+					hidePremiumPlan
+				/>
+			);
+
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )
+			);
+		} );
+
+		test( 'recovers a Newsletter site on Commerce to Commerce and Enterprise', () => {
+			useIntentFromSiteMeta.mockReturnValue( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} );
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...props }
+					enableClassicPlansEmptyGridRecovery
+					hideFreePlan
+					hidePersonalPlan
+					hidePremiumPlan
+					hideBusinessPlan
+				/>
+			);
+
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [ PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )
+			);
+		} );
+
+		test( 'keeps a viable Newsletter Premium grid in the legacy layout', () => {
+			useIntentFromSiteMeta.mockReturnValue( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} );
+			Plans.useCurrentPlan.mockReturnValue( {
+				planSlug: PLAN_PREMIUM,
+				productSlug: PLAN_PREMIUM,
+			} );
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...props }
+					enableClassicPlansEmptyGridRecovery
+					hideFreePlan
+					hidePersonalPlan
+				/>
+			);
+
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [ PLAN_PREMIUM ] )
+			);
+		} );
+
+		test( 'recovers when the untangled layout removes the current Newsletter Premium plan', () => {
+			useIntentFromSiteMeta.mockReturnValue( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} );
+			Plans.useCurrentPlan.mockReturnValue( {
+				planSlug: PLAN_PREMIUM,
+				productSlug: PLAN_PREMIUM,
+			} );
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...props }
+					enableClassicPlansEmptyGridRecovery
+					isInSiteDashboard
+					hideFreePlan
+					hidePersonalPlan
+				/>
+			);
+
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )
+			);
+		} );
+
+		test( 'does not recover an explicit intent when site metadata is also present', () => {
+			useIntentFromSiteMeta.mockReturnValue( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} );
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...props }
+					enableClassicPlansEmptyGridRecovery
+					intent="plans-newsletter"
+					hideFreePlan
+					hidePersonalPlan
+					hidePremiumPlan
+				/>
+			);
+
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent( '[]' );
+		} );
+
+		test( 'does not recover an empty site-meta grid without the classic opt-in', () => {
+			useIntentFromSiteMeta.mockReturnValue( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} );
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } hideFreePlan hidePersonalPlan hidePremiumPlan />
+			);
+
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent( '[]' );
+		} );
+
+		test( 'does not recover while the tailored grid is loading', () => {
+			const observedIntents = [];
+			useIntentFromSiteMeta.mockReturnValue( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} );
+			useGridPlansForFeaturesGrid.mockImplementation( ( { intent } ) => {
+				observedIntents.push( intent );
+				return null;
+			} );
+			const onReady = jest.fn();
+
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } enableClassicPlansEmptyGridRecovery onReady={ onReady } />
+			);
+
+			expect( screen.queryByTestId( 'plan-features' ) ).not.toBeInTheDocument();
+			expect( onReady ).not.toHaveBeenCalled();
+			expect( observedIntents ).not.toContain( 'plans-default-wpcom' );
+		} );
+
+		test( 'keeps the empty tailored pass unready until recovered plans load', async () => {
+			let recoveredPlansLoaded = false;
+			useIntentFromSiteMeta.mockReturnValue( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} );
+			useGridPlansForFeaturesGrid.mockImplementation( ( { intent } ) => {
+				if ( intent === 'plans-newsletter' ) {
+					return [];
+				}
+				if ( intent === 'plans-default-wpcom' && ! recoveredPlansLoaded ) {
+					return null;
+				}
+				return [
+					{ planSlug: PLAN_BUSINESS },
+					{ planSlug: PLAN_ECOMMERCE },
+					{ planSlug: PLAN_ENTERPRISE_GRID_WPCOM },
+				];
+			} );
+			const onReady = jest.fn();
+			const renderSiblingWhenLoaded = jest.fn( () => <div data-testid="loaded-sibling" /> );
+			const component = (
+				<PlansFeaturesMain
+					{ ...props }
+					enableClassicPlansEmptyGridRecovery
+					onReady={ onReady }
+					renderSiblingWhenLoaded={ renderSiblingWhenLoaded }
+				/>
+			);
+			const { rerender } = renderWithProvider( component );
+
+			expect( screen.queryByTestId( 'plan-features' ) ).not.toBeInTheDocument();
+			expect( screen.queryByTestId( 'loaded-sibling' ) ).not.toBeInTheDocument();
+			expect( onReady ).not.toHaveBeenCalled();
+
+			recoveredPlansLoaded = true;
+			rerender( component );
+
+			await waitFor( () => expect( screen.getByTestId( 'plan-features' ) ).toBeVisible() );
+			expect( screen.getByTestId( 'loaded-sibling' ) ).toBeVisible();
+			expect( onReady ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'keeps the manual View all plans action independent', async () => {
+			const user = userEvent.setup();
+			useIntentFromSiteMeta.mockReturnValue( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} );
+			renderWithProvider( <PlansFeaturesMain { ...props } enableClassicPlansEmptyGridRecovery /> );
+
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] )
+			);
+			await user.click( screen.getByRole( 'button', { name: 'View all plans' } ) );
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [
+					PLAN_FREE,
+					PLAN_PERSONAL,
+					PLAN_PREMIUM,
+					PLAN_BUSINESS,
+					PLAN_ECOMMERCE,
+					PLAN_ENTERPRISE_GRID_WPCOM,
+				] )
 			);
 		} );
 
