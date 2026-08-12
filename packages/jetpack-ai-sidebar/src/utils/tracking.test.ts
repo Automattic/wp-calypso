@@ -13,6 +13,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import {
 	getResponseRenderedTrackingProperties,
+	trackJetpackAiUpgrade,
 	trackSplitScreenGuideClick,
 	trackSplitScreenGuideRendered,
 } from './tracking';
@@ -163,9 +164,9 @@ describe( 'Jetpack AI sidebar tracking', () => {
 				session_type: 'paid-user-session',
 			}
 		);
-		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
-			allowPostType: true,
-		} );
+			expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
+				allowPostType: true,
+			} );
 	} );
 
 	it( 'uses the server-provided Automattician tracking value', () => {
@@ -200,6 +201,36 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		trackSplitScreenGuideClick( { componentType: 'proofread' } );
 
 		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'blog_id' );
+	} );
+
+	it( 'tracks Jetpack AI upgrade navigation in the shared product funnel', () => {
+		trackJetpackAiUpgrade( {
+			placement: 'jetpack-ai-sidebar-quota-notice',
+			requestsCount: 20,
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith( 'jetpack_ai_upgrade_button', {
+			blog_id: 12345,
+			is_a11n: false,
+			placement: 'jetpack-ai-sidebar-quota-notice',
+			requests_count: 20,
+			sessionid: 'test-session-id',
+		} );
+		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
+	} );
+
+	it( 'omits the request count when the server does not provide it', () => {
+		trackJetpackAiUpgrade( {
+			placement: 'jetpack-ai-sidebar-blocked-submit',
+			requestsCount: null,
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith( 'jetpack_ai_upgrade_button', {
+			blog_id: 12345,
+			is_a11n: false,
+			placement: 'jetpack-ai-sidebar-blocked-submit',
+			sessionid: 'test-session-id',
+		} );
 	} );
 
 	it( 'uses Agents Manager test and Big Sky free-trial and screen context', () => {

@@ -12,11 +12,16 @@ import {
 	normalizeJetpackAiQuota,
 	useSubmissionAdmission,
 } from './metering';
+import { trackJetpackAiUpgrade } from './utils/tracking';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 jest.mock( '@wordpress/api-fetch', () => jest.fn() );
+jest.mock( './utils/tracking', () => ( {
+	trackJetpackAiUpgrade: jest.fn(),
+} ) );
 
 const mockApiFetch = jest.mocked( apiFetch );
+const mockTrackJetpackAiUpgrade = jest.mocked( trackJetpackAiUpgrade );
 
 function setAgentsManagerData( value: unknown ): void {
 	Object.defineProperty( globalThis, 'agentsManagerData', {
@@ -36,7 +41,7 @@ const canonicalQuota = {
 	exhausted: true,
 	upgrade: {
 		kind: 'jetpack-ai' as const,
-		url: 'https://wordpress.com/jetpack/ai/upgrade',
+		url: 'https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
 	},
 };
 
@@ -44,6 +49,7 @@ describe( 'Jetpack AI quota normalization', () => {
 	beforeEach( () => {
 		Reflect.deleteProperty( globalThis, 'agentsManagerData' );
 		mockApiFetch.mockReset();
+		mockTrackJetpackAiUpgrade.mockReset();
 	} );
 
 	it( 'treats metered:false as authoritative even if exhausted is also true', () => {
@@ -166,6 +172,8 @@ describe( 'useSubmissionAdmission', () => {
 	beforeEach( () => {
 		Reflect.deleteProperty( globalThis, 'agentsManagerData' );
 		mockApiFetch.mockReset();
+		mockTrackJetpackAiUpgrade.mockReset();
+		window.history.replaceState( null, '', '/' );
 	} );
 
 	it( 'does not block an explicitly unmetered WordPress.com plan', () => {
@@ -183,6 +191,7 @@ describe( 'useSubmissionAdmission', () => {
 
 		expect( result.current.submitBlocked ).toBe( false );
 		expect( result.current.notice ).toBeUndefined();
+		expect( mockTrackJetpackAiUpgrade ).not.toHaveBeenCalled();
 	} );
 
 	it( 'ignores stale Jetpack quota when the server selects the full WordPress Agent', () => {
@@ -204,10 +213,13 @@ describe( 'useSubmissionAdmission', () => {
 		expect( mockApiFetch ).not.toHaveBeenCalled();
 	} );
 
-	it( 'keeps the exact exhausted notice visible and routes blocked intent to its upgrade action', () => {
+	it( 'tracks upgrade navigation through the shared notice and blocked-submit action', () => {
 		setAgentsManagerData( {
 			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: canonicalQuota,
+			jetpackAiQuota: {
+				...canonicalQuota,
+				upgrade: { kind: 'jetpack-ai', url: '#upgrade' },
+			},
 		} );
 		const { result } = renderHook( () => useSubmissionAdmission( { messages: [], error: null } ) );
 
@@ -218,7 +230,37 @@ describe( 'useSubmissionAdmission', () => {
 			dismissible: false,
 			action: { label: 'Upgrade' },
 		} );
-		expect( result.current.notice?.action?.onClick ).toBe( result.current.onBlockedSubmit );
+		result.current.notice?.action?.onClick();
+		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledWith( {
+			placement: 'jetpack-ai-sidebar-quota-notice',
+			requestsCount: 20,
+		} );
+		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledTimes( 1 );
+
+		mockTrackJetpackAiUpgrade.mockClear();
+		result.current.onBlockedSubmit();
+		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledWith( {
+			placement: 'jetpack-ai-sidebar-blocked-submit',
+			requestsCount: 20,
+		} );
+		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'still opens checkout when Tracks fails', () => {
+		setAgentsManagerData( {
+			jetpackAiMeteringEnabled: true,
+			jetpackAiQuota: {
+				...canonicalQuota,
+				upgrade: { kind: 'jetpack-ai', url: '#upgrade' },
+			},
+		} );
+		mockTrackJetpackAiUpgrade.mockImplementationOnce( () => {
+			throw new Error( 'Tracks unavailable' );
+		} );
+		const { result } = renderHook( () => useSubmissionAdmission( { messages: [], error: null } ) );
+
+		expect( () => result.current.notice?.action?.onClick() ).not.toThrow();
+		expect( window.location.hash ).toBe( '#upgrade' );
 	} );
 
 	it( 'shows remaining free credits and Upgrade from the server-provided initial state', () => {

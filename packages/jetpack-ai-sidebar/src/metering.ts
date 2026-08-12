@@ -1,6 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { trackJetpackAiUpgrade } from './utils/tracking';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 export const JETPACK_AI_QUOTA_EXHAUSTED_CODE = 'jetpack_ai_quota_exhausted';
@@ -432,20 +433,36 @@ export function useSubmissionAdmission( {
 	}
 
 	const submitBlocked = currentQuota?.metered === true && currentQuota.exhausted === true;
-	const onUpgrade = useCallback( () => {
-		if ( currentQuota?.upgrade ) {
+	const navigateToUpgrade = useCallback(
+		( placement: 'jetpack-ai-sidebar-quota-notice' | 'jetpack-ai-sidebar-blocked-submit' ) => {
+			if ( ! currentQuota?.upgrade ) {
+				return;
+			}
+
+			try {
+				trackJetpackAiUpgrade( { placement, requestsCount: currentQuota.used } );
+			} catch {
+				// Analytics must never block the user from reaching checkout.
+			}
 			openJetpackAiUpgrade( currentQuota.upgrade );
-		}
-	}, [ currentQuota?.upgrade ] );
+		},
+		[ currentQuota?.upgrade, currentQuota?.used ]
+	);
+	const onUpgradeClick = useCallback( () => {
+		navigateToUpgrade( 'jetpack-ai-sidebar-quota-notice' );
+	}, [ navigateToUpgrade ] );
+	const onBlockedSubmit = useCallback( () => {
+		navigateToUpgrade( 'jetpack-ai-sidebar-blocked-submit' );
+	}, [ navigateToUpgrade ] );
 
 	if ( ! currentQuota || currentQuota.metered === false ) {
-		return { submitBlocked: false, onBlockedSubmit: onUpgrade, refreshAfterTurn };
+		return { submitBlocked: false, onBlockedSubmit, refreshAfterTurn };
 	}
 
 	const action = currentQuota.upgrade
 		? {
 				label: __( 'Upgrade', __i18n_text_domain__ ),
-				onClick: onUpgrade,
+				onClick: onUpgradeClick,
 		  }
 		: undefined;
 	let notice: JetpackAiSubmissionAdmission[ 'notice' ];
@@ -482,7 +499,7 @@ export function useSubmissionAdmission( {
 
 	return {
 		submitBlocked,
-		onBlockedSubmit: onUpgrade,
+		onBlockedSubmit,
 		refreshAfterTurn,
 		notice,
 	};
