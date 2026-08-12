@@ -76,7 +76,8 @@ function handleMenuClick(
 					location: 'help-center',
 					section: 'dashboard',
 				},
-				[ [ 'omnibar', omnibarSiteId ] ]
+				'omnibar',
+				omnibarSiteId
 			)
 		);
 		closeAgentsManagerChat();
@@ -95,7 +96,8 @@ function handleMenuClick(
 				section: 'dashboard',
 				destination,
 			},
-			[ [ 'omnibar', omnibarSiteId ] ]
+			'omnibar',
+			omnibarSiteId
 		)
 	);
 }

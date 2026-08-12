@@ -39,14 +39,10 @@ function initHelpCenterTracking() {
 					location: 'help-center',
 					section: 'wp-admin',
 				},
-				[
-					[
-						'agents_manager_data',
-						typeof agentsManagerData !== 'undefined' && agentsManagerData?.isWpcomPlatform === true
-							? agentsManagerData?.site?.ID
-							: undefined,
-					],
-				]
+				'agents_manager_data',
+				typeof agentsManagerData !== 'undefined' && agentsManagerData?.isWpcomPlatform === true
+					? agentsManagerData?.site?.ID
+					: undefined
 			)
 		);
 	} );

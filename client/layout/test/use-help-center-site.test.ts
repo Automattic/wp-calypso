@@ -51,6 +51,7 @@ describe( 'useHelpCenterSite', () => {
 		const { result } = renderHookWithProvider( () => useHelpCenterSite() );
 
 		expect( result.current.site ).toBe( selectedSite );
+		expect( result.current.siteContextSource ).toBe( 'calypso_selected_site' );
 	} );
 
 	it( 'falls back to URL-param site before primary site', () => {
@@ -63,6 +64,7 @@ describe( 'useHelpCenterSite', () => {
 
 		expect( result.current.site ).toBe( urlParamSite );
 		expect( result.current.urlParamSite ).toBe( urlParamSite );
+		expect( result.current.siteContextSource ).toBe( 'calypso_url_param_site' );
 	} );
 
 	it( 'falls back to primary site', () => {
@@ -72,9 +74,10 @@ describe( 'useHelpCenterSite', () => {
 		const { result } = renderHookWithProvider( () => useHelpCenterSite() );
 
 		expect( result.current.site ).toBe( primarySite );
+		expect( result.current.siteContextSource ).toBe( 'calypso_primary_site' );
 	} );
 
-	it( 'reports the candidates in the same priority as the resolved site', () => {
+	it( 'names the source of the site it resolved', () => {
 		window.history.replaceState( {}, '', '/?siteId=2' );
 		mockGetSelectedSite.mockReturnValue( selectedSite );
 		mockGetSite.mockReturnValue( urlParamSite );
@@ -83,16 +86,14 @@ describe( 'useHelpCenterSite', () => {
 
 		const { result } = renderHookWithProvider( () => useHelpCenterSite() );
 
-		expect( result.current.siteCandidates ).toEqual( [
-			[ 'calypso_selected_site', 1 ],
-			[ 'calypso_url_param_site', 2 ],
-			[ 'calypso_primary_site', 3 ],
-		] );
+		expect( result.current.site ).toBe( selectedSite );
+		expect( result.current.siteContextSource ).toBe( 'calypso_selected_site' );
 	} );
 
-	it( 'returns no site when no candidate resolves', () => {
+	it( 'returns no site, and no source, when nothing resolves', () => {
 		const { result } = renderHookWithProvider( () => useHelpCenterSite() );
 
 		expect( result.current.site ).toBeNull();
+		expect( result.current.siteContextSource ).toBe( 'none' );
 	} );
 } );
