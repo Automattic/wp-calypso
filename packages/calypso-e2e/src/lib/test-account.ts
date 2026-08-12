@@ -83,8 +83,11 @@ export class TestAccount {
 	 *
 	 * `Promise.any` resolves on the first shell to appear and rejects only if both
 	 * fail, so a broken login still surfaces as a failure. Neither branch is gated
-	 * on the `load` event here: the dashboard branch settles as soon as its main
-	 * landmark is in the DOM, and the classic branch waits for `load` itself.
+	 * on the `load` event here: the dashboard branch settles as soon as its sidebar
+	 * is in the DOM, and the classic branch waits for `load` itself.
+	 *
+	 * The dashboard branch waits for `attached` rather than `visible` because the
+	 * sidebar is rendered off-canvas below the `medium` breakpoint.
 	 *
 	 * @param {Page} page Page object.
 	 */
@@ -92,7 +95,9 @@ export class TestAccount {
 		try {
 			await Promise.any( [
 				new SidebarComponent( page ).waitForSidebarInitialization(),
-				page.getByRole( 'main' ).waitFor( { timeout: 20 * 1000 } ),
+				page
+					.locator( '.dashboard-sidebar-navigator' )
+					.waitFor( { state: 'attached', timeout: 20 * 1000 } ),
 			] );
 		} catch {
 			throw new Error(
