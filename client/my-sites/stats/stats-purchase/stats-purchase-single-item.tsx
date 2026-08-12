@@ -41,6 +41,12 @@ interface StatsCommercialPurchaseProps {
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
+	/**
+	 * Replaces what "I will do it later" does. The default returns to the site's own dashboard and
+	 * records the dismissal server-side, neither of which a site with no WordPress.com connection
+	 * can do.
+	 */
+	onPostpone?: () => void;
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -210,6 +216,7 @@ const StatsCommercialPurchase = ( {
 	from,
 	adminUrl,
 	redirectUri,
+	onPostpone,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -266,6 +273,11 @@ const StatsCommercialPurchase = ( {
 			blog_id: siteId,
 			from,
 		} );
+
+		if ( onPostpone ) {
+			onPostpone();
+			return;
+		}
 
 		// Skipping is the visitor's plan decision — made on a page that shows the full
 		// paid pitch — so the pricing grid mustn't take over the dashboard afterwards,
@@ -492,4 +504,10 @@ const StatsSingleItemPagePurchase = ( {
 	);
 };
 
-export { StatsSingleItemPagePurchase, StatsSingleItemPersonalPurchasePage };
+export {
+	StatsSingleItemPagePurchase,
+	StatsSingleItemPersonalPurchasePage,
+	// Exported for Odyssey's pre-connection screen, which composes the same commercial pitch into
+	// its own frame rather than the site-scoped purchase page.
+	StatsCommercialPurchase,
+};
