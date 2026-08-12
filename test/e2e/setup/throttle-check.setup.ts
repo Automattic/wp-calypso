@@ -21,7 +21,7 @@ import type { ThrottleId } from '@automattic/calypso-e2e';
 const CHECK_TIMEOUT = 45 * 1000;
 
 setup( 'check active wpcom throttles', async () => {
-	let active: Partial< Record< ThrottleId, number | null > > = {};
+	let active: Partial< Record< ThrottleId, number | null > > | null = null;
 
 	// The requests the lookup makes are bounded one by one, but their sum plus a
 	// worker's startup is close enough to the 120s test timeout to be worth a
@@ -35,6 +35,13 @@ setup( 'check active wpcom throttles', async () => {
 		console.warn( `Could not read the throttles other builds hit: ${ error }` );
 	}
 
+	// Nothing published when the lookup failed: an empty variable is this project
+	// saying it looked and found nothing, and a run that could not look must not
+	// be able to say that.
+	if ( ! active ) {
+		return;
+	}
+
 	for ( const id of THROTTLE_IDS ) {
 		const expiresAtMs = active[ id ];
 		// Empty rather than absent, so a worker reads "checked, not throttled"
@@ -42,8 +49,14 @@ setup( 'check active wpcom throttles', async () => {
 		process.env[ throttleEnvVar( id ) ] = expiresAtMs ? String( expiresAtMs ) : '';
 
 		if ( expiresAtMs ) {
+			// Not "wpcom is throttling": a build carrying the tag whose log went
+			// unread is counted as banned for the documented length from when it
+			// finished, so this is where the ban is assumed to reach, not a number
+			// wpcom stated.
 			console.warn(
-				`wpcom is throttling ${ id } until ${ new Date( expiresAtMs ).toISOString() }.`
+				`Another build hit the ${ id } throttle; treating it as in force until ${ new Date(
+					expiresAtMs
+				).toISOString() }.`
 			);
 		}
 	}
