@@ -23,8 +23,12 @@ const STATS_ADMIN_PATH = 'admin.php?page=stats';
  * Where authorizing returns the visitor to. The marker tells the dashboard's pricing grid that the
  * plan question was already answered here — it cannot be recorded against the site at the time it
  * is asked, since the site has no blog id yet.
+ *
+ * `force_refresh` drops what the site cached while it had no connection. Everything Stats asked
+ * for back then failed for want of a token, and those answers outlive the connection that fixes
+ * them, so without this the dashboard greets a newly connected site with nothing in it.
  */
-const AUTHORIZE_REDIRECT_URI = `${ STATS_ADMIN_PATH }&${ PLAN_CHOSEN_QUERY_ARG }=1`;
+const AUTHORIZE_REDIRECT_URI = `${ STATS_ADMIN_PATH }&${ PLAN_CHOSEN_QUERY_ARG }=1&force_refresh=1`;
 
 /**
  * The plan choice a site sees before it is connected to WordPress.com.
