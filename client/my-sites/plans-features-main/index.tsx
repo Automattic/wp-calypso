@@ -626,9 +626,8 @@ const PlansFeaturesMain = ( {
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
 	const [ automaticDefaultPlansRecoveryContext, setAutomaticDefaultPlansRecoveryContext ] =
 		useState< string | null >( null );
-	const currentAutomaticRecoveryContext = useMemo(
-		() =>
-			JSON.stringify( {
+	const currentAutomaticRecoveryContext = enableClassicPlansEmptyGridRecovery
+		? JSON.stringify( {
 				siteId,
 				sitePlanSlug,
 				intent: intentFromSiteMeta.intent,
@@ -646,30 +645,18 @@ const PlansFeaturesMain = ( {
 				hideBusinessPlan,
 				hideEcommercePlan,
 				hideEnterprisePlan,
-			} ),
-		[
-			siteId,
-			sitePlanSlug,
-			intentFromSiteMeta.intent,
-			term,
-			isInSiteDashboard,
-			isInSignup,
-			resolvedSubdomainName.result,
-			selectedFeature,
-			selectedPlan,
-			planTypeSelector,
-			previousRoute,
-			hideFreePlan,
-			hidePersonalPlan,
-			hidePremiumPlan,
-			hideBusinessPlan,
-			hideEcommercePlan,
-			hideEnterprisePlan,
-		]
-	);
+		  } )
+		: null;
 	const isAutomaticDefaultPlansRecoveryActive =
 		enableClassicPlansEmptyGridRecovery &&
 		automaticDefaultPlansRecoveryContext === currentAutomaticRecoveryContext;
+	const shouldUseAutomaticDefaultIntent = Boolean(
+		isAutomaticDefaultPlansRecoveryActive &&
+			! intentFromProps &&
+			! planFromUpsells &&
+			intentFromSiteMeta.intent &&
+			intentFromSiteMeta.intent !== defaultWpcomPlansIntent
+	);
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 	/**
 	 * Keep the `useEffect` here strictly about intent resolution.
@@ -690,20 +677,15 @@ const PlansFeaturesMain = ( {
 			const resolvedIntent = planFromUpsells
 				? defaultWpcomPlansIntent
 				: intentFromProps || intentFromSiteMeta.intent || defaultWpcomPlansIntent;
-			const effectiveIntent =
-				isAutomaticDefaultPlansRecoveryActive &&
-				! intentFromProps &&
-				! planFromUpsells &&
-				intentFromSiteMeta.intent &&
-				intentFromSiteMeta.intent !== defaultWpcomPlansIntent
-					? defaultWpcomPlansIntent
-					: resolvedIntent;
+			const effectiveIntent = shouldUseAutomaticDefaultIntent
+				? defaultWpcomPlansIntent
+				: resolvedIntent;
 
 			// Always update intent when intent is not set.
 			// When the escape hatch is used (forceDefaultPlans), do not override with intentFromProps.
 			if (
 				! intent ||
-				isAutomaticDefaultPlansRecoveryActive ||
+				shouldUseAutomaticDefaultIntent ||
 				( ! forceDefaultPlans && intentFromProps !== intent )
 			) {
 				setIntent( effectiveIntent );
@@ -717,7 +699,7 @@ const PlansFeaturesMain = ( {
 		forceDefaultPlans,
 		intentFromSiteMeta.processing,
 		defaultWpcomPlansIntent,
-		isAutomaticDefaultPlansRecoveryActive,
+		shouldUseAutomaticDefaultIntent,
 	] );
 
 	const isDisplayingPlansNeededForFeature =
@@ -992,8 +974,7 @@ const PlansFeaturesMain = ( {
 			intentFromSiteMeta.intent &&
 			intentFromSiteMeta.intent !== defaultWpcomPlansIntent &&
 			intent === intentFromSiteMeta.intent &&
-			gridPlansForFeaturesGridRaw !== null &&
-			gridPlansForFeaturesGridRaw.length === 0
+			gridPlansForFeaturesGridRaw?.length === 0
 	);
 
 	useEffect( () => {
@@ -1002,11 +983,13 @@ const PlansFeaturesMain = ( {
 			automaticDefaultPlansRecoveryContext !== currentAutomaticRecoveryContext
 		) {
 			setAutomaticDefaultPlansRecoveryContext( currentAutomaticRecoveryContext );
+			setIntent( defaultWpcomPlansIntent );
 		}
 	}, [
 		shouldStartAutomaticDefaultPlansRecovery,
 		automaticDefaultPlansRecoveryContext,
 		currentAutomaticRecoveryContext,
+		defaultWpcomPlansIntent,
 	] );
 
 	const isIndiaA4A = useIsIndiaA4A();
