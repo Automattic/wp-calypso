@@ -36,6 +36,7 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
+	TransformMessages,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
@@ -59,6 +60,7 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
+	transformMessages?: TransformMessages;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
@@ -74,6 +76,7 @@ export default function AgentDock( {
 	getChatComponent,
 	useSuggestions,
 	siteBuildUtils,
+	transformMessages,
 	useCheckpoint,
 	capabilities,
 }: Props ) {
@@ -403,6 +406,7 @@ export default function AgentDock( {
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
 			siteBuildUtils={ siteBuildUtils }
+			transformMessages={ transformMessages }
 			useCheckpoint={ useCheckpoint }
 			capabilities={ capabilities }
 			isChatInputDisabled={ ! isChatEnabled }
