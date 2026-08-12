@@ -9,13 +9,12 @@ import {
 	type ChatState,
 	type UploadedImage,
 } from '@automattic/agenttic-ui';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
+import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
-import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
@@ -31,7 +30,6 @@ import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
-import type { AgentsManagerSelect } from '@automattic/data-stores';
 import type { ComponentProps, RefObject } from 'react';
 
 interface Props {
@@ -192,14 +190,9 @@ export default function AgentChat( {
 	onContextCardAction,
 	onContextCardDismiss,
 }: Props ) {
-	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
-		useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
 	const imageUploaderRef = useRef< ImageUploaderHandle >( null );
-	const { floatingPosition, freeDragPosition, floatingSize } = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
+	const floatingPanelProps = useFloatingPanelProps();
 
 	const mergedComponents = useMemo(
 		() => ( { a: CustomALink, ...markdownComponents } ),
@@ -297,12 +290,7 @@ export default function AgentChat( {
 
 	return (
 		<AgentUI.Container
-			initialChatPosition={ floatingPosition }
-			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			initialFreeDragPosition={ freeDragPosition ?? undefined }
-			onFreeDragEnd={ setFreeDragPosition }
-			defaultSize={ floatingSize ?? undefined }
-			onResizeEnd={ setFloatingSize }
+			{ ...floatingPanelProps }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
