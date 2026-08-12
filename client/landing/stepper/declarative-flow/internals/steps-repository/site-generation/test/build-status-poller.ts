@@ -53,7 +53,10 @@ describe( 'pollForBuildWowStatus', () => {
 		} );
 
 		await jest.advanceTimersByTimeAsync( 0 );
-		expect( onFailed ).toHaveBeenCalledWith( 'failed:build_wow_theme_activation_failed' );
+		expect( onFailed ).toHaveBeenCalledWith(
+			'failed:build_wow_theme_activation_failed',
+			undefined
+		);
 		expect( onReady ).not.toHaveBeenCalled();
 
 		await jest.advanceTimersByTimeAsync( 5000 );
@@ -370,7 +373,10 @@ describe( 'pollForBuildWowStatus', () => {
 
 		await jest.advanceTimersByTimeAsync( 0 );
 
-		expect( onFailed ).toHaveBeenCalledWith( 'failed:unknown' );
+		expect( onFailed ).toHaveBeenCalledWith( 'failed:unknown', {
+			state: 'failed',
+			can_retry: true,
+		} );
 		await jest.advanceTimersByTimeAsync( 5000 );
 		expect( fetchStatus ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -396,5 +402,30 @@ describe( 'pollForBuildWowStatus', () => {
 
 		expect( onUpdate ).not.toHaveBeenCalled();
 		expect( onReady ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'passes the failed ui block to onFailed', async () => {
+		const failedUi = {
+			state: 'failed',
+			can_retry: true,
+			label: 'We couldn’t finish building your site',
+			detail: 'You can start the build again right away.',
+		};
+		const fetchStatus = jest
+			.fn()
+			.mockResolvedValue( { build_status: 'failed:generation_failed', ui: failedUi } );
+		const onFailed = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady: jest.fn(),
+			onFailed,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+
+		expect( onFailed ).toHaveBeenCalledWith( 'failed:generation_failed', failedUi );
 	} );
 } );

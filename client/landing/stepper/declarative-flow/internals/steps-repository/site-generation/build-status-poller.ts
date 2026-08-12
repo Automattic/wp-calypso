@@ -60,7 +60,7 @@ export function pollForBuildWowStatus( {
 }: {
 	siteIdentifier: string;
 	onReady: () => void;
-	onFailed: ( status: string ) => void;
+	onFailed: ( status: string, ui?: BuildWowUi ) => void;
 	onUpdate?: ( ui: BuildWowUi ) => void;
 	onRequestError?: ( reason: string ) => void;
 	pollIntervalMs?: number;
@@ -81,14 +81,13 @@ export function pollForBuildWowStatus( {
 			// Terminal handling prefers the server's ui verdict; the raw
 			// build_status fallback keeps this working against a backend that
 			// does not send the ui block yet.
-			const status =
-				typeof response.build_status === 'string' ? response.build_status : undefined;
+			const status = typeof response.build_status === 'string' ? response.build_status : undefined;
 			if ( ui?.state === 'ready' || status === BUILD_WOW_LIVE_STATUS ) {
 				onReady();
 				return 'stop';
 			}
 			if ( ui?.state === 'failed' || ( status && isBuildWowFailedStatus( status ) ) ) {
-				onFailed( status ?? 'failed:unknown' );
+				onFailed( status ?? 'failed:unknown', ui );
 				return 'stop';
 			}
 		},
