@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import { getAddSiteDomainUrl } from '../../../utils/domain-url';
-import SiteLaunchCelebrationModal from '../index';
+import SiteLaunchCelebrationModal from '../celebration-modal';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
 const createMockSite = ( options: Partial< Site > = {} ): Site =>

@@ -3,6 +3,16 @@
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/variables";
 
+%launch-modal-card {
+	padding: $grid-unit-10 $grid-unit-20;
+	background-color: $gray-100;
+
+	@include ui-mixins.when-dark-theme {
+		background-color: var( --wp-components-color-gray-200 );
+		color: var( --dashboard__text-color );
+	}
+}
+
 .celebration-modal {
 	.flex-shrink-safe {
 		flex: 1;
@@ -11,13 +21,7 @@
 }
 
 .celebration-modal--content {
-	padding: $grid-unit-10 $grid-unit-20;
-	background-color: $gray-100;
-
-	@include ui-mixins.when-dark-theme {
-		background-color: var( --wp-components-color-gray-200 );
-		color: var( --dashboard__text-color );
-	}
+	@extend %launch-modal-card;
 
 	a {
 		color: inherit;
@@ -39,4 +43,22 @@
 		opacity: 1;
 		pointer-events: auto;
 	}
+}
+
+.site-launch-pre-launch-modal__preview-card {
+	@extend %launch-modal-card;
+
+	border-radius: 4px;
+}
+
+.site-launch-pre-launch-modal__thumbnail {
+	flex-shrink: 0;
+	inline-size: 96px;
+	block-size: 64px;
+	overflow: hidden;
+	border-radius: 4px;
+}
+
+.site-launch-pre-launch-modal__meta {
+	min-width: 0;
 }
