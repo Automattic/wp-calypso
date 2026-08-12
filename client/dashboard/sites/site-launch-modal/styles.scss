@@ -4,8 +4,8 @@
 @import "@wordpress/base-styles/variables";
 
 %launch-modal-card {
-	padding: $grid-unit-10 $grid-unit-20;
-	background-color: $gray-100;
+	padding: $grid-unit-20 $grid-unit-20;
+	background-color: var( --color-primary-5 );
 
 	@include ui-mixins.when-dark-theme {
 		background-color: var( --wp-components-color-gray-200 );
@@ -52,9 +52,10 @@
 }
 
 .site-launch-pre-launch-modal__thumbnail {
+	position: relative;
 	flex-shrink: 0;
-	inline-size: 96px;
-	block-size: 64px;
+	inline-size: 114px;
+	block-size: 88px;
 	overflow: hidden;
 	border-radius: 4px;
 }

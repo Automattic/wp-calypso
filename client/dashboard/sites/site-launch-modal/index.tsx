@@ -7,7 +7,7 @@ import {
 	Icon,
 	Modal,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
+import { useResizeObserver, useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, globe, payment } from '@wordpress/icons';
@@ -21,8 +21,6 @@ import SitePreview from '../site-preview';
 import type { Site } from '@automattic/api-core';
 import './styles.scss';
 
-const THUMBNAIL_WIDTH = 96;
-const THUMBNAIL_HEIGHT = 64;
 const PREVIEW_BASE_WIDTH = 1200;
 
 export type CelebrationSite = Pick< Site, 'ID' | 'slug' | 'URL' > & {
@@ -60,6 +58,8 @@ export default function SiteLaunchModal( props: SiteLaunchModalProps ) {
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const copyButtonRef = useRef< HTMLButtonElement >( null );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const [ previewResizeListener, { width: previewWidth, height: previewHeight } ] =
+		useResizeObserver();
 
 	if ( ! isOpen ) {
 		return null;
@@ -101,11 +101,14 @@ export default function SiteLaunchModal( props: SiteLaunchModalProps ) {
 					>
 						{ site.URL && (
 							<div className="site-launch-pre-launch-modal__thumbnail">
-								<SitePreview
-									url={ site.URL }
-									scale={ THUMBNAIL_WIDTH / PREVIEW_BASE_WIDTH }
-									height={ THUMBNAIL_HEIGHT / ( THUMBNAIL_WIDTH / PREVIEW_BASE_WIDTH ) }
-								/>
+								{ previewResizeListener }
+								{ !! previewWidth && !! previewHeight && (
+									<SitePreview
+										url={ site.URL }
+										scale={ previewWidth / PREVIEW_BASE_WIDTH }
+										height={ previewHeight / ( previewWidth / PREVIEW_BASE_WIDTH ) }
+									/>
+								) }
 							</div>
 						) }
 						<VStack spacing={ 1 } className="site-launch-pre-launch-modal__meta">
