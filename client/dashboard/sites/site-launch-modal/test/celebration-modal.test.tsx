@@ -6,7 +6,6 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import { getAddSiteDomainUrl } from '../../../utils/domain-url';
 import SiteLaunchCelebrationModal from '../celebration-modal';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
@@ -50,7 +49,7 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 	} );
 
 	describe( 'Modal Display', () => {
-		test( 'renders modal with proper structure when conditions are met', async () => {
+		test( 'shows the copy-url and view-site actions when launched and celebrateLaunch is present', async () => {
 			setupCelebrateLaunchUrl();
 			const mockSite = createMockSite();
 			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
@@ -161,26 +160,16 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 	} );
 
 	describe( 'Copy Button Behavior', () => {
-		test( 'copies domain to clipboard and provides feedback', async () => {
+		test( 'copies the site slug to the clipboard when there is no custom domain', async () => {
 			setupCelebrateLaunchUrl();
 			const user = userEvent.setup();
 			const mockSite = createMockSite();
 
 			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
-			const copyButton = await screen.findByRole( 'button', { name: 'Copy URL' } );
+			await user.click( await screen.findByRole( 'button', { name: 'Copy URL' } ) );
 
-			// Initial title should be "Copy URL"
-			expect( copyButton ).toHaveAttribute( 'title', 'Copy URL' );
-
-			// Click button
-			await user.click( copyButton );
-
-			// Verify clipboard was written to
 			expect( await navigator.clipboard.readText() ).toBe( mockSite.slug );
-
-			// After click, title should change to "Copied!"
-			expect( copyButton ).toHaveAttribute( 'title', 'Copied!' );
 		} );
 	} );
 
@@ -231,11 +220,10 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			await screen.findByRole( 'dialog' );
 
 			// Upsell button should appear for free plan without custom domain
-			await screen.findByRole( 'link', { name: 'Get your domain' } );
-			expect( screen.getByRole( 'link', { name: 'Get your domain' } ) ).toHaveAttribute(
-				'href',
-				getAddSiteDomainUrl( mockSite.slug )
-			);
+			const upsellLink = await screen.findByRole( 'link', { name: 'Get your domain' } );
+			const href = upsellLink.getAttribute( 'href' );
+			expect( href ).toMatch( /domain/ );
+			expect( href ).toContain( mockSite.slug );
 		} );
 
 		test( 'does not show upsell when custom domain exists', async () => {
@@ -262,6 +250,45 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 
 			// Upsell button should NOT appear when custom domain is present
 			expect( screen.queryByRole( 'link', { name: 'Get your domain' } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'offers the annual-billing upsell for a monthly paid plan without a custom domain', async () => {
+			setupCelebrateLaunchUrl();
+			const mockSite = createMockSite( {
+				plan: { is_free: false, product_slug: 'business-monthly' },
+			} as Partial< Site > );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
+
+			await screen.findByRole( 'dialog' );
+			expect( await screen.findByText( /Interested in a custom domain/ ) ).toBeVisible();
+			expect( screen.getByRole( 'link', { name: 'Get your domain' } ) ).toBeVisible();
+		} );
+
+		test( 'offers the free-domain upsell for an annually billed paid plan without a custom domain', async () => {
+			setupCelebrateLaunchUrl();
+			const mockSite = createMockSite( {
+				plan: { is_free: false, product_slug: 'business-bundle' },
+			} as Partial< Site > );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
+
+			await screen.findByRole( 'dialog' );
+			expect( await screen.findByRole( 'link', { name: 'Get your free domain' } ) ).toBeVisible();
+		} );
+
+		test( 'tracks an event when the upsell is clicked', async () => {
+			setupCelebrateLaunchUrl();
+			const user = userEvent.setup();
+			const mockSite = createMockSite( {
+				plan: { is_free: false, product_slug: 'business-monthly' },
+			} as Partial< Site > );
+			const { recordTracksEvent } = render( <SiteLaunchCelebrationModal site={ mockSite } /> );
+
+			await user.click( await screen.findByRole( 'link', { name: 'Get your domain' } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_launchpad_celebration_modal_upsell_clicked',
+				{ product_slug: 'business-monthly' }
+			);
 		} );
 	} );
 

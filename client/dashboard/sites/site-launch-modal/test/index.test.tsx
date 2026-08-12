@@ -26,8 +26,12 @@ const createMockSite = ( options: Partial< Site > = {} ): Site =>
 		...options,
 	} ) as Site;
 
-const createMockDomain = ( domain: string ): DomainSummary =>
-	( { domain, blog_id: 1, subscription_id: 123 } ) as unknown as DomainSummary;
+const createMockDomain = ( domain: string, hasSubscription = true ): DomainSummary =>
+	( {
+		domain,
+		blog_id: 1,
+		subscription_id: hasSubscription ? 123 : null,
+	} ) as unknown as DomainSummary;
 
 const mockDomainsApi = ( domains: DomainSummary[] = [] ) => {
 	nock( 'https://public-api.wordpress.com' )
@@ -60,6 +64,85 @@ describe( '<SiteLaunchModal variant="pre-launch">', () => {
 		expect( await screen.findByText( 'kaonashi.com' ) ).toBeVisible();
 		expect( screen.getByText( 'Business plan' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Yes, launch site!' } ) ).toBeVisible();
+	} );
+
+	test( 'falls back to the site slug when there is no custom domain', async () => {
+		nock.cleanAll();
+		mockDomainsApi( [] );
+		render(
+			<SiteLaunchModal
+				variant="pre-launch"
+				site={ createMockSite() }
+				isOpen
+				onClose={ () => {} }
+				isLaunching={ false }
+				onLaunch={ () => {} }
+			/>
+		);
+
+		expect( await screen.findByText( 'kaonashi.wordpress.com' ) ).toBeVisible();
+	} );
+
+	test( 'ignores domains without an active subscription', async () => {
+		nock.cleanAll();
+		mockDomainsApi( [ createMockDomain( 'unsubscribed.com', false ) ] );
+		render(
+			<SiteLaunchModal
+				variant="pre-launch"
+				site={ createMockSite() }
+				isOpen
+				onClose={ () => {} }
+				isLaunching={ false }
+				onLaunch={ () => {} }
+			/>
+		);
+
+		expect( await screen.findByText( 'kaonashi.wordpress.com' ) ).toBeVisible();
+		expect( screen.queryByText( 'unsubscribed.com' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'falls back to the short plan name when the plan has no product_name', async () => {
+		render(
+			<SiteLaunchModal
+				variant="pre-launch"
+				site={ createMockSite( {
+					plan: {
+						product_slug: 'business-bundle',
+						product_name_short: 'Business',
+						is_free: false,
+					},
+				} as Partial< Site > ) }
+				isOpen
+				onClose={ () => {} }
+				isLaunching={ false }
+				onLaunch={ () => {} }
+			/>
+		);
+
+		await screen.findByRole( 'dialog' );
+		expect( screen.getByText( 'Business' ) ).toBeVisible();
+	} );
+
+	test( 'renders nothing and fetches no domains while closed', async () => {
+		nock.cleanAll();
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/all-domains' )
+			.query( true )
+			.reply( 200, { domains: [] } );
+
+		render(
+			<SiteLaunchModal
+				variant="pre-launch"
+				site={ createMockSite() }
+				isOpen={ false }
+				onClose={ () => {} }
+				isLaunching={ false }
+				onLaunch={ () => {} }
+			/>
+		);
+
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		expect( scope.isDone() ).toBe( false );
 	} );
 
 	test( 'does not offer a "View site" action before launch', async () => {
