@@ -3,28 +3,19 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-# Cancel builds of this build configuration still running or queued on this branch for an
-# older commit, so a new push supersedes the previous one instead of running alongside it.
-# TeamCity has no native "cancel on new push", hence the REST API. Called as the first step
-# of a build configuration. See TESTOPS-261.
+# Cancel builds of this build configuration still running or queued on this branch for a
+# different commit, so a new push supersedes the previous one. TeamCity has no native
+# "cancel on new push" (TW-1858), hence the REST API.
 #
-# Reads (as environment variables):
-#   IS_DEFAULT_BRANCH               "true" on the default branch. Anything other than
-#                                   "false" cancels nothing, so an unresolved TeamCity
-#                                   parameter fails closed.
-#   TEAMCITY_BUILD_PROPERTIES_FILE  Set by TeamCity. Supplies the server URL, build and
-#                                   configuration ids, branch, revision and auth token.
+# Reads TEAMCITY_BUILD_PROPERTIES_FILE for the server URL, ids, branch, revision and auth
+# token. Values come from that file rather than interpolated %parameters% so that a branch
+# name containing a quote cannot break the build step. Nothing here fails the build.
 #
-# Values come from the properties file rather than interpolated TeamCity parameters: a
-# branch name containing a quote would otherwise be spliced into the build step and break
-# it. Nothing here fails the build; every error path logs and returns 0.
-#
-# Run the built-in checks with:  ./bin/cancel-superseded-builds.sh --self-test
+# Self-check:  ./bin/cancel-superseded-builds.sh --self-test
 
-# Read one key from Java .properties files, searching them in order. The first unescaped
-# = or : separates key from value. TeamCity escapes \ = : # and ! in values, so those are
-# unescaped afterwards. A \uXXXX escape is not decoded, so a non-ASCII branch name matches
-# nothing and this script becomes a no-op on it, which is safe.
+# Read one key from Java .properties files, searching them in order. TeamCity escapes
+# \ = : # and ! in values. A \uXXXX escape is not decoded, so a non-ASCII branch name
+# matches nothing and the script no-ops on it, which is safe.
 read_property() { # <key> <file...>
 	local key="$1"
 	shift
@@ -37,9 +28,9 @@ read_property() { # <key> <file...>
 	' "$@" | sed 's/\\\(.\)/\1/g'
 }
 
-# Branches whose builds must never be cancelled by a later push: trunk carries the deploy
-# history, and merge queue builds gate a merge. Both merge queue spellings are matched, as
-# in MERGE_QUEUE_BRANCH_FILTER_EXCLUSIONS.
+# trunk carries the deploy history and merge queue builds gate a merge, so a later push may
+# not cancel either. Both merge queue spellings are matched, as in
+# MERGE_QUEUE_BRANCH_FILTER_EXCLUSIONS.
 is_protected_branch() { # <branch>
 	case "$1" in
 	trunk | refs/heads/trunk | gh-readonly-queue/* | refs/heads/gh-readonly-queue/*) return 0 ;;
@@ -47,18 +38,16 @@ is_protected_branch() { # <branch>
 	esac
 }
 
-# Classify every build in the REST response on stdin, one verdict per line:
-#   obsolete <id>   supersede it
-#   unresolved      older, but its revision is not known yet, so leave it alone
-#   otherbranch     not on this branch
+# Classify every build in the REST response on stdin, one verdict per line: "obsolete <id>",
+# "unresolved" (revision not known yet, leave it alone) or "otherbranch".
 #
-# Superseded means queued before this build AND building a different, known commit. Drop
-# either half and it breaks: without the id test two near-simultaneous pushes cancel each
-# other and the branch ends up with no build, and without the revision test a matrix build
-# cancels its own sibling legs, which share a configuration, branch and commit. jq ranks
-# null below every number, so the id test also keeps out a build with no id. An absent
-# branchName is never assumed to be this branch, because on the queue pass, which takes no
-# branch locator, that test is the only thing keeping the pass on-branch.
+# Obsolete means a lower build id AND a different, known commit. Both halves are needed:
+# without the id test two near-simultaneous pushes cancel each other and the branch ends up
+# with no build; without the revision test a matrix build cancels its own sibling legs,
+# which share a configuration, branch and commit. jq ranks null below every number, so the
+# id test also keeps out a build with no id. An absent branchName is never assumed to be
+# this branch, because on the queue pass, which takes no branch locator, that test is the
+# only thing keeping the pass on-branch.
 classify_builds() { # <this build id> <branch> <revision>
 	jq -r --argjson self "$1" --arg branch "$2" --arg rev "$3" '
 		(.build // [])[]
@@ -85,11 +74,6 @@ build_locator() { # <builds|buildQueue> <build type id> <branch>
 }
 
 cancel_superseded() {
-	if [[ "${IS_DEFAULT_BRANCH:-}" != "false" ]]; then
-		echo "Not on a branch known to be non-default, cancelling nothing."
-		return 0
-	fi
-
 	local props="${TEAMCITY_BUILD_PROPERTIES_FILE:-}"
 	if [[ ! -f "$props" ]]; then
 		echo "No build properties file, skipping."
@@ -118,13 +102,13 @@ cancel_superseded() {
 		return 0
 	fi
 
-	# Second gate on the branch name, in case IS_DEFAULT_BRANCH ever stops resolving.
+	# Backstop for the step condition in CancelSupersededBuilds.kt.
 	if is_protected_branch "$branch"; then
 		echo "Not cancelling anything on $branch."
 		return 0
 	fi
 
-	local endpoint locator response classified unresolved otherbranch id
+	local endpoint locator response classified unresolved otherbranch id error
 	for endpoint in builds buildQueue; do
 		locator="$(build_locator "$endpoint" "$build_type" "$branch")"
 
@@ -135,16 +119,19 @@ cancel_superseded() {
 				--data-urlencode "fields=build(id,branchName,revisions(revision(version)))" \
 				"$server/app/rest/$endpoint" 2>&1
 		)"; then
-			# Carries the HTTP status, so a permissions problem with the per-build auth token
-			# shows up in the log instead of looking like "nothing to cancel".
+			# Carries the HTTP status, so a permissions problem with the auth token shows up
+			# in the log instead of looking like "nothing to cancel".
 			echo "Could not list $endpoint, skipping: $response"
 			continue
 		fi
 
-		classified="$(printf '%s' "$response" | classify_builds "$self" "$branch" "$revision")"
+		# jq exits non-zero on a non-JSON body or when it is missing from the agent. Without
+		# this guard errexit would kill the script here and the buildQueue pass would never run.
+		if ! classified="$(printf '%s' "$response" | classify_builds "$self" "$branch" "$revision" 2>&1)"; then
+			echo "Could not read the $endpoint response, skipping: $classified"
+			continue
+		fi
 
-		# Both counts are reported because otherwise "skipped everything" and "nothing to
-		# cancel" produce identical output.
 		unresolved="$(printf '%s' "$classified" | grep -c '^unresolved$' || true)"
 		if [[ "$unresolved" -gt 0 ]]; then
 			echo "Left $unresolved build(s) in $endpoint alone: revision not resolved yet."
@@ -158,12 +145,18 @@ cancel_superseded() {
 		while read -r id; do
 			[[ -z "$id" ]] && continue
 			echo "Cancelling build $id, superseded by build #${number:-$self}"
-			curl --silent --show-error --fail --max-time 30 \
-				--user "$auth_user:$auth_pass" --header "Accept: application/json" \
-				--request POST --header "Content-Type: application/json" \
-				--data '{"comment":"Superseded by a newer commit on the same branch","readdIntoQueue":false}' \
-				--output /dev/null "$server/app/rest/$endpoint/id:$id" ||
-				echo "Could not cancel build $id."
+			# Every matrix leg runs this step, so a sibling leg often cancels the same build
+			# first and this one then fails harmlessly. The HTTP status tells that apart from
+			# a real problem such as a rejected token.
+			if ! error="$(
+				curl --silent --show-error --fail --max-time 30 \
+					--user "$auth_user:$auth_pass" --header "Accept: application/json" \
+					--request POST --header "Content-Type: application/json" \
+					--data '{"comment":"Superseded by a newer commit on the same branch","readdIntoQueue":false}' \
+					--output /dev/null "$server/app/rest/$endpoint/id:$id" 2>&1
+			)"; then
+				echo "Did not cancel build $id (a sibling leg may have got there first): $error"
+			fi
 		done < <(printf '%s' "$classified" | awk '$1 == "obsolete" { print $2 }')
 	done
 
