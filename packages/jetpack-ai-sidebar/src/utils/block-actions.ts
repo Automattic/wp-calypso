@@ -807,6 +807,23 @@ export function handleUpdateBlockContent( input: any ): any {
 				return;
 			}
 
+			if ( nextContent === latestSnapshot.content ) {
+				if ( blockEl ) {
+					removeProcessingEffect( blockEl );
+				}
+				notifyBlockActionComplete();
+				resolve( {
+					success: true,
+					clientId: targetClientId,
+					contentBefore: latestSnapshot.content,
+					contentAfter: nextContent,
+					editableAttribute: latestSnapshot.attributeName,
+					returnToAgent: false,
+					...( summary ? { agentMessage: summary } : {} ),
+				} );
+				return;
+			}
+
 			try {
 				blockEditor.updateBlockAttributes( targetClientId, {
 					[ latestSnapshot.attributeName ]: nextContent,
