@@ -1118,17 +1118,12 @@ export class RestAPIClient {
 	}
 
 	/**
-	 * Method to perform two similar operations - like and unlike a comment.
+	 * Likes a comment.
 	 *
-	 * @param {'like'|'unlike'} action Action to perform on the comment.
 	 * @param {number} siteID Target site ID.
 	 * @param {number} commentID Target comment ID.
 	 */
-	async commentAction(
-		action: 'like' | 'unlike',
-		siteID: number,
-		commentID: number
-	): Promise< CommentLikeResponse > {
+	async likeComment( siteID: number, commentID: number ): Promise< CommentLikeResponse > {
 		const params: RequestParams = {
 			method: 'post',
 			headers: {
@@ -1137,33 +1132,19 @@ export class RestAPIClient {
 			},
 		};
 
-		let endpoint: URL;
-		if ( action === 'like' ) {
-			endpoint = this.getRequestURL(
-				'1.1',
-				`/sites/${ siteID }/comments/${ commentID }/likes/new`
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/comments/${ commentID }/likes/new` ),
+			params
+		);
+
+		if ( ! response.i_like ) {
+			throw new Error(
+				`Failed to like ${ commentID } on site ${ siteID }. Response: ${ JSON.stringify(
+					response
+				) }`
 			);
-		} else {
-			endpoint = this.getRequestURL(
-				'1.1',
-				`/sites/${ siteID }/comments/${ commentID }/likes/mine/delete`
-			);
 		}
 
-		const response = await this.sendRequest( endpoint, params );
-
-		// Tried to like the comment, but failed to do so
-		// and the user still has not liked the comment.
-		if ( action === 'like' && response.like_count !== 1 ) {
-			throw new Error( `Failed to like ${ commentID } on site ${ siteID }` );
-		}
-		// Tried to unlike the comment, but failed to do so
-		// and the user still likes the comment.
-		if ( action === 'unlike' && response.like_count !== 0 ) {
-			throw new Error( `Failed to unlike ${ commentID } on site ${ siteID }` );
-		}
-
-		// Otherwise, consider it a success.
 		return response;
 	}
 
