@@ -123,6 +123,26 @@ export async function startBlueprintArchiveImport(
 }
 
 /**
+ * Apply the confirmed site spec on top of the already-imported blueprint site:
+ * writes the user's site title/tagline synchronously, stamps blueprint
+ * provenance, and materializes the spec into the site knowledge store. Runs
+ * after the import completes and before the redirect. Non-destructive.
+ */
+export async function applyBlueprintSpec(
+	siteIdentifier: string,
+	specId: string,
+	blueprintSlug: string
+): Promise< unknown > {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdentifier }/big-sky/apply-blueprint-spec`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ spec_id: specId, blueprint_id: blueprintSlug }
+	);
+}
+
+/**
  * Poll the site's import status until the backup import finishes.
  * Resolves on success; throws on a terminal failure or timeout.
  */
@@ -163,6 +183,45 @@ export async function waitForBlueprintImportComplete(
 	throw new Error(
 		`Timed out waiting for blueprint import. Last status: ${ String( lastStatus ) }.`
 	);
+}
+
+/**
+ * Poll the site's template-parts REST endpoint until the theme's `header`
+ * template part is served, so we only redirect into the Site Editor once the
+ * freshly-transferred Atomic site can actually render it. Without this, the
+ * editor's first load can race the import (theme/template parts not yet
+ * queryable) and the header block renders as an error until a manual reload.
+ *
+ * Resolves on ready OR on timeout — a timeout must not block handing the user
+ * off to their site (a manual reload still recovers).
+ */
+export async function waitForSiteEditorReady(
+	siteIdentifier: string,
+	{ totalTimeoutSeconds = 60, pollIntervalMs = 3000 } = {}
+): Promise< void > {
+	const deadline = Date.now() + totalTimeoutSeconds * 1000;
+
+	while ( Date.now() < deadline ) {
+		try {
+			const parts = ( await wpcom.req.get( {
+				path: `/sites/${ siteIdentifier }/template-parts`,
+				apiNamespace: 'wp/v2',
+			} ) ) as Array< { slug?: string; area?: string } >;
+
+			if (
+				Array.isArray( parts ) &&
+				parts.some( ( part ) => part?.slug === 'header' || part?.area === 'header' )
+			) {
+				return;
+			}
+		} catch {
+			// Site not ready to serve template parts yet — keep polling.
+		}
+
+		await wait( pollIntervalMs );
+	}
+
+	// Timed out: redirect anyway rather than stranding the user.
 }
 
 /**

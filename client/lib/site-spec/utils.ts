@@ -33,6 +33,9 @@ export interface SiteSpecConfig {
 	agentUrl?: string;
 	agentId?: string;
 	buildSiteUrl?: string;
+	// Blueprint identifier when building from a blueprint. Forwarded by the widget
+	// to the agent (metadata.blueprint_id) so it can run a blueprint-aware interview.
+	blueprintId?: string;
 	theme?: {
 		// Branding
 		brandIcon?: ReactElement | string | null; // ReactElement or image URL; null hides
@@ -187,6 +190,25 @@ export function getDefaultSiteSpecConfig(): SiteSpecConfig {
 				client: 'calypso',
 			} ),
 		},
+	};
+}
+
+/**
+ * SiteSpec configuration for a site being built from a blueprint. Extends the
+ * default config with the blueprint identifier so the widget forwards it to the
+ * agent (as metadata.blueprint_id), which then runs a blueprint-aware interview.
+ * @param {Object} params            Params.
+ * @param {string} params.blueprintId Blueprint identifier (numeric library id or slug).
+ * @returns {SiteSpecConfig} Configuration object for the blueprint flow.
+ */
+export function getBlueprintSiteSpecConfig( {
+	blueprintId,
+}: {
+	blueprintId?: string;
+} ): SiteSpecConfig {
+	return {
+		...getDefaultSiteSpecConfig(),
+		...( blueprintId ? { blueprintId } : {} ),
 	};
 }
 

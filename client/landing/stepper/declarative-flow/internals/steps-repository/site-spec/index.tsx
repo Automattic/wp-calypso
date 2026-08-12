@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import {
+	applyBlueprintSpec,
 	getBlueprintArchiveSiteIdentifier,
 	getSiteAdminUrl,
 	getSiteEditorUrl,
@@ -15,6 +16,7 @@ import {
 	startBlueprintArchiveImport,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
+	waitForSiteEditorReady,
 } from 'calypso/landing/stepper/utils/blueprint-archive-import';
 import {
 	getBuildWowSiteIdentifier,
@@ -25,9 +27,9 @@ import {
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import {
+	getBlueprintSiteSpecConfig,
 	getBuildWowSiteSpecConfig,
 	getCiabSiteSpecConfig,
-	getDefaultSiteSpecConfig,
 	getEarlyProvisionSiteSpecConfig,
 	type SiteSpecConfig,
 } from 'calypso/lib/site-spec/utils';
@@ -359,43 +361,80 @@ const SiteSpec: StepType = function SiteSpec() {
 	// the background (kicked off on mount below). On spec confirm we poll the
 	// canonical Atomic transfer endpoint, then the import status, and finally hand
 	// the user off to the Atomic Site Editor.
-	const handleBlueprintArchiveSpecConfirm = useCallback( async () => {
-		if ( isSubmittingRef.current ) {
-			return;
-		}
+	const handleBlueprintArchiveSpecConfirm = useCallback(
+		async ( specData: unknown ) => {
+			if ( isSubmittingRef.current ) {
+				return;
+			}
 
-		if ( ! blueprintArchiveSiteIdentifier ) {
-			// eslint-disable-next-line no-console
-			console.error( 'Failed to finish blueprint import: missing target site.' );
-			return;
-		}
+			if ( ! blueprintArchiveSiteIdentifier ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to finish blueprint import: missing target site.' );
+				return;
+			}
 
-		isSubmittingRef.current = true;
+			isSubmittingRef.current = true;
 
-		try {
-			logBlueprintArchiveEvent( 'spec_confirm_poll_start', {
-				site_identifier: blueprintArchiveSiteIdentifier,
-			} );
+			const specId =
+				specData && typeof specData === 'object' && 'session_id' in specData
+					? ( specData as { session_id?: string } ).session_id
+					: undefined;
 
-			await waitForAtomicTransferComplete( blueprintArchiveSiteIdentifier );
-			await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
-			const adminUrl = await getSiteAdminUrl( blueprintArchiveSiteIdentifier );
-			const siteEditorUrl = getSiteEditorUrl( adminUrl );
+			try {
+				logBlueprintArchiveEvent( 'spec_confirm_poll_start', {
+					site_identifier: blueprintArchiveSiteIdentifier,
+				} );
 
-			logBlueprintArchiveEvent( 'redirect_site_editor', {
-				site_identifier: blueprintArchiveSiteIdentifier,
-			} );
-			window.location.href = siteEditorUrl;
-		} catch ( error ) {
-			logBlueprintArchiveEvent( 'spec_confirm_error', {
-				site_identifier: blueprintArchiveSiteIdentifier,
-				error: error instanceof Error ? error.message : String( error ),
-			} );
-			// eslint-disable-next-line no-console
-			console.error( 'Failed to finish blueprint import:', error );
-			isSubmittingRef.current = false;
-		}
-	}, [ blueprintArchiveSiteIdentifier ] );
+				await waitForAtomicTransferComplete( blueprintArchiveSiteIdentifier );
+				await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
+
+				// Apply the confirmed spec on top of the imported blueprint site
+				// (site title/tagline + knowledge). Non-fatal: if it fails, still
+				// hand the user off to their site.
+				if ( specId ) {
+					try {
+						await applyBlueprintSpec(
+							blueprintArchiveSiteIdentifier,
+							specId,
+							blueprintArchiveSlug
+						);
+						logBlueprintArchiveEvent( 'apply_spec_done', {
+							site_identifier: blueprintArchiveSiteIdentifier,
+						} );
+					} catch ( applyError ) {
+						logBlueprintArchiveEvent( 'apply_spec_error', {
+							site_identifier: blueprintArchiveSiteIdentifier,
+							error: applyError instanceof Error ? applyError.message : String( applyError ),
+						} );
+					}
+				}
+
+				// The import record can flip to FINISHED before the freshly
+				// transferred Atomic site can serve its template parts, which makes
+				// the editor's first load render the header block as an error until a
+				// manual reload. Wait until the header template part is queryable
+				// before redirecting (times out gracefully so we never strand).
+				await waitForSiteEditorReady( blueprintArchiveSiteIdentifier );
+
+				const adminUrl = await getSiteAdminUrl( blueprintArchiveSiteIdentifier );
+				const siteEditorUrl = getSiteEditorUrl( adminUrl );
+
+				logBlueprintArchiveEvent( 'redirect_site_editor', {
+					site_identifier: blueprintArchiveSiteIdentifier,
+				} );
+				window.location.href = siteEditorUrl;
+			} catch ( error ) {
+				logBlueprintArchiveEvent( 'spec_confirm_error', {
+					site_identifier: blueprintArchiveSiteIdentifier,
+					error: error instanceof Error ? error.message : String( error ),
+				} );
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to finish blueprint import:', error );
+				isSubmittingRef.current = false;
+			}
+		},
+		[ blueprintArchiveSiteIdentifier, blueprintArchiveSlug ]
+	);
 
 	// Kick off the background transfer + blueprint-archive import as soon as the
 	// spec page mounts, so it runs while the user reviews the spec.
@@ -456,7 +495,9 @@ const SiteSpec: StepType = function SiteSpec() {
 	} else if ( shouldImportBlueprint ) {
 		siteSpecStep = (
 			<SiteSpecContainer
-				siteSpecConfig={ getDefaultSiteSpecConfig() }
+				siteSpecConfig={ getBlueprintSiteSpecConfig( {
+					blueprintId: blueprintArchiveSlug,
+				} ) }
 				onSpecConfirm={ handleBlueprintArchiveSpecConfirm }
 			/>
 		);
