@@ -68,8 +68,36 @@ export class TestAccount {
 			await page.waitForURL( url, { timeout: 20 * 1000 } );
 		}
 		if ( waitUntilStable ) {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.waitForSidebarInitialization();
+			await TestAccount.waitForAppShell( page );
+		}
+	}
+
+	/**
+	 * Waits for whichever app shell the landing page rendered.
+	 *
+	 * `/` serves classic Calypso or the hosting dashboard depending on the account's
+	 * rollout enrollment, so waiting on the classic sidebar alone strands every spec
+	 * whose account lands in the dashboard. Specs navigate to their own target after
+	 * this, and those driving the classic sidebar re-wait for it in
+	 * `SidebarComponent.navigate`.
+	 *
+	 * `Promise.any` resolves on the first shell to appear and rejects only if both
+	 * fail, so a broken login still surfaces as a failure.
+	 *
+	 * @param {Page} page Page object.
+	 */
+	private static async waitForAppShell( page: Page ): Promise< void > {
+		await page.waitForLoadState( 'load', { timeout: 20 * 1000 } );
+
+		try {
+			await Promise.any( [
+				new SidebarComponent( page ).waitForSidebarInitialization(),
+				page.getByRole( 'main' ).waitFor( { timeout: 20 * 1000 } ),
+			] );
+		} catch {
+			throw new Error(
+				'Timed out waiting for an app shell: neither the classic Calypso sidebar nor the hosting dashboard rendered after logging in.'
+			);
 		}
 	}
 
