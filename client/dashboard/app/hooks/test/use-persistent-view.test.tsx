@@ -433,6 +433,91 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
+		it( 'should keep a newly added filter with no value yet in the view', async () => {
+			mockGetCalypsoPreferences( {} );
+			mockUpdateCalypsoPreferences();
+
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = {};
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields: [ 'severity' ],
+						syncFiltersToQueryParams: true,
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			const searchBefore = getRouter()?.state.location.search;
+
+			act( () => {
+				result.current.updateView( {
+					...defaultView,
+					page: 1,
+					search: '',
+					filters: [ { field: 'severity', operator: 'isAny', value: undefined } ],
+				} );
+			} );
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'severity', operator: 'isAny', value: undefined },
+				] );
+			} );
+
+			expect( getRouter()?.state.location.search ).toEqual( searchBefore );
+		} );
+
+		it( 'should keep the filter but drop the query param when its values are cleared', async () => {
+			mockGetCalypsoPreferences( {} );
+			mockUpdateCalypsoPreferences();
+
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = { severity: 'Warning' };
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields: [ 'severity' ],
+						syncFiltersToQueryParams: true,
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...defaultView,
+					page: 1,
+					search: '',
+					filters: [ { field: 'severity', operator: 'isAny', value: undefined } ],
+				} );
+			} );
+
+			await waitFor( () => {
+				const router = getRouter();
+				expect( router?.state.location.search ).toEqual( {} );
+			} );
+
+			expect( result.current.view.filters ).toEqual( [
+				{ field: 'severity', operator: 'isAny', value: undefined },
+			] );
+		} );
+
 		it( 'should remove the query param when the filter is cleared', async () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
