@@ -11,7 +11,7 @@ set -o pipefail
 # token. Values come from that file rather than interpolated %parameters% so that a branch
 # name containing a quote cannot break the build step. Nothing here fails the build.
 #
-# Run the checks with:  ./bin/cancel-superseded-builds.sh --self-test
+# Self-check:  ./bin/cancel-superseded-builds.sh --self-test
 
 # Read one key from Java .properties files, searching them in order. TeamCity escapes
 # \ = : # and ! in values. A \uXXXX escape is not decoded, so a non-ASCII branch name
