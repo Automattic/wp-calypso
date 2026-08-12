@@ -1,6 +1,7 @@
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { WooCommerceWooLogo } from '@automattic/components/src/logos/woocommerce-woo-logo';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import type { AgencyPartnerDirectorySlug } from '@automattic/api-core';
 import type { ReactNode } from 'react';
@@ -15,7 +16,12 @@ export type BrandMeta = {
 const DIRECTORY_BRANDS: Partial<
 	Record< AgencyPartnerDirectorySlug, { host: string; icon: ReactNode } >
 > = {
-	wordpress: { host: 'wordpress.com', icon: <WordPressLogo size={ 24 } /> },
+	wordpress: {
+		host: 'wordpress.com',
+		// An explicit className drops the component's default `wordpress-logo`
+		// class, whose bottom margin would inflate the icon box.
+		icon: <WordPressLogo size={ 24 } className="partner-directory-wordpress-logo" />,
+	},
 	woocommerce: { host: 'woocommerce.com', icon: <WooCommerceWooLogo width={ 36 } height={ 24 } /> },
 	pressable: { host: 'pressable.com', icon: <img src={ pressableIcon } alt="" width={ 24 } /> },
 	jetpack: { host: 'jetpack.com', icon: <JetpackLogo size={ 24 } /> },
@@ -47,7 +53,13 @@ export function getBrandMeta(
 	const url = `https://${ brand.host }/development-services/`;
 
 	return {
-		icon: brand.icon,
+		// The fixed-width box keeps rows aligned: the Woo wordmark is wider
+		// than the square logos, and the decoration slot sizes to content.
+		icon: (
+			<HStack as="span" expanded={ false } justify="center" style={ { width: '36px' } }>
+				{ brand.icon }
+			</HStack>
+		),
 		url,
 		profileUrl: `${ url }${ agencySlug }/${ agency?.id ?? '' }`,
 		isAvailable: true,
