@@ -5,6 +5,7 @@
 import { renderHook } from '@testing-library/react';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
+import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import useStatsPurchases from '../../../hooks/use-stats-purchases';
 import useIsPricingGridEligible from '../use-eligibility';
 
@@ -13,6 +14,7 @@ jest.mock( 'calypso/state', () => ( {
 } ) );
 jest.mock( 'calypso/state/purchases/selectors' );
 jest.mock( 'calypso/state/sites/selectors' );
+jest.mock( 'calypso/state/sites/selectors/is-simple-site' );
 jest.mock( '../../../hooks/use-stats-purchases' );
 
 const SITE_ID = 123;
@@ -23,9 +25,11 @@ function mockSite( {
 	connectedAt = POST_LAUNCH_DATE as string | number | null,
 	hasAnyPlan = false,
 	isLoadingPurchases = false,
+	isSimpleSite = false,
 	purchasesError = null as object | null,
 } = {} ) {
 	( getSiteOption as jest.Mock ).mockReturnValue( connectedAt );
+	( getIsSimpleSite as unknown as jest.Mock ).mockReturnValue( isSimpleSite );
 	( getPurchasesError as unknown as jest.Mock ).mockReturnValue( purchasesError );
 	( useStatsPurchases as jest.Mock ).mockReturnValue( {
 		hasAnyPlan,
@@ -45,7 +49,7 @@ describe( 'useIsPricingGridEligible', () => {
 
 		expect( result.current ).toEqual( {
 			isEligible: true,
-			isNewConnection: true,
+			isApplicable: true,
 			isLoading: false,
 		} );
 	} );
@@ -56,7 +60,16 @@ describe( 'useIsPricingGridEligible', () => {
 		const { result } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
 
 		expect( result.current.isEligible ).toBe( false );
-		expect( result.current.isNewConnection ).toBe( false );
+		expect( result.current.isApplicable ).toBe( false );
+	} );
+
+	it( 'is not eligible for a WordPress.com Simple site', () => {
+		mockSite( { isSimpleSite: true } );
+
+		const { result } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
+
+		expect( result.current.isEligible ).toBe( false );
+		expect( result.current.isApplicable ).toBe( false );
 	} );
 
 	it( 'is not eligible when the site already holds a Stats plan', () => {
@@ -80,7 +93,7 @@ describe( 'useIsPricingGridEligible', () => {
 
 		const { result } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
 
-		expect( result.current.isNewConnection ).toBe( true );
+		expect( result.current.isApplicable ).toBe( true );
 	} );
 
 	it( 'is not eligible when the connection date is missing', () => {
@@ -92,7 +105,7 @@ describe( 'useIsPricingGridEligible', () => {
 		expect( result.current.isLoading ).toBe( false );
 	} );
 
-	it( 'only reports loading for newly connected sites', () => {
+	it( 'only reports loading for sites the grid applies to', () => {
 		mockSite( { isLoadingPurchases: true } );
 
 		const { result } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
@@ -104,5 +117,11 @@ describe( 'useIsPricingGridEligible', () => {
 		const { result: preLaunch } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
 
 		expect( preLaunch.current.isLoading ).toBe( false );
+
+		mockSite( { isSimpleSite: true, isLoadingPurchases: true } );
+
+		const { result: simple } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
+
+		expect( simple.current.isLoading ).toBe( false );
 	} );
 } );
