@@ -408,7 +408,7 @@ const StatsPersonalPurchase = ( {
 	return (
 		<>
 			<h1>
-				{ translate( 'Support %(product)s and set your price', {
+				{ translate( 'Support %(product)s and name your price', {
 					args: { product: STATS_PRODUCT_NAME },
 				} ) }
 			</h1>
