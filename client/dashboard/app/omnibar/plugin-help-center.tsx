@@ -14,7 +14,10 @@ import { __ } from '@wordpress/i18n';
 import { Icon, backup, comment, page, rss, video } from '@wordpress/icons';
 import { useAnalytics } from '../analytics';
 import { useHelpCenter } from '../help-center';
+import { useRouteSiteId } from './site';
 import type { AnalyticsClient } from '../analytics';
+// eslint-disable-next-line no-restricted-imports -- Help Center host events need explicit site attribution.
+import type { SiteCandidate } from '@automattic/calypso-analytics';
 import type { OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-help-center.scss';
@@ -50,7 +53,7 @@ function menuIcon( icon: JSX.Element ) {
 function handleMenuClick(
 	recordTracksEvent: RecordTracksEvent,
 	destination: string,
-	omnibarSiteId: number | null | undefined,
+	siteCandidates: readonly SiteCandidate[],
 	isExternal = false
 ) {
 	// Re-clicking the current route closes the chat; external links never do.
@@ -76,7 +79,7 @@ function handleMenuClick(
 					location: 'help-center',
 					section: 'dashboard',
 				},
-				[ [ 'omnibar', omnibarSiteId ] ]
+				siteCandidates
 			)
 		);
 		closeAgentsManagerChat();
@@ -95,14 +98,14 @@ function handleMenuClick(
 				section: 'dashboard',
 				destination,
 			},
-			[ [ 'omnibar', omnibarSiteId ] ]
+			siteCandidates
 		)
 	);
 }
 
 function getAgentsManagerMenuNodes(
 	recordTracksEvent: RecordTracksEvent,
-	omnibarSiteId: number | null | undefined
+	siteCandidates: readonly SiteCandidate[]
 ): OmnibarNode[] {
 	return [
 		{
@@ -113,13 +116,13 @@ function getAgentsManagerMenuNodes(
 					id: 'chat-support',
 					title: __( 'Chat support' ),
 					icon: menuIcon( comment ),
-					onClick: () => handleMenuClick( recordTracksEvent, '/chat', omnibarSiteId ),
+					onClick: () => handleMenuClick( recordTracksEvent, '/chat', siteCandidates ),
 				},
 				{
 					id: 'chat-history',
 					title: __( 'Chat history' ),
 					icon: menuIcon( backup ),
-					onClick: () => handleMenuClick( recordTracksEvent, '/history', omnibarSiteId ),
+					onClick: () => handleMenuClick( recordTracksEvent, '/history', siteCandidates ),
 				},
 			],
 		},
@@ -132,7 +135,7 @@ function getAgentsManagerMenuNodes(
 					id: 'support-guides',
 					title: __( 'Support guides' ),
 					icon: menuIcon( page ),
-					onClick: () => handleMenuClick( recordTracksEvent, '/support-guides', omnibarSiteId ),
+					onClick: () => handleMenuClick( recordTracksEvent, '/support-guides', siteCandidates ),
 				},
 				{
 					id: 'courses',
@@ -142,7 +145,7 @@ function getAgentsManagerMenuNodes(
 						handleMenuClick(
 							recordTracksEvent,
 							localizeUrl( 'https://wordpress.com/support/courses/' ),
-							omnibarSiteId,
+							siteCandidates,
 							true
 						),
 				},
@@ -154,7 +157,7 @@ function getAgentsManagerMenuNodes(
 						handleMenuClick(
 							recordTracksEvent,
 							localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
-							omnibarSiteId,
+							siteCandidates,
 							true
 						),
 				},
@@ -168,13 +171,20 @@ export function useHelpCenterPlugin(): OmnibarNode {
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
+	// The omnibar site is published asynchronously, so the route is the only
+	// site available while it resolves.
+	const routeSiteId = useRouteSiteId();
+	const siteCandidates: SiteCandidate[] = [
+		[ 'omnibar', omnibarSiteId ],
+		[ 'dashboard_route', routeSiteId ],
+	];
 
 	if ( shouldUseUnifiedAgent ) {
 		return {
 			id: 'help-center',
 			label: __( 'Help' ),
 			icon: <HelpIcon />,
-			children: getAgentsManagerMenuNodes( recordTracksEvent, omnibarSiteId ),
+			children: getAgentsManagerMenuNodes( recordTracksEvent, siteCandidates ),
 		};
 	}
 

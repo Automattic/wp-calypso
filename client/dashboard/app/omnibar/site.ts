@@ -8,7 +8,7 @@ import {
 } from '@automattic/api-queries';
 import calypsoConfig from '@automattic/calypso-config';
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { useRouter, useRouterState } from '@tanstack/react-router';
 import { removeQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -30,6 +30,18 @@ async function ensureSite( siteId: number | undefined ) {
 	} catch {
 		return undefined;
 	}
+}
+
+/**
+ * The site the current route resolved. `useSyncOmnibarSite` publishes
+ * asynchronously, so this is the only site available on the first render.
+ */
+export function useRouteSiteId() {
+	return useRouterState( {
+		select: ( state ) =>
+			state.matches.findLast( ( match ) => !! ( match.loaderData as { site?: Site } )?.site )
+				?.loaderData?.site?.ID,
+	} );
 }
 
 /**
