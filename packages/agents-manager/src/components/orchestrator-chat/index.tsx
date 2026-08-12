@@ -446,7 +446,7 @@ export default function OrchestratorChat( {
 
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();
-	useCheckpointAction( registerMessageActions, checkpoint );
+	const getCheckpointActionsForMessage = useCheckpointAction( registerMessageActions, checkpoint );
 
 	// TODO (ability-migration): Remove once the last checkpoint-writing Big Sky
 	// ability migrates. Keeps the provider checkpoint store reachable for the
@@ -865,6 +865,13 @@ export default function OrchestratorChat( {
 			);
 		}
 
+		const checkpointActionsByMessageId = new Map(
+			currentMessages.map( ( message ) => [
+				message.id,
+				getCheckpointActionsForMessage( message ),
+			] )
+		);
+
 		// Group site-build messages only when needed
 		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( currentMessages );
 
@@ -890,6 +897,7 @@ export default function OrchestratorChat( {
 			const messageWithTraceId = traceId ? { ...message, traceId } : message;
 
 			const directActions = [
+				...( checkpointActionsByMessageId.get( message.id ) ?? [] ),
 				...getFeedbackActionsForMessage( message ),
 				...getCopyActionsForMessage( message ),
 				...getRegenerateActionsForMessage( message, {
@@ -897,12 +905,16 @@ export default function OrchestratorChat( {
 					isStreaming: isProcessing,
 				} ),
 			];
-			if ( directActions.length === 0 ) {
+			const hasRegisteredCheckpointAction = message.actions?.some(
+				( action ) => action.id === 'checkpoint'
+			);
+			if ( directActions.length === 0 && ! hasRegisteredCheckpointAction ) {
 				return messageWithTraceId;
 			}
 
 			const existingActions = message.actions?.filter(
 				( action ) =>
+					action.id !== 'checkpoint' &&
 					! action.id.startsWith( 'feedback-' ) &&
 					action.id !== 'copy' &&
 					action.id !== 'regenerate'
@@ -922,6 +934,7 @@ export default function OrchestratorChat( {
 		deletedMessageIds,
 		getChatComponent,
 		getCopyActionsForMessage,
+		getCheckpointActionsForMessage,
 		getShowComponentOrder,
 		getFeedbackActionsForMessage,
 		getTraceIdForMessage,

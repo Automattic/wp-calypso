@@ -3,7 +3,13 @@ import { EscalationButton } from '../components/escalation-button';
 import isAmAbilitiesDisabled from './is-am-abilities-disabled';
 import lazyComponent from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
-import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
+import {
+	APPLY_BLOCK_EDITS_TOOL_ID,
+	getApplyBlockEditsOutcome,
+	getDisplayMessageFromToolData,
+	isBlockEditToolId,
+	isDisplayableToolMessageTool,
+} from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
 import type { ShowComponentType } from '../abilities/show-component';
 import type { UIMessage } from '@automattic/agenttic-client';
@@ -143,6 +149,68 @@ function hasLaterAgentToolMessageInSameTurn(
 	return false;
 }
 
+function hasLaterApplyBlockEditsOutcome(
+	messages: UIMessage[],
+	currentIndex: number,
+	toolCallId: string
+): boolean {
+	for ( const laterMessage of messages.slice( currentIndex + 1 ) ) {
+		if ( laterMessage.role === 'user' ) {
+			return false;
+		}
+
+		const laterText = laterMessage.content?.[ 0 ]?.text;
+		if ( ! hasAgentRole( laterMessage ) || ! laterText ) {
+			continue;
+		}
+
+		try {
+			const laterData = JSON.parse( laterText );
+			if (
+				laterData?.tool_call_id === toolCallId &&
+				getApplyBlockEditsOutcome( laterData.tool_id, laterData.data )
+			) {
+				return true;
+			}
+		} catch ( _error ) {}
+	}
+
+	return false;
+}
+
+function followsTerminalApplyBlockEditsOutcome(
+	messages: UIMessage[],
+	currentIndex: number
+): boolean {
+	for ( let index = currentIndex - 1; index >= 0; index-- ) {
+		const earlierMessage = messages[ index ];
+		if ( earlierMessage.role === 'user' ) {
+			return false;
+		}
+
+		const earlierText = earlierMessage.content?.[ 0 ]?.text;
+		if ( ! hasAgentRole( earlierMessage ) || ! earlierText ) {
+			continue;
+		}
+
+		try {
+			const earlierData = JSON.parse( earlierText );
+			if ( typeof earlierData?.tool_id !== 'string' ) {
+				continue;
+			}
+
+			return (
+				!! getApplyBlockEditsOutcome( earlierData.tool_id, earlierData.data ) &&
+				earlierData.data?.followUpTasks !== true
+			);
+		} catch ( _error ) {
+			return false;
+		}
+	}
+
+	return false;
+}
+
 /**
  * Converts tool-related messages to component messages.
  */
@@ -195,7 +263,7 @@ export default function convertToolMessagesToComponents( {
 		try {
 			textData = JSON.parse( firstContentText );
 		} catch ( _error ) {
-			return [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
 		}
 
 		if (
@@ -203,7 +271,7 @@ export default function convertToolMessagesToComponents( {
 			textData === null ||
 			typeof textData.tool_id !== 'string'
 		) {
-			return [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
 		}
 
 		// Handle `show-component` tool message
@@ -291,10 +359,40 @@ export default function convertToolMessagesToComponents( {
 				return [];
 			}
 
-			const summary = getDisplayMessageFromToolData( textData.data );
-			if ( ! summary ) {
+			const blockEditOutcome = getApplyBlockEditsOutcome( textData.tool_id, textData.data );
+			const isLegacySuccessfulApplyBlockEditsResult =
+				textData.tool_id === APPLY_BLOCK_EDITS_TOOL_ID && textData.data?.result?.success === true;
+			if (
+				isBlockEditToolId( textData.tool_id ) &&
+				! blockEditOutcome &&
+				! isLegacySuccessfulApplyBlockEditsResult
+			) {
 				return [];
 			}
+			const summary = getDisplayMessageFromToolData( textData.data );
+			if ( ! summary && blockEditOutcome !== 'no-changes' ) {
+				return [];
+			}
+			if (
+				typeof textData.tool_call_id === 'string' &&
+				hasLaterApplyBlockEditsOutcome( array, index, textData.tool_call_id )
+			) {
+				return [];
+			}
+			const content =
+				blockEditOutcome === 'no-changes'
+					? [
+							{
+								type: 'text' as const,
+								text: __( '✓ No changes needed', __i18n_text_domain__ ),
+							},
+					  ]
+					: [
+							{
+								type: 'text' as const,
+								text: summary as string,
+							},
+					  ];
 
 			// Tool summaries with follow-up tasks are intermediate status updates. When
 			// rehydrating history, a later tool message in the same user turn (for example,
@@ -311,12 +409,7 @@ export default function convertToolMessagesToComponents( {
 				{
 					...message,
 					suppressThinking: true,
-					content: [
-						{
-							type: 'text' as const,
-							text: summary,
-						},
-					],
+					content,
 				},
 			];
 		}
