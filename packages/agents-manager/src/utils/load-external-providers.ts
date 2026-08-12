@@ -12,8 +12,8 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
-import { amToolProvider, normalizeAbilityName } from '../abilities';
-import { getAvailableCheckpoints } from './checkpoints';
+import { amToolProvider, getAmCheckpointContext } from '../abilities';
+import { findAbilityByName } from '../abilities/ability-name';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import {
@@ -346,7 +346,7 @@ function withAmCheckpoints(
 	return {
 		getClientContext: () => {
 			const context = contextProvider.getClientContext();
-			const amCheckpoints = getAvailableCheckpoints();
+			const amCheckpoints = getAmCheckpointContext();
 			if ( ! amCheckpoints.length ) {
 				return context;
 			}
@@ -688,10 +688,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 				// earliest provider that currently exposes the ability handles it.
 				const results = await collectAbilityResults();
 				for ( let i = 0; i < allToolProviders.length; i++ ) {
-					const owns = results[ i ].some(
-						( ability ) => ability.name === name || normalizeAbilityName( ability.name ) === name
-					);
-					if ( owns ) {
+					if ( findAbilityByName( results[ i ], name ) ) {
 						const result = await allToolProviders[ i ].executeAbility( name, args );
 
 						// TODO (ability-migration): Delete with the provider-checkpoints

@@ -1,9 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import ButtonPicker from '../components/button-picker';
-import ColorPicker from '../components/color-picker';
 import { EscalationButton } from '../components/escalation-button';
-import FontPicker from '../components/font-picker';
 import isAmAbilitiesDisabled from './is-am-abilities-disabled';
+import lazyComponent from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
 import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
@@ -19,10 +17,20 @@ export interface AgentsManagerUIMessage extends UIMessage {
 
 // AM-owned components by `ShowComponentType`. These take precedence over
 // provider components — AM is the single source of truth for each migrated type.
+//
+// The pickers carry the block-editor preview stack, so they load on demand:
+// a picker row fetches its chunk when it first renders, and other chats never
+// download it.
 const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
-	'button-picker': ButtonPicker as React.ComponentType,
-	'color-picker': ColorPicker as React.ComponentType,
-	'font-picker': FontPicker as React.ComponentType,
+	'button-picker': lazyComponent(
+		() => import( /* webpackChunkName: "am-button-picker" */ '../components/button-picker' )
+	),
+	'color-picker': lazyComponent(
+		() => import( /* webpackChunkName: "am-color-picker" */ '../components/color-picker' )
+	),
+	'font-picker': lazyComponent(
+		() => import( /* webpackChunkName: "am-font-picker" */ '../components/font-picker' )
+	),
 };
 
 function getAmComponent( type: string ): React.ComponentType | null {
