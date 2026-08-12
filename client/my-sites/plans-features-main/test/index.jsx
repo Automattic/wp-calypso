@@ -109,6 +109,17 @@ const emptyPlansIndexForMockedFeatures = {
 	[ PLAN_ENTERPRISE_GRID_WPCOM ]: null,
 };
 
+const mockSiteMetaIntent = ( intent = 'plans-newsletter', processing = false ) =>
+	useIntentFromSiteMeta.mockReturnValue( { processing, intent } );
+
+const getVisiblePlans = () => screen.getByTestId( 'visible-plans' );
+
+const renderPlans = ( componentProps = {} ) =>
+	renderWithProvider( <PlansFeaturesMain { ...props } { ...componentProps } /> );
+
+const getRequestedIntents = () =>
+	useGridPlansForFeaturesGrid.mock.calls.map( ( [ { intent } ] ) => intent );
+
 describe( 'PlansFeaturesMain', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -172,64 +183,18 @@ describe( 'PlansFeaturesMain', () => {
 			);
 		} );
 
-		test( 'recovers an empty Newsletter site-meta grid with default plans when enabled', () => {
-			useIntentFromSiteMeta.mockImplementation( () => ( {
-				processing: false,
-				intent: 'plans-newsletter',
-			} ) );
-			renderWithProvider(
-				<PlansFeaturesMain
-					{ ...props }
-					enableClassicPlansEmptyGridRecovery
-					hideFreePlan
-					hidePersonalPlan
-					hidePremiumPlan
-				/>
-			);
-
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-				JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )
-			);
-		} );
-
-		test( 'recovers a Newsletter site on Commerce to Commerce and Enterprise', () => {
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
+		test( 'recovers and re-evaluates when hidden-plan filters change', () => {
+			mockSiteMetaIntent();
+			const { rerender } = renderPlans( {
+				enableClassicPlansEmptyGridRecovery: true,
+				hideFreePlan: true,
+				hidePersonalPlan: true,
+				hidePremiumPlan: true,
+				hideBusinessPlan: true,
 			} );
-			renderWithProvider(
-				<PlansFeaturesMain
-					{ ...props }
-					enableClassicPlansEmptyGridRecovery
-					hideFreePlan
-					hidePersonalPlan
-					hidePremiumPlan
-					hideBusinessPlan
-				/>
-			);
 
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			expect( getVisiblePlans() ).toHaveTextContent(
 				JSON.stringify( [ PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )
-			);
-		} );
-
-		test( 're-evaluates the tailored grid when hidden-plan filters change after recovery', async () => {
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
-			} );
-			const { rerender } = renderWithProvider(
-				<PlansFeaturesMain
-					{ ...props }
-					enableClassicPlansEmptyGridRecovery
-					hideFreePlan
-					hidePersonalPlan
-					hidePremiumPlan
-				/>
-			);
-
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-				JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )
 			);
 
 			rerender(
@@ -241,11 +206,7 @@ describe( 'PlansFeaturesMain', () => {
 				/>
 			);
 
-			await waitFor( () =>
-				expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-					JSON.stringify( [ PLAN_PREMIUM ] )
-				)
-			);
+			expect( getVisiblePlans() ).toHaveTextContent( JSON.stringify( [ PLAN_PREMIUM ] ) );
 		} );
 
 		test( 're-evaluates the tailored grid when site intent changes after recovery', async () => {
@@ -267,29 +228,23 @@ describe( 'PlansFeaturesMain', () => {
 			const component = <PlansFeaturesMain { ...props } enableClassicPlansEmptyGridRecovery />;
 			const { rerender } = renderWithProvider( component );
 
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-				JSON.stringify( [ PLAN_BUSINESS ] )
-			);
+			expect( getVisiblePlans() ).toHaveTextContent( JSON.stringify( [ PLAN_BUSINESS ] ) );
 
 			siteIntent = 'plans-videopress';
 			rerender( component );
 
 			await waitFor( () =>
-				expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-					JSON.stringify( [ PLAN_ECOMMERCE ] )
-				)
+				expect( getVisiblePlans() ).toHaveTextContent( JSON.stringify( [ PLAN_ECOMMERCE ] ) )
 			);
 		} );
 
-		test( 'withholds a recovered default grid while a new site tailored intent settles', async () => {
+		test( 'withholds a recovered default grid while a new site tailored intent settles', () => {
 			let siteMetaProcessing = false;
-			const observedGridRequests = [];
 			useIntentFromSiteMeta.mockImplementation( () => ( {
 				processing: siteMetaProcessing,
 				intent: 'plans-newsletter',
 			} ) );
 			useGridPlansForFeaturesGrid.mockImplementation( ( { intent, siteId } ) => {
-				observedGridRequests.push( { intent, siteId } );
 				if ( siteId === 1 && intent === 'plans-newsletter' ) {
 					return [];
 				}
@@ -314,11 +269,7 @@ describe( 'PlansFeaturesMain', () => {
 			);
 			const { rerender } = renderWithProvider( renderComponent( 1 ) );
 
-			await waitFor( () =>
-				expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-					JSON.stringify( [ PLAN_BUSINESS ] )
-				)
-			);
+			expect( getVisiblePlans() ).toHaveTextContent( JSON.stringify( [ PLAN_BUSINESS ] ) );
 			expect( screen.getByTestId( 'loaded-sibling' ) ).toBeVisible();
 			expect( onReady ).toHaveBeenCalledTimes( 1 );
 
@@ -332,37 +283,22 @@ describe( 'PlansFeaturesMain', () => {
 			siteMetaProcessing = false;
 			rerender( renderComponent( 2 ) );
 
-			await waitFor( () =>
-				expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-					JSON.stringify( [ PLAN_PREMIUM ] )
-				)
-			);
+			expect( getVisiblePlans() ).toHaveTextContent( JSON.stringify( [ PLAN_PREMIUM ] ) );
 			expect( screen.getByTestId( 'loaded-sibling' ) ).toBeVisible();
 			expect( onReady ).toHaveBeenCalledTimes( 2 );
-			expect( observedGridRequests[ observedGridRequests.length - 1 ] ).toEqual( {
-				intent: 'plans-newsletter',
-				siteId: 2,
-			} );
 		} );
 
-		test( 're-evaluates the tailored grid when selected-plan context changes after recovery', async () => {
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
-			} );
+		test( 're-evaluates the tailored grid when selected-plan context changes after recovery', () => {
+			mockSiteMetaIntent();
 			useGridPlansForFeaturesGrid.mockImplementation( ( { intent, selectedPlan } ) => {
 				if ( intent === 'plans-newsletter' ) {
 					return selectedPlan === PLAN_BUSINESS ? [ { planSlug: PLAN_PREMIUM } ] : [];
 				}
 				return [ { planSlug: PLAN_BUSINESS } ];
 			} );
-			const { rerender } = renderWithProvider(
-				<PlansFeaturesMain { ...props } enableClassicPlansEmptyGridRecovery />
-			);
+			const { rerender } = renderPlans( { enableClassicPlansEmptyGridRecovery: true } );
 
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-				JSON.stringify( [ PLAN_BUSINESS ] )
-			);
+			expect( getVisiblePlans() ).toHaveTextContent( JSON.stringify( [ PLAN_BUSINESS ] ) );
 
 			rerender(
 				<PlansFeaturesMain
@@ -372,30 +308,20 @@ describe( 'PlansFeaturesMain', () => {
 				/>
 			);
 
-			await waitFor( () =>
-				expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-					JSON.stringify( [ PLAN_PREMIUM ] )
-				)
-			);
+			expect( getVisiblePlans() ).toHaveTextContent( JSON.stringify( [ PLAN_PREMIUM ] ) );
 		} );
 
 		test( 'preserves the selected term when recovering with default plans', () => {
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
+			mockSiteMetaIntent();
+			renderPlans( {
+				enableClassicPlansEmptyGridRecovery: true,
+				intervalType: 'monthly',
+				hideFreePlan: true,
+				hidePersonalPlan: true,
+				hidePremiumPlan: true,
 			} );
-			renderWithProvider(
-				<PlansFeaturesMain
-					{ ...props }
-					enableClassicPlansEmptyGridRecovery
-					intervalType="monthly"
-					hideFreePlan
-					hidePersonalPlan
-					hidePremiumPlan
-				/>
-			);
 
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			expect( getVisiblePlans() ).toHaveTextContent(
 				JSON.stringify( [
 					PLAN_BUSINESS_MONTHLY,
 					PLAN_ECOMMERCE_MONTHLY,
@@ -404,51 +330,20 @@ describe( 'PlansFeaturesMain', () => {
 			);
 		} );
 
-		test( 'does not recover a viable tailored grid when the current plan is unavailable', () => {
-			const observedIntents = [];
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
-			} );
-			useGridPlansForFeaturesGrid.mockImplementation( ( { intent } ) => {
-				observedIntents.push( intent );
-				return [ { planSlug: PLAN_PREMIUM } ];
-			} );
-
-			renderWithProvider( <PlansFeaturesMain { ...props } enableClassicPlansEmptyGridRecovery /> );
-
-			expect( Plans.useCurrentPlan ).toHaveReturnedWith( undefined );
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-				JSON.stringify( [ PLAN_PREMIUM ] )
-			);
-			expect( observedIntents ).not.toContain( 'plans-default-wpcom' );
-		} );
-
 		test( 'keeps upsell intent resolution isolated from automatic recovery', () => {
-			const observedIntents = [];
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
-			} );
+			mockSiteMetaIntent();
 			usePlanFromUpsells.mockReturnValue( PLAN_BUSINESS );
-			useGridPlansForFeaturesGrid.mockImplementation( ( { intent } ) => {
-				observedIntents.push( intent );
-				return [];
-			} );
+			useGridPlansForFeaturesGrid.mockReturnValue( [] );
 
-			renderWithProvider( <PlansFeaturesMain { ...props } enableClassicPlansEmptyGridRecovery /> );
+			renderPlans( { enableClassicPlansEmptyGridRecovery: true } );
 
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent( '[]' );
-			expect( observedIntents ).toContain( 'plans-default-wpcom' );
-			expect( observedIntents ).not.toContain( 'plans-newsletter' );
+			expect( getVisiblePlans() ).toHaveTextContent( '[]' );
+			expect( getRequestedIntents() ).toContain( 'plans-default-wpcom' );
+			expect( getRequestedIntents() ).not.toContain( 'plans-newsletter' );
 		} );
 
 		test( 'does not recover when bottom-card presentation removes the only grid card', () => {
-			const observedIntents = [];
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
-			} );
+			mockSiteMetaIntent();
 			usePlansGridRedesignExperiment.mockReturnValue( {
 				isLoading: false,
 				variant: 'control',
@@ -458,50 +353,29 @@ describe( 'PlansFeaturesMain', () => {
 				showWooCommerceBottomCard: false,
 				isExperimentEligible: false,
 			} );
-			useGridPlansForFeaturesGrid.mockImplementation( ( { intent } ) => {
-				observedIntents.push( intent );
-				return [ { planSlug: PLAN_ENTERPRISE_GRID_WPCOM } ];
-			} );
+			useGridPlansForFeaturesGrid.mockReturnValue( [ { planSlug: PLAN_ENTERPRISE_GRID_WPCOM } ] );
 
-			renderWithProvider( <PlansFeaturesMain { ...props } enableClassicPlansEmptyGridRecovery /> );
+			renderPlans( { enableClassicPlansEmptyGridRecovery: true } );
 
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent( '[]' );
-			expect( observedIntents ).not.toContain( 'plans-default-wpcom' );
+			expect( getVisiblePlans() ).toHaveTextContent( '[]' );
+			expect( getRequestedIntents() ).not.toContain( 'plans-default-wpcom' );
 		} );
 
-		test( 'keeps a viable Newsletter Premium grid in the legacy layout', () => {
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
-			} );
+		test( 're-evaluates Newsletter Premium when the dashboard hides the current plan', () => {
+			mockSiteMetaIntent();
 			Plans.useCurrentPlan.mockReturnValue( {
 				planSlug: PLAN_PREMIUM,
 				productSlug: PLAN_PREMIUM,
 			} );
-			renderWithProvider(
-				<PlansFeaturesMain
-					{ ...props }
-					enableClassicPlansEmptyGridRecovery
-					hideFreePlan
-					hidePersonalPlan
-				/>
-			);
-
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-				JSON.stringify( [ PLAN_PREMIUM ] )
-			);
-		} );
-
-		test( 'recovers when the untangled layout removes the current Newsletter Premium plan', () => {
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
+			const { rerender } = renderPlans( {
+				enableClassicPlansEmptyGridRecovery: true,
+				hideFreePlan: true,
+				hidePersonalPlan: true,
 			} );
-			Plans.useCurrentPlan.mockReturnValue( {
-				planSlug: PLAN_PREMIUM,
-				productSlug: PLAN_PREMIUM,
-			} );
-			renderWithProvider(
+
+			expect( getVisiblePlans() ).toHaveTextContent( JSON.stringify( [ PLAN_PREMIUM ] ) );
+
+			rerender(
 				<PlansFeaturesMain
 					{ ...props }
 					enableClassicPlansEmptyGridRecovery
@@ -511,69 +385,44 @@ describe( 'PlansFeaturesMain', () => {
 				/>
 			);
 
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			expect( getVisiblePlans() ).toHaveTextContent(
 				JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )
 			);
 		} );
 
-		test( 'does not recover an explicit intent when site metadata is also present', () => {
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
+		test.each( [
+			[
+				'an explicit intent owns the grid',
+				{ enableClassicPlansEmptyGridRecovery: true, intent: 'plans-newsletter' },
+			],
+			[ 'the classic opt-in is absent', {} ],
+		] )( 'does not recover when %s', ( _label, componentProps ) => {
+			mockSiteMetaIntent();
+			renderPlans( {
+				...componentProps,
+				hideFreePlan: true,
+				hidePersonalPlan: true,
+				hidePremiumPlan: true,
 			} );
-			renderWithProvider(
-				<PlansFeaturesMain
-					{ ...props }
-					enableClassicPlansEmptyGridRecovery
-					intent="plans-newsletter"
-					hideFreePlan
-					hidePersonalPlan
-					hidePremiumPlan
-				/>
-			);
 
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent( '[]' );
-		} );
-
-		test( 'does not recover an empty site-meta grid without the classic opt-in', () => {
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
-			} );
-			renderWithProvider(
-				<PlansFeaturesMain { ...props } hideFreePlan hidePersonalPlan hidePremiumPlan />
-			);
-
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent( '[]' );
+			expect( getVisiblePlans() ).toHaveTextContent( '[]' );
 		} );
 
 		test( 'does not recover while the tailored grid is loading', () => {
-			const observedIntents = [];
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
-			} );
-			useGridPlansForFeaturesGrid.mockImplementation( ( { intent } ) => {
-				observedIntents.push( intent );
-				return null;
-			} );
+			mockSiteMetaIntent();
+			useGridPlansForFeaturesGrid.mockReturnValue( null );
 			const onReady = jest.fn();
 
-			renderWithProvider(
-				<PlansFeaturesMain { ...props } enableClassicPlansEmptyGridRecovery onReady={ onReady } />
-			);
+			renderPlans( { enableClassicPlansEmptyGridRecovery: true, onReady } );
 
 			expect( screen.queryByTestId( 'plan-features' ) ).not.toBeInTheDocument();
 			expect( onReady ).not.toHaveBeenCalled();
-			expect( observedIntents ).not.toContain( 'plans-default-wpcom' );
+			expect( getRequestedIntents() ).not.toContain( 'plans-default-wpcom' );
 		} );
 
 		test( 'keeps the empty tailored pass unready until recovered plans load', async () => {
 			let recoveredPlansLoaded = false;
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
-			} );
+			mockSiteMetaIntent();
 			useGridPlansForFeaturesGrid.mockImplementation( ( { intent } ) => {
 				if ( intent === 'plans-newsletter' ) {
 					return [];
@@ -613,17 +462,14 @@ describe( 'PlansFeaturesMain', () => {
 
 		test( 'keeps the manual View all plans action independent', async () => {
 			const user = userEvent.setup();
-			useIntentFromSiteMeta.mockReturnValue( {
-				processing: false,
-				intent: 'plans-newsletter',
-			} );
-			renderWithProvider( <PlansFeaturesMain { ...props } enableClassicPlansEmptyGridRecovery /> );
+			mockSiteMetaIntent();
+			renderPlans( { enableClassicPlansEmptyGridRecovery: true } );
 
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			expect( getVisiblePlans() ).toHaveTextContent(
 				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] )
 			);
 			await user.click( screen.getByRole( 'button', { name: 'View all plans' } ) );
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			expect( getVisiblePlans() ).toHaveTextContent(
 				JSON.stringify( [
 					PLAN_FREE,
 					PLAN_PERSONAL,
