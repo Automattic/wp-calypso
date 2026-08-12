@@ -121,7 +121,11 @@ export const agencyPartnerDirectoryApplicationMutation = ( agencyId: number ) =>
 		mutationFn: ( update: AgencyPartnerDirectoryApplicationUpdate ) =>
 			updateAgencyPartnerDirectoryApplication( agencyId, update ),
 		onSuccess: ( agency: Agency ) => {
-			queryClient.setQueryData( activeAgencyQuery().queryKey, agency );
+			// Merge rather than replace: the PUT response may omit fields the
+			// GET provides (e.g. `user.capabilities`), which gate routes and menus.
+			queryClient.setQueryData( activeAgencyQuery().queryKey, ( previous ) =>
+				previous ? { ...previous, ...agency } : agency
+			);
 		},
 	} );
 

@@ -1,5 +1,9 @@
-import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+	rawUserPreferencesQuery,
+	userPreferenceMutation,
+	userPreferenceQuery,
+} from '@automattic/api-queries';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Popover,
@@ -10,6 +14,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { CardBody } from '../../components/card';
+import type { UserPreferences } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 const PREFERENCE_NAME = 'a4a-partner-directory-dashboard-not-approved-popover';
@@ -34,13 +39,12 @@ export default function NotApprovedPopover( {
 }: Props ) {
 	const [ anchor, setAnchor ] = useState< HTMLElement | null >( null );
 	const [ showPopover, setShowPopover ] = useState( false );
-	// Covers the gap until the preference cache reflects the mutation.
-	const [ dismissedLocally, setDismissedLocally ] = useState( false );
 
+	const queryClient = useQueryClient();
 	const { data: preferenceDismissed } = useQuery( userPreferenceQuery( PREFERENCE_NAME ) );
 	const { mutate: savePreference } = useMutation( userPreferenceMutation( PREFERENCE_NAME ) );
 
-	const popoverDismissed = dismissedLocally || !! preferenceDismissed;
+	const popoverDismissed = !! preferenceDismissed;
 
 	useEffect( () => {
 		if ( showOnLoad && preferenceDismissed === false ) {
@@ -50,7 +54,15 @@ export default function NotApprovedPopover( {
 
 	const dismissPopover = ( eventName: string ) => {
 		setShowPopover( false );
-		setDismissedLocally( true );
+		// Write through the host app's query client: the mutation's own cache
+		// update targets the MSD singleton, which the classic app doesn't read.
+		queryClient.setQueryData< UserPreferences >(
+			rawUserPreferencesQuery().queryKey,
+			( previous ) => ( {
+				...previous,
+				[ PREFERENCE_NAME ]: true,
+			} )
+		);
 		savePreference( true );
 		recordTracksEvent( eventName );
 	};
@@ -79,6 +91,7 @@ export default function NotApprovedPopover( {
 		<VStack
 			as="span"
 			ref={ setAnchor }
+			tabIndex={ 0 }
 			onMouseEnter={ openOnHover }
 			onMouseLeave={ closeOnHoverOut }
 			onFocus={ () => handleShowPopover( true ) }

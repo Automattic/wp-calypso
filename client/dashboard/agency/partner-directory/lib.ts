@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n';
+import emailValidator from 'email-validator';
 import type {
 	AgencyPartnerDirectoryApplication,
+	AgencyPartnerDirectoryEntryStatus,
 	AgencyPartnerDirectorySlug,
 	AgencyProfile,
 } from '@automattic/api-core';
@@ -23,7 +25,9 @@ export const DIRECTORY_NAMES: Record< AgencyPartnerDirectorySlug, string > = {
 	vip: 'WordPress VIP',
 };
 
-export function getDirectoryStatusBadge( status?: string ): DirectoryStatusBadge {
+export function getDirectoryStatusBadge(
+	status?: AgencyPartnerDirectoryEntryStatus
+): DirectoryStatusBadge {
 	switch ( status ) {
 		case 'pending':
 			return { key: 'pending', label: __( 'Pending' ), intent: 'warning' };
@@ -45,10 +49,6 @@ function isValidUrl( url: string ): boolean {
 	);
 }
 
-function isValidEmail( email: string ): boolean {
-	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test( email );
-}
-
 /**
  * Whether the agency's public profile has all the details required to be
  * listed in a partner directory. Mirrors the validation of the agency
@@ -63,7 +63,7 @@ export function isAgencyProfileComplete( profile?: AgencyProfile | null ): boole
 
 	return (
 		company.name.length > 0 &&
-		isValidEmail( company.email ) &&
+		emailValidator.validate( company.email ) &&
 		isValidUrl( company.website ) &&
 		company.bio_description.length > 0 &&
 		// The landing page URL is optional.
@@ -85,7 +85,7 @@ export function isApplicationCompleted(
 ): boolean {
 	return (
 		( application?.is_published &&
-			application.directories.some(
+			application.directories?.some(
 				( directory ) => directory.status === 'approved' && directory.is_published
 			) ) ??
 		false
