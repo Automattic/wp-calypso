@@ -76,6 +76,7 @@ function SiteLogsDataViews( {
 		defaultView: logType === LogType.PHP ? DEFAULT_PHP_LOGS_VIEW : DEFAULT_SERVER_LOGS_VIEW,
 		queryParams: search,
 		queryParamFilterFields: logType === LogType.PHP ? [ 'severity' ] : [],
+		syncFiltersToQueryParams: true,
 	} );
 
 	// Where DataViews' infinite scroll has advanced the window to. Deliberately

@@ -32,6 +32,15 @@ export interface UseViewOptions {
 	queryParamFilterFields?: string[];
 
 	/**
+	 * When true, the URL query params are the source of truth for the
+	 * `queryParamFilterFields` filters: changing them in the UI updates the URL,
+	 * and they are never persisted to the user preference. Fields synced this way
+	 * should restrict `filterBy.operators` to `isAny`, as that is the only
+	 * operator (besides boolean `is`) a query param can express.
+	 */
+	syncFiltersToQueryParams?: boolean;
+
+	/**
 	 * Sanitize the field by removing any invalid or malformed entries and migrating deprecated fields.
 	 */
 	sanitizeFields?: ( fields: View[ 'fields' ] ) => View[ 'fields' ];
@@ -58,6 +67,7 @@ export function useBasePersistentView( {
 	defaultView,
 	queryParams,
 	queryParamFilterFields = [],
+	syncFiltersToQueryParams = false,
 	matches,
 	sanitizeFields,
 	navigate,
@@ -104,7 +114,9 @@ export function useBasePersistentView( {
 		);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ JSON.stringify( transientFilterFields ) ] );
+	}, [
+		JSON.stringify( transientFilterFields.map( ( field ) => [ field, queryParams[ field ] ] ) ),
+	] );
 
 	useEffect( () => {
 		if ( ! matches || matches.length === 0 ) {
@@ -125,15 +137,21 @@ export function useBasePersistentView( {
 		);
 	}, [ matches, transientProperties, transientFilters, queryParams ] );
 
+	// For synced fields the URL is the source of truth, so persisted filters for
+	// them (e.g. from a preference saved before syncing was enabled) are ignored.
+	const excludedFilterFields = syncFiltersToQueryParams
+		? queryParamFilterFields
+		: transientFilterFields;
+
 	// Merge transient properties and filters from query params into the view.
 	const view: View = useMemo( () => {
 		const mergedView = {
 			...baseView,
 			...transientProperties,
-			...( transientFilters.length > 0 && {
+			...( ( transientFilters.length > 0 || syncFiltersToQueryParams ) && {
 				filters: [
 					...( baseView.filters || [] ).filter(
-						( filter ) => ! transientFilterFields.includes( filter.field )
+						( filter ) => ! excludedFilterFields.includes( filter.field )
 					),
 					...transientFilters,
 				],
@@ -145,42 +163,106 @@ export function useBasePersistentView( {
 		}
 
 		return mergedView;
-	}, [ baseView, transientProperties, transientFilterFields, transientFilters, sanitizeFields ] );
+	}, [
+		baseView,
+		transientProperties,
+		excludedFilterFields,
+		transientFilters,
+		syncFiltersToQueryParams,
+		sanitizeFields,
+	] );
 
 	const updateView = useCallback(
 		( newView: View ) => {
-			const newTransientFilterFields = transientFilterFields.filter(
-				( field ) =>
-					newView.filters?.some(
-						( filter ) =>
-							filter.field === field &&
-							fastDeepEqual( filter.value, getTransientFilter( field, queryParams[ field ] ).value )
-					)
-			);
+			let transientFieldsToStrip: string[];
 
-			if ( queryParams ) {
-				const newTransientProperties = {
-					page: newView.page,
-					search: newView.search,
-				};
+			if ( syncFiltersToQueryParams ) {
+				transientFieldsToStrip = queryParamFilterFields;
 
-				if ( ! fastDeepEqual( newTransientFilterFields, transientFilterFields ) ) {
-					setTransientFilters( [] );
-					navigate( {
-						search: clearQueryParamsFromTransientFilters( queryParams, transientFilterFields ),
-						replace: true,
+				if ( queryParams ) {
+					const newQueryParams = { ...queryParams };
+					const newTransientFilters: Filter[] = [];
+					let filtersChanged = false;
+
+					queryParamFilterFields.forEach( ( field ) => {
+						const filter = newView.filters?.find( ( f ) => f.field === field );
+						const serialized = filter ? serializeTransientFilterValue( filter ) : undefined;
+						const current =
+							queryParams[ field ] === undefined ? undefined : String( queryParams[ field ] );
+
+						if ( serialized === undefined ) {
+							delete newQueryParams[ field ];
+						} else {
+							newQueryParams[ field ] = serialized;
+							newTransientFilters.push( filter as Filter );
+						}
+
+						if ( serialized !== current ) {
+							filtersChanged = true;
+						}
 					} );
-				} else if ( ! fastDeepEqual( newTransientProperties, transientProperties ) ) {
-					navigate( {
-						search: mergeQueryParamsWithTransientProperties( queryParams, newTransientProperties ),
-						resetScroll: false,
-					} );
+
+					const newTransientProperties = {
+						page: newView.page,
+						search: newView.search,
+					};
+					const propertiesChanged = ! fastDeepEqual( newTransientProperties, transientProperties );
+
+					if ( filtersChanged || propertiesChanged ) {
+						if ( filtersChanged ) {
+							setTransientFilters( newTransientFilters );
+						}
+						navigate( {
+							search: mergeQueryParamsWithTransientProperties(
+								newQueryParams,
+								newTransientProperties
+							),
+							replace: filtersChanged ? true : undefined,
+							resetScroll: false,
+						} );
+					}
+				}
+			} else {
+				const newTransientFilterFields = transientFilterFields.filter(
+					( field ) =>
+						newView.filters?.some(
+							( filter ) =>
+								filter.field === field &&
+								fastDeepEqual(
+									filter.value,
+									getTransientFilter( field, queryParams[ field ] ).value
+								)
+						)
+				);
+				transientFieldsToStrip = newTransientFilterFields;
+
+				if ( queryParams ) {
+					const newTransientProperties = {
+						page: newView.page,
+						search: newView.search,
+					};
+
+					if ( ! fastDeepEqual( newTransientFilterFields, transientFilterFields ) ) {
+						setTransientFilters( [] );
+						navigate( {
+							search: clearQueryParamsFromTransientFilters( queryParams, transientFilterFields ),
+							replace: true,
+						} );
+					} else if ( ! fastDeepEqual( newTransientProperties, transientProperties ) ) {
+						navigate( {
+							search: mergeQueryParamsWithTransientProperties(
+								queryParams,
+								newTransientProperties
+							),
+							resetScroll: false,
+						} );
+					}
 				}
 			}
 
 			let viewToPersist = newView;
 			viewToPersist = removeTransientPropertiesFromView( viewToPersist );
-			viewToPersist = removeTransientFiltersFromView( viewToPersist, newTransientFilterFields );
+			viewToPersist = removeTransientFiltersFromView( viewToPersist, transientFieldsToStrip );
 			viewToPersist = removeEmptyFiltersFromView( viewToPersist );
 
 			// Persist view if different from baseView.
@@ -196,6 +278,8 @@ export function useBasePersistentView( {
 			queryParams,
 			transientProperties,
 			transientFilterFields,
+			queryParamFilterFields,
+			syncFiltersToQueryParams,
 			navigate,
 			baseView,
 			defaultView,
@@ -207,11 +291,19 @@ export function useBasePersistentView( {
 
 	const resetView = useCallback( () => {
 		persistView( undefined );
+		if ( syncFiltersToQueryParams ) {
+			setTransientFilters( [] );
+		}
 		navigate( {
-			search: mergeQueryParamsWithTransientProperties( queryParams, { page: 1, search: '' } ),
+			search: mergeQueryParamsWithTransientProperties(
+				syncFiltersToQueryParams
+					? clearQueryParamsFromTransientFilters( queryParams, queryParamFilterFields )
+					: queryParams,
+				{ page: 1, search: '' }
+			),
 			replace: true,
 		} );
-	}, [ persistView, navigate, queryParams ] );
+	}, [ persistView, navigate, queryParams, syncFiltersToQueryParams, queryParamFilterFields ] );
 
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
 }
@@ -221,7 +313,17 @@ function getTransientFilter( field: string, rawValue: unknown ): Filter {
 	if ( stringValue === 'true' || stringValue === 'false' ) {
 		return { field, operator: 'is', value: stringValue === 'true' } as Filter;
 	}
-	return { field, operator: 'isAny', value: [ stringValue ] } as Filter;
+	return { field, operator: 'isAny', value: stringValue.split( ',' ) } as Filter;
+}
+
+function serializeTransientFilterValue( filter: Filter ): string | undefined {
+	if ( typeof filter.value === 'boolean' ) {
+		return String( filter.value );
+	}
+	if ( Array.isArray( filter.value ) && filter.value.length > 0 ) {
+		return filter.value.map( String ).join( ',' );
+	}
+	return undefined;
 }
 
 function removeTransientPropertiesFromView( view: View ): View {

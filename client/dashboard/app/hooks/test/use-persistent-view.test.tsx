@@ -315,6 +315,167 @@ describe( 'usePersistentView', () => {
 		} );
 	} );
 
+	describe( 'syncFiltersToQueryParams', () => {
+		it( 'should parse comma-separated query param values into a multi-value filter', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { Wrapper } = createTestWrapper();
+
+			const queryParams = { severity: 'Warning,Fatal error' };
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields: [ 'severity' ],
+						syncFiltersToQueryParams: true,
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'severity', operator: 'isAny', value: [ 'Warning', 'Fatal error' ] },
+				] );
+			} );
+		} );
+
+		it( 'should ignore persisted filters for synced fields', async () => {
+			const persistedView = {
+				type: 'table',
+				sort: { field: 'name', direction: 'asc' },
+				filters: [
+					{ field: 'severity', operator: 'isAny', value: [ 'User' ] },
+					{ field: 'status', operator: 'isAny', value: [ 'active' ] },
+				],
+			};
+			mockGetCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': persistedView,
+			} );
+
+			const { Wrapper } = createTestWrapper();
+
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams: {},
+						queryParamFilterFields: [ 'severity' ],
+						syncFiltersToQueryParams: true,
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'status', operator: 'isAny', value: [ 'active' ] },
+				] );
+			} );
+		} );
+
+		it( 'should sync filter changes to the URL query params without persisting them', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const viewToPersist: View = {
+				type: 'grid',
+				layout: { previewSize: 120 },
+				sort: { field: 'name', direction: 'asc' },
+			};
+			const expectedUpdatePreferences = mockUpdateCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': viewToPersist,
+			} );
+
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = { severity: 'User' };
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields: [ 'severity' ],
+						syncFiltersToQueryParams: true,
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...viewToPersist,
+					page: 1,
+					search: '',
+					filters: [
+						{ field: 'severity', operator: 'isAny', value: [ 'Warning', 'Fatal error' ] },
+					],
+				} );
+			} );
+
+			await waitFor( () => {
+				const router = getRouter();
+				expect( router?.state.location.search ).toEqual( {
+					severity: 'Warning,Fatal error',
+				} );
+			} );
+
+			expect( result.current.view.filters ).toEqual( [
+				{ field: 'severity', operator: 'isAny', value: [ 'Warning', 'Fatal error' ] },
+			] );
+
+			await waitFor( () => {
+				expect( expectedUpdatePreferences.isDone() ).toBe( true );
+			} );
+		} );
+
+		it( 'should remove the query param when the filter is cleared', async () => {
+			mockGetCalypsoPreferences( {} );
+			mockUpdateCalypsoPreferences();
+
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = { 'current-param': 'current-value', severity: 'Warning' };
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields: [ 'severity' ],
+						syncFiltersToQueryParams: true,
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...defaultView,
+					page: 1,
+					search: '',
+					filters: [],
+				} );
+			} );
+
+			await waitFor( () => {
+				const router = getRouter();
+				expect( router?.state.location.search ).toEqual( {
+					'current-param': 'current-value',
+				} );
+			} );
+
+			expect( result.current.view.filters ).toEqual( [] );
+		} );
+	} );
+
 	describe( 'resetView', () => {
 		it( 'should clear the persisted view', async () => {
 			const persistedView = {

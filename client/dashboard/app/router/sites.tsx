@@ -324,9 +324,16 @@ export const siteLogsPhpRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: 'php',
 	loader: loadSiteLogsRoute,
-	validateSearch: ( search ): { severity?: ( typeof VALUES_SEVERITY )[ number ] } => ( {
-		severity: VALUES_SEVERITY.find( ( v ) => v === search.severity ),
-	} ),
+	validateSearch: ( search ): { severity?: string } => {
+		// Accepts a comma-separated list; tolerates '+'-encoded spaces, which
+		// decodeURIComponent (used by the router's search parser) leaves as-is.
+		const severity = String( search.severity ?? '' )
+			.replace( /\+/g, ' ' )
+			.split( ',' )
+			.filter( ( value ) => VALUES_SEVERITY.some( ( v ) => v === value ) )
+			.join( ',' );
+		return { severity: severity || undefined };
+	},
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {
