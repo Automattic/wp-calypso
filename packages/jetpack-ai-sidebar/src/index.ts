@@ -1158,6 +1158,10 @@ export const capabilities = {
  * Returns contextual suggestions based on the selected block type.
  * Hides after a suggestion is clicked, then restores suggestions after a
  * suggestion action completes.
+ *
+ * Post-level suggestions (Optimize Title, reviews, SEO) are not returned
+ * here — they surface through `getEmptyViewSuggestions`, so they render only
+ * while the chat and its input are empty.
  * @returns {Object} Object containing a suggestions array.
  */
 export function useSuggestions(
@@ -1240,21 +1244,11 @@ export function useSuggestions(
 	const editorContext = useSelect( ( select ) => {
 		const blockEditor = select( 'core/block-editor' ) as { getSelectedBlock?: () => any };
 		const editor = select( 'core/editor' ) as {
-			getCurrentPostId?: () => EditorPostId | null | undefined;
 			getCurrentPostType?: () => string | undefined;
 		};
-		const core = select( 'core' ) as {
-			getPostType?: ( name: string ) => { supports?: Record< string, boolean > } | undefined;
-		};
-		const postType = editor?.getCurrentPostType?.();
 		return {
 			selectedBlock: blockEditor?.getSelectedBlock?.() ?? null,
-			postId: normalizeEditorPostId( editor?.getCurrentPostId?.() ),
-			postType,
-			supportsExcerpt:
-				postType && isExcerptSuggestionEnabled()
-					? postTypeRecordSupportsExcerpt( postType, core?.getPostType?.( postType ) )
-					: false,
+			postType: editor?.getCurrentPostType?.(),
 		};
 	}, [] );
 
@@ -1265,15 +1259,6 @@ export function useSuggestions(
 	}, [ editorContext.selectedBlock?.clientId ] );
 
 	const selectedBlock = editorContext.selectedBlock;
-	const postLevelSuggestions = useMemo(
-		() =>
-			getPostLevelSuggestions(
-				editorContext.postType,
-				editorContext.postId,
-				editorContext.supportsExcerpt
-			),
-		[ editorContext.postId, editorContext.postType, editorContext.supportsExcerpt ]
-	);
 	const blockTransformationsEnabled = isBlockTransformationsEnabled();
 	const applicable = useMemo(
 		() =>
@@ -1293,29 +1278,14 @@ export function useSuggestions(
 			} ) ),
 		[ applicable ]
 	);
-	// Editor-level reviews (Optimize Title, Generate Feedback, AI Editorial Review)
-	// show only with no block selected; a selected block shows block transforms.
+	// Only block transforms are returned dynamically; post-level chips come
+	// from getEmptyViewSuggestions and render only in the chat's empty view.
 	const visibleSuggestions = useMemo( () => {
-		if ( hidden ) {
+		if ( hidden || ! selectedBlock ) {
 			return [];
 		}
-		// Both branches narrow to this shared shape; the explicit annotation lets
-		// the generic applySuggestionLimit infer a single element type across them.
-		const activeSuggestions: Array< {
-			id: string;
-			label: string;
-			prompt: string;
-			options?: SuggestionOption[];
-			action?: () => boolean | Promise< boolean >;
-		} > = selectedBlock ? blockTransformationSuggestions : postLevelSuggestions;
-		return applySuggestionLimit( activeSuggestions, maxSuggestions );
-	}, [
-		blockTransformationSuggestions,
-		hidden,
-		maxSuggestions,
-		postLevelSuggestions,
-		selectedBlock,
-	] );
+		return applySuggestionLimit( blockTransformationSuggestions, maxSuggestions );
+	}, [ blockTransformationSuggestions, hidden, maxSuggestions, selectedBlock ] );
 	const visibleSuggestionIds = useMemo(
 		() => new Set( visibleSuggestions.map( ( suggestion ) => suggestion.id ) ),
 		[ visibleSuggestions ]
@@ -1327,9 +1297,11 @@ export function useSuggestions(
 	const visibleBlockTransformationSuggestionsKey = visibleBlockTransformationSuggestions
 		.map( ( suggestion ) => suggestion.id )
 		.join( '|' );
-	const isAiEditorialReviewSuggestionVisible = visibleSuggestionIds.has(
-		AI_EDITORIAL_REVIEW_SUGGESTION.id
-	);
+	// The AI Editorial Review chip renders through the empty view, which is a
+	// plain function with no render signal, so the availability that puts the
+	// chip there is tracked from this hook instead.
+	const isAiEditorialReviewSuggestionAvailable =
+		! selectedBlock && isAiEditorialReviewAvailable( editorContext.postType );
 
 	useEffect( () => {
 		if ( editorContext.selectedBlock ) {
@@ -1338,11 +1310,11 @@ export function useSuggestions(
 	}, [ editorContext.selectedBlock?.clientId, editorContext.selectedBlock ] );
 
 	useEffect( () => {
-		if ( ! suggestionsVisible || hidden || ! isAiEditorialReviewSuggestionVisible ) {
+		if ( ! suggestionsVisible || hidden || ! isAiEditorialReviewSuggestionAvailable ) {
 			return;
 		}
 		trackAiEditorialReviewSuggestionRenderedOnce();
-	}, [ hidden, isAiEditorialReviewSuggestionVisible, suggestionsVisible ] );
+	}, [ hidden, isAiEditorialReviewSuggestionAvailable, suggestionsVisible ] );
 
 	useEffect( () => {
 		if (

@@ -1,3 +1,5 @@
+[← Documentation index](./overview.md)
+
 # Creating Reliable Tests
 
 ## Table of contents
@@ -13,7 +15,7 @@
 For example, running this test 100 times should result in 100 passes if the test is reliable, which is a good indication that the test is repeatable and reliable.
 
 ```
-yarn test:pw ./specs/dashboard/dashboard__authentication.spec.ts --repeat-each=100
+yarn test:pw ./specs/dashboard/dashboard__authentication.spec.ts --repeat-each=100 --reporter=list
 
 Running 100 tests using 10 workers
   100 passed (1.7m)
@@ -121,6 +123,6 @@ A fixture is a reusable setup or resource in your tests, such as a test site, us
 
 For example, you might use a fixture to automatically create a new WordPress.com site before each test and delete it afterwards, ensuring that each test runs with a fresh site and does not interfere with others.
 
-Fortunately the [custom fixtures](./custom-fixtures.md), specifically the public site fixture `sitePublic`, allow you to quickly spin up and tear down a public site that can easily be used to independently test things like changing site visibility settings or importing site content.
+Fortunately the [custom fixtures](./custom_fixtures.md), specifically the public site fixture `sitePublic`, allow you to quickly spin up and tear down a public site that can easily be used to independently test things like changing site visibility settings or importing site content.
 
 Please note that unless you are behind an a8c proxy (Trialmattician or external contributor) spawning multiple new sites in quick sucession will hit an API rate limit.

@@ -1,3 +1,5 @@
+[← Documentation index](./overview.md)
+
 # Playwright Test Setup
 
 ## Table of contents
@@ -17,7 +19,7 @@
   - [Run tests](#run-tests)
   - [Playwright VSCode extension](#install-and-use-playwright-vscode-extension)
 - Related
-  - [Decrypt test environment](../docs/test_environment.md)
+  - [Decrypt test environment](./test_environment.md)
 
 ## Quick start macOS
 
@@ -75,7 +77,7 @@ export E2E_SECRETS_KEY='your-calypso-e2e-config-decode-key-here'
 ```
 
 10. Decrypt the secrets file to access sensitive configuration required for running tests.  
-    See [Decrypt](../docs/test_environment.md) for more details.
+    See [Decrypt](./test_environment.md) for more details.
 
 ```bash
 yarn workspace wp-e2e-tests decrypt-secrets
@@ -90,13 +92,15 @@ yarn workspace wp-e2e-tests build --watch
 12. Run tests
 
 ```bash
-yarn workspace wp-e2e-tests test:pw -- <test_path>
+yarn workspace wp-e2e-tests test:pw -- <test_path> --reporter=list
 ```
+
+`--reporter=list` keeps a failing run from opening the HTML report and holding the terminal. Drop it, then `yarn playwright show-report`, when you want that report.
 
 By default, tests should run on <http://calypso.localhost:3000>. If you wish to run them on another environment, such as <https://wpcalypso.wordpress.com>, you can set an environment variable:
 
 ```bash
-CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests test:pw -- <test_path>
+CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests test:pw -- <test_path> --reporter=list
 ```
 
 13. Install and use Playwright VSCode extension

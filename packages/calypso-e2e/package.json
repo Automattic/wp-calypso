@@ -22,8 +22,6 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
-		"@automattic/jest-circus-allure-reporter": "workspace:^",
-		"@jest/types": "^29.6.3",
 		"@playwright/browser-chromium": "1.57.0",
 		"@playwright/browser-firefox": "1.57.0",
 		"@types/totp-generator": "^0.0.8",
@@ -31,8 +29,6 @@
 		"asana-phrase": "^0.0.8",
 		"chalk": "^4.1.2",
 		"form-data": "^4.0.6",
-		"jest-docblock": "^29.7.0",
-		"jest-environment-node": "^29.7.0",
 		"mailosaur": "^8.4.0",
 		"playwright": "1.57.0",
 		"totp-generator": "^0.0.14",

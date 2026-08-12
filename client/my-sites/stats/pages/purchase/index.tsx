@@ -180,7 +180,6 @@ const StatsPurchasePage = ( {
 										siteId={ siteId }
 										redirectUri={ query.redirect_uri ?? '' }
 										from={ query.from ?? '' }
-										isCommercial={ isCommercial }
 									/>
 								</div>
 							)

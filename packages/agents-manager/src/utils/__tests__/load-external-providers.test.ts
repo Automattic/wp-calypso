@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { amToolProvider } from '../../abilities';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { showComponentAbility } from '../../abilities/show-component';
 import { getAvailableCheckpoints } from '../checkpoints';
@@ -33,6 +34,14 @@ jest.mock( '../checkpoints', () => ( {
 	restoreCheckpoint: jest.fn(),
 	setCheckpoint: jest.fn(),
 } ) );
+
+// The abilities facade only loads the editor abilities on editor pages —
+// open the gate and resolve the load, so the merged provider and the sync
+// checkpoint context see AM's abilities.
+beforeAll( async () => {
+	document.body.classList.add( 'site-editor-php' );
+	await amToolProvider.getAbilities();
+} );
 
 function setAgentsManagerData( data: Record< string, unknown > ) {
 	( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData = data;

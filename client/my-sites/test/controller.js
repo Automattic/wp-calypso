@@ -6,7 +6,7 @@ import page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import * as pageView from 'calypso/lib/analytics/page-view';
-import { PREFERENCES_SET } from 'calypso/state/action-types';
+import { PREFERENCES_SET, SELECTED_SITE_SET } from 'calypso/state/action-types';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	updateRecentSitesPreferences,
@@ -370,5 +370,121 @@ describe( 'redirectToPrimary', () => {
 		expect( spy ).toHaveBeenCalledWith( `${ path }/site?${ query }` );
 
 		spy.mockRestore();
+	} );
+} );
+
+describe( 'siteSelection — site fetch failure fallback', () => {
+	// Flush only the microtask queue (the middleware's promise chain), never a macrotask.
+	// `page.redirect` schedules its real `page.replace` on a timer; pumping setTimeout here
+	// would let that leaked navigation fire and tear down the jsdom document mid-test.
+	const flushPromises = async () => {
+		for ( let i = 0; i < 10; i++ ) {
+			await Promise.resolve();
+		}
+	};
+
+	// Simulates a fresh page load where the site fetch fails: the store has no
+	// matching site (empty `sites.items`, so `getSiteId` returns null) and
+	// requestSite rejects, so `freshSiteId` ends up falsy and the middleware
+	// reaches its fallback branch.
+	const buildContext = ( { path, pathname, querystring, siteFragment, selectedSiteId = null } ) => {
+		const store = mockStore( {
+			currentUser: { id: 12345, user: { site_count: 3, visible_site_count: 2 } },
+			sites: { items: {} },
+			ui: { selectedSiteId },
+		} );
+		const context = {
+			store,
+			params: { site: siteFragment },
+			path,
+			pathname,
+			querystring,
+			query: {},
+			section: { enableNoSites: false },
+		};
+		// The fetch callback bails out early if the user has navigated away, so
+		// pin the current route to this context's path.
+		page.current = context.path;
+		return context;
+	};
+
+	let redirect;
+
+	beforeEach( () => {
+		requestSite.mockReturnValue( () =>
+			Promise.reject( new Error( 'intermittent site fetch failure' ) )
+		);
+		redirect = jest.spyOn( page, 'redirect' ).mockImplementation( () => {} );
+		// `page.redirect` schedules a real `page.replace` on a timer; neutralize it so a
+		// leaked navigation cannot tear down the jsdom document while promises flush.
+		jest.spyOn( page, 'replace' ).mockImplementation( () => {} );
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+		page.current = '';
+	} );
+
+	it( 'does not strip the site slug on a checkout renewal URL when the site fetch fails', async () => {
+		const siteFragment = 'ecommercesite.wpcomstaging.com';
+		const pathname = `/checkout/ecommerce-bundle/renew/1252758/${ siteFragment }`;
+		const querystring = 'cancel_to=%2Fplans&redirect_to=%2Fplans';
+		const context = buildContext( {
+			path: `${ pathname }?${ querystring }`,
+			pathname,
+			querystring,
+			siteFragment,
+		} );
+		const next = jest.fn();
+
+		siteSelection( context, next );
+		await flushPromises();
+
+		expect( redirect ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'clears a stale selectedSiteId before rendering checkout when the site fetch fails', async () => {
+		const siteFragment = 'ecommercesite.wpcomstaging.com';
+		const pathname = `/checkout/ecommerce-bundle/renew/1252758/${ siteFragment }`;
+		const querystring = 'cancel_to=%2Fplans&redirect_to=%2Fplans';
+		const context = buildContext( {
+			path: `${ pathname }?${ querystring }`,
+			pathname,
+			querystring,
+			siteFragment,
+			// A prior SPA navigation left an unrelated site selected.
+			selectedSiteId: 999,
+		} );
+		const next = jest.fn();
+
+		siteSelection( context, next );
+		await flushPromises();
+
+		expect( context.store.getActions() ).toContainEqual( {
+			type: SELECTED_SITE_SET,
+			siteId: null,
+		} );
+		expect( redirect ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'redirects to the slug-less all-sites path on a non-checkout route when the site fetch fails', async () => {
+		const siteFragment = 'ecommercesite.wpcomstaging.com';
+		const pathname = `/stats/day/${ siteFragment }`;
+		const querystring = 'a=b';
+		const context = buildContext( {
+			path: `${ pathname }?${ querystring }`,
+			pathname,
+			querystring,
+			siteFragment,
+		} );
+		const next = jest.fn();
+
+		siteSelection( context, next );
+		await flushPromises();
+
+		expect( redirect ).toHaveBeenCalledWith( `/stats/day?${ querystring }` );
+		expect( next ).not.toHaveBeenCalled();
 	} );
 } );
