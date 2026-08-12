@@ -103,7 +103,7 @@ import { getAccount } from './get-account';
 export type CustomOptions = {
 	/**
 	 * Viewport name used to configure device-specific behavior in page objects.
-	 * Set per-project in playwright.config.ts. Valid values: 'desktop' | 'mobile' | 'tablet'.
+	 * Set per-project in playwright.config.ts. Valid values: 'desktop' | 'mobile'.
 	 */
 	viewportName: string;
 };
@@ -717,7 +717,6 @@ export const tags = {
 	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
 	LEGAL: '@legal',
 	P2: '@p2',
-	QUARANTINED: '@quarantined',
 	SETTINGS: '@settings',
 };
 

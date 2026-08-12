@@ -1,3 +1,5 @@
+[← Documentation index](./overview.md)
+
 # Custom Fixtures
 
 ## Table of contents
@@ -16,7 +18,7 @@
 ## Example
 
 ```typescript
-import { expect, test } from '../lib/pw-base';
+import { expect, test } from '../../lib/pw-base';
 
 test( 'should login and load editor', async ( { pageEditor, pageLogin } ) => {
 	await pageLogin.login( 'user', 'pass' );
