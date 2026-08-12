@@ -39,6 +39,11 @@ import { PaymentMethodEditDialog } from './payment-method-edit-dialog';
 import type { StoredPaymentMethod } from '@automattic/api-core';
 import type { View, Fields, SortDirection, Action } from '@wordpress/dataviews';
 
+interface ChangeBackupArgs {
+	paymentMethod: StoredPaymentMethod;
+	isBackup: boolean;
+}
+
 const getPaymentMethodEventProperties = ( paymentMethod: StoredPaymentMethod ) => ( {
 	payment_partner: paymentMethod.payment_partner,
 	is_backup: paymentMethod.is_backup,
@@ -123,11 +128,15 @@ export default function PaymentMethods() {
 			source,
 		} );
 	};
-	const changePaymentMethodBackup = (
-		paymentMethod: StoredPaymentMethod,
-		isBackup: boolean,
-		source: 'actions-menu' | 'toggle'
-	) => {
+	const changePaymentMethodBackup = ( {
+		paymentMethod,
+		isBackup,
+		source,
+	}: {
+		paymentMethod: StoredPaymentMethod;
+		isBackup: boolean;
+		source: 'actions-menu' | 'toggle';
+	} ) => {
 		recordActionClick( paymentMethod, isBackup ? 'enable-backup' : 'disable-backup', source );
 		// Unlike the click event above, these describe the state being saved, not
 		// the state the payment method was in when the user acted.
@@ -153,8 +162,8 @@ export default function PaymentMethods() {
 	const paymentMethodFields = getFields( {
 		isUpdatingPaymentMethods,
 		isSettingPaymentMethodBackup,
-		onChangeBackup: ( paymentMethod: StoredPaymentMethod, isBackup: boolean ) =>
-			changePaymentMethodBackup( paymentMethod, isBackup, 'toggle' ),
+		onChangeBackup: ( { paymentMethod, isBackup }: ChangeBackupArgs ) =>
+			changePaymentMethodBackup( { paymentMethod, isBackup, source: 'toggle' } ),
 	} );
 	const { data: filteredPaymentMethods, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( paymentMethods, currentView, paymentMethodFields );
@@ -171,7 +180,11 @@ export default function PaymentMethods() {
 			},
 			callback: ( items ) => {
 				const item = items[ 0 ];
-				changePaymentMethodBackup( item, true, 'actions-menu' );
+				changePaymentMethodBackup( {
+					paymentMethod: item,
+					isBackup: true,
+					source: 'actions-menu',
+				} );
 			},
 		},
 		{
@@ -185,7 +198,11 @@ export default function PaymentMethods() {
 			},
 			callback: ( items ) => {
 				const item = items[ 0 ];
-				changePaymentMethodBackup( item, false, 'actions-menu' );
+				changePaymentMethodBackup( {
+					paymentMethod: item,
+					isBackup: false,
+					source: 'actions-menu',
+				} );
 			},
 		},
 		{
@@ -338,7 +355,7 @@ function getFields( {
 }: {
 	isUpdatingPaymentMethods: boolean;
 	isSettingPaymentMethodBackup: boolean;
-	onChangeBackup: ( paymentMethod: StoredPaymentMethod, isBackup: boolean ) => void;
+	onChangeBackup: ( args: ChangeBackupArgs ) => void;
 } ): Fields< StoredPaymentMethod > {
 	return [
 		{
@@ -440,7 +457,7 @@ function getFields( {
 							! isCreditCard( item ) || isSettingPaymentMethodBackup || isUpdatingPaymentMethods
 						}
 						onChange={ () => {
-							onChangeBackup( item, ! item.is_backup );
+							onChangeBackup( { paymentMethod: item, isBackup: ! item.is_backup } );
 						} }
 					/>
 				);

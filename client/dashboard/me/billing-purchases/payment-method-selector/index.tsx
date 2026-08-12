@@ -40,7 +40,7 @@ import type { PaymentMethod, PaymentProcessorProp } from '@automattic/composite-
  * different user intents that happen to share this component, so they get
  * distinct events rather than one event with a flag.
  */
-function getEventNames( isPurchaseAssignment: boolean ) {
+function getEventNames( { isPurchaseAssignment }: { isPurchaseAssignment: boolean } ) {
 	return isPurchaseAssignment
 		? {
 				success: 'calypso_dashboard_purchase_payment_method_change',
@@ -90,7 +90,7 @@ export function PaymentMethodSelector( {
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase );
 	const { stripe, stripeConfiguration } = useStripe();
 	const { recordTracksEvent } = useAnalytics();
-	const eventNames = getEventNames( Boolean( purchase ) );
+	const eventNames = getEventNames( { isPurchaseAssignment: Boolean( purchase ) } );
 	const submittedPaymentProcessorId = useRef( '' );
 
 	const { mutateAsync: assignPaymentMethod } = useMutation( assignPaymentMethodMutation() );
