@@ -55,7 +55,6 @@ import {
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
-import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
 import { reauthRequiredLink } from '../../utils/link';
 import {
 	getActivityLogHiddenGroups,
@@ -324,20 +323,6 @@ export const siteLogsPhpRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: 'php',
 	loader: loadSiteLogsRoute,
-	validateSearch: ( search ): { severity?: string } => {
-		// Accepts a comma-separated list, canonicalized case-insensitively.
-		// Tolerates '+'-encoded spaces, which decodeURIComponent (used by the
-		// router's search parser) leaves as-is.
-		const values = String( search.severity ?? '' )
-			.replace( /\+/g, ' ' )
-			.split( ',' )
-			.map( ( value ) =>
-				VALUES_SEVERITY.find( ( v ) => v.toLowerCase() === value.trim().toLowerCase() )
-			)
-			.filter( ( value ): value is ( typeof VALUES_SEVERITY )[ number ] => value !== undefined );
-		const severity = Array.from( new Set( values ) ).join( ',' );
-		return { severity: severity || undefined };
-	},
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {

@@ -24,6 +24,7 @@ import {
 	type ServerLogWithId,
 } from '../utils';
 import { useActions } from './actions';
+import { VALUES_SEVERITY } from './constants';
 import { useFields } from './fields';
 import {
 	DEFAULT_PER_PAGE,
@@ -63,9 +64,6 @@ function SiteLogsDataViews( {
 	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
-	// The validated route search (not the raw location search), so values
-	// canonicalized by `validateSearch` (e.g. severity casing) are what the
-	// filters and the URL sync consume.
 	const search = useSearch( { strict: false } );
 	const rafIdRef = useRef< number | null >( null );
 	const dataviewsRef = useRef< HTMLDivElement | null >( null );
@@ -77,8 +75,8 @@ function SiteLogsDataViews( {
 		slug: `site-logs-${ logType }`,
 		defaultView: logType === LogType.PHP ? DEFAULT_PHP_LOGS_VIEW : DEFAULT_SERVER_LOGS_VIEW,
 		queryParams: search,
-		queryParamFilterFields: logType === LogType.PHP ? [ 'severity' ] : [],
-		syncFiltersToQueryParams: true,
+		queryParamFilterFields:
+			logType === LogType.PHP ? [ { field: 'severity', values: VALUES_SEVERITY } ] : [],
 	} );
 
 	// Where DataViews' infinite scroll has advanced the window to. Deliberately

@@ -315,7 +315,33 @@ describe( 'usePersistentView', () => {
 		} );
 	} );
 
-	describe( 'syncFiltersToQueryParams', () => {
+	describe( 'query param filter sync', () => {
+		it( 'should canonicalize param values case-insensitively when allowed values are provided', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { Wrapper } = createTestWrapper();
+
+			const queryParams = { severity: 'warning,FATAL+ERROR,bogus' };
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields: [
+							{ field: 'severity', values: [ 'User', 'Warning', 'Deprecated', 'Fatal error' ] },
+						],
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'severity', operator: 'isAny', value: [ 'Warning', 'Fatal error' ] },
+				] );
+			} );
+		} );
+
 		it( 'should parse comma-separated query param values into a multi-value filter', async () => {
 			mockGetCalypsoPreferences( {} );
 
@@ -329,7 +355,6 @@ describe( 'usePersistentView', () => {
 						defaultView,
 						queryParams,
 						queryParamFilterFields: [ 'severity' ],
-						syncFiltersToQueryParams: true,
 					} ),
 				{ wrapper: Wrapper }
 			);
@@ -363,7 +388,6 @@ describe( 'usePersistentView', () => {
 						defaultView,
 						queryParams: {},
 						queryParamFilterFields: [ 'severity' ],
-						syncFiltersToQueryParams: true,
 					} ),
 				{ wrapper: Wrapper }
 			);
@@ -397,7 +421,6 @@ describe( 'usePersistentView', () => {
 						defaultView,
 						queryParams,
 						queryParamFilterFields: [ 'severity' ],
-						syncFiltersToQueryParams: true,
 					} ),
 				{ wrapper: Wrapper }
 			);
@@ -447,7 +470,6 @@ describe( 'usePersistentView', () => {
 						defaultView,
 						queryParams,
 						queryParamFilterFields: [ 'severity' ],
-						syncFiltersToQueryParams: true,
 					} ),
 				{ wrapper: Wrapper }
 			);
@@ -490,7 +512,6 @@ describe( 'usePersistentView', () => {
 						defaultView,
 						queryParams,
 						queryParamFilterFields: [ 'severity' ],
-						syncFiltersToQueryParams: true,
 					} ),
 				{ wrapper: Wrapper }
 			);
@@ -532,7 +553,6 @@ describe( 'usePersistentView', () => {
 						defaultView,
 						queryParams,
 						queryParamFilterFields: [ 'severity' ],
-						syncFiltersToQueryParams: true,
 					} ),
 				{ wrapper: Wrapper }
 			);

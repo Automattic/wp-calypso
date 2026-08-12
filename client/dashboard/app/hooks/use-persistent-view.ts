@@ -7,6 +7,13 @@ import { setTransientQueryParamsAtPathname } from '../transient-query-params';
 import type { AnyRouteMatch } from '@tanstack/react-router';
 import type { Filter, View } from '@wordpress/dataviews';
 
+/**
+ * A field whose filter is kept in sync with the URL query params. Provide
+ * `values` to restrict the accepted param values; they are canonicalized
+ * case-insensitively, so hand-typed URLs keep working.
+ */
+export type QueryParamFilterField = string | { field: string; values?: readonly string[] };
+
 export interface UseViewOptions {
 	/**
 	 * Unique slug to identify the view.
@@ -26,19 +33,14 @@ export interface UseViewOptions {
 	queryParams?: any;
 
 	/**
-	 * Fields that should become transient filters when present in the URL query params.
-	 * The returned view's `filters` will be merged with the transient filters.
+	 * Fields whose filters are kept in sync with the URL query params: params
+	 * become filters in the returned view, changing the filters in the UI
+	 * updates the URL, and they are never persisted to the user preference.
+	 * Requires `queryParams`. Fields synced this way should restrict
+	 * `filterBy.operators` to `isAny`, as that is the only operator (besides
+	 * boolean `is`) a query param can express.
 	 */
-	queryParamFilterFields?: string[];
-
-	/**
-	 * When true, the URL query params are the source of truth for the
-	 * `queryParamFilterFields` filters: changing them in the UI updates the URL,
-	 * and they are never persisted to the user preference. Fields synced this way
-	 * should restrict `filterBy.operators` to `isAny`, as that is the only
-	 * operator (besides boolean `is`) a query param can express.
-	 */
-	syncFiltersToQueryParams?: boolean;
+	queryParamFilterFields?: QueryParamFilterField[];
 
 	/**
 	 * Sanitize the field by removing any invalid or malformed entries and migrating deprecated fields.
@@ -48,8 +50,9 @@ export interface UseViewOptions {
 
 /**
  * Hook for managing DataViews view state.
- * Transient properties (`page` and `search`) are synced to the URL query params,
- * while the rest of the properties is persisted to Calypso preferences.
+ * Transient properties (`page` and `search`) and `queryParamFilterFields`
+ * filters are synced to the URL query params, while the rest of the properties
+ * is persisted to Calypso preferences.
  */
 export function usePersistentView( options: UseViewOptions ) {
 	const navigate = useNavigate();
@@ -67,7 +70,6 @@ export function useBasePersistentView( {
 	defaultView,
 	queryParams,
 	queryParamFilterFields = [],
-	syncFiltersToQueryParams = false,
 	matches,
 	sanitizeFields,
 	navigate,
@@ -98,14 +100,23 @@ export function useBasePersistentView( {
 
 	const transientProperties = useMemo( () => ( { page, search } ), [ page, search ] );
 
-	const transientFilterFields = queryParamFilterFields.filter(
-		( field ) => queryParams && queryParams[ field ] !== undefined
+	const filterFieldConfigs = queryParamFilterFields.map( ( config ) =>
+		typeof config === 'string' ? { field: config, values: undefined } : config
+	);
+	const filterFieldNames = queryParams ? filterFieldConfigs.map( ( { field } ) => field ) : [];
+	const filterFieldNamesKey = JSON.stringify( filterFieldNames );
+
+	const transientFilterFields = filterFieldNames.filter(
+		( field ) => queryParams[ field ] !== undefined
 	);
 
+	const getFilterFromQueryParam = ( field: string ) => {
+		const config = filterFieldConfigs.find( ( c ) => c.field === field );
+		return getTransientFilter( field, queryParams[ field ], config?.values );
+	};
+
 	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( () =>
-		queryParamFilterFields
-			.filter( ( field ) => queryParams && queryParams[ field ] !== undefined )
-			.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
+		transientFilterFields.flatMap( ( field ) => getFilterFromQueryParam( field ) ?? [] )
 	);
 
 	const transientFilterParamsKey = JSON.stringify(
@@ -116,9 +127,7 @@ export function useBasePersistentView( {
 		// Rebuild from the query params, but keep filters with no value yet:
 		// they have no param to rebuild from and are still being edited.
 		setTransientFilters( ( currentFilters ) => [
-			...transientFilterFields.map( ( field ) =>
-				getTransientFilter( field, queryParams[ field ] )
-			),
+			...transientFilterFields.flatMap( ( field ) => getFilterFromQueryParam( field ) ?? [] ),
 			...currentFilters.filter(
 				( filter ) =>
 					! transientFilterFields.includes( filter.field ) &&
@@ -148,21 +157,16 @@ export function useBasePersistentView( {
 		);
 	}, [ matches, transientProperties, transientFilters, queryParams ] );
 
-	// For synced fields the URL is the source of truth, so persisted filters for
-	// them (e.g. from a preference saved before syncing was enabled) are ignored.
-	const excludedFilterFields = syncFiltersToQueryParams
-		? queryParamFilterFields
-		: transientFilterFields;
-
-	// Merge transient properties and filters from query params into the view.
+	// The URL is the source of truth for the synced fields, so persisted filters
+	// for them (e.g. from a preference saved before syncing existed) are ignored.
 	const view: View = useMemo( () => {
 		const mergedView = {
 			...baseView,
 			...transientProperties,
-			...( ( transientFilters.length > 0 || syncFiltersToQueryParams ) && {
+			...( ( transientFilters.length > 0 || filterFieldNames.length > 0 ) && {
 				filters: [
 					...( baseView.filters || [] ).filter(
-						( filter ) => ! excludedFilterFields.includes( filter.field )
+						( filter ) => ! filterFieldNames.includes( filter.field )
 					),
 					...transientFilters,
 				],
@@ -174,31 +178,18 @@ export function useBasePersistentView( {
 		}
 
 		return mergedView;
-	}, [
-		baseView,
-		transientProperties,
-		excludedFilterFields,
-		transientFilters,
-		syncFiltersToQueryParams,
-		sanitizeFields,
-	] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ baseView, transientProperties, transientFilters, filterFieldNamesKey, sanitizeFields ] );
 
 	const updateView = useCallback(
 		( newView: View ) => {
-			const changes = syncFiltersToQueryParams
-				? computeSyncedFiltersChanges( {
-						newView,
-						queryParams,
-						queryParamFilterFields,
-						transientFilters,
-						transientProperties,
-				  } )
-				: computeTransientFiltersChanges( {
-						newView,
-						queryParams,
-						transientFilterFields,
-						transientProperties,
-				  } );
+			const changes = computeUpdateViewChanges( {
+				newView,
+				queryParams,
+				filterFieldNames,
+				transientFilters,
+				transientProperties,
+			} );
 
 			if ( changes.transientFilters ) {
 				setTransientFilters( changes.transientFilters );
@@ -225,13 +216,12 @@ export function useBasePersistentView( {
 				}
 			}
 		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[
 			queryParams,
 			transientProperties,
-			transientFilterFields,
 			transientFilters,
-			queryParamFilterFields,
-			syncFiltersToQueryParams,
+			filterFieldNamesKey,
 			navigate,
 			baseView,
 			defaultView,
@@ -243,19 +233,16 @@ export function useBasePersistentView( {
 
 	const resetView = useCallback( () => {
 		persistView( undefined );
-		if ( syncFiltersToQueryParams ) {
-			setTransientFilters( [] );
-		}
+		setTransientFilters( [] );
 		navigate( {
 			search: mergeQueryParamsWithTransientProperties(
-				syncFiltersToQueryParams
-					? clearQueryParamsFromTransientFilters( queryParams, queryParamFilterFields )
-					: queryParams,
+				clearQueryParamsFromTransientFilters( queryParams, filterFieldNames ),
 				{ page: 1, search: '' }
 			),
 			replace: true,
 		} );
-	}, [ persistView, navigate, queryParams, syncFiltersToQueryParams, queryParamFilterFields ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ persistView, navigate, queryParams, filterFieldNamesKey ] );
 
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
 }
@@ -275,36 +262,33 @@ type UpdateViewChanges = {
 	resetScroll?: boolean;
 };
 
-// Synced mode: the URL is the source of truth for `queryParamFilterFields`
-// filters — filter changes are written back to the query params and never
-// persisted to the preference.
-function computeSyncedFiltersChanges( {
+function computeUpdateViewChanges( {
 	newView,
 	queryParams,
-	queryParamFilterFields,
+	filterFieldNames,
 	transientFilters,
 	transientProperties,
 }: {
 	newView: View;
 	queryParams: any;
-	queryParamFilterFields: string[];
+	filterFieldNames: string[];
 	transientFilters: Filter[];
 	transientProperties: { page: number; search: string };
 } ): UpdateViewChanges {
 	if ( ! queryParams ) {
-		return { fieldsToStrip: queryParamFilterFields };
+		return { fieldsToStrip: [] };
 	}
 
 	// All synced-field filters stay in the transient state, including ones with
 	// no value yet (a filter just added via the "Add filter" UI): they can't be
 	// expressed in the URL, but dropping them would dismiss the filter mid-edit.
 	const newTransientFilters =
-		newView.filters?.filter( ( filter ) => queryParamFilterFields.includes( filter.field ) ) ?? [];
+		newView.filters?.filter( ( filter ) => filterFieldNames.includes( filter.field ) ) ?? [];
 
 	const newQueryParams = { ...queryParams };
 	let filtersChanged = false;
 
-	queryParamFilterFields.forEach( ( field ) => {
+	filterFieldNames.forEach( ( field ) => {
 		const filter = newView.filters?.find( ( f ) => f.field === field );
 		const serialized = filter ? serializeTransientFilterValue( filter ) : undefined;
 		const current = queryParams[ field ] === undefined ? undefined : String( queryParams[ field ] );
@@ -320,7 +304,7 @@ function computeSyncedFiltersChanges( {
 		}
 	} );
 
-	const changes: UpdateViewChanges = { fieldsToStrip: queryParamFilterFields };
+	const changes: UpdateViewChanges = { fieldsToStrip: filterFieldNames };
 
 	if ( ! fastDeepEqual( newTransientFilters, transientFilters ) ) {
 		changes.transientFilters = newTransientFilters;
@@ -341,60 +325,34 @@ function computeSyncedFiltersChanges( {
 	return changes;
 }
 
-// Default mode: query param filters are inbound-only. Once the user changes one
-// in the UI, the param is cleared and the persisted preference takes over.
-function computeTransientFiltersChanges( {
-	newView,
-	queryParams,
-	transientFilterFields,
-	transientProperties,
-}: {
-	newView: View;
-	queryParams: any;
-	transientFilterFields: string[];
-	transientProperties: { page: number; search: string };
-} ): UpdateViewChanges {
-	const keptTransientFilterFields = transientFilterFields.filter(
-		( field ) =>
-			newView.filters?.some(
-				( filter ) =>
-					filter.field === field &&
-					fastDeepEqual( filter.value, getTransientFilter( field, queryParams[ field ] ).value )
-			)
-	);
-
-	const changes: UpdateViewChanges = { fieldsToStrip: keptTransientFilterFields };
-
-	if ( ! queryParams ) {
-		return changes;
-	}
-
-	const newTransientProperties = { page: newView.page, search: newView.search };
-
-	if ( ! fastDeepEqual( keptTransientFilterFields, transientFilterFields ) ) {
-		changes.transientFilters = [];
-		changes.navigateSearch = clearQueryParamsFromTransientFilters(
-			queryParams,
-			transientFilterFields
-		);
-		changes.replace = true;
-	} else if ( ! fastDeepEqual( newTransientProperties, transientProperties ) ) {
-		changes.navigateSearch = mergeQueryParamsWithTransientProperties(
-			queryParams,
-			newTransientProperties
-		);
-		changes.resetScroll = false;
-	}
-
-	return changes;
-}
-
-function getTransientFilter( field: string, rawValue: unknown ): Filter {
+function getTransientFilter(
+	field: string,
+	rawValue: unknown,
+	allowedValues?: readonly string[]
+): Filter | undefined {
 	const stringValue = String( rawValue );
 	if ( stringValue === 'true' || stringValue === 'false' ) {
 		return { field, operator: 'is', value: stringValue === 'true' } as Filter;
 	}
-	return { field, operator: 'isAny', value: stringValue.split( ',' ) } as Filter;
+
+	let values = stringValue.split( ',' );
+	if ( allowedValues ) {
+		// '+' is tolerated as an encoded space: the router's search parser uses
+		// decodeURIComponent, which leaves it as-is.
+		values = Array.from(
+			new Set(
+				values.flatMap( ( value ) => {
+					const normalized = value.replace( /\+/g, ' ' ).trim().toLowerCase();
+					const canonical = allowedValues.find( ( v ) => v.toLowerCase() === normalized );
+					return canonical === undefined ? [] : [ canonical ];
+				} )
+			)
+		);
+		if ( values.length === 0 ) {
+			return undefined;
+		}
+	}
+	return { field, operator: 'isAny', value: values } as Filter;
 }
 
 function serializeTransientFilterValue( filter: Filter ): string | undefined {
