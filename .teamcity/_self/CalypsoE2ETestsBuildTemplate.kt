@@ -1,5 +1,6 @@
 package _self
 
+import _self.lib.utils.cancelSupersededBuilds
 import _self.lib.utils.mergeTrunk
 import _self.lib.utils.allBranchesExceptMergeQueue
 
@@ -61,6 +62,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 	}
 
   	steps {
+		cancelSupersededBuilds()
+
 		mergeTrunk( skipIfConflict = true )
 
     	bashNodeScript {
