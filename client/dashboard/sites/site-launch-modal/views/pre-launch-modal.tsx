@@ -37,12 +37,12 @@ export default function PreLaunchModal( {
 			size="medium"
 			onRequestClose={ onClose }
 		>
-			{ isLaunching ? (
-				<div className="site-launch-pre-launch-modal__launching">
-					<Spinner />
-				</div>
-			) : (
-				<VStack spacing={ 6 }>
+			<div className="site-launch-pre-launch-modal__body" data-launching={ isLaunching }>
+				<VStack
+					className="site-launch-pre-launch-modal__confirmation"
+					spacing={ 6 }
+					aria-hidden={ isLaunching }
+				>
 					<Text as="p">
 						{ __(
 							'Share your work, connect with your audience, and take the next step toward your goals. Do you want to launch?'
@@ -75,7 +75,12 @@ export default function PreLaunchModal( {
 						</Button>
 					</HStack>
 				</VStack>
-			) }
+				{ isLaunching && (
+					<div className="site-launch-pre-launch-modal__spinner">
+						<Spinner />
+					</div>
+				) }
+			</div>
 		</Modal>
 	);
 }
