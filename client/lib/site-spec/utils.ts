@@ -199,6 +199,9 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 	const ref = new URLSearchParams( window.location.search ).get( 'ref' );
 
 	return {
+		// Needed for `tracking`: without it the widget falls back to its own
+		// default of `enabled: false` and this flow reports no events at all.
+		...getDefaultSiteSpecConfig(),
 		buildSiteUrl: '/setup/ai-site-builder/?create_garden_site=1&trigger_backend_build=0&spec_id=',
 		backButton: {
 			enabled: ref === 'new-site-popover' || ref === 'start-store',
