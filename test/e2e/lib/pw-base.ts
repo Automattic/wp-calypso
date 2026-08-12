@@ -147,12 +147,12 @@ const THROTTLED_ENDPOINT =
 
 // The response event fires on headers, and `response.text()` has no deadline of
 // its own, so without these a stalled body would hang the teardown that waits
-// for it. The flush covers a body read and one tag POST, which is what has to
-// land before a worker exits; a second tag attempt falls to the next detection
-// rather than to this teardown, which is charged to the test's own timeout and
-// must not fail a spec that had already passed.
+// for it. The flush covers a body read and the two tag POSTs a detection makes,
+// which is what has to land before a worker exits: a flag whose tag never landed
+// leaves its line in a build no peer can find. Charged to the test's own timeout,
+// so it must stay well under it and must not fail a spec that had already passed.
 const BODY_TIMEOUT = 2 * 1000;
-const FLUSH_TIMEOUT = 5 * 1000;
+const FLUSH_TIMEOUT = 7 * 1000;
 
 /**
  * Records a throttle whenever wpcom rate-limits one of the endpoints the suite
