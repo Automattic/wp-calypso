@@ -12,9 +12,6 @@ jest.mock( '@wordpress/data', () => ( {
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import {
-	trackAiEditorialReviewItemAction,
-	trackAiEditorialReviewResultRendered,
-	trackAiEditorialReviewSuggestionRendered,
 	trackBlockTransformationSuggestionRendered,
 	trackSplitScreenGuideClick,
 	trackSplitScreenGuideRendered,
@@ -77,64 +74,6 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
 		delete window.bigSkyInitialState;
 		delete ( window as WindowWithAgentsManagerActions ).__agentsManagerActions;
-	} );
-
-	it( 'tracks suggestion exposure with only session context', () => {
-		trackAiEditorialReviewSuggestionRendered();
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_suggestion_rendered',
-			{
-				sessionid: 'test-session-id',
-			}
-		);
-		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
-	} );
-
-	it( 'tracks rendered results as aggregate usefulness counts', () => {
-		trackAiEditorialReviewResultRendered( {
-			outcome: 'success',
-			conflictCount: 2,
-			implicationCount: 3,
-			suggestedEditCount: 8,
-			guidelineViolationCount: 0,
-			reviewContext: 'notes_and_guidelines',
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_result_rendered',
-			{
-				outcome: 'success',
-				conflict_count: 2,
-				implication_count: 3,
-				suggested_edit_count: 8,
-				guideline_violation_count: 0,
-				review_context: 'notes_and_guidelines',
-				sessionid: 'test-session-id',
-			}
-		);
-		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
-	} );
-
-	it( 'tracks item actions after completion without row identifiers', () => {
-		trackAiEditorialReviewItemAction( {
-			action: 'bulk_accept',
-			target: 'mixed',
-			outcome: 'partial_failed',
-			itemCount: 4,
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_item_action',
-			{
-				action: 'bulk_accept',
-				target: 'mixed',
-				outcome: 'partial_failed',
-				item_count: 4,
-				sessionid: 'test-session-id',
-			}
-		);
-		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
 	} );
 
 	it( 'tracks block transformation suggestion exposure with stable metadata', () => {

@@ -2319,11 +2319,8 @@ describe( 'useSuggestions', () => {
 		expect( emptyViewLabels ).toContain( 'Optimize Title' );
 		expect( emptyViewLabels ).toContain( 'Editorial Review' );
 
-		// The rendered event fires once per page load (module-level guard), so
-		// only the first render with the chip available can assert it — which is
-		// this test: every earlier test either selects a block or uses an
-		// unsupported post type.
-		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toHaveLength( 1 );
+		// Chip exposure is tracked by Agents Manager's jetpack_big_sky_chat_suggestions_rendered.
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
 	it( 'keeps selected-block suggestions on template entities', () => {
@@ -2418,6 +2415,8 @@ describe( 'useSuggestions', () => {
 		latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions ).toEqual( [] );
+		// Chip exposure is tracked by Agents Manager's jetpack_big_sky_chat_suggestions_rendered.
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
 	it( 'tracks rendered image block transformation suggestions', () => {

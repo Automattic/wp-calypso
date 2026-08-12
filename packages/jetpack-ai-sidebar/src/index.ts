@@ -67,7 +67,6 @@ import {
 } from './utils/tool-provider';
 import {
 	type BlockTransformationSuggestionType,
-	trackAiEditorialReviewSuggestionRendered,
 	trackBlockTransformationSuggestionRendered,
 } from './utils/tracking';
 import type { SuggestionOption } from '@automattic/agenttic-client';
@@ -93,10 +92,6 @@ type BlockEditSnapshot = {
 };
 
 const blockEditSnapshots = new Map< string, BlockEditSnapshot >();
-
-/** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
-let suggestionRenderedFiredOnce = false;
-
 /** Block transformation suggestions whose rendered event has fired this page life. */
 const blockTransformationSuggestionRenderedKeys = new Set< string >();
 
@@ -315,14 +310,6 @@ function isProofreadAvailable(
 	return (
 		isProofreadEnabled() && isEditorLevelSuggestionPostType( currentPostType ) && !! currentPostId
 	);
-}
-
-function trackAiEditorialReviewSuggestionRenderedOnce(): void {
-	if ( suggestionRenderedFiredOnce ) {
-		return;
-	}
-	suggestionRenderedFiredOnce = true;
-	trackAiEditorialReviewSuggestionRendered();
 }
 
 function getAiEditorialReviewSuggestions( currentPostType?: string ) {
@@ -1394,24 +1381,12 @@ export function useSuggestions(
 	const visibleBlockTransformationSuggestionsKey = visibleBlockTransformationSuggestions
 		.map( ( suggestion ) => suggestion.id )
 		.join( '|' );
-	// The AI Editorial Review chip renders through the empty view, which is a
-	// plain function with no render signal, so the availability that puts the
-	// chip there is tracked from this hook instead.
-	const isAiEditorialReviewSuggestionAvailable =
-		! selectedBlock && isAiEditorialReviewAvailable( editorContext.postType );
 
 	useEffect( () => {
 		if ( editorContext.selectedBlock ) {
 			rememberSelectedBlock( editorContext.selectedBlock );
 		}
 	}, [ editorContext.selectedBlock?.clientId, editorContext.selectedBlock ] );
-
-	useEffect( () => {
-		if ( ! suggestionsVisible || hidden || ! isAiEditorialReviewSuggestionAvailable ) {
-			return;
-		}
-		trackAiEditorialReviewSuggestionRenderedOnce();
-	}, [ hidden, isAiEditorialReviewSuggestionAvailable, suggestionsVisible ] );
 
 	useEffect( () => {
 		if (

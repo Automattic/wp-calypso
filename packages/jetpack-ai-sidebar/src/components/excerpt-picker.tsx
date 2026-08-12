@@ -18,6 +18,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { notifySuggestionActionComplete } from '../utils/suggestion-events';
 import BaseSuggestionPicker from './base-suggestion-picker';
+import type { OnResponseAction } from '../utils/response-action';
 
 /**
  * Props for the ExcerptPicker component.
@@ -30,14 +31,15 @@ interface ExcerptOption {
 interface ExcerptPickerProps {
 	excerpts: ExcerptOption[];
 	onComplete?: () => void;
+	onResponseAction?: OnResponseAction;
 }
 
-/**
- * ExcerptPicker component for the chat sidebar.
- * @param {ExcerptPickerProps} props - Component props.
- * @returns {import('react').ReactElement} The rendered component.
- */
-export default function ExcerptPicker( { excerpts, onComplete }: ExcerptPickerProps ) {
+/** Renders excerpt suggestions and applies the selected excerpt to the post. */
+export default function ExcerptPicker( {
+	excerpts,
+	onComplete,
+	onResponseAction,
+}: ExcerptPickerProps ) {
 	const { editPost } = useDispatch( 'core/editor' );
 	const currentExcerpt = useSelect( ( select ) => {
 		return (
@@ -51,9 +53,8 @@ export default function ExcerptPicker( { excerpts, onComplete }: ExcerptPickerPr
 		( excerpt: string ) => {
 			editPost( { excerpt } );
 			notifySuggestionActionComplete();
-			onComplete?.();
 		},
-		[ editPost, onComplete ]
+		[ editPost ]
 	);
 
 	// The props arrive from an orchestrator tool payload, so guard the shape
@@ -72,8 +73,10 @@ export default function ExcerptPicker( { excerpts, onComplete }: ExcerptPickerPr
 			) }
 			options={ options }
 			onApply={ handleApply }
+			onComplete={ onComplete }
 			appliedMessage={ __( 'Excerpt updated.', 'jetpack' ) }
 			currentValue={ typeof currentExcerpt === 'string' ? currentExcerpt : undefined }
+			onResponseAction={ onResponseAction }
 		/>
 	);
 }

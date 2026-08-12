@@ -1,4 +1,7 @@
 import { __ } from '@wordpress/i18n';
+import ChatResponseRenderedTracker, {
+	createChatResponseActionCallback,
+} from '../components/chat-response-tracking';
 import { EscalationButton } from '../components/escalation-button';
 import isAmAbilitiesDisabled from './is-am-abilities-disabled';
 import lazyComponent from './lazy-component';
@@ -278,6 +281,10 @@ export default function convertToolMessagesToComponents( {
 		if ( isShowComponentTool( textData.tool_id ) ) {
 			const toolData = textData.data ?? {};
 			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
+			const toolCallId =
+				typeof textData.tool_call_id === 'string' && textData.tool_call_id
+					? textData.tool_call_id
+					: undefined;
 			// The testing switch flips rendering to the provider components too,
 			// so the comparison covers the whole flow.
 			const amComponent = isAmAbilitiesDisabled() ? null : getAmComponent( contentType );
@@ -323,6 +330,19 @@ export default function convertToolMessagesToComponents( {
 			const isPageChanged =
 				!! postId && !! currentPostId && String( postId ) !== String( currentPostId );
 			const isStale = hasUserReplied || ! isCurrent || isPageChanged;
+			const shouldTrackResponse = ! isStale;
+			let responseActionProps = {};
+			if ( ! amComponent ) {
+				responseActionProps = {
+					onResponseAction: shouldTrackResponse
+						? createChatResponseActionCallback( {
+								componentType: contentType,
+								toolId: textData.tool_id,
+								...( toolCallId ? { toolCallId } : {} ),
+						  } )
+						: undefined,
+				};
+			}
 
 			const componentMessage: AgentsManagerUIMessage = {
 				...message,
@@ -342,9 +362,23 @@ export default function convertToolMessagesToComponents( {
 							...props,
 							...( summaryText && { summary: summaryText } ),
 							...ownerProps,
+							...responseActionProps,
 							...( isStale && { isMessageStale: true } ),
 						},
 					},
+					...( shouldTrackResponse
+						? [
+								{
+									type: 'component' as const,
+									component: ChatResponseRenderedTracker as React.ComponentType,
+									componentProps: {
+										componentType: contentType,
+										toolId: textData.tool_id,
+										...( toolCallId ? { toolCallId } : {} ),
+									},
+								},
+						  ]
+						: [] ),
 				],
 				disabled: isStale,
 				suppressThinking: followUpTasks !== true,

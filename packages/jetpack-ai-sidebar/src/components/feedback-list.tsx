@@ -42,10 +42,12 @@ import {
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
+import { getBulkResponseActionOutcome } from '../utils/response-action';
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
 import { type BlockSnapshot } from './block-ref';
 import ReviewCard, { type ReviewCardRow } from './review-card';
 import SplitScreenGuide from './split-screen-guide';
+import type { OnResponseAction } from '../utils/response-action';
 
 export interface FeedbackListItem {
 	title: string;
@@ -90,6 +92,8 @@ export interface FeedbackListProps {
 	postId?: EditorPostId;
 	/** Whether the containing chat message is no longer interactive. */
 	isMessageStale?: boolean;
+	/** Reports completed user actions to the host that rendered this response. */
+	onResponseAction?: OnResponseAction;
 	/** Title used when the flow provides flat items rather than sections. */
 	sectionFallbackTitle: string;
 	/** Warning shown when the reviewed post no longer matches the editor. */
@@ -202,11 +206,7 @@ function getApplyUnavailableReason(
 	return undefined;
 }
 
-/**
- * Render a flat, item-based feedback list.
- * @param {FeedbackListProps} props Component props.
- * @returns React element.
- */
+/** Renders actionable feedback items and their bulk-apply control. */
 export default function FeedbackList( {
 	componentType,
 	summary,
@@ -214,6 +214,7 @@ export default function FeedbackList( {
 	sections,
 	postId,
 	isMessageStale = false,
+	onResponseAction,
 	sectionFallbackTitle,
 	staleWarning,
 	failureMessage,
@@ -278,19 +279,23 @@ export default function FeedbackList( {
 	}, [] );
 
 	const applyItem = useCallback(
-		async ( item: FeedbackListItem, sectionIndex: number, itemIndex: number ) => {
+		async (
+			item: FeedbackListItem,
+			sectionIndex: number,
+			itemIndex: number
+		): Promise< boolean > => {
 			const key = getItemKey( sectionIndex, itemIndex );
 			const block = item.block_index === null ? null : flatBlocks[ item.block_index ];
 			if ( isLatestPostContextStale() || getApplyUnavailableReason( item, block ) ) {
 				setItemStatus( key, 'failed' );
-				return;
+				return false;
 			}
 
 			setItemStatus( key, 'applying' );
 			const clientId = block?.clientId;
 			if ( ! clientId || ! item.suggested_text ) {
 				setItemStatus( key, 'failed' );
-				return;
+				return false;
 			}
 
 			let result: Awaited< ReturnType< typeof applyReviewEdit > >;
@@ -305,7 +310,7 @@ export default function FeedbackList( {
 				);
 			} catch {
 				setItemStatus( key, 'failed' );
-				return;
+				return false;
 			}
 
 			if (
@@ -321,10 +326,11 @@ export default function FeedbackList( {
 					editableAttribute: result.editableAttribute,
 				};
 				setItemStatus( key, 'accepted' );
-				return;
+				return true;
 			}
 
 			setItemStatus( key, 'failed' );
+			return false;
 		},
 		[ flatBlocks, isLatestPostContextStale, setItemStatus ]
 	);
@@ -356,21 +362,38 @@ export default function FeedbackList( {
 		if ( bulkRunning || isLatestPostContextStale() ) {
 			return;
 		}
+		let successCount = 0;
+		let failureCount = 0;
 		setBulkRunning( true );
 		for ( const target of applyAllTargets ) {
 			// Apply sequentially so each edit validates against the live block.
 			// eslint-disable-next-line no-await-in-loop
-			await applyItem( target.item, target.sectionIndex, target.itemIndex );
+			const succeeded = await applyItem( target.item, target.sectionIndex, target.itemIndex );
+			if ( succeeded ) {
+				successCount++;
+			} else {
+				failureCount++;
+			}
 		}
 		setBulkRunning( false );
-	}, [ applyAllTargets, applyItem, bulkRunning, isLatestPostContextStale ] );
+		onResponseAction?.( {
+			action: 'bulk_accept',
+			target: 'edit',
+			outcome: getBulkResponseActionOutcome( successCount, failureCount ),
+			itemCount: successCount + failureCount,
+		} );
+	}, [ applyAllTargets, applyItem, bulkRunning, isLatestPostContextStale, onResponseAction ] );
 
 	const undoItem = useCallback(
-		( key: string ) => {
+		( key: string, status: ItemStatus ) => {
 			if ( isLatestPostContextStale() ) {
-				return;
+				return false;
 			}
 			const snapshot = editSnapshots.current[ key ];
+			if ( status === 'accepted' && ! snapshot ) {
+				setItemStatus( key, 'failed' );
+				return false;
+			}
 			if ( snapshot ) {
 				const didUndo = undoBlockEdit(
 					snapshot.clientId,
@@ -380,20 +403,23 @@ export default function FeedbackList( {
 				);
 				if ( ! didUndo ) {
 					setItemStatus( key, 'failed' );
-					return;
+					return false;
 				}
 				delete editSnapshots.current[ key ];
 			}
 			setItemStatus( key, 'pending' );
+			return true;
 		},
 		[ isLatestPostContextStale, setItemStatus ]
 	);
 
 	const dismissItem = useCallback(
 		( key: string ) => {
-			if ( ! isPostStale ) {
-				setItemStatus( key, 'dismissed' );
+			if ( isPostStale ) {
+				return false;
 			}
+			setItemStatus( key, 'dismissed' );
+			return true;
 		},
 		[ isPostStale, setItemStatus ]
 	);
@@ -527,7 +553,15 @@ export default function FeedbackList( {
 										copied={ copiedKey === key }
 										disabled={ isPostStale || bulkRunning }
 										failureMessage={ failureMessage }
-										onApply={ () => applyItem( item, sectionIndex, itemIndex ) }
+										onApply={ () => {
+											void applyItem( item, sectionIndex, itemIndex ).then( ( succeeded ) => {
+												onResponseAction?.( {
+													action: 'accept',
+													target: 'edit',
+													outcome: succeeded ? 'success' : 'failed',
+												} );
+											} );
+										} }
 										onGoToSection={ () => {
 											if ( item.block_index !== null && item.block_index !== undefined ) {
 												focusBlock( item.block_index );
@@ -538,8 +572,23 @@ export default function FeedbackList( {
 												copyItem( key, suggestionText );
 											}
 										} }
-										onDismiss={ () => dismissItem( key ) }
-										onUndo={ () => undoItem( key ) }
+										onDismiss={ () => {
+											if ( dismissItem( key ) ) {
+												onResponseAction?.( {
+													action: 'dismiss',
+													target: 'edit',
+													outcome: 'success',
+												} );
+											}
+										} }
+										onUndo={ () => {
+											const succeeded = undoItem( key, status );
+											onResponseAction?.( {
+												action: 'undo',
+												target: 'edit',
+												outcome: succeeded ? 'success' : 'failed',
+											} );
+										} }
 										onFocusBlock={ focusCurrentPostBlock }
 									/>
 								);
