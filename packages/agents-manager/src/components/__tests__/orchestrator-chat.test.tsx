@@ -186,6 +186,7 @@ jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
+jest.mock( '../../hooks/use-abilities-registration', () => () => {} );
 jest.mock( '../../hooks/use-conversation', () => () => mockUseConversation() );
 jest.mock( '../../hooks/use-save-new-chat-route', () => () => {} );
 jest.mock( '../../hooks/use-checkpoint-action', () => () => {} );
@@ -204,7 +205,6 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
-jest.mock( '../../hooks/use-zoom-action', () => () => {} );
 jest.mock( '../../utils/agent-session', () => ( { markSessionUsed: jest.fn() } ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,

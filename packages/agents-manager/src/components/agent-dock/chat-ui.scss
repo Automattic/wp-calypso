@@ -230,62 +230,6 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 		left: auto;
 		right: 0;
 	}
-
-	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
-		&.is-active,
-		&:focus-visible {
-			.edit-site-global-styles-variations_item-preview {
-				outline: var( --wp-admin-theme-color, #3858e9 ) solid 2px !important;
-			}
-		}
-	}
-}
-
-/* Agenttic UI: docked chat */
-.agents-manager-chat--docked .agenttic {
-	.Message-module_message {
-		.big-sky__dock__menu__variation-picker {
-			min-height: unset;
-
-			.edit-site-global-styles-variations_item {
-				&:not( .is-active ):hover {
-					.edit-site-global-styles-variations_item-preview {
-						outline-color: $gray-600;
-					}
-				}
-
-				.edit-site-global-styles-variations_item-preview {
-					outline: 1px solid #545454;
-					overflow: hidden;
-				}
-			}
-		}
-
-		.big-sky__item-picker__arrows {
-			bottom: -40px;
-
-			.components-button {
-				color: $gray-700;
-
-				&:not( :disabled ):hover {
-					color: $gray-100;
-				}
-
-				&:disabled {
-					opacity: 0.5;
-				}
-
-				&.is-pressed {
-					color: $gray-100;
-					background-color: #484848;
-				}
-			}
-		}
-
-		.big-sky__item-picker__pager {
-			color: $gray-400;
-		}
-	}
 }
 
 /* Agenttic UI: undocked chat */
@@ -297,19 +241,6 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 	// Shared overlay base keeps the floating chat above the nav menu and lets it
 	// trade stacking with the Help Center panel via the focused offset above.
 	z-index: $agents-manager-z-index-docked;
-
-	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
-		&:not( .is-active ):hover {
-			.edit-site-global-styles-variations_item-preview {
-				outline-color: #00000080;
-			}
-		}
-
-		.edit-site-global-styles-variations_item-preview {
-			outline: 1px solid #0000004d;
-			overflow: hidden;
-		}
-	}
 }
 
 /* Docked split-screen */

@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	Button,
 	TextareaControl,
@@ -21,6 +20,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import './help-center-a4a-contact-form.scss';
 import { useSubmitA4ATicketMutation } from '../data/use-submit-a4a-support-ticket';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import type { Field } from '@wordpress/dataviews';
 
 type FormData = {
@@ -41,6 +41,7 @@ const FORM_CONFIG = {
 export const HelpCenterA4AContactForm = () => {
 	const { currentUser, agency } = useHelpCenterContext();
 	const [ searchParams ] = useSearchParams();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 	const isMigrationRequest = !! searchParams.get( 'migration-request' );
 
 	const navigate = useNavigate();
@@ -270,6 +271,7 @@ export const HelpCenterA4AContactForm = () => {
 			isMigrationRequest,
 			isPressableSelected,
 			navigate,
+			recordTracksEvent,
 		]
 	);
 

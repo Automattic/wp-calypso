@@ -128,6 +128,8 @@ const PlanComparisonHeader = styled.h1`
 `;
 export interface PlansFeaturesMainProps {
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	siteId?: number | null;
 	intent?: PlansIntent | null;
 	isInSiteDashboard?: boolean;
@@ -236,6 +238,8 @@ const PlansFeaturesMain = ( {
 	plansWithScroll,
 	discountEndDate,
 	highlightLabelOverrides,
+	titleBadgeOverrides,
+	taglineOverrides,
 	hideFreePlan,
 	hidePersonalPlan,
 	hidePremiumPlan,
@@ -893,6 +897,8 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		highlightLabelOverrides: highlightLabelOverridesWithDowngrade,
+		titleBadgeOverrides,
+		taglineOverrides,
 		hiddenPlans,
 		hideCurrentPlan: isInSiteDashboard,
 		intent,

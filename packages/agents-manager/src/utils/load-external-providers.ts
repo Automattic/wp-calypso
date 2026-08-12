@@ -12,8 +12,15 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
+import { amToolProvider, normalizeAbilityName } from '../abilities';
+import { getAvailableCheckpoints } from './checkpoints';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
+import {
+	getProviderCheckpointObservedAt,
+	getProviderCheckpointRecords,
+	stampProviderCheckpointObservations,
+} from './provider-checkpoints';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type {
 	ToolProvider,
@@ -83,12 +90,15 @@ export type SiteBuildUtils = {
  * Supported chat component types for agent messages.
  */
 type ChatComponentType =
+	// The picker types resolve to AM's own components first; kept for
+	// provider back-compat until Big Sky drops its copies.
 	| 'button-picker'
 	| 'font-picker'
 	| 'color-picker'
-	| 'pattern-picker'
 	| 'chat-suggestions'
-	| 'next-step-button';
+	| 'open-help-center-button'
+	| 'title-picker'
+	| 'seo-title-picker';
 
 /**
  * Get a chat component by type for rendering in agent messages.
@@ -102,7 +112,7 @@ export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentTyp
  */
 export type UseCheckpointReturn = {
 	getLastEditorState: () => unknown;
-	setCheckpoint: ( id: string, keys?: string[] ) => void;
+	setCheckpoint: ( id: string, keys?: string[], metadata?: Record< string, unknown > ) => void;
 	addCheckpointKeys: ( id: string, keys: string[] ) => void;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
 	addNewPageToCheckpoint: ( pageId: string ) => void;
@@ -112,6 +122,7 @@ export type UseCheckpointReturn = {
 		pageTitle: string,
 		options?: { shouldRestoreNavigation?: boolean }
 	) => void;
+	addNavigationToCheckpoint?: ( id: string, navigationId: string ) => void;
 	getLatestUserMessageId: () => string | undefined;
 	clearCheckpoint: ( userMessageId: string ) => void;
 	hasCheckpoint: ( id: string ) => boolean;
@@ -318,6 +329,62 @@ function getFallbackClientContext(): ClientContextType {
 	};
 }
 
+// TODO (ability-migration): Remove the merge once Big Sky deletes its
+// checkpoint context feed — AM's list then stands alone.
+/**
+ * Appends AM's checkpoints to the provider-advertised `availableCheckpoints`,
+ * so the agent sees every restorable id — the provider's (restored through
+ * the provider-checkpoints bridge) and AM's own.
+ */
+function withAmCheckpoints(
+	contextProvider: ContextProvider | undefined
+): ContextProvider | undefined {
+	if ( ! contextProvider ) {
+		return undefined;
+	}
+
+	return {
+		getClientContext: () => {
+			const context = contextProvider.getClientContext();
+			const amCheckpoints = getAvailableCheckpoints();
+			if ( ! amCheckpoints.length ) {
+				return context;
+			}
+
+			const providerCheckpoints: { checkpointId?: string }[] = Array.isArray(
+				context.availableCheckpoints
+			)
+				? context.availableCheckpoints
+				: [];
+
+			// Order the merged list chronologically: AM records carry `createdAt`,
+			// provider records sort by when the loader first saw them (the stores
+			// share no clock). The agent picks "the most recent" by position.
+			stampProviderCheckpointObservations(
+				providerCheckpoints
+					.map( ( { checkpointId } ) => checkpointId )
+					.filter( ( id ): id is string => !! id )
+			);
+			const merged = [
+				...providerCheckpoints.map( ( item ) => ( {
+					item,
+					at: getProviderCheckpointObservedAt( item.checkpointId ?? '' ),
+				} ) ),
+				...amCheckpoints.map( ( item ) => ( { item, at: item.createdAt } ) ),
+			];
+			merged.sort( ( a, b ) => a.at - b.at );
+
+			return {
+				...context,
+				availableCheckpoints: merged.map( ( { item }, index ) => ( {
+					...item,
+					checkpointIndex: index,
+				} ) ),
+			};
+		},
+	};
+}
+
 export function mergeContextProviders(
 	contextProviders: ContextProvider[]
 ): ContextProvider | undefined {
@@ -473,7 +540,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedSuppressEmptyViewDefaults = false;
 
 	// Collect exports that need to be merged across all providers.
-	const allToolProviders: ToolProvider[] = [];
+	// AM's own provider goes first: tool execution resolves first-write-wins
+	// by ability name, so a migrated ability executes through AM even if an
+	// external provider still ships its copy.
+	const allToolProviders: ToolProvider[] = [ amToolProvider ];
 	const allContextProviders: ContextProvider[] = [];
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
@@ -570,7 +640,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 	}
 
-	const mergedContextProvider = mergeContextProviders( allContextProviders );
+	const mergedContextProvider = withAmCheckpoints( mergeContextProviders( allContextProviders ) );
 	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
 	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );
 
@@ -580,10 +650,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	if ( allToolProviders.length === 1 ) {
 		mergedToolProvider = allToolProviders[ 0 ];
 	} else if ( allToolProviders.length > 1 ) {
-		// Normalize ability names: AM converts `/` → `__` and `-` → `_` when
-		// routing tool calls, so we match on either the raw or normalized form.
-		const normalize = ( name: string ) => name.replace( /\//g, '__' ).replace( /-/g, '_' );
-
 		// Query providers live on each call rather than snapshotting at load.
 		// agenttic-client calls getAbilities()/executeAbility() fresh every turn,
 		// so abilities registered later stay visible. Big Sky, for one, registers
@@ -623,10 +689,20 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 				const results = await collectAbilityResults();
 				for ( let i = 0; i < allToolProviders.length; i++ ) {
 					const owns = results[ i ].some(
-						( ability ) => ability.name === name || normalize( ability.name ) === name
+						( ability ) => ability.name === name || normalizeAbilityName( ability.name ) === name
 					);
 					if ( owns ) {
-						return allToolProviders[ i ].executeAbility( name, args );
+						const result = await allToolProviders[ i ].executeAbility( name, args );
+
+						// TODO (ability-migration): Delete with the provider-checkpoints
+						// bridge. Stamping right after execution times a Big Sky record
+						// within the turn that created it — the context-build stamp
+						// alone would time it one message late.
+						stampProviderCheckpointObservations(
+							getProviderCheckpointRecords().map( ( { id } ) => id )
+						);
+
+						return result;
 					}
 				}
 				throw new Error( `No provider handled ability: ${ name }` );

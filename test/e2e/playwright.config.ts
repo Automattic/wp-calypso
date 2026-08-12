@@ -102,7 +102,7 @@ export default defineConfig( {
 		video: 'retain-on-failure',
 	},
 
-	/* Configure projects for major browsers */
+	/* Configure projects per device */
 	// See https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json */
 	projects: [
 		{
@@ -116,7 +116,7 @@ export default defineConfig( {
 			testDir: './setup',
 			// Borrows the `chrome` context so the login carries the e2e user agent suffix the
 			// backend expects. The cookies it leaves are per account, not per device, so the
-			// mobile projects reuse them too.
+			// mobile project reuses them too.
 			use: withCustomOptions( {
 				...devices[ 'Desktop Chrome HiDPI' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
@@ -132,49 +132,11 @@ export default defineConfig( {
 			} ),
 		},
 		{
-			name: 'firefox',
-			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
-			use: withCustomOptions( {
-				...devices[ 'Desktop Firefox' ],
-				userAgent: appendE2EUserAgent( devices[ 'Desktop Firefox' ].userAgent ),
-				viewportName: 'desktop',
-			} ),
-		},
-		{
-			name: 'webkit',
-			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
-			use: withCustomOptions( {
-				...devices[ 'Desktop Safari' ],
-				userAgent: appendE2EUserAgent( devices[ 'Desktop Safari' ].userAgent ),
-				viewportName: 'desktop',
-			} ),
-		},
-		{
-			name: 'pixel',
+			name: 'mobile',
 			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
 			use: withCustomOptions( {
 				...devices[ 'Pixel 7' ],
 				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
-				viewportName: 'mobile',
-			} ),
-			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
-		},
-		{
-			name: 'galaxy',
-			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
-			use: withCustomOptions( {
-				...devices[ 'Galaxy S24' ],
-				userAgent: appendE2EUserAgent( devices[ 'Galaxy S24' ].userAgent ),
-				viewportName: 'mobile',
-			} ),
-			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
-		},
-		{
-			name: 'iphone',
-			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
-			use: withCustomOptions( {
-				...devices[ 'iPhone 15 Pro' ],
-				userAgent: appendE2EUserAgent( devices[ 'iPhone 15 Pro' ].userAgent ),
 				viewportName: 'mobile',
 			} ),
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),

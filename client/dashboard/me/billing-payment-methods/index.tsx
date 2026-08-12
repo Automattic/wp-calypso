@@ -21,6 +21,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { info, cautionFilled as warning } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { addPaymentMethodRoute } from '../../app/router/me';
@@ -37,6 +38,12 @@ import { PaymentMethodDetails } from './payment-method-details';
 import { PaymentMethodEditDialog } from './payment-method-edit-dialog';
 import type { StoredPaymentMethod } from '@automattic/api-core';
 import type { View, Fields, SortDirection, Action } from '@wordpress/dataviews';
+
+const getDeleteEventProperties = ( paymentMethod: StoredPaymentMethod ) => ( {
+	payment_partner: paymentMethod.payment_partner,
+	is_backup: paymentMethod.is_backup,
+	is_expired: paymentMethod.is_expired,
+} );
 
 const paymentMethodWideFields = [ 'expiry', 'billing-address', 'backup', 'tax-info' ];
 const paymentMethodDesktopFields = [ 'expiry', 'billing-address' ];
@@ -104,6 +111,7 @@ export default function PaymentMethods() {
 		userPaymentMethodDeleteQuery()
 	);
 	const { mutate: setPaymentMethodTaxInfo } = useMutation( userPaymentMethodSetTaxInfoQuery() );
+	const { recordTracksEvent } = useAnalytics();
 	const paymentMethodFields = getFields( {
 		isUpdatingPaymentMethods,
 		isSettingPaymentMethodBackup,
@@ -163,6 +171,10 @@ export default function PaymentMethods() {
 			},
 			callback: ( items ) => {
 				const item = items[ 0 ];
+				recordTracksEvent(
+					'calypso_dashboard_payment_method_delete_click',
+					getDeleteEventProperties( item )
+				);
 				setRemoveDialogPaymentMethod( item );
 			},
 		},
@@ -230,11 +242,21 @@ export default function PaymentMethods() {
 						isVisible={ Boolean( removeDialogPaymentMethod ) }
 						paymentMethod={ removeDialogPaymentMethod }
 						onConfirm={ () => {
+							const eventProperties = getDeleteEventProperties( removeDialogPaymentMethod );
+							recordTracksEvent(
+								'calypso_dashboard_payment_method_delete_confirm_click',
+								eventProperties
+							);
 							deletePaymentMethod( removeDialogPaymentMethod.stored_details_id, {
 								onSuccess: () => {
+									recordTracksEvent( 'calypso_dashboard_payment_method_delete', eventProperties );
 									createSuccessNotice( __( 'Payment method deleted.' ), { type: 'snackbar' } );
 								},
-								onError: () => {
+								onError: ( error ) => {
+									recordTracksEvent( 'calypso_dashboard_payment_method_delete_failure', {
+										...eventProperties,
+										error_message: error.message,
+									} );
 									createErrorNotice( __( 'Failed to delete payment method.' ), {
 										type: 'snackbar',
 									} );

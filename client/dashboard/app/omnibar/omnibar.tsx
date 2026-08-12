@@ -8,12 +8,18 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
+import { wpcomLink } from '../../utils/link';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
+import { useAiChatPlugin } from './plugin-ai-chat';
 import { useHelpCenterPlugin } from './plugin-help-center';
+import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
+import { useLaunchSitePlugin } from './plugin-launch-site';
 import { useNotificationsPlugin } from './plugin-notifications';
+import { useReaderPlugin } from './plugin-reader';
+import { buildSiteBadgeNode } from './plugin-site-badges';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
 import { buildWpcomAccountNode } from './plugin-wpcom-account';
 import type { AppConfig } from '../context';
@@ -22,25 +28,37 @@ import type { OmnibarNodeBuilders } from '@automattic/omnibar';
 
 const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
 
-const UNSUPPORTED_DOTCOM_NODE_IDS = new Set( [
-	'site-plan',
-	'site-plan-badge',
-	'site-status-badge',
-] );
-
 const DOTCOM_NODE_BUILDERS: OmnibarNodeBuilders = {
 	'my-wpcom-account': buildWpcomAccountNode,
+	'site-plan-badge': buildSiteBadgeNode,
+	'site-status-badge': buildSiteBadgeNode,
 };
 
 function removeUnsupportedNodes( nodes: AdminBarNode[], supports: AppConfig[ 'supports' ] ) {
-	return nodes.filter( ( node ) => {
-		if ( UNSUPPORTED_DOTCOM_NODE_IDS.has( node.id ) ) {
-			return false;
+	// The palette is only mounted where the app supports it, so elsewhere the
+	// admin bar's button would open nothing.
+	return nodes.filter( ( node ) => node.id !== 'command-palette' || supports.commandPalette );
+}
+
+function createHrefResolver( adminUrl?: string ) {
+	return ( href: string ) => {
+		let url;
+		try {
+			url = new URL( href, adminUrl );
+		} catch {
+			return href;
 		}
-		// The palette is only mounted where the app supports it, so elsewhere the
-		// admin bar's button would open nothing.
-		return node.id !== 'command-palette' || supports.commandPalette;
-	} );
+
+		const path = url.pathname + url.search + url.hash;
+
+		if ( url.host === 'my.wordpress.com' ) {
+			return path;
+		}
+		if ( url.host === 'wordpress.com' ) {
+			return wpcomLink( path );
+		}
+		return url.href;
+	};
 }
 
 export default function OmnibarContainer( { user }: { user?: User } ) {
@@ -66,7 +84,8 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
 		const result = buildOmnibarNodesFromAdminBarNodes(
 			removeUnsupportedNodes( nodes, supports ),
-			DOTCOM_NODE_BUILDERS
+			DOTCOM_NODE_BUILDERS,
+			createHrefResolver( siteNodes ? site?.options?.admin_url : undefined )
 		);
 
 		if ( ! result.home ) {
@@ -79,8 +98,12 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 			if ( ! result.site ) {
 				result.site = {
 					id: 'site-name',
-					icon: <span className="omnibar__site-icon" />,
-					children: [],
+					icon: site.icon?.img ? (
+						<img className="omnibar__site-icon" src={ site.icon.img } alt="" />
+					) : (
+						<span className="dashicons-before dashicons-admin-home" />
+					),
+					href: site.URL,
 				};
 			}
 
@@ -90,17 +113,29 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		return result;
 	}, [ dashboardNodes, siteNodes, site, supports ] );
 
+	const readerPluginNode = useReaderPlugin();
 	const helpCenterPluginNode = useHelpCenterPlugin();
+	const aiChatPluginNode = useAiChatPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
+	const languageSwitcherNode = useLanguageSwitcherPlugin( { user } );
 	const statsSparklineNode = useStatsSparklinePlugin( { siteId, site } );
-	const siteActions = statsSparklineNode
-		? [ ...( baseOmnibarNodes.siteActions ?? [] ), statsSparklineNode ]
-		: baseOmnibarNodes.siteActions;
+	const launchSiteNode = useLaunchSitePlugin( { site } );
+	const siteActions = [
+		...( baseOmnibarNodes.siteActions ?? [] ),
+		statsSparklineNode,
+		launchSiteNode,
+	].filter( ( node ) => node !== undefined );
 
 	const omnibarNodes = {
 		...baseOmnibarNodes,
 		siteActions,
-		plugins: [ helpCenterPluginNode, notificationsPluginNode ],
+		plugins: [
+			...( languageSwitcherNode ? [ languageSwitcherNode ] : [] ),
+			...( supports.reader ? [ readerPluginNode ] : [] ),
+			...( supports.help ? [ helpCenterPluginNode ] : [] ),
+			...( supports.help && aiChatPluginNode ? [ aiChatPluginNode ] : [] ),
+			...( supports.notifications ? [ notificationsPluginNode ] : [] ),
+		],
 	};
 
 	if ( ! hydrated ) {

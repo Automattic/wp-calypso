@@ -1,4 +1,4 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -130,13 +130,19 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 */
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
-			recordTracksEvent( `calypso_odie_${ eventName }`, {
-				...properties,
-				chat_id: mainChatState?.odieId,
-				bot_name_slug: newInteractionsBotSlug,
-			} );
+			recordTracksEvent(
+				`calypso_odie_${ eventName }`,
+				withSiteContext(
+					{
+						...properties,
+						chat_id: mainChatState?.odieId,
+						bot_name_slug: newInteractionsBotSlug,
+					},
+					[ [ 'selected_site', selectedSiteId ] ]
+				)
+			);
 		},
-		[ newInteractionsBotSlug, mainChatState ]
+		[ newInteractionsBotSlug, mainChatState, selectedSiteId ]
 	);
 
 	const clearChat = useCallback( () => {

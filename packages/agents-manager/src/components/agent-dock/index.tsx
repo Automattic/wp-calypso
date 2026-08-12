@@ -7,7 +7,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { backup, cog, columns, comment, heading } from '@wordpress/icons';
+import { backup, cog, columns, comment, drawerRight, heading } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
@@ -25,7 +25,7 @@ import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import EditorAiChatButton from '../editor-ai-chat-button';
 import EditorHelpCenterButton from '../editor-help-center-button';
-import { SwitchToFloating, SwitchToSidebar } from '../icons';
+import { SwitchToFloating } from '../icons';
 import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
@@ -51,8 +51,8 @@ interface Props {
 	markdownExtensions?: MarkdownExtensions;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
-	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
-	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** The external providers' abilities-setup hook (e.g. Big Sky, jetpack-ai-sidebar). Invoked after custom actions registration. */
+	useProviderAbilitiesSetup?: AbilitiesSetupHook;
 	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
@@ -70,7 +70,7 @@ export default function AgentDock( {
 	markdownComponents = {},
 	markdownExtensions = {},
 	useNavigationContinuation,
-	useAbilitiesSetup,
+	useProviderAbilitiesSetup,
 	getChatComponent,
 	useSuggestions,
 	siteBuildUtils,
@@ -361,7 +361,7 @@ export default function AgentDock( {
 			! isReaderChat &&
 				! isDocked &&
 				canDock && {
-					icon: <SwitchToSidebar />,
+					icon: drawerRight,
 					title: __( 'Switch to sidebar', __i18n_text_domain__ ),
 					onClick: () => {
 						recordMoreOptionsClick( 'dock' );
@@ -399,7 +399,7 @@ export default function AgentDock( {
 			markdownExtensions={ markdownExtensions }
 			isCompactMode={ isCompactMode }
 			useNavigationContinuation={ useNavigationContinuation }
-			useAbilitiesSetup={ useAbilitiesSetup }
+			useProviderAbilitiesSetup={ useProviderAbilitiesSetup }
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
 			siteBuildUtils={ siteBuildUtils }

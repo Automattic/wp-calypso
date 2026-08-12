@@ -99,6 +99,7 @@ export default function SupportGuide( {
 							currentSiteDomain={ site?.domain }
 							isEligibleForChat={ isEligibleForChat }
 							forceEmailSupport={ false }
+							siteId={ site?.ID }
 						/>
 					</div>
 					{ ! isFromChat && (

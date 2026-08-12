@@ -71,8 +71,9 @@ const exclude = [
 	// .color-scheme.is-<scheme> sets vars on the element that carries the class itself. Anchored
 	// to the full compound so nested rules like `.color-scheme.is-light .masterbar` still prefix.
 	/^\.color-scheme\.is-[\w-]+$/,
-	// .stats-widget-content.color-scheme: widget's primary→accent remap on its own root element.
-	/^\.stats-widget-content\.color-scheme$/,
+	// .stats-widget-content.color-scheme: widget's primary→accent remap on its own root element,
+	// and the admin-theme-colour handback compounded with the scheme (`.is-coffee` and friends).
+	/^\.stats-widget-content\.color-scheme(\.is-[\w-]+)?$/,
 	// @wordpress/components' Tooltip (Ariakit, not @wordpress/ui) portals to document.body with no
 	// class/attribute on the wrapper — only its content carries `.components-tooltip`. Nothing
 	// targets it today; excluded pre-emptively so that stays true if something ever does.

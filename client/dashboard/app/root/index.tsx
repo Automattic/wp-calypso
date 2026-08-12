@@ -27,6 +27,7 @@ import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
+import OmnibarLanguageSwitcher from '../omnibar/omnibar-language-switcher';
 import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
 import { useSyncOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
@@ -211,6 +212,7 @@ function Root() {
 			{ supports.help && <OmnibarHelpCenter /> }
 			{ supports.help && <OmnibarAgentsManager /> }
 			<OmnibarSiteSwitcher />
+			<OmnibarLanguageSwitcher />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />
 			{ isResurrectedWelcomeModalEnabled && (

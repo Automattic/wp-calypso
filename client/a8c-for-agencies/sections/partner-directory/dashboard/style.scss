@@ -48,14 +48,14 @@
 	flex-direction: column;
 	gap: 8px;
 
-	.badge {
-		min-width: 100px;
-		margin-inline-end: 8px;
-		text-align: center;
-	}
+	> div {
+		display: flex;
+		align-items: center;
+		gap: 8px;
 
-	span {
-		color: var(--color-text-black);
+		> span {
+			color: var(--color-text-black);
+		}
 	}
 }
 

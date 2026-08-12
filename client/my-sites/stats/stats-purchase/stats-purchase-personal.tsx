@@ -92,6 +92,7 @@ const PersonalPurchase = ( {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked`, {
 			blog_id: siteId,
+			from,
 		} );
 
 		// Skipping is the visitor's plan decision — made on a page that shows the full

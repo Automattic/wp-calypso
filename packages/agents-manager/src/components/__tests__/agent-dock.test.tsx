@@ -53,6 +53,7 @@ jest.mock( '@wordpress/icons', () => ( {
 	cog: 'cog',
 	columns: 'columns',
 	comment: 'comment',
+	drawerRight: 'drawerRight',
 	heading: 'heading',
 } ) );
 jest.mock( '../../contexts', () => ( {

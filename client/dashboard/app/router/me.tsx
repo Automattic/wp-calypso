@@ -1231,7 +1231,11 @@ export const mcpRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: 'mcp',
 	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			// The MCP Tracks audience props read Automattician status on first render (view events).
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+		] );
 	},
 } );
 

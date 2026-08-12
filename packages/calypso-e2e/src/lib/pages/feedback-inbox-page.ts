@@ -60,7 +60,8 @@ export class FeedbackInboxPage {
 	 * Doesn't verify the row is selected, it just makes sure the response
 	 * is visible (inspector on desktop, modal on mobile)
 	 *
-	 * @param {string} text The text to match in the row. Using the name field is a good choice.
+	 * @param {string} text The text to match in the row. Prefer the email address:
+	 * it is what the list was searched by, so it is guaranteed to identify the row.
 	 */
 	async viewResponseRowByText( text: string ): Promise< void > {
 		const responseRowLocator = this.getResponseRow( text );
@@ -185,13 +186,48 @@ export class FeedbackInboxPage {
 			const folderChip = this.page.locator( '.dataviews-filters__summary-chip' ).filter( {
 				hasText: /Folder is:/i,
 			} );
-			await folderChip.click();
-			await this.page.getByRole( 'option', { name: new RegExp( folderName, 'i' ) } ).click();
+
+			// If the chip text includes the folder name, we're already on the correct folder.
+			const chipText = ( await folderChip.textContent() )?.toLowerCase();
+			if ( chipText?.includes( folderName.toLowerCase() ) ) {
+				return;
+			}
+
+			const folderOption = this.page.getByRole( 'option', {
+				name: new RegExp( folderName, 'i' ),
+			} );
+			// This method always leaves the popover closed, so an open popover here
+			// means a caller opened it. Clicking the chip then would shut it.
+			if ( ! ( await folderOption.isVisible() ) ) {
+				await folderChip.click();
+			}
+
+			const status =
+				folderName.toLowerCase() === 'inbox' ? 'draft,publish' : folderName.toLowerCase();
+			const listResponse = this.page.waitForResponse(
+				( response ) =>
+					( response.url().includes( '/wp-json/wp/v2/feedback' ) ||
+						!! response.url().match( /\/wp\/v2\/sites\/[0-9]+\/feedback/ ) ) &&
+					// The counts request shares the path and would resolve this early.
+					! response.url().includes( '/counts' ) &&
+					response.url().includes( `status=${ encodeURIComponent( status ) }` )
+			);
+			await folderOption.click();
 			// Wait for the chip text to reflect the selected folder.
 			await this.page
 				.locator( '.dataviews-filters__summary-chip' )
 				.filter( { hasText: new RegExp( `Folder is:\\s*${ folderName }`, 'i' ) } )
-				.waitFor( { timeout: 5000 } );
+				.waitFor();
+
+			await listResponse;
+
+			// Selecting a folder leaves the popover open over the table, where it
+			// swallows clicks on the rows underneath. Dismiss unconditionally:
+			// isVisible() is point-in-time, so polled mid-transition it reports
+			// false and the popover survives — the state this block exists to
+			// prevent. Escape on an already-closed popover is a no-op.
+			await this.page.keyboard.press( 'Escape' );
+			await folderOption.waitFor( { state: 'hidden', timeout: 5000 } );
 			return;
 		}
 
@@ -210,6 +246,55 @@ export class FeedbackInboxPage {
 				} )
 			)
 			.waitFor( { timeout: 5000 } );
+	}
+
+	/**
+	 * Selects the folder that holds the response matching the given text, and
+	 * returns that folder's name.
+	 *
+	 * Akismet decides whether a submission lands in Inbox or Spam, so the caller
+	 * cannot know up front which folder to look in.
+	 *
+	 * The old dashboard answers this cheaply: folders are tabs (radios on some
+	 * Atomic sites) labelled with a result count, so the tab reading "1" is the
+	 * one holding the match. CFM has no folder tabs — the folder is a DataViews
+	 * filter chip — so there we select each folder in turn and look for the row.
+	 *
+	 * Deliberately not read from the chip's own count ("Folder is: Inbox (3)").
+	 * That count is only correct once the search-scoped `feedback/counts` refetch
+	 * has landed, and `searchResponses` cannot guarantee it has: its predicate
+	 * matches both the list request and the counts request, so it resolves on
+	 * whichever arrives first. A stale count returns the wrong folder without
+	 * throwing, which hides the failure until several steps later.
+	 *
+	 * @param {string} text Text identifying the response row, e.g. the email address.
+	 * @returns {Promise<'Inbox'|'Spam'>} The folder holding the response.
+	 * @throws If neither Inbox nor Spam holds a matching response.
+	 */
+	async findFolderWithResult( text: string ): Promise< 'Inbox' | 'Spam' > {
+		if ( await this.isCentralFormManagement() ) {
+			for ( const folder of [ 'Inbox', 'Spam' ] as const ) {
+				await this.clickFolderTab( folder );
+				// Changing folder refetches without the search term — the request is
+				// `status=spam` with no `search=`, so the list comes back unfiltered and
+				// the row is only findable if it happens to be on the first page. Re-apply
+				// the search. Clear first: refilling the identical value fires no request.
+				await this.clearSearch( true );
+				await this.searchResponses( text );
+				if ( await this.hasResponseRow( text ) ) {
+					return folder;
+				}
+			}
+
+			throw new Error( `No response matching "${ text }" found in Inbox or Spam.` );
+		}
+
+		const tabLocator = this.page
+			.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
+			.or( this.page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) );
+		await tabLocator.click( { timeout: 4000 } );
+		const tabText = await tabLocator.textContent();
+		return tabText?.toLowerCase().includes( 'spam' ) ? 'Spam' : 'Inbox';
 	}
 
 	/**
@@ -423,16 +508,21 @@ export class FeedbackInboxPage {
 	 * @param {number} timeout  How long to wait (ms).
 	 * @returns {boolean} True if the row is visible.
 	 */
-	async hasResponseRow( text: string, timeout = 3000 ): Promise< boolean > {
+	async hasResponseRow( text: string, timeout = 5000 ): Promise< boolean > {
+		// waitFor, not isVisible: isVisible() returns immediately and ignores its
+		// timeout, so callers that check straight after a folder switch would read
+		// the table mid-refetch and conclude the row is absent.
 		return this.getResponseRow( text )
-			.isVisible( { timeout } )
+			.waitFor( { state: 'visible', timeout } )
+			.then( () => true )
 			.catch( () => false );
 	}
 
 	/**
 	 * Opens the actions menu (three dot menu) and verifies the specified action exists.
 	 *
-	 * @param {string} text The text to match in the row. Using the name field is a good choice.
+	 * @param {string} text The text to match in the row. Prefer the email address:
+	 * it is what the list was searched by, so it is guaranteed to identify the row.
 	 * @param {string} actionName The name of the action to verify in the dropdown menu.
 	 */
 	async verifyActionExistsInMenu( text: string, actionName: string ): Promise< void > {
