@@ -126,7 +126,7 @@ export const PlaygroundSetupStep: Step< {
 				{ ! hasBlueprint && (
 					<PlaygroundIframe
 						className="playground__onboarding-iframe"
-						playgroundClient={ playgroundClientRef.current }
+						hasPlaygroundClient={ Boolean( playgroundClientRef.current ) }
 						setPlaygroundClient={ startImport }
 					/>
 				) }
