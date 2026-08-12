@@ -1,10 +1,4 @@
-import {
-	DataHelper,
-	PluginsPage,
-	SidebarComponent,
-	TestAccount,
-	envVariables,
-} from '@automattic/calypso-e2e';
+import { DataHelper, PluginsPage, TestAccount, envVariables } from '@automattic/calypso-e2e';
 import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe(
@@ -32,12 +26,11 @@ test.describe(
 			} );
 
 			await test.step( 'Navigate to the plugins page', async () => {
-				const sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.navigate( 'Plugins' );
+				pluginsPage = new PluginsPage( page );
+				await pluginsPage.visit( siteUrl );
 			} );
 
 			await test.step( 'Search for "woocommerce"', async () => {
-				pluginsPage = new PluginsPage( page );
 				await pluginsPage.search( 'woocommerce' );
 				await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
 			} );

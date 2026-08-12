@@ -1,7 +1,6 @@
 import {
 	DataHelper,
 	StatsPage,
-	SidebarComponent,
 	TestAccount,
 	getTestAccountByFeature,
 	envToFeatureKey,
@@ -37,13 +36,7 @@ test.describe(
 			await test.step( 'Navigate to Stats', async () => {
 				statsPage = new StatsPage( page );
 
-				if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
-					return await statsPage.visit(
-						DataHelper.getAccountSiteURL( accountName, { protocol: false } )
-					);
-				}
-				const sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.navigate( 'Stats' );
+				await statsPage.visit( DataHelper.getAccountSiteURL( accountName, { protocol: false } ) );
 			} );
 
 			// Traffic
