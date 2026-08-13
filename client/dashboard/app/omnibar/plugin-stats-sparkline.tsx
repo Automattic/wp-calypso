@@ -7,21 +7,16 @@ import type { OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-stats-sparkline.scss';
 
-export function useStatsSparklinePlugin( {
-	siteId,
-	site,
-}: {
-	siteId?: number | null;
-	site?: Site;
-} ): OmnibarNode | undefined {
+export function useStatsSparklinePlugin( { site }: { site?: Site } ): OmnibarNode | undefined {
+	const adminUrl = site?.options?.admin_url;
+	const canViewStats = !! site?.capabilities?.view_stats;
+
 	const { data: hourlyViews } = useQuery( {
-		...siteHourlyViewsQuery( siteId ?? 0 ),
-		enabled: !! siteId,
+		...siteHourlyViewsQuery( site?.ID ?? 0 ),
+		enabled: canViewStats,
 	} );
 
-	const adminUrl = site?.options?.admin_url;
-
-	if ( ! adminUrl || ! hourlyViews || hourlyViews.length === 0 ) {
+	if ( ! adminUrl || ! canViewStats || ! hourlyViews || hourlyViews.length === 0 ) {
 		return undefined;
 	}
 

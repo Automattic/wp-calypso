@@ -209,6 +209,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			useSuggestions={ loadedProviders.useSuggestions }
 			getChatComponent={ loadedProviders.getChatComponent }
 			siteBuildUtils={ loadedProviders.siteBuildUtils }
+			transformMessages={ loadedProviders.transformMessages }
 			useCheckpoint={ loadedProviders.useCheckpoint }
 			capabilities={ loadedProviders.capabilities }
 		/>

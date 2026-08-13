@@ -20,6 +20,7 @@ import type {
 	UseCheckpointReturn,
 	UseSuggestionsHook,
 } from '../load-external-providers';
+import type { UIMessage } from '@automattic/agenttic-client';
 
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,
@@ -682,6 +683,37 @@ describe( 'loadExternalProviders', () => {
 
 		expect( providers.getChatComponent?.( 'title-picker' ) ).toBe( TitlePicker );
 		expect( providers.getChatComponent?.( 'chat-suggestions' ) ).toBeNull();
+	} );
+
+	it( 'chains message transforms across providers', async () => {
+		// Chained, not first-write-wins: one provider hiding its own prompts must
+		// not stop another from presenting its messages.
+		setAgentsManagerData( {
+			agentProviders: [
+				{
+					transformMessages: ( messages: UIMessage[] ) =>
+						messages.map( ( message ) => ( { ...message, id: `${ message.id }-a` } ) ),
+				},
+				{
+					transformMessages: ( messages: UIMessage[] ) =>
+						messages.map( ( message ) => ( { ...message, id: `${ message.id }-b` } ) ),
+				},
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.transformMessages?.( [ { id: '1' } as UIMessage ] ) ).toEqual( [
+			{ id: '1-a-b' },
+		] );
+	} );
+
+	it( 'leaves the transcript alone when no provider transforms messages', async () => {
+		setAgentsManagerData( { agentProviders: [ {} ] } );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.transformMessages ).toBeUndefined();
 	} );
 
 	it( 'uses the first provider for onTaskUpdate', async () => {

@@ -108,6 +108,21 @@ type ChatComponentType =
 export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
 
 /**
+ * Rewrite the visible transcript.
+ *
+ * Applied to the whole message list on every render — including messages
+ * rehydrated from conversation history — so a provider can present a message
+ * differently from what it sent. The motivating case is a host that submits a
+ * large machine-facing prompt (block ids, computed styles, tool instructions)
+ * and wants the user to see a short summary instead. Deriving the display from
+ * the content, rather than flagging it at send time, is what makes it survive a
+ * reload.
+ *
+ * Must be pure and cheap: it runs on every render of the transcript.
+ */
+export type TransformMessages = ( messages: UIMessage[] ) => UIMessage[];
+
+/**
  * Checkpoint return type - for saving and restoring editor state so that AI actions can be undone.
  */
 export type UseCheckpointReturn = {
@@ -182,6 +197,7 @@ export interface LoadedProviders {
 	useAbilitiesSetup?: AbilitiesSetupHook;
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
+	transformMessages?: TransformMessages;
 	siteBuildUtils?: SiteBuildUtils;
 	useCheckpoint?: UseCheckpointHook;
 	/**
@@ -600,6 +616,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];
+	const allTransformMessages: TransformMessages[] = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
@@ -650,6 +667,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.getChatComponent ) {
 			allGetChatComponents.push( module.getChatComponent );
+		}
+		if ( module.transformMessages ) {
+			allTransformMessages.push( module.transformMessages );
 		}
 		if ( module.useAbilitiesSetup ) {
 			allAbilitiesSetups.push( module.useAbilitiesSetup );
@@ -760,6 +780,18 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		};
 	}
 
+	// Merge transformMessages: compose in registration order, so each provider
+	// rewrites what the previous one produced. Unlike the singleton exports this
+	// is chained rather than first-write-wins — two providers can each present
+	// their own messages without one silently disabling the other.
+	let mergedTransformMessages: TransformMessages | undefined;
+	if ( allTransformMessages.length === 1 ) {
+		mergedTransformMessages = allTransformMessages[ 0 ];
+	} else if ( allTransformMessages.length > 1 ) {
+		mergedTransformMessages = ( messages: UIMessage[] ) =>
+			allTransformMessages.reduce( ( current, transform ) => transform( current ), messages );
+	}
+
 	// Merge getChatComponent: try each provider, return first non-null.
 	if ( allGetChatComponents.length === 1 ) {
 		mergedGetChatComponent = allGetChatComponents[ 0 ];
@@ -823,6 +855,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		onTaskUpdate: mergedOnTaskUpdate,
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
+		transformMessages: mergedTransformMessages,
 		siteBuildUtils: mergedSiteBuildUtils,
 		useCheckpoint: mergedUseCheckpoint,
 		// Match peer fields: undefined when no provider opted in.
