@@ -8,7 +8,7 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
-import { wpcomLink } from '../../utils/link';
+import { dashboardLink, wpcomLink } from '../../utils/link';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { useAppContext } from '../context';
@@ -48,7 +48,7 @@ function createHrefResolver( adminUrl?: string ) {
 		const path = url.pathname + url.search + url.hash;
 
 		if ( url.host === 'my.wordpress.com' ) {
-			return path;
+			return dashboardLink( path );
 		}
 		if ( url.host === 'wordpress.com' ) {
 			return wpcomLink( path );

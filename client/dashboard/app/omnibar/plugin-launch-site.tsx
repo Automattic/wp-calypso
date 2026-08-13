@@ -56,7 +56,7 @@ export function useLaunchSitePlugin( { site }: { site?: Site } ): OmnibarNode | 
 		id: 'launch-site',
 		title: __( 'Launch site' ),
 		icon: <LaunchRocketIcon />,
-		className: 'omnibar__launch-site',
+		className: 'omnibar__launch-site color-scheme is-global',
 		disabled,
 		href,
 		onClick,
