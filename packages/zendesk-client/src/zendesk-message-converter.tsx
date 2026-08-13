@@ -86,16 +86,12 @@ function getContentMessage( message: ZendeskMessage ): ReactNode {
 			messageContent = __( 'Message content not supported', __i18n_text_domain__ );
 	}
 
-	if ( isCsatTriggerMessage( message ) && message.actions?.length ) {
+	if (
+		message.actions?.length &&
+		( isCsatTriggerMessage( message ) || isZendeskSurveyMessage( message ) )
+	) {
 		messageContent = __(
 			'Please help us improve. How would you rate your support experience?',
-			__i18n_text_domain__
-		);
-	}
-
-	if ( isZendeskSurveyMessage( message ) && message.actions?.length ) {
-		messageContent = __(
-			'Please help us improve. How would you rate the support you received?',
 			__i18n_text_domain__
 		);
 	}
