@@ -185,7 +185,7 @@ export function getNav2026Menus( {
 					items: [
 						{
 							label: __( 'Developer tools', __i18n_text_domain__ ),
-							url: 'https://developer.wordpress.com/docs/developer-tools/',
+							url: localizeUrl( '//developer.wordpress.com/docs/developer-tools/' ),
 						},
 						{
 							label: __( 'Developer blog', __i18n_text_domain__ ),
@@ -194,11 +194,11 @@ export function getNav2026Menus( {
 						},
 						{
 							label: __( 'Rest API', __i18n_text_domain__ ),
-							url: 'https://developer.wordpress.com/docs/api/',
+							url: localizeUrl( '//developer.wordpress.com/docs/api/' ),
 						},
 						{
 							label: __( 'Docs', __i18n_text_domain__ ),
-							url: 'https://developer.wordpress.com/docs/',
+							url: localizeUrl( '//developer.wordpress.com/docs/' ),
 						},
 						{
 							label: __( 'Studio', __i18n_text_domain__ ),
