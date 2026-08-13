@@ -49,7 +49,7 @@ const UniversalNavbarHeader = ( {
 }: HeaderProps ) => {
 	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	// Mobile drill-down: which category is expanded (null = top level).
 	const [ currentDropdown, setCurrentDropdown ] = useState< string | null >( null );
@@ -84,8 +84,9 @@ const UniversalNavbarHeader = ( {
 	const dropdownRef = useDropdownFlip( { nav2026, activeDropdown } );
 
 	const nav2026Menus = useMemo(
-		() => ( nav2026 ? getNav2026Menus( { __, localizeUrl, locale, isLoggedIn } ) : [] ),
-		[ nav2026, __, localizeUrl, locale, isLoggedIn ]
+		() =>
+			nav2026 ? getNav2026Menus( { __, localizeUrl, locale, isLoggedIn, hasTranslation } ) : [],
+		[ nav2026, __, localizeUrl, locale, isLoggedIn, hasTranslation ]
 	);
 	const activeCategory = nav2026Menus.find( ( menu ) => menu.name === currentDropdown );
 
