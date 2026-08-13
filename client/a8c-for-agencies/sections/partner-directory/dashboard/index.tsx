@@ -32,8 +32,9 @@ const PartnerDirectoryDashboard = () => {
 
 	const onPublishSuccess = useCallback(
 		( response: AgencyPayload ) => {
-			// The endpoint returns the full agency; the cast bridges the api-core
-			// and Redux models of it.
+			// The shared mutation only refreshes the dashboard's query cache,
+			// which this app doesn't read, so mirror the updated agency into
+			// Redux here. The cast bridges the api-core and Redux models of it.
 			dispatch( setActiveAgency( { ...agency, ...response } as Agency ) );
 			dispatch( successNotice( getProfilePublishedMessage(), { duration: 6000 } ) );
 		},
@@ -48,6 +49,12 @@ const PartnerDirectoryDashboard = () => {
 	useEffect( () => {
 		document.querySelector( '.partner-directory__body' )?.scrollTo( 0, 0 );
 	}, [] );
+
+	// The section controller waits for the agency before rendering sections,
+	// so this only satisfies the shared component's required prop.
+	if ( ! agency ) {
+		return null;
+	}
 
 	return (
 		<PartnerDirectoryDashboardContent
