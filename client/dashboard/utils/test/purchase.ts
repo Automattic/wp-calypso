@@ -579,6 +579,13 @@ describe( 'getStudioCreditsTitle', () => {
 } );
 
 describe( 'getTitleForDisplay', () => {
+	const priceTier = {
+		minimum_units: 1,
+		minimum_price: 0,
+		minimum_price_display: '$0',
+		maximum_price: 0,
+	};
+
 	test( 'shows the credit count for a Studio Code AI Credits purchase', () => {
 		expect(
 			getTitleForDisplay(
@@ -635,7 +642,7 @@ describe( 'getTitleForDisplay', () => {
 					product_name: 'Jetpack AI Assistant',
 					is_jetpack_ai_product: true,
 					renewal_price_tier_usage_quantity: 1000,
-					price_tier_list: [ {} ],
+					price_tier_list: [ priceTier ],
 				} )
 			)
 		).toBe( 'Jetpack AI Assistant (1,000 requests per month)' );
@@ -649,7 +656,7 @@ describe( 'getTitleForDisplay', () => {
 					is_jetpack_stats_product: true,
 					is_free_jetpack_stats_product: false,
 					renewal_price_tier_usage_quantity: 10000,
-					price_tier_list: [ {} ],
+					price_tier_list: [ priceTier ],
 				} )
 			)
 		).toBe( 'Jetpack Stats (10,000 views per month)' );
