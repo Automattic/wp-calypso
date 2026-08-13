@@ -244,7 +244,7 @@ export default function CancellationMainContent( {
 				<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
 			) }
 
-			{ isGSuite && ! isSplitCancelRemoveEnabled && (
+			{ isGSuite && (
 				<GSuiteAccessMessage purchase={ purchase } selectedDomain={ selectedDomain } />
 			) }
 

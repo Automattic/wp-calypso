@@ -48,7 +48,7 @@ export default function GSuiteAccessMessage( {
 				sprintf(
 					// Translators: %(domainName)s is the name of the domain (e.g. example.com), %(googleMailService)s can be either "G Suite" or "Google Workspace", and %(days)d is a number of days (usually '30')
 					__(
-						'If you cancel your subscription for %(domainName)s now, <strong>you will lose access to all of your %(googleMailService)s features in %(days)d days</strong>. After that time, you will need to purchase a new subscription with Google if you wish to regain access to them.'
+						'If you cancel your subscription for %(domainName)s now, <strong>you will lose access to all of your %(googleMailService)s features %(days)d days after it expires</strong>. After that time, you will need to purchase a new subscription with Google if you wish to regain access to them.'
 					),
 					{
 						domainName,
