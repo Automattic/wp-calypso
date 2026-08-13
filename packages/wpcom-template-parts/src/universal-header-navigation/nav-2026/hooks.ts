@@ -55,7 +55,7 @@ export function useScrollState( nav2026: boolean ): boolean {
 }
 
 // Align the dropdown's first column under the first nav item.
-export function useDropdownOffset( nav2026: boolean, nav2026Variant: 1 | 2 ): void {
+export function useDropdownOffset( nav2026: boolean ): void {
 	useEffect( () => {
 		if ( ! nav2026 ) {
 			return;
@@ -96,7 +96,7 @@ export function useDropdownOffset( nav2026: boolean, nav2026Variant: 1 | 2 ): vo
 				window.cancelAnimationFrame( frame );
 			}
 		};
-	}, [ nav2026, nav2026Variant ] );
+	}, [ nav2026 ] );
 }
 
 interface UseFooterHeightArgs {

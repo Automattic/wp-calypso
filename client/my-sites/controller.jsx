@@ -529,6 +529,7 @@ export function noSite( context, next ) {
 	);
 
 	const isUnifiedCheckoutFlow = context.pathname.includes( '/checkout/unified' );
+	const isWpcomCheckoutFlow = context.pathname.includes( '/checkout/wpcom' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
@@ -539,6 +540,7 @@ export function noSite( context, next ) {
 		! isAkismetCheckoutFlow &&
 		! isMarketplaceSitelessCheckoutFlow &&
 		! isUnifiedCheckoutFlow &&
+		! isWpcomCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
 		! is100YearCheckoutFlow &&

@@ -108,6 +108,21 @@ type ChatComponentType =
 export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
 
 /**
+ * Rewrite the visible transcript.
+ *
+ * Applied to the whole message list on every render — including messages
+ * rehydrated from conversation history — so a provider can present a message
+ * differently from what it sent. The motivating case is a host that submits a
+ * large machine-facing prompt (block ids, computed styles, tool instructions)
+ * and wants the user to see a short summary instead. Deriving the display from
+ * the content, rather than flagging it at send time, is what makes it survive a
+ * reload.
+ *
+ * Must be pure and cheap: it runs on every render of the transcript.
+ */
+export type TransformMessages = ( messages: UIMessage[] ) => UIMessage[];
+
+/**
  * Checkpoint return type - for saving and restoring editor state so that AI actions can be undone.
  */
 export type UseCheckpointReturn = {
@@ -182,6 +197,7 @@ export interface LoadedProviders {
 	useAbilitiesSetup?: AbilitiesSetupHook;
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
+	transformMessages?: TransformMessages;
 	siteBuildUtils?: SiteBuildUtils;
 	useCheckpoint?: UseCheckpointHook;
 	/**
@@ -234,6 +250,59 @@ export function mergeUseSuggestionsHooks(
 		return {
 			suggestions: combined,
 			...( replaceEmptyViewSuggestions && { replaceEmptyViewSuggestions: true } ),
+		};
+	};
+}
+
+/**
+ * Merge provider checkpoint hooks. Each provider owns its own checkpoint store,
+ * so id-based lookups must search every loaded provider. Other methods keep
+ * delegating to the first provider to preserve the previous behavior.
+ */
+export function mergeUseCheckpointHooks(
+	hooks: UseCheckpointHook[]
+): UseCheckpointHook | undefined {
+	if ( hooks.length === 0 ) {
+		return undefined;
+	}
+
+	if ( hooks.length === 1 ) {
+		return hooks[ 0 ];
+	}
+
+	return () => {
+		const instances: Array< Partial< UseCheckpointReturn > | undefined > = hooks.map( ( hook ) =>
+			hook()
+		);
+		const first = instances[ 0 ];
+		const findOwner = ( id: string ) =>
+			instances.find( ( instance ) => instance?.hasCheckpoint?.( id ) );
+
+		return {
+			hasCheckpoint: ( id: string ) =>
+				instances.some( ( instance ) => instance?.hasCheckpoint?.( id ) ),
+			restoreCheckpoint: async ( id: string ) => {
+				await findOwner( id )?.restoreCheckpoint?.( id );
+			},
+			clearCheckpoint: ( id: string ) => {
+				for ( const instance of instances ) {
+					if ( instance?.hasCheckpoint?.( id ) ) {
+						instance.clearCheckpoint?.( id );
+					}
+				}
+			},
+			getLastEditorState: () => first?.getLastEditorState?.(),
+			setCheckpoint: ( id: string, keys?: string[] ) => first?.setCheckpoint?.( id, keys ),
+			addCheckpointKeys: ( id: string, keys: string[] ) => first?.addCheckpointKeys?.( id, keys ),
+			addNewPageToCheckpoint: ( pageId: string ) => first?.addNewPageToCheckpoint?.( pageId ),
+			addPageRenameToCheckpoint: ( pageId: string, oldTitle: string, newTitle: string ) =>
+				first?.addPageRenameToCheckpoint?.( pageId, oldTitle, newTitle ),
+			addPageRemovalToCheckpoint: (
+				pageId: string,
+				pageTitle: string,
+				options?: { shouldRestoreNavigation?: boolean }
+			) => first?.addPageRemovalToCheckpoint?.( pageId, pageTitle, options ),
+			getLatestUserMessageId: () => first?.getLatestUserMessageId?.(),
 		};
 	};
 }
@@ -533,7 +602,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
-	let mergedUseCheckpoint: UseCheckpointHook | undefined;
 	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
@@ -548,9 +616,11 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];
+	const allTransformMessages: TransformMessages[] = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+	const allUseCheckpoints: UseCheckpointHook[] = [];
 	const allProviderIds: string[] = [];
 
 	// Load all providers in parallel to avoid serializing network/module fetches.
@@ -598,6 +668,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.getChatComponent ) {
 			allGetChatComponents.push( module.getChatComponent );
 		}
+		if ( module.transformMessages ) {
+			allTransformMessages.push( module.transformMessages );
+		}
 		if ( module.useAbilitiesSetup ) {
 			allAbilitiesSetups.push( module.useAbilitiesSetup );
 		}
@@ -606,6 +679,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.getEmptyViewSuggestions ) {
 			allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
+		}
+		if ( module.useCheckpoint ) {
+			allUseCheckpoints.push( module.useCheckpoint );
 		}
 		if ( module.contextProvider ) {
 			allContextProviders.push( module.contextProvider );
@@ -623,9 +699,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
 			mergedSiteBuildUtils = module.siteBuildUtils;
-		}
-		if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
-			mergedUseCheckpoint = module.useCheckpoint;
 		}
 		if ( module.onTaskUpdate && ! mergedOnTaskUpdate ) {
 			mergedOnTaskUpdate = module.onTaskUpdate;
@@ -707,6 +780,18 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		};
 	}
 
+	// Merge transformMessages: compose in registration order, so each provider
+	// rewrites what the previous one produced. Unlike the singleton exports this
+	// is chained rather than first-write-wins — two providers can each present
+	// their own messages without one silently disabling the other.
+	let mergedTransformMessages: TransformMessages | undefined;
+	if ( allTransformMessages.length === 1 ) {
+		mergedTransformMessages = allTransformMessages[ 0 ];
+	} else if ( allTransformMessages.length > 1 ) {
+		mergedTransformMessages = ( messages: UIMessage[] ) =>
+			allTransformMessages.reduce( ( current, transform ) => transform( current ), messages );
+	}
+
 	// Merge getChatComponent: try each provider, return first non-null.
 	if ( allGetChatComponents.length === 1 ) {
 		mergedGetChatComponent = allGetChatComponents[ 0 ];
@@ -735,6 +820,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 	// Merge useSuggestions: combine from all providers, dedupe by id.
 	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
+
+	// Merge useCheckpoint: run every provider's hook, search all stores by id.
+	const mergedUseCheckpoint = mergeUseCheckpointHooks( allUseCheckpoints );
 
 	// Merge getEmptyViewSuggestions: combine from all providers, dedupe by id.
 	if ( allGetEmptyViewSuggestions.length === 1 ) {
@@ -767,6 +855,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		onTaskUpdate: mergedOnTaskUpdate,
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
+		transformMessages: mergedTransformMessages,
 		siteBuildUtils: mergedSiteBuildUtils,
 		useCheckpoint: mergedUseCheckpoint,
 		// Match peer fields: undefined when no provider opted in.

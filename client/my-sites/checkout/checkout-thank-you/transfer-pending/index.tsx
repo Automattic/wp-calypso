@@ -84,13 +84,13 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 	// Redirect based on transfer status
 	const didRedirect = React.useRef( false );
 	React.useEffect( () => {
-		const retryOnError = () => {
+		const redirectWithNotice = ( message: string ) => {
 			if ( didRedirect.current ) {
 				return;
 			}
 
 			dispatch(
-				errorNotice( __( "Sorry, we couldn't process your transfer. Please try again later." ), {
+				errorNotice( message, {
 					id: 'atomic-transfer-error',
 					isPersistent: true,
 					displayOnNextPage: true,
@@ -111,9 +111,21 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 			}
 
 			// If the processing status indicates that there was something wrong.
-			if ( transferStates.ERROR === transfer.status ) {
+			if ( [ transferStates.ERROR, transferStates.REVERTED ].includes( transfer.status ) ) {
 				// Redirect users back to the stats page so they can try again.
-				retryOnError();
+				redirectWithNotice(
+					__( "Sorry, we couldn't process your transfer. Please try again later." )
+				);
+
+				return;
+			}
+
+			if ( transferStates.CLIENT_TIMEOUT === transfer.status ) {
+				redirectWithNotice(
+					__(
+						'Your transfer is taking longer than expected. It may still finish — reload the page to check.'
+					)
+				);
 
 				return;
 			}

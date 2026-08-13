@@ -297,10 +297,11 @@ const PlansFeaturesMain = ( {
 	);
 	const isPlanExpired = !! sitePlansData?.find( ( p ) => p.currentPlan )?.expired;
 
-	// Refund-window instant downgrade: when the current plan is still within its
-	// initial refund window, a downgrade is performed instantly via the cancel
-	// endpoint instead of routing the user to checkout. This applies regardless of
-	// whether any money would be refunded (e.g. plans paid with credits or free).
+	// Refund-window instant downgrade: when the current plan has a refundable
+	// receipt — its initial purchase or, after a renewal, the renewal's — a
+	// downgrade is performed instantly via the cancel endpoint instead of routing
+	// the user to checkout. This applies regardless of whether any money would be
+	// refunded (e.g. plans paid with credits or free).
 	const reduxDispatch = useReduxDispatch();
 	const queryClient = useQueryClient();
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
@@ -321,7 +322,7 @@ const PlansFeaturesMain = ( {
 	const isWithinRefundWindow =
 		config.isEnabled( 'plans/expired-downgrade' ) &&
 		!! currentPurchase &&
-		currentPurchase.is_within_initial_refund_window &&
+		currentPurchase.is_refundable &&
 		! currentPurchase.is_past_expiry_date;
 	// The delayed-downgrade flow (schedule a downgrade at renewal for an active
 	// plan) is gated separately from the launched expired/refund downgrade flow.

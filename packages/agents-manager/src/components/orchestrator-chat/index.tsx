@@ -51,6 +51,7 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
+	TransformMessages,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
@@ -182,6 +183,8 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
+	/** Rewrite the transcript before it is displayed. See `TransformMessages`. */
+	transformMessages?: TransformMessages;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
@@ -208,6 +211,7 @@ export default function OrchestratorChat( {
 	useSuggestions,
 	getChatComponent,
 	siteBuildUtils,
+	transformMessages,
 	useCheckpoint,
 	capabilities,
 	isChatInputDisabled,
@@ -446,7 +450,7 @@ export default function OrchestratorChat( {
 
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();
-	useCheckpointAction( registerMessageActions, checkpoint );
+	const getCheckpointActionsForMessage = useCheckpointAction( registerMessageActions, checkpoint );
 
 	// TODO (ability-migration): Remove once the last checkpoint-writing Big Sky
 	// ability migrates. Keeps the provider checkpoint store reachable for the
@@ -829,6 +833,14 @@ export default function OrchestratorChat( {
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		let currentMessages: AgentsManagerUIMessage[] = messages;
 
+		// Let the provider rewrite the transcript first, while the messages are
+		// still the raw ones. Applied on every render over the whole list, so a
+		// message restored from conversation history is presented the same way as
+		// one that was just sent.
+		if ( transformMessages ) {
+			currentMessages = transformMessages( currentMessages );
+		}
+
 		currentMessages = currentMessages.filter(
 			( message ) =>
 				! deletedMessageIds.has( message.id ) &&
@@ -865,6 +877,13 @@ export default function OrchestratorChat( {
 			);
 		}
 
+		const checkpointActionsByMessageId = new Map(
+			currentMessages.map( ( message ) => [
+				message.id,
+				getCheckpointActionsForMessage( message ),
+			] )
+		);
+
 		// Group site-build messages only when needed
 		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( currentMessages );
 
@@ -890,6 +909,7 @@ export default function OrchestratorChat( {
 			const messageWithTraceId = traceId ? { ...message, traceId } : message;
 
 			const directActions = [
+				...( checkpointActionsByMessageId.get( message.id ) ?? [] ),
 				...getFeedbackActionsForMessage( message ),
 				...getCopyActionsForMessage( message ),
 				...getRegenerateActionsForMessage( message, {
@@ -897,12 +917,16 @@ export default function OrchestratorChat( {
 					isStreaming: isProcessing,
 				} ),
 			];
-			if ( directActions.length === 0 ) {
+			const hasRegisteredCheckpointAction = message.actions?.some(
+				( action ) => action.id === 'checkpoint'
+			);
+			if ( directActions.length === 0 && ! hasRegisteredCheckpointAction ) {
 				return messageWithTraceId;
 			}
 
 			const existingActions = message.actions?.filter(
 				( action ) =>
+					action.id !== 'checkpoint' &&
 					! action.id.startsWith( 'feedback-' ) &&
 					action.id !== 'copy' &&
 					action.id !== 'regenerate'
@@ -922,6 +946,7 @@ export default function OrchestratorChat( {
 		deletedMessageIds,
 		getChatComponent,
 		getCopyActionsForMessage,
+		getCheckpointActionsForMessage,
 		getShowComponentOrder,
 		getFeedbackActionsForMessage,
 		getTraceIdForMessage,
@@ -932,6 +957,7 @@ export default function OrchestratorChat( {
 		retainedShowComponentMessages,
 		siteBuildUtils,
 		thinkingMessage,
+		transformMessages,
 	] );
 
 	// Notify parent when has-messages state changes.
