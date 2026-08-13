@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	makeLayout,
@@ -34,14 +35,16 @@ export default function () {
 	page( '/me/find-friends', controller.profileRedirect, makeLayout, clientRender );
 
 	page( TELEGRAM_CONNECT_PATH, setupPreferences, telegramConnect, makeLayout, clientRender );
-	page(
-		WORDPRESS_AGENT_PATH,
-		setupPreferences,
-		controller.sidebar,
-		wordpressAgent,
-		makeLayout,
-		clientRender
-	);
+	if ( config.isEnabled( 'wordpress-agent' ) ) {
+		page(
+			WORDPRESS_AGENT_PATH,
+			setupPreferences,
+			controller.sidebar,
+			wordpressAgent,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		'/me/get-apps',

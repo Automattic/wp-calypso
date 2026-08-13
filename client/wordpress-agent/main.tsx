@@ -145,10 +145,20 @@ export default function WordPressAgentPage( { pairToken, slackStatus }: WordPres
 
 	const title = translate( 'WordPress Agent' );
 	const pairingTitle = username
-		? translate( 'Connect this Slack account to your WordPress.com account %(username)s?', {
+		? translate( 'Connect your WordPress.com account %(username)s to this Slack workspace?', {
 				args: { username },
 		  } )
-		: translate( 'Connect this Slack account to your WordPress.com account?' );
+		: translate( 'Connect your WordPress.com account to this Slack workspace?' );
+	const installTitle = pairToken
+		? translate( 'Install WordPress Agent in another Slack workspace' )
+		: translate( 'Install WordPress Agent in Slack' );
+	const installDescription = pairToken
+		? translate(
+				'This is a separate step for adding WordPress Agent to a different Slack workspace.'
+		  )
+		: translate(
+				'Add WordPress Agent to a Slack workspace, then connect your WordPress.com account.'
+		  );
 	let connectionsContent: ReactNode;
 	if ( loading ) {
 		connectionsContent = (
@@ -232,7 +242,7 @@ export default function WordPressAgentPage( { pairToken, slackStatus }: WordPres
 							<h2>{ pairingTitle }</h2>
 							<p>
 								{ translate(
-									'WordPress Agent will use your WordPress.com account and sites when you message it in this Slack workspace.'
+									'WordPress Agent is already installed in this workspace. Connect your account to use your WordPress.com sites when you message it here.'
 								) }
 							</p>
 						</div>
@@ -250,10 +260,8 @@ export default function WordPressAgentPage( { pairToken, slackStatus }: WordPres
 
 			<div className="wordpress-agent-slack__heading">
 				<div>
-					<h2>{ translate( 'Slack' ) }</h2>
-					<p>
-						{ translate( 'Use WordPress Agent in direct messages in any connected workspace.' ) }
-					</p>
+					<h2>{ installTitle }</h2>
+					<p>{ installDescription }</p>
 				</div>
 				<Button
 					variant="primary"
@@ -261,7 +269,7 @@ export default function WordPressAgentPage( { pairToken, slackStatus }: WordPres
 					isBusy={ action === 'install' }
 					disabled={ !! action }
 				>
-					{ translate( 'Add to Slack' ) }
+					{ pairToken ? translate( 'Install in another workspace' ) : translate( 'Add to Slack' ) }
 				</Button>
 			</div>
 
