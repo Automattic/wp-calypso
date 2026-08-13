@@ -847,6 +847,18 @@ export const agencySiteSettingsRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Settings' ) } ] } ),
 	getParentRoute: () => agencySiteRoute,
 	path: 'settings',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		// Keep the router in sync with the sidebar, which only offers Settings
+		// to users with manage_options on the site.
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! site.capabilities?.manage_options ) {
+			throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 

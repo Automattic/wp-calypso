@@ -29,6 +29,7 @@ import { Icon, lock } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { SectionHeader } from '../../components/section-header';
+import { getSiteSettingsRepositoriesURL } from '../../utils/site-url';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
 import { useInstallGithub } from './use-install-github';
 import type {
@@ -37,7 +38,6 @@ import type {
 	CreateAndUpdateCodeDeploymentVariables,
 	CreateAndUpdateCodeDeploymentResponse,
 } from '@automattic/api-core';
-import type { NavigateOptions } from '@tanstack/react-router';
 
 interface ConnectRepositoryFormProps {
 	formTitle: string;
@@ -53,7 +53,6 @@ interface ConnectRepositoryFormProps {
 	submitText: string;
 	successMessage: string;
 	errorMessage: ( reason: string ) => string;
-	navigateFrom: NavigateOptions[ 'from' ];
 }
 
 export interface ConnectRepositoryFormData {
@@ -230,10 +229,9 @@ export const ConnectRepositoryForm = ( {
 	submitText,
 	successMessage,
 	errorMessage,
-	navigateFrom,
 }: ConnectRepositoryFormProps ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const navigate = useNavigate( { from: navigateFrom } );
+	const navigate = useNavigate();
 	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const {
@@ -431,7 +429,7 @@ export const ConnectRepositoryForm = ( {
 				createSuccessNotice( successMessage, {
 					type: 'snackbar',
 				} );
-				navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+				navigate( { to: getSiteSettingsRepositoriesURL( siteSlug ) } );
 			},
 			onError: ( error ) => {
 				createErrorNotice( errorMessage( error.message ), {

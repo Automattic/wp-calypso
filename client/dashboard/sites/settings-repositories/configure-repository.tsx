@@ -7,13 +7,10 @@ import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
-import {
-	siteSettingsRepositoriesRoute,
-	siteSettingsRepositoriesManageRoute,
-} from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { getSiteSettingsRepositoriesURL } from '../../utils/site-url';
 import { ConnectRepositoryForm } from './connect-repository-form';
 
 export default function ConfigureRepository() {
@@ -25,13 +22,10 @@ export default function ConfigureRepository() {
 	const { data: existingDeployment } = useSuspenseQuery(
 		codeDeploymentQuery( site.ID, deploymentId )
 	);
-	const navigateFrom = siteSettingsRepositoriesManageRoute.fullPath;
-	const navigate = useNavigate( {
-		from: navigateFrom,
-	} );
+	const navigate = useNavigate();
 
 	const handleCancel = () => {
-		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
+		navigate( { to: getSiteSettingsRepositoriesURL( siteSlug ) } );
 	};
 
 	const updateMutation = useMutation( updateCodeDeploymentMutation( site.ID, deploymentId ?? 0 ) );
@@ -80,7 +74,6 @@ export default function ConfigureRepository() {
 								{ reason }
 							)
 						}
-						navigateFrom={ navigateFrom }
 					/>
 				</CardBody>
 			</Card>
