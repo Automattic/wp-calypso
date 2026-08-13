@@ -1,90 +1,92 @@
-import { removeQueryArgs } from '@wordpress/url';
+import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { sendVerificationSignal } from 'calypso/lib/user/verification-checker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
-import { successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Page middleware
  */
 
-// Parse email verification params from query
 function parseVerificationParams( query ) {
 	const verified = query.verified;
 	const newEmailResult = query.new_email_result;
 
+	const isEmailChangeComplete = newEmailResult === '1';
+	const isEmailVerificationComplete = verified === '1';
+	const emailChangeFailed = newEmailResult === '0';
+	const emailVerificationFailed = verified === '0';
+
 	return {
-		isEmailChangeComplete: newEmailResult === '1',
-		isEmailVerificationComplete: verified === '1',
-		emailChangeFailed: newEmailResult === '0',
-		emailVerificationFailed: verified === '0',
-		hasAnyParam: !! ( newEmailResult || verified ),
+		isEmailChangeComplete,
+		isEmailVerificationComplete,
+		emailChangeFailed,
+		emailVerificationFailed,
+		hasValidResult:
+			isEmailChangeComplete ||
+			isEmailVerificationComplete ||
+			emailChangeFailed ||
+			emailVerificationFailed,
 		verified,
 		newEmailResult,
+		newEmailError: query.new_email_error,
 	};
 }
 
 export default function emailVerification( context, next ) {
 	const params = parseVerificationParams( context.query );
 
-	if ( ! params.hasAnyParam ) {
+	if ( ! params.hasValidResult ) {
 		next();
 		return;
 	}
 
-	// Redirect users to v2 if they opted in to the Multi-site Dashboard
-	if ( shouldRedirectToV2( context, next, params ) ) {
+	if ( redirectToOptedInDashboard( context, params ) ) {
 		return;
 	}
 
-	// Fallback to v1 logic
-	handleV1Logic( context, next, params );
+	handleV1Logic( context, params );
 
+	// Once: a second hand-off runs the rest of the chain again, past a redirect meant to end it.
 	next();
 }
 
-// Helper function to build redirect URL
-function buildDashboardRedirectUrl( verified, newEmailResult ) {
+function buildDashboardRedirectUrl( { verified, newEmailResult, newEmailError } ) {
 	bumpStat( 'dashboard-redirect', 'email-verification' );
-	let redirectUrl = dashboardLink( '/me/profile' );
+	// Not /me/profile: it redirects here without carrying the query arguments.
+	const redirectUrl = dashboardLink( '/me/account' );
 	if ( verified ) {
-		redirectUrl += `?verified=${ verified }`;
-	} else if ( newEmailResult ) {
-		redirectUrl += `?new_email_result=${ newEmailResult }`;
+		return addQueryArgs( redirectUrl, { verified } );
+	}
+	if ( newEmailResult ) {
+		return addQueryArgs( redirectUrl, {
+			new_email_result: newEmailResult,
+			new_email_error: newEmailError,
+		} );
 	}
 	return redirectUrl;
 }
 
 /**
- * v2
- * Redirect to v2 for success and error cases.
+ * Sends the result to the dashboard the user has opted in to, if they have. Returns true when it
+ * has done so, and the result is no longer this dashboard's to show.
  *
- * Examples:
- * /me/account?verified=1 → /v2/me/profile?verified=1
- * /me/account?new_email_result=1 → /v2/me/profile?new_email_result=1
+ * /me/account?verified=1 → <the dashboard they are on>/me/account?verified=1
  */
-function shouldRedirectToV2( context, next, params ) {
-	const hasValidParams =
-		params.isEmailChangeComplete ||
-		params.isEmailVerificationComplete ||
-		params.emailChangeFailed ||
-		params.emailVerificationFailed;
-
-	if ( ! hasValidParams || ! [ '/me/account', '/settings/account' ].includes( context.pathname ) ) {
+function redirectToOptedInDashboard( context, params ) {
+	if ( ! [ '/me/account', '/settings/account' ].includes( context.pathname ) ) {
 		return false;
 	}
 
-	// Check user preferences to see if they opted in to the Hosting Dashboard
 	let state = context.store.getState();
 
 	const arePreferencesLoaded = ( storeState ) =>
 		! storeState.preferences.fetching && storeState.preferences.remoteValues !== null;
 
 	if ( ! arePreferencesLoaded( state ) ) {
-		// Wait for preferences to load
 		const unsubscribe = context.store.subscribe( () => {
 			state = context.store.getState();
 
@@ -92,48 +94,64 @@ function shouldRedirectToV2( context, next, params ) {
 				unsubscribe();
 
 				if ( hasDashboardOptIn( state ) ) {
-					window.location.href = buildDashboardRedirectUrl(
-						params.verified,
-						params.newEmailResult
-					);
+					window.location.href = buildDashboardRedirectUrl( params );
 				}
 			}
 		} );
 
 		setTimeout( () => unsubscribe(), 10000 ); // 10 seconds
 
-		next();
-		return;
+		return false;
 	}
 
 	if ( hasDashboardOptIn( state ) ) {
-		window.location.href = buildDashboardRedirectUrl( params.verified, params.newEmailResult );
+		window.location.href = buildDashboardRedirectUrl( params );
 		return true;
 	}
 
 	return false;
 }
 
-/**
- * v1
- * Show notification for success cases only
- */
-function handleV1Logic( context, next, params ) {
+// The notice state seems to be cleared on page load, so it is dispatched a moment afterwards.
+const announce = ( context, notice ) => {
+	setTimeout( () => context.store.dispatch( notice ), 500 );
+};
+
+const invalidLinkMessage = () =>
+	i18n.translate(
+		'The email verification link is invalid or has expired. Please request a new one.'
+	);
+
+// Unknown or absent reads as it did before, so the server can start sending a reason later.
+function emailChangeFailureMessage( newEmailError ) {
+	if ( newEmailError === 'email_in_use' ) {
+		return i18n.translate(
+			'That email address is already used by another WordPress.com account. Try a different address.'
+		);
+	}
+	return invalidLinkMessage();
+}
+
+function handleV1Logic( context, params ) {
+	// This path forwards these on rather than consuming them; announcing here too says it twice.
+	if ( params.newEmailResult && context.pathname === '/settings/account' ) {
+		return;
+	}
+
 	if ( params.isEmailVerificationComplete ) {
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'verified' ) );
-		sendVerificationSignal();
-		setTimeout( () => {
-			const message = i18n.translate( 'Email confirmed!' );
-			const notice = successNotice( message, { duration: 10000 } );
-			context.store.dispatch( notice );
-		}, 500 ); // A delay is needed here, because the notice state seems to be cleared upon page load
+		try {
+			sendVerificationSignal();
+		} catch {}
+		announce( context, successNotice( i18n.translate( 'Email confirmed!' ), { duration: 10000 } ) );
 	} else if ( params.isEmailChangeComplete ) {
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'new_email_result' ) );
-		setTimeout( () => {
-			const message = i18n.translate(
-				'Email address updated. Make sure you update your contact information for any registered domains.'
-			);
-			const notice = successNotice( message, {
+		const message = i18n.translate(
+			'Email address updated. Make sure you update your contact information for any registered domains.'
+		);
+		announce(
+			context,
+			successNotice( message, {
 				duration: 10000,
 				button: i18n.translate( 'Update' ),
 				href: '/domains/manage?site=all&action=edit-contact-email',
@@ -145,10 +163,18 @@ function handleV1Logic( context, next, params ) {
 						} )
 					);
 				},
-			} );
-			context.store.dispatch( notice );
-		}, 500 ); // A delay is needed here, because the notice state seems to be cleared upon page load
+			} )
+		);
+	} else if ( params.emailVerificationFailed ) {
+		context.page.replace( removeQueryArgs( context.canonicalPath, 'verified' ) );
+		announce( context, errorNotice( invalidLinkMessage(), { duration: 10000 } ) );
+	} else if ( params.emailChangeFailed ) {
+		context.page.replace(
+			removeQueryArgs( context.canonicalPath, 'new_email_result', 'new_email_error' )
+		);
+		announce(
+			context,
+			errorNotice( emailChangeFailureMessage( params.newEmailError ), { duration: 10000 } )
+		);
 	}
-
-	next();
 }

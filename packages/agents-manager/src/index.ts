@@ -9,6 +9,14 @@ export { AGENTS_MANAGER_STORE } from './stores';
 // Utility for agents manager inline data
 export { getAgentsManagerInlineData } from './utils/get-agents-manager-inline-data';
 
+// Host-facing controls for the chat dock, for entry points outside it
+export {
+	closeAgentsManagerChat,
+	getAgentsManagerChatRoute,
+	isAgentsManagerChatVisible,
+	openAgentsManagerChat,
+} from './utils/chat-actions';
+
 // Extension API types for other plugins to hook into
 export type {
 	Ability,

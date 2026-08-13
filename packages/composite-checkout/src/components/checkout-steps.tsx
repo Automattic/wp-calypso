@@ -43,6 +43,8 @@ import type { ReactNode, HTMLAttributes, PropsWithChildren, ReactElement } from 
 const debug = debugFactory( 'composite-checkout:checkout-steps' );
 
 const customPropertyForSubmitButtonHeight = '--submit-button-height';
+const submitButtonWrapperClassName = 'checkout-steps__submit-button-wrapper';
+const stepContentClassName = 'checkout-steps__step-content';
 
 interface CheckoutSingleStepDataContext {
 	stepNumber: number;
@@ -67,6 +69,7 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		stepCompleteCallbackMap: {},
 		stepSkipValidationOnSubmitMap: {},
 		suppressNextForwardScroll: false,
+		hasUserInteractedWithSteps: false,
 	},
 	actions: {
 		makeStepActive: noop,
@@ -79,6 +82,7 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		getStepNumberFromId: noop,
 		setTotalSteps: noop,
 		setSuppressNextForwardScroll: noop,
+		setHasUserInteractedWithSteps: noop,
 	},
 	subscription: new SubscriptionManager(),
 } );
@@ -103,6 +107,7 @@ function createCheckoutStepGroupState(): CheckoutStepGroupState {
 		stepCompleteCallbackMap: {},
 		stepSkipValidationOnSubmitMap: {},
 		suppressNextForwardScroll: false,
+		hasUserInteractedWithSteps: false,
 	};
 }
 
@@ -265,6 +270,12 @@ function createCheckoutStepGroupActions(
 		state.suppressNextForwardScroll = value;
 	};
 
+	// Records that the shopper has touched the step content at least once. Read
+	// synchronously at click time, so it deliberately does not notify subscribers.
+	const setHasUserInteractedWithSteps = ( value: boolean ) => {
+		state.hasUserInteractedWithSteps = value;
+	};
+
 	return {
 		setActiveStepNumber,
 		setStepCompleteStatus,
@@ -276,6 +287,7 @@ function createCheckoutStepGroupActions(
 		completeAllSteps,
 		makeStepActive,
 		setSuppressNextForwardScroll,
+		setHasUserInteractedWithSteps,
 	};
 }
 
@@ -332,6 +344,76 @@ export const CheckoutSummaryArea = ( {
 		</CheckoutSummary>
 	);
 };
+
+/**
+ * True when the shopper can actually see some part of the element right now.
+ *
+ * Overlapping the viewport is not enough on its own: a checkout step is often
+ * taller than a phone screen, so its rect nearly always overlaps, and the sticky
+ * summary pinned to the bottom of the screen can be covering every pixel of it
+ * that is on-screen. So once the rect says "on-screen", hit-test points down the
+ * element's visible height to see whether anything is painted over it.
+ *
+ * Elements that are missing or have no layout box at all (so there is nothing to
+ * scroll to) count as visible, and so does the case where the environment has no
+ * hit-testing, so that callers fall back to their normal behavior.
+ */
+function isElementVisibleInViewport( el: HTMLElement | null ): boolean {
+	if ( ! el ) {
+		return true;
+	}
+	const rect = el.getBoundingClientRect();
+	if ( rect.width === 0 && rect.height === 0 ) {
+		return true;
+	}
+	const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+	const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+	const top = Math.max( rect.top, 0 );
+	const bottom = Math.min( rect.bottom, viewportHeight );
+	const left = Math.max( rect.left, 0 );
+	const right = Math.min( rect.right, viewportWidth );
+	if ( bottom <= top || right <= left ) {
+		return false;
+	}
+	if ( typeof document.elementFromPoint !== 'function' ) {
+		return true;
+	}
+	const x = Math.min( ( left + right ) / 2, viewportWidth - 1 );
+	const sampleCount = 8;
+	for ( let sample = 0; sample <= sampleCount; sample++ ) {
+		const y = Math.min( top + ( ( bottom - top ) * sample ) / sampleCount, viewportHeight - 1 );
+		const topmostElement = document.elementFromPoint( x, y );
+		if ( topmostElement && el.contains( topmostElement ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * The first form control the shopper would fill in for a step (e.g. the country
+ * dropdown on the contact step), or null when the step has none.
+ *
+ * A checkout step is often taller than a phone screen, so "part of the step is
+ * visible" can be true while the shopper sees only its heading. Where the step
+ * has fields, whether the first of them is visible is the better question.
+ * Controls with no layout box are skipped: they are hidden, so seeing them tells
+ * the shopper nothing.
+ */
+function getFirstFormFieldInStep( stepEl: HTMLElement ): HTMLElement | null {
+	// Steps render their active and complete content at the same time, so restrict
+	// this to the active content and fall back to the step for stepless layouts.
+	const activeContent = stepEl.querySelector( `.${ stepContentClassName }` ) ?? stepEl;
+	const fields = Array.from(
+		activeContent.querySelectorAll< HTMLElement >( 'input:not([type="hidden"]), select, textarea' )
+	);
+	return (
+		fields.find( ( field ) => {
+			const rect = field.getBoundingClientRect();
+			return rect.width > 0 || rect.height > 0;
+		} ) ?? null
+	);
+}
 
 function isElementAStep( el: ReactNode ): boolean {
 	const childStep = el as { type?: { isCheckoutStep?: boolean } };
@@ -680,9 +762,34 @@ function CheckoutStepArea( {
 }: PropsWithChildren< {
 	className?: string;
 } > ) {
-	const { state } = useContext( CheckoutStepGroupContext );
+	const { state, actions } = useContext( CheckoutStepGroupContext );
 	const { activeStepNumber, totalSteps } = state;
+	const { setHasUserInteractedWithSteps } = actions;
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
+
+	// Native (not React) listeners on purpose: a submit button rendered into this
+	// group but portaled elsewhere in the DOM would still bubble its React events
+	// through here, and pressing that button is not "interacting with the steps".
+	// The submit area is excluded for the same reason when it is not portaled.
+	const stepAreaRef = useRef< HTMLDivElement >( null );
+	useEffect( () => {
+		const stepArea = stepAreaRef.current;
+		if ( ! stepArea ) {
+			return;
+		}
+		const onInteract = ( event: Event ) => {
+			const target = event.target as HTMLElement | null;
+			if ( target?.closest?.( `.${ submitButtonWrapperClassName }` ) ) {
+				return;
+			}
+			setHasUserInteractedWithSteps( true );
+		};
+		const events = [ 'pointerdown', 'keydown', 'change' ] as const;
+		events.forEach( ( event ) => stepArea.addEventListener( event, onInteract ) );
+		return () => {
+			events.forEach( ( event ) => stepArea.removeEventListener( event, onInteract ) );
+		};
+	}, [ setHasUserInteractedWithSteps ] );
 
 	const classNames = joinClasses( [
 		'checkout__step-wrapper',
@@ -690,7 +797,11 @@ function CheckoutStepArea( {
 		...( ! isThereAnotherNumberedStep ? [ 'checkout__step-wrapper--last-step' ] : [] ),
 	] );
 
-	return <CheckoutStepAreaWrapper className={ classNames }>{ children }</CheckoutStepAreaWrapper>;
+	return (
+		<CheckoutStepAreaWrapper className={ classNames } ref={ stepAreaRef }>
+			{ children }
+		</CheckoutStepAreaWrapper>
+	);
 }
 
 export function CheckoutFormSubmit( {
@@ -787,7 +898,6 @@ export function CheckoutFormSubmit( {
 	}, [
 		activeStepNumber,
 		totalSteps,
-		stepCompleteStatus,
 		stepSkipValidationOnSubmitMap,
 		getStepCompleteCallback,
 		setStepCompleteStatus,
@@ -850,6 +960,29 @@ export function CheckoutFormSubmit( {
 		if ( ! targetStepId ) {
 			return;
 		}
+		// When the step needing the shopper's attention is not visible — off-screen,
+		// or hidden behind the sticky summary — this press only reveals that step.
+		// Validating it here would flag errors on fields they have not yet seen.
+		// Once the step is on-screen the button submits as usual. Visibility is
+		// judged by the step's first form field where it has one, since a step
+		// taller than the screen can have its heading showing and every field
+		// covered.
+		//
+		// Anyone who has already touched the steps is exempt: on a step taller than
+		// the screen, working down the form scrolls that first field off the top, and
+		// they should get a real submit rather than being thrown back to the heading.
+		const targetStepEl = document.getElementById( targetStepId );
+		if (
+			targetStepEl &&
+			stepIdMap[ targetStepId ] === activeStepNumber &&
+			! state.hasUserInteractedWithSteps
+		) {
+			const elementToReveal = getFirstFormFieldInStep( targetStepEl ) ?? targetStepEl;
+			if ( ! isElementVisibleInViewport( elementToReveal ) ) {
+				targetStepEl.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
+				return;
+			}
+		}
 		if ( stepIdMap[ targetStepId ] === activeStepNumber ) {
 			// The active step is itself the step that still needs completing.
 			// makeStepActive would be a no-op here because it only runs completion
@@ -875,7 +1008,7 @@ export function CheckoutFormSubmit( {
 	};
 
 	return (
-		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
+		<SubmitButtonWrapper className={ submitButtonWrapperClassName } ref={ submitWrapperRef }>
 			{ submitButtonHeader || null }
 			{ showContinueToNextIncompleteStep ? (
 				<Button
@@ -1011,7 +1144,7 @@ export function CheckoutStepBody( {
 				<StepContentWrapper
 					data-testid={ activeStepTestId }
 					isVisible={ isStepActive }
-					className="checkout-steps__step-content"
+					className={ stepContentClassName }
 				>
 					{ activeStepContent }
 					{ goToNextStep && isStepActive && (

@@ -36,7 +36,7 @@ export class SignupPickPlanPage {
 	 * interception to avoid the race where the page navigates away before
 	 * the response body can be read through CDP.
 	 *
-	 * @see test/e2e/docs-new/creating_reliable_tests.md
+	 * @see test/e2e/docs/creating_reliable_tests.md
 	 * @returns {Promise<NewSiteResponse>}
 	 */
 	private captureNewSiteResponse(): Promise< NewSiteResponse > {

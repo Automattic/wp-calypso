@@ -5,6 +5,8 @@ import { useRef, useState } from 'react';
 import { OmnibarNodeContent } from './omnibar-node';
 import type { OmnibarNode } from '../types';
 
+import './omnibar-menu.scss';
+
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
 	'@wordpress/components'
@@ -12,10 +14,10 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 const { Menu } = unlock( privateApis );
 
 function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
-	if ( node.children ) {
+	if ( node.children?.length ) {
 		return (
 			<Menu>
-				<Menu.SubmenuTriggerItem>
+				<Menu.SubmenuTriggerItem tabbable>
 					<OmnibarNodeContent node={ node } />
 				</Menu.SubmenuTriggerItem>
 				<Menu.Popover className="omnibar__popover">
@@ -25,8 +27,20 @@ function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
 		);
 	}
 
+	if ( node.disabled ) {
+		return (
+			<div className="omnibar__menu-static-item">
+				<OmnibarNodeContent node={ node } />
+			</div>
+		);
+	}
+
 	return (
-		<Menu.Item render={ node.href ? <a href={ node.href } /> : undefined }>
+		<Menu.Item
+			tabbable
+			render={ node.href ? <a href={ node.href } /> : undefined }
+			onClick={ node.onClick }
+		>
 			<OmnibarNodeContent node={ node } />
 		</Menu.Item>
 	);
@@ -38,7 +52,9 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 
 	for ( const node of nodes ) {
 		if ( node.group ) {
-			groups.push( node );
+			if ( node.children?.length ) {
+				groups.push( node );
+			}
 		} else {
 			ungroupedItems.push( node );
 		}
@@ -54,7 +70,12 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 				</Menu.Group>
 			) }
 			{ groups.map( ( group ) => (
-				<Menu.Group key={ group.id }>
+				<Menu.Group
+					key={ group.id }
+					className={
+						group.variant ? `omnibar__menu-group is-${ group.variant }` : 'omnibar__menu-group'
+					}
+				>
 					{ group.title && <Menu.GroupLabel>{ group.title }</Menu.GroupLabel> }
 					{ ( group.children || [] ).map( ( item ) => (
 						<OmnibarMenuItem key={ item.id } node={ item } />
@@ -67,19 +88,32 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 
 export function OmnibarMenu( { node, className }: { node: OmnibarNode; className?: string } ) {
 	const label = node.title || node.label || '';
-	const menuClassName = className ? `omnibar__menu ${ className }` : 'omnibar__menu';
+	const menuClassName = [ 'omnibar__menu', className, node.className ]
+		.filter( Boolean )
+		.join( ' ' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const triggerRef = useRef< HTMLElement >( null );
 	const popoverRef = useRef< HTMLElement >( null );
 	const closedByPointerRef = useRef( false );
+	const openedByKeyboardRef = useRef( false );
 
-	if ( ! node.children ) {
+	const setPopoverRef = ( element: HTMLElement | null ) => {
+		popoverRef.current = element;
+		if ( element && openedByKeyboardRef.current ) {
+			openedByKeyboardRef.current = false;
+			element.querySelector< HTMLElement >( '[role="menuitem"]' )?.focus();
+		}
+	};
+
+	if ( ! node.children?.length ) {
+		const isLink = !! node.href && ! node.disabled;
 		return (
 			<Button
 				variant="unstyled"
 				className={ menuClassName }
-				render={ node.href ? <a href={ node.href } /> : undefined }
-				nativeButton={ ! node.href }
+				render={ isLink ? <a href={ node.href } /> : undefined }
+				nativeButton={ ! isLink }
+				disabled={ node.disabled }
 				onClick={ node.onClick }
 				aria-label={ label }
 			>
@@ -89,7 +123,7 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 	}
 
 	const handleMouseLeave = ( event: React.MouseEvent ) => {
-		const movingTo = event.relatedTarget as Node | null;
+		const movingTo = event.relatedTarget instanceof Node ? event.relatedTarget : null;
 		if (
 			! triggerRef.current?.contains( movingTo ) &&
 			! popoverRef.current?.contains( movingTo )
@@ -106,21 +140,46 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 		setIsOpen( open );
 	};
 
+	const handleTouchEnd = ( event: React.TouchEvent ) => {
+		if ( ! node.href ) {
+			return;
+		}
+		event.preventDefault();
+		setIsOpen( ( open ) => ! open );
+	};
+
+	const handleKeyDown = ( event: React.KeyboardEvent ) => {
+		if ( ! node.href || ( event.key !== 'Enter' && event.key !== ' ' ) ) {
+			return;
+		}
+		event.preventDefault();
+		openedByKeyboardRef.current = ! isOpen;
+		setIsOpen( ( open ) => ! open );
+	};
+
 	return (
 		<Menu open={ isOpen } onOpenChange={ handleOpenChange }>
 			<Menu.TriggerButton
 				ref={ triggerRef }
 				onMouseEnter={ () => setIsOpen( true ) }
 				onMouseLeave={ handleMouseLeave }
+				onTouchEnd={ handleTouchEnd }
+				onKeyDown={ handleKeyDown }
 				aria-expanded={ isOpen }
 				render={
-					<Button variant="unstyled" className={ menuClassName } aria-label={ label }>
+					<Button
+						variant="unstyled"
+						className={ menuClassName }
+						aria-label={ label }
+						render={ node.href ? <a href={ node.href } /> : undefined }
+						nativeButton={ ! node.href }
+					>
 						<OmnibarNodeContent node={ node } />
 					</Button>
 				}
 			/>
 			<Menu.Popover
-				ref={ popoverRef }
+				ref={ setPopoverRef }
 				className="omnibar__popover"
 				gutter={ 0 }
 				overflowPadding={ 0 }

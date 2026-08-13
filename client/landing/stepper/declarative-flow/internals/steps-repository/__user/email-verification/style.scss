@@ -20,6 +20,13 @@
 	font-size: 15px;
 	line-height: 1.5;
 	text-wrap: balance;
+
+	// A button in the middle of a sentence: it brings its own type, and has to give it back.
+	.components-button.is-link {
+		font-size: inherit;
+		font-weight: inherit;
+		line-height: inherit;
+	}
 }
 
 // Focus lands here programmatically to announce the screen change; it isn't a tab stop, so

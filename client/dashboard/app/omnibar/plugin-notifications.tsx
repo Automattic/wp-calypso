@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
+import { wpcomLink } from '../../utils/link';
 import { omnibarEvents, useOmnibarEvent } from './events';
 import type { User } from '@automattic/api-core';
 import type { OmnibarNode } from '@automattic/omnibar';
@@ -30,7 +31,7 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 
 	// Re-runs every commit so the anchor stays correct if the bell button is replaced.
 	useEffect( () => {
-		omnibarEvents.notificationsAnchor.emit( bellRef.current?.closest( 'button' ) ?? null );
+		omnibarEvents.notificationsAnchor.emit( bellRef.current?.closest( 'a' ) ?? null );
 	} );
 
 	return {
@@ -41,6 +42,10 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 				<BellIcon hasUnread={ hasUnseenNotifications } />
 			</span>
 		),
-		onClick: () => omnibarEvents.notifications.emit(),
+		href: wpcomLink( '/notifications' ),
+		onClick: ( event ) => {
+			event.preventDefault();
+			omnibarEvents.notifications.emit();
+		},
 	};
 }

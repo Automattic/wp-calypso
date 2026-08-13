@@ -137,6 +137,7 @@ export type PaymentMethodChangedCallback = ( method: string ) => void;
 export type PaymentEventCallback = ( args: PaymentEventCallbackArguments ) => void;
 export type PaymentErrorCallback = ( args: {
 	paymentMethodId: string | null | undefined;
+	paymentProcessorId: string | undefined;
 	transactionError: string | null;
 } ) => void;
 export type CheckoutPageErrorCallback = (
@@ -153,6 +154,8 @@ export type StepChangedEventArguments = {
 
 export type PaymentEventCallbackArguments = {
 	transactionLastResponse: PaymentProcessorResponseData;
+	paymentMethodId: string | null | undefined;
+	paymentProcessorId: string | undefined;
 };
 
 export type PaymentProcessorResponseData = unknown;
@@ -295,6 +298,7 @@ export interface CheckoutStepGroupState {
 	stepCompleteCallbackMap: StepCompleteCallbackMap;
 	stepSkipValidationOnSubmitMap: Record< number, boolean >;
 	suppressNextForwardScroll: boolean;
+	hasUserInteractedWithSteps: boolean;
 }
 
 export interface CheckoutStepGroupActions {
@@ -313,6 +317,7 @@ export interface CheckoutStepGroupActions {
 	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;
 	setSuppressNextForwardScroll: ( value: boolean ) => void;
+	setHasUserInteractedWithSteps: ( value: boolean ) => void;
 }
 
 export type TogglePaymentMethod = ( paymentMethodId: string, available: boolean ) => void;

@@ -1,8 +1,13 @@
 // Must come before ./lib/pw-base so .env is loaded before
 // @automattic/calypso-e2e's env-variables module is evaluated.
 import './load-env';
+import { envVariables } from '@automattic/calypso-e2e';
 import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
 import { tags, type CustomOptions } from './lib/pw-base';
+
+// Reads every supported variable so an unsupported value fails here, before the suite starts,
+// instead of mid-spec on its first read.
+envVariables.validate();
 
 /**
  * Creates a use config object with custom options.
@@ -51,10 +56,11 @@ const loginBrowserUse = {
 		],
 		slowMo: 1000,
 		env: {},
-		channel: '',
+		// Google OAuth rejects the headless shell as an insecure browser.
+		channel: 'chromium',
 	},
-	userAgent:
-		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
+	// Google OAuth also rejects stale user agents: don't pin `userAgent` here,
+	// let the device descriptor track the bundled Chromium.
 };
 
 function getWorkers(): number | string {
@@ -101,7 +107,7 @@ export default defineConfig( {
 		video: 'retain-on-failure',
 	},
 
-	/* Configure projects for major browsers */
+	/* Configure projects per device */
 	// See https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json */
 	projects: [
 		{
@@ -115,7 +121,7 @@ export default defineConfig( {
 			testDir: './setup',
 			// Borrows the `chrome` context so the login carries the e2e user agent suffix the
 			// backend expects. The cookies it leaves are per account, not per device, so the
-			// mobile projects reuse them too.
+			// mobile project reuses them too.
 			use: withCustomOptions( {
 				...devices[ 'Desktop Chrome HiDPI' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
@@ -131,49 +137,11 @@ export default defineConfig( {
 			} ),
 		},
 		{
-			name: 'firefox',
-			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
-			use: withCustomOptions( {
-				...devices[ 'Desktop Firefox' ],
-				userAgent: appendE2EUserAgent( devices[ 'Desktop Firefox' ].userAgent ),
-				viewportName: 'desktop',
-			} ),
-		},
-		{
-			name: 'webkit',
-			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
-			use: withCustomOptions( {
-				...devices[ 'Desktop Safari' ],
-				userAgent: appendE2EUserAgent( devices[ 'Desktop Safari' ].userAgent ),
-				viewportName: 'desktop',
-			} ),
-		},
-		{
-			name: 'pixel',
+			name: 'mobile',
 			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
 			use: withCustomOptions( {
 				...devices[ 'Pixel 7' ],
 				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
-				viewportName: 'mobile',
-			} ),
-			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
-		},
-		{
-			name: 'galaxy',
-			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
-			use: withCustomOptions( {
-				...devices[ 'Galaxy S24' ],
-				userAgent: appendE2EUserAgent( devices[ 'Galaxy S24' ].userAgent ),
-				viewportName: 'mobile',
-			} ),
-			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
-		},
-		{
-			name: 'iphone',
-			dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
-			use: withCustomOptions( {
-				...devices[ 'iPhone 15 Pro' ],
-				userAgent: appendE2EUserAgent( devices[ 'iPhone 15 Pro' ].userAgent ),
 				viewportName: 'mobile',
 			} ),
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),

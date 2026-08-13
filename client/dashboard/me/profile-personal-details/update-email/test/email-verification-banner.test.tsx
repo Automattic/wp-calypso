@@ -26,6 +26,15 @@ const pendingSettings = {
 	new_user_email: 'pending@example.com',
 } as unknown as UserSettings;
 
+const originalLocation = window.location;
+
+const setSearch = ( search: string ) => {
+	Object.defineProperty( window, 'location', {
+		value: { ...originalLocation, search, pathname: '/test' },
+		writable: true,
+	} );
+};
+
 const notificationSnackBar = () => {
 	// Snackbar requires a custom matcher because its aria-live is not supported by the testing library
 	return document.getElementById( 'a11y-speak-polite' );
@@ -40,6 +49,7 @@ describe( '<EmailVerificationBanner>', () => {
 	} );
 
 	afterEach( () => {
+		Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
 		// Snackbars are their own notice type, so the default clear leaves them behind for the
 		// next case to find.
 		dispatch( noticesStore ).removeAllNotices( 'snackbar' );
@@ -318,38 +328,57 @@ describe( '<EmailVerificationBanner>', () => {
 	} );
 
 	test( 'shows success banner after email change verification', async () => {
-		const originalLocation = window.location;
-		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, search: '?new_email_result=1', pathname: '/test' },
-			writable: true,
-		} );
+		setSearch( '?new_email_result=1' );
 
 		render( <EmailVerificationBanner userSettings={ settings } isEmailVerified /> );
 
 		expect( await screen.findByText( 'Email address updated' ) ).toBeVisible();
 		expect( screen.getByText( 'Update domain contacts' ) ).toBeVisible();
+	} );
 
-		Object.defineProperty( window, 'location', {
-			value: originalLocation,
-			writable: true,
-		} );
+	// The reason is optional so this can ship before the server sends one; without the fallback a
+	// failure would announce nothing at all.
+	test( 'reports a failed email change generically when no reason is given', async () => {
+		setSearch( '?new_email_result=0' );
+
+		render(
+			<>
+				<EmailVerificationBanner userSettings={ settings } isEmailVerified />
+				<Snackbars />
+			</>
+		);
+
+		await waitFor( () =>
+			expect( notificationSnackBar() ).toHaveTextContent( 'invalid or has expired' )
+		);
+	} );
+
+	// Blaming the link would send the user back to Resend, which re-sends to the address that is
+	// already taken.
+	test( 'says the address is taken rather than blaming the link', async () => {
+		setSearch( '?new_email_result=0&new_email_error=email_in_use' );
+
+		render(
+			<>
+				<EmailVerificationBanner userSettings={ settings } isEmailVerified />
+				<Snackbars />
+			</>
+		);
+
+		await waitFor( () =>
+			expect( notificationSnackBar() ).toHaveTextContent(
+				'already used by another WordPress.com account'
+			)
+		);
+		expect( notificationSnackBar() ).not.toHaveTextContent( 'invalid or has expired' );
 	} );
 
 	test( 'shows success banner after initial email verification', async () => {
-		const originalLocation = window.location;
-		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, search: '?verified=1', pathname: '/test' },
-			writable: true,
-		} );
+		setSearch( '?verified=1' );
 
 		render( <EmailVerificationBanner userSettings={ settings } isEmailVerified /> );
 
 		expect( await screen.findByText( 'Email verified' ) ).toBeVisible();
 		expect( screen.queryByText( 'Update domain contacts' ) ).not.toBeInTheDocument();
-
-		Object.defineProperty( window, 'location', {
-			value: originalLocation,
-			writable: true,
-		} );
 	} );
 } );

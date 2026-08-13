@@ -36,6 +36,10 @@ class PasswordlessSignupForm extends Component {
 		onCreateAccountError: PropTypes.func,
 		onCreateAccountSuccess: PropTypes.func,
 		disableTosText: PropTypes.bool,
+		termsAfterActions: PropTypes.bool,
+		// Replaces account creation with a change to the account the caller already has, and
+		// reports its own failures.
+		onUpdateEmail: PropTypes.func,
 		// Names the signup's origin to the backend, which aims the activation link on it.
 		activationEmailFrom: PropTypes.string,
 		useConnectScreenActions: PropTypes.bool,
@@ -69,7 +73,24 @@ class PasswordlessSignupForm extends Component {
 				errorMessages: [ this.props.translate( 'Please provide a valid email address.' ) ],
 				isSubmitting: false,
 			} );
-			this.submitTracksEvent( false, { action_message: 'Please provide a valid email address.' } );
+			if ( ! this.props.onUpdateEmail ) {
+				this.submitTracksEvent( false, {
+					action_message: 'Please provide a valid email address.',
+				} );
+			}
+			return;
+		}
+
+		if ( this.props.onUpdateEmail ) {
+			this.setState( { isSubmitting: true } );
+			try {
+				await this.props.onUpdateEmail( this.state.email.trim() );
+			} catch {
+				// The caller reports its own failures. This only keeps one it didn't from leaving
+				// the screen disabled with nothing to press.
+			} finally {
+				this.setState( { isSubmitting: false } );
+			}
 			return;
 		}
 
@@ -388,17 +409,9 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.props.secondaryFooterButton ? (
-						<>
-							{ this.formFooter() }
-							{ terms }
-						</>
-					) : (
-						<>
-							{ terms }
-							{ this.formFooter() }
-						</>
-					) }
+					{ ! this.props.termsAfterActions && terms }
+					{ this.formFooter() }
+					{ this.props.termsAfterActions && terms }
 				</LoggedOutForm>
 			</div>
 		);

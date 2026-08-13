@@ -107,7 +107,7 @@ async function getAiChatIdFromSession(
 }
 
 export function EscalationButton( { messageId }: { messageId: string } ) {
-	const { agentConfig, getActiveSessionId, zendeskSmoochIntegrationKey } =
+	const { agentConfig, getActiveSessionId, site, zendeskSmoochIntegrationKey } =
 		useAgentsManagerContext();
 	const navigate = useNavigate();
 	const activeSessionId = getActiveSessionId();
@@ -115,7 +115,8 @@ export function EscalationButton( { messageId }: { messageId: string } ) {
 
 	const { conversations, isLoading } = useGetZendeskConversations(
 		!! activeSessionId,
-		zendeskSmoochIntegrationKey
+		zendeskSmoochIntegrationKey,
+		site?.ID
 	);
 	const existingConversation = useMemo(
 		() => findConversationByChatSessionId( conversations, activeSessionId ),

@@ -54,7 +54,11 @@ export function useAtomicTransfer(
 			return;
 		}
 
-		if ( ! isFetchingTransferStatus && transferStatus !== transferStates.COMPLETE ) {
+		if (
+			! isFetchingTransferStatus &&
+			transferStatus !== transferStates.COMPLETE &&
+			transferStatus !== transferStates.CLIENT_TIMEOUT
+		) {
 			waitFor( 2 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
 		}
 

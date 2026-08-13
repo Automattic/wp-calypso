@@ -73,7 +73,14 @@ const advance = ( ms: number ) =>
 
 const render = ( { logo }: { logo?: ReactNode } = {} ) => {
 	const result = renderStep(
-		<EmailVerificationGate flow={ FLOW } scope={ SCOPE } logo={ logo } />,
+		<EmailVerificationGate
+			addressSettled
+			flow={ FLOW }
+			scope={ SCOPE }
+			logo={ logo }
+			onEditEmail={ jest.fn() }
+			email={ EMAIL }
+		/>,
 		{
 			initialState: currentUserState( false ),
 		}
@@ -116,14 +123,23 @@ describe( 'EmailVerificationGate', () => {
 	} );
 
 	it( 'offers an inbox button that deep-links to a known provider', async () => {
-		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } />, {
-			initialState: {
-				currentUser: {
-					id: USER_ID,
-					user: { ID: USER_ID, email: 'onboarder@gmail.com', email_verified: false },
+		renderStep(
+			<EmailVerificationGate
+				addressSettled
+				flow={ FLOW }
+				scope={ SCOPE }
+				onEditEmail={ jest.fn() }
+				email="onboarder@gmail.com"
+			/>,
+			{
+				initialState: {
+					currentUser: {
+						id: USER_ID,
+						user: { ID: USER_ID, email: 'onboarder@gmail.com', email_verified: false },
+					},
 				},
-			},
-		} );
+			}
+		);
 
 		const openButton = await screen.findByRole( 'link', { name: 'Open email inbox' } );
 		expect( openButton.getAttribute( 'href' ) ).toContain( 'mail.google.com' );

@@ -32,14 +32,12 @@ export function OmnibarUserNode( { node }: { node: OmnibarNode } ) {
 							return {
 								...grandChild,
 								render: ( { title, icon, meta } ) => (
-									<Stack direction="row" gap="md" align="center" className="omnibar__user">
+									<Stack direction="row" gap="sm" align="center" className="omnibar__user">
 										{ icon && <span className="omnibar__user-avatar">{ icon }</span> }
-										<Stack direction="column" gap="sm">
-											<Stack direction="column" gap="xs">
-												<span>{ meta?.displayName }</span>
-												<span className="omnibar__user-info">@{ meta?.username }</span>
-											</Stack>
-											<span className="omnibar__user-info">{ title }</span>
+										<Stack direction="column" className="omnibar__user-details">
+											<span>{ meta?.displayName }</span>
+											<span className="omnibar__user-username">{ meta?.username }</span>
+											<span>{ title }</span>
 										</Stack>
 									</Stack>
 								),

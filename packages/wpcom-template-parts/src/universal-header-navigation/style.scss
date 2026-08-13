@@ -1418,8 +1418,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	.x-dropdown-subcategories {
 		display: flex;
-		flex-wrap: wrap;
-		gap: $x-dropdown-2026-column-gap;
+		flex-wrap: nowrap; // Columns compress (labels wrap) in verbose locales; never spill to a second row.
+		// Don't stretch short columns to the tallest column's height.
+		align-items: flex-start;
+		gap: clamp(40px, 7vw, $x-dropdown-2026-column-gap);
 		max-width: $x-nav-2026-content-max-width;
 		margin: 0;
 		padding: 0;
@@ -1429,7 +1431,13 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
+		min-width: 0;
 		max-width: $x-dropdown-2026-column-max-width;
+		margin: 0;
+	}
+
+	.x-dropdown-subcategory {
+		min-width: 0;
 		margin: 0;
 
 		> ul {
@@ -1453,7 +1461,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	.x-dropdown-subcategory-title {
 		margin: 0;
-		padding: 0;
+		// Separates the title from the first link below it.
+		padding-bottom: 12px;
 		font-size: $x-dropdown-2026-subtitle-font-size;
 		font-weight: 400;
 		line-height: 33px;
@@ -1508,6 +1517,19 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		vertical-align: 2px;
 	}
 
+}
+
+/* Leaves-WordPress.com marker; shared by the 2026 desktop dropdown and mobile menu. */
+.x-nav__external-link-icon {
+	white-space: nowrap;
+
+	.x-icon--external {
+		display: inline-block;
+		width: 9px;
+		height: 9px;
+		fill: currentColor;
+		vertical-align: baseline;
+	}
 }
 
 /* Mobile menu — full-screen white panel: header (logo ⇄ back + close), drill-down category list, footer (logged-out CTAs vs logged-in user). */
@@ -1811,6 +1833,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			pointer-events: auto;
 			// Drill-in: fade the items in so they don't pop in over the fading-out nav list.
 			transition: opacity 0.27s var( --x-menu-2026-easing );
+
+			// Completes the 30px above a section title (8px here + 22px subtitle
+			// padding). On the list, not the items, so link pitch stays 36px.
+			&:not( .is-first-group ) {
+				margin-top: 8px;
+			}
 		}
 	}
 
@@ -1862,9 +1890,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		text-transform: uppercase;
 		color: $studio-gray-30;
 
-		&:first-child {
-			padding-top: 0;
-		}
+	}
+
+	// Each group is its own <ul>, so scope the flush-top exception to the
+	// category's first list — otherwise every subtitle is a :first-child.
+	.x-menu-mobile-dropdown-list.is-first-group .x-menu-mobile-dropdown-subtitle:first-child {
+		padding-top: 0;
 	}
 
 	.x-menu-mobile-dropdown-link.x-menu-mobile-dropdown-link {

@@ -1,9 +1,8 @@
-@import './variables';
-
 .omnibar,
 .omnibar__popover {
 	.omnibar__user {
 		padding-top: 8px;
+		padding-bottom: 10px;
 	}
 
 	.omnibar__user-avatar {
@@ -11,7 +10,7 @@
 		box-sizing: border-box;
 		width: 30px;
 		height: 30px;
-		border: 1px solid $omnibar-avatar-ring-color;
+		border: 1px solid var( --omnibar-avatar-ring-color );
 		border-radius: 50%;
 		overflow: hidden;
 
@@ -33,17 +32,22 @@
 			display: block;
 			object-fit: cover;
 			border-radius: 50%;
-			background: $omnibar-avatar-ring-color;
+			background: var( --omnibar-avatar-ring-color );
 		}
 	}
 
 	.omnibar__user-label {
 		gap: 6px;
+		white-space: nowrap;
 	}
 
-	.omnibar__user-info {
-		opacity: 0.8;
+	.omnibar__user-username {
 		font-size: 11px;
+		color: var( --omnibar-submenu-text-color );
+	}
+
+	.omnibar__user-details > span {
+		line-height: 18px;
 	}
 }
 
@@ -57,10 +61,22 @@
 	}
 }
 
+.omnibar__popover:has( .omnibar__user ) {
+	min-width: 270px;
+}
+
 .omnibar__popover {
 	.omnibar__user-avatar {
 		width: 64px;
 		height: 64px;
 		border: 0;
+	}
+
+	[role='group']:has( .omnibar__user ) [role='menuitem'] {
+		padding-inline-start: 88px;
+	}
+
+	.omnibar__user .omnibar__user-avatar {
+		margin-inline-start: -72px;
 	}
 }

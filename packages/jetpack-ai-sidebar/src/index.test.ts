@@ -19,6 +19,7 @@ import SeoDescriptionPicker from './components/seo-description-picker';
 import SeoTitlePicker from './components/seo-title-picker';
 import TitlePicker from './components/title-picker';
 import { clearActiveBlockFocus, undoBlockEdit } from './utils/block-actions';
+import { SUGGESTION_ACTION_COMPLETE_EVENT } from './utils/suggestion-events';
 import {
 	applyReviewEdit,
 	findBlockElement,
@@ -59,6 +60,7 @@ let mockBlocksByClientId: Record< string, any > = {};
 let mockEditorBlocks: any[] = [];
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
 const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
 const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
 
@@ -2174,6 +2176,7 @@ describe( 'useSuggestions', () => {
 	} );
 
 	afterEach( () => {
+		jest.useRealTimers();
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
 	} );
@@ -2301,6 +2304,28 @@ describe( 'useSuggestions', () => {
 		}
 	);
 
+	it( 'keeps post-level suggestions in the empty view only', () => {
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
+		installPostTypeMock( 'post' );
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestCall = onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ];
+		expect( latestCall?.[ 0 ] ).toEqual( [] );
+		expect( latestCall?.[ 1 ] ).toBe( false );
+
+		const emptyViewLabels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+		expect( emptyViewLabels ).toContain( 'Optimize Title' );
+		expect( emptyViewLabels ).toContain( 'Editorial Review' );
+
+		// The rendered event fires once per page load (module-level guard), so
+		// only the first render with the chip available can assert it — which is
+		// this test: every earlier test either selects a block or uses an
+		// unsupported post type.
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toHaveLength( 1 );
+	} );
+
 	it( 'keeps selected-block suggestions on template entities', () => {
 		installAiEditorialReviewData();
 		mockCurrentPostType = 'wp_template';
@@ -2369,7 +2394,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'shows editor-level suggestions after the selected-block chip is cleared', () => {
+	it( 'returns no suggestions after the selected-block chip is cleared', () => {
 		installAiEditorialReviewData();
 		const block = { clientId: 'b-clear', name: 'core/paragraph' };
 		mockSelectedBlock = block;
@@ -2392,10 +2417,7 @@ describe( 'useSuggestions', () => {
 
 		latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'Simple Review',
-			'Editorial Review',
-		] );
+		expect( latestSuggestions ).toEqual( [] );
 	} );
 
 	it( 'tracks rendered image block transformation suggestions', () => {
@@ -2435,13 +2457,14 @@ describe( 'useSuggestions', () => {
 		expect( latestSuggestions ).toEqual( [] );
 	} );
 
-	it( 'shows review suggestions at post level regardless of the block transformations feature', () => {
+	it( 'keeps review suggestions in the empty view regardless of the block transformations feature', () => {
 		( globalThis as any ).agentsManagerData = {
 			jetpackAiSidebar: {
 				enabled: true,
 				features: { aiEditorialReview: true },
 			},
 		};
+		installPostTypeMock( 'post' );
 		mockSelectedBlock = null;
 		const onSuggestions = jest.fn();
 
@@ -2449,7 +2472,8 @@ describe( 'useSuggestions', () => {
 
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+		expect( latestSuggestions ).toEqual( [] );
+		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).toEqual( [
 			'Editorial Review',
 		] );
 	} );
@@ -2630,6 +2654,33 @@ describe( 'useSuggestions', () => {
 			'Check grammar',
 			'Simplify text',
 		] );
+	} );
+
+	it( 'keeps hook suggestions empty at post level after a generated title is applied', () => {
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { suggestionId: 'optimize-title' },
+				} )
+			);
+		} );
+
+		let latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions ).toEqual( [] );
+
+		act( () => {
+			window.dispatchEvent( new Event( SUGGESTION_ACTION_COMPLETE_EVENT ) );
+		} );
+
+		latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions ).toEqual( [] );
 	} );
 
 	it( 'keeps block suggestions hidden after a Proofread request finishes', () => {
@@ -2876,6 +2927,7 @@ describe( 'toolProvider', () => {
 	} );
 
 	afterEach( () => {
+		jest.useRealTimers();
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
 	} );
@@ -2903,6 +2955,147 @@ describe( 'toolProvider', () => {
 			expect( typeof showComponent?.callback ).toBe( 'function' );
 			expect( typeof legacyShowComponent?.callback ).toBe( 'function' );
 			expect( typeof updateBlock?.callback ).toBe( 'function' );
+		} );
+
+		it( 'emits an updated outcome with a restorable block checkpoint', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				summary: 'Changed "stuffs" to "stuff".',
+				toolCallId: 'call-update-block',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			const result = await pending;
+
+			expect( result ).toMatchObject( {
+				success: true,
+				outcome: 'updated',
+				returnToAgent: false,
+			} );
+			expect( JSON.parse( result.agentMessage ) ).toEqual( {
+				tool_id: UPDATE_BLOCK_CONTENT_TOOL_ID,
+				tool_call_id: 'call-update-block',
+				data: {
+					result: {
+						success: true,
+						message: 'Changed "stuffs" to "stuff".',
+						outcome: 'updated',
+					},
+					followUpTasks: false,
+				},
+			} );
+			expect( checkpoint.hasCheckpoint( 'call-update-block' ) ).toBe( true );
+
+			await checkpoint.restoreCheckpoint( 'call-update-block' );
+			expect( blockUpdates ).toEqual( [
+				{
+					clientId: '550e8400-e29b-41d4-a716-446655440000',
+					attrs: { content: 'Corrected block content.' },
+				},
+				{
+					clientId: '550e8400-e29b-41d4-a716-446655440000',
+					attrs: { content: 'original block content' },
+				},
+			] );
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'original block content'
+			);
+			checkpoint.clearCheckpoint( 'call-update-block' );
+		} );
+
+		it( 'surfaces a failed block checkpoint restore', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				summary: 'Changed "stuffs" to "stuff".',
+				toolCallId: 'call-update-block',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content = 'A later block edit.';
+
+			await expect( checkpoint.restoreCheckpoint( 'call-update-block' ) ).rejects.toThrow(
+				'Failed to restore block edit checkpoint.'
+			);
+			expect( blockUpdates ).toEqual( [
+				{
+					clientId: '550e8400-e29b-41d4-a716-446655440000',
+					attrs: { content: 'Corrected block content.' },
+				},
+			] );
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'A later block edit.'
+			);
+			checkpoint.clearCheckpoint( 'call-update-block' );
+		} );
+
+		it( 'emits a no-change outcome without mutating or checkpointing the block', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'original block content',
+				summary: 'No changes were needed.',
+				toolCallId: 'call-no-block-change',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			const result = await pending;
+			const agentMessage = JSON.parse( result.agentMessage );
+
+			expect( result ).toMatchObject( {
+				success: true,
+				outcome: 'no-changes',
+				returnToAgent: false,
+			} );
+			expect( agentMessage ).toMatchObject( {
+				tool_id: UPDATE_BLOCK_CONTENT_TOOL_ID,
+				tool_call_id: 'call-no-block-change',
+				data: {
+					result: { success: true, outcome: 'no-changes' },
+				},
+			} );
+			expect( blockUpdates ).toEqual( [] );
+			expect( checkpoint.hasCheckpoint( 'call-no-block-change' ) ).toBe( false );
+		} );
+
+		it( 'documents the completed-edit summary contract in the update-block-content schema', async () => {
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find( ( a: any ) => a.name === 'wpcom/update-block-content' );
+			const summaryDescription = updateBlock?.input_schema?.properties?.summary?.description;
+
+			expect( updateBlock ).toBeDefined();
+			expect( summaryDescription ).toContain( 'concrete completed edit' );
+			expect( summaryDescription ).toContain( 'language of the current user message' );
+			expect( summaryDescription ).toContain( 'name the exact corrections' );
+			expect( summaryDescription ).toContain( 'Changed "stuffs" to "stuff".' );
+			expect( summaryDescription ).toContain( 'no changes were needed' );
+			expect( summaryDescription ).not.toContain( 'brief user-friendly description' );
 		} );
 
 		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {

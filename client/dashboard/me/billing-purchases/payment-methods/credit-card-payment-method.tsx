@@ -11,6 +11,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { Fragment, useState } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { TaxLocationForm, defaultTaxLocation } from '../../../components/tax-location-form';
 import { PaymentMethodImage } from '../payment-method-image';
@@ -203,6 +204,7 @@ function CreditCardSubmitButton( {
 } ) {
 	const { formStatus } = useFormStatus();
 	const { createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
 	const handleButtonPress = () => {
 		if ( ! onClick ) {
@@ -212,6 +214,8 @@ function CreditCardSubmitButton( {
 		}
 		const formData = getFormData();
 		const cardElement = getCardElement();
+
+		recordTracksEvent( 'calypso_dashboard_payment_method_save_card_click' );
 
 		if ( ! formData.taxLocation.country_code ) {
 			createErrorNotice( __( 'Please select a country.' ), { type: 'snackbar' } );

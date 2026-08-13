@@ -1,4 +1,5 @@
-import { Badge, Card, Gridicon } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
@@ -197,7 +198,7 @@ export default function LicenseDetails( {
 				<div className="license-details__subscription-row">
 					{ subscriptionBadgeLabel && (
 						<Badge
-							type={ subscription?.status === 'inactive' ? 'info-green' : 'info' }
+							intent={ subscription?.status === 'inactive' ? 'success' : 'info' }
 							className="license-details__subscription-badge"
 						>
 							{ subscriptionBadgeLabel }

@@ -37,6 +37,10 @@ jest.mock( '../utils/block-actions', () => ( {
 	clearActiveBlockFocus: ( ...args: any[] ) => mockClearActiveBlockFocus( ...args ),
 	clearActiveBlockFocusUnlessBlockReferenceClick: ( ...args: any[] ) =>
 		mockClearActiveBlockFocusUnlessBlockReferenceClick( ...args ),
+	// Real implementation: the card must gate Apply on the same count the apply
+	// itself uses, so a stub would hide the mismatch this guards against.
+	countCurrentTextOccurrences:
+		jest.requireActual( '../utils/block-actions' ).countCurrentTextOccurrences,
 	getEditableBlockContent: ( block: any, attributeName?: string, currentText?: string ) => {
 		if ( attributeName ) {
 			return block?.attributes?.[ attributeName ] ?? '';
@@ -463,6 +467,186 @@ describe( 'AiEditorialReview — smoke render', () => {
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
 		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'renders a conflict that omits positions', () => {
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					conflicts: [
+						{
+							subject: 'Tone of the opening',
+							guideline_anchor: null,
+							recommended_resolution: 'Use neutral phrasing.',
+						},
+					] as any,
+				} ) }
+			/>
+		);
+
+		expect( screen.getByText( 'Tone of the opening' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a suggested edit that omits supported_by_reviewers', () => {
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							suggested_text: 'voted on Tuesday',
+							rationale: 'Concise.',
+						},
+					] as any,
+				} ) }
+			/>
+		);
+
+		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders an implication that omits affected_blocks', () => {
+		// The tool schema marks affected_blocks required but the tool is not strict,
+		// so the model can omit it. Indexing it directly used to blank the card.
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					implications: [
+						{ change: 'Tone shift', implies: 'May affect downstream FAQ wording.' },
+					] as any,
+				} ) }
+			/>
+		);
+
+		expect( screen.getByText( 'Tone shift' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Affects:' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders a payload whose list fields are null', () => {
+		// Destructuring defaults would not catch this: an explicit null is not
+		// undefined, so `= []` never fires.
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					conflicts: null as any,
+					implications: null as any,
+					suggested_edits: null as any,
+					guideline_violations: null as any,
+				} ) }
+			/>
+		);
+
+		expect(
+			screen.getByText( 'Two reviewers disagree on the procedural framing.' )
+		).toBeInTheDocument();
+		expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'drops null items from every model-supplied list and renders the rest', () => {
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					conflicts: [
+						null,
+						{
+							subject: 'Procedural framing',
+							positions: [ null, { reviewer: 'Marcus', position: 'Soften.' } ],
+							guideline_anchor: null,
+							recommended_resolution: 'Use neutral phrasing.',
+							candidate_resolutions: [
+								null,
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: 1,
+									current_text: 'voted last Tuesday',
+									text: 'voted on Tuesday',
+									rationale: '',
+								},
+							],
+						},
+					] as any,
+					implications: [
+						null,
+						{
+							change: 'Tone shift',
+							implies: 'May affect downstream FAQ wording.',
+							affected_blocks: [ null, 1 ],
+						},
+					] as any,
+					suggested_edits: [
+						null,
+						{
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							suggested_text: 'voted on Tuesday',
+							rationale: 'Concise.',
+							supported_by_reviewers: [ null, {}, 'Priya' ],
+						},
+					] as any,
+					guideline_violations: [
+						null,
+						{
+							category: 'copy',
+							block_name: null,
+							guideline_quote: 'Avoid passive voice.',
+							block_index: 1,
+							violating_text: 'was voted upon',
+							issue: 'Passive voice detected.',
+						},
+					] as any,
+				} ) }
+			/>
+		);
+
+		// Every real item renders.
+		expect( screen.getByText( 'Procedural framing' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Soften.' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Apply AI change' } ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Tone shift' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Affects:' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Priya' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Passive voice detected.' ) ).toBeInTheDocument();
+
+		// The null entries are not counted by the stats chips.
+		expect( screen.getByTitle( 'Jump to conflicts' ).textContent ).toMatch( /1/ );
+		expect( screen.getByTitle( 'Jump to implications' ).textContent ).toMatch( /1/ );
+		expect( screen.getByTitle( 'Jump to suggested edits' ).textContent ).toMatch( /1/ );
+	} );
+
+	it( 'offers Apply when the model retyped a typographic apostrophe', () => {
+		// The block holds a typographic apostrophe; the model quoted a straight one.
+		// The apply path treats those as equivalent, so the card must not gate the
+		// edit behind "source text changed".
+		mockBlocks = [
+			{
+				clientId: 'b0',
+				name: 'core/paragraph',
+				attributes: { content: 'Whether you\u2019re after a thin, crispy margherita.' },
+			},
+		];
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 0,
+							editable_attribute: 'content',
+							current_text: "Whether you're after a thin",
+							suggested_text: 'Whether you prefer a thin',
+							rationale: 'Concise.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Apply change' } ) ).toBeEnabled();
+		expect( screen.queryByText( 'Manual edit' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not tag a stale AER edit "Manual edit" even when the source text is absent', () => {

@@ -98,8 +98,7 @@ function SiteMonitoringBody( {
 	);
 }
 
-function SiteMonitoring() {
-	const { siteSlug } = siteRoute.useParams();
+export function SiteMonitoringContent( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 	const locale = useLocale();
 
@@ -147,6 +146,11 @@ function SiteMonitoring() {
 			</PageLayout>
 		</HostingFeatureGatedWithCallout>
 	);
+}
+
+function SiteMonitoring() {
+	const { siteSlug } = siteRoute.useParams();
+	return <SiteMonitoringContent siteSlug={ siteSlug } />;
 }
 
 export default SiteMonitoring;

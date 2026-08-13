@@ -139,7 +139,11 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 	}, [ areAllWporgPluginsFetched, areWporgPluginsFetched, pluginSlugs, dispatch, wporgPlugins ] );
 
 	useEffect( () => {
-		if ( ! isFetchingTransferStatus && transferStatus !== transferStates.COMPLETE ) {
+		if (
+			! isFetchingTransferStatus &&
+			transferStatus !== transferStates.COMPLETE &&
+			transferStatus !== transferStates.CLIENT_TIMEOUT
+		) {
 			dispatch( fetchAutomatedTransferStatus( siteId as number ) );
 		}
 	}, [ dispatch, isFetchingTransferStatus, siteId, transferStatus ] );

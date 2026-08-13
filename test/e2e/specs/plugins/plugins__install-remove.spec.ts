@@ -27,7 +27,7 @@ test.describe.fixme(
 		test.beforeAll( async ( { browser } ) => {
 			// beforeAll cannot request the per-test `page` fixture, so the project's viewport
 			// and device options are not applied automatically. Derive them from the project
-			// config so each matrix leg (chrome/desktop, pixel/mobile) targets a distinct plugin
+			// config so each matrix leg (chrome, mobile) targets a distinct plugin
 			// and runs against the matching device context.
 			const { viewportName = 'desktop', ...contextOptions } = test.info().project.use as {
 				viewportName?: string;

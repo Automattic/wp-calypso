@@ -39,6 +39,32 @@ describe( 'getMessageUniqueIdentifier', () => {
 		expect( getMessageUniqueIdentifier( message ) ).toBe( 'internal-789' );
 	} );
 
+	it( 'returns message.id for Zendesk messages that carry no other identifier', () => {
+		const message: Message = {
+			content: 'test',
+			role: 'business',
+			type: 'message',
+			id: 'zendesk-message-id',
+			metadata: {},
+		};
+
+		expect( getMessageUniqueIdentifier( message ) ).toBe( 'zendesk-message-id' );
+	} );
+
+	it( 'prefers metadata.temporary_id over message.id so echoed messages match their local copy', () => {
+		const message: Message = {
+			content: 'test',
+			role: 'user',
+			type: 'message',
+			id: 'zendesk-message-id',
+			metadata: {
+				temporary_id: 'temp-123',
+			},
+		};
+
+		expect( getMessageUniqueIdentifier( message ) ).toBe( 'temp-123' );
+	} );
+
 	it( 'returns message.metadata.local_timestamp when no other identifier is present but local_timestamp is', () => {
 		const message: Message = {
 			content: 'test',

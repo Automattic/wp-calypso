@@ -1,9 +1,4 @@
 import {
-	JetpackLicenseFilter,
-	JetpackLicenseSortField,
-	JetpackLicenseSortDirection,
-} from '@automattic/api-core';
-import {
 	activeAgencyQuery,
 	agencyProductsQuery,
 	agencyQuery,
@@ -11,7 +6,6 @@ import {
 	agencySiteQuery,
 	agencySitesWithPluginsQuery,
 	agencyWooPaymentsDataQuery,
-	jetpackAgencyLicensesQuery,
 	mcpSettingsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -25,6 +19,8 @@ import {
 	referralsQuery,
 	referralCommissionPayoutQuery,
 	tipaltiPayeeQuery,
+	wooPaymentsLicensesQuery,
+	WOOPAYMENTS_PLUGIN,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
@@ -312,16 +308,9 @@ export const earnWooPaymentsRoute = createRoute( {
 		}
 		const [ sitesWithPlugins, licenses ] = await Promise.all( [
 			queryClient.ensureQueryData(
-				agencySitesWithPluginsQuery( agency.id, [ 'woocommerce-payments/woocommerce-payments' ] )
+				agencySitesWithPluginsQuery( agency.id, [ WOOPAYMENTS_PLUGIN ] )
 			),
-			queryClient.ensureQueryData(
-				jetpackAgencyLicensesQuery( agency.id, {
-					filter: JetpackLicenseFilter.Attached,
-					search: 'woopayments',
-					sortField: JetpackLicenseSortField.IssuedAt,
-					sortDirection: JetpackLicenseSortDirection.Descending,
-				} )
-			),
+			queryClient.ensureQueryData( wooPaymentsLicensesQuery( agency.id ) ),
 		] );
 		if ( sitesWithPlugins.length > 0 || licenses.length > 0 ) {
 			await Promise.all( [
@@ -805,6 +794,20 @@ export const agencySitePerformanceBackendRequestDetailRoute = createRoute( {
 	)
 );
 
+// `/sites/$siteSlug/monitoring` – server stats detailed view (WP.com sites only)
+export const agencySiteMonitoringRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'monitoring' },
+	head: () => ( { meta: [ { title: __( 'Monitoring' ) } ] } ),
+	getParentRoute: () => agencySiteRoute,
+	path: 'monitoring',
+} ).lazy( () =>
+	import( '../../agency/sites/site/monitoring' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-monitoring' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
@@ -851,6 +854,7 @@ export const createAgencyRoutes = () => [
 					agencySitePerformanceBackendRequestDetailRoute,
 				] ),
 			] ),
+			agencySiteMonitoringRoute,
 			agencySiteLogsRoute.addChildren( [ agencySiteLogsIndexRoute, agencySiteActivityRoute ] ),
 		] ),
 	] ),
