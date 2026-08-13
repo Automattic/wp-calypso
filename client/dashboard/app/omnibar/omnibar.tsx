@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { wpcomLink } from '../../utils/link';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
@@ -17,6 +18,7 @@ import { useAiChatPlugin } from './plugin-ai-chat';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
 import { useLaunchSitePlugin } from './plugin-launch-site';
+import { createLogoutNodeBuilder } from './plugin-logout';
 import { useNotificationsPlugin } from './plugin-notifications';
 import { useReaderPlugin } from './plugin-reader';
 import { buildSiteBadgeNode } from './plugin-site-badges';
@@ -27,12 +29,6 @@ import type { User } from '@automattic/api-core';
 import type { OmnibarNodeBuilders } from '@automattic/omnibar';
 
 const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
-
-const DOTCOM_NODE_BUILDERS: OmnibarNodeBuilders = {
-	'my-wpcom-account': buildWpcomAccountNode,
-	'site-plan-badge': buildSiteBadgeNode,
-	'site-status-badge': buildSiteBadgeNode,
-};
 
 function removeUnsupportedNodes( nodes: AdminBarNode[], supports: AppConfig[ 'supports' ] ) {
 	// The palette is only mounted where the app supports it, so elsewhere the
@@ -80,11 +76,31 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		enabled: hydrated && !! siteId,
 	} );
 
+	const { data: authUser } = useQuery( {
+		queryKey: AUTH_QUERY_KEY,
+		queryFn: initializeCurrentUser,
+		initialData: user,
+		enabled: hydrated,
+		staleTime: 30 * 60 * 1000,
+		retry: false,
+		meta: { persist: false },
+	} );
+
+	const nodeBuilders = useMemo< OmnibarNodeBuilders >(
+		() => ( {
+			'my-wpcom-account': buildWpcomAccountNode,
+			'site-plan-badge': buildSiteBadgeNode,
+			'site-status-badge': buildSiteBadgeNode,
+			...( authUser ? { logout: createLogoutNodeBuilder( authUser ) } : {} ),
+		} ),
+		[ authUser ]
+	);
+
 	const baseOmnibarNodes = useMemo( () => {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
 		const result = buildOmnibarNodesFromAdminBarNodes(
 			removeUnsupportedNodes( nodes, supports ),
-			DOTCOM_NODE_BUILDERS,
+			nodeBuilders,
 			createHrefResolver( siteNodes ? site?.options?.admin_url : undefined )
 		);
 
@@ -111,14 +127,14 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		}
 
 		return result;
-	}, [ dashboardNodes, siteNodes, site, supports ] );
+	}, [ dashboardNodes, siteNodes, site, supports, nodeBuilders ] );
 
 	const readerPluginNode = useReaderPlugin();
 	const helpCenterPluginNode = useHelpCenterPlugin();
 	const aiChatPluginNode = useAiChatPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const languageSwitcherNode = useLanguageSwitcherPlugin( { user } );
-	const statsSparklineNode = useStatsSparklinePlugin( { siteId, site } );
+	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const launchSiteNode = useLaunchSitePlugin( { site } );
 	const siteActions = [
 		...( baseOmnibarNodes.siteActions ?? [] ),

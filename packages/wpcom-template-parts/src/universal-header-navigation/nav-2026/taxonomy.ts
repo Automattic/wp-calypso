@@ -14,6 +14,7 @@ interface GetNav2026MenusArgs {
 	localizeUrl: LocalizeUrl;
 	locale: string;
 	isLoggedIn: boolean;
+	hasTranslation?: ( text: string ) => boolean;
 }
 
 // The 2026 nav taxonomy. Keep in sync with the WPCOM twin in
@@ -23,7 +24,13 @@ export function getNav2026Menus( {
 	localizeUrl,
 	locale,
 	isLoggedIn,
+	hasTranslation,
 }: GetNav2026MenusArgs ): Nav2026Menu[] {
+	// Fall back to the old translated label until "Site profiler" is translated.
+	const siteProfilerLabel =
+		locale.startsWith( 'en' ) || hasTranslation?.( 'Site profiler' )
+			? __( 'Site profiler', __i18n_text_domain__ )
+			: __( 'Site profiler (WHOIS)', __i18n_text_domain__ );
 	const buildGroup: Nav2026Group = {
 		title: __( 'Build', __i18n_text_domain__ ),
 		columnGroup: 'build-publish',
@@ -169,7 +176,7 @@ export function getNav2026Menus( {
 							target: '_self',
 						},
 						{
-							label: __( 'Site profiler (WHOIS)', __i18n_text_domain__ ),
+							label: siteProfilerLabel,
 							url: localizeUrl( '//wordpress.com/site-profiler' ),
 							target: '_self',
 						},

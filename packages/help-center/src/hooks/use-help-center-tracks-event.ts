@@ -1,4 +1,4 @@
-import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
+import { getValidBlogId, recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useCallback, useRef } from '@wordpress/element';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 
@@ -15,10 +15,9 @@ export function getHelpCenterTracksProperties(
 	properties: TracksProperties = {},
 	{ explicitSiteId, siteId }: SiteContext = {}
 ): TracksProperties {
-	return withSiteContext( properties, [
-		[ 'explicit', explicitSiteId ],
-		[ 'help_center_context', siteId ],
-	] );
+	return getValidBlogId( explicitSiteId )
+		? withSiteContext( properties, 'explicit', explicitSiteId )
+		: withSiteContext( properties, 'help_center_context', siteId );
 }
 
 export function recordHelpCenterTracksEvent(
