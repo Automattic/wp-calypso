@@ -80,6 +80,37 @@ describe( '<CancelOrRemoveActionButton />', () => {
 		expect( screen.queryByRole( 'button', { name: 'Remove' } ) ).toBeNull();
 	} );
 
+	test( 'shows only Remove for a domain connection bundled with a plan', () => {
+		render(
+			<CancelOrRemoveActionButton
+				purchase={ makePurchase( {
+					product_name: 'Domain Connection',
+					product_slug: 'domain_map',
+					is_plan: false,
+					expiry_status: 'included',
+				} ) }
+			/>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Remove' } ) ).toBeVisible();
+		expect( screen.getByText( 'Remove Domain Connection' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Cancel' } ) ).toBeNull();
+	} );
+
+	test( 'renders nothing for a non-domain-connection purchase bundled with a plan', () => {
+		const { container } = render(
+			<CancelOrRemoveActionButton
+				purchase={ makePurchase( {
+					product_name: 'Professional Email',
+					product_slug: 'wp_titan_mail_yearly',
+					is_plan: false,
+					expiry_status: 'included',
+				} ) }
+			/>
+		);
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
 	test( 'renders nothing for a non-refundable domain transfer with auto-renew on', () => {
 		const { container } = render(
 			<CancelOrRemoveActionButton

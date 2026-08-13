@@ -7,11 +7,12 @@ import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
+	LayoutHeaderSubtitle as Subtitle,
 } from 'calypso/layout/hosting-dashboard/header';
 import AiMcpAvailableToolsContent from './available-tools-content';
 
 export default function AiMcpAvailableTools() {
-	const title = __( 'Available tools' );
+	const title = __( 'Read' );
 
 	return (
 		<Layout title={ title } wide>
@@ -29,6 +30,9 @@ export default function AiMcpAvailableTools() {
 							},
 						] }
 					/>
+					<Subtitle>
+						{ __( 'Control which AI tools are available to your external AI assistant.' ) }
+					</Subtitle>
 					<Actions useColumnAlignment>
 						<MobileSidebarNavigation />
 					</Actions>

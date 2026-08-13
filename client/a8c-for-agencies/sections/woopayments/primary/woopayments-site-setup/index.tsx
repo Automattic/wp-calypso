@@ -186,6 +186,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 						</div>
 						<StepSection heading={ translate( 'Next steps' ) }>
 							<StepSectionItem
+								stepNumber={ 1 }
 								heading={ translate( 'Install and activate the plugin on WP-Admin' ) }
 								description={
 									<>
@@ -233,12 +234,13 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 								}
 							/>
 							<StepSectionItem
+								stepNumber={ 2 }
 								heading={ translate( 'Earn commissions' ) }
 								description={
 									<>
 										<div>
 											{ translate(
-												"Once the plugin is installed and configured, each time a transaction occurs, you'll earn commisions!"
+												"Once the plugin is installed and configured, each time a transaction occurs, you'll earn commissions!"
 											) }
 										</div>
 										<Button

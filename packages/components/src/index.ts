@@ -18,6 +18,13 @@ export type { SupportedSlugs } from './product-icon/config';
 export { default as ProgressBar } from './progress-bar';
 export { default as CircularProgressBar } from './circular-progress-bar';
 export { default as ResponsiveToolbarGroup } from './responsive-toolbar-group';
+export { default as ResurrectedWelcomeModal } from './resurrected-welcome-modal';
+export {
+	WELCOME_BACK_VARIATIONS,
+	type ResurrectedWelcomeModalCta,
+	type ResurrectedWelcomeModalDraft,
+	type ResurrectedWelcomeModalProps,
+} from './resurrected-welcome-modal';
 export { default as Ribbon } from './ribbon';
 export { default as RootChild } from './root-child';
 export { default as ScreenReaderText } from './screen-reader-text';

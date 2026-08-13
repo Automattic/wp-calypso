@@ -16,6 +16,7 @@ import { createSitesRoutes } from './sites';
 import { startStoreRoute } from './start-store';
 import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
+import type { AgencyCapability } from '@automattic/api-core';
 import type { ErrorInfo } from 'react';
 
 /**
@@ -25,10 +26,16 @@ declare module '@tanstack/react-router' {
 	interface StaticDataRouteOption {
 		/**
 		 * If set, the route is only accessible when the site type supports this feature.
-		 * The check is performed in siteRoute.beforeLoad against getSiteTypeFeatureSupports(site).
+		 * The check is performed in siteRoute.beforeLoad and agencySiteRoute.beforeLoad
+		 * against getSiteTypeFeatureSupports(site).
 		 */
 		requiresSiteTypeSupport?: SiteTypeFeature;
 		availableToInaccessibleJetpackSites?: boolean;
+		/**
+		 * If set, the route is only accessible when the agency user holds at least one
+		 * of these capabilities. Enforced in agencyRoute.beforeLoad.
+		 */
+		requiresAgencyCapability?: AgencyCapability | AgencyCapability[];
 	}
 }
 

@@ -9,6 +9,7 @@ export {
 	getOdieIdFromInteraction,
 } from './support-interaction-utils';
 export { isCSATMessage, hasCSATMessage, hasSubmittedCSATRating } from './csat';
+export { isStaleOdieChat } from './chat-utils';
 import type { Chat, Message } from '../types';
 
 export const getIsRequestingHumanSupport = ( message: Message ) => {

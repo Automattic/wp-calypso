@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
 	followReadTagMutation,
@@ -235,5 +235,141 @@ describe( 'unfollowReadTagMutation', () => {
 
 		await result.current.mutateAsync( 'Photography' );
 		expect( scope.isDone() ).toBe( true );
+	} );
+} );
+
+describe( 'optimistic followed-tags cache updates', () => {
+	afterEach( () => nock.cleanAll() );
+
+	const FOLLOWED_KEY = [ 'read', 'tags', 'followed', null ];
+
+	function seedFollowed( client: QueryClient, slugs: string[] ) {
+		client.setQueryData( FOLLOWED_KEY, {
+			tags: slugs.map( ( slug, i ) => ( {
+				ID: String( i + 1 ),
+				slug,
+				title: slug,
+				display_name: slug,
+				URL: `/tag/${ slug }`,
+			} ) ),
+		} );
+	}
+
+	function cachedSlugs( client: QueryClient ): string[] {
+		const data = client.getQueryData< { tags: Array< { slug: string } > } >( FOLLOWED_KEY );
+		return ( data?.tags ?? [] ).map( ( t ) => t.slug );
+	}
+
+	it( 'removes the tag from the followed cache on unfollow (before the request resolves)', async () => {
+		nock( BASE )
+			.post( '/rest/v1.1/read/tags/finance/mine/delete' )
+			.delay( 300 )
+			.reply( 200, { subscribed: false, removed_tag: '1' } );
+
+		const client = newClient();
+		seedFollowed( client, [ 'finance', 'health' ] );
+		const { result } = renderHook( () => useMutation( unfollowReadTagMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		act( () => {
+			result.current.mutate( 'finance' );
+		} );
+
+		await waitFor( () => expect( cachedSlugs( client ) ).toEqual( [ 'health' ] ) );
+		expect( result.current.isPending ).toBe( true );
+		await waitFor( () => expect( result.current.isPending ).toBe( false ) );
+	} );
+
+	it( 'restores the followed cache when the unfollow request fails', async () => {
+		nock( BASE ).post( '/rest/v1.1/read/tags/finance/mine/delete' ).reply( 500, {} );
+
+		const client = newClient();
+		seedFollowed( client, [ 'finance', 'health' ] );
+		const { result } = renderHook( () => useMutation( unfollowReadTagMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( 'finance' ).catch( () => undefined );
+		} );
+
+		expect( cachedSlugs( client ).sort() ).toEqual( [ 'finance', 'health' ] );
+	} );
+
+	it( 'removes only the optimistically-added tag when the follow request fails', async () => {
+		nock( BASE ).post( '/rest/v1.1/read/tags/gardening/mine/new' ).reply( 500, {} );
+
+		const client = newClient();
+		seedFollowed( client, [ 'health' ] );
+		const { result } = renderHook( () => useMutation( followReadTagMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( 'gardening' ).catch( () => undefined );
+		} );
+
+		expect( cachedSlugs( client ) ).toEqual( [ 'health' ] );
+	} );
+
+	it( 'rolls back only its own tag when concurrent mutations run and one fails', async () => {
+		nock( BASE )
+			.post( '/rest/v1.1/read/tags/finance/mine/delete' )
+			.reply( 200, { subscribed: false, removed_tag: '1' } );
+		nock( BASE ).post( '/rest/v1.1/read/tags/health/mine/delete' ).reply( 500, {} );
+
+		const client = newClient();
+		seedFollowed( client, [ 'finance', 'health' ] );
+		const { result } = renderHook( () => useMutation( unfollowReadTagMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await Promise.all( [
+				result.current.mutateAsync( 'finance' ).catch( () => undefined ),
+				result.current.mutateAsync( 'health' ).catch( () => undefined ),
+			] );
+		} );
+
+		// finance's unfollow succeeded (stays removed); health's failed and was
+		// rolled back (re-added) without reverting finance's optimistic removal.
+		expect( cachedSlugs( client ) ).toEqual( [ 'health' ] );
+	} );
+
+	it( 'adds the tag to the followed cache on follow', async () => {
+		nock( BASE )
+			.post( '/rest/v1.1/read/tags/gardening/mine/new' )
+			.reply( 200, { subscribed: true, added_tag: 'gardening', tags: [] } );
+
+		const client = newClient();
+		seedFollowed( client, [ 'health' ] );
+		const { result } = renderHook( () => useMutation( followReadTagMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( 'gardening' );
+		} );
+
+		expect( cachedSlugs( client ) ).toEqual( expect.arrayContaining( [ 'health', 'gardening' ] ) );
+	} );
+
+	it( 'does not duplicate a tag that is already followed', async () => {
+		nock( BASE )
+			.post( '/rest/v1.1/read/tags/health/mine/new' )
+			.reply( 200, { subscribed: true, added_tag: 'health', tags: [] } );
+
+		const client = newClient();
+		seedFollowed( client, [ 'health' ] );
+		const { result } = renderHook( () => useMutation( followReadTagMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( 'health' );
+		} );
+
+		expect( cachedSlugs( client ) ).toEqual( [ 'health' ] );
 	} );
 } );

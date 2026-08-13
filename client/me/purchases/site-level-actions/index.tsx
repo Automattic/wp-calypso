@@ -283,7 +283,9 @@ export default function SiteActionInterstitial( {
 					<PurchaseSiteHeader
 						siteId={ purchase.siteId }
 						name={ purchase.siteName }
-						purchase={ purchase }
+						// Temporary bridge (SHILL-2256): this page still reads the
+						// camelCase Purchase from Redux.
+						purchase={ purchase.rawPurchase }
 					/>
 				</div>
 			</div>

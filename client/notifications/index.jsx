@@ -17,7 +17,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { Component, Suspense, lazy, useMemo } from 'react';
+import { Component, Suspense, lazy, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import localStorageHelper from 'store';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -111,8 +111,25 @@ const RedesignedNotifications = ( {
 	locale,
 	actionHandlers,
 	closePanel,
+	updateUnseenCount,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
+
+	useEffect( () => {
+		let unsubscribe;
+		let cancelled = false;
+
+		import( '@automattic/notifications/src/app/client' ).then( ( { subscribeUnseenCount } ) => {
+			if ( ! cancelled ) {
+				unsubscribe = subscribeUnseenCount( wpcom, updateUnseenCount );
+			}
+		} );
+
+		return () => {
+			cancelled = true;
+			unsubscribe?.();
+		};
+	}, [ updateUnseenCount ] );
 
 	// Resolve the bell at measurement time: the masterbar remounts it when
 	// the unseen count changes, so a captured node can go stale.
@@ -458,6 +475,7 @@ export class Notifications extends Component {
 					locale={ localeSlug }
 					actionHandlers={ this.actionHandlers }
 					closePanel={ this.closePanel }
+					updateUnseenCount={ this.props.setUnseenCount }
 				/>
 			);
 

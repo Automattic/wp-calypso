@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { formatCurrency } from '@automattic/number-formatters';
+import { Badge } from '@automattic/ui';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -128,15 +129,16 @@ export default function WPCOMPlanSelector( {
 		>
 			<div className="wpcom-plan-selector__top">
 				{ ownedPlans > 0 && (
-					<div className="wpcom-plan-selector__owned-plan">
+					<Badge className="wpcom-plan-selector__owned-plan">
 						{ translate( 'You own %(count)s site', 'You own %(count)s sites', {
 							args: {
 								count: ownedPlans,
 							},
 							count: ownedPlans,
 							comment: '%(count)s is the number of WordPress.com sites owned by the user',
+							textOnly: true,
 						} ) }
-					</div>
+					</Badge>
 				) }
 
 				<div className="wpcom-plan-selector__plan-name">

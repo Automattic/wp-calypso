@@ -21,6 +21,7 @@ import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 import config from './lib/config-api';
 import initSentry from './lib/init-sentry';
 import { initializeSiteData } from './lib/initialize-site-data';
+import loadWpComponentsStyle from './lib/load-wp-components-style';
 import setLocale from './lib/set-locale';
 import { setupContextMiddleware } from './page-middleware/setup-context';
 import registerStatsPages from './routes';
@@ -31,6 +32,10 @@ import './app.scss';
 async function AppBoot() {
 	const siteId = config( 'blog_id' );
 	const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
+
+	// Awaited before anything renders so components are never painted unstyled on the WP versions
+	// that need it. Resolves immediately without a request on WP 7.0+, which serves it already.
+	await loadWpComponentsStyle();
 
 	const rootReducer = combineReducers( {
 		currentUser,

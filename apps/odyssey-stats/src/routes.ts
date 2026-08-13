@@ -15,6 +15,7 @@ import {
 	emailSummary,
 	redirectToDaySummary,
 } from 'calypso/my-sites/stats/controller';
+import { withPricingGridGate } from 'calypso/my-sites/stats/pricing-grid/gate';
 import config from './lib/config-api';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
 import 'calypso/my-sites/stats/style.scss';
@@ -61,8 +62,10 @@ export default function ( pageBase = '/' ) {
 	statsPage( '/stats/subscribers/:site', subscribers );
 	statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
 
-	// Stat Site Pages
-	statsPage( `/stats/:period(${ validTrafficPagePeriods })/:site`, site );
+	// Stat Site Pages. The traffic page doubles as the landing page, so it carries
+	// the pricing grid gate: eligible new sites see the plan choice instead of the
+	// dashboard until they pick one.
+	statsPage( `/stats/:period(${ validTrafficPagePeriods })/:site`, withPricingGridGate( site ) );
 
 	// Redirect this to default /stats/day/:module/:site view to
 	// keep the paths and page view reporting consistent.

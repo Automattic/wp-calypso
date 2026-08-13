@@ -15,24 +15,18 @@ describe( 'getOrchestratorErrorMessage', () => {
 		);
 	} );
 
-	it( 'keeps mapping the legacy over-limit error code for delayed responses', () => {
-		expect( getOrchestratorErrorMessage( 'review_mediator_over_limit' ) ).toBe(
-			'You have reached your Jetpack AI usage limit. Upgrade your plan to continue.'
-		);
-	} );
-
 	it( 'maps a differently-worded over-limit message to localized upgrade copy', () => {
 		expect( getOrchestratorErrorMessage( 'HTTP 429: Jetpack AI usage limit reached.' ) ).toBe(
 			'You have reached your Jetpack AI usage limit. Upgrade your plan to continue.'
 		);
 	} );
 
-	it.each( [ 'ai_editorial_review_over_limit_retryable', 'prefix_review_mediator_over_limit' ] )(
-		'passes the near-miss error code %s through unchanged',
-		( error ) => {
-			expect( getOrchestratorErrorMessage( error ) ).toBe( error );
-		}
-	);
+	it.each( [
+		'ai_editorial_review_over_limit_retryable',
+		'prefix_ai_editorial_review_over_limit',
+	] )( 'passes the near-miss error code %s through unchanged', ( error ) => {
+		expect( getOrchestratorErrorMessage( error ) ).toBe( error );
+	} );
 
 	it( 'passes other errors through unchanged', () => {
 		expect( getOrchestratorErrorMessage( 'Some other error.' ) ).toBe( 'Some other error.' );

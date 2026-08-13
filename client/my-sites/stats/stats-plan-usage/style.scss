@@ -40,7 +40,11 @@
 
 .plan-usage-heading-info {
 	display: inline-flex;
-	color: var(--studio-gray-60);
+	color: var(--color-neutral-20);
+
+	svg {
+		fill: currentColor;
+	}
 }
 
 .plan-usage-progress {

@@ -9,6 +9,7 @@ import userSettingsReducer from 'calypso/state/user-settings/reducer';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import {
 	RESURRECTED_FREE_USERS_EXPERIMENT,
+	WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG,
 	WELCOME_BACK_VARIATION_MANUAL,
 	WELCOME_BACK_VARIATIONS,
 } from '../constants';
@@ -150,6 +151,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		} );
 
 		expect( result.current.isResurrectedSixMonths ).toBe( true );
+		expect( result.current.isResurrectedThreeMonths ).toBe( true );
 		expect( result.current.hasActivePaidSubscription ).toBe( false );
 		expect( result.current.isEligible ).toBe( true );
 		expect( result.current.variationName ).toBe( WELCOME_BACK_VARIATION_MANUAL );
@@ -158,6 +160,37 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		expect( mockUseExperiment ).toHaveBeenCalledWith( RESURRECTED_FREE_USERS_EXPERIMENT, {
 			isEligible: true,
 		} );
+	} );
+
+	it( 'uses the 180-day threshold when 90-day eligibility is disabled', () => {
+		selectorsState.purchases = [];
+		selectorsState.hasLoaded = true;
+
+		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
+			initialState: createState( { lastSeenOffsetDays: 100 } ),
+			reducers,
+		} );
+
+		expect( result.current.isResurrectedSixMonths ).toBe( false );
+		expect( result.current.isResurrectedThreeMonths ).toBe( true );
+		expect( result.current.isEligible ).toBe( false );
+	} );
+
+	it( 'uses the 90-day threshold when 90-day eligibility is enabled', () => {
+		mockIsFeatureEnabled.mockImplementation(
+			( flagName ) => flagName === WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG
+		);
+		selectorsState.purchases = [];
+		selectorsState.hasLoaded = true;
+
+		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
+			initialState: createState( { lastSeenOffsetDays: 100 } ),
+			reducers,
+		} );
+
+		expect( result.current.isResurrectedSixMonths ).toBe( false );
+		expect( result.current.isResurrectedThreeMonths ).toBe( true );
+		expect( result.current.isEligible ).toBe( true );
 	} );
 
 	it( 'returns the assigned experiment variation for an eligible user', () => {

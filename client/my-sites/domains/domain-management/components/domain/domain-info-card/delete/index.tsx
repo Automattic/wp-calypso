@@ -53,7 +53,7 @@ const DomainDeleteInfoCard = ( {
 			hasLoadedSites
 			hasLoadedUserPurchasesFromServer
 			site={ selectedSite }
-			purchase={ purchase }
+			purchase={ purchase.rawPurchase }
 			className={ removePurchaseClassName }
 		>
 			{ buttonLabel }

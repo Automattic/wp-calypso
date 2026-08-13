@@ -1,7 +1,9 @@
 import { siteLaunchpadQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { lockOutline, published } from '@wordpress/icons';
+import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
+import { useExperiment } from 'calypso/lib/explat';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { wpcomLink } from '../../utils/link';
@@ -41,10 +43,20 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 		withTasks: true,
 	} );
 
+	const [ , personalizationAssignment ] = useExperiment( LAUNCHPAD_PERSONALIZATION_EXPERIMENT );
+	const isNoGuidance =
+		normalizeVariation( personalizationAssignment?.variationName ) === 'no_guidance';
+
 	const { data: launchpad } = useQuery( {
 		...siteLaunchpadQuery( site.ID, getLaunchpadChecklistSlug( site ) ),
-		enabled: ! isAiLaunchpad,
+		enabled: ! isAiLaunchpad && ! isNoGuidance,
 	} );
+
+	// The no_guidance launchpad-personalization variation gets no setup guidance at all:
+	// the card behaves like a plain coming-soon site, pointing at the visibility settings.
+	if ( isNoGuidance ) {
+		return <VisibilityCardComingSoon site={ site } />;
+	}
 
 	const tasks = ( isAiLaunchpad ? aiTasks : launchpad?.checklist ) ?? [];
 	const numberOfTasks = tasks.length;
@@ -71,7 +83,13 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 				value: completedTasks,
 				max: numberOfTasks,
 				label: `${ completedTasks }/${ numberOfTasks }`,
-				...( isLaunchpadCompleted && { variant: 'success' } ),
+				ariaValueText: sprintf(
+					/* translators: %1$d: number of completed steps, %2$d: total number of steps. e.g. "2 of 5 steps complete" */
+					__( '%1$d of %2$d steps complete' ),
+					completedTasks,
+					numberOfTasks
+				),
+				...( isLaunchpadCompleted && { variant: 'success' as const } ),
 			} }
 		/>
 	);

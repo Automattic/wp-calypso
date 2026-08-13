@@ -7,6 +7,7 @@ import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data'
 import { useEffect, useCallback, useState } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
 import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
+import { recordHostTracksEvent } from './tracks';
 
 import './help-center.scss';
 
@@ -85,7 +86,7 @@ function AdminHelpCenterContent() {
 	);
 
 	const trackIconInteraction = useCallback( () => {
-		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
+		recordHostTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
 			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
@@ -119,8 +120,7 @@ function AdminHelpCenterContent() {
 
 	const handleToggleHelpCenter = () => {
 		trackIconInteraction();
-		recordTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
-			force_site_id: true,
+		recordHostTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
 			location: 'help-center',
 			section: helpCenterData.sectionName || 'wp-admin',
 		} );
@@ -146,8 +146,7 @@ function AdminHelpCenterContent() {
 					setNavigateToRoute( destination );
 					setHelpCenterPage( destination );
 				} else {
-					recordTracksEvent( `calypso_inlinehelp_close`, {
-						force_site_id: true,
+					recordHostTracksEvent( `calypso_inlinehelp_close`, {
 						location: 'help-center',
 						section: helpCenterData.sectionName || 'wp-admin',
 					} );
@@ -159,8 +158,7 @@ function AdminHelpCenterContent() {
 				setHelpCenterPage( destination );
 				setShowHelpCenter( true );
 
-				recordTracksEvent( `calypso_inlinehelp_show`, {
-					force_site_id: true,
+				recordHostTracksEvent( `calypso_inlinehelp_show`, {
 					location: 'help-center',
 					section: helpCenterData.sectionName || 'wp-admin',
 					destination,
@@ -211,9 +209,15 @@ function AdminHelpCenterContent() {
 		};
 	}, [] );
 
-	const botProps = helpCenterData.isCommerceGarden
-		? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
-		: {};
+	const customProps = {};
+
+	if ( helpCenterData?.newInteractionsBotSlug ) {
+		customProps.newInteractionsBotSlug = helpCenterData.newInteractionsBotSlug;
+	}
+
+	if ( helpCenterData?.newLoggedOutInteractionsBotSlug ) {
+		customProps.newLoggedOutInteractionsBotSlug = helpCenterData.newLoggedOutInteractionsBotSlug;
+	}
 
 	return (
 		<HelpCenter
@@ -225,7 +229,7 @@ function AdminHelpCenterContent() {
 			onboardingUrl="https://wordpress.com/start"
 			handleClose={ closeCallback }
 			product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
-			{ ...botProps }
+			{ ...customProps }
 		/>
 	);
 }

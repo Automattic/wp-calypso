@@ -9,13 +9,15 @@ import { useResizeObserver } from '@wordpress/compose';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { purchasesIndexRoute, purchasesRoute } from '../../app/router/me';
+import { billingHistoryRoute, purchasesIndexRoute, purchasesRoute } from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import { useIsSplitCancelRemoveEnabled } from './cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
@@ -117,6 +119,13 @@ export default function PurchasesList() {
 		transferredPurchases,
 	} );
 
+	const { recordTracksEvent } = useAnalytics();
+	const siteFilterValue = view.filters?.find( ( filter ) => filter.field === 'site' )?.value;
+	const activeSiteId =
+		Array.isArray( siteFilterValue ) && siteFilterValue.length === 1
+			? Number( siteFilterValue[ 0 ] )
+			: undefined;
+
 	return (
 		<PageLayout
 			size="large"
@@ -125,6 +134,22 @@ export default function PurchasesList() {
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Active upgrades' ) }
 					description={ __( 'View and manage your active plans and purchases.' ) }
+					actions={
+						activeSiteId !== undefined && (
+							<RouterLinkButton
+								variant="secondary"
+								to={ billingHistoryRoute.fullPath }
+								search={ { site: activeSiteId } }
+								onClick={ () =>
+									recordTracksEvent(
+										'calypso_dashboard_purchases_see_billing_history_for_site_click'
+									)
+								}
+							>
+								{ __( 'View billing history for this site' ) }
+							</RouterLinkButton>
+						)
+					}
 				/>
 			}
 		>

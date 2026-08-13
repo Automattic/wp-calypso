@@ -53,6 +53,7 @@ import {
 	getPurchaseCancellationFlowType,
 	getDisplayVariant,
 	getRenewUrlForPurchases,
+	hasQueryableSite,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 	type CancelIntent,
@@ -188,6 +189,20 @@ export const billingHistoryIndexRoute = createRoute( {
 	path: '/',
 	loader: () => {
 		queryClient.prefetchQuery( userReceiptsQuery() );
+		queryClient.prefetchQuery( allSitesQuery() );
+	},
+	validateSearch: (
+		search
+	): {
+		page?: number;
+		search?: string;
+		site?: number;
+	} => {
+		return {
+			page: typeof search.page === 'number' ? search.page : undefined,
+			search: typeof search.search === 'string' ? search.search : undefined,
+			site: typeof search.site === 'number' ? search.site : undefined,
+		};
 	},
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
@@ -468,9 +483,13 @@ export const cancelPurchaseRoute = createRoute( {
 			return { purchase: undefined, intent };
 		}
 		await Promise.all( [
-			queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+			...( hasQueryableSite( purchase )
+				? [
+						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
+				  ]
+				: [] ),
 			queryClient.ensureQueryData( productsQuery() ),
-			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( plansQuery() ),
 			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
 		] );
@@ -1144,8 +1163,8 @@ export const wordpressDefaultsRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../me/wordpress-defaults' ).then( ( d ) =>
-		createLazyRoute( 'wordpress-defaults' )( {
+	import( '../../me/preferences-defaults' ).then( ( d ) =>
+		createLazyRoute( 'preferences-defaults' )( {
 			component: d.default,
 		} )
 	)
@@ -1212,7 +1231,11 @@ export const mcpRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: 'mcp',
 	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			// The MCP Tracks audience props read Automattician status on first render (view events).
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+		] );
 	},
 } );
 

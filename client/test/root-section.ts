@@ -229,43 +229,14 @@ describe( 'Logged In Landing Page', () => {
 		await waitFor( () => expect( page.current ).toBe( '/reader' ) );
 	} );
 
-	test( 'user with a selected site goes to My Home for Default Style interface', async () => {
-		const state = {
-			currentUser: {
-				id: 1,
-				capabilities: { 1: { edit_posts: true }, 2: { edit_posts: true } },
-				user: { primary_blog: 1 },
-			},
-			ui: { selectedSiteId: 2 },
-			sites: {
-				items: {
-					1: {
-						ID: 1,
-						URL: 'https://test.wordpress.com',
-					},
-					2: {
-						ID: 2,
-						URL: 'https://selected.wordpress.com',
-						options: { wpcom_admin_interface: 'calypso' },
-					},
-				},
-			},
-		};
-		const { page } = initRouter( { state } );
-
-		page( '/' );
-
-		await waitFor( () => expect( page.current ).toBe( '/home/selected.wordpress.com' ) );
-	} );
-
-	test( 'user with a selected site goes to WP Admin Dashboard for Classic Style interface', async () => {
+	test( 'user with a primary site using the Classic interface goes to WP Admin Dashboard', async () => {
 		const state = {
 			currentUser: {
 				id: 1,
 				capabilities: { 1: { edit_posts: true } },
 				user: { primary_blog: 1 },
 			},
-			ui: { selectedSiteId: 1 },
+			ui: {},
 			sites: {
 				items: {
 					1: {

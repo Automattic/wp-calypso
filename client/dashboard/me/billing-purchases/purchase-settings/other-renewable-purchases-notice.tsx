@@ -6,7 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { purchaseSettingsRoute, changePaymentMethodRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
-import { getRelativeTimeString, isWithinNext } from '../../../utils/datetime';
+import { getRelativeDayString, isWithinNext } from '../../../utils/datetime';
 import {
 	isExpiring,
 	isIncludedWithPlan,
@@ -224,12 +224,21 @@ export function OtherRenewablePurchasesNotice( {
 	const purchaseName = currentPurchase.is_domain
 		? currentPurchase.meta ?? ''
 		: currentPurchase.product_name;
-	const expiry = getRelativeTimeString( new Date( currentPurchase.expiry_date ) );
+	// These slots feed both past-tense ("expired %(expiry)s") and future-tense
+	// ("will expire %(expiry)s") sentences, so each is clamped to match the
+	// tense of the scenario it lands in.
+	const expiry = getRelativeDayString(
+		new Date( currentPurchase.expiry_date ),
+		isExpiredOrRemoved( currentPurchase ) ? 'past' : 'upcoming'
+	);
 	const includedPurchaseName = includedPurchase.is_domain
 		? includedPurchase.meta ?? ''
 		: includedPurchase.product_name;
 	const earliestOtherExpiry = earliestOtherExpiringPurchase
-		? getRelativeTimeString( new Date( earliestOtherExpiringPurchase.expiry_date ) )
+		? getRelativeDayString(
+				new Date( earliestOtherExpiringPurchase.expiry_date ),
+				isExpiredOrRemoved( earliestOtherExpiringPurchase ) ? 'past' : 'upcoming'
+		  )
 		: '';
 	const openUpcomingRenewalsDialog = () => setUpcomingRenewalsDialogVisible( true );
 	const link = <Button variant="link" onClick={ () => openUpcomingRenewalsDialog() } />;

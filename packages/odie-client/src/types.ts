@@ -9,6 +9,7 @@ export type OdieAssistantContextInterface = {
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	newInteractionsBotSlug: string;
+	newLoggedOutInteractionsBotSlug: string;
 	newInteractionsBotVersion?: string;
 	chat: Chat;
 	clearChat: () => void;
@@ -35,6 +36,7 @@ export type OdieAssistantContextInterface = {
 
 export type OdieAssistantProviderProps = {
 	newInteractionsBotSlug: OdieAllowedBots;
+	newLoggedOutInteractionsBotSlug: string;
 	newInteractionsBotVersion?: string;
 	canConnectToZendesk?: boolean;
 	isLoadingCanConnectToZendesk?: boolean;
@@ -150,6 +152,10 @@ export type Message = {
 	content: ReactNode;
 	context?: Context;
 	displayName?: string;
+	/**
+	 * Set on messages originating from Zendesk, where it holds the Smooch message id.
+	 */
+	id?: string;
 	internal_message_id?: string;
 	message_id?: number;
 	meta?: Record< string, string >;

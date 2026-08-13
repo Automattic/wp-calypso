@@ -129,6 +129,15 @@ export type FrDomainContactExtraDetails = {
 	trademarkNumber?: string;
 	sirenSiret?: string;
 };
+/**
+ * ccTLD registrant details the registrar stores alongside the WHOIS contact.
+ *
+ * Only present for TLDs that declare extra contact fields (for example `.uk`,
+ * which stores `registrant_type`). The keys are the registrar's own snake_case
+ * names and differ per TLD, so this stays deliberately loose.
+ */
+export type WhoisContactExtra = Record< string, string >;
+
 export interface WhoisDataEntry {
 	fname: string;
 	lname: string;
@@ -145,6 +154,7 @@ export interface WhoisDataEntry {
 	fax: string;
 	state: string;
 	type: WhoisType;
+	extra?: WhoisContactExtra;
 }
 
 export interface WhoisEmailRecord {

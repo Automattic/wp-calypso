@@ -96,7 +96,7 @@ const domainUpsell: Flow = {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
 
-						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
+						let useMyDomainURL = addQueryArgs( 'use-my-domain', currentQueryArgs );
 
 						const lastQueryParam = providedDependencies.lastQuery as string | undefined;
 
@@ -129,7 +129,7 @@ const domainUpsell: Flow = {
 						providedDependencies.mode &&
 						providedDependencies.domain
 					) {
-						const destination = addQueryArgs( '/use-my-domain', {
+						const destination = addQueryArgs( 'use-my-domain', {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,

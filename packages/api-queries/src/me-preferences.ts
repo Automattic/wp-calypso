@@ -11,6 +11,7 @@ const defaultValues: Required< UserPreferences > = {
 	'hosting-dashboard-opt-in-welcome-modal-dismissed': '',
 	'hosting-dashboard-welcome-notice-dismissed': '',
 	'account-recovery-interstitial-snoozed-until': 0,
+	'account-recovery-interstitial-dismiss-count': 0,
 	'reader-landing-page': {
 		useReaderAsLandingPage: false,
 		updatedAt: 0,
@@ -24,6 +25,7 @@ const defaultValues: Required< UserPreferences > = {
 	'reader-profile-posts-visibility': 'public',
 	'reader-profile-sites-visibility': 'public',
 	'reader-profile-hidden-sites': [],
+	two_step_security_key_reregister_required: false,
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -34,6 +36,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'hosting-dashboard-opt-in-welcome-modal-dismissed': 'optwelc',
 	'hosting-dashboard-welcome-notice-dismissed': 'welcome',
 	'account-recovery-interstitial-snoozed-until': 'acctrec',
+	'account-recovery-interstitial-dismiss-count': 'acrdis',
 	'reader-landing-page': 'rdland',
 	'sites-landing-page': 'stland',
 	'achievements-visibility': 'achvis',
@@ -41,6 +44,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'reader-profile-posts-visibility': 'postvis',
 	'reader-profile-sites-visibility': 'sitevis',
 	'reader-profile-hidden-sites': 'hidsit',
+	two_step_security_key_reregister_required: '2fakey',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {

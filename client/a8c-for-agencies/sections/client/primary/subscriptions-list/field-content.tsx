@@ -1,8 +1,8 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { Badge } from '@automattic/ui';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import CancelSubscriptionAction from '../../cancel-subscription-confirmation-dialog';
 import { getSubscriptionStatus } from '../../lib/get-subscription-status';
@@ -74,7 +74,13 @@ export function SubscriptionStatus( {
 	translate: ( key: string ) => string;
 } ) {
 	const { children, type } = getSubscriptionStatus( status, translate );
-	return children ? <StatusBadge statusProps={ { children, type } } /> : '-';
+	return children ? (
+		<Badge className="step-section-item__status" intent={ type }>
+			{ children }
+		</Badge>
+	) : (
+		'-'
+	);
 }
 
 export function SubscriptionAction( {

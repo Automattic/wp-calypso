@@ -8,6 +8,7 @@ import type { ComponentProps } from 'react';
 
 const mockUseAgentChat = jest.fn();
 const mockUseRegenerateAction = jest.fn();
+const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
 const mockIsReaderChatAgent = jest.fn();
@@ -186,9 +187,13 @@ jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
+jest.mock( '../../hooks/use-abilities-registration', () => () => {} );
 jest.mock( '../../hooks/use-conversation', () => () => mockUseConversation() );
 jest.mock( '../../hooks/use-save-new-chat-route', () => () => {} );
-jest.mock( '../../hooks/use-checkpoint-action', () => () => {} );
+jest.mock( '../../hooks/use-checkpoint-action', () => ( {
+	__esModule: true,
+	default: ( ...args: unknown[] ) => mockUseCheckpointAction( ...args ),
+} ) );
 jest.mock( '../../hooks/use-feedback-action', () => () => ( {
 	showFeedbackInput: false,
 	submitFeedbackText: jest.fn(),
@@ -204,7 +209,6 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
-jest.mock( '../../hooks/use-zoom-action', () => () => {} );
 jest.mock( '../../utils/agent-session', () => ( { markSessionUsed: jest.fn() } ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
@@ -326,6 +330,7 @@ const countShowComponentMessages = () => {
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockUseCheckpointAction.mockReturnValue( () => [] );
 		// Default getter: contributes no actions.
 		mockUseRegenerateAction.mockReturnValue( () => [] );
 		mockUseConversation.mockReturnValue( { isLoading: false } );
@@ -359,7 +364,7 @@ describe( 'OrchestratorChat', () => {
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
 	} );
 
-	it( 'dispatches and tracks the canonical AI Editorial Review suggestion ID once', () => {
+	it( 'dispatches and tracks the AI Editorial Review suggestion ID once', () => {
 		const listener = jest.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 		const suggestion = {
@@ -1021,6 +1026,79 @@ describe( 'OrchestratorChat', () => {
 
 		expect( mockUseRegenerateAction ).toHaveBeenCalledWith(
 			expect.objectContaining( { enabled: false } )
+		);
+	} );
+
+	it( 'derives and deduplicates checkpoint actions for synthetic streaming messages', () => {
+		const checkpointAction = {
+			id: 'checkpoint',
+			label: 'Undo',
+			onClick: jest.fn(),
+			order: 1,
+		};
+		const createOutcomeMessage = ( id: string, actions?: unknown[] ) => ( {
+			id,
+			role: 'agent',
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify( {
+						tool_id: 'big_sky__apply_block_edits',
+						tool_call_id: 'tool-call-1',
+						data: {
+							result: { success: true, outcome: 'updated', message: 'Updated the block.' },
+						},
+					} ),
+				},
+			],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+			...( actions ? { actions } : {} ),
+		} );
+		const getCheckpointActions = jest.fn( ( message: { id: string } ) =>
+			message.id === 'agent-streaming-stale' ? [] : [ checkpointAction ]
+		);
+		mockUseCheckpointAction.mockReturnValue( getCheckpointActions );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					createOutcomeMessage( 'agent-streaming-new' ),
+					createOutcomeMessage( 'agent-streaming-duplicate', [
+						{ ...checkpointAction, label: 'Old Undo' },
+					] ),
+					createOutcomeMessage( 'agent-streaming-stale', [ checkpointAction ] ),
+				],
+			} )
+		);
+
+		render( chat() );
+
+		const messages = mockAgentChat.mock.calls[ 0 ][ 0 ].messages as Array< {
+			id: string;
+			actions?: Array< { id: string; label: string } >;
+		} >;
+		const getCheckpointActionsFromMessage = ( id: string ) =>
+			messages
+				.find( ( message ) => message.id === id )
+				?.actions?.filter( ( action ) => action.id === 'checkpoint' ) ?? [];
+
+		expect( getCheckpointActionsFromMessage( 'agent-streaming-new' ) ).toEqual( [
+			expect.objectContaining( { id: 'checkpoint', label: 'Undo' } ),
+		] );
+		expect( getCheckpointActionsFromMessage( 'agent-streaming-duplicate' ) ).toEqual( [
+			expect.objectContaining( { id: 'checkpoint', label: 'Undo' } ),
+		] );
+		expect( getCheckpointActionsFromMessage( 'agent-streaming-stale' ) ).toEqual( [] );
+		expect( getCheckpointActions ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				id: 'agent-streaming-new',
+				content: expect.arrayContaining( [
+					expect.objectContaining( {
+						text: expect.stringContaining( 'big_sky__apply_block_edits' ),
+					} ),
+				] ),
+			} )
 		);
 	} );
 

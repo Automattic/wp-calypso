@@ -2,14 +2,14 @@ import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import expiredIllustration from 'calypso/assets/images/customer-home/disconnected-dark.svg';
 import expiringIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import { TASK_RENEW_EXPIRED_PLAN } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const Renew = ( { card, moment, purchases, site, siteSlug } ) => {
+const Renew = ( { card, purchases, site, siteSlug } ) => {
 	const translate = useTranslate();
 	const hasExpired = card === TASK_RENEW_EXPIRED_PLAN;
 
@@ -19,9 +19,9 @@ const Renew = ( { card, moment, purchases, site, siteSlug } ) => {
 
 	const planName = site?.plan.product_name_short;
 	const planSlug = planPurchase?.productSlug;
-	const expiry = moment( planPurchase?.expiryDate );
-	const expiryToday = Math.abs( moment().diff( expiry, 'hours' ) ) < 24;
-	const expiryText = expiryToday ? expiry.format( '[today]' ) : expiry.fromNow();
+	const expiryText = planPurchase?.expiryDate
+		? getRelativeDayString( new Date( planPurchase.expiryDate ), hasExpired ? 'past' : 'upcoming' )
+		: '';
 	const isOwner = site?.plan.user_is_owner;
 
 	const title = hasExpired
@@ -111,4 +111,4 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )( withLocalizedMoment( Renew ) );
+export default connect( mapStateToProps )( Renew );

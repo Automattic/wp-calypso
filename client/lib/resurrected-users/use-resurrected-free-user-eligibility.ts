@@ -13,10 +13,12 @@ import {
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import {
+	RESURRECTED_FREE_USERS_EXPERIMENT,
+	RESURRECTION_DAY_LIMIT_3M,
 	RESURRECTION_DAY_LIMIT_EXPERIMENT,
+	WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG,
 	WELCOME_BACK_MODAL_FORCE_FLAG,
 	WELCOME_BACK_VARIATION_MANUAL,
-	RESURRECTED_FREE_USERS_EXPERIMENT,
 } from './constants';
 import { hasExceededDormancyThreshold } from './utils';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -24,6 +26,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 interface EligibilityResult {
 	isLoading: boolean;
 	isResurrectedSixMonths: boolean;
+	isResurrectedThreeMonths: boolean;
 	hasActivePaidSubscription: boolean | null;
 	isEligible: boolean;
 	variationName: string | null;
@@ -74,13 +77,20 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 		() => hasExceededDormancyThreshold( lastSeen, RESURRECTION_DAY_LIMIT_EXPERIMENT ),
 		[ lastSeen ]
 	);
+	const isResurrectedThreeMonths = useMemo(
+		() => hasExceededDormancyThreshold( lastSeen, RESURRECTION_DAY_LIMIT_3M ),
+		[ lastSeen ]
+	);
 
 	const hasActiveSubscriptions = useMemo(
 		() => hasActivePaidSubscription( purchases ),
 		[ purchases ]
 	);
 
-	const baseEligibility = isResurrectedSixMonths && hasActiveSubscriptions === false;
+	const isResurrected = config.isEnabled( WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG )
+		? isResurrectedThreeMonths
+		: isResurrectedSixMonths;
+	const baseEligibility = isResurrected && hasActiveSubscriptions === false;
 	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
 		RESURRECTED_FREE_USERS_EXPERIMENT,
 		{
@@ -96,6 +106,7 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 		return {
 			isLoading: false,
 			isResurrectedSixMonths,
+			isResurrectedThreeMonths,
 			hasActivePaidSubscription: hasActiveSubscriptions,
 			isEligible: true,
 			variationName,
@@ -112,6 +123,7 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 	return {
 		isLoading,
 		isResurrectedSixMonths,
+		isResurrectedThreeMonths,
 		hasActivePaidSubscription: hasActiveSubscriptions,
 		isEligible: baseEligibility && experimentReady,
 		variationName,

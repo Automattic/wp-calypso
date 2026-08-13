@@ -7,12 +7,38 @@ export type AgencyTierId =
 
 export type AgencyTierStatus = 'early_access' | 'tier_protected';
 
+export type AgencyApprovalStatus = 'pending' | 'approved' | 'rejected';
+
 export interface AgencyTier {
 	id?: AgencyTierId;
 	label?: string;
 	features?: string[];
 	status?: AgencyTierStatus;
 }
+
+/**
+ * Agency user capabilities, following the `a4a_<action>_<resource>` convention.
+ * Used to declare per-route access requirements in the dashboard router.
+ */
+export type AgencyCapability =
+	| 'a4a_read_managed_sites'
+	| 'a4a_read_reports'
+	| 'a4a_edit_reports'
+	| 'a4a_read_marketplace'
+	| 'a4a_read_referrals'
+	| 'a4a_read_migrations'
+	| 'a4a_read_partner_directory'
+	| 'a4a_read_agency_tier'
+	| 'a4a_read_users'
+	| 'a4a_read_learn'
+	| 'a4a_read_amplify'
+	| 'a4a_read_exclusive_offers'
+	| 'a4a_jetpack_licensing'
+	| 'a4a_edit_user_invites'
+	| 'a4a_remove_users'
+	| 'a4a_revoke_licenses'
+	| 'a4a_remove_payment_methods'
+	| 'a4a_remove_managed_sites';
 
 /**
  * A single agency, as returned by GET /wpcom/v2/agency. Only the fields
@@ -27,6 +53,7 @@ export interface Agency {
 		allowed: boolean;
 	};
 	influenced_revenue?: number;
+	approval_status?: AgencyApprovalStatus | '';
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
 	user?: {

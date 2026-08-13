@@ -18,6 +18,9 @@ import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
+import SecurityKeyReregisterNotice, {
+	useShouldShowSecurityKeyReregisterNotice,
+} from '../app/security-key-reregister-notice';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
 import InlineSupportLink from '../components/inline-support-link';
 import { PageHeader } from '../components/page-header';
@@ -159,7 +162,11 @@ export default function Sites() {
 	const isRestoringAccount = !! currentSearchParams.restored;
 
 	const { user } = useAuth();
+	const { supports } = useAppContext();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+
+	const isSecurityKeyReregisterRequired = useShouldShowSecurityKeyReregisterNotice();
+	const showSecurityKeyReregisterNotice = supports.me && isSecurityKeyReregisterRequired;
 
 	const defaultView = getDefaultView( {
 		siteCount: user.site_count,
@@ -243,6 +250,7 @@ export default function Sites() {
 				}
 				notices={
 					<SitesNoticeArbiter>
+						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
 						{ ! isDashboardBackport() && isRestoringAccount && <RestoringSitesNotices /> }
 					</SitesNoticeArbiter>
 				}

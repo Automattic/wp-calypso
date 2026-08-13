@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
+import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
 import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
@@ -22,7 +23,6 @@ import { useImageUpload } from '../../hooks/use-image-upload';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
-import useZoomAction from '../../hooks/use-zoom-action';
 import { markSessionUsed } from '../../utils/agent-session';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
@@ -38,6 +38,7 @@ import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
+import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
@@ -50,6 +51,7 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
+	TransformMessages,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
@@ -173,18 +175,22 @@ interface Props {
 	isCompactMode: boolean;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
-	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
-	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** The external providers' abilities-setup hook (e.g. Big Sky, jetpack-ai-sidebar). Invoked after custom actions registration. */
+	useProviderAbilitiesSetup?: AbilitiesSetupHook;
 	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
+	/** Rewrite the transcript before it is displayed. See `TransformMessages`. */
+	transformMessages?: TransformMessages;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
 	capabilities?: ProviderCapabilities;
+	/** Renders the chat with a disabled input. Driven by `setChatEnabled( false )`. */
+	isChatInputDisabled?: boolean;
 	/** Called when the has-messages state changes. */
 	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
@@ -201,12 +207,14 @@ export default function OrchestratorChat( {
 	markdownExtensions,
 	isCompactMode,
 	useNavigationContinuation,
-	useAbilitiesSetup,
+	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
 	siteBuildUtils,
+	transformMessages,
 	useCheckpoint,
 	capabilities,
+	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
 	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
@@ -442,7 +450,15 @@ export default function OrchestratorChat( {
 
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();
-	useCheckpointAction( registerMessageActions, checkpoint );
+	const getCheckpointActionsForMessage = useCheckpointAction( registerMessageActions, checkpoint );
+
+	// TODO (ability-migration): Remove once the last checkpoint-writing Big Sky
+	// ability migrates. Keeps the provider checkpoint store reachable for the
+	// `restore-checkpoint` delegation while Big Sky still writes checkpoints.
+	useEffect( () => {
+		setProviderCheckpoints( checkpoint );
+		return () => setProviderCheckpoints( undefined );
+	}, [ checkpoint ] );
 
 	// Register thumbs-up/down feedback actions on agent messages.
 	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =
@@ -462,9 +478,6 @@ export default function OrchestratorChat( {
 
 	// Add a "Copy" action on plain-text agent messages.
 	const getCopyActionsForMessage = useCopyAction();
-
-	// Register zoom-in/zoom-out actions on agent messages.
-	useZoomAction( registerMessageActions );
 
 	// Register a "Sources" action on agent messages with sources data.
 	useSourcesAction( registerMessageActions, ! isReaderChat );
@@ -762,9 +775,14 @@ export default function OrchestratorChat( {
 	);
 
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
-	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
-	// The hook is stable as `OrchestratorChat` only renders after external providers have been loaded.
-	useAbilitiesSetup?.( {
+	// Provides chat action handlers to the external providers' ability setups
+	// (Big Sky, jetpack-ai-sidebar) — permanent provider infrastructure. The hook
+	// is stable as `OrchestratorChat` only renders after providers have loaded.
+	// TODO (ability-migration): After Big Sky's abilities migrate, prune this object to
+	// the fields other providers consume (jetpack-ai-sidebar reads only
+	// `clearSuggestions` and `isProcessing`) and drop the `BigSkyMessage`
+	// conversion.
+	useProviderAbilitiesSetup?.( {
 		addMessage: ( message: BigSkyMessage ) => {
 			// Transform Big Sky message format to `UIMessage` format and add to chat.
 			addMessage( convertBigSkyMessageToUIMessage( message ) );
@@ -810,8 +828,18 @@ export default function OrchestratorChat( {
 		setThinkingMessage,
 	} );
 
+	useAbilitiesRegistration();
+
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		let currentMessages: AgentsManagerUIMessage[] = messages;
+
+		// Let the provider rewrite the transcript first, while the messages are
+		// still the raw ones. Applied on every render over the whole list, so a
+		// message restored from conversation history is presented the same way as
+		// one that was just sent.
+		if ( transformMessages ) {
+			currentMessages = transformMessages( currentMessages );
+		}
 
 		currentMessages = currentMessages.filter(
 			( message ) =>
@@ -849,6 +877,13 @@ export default function OrchestratorChat( {
 			);
 		}
 
+		const checkpointActionsByMessageId = new Map(
+			currentMessages.map( ( message ) => [
+				message.id,
+				getCheckpointActionsForMessage( message ),
+			] )
+		);
+
 		// Group site-build messages only when needed
 		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( currentMessages );
 
@@ -873,11 +908,8 @@ export default function OrchestratorChat( {
 			const traceId = getTraceIdForMessage( message.id );
 			const messageWithTraceId = traceId ? { ...message, traceId } : message;
 
-			if ( message.id.endsWith( '-next-step' ) ) {
-				return messageWithTraceId;
-			}
-
 			const directActions = [
+				...( checkpointActionsByMessageId.get( message.id ) ?? [] ),
 				...getFeedbackActionsForMessage( message ),
 				...getCopyActionsForMessage( message ),
 				...getRegenerateActionsForMessage( message, {
@@ -885,12 +917,16 @@ export default function OrchestratorChat( {
 					isStreaming: isProcessing,
 				} ),
 			];
-			if ( directActions.length === 0 ) {
+			const hasRegisteredCheckpointAction = message.actions?.some(
+				( action ) => action.id === 'checkpoint'
+			);
+			if ( directActions.length === 0 && ! hasRegisteredCheckpointAction ) {
 				return messageWithTraceId;
 			}
 
 			const existingActions = message.actions?.filter(
 				( action ) =>
+					action.id !== 'checkpoint' &&
 					! action.id.startsWith( 'feedback-' ) &&
 					action.id !== 'copy' &&
 					action.id !== 'regenerate'
@@ -910,6 +946,7 @@ export default function OrchestratorChat( {
 		deletedMessageIds,
 		getChatComponent,
 		getCopyActionsForMessage,
+		getCheckpointActionsForMessage,
 		getShowComponentOrder,
 		getFeedbackActionsForMessage,
 		getTraceIdForMessage,
@@ -920,6 +957,7 @@ export default function OrchestratorChat( {
 		retainedShowComponentMessages,
 		siteBuildUtils,
 		thinkingMessage,
+		transformMessages,
 	] );
 
 	// Notify parent when has-messages state changes.
@@ -1016,6 +1054,7 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
+			isChatInputDisabled={ isChatInputDisabled }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }

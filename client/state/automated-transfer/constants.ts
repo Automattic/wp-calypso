@@ -27,6 +27,10 @@ export const transferStates = {
 	 * This is when the request to fetch the transfer status failed with an unknown error
 	 */
 	REQUEST_FAILURE: 'request_failure',
+	/**
+	 * Client-only: the status poller hit its deadline while the transfer was still in progress.
+	 */
+	CLIENT_TIMEOUT: 'client_timeout',
 } as const;
 
 export const transferInProgress = [

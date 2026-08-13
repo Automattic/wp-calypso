@@ -11,11 +11,13 @@ export type TeamActionRequest =
 
 export function useTeamActions( {
 	canRemove,
+	canInvite,
 	currentUserEmail,
 	onResendInvite,
 	onConfirmAction,
 }: {
 	canRemove: boolean;
+	canInvite: boolean;
 	currentUserEmail?: string;
 	onResendInvite: ( member: TeamMember ) => void;
 	onConfirmAction: ( request: TeamActionRequest ) => void;
@@ -30,13 +32,13 @@ export function useTeamActions( {
 			{
 				id: 'resend-user-invite',
 				label: __( 'Resend invite' ),
-				isEligible: ( item: TeamMember ) => isNotOwner( item ) && isInvited( item ),
+				isEligible: ( item: TeamMember ) => canInvite && isNotOwner( item ) && isInvited( item ),
 				callback: ( items: TeamMember[] ) => onResendInvite( items[ 0 ] ),
 			},
 			{
 				id: 'cancel-user-invite',
 				label: __( 'Cancel invite' ),
-				isEligible: ( item: TeamMember ) => isNotOwner( item ) && isInvited( item ),
+				isEligible: ( item: TeamMember ) => canInvite && isNotOwner( item ) && isInvited( item ),
 				callback: ( items: TeamMember[] ) =>
 					onConfirmAction( { kind: 'cancel-invite', member: items[ 0 ] } ),
 			},
@@ -65,5 +67,5 @@ export function useTeamActions( {
 					onConfirmAction( { kind: 'remove-member', member: items[ 0 ], isSelf: false } ),
 			},
 		];
-	}, [ canRemove, currentUserEmail, onResendInvite, onConfirmAction ] );
+	}, [ canRemove, canInvite, currentUserEmail, onResendInvite, onConfirmAction ] );
 }

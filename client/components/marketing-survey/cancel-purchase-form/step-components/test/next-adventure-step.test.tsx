@@ -1,23 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-import config from '@automattic/calypso-config';
 import { render, screen } from '@testing-library/react';
 import NextAdventureStep from '../next-adventure-step';
-
-jest.mock( '@automattic/calypso-config', () => {
-	const isEnabled = jest.fn();
-	return { __esModule: true, default: { isEnabled }, isEnabled };
-} );
 
 const SUBTITLE = 'Before you go, please answer a quick question to help us improve WordPress.com.';
 
 describe( 'NextAdventureStep', () => {
-	describe( 'with purchases/split-cancel-remove enabled', () => {
-		beforeEach( () => {
-			( config.isEnabled as jest.Mock ).mockReturnValue( true );
-		} );
-
+	// The cancel intents fire their mutation before the survey renders, so their
+	// headings can state that the cancellation already happened.
+	describe( 'with a cancel intent (mutation already fired)', () => {
 		it( 'shows "Cancellation confirmed" title with subtitle when isOnlyStep and cancel intent', () => {
 			render(
 				<NextAdventureStep isPlan={ false } isOnlyStep adventureOptions={ [] } intent="cancel" />
@@ -26,11 +18,16 @@ describe( 'NextAdventureStep', () => {
 			expect( screen.getByText( SUBTITLE ) ).toBeVisible();
 		} );
 
-		it( 'shows "Share your feedback" title with subtitle when isOnlyStep and remove intent', () => {
+		it( 'shows "Auto-renew disabled" title with subtitle when isOnlyStep and auto-renew intent', () => {
 			render(
-				<NextAdventureStep isPlan={ false } isOnlyStep adventureOptions={ [] } intent="remove" />
+				<NextAdventureStep
+					isPlan={ false }
+					isOnlyStep
+					adventureOptions={ [] }
+					intent="auto-renew"
+				/>
 			);
-			expect( screen.getByRole( 'heading', { name: /Share your feedback/ } ) ).toBeVisible();
+			expect( screen.getByRole( 'heading', { name: /Auto-renew disabled/ } ) ).toBeVisible();
 			expect( screen.getByText( SUBTITLE ) ).toBeVisible();
 		} );
 
@@ -46,8 +43,19 @@ describe( 'NextAdventureStep', () => {
 			expect( screen.getByRole( 'heading', { name: /Thanks for your feedback/ } ) ).toBeVisible();
 			expect( screen.queryByText( SUBTITLE ) ).not.toBeInTheDocument();
 		} );
+	} );
 
-		it( 'shows "One last thing" title without subtitle in multi-step remove flow', () => {
+	// Remove submits at survey-end, so nothing has happened yet.
+	describe( 'with a remove intent (mutation deferred to survey-end)', () => {
+		it( 'shows "Share your feedback" title with subtitle when isOnlyStep', () => {
+			render(
+				<NextAdventureStep isPlan={ false } isOnlyStep adventureOptions={ [] } intent="remove" />
+			);
+			expect( screen.getByRole( 'heading', { name: /Share your feedback/ } ) ).toBeVisible();
+			expect( screen.getByText( SUBTITLE ) ).toBeVisible();
+		} );
+
+		it( 'shows "One last thing" title without subtitle in a multi-step flow', () => {
 			render(
 				<NextAdventureStep
 					isPlan={ false }
@@ -61,16 +69,21 @@ describe( 'NextAdventureStep', () => {
 		} );
 	} );
 
-	describe( 'with purchases/split-cancel-remove disabled', () => {
-		beforeEach( () => {
-			( config.isEnabled as jest.Mock ).mockReturnValue( false );
-		} );
-
-		it( 'renders the trunk header regardless of intent or isOnlyStep', () => {
-			render( <NextAdventureStep isPlan={ false } adventureOptions={ [] } /> );
+	// No intent means a legacy deep link, which also submits at survey-end. It
+	// must never claim the cancellation is confirmed.
+	describe( 'with no intent (legacy deep link)', () => {
+		it( 'renders the pre-cancellation header regardless of isOnlyStep', () => {
+			render( <NextAdventureStep isPlan={ false } isOnlyStep adventureOptions={ [] } /> );
 			expect( screen.getByRole( 'heading', { name: /Sorry to see you go/ } ) ).toBeVisible();
 			expect( screen.getByText( /One last thing/ ) ).toBeVisible();
 			expect( screen.queryByText( SUBTITLE ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'never claims the cancellation is confirmed', () => {
+			render( <NextAdventureStep isPlan={ false } isOnlyStep adventureOptions={ [] } /> );
+			expect(
+				screen.queryByRole( 'heading', { name: /Cancellation confirmed/ } )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );

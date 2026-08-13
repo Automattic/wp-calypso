@@ -97,6 +97,8 @@
 
 .site-preview-pane__monitor-content {
 
+	// Mirrors the block-start padding the sibling tabs get from their page wrapper.
+	padding-block-start: 16px;
 	text-align: unset !important;
 
 	.site-expanded-content__card-content-column {

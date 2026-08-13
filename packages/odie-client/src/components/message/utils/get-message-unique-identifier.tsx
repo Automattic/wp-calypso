@@ -5,6 +5,7 @@ export const getMessageUniqueIdentifier = ( message: Message, fallback?: string 
 		message.metadata?.temporary_id ??
 		message.message_id ??
 		message.internal_message_id ??
+		message.id ??
 		message.metadata?.local_timestamp ??
 		fallback
 	);

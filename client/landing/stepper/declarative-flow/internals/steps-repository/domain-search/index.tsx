@@ -51,7 +51,6 @@ import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboardi
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
-import { useOnboardingHelpExperiment } from '../components/use-onboarding-help-experiment';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
 import type { Step as StepType } from '../../types';
@@ -135,7 +134,7 @@ const DomainSearchStep: StepType< {
 		}
 		setShowHelpCenter( ! isHelpCenterShown );
 	};
-	const { showHelp: showHelpCenter } = useOnboardingHelpExperiment( flow );
+	const showHelpCenter = isOnboardingFlow( flow );
 
 	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;

@@ -45,4 +45,7 @@ export interface AmplifyApiError {
 	status: number;
 	code: string | null;
 	message: string;
+	data?: {
+		status?: number;
+	};
 }

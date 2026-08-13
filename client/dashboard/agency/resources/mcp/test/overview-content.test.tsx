@@ -6,36 +6,140 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../../test-utils';
 import McpOverview from '../overview-content';
-import type { McpSettings } from '@automattic/api-core';
+import type { McpAvailableAbility, McpSettings } from '@automattic/api-core';
 
-const enabledSettings = { enabled: true, available_abilities: [] } as unknown as McpSettings;
-const disabledSettings = { enabled: false, available_abilities: [] } as unknown as McpSettings;
+function ability( name: string, enabled: boolean ): McpAvailableAbility {
+	return { name, title: name, description: '', category: 'sites', enabled };
+}
 
-describe( '<McpOverview> starter prompts section', () => {
-	test( 'shows expandable starter prompts when MCP access is enabled', async () => {
-		render( <McpOverview settings={ enabledSettings } onSave={ jest.fn() } /> );
+function settings( enabled: boolean, abilities: McpAvailableAbility[] = [] ): McpSettings {
+	return {
+		enabled,
+		available_categories: [ { slug: 'sites', label: 'Sites' } ],
+		available_abilities: abilities,
+	};
+}
 
-		expect( screen.getByText( 'Starter prompts' ) ).toBeVisible();
-		expect( screen.getByText( 'Program health snapshot' ) ).toBeVisible();
+describe( '<McpOverview>', () => {
+	test( 'toggling MCP access saves the new value', async () => {
+		const onSave = jest.fn();
+		render( <McpOverview settings={ settings( false ) } onSave={ onSave } /> );
 
-		await userEvent.click( screen.getByText( 'Program health snapshot' ) );
-		expect(
-			screen.getByText( /Give me a high-level health check of my Automattic for Agencies account/ )
-		).toBeVisible();
+		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Enable MCP access' } ) );
+
+		expect( onSave ).toHaveBeenCalledWith( { enabled: true } );
 	} );
 
-	test( 'disables the starter prompts until MCP access is enabled', async () => {
-		render( <McpOverview settings={ disabledSettings } onSave={ jest.fn() } /> );
+	test( 'shows how many read tools are enabled', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [
+					ability( 'get-site-health', true ),
+					ability( 'list-invoices', true ),
+					ability( 'get-billing-summary', false ),
+				] ) }
+				onSave={ jest.fn() }
+			/>
+		);
 
-		expect( screen.getByText( 'Starter prompts' ) ).toBeVisible();
-		expect( screen.getByText( 'Program health snapshot' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Program health snapshot' } ) ).toBeDisabled();
+		expect( screen.getByText( '2 of 3 enabled' ) ).toBeVisible();
+	} );
 
-		await userEvent.click( screen.getByText( 'Program health snapshot' ) );
+	test( 'shows "All enabled" when every read tool is on', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByText( 'All enabled' ) ).toBeVisible();
+	} );
+
+	test( 'shows "None enabled" when every read tool is off', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'get-site-health', false ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByText( 'None enabled' ) ).toBeVisible();
+	} );
+
+	test( 'links Read and Connect to their screens once MCP access is enabled', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'link', { name: /^Read\b/ } ) ).toHaveAttribute(
+			'href',
+			'/resources/ai-mcp/tools'
+		);
 		expect(
-			screen.queryByText(
-				/Give me a high-level health check of my Automattic for Agencies account/
-			)
-		).not.toBeInTheDocument();
+			screen.getByRole( 'link', { name: /^Connect external AI assistant/ } )
+		).toHaveAttribute( 'href', '/resources/ai-mcp/connect' );
+	} );
+
+	test( 'hides the tool and connection rows until MCP access is enabled', () => {
+		render(
+			<McpOverview
+				settings={ settings( false, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'checkbox', { name: 'Enable MCP access' } ) ).toBeVisible();
+		expect( screen.queryByText( /^Read$/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^Write$/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^Connect external AI assistant$/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^Starter prompts$/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows Write as coming soon', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByText( 'Coming soon' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /^Write\b/ } ) ).toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
+	} );
+
+	test( 'links Starter prompts to its screen once MCP access is enabled', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'link', { name: /^Starter prompts/ } ) ).toHaveAttribute(
+			'href',
+			'/resources/ai-mcp/prompts'
+		);
+	} );
+
+	test( 'navigates via onNavigate instead of the href when provided', async () => {
+		const onNavigate = jest.fn();
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+				onNavigate={ onNavigate }
+			/>
+		);
+
+		await userEvent.click( screen.getByRole( 'link', { name: /^Read\b/ } ) );
+
+		expect( onNavigate ).toHaveBeenCalledWith( '/resources/ai-mcp/tools' );
 	} );
 } );

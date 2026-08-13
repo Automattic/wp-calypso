@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/variables";
+
 // Validation styles for username fields
 .components-input-control.has-error {
 	.components-input-control__backdrop {
@@ -58,4 +60,14 @@
 			flex-shrink: 0;
 		}
 	}
+}
+
+// The countdown can reach h:mm:ss, and a notice sits inside the page, card and notice padding,
+// so on a narrow screen this label is wider than the room left for it. Buttons don't wrap their
+// labels, so without this the text escapes the card rather than the button growing to fit.
+.dashboard-email-verification-resend.components-button {
+	height: auto;
+	max-width: 100%;
+	min-height: $button-size-next-default-40px;
+	white-space: normal;
 }

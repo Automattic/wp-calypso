@@ -1,5 +1,3 @@
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/mixins";
 
@@ -56,13 +54,6 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 	position: absolute;
 	// 4px below the bottom of the icon
 	inset-block-start: calc(100% + 4px);
-
-	// Float the dropdown to the left on small screens,
-	// and to the right on larger screens
-	inset-inline-end: 0;
-	@include breakpoint-deprecated( ">660px" ) {
-		inset-inline-end: initial;
-	}
 
 	// The menu should render "on top" of the profile picture & site switcher
 	z-index: 20;

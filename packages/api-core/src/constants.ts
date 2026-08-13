@@ -277,6 +277,7 @@ export const DomainProductSlugs = {
 	TRANSFER_IN: 'domain_transfer',
 	DOTCOM_DOMAIN_REGISTRATION: 'domain_reg',
 	DOMAIN_MOVE_INTERNAL: 'domain_move_internal',
+	DOMAIN_MAPPING: 'domain_map',
 } as const;
 
 export const TitanMailSlugs = {

@@ -28,10 +28,11 @@ import {
 	sitePlansQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
+	siteAdminBarQuery,
+	siteAdminMenuQuery,
 	siteCrontabsQuery,
 	sitePreviewLinksQuery,
 	sitePrimaryDataCenterQuery,
-	purchaseQuery,
 	sitePurchasesQuery,
 	siteRedirectQuery,
 	siteScanQuery,
@@ -179,6 +180,10 @@ export const siteRoute = createRoute( {
 		const otherEnvironmentSiteId = site.is_wpcom_staging_site
 			? site.options?.wpcom_production_blog_id
 			: site.options?.wpcom_staging_blog_ids?.[ 0 ];
+
+		queryClient.prefetchQuery( siteAdminMenuQuery( site.ID ) );
+		queryClient.prefetchQuery( siteAdminBarQuery( site.ID ) );
+
 		await Promise.all( [
 			otherEnvironmentSiteId &&
 				queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) ),
@@ -215,10 +220,8 @@ export const siteOverviewRoute = createRoute( {
 				queryClient.prefetchQuery( sitePreviewLinksQuery( site.ID ) );
 			}
 
-			const currentPlan = await queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) );
-			if ( currentPlan.id ) {
-				queryClient.ensureQueryData( purchaseQuery( currentPlan.id ) );
-			}
+			queryClient.prefetchQuery( siteCurrentPlanQuery( site.ID ) );
+			queryClient.prefetchQuery( sitePurchasesQuery( site.ID ) );
 		}
 
 		await Promise.all( [

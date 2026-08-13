@@ -4,7 +4,7 @@ import {
 	ThumbsDownIcon,
 	ThumbsUpIcon,
 } from '@automattic/agenttic-ui';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getValidBlogId, recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import {
 	useCallback,
@@ -93,6 +93,54 @@ function sortMessagesByTimestamp( messages: ZendeskMessage[] ) {
 	} );
 }
 
+// Smooch is a singleton whose auth delegate is installed once, by whichever hook mounts
+// first, so the site belongs to the singleton rather than to one hook instance. Every owner
+// registers its own entry, which keeps a still-mounted owner's site alive when another
+// unmounts.
+type SmoochSiteEntry = { siteId: number | string | undefined };
+
+const smoochSiteEntries = new Set< SmoochSiteEntry >();
+
+function getSmoochSiteId() {
+	let siteId: number | undefined;
+	for ( const entry of smoochSiteEntries ) {
+		siteId = getValidBlogId( entry.siteId ) ?? siteId;
+	}
+	return siteId;
+}
+
+type TracksProperties = Record< string, unknown >;
+
+/**
+ * Records against the site the singleton currently knows. Used from the Smooch delegate,
+ * which is installed outside React and so cannot read a hook.
+ */
+function recordWithSmoochSite( eventName: string, properties: TracksProperties = {} ) {
+	recordTracksEvent( eventName, withSiteContext( properties, 'chat_site', getSmoochSiteId() ) );
+}
+
+/** Records against the site this hook instance was given. */
+function useZendeskTracksEvent( siteId: number | string | undefined ) {
+	return useCallback(
+		( eventName: string, properties: TracksProperties = {} ) =>
+			recordTracksEvent( eventName, withSiteContext( properties, 'chat_site', siteId ) ),
+		[ siteId ]
+	);
+}
+
+function useSmoochSiteContext( siteId: number | string | undefined ) {
+	const entryRef = useRef< SmoochSiteEntry >( { siteId } );
+	entryRef.current.siteId = siteId;
+
+	useEffect( () => {
+		const entry = entryRef.current;
+		smoochSiteEntries.add( entry );
+		return () => {
+			smoochSiteEntries.delete( entry );
+		};
+	}, [] );
+}
+
 function useSmooch( enabled = true, integrationKey?: string ) {
 	const queryClient = useQueryClient();
 	const { data: authData, isFetching: isAuthenticatingZendeskMessaging } =
@@ -120,7 +168,7 @@ function useSmooch( enabled = true, integrationKey?: string ) {
 				integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : integrationId,
 				delegate: {
 					async onInvalidAuth() {
-						recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
+						recordWithSmoochSite( 'calypso_smooch_messenger_auth_error' );
 
 						await queryClient.invalidateQueries( {
 							queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode, false ],
@@ -208,6 +256,8 @@ type ManagedZendeskChatOptions = {
 	conversationTicketFields?: ZendeskTicketFields;
 	/** Index into `SMOOCH_INTEGRATION_ID_CUSTOM` selecting a dedicated Smooch integration (e.g. `woo`). */
 	smoochIntegrationKey?: string;
+	/** Site the chat is scoped to, attached as `blog_id` on Tracks events. */
+	siteId?: number | string;
 };
 
 /**
@@ -224,6 +274,7 @@ export const useManagedZendeskChat = ( {
 	conversationTags = EMPTY_ARRAY,
 	conversationTicketFields = EMPTY_TICKET_FIELDS,
 	smoochIntegrationKey,
+	siteId,
 }: ManagedZendeskChatOptions = {} ) => {
 	const [ attachmentsNotice, setAttachmentNotice ] = useState< NoticeConfig | undefined >();
 	const { state } = useLocation();
@@ -243,6 +294,7 @@ export const useManagedZendeskChat = ( {
 	const connectionStatusRef = useRef( connectionStatus );
 	connectionStatusRef.current = connectionStatus;
 	const hadDisconnectRef = useRef( false );
+	const recordZendeskTracksEvent = useZendeskTracksEvent( siteId );
 
 	const connectionNotice = useConnectionStatusNotice( connectionStatus, true );
 
@@ -250,6 +302,8 @@ export const useManagedZendeskChat = ( {
 	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch( true, smoochIntegrationKey );
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
 		useAttachFileToConversation();
+
+	useSmoochSiteContext( siteId );
 
 	const clientId = useMemo( () => {
 		const messages = conversation?.messages ?? [];
@@ -283,13 +337,13 @@ export const useManagedZendeskChat = ( {
 	const disconnectedListener = useCallback( () => {
 		hadDisconnectRef.current = true;
 		setConnectionStatus( 'disconnected' );
-		recordTracksEvent( 'calypso_smooch_messenger_disconnected' );
-	}, [ setConnectionStatus ] );
+		recordZendeskTracksEvent( 'calypso_smooch_messenger_disconnected' );
+	}, [ setConnectionStatus, recordZendeskTracksEvent ] );
 
 	const reconnectingListener = useCallback( () => {
 		setConnectionStatus( 'reconnecting' );
-		recordTracksEvent( 'calypso_smooch_messenger_reconnecting' );
-	}, [ setConnectionStatus ] );
+		recordZendeskTracksEvent( 'calypso_smooch_messenger_reconnecting' );
+	}, [ setConnectionStatus, recordZendeskTracksEvent ] );
 
 	const typingStartListener = useCallback(
 		( { conversation }: ConversationData ) => {
@@ -309,9 +363,9 @@ export const useManagedZendeskChat = ( {
 		// We don't want a "connected" status on page load, it's only useful as a sign of a recovered connection.
 		if ( connectionStatus ) {
 			setConnectionStatus( 'connected' );
-			recordTracksEvent( 'calypso_smooch_messenger_connected' );
+			recordZendeskTracksEvent( 'calypso_smooch_messenger_connected' );
 		}
-	}, [ setConnectionStatus, connectionStatus ] );
+	}, [ setConnectionStatus, connectionStatus, recordZendeskTracksEvent ] );
 
 	const navigate = useNavigate();
 
@@ -691,7 +745,7 @@ export const useManagedZendeskChat = ( {
 						// eslint-disable-next-line no-console
 						console.error( 'Error uploading Zendesk chat attachments', error );
 						try {
-							recordTracksEvent( 'zendesk_chat_file_upload_failed' );
+							recordZendeskTracksEvent( 'zendesk_chat_file_upload_failed' );
 						} catch {
 							// Swallow analytics errors to avoid affecting user flow.
 						}
@@ -711,6 +765,7 @@ export const useManagedZendeskChat = ( {
 			clientId,
 			Smooch,
 			attachFileToConversation,
+			recordZendeskTracksEvent,
 		]
 	);
 
@@ -742,7 +797,7 @@ export const useManagedZendeskChat = ( {
 			}
 
 			if ( queue.length > 0 ) {
-				recordTracksEvent( 'calypso_smooch_messenger_queue_flushed', {
+				recordZendeskTracksEvent( 'calypso_smooch_messenger_queue_flushed', {
 					queued_messages: queue.length,
 				} );
 			}
@@ -751,7 +806,7 @@ export const useManagedZendeskChat = ( {
 		};
 
 		flushAndResync();
-	}, [ connectionStatus, Smooch, conversation?.id ] );
+	}, [ connectionStatus, Smooch, conversation?.id, recordZendeskTracksEvent ] );
 
 	useEffect( () => {
 		return () => {
@@ -784,10 +839,16 @@ export const useManagedZendeskChat = ( {
 	};
 };
 
-export const useGetZendeskConversations = ( enabled: boolean, smoochIntegrationKey?: string ) => {
+export const useGetZendeskConversations = (
+	enabled: boolean,
+	smoochIntegrationKey?: string,
+	siteId?: number | string
+) => {
 	// Forward the integration key so this shares the same Smooch init as the chat
 	// (Smooch is a singleton): listing conversations must target the same integration
 	// the chat created them on.
 	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch( enabled, smoochIntegrationKey );
+	// Can be the only Smooch owner on screen (history, escalation), so it registers a site too.
+	useSmoochSiteContext( siteId );
 	return { conversations: Smooch?.getConversations() ?? [], isLoading: isSettingUpSmooch };
 };

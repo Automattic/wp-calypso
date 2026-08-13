@@ -8,11 +8,16 @@ import {
 	getDisplayVariant,
 	getMutationFlowType,
 	getPurchaseCancellationFlowType,
+	hasQueryableSite,
 	isExpiredAndInGracePeriod,
 	isExpiredOrRemoved,
 	isRemoved,
 	mightStillAutoRenew,
 	isExpiredWithNoAutoRenewAttemptsLeft,
+	creditCardExpiresBeforeSubscription,
+	getRenewalUrlFromPurchase,
+	isPurchaseDowngradeEligible,
+	isWithinRefundWindowDowngradeEligible,
 } from '../purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -108,11 +113,20 @@ describe( 'getMutationFlowType', () => {
 		).toBe( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
 	} );
 
-	test( 'intent=remove + auto-renew off → REMOVE (DELETE)', () => {
+	test( 'intent=remove + auto-renew off + refund available → CANCEL_WITH_REFUND', () => {
 		expect(
 			getMutationFlowType(
 				'remove',
 				makePurchase( { is_auto_renew_enabled: false, is_refundable: true, refund_amount: 50 } )
+			)
+		).toBe( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
+	} );
+
+	test( 'intent=remove + auto-renew off + no refund → REMOVE (DELETE)', () => {
+		expect(
+			getMutationFlowType(
+				'remove',
+				makePurchase( { is_auto_renew_enabled: false, is_refundable: false, refund_amount: 0 } )
 			)
 		).toBe( CANCEL_FLOW_TYPE.REMOVE );
 	} );
@@ -307,6 +321,224 @@ describe( 'isExpiredWithNoAutoRenewAttemptsLeft', () => {
 					subscription_status: 'active',
 					is_past_last_auto_renew_attempt_date: true,
 				} )
+			)
+		).toBe( false );
+	} );
+} );
+
+describe( 'hasQueryableSite', () => {
+	test( 'is true for a purchase attached to a real site', () => {
+		expect( hasQueryableSite( makePurchase( { blog_id: 12345 } ) ) ).toBe( true );
+	} );
+
+	test( 'is false for a holding-site purchase (siteless Akismet)', () => {
+		expect(
+			hasQueryableSite(
+				makePurchase( {
+					blog_id: 12345,
+					is_attached_to_holding_site: true,
+					product_type: 'akismet',
+					product_slug: 'ak_personal_yearly',
+				} )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false when there is no blog_id at all', () => {
+		expect( hasQueryableSite( makePurchase( { blog_id: 0 } ) ) ).toBe( false );
+	} );
+} );
+
+describe( 'creditCardExpiresBeforeSubscription', () => {
+	test( 'is true when the card expires before the subscription', () => {
+		expect(
+			creditCardExpiresBeforeSubscription(
+				makePurchase( {
+					payment_type: 'credit_card',
+					payment_expiry_date: '2027-01-31',
+					expiry_date: '2027-06-01',
+				} )
+			)
+		).toBe( true );
+	} );
+
+	test( 'is false when the card outlives the subscription', () => {
+		expect(
+			creditCardExpiresBeforeSubscription(
+				makePurchase( {
+					payment_type: 'credit_card',
+					payment_expiry_date: '2027-06-30',
+					expiry_date: '2027-01-01',
+				} )
+			)
+		).toBe( false );
+	} );
+
+	test( 'falls back to payment_expiry when payment_expiry_date is absent', () => {
+		expect(
+			creditCardExpiresBeforeSubscription(
+				makePurchase( {
+					payment_type: 'credit_card',
+					payment_expiry: '01/27',
+					expiry_date: '2027-06-01',
+				} )
+			)
+		).toBe( true );
+	} );
+
+	// The API returns no expiry date for some purchases even though the type
+	// says otherwise, and parsing it as a date throws.
+	test( 'is false when the purchase has no expiry date', () => {
+		expect(
+			creditCardExpiresBeforeSubscription(
+				makePurchase( {
+					payment_type: 'credit_card',
+					payment_expiry_date: '2027-01-31',
+					expiry_date: null as unknown as string,
+				} )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false when the purchase has no expiry date and only payment_expiry', () => {
+		expect(
+			creditCardExpiresBeforeSubscription(
+				makePurchase( {
+					payment_type: 'credit_card',
+					payment_expiry: '01/27',
+					expiry_date: null as unknown as string,
+				} )
+			)
+		).toBe( false );
+	} );
+} );
+
+describe( 'getRenewalUrlFromPurchase', () => {
+	test( 'omits the site slug for an A4A holding site purchase', () => {
+		const url = getRenewalUrlFromPurchase(
+			makePurchase( {
+				ID: 28259013,
+				product_slug: 'pressable_build_monthly',
+				meta: 'is-a4a',
+				is_attached_to_holding_site: true,
+				site_slug: 'siteless.agencies.automattic.com::yETR9VrPZIMpOMIL6CICWl36',
+			} )
+		);
+
+		expect( url ).toContain( '/checkout/pressable_build_monthly:is-a4a/renew/28259013/?' );
+		expect( url ).not.toContain( 'siteless.agencies.automattic.com' );
+	} );
+
+	test( 'keeps the site slug for a regular site purchase', () => {
+		const url = getRenewalUrlFromPurchase(
+			makePurchase( {
+				ID: 12345,
+				product_slug: 'business-bundle',
+				is_attached_to_holding_site: false,
+				site_slug: 'example.wordpress.com',
+			} )
+		);
+
+		expect( url ).toContain( '/checkout/business-bundle/renew/12345/example.wordpress.com?' );
+	} );
+} );
+
+describe( 'isPurchaseDowngradeEligible', () => {
+	// Both `plans/expired-downgrade` and `plans/delayed-downgrade` are enabled in
+	// every config, so these exercise the shipping behaviour.
+	test( 'is true for a downgradable plan', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( { is_plan: true, is_plan_type_downgradable: true } )
+			)
+		).toBe( true );
+	} );
+
+	test( 'is false for a plan with nothing below it', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( { is_plan: true, is_plan_type_downgradable: false } )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false for a non-plan product', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( { is_plan: false, is_plan_type_downgradable: true } )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is true for a downgradable plan past its expiry date', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( {
+					is_plan: true,
+					is_plan_type_downgradable: true,
+					is_past_expiry_date: true,
+					expiry_status: 'expired',
+					subscription_status: 'active',
+				} )
+			)
+		).toBe( true );
+	} );
+
+	test( 'is true for a downgradable plan inside its refund window', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( {
+					is_plan: true,
+					is_plan_type_downgradable: true,
+					is_refundable: true,
+				} )
+			)
+		).toBe( true );
+	} );
+} );
+
+describe( 'isWithinRefundWindowDowngradeEligible', () => {
+	const downgradablePlan = ( overrides: Partial< Purchase > = {} ) =>
+		makePurchase( { is_plan: true, is_plan_type_downgradable: true, ...overrides } );
+
+	test( 'is true for a refundable plan', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible( downgradablePlan( { is_refundable: true } ) )
+		).toBe( true );
+	} );
+
+	test( 'is true for a refundable renewal outside the initial refund window', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				downgradablePlan( { is_within_initial_refund_window: false, is_refundable: true } )
+			)
+		).toBe( true );
+	} );
+
+	test( 'is false once no receipt is refundable, even inside the initial refund window', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				downgradablePlan( { is_within_initial_refund_window: true, is_refundable: false } )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false for a plan in its post-expiry grace period even when refundable', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				downgradablePlan( {
+					is_refundable: true,
+					expiry_status: 'expired',
+					subscription_status: 'active',
+				} )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false for a non-plan product', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				makePurchase( { is_plan: false, is_plan_type_downgradable: true, is_refundable: true } )
 			)
 		).toBe( false );
 	} );

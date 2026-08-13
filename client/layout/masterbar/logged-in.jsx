@@ -3,6 +3,11 @@ import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
+// @ts-expect-error The commands package is not yet typed.
+import { store as commandsStore } from '@wordpress/commands';
+import { dispatch } from '@wordpress/data';
+import { displayShortcut } from '@wordpress/keycodes';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
@@ -13,6 +18,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
 import { navigate } from 'calypso/lib/navigate';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -58,15 +64,10 @@ import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSectionGroup, getSectionName } from 'calypso/state/ui/selectors';
+import { getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
-import BigSkyIcon from './masterbar-agents-manager/big-sky-icon';
-import {
-	closeAgentsManagerChat,
-	isAgentsManagerChatVisible,
-	openAgentsManagerChat,
-} from './masterbar-agents-manager/chat-actions';
+import MasterbarAiChatButton from './masterbar-agents-manager/ai-chat-button';
 import HelpIcon from './masterbar-agents-manager/help-icon';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
@@ -97,7 +98,6 @@ class MasterbarLoggedIn extends Component {
 		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-		sectionName: PropTypes.string,
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
@@ -116,6 +116,7 @@ class MasterbarLoggedIn extends Component {
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
 		sitePlanUrl: PropTypes.string,
+		commandPalette: PropTypes.bool,
 	};
 
 	state = { mounted: false };
@@ -611,11 +612,25 @@ class MasterbarLoggedIn extends Component {
 			} );
 		}
 
+		const siteIconUrl = site?.icon?.img || site?.icon?.ico;
+		const hasSiteIcon = !! siteIconUrl;
+		const icon = hasSiteIcon ? (
+			<img
+				className="masterbar__item-site-icon"
+				src={ resizeImageUrl( siteIconUrl, 40 ) }
+				alt=""
+				width={ 20 }
+				height={ 20 }
+			/>
+		) : (
+			<span className="dashicons-before dashicons-admin-home" />
+		);
+
 		return (
 			<Item
-				className="masterbar__item-my-site"
+				className={ clsx( 'masterbar__item-my-site', { 'has-site-icon': hasSiteIcon } ) }
 				url={ siteUrl }
-				icon={ <span className="dashicons-before dashicons-admin-home" /> }
+				icon={ icon }
 				tipTarget="visit-site"
 				subItems={ [ menuItems ] }
 			>
@@ -970,31 +985,22 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	clickAgentsManagerAiChat = () => {
-		// Toggle: close the chat if it's already showing, otherwise resume the active
-		// conversation and open it.
-		const isVisible = isAgentsManagerChatVisible();
-		this.props.recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
-			section: this.props.sectionName,
-			action: isVisible ? 'close' : 'open',
-		} );
-		if ( isVisible ) {
-			closeAgentsManagerChat();
-		} else {
-			openAgentsManagerChat();
-		}
+	openCommandPalette = () => {
+		dispatch( commandsStore ).open();
 	};
 
-	renderAgentsManagerAiChat() {
+	renderCommandPalette() {
 		const { translate } = this.props;
-
 		return (
 			<Item
-				className="masterbar__item-agents-manager-ai-chat"
-				onClick={ this.clickAgentsManagerAiChat }
-				icon={ <BigSkyIcon /> }
-				tooltip={ translate( 'Ask AI' ) }
-			/>
+				className="masterbar__item-command-palette"
+				onClick={ this.openCommandPalette }
+				icon={ <span className="dashicons-before dashicons-search" /> }
+				tooltip={ translate( 'Open command palette' ) }
+				ariaLabel={ translate( 'Open command palette' ) }
+			>
+				<span aria-hidden="true">{ displayShortcut.primary( 'k' ) }</span>
+			</Item>
 		);
 	}
 
@@ -1019,6 +1025,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderSidebarMobileMenu() }
 					{ this.renderMySites() }
 					{ this.renderSiteMenu() }
+					{ this.props.commandPalette && this.renderCommandPalette() }
 					{ this.renderUpdatesMenu() }
 					{ this.renderCommentsMenu() }
 					{ this.renderSiteActionMenu() }
@@ -1032,7 +1039,7 @@ class MasterbarLoggedIn extends Component {
 					{ loadHelpCenterIcon && this.renderHelpCenter() }
 					{ /* Show the AI button only where the chat dock is mounted (same two
 					     conditions the dock loads on), so clicking it always opens the chat. */ }
-					{ useUnifiedAgent && loadAgentsManager && this.renderAgentsManagerAiChat() }
+					{ useUnifiedAgent && loadAgentsManager && <MasterbarAiChatButton /> }
 					{ this.renderNotifications() }
 					{ this.renderProfileMenu() }
 				</div>
@@ -1078,7 +1085,6 @@ const ConnectedMasterbarLoggedIn = connect(
 			adminMenu: getAdminMenu( state, siteId ),
 			sectionGroup,
 			sidebarType,
-			sectionName: getSectionName( state ),
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
 			user: getCurrentUser( state ),

@@ -132,7 +132,7 @@ describe( 'PlanBillingPeriod', () => {
 				};
 				render( <PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } /> );
 				expect( screen.getByText( /billed yearly/i ) ).toHaveTextContent(
-					'Billed yearly, expired a month ago'
+					'Billed yearly, expired 1 month ago'
 				);
 			} );
 		} );

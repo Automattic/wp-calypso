@@ -111,25 +111,40 @@ function clusterMessagesBySender( messages: Message[] ) {
 		role: MessageRole | 'csat' | 'attachment' | 'feedback' | 'zendesk-intro' | 'business-automated';
 		messages: Message[];
 	} = {
-		id: crypto.randomUUID(),
+		// A deterministic id, not crypto.randomUUID(): that was regenerated on every render (this
+		// function isn't memoized), so the Fragment keyed on it below force-remounted the entire
+		// cluster -- including any in-progress CSATForm state -- on every unrelated re-render.
+		id: String( getMessageUniqueIdentifier( messages[ 0 ], 'group-0' ) ),
 		role: getPresentedRole( messages[ 0 ] ),
 		messages: [],
 	};
 
 	const groups = [ currentGroup ];
+	let groupIndex = 1;
 
-	for ( const message of sortMessagesByTimestamp( messages ) ) {
+	const sortedMessages = sortMessagesByTimestamp( messages );
+	const lastCSATMessage = sortedMessages.filter( isCSATMessage ).at( -1 );
+
+	for ( const message of sortedMessages ) {
 		if ( EXCLUDED_MESSAGE_ROLES.includes( getPresentedRole( message ) as any ) ) {
+			continue;
+		}
+
+		// Zendesk can emit more than one CSAT prompt for the same conversation. They are all rendered
+		// with the same copy, so every extra one reads as a duplicate and lets the user submit
+		// conflicting ratings for a single ticket. Only the most recent prompt is kept.
+		if ( isCSATMessage( message ) && message !== lastCSATMessage ) {
 			continue;
 		}
 
 		if ( shouldStartNewGroup( message, currentGroup ) ) {
 			currentGroup = {
-				id: crypto.randomUUID(),
+				id: String( getMessageUniqueIdentifier( message, `group-${ groupIndex }` ) ),
 				role: getPresentedRole( message ),
 				messages: [],
 			};
 			groups.push( currentGroup );
+			groupIndex++;
 		}
 
 		currentGroup.messages.push( message );

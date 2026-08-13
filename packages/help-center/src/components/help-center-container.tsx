@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import observeEditorCanvasPointerDown from '@automattic/agents-manager/src/utils/observe-editor-canvas-pointerdown';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useWindowDimensions } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card, __experimentalElevation as Elevation } from '@wordpress/components';
@@ -16,11 +15,13 @@ import Draggable, { DraggableProps } from 'react-draggable';
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useActionHooks } from '../hooks';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
+import { ZendeskStagingNotice } from './help-center-zendesk-staging-notice';
 import { PersistentRouter } from './persistent-router';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 interface OptionalDraggableProps extends Partial< DraggableProps > {
@@ -58,6 +59,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		};
 	}, [] );
 	const { sectionName } = useHelpCenterContext();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 	const nodeRef = useRef< HTMLDivElement >( null );
 	const isMobile = useMobileBreakpoint();
 	const [ isFocused, setIsFocused ] = useState( false );
@@ -73,7 +75,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		recordTracksEvent( 'calypso_inlinehelp_close', {
 			section: sectionName,
 		} );
-	}, [ handleClose, sectionName ] );
+	}, [ handleClose, recordTracksEvent, sectionName ] );
 
 	const focusReturnRef = useFocusReturn();
 
@@ -170,6 +172,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 			>
 				<Card className={ classNames } ref={ cardMergeRefs }>
 					<HelpCenterHeader onDismiss={ onDismiss } />
+					{ ! isMinimized && <ZendeskStagingNotice /> }
 					<HelpCenterContent currentRoute={ currentRoute } />
 					{ ! isMinimized && <HelpCenterFooter /> }
 					{ ! isMobile && (

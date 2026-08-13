@@ -5,6 +5,7 @@
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import onboarding from '../flows/onboarding/onboarding';
 import { STEPS } from '../internals/steps';
@@ -30,6 +31,13 @@ jest.mock( '../../hooks/use-simplified-onboarding', () => ( {
 
 jest.mock( 'calypso/lib/analytics/survicate', () => ( {
 	addSurvicate: jest.fn(),
+} ) );
+
+// The processing step awaits the launchpad-personalization ExPlat assignment before redirecting.
+// Resolve it synchronously to control (variationName: null) so the redirect fires within the test's
+// tick instead of waiting on a real network fetch.
+jest.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: jest.fn( () => Promise.resolve( { variationName: null } ) ),
 } ) );
 
 describe( 'Onboarding Flow', () => {
@@ -103,7 +111,6 @@ describe( 'Onboarding Flow', () => {
 
 		describe( 'Survicate side effect', () => {
 			it( 'calls addSurvicate with user data when logged in on step changes', () => {
-				const { addSurvicate } = require( 'calypso/lib/analytics/survicate' );
 				const loggedInState = {
 					currentUser: {
 						id: 123,
@@ -131,6 +138,7 @@ describe( 'Onboarding Flow', () => {
 				expect( addSurvicate ).toHaveBeenCalledWith( {
 					email: 'test@example.com',
 					registrationDate: '2024-01-15T00:00:00+00:00',
+					userId: 123,
 				} );
 
 				rerender(

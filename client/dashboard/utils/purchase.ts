@@ -10,6 +10,7 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -30,6 +31,18 @@ export const CANCEL_FLOW_TYPE = {
 	CANCEL_AUTORENEW: 'cancel_autorenew',
 } as const;
 export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
+
+/**
+ * Once expiration is this close, a subscription that will not renew itself is a
+ * problem worth raising rather than a date still comfortably far off.
+ */
+export const EXPIRY_WARNING_DAYS = 60;
+
+/**
+ * Once expiration is this close, losing the subscription is the most likely
+ * outcome rather than a distant possibility.
+ */
+export const EXPIRY_ERROR_DAYS = 7;
 
 /**
  * Returns true if the purchase is auto-renewing and not yet expired.
@@ -184,6 +197,10 @@ export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boole
 	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;
 	}
+	// Some purchases have no expiry date, so there is nothing to compare against.
+	if ( ! purchase.expiry_date ) {
+		return false;
+	}
 	// For 100 years plans, the credit card will probably always expire before
 	// the subscription so we should only consider this true if we are close to
 	// the expiration date.
@@ -273,6 +290,19 @@ export function isMarketplaceHoldingSitePurchase( purchase: Purchase ): boolean 
 
 export function isJetpackHoldingSitePurchase( purchase: Purchase ): boolean {
 	return purchase.is_attached_to_holding_site && purchase.product_type === 'jetpack';
+}
+
+/**
+ * Whether site-scoped endpoints can be called for this purchase's `blog_id`.
+ *
+ * Holding-site purchases (siteless Akismet/Jetpack/Marketplace/A4A) are attached
+ * to a placeholder blog the user is not a member of, so `/sites/{blog_id}/…`
+ * returns `403 authorization_required`. The dashboard's auth layer reads that as
+ * a signed-out session and redirects to `/log-in`, which bounces straight back —
+ * an infinite loop. Gate site queries and site-dependent UI on this.
+ */
+export function hasQueryableSite( purchase: Purchase ): boolean {
+	return Boolean( purchase.blog_id ) && ! purchase.is_attached_to_holding_site;
 }
 
 /**
@@ -506,6 +536,14 @@ export function isDomainTransfer( purchase: Purchase | ObjectWithProductSlug ): 
 	return purchase.product_slug === DomainProductSlugs.TRANSFER_IN;
 }
 
+/**
+ * A domain connection (also known as a domain mapping): a domain registered
+ * elsewhere that points at a WordPress.com site.
+ */
+export function isDomainMapping( purchase: Purchase | ObjectWithProductSlug ): boolean {
+	return purchase.product_slug === DomainProductSlugs.DOMAIN_MAPPING;
+}
+
 export function isSiteRedirect( purchase: Purchase ): boolean {
 	return purchase.product_slug === OFFSITE_REDIRECT;
 }
@@ -602,8 +640,8 @@ function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
 }
 
 function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
-	if ( isAkismetProduct( purchase ) ) {
-		// Akismet checkout never uses a site slug.
+	// Neither Akismet nor A4A holding sites should use a site slug
+	if ( isAkismetProduct( purchase ) || isA4AHoldingSitePurchase( purchase ) ) {
 		return '';
 	}
 	return purchase.site_slug || '';
@@ -611,14 +649,21 @@ function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
 
 export function getRenewalUrlFromPurchase(
 	purchase: Purchase,
-	checkoutSiteSlugForUrl?: string
+	checkoutSiteSlugForUrl?: string,
+	backUrl?: string
 ): string {
-	return getRenewUrlForPurchases( [ purchase ], checkoutSiteSlugForUrl );
+	return getRenewUrlForPurchases( [ purchase ], checkoutSiteSlugForUrl, backUrl );
 }
 
+/**
+ * `backUrl` is where checkout returns to, whether the renewal goes through or is
+ * abandoned. It defaults to the dashboard page the user is on, so surfaces
+ * outside the dashboard have to say where they are.
+ */
 export function getRenewUrlForPurchases(
 	purchases: Purchase[],
-	checkoutSiteSlugForUrl?: string
+	checkoutSiteSlugForUrl?: string,
+	backUrl: string = redirectToDashboardLink()
 ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
@@ -631,7 +676,6 @@ export function getRenewUrlForPurchases(
 		checkoutSiteSlugForUrl || getCheckoutSiteSlugForPurchase( firstPurchase );
 	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
-	const backUrl = redirectToDashboardLink();
 	return addQueryArgs(
 		wpcomLink(
 			`/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`
@@ -670,8 +714,8 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
 
 export function isPartnerPurchase(
 	purchase: Purchase
-): purchase is Purchase & { partnerType: string } {
-	return !! purchase?.partner_name;
+): purchase is Purchase & { partner_name: string } {
+	return !! purchase.partner_name;
 }
 
 export function isAgencyPartnerType( partnerType: string ) {
@@ -745,12 +789,17 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 
 /**
  * Returns true if the plan is eligible for an instant, self-serve downgrade: the
- * plan is still within its initial refund window (not a renewal) and has neither
- * expired nor entered its post-expiry grace period.
+ * plan has a refundable receipt and has neither expired nor entered its
+ * post-expiry grace period.
  *
- * Note: this intentionally does NOT require a refundable amount. Instant
- * downgrades are also offered for plans that were paid with credits or are
- * otherwise free, where no money would be refunded.
+ * `is_refundable` covers any refundable receipt, so it holds both for an initial
+ * purchase and for a renewal that is still within its own refund window — both
+ * cases where an instant downgrade costs neither side money.
+ *
+ * Note: this intentionally does NOT require a refundable amount. A refundable
+ * receipt worth nothing generally means the purchase was free (or fully paid
+ * with credits), which is still a valid instant downgrade — it just issues no
+ * refund, and the confirmation modal drops its refund line accordingly.
  *
  * This is distinct from {@link isExpiredAndInGracePeriod}, which gates the
  * downgrade-to-checkout flow for plans whose expiry date has already passed.
@@ -759,9 +808,29 @@ export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boo
 	return (
 		purchase.is_plan_type_downgradable &&
 		purchase.is_plan &&
-		purchase.is_within_initial_refund_window &&
+		purchase.is_refundable &&
 		! isExpiredOrRemoved( purchase )
 	);
+}
+
+/**
+ * Whether to offer this purchase downgrade options as well as upgrades. Covers
+ * three downgrade flows, each gated by its own flag:
+ *   - past expiry (downgrade-to-checkout) — `plans/expired-downgrade`
+ *   - within refund window (instant downgrade) — `plans/expired-downgrade`
+ *   - active downgradable plan (delayed downgrade) — `plans/delayed-downgrade`
+ *
+ * Only ever true for WordPress.com plans.
+ */
+export function isPurchaseDowngradeEligible( purchase: Purchase ): boolean {
+	if ( ! purchase.is_plan || ! purchase.is_plan_type_downgradable ) {
+		return false;
+	}
+	const expiredOrRefundDowngrade =
+		config.isEnabled( 'plans/expired-downgrade' ) &&
+		( purchase.is_past_expiry_date || isWithinRefundWindowDowngradeEligible( purchase ) );
+	const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
+	return expiredOrRefundDowngrade || delayedDowngrade;
 }
 
 /**
@@ -847,7 +916,11 @@ export function getMutationFlowType(
 		return getPurchaseCancellationFlowType( purchase );
 	}
 
-	if ( purchase.is_auto_renew_enabled && hasAmountAvailableToRefund( purchase ) ) {
+	// intent === 'remove': refundability alone decides the endpoint. A purchase
+	// still inside its refund window goes through cancel-and-refund rather than
+	// the bare DELETE — auto-renew is typically already off by the time Remove is
+	// offered (the user cancelled first), so it must not gate the refund.
+	if ( hasAmountAvailableToRefund( purchase ) ) {
 		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
 	}
 	return CANCEL_FLOW_TYPE.REMOVE;

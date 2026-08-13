@@ -35,7 +35,11 @@ import {
 	BlazeCampaignPage,
 	BlockWidgetEditorComponent,
 	CartCheckoutPage,
+	DashboardMeSidebarComponent,
 	DashboardPage,
+	DashboardPurchasesPage,
+	DashboardSiteDomainsPage,
+	DashboardSnackbarComponent,
 	DashboardVisibilitySettingsPage,
 	DataHelper,
 	DomainSearchComponent,
@@ -77,6 +81,7 @@ import {
 	SiteSelectComponent,
 	SignupPickPlanPage,
 	TestAccount,
+	TestAccountName,
 	ThemesDetailPage,
 	ThemesPage,
 	UserSignupPage,
@@ -85,7 +90,7 @@ import {
 	UseADomainIOwnPage,
 	SelectItemsComponent,
 } from '@automattic/calypso-e2e';
-import { test as base, expect } from '@playwright/test';
+import { test as base, expect, type Page } from '@playwright/test';
 import {
 	apiCloseAccount,
 	apiWaitForBearerTokenAcceptance,
@@ -98,49 +103,46 @@ import { getAccount } from './get-account';
 export type CustomOptions = {
 	/**
 	 * Viewport name used to configure device-specific behavior in page objects.
-	 * Set per-project in playwright.config.ts. Valid values: 'desktop' | 'mobile' | 'tablet'.
+	 * Set per-project in playwright.config.ts. Valid values: 'desktop' | 'mobile'.
 	 */
 	viewportName: string;
 };
 
+/**
+ * Test accounts exposed as a fixture of the same name, logged in on first use.
+ *
+ * The `prime-logins` setup project logs in as each of these before the suite starts, so
+ * an account added here is primed rather than logged in inline. Two accounts are fixtures
+ * without belonging here: `accountGivenByEnvironment`, which resolves at run time, and
+ * `accountSMS`, whose 2FA code costs a Mailosaur email only a couple of specs need.
+ */
+export const fixtureAccounts = {
+	accountAtomic: 'atomicUser',
+	accountDefaultUser: 'defaultUser',
+	accountGutenbergSimple: 'gutenbergSimpleSiteUser',
+	accounti18n: 'i18nUser',
+	accountP2: 'p2User',
+	accountPreRelease: 'calypsoPreReleaseUser',
+	accountSimpleSiteFreePlan: 'simpleSiteFreePlanUser',
+} as const satisfies Record< string, TestAccountName >;
+
+type AccountFixture = (
+	args: { page: Page },
+	use: ( account: TestAccount ) => Promise< void >
+) => Promise< void >;
+
 export const test = base.extend<
 	CustomOptions & {
-		/**
-		 * Test account used to test atomic sites (Business plans)
-		 */
-		accountAtomic: TestAccount;
+		[ K in keyof typeof fixtureAccounts ]: TestAccount;
+	} & {
 		/**
 		 * Test account selected based on the current environment variables.
 		 */
 		accountGivenByEnvironment: TestAccount;
 		/**
-		 * Default test account.
-		 */
-		accountDefaultUser: TestAccount;
-		/**
-		 * Test account with a simple Gutenberg site.
-		 */
-		accountGutenbergSimple: TestAccount;
-		/**
-		 * Test account used for i18n locale switching.
-		 */
-		accounti18n: TestAccount;
-		/**
-		 * Test account used for pre-release testing.
-		 */
-		accountPreRelease: TestAccount;
-		/**
-		 * Test account used to test atomic sites (Business plans)
-		 */
-		accountSimpleSiteFreePlan: TestAccount;
-		/**
 		 * Test account used for SMS-based 2FA.
 		 */
 		accountSMS: TestAccount;
-		/**
-		 * Test account used for P2 tests.
-		 */
-		accountP2: TestAccount;
 		/**
 		 * Client for interacting with emails during tests.
 		 */
@@ -169,6 +171,14 @@ export const test = base.extend<
 		 * Component for searching/selecting domains during signup flows.
 		 */
 		componentDomainSearch: DomainSearchComponent;
+		/**
+		 * Component for the Multi-site Dashboard `/me` sidebar (profile/settings).
+		 */
+		componentDashboardMeSidebar: DashboardMeSidebarComponent;
+		/**
+		 * Component for the Multi-site Dashboard snackbar notices.
+		 */
+		componentDashboardSnackbar: DashboardSnackbarComponent;
 		/**
 		 * Component for the Me sidebar (profile/settings)
 		 */
@@ -217,6 +227,10 @@ export const test = base.extend<
 		 * Page object representing the WordPress.com dashboard.
 		 */
 		pageDashboard: DashboardPage;
+		/**
+		 * Page object representing a single site's Domains screen (`/sites/:slug/domains`) in the WordPress.com dashboard.
+		 */
+		pageDashboardSiteDomains: DashboardSiteDomainsPage;
 		/**
 		 * Page object representing the cart checkout page.
 		 */
@@ -322,6 +336,10 @@ export const test = base.extend<
 		 */
 		pagePurchases: PurchasesPage;
 		/**
+		 * Page object representing the Multi-site Dashboard Billing > Active upgrades screens.
+		 */
+		pageDashboardPurchases: DashboardPurchasesPage;
+		/**
 		 * Page object representing the WordPress.com themes detail page.
 		 */
 		pageThemeDetails: ThemesDetailPage;
@@ -371,41 +389,22 @@ export const test = base.extend<
 
 		await use( page );
 	},
-	accountAtomic: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'atomicUser' );
-		await use( testAccount );
-	},
+	...( Object.fromEntries(
+		Object.entries( fixtureAccounts ).map( ( [ fixtureName, accountName ] ) => [
+			fixtureName,
+			async ( { page }, use ) => {
+				const testAccount = await getAccount( page, accountName );
+				await use( testAccount );
+			},
+		] )
+	) as Record< keyof typeof fixtureAccounts, AccountFixture > ),
 	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		const testAccount = await getAccount( page, accountName );
 		await use( testAccount );
 	},
-	accountDefaultUser: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'defaultUser' );
-		await use( testAccount );
-	},
-	accountGutenbergSimple: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'gutenbergSimpleSiteUser' );
-		await use( testAccount );
-	},
-	accounti18n: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'i18nUser' );
-		await use( testAccount );
-	},
-	accountPreRelease: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'calypsoPreReleaseUser' );
-		await use( testAccount );
-	},
-	accountSimpleSiteFreePlan: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'simpleSiteFreePlanUser' );
-		await use( testAccount );
-	},
 	accountSMS: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'smsUser' );
-		await use( testAccount );
-	},
-	accountP2: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'p2User' );
 		await use( testAccount );
 	},
 	clientEmail: async ( {}, use ) => {
@@ -419,6 +418,14 @@ export const test = base.extend<
 	componentBlockWidgetEditor: async ( { page }, use ) => {
 		const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
 		await use( blockWidgetEditorComponent );
+	},
+	componentDashboardMeSidebar: async ( { page }, use ) => {
+		const dashboardMeSidebarComponent = new DashboardMeSidebarComponent( page );
+		await use( dashboardMeSidebarComponent );
+	},
+	componentDashboardSnackbar: async ( { page }, use ) => {
+		const dashboardSnackbarComponent = new DashboardSnackbarComponent( page );
+		await use( dashboardSnackbarComponent );
 	},
 	componentMeSidebar: async ( { page }, use ) => {
 		const meSidebarComponent = new MeSidebarComponent( page );
@@ -480,6 +487,10 @@ export const test = base.extend<
 	pageDashboard: async ( { page }, use ) => {
 		const dashboardPage = new DashboardPage( page );
 		await use( dashboardPage );
+	},
+	pageDashboardSiteDomains: async ( { page }, use ) => {
+		const dashboardSiteDomainsPage = new DashboardSiteDomainsPage( page );
+		await use( dashboardSiteDomainsPage );
 	},
 	pageCartCheckout: async ( { page }, use ) => {
 		const cartCheckoutPage = new CartCheckoutPage( page );
@@ -587,6 +598,10 @@ export const test = base.extend<
 	pagePurchases: async ( { page }, use ) => {
 		const purchasesPage = new PurchasesPage( page );
 		await use( purchasesPage );
+	},
+	pageDashboardPurchases: async ( { page }, use ) => {
+		const dashboardPurchasesPage = new DashboardPurchasesPage( page );
+		await use( dashboardPurchasesPage );
 	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
@@ -702,7 +717,6 @@ export const tags = {
 	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
 	LEGAL: '@legal',
 	P2: '@p2',
-	QUARANTINED: '@quarantined',
 	SETTINGS: '@settings',
 };
 
@@ -738,6 +752,30 @@ export function skipIfMailosaurLimitReached(): void {
  */
 export function skipIfNotTrunk(): void {
 	test.skip( ( process.env.BRANCH_NAME || '' ) !== 'trunk', 'Skipping: run only on trunk' );
+}
+
+/**
+ * Skips the current test suite when the run does not target a Jetpack deployment site.
+ *
+ * `wpcom-deployment` is the only value any build type sets, and only it resolves an
+ * account owning a site with the Jetpack site features (Instant Search, Subscriptions)
+ * some specs need. Every other run resolves an account whose site has none of them —
+ * the Calypso PR matrix reaches these specs whenever a shared E2E file change drops
+ * its `--grep` and runs the whole suite.
+ *
+ * @example
+ * ```typescript
+ * test.describe( 'My Test Suite', () => {
+ *   skipIfNotJetpackDeployment();
+ *   test( 'my test', async () => { ... });
+ * });
+ * ```
+ */
+export function skipIfNotJetpackDeployment(): void {
+	test.skip(
+		envVariables.JETPACK_TARGET !== 'wpcom-deployment',
+		'Skipping: requires a test site with Jetpack features (JETPACK_TARGET=wpcom-deployment)'
+	);
 }
 
 /**

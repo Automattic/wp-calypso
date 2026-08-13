@@ -207,10 +207,26 @@ export interface Purchase {
 	is_past_expiry_date: boolean;
 
 	/**
-	 * Whole days until the subscription expires, rounded down. Uses a UTC midnight
-	 * basis, so it can go negative up to a day before `is_past_expiry_date`
-	 * (end-of-day basis) does, and can read up to a day off from the viewer's local
-	 * time zone. Null for purchases with no expiry time (one-time and perpetual).
+	 * Whole days from today until the subscription expires, counted in UTC.
+	 * Negative once the subscription has expired, and null for subscriptions
+	 * that never expire (for example, one-time purchases).
+	 *
+	 * Don't use this in text that counts down to a date the viewer can also
+	 * see; the fact that it is UTC-based means it can disagree by 1 day with
+	 * the viewer's own time zone. For example, a subscription expiration date
+	 * of July 30 (midnight UTC) will be shown as July 29 in any timezone west
+	 * of UTC (such as New York). As a result, the viewer will expect the
+	 * displayed days until expiration to equal 2 any time during the day on
+	 * July 27 in their time zone, and to equal 1 any time during the day on
+	 * July 28 in their time zone, etc. To get that behavior, see
+	 * `getCalendarDaysUntil` and `getRelativeDayString` in
+	 * `client/dashboard/utils/datetime.ts` instead.
+	 *
+	 * By contrast, do use this when the answer should match the server's time
+	 * rather than the viewer's time. If you want the count of days to change
+	 * at the same moment the subscription itself can change state (for
+	 * example, as soon as the subscription's `expiry_status` becomes
+	 * "expired"), then this property is a good choice.
 	 */
 	days_until_expiry: number | null;
 
@@ -371,8 +387,8 @@ export interface Purchase {
 	regular_price_integer: number;
 
 	/**
-	 * The date of the next scheduled auto-renewal attempt (ISO 8601), or an
-	 * empty string when no renewal is scheduled.
+	 * The date of the next scheduled auto-renewal attempt (ISO 8601), or
+	 * `undefined` when no renewal is scheduled.
 	 *
 	 * Populated only when the subscription is set to auto-renew and a renewal
 	 * attempt is still upcoming. WordPress.com begins attempting renewals before
@@ -381,12 +397,13 @@ export interface Purchase {
 	 * post-expiry grace period, so this date may fall before or after
 	 * `expiry_date`.
 	 *
-	 * An empty string means no attempt is scheduled: auto-renew is off, or the
+	 * `undefined` means no attempt is scheduled: auto-renew is off, or the
 	 * subscription is in its grace period past the final auto-renewal attempt.
 	 * It does NOT fall back to the expiry date — read `expiry_date` explicitly
-	 * where an expiry date is wanted.
+	 * where an expiry date is wanted. The server may also send an empty string
+	 * for the same "unset" meaning; treat both as falsy.
 	 */
-	renew_date: string;
+	renew_date?: string;
 
 	sale_amount?: number;
 	sale_amount_integer?: number;
@@ -434,6 +451,18 @@ export interface Purchase {
 	 * payment method attached, no auto-renew will be attempted.
 	 */
 	is_auto_renew_enabled: boolean;
+
+	/**
+	 * True if the purchase is past the UTC date of its first auto-renewal attempt.
+	 *
+	 * Once this is `true` the subscription has had at least one chance to renew
+	 * itself and has not taken it.
+	 *
+	 * The same caveats as `is_past_last_auto_renew_attempt_date` apply: it is
+	 * unaffected by whether auto-renew is actually enabled, and it is
+	 * day-granular.
+	 */
+	is_past_first_auto_renew_attempt_date: boolean;
 
 	/**
 	 * True if the purchase is past the UTC date of its final auto-renewal attempt.
@@ -523,6 +552,10 @@ export interface Purchase {
 	 * link will typically go to the plans page for the site or some other
 	 * location depending on the product. To cause these buttons to instead add
 	 * a product directly to the cart, also set `upgrade_product_slug`.
+	 *
+	 * Note that a subscription may be upgradable even if it is past its expiry
+	 * date (i.e. in its grace period). This allows lapsed customers to choose
+	 * a different plan.
 	 */
 	is_upgradable: boolean;
 
@@ -530,11 +563,9 @@ export interface Purchase {
 	 * True if this subscription's plan can be downgraded to a different, lower
 	 * plan type (eg: Business to Personal).
 	 *
-	 * Only ever true for plans. Like `is_upgradable`, this is false for A4A
-	 * plans, bundle-`included` subscriptions, and (for Jetpack plans) holding
-	 * sites. Unlike `is_upgradable`, an active subscription that is merely past
-	 * its expiry date (grace period) is still considered downgradable; only
-	 * inactive ('expired') subscriptions are excluded.
+	 * Only ever true for WordPress.com plans. Like `is_upgradable`, it may
+	 * return true for expired subscriptions that are in their grace period, to
+	 * allow lapsed customers to downgrade to a lower plan.
 	 */
 	is_plan_type_downgradable: boolean;
 

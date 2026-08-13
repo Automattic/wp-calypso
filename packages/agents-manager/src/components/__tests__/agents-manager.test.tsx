@@ -32,6 +32,9 @@ jest.mock( '../../contexts', () => ( {
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
 jest.mock( '../../utils/create-agent-config', () => ( {} ) );
 jest.mock( '../../hooks/use-agent-config', () => ( {} ) );
+jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
+	useOpenChatUrlParam: () => true,
+} ) );
 jest.mock( '../../utils/agent-session', () => ( {} ) );
 jest.mock( '../../utils/load-external-providers', () => ( {} ) );
 jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {} ) );

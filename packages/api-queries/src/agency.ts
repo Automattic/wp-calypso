@@ -68,6 +68,9 @@ export const activeAgencyQuery = () =>
 			}
 			return null;
 		},
+		// Not persisted: tier, influenced revenue and approval status change server-side
+		// and are shown prominently on the overview, so a reload must revalidate them.
+		meta: { persist: false },
 		staleTime: 5 * 60 * 1000,
 		retry: false,
 	} );

@@ -2,23 +2,22 @@ import {
 	BrowserManager,
 	CartCheckoutPage,
 	ComingSoonPage,
+	DashboardMeSidebarComponent,
+	DashboardPurchasesPage,
+	DashboardSnackbarComponent,
 	DataHelper,
 	DomainSearchComponent,
+	LaunchCelebrationComponent,
 	LoginPage,
-	MeSidebarComponent,
-	MyHomePage,
-	MyProfilePage,
 	NewSiteResponse,
 	NewUserResponse,
-	NoticeComponent,
 	PostCheckoutSetupSitePage,
-	PurchasesPage,
 	RestAPIClient,
 	SecretsManager,
 	SignupPickPlanPage,
-	SiteSettingsPage,
 	StartSiteFlow,
 	UserSignupPage,
+	cancelDashboardPurchaseFlow,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
@@ -57,10 +56,7 @@ test.describe(
 			} );
 		} );
 
-		// Skipped for now; can be updated once we're sure all onboarding tests will go
-		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
-		// and https://github.com/Automattic/wp-calypso/pull/112587.
-		test.skip( 'As a new user, I can sign up, onboard, launch, and cancel subscription', async ( {
+		test( 'As a new user, I can sign up, onboard, launch, and cancel subscription', async ( {
 			page,
 			browser,
 		} ) => {
@@ -104,32 +100,32 @@ test.describe(
 			} );
 
 			await test.step( 'Then prices are shown in GBP', async () => {
-				const cartAmount = ( await cartCheckoutPage!.getCheckoutTotalAmount( {
+				const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
 					rawString: true,
 				} ) ) as string;
 				expect( cartAmount.startsWith( '£' ) ).toBe( true );
 			} );
 
 			await test.step( 'When I apply coupon', async () => {
-				originalAmount = ( await cartCheckoutPage!.getCheckoutTotalAmount() ) as number;
-				await cartCheckoutPage!.enterCouponCode( SecretsManager.secrets.testCouponCode );
+				originalAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
+				await cartCheckoutPage.enterCouponCode( SecretsManager.secrets.testCouponCode );
 			} );
 
 			await test.step( 'Then the coupon reduces the purchase amount', async () => {
-				const newAmount = ( await cartCheckoutPage!.getCheckoutTotalAmount() ) as number;
-				expect( newAmount ).toBeLessThan( originalAmount! );
-				const expectedAmount = originalAmount! * 0.99;
+				const newAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
+				expect( newAmount ).toBeLessThan( originalAmount );
+				const expectedAmount = originalAmount * 0.99;
 				expect( newAmount ).toStrictEqual( expectedAmount );
 			} );
 
 			await test.step( 'When I enter billing and payment details', async () => {
 				const paymentDetails = DataHelper.getTestPaymentDetails();
-				await cartCheckoutPage!.enterBillingDetails( paymentDetails );
-				await cartCheckoutPage!.enterPaymentDetails( paymentDetails );
+				await cartCheckoutPage.enterBillingDetails( paymentDetails );
+				await cartCheckoutPage.enterPaymentDetails( paymentDetails );
 			} );
 
 			await test.step( 'When I make purchase', async () => {
-				await cartCheckoutPage!.purchase( { timeout: 90 * 1000 } );
+				await cartCheckoutPage.purchase( { timeout: 90 * 1000 } );
 			} );
 
 			await test.step( 'When I skip upsell if present', async () => {
@@ -171,7 +167,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then site slug exists', async () => {
-				expect( newSiteDetails!.blog_details.site_slug ).toBeDefined();
+				expect( newSiteDetails.blog_details.site_slug ).toBeDefined();
 			} );
 
 			await test.step( 'Then site is not yet launched', async () => {
@@ -179,64 +175,59 @@ test.describe(
 				// about what the public sees, not the authenticated owner.
 				const tmpContext = await browser.newContext();
 				const tmpPage = await tmpContext.newPage();
-				await tmpPage.goto( newSiteDetails!.blog_details.url as string );
+				await tmpPage.goto( newSiteDetails.blog_details.url as string );
 				const comingSoonPage = new ComingSoonPage( tmpPage );
 				await comingSoonPage.validateComingSoonState();
 				await tmpContext.close();
 			} );
 
-			await test.step( 'When I launch site via site settings', async () => {
-				const siteSettingsPage = new SiteSettingsPage( page );
-				await siteSettingsPage.visit( newSiteDetails!.blog_details.site_slug, 'site-visibility' );
-				await siteSettingsPage.launchSite();
+			await test.step( 'When I launch site from the dashboard visibility settings', async () => {
+				await page.goto(
+					DataHelper.getDashboardURL(
+						`/sites/${ newSiteDetails.blog_details.site_slug }/settings/site-visibility`
+					)
+				);
+				await page.getByRole( 'link', { name: 'Launch your site' } ).click();
 			} );
 
 			await test.step( 'When I skip domain purchase', async () => {
 				const domainSearchComponent = new DomainSearchComponent( page );
-				await domainSearchComponent.search( newSiteDetails!.blog_details.site_slug );
+				await domainSearchComponent.search( newSiteDetails.blog_details.site_slug );
 				await domainSearchComponent.skipPurchase();
 			} );
 
-			await test.step( 'Then I am navigated back to site overview', async () => {
-				await page.waitForURL( /sites/ );
-				const myHomePage = new MyHomePage( page );
-				await new Promise( ( r ) => setTimeout( r, 2000 ) );
-				await page.reload();
-				const heading = page.getByRole( 'heading', { name: 'You launched your site!' } );
-				if ( ! ( await heading.isVisible( { timeout: 5_000 } ).catch( () => false ) ) ) {
-					return;
-				}
-				await myHomePage.validateTaskHeadingMessage( 'You launched your site!' );
+			await test.step( 'Then the site launch is confirmed in the dashboard', async () => {
+				// The launch flow returns to the Multi-site Dashboard site overview.
+				await page.waitForURL( new RegExp( `/sites/${ newSiteDetails.blog_details.site_slug }` ) );
+				// A separate spec covers whether the site is actually public; here we
+				// just confirm the dashboard shows the launch celebration.
+				const launchCelebration = new LaunchCelebrationComponent( page );
+				await launchCelebration.validateVisible();
 			} );
 
-			await test.step( 'When I navigate to Me > Purchases', async () => {
-				const mePage = new MyProfilePage( page );
-				await mePage.visit();
-				const meSidebarComponent = new MeSidebarComponent( page );
-				await meSidebarComponent.openMobileMenu();
-				await meSidebarComponent.navigate( 'Purchases' );
+			await test.step( 'When I navigate to Billing > Active upgrades', async () => {
+				await page.goto( DataHelper.getDashboardURL( '/me' ) );
+				const meSidebar = new DashboardMeSidebarComponent( page );
+				await meSidebar.openMobileMenu();
+				await meSidebar.navigate( 'Billing' );
+				await page.getByRole( 'link', { name: 'Active upgrades', exact: true } ).click();
 			} );
 
-			await test.step( 'When I view details of purchased plan', async () => {
-				const purchasesPage = new PurchasesPage( page );
+			await test.step( 'When I cancel plan', async () => {
+				const purchasesPage = new DashboardPurchasesPage( page );
 				await purchasesPage.clickOnPurchase(
 					`WordPress.com ${ planName }`,
-					newSiteDetails!.blog_details.site_slug
+					newSiteDetails.blog_details.site_slug
 				);
-			} );
-
-			await test.step( 'When I cancel plan renewal', async () => {
-				const purchasesPage = new PurchasesPage( page );
-				const noticeComponent = new NoticeComponent( page );
-				await purchasesPage.cancelPurchase( 'Cancel plan' );
-				try {
-					await noticeComponent.noticeShown(
-						'Your refund has been processed and your purchase removed.',
-						{ timeout: 30 * 1000 }
-					);
-				} catch {
-					// Alternate flows may show different confirmation messaging.
-				}
+				await purchasesPage.cancelPurchase();
+				await cancelDashboardPurchaseFlow( page, {
+					reason: 'Another reason…',
+					customReasonText: 'E2E TEST CANCELLATION',
+				} );
+				const snackbar = new DashboardSnackbarComponent( page );
+				await snackbar.noticeShown( 'Your refund has been processed and your purchase removed.', {
+					exact: true,
+				} );
 			} );
 		} );
 	}
