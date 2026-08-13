@@ -19,6 +19,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
+import { isRemoved } from '../../utils/purchase';
 import { useIsSplitCancelRemoveEnabled } from './cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	WIDE_FIELDS,
@@ -107,8 +108,14 @@ export default function PurchasesList() {
 		visibleFields: view.fields,
 	} );
 
+	// A removed subscription is not an upgrade the viewer still holds, and nothing
+	// on this page can act on one — whether they cancelled it or support did.
+	// Filtered here rather than in the query, because other readers of it (e.g.
+	// account deletion) do need to see removed subscriptions.
 	const allSubscriptions = useMemo( () => {
-		return isLoading ? [] : [ ...purchases, ...transferredPurchases ];
+		return isLoading
+			? []
+			: [ ...purchases, ...transferredPurchases ].filter( ( purchase ) => ! isRemoved( purchase ) );
 	}, [ isLoading, purchases, transferredPurchases ] );
 
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {

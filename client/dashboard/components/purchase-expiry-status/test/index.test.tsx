@@ -94,6 +94,22 @@ describe( '<PurchaseExpiryStatus>', () => {
 		expect( renewLink() ).toBeVisible();
 	} );
 
+	test( 'says a removed purchase is over rather than dating it to the day it was cancelled', () => {
+		render(
+			<PurchaseExpiryStatus
+				purchase={ createPurchase( {
+					expiry_status: 'expired',
+					subscription_status: 'inactive',
+					expiry_date: NOW,
+				} ) }
+			/>
+		);
+
+		expect( screen.getByText( /no longer active/i ) ).toBeVisible();
+		expect( screen.queryByText( /expired today/i ) ).toBeNull();
+		expect( renewLink() ).toBeNull();
+	} );
+
 	describe( 'a monthly subscription', () => {
 		const monthly = { bill_period_days: SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD };
 

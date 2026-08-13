@@ -20,6 +20,7 @@ import {
 	isExpiring,
 	isExpiredOrRemoved,
 	isIncludedWithPlan,
+	isRemoved,
 	isOneTimePurchase,
 	isAkismetFreeProduct,
 	creditCardHasAlreadyExpired,
@@ -461,6 +462,14 @@ export function PurchaseExpiryStatus( {
 		return sprintf( __( 'Session used on %s' ), [
 			formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 		] );
+	}
+
+	// A removed subscription is settled: it cannot be renewed, and its expiry date
+	// records when it was cancelled rather than when it lapsed — so the expired
+	// copy below would announce that it "expired today" on the day support
+	// cancelled it, and offer a renewal link that leads nowhere.
+	if ( isRemoved( purchase ) ) {
+		return <span>{ __( 'No longer active' ) }</span>;
 	}
 
 	if ( isExpiredOrRemoved( purchase ) ) {
