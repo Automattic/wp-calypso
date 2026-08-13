@@ -178,6 +178,8 @@ export function Nav2026MobileMenu( {
 										<ul
 											className={ clsx( 'x-menu-mobile-dropdown-list', {
 												'is-visible': isActive,
+												// Only this list's subtitle sits flush; the rest keep their top padding.
+												'is-first-group': groupIndex === 0,
 											} ) }
 											data-dropdown-name={ menu.name }
 											key={ `${ menu.name }-${ group.title }` }

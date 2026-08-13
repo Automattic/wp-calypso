@@ -1884,9 +1884,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		text-transform: uppercase;
 		color: $studio-gray-30;
 
-		&:first-child {
-			padding-top: 0;
-		}
+	}
+
+	// Each group is its own <ul>, so scope the flush-top exception to the
+	// category's first list — otherwise every subtitle is a :first-child.
+	.x-menu-mobile-dropdown-list.is-first-group .x-menu-mobile-dropdown-subtitle:first-child {
+		padding-top: 0;
 	}
 
 	.x-menu-mobile-dropdown-link.x-menu-mobile-dropdown-link {
