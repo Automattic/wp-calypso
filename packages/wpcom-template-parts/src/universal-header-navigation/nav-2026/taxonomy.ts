@@ -26,7 +26,7 @@ export function getNav2026Menus( {
 }: GetNav2026MenusArgs ): Nav2026Menu[] {
 	const buildGroup: Nav2026Group = {
 		title: __( 'Build', __i18n_text_domain__ ),
-		columnGroup: 'build',
+		columnGroup: 'build-publish',
 		items: [
 			{
 				label: __( 'Website', __i18n_text_domain__ ),
@@ -47,7 +47,7 @@ export function getNav2026Menus( {
 	};
 	const publishGroup: Nav2026Group = {
 		title: __( 'Publish', __i18n_text_domain__ ),
-		columnGroup: 'publish',
+		columnGroup: 'build-publish',
 		items: [
 			{
 				label: __( 'Blog', __i18n_text_domain__ ),
@@ -91,28 +91,6 @@ export function getNav2026Menus( {
 					],
 				},
 				{
-					title: __( 'Affiliates', __i18n_text_domain__ ),
-					columnGroup: 'hosting',
-					items: [
-						{
-							label: __( 'Affiliate program', __i18n_text_domain__ ),
-							url: localizeUrl( '//wordpress.com/affiliates/' ),
-							target: '_self',
-						},
-					],
-				},
-				{
-					title: __( 'Enterprise', __i18n_text_domain__ ),
-					columnGroup: 'hosting',
-					items: [
-						{
-							label: __( 'Enterprise hosting', __i18n_text_domain__ ),
-							url: 'https://wpvip.com/',
-							isExternal: true,
-						},
-					],
-				},
-				{
 					title: __( 'Domains', __i18n_text_domain__ ),
 					columnGroup: 'domains',
 					items: [
@@ -136,6 +114,28 @@ export function getNav2026Menus( {
 							label: __( 'Professional email', __i18n_text_domain__ ),
 							url: localizeUrl( '//wordpress.com/professional-email/' ),
 							target: '_self',
+						},
+					],
+				},
+				{
+					title: __( 'Affiliates', __i18n_text_domain__ ),
+					columnGroup: 'affiliates-enterprise',
+					items: [
+						{
+							label: __( 'Affiliate program', __i18n_text_domain__ ),
+							url: localizeUrl( '//wordpress.com/affiliates/' ),
+							target: '_self',
+						},
+					],
+				},
+				{
+					title: __( 'Enterprise', __i18n_text_domain__ ),
+					columnGroup: 'affiliates-enterprise',
+					items: [
+						{
+							label: __( 'Enterprise hosting', __i18n_text_domain__ ),
+							url: 'https://wpvip.com/',
+							isExternal: true,
 						},
 					],
 				},
