@@ -31,7 +31,6 @@ import Dashboard from './dashboard';
 import LeadMatchingForm from './lead-matching';
 import {
 	mapAgencyDetailsFormData,
-	mapApplicationFormData,
 	mapLeadMatchingFormData,
 	mapLeadMatchingProfileToFormData,
 } from './utils/map-application-form-data';
@@ -59,7 +58,6 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		selectedSection === PARTNER_DIRECTORY_LEAD_MATCHING_SLUG && hasAgency && ! isFetching;
 	const leadMatchingProfileQuery = useLeadMatchingProfile( shouldFetchLeadMatching );
 
-	const applicationData = useMemo( () => mapApplicationFormData( agency ), [ agency ] );
 	const agencyDetailsData = useMemo( () => mapAgencyDetailsFormData( agency ), [ agency ] );
 	const leadMatchingProfile =
 		leadMatchingProfileQuery.data?.lead_matching_profile ?? agency?.lead_matching?.profile ?? null;
@@ -102,7 +100,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		sections[ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG ] = {
-			content: <AgencyExpertise initialFormData={ applicationData } />,
+			content: <AgencyExpertise />,
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ].breadcrumbItems,
 				{
@@ -131,7 +129,6 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 	}, [
 		translate,
 		agencyDetailsData,
-		applicationData,
 		isLeadMatchingLoading,
 		leadMatchingData,
 		leadMatchingProfile,
