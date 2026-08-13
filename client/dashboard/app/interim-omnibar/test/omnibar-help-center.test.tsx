@@ -2,13 +2,20 @@
  * @jest-environment jsdom
  */
 
+import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import { render } from '../../../test-utils';
 import OmnibarHelpCenter from '../omnibar-help-center';
+import type { Site } from '@automattic/api-core';
 
 jest.mock( '@automattic/help-center', () => ( {
 	__esModule: true,
-	default: () => <div role="region" aria-label="Help Center" />,
+	default: ( { site }: { site?: { ID: number } | null } ) => (
+		<div role="region" aria-label="Help Center">
+			{ site ? `site:${ site.ID }` : 'site:none' }
+		</div>
+	),
 } ) );
 
 describe( '<OmnibarHelpCenter />', () => {
@@ -40,6 +47,29 @@ describe( '<OmnibarHelpCenter />', () => {
 
 			unmount();
 		}
+	} );
+
+	test( 'hands the omnibar site to the Help Center', async () => {
+		window.history.replaceState( {}, '', '/sites?help-center=home' );
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { retry: false } },
+		} );
+		queryClient.setQueryData( omnibarSiteIdQuery().queryKey, 456 );
+		queryClient.setQueryData( siteByIdQuery( 456 ).queryKey, {
+			ID: 456,
+			name: 'Test Site',
+			URL: 'https://test.example',
+			slug: 'test.example',
+			is_wpcom_atomic: false,
+			jetpack: false,
+			site_owner: 1,
+		} as Site );
+
+		render( <OmnibarHelpCenter />, { queryClient } );
+
+		expect( await screen.findByRole( 'region', { name: 'Help Center' } ) ).toHaveTextContent(
+			'site:456'
+		);
 	} );
 
 	test( 'ignores unrelated query params', () => {
