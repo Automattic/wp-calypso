@@ -21,6 +21,7 @@ import {
 	isAgencyProfileComplete,
 	isApplicationCompleted,
 } from './lib';
+import LinkButton from './link-button';
 import StatusBadge from './status-badge';
 import type { DirectoryStatusBadge } from './lib';
 import type { Agency, AgencyPartnerDirectorySlug, AgencyProfile } from '@automattic/api-core';
@@ -54,6 +55,11 @@ interface Props {
 	onPublishSuccess?: ( agency: Agency ) => void;
 	onPublishError?: () => void;
 	openSupportGuide?: ( url: string ) => void;
+	/**
+	 * Set to false in apps without the dashboard's TanStack Router, so link
+	 * buttons render plain anchors for the host app's own router to pick up.
+	 */
+	shouldUseRouterLink?: boolean;
 }
 
 /*
@@ -71,6 +77,7 @@ export default function PartnerDirectoryDashboardContent( {
 	onPublishSuccess,
 	onPublishError,
 	openSupportGuide,
+	shouldUseRouterLink,
 }: Props ) {
 	const profile = agency.profile;
 	const application = profile?.partner_directory_application;
@@ -170,6 +177,7 @@ export default function PartnerDirectoryDashboardContent( {
 						showPopoverOnLoad={ showPopoverOnLoad }
 						expertiseUrl={ expertiseUrl }
 						recordTracksEvent={ recordTracksEvent }
+						shouldUseRouterLink={ shouldUseRouterLink }
 					/>
 					<Text>{ DIRECTORY_NAMES[ directory ] }</Text>
 				</HStack>
@@ -225,6 +233,7 @@ export default function PartnerDirectoryDashboardContent( {
 														showPopoverOnLoad={ false }
 														expertiseUrl={ expertiseUrl }
 														recordTracksEvent={ recordTracksEvent }
+														shouldUseRouterLink={ shouldUseRouterLink }
 													/>
 													{ badge.key === 'approved' && ! brandMeta.isAvailable && (
 														<Text>{ __( 'This Partner Directory is launching soon.' ) }</Text>
@@ -246,12 +255,22 @@ export default function PartnerDirectoryDashboardContent( {
 					) }
 					actions={
 						<>
-							<Button variant="secondary" href={ expertiseUrl } onClick={ onEditExpertiseClick }>
+							<LinkButton
+								variant="secondary"
+								href={ expertiseUrl }
+								onClick={ onEditExpertiseClick }
+								shouldUseRouterLink={ shouldUseRouterLink }
+							>
 								{ __( 'Edit expertise' ) }
-							</Button>
-							<Button variant="secondary" href={ profileUrl } onClick={ onEditProfileClick }>
+							</LinkButton>
+							<LinkButton
+								variant="secondary"
+								href={ profileUrl }
+								onClick={ onEditProfileClick }
+								shouldUseRouterLink={ shouldUseRouterLink }
+							>
 								{ __( 'Edit profile' ) }
-							</Button>
+							</LinkButton>
 						</>
 					}
 				/>
@@ -285,13 +304,14 @@ export default function PartnerDirectoryDashboardContent( {
 								  )
 						}
 						actions={
-							<Button
+							<LinkButton
 								variant={ applicationWasSubmitted ? 'secondary' : 'primary' }
 								href={ expertiseUrl }
 								onClick={ applicationWasSubmitted ? onEditExpertiseClick : onApplyNowClick }
+								shouldUseRouterLink={ shouldUseRouterLink }
 							>
 								{ applicationWasSubmitted ? __( 'Edit expertise' ) : __( 'Apply now' ) }
-							</Button>
+							</LinkButton>
 						}
 					/>
 				</ActionList>
@@ -303,7 +323,7 @@ export default function PartnerDirectoryDashboardContent( {
 							'When approved, add details to your agency’s public profile for clients to see.'
 						) }
 						actions={
-							<Button
+							<LinkButton
 								variant={
 									applicationWasSubmitted && hasDirectoryApproval && ! isProfileComplete
 										? 'primary'
@@ -312,9 +332,10 @@ export default function PartnerDirectoryDashboardContent( {
 								href={ profileUrl }
 								onClick={ onFinishProfileClick }
 								disabled={ ! applicationWasSubmitted || ! hasDirectoryApproval }
+								shouldUseRouterLink={ shouldUseRouterLink }
 							>
 								{ isProfileComplete ? __( 'Edit profile' ) : __( 'Finish profile' ) }
-							</Button>
+							</LinkButton>
 						}
 					/>
 				</ActionList>

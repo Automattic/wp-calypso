@@ -137,7 +137,7 @@ export const agencyTiersRoute = createRoute( {
 	)
 );
 
-// `/agency/partner-directory` – partner directory application dashboard
+// `/agency/partner-directory` – layout that gates on the partner directory program
 export const agencyPartnerDirectoryRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_partner_directory' },
 	head: () => ( {
@@ -159,10 +159,35 @@ export const agencyPartnerDirectoryRoute = createRoute( {
 			throw redirectAsNotAllowed( { to: '/overview' } );
 		}
 	},
+} );
+
+const agencyPartnerDirectoryIndexRoute = createRoute( {
+	getParentRoute: () => agencyPartnerDirectoryRoute,
+	path: '/',
 	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
 } ).lazy( () =>
 	import( '../../agency/partner-directory' ).then( ( d ) =>
 		createLazyRoute( 'agency-partner-directory' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/agency/partner-directory/expertise` – apply to or update the directory application
+export const agencyPartnerDirectoryExpertiseRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Share your expertise' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyPartnerDirectoryRoute,
+	path: 'expertise',
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+} ).lazy( () =>
+	import( '../../agency/partner-directory/expertise' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory-expertise' )( {
 			component: d.default,
 		} )
 	)
@@ -864,7 +889,10 @@ export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
-		agencyPartnerDirectoryRoute,
+		agencyPartnerDirectoryRoute.addChildren( [
+			agencyPartnerDirectoryIndexRoute,
+			agencyPartnerDirectoryExpertiseRoute,
+		] ),
 		exclusiveOffersRoute,
 		learnRoute,
 		mcpRoute.addChildren( [

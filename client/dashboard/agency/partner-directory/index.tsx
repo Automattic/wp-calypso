@@ -8,13 +8,14 @@ import PageLayout from '../../components/page-layout';
 import { a4aLink } from '../../utils/link';
 import PartnerDirectoryDashboardContent from './dashboard-content';
 
+const EXPERTISE_URL = '/agency/partner-directory/expertise';
+
 /*
- * TODO: The expertise, profile, and lead matching screens are not migrated to
- * the dashboard yet, so these link to the classic A4A app — and lead matching
- * is not reachable from here at all until it migrates. Switch to dashboard
+ * TODO: The profile and lead matching screens are not migrated to the
+ * dashboard yet, so this links to the classic A4A app — and lead matching is
+ * not reachable from here at all until it migrates. Switch to dashboard
  * routes once those screens are migrated.
  */
-const EXPERTISE_URL = a4aLink( '/partner-directory/agency-expertise' );
 const PROFILE_URL = a4aLink( '/partner-directory/agency-details' );
 
 export default function AgencyPartnerDirectory() {
