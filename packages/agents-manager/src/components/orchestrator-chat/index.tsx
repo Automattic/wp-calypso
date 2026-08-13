@@ -1,4 +1,9 @@
-import { getAgentManager, useAgentChat, type UIMessage } from '@automattic/agenttic-client';
+import {
+	getAgentManager,
+	useAgentChat,
+	type TaskUpdate,
+	type UIMessage,
+} from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -37,6 +42,7 @@ import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-mess
 import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
+import { isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -51,6 +57,19 @@ import type {
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
+
+const streamedCheckpointMessagesBySession = new Map< string, Map< string, UIMessage > >();
+
+function getStreamedCheckpointMessages( sessionIdentity: string ): Map< string, UIMessage > {
+	const existing = streamedCheckpointMessagesBySession.get( sessionIdentity );
+	if ( existing ) {
+		return existing;
+	}
+
+	const messages = new Map< string, UIMessage >();
+	streamedCheckpointMessagesBySession.set( sessionIdentity, messages );
+	return messages;
+}
 
 function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
 	for ( let index = messages.length - 1; index >= 0; index-- ) {
@@ -241,6 +260,75 @@ export default function OrchestratorChat( {
 		}
 	}, [] );
 	const { isPageOrSiteEditorSurface: groupWritingSuggestions } = usePageOrSiteEditorSurface();
+	const checkpointSessionIdentity = `${ agentConfig?.agentId ?? '' }:${
+		agentConfig?.sessionId ?? getActiveSessionId() ?? ''
+	}`;
+	const streamedCheckpointMessagesRef = useRef( {
+		sessionIdentity: checkpointSessionIdentity,
+		pendingByTaskId: new Map< string, UIMessage >(),
+		byFinalMessageId: getStreamedCheckpointMessages( checkpointSessionIdentity ),
+		regeneratingMessageId: undefined as string | undefined,
+	} );
+	if ( streamedCheckpointMessagesRef.current.sessionIdentity !== checkpointSessionIdentity ) {
+		streamedCheckpointMessagesRef.current = {
+			sessionIdentity: checkpointSessionIdentity,
+			pendingByTaskId: new Map(),
+			byFinalMessageId: getStreamedCheckpointMessages( checkpointSessionIdentity ),
+			regeneratingMessageId: undefined,
+		};
+	}
+	const agentChatConfig = useMemo( () => {
+		if ( ! agentConfig ) {
+			return null;
+		}
+
+		const { onTaskUpdate } = agentConfig;
+		return {
+			...agentConfig,
+			onTaskUpdate: async ( update: TaskUpdate ) => {
+				const streamedMessages = streamedCheckpointMessagesRef.current;
+				if ( streamedMessages.sessionIdentity === checkpointSessionIdentity && update.text ) {
+					const message: UIMessage = {
+						id: update.status.message?.messageId ?? update.agentMessage?.messageId ?? update.id,
+						role: 'agent',
+						content: [ { type: 'text', text: update.text } ],
+						timestamp: Date.now(),
+						archived: false,
+						showIcon: true,
+					};
+					if ( isBlockEditToolId( getToolMessageData( message )?.toolId ) ) {
+						streamedMessages.pendingByTaskId.set( update.id, message );
+					}
+				}
+
+				const isTerminal =
+					update.final === true ||
+					[ 'completed', 'canceled', 'failed' ].includes( update.status.state );
+				if ( isTerminal ) {
+					const finalMessageId = update.status.message?.messageId ?? update.agentMessage?.messageId;
+					const completedSuccessfully =
+						update.status.state === 'completed' ||
+						( update.final === true && ! [ 'canceled', 'failed' ].includes( update.status.state ) );
+					const checkpointMessage = streamedMessages.pendingByTaskId.get( update.id );
+					const regeneratingMessageId = streamedMessages.regeneratingMessageId;
+					if ( completedSuccessfully && regeneratingMessageId ) {
+						streamedMessages.byFinalMessageId.delete( regeneratingMessageId );
+					}
+					if ( finalMessageId && completedSuccessfully && checkpointMessage ) {
+						streamedMessages.byFinalMessageId.set( finalMessageId, checkpointMessage );
+					} else if ( completedSuccessfully && regeneratingMessageId ) {
+						if ( finalMessageId ) {
+							streamedMessages.byFinalMessageId.delete( finalMessageId );
+						}
+					}
+					streamedMessages.pendingByTaskId.delete( update.id );
+					streamedMessages.regeneratingMessageId = undefined;
+				}
+
+				await onTaskUpdate?.( update );
+			},
+		};
+	}, [ agentConfig, checkpointSessionIdentity ] );
 
 	const {
 		addMessage,
@@ -256,7 +344,7 @@ export default function OrchestratorChat( {
 		registerMessageActions,
 		getRegenerateHandler,
 		progressMessage,
-	} = useAgentChat( agentConfig! );
+	} = useAgentChat( agentChatConfig! );
 	const messagesRef = useRef( messages );
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 	const previousMessagesRef = useRef( messages );
@@ -296,11 +384,17 @@ export default function OrchestratorChat( {
 
 			return async () => {
 				setIsRegenerating( true );
+				streamedCheckpointMessagesRef.current.pendingByTaskId.clear();
+				streamedCheckpointMessagesRef.current.regeneratingMessageId = message?.id;
 				// Drop any retained placeholders up front; the turn is being
 				// rewound, so a leftover picker would otherwise reappear once
 				// regeneration settles if the new response omits the component.
 				clearRetainedShowComponentMessages();
-				await handler();
+				try {
+					await handler();
+				} finally {
+					streamedCheckpointMessagesRef.current.regeneratingMessageId = undefined;
+				}
 			};
 		},
 		[ clearRetainedShowComponentMessages, getRegenerateHandler ]
@@ -871,7 +965,9 @@ export default function OrchestratorChat( {
 		const checkpointActionsByMessageId = new Map(
 			currentMessages.map( ( message ) => [
 				message.id,
-				getCheckpointActionsForMessage( message ),
+				getCheckpointActionsForMessage(
+					streamedCheckpointMessagesRef.current.byFinalMessageId.get( message.id ) ?? message
+				),
 			] )
 		);
 

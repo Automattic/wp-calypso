@@ -25,6 +25,8 @@ export interface CheckpointApi {
 	setCheckpoint: ( id: string, fields?: CheckpointField[] ) => void;
 	hasCheckpoint: ( id: string ) => boolean;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
+	canSwapCheckpoint?: ( id: string ) => boolean | undefined;
+	swapCheckpoint?: ( id: string ) => Promise< void >;
 }
 
 // ---------- Module state ----------
@@ -925,4 +927,13 @@ export function undoBlockEdit(
 	} catch {
 		return false;
 	}
+}
+
+export function canUndoBlockEdit(
+	clientId: string,
+	expectedContent: string,
+	editableAttribute?: string
+): boolean {
+	const snapshot = getBlockSnapshot( clientId, editableAttribute, undefined, expectedContent );
+	return !! snapshot?.attributeName && snapshot.content === expectedContent;
 }

@@ -25,6 +25,7 @@ jest.mock( '@wordpress/icons', () => {
 	return {
 		check: 'check',
 		closeSmall: 'closeSmall',
+		redo: 'redo',
 		undo: 'undo',
 		Icon: ( { className, icon }: { className?: string; icon: unknown } ) => {
 			if ( typeof icon !== 'string' ) {
@@ -99,7 +100,7 @@ describe( 'useCheckpointAction', () => {
 		jest.restoreAllMocks();
 	} );
 
-	it( 'shows Reverted and disables Undo after restoring a successful block edit', async () => {
+	it( 'shows Reverted and removes Undo after restoring a successful block edit', async () => {
 		let registration: MessageActionsRegistration | undefined;
 		const registerMessageActions = jest.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
@@ -119,6 +120,7 @@ describe( 'useCheckpointAction', () => {
 					success: true,
 					message: 'Corrected the grammar.',
 					outcome: 'updated',
+					changeType: 'text-content',
 				},
 			},
 		} );
@@ -160,10 +162,13 @@ describe( 'useCheckpointAction', () => {
 			id: 'tool-call-1',
 			outcome: 'success',
 		} );
-		expect( undoButton ).toBeDisabled();
+		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
 		expect( status ).toHaveTextContent( 'Reverted' );
 		expect( within( status ).getByTestId( 'icon-closeSmall' ) ).toBeInTheDocument();
 		expect( status ).toHaveClass( 'agents-manager-resolved-edit-action__status--reverted' );
+		expect( getActions( registration, message )[ 0 ] ).toMatchObject( {
+			label: 'Reverted',
+		} );
 	} );
 
 	it( 're-enables Undo when restoring the checkpoint fails', async () => {
@@ -183,12 +188,13 @@ describe( 'useCheckpointAction', () => {
 			.mockResolvedValueOnce( undefined );
 		const consoleError = jest.spyOn( console, 'error' ).mockImplementation();
 		const message = createToolMessage( {
-			toolCallId: 'tool-call-1',
+			toolCallId: 'tool-call-failure',
 			data: {
 				result: {
 					success: true,
 					message: 'Corrected the grammar.',
 					outcome: 'updated',
+					changeType: 'text-content',
 				},
 			},
 		} );
@@ -209,7 +215,7 @@ describe( 'useCheckpointAction', () => {
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'restore_checkpoint_action', {
-			id: 'tool-call-1',
+			id: 'tool-call-failure',
 			outcome: 'failed',
 		} );
 		expect( undoButton ).toBeEnabled();
@@ -224,11 +230,96 @@ describe( 'useCheckpointAction', () => {
 		expect( checkpoint.restoreCheckpoint ).toHaveBeenCalledTimes( 2 );
 		expect( undoButton ).toBeDisabled();
 		await waitFor( () => expect( status ).toHaveTextContent( 'Reverted' ) );
+		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 2 );
 		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'restore_checkpoint_action', {
-			id: 'tool-call-1',
+			id: 'tool-call-failure',
 			outcome: 'success',
 		} );
+	} );
+
+	it( 'swaps a text checkpoint between Undo and Redo', async () => {
+		let registration: MessageActionsRegistration | undefined;
+		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+			registration = nextRegistration;
+		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
+		const checkpoint = createCheckpoint();
+		checkpoint.canSwapCheckpoint = jest.fn().mockReturnValue( true );
+		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
+		const message = createToolMessage( {
+			toolCallId: 'swappable-tool-call',
+			data: {
+				result: {
+					success: true,
+					message: 'Corrected the grammar.',
+					outcome: 'updated',
+					changeType: 'text-content',
+				},
+			},
+		} );
+
+		renderHook( () => useCheckpointAction( registerMessageActions, checkpoint ) );
+
+		const actions = getActions( registration, message );
+		if ( actions[ 0 ]?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		render( createElement( actions[ 0 ].component, actions[ 0 ].componentProps ) );
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Undo' } ) );
+		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Redo' } ) ).toBeEnabled() );
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Reverted' );
+		( checkpoint.canSwapCheckpoint as jest.Mock ).mockReturnValue( false );
+		const driftedAction = getActions( registration, message )[ 0 ];
+		expect( driftedAction ).toMatchObject( { label: 'Reverted' } );
+		if ( driftedAction?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		expect( driftedAction.componentProps ).not.toHaveProperty( 'onRedo' );
+		( checkpoint.canSwapCheckpoint as jest.Mock ).mockReturnValue( true );
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Redo' } ) );
+		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Undo' } ) ).toBeEnabled() );
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Updated' );
+		expect( checkpoint.swapCheckpoint ).toHaveBeenNthCalledWith( 1, 'swappable-tool-call' );
+		expect( checkpoint.swapCheckpoint ).toHaveBeenNthCalledWith( 2, 'swappable-tool-call' );
+		expect( checkpoint.restoreCheckpoint ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not offer Undo when a swappable text checkpoint has drifted', () => {
+		let registration: MessageActionsRegistration | undefined;
+		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+			registration = nextRegistration;
+		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
+		const checkpoint = createCheckpoint();
+		checkpoint.canSwapCheckpoint = jest.fn().mockReturnValue( false );
+		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
+		const message = createToolMessage( {
+			toolCallId: 'drifted-tool-call',
+			data: {
+				result: {
+					success: true,
+					message: 'Corrected the grammar.',
+					outcome: 'updated',
+					changeType: 'text-content',
+				},
+			},
+		} );
+
+		renderHook( () => useCheckpointAction( registerMessageActions, checkpoint ) );
+
+		const actions = getActions( registration, message );
+		expect( actions[ 0 ] ).toMatchObject( {
+			type: 'component',
+			id: 'checkpoint',
+			label: 'Updated',
+		} );
+		if ( actions[ 0 ]?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		expect( actions[ 0 ].componentProps ).not.toHaveProperty( 'onUndo' );
+		expect( actions[ 0 ].componentProps ).not.toHaveProperty( 'onRedo' );
+		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
 	} );
 
 	it( 'uses the Jetpack tool call id for its block edit checkpoint', async () => {
@@ -282,6 +373,30 @@ describe( 'useCheckpointAction', () => {
 					success: true,
 					message: 'No edits were necessary.',
 					outcome: 'no-changes',
+				},
+			},
+		} );
+
+		renderHook( () => useCheckpointAction( registerMessageActions, checkpoint ) );
+
+		expect( getActions( registration, message ) ).toEqual( [] );
+		expect( checkpoint.hasCheckpoint ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not show the resolved edit action for a structural block edit', () => {
+		let registration: MessageActionsRegistration | undefined;
+		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+			registration = nextRegistration;
+		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
+		const checkpoint = createCheckpoint();
+		const message = createToolMessage( {
+			toolCallId: 'structural-tool-call',
+			data: {
+				result: {
+					success: true,
+					message: 'Moved the block.',
+					outcome: 'updated',
+					changeType: 'other',
 				},
 			},
 		} );

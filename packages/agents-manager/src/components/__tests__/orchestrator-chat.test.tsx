@@ -3,12 +3,14 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import type { TaskUpdate } from '@automattic/agenttic-client';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { ComponentProps } from 'react';
 
 const mockUseAgentChat = jest.fn();
 const mockUpdateSessionId = jest.fn();
 let mockManagerHasAgent = true;
+let mockAgentChatConfig: { onTaskUpdate?: ( update: TaskUpdate ) => Promise< void > } | undefined;
 const mockUseRegenerateAction = jest.fn();
 const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
@@ -152,7 +154,10 @@ jest.mock(
 			updateSessionId: mockUpdateSessionId,
 			hasAgent: () => mockManagerHasAgent,
 		} ),
-		useAgentChat: () => mockUseAgentChat(),
+		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
+			mockAgentChatConfig = config;
+			return mockUseAgentChat();
+		},
 	} ),
 	{ virtual: true }
 );
@@ -348,6 +353,7 @@ describe( 'OrchestratorChat', () => {
 		mockBlockEditorStoreThrows = false;
 		sessionStorage.clear();
 		mockManagerHasAgent = true;
+		mockAgentChatConfig = undefined;
 	} );
 
 	it( 'ignores a conversation result for a discarded agent', () => {
@@ -1214,6 +1220,134 @@ describe( 'OrchestratorChat', () => {
 					} ),
 				] ),
 			} )
+		);
+	} );
+
+	it( 'keeps streamed checkpoint actions through final prose and remounts', async () => {
+		const checkpointAction = {
+			id: 'checkpoint',
+			label: 'Updated and Undo',
+			onClick: jest.fn(),
+			order: 1,
+		};
+		mockUseCheckpointAction.mockReturnValue(
+			( message: { content?: Array< { text?: string } > } ) =>
+				message.content?.[ 0 ]?.text?.includes( 'big_sky__apply_block_edits' )
+					? [ checkpointAction ]
+					: []
+		);
+		const view = render( chat() );
+		const checkpointResult = JSON.stringify( {
+			tool_id: 'big_sky__apply_block_edits',
+			tool_call_id: 'tool-call-streamed',
+			data: {
+				result: {
+					success: true,
+					outcome: 'updated',
+					changeType: 'text-content',
+				},
+			},
+		} );
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-streamed',
+				status: { state: 'working' },
+				text: checkpointResult,
+				final: false,
+				kind: 'status',
+			} );
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-streamed',
+				status: {
+					state: 'completed',
+					message: { messageId: 'agent-final', role: 'agent', kind: 'message', parts: [] },
+				},
+				text: 'The paragraph has been updated.',
+				final: true,
+				kind: 'status',
+			} );
+		} );
+
+		const finalMessage = {
+			id: 'agent-final',
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+		};
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { messages: [ finalMessage ] } ) );
+		view.rerender( chat() );
+
+		const messages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+			id: string;
+			actions?: Array< { id: string; label: string } >;
+		} >;
+		expect( messages[ 0 ].actions ).toEqual( [
+			expect.objectContaining( { id: 'checkpoint', label: 'Updated and Undo' } ),
+		] );
+		view.unmount();
+
+		const remountedView = render( chat() );
+		const remountedMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+			actions?: Array< { id: string; label: string } >;
+		} >;
+		expect( remountedMessages[ 0 ].actions ).toEqual( [
+			expect.objectContaining( { id: 'checkpoint', label: 'Updated and Undo' } ),
+		] );
+
+		const regenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			await regenerateConfig.getRegenerateHandler?.( finalMessage )?.();
+		} );
+		remountedView.rerender( chat() );
+
+		const restoredMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+			actions?: Array< { id: string; label: string } >;
+		} >;
+		expect( restoredMessages[ 0 ].actions ).toEqual( [
+			expect.objectContaining( { id: 'checkpoint', label: 'Updated and Undo' } ),
+		] );
+
+		let resolveRegenerate!: () => void;
+		const regeneration = new Promise< void >( ( resolve ) => {
+			resolveRegenerate = resolve;
+		} );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [ finalMessage ],
+				getRegenerateHandler: jest.fn( () => () => regeneration ),
+			} )
+		);
+		remountedView.rerender( chat() );
+		const successfulRegenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			const regenerate = successfulRegenerateConfig.getRegenerateHandler?.( finalMessage )?.();
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-regenerated',
+				status: {
+					state: 'completed',
+					message: { messageId: 'agent-final', role: 'agent', kind: 'message', parts: [] },
+				},
+				text: 'No edit was made.',
+				final: true,
+				kind: 'status',
+			} );
+			resolveRegenerate();
+			await regenerate;
+		} );
+		remountedView.rerender( chat() );
+
+		const regeneratedMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+			actions?: Array< { id: string } >;
+		} >;
+		expect( regeneratedMessages[ 0 ].actions ).not.toEqual(
+			expect.arrayContaining( [ expect.objectContaining( { id: 'checkpoint' } ) ] )
 		);
 	} );
 

@@ -1,30 +1,37 @@
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { check, closeSmall, Icon, undo } from '@wordpress/icons';
+import { check, closeSmall, Icon, redo, undo } from '@wordpress/icons';
 
 type ResolvedEditActionProps = {
-	onUndo: () => Promise< boolean >;
+	initiallyReverted?: boolean;
+	onRedo?: () => Promise< boolean >;
+	onUndo?: () => Promise< boolean >;
 };
 
-export default function ResolvedEditAction( { onUndo }: ResolvedEditActionProps ) {
-	const [ undoState, setUndoState ] = useState< 'ready' | 'pending' | 'reverted' >( 'ready' );
-	const handleUndo = async () => {
-		if ( undoState !== 'ready' ) {
+export default function ResolvedEditAction( {
+	initiallyReverted = false,
+	onRedo,
+	onUndo,
+}: ResolvedEditActionProps ) {
+	const [ isReverted, setIsReverted ] = useState( initiallyReverted );
+	const [ isPending, setIsPending ] = useState( false );
+	const action = isReverted ? onRedo : onUndo;
+	const handleAction = async () => {
+		if ( ! action || isPending ) {
 			return;
 		}
 
-		setUndoState( 'pending' );
+		setIsPending( true );
 		try {
-			if ( await onUndo() ) {
-				setUndoState( 'reverted' );
-			} else {
-				setUndoState( 'ready' );
+			if ( await action() ) {
+				setIsReverted( ! isReverted );
 			}
 		} catch {
-			setUndoState( 'ready' );
+			return;
+		} finally {
+			setIsPending( false );
 		}
 	};
-	const isReverted = undoState === 'reverted';
 
 	return (
 		<div className="agents-manager-resolved-edit-action">
@@ -43,15 +50,21 @@ export default function ResolvedEditAction( { onUndo }: ResolvedEditActionProps 
 					? __( 'Reverted', __i18n_text_domain__ )
 					: __( 'Updated', __i18n_text_domain__ ) }
 			</span>
-			<button
-				type="button"
-				className="agents-manager-resolved-edit-action__undo"
-				onClick={ () => void handleUndo() }
-				disabled={ undoState !== 'ready' }
-			>
-				<Icon className="agents-manager-resolved-edit-action__icon" icon={ undo } size={ 20 } />
-				{ __( 'Undo', __i18n_text_domain__ ) }
-			</button>
+			{ action && (
+				<button
+					type="button"
+					className="agents-manager-resolved-edit-action__undo"
+					onClick={ () => void handleAction() }
+					disabled={ isPending }
+				>
+					<Icon
+						className="agents-manager-resolved-edit-action__icon"
+						icon={ isReverted ? redo : undo }
+						size={ 20 }
+					/>
+					{ isReverted ? __( 'Redo', __i18n_text_domain__ ) : __( 'Undo', __i18n_text_domain__ ) }
+				</button>
+			) }
 		</div>
 	);
 }

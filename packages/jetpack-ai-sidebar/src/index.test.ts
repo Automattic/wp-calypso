@@ -2967,6 +2967,65 @@ describe( 'toolProvider', () => {
 			checkpoint.clearCheckpoint( 'call-update-block' );
 		} );
 
+		it( 'swaps a block checkpoint between the updated and original content', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-swap-block',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			expect( checkpoint.canSwapCheckpoint( 'call-swap-block' ) ).toBe( true );
+			await checkpoint.swapCheckpoint( 'call-swap-block' );
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'original block content'
+			);
+
+			await checkpoint.swapCheckpoint( 'call-swap-block' );
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'Corrected block content.'
+			);
+			expect( blockUpdates ).toHaveLength( 3 );
+			checkpoint.clearCheckpoint( 'call-swap-block' );
+		} );
+
+		it( 'does not swap a block checkpoint after a later edit', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-stale-swap',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content = 'A later edit.';
+			expect( checkpoint.canSwapCheckpoint( 'call-stale-swap' ) ).toBe( false );
+			await expect( checkpoint.swapCheckpoint( 'call-stale-swap' ) ).rejects.toThrow(
+				'Failed to swap block edit checkpoint.'
+			);
+			expect( blockUpdates ).toHaveLength( 1 );
+			checkpoint.clearCheckpoint( 'call-stale-swap' );
+		} );
+
 		it( 'surfaces a failed block checkpoint restore', async () => {
 			jest.useFakeTimers();
 			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();

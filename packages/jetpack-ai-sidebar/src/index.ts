@@ -45,6 +45,7 @@ import {
 	rememberSelectedBlock,
 	clearRememberedSelectedBlock,
 	notifyBlockActionComplete,
+	canUndoBlockEdit,
 	undoBlockEdit,
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
@@ -944,8 +945,8 @@ export function getChatComponent( type: string ): ComponentType | null {
  * checkpoint must not clobber another field's later edits. Block-edit snapshots
  * are captured by `handleUpdateBlockContentForChat`; meta (SEO pickers) and
  * image alt text changes are not checkpointed. Stubs the rest of AM's
- * `UseCheckpointReturn` interface — only the three methods above are used on
- * this path.
+ * `UseCheckpointReturn` interface; block-edit checkpoints also support safe
+ * inline Undo and Redo through `canSwapCheckpoint` and `swapCheckpoint`.
  * @returns {Object} The checkpoint API AM consumes.
  */
 const postSnapshots: Map< string, Partial< Record< CheckpointField, string > > > = new Map();
@@ -962,6 +963,32 @@ export function useCheckpoint(): any {
 		},
 		hasCheckpoint( id: string ): boolean {
 			return postSnapshots.has( id ) || blockEditSnapshots.has( id );
+		},
+		canSwapCheckpoint( id: string ): boolean | undefined {
+			const snapshot = blockEditSnapshots.get( id );
+			return snapshot
+				? canUndoBlockEdit( snapshot.clientId, snapshot.contentAfter, snapshot.editableAttribute )
+				: undefined;
+		},
+		async swapCheckpoint( id: string ): Promise< void > {
+			const snapshot = blockEditSnapshots.get( id );
+			if (
+				! snapshot ||
+				! undoBlockEdit(
+					snapshot.clientId,
+					snapshot.contentBefore,
+					snapshot.contentAfter,
+					snapshot.editableAttribute
+				)
+			) {
+				throw new Error( 'Failed to swap block edit checkpoint.' );
+			}
+
+			blockEditSnapshots.set( id, {
+				...snapshot,
+				contentBefore: snapshot.contentAfter,
+				contentAfter: snapshot.contentBefore,
+			} );
 		},
 		async restoreCheckpoint( id: string ): Promise< void > {
 			const blockEditSnapshot = blockEditSnapshots.get( id );
