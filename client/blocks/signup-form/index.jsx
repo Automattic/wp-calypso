@@ -72,7 +72,6 @@ class SignupForm extends Component {
 		isPasswordless: PropTypes.bool,
 		isSocialFirst: PropTypes.bool,
 		isSocialSignupEnabled: PropTypes.bool,
-		signupFlowName: PropTypes.string,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
 		redirectToAfterLoginUrl: PropTypes.string,
@@ -759,7 +758,6 @@ class SignupForm extends Component {
 					<PasswordlessSignupForm
 						stepName={ this.props.stepName }
 						flowName={ this.props.flowName }
-						signupFlowName={ this.props.signupFlowName }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
 						disableTosText={ this.props.disableTosText }
@@ -787,7 +785,6 @@ class SignupForm extends Component {
 						<PasswordlessSignupForm
 							stepName={ this.props.stepName }
 							flowName={ this.props.flowName }
-							signupFlowName={ this.props.signupFlowName }
 							goToNextStep={ this.props.goToNextStep }
 							disableTosText
 							submitForm={ this.handlePasswordlessSubmit }

@@ -42,7 +42,6 @@ class PasswordlessSignupForm extends Component {
 		onUpdateEmail: PropTypes.func,
 		// Names the signup's origin to the backend, which aims the activation link on it.
 		activationEmailFrom: PropTypes.string,
-		signupFlowName: PropTypes.string,
 		useConnectScreenActions: PropTypes.bool,
 	};
 
@@ -103,7 +102,7 @@ class PasswordlessSignupForm extends Component {
 			username: '',
 			password: '',
 		};
-		const { activationEmailFrom, flowName, signupFlowName = flowName, queryArgs = {} } = this.props;
+		const { activationEmailFrom, flowName, queryArgs = {} } = this.props;
 		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
 		const isDevAccount = devAccountLandingPageRefs.includes( queryArgs.ref );
 
@@ -131,8 +130,7 @@ class PasswordlessSignupForm extends Component {
 		// I'm not sure why passwordless signup form stopped respecting flowName from variationName param,
 		// see https://github.com/Automattic/wp-calypso/pull/67225 for more details.
 		// I'm going to add a temporary hack for entrepreneur flow.
-		const signup_flow_name =
-			queryArgs.variationName === 'entrepreneur' ? 'entrepreneur' : signupFlowName;
+		const signup_flow_name = queryArgs.variationName === 'entrepreneur' ? 'entrepreneur' : flowName;
 
 		try {
 			const body = {
@@ -226,12 +224,12 @@ class PasswordlessSignupForm extends Component {
 		};
 
 		const marketing_price_group = response?.marketing_price_group ?? '';
-		const { flowName, signupFlowName = flowName, queryArgs = {} } = this.props;
+		const { flowName, queryArgs = {} } = this.props;
 		const { redirect_to, oauth2_client_id, oauth2_redirect } = queryArgs;
 
 		recordRegistration( {
 			userData,
-			flow: signupFlowName,
+			flow: flowName,
 			type: 'passwordless',
 		} );
 

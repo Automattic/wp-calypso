@@ -143,7 +143,6 @@ export class UserStep extends Component {
 		translate: PropTypes.func,
 		subHeaderText: PropTypes.string,
 		isSocialSignupEnabled: PropTypes.bool,
-		isAkismet: PropTypes.bool,
 		initialContext: PropTypes.object,
 	};
 
@@ -305,7 +304,7 @@ export class UserStep extends Component {
 	};
 
 	submit = ( data ) => {
-		const { flowName, stepName, oauth2Signup, isAkismet } = this.props;
+		const { flowName, stepName, oauth2Signup } = this.props;
 		const dependencies = {};
 		if ( oauth2Signup ) {
 			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
@@ -316,7 +315,6 @@ export class UserStep extends Component {
 		this.props.submitSignupStep(
 			{
 				flowName,
-				...( isAkismet && { signupFlowName: 'akismet' } ),
 				stepName,
 				oauth2Signup,
 				...data,
@@ -579,7 +577,6 @@ export class UserStep extends Component {
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
 					isPasswordless={ isPasswordless }
-					signupFlowName={ this.props.isAkismet ? 'akismet' : undefined }
 					queryArgs={ this.props.initialContext?.query || {} }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }

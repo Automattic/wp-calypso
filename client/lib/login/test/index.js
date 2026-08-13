@@ -59,6 +59,24 @@ describe( 'getSignupUrl', () => {
 		);
 	} );
 
+	test( 'should preserve ref for the account signup flow', () => {
+		expect(
+			getSignupUrl(
+				{ redirect_to: 'https://example.com', ref: 'product' },
+				'/log-in',
+				null,
+				'en',
+				''
+			)
+		).toEqual( '/start/account?redirect_to=https%3A%2F%2Fexample.com&ref=product' );
+	} );
+
+	test( 'should preserve ref without a redirect', () => {
+		expect( getSignupUrl( { ref: 'product' }, '/log-in', null, 'de', '' ) ).toEqual(
+			'/start/de?ref=product'
+		);
+	} );
+
 	test( 'should work for VaultPress route', () => {
 		const currentQuery = {
 			client_id: '930',
@@ -176,6 +194,15 @@ describe( 'getSignupUrl', () => {
 				''
 			)
 		).toEqual( '/start/account?redirect_to=https%3A%2F%2Fexample.com' );
+		expect(
+			getSignupUrl(
+				{ signup_flow: 'account', redirect_to: 'https://example.com', ref: 'product' },
+				'/log-in',
+				null,
+				'en',
+				''
+			)
+		).toEqual( '/start/account?redirect_to=https%3A%2F%2Fexample.com&ref=product' );
 	} );
 
 	test( '/log-in/jetpack uses /jetpack/connect', () => {

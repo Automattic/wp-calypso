@@ -52,6 +52,7 @@ export function pathWithLeadingSlash( path ) {
 
 export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname ) {
 	const redirectTo = currentQuery?.redirect_to ?? '';
+	const ref = currentQuery?.ref ?? '';
 
 	if (
 		// Match locales like `/log-in/jetpack/es`
@@ -140,10 +141,14 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 
 	const signupFlow = currentQuery?.signup_flow;
 	if ( signupFlow ) {
-		if ( redirectTo ) {
-			const params = new URLSearchParams( {
-				redirect_to: redirectTo,
-			} );
+		if ( redirectTo || ref ) {
+			const params = new URLSearchParams();
+			if ( redirectTo ) {
+				params.set( 'redirect_to', redirectTo );
+			}
+			if ( ref ) {
+				params.set( 'ref', ref );
+			}
 			return `/start/${ signupFlow }?${ params.toString() }`;
 		}
 		return `/start/${ signupFlow }`;
@@ -153,14 +158,18 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		const params = new URLSearchParams( {
 			redirect_to: redirectTo,
 		} );
+		if ( ref ) {
+			params.set( 'ref', ref );
+		}
 		return `/start/account?${ params.toString() }`;
 	}
 
-	if ( ! isDefaultLocale( locale ) ) {
-		return addLocaleToPath( '/start', locale );
+	const signupPath = ! isDefaultLocale( locale ) ? addLocaleToPath( '/start', locale ) : '/start';
+	if ( ref ) {
+		return `${ signupPath }?${ new URLSearchParams( { ref } ).toString() }`;
 	}
 
-	return '/start';
+	return signupPath;
 }
 
 export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client ) => {

@@ -799,7 +799,6 @@ export function createAccount(
 	{
 		userData,
 		flowName,
-		signupFlowName,
 		lastKnownFlow,
 		queryArgs,
 		service,
@@ -829,11 +828,10 @@ export function createAccount(
 	const SIGNUP_TYPE_DEFAULT = 'default';
 
 	const params = new URLSearchParams( window.location.search );
-	const baseSignupFlowName = signupFlowName ?? flowName;
 	const flowNameTracking =
 		null === params.get( 'variationName' )
-			? baseSignupFlowName
-			: `${ baseSignupFlowName }-${ params.get( 'variationName' ) }`;
+			? flowName
+			: `${ flowName }-${ params.get( 'variationName' ) }`;
 
 	const responseHandler = ( signupType ) => ( error, response ) => {
 		const emailInError = signupType === SIGNUP_TYPE_SOCIAL ? { email: error?.data?.email } : {};
@@ -932,6 +930,7 @@ export function createAccount(
 				...userData,
 				tos: getToSAcceptancePayload(),
 				anon_id: getTracksAnonymousUserId(),
+				...( queryArgs.ref && { ref: queryArgs.ref } ),
 			},
 			responseHandler( SIGNUP_TYPE_SOCIAL )
 		);
@@ -951,6 +950,7 @@ export function createAccount(
 					client_secret: config( 'wpcom_signup_key' ),
 					tos: getToSAcceptancePayload(),
 					anon_id: getTracksAnonymousUserId(),
+					...( queryArgs.ref && { ref: queryArgs.ref } ),
 				},
 				oauth2Signup
 					? {
