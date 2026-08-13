@@ -1,3 +1,4 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { isAkismetPro500Plan } from '../../utils/akismet';
@@ -187,6 +188,22 @@ function renderSpaceAddOnquantitySummary( licensedQuantity: number, isRenewal: b
 	);
 }
 
+function renderStudioCodeAiCreditsQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
+	if ( isRenewal ) {
+		return sprintf(
+			/* translators: %s: formatted number of credits */
+			_n( 'Renewal for %s credit', 'Renewal for %s credits', licensedQuantity ),
+			formatNumber( licensedQuantity )
+		);
+	}
+
+	return sprintf(
+		/* translators: %s: formatted number of credits */
+		_n( 'Purchase of %s credit', 'Purchase of %s credits', licensedQuantity ),
+		formatNumber( licensedQuantity )
+	);
+}
+
 function renderAkismetTransactionQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
 	if ( isRenewal ) {
 		return sprintf(
@@ -289,6 +306,10 @@ export function renderTransactionQuantitySummary( {
 
 	if ( isAkismetPro500Plan( wpcom_product_slug ) ) {
 		return renderAkismetTransactionQuantitySummary( licensedQuantity, isRenewal );
+	}
+
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
+		return renderStudioCodeAiCreditsQuantitySummary( licensedQuantity, isRenewal );
 	}
 
 	if ( isRenewal ) {

@@ -1,3 +1,4 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import {
 	getPlanTermLabel,
 	isDIFMProduct,
@@ -316,6 +317,26 @@ export function DomainTransactionVolumeSummary( { item }: { item: BillingTransac
 	);
 }
 
+function renderStudioCodeAiCreditsQuantitySummary(
+	licensed_quantity: number,
+	isRenewal: boolean,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	if ( isRenewal ) {
+		return translate( 'Renewal for %(quantity)s credit', 'Renewal for %(quantity)s credits', {
+			args: { quantity: formatNumber( licensed_quantity ) },
+			count: licensed_quantity,
+			comment: '%(quantity)s is the number of credits',
+		} );
+	}
+
+	return translate( 'Purchase of %(quantity)s credit', 'Purchase of %(quantity)s credits', {
+		args: { quantity: formatNumber( licensed_quantity ) },
+		count: licensed_quantity,
+		comment: '%(quantity)s is the number of credits',
+	} );
+}
+
 function renderAkismetTransactionQuantitySummary(
 	licensed_quantity: number,
 	isRenewal: boolean,
@@ -384,6 +405,10 @@ export function renderTransactionQuantitySummary(
 
 	if ( isAkismetPro500( product ) ) {
 		return renderAkismetTransactionQuantitySummary( licensed_quantity, isRenewal, translate );
+	}
+
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
+		return renderStudioCodeAiCreditsQuantitySummary( licensed_quantity, isRenewal, translate );
 	}
 
 	if ( isRenewal ) {
