@@ -4,7 +4,11 @@
 import config from '@automattic/calypso-config';
 import { renderHook } from '@testing-library/react';
 import { useSelector } from 'calypso/state';
-import { useEmailVerificationGate } from '../use-email-verification-gate';
+import {
+	isDeferredEmailVerification,
+	isEmailVerificationEnabled,
+	useEmailVerificationGate,
+} from '../use-email-verification-gate';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const actual = jest.requireActual( '@automattic/calypso-config' );
@@ -85,5 +89,63 @@ describe( 'useEmailVerificationGate', () => {
 
 			expect( statusFor() ).toBe( 'verified' );
 		} );
+	} );
+
+	// The deferred flag (Variant B) must not open the account-step gate: it moves later in the flow.
+	it( 'does not gate the account step under the deferred flag alone', () => {
+		mockConfig.enabledFlags.clear();
+		mockConfig.enabledFlags.add( 'onboarding/email-verification-deferred' );
+		mockUser( { email_verified: false } );
+
+		expect( statusFor() ).toBe( 'clear' );
+	} );
+} );
+
+describe( 'isDeferredEmailVerification', () => {
+	afterEach( () => mockConfig.enabledFlags.clear() );
+
+	it( 'is true for onboarding with the deferred flag on', () => {
+		mockConfig.enabledFlags.add( 'onboarding/email-verification-deferred' );
+
+		expect( isDeferredEmailVerification( 'onboarding' ) ).toBe( true );
+	} );
+
+	it( 'is false for other flows', () => {
+		mockConfig.enabledFlags.add( 'onboarding/email-verification-deferred' );
+
+		expect( isDeferredEmailVerification( 'newsletter' ) ).toBe( false );
+	} );
+
+	it( 'is false when only the account-step flag is on', () => {
+		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
+
+		expect( isDeferredEmailVerification( 'onboarding' ) ).toBe( false );
+	} );
+} );
+
+describe( 'isEmailVerificationEnabled', () => {
+	afterEach( () => mockConfig.enabledFlags.clear() );
+
+	// Either variant sends the activation email and points it back at onboarding.
+	it( 'is true under the account-step flag', () => {
+		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
+
+		expect( isEmailVerificationEnabled( 'onboarding' ) ).toBe( true );
+	} );
+
+	it( 'is true under the deferred flag', () => {
+		mockConfig.enabledFlags.add( 'onboarding/email-verification-deferred' );
+
+		expect( isEmailVerificationEnabled( 'onboarding' ) ).toBe( true );
+	} );
+
+	it( 'is false with neither flag on', () => {
+		expect( isEmailVerificationEnabled( 'onboarding' ) ).toBe( false );
+	} );
+
+	it( 'is false for other flows', () => {
+		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
+
+		expect( isEmailVerificationEnabled( 'newsletter' ) ).toBe( false );
 	} );
 } );

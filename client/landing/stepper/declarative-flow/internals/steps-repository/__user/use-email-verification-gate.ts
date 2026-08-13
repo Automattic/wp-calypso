@@ -7,6 +7,31 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 // back here. Matched as an exact string: changing it here alone sends them somewhere else.
 export const ACTIVATION_EMAIL_SOURCE = 'onboarding-with-email-verification';
 
+// Variant A: the gate holds the user on the account step, right after creation.
+const ACCOUNT_STEP_FLAG = 'onboarding/email-verification';
+// Variant B: the account step never gates; the gate is met later, after the free plan selection
+// or after checkout. Wired by the flow, not by this hook.
+const DEFERRED_FLAG = 'onboarding/email-verification-deferred';
+
+/**
+ * Whether either variant is live for this flow. Both send the same activation email on account
+ * creation and point its link back here, so the account step asks for that whichever gates.
+ */
+export function isEmailVerificationEnabled( flow: string ): boolean {
+	return (
+		flow === ONBOARDING_FLOW &&
+		( config.isEnabled( ACCOUNT_STEP_FLAG ) || config.isEnabled( DEFERRED_FLAG ) )
+	);
+}
+
+/**
+ * Whether the gate is deferred past the account step (Variant B). The flow reads this to move the
+ * gate to after the free plan selection or after checkout.
+ */
+export function isDeferredEmailVerification( flow: string ): boolean {
+	return flow === ONBOARDING_FLOW && config.isEnabled( DEFERRED_FLAG );
+}
+
 // `pending` is not a kind of `clear`: the user's ID survives a reload but the user object does
 // not, so there is a window where the account is logged in and nothing is known about it. Reading
 // those absent fields as an unverified email opens the gate onto a blank address.
@@ -37,7 +62,7 @@ interface EmailVerificationGate {
 export function useEmailVerificationGate( flow: string ): EmailVerificationGate {
 	const currentUser = useSelector( getCurrentUser );
 
-	const isEnabled = config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW;
+	const isEnabled = config.isEnabled( ACCOUNT_STEP_FLAG ) && flow === ONBOARDING_FLOW;
 
 	// Verification is read before enablement, so turning the flag off mid-attempt can't be
 	// mistaken for the user having confirmed.
