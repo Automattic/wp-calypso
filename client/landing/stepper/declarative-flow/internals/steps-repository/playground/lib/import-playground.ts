@@ -92,6 +92,10 @@ foreach ( $plugins as $slug ) {
 	rmdir( $dir );
 }`,
 	} );
+
+	// The saved-site exporter reads OPFS from a separate iframe, so wait until the
+	// mount's asynchronous journal has persisted these changes.
+	await playground.flushOpfs( '/wordpress' );
 }
 
 /**
