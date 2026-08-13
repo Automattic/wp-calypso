@@ -1,5 +1,5 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { getGSuiteSubscriptionStatus, getGoogleMailServiceFamily } from '../../../utils/gsuite';
 import type { Purchase, Domain } from '@automattic/api-core';
 
@@ -24,17 +24,13 @@ export default function GSuiteAccessMessage( {
 		return (
 			<p>
 				{ createInterpolateElement(
-					sprintf(
-						// Translators: %(domainName)s is the name of the domain (e.g. example.com) and %(googleMailService)s can be either "G Suite" or "Google Workspace"
-						__(
-							'If you cancel your subscription for %(domainName)s now, <strong>you will lose access to all of your %(googleMailService)s features immediately</strong>, and you will need to purchase a new subscription with Google if you wish to regain access to them.'
-						),
-						{
-							domainName,
-							googleMailService,
-						}
+					// Translators: <domainName /> is the name of the domain (e.g. example.com) and <googleMailService /> is either "G Suite" or "Google Workspace"
+					__(
+						'If you cancel your subscription for <domainName /> now, <strong>you will lose access to all of your <googleMailService /> features immediately</strong>, and you will need to purchase a new subscription with Google if you wish to regain access to them.'
 					),
 					{
+						domainName: <>{ domainName }</>,
+						googleMailService: <>{ googleMailService }</>,
 						strong: <strong />,
 					}
 				) }
@@ -45,18 +41,13 @@ export default function GSuiteAccessMessage( {
 	return (
 		<p>
 			{ createInterpolateElement(
-				sprintf(
-					// Translators: %(domainName)s is the name of the domain (e.g. example.com), %(googleMailService)s can be either "G Suite" or "Google Workspace", and %(days)d is a number of days (usually '30')
-					__(
-						'If you cancel your subscription for %(domainName)s now, <strong>you will lose access to all of your %(googleMailService)s features %(days)d days after it expires</strong>. After that time, you will need to purchase a new subscription with Google if you wish to regain access to them.'
-					),
-					{
-						domainName,
-						googleMailService,
-						days: 30,
-					}
+				// Translators: <domainName /> is the name of the domain (e.g. example.com) and <googleMailService /> is either "G Suite" or "Google Workspace"
+				__(
+					'If you cancel your subscription for <domainName /> now, <strong>you will lose access to all of your <googleMailService /> features 30 days after it expires</strong>. After that time, you will need to purchase a new subscription with Google if you wish to regain access to them.'
 				),
 				{
+					domainName: <>{ domainName }</>,
+					googleMailService: <>{ googleMailService }</>,
 					strong: <strong />,
 				}
 			) }
