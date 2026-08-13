@@ -7,13 +7,10 @@ import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
-import {
-	siteSettingsRepositoriesConnectRoute,
-	siteSettingsRepositoriesRoute,
-} from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { getSiteSettingsRepositoriesURL } from '../../utils/site-url';
 import { ConnectRepositoryForm } from './connect-repository-form';
 import type { ConnectRepositoryFormData } from './connect-repository-form';
 
@@ -21,11 +18,10 @@ export default function ConnectRepository() {
 	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: installations = [] } = useQuery( githubInstallationsQuery() );
-	const navigateFrom = siteSettingsRepositoriesConnectRoute.fullPath;
-	const navigate = useNavigate( { from: navigateFrom } );
+	const navigate = useNavigate();
 
 	const handleCancel = () => {
-		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
+		navigate( { to: getSiteSettingsRepositoriesURL( siteSlug ) } );
 	};
 
 	const createMutation = useMutation( createCodeDeploymentMutation( site.ID ) );
@@ -70,7 +66,6 @@ export default function ConnectRepository() {
 								{ reason }
 							)
 						}
-						navigateFrom={ navigateFrom }
 					/>
 				</CardBody>
 			</Card>
