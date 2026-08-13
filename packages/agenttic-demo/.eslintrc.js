@@ -22,5 +22,7 @@ module.exports = {
 		// The moved sources predate Calypso's import/order convention; reordering imports
 		// across the tree would conflict with every in-flight agenttic branch. Follow-up.
 		'import/order': 'off',
+		// Debt: parity with the source repo's config; not Calypso's standard. Follow-up.
+		'no-console': 'off',
 	},
 };

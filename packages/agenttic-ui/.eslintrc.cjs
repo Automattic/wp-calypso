@@ -37,13 +37,50 @@ module.exports = {
 		// The moved sources predate Calypso's import/order convention; reordering imports
 		// across the tree would conflict with every in-flight agenttic branch. Follow-up.
 		'import/order': 'off',
+		// Debt: bare @ts-ignore came in with the move; documenting them needs the
+		// original authors. Follow-up.
+		'@typescript-eslint/ban-ts-comment': [
+			'error',
+			{ 'ts-ignore': false, 'ts-expect-error': false },
+		],
+		// Debt: parity with the source repo's config; not Calypso's standard. Follow-up.
+		'no-console': 'off',
 	},
 	overrides: [
 		...( wpRecommended.overrides || [] ),
 		{
+			// The wp config's top-level @babel/eslint-parser would otherwise hijack
+			// JSON files from Calypso's JSON linting setup.
+			files: [ '**/*.json' ],
+			extends: [ 'plugin:@automattic/json/recommended' ],
+		},
+		{
 			files: [ '**/*.stories.*', '**/stories/**', '**/__stories__/**' ],
 			rules: {
 				'no-console': 'off',
+			},
+		},
+		{
+			// scripts/ are Node CLI tools, not browser code
+			files: [ 'scripts/**' ],
+			rules: {
+				'import/no-nodejs-modules': 'off',
+			},
+		},
+		{
+			// Late override: the wp config's own TS override sets this rule, and
+			// overrides outrank top-level rules.
+			files: [ '**/*.ts', '**/*.tsx' ],
+			rules: {
+				'@typescript-eslint/no-unused-vars': [
+					'error',
+					{
+						argsIgnorePattern: '^_',
+						varsIgnorePattern: '^_',
+						caughtErrorsIgnorePattern: '^_',
+						ignoreRestSiblings: true,
+					},
+				],
 			},
 		},
 	],
