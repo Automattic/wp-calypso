@@ -59,10 +59,9 @@ setup( 'check active wpcom throttles', async () => {
 		process.env[ throttleEnvVar( id ) ] = expiresAtMs ? String( expiresAtMs ) : '';
 
 		if ( expiresAtMs ) {
-			// Not "wpcom is throttling": a build carrying the tag whose log went
-			// unread is counted as banned for the documented length from when it
-			// finished, so this is where the ban is assumed to reach, not a number
-			// wpcom stated.
+			// Not "wpcom is throttling": this is where another build's log said its
+			// ban reached, and that build may have been refused again since and
+			// pushed its own expiry out past this one.
 			console.warn(
 				`Another build hit the ${ id } throttle; treating it as in force until ${ new Date(
 					expiresAtMs

@@ -237,6 +237,26 @@ describe( 'RestAPIClient: createSite', function () {
 		);
 	} );
 
+	test( 'A throttled call answers without waiting for the write', async function () {
+		let settle: ( status: number ) => void = () => undefined;
+		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+		appendOwnBuildLog = jest
+			.spyOn( teamcity, 'appendOwnBuildLog' )
+			.mockImplementation( () => new Promise< number >( ( resolve ) => ( settle = resolve ) ) );
+		warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		nock( requestURL.origin ).post( requestURL.pathname ).reply( 403, { error: 'throttled' } );
+
+		// TeamCity has not answered, and the caller is through regardless: what a
+		// test spends on a throttle is the throttled call, not the telling.
+		await expect(
+			restAPIClient.createSite( { name: 'fake_blog_name', title: 'fake_blog_title' } )
+		).rejects.toThrow( 'throttled' );
+		expect( tagOwnBuild ).not.toHaveBeenCalled();
+
+		settle( 200 );
+		await flushThrottleWrites();
+	} );
+
 	test( 'A throttled response is recognised without the sentence too', async function () {
 		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
 		appendOwnBuildLog = jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );

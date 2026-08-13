@@ -175,7 +175,9 @@ describe( 'raiseFlag', () => {
 	test( 'a line that could not be written leaves the build untagged', async () => {
 		appendOwnBuildLog.mockRejectedValue( new Error( 'TeamCity is down' ) );
 
-		await raiseAndSettle( 'signup' );
+		// Never rejects: the promise is held by a teardown that settles it, and a
+		// worker's own path drops it on the floor.
+		await expect( raiseFlag( 'signup' ) ).resolves.toBeUndefined();
 
 		// A build a peer can find but learn nothing from is worse than one it never
 		// finds. The worker still knows: it ran into the ban itself.
