@@ -5,6 +5,7 @@ import {
 	GoogleWorkspaceSlugs,
 	JetpackSearchProducts,
 	PRODUCT_1GB_SPACE,
+	PRODUCT_STUDIO_CODE_AI_CREDITS,
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
@@ -12,7 +13,7 @@ import {
 } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, parseISO, startOfDay } from 'date-fns';
 import { isAkismetPro500Plan } from './akismet';
@@ -342,6 +343,31 @@ export function getBillPeriodLabel( purchase: Purchase ): string {
 }
 
 /**
+ * Return the Studio Code AI Credits title with its credit count, or `null` for
+ * any other product and for a purchase with no quantity.
+ */
+export function getStudioCreditsTitle(
+	productSlug: string,
+	productName: string,
+	quantity: number | null | undefined
+): string | null {
+	if ( productSlug !== PRODUCT_STUDIO_CODE_AI_CREDITS || ! quantity ) {
+		return null;
+	}
+
+	// Store Admin calls these "AI credits". Customer-facing copy says "credits".
+	return sprintf(
+		// translators: productName is the name of the product and quantity is a number of credits
+		_n(
+			'%(productName)s (%(quantity)s credit)',
+			'%(productName)s (%(quantity)s credits)',
+			quantity
+		),
+		{ productName, quantity: formatNumber( quantity ) }
+	);
+}
+
+/**
  * Return the title for a purchase for display.
  *
  * Usually this is just the `product_name`, but some products are displayed
@@ -376,6 +402,15 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 			productName: purchase.product_name,
 			quantity: formatNumber( purchase.renewal_price_tier_usage_quantity ),
 		} );
+	}
+
+	const studioTitle = getStudioCreditsTitle(
+		purchase.product_slug,
+		purchase.product_name,
+		purchase.renewal_price_tier_usage_quantity
+	);
+	if ( studioTitle ) {
+		return studioTitle;
 	}
 
 	if (

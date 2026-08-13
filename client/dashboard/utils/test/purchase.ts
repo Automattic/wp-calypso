@@ -16,6 +16,9 @@ import {
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	creditCardExpiresBeforeSubscription,
 	getRenewalUrlFromPurchase,
+	getStudioCreditsTitle,
+	getTitleForDisplay,
+	getTitleForListDisplay,
 	isPurchaseDowngradeEligible,
 	isWithinRefundWindowDowngradeEligible,
 } from '../purchase';
@@ -541,5 +544,140 @@ describe( 'isWithinRefundWindowDowngradeEligible', () => {
 				makePurchase( { is_plan: false, is_plan_type_downgradable: true, is_refundable: true } )
 			)
 		).toBe( false );
+	} );
+} );
+
+describe( 'getStudioCreditsTitle', () => {
+	const STUDIO_SLUG = 'studio-code-ai-credits';
+	const STUDIO_NAME = 'Studio Code AI Credits';
+
+	test( 'returns the title with the credit count', () => {
+		expect( getStudioCreditsTitle( STUDIO_SLUG, STUDIO_NAME, 100 ) ).toBe(
+			'Studio Code AI Credits (100 credits)'
+		);
+	} );
+
+	test( 'groups thousands in the credit count', () => {
+		expect( getStudioCreditsTitle( STUDIO_SLUG, STUDIO_NAME, 1000 ) ).toBe(
+			'Studio Code AI Credits (1,000 credits)'
+		);
+	} );
+
+	test( 'uses the singular form for a count of one', () => {
+		expect( getStudioCreditsTitle( STUDIO_SLUG, STUDIO_NAME, 1 ) ).toBe(
+			'Studio Code AI Credits (1 credit)'
+		);
+	} );
+
+	test.each( [ null, undefined, 0 ] )( 'returns null for a quantity of %p', ( quantity ) => {
+		expect( getStudioCreditsTitle( STUDIO_SLUG, STUDIO_NAME, quantity ) ).toBeNull();
+	} );
+
+	test( 'returns null for another product', () => {
+		expect( getStudioCreditsTitle( 'ak_pro5h_yearly', 'Akismet Pro', 1 ) ).toBeNull();
+	} );
+} );
+
+describe( 'getTitleForDisplay', () => {
+	test( 'shows the credit count for a Studio Code AI Credits purchase', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_slug: 'studio-code-ai-credits',
+					product_name: 'Studio Code AI Credits',
+					renewal_price_tier_usage_quantity: 500,
+				} )
+			)
+		).toBe( 'Studio Code AI Credits (500 credits)' );
+	} );
+
+	test( 'shows the product name when there is no quantity', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_slug: 'studio-code-ai-credits',
+					product_name: 'Studio Code AI Credits',
+					renewal_price_tier_usage_quantity: null,
+				} )
+			)
+		).toBe( 'Studio Code AI Credits' );
+	} );
+
+	test( 'shows the credit count ahead of the plan title', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_slug: 'studio-code-ai-credits',
+					product_name: 'Studio Code AI Credits',
+					renewal_price_tier_usage_quantity: 500,
+					is_plan: true,
+				} )
+			)
+		).toBe( 'Studio Code AI Credits (500 credits)' );
+	} );
+
+	test( 'leaves Akismet Pro titles alone', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_slug: 'ak_pro5h_yearly',
+					product_name: 'Akismet Pro (500 requests/month)',
+					renewal_price_tier_usage_quantity: 2,
+				} )
+			)
+		).toBe( 'Akismet Pro (1000 requests/month)' );
+	} );
+
+	test( 'leaves Jetpack AI titles alone', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_name: 'Jetpack AI Assistant',
+					is_jetpack_ai_product: true,
+					renewal_price_tier_usage_quantity: 1000,
+					price_tier_list: [ {} ],
+				} )
+			)
+		).toBe( 'Jetpack AI Assistant (1,000 requests per month)' );
+	} );
+
+	test( 'leaves Jetpack Stats titles alone', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_name: 'Jetpack Stats',
+					is_jetpack_stats_product: true,
+					is_free_jetpack_stats_product: false,
+					renewal_price_tier_usage_quantity: 10000,
+					price_tier_list: [ {} ],
+				} )
+			)
+		).toBe( 'Jetpack Stats (10,000 views per month)' );
+	} );
+
+	test( 'leaves storage add-on titles alone', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_slug: 'wordpress_com_1gb_space_addon_yearly',
+					product_name: 'Extra Storage',
+					renewal_price_tier_usage_quantity: 50,
+				} )
+			)
+		).toBe( 'Extra Storage 50 GB' );
+	} );
+} );
+
+describe( 'getTitleForListDisplay', () => {
+	test( 'shows the credit count for a Studio Code AI Credits purchase', () => {
+		expect(
+			getTitleForListDisplay(
+				makePurchase( {
+					product_slug: 'studio-code-ai-credits',
+					product_name: 'Studio Code AI Credits',
+					renewal_price_tier_usage_quantity: 500,
+				} )
+			)
+		).toBe( 'Studio Code AI Credits (500 credits)' );
 	} );
 } );

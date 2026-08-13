@@ -37,6 +37,7 @@ import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import i18n from 'i18n-calypso';
 import moment from 'moment';
 import {
+	getStudioCreditsTitle,
 	hasAmountAvailableToRefund,
 	isA4AHoldingSitePurchase,
 	isAgencyPartnerType,
@@ -428,6 +429,11 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 
 	if ( jetpackProductsDisplayNames[ productSlug ] ) {
 		return jetpackProductsDisplayNames[ productSlug ];
+	}
+
+	const studioTitle = getStudioCreditsTitle( productSlug, productName, quantity );
+	if ( studioTitle ) {
+		return studioTitle;
 	}
 
 	if ( isTieredVolumeSpaceAddon( purchase ) ) {
