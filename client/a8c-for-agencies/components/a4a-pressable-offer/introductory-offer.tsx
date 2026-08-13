@@ -1,24 +1,18 @@
 import { useTranslate } from 'i18n-calypso';
-import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
-import { useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import PressableOfferBanner from './banner';
 import {
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 	PRESSABLE_Q3_2026_OFFER_DEADLINE,
 } from './constants';
+import usePressableOfferEligibility from './hooks/use-pressable-offer-eligibility';
 
 const PressableIntroductoryOffer = () => {
 	const translate = useTranslate();
 
-	const agency = useSelector( getActiveAgency );
-
-	const pressableOwnership = usePressableOwnershipType();
+	const { isEligibleForIntroductoryOffer } = usePressableOfferEligibility();
 
 	const shouldShowOffer =
-		agency?.billing_system === 'billingdragon' &&
-		pressableOwnership !== 'agency' &&
-		new Date() <= PRESSABLE_Q3_2026_OFFER_DEADLINE;
+		isEligibleForIntroductoryOffer && new Date() <= PRESSABLE_Q3_2026_OFFER_DEADLINE;
 
 	if ( ! shouldShowOffer ) {
 		return null;

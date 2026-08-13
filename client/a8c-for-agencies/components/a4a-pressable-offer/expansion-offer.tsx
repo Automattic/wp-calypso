@@ -1,18 +1,16 @@
 import { useTranslate } from 'i18n-calypso';
 import { CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
-import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
-import { useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import PressableOfferBanner from './banner';
 import { PRESSABLE_EXPANSION_OFFER_TERMS_URL, PRESSABLE_Q3_2026_OFFER_DEADLINE } from './constants';
-import useHasBenefitedFromIntroductoryOffer from './hooks/use-has-benefited-from-introductory-offer';
+import useIsEligibleForExpansionOffer from './hooks/use-is-eligible-for-expansion-offer';
+import usePressableOfferEligibility from './hooks/use-pressable-offer-eligibility';
 
 const PressableExpansionOfferBanner = () => {
 	const translate = useTranslate();
 
-	const { hasBenefited, isReady } = useHasBenefitedFromIntroductoryOffer();
+	const isEligibleForExpansionOffer = useIsEligibleForExpansionOffer();
 
-	if ( ! isReady || hasBenefited !== false ) {
+	if ( ! isEligibleForExpansionOffer ) {
 		return null;
 	}
 
@@ -71,16 +69,12 @@ const PressableExpansionOfferBanner = () => {
 };
 
 const PressableExpansionOffer = () => {
-	const agency = useSelector( getActiveAgency );
-
-	const pressableOwnership = usePressableOwnershipType();
+	const { mayBeEligibleForExpansionOffer } = usePressableOfferEligibility();
 
 	// Gate before rendering the banner so the license fetch it depends on only
 	// runs for agencies that own a Pressable plan through A4A.
 	const shouldShowOffer =
-		agency?.billing_system === 'billingdragon' &&
-		pressableOwnership === 'agency' &&
-		new Date() <= PRESSABLE_Q3_2026_OFFER_DEADLINE;
+		mayBeEligibleForExpansionOffer && new Date() <= PRESSABLE_Q3_2026_OFFER_DEADLINE;
 
 	if ( ! shouldShowOffer ) {
 		return null;

@@ -5,29 +5,23 @@ import { useMemo } from 'react';
 import {
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
+	PRESSABLE_Q3_2026_OFFER_END_DATE,
 	PRESSABLE_Q3_2026_OFFER_START_DATE,
 } from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/constants';
+import usePressableOfferEligibility from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/hooks/use-pressable-offer-eligibility';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { UpcomingEventProps } from 'calypso/a8c-for-agencies/components/upcoming-event/types';
-import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
 import WordCampAsia2026Image from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-asia2026-compliment-image.svg';
 import WordCampAsia2026Logo from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-asia2026-image.svg';
 import WordCampUS2026Logo from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-us2026-image.webp';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
 export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} ) => {
 	const translate = useTranslate();
 	const localizedMoment = useLocalizedMoment();
 
-	const agency = useSelector( getActiveAgency );
-
-	const pressableOwnership = usePressableOwnershipType();
-
-	const shouldShowPressablePromoOffer =
-		agency?.billing_system === 'billingdragon' && pressableOwnership !== 'agency';
+	const { isEligibleForIntroductoryOffer } = usePressableOfferEligibility();
 
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
@@ -117,13 +111,13 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 				imageClassName: 'a4a-event__image--wordcamp-2026',
 				dateClassName: 'a4a-event__date--critical',
 			},
-			...( shouldShowPressablePromoOffer
+			...( isEligibleForIntroductoryOffer
 				? [
 						{
 							id: 'a4a-pressable-promo-offer-2026-q3',
 							date: {
-								from: moment( '2026-08-11' ),
-								to: moment( '2026-09-30' ),
+								from: moment( PRESSABLE_Q3_2026_OFFER_START_DATE ),
+								to: moment( PRESSABLE_Q3_2026_OFFER_END_DATE ),
 							},
 							title: translate(
 								'Limited time offer: Get up to 6 months of free Pressable hosting on new plans!'
@@ -162,7 +156,7 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 							id: 'a4a-pressable-expansion-offer-2026-q3',
 							date: {
 								from: moment( PRESSABLE_Q3_2026_OFFER_START_DATE ),
-								to: moment( '2026-09-30' ),
+								to: moment( PRESSABLE_Q3_2026_OFFER_END_DATE ),
 							},
 							title: translate(
 								'Limited time offer: Upgrade your Pressable plan and get up to 6 months of the upgrade free'
@@ -205,5 +199,5 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 			const today = localizedMoment().startOf( 'day' );
 			return eventDate.isSameOrAfter( today );
 		} );
-	}, [ localizedMoment, shouldShowPressablePromoOffer, showPressableExpansionOffer, translate ] );
+	}, [ localizedMoment, isEligibleForIntroductoryOffer, showPressableExpansionOffer, translate ] );
 };

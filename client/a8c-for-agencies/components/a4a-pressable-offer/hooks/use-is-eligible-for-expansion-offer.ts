@@ -38,9 +38,12 @@ export function hasBenefitedFromIntroductoryOffer(
 	return earliestLicense.issuedAt.slice( 0, 10 ) >= PRESSABLE_Q3_2026_OFFER_START_DATE;
 }
 
-// Fires a licenses API request on mount, so callers should only mount the
-// component using it once cheaper eligibility checks have passed.
-export default function useHasBenefitedFromIntroductoryOffer() {
+// The expansion offer is only for agencies that did not benefit from the
+// introductory offer; unknown history (query pending, or no plan license
+// found) counts as ineligible so the offer stays hidden. Fires a licenses API
+// request on mount, so callers should only mount the component using it once
+// usePressableOfferEligibility's cheaper checks have passed.
+export default function useIsEligibleForExpansionOffer(): boolean {
 	const { data, isFetched } = useFetchLicenses(
 		LicenseFilter.NotRevoked,
 		'pressable',
@@ -51,10 +54,7 @@ export default function useHasBenefitedFromIntroductoryOffer() {
 	);
 
 	return useMemo(
-		() => ( {
-			hasBenefited: hasBenefitedFromIntroductoryOffer( data?.items ),
-			isReady: isFetched,
-		} ),
+		() => isFetched && hasBenefitedFromIntroductoryOffer( data?.items ) === false,
 		[ data?.items, isFetched ]
 	);
 }
