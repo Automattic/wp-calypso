@@ -4,7 +4,11 @@ import {
 	setAutomatedTransferStatus,
 	automatedTransferStatusFetchingFailure,
 } from 'calypso/state/automated-transfer/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	NO_TRANSFER_RECORD_ERROR,
+	transferSettledStates,
+	transferStates,
+} from 'calypso/state/automated-transfer/constants';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -14,17 +18,10 @@ export const TRANSFER_STATUS_POLL_DEADLINE_MS = 5 * 60 * 1000;
 
 const POLL_INTERVAL_MS = 3000;
 
-// Statuses the backend will not move away from on its own. Polling past one of these would
-// keep asking about a transfer that has already ended, and letting the deadline fire on one
-// would overwrite a real outcome with a generic timeout.
-const settledStates = [
-	transferStates.COMPLETE,
-	transferStates.COMPLETED,
-	transferStates.ERROR,
-	transferStates.FAILURE,
-	transferStates.CONFLICTS,
-	transferStates.REVERTED,
-];
+// A missing transfer record right after a purchase can mean the backend simply hasn't created
+// it yet, so it deserves a few retries — but it is also the terminal answer for a site that
+// has no transfer at all, so it must not be retried for the full deadline window.
+export const MISSING_RECORD_ATTEMPTS = 6;
 
 // The deadline belongs to the wait, not to a single request: consumers re-dispatch a fetch
 // every time the status changes, and each of those would otherwise open a fresh window. It
@@ -34,8 +31,23 @@ const pollDeadlines = new Map();
 
 export const clearPollDeadlines = () => pollDeadlines.clear();
 
-export const requestStatus = ( action ) =>
-	http(
+const getOrCreatePollDeadline = ( siteId ) => {
+	const stored = pollDeadlines.get( siteId );
+	if ( stored ) {
+		return stored;
+	}
+
+	const created = { deadline: Date.now() + TRANSFER_STATUS_POLL_DEADLINE_MS };
+	pollDeadlines.set( siteId, created );
+	return created;
+};
+
+export const requestStatus = ( action ) => {
+	if ( action.resetPolling ) {
+		pollDeadlines.delete( action.siteId );
+	}
+	getOrCreatePollDeadline( action.siteId );
+	return http(
 		{
 			method: 'GET',
 			path: `/sites/${ action.siteId }/automated-transfers/status`,
@@ -43,14 +55,16 @@ export const requestStatus = ( action ) =>
 		},
 		action
 	);
+};
 
 export const receiveStatus =
-	( { siteId }, { status, uploaded_plugin_slug, transfer_id: transferId } ) =>
+	( { siteId, singleCheck }, { status, uploaded_plugin_slug, transfer_id: transferId } ) =>
 	( dispatch ) => {
 		const pluginId = uploaded_plugin_slug;
-		const isSettled = settledStates.includes( status );
+		const isSettled = transferSettledStates.includes( status );
 		const stored = pollDeadlines.get( siteId );
-		const recorded = stored?.transferId === transferId ? stored : undefined;
+		const recorded =
+			stored?.transferId === undefined || stored?.transferId === transferId ? stored : undefined;
 
 		// Once a wait has run out of time it stays that way until the transfer actually ends.
 		// Otherwise the next status fetch — and several screens keep fetching — would replace
@@ -63,6 +77,8 @@ export const receiveStatus =
 		dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
 
 		if ( isSettled ) {
+			pollDeadlines.delete( siteId );
+		} else if ( singleCheck ) {
 			pollDeadlines.delete( siteId );
 		} else {
 			const deadline = recorded?.deadline ?? Date.now() + TRANSFER_STATUS_POLL_DEADLINE_MS;
@@ -82,11 +98,39 @@ export const receiveStatus =
 		}
 	};
 
-export const requestingStatusFailure = ( response ) => {
-	return automatedTransferStatusFetchingFailure( {
-		siteId: response.siteId,
-		error: response.meta?.dataLayer?.error?.message,
-	} );
+export const requestingStatusFailure = ( response ) => ( dispatch ) => {
+	const { siteId } = response;
+	const message = response.meta?.dataLayer?.error?.message;
+	const recorded = getOrCreatePollDeadline( siteId );
+	dispatch( automatedTransferStatusFetchingFailure( { siteId, error: message } ) );
+
+	if ( response.singleCheck ) {
+		pollDeadlines.delete( siteId );
+		return;
+	}
+
+	// The reducer maps a missing record to the terminal NONE status, so once the retries run
+	// out the chain must end there — letting the deadline fire would replace a real "this site
+	// has no transfer" answer with a timeout.
+	if ( message === NO_TRANSFER_RECORD_ERROR ) {
+		const missingRecordAttempts = ( recorded.missingRecordAttempts ?? 0 ) + 1;
+		if ( missingRecordAttempts >= MISSING_RECORD_ATTEMPTS ) {
+			pollDeadlines.delete( siteId );
+			return;
+		}
+
+		pollDeadlines.set( siteId, { ...recorded, missingRecordAttempts } );
+		setTimeout( dispatch, POLL_INTERVAL_MS, fetchAutomatedTransferStatus( siteId ) );
+		return;
+	}
+
+	if ( Date.now() < recorded.deadline ) {
+		setTimeout( dispatch, POLL_INTERVAL_MS, fetchAutomatedTransferStatus( siteId ) );
+		return;
+	}
+
+	pollDeadlines.set( siteId, { ...recorded, hasTimedOut: true } );
+	dispatch( setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT ) );
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/status/index.js', {

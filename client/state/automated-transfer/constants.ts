@@ -1,6 +1,13 @@
+/**
+ * Error message the status endpoint returns when the site has no transfer record.
+ * Maps to `transferStates.NONE`.
+ * TODO : [MARKETPLACE] rely on a tangible status from the backend instead of this message
+ */
+export const NO_TRANSFER_RECORD_ERROR = 'An invalid transfer ID was passed.';
+
 export const transferStates = {
 	/**
-	 * This is when the request to fetch the transfer returns the error 'An invalid transfer ID was passed.'
+	 * This is when the request to fetch the transfer returns the error `NO_TRANSFER_RECORD_ERROR`.
 	 */
 	NONE: 'none',
 	PENDING: 'pending',
@@ -33,6 +40,25 @@ export const transferStates = {
 	CLIENT_TIMEOUT: 'client_timeout',
 } as const;
 
+export type TransferStates = ( typeof transferStates )[ keyof typeof transferStates ];
+
+export const transferCompleteStates: ReadonlyArray< string | null > = [
+	transferStates.COMPLETE,
+	transferStates.COMPLETED,
+];
+
+export const transferFailureStates: ReadonlyArray< string | null > = [
+	transferStates.ERROR,
+	transferStates.FAILURE,
+	transferStates.CONFLICTS,
+	transferStates.REVERTED,
+];
+
+export const transferSettledStates: ReadonlyArray< string | null > = [
+	...transferCompleteStates,
+	...transferFailureStates,
+];
+
 export const transferInProgress = [
 	transferStates.START,
 	transferStates.PENDING,
@@ -41,8 +67,6 @@ export const transferInProgress = [
 ] as const;
 
 export const transferRevertingInProgress = [ transferStates.RELOCATING_REVERT ] as const;
-
-export type TransferStates = ( typeof transferStates )[ keyof typeof transferStates ];
 
 export const eligibilityHolds = {
 	BLOCKED_ATOMIC_TRANSFER: 'BLOCKED_ATOMIC_TRANSFER',

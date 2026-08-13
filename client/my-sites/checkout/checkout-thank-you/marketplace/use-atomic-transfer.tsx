@@ -1,8 +1,8 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import { useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { transferCompleteStates, transferStates } from 'calypso/state/automated-transfer/constants';
 import {
 	getAutomatedTransferStatus,
 	isFetchingAutomatedTransferStatus,
@@ -12,15 +12,27 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { THANK_YOU_RECOVERY_INTERVAL_MS } from './use-thank-you-deadline';
+
+const ATOMIC_FLAG_POLL_INTERVAL_MS = 2000;
+
+type AtomicTransferData = {
+	isAtomicTransferCheckComplete: boolean;
+	currentStep: number;
+	showProgressBar: boolean;
+	setShowProgressBar: Dispatch< SetStateAction< boolean > >;
+	isRetryingTransferStatus: boolean;
+	retry: () => void;
+};
 
 export function useAtomicTransfer(
-	isAtomicNeeded: boolean
-): [ boolean, number, boolean, Dispatch< SetStateAction< boolean > > ] {
+	isAtomicNeeded: boolean,
+	isRecoveryMode: boolean,
+	isDeadlineInitialized: boolean
+): AtomicTransferData {
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
-
 	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
-
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
@@ -36,56 +48,119 @@ export function useAtomicTransfer(
 		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
 	);
 	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ isRetryingTransferStatus, setIsRetryingTransferStatus ] = useState( false );
+	const statusRequestSiteIdRef = useRef< number | null >( null );
+	const atomicFlagRequestSiteIdRef = useRef< number | null >( null );
+	const retryObservedFetchingRef = useRef( false );
 
 	useEffect( () => {
 		setIsAtomicTransferCheckComplete( ! isAtomicNeeded );
 	}, [ isAtomicNeeded ] );
 
-	// Site is transferring to Atomic.
-	// Poll the transfer status.
 	useEffect( () => {
-		// Check the transfer status through the isSiteAtomic selector.
-		// This uses the `is_wpcom_atomic` flag returned by the sites endpoint.
 		if ( siteId && isSiteAtomic ) {
 			setIsAtomicTransferCheckComplete( true );
 		}
 
-		if ( ! siteId || isSiteAtomic || isJetpackSelfHosted || ! isAtomicNeeded ) {
+		if (
+			! siteId ||
+			isSiteAtomic ||
+			isJetpackSelfHosted ||
+			! isAtomicNeeded ||
+			! isDeadlineInitialized ||
+			isRecoveryMode ||
+			isFetchingTransferStatus ||
+			statusRequestSiteIdRef.current === siteId
+		) {
 			return;
 		}
 
-		if (
-			! isFetchingTransferStatus &&
-			transferStatus !== transferStates.COMPLETE &&
-			transferStatus !== transferStates.CLIENT_TIMEOUT
-		) {
-			waitFor( 2 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
-		}
-
-		// Once the transferStatus is reported complete, query the sites endpoint
-		// until the `is_wpcom_atomic` = true is returned
-		if ( transferStatus === transferStates.COMPLETE && ! isSiteAtomic ) {
-			waitFor( 2 ).then( () => dispatch( requestSite( siteId ) ) );
-		}
+		statusRequestSiteIdRef.current = siteId;
+		dispatch( fetchAutomatedTransferStatus( siteId ) );
 	}, [
-		siteId,
 		dispatch,
-		transferStatus,
+		isAtomicNeeded,
+		isDeadlineInitialized,
 		isFetchingTransferStatus,
 		isJetpackSelfHosted,
-		isAtomicNeeded,
+		isRecoveryMode,
 		isSiteAtomic,
+		siteId,
 	] );
 
-	// Set progressbar (currentStep) depending on transfer/plugin status.
-	useEffect( () => {
-		// We don't want to show the progress bar again when it is hidden.
-		if ( ! showProgressBar ) {
+	const requestAtomicSite = useCallback( () => {
+		if ( ! siteId || atomicFlagRequestSiteIdRef.current === siteId ) {
 			return;
 		}
 
-		// Sites already transferred to Atomic or self-hosted Jetpack sites no longer need to change the current step.
-		if ( isJetpack ) {
+		atomicFlagRequestSiteIdRef.current = siteId;
+		const clearInFlightRequest = () => {
+			if ( atomicFlagRequestSiteIdRef.current === siteId ) {
+				atomicFlagRequestSiteIdRef.current = null;
+			}
+		};
+		Promise.resolve( dispatch( requestSite( siteId ) ) ).then(
+			clearInFlightRequest,
+			clearInFlightRequest
+		);
+	}, [ dispatch, siteId ] );
+
+	const isTransferComplete = transferCompleteStates.includes( transferStatus );
+	const isWaitingForAtomicFlag =
+		!! siteId && isTransferComplete && ! isSiteAtomic && ! isJetpackSelfHosted && isAtomicNeeded;
+	let atomicFlagPollInterval: number | null = null;
+	if ( isWaitingForAtomicFlag ) {
+		atomicFlagPollInterval = isRecoveryMode
+			? THANK_YOU_RECOVERY_INTERVAL_MS
+			: ATOMIC_FLAG_POLL_INTERVAL_MS;
+	}
+
+	useInterval( requestAtomicSite, atomicFlagPollInterval );
+
+	useInterval(
+		() => {
+			if ( siteId && ! isFetchingTransferStatus ) {
+				dispatch( fetchAutomatedTransferStatus( siteId, { singleCheck: true } ) );
+			}
+		},
+		isRecoveryMode &&
+			siteId &&
+			! isTransferComplete &&
+			! isSiteAtomic &&
+			! isJetpackSelfHosted &&
+			isAtomicNeeded
+			? THANK_YOU_RECOVERY_INTERVAL_MS
+			: null
+	);
+
+	useEffect( () => {
+		if ( ! isRetryingTransferStatus ) {
+			return;
+		}
+		if ( isFetchingTransferStatus ) {
+			retryObservedFetchingRef.current = true;
+		} else if ( retryObservedFetchingRef.current ) {
+			retryObservedFetchingRef.current = false;
+			setIsRetryingTransferStatus( false );
+		}
+	}, [ isFetchingTransferStatus, isRetryingTransferStatus ] );
+
+	const retry = useCallback( () => {
+		if ( ! siteId ) {
+			return;
+		}
+
+		if ( isTransferComplete ) {
+			requestAtomicSite();
+		} else if ( ! isFetchingTransferStatus ) {
+			statusRequestSiteIdRef.current = siteId;
+			setIsRetryingTransferStatus( true );
+			dispatch( fetchAutomatedTransferStatus( siteId, { resetPolling: true } ) );
+		}
+	}, [ dispatch, isFetchingTransferStatus, isTransferComplete, requestAtomicSite, siteId ] );
+
+	useEffect( () => {
+		if ( ! showProgressBar || isJetpack ) {
 			return;
 		}
 
@@ -95,10 +170,17 @@ export function useAtomicTransfer(
 			setCurrentStep( 1 );
 		} else if ( transferStatus === transferStates.RELOCATING ) {
 			setCurrentStep( 2 );
-		} else if ( transferStatus === transferStates.COMPLETE ) {
+		} else if ( transferCompleteStates.includes( transferStatus ) ) {
 			setCurrentStep( 3 );
 		}
 	}, [ transferStatus, showProgressBar, isJetpack ] );
 
-	return [ isAtomicTransferCheckComplete, currentStep, showProgressBar, setShowProgressBar ];
+	return {
+		isAtomicTransferCheckComplete,
+		currentStep,
+		showProgressBar,
+		setShowProgressBar,
+		isRetryingTransferStatus,
+		retry,
+	};
 }
