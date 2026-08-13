@@ -19,8 +19,8 @@ jest.mock( '../use-site-generation', () => ( {
 } ) );
 
 jest.mock( '../view', () => ( {
-	SiteGenerationView: ( { onRetry }: { onRetry: () => void } ) => (
-		<button onClick={ onRetry }>Recover</button>
+	SiteGenerationView: ( { onReload }: { onReload: () => void } ) => (
+		<button onClick={ onReload }>Recover</button>
 	),
 } ) );
 
@@ -64,24 +64,12 @@ describe( 'SiteGeneration recovery', () => {
 			/>
 		);
 
-	it( 'returns a failed build to Site Spec without reusing the failed spec', () => {
+	it( 'reloads when a failed build has no server retry', () => {
 		renderStep();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Recover' } ) );
 
-		expect( window.location.assign ).toHaveBeenCalledTimes( 1 );
-		const destination = new URL(
-			( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ],
-			'https://wordpress.com'
-		);
-		expect( destination.pathname ).toBe( '/setup/ai-site-builder-spec/site-spec' );
-		expect( destination.searchParams.get( 'build_wow' ) ).toBe( '1' );
-		expect( destination.searchParams.get( 'siteId' ) ).toBe( '123' );
-		expect( destination.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
-		expect( destination.searchParams.get( 'ref' ) ).toBe( 'site-card' );
-		expect( destination.searchParams.get( 'source' ) ).toBe( 'site-overview' );
-		expect( destination.searchParams.has( 'specId' ) ).toBe( false );
-		expect( destination.searchParams.has( 'editorUrl' ) ).toBe( false );
-		expect( window.location.reload ).not.toHaveBeenCalled();
+		expect( window.location.reload ).toHaveBeenCalledTimes( 1 );
+		expect( window.location.assign ).not.toHaveBeenCalled();
 	} );
 
 	it( 'reloads when checking again after a timeout', () => {

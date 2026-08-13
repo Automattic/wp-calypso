@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getBuildWowSiteSpecUrl } from 'calypso/landing/stepper/utils/build-wow';
 import { getSafeEditorUrl } from './editor-url';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
@@ -31,25 +30,14 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	);
 	const state = useSiteGeneration( { siteIdentifier, editorUrl, specId, steps } );
 
-	const retry = () => {
-		if ( state.failureReason === 'build-failed' ) {
-			window.location.assign(
-				getBuildWowSiteSpecUrl( {
-					siteSlug: query.get( 'siteSlug' ),
-					siteId: query.get( 'siteId' ),
-					ref: query.get( 'ref' ),
-					source: query.get( 'source' ),
-				} )
-			);
-			return;
-		}
+	const reload = () => {
 		window.location.reload();
 	};
 
 	return (
 		<>
 			<DocumentHead title={ translate( 'Generating your site' ) } />
-			<SiteGenerationView onRetry={ retry } state={ state } />
+			<SiteGenerationView onReload={ reload } state={ state } />
 		</>
 	);
 };

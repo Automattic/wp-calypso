@@ -117,7 +117,7 @@ function WaitingCanvas() {
 	);
 }
 
-function ErrorCanvas( { state, onRetry }: { state: SiteGenerationState; onRetry: () => void } ) {
+function ErrorCanvas( { state, onReload }: { state: SiteGenerationState; onReload: () => void } ) {
 	const translate = useTranslate();
 	const failureReason = state.failureReason ?? 'missing-parameters';
 
@@ -125,11 +125,7 @@ function ErrorCanvas( { state, onRetry }: { state: SiteGenerationState; onRetry:
 	let description = translate( 'The site or editor destination is missing from this page.' );
 	let actionLabel = translate( 'Reload' );
 
-	if ( failureReason === 'build-failed' ) {
-		title = translate( 'We couldn’t finish building your site' );
-		description = translate( 'Start a new site brief to try building it again.' );
-		actionLabel = translate( 'Start over' );
-	} else if ( failureReason === 'timed-out' ) {
+	if ( failureReason === 'timed-out' || failureReason === 'build-failed' ) {
 		title = translate( 'This is taking longer than expected' );
 		description = translate( 'Your brief is saved.' );
 		actionLabel = translate( 'Check again' );
@@ -144,7 +140,7 @@ function ErrorCanvas( { state, onRetry }: { state: SiteGenerationState; onRetry:
 
 	const action = state.retryBuild
 		? { label: translate( 'Start again' ), onClick: state.retryBuild }
-		: { label: actionLabel, onClick: onRetry };
+		: { label: actionLabel, onClick: onReload };
 
 	return (
 		<div aria-live="polite" className="site-generation__outcome" role="status">
@@ -227,10 +223,10 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 
 export function SiteGenerationView( {
 	state,
-	onRetry,
+	onReload,
 }: {
 	state: SiteGenerationState;
-	onRetry: () => void;
+	onReload: () => void;
 } ) {
 	const translate = useTranslate();
 
@@ -242,7 +238,7 @@ export function SiteGenerationView( {
 				</div>
 				<div className="site-generation__canvas">
 					{ state.status === 'failed' ? (
-						<ErrorCanvas state={ state } onRetry={ onRetry } />
+						<ErrorCanvas state={ state } onReload={ onReload } />
 					) : (
 						<WaitingCanvas />
 					) }

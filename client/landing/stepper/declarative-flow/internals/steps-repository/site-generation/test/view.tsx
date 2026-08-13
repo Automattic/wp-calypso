@@ -32,7 +32,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		try {
 			const { getByText, rerender } = render(
 				<SiteGenerationView
-					onRetry={ jest.fn() }
+					onReload={ jest.fn() }
 					state={ {
 						...idleState,
 						status: 'working',
@@ -53,7 +53,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 			rerender(
 				<SiteGenerationView
-					onRetry={ jest.fn() }
+					onReload={ jest.fn() }
 					state={ {
 						...idleState,
 						status: 'working',
@@ -79,11 +79,11 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		}
 	} );
 
-	it( 'distinguishes a failed build from a timeout', () => {
-		const onRetry = jest.fn();
+	it( 'uses the calm reload fallback for failed builds and timeouts', () => {
+		const onReload = jest.fn();
 		const { getByRole, getByText, rerender } = render(
 			<SiteGenerationView
-				onRetry={ onRetry }
+				onReload={ onReload }
 				state={ {
 					...idleState,
 					status: 'failed',
@@ -93,15 +93,13 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 			/>
 		);
 
-		expect(
-			getByRole( 'heading', { name: 'We couldn’t finish building your site' } )
-		).toBeVisible();
-		expect( getByText( 'Start a new site brief to try building it again.' ) ).toBeVisible();
-		expect( getByRole( 'button', { name: 'Start over' } ) ).toBeVisible();
+		expect( getByRole( 'heading', { name: 'This is taking longer than expected' } ) ).toBeVisible();
+		expect( getByText( 'Your brief is saved.' ) ).toBeVisible();
+		expect( getByRole( 'button', { name: 'Check again' } ) ).toBeVisible();
 
 		rerender(
 			<SiteGenerationView
-				onRetry={ onRetry }
+				onReload={ onReload }
 				state={ {
 					...idleState,
 					status: 'failed',
@@ -130,7 +128,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 		const { getAllByRole, getByRole, rerender } = render(
 			<SiteGenerationView
-				onRetry={ jest.fn() }
+				onReload={ jest.fn() }
 				state={ { ...idleState, status: 'working', steps: steps( 0 ) } }
 			/>
 		);
@@ -139,7 +137,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 		rerender(
 			<SiteGenerationView
-				onRetry={ jest.fn() }
+				onReload={ jest.fn() }
 				state={ { ...idleState, status: 'working', steps: steps( 2 ) } }
 			/>
 		);
@@ -148,7 +146,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 		rerender(
 			<SiteGenerationView
-				onRetry={ jest.fn() }
+				onReload={ jest.fn() }
 				state={ {
 					...idleState,
 					status: 'failed',
@@ -179,7 +177,9 @@ const failedState: SiteGenerationState = {
 describe( 'SiteGenerationView server recovery', () => {
 	it( 'renders the server failure copy and starts the rebuild', async () => {
 		const retryBuild = jest.fn();
-		render( <SiteGenerationView state={ { ...failedState, retryBuild } } onRetry={ jest.fn() } /> );
+		render(
+			<SiteGenerationView state={ { ...failedState, retryBuild } } onReload={ jest.fn() } />
+		);
 
 		expect( screen.getByText( 'We couldn’t finish building your site' ) ).toBeVisible();
 		expect( screen.getByText( 'You can start the build again right away.' ) ).toBeVisible();
@@ -188,14 +188,14 @@ describe( 'SiteGenerationView server recovery', () => {
 		expect( retryBuild ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'falls back to Site Spec recovery when no server retry is offered', async () => {
-		const onRetry = jest.fn();
+	it( 'falls back to reload when no server retry is offered', async () => {
+		const onReload = jest.fn();
 		render(
-			<SiteGenerationView state={ { ...failedState, retryBuild: null } } onRetry={ onRetry } />
+			<SiteGenerationView state={ { ...failedState, retryBuild: null } } onReload={ onReload } />
 		);
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Start over' } ) );
-		expect( onRetry ).toHaveBeenCalledTimes( 1 );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Check again' } ) );
+		expect( onReload ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'keeps the timed-out copy when the ui block carried no text', () => {
@@ -208,7 +208,7 @@ describe( 'SiteGenerationView server recovery', () => {
 					failureDetail: undefined,
 					retryBuild: null,
 				} }
-				onRetry={ jest.fn() }
+				onReload={ jest.fn() }
 			/>
 		);
 
@@ -220,7 +220,7 @@ describe( 'SiteGenerationView server recovery', () => {
 		render(
 			<SiteGenerationView
 				state={ { ...failedState, isRetryingBuild: true } }
-				onRetry={ jest.fn() }
+				onReload={ jest.fn() }
 			/>
 		);
 
