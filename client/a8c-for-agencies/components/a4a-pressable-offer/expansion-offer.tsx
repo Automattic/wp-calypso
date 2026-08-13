@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
+import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import PressableOfferBanner from './banner';
 import { PRESSABLE_EXPANSION_OFFER_TERMS_URL, PRESSABLE_Q3_2026_OFFER_DEADLINE } from './constants';
 import useIsEligibleForExpansionOffer from './hooks/use-is-eligible-for-expansion-offer';
@@ -42,7 +42,7 @@ const PressableExpansionOfferBanner = () => {
 					}
 				),
 				translate(
-					'The discount is calculated on the price increase from your current plan to your new tier, and applied automatically at checkout. Note: The discount for monthly plans is applied over a 3-month period.'
+					'The discount is calculated on the price increase from your current plan to your new tier. Note: The discount for monthly plans is applied over a 3-month period.'
 				),
 				translate(
 					'Migrating 50+ sites? You may qualify for a custom cash incentive scaling with volume, up to $25,000, in place of the standard discount.'
@@ -50,8 +50,8 @@ const PressableExpansionOfferBanner = () => {
 			] }
 			ctas={ [
 				{
-					label: translate( 'Talk to us about migrations' ),
-					url: CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT,
+					label: translate( 'Talk to us about the offer' ),
+					url: CONTACT_URL_HASH_FRAGMENT,
 					eventName: 'calypso_a4a_pressable_expansion_offer_talk_to_us_click',
 					variant: 'primary',
 				},

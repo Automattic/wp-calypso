@@ -164,7 +164,7 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 							subtitle: translate( 'Automattic for Agencies & Pressable' ),
 							descriptions: [
 								translate(
-									'Move up a Pressable plan tier and we’ll cover part of the increase: 6 months’ worth on annual upgrades, 3 months’ worth on monthly, applied automatically at checkout.'
+									'Move up a Pressable plan tier and we’ll cover part of the increase: 6 months’ worth on annual upgrades, 3 months’ worth on monthly.'
 								),
 								translate(
 									'For example, an annual upgrade from $10,000 to $13,250/yr is a $3,250 increase, so you’d save $1,625. The discount is calculated on that increase. Migrating 50+ sites? You may qualify for a custom incentive, up to $25,000.'
