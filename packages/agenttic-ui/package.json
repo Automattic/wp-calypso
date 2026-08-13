@@ -2,7 +2,7 @@
 	"name": "@automattic/agenttic-ui",
 	"version": "0.1.89",
 	"type": "module",
-	"description": "UI components for the Agenttic framework",
+	"description": "UI components for the Agenttic framework.",
 	"main": "dist/index.js",
 	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -45,8 +45,15 @@
 		"ai",
 		"agent"
 	],
-	"author": "Automattic",
+	"author": "Automattic Inc.",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/agenttic-ui"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"engines": {
 		"node": ">=20.0.0"
 	},
@@ -100,8 +107,7 @@
 		"react-dom": "^18.0.0 || ^19.0.0"
 	},
 	"publishConfig": {
-		"access": "public",
-		"branch": "trunk"
+		"access": "public"
 	},
 	"overrides": {
 		"esbuild": "0.24.0"
