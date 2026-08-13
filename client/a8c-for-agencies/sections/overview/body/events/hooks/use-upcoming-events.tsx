@@ -165,12 +165,15 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 								to: moment( '2026-09-30' ),
 							},
 							title: translate(
-								'Pressable expansion offer: Save when you expand your existing Pressable plan!'
+								'Limited time offer: Upgrade your Pressable plan and get up to 6 months of the upgrade free'
 							),
 							subtitle: translate( 'Automattic for Agencies & Pressable' ),
 							descriptions: [
 								translate(
-									'Placeholder description: dummy copy describing the expansion offer for agencies with an existing Pressable plan.'
+									'Move up a Pressable plan tier and we’ll cover part of the increase: 6 months’ worth on annual upgrades, 3 months’ worth on monthly, applied automatically at checkout.'
+								),
+								translate(
+									'For example, an annual upgrade from $10,000 to $13,250/yr is a $3,250 increase, so you’d save $1,625. The discount is calculated on that increase. Migrating 50+ sites? You may qualify for a custom incentive, up to $25,000.'
 								),
 							],
 							ctas: [
