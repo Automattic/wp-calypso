@@ -1,6 +1,6 @@
 // Dynamically import all Jed JSON files directly
 const jedFiles = import.meta.glob(
-	'../../../../languages/wpcom-agenttic-*.jed.json',
+	'../../languages/wpcom-agenttic-*.jed.json',
 	{
 		eager: true,
 	}

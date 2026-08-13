@@ -2,32 +2,30 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
-
-export default defineConfig(({ mode }) => {
+export default defineConfig( ( { mode } ) => {
 	const useUiBuild = mode === 'use-ui-build';
 	return {
-		plugins: [react()],
-		root: 'demo',
+		plugins: [ react() ],
 		build: {
-			outDir: '../dist-demo',
+			outDir: 'dist',
 		},
 		server: {
-			port: 3000,
+			port: 3001,
 		},
 		define: {
-			__USE_UI_BUILD__: JSON.stringify(useUiBuild),
+			__USE_UI_BUILD__: JSON.stringify( useUiBuild ),
 		},
 		resolve: {
 			alias: [
 				{
 					find: '@automattic/agenttic-ui',
 					replacement: useUiBuild
-						? resolve(__dirname, '../packages/agenttic-ui/dist/index.js')
-						: resolve(__dirname, '../packages/agenttic-ui/src'),
+						? resolve( __dirname, '../agenttic-ui/dist/index.js' )
+						: resolve( __dirname, '../agenttic-ui/src' ),
 				},
 				{
 					find: '@automattic/agenttic-client',
-					replacement: resolve(__dirname, '../packages/agenttic-client/src'),
+					replacement: resolve( __dirname, '../agenttic-client/src' ),
 				},
 			],
 		},
@@ -36,5 +34,5 @@ export default defineConfig(({ mode }) => {
 				generateScopedName: '[name]_[local]',
 			},
 		},
-	}
+	};
 } );
