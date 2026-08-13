@@ -169,7 +169,7 @@ export function getNav2026Menus( {
 							target: '_self',
 						},
 						{
-							label: __( 'Site profiler (WHOIS)', __i18n_text_domain__ ),
+							label: __( 'Site profiler', __i18n_text_domain__ ),
 							url: localizeUrl( '//wordpress.com/site-profiler' ),
 							target: '_self',
 						},
