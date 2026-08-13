@@ -4,6 +4,7 @@ import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import { requestSite } from 'calypso/state/sites/actions';
 
 export const TRANSFER_POLL_DEADLINE_MS = 5 * 60 * 1000;
@@ -13,108 +14,55 @@ const MISSING_RECORD_ATTEMPTS = 6;
 
 const settledStates = [ transferStates.COMPLETED, transferStates.ERROR, transferStates.REVERTED ];
 
-const pollDeadlines = new Map();
+// Timers only. The verdict of a wait lives in the store, as CLIENT_TIMEOUT on the site's transfer.
+const waits = new Map();
 
-const clearTimers = ( entry ) => {
-	if ( entry?.timerId ) {
-		clearTimeout( entry.timerId );
-	}
+const stopWait = ( siteId ) => {
+	const wait = waits.get( siteId );
 
-	if ( entry?.deadlineTimerId ) {
-		clearTimeout( entry.deadlineTimerId );
-	}
+	clearTimeout( wait?.pollTimerId );
+	clearTimeout( wait?.deadlineTimerId );
+	waits.delete( siteId );
 };
 
-const clearPollDeadline = ( siteId ) => {
-	clearTimers( pollDeadlines.get( siteId ) );
-	pollDeadlines.delete( siteId );
-};
-
-export const clearPollDeadlines = () => {
-	for ( const siteId of [ ...pollDeadlines.keys() ] ) {
-		clearPollDeadline( siteId );
+export const clearTransferWaits = () => {
+	for ( const siteId of [ ...waits.keys() ] ) {
+		stopWait( siteId );
 	}
 };
 
-const getPollDeadline = ( siteId ) => {
-	const stored = pollDeadlines.get( siteId );
+const schedulePoll = ( siteId, dispatch ) => {
+	const wait = waits.get( siteId );
 
-	// Keep timeout state sticky for one extra deadline so duplicate fetches cannot restart the wait.
-	// Clear it after that window to bound memory while allowing a later, intentional fetch to start fresh.
-	if ( stored && Date.now() - stored.deadline > TRANSFER_POLL_DEADLINE_MS ) {
-		clearPollDeadline( siteId );
-		return undefined;
-	}
-
-	return stored;
-};
-
-const scheduleTransferPoll = ( siteId, dispatch ) => {
-	const stored = pollDeadlines.get( siteId );
-	if ( stored?.timerId ) {
-		clearTimeout( stored.timerId );
-	}
-
-	const timerId = setTimeout( () => dispatch( fetchAtomicTransfer( siteId ) ), POLL_INTERVAL_MS );
-	pollDeadlines.set( siteId, { ...stored, timerId } );
-};
-
-const setTransferTimeout = ( siteId, dispatch, transfer = {} ) => {
-	const stored = pollDeadlines.get( siteId );
-	clearTimers( stored );
-	pollDeadlines.set( siteId, {
-		...stored,
-		deadline: stored?.deadline ?? Date.now(),
-		hasTimedOut: true,
-		timerId: undefined,
-		deadlineTimerId: undefined,
+	clearTimeout( wait?.pollTimerId );
+	waits.set( siteId, {
+		...wait,
+		pollTimerId: setTimeout( () => dispatch( fetchAtomicTransfer( siteId ) ), POLL_INTERVAL_MS ),
 	} );
+};
 
-	dispatch(
-		setAtomicTransfer( siteId, {
-			...transfer,
-			status: transferStates.CLIENT_TIMEOUT,
-		} )
+const giveUp = ( siteId, dispatch, transfer = {} ) => {
+	stopWait( siteId );
+	dispatch( setAtomicTransfer( siteId, { ...transfer, status: transferStates.CLIENT_TIMEOUT } ) );
+};
+
+// Two consumers poll the same site, and a response can arrive after we stopped waiting, so every
+// entry point asks the store first: a wait that already ended in a timeout must not revive the
+// progress bar. A response carrying a different transfer means a new wait, which may proceed.
+const gaveUp = ( getState, siteId, transferId ) => {
+	const stored = getAtomicTransfer( getState(), siteId );
+
+	return (
+		stored.status === transferStates.CLIENT_TIMEOUT &&
+		( transferId === undefined || stored.atomic_transfer_id === transferId )
 	);
 };
 
-// The deadline is otherwise only checked when a response arrives. A request that never settles —
-// a stalled connection, a tab the browser froze — produces no response at all, so without an
-// absolute timer the wait would outlive its deadline in exactly the case it exists to catch.
-const armDeadlineTimer = ( siteId, dispatch ) => {
-	const stored = getPollDeadline( siteId );
-
-	if ( stored?.hasTimedOut || stored?.deadlineTimerId ) {
-		return;
-	}
-
-	const deadline = stored?.deadline ?? Date.now() + TRANSFER_POLL_DEADLINE_MS;
-	const deadlineTimerId = setTimeout(
-		() => setTransferTimeout( siteId, dispatch ),
-		Math.max( 0, deadline - Date.now() )
-	);
-
-	pollDeadlines.set( siteId, { ...stored, deadline, deadlineTimerId } );
-};
-
-export const armTransferDeadline = ( siteId ) => ( dispatch ) =>
-	armDeadlineTimer( siteId, dispatch );
-
-const pollOrTimeout = ( siteId, dispatch ) => {
-	const stored = getPollDeadline( siteId );
-	const deadline = stored?.deadline ?? Date.now() + TRANSFER_POLL_DEADLINE_MS;
-
-	if ( stored?.hasTimedOut || Date.now() >= deadline ) {
-		setTransferTimeout( siteId, dispatch );
-		return;
-	}
-
-	pollDeadlines.set( siteId, { ...stored, deadline } );
-	scheduleTransferPoll( siteId, dispatch );
-};
+const keepWaiting = ( siteId, dispatch, getState ) =>
+	gaveUp( getState, siteId ) ? giveUp( siteId, dispatch ) : schedulePoll( siteId, dispatch );
 
 export const requestTransfer = ( action ) => [
-	// Keep default exponential backoff for transient failures; onTransferError handles terminal cases.
+	// Keep the default exponential backoff for transient failures; onTransferError handles the rest.
 	http(
 		{
 			method: 'GET',
@@ -123,51 +71,45 @@ export const requestTransfer = ( action ) => [
 		},
 		action
 	),
-	armTransferDeadline( action.siteId ),
+	// Responses are the only other thing that ends a wait, so a request that never answers — a
+	// stalled connection, a frozen tab — would wait forever without this. One timer per wait: a
+	// second request joins the deadline already running instead of opening a new one.
+	( dispatch, getState ) => {
+		if ( waits.get( action.siteId )?.deadlineTimerId || gaveUp( getState, action.siteId ) ) {
+			return;
+		}
+
+		waits.set( action.siteId, {
+			...waits.get( action.siteId ),
+			deadlineTimerId: setTimeout(
+				() => giveUp( action.siteId, dispatch ),
+				TRANSFER_POLL_DEADLINE_MS
+			),
+		} );
+	},
 ];
 
 export const receiveTransfer =
 	( { siteId }, transfer ) =>
-	( dispatch ) => {
-		if ( ! transfer?.status ) {
-			pollOrTimeout( siteId, dispatch );
+	( dispatch, getState ) => {
+		const status = transfer?.status;
+
+		if ( ! status ) {
+			keepWaiting( siteId, dispatch, getState );
 			return;
 		}
 
-		const stored = getPollDeadline( siteId );
-		const transferId = transfer.atomic_transfer_id;
-		const recorded =
-			stored && ( stored.transferId === transferId || stored.transferId === undefined )
-				? stored
-				: undefined;
-		const status = transfer.status;
-		const isSettled = settledStates.includes( status );
-
-		if ( recorded?.hasTimedOut && ! isSettled ) {
-			setTransferTimeout( siteId, dispatch, transfer );
+		if ( gaveUp( getState, siteId, transfer.atomic_transfer_id ) ) {
+			giveUp( siteId, dispatch, transfer );
 			return;
 		}
 
 		dispatch( setAtomicTransfer( siteId, transfer ) );
 
-		if ( isSettled ) {
-			clearPollDeadline( siteId );
+		if ( settledStates.includes( status ) ) {
+			stopWait( siteId );
 		} else {
-			if ( ! recorded ) {
-				// A different transfer is under way: drop the previous wait's deadline, timers and
-				// timeout flag instead of inheriting them.
-				clearPollDeadline( siteId );
-			}
-
-			const deadline = recorded?.deadline ?? Date.now() + TRANSFER_POLL_DEADLINE_MS;
-
-			if ( Date.now() < deadline ) {
-				pollDeadlines.set( siteId, { ...pollDeadlines.get( siteId ), transferId, deadline } );
-				scheduleTransferPoll( siteId, dispatch );
-			} else {
-				pollDeadlines.set( siteId, { ...pollDeadlines.get( siteId ), transferId, deadline } );
-				setTransferTimeout( siteId, dispatch, transfer );
-			}
+			schedulePoll( siteId, dispatch );
 		}
 
 		if ( status === transferStates.COMPLETED ) {
@@ -178,32 +120,32 @@ export const receiveTransfer =
 
 export const onTransferError =
 	( { siteId }, error ) =>
-	( dispatch ) => {
+	( dispatch, getState ) => {
 		const statusCode = error?.status ?? error?.statusCode;
 		const isMissingRecord =
 			error?.error === 'no_transfer_record' || error?.code === 'no_transfer_record';
 
 		if ( ( statusCode >= 400 && statusCode < 500 ) || isMissingRecord ) {
-			if ( isMissingRecord ) {
-				const stored = getPollDeadline( siteId );
-				const missingRecordAttempts = ( stored?.missingRecordAttempts ?? 0 ) + 1;
+			const attempts = ( waits.get( siteId )?.missingRecordAttempts ?? 0 ) + 1;
 
-				// The record is written moments after the purchase, so a few short retries recover the
-				// common race; beyond that the client cannot tell the difference from a transfer that
-				// was never started, and waiting on it is what traps the user.
-				if ( missingRecordAttempts < MISSING_RECORD_ATTEMPTS ) {
-					const deadline = stored?.deadline ?? Date.now() + TRANSFER_POLL_DEADLINE_MS;
-					pollDeadlines.set( siteId, { ...stored, deadline, missingRecordAttempts } );
-					scheduleTransferPoll( siteId, dispatch );
-					return;
-				}
+			// The record is written moments after the purchase, so a few short retries recover the
+			// common race; beyond that the client cannot tell the difference from a transfer that was
+			// never started, and waiting on it is what traps the user.
+			if ( isMissingRecord && attempts < MISSING_RECORD_ATTEMPTS ) {
+				waits.set( siteId, { ...waits.get( siteId ), missingRecordAttempts: attempts } );
+				schedulePoll( siteId, dispatch );
+				return;
 			}
 
-			setTransferTimeout( siteId, dispatch );
+			// The remaining 4xx cases (a failed capability check, a blog we cannot validate) say the
+			// client cannot read the status, not that the transfer failed — it runs server-side either
+			// way. Hence the timeout status, whose copy says the transfer may still finish, rather than
+			// an error claiming it did not.
+			giveUp( siteId, dispatch );
 			return;
 		}
 
-		pollOrTimeout( siteId, dispatch );
+		keepWaiting( siteId, dispatch, getState );
 	};
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfer/index.js', {

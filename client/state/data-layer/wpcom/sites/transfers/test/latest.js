@@ -3,7 +3,7 @@ import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
-	clearPollDeadlines,
+	clearTransferWaits,
 	onTransferError,
 	receiveTransfer,
 	requestTransfer,
@@ -18,8 +18,7 @@ jest.mock( 'calypso/state/sites/actions', () => ( {
 } ) );
 
 const siteId = 1916284;
-const start = 1000000;
-let setTimeoutSpy;
+const POLL_INTERVAL_MS = 10000;
 
 const transfer = ( status, atomicTransferId = 1 ) => ( {
 	atomic_transfer_id: atomicTransferId,
@@ -28,17 +27,49 @@ const transfer = ( status, atomicTransferId = 1 ) => ( {
 	created_at: '2026-08-11T18:00:00Z',
 } );
 
+const timedOut = ( transferData = {} ) =>
+	setAtomicTransfer( siteId, { ...transferData, status: transferStates.CLIENT_TIMEOUT } );
+
+// The handlers read the transfer back out of the store, so the fake one applies what they dispatch
+// the same way the reducer does.
+const createStore = () => {
+	const state = { atomicTransfer: {} };
+	const getState = () => state;
+	const dispatch = jest.fn( ( action ) => {
+		if ( action?.type === setAtomicTransfer( siteId, {} ).type ) {
+			state.atomicTransfer[ action.siteId ] = {
+				...state.atomicTransfer[ action.siteId ],
+				...action.transfer,
+			};
+		}
+
+		return action;
+	} );
+
+	return { dispatch, getState };
+};
+
+// Every response follows a request, so tests arm the deadline the way production arms it.
+const startWait = ( { dispatch, getState } ) =>
+	requestTransfer( { siteId } )[ 1 ]( dispatch, getState );
+
+const receive = ( store, transferData ) =>
+	receiveTransfer( { siteId }, transferData )( store.dispatch, store.getState );
+
+const fail = ( store, error ) =>
+	onTransferError( { siteId }, error )( store.dispatch, store.getState );
+
+beforeEach( () => {
+	jest.useFakeTimers();
+	jest.clearAllMocks();
+	clearTransferWaits();
+} );
+
+afterEach( () => {
+	jest.useRealTimers();
+} );
+
 describe( 'requestTransfer', () => {
-	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.setSystemTime( start );
-		clearPollDeadlines();
-	} );
-
-	afterEach( () => {
-		jest.useRealTimers();
-	} );
-
 	test( 'should dispatch an http request', () => {
 		const [ request ] = requestTransfer( { siteId } );
 
@@ -55,72 +86,64 @@ describe( 'requestTransfer', () => {
 	} );
 
 	test( 'should time out a request that never responds', () => {
-		const dispatch = jest.fn();
-		const [ , armDeadline ] = requestTransfer( { siteId } );
+		const store = createStore();
 
-		armDeadline( dispatch );
+		startWait( store );
 		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
 
-		expect( dispatch ).toHaveBeenCalledWith(
-			setAtomicTransfer( siteId, { status: transferStates.CLIENT_TIMEOUT } )
-		);
+		expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
 	} );
 
-	test( 'should anchor the deadline to the wait already in progress', () => {
-		const dispatch = jest.fn();
+	test( 'should not extend the deadline of a wait already in progress', () => {
+		const store = createStore();
 
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE ) )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS - 1000 );
-		requestTransfer( { siteId } )[ 1 ]( dispatch );
-		dispatch.mockClear();
-		jest.advanceTimersByTime( 1000 );
+		startWait( store );
+		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS / 2 );
+		startWait( store );
+		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS / 2 );
 
-		expect( dispatch ).toHaveBeenCalledWith(
-			setAtomicTransfer( siteId, { status: transferStates.CLIENT_TIMEOUT } )
-		);
+		expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
+	} );
+
+	test( 'should not start a new deadline once the wait has timed out', () => {
+		const store = createStore();
+
+		startWait( store );
+		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		store.dispatch.mockClear();
+		startWait( store );
+		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+
+		expect( store.dispatch ).not.toHaveBeenCalled();
 	} );
 } );
 
 describe( 'receiveTransfer', () => {
-	beforeEach( () => {
-		jest.useFakeTimers();
-		setTimeoutSpy = jest.spyOn( global, 'setTimeout' );
-		jest.setSystemTime( start );
-		jest.clearAllMocks();
-		clearPollDeadlines();
-	} );
-
-	afterEach( () => {
-		jest.useRealTimers();
-		jest.restoreAllMocks();
-	} );
-
 	test( 'should dispatch the transfer and poll while it is in progress', () => {
-		const dispatch = jest.fn();
+		const store = createStore();
 		const response = transfer( transferStates.ACTIVE );
 
-		receiveTransfer( { siteId }, response )( dispatch );
+		receive( store, response );
 
-		expect( dispatch ).toHaveBeenCalledWith( setAtomicTransfer( siteId, response ) );
-		expect( setTimeoutSpy ).toHaveBeenLastCalledWith( expect.any( Function ), 10000 );
-		jest.runOnlyPendingTimers();
-		expect( dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
+		expect( store.dispatch ).toHaveBeenCalledWith( setAtomicTransfer( siteId, response ) );
+		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
 
 	test.each( [ 'reverting', 'unknown' ] )( 'should poll unknown status %s', ( status ) => {
-		const dispatch = jest.fn();
+		const store = createStore();
 
-		receiveTransfer( { siteId }, transfer( status ) )( dispatch );
-		jest.runOnlyPendingTimers();
+		receive( store, transfer( status ) );
+		jest.advanceTimersByTime( POLL_INTERVAL_MS );
 
-		expect( dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
+		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
 
 	test( 'should keep one poll timer per site', () => {
-		const dispatch = jest.fn();
+		const store = createStore();
 
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE ) )( dispatch );
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE ) )( dispatch );
+		receive( store, transfer( transferStates.ACTIVE ) );
+		receive( store, transfer( transferStates.ACTIVE ) );
 
 		expect( jest.getTimerCount() ).toBe( 1 );
 	} );
@@ -128,304 +151,155 @@ describe( 'receiveTransfer', () => {
 	test.each( [ transferStates.COMPLETED, transferStates.ERROR, transferStates.REVERTED ] )(
 		'should stop polling on settled status %s',
 		( status ) => {
-			const dispatch = jest.fn();
+			const store = createStore();
 
-			receiveTransfer( { siteId }, transfer( status ) )( dispatch );
-			jest.runOnlyPendingTimers();
+			receive( store, transfer( status ) );
+			jest.advanceTimersByTime( POLL_INTERVAL_MS );
 
-			expect( dispatch ).not.toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
+			expect( store.dispatch ).not.toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 		}
 	);
 
 	test( 'should refresh the site after completion', () => {
-		const dispatch = jest.fn();
+		const store = createStore();
 
-		receiveTransfer( { siteId }, transfer( transferStates.COMPLETED ) )( dispatch );
+		receive( store, transfer( transferStates.COMPLETED ) );
 
 		expect( requestSite ).toHaveBeenCalledWith( siteId );
-		expect( dispatch ).toHaveBeenLastCalledWith( requestSite( siteId ) );
+		expect( store.dispatch ).toHaveBeenLastCalledWith( requestSite( siteId ) );
 	} );
 
 	test( 'should keep polling until the deadline arrives', () => {
-		const dispatch = jest.fn();
-
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE ) )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS - 1 );
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE ) )( dispatch );
-
-		expect( dispatch ).not.toHaveBeenCalledWith(
-			setAtomicTransfer( siteId, transfer( transferStates.CLIENT_TIMEOUT ) )
-		);
-		jest.runOnlyPendingTimers();
-		expect( dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
-	} );
-
-	test( 'should set client timeout when the deadline expires', () => {
-		const dispatch = jest.fn();
+		const store = createStore();
 		const response = transfer( transferStates.ACTIVE );
 
-		receiveTransfer( { siteId }, response )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS );
-		receiveTransfer( { siteId }, response )( dispatch );
+		startWait( store );
+		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS / 2 );
+		receive( store, response );
 
-		expect( dispatch ).toHaveBeenLastCalledWith(
-			setAtomicTransfer( siteId, { ...response, status: transferStates.CLIENT_TIMEOUT } )
-		);
+		expect( store.dispatch ).not.toHaveBeenCalledWith( timedOut( response ) );
+		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
 
-	test( 'should keep timeout status sticky', () => {
-		const dispatch = jest.fn();
+	test( 'should stop polling once the deadline expires', () => {
+		const store = createStore();
+
+		startWait( store );
+		receive( store, transfer( transferStates.ACTIVE ) );
+		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		store.dispatch.mockClear();
+		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+
+		expect( store.dispatch ).not.toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
+	} );
+
+	test( 'should keep reporting the timeout to late responses, with their data', () => {
+		const store = createStore();
 		const response = transfer( transferStates.ACTIVE );
 
-		receiveTransfer( { siteId }, response )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS );
-		receiveTransfer( { siteId }, response )( dispatch );
-		dispatch.mockClear();
-		receiveTransfer( { siteId }, response )( dispatch );
+		startWait( store );
+		receive( store, response );
+		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		store.dispatch.mockClear();
+		receive( store, response );
 
-		expect( dispatch ).toHaveBeenCalledTimes( 1 );
-		expect( dispatch ).toHaveBeenCalledWith(
-			setAtomicTransfer( siteId, { ...response, status: transferStates.CLIENT_TIMEOUT } )
-		);
+		expect( store.dispatch ).toHaveBeenCalledTimes( 1 );
+		expect( store.dispatch ).toHaveBeenCalledWith( timedOut( response ) );
 	} );
 
-	test.each( [ transferStates.COMPLETED, transferStates.ERROR, transferStates.REVERTED ] )(
-		'should prefer settled status %s over expired deadline',
-		( status ) => {
-			const dispatch = jest.fn();
+	test( 'should give a new transfer a fresh wait after the previous one timed out', () => {
+		const store = createStore();
+		const newTransfer = transfer( transferStates.ACTIVE, 2 );
 
-			receiveTransfer( { siteId }, transfer( transferStates.ACTIVE ) )( dispatch );
-			jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS + 1 );
-			receiveTransfer( { siteId }, transfer( status ) )( dispatch );
+		startWait( store );
+		receive( store, transfer( transferStates.ACTIVE, 1 ) );
+		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		store.dispatch.mockClear();
 
-			expect( dispatch ).not.toHaveBeenCalledWith(
-				setAtomicTransfer( siteId, {
-					...transfer( status ),
-					status: transferStates.CLIENT_TIMEOUT,
-				} )
-			);
-		}
-	);
+		receive( store, newTransfer );
+		receive( store, newTransfer );
 
-	test( 'should not reopen the deadline for the same transfer', () => {
-		const dispatch = jest.fn();
-
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE ) )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS + 1 );
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE ) )( dispatch );
-
-		expect( dispatch ).toHaveBeenLastCalledWith(
-			setAtomicTransfer( siteId, {
-				...transfer( transferStates.ACTIVE ),
-				status: transferStates.CLIENT_TIMEOUT,
-			} )
-		);
-	} );
-
-	test( 'should give a new transfer a fresh deadline', () => {
-		const dispatch = jest.fn();
-
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE, 1 ) )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS + 1 );
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE, 2 ) )( dispatch );
-
-		expect( dispatch ).not.toHaveBeenCalledWith(
-			setAtomicTransfer( siteId, {
-				...transfer( transferStates.ACTIVE, 2 ),
-				status: transferStates.CLIENT_TIMEOUT,
-			} )
-		);
-		jest.runOnlyPendingTimers();
-		expect( dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
-	} );
-
-	test( 'should give a new transfer a fresh deadline after the previous one timed out', () => {
-		const dispatch = jest.fn();
-
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE, 1 ) )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS );
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE, 1 ) )( dispatch );
-
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE, 2 ) )( dispatch );
-		dispatch.mockClear();
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE, 2 ) )( dispatch );
-
-		expect( dispatch ).not.toHaveBeenCalledWith(
-			setAtomicTransfer( siteId, {
-				...transfer( transferStates.ACTIVE, 2 ),
-				status: transferStates.CLIENT_TIMEOUT,
-			} )
-		);
-	} );
-
-	test( 'should not let a poll from an ended wait time out a new wait', () => {
-		const dispatch = jest.fn();
-
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE ) )( dispatch );
-		receiveTransfer( { siteId }, transfer( transferStates.COMPLETED ) )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS + 1 );
-		jest.runOnlyPendingTimers();
-		receiveTransfer( { siteId }, transfer( transferStates.ACTIVE ) )( dispatch );
-
-		expect( dispatch ).not.toHaveBeenLastCalledWith(
-			setAtomicTransfer( siteId, {
-				...transfer( transferStates.ACTIVE ),
-				status: transferStates.CLIENT_TIMEOUT,
-			} )
-		);
-	} );
-
-	test( 'should preserve transfer data when timing out', () => {
-		const dispatch = jest.fn();
-		const response = transfer( transferStates.ACTIVE );
-
-		receiveTransfer( { siteId }, response )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS );
-		receiveTransfer( { siteId }, response )( dispatch );
-
-		expect( dispatch ).toHaveBeenLastCalledWith(
-			setAtomicTransfer( siteId, {
-				...response,
-				status: transferStates.CLIENT_TIMEOUT,
-			} )
-		);
+		expect( store.dispatch ).not.toHaveBeenCalledWith( timedOut( newTransfer ) );
+		expect( store.dispatch ).toHaveBeenCalledWith( setAtomicTransfer( siteId, newTransfer ) );
+		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
 
 	test( 'should recover from an empty response by polling', () => {
-		const dispatch = jest.fn();
+		const store = createStore();
 
-		receiveTransfer( { siteId }, undefined )( dispatch );
-		jest.runOnlyPendingTimers();
+		receive( store, undefined );
+		jest.advanceTimersByTime( POLL_INTERVAL_MS );
 
-		expect( dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
+		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
+	} );
+
+	test( 'should report the timeout for an empty response after the deadline', () => {
+		const store = createStore();
+
+		startWait( store );
+		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		store.dispatch.mockClear();
+		receive( store, undefined );
+
+		expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
 	} );
 } );
 
 describe( 'onTransferError', () => {
-	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.setSystemTime( start );
-		clearPollDeadlines();
-	} );
-
-	afterEach( () => {
-		jest.useRealTimers();
-	} );
-
 	test.each( [ { status: 404 }, { statusCode: 403 } ] )(
-		'should dispatch a terminal status on client error %p',
+		'should end the wait on client error %p',
 		( error ) => {
-			const dispatch = jest.fn();
+			const store = createStore();
 
-			onTransferError( { siteId }, error )( dispatch );
-			jest.runOnlyPendingTimers();
+			startWait( store );
+			fail( store, error );
+			jest.advanceTimersByTime( POLL_INTERVAL_MS );
 
-			expect( dispatch ).toHaveBeenCalledWith(
-				setAtomicTransfer( siteId, { status: transferStates.CLIENT_TIMEOUT } )
-			);
+			expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
+			expect( store.dispatch ).not.toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 		}
 	);
 
-	test( 'should retry missing transfer records before timing out', () => {
-		const dispatch = jest.fn();
+	test( 'should retry missing transfer records before ending the wait', () => {
+		const store = createStore();
+		const missingRecord = { status: 400, error: 'no_transfer_record' };
+
+		startWait( store );
 
 		for ( let attempt = 1; attempt < 6; attempt++ ) {
-			onTransferError( { siteId }, { status: 400, error: 'no_transfer_record' } )( dispatch );
-			jest.runOnlyPendingTimers();
+			fail( store, missingRecord );
+			jest.advanceTimersByTime( POLL_INTERVAL_MS );
 		}
 
-		expect( dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
-		onTransferError( { siteId }, { status: 400, error: 'no_transfer_record' } )( dispatch );
+		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
+		store.dispatch.mockClear();
+		fail( store, missingRecord );
 
-		expect( dispatch ).toHaveBeenLastCalledWith(
-			setAtomicTransfer( siteId, { status: transferStates.CLIENT_TIMEOUT } )
-		);
+		expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
 	} );
 
 	test( 'should poll again after a server error', () => {
-		const dispatch = jest.fn();
+		const store = createStore();
 
-		onTransferError( { siteId }, { status: 500 } )( dispatch );
-		jest.runOnlyPendingTimers();
+		startWait( store );
+		fail( store, { status: 500 } );
+		jest.advanceTimersByTime( POLL_INTERVAL_MS );
 
-		expect( dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
+		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
 
-	test( 'should time out after server errors exceed the deadline', () => {
-		const dispatch = jest.fn();
+	test( 'should stop retrying server errors once the wait has timed out', () => {
+		const store = createStore();
 
-		onTransferError( { siteId }, { status: 500 } )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS );
-		onTransferError( { siteId }, { status: 500 } )( dispatch );
+		startWait( store );
+		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		store.dispatch.mockClear();
+		fail( store, { status: 500 } );
+		jest.advanceTimersByTime( POLL_INTERVAL_MS );
 
-		expect( dispatch ).toHaveBeenLastCalledWith(
-			setAtomicTransfer( siteId, { status: transferStates.CLIENT_TIMEOUT } )
-		);
-	} );
-
-	test( 'should keep timeout status sticky after server errors', () => {
-		const dispatch = jest.fn();
-
-		onTransferError( { siteId }, { status: 500 } )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS );
-		onTransferError( { siteId }, { status: 500 } )( dispatch );
-		dispatch.mockClear();
-		onTransferError( { siteId }, { status: 500 } )( dispatch );
-
-		expect( dispatch ).toHaveBeenCalledTimes( 1 );
-		expect( dispatch ).toHaveBeenCalledWith(
-			setAtomicTransfer( siteId, { status: transferStates.CLIENT_TIMEOUT } )
-		);
-	} );
-
-	test( 'should adopt an error-created deadline when a response succeeds', () => {
-		const dispatch = jest.fn();
-		const response = transfer( transferStates.ACTIVE );
-
-		onTransferError( { siteId }, { status: 500 } )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS - 1 );
-		dispatch.mockClear();
-		receiveTransfer( { siteId }, response )( dispatch );
-
-		expect( dispatch ).not.toHaveBeenCalledWith(
-			setAtomicTransfer( siteId, { ...response, status: transferStates.CLIENT_TIMEOUT } )
-		);
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS );
-		receiveTransfer( { siteId }, response )( dispatch );
-		expect( dispatch ).toHaveBeenLastCalledWith(
-			setAtomicTransfer( siteId, { ...response, status: transferStates.CLIENT_TIMEOUT } )
-		);
-	} );
-
-	test( 'should honor timeout created before a response succeeds', () => {
-		const dispatch = jest.fn();
-		const response = transfer( transferStates.ACTIVE );
-
-		onTransferError( { siteId }, { status: 500 } )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS );
-		onTransferError( { siteId }, { status: 500 } )( dispatch );
-		dispatch.mockClear();
-		receiveTransfer( { siteId }, response )( dispatch );
-
-		expect( dispatch ).toHaveBeenCalledWith(
-			setAtomicTransfer( siteId, { ...response, status: transferStates.CLIENT_TIMEOUT } )
-		);
-	} );
-
-	test( 'should start a fresh wait after a stale timeout entry', () => {
-		const dispatch = jest.fn();
-
-		onTransferError( { siteId }, { status: 500 } )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS );
-		onTransferError( { siteId }, { status: 500 } )( dispatch );
-		jest.setSystemTime( start + TRANSFER_POLL_DEADLINE_MS * 2 + 1 );
-		dispatch.mockClear();
-		onTransferError( { siteId }, { status: 500 } )( dispatch );
-		jest.runOnlyPendingTimers();
-
-		expect( dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
-		expect( dispatch ).not.toHaveBeenCalledWith(
-			setAtomicTransfer( siteId, { status: transferStates.CLIENT_TIMEOUT } )
-		);
+		expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
+		expect( store.dispatch ).not.toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
 } );
