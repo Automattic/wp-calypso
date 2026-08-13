@@ -387,7 +387,7 @@ export function renderTransactionQuantitySummary(
 		return renderAkismetTransactionQuantitySummary( licensed_quantity, isRenewal, translate );
 	}
 
-	// The product name already carries the credit count, so a second line repeating it says nothing new.
+	// The title already includes the credit count, so skip the quantity line.
 	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
 		return null;
 	}
