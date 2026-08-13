@@ -1,3 +1,4 @@
+import { isAkismetPro500, getAkismetPro500ProductDisplayName } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -39,7 +40,6 @@ import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
 import {
-	getReceiptItemName,
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionQuantitySummary,
@@ -621,7 +621,6 @@ function ReceiptLineItem( {
 } ) {
 	const translate = useTranslate();
 	const termLabel = getTransactionTermLabel( item, translate );
-	const quantitySummary = renderTransactionQuantitySummary( item, translate );
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( transaction.date );
 	const subtotal_integer = shouldShowDiscount
 		? getReceiptItemOriginalCost( item )
@@ -635,11 +634,17 @@ function ReceiptLineItem( {
 		<>
 			<tr>
 				<td className="billing-history__receipt-item-name">
-					<span>{ getReceiptItemName( item ) }</span>
+					<span>
+						{ isAkismetPro500( { product_slug: item.wpcom_product_slug } )
+							? getAkismetPro500ProductDisplayName( item.variation, item.licensed_quantity )
+							: item.variation }
+					</span>
 					<small>({ item.type_localized })</small>
 					{ termLabel && <em>{ termLabel }</em> }
 					{ item.domain && <em>{ item.domain }</em> }
-					{ quantitySummary && <em>{ quantitySummary }</em> }
+					{ item.licensed_quantity && (
+						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
+					) }
 					{ isTransactionJetpackSearch10kTier( item ) && (
 						<em>{ renderJetpackSearch10kTierBreakdown( item, subtotal_integer, translate ) }</em>
 					) }

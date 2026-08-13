@@ -28,12 +28,12 @@ import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { isAkismetPro500Plan } from '../../utils/akismet';
 import { getTaxName } from '../../utils/tax';
 import {
 	formatReceiptAmount,
 	formatReceiptTaxAmount,
 	groupDomainProducts,
-	getReceiptItemName,
 	getTransactionTermLabel,
 	renderTransactionQuantitySummary,
 	DomainTransactionVolumeSummary,
@@ -504,8 +504,15 @@ function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
 
 function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Receipt } ) {
 	const termLabel = getTransactionTermLabel( item );
-	const quantitySummary = renderTransactionQuantitySummary( item );
-	const variationDisplay = getReceiptItemName( item, item.variation );
+	const isAkismet = item.licensed_quantity && isAkismetPro500Plan( item.wpcom_product_slug );
+	const variationDisplay = isAkismet
+		? sprintf(
+				/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
+				__( '%1$s (%2$d requests/month)' ),
+				item.variation.replace( /\s*\(.*$/, '' ).trim(),
+				500 * parseInt( String( item.licensed_quantity ) )
+		  )
+		: item.variation;
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( receipt.date );
 	const subtotalInteger = shouldShowDiscount
 		? getReceiptItemOriginalCost( item )
@@ -526,7 +533,9 @@ function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Recei
 						<VStack spacing={ 0 }>
 							{ termLabel && <Text>{ termLabel }</Text> }
 							{ item.domain && <Text variant="muted">{ item.domain }</Text> }
-							{ quantitySummary && <Text>{ quantitySummary }</Text> }
+							{ item.licensed_quantity && (
+								<Text>{ renderTransactionQuantitySummary( item ) }</Text>
+							) }
 							{ isTransactionJetpackSearch10kTier( item ) && (
 								<Text>{ renderJetpackSearch10kTierBreakdown( item, subtotalInteger ) }</Text>
 							) }

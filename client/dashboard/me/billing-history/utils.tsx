@@ -1,4 +1,3 @@
-import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { isAkismetPro500Plan } from '../../utils/akismet';
@@ -10,7 +9,6 @@ import {
 	isJetpackSearch,
 	isJetpackStatsPaidProductSlug,
 } from '../../utils/purchase';
-import { getStudioCodeAiCreditsTitle } from '../../utils/studio-code-ai-credits';
 import type { Receipt, ReceiptItem } from '@automattic/api-core';
 import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
 
@@ -248,30 +246,6 @@ export function DomainTransactionVolumeSummary( { item }: { item: ReceiptItem } 
 	);
 }
 
-/**
- * Return the name to show for a receipt item, which for a few products includes
- * the quantity bought. `name` is passed in because the list groups items under a
- * shared label while the receipt uses each item's own variation.
- */
-export function getReceiptItemName( item: ReceiptItem, name: string ): string {
-	const quantity = parseInt( String( item.licensed_quantity ) );
-
-	if ( quantity && isAkismetPro500Plan( item.wpcom_product_slug ) ) {
-		return sprintf(
-			/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
-			__( '%1$s (%2$d requests/month)' ),
-			name.replace( /\s*\(.*$/, '' ).trim(),
-			500 * quantity
-		);
-	}
-
-	if ( quantity && PRODUCT_STUDIO_CODE_AI_CREDITS === item.wpcom_product_slug ) {
-		return getStudioCodeAiCreditsTitle( name, quantity );
-	}
-
-	return name;
-}
-
 export function renderTransactionQuantitySummary( {
 	licensed_quantity,
 	new_quantity,
@@ -315,11 +289,6 @@ export function renderTransactionQuantitySummary( {
 
 	if ( isAkismetPro500Plan( wpcom_product_slug ) ) {
 		return renderAkismetTransactionQuantitySummary( licensedQuantity, isRenewal );
-	}
-
-	// The title already includes the credit count, so skip the quantity line.
-	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
-		return null;
 	}
 
 	if ( isRenewal ) {

@@ -1,10 +1,12 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
+import { isAkismetPro500, getAkismetPro500ProductDisplayName } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
 import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
+import { getStudioCodeAiCreditsTitle } from 'calypso/dashboard/utils/studio-code-ai-credits';
 import { capitalPDangit } from 'calypso/lib/formatting';
 import { wideFields } from './constants';
 import {
-	getReceiptItemName,
 	getTransactionTermLabel,
 	groupDomainProducts,
 	TransactionAmount,
@@ -19,20 +21,39 @@ import type {
 } from 'calypso/state/billing-transactions/types';
 import type { JSX } from 'react';
 
+/**
+ * Return the name to show for a receipt item, which for a few products includes
+ * the quantity bought.
+ */
+function getReceiptItemName( item: BillingTransactionItem ): string {
+	const quantity = parseInt( String( item.licensed_quantity ) );
+
+	if ( quantity && PRODUCT_STUDIO_CODE_AI_CREDITS === item.wpcom_product_slug ) {
+		return getStudioCodeAiCreditsTitle( item.variation, quantity );
+	}
+
+	if ( isAkismetPro500( { product_slug: item.wpcom_product_slug } ) ) {
+		return String( getAkismetPro500ProductDisplayName( item.variation, item.licensed_quantity ) );
+	}
+
+	return item.variation;
+}
+
 function renderServiceNameDescription(
 	transaction: BillingTransactionItem,
 	translate: ReturnType< typeof useTranslate >
 ) {
 	const plan = capitalPDangit( getReceiptItemName( transaction ) );
 	const termLabel = getTransactionTermLabel( transaction, translate );
-	const quantitySummary = renderTransactionQuantitySummary( transaction, translate );
 
 	return (
 		<div>
 			<strong>{ plan }</strong>
 			{ transaction.domain && <small>{ transaction.domain }</small> }
 			{ termLabel && <small>{ termLabel }</small> }
-			{ quantitySummary && <small>{ quantitySummary }</small> }
+			{ transaction.licensed_quantity && (
+				<small>{ renderTransactionQuantitySummary( transaction, translate ) }</small>
+			) }
 		</div>
 	);
 }

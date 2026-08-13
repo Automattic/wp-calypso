@@ -1,3 +1,4 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { sendReceiptEmailMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
@@ -6,18 +7,19 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useMemo, type JSX } from 'react';
 import { receiptRoute } from '../../app/router/me';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import { isAkismetPro500Plan } from '../../utils/akismet';
+import { getStudioCodeAiCreditsTitle } from '../../utils/studio-code-ai-credits';
 import { getTaxName } from '../../utils/tax';
 import {
 	formatReceiptAmount,
 	formatReceiptTaxAmount,
-	getReceiptItemName,
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionQuantitySummary,
 	summarizeReceiptItems,
 	transactionIncludesTax,
 } from './utils';
-import type { CountryListItem, Receipt, Site } from '@automattic/api-core';
+import type { CountryListItem, Receipt, ReceiptItem, Site } from '@automattic/api-core';
 import type { Fields, Operator, SortDirection, View } from '@wordpress/dataviews';
 
 import './styles.scss';
@@ -353,6 +355,30 @@ function getServiceForFiltering( receipt: Receipt ): string {
 	return String( receipt.service || '' );
 }
 
+/**
+ * Return the name to show for a receipt item, which for a few products includes
+ * the quantity bought. `name` is passed in because the list groups items under a
+ * shared label.
+ */
+function getReceiptItemName( item: ReceiptItem, name: string ): string {
+	const quantity = parseInt( String( item.licensed_quantity ) );
+
+	if ( quantity && PRODUCT_STUDIO_CODE_AI_CREDITS === item.wpcom_product_slug ) {
+		return getStudioCodeAiCreditsTitle( name, quantity );
+	}
+
+	if ( quantity && isAkismetPro500Plan( item.wpcom_product_slug ) ) {
+		return sprintf(
+			/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
+			__( '%1$s (%2$d requests/month)' ),
+			name.replace( /\s*\(.*$/, '' ).trim(),
+			500 * quantity
+		);
+	}
+
+	return name;
+}
+
 function renderServiceNameDescription( receipt: Receipt ) {
 	const { groupedItems: receiptItems, label } = summarizeReceiptItems( receipt.items );
 
@@ -366,7 +392,6 @@ function renderServiceNameDescription( receipt: Receipt ) {
 
 	const receiptItem = receiptItems[ 0 ];
 	const termLabel = getTransactionTermLabel( receiptItem );
-	const quantitySummary = renderTransactionQuantitySummary( receiptItem );
 	const displayLabel = getReceiptItemName( receiptItem, label );
 
 	return (
@@ -384,9 +409,9 @@ function renderServiceNameDescription( receipt: Receipt ) {
 					{ termLabel }
 				</Text>
 			) }
-			{ quantitySummary && (
+			{ receiptItem.licensed_quantity && (
 				<Text isBlock variant="muted" size="12">
-					{ quantitySummary }
+					{ renderTransactionQuantitySummary( receiptItem ) }
 				</Text>
 			) }
 		</VStack>

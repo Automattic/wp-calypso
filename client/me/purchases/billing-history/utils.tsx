@@ -1,6 +1,4 @@
-import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import {
-	getAkismetPro500ProductDisplayName,
 	getPlanTermLabel,
 	isDIFMProduct,
 	isAkismetPro500,
@@ -13,7 +11,6 @@ import {
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Fragment, type JSX } from 'react';
-import { getStudioCodeAiCreditsTitle } from 'calypso/dashboard/utils/studio-code-ai-credits';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import {
 	BillingTransaction,
@@ -345,24 +342,6 @@ function renderAkismetTransactionQuantitySummary(
 	);
 }
 
-/**
- * Return the name to show for a receipt item, which for a few products includes
- * the quantity bought.
- */
-export function getReceiptItemName( item: BillingTransactionItem ): string {
-	const quantity = parseInt( String( item.licensed_quantity ) );
-
-	if ( quantity && isAkismetPro500( { product_slug: item.wpcom_product_slug } ) ) {
-		return String( getAkismetPro500ProductDisplayName( item.variation, quantity ) );
-	}
-
-	if ( quantity && PRODUCT_STUDIO_CODE_AI_CREDITS === item.wpcom_product_slug ) {
-		return getStudioCodeAiCreditsTitle( item.variation, quantity );
-	}
-
-	return item.variation;
-}
-
 export function renderTransactionQuantitySummary(
 	{ licensed_quantity, new_quantity, type, wpcom_product_slug }: BillingTransactionItem,
 	translate: LocalizeProps[ 'translate' ]
@@ -405,11 +384,6 @@ export function renderTransactionQuantitySummary(
 
 	if ( isAkismetPro500( product ) ) {
 		return renderAkismetTransactionQuantitySummary( licensed_quantity, isRenewal, translate );
-	}
-
-	// The title already includes the credit count, so skip the quantity line.
-	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
-		return null;
 	}
 
 	if ( isRenewal ) {
