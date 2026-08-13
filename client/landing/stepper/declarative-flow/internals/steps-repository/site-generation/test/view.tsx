@@ -2,9 +2,10 @@
  * @jest-environment jsdom
  */
 
-import { act, render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { SiteGenerationView } from '../view';
-import type { SiteGenerationStep } from '../use-site-generation';
+import type { SiteGenerationState, SiteGenerationStep } from '../use-site-generation';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: ( Component: unknown ) => Component,
@@ -18,7 +19,12 @@ jest.mock( 'i18n-calypso', () => ( {
 		),
 } ) );
 
-describe( 'SiteGenerationView', () => {
+const idleState = {
+	retryBuild: null,
+	isRetryingBuild: false,
+};
+
+describe( 'SiteGenerationView progress and fallback states', () => {
 	it( 'shows an accessible elapsed time for the active step and updates it every second', () => {
 		jest.useFakeTimers();
 		jest.setSystemTime( new Date( '2026-08-07T12:00:00Z' ) );
@@ -28,6 +34,7 @@ describe( 'SiteGenerationView', () => {
 				<SiteGenerationView
 					onRetry={ jest.fn() }
 					state={ {
+						...idleState,
 						status: 'working',
 						steps: [
 							{
@@ -48,6 +55,7 @@ describe( 'SiteGenerationView', () => {
 				<SiteGenerationView
 					onRetry={ jest.fn() }
 					state={ {
+						...idleState,
 						status: 'working',
 						steps: [
 							{
@@ -77,6 +85,7 @@ describe( 'SiteGenerationView', () => {
 			<SiteGenerationView
 				onRetry={ onRetry }
 				state={ {
+					...idleState,
 					status: 'failed',
 					failureReason: 'build-failed',
 					steps: [ { id: 'preparing', label: 'Preparing the site', status: 'active' } ],
@@ -94,6 +103,7 @@ describe( 'SiteGenerationView', () => {
 			<SiteGenerationView
 				onRetry={ onRetry }
 				state={ {
+					...idleState,
 					status: 'failed',
 					failureReason: 'timed-out',
 					steps: [ { id: 'preparing', label: 'Preparing the site', status: 'active' } ],
@@ -121,7 +131,7 @@ describe( 'SiteGenerationView', () => {
 		const { getAllByRole, getByRole, rerender } = render(
 			<SiteGenerationView
 				onRetry={ jest.fn() }
-				state={ { status: 'working', steps: steps( 0 ) } }
+				state={ { ...idleState, status: 'working', steps: steps( 0 ) } }
 			/>
 		);
 
@@ -130,7 +140,7 @@ describe( 'SiteGenerationView', () => {
 		rerender(
 			<SiteGenerationView
 				onRetry={ jest.fn() }
-				state={ { status: 'working', steps: steps( 2 ) } }
+				state={ { ...idleState, status: 'working', steps: steps( 2 ) } }
 			/>
 		);
 
@@ -139,7 +149,12 @@ describe( 'SiteGenerationView', () => {
 		rerender(
 			<SiteGenerationView
 				onRetry={ jest.fn() }
-				state={ { status: 'failed', failureReason: 'build-failed', steps: steps( 2 ) } }
+				state={ {
+					...idleState,
+					status: 'failed',
+					failureReason: 'build-failed',
+					steps: steps( 2 ),
+				} }
 			/>
 		);
 
@@ -148,5 +163,67 @@ describe( 'SiteGenerationView', () => {
 				( region ) => region.textContent?.includes( 'Building the pages' )
 			)
 		).toBe( false );
+	} );
+} );
+
+const failedState: SiteGenerationState = {
+	status: 'failed',
+	failureReason: 'build-failed',
+	failureLabel: 'We couldn’t finish building your site',
+	failureDetail: 'You can start the build again right away.',
+	steps: [],
+	retryBuild: jest.fn(),
+	isRetryingBuild: false,
+};
+
+describe( 'SiteGenerationView server recovery', () => {
+	it( 'renders the server failure copy and starts the rebuild', async () => {
+		const retryBuild = jest.fn();
+		render( <SiteGenerationView state={ { ...failedState, retryBuild } } onRetry={ jest.fn() } /> );
+
+		expect( screen.getByText( 'We couldn’t finish building your site' ) ).toBeVisible();
+		expect( screen.getByText( 'You can start the build again right away.' ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Start again' } ) );
+		expect( retryBuild ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'falls back to Site Spec recovery when no server retry is offered', async () => {
+		const onRetry = jest.fn();
+		render(
+			<SiteGenerationView state={ { ...failedState, retryBuild: null } } onRetry={ onRetry } />
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Start over' } ) );
+		expect( onRetry ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'keeps the timed-out copy when the ui block carried no text', () => {
+		render(
+			<SiteGenerationView
+				state={ {
+					...failedState,
+					failureReason: 'timed-out',
+					failureLabel: undefined,
+					failureDetail: undefined,
+					retryBuild: null,
+				} }
+				onRetry={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByText( 'This is taking longer than expected' ) ).toBeVisible();
+		expect( screen.getByText( 'Your brief is saved.' ) ).toBeVisible();
+	} );
+
+	it( 'disables the rebuild button while the retry request is in flight', () => {
+		render(
+			<SiteGenerationView
+				state={ { ...failedState, isRetryingBuild: true } }
+				onRetry={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Start again' } ) ).toBeDisabled();
 	} );
 } );

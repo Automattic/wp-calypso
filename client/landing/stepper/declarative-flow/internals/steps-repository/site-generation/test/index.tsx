@@ -34,6 +34,8 @@ describe( 'SiteGeneration recovery', () => {
 			status: 'failed',
 			failureReason: 'build-failed',
 			steps: [],
+			retryBuild: null,
+			isRetryingBuild: false,
 		};
 		Object.defineProperty( window, 'location', {
 			value: {

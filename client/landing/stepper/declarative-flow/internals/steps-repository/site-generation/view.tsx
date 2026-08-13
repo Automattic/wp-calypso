@@ -4,7 +4,7 @@ import { Button, Icon, Notice } from '@wordpress/components';
 import { check, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import type { SiteGenerationFailureReason, SiteGenerationState } from './use-site-generation';
+import type { SiteGenerationState } from './use-site-generation';
 
 const WordPressMark = () => <Icon className="site-generation__wordpress-mark" icon={ wordpress } />;
 
@@ -117,14 +117,9 @@ function WaitingCanvas() {
 	);
 }
 
-function ErrorCanvas( {
-	failureReason,
-	onRetry,
-}: {
-	failureReason: SiteGenerationFailureReason;
-	onRetry: () => void;
-} ) {
+function ErrorCanvas( { state, onRetry }: { state: SiteGenerationState; onRetry: () => void } ) {
 	const translate = useTranslate();
+	const failureReason = state.failureReason ?? 'missing-parameters';
 
 	let title = translate( 'We couldn’t check your site' );
 	let description = translate( 'The site or editor destination is missing from this page.' );
@@ -140,6 +135,17 @@ function ErrorCanvas( {
 		actionLabel = translate( 'Check again' );
 	}
 
+	// A server-failed build renders the server's copy verbatim; the timed-out
+	// copy above stays as the fallback when the ui block omitted it.
+	if ( failureReason === 'build-failed' ) {
+		title = state.failureLabel ?? title;
+		description = state.failureDetail ?? description;
+	}
+
+	const action = state.retryBuild
+		? { label: translate( 'Start again' ), onClick: state.retryBuild }
+		: { label: actionLabel, onClick: onRetry };
+
 	return (
 		<div aria-live="polite" className="site-generation__outcome" role="status">
 			<div className="site-generation__outcome-icon" aria-hidden="true">
@@ -148,8 +154,13 @@ function ErrorCanvas( {
 			<h1 className="site-generation__outcome-title">{ title }</h1>
 			<p className="site-generation__outcome-description">{ description }</p>
 			<div className="site-generation__outcome-actions">
-				<Button onClick={ onRetry } variant="primary">
-					{ actionLabel }
+				<Button
+					disabled={ state.isRetryingBuild }
+					isBusy={ state.isRetryingBuild }
+					onClick={ action.onClick }
+					variant="primary"
+				>
+					{ action.label }
 				</Button>
 			</div>
 		</div>
@@ -231,10 +242,7 @@ export function SiteGenerationView( {
 				</div>
 				<div className="site-generation__canvas">
 					{ state.status === 'failed' ? (
-						<ErrorCanvas
-							failureReason={ state.failureReason ?? 'missing-parameters' }
-							onRetry={ onRetry }
-						/>
+						<ErrorCanvas state={ state } onRetry={ onRetry } />
 					) : (
 						<WaitingCanvas />
 					) }
