@@ -1,3 +1,4 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { isAkismetPro500Plan } from '../../utils/akismet';
@@ -289,6 +290,11 @@ export function renderTransactionQuantitySummary( {
 
 	if ( isAkismetPro500Plan( wpcom_product_slug ) ) {
 		return renderAkismetTransactionQuantitySummary( licensedQuantity, isRenewal );
+	}
+
+	// The product name already carries the credit count, so a second line repeating it says nothing new.
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
+		return null;
 	}
 
 	if ( isRenewal ) {

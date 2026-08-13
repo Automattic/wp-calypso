@@ -1,3 +1,4 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { isAkismetPro500, getAkismetPro500ProductDisplayName } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
@@ -23,6 +24,7 @@ import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/loca
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
+import { getStudioCodeAiCreditsTitle } from 'calypso/dashboard/utils/purchase';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
@@ -612,6 +614,18 @@ export function ReceiptItemTaxes( { transaction }: { transaction: BillingTransac
 	);
 }
 
+function getReceiptItemName( item: BillingTransactionItem ): string {
+	if ( isAkismetPro500( { product_slug: item.wpcom_product_slug } ) ) {
+		return String( getAkismetPro500ProductDisplayName( item.variation, item.licensed_quantity ) );
+	}
+
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === item.wpcom_product_slug && item.licensed_quantity ) {
+		return getStudioCodeAiCreditsTitle( item.variation, item.licensed_quantity );
+	}
+
+	return item.variation;
+}
+
 function ReceiptLineItem( {
 	item,
 	transaction,
@@ -621,6 +635,7 @@ function ReceiptLineItem( {
 } ) {
 	const translate = useTranslate();
 	const termLabel = getTransactionTermLabel( item, translate );
+	const quantitySummary = renderTransactionQuantitySummary( item, translate );
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( transaction.date );
 	const subtotal_integer = shouldShowDiscount
 		? getReceiptItemOriginalCost( item )
@@ -634,17 +649,11 @@ function ReceiptLineItem( {
 		<>
 			<tr>
 				<td className="billing-history__receipt-item-name">
-					<span>
-						{ isAkismetPro500( { product_slug: item.wpcom_product_slug } )
-							? getAkismetPro500ProductDisplayName( item.variation, item.licensed_quantity )
-							: item.variation }
-					</span>
+					<span>{ getReceiptItemName( item ) }</span>
 					<small>({ item.type_localized })</small>
 					{ termLabel && <em>{ termLabel }</em> }
 					{ item.domain && <em>{ item.domain }</em> }
-					{ item.licensed_quantity && (
-						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
-					) }
+					{ quantitySummary && <em>{ quantitySummary }</em> }
 					{ isTransactionJetpackSearch10kTier( item ) && (
 						<em>{ renderJetpackSearch10kTierBreakdown( item, subtotal_integer, translate ) }</em>
 					) }

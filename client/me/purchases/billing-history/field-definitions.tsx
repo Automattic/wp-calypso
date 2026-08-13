@@ -1,7 +1,9 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { isAkismetPro500, getAkismetPro500ProductDisplayName } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
 import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
+import { getStudioCodeAiCreditsTitle } from 'calypso/dashboard/utils/purchase';
 import { capitalPDangit } from 'calypso/lib/formatting';
 import { wideFields } from './constants';
 import {
@@ -24,22 +26,27 @@ function renderServiceNameDescription(
 	translate: ReturnType< typeof useTranslate >
 ) {
 	const isAkismet = isAkismetPro500( { product_slug: transaction.wpcom_product_slug } );
-	const planName = isAkismet
-		? String(
-				getAkismetPro500ProductDisplayName( transaction.variation, transaction.licensed_quantity )
-		  )
-		: transaction.variation;
+	let planName = transaction.variation;
+	if ( isAkismet ) {
+		planName = String(
+			getAkismetPro500ProductDisplayName( transaction.variation, transaction.licensed_quantity )
+		);
+	} else if (
+		PRODUCT_STUDIO_CODE_AI_CREDITS === transaction.wpcom_product_slug &&
+		transaction.licensed_quantity
+	) {
+		planName = getStudioCodeAiCreditsTitle( transaction.variation, transaction.licensed_quantity );
+	}
 	const plan = capitalPDangit( planName );
 	const termLabel = getTransactionTermLabel( transaction, translate );
+	const quantitySummary = renderTransactionQuantitySummary( transaction, translate );
 
 	return (
 		<div>
 			<strong>{ plan }</strong>
 			{ transaction.domain && <small>{ transaction.domain }</small> }
 			{ termLabel && <small>{ termLabel }</small> }
-			{ transaction.licensed_quantity && (
-				<small>{ renderTransactionQuantitySummary( transaction, translate ) }</small>
-			) }
+			{ quantitySummary && <small>{ quantitySummary }</small> }
 		</div>
 	);
 }
@@ -222,14 +229,23 @@ export function getFieldDefinitions(
 					return String( transactionItem.product );
 				}
 				const isAkismet = isAkismetPro500( { product_slug: transactionItem.wpcom_product_slug } );
-				const name = isAkismet
-					? String(
-							getAkismetPro500ProductDisplayName(
-								transactionItem.variation,
-								transactionItem.licensed_quantity
-							)
-					  )
-					: transactionItem.variation;
+				let name = transactionItem.variation;
+				if ( isAkismet ) {
+					name = String(
+						getAkismetPro500ProductDisplayName(
+							transactionItem.variation,
+							transactionItem.licensed_quantity
+						)
+					);
+				} else if (
+					PRODUCT_STUDIO_CODE_AI_CREDITS === transactionItem.wpcom_product_slug &&
+					transactionItem.licensed_quantity
+				) {
+					name = getStudioCodeAiCreditsTitle(
+						transactionItem.variation,
+						transactionItem.licensed_quantity
+					);
+				}
 				return capitalPDangit( name );
 			},
 		},

@@ -1,3 +1,4 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { sendReceiptEmailMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
@@ -7,6 +8,7 @@ import { useMemo, type JSX } from 'react';
 import { receiptRoute } from '../../app/router/me';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { isAkismetPro500Plan } from '../../utils/akismet';
+import { getStudioCodeAiCreditsTitle } from '../../utils/purchase';
 import { getTaxName } from '../../utils/tax';
 import {
 	formatReceiptAmount,
@@ -366,16 +368,23 @@ function renderServiceNameDescription( receipt: Receipt ) {
 
 	const receiptItem = receiptItems[ 0 ];
 	const termLabel = getTransactionTermLabel( receiptItem );
+	const quantitySummary = renderTransactionQuantitySummary( receiptItem );
 	const isAkismet =
 		receiptItem.licensed_quantity && isAkismetPro500Plan( receiptItem.wpcom_product_slug );
-	const displayLabel = isAkismet
-		? sprintf(
-				/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
-				__( '%1$s (%2$d requests/month)' ),
-				label.replace( /\s*\(.*$/, '' ).trim(),
-				500 * parseInt( String( receiptItem.licensed_quantity ) )
-		  )
-		: label;
+	const isStudioCodeAiCredits =
+		receiptItem.licensed_quantity &&
+		PRODUCT_STUDIO_CODE_AI_CREDITS === receiptItem.wpcom_product_slug;
+	let displayLabel = label;
+	if ( isAkismet ) {
+		displayLabel = sprintf(
+			/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
+			__( '%1$s (%2$d requests/month)' ),
+			label.replace( /\s*\(.*$/, '' ).trim(),
+			500 * parseInt( String( receiptItem.licensed_quantity ) )
+		);
+	} else if ( isStudioCodeAiCredits ) {
+		displayLabel = getStudioCodeAiCreditsTitle( label, receiptItem.licensed_quantity );
+	}
 
 	return (
 		<VStack spacing={ 1 }>
@@ -392,9 +401,9 @@ function renderServiceNameDescription( receipt: Receipt ) {
 					{ termLabel }
 				</Text>
 			) }
-			{ receiptItem.licensed_quantity && (
+			{ quantitySummary && (
 				<Text isBlock variant="muted" size="12">
-					{ renderTransactionQuantitySummary( receiptItem ) }
+					{ quantitySummary }
 				</Text>
 			) }
 		</VStack>

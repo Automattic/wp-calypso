@@ -1,4 +1,4 @@
-import { PaymentPartners } from '@automattic/api-core';
+import { PaymentPartners, PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import {
 	countryListQuery,
 	receiptQuery,
@@ -29,6 +29,7 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isAkismetPro500Plan } from '../../utils/akismet';
+import { getStudioCodeAiCreditsTitle } from '../../utils/purchase';
 import { getTaxName } from '../../utils/tax';
 import {
 	formatReceiptAmount,
@@ -504,15 +505,21 @@ function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
 
 function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Receipt } ) {
 	const termLabel = getTransactionTermLabel( item );
+	const quantitySummary = renderTransactionQuantitySummary( item );
 	const isAkismet = item.licensed_quantity && isAkismetPro500Plan( item.wpcom_product_slug );
-	const variationDisplay = isAkismet
-		? sprintf(
-				/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
-				__( '%1$s (%2$d requests/month)' ),
-				item.variation.replace( /\s*\(.*$/, '' ).trim(),
-				500 * parseInt( String( item.licensed_quantity ) )
-		  )
-		: item.variation;
+	const isStudioCodeAiCredits =
+		item.licensed_quantity && PRODUCT_STUDIO_CODE_AI_CREDITS === item.wpcom_product_slug;
+	let variationDisplay = item.variation;
+	if ( isAkismet ) {
+		variationDisplay = sprintf(
+			/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
+			__( '%1$s (%2$d requests/month)' ),
+			item.variation.replace( /\s*\(.*$/, '' ).trim(),
+			500 * parseInt( String( item.licensed_quantity ) )
+		);
+	} else if ( isStudioCodeAiCredits ) {
+		variationDisplay = getStudioCodeAiCreditsTitle( item.variation, item.licensed_quantity );
+	}
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( receipt.date );
 	const subtotalInteger = shouldShowDiscount
 		? getReceiptItemOriginalCost( item )
@@ -533,9 +540,7 @@ function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Recei
 						<VStack spacing={ 0 }>
 							{ termLabel && <Text>{ termLabel }</Text> }
 							{ item.domain && <Text variant="muted">{ item.domain }</Text> }
-							{ item.licensed_quantity && (
-								<Text>{ renderTransactionQuantitySummary( item ) }</Text>
-							) }
+							{ quantitySummary && <Text>{ quantitySummary }</Text> }
 							{ isTransactionJetpackSearch10kTier( item ) && (
 								<Text>{ renderJetpackSearch10kTierBreakdown( item, subtotalInteger ) }</Text>
 							) }

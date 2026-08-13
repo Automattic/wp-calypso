@@ -1,3 +1,4 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import {
 	getPlanTermLabel,
 	isDIFMProduct,
@@ -384,6 +385,11 @@ export function renderTransactionQuantitySummary(
 
 	if ( isAkismetPro500( product ) ) {
 		return renderAkismetTransactionQuantitySummary( licensed_quantity, isRenewal, translate );
+	}
+
+	// The product name already carries the credit count, so a second line repeating it says nothing new.
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
+		return null;
 	}
 
 	if ( isRenewal ) {
