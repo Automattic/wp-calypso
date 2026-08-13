@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { ClickableItem } from '../menu-items';
 import { Nav2026AppBanner } from './app-banner';
+import { Nav2026ItemContent } from './item-content';
 import type { Nav2026Menu } from './types';
 
 // Mystery-person Gravatar fallback for the mobile footer avatar.
@@ -198,16 +199,10 @@ export function Nav2026MobileMenu( {
 													<ClickableItem
 														titleValue=""
 														content={
-															item.badge ? (
-																<>
-																	{ item.label }
-																	<span className="x-menu-mobile-dropdown-badge-new">
-																		{ item.badge }
-																	</span>
-																</>
-															) : (
-																item.label
-															)
+															<Nav2026ItemContent
+																item={ item }
+																badgeClassName="x-menu-mobile-dropdown-badge-new"
+															/>
 														}
 														urlValue={ item.url }
 														type="menu"

@@ -1428,8 +1428,15 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.x-dropdown-column-group {
 		display: flex;
 		flex-direction: column;
-		gap: 12px;
+		gap: 32px;
 		max-width: $x-dropdown-2026-column-max-width;
+		margin: 0;
+	}
+
+	.x-dropdown-subcategory {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
 		margin: 0;
 
 		> ul {
@@ -1508,6 +1515,19 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		vertical-align: 2px;
 	}
 
+}
+
+/* Leaves-WordPress.com marker; shared by the 2026 desktop dropdown and mobile menu. */
+.x-nav__external-link-icon {
+	white-space: nowrap;
+
+	.x-icon--external {
+		display: inline-block;
+		width: 9px;
+		height: 9px;
+		fill: currentColor;
+		vertical-align: baseline;
+	}
 }
 
 /* Mobile menu — full-screen white panel: header (logo ⇄ back + close), drill-down category list, footer (logged-out CTAs vs logged-in user). */
