@@ -143,7 +143,7 @@ export const agencyPartnerDirectoryRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Partner Directory' ),
+				title: __( 'Partner Directories' ),
 			},
 		],
 	} ),

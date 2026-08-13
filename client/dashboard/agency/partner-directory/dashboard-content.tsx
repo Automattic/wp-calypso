@@ -10,6 +10,7 @@ import {
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ActionList from '../../components/action-list';
+import IconList from '../../components/icon-list';
 import { SectionHeader } from '../../components/section-header';
 import { getBrandMeta } from './get-brand-meta';
 import {
@@ -32,7 +33,7 @@ const KB_PROFILE_CONTENT_URL =
  * dashboard (`@automattic/api-core` agency) and the A4A client (Redux agency)
  * can provide it.
  */
-export interface PartnerDirectoryDashboardAgency {
+interface PartnerDirectoryDashboardAgency {
 	id: number;
 	name: string;
 	profile?: AgencyProfile | null;
@@ -44,7 +45,7 @@ interface DirectoryStatus {
 }
 
 interface Props {
-	agency?: PartnerDirectoryDashboardAgency | null;
+	agency: PartnerDirectoryDashboardAgency;
 	recordTracksEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	expertiseUrl: string;
 	profileUrl: string;
@@ -69,11 +70,11 @@ export default function PartnerDirectoryDashboardContent( {
 	onPublishError,
 	openSupportGuide,
 }: Props ) {
-	const profile = agency?.profile;
+	const profile = agency.profile;
 	const application = profile?.partner_directory_application;
 
 	const { mutate: publishProfile, isPending: isPublishingProfile } = useMutation(
-		withSnackbar( agencyPartnerDirectoryApplicationMutation( agency?.id ?? 0 ), {
+		withSnackbar( agencyPartnerDirectoryApplicationMutation( agency.id ), {
 			success: getProfilePublishedMessage(),
 			error: getProfilePublishFailedMessage(),
 		} )
@@ -96,19 +97,19 @@ export default function PartnerDirectoryDashboardContent( {
 		directories.filter( ( { status } ) => status === 'rejected' ).length === 1;
 
 	const onApplyNowClick = () => {
-		recordTracksEvent( 'calypso_partner_directory_dashboard_apply_now_click' );
+		recordTracksEvent( 'calypso_a4a_partner_directory_dashboard_apply_now_click' );
 	};
 
 	const onFinishProfileClick = () => {
-		recordTracksEvent( 'calypso_partner_directory_dashboard_finish_profile_click' );
+		recordTracksEvent( 'calypso_a4a_partner_directory_dashboard_finish_profile_click' );
 	};
 
 	const onEditExpertiseClick = () => {
-		recordTracksEvent( 'calypso_partner_directory_dashboard_edit_expertise_click' );
+		recordTracksEvent( 'calypso_a4a_partner_directory_dashboard_edit_expertise_click' );
 	};
 
 	const onEditProfileClick = () => {
-		recordTracksEvent( 'calypso_partner_directory_dashboard_edit_profile_click' );
+		recordTracksEvent( 'calypso_a4a_partner_directory_dashboard_edit_profile_click' );
 	};
 
 	const onPublishProfileClick = () => {
@@ -116,7 +117,7 @@ export default function PartnerDirectoryDashboardContent( {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_partner_directory_dashboard_publish_profile_click' );
+		recordTracksEvent( 'calypso_a4a_partner_directory_dashboard_publish_profile_click' );
 
 		publishProfile(
 			{
@@ -187,12 +188,12 @@ export default function PartnerDirectoryDashboardContent( {
 						approvedCount
 					) }
 				/>
-				<ActionList>
+				<IconList>
 					{ directoryStatuses.map( ( { directory, badge } ) => {
 						const brandMeta = getBrandMeta( directory, agency );
 
 						return (
-							<ActionList.ActionItem
+							<IconList.Item
 								key={ directory }
 								decoration={ brandMeta.icon }
 								title={ DIRECTORY_NAMES[ directory ] }
@@ -225,11 +226,10 @@ export default function PartnerDirectoryDashboardContent( {
 										</VStack>
 									)
 								}
-								actions={ null }
 							/>
 						);
 					} ) }
-				</ActionList>
+				</IconList>
 				<SectionHeader
 					level={ 3 }
 					title={ __( 'Edit your agency’s information' ) }

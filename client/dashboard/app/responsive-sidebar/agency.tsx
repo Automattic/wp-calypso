@@ -77,7 +77,7 @@ export default function AgencySidebar() {
 					) }
 					{ canAccessPartnerDirectory && (
 						<SidebarMenuItem to="/agency/partner-directory">
-							{ __( 'Partner Directory' ) }
+							{ __( 'Partner Directories' ) }
 						</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>

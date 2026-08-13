@@ -115,7 +115,7 @@ describe( '<AgencyPartnerDirectory>', () => {
 			feedback_url: '',
 			is_published: false,
 		} );
-		mockPreferences( { 'a4a-partner-directory-dashboard-not-approved-popover': true } );
+		mockPreferences( { 'a4a-dashboard-pd-not-approved-popover': true } );
 
 		render( <AgencyPartnerDirectory /> );
 

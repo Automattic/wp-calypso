@@ -110,7 +110,7 @@ describe( '<AgencySidebar>', () => {
 		await renderSidebar( [ 'a4a_read_partner_directory' ] );
 
 		expect( screen.getByRole( 'button', { name: 'Agency' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Partner Directory' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Partner Directories' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Tiers' } ) ).not.toBeInTheDocument();
 	} );
 
@@ -118,7 +118,7 @@ describe( '<AgencySidebar>', () => {
 		await renderSidebar( [ 'a4a_read_agency_tier' ] );
 
 		expect( screen.getByRole( 'link', { name: 'Tiers' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'Partner Directory' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Partner Directories' } ) ).not.toBeInTheDocument();
 	} );
 
 	// MCP is the one item gated by both a tier flag (`mcp.allowed`) and a
