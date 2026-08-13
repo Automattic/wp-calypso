@@ -2,10 +2,16 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import onboarding from '../onboarding';
 
 let mockDeferredFlagOn = true;
 let mockQueryParams = new URLSearchParams( '' );
+
+jest.mock( 'wpcom-proxy-request', () => ( {
+	reloadProxy: jest.fn(),
+	requestAllBlogsAccess: jest.fn( () => Promise.resolve() ),
+} ) );
 
 jest.mock( '@automattic/calypso-config', () => {
 	const actual = jest.requireActual( '@automattic/calypso-config' );
@@ -135,8 +141,7 @@ describe( 'onboarding deferred email verification (Variant B)', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 	} );
 
-	it( 'advances the verification step to the target named in the next query param', async () => {
-		mockQueryParams = new URLSearchParams( 'next=post-checkout-onboarding' );
+	const submitEmailVerification = async () => {
 		const navigate = jest.fn();
 		const { result } = renderHook( () =>
 			onboarding.useStepNavigation.call(
@@ -151,6 +156,35 @@ describe( 'onboarding deferred email verification (Variant B)', () => {
 			providedDependencies: {},
 		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
 
+		return { navigate };
+	};
+
+	it( 'advances the verification step to the target named in the next query param', async () => {
+		mockQueryParams = new URLSearchParams( 'next=post-checkout-onboarding' );
+
+		const { navigate } = await submitEmailVerification();
+
 		expect( navigate ).toHaveBeenCalledWith( 'post-checkout-onboarding' );
+	} );
+
+	// Verification invalidates the signup proxy session; the free path re-grants site-creation
+	// access before create-site so `/sites/new` is authorized.
+	it( 're-establishes proxy site-creation access before creating the site on the free path', async () => {
+		mockQueryParams = new URLSearchParams( 'next=create-site' );
+
+		const { navigate } = await submitEmailVerification();
+
+		expect( requestAllBlogsAccess ).toHaveBeenCalledTimes( 1 );
+		expect( navigate ).toHaveBeenCalledWith( 'create-site' );
+	} );
+
+	// The paid path already has a site, so it must not run the site-creation re-grant.
+	it( 'does not re-request blog access on the paid path', async () => {
+		mockQueryParams = new URLSearchParams( 'next=post-checkout-onboarding' );
+
+		await submitEmailVerification();
+
+		expect( requestAllBlogsAccess ).not.toHaveBeenCalled();
+		expect( reloadProxy ).not.toHaveBeenCalled();
 	} );
 } );
