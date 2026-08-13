@@ -146,7 +146,7 @@ export default function WordPressAgentSlackPage( {
 		}
 	};
 
-	const title = translate( 'WordPress Agent for Slack' );
+	const title = translate( 'WordPress Agent' );
 	const pairingTitle = username
 		? translate( 'Connect this Slack account to your WordPress.com account %(username)s?', {
 				args: { username },
@@ -203,7 +203,7 @@ export default function WordPressAgentSlackPage( {
 			<NavigationHeader
 				navigationItems={ [] }
 				title={ title }
-				subtitle={ translate( 'Connect your WordPress.com account and sites to Slack.' ) }
+				subtitle={ translate( 'Connect your WordPress.com account to the tools where you work.' ) }
 				className="wordpress-agent-slack__header"
 			/>
 
@@ -253,7 +253,7 @@ export default function WordPressAgentSlackPage( {
 
 			<div className="wordpress-agent-slack__heading">
 				<div>
-					<h2>{ translate( 'Connected workspaces' ) }</h2>
+					<h2>{ translate( 'Slack' ) }</h2>
 					<p>
 						{ translate( 'Use WordPress Agent in direct messages in any connected workspace.' ) }
 					</p>
