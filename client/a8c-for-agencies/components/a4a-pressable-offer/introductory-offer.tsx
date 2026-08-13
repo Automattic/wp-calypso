@@ -3,9 +3,10 @@ import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketp
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import PressableOfferBanner from './banner';
-import { PRESSABLE_Q3_2026_OFFER_DEADLINE } from './constants';
-
-const FULL_TERMS_URL = 'https://pressable.com/legal/late-summer-promotion-terms-and-conditions/';
+import {
+	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
+	PRESSABLE_Q3_2026_OFFER_DEADLINE,
+} from './constants';
 
 const PressableIntroductoryOffer = () => {
 	const translate = useTranslate();
@@ -62,11 +63,16 @@ const PressableIntroductoryOffer = () => {
 					'You will continue to earn your standard revenue share and reseller incentives on these accounts.'
 				),
 			] }
-			ctaLabel={ translate( 'See full terms ↗' ) }
-			ctaUrl={ FULL_TERMS_URL }
+			ctas={ [
+				{
+					label: translate( 'See full terms ↗' ),
+					url: PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
+					eventName: 'calypso_a4a_pressable_promo_offer_q3_2026_see_full_terms_click',
+					isExternal: true,
+				},
+			] }
 			footnote={ translate( '*Offer valid August 11 – September 30, 2026' ) }
 			toggleEventName="calypso_a4a_pressable_promo_offer_q3_2026_toggle_view"
-			ctaEventName="calypso_a4a_pressable_promo_offer_q3_2026_see_full_terms_click"
 		/>
 	);
 };

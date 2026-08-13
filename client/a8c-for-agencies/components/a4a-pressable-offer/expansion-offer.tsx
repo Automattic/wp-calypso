@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -18,7 +19,7 @@ const PressableExpansionOfferBanner = () => {
 	return (
 		<PressableOfferBanner
 			title={ translate(
-				'{{b}}Pressable expansion offer:{{/b}} Save when you expand your existing Pressable plan!',
+				'{{b}}Limited time offer:{{/b}} Upgrade your Pressable plan and get up to 6 months of the upgrade free',
 				{
 					components: {
 						b: <b />,
@@ -27,7 +28,7 @@ const PressableExpansionOfferBanner = () => {
 			) }
 			items={ [
 				translate(
-					'{{b}}Placeholder benefit:{{/b}} Dummy copy describing the first perk of the expansion offer.',
+					'{{b}}Annual upgrades:{{/b}} Move up a plan tier and we’ll cover 6 months’ worth of the price increase. Example: upgrading from $10,000 to $13,250/yr is a $3,250 increase, so you save $1,625.',
 					{
 						components: {
 							b: <b />,
@@ -35,7 +36,7 @@ const PressableExpansionOfferBanner = () => {
 					}
 				),
 				translate(
-					'{{b}}Placeholder benefit:{{/b}} Dummy copy describing the second perk of the expansion offer.',
+					'{{b}}Monthly upgrades:{{/b}} Move up a plan tier and we’ll cover 3 months’ worth of the price increase. Example: upgrading from $1,000 to $1,325/mo is a $325 increase, so you save $975 (3 × $325).',
 					{
 						components: {
 							b: <b />,
@@ -43,14 +44,28 @@ const PressableExpansionOfferBanner = () => {
 					}
 				),
 				translate(
-					'You will continue to earn your standard revenue share and reseller incentives on these accounts.'
+					'The discount is calculated on the price increase from your current plan to your new tier, and applied automatically at checkout. Note: The discount for monthly plans is applied over a 3-month period.'
+				),
+				translate(
+					'Migrating 50+ sites? You may qualify for a custom cash incentive scaling with volume, up to $25,000, in place of the standard discount.'
 				),
 			] }
-			ctaLabel={ translate( 'See full terms ↗' ) }
-			ctaUrl={ PRESSABLE_EXPANSION_OFFER_TERMS_URL }
-			footnote={ translate( '*Offer valid for a limited time' ) }
+			ctas={ [
+				{
+					label: translate( 'Talk to us about migrations' ),
+					url: CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT,
+					eventName: 'calypso_a4a_pressable_expansion_offer_talk_to_us_click',
+					variant: 'primary',
+				},
+				{
+					label: translate( 'See full terms ↗' ),
+					url: PRESSABLE_EXPANSION_OFFER_TERMS_URL,
+					eventName: 'calypso_a4a_pressable_expansion_offer_see_full_terms_click',
+					isExternal: true,
+				},
+			] }
+			footnote={ translate( '*Offer valid August 11–September 30, 2026' ) }
 			toggleEventName="calypso_a4a_pressable_expansion_offer_toggle_view"
-			ctaEventName="calypso_a4a_pressable_expansion_offer_see_full_terms_click"
 		/>
 	);
 };

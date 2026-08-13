@@ -4,6 +4,7 @@ import moment from 'moment';
 import { useMemo } from 'react';
 import {
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
+	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 	PRESSABLE_Q3_2026_OFFER_START_DATE,
 } from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/constants';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -144,7 +145,7 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 								{
 									variant: 'secondary',
 									label: translate( 'See full terms' ),
-									url: 'https://pressable.com/legal/late-summer-promotion-terms-and-conditions/',
+									url: PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 									isExternal: true,
 									trackEventName:
 										'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_see_full_terms_click',

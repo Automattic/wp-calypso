@@ -8,25 +8,23 @@ import SimpleList from '../simple-list';
 
 import './style.scss';
 
+type BannerCta = {
+	label: ReactNode;
+	url: string;
+	eventName: string;
+	variant?: 'primary' | 'secondary';
+	isExternal?: boolean;
+};
+
 type Props = {
 	title: ReactNode;
 	items: ReactNode[];
-	ctaLabel: ReactNode;
-	ctaUrl: string;
+	ctas: BannerCta[];
 	footnote?: ReactNode;
 	toggleEventName: string;
-	ctaEventName: string;
 };
 
-const PressableOfferBanner = ( {
-	title,
-	items,
-	ctaLabel,
-	ctaUrl,
-	footnote,
-	toggleEventName,
-	ctaEventName,
-}: Props ) => {
+const PressableOfferBanner = ( { title, items, ctas, footnote, toggleEventName }: Props ) => {
 	const dispatch = useDispatch();
 
 	const [ isExpanded, setIsExpanded ] = useState( true );
@@ -41,11 +39,11 @@ const PressableOfferBanner = ( {
 	}, [ dispatch, isExpanded, toggleEventName ] );
 
 	const onCtaClick = useCallback(
-		( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement > ) => {
+		( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement >, eventName: string ) => {
 			e.stopPropagation();
-			dispatch( recordTracksEvent( ctaEventName ) );
+			dispatch( recordTracksEvent( eventName ) );
 		},
-		[ dispatch, ctaEventName ]
+		[ dispatch ]
 	);
 
 	return (
@@ -75,15 +73,22 @@ const PressableOfferBanner = ( {
 						<SimpleList items={ items } />
 
 						<div className="a4a-pressable-offer__body-actions">
-							<Button
-								variant="secondary"
-								href={ ctaUrl }
-								target="_blank"
-								rel="noopener noreferrer"
-								onClick={ onCtaClick }
-							>
-								{ ctaLabel }
-							</Button>
+							{ ctas.map( ( cta ) => (
+								<Button
+									key={ cta.eventName }
+									variant={ cta.variant ?? 'secondary' }
+									href={ cta.url }
+									{ ...( cta.isExternal && {
+										target: '_blank',
+										rel: 'noopener noreferrer',
+									} ) }
+									onClick={ ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement > ) =>
+										onCtaClick( e, cta.eventName )
+									}
+								>
+									{ cta.label }
+								</Button>
+							) ) }
 
 							{ footnote && (
 								<span className="a4a-pressable-offer__body-actions-footnote">{ footnote }</span>
