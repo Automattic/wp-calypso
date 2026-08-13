@@ -21,7 +21,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
-import { siteSettingsCrontabAddRoute, siteSettingsCrontabEditRoute } from '../../app/router/sites';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -29,6 +28,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import TimeSince, { useTimeSince } from '../../components/time-since';
 import { hasHostingFeature } from '../../utils/site-features';
+import { getSiteSettingsCrontabAddURL, getSiteSettingsCrontabEditURL } from '../../utils/site-url';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { parseRequestedScheduleForBackwardCompatibility } from './parse-requested-schedule-for-backward-compatibility';
 import { formatScheduleLabel, formatScheduleDescription } from './schedules';
@@ -221,8 +221,7 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 			label: __( 'Edit' ),
 			callback: ( items: Crontab[] ) => {
 				router.navigate( {
-					to: siteSettingsCrontabEditRoute.fullPath,
-					params: { siteSlug, cronId: items[ 0 ].cron_id },
+					to: getSiteSettingsCrontabEditURL( siteSlug, items[ 0 ].cron_id ),
 				} );
 			},
 		},
@@ -262,8 +261,7 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 								__next40pxDefaultSize
 								onClick={ () =>
 									router.navigate( {
-										to: siteSettingsCrontabAddRoute.fullPath,
-										params: { siteSlug },
+										to: getSiteSettingsCrontabAddURL( siteSlug ),
 									} )
 								}
 							>
