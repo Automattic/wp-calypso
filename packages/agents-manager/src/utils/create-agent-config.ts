@@ -13,7 +13,6 @@ import { getExternalContextEntries } from './external-context';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
-import type { ClientStateDataPartAdapter } from './load-external-providers';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
 export interface CreateAgentConfigOptions {
@@ -38,8 +37,6 @@ export interface CreateAgentConfigOptions {
 	 * paint streamed page-design markup into the editor as it arrives.
 	 */
 	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
-	/** Provider adapter for product-specific terminal DataParts. */
-	clientStateDataPartAdapter?: ClientStateDataPartAdapter;
 }
 
 /**
@@ -261,12 +258,9 @@ export async function createAgentConfig(
 		agentId = ORCHESTRATOR_AGENT_ID,
 		version,
 		onTaskUpdate,
-		clientStateDataPartAdapter,
 	} = options;
 
-	const config: UseAgentChatConfig & {
-		clientStateDataPartAdapter?: ClientStateDataPartAdapter;
-	} = {
+	const config: UseAgentChatConfig = {
 		agentId,
 		agentUrl:
 			agentId === ORCHESTRATOR_AGENT_ID &&
@@ -284,7 +278,6 @@ export async function createAgentConfig(
 			...( sessionUserId !== undefined && { userId: sessionUserId } ),
 		} ),
 		enableStreaming: true,
-		clientStateDataPartAdapter,
 	};
 
 	if ( onTaskUpdate ) {

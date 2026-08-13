@@ -1,27 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-import { act, renderHook, waitFor } from '@testing-library/react';
-import apiFetch from '@wordpress/api-fetch';
-import {
-	JETPACK_AI_QUOTA_EXHAUSTED_CODE,
-	getJetpackAiQuotaFromError,
-	getJetpackAiQuotaFromMessages,
-	jetpackAiClientStateDataPartAdapter,
-	normalizeJetpackAiFeatureQuota,
-	normalizeJetpackAiQuota,
-	useSubmissionAdmission,
-} from './metering';
+import { renderHook } from '@testing-library/react';
+import { normalizeJetpackAiQuota, useChatNotice } from './metering';
 import { trackJetpackAiUpgrade } from './utils/tracking';
-import type { UIMessage } from '@automattic/agenttic-client';
 
-jest.mock( '@wordpress/api-fetch', () => jest.fn() );
 jest.mock( './utils/tracking', () => ( {
 	trackJetpackAiUpgrade: jest.fn(),
 } ) );
 
-const mockApiFetch = jest.mocked( apiFetch );
 const mockTrackJetpackAiUpgrade = jest.mocked( trackJetpackAiUpgrade );
+const mockAssign = jest.fn();
 
 function setAgentsManagerData( value: unknown ): void {
 	Object.defineProperty( globalThis, 'agentsManagerData', {
@@ -31,542 +20,261 @@ function setAgentsManagerData( value: unknown ): void {
 	} );
 }
 
-const canonicalQuota = {
-	product: 'jetpack-ai' as const,
-	plan: 'free' as const,
-	metered: true,
-	limit: 20,
-	used: 20,
-	remaining: 0,
-	exhausted: true,
-	upgrade: {
-		kind: 'jetpack-ai' as const,
-		url: 'https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
-	},
+const serverQuota = {
+	plan: 'free',
+	upgrade: { kind: 'wpcom-plan', url: 'https://wordpress.com/checkout/example.com/personal' },
 };
 
-describe( 'Jetpack AI quota normalization', () => {
-	beforeEach( () => {
-		Reflect.deleteProperty( globalThis, 'agentsManagerData' );
-		mockApiFetch.mockReset();
-		mockTrackJetpackAiUpgrade.mockReset();
+/**
+ * The message the current WPCOM agent request returns for an exhausted quota,
+ * wrapped the way Agenttic 0.1.87 surfaces a JSON-RPC error. The published
+ * client exposes only `error.message`, so no machine-readable code reaches us.
+ */
+const CURRENT_ENDPOINT_ERROR =
+	'Protocol request error: You have reached your Jetpack AI usage limit.';
+
+beforeAll( () => {
+	Object.defineProperty( window, 'location', {
+		configurable: true,
+		value: { ...window.location, assign: mockAssign },
+	} );
+} );
+
+beforeEach( () => {
+	Reflect.deleteProperty( globalThis, 'agentsManagerData' );
+	mockTrackJetpackAiUpgrade.mockReset();
+	mockAssign.mockReset();
+} );
+
+describe( 'normalizeJetpackAiQuota', () => {
+	it( 'reads the server-owned plan and upgrade destination', () => {
+		expect( normalizeJetpackAiQuota( serverQuota ) ).toEqual( {
+			plan: 'free',
+			exhausted: false,
+			upgradeUrl: 'https://wordpress.com/checkout/example.com/personal',
+		} );
 	} );
 
-	it( 'treats metered:false as authoritative even if exhausted is also true', () => {
-		expect( normalizeJetpackAiQuota( { ...canonicalQuota, metered: false } ) ).toMatchObject( {
-			metered: false,
+	it( 'reads the server-owned initial exhausted state', () => {
+		expect( normalizeJetpackAiQuota( { ...serverQuota, exhausted: true } ) ).toMatchObject( {
 			exhausted: true,
 		} );
 	} );
 
-	it( 'normalizes the backend exhausted terminal DataPart and approved Jetpack route', () => {
-		expect(
-			normalizeJetpackAiQuota( {
-				code: JETPACK_AI_QUOTA_EXHAUSTED_CODE,
-				product: 'jetpack-ai',
-				plan: 'free',
-				state: 'exhausted',
-				usage: { limit: 20, used: 20, remaining: 0 },
-				jetpack_ai_upgrade_url: '/jetpack-ai-upgrade',
-			} )
-		).toEqual( {
-			...canonicalQuota,
-			upgrade: { kind: 'jetpack-ai', url: '/jetpack-ai-upgrade' },
+	it.each( [ 'true', 1, undefined ] )(
+		'treats a non-boolean exhausted flag as false: %p',
+		( value ) => {
+			expect( normalizeJetpackAiQuota( { ...serverQuota, exhausted: value } ) ).toMatchObject( {
+				exhausted: false,
+			} );
+		}
+	);
+
+	it.each( [
+		[ 'a look-alike subdomain', 'https://wordpress.com.evil.example/checkout' ],
+		[ 'a trusted-host subdomain', 'https://cdn.wordpress.com/checkout' ],
+		[ 'an insecure scheme', 'http://wordpress.com/checkout' ],
+		[ 'a relative path', '/checkout/example.com/personal' ],
+		[ 'a javascript URL', 'javascript:alert(1)' ],
+	] )( 'drops the upgrade action for %s', ( _label, url ) => {
+		expect( normalizeJetpackAiQuota( { ...serverQuota, upgrade: { url } } ) ).toEqual( {
+			plan: 'free',
+			exhausted: false,
+			upgradeUrl: null,
 		} );
 	} );
 
-	it( 'reads the latest terminal quota DataPart from UI messages', () => {
-		const messages = [
-			{
-				content: [ { type: 'data', data: { name: 'jetpackAiQuota', ...canonicalQuota } } ],
-			},
-		] as Pick< UIMessage, 'content' >[];
-
-		expect( getJetpackAiQuotaFromMessages( messages ) ).toEqual( canonicalQuota );
-	} );
-
-	it( 'reads canonical quota nested in Agenttic client state', () => {
-		const messages = [
-			{
-				content: [
-					{
-						type: 'data',
-						data: { clientState: { jetpackAiQuota: canonicalQuota } },
-					},
-				],
-			},
-		] as Pick< UIMessage, 'content' >[];
-
-		expect( getJetpackAiQuotaFromMessages( messages ) ).toEqual( canonicalQuota );
-	} );
-
-	it( 'adapts rollout quota parts into Agenttic client state', () => {
-		expect( jetpackAiClientStateDataPartAdapter( { jetpackAiQuota: canonicalQuota } ) ).toEqual( {
-			jetpackAiQuota: canonicalQuota,
-		} );
-		expect( jetpackAiClientStateDataPartAdapter( { unrelated: true } ) ).toBeUndefined();
-	} );
-
-	it( 'requires the stable quota code and ignores generic JSON-RPC codes', () => {
-		expect(
-			getJetpackAiQuotaFromError( {
-				code: -32000,
-				data: { jetpackAiQuota: canonicalQuota },
-			} )
-		).toBeUndefined();
-		expect(
-			getJetpackAiQuotaFromError( {
-				code: JETPACK_AI_QUOTA_EXHAUSTED_CODE,
-				data: { jetpackAiQuota: canonicalQuota },
-			} )
-		).toEqual( canonicalQuota );
-	} );
-
-	it( 'reads a structured Agenttic protocol error without keying on its JSON-RPC code', () => {
-		expect(
-			getJetpackAiQuotaFromError( {
-				code: -32000,
-				data: {
-					code: JETPACK_AI_QUOTA_EXHAUSTED_CODE,
-					clientState: { jetpackAiQuota: canonicalQuota },
-				},
-			} )
-		).toEqual( canonicalQuota );
-	} );
-
-	it( 'requires the server-owned plan discriminator instead of inferring a free tier', () => {
-		const { plan, ...quotaWithoutPlan } = canonicalQuota;
-		void plan;
-
-		expect(
-			normalizeJetpackAiQuota( {
-				...quotaWithoutPlan,
-				'current-tier': { value: 0 },
-			} )
-		).toBeUndefined();
-	} );
-
-	it( 'accepts canonical quota nested in the feature response', () => {
-		expect( normalizeJetpackAiFeatureQuota( { jetpackAiQuota: canonicalQuota } ) ).toEqual(
-			canonicalQuota
-		);
-	} );
-
-	it( 'rejects upgrade URLs outside the site and trusted product hosts', () => {
-		expect(
-			normalizeJetpackAiQuota( {
-				...canonicalQuota,
-				upgrade: { kind: 'jetpack-ai', url: 'https://example.com/phishing' },
-			} )
-		).toBeUndefined();
-		expect(
-			normalizeJetpackAiQuota( {
-				...canonicalQuota,
-				upgrade: { kind: 'wpcom-plan', url: 'https://wordpress.com.evil.test/plans' },
-			} )
-		).toBeUndefined();
-	} );
+	it.each( [ undefined, null, 'free', {}, { plan: 'enterprise' } ] )(
+		'discards the snapshot without a recognized plan: %p',
+		( value ) => {
+			expect( normalizeJetpackAiQuota( value ) ).toBeUndefined();
+		}
+	);
 } );
 
-describe( 'useSubmissionAdmission', () => {
-	beforeEach( () => {
-		Reflect.deleteProperty( globalThis, 'agentsManagerData' );
-		mockApiFetch.mockReset();
-		mockTrackJetpackAiUpgrade.mockReset();
-		window.history.replaceState( null, '', '/' );
+describe( 'useChatNotice', () => {
+	it( 'stays silent until the backend rejects a turn', () => {
+		setAgentsManagerData( { jetpackAiQuota: serverQuota } );
+
+		const { result } = renderHook( () => useChatNotice( { error: null } ) );
+
+		expect( result.current ).toBeUndefined();
 	} );
 
-	it( 'does not block an explicitly unmetered WordPress.com plan', () => {
-		setAgentsManagerData( {
-			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: {
-				...canonicalQuota,
-				product: 'wordpress-com-agent',
-				plan: 'included',
-				metered: false,
-				upgrade: null,
-			},
-		} );
-		const { result } = renderHook( () => useSubmissionAdmission( { messages: [], error: null } ) );
+	it( 'recognizes the message the current WPCOM endpoint returns', () => {
+		setAgentsManagerData( { jetpackAiQuota: serverQuota } );
 
-		expect( result.current.submitBlocked ).toBe( false );
-		expect( result.current.notice ).toBeUndefined();
-		expect( mockTrackJetpackAiUpgrade ).not.toHaveBeenCalled();
-	} );
+		const { result } = renderHook( () => useChatNotice( { error: CURRENT_ENDPOINT_ERROR } ) );
 
-	it( 'ignores stale Jetpack quota when the server selects the full WordPress Agent', () => {
-		setAgentsManagerData( { jetpackAiMeteringEnabled: false } );
-		const staleMessage = {
-			content: [ { type: 'data', data: { name: 'jetpackAiQuota', ...canonicalQuota } } ],
-		} as UIMessage;
-		const staleError = {
-			code: JETPACK_AI_QUOTA_EXHAUSTED_CODE,
-			data: { jetpackAiQuota: canonicalQuota },
-		};
-
-		const { result } = renderHook( () =>
-			useSubmissionAdmission( { messages: [ staleMessage ], error: staleError } )
-		);
-
-		expect( result.current.submitBlocked ).toBe( false );
-		expect( result.current.notice ).toBeUndefined();
-		expect( mockApiFetch ).not.toHaveBeenCalled();
-	} );
-
-	it( 'tracks upgrade navigation through the shared notice and blocked-submit action', () => {
-		setAgentsManagerData( {
-			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: {
-				...canonicalQuota,
-				upgrade: { kind: 'jetpack-ai', url: '#upgrade' },
-			},
-		} );
-		const { result } = renderHook( () => useSubmissionAdmission( { messages: [], error: null } ) );
-
-		expect( result.current.submitBlocked ).toBe( true );
-		expect( result.current.notice ).toMatchObject( {
+		expect( result.current ).toMatchObject( {
 			message: 'You’re out of free credits.',
 			status: 'error',
 			dismissible: false,
-			action: { label: 'Upgrade' },
+			suppressCurrentError: true,
 		} );
-		result.current.notice?.action?.onClick();
-		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledWith( {
-			placement: 'jetpack-ai-sidebar-quota-notice',
-			requestsCount: 20,
-		} );
-		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledTimes( 1 );
-
-		mockTrackJetpackAiUpgrade.mockClear();
-		result.current.onBlockedSubmit();
-		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledWith( {
-			placement: 'jetpack-ai-sidebar-blocked-submit',
-			requestsCount: 20,
-		} );
-		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'still opens checkout when Tracks fails', () => {
-		setAgentsManagerData( {
-			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: {
-				...canonicalQuota,
-				upgrade: { kind: 'jetpack-ai', url: '#upgrade' },
-			},
-		} );
-		mockTrackJetpackAiUpgrade.mockImplementationOnce( () => {
-			throw new Error( 'Tracks unavailable' );
-		} );
-		const { result } = renderHook( () => useSubmissionAdmission( { messages: [], error: null } ) );
+	it( 'does not latch on an unrelated error that quotes the quota message', () => {
+		setAgentsManagerData( { jetpackAiQuota: serverQuota } );
 
-		expect( () => result.current.notice?.action?.onClick() ).not.toThrow();
-		expect( window.location.hash ).toBe( '#upgrade' );
+		const { result } = renderHook( () =>
+			useChatNotice( {
+				error: 'Unexpected response while discussing the Jetpack AI usage limit.',
+			} )
+		);
+
+		expect( result.current ).toBeUndefined();
 	} );
 
-	it( 'shows remaining free credits and Upgrade from the server-provided initial state', () => {
-		setAgentsManagerData( {
-			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: {
-				...canonicalQuota,
-				used: 0,
-				remaining: 20,
-				exhausted: false,
-			},
-		} );
+	it( 'does not latch on an unrelated error that embeds the quota code', () => {
+		setAgentsManagerData( { jetpackAiQuota: serverQuota } );
 
-		const { result } = renderHook( () => useSubmissionAdmission( { messages: [], error: null } ) );
+		const { result } = renderHook( () =>
+			useChatNotice( {
+				error: 'Unexpected JSON payload contained jetpack_ai_quota_exhausted metadata.',
+			} )
+		);
 
-		expect( result.current.submitBlocked ).toBe( false );
-		expect( result.current.notice ).toMatchObject( {
-			message: '20 free credits left',
-			dismissible: false,
-			action: { label: 'Upgrade' },
-		} );
-		expect( result.current.notice?.status ).toBeUndefined();
+		expect( result.current ).toBeUndefined();
 	} );
 
-	it( 'does not show the free-plan notice for a paid Jetpack AI plan', () => {
-		setAgentsManagerData( {
-			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: {
-				...canonicalQuota,
-				plan: 'paid',
-				used: 5,
-				remaining: 15,
-				exhausted: false,
-			},
-		} );
-		const { result } = renderHook( () => useSubmissionAdmission( { messages: [], error: null } ) );
+	it( 'renders a persistent Upgrade notice once the backend reports exhaustion', () => {
+		setAgentsManagerData( { jetpackAiQuota: serverQuota } );
 
-		expect( result.current.submitBlocked ).toBe( false );
-		expect( result.current.notice ).toBeUndefined();
-	} );
+		const { result } = renderHook( () => useChatNotice( { error: 'jetpack_ai_quota_exhausted' } ) );
 
-	it( 'keeps a paid-plan upgrade path visible when its quota is exhausted', () => {
-		setAgentsManagerData( {
-			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: { ...canonicalQuota, plan: 'paid' },
-		} );
-		const { result } = renderHook( () => useSubmissionAdmission( { messages: [], error: null } ) );
-
-		expect( result.current.submitBlocked ).toBe( true );
-		expect( result.current.notice ).toMatchObject( {
-			message: 'No AI requests remaining',
+		expect( result.current ).toMatchObject( {
+			message: 'You’re out of free credits.',
 			status: 'error',
-			action: { label: 'Upgrade' },
+			dismissible: false,
 		} );
+
+		result.current?.action?.onClick();
+
+		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledWith();
+		expect( mockAssign ).toHaveBeenCalledWith(
+			'https://wordpress.com/checkout/example.com/personal'
+		);
 	} );
 
-	it( 'preloads canonical server quota for self-hosted Jetpack sites', async () => {
-		setAgentsManagerData( { jetpackAiMeteringEnabled: true } );
-		mockApiFetch.mockResolvedValue( {
-			jetpackAiQuota: {
-				...canonicalQuota,
-				used: 5,
-				remaining: 15,
-				exhausted: false,
-			},
-		} );
-
-		const { result } = renderHook( () => useSubmissionAdmission( { messages: [], error: null } ) );
-
-		await waitFor( () => expect( result.current.notice?.message ).toBe( '15 free credits left' ) );
-		expect( mockApiFetch ).toHaveBeenCalledWith( {
-			path: '/wpcom/v2/jetpack-ai/ai-assistant-feature?skip_cache=true',
-		} );
-	} );
-
-	it( 'replaces inline quota with a fresh canonical snapshot after a turn settles', async () => {
-		setAgentsManagerData( {
-			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: {
-				...canonicalQuota,
-				used: 19,
-				remaining: 1,
-				exhausted: false,
-			},
-		} );
-		mockApiFetch.mockResolvedValue( { jetpackAiQuota: canonicalQuota } );
-
-		const { result } = renderHook( () => useSubmissionAdmission( { messages: [], error: null } ) );
-		expect( result.current.notice?.message ).toBe( '1 free credit left' );
-
-		await act( async () => {
-			await result.current.refreshAfterTurn?.();
-		} );
-
-		await waitFor( () => expect( result.current.submitBlocked ).toBe( true ) );
-		expect( result.current.notice?.message ).toBe( 'You’re out of free credits.' );
-		expect( mockApiFetch ).toHaveBeenCalledWith( {
-			path: '/wpcom/v2/jetpack-ai/ai-assistant-feature?skip_cache=true',
-		} );
-	} );
-
-	it( 'does not let asynchronously hydrated history override the initial server snapshot', () => {
-		setAgentsManagerData( {
-			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: {
-				...canonicalQuota,
-				used: 10,
-				remaining: 10,
-				exhausted: false,
-			},
-		} );
-		const staleMessage = {
-			id: 'persisted-terminal',
-			content: [ { type: 'data', data: { name: 'jetpackAiQuota', ...canonicalQuota } } ],
-		} as UIMessage;
+	it( 'keeps the notice up after Agenttic clears the error for the next send', () => {
+		setAgentsManagerData( { jetpackAiQuota: serverQuota } );
 
 		const { result, rerender } = renderHook(
-			( { messages, historyRevision } ) =>
-				useSubmissionAdmission( { messages, error: null, historyRevision } ),
-			{ initialProps: { messages: [] as UIMessage[], historyRevision: 0 } }
+			( { error }: { error: string | null } ) => useChatNotice( { error } ),
+			{ initialProps: { error: CURRENT_ENDPOINT_ERROR as string | null } }
 		);
-		expect( result.current.notice?.message ).toBe( '10 free credits left' );
 
-		rerender( { messages: [ staleMessage ], historyRevision: 1 } );
+		expect( result.current ).toBeDefined();
 
-		expect( result.current.submitBlocked ).toBe( false );
-		expect( result.current.notice?.message ).toBe( '10 free credits left' );
+		rerender( { error: null } );
+
+		expect( result.current ).toMatchObject( {
+			message: 'You’re out of free credits.',
+			suppressCurrentError: false,
+		} );
 	} );
 
-	it( 'does not let asynchronously hydrated history override a completed REST refresh', async () => {
-		setAgentsManagerData( { jetpackAiMeteringEnabled: true } );
-		const freshQuota = {
-			...canonicalQuota,
-			used: 10,
-			remaining: 10,
-			exhausted: false,
-		};
-		mockApiFetch.mockResolvedValue( { jetpackAiQuota: freshQuota } );
-		const staleMessage = {
-			id: 'persisted-terminal',
-			content: [ { type: 'data', data: { name: 'jetpackAiQuota', ...canonicalQuota } } ],
-		} as UIMessage;
+	it( 'shows the notice on load when the server snapshot is already exhausted', () => {
+		setAgentsManagerData( { jetpackAiQuota: { ...serverQuota, exhausted: true } } );
 
-		const { result, rerender } = renderHook(
-			( { messages, historyRevision } ) =>
-				useSubmissionAdmission( { messages, error: null, historyRevision } ),
-			{ initialProps: { messages: [] as UIMessage[], historyRevision: 0 } }
-		);
-		await waitFor( () => expect( result.current.notice?.message ).toBe( '10 free credits left' ) );
+		const { result } = renderHook( () => useChatNotice( { error: null } ) );
 
-		rerender( { messages: [ staleMessage ], historyRevision: 1 } );
-
-		expect( result.current.submitBlocked ).toBe( false );
-		expect( result.current.notice?.message ).toBe( '10 free credits left' );
+		expect( result.current ).toMatchObject( { message: 'You’re out of free credits.' } );
 	} );
 
-	it( 'uses a terminal quota only when it follows a live dispatch', () => {
-		setAgentsManagerData( {
-			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: {
-				...canonicalQuota,
-				used: 19,
-				remaining: 1,
-				exhausted: false,
-			},
-		} );
-		const terminalMessage = {
-			id: 'live-terminal',
-			content: [ { type: 'data', data: { name: 'jetpackAiQuota', ...canonicalQuota } } ],
-		} as UIMessage;
-		const { result, rerender } = renderHook(
-			( { messages, dispatchRevision } ) =>
-				useSubmissionAdmission( { messages, error: null, dispatchRevision } ),
-			{ initialProps: { messages: [] as UIMessage[], dispatchRevision: 0 } }
-		);
+	it( 'uses the paid copy and omits the action without a trusted upgrade URL', () => {
+		setAgentsManagerData( { jetpackAiQuota: { plan: 'paid', upgrade: null } } );
 
-		rerender( { messages: [], dispatchRevision: 1 } );
-		rerender( { messages: [ terminalMessage ], dispatchRevision: 1 } );
+		const { result } = renderHook( () => useChatNotice( { error: 'jetpack_ai_quota_exhausted' } ) );
 
-		expect( result.current.submitBlocked ).toBe( true );
-		expect( result.current.notice?.message ).toBe( 'You’re out of free credits.' );
+		expect( result.current ).toMatchObject( { message: 'No AI requests remaining' } );
+		expect( result.current?.action ).toBeUndefined();
 	} );
 
-	it( 'recognizes a terminal quota when dispatch and response render in one batch', () => {
-		setAgentsManagerData( {
-			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: {
-				...canonicalQuota,
-				used: 19,
-				remaining: 1,
-				exhausted: false,
-			},
+	it( 'still notices exhaustion when the server injected no quota snapshot', () => {
+		const { result } = renderHook( () => useChatNotice( { error: 'jetpack_ai_quota_exhausted' } ) );
+
+		expect( result.current ).toMatchObject( {
+			message: 'No AI requests remaining',
+			dismissible: false,
 		} );
-		const terminalMessage = {
-			id: 'synchronous-terminal',
-			content: [ { type: 'data', data: { name: 'jetpackAiQuota', ...canonicalQuota } } ],
-		} as UIMessage;
-		const { result, rerender } = renderHook(
-			( { messages, dispatchRevision } ) =>
-				useSubmissionAdmission( { messages, error: null, dispatchRevision } ),
-			{ initialProps: { messages: [] as UIMessage[], dispatchRevision: 0 } }
-		);
-
-		rerender( { messages: [ terminalMessage ], dispatchRevision: 1 } );
-
-		expect( result.current.submitBlocked ).toBe( true );
-		expect( result.current.notice?.message ).toBe( 'You’re out of free credits.' );
 	} );
 
-	it( 'does not reuse the prior terminal quota as the result of a new dispatch', () => {
-		setAgentsManagerData( {
-			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: {
-				...canonicalQuota,
-				used: 10,
-				remaining: 10,
-				exhausted: false,
-			},
-		} );
-		const priorTerminal = {
-			id: 'prior-terminal',
-			content: [ { type: 'data', data: { name: 'jetpackAiQuota', ...canonicalQuota } } ],
-		} as UIMessage;
-		const { result, rerender } = renderHook(
-			( { messages, dispatchRevision, historyRevision } ) =>
-				useSubmissionAdmission( {
-					messages,
-					error: null,
-					dispatchRevision,
-					historyRevision,
-				} ),
-			{
-				initialProps: {
-					messages: [ priorTerminal ],
-					dispatchRevision: 0,
-					historyRevision: 1,
-				},
-			}
-		);
+	describe( 'upgrade URL carried by the rejection message', () => {
+		it( 'accepts a trusted URL when there is no inline snapshot', () => {
+			const { result } = renderHook( () =>
+				useChatNotice( {
+					error:
+						'Protocol request error: You have reached your Jetpack AI usage limit. Upgrade at https://wordpress.com/checkout/example.com/ai-monthly.',
+				} )
+			);
 
-		rerender( { messages: [ priorTerminal ], dispatchRevision: 1, historyRevision: 1 } );
+			result.current?.action?.onClick();
 
-		expect( result.current.submitBlocked ).toBe( false );
-		expect( result.current.notice?.message ).toBe( '10 free credits left' );
-	} );
-
-	it( 'ignores an older refresh response that arrives after the post-turn refresh', async () => {
-		setAgentsManagerData( {
-			jetpackAiMeteringEnabled: true,
-			jetpackAiQuota: {
-				...canonicalQuota,
-				used: 19,
-				remaining: 1,
-				exhausted: false,
-			},
-		} );
-		let resolveInitialRefresh: ( value: unknown ) => void = () => undefined;
-		let resolvePostTurnRefresh: ( value: unknown ) => void = () => undefined;
-		const initialRefresh = new Promise< unknown >( ( resolve ) => {
-			resolveInitialRefresh = resolve;
-		} );
-		const postTurnRefresh = new Promise< unknown >( ( resolve ) => {
-			resolvePostTurnRefresh = resolve;
-		} );
-		mockApiFetch.mockReturnValueOnce( initialRefresh ).mockReturnValueOnce( postTurnRefresh );
-
-		const { result, rerender } = renderHook(
-			( { messages, dispatchRevision } ) =>
-				useSubmissionAdmission( { messages, error: null, dispatchRevision } ),
-			{ initialProps: { messages: [] as UIMessage[], dispatchRevision: 0 } }
-		);
-		await waitFor( () => expect( mockApiFetch ).toHaveBeenCalledTimes( 1 ) );
-
-		const exhaustedMessage = {
-			id: 'live-terminal',
-			content: [ { type: 'data', data: { name: 'jetpackAiQuota', ...canonicalQuota } } ],
-		} as UIMessage;
-		rerender( { messages: [], dispatchRevision: 1 } );
-		rerender( { messages: [ exhaustedMessage ], dispatchRevision: 1 } );
-		expect( result.current.submitBlocked ).toBe( true );
-
-		let postTurnRequest: Promise< void > | undefined;
-		act( () => {
-			postTurnRequest = result.current.refreshAfterTurn?.( 1 );
-		} );
-		expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
-
-		await act( async () => {
-			resolvePostTurnRefresh( { jetpackAiQuota: canonicalQuota } );
-			await postTurnRequest;
-		} );
-		expect( result.current.submitBlocked ).toBe( true );
-
-		await act( async () => {
-			resolveInitialRefresh( {
-				jetpackAiQuota: {
-					...canonicalQuota,
-					used: 10,
-					remaining: 10,
-					exhausted: false,
-				},
-			} );
-			await initialRefresh;
+			expect( mockAssign ).toHaveBeenCalledWith(
+				'https://wordpress.com/checkout/example.com/ai-monthly'
+			);
 		} );
 
-		expect( result.current.submitBlocked ).toBe( true );
-		expect( result.current.notice?.message ).toBe( 'You’re out of free credits.' );
+		it( 'prefers the rejection URL over the page-load snapshot', () => {
+			setAgentsManagerData( { jetpackAiQuota: serverQuota } );
+
+			const { result } = renderHook( () =>
+				useChatNotice( {
+					error:
+						'Protocol request error: You have reached your Jetpack AI usage limit. See https://jetpack.com/upgrade/ai',
+				} )
+			);
+
+			result.current?.action?.onClick();
+
+			expect( mockAssign ).toHaveBeenCalledWith( 'https://jetpack.com/upgrade/ai' );
+		} );
+
+		it.each( [
+			[ 'a look-alike host', 'https://wordpress.com.evil.example/checkout' ],
+			[ 'a trusted-host subdomain', 'https://cdn.wordpress.com/checkout' ],
+			[ 'an insecure scheme', 'http://wordpress.com/checkout' ],
+		] )( 'falls back to the snapshot for %s', ( _label, url ) => {
+			setAgentsManagerData( { jetpackAiQuota: serverQuota } );
+
+			const { result } = renderHook( () =>
+				useChatNotice( { error: `Jetpack AI usage limit reached. Upgrade at ${ url }` } )
+			);
+
+			result.current?.action?.onClick();
+
+			expect( mockAssign ).toHaveBeenCalledWith(
+				'https://wordpress.com/checkout/example.com/personal'
+			);
+		} );
+
+		it( 'skips an untrusted URL and takes a later trusted one', () => {
+			const { result } = renderHook( () =>
+				useChatNotice( {
+					error:
+						'Jetpack AI usage limit reached (https://public-api.wordpress.com/rest/v1). Upgrade at https://wordpress.com/checkout/example.com/personal',
+				} )
+			);
+
+			result.current?.action?.onClick();
+
+			expect( mockAssign ).toHaveBeenCalledWith(
+				'https://wordpress.com/checkout/example.com/personal'
+			);
+		} );
+
+		it( 'offers no action when neither the rejection nor a snapshot has a trusted URL', () => {
+			const { result } = renderHook( () =>
+				useChatNotice( {
+					error: 'Jetpack AI usage limit reached. Upgrade at https://evil.example/checkout',
+				} )
+			);
+
+			expect( result.current ).toMatchObject( { message: 'No AI requests remaining' } );
+			expect( result.current?.action ).toBeUndefined();
+			expect( mockAssign ).not.toHaveBeenCalled();
+		} );
 	} );
 } );

@@ -261,7 +261,6 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 				agentId,
 				version,
 				onTaskUpdate: providers.onTaskUpdate,
-				clientStateDataPartAdapter: providers.clientStateDataPartAdapter,
 			} );
 
 			if ( isSuperseded ) {
@@ -315,7 +314,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			transformMessages={ loadedProviders.transformMessages }
 			useCheckpoint={ loadedProviders.useCheckpoint }
 			capabilities={ loadedProviders.capabilities }
-			useSubmissionAdmission={ loadedProviders.useSubmissionAdmission }
+			useChatNotice={ loadedProviders.useChatNotice }
 		/>
 	);
 }

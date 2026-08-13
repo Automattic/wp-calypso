@@ -6,7 +6,6 @@ import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { JETPACK_AI_AGENT_URL, ORCHESTRATOR_AGENT_ID } from '../constants';
 import { getSessionStorageKey } from './agent-session';
 import type { ContextProvider, ToolProvider } from '../extension-types';
-import type { ClientStateDataPartAdapter } from './load-external-providers';
 import type { Ability as AgenticAbility, UseAgentChatConfig } from '@automattic/agenttic-client';
 
 interface Options {
@@ -15,7 +14,6 @@ interface Options {
 	providerId: string;
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
-	clientStateDataPartAdapter?: ClientStateDataPartAdapter;
 }
 
 function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'toolProvider' ] {
@@ -43,16 +41,13 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
 
 export function createWritingOnlyAgentConfig( options: Options ): UseAgentChatConfig {
 	const agentId = ORCHESTRATOR_AGENT_ID;
-	const config: UseAgentChatConfig & {
-		clientStateDataPartAdapter?: ClientStateDataPartAdapter;
-	} = {
+	const config: UseAgentChatConfig = {
 		agentId,
 		agentUrl: JETPACK_AI_AGENT_URL,
 		sessionId: options.sessionId,
 		sessionIdStorageKey: getSessionStorageKey( agentId ),
 		authProvider: createCalypsoAuthProvider( options.siteId, { logWpcomJwtFailure: true } ),
 		enableStreaming: true,
-		clientStateDataPartAdapter: options.clientStateDataPartAdapter,
 		contextProvider: {
 			getClientContext: () => {
 				const providerContext = options.contextProvider?.getClientContext() ?? {

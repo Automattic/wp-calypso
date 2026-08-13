@@ -42,7 +42,7 @@ import type {
 	TransformMessages,
 	UseCheckpointHook,
 	ProviderCapabilities,
-	UseSubmissionAdmissionHook,
+	UseChatNoticeHook,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
@@ -69,8 +69,8 @@ interface Props {
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
 	capabilities?: ProviderCapabilities;
-	/** Provider-owned admission and metering hook for user-authored turns. */
-	useSubmissionAdmission?: UseSubmissionAdmissionHook;
+	/** Provider-owned, display-only notice derived from the backend's rejection text. */
+	useChatNotice?: UseChatNoticeHook;
 }
 
 export default function AgentDock( {
@@ -85,7 +85,7 @@ export default function AgentDock( {
 	transformMessages,
 	useCheckpoint,
 	capabilities,
-	useSubmissionAdmission,
+	useChatNotice,
 }: Props ) {
 	// Full Agents Manager owns its editor abilities. The writing-only entry does
 	// not import this dock, so its graph cannot emit or load am-editor-abilities.
@@ -422,7 +422,7 @@ export default function AgentDock( {
 			transformMessages={ transformMessages }
 			useCheckpoint={ useCheckpoint }
 			capabilities={ capabilities }
-			useSubmissionAdmission={ useSubmissionAdmission }
+			useChatNotice={ useChatNotice }
 			groupWritingSuggestions={ groupWritingSuggestions }
 			hasAiChatEntry={ hasAiChatEntry }
 			isChatInputDisabled={ ! isChatEnabled }

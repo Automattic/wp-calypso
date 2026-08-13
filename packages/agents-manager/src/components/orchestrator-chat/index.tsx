@@ -75,7 +75,7 @@ import type {
 	TransformMessages,
 	UseCheckpointHook,
 	ProviderCapabilities,
-	UseSubmissionAdmissionHook,
+	UseChatNoticeHook,
 } from '../../utils/load-external-providers';
 
 const streamedCheckpointMessagesBySession = new Map< string, Map< string, UIMessage > >();
@@ -310,8 +310,8 @@ interface Props {
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
 	capabilities?: ProviderCapabilities;
-	/** Provider-owned admission and metering hook for user-authored turns. */
-	useSubmissionAdmission?: UseSubmissionAdmissionHook;
+	/** Provider-owned, display-only notice derived from the backend's rejection text. */
+	useChatNotice?: UseChatNoticeHook;
 	/** Whether writing suggestions should use the editor-grouped labels. */
 	groupWritingSuggestions?: boolean;
 	/** Whether the host has a separate button that can reopen a closed chat. */
@@ -342,7 +342,7 @@ export default function OrchestratorChat( {
 	transformMessages,
 	useCheckpoint,
 	capabilities,
-	useSubmissionAdmission,
+	useChatNotice,
 	groupWritingSuggestions = false,
 	hasAiChatEntry = false,
 	isChatInputDisabled,
@@ -366,15 +366,6 @@ export default function OrchestratorChat( {
 	>( new Map() );
 	const [ isRegenerating, setIsRegenerating ] = useState( false );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
-	const [ dispatchRevision, setDispatchRevision ] = useState( 0 );
-	const dispatchRevisionRef = useRef( 0 );
-	const [ historyRevision, setHistoryRevision ] = useState( 0 );
-	const beginDispatch = useCallback( () => {
-		const nextRevision = dispatchRevisionRef.current + 1;
-		dispatchRevisionRef.current = nextRevision;
-		setDispatchRevision( nextRevision );
-		return nextRevision;
-	}, [] );
 	const currentPostId = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
 		return editor?.getCurrentPostId?.();
@@ -552,10 +543,7 @@ export default function OrchestratorChat( {
 		registerMessageActions,
 		getRegenerateHandler,
 		progressMessage,
-		protocolError,
-	} = useAgentChat( agentChatConfig! ) as ReturnType< typeof useAgentChat > & {
-		protocolError?: unknown;
-	};
+	} = useAgentChat( agentChatConfig! );
 	const messagesRef = useRef( messages );
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 	const previousMessagesRef = useRef( messages );
@@ -778,7 +766,6 @@ export default function OrchestratorChat( {
 				}
 			} );
 			// Update the UI with the loaded messages
-			setHistoryRevision( ( currentRevision ) => currentRevision + 1 );
 			loadMessages( loadedMessages );
 			// Make sure future messages go to the right session
 			agentManager.updateSessionId( agentConfig!.agentId, serverSessionId );
@@ -791,14 +778,13 @@ export default function OrchestratorChat( {
 			}
 		},
 	} );
-	const providerSubmissionAdmission = useSubmissionAdmission?.( {
-		messages,
-		error: protocolError ?? error,
-		dispatchRevision,
-		historyRevision,
-	} );
-	// Reader Chat has its own Search quota and must not inherit Jetpack AI admission UI.
-	const submissionAdmission = isReaderChat ? undefined : providerSubmissionAdmission;
+	const providerNotice = useChatNotice?.( { error } );
+	// Reader Chat has its own Search quota and must not inherit Jetpack AI metering UI.
+	const chatNotice = isReaderChat ? undefined : providerNotice;
+	// A provider notice replaces the matching transient chat error instead of
+	// rendering the same backend rejection twice.
+	const displayedChatError =
+		! isReaderChat && providerNotice?.suppressCurrentError ? null : chatError;
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
@@ -1235,20 +1221,6 @@ export default function OrchestratorChat( {
 		async ( message: string ) => {
 			submitDispatchedRef.current = false;
 
-			// Admission must run before uploads, analytics, persistence, or dispatch.
-			// Tool-result continuations call Agenttic directly below and are already
-			// admitted server work, so they deliberately bypass this user-turn gate.
-			if ( submissionAdmission?.submitBlocked ) {
-				submissionAdmission.onBlockedSubmit( message );
-				// Agenttic UI versions before native admission support clear a
-				// controlled composer before calling onSubmit. Restore only the draft
-				// that produced this turn, without overwriting a newer/programmatic one.
-				if ( inputValue.trim() === message ) {
-					setInputValue( ( currentValue ) => ( currentValue === '' ? inputValue : currentValue ) );
-				}
-				return;
-			}
-
 			// The composer is committed while a batch uploads — drop re-entrant
 			// sends (suggestion clicks, programmatic submits) instead of
 			// interleaving a second message.
@@ -1337,7 +1309,6 @@ export default function OrchestratorChat( {
 			// composer calls this callback directly, and the sends above that bail out
 			// early must not disturb a binding that still belongs to a running request.
 			startNewUserRequest();
-			const currentDispatchRevision = beginDispatch();
 			submitDispatchedRef.current = true;
 			try {
 				// Images dispatch via agenttic's `imageUrls` option — the resulting
@@ -1349,24 +1320,18 @@ export default function OrchestratorChat( {
 				submitDispatchedRef.current = false;
 				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
 				return;
-			} finally {
-				// Agenttic resolves onSubmit after the terminal stream event; WPCOM
-				// commits quota before emitting that event, so this fetch is post-turn.
-				await submissionAdmission?.refreshAfterTurn?.( currentDispatchRevision );
 			}
 
 			consumeNextMessageExternalContextEntries();
 		},
 		[
 			agentConfig?.agentId,
-			beginDispatch,
 			inputValue,
 			isUploadingImages,
 			onSubmit,
 			pendingImages.length,
 			setChatInput,
 			siteKey,
-			submissionAdmission,
 			uploadImagesToWordPress,
 		]
 	);
@@ -1407,10 +1372,6 @@ export default function OrchestratorChat( {
 			if ( ! action.prompt ) {
 				return;
 			}
-			if ( action.type === 'submit' && submissionAdmission?.submitBlocked ) {
-				submissionAdmission.onBlockedSubmit( action.prompt );
-				return;
-			}
 
 			// Remove the card immediately so the user gets instant collapse feedback.
 			// For 'submit' actions the linked context entry stays until the request
@@ -1425,7 +1386,7 @@ export default function OrchestratorChat( {
 
 			setChatInput( action.prompt );
 		},
-		[ setChatInput, submissionAdmission, submitChatMessage ]
+		[ setChatInput, submitChatMessage ]
 	);
 
 	const dismissContextCard = useCallback( ( card: ExternalContextCard ) => {
@@ -1440,17 +1401,12 @@ export default function OrchestratorChat( {
 	useNavigationContinuation?.( {
 		isProcessing,
 		sendToolResult: async ( params ) => {
-			const currentDispatchRevision = beginDispatch();
-			try {
-				await onSubmit( params.message, {
-					type: 'tool_result',
-					toolCallId: params.toolCallId,
-					toolId: params.toolId,
-					sessionId: params.sessionId,
-				} );
-			} finally {
-				await submissionAdmission?.refreshAfterTurn?.( currentDispatchRevision );
-			}
+			await onSubmit( params.message, {
+				type: 'tool_result',
+				toolCallId: params.toolCallId,
+				toolId: params.toolId,
+				sessionId: params.sessionId,
+			} );
 		},
 		sessionId: getTabSessionId(),
 		pathname: window.location.pathname,
@@ -1491,11 +1447,6 @@ export default function OrchestratorChat( {
 				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
 
 			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
-			// Agenttic has already opened the meter for a blocked auto-submit. Do not
-			// run provider click effects (tracking, hiding the chip, or shimmer setup).
-			if ( autoSubmit && submissionAdmission?.submitBlocked ) {
-				return;
-			}
 			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
 			// A click routed through Agenttic's own container reports the footer list,
 			// which is empty while the chips live in the empty view.
@@ -1538,7 +1489,7 @@ export default function OrchestratorChat( {
 				} )
 			);
 		},
-		[ contextualSuggestionIds, selectedBlockType, submissionAdmission ]
+		[ contextualSuggestionIds, selectedBlockType ]
 	);
 
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
@@ -1868,7 +1819,7 @@ export default function OrchestratorChat( {
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}
-			error={ chatError || uploadError }
+			error={ displayedChatError || uploadError }
 			onSubmit={ onSubmitWithImages }
 			onAbort={ handleAbort }
 			isLoadingConversation={ isLoadingConversation }
@@ -1887,7 +1838,7 @@ export default function OrchestratorChat( {
 			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
 			isChatInputDisabled={ isChatInputDisabled }
-			submissionAdmission={ submissionAdmission }
+			notice={ chatNotice }
 			hasAiChatEntry={ hasAiChatEntry }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }

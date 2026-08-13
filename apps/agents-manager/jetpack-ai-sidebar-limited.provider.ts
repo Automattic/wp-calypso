@@ -6,8 +6,7 @@ import {
 	registerBlockEditorFilters,
 	useAbilitiesSetup,
 	useCheckpoint,
-	useSubmissionAdmission,
-	jetpackAiClientStateDataPartAdapter,
+	useChatNotice,
 	useWritingOnlySuggestions,
 	writingOnlyToolProvider,
 } from '@automattic/jetpack-ai-sidebar';
@@ -60,6 +59,5 @@ export { getEmptyViewSuggestions };
 export { useWritingOnlySuggestions as useSuggestions };
 export { useAbilitiesSetup };
 export { useCheckpoint };
-export { useSubmissionAdmission };
-export const clientStateDataPartAdapter = jetpackAiClientStateDataPartAdapter;
+export { useChatNotice };
 export const capabilities = { ...sharedCapabilities, supportsSplitScreen: false };

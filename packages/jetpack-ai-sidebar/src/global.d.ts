@@ -31,6 +31,7 @@ declare const agentsManagerData:
 			site?: { ID?: number; domain?: string };
 			isWpcomPlatform?: boolean;
 			jetpackAiMeteringEnabled?: boolean;
+			/** Server-owned quota snapshot; see `metering.ts` for the shape. */
 			jetpackAiQuota?: unknown;
 			jetpackAiSidebar?: {
 				enabled: boolean;

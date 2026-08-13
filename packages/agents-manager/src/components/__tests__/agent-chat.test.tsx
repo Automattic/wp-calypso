@@ -11,7 +11,6 @@ import type { ComponentProps, ReactNode, Ref } from 'react';
 const mockSetFloatingPosition = jest.fn();
 const mockContainerProps = jest.fn();
 const mockInputProps = jest.fn();
-const mockSubmissionProps = jest.fn();
 const mockNoticeProps = jest.fn();
 const mockImageUploaderProps = jest.fn();
 
@@ -26,8 +25,6 @@ jest.mock(
 			floatingChatState,
 			suggestions = [],
 			onSuggestionClick,
-			submitBlocked,
-			onBlockedSubmit,
 			notice,
 		}: {
 			children: ReactNode;
@@ -38,12 +35,9 @@ jest.mock(
 				selectedSuggestion: Suggestion,
 				availableSuggestions: Suggestion[]
 			) => void;
-			submitBlocked?: boolean;
-			onBlockedSubmit?: ( message: string ) => void;
 			notice?: unknown;
 		} ) {
 			mockContainerProps( { floatingChatState } );
-			mockSubmissionProps( { submitBlocked, onBlockedSubmit } );
 			mockNoticeProps( notice );
 			return (
 				<div>
@@ -307,26 +301,16 @@ describe( 'AgentChat', () => {
 		);
 	} );
 
-	it( 'forwards provider admission and its persistent compose notice to Agenttic', () => {
-		const onBlockedSubmit = jest.fn();
+	it( 'forwards a persistent compose notice to Agenttic', () => {
 		const notice = {
 			message: 'You’re out of free credits.',
 			status: 'error' as const,
 			action: { label: 'Upgrade', onClick: jest.fn() },
 			dismissible: false,
 		};
-		renderAgentChat( {
-			submissionAdmission: {
-				submitBlocked: true,
-				onBlockedSubmit,
-				notice,
-			},
-		} );
 
-		expect( mockSubmissionProps ).toHaveBeenLastCalledWith( {
-			submitBlocked: true,
-			onBlockedSubmit,
-		} );
+		renderAgentChat( { notice } );
+
 		expect( mockNoticeProps ).toHaveBeenLastCalledWith( notice );
 	} );
 

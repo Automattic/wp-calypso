@@ -11,12 +11,10 @@ import { createWritingOnlyAgentConfig } from '../create-writing-only-agent-confi
 
 describe( 'createWritingOnlyAgentConfig', () => {
 	it( 'keeps the provider context while omitting full-Agent editor capabilities', () => {
-		const clientStateDataPartAdapter = jest.fn( () => ( { jetpackAiQuota: {} } ) );
 		const config = createWritingOnlyAgentConfig( {
 			sessionId: 'session-1',
 			siteId: 123,
 			providerId: 'jetpack-ai-sidebar-limited',
-			clientStateDataPartAdapter,
 			contextProvider: {
 				getClientContext: () => ( {
 					url: 'https://example.com/wp-admin/post.php',
@@ -26,15 +24,12 @@ describe( 'createWritingOnlyAgentConfig', () => {
 					selectedBlockClientId: 'block-1',
 				} ),
 			},
-		} ) as ReturnType< typeof createWritingOnlyAgentConfig > & {
-			clientStateDataPartAdapter?: typeof clientStateDataPartAdapter;
-		};
+		} );
 		const context = config.contextProvider?.getClientContext();
 
 		expect( createCalypsoAuthProvider ).toHaveBeenCalledWith( 123, {
 			logWpcomJwtFailure: true,
 		} );
-		expect( config.clientStateDataPartAdapter ).toBe( clientStateDataPartAdapter );
 		expect( config.agentId ).toBe( 'wp-orchestrator' );
 		expect( config.agentUrl ).toBe( 'https://public-api.wordpress.com/wpcom/v2/ai/jetpack-agent' );
 		expect( context ).toEqual(

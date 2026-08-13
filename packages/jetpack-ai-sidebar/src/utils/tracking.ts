@@ -180,11 +180,6 @@ interface TrackSplitScreenGuideOptions {
 	componentType: string;
 }
 
-interface TrackJetpackAiUpgradeOptions {
-	placement: 'jetpack-ai-sidebar-quota-notice' | 'jetpack-ai-sidebar-blocked-submit';
-	requestsCount: number | null;
-}
-
 function getSplitScreenGuideProperties( {
 	componentType,
 }: TrackSplitScreenGuideOptions ): TrackProperties {
@@ -219,17 +214,13 @@ export function trackSplitScreenGuideClick( options: TrackSplitScreenGuideOption
 }
 
 /**
- * Tracks navigation from the sidebar to the Jetpack AI upgrade flow.
- * @param options               - Tracking options.
- * @param options.placement     - Sidebar interaction that opened the upgrade flow.
- * @param options.requestsCount - Current request count when the server provides it.
+ * Tracks navigation from the out-of-credits notice to the upgrade flow. No
+ * request count is reported: the only usage figure the client has is the
+ * page-load snapshot, and nothing refreshes it after a turn, so it would be
+ * stale by the time exhaustion is reached.
  */
-export function trackJetpackAiUpgrade( {
-	placement,
-	requestsCount,
-}: TrackJetpackAiUpgradeOptions ): void {
+export function trackJetpackAiUpgrade(): void {
 	recordTracksEvent( 'ai_upgrade_button', {
-		placement,
-		...( requestsCount !== null ? { requests_count: requestsCount } : {} ),
+		placement: 'jetpack-ai-sidebar-quota-notice',
 	} );
 }

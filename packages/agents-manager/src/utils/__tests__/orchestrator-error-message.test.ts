@@ -28,6 +28,13 @@ describe( 'getOrchestratorErrorMessage', () => {
 		expect( getOrchestratorErrorMessage( error ) ).toBe( error );
 	} );
 
+	it.each( [
+		'Unexpected JSON payload contained jetpack_ai_quota_exhausted metadata.',
+		'Unexpected response while discussing the Jetpack AI usage limit.',
+	] )( 'passes the unrelated quota-like message through unchanged: %s', ( error ) => {
+		expect( getOrchestratorErrorMessage( error ) ).toBe( error );
+	} );
+
 	it( 'passes other errors through unchanged', () => {
 		expect( getOrchestratorErrorMessage( 'Some other error.' ) ).toBe( 'Some other error.' );
 	} );

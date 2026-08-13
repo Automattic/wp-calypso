@@ -18,8 +18,7 @@ import {
 	getEmptyViewSuggestions,
 	useSuggestions,
 	useCheckpoint,
-	useSubmissionAdmission,
-	jetpackAiClientStateDataPartAdapter,
+	useChatNotice,
 	capabilities,
 	registerBlockEditorFilters,
 } from '@automattic/jetpack-ai-sidebar';
@@ -38,7 +37,6 @@ window.__JetpackAIProvider = {
 	getEmptyViewSuggestions,
 	useSuggestions,
 	useCheckpoint,
-	useSubmissionAdmission,
-	clientStateDataPartAdapter: jetpackAiClientStateDataPartAdapter,
+	useChatNotice,
 	capabilities,
 };
