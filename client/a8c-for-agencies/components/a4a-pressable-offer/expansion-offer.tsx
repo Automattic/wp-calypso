@@ -62,7 +62,7 @@ const PressableExpansionOfferBanner = () => {
 					isExternal: true,
 				},
 			] }
-			footnote={ translate( '*Offer valid August 11–September 30, 2026' ) }
+			footnote={ translate( '*Offer valid August 11 – September 30, 2026' ) }
 			toggleEventName="calypso_a4a_pressable_expansion_offer_toggle_view"
 		/>
 	);

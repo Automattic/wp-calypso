@@ -73,7 +73,7 @@ export const HelpCenterA4AContactForm = () => {
 		return __( 'Contact sales & support', __i18n_text_domain__ );
 	};
 
-	const [ formData, setFormData ] = useState< FormData >( {
+	const [ formData, setFormData ] = useState< FormData >( () => ( {
 		name: currentUser?.display_name ?? '',
 		email: currentUser?.email ?? '',
 		site: '',
@@ -81,7 +81,7 @@ export const HelpCenterA4AContactForm = () => {
 		message: getDefaultMessage(),
 		no_of_sites: 1,
 		pressable_contact: 'sales',
-	} );
+	} ) );
 
 	const {
 		isPending,
