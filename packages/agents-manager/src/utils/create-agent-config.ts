@@ -6,7 +6,7 @@
  */
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
-import { JETPACK_AI_AGENT_URL, ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
+import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
@@ -262,13 +262,7 @@ export async function createAgentConfig(
 
 	const config: UseAgentChatConfig = {
 		agentId,
-		agentUrl:
-			agentId === ORCHESTRATOR_AGENT_ID &&
-			[ 'gutenberg', 'site-editor' ].includes( environment ) &&
-			typeof agentsManagerData !== 'undefined' &&
-			agentsManagerData?.jetpackAiMeteringEnabled === true
-				? JETPACK_AI_AGENT_URL
-				: ORCHESTRATOR_AGENT_URL,
+		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId,
 		// Persist server-assigned session IDs as this tab's session.
 		onSessionIdChange: ( newSessionId ) =>

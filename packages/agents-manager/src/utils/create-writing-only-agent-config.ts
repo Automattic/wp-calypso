@@ -3,7 +3,7 @@
  * the full manager's Site Editor actions, Zendesk access, and external context.
  */
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
-import { JETPACK_AI_AGENT_URL, ORCHESTRATOR_AGENT_ID } from '../constants';
+import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { getSessionStorageKey } from './agent-session';
 import type { ContextProvider, ToolProvider } from '../extension-types';
 import type { Ability as AgenticAbility, UseAgentChatConfig } from '@automattic/agenttic-client';
@@ -43,7 +43,7 @@ export function createWritingOnlyAgentConfig( options: Options ): UseAgentChatCo
 	const agentId = ORCHESTRATOR_AGENT_ID;
 	const config: UseAgentChatConfig = {
 		agentId,
-		agentUrl: JETPACK_AI_AGENT_URL,
+		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId: options.sessionId,
 		sessionIdStorageKey: getSessionStorageKey( agentId ),
 		authProvider: createCalypsoAuthProvider( options.siteId, { logWpcomJwtFailure: true } ),

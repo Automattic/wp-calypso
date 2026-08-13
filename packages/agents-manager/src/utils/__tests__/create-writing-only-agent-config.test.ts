@@ -31,7 +31,7 @@ describe( 'createWritingOnlyAgentConfig', () => {
 			logWpcomJwtFailure: true,
 		} );
 		expect( config.agentId ).toBe( 'wp-orchestrator' );
-		expect( config.agentUrl ).toBe( 'https://public-api.wordpress.com/wpcom/v2/ai/jetpack-agent' );
+		expect( config.agentUrl ).toBe( 'https://public-api.wordpress.com/wpcom/v2/ai/agent' );
 		expect( context ).toEqual(
 			expect.objectContaining( {
 				selectedBlockClientId: 'block-1',
