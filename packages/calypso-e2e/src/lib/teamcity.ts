@@ -24,11 +24,14 @@ interface BuildContext {
 const TAG_TIMEOUT_MS = 2_000;
 
 /**
- * How long a log write may take. Generous, because no test waits on it: the
- * worker knows about its own ban the moment it sees it and carries on, and this
- * runs behind it. Only a worker exiting settles it early.
+ * How long a log write may take. No test waits on it — the worker knows about
+ * its own ban the moment it sees it and carries on, and this runs behind it —
+ * but a worker's teardown settles what is still in flight, on a budget it
+ * shares with the response bodies it is reading. Set under that budget, so a
+ * slow write is one the teardown can still wait out rather than one that
+ * leaves the last test of a worker untagged.
  */
-const LOG_WRITE_TIMEOUT_MS = 10_000;
+const LOG_WRITE_TIMEOUT_MS = 5_000;
 
 /**
  * Reads a single key out of `java.util.Properties.store()` output.
