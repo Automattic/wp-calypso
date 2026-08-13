@@ -114,7 +114,7 @@ describe( '<McpOverview>', () => {
 		);
 	} );
 
-	test( 'shows Starter prompts as disabled for now', () => {
+	test( 'links Starter prompts to its screen once MCP access is enabled', () => {
 		render(
 			<McpOverview
 				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
@@ -122,9 +122,9 @@ describe( '<McpOverview>', () => {
 			/>
 		);
 
-		expect( screen.getByRole( 'button', { name: /^Starter prompts/ } ) ).toHaveAttribute(
-			'aria-disabled',
-			'true'
+		expect( screen.getByRole( 'link', { name: /^Starter prompts/ } ) ).toHaveAttribute(
+			'href',
+			'/resources/ai-mcp/prompts'
 		);
 	} );
 

@@ -225,6 +225,16 @@ const mcpAvailableToolsRoute = createRoute( {
 	)
 );
 
+const mcpStarterPromptsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Starter prompts' ) } ] } ),
+	getParentRoute: () => mcpRoute,
+	path: 'prompts',
+} ).lazy( () =>
+	import( '../../agency/resources/mcp/starter-prompts' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-prompts' )( { component: d.default } )
+	)
+);
+
 const mcpConnectRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Connect external AI assistant' ) } ] } ),
 	getParentRoute: () => mcpRoute,
@@ -814,7 +824,12 @@ export const createAgencyRoutes = () => [
 		agencyTiersRoute,
 		exclusiveOffersRoute,
 		learnRoute,
-		mcpRoute.addChildren( [ mcpOverviewRoute, mcpAvailableToolsRoute, mcpConnectRoute ] ),
+		mcpRoute.addChildren( [
+			mcpOverviewRoute,
+			mcpAvailableToolsRoute,
+			mcpStarterPromptsRoute,
+			mcpConnectRoute,
+		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
 		earnOverviewRoute,
