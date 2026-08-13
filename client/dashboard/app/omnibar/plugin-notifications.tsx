@@ -27,6 +27,12 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 		setHasUnseenNotifications( count > 0 )
 	);
 
+	useOmnibarEvent( 'notificationsOpen', ( isOpen ) => {
+		if ( isOpen ) {
+			setHasUnseenNotifications( false );
+		}
+	} );
+
 	const bellRef = useRef< HTMLSpanElement >( null );
 
 	// Re-runs every commit so the anchor stays correct if the bell button is replaced.
