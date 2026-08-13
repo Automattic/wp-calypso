@@ -1,0 +1,10 @@
+{
+	"extends": "../../.stylelintrc",
+	"rules": {
+		"selector-pseudo-class-no-unknown": [
+			true,
+			{ "ignorePseudoClasses": [ "global", "local" ] }
+		],
+		"scales/radii": null
+	}
+}
