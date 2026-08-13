@@ -13,13 +13,14 @@ import {
 } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, parseISO, startOfDay } from 'date-fns';
 import { isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
+import { getStudioCodeAiCreditsTitle } from './studio-code-ai-credits';
 import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase } from '@automattic/api-core';
 
@@ -344,22 +345,6 @@ export function getBillPeriodLabel( purchase: Purchase ): string {
 		default:
 			return purchase.bill_period_label;
 	}
-}
-
-/**
- * Return the Studio Code AI Credits title with its credit count.
- */
-export function getStudioCodeAiCreditsTitle( productName: string, quantity: number ): string {
-	// Store Admin calls these "AI credits". Customer-facing copy says "credits".
-	return sprintf(
-		// translators: productName is the name of the product and quantity is a number of credits
-		_n(
-			'%(productName)s (%(quantity)s credit)',
-			'%(productName)s (%(quantity)s credits)',
-			quantity
-		),
-		{ productName, quantity: formatNumber( quantity ) }
-	);
 }
 
 /**

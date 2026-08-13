@@ -3,7 +3,6 @@ import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { isAkismetPro500Plan } from '../../utils/akismet';
 import {
-	getStudioCodeAiCreditsTitle,
 	isDIFMProduct,
 	isGoogleWorkspace,
 	isTitanMail,
@@ -11,6 +10,7 @@ import {
 	isJetpackSearch,
 	isJetpackStatsPaidProductSlug,
 } from '../../utils/purchase';
+import { getStudioCodeAiCreditsTitle } from '../../utils/studio-code-ai-credits';
 import type { Receipt, ReceiptItem } from '@automattic/api-core';
 import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
 

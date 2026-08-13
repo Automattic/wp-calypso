@@ -13,7 +13,7 @@ import {
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Fragment, type JSX } from 'react';
-import { getStudioCodeAiCreditsTitle } from 'calypso/dashboard/utils/purchase';
+import { getStudioCodeAiCreditsTitle } from 'calypso/dashboard/utils/studio-code-ai-credits';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import {
 	BillingTransaction,

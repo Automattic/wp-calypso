@@ -38,13 +38,13 @@ import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import i18n from 'i18n-calypso';
 import moment from 'moment';
 import {
-	getStudioCodeAiCreditsTitle,
 	hasAmountAvailableToRefund,
 	isA4AHoldingSitePurchase,
 	isAgencyPartnerType,
 	isMarketplaceHoldingSitePurchase,
 	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
+import { getStudioCodeAiCreditsTitle } from 'calypso/dashboard/utils/studio-code-ai-credits';
 import { addPaymentMethod, changePaymentMethod } from '../paths';
 import type { MarketingSurveyResponses, Purchase } from '@automattic/api-core';
 import type { TranslateResult } from 'i18n-calypso';

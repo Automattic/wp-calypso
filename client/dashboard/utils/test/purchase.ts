@@ -16,11 +16,11 @@ import {
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	creditCardExpiresBeforeSubscription,
 	getRenewalUrlFromPurchase,
-	getStudioCodeAiCreditsTitle,
 	getTitleForDisplay,
 	isPurchaseDowngradeEligible,
 	isWithinRefundWindowDowngradeEligible,
 } from '../purchase';
+import { getStudioCodeAiCreditsTitle } from '../studio-code-ai-credits';
 import type { Purchase } from '@automattic/api-core';
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
