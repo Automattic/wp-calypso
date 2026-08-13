@@ -62,7 +62,7 @@ interface MessageWithContextFlags extends UIMessage {
 	};
 }
 
-function isContextOnlyMessage( message: UIMessage ): boolean {
+export function isContextOnlyMessage( message: UIMessage ): boolean {
 	return (
 		( message as MessageWithContextFlags ).context?.flags?.context_only === true ||
 		message.content?.some( ( content ) => {

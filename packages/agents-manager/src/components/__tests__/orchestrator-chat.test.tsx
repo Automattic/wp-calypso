@@ -11,13 +11,81 @@ const mockUseAgentChat = jest.fn();
 const mockUpdateSessionId = jest.fn();
 let mockManagerHasAgent = true;
 let mockAgentChatConfig: { onTaskUpdate?: ( update: TaskUpdate ) => Promise< void > } | undefined;
+let mockConversationConfig:
+	| {
+			onSuccess?: (
+				messages: Array< {
+					messageId: string;
+					role: 'user' | 'agent';
+					parts: Array< { type: 'text'; text: string } >;
+					kind: 'message';
+				} >,
+				sessionId: string
+			) => void;
+	  }
+	| undefined;
 const mockUseRegenerateAction = jest.fn();
 const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
 const mockIsReaderChatAgent = jest.fn();
+const mockInvalidateCheckpointAction = jest.fn();
+const mockInvalidatedCheckpointIds = new Set< string >();
 let mockSelectedBlockType: string | undefined;
 let mockBlockEditorStoreThrows = false;
+let mockHasEditorRedo = false;
+
+function mockGetCheckpointIdForMessage( message: {
+	content?: Array< { text?: string } >;
+} ): string | null {
+	try {
+		const parsed = JSON.parse( message.content?.[ 0 ]?.text ?? '' );
+		if (
+			parsed.tool_id !== 'big_sky__apply_block_edits' &&
+			parsed.tool_id !== 'wpcom__update_block_content'
+		) {
+			return null;
+		}
+		return parsed.data?.calypsoCheckpointId ?? parsed.tool_call_id ?? null;
+	} catch {
+		return null;
+	}
+}
+
+const mockCheckpointActions = () => {
+	let isCheckpointActionAvailable: ( ( checkpointId: string ) => boolean ) | undefined;
+	const getActions = ( message: { content?: Array< { text?: string } > } ) => {
+		const checkpointId = mockGetCheckpointIdForMessage( message );
+		if ( ! checkpointId ) {
+			return [];
+		}
+
+		const canAct =
+			! mockInvalidatedCheckpointIds.has( checkpointId ) &&
+			( isCheckpointActionAvailable?.( checkpointId ) ?? true );
+		return [
+			{
+				type: 'component',
+				id: 'checkpoint',
+				label: canAct ? 'Updated and Undo' : 'Updated',
+				component: () => null,
+				componentProps: canAct ? { onUndo: jest.fn(), onRedo: jest.fn() } : {},
+				order: 1,
+			},
+		];
+	};
+	mockUseCheckpointAction.mockImplementation(
+		(
+			_registerMessageActions: unknown,
+			_checkpoint: unknown,
+			nextIsCheckpointActionAvailable?: ( checkpointId: string ) => boolean
+		) => {
+			isCheckpointActionAvailable = nextIsCheckpointActionAvailable;
+			return getActions;
+		}
+	);
+};
+
 const mockAgentChat = jest.fn(
 	( {
 		onSuggestionClick,
@@ -164,6 +232,9 @@ jest.mock(
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( mapSelect: ( select: ( storeName: string ) => object ) => unknown ) =>
 		mapSelect( ( storeName: string ) => {
+			if ( storeName === 'core/editor' ) {
+				return { hasEditorRedo: () => mockHasEditorRedo };
+			}
 			if ( storeName === 'core/block-editor' ) {
 				if ( mockBlockEditorStoreThrows ) {
 					throw new Error( 'Block editor store unavailable' );
@@ -201,13 +272,18 @@ jest.mock( '../../utils/tracks', () => ( {
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
 jest.mock( '../../hooks/use-abilities-registration', () => () => {} );
-jest.mock(
-	'../../hooks/use-conversation',
-	() => ( config: unknown ) => mockUseConversation( config )
-);
+jest.mock( '../../hooks/use-conversation', () => ( config: typeof mockConversationConfig ) => {
+	mockConversationConfig = config;
+	return mockUseConversation( config );
+} );
 jest.mock( '../../hooks/use-checkpoint-action', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockUseCheckpointAction( ...args ),
+	getCheckpointIdForMessage: mockGetCheckpointIdForMessage,
+	invalidateCheckpointAction: ( checkpointId: string ) => {
+		mockInvalidatedCheckpointIds.add( checkpointId );
+		mockInvalidateCheckpointAction( checkpointId );
+	},
 } ) );
 jest.mock( '../../hooks/use-feedback-action', () => () => ( {
 	showFeedbackInput: false,
@@ -227,6 +303,16 @@ jest.mock( '../../hooks/use-sources-action', () => () => {} );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
 	default: ( { messages }: { messages: unknown[] } ) => messages,
+	isContextOnlyMessage: ( message: {
+		context?: { flags?: { context_only?: boolean } };
+		content?: Array< { type?: string; data?: { flags?: { context_only?: boolean } } } >;
+	} ) =>
+		message.context?.flags?.context_only === true ||
+		message.content?.some(
+			( content ) =>
+				content.type === 'context' ||
+				( content.type === 'data' && content.data?.flags?.context_only === true )
+		),
 } ) );
 jest.mock( '../../utils/external-context', () => ( {
 	consumeNextMessageExternalContextEntries: jest.fn(),
@@ -322,6 +408,32 @@ const showComponentMessage = ( id: string, content: string = SHOW_COMPONENT_CONT
 	showIcon: true,
 } );
 
+const createCheckpointMessage = ( id: string, checkpointId: string ) => ( {
+	id,
+	role: 'agent',
+	content: [
+		{
+			type: 'text',
+			text: JSON.stringify( {
+				tool_id: 'big_sky__apply_block_edits',
+				tool_call_id: checkpointId,
+				data: { result: { success: true, outcome: 'updated' } },
+			} ),
+		},
+	],
+	timestamp: 1,
+} );
+
+const getDisplayedCheckpointAction = ( messageId: string ) => {
+	const messages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+		id: string;
+		actions?: Array< { id: string; componentProps?: Record< string, unknown > } >;
+	} >;
+	return messages
+		.find( ( message ) => message.id === messageId )
+		?.actions?.find( ( action ) => action.id === 'checkpoint' );
+};
+
 const countShowComponentMessages = () => {
 	const messages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
 		content?: Array< { text?: string } >;
@@ -353,7 +465,10 @@ describe( 'OrchestratorChat', () => {
 		mockBlockEditorStoreThrows = false;
 		sessionStorage.clear();
 		mockManagerHasAgent = true;
+		mockHasEditorRedo = false;
+		mockInvalidatedCheckpointIds.clear();
 		mockAgentChatConfig = undefined;
+		mockConversationConfig = undefined;
 	} );
 
 	it( 'ignores a conversation result for a discarded agent', () => {
@@ -1223,19 +1338,174 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'keeps streamed checkpoint actions through final prose and remounts', async () => {
-		const checkpointAction = {
-			id: 'checkpoint',
-			label: 'Updated and Undo',
-			onClick: jest.fn(),
-			order: 1,
-		};
-		mockUseCheckpointAction.mockReturnValue(
-			( message: { content?: Array< { text?: string } > } ) =>
-				message.content?.[ 0 ]?.text?.includes( 'big_sky__apply_block_edits' )
-					? [ checkpointAction ]
-					: []
+	it( 'hides checkpoint controls after a later user message', () => {
+		const checkpointMessage = createCheckpointMessage( 'agent-checkpoint', 'history-checkpoint' );
+		mockCheckpointActions();
+		const initialMessages = [ userMessage, checkpointMessage ];
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { messages: initialMessages } ) );
+		const view = render( chat() );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
 		);
+
+		const contextOnlyMessage = {
+			id: 'context-only',
+			role: 'user',
+			content: [ { type: 'context' } ],
+			timestamp: 2,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ ...initialMessages, contextOnlyMessage ] } )
+		);
+		view.rerender( chat() );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+
+		const nextUserMessage = {
+			id: 'user-2',
+			role: 'user',
+			content: [ { type: 'text', text: 'Make another edit' } ],
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ ...initialMessages, contextOnlyMessage, nextUserMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
+	} );
+
+	it( 'hides checkpoint controls in loaded conversation history', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-history',
+			`loaded-history-checkpoint-${ Date.now() }`
+		);
+		const checkpointId = mockGetCheckpointIdForMessage( checkpointMessage )!;
+		const checkpointResult = checkpointMessage.content[ 0 ].text;
+		const loadMessages = jest.fn();
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { loadMessages } ) );
+
+		render( chat() );
+		act( () => {
+			mockConversationConfig?.onSuccess?.(
+				[
+					{
+						messageId: checkpointMessage.id,
+						role: 'agent',
+						parts: [ { type: 'text', text: checkpointResult } ],
+						kind: 'message',
+					},
+				],
+				'history-session'
+			);
+		} );
+
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith( checkpointId );
+		expect( loadMessages ).toHaveBeenCalledWith(
+			expect.arrayContaining( [ expect.objectContaining( { messageId: checkpointMessage.id } ) ] )
+		);
+	} );
+
+	it( 'keeps checkpoint controls hidden after Gutenberg Undo and Redo', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-native-undo',
+			'native-undo-checkpoint'
+		);
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		const view = render( chat() );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+
+		mockHasEditorRedo = true;
+		view.rerender( chat() );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith( 'native-undo-checkpoint' );
+
+		mockHasEditorRedo = false;
+		view.rerender( chat() );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect( mockInvalidateCheckpointAction ).toHaveBeenLastCalledWith( 'native-undo-checkpoint' );
+	} );
+
+	it( 'invalidates a checkpoint that arrives after Gutenberg Undo', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-late-checkpoint',
+			'late-native-undo-checkpoint'
+		);
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { messages: [ userMessage ] } ) );
+		const view = render( chat() );
+
+		mockHasEditorRedo = true;
+		view.rerender( chat() );
+		mockHasEditorRedo = false;
+		view.rerender( chat() );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith( 'late-native-undo-checkpoint' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+	} );
+
+	it( 'allows checkpoint controls on a later user turn', () => {
+		const firstCheckpoint = createCheckpointMessage( 'agent-first-turn', 'first-turn-checkpoint' );
+		const secondCheckpoint = createCheckpointMessage(
+			'agent-second-turn',
+			'second-turn-checkpoint'
+		);
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, firstCheckpoint ] } )
+		);
+		const view = render( chat() );
+
+		mockHasEditorRedo = true;
+		view.rerender( chat() );
+		mockHasEditorRedo = false;
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					userMessage,
+					firstCheckpoint,
+					{
+						id: 'user-second-turn',
+						role: 'user',
+						content: [ { type: 'text', text: 'Make another edit' } ],
+						timestamp: 2,
+					},
+					secondCheckpoint,
+				],
+			} )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( secondCheckpoint.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+	} );
+
+	it( 'keeps streamed checkpoint actions through final prose and remounts', async () => {
+		mockCheckpointActions();
 		const view = render( chat() );
 		const checkpointResult = JSON.stringify( {
 			tool_id: 'big_sky__apply_block_edits',
@@ -1248,7 +1518,6 @@ describe( 'OrchestratorChat', () => {
 				},
 			},
 		} );
-
 		await act( async () => {
 			await mockAgentChatConfig?.onTaskUpdate?.( {
 				id: 'task-streamed',

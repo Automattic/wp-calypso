@@ -12,7 +12,7 @@ import {
 } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
-import useCheckpointAction from '../use-checkpoint-action';
+import useCheckpointAction, { invalidateCheckpointAction } from '../use-checkpoint-action';
 import type { UseCheckpointReturn } from '../../utils/load-external-providers';
 import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
 
@@ -320,6 +320,46 @@ describe( 'useCheckpointAction', () => {
 		expect( actions[ 0 ].componentProps ).not.toHaveProperty( 'onUndo' );
 		expect( actions[ 0 ].componentProps ).not.toHaveProperty( 'onRedo' );
 		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
+	} );
+
+	it( 'hides unavailable and invalidated checkpoint controls', () => {
+		const registerMessageActions = jest.fn() as UseAgentChatReturn[ 'registerMessageActions' ];
+		const checkpoint = createCheckpoint();
+		checkpoint.canSwapCheckpoint = jest.fn().mockReturnValue( true );
+		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
+		const message = createToolMessage( {
+			toolCallId: 'invalidated-tool-call',
+			data: {
+				result: {
+					success: true,
+					outcome: 'updated',
+					changeType: 'text-content',
+				},
+			},
+		} );
+		let isAvailable = false;
+		const { result, rerender } = renderHook( () =>
+			useCheckpointAction( registerMessageActions, checkpoint, () => isAvailable )
+		);
+
+		const unavailableAction = result.current( message )[ 0 ];
+		expect( unavailableAction ).toMatchObject( { label: 'Updated' } );
+		if ( unavailableAction?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		expect( unavailableAction.componentProps ).not.toHaveProperty( 'onUndo' );
+		expect( unavailableAction.componentProps ).not.toHaveProperty( 'onRedo' );
+
+		isAvailable = true;
+		rerender();
+		invalidateCheckpointAction( 'invalidated-tool-call' );
+		const invalidatedAction = result.current( message )[ 0 ];
+		expect( invalidatedAction ).toMatchObject( { label: 'Updated' } );
+		if ( invalidatedAction?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		expect( invalidatedAction.componentProps ).not.toHaveProperty( 'onUndo' );
+		expect( invalidatedAction.componentProps ).not.toHaveProperty( 'onRedo' );
 	} );
 
 	it( 'uses the Jetpack tool call id for its block edit checkpoint', async () => {

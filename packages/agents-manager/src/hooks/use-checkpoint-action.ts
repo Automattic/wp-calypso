@@ -12,8 +12,10 @@ import type { UseCheckpointReturn } from '../utils/load-external-providers';
 import type { UIMessage, UIMessageAction, UseAgentChatReturn } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
+type IsCheckpointActionAvailable = ( checkpointId: string ) => boolean;
 
 const revertedCheckpointIds = new Set< string >();
+const invalidatedCheckpointIds = new Set< string >();
 
 function isTextContentEdit( toolId: unknown, data: unknown ): boolean {
 	if ( toolId === UPDATE_BLOCK_CONTENT_TOOL_ID ) {
@@ -58,7 +60,7 @@ function isTextContentEdit( toolId: unknown, data: unknown ): boolean {
  * state is session-only; `hasCheckpoint` filters out stale IDs.
  */
 function getCheckpointInfo(
-	message: UIMessage
+	message: Pick< UIMessage, 'content' >
 ): { checkpointId: string; showResolvedEditAction: boolean } | undefined {
 	const firstPartText = message.content?.[ 0 ]?.text ?? '';
 
@@ -89,16 +91,27 @@ function getCheckpointInfo(
 	return undefined;
 }
 
+export function getCheckpointIdForMessage( message: Pick< UIMessage, 'content' > ): string | null {
+	return getCheckpointInfo( message )?.checkpointId ?? null;
+}
+
+export function invalidateCheckpointAction( checkpointId: string ): void {
+	invalidatedCheckpointIds.add( checkpointId );
+}
+
 /**
  * Registers an undo action on agent messages that have a checkpoint.
  */
 export default function useCheckpointAction(
 	registerMessageActions: RegisterMessageActions,
-	checkpoint?: UseCheckpointReturn
+	checkpoint?: UseCheckpointReturn,
+	isCheckpointActionAvailable?: IsCheckpointActionAvailable
 ): ( message: UIMessage ) => UIMessageAction[] {
-	// Ref avoids infinite re-renders caused by unstable `checkpoint` reference.
+	// Refs avoid infinite re-renders caused by unstable provider values.
 	const checkpointRef = useRef( checkpoint );
 	checkpointRef.current = checkpoint;
+	const isCheckpointActionAvailableRef = useRef( isCheckpointActionAvailable );
+	isCheckpointActionAvailableRef.current = isCheckpointActionAvailable;
 	const getCheckpointActionsForMessage = useCallback( ( message: UIMessage ): UIMessageAction[] => {
 		const currentCheckpoint = checkpointRef.current;
 
@@ -119,11 +132,16 @@ export default function useCheckpointAction(
 				: undefined;
 		const supportsSwap = swapAvailability !== undefined;
 		const isReverted = revertedCheckpointIds.has( checkpointInfo.checkpointId );
+		const isActionAvailable =
+			! invalidatedCheckpointIds.has( checkpointInfo.checkpointId ) &&
+			( isCheckpointActionAvailableRef.current?.( checkpointInfo.checkpointId ) ?? true );
 		const applyCheckpointAction = async ( revert: boolean ): Promise< boolean > => {
 			let outcome: 'success' | 'failed' = 'failed';
 			try {
 				const checkpointToRestore = checkpointRef.current;
 				if (
+					invalidatedCheckpointIds.has( checkpointInfo.checkpointId ) ||
+					isCheckpointActionAvailableRef.current?.( checkpointInfo.checkpointId ) === false ||
 					! checkpointToRestore ||
 					! checkpointToRestore.hasCheckpoint( checkpointInfo.checkpointId )
 				) {
@@ -162,7 +180,7 @@ export default function useCheckpointAction(
 		};
 
 		if ( checkpointInfo.showResolvedEditAction ) {
-			const canAct = ! supportsSwap || swapAvailability === true;
+			const canAct = isActionAvailable && ( ! supportsSwap || swapAvailability === true );
 			let label: string = canAct
 				? __( 'Updated and Undo', __i18n_text_domain__ )
 				: __( 'Updated', __i18n_text_domain__ );
@@ -189,6 +207,10 @@ export default function useCheckpointAction(
 					order: 1,
 				},
 			];
+		}
+
+		if ( ! isActionAvailable ) {
+			return [];
 		}
 
 		return [

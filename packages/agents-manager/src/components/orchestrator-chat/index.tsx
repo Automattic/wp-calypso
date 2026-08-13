@@ -18,7 +18,10 @@ import { useRegisterCustomActions } from '../../hooks/custom-actions';
 import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
 import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
-import useCheckpointAction from '../../hooks/use-checkpoint-action';
+import useCheckpointAction, {
+	getCheckpointIdForMessage,
+	invalidateCheckpointAction,
+} from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
@@ -28,6 +31,7 @@ import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
+	isContextOnlyMessage,
 } from '../../utils/convert-tool-messages-to-components';
 import {
 	consumeNextMessageExternalContextEntries,
@@ -79,6 +83,16 @@ function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
 	}
 
 	return null;
+}
+
+function getLatestUserMessageIndex( messages: UIMessage[] ): number {
+	for ( let index = messages.length - 1; index >= 0; index-- ) {
+		if ( messages[ index ].role === 'user' && ! isContextOnlyMessage( messages[ index ] ) ) {
+			return index;
+		}
+	}
+
+	return -1;
 }
 
 /**
@@ -257,6 +271,14 @@ export default function OrchestratorChat( {
 			return typeof blockName === 'string' && blockName ? blockName : undefined;
 		} catch {
 			return undefined;
+		}
+	}, [] );
+	const hasEditorRedo = useSelect( ( select ) => {
+		try {
+			const editor = select( 'core/editor' ) as { hasEditorRedo?: () => boolean };
+			return editor?.hasEditorRedo?.() ?? false;
+		} catch {
+			return false;
 		}
 	}, [] );
 	const { isPageOrSiteEditorSurface: groupWritingSuggestions } = usePageOrSiteEditorSurface();
@@ -496,6 +518,21 @@ export default function OrchestratorChat( {
 				return;
 			}
 
+			loadedMessages.forEach( ( message ) => {
+				const checkpointMessage = streamedCheckpointMessagesRef.current.byFinalMessageId.get(
+					message.messageId
+				) ?? {
+					id: message.messageId,
+					role: message.role,
+					content: message.parts
+						.filter( ( part ) => part.type === 'text' )
+						.map( ( part ) => ( { type: 'text', text: part.text } ) ),
+				};
+				const checkpointId = getCheckpointIdForMessage( checkpointMessage );
+				if ( checkpointId ) {
+					invalidateCheckpointAction( checkpointId );
+				}
+			} );
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
 			// Make sure future messages go to the right session
@@ -543,7 +580,53 @@ export default function OrchestratorChat( {
 
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();
-	const getCheckpointActionsForMessage = useCheckpointAction( registerMessageActions, checkpoint );
+	const checkpointIdsByTurn = useMemo( () => {
+		const latestUserMessageIndex = getLatestUserMessageIndex( messages );
+		const current = new Set< string >();
+
+		messages.forEach( ( message, index ) => {
+			const checkpointMessage =
+				streamedCheckpointMessagesRef.current.byFinalMessageId.get( message.id ) ?? message;
+			const checkpointId = getCheckpointIdForMessage( checkpointMessage );
+			if ( checkpointId && index > latestUserMessageIndex ) {
+				current.add( checkpointId );
+			}
+		} );
+
+		return {
+			current,
+			userMessageId: messages[ latestUserMessageIndex ]?.id,
+		};
+	}, [ messages ] );
+	const previousHasEditorRedoRef = useRef( hasEditorRedo );
+	const nativeUndoInvalidatedTurnRef = useRef(
+		hasEditorRedo ? checkpointIdsByTurn.userMessageId : undefined
+	);
+	const getCheckpointActionsForMessage = useCheckpointAction(
+		registerMessageActions,
+		checkpoint,
+		( checkpointId ) =>
+			! hasEditorRedo &&
+			checkpointIdsByTurn.current.has( checkpointId ) &&
+			( ! checkpointIdsByTurn.userMessageId ||
+				nativeUndoInvalidatedTurnRef.current !== checkpointIdsByTurn.userMessageId )
+	);
+
+	useEffect( () => {
+		if ( previousHasEditorRedoRef.current === false && hasEditorRedo ) {
+			nativeUndoInvalidatedTurnRef.current = checkpointIdsByTurn.userMessageId;
+		}
+		previousHasEditorRedoRef.current = hasEditorRedo;
+
+		for ( const checkpointId of checkpointIdsByTurn.current ) {
+			if (
+				checkpointIdsByTurn.userMessageId &&
+				nativeUndoInvalidatedTurnRef.current === checkpointIdsByTurn.userMessageId
+			) {
+				invalidateCheckpointAction( checkpointId );
+			}
+		}
+	}, [ checkpointIdsByTurn, hasEditorRedo ] );
 
 	// TODO (ability-migration): Remove once the last checkpoint-writing Big Sky
 	// ability migrates. Keeps the provider checkpoint store reachable for the
@@ -916,6 +999,8 @@ export default function OrchestratorChat( {
 	useAbilitiesRegistration();
 
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
+		// The stable checkpoint getter reads this value through a ref.
+		void hasEditorRedo;
 		let currentMessages: AgentsManagerUIMessage[] = messages;
 
 		// Let the provider rewrite the transcript first, while the messages are
@@ -1038,6 +1123,7 @@ export default function OrchestratorChat( {
 		getFeedbackActionsForMessage,
 		getTraceIdForMessage,
 		getRegenerateActionsForMessage,
+		hasEditorRedo,
 		isBuildingSite,
 		isProcessing,
 		messages,
