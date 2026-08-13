@@ -1,5 +1,6 @@
 import {
 	CSATForm,
+	getZendeskSurveyResponseId,
 	isTestModeEnvironment,
 	useRateSurveyResponse,
 	type SurveyReasonQuestion,
@@ -12,9 +13,8 @@ import type { MessageAction } from '../../types';
 
 function parseSurveyResponseUri( uri: string ): { id: string; accessToken: string } | null {
 	try {
-		const url = new URL( uri );
-		const id = url.pathname.split( '/' ).filter( Boolean ).pop();
-		const accessToken = url.searchParams.get( 'access_token' );
+		const id = getZendeskSurveyResponseId( uri );
+		const accessToken = new URL( uri ).searchParams.get( 'access_token' );
 
 		if ( ! id || ! accessToken ) {
 			return null;
