@@ -80,7 +80,7 @@ export default function AgentDock( {
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { agentConfig, siteKey } = useAgentsManagerContext();
+	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -257,7 +257,7 @@ export default function AgentDock( {
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
 			if ( conversation.session_id ) {
-				saveSessionId( conversation.session_id, agentConfig?.agentId, siteKey );
+				saveSessionId( conversation.session_id, agentConfig?.agentId, siteKey, currentUser?.ID );
 			}
 
 			handleAbort();

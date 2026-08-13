@@ -75,6 +75,21 @@ describe( 'createAgentConfig', () => {
 		expect( getSessionId( 'wp-orchestrator' ) ).toBe( 'server-session-id' );
 	} );
 
+	// The callback can fire after a logout and login in the same tab, so it must
+	// write under the user captured at creation, not whoever is current then.
+	it( 'persists server-assigned sessions under the captured sessionUserId', async () => {
+		const config = await createAgentConfig( {
+			sessionId: '',
+			sessionSiteKey: '111',
+			sessionUserId: 101,
+			agentId: 'wp-orchestrator',
+		} );
+		config.onSessionIdChange?.( 'server-session-id' );
+
+		expect( getSessionId( undefined, '111', 101 ) ).toBe( 'server-session-id' );
+		expect( getSessionId( undefined, '111', 202 ) ).toBe( '' );
+	} );
+
 	it( 'persists server-assigned sessions under an explicit sessionSiteKey', async () => {
 		const config = await createAgentConfig( {
 			sessionId: '',

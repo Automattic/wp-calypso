@@ -75,7 +75,15 @@ jest.mock( '../agent-dock', () => {
 } );
 
 import AgentsManager from '../agents-manager';
-import { getSessionId, saveSessionId, setSessionSiteKey } from '../../utils/agent-session';
+import {
+	getSessionId,
+	saveSessionId,
+	setSessionSiteKey,
+	setSessionUserId,
+} from '../../utils/agent-session';
+import type { AgentsManagerProps } from '../agents-manager';
+
+const user = ( ID: number ) => ( { ID } ) as AgentsManagerProps[ 'currentUser' ];
 
 function manager( siteId: number ) {
 	return (
@@ -95,6 +103,7 @@ describe( 'AgentSetup', () => {
 		mockHasAiChatEntry = false;
 		sessionStorage.clear();
 		setSessionSiteKey( 'no-site' );
+		setSessionUserId( undefined );
 	} );
 
 	it( 'does not re-initialize while the chat view stays shown', async () => {
@@ -293,6 +302,35 @@ describe( 'AgentSetup', () => {
 		mockAgentManager.hasAgent.mockReturnValue( true );
 
 		rerender( <AgentsManager sectionName="wp-admin" site={ site } currentSiteId={ undefined } /> );
+
+		await waitFor( () => expect( mockAgentManager.removeAgent ).toHaveBeenCalled() );
+		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();
+	} );
+
+	// A logout and login in the same tab keeps the agent alive: without this the
+	// previous account's streaming response writes into the new account's session.
+	it( 'discards the agent when the user changes on the same site', async () => {
+		const site = { ID: 111, domain: 'example.com' };
+		const { rerender } = render(
+			<AgentsManager
+				sectionName="wp-admin"
+				site={ site }
+				currentSiteId={ 111 }
+				currentUser={ user( 101 ) }
+			/>
+		);
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		mockAgentManager.hasAgent.mockReturnValue( true );
+
+		rerender(
+			<AgentsManager
+				sectionName="wp-admin"
+				site={ site }
+				currentSiteId={ 111 }
+				currentUser={ user( 202 ) }
+			/>
+		);
 
 		await waitFor( () => expect( mockAgentManager.removeAgent ).toHaveBeenCalled() );
 		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();

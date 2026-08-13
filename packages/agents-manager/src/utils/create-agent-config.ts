@@ -19,6 +19,8 @@ export interface CreateAgentConfigOptions {
 	sessionId: string;
 	/** Site scope for session writes, captured at creation for async callbacks. */
 	sessionSiteKey: string;
+	/** User scope for session writes, captured alongside the site scope. */
+	sessionUserId?: number;
 	siteId?: number;
 	currentRoute?: string;
 	toolProvider?: ToolProvider;
@@ -244,8 +246,9 @@ export async function createAgentConfig(
 	const {
 		sessionId,
 		// The callback below can fire while a response is still streaming, after
-		// the tab has switched sites — it writes under this captured site scope.
+		// the tab has switched scope — it writes under this captured scope.
 		sessionSiteKey,
+		sessionUserId,
 		siteId,
 		currentRoute,
 		toolProvider,
@@ -262,7 +265,8 @@ export async function createAgentConfig(
 		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId,
 		// Persist server-assigned session IDs as this tab's session.
-		onSessionIdChange: ( newSessionId ) => saveSessionId( newSessionId, agentId, sessionSiteKey ),
+		onSessionIdChange: ( newSessionId ) =>
+			saveSessionId( newSessionId, agentId, sessionSiteKey, sessionUserId ),
 		authProvider: createCalypsoAuthProvider( siteId, {
 			logWpcomJwtFailure: ! isReaderChatAgent( agentId ),
 		} ),

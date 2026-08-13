@@ -6,7 +6,7 @@ import {
 	useState,
 } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
-import { getSessionId, setSessionSiteKey } from '../utils/agent-session';
+import { getSessionId, setSessionSiteKey, setSessionUserId } from '../utils/agent-session';
 import { setResolvedAgentId } from '../utils/resolved-agent-id';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
@@ -98,8 +98,8 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	const navigate = useNavigate();
 
 	const getTabSessionId = useCallback( () => {
-		return getSessionId( agentConfig?.agentId, value.siteKey );
-	}, [ agentConfig?.agentId, value.siteKey ] );
+		return getSessionId( agentConfig?.agentId, value.siteKey, value.currentUser?.ID );
+	}, [ agentConfig?.agentId, value.siteKey, value.currentUser?.ID ] );
 
 	// `AgentSetup` resolves this tab's stored session, so navigating is all a
 	// resume needs.
@@ -107,13 +107,14 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 		navigate( '/chat' );
 	}, [ navigate ] );
 
-	// Publish the resolved agent id and session site scope for non-React callers
+	// Publish the resolved agent id and session scope for non-React callers
 	// (e.g. tracks), which fire from event handlers after commit. React callers
-	// receive both explicitly, so no render-phase module writes are needed.
+	// receive the scope explicitly, so no render-phase module writes are needed.
 	useLayoutEffect( () => {
 		setResolvedAgentId( agentConfig?.agentId );
 		setSessionSiteKey( value.siteKey );
-	}, [ agentConfig?.agentId, value.siteKey ] );
+		setSessionUserId( value.currentUser?.ID );
+	}, [ agentConfig?.agentId, value.siteKey, value.currentUser?.ID ] );
 
 	return (
 		<AgentsManagerContext.Provider

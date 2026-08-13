@@ -3,6 +3,7 @@
  */
 import {
 	setSessionSiteKey,
+	setSessionUserId,
 	getSessionId,
 	saveSessionId,
 	clearSessionId,
@@ -25,6 +26,7 @@ function ensureCryptoRandomUUID() {
 beforeEach( () => {
 	sessionStorage.clear();
 	setSessionSiteKey( 'no-site' );
+	setSessionUserId( undefined );
 } );
 
 afterEach( () => {
@@ -36,7 +38,9 @@ describe( 'saveSessionId / getSessionId', () => {
 		saveSessionId( 'session-abc' );
 
 		expect( getSessionId() ).toBe( 'session-abc' );
-		expect( sessionStorage.getItem( 'agents-manager-session-id-no-site' ) ).toBe( 'session-abc' );
+		expect( sessionStorage.getItem( 'agents-manager-session-id-no-site-no-user' ) ).toBe(
+			'session-abc'
+		);
 	} );
 
 	it( 'returns empty string when nothing is stored', () => {
@@ -55,9 +59,9 @@ describe( 'saveSessionId / getSessionId', () => {
 
 		expect( getSessionId() ).toBe( 'orchestrator-session' );
 		expect( getSessionId( 'reader-chat' ) ).toBe( 'reader-session' );
-		expect( sessionStorage.getItem( 'agents-manager-session-id-reader-chat-no-site' ) ).toBe(
-			'reader-session'
-		);
+		expect(
+			sessionStorage.getItem( 'agents-manager-session-id-reader-chat-no-site-no-user' )
+		).toBe( 'reader-session' );
 	} );
 
 	it( 'degrades gracefully when sessionStorage is unavailable', () => {
@@ -98,6 +102,30 @@ describe( 'saveSessionId / getSessionId', () => {
 
 		setSessionSiteKey( '123' );
 		expect( getSessionId() ).toBe( 'site-123-session' );
+	} );
+
+	// `sessionStorage` outlives a logout and login in the same tab, so without
+	// the user in the key the next account resumes the previous one's chat.
+	it( 'scopes sessions per user', () => {
+		setSessionUserId( 101 );
+		saveSessionId( 'user-101-session' );
+
+		setSessionUserId( 202 );
+		expect( getSessionId() ).toBe( '' );
+
+		setSessionUserId( 101 );
+		expect( getSessionId() ).toBe( 'user-101-session' );
+	} );
+
+	it.each( [
+		[ 'another user', '123', 202 ],
+		[ 'another site', '456', 101 ],
+		[ 'a logged-out visitor', '123', undefined ],
+	] as const )( 'does not expose an explicitly scoped session to %s', ( _who, siteKey, userId ) => {
+		saveSessionId( 'user-101-session', undefined, '123', 101 );
+
+		expect( getSessionId( undefined, siteKey, userId ) ).toBe( '' );
+		expect( getSessionId( undefined, '123', 101 ) ).toBe( 'user-101-session' );
 	} );
 } );
 

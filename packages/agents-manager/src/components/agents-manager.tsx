@@ -51,8 +51,8 @@ const EMPTY_ARRAY: string[] = [];
 
 // The scope the live agent was initialized for. Module-level like the agent
 // manager itself, so a host that unmounts and remounts this tree (Calypso does
-// on some routes) still discards when the remount lands on a different site.
-let lastInitializedSiteKey: string | undefined;
+// on some routes) still discards when the remount lands on a different scope.
+let lastInitializedScope: string | undefined;
 
 export default function AgentsManager( {
 	sectionName,
@@ -114,21 +114,23 @@ export default function AgentsManager( {
 function resolveTabSessionId(
 	isNewChat: boolean,
 	agentId: string | undefined,
-	siteKey: string
+	siteKey: string,
+	userId?: number
 ): string {
 	if ( isNewChat ) {
 		return '';
 	}
 	if ( isReaderChatAgent( agentId ) ) {
-		return getOrCreateSessionId( agentId, siteKey );
+		return getOrCreateSessionId( agentId, siteKey, userId );
 	}
-	return getSessionId( agentId, siteKey );
+	return getSessionId( agentId, siteKey, userId );
 }
 
 // Separate component that uses hooks within `PersistentRouter` context
 function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Element | null {
-	const { site, siteKey, sectionName, currentRoute, agentConfig, setAgentConfig } =
+	const { site, siteKey, currentUser, sectionName, currentRoute, agentConfig, setAgentConfig } =
 		useAgentsManagerContext();
+	const userId = currentUser?.ID;
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const agentConfigRef = useRef( agentConfig );
 	agentConfigRef.current = agentConfig;
@@ -156,7 +158,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
 
-	const sessionId = resolveTabSessionId( isNewChat, agentId, siteKey );
+	const sessionId = resolveTabSessionId( isNewChat, agentId, siteKey, userId );
 
 	useEffect( () => {
 		// Wait for the agent config to stabilize before initializing.
@@ -182,14 +184,15 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		}
 
 		async function initializeAgent(): Promise< void > {
-			// A session-scope switch (`siteKey`, which keys the tab's storage) is
-			// a context switch: drop the previous scope's agent so its
-			// still-streaming response can't write into this scope's session or
-			// transcript, then initialize from this scope's session.
-			const previousSiteKey = lastInitializedSiteKey;
-			lastInitializedSiteKey = siteKey;
+			// A session-scope switch (`siteKey` and the user, which together key
+			// the tab's storage) is a context switch: drop the previous scope's
+			// agent so its still-streaming response can't write into this scope's
+			// session or transcript, then initialize from this scope's session.
+			const scope = `${ siteKey }-${ userId ?? '' }`;
+			const previousScope = lastInitializedScope;
+			lastInitializedScope = scope;
 
-			if ( previousSiteKey !== undefined && previousSiteKey !== siteKey ) {
+			if ( previousScope !== undefined && previousScope !== scope ) {
 				await discardAgent();
 
 				if ( isSuperseded ) {
@@ -205,7 +208,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 					return;
 				}
 
-				clearSessionId( agentId, siteKey );
+				clearSessionId( agentId, siteKey, userId );
 				// Clear route state to prevent repeated new chat initialization
 				navigate( '/chat', { replace: true } );
 				return;
@@ -248,6 +251,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			const config = await createAgentConfig( {
 				sessionId,
 				sessionSiteKey: siteKey,
+				sessionUserId: userId,
 				siteId,
 				currentRoute,
 				toolProvider: providers.toolProvider,
@@ -283,6 +287,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		setAgentConfig,
 		site?.ID,
 		siteKey,
+		userId,
 		version,
 	] );
 
