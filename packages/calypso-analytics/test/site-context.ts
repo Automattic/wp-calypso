@@ -47,6 +47,13 @@ describe( 'withSiteContext', () => {
 		} );
 	} );
 
+	test( 'ignores the site when the source is deliberately none', () => {
+		expect( withSiteContext( { source: 'chat' }, 'none', 123 ) ).toEqual( {
+			source: 'chat',
+			site_context_source: 'none',
+		} );
+	} );
+
 	test( 'never lets a caller-supplied blog_id stand in for the site', () => {
 		expect( withSiteContext( { source: 'chat', blog_id: 999 }, 'chat_site', 123 ) ).toEqual( {
 			source: 'chat',
