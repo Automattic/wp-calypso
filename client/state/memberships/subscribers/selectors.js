@@ -9,3 +9,7 @@ export function getTotalSubscribersForSiteId( state, siteId ) {
 export function getOwnershipsForSiteId( state, siteId ) {
 	return state?.memberships?.subscribers?.list?.[ siteId ]?.ownerships ?? emptyObject;
 }
+
+export function hasLoadedSubscribersForSiteId( state, siteId ) {
+	return Boolean( state?.memberships?.subscribers?.list?.[ siteId ] );
+}
