@@ -200,43 +200,11 @@ describe( 'createAgentConfig', () => {
 		);
 	} );
 
-	it( 'uses the dedicated Jetpack endpoint for a server-metered editor site', async () => {
-		setAgentsManagerData( { jetpackAiMeteringEnabled: true } );
-
+	it( 'uses the existing Agent endpoint for wp-orchestrator', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
 			agentId: 'wp-orchestrator',
 			environment: 'gutenberg',
-		} );
-
-		expect( config.agentUrl ).toBe( 'https://public-api.wordpress.com/wpcom/v2/ai/jetpack-agent' );
-	} );
-
-	it.each( [ 'reader-chat', 'p2-reader-chat' ] )(
-		'keeps the shared endpoint for %s even with stale Jetpack metering data',
-		async ( agentId ) => {
-			setAgentsManagerData( { jetpackAiMeteringEnabled: true } );
-
-			const config = await createAgentConfig( {
-				sessionId: 'session-1',
-				agentId,
-				environment: 'reader-chat',
-			} );
-
-			expect( config.agentUrl ).toBe( 'https://public-api.wordpress.com/wpcom/v2/ai/agent' );
-		}
-	);
-
-	it.each( [
-		[ 'a non-editor surface', 'wp-admin', true ],
-		[ 'an unmetered editor site', 'gutenberg', false ],
-	] )( 'keeps the shared Agent endpoint for %s', async ( _label, environment, meteringEnabled ) => {
-		setAgentsManagerData( { jetpackAiMeteringEnabled: meteringEnabled } );
-
-		const config = await createAgentConfig( {
-			sessionId: 'session-1',
-			agentId: 'wp-orchestrator',
-			environment,
 		} );
 
 		expect( config.agentUrl ).toBe( 'https://public-api.wordpress.com/wpcom/v2/ai/agent' );

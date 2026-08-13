@@ -139,7 +139,12 @@ async function requestJWTToken(): Promise< TokenData | null > {
 }
 
 function getSiteId(): number | string | null {
-	return window._currentSiteId || window.Jetpack_Editor_Initial_State?.wpcomBlogId || null;
+	return (
+		window._currentSiteId ||
+		window.Jetpack_Editor_Initial_State?.wpcomBlogId ||
+		window.imageStudioData?.blogId ||
+		null
+	);
 }
 
 /**

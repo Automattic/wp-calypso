@@ -29,10 +29,6 @@ declare const agentsManagerData:
 			isA11n?: boolean;
 			/** The site's canonical identity; injected on wp-admin. */
 			site?: { ID?: number; domain?: string };
-			isWpcomPlatform?: boolean;
-			jetpackAiMeteringEnabled?: boolean;
-			/** Server-owned quota snapshot; see `metering.ts` for the shape. */
-			jetpackAiQuota?: unknown;
 			jetpackAiSidebar?: {
 				enabled: boolean;
 				features?: {

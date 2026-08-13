@@ -89,6 +89,25 @@ function setupSelect( {
 describe( 'getClientContext', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		delete window.imageStudioData;
+		delete window.Jetpack_Editor_Initial_State;
+		delete window._currentSiteId;
+	} );
+
+	it( 'includes the current Image Studio site for backend quota ownership', () => {
+		window.imageStudioData = { blogId: 123 };
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => false,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => null,
+				getBlockType: () => null,
+			},
+		} );
+
+		expect( getClientContext() ).toEqual( expect.objectContaining( { selectedSiteId: 123 } ) );
 	} );
 
 	it( 'emits an imageStudio payload for default (image) entry points', () => {

@@ -27,8 +27,6 @@ declare const agentsManagerData:
 			agentId?: string;
 			/** Strict provider URL used only by the writing-only Gutenberg entry. */
 			jetpackAiWritingProviderUrl?: string;
-			/** Server-owned mode gate. False for the full WordPress Agent entitlement. */
-			jetpackAiMeteringEnabled?: boolean;
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
