@@ -6,7 +6,7 @@ import type { Query } from '@tanstack/react-query';
 const QUERY_KEY = [ 'canConnectToZendesk' ];
 
 /**
- * Bump when the meaning of the events below changes, so Superset can tell old rows from new
+ * Bump when the meaning of the event below changes, so Superset can tell old rows from new
  * ones. Version 2 reports once per settled query instead of once per observer per state.
  * Version 3 attaches the support site as `blog_id` when a consumer knows it; only the
  * request event gained anything in v3, the error event merely shares the counter.
@@ -126,15 +126,6 @@ export function useCanConnectToZendeskMessaging( enabled = true, siteId?: number
 
 		const failureCount = Math.max( reportingState.peakFailureCount, query.failureCount );
 		reportingState.peakFailureCount = 0;
-
-		// Leaving for backwards compatibility. This event is no longer needed. The one below is more general.
-		if ( ! query.data ) {
-			recordTracksEvent( 'calypso_helpcenter_zendesk_config_error', {
-				status: query.status,
-				status_text: query.error?.message,
-				reporting_version: REPORTING_VERSION,
-			} );
-		}
 
 		const requestProperties = {
 			status: query.status,
