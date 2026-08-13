@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
 
 let mockDeferredFlagOn = true;
@@ -86,6 +87,63 @@ jest.mock( '@automattic/onboarding', () => ( {
 	clearStepPersistedState: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/lib/ai-launchpad', () => ( {
+	resolveLaunchpadPersonalizationVariation: jest.fn( async () => 'control' ),
+	getLaunchpadPersonalizationDestination: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/url', () => ( { pathToUrl: ( path: string ) => path } ) );
+
+jest.mock( '../../../helpers/get-onboarding-post-checkout-destination', () => ( {
+	getOnboardingPostCheckoutDestination: jest.fn( () => [
+		'/home/example.wordpress.com',
+		null,
+		null,
+	] ),
+} ) );
+
+jest.mock( '../step-counter-config', () => ( {
+	getOnboardingStepperPosition: () => ( { current: 3, total: 3 } ),
+} ) );
+
+// Runs the `processing` case for a successful, paid order (goToCheckout) with a mocked
+// `window.location`, and returns the URL passed to `window.location.replace`.
+const submitPaidProcessing = async () => {
+	const replace = jest.fn();
+	const originalLocation = Object.getOwnPropertyDescriptor( window, 'location' );
+	Object.defineProperty( window, 'location', {
+		configurable: true,
+		value: { href: 'http://localhost/', search: '', replace },
+	} );
+
+	try {
+		const navigate = jest.fn();
+		const { result } = renderHook( () =>
+			onboarding.useStepNavigation.call(
+				onboarding,
+				'processing' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
+				navigate
+			)
+		);
+
+		await result.current.submit?.( {
+			slug: 'processing',
+			providedDependencies: {
+				processingResult: ProcessingResult.SUCCESS,
+				goToCheckout: true,
+				siteSlug: 'example.wordpress.com',
+				siteId: 123,
+			},
+		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
+
+		return replace.mock.calls[ 0 ]?.[ 0 ] ? decodeURIComponent( replace.mock.calls[ 0 ][ 0 ] ) : '';
+	} finally {
+		if ( originalLocation ) {
+			Object.defineProperty( window, 'location', originalLocation );
+		}
+	}
+};
+
 const submitPlans = async ( providedDependencies: Record< string, unknown > ) => {
 	const navigate = jest.fn();
 	const { result } = renderHook( () =>
@@ -152,5 +210,24 @@ describe( 'onboarding deferred email verification (Variant B)', () => {
 		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
 
 		expect( navigate ).toHaveBeenCalledWith( 'post-checkout-onboarding' );
+	} );
+
+	it( 'points a paid order back at the verification step on return from checkout', async () => {
+		const checkoutUrl = await submitPaidProcessing();
+
+		expect( checkoutUrl ).toContain( '/checkout/' );
+		// The checkout return (redirect_to) lands on the deferred gate, which then advances to
+		// post-checkout-onboarding once verified.
+		expect( checkoutUrl ).toContain( '/setup/onboarding/email-verification' );
+		expect( checkoutUrl ).toContain( 'next=post-checkout-onboarding' );
+	} );
+
+	it( 'sends a paid order straight to post-checkout-onboarding when the deferred flag is off', async () => {
+		mockDeferredFlagOn = false;
+
+		const checkoutUrl = await submitPaidProcessing();
+
+		expect( checkoutUrl ).toContain( '/setup/onboarding/post-checkout-onboarding' );
+		expect( checkoutUrl ).not.toContain( 'email-verification' );
 	} );
 } );

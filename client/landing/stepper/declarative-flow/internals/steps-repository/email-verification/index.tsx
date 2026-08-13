@@ -1,5 +1,5 @@
 import { Step } from '@automattic/onboarding';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useSelector } from 'calypso/state';
@@ -29,10 +29,15 @@ const EmailVerificationStep: StepType = function EmailVerificationStep( { flow, 
 	const { topBarLogo } = usePartnerBranding();
 	const scope = gateScope( flow, userId );
 
+	// `navigation` is a fresh object each render, so the effect re-runs on unrelated re-renders;
+	// this keeps the advance (and its event) to once per verified attempt.
+	const hasAdvanced = useRef( false );
+
 	useEffect( () => {
-		if ( ! isVerified ) {
+		if ( ! isVerified || hasAdvanced.current ) {
 			return;
 		}
+		hasAdvanced.current = true;
 		// Only the tab that opened the gate records the confirmation; a link opened in another tab of
 		// the same browser resolves this one by polling.
 		const claim = claimGateConfirmation( scope );

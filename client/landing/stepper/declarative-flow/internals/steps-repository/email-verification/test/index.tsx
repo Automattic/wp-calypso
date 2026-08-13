@@ -79,4 +79,29 @@ describe( 'EmailVerificationStep', () => {
 		);
 		expect( screen.queryByTestId( 'gate' ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'advances only once when the navigation object changes identity on re-render', () => {
+		mockState = { ...mockState, verified: true };
+		const submit = jest.fn();
+
+		// The flow hands the step a fresh `navigation` object every render, so a re-render must not
+		// re-trigger the advance or double-record the confirmation.
+		const { rerender } = render(
+			<EmailVerificationStep
+				flow="onboarding"
+				navigation={ { submit } }
+				stepName="email-verification"
+			/>
+		);
+		rerender(
+			<EmailVerificationStep
+				flow="onboarding"
+				navigation={ { submit } }
+				stepName="email-verification"
+			/>
+		);
+
+		expect( submit ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+	} );
 } );
