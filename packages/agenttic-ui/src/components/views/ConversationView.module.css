@@ -1,0 +1,15 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: flex-end;
+}
+
+.container.withHeader {
+    justify-content: space-between;
+}
+
+.container:has([data-slot="suggestions"]) [data-slot="messages"] {
+    padding-bottom: var(--spacing-12);
+}
+

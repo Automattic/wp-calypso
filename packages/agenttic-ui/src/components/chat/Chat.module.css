@@ -1,0 +1,41 @@
+.container {
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    font-weight: 400;
+    font-family: var(--font-sans);
+    letter-spacing: var(--text-base--tracking);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container.embedded {
+    height: 100%;
+}
+
+.container.floating {
+    position: fixed;
+    z-index: 50;
+}
+
+.container.floating .content {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    overflow: hidden;
+    min-height: 56px;
+    padding: var(--spacing-2);
+    box-shadow: var(--shadow-lg);
+}
+
+.container.expanded .content {
+    padding: var(--spacing-3);
+}
+
+/* Override drag cursor for textarea and input elements */
+.container.floating [data-slot="chat-input"],
+.container.floating [data-slot="chat-input"] .textareaContainer,
+.container.floating [data-slot="chat-input"] .textareaContainer *,
+.container.floating textarea,
+.container.floating input {
+    cursor: auto;
+}
+

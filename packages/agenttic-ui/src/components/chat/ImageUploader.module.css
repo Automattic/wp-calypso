@@ -1,0 +1,241 @@
+.container {
+	width: 100%;
+	padding: 4px 0;
+	align-self: flex-start;
+	position: absolute;
+	pointer-events: none;
+}
+
+.container.active {
+	position: relative;
+	pointer-events: auto;
+}
+
+.uploader {
+	position: relative;
+	width: 100%;
+	transition: opacity 0.2s ease;
+}
+
+.uploader.uploading {
+	opacity: 0.9;
+}
+
+.content {
+	width: 100%;
+}
+
+.hiddenInput {
+	display: none;
+}
+
+.clickArea {
+	cursor: pointer;
+	outline: none;
+	width: 100%;
+}
+
+.clickArea:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+	border-radius: 4px;
+}
+
+.clickAreaDisabled {
+	cursor: default;
+}
+
+.draggingMessage {
+	padding: 60px 24px;
+	text-align: center;
+	border: 1px dashed var(--color-muted);
+	border-radius: 12px;
+	background-color: var(--color-muted);
+	margin-bottom: 8px;
+	position: relative;
+	min-height: 150px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+}
+
+.draggingMessage p {
+	margin: 0;
+	color: var(--color-muted-foreground);
+	font-size: 15px;
+	line-height: 1.6;
+}
+
+.uploader.draggingOver .draggingMessage {
+	border-color: var(--color-primary);
+	background-color: transparent;
+}
+
+.preview {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	padding: 0 4px;
+}
+
+.previewItem {
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 8px;
+	border-radius: 8px;
+	border: none;
+	background-color: var(--color-muted);
+	cursor: move;
+	transition:
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
+	width: 150px;
+}
+
+.previewItem:active {
+	cursor: grabbing;
+}
+
+.removeButton {
+	position: absolute;
+	top: -5px;
+	right: -8px;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: none;
+	background-color: var(--color-popover-muted, #2F2F2F);
+	color: white;
+	font-size: 16px;
+	line-height: 1;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 2;
+	padding: 0;
+	opacity: 0;
+	transition:
+		opacity 0.2s ease,
+		background-color 0.2s ease;
+}
+
+.removeButton svg {
+	color: var(--color-muted-foreground, #8F8F8F);
+}
+
+.previewItem:hover .removeButton {
+	opacity: 1;
+}
+
+.removeButton:disabled {
+	pointer-events: none;
+}
+
+.previewItem:hover .removeButton:disabled {
+	opacity: 0;
+}
+
+.removeButton:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+}
+
+.previewImage {
+	width: 48px;
+	height: 48px;
+	object-fit: cover;
+	border-radius: 6px;
+}
+
+.previewMeta {
+	display: flex;
+	flex-direction: column;
+	gap: 0px;
+	flex: 1;
+	min-width: 0;
+}
+
+.previewMeta span.previewFilename {
+	font-size: 14px !important;
+	color: var(--color-foreground);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-weight: 400;
+}
+
+.previewMeta span.previewType {
+	font-size: 12px !important;
+	color: var(--color-muted-foreground);
+	text-transform: uppercase;
+	font-weight: 400;
+}
+
+.uploadingItem,
+.uploadingItem:active {
+	cursor: default;
+}
+
+.uploadingIndicator {
+	width: 48px;
+	height: 48px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/* Solid neutral: reads on light and dark surfaces, unlike a translucent scrim */
+	background-color: #3c3c3c;
+	border-radius: 6px;
+}
+
+.thumbnail {
+	position: relative;
+	width: 48px;
+	height: 48px;
+	flex-shrink: 0;
+}
+
+.uploadingOverlay {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: rgba(0, 0, 0, 0.4);
+	border-radius: 6px;
+}
+
+.spinner {
+	width: 20px;
+	height: 20px;
+	border: 2px solid rgba(255, 255, 255, 0.35);
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.invalidMessage {
+	padding: 16px;
+	background-color: var(--color-error-background);
+	border: 1px solid var(--color-error);
+	border-radius: 8px;
+	text-align: center;
+}
+
+.invalidMessage p {
+	margin: 0;
+	color: var(--color-error);
+	font-size: 14px;
+}

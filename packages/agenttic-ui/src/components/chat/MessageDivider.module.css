@@ -1,0 +1,17 @@
+.container {
+	display: flex;
+	align-items: center;
+	margin: var(--spacing-4) 0;
+}
+
+.line {
+	flex: 1;
+	height: 1px;
+	background-color: var(--color-muted);
+}
+
+.message {
+	padding: 0 var(--spacing-3);
+	color: var(--color-muted-foreground);
+	font-size: var(--text-sm);
+}

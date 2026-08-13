@@ -1,0 +1,16 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"noEmit": false,
+		"outDir": "dist",
+		"rootDir": "src",
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"jsx": "react-jsx",
+		"lib": [ "DOM", "DOM.Iterable", "ES2022" ],
+		"types": [ "vitest/globals" ]
+	},
+	"include": [ "src/**/*", "src/test/setup.ts" ],
+	"exclude": [ "node_modules", "dist" ]
+}
