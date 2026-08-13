@@ -125,22 +125,20 @@ export default function McpReadTools( {
 
 	const toggleGroupOpen = useCallback(
 		( group: CategoryGroup ) => {
-			setOpenGroups( ( current ) => {
-				const next = new Set( current );
-				const willBeOpen = ! next.has( group.slug );
-				if ( willBeOpen ) {
-					next.add( group.slug );
-				} else {
-					next.delete( group.slug );
-				}
-				recordTracksEvent( 'calypso_a4a_ai_mcp_category_expanded', {
-					category: group.slug,
-					is_open: willBeOpen,
-				} );
-				return next;
+			const next = new Set( openGroups );
+			const willBeOpen = ! next.has( group.slug );
+			if ( willBeOpen ) {
+				next.add( group.slug );
+			} else {
+				next.delete( group.slug );
+			}
+			recordTracksEvent( 'calypso_a4a_ai_mcp_category_expanded', {
+				category: group.slug,
+				is_open: willBeOpen,
 			} );
+			setOpenGroups( next );
 		},
-		[ recordTracksEvent ]
+		[ openGroups, recordTracksEvent ]
 	);
 
 	const onToggleAbility = useCallback(
