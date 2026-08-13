@@ -481,16 +481,15 @@ describe( 'AgentChat', () => {
 		expect( screen.queryByRole( 'button', { name: 'Proofread' } ) ).toBeNull();
 	} );
 
-	it( 'shortens the featured image label alongside the design suggestions', () => {
-		const featuredImageSuggestion = {
-			id: 'generate-featured-image',
-			label: 'Generate Featured Image',
-			description: 'Create a new image with AI and set it as the featured image.',
-			prompt: '',
-		};
+	it( 'keeps the featured image suggestion out of the writing group', () => {
 		const suggestions = [
 			{ id: 'customize-colors', label: 'Customize colors', prompt: 'Customize colors' },
-			featuredImageSuggestion,
+			{
+				id: 'generate-featured-image',
+				label: 'Generate featured image',
+				description: 'Create a new image with AI and set it as the featured image.',
+				prompt: '',
+			},
 			{ id: 'optimize-title', label: 'Optimize Title', prompt: 'Optimize the title' },
 		];
 
@@ -502,23 +501,6 @@ describe( 'AgentChat', () => {
 
 		const button = screen.getByRole( 'button', { name: 'Generate featured image' } );
 		expect( button.closest( '.agents-manager-writing-suggestions' ) ).toBeNull();
-	} );
-
-	it( 'keeps the featured image label as provided in the flat view', () => {
-		const featuredImageSuggestion = {
-			id: 'generate-featured-image',
-			label: 'Generate Featured Image',
-			description: 'Create a new image with AI and set it as the featured image.',
-			prompt: '',
-		};
-
-		renderAgentChat( {
-			isOpen: true,
-			emptyViewSuggestions: [ featuredImageSuggestion ],
-			groupWritingSuggestions: false,
-		} );
-
-		expect( screen.getByRole( 'button', { name: 'Generate Featured Image' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'keeps the flat empty view when there are no writing suggestions', () => {

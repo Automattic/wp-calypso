@@ -39,10 +39,9 @@ const WRITING_SUGGESTION_LABELS: Record< string, () => string > = {
 
 export const WRITING_SUGGESTION_IDS = new Set( Object.keys( WRITING_SUGGESTION_LABELS ) );
 
-// Provider suggestions that stay out of the writing group
-const TOP_LEVEL_SUGGESTION_LABELS: Record< string, () => string > = {
-	'generate-featured-image': () => __( 'Generate featured image', __i18n_text_domain__ ),
-};
+// Provider suggestions that stay out of the writing group sit beside the design
+// actions, which show no description.
+const HIDE_DESCRIPTION_IDS = new Set( [ 'generate-featured-image' ] );
 
 // Keep writing action labels consistent across flat and grouped editor views.
 export function getWritingSuggestionLabel( suggestion: Suggestion ): string {
@@ -64,11 +63,12 @@ export function formatWritingSuggestionLabels(
 	);
 }
 
-export function formatTopLevelSuggestions( suggestions: Suggestion[] ): Suggestion[] {
-	return suggestions.map( ( suggestion ) => {
-		const label = TOP_LEVEL_SUGGESTION_LABELS[ suggestion.id ]?.();
-		return label ? { ...suggestion, label, description: undefined } : suggestion;
-	} );
+export function hideTopLevelDescriptions( suggestions: Suggestion[] ): Suggestion[] {
+	return suggestions.map( ( suggestion ) =>
+		HIDE_DESCRIPTION_IDS.has( suggestion.id )
+			? { ...suggestion, description: undefined }
+			: suggestion
+	);
 }
 
 export const DEFAULT_EMPTY_VIEW_SUGGESTION_IDS = {
