@@ -103,8 +103,6 @@ class PasswordlessSignupForm extends Component {
 			password: '',
 		};
 		const { activationEmailFrom, flowName, queryArgs = {} } = this.props;
-		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
-		const isDevAccount = devAccountLandingPageRefs.includes( queryArgs.ref );
 
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
@@ -112,7 +110,6 @@ class PasswordlessSignupForm extends Component {
 			this.props.submitForm( {
 				email: this.state.email,
 				is_passwordless: true,
-				is_dev_account: isDevAccount,
 			} );
 			return;
 		}
@@ -146,7 +143,6 @@ class PasswordlessSignupForm extends Component {
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
 				anon_id: getTracksAnonymousUserId(),
-				is_dev_account: isDevAccount,
 				extra: {
 					has_segmentation_survey: queryArgs.variationName === 'entrepreneur',
 					...( activationEmailFrom && { from: activationEmailFrom } ),
