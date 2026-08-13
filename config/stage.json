@@ -179,7 +179,7 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"use-translation-chunks": true,
-		"wordpress-agent": true,
+		"wordpress-agent-slack": true,
 		"wordpress-ai-tools": true,
 		"wpcom-user-bootstrap": true
 	},

@@ -35,7 +35,7 @@ export default function () {
 	page( '/me/find-friends', controller.profileRedirect, makeLayout, clientRender );
 
 	page( TELEGRAM_CONNECT_PATH, setupPreferences, telegramConnect, makeLayout, clientRender );
-	if ( config.isEnabled( 'wordpress-agent' ) ) {
+	if ( config.isEnabled( 'wordpress-agent-slack' ) ) {
 		page(
 			WORDPRESS_AGENT_PATH,
 			setupPreferences,
