@@ -41,6 +41,12 @@ import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import HundredYearThankYou from './checkout-thank-you/hundred-year-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
+import StudioReturn from './studio-return';
+import {
+	buildStudioCancelTo,
+	buildStudioRedirectTo,
+	getStudioCheckoutParams,
+} from './studio-return/round-trip';
 import UpsellNudge, {
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
@@ -49,6 +55,37 @@ import UpsellNudge, {
 import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
+
+/**
+ * Studio links straight into checkout and needs the user handed back to the app on both outcomes.
+ *
+ * Unlike `redirect_to`, which reaches `getThankYouPageUrl` as a prop, `cancel_to` has to be on the
+ * URL itself because `leaveCheckout` reads `window.location.search` rather than the router context.
+ * Guarding on `cancel_to` being absent is what stops the replace from looping.
+ * @returns {boolean} whether a redirect was issued, in which case the caller should bail out.
+ */
+function didRedirectForStudioCancelTo( context ) {
+	const studioCheckoutParams = getStudioCheckoutParams( context.query );
+
+	if ( ! studioCheckoutParams || context.query.cancel_to ) {
+		return false;
+	}
+
+	page.replace(
+		addQueryArgs( { cancel_to: buildStudioCancelTo( studioCheckoutParams ) }, context.path )
+	);
+	return true;
+}
+
+/**
+ * Studio's post-checkout destination: the real thank-you page, carrying the params that its
+ * handoff component echoes back to the app. Undefined when this is not a Studio checkout.
+ */
+function getStudioRedirectTo( context, siteSlug ) {
+	const studioCheckoutParams = getStudioCheckoutParams( context.query );
+
+	return studioCheckoutParams ? buildStudioRedirectTo( siteSlug, studioCheckoutParams ) : undefined;
+}
 
 export function checkoutFailedPurchases( context, next ) {
 	context.primary = <FailedPurchasePage />;
@@ -138,6 +175,10 @@ export function redirectToRenewalBySubscriptionId( context ) {
 }
 
 function sitelessCheckout( context, next, extraProps ) {
+	if ( didRedirectForStudioCancelTo( context ) ) {
+		return;
+	}
+
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
 	const { productSlug: product, purchaseId } = context.params;
@@ -163,7 +204,7 @@ function sitelessCheckout( context, next, extraProps ) {
 				productSourceFromUrl={ context.query.source }
 				couponCode={ couponCode }
 				isComingFromUpsell={ !! context.query.upgrade }
-				redirectTo={ context.query.redirect_to }
+				redirectTo={ context.query.redirect_to || getStudioRedirectTo( context ) }
 				isLoggedOutCart={ isLoggedOut }
 				isNoSiteCart
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }
@@ -217,6 +258,10 @@ export function checkout( context, next ) {
 	// Do not use Jetpack checkout for Jetpack Anti Spam
 	if ( 'jetpack_anti_spam' === context.params.productSlug ) {
 		page( context.path.replace( '/checkout/jetpack', '/checkout' ) );
+		return;
+	}
+
+	if ( didRedirectForStudioCancelTo( context ) ) {
 		return;
 	}
 
@@ -334,7 +379,9 @@ export function checkout( context, next ) {
 				isComingFromUpsell={ !! context.query.upgrade }
 				plan={ plan }
 				selectedSite={ selectedSite }
-				redirectTo={ context.query.redirect_to }
+				redirectTo={
+					context.query.redirect_to || getStudioRedirectTo( context, selectedSite?.slug )
+				}
 				isLoggedOutCart={ isLoggedOutCart }
 				isNoSiteCart={ isNoSiteCart }
 				// TODO: in theory, isJetpackCheckoutLoggedOut should always be false here if it is indicating whether this is a siteless Jetpack purchase
@@ -665,6 +712,26 @@ export function jetpackCheckoutThankYou( context, next ) {
 
 export function akismetCheckoutThankYou( context, next ) {
 	context.primary = <AkismetCheckoutThankYou productSlug={ context.params.productSlug } />;
+
+	next();
+}
+
+export function studioCheckoutReturn( context, next ) {
+	const studioCheckoutParams = getStudioCheckoutParams( context.query );
+
+	// Without a valid `studioSiteId` there is nothing to hand back to, so there is no page worth
+	// rendering.
+	if ( ! studioCheckoutParams ) {
+		page.redirect( '/sites' );
+		return;
+	}
+
+	context.primary = (
+		<StudioReturn
+			studioSiteId={ studioCheckoutParams.studioSiteId }
+			studioReturnTo={ studioCheckoutParams.studioReturnTo }
+		/>
+	);
 
 	next();
 }

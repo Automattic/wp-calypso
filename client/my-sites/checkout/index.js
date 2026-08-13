@@ -36,6 +36,7 @@ import {
 	transferDomainToAnyUser,
 	checkoutFailedPurchases,
 	refreshUserSession,
+	studioCheckoutReturn,
 } from './controller';
 
 export default function () {
@@ -302,6 +303,17 @@ export default function () {
 	);
 
 	page( '/checkout/failed-purchases', checkoutFailedPurchases, makeLayout, clientRender );
+
+	// Must stay ahead of the generic `/checkout/:domainOrProduct` route below, which would
+	// otherwise match this as a product slug.
+	page(
+		'/checkout/studio-return',
+		redirectLoggedOut,
+		noSite,
+		studioCheckoutReturn,
+		makeLayout,
+		clientRender
+	);
 
 	page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
 
