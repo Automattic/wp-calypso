@@ -1,7 +1,7 @@
 import { Button, Icon, Notice } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import type { SiteGenerationFailureReason, SiteGenerationState } from './use-site-generation';
+import type { SiteGenerationState } from './use-site-generation';
 
 // Email notifications are out of MVP scope. The copy is kept so it can be switched back on.
 const HAS_EMAIL_NOTIFICATIONS: boolean = false;
@@ -96,26 +96,32 @@ function WaitingCanvas( { state }: { state: SiteGenerationState } ) {
 	);
 }
 
-function ErrorCanvas( {
-	failureReason,
-	onRetry,
-}: {
-	failureReason: SiteGenerationFailureReason;
-	onRetry: () => void;
-} ) {
+function ErrorCanvas( { state, onReload }: { state: SiteGenerationState; onReload: () => void } ) {
 	const translate = useTranslate();
+	const failureReason = state.failureReason ?? 'missing-parameters';
 
 	let title = translate( 'We couldn’t check your site' );
 	let description = translate( 'The site or editor destination is missing from this page.' );
 	let actionLabel = translate( 'Reload' );
 
-	if ( failureReason === 'timed-out' ) {
+	if ( failureReason === 'timed-out' || failureReason === 'build-failed' ) {
 		title = translate( 'This is taking longer than expected' );
 		description = HAS_EMAIL_NOTIFICATIONS
 			? translate( 'Your brief is saved. We’ll email you when your site is ready.' )
 			: translate( 'Your brief is saved.' );
 		actionLabel = translate( 'Check again' );
 	}
+
+	// A server-failed build renders the server's copy verbatim; the timed-out
+	// copy above stays as the fallback when the ui block omitted it.
+	if ( failureReason === 'build-failed' ) {
+		title = state.failureLabel ?? title;
+		description = state.failureDetail ?? description;
+	}
+
+	const action = state.retryBuild
+		? { label: translate( 'Start again' ), onClick: state.retryBuild }
+		: { label: actionLabel, onClick: onReload };
 
 	return (
 		<div aria-live="polite" className="site-generation__outcome" role="status">
@@ -125,8 +131,13 @@ function ErrorCanvas( {
 			<h1 className="site-generation__outcome-title">{ title }</h1>
 			<p className="site-generation__outcome-description">{ description }</p>
 			<div className="site-generation__outcome-actions">
-				<Button onClick={ onRetry } variant="primary">
-					{ actionLabel }
+				<Button
+					disabled={ state.isRetryingBuild }
+					isBusy={ state.isRetryingBuild }
+					onClick={ action.onClick }
+					variant="primary"
+				>
+					{ action.label }
 				</Button>
 			</div>
 		</div>
@@ -203,10 +214,10 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 
 export function SiteGenerationView( {
 	state,
-	onRetry,
+	onReload,
 }: {
 	state: SiteGenerationState;
-	onRetry: () => void;
+	onReload: () => void;
 } ) {
 	const translate = useTranslate();
 
@@ -215,10 +226,7 @@ export function SiteGenerationView( {
 			<section className="site-generation__editor" aria-label={ translate( 'Site generation' ) }>
 				<div className="site-generation__canvas">
 					{ state.status === 'failed' ? (
-						<ErrorCanvas
-							failureReason={ state.failureReason ?? 'missing-parameters' }
-							onRetry={ onRetry }
-						/>
+						<ErrorCanvas state={ state } onReload={ onReload } />
 					) : (
 						<WaitingCanvas state={ state } />
 					) }
