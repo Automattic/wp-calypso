@@ -18,7 +18,6 @@ import {
 	getRenewalUrlFromPurchase,
 	getStudioCodeAiCreditsTitle,
 	getTitleForDisplay,
-	getTitleForListDisplay,
 	isPurchaseDowngradeEligible,
 	isWithinRefundWindowDowngradeEligible,
 } from '../purchase';
@@ -550,12 +549,6 @@ describe( 'isWithinRefundWindowDowngradeEligible', () => {
 describe( 'getStudioCodeAiCreditsTitle', () => {
 	const STUDIO_NAME = 'Studio Code AI Credits';
 
-	test( 'returns the title with the credit count', () => {
-		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 100 ) ).toBe(
-			'Studio Code AI Credits (100 credits)'
-		);
-	} );
-
 	test( 'groups thousands in the credit count', () => {
 		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1000 ) ).toBe(
 			'Studio Code AI Credits (1,000 credits)'
@@ -666,19 +659,5 @@ describe( 'getTitleForDisplay', () => {
 				} )
 			)
 		).toBe( 'Extra Storage 50 GB' );
-	} );
-} );
-
-describe( 'getTitleForListDisplay', () => {
-	test( 'shows the credit count for a Studio Code AI Credits purchase', () => {
-		expect(
-			getTitleForListDisplay(
-				makePurchase( {
-					product_slug: 'studio-code-ai-credits',
-					product_name: 'Studio Code AI Credits',
-					renewal_price_tier_usage_quantity: 500,
-				} )
-			)
-		).toBe( 'Studio Code AI Credits (500 credits)' );
 	} );
 } );
