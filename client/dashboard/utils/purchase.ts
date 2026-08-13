@@ -293,6 +293,10 @@ export function isJetpackHoldingSitePurchase( purchase: Purchase ): boolean {
 	return purchase.is_attached_to_holding_site && purchase.product_type === 'jetpack';
 }
 
+export function isStudioCodeHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'studio_code';
+}
+
 /**
  * Whether site-scoped endpoints can be called for this purchase's `blog_id`.
  *
