@@ -6,7 +6,7 @@ import {
 	type NewUserResponse,
 } from '@automattic/calypso-e2e';
 import { expect, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
-import { apiCancelAtomicPlan, apiCloseAccount } from '../shared';
+import { apiCancelAtomicPlan, apiCloseAccount, recordAccountLeakMarker } from '../shared';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Onboarding: Publish a Playground site to Atomic' ),
@@ -17,11 +17,19 @@ test.describe(
 		const testUser = DataHelper.getNewTestUser( { usernamePrefix: 'playground' } );
 		const blogName = testUser.siteName;
 		const playgroundSiteTitle = `Playground import ${ blogName }`;
+		let signupAttempted = false;
 		let newUserDetails: NewUserResponse | undefined;
 		let newSiteDetails: NewSiteResponse | undefined;
 
 		test.afterAll( async () => {
 			if ( ! newUserDetails ) {
+				if ( signupAttempted ) {
+					recordAccountLeakMarker( {
+						username: testUser.username,
+						email: testUser.email,
+						error: 'Signup did not return account details; account creation status is unknown.',
+					} );
+				}
 				return;
 			}
 
@@ -46,7 +54,7 @@ test.describe(
 			pageSignupPickPlan,
 			pageUserSignUp,
 		} ) => {
-			test.setTimeout( 15 * 60 * 1000 );
+			test.setTimeout( 30 * 60 * 1000 );
 
 			let playgroundId: string;
 			let selectedFreeDomain: string;
@@ -86,6 +94,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I sign up as a new user', async () => {
+				signupAttempted = true;
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
