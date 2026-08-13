@@ -33,7 +33,8 @@ export function HelpCenterChat( {
 	} = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
 	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging(
-		!! currentUser?.ID
+		!! currentUser?.ID,
+		site?.ID
 	);
 	const { search } = useLocation();
 	const { data } = useSupportStatus( ! featureConfig.chat.skipSupportStatus );

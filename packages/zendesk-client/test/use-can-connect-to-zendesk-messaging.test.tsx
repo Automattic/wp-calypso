@@ -15,7 +15,7 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 
 const REQUEST_EVENT = 'calypso_helpcenter_zendesk_config_request';
 const ERROR_EVENT = 'calypso_helpcenter_zendesk_config_error';
-const REPORTING_VERSION = 2;
+const REPORTING_VERSION = 3;
 const fetchMock = jest.fn();
 const originalFetch = globalThis.fetch;
 
@@ -67,6 +67,44 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 			status_text: undefined,
 			failure_count: 0,
 			reporting_version: REPORTING_VERSION,
+		} );
+	} );
+
+	it( 'attaches the site a consumer supplied', async () => {
+		const queryClient = makeQueryClient();
+		const { result } = renderHook( () => useCanConnectToZendeskMessaging( true, 123 ), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+		expect( getEventCalls( REQUEST_EVENT )[ 0 ][ 1 ] ).toEqual( {
+			status: 'success',
+			status_text: undefined,
+			failure_count: 0,
+			reporting_version: REPORTING_VERSION,
+			blog_id: 123,
+			site_context_source: 'chat_site',
+		} );
+	} );
+
+	it( 'uses the site any observer supplied, not just the reporting one', async () => {
+		const queryClient = makeQueryClient();
+		const wrapper = makeWrapper( queryClient );
+		const siteAware = renderHook( () => useCanConnectToZendeskMessaging( true, 456 ), {
+			wrapper,
+		} );
+		const siteless = renderHook( () => useCanConnectToZendeskMessaging(), { wrapper } );
+
+		await waitFor( () => {
+			expect( siteAware.result.current.isSuccess ).toBe( true );
+			expect( siteless.result.current.isSuccess ).toBe( true );
+		} );
+
+		expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 1 );
+		expect( getEventCalls( REQUEST_EVENT )[ 0 ][ 1 ] ).toMatchObject( {
+			blog_id: 456,
+			site_context_source: 'chat_site',
 		} );
 	} );
 

@@ -1,4 +1,4 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getValidBlogId, recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from '@wordpress/element';
 import type { Query } from '@tanstack/react-query';
@@ -8,12 +8,14 @@ const QUERY_KEY = [ 'canConnectToZendesk' ];
 /**
  * Bump when the meaning of the events below changes, so Superset can tell old rows from new
  * ones. Version 2 reports once per settled query instead of once per observer per state.
+ * Version 3 attaches the support site as `blog_id` when a consumer knows it.
  */
-const REPORTING_VERSION = 2;
+const REPORTING_VERSION = 3;
 
 type ReportingState = {
 	lastResolutionKey?: string;
 	peakFailureCount: number;
+	blogId?: number;
 };
 
 /**
@@ -45,8 +47,13 @@ function fetchZendeskConfig() {
 
 /**
  * This hook verifies connectivity to Zendesk's messaging service by making a config request and manages automatic retries with error tracking.
+ *
+ * `siteId` is the support site the caller knows, if any. The connectivity check is shared
+ * across all consumers, so the reported event attaches the last valid site any of them
+ * supplied; when none did, the properties stay site-less rather than asserting that no
+ * site exists.
  */
-export function useCanConnectToZendeskMessaging( enabled = true ) {
+export function useCanConnectToZendeskMessaging( enabled = true, siteId?: number | string ) {
 	const queryClient = useQueryClient();
 	const query = useQuery< boolean, Error >( {
 		queryKey: QUERY_KEY,
@@ -77,6 +84,11 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 		}
 
 		const reportingState = getReportingState( cachedQuery );
+
+		const blogId = getValidBlogId( siteId );
+		if ( blogId ) {
+			reportingState.blogId = blogId;
+		}
 
 		if ( query.fetchStatus !== 'idle' ) {
 			// A success resets `failureCount` to 0, so retries that ended in recovery are only
@@ -123,12 +135,18 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 			} );
 		}
 
-		recordTracksEvent( 'calypso_helpcenter_zendesk_config_request', {
+		const requestProperties = {
 			status: query.status,
 			status_text: query.error?.message,
 			failure_count: failureCount,
 			reporting_version: REPORTING_VERSION,
-		} );
+		};
+		recordTracksEvent(
+			'calypso_helpcenter_zendesk_config_request',
+			reportingState.blogId
+				? withSiteContext( requestProperties, 'chat_site', reportingState.blogId )
+				: requestProperties
+		);
 		// The two timestamps look redundant next to `fetchStatus`, which already cycles on
 		// every network refetch. They are what re-runs this for a resolution that leaves
 		// `fetchStatus` untouched: a manual `setQueryData`, or the refetch that follows a
@@ -142,6 +160,7 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 		query.fetchStatus,
 		query.status,
 		queryClient,
+		siteId,
 	] );
 
 	return query;
