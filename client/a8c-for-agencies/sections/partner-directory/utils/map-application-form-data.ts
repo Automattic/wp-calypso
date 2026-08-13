@@ -1,10 +1,5 @@
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
-import {
-	AgencyDetails,
-	AgencyDirectoryApplication,
-	AgencyLeadMatchingProfile,
-	LeadMatchingDetails,
-} from '../types';
+import { AgencyDetails, AgencyLeadMatchingProfile, LeadMatchingDetails } from '../types';
 
 const ALLOWED_BUSINESS_TYPES = new Set( [
 	'local_service',
@@ -150,29 +145,6 @@ export function createDefaultLeadMatchingProfile(): AgencyLeadMatchingProfile {
 			works_with_internal_technical_teams: false,
 			requires_maintenance_plan: false,
 		},
-	};
-}
-
-export function mapApplicationFormData( agency: Agency | null ): AgencyDirectoryApplication | null {
-	if ( ! agency?.profile?.partner_directory_application ) {
-		return null;
-	}
-
-	return {
-		status: agency.profile.partner_directory_application.status,
-		products: agency.profile.listing_details.products ?? [],
-		services: agency.profile.listing_details.services ?? [],
-		directories: agency.profile.partner_directory_application.directories.map(
-			( { status, directory, is_published, urls, note } ) => ( {
-				status: status,
-				directory: directory,
-				isPublished: is_published,
-				urls: urls,
-				note: note,
-			} )
-		),
-		feedbackUrl: agency.profile.partner_directory_application.feedback_url,
-		isPublished: !! agency.profile.partner_directory_application.is_published,
 	};
 }
 
