@@ -359,6 +359,23 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
+		it( 'should not apply a boolean filter for a field with allowed values', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { result } = renderHookWithRouterSearch(
+				{
+					queryParamFilterFields: [
+						{ field: 'severity', values: [ 'User', 'Warning', 'Deprecated', 'Fatal error' ] },
+					],
+				},
+				'/?severity=true'
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [] );
+			} );
+		} );
+
 		it( 'should parse comma-separated query param values into a multi-value filter', async () => {
 			mockGetCalypsoPreferences( {} );
 

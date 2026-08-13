@@ -334,7 +334,10 @@ function getTransientFilter(
 	allowedValues?: readonly string[]
 ): Filter | undefined {
 	const stringValue = String( rawValue );
-	if ( stringValue === 'true' || stringValue === 'false' ) {
+	// The boolean shorthand applies only to fields without an allowlist —
+	// otherwise 'true'/'false' would bypass validation with a filter shape
+	// the field doesn't support.
+	if ( ! allowedValues && ( stringValue === 'true' || stringValue === 'false' ) ) {
 		return { field, operator: 'is', value: stringValue === 'true' } as Filter;
 	}
 
