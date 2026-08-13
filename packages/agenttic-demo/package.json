@@ -2,7 +2,16 @@
 	"name": "@automattic/agenttic-demo",
 	"version": "1.0.0",
 	"private": true,
-	"description": "Development playground for the agenttic packages",
+	"description": "Development playground for the agenttic packages.",
+	"author": "Automattic Inc.",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/agenttic-demo"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"scripts": {
 		"dev": "vite",
 		"build": "vite build"

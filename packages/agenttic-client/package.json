@@ -43,8 +43,15 @@
 		"agent",
 		"protocol"
 	],
-	"author": "Automattic",
+	"author": "Automattic Inc.",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/agenttic-client"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"engines": {
 		"node": ">=20.0.0"
 	},
@@ -75,7 +82,6 @@
 		}
 	},
 	"publishConfig": {
-		"access": "public",
-		"branch": "trunk"
+		"access": "public"
 	}
 }
