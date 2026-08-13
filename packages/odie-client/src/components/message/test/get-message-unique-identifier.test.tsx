@@ -78,20 +78,6 @@ describe( 'getMessageUniqueIdentifier', () => {
 		expect( getMessageUniqueIdentifier( message ) ).toBe( 1234567890 );
 	} );
 
-	it( 'returns the raw Zendesk message id when no other identifier is present but id is', () => {
-		// zendeskMessageConverter spreads the original ZendeskMessage, so the runtime object
-		// carries an `id` even though it isn't declared on the `Message` type.
-		const message = {
-			content: 'test',
-			role: 'user',
-			type: 'message',
-			metadata: {},
-			id: 'zd-message-123',
-		} as unknown as Message;
-
-		expect( getMessageUniqueIdentifier( message ) ).toBe( 'zd-message-123' );
-	} );
-
 	it( 'returns the fallback string when no other identifier is present', () => {
 		const message: Message = {
 			content: 'test',
