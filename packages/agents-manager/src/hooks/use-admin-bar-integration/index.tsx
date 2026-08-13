@@ -86,7 +86,8 @@ export default function useAdminBarIntegration( {
 						is_menu_panel_enabled: false,
 						is_assignment_loaded: true,
 					},
-					[ [ 'agents_manager_context', site?.ID ] ]
+					'agents_manager_context',
+					site?.ID
 				)
 			);
 
@@ -98,7 +99,8 @@ export default function useAdminBarIntegration( {
 						location: 'help-center',
 						section: sectionName || 'wp-admin',
 					},
-					[ [ 'agents_manager_context', site?.ID ] ]
+					'agents_manager_context',
+					site?.ID
 				)
 			);
 

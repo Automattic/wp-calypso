@@ -25,7 +25,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 const MasterbarHelpCenter = ( { tooltip } ) => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
-	const { siteCandidates } = useHelpCenterSite();
+	const { site, siteContextSource } = useHelpCenterSite();
 	const isNotificationsOpen = useSelector( ( state ) => getIsNotificationsOpen( state ) );
 	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
@@ -56,7 +56,8 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					is_menu_panel_enabled: isMenuPanelExperimentEnabled,
 					is_assignment_loaded: ! isLoadingExperimentAssignment,
 				},
-				siteCandidates
+				siteContextSource,
+				site?.ID
 			)
 		);
 	};
@@ -71,7 +72,8 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					location: 'help-center',
 					section: sectionName,
 				},
-				siteCandidates
+				siteContextSource,
+				site?.ID
 			)
 		);
 
@@ -100,7 +102,8 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 							location: 'help-center',
 							section: sectionName,
 						},
-						siteCandidates
+						siteContextSource,
+						site?.ID
 					)
 				);
 				setShowHelpCenter( false );
@@ -119,7 +122,8 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 						section: sectionName,
 						destination,
 					},
-					siteCandidates
+					siteContextSource,
+					site?.ID
 				)
 			);
 		}

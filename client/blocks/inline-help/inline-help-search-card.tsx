@@ -66,7 +66,8 @@ const InlineHelpSearchCard = ( {
 						location: location,
 						section: sectionName,
 					},
-					[ [ siteContextSource, blogId ] ]
+					siteContextSource,
+					blogId
 				)
 			);
 		}

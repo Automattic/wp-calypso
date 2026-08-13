@@ -21,7 +21,7 @@ const SupportLink = ( {
 	onShowHelpAssistant?: () => void;
 } & LocalizeProps ) => {
 	const sectionName = useSelector( getSectionName );
-	const { siteCandidates } = useHelpCenterSite();
+	const { site, siteContextSource } = useHelpCenterSite();
 	const { show, isMinimized } = useDateStoreSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -47,7 +47,8 @@ const SupportLink = ( {
 						location: 'help-center',
 						section: sectionName,
 					},
-					siteCandidates
+					siteContextSource,
+					site?.ID
 				)
 			);
 		}
@@ -61,7 +62,8 @@ const SupportLink = ( {
 		show,
 		setShowHelpCenter,
 		sectionName,
-		siteCandidates,
+		siteContextSource,
+		site?.ID,
 		isMinimized,
 		setIsMinimized,
 	] );
