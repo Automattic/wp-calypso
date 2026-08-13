@@ -159,7 +159,8 @@ export const createSite = async (
 	specId?: string | null,
 	ref?: string,
 	provisionTarget?: string | null,
-	aiLaunchpadEnabled?: boolean
+	aiLaunchpadEnabled?: boolean,
+	blueprintSlug?: string | null
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 
@@ -209,6 +210,14 @@ export const createSite = async (
 				} ),
 			...( specId && {
 				spec_id: specId,
+			} ),
+			// Starts the blueprint build as soon as the site exists. For blueprints that
+			// need plugins the backend provisions a suspended Atomic site and builds it
+			// while the customer picks a plan and checks out, handing the blog over once
+			// the purchase lands. Plugin-free blueprints are ignored here and still take
+			// the ordinary post-checkout import path.
+			...( blueprintSlug && {
+				blueprint_slug: blueprintSlug,
 			} ),
 			options: {
 				...newSiteParams.options,

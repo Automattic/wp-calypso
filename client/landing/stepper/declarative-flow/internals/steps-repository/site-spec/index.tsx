@@ -9,8 +9,11 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import {
 	getBlueprintArchiveSiteIdentifier,
+	fetchBlueprintImportStatus,
 	getSiteAdminUrl,
 	getSiteEditorUrl,
+	IMPORT_FAILURE_STATUSES,
+	IMPORT_SUCCESS,
 	logBlueprintArchiveEvent,
 	startBlueprintArchiveImport,
 	waitForAtomicTransferComplete,
@@ -148,6 +151,36 @@ const SiteSpec: StepType = function SiteSpec() {
 	const messageCountRef = useRef( 0 );
 	const isSubmittingRef = useRef( false );
 	const blueprintImportStartedRef = useRef( false );
+	// Set once anything observes the pre-checkout build finished — the start request's response,
+	// or the background watcher below. Spec confirm then redirects immediately instead of
+	// entering the poll loop. Mirrored to sessionStorage so a mid-spec reload keeps the signal.
+	const blueprintImportCompleteRef = useRef( false );
+	// Prefetched on readiness so confirm can redirect without any request at all.
+	const blueprintAdminUrlRef = useRef< string | null >( null );
+	const blueprintReadySessionKey = blueprintArchiveSiteIdentifier
+		? `blueprint-import-ready-${ blueprintArchiveSiteIdentifier }`
+		: null;
+
+	const markBlueprintImportComplete = useCallback( () => {
+		blueprintImportCompleteRef.current = true;
+		if ( blueprintReadySessionKey ) {
+			try {
+				sessionStorage.setItem( blueprintReadySessionKey, '1' );
+			} catch {
+				// Storage unavailable: the ref still covers this page view.
+			}
+		}
+		// Prefetch the redirect target so confirm is a pure navigation.
+		if ( ! blueprintAdminUrlRef.current && blueprintArchiveSiteIdentifier ) {
+			getSiteAdminUrl( blueprintArchiveSiteIdentifier )
+				.then( ( adminUrl ) => {
+					blueprintAdminUrlRef.current = adminUrl;
+				} )
+				.catch( () => {
+					// Confirm falls back to fetching it.
+				} );
+		}
+	}, [ blueprintReadySessionKey, blueprintArchiveSiteIdentifier ] );
 
 	const handleCiabMessage = useCallback( () => {
 		messageCountRef.current += 1;
@@ -373,13 +406,19 @@ const SiteSpec: StepType = function SiteSpec() {
 		isSubmittingRef.current = true;
 
 		try {
-			logBlueprintArchiveEvent( 'spec_confirm_poll_start', {
-				site_identifier: blueprintArchiveSiteIdentifier,
-			} );
+			// When the build is already known to be finished — from the start response, the
+			// background watcher, or a previous page view via sessionStorage — go straight to
+			// the redirect. The polls are the fallback for a build still in flight.
+			if ( ! blueprintImportCompleteRef.current ) {
+				logBlueprintArchiveEvent( 'spec_confirm_poll_start', {
+					site_identifier: blueprintArchiveSiteIdentifier,
+				} );
 
-			await waitForAtomicTransferComplete( blueprintArchiveSiteIdentifier );
-			await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
-			const adminUrl = await getSiteAdminUrl( blueprintArchiveSiteIdentifier );
+				await waitForAtomicTransferComplete( blueprintArchiveSiteIdentifier );
+				await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
+			}
+			const adminUrl =
+				blueprintAdminUrlRef.current ?? ( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ) );
 			const siteEditorUrl = getSiteEditorUrl( adminUrl );
 
 			logBlueprintArchiveEvent( 'redirect_site_editor', {
@@ -415,10 +454,25 @@ const SiteSpec: StepType = function SiteSpec() {
 			site_identifier: blueprintArchiveSiteIdentifier,
 		} );
 
+		// A mid-spec reload loses component state; the readiness flag survives in sessionStorage.
+		if ( blueprintReadySessionKey ) {
+			try {
+				if ( '1' === sessionStorage.getItem( blueprintReadySessionKey ) ) {
+					markBlueprintImportComplete();
+				}
+			} catch {
+				// Storage unavailable: rely on the start response and the watcher.
+			}
+		}
+
 		startBlueprintArchiveImport( blueprintArchiveSiteIdentifier, blueprintArchiveSlug )
-			.then( () => {
+			.then( ( status ) => {
+				if ( status?.importStatus === IMPORT_SUCCESS ) {
+					markBlueprintImportComplete();
+				}
 				logBlueprintArchiveEvent( 'start_success', {
 					site_identifier: blueprintArchiveSiteIdentifier,
+					already_complete: blueprintImportCompleteRef.current,
 				} );
 			} )
 			.catch( ( error ) => {
@@ -427,7 +481,53 @@ const SiteSpec: StepType = function SiteSpec() {
 					error: error instanceof Error ? error.message : String( error ),
 				} );
 			} );
-	}, [ shouldImportBlueprint, blueprintArchiveSlug, blueprintArchiveSiteIdentifier ] );
+	}, [
+		shouldImportBlueprint,
+		blueprintArchiveSlug,
+		blueprintArchiveSiteIdentifier,
+		blueprintReadySessionKey,
+		markBlueprintImportComplete,
+	] );
+
+	// Watch the build in the background while the user reviews the spec, so readiness is known
+	// the moment it happens rather than discovered by polling after confirm. Only records the
+	// flag — the redirect itself always waits for the user to confirm. A terminal failure stops
+	// the watcher and leaves error handling to the confirm path, which surfaces it properly.
+	useEffect( () => {
+		if ( ! shouldImportBlueprint || ! blueprintArchiveSiteIdentifier ) {
+			return;
+		}
+
+		let cancelled = false;
+
+		const interval = setInterval( async () => {
+			if ( cancelled || blueprintImportCompleteRef.current ) {
+				clearInterval( interval );
+				return;
+			}
+
+			const status = await fetchBlueprintImportStatus( blueprintArchiveSiteIdentifier );
+
+			if ( cancelled ) {
+				return;
+			}
+
+			if ( IMPORT_SUCCESS === status ) {
+				markBlueprintImportComplete();
+				logBlueprintArchiveEvent( 'background_ready', {
+					site_identifier: blueprintArchiveSiteIdentifier,
+				} );
+				clearInterval( interval );
+			} else if ( status && IMPORT_FAILURE_STATUSES.includes( status ) ) {
+				clearInterval( interval );
+			}
+		}, 5000 );
+
+		return () => {
+			cancelled = true;
+			clearInterval( interval );
+		};
+	}, [ shouldImportBlueprint, blueprintArchiveSiteIdentifier, markBlueprintImportComplete ] );
 
 	if ( buildWowRequested && isLoadingAutomattician ) {
 		return <DocumentHead title={ translate( 'Build Your Site with AI' ) } />;

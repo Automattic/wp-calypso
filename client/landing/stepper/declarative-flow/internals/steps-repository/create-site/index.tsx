@@ -120,6 +120,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		partnerBundle,
 		gardenName,
 		gardenPartnerName,
+		blueprint,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -133,6 +134,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
 			gardenName: select( ONBOARD_STORE ).getGardenName(),
 			gardenPartnerName: select( ONBOARD_STORE ).getGardenPartnerName(),
+			blueprint: select( ONBOARD_STORE ).getBlueprint(),
 		} ),
 		[]
 	);
@@ -217,6 +219,31 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
+		// The blueprint Atomic path creates the site right after the domain step so the
+		// build can run during plan selection. Coming back through here with a plan chosen,
+		// the site already exists — reuse it and just fill the cart. Skipping the cart here
+		// would send the customer to an empty checkout.
+		const blueprintEarlySiteId = parseInt( urlQueryParams.get( 'early_created_site' ) ?? '', 10 );
+		const blueprintEarlySiteSlug = urlQueryParams.get( 'early_created_site_slug' ) ?? '';
+		if ( blueprint && urlQueryParams.get( 'build_dest' ) === 'wow' && blueprintEarlySiteSlug ) {
+			const blueprintCartItems = [
+				...( planCartItem ? [ planCartItem ] : [] ),
+				...( productCartItems ?? [] ),
+				...mergedDomainCartItems,
+			];
+
+			if ( blueprintCartItems.length > 0 ) {
+				await addProductsToCart( blueprintEarlySiteSlug, flow, blueprintCartItems );
+			}
+
+			return {
+				...( isNaN( blueprintEarlySiteId ) ? {} : { siteId: blueprintEarlySiteId } ),
+				siteSlug: blueprintEarlySiteSlug,
+				goToCheckout: shouldGoToCheckout,
+				siteCreated: true,
+			};
+		}
+
 		// Flow A: The site was early-created during the AI chat session.
 		// Flow B: If early_created_site is absent, the regular createSiteWithCart path below handles creation.
 		const earlyCreatedSite = urlQueryParams.get( 'early_created_site' );
@@ -292,7 +319,12 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			urlQueryParams.get( 'spec_id' ),
 			isPlaygroundPublish ? 'playground-publish' : undefined,
 			undefined, // provisionTarget
-			launchpadPersonalizationVariation === 'ai_launchpad'
+			launchpadPersonalizationVariation === 'ai_launchpad',
+			// Only build_dest=wow targets Atomic. The legacy blueprint flow imports onto a
+			// Simple site post-checkout, so passing the slug there would provision an Atomic
+			// site it never asked for. The blueprint step has already confirmed the archive
+			// exists and stripped build_dest when it does not.
+			urlQueryParams.get( 'build_dest' ) === 'wow' ? blueprint : null
 		);
 
 		if ( ! site ) {

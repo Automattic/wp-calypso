@@ -29,8 +29,27 @@ type AtomicTransferResponse = {
 const wait = ( ms: number ) => new Promise< void >( ( resolve ) => setTimeout( resolve, ms ) );
 
 // Terminal states returned by GET /sites/{id}/imports (see Import_V1_1_Helpers::translate_status).
-const IMPORT_SUCCESS = 'importSuccess';
-const IMPORT_FAILURE_STATUSES = [ 'importFailure', 'importExpired', 'importStopped' ];
+export const IMPORT_SUCCESS = 'importSuccess';
+export const IMPORT_FAILURE_STATUSES = [ 'importFailure', 'importExpired', 'importStopped' ];
+
+/**
+ * One-shot import status check. Returns the current importStatus, or null on any
+ * request error — background watchers poll this without wanting throws.
+ */
+export async function fetchBlueprintImportStatus(
+	siteIdentifier: string
+): Promise< string | null > {
+	try {
+		const status = ( await wpcom.req.get( {
+			path: `/sites/${ siteIdentifier }/imports`,
+			apiVersion: '1.1',
+		} ) ) as ImportStatusResponse;
+
+		return status?.importStatus ?? null;
+	} catch {
+		return null;
+	}
+}
 
 // Terminal Atomic transfer states (see calypso/state/automated-transfer/constants).
 const ATOMIC_TRANSFER_COMPLETE_STATES: TransferStates[] = [
@@ -132,9 +151,14 @@ export async function waitForBlueprintImportComplete(
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastStatus: string | null | undefined;
+	let firstAttempt = true;
 
 	while ( Date.now() < maxFinishTime ) {
-		await wait( pollIntervalMs );
+		// Check first, wait between attempts — see waitForAtomicTransferComplete.
+		if ( ! firstAttempt ) {
+			await wait( pollIntervalMs );
+		}
+		firstAttempt = false;
 
 		try {
 			const status = ( await wpcom.req.get( {
@@ -182,9 +206,15 @@ export async function waitForAtomicTransferComplete(
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastStatus: TransferStates | undefined;
+	let firstAttempt = true;
 
 	while ( Date.now() < maxFinishTime ) {
-		await wait( pollIntervalMs );
+		// Check first, wait between attempts: the transfer routinely finished while the user
+		// reviewed the spec, and a leading wait turns "already done" into a guaranteed delay.
+		if ( ! firstAttempt ) {
+			await wait( pollIntervalMs );
+		}
+		firstAttempt = false;
 
 		try {
 			const transfer = ( await wpcom.req.get( {

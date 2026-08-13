@@ -102,6 +102,13 @@ const onboarding: FlowV2< typeof initialize > = {
 		const playgroundId = queryParams.get( 'playground' );
 		const buildDest = queryParams.get( 'build_dest' );
 
+		// `blueprint` is not in the onboard store's persist list, so it is lost on any full page
+		// load — returning from checkout, most notably. The URL carries it (navigate merges query
+		// params forward), so fall back to that; otherwise the post-checkout branches below stop
+		// recognising a blueprint build and route to the generic setup chooser instead of the
+		// site spec.
+		const blueprintSlug = blueprint || queryParams.get( 'blueprint' );
+
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
@@ -114,12 +121,12 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 			}
 
-			if ( playgroundId || blueprint ) {
+			if ( playgroundId || blueprintSlug ) {
 				// Check if the user selected the free plan
 				const isFree =
 					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
 
-				if ( isFree && ! blueprint ) {
+				if ( isFree && ! blueprintSlug ) {
 					// Redirect free plan users to a home page
 					return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 				}
@@ -134,12 +141,12 @@ const onboarding: FlowV2< typeof initialize > = {
 				// blueprint-archive import and, on confirm, polls the import and
 				// redirects to the Site Editor. The blueprint step already verified the
 				// archive exists (and stripped build_dest when it does not).
-				if ( blueprint && buildDest === 'wow' ) {
+				if ( blueprintSlug && buildDest === 'wow' ) {
 					return [
 						getBlueprintArchiveSiteSpecUrl( {
 							siteSlug: providedDependencies.siteSlug as string,
 							siteId: providedDependencies.siteId as number,
-							blueprintSlug: blueprint,
+							blueprintSlug,
 							ref: refParameter,
 						} ),
 						null,
@@ -147,8 +154,8 @@ const onboarding: FlowV2< typeof initialize > = {
 					];
 				}
 
-				if ( blueprint ) {
-					params.blueprint = blueprint;
+				if ( blueprintSlug ) {
+					params.blueprint = blueprintSlug;
 				} else if ( playgroundId ) {
 					params.playground = playgroundId;
 				}
@@ -216,6 +223,21 @@ const onboarding: FlowV2< typeof initialize > = {
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+
+					// build_dest=wow builds the blueprint on Atomic, which takes minutes. Create
+					// the site as soon as the domain is known so the backend can start that build
+					// while the customer is still picking a plan, instead of after checkout. The
+					// site is created plan-less; `plans` follows and the cart is filled on the way
+					// back through `create-site`.
+					if ( blueprintSlug && buildDest === 'wow' ) {
+						// planCartItem is persisted in the onboard store, so a plan chosen in an
+						// earlier run is still here even though this customer has not picked one
+						// yet. Left in place it makes the site look plan-ready: the cart is filled
+						// with the stale plan and the flow jumps straight to checkout, skipping
+						// plan selection entirely.
+						setPlanCartItem( null );
+						return navigate( 'create-site' );
+					}
 
 					return navigate( 'plans' );
 				case 'use-my-domain': {
@@ -396,6 +418,34 @@ const onboarding: FlowV2< typeof initialize > = {
 						setSignupCompleteFlowName( flowName );
 						setSignupCompleteSlug( providedDependencies.siteSlug );
 
+						// The blueprint path created the site straight after the domain step, so
+						// there is no plan yet. Send the customer on to pick one, carrying the new
+						// site forward — `create-site` recognises it and fills the cart rather than
+						// creating a second site. Without this the branches below would treat an
+						// unpaid site as finished and skip both plans and checkout.
+						// Gate on the round-trip marker rather than on planCartItem: that value is
+						// persisted, so it cannot distinguish "no plan chosen yet" from "a plan is
+						// left over from a previous run". early_created_site is only present on the
+						// way back from plan selection, which also stops this from looping.
+						// Key on siteSlug, not siteId: createSiteAction's re-entry branch (stale
+						// signup cookies from an earlier checkout) returns a slug with no id, and
+						// requiring the id there silently drops the customer past plan selection.
+						if (
+							blueprintSlug &&
+							buildDest === 'wow' &&
+							! queryParams.get( 'early_created_site_slug' ) &&
+							providedDependencies.siteSlug
+						) {
+							return navigate(
+								addQueryArgs( 'plans', {
+									early_created_site_slug: providedDependencies.siteSlug as string,
+									...( providedDependencies.siteId
+										? { early_created_site: providedDependencies.siteId as number }
+										: {} ),
+								} ) as typeof currentStepSlug
+							);
+						}
+
 						if ( providedDependencies.goToCheckout ) {
 							const siteSlug = providedDependencies.siteSlug as string;
 
@@ -428,7 +478,7 @@ const onboarding: FlowV2< typeof initialize > = {
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 									// build_dest=wow goes straight from checkout to the AI site-spec
 									// (no post-checkout-onboarding hop, no chooser).
-									redirect_to: blueprint && buildDest === 'wow' ? destination : redirectTo,
+									redirect_to: blueprintSlug && buildDest === 'wow' ? destination : redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
@@ -440,7 +490,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( blueprint && buildDest === 'wow' ) {
+						} else if ( blueprintSlug && buildDest === 'wow' ) {
 							// build_dest=wow never shows the setup-your-site-ai chooser; go
 							// straight to the AI site-spec destination.
 							window.location.replace( destination );
