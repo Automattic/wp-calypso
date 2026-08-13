@@ -174,17 +174,10 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 								{
 									variant: 'primary',
 									label: translate( 'View promo details' ),
-									url: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
-									trackEventName:
-										'calypso_a4a_overview_events_a4a_pressable_expansion_offer_view_promo_details_click',
-								},
-								{
-									variant: 'secondary',
-									label: translate( 'See full terms' ),
 									url: PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 									isExternal: true,
 									trackEventName:
-										'calypso_a4a_overview_events_a4a_pressable_expansion_offer_see_full_terms_click',
+										'calypso_a4a_overview_events_a4a_pressable_expansion_offer_view_promo_details_click',
 								},
 							],
 							logoUrl: PressableLogo,
