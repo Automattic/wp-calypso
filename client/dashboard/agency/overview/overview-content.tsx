@@ -99,6 +99,7 @@ export default function AgencyOverviewContent( {
 						agencyId={ agencyId }
 						isPending={ isPending }
 						canAccessEarnings={ canAccessEarnings }
+						capabilities={ capabilities }
 						hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
 						tierId={ tierId }
 						influencedRevenue={ influencedRevenue }

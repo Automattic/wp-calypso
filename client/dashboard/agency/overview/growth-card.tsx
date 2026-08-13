@@ -25,11 +25,21 @@ import OverviewLinkButton from './overview-link-button';
 import useWooPaymentsStoreCount from './use-woopayments-store-count';
 import type { AgencyOverviewLinks } from './overview-content';
 import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
+import type { AgencyCapability } from '@automattic/api-core';
 
 type GrowthCardLinks = Pick<
 	AgencyOverviewLinks,
 	'tiers' | 'sites' | 'referrals' | 'woopayments' | 'marketplace' | 'partnerDirectory'
 >;
+
+// The marketplace destination differs per host (products on the classic app,
+// exclusive offers on the dashboard), so either capability unlocks those rows.
+// TODO: drop 'a4a_read_exclusive_offers' once the MSD dashboard has a real
+// marketplace screen and its overview links there instead of exclusive offers.
+const MARKETPLACE_CAPABILITIES: AgencyCapability[] = [
+	'a4a_read_marketplace',
+	'a4a_read_exclusive_offers',
+];
 
 interface GrowthItem {
 	id: string;
@@ -39,6 +49,8 @@ interface GrowthItem {
 	actionLabel: string;
 	href: string;
 	isExternal?: boolean;
+	/** Capabilities that can act on the row (any of them); rows without one are visible to everyone. */
+	requiredCapability?: AgencyCapability | AgencyCapability[];
 }
 
 interface GrowthContent {
@@ -53,6 +65,8 @@ interface GrowthCardProps {
 	isPending?: boolean;
 	/** Disables the WooPayments store lookup for users without earnings access. */
 	canAccessEarnings?: boolean;
+	/** The current user's agency capabilities; rows the user can't act on are hidden. */
+	capabilities?: string[];
 	/** Swaps Premier’s “get listed” move for moving more sites once the agency has an approved listing. */
 	hasPartnerDirectoryListing?: boolean;
 	tierId?: AgencyTierType;
@@ -86,6 +100,7 @@ function getGrowRevenueItem(
 		),
 		actionLabel: __( 'Review' ),
 		href: links.tiers,
+		requiredCapability: 'a4a_read_agency_tier',
 	};
 }
 
@@ -109,6 +124,7 @@ function getPendingContent( links: GrowthCardLinks ): GrowthContent {
 				description: __( 'Browse 60+ products you’ll be able to resell' ),
 				actionLabel: __( 'Explore' ),
 				href: links.marketplace,
+				requiredCapability: MARKETPLACE_CAPABILITIES,
 			},
 		],
 	};
@@ -128,18 +144,20 @@ function getEmergingContent( links: GrowthCardLinks ): GrowthContent {
 			{
 				id: 'refer-hosting',
 				icon: globe,
-				title: __( 'Refer a client' ),
-				description: __( 'Their spend counts toward IAR · you earn 20% recurring' ),
+				title: __( 'Refer sites' ),
+				description: __( 'Client spend counts toward IAR · you earn 20% recurring' ),
 				actionLabel: __( 'Refer' ),
 				href: links.referrals,
+				requiredCapability: 'a4a_read_referrals',
 			},
 			{
-				id: 'recommend-plan',
+				id: 'refer-products',
 				icon: currencyDollar,
-				title: __( 'Recommend a plan' ),
+				title: __( 'Refer products' ),
 				description: __( 'Counts toward IAR · 50% recurring on renewals' ),
-				actionLabel: __( 'Recommend' ),
+				actionLabel: __( 'Refer' ),
 				href: links.marketplace,
+				requiredCapability: MARKETPLACE_CAPABILITIES,
 			},
 			{
 				id: 'browse-marketplace',
@@ -148,6 +166,7 @@ function getEmergingContent( links: GrowthCardLinks ): GrowthContent {
 				description: __( '60+ products at up to 80% off — purchases count toward IAR' ),
 				actionLabel: __( 'Browse' ),
 				href: links.marketplace,
+				requiredCapability: MARKETPLACE_CAPABILITIES,
 			},
 		],
 	};
@@ -170,25 +189,28 @@ function getAgencyContent( links: GrowthCardLinks ): GrowthContent {
 				id: 'refer-hosting',
 				icon: globe,
 				title: __( 'Refer more sites' ),
-				description: __( 'Their spend counts toward IAR · you earn 20% recurring' ),
+				description: __( 'Client spend counts toward IAR · you earn 20% recurring' ),
 				actionLabel: __( 'Refer' ),
 				href: links.referrals,
+				requiredCapability: 'a4a_read_referrals',
 			},
 			{
 				id: 'set-up-woopayments',
 				icon: currencyDollar,
-				title: __( 'Set up WooPayments' ),
+				title: __( 'Set up WooPayments for clients' ),
 				description: __( '$1 of IAR for every $100 in sales · earn 0.05% TPV' ),
 				actionLabel: __( 'Set up' ),
 				href: links.woopayments,
+				requiredCapability: 'a4a_read_referrals',
 			},
 			{
-				id: 'recommend-plan',
+				id: 'refer-products',
 				icon: store,
-				title: __( 'Recommend plans' ),
+				title: __( 'Refer products' ),
 				description: __( 'Counts toward IAR · 50% recurring on renewals' ),
-				actionLabel: __( 'Recommend' ),
+				actionLabel: __( 'Refer' ),
 				href: links.marketplace,
+				requiredCapability: MARKETPLACE_CAPABILITIES,
 			},
 		],
 	};
@@ -211,10 +233,11 @@ function getProContent(
 		wooPaymentsItem = {
 			id: 'set-up-woopayments',
 			icon: payment,
-			title: __( 'Set up WooPayments' ),
+			title: __( 'Set up WooPayments for clients' ),
 			description: __( '$1 of IAR for every $100 in sales · earn 0.05% TPV' ),
 			actionLabel: __( 'Set up' ),
 			href: links.woopayments,
+			requiredCapability: 'a4a_read_referrals',
 		};
 	}
 
@@ -265,6 +288,7 @@ function getPremierContent(
 						description: __( '20% recurring on every renewal · grows IAR' ),
 						actionLabel: __( 'Review sites' ),
 						href: links.sites,
+						requiredCapability: 'a4a_read_managed_sites',
 				  }
 				: {
 						id: 'partner-directory',
@@ -275,6 +299,7 @@ function getPremierContent(
 						),
 						actionLabel: __( 'Set up listing' ),
 						href: links.partnerDirectory,
+						requiredCapability: 'a4a_read_partner_directory',
 				  },
 			{
 				id: 'set-up-woopayments',
@@ -283,6 +308,7 @@ function getPremierContent(
 				description: __( '$1 IAR per $100 in sales' ),
 				actionLabel: __( 'Set up' ),
 				href: links.woopayments,
+				requiredCapability: 'a4a_read_referrals',
 			},
 			{
 				id: 'marketing-development-funds',
@@ -351,6 +377,7 @@ export default function GrowthCard( {
 	agencyId,
 	isPending,
 	canAccessEarnings = true,
+	capabilities,
 	hasPartnerDirectoryListing,
 	tierId,
 	influencedRevenue,
@@ -382,12 +409,28 @@ export default function GrowthCard( {
 		hasPartnerDirectoryListing
 	);
 
+	// Rows the user can't act on would only bounce off the route guards.
+	const canActOn = ( item: GrowthItem ) => {
+		if ( ! item.requiredCapability || ! capabilities ) {
+			return true;
+		}
+		const required = Array.isArray( item.requiredCapability )
+			? item.requiredCapability
+			: [ item.requiredCapability ];
+		return required.some( ( capability ) => capabilities.includes( capability ) );
+	};
+	const items = content.items.filter( canActOn );
+
+	if ( ! items.length ) {
+		return null;
+	}
+
 	return (
 		<Card>
 			<CardHeader>
 				<SectionHeader level={ 3 } title={ content.title } description={ content.description } />
 			</CardHeader>
-			{ content.items.map( ( item, index ) => {
+			{ items.map( ( item, index ) => {
 				const handleClick = () =>
 					recordTracksEvent?.( 'calypso_a4a_overview_growth_action_click', {
 						action_id: item.id,
