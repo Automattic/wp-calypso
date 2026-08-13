@@ -101,12 +101,12 @@ describe( '<AgencySidebar>', () => {
 	test( 'shows MCP when the agency is MCP-enabled and the user holds the learn capability', async () => {
 		await renderSidebar( [ 'a4a_read_learn' ] );
 
-		expect( screen.getByRole( 'link', { name: 'MCP' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'AI and MCP' } ) ).toBeVisible();
 	} );
 
 	test( 'hides MCP when the agency is MCP-enabled but the user lacks the learn capability', async () => {
 		await renderSidebar( [ 'a4a_read_managed_sites' ] );
 
-		expect( screen.queryByRole( 'link', { name: 'MCP' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'AI and MCP' } ) ).not.toBeInTheDocument();
 	} );
 } );
