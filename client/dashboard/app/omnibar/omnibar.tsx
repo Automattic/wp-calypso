@@ -134,7 +134,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	const aiChatPluginNode = useAiChatPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const languageSwitcherNode = useLanguageSwitcherPlugin( { user } );
-	const statsSparklineNode = useStatsSparklinePlugin( { siteId, site } );
+	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const launchSiteNode = useLaunchSitePlugin( { site } );
 	const siteActions = [
 		...( baseOmnibarNodes.siteActions ?? [] ),
