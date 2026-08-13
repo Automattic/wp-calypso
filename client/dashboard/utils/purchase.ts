@@ -5,7 +5,7 @@ import {
 	GoogleWorkspaceSlugs,
 	JetpackSearchProducts,
 	PRODUCT_1GB_SPACE,
-	isStudioCodeAiCredits,
+	PRODUCT_STUDIO_CODE_AI_CREDITS,
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
@@ -396,7 +396,7 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	}
 
 	if (
-		isStudioCodeAiCredits( purchase.product_slug ) &&
+		PRODUCT_STUDIO_CODE_AI_CREDITS === purchase.product_slug &&
 		purchase.renewal_price_tier_usage_quantity
 	) {
 		return getStudioCodeAiCreditsTitle(

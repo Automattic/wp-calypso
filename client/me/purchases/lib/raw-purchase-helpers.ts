@@ -3,7 +3,7 @@ import {
 	getPurchasePriceTierList,
 	isPurchaseExpiring,
 	isPurchaseOneTimePurchase,
-	isStudioCodeAiCredits,
+	PRODUCT_STUDIO_CODE_AI_CREDITS,
 } from '@automattic/api-core';
 import {
 	findPlansKeys,
@@ -432,7 +432,7 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 		return jetpackProductsDisplayNames[ productSlug ];
 	}
 
-	if ( isStudioCodeAiCredits( productSlug ) && quantity ) {
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === productSlug && quantity ) {
 		return getStudioCodeAiCreditsTitle( productName, quantity );
 	}
 
