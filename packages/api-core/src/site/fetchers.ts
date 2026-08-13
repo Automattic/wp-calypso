@@ -42,6 +42,7 @@ export const SITE_FIELDS = [
 	'garden_partner',
 	'garden_is_provisioned',
 	'big_sky_enabled',
+	'atomic_email_block',
 ];
 
 export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
