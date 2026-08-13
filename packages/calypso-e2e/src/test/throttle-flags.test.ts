@@ -15,8 +15,8 @@ import {
 import type { ThrottleId } from '../lib/throttle-flags';
 
 let tagOwnBuild: jest.SpiedFunction< typeof teamcity.tagOwnBuild >;
+let setOwnBuildComment: jest.SpiedFunction< typeof teamcity.setOwnBuildComment >;
 let fetchBuildsByTag: jest.SpiedFunction< typeof teamcity.fetchBuildsByTag >;
-let fetchBuildLog: jest.SpiedFunction< typeof teamcity.fetchBuildLog >;
 let warn: jest.SpiedFunction< typeof console.warn >;
 
 const NOW = 1_000_000;
@@ -32,17 +32,37 @@ function reported( id: ThrottleId, nowMs?: number ): string | null {
 }
 
 /**
- * A tagged build as `fetchBuildsByTag` returns it.
+ * A tagged build as `fetchBuildsByTag` returns it. States nothing unless asked
+ * to: a build carrying a tag it never got to state anything about is the case
+ * most of these turn on.
  */
-function taggedBuild( id: number, finishedAtMs: number | null = null ): teamcity.TaggedBuild {
-	return { id, finishedAtMs };
+function taggedBuild(
+	id: number,
+	finishedAtMs: number | null = null,
+	comment = ''
+): teamcity.TaggedBuild {
+	return { id, finishedAtMs, comment };
+}
+
+/**
+ * Every comment the build was made to state, in order.
+ */
+function published(): string[] {
+	return setOwnBuildComment.mock.calls.map( ( [ text ] ) => text );
+}
+
+/**
+ * What a build states when it has raised one flag, as `publishFlags` writes it.
+ */
+function states( id: ThrottleId, expiresAtMs: number ): string {
+	return `[e2e-throttle] type=${ id } start=1 duration=2 end=${ expiresAtMs }`;
 }
 
 beforeEach( () => {
 	jest.spyOn( Date, 'now' ).mockReturnValue( NOW );
 	tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+	setOwnBuildComment = jest.spyOn( teamcity, 'setOwnBuildComment' ).mockResolvedValue( 200 );
 	fetchBuildsByTag = jest.spyOn( teamcity, 'fetchBuildsByTag' ).mockResolvedValue( null );
-	fetchBuildLog = jest.spyOn( teamcity, 'fetchBuildLog' ).mockResolvedValue( null );
 	warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 	for ( const id of [ 'SIGNUP', 'DOMAIN_SUGGESTIONS', 'DOMAIN_AVAILABILITY' ] ) {
 		delete process.env[ `THROTTLE_${ id }_EXPIRATION` ];
@@ -107,13 +127,95 @@ describe( 'the log line', () => {
 } );
 
 describe( 'raiseFlag', () => {
-	test( 'tags the build generically and reports the detail in the log', async () => {
+	test( 'states the ban on the build, then tags it generically', async () => {
+		const order: string[] = [];
+		setOwnBuildComment.mockImplementation( async () => {
+			order.push( 'stated' );
+			return 200;
+		} );
+		tagOwnBuild.mockImplementation( async () => {
+			order.push( 'tagged' );
+			return 200;
+		} );
+
 		await raiseFlag( 'signup' );
 
+		expect( published() ).toEqual( [
+			'[e2e-throttle] type=signup start=1000000 duration=600000 end=1600000',
+		] );
 		expect( tagOwnBuild ).toHaveBeenCalledWith( 'throttle-signup' );
-		expect( warn ).toHaveBeenCalledWith(
-			'[e2e-throttle] type=signup start=1000000 duration=600000 end=1600000'
+		// A tag is what makes a build findable, so it must not arrive before there
+		// is anything to find.
+		expect( order ).toEqual( [ 'stated', 'tagged' ] );
+	} );
+
+	test( 'a ban it could not state is one it never saw', async () => {
+		setOwnBuildComment.mockRejectedValue( new Error( 'TeamCity is down' ) );
+
+		await expect( raiseFlag( 'signup' ) ).resolves.toBeUndefined();
+
+		// Not tagged: a build a peer can find but learn nothing from is worse than
+		// one it never finds. Not kept either, so nothing here believes a ban it
+		// could not publish.
+		expect( tagOwnBuild ).not.toHaveBeenCalled();
+		expect( reported( 'signup' ) ).toBeNull();
+	} );
+
+	test( 'a refused comment is a failure to state, not a statement', async () => {
+		setOwnBuildComment.mockResolvedValue( 403 );
+
+		await raiseFlag( 'signup' );
+
+		expect( tagOwnBuild ).not.toHaveBeenCalled();
+		expect( reported( 'signup' ) ).toBeNull();
+	} );
+
+	test( 'the next refusal tries the whole thing again', async () => {
+		setOwnBuildComment.mockRejectedValueOnce( new Error( 'TeamCity is down' ) );
+
+		await raiseFlag( 'signup' );
+		await raiseFlag( 'signup' );
+
+		// The second refusal is not damped by the first: nothing was kept to damp
+		// it against, which is what makes the retry happen at all.
+		expect( setOwnBuildComment ).toHaveBeenCalledTimes( 2 );
+		expect( tagOwnBuild ).toHaveBeenCalledTimes( 1 );
+		expect( reported( 'signup' ) ).toContain( 'signup is throttled' );
+	} );
+
+	test( 'a write restates every live ban this worker holds', async () => {
+		await raiseFlag( 'signup' );
+		await raiseFlag( 'domain-suggestions' );
+
+		// A PUT replaces the field, so a write that carried only the id just hit
+		// would leave this build tagged for signup with nothing to read.
+		const [ first, second ] = published();
+		expect( first ).toBe( '[e2e-throttle] type=signup start=1000000 duration=600000 end=1600000' );
+		expect( second ).toContain( 'type=signup' );
+		expect( second ).toContain( 'type=domain-suggestions' );
+	} );
+
+	test( 'a ban that has run out is left off the next write', async () => {
+		let clock = NOW;
+		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
+
+		await raiseFlag( 'domain-suggestions' );
+		clock += 60_001;
+		await raiseFlag( 'signup' );
+
+		// A lapsed statement and no statement read alike, so it is only noise.
+		expect( published().at( -1 ) ).toBe(
+			'[e2e-throttle] type=signup start=1060001 duration=600000 end=1660001'
 		);
+	} );
+
+	test( 'a local run has nothing to state, and still knows the ban itself', async () => {
+		setOwnBuildComment.mockResolvedValue( null );
+
+		await raiseFlag( 'signup' );
+
+		expect( reported( 'signup' ) ).toContain( 'signup is throttled' );
+		expect( tagOwnBuild ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'a worker tags and reports each throttle at most once', async () => {
@@ -166,11 +268,9 @@ describe( 'raiseFlag', () => {
 		await raiseFlag( 'signup' );
 		await raiseFlag( 'signup' );
 
-		// One line, however many times the tag is tried: a peer reading the log
-		// must not see the same ban restarting.
-		expect(
-			warn.mock.calls.filter( ( [ line ] ) => /^\[e2e-throttle]/.test( String( line ) ) )
-		).toHaveLength( 1 );
+		// Stated once, however many times the tag is tried: a peer reading it must
+		// not see the same ban restarting.
+		expect( published() ).toHaveLength( 1 );
 		expect( reported( 'signup' ) ).toContain( 'signup is throttled' );
 	} );
 
@@ -231,10 +331,10 @@ describe( 'raiseFlag', () => {
 		warn.mockClear();
 		await raiseFlag( 'signup' );
 
-		// The later expiry is published, not just held: a peer reads the line and
-		// nothing else, so a ban pushed out in silence is a ban a peer sits out
-		// early.
-		expect( warn ).toHaveBeenCalledWith(
+		// The later expiry is published, not just held: a peer reads what the build
+		// states and nothing else, so a ban pushed out in silence is a ban a peer
+		// sits out early.
+		expect( published() ).toContain(
 			'[e2e-throttle] type=signup start=1500000 duration=600000 end=2100000'
 		);
 		expect( reported( 'signup', clock + 599_000 ) ).toContain( 'signup is throttled' );
@@ -251,10 +351,7 @@ describe( 'raiseFlag', () => {
 			clock += 100;
 		}
 
-		const lines = warn.mock.calls.filter( ( [ line ] ) =>
-			/^\[e2e-throttle]/.test( String( line ) )
-		);
-		expect( lines ).toHaveLength( 10 );
+		expect( published() ).toHaveLength( 10 );
 		// Still the ban this worker believes in, whatever was published.
 		expect( reported( 'domain-suggestions' ) ).toContain( '~60 seconds left' );
 	} );
@@ -307,12 +404,12 @@ describe( 'reading the published throttle', () => {
 describe( 'readActiveThrottles', () => {
 	test( 'takes the furthest expiry across every tagged build', async () => {
 		fetchBuildsByTag.mockImplementation( async ( tag ) =>
-			tag === 'throttle-signup' ? [ taggedBuild( 11 ), taggedBuild( 22 ) ] : null
-		);
-		fetchBuildLog.mockImplementation( async ( buildId ) =>
-			buildId === 11
-				? '[e2e-throttle] type=signup start=1 duration=2 end=1600000'
-				: '[e2e-throttle] type=signup start=1 duration=2 end=1700000'
+			tag === 'throttle-signup'
+				? [
+						taggedBuild( 11, null, states( 'signup', 1_600_000 ) ),
+						taggedBuild( 22, null, states( 'signup', 1_700_000 ) ),
+				  ]
+				: null
 		);
 
 		expect( await readActiveThrottles() ).toEqual( {
@@ -322,21 +419,23 @@ describe( 'readActiveThrottles', () => {
 		} );
 	} );
 
-	test( 'ignores lines belonging to another throttle', async () => {
+	test( 'ignores what a build states about another throttle', async () => {
 		fetchBuildsByTag.mockImplementation( async ( tag ) =>
-			tag === 'throttle-signup' ? [ taggedBuild( 11 ) ] : null
-		);
-		fetchBuildLog.mockResolvedValue(
-			[
-				'[e2e-throttle] type=domain-suggestions start=1 duration=2 end=9000000',
-				'[e2e-throttle] type=signup start=1 duration=2 end=1600000',
-			].join( '\n' )
+			tag === 'throttle-signup'
+				? [
+						taggedBuild(
+							11,
+							null,
+							`${ states( 'domain-suggestions', 9_000_000 ) } ${ states( 'signup', 1_600_000 ) }`
+						),
+				  ]
+				: null
 		);
 
 		expect( ( await readActiveThrottles() ).signup ).toBe( 1_600_000 );
 	} );
 
-	test( 'no tagged builds means no throttle, and the log is never fetched', async () => {
+	test( 'one lookup per id is the whole of it', async () => {
 		fetchBuildsByTag.mockResolvedValue( [] );
 
 		expect( await readActiveThrottles() ).toEqual( {
@@ -344,7 +443,8 @@ describe( 'readActiveThrottles', () => {
 			'domain-suggestions': null,
 			'domain-availability': null,
 		} );
-		expect( fetchBuildLog ).not.toHaveBeenCalled();
+		// What a build states arrives with the build, so nothing else is fetched.
+		expect( fetchBuildsByTag ).toHaveBeenCalledTimes( 3 );
 	} );
 
 	test( 'no TeamCity build around it is no throttle, and is not retried', async () => {
@@ -359,9 +459,10 @@ describe( 'readActiveThrottles', () => {
 			if ( tag === 'throttle-domain-suggestions' ) {
 				throw new Error( 'status 403' );
 			}
-			return tag === 'throttle-signup' ? [ taggedBuild( 11 ) ] : null;
+			return tag === 'throttle-signup'
+				? [ taggedBuild( 11, null, states( 'signup', 1_600_000 ) ) ]
+				: null;
 		} );
-		fetchBuildLog.mockResolvedValue( '[e2e-throttle] type=signup start=1 duration=2 end=1600000' );
 
 		// Absent, not null: the id TeamCity refused is one this run cannot speak
 		// for, and null is this run saying it looked and found nothing.
@@ -372,156 +473,70 @@ describe( 'readActiveThrottles', () => {
 		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( '403' ) );
 	} );
 
-	test( 'a running build whose log went unread is not called clear', async () => {
-		let clock = NOW;
-		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
+	test( 'a tagged build that states nothing is passed over while it runs', async () => {
 		fetchBuildsByTag.mockImplementation( async ( tag ) =>
-			tag === 'throttle-domain-availability' ? [ taggedBuild( 11 ), taggedBuild( 22 ) ] : null
+			tag === 'throttle-domain-availability' ? [ taggedBuild( 11 ) ] : null
 		);
-		// The first read spends the budget, so the second build goes unread.
-		fetchBuildLog.mockImplementation( async () => {
-			clock += 60_000;
-			return 'a log with nothing of ours in it';
-		} );
 
-		// Still running, so there is no finish date to date a ban from, and the tag
-		// says one happened inside the window. Nothing can be concluded, and saying
-		// "clear" would be a conclusion.
-		expect( 'domain-availability' in ( await readActiveThrottles( NOW ) ) ).toBe( false );
+		// The tag says this build hit it, and the comment is one field every worker
+		// writes, so another worker may have taken it. Nothing here says when the
+		// ban ends, and a ban nobody stated is one nobody publishes: whoever runs
+		// into it next raises it, which is how it was found the first time.
+		expect( ( await readActiveThrottles() )[ 'domain-availability' ] ).toBeNull();
 	} );
 
-	test( 'a tagged build with no readable line bans from when that build finished', async () => {
+	test( 'a tagged build that states nothing is passed over once finished too', async () => {
 		fetchBuildsByTag.mockImplementation( async ( tag ) =>
 			tag === 'throttle-signup' ? [ taggedBuild( 11, NOW - 60_000 ) ] : null
 		);
-		fetchBuildLog.mockResolvedValue( 'a log with nothing of ours in it' );
 
-		// The tag is proof the ban happened; only its timing is missing. Anchored
-		// to the build, so a build that reads the tag later does not restart it.
-		expect( ( await readActiveThrottles() ).signup ).toBe( NOW - 60_000 + 600_000 );
+		// Its dates would date a ban from when it finished. That expiry is one no
+		// build ever gave, and the tag alone cannot tell a ban that is still in
+		// force from one that ended before the build did.
+		expect( ( await readActiveThrottles() ).signup ).toBeNull();
 	} );
 
-	test( 'a running build with no readable line is not guessed at', async () => {
+	test( 'a build that states a lapsed ban is passed over as well', async () => {
 		fetchBuildsByTag.mockImplementation( async ( tag ) =>
-			tag === 'throttle-domain-suggestions' ? [ taggedBuild( 11 ) ] : null
+			tag === 'throttle-signup'
+				? [ taggedBuild( 11, NOW - 60_000, states( 'signup', NOW - 1 ) ) ]
+				: null
 		);
-		fetchBuildLog.mockResolvedValue( null );
-
-		// Assuming a ban from now would republish it, always fresh, for as long as
-		// that build keeps running.
-		expect( ( await readActiveThrottles() )[ 'domain-suggestions' ] ).toBeNull();
-	} );
-
-	test( 'a build whose fallback has run out is not reported', async () => {
-		fetchBuildsByTag.mockImplementation( async ( tag ) =>
-			tag === 'throttle-signup' ? [ taggedBuild( 11, NOW - 600_001 ) ] : null
-		);
-		fetchBuildLog.mockResolvedValue( null );
 
 		expect( ( await readActiveThrottles() ).signup ).toBeNull();
 	} );
 
-	test( 'a log we could not read still leaves the tag it was found by', async () => {
+	test( 'every expiry reported is one a build stated', async () => {
 		fetchBuildsByTag.mockImplementation( async ( tag ) =>
-			tag === 'throttle-signup' ? [ taggedBuild( 11, NOW - 60_000 ) ] : null
+			tag === 'throttle-signup'
+				? [
+						taggedBuild( 11, NOW - 60_000 ),
+						taggedBuild( 22, NOW - 30_000, states( 'signup', NOW + 5_000 ) ),
+				  ]
+				: null
 		);
-		fetchBuildLog.mockRejectedValue( new Error( 'status 401' ) );
 
-		// Not reading a log is less than reading one and finding nothing in it, so
-		// it cannot answer more confidently than that does.
-		expect( ( await readActiveThrottles() ).signup ).toBe( NOW - 60_000 + 600_000 );
-		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( '401' ) );
+		// Only the build that spoke counts, and only for what it said. Build 11
+		// finished inside a signup ban's length and contributes nothing.
+		expect( ( await readActiveThrottles() ).signup ).toBe( NOW + 5_000 );
 	} );
 
-	test( 'a build there was no time to read counts on its tag, and says so', async () => {
-		let clock = NOW;
-		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
+	test( 'one silent build does not throw away what another stated', async () => {
 		fetchBuildsByTag.mockImplementation( async ( tag ) =>
-			tag === 'throttle-signup' ? [ taggedBuild( 11, NOW - 60_000 ), taggedBuild( 22, NOW ) ] : null
+			tag === 'throttle-signup'
+				? [ taggedBuild( 11, null, states( 'signup', 1_600_000 ) ), taggedBuild( 22 ) ]
+				: null
 		);
-		// The first read spends the whole budget.
-		fetchBuildLog.mockImplementation( async () => {
-			clock += 60_000;
-			return 'a log with nothing of ours in it';
-		} );
 
-		expect( ( await readActiveThrottles( NOW ) ).signup ).toBe( NOW + 600_000 );
-		expect( fetchBuildLog ).toHaveBeenCalledTimes( 1 );
-		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'Ran out of time to read 1' ) );
-	} );
-
-	test( 'the longest ban is read before the budget can run out', async () => {
-		let clock = NOW;
-		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
-		fetchBuildsByTag.mockImplementation( async ( tag ) => {
-			// The one with the longest ban is still running, so its log line is the
-			// only thing that can speak for it.
-			if ( tag === 'throttle-domain-availability' ) {
-				return [ taggedBuild( 11 ) ];
-			}
-			return tag === 'throttle-signup' ? [ taggedBuild( 22, NOW - 60_000 ) ] : null;
-		} );
-		// One read is all there is time for.
-		fetchBuildLog.mockImplementation( async ( buildId ) => {
-			clock += 60_000;
-			return buildId === 11
-				? '[e2e-throttle] type=domain-availability start=1 duration=2 end=5000000'
-				: '[e2e-throttle] type=signup start=1 duration=2 end=1600000';
-		} );
-
-		const active = await readActiveThrottles( NOW );
-
-		expect( fetchBuildLog ).toHaveBeenCalledTimes( 1 );
-		expect( active[ 'domain-availability' ] ).toBe( 5_000_000 );
-	} );
-
-	test( 'one unreadable build does not throw away what the others said', async () => {
-		fetchBuildsByTag.mockImplementation( async ( tag ) =>
-			tag === 'throttle-signup' ? [ taggedBuild( 11 ), taggedBuild( 22 ) ] : null
-		);
-		fetchBuildLog.mockImplementation( async ( buildId ) => {
-			if ( buildId === 22 ) {
-				throw new Error( 'status 404' );
-			}
-			return '[e2e-throttle] type=signup start=1 duration=2 end=1600000';
-		} );
-
+		// A ban another build did state stands whatever this one hid: what is
+		// missing can only push an expiry further out, never bring it closer.
 		expect( ( await readActiveThrottles() ).signup ).toBe( 1_600_000 );
-	} );
-
-	test( 'the id that asks first may spend the whole budget, not a share of it', async () => {
-		let clock = NOW;
-		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
-		fetchBuildsByTag.mockImplementation( async ( tag ) =>
-			tag === 'throttle-signup' ? [ taggedBuild( 11 ), taggedBuild( 22 ) ] : null
-		);
-		// A read costs more than a third of the budget and less than all of it, so
-		// the second build is only reached if signup was not held to a third.
-		fetchBuildLog.mockImplementation( async ( buildId ) => {
-			clock += 8_000;
-			return buildId === 22
-				? '[e2e-throttle] type=signup start=1 duration=2 end=1600000'
-				: 'a log with nothing of ours in it';
-		} );
-
-		expect( ( await readActiveThrottles( NOW ) ).signup ).toBe( 1_600_000 );
-		expect( fetchBuildLog ).toHaveBeenCalledTimes( 2 );
-	} );
-
-	test( 'a build tagged for more than one throttle has its log read once', async () => {
-		fetchBuildsByTag.mockResolvedValue( [ taggedBuild( 11 ) ] );
-		fetchBuildLog.mockResolvedValue( '[e2e-throttle] type=signup start=1 duration=2 end=1600000' );
-
-		await readActiveThrottles();
-
-		expect( fetchBuildLog ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'a tag whose ban has already lapsed is not reported', async () => {
 		fetchBuildsByTag.mockImplementation( async ( tag ) =>
-			tag === 'throttle-signup' ? [ taggedBuild( 11 ) ] : null
+			tag === 'throttle-signup' ? [ taggedBuild( 11, null, states( 'signup', 999_999 ) ) ] : null
 		);
-		fetchBuildLog.mockResolvedValue( '[e2e-throttle] type=signup start=1 duration=2 end=999999' );
 
 		expect( ( await readActiveThrottles() ).signup ).toBeNull();
 	} );
@@ -659,6 +674,6 @@ describe( 'detectThrottle', () => {
 			'https://public-api.wordpress.com/rest/v1.1/sites/new'
 		);
 
-		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'duration=600000' ) );
+		expect( published() ).toEqual( [ expect.stringContaining( 'duration=600000' ) ] );
 	} );
 } );

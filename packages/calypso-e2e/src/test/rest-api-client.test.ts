@@ -200,6 +200,7 @@ describe( 'RestAPIClient: createSite', function () {
 	} );
 
 	let tagOwnBuild: jest.SpiedFunction< typeof teamcity.tagOwnBuild >;
+	let setOwnBuildComment: jest.SpiedFunction< typeof teamcity.setOwnBuildComment >;
 	let warn: jest.SpiedFunction< typeof console.warn >;
 
 	// Restores only what the test below spies on: the file-level
@@ -207,12 +208,14 @@ describe( 'RestAPIClient: createSite', function () {
 	// decrypted secrets file, and `restoreAllMocks` would take it with it.
 	afterEach( () => {
 		tagOwnBuild?.mockRestore();
+		setOwnBuildComment?.mockRestore();
 		warn?.mockRestore();
 		resetRaisedThrottles();
 	} );
 
 	test( 'A throttled response raises a flag and still fails the call', async function () {
 		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+		setOwnBuildComment = jest.spyOn( teamcity, 'setOwnBuildComment' ).mockResolvedValue( 200 );
 		warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 		nock( requestURL.origin ).post( requestURL.pathname ).reply( 403, {
 			error: 'throttled',
@@ -225,12 +228,16 @@ describe( 'RestAPIClient: createSite', function () {
 		).rejects.toThrow( 'throttled: Limit reached. You can try again in 10 minutes.' );
 
 		expect( tagOwnBuild ).toHaveBeenCalledWith( 'throttle-signup' );
-		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'type=signup' ) );
-		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'duration=600000' ) );
+		// The build states the detail; the log only says a person why.
+		expect( setOwnBuildComment ).toHaveBeenCalledWith( expect.stringContaining( 'type=signup' ) );
+		expect( setOwnBuildComment ).toHaveBeenCalledWith(
+			expect.stringContaining( 'duration=600000' )
+		);
 	} );
 
 	test( 'A throttled response is recognised without the sentence too', async function () {
 		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+		setOwnBuildComment = jest.spyOn( teamcity, 'setOwnBuildComment' ).mockResolvedValue( 200 );
 		warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 		nock( requestURL.origin ).post( requestURL.pathname ).reply( 403, { error: 'throttled' } );
 
