@@ -1,5 +1,6 @@
 import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import {
+	getAkismetPro500ProductDisplayName,
 	getPlanTermLabel,
 	isDIFMProduct,
 	isAkismetPro500,
@@ -12,6 +13,7 @@ import {
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Fragment, type JSX } from 'react';
+import { getStudioCodeAiCreditsTitle } from 'calypso/dashboard/utils/purchase';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import {
 	BillingTransaction,
@@ -341,6 +343,24 @@ function renderAkismetTransactionQuantitySummary(
 			count: licensed_quantity,
 		}
 	);
+}
+
+/**
+ * Return the name to show for a receipt item, which for a few products includes
+ * the quantity bought.
+ */
+export function getReceiptItemName( item: BillingTransactionItem ): string {
+	const quantity = parseInt( String( item.licensed_quantity ) );
+
+	if ( quantity && isAkismetPro500( { product_slug: item.wpcom_product_slug } ) ) {
+		return String( getAkismetPro500ProductDisplayName( item.variation, quantity ) );
+	}
+
+	if ( quantity && PRODUCT_STUDIO_CODE_AI_CREDITS === item.wpcom_product_slug ) {
+		return getStudioCodeAiCreditsTitle( item.variation, quantity );
+	}
+
+	return item.variation;
 }
 
 export function renderTransactionQuantitySummary(

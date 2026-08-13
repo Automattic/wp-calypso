@@ -1,5 +1,3 @@
-import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
-import { isAkismetPro500, getAkismetPro500ProductDisplayName } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -24,7 +22,6 @@ import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/loca
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
-import { getStudioCodeAiCreditsTitle } from 'calypso/dashboard/utils/purchase';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
@@ -42,6 +39,7 @@ import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
 import {
+	getReceiptItemName,
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionQuantitySummary,
@@ -612,18 +610,6 @@ export function ReceiptItemTaxes( { transaction }: { transaction: BillingTransac
 			</span>
 		</div>
 	);
-}
-
-function getReceiptItemName( item: BillingTransactionItem ): string {
-	if ( isAkismetPro500( { product_slug: item.wpcom_product_slug } ) ) {
-		return String( getAkismetPro500ProductDisplayName( item.variation, item.licensed_quantity ) );
-	}
-
-	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === item.wpcom_product_slug && item.licensed_quantity ) {
-		return getStudioCodeAiCreditsTitle( item.variation, item.licensed_quantity );
-	}
-
-	return item.variation;
 }
 
 function ReceiptLineItem( {
