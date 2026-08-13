@@ -1,3 +1,4 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import {
 	getPlanTermLabel,
 	isDIFMProduct,
@@ -342,6 +343,17 @@ function renderAkismetTransactionQuantitySummary(
 	);
 }
 
+function renderStudioCodeAiCreditsQuantitySummary(
+	licensed_quantity: number,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	return translate( 'Purchase of %(quantity)s credit', 'Purchase of %(quantity)s credits', {
+		args: { quantity: formatNumber( licensed_quantity ) },
+		count: licensed_quantity,
+		comment: '%(quantity)s is the number of Studio Code AI credits purchased',
+	} );
+}
+
 export function renderTransactionQuantitySummary(
 	{ licensed_quantity, new_quantity, type, wpcom_product_slug }: BillingTransactionItem,
 	translate: LocalizeProps[ 'translate' ]
@@ -384,6 +396,10 @@ export function renderTransactionQuantitySummary(
 
 	if ( isAkismetPro500( product ) ) {
 		return renderAkismetTransactionQuantitySummary( licensed_quantity, isRenewal, translate );
+	}
+
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
+		return renderStudioCodeAiCreditsQuantitySummary( licensed_quantity, translate );
 	}
 
 	if ( isRenewal ) {
