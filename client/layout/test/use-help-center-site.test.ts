@@ -54,6 +54,21 @@ describe( 'useHelpCenterSite', () => {
 		expect( result.current.siteContextSource ).toBe( 'calypso_selected_site' );
 	} );
 
+	it( 'keeps a previously selected site on general-admin routes, before the primary site', () => {
+		// Redux's selectedSiteId is sticky: /me, /read and /help don't clear it,
+		// so a session that visited a site attributes that site there — matching
+		// the site the Help Center panel actually mounts with.
+		window.history.replaceState( {}, '', '/me' );
+		mockGetSelectedSite.mockReturnValue( selectedSite );
+		mockGetPrimarySiteSlug.mockReturnValue( 'primary-site' );
+		mockGetSiteBySlug.mockReturnValue( primarySite );
+
+		const { result } = renderHookWithProvider( () => useHelpCenterSite() );
+
+		expect( result.current.site ).toBe( selectedSite );
+		expect( result.current.siteContextSource ).toBe( 'calypso_selected_site' );
+	} );
+
 	it( 'falls back to URL-param site before primary site', () => {
 		window.history.replaceState( {}, '', '/?siteId=2' );
 		mockGetSite.mockReturnValue( urlParamSite );

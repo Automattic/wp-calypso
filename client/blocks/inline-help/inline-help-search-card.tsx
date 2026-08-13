@@ -18,8 +18,10 @@ type Props = {
 	onSearch?: ( query: string ) => void;
 	sectionName: string;
 	useSearchControl: boolean;
+	// An absent blogId means the caller has no site — the event reports
+	// site_context_source 'none' and super props will not infer one.
 	blogId?: number | string;
-	siteContextSource?: string;
+	siteContextSource: string;
 };
 
 const AUTO_FOCUS_LOCATION = [ 'help-center', 'inline-help-popover' ];
@@ -33,7 +35,7 @@ const InlineHelpSearchCard = ( {
 	sectionName,
 	useSearchControl,
 	blogId,
-	siteContextSource = 'explicit',
+	siteContextSource,
 }: Props ) => {
 	const cardRef = useRef< { searchInput: HTMLInputElement } >( undefined );
 	const translate = useTranslate();

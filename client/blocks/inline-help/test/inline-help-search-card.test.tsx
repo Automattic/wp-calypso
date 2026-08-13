@@ -34,6 +34,7 @@ const renderCard = ( blogId?: number ) =>
 			sectionName="help-center"
 			useSearchControl={ false }
 			blogId={ blogId }
+			siteContextSource="explicit"
 		/>
 	);
 
