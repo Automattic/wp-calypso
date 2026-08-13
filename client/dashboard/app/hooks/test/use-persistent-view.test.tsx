@@ -3,11 +3,19 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createRouter, RouterProvider, createRootRoute, createRoute } from '@tanstack/react-router';
+import {
+	createRouter,
+	createMemoryHistory,
+	RouterProvider,
+	createRootRoute,
+	createRoute,
+	useSearch,
+} from '@tanstack/react-router';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Suspense } from 'react';
 import { usePersistentView } from '../use-persistent-view';
+import type { UseViewOptions } from '../use-persistent-view';
 import type { View } from '@wordpress/dataviews';
 
 const defaultView: View = {
@@ -17,7 +25,7 @@ const defaultView: View = {
 };
 const slug = 'sites';
 
-function createTestWrapper() {
+function createTestWrapper( initialPath = '/' ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	let router: ReturnType< typeof createRouter > | undefined;
 
@@ -31,6 +39,7 @@ function createTestWrapper() {
 
 		router = createRouter( {
 			routeTree: rootRoute.addChildren( [ indexRoute ] ),
+			history: createMemoryHistory( { initialEntries: [ initialPath ] } ),
 		} );
 
 		return (
@@ -41,6 +50,21 @@ function createTestWrapper() {
 	};
 
 	return { Wrapper, getRouter: () => router };
+}
+
+// Renders the hook with `queryParams` fed live from the router, the way
+// production callers pass `useSearch()` output — so the hook sees params
+// change after its own navigations.
+function renderHookWithRouterSearch( options: Partial< UseViewOptions >, initialPath = '/' ) {
+	const { Wrapper, getRouter } = createTestWrapper( initialPath );
+	const utils = renderHook(
+		() => {
+			const search = useSearch( { strict: false } );
+			return usePersistentView( { slug, defaultView, queryParams: search, ...options } );
+		},
+		{ wrapper: Wrapper }
+	);
+	return { ...utils, getRouter };
 }
 
 function mockGetCalypsoPreferences( preferences: any ) {
@@ -319,20 +343,13 @@ describe( 'usePersistentView', () => {
 		it( 'should canonicalize param values case-insensitively when allowed values are provided', async () => {
 			mockGetCalypsoPreferences( {} );
 
-			const { Wrapper } = createTestWrapper();
-
-			const queryParams = { severity: 'warning,FATAL+ERROR,bogus' };
-			const { result } = renderHook(
-				() =>
-					usePersistentView( {
-						slug,
-						defaultView,
-						queryParams,
-						queryParamFilterFields: [
-							{ field: 'severity', values: [ 'User', 'Warning', 'Deprecated', 'Fatal error' ] },
-						],
-					} ),
-				{ wrapper: Wrapper }
+			const { result } = renderHookWithRouterSearch(
+				{
+					queryParamFilterFields: [
+						{ field: 'severity', values: [ 'User', 'Warning', 'Deprecated', 'Fatal error' ] },
+					],
+				},
+				'/?severity=warning,FATAL+ERROR,bogus'
 			);
 
 			await waitFor( () => {
@@ -345,18 +362,9 @@ describe( 'usePersistentView', () => {
 		it( 'should parse comma-separated query param values into a multi-value filter', async () => {
 			mockGetCalypsoPreferences( {} );
 
-			const { Wrapper } = createTestWrapper();
-
-			const queryParams = { severity: 'Warning,Fatal error' };
-			const { result } = renderHook(
-				() =>
-					usePersistentView( {
-						slug,
-						defaultView,
-						queryParams,
-						queryParamFilterFields: [ 'severity' ],
-					} ),
-				{ wrapper: Wrapper }
+			const { result } = renderHookWithRouterSearch(
+				{ queryParamFilterFields: [ 'severity' ] },
+				'/?severity=Warning,Fatal%20error'
 			);
 
 			await waitFor( () => {
@@ -379,18 +387,9 @@ describe( 'usePersistentView', () => {
 				'hosting-dashboard-dataviews-view-sites': persistedView,
 			} );
 
-			const { Wrapper } = createTestWrapper();
-
-			const { result } = renderHook(
-				() =>
-					usePersistentView( {
-						slug,
-						defaultView,
-						queryParams: {},
-						queryParamFilterFields: [ 'severity' ],
-					} ),
-				{ wrapper: Wrapper }
-			);
+			const { result } = renderHookWithRouterSearch( {
+				queryParamFilterFields: [ 'severity' ],
+			} );
 
 			await waitFor( () => {
 				expect( result.current.view.filters ).toEqual( [
@@ -411,18 +410,9 @@ describe( 'usePersistentView', () => {
 				'hosting-dashboard-dataviews-view-sites': viewToPersist,
 			} );
 
-			const { Wrapper, getRouter } = createTestWrapper();
-
-			const queryParams = { severity: 'User' };
-			const { result } = renderHook(
-				() =>
-					usePersistentView( {
-						slug,
-						defaultView,
-						queryParams,
-						queryParamFilterFields: [ 'severity' ],
-					} ),
-				{ wrapper: Wrapper }
+			const { result, getRouter } = renderHookWithRouterSearch(
+				{ queryParamFilterFields: [ 'severity' ] },
+				'/?severity=User'
 			);
 
 			await waitFor( () => {
@@ -447,9 +437,11 @@ describe( 'usePersistentView', () => {
 				} );
 			} );
 
-			expect( result.current.view.filters ).toEqual( [
-				{ field: 'severity', operator: 'isAny', value: [ 'Warning', 'Fatal error' ] },
-			] );
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'severity', operator: 'isAny', value: [ 'Warning', 'Fatal error' ] },
+				] );
+			} );
 
 			await waitFor( () => {
 				expect( expectedUpdatePreferences.isDone() ).toBe( true );
@@ -460,19 +452,9 @@ describe( 'usePersistentView', () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
 
-			const { Wrapper, getRouter } = createTestWrapper();
-
-			const queryParams = {};
-			const { result } = renderHook(
-				() =>
-					usePersistentView( {
-						slug,
-						defaultView,
-						queryParams,
-						queryParamFilterFields: [ 'severity' ],
-					} ),
-				{ wrapper: Wrapper }
-			);
+			const { result, getRouter } = renderHookWithRouterSearch( {
+				queryParamFilterFields: [ 'severity' ],
+			} );
 
 			await waitFor( () => {
 				expect( result.current.updateView ).toBeTruthy();
@@ -502,18 +484,9 @@ describe( 'usePersistentView', () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
 
-			const { Wrapper, getRouter } = createTestWrapper();
-
-			const queryParams = { severity: 'Warning' };
-			const { result } = renderHook(
-				() =>
-					usePersistentView( {
-						slug,
-						defaultView,
-						queryParams,
-						queryParamFilterFields: [ 'severity' ],
-					} ),
-				{ wrapper: Wrapper }
+			const { result, getRouter } = renderHookWithRouterSearch(
+				{ queryParamFilterFields: [ 'severity' ] },
+				'/?severity=Warning'
 			);
 
 			await waitFor( () => {
@@ -534,27 +507,20 @@ describe( 'usePersistentView', () => {
 				expect( router?.state.location.search ).toEqual( {} );
 			} );
 
-			expect( result.current.view.filters ).toEqual( [
-				{ field: 'severity', operator: 'isAny', value: undefined },
-			] );
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'severity', operator: 'isAny', value: undefined },
+				] );
+			} );
 		} );
 
 		it( 'should remove the query param when the filter is cleared', async () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
 
-			const { Wrapper, getRouter } = createTestWrapper();
-
-			const queryParams = { 'current-param': 'current-value', severity: 'Warning' };
-			const { result } = renderHook(
-				() =>
-					usePersistentView( {
-						slug,
-						defaultView,
-						queryParams,
-						queryParamFilterFields: [ 'severity' ],
-					} ),
-				{ wrapper: Wrapper }
+			const { result, getRouter } = renderHookWithRouterSearch(
+				{ queryParamFilterFields: [ 'severity' ] },
+				'/?current-param=current-value&severity=Warning'
 			);
 
 			await waitFor( () => {
@@ -577,7 +543,9 @@ describe( 'usePersistentView', () => {
 				} );
 			} );
 
-			expect( result.current.view.filters ).toEqual( [] );
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [] );
+			} );
 		} );
 	} );
 

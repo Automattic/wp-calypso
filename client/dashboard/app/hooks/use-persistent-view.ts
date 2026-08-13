@@ -106,37 +106,25 @@ export function useBasePersistentView( {
 	const filterFieldNames = queryParams ? filterFieldConfigs.map( ( { field } ) => field ) : [];
 	const filterFieldNamesKey = JSON.stringify( filterFieldNames );
 
-	const transientFilterFields = filterFieldNames.filter(
+	const paramFilterFields = filterFieldNames.filter(
 		( field ) => queryParams[ field ] !== undefined
 	);
 
-	const getFilterFromQueryParam = ( field: string ) => {
+	// Filters derived from the URL query params — the source of truth for
+	// synced fields. Derived, not state: it cannot drift from the URL.
+	const urlFilters = paramFilterFields.flatMap( ( field ) => {
 		const config = filterFieldConfigs.find( ( c ) => c.field === field );
-		return getTransientFilter( field, queryParams[ field ], config?.values );
-	};
+		return getTransientFilter( field, queryParams[ field ], config?.values ) ?? [];
+	} );
 
-	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( () =>
-		transientFilterFields.flatMap( ( field ) => getFilterFromQueryParam( field ) ?? [] )
+	// Filters the URL cannot express: chips added via the "Add filter" UI that
+	// have no value selected yet. Held separately so an in-progress chip isn't
+	// dismissed mid-edit; it graduates to a query param once it gains a value.
+	const [ draftFilters, setDraftFilters ] = useState< Filter[] >( [] );
+
+	const urlFilterParamsKey = JSON.stringify(
+		paramFilterFields.map( ( field ) => [ field, queryParams?.[ field ] ] )
 	);
-
-	const transientFilterParamsKey = JSON.stringify(
-		transientFilterFields.map( ( field ) => [ field, queryParams?.[ field ] ] )
-	);
-
-	useEffect( () => {
-		// Rebuild from the query params, but keep filters with no value yet:
-		// they have no param to rebuild from and are still being edited.
-		setTransientFilters( ( currentFilters ) => [
-			...transientFilterFields.flatMap( ( field ) => getFilterFromQueryParam( field ) ?? [] ),
-			...currentFilters.filter(
-				( filter ) =>
-					! transientFilterFields.includes( filter.field ) &&
-					serializeTransientFilterValue( filter ) === undefined
-			),
-		] );
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ transientFilterParamsKey ] );
 
 	useEffect( () => {
 		if ( ! matches || matches.length === 0 ) {
@@ -144,7 +132,7 @@ export function useBasePersistentView( {
 		}
 
 		let transientQueryParams: Record< string, unknown > = {};
-		transientFilters.forEach( ( { field } ) => {
+		urlFilters.forEach( ( { field } ) => {
 			transientQueryParams[ field ] = queryParams[ field ];
 		} );
 		transientQueryParams = mergeQueryParamsWithTransientProperties(
@@ -155,20 +143,27 @@ export function useBasePersistentView( {
 			matches[ matches.length - 1 ].pathname.replace( /\/$/, '' ),
 			transientQueryParams
 		);
-	}, [ matches, transientProperties, transientFilters, queryParams ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ matches, transientProperties, urlFilterParamsKey, queryParams ] );
 
 	// The URL is the source of truth for the synced fields, so persisted filters
 	// for them (e.g. from a preference saved before syncing existed) are ignored.
+	// A draft yields to the URL if its field gains a param (e.g. via history
+	// navigation).
 	const view: View = useMemo( () => {
+		const activeDraftFilters = draftFilters.filter(
+			( filter ) => ! paramFilterFields.includes( filter.field )
+		);
 		const mergedView = {
 			...baseView,
 			...transientProperties,
-			...( ( transientFilters.length > 0 || filterFieldNames.length > 0 ) && {
+			...( filterFieldNames.length > 0 && {
 				filters: [
 					...( baseView.filters || [] ).filter(
 						( filter ) => ! filterFieldNames.includes( filter.field )
 					),
-					...transientFilters,
+					...urlFilters,
+					...activeDraftFilters,
 				],
 			} ),
 		};
@@ -179,7 +174,14 @@ export function useBasePersistentView( {
 
 		return mergedView;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ baseView, transientProperties, transientFilters, filterFieldNamesKey, sanitizeFields ] );
+	}, [
+		baseView,
+		transientProperties,
+		draftFilters,
+		urlFilterParamsKey,
+		filterFieldNamesKey,
+		sanitizeFields,
+	] );
 
 	const updateView = useCallback(
 		( newView: View ) => {
@@ -187,12 +189,12 @@ export function useBasePersistentView( {
 				newView,
 				queryParams,
 				filterFieldNames,
-				transientFilters,
+				draftFilters,
 				transientProperties,
 			} );
 
-			if ( changes.transientFilters ) {
-				setTransientFilters( changes.transientFilters );
+			if ( changes.draftFilters ) {
+				setDraftFilters( changes.draftFilters );
 			}
 			if ( changes.navigateSearch ) {
 				navigate( {
@@ -220,7 +222,7 @@ export function useBasePersistentView( {
 		[
 			queryParams,
 			transientProperties,
-			transientFilters,
+			draftFilters,
 			filterFieldNamesKey,
 			navigate,
 			baseView,
@@ -233,7 +235,7 @@ export function useBasePersistentView( {
 
 	const resetView = useCallback( () => {
 		persistView( undefined );
-		setTransientFilters( [] );
+		setDraftFilters( [] );
 		navigate( {
 			search: mergeQueryParamsWithTransientProperties(
 				clearQueryParamsFromTransientFilters( queryParams, filterFieldNames ),
@@ -251,12 +253,12 @@ export function useBasePersistentView( {
  * The transient-state effects an `updateView` call should perform, computed as
  * data so the deciding stays pure and the doing stays mechanical:
  * - `fieldsToStrip`: filter fields to exclude from the persisted view.
- * - `transientFilters`: new transient filter state; `undefined` means leave it untouched.
+ * - `draftFilters`: new draft filter state; `undefined` means leave it untouched.
  * - `navigateSearch`: query params to navigate to; `undefined` means don't navigate.
  */
 type UpdateViewChanges = {
 	fieldsToStrip: string[];
-	transientFilters?: Filter[];
+	draftFilters?: Filter[];
 	navigateSearch?: any;
 	replace?: boolean;
 	resetScroll?: boolean;
@@ -266,26 +268,24 @@ function computeUpdateViewChanges( {
 	newView,
 	queryParams,
 	filterFieldNames,
-	transientFilters,
+	draftFilters,
 	transientProperties,
 }: {
 	newView: View;
 	queryParams: any;
 	filterFieldNames: string[];
-	transientFilters: Filter[];
+	draftFilters: Filter[];
 	transientProperties: { page: number; search: string };
 } ): UpdateViewChanges {
 	if ( ! queryParams ) {
 		return { fieldsToStrip: [] };
 	}
 
-	// All synced-field filters stay in the transient state, including ones with
-	// no value yet (a filter just added via the "Add filter" UI): they can't be
-	// expressed in the URL, but dropping them would dismiss the filter mid-edit.
-	const newTransientFilters =
-		newView.filters?.filter( ( filter ) => filterFieldNames.includes( filter.field ) ) ?? [];
-
 	const newQueryParams = { ...queryParams };
+	// Synced-field filters that can't be expressed in the URL — no value yet
+	// (e.g. just added via the "Add filter" UI) — become drafts instead, so
+	// they aren't dismissed mid-edit.
+	const newDraftFilters: Filter[] = [];
 	let filtersChanged = false;
 
 	filterFieldNames.forEach( ( field ) => {
@@ -295,6 +295,9 @@ function computeUpdateViewChanges( {
 
 		if ( serialized === undefined ) {
 			delete newQueryParams[ field ];
+			if ( filter ) {
+				newDraftFilters.push( filter );
+			}
 		} else {
 			newQueryParams[ field ] = serialized;
 		}
@@ -306,8 +309,8 @@ function computeUpdateViewChanges( {
 
 	const changes: UpdateViewChanges = { fieldsToStrip: filterFieldNames };
 
-	if ( ! fastDeepEqual( newTransientFilters, transientFilters ) ) {
-		changes.transientFilters = newTransientFilters;
+	if ( ! fastDeepEqual( newDraftFilters, draftFilters ) ) {
+		changes.draftFilters = newDraftFilters;
 	}
 
 	const newTransientProperties = { page: newView.page, search: newView.search };
