@@ -1,11 +1,11 @@
 /* global helpCenterData */
 import './config';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter from '@automattic/help-center';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
+import { recordHostTracksEvent } from './tracks';
 
 import './help-center.scss';
 
@@ -45,7 +45,7 @@ function CustomizerHelpCenterContent() {
 	);
 
 	const trackIconInteraction = useCallback( () => {
-		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
+		recordHostTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-customizer',
 			is_menu_panel_enabled: false,
@@ -54,8 +54,7 @@ function CustomizerHelpCenterContent() {
 
 	const handleToggleHelpCenter = useCallback( () => {
 		trackIconInteraction();
-		recordTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
-			force_site_id: true,
+		recordHostTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
 			location: 'help-center',
 			section: helpCenterData.sectionName || 'wp-customizer',
 		} );

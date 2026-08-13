@@ -11,6 +11,7 @@ import getSuperProps from '../super-props';
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	getConnectionSpeedData: jest.fn(),
+	NO_SITE_CONTEXT: 'none',
 } ) );
 jest.mock( '@automattic/calypso-config', () => {
 	const config = jest.fn( ( key ) => key );
@@ -119,5 +120,14 @@ describe( 'analytics super props', () => {
 		const superProps = getSuperProps( reduxStore )( { blog_id: 0 } );
 
 		expect( superProps.blog_id ).toBe( selectedSite.ID );
+	} );
+
+	test( 'does not infer selected site when site context is explicitly absent', () => {
+		const superProps = getSuperProps( reduxStore )( {
+			force_site_id: true,
+			site_context_source: 'none',
+		} );
+
+		expect( superProps ).not.toHaveProperty( 'blog_id' );
 	} );
 } );
