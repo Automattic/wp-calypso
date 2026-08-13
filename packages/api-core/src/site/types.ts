@@ -26,6 +26,7 @@ interface SitePlan {
 export interface SiteCapabilities {
 	manage_options: boolean;
 	update_plugins: boolean;
+	view_stats: boolean;
 }
 
 export interface SiteOptions {
@@ -58,6 +59,18 @@ export interface SiteOptions {
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	import_engine?: string | null;
+}
+
+/**
+ * Outgoing email block on a WordPress.com on Atomic site, as reported by the
+ * site endpoint. `null`/absent means the site can send. `status` is always
+ * `blocked` today; the field exists so an at-risk state can be added later
+ * without changing the shape.
+ */
+export interface AtomicEmailBlock {
+	status: 'blocked';
+	reason: string;
+	expires_on: string;
 }
 
 export interface Site {
@@ -107,6 +120,7 @@ export interface Site {
 	garden_is_provisioned: boolean | null;
 	/** Present when requested via SITE_FIELDS; indicates Big Sky / AI builder availability. */
 	big_sky_enabled?: boolean;
+	atomic_email_block?: AtomicEmailBlock | null;
 
 	// Injected local properties
 	__inaccessible_jetpack_error?: Error;

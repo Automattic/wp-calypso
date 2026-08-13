@@ -142,7 +142,9 @@ describe( 'SiteSpec early provisioning step', () => {
 	} );
 
 	it( 'attaches a confirmed spec and redirects immediately to site generation', async () => {
-		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&ref=site-card&source=site-overview'
+		);
 		wpcomPostMock.mockResolvedValue( {
 			blog_id: 123,
 			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
@@ -179,8 +181,10 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( redirect.searchParams.get( 'siteId' ) ).toBe( '123' );
 		expect( redirect.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
 		expect( redirect.searchParams.get( 'specId' ) ).toBe( 'spec-456' );
+		expect( redirect.searchParams.get( 'ref' ) ).toBe( 'site-card' );
+		expect( redirect.searchParams.get( 'source' ) ).toBe( 'site-overview' );
 		expect( redirect.searchParams.get( 'editorUrl' ) ).toBe(
-			'https://example.wordpress.com/wp-admin/site-editor.php?spec_id=spec-456'
+			'https://example.wordpress.com/wp-admin/site-editor.php?spec_id=spec-456&source=site-overview'
 		);
 
 		expect( logToLogstashMock ).toHaveBeenCalledWith(

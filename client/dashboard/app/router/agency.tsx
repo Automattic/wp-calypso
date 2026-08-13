@@ -189,7 +189,7 @@ const ensureMcpSettings = async () => {
 
 export const mcpRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
-	head: () => ( { meta: [ { title: __( 'MCP' ) } ] } ),
+	head: () => ( { meta: [ { title: __( 'AI and MCP' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'resources/ai-mcp',
 	beforeLoad: async ( { cause } ) => {
@@ -215,13 +215,23 @@ const mcpOverviewRoute = createRoute( {
 );
 
 const mcpAvailableToolsRoute = createRoute( {
-	head: () => ( { meta: [ { title: __( 'Available tools' ) } ] } ),
+	head: () => ( { meta: [ { title: __( 'Read' ) } ] } ),
 	getParentRoute: () => mcpRoute,
 	path: 'tools',
 	loader: ensureMcpSettings,
 } ).lazy( () =>
-	import( '../../agency/resources/mcp/available-tools' ).then( ( d ) =>
-		createLazyRoute( 'resources-mcp-tools' )( { component: d.default } )
+	import( '../../agency/resources/mcp/read-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-read' )( { component: d.default } )
+	)
+);
+
+const mcpStarterPromptsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Starter prompts' ) } ] } ),
+	getParentRoute: () => mcpRoute,
+	path: 'prompts',
+} ).lazy( () =>
+	import( '../../agency/resources/mcp/starter-prompts' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-prompts' )( { component: d.default } )
 	)
 );
 
@@ -814,7 +824,12 @@ export const createAgencyRoutes = () => [
 		agencyTiersRoute,
 		exclusiveOffersRoute,
 		learnRoute,
-		mcpRoute.addChildren( [ mcpOverviewRoute, mcpAvailableToolsRoute, mcpConnectRoute ] ),
+		mcpRoute.addChildren( [
+			mcpOverviewRoute,
+			mcpAvailableToolsRoute,
+			mcpStarterPromptsRoute,
+			mcpConnectRoute,
+		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
 		earnOverviewRoute,

@@ -68,8 +68,31 @@ export class TestAccount {
 			await page.waitForURL( url, { timeout: 20 * 1000 } );
 		}
 		if ( waitUntilStable ) {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.waitForSidebarInitialization();
+			await TestAccount.waitForAppShell( page );
+		}
+	}
+
+	/**
+	 * Waits for whichever app shell `/` rendered: rollout enrollment decides whether
+	 * an account lands in classic Calypso or the hosting dashboard.
+	 *
+	 * Waits for `attached` rather than `visible` because the dashboard sidebar is
+	 * rendered off-canvas below the `medium` breakpoint.
+	 *
+	 * @param {Page} page Page object.
+	 */
+	private static async waitForAppShell( page: Page ): Promise< void > {
+		try {
+			await Promise.any( [
+				new SidebarComponent( page ).waitForSidebarInitialization(),
+				page
+					.locator( '.dashboard-sidebar-navigator' )
+					.waitFor( { state: 'attached', timeout: 20 * 1000 } ),
+			] );
+		} catch {
+			throw new Error(
+				'Timed out waiting for an app shell: neither the classic Calypso sidebar nor the hosting dashboard rendered after logging in.'
+			);
 		}
 	}
 

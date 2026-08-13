@@ -4,6 +4,7 @@ import LearnSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/learn
 import AiMcpAvailableTools from './primary/available-tools';
 import AiMcpConnectAgent from './primary/connect-agent';
 import AiMcpOverview from './primary/overview';
+import AiMcpStarterPrompts from './primary/starter-prompts';
 
 export const aiMcpOverviewContext: Callback = ( context, next ) => {
 	context.primary = (
@@ -24,6 +25,20 @@ export const aiMcpAvailableToolsContext: Callback = ( context, next ) => {
 				path={ context.path }
 			/>
 			<AiMcpAvailableTools />
+		</>
+	);
+	context.secondary = <LearnSidebar path={ context.path } />;
+	next();
+};
+
+export const aiMcpStarterPromptsContext: Callback = ( context, next ) => {
+	context.primary = (
+		<>
+			<PageViewTracker
+				title="Resources and tools > AI and MCP > Starter prompts"
+				path={ context.path }
+			/>
+			<AiMcpStarterPrompts />
 		</>
 	);
 	context.secondary = <LearnSidebar path={ context.path } />;

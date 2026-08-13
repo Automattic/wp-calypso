@@ -88,6 +88,10 @@ export function checkoutUnifiedSiteless( context, next ) {
 	sitelessCheckout( context, next, { sitelessCheckoutType: 'unified' } );
 }
 
+export function checkoutWpcomSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'wpcom' } );
+}
+
 export function checkoutRenewalBySubscriptionId( context, next ) {
 	const { subscriptionId } = context.params;
 	const state = context.store.getState();

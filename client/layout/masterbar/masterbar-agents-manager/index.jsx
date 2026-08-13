@@ -5,12 +5,13 @@ import {
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
 } from '@automattic/agents-manager';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSelect as useDateStoreSelect } from '@wordpress/data';
 import { Icon, comment, backup, page, video, rss } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { useHelpCenterSite } from 'calypso/layout/use-help-center-site';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from '../item';
 import HelpIcon from './help-icon';
@@ -19,6 +20,7 @@ import './style.scss';
 const MasterbarAgentsManager = ( { tooltip } ) => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
+	const { site, siteContextSource } = useHelpCenterSite();
 
 	const agentsManagerVisible = useDateStoreSelect(
 		( select ) => select( AGENTS_MANAGER_STORE ).getAgentsManagerState().isOpen,
@@ -26,12 +28,19 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 	);
 
 	const trackIconInteraction = () => {
-		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
-			is_help_center_visible: agentsManagerVisible,
-			section: sectionName,
-			is_menu_panel_enabled: true,
-			is_assignment_loaded: true,
-		} );
+		recordTracksEvent(
+			'wpcom_help_center_icon_interaction',
+			withSiteContext(
+				{
+					is_help_center_visible: agentsManagerVisible,
+					section: sectionName,
+					is_menu_panel_enabled: true,
+					is_assignment_loaded: true,
+				},
+				siteContextSource,
+				site?.ID
+			)
+		);
 	};
 
 	const handleMenuClick = ( destination, isExternal = false ) => {
@@ -50,11 +59,17 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 		}
 
 		if ( isClosing ) {
-			recordTracksEvent( 'calypso_inlinehelp_close', {
-				force_site_id: true,
-				location: 'help-center',
-				section: sectionName,
-			} );
+			recordTracksEvent(
+				'calypso_inlinehelp_close',
+				withSiteContext(
+					{
+						location: 'help-center',
+						section: sectionName,
+					},
+					siteContextSource,
+					site?.ID
+				)
+			);
 			return closeAgentsManagerChat();
 		}
 
@@ -62,12 +77,18 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 		// button; other items open the chat at their own route.
 		openAgentsManagerChat( destination === '/chat' ? undefined : destination );
 
-		recordTracksEvent( 'calypso_inlinehelp_show', {
-			force_site_id: true,
-			location: 'help-center',
-			section: sectionName,
-			destination,
-		} );
+		recordTracksEvent(
+			'calypso_inlinehelp_show',
+			withSiteContext(
+				{
+					location: 'help-center',
+					section: sectionName,
+					destination,
+				},
+				siteContextSource,
+				site?.ID
+			)
+		);
 	};
 
 	// Menu items for the panel

@@ -154,6 +154,7 @@ export default function usePrepareProductsForCart( {
 			sitelessCheckoutType === 'marketplace' ||
 			sitelessCheckoutType === 'a4a' ||
 			sitelessCheckoutType === 'unified' ||
+			sitelessCheckoutType === 'wpcom' ||
 			isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
@@ -236,7 +237,8 @@ function chooseAddHandler( {
 	if (
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
-		sitelessCheckoutType === 'unified'
+		sitelessCheckoutType === 'unified' ||
+		sitelessCheckoutType === 'wpcom'
 	) {
 		return 'addProductFromSlug';
 	}
@@ -756,6 +758,7 @@ function createItemToAddToCart( {
 			sitelessCheckoutType,
 			isDomainOnlySitelessCheckout: sitelessCheckoutType === 'domainonly',
 			isUnifiedSitelessCheckout: sitelessCheckoutType === 'unified',
+			isWpcomSitelessCheckout: sitelessCheckoutType === 'wpcom',
 			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 			isJetpackCheckout: sitelessCheckoutType === 'jetpack',
 			jetpackSiteSlug,

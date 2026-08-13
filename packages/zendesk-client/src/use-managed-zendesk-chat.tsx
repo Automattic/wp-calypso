@@ -116,17 +116,14 @@ type TracksProperties = Record< string, unknown >;
  * which is installed outside React and so cannot read a hook.
  */
 function recordWithSmoochSite( eventName: string, properties: TracksProperties = {} ) {
-	recordTracksEvent(
-		eventName,
-		withSiteContext( properties, [ [ 'chat_site', getSmoochSiteId() ] ] )
-	);
+	recordTracksEvent( eventName, withSiteContext( properties, 'chat_site', getSmoochSiteId() ) );
 }
 
 /** Records against the site this hook instance was given. */
 function useZendeskTracksEvent( siteId: number | string | undefined ) {
 	return useCallback(
 		( eventName: string, properties: TracksProperties = {} ) =>
-			recordTracksEvent( eventName, withSiteContext( properties, [ [ 'chat_site', siteId ] ] ) ),
+			recordTracksEvent( eventName, withSiteContext( properties, 'chat_site', siteId ) ),
 		[ siteId ]
 	);
 }
