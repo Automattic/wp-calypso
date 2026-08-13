@@ -56,7 +56,7 @@ type Story = StoryObj< typeof meta >;
 
 export const FreePlan: Story = {
 	args: {
-		domain: 'kaonashi.com',
+		domain: 'kaonashi.wordpress.com',
 		hasCustomDomain: false,
 		isPaidPlan: false,
 		isBilledMonthly: false,
