@@ -8,7 +8,8 @@ const QUERY_KEY = [ 'canConnectToZendesk' ];
 /**
  * Bump when the meaning of the events below changes, so Superset can tell old rows from new
  * ones. Version 2 reports once per settled query instead of once per observer per state.
- * Version 3 attaches the support site as `blog_id` when a consumer knows it.
+ * Version 3 attaches the support site as `blog_id` when a consumer knows it; only the
+ * request event gained anything in v3, the error event merely shares the counter.
  */
 const REPORTING_VERSION = 3;
 
@@ -144,7 +145,7 @@ export function useCanConnectToZendeskMessaging( enabled = true, siteId?: number
 		recordTracksEvent(
 			'calypso_helpcenter_zendesk_config_request',
 			reportingState.blogId
-				? withSiteContext( requestProperties, 'chat_site', reportingState.blogId )
+				? withSiteContext( requestProperties, 'help_center_context', reportingState.blogId )
 				: requestProperties
 		);
 		// The two timestamps look redundant next to `fetchStatus`, which already cycles on
