@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, jest } from '@jest/globals';
 import nock from 'nock';
 import * as teamcity from '../lib/teamcity';
-import { resetRaisedThrottles } from '../lib/throttle-flags';
+import { flushThrottleWrites, resetRaisedThrottles } from '../lib/throttle-flags';
 import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import type { Secrets } from '../secrets';
@@ -200,7 +200,7 @@ describe( 'RestAPIClient: createSite', function () {
 	} );
 
 	let tagOwnBuild: jest.SpiedFunction< typeof teamcity.tagOwnBuild >;
-	let setOwnBuildComment: jest.SpiedFunction< typeof teamcity.setOwnBuildComment >;
+	let appendOwnBuildLog: jest.SpiedFunction< typeof teamcity.appendOwnBuildLog >;
 	let warn: jest.SpiedFunction< typeof console.warn >;
 
 	// Restores only what the test below spies on: the file-level
@@ -208,14 +208,14 @@ describe( 'RestAPIClient: createSite', function () {
 	// decrypted secrets file, and `restoreAllMocks` would take it with it.
 	afterEach( () => {
 		tagOwnBuild?.mockRestore();
-		setOwnBuildComment?.mockRestore();
+		appendOwnBuildLog?.mockRestore();
 		warn?.mockRestore();
 		resetRaisedThrottles();
 	} );
 
 	test( 'A throttled response raises a flag and still fails the call', async function () {
 		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
-		setOwnBuildComment = jest.spyOn( teamcity, 'setOwnBuildComment' ).mockResolvedValue( 200 );
+		appendOwnBuildLog = jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
 		warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 		nock( requestURL.origin ).post( requestURL.pathname ).reply( 403, {
 			error: 'throttled',
@@ -227,17 +227,19 @@ describe( 'RestAPIClient: createSite', function () {
 			restAPIClient.createSite( { name: 'fake_blog_name', title: 'fake_blog_title' } )
 		).rejects.toThrow( 'throttled: Limit reached. You can try again in 10 minutes.' );
 
+		// Recording runs behind the call rather than in front of it, so settle it.
+		await flushThrottleWrites();
+
 		expect( tagOwnBuild ).toHaveBeenCalledWith( 'throttle-signup' );
-		// The build states the detail; the log only says a person why.
-		expect( setOwnBuildComment ).toHaveBeenCalledWith( expect.stringContaining( 'type=signup' ) );
-		expect( setOwnBuildComment ).toHaveBeenCalledWith(
+		expect( appendOwnBuildLog ).toHaveBeenCalledWith( expect.stringContaining( 'type=signup' ) );
+		expect( appendOwnBuildLog ).toHaveBeenCalledWith(
 			expect.stringContaining( 'duration=600000' )
 		);
 	} );
 
 	test( 'A throttled response is recognised without the sentence too', async function () {
 		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
-		setOwnBuildComment = jest.spyOn( teamcity, 'setOwnBuildComment' ).mockResolvedValue( 200 );
+		appendOwnBuildLog = jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
 		warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 		nock( requestURL.origin ).post( requestURL.pathname ).reply( 403, { error: 'throttled' } );
 

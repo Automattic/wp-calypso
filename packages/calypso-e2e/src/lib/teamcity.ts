@@ -24,11 +24,11 @@ interface BuildContext {
 const TAG_TIMEOUT_MS = 2_000;
 
 /**
- * How long a comment PUT may take. Shorter than the tag: a test that hit a
- * throttle waits on this before it may do anything about it, and a ban stated
- * too late to be read is worth no more than one never stated at all.
+ * How long a log write may take. Generous, because no test waits on it: the
+ * worker knows about its own ban the moment it sees it and carries on, and this
+ * runs behind it. Only a worker exiting settles it early.
  */
-const COMMENT_TIMEOUT_MS = 1_000;
+const LOG_WRITE_TIMEOUT_MS = 10_000;
 
 /**
  * Reads a single key out of `java.util.Properties.store()` output.
@@ -178,19 +178,18 @@ export async function tagOwnBuild( tag: string ): Promise< number | null > {
 }
 
 /**
- * Sets the comment on the build this process belongs to, replacing whatever it
- * held. Returns the HTTP status, or null when there is no TeamCity build around
- * this process — a local run, where there is nothing to write on.
+ * Adds a line to the log of the build this process belongs to. Returns the HTTP
+ * status, or null when there is no TeamCity build around this process.
  *
- * A comment is a field on the build rather than a line in its log, so it is
- * readable the moment this returns: it comes back from the same build lookup a
- * peer already makes, while a log line waits on the server ingesting a stream.
- * That is the whole reason a ban is stated here.
+ * Written through the REST API rather than printed, so the caller learns whether
+ * it landed. A build log only ever grows, which is what makes it the place to
+ * state a ban: a worker cannot overwrite what another worker put there, and a
+ * build's workers hit different throttles.
  *
- * Bounded tightly. A caller has a throttled test waiting on it, and a ban it
- * cannot state in that time is one it must not act as though it has stated.
+ * Landing is not the same as being readable. The server serves the line some
+ * seconds after this returns, and nothing here reports when.
  */
-export async function setOwnBuildComment( text: string ): Promise< number | null > {
+export async function appendOwnBuildLog( text: string ): Promise< number | null > {
 	const context = readBuildContext();
 	if ( ! context ) {
 		return null;
@@ -198,22 +197,22 @@ export async function setOwnBuildComment( text: string ): Promise< number | null
 
 	try {
 		const response = await fetch(
-			`${ context.serverUrl }/app/rest/builds/id:${ context.buildId }/comment`,
+			`${ context.serverUrl }/app/rest/builds/id:${ context.buildId }/log`,
 			{
-				method: 'PUT',
+				method: 'POST',
 				headers: {
 					'Content-Type': 'text/plain',
 					Authorization: authorization( context ),
 				},
 				body: text,
-				signal: AbortSignal.timeout( COMMENT_TIMEOUT_MS ),
+				signal: AbortSignal.timeout( LOG_WRITE_TIMEOUT_MS ),
 			}
 		);
 		return response.status;
 	} catch {
 		// As with the tag: the original error can carry a header derived from the
 		// build token, so it never leaves this module.
-		throw new Error( 'The TeamCity build comment request failed.' );
+		throw new Error( 'The TeamCity build log write failed.' );
 	}
 }
 
@@ -245,8 +244,6 @@ export interface TaggedBuild {
 	id: number;
 	/** When the build finished, or null while it is still running. */
 	finishedAtMs: number | null;
-	/** What the build states about itself, empty when it states nothing. */
-	comment: string;
 }
 
 /**
@@ -279,7 +276,7 @@ export async function fetchBuildsByTag(
 		response = await fetch(
 			`${ context.serverUrl }/app/rest/builds?locator=${ encodeURIComponent(
 				locator
-			) }&fields=build(id,finishDate,comment(text))`,
+			) }&fields=build(id,finishDate)`,
 			{
 				headers: { Accept: 'application/json', Authorization: authorization( context ) },
 				signal: AbortSignal.timeout( 5_000 ),
@@ -292,7 +289,7 @@ export async function fetchBuildsByTag(
 		throw new Error( `The TeamCity build lookup answered with status ${ response.status }.` );
 	}
 
-	let body: { build?: { id?: number; finishDate?: string; comment?: { text?: string } }[] };
+	let body: { build?: { id?: number; finishDate?: string }[] };
 	try {
 		body = await response.json();
 	} catch {
@@ -302,13 +299,54 @@ export async function fetchBuildsByTag(
 	}
 
 	return ( body.build ?? [] )
-		.filter( ( build ): build is { id: number; finishDate?: string; comment?: { text?: string } } =>
+		.filter( ( build ): build is { id: number; finishDate?: string } =>
 			Number.isFinite( build.id )
 		)
-		.map( ( build ) => ( {
-			id: build.id,
-			finishedAtMs: parseBuildDate( build.finishDate ),
-			// TeamCity leaves the key out rather than sending an empty one.
-			comment: build.comment?.text ?? '',
-		} ) );
+		.map( ( build ) => ( { id: build.id, finishedAtMs: parseBuildDate( build.finishDate ) } ) );
+}
+
+/**
+ * A build's log as text, or null when there is no TeamCity build around this
+ * process.
+ *
+ * There is no REST endpoint for reading logs and no way to ask for part of one,
+ * so this pulls the whole thing from the UI endpoint, under `/httpAuth/` so that
+ * a credential TeamCity will not accept comes back as a 401 rather than as a 200
+ * carrying the login page. An E2E build's log measures a little over 100KB and
+ * takes about a second, and this is only ever called for a build already known
+ * to carry a throttle tag, which is normally none of them.
+ *
+ * A refused or failed read throws, for the same reason the build lookup does:
+ * downloading another build's log is its own TeamCity permission, and a log we
+ * are not allowed to read must not pass for a log with nothing in it.
+ */
+export async function fetchBuildLog( buildId: number ): Promise< string | null > {
+	const context = readBuildContext();
+	if ( ! context ) {
+		return null;
+	}
+
+	let response;
+	try {
+		response = await fetch(
+			`${ context.serverUrl }/httpAuth/downloadBuildLog.html?buildId=${ buildId }`,
+			{
+				headers: { Authorization: authorization( context ) },
+				// The signal covers the body too, and the body is the whole log.
+				signal: AbortSignal.timeout( 20_000 ),
+			}
+		);
+	} catch {
+		throw new Error( 'The TeamCity build log request failed.' );
+	}
+	if ( ! response.ok ) {
+		throw new Error( `The TeamCity build log answered with status ${ response.status }.` );
+	}
+	try {
+		return await response.text();
+	} catch {
+		// The deadline covers the body, and the body is the whole log, so giving up
+		// part-way through is the ordinary case rather than the strange one.
+		throw new Error( 'The TeamCity build log could not be read to the end.' );
+	}
 }

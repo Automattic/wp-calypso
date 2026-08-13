@@ -91,6 +91,7 @@ import {
 	SelectItemsComponent,
 	THROTTLE_IDS,
 	debugThrottle,
+	flushThrottleWrites,
 	mayBeThrottled,
 	recordThrottle,
 } from '@automattic/calypso-e2e';
@@ -219,10 +220,13 @@ function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 		// checked between rounds: this runs inside the test's own timeout, and a
 		// lost flag costs a peer build a warning where an overrun costs this
 		// build a spec that had already passed.
+		// The listeners above, and the writes they and the REST client started:
+		// a worker that exits with one in flight leaves the build untagged.
 		const drain = ( async () => {
 			while ( pending.size ) {
 				await Promise.allSettled( [ ...pending ] );
 			}
+			await flushThrottleWrites();
 		} )();
 		await withDeadline( drain, FLUSH_TIMEOUT ).catch( () => {} );
 	};

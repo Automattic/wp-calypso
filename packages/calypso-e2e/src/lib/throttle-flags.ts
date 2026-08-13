@@ -1,4 +1,4 @@
-import { fetchBuildsByTag, setOwnBuildComment, tagOwnBuild } from './teamcity';
+import { appendOwnBuildLog, fetchBuildLog, fetchBuildsByTag, tagOwnBuild } from './teamcity';
 import type { TaggedBuild } from './teamcity';
 
 export const THROTTLE_IDS = [ 'signup', 'domain-suggestions', 'domain-availability' ] as const;
@@ -58,6 +58,32 @@ const BAN_DURATIONS: Record< ThrottleId, number > = {
 const TAG_WINDOW_MS = 6 * 60 * 60 * 1000;
 
 /**
+ * How long the whole read may spend pulling logs. An E2E build's log measures a
+ * little over 100KB and takes about a second to pull, and the locator asks for
+ * at most twenty builds, so this covers most of a worst case that in practice
+ * never arrives: a project with no throttle at all has no build to read.
+ */
+const LOG_BUDGET_MS = 20_000;
+
+/**
+ * The writes still in flight. A worker does not wait for its own: it knows
+ * about the ban already, and the request is only there to tell everyone else.
+ * Something has to hold them, though, or a worker exits mid-request and the
+ * last throttle of a run is never published.
+ */
+const publishing = new Set< Promise< void > >();
+
+/**
+ * Settles what `raiseFlag` started. For a worker's teardown, which is the last
+ * moment a build can still say what it hit.
+ */
+export async function flushThrottleWrites(): Promise< void > {
+	while ( publishing.size ) {
+		await Promise.allSettled( [ ...publishing ] );
+	}
+}
+
+/**
  * What this worker has already raised. One entry per id: a worker that has seen
  * a throttle knows about it for as long as it lasts, whatever happens next.
  */
@@ -102,6 +128,7 @@ export function resetRaisedThrottles(): void {
 	tagAttempts.clear();
 	tagging.clear();
 	reportedHere.clear();
+	publishing.clear();
 }
 
 /**
@@ -163,93 +190,40 @@ function flagFromMatch( match: RegExpMatchArray ): ThrottleFlag | null {
 }
 
 /**
- * States every ban this worker still holds on the build itself, and says
- * whether the build now carries them.
+ * Tells everyone else about a ban this worker hit: writes the line, then tags.
  *
- * All of them, because a comment is one field and a PUT replaces it whole: a
- * worker stating only the id it just hit would leave the build tagged for the
- * others with nothing to read, and a tag without a statement counts for nothing.
+ * That order, and the tag only if the line landed. A tag is what makes a build
+ * findable and a tag with no line to read counts for nothing, so tagging first
+ * publishes a build a peer can find and learn nothing from. A line that did not
+ * land leaves the build untagged, and the next refusal — which a throttled
+ * endpoint will supply — tries the whole thing again.
  *
- * They are restated from this worker's own copy, which another worker may
- * already have moved past, so an expiry can go out shorter than the one it
- * replaces. That is worth it. A ban stated too short is still a ban a peer sits
- * out, and it lapses into the same silence that dropping the id would have
- * caused immediately — later, and never sooner. Peers read the furthest expiry
- * they can see, so nothing here can pull a fresher statement down.
- *
- * Ones that have already run out are left off: a lapsed statement and no
- * statement read alike, and the field is easier to read without them.
- *
- * The line format is the one `flagsInLog` already reads, so what a peer parses
- * does not depend on where it was written.
+ * Nothing waits on this. The worker that hit the throttle already knows.
  */
-async function publishFlags( flag: ThrottleFlag ): Promise< boolean > {
-	const nowMs = Date.now();
-	const stated = new Map( raisedHere ).set( flag.id, flag );
-	const text = [ ...stated.values() ]
-		.filter( ( known ) => known.expiresAtMs > nowMs )
-		.map( formatThrottleLine )
-		.join( ' ' );
-
+async function publish( flag: ThrottleFlag ): Promise< void > {
 	try {
-		const status = await setOwnBuildComment( text );
-		// No build to write on is a local run, where there is no peer to read it
-		// either and the worker's own copy is the whole point.
-		return status === null || ( status >= 200 && status < 300 );
-	} catch {
-		return false;
-	}
-}
-
-/**
- * Records a throttle this worker just hit: states it on the build, then tags.
- *
- * That order, and nothing recorded until the first half of it lands. A tag is
- * what makes a build findable, so tagging a build that does not yet state its
- * ban publishes a build a peer can find and learn nothing from. A ban this
- * build could not state is one it must behave as though it never saw: nothing
- * kept here, nothing tagged, and the next refusal — which a throttled endpoint
- * will supply — tries the whole thing again.
- *
- * The tag is retried until it lands or is refused often enough to be settled.
- * Never throws: a build that cannot say it was throttled still runs.
- */
-export async function raiseFlag( id: ThrottleId ): Promise< void > {
-	const nowMs = Date.now();
-	const duration = BAN_DURATIONS[ id ];
-	const expiresAtMs = nowMs + duration;
-
-	const known = raisedHere.get( id );
-	const live = known && known.expiresAtMs > nowMs ? known : null;
-
-	// Refused again while the ban is in force: coming back early lengthens it, so
-	// the expiry moves out, and the comment is the only place a peer can read
-	// that. Restated as the ban ages rather than on every refusal: the endpoints
-	// that answer one refusal per keystroke would otherwise spend a request each,
-	// so a peer's copy of the expiry is at most a tenth of a ban behind this
-	// worker's.
-	if ( live && nowMs - live.raisedAtMs < duration / 10 ) {
-		raisedHere.set( id, { ...live, expiresAtMs } );
-	} else {
-		const flag: ThrottleFlag = { id, raisedAtMs: nowMs, durationMs: duration, expiresAtMs };
-		if ( ! ( await publishFlags( flag ) ) ) {
+		const status = await appendOwnBuildLog( formatThrottleLine( flag ) );
+		// No build to write on is a local run: nothing to tag either.
+		if ( status === null ) {
 			return;
 		}
-		raisedHere.set( id, flag );
-		// Not a line `EVERY_LINE` matches: the build states its bans in its
-		// comment, and this is only so a person reading the log knows why.
-		console.warn(
-			`wpcom is throttling ${ id } for ${ approximately( duration ) }; stated on this build.`
-		);
+		if ( status < 200 || status >= 300 ) {
+			console.warn( `TeamCity refused the ${ flag.id } throttle line with status ${ status }.` );
+			return;
+		}
+	} catch {
+		// Telling everyone else never fails the test that found it.
+		return;
 	}
 
+	const id = flag.id;
 	if ( tagSettled.has( id ) ) {
 		return;
 	}
 
 	// A burst of refusals is one opportunity to tag, not several: the page fires
-	// a request per keystroke, and three of them landing in the same tick would
-	// otherwise spend every attempt on one instant of TeamCity trouble.
+	// a request per keystroke, and three of them landing together would otherwise
+	// spend every attempt on one instant of TeamCity trouble.
 	const inFlight = tagging.get( id );
 	if ( inFlight ) {
 		await inFlight;
@@ -263,6 +237,53 @@ export async function raiseFlag( id: ThrottleId ): Promise< void > {
 	} finally {
 		tagging.delete( id );
 	}
+}
+
+/**
+ * Records a throttle this worker just hit.
+ *
+ * The worker's own copy is set first and unconditionally: it ran into the ban,
+ * so it knows about it whatever TeamCity has to say, and it must not have to
+ * wait on a request to act on what it already saw. Both the map and the
+ * variable, so a caller reads a ban this worker raised the same way it reads
+ * one the pre-flight check found.
+ *
+ * Telling everyone else runs behind that and is not awaited here. It is held in
+ * `publishing` so a worker's teardown can settle it; see `flushThrottleWrites`.
+ * Never throws.
+ */
+export function raiseFlag( id: ThrottleId ): Promise< void > {
+	const nowMs = Date.now();
+	const duration = BAN_DURATIONS[ id ];
+	const expiresAtMs = nowMs + duration;
+
+	const known = raisedHere.get( id );
+	const live = known && known.expiresAtMs > nowMs ? known : null;
+
+	// Refused again while the ban is in force: coming back early lengthens it, so
+	// the expiry moves out. Restated to everyone else as the ban ages rather than
+	// on every refusal: the endpoints that answer one refusal per keystroke would
+	// otherwise spend a request each, so a peer's copy of the expiry is at most a
+	// tenth of a ban behind this worker's.
+	const restating = ! live || nowMs - live.raisedAtMs >= duration / 10;
+	const flag: ThrottleFlag = restating
+		? { id, raisedAtMs: nowMs, durationMs: duration, expiresAtMs }
+		: { ...( live as ThrottleFlag ), expiresAtMs };
+
+	raisedHere.set( id, flag );
+	process.env[ throttleEnvVar( id ) ] = String( expiresAtMs );
+
+	if ( ! restating ) {
+		return Promise.resolve();
+	}
+
+	// Not a line `EVERY_LINE` matches: what a peer reads is written to the build
+	// log through the REST API, and this is only so a person reading it knows why.
+	console.warn( `wpcom is throttling ${ id } for ${ approximately( duration ) }.` );
+
+	const writing = publish( flag ).finally( () => publishing.delete( writing ) );
+	publishing.add( writing );
+	return writing;
 }
 
 /**
@@ -389,12 +410,12 @@ export function debugThrottle( id: ThrottleId, nowMs: number = Date.now() ): voi
  * The last covers the lookup itself being refused — an id nothing can be said
  * about is not an id with nothing to report, and nothing is retried.
  *
- * A tag alone reports nothing. Only a build that states a ban still in force
- * counts, so a tagged build whose comment says nothing about this id is passed
- * over rather than dated from its own clock. What that costs is a ban going
- * unreported until somebody runs into it, which is how every ban here is found
- * in the first place; what it buys is that no expiry is ever published that no
- * build ever stated.
+ * A tag alone reports nothing. Only a build whose log carries a line for this id
+ * that is still in force counts; a tagged build with no such line, or one whose
+ * log there was no time to read, is passed over rather than dated from its own
+ * clock. What that costs is a ban going unreported until somebody runs into it,
+ * which is how every ban here is found in the first place; what it buys is that
+ * no expiry is ever published that no build ever wrote.
  */
 export async function readActiveThrottles(
 	nowMs: number = Date.now()
@@ -417,14 +438,36 @@ export async function readActiveThrottles(
 		} )
 	);
 
-	// Each build states its bans in its own comment, which the lookup above
-	// already carried back. Nothing further to fetch, and nothing to budget: what
-	// used to cost a log download per tagged build now costs the request that
-	// found it.
+	// A build that hit two throttles carries both tags. Read each log once,
+	// however many ids ask for it. One clock for the whole read rather than a
+	// share each: the loop below is sequential, so a per-id share would stop the
+	// first id short while the ids after it, which may have no tagged build at
+	// all, keep time they cannot spend.
+	const until = Date.now() + LOG_BUDGET_MS;
+	const logs = new Map< number, Promise< Map< ThrottleId, ThrottleFlag > | null > >();
+	const unread = Promise.resolve( null );
+	const readFlags = ( buildId: number ) => {
+		const known = logs.get( buildId );
+		if ( known ) {
+			return known;
+		}
+		if ( Date.now() >= until ) {
+			return unread;
+		}
+		const reading = fetchBuildLog( buildId )
+			.then( flagsInLog )
+			.catch( ( error: unknown ) => {
+				console.warn( `Could not read the log of build ${ buildId }: ${ error }` );
+				return null;
+			} );
+		logs.set( buildId, reading );
+		return reading;
+	};
+
 	const active: Partial< Record< ThrottleId, number | null > > = {};
 	for ( const { id, builds, looked } of listed ) {
 		if ( looked ) {
-			active[ id ] = furthestExpiry( id, nowMs, builds );
+			active[ id ] = await furthestExpiry( id, nowMs, builds, readFlags );
 		}
 	}
 	return active;
@@ -433,19 +476,21 @@ export async function readActiveThrottles(
 /**
  * The furthest expiry one throttle carries across the builds tagged with it.
  */
-function furthestExpiry(
+async function furthestExpiry(
 	id: ThrottleId,
 	nowMs: number,
-	builds: TaggedBuild[] | null
-): number | null {
+	builds: TaggedBuild[] | null,
+	readFlags: ( buildId: number ) => Promise< Map< ThrottleId, ThrottleFlag > | null >
+): Promise< number | null > {
 	let latest = 0;
 	for ( const build of builds ?? [] ) {
-		// A tagged build that states nothing about this id is passed over. Its
-		// comment was taken by another worker, or its statement never landed, and
-		// dating a ban from the build's own clock would publish an expiry no build
-		// ever gave. A lapsed statement goes the same way, being no further off
-		// than none at all.
-		latest = Math.max( latest, flagsInLog( build.comment ).get( id )?.expiresAtMs ?? 0 );
+		// A tagged build with no line for this id is passed over, whether the log
+		// said nothing or went unread. The tag says a ban happened; only the line
+		// says when it ends, and dating one from the build's own clock would
+		// publish an expiry no build ever wrote. A lapsed line goes the same way,
+		// being no further off than none at all.
+		const flag = ( await readFlags( build.id ) )?.get( id );
+		latest = Math.max( latest, flag?.expiresAtMs ?? 0 );
 	}
 
 	return latest > nowMs ? latest : null;

@@ -3,10 +3,11 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import {
+	appendOwnBuildLog,
+	fetchBuildLog,
 	fetchBuildsByTag,
 	parseBuildDate,
 	readProperty,
-	setOwnBuildComment,
 	tagOwnBuild,
 } from '../lib/teamcity';
 
@@ -108,18 +109,17 @@ describe( 'fetchBuildsByTag', () => {
 		jest.spyOn( globalThis, 'fetch' ).mockResolvedValue(
 			Response.json( {
 				build: [
-					{ id: 11, finishDate: '20260810T124500+0000', comment: { text: 'stated' } },
+					{ id: 11, finishDate: '20260810T124500+0000' },
 					{ id: 22, finishDate: '20260810T144500+0200' },
 					{ id: 33 },
 				],
 			} )
 		);
 
-		// A build that states nothing has no comment key at all, not an empty one.
 		await expect( fetchBuildsByTag( 'throttle-signup', { sinceMs: 0 } ) ).resolves.toEqual( [
-			{ id: 11, finishedAtMs: Date.parse( '2026-08-10T12:45:00Z' ), comment: 'stated' },
-			{ id: 22, finishedAtMs: Date.parse( '2026-08-10T12:45:00Z' ), comment: '' },
-			{ id: 33, finishedAtMs: null, comment: '' },
+			{ id: 11, finishedAtMs: Date.parse( '2026-08-10T12:45:00Z' ) },
+			{ id: 22, finishedAtMs: Date.parse( '2026-08-10T12:45:00Z' ) },
+			{ id: 33, finishedAtMs: null },
 		] );
 	} );
 
@@ -135,6 +135,15 @@ describe( 'fetchBuildsByTag', () => {
 
 	test( 'no TeamCity build around it is nothing to ask, not a failure', async () => {
 		await expect( fetchBuildsByTag( 'throttle-signup', { sinceMs: 0 } ) ).resolves.toBeNull();
+	} );
+
+	test( 'a refused log read is reported, not read as an empty log', async () => {
+		writeProperties( completeProperties() );
+		jest
+			.spyOn( globalThis, 'fetch' )
+			.mockResolvedValue( new Response( 'Access denied', { status: 401 } ) );
+
+		await expect( fetchBuildLog( 11 ) ).rejects.toThrow( '401' );
 	} );
 
 	test( 'anything but a date is no date at all', () => {
@@ -210,28 +219,28 @@ describe( 'tagOwnBuild', () => {
 	} );
 } );
 
-describe( 'setOwnBuildComment', () => {
-	test( 'puts the text on this build, with the token only in the header', async () => {
+describe( 'appendOwnBuildLog', () => {
+	test( 'posts the line to this build, with the token only in the header', async () => {
 		writeProperties( completeProperties() );
 		const fetchSpy = jest
 			.spyOn( globalThis, 'fetch' )
 			.mockResolvedValue( new Response( '', { status: 200 } ) );
 
-		await expect( setOwnBuildComment( 'stated' ) ).resolves.toBe( 200 );
+		await expect( appendOwnBuildLog( 'a line' ) ).resolves.toBe( 200 );
 
 		const [ url, init ] = fetchSpy.mock.calls[ 0 ] as [ string, RequestInit ];
-		expect( url ).toBe( 'https://teamcity.example.com/app/rest/builds/id:18847887/comment' );
+		expect( url ).toBe( 'https://teamcity.example.com/app/rest/builds/id:18847887/log' );
 		expect( url ).not.toContain( PASSWORD );
-		expect( init.method ).toBe( 'PUT' );
-		expect( init.body ).toBe( 'stated' );
+		expect( init.method ).toBe( 'POST' );
+		expect( init.body ).toBe( 'a line' );
 		expect( ( init.headers as Record< string, string > ).Authorization ).toBe(
 			`Basic ${ Buffer.from( `TeamCityBuildId=18847887:${ PASSWORD }` ).toString( 'base64' ) }`
 		);
 	} );
 
-	test( 'no TeamCity build around it is nothing to state, not a failure', async () => {
+	test( 'no TeamCity build around it is nothing to write, not a failure', async () => {
 		const fetchSpy = jest.spyOn( globalThis, 'fetch' );
-		await expect( setOwnBuildComment( 'stated' ) ).resolves.toBeNull();
+		await expect( appendOwnBuildLog( 'a line' ) ).resolves.toBeNull();
 		expect( fetchSpy ).not.toHaveBeenCalled();
 	} );
 
@@ -246,8 +255,8 @@ describe( 'setOwnBuildComment', () => {
 			jest.spyOn( console, method ).mockImplementation( () => undefined )
 		);
 
-		await expect( setOwnBuildComment( 'stated' ) ).rejects.toThrow(
-			'The TeamCity build comment request failed.'
+		await expect( appendOwnBuildLog( 'a line' ) ).rejects.toThrow(
+			'The TeamCity build log write failed.'
 		);
 
 		for ( const spy of consoleSpies ) {
@@ -261,6 +270,6 @@ describe( 'setOwnBuildComment', () => {
 			.spyOn( globalThis, 'fetch' )
 			.mockResolvedValue( new Response( 'Access denied', { status: 403 } ) );
 
-		await expect( setOwnBuildComment( 'stated' ) ).resolves.toBe( 403 );
+		await expect( appendOwnBuildLog( 'a line' ) ).resolves.toBe( 403 );
 	} );
 } );

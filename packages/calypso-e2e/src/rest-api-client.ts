@@ -282,10 +282,12 @@ export class RestAPIClient {
 			// Recorded either way, and rethrown untouched. The endpoint travels
 			// alongside: neither shape names it, and a bare `throttled` code means
 			// nothing without it.
-			await recordThrottle( error, url.href );
+			// Not awaited: the worker knows about the ban the moment this returns,
+			// and telling the rest of the project runs behind it.
+			void recordThrottle( error, url.href );
 			throw error;
 		}
-		await recordThrottle( response, url.href );
+		void recordThrottle( response, url.href );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
