@@ -102,7 +102,7 @@ describe( 'useSiteGeneration', () => {
 		expect( stopStatusPolling ).toHaveBeenCalled();
 	} );
 
-	it( 'shows the calm fallback (never an error) when the backend reports a failed build', () => {
+	it( 'shows the calm fallback when the backend reports a failed build without UI', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
@@ -167,13 +167,14 @@ describe( 'useSiteGeneration', () => {
 
 		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
 			'active',
-			'pending',
-			'pending',
-			'pending',
-			'pending',
-			'pending',
+			'idle',
+			'idle',
+			'idle',
+			'idle',
+			'idle',
 		] );
 		expect( result.current.steps[ 0 ].label ).toBe( 'Preparing your site' );
+		expect( result.current.steps[ 0 ].startedAt ).toEqual( expect.any( Number ) );
 	} );
 
 	it( 'renders the server checklist verbatim once it arrives', () => {
@@ -191,12 +192,12 @@ describe( 'useSiteGeneration', () => {
 		} );
 
 		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
-			'complete',
-			'complete',
+			'done',
+			'done',
 			'active',
-			'pending',
-			'pending',
-			'pending',
+			'idle',
+			'idle',
+			'idle',
 		] );
 		expect( result.current.steps[ 2 ].id ).toBe( 'pages' );
 
@@ -205,6 +206,30 @@ describe( 'useSiteGeneration', () => {
 			onUpdate( { state: 'finishing', steps: SERVER_STEPS( 4 ) } );
 		} );
 		expect( result.current.steps[ 4 ].status ).toBe( 'active' );
+	} );
+
+	it( 'keeps the active step start time until the server advances', () => {
+		jest.setSystemTime( 1723032220000 );
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		const { onUpdate } = statusPollMock.mock.calls[ 0 ][ 0 ];
+		act( () => onUpdate( { state: 'generating', steps: SERVER_STEPS( 2 ) } ) );
+		expect( result.current.steps[ 2 ].startedAt ).toBe( 1723032220000 );
+
+		act( () => {
+			jest.advanceTimersByTime( 10000 );
+			onUpdate( { state: 'generating', steps: SERVER_STEPS( 2 ) } );
+		} );
+		expect( result.current.steps[ 2 ].startedAt ).toBe( 1723032220000 );
+
+		act( () => onUpdate( { state: 'generating', steps: SERVER_STEPS( 3 ) } ) );
+		expect( result.current.steps[ 3 ].startedAt ).toBe( 1723032230000 );
 	} );
 
 	it( 'keeps the fallback checklist when a response carries no usable steps', () => {
@@ -327,11 +352,11 @@ describe( 'useSiteGeneration', () => {
 		expect( result.current.steps[ 0 ].label ).toBe( 'Preparing your site' );
 		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
 			'active',
-			'pending',
-			'pending',
-			'pending',
-			'pending',
-			'pending',
+			'idle',
+			'idle',
+			'idle',
+			'idle',
+			'idle',
 		] );
 	} );
 
