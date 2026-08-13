@@ -1,7 +1,29 @@
 import clsx from 'clsx';
 import React from 'react';
 import { ClickableItem } from '../menu-items';
-import type { Nav2026Menu } from './types';
+import { Nav2026ItemContent } from './item-content';
+import type { Nav2026Group, Nav2026Menu } from './types';
+
+// Groups sharing a `columnGroup` key stack in one column; the rest get their own.
+function toColumns( groups: Nav2026Group[] ): Nav2026Group[][] {
+	const columns: Nav2026Group[][] = [];
+	const byKey = new Map< string, Nav2026Group[] >();
+
+	for ( const group of groups ) {
+		const existing = group.columnGroup ? byKey.get( group.columnGroup ) : undefined;
+		if ( existing ) {
+			existing.push( group );
+			continue;
+		}
+		const column = [ group ];
+		columns.push( column );
+		if ( group.columnGroup ) {
+			byKey.set( group.columnGroup, column );
+		}
+	}
+
+	return columns;
+}
 
 interface Nav2026DesktopDropdownProps {
 	dropdownRef: React.RefObject< HTMLDivElement | null >;
@@ -42,39 +64,39 @@ export function Nav2026DesktopDropdown( {
 						key={ menu.name }
 					>
 						<div className="x-dropdown-subcategories">
-							{ menu.groups.map( ( group ) => (
-								<div className="x-dropdown-column-group" key={ group.title }>
-									<h4
-										className="x-dropdown-subcategory-title"
-										role="presentation"
-										style={ { '--stagger-index': staggerIndex++ } as React.CSSProperties }
-									>
-										{ group.title }
-									</h4>
-									<ul>
-										{ group.items.map( ( item ) => (
-											<ClickableItem
-												key={ item.url }
-												index={ staggerIndex++ }
-												titleValue=""
-												content={
-													item.badge ? (
-														<>
-															{ item.label }
-															<span className="x-dropdown-badge-new">{ item.badge }</span>
-														</>
-													) : (
-														item.label
-													)
-												}
-												urlValue={ item.url }
-												type="dropdown"
-												trackingText={ item.label }
-												target={ item.target }
-												tabIndex={ activeDropdown === menu.name ? undefined : -1 }
-											/>
-										) ) }
-									</ul>
+							{ toColumns( menu.groups ).map( ( column ) => (
+								<div className="x-dropdown-column-group" key={ column[ 0 ].title }>
+									{ column.map( ( group ) => (
+										<div className="x-dropdown-subcategory" key={ group.title }>
+											<h4
+												className="x-dropdown-subcategory-title"
+												role="presentation"
+												style={ { '--stagger-index': staggerIndex++ } as React.CSSProperties }
+											>
+												{ group.title }
+											</h4>
+											<ul>
+												{ group.items.map( ( item ) => (
+													<ClickableItem
+														key={ item.url }
+														index={ staggerIndex++ }
+														titleValue=""
+														content={
+															<Nav2026ItemContent
+																item={ item }
+																badgeClassName="x-dropdown-badge-new"
+															/>
+														}
+														urlValue={ item.url }
+														type="dropdown"
+														trackingText={ item.label }
+														target={ item.target }
+														tabIndex={ activeDropdown === menu.name ? undefined : -1 }
+													/>
+												) ) }
+											</ul>
+										</div>
+									) ) }
 								</div>
 							) ) }
 						</div>

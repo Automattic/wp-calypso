@@ -43,7 +43,6 @@ const UniversalNavbarHeader = ( {
 	startUrl,
 	loginUrl,
 	nav2026 = false,
-	nav2026Variant = 1,
 	userAvatar,
 	userName,
 	userEmail,
@@ -74,7 +73,7 @@ const UniversalNavbarHeader = ( {
 	const prevDropdownRef = useRef< string | null >( null );
 	// The <nav> element, so the legacy arm can bind DOM-listener telemetry.
 	const legacyNavRef = useRef< HTMLElement >( null );
-	useDropdownOffset( nav2026, nav2026Variant );
+	useDropdownOffset( nav2026 );
 	useFooterHeight( {
 		nav2026,
 		isMobileMenuOpen,
@@ -85,11 +84,8 @@ const UniversalNavbarHeader = ( {
 	const dropdownRef = useDropdownFlip( { nav2026, activeDropdown } );
 
 	const nav2026Menus = useMemo(
-		() =>
-			nav2026
-				? getNav2026Menus( { __, localizeUrl, locale, isLoggedIn, variant: nav2026Variant } )
-				: [],
-		[ nav2026, __, localizeUrl, locale, isLoggedIn, nav2026Variant ]
+		() => ( nav2026 ? getNav2026Menus( { __, localizeUrl, locale, isLoggedIn } ) : [] ),
+		[ nav2026, __, localizeUrl, locale, isLoggedIn ]
 	);
 	const activeCategory = nav2026Menus.find( ( menu ) => menu.name === currentDropdown );
 
