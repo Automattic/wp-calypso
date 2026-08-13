@@ -126,16 +126,20 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		launchSiteNode,
 	].filter( ( node ) => node !== undefined );
 
+	const plugins = baseOmnibarNodes.user
+		? [
+				...( languageSwitcherNode ? [ languageSwitcherNode ] : [] ),
+				...( supports.reader ? [ readerPluginNode ] : [] ),
+				...( supports.help ? [ helpCenterPluginNode ] : [] ),
+				...( supports.help && aiChatPluginNode ? [ aiChatPluginNode ] : [] ),
+				...( supports.notifications ? [ notificationsPluginNode ] : [] ),
+		  ]
+		: [];
+
 	const omnibarNodes = {
 		...baseOmnibarNodes,
 		siteActions,
-		plugins: [
-			...( languageSwitcherNode ? [ languageSwitcherNode ] : [] ),
-			...( supports.reader ? [ readerPluginNode ] : [] ),
-			...( supports.help ? [ helpCenterPluginNode ] : [] ),
-			...( supports.help && aiChatPluginNode ? [ aiChatPluginNode ] : [] ),
-			...( supports.notifications ? [ notificationsPluginNode ] : [] ),
-		],
+		plugins,
 	};
 
 	if ( ! hydrated ) {
