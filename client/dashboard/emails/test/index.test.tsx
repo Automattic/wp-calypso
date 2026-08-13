@@ -9,13 +9,14 @@ import { render } from '../../test-utils';
 import Emails from '../index';
 import type { DomainSummary, EmailAccount } from '@automattic/api-core';
 
+let mockEmailsSearch: Record< string, unknown > = {};
 jest.mock( '../../app/router/emails', () => {
 	const actual = jest.requireActual( '../../app/router/emails' );
 	return {
 		...actual,
 		emailsRoute: {
 			...actual.emailsRoute,
-			useSearch: () => ( {} ),
+			useSearch: () => mockEmailsSearch,
 		},
 	};
 } );
@@ -72,6 +73,44 @@ function mockApi( { domains, accounts }: { domains: DomainSummary[]; accounts: E
 }
 
 describe( '<Emails>', () => {
+	afterEach( () => {
+		mockEmailsSearch = {};
+	} );
+
+	test( 'applies the domain filter from the URL query params', async () => {
+		const OTHER_DOMAIN = 'other.example.com';
+		const otherDomain = {
+			...nonOwnedDomain,
+			domain: OTHER_DOMAIN,
+			blog_id: 2,
+			site_slug: OTHER_DOMAIN,
+		} as DomainSummary;
+		const otherAccount = {
+			...forwardingAccount,
+			domains: [ { domain: OTHER_DOMAIN, is_primary: true } ],
+			emails: [
+				{
+					mailbox: 'zzz',
+					domain: OTHER_DOMAIN,
+					target: 'someone-else@example.com',
+					email_type: 'email_forward',
+					role: 'standard',
+					warnings: [],
+				},
+			],
+		} as unknown as EmailAccount;
+
+		mockEmailsSearch = { domainName: DOMAIN };
+		mockApi( {
+			domains: [ nonOwnedDomain, otherDomain ],
+			accounts: [ forwardingAccount, otherAccount ],
+		} );
+		render( <Emails /> );
+
+		expect( await screen.findByText( `yea@${ DOMAIN }` ) ).toBeVisible();
+		expect( screen.queryByText( `zzz@${ OTHER_DOMAIN }` ) ).not.toBeInTheDocument();
+	} );
+
 	// DOTMSD-1477
 	test( 'lists forwards on a domain the user administers but does not own', async () => {
 		mockApi( { domains: [ nonOwnedDomain ], accounts: [ forwardingAccount ] } );

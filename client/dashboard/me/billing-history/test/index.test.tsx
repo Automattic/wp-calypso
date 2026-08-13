@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -105,6 +105,45 @@ function mockEndpoints( { siteList = sites }: { siteList?: Site[] } = {} ) {
 }
 
 describe( '<BillingHistory>', () => {
+	afterEach( () => {
+		window.history.replaceState( null, '', '/' );
+	} );
+
+	test( 'applies the site filter from the URL query params', async () => {
+		window.history.replaceState( null, '', '/?site=1' );
+		mockEndpoints();
+		render( <BillingHistory />, { user: testUser } );
+
+		const table = await screen.findByRole( 'table' );
+		await within( table ).findByText( 'Site A Personal Plan' );
+		expect( within( table ).queryByText( 'Site B Business Plan' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'writes the site filter to the URL query params', async () => {
+		mockEndpoints();
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.post( '/rest/v1.1/me/preferences' )
+			.reply( 200 );
+		const user = userEvent.setup();
+		const { router } = render( <BillingHistory />, { user: testUser } );
+
+		await screen.findByRole( 'table' );
+		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
+		await user.click( screen.getByRole( 'menuitem', { name: 'Site' } ) );
+		await user.click( await screen.findByRole( 'option', { name: /Site A/ } ) );
+
+		await waitFor( () => {
+			expect( router.state.location.search ).toEqual( { site: '1' } );
+		} );
+
+		const table = screen.getByRole( 'table' );
+		await waitFor( () => {
+			expect( within( table ).queryByText( 'Site B Business Plan' ) ).not.toBeInTheDocument();
+		} );
+		expect( within( table ).getByText( 'Site A Personal Plan' ) ).toBeVisible();
+	} );
+
 	test( 'shows receipts for every site', async () => {
 		mockEndpoints();
 		render( <BillingHistory />, { user: testUser } );

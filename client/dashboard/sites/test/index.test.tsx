@@ -53,6 +53,42 @@ describe( '<Sites>', () => {
 			.reply( 200, { calypso_preferences: {} } );
 	} );
 
+	afterEach( () => {
+		window.history.replaceState( null, '', '/' );
+	} );
+
+	test( 'applies the deleted-sites filter from the URL query params', async () => {
+		window.history.replaceState( null, '', '/?is_deleted=true' );
+
+		const deletedSitesRequest = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.3/me/sites' )
+			.query( ( q ) => q.site_visibility === 'deleted' )
+			.reply( 200, {
+				sites: [
+					{
+						...mockSites[ 0 ],
+						ID: 99,
+						name: 'My Deleted Site',
+						slug: 'my-deleted-site.wordpress.com',
+						URL: 'https://my-deleted-site.wordpress.com',
+						is_deleted: true,
+					} as Site,
+				],
+				total: 1,
+			} );
+		mockSitesEndpoint( mockSites );
+
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+			} as User,
+		} );
+
+		expect( await screen.findByText( 'My Deleted Site' ) ).toBeVisible();
+		expect( deletedSitesRequest.isDone() ).toBe( true );
+		expect( screen.queryByText( 'My First Site' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'renders Add new site button', async () => {
 		mockSitesEndpoint( mockSites );
 		render( <Sites />, {
