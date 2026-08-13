@@ -38,6 +38,8 @@ export function hasBenefitedFromIntroductoryOffer(
 	return earliestLicense.issuedAt.slice( 0, 10 ) >= PRESSABLE_Q3_2026_OFFER_START_DATE;
 }
 
+// Fires a licenses API request on mount, so callers should only mount the
+// component using it once cheaper eligibility checks have passed.
 export default function useHasBenefitedFromIntroductoryOffer() {
 	const { data, isFetched } = useFetchLicenses(
 		LicenseFilter.NotRevoked,

@@ -2,6 +2,10 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useMemo } from 'react';
+import {
+	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
+	PRESSABLE_Q3_2026_OFFER_START_DATE,
+} from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/constants';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { UpcomingEventProps } from 'calypso/a8c-for-agencies/components/upcoming-event/types';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
@@ -13,7 +17,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
-export const useUpcomingEvents = () => {
+export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} ) => {
 	const translate = useTranslate();
 	const localizedMoment = useLocalizedMoment();
 
@@ -151,6 +155,45 @@ export const useUpcomingEvents = () => {
 						},
 				  ]
 				: [] ),
+			...( showPressableExpansionOffer
+				? [
+						{
+							id: 'a4a-pressable-expansion-offer-2026-q3',
+							date: {
+								from: moment( PRESSABLE_Q3_2026_OFFER_START_DATE ),
+								to: moment( '2026-09-30' ),
+							},
+							title: translate(
+								'Pressable expansion offer: Save when you expand your existing Pressable plan!'
+							),
+							subtitle: translate( 'Automattic for Agencies & Pressable' ),
+							descriptions: [
+								translate(
+									'Placeholder description: dummy copy describing the expansion offer for agencies with an existing Pressable plan.'
+								),
+							],
+							ctas: [
+								{
+									variant: 'primary',
+									label: translate( 'View promo details' ),
+									url: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+									trackEventName:
+										'calypso_a4a_overview_events_a4a_pressable_expansion_offer_view_promo_details_click',
+								},
+								{
+									variant: 'secondary',
+									label: translate( 'See full terms' ),
+									url: PRESSABLE_EXPANSION_OFFER_TERMS_URL,
+									isExternal: true,
+									trackEventName:
+										'calypso_a4a_overview_events_a4a_pressable_expansion_offer_see_full_terms_click',
+								},
+							],
+							logoUrl: PressableLogo,
+							dateClassName: 'a4a-event__date--a4a',
+						},
+				  ]
+				: [] ),
 		];
 
 		return eventsData.filter( ( event ) => {
@@ -158,5 +201,5 @@ export const useUpcomingEvents = () => {
 			const today = localizedMoment().startOf( 'day' );
 			return eventDate.isSameOrAfter( today );
 		} );
-	}, [ localizedMoment, shouldShowPressablePromoOffer, translate ] );
+	}, [ localizedMoment, shouldShowPressablePromoOffer, showPressableExpansionOffer, translate ] );
 };

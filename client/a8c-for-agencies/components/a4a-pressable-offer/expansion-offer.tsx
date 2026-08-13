@@ -3,10 +3,8 @@ import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketp
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import PressableOfferBanner from './banner';
-import { PRESSABLE_Q3_2026_OFFER_DEADLINE } from './constants';
+import { PRESSABLE_EXPANSION_OFFER_TERMS_URL, PRESSABLE_Q3_2026_OFFER_DEADLINE } from './constants';
 import useHasBenefitedFromIntroductoryOffer from './hooks/use-has-benefited-from-introductory-offer';
-
-const FULL_TERMS_URL = 'https://pressable.com/legal/';
 
 const PressableExpansionOfferBanner = () => {
 	const translate = useTranslate();
@@ -49,7 +47,7 @@ const PressableExpansionOfferBanner = () => {
 				),
 			] }
 			ctaLabel={ translate( 'See full terms ↗' ) }
-			ctaUrl={ FULL_TERMS_URL }
+			ctaUrl={ PRESSABLE_EXPANSION_OFFER_TERMS_URL }
 			footnote={ translate( '*Offer valid for a limited time' ) }
 			toggleEventName="calypso_a4a_pressable_expansion_offer_toggle_view"
 			ctaEventName="calypso_a4a_pressable_expansion_offer_see_full_terms_click"
