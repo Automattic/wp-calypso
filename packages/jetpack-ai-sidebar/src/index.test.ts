@@ -51,6 +51,7 @@ const mockSelectBlock = jest.fn( ( clientId?: string | null ) => {
 const mockClearSelectedBlock = jest.fn( () => {
 	mockSelectedBlockClientId = null;
 } );
+const mockEditPost = jest.fn();
 const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 	typeof recordTracksEvent
 >;
@@ -147,6 +148,9 @@ jest.mock( '@wordpress/data', () => ( {
 		}
 		if ( store === 'image-studio' ) {
 			return mockImageStudioActions ?? {};
+		}
+		if ( store === 'core/editor' ) {
+			return { editPost: mockEditPost };
 		}
 		return {};
 	} ),
