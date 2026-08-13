@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import type { ReactElement } from 'react';
@@ -45,6 +45,15 @@ export function useBlackboxProtection( {
 		config.isEnabled( 'blackbox' ) &&
 		config.isEnabled( feature );
 	const [ isSubmitBlocked, setIsSubmitBlocked ] = useState( enabled );
+
+	// Re-block during render when a suspended surface re-enables: the challenge
+	// only re-blocks from a post-paint effect, which would leave the submit
+	// button clickable for a frame.
+	const prevEnabled = useRef( enabled );
+	if ( prevEnabled.current !== enabled ) {
+		prevEnabled.current = enabled;
+		setIsSubmitBlocked( enabled );
+	}
 
 	const handleSubmitBlockedChange = useCallback( ( isBlocked: boolean ) => {
 		setIsSubmitBlocked( isBlocked );
