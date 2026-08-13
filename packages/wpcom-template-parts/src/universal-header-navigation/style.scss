@@ -1419,6 +1419,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.x-dropdown-subcategories {
 		display: flex;
 		flex-wrap: wrap;
+		// Don't stretch short columns to the tallest column's height.
+		align-items: flex-start;
 		gap: $x-dropdown-2026-column-gap;
 		max-width: $x-nav-2026-content-max-width;
 		margin: 0;
@@ -1428,15 +1430,14 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.x-dropdown-column-group {
 		display: flex;
 		flex-direction: column;
-		gap: 32px;
+		gap: 12px;
+		min-width: 0;
 		max-width: $x-dropdown-2026-column-max-width;
 		margin: 0;
 	}
 
 	.x-dropdown-subcategory {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
+		min-width: 0;
 		margin: 0;
 
 		> ul {
@@ -1460,7 +1461,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	.x-dropdown-subcategory-title {
 		margin: 0;
-		padding: 0;
+		// Separates the title from the first link below it.
+		padding-bottom: 12px;
 		font-size: $x-dropdown-2026-subtitle-font-size;
 		font-weight: 400;
 		line-height: 33px;
