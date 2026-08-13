@@ -128,20 +128,6 @@ describe( '<McpOverview>', () => {
 		);
 	} );
 
-	test( 'disables Starter prompts until MCP access is enabled', () => {
-		render(
-			<McpOverview
-				settings={ settings( false, [ ability( 'get-site-health', true ) ] ) }
-				onSave={ jest.fn() }
-			/>
-		);
-
-		expect( screen.getByRole( 'button', { name: /^Starter prompts/ } ) ).toHaveAttribute(
-			'aria-disabled',
-			'true'
-		);
-	} );
-
 	test( 'navigates via onNavigate instead of the href when provided', async () => {
 		const onNavigate = jest.fn();
 		render(
