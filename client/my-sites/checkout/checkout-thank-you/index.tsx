@@ -253,7 +253,9 @@ export class CheckoutThankYou extends Component<
 				const params = [ 'trackCustom', 'BulkDomainTransfer', {} ];
 
 				debug( 'recordOrderInFacebookAds: WPCom Bulk Domain Transfer Purchase', params );
-				window.fbq && window.fbq( ...params );
+				if ( window.fbq ) {
+					window.fbq( ...params );
+				}
 			}
 
 			// Custom conversion for Twitter Ads.
