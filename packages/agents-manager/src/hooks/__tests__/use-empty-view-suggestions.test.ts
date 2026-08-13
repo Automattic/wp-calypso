@@ -25,7 +25,7 @@ jest.mock( '../../contexts', () => ( {
 } ) );
 
 import { renderHook, waitFor } from '@testing-library/react';
-import { useEmptyViewSuggestions } from '../use-empty-view-suggestions';
+import { formatTopLevelSuggestions, useEmptyViewSuggestions } from '../use-empty-view-suggestions';
 import type { LoadedProviders } from '../../utils/load-external-providers';
 
 const readerSuggestion = {
@@ -331,4 +331,35 @@ describe( 'useEmptyViewSuggestions', () => {
 			);
 		}
 	);
+} );
+
+describe( 'formatTopLevelSuggestions', () => {
+	const featuredImage = {
+		id: 'generate-featured-image',
+		label: 'Generate Featured Image',
+		description: 'Create a new image with AI and set it as the featured image.',
+		prompt: '',
+	};
+
+	it( 'shortens the label and drops the description', () => {
+		const [ formatted ] = formatTopLevelSuggestions( [ featuredImage ] );
+
+		expect( formatted.label ).toBe( 'Generate featured image' );
+		expect( formatted.description ).toBeUndefined();
+	} );
+
+	it( 'keeps the rest of the suggestion intact', () => {
+		const action = jest.fn();
+		const [ formatted ] = formatTopLevelSuggestions( [ { ...featuredImage, action } ] );
+
+		expect( formatted.id ).toBe( featuredImage.id );
+		expect( formatted.prompt ).toBe( '' );
+		expect( formatted.action ).toBe( action );
+	} );
+
+	it( 'leaves suggestions it does not know about alone', () => {
+		expect( formatTopLevelSuggestions( [ siteEditorSuggestion ] ) ).toEqual( [
+			siteEditorSuggestion,
+		] );
+	} );
 } );
