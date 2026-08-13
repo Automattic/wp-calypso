@@ -3,6 +3,7 @@ import {
 	getPurchasePriceTierList,
 	isPurchaseExpiring,
 	isPurchaseOneTimePurchase,
+	isStudioCodeAiCredits,
 } from '@automattic/api-core';
 import {
 	findPlansKeys,
@@ -37,7 +38,7 @@ import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import i18n from 'i18n-calypso';
 import moment from 'moment';
 import {
-	getStudioCreditsTitle,
+	getStudioCodeAiCreditsTitle,
 	hasAmountAvailableToRefund,
 	isA4AHoldingSitePurchase,
 	isAgencyPartnerType,
@@ -431,9 +432,8 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 		return jetpackProductsDisplayNames[ productSlug ];
 	}
 
-	const studioTitle = getStudioCreditsTitle( productSlug, productName, quantity );
-	if ( studioTitle ) {
-		return studioTitle;
+	if ( isStudioCodeAiCredits( productSlug ) && quantity ) {
+		return getStudioCodeAiCreditsTitle( productName, quantity );
 	}
 
 	if ( isTieredVolumeSpaceAddon( purchase ) ) {

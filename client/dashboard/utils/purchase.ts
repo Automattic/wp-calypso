@@ -5,7 +5,7 @@ import {
 	GoogleWorkspaceSlugs,
 	JetpackSearchProducts,
 	PRODUCT_1GB_SPACE,
-	PRODUCT_STUDIO_CODE_AI_CREDITS,
+	isStudioCodeAiCredits,
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
@@ -343,18 +343,9 @@ export function getBillPeriodLabel( purchase: Purchase ): string {
 }
 
 /**
- * Return the Studio Code AI Credits title with its credit count, or `null` for
- * any other product and for a purchase with no quantity.
+ * Return the Studio Code AI Credits title with its credit count.
  */
-export function getStudioCreditsTitle(
-	productSlug: string,
-	productName: string,
-	quantity: number | null | undefined
-): string | null {
-	if ( productSlug !== PRODUCT_STUDIO_CODE_AI_CREDITS || ! quantity ) {
-		return null;
-	}
-
+export function getStudioCodeAiCreditsTitle( productName: string, quantity: number ): string {
 	// Store Admin calls these "AI credits". Customer-facing copy says "credits".
 	return sprintf(
 		// translators: productName is the name of the product and quantity is a number of credits
@@ -404,13 +395,14 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		} );
 	}
 
-	const studioTitle = getStudioCreditsTitle(
-		purchase.product_slug,
-		purchase.product_name,
+	if (
+		isStudioCodeAiCredits( purchase.product_slug ) &&
 		purchase.renewal_price_tier_usage_quantity
-	);
-	if ( studioTitle ) {
-		return studioTitle;
+	) {
+		return getStudioCodeAiCreditsTitle(
+			purchase.product_name,
+			purchase.renewal_price_tier_usage_quantity
+		);
 	}
 
 	if (

@@ -26,17 +26,20 @@ describe( 'getDisplayName', () => {
 		).toBe( 'Studio Code AI Credits (500 credits)' );
 	} );
 
-	test( 'shows the product name when there is no quantity', () => {
-		expect(
-			getDisplayName(
-				makePurchase( {
-					product_slug: 'studio-code-ai-credits',
-					product_name: 'Studio Code AI Credits',
-					renewal_price_tier_usage_quantity: null,
-				} )
-			)
-		).toBe( 'Studio Code AI Credits' );
-	} );
+	test.each( [ null, undefined, 0 ] )(
+		'shows the product name for a quantity of %p',
+		( quantity ) => {
+			expect(
+				getDisplayName(
+					makePurchase( {
+						product_slug: 'studio-code-ai-credits',
+						product_name: 'Studio Code AI Credits',
+						renewal_price_tier_usage_quantity: quantity,
+					} )
+				)
+			).toBe( 'Studio Code AI Credits' );
+		}
+	);
 
 	test( 'leaves Akismet Pro titles alone', () => {
 		expect(

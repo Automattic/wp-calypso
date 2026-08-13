@@ -16,7 +16,7 @@ import {
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	creditCardExpiresBeforeSubscription,
 	getRenewalUrlFromPurchase,
-	getStudioCreditsTitle,
+	getStudioCodeAiCreditsTitle,
 	getTitleForDisplay,
 	getTitleForListDisplay,
 	isPurchaseDowngradeEligible,
@@ -547,34 +547,25 @@ describe( 'isWithinRefundWindowDowngradeEligible', () => {
 	} );
 } );
 
-describe( 'getStudioCreditsTitle', () => {
-	const STUDIO_SLUG = 'studio-code-ai-credits';
+describe( 'getStudioCodeAiCreditsTitle', () => {
 	const STUDIO_NAME = 'Studio Code AI Credits';
 
 	test( 'returns the title with the credit count', () => {
-		expect( getStudioCreditsTitle( STUDIO_SLUG, STUDIO_NAME, 100 ) ).toBe(
+		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 100 ) ).toBe(
 			'Studio Code AI Credits (100 credits)'
 		);
 	} );
 
 	test( 'groups thousands in the credit count', () => {
-		expect( getStudioCreditsTitle( STUDIO_SLUG, STUDIO_NAME, 1000 ) ).toBe(
+		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1000 ) ).toBe(
 			'Studio Code AI Credits (1,000 credits)'
 		);
 	} );
 
 	test( 'uses the singular form for a count of one', () => {
-		expect( getStudioCreditsTitle( STUDIO_SLUG, STUDIO_NAME, 1 ) ).toBe(
+		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1 ) ).toBe(
 			'Studio Code AI Credits (1 credit)'
 		);
-	} );
-
-	test.each( [ null, undefined, 0 ] )( 'returns null for a quantity of %p', ( quantity ) => {
-		expect( getStudioCreditsTitle( STUDIO_SLUG, STUDIO_NAME, quantity ) ).toBeNull();
-	} );
-
-	test( 'returns null for another product', () => {
-		expect( getStudioCreditsTitle( 'ak_pro5h_yearly', 'Akismet Pro', 1 ) ).toBeNull();
 	} );
 } );
 
@@ -598,17 +589,20 @@ describe( 'getTitleForDisplay', () => {
 		).toBe( 'Studio Code AI Credits (500 credits)' );
 	} );
 
-	test( 'shows the product name when there is no quantity', () => {
-		expect(
-			getTitleForDisplay(
-				makePurchase( {
-					product_slug: 'studio-code-ai-credits',
-					product_name: 'Studio Code AI Credits',
-					renewal_price_tier_usage_quantity: null,
-				} )
-			)
-		).toBe( 'Studio Code AI Credits' );
-	} );
+	test.each( [ null, undefined, 0 ] )(
+		'shows the product name for a quantity of %p',
+		( quantity ) => {
+			expect(
+				getTitleForDisplay(
+					makePurchase( {
+						product_slug: 'studio-code-ai-credits',
+						product_name: 'Studio Code AI Credits',
+						renewal_price_tier_usage_quantity: quantity,
+					} )
+				)
+			).toBe( 'Studio Code AI Credits' );
+		}
+	);
 
 	test( 'shows the credit count ahead of the plan title', () => {
 		expect(
