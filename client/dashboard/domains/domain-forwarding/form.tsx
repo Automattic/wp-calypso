@@ -117,12 +117,12 @@ export default function DomainForwardingForm( {
 				Edit: 'select',
 				elements: [
 					{
-						label: __( 'Subdomain' ),
-						value: '',
-					},
-					{
 						label: __( 'Domain' ),
 						value: 'root',
+					},
+					{
+						label: __( 'Subdomain' ),
+						value: '',
 					},
 				],
 				isVisible: () => {
