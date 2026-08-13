@@ -40,7 +40,6 @@ jest.mock( '../../__user/email-verification/storage', () => ( {
 
 const renderStep = ( submit = jest.fn() ) => {
 	render(
-		// @ts-expect-error -- only the props the step reads are provided.
 		<EmailVerificationStep
 			flow="onboarding"
 			navigation={ { submit } }
