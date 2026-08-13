@@ -40,12 +40,27 @@ interface ImageStudioActions {
 	) => void;
 }
 
+interface EditorActions {
+	editPost: ( edits: Record< string, unknown > ) => void;
+}
+
 function getImageStudioActions(): ImageStudioActions | undefined {
 	const actions = dispatch( IMAGE_STUDIO_STORE ) as Partial< ImageStudioActions > | undefined;
 
 	return typeof actions?.openImageStudio === 'function'
 		? ( actions as ImageStudioActions )
 		: undefined;
+}
+
+/** `core/editor` is absent outside the post editor, where `dispatch` returns undefined. */
+function getEditorActions(): EditorActions | undefined {
+	try {
+		const actions = dispatch( 'core/editor' ) as Partial< EditorActions > | undefined;
+
+		return typeof actions?.editPost === 'function' ? ( actions as EditorActions ) : undefined;
+	} catch {
+		return undefined;
+	}
 }
 
 export function isImageStudioAvailable(): boolean {
@@ -108,14 +123,17 @@ export function openImageStudioForBlock( block: any, mode: ImageStudioMode ): bo
 export function openImageStudioForFeaturedImage(): boolean {
 	const imageStudioActions = getImageStudioActions();
 
-	if ( ! imageStudioActions ) {
+	// Without the editor store there is nowhere to write the result, so do not open at all.
+	if ( ! imageStudioActions || ! getEditorActions() ) {
 		return false;
 	}
 
 	const handleClose = ( image: ImageStudioImage | null ) => {
-		const editor = dispatch( 'core/editor' ) as {
-			editPost: ( edits: Record< string, unknown > ) => void;
-		};
+		const editor = getEditorActions();
+
+		if ( ! editor ) {
+			return;
+		}
 
 		// A null image means the user removed it; clear the featured image.
 		if ( image === null ) {

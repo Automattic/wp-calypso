@@ -23,7 +23,9 @@ const editPost = jest.fn();
 
 // Routes the stores this module dispatches to. An Image Studio bundle that
 // is not loaded leaves the store registered but without openImageStudio.
-function stubStores( { imageStudioRegistered = true } = {} ) {
+// wp.data returns undefined for a store that was never registered, which is
+// what happens to core/editor outside the post editor.
+function stubStores( { imageStudioRegistered = true, editorRegistered = true } = {} ) {
 	mockDispatch.mockImplementation( ( storeRef: string ) => {
 		if ( storeRef === 'image-studio' ) {
 			return imageStudioRegistered ? { openImageStudio } : {};
@@ -32,7 +34,7 @@ function stubStores( { imageStudioRegistered = true } = {} ) {
 			return { updateBlockAttributes };
 		}
 		if ( storeRef === 'core/editor' ) {
-			return { editPost };
+			return editorRegistered ? { editPost } : undefined;
 		}
 		return undefined;
 	} );
@@ -152,6 +154,25 @@ describe( 'openImageStudioForFeaturedImage', () => {
 		stubStores( { imageStudioRegistered: false } );
 		expect( openImageStudioForFeaturedImage() ).toBe( false );
 		expect( openImageStudio ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not open when the editor store is not registered', () => {
+		stubStores( { editorRegistered: false } );
+		expect( openImageStudioForFeaturedImage() ).toBe( false );
+		expect( openImageStudio ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does nothing on close when the editor store has gone away', () => {
+		openImageStudioForFeaturedImage();
+		const onClose = openImageStudio.mock.calls[ 0 ][ 1 ];
+
+		stubStores( { editorRegistered: false } );
+
+		expect( () =>
+			onClose( { id: 99, url: 'https://example.com/new.jpg', alt: 'A cat' } )
+		).not.toThrow();
+		expect( () => onClose( null ) ).not.toThrow();
+		expect( editPost ).not.toHaveBeenCalled();
 	} );
 
 	it( 'sets the featured image on close', () => {
