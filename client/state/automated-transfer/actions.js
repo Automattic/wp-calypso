@@ -35,12 +35,13 @@ export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => (
  */
 export const fetchAutomatedTransferStatus = (
 	siteId,
-	{ resetPolling = false, singleCheck = false } = {}
+	{ resetPolling = false, singleCheck = false, retryOnFailure = false } = {}
 ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST,
 	siteId,
 	...( resetPolling ? { resetPolling: true } : {} ),
 	...( singleCheck ? { singleCheck: true } : {} ),
+	...( retryOnFailure ? { retryOnFailure: true } : {} ),
 } );
 
 /**

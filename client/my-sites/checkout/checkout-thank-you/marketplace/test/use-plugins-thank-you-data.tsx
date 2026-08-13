@@ -25,6 +25,7 @@ let mockState = {
 	transferStatus: transferStates.COMPLETE as string | null,
 	isJetpack: false,
 	isAtomic: true,
+	isRequestingPlugins: false,
 };
 
 jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
@@ -51,6 +52,7 @@ jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
 } ) );
 jest.mock( 'calypso/state/plugins/installed/selectors', () => ( {
 	getPluginsOnSite: ( state: typeof mockState ) => state.pluginsOnSite,
+	isRequesting: ( state: typeof mockState ) => state.isRequestingPlugins,
 } ) );
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	isPluginActive: ( state: typeof mockState, _siteId: number, slug: string ) =>
@@ -112,6 +114,21 @@ describe( 'usePluginsThankYouData', () => {
 
 		expect( fetchSitePlugins ).toHaveBeenCalledTimes( 2 );
 		expect( fetchSitePlugins ).toHaveBeenLastCalledWith( 1 );
+	} );
+
+	it( 'skips a poll tick while a plugin request is in flight', () => {
+		const { rerender } = renderPlugins();
+		jest.clearAllMocks();
+
+		mockState.isRequestingPlugins = true;
+		rerender( { slugs: [ PLUGIN_SLUG ], recovery: false } );
+		act( () => jest.advanceTimersByTime( 3000 ) );
+		expect( fetchSitePlugins ).not.toHaveBeenCalled();
+
+		mockState.isRequestingPlugins = false;
+		rerender( { slugs: [ PLUGIN_SLUG ], recovery: false } );
+		act( () => jest.advanceTimersByTime( 3000 ) );
+		expect( fetchSitePlugins ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'does not poll before transfer completion', () => {

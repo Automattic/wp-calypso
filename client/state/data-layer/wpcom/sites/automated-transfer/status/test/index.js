@@ -64,10 +64,10 @@ describe( 'requestStatus', () => {
 	test( 'should restart the polling deadline when requested', () => {
 		const start = 1000000;
 		jest.setSystemTime( start );
-		requestStatus( { siteId } );
+		requestStatus( { siteId, retryOnFailure: true } );
 		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
 
-		requestStatus( { siteId, resetPolling: true } );
+		requestStatus( { siteId, resetPolling: true, retryOnFailure: true } );
 		const dispatch = jest.fn();
 		requestingStatusFailure( { siteId } )( dispatch );
 
@@ -84,12 +84,12 @@ describe( 'requestingStatusFailure', () => {
 	} );
 	afterEach( () => jest.useRealTimers() );
 
-	test( 'should retry failed requests at the polling cadence', () => {
+	test( 'should retry failed requests at the polling cadence when the wait opted in', () => {
 		const response = {
 			siteId,
 			meta: { dataLayer: { error: { message: 'Service unavailable' } } },
 		};
-		requestStatus( { siteId } );
+		requestStatus( { siteId, retryOnFailure: true } );
 		const dispatch = jest.fn();
 
 		requestingStatusFailure( response )( dispatch );
@@ -104,10 +104,32 @@ describe( 'requestingStatusFailure', () => {
 		expect( dispatch ).toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
 	} );
 
-	test( 'should time out repeated request failures against the original request', () => {
+	test( 'should not retry or time out a failure when the wait did not opt in', () => {
 		const start = 1000000;
 		jest.setSystemTime( start );
 		requestStatus( { siteId } );
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		const dispatch = jest.fn();
+
+		requestingStatusFailure( {
+			siteId,
+			meta: { dataLayer: { error: { message: 'Service unavailable' } } },
+		} )( dispatch );
+		jest.runAllTimers();
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			automatedTransferStatusFetchingFailure( { siteId, error: 'Service unavailable' } )
+		);
+		expect( dispatch ).not.toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
+		expect( dispatch ).not.toHaveBeenCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT )
+		);
+	} );
+
+	test( 'should time out repeated request failures against the original request', () => {
+		const start = 1000000;
+		jest.setSystemTime( start );
+		requestStatus( { siteId, retryOnFailure: true } );
 		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
 		const dispatch = jest.fn();
 
@@ -123,7 +145,7 @@ describe( 'requestingStatusFailure', () => {
 			siteId,
 			meta: { dataLayer: { error: { message: NO_TRANSFER_RECORD_ERROR } } },
 		};
-		requestStatus( { siteId } );
+		requestStatus( { siteId, retryOnFailure: true } );
 		const dispatch = jest.fn();
 
 		for ( let attempt = 0; attempt < MISSING_RECORD_ATTEMPTS; attempt++ ) {
@@ -143,7 +165,7 @@ describe( 'requestingStatusFailure', () => {
 	test( 'should not turn a missing transfer record into a client timeout at the deadline', () => {
 		const start = 1000000;
 		jest.setSystemTime( start );
-		requestStatus( { siteId } );
+		requestStatus( { siteId, retryOnFailure: true } );
 		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
 		const dispatch = jest.fn();
 
@@ -212,6 +234,25 @@ describe( 'receiveStatus', () => {
 		jest.runAllTimers();
 
 		expect( dispatch ).not.toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
+	} );
+
+	test( 'should not let a single recovery check clobber a running chain deadline', () => {
+		const start = 1000000;
+		jest.setSystemTime( start );
+		const dispatch = jest.fn();
+
+		requestStatus( { siteId } );
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS - 1000 );
+		receiveStatus( { siteId, singleCheck: true }, IN_PROGRESS_RESPONSE )( dispatch );
+
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
+
+		expect( dispatch ).toHaveBeenLastCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
+		);
 	} );
 
 	test( 'should keep polling until the deadline arrives', () => {

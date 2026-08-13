@@ -107,8 +107,10 @@ describe( 'useThemesThankYouData retry', () => {
 		expect( requestTheme ).not.toHaveBeenCalled();
 	} );
 
-	test( 'refetches site purchases when they never loaded', () => {
-		mockState.hasLoadedSitePurchases = false;
+	test( 'refetches site purchases even when a failed fetch marked them loaded', () => {
+		// The purchases reducer sets hasLoadedSitePurchasesFromServer on failure too, so the
+		// flag cannot gate the retry — only an in-flight request should.
+		mockState.hasLoadedSitePurchases = true;
 		const { result } = renderThemes();
 
 		act( () => result.current.retry() );
@@ -116,17 +118,27 @@ describe( 'useThemesThankYouData retry', () => {
 		expect( fetchSitePurchases ).toHaveBeenCalledWith( 1 );
 	} );
 
-	test( 'leaves loaded purchases and in-flight requests alone', () => {
+	test( 'skips the purchases refetch while one is in flight', () => {
+		mockState.isRequestingSitePurchases = true;
 		const { result } = renderThemes();
 
 		act( () => result.current.retry() );
 		expect( fetchSitePurchases ).not.toHaveBeenCalled();
+	} );
 
+	test( 'reports loaded once purchases arrive for a plain theme purchase', () => {
+		mockState.dotComThemes = [ { id: THEME_SLUG } ];
+		mockState.hasLoadedSitePurchases = true;
+		mockState.isRequestingSitePurchases = false;
+		const { result } = renderThemes();
+
+		expect( result.current.isLoaded ).toBe( true );
+	} );
+
+	test( 'stays loading while purchases have not loaded yet', () => {
 		mockState.hasLoadedSitePurchases = false;
-		mockState.isRequestingSitePurchases = true;
-		const { result: fetching } = renderThemes();
+		const { result } = renderThemes();
 
-		act( () => fetching.current.retry() );
-		expect( fetchSitePurchases ).not.toHaveBeenCalled();
+		expect( result.current.isLoaded ).toBe( false );
 	} );
 } );

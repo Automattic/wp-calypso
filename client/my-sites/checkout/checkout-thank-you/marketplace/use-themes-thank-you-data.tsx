@@ -184,18 +184,13 @@ export function useThemesThankYouData(
 			}
 		} );
 
-		if ( ! hasLoadedSitePurchases && ! isRequestingSitePurchases ) {
+		// Unconditional on purpose: `hasLoadedSitePurchasesFromServer` is set even when the
+		// fetch failed, so it cannot distinguish "loaded" from "failed" — and a manual retry
+		// after a failure is exactly when a refetch is needed.
+		if ( ! isRequestingSitePurchases ) {
 			dispatch( fetchSitePurchases( siteId ) );
 		}
-	}, [
-		dispatch,
-		dotComThemes,
-		dotOrgThemes,
-		hasLoadedSitePurchases,
-		isRequestingSitePurchases,
-		siteId,
-		themeSlugs,
-	] );
+	}, [ dispatch, dotComThemes, dotOrgThemes, isRequestingSitePurchases, siteId, themeSlugs ] );
 
 	return {
 		firstTheme,
@@ -206,11 +201,13 @@ export function useThemesThankYouData(
 		themesProgressbarSteps: thankyouSteps,
 		isAtomicNeeded,
 		thankYouHeaderAction: null,
-		// Always display the loading screen for the following situations:
-		// - Redirect to the plugin-bundle flow after the theme is activated for Woo themes.
-		// - Redirect to the Theme Details page after the atomic transfer if it's required.
-		// - Redirect to the /home page if the user removed the externally managed theme from checkout.
-		isLoaded: ! ( continueWithPluginBundle || isAtomicNeeded || ! isRequestingSitePurchases ),
+		// Keep the loading screen up for the flows that redirect away from this page:
+		// - the plugin-bundle flow after the theme is activated for Woo themes;
+		// - the Theme Details page after the atomic transfer, if one is required.
+		// Otherwise the page is loaded once purchases have been fetched — the previous
+		// `isRequestingSitePurchases` form was only true *while* fetching, so a slow theme
+		// request could leave this false forever and time the page out.
+		isLoaded: ! continueWithPluginBundle && ! isAtomicNeeded && hasLoadedSitePurchases,
 		retry,
 	};
 }

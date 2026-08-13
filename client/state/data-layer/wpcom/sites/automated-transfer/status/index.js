@@ -43,10 +43,18 @@ const getOrCreatePollDeadline = ( siteId ) => {
 };
 
 export const requestStatus = ( action ) => {
-	if ( action.resetPolling ) {
-		pollDeadlines.delete( action.siteId );
+	// A single recovery check must not touch the deadline state: a regular chain may be
+	// running for the same site, and deleting or reviving its entry would either kill its
+	// timeout or let it mint a fresh five-minute window.
+	if ( ! action.singleCheck ) {
+		if ( action.resetPolling ) {
+			pollDeadlines.delete( action.siteId );
+		}
+		const recorded = getOrCreatePollDeadline( action.siteId );
+		if ( action.retryOnFailure && ! recorded.retryOnFailure ) {
+			pollDeadlines.set( action.siteId, { ...recorded, retryOnFailure: true } );
+		}
 	}
-	getOrCreatePollDeadline( action.siteId );
 	return http(
 		{
 			method: 'GET',
@@ -76,18 +84,19 @@ export const receiveStatus =
 
 		dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
 
-		if ( isSettled ) {
-			pollDeadlines.delete( siteId );
-		} else if ( singleCheck ) {
+		if ( singleCheck ) {
+			// Inert with respect to the deadline state, and no polling chain of its own.
+		} else if ( isSettled ) {
 			pollDeadlines.delete( siteId );
 		} else {
 			const deadline = recorded?.deadline ?? Date.now() + TRANSFER_STATUS_POLL_DEADLINE_MS;
+			const retryOnFailure = recorded?.retryOnFailure;
 
 			if ( Date.now() < deadline ) {
-				pollDeadlines.set( siteId, { transferId, deadline } );
+				pollDeadlines.set( siteId, { transferId, deadline, retryOnFailure } );
 				setTimeout( dispatch, POLL_INTERVAL_MS, fetchAutomatedTransferStatus( siteId ) );
 			} else {
-				pollDeadlines.set( siteId, { transferId, deadline, hasTimedOut: true } );
+				pollDeadlines.set( siteId, { transferId, deadline, retryOnFailure, hasTimedOut: true } );
 				dispatch( setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, pluginId ) );
 			}
 		}
@@ -101,11 +110,17 @@ export const receiveStatus =
 export const requestingStatusFailure = ( response ) => ( dispatch ) => {
 	const { siteId } = response;
 	const message = response.meta?.dataLayer?.error?.message;
-	const recorded = getOrCreatePollDeadline( siteId );
 	dispatch( automatedTransferStatusFetchingFailure( { siteId, error: message } ) );
 
 	if ( response.singleCheck ) {
-		pollDeadlines.delete( siteId );
+		return;
+	}
+
+	// Retrying failures — and eventually reporting CLIENT_TIMEOUT — is behavior only waits
+	// that asked for it should get. Other dispatchers of this action expect a failed request
+	// to fail once and stop, exactly as it did before the retry logic existed.
+	const recorded = pollDeadlines.get( siteId );
+	if ( ! recorded?.retryOnFailure ) {
 		return;
 	}
 

@@ -10,7 +10,7 @@ import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/sel
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
-import { getPluginsOnSite } from 'calypso/state/plugins/installed/selectors';
+import { getPluginsOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { isPluginActive } from 'calypso/state/plugins/installed/selectors-ts';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg/selectors';
@@ -139,6 +139,10 @@ export default function usePluginsThankYouData(
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ areAllWporgPluginsFetched, areWporgPluginsFetched, pluginSlugs, dispatch, wporgPlugins ] );
 
+	const isRequestingPlugins = useSelector( ( state ) =>
+		siteId ? isRequesting( state, siteId ) : false
+	);
+
 	const isPluginPollActive =
 		!! siteId &&
 		pluginSlugs.length > 0 &&
@@ -158,16 +162,16 @@ export default function usePluginsThankYouData(
 	}
 
 	useInterval( () => {
-		if ( siteId ) {
+		if ( siteId && ! isRequestingPlugins ) {
 			dispatch( fetchSitePlugins( siteId ) );
 		}
 	}, pluginPollInterval );
 
 	const retry = useCallback( () => {
-		if ( siteId && pluginSlugs.length > 0 ) {
+		if ( siteId && pluginSlugs.length > 0 && ! isRequestingPlugins ) {
 			dispatch( fetchSitePlugins( siteId ) );
 		}
-	}, [ dispatch, pluginSlugs.length, siteId ] );
+	}, [ dispatch, isRequestingPlugins, pluginSlugs.length, siteId ] );
 
 	const pluginsSection = pluginsInformationList.map( ( plugin: any ) => {
 		return <ThankYouPluginSection plugin={ plugin } key={ `plugin_${ plugin.slug }` } />;

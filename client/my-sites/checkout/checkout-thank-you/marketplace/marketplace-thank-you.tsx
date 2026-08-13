@@ -59,7 +59,7 @@ const MarketplaceThankYou = ( {
 	const {
 		isInitialized: isDeadlineInitialized,
 		hasTimedOut,
-		waitedSeconds,
+		getWaitedSeconds,
 		restart: restartDeadline,
 		complete: completeWait,
 	} = useThankYouDeadline( {
@@ -124,6 +124,7 @@ const MarketplaceThankYou = ( {
 		showProgressBar,
 		setShowProgressBar,
 		isRetryingTransferStatus,
+		trustedTransferStatus,
 		retry: retryAtomicTransfer,
 	} = useAtomicTransfer( isAtomicNeeded, hasTimedOut, isDeadlineInitialized );
 
@@ -137,7 +138,7 @@ const MarketplaceThankYou = ( {
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const thankYouError = getThankYouError( {
-		transferStatus: isRetryingTransferStatus ? null : transferStatus,
+		transferStatus: isRetryingTransferStatus ? null : trustedTransferStatus,
 		hasTimedOut,
 		isPageReady,
 	} );
@@ -181,11 +182,11 @@ const MarketplaceThankYou = ( {
 		reportedErrorRef.current = thankYouError;
 		recordTracksEvent( 'calypso_marketplace_thank_you_wait_ended', {
 			error: thankYouError,
-			transfer_status: transferStatus,
-			waited_seconds: waitedSeconds,
+			transfer_status: trustedTransferStatus,
+			waited_seconds: getWaitedSeconds(),
 			plugin_slugs: pluginSlugs.join( ',' ),
 		} );
-	}, [ pluginSlugs, thankYouError, transferStatus, waitedSeconds ] );
+	}, [ getWaitedSeconds, pluginSlugs, thankYouError, trustedTransferStatus ] );
 
 	const retry = useCallback( () => {
 		restartDeadline();

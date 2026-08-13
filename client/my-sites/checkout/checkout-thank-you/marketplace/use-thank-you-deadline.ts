@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useInterval } from 'calypso/lib/interval';
 
 export const THANK_YOU_WAIT_DEADLINE_MS = 5 * 60 * 1000;
 export const THANK_YOU_RECOVERY_INTERVAL_MS = 30 * 1000;
 
-const CLOCK_TICK_MS = 1000;
 const STORAGE_PREFIX = 'marketplace-thank-you-wait';
 
 const readStartedAt = ( key: string ): number | null => {
@@ -48,11 +46,9 @@ export function useThankYouDeadline( {
 		if ( ! enabled || ! storageKey ) {
 			return null;
 		}
-		const startedAt = readStartedAt( storageKey ) ?? Date.now();
-		writeStartedAt( storageKey, startedAt );
-		return { storageKey, startedAt };
+		return { storageKey, startedAt: readStartedAt( storageKey ) ?? Date.now() };
 	} );
-	const [ now, setNow ] = useState( () => Date.now() );
+	const [ hasTimedOut, setHasTimedOut ] = useState( false );
 
 	useEffect( () => {
 		if ( ! enabled || ! storageKey ) {
@@ -62,16 +58,35 @@ export function useThankYouDeadline( {
 
 		const startedAt = readStartedAt( storageKey ) ?? Date.now();
 		writeStartedAt( storageKey, startedAt );
-		setNow( Date.now() );
 		setDeadlineState( { storageKey, startedAt } );
 	}, [ enabled, storageKey ] );
 
 	const isCurrentWait = deadlineState?.storageKey === storageKey;
 	const startedAt = isCurrentWait ? deadlineState.startedAt : null;
-	const hasTimedOut =
-		enabled && startedAt !== null && now - startedAt >= THANK_YOU_WAIT_DEADLINE_MS;
 
-	useInterval( () => setNow( Date.now() ), enabled && startedAt !== null ? CLOCK_TICK_MS : null );
+	// A single timer at the deadline instead of a ticking clock: the only state transition
+	// anyone renders on is the deadline crossing.
+	useEffect( () => {
+		if ( ! enabled || startedAt === null ) {
+			setHasTimedOut( false );
+			return;
+		}
+
+		const remainingMs = startedAt + THANK_YOU_WAIT_DEADLINE_MS - Date.now();
+		if ( remainingMs <= 0 ) {
+			setHasTimedOut( true );
+			return;
+		}
+
+		setHasTimedOut( false );
+		const id = setTimeout( () => setHasTimedOut( true ), remainingMs );
+		return () => clearTimeout( id );
+	}, [ enabled, startedAt ] );
+
+	const getWaitedSeconds = useCallback(
+		() => ( startedAt === null ? 0 : Math.round( ( Date.now() - startedAt ) / 1000 ) ),
+		[ startedAt ]
+	);
 
 	const restart = useCallback( () => {
 		if ( ! storageKey ) {
@@ -80,7 +95,6 @@ export function useThankYouDeadline( {
 
 		const nextStartedAt = Date.now();
 		writeStartedAt( storageKey, nextStartedAt );
-		setNow( nextStartedAt );
 		setDeadlineState( { storageKey, startedAt: nextStartedAt } );
 	}, [ storageKey ] );
 
@@ -93,8 +107,8 @@ export function useThankYouDeadline( {
 
 	return {
 		isInitialized: ! enabled || ( !! storageKey && isCurrentWait ),
-		hasTimedOut,
-		waitedSeconds: startedAt === null ? 0 : Math.round( ( now - startedAt ) / 1000 ),
+		hasTimedOut: enabled && hasTimedOut,
+		getWaitedSeconds,
 		restart,
 		complete,
 	};

@@ -5,7 +5,7 @@ import { act, renderHook } from '@testing-library/react';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { requestSite } from 'calypso/state/sites/actions';
-import { useAtomicTransfer } from '../use-atomic-transfer';
+import { FAILURE_CONFIRM_ATTEMPTS, useAtomicTransfer } from '../use-atomic-transfer';
 import { THANK_YOU_RECOVERY_INTERVAL_MS } from '../use-thank-you-deadline';
 
 const mockDispatch = jest.fn();
@@ -24,11 +24,15 @@ jest.mock( 'calypso/state', () => ( {
 } ) );
 jest.mock( 'calypso/state/automated-transfer/actions', () => ( {
 	fetchAutomatedTransferStatus: jest.fn(
-		( siteId: number, { resetPolling = false, singleCheck = false } = {} ) => ( {
+		(
+			siteId: number,
+			{ resetPolling = false, singleCheck = false, retryOnFailure = false } = {}
+		) => ( {
 			type: 'FETCH_AUTOMATED_TRANSFER_STATUS',
 			siteId,
 			...( resetPolling ? { resetPolling: true } : {} ),
 			...( singleCheck ? { singleCheck: true } : {} ),
+			...( retryOnFailure ? { retryOnFailure: true } : {} ),
 		} )
 	),
 } ) );
@@ -73,7 +77,7 @@ describe( 'useAtomicTransfer', () => {
 	it( 'starts one transfer-status polling chain for the selected site', () => {
 		const { rerender } = renderAtomic();
 
-		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1 );
+		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, { retryOnFailure: true } );
 		mockState.transferStatus = transferStates.PROVISIONED;
 		rerender();
 
@@ -91,7 +95,7 @@ describe( 'useAtomicTransfer', () => {
 		mockState.transferStatus = transferStatus;
 		renderAtomic();
 
-		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1 );
+		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, { retryOnFailure: true } );
 	} );
 
 	it( 'polls site data for either completed spelling', () => {
@@ -155,7 +159,10 @@ describe( 'useAtomicTransfer', () => {
 
 		act( () => result.current.retry() );
 
-		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, { resetPolling: true } );
+		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, {
+			resetPolling: true,
+			retryOnFailure: true,
+		} );
 		expect( result.current.isRetryingTransferStatus ).toBe( true );
 
 		mockState.isFetchingTransferStatus = true;
@@ -164,6 +171,76 @@ describe( 'useAtomicTransfer', () => {
 		mockState.transferStatus = transferStates.ACTIVE;
 		rerender();
 		expect( result.current.isRetryingTransferStatus ).toBe( false );
+	} );
+
+	it( 'does not trust a settled failure before this wait confirms it', () => {
+		const { result, rerender } = renderAtomic();
+
+		mockState.isFetchingTransferStatus = true;
+		rerender();
+		mockState.isFetchingTransferStatus = false;
+		mockState.transferStatus = transferStates.ERROR;
+		rerender();
+
+		expect( result.current.trustedTransferStatus ).toBeNull();
+
+		jest.clearAllMocks();
+		act( () => jest.advanceTimersByTime( 3000 ) );
+		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, {
+			resetPolling: true,
+			retryOnFailure: true,
+		} );
+	} );
+
+	it( 'trusts a settled failure once every confirmation attempt still reports it', () => {
+		const { result, rerender } = renderAtomic();
+
+		for ( let attempt = 0; attempt <= FAILURE_CONFIRM_ATTEMPTS; attempt++ ) {
+			mockState.isFetchingTransferStatus = true;
+			rerender();
+			mockState.isFetchingTransferStatus = false;
+			mockState.transferStatus = transferStates.ERROR;
+			rerender();
+			act( () => jest.advanceTimersByTime( 3000 ) );
+		}
+
+		expect( result.current.trustedTransferStatus ).toBe( transferStates.ERROR );
+	} );
+
+	it( 'trusts a failure immediately once this wait has seen the transfer progress', () => {
+		const { result, rerender } = renderAtomic();
+
+		mockState.isFetchingTransferStatus = true;
+		rerender();
+		mockState.isFetchingTransferStatus = false;
+		mockState.transferStatus = transferStates.ACTIVE;
+		rerender();
+		expect( result.current.trustedTransferStatus ).toBe( transferStates.ACTIVE );
+
+		mockState.isFetchingTransferStatus = true;
+		rerender();
+		mockState.isFetchingTransferStatus = false;
+		mockState.transferStatus = transferStates.ERROR;
+		rerender();
+		expect( result.current.trustedTransferStatus ).toBe( transferStates.ERROR );
+	} );
+
+	it( 'queues a retry clicked while a status request is in flight', () => {
+		mockState.transferStatus = transferStates.CLIENT_TIMEOUT;
+		mockState.isFetchingTransferStatus = true;
+		const { result, rerender } = renderAtomic();
+		jest.clearAllMocks();
+
+		act( () => result.current.retry() );
+		expect( fetchAutomatedTransferStatus ).not.toHaveBeenCalled();
+		expect( result.current.isRetryingTransferStatus ).toBe( true );
+
+		mockState.isFetchingTransferStatus = false;
+		rerender();
+		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, {
+			resetPolling: true,
+			retryOnFailure: true,
+		} );
 	} );
 
 	it( 'completes immediately once the site reports Atomic', () => {

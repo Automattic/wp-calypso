@@ -2,7 +2,11 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } fr
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { transferCompleteStates, transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	transferCompleteStates,
+	transferFailureStates,
+	transferStates,
+} from 'calypso/state/automated-transfer/constants';
 import {
 	getAutomatedTransferStatus,
 	isFetchingAutomatedTransferStatus,
@@ -16,12 +20,20 @@ import { THANK_YOU_RECOVERY_INTERVAL_MS } from './use-thank-you-deadline';
 
 const ATOMIC_FLAG_POLL_INTERVAL_MS = 2000;
 
+// The status endpoint returns the site's *latest* transfer, so right after a purchase a
+// settled failure can belong to a previous transfer whose record has not been superseded
+// yet. Until this wait has seen the transfer progress, a failure is only trusted after a
+// few confirmations spaced far enough apart for the new record to appear.
+export const FAILURE_CONFIRM_ATTEMPTS = 3;
+const FAILURE_CONFIRM_INTERVAL_MS = 3000;
+
 type AtomicTransferData = {
 	isAtomicTransferCheckComplete: boolean;
 	currentStep: number;
 	showProgressBar: boolean;
 	setShowProgressBar: Dispatch< SetStateAction< boolean > >;
 	isRetryingTransferStatus: boolean;
+	trustedTransferStatus: string | null;
 	retry: () => void;
 };
 
@@ -49,13 +61,30 @@ export function useAtomicTransfer(
 	);
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ isRetryingTransferStatus, setIsRetryingTransferStatus ] = useState( false );
+	// Redux already holds a transfer status when this page mounts — possibly a stale one from
+	// earlier in the SPA session. Only statuses observed from a response of this wait are safe
+	// to act on.
+	const [ trustedTransferStatus, setTrustedTransferStatus ] = useState< string | null >( null );
 	const statusRequestSiteIdRef = useRef< number | null >( null );
 	const atomicFlagRequestSiteIdRef = useRef< number | null >( null );
-	const retryObservedFetchingRef = useRef( false );
+	const wasFetchingStatusRef = useRef( false );
+	const sawProgressRef = useRef( false );
+	const failureConfirmAttemptsRef = useRef( 0 );
+	const pendingRetryRef = useRef( false );
+	const confirmTimeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 
 	useEffect( () => {
 		setIsAtomicTransferCheckComplete( ! isAtomicNeeded );
 	}, [ isAtomicNeeded ] );
+
+	useEffect(
+		() => () => {
+			if ( confirmTimeoutRef.current ) {
+				clearTimeout( confirmTimeoutRef.current );
+			}
+		},
+		[]
+	);
 
 	useEffect( () => {
 		if ( siteId && isSiteAtomic ) {
@@ -76,7 +105,7 @@ export function useAtomicTransfer(
 		}
 
 		statusRequestSiteIdRef.current = siteId;
-		dispatch( fetchAutomatedTransferStatus( siteId ) );
+		dispatch( fetchAutomatedTransferStatus( siteId, { retryOnFailure: true } ) );
 	}, [
 		dispatch,
 		isAtomicNeeded,
@@ -87,6 +116,60 @@ export function useAtomicTransfer(
 		isSiteAtomic,
 		siteId,
 	] );
+
+	const performStatusRetry = useCallback(
+		( targetSiteId: number ) => {
+			statusRequestSiteIdRef.current = targetSiteId;
+			dispatch(
+				fetchAutomatedTransferStatus( targetSiteId, { resetPolling: true, retryOnFailure: true } )
+			);
+		},
+		[ dispatch ]
+	);
+
+	useEffect( () => {
+		if ( isFetchingTransferStatus ) {
+			wasFetchingStatusRef.current = true;
+			return;
+		}
+		if ( ! wasFetchingStatusRef.current ) {
+			return;
+		}
+		wasFetchingStatusRef.current = false;
+
+		// A "Check again" click that arrived while a request was in flight: that response is
+		// stale, so discard it and run the queued reset now.
+		if ( pendingRetryRef.current ) {
+			pendingRetryRef.current = false;
+			if ( siteId ) {
+				performStatusRetry( siteId );
+			}
+			return;
+		}
+
+		const isFailure = transferFailureStates.includes( transferStatus );
+		if (
+			isFailure &&
+			! sawProgressRef.current &&
+			failureConfirmAttemptsRef.current < FAILURE_CONFIRM_ATTEMPTS
+		) {
+			failureConfirmAttemptsRef.current += 1;
+			confirmTimeoutRef.current = setTimeout( () => {
+				if ( siteId ) {
+					dispatch(
+						fetchAutomatedTransferStatus( siteId, { resetPolling: true, retryOnFailure: true } )
+					);
+				}
+			}, FAILURE_CONFIRM_INTERVAL_MS );
+			return;
+		}
+
+		if ( ! isFailure ) {
+			sawProgressRef.current = true;
+		}
+		setTrustedTransferStatus( transferStatus );
+		setIsRetryingTransferStatus( false );
+	}, [ dispatch, isFetchingTransferStatus, performStatusRetry, siteId, transferStatus ] );
 
 	const requestAtomicSite = useCallback( () => {
 		if ( ! siteId || atomicFlagRequestSiteIdRef.current === siteId ) {
@@ -133,18 +216,6 @@ export function useAtomicTransfer(
 			: null
 	);
 
-	useEffect( () => {
-		if ( ! isRetryingTransferStatus ) {
-			return;
-		}
-		if ( isFetchingTransferStatus ) {
-			retryObservedFetchingRef.current = true;
-		} else if ( retryObservedFetchingRef.current ) {
-			retryObservedFetchingRef.current = false;
-			setIsRetryingTransferStatus( false );
-		}
-	}, [ isFetchingTransferStatus, isRetryingTransferStatus ] );
-
 	const retry = useCallback( () => {
 		if ( ! siteId ) {
 			return;
@@ -152,12 +223,27 @@ export function useAtomicTransfer(
 
 		if ( isTransferComplete ) {
 			requestAtomicSite();
-		} else if ( ! isFetchingTransferStatus ) {
-			statusRequestSiteIdRef.current = siteId;
-			setIsRetryingTransferStatus( true );
-			dispatch( fetchAutomatedTransferStatus( siteId, { resetPolling: true } ) );
+			return;
 		}
-	}, [ dispatch, isFetchingTransferStatus, isTransferComplete, requestAtomicSite, siteId ] );
+
+		if ( confirmTimeoutRef.current ) {
+			clearTimeout( confirmTimeoutRef.current );
+		}
+		failureConfirmAttemptsRef.current = 0;
+		sawProgressRef.current = false;
+		setIsRetryingTransferStatus( true );
+		if ( isFetchingTransferStatus ) {
+			pendingRetryRef.current = true;
+			return;
+		}
+		performStatusRetry( siteId );
+	}, [
+		isFetchingTransferStatus,
+		isTransferComplete,
+		performStatusRetry,
+		requestAtomicSite,
+		siteId,
+	] );
 
 	useEffect( () => {
 		if ( ! showProgressBar || isJetpack ) {
@@ -181,6 +267,7 @@ export function useAtomicTransfer(
 		showProgressBar,
 		setShowProgressBar,
 		isRetryingTransferStatus,
+		trustedTransferStatus,
 		retry,
 	};
 }

@@ -20,7 +20,7 @@ let mockState = {
 let mockWait = {
 	isInitialized: true,
 	hasTimedOut: false,
-	waitedSeconds: 0,
+	getWaitedSeconds: () => 0,
 	restart: mockRestart,
 	complete: mockComplete,
 };
@@ -100,6 +100,7 @@ jest.mock( '../use-atomic-transfer', () => ( {
 		showProgressBar: false,
 		setShowProgressBar: mockSetShowProgressBar,
 		isRetryingTransferStatus: false,
+		trustedTransferStatus: mockState.transferStatus,
 		retry: mockRetryAtomic,
 	} ),
 } ) );
@@ -136,7 +137,7 @@ describe( 'MarketplaceThankYou errors', () => {
 		mockWait = {
 			isInitialized: true,
 			hasTimedOut: false,
-			waitedSeconds: 0,
+			getWaitedSeconds: () => 0,
 			restart: mockRestart,
 			complete: mockComplete,
 		};
@@ -160,7 +161,7 @@ describe( 'MarketplaceThankYou errors', () => {
 	} );
 
 	it( 'renders a timeout and lets the customer retry', async () => {
-		mockWait = { ...mockWait, hasTimedOut: true, waitedSeconds: 300 };
+		mockWait = { ...mockWait, hasTimedOut: true, getWaitedSeconds: () => 300 };
 		renderPage();
 
 		expect(
