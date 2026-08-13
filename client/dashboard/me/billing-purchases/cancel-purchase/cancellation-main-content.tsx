@@ -244,7 +244,9 @@ export default function CancellationMainContent( {
 				<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
 			) }
 
-			{ isGSuite && (
+			{ /* Cancel and auto-renew only: the message is worded around cancelling and counts
+			    the grace period from expiry, neither of which applies to an immediate removal. */ }
+			{ isGSuite && displayVariant !== 'remove' && (
 				<GSuiteAccessMessage purchase={ purchase } selectedDomain={ selectedDomain } />
 			) }
 
