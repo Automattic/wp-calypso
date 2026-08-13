@@ -84,7 +84,7 @@ describe( '<McpOverview>', () => {
 		).toHaveAttribute( 'href', '/resources/ai-mcp/connect' );
 	} );
 
-	test( 'disables Read and Connect until MCP access is enabled', () => {
+	test( 'hides the tool and connection rows until MCP access is enabled', () => {
 		render(
 			<McpOverview
 				settings={ settings( false, [ ability( 'get-site-health', true ) ] ) }
@@ -92,13 +92,11 @@ describe( '<McpOverview>', () => {
 			/>
 		);
 
-		expect( screen.getByRole( 'button', { name: /^Read\b/ } ) ).toHaveAttribute(
-			'aria-disabled',
-			'true'
-		);
-		expect(
-			screen.getByRole( 'button', { name: /^Connect external AI assistant/ } )
-		).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( screen.getByRole( 'checkbox', { name: 'Enable MCP access' } ) ).toBeVisible();
+		expect( screen.queryByText( /^Read$/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^Write$/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^Connect external AI assistant$/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^Starter prompts$/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows Write as coming soon', () => {

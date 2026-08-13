@@ -93,40 +93,46 @@ export default function McpOverview( {
 					</VStack>
 				</CardBody>
 
-				<CardDivider style={ { borderColor: 'var(--color-border-subtle)' } } />
-				<SummaryButton
-					density="medium"
-					title={ __( 'Read' ) }
-					decoration={ <Icon icon={ seen } size={ 24 } /> }
-					badges={ [ getReadBadge( availableAbilities ) ] }
-					href={ toolsPath }
-					disabled={ ! mcpEnabled }
-					onClick={ handleNavClick( toolsPath, 'calypso_a4a_ai_mcp_available_tools_click' ) }
-				/>
-				<SummaryButton
-					density="medium"
-					title={ __( 'Write' ) }
-					decoration={ <Icon icon={ pencil } size={ 24 } /> }
-					badges={ [ { text: __( 'Coming soon' ) } ] }
-					disabled
-				/>
+				{ mcpEnabled && (
+					<>
+						<CardDivider style={ { borderColor: 'var(--color-border-subtle)' } } />
+						<SummaryButton
+							density="medium"
+							title={ __( 'Read' ) }
+							decoration={ <Icon icon={ seen } size={ 24 } /> }
+							badges={ [ getReadBadge( availableAbilities ) ] }
+							href={ toolsPath }
+							onClick={ handleNavClick( toolsPath, 'calypso_a4a_ai_mcp_available_tools_click' ) }
+						/>
+						<SummaryButton
+							density="medium"
+							title={ __( 'Write' ) }
+							decoration={ <Icon icon={ pencil } size={ 24 } /> }
+							badges={ [ { text: __( 'Coming soon' ) } ] }
+							disabled
+						/>
+					</>
+				) }
 			</Card>
 
-			<SummaryButton
-				title={ __( 'Connect external AI assistant' ) }
-				description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-				decoration={ <Icon icon={ connection } size={ 24 } /> }
-				href={ connectPath }
-				disabled={ ! mcpEnabled }
-				onClick={ handleNavClick( connectPath, 'calypso_a4a_ai_mcp_connect_click' ) }
-			/>
+			{ mcpEnabled && (
+				<>
+					<SummaryButton
+						title={ __( 'Connect external AI assistant' ) }
+						description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+						decoration={ <Icon icon={ connection } size={ 24 } /> }
+						href={ connectPath }
+						onClick={ handleNavClick( connectPath, 'calypso_a4a_ai_mcp_connect_click' ) }
+					/>
 
-			<SummaryButton
-				title={ __( 'Starter prompts' ) }
-				description={ __( 'Ready-made prompts to copy into your connected assistant.' ) }
-				decoration={ <Icon icon={ listView } size={ 24 } /> }
-				disabled
-			/>
+					<SummaryButton
+						title={ __( 'Starter prompts' ) }
+						description={ __( 'Ready-made prompts to copy into your connected assistant.' ) }
+						decoration={ <Icon icon={ listView } size={ 24 } /> }
+						disabled
+					/>
+				</>
+			) }
 		</VStack>
 	);
 }
