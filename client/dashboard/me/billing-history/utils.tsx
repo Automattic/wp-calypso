@@ -1,3 +1,4 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { isAkismetPro500Plan } from '../../utils/akismet';
@@ -211,6 +212,14 @@ function renderAkismetTransactionQuantitySummary( licensedQuantity: number, isRe
 	);
 }
 
+function renderStudioCodeAiCreditsQuantitySummary( licensedQuantity: number ) {
+	return sprintf(
+		/* translators: %s: formatted number of Studio Code AI credits */
+		_n( 'Purchase of %s credit', 'Purchase of %s credits', licensedQuantity ),
+		formatNumber( licensedQuantity )
+	);
+}
+
 export function DomainTransactionVolumeSummary( { item }: { item: ReceiptItem } ) {
 	if ( ! item.volume ) {
 		return null;
@@ -289,6 +298,10 @@ export function renderTransactionQuantitySummary( {
 
 	if ( isAkismetPro500Plan( wpcom_product_slug ) ) {
 		return renderAkismetTransactionQuantitySummary( licensedQuantity, isRenewal );
+	}
+
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
+		return renderStudioCodeAiCreditsQuantitySummary( licensedQuantity );
 	}
 
 	if ( isRenewal ) {

@@ -1,6 +1,7 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import deepFreeze from 'deep-freeze';
-import { groupDomainProducts } from '../utils';
+import { translate } from 'i18n-calypso';
+import { groupDomainProducts, renderTransactionQuantitySummary } from '../utils';
 
 const ident = ( x ) => x;
 
@@ -350,6 +351,39 @@ describe( 'utils', () => {
 			expect( result[ 1 ].amount_integer ).toEqual( 200 );
 			expect( result[ 2 ].amount ).toEqual( '$19' );
 			expect( result[ 2 ].amount_integer ).toEqual( 1900 );
+		} );
+	} );
+
+	describe( '#renderTransactionQuantitySummary()', () => {
+		const item = ( wpcom_product_slug, licensed_quantity ) => ( {
+			wpcom_product_slug,
+			licensed_quantity,
+			new_quantity: 0,
+			type: 'new purchase',
+		} );
+
+		test( 'should name Studio Code AI Credits in credits', () => {
+			expect(
+				renderTransactionQuantitySummary( item( 'studio-code-ai-credits', 500 ), translate )
+			).toEqual( 'Purchase of 500 credits' );
+		} );
+
+		test( 'should separate thousands', () => {
+			expect(
+				renderTransactionQuantitySummary( item( 'studio-code-ai-credits', 30000 ), translate )
+			).toEqual( 'Purchase of 30,000 credits' );
+		} );
+
+		test( 'should leave Akismet Pro unchanged', () => {
+			expect( renderTransactionQuantitySummary( item( 'ak_pro5h_yearly', 3 ), translate ) ).toEqual(
+				'Purchase of 3 500 API call licenses'
+			);
+		} );
+
+		test( 'should leave unmatched products on the generic summary', () => {
+			expect(
+				renderTransactionQuantitySummary( item( 'jetpack_ai_yearly', 3 ), translate )
+			).toEqual( 'Purchase of 3 items' );
 		} );
 	} );
 } );
