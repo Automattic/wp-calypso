@@ -2110,7 +2110,7 @@ describe( 'getEmptyViewSuggestions', () => {
 			( suggestion ) => suggestion.id === 'generate-featured-image'
 		);
 
-		expect( chip?.label ).toBe( 'Generate Featured Image' );
+		expect( chip?.label ).toBe( 'Generate featured image' );
 		expect( chip?.prompt ).toBe( '' );
 		expect( typeof chip?.action ).toBe( 'function' );
 	} );

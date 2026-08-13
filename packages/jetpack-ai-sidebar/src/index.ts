@@ -124,7 +124,7 @@ const OPTIMIZE_TITLE_SUGGESTION = {
  */
 const GENERATE_FEATURED_IMAGE_SUGGESTION = {
 	id: 'generate-featured-image',
-	label: __( 'Generate Featured Image', __i18n_text_domain__ ),
+	label: __( 'Generate featured image', __i18n_text_domain__ ),
 	description: __(
 		'Create a new image with AI and set it as the featured image.',
 		__i18n_text_domain__
@@ -364,8 +364,8 @@ function getPostLevelSuggestions(
 	}
 
 	return [
-		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
 		...( isImageStudioAvailable() ? [ GENERATE_FEATURED_IMAGE_SUGGESTION ] : [] ),
+		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
 		...( isExcerptSuggestionAvailable( currentPostType, supportsExcerpt )
 			? [ GENERATE_EXCERPT_SUGGESTION ]
 			: [] ),
