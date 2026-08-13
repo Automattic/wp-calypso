@@ -174,7 +174,7 @@ export function getNav2026Menus( {
 							target: '_self',
 						},
 						{
-							label: __( 'Newspack', __i18n_text_domain__ ),
+							label: 'Newspack',
 							url: 'https://newspack.com/',
 							isExternal: true,
 						},
