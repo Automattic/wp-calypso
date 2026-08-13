@@ -12,8 +12,7 @@ jest.mock( '@automattic/jetpack-ai-sidebar', () => ( {
 	registerBlockEditorFilters: mockRegisterBlockEditorFilters,
 	useAbilitiesSetup: jest.fn(),
 	useCheckpoint: jest.fn(),
-	useSubmissionAdmission: jest.fn(),
-	jetpackAiClientStateDataPartAdapter: jest.fn(),
+	useChatNotice: jest.fn(),
 	useWritingOnlySuggestions: jest.fn(),
 	writingOnlyToolProvider: {},
 } ) );

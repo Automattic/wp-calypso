@@ -183,8 +183,7 @@ describe( 'loadExternalProviders', () => {
 
 			expect( providers.toolProvider ).toBeUndefined();
 			expect( providers.contextProvider ).toBeUndefined();
-			expect( providers.useSubmissionAdmission ).toBeUndefined();
-			expect( providers.clientStateDataPartAdapter ).toBeUndefined();
+			expect( providers.useChatNotice ).toBeUndefined();
 			expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
 		}
 	);
@@ -200,19 +199,16 @@ describe( 'loadExternalProviders', () => {
 		await expect( loadExternalProviders() ).resolves.toEqual( {} );
 	} );
 
-	it( 'keeps the first client-state adapter', async () => {
-		const firstAdapter = jest.fn( () => ( { quota: 'first' } ) );
-		const secondAdapter = jest.fn( () => ( { quota: 'second' } ) );
+	it( 'keeps the first chat-notice hook', async () => {
+		const firstNotice = jest.fn( () => ( { message: 'first' } ) );
+		const secondNotice = jest.fn( () => ( { message: 'second' } ) );
 		setAgentsManagerData( {
-			agentProviders: [
-				{ clientStateDataPartAdapter: firstAdapter },
-				{ clientStateDataPartAdapter: secondAdapter },
-			],
+			agentProviders: [ { useChatNotice: firstNotice }, { useChatNotice: secondNotice } ],
 		} );
 
 		const providers = await loadExternalProviders();
 
-		expect( providers.clientStateDataPartAdapter ).toBe( firstAdapter );
+		expect( providers.useChatNotice ).toBe( firstNotice );
 	} );
 
 	it( 'merges abilities from multiple tool providers and dispatches execution to the owner', async () => {

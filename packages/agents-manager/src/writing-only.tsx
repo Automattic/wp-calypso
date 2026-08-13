@@ -86,7 +86,6 @@ function WritingOnlySetup( {
 				toolProvider: provider.toolProvider,
 				contextProvider: provider.contextProvider,
 				providerId: provider.providerId,
-				clientStateDataPartAdapter: provider.clientStateDataPartAdapter,
 			} )
 		);
 	}, [ provider, setAgentConfig, site?.ID ] );
@@ -229,7 +228,7 @@ function WritingOnlyDock( {
 						getChatComponent={ provider.getChatComponent }
 						useCheckpoint={ provider.useCheckpoint }
 						capabilities={ provider.capabilities }
-						useSubmissionAdmission={ provider.useSubmissionAdmission }
+						useChatNotice={ provider.useChatNotice }
 						groupWritingSuggestions
 						hasAiChatEntry={ hasAiChatEntry }
 						onHasMessagesChange={ NOOP }

@@ -25,12 +25,10 @@ import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
-import { AgentticContainer } from './agenttic-container-adapter';
 import getSuggestionClickPayload from './get-suggestion-click-payload';
 import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
-import type { SubmissionAdmission } from '../../utils/load-external-providers';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import type { ComponentProps, RefObject } from 'react';
@@ -111,8 +109,6 @@ interface Props {
 	onContextCardAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
 	/** Called when a context card's dismiss button is clicked. */
 	onContextCardDismiss?: ( card: ExternalContextCard ) => void;
-	/** Provider-owned quota admission state and optional compose-area notice. */
-	submissionAdmission?: SubmissionAdmission;
 	/** Whether the host has a separate button that can reopen a closed chat. */
 	hasAiChatEntry?: boolean;
 }
@@ -196,7 +192,6 @@ export default function AgentChat( {
 	complianceDisclosure,
 	onContextCardAction,
 	onContextCardDismiss,
-	submissionAdmission,
 	hasAiChatEntry = false,
 }: Props ) {
 	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
@@ -303,7 +298,7 @@ export default function AgentChat( {
 	}, [ trackImageUpload ] );
 
 	return (
-		<AgentticContainer
+		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
 			initialFreeDragPosition={ freeDragPosition ?? undefined }
@@ -316,8 +311,6 @@ export default function AgentChat( {
 			thinkingMessage={ thinkingMessage ?? undefined }
 			error={ error }
 			onSubmit={ onSubmit }
-			submitBlocked={ submissionAdmission?.submitBlocked }
-			onBlockedSubmit={ submissionAdmission?.onBlockedSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			freeDrag={ ! isDocked }
 			resizable={ ! isDocked }
@@ -333,7 +326,7 @@ export default function AgentChat( {
 			onInputChange={ onInputChange }
 			messagesPosition="bottom"
 			expandOnHover={ false }
-			notice={ submissionAdmission?.notice ?? notice }
+			notice={ notice }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
@@ -406,6 +399,6 @@ export default function AgentChat( {
 					</AgentUI.Footer>
 				) }
 			</AgentUI.ConversationView>
-		</AgentticContainer>
+		</AgentUI.Container>
 	);
 }

@@ -200,16 +200,6 @@ describe( 'createAgentConfig', () => {
 		);
 	} );
 
-	it( 'forwards the provider client-state adapter to Agenttic', async () => {
-		const clientStateDataPartAdapter = jest.fn( () => ( { quota: 'exhausted' } ) );
-		const config = ( await createAgentConfig( {
-			sessionId: 'session-1',
-			clientStateDataPartAdapter,
-		} ) ) as { clientStateDataPartAdapter?: typeof clientStateDataPartAdapter };
-
-		expect( config.clientStateDataPartAdapter ).toBe( clientStateDataPartAdapter );
-	} );
-
 	it( 'uses the dedicated Jetpack endpoint for a server-metered editor site', async () => {
 		setAgentsManagerData( { jetpackAiMeteringEnabled: true } );
 
