@@ -215,13 +215,13 @@ const mcpOverviewRoute = createRoute( {
 );
 
 const mcpAvailableToolsRoute = createRoute( {
-	head: () => ( { meta: [ { title: __( 'Available tools' ) } ] } ),
+	head: () => ( { meta: [ { title: __( 'Read' ) } ] } ),
 	getParentRoute: () => mcpRoute,
 	path: 'tools',
 	loader: ensureMcpSettings,
 } ).lazy( () =>
-	import( '../../agency/resources/mcp/available-tools' ).then( ( d ) =>
-		createLazyRoute( 'resources-mcp-tools' )( { component: d.default } )
+	import( '../../agency/resources/mcp/read-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-read' )( { component: d.default } )
 	)
 );
 
