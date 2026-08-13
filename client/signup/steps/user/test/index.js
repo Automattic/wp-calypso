@@ -115,4 +115,42 @@ describe( '#signupStep User', () => {
 			);
 		} );
 	} );
+
+	describe( '#submit', () => {
+		test( 'attributes Akismet account creation to the Akismet signup flow', () => {
+			const submitSignupStep = jest.fn();
+			const user = new User( {
+				flowName: 'account',
+				stepName: 'user',
+				isAkismet: true,
+				submitSignupStep,
+			} );
+
+			user.submit( { queryArgs: {} } );
+
+			expect( submitSignupStep ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					flowName: 'account',
+					signupFlowName: 'akismet',
+				} ),
+				{}
+			);
+		} );
+
+		test( 'does not override attribution for other account creation', () => {
+			const submitSignupStep = jest.fn();
+			const user = new User( {
+				flowName: 'account',
+				stepName: 'user',
+				isAkismet: false,
+				submitSignupStep,
+			} );
+
+			user.submit( { queryArgs: {} } );
+
+			const submittedStep = submitSignupStep.mock.calls[ 0 ][ 0 ];
+			expect( submittedStep.flowName ).toBe( 'account' );
+			expect( submittedStep ).not.toHaveProperty( 'signupFlowName' );
+		} );
+	} );
 } );

@@ -109,6 +109,12 @@ describe( 'activation email source', () => {
 
 		expect( body.extra ).toEqual( { has_segmentation_survey: false } );
 	} );
+
+	it( 'uses an explicit signup flow for attribution', async () => {
+		const body = await submitWith( { signupFlowName: 'akismet' } );
+
+		expect( body.signup_flow_name ).toBe( 'akismet' );
+	} );
 } );
 
 describe( 'email update mode', () => {

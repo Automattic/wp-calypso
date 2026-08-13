@@ -799,6 +799,7 @@ export function createAccount(
 	{
 		userData,
 		flowName,
+		signupFlowName,
 		lastKnownFlow,
 		queryArgs,
 		service,
@@ -828,10 +829,11 @@ export function createAccount(
 	const SIGNUP_TYPE_DEFAULT = 'default';
 
 	const params = new URLSearchParams( window.location.search );
+	const baseSignupFlowName = signupFlowName ?? flowName;
 	const flowNameTracking =
 		null === params.get( 'variationName' )
-			? flowName
-			: `${ flowName }-${ params.get( 'variationName' ) }`;
+			? baseSignupFlowName
+			: `${ baseSignupFlowName }-${ params.get( 'variationName' ) }`;
 
 	const responseHandler = ( signupType ) => ( error, response ) => {
 		const emailInError = signupType === SIGNUP_TYPE_SOCIAL ? { email: error?.data?.email } : {};
