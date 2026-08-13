@@ -17,7 +17,7 @@ import { CardBody } from '../../components/card';
 import type { UserPreferences } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
-const PREFERENCE_NAME = 'a4a-partner-directory-dashboard-not-approved-popover';
+const PREFERENCE_NAME = 'a4a-dashboard-pd-not-approved-popover';
 
 interface Props {
 	children: ReactNode;
@@ -99,7 +99,15 @@ export default function NotApprovedPopover( {
 			tabIndex={ 0 }
 			onMouseEnter={ openOnHover }
 			onMouseLeave={ closeOnHoverOut }
-			onFocus={ () => handleShowPopover( true ) }
+			onFocus={ openOnHover }
+			onBlur={ closeOnHoverOut }
+			onKeyDown={ ( event: React.KeyboardEvent ) => {
+				// Escape always closes, even the on-load popover; the dismissal
+				// isn't persisted, so the nudge returns on the next visit.
+				if ( event.key === 'Escape' ) {
+					setShowPopover( false );
+				}
+			} }
 		>
 			{ children }
 			{ showPopover && (
@@ -110,11 +118,14 @@ export default function NotApprovedPopover( {
 					shift
 					focusOnMount={ false }
 					onFocusOutside={ () => handleShowPopover( false ) }
+					onClose={ () => setShowPopover( false ) }
 				>
 					<CardBody
 						style={ { width: 'min(80vw, 350px)' } }
 						onMouseEnter={ openOnHover }
 						onMouseLeave={ closeOnHoverOut }
+						onFocus={ openOnHover }
+						onBlur={ closeOnHoverOut }
 					>
 						<VStack spacing={ 4 }>
 							<Text as="p">
@@ -128,7 +139,9 @@ export default function NotApprovedPopover( {
 									size="compact"
 									href={ expertiseUrl }
 									onClick={ () =>
-										dismissPopover( 'calypso_partner_directory_dashboard_update_expertise_click' )
+										dismissPopover(
+											'calypso_a4a_partner_directory_dashboard_update_expertise_click'
+										)
 									}
 								>
 									{ __( 'Update my expertise' ) }
@@ -138,7 +151,7 @@ export default function NotApprovedPopover( {
 										variant="secondary"
 										size="compact"
 										onClick={ () =>
-											dismissPopover( 'calypso_partner_directory_dashboard_do_it_later_click' )
+											dismissPopover( 'calypso_a4a_partner_directory_dashboard_do_it_later_click' )
 										}
 									>
 										{ __( 'I’ll do it later' ) }
