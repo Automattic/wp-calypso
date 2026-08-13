@@ -31,7 +31,7 @@ interface OAuthStartResponse {
 	authorize_url: string;
 }
 
-interface WordPressAgentSlackPageProps {
+interface WordPressAgentPageProps {
 	pairToken?: string;
 	slackStatus?: string;
 }
@@ -42,10 +42,7 @@ function errorMessage( error: unknown, fallback: string ): string {
 	return error instanceof Error && error.message ? error.message : fallback;
 }
 
-export default function WordPressAgentSlackPage( {
-	pairToken,
-	slackStatus,
-}: WordPressAgentSlackPageProps ) {
+export default function WordPressAgentPage( { pairToken, slackStatus }: WordPressAgentPageProps ) {
 	const translate = useTranslate();
 	const displayName = useSelector( getCurrentUserDisplayName );
 	const userLogin = useSelector( getCurrentUserName );
@@ -194,7 +191,7 @@ export default function WordPressAgentSlackPage( {
 	}
 
 	return (
-		<Main className="wordpress-agent-slack">
+		<Main className="wordpress-agent">
 			<DocumentHead title={ title } />
 			<PageViewTracker
 				path="/me/get-apps/wordpress-agent"
@@ -204,7 +201,7 @@ export default function WordPressAgentSlackPage( {
 				navigationItems={ [] }
 				title={ title }
 				subtitle={ translate( 'Connect your WordPress.com account to the tools where you work.' ) }
-				className="wordpress-agent-slack__header"
+				className="wordpress-agent__header"
 			/>
 
 			{ slackStatus === 'connected' && (

@@ -3,14 +3,14 @@
 @import '@automattic/typography/styles/variables';
 @import '@automattic/components/src/styles/typography';
 
-.wordpress-agent-slack {
+.wordpress-agent {
 	.wp-block-notice,
 	.components-notice {
 		margin-block-end: 16px;
 	}
 }
 
-.navigation-header.wordpress-agent-slack__header {
+.navigation-header.wordpress-agent__header {
 	@include break-small {
 		margin-top: 50px;
 	}

@@ -2,11 +2,11 @@ import page from '@automattic/calypso-router';
 import { createElement } from 'react';
 import { login } from 'calypso/lib/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import WordPressAgentSlackPage from './main';
+import WordPressAgentPage from './main';
 
-export const WORDPRESS_AGENT_SLACK_PATH = '/me/get-apps/wordpress-agent';
+export const WORDPRESS_AGENT_PATH = '/me/get-apps/wordpress-agent';
 
-export function wordpressAgentSlack( context, next ) {
+export function wordpressAgent( context, next ) {
 	if ( ! isUserLoggedIn( context.store.getState() ) ) {
 		page.replace( login( { redirectTo: window.location.href } ) );
 		return;
@@ -19,7 +19,7 @@ export function wordpressAgentSlack( context, next ) {
 		window.history.replaceState( window.history.state, '', url.toString() );
 	}
 
-	context.primary = createElement( WordPressAgentSlackPage, {
+	context.primary = createElement( WordPressAgentPage, {
 		pairToken,
 		slackStatus: context.query.slack,
 	} );

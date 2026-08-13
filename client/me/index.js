@@ -7,10 +7,7 @@ import {
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { TELEGRAM_CONNECT_PATH, telegramConnect } from 'calypso/telegram-connect/controller';
-import {
-	WORDPRESS_AGENT_SLACK_PATH,
-	wordpressAgentSlack,
-} from 'calypso/wordpress-agent-slack/controller';
+import { WORDPRESS_AGENT_PATH, wordpressAgent } from 'calypso/wordpress-agent/controller';
 import * as controller from './controller';
 
 import './style.scss';
@@ -38,10 +35,10 @@ export default function () {
 
 	page( TELEGRAM_CONNECT_PATH, setupPreferences, telegramConnect, makeLayout, clientRender );
 	page(
-		WORDPRESS_AGENT_SLACK_PATH,
+		WORDPRESS_AGENT_PATH,
 		setupPreferences,
 		controller.sidebar,
-		wordpressAgentSlack,
+		wordpressAgent,
 		makeLayout,
 		clientRender
 	);
