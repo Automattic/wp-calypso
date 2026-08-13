@@ -12,14 +12,14 @@ type FreshlyPressedPost = {
 export function getFreshlyPressedOn(
 	streamKey: string | undefined,
 	post: FreshlyPressedPost | null | undefined
-): string | null {
+): string | undefined {
 	if ( streamKey !== FRESHLY_PRESSED_STREAM_KEY ) {
-		return null;
+		return undefined;
 	}
 
 	const displayedOn = post?.editorial?.displayed_on;
 	if ( typeof displayedOn !== 'string' || displayedOn.trim() === '' ) {
-		return null;
+		return undefined;
 	}
 
 	return displayedOn;
