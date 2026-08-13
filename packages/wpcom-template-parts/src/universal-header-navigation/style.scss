@@ -1833,6 +1833,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			pointer-events: auto;
 			// Drill-in: fade the items in so they don't pop in over the fading-out nav list.
 			transition: opacity 0.27s var( --x-menu-2026-easing );
+
+			// Completes the 30px above a section title (8px here + 22px subtitle
+			// padding). On the list, not the items, so link pitch stays 36px.
+			&:not( .is-first-group ) {
+				margin-top: 8px;
+			}
 		}
 	}
 
