@@ -73,21 +73,11 @@ export class TestAccount {
 	}
 
 	/**
-	 * Waits for whichever app shell the landing page rendered.
+	 * Waits for whichever app shell `/` rendered: rollout enrollment decides whether
+	 * an account lands in classic Calypso or the hosting dashboard.
 	 *
-	 * `/` serves classic Calypso or the hosting dashboard depending on the account's
-	 * rollout enrollment, so waiting on the classic sidebar alone strands every spec
-	 * whose account lands in the dashboard. Specs navigate to their own target after
-	 * this, and those driving the classic sidebar re-wait for it in
-	 * `SidebarComponent.navigate`.
-	 *
-	 * `Promise.any` resolves on the first shell to appear and rejects only if both
-	 * fail, so a broken login still surfaces as a failure. Neither branch is gated
-	 * on the `load` event here: the dashboard branch settles as soon as its sidebar
-	 * is in the DOM, and the classic branch waits for `load` itself.
-	 *
-	 * The dashboard branch waits for `attached` rather than `visible` because the
-	 * sidebar is rendered off-canvas below the `medium` breakpoint.
+	 * Waits for `attached` rather than `visible` because the dashboard sidebar is
+	 * rendered off-canvas below the `medium` breakpoint.
 	 *
 	 * @param {Page} page Page object.
 	 */
