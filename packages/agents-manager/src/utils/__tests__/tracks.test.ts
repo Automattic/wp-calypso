@@ -107,6 +107,28 @@ describe( 'tracks wrappers', () => {
 			recordBigSkyTracksEvent( 'chat_input_send_message' );
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		} );
+
+		it( 'adds the canonical server-provided blog ID', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+				isDevMode: false,
+				site: { ID: 12345 },
+			};
+
+			recordBigSkyTracksEvent( 'chat_input_send_message' );
+
+			expect( lastEventProps().blog_id ).toBe( 12345 );
+		} );
+
+		it( 'omits blog_id when the server payload has no valid site ID', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+				isDevMode: false,
+				site: { ID: 0 },
+			};
+
+			recordBigSkyTracksEvent( 'chat_input_send_message' );
+
+			expect( lastEventProps() ).not.toHaveProperty( 'blog_id' );
+		} );
 	} );
 
 	describe( 'recordAgentsManagerTracksEvent', () => {

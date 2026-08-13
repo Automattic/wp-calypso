@@ -37,6 +37,14 @@ function getIsA11n(): boolean | undefined {
 	return typeof isA11n === 'boolean' ? isA11n : undefined;
 }
 
+/** Reads the canonical server-provided blog ID when available. */
+function getBlogId(): number | undefined {
+	const blogId = getAgentsManagerInlineData()?.site?.ID;
+	return typeof blogId === 'number' && Number.isInteger( blogId ) && blogId > 0
+		? blogId
+		: undefined;
+}
+
 type BigSkyTracksData = {
 	bigSkyVersion: string;
 	sessionType: string;
@@ -99,9 +107,11 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 
 	const bigSky = getBigSkyTracksData();
 	const isA11n = getIsA11n();
+	const blogId = getBlogId();
 	const baseProps: TracksProps = {
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
+		...( blogId !== undefined ? { blog_id: blogId } : {} ),
 		sessionid: getSessionId(),
 		session_type: bigSky.sessionType,
 		// AM has no onboarding flow, so the phase is always the editor.

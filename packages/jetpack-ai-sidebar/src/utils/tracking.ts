@@ -67,13 +67,23 @@ function getIsA11n(): boolean | undefined {
 	return typeof isA11n === 'boolean' ? isA11n : undefined;
 }
 
+/** Reads the canonical server-provided blog ID when available. */
+function getBlogId(): number | undefined {
+	const blogId = typeof agentsManagerData !== 'undefined' ? agentsManagerData?.site?.ID : undefined;
+	return typeof blogId === 'number' && Number.isInteger( blogId ) && blogId > 0
+		? blogId
+		: undefined;
+}
+
 function recordTracksEvent( eventName: string, properties: TrackProperties = {} ): void {
 	const sessionId = getSessionId();
 	const isA11n = getIsA11n();
+	const blogId = getBlogId();
 	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, {
 		...properties,
 		...( sessionId ? { sessionid: sessionId } : {} ),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
+		...( blogId !== undefined ? { blog_id: blogId } : {} ),
 	} );
 }
 

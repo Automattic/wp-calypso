@@ -56,6 +56,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		( globalThis as Record< string, unknown > ).agentsManagerData = {
 			isDevMode: false,
 			isA11n: false,
+			site: { ID: 12345 },
 		};
 		window.bigSkyInitialState = {
 			isFreeTrial: '',
@@ -79,6 +80,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		trackSplitScreenGuideClick( { componentType: 'post-feedback' } );
 
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith( 'jetpack_ai_split_screen_guide_click', {
+			blog_id: 12345,
 			component_type: 'post-feedback',
 			guide_variant: 'inline_action_card',
 			is_test: false,
@@ -99,6 +101,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_ai_split_screen_guide_rendered',
 			{
+				blog_id: 12345,
 				component_type: 'ai-editorial-review',
 				guide_variant: 'inline_action_card',
 				is_test: false,
@@ -134,6 +137,18 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		trackSplitScreenGuideClick( { componentType: 'proofread' } );
 
 		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'is_a11n' );
+	} );
+
+	it( 'omits blog_id when the server payload has no valid site ID', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			isDevMode: false,
+			isA11n: false,
+			site: { ID: 0 },
+		};
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'blog_id' );
 	} );
 
 	it( 'uses Agents Manager test and Big Sky free-trial and screen context', () => {
