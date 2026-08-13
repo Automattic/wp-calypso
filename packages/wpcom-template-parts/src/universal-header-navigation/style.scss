@@ -1418,10 +1418,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	.x-dropdown-subcategories {
 		display: flex;
-		flex-wrap: wrap;
+		flex-wrap: nowrap; // Columns compress (labels wrap) in verbose locales; never spill to a second row.
 		// Don't stretch short columns to the tallest column's height.
 		align-items: flex-start;
-		gap: $x-dropdown-2026-column-gap;
+		gap: clamp(40px, 7vw, $x-dropdown-2026-column-gap);
 		max-width: $x-nav-2026-content-max-width;
 		margin: 0;
 		padding: 0;
