@@ -22,12 +22,16 @@ class DomainsLandingHeader extends Component {
 			</svg>
 		);
 
-		switch ( this.props.reseller ) {
+		const reseller = this.props.reseller === undefined ? 'wordpress' : this.props.reseller;
+
+		switch ( reseller ) {
 			case 'tumblr_live':
 			case 'tumblr_ote':
 				return tumblrLogo;
-			default:
+			case 'wordpress':
 				return <WordPressLogo className="header__logo" size={ 52 } />;
+			default:
+				return null;
 		}
 	};
 
