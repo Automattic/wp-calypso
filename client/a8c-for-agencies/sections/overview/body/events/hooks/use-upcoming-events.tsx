@@ -179,6 +179,13 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 									trackEventName:
 										'calypso_a4a_overview_events_a4a_pressable_expansion_offer_view_promo_details_click',
 								},
+								{
+									variant: 'secondary',
+									label: translate( 'See Pressable plans' ),
+									url: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+									trackEventName:
+										'calypso_a4a_overview_events_a4a_pressable_expansion_offer_see_pressable_plans_click',
+								},
 							],
 							logoUrl: PressableLogo,
 							dateClassName: 'a4a-event__date--a4a',
