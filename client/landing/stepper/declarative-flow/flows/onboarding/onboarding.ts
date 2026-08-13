@@ -5,7 +5,6 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
-import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import {
@@ -292,16 +291,6 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'email-verification': {
 					const next = queryParams.get( 'next' ) || 'create-site';
-
-					// Verifying the email invalidates the proxy session established at signup, and with
-					// it the all-blogs-access grant that authorizes site creation. Only the free path
-					// creates a site from here (the paid path already has one), so re-establish that
-					// access — the same setup the account step runs at signup — before proceeding.
-					if ( next === 'create-site' && ! isEnabled( 'oauth' ) ) {
-						reloadProxy();
-						await requestAllBlogsAccess();
-					}
-
 					return navigate( next as typeof currentStepSlug );
 				}
 				case 'create-site':
