@@ -16,7 +16,7 @@ import {
 	withSchemaValidation,
 	withPersistence,
 } from 'calypso/state/utils';
-import { NO_TRANSFER_RECORD_ERROR, transferStates } from './constants';
+import { isNoTransferRecordError, transferStates } from './constants';
 import eligibility from './eligibility/reducer';
 import { automatedTransfer as schema } from './schema';
 
@@ -34,7 +34,7 @@ export const status = withPersistence(
 			case TRANSFER_UPDATE:
 				return 'complete' === action.status ? transferStates.COMPLETE : state;
 			case REQUEST_STATUS_FAILURE:
-				return action.error === NO_TRANSFER_RECORD_ERROR
+				return isNoTransferRecordError( { error: action.errorCode, message: action.error } )
 					? transferStates.NONE
 					: transferStates.REQUEST_FAILURE;
 		}

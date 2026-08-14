@@ -6,6 +6,7 @@ import {
 } from 'calypso/state/automated-transfer/actions';
 import {
 	NO_TRANSFER_RECORD_ERROR,
+	NO_TRANSFER_RECORD_ERROR_CODE,
 	transferStates,
 } from 'calypso/state/automated-transfer/constants';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -162,6 +163,38 @@ describe( 'requestingStatusFailure', () => {
 		retries.forEach( ( [ action ] ) => expect( action.pollingMode ).toBe( 'continue' ) );
 		expect( dispatch ).not.toHaveBeenCalledWith(
 			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT )
+		);
+	} );
+
+	test( 'should recognize a missing transfer record by its error code alone', () => {
+		const start = 1000000;
+		jest.setSystemTime( start );
+		requestStatus( { siteId, pollingMode: 'start' } );
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		const dispatch = jest.fn();
+
+		requestingStatusFailure( {
+			siteId,
+			pollingMode: 'start',
+			meta: {
+				dataLayer: {
+					error: {
+						error: NO_TRANSFER_RECORD_ERROR_CODE,
+						message: 'This site has no automated transfer.',
+					},
+				},
+			},
+		} )( dispatch );
+
+		expect( dispatch ).not.toHaveBeenCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT )
+		);
+		expect( dispatch ).toHaveBeenCalledWith(
+			automatedTransferStatusFetchingFailure( {
+				siteId,
+				error: 'This site has no automated transfer.',
+				errorCode: NO_TRANSFER_RECORD_ERROR_CODE,
+			} )
 		);
 	} );
 

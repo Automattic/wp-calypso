@@ -75,10 +75,11 @@ export const setAutomatedTransferStatus = ( siteId, status, uploadedPluginId ) =
  * @param {string} param.error The error string received
  * @returns {Object} An action object
  */
-export const automatedTransferStatusFetchingFailure = ( { siteId, error } ) => ( {
+export const automatedTransferStatusFetchingFailure = ( { siteId, error, errorCode } ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
 	siteId,
 	error,
+	errorCode,
 } );
 
 /**
