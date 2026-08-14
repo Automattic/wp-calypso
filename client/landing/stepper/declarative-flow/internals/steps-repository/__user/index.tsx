@@ -94,7 +94,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { status: gateStatus } = useEmailVerificationGate( flow );
 	// Sending the activation email and aiming it back at onboarding is shared by both variants: the
 	// account step gates in Variant A, but in Variant B the same link is what the deferred gate,
-	// met after checkout, goes on to wait for.
+	// met after plan selection or checkout, goes on to wait for.
 	const isPostAccountCreationVerification = useIsPostAccountCreationEmailVerification( flow );
 	const isPostPlanSelectionVerification = useIsPostPlanSelectionEmailVerification( flow );
 	const emailVerificationEnabled =

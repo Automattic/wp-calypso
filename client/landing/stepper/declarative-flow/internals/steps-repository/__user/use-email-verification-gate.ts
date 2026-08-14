@@ -66,8 +66,6 @@ export function useIsPostPlanSelectionEmailVerification( flow: string ): boolean
 type GateStatus = 'pending' | 'clear' | 'verified' | 'gated';
 
 interface EmailVerificationGate {
-	// Account creation needs this before `/me` has answered anything.
-	isEnabled: boolean;
 	status: GateStatus;
 }
 
@@ -85,10 +83,8 @@ export function useEmailVerificationGate( flow: string ): EmailVerificationGate 
 	const currentUser = useSelector( getCurrentUser );
 	const { isLoading, variant } = useEmailVerificationVariant( flow );
 
-	const isEnabled = variant === 'treatment_post_account_creation';
-
-	// Verification is read before enablement, so a control assignment can't be mistaken for the
-	// user having confirmed.
+	// Verification is read before the arm, so a control assignment can't be mistaken for the user
+	// having confirmed.
 	let status: GateStatus = 'clear';
 	if ( currentUser?.email_verified ) {
 		status = 'verified';
@@ -96,7 +92,7 @@ export function useEmailVerificationGate( flow: string ): EmailVerificationGate 
 		// Hold rather than clear until the arm is known, so a would-be-gated account isn't advanced
 		// past the step before the assignment resolves.
 		status = 'pending';
-	} else if ( ! isEnabled ) {
+	} else if ( variant !== 'treatment_post_account_creation' ) {
 		status = 'clear';
 	} else if ( ! currentUser ) {
 		status = 'pending';
@@ -104,5 +100,5 @@ export function useEmailVerificationGate( flow: string ): EmailVerificationGate 
 		status = 'gated';
 	}
 
-	return { isEnabled, status };
+	return { status };
 }
