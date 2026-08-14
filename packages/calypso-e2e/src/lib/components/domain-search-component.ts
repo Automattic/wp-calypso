@@ -1,5 +1,6 @@
 import { Locator, Page, Response } from 'playwright';
 import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
+import { handleActiveThrottles, recordThrottle } from '../throttle-flags';
 
 type CartResponseDiagnostic = {
 	method: string;
@@ -142,6 +143,12 @@ export class DomainSearchComponent {
 				);
 			}
 
+			await recordThrottle( {
+				url: response.url(),
+				status: response.status(),
+				body: await response.text().catch( () => '' ),
+			} );
+
 			// Wait for the DOM to reflect the new search results. The API
 			// response resolves before React re-renders the suggestion list
 			// (TanStack Query keeps isLoading false on refetch while prior
@@ -158,9 +165,17 @@ export class DomainSearchComponent {
 			}
 		}
 
-		// Domain lookup service is external to Automattic and sometimes it returns an error.
-		// Retry a few times when this is encountered.
-		await reloadAndRetry( this.page, searchDomainClosure );
+		// Outside the retry: `reloadAndRetry` swallows every error the closure
+		// throws, and skipping or failing for a throttle is thrown, not returned.
+		// The check after it reads the flag the closure raised.
+		handleActiveThrottles( [ 'domain-suggestions' ] );
+		try {
+			// Domain lookup service is external to Automattic and sometimes it returns an error.
+			// Retry a few times when this is encountered.
+			await reloadAndRetry( this.page, searchDomainClosure );
+		} finally {
+			handleActiveThrottles( [ 'domain-suggestions' ] );
+		}
 	}
 
 	/**

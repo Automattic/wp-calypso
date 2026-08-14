@@ -1,5 +1,6 @@
 import { Page, Locator, Frame } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
+import { handleActiveThrottles } from '../../throttle-flags';
 import type { NewUserResponse } from '../../../types/rest-api-client.types';
 
 /**
@@ -221,12 +222,17 @@ export class UserSignupPage {
 	 * @returns {Promise<NewUserResponse>}
 	 */
 	private captureNewUserResponse(): Promise< NewUserResponse > {
+		handleActiveThrottles( [ 'signup' ] );
 		return this.page
 			.waitForResponse(
+				// Not `ok()`: a refused signup carries the reason it was refused, and
+				// waiting for an ok response that is never coming turns it into a
+				// timeout. Still not a 5xx, which `captureUsersNewServerError` races
+				// this promise to reject with the retryable error the caller keys on.
 				( response ) =>
 					/\/users\/new\?/.test( response.url() ) &&
-					response.ok() &&
-					response.request().method() === 'POST',
+					response.request().method() === 'POST' &&
+					response.status() < 500,
 				// Use an explicit timeout so the global actionTimeout (10s) does not
 				// apply here. The form load + fill + network round-trip can easily
 				// exceed 10s on a slow CI runner.
