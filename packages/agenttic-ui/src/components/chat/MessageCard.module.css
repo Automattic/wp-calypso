@@ -12,7 +12,11 @@
 }
 
 .card:hover {
-	background-color: color-mix(in srgb, var(--color-foreground) 15%, var(--color-background));
+	background-color: color-mix(
+		in srgb,
+		var(--color-foreground) 15%,
+		var(--color-background)
+	);
 }
 
 .content {

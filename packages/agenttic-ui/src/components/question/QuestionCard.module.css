@@ -1,6 +1,7 @@
 .card {
 	background: var(--color-background);
-	border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+	border: 1px solid
+		color-mix(in srgb, var(--color-foreground) 10%, transparent);
 	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-sm);
 	display: flex;
@@ -35,7 +36,8 @@
 .choice {
 	align-items: stretch;
 	background: var(--color-background);
-	border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+	border: 1px solid
+		color-mix(in srgb, var(--color-foreground) 10%, transparent);
 	border-radius: var(--radius-md);
 	color: var(--color-foreground);
 	cursor: pointer;

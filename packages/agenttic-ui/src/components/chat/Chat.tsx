@@ -444,7 +444,7 @@ export function Chat( {
 								placeholder={ placeholder }
 								isProcessing={ isProcessing }
 								onStop={ onStop }
-								showHeader={ true }
+								showHeader
 								onClose={ handleClose }
 								fromCompact={ fromCompact }
 								notice={ notice }

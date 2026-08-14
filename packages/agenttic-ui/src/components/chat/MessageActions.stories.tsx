@@ -59,7 +59,7 @@ export const FeedbackExample: Story = {
 		const FeedbackDemo = () => {
 			const [ message, setMessage ] =
 				useState< MessageType >( mockAgentMessage );
-			const [ , forceUpdate ] = useState( {} );
+			const [ , _forceUpdate ] = useState( {} );
 
 			// Create feedback manager with ref to maintain instance
 			const feedbackManagerRef = useRef< ReturnType<

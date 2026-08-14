@@ -239,7 +239,7 @@ const SiteSpecDemo: React.FC< { currentTheme: 'light' | 'dark' } > = () => {
 								<div className="site-spec-demo__prompt-suggestions">
 									<AgentUI.Suggestions
 										onSelect={ handleSuggestionSelect }
-										showSuggestions={ true }
+										showSuggestions
 									/>
 								</div>
 							) }

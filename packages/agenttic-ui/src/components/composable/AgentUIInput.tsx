@@ -14,7 +14,7 @@ export interface AgentUIInputProps {
 	actionOrder?: 'before-submit' | 'after-submit';
 	onKeyDown?: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 	layout?: 'inline' | 'stacked';
-	imageUploaderRef?: React.RefObject< ImageUploaderHandle >;
+	imageUploaderRef?: React.RefObject< ImageUploaderHandle | null >;
 	// Disables the "+" upload action (e.g. while an upload is in flight)
 	imageUploadDisabled?: boolean;
 }

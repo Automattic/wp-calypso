@@ -59,7 +59,7 @@ export class ChartErrorBoundary extends Component< Props, State > {
 			try {
 				const parsed = JSON.parse( this.props.chartData );
 				console.error( 'Parsed chart data:', parsed );
-			} catch ( parseError ) {
+			} catch ( _parseError ) {
 				console.error( 'Could not parse chart data as JSON' );
 			}
 		}

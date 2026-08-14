@@ -10,7 +10,8 @@ interface ChatHeaderProps {
 	className?: string;
 }
 
-export function ChatHeader( { onClose, className }: ChatHeaderProps ) {
+// TODO: `className` is accepted but never applied — apply or drop it (tracked follow-up).
+export function ChatHeader( { onClose }: ChatHeaderProps ) {
 	return (
 		<motion.div
 			data-slot="chat-header"

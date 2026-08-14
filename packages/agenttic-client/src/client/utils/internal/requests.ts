@@ -188,7 +188,7 @@ export async function prepareRequest(
 	defaultSessionId?: string
 ) {
 	const { message, sessionId, taskId, metadata } = params;
-	const { agentId, agentUrl, authProvider, proxy } = config;
+	const { agentId, agentUrl, authProvider } = config;
 	const { isStreaming = false, enableTokenStreaming = false } = options;
 
 	const effectiveSessionId = sessionId || defaultSessionId;

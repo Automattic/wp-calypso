@@ -3,17 +3,20 @@ import { resolve } from 'path';
 import autoprefixer from 'autoprefixer';
 import { libInjectCss } from 'vite-plugin-lib-inject-css';
 
-export default defineConfig({
+export default defineConfig( {
 	build: {
 		lib: {
 			entry: {
-				index: resolve(__dirname, 'src/index.ts'),
-				mocks: resolve(__dirname, 'src/mocks/index.ts'),
-				'agents-api/index': resolve(__dirname, 'src/agents-api/index.ts'),
+				index: resolve( __dirname, 'src/index.ts' ),
+				mocks: resolve( __dirname, 'src/mocks/index.ts' ),
+				'agents-api/index': resolve(
+					__dirname,
+					'src/agents-api/index.ts'
+				),
 			},
 			name: 'AgentticClient',
-			fileName: (format, entryName) => `${entryName}.js`,
-			formats: ['es'],
+			fileName: ( format, entryName ) => `${ entryName }.js`,
+			formats: [ 'es' ],
 		},
 		rollupOptions: {
 			external: [
@@ -50,8 +53,8 @@ export default defineConfig({
 			generateScopedName: '[name]_[local]',
 		},
 		postcss: {
-			plugins: [autoprefixer()],
+			plugins: [ autoprefixer() ],
 		},
 	},
-	plugins: [libInjectCss()],
-});
+	plugins: [ libInjectCss() ],
+} );

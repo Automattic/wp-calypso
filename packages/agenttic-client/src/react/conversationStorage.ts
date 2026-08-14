@@ -323,6 +323,7 @@ function restoreMessage( stored: StoredMessage ): Message {
  * which of those applies and how to surface the outcome.
  *
  * Uses `Message.metadata.deliveryStatus` written by {@link restoreMessage}.
+ * @param messages - The restored conversation messages.
  */
 export function getUnresolvedMessages( messages: Message[] ): Message[] {
 	return messages.filter( ( m ) => {
@@ -331,7 +332,10 @@ export function getUnresolvedMessages( messages: Message[] ): Message[] {
 	} );
 }
 
-/** Joined text parts — messageId is regenerated on restore, so text matches. */
+/**
+ * Joined text parts — messageId is regenerated on restore, so text matches.
+ * @param message - The message whose text parts to join.
+ */
 function messageTextContent( message: Message ): string {
 	return message.parts
 		.filter( ( part ): part is TextPart => part.type === 'text' )
@@ -339,7 +343,10 @@ function messageTextContent( message: Message ): string {
 		.join( '\n' );
 }
 
-/** Count user turns by text so duplicate prompts are distinct occurrences. */
+/**
+ * Count user turns by text so duplicate prompts are distinct occurrences.
+ * @param messages - The messages to count user turns in.
+ */
 function userTextCounts( messages: Message[] ): Map< string, number > {
 	const counts = new Map< string, number >();
 	for ( const message of messages ) {

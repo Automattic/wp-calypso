@@ -76,11 +76,8 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 					data-slot="suggestions"
 					className={ cn(
 						styles.container,
-						layout === 'vertical'
-							? styles.vertical
-							: layout === 'floating'
-							? styles.floating
-							: '',
+						layout === 'vertical' ? styles.vertical : undefined,
+						layout === 'floating' ? styles.floating : undefined,
 						className
 					) }
 					initial={ { opacity: 0, y: '-80%' } }

@@ -1,12 +1,6 @@
-import React, { createContext, useCallback, useContext } from 'react';
+import React, { createContext, useContext } from 'react';
 import type { ComponentType } from 'react';
-import type {
-	ChatState,
-	Message,
-	NoticeConfig,
-	Suggestion,
-	UseInputReturn,
-} from '../types';
+import type { ChatState, Message, NoticeConfig, Suggestion } from '../types';
 
 export interface AgentUIContextValue {
 	// Core data

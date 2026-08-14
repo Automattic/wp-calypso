@@ -112,7 +112,9 @@ function now(): number {
 function stableHash( value: string ): string {
 	let hash = 0;
 	for ( let i = 0; i < value.length; i++ ) {
+		// eslint-disable-next-line no-bitwise
 		hash = ( hash << 5 ) - hash + value.charCodeAt( i );
+		// eslint-disable-next-line no-bitwise
 		hash |= 0;
 	}
 	return Math.abs( hash ).toString( 36 );
@@ -296,6 +298,7 @@ export function groupToolMessages(
 		const parameters = asRecord(
 			metadata.parameters ?? raw.parameters ?? toolData.parameters
 		);
+		// eslint-disable-next-line @wordpress/no-unused-vars-before-return
 		const result = asRecord(
 			toolData.result ?? raw.result ?? metadata.result ?? toolData
 		);

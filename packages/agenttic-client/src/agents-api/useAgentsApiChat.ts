@@ -104,9 +104,11 @@ export function useAgentsApiChat( {
 	}, [] );
 
 	const refreshSessions = useCallback( async () => {
+		/* eslint-disable @wordpress/no-unused-vars-before-return -- the request must complete before the staleness guard */
 		const requestId = ++refreshRequestRef.current;
 		const response = await adapter.listSessions();
 		const nextSessions = normalizeSessions( response );
+		/* eslint-enable @wordpress/no-unused-vars-before-return */
 		if ( ! mountedRef.current || requestId !== refreshRequestRef.current ) {
 			return;
 		}

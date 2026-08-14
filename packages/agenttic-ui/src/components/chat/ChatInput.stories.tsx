@@ -65,7 +65,7 @@ export const Default: Story = {
 };
 
 export const Processing: Story = {
-	render: () => <ChatInputWrapper isProcessing={ true } />,
+	render: () => <ChatInputWrapper isProcessing />,
 	args: {
 		value: '',
 		onChange: () => {},
@@ -79,7 +79,7 @@ export const Processing: Story = {
 export const WithExpandButton: Story = {
 	render: () => (
 		<ChatInputWrapper
-			showExpandButton={ true }
+			showExpandButton
 			onExpand={ () => console.log( 'Expand clicked!' ) }
 		/>
 	),
@@ -170,7 +170,7 @@ export const WithCustomActionsAfterSubmit: Story = {
 };
 
 export const DisabledSubmit: Story = {
-	render: () => <ChatInputWrapper disabled={ true } />,
+	render: () => <ChatInputWrapper disabled />,
 	args: {
 		value: '',
 		onChange: () => {},

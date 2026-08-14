@@ -159,6 +159,7 @@ function waitForNextFrame(): Promise< void > {
 		const timeoutId = setTimeout( () => {
 			settled = true;
 			if ( typeof cancelAnimationFrame !== 'undefined' ) {
+				// eslint-disable-next-line @typescript-eslint/no-use-before-define
 				cancelAnimationFrame( rafId );
 			}
 			resolve();
@@ -188,6 +189,7 @@ export async function* parseSSEStream(
 	const reader = stream.getReader();
 	const decoder = new TextDecoder();
 	let buffer = '';
+	// eslint-disable-next-line @typescript-eslint/no-use-before-define
 	const accumulator = new DeltaAccumulator();
 	let currentTaskId: string | null = null;
 	let hasProcessedDelta = false;
@@ -523,7 +525,7 @@ export class DeltaAccumulator {
 				this.textContent += delta.content;
 				break;
 
-			case 'tool_name':
+			case 'tool_name': {
 				if ( ! this.toolCalls.has( delta.toolCallIndex ) ) {
 					this.toolCalls.set( delta.toolCallIndex, {
 						toolCallId: delta.toolCallId,
@@ -534,8 +536,9 @@ export class DeltaAccumulator {
 				const toolCall = this.toolCalls.get( delta.toolCallIndex )!;
 				toolCall.toolName += delta.content;
 				break;
+			}
 
-			case 'tool_argument':
+			case 'tool_argument': {
 				if ( ! this.toolCalls.has( delta.toolCallIndex ) ) {
 					this.toolCalls.set( delta.toolCallIndex, {
 						toolCallId: delta.toolCallId,
@@ -546,6 +549,7 @@ export class DeltaAccumulator {
 				const call = this.toolCalls.get( delta.toolCallIndex )!;
 				call.argumentFragments.push( delta.content );
 				break;
+			}
 		}
 	}
 

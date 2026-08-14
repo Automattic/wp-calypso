@@ -108,7 +108,7 @@ export const getClientTools = ( addMessage: ( message: any ) => void ) => {
 			} );
 
 			switch ( toolId ) {
-				case 'display_graph':
+				case 'display_graph': {
 					if ( ! args.title || ! args.data ) {
 						return {
 							result: 'Error: Title and data are required for graph display',
@@ -142,6 +142,7 @@ export const getClientTools = ( addMessage: ( message: any ) => void ) => {
 						result: `Graph displayed: ${ args.title } with ${ args.data.length } data points`,
 						returnToAgent: false,
 					};
+				}
 			}
 		},
 	};

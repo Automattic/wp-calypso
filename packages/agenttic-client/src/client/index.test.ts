@@ -257,7 +257,7 @@ describe( 'Client', () => {
 					toolId: string,
 					args: any,
 					messageId?: string,
-					toolCallId?: string
+					_toolCallId?: string
 				) {
 					capturedMessageId = messageId;
 					return { result: 'tool executed' };
@@ -417,7 +417,7 @@ describe( 'Client', () => {
 					toolId: string,
 					args: any,
 					messageId?: string,
-					toolCallId?: string
+					_toolCallId?: string
 				) {
 					capturedMessageId = messageId;
 					return { result: 'tool executed' };
@@ -577,7 +577,7 @@ describe( 'Client', () => {
 					toolId: string,
 					args: any,
 					messageId?: string,
-					toolCallId?: string
+					_toolCallId?: string
 				) {
 					capturedMessageIds.push( messageId );
 					return { result: 'tool executed' };
@@ -1713,7 +1713,7 @@ describe( 'Client', () => {
 				const stream = client.sendMessageStream( {
 					message: createTextMessage( 'Hello' ),
 				} );
-				for await ( const update of stream ) {
+				for await ( const _update of stream ) {
 					// Should throw before yielding any updates
 				}
 			} ).rejects.toThrow( 'Streaming error: API rate limit exceeded' );

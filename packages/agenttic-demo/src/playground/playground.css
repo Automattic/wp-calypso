@@ -53,7 +53,7 @@
 		color: #fff;
 	}
 
-	&[aria-pressed='true'] {
+	&[aria-pressed="true"] {
 		background: #fff;
 		color: #16161a;
 	}
@@ -86,7 +86,7 @@
 		color: #fff;
 	}
 
-	&[aria-pressed='true'] {
+	&[aria-pressed="true"] {
 		background: #2271b1;
 		border-color: #2271b1;
 		color: #fff;

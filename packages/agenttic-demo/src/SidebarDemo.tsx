@@ -246,7 +246,7 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 											'image/gif',
 											'image/webp',
 										] }
-										showFileMetadata={ true }
+										showFileMetadata
 									/>
 									<AgentUI.Input
 										imageUploaderRef={ uploaderRef }

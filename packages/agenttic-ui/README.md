@@ -133,9 +133,10 @@ function ChatWithTypingStatus() {
 ```
 
 The `onTypingStatusChange` callback is triggered when the typing status changes. The user is considered "typing" when:
-- The input field is focused
-- The browser window is focused  
-- The input contains text (length > 0)
+
+-   The input field is focused
+-   The browser window is focused
+-   The input contains text (length > 0)
 
 ## Architecture
 
@@ -183,11 +184,11 @@ design-system overrides should target the stable data hooks instead of generated
 class names:
 
 ```css
-[data-agenttic-question-card] [data-slot="choice"] {
+[data-agenttic-question-card] [data-slot='choice'] {
 	/* Product choice styles. */
 }
 
-[data-agenttic-question-card] [data-slot="presentation"] {
+[data-agenttic-question-card] [data-slot='presentation'] {
 	/* Product presentation layout. */
 }
 ```
@@ -262,25 +263,28 @@ interface AgentUIProps {
 Place suggestions anywhere in your layout:
 
 ```tsx
-<AgentUI.Container {...props}>
-  <AgentUI.ConversationView>
-    <AgentUI.Messages />
-    <AgentUI.Suggestions /> {/* Above input */}
-    <AgentUI.Footer>
-      <AgentUI.Input />
-    </AgentUI.Footer>
-  </AgentUI.ConversationView>
+<AgentUI.Container { ...props }>
+	<AgentUI.ConversationView>
+		<AgentUI.Messages />
+		<AgentUI.Suggestions /> { /* Above input */ }
+		<AgentUI.Footer>
+			<AgentUI.Input />
+		</AgentUI.Footer>
+	</AgentUI.ConversationView>
 </AgentUI.Container>
+```
 
-// Or below input:
-<AgentUI.Container {...props}>
-  <AgentUI.ConversationView>
-    <AgentUI.Messages />
-    <AgentUI.Footer>
-      <AgentUI.Input />
-    </AgentUI.Footer>
-    <AgentUI.Suggestions /> {/* Below input */}
-  </AgentUI.ConversationView>
+Or below input:
+
+```tsx
+<AgentUI.Container { ...props }>
+	<AgentUI.ConversationView>
+		<AgentUI.Messages />
+		<AgentUI.Footer>
+			<AgentUI.Input />
+		</AgentUI.Footer>
+		<AgentUI.Suggestions /> { /* Below input */ }
+	</AgentUI.ConversationView>
 </AgentUI.Container>
 ```
 
@@ -336,10 +340,10 @@ Stop button appears automatically during processing:
 
 Content items can have different types that determine how they're displayed:
 
-- `type: 'text'` - Normal text content (visible)
-- `type: 'image_url'` - Image content (visible)
-- `type: 'component'` - React component (visible)
-- `type: 'context'` - Context information sent as text to the agent but hidden from UI
+-   `type: 'text'` - Normal text content (visible)
+-   `type: 'image_url'` - Image content (visible)
+-   `type: 'component'` - React component (visible)
+-   `type: 'context'` - Context information sent as text to the agent but hidden from UI
 
 ```tsx
 // Example: Mixing visible and context content
@@ -368,9 +372,7 @@ const messages = [
 	{
 		id: '3',
 		role: 'agent',
-		content: [
-			{ type: 'text', text: "I've taken you to the dashboard." },
-		],
+		content: [ { type: 'text', text: "I've taken you to the dashboard." } ],
 		timestamp: Date.now(),
 		archived: false,
 		showIcon: true,
@@ -455,7 +457,7 @@ and a title (`triggerTitle`, defaults to `Ask AI`); clicking it expands the chat
 	variant="floating"
 	floatingChatState="minimized"
 	triggerTitle="Ask AI"
-/>;
+/>
 ```
 
 ## Hooks

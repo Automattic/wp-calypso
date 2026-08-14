@@ -109,8 +109,8 @@
 	height: 20px;
 	border-radius: 50%;
 	border: none;
-	background-color: var(--color-popover-muted, #2F2F2F);
-	color: white;
+	background-color: var(--color-popover-muted, #2f2f2f);
+	color: #fff;
 	font-size: 16px;
 	line-height: 1;
 	cursor: pointer;
@@ -126,7 +126,7 @@
 }
 
 .removeButton svg {
-	color: var(--color-muted-foreground, #8F8F8F);
+	color: var(--color-muted-foreground, #8f8f8f);
 }
 
 .previewItem:hover .removeButton {
@@ -156,7 +156,7 @@
 .previewMeta {
 	display: flex;
 	flex-direction: column;
-	gap: 0px;
+	gap: 0;
 	flex: 1;
 	min-width: 0;
 }

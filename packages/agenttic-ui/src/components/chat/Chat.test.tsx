@@ -24,7 +24,7 @@ const { animateMock, dragStartSpy, floatingDragProps } = vi.hoisted( () => ( {
 	floatingDragProps: { current: null } as {
 		current: {
 			onDragEnd: ( event: unknown, info: unknown ) => void;
-			style: { x: { set( v: number ): void } };
+			style: { x: { set: ( v: number ) => void } };
 		} | null;
 	},
 } ) );

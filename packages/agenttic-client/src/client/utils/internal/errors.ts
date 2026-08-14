@@ -27,12 +27,12 @@ export function handleRequestError(
 /**
  * Validate HTTP response and throw if not ok
  *
- * @param response  - The HTTP response
- * @param operation - Description of the operation
+ * @param response   - The HTTP response
+ * @param _operation - Description of the operation
  */
 export function validateHttpResponse(
 	response: Response,
-	operation: string = 'request'
+	_operation: string = 'request'
 ): void {
 	if ( ! response.ok ) {
 		throw new Error( `HTTP error! status: ${ response.status }` );
@@ -83,13 +83,13 @@ export function validateStreamingResponse(
 /**
  * Create timeout handler with abort controller
  *
- * @param timeout   - Timeout in milliseconds
- * @param operation - Description of the operation
+ * @param timeout    - Timeout in milliseconds
+ * @param _operation - Description of the operation
  * @return Timeout handler object
  */
 export function createTimeoutHandler(
 	timeout: number,
-	operation: string = 'request'
+	_operation: string = 'request'
 ): { timeoutId: number; controller: AbortController } {
 	const controller = new AbortController();
 	const timeoutId = setTimeout(

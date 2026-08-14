@@ -53,6 +53,9 @@ describe( 'ComplianceDisclosure', () => {
 	it( 'still renders the slot for other falsy nodes (not silently hidden)', () => {
 		// A computed '' or 0 must not be treated as the hide sentinel — the
 		// wrapper stays in the DOM so the omission is visible, not silent.
+		// The literal `{ '' }` is the point of this test: children === '' and
+		// children === undefined are different cases. Do not "simplify" it.
+		// eslint-disable-next-line react/jsx-curly-brace-presence
 		render( <ComplianceDisclosure>{ '' }</ComplianceDisclosure> );
 		expect( slot() ).not.toBeNull();
 

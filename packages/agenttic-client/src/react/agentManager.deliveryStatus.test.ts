@@ -65,7 +65,9 @@ interface StoreCall {
  */
 function lastStoreCall(): StoreCall | null {
 	const calls = vi.mocked( storeConversation ).mock.calls;
-	if ( calls.length === 0 ) return null;
+	if ( calls.length === 0 ) {
+		return null;
+	}
 	const [ sessionId, messages, storageKey ] = calls[ calls.length - 1 ]!;
 	return { sessionId, messages, storageKey };
 }
@@ -80,7 +82,10 @@ function hangingStream() {
 	};
 }
 
-/** Drain until `predicate` is true. Fails the test on timeout. */
+/**
+ * Drain until `predicate` is true. Fails the test on timeout.
+ * @param predicate - Condition to wait for.
+ */
 async function waitFor( predicate: () => boolean ): Promise< void > {
 	await vi.waitFor( () => {
 		expect( predicate() ).toBe( true );

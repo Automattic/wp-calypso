@@ -434,6 +434,7 @@ export const ImageUploader = forwardRef<
 			// Check both activeElement and event target to handle edge cases
 			const isTextareaFocused =
 				textareaRef.current &&
+				// eslint-disable-next-line @wordpress/no-global-active-element
 				document.activeElement === textareaRef.current;
 			const isPasteTargetTextarea =
 				textareaRef.current &&

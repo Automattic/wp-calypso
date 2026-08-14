@@ -55,7 +55,11 @@
 }
 
 .option:hover {
-	background-color: color-mix(in srgb, var(--color-background) 50%, var(--color-muted));
+	background-color: color-mix(
+		in srgb,
+		var(--color-background) 50%,
+		var(--color-muted)
+	);
 }
 
 /* Suppress the UA-default focus outline that shows on programmatic focus */

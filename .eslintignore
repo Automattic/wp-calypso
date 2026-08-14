@@ -39,8 +39,5 @@ packages/calypso-color-schemes/root-only
 /cached-requests.json
 /yarn-json-output.json
 
-# Agenttic packages: lint deferred until the post-migration cleanup
-# (packages are not consumed from the workspace yet; consumers use the npm releases)
-packages/agenttic-client
-packages/agenttic-ui
-packages/agenttic-demo
+# Agenttic downloaded translation files
+packages/agenttic-ui/languages/*.jed.json

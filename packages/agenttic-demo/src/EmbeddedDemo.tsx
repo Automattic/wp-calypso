@@ -241,7 +241,7 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 									'image/gif',
 									'image/webp',
 								] }
-								showFileMetadata={ true }
+								showFileMetadata
 							/>
 							<AgentUI.Input />
 							<AgentUI.InputToolbar label="Custom Toolbar">

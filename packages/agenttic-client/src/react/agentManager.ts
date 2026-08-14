@@ -105,7 +105,10 @@ function notifySessionIdChange(
 	}
 }
 
-/** Omit client-minted `local-*` ids from outbound requests. */
+/**
+ * Omit client-minted `local-*` ids from outbound requests.
+ * @param sessionId - The session id to filter.
+ */
 function toOutboundSessionId(
 	sessionId: string | null | undefined
 ): string | undefined {
@@ -115,7 +118,10 @@ function toOutboundSessionId(
 	return sessionId;
 }
 
-/** True when every part is a tool result (sendToolResult follow-ups). */
+/**
+ * True when every part is a tool result (sendToolResult follow-ups).
+ * @param message - The message to inspect.
+ */
 function isToolResultOnlyMessage( message: Message ): boolean {
 	return (
 		message.parts.length > 0 &&
