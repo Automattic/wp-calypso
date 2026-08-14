@@ -5,6 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { hydrateRoot } from 'react-dom/client';
 import { AnalyticsProvider } from '../analytics';
 import { AppProvider } from '../context';
+import { shoppingCartManagerClient } from '../shopping-cart';
 import OmnibarContainer from './omnibar';
 import type { AnalyticsClient } from '../analytics';
 import type { AppConfig } from '../context';
@@ -25,7 +26,10 @@ export default function loadOmnibar( config: AppConfig ) {
 		<AppProvider config={ config }>
 			<QueryClientProvider client={ queryClient }>
 				<AnalyticsProvider client={ analyticsClient }>
-					<OmnibarContainer user={ window.currentUser } />
+					<OmnibarContainer
+						user={ window.currentUser }
+						cartManagerClient={ shoppingCartManagerClient }
+					/>
 				</AnalyticsProvider>
 			</QueryClientProvider>
 		</AppProvider>

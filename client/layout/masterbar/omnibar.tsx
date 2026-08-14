@@ -6,6 +6,7 @@ import { APP_CONTEXT_DEFAULT_CONFIG, AppProvider } from 'calypso/dashboard/app/c
 import { omnibarEvents, useOmnibarEvent } from 'calypso/dashboard/app/omnibar/events';
 import OmnibarContainer from 'calypso/dashboard/app/omnibar/omnibar';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { useDispatch, useSelector } from 'calypso/state';
 import getUnseenCount from 'calypso/state/selectors/get-notification-unseen-count';
 import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -76,7 +77,7 @@ export default function Omnibar( { loadHelpCenterIcon }: { loadHelpCenterIcon?: 
 			<QueryClientProvider client={ queryClient }>
 				<AnalyticsProvider client={ analyticsClient }>
 					<div id="wpcom-omnibar">
-						<OmnibarContainer user={ window.currentUser } />
+						<OmnibarContainer user={ window.currentUser } cartManagerClient={ cartManagerClient } />
 					</div>
 				</AnalyticsProvider>
 			</QueryClientProvider>

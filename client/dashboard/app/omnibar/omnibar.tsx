@@ -6,6 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
+import { ShoppingCartProvider } from '@automattic/shopping-cart';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { dashboardLink, wpcomLink } from '../../utils/link';
@@ -21,12 +22,14 @@ import { useLaunchSitePlugin } from './plugin-launch-site';
 import { createLogoutNodeBuilder } from './plugin-logout';
 import { useNotificationsPlugin } from './plugin-notifications';
 import { useReaderPlugin } from './plugin-reader';
+import { useShoppingCartPlugin } from './plugin-shopping-cart';
 import { buildSiteBadgeNode } from './plugin-site-badges';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
 import { buildWpcomAccountNode } from './plugin-wpcom-account';
 import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
 import type { OmnibarNodeBuilders } from '@automattic/omnibar';
+import type { ShoppingCartManagerClient } from '@automattic/shopping-cart';
 
 const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
 
@@ -57,7 +60,21 @@ function createHrefResolver( adminUrl?: string ) {
 	};
 }
 
-export default function OmnibarContainer( { user }: { user?: User } ) {
+export default function OmnibarContainer( {
+	user,
+	cartManagerClient,
+}: {
+	user?: User;
+	cartManagerClient: ShoppingCartManagerClient;
+} ) {
+	return (
+		<ShoppingCartProvider managerClient={ cartManagerClient }>
+			<ConnectedOmnibar user={ user } />
+		</ShoppingCartProvider>
+	);
+}
+
+function ConnectedOmnibar( { user }: { user?: User } ) {
 	const { supports } = useAppContext();
 	const [ hydrated, setHydrated ] = useState( false );
 	useEffect( () => {
@@ -134,6 +151,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	const aiChatPluginNode = useAiChatPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const languageSwitcherNode = useLanguageSwitcherPlugin( { user } );
+	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
 	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const launchSiteNode = useLaunchSitePlugin( { site } );
 	const siteActions = [
@@ -145,6 +163,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	const plugins = baseOmnibarNodes.user
 		? [
 				...( languageSwitcherNode ? [ languageSwitcherNode ] : [] ),
+				...( shoppingCartNode ? [ shoppingCartNode ] : [] ),
 				...( supports.reader ? [ readerPluginNode ] : [] ),
 				...( supports.help ? [ helpCenterPluginNode ] : [] ),
 				...( supports.help && aiChatPluginNode ? [ aiChatPluginNode ] : [] ),
@@ -162,11 +181,14 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		return <InitialOmnibar user={ user } />;
 	}
 	return (
-		<Omnibar
-			nodes={ omnibarNodes }
-			onClickResponsiveMenu={ onClickResponsiveMenu }
-			className={ isSupportSession() ? 'is-support-session' : undefined }
-		/>
+		<>
+			<Omnibar
+				nodes={ omnibarNodes }
+				onClickResponsiveMenu={ onClickResponsiveMenu }
+				className={ isSupportSession() ? 'is-support-session' : undefined }
+			/>
+			{ shoppingCartPanel }
+		</>
 	);
 }
 
