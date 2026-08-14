@@ -222,7 +222,6 @@ export class UserSignupPage {
 	 * @returns {Promise<NewUserResponse>}
 	 */
 	private captureNewUserResponse(): Promise< NewUserResponse > {
-		handleActiveThrottles( [ 'signup' ] );
 		return this.page
 			.waitForResponse(
 				// Not `ok()`: a refused signup carries the reason it was refused, and
@@ -250,6 +249,7 @@ export class UserSignupPage {
 	 * @returns Response from the REST API.
 	 */
 	async signup( email: string, username: string, password: string ): Promise< NewUserResponse > {
+		handleActiveThrottles( [ 'signup' ] );
 		await this.waitForSignupForm();
 		await this.emailInput.fill( email );
 		await this.usernameInput.fill( username );
@@ -281,6 +281,10 @@ export class UserSignupPage {
 		// timed out; the same-email retry then surfaces a "user exists" error
 		// instead of recovering, which is still preferable to masking the failure.
 		// Retry a bounded number of times before giving up.
+		//
+		// Outside the loop: the policy skips or fails by throwing, and the catch
+		// below turns a throw met on a server-error page into a retry.
+		handleActiveThrottles( [ 'signup' ] );
 		const maxAttempts = 3;
 		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 			try {
