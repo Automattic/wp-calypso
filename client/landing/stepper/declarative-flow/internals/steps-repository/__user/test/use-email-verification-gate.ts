@@ -114,33 +114,33 @@ describe( 'useEmailVerificationGate', () => {
 describe( 'useIsPostPlanSelectionEmailVerification', () => {
 	afterEach( () => jest.clearAllMocks() );
 
-	const deferredFor = ( flow = 'onboarding' ) =>
+	const postPlanSelectionFor = ( flow = 'onboarding' ) =>
 		renderHook( () => useIsPostPlanSelectionEmailVerification( flow ) ).result.current;
 
 	it( 'is true for onboarding under the post-plan-selection arm', () => {
 		assign( 'treatment_post_plan_selection' );
 
-		expect( deferredFor() ).toBe( true );
+		expect( postPlanSelectionFor() ).toBe( true );
 	} );
 
 	it( 'is false for other flows', () => {
 		assign( 'treatment_post_plan_selection' );
 
-		expect( deferredFor( 'newsletter' ) ).toBe( false );
+		expect( postPlanSelectionFor( 'newsletter' ) ).toBe( false );
 	} );
 
 	it( 'is false under the account-step arm', () => {
 		assign( 'treatment_post_account_creation' );
 
-		expect( deferredFor() ).toBe( false );
+		expect( postPlanSelectionFor() ).toBe( false );
 	} );
 
 	// While the assignment loads the arm is unknown, so it must read as control (false) — this is
-	// what makes the flow route as control mid-load rather than guessing the deferred gate.
+	// what makes the flow route as control mid-load rather than guessing the post-plan-selection gate.
 	it( 'is false while the assignment is loading', () => {
 		assign( 'treatment_post_plan_selection', { isLoading: true } );
 
-		expect( deferredFor() ).toBe( false );
+		expect( postPlanSelectionFor() ).toBe( false );
 	} );
 } );
 

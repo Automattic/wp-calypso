@@ -158,7 +158,7 @@ const submitPlans = async ( providedDependencies: Record< string, unknown > ) =>
 	return { navigate };
 };
 
-describe( 'onboarding deferred email verification (Variant B)', () => {
+describe( 'onboarding post-plan-selection email verification (Variant B)', () => {
 	beforeEach( () => {
 		mockVariant = 'treatment_post_plan_selection';
 		mockLoading = false;
@@ -186,7 +186,7 @@ describe( 'onboarding deferred email verification (Variant B)', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 	} );
 
-	// The deferred gate is guarded on `! pickedPlan`, i.e. presence not price: once any plan is
+	// The post-plan-selection gate is guarded on `! pickedPlan`, i.e. presence not price: once any plan is
 	// picked the free-order gate is skipped. Dropping that guard would defer picked plans too.
 	it( 'skips the verification step once a plan is picked, even under Variant B', async () => {
 		const { navigate } = await submitPlans( { cartItems: [ { product_id: 1, is_free: true } ] } );
@@ -249,7 +249,7 @@ describe( 'onboarding deferred email verification (Variant B)', () => {
 		const checkoutUrl = await submitPaidProcessing();
 
 		expect( checkoutUrl ).toContain( '/checkout/' );
-		// The checkout return (redirect_to) lands on the deferred gate, which then advances to
+		// The checkout return (redirect_to) lands on the post-plan-selection gate, which then advances to
 		// post-checkout-onboarding once verified.
 		expect( checkoutUrl ).toContain( '/setup/onboarding/email-verification' );
 		expect( checkoutUrl ).toContain( 'next=post-checkout-onboarding' );

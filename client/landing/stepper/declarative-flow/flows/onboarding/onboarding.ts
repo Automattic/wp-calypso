@@ -277,7 +277,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					setSignupCompleteFlowName( flowName );
 
-					// A fully free order never reaches checkout, so the deferred gate is met here,
+					// A fully free order never reaches checkout, so the post-plan-selection gate is met here,
 					// right after the plan is chosen, before the site is created.
 					if ( postPlanSelectionEmailVerification && ! pickedPlan ) {
 						return navigate(
@@ -449,7 +449,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											}
 									  );
 
-							// Variant B: a paid order meets the deferred gate on return from checkout,
+							// Variant B: a paid order meets the post-plan-selection gate on return from checkout,
 							// before post-checkout-onboarding. The Playground import path keeps its own
 							// return target.
 							if ( postPlanSelectionEmailVerification && ! playgroundId ) {

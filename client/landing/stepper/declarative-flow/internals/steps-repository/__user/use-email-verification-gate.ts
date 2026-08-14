@@ -49,8 +49,8 @@ export function useIsPostAccountCreationEmailVerification( flow: string ): boole
 }
 
 /**
- * Whether the gate is deferred past the account step (Variant B). The flow reads this to move the
- * gate to after the free plan selection or after checkout.
+ * Whether the gate is moved past the account step to after plan selection (Variant B). The flow
+ * reads this to move the gate to after the free plan selection or after checkout.
  */
 export function useIsPostPlanSelectionEmailVerification( flow: string ): boolean {
 	const { variant } = useEmailVerificationVariant( flow );

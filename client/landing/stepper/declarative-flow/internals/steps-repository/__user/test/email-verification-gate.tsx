@@ -215,7 +215,7 @@ describe( 'account step email verification gate', () => {
 		renderUser( makeLoggedOutStore() ).unmount();
 		expect( activationEmailFromProp ).toBe( 'onboarding-with-email-verification' );
 
-		// Variant B doesn't gate the account step, but still needs the same link for the deferred gate.
+		// Variant B doesn't gate the account step, but still needs the same link for the post-plan-selection gate.
 		activationEmailFromProp = undefined;
 		mockGateVariant = 'treatment_post_plan_selection';
 		renderUser( makeLoggedOutStore() ).unmount();
