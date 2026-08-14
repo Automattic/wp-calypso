@@ -29,8 +29,8 @@
 		"dev": "vite build --watch",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",
-		"lint": "wp-scripts lint-js src --ext .ts,.tsx",
-		"lint:fix": "wp-scripts lint-js src --ext .ts,.tsx --fix",
+		"lint": "ESLINT_USE_FLAT_CONFIG=false eslint src --ext .ts,.tsx",
+		"lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint src --ext .ts,.tsx --fix",
 		"test": "vitest run",
 		"prepublishOnly": "pnpm run build"
 	},
@@ -51,6 +51,7 @@
 	"devDependencies": {
 		"@wordpress/api-fetch": "^7.0.0",
 		"autoprefixer": "^10.4.0",
+		"postcss": "^8.4.0",
 		"react": "^18.0.0",
 		"typescript": "^5.0.0",
 		"unified": "^11.0.5",
