@@ -53,6 +53,7 @@ export const SITE_OPTIONS = [
 	'created_at',
 	'unmapped_url',
 	'is_difm_lite_in_progress',
+	'difm_lite_site_options',
 	'is_gating_business_q1',
 	'is_domain_only',
 	'is_redirect',
