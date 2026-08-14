@@ -41,14 +41,11 @@ function useEmailVerificationVariant( flow: string ): {
 }
 
 /**
- * Whether either treatment is live for this flow. Both send the same activation email on account
- * creation and point its link back here, so the account step asks for that whichever gates.
+ * Whether the gate holds the user on the account step, right after creation (Variant A).
  */
-export function useIsEmailVerificationEnabled( flow: string ): boolean {
+export function useIsPostAccountCreationEmailVerification( flow: string ): boolean {
 	const { variant } = useEmailVerificationVariant( flow );
-	return (
-		variant === 'treatment_post_account_creation' || variant === 'treatment_post_plan_selection'
-	);
+	return variant === 'treatment_post_account_creation';
 }
 
 /**

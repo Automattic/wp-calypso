@@ -207,10 +207,17 @@ describe( 'account step email verification gate', () => {
 		nock.cleanAll();
 	} );
 
-	it( 'asks for a link back to the flow only when the gate is on', async () => {
+	it( 'asks for a link back to the flow under either treatment, not control', async () => {
 		renderUser( makeLoggedOutStore() ).unmount();
 		expect( activationEmailFromProp ).toBe( 'onboarding-with-email-verification' );
 
+		// Variant B doesn't gate the account step, but still needs the same link for the deferred gate.
+		activationEmailFromProp = undefined;
+		mockGateVariant = 'treatment_post_plan_selection';
+		renderUser( makeLoggedOutStore() ).unmount();
+		expect( activationEmailFromProp ).toBe( 'onboarding-with-email-verification' );
+
+		activationEmailFromProp = undefined;
 		mockGateVariant = 'control';
 		renderUser( makeLoggedOutStore() );
 

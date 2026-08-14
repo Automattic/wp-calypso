@@ -6,7 +6,7 @@ import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import {
 	useIsPostPlanSelectionEmailVerification,
-	useIsEmailVerificationEnabled,
+	useIsPostAccountCreationEmailVerification,
 	useEmailVerificationGate,
 } from '../use-email-verification-gate';
 
@@ -127,34 +127,27 @@ describe( 'useIsPostPlanSelectionEmailVerification', () => {
 	} );
 } );
 
-describe( 'useIsEmailVerificationEnabled', () => {
+describe( 'useIsPostAccountCreationEmailVerification', () => {
 	afterEach( () => jest.clearAllMocks() );
 
-	const enabledFor = ( flow = 'onboarding' ) =>
-		renderHook( () => useIsEmailVerificationEnabled( flow ) ).result.current;
+	const accountCreationFor = ( flow = 'onboarding' ) =>
+		renderHook( () => useIsPostAccountCreationEmailVerification( flow ) ).result.current;
 
-	// Either treatment sends the activation email and points it back at onboarding.
-	it( 'is true under the account-step arm', () => {
+	it( 'is true for onboarding under the account-step arm', () => {
 		assign( 'treatment_post_account_creation' );
 
-		expect( enabledFor() ).toBe( true );
-	} );
-
-	it( 'is true under the post-plan-selection arm', () => {
-		assign( 'treatment_post_plan_selection' );
-
-		expect( enabledFor() ).toBe( true );
-	} );
-
-	it( 'is false under the control arm', () => {
-		assign( 'control' );
-
-		expect( enabledFor() ).toBe( false );
+		expect( accountCreationFor() ).toBe( true );
 	} );
 
 	it( 'is false for other flows', () => {
 		assign( 'treatment_post_account_creation' );
 
-		expect( enabledFor( 'newsletter' ) ).toBe( false );
+		expect( accountCreationFor( 'newsletter' ) ).toBe( false );
+	} );
+
+	it( 'is false under the post-plan-selection arm', () => {
+		assign( 'treatment_post_plan_selection' );
+
+		expect( accountCreationFor() ).toBe( false );
 	} );
 } );
