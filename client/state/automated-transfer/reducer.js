@@ -16,7 +16,7 @@ import {
 	withSchemaValidation,
 	withPersistence,
 } from 'calypso/state/utils';
-import { transferStates } from './constants';
+import { NO_TRANSFER_RECORD_ERROR, transferStates } from './constants';
 import eligibility from './eligibility/reducer';
 import { automatedTransfer as schema } from './schema';
 
@@ -34,8 +34,7 @@ export const status = withPersistence(
 			case TRANSFER_UPDATE:
 				return 'complete' === action.status ? transferStates.COMPLETE : state;
 			case REQUEST_STATUS_FAILURE:
-				// TODO : [MARKETPLACE] rely on a tangible status from the backend instead of this message
-				return action.error === 'An invalid transfer ID was passed.'
+				return action.error === NO_TRANSFER_RECORD_ERROR
 					? transferStates.NONE
 					: transferStates.REQUEST_FAILURE;
 		}
