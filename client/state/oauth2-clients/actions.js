@@ -1,4 +1,5 @@
 import LRU from 'lru';
+import { getOAuth2_1ClientKey } from 'calypso/lib/oauth2-clients';
 import wpcom from 'calypso/lib/wp';
 import { OAUTH2_CLIENT_DATA_RECEIVE } from 'calypso/state/action-types';
 
@@ -26,6 +27,28 @@ export const fetchOAuth2ClientData = ( clientId ) => async ( dispatch ) => {
 			data = await wpcom.req.get( `/oauth2/client-data/${ clientId }`, {
 				apiNamespace: 'wpcom/v2',
 			} );
+			cache.set( cacheKey, data );
+		}
+
+		dispatch( { type: OAUTH2_CLIENT_DATA_RECEIVE, data } );
+		return data;
+	} catch ( error ) {
+		throw convertWpcomError( error );
+	}
+};
+
+// OAuth 2.1 clients resolve against a separate endpoint and namespace. The
+// endpoint only returns curated branding for trusted clients and 404s otherwise.
+export const fetchOAuth2_1ClientData = ( clientId ) => async ( dispatch ) => {
+	const cacheKey = getOAuth2_1ClientKey( clientId );
+
+	try {
+		let data = cache.get( cacheKey );
+		if ( data === undefined ) {
+			data = await wpcom.req.get( `/oauth2-1/client-data/${ clientId }`, {
+				apiNamespace: 'wpcom/v2',
+			} );
+			data = { ...data, id: cacheKey };
 			cache.set( cacheKey, data );
 		}
 

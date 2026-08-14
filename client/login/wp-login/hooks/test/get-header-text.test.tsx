@@ -52,7 +52,7 @@ describe( 'getHeaderText client-name casing', () => {
 	// authoritative and opt out via `is-exact-case`; only the raw client slug keeps
 	// the default title-casing.
 	const renderClientName = (
-		oauth2Client: { id: number; name?: string },
+		oauth2Client: { id: number | string; name?: string; title?: string },
 		isJetpackApp?: boolean
 	) => {
 		const headerText = getHeaderText( {
@@ -96,5 +96,13 @@ describe( 'getHeaderText client-name casing', () => {
 		expect( clientName ).toBeVisible();
 		expect( clientName ).not.toHaveClass( 'is-exact-case' );
 		expect( clientName ).toHaveTextContent( 'crowdsignal' );
+	} );
+
+	test( 'renders an OAuth 2.1 client title verbatim (is-exact-case)', () => {
+		// 2.1 branding is curated server-side, so the fetched title wins over the slug.
+		const clientName = renderClientName( { id: 'oauth2-1:7', name: 'chatgpt', title: 'ChatGPT' } );
+		expect( clientName ).toBeVisible();
+		expect( clientName ).toHaveClass( 'is-exact-case' );
+		expect( clientName ).toHaveTextContent( 'ChatGPT' );
 	} );
 } );

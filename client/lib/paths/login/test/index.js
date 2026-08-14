@@ -28,6 +28,11 @@ describe( 'login', () => {
 		expect( url ).toBe( '/log-in?client_id=12345' );
 	} );
 
+	test( 'should return the login url with encoded OAuth 2.1 client ID param', () => {
+		const url = login( { oauth21ClientId: 7 } );
+		expect( url ).toBe( '/log-in?oauth2_1_client_id=7' );
+	} );
+
 	test( 'should return the login url for Jetpack specific login', () => {
 		const url = login( { isJetpack: true } );
 		expect( url ).toBe( '/log-in/jetpack' );

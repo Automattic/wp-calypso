@@ -4,6 +4,8 @@ import {
 	isSharedMobileAppOAuth2Client,
 	getOAuth2RedirectUri,
 	isJetpackAppRedirectUri,
+	getOAuth2_1ClientKey,
+	isOAuth2_1Client,
 } from 'calypso/lib/oauth2-clients';
 
 describe( 'oauth2-clients mobile app helpers', () => {
@@ -88,6 +90,26 @@ describe( 'oauth2-clients mobile app helpers', () => {
 			expect( isJetpackAppRedirectUri( '' ) ).toBe( false );
 			expect( isJetpackAppRedirectUri( null ) ).toBe( false );
 			expect( isJetpackAppRedirectUri( undefined ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'getOAuth2_1ClientKey', () => {
+		test( 'prefixes the client id with the 2.1 namespace', () => {
+			expect( getOAuth2_1ClientKey( 7 ) ).toBe( 'oauth2-1:7' );
+			expect( getOAuth2_1ClientKey( '7' ) ).toBe( 'oauth2-1:7' );
+		} );
+	} );
+
+	describe( 'isOAuth2_1Client', () => {
+		test( 'is true for clients stored under a namespaced key', () => {
+			expect( isOAuth2_1Client( { id: 'oauth2-1:7' } ) ).toBe( true );
+		} );
+
+		test( 'is false for OAuth 2.0 clients and empty values', () => {
+			expect( isOAuth2_1Client( { id: 1854 } ) ).toBe( false );
+			expect( isOAuth2_1Client( { id: '1854' } ) ).toBe( false );
+			expect( isOAuth2_1Client( null ) ).toBe( false );
+			expect( isOAuth2_1Client( undefined ) ).toBe( false );
 		} );
 	} );
 } );

@@ -48,7 +48,7 @@ export interface PartnerConfig {
 	/** Domains that identify this partner in redirect URLs (e.g., ['my.woo.ai']) */
 	domains?: string[];
 	/** Callback to check if an OAuth2 client belongs to this partner */
-	isOAuth2Client?: ( oauth2Client: { id: number } | null ) => boolean;
+	isOAuth2Client?: ( oauth2Client: { id: number | string } | null ) => boolean;
 	/** Window title suffix used on branded auth flows */
 	windowTitleSuffix?: string;
 }
@@ -333,7 +333,7 @@ export function getPartnerConfigFromRedirectUrl(
  * Get partner config by matching an OAuth2 client against partner configs.
  */
 export function getPartnerConfigFromOAuth2Client(
-	oauth2Client: { id: number } | null | undefined
+	oauth2Client: { id: number | string } | null | undefined
 ): PartnerConfig | null {
 	if ( ! oauth2Client ) {
 		return null;
@@ -373,7 +373,11 @@ function getSearchParam( name: string ): string | null {
  *   4. redirect_to        — hostname inside ?redirect_to= URL
  *   5. session storage    — persisted partner from a previous detection in this session
  */
-export function detectPartnerConfig( oauth2Client?: { id: number } | null ): PartnerConfig | null {
+export function detectPartnerConfig(
+	oauth2Client?: {
+		id: number | string;
+	} | null
+): PartnerConfig | null {
 	const detected =
 		getPartnerConfigFromCurrentDomain() ??
 		getPartnerConfigFromBrandingCode() ??

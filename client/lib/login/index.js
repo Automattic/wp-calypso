@@ -10,6 +10,7 @@ import {
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
 	isIntenseDebateOAuth2Client,
+	isOAuth2_1Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 
@@ -130,7 +131,9 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		return `/start/wpcc?${ oauth2Params.toString() }`;
 	}
 
-	if ( oauth2Client ) {
+	// OAuth 2.1 clients have no 2.0 client ID, so there is no wpcc signup flow for
+	// them; fall through to the generic account signup with the same redirect_to.
+	if ( oauth2Client && ! isOAuth2_1Client( oauth2Client ) ) {
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,

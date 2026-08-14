@@ -10,6 +10,7 @@ import {
 	isVIPOAuth2Client,
 	isSharedMobileAppOAuth2Client,
 	isIosOAuth2Client,
+	isOAuth2_1Client,
 } from 'calypso/lib/oauth2-clients';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -73,7 +74,7 @@ export function getMobileAppClientName( {
 	isJetpackApp,
 	translate,
 }: {
-	oauth2Client: { id: number } | null | undefined;
+	oauth2Client: { id: number | string } | null | undefined;
 	isJetpackApp?: boolean;
 	translate: Props[ 'translate' ];
 } ): TranslateResult | null {
@@ -175,6 +176,10 @@ export function getHeaderText( {
 				clientName = 'Woo';
 			} else if ( isVIPOAuth2Client( oauth2Client ) ) {
 				clientName = 'VIP';
+			} else if ( isOAuth2_1Client( oauth2Client ) ) {
+				// 2.1 branding is curated server-side by the client's registered
+				// redirect_uri origin, so the fetched title is authoritative.
+				clientName = oauth2Client?.title;
 			}
 
 			/**

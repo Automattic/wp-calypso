@@ -1,10 +1,12 @@
 import page from '@automattic/calypso-router';
+import { fetchOAuth2_1ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { redirectJetpack, login } from '../controller';
 
 jest.mock( 'calypso/state/oauth2-clients/actions', () => ( {
 	...jest.requireActual( 'calypso/state/oauth2-clients/actions' ),
 	fetchOAuth2ClientData: jest.fn(),
+	fetchOAuth2_1ClientData: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/oauth2-clients/selectors', () => ( {
@@ -123,5 +125,69 @@ describe( 'login', () => {
 
 		expect( getOAuth2Client ).toHaveBeenCalledWith( state, '1234' );
 		expect( next ).toHaveBeenCalled();
+	} );
+
+	describe( 'oauth2_1_client_id', () => {
+		beforeEach( () => {
+			jest.clearAllMocks();
+		} );
+
+		it( 'should throw an error if oauth2_1_client_id exists but redirect_to does not', async () => {
+			context.query.oauth2_1_client_id = '7';
+
+			await login( context, next );
+
+			expect( next ).toHaveBeenCalledWith( expect.objectContaining( { status: 401 } ) );
+		} );
+
+		it( 'should throw an error if oauth2_1_client_id does not match the client_id in redirect_to', async () => {
+			context.query.oauth2_1_client_id = '7';
+			context.query.redirect_to =
+				'https://public-api.wordpress.com/oauth2-1/authorize/?client_id=8';
+
+			await login( context, next );
+
+			expect( next ).toHaveBeenCalledWith( expect.objectContaining( { status: 401 } ) );
+		} );
+
+		it( 'should fetch the OAuth 2.1 client data when the id matches redirect_to', async () => {
+			context.query.oauth2_1_client_id = '7';
+			context.query.redirect_to =
+				'https://public-api.wordpress.com/oauth2-1/authorize/?client_id=7';
+			getOAuth2Client.mockReturnValueOnce( null );
+
+			await login( context, next );
+
+			expect( getOAuth2Client ).toHaveBeenCalledWith( state, 'oauth2-1:7' );
+			expect( fetchOAuth2_1ClientData ).toHaveBeenCalledWith( '7' );
+			expect( next ).toHaveBeenCalledWith();
+		} );
+
+		it( 'should not fetch when the OAuth 2.1 client data is already in the store', async () => {
+			context.query.oauth2_1_client_id = '7';
+			context.query.redirect_to =
+				'https://public-api.wordpress.com/oauth2-1/authorize/?client_id=7';
+			getOAuth2Client.mockReturnValueOnce( { id: 'oauth2-1:7', title: 'ChatGPT' } );
+
+			await login( context, next );
+
+			expect( fetchOAuth2_1ClientData ).not.toHaveBeenCalled();
+			expect( next ).toHaveBeenCalledWith();
+		} );
+
+		it( 'should continue unbranded when the OAuth 2.1 client data fetch fails', async () => {
+			context.query.oauth2_1_client_id = '7';
+			context.query.redirect_to =
+				'https://public-api.wordpress.com/oauth2-1/authorize/?client_id=7';
+			getOAuth2Client.mockReturnValueOnce( null );
+			context.store.dispatch.mockImplementationOnce( ( thunk ) => thunk );
+			fetchOAuth2_1ClientData.mockImplementationOnce( () =>
+				Promise.reject( new Error( 'not found' ) )
+			);
+
+			await login( context, next );
+
+			expect( next ).toHaveBeenCalledWith();
+		} );
 	} );
 } );

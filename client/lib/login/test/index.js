@@ -154,6 +154,25 @@ describe( 'getSignupUrl', () => {
 		);
 	} );
 
+	test( 'should fall through to the generic account signup for OAuth 2.1 clients', () => {
+		// 2.1 clients have no 2.0 client ID, so there is no wpcc signup flow for them.
+		const currentQuery = {
+			oauth2_1_client_id: '7',
+			redirect_to:
+				'https://public-api.wordpress.com/oauth2-1/authorize/?client_id=7&response_type=code&redirect_uri=https%3A%2F%2Fchatgpt.com%2Fconnector_platform_oauth_redirect&from-calypso=1',
+		};
+		const currentRoute = '/log-in';
+		const oauth2Client = {
+			id: 'oauth2-1:7',
+			name: 'chatgpt',
+			title: 'ChatGPT',
+			icon: 'https://example.com/chatgpt.svg',
+		};
+		expect( getSignupUrl( currentQuery, currentRoute, oauth2Client, 'en', '' ) ).toEqual(
+			'/start/account?redirect_to=https%3A%2F%2Fpublic-api.wordpress.com%2Foauth2-1%2Fauthorize%2F%3Fclient_id%3D7%26response_type%3Dcode%26redirect_uri%3Dhttps%253A%252F%252Fchatgpt.com%252Fconnector_platform_oauth_redirect%26from-calypso%3D1'
+		);
+	} );
+
 	test( 'signup_flow modifies /start base', () => {
 		expect( getSignupUrl( { signup_flow: 'test' }, '/log-in', null, 'en', '' ) ).toEqual(
 			'/start/test'

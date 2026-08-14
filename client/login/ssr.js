@@ -3,7 +3,7 @@ import { ssrSetupLocale } from 'calypso/controller';
 import { setDocumentHeadMeta } from 'calypso/state/document-head/actions';
 import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 
-const VALID_QUERY_KEYS = [ 'client_id', 'signup_flow', 'redirect_to' ];
+const VALID_QUERY_KEYS = [ 'client_id', 'oauth2_1_client_id', 'signup_flow', 'redirect_to' ];
 
 /**
  * A middleware that enables (or disables) server side rendering for the /log-in page.

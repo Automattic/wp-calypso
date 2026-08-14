@@ -90,6 +90,15 @@ describe( 'setShouldServerSideRenderLogin', () => {
 		expect( next ).toHaveBeenCalledTimes( 5 ); // because we have 5 tests and we did not check for each of them
 	} );
 
+	test( 'when query has oauth2_1_client_id, then sets context.serverSideRender to TRUE - and calls next()', () => {
+		const next = jest.fn();
+		const contextWithQueryKeys = getSomeCleanLoginContext( { oauth2_1_client_id: '7' } );
+
+		setShouldServerSideRenderLogin( contextWithQueryKeys, next );
+		expect( contextWithQueryKeys.serverSideRender ).toBe( true );
+		expect( next ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	test( 'when query has redirect_to, then only the ones starting with the prefix make SSR true', () => {
 		const contextWithThemePrefix = getSomeCleanLoginContext( {
 			redirect_to: 'https://wordpress.com/theme/something',

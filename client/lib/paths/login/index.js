@@ -11,6 +11,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 	emailAddress?: string;
 	socialService?: string;
 	oauth2ClientId?: string | number;
+	oauth21ClientId?: string | number;
 	wccomFrom?: string;
 	site?: string;
 	useMagicLink?: boolean;
@@ -32,6 +33,7 @@ export function login( {
 	emailAddress = undefined,
 	socialService = undefined,
 	oauth2ClientId = undefined,
+	oauth21ClientId = undefined,
 	wccomFrom = undefined,
 	site = undefined,
 	useMagicLink = undefined,
@@ -87,6 +89,10 @@ export function login( {
 
 	if ( oauth2ClientId && ! isNaN( oauth2ClientId ) ) {
 		url = addQueryArgs( { client_id: oauth2ClientId }, url );
+	}
+
+	if ( oauth21ClientId ) {
+		url = addQueryArgs( { oauth2_1_client_id: oauth21ClientId }, url );
 	}
 
 	if ( wccomFrom ) {

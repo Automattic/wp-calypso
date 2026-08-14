@@ -187,6 +187,7 @@ class Login extends Component {
 				locale: this.props.locale,
 				twoFactorAuthType: 'link',
 				oauth2ClientId: this.props.currentQuery?.client_id,
+				oauth21ClientId: this.props.currentQuery?.oauth2_1_client_id,
 				redirectTo: this.props.redirectTo,
 				usernameOnly: true,
 			};

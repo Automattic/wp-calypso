@@ -1,3 +1,4 @@
+import { getOAuth2_1ClientKey } from 'calypso/lib/oauth2-clients';
 import { ROUTE_SET } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
@@ -5,11 +6,13 @@ export const currentClientId = ( state = null, action ) => {
 	switch ( action.type ) {
 		case ROUTE_SET: {
 			const { path, query } = action;
-			if (
-				( path.startsWith( '/log-in' ) || path.startsWith( '/oauth2/authorize' ) ) &&
-				query.client_id
-			) {
-				return Number( query.client_id );
+			if ( path.startsWith( '/log-in' ) || path.startsWith( '/oauth2/authorize' ) ) {
+				if ( query.oauth2_1_client_id ) {
+					return getOAuth2_1ClientKey( query.oauth2_1_client_id );
+				}
+				if ( query.client_id ) {
+					return Number( query.client_id );
+				}
 			}
 
 			if (

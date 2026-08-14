@@ -5,7 +5,7 @@ import 'calypso/state/oauth2-clients/init';
 /**
  * Returns the ID of the current OAuth2 client.
  * @param  {Object}  state  Global state tree
- * @returns {?number}        Current OAuth2 client ID
+ * @returns {?number | string} Current OAuth2 client ID, or the namespaced key for an OAuth 2.1 client
  */
 export function getCurrentOAuth2ClientId( state ) {
 	return state.oauth2Clients?.ui.currentClientId;
@@ -14,7 +14,7 @@ export function getCurrentOAuth2ClientId( state ) {
 /**
  * Gets the OAuth2 client data.
  * @param  {Object}   state  Global state tree
- * @returns {{ id: number; title: string; icon: string; name: string; } | null} OAuth2 client data
+ * @returns {{ id: number | string; title: string; icon: string; name: string; } | null} OAuth2 client data
  */
 export const getCurrentOAuth2Client = ( state ) => {
 	const currentClientId = getCurrentOAuth2ClientId( state );

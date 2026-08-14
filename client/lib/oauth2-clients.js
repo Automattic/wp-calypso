@@ -1,5 +1,16 @@
 import { getQueryArg } from '@wordpress/url';
 
+// OAuth 2.1 (MCP) client IDs are issued from `oauth2_1_clients`, a separate
+// namespace to the OAuth 2.0 `oauth2_clients` table, and both count from 1. 2.1
+// client data is stored under a prefixed key so the two namespaces can never
+// collide in the Redux store.
+export const OAUTH2_1_CLIENT_ID_PREFIX = 'oauth2-1:';
+
+export const getOAuth2_1ClientKey = ( clientId ) => `${ OAUTH2_1_CLIENT_ID_PREFIX }${ clientId }`;
+
+export const isOAuth2_1Client = ( oauth2Client ) =>
+	typeof oauth2Client?.id === 'string' && oauth2Client.id.startsWith( OAUTH2_1_CLIENT_ID_PREFIX );
+
 // The WordPress and Jetpack mobile apps share the same OAuth2 client IDs; the app
 // identity is not encoded in the client_id. Distinguish the Jetpack app from the
 // WordPress app by the redirect_uri scheme (jetpack:// vs wordpress://).

@@ -510,6 +510,7 @@ export class LoginForm extends Component {
 							locale: this.props.locale,
 							action: this.props.isWooJPC ? 'jetpack/lostpassword' : 'lostpassword',
 							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+							oauth21ClientId: this.props.currentQuery?.oauth2_1_client_id,
 							from: this.props.currentQuery?.from,
 						} )
 					);
@@ -554,6 +555,7 @@ export class LoginForm extends Component {
 			currentRoute: this.props.currentRoute,
 			signupUrl: this.props.currentQuery?.signup_url,
 			oauth2ClientId: this.props.oauth2Client?.id,
+			oauth21ClientId: this.props.currentQuery?.oauth2_1_client_id,
 			emailAddress: usernameOrEmail || query?.email_address || this.state.usernameOrEmail,
 			redirectTo: this.props.redirectTo,
 			from: this.props.currentQuery?.from,

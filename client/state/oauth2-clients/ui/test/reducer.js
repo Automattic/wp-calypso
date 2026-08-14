@@ -27,5 +27,40 @@ describe( 'reducer', () => {
 
 			expect( state ).toEqual( 42 );
 		} );
+
+		test( 'should store the namespaced key on ROUTE_SET with oauth2_1_client_id', () => {
+			const state = currentClientId( undefined, {
+				type: ROUTE_SET,
+				path: '/log-in',
+				query: {
+					oauth2_1_client_id: '7',
+				},
+			} );
+
+			expect( state ).toEqual( 'oauth2-1:7' );
+		} );
+
+		test( 'should prefer oauth2_1_client_id over client_id when both are present', () => {
+			const state = currentClientId( undefined, {
+				type: ROUTE_SET,
+				path: '/log-in',
+				query: {
+					client_id: 42,
+					oauth2_1_client_id: '7',
+				},
+			} );
+
+			expect( state ).toEqual( 'oauth2-1:7' );
+		} );
+
+		test( 'should keep the current state when neither client id is present', () => {
+			const state = currentClientId( 'oauth2-1:7', {
+				type: ROUTE_SET,
+				path: '/log-in/link',
+				query: {},
+			} );
+
+			expect( state ).toEqual( 'oauth2-1:7' );
+		} );
 	} );
 } );

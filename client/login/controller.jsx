@@ -1,11 +1,14 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
-import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isGravPoweredOAuth2Client, getOAuth2_1ClientKey } from 'calypso/lib/oauth2-clients';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
+import {
+	fetchOAuth2ClientData,
+	fetchOAuth2_1ClientData,
+} from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { LocalizedMagicLogin } from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
@@ -74,7 +77,7 @@ const enhanceContextWithLogin = ( context ) => {
 
 export async function login( context, next ) {
 	const {
-		query: { client_id, redirect_to },
+		query: { client_id, oauth2_1_client_id, redirect_to },
 	} = context;
 
 	// Remove id_token from the address bar and push social connect args into the state instead
@@ -114,6 +117,34 @@ export async function login( context, next ) {
 				await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
 			} catch ( error ) {
 				return next( error );
+			}
+		}
+	}
+
+	if ( oauth2_1_client_id ) {
+		if ( ! redirect_to ) {
+			const error = new Error( 'The `redirect_to` query parameter is missing.' );
+			error.status = 401;
+			return next( error );
+		}
+
+		// The authorize URL inside redirect_to carries the OAuth 2.1 client_id.
+		const { searchParams: redirectParams } = getUrlParts( redirect_to );
+
+		if ( oauth2_1_client_id !== redirectParams.get( 'client_id' ) ) {
+			const error = new Error(
+				'The `redirect_to` query parameter is invalid with the given `oauth2_1_client_id`.'
+			);
+			error.status = 401;
+			return next( error );
+		}
+
+		const clientKey = getOAuth2_1ClientKey( oauth2_1_client_id );
+		if ( ! getOAuth2Client( context.store.getState(), clientKey ) ) {
+			try {
+				await context.store.dispatch( fetchOAuth2_1ClientData( oauth2_1_client_id ) );
+			} catch {
+				// The endpoint 404s for unknown or untrusted clients; render unbranded.
 			}
 		}
 	}
