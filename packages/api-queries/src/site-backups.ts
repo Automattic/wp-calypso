@@ -17,17 +17,8 @@ export const BACKUP_PLUGINS_PATH = '/wp-content/plugins/';
 
 export const WOOCOMMERCE_SUBSCRIPTIONS_PLUGIN_SLUG = 'woocommerce-subscriptions';
 
-/**
- * Builds a `select` that reports whether a plugin directory is present in a
- * backup's plugin listing.
- *
- * Matches against the raw `contents` keys, which are the plugin directory
- * slugs. The file browser's parsed representation replaces those keys with the
- * API's display label ("WooCommerce Subscriptions"), so it can't be used for an
- * identity check.
- * @param slug - The plugin directory slug to look for.
- * @returns A `select` function for `siteBackupContentsQuery`.
- */
+// Matches on raw `contents` keys (directory slugs), not the API display labels
+// the file browser substitutes in their place.
 export const selectBackupIncludesPlugin =
 	( slug: string ) =>
 	( response: BackupContentsResponse ): boolean =>
