@@ -1,11 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { Gravatar, TimeSince, WordPressLogo } from '@automattic/components';
 import { WapuuAvatar } from '@automattic/odie-client/src/assets';
-import {
-	getSurveyResponseRatingMetadataKey,
-	getZendeskSurveyResponseId,
-	isZendeskSurveyMessage,
-} from '@automattic/zendesk-client';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -13,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useGetHistoryChats } from '../hooks';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
-import { getChatLinkFromConversation } from './utils';
+import { getChatLinkFromConversation, getZendeskSurveyRating } from './utils';
 import type { OdieConversation, OdieMessage } from '@automattic/odie-client';
 import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
 
@@ -35,24 +30,7 @@ export const HelpCenterSupportChatMessage = ( {
 	const { currentUser } = useHelpCenterContext();
 	const recordTracksEvent = useHelpCenterTracksEvent();
 	const { received, role, text, altText } = message;
-
-	// The rated outcome of a `zd:surveys` CSAT Survey Response, if this conversation has one and
-	// it's already been rated -- persisted on the conversation's own metadata by
-	// useSurveyResponseRating (in @automattic/odie-client), keyed by survey_response_id.
-	const conversationMessages: ( OdieMessage | ZendeskMessage )[] = conversation.messages;
-	const surveyMessage = conversationMessages.find(
-		( conversationMessage ): conversationMessage is ZendeskMessage =>
-			'source' in conversationMessage &&
-			isZendeskSurveyMessage( conversationMessage as ZendeskMessage )
-	);
-	const surveyResponseId = surveyMessage?.actions?.[ 0 ]?.uri
-		? getZendeskSurveyResponseId( surveyMessage.actions[ 0 ].uri )
-		: null;
-	const surveyRating = surveyResponseId
-		? ( conversation as ZendeskConversation ).metadata?.[
-				getSurveyResponseRatingMetadataKey( surveyResponseId )
-		  ]
-		: undefined;
+	const surveyRating = getZendeskSurveyRating( conversation );
 
 	let messageText: string | undefined;
 	if ( surveyRating === 'good' ) {
