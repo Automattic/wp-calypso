@@ -59,6 +59,7 @@ import {
 	OtherRenewablePurchasesNotice,
 	shouldShowOtherRenewablePurchasesNotice,
 } from './other-renewable-purchases-notice';
+import { PartnerManagedNotice } from './partner-managed-notice';
 import { PurchaseCancelledNotice } from './purchase-cancelled-notice';
 import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-expiring-notice';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
@@ -330,6 +331,13 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 
 	if ( purchase.product_slug === 'concierge-session' && isExpiredOrRemoved( purchase ) ) {
 		return <ConciergeConsumedNotice />;
+	}
+
+	// Takes precedence over every notice below, including the expiry ones: those
+	// all push the customer toward a renewal or a payment method that the partner
+	// controls rather than WordPress.com.
+	if ( purchase.is_partner_managed ) {
+		return <PartnerManagedNotice purchase={ purchase } />;
 	}
 
 	// A plan that is expiring, expired, or otherwise at risk of not renewing
