@@ -2,13 +2,12 @@ import { readSpaceBySlugQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { useSpaces } from 'calypso/reader/data/spaces';
 import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import { AddMenuItem } from 'calypso/reader/sidebar/menu';
-import { CreateSpaceModal } from 'calypso/reader/spaces/create-modal';
 import {
 	READER_SPACES_ONBOARDING_DEBUG_KEY,
 	READER_SPACES_ONBOARDING_SEEN_PREFERENCE_KEY,
@@ -23,6 +22,17 @@ import { SpaceMenuItem } from './menu-item';
 import type { ReadSpace } from '@automattic/api-core';
 
 import './style.scss';
+
+// Click-gated UI: the create/edit modal pulls in the heavy customize-modal chain
+// (tabs, colour/icon pickers, search, sources, layout registry). The sidebar
+// loads broadly for flagged users, so defer that code until the user opens the
+// modal — React.lazy + Suspense, mounted only while open. The named → default
+// mapping is needed because the module uses named exports only.
+const CreateSpaceModal = lazy( () =>
+	import( 'calypso/reader/spaces/create-modal' ).then( ( { CreateSpaceModal } ) => ( {
+		default: CreateSpaceModal,
+	} ) )
+);
 
 interface Props {
 	path: string;
@@ -177,6 +187,15 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 				) ) }
 				<AddMenuItem label={ translate( 'Create a space' ) } onClick={ handleAddSpaceClick } />
 			</ExpandableSidebarMenu>
+			{ isCreateModalOpen && (
+				<Suspense fallback={ null }>
+					<CreateSpaceModal
+						isOpen
+						onClose={ () => setIsCreateModalOpen( false ) }
+						onCreated={ handleSpaceCreated }
+					/>
+				</Suspense>
+			) }
 			{ isOnboardingOpen && (
 				<AsyncLoad
 					require={ loadOnboardingModal }
@@ -185,11 +204,6 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 					onClose={ markOnboardingSeen }
 				/>
 			) }
-			<CreateSpaceModal
-				isOpen={ isCreateModalOpen }
-				onClose={ () => setIsCreateModalOpen( false ) }
-				onCreated={ handleSpaceCreated }
-			/>
 		</li>
 	);
 }
