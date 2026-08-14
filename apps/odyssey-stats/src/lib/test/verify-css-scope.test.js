@@ -123,20 +123,23 @@ describe( 'verify-css-scope findScopeFailures', () => {
 		] );
 	} );
 
-	it.each( [ 'html.rtl .card', 'body.is-section-stats .card', ':root .card', '.foo body .card' ] )(
-		'flags `%s` when prefixed, whatever the combinator or position',
-		( selector ) => {
-			const css = `
-				${ PREFIX } ${ selector }{color:red}
-				.jp-stats-dashboard{--sidebar-width-max:160px}
-				.jp-stats-widget{background:#fff}
-			`;
+	it.each( [
+		[ 'html.rtl .card', 'html' ],
+		[ 'body.is-section-stats .card', 'body' ],
+		[ ':root .card', ':root' ],
+		[ '.foo body .card', 'body' ],
+		[ 'html>body .x', 'html, body' ],
+	] )( 'flags `%s` when prefixed, naming %s as the anchor', ( selector, anchor ) => {
+		const css = `
+			${ PREFIX } ${ selector }{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
 
-			expect( findScopeFailures( css ) ).toEqual( [
-				expect.stringContaining( 'the prefix requires to be a descendant of a mount point' ),
-			] );
-		}
-	);
+		expect( findScopeFailures( css ) ).toEqual( [
+			expect.stringContaining( `anchored on ${ anchor }` ),
+		] );
+	} );
 
 	it( 'does not flag a document-root selector that was correctly left unprefixed', () => {
 		const css = `
@@ -149,17 +152,26 @@ describe( 'verify-css-scope findScopeFailures', () => {
 		expect( findScopeFailures( css ) ).toEqual( [] );
 	} );
 
-	it( 'flags `:is(html,body)` — every branch is a root anchor, so the whole group is dead', () => {
-		const css = `
-			${ PREFIX } :is(html,body) .card{color:red}
+	it.each( [
+		[ ':is(html,body) .card', ':is(html,body)' ],
+		[ ':where(html,body) .card', ':where(html,body)' ],
+		[ ':matches(html,body) .card', ':matches(html,body)' ],
+		[ ':is(body.rtl,html.rtl) .card', ':is(body.rtl,html.rtl)' ],
+		[ ':is(html body) .card', ':is(html body)' ],
+	] )(
+		'flags `%s` — every branch leads with a root, so the whole group is dead',
+		( selector, anchor ) => {
+			const css = `
+			${ PREFIX } ${ selector }{color:red}
 			.jp-stats-dashboard{--sidebar-width-max:160px}
 			.jp-stats-widget{background:#fff}
 		`;
 
-		expect( findScopeFailures( css ) ).toEqual( [
-			expect.stringContaining( 'anchored on :is(html,body)' ),
-		] );
-	} );
+			expect( findScopeFailures( css ) ).toEqual( [
+				expect.stringContaining( `anchored on ${ anchor }` ),
+			] );
+		}
+	);
 
 	it( 'does not flag a mixed group like `:is(.foo,body)` — only one branch is dead, and the rule must stay scoped', () => {
 		// Excluding this from prefixing to save the `body` branch would ship `.foo .card`

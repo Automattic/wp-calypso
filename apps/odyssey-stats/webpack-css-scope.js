@@ -57,9 +57,19 @@ const ignoreFiles = [
 // the rule would just go dead. Leave them unscoped instead.
 const exclude = [
 	/^:root(?![\w-])/, // :root, :root[data-theme=dark] .foo
-	// The lookahead has to accept combinators as well as whitespace: Sass emits `body > .x`
-	// compressed as `body>.x`, and without `>+~` here that form slips through and gets prefixed.
-	/(^|[\s,])(html|body)(?=$|[\s.[:#,>+~])/, // html.rtl, body.lockscroll, body>.color-scheme
+	// Production Sass output is compressed, so `body > .x` arrives here as `body>.x` — both sides
+	// have to accept combinators or the compressed form gets prefixed and the rule dies.
+	//
+	// A leading `,` is deliberately not accepted. The plugin applies `exclude` per selector, having
+	// already split on top-level commas, so a comma before `body` only ever comes from inside an
+	// `:is()`/`:where()`/`:not()` argument list. Matching there would exclude the whole rule to save
+	// one dead branch, shipping its live branches unscoped — worse than the dead branch. Such a
+	// selector stays prefixed, and verify-css-scope.js flags it if every branch is a root.
+	//
+	// Whitespace before a root inside such a list still over-matches (`:is(.foo, body .x)`), because
+	// it is indistinguishable from the descendant combinator in `.foo body .x`. Telling them apart
+	// needs paren-awareness a regex list cannot express; css-scope.test.js pins the behaviour.
+	/(^|[\s>+~])(html|body)(?=$|[\s.[:#,>+~])/, // html.rtl, body.lockscroll, body>.color-scheme
 	/^\.rtl(?![\w-])/, // .rtl button
 	/^:lang\(/, // :lang(he) .rtl
 	/^\[lang/, // [lang*=fr] .wp-brand-font

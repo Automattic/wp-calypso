@@ -1,5 +1,6 @@
 import postcss from 'postcss';
 import prefixSelectorPlugin from 'postcss-prefix-selector';
+import { findScopeFailures } from '../../../bin/verify-css-scope';
 import cssScope from '../../../webpack-css-scope';
 
 /**
@@ -142,14 +143,41 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 		expect( compiled ).toMatch( /^\.stats-widget-content\.color-scheme\.is-coffee/m );
 	} );
 
-	it.each( [ 'body>.color-scheme', 'body > .color-scheme' ] )(
-		'leaves `%s` unprefixed whether or not Sass emitted the combinator with spaces',
-		( selector ) => {
-			const compiled = compile( `${ selector } { --color-accent: rgb(7, 8, 9); }` );
+	it.each( [
+		'body>.color-scheme',
+		'body > .color-scheme',
+		'body+.x',
+		'body~.x',
+		'.foo>body .x',
+		'html>body .x',
+	] )( 'leaves `%s` unprefixed, whatever combinator spacing Sass emitted', ( selector ) => {
+		const compiled = compile( `${ selector } { --color-accent: rgb(7, 8, 9); }` );
 
-			expect( compiled ).not.toContain( ':where(' );
+		expect( compiled.trim() ).toBe( `${ selector } { --color-accent: rgb(7, 8, 9); }` );
+	} );
+
+	// Excluding these to save their dead `body` branch would ship the live branches unscoped into
+	// wp-admin, which is the worse trade. They stay prefixed; verify-css-scope.js flags the ones
+	// that are dead outright.
+	it.each( [ ':is(.foo,body>.x) .card', ':is(html,body) .card' ] )(
+		'still prefixes `%s` — a root inside a matches-any group must not exclude the whole rule',
+		( selector ) => {
+			const compiled = compile( `${ selector } { color: red; }` );
+
+			expect( compiled ).toContain( ':where(' );
 		}
 	);
+
+	// Known limitation, unchanged by the combinator widening: whitespace before a root inside a
+	// functional pseudo is indistinguishable from the descendant combinator in `.foo body .x`, which
+	// `exclude` must keep matching. Separating them needs paren-awareness that a regex list cannot
+	// express. No such selector exists in first-party SCSS; this pins the behaviour so a future
+	// change to `exclude` shows up here rather than as a silent leak into wp-admin.
+	it( 'over-matches a whitespace-separated root inside a functional pseudo, leaving it unscoped', () => {
+		const compiled = compile( ':is(.foo, body .x) .card { color: red; }' );
+
+		expect( compiled ).not.toContain( ':where(' );
+	} );
 
 	it( 'keeps a rule anchored on the Odyssey portal root applying to elements inside it', () => {
 		const compiled = compile( 'body>.color-scheme .date-range__picker { color: rgb(7, 8, 9); }' );
@@ -162,19 +190,37 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 		expect( getComputedStyle( document.getElementById( 'picker' ) ).color ).toBe( 'rgb(7, 8, 9)' );
 	} );
 
-	// theme.scss hands `--wp-admin-theme-color` back to wp-admin on the portalled scheme root, once
-	// per scheme. These share the `body>` anchor with the picker rule, so they were dead for the
-	// same reason — and they cover every @wordpress/components control in a portal, not one widget.
-	it.each( [ 'is-coffee', 'is-light', 'is-sunrise' ] )(
-		'leaves the %s admin-theme handback on the portalled scheme root unprefixed',
-		( scheme ) => {
-			const compiled = compile(
-				`body>.color-scheme.${ scheme } { --wp-admin-theme-color: inherit; }`
-			);
+	// theme.scss emits the three `--wp-admin-theme-color*` properties on the portalled scheme root,
+	// once per wp-admin scheme. They share the `body>` anchor with the picker rule and cover every
+	// @wordpress/components control in a portal.
+	// The two halves of the scoping contract are configured apart and only meet in the build:
+	// webpack-css-scope.js decides what gets prefixed, verify-css-scope.js decides what counts as
+	// dead. Compiling real source selectors and running the result through the checker is what ties
+	// them together — it fails for any selector `exclude` mishandles, including forms nobody
+	// anticipated. This case alone would have caught STATS-413 without knowing about `>`.
+	it( 'produces no dead rules when the real source selectors are compiled and checked', () => {
+		// The three-member rule from stats-main/style.scss, plus the other shapes `exclude` and the
+		// prefix roots are meant to handle.
+		const compiled = compile( `
+			.stats-main,
+			body>.color-scheme,
+			body.is-section-stats .components-modal__screen-overlay { --color-accent: red; }
+			body>.color-scheme.is-coffee { --wp-admin-theme-color: inherit; }
+			html.rtl .stats-tab { margin: 0; }
+			.card { color: blue; }
+			.color-scheme.is-light .masterbar { color: green; }
+		` );
 
-			expect( compiled ).not.toContain( ':where(' );
-		}
-	);
+		expect(
+			findScopeFailures( `${ compiled }\n.jp-stats-dashboard{--x:1}\n.jp-stats-widget{--y:2}` )
+		).toEqual( [] );
+	} );
+
+	it( 'leaves the admin-theme handback on the portalled scheme root unprefixed', () => {
+		const compiled = compile( 'body>.color-scheme.is-coffee { --wp-admin-theme-color: inherit; }' );
+
+		expect( compiled ).not.toContain( ':where(' );
+	} );
 
 	it( 'scopes content inside a @wordpress/components Popover fallback container, mirroring the modal/widget mounts', () => {
 		const compiled = compile( '.card { color: rgb(4, 5, 6); }' );

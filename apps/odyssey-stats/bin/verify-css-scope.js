@@ -13,16 +13,17 @@
  *    `:where(<roots>) X` where X's compound contains one of them. That's always dead: those roots
  *    are placed directly on the page and never nested inside another root, so they can never
  *    satisfy the ancestor requirement the prefix just added. This is the STATS-368 failure mode.
- * 4. No compiled rule prefixes a selector anchored on the document root — `html`, `body` or
- *    `:root`. The prefix makes everything a descendant of a mount point, and those three never
- *    are, so the rule is dead. `exclude` exists to keep them unprefixed; this catches the case
- *    where a pattern there fails to match the selector as Sass actually emitted it.
+ * 4. No compiled rule contains a top-level `html`, `body` or `:root` after the prefix, wherever in
+ *    the chain it sits — plus a matches-any group whose every branch is one, e.g. `:is(html,body)`.
+ *    The prefix requires a mount-point ancestor, which the document root can never have, so the
+ *    rule is dead. `exclude` exists to keep such selectors unprefixed; this catches the case where
+ *    a pattern there fails to match the selector as Sass actually emitted it.
  *
- * Check 4 is deliberately structural rather than re-running `exclude` against the compiled
- * selector. Re-running it could never fail: the plugin already tested those same patterns against
- * that same string, so a pattern that missed at build time misses here too. Asking "is this
- * selector anchored somewhere the prefix can never reach" is independent of how `exclude` is
- * written, which is the whole point — it catches gaps in `exclude` rather than trusting it.
+ * Check 4 is deliberately structural rather than derived from `exclude`. A check built out of those
+ * same patterns would inherit their blind spots by construction: it can only recognise what they
+ * already match, so the one case it needs to catch — a pattern that is itself wrong — is the case
+ * it cannot see. Asking "is this selector anchored somewhere the prefix can never reach" is
+ * independent of how `exclude` is written, which is what lets it catch gaps in it.
  *
  * Check 3 only covers `entryPointRoots`, not every `prefix` selector: portal roots (`.color-scheme`
  * etc.) are routinely, correctly nested *inside* `.jp-stats-dashboard`/`.jp-stats-widget`, so
@@ -108,13 +109,14 @@ function getCompoundAfterPrefix( selector ) {
 	return compoundNodes;
 }
 
-// Selectors that can never be a descendant of anything, so prefixing them always kills the rule.
+// Tags that can never be a descendant of a mount point, so prefixing them always kills the rule.
 const DOCUMENT_ROOT_TAGS = [ 'html', 'body' ];
 
 /**
- * Given a rule selector starting with the `:where(<roots>)` prefix, returns any document-root
- * anchors (`html`, `body`, `:root`) appearing after it. Top level only — a `body` inside an
- * `:is()`/`:where()` argument list is a different question and not necessarily dead.
+ * Given a rule selector starting with the `:where(<roots>)` prefix, returns the top-level
+ * document-root anchors after it: a bare `html`/`body`/`:root`, or a matches-any group whose every
+ * branch is one (see `isAllRootMatchesPseudo`). A mixed group like `:is(.foo,body)` is not an
+ * anchor — only one of its branches is dead.
  */
 function getDocumentRootAnchorsAfterPrefix( selector ) {
 	const anchors = [];
@@ -155,13 +157,14 @@ function isAllRootMatchesPseudo( node ) {
 		return false;
 	}
 
+	// A branch is dead when its leading element is a document root, whatever is compounded onto it
+	// or descends from it: `body.rtl` and `html body` are as unreachable as a bare `body`.
 	return node.nodes.every( ( branch ) => {
-		const branchNodes = branch.nodes.filter( ( child ) => child.type !== 'combinator' );
+		const [ head ] = branch.nodes.filter( ( child ) => child.type !== 'combinator' );
 		return (
-			branchNodes.length === 1 &&
-			( ( branchNodes[ 0 ].type === 'tag' &&
-				DOCUMENT_ROOT_TAGS.includes( branchNodes[ 0 ].value ) ) ||
-				( branchNodes[ 0 ].type === 'pseudo' && branchNodes[ 0 ].value === ':root' ) )
+			!! head &&
+			( ( head.type === 'tag' && DOCUMENT_ROOT_TAGS.includes( head.value ) ) ||
+				( head.type === 'pseudo' && head.value === ':root' ) )
 		);
 	} );
 }
@@ -244,7 +247,7 @@ function findScopeFailures(
 				failures.push(
 					`Dead rule found: \`${ selector.trim() }\` was prefixed despite being anchored on ` +
 						`${ rootAnchors.join( ', ' ) }, which the prefix requires to be a descendant of a ` +
-						'mount point. Nothing is a descendant of the document root, so the rule can never ' +
+						'mount point. The document root is a descendant of nothing, so the rule can never ' +
 						'match. `exclude` in webpack-css-scope.js is meant to keep it unprefixed — check ' +
 						'that its pattern matches the selector as Sass emits it, including without spaces ' +
 						'around combinators (`body>.x`, not just `body > .x`).'
