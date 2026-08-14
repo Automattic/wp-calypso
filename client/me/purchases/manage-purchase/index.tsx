@@ -1008,6 +1008,15 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		// The host owns the billing relationship for a host-managed plan, so
+		// cancelling has to happen there. `is_cancelable` is false server-side for
+		// these, but visibility here is driven by auto-renew state instead, so the
+		// check has to be repeated. Agency-provisioned purchases are bought through
+		// WordPress.com and stay cancellable.
+		if ( purchase.is_host_managed ) {
+			return null;
+		}
+
 		// Only show the Cancel button when auto-renew is still on (i.e. the user
 		// hasn't already cancelled the subscription). The Remove button owns the
 		// auto-renew-off state. `canAutoRenewBeTurnedOff` returns true for
@@ -1440,25 +1449,15 @@ class ManagePurchase extends Component<
 									: purchaseType( purchase ) }
 							</div>
 							<div className="manage-purchase__price">
-								{ isPartnerPurchase( purchase ) && ! isA4ABillingDragonPurchase( purchase ) ? (
-									<div className="manage-purchase__contact-partner">
-										{ translate( 'Please contact %(partnerName)s for details', {
-											args: {
-												partnerName: purchase.partner_name ?? '',
-											},
-										} ) }
-									</div>
-								) : (
-									<>
-										{ isPurchaseOneTimePurchase( purchase ) && (
-											<PlanPrice
-												rawPrice={ purchase.regular_price_integer }
-												isSmallestUnit
-												currencyCode={ purchase.currency_code }
-												isOnSale={ !! purchase.sale_amount }
-											/>
-										) }
-									</>
+								{ /* A partner-managed purchase has no WordPress.com price to show, and
+								     the "contact the partner" guidance now lives in PurchaseNotice. */ }
+								{ ! purchase.is_partner_managed && isPurchaseOneTimePurchase( purchase ) && (
+									<PlanPrice
+										rawPrice={ purchase.regular_price_integer }
+										isSmallestUnit
+										currencyCode={ purchase.currency_code }
+										isOnSale={ !! purchase.sale_amount }
+									/>
 								) }
 							</div>
 						</div>

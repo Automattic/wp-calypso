@@ -1522,6 +1522,25 @@ function CancelPurchaseInner() {
 			return false;
 		}
 
+		// A host-managed plan is billed by the partner, so there is nothing to
+		// cancel here. The CTA is hidden on Purchase Settings; this also turns away
+		// anyone arriving from a stale link, with copy that names the partner rather
+		// than the generic "cannot be cancelled" message below.
+		if ( purchase.is_host_managed ) {
+			if ( ! createdErrorNoticeForRedirect.current ) {
+				createErrorNotice(
+					sprintf(
+						/* translators: %s is the name of the hosting partner, e.g. "Bluehost" */
+						__( 'This subscription is managed by %s. Please contact them to make changes.' ),
+						purchase.partner_name ?? ''
+					),
+					{ type: 'snackbar' }
+				);
+				createdErrorNoticeForRedirect.current = true;
+			}
+			return false;
+		}
+
 		// If intent=cancel/auto-renew but auto-renew is already off (e.g. page
 		// refresh after the mutation), redirect to Purchase Settings instead of
 		// re-showing the confirmation screen. Bypass when surveyShown is true —
