@@ -46,8 +46,7 @@ const UniversalNavbarHeader = ( {
 	userName,
 	userEmail,
 }: HeaderProps ) => {
-	// The 2026 Global Nav is the permanent design; only the minimal variant
-	// keeps the slim pre-2026 bar (logo, CTAs, and the legacy mobile menu).
+	// Only the minimal variant keeps the slim pre-2026 bar.
 	const nav2026 = variant !== 'minimal';
 	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
