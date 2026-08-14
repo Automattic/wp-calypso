@@ -294,6 +294,9 @@ export default function PartnerDirectoryExpertiseContent( {
 					variant="tertiary"
 					disabled={ isSubmitting }
 					shouldUseRouterLink={ shouldUseRouterLink }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_a4a_partner_directory_expertise_cancel_click' )
+					}
 				>
 					{ __( 'Cancel' ) }
 				</LinkButton>
