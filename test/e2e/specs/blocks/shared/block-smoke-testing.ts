@@ -33,6 +33,10 @@ export function createBlockTests(
 		] );
 
 		test( `${ specName }: smoke test blocks`, async ( { page, pageEditor } ) => {
+			// One test adds, configures and validates every flow in the list, so the budget covers a
+			// fixed cost (authenticate, load the editor, publish) plus a share per flow.
+			test.setTimeout( 120_000 + blockFlows.length * 60_000 );
+
 			let editorContext: EditorContext;
 			let publishedPostContext: PublishedPostContext;
 
