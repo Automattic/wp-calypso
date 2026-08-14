@@ -21,6 +21,10 @@ export default class SecuritySectionNav extends Component {
 				path: '/me/security/social-login',
 			},
 			{
+				title: i18n.translate( 'Telegram Bot (alpha)' ),
+				path: '/me/security/ai-assistant',
+			},
+			{
 				title: i18n.translate( 'Two-Step Authentication' ),
 				path: '/me/security/two-step',
 			},

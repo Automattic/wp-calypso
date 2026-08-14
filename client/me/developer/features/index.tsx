@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useOpenArticleInHelpCenter } from '@automattic/help-center/src/hooks';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { DollyCard } from './dolly-card';
 import { GitHubDeploymentCard } from './github-deployment-card';
 import { StudioCard } from './studio-card';
 import { useFeaturesList } from './use-features-list';
@@ -43,6 +45,7 @@ export const DeveloperFeatures = () => {
 			<div className="developer-features-list developer-features-list--latest">
 				<StudioCard />
 				<GitHubDeploymentCard />
+				{ config.isEnabled( 'dolly/telegram' ) && <DollyCard /> }
 			</div>
 
 			<h2 className="developer-features-sub-title">{ translate( 'Popular features' ) }</h2>

@@ -4,6 +4,7 @@ import { createElement } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import { login } from 'calypso/lib/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import TelegramConnectPage from './main';
 
 export const LEGACY_TELEGRAM_CONNECT_PATH = '/telegram-connect';
 export const TELEGRAM_CONNECT_PATH = '/me/get-apps/telegram-connect';
@@ -31,11 +32,11 @@ export function telegramConnect( context, next ) {
 		return;
 	}
 
-	const destination = new URL( '/me/preferences/mcp', window.location.origin );
-	[ 'telegram_id', 'token', 'ts', 'bot' ].forEach( ( parameter ) => {
-		if ( typeof context.query[ parameter ] === 'string' ) {
-			destination.searchParams.set( parameter, context.query[ parameter ] );
-		}
+	context.primary = createElement( TelegramConnectPage, {
+		telegramId: context.query.telegram_id,
+		token: context.query.token,
+		ts: context.query.ts,
+		bot: context.query.bot,
 	} );
-	window.location.replace( destination.toString() );
+	next();
 }

@@ -18,10 +18,12 @@ class SecurityCheckupDolly extends Component {
 
 		return (
 			<SecurityCheckupNavigationItem
-				path="/me/mcp"
+				path="/me/security/ai-assistant"
 				materialIcon="smartphone"
-				text={ translate( 'WordPress Agent connections' ) }
-				description={ translate( 'Connect WordPress Agent to Slack or Telegram.' ) }
+				text={ translate( 'Telegram Bot (alpha)' ) }
+				description={ translate(
+					'Connect your WordPress.com account to @wordpressagentbot to manage your sites from Telegram.'
+				) }
 			/>
 		);
 	}
