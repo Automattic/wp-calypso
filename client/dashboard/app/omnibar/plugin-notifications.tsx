@@ -42,6 +42,7 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 
 	return {
 		id: 'notifications',
+		className: 'omnibar__notifications',
 		label: __( 'Notifications' ),
 		icon: (
 			<span ref={ bellRef } className="omnibar__notifications-icon">
