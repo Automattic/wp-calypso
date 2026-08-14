@@ -171,4 +171,5 @@ export * from './sites-posts-replies';
 export * from './upgrades';
 export * from './users';
 export * from './user-sites';
+export * from './wordpress-agent';
 export * from './wp-org';

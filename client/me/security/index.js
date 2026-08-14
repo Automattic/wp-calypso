@@ -65,7 +65,7 @@ export default function () {
 	page(
 		'/me/security/ai-assistant',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/security/ai-assistant' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp' ),
 		sidebar,
 		dolly,
 		makeLayout,

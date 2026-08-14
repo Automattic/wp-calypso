@@ -61,7 +61,6 @@ import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { isWriteTool } from '../../me/mcp/categories';
-import { wpcomLink } from '../../utils/link';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import upsellIllustrationUrl from './upsell-illustration.svg';
 
@@ -127,7 +126,7 @@ function UpgradeRequiredBadge() {
 	);
 }
 
-const TELEGRAM_CONNECTION_PATH = '/me/developer';
+const TELEGRAM_CONNECTION_PATH = '/me/preferences/mcp';
 
 const INVALID_POST_BY_EMAIL_VALUES = new Set( [
 	'',
@@ -487,8 +486,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				{ config.isEnabled( 'dolly/telegram' ) && (
 					<div className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
 						<SummaryButton
-							href={ wpcomLink( TELEGRAM_CONNECTION_PATH ) }
-							title={ __( 'Connect Telegram' ) }
+							href={ TELEGRAM_CONNECTION_PATH }
+							title={ __( 'Connect WordPress Agent to Telegram' ) }
 							description={ __(
 								'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
 							) }

@@ -1,9 +1,11 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { seen, pencil, notAllowed, connection, globe } from '@wordpress/icons';
+import { useEffect, useState } from 'react';
 import { getOverridesToMatch, groupIntentKey } from '../../../me/mcp/group-intents';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
@@ -14,6 +16,7 @@ import {
 } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { mcpRoute } from '../../app/router/me';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -22,6 +25,10 @@ import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { SectionHeader } from '../../components/section-header';
 import { isWriteTool } from './categories';
+import WordPressAgentSlack from './wordpress-agent-slack';
+import WordPressAgentTelegram from './wordpress-agent-telegram';
+
+import './style.scss';
 
 interface McpAbility {
 	title: string;
@@ -75,6 +82,51 @@ function McpComponent() {
 	const { recordTracksEvent } = useAnalytics();
 	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const {
+		pair_token: pairTokenParam,
+		slack: slackStatusParam,
+		telegram_id: telegramIdParam,
+		token: telegramTokenParam,
+		ts: telegramTimestampParam,
+		bot: telegramBotParam,
+	} = mcpRoute.useSearch();
+	const [ connectionCallbacks ] = useState( () => ( {
+		pairToken: pairTokenParam,
+		slackStatus: slackStatusParam,
+		telegramId: telegramIdParam,
+		telegramToken: telegramTokenParam,
+		telegramTimestamp: telegramTimestampParam,
+		telegramBot: telegramBotParam,
+	} ) );
+
+	useEffect( () => {
+		if (
+			! pairTokenParam &&
+			! slackStatusParam &&
+			! telegramIdParam &&
+			! telegramTokenParam &&
+			! telegramTimestampParam &&
+			! telegramBotParam
+		) {
+			return;
+		}
+
+		const url = new URL( window.location.href );
+		url.searchParams.delete( 'pair_token' );
+		url.searchParams.delete( 'slack' );
+		url.searchParams.delete( 'telegram_id' );
+		url.searchParams.delete( 'token' );
+		url.searchParams.delete( 'ts' );
+		url.searchParams.delete( 'bot' );
+		window.history.replaceState( window.history.state, '', url.toString() );
+	}, [
+		pairTokenParam,
+		slackStatusParam,
+		telegramIdParam,
+		telegramTokenParam,
+		telegramTimestampParam,
+		telegramBotParam,
+	] );
 
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const availableTools = (
@@ -162,74 +214,116 @@ function McpComponent() {
 				eventName="calypso_dashboard_mcp_view"
 				properties={ tracksAudienceProps }
 			/>
-			<VStack spacing={ 4 }>
-				<Card>
-					<CardBody>
-						<VStack spacing={ 4 }>
-							<SectionHeader
-								level={ 3 }
-								title={ __( 'External AI agent access' ) }
-								description={ __(
-									'Allow external AI agents to access your WordPress.com account and sites via MCP.'
-								) }
-							/>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								checked={ mcpEnabled }
-								disabled={ mutation.isPending }
-								label={ __( 'Enable MCP access' ) }
-								onChange={ handleMcpToggle }
-							/>
-						</VStack>
-					</CardBody>
+			<VStack spacing={ 8 }>
+				<VStack spacing={ 4 }>
+					<SectionHeader
+						level={ 2 }
+						title={ __( 'MCP' ) }
+						description={ __(
+							'Control how external AI agents access your WordPress.com account and sites.'
+						) }
+					/>
+					<Card>
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<SectionHeader
+									level={ 3 }
+									title={ __( 'External AI agent access' ) }
+									description={ __(
+										'Allow external AI agents to access your WordPress.com account and sites via MCP.'
+									) }
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ mcpEnabled }
+									disabled={ mutation.isPending }
+									label={ __( 'Enable MCP access' ) }
+									onChange={ handleMcpToggle }
+								/>
+							</VStack>
+						</CardBody>
+
+						{ mcpEnabled && (
+							<>
+								<CardDivider />
+								<RouterLinkSummaryButton
+									to="/me/preferences/mcp/read"
+									density="medium"
+									title={ __( 'Read' ) }
+									decoration={ <Icon icon={ seen } size={ 24 } /> }
+									badges={ [ readBadge ] }
+								/>
+								<RouterLinkSummaryButton
+									to="/me/preferences/mcp/write"
+									density="medium"
+									title={ __( 'Write' ) }
+									decoration={ <Icon icon={ pencil } size={ 24 } /> }
+									badges={ [ writeBadge ] }
+								/>
+								<RouterLinkSummaryButton
+									to="/me/preferences/mcp/mcp-sites"
+									density="medium"
+									title={ __( 'Site exceptions' ) }
+									decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
+									badges={ [ exceptionBadge ] }
+								/>
+							</>
+						) }
+						{ ! mcpEnabled && (
+							<>
+								<CardDivider />
+								<RouterLinkSummaryButton
+									to="/me/preferences/mcp/mcp-sites"
+									density="medium"
+									title={ __( 'Add to specific sites' ) }
+									decoration={ <Icon icon={ globe } size={ 24 } /> }
+									badges={ [ addSiteBadge ] }
+								/>
+							</>
+						) }
+					</Card>
 
 					{ mcpEnabled && (
-						<>
-							<CardDivider />
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/read"
-								density="medium"
-								title={ __( 'Read' ) }
-								decoration={ <Icon icon={ seen } size={ 24 } /> }
-								badges={ [ readBadge ] }
-							/>
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/write"
-								density="medium"
-								title={ __( 'Write' ) }
-								decoration={ <Icon icon={ pencil } size={ 24 } /> }
-								badges={ [ writeBadge ] }
-							/>
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/mcp-sites"
-								density="medium"
-								title={ __( 'Site exceptions' ) }
-								decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
-								badges={ [ exceptionBadge ] }
-							/>
-						</>
+						<RouterLinkSummaryButton
+							to="/me/preferences/mcp/setup"
+							title={ __( 'Connect external AI assistant' ) }
+							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+							decoration={ <Icon icon={ connection } size={ 24 } /> }
+						/>
 					) }
-					{ ! mcpEnabled && (
-						<>
-							<CardDivider />
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/mcp-sites"
-								density="medium"
-								title={ __( 'Add to specific sites' ) }
-								decoration={ <Icon icon={ globe } size={ 24 } /> }
-								badges={ [ addSiteBadge ] }
-							/>
-						</>
-					) }
-				</Card>
+				</VStack>
 
-				{ mcpEnabled && (
-					<RouterLinkSummaryButton
-						to="/me/preferences/mcp/setup"
-						title={ __( 'Connect external AI assistant' ) }
-						description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-						decoration={ <Icon icon={ connection } size={ 24 } /> }
-					/>
+				{ ( config.isEnabled( 'wordpress-agent-slack' ) ||
+					config.isEnabled( 'dolly/telegram' ) ) && (
+					<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 2 }
+							title={ __( 'WordPress Agent' ) }
+							description={ __(
+								'Your AI assistant for building, managing, and growing your WordPress.com sites.'
+							) }
+							decoration={ <BigSkyLogo.CentralLogo heartless size={ 32 } /> }
+						/>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Connections' ) }
+							description={ __( 'Talk to WordPress Agent where you already are.' ) }
+						/>
+						{ config.isEnabled( 'dolly/telegram' ) && (
+							<WordPressAgentTelegram
+								telegramId={ connectionCallbacks.telegramId }
+								token={ connectionCallbacks.telegramToken }
+								timestamp={ connectionCallbacks.telegramTimestamp }
+								bot={ connectionCallbacks.telegramBot }
+							/>
+						) }
+						{ config.isEnabled( 'wordpress-agent-slack' ) && (
+							<WordPressAgentSlack
+								pairToken={ connectionCallbacks.pairToken }
+								slackStatus={ connectionCallbacks.slackStatus }
+							/>
+						) }
+					</VStack>
 				) }
 			</VStack>
 		</PageLayout>
