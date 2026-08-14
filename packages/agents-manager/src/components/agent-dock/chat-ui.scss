@@ -137,6 +137,12 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 				color: inherit;
 				flex: 0 0 auto;
 				fill: currentColor;
+
+				// Agenttic sets `color` directly on every message descendant.
+				path {
+					color: inherit;
+					fill: currentColor;
+				}
 			}
 		}
 	}
