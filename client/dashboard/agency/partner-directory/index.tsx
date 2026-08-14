@@ -7,8 +7,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { a4aLink } from '../../utils/link';
 import PartnerDirectoryDashboardContent from './dashboard-content';
-
-const EXPERTISE_URL = '/agency/partner-directory/expertise';
+import { PARTNER_DIRECTORY_EXPERTISE_ROUTE } from './paths';
 
 /*
  * TODO: The profile and lead matching screens are not migrated to the
@@ -34,7 +33,7 @@ export default function AgencyPartnerDirectory() {
 				<PartnerDirectoryDashboardContent
 					agency={ agency }
 					recordTracksEvent={ recordTracksEvent }
-					expertiseUrl={ EXPERTISE_URL }
+					expertiseUrl={ PARTNER_DIRECTORY_EXPERTISE_ROUTE }
 					profileUrl={ PROFILE_URL }
 					openSupportGuide={ openSupportGuide }
 				/>

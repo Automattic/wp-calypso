@@ -6,9 +6,8 @@ import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { PARTNER_DIRECTORY_ROUTE } from '../paths';
 import PartnerDirectoryExpertiseContent from './expertise-content';
-
-const DASHBOARD_URL = '/agency/partner-directory';
 
 export default function AgencyPartnerDirectoryExpertise() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -30,8 +29,8 @@ export default function AgencyPartnerDirectoryExpertise() {
 				<PartnerDirectoryExpertiseContent
 					agency={ agency }
 					recordTracksEvent={ recordTracksEvent }
-					dashboardUrl={ DASHBOARD_URL }
-					onSubmitSuccess={ () => navigate( { to: DASHBOARD_URL } ) }
+					dashboardUrl={ PARTNER_DIRECTORY_ROUTE }
+					onSubmitSuccess={ () => navigate( { to: PARTNER_DIRECTORY_ROUTE } ) }
 				/>
 			) }
 		</PageLayout>

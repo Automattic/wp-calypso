@@ -25,6 +25,10 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import {
+	PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
+	PARTNER_DIRECTORY_ROUTE,
+} from '../../agency/partner-directory/paths';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -148,7 +152,7 @@ export const agencyPartnerDirectoryRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => agencyRoute,
-	path: 'agency/partner-directory',
+	path: PARTNER_DIRECTORY_ROUTE,
 	beforeLoad: async ( { cause } ) => {
 		if ( cause === 'preload' ) {
 			return;
@@ -183,7 +187,7 @@ export const agencyPartnerDirectoryExpertiseRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => agencyPartnerDirectoryRoute,
-	path: 'expertise',
+	path: PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
 	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
 } ).lazy( () =>
 	import( '../../agency/partner-directory/expertise' ).then( ( d ) =>
