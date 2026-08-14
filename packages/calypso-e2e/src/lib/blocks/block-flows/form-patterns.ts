@@ -111,12 +111,17 @@ export class FormPatternsFlow implements BlockFlow {
 		// carry no Email field for `configure` to label or the assertions to find.
 		const option = editorParent
 			.getByRole( 'dialog', { name: 'Choose a pattern' } )
-			.getByRole( 'option', { name: FORM_PATTERN_NAME, exact: true } );
+			.getByRole( 'option', { name: FORM_PATTERN_NAME, exact: true } )
+			.first();
 		// Wait for the dialog to settle before clicking; the patterns load in via an
 		// iframe and a `block-editor-block-preview__container` overlay intercepts
 		// pointer events while previews hydrate. The remote pattern library can be
 		// slow to load on loaded CI agents, so allow a generous timeout here.
 		await option.waitFor( { state: 'visible', timeout: 40 * 1000 } );
+		// The option sits partway down the list and previews above it hydrate late, so
+		// settle its position before taking a point: a forced click skips the stability
+		// check and would otherwise land on whichever pattern shifted into place.
+		await option.scrollIntoViewIfNeeded();
 		// Force the click: on slower CI agents the preview container occasionally
 		// continues to intercept pointer events even after the option reports as
 		// visible, enabled and stable. The option still carries the selection
