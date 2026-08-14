@@ -70,4 +70,11 @@ describe( 'selectBackupIncludesPlugin', () => {
 			} )
 		).toBe( false );
 	} );
+
+	// The wpcom endpoint discards the VaultPress payload and returns a bare
+	// `array()` on any failure, so the client sees `[]` rather than `ok: false`.
+	// See sites-rewind-backup-ls.php::get_backup_contents().
+	it( 'returns false for the empty array wpcom returns on failure', () => {
+		expect( selectWooSubscriptions( [] as unknown as BackupContentsResponse ) ).toBe( false );
+	} );
 } );
