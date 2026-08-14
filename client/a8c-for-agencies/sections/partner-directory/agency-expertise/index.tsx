@@ -52,7 +52,6 @@ const AgencyExpertise = () => {
 		dispatch( errorNotice( getApplicationSubmitFailedMessage(), { duration: 6000 } ) );
 	}, [ dispatch ] );
 
-	// We want to scroll to the top of the page when the component is rendered
 	useEffect( () => {
 		document.querySelector( '.partner-directory__body' )?.scrollTo( 0, 0 );
 	}, [] );
