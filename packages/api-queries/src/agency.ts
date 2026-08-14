@@ -5,6 +5,8 @@ import {
 	fetchAgencyMcpSettings,
 	updateAgencyMcpSettings,
 	updateAgencyPartnerDirectoryApplication,
+	updateAgencyProfile,
+	uploadAgencyPartnerDirectoryLogo,
 	fetchTipaltiIFrameUrl,
 	fetchTipaltiPayee,
 } from '@automattic/api-core';
@@ -13,6 +15,7 @@ import { queryClient } from './query-client';
 import type {
 	Agency,
 	AgencyPartnerDirectoryApplicationUpdate,
+	AgencyProfileUpdate,
 	McpSettings,
 	McpSettingsUpdate,
 } from '@automattic/api-core';
@@ -134,6 +137,33 @@ export const agencyPartnerDirectoryApplicationMutation = ( agencyId: number ) =>
 				previous ? { ...previous, ...agency } : agency
 			);
 		},
+	} );
+
+export const agencyProfileMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-profile-update' },
+		mutationFn: async ( update: AgencyProfileUpdate ) => {
+			const agency = await updateAgencyProfile( agencyId, update );
+			// A 2xx without the saved profile means the write didn't take;
+			// surface it as an error instead of reporting success.
+			if ( ! agency?.profile ) {
+				throw new Error( 'The response did not include the saved profile.' );
+			}
+			return agency;
+		},
+		onSuccess: ( agency: Agency ) => {
+			// Merge rather than replace: the PUT response may omit fields the
+			// GET provides (e.g. `user.capabilities`), which gate routes and menus.
+			queryClient.setQueryData( activeAgencyQuery().queryKey, ( previous ) =>
+				previous ? { ...previous, ...agency } : agency
+			);
+		},
+	} );
+
+export const agencyPartnerDirectoryLogoMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-pd-logo-upload' },
+		mutationFn: ( file: File ) => uploadAgencyPartnerDirectoryLogo( agencyId, file ),
 	} );
 
 export const mcpSettingsQuery = ( agencyId: number ) =>
