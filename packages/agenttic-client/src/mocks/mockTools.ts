@@ -1,5 +1,5 @@
-import type { Ability } from '../client/types/index';
 import { logger } from '../client/utils/logger';
+import type { Ability } from '../client/types/index';
 
 export const getClientTools = ( addMessage: ( message: any ) => void ) => {
 	// Define abilities with their callbacks
@@ -42,9 +42,7 @@ export const getClientTools = ( addMessage: ( message: any ) => void ) => {
 				return {
 					name: 'Demo User',
 					email: 'demo@example.com',
-					preferences: input.includePreferences
-						? { theme: 'dark', language: 'en' }
-						: undefined,
+					preferences: input.includePreferences ? { theme: 'dark', language: 'en' } : undefined,
 				};
 			},
 		},
@@ -63,13 +61,11 @@ export const getClientTools = ( addMessage: ( message: any ) => void ) => {
 					properties: {
 						title: {
 							type: 'string' as const,
-							description:
-								'The title for the graph (e.g., "Top 5 Products by Sales")',
+							description: 'The title for the graph (e.g., "Top 5 Products by Sales")',
 						},
 						timeframe: {
 							type: 'string' as const,
-							description:
-								'Optional timeframe description (e.g., "Last 30 days", "Q3 2024")',
+							description: 'Optional timeframe description (e.g., "Last 30 days", "Q3 2024")',
 						},
 						data: {
 							type: 'array' as const,
@@ -83,8 +79,7 @@ export const getClientTools = ( addMessage: ( message: any ) => void ) => {
 									},
 									sales: {
 										type: 'number' as const,
-										description:
-											'Number of sales/units sold',
+										description: 'Number of sales/units sold',
 									},
 								},
 								required: [ 'product', 'sales' ],
@@ -95,12 +90,7 @@ export const getClientTools = ( addMessage: ( message: any ) => void ) => {
 				},
 			},
 		],
-		executeTool: async (
-			toolId: string,
-			args: any,
-			messageId?: string,
-			toolCallId?: string
-		) => {
+		executeTool: async ( toolId: string, args: any, messageId?: string, toolCallId?: string ) => {
 			logger( 'Executing tool: %s with args: %O', toolId, {
 				args,
 				messageId,
@@ -116,9 +106,7 @@ export const getClientTools = ( addMessage: ( message: any ) => void ) => {
 						};
 					}
 					// Add a component message
-					const { MockSalesGraph } = await import(
-						'./MockSalesGraph'
-					);
+					const { MockSalesGraph } = await import( './MockSalesGraph' );
 					addMessage( {
 						id: crypto.randomUUID(),
 						role: 'agent',

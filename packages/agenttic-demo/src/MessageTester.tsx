@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import type { Message as ClientMessage } from '@automattic/agenttic-client';
 import { ToolDropdown } from './playground/ToolDropdown';
+import type { Message as ClientMessage } from '@automattic/agenttic-client';
 
 interface MessageTesterProps {
 	addMessage: ( message: any ) => void;
@@ -152,11 +152,7 @@ That's it for now. Let me know if you have questions!`,
 	},
 ];
 
-const MessageTester: React.FC< MessageTesterProps > = ( {
-	addMessage,
-	loadMessages,
-	onClear,
-} ) => {
+const MessageTester: React.FC< MessageTesterProps > = ( { addMessage, loadMessages, onClear } ) => {
 	const [ role, setRole ] = useState< 'user' | 'agent' >( 'agent' );
 	const [ text, setText ] = useState( '' );
 	const presets = loadMessages ? [ REGENERATE_PRESET, ...PRESETS ] : PRESETS;
@@ -205,9 +201,7 @@ const MessageTester: React.FC< MessageTesterProps > = ( {
 						<select
 							className="message-tester__select"
 							value={ role }
-							onChange={ ( e ) =>
-								setRole( e.target.value as 'user' | 'agent' )
-							}
+							onChange={ ( e ) => setRole( e.target.value as 'user' | 'agent' ) }
 						>
 							<option value="agent">Agent</option>
 							<option value="user">User</option>
@@ -223,11 +217,7 @@ const MessageTester: React.FC< MessageTesterProps > = ( {
 
 					<div className="message-tester__actions">
 						{ onClear && (
-							<button
-								type="button"
-								className="playground-tool is-accent"
-								onClick={ onClear }
-							>
+							<button type="button" className="playground-tool is-accent" onClick={ onClear }>
 								Clear Chat
 							</button>
 						) }
@@ -242,9 +232,7 @@ const MessageTester: React.FC< MessageTesterProps > = ( {
 					</div>
 
 					<div className="message-tester__presets">
-						<div className="message-tester__presets-label">
-							Presets
-						</div>
+						<div className="message-tester__presets-label">Presets</div>
 						<div className="message-tester__presets-list">
 							{ presets.map( ( preset ) => (
 								<button

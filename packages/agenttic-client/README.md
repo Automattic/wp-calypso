@@ -12,15 +12,15 @@ npm install @automattic/agenttic-client
 
 ## Key Features
 
--   React hooks for agent communication (`useAgentChat`, `useClientContext`, `useClientTools`, `useClientAbilities`)
--   Streaming and non-streaming responses
--   Tool execution system with automatic handling
--   Compatibility with [WordPress Abilities API](https://github.com/WordPress/abilities-api)
--   Context injection for each message
--   Conversation persistence and management
--   Request cancellation with abort controllers
--   TypeScript support
--   Message actions and markdown rendering
+- React hooks for agent communication (`useAgentChat`, `useClientContext`, `useClientTools`, `useClientAbilities`)
+- Streaming and non-streaming responses
+- Tool execution system with automatic handling
+- Compatibility with [WordPress Abilities API](https://github.com/WordPress/abilities-api)
+- Context injection for each message
+- Conversation persistence and management
+- Request cancellation with abort controllers
+- TypeScript support
+- Message actions and markdown rendering
 
 ## Quick Start
 
@@ -176,12 +176,12 @@ const {
 
 **Config Options:**
 
--   `agentId: string` - Required. Agent identifier
--   `agentUrl?: string` - Agent endpoint URL (defaults to WordPress.com)
--   `sessionId?: string` - Session ID for conversation persistence
--   `contextProvider?: ContextProvider` - Dynamic context injection
--   `toolProvider?: ToolProvider` - Tool execution capabilities
--   `authProvider?: AuthProvider` - Authentication headers
+- `agentId: string` - Required. Agent identifier
+- `agentUrl?: string` - Agent endpoint URL (defaults to WordPress.com)
+- `sessionId?: string` - Session ID for conversation persistence
+- `contextProvider?: ContextProvider` - Dynamic context injection
+- `toolProvider?: ToolProvider` - Tool execution capabilities
+- `authProvider?: AuthProvider` - Authentication headers
 
 ### useClientContext Hook
 
@@ -246,8 +246,8 @@ const toolProvider = useClientAbilities( abilities, executeAbility );
 
 WordPress Abilities can be:
 
--   **Server-side**: Executed via REST API (no `callback` property)
--   **Client-side**: Executed in browser (has `callback` function)
+- **Server-side**: Executed via REST API (no `callback` property)
+- **Client-side**: Executed in browser (has `callback` function)
 
 The API handles both types automatically, routing execution appropriately.
 
@@ -363,10 +363,7 @@ if ( isProcessing ) {
 For low-level client usage, use `AbortController`:
 
 ```typescript
-import {
-	createClient,
-	createAbortController,
-} from '@automattic/agenttic-client';
+import { createClient, createAbortController } from '@automattic/agenttic-client';
 
 const client = createClient( config );
 const abortController = createAbortController();

@@ -24,13 +24,7 @@ export { useChat } from '../../hooks/useChat';
 export { useInput } from '../../hooks/useInput';
 
 // Type exports
-export type {
-	ChatProps,
-	ChatState,
-	Message,
-	UseChatReturn,
-	UseInputReturn,
-} from '../../types';
+export type { ChatProps, ChatState, Message, UseChatReturn, UseInputReturn } from '../../types';
 
 // Animation exports
 export * from '../animations';

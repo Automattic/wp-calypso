@@ -3,8 +3,8 @@
  */
 import './charts.css';
 import React from 'react';
-import type { ChartExtensionConfig } from '../types';
 import { ChartBlock } from './ChartBlock';
+import type { ChartExtensionConfig } from '../types';
 
 interface CodeProps extends React.HTMLAttributes< HTMLElement > {
 	children?: React.ReactNode;
@@ -16,7 +16,7 @@ type ChartConfig = ChartExtensionConfig[ 'config' ];
 /**
  * Create a chart block component that handles code blocks with language="chart"
  * @param config - Optional configuration for the chart extension
- * @return A react-markdown code component that renders charts
+ * @returns A react-markdown code component that renders charts
  */
 export function createChartBlock( config?: ChartConfig ) {
 	return function ChartCodeBlock( props: CodeProps ) {
@@ -25,11 +25,7 @@ export function createChartBlock( config?: ChartConfig ) {
 		const isChartBlock = className?.includes( 'language-chart' );
 
 		if ( ! isChartBlock ) {
-			return React.createElement(
-				'code',
-				{ className, ...rest },
-				children
-			);
+			return React.createElement( 'code', { className, ...rest }, children );
 		}
 
 		const chartData = typeof children === 'string' ? children : '';

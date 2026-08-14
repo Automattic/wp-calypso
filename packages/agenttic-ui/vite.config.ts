@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import autoprefixer from 'autoprefixer';
+import { defineConfig } from 'vite';
 import { libInjectCss } from 'vite-plugin-lib-inject-css';
 
 export default defineConfig( {
@@ -8,14 +8,8 @@ export default defineConfig( {
 		lib: {
 			entry: {
 				index: resolve( __dirname, 'src/index.ts' ),
-				'embedded-agent-ui': resolve(
-					__dirname,
-					'src/embedded-agent-ui.ts'
-				),
-				'embedded-agent-ui.css': resolve(
-					__dirname,
-					'src/embedded-agent-ui.css'
-				),
+				'embedded-agent-ui': resolve( __dirname, 'src/embedded-agent-ui.ts' ),
+				'embedded-agent-ui.css': resolve( __dirname, 'src/embedded-agent-ui.css' ),
 				'global.css': resolve( __dirname, 'src/styles/global.css' ),
 			},
 			name: 'AgentticUI',

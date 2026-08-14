@@ -9,6 +9,13 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+	clearToolResultPromises,
+	createClient,
+	updateToolResultsWithResolvedPromises,
+} from '../client/index';
+import { createTextMessage, extractToolCallsFromMessage } from '../client/utils/index';
+import { type AgentManager, getAgentManager } from './agentManager';
 import type { ClientConfig, TaskUpdate } from '../client/types/index';
 
 vi.mock( '../client/index', () => ( {
@@ -22,17 +29,6 @@ vi.mock( '../client/utils/index', () => ( {
 	extractToolCallsFromMessage: vi.fn(),
 	generateMessageId: vi.fn( () => 'gen-id' ),
 } ) );
-
-import { type AgentManager, getAgentManager } from './agentManager';
-import {
-	clearToolResultPromises,
-	createClient,
-	updateToolResultsWithResolvedPromises,
-} from '../client/index';
-import {
-	createTextMessage,
-	extractToolCallsFromMessage,
-} from '../client/utils/index';
 
 const STORAGE_PREFIX = 'a8c_agenttic_conversation_history_';
 
@@ -50,8 +46,7 @@ interface StoredConversation {
 function hangingStream() {
 	return {
 		[ Symbol.asyncIterator ]: () => ( {
-			next: () =>
-				new Promise< IteratorResult< TaskUpdate > >( () => undefined ),
+			next: () => new Promise< IteratorResult< TaskUpdate > >( () => undefined ),
 		} ),
 	};
 }
@@ -102,19 +97,15 @@ describe( 'agentManager.sendMessageStream — real sessionStorage (WOOAI-872)', 
 		};
 
 		vi.mocked( createClient ).mockReturnValue( mockClient as any );
-		vi.mocked( createTextMessage ).mockImplementation(
-			( text: string ) => ( {
-				role: 'user' as const,
-				kind: 'message' as const,
-				parts: [ { type: 'text' as const, text } ],
-				messageId: `msg-${ text }`,
-				metadata: { timestamp: 0 },
-			} )
-		);
+		vi.mocked( createTextMessage ).mockImplementation( ( text: string ) => ( {
+			role: 'user' as const,
+			kind: 'message' as const,
+			parts: [ { type: 'text' as const, text } ],
+			messageId: `msg-${ text }`,
+			metadata: { timestamp: 0 },
+		} ) );
 		vi.mocked( extractToolCallsFromMessage ).mockReturnValue( [] );
-		vi.mocked( updateToolResultsWithResolvedPromises ).mockImplementation(
-			( parts ) => parts
-		);
+		vi.mocked( updateToolResultsWithResolvedPromises ).mockImplementation( ( parts ) => parts );
 		vi.mocked( clearToolResultPromises ).mockReturnValue();
 	} );
 
@@ -123,18 +114,13 @@ describe( 'agentManager.sendMessageStream — real sessionStorage (WOOAI-872)', 
 
 		await agentManager.createAgent( 'k', testConfig );
 
-		const gen = agentManager.sendMessageStream(
-			'k',
-			'hello from sessionStorage integration'
-		);
+		const gen = agentManager.sendMessageStream( 'k', 'hello from sessionStorage integration' );
 		const iter = gen[ Symbol.asyncIterator ]();
 		void iter.next();
 
 		await waitFor( () => {
 			const entries = readAgentticEntries();
-			return Object.keys( entries ).some( ( key ) =>
-				key.includes( `${ STORAGE_PREFIX }local-` )
-			);
+			return Object.keys( entries ).some( ( key ) => key.includes( `${ STORAGE_PREFIX }local-` ) );
 		} );
 
 		const entries = readAgentticEntries();

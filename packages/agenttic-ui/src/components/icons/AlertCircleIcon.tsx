@@ -13,10 +13,7 @@ export function AlertCircleIcon( { className, size = 18 }: BaseIconProps ) {
 			aria-label="Alert"
 		>
 			<path d="M8.4375 12V10.875H9.5625V12H8.4375Z" fill="currentColor" />
-			<path
-				d="M8.4375 6L8.4375 9.75H9.5625V6L8.4375 6Z"
-				fill="currentColor"
-			/>
+			<path d="M8.4375 6L8.4375 9.75H9.5625V6L8.4375 6Z" fill="currentColor" />
 			<path
 				fillRule="evenodd"
 				clipRule="evenodd"

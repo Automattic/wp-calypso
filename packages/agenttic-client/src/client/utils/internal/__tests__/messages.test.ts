@@ -369,9 +369,7 @@ describe( 'enhanceMessageWithTools', () => {
 
 		const abilityPart = enhanced.parts[ 1 ] as any;
 		expect( abilityPart.data.input_schema ).toEqual( ability.input_schema );
-		expect( abilityPart.data.output_schema ).toEqual(
-			ability.output_schema
-		);
+		expect( abilityPart.data.output_schema ).toEqual( ability.output_schema );
 		expect( abilityPart.data.meta ).toEqual( ability.meta );
 	} );
 } );

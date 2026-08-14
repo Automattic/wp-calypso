@@ -1,9 +1,8 @@
-import type { JsonRpcResponse } from '../../types/index';
 import { logger } from '../logger';
+import type { JsonRpcResponse } from '../../types/index';
 
 /**
  * Handle request errors with consistent logging and timeout cleanup
- *
  * @param error     - The error that occurred
  * @param timeoutId - Timeout ID to clear
  * @param operation - Description of the operation
@@ -26,14 +25,9 @@ export function handleRequestError(
 
 /**
  * Validate HTTP response and throw if not ok
- *
  * @param response   - The HTTP response
- * @param _operation - Description of the operation
  */
-export function validateHttpResponse(
-	response: Response,
-	_operation: string = 'request'
-): void {
+export function validateHttpResponse( response: Response ): void {
 	if ( ! response.ok ) {
 		throw new Error( `HTTP error! status: ${ response.status }` );
 	}
@@ -41,19 +35,16 @@ export function validateHttpResponse(
 
 /**
  * Validate JSON-RPC response and return result
- *
  * @param data      - The JSON-RPC response
  * @param operation - Description of the operation
- * @return The validated result
+ * @returns The validated result
  */
 export function validateJsonRpcResponse< T >(
 	data: JsonRpcResponse< T >,
 	operation: string = 'request'
 ): T {
 	if ( data.error ) {
-		throw new Error(
-			`Protocol ${ operation } error: ${ data.error.message }`
-		);
+		throw new Error( `Protocol ${ operation } error: ${ data.error.message }` );
 	}
 
 	if ( ! data.result ) {
@@ -65,7 +56,6 @@ export function validateJsonRpcResponse< T >(
 
 /**
  * Validate streaming response
- *
  * @param response  - The HTTP response
  * @param operation - Description of the operation
  */
@@ -73,7 +63,7 @@ export function validateStreamingResponse(
 	response: Response,
 	operation: string = 'streaming request'
 ): void {
-	validateHttpResponse( response, operation );
+	validateHttpResponse( response );
 
 	if ( ! response.body ) {
 		throw new Error( `No response body for ${ operation }` );
@@ -82,19 +72,14 @@ export function validateStreamingResponse(
 
 /**
  * Create timeout handler with abort controller
- *
  * @param timeout    - Timeout in milliseconds
- * @param _operation - Description of the operation
- * @return Timeout handler object
+ * @returns Timeout handler object
  */
-export function createTimeoutHandler(
-	timeout: number,
-	_operation: string = 'request'
-): { timeoutId: number; controller: AbortController } {
+export function createTimeoutHandler( timeout: number ): {
+	timeoutId: number;
+	controller: AbortController;
+} {
 	const controller = new AbortController();
-	const timeoutId = setTimeout(
-		() => controller.abort(),
-		timeout
-	) as unknown as number;
+	const timeoutId = setTimeout( () => controller.abort(), timeout ) as unknown as number;
 	return { timeoutId, controller };
 }

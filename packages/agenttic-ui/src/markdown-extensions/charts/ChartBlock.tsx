@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import type { DataPointDate, SeriesData } from '@automattic/charts';
-import type { FC } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
-import type { ChartData, ChartDataPoint, ChartExtensionConfig } from '../types';
-import type { ChartTooltipParams, CurrencyOptions } from './BaseChart';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { BarChart } from './BarChart';
 import { ChartError } from './ChartError';
 import { ChartErrorBoundary } from './ChartErrorBoundary';
 import { LineChart } from './LineChart';
+import type { ChartTooltipParams, CurrencyOptions } from './BaseChart';
+import type { ChartData, ChartDataPoint, ChartExtensionConfig } from '../types';
+import type { DataPointDate, SeriesData } from '@automattic/charts';
+import type { FC } from 'react';
 
 export interface ChartBlockProps {
 	data: string;
@@ -63,14 +56,9 @@ interface ProcessedChartData {
  * @param root0.data
  * @param root0.className
  */
-export const ChartBlock: FC< ChartBlockProps > = ( {
-	data,
-	className = '',
-} ) => {
+export const ChartBlock: FC< ChartBlockProps > = ( { data, className = '' } ) => {
 	const [ error, setError ] = useState< ChartErrorState | null >( null );
-	const [ chartData, setChartData ] = useState< ProcessedChartData | null >(
-		null
-	);
+	const [ chartData, setChartData ] = useState< ProcessedChartData | null >( null );
 	const [ containerWidth, setContainerWidth ] = useState< number >( 300 );
 	const resizeObserverRef = useRef< ResizeObserver | null >( null );
 
@@ -89,9 +77,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 					let formattedValue: string;
 
 					if ( value >= 1000000 ) {
-						formattedValue = `${ ( value / 1000000 ).toFixed(
-							1
-						) }M`;
+						formattedValue = `${ ( value / 1000000 ).toFixed( 1 ) }M`;
 					} else if ( value >= 1000 ) {
 						formattedValue = `${ ( value / 1000 ).toFixed( 1 ) }K`;
 					} else {
@@ -137,9 +123,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 			};
 
 			const productName = nearestDatum.label;
-			const tooltipPoints = Object.entries(
-				tooltipData?.datumByKey || {}
-			)
+			const tooltipPoints = Object.entries( tooltipData?.datumByKey || {} )
 				.map( ( [ key, datumInfo ] ) => {
 					const datum = ( datumInfo as TooltipDatumInfo ).datum;
 					return {
@@ -176,12 +160,8 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 						</div>
 					) }
 					{ tooltipPoints.map( ( point ) => (
-						<div
-							key={ point.key }
-							style={ { marginBottom: '2px' } }
-						>
-							<strong>{ point.key }:</strong>{ ' ' }
-							{ formatValue( point.value ) }
+						<div key={ point.key } style={ { marginBottom: '2px' } }>
+							<strong>{ point.key }:</strong> { formatValue( point.value ) }
 						</div>
 					) ) }
 				</div>
@@ -207,10 +187,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 
 			if ( ! rawData.chartType ) {
 				setError( {
-					message: __(
-						'Chart data must include chartType',
-						'a8c-agenttic'
-					),
+					message: __( 'Chart data must include chartType', 'a8c-agenttic' ),
 					details: __( 'Available types: line, bar', 'a8c-agenttic' ),
 				} );
 				return;
@@ -218,10 +195,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 
 			if ( ! rawData.data || ! Array.isArray( rawData.data ) ) {
 				setError( {
-					message: __(
-						'Chart data must include a data array',
-						'a8c-agenttic'
-					),
+					message: __( 'Chart data must include a data array', 'a8c-agenttic' ),
 					details: `Input data: ${ data }`,
 				} );
 				return;
@@ -229,10 +203,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 
 			if ( rawData.data.length === 0 ) {
 				setError( {
-					message: __(
-						'No data points found for chart',
-						'a8c-agenttic'
-					),
+					message: __( 'No data points found for chart', 'a8c-agenttic' ),
 					details: `Input data: ${ data }`,
 				} );
 				return;
@@ -280,10 +251,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 			setChartData( processedData );
 		} catch ( _parseError ) {
 			setError( {
-				message: __(
-					'Failed to parse chart data as JSON',
-					'a8c-agenttic'
-				),
+				message: __( 'Failed to parse chart data as JSON', 'a8c-agenttic' ),
 				details: `Input data: ${ data }`,
 			} );
 		}
@@ -303,10 +271,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 			resizeObserverRef.current = new ResizeObserver( ( entries ) => {
 				for ( const entry of entries ) {
 					const resizedWidth = entry.contentRect.width;
-					const resizedContentWidth = Math.max(
-						280,
-						resizedWidth - 4
-					);
+					const resizedContentWidth = Math.max( 280, resizedWidth - 4 );
 					setContainerWidth( resizedContentWidth );
 				}
 			} );
@@ -324,17 +289,11 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 	}, [] );
 
 	if ( error ) {
-		return (
-			<ChartError message={ error.message } details={ error.details } />
-		);
+		return <ChartError message={ error.message } details={ error.details } />;
 	}
 
 	if ( ! chartData ) {
-		return (
-			<ChartError
-				message={ __( 'No chart data available', 'a8c-agenttic' ) }
-			/>
-		);
+		return <ChartError message={ __( 'No chart data available', 'a8c-agenttic' ) } />;
 	}
 
 	const hasMultipleSeries = chartData.data.length > 1;
@@ -361,11 +320,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 				return (
 					<BarChart
 						{ ...commonProps }
-						mode={
-							chartData.mode as
-								| 'time-comparison'
-								| 'item-comparison'
-						}
+						mode={ chartData.mode as 'time-comparison' | 'item-comparison' }
 					/>
 				);
 			default:
@@ -383,13 +338,8 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 
 	return (
 		<ChartErrorBoundary chartData={ data }>
-			<div
-				ref={ setContainerRef }
-				className={ `chart-block ${ className }` }
-			>
-				{ chartData.title && (
-					<h3 className="chart-block-title">{ chartData.title }</h3>
-				) }
+			<div ref={ setContainerRef } className={ `chart-block ${ className }` }>
+				{ chartData.title && <h3 className="chart-block-title">{ chartData.title }</h3> }
 				<div className="chart-container">{ renderChart() }</div>
 			</div>
 		</ChartErrorBoundary>

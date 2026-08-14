@@ -1,9 +1,9 @@
-import { motion } from 'framer-motion';
-import { Button } from '../ui/button';
-import { XIcon } from '../icons/XIcon';
-import { fastSpring } from '../animations';
-import styles from './ChatHeader.module.css';
 import { __ } from '@wordpress/i18n';
+import { motion } from 'framer-motion';
+import { fastSpring } from '../animations';
+import { XIcon } from '../icons/XIcon';
+import { Button } from '../ui/button';
+import styles from './ChatHeader.module.css';
 
 interface ChatHeaderProps {
 	onClose?: () => void;

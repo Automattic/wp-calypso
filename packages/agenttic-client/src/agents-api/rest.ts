@@ -11,9 +11,7 @@ export function createAgentsApiChatAdapter( {
 } ): AgentsApiChatAdapter {
 	const path = ( suffix: string ) => {
 		const [ base, query ] = basePath.split( '?', 2 );
-		return query
-			? `${ base }${ suffix }?${ query }`
-			: `${ base }${ suffix }`;
+		return query ? `${ base }${ suffix }?${ query }` : `${ base }${ suffix }`;
 	};
 	const withAgentPath = ( value: string ) => {
 		if ( ! agent || /[?&]agent=/.test( value ) ) {
@@ -36,28 +34,19 @@ export function createAgentsApiChatAdapter( {
 					attachments: input.attachments ?? [],
 				} ),
 			} ),
-		listSessions: () =>
-			fetchFn( { path: withAgentPath( path( '/sessions' ) ) } ),
+		listSessions: () => fetchFn( { path: withAgentPath( path( '/sessions' ) ) } ),
 		loadSession: ( sessionId ) =>
 			fetchFn( {
-				path: withAgentPath(
-					path( `/${ encodeURIComponent( sessionId ) }` )
-				),
+				path: withAgentPath( path( `/${ encodeURIComponent( sessionId ) }` ) ),
 			} ),
 		markSessionRead: ( sessionId ) =>
 			fetchFn( {
-				path: withAgentPath(
-					path(
-						`/sessions/${ encodeURIComponent( sessionId ) }/read`
-					)
-				),
+				path: withAgentPath( path( `/sessions/${ encodeURIComponent( sessionId ) }/read` ) ),
 				method: 'POST',
 			} ),
 		deleteSession: ( sessionId ) =>
 			fetchFn( {
-				path: withAgentPath(
-					path( `/${ encodeURIComponent( sessionId ) }` )
-				),
+				path: withAgentPath( path( `/${ encodeURIComponent( sessionId ) }` ) ),
 				method: 'DELETE',
 			} ),
 	};
@@ -68,22 +57,15 @@ export const agentsApiSendMessage = (
 	...args: Parameters< AgentsApiChatAdapter[ 'sendMessage' ] >
 ) => adapter.sendMessage( ...args );
 
-export const agentsApiListSessions = ( adapter: AgentsApiChatAdapter ) =>
-	adapter.listSessions();
+export const agentsApiListSessions = ( adapter: AgentsApiChatAdapter ) => adapter.listSessions();
 
-export const agentsApiLoadSession = (
-	adapter: AgentsApiChatAdapter,
-	sessionId: string
-) => adapter.loadSession( sessionId );
+export const agentsApiLoadSession = ( adapter: AgentsApiChatAdapter, sessionId: string ) =>
+	adapter.loadSession( sessionId );
 
-export const agentsApiMarkSessionRead = (
-	adapter: AgentsApiChatAdapter,
-	sessionId: string
-) => adapter.markSessionRead( sessionId );
+export const agentsApiMarkSessionRead = ( adapter: AgentsApiChatAdapter, sessionId: string ) =>
+	adapter.markSessionRead( sessionId );
 
-export const agentsApiDeleteSession = (
-	adapter: AgentsApiChatAdapter,
-	sessionId: string
-) => adapter.deleteSession( sessionId );
+export const agentsApiDeleteSession = ( adapter: AgentsApiChatAdapter, sessionId: string ) =>
+	adapter.deleteSession( sessionId );
 
 export const agentsApiContinueResponse = agentsApiSendMessage;

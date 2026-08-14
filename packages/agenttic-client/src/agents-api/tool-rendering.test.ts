@@ -1,14 +1,14 @@
 import { isValidElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import type { AgentsApiToolGroup } from './types';
 import {
 	createPresentQuestionRenderer,
 	createPresentQuestionToolRenderers,
 	normalizePresentQuestionPrompt,
 	type PresentQuestionCardProps,
 } from './tool-rendering';
+import type { AgentsApiToolGroup } from './types';
 
-function FakeQuestionCard( _props: PresentQuestionCardProps ) {
+function FakeQuestionCard() {
 	return null;
 }
 
@@ -27,15 +27,10 @@ describe( 'present_question tool rendering', () => {
 			} )
 		).toEqual( {
 			question: 'Choose a direction',
-			choices: [
-				{ label: 'Minimal' },
-				{ label: 'Bold', message: 'Use the bold direction.' },
-			],
+			choices: [ { label: 'Minimal' }, { label: 'Bold', message: 'Use the bold direction.' } ],
 		} );
 
-		expect(
-			normalizePresentQuestionPrompt( { question: 'Missing choices' } )
-		).toBeNull();
+		expect( normalizePresentQuestionPrompt( { question: 'Missing choices' } ) ).toBeNull();
 	} );
 
 	it( 'preserves opaque choice presentation data for consumers', () => {
@@ -122,16 +117,11 @@ describe( 'present_question tool rendering', () => {
 			},
 		} );
 
-		( element as { props: PresentQuestionCardProps } ).props.onAnswer(
-			'First',
-			{ label: 'First' }
-		);
+		( element as { props: PresentQuestionCardProps } ).props.onAnswer( 'First', {
+			label: 'First',
+		} );
 
-		expect( onAnswer ).toHaveBeenCalledWith(
-			'First',
-			{ label: 'First' },
-			group
-		);
+		expect( onAnswer ).toHaveBeenCalledWith( 'First', { label: 'First' }, group );
 	} );
 
 	it( 'renders question cards from tool call args before results arrive', () => {

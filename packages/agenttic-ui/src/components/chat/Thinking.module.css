@@ -1,10 +1,10 @@
 .container {
 	display: flex;
 	align-items: flex-start;
-	gap: var(--spacing);
-	padding: 0 var(--spacing-2);
-	color: var(--color-muted-foreground);
-	font-size: var(--text-sm);
+	gap: var( --spacing );
+	padding: 0 var( --spacing-2 );
+	color: var( --color-muted-foreground );
+	font-size: var( --text-sm );
 }
 
 .icon {
@@ -14,16 +14,16 @@
 }
 
 .icon svg {
-	width: var(--spacing-6);
-	height: var(--spacing-6);
+	width: var( --spacing-6 );
+	height: var( --spacing-6 );
 }
 
 .content {
 	background: linear-gradient(
 		90deg,
-		color-mix(in srgb, currentColor 30%, transparent),
+		color-mix( in srgb, currentColor 30%, transparent ),
 		currentColor,
-		color-mix(in srgb, currentColor 30%, transparent)
+		color-mix( in srgb, currentColor 30%, transparent )
 	);
 	background-size: 200% 100%;
 	background-clip: text;

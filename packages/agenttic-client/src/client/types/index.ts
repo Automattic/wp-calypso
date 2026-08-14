@@ -135,7 +135,6 @@ export type ProgressDataPart =
  *
  * This is a copy of the Ability interface from @wordpress/abilities.
  * We maintain our own copy to avoid runtime dependencies. The interface is stable as part of WordPress core.
- *
  * @see https://github.com/WordPress/abilities-api
  */
 export interface Ability {
@@ -265,8 +264,7 @@ export interface MessageSendParams {
 	metadata?: Record< string, unknown >;
 }
 
-export interface SendMessageRequest
-	extends JsonRpcRequest< MessageSendParams > {
+export interface SendMessageRequest extends JsonRpcRequest< MessageSendParams > {
 	tokenStreaming?: boolean; // Enable token-by-token streaming
 }
 export type SendMessageResponse = JsonRpcResponse< Task >;
@@ -347,16 +345,10 @@ export interface TaskUpdate {
 
 export interface Client {
 	sendMessage: ( params: SendMessageParams ) => Promise< TaskUpdate >;
-	sendMessageStream: (
-		params: SendMessageParams
-	) => AsyncIterable< TaskUpdate >;
+	sendMessageStream: ( params: SendMessageParams ) => AsyncIterable< TaskUpdate >;
 
 	// Continue an existing task (useful for human input after input-required state)
-	continueTask: (
-		taskId: string,
-		userInput: string,
-		sessionId?: string
-	) => Promise< TaskUpdate >;
+	continueTask: ( taskId: string, userInput: string, sessionId?: string ) => Promise< TaskUpdate >;
 
 	getTask: ( taskId: string ) => Promise< Task >;
 	cancelTask: ( taskId: string ) => Promise< void >;
@@ -403,10 +395,7 @@ export interface ToolCallResult {
 /**
  * Type for the executeAbility function from @wordpress/abilities
  */
-export type ExecuteAbilityFunction = (
-	name: string,
-	input?: any
-) => Promise< any >;
+export type ExecuteAbilityFunction = ( name: string, input?: any ) => Promise< any >;
 
 // Context system types
 export type ClientContext = Record< string, unknown >;

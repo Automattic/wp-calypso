@@ -25,11 +25,7 @@
 			"@automattic/agenttic-client/*": [ "../agenttic-client/src/*" ]
 		}
 	},
-	"include": [
-		"src/**/*",
-		"../agenttic-ui/src/**/*",
-		"../agenttic-client/src/**/*"
-	],
+	"include": [ "src/**/*", "../agenttic-ui/src/**/*", "../agenttic-client/src/**/*" ],
 	"exclude": [
 		"../agenttic-ui/src/**/*.test.*",
 		"../agenttic-ui/src/**/__tests__/**",

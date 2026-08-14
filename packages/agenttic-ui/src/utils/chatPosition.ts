@@ -17,14 +17,13 @@ export const DEFAULT_CHAT_POSITION: ChatPosition = 'right';
  * x in [0, innerWidth - width - left - right], y in
  * [top + bottom + height - innerHeight, 0]. When the viewport is smaller
  * than the panel the min bound wins (Math.min runs after Math.max).
- *
  * @param position   - The free-drag pixel offset to clamp
  * @param position.x - Horizontal offset
  * @param position.y - Vertical offset
  * @param width      - Panel width
  * @param height     - Panel height
  * @param insets     - Per-side viewport insets (boundaryInset)
- * @return The clamped { x, y } pixel offset
+ * @returns The clamped { x, y } pixel offset
  */
 export function clampFreeDragPosition(
 	{ x, y }: { x: number; y: number },
@@ -47,21 +46,17 @@ export function clampFreeDragPosition(
  * bottom edge is docked by CSS and needs no measurement — the docked `y`
  * transform is always 0. The right corner's x matches the `maxX` in
  * clampFreeDragPosition and the `cornerX` in getInitialChatPosition.
- *
  * @param side       - The corner side to dock to
  * @param panelWidth - Panel width
  * @param insets     - Per-side viewport insets (boundaryInset)
- * @return The docked { x, y } transform offset
+ * @returns The docked { x, y } transform offset
  */
 export function getCornerSnapPosition(
 	side: 'left' | 'right',
 	panelWidth: number,
 	insets: BoundaryInsets = DEFAULT_BOUNDARY_INSETS
 ): { x: number; y: number } {
-	const x =
-		side === 'right'
-			? window.innerWidth - panelWidth - insets.left - insets.right
-			: 0;
+	const x = side === 'right' ? window.innerWidth - panelWidth - insets.left - insets.right : 0;
 	return { x, y: 0 };
 }
 
@@ -73,7 +68,6 @@ export function getCornerSnapPosition(
  * larger viewport can't strand the panel off-screen on a smaller one.
  * Otherwise the panel is initialized at the seeded corner (right-aligned needs
  * an x offset; left is 0).
- *
  * @param options
  * @param options.freeDrag                - Whether free drag mode is enabled
  * @param options.initialFreeDragPosition - Persisted pixel position, if any
@@ -81,7 +75,7 @@ export function getCornerSnapPosition(
  * @param options.width                   - Panel width (defaults to COMPACT_WIDTH)
  * @param options.height                  - Panel height (defaults to EXPANDED_HEIGHT)
  * @param options.insets                  - Per-side viewport insets (boundaryInset)
- * @return The initial { x, y } pixel position
+ * @returns The initial { x, y } pixel position
  */
 export function getInitialChatPosition( {
 	freeDrag,
@@ -98,20 +92,12 @@ export function getInitialChatPosition( {
 	height?: number;
 	insets?: BoundaryInsets;
 } ): { x: number; y: number } {
-	const cornerX =
-		side === 'right'
-			? window.innerWidth - width - insets.left - insets.right
-			: 0;
+	const cornerX = side === 'right' ? window.innerWidth - width - insets.left - insets.right : 0;
 
 	if ( ! freeDrag || initialFreeDragPosition === undefined ) {
 		return { x: cornerX, y: 0 };
 	}
 
 	// Clamp the seed so a persisted off-screen position is pulled back on-screen.
-	return clampFreeDragPosition(
-		initialFreeDragPosition,
-		width,
-		height,
-		insets
-	);
+	return clampFreeDragPosition( initialFreeDragPosition, width, height, insets );
 }

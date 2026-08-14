@@ -13,7 +13,22 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+	clearToolResultPromises,
+	createClient,
+	updateToolResultsWithResolvedPromises,
+} from '../client/index';
+import { createTextMessage, extractToolCallsFromMessage } from '../client/utils/index';
+import { type AgentManager, getAgentManager } from './agentManager';
+import { loadConversation, storeConversation, clearConversation } from './conversationStorage';
 import type { ClientConfig, Message, TaskUpdate } from '../client/types/index';
+
+async function drain( stream: AsyncIterable< unknown > ): Promise< void > {
+	const iterator = stream[ Symbol.asyncIterator ]();
+	while ( ! ( await iterator.next() ).done ) {
+		// consume
+	}
+}
 
 vi.mock( '../client/index', () => ( {
 	createClient: vi.fn(),
@@ -36,22 +51,6 @@ vi.mock( './conversationStorage', async () => {
 		storeConversation: vi.fn(),
 	};
 } );
-
-import { type AgentManager, getAgentManager } from './agentManager';
-import {
-	clearToolResultPromises,
-	createClient,
-	updateToolResultsWithResolvedPromises,
-} from '../client/index';
-import {
-	createTextMessage,
-	extractToolCallsFromMessage,
-} from '../client/utils/index';
-import {
-	loadConversation,
-	storeConversation,
-	clearConversation,
-} from './conversationStorage';
 
 interface StoreCall {
 	sessionId: string;
@@ -76,8 +75,7 @@ function lastStoreCall(): StoreCall | null {
 function hangingStream() {
 	return {
 		[ Symbol.asyncIterator ]: () => ( {
-			next: () =>
-				new Promise< IteratorResult< TaskUpdate > >( () => undefined ),
+			next: () => new Promise< IteratorResult< TaskUpdate > >( () => undefined ),
 		} ),
 	};
 }
@@ -96,12 +94,7 @@ async function waitFor( predicate: () => boolean ): Promise< void > {
 async function flushPreLoopPersist(): Promise< void > {
 	await waitFor( () => {
 		const call = lastStoreCall();
-		return (
-			!! call &&
-			call.messages.some(
-				( m ) => m.metadata?.deliveryStatus === 'pending'
-			)
-		);
+		return !! call && call.messages.some( ( m ) => m.metadata?.deliveryStatus === 'pending' );
 	} );
 }
 
@@ -128,21 +121,17 @@ describe( 'agentManager.sendMessageStream — WOOAI-872 delivery-status fix', ()
 		};
 
 		vi.mocked( createClient ).mockReturnValue( mockClient );
-		vi.mocked( createTextMessage ).mockImplementation(
-			( text: string ) => ( {
-				role: 'user' as const,
-				kind: 'message' as const,
-				parts: [ { type: 'text' as const, text } ],
-				messageId: `msg-${ text }`,
-				metadata: { timestamp: 0 },
-			} )
-		);
+		vi.mocked( createTextMessage ).mockImplementation( ( text: string ) => ( {
+			role: 'user' as const,
+			kind: 'message' as const,
+			parts: [ { type: 'text' as const, text } ],
+			messageId: `msg-${ text }`,
+			metadata: { timestamp: 0 },
+		} ) );
 		vi.mocked( loadConversation ).mockResolvedValue( { messages: [] } );
 		vi.mocked( storeConversation ).mockResolvedValue();
 		vi.mocked( extractToolCallsFromMessage ).mockReturnValue( [] );
-		vi.mocked( updateToolResultsWithResolvedPromises ).mockImplementation(
-			( parts ) => parts
-		);
+		vi.mocked( updateToolResultsWithResolvedPromises ).mockImplementation( ( parts ) => parts );
 		vi.mocked( clearToolResultPromises ).mockReturnValue();
 	} );
 
@@ -255,10 +244,7 @@ describe( 'agentManager.sendMessageStream — WOOAI-872 delivery-status fix', ()
 		} );
 		const iter = gen[ Symbol.asyncIterator ]();
 		void iter.next();
-		await waitFor(
-			() =>
-				vi.mocked( mockClient.sendMessageStream ).mock.calls.length > 0
-		);
+		await waitFor( () => vi.mocked( mockClient.sendMessageStream ).mock.calls.length > 0 );
 
 		expect( onSessionIdChange ).not.toHaveBeenCalled();
 		expect( vi.mocked( storeConversation ).mock.calls ).toHaveLength( 0 );
@@ -277,10 +263,7 @@ describe( 'agentManager.sendMessageStream — WOOAI-872 delivery-status fix', ()
 		const gen = agentManager.sendMessageStream( 'k', 'hello' );
 		const iter = gen[ Symbol.asyncIterator ]();
 		void iter.next();
-		await waitFor(
-			() =>
-				vi.mocked( mockClient.sendMessageStream ).mock.calls.length > 0
-		);
+		await waitFor( () => vi.mocked( mockClient.sendMessageStream ).mock.calls.length > 0 );
 
 		expect( mockClient.sendMessageStream ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -302,10 +285,7 @@ describe( 'agentManager.sendMessageStream — WOOAI-872 delivery-status fix', ()
 		const gen = agentManager.sendMessageStream( 'k', 'hello' );
 		const iter = gen[ Symbol.asyncIterator ]();
 		void iter.next();
-		await waitFor(
-			() =>
-				vi.mocked( mockClient.sendMessageStream ).mock.calls.length > 0
-		);
+		await waitFor( () => vi.mocked( mockClient.sendMessageStream ).mock.calls.length > 0 );
 
 		expect( mockClient.sendMessageStream ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -366,12 +346,7 @@ describe( 'agentManager.sendMessageStream — WOOAI-872 delivery-status fix', ()
 
 		await agentManager.createAgent( 'k', testConfig );
 
-		for await ( const _ of agentManager.sendMessageStream(
-			'k',
-			'hello'
-		) ) {
-			// drain
-		}
+		await drain( agentManager.sendMessageStream( 'k', 'hello' ) );
 
 		expect( clearConversation ).toHaveBeenCalledWith( 'local-gen-id' );
 		const serverPersists = vi
@@ -401,12 +376,7 @@ describe( 'agentManager.sendMessageStream — WOOAI-872 delivery-status fix', ()
 			sessionId: 'server-abc',
 		} );
 
-		for await ( const _ of agentManager.sendMessageStream(
-			'k',
-			'hello'
-		) ) {
-			// drain
-		}
+		await drain( agentManager.sendMessageStream( 'k', 'hello' ) );
 
 		const call = lastStoreCall();
 		expect( call ).not.toBeNull();
@@ -446,21 +416,12 @@ describe( 'agentManager.sendMessageStream — WOOAI-872 delivery-status fix', ()
 			sessionId: 'server-abc',
 		} );
 
-		for await ( const _ of agentManager.sendMessageStream(
-			'k',
-			'hello'
-		) ) {
-			// drain
-		}
+		await drain( agentManager.sendMessageStream( 'k', 'hello' ) );
 
 		const call = lastStoreCall();
 		expect( call ).not.toBeNull();
-		const orphaned = call!.messages.find(
-			( m ) => m.messageId === 'orphan-1'
-		);
-		const completed = call!.messages.find(
-			( m ) => m.messageId === 'msg-hello'
-		);
+		const orphaned = call!.messages.find( ( m ) => m.messageId === 'orphan-1' );
+		const completed = call!.messages.find( ( m ) => m.messageId === 'msg-hello' );
 		expect( orphaned?.metadata?.deliveryStatus ).toBe( 'pending' );
 		expect( completed?.metadata?.deliveryStatus ).toBe( 'complete' );
 	} );
@@ -478,21 +439,14 @@ describe( 'agentManager.sendMessageStream — WOOAI-872 delivery-status fix', ()
 		void iter.next();
 		await waitFor( () => {
 			const call = lastStoreCall();
-			return (
-				!! call &&
-				call.messages.some(
-					( m ) => m.metadata?.deliveryStatus === 'pending'
-				)
-			);
+			return !! call && call.messages.some( ( m ) => m.metadata?.deliveryStatus === 'pending' );
 		} );
 
 		agentManager.abortCurrentRequest( 'k' );
 
 		const call = lastStoreCall();
 		expect( call ).not.toBeNull();
-		const pending = call!.messages.find(
-			( m ) => m.metadata?.deliveryStatus === 'pending'
-		);
+		const pending = call!.messages.find( ( m ) => m.metadata?.deliveryStatus === 'pending' );
 		expect( pending ).toBeDefined();
 	} );
 
@@ -510,16 +464,9 @@ describe( 'agentManager.sendMessageStream — WOOAI-872 delivery-status fix', ()
 			sessionId: 'server-abc',
 		} );
 
-		for await ( const _ of agentManager.sendMessageStream(
-			'k',
-			'hello'
-		) ) {
-			// drain
-		}
+		await drain( agentManager.sendMessageStream( 'k', 'hello' ) );
 
-		const user = lastStoreCall()?.messages.find(
-			( m ) => m.role === 'user'
-		);
+		const user = lastStoreCall()?.messages.find( ( m ) => m.role === 'user' );
 		expect( user?.metadata?.deliveryStatus ).toBe( 'failed' );
 	} );
 
@@ -571,47 +518,41 @@ describe( 'agentManager.sendMessageStream — WOOAI-872 delivery-status fix', ()
 			sessionId: 'server-abc',
 		} );
 
-		for await ( const _ of agentManager.sendMessageStream(
-			'k',
-			'hello'
-		) ) {
-			// drain opener → input-required
-		}
+		// drain opener → input-required
+		await drain( agentManager.sendMessageStream( 'k', 'hello' ) );
 
 		expect(
-			lastStoreCall()?.messages.find(
-				( m ) => m.messageId === 'msg-hello'
-			)?.metadata?.deliveryStatus
+			lastStoreCall()?.messages.find( ( m ) => m.messageId === 'msg-hello' )?.metadata
+				?.deliveryStatus
 		).toBe( 'pending' );
 
-		for await ( const _ of agentManager.sendMessageStream( 'k', '', {
-			message: {
-				role: 'user',
-				kind: 'message',
-				messageId: 'tool-result-1',
-				parts: [
-					{
-						type: 'data',
-						data: {
-							toolCallId: 'tc1',
-							toolId: 't',
-							result: 'ok',
+		// drain tool follow-up
+		await drain(
+			agentManager.sendMessageStream( 'k', '', {
+				message: {
+					role: 'user',
+					kind: 'message',
+					messageId: 'tool-result-1',
+					parts: [
+						{
+							type: 'data',
+							data: {
+								toolCallId: 'tc1',
+								toolId: 't',
+								result: 'ok',
+							},
 						},
-					},
-				],
-			},
-		} ) ) {
-			// drain tool follow-up
-		}
+					],
+				},
+			} )
+		);
 
 		const call = lastStoreCall();
 		expect(
-			call?.messages.find( ( m ) => m.messageId === 'msg-hello' )
-				?.metadata?.deliveryStatus
+			call?.messages.find( ( m ) => m.messageId === 'msg-hello' )?.metadata?.deliveryStatus
 		).toBe( 'complete' );
 		expect(
-			call?.messages.find( ( m ) => m.messageId === 'tool-result-1' )
-				?.metadata?.deliveryStatus
+			call?.messages.find( ( m ) => m.messageId === 'tool-result-1' )?.metadata?.deliveryStatus
 		).toBeUndefined();
 	} );
 } );

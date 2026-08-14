@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
-import { Button } from '../ui/button';
-import { XIcon } from '../icons/XIcon';
+import Markdown from 'react-markdown';
+import { cn } from '../../utils/classNames';
 import { AlertCircleIcon } from '../icons/AlertCircleIcon';
 import { AlertTriangleIcon } from '../icons/AlertTriangleIcon';
-import { cn } from '../../utils/classNames';
+import { XIcon } from '../icons/XIcon';
+import { Button } from '../ui/button';
 import styles from './Notice.module.css';
-import Markdown from 'react-markdown';
 
 interface NoticeProps {
 	icon?: React.ReactNode | null | false;
@@ -67,9 +67,7 @@ export function Notice( {
 			) }
 		>
 			<div className={ styles.content }>
-				{ iconNode && (
-					<div className={ styles.icon }>{ iconNode }</div>
-				) }
+				{ iconNode && <div className={ styles.icon }>{ iconNode }</div> }
 				{ /* Add markdown support with select whitelisted tags */ }
 				<div>
 					<Markdown
@@ -77,11 +75,7 @@ export function Notice( {
 						unwrapDisallowed
 						components={ {
 							a: ( { node, ...props } ) => (
-								<a
-									{ ...props }
-									target="_blank"
-									rel="noopener noreferrer"
-								>
+								<a { ...props } target="_blank" rel="noopener noreferrer">
 									{ props.children }
 								</a>
 							),
@@ -93,11 +87,7 @@ export function Notice( {
 			</div>
 			<div className={ styles.actions }>
 				{ action && (
-					<Button
-						className={ styles.action }
-						onClick={ action.onClick }
-						variant="link"
-					>
+					<Button className={ styles.action } onClick={ action.onClick } variant="link">
 						{ action.label }
 					</Button>
 				) }

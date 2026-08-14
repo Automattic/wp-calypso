@@ -12,26 +12,20 @@ export const createMockAgent = () => {
 		sendMessage: async ( message: string ) => {
 			// Select a response based on message content or randomly
 			const response =
-				message.toLowerCase().includes( 'hello' ) ||
-				message.toLowerCase().includes( 'help' )
+				message.toLowerCase().includes( 'hello' ) || message.toLowerCase().includes( 'help' )
 					? responses[ 0 ]
-					: responses[
-							Math.floor( Math.random() * responses.length )
-					  ];
+					: responses[ Math.floor( Math.random() * responses.length ) ];
 
 			async function* streamResponse() {
 				const words = response.split( ' ' );
 				for ( let i = 0; i < words.length; i++ ) {
 					yield {
-						content:
-							words[ i ] + ( i < words.length - 1 ? ' ' : '' ),
+						content: words[ i ] + ( i < words.length - 1 ? ' ' : '' ),
 						type: 'text',
 					};
 
 					const delay = Math.random() * 80 + 40; // 40-120ms
-					await new Promise( ( resolve ) =>
-						setTimeout( resolve, delay )
-					);
+					await new Promise( ( resolve ) => setTimeout( resolve, delay ) );
 				}
 			}
 
@@ -157,9 +151,7 @@ if ( typeof window !== 'undefined' && ! ( window as any ).wp ) {
 							mockMessages = [ ...mockMessages, message ];
 						},
 						deleteMessage: ( id: string ) => {
-							mockMessages = mockMessages.filter(
-								( m ) => m.id !== id
-							);
+							mockMessages = mockMessages.filter( ( m ) => m.id !== id );
 						},
 						clearMessages: () => {
 							mockMessages = [];

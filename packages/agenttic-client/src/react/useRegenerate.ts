@@ -1,8 +1,6 @@
 import { useCallback } from 'react';
-import type { MutableRefObject } from 'react';
-import { getAgentManager } from './agentManager';
-import type { Message as ClientMessage } from '../client/types/index';
 import { logger } from '../client/utils/logger';
+import { getAgentManager } from './agentManager';
 import {
 	canRegenerateAgentMessage,
 	getLatestRegeneratableAgentMessageId,
@@ -14,6 +12,8 @@ import type {
 	SubmitOptions,
 	UIMessage,
 } from './useAgentChat';
+import type { Message as ClientMessage } from '../client/types/index';
+import type { MutableRefObject } from 'react';
 
 // The subset of `useAgentChat`'s send function that regenerate relies on:
 // the same signature, including the internal options used to rewind history
@@ -39,9 +39,7 @@ interface UseRegenerateReturn {
 	// Returns a handler that regenerates the given agent message (or the latest
 	// eligible one when no message is passed), or `null` when regenerate is not
 	// available — so callers can both gate the UI and trigger the action.
-	getRegenerateHandler: (
-		message?: UIMessage
-	) => ( () => Promise< void > ) | null;
+	getRegenerateHandler: ( message?: UIMessage ) => ( () => Promise< void > ) | null;
 }
 
 /**
@@ -50,7 +48,6 @@ interface UseRegenerateReturn {
  * Rewinds the conversation to the history that preceded a chosen agent
  * response, re-sends the originating user message, and restores the prior
  * state if the new send fails.
- *
  * @param root0                   - Dependencies supplied by `useAgentChat`
  * @param root0.agentId           - Identifier of the active agent
  * @param root0.isValidConfig     - Whether the agent configuration is valid
@@ -58,7 +55,7 @@ interface UseRegenerateReturn {
  * @param root0.stateRef          - Ref holding the latest chat state
  * @param root0.transformMessages - Converts client messages to UI messages
  * @param root0.sendMessage       - The hook's guarded send function
- * @return Regenerate handler accessor for the chat
+ * @returns Regenerate handler accessor for the chat
  */
 export function useRegenerate( {
 	agentId,
@@ -75,20 +72,15 @@ export function useRegenerate( {
 			}
 
 			const agentManager = getAgentManager();
-			const currentClientMessages =
-				agentManager.getConversationHistory( agentId );
+			const currentClientMessages = agentManager.getConversationHistory( agentId );
 			const agentMessageId =
-				message?.id ??
-				getLatestRegeneratableAgentMessageId( currentClientMessages );
+				message?.id ?? getLatestRegeneratableAgentMessageId( currentClientMessages );
 
 			if ( ! agentMessageId ) {
 				return;
 			}
 
-			const regenerateRequest = getRegenerateRequest(
-				currentClientMessages,
-				agentMessageId
-			);
+			const regenerateRequest = getRegenerateRequest( currentClientMessages, agentMessageId );
 
 			if ( ! regenerateRequest ) {
 				return;
@@ -98,9 +90,7 @@ export function useRegenerate( {
 				clientMessages: currentClientMessages,
 				uiMessages: stateRef.current.uiMessages,
 			};
-			const initialUiMessages = transformMessages(
-				regenerateRequest.baseHistory
-			);
+			const initialUiMessages = transformMessages( regenerateRequest.baseHistory );
 
 			// sendMessage re-throws on failure, but restoreOnError has already
 			// reverted the conversation and surfaced the error in state. Swallow
@@ -121,14 +111,7 @@ export function useRegenerate( {
 				logger( 'Regenerate failed; conversation restored', error );
 			}
 		},
-		[
-			agentId,
-			isSendingRef,
-			isValidConfig,
-			sendMessage,
-			stateRef,
-			transformMessages,
-		]
+		[ agentId, isSendingRef, isValidConfig, sendMessage, stateRef, transformMessages ]
 	);
 
 	const getRegenerateHandler = useCallback(
@@ -139,17 +122,13 @@ export function useRegenerate( {
 				? agentManager.getConversationHistory( agentId )
 				: currentState.clientMessages;
 			const agentMessageId =
-				message?.id ??
-				getLatestRegeneratableAgentMessageId( currentClientMessages );
+				message?.id ?? getLatestRegeneratableAgentMessageId( currentClientMessages );
 
 			if (
 				! isValidConfig ||
 				( message && message.role !== 'agent' ) ||
 				! agentMessageId ||
-				! canRegenerateAgentMessage(
-					currentClientMessages,
-					agentMessageId
-				)
+				! canRegenerateAgentMessage( currentClientMessages, agentMessageId )
 			) {
 				return null;
 			}

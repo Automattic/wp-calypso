@@ -1,15 +1,12 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import React from 'react';
 import { cn } from '../../utils/classNames';
 import { fastSpring } from '../animations';
-import { AgentUISuggestions } from './AgentUISuggestions';
-import { AgentUINotice } from './AgentUINotice';
-import { AgentUIInput } from './AgentUIInput';
-import {
-	ComplianceDisclosure,
-	DefaultComplianceDisclosure,
-} from '../chat/ComplianceDisclosure';
 import styles from '../chat/ChatFooter.module.css';
+import { ComplianceDisclosure, DefaultComplianceDisclosure } from '../chat/ComplianceDisclosure';
+import { AgentUIInput } from './AgentUIInput';
+import { AgentUINotice } from './AgentUINotice';
+import { AgentUISuggestions } from './AgentUISuggestions';
 
 export interface AgentUIFooterProps {
 	children?: React.ReactNode;
@@ -25,9 +22,7 @@ export function AgentUIFooter( {
 	className,
 	complianceDisclosure = <DefaultComplianceDisclosure />,
 }: AgentUIFooterProps = {} ) {
-	const disclosure = (
-		<ComplianceDisclosure>{ complianceDisclosure }</ComplianceDisclosure>
-	);
+	const disclosure = <ComplianceDisclosure>{ complianceDisclosure }</ComplianceDisclosure>;
 
 	if ( children ) {
 		return (

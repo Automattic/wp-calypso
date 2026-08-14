@@ -4,10 +4,7 @@
  * @param variableName
  * @param fallback
  */
-export const getCSSVariable = (
-	variableName: string,
-	fallback: string = ''
-): string => {
+export const getCSSVariable = ( variableName: string, fallback: string = '' ): string => {
 	try {
 		const value = getComputedStyle( document.documentElement )
 			.getPropertyValue( variableName )

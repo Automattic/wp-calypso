@@ -13,9 +13,8 @@ export type GetClientContextCallback = () => ClientContext;
  * This hook abstracts the ContextProvider interface and allows users to simply
  * provide a callback function that returns fresh context data each time a message
  * is sent to the agent.
- *
  * @param getClientContextCallback - Function that returns fresh client context data
- * @return ContextProvider instance or undefined if no callback provided
+ * @returns ContextProvider instance or undefined if no callback provided
  */
 export function useClientContext(
 	getClientContextCallback?: GetClientContextCallback

@@ -1,17 +1,11 @@
-import type {
-	DataPart,
-	FilePart,
-	Message,
-	TextPart,
-} from '../client/types/index';
 import { generateMessageId } from '../client/utils/core';
+import type { DataPart, FilePart, Message, TextPart } from '../client/types/index';
 
 /**
  * Extract only the new content (non-history) parts from a message
  * This helps avoid storing history data parts in conversation history
- *
  * @param message - The message to extract new content from
- * @return A clean message with only new content parts
+ * @returns A clean message with only new content parts
  */
 export function extractNewContentFromMessage( message: Message ): Message {
 	const newParts = message.parts.filter( ( part ) => {
@@ -73,9 +67,8 @@ export function extractNewContentFromMessage( message: Message ): Message {
 
 /**
  * Convert conversation messages to data parts for history
- *
  * @param conversationMessages - Array of previous conversation messages
- * @return Array of data parts representing conversation history
+ * @returns Array of data parts representing conversation history
  */
 export function conversationMessagesToDataParts(
 	conversationMessages: Message[]
@@ -133,25 +126,22 @@ export interface ImageData {
 
 /**
  * Create message with conversation history from Message array
- *
  * @param text                 - The user text message to send
  * @param conversationMessages - Array of previous conversation messages
  * @param imageUrls            - Array of image URLs or image objects with metadata
- * @return Message with history and current text
+ * @returns Message with history and current text
  */
 export function createTextMessageWithHistory(
 	text: string,
 	conversationMessages: Message[] = [],
 	imageUrls: ( string | ImageData )[] = []
 ): Message {
-	const historyParts =
-		conversationMessagesToDataParts( conversationMessages );
+	const historyParts = conversationMessagesToDataParts( conversationMessages );
 
 	const imageParts: FilePart[] = imageUrls.map( ( imageData ) => {
 		// Handle both string URLs and ImageData objects
 		const url = typeof imageData === 'string' ? imageData : imageData.url;
-		const metadata =
-			typeof imageData === 'object' ? imageData.metadata : undefined;
+		const metadata = typeof imageData === 'object' ? imageData.metadata : undefined;
 
 		// Get mimeType from metadata if available, otherwise default to image/jpeg
 		const mimeType = ( metadata?.fileType as string ) || 'image/jpeg';
@@ -188,9 +178,8 @@ export function createTextMessageWithHistory(
 
 /**
  * Extract tool results from a message
- *
  * @param message - The message to check for tool results
- * @return Array of tool result parts
+ * @returns Array of tool result parts
  */
 export function extractToolResultsFromMessage( message?: Message ): DataPart[] {
 	if ( ! message?.parts ) {
@@ -198,10 +187,7 @@ export function extractToolResultsFromMessage( message?: Message ): DataPart[] {
 	}
 
 	return message.parts.filter(
-		( part: any ) =>
-			part.type === 'data' &&
-			'toolCallId' in part.data &&
-			'result' in part.data
+		( part: any ) => part.type === 'data' && 'toolCallId' in part.data && 'result' in part.data
 	) as DataPart[];
 }
 
@@ -214,25 +200,18 @@ export function extractToolResultsFromMessage( message?: Message ): DataPart[] {
  * This deliberately matches only a fully-formed payload (parses to an object
  * with a string `tool_id`), so partial text from token-streaming agents — which
  * is plain prose, not JSON — is ignored.
- *
  * @param message - The message to inspect.
- * @return True when the first text part is a `{ tool_id, ... }` JSON payload.
+ * @returns True when the first text part is a `{ tool_id, ... }` JSON payload.
  */
 export function messageCarriesToolPayload( message?: Message ): boolean {
-	const text = message?.parts?.find(
-		( part ): part is TextPart => part.type === 'text'
-	)?.text;
+	const text = message?.parts?.find( ( part ): part is TextPart => part.type === 'text' )?.text;
 	if ( typeof text !== 'string' || text.trim() === '' ) {
 		return false;
 	}
 
 	try {
 		const parsed = JSON.parse( text );
-		return (
-			!! parsed &&
-			typeof parsed === 'object' &&
-			typeof parsed.tool_id === 'string'
-		);
+		return !! parsed && typeof parsed === 'object' && typeof parsed.tool_id === 'string';
 	} catch ( _error ) {
 		return false;
 	}

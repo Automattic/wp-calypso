@@ -6,11 +6,11 @@
  * markdown extensions like charts, tables, forms, etc.
  */
 
-import type { Components } from 'react-markdown';
-import type { PluggableList } from 'unified';
 import remarkGfm from 'remark-gfm';
 import { createChartBlock } from './charts';
 import type { MarkdownExtensions } from './types';
+import type { Components } from 'react-markdown';
+import type { PluggableList } from 'unified';
 
 /**
  * Result of processing markdown extensions
@@ -23,7 +23,7 @@ export interface ProcessedMarkdownExtensions {
 /**
  * Process markdown extensions and return components and plugins for react-markdown
  * @param extensions - The markdown extensions configuration
- * @return An object containing react-markdown components and remark plugins for the enabled extensions
+ * @returns An object containing react-markdown components and remark plugins for the enabled extensions
  */
 export function processMarkdownExtensions(
 	extensions?: MarkdownExtensions
@@ -49,7 +49,7 @@ export function processMarkdownExtensions(
  * User components take precedence over extension components
  * @param extensionComponents - Components from extensions
  * @param userComponents      - User-provided components
- * @return Merged components object
+ * @returns Merged components object
  */
 export function mergeMarkdownComponents(
 	extensionComponents: Components,

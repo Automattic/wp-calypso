@@ -53,7 +53,7 @@
 		color: #fff;
 	}
 
-	&[aria-pressed="true"] {
+	&[aria-pressed='true'] {
 		background: #fff;
 		color: #16161a;
 	}
@@ -86,7 +86,7 @@
 		color: #fff;
 	}
 
-	&[aria-pressed="true"] {
+	&[aria-pressed='true'] {
 		background: #2271b1;
 		border-color: #2271b1;
 		color: #fff;
@@ -124,7 +124,7 @@
 
 .tool-dropdown__panel {
 	position: absolute;
-	top: calc(100% + 4px);
+	top: calc( 100% + 4px );
 	left: 0;
 	z-index: 10;
 	min-width: 160px;
@@ -132,8 +132,8 @@
 	padding: 12px;
 	background: #1e1e26;
 	border: 1px solid #3a3a44;
-	border-radius: 6px;
-	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+	border-radius: 4px;
+	box-shadow: 0 6px 18px rgba( 0, 0, 0, 0.45 );
 	font-size: 12px;
 }
 

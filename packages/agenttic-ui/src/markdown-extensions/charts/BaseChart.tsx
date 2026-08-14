@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import {
 	type BaseChartProps as AutomatticBaseChartProps,
 	type DataPointDate,
@@ -9,14 +6,10 @@ import {
 	type SeriesData,
 	ThemeProvider,
 } from '@automattic/charts';
-import type { FC } from 'react';
 import React, { useMemo } from 'react';
-
-/**
- * Internal dependencies
- */
 import { getCSSVariable } from '../../utils/theme';
 import { ChartError } from './ChartError';
+import type { FC } from 'react';
 
 export interface CurrencyOptions {
 	symbol: string;
@@ -25,8 +18,7 @@ export interface CurrencyOptions {
 
 export type ChartTooltipParams = RenderTooltipParams< DataPointDate >;
 
-export interface BaseChartProps
-	extends Omit< AutomatticBaseChartProps< SeriesData[] >, 'data' > {
+export interface BaseChartProps extends Omit< AutomatticBaseChartProps< SeriesData[] >, 'data' > {
 	data: SeriesData[];
 	currency?: CurrencyOptions;
 	renderTooltip?: ( params: ChartTooltipParams ) => React.ReactNode;
@@ -52,10 +44,7 @@ interface BaseChartInternalProps {
  * @param root0.children
  * @param root0.error
  */
-export const BaseChart: FC< BaseChartInternalProps > = ( {
-	children,
-	error,
-} ) => {
+export const BaseChart: FC< BaseChartInternalProps > = ( { children, error } ) => {
 	const customTheme = useMemo( () => {
 		const primaryColor = getCSSVariable( '--color-primary', '#4F46E5' );
 
@@ -82,17 +71,13 @@ export const BaseChart: FC< BaseChartInternalProps > = ( {
 	}, [] );
 
 	if ( error ) {
-		return (
-			<ChartError message={ error.message } details={ error.details } />
-		);
+		return <ChartError message={ error.message } details={ error.details } />;
 	}
 
 	return (
 		<div className="chart-block">
 			<div className="chart-container">
-				<ThemeProvider theme={ customTheme }>
-					{ children }
-				</ThemeProvider>
+				<ThemeProvider theme={ customTheme }>{ children }</ThemeProvider>
 			</div>
 		</div>
 	);

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
-import type { RefObject } from 'react';
 import type { Message } from '../types';
+import type { RefObject } from 'react';
 
 interface UseAutoScrollOptions {
 	scrollAreaRef: RefObject< HTMLDivElement | null >;
@@ -25,10 +25,7 @@ const SNAP_THRESHOLD = 1;
  * @param root0.scrollAreaRef
  * @param root0.visibleMessages
  */
-export function useAutoScroll( {
-	scrollAreaRef,
-	visibleMessages,
-}: UseAutoScrollOptions ) {
+export function useAutoScroll( { scrollAreaRef, visibleMessages }: UseAutoScrollOptions ) {
 	const prevMessageCountRef = useRef( 0 );
 	const isFirstRenderRef = useRef( true );
 	const autoScrollEnabledRef = useRef( true );
@@ -128,8 +125,7 @@ export function useAutoScroll( {
 			return;
 		}
 
-		const hasNewMessage =
-			visibleMessages.length > prevMessageCountRef.current;
+		const hasNewMessage = visibleMessages.length > prevMessageCountRef.current;
 		const lastMessage = visibleMessages[ visibleMessages.length - 1 ];
 
 		// First render: instant scroll to bottom without animation.
@@ -169,17 +165,11 @@ export function useAutoScroll( {
 		}
 
 		prevMessageCountRef.current = visibleMessages.length;
-	}, [
-		visibleMessages,
-		scrollAreaRef,
-		startScrollToUserMessage,
-		stopAnimation,
-	] );
+	}, [ visibleMessages, scrollAreaRef, startScrollToUserMessage, stopAnimation ] );
 }
 
 function getLastUserMessageTop( container: HTMLElement ): number | null {
-	const userMessages =
-		container.querySelectorAll< HTMLElement >( '[data-role="user"]' );
+	const userMessages = container.querySelectorAll< HTMLElement >( '[data-role="user"]' );
 	const lastUserMsg = userMessages[ userMessages.length - 1 ];
 	return lastUserMsg?.offsetTop ?? null;
 }

@@ -1,11 +1,5 @@
+import { animate, type MotionValue, type PanInfo, useDragControls } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-	animate,
-	type MotionValue,
-	type PanInfo,
-	useDragControls,
-} from 'framer-motion';
-import { DEFAULT_BOUNDARY_INSETS, DRAG_CONSTANTS } from '../utils/constants';
 import { morphSpring } from '../components/animations';
 import {
 	type ChatPosition,
@@ -13,6 +7,7 @@ import {
 	DEFAULT_CHAT_POSITION,
 	getCornerSnapPosition,
 } from '../utils/chatPosition';
+import { DEFAULT_BOUNDARY_INSETS, DRAG_CONSTANTS } from '../utils/constants';
 import type { BoundaryInsets, ChatSize, ChatState } from '../types';
 
 export interface UseFloatingPanelPositionArgs {
@@ -93,11 +88,7 @@ export function useFloatingPanelPosition( {
 	const calculateSnapPosition = useCallback(
 		( side?: 'left' | 'right' ) => {
 			const targetSide = side ?? currentSide;
-			return getCornerSnapPosition(
-				targetSide,
-				getPanelSize().width,
-				insets
-			);
+			return getCornerSnapPosition( targetSide, getPanelSize().width, insets );
 		},
 		[ currentSide, getPanelSize, insets ]
 	);
@@ -118,9 +109,7 @@ export function useFloatingPanelPosition( {
 				return;
 			}
 
-			const isNonDraggable = target.closest(
-				DRAG_CONSTANTS.NON_DRAGGABLE_SELECTORS
-			);
+			const isNonDraggable = target.closest( DRAG_CONSTANTS.NON_DRAGGABLE_SELECTORS );
 
 			if ( ! isNonDraggable ) {
 				// Prevent text selection during drag
@@ -159,12 +148,7 @@ export function useFloatingPanelPosition( {
 			if ( freeDrag ) {
 				const panelSize = getPanelSize();
 				const dropped = { x: dropX, y: y.get() };
-				const clamped = clampFreeDragPosition(
-					dropped,
-					panelSize.width,
-					panelSize.height,
-					insets
-				);
+				const clamped = clampFreeDragPosition( dropped, panelSize.width, panelSize.height, insets );
 				if ( clamped.x !== dropped.x ) {
 					animate( x, clamped.x, DRAG_CONSTANTS.SPRING_CONFIG );
 				}
@@ -267,11 +251,7 @@ export function useFloatingPanelPosition( {
 		if ( stashedFreeDragYRef.current === null ) {
 			return;
 		}
-		const controls = animate(
-			y,
-			stashedFreeDragYRef.current,
-			DRAG_CONSTANTS.SPRING_CONFIG
-		);
+		const controls = animate( y, stashedFreeDragYRef.current, DRAG_CONSTANTS.SPRING_CONFIG );
 		stashedFreeDragYRef.current = null;
 		return () => controls.stop();
 	}, [ chatState, freeDrag, y ] );
@@ -285,8 +265,7 @@ export function useFloatingPanelPosition( {
 	const holdYWithTopGuard = useCallback(
 		( panelHeight: number ): { y: number; skipY: boolean } => {
 			const currentY = y.get();
-			const minY =
-				insets.top + insets.bottom + panelHeight - window.innerHeight;
+			const minY = insets.top + insets.bottom + panelHeight - window.innerHeight;
 			const clampedY = Math.max( minY, Math.min( currentY, 0 ) );
 			return { y: clampedY, skipY: clampedY === currentY };
 		},
@@ -312,26 +291,15 @@ export function useFloatingPanelPosition( {
 				// side: no shift, hold the left edge (grows top-right). Both clamp to
 				// [0, maxX]; the Math.max(0) floor wins, so pinning the right edge can
 				// never push the left edge past the inset (near-left-edge grows right).
-				const maxX =
-					window.innerWidth -
-					panelSize.width -
-					insets.left -
-					insets.right;
+				const maxX = window.innerWidth - panelSize.width - insets.left - insets.right;
 				const sideShift = currentSide === 'right' ? deltaWidth : 0;
-				const xClamped = Math.max(
-					0,
-					Math.min( x.get() - sideShift, maxX )
-				);
+				const xClamped = Math.max( 0, Math.min( x.get() - sideShift, maxX ) );
 				const vertical = holdYWithTopGuard( panelSize.height );
 				return { x: xClamped, y: vertical.y, skipY: vertical.skipY };
 			}
 
 			// Corner-snap: analytic dock x (no DOM read → no stale-height drift).
-			const snapX = getCornerSnapPosition(
-				currentSide,
-				panelSize.width,
-				insets
-			).x;
+			const snapX = getCornerSnapPosition( currentSide, panelSize.width, insets ).x;
 
 			// While minimized the `y` transform is pinned to 0 and `bottom: 0` keeps
 			// the tab docked, so leave y alone — overwriting fights the un-minimize
@@ -343,15 +311,7 @@ export function useFloatingPanelPosition( {
 			const vertical = holdYWithTopGuard( panelSize.height );
 			return { x: snapX, y: vertical.y, skipY: vertical.skipY };
 		},
-		[
-			freeDrag,
-			x,
-			currentSide,
-			chatState,
-			holdYWithTopGuard,
-			getPanelSize,
-			insets,
-		]
+		[ freeDrag, x, currentSide, chatState, holdYWithTopGuard, getPanelSize, insets ]
 	);
 
 	// Reconcile x/y after a programmatic size change, animating with the morph
@@ -389,11 +349,7 @@ export function useFloatingPanelPosition( {
 			// Keep the header reachable on viewports shorter than the panel
 			// (the same floor the drag paths apply).
 			const target = calculateSnapPosition( side );
-			const minY =
-				insets.top +
-				insets.bottom +
-				getPanelSize().height -
-				window.innerHeight;
+			const minY = insets.top + insets.bottom + getPanelSize().height - window.innerHeight;
 			const targetY = Math.max( minY, target.y );
 
 			// Placed, not animated: a command usually accompanies a layout change

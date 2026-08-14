@@ -1,7 +1,7 @@
 import React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
 import { Chat } from './Chat';
 import type { Message } from '../../types';
+import type { Meta, StoryObj } from '@storybook/react';
 
 // Mock data for stories
 const mockMessages: Message[] = [
@@ -164,12 +164,10 @@ export const WithEmptyView: Story = {
 					color: '#666',
 				} }
 			>
-				<h3 style={ { marginBottom: '1rem', color: '#333' } }>
-					Welcome to WordPress!
-				</h3>
+				<h3 style={ { marginBottom: '1rem', color: '#333' } }>Welcome to WordPress!</h3>
 				<p>
-					I can help you optimize your site, create content, improve
-					SEO, and provide insights about your WordPress site.
+					I can help you optimize your site, create content, improve SEO, and provide insights about
+					your WordPress site.
 				</p>
 			</div>
 		),

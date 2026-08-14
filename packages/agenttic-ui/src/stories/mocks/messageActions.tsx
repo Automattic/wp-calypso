@@ -1,6 +1,6 @@
 import React from 'react';
-import type { Message, MessageAction, MessageActionButton } from '../../types';
 import { CopyIcon, ThumbsDownIcon, ThumbsUpIcon } from '../../components';
+import type { Message, MessageAction, MessageActionButton } from '../../types';
 
 // Mock message data
 export const mockAgentMessage: Message = {
@@ -203,10 +203,7 @@ export const retryAction: MessageAction = {
 };
 
 // Helper to create messages with actions
-export function createMessageWithActions(
-	base: Message,
-	actions: MessageAction[]
-): Message {
+export function createMessageWithActions( base: Message, actions: MessageAction[] ): Message {
 	return {
 		...base,
 		actions,
@@ -214,10 +211,7 @@ export function createMessageWithActions(
 }
 
 // Helper to create a message with feedback actions
-export function createMessageWithFeedback(
-	base: Message,
-	feedbackState?: 'up' | 'down'
-): Message {
+export function createMessageWithFeedback( base: Message, feedbackState?: 'up' | 'down' ): Message {
 	const actions: MessageAction[] = [];
 
 	if ( feedbackState !== 'down' ) {
@@ -282,8 +276,5 @@ export const mockMessageThread: Message[] = [
 		],
 		timestamp: Date.now() - 20000,
 	},
-	createMessageWithActions( mockLongAgentMessage, [
-		copyAction,
-		shareAction,
-	] ),
+	createMessageWithActions( mockLongAgentMessage, [ copyAction, shareAction ] ),
 ];

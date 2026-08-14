@@ -1,3 +1,7 @@
+import { generateMessageId } from '../client/utils/core';
+import { logger } from '../client/utils/logger';
+import { DEFAULT_API_BASE_URL, loadChatFromServer, type OdieServiceConfig } from './odieService';
+import type { PaginationMeta } from './serverTypes';
 import type {
 	AuthProvider,
 	ContentType,
@@ -6,14 +10,6 @@ import type {
 	Message,
 	TextPart,
 } from '../client/types/index';
-import { logger } from '../client/utils/logger';
-import { generateMessageId } from '../client/utils/core';
-import {
-	DEFAULT_API_BASE_URL,
-	loadChatFromServer,
-	type OdieServiceConfig,
-} from './odieService';
-import type { PaginationMeta } from './serverTypes';
 
 const STORAGE_KEY = 'a8c_agenttic_conversation_history';
 
@@ -47,12 +43,7 @@ export interface ConversationLoadResult {
  * A stored message with no `deliveryStatus` is treated as `complete` for
  * backwards compatibility with existing stored conversations.
  */
-export type DeliveryStatus =
-	| 'pending'
-	| 'sent'
-	| 'streaming'
-	| 'complete'
-	| 'failed';
+export type DeliveryStatus = 'pending' | 'sent' | 'streaming' | 'complete' | 'failed';
 
 /**
  * Simplified stored message format for efficient serialization
@@ -107,13 +98,9 @@ function extractStorableContent( message: Message ): StoredMessage {
 		( part ): part is TextPart => part.type === 'text'
 	);
 
-	const textParts = textPartsWithMeta
-		.map( ( part ) => part.text )
-		.join( '\n' );
+	const textParts = textPartsWithMeta.map( ( part ) => part.text ).join( '\n' );
 
-	const contentType = textPartsWithMeta.some(
-		( part ) => part.metadata?.contentType === 'context'
-	)
+	const contentType = textPartsWithMeta.some( ( part ) => part.metadata?.contentType === 'context' )
 		? 'context'
 		: undefined;
 
@@ -121,9 +108,7 @@ function extractStorableContent( message: Message ): StoredMessage {
 	const toolCalls = message.parts
 		.filter(
 			( part ): part is DataPart =>
-				part.type === 'data' &&
-				'toolCallId' in part.data &&
-				'arguments' in part.data
+				part.type === 'data' && 'toolCallId' in part.data && 'arguments' in part.data
 		)
 		.map( ( part ) => ( {
 			toolCallId: part.data.toolCallId as string,
@@ -135,9 +120,7 @@ function extractStorableContent( message: Message ): StoredMessage {
 	const toolResults = message.parts
 		.filter(
 			( part ): part is DataPart =>
-				part.type === 'data' &&
-				'toolCallId' in part.data &&
-				'result' in part.data
+				part.type === 'data' && 'toolCallId' in part.data && 'result' in part.data
 		)
 		.map( ( part ) => ( {
 			toolCallId: part.data.toolCallId as string,
@@ -157,11 +140,7 @@ function extractStorableContent( message: Message ): StoredMessage {
 	// Preserve agent UI data parts (forward_to_human_support, sources) — not tool payloads
 	let agentMessageData: StoredMessage[ 'agentMessageData' ];
 	for ( const part of message.parts ) {
-		if (
-			part.type !== 'data' ||
-			! part.data ||
-			typeof part.data !== 'object'
-		) {
+		if ( part.type !== 'data' || ! part.data || typeof part.data !== 'object' ) {
 			continue;
 		}
 		if ( 'toolCallId' in part.data ) {
@@ -377,7 +356,6 @@ function markFailed( message: Message ): Message {
  * `failed`. Affirmative empty/null fetch marks all local unresolved as
  * `failed`. A thrown fetch leaves them pending so a later retry can
  * reconcile instead of prompting a duplicate send.
- *
  * @param messages    - Locally-loaded messages.
  * @param fetchServer - Server loader; null when no matching session exists.
  */
@@ -403,10 +381,7 @@ export async function reconcileWithServer(
 		const extras = new Map< string, number >();
 		const serverCounts = userTextCounts( serverMessages );
 		for ( const [ text, localCount ] of userTextCounts( messages ) ) {
-			extras.set(
-				text,
-				Math.max( 0, localCount - ( serverCounts.get( text ) ?? 0 ) )
-			);
+			extras.set( text, Math.max( 0, localCount - ( serverCounts.get( text ) ?? 0 ) ) );
 		}
 
 		const orphanedFailed: Message[] = [];
@@ -464,8 +439,6 @@ export async function storeConversation(
 		}
 	}
 
-	// Ignore TypeScript error for environments where sessionStorage might not be available
-	// @ts-ignore
 	if ( typeof sessionStorage === 'undefined' ) {
 		// Handle case where sessionStorage is not available
 		return;
@@ -479,11 +452,7 @@ export async function storeConversation(
 			lastUpdated: Date.now(),
 		};
 
-		// @ts-ignore
-		sessionStorage.setItem(
-			`${ STORAGE_KEY }_${ currentStorageKey }`,
-			JSON.stringify( stored )
-		);
+		sessionStorage.setItem( `${ STORAGE_KEY }_${ currentStorageKey }`, JSON.stringify( stored ) );
 	} catch ( error ) {
 		// Handle sessionStorage quota exceeded or other errors
 		logger(
@@ -511,10 +480,7 @@ export async function loadConversation(
 	}
 
 	// Branch: Local sessionStorage mode (default)
-	return loadConversationFromSessionStorage(
-		sessionId,
-		conversationStorageKey
-	);
+	return loadConversationFromSessionStorage( sessionId, conversationStorageKey );
 }
 
 /**
@@ -543,12 +509,7 @@ async function loadConversationFromServer(
 		};
 
 		// Load first page of messages from server
-		const result = await loadChatFromServer(
-			sessionId,
-			serviceConfig,
-			1,
-			50
-		);
+		const result = await loadChatFromServer( sessionId, serviceConfig, 1, 50 );
 
 		logger(
 			'Loaded conversation from server: %s (%d messages, page %d/%d)',
@@ -588,17 +549,13 @@ async function loadConversationFromSessionStorage(
 	}
 
 	// Fallback to sessionStorage
-	// @ts-ignore
 	if ( typeof sessionStorage === 'undefined' ) {
 		// Handle case where sessionStorage is not available
 		return { messages: [] };
 	}
 
 	try {
-		// @ts-ignore
-		const stored = sessionStorage.getItem(
-			`${ STORAGE_KEY }_${ currentStorageKey }`
-		);
+		const stored = sessionStorage.getItem( `${ STORAGE_KEY }_${ currentStorageKey }` );
 		if ( stored ) {
 			const conversation: StoredConversation = JSON.parse( stored );
 			const messages = conversation.messages.map( restoreMessage );
@@ -625,7 +582,6 @@ async function loadConversationFromSessionStorage(
  *
  * Note: The caller should check pagination.hasMore from the previous load
  * before calling this function to avoid unnecessary API calls.
- *
  * @param sessionId - The session/chat ID to load
  * @param page      - Page number to load (should be validated by caller against pagination data)
  * @param config    - Server storage configuration
@@ -659,12 +615,7 @@ export async function loadMoreMessages(
 		};
 
 		// Load specific page from server
-		const result = await loadChatFromServer(
-			sessionId,
-			serviceConfig,
-			page,
-			50
-		);
+		const result = await loadChatFromServer( sessionId, serviceConfig, page, 50 );
 
 		logger(
 			'Loaded more messages from server: %s (page %d, %d messages)',
@@ -697,14 +648,12 @@ export async function clearConversation(
 
 	conversationCache.delete( currentStorageKey );
 
-	// @ts-ignore
 	if ( typeof sessionStorage === 'undefined' ) {
 		// Handle case where sessionStorage is not available
 		return;
 	}
 
 	try {
-		// @ts-ignore
 		sessionStorage.removeItem( `${ STORAGE_KEY }_${ currentStorageKey }` );
 	} catch ( error ) {
 		logger(
@@ -721,7 +670,6 @@ export async function clearConversation(
 export async function clearAllConversations(): Promise< void > {
 	conversationCache.clear();
 
-	// @ts-ignore
 	if ( typeof sessionStorage === 'undefined' ) {
 		// Handle case where sessionStorage is not available
 		return;
@@ -730,9 +678,7 @@ export async function clearAllConversations(): Promise< void > {
 	try {
 		// Remove all agenttic conversation keys from sessionStorage
 		const keysToRemove: string[] = [];
-		// @ts-ignore
 		for ( let i = 0; i < sessionStorage.length; i++ ) {
-			// @ts-ignore
 			const key = sessionStorage.key( i );
 			if ( key && key.startsWith( STORAGE_KEY ) ) {
 				keysToRemove.push( key );
@@ -740,14 +686,10 @@ export async function clearAllConversations(): Promise< void > {
 		}
 
 		for ( const key of keysToRemove ) {
-			// @ts-ignore
 			sessionStorage.removeItem( key );
 		}
 	} catch ( error ) {
-		logger(
-			'Failed to clear all conversations from sessionStorage: %O',
-			error
-		);
+		logger( 'Failed to clear all conversations from sessionStorage: %O', error );
 	}
 }
 
@@ -761,16 +703,13 @@ export async function getStoredSessionIds(): Promise< string[] > {
 	sessionIds.push( ...conversationCache.keys() );
 
 	// From sessionStorage
-	// @ts-ignore
 	if ( typeof sessionStorage === 'undefined' ) {
 		// Handle case where sessionStorage is not available
 		return sessionIds;
 	}
 
 	try {
-		// @ts-ignore
 		for ( let i = 0; i < sessionStorage.length; i++ ) {
-			// @ts-ignore
 			const key = sessionStorage.key( i );
 			if ( key && key.startsWith( STORAGE_KEY ) ) {
 				const sessionId = key.replace( `${ STORAGE_KEY }_`, '' );

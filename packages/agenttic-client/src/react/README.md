@@ -4,11 +4,11 @@ The React consumer now supports automatic conversation persistence across page n
 
 ## Features
 
--   **Memory-first performance**: Active conversations are cached in memory for fast access
--   **SessionStorage backup**: Conversations persist across page reloads and navigation
--   **Efficient serialization**: Only essential message content is stored, not redundant history data
--   **Automatic cleanup**: Old conversations are automatically cleaned up to manage storage limits
--   **Session-based**: Each conversation is tied to a sessionId for isolation
+- **Memory-first performance**: Active conversations are cached in memory for fast access
+- **SessionStorage backup**: Conversations persist across page reloads and navigation
+- **Efficient serialization**: Only essential message content is stored, not redundant history data
+- **Automatic cleanup**: Old conversations are automatically cleaned up to manage storage limits
+- **Session-based**: Each conversation is tied to a sessionId for isolation
 
 ## Usage
 
@@ -119,24 +119,24 @@ await clearAllConversations();
 
 ### Automatic Persistence
 
--   Conversations are automatically loaded when the hook initializes
--   New messages are immediately persisted after being added to state
--   Tool interactions are captured and stored efficiently
--   Storage operations are non-blocking and handle errors gracefully
+- Conversations are automatically loaded when the hook initializes
+- New messages are immediately persisted after being added to state
+- Tool interactions are captured and stored efficiently
+- Storage operations are non-blocking and handle errors gracefully
 
 ### Storage Limits
 
--   **Cache Limit**: Maximum 10 conversations in memory (configurable)
--   **SessionStorage**: ~5MB browser limit (shared across all tabs)
--   **Automatic Cleanup**: Old conversations are removed when limits are reached
+- **Cache Limit**: Maximum 10 conversations in memory (configurable)
+- **SessionStorage**: ~5MB browser limit (shared across all tabs)
+- **Automatic Cleanup**: Old conversations are removed when limits are reached
 
 ## Error Handling
 
 Storage operations are designed to fail gracefully:
 
--   If sessionStorage is full, warnings are logged but functionality continues
--   If stored data is corrupted, it's ignored and a fresh conversation starts
--   Network errors don't affect local conversation state
+- If sessionStorage is full, warnings are logged but functionality continues
+- If stored data is corrupted, it's ignored and a fresh conversation starts
+- Network errors don't affect local conversation state
 
 ## Tool Promise Resolution
 
@@ -144,12 +144,12 @@ The agent manager automatically handles asynchronous tool results:
 
 **Automatic Promise Resolution:**
 
--   Tool results containing unresolved promises (the promise needs to be attached to the tool response `result` property) are automatically detected and resolved before conversation is returned to the agent
--   Resolved values are persisted to conversation storage and in-memory history
+- Tool results containing unresolved promises (the promise needs to be attached to the tool response `result` property) are automatically detected and resolved before conversation is returned to the agent
+- Resolved values are persisted to conversation storage and in-memory history
 
 ## Performance Considerations
 
--   **Memory Usage**: Each cached conversation uses minimal memory (text + metadata only)
--   **Storage Size**: Compressed message format reduces sessionStorage usage
--   **Load Time**: Conversations load instantly from memory cache
--   **Persistence**: Non-blocking async operations don't affect UI responsiveness
+- **Memory Usage**: Each cached conversation uses minimal memory (text + metadata only)
+- **Storage Size**: Compressed message format reduces sessionStorage usage
+- **Load Time**: Conversations load instantly from memory cache
+- **Persistence**: Non-blocking async operations don't affect UI responsiveness

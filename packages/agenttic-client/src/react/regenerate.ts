@@ -1,9 +1,5 @@
-import type {
-	Message as ClientMessage,
-	Part,
-	TextPart,
-} from '../client/types/index';
 import { generateMessageId } from '../client/utils/core';
+import type { Message as ClientMessage, Part, TextPart } from '../client/types/index';
 
 export interface RegenerateRequest {
 	baseHistory: ClientMessage[];
@@ -37,17 +33,14 @@ const clonePart = ( part: Part ): Part => {
 const getVisiblePromptText = ( message: ClientMessage ): string => {
 	return message.parts
 		.filter(
-			( part ): part is TextPart =>
-				part.type === 'text' && part.metadata?.contentType !== 'context'
+			( part ): part is TextPart => part.type === 'text' && part.metadata?.contentType !== 'context'
 		)
 		.map( ( part ) => part.text )
 		.join( '\n' )
 		.trim();
 };
 
-const cloneUserMessageForRegenerate = (
-	message: ClientMessage
-): ClientMessage => ( {
+const cloneUserMessageForRegenerate = ( message: ClientMessage ): ClientMessage => ( {
 	...message,
 	messageId: generateMessageId(),
 	metadata: {
@@ -62,8 +55,7 @@ const getRegenerateSource = (
 	agentMessageId: string
 ): RegenerateRequest | null => {
 	const agentMessageIndex = messages.findIndex(
-		( message ) =>
-			message.messageId === agentMessageId && message.role === 'agent'
+		( message ) => message.messageId === agentMessageId && message.role === 'agent'
 	);
 
 	if ( agentMessageIndex === -1 ) {
@@ -123,10 +115,7 @@ export const getLatestRegeneratableAgentMessageId = (
 	for ( let i = messages.length - 1; i >= 0; i-- ) {
 		const message = messages[ i ];
 
-		if (
-			message.role === 'agent' &&
-			canRegenerateAgentMessage( messages, message.messageId )
-		) {
+		if ( message.role === 'agent' && canRegenerateAgentMessage( messages, message.messageId ) ) {
 			return message.messageId;
 		}
 	}

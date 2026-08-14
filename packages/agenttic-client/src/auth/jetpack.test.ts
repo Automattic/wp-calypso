@@ -1,3 +1,4 @@
+import apiFetch from '@wordpress/api-fetch';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	createJetpackAuthProvider,
@@ -11,7 +12,6 @@ vi.mock( '@wordpress/api-fetch', () => ( {
 	default: vi.fn(),
 } ) );
 
-import apiFetch from '@wordpress/api-fetch';
 const mockedApiFetch = vi.mocked( apiFetch );
 
 // Mock localStorage for Node.js environment
@@ -56,9 +56,7 @@ describe( 'Jetpack Auth Provider', () => {
 		localStorageMock.clear();
 	} );
 
-	const mockErrorHandler: JetpackErrorHandler = (
-		error: JetpackApiError
-	) => {
+	const mockErrorHandler: JetpackErrorHandler = ( error: JetpackApiError ) => {
 		if ( error?.code === 'rest_invalid_nonce' ) {
 			return 'Your session expired. Please refresh the page and try again or check your Jetpack connection.';
 		}
@@ -106,9 +104,7 @@ describe( 'Jetpack Auth Provider', () => {
 
 			expect( mockedApiFetch ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					path: expect.stringContaining(
-						'/jetpack/v4/jetpack-ai-jwt'
-					),
+					path: expect.stringContaining( '/jetpack/v4/jetpack-ai-jwt' ),
 					method: 'POST',
 					headers: {
 						'X-WP-Nonce': 'test-nonce',
@@ -150,10 +146,7 @@ describe( 'Jetpack Auth Provider', () => {
 				expire: Date.now() + 60000, // Valid for 1 minute
 			};
 
-			localStorageMock.setItem(
-				JWT_TOKEN_ID,
-				JSON.stringify( cachedToken )
-			);
+			localStorageMock.setItem( JWT_TOKEN_ID, JSON.stringify( cachedToken ) );
 
 			const result = await requestJetpackToken( mockErrorHandler );
 
@@ -168,10 +161,7 @@ describe( 'Jetpack Auth Provider', () => {
 				expire: Date.now() - 1000, // Expired 1 second ago
 			};
 
-			localStorageMock.setItem(
-				JWT_TOKEN_ID,
-				JSON.stringify( expiredToken )
-			);
+			localStorageMock.setItem( JWT_TOKEN_ID, JSON.stringify( expiredToken ) );
 
 			// Setup environment
 			( window as any ).JP_CONNECTION_INITIAL_STATE = {
@@ -222,9 +212,9 @@ describe( 'Jetpack Auth Provider', () => {
 			// Mock apiFetch to return empty data (no token)
 			mockedApiFetch.mockResolvedValueOnce( { token: '', blog_id: '' } );
 
-			await expect(
-				requestJetpackToken( mockErrorHandler )
-			).rejects.toThrow( 'Authentication failed' );
+			await expect( requestJetpackToken( mockErrorHandler ) ).rejects.toThrow(
+				'Authentication failed'
+			);
 		} );
 
 		it( 'should throw error when API returns no token', async () => {
@@ -236,9 +226,9 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockResolvedValueOnce( { token: '', blog_id: '' } );
 
-			await expect(
-				requestJetpackToken( mockErrorHandler )
-			).rejects.toThrow( 'Authentication failed' );
+			await expect( requestJetpackToken( mockErrorHandler ) ).rejects.toThrow(
+				'Authentication failed'
+			);
 		} );
 
 		it( 'should handle API errors with appropriate messages', async () => {
@@ -254,9 +244,7 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockRejectedValueOnce( error );
 
-			await expect(
-				requestJetpackToken( mockErrorHandler )
-			).rejects.toThrow(
+			await expect( requestJetpackToken( mockErrorHandler ) ).rejects.toThrow(
 				"You don't have permission to access Jetpack AI features"
 			);
 		} );
@@ -271,9 +259,9 @@ describe( 'Jetpack Auth Provider', () => {
 			const error = new Error( 'Network request failed' );
 			mockedApiFetch.mockRejectedValueOnce( error );
 
-			await expect(
-				requestJetpackToken( mockErrorHandler )
-			).rejects.toThrow( 'Network connection issue' );
+			await expect( requestJetpackToken( mockErrorHandler ) ).rejects.toThrow(
+				'Network connection issue'
+			);
 		} );
 
 		it( 'should cache the new token after successful fetch', async () => {
@@ -336,10 +324,7 @@ describe( 'Jetpack Auth Provider', () => {
 				expire: Date.now() + 60000, // Valid for 1 minute
 			};
 
-			localStorageMock.setItem(
-				JWT_TOKEN_ID,
-				JSON.stringify( cachedToken )
-			);
+			localStorageMock.setItem( JWT_TOKEN_ID, JSON.stringify( cachedToken ) );
 
 			( window as any ).JP_CONNECTION_INITIAL_STATE = {
 				apiNonce: 'test-nonce',
@@ -376,8 +361,7 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockResolvedValueOnce( mockToken );
 
-			const jetpackAuthProvider =
-				createJetpackAuthProvider( mockErrorHandler );
+			const jetpackAuthProvider = createJetpackAuthProvider( mockErrorHandler );
 			const headers = await jetpackAuthProvider();
 
 			expect( headers ).toEqual( {
@@ -388,8 +372,7 @@ describe( 'Jetpack Auth Provider', () => {
 		it( 'should throw error when token request fails', async () => {
 			// No window globals set - will cause requestJetpackToken to fail
 
-			const jetpackAuthProvider =
-				createJetpackAuthProvider( mockErrorHandler );
+			const jetpackAuthProvider = createJetpackAuthProvider( mockErrorHandler );
 			await expect( jetpackAuthProvider() ).rejects.toThrow();
 		} );
 
@@ -400,13 +383,9 @@ describe( 'Jetpack Auth Provider', () => {
 				expire: Date.now() + 60000,
 			};
 
-			localStorageMock.setItem(
-				JWT_TOKEN_ID,
-				JSON.stringify( cachedToken )
-			);
+			localStorageMock.setItem( JWT_TOKEN_ID, JSON.stringify( cachedToken ) );
 
-			const jetpackAuthProvider =
-				createJetpackAuthProvider( mockErrorHandler );
+			const jetpackAuthProvider = createJetpackAuthProvider( mockErrorHandler );
 			const headers = await jetpackAuthProvider();
 
 			expect( headers ).toEqual( {
@@ -425,11 +404,8 @@ describe( 'Jetpack Auth Provider', () => {
 			// No window globals set - will cause requestJetpackToken to fail
 			mockedApiFetch.mockResolvedValueOnce( { token: '', blog_id: '' } );
 
-			const jetpackAuthProvider =
-				createJetpackAuthProvider( customErrorHandler );
-			await expect( jetpackAuthProvider() ).rejects.toThrow(
-				'Authentication failed'
-			);
+			const jetpackAuthProvider = createJetpackAuthProvider( customErrorHandler );
+			await expect( jetpackAuthProvider() ).rejects.toThrow( 'Authentication failed' );
 		} );
 
 		it( 'should use custom error handler for API errors', async () => {
@@ -451,11 +427,8 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockRejectedValueOnce( error );
 
-			const jetpackAuthProvider =
-				createJetpackAuthProvider( customErrorHandler );
-			await expect( jetpackAuthProvider() ).rejects.toThrow(
-				'This is a custom error message'
-			);
+			const jetpackAuthProvider = createJetpackAuthProvider( customErrorHandler );
+			await expect( jetpackAuthProvider() ).rejects.toThrow( 'This is a custom error message' );
 		} );
 	} );
 } );

@@ -10,8 +10,7 @@ function getSafeHref( href: string ): string | undefined {
 
 function renderInlineMarkdown( text: string ): React.ReactNode[] {
 	const nodes: React.ReactNode[] = [];
-	const pattern =
-		/(\[[^\]]+\]\([^)]+\)|`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_)/g;
+	const pattern = /(\[[^\]]+\]\([^)]+\)|`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_)/g;
 	let lastIndex = 0;
 	let match: RegExpExecArray | null;
 
@@ -27,12 +26,7 @@ function renderInlineMarkdown( text: string ): React.ReactNode[] {
 			const href = getSafeHref( link[ 2 ] );
 			nodes.push(
 				href ? (
-					<a
-						key={ key }
-						href={ href }
-						rel="noreferrer"
-						target="_blank"
-					>
+					<a key={ key } href={ href } rel="noreferrer" target="_blank">
 						{ link[ 1 ] }
 					</a>
 				) : (
@@ -69,21 +63,11 @@ function flushList(
 	const children = listItems.map( ( item, index ) => (
 		<li key={ index }>{ renderInlineMarkdown( item ) }</li>
 	) );
-	blocks.push(
-		ordered ? (
-			<ol key={ key }>{ children }</ol>
-		) : (
-			<ul key={ key }>{ children }</ul>
-		)
-	);
+	blocks.push( ordered ? <ol key={ key }>{ children }</ol> : <ul key={ key }>{ children }</ul> );
 	listItems.length = 0;
 }
 
-export function LightweightMarkdownRenderer( {
-	children,
-}: {
-	children: string;
-} ) {
+export function LightweightMarkdownRenderer( { children }: { children: string } ) {
 	const blocks: React.ReactNode[] = [];
 	const listItems: string[] = [];
 	let listOrdered = false;
@@ -120,9 +104,7 @@ export function LightweightMarkdownRenderer( {
 				flushList( blocks, listItems, listOrdered, `list-${ index }` );
 			}
 			listOrdered = nextOrdered;
-			listItems.push(
-				( ordered?.[ 1 ] ?? unordered?.[ 1 ] ?? '' ).trim()
-			);
+			listItems.push( ( ordered?.[ 1 ] ?? unordered?.[ 1 ] ?? '' ).trim() );
 			return;
 		}
 
@@ -137,18 +119,12 @@ export function LightweightMarkdownRenderer( {
 			const level = heading[ 1 ].length;
 			const Tag = `h${ level }` as 'h1' | 'h2' | 'h3';
 			blocks.push(
-				<Tag key={ `heading-${ index }` }>
-					{ renderInlineMarkdown( heading[ 2 ] ) }
-				</Tag>
+				<Tag key={ `heading-${ index }` }>{ renderInlineMarkdown( heading[ 2 ] ) }</Tag>
 			);
 			return;
 		}
 
-		blocks.push(
-			<p key={ `paragraph-${ index }` }>
-				{ renderInlineMarkdown( line ) }
-			</p>
-		);
+		blocks.push( <p key={ `paragraph-${ index }` }>{ renderInlineMarkdown( line ) }</p> );
 	} );
 
 	flushList( blocks, listItems, listOrdered, 'list-final' );

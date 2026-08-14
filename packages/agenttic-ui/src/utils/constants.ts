@@ -22,13 +22,10 @@ export const DEFAULT_BOUNDARY_INSETS: BoundaryInsets = {
  * Resolve the `boundaryInset` prop into a full per-side insets object. A
  * number applies to all sides; a partial object fills missing sides with the
  * 16px default; undefined returns the shared default object.
- *
  * @param inset - The consumer-supplied boundaryInset prop
- * @return The resolved per-side insets
+ * @returns The resolved per-side insets
  */
-export function resolveBoundaryInset(
-	inset?: number | Partial< BoundaryInsets >
-): BoundaryInsets {
+export function resolveBoundaryInset( inset?: number | Partial< BoundaryInsets > ): BoundaryInsets {
 	if ( inset === undefined ) {
 		return DEFAULT_BOUNDARY_INSETS;
 	}
@@ -67,15 +64,11 @@ export function getVisibleResizeHandles(
 	resizable: boolean | 'horizontal' | 'vertical'
 ): ( typeof RESIZE_HANDLES )[ number ][] {
 	if ( resizable === 'horizontal' ) {
-		return RESIZE_HANDLES.filter( ( handle ) =>
-			[ 'left', 'right' ].includes( handle.edge )
-		);
+		return RESIZE_HANDLES.filter( ( handle ) => [ 'left', 'right' ].includes( handle.edge ) );
 	}
 
 	if ( resizable === 'vertical' ) {
-		return RESIZE_HANDLES.filter( ( handle ) =>
-			[ 'top', 'bottom' ].includes( handle.edge )
-		);
+		return RESIZE_HANDLES.filter( ( handle ) => [ 'top', 'bottom' ].includes( handle.edge ) );
 	}
 
 	return [ ...RESIZE_HANDLES ];

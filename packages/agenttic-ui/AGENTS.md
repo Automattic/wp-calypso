@@ -51,32 +51,32 @@ stay in sync with the `data-slot` list in `styles/global.css`.
 
 ## i18n
 
--   Text domain is `a8c-agenttic`.
--   **The build deletes `languages/*.jed.json` and re-downloads them from
-    `translate.wordpress.com`.** Translations are bundled via `import.meta.glob`
-    (`src/assets/translations.ts`), so building offline silently ships a translation-less
-    package. Per-locale 404s during the download are normal and non-fatal.
--   `scripts/extract-i18n.js` regenerates `languages/a8c-agenttic.pot` — note it scans **both**
-    agenttic packages even though it lives here.
+- Text domain is `a8c-agenttic`.
+- **The build deletes `languages/*.jed.json` and re-downloads them from
+  `translate.wordpress.com`.** Translations are bundled via `import.meta.glob`
+  (`src/assets/translations.ts`), so building offline silently ships a translation-less
+  package. Per-locale 404s during the download are normal and non-fatal.
+- `scripts/extract-i18n.js` regenerates `languages/a8c-agenttic.pot` — note it scans **both**
+  agenttic packages even though it lives here.
 
 ## Conventions
 
--   Formatting is WordPress prettier style (tabs, spaces inside parens/brackets), configured by
-    the package `.prettierrc`.
--   **Tests use raw `react-dom/client` — there is no `@testing-library` here.** Match the
-    existing pattern; don't add a testing library.
--   `vitest.config.ts` has **no `test` block**, so UI tests that touch the DOM need a
-    `// @vitest-environment jsdom` docblock on line 1.
--   Tests are vitest and do not run under Calypso's jest-based `test-packages`; run them with
-    the workspace `test` script.
+- Formatting is WordPress prettier style (tabs, spaces inside parens/brackets), configured by
+  the package `.prettierrc`.
+- **Tests use raw `react-dom/client` — there is no `@testing-library` here.** Match the
+  existing pattern; don't add a testing library.
+- `vitest.config.ts` has **no `test` block**, so UI tests that touch the DOM need a
+  `// @vitest-environment jsdom` docblock on line 1.
+- Tests are vitest and do not run under Calypso's jest-based `test-packages`; run them with
+  the workspace `test` script.
 
 ## Gotchas
 
--   Everything meaningful is externalized in the vite lib config (react, `@wordpress/*`,
-    `@automattic/charts`, `react-markdown`, `framer-motion`, radix, …). A new runtime dependency
-    must be added to both `package.json` and the `rollupOptions.external` list, or it gets
-    silently inlined into the bundle.
--   `marked` is an optional dependency, lazily `import()`ed in
-    `utils/streaming/parseBlocks.ts` — code must work when it's absent.
--   `vite --mode use-ui-build` in the demo package aliases the UI to `dist/` instead of source —
-    use it to verify the built artifact.
+- Everything meaningful is externalized in the vite lib config (react, `@wordpress/*`,
+  `@automattic/charts`, `react-markdown`, `framer-motion`, radix, …). A new runtime dependency
+  must be added to both `package.json` and the `rollupOptions.external` list, or it gets
+  silently inlined into the bundle.
+- `marked` is an optional dependency, lazily `import()`ed in
+  `utils/streaming/parseBlocks.ts` — code must work when it's absent.
+- `vite --mode use-ui-build` in the demo package aliases the UI to `dist/` instead of source —
+  use it to verify the built artifact.

@@ -14,9 +14,7 @@ export interface AgentsApiAttachment {
 	media_id?: number | string;
 }
 
-export type AgentsApiMediaUpload = (
-	file: File
-) => Promise< AgentsApiAttachment >;
+export type AgentsApiMediaUpload = ( file: File ) => Promise< AgentsApiAttachment >;
 
 export interface AgentsApiSource {
 	id?: string;
@@ -74,10 +72,7 @@ export interface AgentsApiToolGroup {
 	};
 }
 
-export type AgentsApiToolRenderers = Record<
-	string,
-	( group: AgentsApiToolGroup ) => ReactNode
->;
+export type AgentsApiToolRenderers = Record< string, ( group: AgentsApiToolGroup ) => ReactNode >;
 
 export interface AgentsApiRunEvent {
 	id: string;
@@ -117,13 +112,8 @@ export interface AgentsApiRunCapabilities {
 
 export interface AgentsApiRunAdapter {
 	capabilities?: AgentsApiRunCapabilities;
-	getRunId?: (
-		metadata: Record< string, unknown >
-	) => string | null | undefined;
-	cancel?: ( input: {
-		runId: string;
-		sessionId: string;
-	} ) => Promise< unknown >;
+	getRunId?: ( metadata: Record< string, unknown > ) => string | null | undefined;
+	cancel?: ( input: { runId: string; sessionId: string } ) => Promise< unknown >;
 	queue?: ( input: {
 		content: string;
 		files?: File[];
@@ -131,10 +121,7 @@ export interface AgentsApiRunAdapter {
 		runId?: string;
 		sessionId?: string;
 	} ) => Promise< AgentsApiQueueMessageResult >;
-	listEvents?: ( input: {
-		runId: string;
-		sessionId: string;
-	} ) => Promise< AgentsApiRunEvent[] >;
+	listEvents?: ( input: { runId: string; sessionId: string } ) => Promise< AgentsApiRunEvent[] >;
 }
 
 export interface AgentsApiChatAdapter {
@@ -165,9 +152,7 @@ export interface AgentsApiChatOptions {
 	adapter: AgentsApiChatAdapter;
 	mediaUploadFn?: AgentsApiMediaUpload;
 	runAdapter?: AgentsApiRunAdapter;
-	getRunId?: (
-		metadata: Record< string, unknown >
-	) => string | null | undefined;
+	getRunId?: ( metadata: Record< string, unknown > ) => string | null | undefined;
 	onMessage?: ( message: AgentsApiMessage ) => void;
 	onError?: ( error: Error ) => void;
 	onResponseMetadata?: ( metadata: Record< string, unknown > ) => void;

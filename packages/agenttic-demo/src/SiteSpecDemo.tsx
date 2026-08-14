@@ -1,9 +1,9 @@
-import React, { useCallback, useMemo } from 'react';
 import { AgentUI } from '@automattic/agenttic-ui';
-import type { Suggestion } from '@automattic/agenttic-ui';
+import React, { useCallback, useMemo } from 'react';
 import MessageTester from './MessageTester';
-import { ViewTools } from './playground/PlaygroundShell';
 import { useDemoChat } from './hooks/useDemoChat';
+import { ViewTools } from './playground/PlaygroundShell';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 /**
  * Site Spec Demo
@@ -237,10 +237,7 @@ const SiteSpecDemo: React.FC< { currentTheme: 'light' | 'dark' } > = () => {
 							{ /* Suggestions below input - exact pattern from site-spec */ }
 							{ promptSuggestions.length > 0 && (
 								<div className="site-spec-demo__prompt-suggestions">
-									<AgentUI.Suggestions
-										onSelect={ handleSuggestionSelect }
-										showSuggestions
-									/>
+									<AgentUI.Suggestions onSelect={ handleSuggestionSelect } showSuggestions />
 								</div>
 							) }
 						</AgentUI.ConversationView>

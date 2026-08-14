@@ -6,17 +6,14 @@ import {
 } from '@automattic/agenttic-ui';
 import React, { useEffect, useMemo, useRef } from 'react';
 import MessageTester from './MessageTester';
-import { ViewTools } from './playground/PlaygroundShell';
-import { SuggestionsTool } from './playground/SuggestionsTool';
 import { useDemoChat } from './hooks/useDemoChat';
 import { useImageUploads } from './hooks/useImageUploads';
+import { ViewTools } from './playground/PlaygroundShell';
+import { SuggestionsTool } from './playground/SuggestionsTool';
 
-const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
-	currentTheme,
-} ) => {
+const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { currentTheme } ) => {
 	const uploaderRef = useRef< ImageUploaderHandle >( null );
-	const { uploadedImages, handleFilesSelected, handleRemoveImage } =
-		useImageUploads();
+	const { uploadedImages, handleFilesSelected, handleRemoveImage } = useImageUploads();
 
 	const {
 		messages,
@@ -119,11 +116,7 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 
 				.sidebar-demo__header-button:hover {
 					color: ${ currentTheme === 'dark' ? '#fff' : '#1e1e1e' };
-					background: ${
-						currentTheme === 'dark'
-							? 'rgba(255, 255, 255, 0.08)'
-							: 'rgba(0, 0, 0, 0.06)'
-					};
+					background: ${ currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)' };
 				}
 
 				.sidebar-demo__chat {
@@ -170,25 +163,14 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 						>
 							<AgentUI.ConversationView>
 								<div className="sidebar-demo__header">
-									<button
-										className="sidebar-demo__header-button"
-										title="More options"
-									>
-										<svg
-											width="20"
-											height="20"
-											viewBox="0 0 24 24"
-											fill="currentColor"
-										>
+									<button className="sidebar-demo__header-button" title="More options">
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
 											<circle cx="12" cy="5" r="2" />
 											<circle cx="12" cy="12" r="2" />
 											<circle cx="12" cy="19" r="2" />
 										</svg>
 									</button>
-									<button
-										className="sidebar-demo__header-button"
-										title="History"
-									>
+									<button className="sidebar-demo__header-button" title="History">
 										<svg
 											width="20"
 											height="20"
@@ -203,10 +185,7 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 											<polyline points="12 6 12 12 16 14" />
 										</svg>
 									</button>
-									<button
-										className="sidebar-demo__header-button"
-										title="Close"
-									>
+									<button className="sidebar-demo__header-button" title="Close">
 										<svg
 											width="20"
 											height="20"
@@ -217,18 +196,8 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 											strokeLinecap="round"
 											strokeLinejoin="round"
 										>
-											<line
-												x1="18"
-												y1="6"
-												x2="6"
-												y2="18"
-											/>
-											<line
-												x1="6"
-												y1="6"
-												x2="18"
-												y2="18"
-											/>
+											<line x1="18" y1="6" x2="6" y2="18" />
+											<line x1="6" y1="6" x2="18" y2="18" />
 										</svg>
 									</button>
 								</div>
@@ -240,17 +209,10 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 										images={ uploadedImages }
 										onFilesSelected={ handleFilesSelected }
 										onRemoveImage={ handleRemoveImage }
-										acceptedFileTypes={ [
-											'image/jpeg',
-											'image/png',
-											'image/gif',
-											'image/webp',
-										] }
+										acceptedFileTypes={ [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ] }
 										showFileMetadata
 									/>
-									<AgentUI.Input
-										imageUploaderRef={ uploaderRef }
-									/>
+									<AgentUI.Input imageUploaderRef={ uploaderRef } />
 								</AgentUI.Footer>
 							</AgentUI.ConversationView>
 						</AgentUI.Container>

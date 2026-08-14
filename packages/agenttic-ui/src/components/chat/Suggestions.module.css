@@ -5,8 +5,8 @@
 	right: 0;
 	display: flex;
 	flex-wrap: nowrap;
-	gap: var(--spacing-2);
-	padding: var(--spacing-2) var(--spacing-1\.5);
+	gap: var( --spacing-2 );
+	padding: var( --spacing-2 ) var( --spacing-1\.5 );
 	overflow-x: auto;
 	overflow-y: hidden;
 	scrollbar-width: none;
@@ -18,7 +18,7 @@
 }
 
 .label {
-	font-size: var(--text-sm);
+	font-size: var( --text-sm );
 }
 
 /* New vertical style - stacked full-width buttons */
@@ -33,10 +33,10 @@
 		width: 100%;
 		height: unset;
 		justify-content: start;
-		font-size: var(--text-xs);
+		font-size: var( --text-xs );
 		line-height: 20px;
 		padding: 14px 16px;
-		border: 1px solid var(--color-muted);
+		border: 1px solid var( --color-muted );
 		border-radius: 0;
 		box-shadow: none;
 
@@ -45,21 +45,17 @@
 			flex-direction: column;
 
 			.label {
-				font-weight: var(--font-weight-semibold);
+				font-weight: var( --font-weight-semibold );
 			}
 
 			.description {
-				color: var(--color-muted-foreground);
+				color: var( --color-muted-foreground );
 			}
 		}
 
 		&:hover {
 			box-shadow: none;
-			background-color: color-mix(
-				in srgb,
-				var(--color-background) 50%,
-				var(--color-muted)
-			);
+			background-color: color-mix( in srgb, var( --color-background ) 50%, var( --color-muted ) );
 		}
 
 		&:focus-visible {
@@ -75,11 +71,11 @@
 		border-radius: 8px;
 	}
 
-	> div:first-of-type:not(:only-of-type) .button {
+	> div:first-of-type:not( :only-of-type ) .button {
 		border-radius: 8px 8px 0 0;
 	}
 
-	> div:last-of-type:not(:only-of-type) .button {
+	> div:last-of-type:not( :only-of-type ) .button {
 		border-radius: 0 0 8px 8px;
 	}
 }
@@ -87,9 +83,9 @@
 /* Floating style - appears behind compact state (old trunk vertical) */
 .floating {
 	flex-direction: column;
-	gap: var(--spacing-1);
+	gap: var( --spacing-1 );
 	overflow: visible;
 	padding: 1px; /* Account for the shadow of the buttons. */
-	padding-bottom: var(--spacing-1);
+	padding-bottom: var( --spacing-1 );
 	z-index: -1; /* Make them appear behind the compact state. */
 }

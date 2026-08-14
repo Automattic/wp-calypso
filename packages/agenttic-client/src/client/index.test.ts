@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createClient, sendMessageAndWait } from './index';
 import { createTextMessage } from './utils/index';
+import { createClient, sendMessageAndWait } from './index';
 import type { ToolProvider } from './types/index';
 
 // Mock fetch globally
@@ -33,12 +33,7 @@ describe( 'Client', () => {
 						},
 					];
 				},
-				async executeTool(
-					toolId: string,
-					args: any,
-					messageId?: string,
-					toolCallId?: string
-				) {
+				async executeTool( toolId: string, args: any, messageId?: string, toolCallId?: string ) {
 					executedToolCallId = toolCallId;
 					return {
 						result: { toolId, args, messageId },
@@ -87,11 +82,7 @@ describe( 'Client', () => {
 							},
 						} );
 
-						controller.enqueue(
-							encoder.encode(
-								`data: ${ inputRequiredEvent }\n\n`
-							)
-						);
+						controller.enqueue( encoder.encode( `data: ${ inputRequiredEvent }\n\n` ) );
 						controller.close();
 					},
 				} ),
@@ -129,9 +120,7 @@ describe( 'Client', () => {
 							},
 						} );
 
-						controller.enqueue(
-							encoder.encode( `data: ${ completionEvent }\n\n` )
-						);
+						controller.enqueue( encoder.encode( `data: ${ completionEvent }\n\n` ) );
 						controller.close();
 					},
 				} ),
@@ -194,8 +183,7 @@ describe( 'Client', () => {
 											{
 												type: 'data',
 												data: {
-													toolCallId:
-														'call-unavailable',
+													toolCallId: 'call-unavailable',
 													toolId: 'available-tool',
 													arguments: {},
 												},
@@ -208,11 +196,7 @@ describe( 'Client', () => {
 							},
 						} );
 
-						controller.enqueue(
-							encoder.encode(
-								`data: ${ inputRequiredEvent }\n\n`
-							)
-						);
+						controller.enqueue( encoder.encode( `data: ${ inputRequiredEvent }\n\n` ) );
 						controller.close();
 					},
 				} ),
@@ -224,9 +208,7 @@ describe( 'Client', () => {
 			} );
 
 			const result = await sendMessageAndWait( client, {
-				message: createTextMessage(
-					'Request an unavailable client tool'
-				),
+				message: createTextMessage( 'Request an unavailable client tool' ),
 			} );
 
 			expect( mockFetch ).toHaveBeenCalledTimes( 1 );
@@ -253,12 +235,7 @@ describe( 'Client', () => {
 						},
 					];
 				},
-				async executeTool(
-					toolId: string,
-					args: any,
-					messageId?: string,
-					_toolCallId?: string
-				) {
+				async executeTool( toolId: string, args: any, messageId?: string ) {
 					capturedMessageId = messageId;
 					return { result: 'tool executed' };
 				},
@@ -413,12 +390,7 @@ describe( 'Client', () => {
 						},
 					];
 				},
-				async executeTool(
-					toolId: string,
-					args: any,
-					messageId?: string,
-					_toolCallId?: string
-				) {
+				async executeTool( toolId: string, args: any, messageId?: string ) {
 					capturedMessageId = messageId;
 					return { result: 'tool executed' };
 				},
@@ -573,12 +545,7 @@ describe( 'Client', () => {
 						},
 					];
 				},
-				async executeTool(
-					toolId: string,
-					args: any,
-					messageId?: string,
-					_toolCallId?: string
-				) {
+				async executeTool( toolId: string, args: any, messageId?: string ) {
 					capturedMessageIds.push( messageId );
 					return { result: 'tool executed' };
 				},
@@ -752,9 +719,7 @@ describe( 'Client', () => {
 			} );
 
 			// Act: Send a message and let the client handle multiple rounds of tool calls
-			const userMessage = createTextMessage(
-				'Please use tools as needed'
-			);
+			const userMessage = createTextMessage( 'Please use tools as needed' );
 
 			const updates = [];
 			for await ( const update of client.sendMessageStream( {
@@ -797,12 +762,7 @@ describe( 'Client', () => {
 						},
 					];
 				},
-				async executeTool(
-					toolId: string,
-					args: any,
-					messageId?: string,
-					toolCallId?: string
-				) {
+				async executeTool( toolId: string, args: any, messageId?: string, toolCallId?: string ) {
 					executedTools.push( {
 						toolId,
 						args,
@@ -835,8 +795,7 @@ describe( 'Client', () => {
 											{
 												type: 'data',
 												data: {
-													toolCallId:
-														'call-running-123',
+													toolCallId: 'call-running-123',
 													toolId: 'set_processing_state',
 													arguments: {
 														clientId: 'block-123',
@@ -876,9 +835,7 @@ describe( 'Client', () => {
 
 						controller.enqueue( encoder.encode( runningEvent ) );
 						setTimeout( () => {
-							controller.enqueue(
-								encoder.encode( completedEvent )
-							);
+							controller.enqueue( encoder.encode( completedEvent ) );
 							controller.close();
 						}, 10 );
 					},
@@ -1061,14 +1018,12 @@ describe( 'Client', () => {
 											{
 												type: 'data',
 												data: {
-													toolCallId:
-														'call-running-123',
+													toolCallId: 'call-running-123',
 													// Sanitized form of the ability name
 													toolId: 'big_sky__apply_block_edits',
 													arguments: {
 														// Raw, pre-validation shape
-														updates:
-															'[{"clientId":"abc"}]',
+														updates: '[{"clientId":"abc"}]',
 														summary: 'Editing',
 													},
 												},
@@ -1183,8 +1138,7 @@ describe( 'Client', () => {
 											{
 												type: 'data',
 												data: {
-													toolCallId:
-														'call-ability-1',
+													toolCallId: 'call-ability-1',
 													toolId: 'big_sky__apply_block_edits',
 													arguments: {
 														updates: [],
@@ -1403,15 +1357,11 @@ describe( 'Client', () => {
 			const continuationParts = continuationBody.params.message.parts;
 
 			// Should contain the file part from the original message in the history
-			const fileParts = continuationParts.filter(
-				( p: any ) => p.type === 'file'
-			);
+			const fileParts = continuationParts.filter( ( p: any ) => p.type === 'file' );
 			expect( fileParts ).toHaveLength( 1 );
 			expect( fileParts[ 0 ].file.name ).toBe( 'hero.jpg' );
 			expect( fileParts[ 0 ].file.mimeType ).toBe( 'image/jpeg' );
-			expect( fileParts[ 0 ].file.uri ).toBe(
-				'https://example.com/uploads/hero.jpg'
-			);
+			expect( fileParts[ 0 ].file.uri ).toBe( 'https://example.com/uploads/hero.jpg' );
 		} );
 	} );
 
@@ -1474,8 +1424,7 @@ describe( 'Client', () => {
 													{
 														type: 'data',
 														data: {
-															toolCallId:
-																'call-1',
+															toolCallId: 'call-1',
 															toolId: 'capture_screenshot',
 															arguments: {},
 														},
@@ -1545,20 +1494,13 @@ describe( 'Client', () => {
 
 			expect( mockFetch ).toHaveBeenCalledTimes( 2 );
 
-			const continuationBody = JSON.parse(
-				mockFetch.mock.calls[ 1 ][ 1 ].body
-			);
+			const continuationBody = JSON.parse( mockFetch.mock.calls[ 1 ][ 1 ].body );
 			const toolResultPart = continuationBody.params.message.parts.find(
-				( p: any ) =>
-					p.type === 'data' &&
-					p.data?.toolCallId === 'call-1' &&
-					'result' in p.data
+				( p: any ) => p.type === 'data' && p.data?.toolCallId === 'call-1' && 'result' in p.data
 			);
 
 			expect( toolResultPart ).toBeDefined();
-			expect( toolResultPart.data.__file_parts ).toEqual( [
-				screenshot,
-			] );
+			expect( toolResultPart.data.__file_parts ).toEqual( [ screenshot ] );
 		} );
 
 		it( 'omits `__file_parts` for tools that return no files', async () => {
@@ -1605,8 +1547,7 @@ describe( 'Client', () => {
 													{
 														type: 'data',
 														data: {
-															toolCallId:
-																'call-1',
+															toolCallId: 'call-1',
 															toolId: 'plain_tool',
 															arguments: {},
 														},
@@ -1673,14 +1614,9 @@ describe( 'Client', () => {
 				void update;
 			}
 
-			const continuationBody = JSON.parse(
-				mockFetch.mock.calls[ 1 ][ 1 ].body
-			);
+			const continuationBody = JSON.parse( mockFetch.mock.calls[ 1 ][ 1 ].body );
 			const toolResultPart = continuationBody.params.message.parts.find(
-				( p: any ) =>
-					p.type === 'data' &&
-					p.data?.toolCallId === 'call-1' &&
-					'result' in p.data
+				( p: any ) => p.type === 'data' && p.data?.toolCallId === 'call-1' && 'result' in p.data
 			);
 
 			expect( toolResultPart ).toBeDefined();
@@ -1698,9 +1634,7 @@ describe( 'Client', () => {
 				body: new ReadableStream( {
 					start( controller ) {
 						controller.enqueue(
-							encoder.encode(
-								`data: {"error":{"message":"API rate limit exceeded"}}\n\n`
-							)
+							encoder.encode( 'data: {"error":{"message":"API rate limit exceeded"}}\n\n' )
 						);
 						controller.close();
 					},
@@ -1713,7 +1647,8 @@ describe( 'Client', () => {
 				const stream = client.sendMessageStream( {
 					message: createTextMessage( 'Hello' ),
 				} );
-				for await ( const _update of stream ) {
+				const iterator = stream[ Symbol.asyncIterator ]();
+				while ( ! ( await iterator.next() ).done ) {
 					// Should throw before yielding any updates
 				}
 			} ).rejects.toThrow( 'Streaming error: API rate limit exceeded' );
@@ -1822,9 +1757,7 @@ describe( 'Client', () => {
 								},
 							},
 						} );
-						controller.enqueue(
-							encoder.encode( `data: ${ completionEvent }\n\n` )
-						);
+						controller.enqueue( encoder.encode( `data: ${ completionEvent }\n\n` ) );
 						setTimeout( () => controller.close(), 10 );
 					},
 				} );
@@ -1907,8 +1840,7 @@ describe( 'Client', () => {
 													toolCallId: 'call-123',
 													toolId: 'demo__get_user_info', // Sanitized name
 													arguments: {
-														includePreferences:
-															true,
+														includePreferences: true,
 													},
 												},
 											},
@@ -1961,9 +1893,7 @@ describe( 'Client', () => {
 								},
 							},
 						} );
-						controller.enqueue(
-							encoder.encode( `data: ${ completionEvent }\n\n` )
-						);
+						controller.enqueue( encoder.encode( `data: ${ completionEvent }\n\n` ) );
 						setTimeout( () => controller.close(), 10 );
 					},
 				} );
@@ -2116,9 +2046,7 @@ describe( 'Client', () => {
 								},
 							},
 						} );
-						controller.enqueue(
-							encoder.encode( `data: ${ completionEvent }\n\n` )
-						);
+						controller.enqueue( encoder.encode( `data: ${ completionEvent }\n\n` ) );
 						setTimeout( () => controller.close(), 10 );
 					},
 				} );
@@ -2250,9 +2178,7 @@ describe( 'Client', () => {
 								},
 							},
 						} );
-						controller.enqueue(
-							encoder.encode( `data: ${ completionEvent }\n\n` )
-						);
+						controller.enqueue( encoder.encode( `data: ${ completionEvent }\n\n` ) );
 						setTimeout( () => controller.close(), 10 );
 					},
 				} );

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Message } from '../client/types/index';
 import { messageCarriesToolPayload } from './conversationUtils';
+import type { Message } from '../client/types/index';
 
 const messageWithText = ( text: string ): Message => ( {
 	role: 'agent',
@@ -15,39 +15,29 @@ describe( 'messageCarriesToolPayload', () => {
 			tool_id: 'big_sky__show_component',
 			data: { type: 'color-picker', props: { variations: [] } },
 		} );
-		expect( messageCarriesToolPayload( messageWithText( payload ) ) ).toBe(
-			true
-		);
+		expect( messageCarriesToolPayload( messageWithText( payload ) ) ).toBe( true );
 	} );
 
 	it( 'ignores plain agent prose (token-streamed text is not a payload)', () => {
 		expect(
-			messageCarriesToolPayload(
-				messageWithText( 'Here are some red palettes — pick one!' )
-			)
+			messageCarriesToolPayload( messageWithText( 'Here are some red palettes — pick one!' ) )
 		).toBe( false );
 	} );
 
 	it( 'ignores valid JSON that is not a tool payload', () => {
-		expect(
-			messageCarriesToolPayload(
-				messageWithText( JSON.stringify( { foo: 'bar' } ) )
-			)
-		).toBe( false );
+		expect( messageCarriesToolPayload( messageWithText( JSON.stringify( { foo: 'bar' } ) ) ) ).toBe(
+			false
+		);
 	} );
 
 	it( 'ignores a payload whose tool_id is not a string', () => {
 		expect(
-			messageCarriesToolPayload(
-				messageWithText( JSON.stringify( { tool_id: 42 } ) )
-			)
+			messageCarriesToolPayload( messageWithText( JSON.stringify( { tool_id: 42 } ) ) )
 		).toBe( false );
 	} );
 
 	it( 'ignores empty / whitespace text', () => {
-		expect( messageCarriesToolPayload( messageWithText( '   ' ) ) ).toBe(
-			false
-		);
+		expect( messageCarriesToolPayload( messageWithText( '   ' ) ) ).toBe( false );
 	} );
 
 	it( 'ignores messages without a text part', () => {

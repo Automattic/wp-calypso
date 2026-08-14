@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from './button';
 import { ArrowUpIcon } from '../icons/ArrowUpIcon';
+import { Button } from './button';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof Button > = {
 	title: 'Primitives/Button',
@@ -181,9 +181,7 @@ export const LinkDisabled: Story = {
 export const AllVariantsMatrix: Story = {
 	name: 'All Variants & States',
 	render: () => (
-		<div
-			style={ { display: 'flex', flexDirection: 'column', gap: '2rem' } }
-		>
+		<div style={ { display: 'flex', flexDirection: 'column', gap: '2rem' } }>
 			{ /* Primary Row */ }
 			<div>
 				<h4
@@ -314,9 +312,7 @@ export const AllVariantsMatrix: Story = {
 export const IconVariations: Story = {
 	name: 'Icon Usage Patterns',
 	render: () => (
-		<div
-			style={ { display: 'flex', flexDirection: 'column', gap: '2rem' } }
-		>
+		<div style={ { display: 'flex', flexDirection: 'column', gap: '2rem' } }>
 			<div>
 				<h4
 					style={ {
@@ -382,11 +378,7 @@ export const IconVariations: Story = {
 					<Button variant="primary" icon={ <ArrowUpIcon /> } />
 					<Button variant="ghost" icon={ <ArrowUpIcon /> } />
 					<Button variant="outline" icon={ <ArrowUpIcon /> } />
-					<Button
-						variant="ghost"
-						icon={ <ArrowUpIcon /> }
-						size="sm"
-					/>
+					<Button variant="ghost" icon={ <ArrowUpIcon /> } size="sm" />
 				</div>
 			</div>
 		</div>

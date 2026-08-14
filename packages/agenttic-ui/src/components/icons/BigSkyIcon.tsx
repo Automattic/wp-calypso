@@ -5,11 +5,7 @@ interface BigSkyIconProps extends BaseIconProps {
 	fullBleed?: boolean;
 }
 
-export function BigSkyIcon( {
-	className,
-	size = 24,
-	fullBleed = false,
-}: BigSkyIconProps ) {
+export function BigSkyIcon( { className, size = 24, fullBleed = false }: BigSkyIconProps ) {
 	return (
 		<svg
 			className={ className }

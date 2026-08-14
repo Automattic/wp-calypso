@@ -1,25 +1,12 @@
 // @vitest-environment jsdom
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import {
-	afterEach,
-	beforeAll,
-	beforeEach,
-	describe,
-	expect,
-	it,
-	vi,
-} from 'vitest';
-import {
-	type AgentUIContextValue,
-	AgentUIProvider,
-} from '../../context/AgentUIContext';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { type AgentUIContextValue, AgentUIProvider } from '../../context/AgentUIContext';
 import { Suggestions } from './Suggestions';
 import type { Suggestion } from '../../types';
 
-(
-	globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 // The dropdown branch renders a Radix Popover, which relies on browser APIs
 // jsdom does not implement. Only needed for the description-wiring tests below.
@@ -27,13 +14,8 @@ beforeAll( () => {
 	if ( ! HTMLElement.prototype.hasPointerCapture ) {
 		HTMLElement.prototype.hasPointerCapture = () => false;
 	}
-	if (
-		! ( globalThis as unknown as { ResizeObserver?: unknown } )
-			.ResizeObserver
-	) {
-		(
-			globalThis as unknown as { ResizeObserver: unknown }
-		 ).ResizeObserver = class {
+	if ( ! ( globalThis as unknown as { ResizeObserver?: unknown } ).ResizeObserver ) {
+		( globalThis as unknown as { ResizeObserver: unknown } ).ResizeObserver = class {
 			observe() {}
 			unobserve() {}
 			disconnect() {}
@@ -95,9 +77,12 @@ describe( 'Suggestions reportSuggestionsRendered', () => {
 		render( 'embedded', report, { suggestions } );
 
 		expect( report ).toHaveBeenCalledOnce();
-		expect(
-			report.mock.calls[ 0 ][ 0 ].map( ( s: Suggestion ) => s.id )
-		).toEqual( [ 'a', 'b', 'c', 'd' ] );
+		expect( report.mock.calls[ 0 ][ 0 ].map( ( s: Suggestion ) => s.id ) ).toEqual( [
+			'a',
+			'b',
+			'c',
+			'd',
+		] );
 	} );
 
 	it( 'reports at most three when floating (after truncation)', () => {
@@ -105,9 +90,11 @@ describe( 'Suggestions reportSuggestionsRendered', () => {
 		render( 'floating', report, { suggestions } );
 
 		expect( report ).toHaveBeenCalledOnce();
-		expect(
-			report.mock.calls[ 0 ][ 0 ].map( ( s: Suggestion ) => s.id )
-		).toEqual( [ 'a', 'b', 'c' ] );
+		expect( report.mock.calls[ 0 ][ 0 ].map( ( s: Suggestion ) => s.id ) ).toEqual( [
+			'a',
+			'b',
+			'c',
+		] );
 	} );
 
 	it( 'does not fire while hidden', () => {
@@ -135,9 +122,7 @@ describe( 'Suggestions reportSuggestionsRendered', () => {
 
 		expect( report ).toHaveBeenCalledTimes( 2 );
 		expect(
-			report.mock.calls.map( ( [ shown ]: [ Suggestion[] ] ) =>
-				shown.map( ( s ) => s.id )
-			)
+			report.mock.calls.map( ( [ shown ]: [ Suggestion[] ] ) => shown.map( ( s ) => s.id ) )
 		).toEqual( [
 			[ 'a', 'b' ],
 			[ 'a', 'b', 'c', 'd' ],
@@ -162,9 +147,7 @@ describe( 'Suggestions dropdown description wiring', () => {
 			layout: 'vertical',
 		} );
 
-		expect( container.textContent ).toContain(
-			'Adjust the tone of your post.'
-		);
+		expect( container.textContent ).toContain( 'Adjust the tone of your post.' );
 	} );
 
 	it( 'hides the dropdown description in horizontal layout', () => {
@@ -173,8 +156,6 @@ describe( 'Suggestions dropdown description wiring', () => {
 			layout: 'horizontal',
 		} );
 
-		expect( container.textContent ).not.toContain(
-			'Adjust the tone of your post.'
-		);
+		expect( container.textContent ).not.toContain( 'Adjust the tone of your post.' );
 	} );
 } );

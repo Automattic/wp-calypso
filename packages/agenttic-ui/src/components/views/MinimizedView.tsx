@@ -1,10 +1,10 @@
+import { __ } from '@wordpress/i18n';
+import { motion } from 'framer-motion';
 import React, { useEffect, useRef } from 'react';
-import { Button } from '../ui/button';
+import { morphSpring } from '../animations';
 import { BigSkyIcon } from '../icons/BigSkyIcon';
 import { ChevronUpIcon } from '../icons/ChevronUpIcon';
-import { motion } from 'framer-motion';
-import { morphSpring } from '../animations';
-import { __ } from '@wordpress/i18n';
+import { Button } from '../ui/button';
 import styles from './MinimizedView.module.css';
 
 interface MinimizedViewProps {

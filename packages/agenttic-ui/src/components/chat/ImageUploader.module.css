@@ -36,7 +36,7 @@
 }
 
 .clickArea:focus-visible {
-	outline: 2px solid var(--color-primary);
+	outline: 2px solid var( --color-primary );
 	outline-offset: 2px;
 	border-radius: 4px;
 }
@@ -48,9 +48,9 @@
 .draggingMessage {
 	padding: 60px 24px;
 	text-align: center;
-	border: 1px dashed var(--color-muted);
-	border-radius: 12px;
-	background-color: var(--color-muted);
+	border: 1px dashed var( --color-muted );
+	border-radius: 8px;
+	background-color: var( --color-muted );
 	margin-bottom: 8px;
 	position: relative;
 	min-height: 150px;
@@ -63,13 +63,13 @@
 
 .draggingMessage p {
 	margin: 0;
-	color: var(--color-muted-foreground);
+	color: var( --color-muted-foreground );
 	font-size: 15px;
 	line-height: 1.6;
 }
 
 .uploader.draggingOver .draggingMessage {
-	border-color: var(--color-primary);
+	border-color: var( --color-primary );
 	background-color: transparent;
 }
 
@@ -89,7 +89,7 @@
 	padding: 8px 8px;
 	border-radius: 8px;
 	border: none;
-	background-color: var(--color-muted);
+	background-color: var( --color-muted );
 	cursor: move;
 	transition:
 		transform 0.2s ease,
@@ -109,7 +109,7 @@
 	height: 20px;
 	border-radius: 50%;
 	border: none;
-	background-color: var(--color-popover-muted, #2f2f2f);
+	background-color: var( --color-popover-muted, #2f2f2f );
 	color: #fff;
 	font-size: 16px;
 	line-height: 1;
@@ -126,7 +126,7 @@
 }
 
 .removeButton svg {
-	color: var(--color-muted-foreground, #8f8f8f);
+	color: var( --color-muted-foreground, #8f8f8f );
 }
 
 .previewItem:hover .removeButton {
@@ -142,7 +142,7 @@
 }
 
 .removeButton:focus-visible {
-	outline: 2px solid var(--color-primary);
+	outline: 2px solid var( --color-primary );
 	outline-offset: 2px;
 }
 
@@ -150,7 +150,7 @@
 	width: 48px;
 	height: 48px;
 	object-fit: cover;
-	border-radius: 6px;
+	border-radius: 4px;
 }
 
 .previewMeta {
@@ -163,7 +163,7 @@
 
 .previewMeta span.previewFilename {
 	font-size: 14px !important;
-	color: var(--color-foreground);
+	color: var( --color-foreground );
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -172,7 +172,7 @@
 
 .previewMeta span.previewType {
 	font-size: 12px !important;
-	color: var(--color-muted-foreground);
+	color: var( --color-muted-foreground );
 	text-transform: uppercase;
 	font-weight: 400;
 }
@@ -191,7 +191,7 @@
 	justify-content: center;
 	/* Solid neutral: reads on light and dark surfaces, unlike a translucent scrim */
 	background-color: #3c3c3c;
-	border-radius: 6px;
+	border-radius: 4px;
 }
 
 .thumbnail {
@@ -207,14 +207,14 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: rgba(0, 0, 0, 0.4);
-	border-radius: 6px;
+	background-color: rgba( 0, 0, 0, 0.4 );
+	border-radius: 4px;
 }
 
 .spinner {
 	width: 20px;
 	height: 20px;
-	border: 2px solid rgba(255, 255, 255, 0.35);
+	border: 2px solid rgba( 255, 255, 255, 0.35 );
 	border-top-color: #fff;
 	border-radius: 50%;
 	animation: spin 0.8s linear infinite;
@@ -222,20 +222,20 @@
 
 @keyframes spin {
 	to {
-		transform: rotate(360deg);
+		transform: rotate( 360deg );
 	}
 }
 
 .invalidMessage {
 	padding: 16px;
-	background-color: var(--color-error-background);
-	border: 1px solid var(--color-error);
+	background-color: var( --color-error-background );
+	border: 1px solid var( --color-error );
 	border-radius: 8px;
 	text-align: center;
 }
 
 .invalidMessage p {
 	margin: 0;
-	color: var(--color-error);
+	color: var( --color-error );
 	font-size: 14px;
 }

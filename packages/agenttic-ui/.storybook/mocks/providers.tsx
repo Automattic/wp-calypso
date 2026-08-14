@@ -46,9 +46,7 @@ export const MockProviders: React.FC< MockProvidersProps > = ( {
 			},
 		],
 		executeTool: async ( toolId: string, args: any ) => ( {
-			result: `Mock result for ${ toolId } with args: ${ JSON.stringify(
-				args
-			) }`,
+			result: `Mock result for ${ toolId } with args: ${ JSON.stringify( args ) }`,
 			returnToAgent: true,
 		} ),
 	};

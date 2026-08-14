@@ -18,8 +18,7 @@ export default function DemoMoreMenu() {
 			}
 		};
 		document.addEventListener( 'mousedown', handleClickOutside );
-		return () =>
-			document.removeEventListener( 'mousedown', handleClickOutside );
+		return () => document.removeEventListener( 'mousedown', handleClickOutside );
 	}, [ open ] );
 
 	return (

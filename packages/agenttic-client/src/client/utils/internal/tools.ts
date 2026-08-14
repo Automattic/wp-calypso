@@ -1,11 +1,10 @@
-import type { Message } from '../../types/index';
 import { extractToolCallsFromMessage } from '../core';
+import type { Message } from '../../types/index';
 
 /**
  * Check if a message contains tool calls
- *
  * @param message - The message to check
- * @return True if the message contains tool calls, false otherwise
+ * @returns True if the message contains tool calls, false otherwise
  */
 export function hasToolCalls( message: Message ): boolean {
 	if ( ! message || ! message.parts || ! Array.isArray( message.parts ) ) {
@@ -18,9 +17,8 @@ export function hasToolCalls( message: Message ): boolean {
 
 /**
  * Get the number of tool calls in a message
- *
  * @param message - The message to analyze
- * @return The number of tool calls found
+ * @returns The number of tool calls found
  */
 export function getToolCallCount( message: Message ): number {
 	if ( ! message || ! message.parts || ! Array.isArray( message.parts ) ) {

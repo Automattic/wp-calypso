@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
-import styles from './ImageRenderer.module.css';
 import { motion } from 'framer-motion';
-import { CheckIcon } from '../icons/CheckIcon';
+import React, { useEffect, useState, useRef } from 'react';
 import { cn } from '../../utils/classNames';
+import { CheckIcon } from '../icons/CheckIcon';
+import styles from './ImageRenderer.module.css';
 
 export interface ImageData {
 	url: string;
@@ -37,18 +37,14 @@ export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 		}
 
 		const handleClickOutside = ( event: MouseEvent ) => {
-			if (
-				containerRef.current &&
-				! containerRef.current.contains( event.target as Node )
-			) {
+			if ( containerRef.current && ! containerRef.current.contains( event.target as Node ) ) {
 				setSelectedUrl( null );
 				onSelect( null );
 			}
 		};
 
 		window.addEventListener( 'click', handleClickOutside, true );
-		return () =>
-			window.removeEventListener( 'click', handleClickOutside, true );
+		return () => window.removeEventListener( 'click', handleClickOutside, true );
 	}, [ onSelect, disabled, selectedUrl ] );
 
 	return (
@@ -66,20 +62,14 @@ export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 						key={ image.url }
 						className={ cn(
 							styles.imageButton,
-							! disabled && selectedUrl === image.url
-								? styles.selected
-								: '',
+							! disabled && selectedUrl === image.url ? styles.selected : '',
 							disabled ? styles.disabled : ''
 						) }
 						onClick={ () => handleImageClick( image ) }
 						disabled={ disabled }
 						type="button"
 					>
-						<img
-							src={ image.url }
-							alt={ image.alt }
-							className={ styles.image }
-						/>
+						<img src={ image.url } alt={ image.alt } className={ styles.image } />
 					</button>
 				) ) }
 			</div>

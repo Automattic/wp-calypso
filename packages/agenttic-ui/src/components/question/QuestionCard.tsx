@@ -1,14 +1,11 @@
 import { type ReactNode } from 'react';
-import type { QuestionChoice, QuestionPrompt } from '../../types';
 import { cn } from '../../utils/classNames';
 import styles from './QuestionCard.module.css';
+import type { QuestionChoice, QuestionPrompt } from '../../types';
 
 export interface QuestionCardProps {
 	prompt: QuestionPrompt;
-	onAnswer: (
-		answer: string,
-		choice: QuestionChoice
-	) => void | Promise< void >;
+	onAnswer: ( answer: string, choice: QuestionChoice ) => void | Promise< void >;
 	disabled?: boolean;
 	answered?: boolean;
 	answeredChoice?: string;
@@ -38,10 +35,7 @@ export function QuestionCard( {
 				{ prompt.question }
 			</p>
 			<div
-				className={ cn(
-					styles.choices,
-					choices.length === 4 ? styles.choicesGrid : undefined
-				) }
+				className={ cn( styles.choices, choices.length === 4 ? styles.choicesGrid : undefined ) }
 				data-slot="choices"
 			>
 				{ choices.map( ( choice, index ) => {
@@ -53,10 +47,7 @@ export function QuestionCard( {
 							key={ `${ choice.label }-${ index }` }
 							type="button"
 							data-slot="choice"
-							className={ cn(
-								styles.choice,
-								isAnsweredChoice ? styles.answered : undefined
-							) }
+							className={ cn( styles.choice, isAnsweredChoice ? styles.answered : undefined ) }
 							disabled={ controlsDisabled }
 							aria-pressed={ isAnsweredChoice || undefined }
 							onClick={ () => onAnswer( answer, choice ) }
@@ -65,10 +56,7 @@ export function QuestionCard( {
 								{ choice.label }
 							</span>
 							{ choice.description ? (
-								<span
-									className={ styles.description }
-									data-slot="description"
-								>
+								<span className={ styles.description } data-slot="description">
 									{ choice.description }
 								</span>
 							) : null }

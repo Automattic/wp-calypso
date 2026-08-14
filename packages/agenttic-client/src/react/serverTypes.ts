@@ -3,8 +3,8 @@
  * Maps to odie-assistant.php endpoints on WordPress.com
  */
 
-import type { FilePart, Message, Part, TextPart } from '../client/types/index';
 import { generateMessageId } from '../client/utils/core';
+import type { FilePart, Message, Part, TextPart } from '../client/types/index';
 
 /**
  * Server-side file part structure from odie-assistant API
@@ -108,9 +108,7 @@ export interface ServerConversationListItem {
  * Transform server message to client Message format
  * @param serverMessage - Server message from odie-assistant API
  */
-export function serverMessageToMessage(
-	serverMessage: ServerMessage
-): Message {
+export function serverMessageToMessage( serverMessage: ServerMessage ): Message {
 	const parts: Part[] = [];
 	const context = serverMessage.context;
 
@@ -139,11 +137,7 @@ export function serverMessageToMessage(
 	}
 
 	// Add file parts from context (images/attachments)
-	if (
-		context &&
-		! Array.isArray( context ) &&
-		Array.isArray( context.file_parts )
-	) {
+	if ( context && ! Array.isArray( context ) && Array.isArray( context.file_parts ) ) {
 		for ( const serverFilePart of context.file_parts ) {
 			if ( serverFilePart?.uri ) {
 				const part: FilePart = {
@@ -153,9 +147,7 @@ export function serverMessageToMessage(
 						uri: serverFilePart.uri,
 					},
 					// Pass attachment ID in metadata if available
-					metadata: serverFilePart.id
-						? { id: serverFilePart.id }
-						: undefined,
+					metadata: serverFilePart.id ? { id: serverFilePart.id } : undefined,
 				};
 				parts.push( part );
 			}
@@ -165,10 +157,8 @@ export function serverMessageToMessage(
 	// Preserve flags (e.g. forward_to_human_support) and sources from context as a data part.
 	if ( context && ! Array.isArray( context ) ) {
 		const ctx = context as ServerMessageContext;
-		const hasFlags =
-			ctx.flags && typeof ctx.flags === 'object' && ctx.flags !== null;
-		const hasSources =
-			Array.isArray( ctx.sources ) && ctx.sources.length > 0;
+		const hasFlags = ctx.flags && typeof ctx.flags === 'object' && ctx.flags !== null;
+		const hasSources = Array.isArray( ctx.sources ) && ctx.sources.length > 0;
 
 		if ( hasFlags || hasSources ) {
 			const data: Record< string, unknown > = {};
@@ -190,15 +180,12 @@ export function serverMessageToMessage(
 
 	// Map server role to client role
 	// 'bot' and 'system' both map to 'agent'
-	const role: 'user' | 'agent' =
-		serverMessage.role === 'user' ? 'user' : 'agent';
+	const role: 'user' | 'agent' = serverMessage.role === 'user' ? 'user' : 'agent';
 
 	// Parse MySQL datetime to timestamp
 	const timestamp = serverMessage.ts
 		? serverMessage.ts * 1000 // Convert Unix timestamp to milliseconds
-		: new Date(
-				serverMessage.created_at.replace( ' ', 'T' ) + 'Z'
-		  ).getTime();
+		: new Date( serverMessage.created_at.replace( ' ', 'T' ) + 'Z' ).getTime();
 
 	return {
 		role,
@@ -270,9 +257,7 @@ export function serverChatToLoadResult(
 		itemsPerPage: serverChat.metadata?.items_per_page ?? 10,
 		totalPages: serverChat.metadata?.total_pages ?? 1,
 		totalMessages: serverChat.metadata?.total_messages ?? messages.length,
-		hasMore:
-			( serverChat.metadata?.current_page ?? 1 ) <
-			( serverChat.metadata?.total_pages ?? 1 ),
+		hasMore: ( serverChat.metadata?.current_page ?? 1 ) < ( serverChat.metadata?.total_pages ?? 1 ),
 	};
 
 	return {

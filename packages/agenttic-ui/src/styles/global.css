@@ -1,4 +1,4 @@
-@import "./tokens.css";
+@import './tokens.css';
 
 @layer base {
 	.agenttic {
@@ -14,7 +14,7 @@
 		}
 
 		* {
-			outline-color: var(--color-ring);
+			outline-color: var( --color-ring );
 		}
 
 		button,
@@ -41,11 +41,11 @@
 		}
 
 		/* Should reflect the constant NON_DRAGGABLE_SELECTORS */
-		[data-slot="messages"],
-		[data-slot="chat-input"],
-		[data-slot="chat-footer"],
-		[data-slot="chat-compliance-disclosure"],
-		[data-slot="chat-header"] [data-slot="button"] {
+		[data-slot='messages'],
+		[data-slot='chat-input'],
+		[data-slot='chat-footer'],
+		[data-slot='chat-compliance-disclosure'],
+		[data-slot='chat-header'] [data-slot='button'] {
 			cursor: default;
 		}
 	}

@@ -11,10 +11,7 @@ export function AltIcon( { className, size = 24 }: BaseIconProps ) {
 			className={ className }
 			aria-hidden="true"
 		>
-			<path
-				fill="currentColor"
-				d="M8.082 12.589H6.667l.68-2.308h.034l.701 2.308Z"
-			/>
+			<path fill="currentColor" d="M8.082 12.589H6.667l.68-2.308h.034l.701 2.308Z" />
 			<path
 				fill="currentColor"
 				fillRule="evenodd"

@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import type { Suggestion } from '../../types';
+import { useMultiTimeout } from '../../hooks/useMultiTimeout';
 import { type ActionButton, ChatInput } from '../chat/ChatInput';
 import { Suggestions } from '../chat/Suggestions';
-import { useMultiTimeout } from '../../hooks/useMultiTimeout';
+import type { Suggestion } from '../../types';
 
 // Constants for better maintainability
 const SUGGESTIONS_AUTO_HIDE_DELAY = 4000; // 4 seconds
@@ -126,13 +126,7 @@ export function CompactView( {
 		setSuggestionsVisible( true );
 
 		scheduleSuggestionsHide();
-	}, [
-		value,
-		suggestions,
-		dropdownOpen,
-		clearAllTimeouts,
-		scheduleSuggestionsHide,
-	] );
+	}, [ value, suggestions, dropdownOpen, clearAllTimeouts, scheduleSuggestionsHide ] );
 
 	return (
 		<>

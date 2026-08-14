@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import autoprefixer from 'autoprefixer';
+import { defineConfig } from 'vite';
 import { libInjectCss } from 'vite-plugin-lib-inject-css';
 
 export default defineConfig( {
@@ -9,10 +9,7 @@ export default defineConfig( {
 			entry: {
 				index: resolve( __dirname, 'src/index.ts' ),
 				mocks: resolve( __dirname, 'src/mocks/index.ts' ),
-				'agents-api/index': resolve(
-					__dirname,
-					'src/agents-api/index.ts'
-				),
+				'agents-api/index': resolve( __dirname, 'src/agents-api/index.ts' ),
 			},
 			name: 'AgentticClient',
 			fileName: ( format, entryName ) => `${ entryName }.js`,

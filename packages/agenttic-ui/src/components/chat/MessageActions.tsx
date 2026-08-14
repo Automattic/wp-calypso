@@ -1,16 +1,13 @@
-import type { Message, MessageAction } from '../../types';
 import { Button } from '../ui/button';
 import styles from './MessageActions.module.css';
+import type { Message, MessageAction } from '../../types';
 
 interface MessageActionsProps {
 	message: Message;
 	actions?: MessageAction[];
 }
 
-export function MessageActions( {
-	message,
-	actions: actionsProp,
-}: MessageActionsProps ) {
+export function MessageActions( { message, actions: actionsProp }: MessageActionsProps ) {
 	const actions = actionsProp || message.actions;
 
 	if ( ! actions || actions.length === 0 ) {
@@ -27,12 +24,7 @@ export function MessageActions( {
 			{ actions.map( ( action: MessageAction ) => {
 				if ( action.type === 'component' ) {
 					const ActionComponent = action.component;
-					return (
-						<ActionComponent
-							key={ action.id }
-							{ ...( action.componentProps || {} ) }
-						/>
-					);
+					return <ActionComponent key={ action.id } { ...( action.componentProps || {} ) } />;
 				}
 				return (
 					<Button

@@ -2,12 +2,10 @@
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { MotionValue } from 'framer-motion';
+import { type AgentUIContextValue, AgentUIProvider } from '../../context/AgentUIContext';
+import { Chat } from './Chat';
 import type { ChatState } from '../../types';
-import {
-	type AgentUIContextValue,
-	AgentUIProvider,
-} from '../../context/AgentUIContext';
+import type { MotionValue } from 'framer-motion';
 
 // Capture every animate() call so we can assert what the minimize effect drives
 // the `y` motion value toward. Framer's spring physics run on rAF and cannot be
@@ -29,10 +27,7 @@ const { animateMock, dragStartSpy, floatingDragProps } = vi.hoisted( () => ( {
 	},
 } ) );
 vi.mock( 'framer-motion', async () => {
-	const actual =
-		await vi.importActual< typeof import('framer-motion') >(
-			'framer-motion'
-		);
+	const actual = await vi.importActual< typeof import('framer-motion') >( 'framer-motion' );
 	const { createElement } = await import( 'react' );
 	return {
 		...actual,
@@ -42,9 +37,7 @@ vi.mock( 'framer-motion', async () => {
 		useDragControls: () => {
 			const controls = actual.useDragControls();
 			const originalStart = controls.start.bind( controls );
-			controls.start = (
-				...args: Parameters< typeof controls.start >
-			) => {
+			controls.start = ( ...args: Parameters< typeof controls.start > ) => {
 				dragStartSpy( ...args );
 				return originalStart( ...args );
 			};
@@ -74,11 +67,7 @@ vi.mock( 'framer-motion', async () => {
 	};
 } );
 
-import { Chat } from './Chat';
-
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 const SEED_Y = -100; // Panel dragged upward; within the clamp for jsdom's 768px height.
 
@@ -108,10 +97,7 @@ function Container( { state }: { state: ChatState } ) {
 
 // Pull the `y` motion value and target out of the most recent animate() call.
 function lastAnimate(): { value: MotionValue< number >; target: number } {
-	const call = animateMock.mock.calls.at( -1 ) as unknown as [
-		MotionValue< number >,
-		number,
-	];
+	const call = animateMock.mock.calls.at( -1 ) as unknown as [ MotionValue< number >, number ];
 	return { value: call[ 0 ], target: call[ 1 ] };
 }
 
@@ -225,9 +211,7 @@ function ResizableContainer( {
 // Reads the seeded size from the inner content div, which binds the width/height
 // motion values through its inline style on the initial render.
 function readPanelSize( root: HTMLElement ): { width: number; height: number } {
-	const content = root.querySelector< HTMLElement >(
-		'[data-slot="chat-floating"] > div'
-	);
+	const content = root.querySelector< HTMLElement >( '[data-slot="chat-floating"] > div' );
 	if ( ! content ) {
 		throw new Error( 'content element not found' );
 	}
@@ -238,9 +222,7 @@ function readPanelSize( root: HTMLElement ): { width: number; height: number } {
 }
 
 function getHandle( edge: string ): HTMLElement {
-	const handle = document.querySelector< HTMLElement >(
-		`[data-resize-edge="${ edge }"]`
-	);
+	const handle = document.querySelector< HTMLElement >( `[data-resize-edge="${ edge }"]` );
 	if ( ! handle ) {
 		throw new Error( `resize handle not found: ${ edge }` );
 	}
@@ -251,34 +233,22 @@ function getHandle( edge: string ): HTMLElement {
 // inside act() so the latest x/y motion-value writes land on the element style.
 async function flushFrame(): Promise< void > {
 	await act( async () => {
-		await new Promise< void >( ( resolve ) =>
-			requestAnimationFrame( () => resolve() )
-		);
+		await new Promise< void >( ( resolve ) => requestAnimationFrame( () => resolve() ) );
 	} );
 }
 
 // Reads the last { x, y } the panel transform was set to from the element style.
 function readPanelTransform(): { x: number; y: number } {
-	const floating = document.querySelector< HTMLElement >(
-		'[data-slot="chat-floating"]'
-	);
+	const floating = document.querySelector< HTMLElement >( '[data-slot="chat-floating"]' );
 	const transform = floating?.style.transform ?? '';
-	const x = parseFloat(
-		transform.match( /translateX\(([-\d.]+)px\)/ )?.[ 1 ] ?? '0'
-	);
-	const y = parseFloat(
-		transform.match( /translateY\(([-\d.]+)px\)/ )?.[ 1 ] ?? '0'
-	);
+	const x = parseFloat( transform.match( /translateX\(([-\d.]+)px\)/ )?.[ 1 ] ?? '0' );
+	const y = parseFloat( transform.match( /translateY\(([-\d.]+)px\)/ )?.[ 1 ] ?? '0' );
 	return { x, y };
 }
 
 // jsdom has no real pointer capture; stub the methods the loop calls so the
 // handlers run without throwing.
-function makePointerEvent(
-	type: string,
-	clientX: number,
-	clientY: number
-): PointerEvent {
+function makePointerEvent( type: string, clientX: number, clientY: number ): PointerEvent {
 	const event = new MouseEvent( type, {
 		bubbles: true,
 		clientX,
@@ -288,11 +258,7 @@ function makePointerEvent(
 	return event;
 }
 
-function startResize(
-	handle: HTMLElement,
-	clientX: number,
-	clientY: number
-): void {
+function startResize( handle: HTMLElement, clientX: number, clientY: number ): void {
 	handle.setPointerCapture = () => {};
 	handle.releasePointerCapture = () => {};
 	handle.dispatchEvent( makePointerEvent( 'pointerdown', clientX, clientY ) );
@@ -325,38 +291,32 @@ describe( 'Chat resize', () => {
 
 	it( 'renders the 8 resize handles when resizable, floating, and expanded', async () => {
 		await render();
-		expect(
-			document.querySelectorAll( '[data-slot="resize-handle"]' )
-		).toHaveLength( 8 );
+		expect( document.querySelectorAll( '[data-slot="resize-handle"]' ) ).toHaveLength( 8 );
 	} );
 
 	it( 'renders no handles when resizable is false', async () => {
 		await render( { resizable: false } );
-		expect(
-			document.querySelectorAll( '[data-slot="resize-handle"]' )
-		).toHaveLength( 0 );
+		expect( document.querySelectorAll( '[data-slot="resize-handle"]' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'renders no handles when not expanded', async () => {
 		await render( { state: 'compact' } );
-		expect(
-			document.querySelectorAll( '[data-slot="resize-handle"]' )
-		).toHaveLength( 0 );
+		expect( document.querySelectorAll( '[data-slot="resize-handle"]' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'renders only the left/right edge handles when resizable is horizontal', async () => {
 		await render( { resizable: 'horizontal' } );
-		const edges = Array.from(
-			document.querySelectorAll( '[data-slot="resize-handle"]' )
-		).map( ( el ) => el.getAttribute( 'data-resize-edge' ) );
+		const edges = Array.from( document.querySelectorAll( '[data-slot="resize-handle"]' ) ).map(
+			( el ) => el.getAttribute( 'data-resize-edge' )
+		);
 		expect( edges ).toEqual( [ 'right', 'left' ] );
 	} );
 
 	it( 'renders only the top/bottom edge handles when resizable is vertical', async () => {
 		await render( { resizable: 'vertical' } );
-		const edges = Array.from(
-			document.querySelectorAll( '[data-slot="resize-handle"]' )
-		).map( ( el ) => el.getAttribute( 'data-resize-edge' ) );
+		const edges = Array.from( document.querySelectorAll( '[data-slot="resize-handle"]' ) ).map(
+			( el ) => el.getAttribute( 'data-resize-edge' )
+		);
 		expect( edges ).toEqual( [ 'top', 'bottom' ] );
 	} );
 
@@ -375,9 +335,7 @@ describe( 'Chat resize', () => {
 			startResize( getHandle( 'top-right' ), 0, 0 );
 		} );
 		await act( async () => {
-			getHandle( 'top-right' ).dispatchEvent(
-				makePointerEvent( 'pointermove', 50, -30 )
-			);
+			getHandle( 'top-right' ).dispatchEvent( makePointerEvent( 'pointermove', 50, -30 ) );
 		} );
 
 		expect( onResize ).toHaveBeenLastCalledWith( {
@@ -395,9 +353,7 @@ describe( 'Chat resize', () => {
 			startResize( getHandle( 'bottom-right' ), 0, 0 );
 		} );
 		await act( async () => {
-			getHandle( 'bottom-right' ).dispatchEvent(
-				makePointerEvent( 'pointermove', -1000, -1000 )
-			);
+			getHandle( 'bottom-right' ).dispatchEvent( makePointerEvent( 'pointermove', -1000, -1000 ) );
 		} );
 
 		expect( onResize ).toHaveBeenLastCalledWith( MIN_SIZE );
@@ -414,9 +370,7 @@ describe( 'Chat resize', () => {
 			startResize( getHandle( 'top-right' ), 0, 0 );
 		} );
 		await act( async () => {
-			getHandle( 'top-right' ).dispatchEvent(
-				makePointerEvent( 'pointermove', 5000, -5000 )
-			);
+			getHandle( 'top-right' ).dispatchEvent( makePointerEvent( 'pointermove', 5000, -5000 ) );
 		} );
 
 		const box = {
@@ -525,14 +479,10 @@ describe( 'Chat resize', () => {
 
 	it( 'starts a move-drag on a body pointer-down (not a resize handle)', async () => {
 		await render();
-		const floating = document.querySelector< HTMLElement >(
-			'[data-slot="chat-floating"]'
-		)!;
+		const floating = document.querySelector< HTMLElement >( '[data-slot="chat-floating"]' )!;
 
 		await act( async () => {
-			floating.dispatchEvent(
-				makePointerEvent( 'pointerdown', 200, 200 )
-			);
+			floating.dispatchEvent( makePointerEvent( 'pointerdown', 200, 200 ) );
 		} );
 
 		expect( dragStartSpy ).toHaveBeenCalledTimes( 1 );
@@ -576,9 +526,7 @@ describe( 'Chat drag-end side persistence', () => {
 	} );
 
 	// Renders expanded ( the only state with drag wired ) so onDragEnd is captured.
-	const renderExpanded = async (
-		onChatPositionChange: ( side: 'left' | 'right' ) => void
-	) => {
+	const renderExpanded = async ( onChatPositionChange: ( side: 'left' | 'right' ) => void ) => {
 		await act( async () => {
 			root.render(
 				<AgentUIProvider value={ contextValue }>

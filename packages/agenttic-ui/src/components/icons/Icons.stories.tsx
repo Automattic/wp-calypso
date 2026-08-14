@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { AltIcon } from './AltIcon';
 import { ArrowUpIcon } from './ArrowUpIcon';
 import { BigSkyIcon } from './BigSkyIcon';
@@ -18,6 +17,7 @@ import { StylesIcon } from './StylesIcon';
 import { ThumbsDownIcon } from './ThumbsDownIcon';
 import { ThumbsUpIcon } from './ThumbsUpIcon';
 import { XIcon } from './XIcon';
+import type { Meta, StoryObj } from '@storybook/react';
 
 interface IconStoryArgs {
 	size?: number;
@@ -50,171 +50,133 @@ export default meta;
 type Story = StoryObj< typeof meta >;
 
 export const Alt: Story = {
-	render: ( args ) => (
-		<AltIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <AltIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const ArrowUp: Story = {
-	render: ( args ) => (
-		<ArrowUpIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <ArrowUpIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const BigSky: Story = {
-	render: ( args ) => (
-		<BigSkyIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <BigSkyIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const Blur: Story = {
-	render: ( args ) => (
-		<BlurIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <BlurIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const Check: Story = {
-	render: ( args ) => (
-		<CheckIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <CheckIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const ChevronDown: Story = {
-	render: ( args ) => (
-		<ChevronDownIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <ChevronDownIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const ChevronRight: Story = {
-	render: ( args ) => (
-		<ChevronRightIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <ChevronRightIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const ChevronUp: Story = {
-	render: ( args ) => (
-		<ChevronUpIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <ChevronUpIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const Copy: Story = {
-	render: ( args ) => (
-		<CopyIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <CopyIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const Image: Story = {
-	render: ( args ) => (
-		<ImageIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <ImageIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const Layout: Story = {
-	render: ( args ) => (
-		<LayoutIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <LayoutIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const Page: Story = {
-	render: ( args ) => (
-		<PageIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <PageIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const Plus: Story = {
-	render: ( args ) => (
-		<PlusIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <PlusIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const Regenerate: Story = {
-	render: ( args ) => (
-		<RegenerateIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <RegenerateIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const Stop: Story = {
-	render: ( args ) => (
-		<StopIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <StopIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const Styles: Story = {
-	render: ( args ) => (
-		<StylesIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <StylesIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const ThumbsDown: Story = {
-	render: ( args ) => (
-		<ThumbsDownIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <ThumbsDownIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const ThumbsUp: Story = {
-	render: ( args ) => (
-		<ThumbsUpIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <ThumbsUpIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},
 };
 
 export const X: Story = {
-	render: ( args ) => (
-		<XIcon size={ args.size } className={ args.className } />
-	),
+	render: ( args ) => <XIcon size={ args.size } className={ args.className } />,
 	args: {
 		size: 24,
 	},

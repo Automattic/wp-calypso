@@ -8,19 +8,14 @@ import type {
 } from './types';
 
 function asRecord( value: unknown ): Record< string, unknown > {
-	return value && typeof value === 'object'
-		? ( value as Record< string, unknown > )
-		: {};
+	return value && typeof value === 'object' ? ( value as Record< string, unknown > ) : {};
 }
 
 function asString( value: unknown, fallback = '' ): string {
 	return typeof value === 'string' ? value : fallback;
 }
 
-function normalizeRole(
-	role: unknown,
-	fallbackRole: 'user' | 'agent'
-): 'user' | 'agent' {
+function normalizeRole( role: unknown, fallbackRole: 'user' | 'agent' ): 'user' | 'agent' {
 	if ( role === 'user' ) {
 		return 'user';
 	}
@@ -52,12 +47,8 @@ function normalizeSource( input: unknown ): AgentsApiSource | null {
 		asString( raw.sourceId ) ||
 		asString( raw.document_id );
 	const title = asString( raw.title ) || asString( raw.name );
-	const url =
-		asString( raw.url ) || asString( raw.href ) || asString( raw.link );
-	const label =
-		asString( raw.label ) ||
-		asString( raw.container ) ||
-		asString( raw.provider );
+	const url = asString( raw.url ) || asString( raw.href ) || asString( raw.link );
+	const label = asString( raw.label ) || asString( raw.container ) || asString( raw.provider );
 	const metadata = asRecord( raw.metadata );
 	const source: AgentsApiSource = {};
 	if ( id ) {
@@ -78,9 +69,7 @@ function normalizeSource( input: unknown ): AgentsApiSource | null {
 	return Object.keys( source ).length ? source : null;
 }
 
-export function normalizeSources(
-	...candidates: unknown[]
-): AgentsApiSource[] {
+export function normalizeSources( ...candidates: unknown[] ): AgentsApiSource[] {
 	for ( const candidate of candidates ) {
 		if ( ! Array.isArray( candidate ) || candidate.length === 0 ) {
 			continue;
@@ -127,10 +116,7 @@ export function normalizeAgentsApiMessage(
 ): AgentsApiMessage {
 	const raw = asRecord( input );
 	const role = normalizeRole( raw.role, fallbackRole );
-	const text =
-		asString( raw.content ) ||
-		asString( raw.text ) ||
-		asString( raw.message );
+	const text = asString( raw.content ) || asString( raw.text ) || asString( raw.message );
 	const timestampValue = raw.timestamp ?? raw.created_at ?? raw.createdAt;
 	const timestamp = normalizeTimestamp( timestampValue );
 	const timestampIdPart =
@@ -140,18 +126,10 @@ export function normalizeAgentsApiMessage(
 	const id =
 		asString( raw.id ) ||
 		asString( raw.message_id ) ||
-		`${ role }-${ stableHash(
-			`${ fallbackIndex }:${ timestampIdPart }:${ text }`
-		) }`;
-	const content = Array.isArray( raw.content )
-		? raw.content
-		: [ { type: 'text' as const, text } ];
+		`${ role }-${ stableHash( `${ fallbackIndex }:${ timestampIdPart }:${ text }` ) }`;
+	const content = Array.isArray( raw.content ) ? raw.content : [ { type: 'text' as const, text } ];
 	const metadata = asRecord( raw.metadata );
-	const sources = normalizeSources(
-		metadata.sources,
-		metadata.citations,
-		raw.sources
-	);
+	const sources = normalizeSources( metadata.sources, metadata.citations, raw.sources );
 
 	return {
 		id,
@@ -162,9 +140,7 @@ export function normalizeAgentsApiMessage(
 		showIcon: role === 'agent',
 		disabled: false,
 		reactKey: id,
-		attachments: Array.isArray( raw.attachments )
-			? raw.attachments
-			: undefined,
+		attachments: Array.isArray( raw.attachments ) ? raw.attachments : undefined,
 		sources: sources.length ? sources : undefined,
 		metadata,
 		raw,
@@ -194,14 +170,8 @@ export function normalizeSendResponse(
 	let messages = normalizeConversation( data );
 	if ( messages.length === 0 ) {
 		messages = [
-			normalizeAgentsApiMessage(
-				{ role: 'user', content: message, attachments },
-				'user'
-			),
-			normalizeAgentsApiMessage(
-				{ role: 'agent', content: asString( data.response ) },
-				'agent'
-			),
+			normalizeAgentsApiMessage( { role: 'user', content: message, attachments }, 'user' ),
+			normalizeAgentsApiMessage( { role: 'agent', content: asString( data.response ) }, 'agent' ),
 		];
 	}
 	return {
@@ -222,16 +192,11 @@ export function normalizeSessions( response: unknown ): AgentsApiSession[] {
 			return {
 				id: asString( raw.id ) || asString( raw.session_id ),
 				title: asString( raw.title ) || asString( raw.label ),
-				updated_at:
-					asString( raw.updated_at ) || asString( raw.updatedAt ),
-				updatedAt:
-					asString( raw.updatedAt ) || asString( raw.updated_at ),
-				created_at:
-					asString( raw.created_at ) || asString( raw.createdAt ),
-				createdAt:
-					asString( raw.createdAt ) || asString( raw.created_at ),
-				unread_count:
-					typeof raw.unread_count === 'number' ? raw.unread_count : 0,
+				updated_at: asString( raw.updated_at ) || asString( raw.updatedAt ),
+				updatedAt: asString( raw.updatedAt ) || asString( raw.updated_at ),
+				created_at: asString( raw.created_at ) || asString( raw.createdAt ),
+				createdAt: asString( raw.createdAt ) || asString( raw.created_at ),
+				unread_count: typeof raw.unread_count === 'number' ? raw.unread_count : 0,
 				metadata: asRecord( raw.metadata ),
 			};
 		} )
@@ -252,10 +217,7 @@ export function normalizeLoadedSession( response: unknown ): {
 	};
 }
 
-export function normalizeRunEvent(
-	input: unknown,
-	fallbackRunId = ''
-): AgentsApiRunEvent | null {
+export function normalizeRunEvent( input: unknown, fallbackRunId = '' ): AgentsApiRunEvent | null {
 	const raw = asRecord( input );
 	const type = asString( raw.type ) || asString( raw.event );
 	if ( ! type ) {
@@ -263,9 +225,7 @@ export function normalizeRunEvent(
 	}
 	const runId = asString( raw.run_id ) || fallbackRunId;
 	return {
-		id:
-			asString( raw.id ) ||
-			`${ runId }-${ type }-${ asString( raw.cursor ) }`,
+		id: asString( raw.id ) || `${ runId }-${ type }-${ asString( raw.cursor ) }`,
 		run_id: runId,
 		session_id: asString( raw.session_id ) || undefined,
 		type,
@@ -275,9 +235,7 @@ export function normalizeRunEvent(
 	};
 }
 
-export function groupToolMessages(
-	messages: AgentsApiMessage[]
-): AgentsApiToolGroup[] {
+export function groupToolMessages( messages: AgentsApiMessage[] ): AgentsApiToolGroup[] {
 	return messages.flatMap< AgentsApiToolGroup >( ( message ) => {
 		const raw = message.raw ?? {};
 		const metadata = message.metadata ?? {};
@@ -291,17 +249,10 @@ export function groupToolMessages(
 			return [];
 		}
 		const type = asString( metadata.type ) || asString( raw.type );
-		const id =
-			asString( metadata.tool_call_id ) ||
-			asString( raw.tool_call_id ) ||
-			message.id;
-		const parameters = asRecord(
-			metadata.parameters ?? raw.parameters ?? toolData.parameters
-		);
+		const id = asString( metadata.tool_call_id ) || asString( raw.tool_call_id ) || message.id;
+		const parameters = asRecord( metadata.parameters ?? raw.parameters ?? toolData.parameters );
 		// eslint-disable-next-line @wordpress/no-unused-vars-before-return
-		const result = asRecord(
-			toolData.result ?? raw.result ?? metadata.result ?? toolData
-		);
+		const result = asRecord( toolData.result ?? raw.result ?? metadata.result ?? toolData );
 
 		if ( type === 'tool_call' ) {
 			return [
@@ -335,7 +286,5 @@ export function renderToolGroups(
 	groups: AgentsApiToolGroup[],
 	renderers: AgentsApiToolRenderers = {}
 ) {
-	return groups.map(
-		( group ) => renderers[ group.name ]?.( group ) ?? null
-	);
+	return groups.map( ( group ) => renderers[ group.name ]?.( group ) ?? null );
 }

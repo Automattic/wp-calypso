@@ -12,14 +12,8 @@ export function AlertTriangleIcon( { className, size = 18 }: BaseIconProps ) {
 			role="img"
 			aria-label="Alert"
 		>
-			<path
-				d="M9.56279 13.0952H8.43779V11.9702H9.56279V13.0952Z"
-				fill="currentColor"
-			/>
-			<path
-				d="M8.43779 10.8452H9.56279V7.0952L8.43779 7.0952V10.8452Z"
-				fill="currentColor"
-			/>
+			<path d="M9.56279 13.0952H8.43779V11.9702H9.56279V13.0952Z" fill="currentColor" />
+			<path d="M8.43779 10.8452H9.56279V7.0952L8.43779 7.0952V10.8452Z" fill="currentColor" />
 			<path
 				fillRule="evenodd"
 				clipRule="evenodd"

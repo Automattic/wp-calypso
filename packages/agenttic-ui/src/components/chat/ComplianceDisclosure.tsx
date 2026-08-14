@@ -1,5 +1,5 @@
-import React from 'react';
 import { __ } from '@wordpress/i18n';
+import React from 'react';
 import styles from './ComplianceDisclosure.module.css';
 
 // Rendered by both build entries — keep this module a leaf. Anything imported
@@ -22,10 +22,7 @@ export function DefaultComplianceDisclosure() {
 				href={ AI_GUIDELINES_URL }
 				target="_blank"
 				rel="noopener noreferrer"
-				aria-label={ __(
-					'Guidelines (opens in a new tab)',
-					'a8c-agenttic'
-				) }
+				aria-label={ __( 'Guidelines (opens in a new tab)', 'a8c-agenttic' ) }
 			>
 				{ __( 'Guidelines', 'a8c-agenttic' ) }
 			</a>
@@ -38,19 +35,12 @@ export function DefaultComplianceDisclosure() {
 // Hides only on the explicit `false` sentinel or nullish values — a computed
 // falsy node like `''` or `0` must not silently drop a legally required
 // disclosure.
-export function ComplianceDisclosure( {
-	children,
-}: {
-	children?: React.ReactNode;
-} ) {
+export function ComplianceDisclosure( { children }: { children?: React.ReactNode } ) {
 	if ( children === false || children === null || children === undefined ) {
 		return null;
 	}
 	return (
-		<div
-			data-slot="chat-compliance-disclosure"
-			className={ styles.disclosure }
-		>
+		<div data-slot="chat-compliance-disclosure" className={ styles.disclosure }>
 			{ children }
 		</div>
 	);

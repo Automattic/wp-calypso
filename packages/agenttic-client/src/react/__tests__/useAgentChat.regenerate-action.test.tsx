@@ -4,18 +4,13 @@ import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createClient } from '../../client/index';
-import type {
-	Client,
-	Message as ClientMessage,
-	TaskUpdate,
-} from '../../client/types/index';
 import { getAgentManager } from '../agentManager';
 import { useAgentChat } from '../useAgentChat';
+import type { Client, Message as ClientMessage, TaskUpdate } from '../../client/types/index';
 import type { UIMessage, UseAgentChatReturn } from '../useAgentChat';
 
 vi.mock( '../../client/index', async ( importOriginal ) => {
-	const actual =
-		await importOriginal< typeof import('../../client/index') >();
+	const actual = await importOriginal< typeof import('../../client/index') >();
 
 	return {
 		...actual,
@@ -23,9 +18,7 @@ vi.mock( '../../client/index', async ( importOriginal ) => {
 	};
 } );
 
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 const clientMessage = (
 	messageId: string,
@@ -122,29 +115,21 @@ describe( 'useAgentChat regenerate action', () => {
 			] );
 		} );
 
-		const userMessage = latestHookValue?.messages.find(
-			( message ) => message.id === 'user-1'
-		) as UIMessage | undefined;
+		const userMessage = latestHookValue?.messages.find( ( message ) => message.id === 'user-1' ) as
+			| UIMessage
+			| undefined;
 		const agentMessage = latestHookValue?.messages.find(
 			( message ) => message.id === 'agent-1'
 		) as UIMessage | undefined;
 
 		// Opt-in: the hook never attaches the action itself.
 		expect( agentMessage?.actions ).toBeUndefined();
-		expect(
-			userMessage
-				? latestHookValue?.getRegenerateHandler( userMessage )
-				: null
-		).toBeNull();
+		expect( userMessage ? latestHookValue?.getRegenerateHandler( userMessage ) : null ).toBeNull();
 
 		expect(
-			typeof ( agentMessage
-				? latestHookValue?.getRegenerateHandler( agentMessage )
-				: null )
+			typeof ( agentMessage ? latestHookValue?.getRegenerateHandler( agentMessage ) : null )
 		).toBe( 'function' );
-		expect( typeof latestHookValue?.getRegenerateHandler() ).toBe(
-			'function'
-		);
+		expect( typeof latestHookValue?.getRegenerateHandler() ).toBe( 'function' );
 	} );
 
 	it( 'replaces the latest agent response when actions refresh during regenerate', async () => {
@@ -215,12 +200,7 @@ describe( 'useAgentChat regenerate action', () => {
 					final: true,
 					status: {
 						state: 'completed',
-						message: clientMessage(
-							'agent-1',
-							'agent',
-							'Petals and Poetry',
-							Date.now() + 1
-						),
+						message: clientMessage( 'agent-1', 'agent', 'Petals and Poetry', Date.now() + 1 ),
 					},
 					text: 'Petals and Poetry',
 				};
@@ -235,13 +215,9 @@ describe( 'useAgentChat regenerate action', () => {
 			await latestHookValue?.onSubmit( 'Generate a title' );
 		} );
 
-		const agentMessage = latestHookValue?.messages.find(
-			( message ) => message.role === 'agent'
-		);
+		const agentMessage = latestHookValue?.messages.find( ( message ) => message.role === 'agent' );
 
-		expect(
-			agentMessage?.actions?.map( ( action ) => action.id )
-		).toContain( 'regenerate' );
+		expect( agentMessage?.actions?.map( ( action ) => action.id ) ).toContain( 'regenerate' );
 	} );
 
 	const loadBaseConversation = async () => {
@@ -339,15 +315,11 @@ describe( 'useAgentChat regenerate action', () => {
 
 		// Simulate storage failing while restoring the original conversation.
 		const agentManager = getAgentManager();
-		const originalReplace =
-			agentManager.replaceMessages.bind( agentManager );
+		const originalReplace = agentManager.replaceMessages.bind( agentManager );
 		let failRestore = false;
 		vi.spyOn( agentManager, 'replaceMessages' ).mockImplementation(
 			async ( key: string, messages: ClientMessage[] ) => {
-				if (
-					failRestore &&
-					messages.some( ( message ) => message.role === 'agent' )
-				) {
+				if ( failRestore && messages.some( ( message ) => message.role === 'agent' ) ) {
 					throw new Error( 'storage failed' );
 				}
 				return originalReplace( key, messages );

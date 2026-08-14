@@ -93,10 +93,7 @@ export { loadAgentticTranslations } from './utils/translation-loader';
 
 // Message actions utilities
 export { createFeedbackActions } from './message-actions/utils';
-export type {
-	FeedbackActionsConfig,
-	FeedbackActionsManager,
-} from './message-actions/utils';
+export type { FeedbackActionsConfig, FeedbackActionsManager } from './message-actions/utils';
 
 // Markdown extensions - Chart components
 export { BarChart, LineChart, ChartBlock } from './markdown-extensions/charts';

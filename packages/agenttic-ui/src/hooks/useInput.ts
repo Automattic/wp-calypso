@@ -56,10 +56,7 @@ export function useInput( {
 		const minHeight = 40; // ~1 line
 		const maxHeight = 200; // ~8 lines
 
-		textarea.style.height = `${ Math.min(
-			Math.max( scrollHeight, minHeight ),
-			maxHeight
-		) }px`;
+		textarea.style.height = `${ Math.min( Math.max( scrollHeight, minHeight ), maxHeight ) }px`;
 	}, [] );
 
 	const handleKeyDown = useCallback(

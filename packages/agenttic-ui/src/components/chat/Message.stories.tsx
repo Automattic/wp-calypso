@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { Message } from './Message';
 import type { Message as MessageType } from '../../types';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
 	title: 'Chat/Message',
@@ -187,19 +187,11 @@ export const LongMessage: Story = {
 
 export const MessageThread: Story = {
 	render: ( { showAgentIcon } ) => (
-		<div
-			style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }
-		>
+		<div style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
 			<Message message={ userMessage } showAgentIcon={ showAgentIcon } />
 			<Message message={ agentMessage } showAgentIcon={ showAgentIcon } />
-			<Message
-				message={ markdownMessage }
-				showAgentIcon={ showAgentIcon }
-			/>
-			<Message
-				message={ componentMessage }
-				showAgentIcon={ showAgentIcon }
-			/>
+			<Message message={ markdownMessage } showAgentIcon={ showAgentIcon } />
+			<Message message={ componentMessage } showAgentIcon={ showAgentIcon } />
 			<Message
 				message={ {
 					...userMessage,

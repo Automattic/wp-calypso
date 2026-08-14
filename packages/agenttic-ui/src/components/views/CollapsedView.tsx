@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react';
-import { Button } from '../ui/button';
-import { BigSkyIcon } from '../icons/BigSkyIcon';
-import { motion } from 'framer-motion';
-import { morphSpring } from '../animations';
-import styles from './CollapsedView.module.css';
 import { __ } from '@wordpress/i18n';
+import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
+import { morphSpring } from '../animations';
+import { BigSkyIcon } from '../icons/BigSkyIcon';
+import { Button } from '../ui/button';
+import styles from './CollapsedView.module.css';
 
 interface CollapsedViewProps {
 	icon?: React.ReactNode;

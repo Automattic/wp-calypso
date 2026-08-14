@@ -1,10 +1,6 @@
-import type { Message, Task, TaskUpdate } from '../../types/index';
+import { extractProgressDataFromMessage, extractTextFromMessage, generateMessageId } from '../core';
 import { logger } from '../logger';
-import {
-	extractProgressDataFromMessage,
-	extractTextFromMessage,
-	generateMessageId,
-} from '../core';
+import type { Message, Task, TaskUpdate } from '../../types/index';
 
 /**
  * Parse a stream chunk from a server-sent events stream.
@@ -35,10 +31,7 @@ export function parseStreamChunk(
 	// and is typically terminated by a blank line.
 	let searchStartIndex = 0;
 	while ( searchStartIndex < currentStreamData.length ) {
-		const newlineIndex = currentStreamData.indexOf(
-			'\n',
-			searchStartIndex
-		);
+		const newlineIndex = currentStreamData.indexOf( '\n', searchStartIndex );
 		// If newlineIndex is -1, it means the rest of currentStreamData is a single line (or empty)
 		const line =
 			newlineIndex === -1
@@ -54,19 +47,14 @@ export function parseStreamChunk(
 				eventPayload += '\n';
 			}
 			// Add the data part of the line (stripping "data: " or "data:")
-			eventPayload += fieldLine.substring(
-				fieldLine.startsWith( 'data: ' ) ? 6 : 5
-			);
+			eventPayload += fieldLine.substring( fieldLine.startsWith( 'data: ' ) ? 6 : 5 );
 		} else if ( line.trim() === '' ) {
 			// Blank line: indicates the end of an event
 			if ( eventPayload ) {
 				try {
 					events.push( JSON.parse( eventPayload ) );
 					// Mark where this complete event ended
-					lastCompleteEventEnd =
-						newlineIndex === -1
-							? currentStreamData.length
-							: newlineIndex + 1;
+					lastCompleteEventEnd = newlineIndex === -1 ? currentStreamData.length : newlineIndex + 1;
 				} catch ( e ) {
 					// Log the error and the problematic eventPayload
 					logger( 'Failed to parse SSE event: %o', e );
@@ -112,10 +100,7 @@ export interface ParseSSEStreamOptions {
 	supportDeltas?: boolean;
 }
 
-function getResultTaskId( result: {
-	id?: string;
-	taskId?: string;
-} ): string | undefined {
+function getResultTaskId( result: { id?: string; taskId?: string } ): string | undefined {
 	return result.id ?? result.taskId;
 }
 
@@ -204,16 +189,10 @@ export async function* parseSSEStream(
 			// Pace delta messages for smoother rendering, but only when the
 			// processing budget since the last frame yield is exhausted —
 			// never one frame per delta, and never delaying the first delta.
-			if (
-				event.method === 'message/delta' &&
-				typeof requestAnimationFrame !== 'undefined'
-			) {
+			if ( event.method === 'message/delta' && typeof requestAnimationFrame !== 'undefined' ) {
 				if ( ! hasProcessedDelta ) {
 					lastFrameYieldTime = Date.now();
-				} else if (
-					Date.now() - lastFrameYieldTime >=
-					DELTA_PACING_FRAME_BUDGET_MS
-				) {
+				} else if ( Date.now() - lastFrameYieldTime >= DELTA_PACING_FRAME_BUDGET_MS ) {
 					await waitForNextFrame();
 					lastFrameYieldTime = Date.now();
 				}
@@ -225,11 +204,7 @@ export async function* parseSSEStream(
 			}
 
 			// Handle delta messages
-			if (
-				supportDeltas &&
-				event.method === 'message/delta' &&
-				event.params?.delta
-			) {
+			if ( supportDeltas && event.method === 'message/delta' && event.params?.delta ) {
 				const delta = event.params.delta as StreamDelta;
 
 				try {
@@ -273,10 +248,7 @@ export async function* parseSSEStream(
 				}
 				// When token streaming is enabled, the final message already contains
 				// the complete text. We can now reset the accumulator since streaming is complete.
-				if (
-					accumulator.getTextContent() ||
-					accumulator.getCurrentMessage().parts.length > 0
-				) {
+				if ( accumulator.getTextContent() || accumulator.getCurrentMessage().parts.length > 0 ) {
 					accumulator.reset();
 				}
 
@@ -284,8 +256,7 @@ export async function* parseSSEStream(
 					role: 'agent',
 					parts: [],
 				};
-				const progress =
-					extractProgressDataFromMessage( statusMessage );
+				const progress = extractProgressDataFromMessage( statusMessage );
 				const update: TaskUpdate = {
 					id: taskId ?? currentTaskId ?? '',
 					sessionId: event.result.sessionId,
@@ -311,8 +282,7 @@ export async function* parseSSEStream(
 						role: 'agent',
 						parts: [],
 					};
-					const progress =
-						extractProgressDataFromMessage( statusMessage );
+					const progress = extractProgressDataFromMessage( statusMessage );
 					const update: TaskUpdate = {
 						id: taskId ?? currentTaskId ?? '',
 						sessionId: event.result.sessionId,
@@ -358,10 +328,7 @@ export async function* parseSSEStream(
 				yield* processEvents( flushed.events );
 			}
 			if ( flushed.nextBuffer.trim() ) {
-				logger(
-					'Discarding incomplete SSE payload at stream end: %s',
-					flushed.nextBuffer
-				);
+				logger( 'Discarding incomplete SSE payload at stream end: %s', flushed.nextBuffer );
 			}
 		}
 	} finally {
@@ -373,9 +340,7 @@ export async function* parseSSEStream(
  * Convert a streaming response to a final task result
  * @param stream
  */
-export async function streamToTask(
-	stream: AsyncIterable< TaskUpdate >
-): Promise< Task > {
+export async function streamToTask( stream: AsyncIterable< TaskUpdate > ): Promise< Task > {
 	let finalTask: Task | null = null;
 
 	for await ( const update of stream ) {
@@ -423,17 +388,10 @@ export interface ToolArgumentStreamDelta {
 
 export type ToolCallStreamDelta = ToolNameStreamDelta | ToolArgumentStreamDelta;
 
-export type StreamDelta =
-	| ContentStreamDelta
-	| ToolNameStreamDelta
-	| ToolArgumentStreamDelta;
+export type StreamDelta = ContentStreamDelta | ToolNameStreamDelta | ToolArgumentStreamDelta;
 
-function isToolCallStreamDelta(
-	delta: StreamDelta
-): delta is ToolCallStreamDelta {
-	return (
-		delta.deltaType === 'tool_argument' || delta.deltaType === 'tool_name'
-	);
+function isToolCallStreamDelta( delta: StreamDelta ): delta is ToolCallStreamDelta {
+	return delta.deltaType === 'tool_argument' || delta.deltaType === 'tool_name';
 }
 
 /**

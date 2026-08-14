@@ -1,4 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+	clearToolResultPromises,
+	createClient,
+	updateToolResultsWithResolvedPromises,
+} from '../client/index';
+import { createTextMessage, extractToolCallsFromMessage } from '../client/utils/index';
+import { type AgentManager, getAgentManager } from './agentManager';
+import { clearConversation, loadConversation, storeConversation } from './conversationStorage';
 import type {
 	ClientConfig,
 	DataPart,
@@ -28,23 +36,6 @@ vi.mock( './conversationStorage', () => ( {
 	loadConversation: vi.fn(),
 	storeConversation: vi.fn(),
 } ) );
-
-// Import after mocking
-import { type AgentManager, getAgentManager } from './agentManager';
-import {
-	clearToolResultPromises,
-	createClient,
-	updateToolResultsWithResolvedPromises,
-} from '../client/index';
-import {
-	createTextMessage,
-	extractToolCallsFromMessage,
-} from '../client/utils/index';
-import {
-	clearConversation,
-	loadConversation,
-	storeConversation,
-} from './conversationStorage';
 
 describe( 'agentManager', () => {
 	let agentManager: AgentManager;
@@ -114,24 +105,20 @@ describe( 'agentManager', () => {
 
 		// Setup default mock implementations
 		vi.mocked( createClient ).mockReturnValue( mockClient );
-		vi.mocked( createTextMessage ).mockImplementation(
-			( text: string ) => ( {
-				role: 'user',
-				parts: [ { type: 'text', text } ],
-				kind: 'message',
-				messageId: 'test-message-id',
-				metadata: {
-					timestamp: expect.any( Number ),
-				},
-			} )
-		);
+		vi.mocked( createTextMessage ).mockImplementation( ( text: string ) => ( {
+			role: 'user',
+			parts: [ { type: 'text', text } ],
+			kind: 'message',
+			messageId: 'test-message-id',
+			metadata: {
+				timestamp: expect.any( Number ),
+			},
+		} ) );
 		vi.mocked( loadConversation ).mockResolvedValue( { messages: [] } );
 		vi.mocked( storeConversation ).mockResolvedValue();
 		vi.mocked( clearConversation ).mockResolvedValue();
 		vi.mocked( extractToolCallsFromMessage ).mockReturnValue( [] );
-		vi.mocked( updateToolResultsWithResolvedPromises ).mockImplementation(
-			( parts ) => parts
-		);
+		vi.mocked( updateToolResultsWithResolvedPromises ).mockImplementation( ( parts ) => parts );
 		vi.mocked( clearToolResultPromises ).mockReturnValue();
 
 		// Setup default mock for sendMessage to return the mockTask
@@ -140,10 +127,7 @@ describe( 'agentManager', () => {
 
 	describe( 'createAgent', () => {
 		it( 'should create a new agent', async () => {
-			const client = await agentManager.createAgent(
-				'test-key',
-				testConfig
-			);
+			const client = await agentManager.createAgent( 'test-key', testConfig );
 
 			expect( client ).toBe( mockClient );
 			expect( createClient ).toHaveBeenCalledWith( testConfig );
@@ -152,10 +136,7 @@ describe( 'agentManager', () => {
 
 		it( 'should return existing agent if key already exists', async () => {
 			await agentManager.createAgent( 'test-key', testConfig );
-			const client2 = await agentManager.createAgent(
-				'test-key',
-				testConfig
-			);
+			const client2 = await agentManager.createAgent( 'test-key', testConfig );
 
 			expect( client2 ).toBe( mockClient );
 			expect( createClient ).toHaveBeenCalledTimes( 1 );
@@ -251,9 +232,9 @@ describe( 'agentManager', () => {
 		} );
 
 		it( 'should throw error for non-existent agent', async () => {
-			await expect(
-				agentManager.sendMessage( 'non-existent', 'Hello' )
-			).rejects.toThrow( 'Agent with key "non-existent" not found' );
+			await expect( agentManager.sendMessage( 'non-existent', 'Hello' ) ).rejects.toThrow(
+				'Agent with key "non-existent" not found'
+			);
 		} );
 
 		it( 'should handle withHistory=false option', async () => {
@@ -281,17 +262,12 @@ describe( 'agentManager', () => {
 				...testConfig,
 				sessionId: 'test-session',
 			};
-			await agentManager.createAgent(
-				'test-key-with-session',
-				configWithSession
-			);
+			await agentManager.createAgent( 'test-key-with-session', configWithSession );
 			mockClient.sendMessage.mockResolvedValue( mockTask );
 
 			await agentManager.sendMessage( 'test-key-with-session', 'Hello' );
 
-			const history = agentManager.getConversationHistory(
-				'test-key-with-session'
-			);
+			const history = agentManager.getConversationHistory( 'test-key-with-session' );
 			expect( history ).toHaveLength( 2 ); // User message + agent response
 			expect( history[ 0 ] ).toEqual(
 				expect.objectContaining( {
@@ -352,9 +328,7 @@ describe( 'agentManager', () => {
 
 			await agentManager.sendMessage( 'test-key', 'Hello' );
 
-			expect( onSessionIdChange ).toHaveBeenCalledWith(
-				'server-session'
-			);
+			expect( onSessionIdChange ).toHaveBeenCalledWith( 'server-session' );
 		} );
 
 		it( 'should fire when the session ID changes', async () => {
@@ -413,26 +387,19 @@ describe( 'agentManager', () => {
 					text: 'Hello back!',
 				},
 			];
-			mockClient.sendMessageStream.mockImplementation(
-				async function* () {
-					for ( const update of mockUpdates ) {
-						yield update;
-					}
+			mockClient.sendMessageStream.mockImplementation( async function* () {
+				for ( const update of mockUpdates ) {
+					yield update;
 				}
-			);
+			} );
 
 			// Consume the stream so the updates are processed.
-			for await ( const update of agentManager.sendMessageStream(
-				'test-key',
-				'Hello'
-			) ) {
+			for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
 				void update;
 			}
 
 			expect( onSessionIdChange ).toHaveBeenCalledTimes( 1 );
-			expect( onSessionIdChange ).toHaveBeenCalledWith(
-				'stream-session'
-			);
+			expect( onSessionIdChange ).toHaveBeenCalledWith( 'stream-session' );
 		} );
 
 		it( 'should not fail the send when the callback throws', async () => {
@@ -451,9 +418,7 @@ describe( 'agentManager', () => {
 			const task = await agentManager.sendMessage( 'test-key', 'Hello' );
 
 			expect( task.sessionId ).toBe( 'server-session' );
-			expect( onSessionIdChange ).toHaveBeenCalledWith(
-				'server-session'
-			);
+			expect( onSessionIdChange ).toHaveBeenCalledWith( 'server-session' );
 		} );
 
 		it( 'should not fire for app-driven updateSessionId calls', async () => {
@@ -490,19 +455,14 @@ describe( 'agentManager', () => {
 				},
 			];
 
-			mockClient.sendMessageStream.mockImplementation(
-				async function* () {
-					for ( const update of mockUpdates ) {
-						yield update;
-					}
+			mockClient.sendMessageStream.mockImplementation( async function* () {
+				for ( const update of mockUpdates ) {
+					yield update;
 				}
-			);
+			} );
 
 			const results: TaskUpdate[] = [];
-			for await ( const update of agentManager.sendMessageStream(
-				'test-key',
-				'Hello'
-			) ) {
+			for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
 				results.push( update );
 			}
 
@@ -525,16 +485,11 @@ describe( 'agentManager', () => {
 		} );
 
 		it( 'should throw error for non-existent agent', async () => {
-			const stream = agentManager.sendMessageStream(
-				'non-existent',
-				'Hello'
-			);
+			const stream = agentManager.sendMessageStream( 'non-existent', 'Hello' );
 
 			// Convert async iterable to iterator and test
 			const iterator = stream[ Symbol.asyncIterator ]();
-			await expect( iterator.next() ).rejects.toThrow(
-				'Agent with key "non-existent" not found'
-			);
+			await expect( iterator.next() ).rejects.toThrow( 'Agent with key "non-existent" not found' );
 		} );
 
 		it( 'should handle tool calls during streaming', async () => {
@@ -565,25 +520,18 @@ describe( 'agentManager', () => {
 				} as ToolCallDataPart,
 			] );
 
-			mockClient.sendMessageStream.mockImplementation(
-				async function* () {
-					yield toolCallUpdate;
-					yield completedUpdate;
-				}
-			);
+			mockClient.sendMessageStream.mockImplementation( async function* () {
+				yield toolCallUpdate;
+				yield completedUpdate;
+			} );
 
 			const results: TaskUpdate[] = [];
-			for await ( const update of agentManager.sendMessageStream(
-				'test-key',
-				'Hello'
-			) ) {
+			for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
 				results.push( update );
 			}
 
 			expect( results ).toHaveLength( 2 );
-			expect( extractToolCallsFromMessage ).toHaveBeenCalledWith(
-				mockToolCallMessage
-			);
+			expect( extractToolCallsFromMessage ).toHaveBeenCalledWith( mockToolCallMessage );
 		} );
 	} );
 
@@ -592,15 +540,11 @@ describe( 'agentManager', () => {
 			await agentManager.createAgent( 'test-key', testConfig );
 			await agentManager.sendMessage( 'test-key', 'Hello' );
 
-			expect(
-				agentManager.getConversationHistory( 'test-key' )
-			).toHaveLength( 2 );
+			expect( agentManager.getConversationHistory( 'test-key' ) ).toHaveLength( 2 );
 
 			await agentManager.resetConversation( 'test-key' );
 
-			expect(
-				agentManager.getConversationHistory( 'test-key' )
-			).toHaveLength( 0 );
+			expect( agentManager.getConversationHistory( 'test-key' ) ).toHaveLength( 0 );
 		} );
 
 		it( 'should clear persistent storage when sessionId exists', async () => {
@@ -611,16 +555,13 @@ describe( 'agentManager', () => {
 			await agentManager.createAgent( 'test-key', configWithSession );
 			await agentManager.resetConversation( 'test-key' );
 
-			expect( clearConversation ).toHaveBeenCalledWith(
-				'session-123',
-				undefined
-			);
+			expect( clearConversation ).toHaveBeenCalledWith( 'session-123', undefined );
 		} );
 
 		it( 'should throw error for non-existent agent', async () => {
-			await expect(
-				agentManager.resetConversation( 'non-existent' )
-			).rejects.toThrow( 'Agent with key "non-existent" not found' );
+			await expect( agentManager.resetConversation( 'non-existent' ) ).rejects.toThrow(
+				'Agent with key "non-existent" not found'
+			);
 		} );
 	} );
 
@@ -640,9 +581,9 @@ describe( 'agentManager', () => {
 		} );
 
 		it( 'should throw error for non-existent agent', () => {
-			expect( () =>
-				agentManager.getConversationHistory( 'non-existent' )
-			).toThrow( 'Agent with key "non-existent" not found' );
+			expect( () => agentManager.getConversationHistory( 'non-existent' ) ).toThrow(
+				'Agent with key "non-existent" not found'
+			);
 		} );
 	} );
 
@@ -697,20 +638,15 @@ describe( 'agentManager', () => {
 					},
 				];
 
-				mockClient.sendMessageStream.mockImplementation(
-					async function* () {
-						for ( const update of mockUpdates ) {
-							yield update;
-						}
+				mockClient.sendMessageStream.mockImplementation( async function* () {
+					for ( const update of mockUpdates ) {
+						yield update;
 					}
-				);
+				} );
 
 				// Execute sendMessageStream which should trigger promise resolution
 				const results: TaskUpdate[] = [];
-				for await ( const update of agentManager.sendMessageStream(
-					'test-key',
-					'Hello'
-				) ) {
+				for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
 					results.push( update );
 				}
 
@@ -752,27 +688,20 @@ describe( 'agentManager', () => {
 					},
 				];
 
-				mockClient.sendMessageStream.mockImplementation(
-					async function* () {
-						for ( const update of mockUpdates ) {
-							yield update;
-						}
+				mockClient.sendMessageStream.mockImplementation( async function* () {
+					for ( const update of mockUpdates ) {
+						yield update;
 					}
-				);
+				} );
 
 				// Execute sendMessageStream
 				const results: TaskUpdate[] = [];
-				for await ( const update of agentManager.sendMessageStream(
-					'test-key',
-					'Hello'
-				) ) {
+				for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
 					results.push( update );
 				}
 
 				// updateToolResultsWithResolvedPromises should not be called for text-only messages
-				expect(
-					updateToolResultsWithResolvedPromises
-				).not.toHaveBeenCalled();
+				expect( updateToolResultsWithResolvedPromises ).not.toHaveBeenCalled();
 
 				// clearToolResultPromises should still be called to clean up any existing promises
 				expect( clearToolResultPromises ).toHaveBeenCalled();
@@ -794,21 +723,17 @@ describe( 'agentManager', () => {
 					},
 				];
 
-				mockClient.sendMessageStream.mockImplementation(
-					async function* () {
-						for ( const update of mockUpdates ) {
-							yield update;
-						}
+				mockClient.sendMessageStream.mockImplementation( async function* () {
+					for ( const update of mockUpdates ) {
+						yield update;
 					}
-				);
+				} );
 
 				// Execute with withHistory=false
 				const results: TaskUpdate[] = [];
-				for await ( const update of agentManager.sendMessageStream(
-					'test-key',
-					'Hello',
-					{ withHistory: false }
-				) ) {
+				for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello', {
+					withHistory: false,
+				} ) ) {
 					results.push( update );
 				}
 
@@ -849,27 +774,20 @@ describe( 'agentManager', () => {
 					},
 				];
 
-				mockClient.sendMessageStream.mockImplementation(
-					async function* () {
-						for ( const update of mockUpdates ) {
-							yield update;
-						}
+				mockClient.sendMessageStream.mockImplementation( async function* () {
+					for ( const update of mockUpdates ) {
+						yield update;
 					}
-				);
+				} );
 
 				// Execute sendMessageStream
 				const results: TaskUpdate[] = [];
-				for await ( const update of agentManager.sendMessageStream(
-					'test-key',
-					'Hello'
-				) ) {
+				for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
 					results.push( update );
 				}
 
 				// updateToolResultsWithResolvedPromises should not be called for text-only messages
-				expect(
-					updateToolResultsWithResolvedPromises
-				).not.toHaveBeenCalled();
+				expect( updateToolResultsWithResolvedPromises ).not.toHaveBeenCalled();
 
 				// clearToolResultPromises should still be called to clean up any existing promises
 				expect( clearToolResultPromises ).toHaveBeenCalled();
@@ -920,9 +838,9 @@ describe( 'agentManager', () => {
 				vi.mocked( loadConversation ).mockResolvedValue( {
 					messages: originalConversation,
 				} );
-				vi.mocked(
-					updateToolResultsWithResolvedPromises
-				).mockReturnValue( resolvedConversation[ 0 ].parts );
+				vi.mocked( updateToolResultsWithResolvedPromises ).mockReturnValue(
+					resolvedConversation[ 0 ].parts
+				);
 
 				// Mock streaming updates
 				const mockUpdates: TaskUpdate[] = [
@@ -937,20 +855,15 @@ describe( 'agentManager', () => {
 					},
 				];
 
-				mockClient.sendMessageStream.mockImplementation(
-					async function* () {
-						for ( const update of mockUpdates ) {
-							yield update;
-						}
+				mockClient.sendMessageStream.mockImplementation( async function* () {
+					for ( const update of mockUpdates ) {
+						yield update;
 					}
-				);
+				} );
 
 				// Execute sendMessageStream
 				const results: TaskUpdate[] = [];
-				for await ( const update of agentManager.sendMessageStream(
-					'test-key',
-					'Hello'
-				) ) {
+				for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
 					results.push( update );
 				}
 
@@ -962,8 +875,7 @@ describe( 'agentManager', () => {
 				);
 
 				// Verify in-memory conversation history was updated
-				const finalHistory =
-					agentManager.getConversationHistory( 'test-key' );
+				const finalHistory = agentManager.getConversationHistory( 'test-key' );
 				expect( finalHistory.length ).toBeGreaterThan( 0 );
 			} );
 
@@ -989,9 +901,7 @@ describe( 'agentManager', () => {
 				];
 
 				// Set initial conversation history
-				agentManager.getConversationHistory = vi
-					.fn()
-					.mockReturnValue( conversationWithPromises );
+				agentManager.getConversationHistory = vi.fn().mockReturnValue( conversationWithPromises );
 
 				// Mock streaming updates
 				const mockUpdates: TaskUpdate[] = [
@@ -1006,21 +916,17 @@ describe( 'agentManager', () => {
 					},
 				];
 
-				mockClient.sendMessageStream.mockImplementation(
-					async function* () {
-						for ( const update of mockUpdates ) {
-							yield update;
-						}
+				mockClient.sendMessageStream.mockImplementation( async function* () {
+					for ( const update of mockUpdates ) {
+						yield update;
 					}
-				);
+				} );
 
 				// Execute with withHistory=false
 				const results: TaskUpdate[] = [];
-				for await ( const update of agentManager.sendMessageStream(
-					'test-key',
-					'Hello',
-					{ withHistory: false }
-				) ) {
+				for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello', {
+					withHistory: false,
+				} ) ) {
 					results.push( update );
 				}
 
@@ -1088,10 +994,7 @@ describe( 'agentManager helper functions', () => {
 						return false;
 					}
 					// INCLUDE tool calls (have toolCallId + arguments)
-					if (
-						'toolCallId' in part.data &&
-						'arguments' in part.data
-					) {
+					if ( 'toolCallId' in part.data && 'arguments' in part.data ) {
 						return true;
 					}
 					// INCLUDE tool results (have toolCallId + result)
@@ -1106,9 +1009,7 @@ describe( 'agentManager helper functions', () => {
 			expect( filteredParts ).toHaveLength( 2 ); // text part + tool call part
 			expect( filteredParts[ 0 ].type ).toBe( 'text' );
 			expect( filteredParts[ 1 ].type ).toBe( 'data' );
-			expect( ( filteredParts[ 1 ] as DataPart ).data ).toHaveProperty(
-				'toolCallId'
-			);
+			expect( ( filteredParts[ 1 ] as DataPart ).data ).toHaveProperty( 'toolCallId' );
 		} );
 	} );
 
@@ -1190,18 +1091,12 @@ describe( 'agentManager helper functions', () => {
 							continue;
 						}
 						// INCLUDE tool calls (have toolCallId + arguments)
-						if (
-							'toolCallId' in part.data &&
-							'arguments' in part.data
-						) {
+						if ( 'toolCallId' in part.data && 'arguments' in part.data ) {
 							historyParts.push( part as ToolCallDataPart );
 							continue;
 						}
 						// INCLUDE tool results (have toolCallId + result)
-						if (
-							'toolCallId' in part.data &&
-							'result' in part.data
-						) {
+						if ( 'toolCallId' in part.data && 'result' in part.data ) {
 							historyParts.push( part as ToolResultDataPart );
 							continue;
 						}
@@ -1253,10 +1148,7 @@ describe( 'agentManager helper functions', () => {
 
 			// Test the extraction logic
 			const toolResults = message.parts.filter(
-				( part: any ) =>
-					part.type === 'data' &&
-					'toolCallId' in part.data &&
-					'result' in part.data
+				( part: any ) => part.type === 'data' && 'toolCallId' in part.data && 'result' in part.data
 			) as DataPart[];
 
 			expect( toolResults ).toHaveLength( 2 );
@@ -1277,10 +1169,7 @@ describe( 'agentManager helper functions', () => {
 			};
 
 			const toolResults = message.parts.filter(
-				( part: any ) =>
-					part.type === 'data' &&
-					'toolCallId' in part.data &&
-					'result' in part.data
+				( part: any ) => part.type === 'data' && 'toolCallId' in part.data && 'result' in part.data
 			) as DataPart[];
 
 			expect( toolResults ).toHaveLength( 0 );
@@ -1292,9 +1181,7 @@ describe( 'agentManager helper functions', () => {
 			const toolResults =
 				( message?.parts?.filter(
 					( part: any ) =>
-						part.type === 'data' &&
-						'toolCallId' in part.data &&
-						'result' in part.data
+						part.type === 'data' && 'toolCallId' in part.data && 'result' in part.data
 				) as DataPart[] ) || [];
 
 			expect( toolResults ).toHaveLength( 0 );

@@ -2,10 +2,7 @@
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import {
-	ComplianceDisclosure,
-	DefaultComplianceDisclosure,
-} from '../chat/ComplianceDisclosure';
+import { ComplianceDisclosure, DefaultComplianceDisclosure } from '../chat/ComplianceDisclosure';
 
 describe( 'ComplianceDisclosure', () => {
 	let container: HTMLDivElement;
@@ -26,8 +23,7 @@ describe( 'ComplianceDisclosure', () => {
 		act( () => root.render( node ) );
 	};
 
-	const slot = () =>
-		container.querySelector( '[data-slot="chat-compliance-disclosure"]' );
+	const slot = () => container.querySelector( '[data-slot="chat-compliance-disclosure"]' );
 
 	it( 'renders its children inside the disclosure slot', () => {
 		render( <ComplianceDisclosure>AI notice</ComplianceDisclosure> );
@@ -85,14 +81,10 @@ describe( 'DefaultComplianceDisclosure', () => {
 		expect( container.textContent ).toContain( 'You’re chatting with AI.' );
 
 		const link = container.querySelector( 'a' );
-		expect( link?.getAttribute( 'href' ) ).toBe(
-			'https://automattic.com/ai-guidelines/'
-		);
+		expect( link?.getAttribute( 'href' ) ).toBe( 'https://automattic.com/ai-guidelines/' );
 		expect( link?.getAttribute( 'target' ) ).toBe( '_blank' );
 		expect( link?.getAttribute( 'rel' ) ).toBe( 'noopener noreferrer' );
-		expect( link?.getAttribute( 'aria-label' ) ).toBe(
-			'Guidelines (opens in a new tab)'
-		);
+		expect( link?.getAttribute( 'aria-label' ) ).toBe( 'Guidelines (opens in a new tab)' );
 		expect( link?.textContent ).toBe( 'Guidelines' );
 	} );
 } );

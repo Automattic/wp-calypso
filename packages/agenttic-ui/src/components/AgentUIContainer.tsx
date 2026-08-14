@@ -1,26 +1,23 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
 import { AnimatePresence, motion } from 'framer-motion';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { type AgentUIContextValue, AgentUIProvider } from '../context/AgentUIContext';
+import { useBoundaryInsets } from '../hooks/useBoundaryInsets';
+import { useChat } from '../hooks/useChat';
+import { useFloatingPanel } from '../hooks/useFloatingPanel';
+import { useInput } from '../hooks/useInput';
+import { useWindowFocusStatus } from '../hooks/useWindowFocusStatus';
+import { cn } from '../utils/classNames';
 import { STYLE_CONSTANTS } from '../utils/constants';
 import { loadAgentticTranslations } from '../utils/translation-loader';
-import { useChat } from '../hooks/useChat';
-import { useInput } from '../hooks/useInput';
-import { useFloatingPanel } from '../hooks/useFloatingPanel';
-import { useBoundaryInsets } from '../hooks/useBoundaryInsets';
-import { useWindowFocusStatus } from '../hooks/useWindowFocusStatus';
-import type { AgentUIProps, Suggestion } from '../types';
-import { cn } from '../utils/classNames';
-import { morphSpring } from './animations';
-import {
-	type AgentUIContextValue,
-	AgentUIProvider,
-} from '../context/AgentUIContext';
 import { DragOverlay } from './DragOverlay';
 import { ResizeHandles } from './ResizeHandles';
+import { morphSpring } from './animations';
+import styles from './chat/Chat.module.css';
 import { CollapsedView } from './views/CollapsedView';
 import { CompactView } from './views/CompactView';
 import { MinimizedView } from './views/MinimizedView';
-import styles from './chat/Chat.module.css';
-import { __, sprintf } from '@wordpress/i18n';
+import type { AgentUIProps, Suggestion } from '../types';
 
 interface AgentUIContainerProps extends AgentUIProps {
 	children: React.ReactNode;
@@ -80,16 +77,11 @@ export function AgentUIContainer( {
 	const isControlled = controlledInputValue !== undefined;
 
 	// Local input state for uncontrolled mode
-	const [ uncontrolledInputValue, setUncontrolledInputValue ] =
-		useState( '' );
+	const [ uncontrolledInputValue, setUncontrolledInputValue ] = useState( '' );
 
 	// Use controlled value if provided, otherwise use internal state
-	const inputValue = isControlled
-		? controlledInputValue
-		: uncontrolledInputValue;
-	const setInputValue = isControlled
-		? controlledOnInputChange!
-		: setUncontrolledInputValue;
+	const inputValue = isControlled ? controlledInputValue : uncontrolledInputValue;
+	const setInputValue = isControlled ? controlledOnInputChange! : setUncontrolledInputValue;
 
 	const chat = useChat( floatingChatState );
 
@@ -246,9 +238,7 @@ export function AgentUIContainer( {
 
 	// Stable ( empty deps ) so it never retriggers consumers' effects.
 	const reportSuggestionsRendered = useCallback( ( shown: Suggestion[] ) => {
-		const key = shown.length
-			? JSON.stringify( shown.map( ( suggestion ) => suggestion.id ) )
-			: '';
+		const key = shown.length ? JSON.stringify( shown.map( ( suggestion ) => suggestion.id ) ) : '';
 
 		if ( ! key || key === lastReportedKeyRef.current ) {
 			return;
@@ -260,10 +250,7 @@ export function AgentUIContainer( {
 
 	// Handle suggestion submission
 	const handleSuggestionSubmit = useCallback(
-		async (
-			selectedSuggestion: Suggestion,
-			availableSuggestions: Suggestion[]
-		) => {
+		async ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => {
 			const value = selectedSuggestion.prompt ?? selectedSuggestion.label;
 
 			if ( selectedSuggestion.autoSubmit ) {
@@ -275,9 +262,7 @@ export function AgentUIContainer( {
 				}
 			} else {
 				// Default: populate input field for user to edit/submit
-				const valueWithSpace = value.endsWith( ' ' )
-					? value
-					: `${ value } `;
+				const valueWithSpace = value.endsWith( ' ' ) ? value : `${ value } `;
 				input.setValue( valueWithSpace );
 				clearSuggestions?.();
 				if ( input.textareaRef.current ) {
@@ -343,11 +328,7 @@ export function AgentUIContainer( {
 	// Handle auto-collapse - return to initial state if no input value and not focused
 	const handleAutoCollapse = useCallback( () => {
 		// Only auto-collapse if initial state was collapsed
-		if (
-			chat.initialState === 'collapsed' &&
-			chat.state === 'compact' &&
-			shouldAutoCollapse()
-		) {
+		if ( chat.initialState === 'collapsed' && chat.state === 'compact' && shouldAutoCollapse() ) {
 			const timeoutId = setTimeout( () => {
 				if ( chat.state === 'compact' && shouldAutoCollapse() ) {
 					chat.setState( 'collapsed' );
@@ -388,8 +369,7 @@ export function AgentUIContainer( {
 
 	// Track previous state for animation purposes
 	const prevStateRef = useRef( chat.state );
-	const fromCompact =
-		prevStateRef.current === 'compact' && chat.state === 'expanded';
+	const fromCompact = prevStateRef.current === 'compact' && chat.state === 'expanded';
 
 	useEffect( () => {
 		// Clear all timeouts when state changes (they're no longer valid)
@@ -411,8 +391,7 @@ export function AgentUIContainer( {
 	// Measure the compact view height
 	useEffect( () => {
 		if ( chat.state === 'compact' && compactRef.current ) {
-			const measured =
-				compactRef.current.scrollHeight + STYLE_CONSTANTS.PADDING;
+			const measured = compactRef.current.scrollHeight + STYLE_CONSTANTS.PADDING;
 			setCompactHeight( measured );
 		}
 	}, [ chat.state, input.value ] );
@@ -436,10 +415,7 @@ export function AgentUIContainer( {
 		? {
 				message: sprintf(
 					/* translators: %d: maximum number of characters allowed */
-					__(
-						'Message is too long. Please keep it under %d characters.',
-						'a8c-agenttic'
-					),
+					__( 'Message is too long. Please keep it under %d characters.', 'a8c-agenttic' ),
 					maxInputLength
 				),
 				dismissible: false,
@@ -512,11 +488,7 @@ export function AgentUIContainer( {
 			<AgentUIProvider value={ contextValue }>
 				<div
 					data-slot="chat-embedded"
-					className={ cn(
-						className,
-						styles.container,
-						styles.embedded
-					) }
+					className={ cn( className, styles.container, styles.embedded ) }
 				>
 					{ children }
 				</div>
@@ -550,9 +522,7 @@ export function AgentUIContainer( {
 					[ styles.expanded ]: chat.state === 'expanded',
 					animating: isAnimating,
 				} ) }
-				onMouseLeave={
-					chat.state === 'compact' ? handleAutoCollapse : undefined
-				}
+				onMouseLeave={ chat.state === 'compact' ? handleAutoCollapse : undefined }
 				drag={ draggableStates.includes( chat.state ) }
 				dragControls={ dragControls }
 				dragListener={ false }
@@ -573,9 +543,7 @@ export function AgentUIContainer( {
 					x,
 					y,
 					left: insets.left,
-					cursor: draggableStates.includes( chat.state )
-						? 'grab'
-						: 'default',
+					cursor: draggableStates.includes( chat.state ) ? 'grab' : 'default',
 				} }
 			>
 				<motion.div
@@ -597,22 +565,12 @@ export function AgentUIContainer( {
 									height: getHeightForState( chat.state ),
 							  } ),
 						x:
-							chat.state === 'collapsed' &&
-							currentSide === 'right'
-								? STYLE_CONSTANTS.COMPACT_WIDTH -
-								  STYLE_CONSTANTS.COLLAPSED_SIZE
+							chat.state === 'collapsed' && currentSide === 'right'
+								? STYLE_CONSTANTS.COMPACT_WIDTH - STYLE_CONSTANTS.COLLAPSED_SIZE
 								: 0,
-						borderBottomLeftRadius:
-							chat.state === 'minimized'
-								? 0
-								: STYLE_CONSTANTS.BORDER_RADIUS,
-						borderBottomRightRadius:
-							chat.state === 'minimized'
-								? 0
-								: STYLE_CONSTANTS.BORDER_RADIUS,
-						transition: input.value.trim()
-							? { duration: 0 }
-							: morphSpring,
+						borderBottomLeftRadius: chat.state === 'minimized' ? 0 : STYLE_CONSTANTS.BORDER_RADIUS,
+						borderBottomRightRadius: chat.state === 'minimized' ? 0 : STYLE_CONSTANTS.BORDER_RADIUS,
+						transition: input.value.trim() ? { duration: 0 } : morphSpring,
 					} }
 					onAnimationStart={ () => setIsAnimating( true ) }
 					onAnimationComplete={ () => setIsAnimating( false ) }
@@ -660,9 +618,7 @@ export function AgentUIContainer( {
 									onStop={ onStop }
 									suggestions={ suggestions }
 									clearSuggestions={ clearSuggestions }
-									handleSuggestionSubmit={
-										handleSuggestionSubmit
-									}
+									handleSuggestionSubmit={ handleSuggestionSubmit }
 									expandOnClick={ expandOnClick }
 								/>
 							</div>
@@ -671,10 +627,7 @@ export function AgentUIContainer( {
 					</AnimatePresence>
 				</motion.div>
 				{ showResizeHandles && (
-					<ResizeHandles
-						resizable={ resizable }
-						onPointerDown={ handleResizePointerDown }
-					/>
+					<ResizeHandles resizable={ resizable } onPointerDown={ handleResizePointerDown } />
 				) }
 			</motion.div>
 		</AgentUIProvider>

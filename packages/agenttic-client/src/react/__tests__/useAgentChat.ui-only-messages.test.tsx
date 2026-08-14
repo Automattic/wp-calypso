@@ -4,18 +4,13 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createClient } from '../../client/index';
-import type {
-	Client,
-	Message as ClientMessage,
-	TaskUpdate,
-} from '../../client/types/index';
 import { getAgentManager } from '../agentManager';
 import { useAgentChat } from '../useAgentChat';
+import type { Client, Message as ClientMessage, TaskUpdate } from '../../client/types/index';
 import type { UIMessage, UseAgentChatReturn } from '../useAgentChat';
 
 vi.mock( '../../client/index', async ( importOriginal ) => {
-	const actual =
-		await importOriginal< typeof import('../../client/index') >();
+	const actual = await importOriginal< typeof import('../../client/index') >();
 
 	return {
 		...actual,
@@ -23,9 +18,7 @@ vi.mock( '../../client/index', async ( importOriginal ) => {
 	};
 } );
 
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 const clientMessage = (
 	messageId: string,
@@ -93,12 +86,7 @@ describe( 'useAgentChat normal send reconcile', () => {
 					final: true,
 					status: {
 						state: 'completed',
-						message: clientMessage(
-							'agent-2',
-							'agent',
-							'Second answer',
-							Date.now() + 2
-						),
+						message: clientMessage( 'agent-2', 'agent', 'Second answer', Date.now() + 2 ),
 					},
 					text: 'Second answer',
 				};
@@ -135,9 +123,7 @@ describe( 'useAgentChat normal send reconcile', () => {
 			await latestHookValue?.onSubmit( 'Second question' );
 		} );
 
-		const messageIds = latestHookValue?.messages.map(
-			( message ) => message.id
-		);
+		const messageIds = latestHookValue?.messages.map( ( message ) => message.id );
 
 		// The tool-injected message survives the reconcile, alongside the new
 		// server response.
@@ -170,12 +156,7 @@ describe( 'useAgentChat normal send reconcile', () => {
 					final: true,
 					status: {
 						state: 'completed',
-						message: clientMessage(
-							'agent-2',
-							'agent',
-							'Second answer',
-							Date.now() + 2
-						),
+						message: clientMessage( 'agent-2', 'agent', 'Second answer', Date.now() + 2 ),
 					},
 					text: 'Second answer',
 				};
@@ -215,9 +196,7 @@ describe( 'useAgentChat normal send reconcile', () => {
 		const midSendCopies = latestHookValue?.messages.filter(
 			( message ) =>
 				message.role === 'user' &&
-				message.content.some(
-					( part ) => part.text === 'Second question'
-				)
+				message.content.some( ( part ) => part.text === 'Second question' )
 		);
 
 		expect( midSendCopies ).toHaveLength( 1 );
@@ -248,12 +227,7 @@ describe( 'useAgentChat normal send reconcile', () => {
 					final: true,
 					status: {
 						state: 'completed',
-						message: clientMessage(
-							'agent-2',
-							'agent',
-							'Second answer',
-							Date.now() + 2
-						),
+						message: clientMessage( 'agent-2', 'agent', 'Second answer', Date.now() + 2 ),
 					},
 					text: 'Second answer',
 				};
@@ -286,9 +260,7 @@ describe( 'useAgentChat normal send reconcile', () => {
 		const userCopies = latestHookValue?.messages.filter(
 			( message ) =>
 				message.role === 'user' &&
-				message.content.some(
-					( part ) => part.text === 'Second question'
-				)
+				message.content.some( ( part ) => part.text === 'Second question' )
 		);
 
 		expect( userCopies ).toHaveLength( 1 );

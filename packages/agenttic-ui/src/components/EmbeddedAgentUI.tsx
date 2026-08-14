@@ -1,18 +1,9 @@
-import React, {
-	createContext,
-	useCallback,
-	useContext,
-	useRef,
-	useState,
-} from 'react';
 import { __ } from '@wordpress/i18n';
-import type { AgentUIProps, Message, NoticeConfig, Suggestion } from '../types';
+import React, { createContext, useCallback, useContext, useRef, useState } from 'react';
 import { LightweightMarkdownRenderer } from './LightweightMarkdownRenderer';
-import {
-	ComplianceDisclosure,
-	DefaultComplianceDisclosure,
-} from './chat/ComplianceDisclosure';
+import { ComplianceDisclosure, DefaultComplianceDisclosure } from './chat/ComplianceDisclosure';
 import { SourcesCard } from './sources';
+import type { AgentUIProps, Message, NoticeConfig, Suggestion } from '../types';
 
 interface EmbeddedAgentUIContextValue extends AgentUIProps {
 	inputValue: string;
@@ -23,8 +14,7 @@ interface EmbeddedAgentUIContextValue extends AgentUIProps {
 	submit: ( message?: string ) => Promise< void >;
 }
 
-const EmbeddedAgentUIContext =
-	createContext< EmbeddedAgentUIContextValue | null >( null );
+const EmbeddedAgentUIContext = createContext< EmbeddedAgentUIContextValue | null >( null );
 
 function useEmbeddedAgentUIContext(): EmbeddedAgentUIContextValue {
 	const context = useContext( EmbeddedAgentUIContext );
@@ -77,9 +67,7 @@ export function EmptyView( {
 }
 
 function getRenderableBlocks( message: Message ) {
-	return message.content.filter(
-		( block ) => block.type === 'text' || block.type === 'component'
-	);
+	return message.content.filter( ( block ) => block.type === 'text' || block.type === 'component' );
 }
 
 function EmbeddedMessage( { message }: { message: Message } ) {
@@ -95,10 +83,7 @@ function EmbeddedMessage( { message }: { message: Message } ) {
 			{ getRenderableBlocks( message ).map( ( block, index ) => {
 				if ( block.type === 'text' && block.text ) {
 					return (
-						<div
-							key={ index }
-							className="agenttic-embedded__bubble"
-						>
+						<div key={ index } className="agenttic-embedded__bubble">
 							<MessageRenderer>{ block.text }</MessageRenderer>
 						</div>
 					);
@@ -106,12 +91,7 @@ function EmbeddedMessage( { message }: { message: Message } ) {
 
 				if ( block.type === 'component' && block.component ) {
 					const Component = block.component;
-					return (
-						<Component
-							key={ index }
-							{ ...( block.componentProps || {} ) }
-						/>
-					);
+					return <Component key={ index } { ...( block.componentProps || {} ) } />;
 				}
 
 				return null;
@@ -128,14 +108,8 @@ export function EmbeddedAgentUIMessages( {
 }: {
 	className?: string;
 } = {} ) {
-	const {
-		messages,
-		isProcessing,
-		error,
-		emptyView,
-		thinkingMessage,
-		messagesPosition,
-	} = useEmbeddedAgentUIContext();
+	const { messages, isProcessing, error, emptyView, thinkingMessage, messagesPosition } =
+		useEmbeddedAgentUIContext();
 	const visibleMessages = messages.filter(
 		( message ) => getRenderableBlocks( message ).length > 0
 	);
@@ -162,24 +136,17 @@ export function EmbeddedAgentUIMessages( {
 			data-slot="messages"
 			className={ [
 				'agenttic-embedded__messages',
-				messagesPosition === 'bottom'
-					? 'agenttic-embedded__messages--bottom'
-					: '',
+				messagesPosition === 'bottom' ? 'agenttic-embedded__messages--bottom' : '',
 				className,
 			]
 				.filter( Boolean )
 				.join( ' ' ) }
 		>
 			{ visibleMessages.map( ( message ) => (
-				<EmbeddedMessage
-					key={ message.reactKey || message.id }
-					message={ message }
-				/>
+				<EmbeddedMessage key={ message.reactKey || message.id } message={ message } />
 			) ) }
 			{ isProcessing && <ThinkingMessage content={ thinkingMessage } /> }
-			{ error && (
-				<div className="agenttic-embedded__error">{ error }</div>
-			) }
+			{ error && <div className="agenttic-embedded__error">{ error }</div> }
 		</div>
 	);
 }
@@ -193,14 +160,8 @@ export function EmbeddedAgentUISuggestions( {
 	showSuggestions?: boolean;
 	onSelect?: ( message: string ) => void;
 } = {} ) {
-	const {
-		inputValue,
-		setInputValue,
-		suggestions,
-		clearSuggestions,
-		onSuggestionClick,
-		submit,
-	} = useEmbeddedAgentUIContext();
+	const { inputValue, setInputValue, suggestions, clearSuggestions, onSuggestionClick, submit } =
+		useEmbeddedAgentUIContext();
 
 	if ( inputValue && ! showSuggestions ) {
 		return null;
@@ -212,9 +173,7 @@ export function EmbeddedAgentUISuggestions( {
 
 	return (
 		<div
-			className={ [ 'agenttic-embedded__suggestions', className ]
-				.filter( Boolean )
-				.join( ' ' ) }
+			className={ [ 'agenttic-embedded__suggestions', className ].filter( Boolean ).join( ' ' ) }
 		>
 			{ suggestions.map( ( suggestion ) => {
 				const value = suggestion.prompt ?? suggestion.label;
@@ -255,9 +214,7 @@ export function EmbeddedAgentUINotice( {
 		<div
 			className={ [
 				'agenttic-embedded__notice',
-				notice.status
-					? `agenttic-embedded__notice--${ notice.status }`
-					: '',
+				notice.status ? `agenttic-embedded__notice--${ notice.status }` : '',
 				className,
 			]
 				.filter( Boolean )
@@ -298,18 +255,13 @@ export function EmbeddedAgentUIInput( {
 	} = useEmbeddedAgentUIContext();
 	const canSubmit =
 		! disabled &&
-		( isProcessing ||
-			( !! inputValue.trim() && inputValue.length <= maxInputLength ) );
-	const placeholderText = Array.isArray( placeholder )
-		? placeholder[ 0 ]
-		: placeholder;
+		( isProcessing || ( !! inputValue.trim() && inputValue.length <= maxInputLength ) );
+	const placeholderText = Array.isArray( placeholder ) ? placeholder[ 0 ] : placeholder;
 
 	return (
 		<div
 			data-slot="chat-input"
-			className={ [ 'agenttic-embedded__input', className ]
-				.filter( Boolean )
-				.join( ' ' ) }
+			className={ [ 'agenttic-embedded__input', className ].filter( Boolean ).join( ' ' ) }
 		>
 			{ allowAttachments && (
 				<>
@@ -319,11 +271,7 @@ export function EmbeddedAgentUIInput( {
 						multiple
 						accept={ acceptedFileTypes?.join( ',' ) }
 						style={ { display: 'none' } }
-						onChange={ ( event ) =>
-							setFiles(
-								Array.from( event.currentTarget.files ?? [] )
-							)
-						}
+						onChange={ ( event ) => setFiles( Array.from( event.currentTarget.files ?? [] ) ) }
 					/>
 					<button
 						type="button"
@@ -338,9 +286,7 @@ export function EmbeddedAgentUIInput( {
 				aria-label={ __( 'Chat input', 'a8c-agenttic' ) }
 				placeholder={ placeholderText }
 				value={ inputValue }
-				onChange={ ( event ) =>
-					setInputValue( event.currentTarget.value )
-				}
+				onChange={ ( event ) => setInputValue( event.currentTarget.value ) }
 				onKeyDown={ ( event ) => {
 					onKeyDown?.( event );
 					if (
@@ -374,9 +320,7 @@ export function EmbeddedAgentUIInput( {
 				{ isProcessing ? '■' : '↑' }
 			</button>
 			{ files.length > 0 && (
-				<span className="agenttic-embedded__attachment-count">
-					{ files.length }
-				</span>
+				<span className="agenttic-embedded__attachment-count">{ files.length }</span>
 			) }
 		</div>
 	);
@@ -395,9 +339,7 @@ export function EmbeddedAgentUIFooter( {
 		<>
 			<div
 				data-slot="chat-footer"
-				className={ [ 'agenttic-embedded__footer', className ]
-					.filter( Boolean )
-					.join( ' ' ) }
+				className={ [ 'agenttic-embedded__footer', className ].filter( Boolean ).join( ' ' ) }
 			>
 				{ children ?? (
 					<>
@@ -407,9 +349,7 @@ export function EmbeddedAgentUIFooter( {
 					</>
 				) }
 			</div>
-			<ComplianceDisclosure>
-				{ complianceDisclosure }
-			</ComplianceDisclosure>
+			<ComplianceDisclosure>{ complianceDisclosure }</ComplianceDisclosure>
 		</>
 	);
 }
@@ -424,9 +364,7 @@ export function EmbeddedAgentUIConversationView( {
 	return (
 		<div
 			data-slot="conversation-view"
-			className={ [ 'agenttic-embedded__conversation', className ]
-				.filter( Boolean )
-				.join( ' ' ) }
+			className={ [ 'agenttic-embedded__conversation', className ].filter( Boolean ).join( ' ' ) }
 		>
 			{ children ?? (
 				<>
@@ -445,8 +383,7 @@ export function EmbeddedAgentUIContainer( {
 }: AgentUIProps & {
 	children?: React.ReactNode;
 } ) {
-	const [ uncontrolledInputValue, setUncontrolledInputValue ] =
-		useState( '' );
+	const [ uncontrolledInputValue, setUncontrolledInputValue ] = useState( '' );
 	const [ files, setFiles ] = useState< File[] >( [] );
 	const fileInputRef = useRef< HTMLInputElement >( null );
 	const inputValue = props.inputValue ?? uncontrolledInputValue;
@@ -460,10 +397,7 @@ export function EmbeddedAgentUIContainer( {
 			}
 			setInputValue( '' );
 			setFiles( [] );
-			await props.onSubmit(
-				message,
-				props.allowAttachments ? files : undefined
-			);
+			await props.onSubmit( message, props.allowAttachments ? files : undefined );
 		},
 		[ files, inputValue, props, setInputValue ]
 	);
@@ -482,9 +416,7 @@ export function EmbeddedAgentUIContainer( {
 		<EmbeddedAgentUIContext.Provider value={ value }>
 			<div
 				data-slot="chat-embedded"
-				className={ [ 'agenttic', 'agenttic-embedded', className ]
-					.filter( Boolean )
-					.join( ' ' ) }
+				className={ [ 'agenttic', 'agenttic-embedded', className ].filter( Boolean ).join( ' ' ) }
 			>
 				{ children ?? <EmbeddedAgentUIConversationView /> }
 			</div>
@@ -502,11 +434,11 @@ const EmbeddedAgentUINamespace = {
 	Notice: EmbeddedAgentUINotice,
 };
 
-export const EmbeddedAgentUI: React.FC< AgentUIProps > &
-	typeof EmbeddedAgentUINamespace = Object.assign(
-	( props: AgentUIProps ) => <EmbeddedAgentUIContainer { ...props } />,
-	EmbeddedAgentUINamespace
-);
+export const EmbeddedAgentUI: React.FC< AgentUIProps > & typeof EmbeddedAgentUINamespace =
+	Object.assign(
+		( props: AgentUIProps ) => <EmbeddedAgentUIContainer { ...props } />,
+		EmbeddedAgentUINamespace
+	);
 
 export const AgentUI = EmbeddedAgentUI;
 

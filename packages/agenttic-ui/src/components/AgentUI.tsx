@@ -1,15 +1,15 @@
 import React from 'react';
-import type { AgentUIProps } from '../types';
 import { cn } from '../utils/classNames';
 import { AgentUIContainer } from './AgentUIContainer';
-import { AgentUIHeader } from './composable/AgentUIHeader';
-import { AgentUIMessages } from './composable/AgentUIMessages';
-import { AgentUIInput } from './composable/AgentUIInput';
-import { AgentUISuggestions } from './composable/AgentUISuggestions';
-import { AgentUINotice } from './composable/AgentUINotice';
-import { AgentUIFooter } from './composable/AgentUIFooter';
 import { AgentUIConversationView } from './composable/AgentUIConversationView';
+import { AgentUIFooter } from './composable/AgentUIFooter';
+import { AgentUIHeader } from './composable/AgentUIHeader';
+import { AgentUIInput } from './composable/AgentUIInput';
 import { AgentUIInputToolbar } from './composable/AgentUIInputToolbar';
+import { AgentUIMessages } from './composable/AgentUIMessages';
+import { AgentUINotice } from './composable/AgentUINotice';
+import { AgentUISuggestions } from './composable/AgentUISuggestions';
+import type { AgentUIProps } from '../types';
 
 /**
  * AgentUI - Pure UI component for chat interface
@@ -24,34 +24,33 @@ import { AgentUIInputToolbar } from './composable/AgentUIInputToolbar';
  * import { AgentUI } from '@automattic/agenttic-ui';
  *
  * function ChatComponent() {
- *   const {
- *     messages,
- *     isProcessing,
- *     error,
- *     onSubmit,
- *     suggestions,
- *     clearSuggestions
- *   } = useAgentChat({
- *     agentId: 'your-agent-id',
- *     contextProvider,
- *     toolProvider
- *   });
+ * const {
+ * messages,
+ * isProcessing,
+ * error,
+ * onSubmit,
+ * suggestions,
+ * clearSuggestions
+ * } = useAgentChat({
+ * agentId: 'your-agent-id',
+ * contextProvider,
+ * toolProvider
+ * });
  *
- *   return (
- *     <AgentUI
- *       messages={messages}
- *       isProcessing={isProcessing}
- *       error={error}
- *       onSubmit={onSubmit}
- *       suggestions={suggestions}
- *       clearSuggestions={clearSuggestions}
- *       variant="floating"
- *       placeholder="Ask anything..."
- *     />
- *   );
+ * return (
+ * <AgentUI
+ * messages={messages}
+ * isProcessing={isProcessing}
+ * error={error}
+ * onSubmit={onSubmit}
+ * suggestions={suggestions}
+ * clearSuggestions={clearSuggestions}
+ * variant="floating"
+ * placeholder="Ask anything..."
+ * />
+ * );
  * }
  * ```
- *
  * @param props                   - UI-only props for chat interface
  * @param props.variant
  * @param props.triggerIcon
@@ -91,19 +90,13 @@ const AgentUINamespace = {
 };
 
 // Main convenience wrapper - provides current API with new composable architecture
-export const AgentUI: React.FC< AgentUIProps > & typeof AgentUINamespace =
-	Object.assign(
-		( props: AgentUIProps ) => (
-			<AgentUIContainer
-				{ ...props }
-				className={ cn( 'agenttic', props.className ) }
-			>
-				<AgentUIConversationView
-					showHeader={ props.variant === 'floating' }
-				/>
-			</AgentUIContainer>
-		),
-		AgentUINamespace
-	);
+export const AgentUI: React.FC< AgentUIProps > & typeof AgentUINamespace = Object.assign(
+	( props: AgentUIProps ) => (
+		<AgentUIContainer { ...props } className={ cn( 'agenttic', props.className ) }>
+			<AgentUIConversationView showHeader={ props.variant === 'floating' } />
+		</AgentUIContainer>
+	),
+	AgentUINamespace
+);
 
 export default AgentUI;

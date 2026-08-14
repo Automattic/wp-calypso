@@ -18,7 +18,6 @@ export function usePlaygroundHeaderHeight() {
 /**
  * Renders its children into the shell header's view-tools slot. Each demo
  * uses this to expose its own controls without a second fixed overlay.
- *
  * @param props          Component props.
  * @param props.children Toolbar content to portal into the header.
  */
@@ -32,7 +31,6 @@ export function ViewTools( { children }: { children: React.ReactNode } ) {
 
 /**
  * Standard toolbar button for demo view tools.
- *
  * @param props          Component props.
  * @param props.active   Toggled-on state (rendered via aria-pressed).
  * @param props.accent   Highlights the button for destructive/attention actions.
@@ -78,18 +76,10 @@ interface PlaygroundShellProps {
 /**
  * Unified playground chrome: a single header with demo tabs, theme toggle,
  * and a slot for the active demo's tools; the demo fills the canvas below.
- *
  * @param props Component props.
  */
 const PlaygroundShell: React.FC< PlaygroundShellProps > = ( props ) => {
-	const {
-		demos,
-		currentDemoId,
-		onSelectDemo,
-		currentTheme,
-		onThemeChange,
-		children,
-	} = props;
+	const { demos, currentDemoId, onSelectDemo, currentTheme, onThemeChange, children } = props;
 	const [ toolsSlot, setToolsSlot ] = useState< HTMLElement | null >( null );
 	const [ headerEl, setHeaderEl ] = useState< HTMLElement | null >( null );
 	const [ headerHeight, setHeaderHeight ] = useState( 0 );
@@ -123,11 +113,7 @@ const PlaygroundShell: React.FC< PlaygroundShellProps > = ( props ) => {
 							</button>
 						) ) }
 					</nav>
-					<div
-						className="playground-theme"
-						role="group"
-						aria-label="Theme"
-					>
+					<div className="playground-theme" role="group" aria-label="Theme">
 						{ ( [ 'light', 'dark' ] as const ).map( ( theme ) => (
 							<button
 								key={ theme }
@@ -142,10 +128,7 @@ const PlaygroundShell: React.FC< PlaygroundShellProps > = ( props ) => {
 					</div>
 				</div>
 				<div className="playground-header__row">
-					<div
-						className="playground-view-tools"
-						ref={ setToolsSlot }
-					/>
+					<div className="playground-view-tools" ref={ setToolsSlot } />
 				</div>
 			</header>
 			<main className="playground-canvas">

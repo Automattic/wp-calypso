@@ -58,22 +58,22 @@ Conversation persistence: memory cache + `sessionStorage`, keyed by `sessionId`
 
 ## Conventions
 
--   Formatting is WordPress prettier style (tabs, spaces inside parens/brackets), configured by
-    the package `.prettierrc`.
--   `@typescript-eslint/consistent-type-imports` is enforced — use `import type`.
--   i18n text domain is `a8c-agenttic`.
--   **Tests use raw `react-dom/client` — there is no `@testing-library` here.** Pattern:
-    `createRoot` + `act` from `react`, `IS_REACT_ACT_ENVIRONMENT = true`, query with
-    `querySelector` over `data-slot`/`viewBox` selectors. Match it; don't add a testing library.
--   `vitest.config.ts` sets `environment: 'jsdom'` globally.
--   Tests sit next to sources (`Foo.test.ts`) or in a sibling `__tests__/`; both are used.
--   Debug at runtime with `window.DEBUG = 'agenttic-client'` (see `client/utils/logger.ts`).
+- Formatting is WordPress prettier style (tabs, spaces inside parens/brackets), configured by
+  the package `.prettierrc`.
+- `@typescript-eslint/consistent-type-imports` is enforced — use `import type`.
+- i18n text domain is `a8c-agenttic`.
+- **Tests use raw `react-dom/client` — there is no `@testing-library` here.** Pattern:
+  `createRoot` + `act` from `react`, `IS_REACT_ACT_ENVIRONMENT = true`, query with
+  `querySelector` over `data-slot`/`viewBox` selectors. Match it; don't add a testing library.
+- `vitest.config.ts` sets `environment: 'jsdom'` globally.
+- Tests sit next to sources (`Foo.test.ts`) or in a sibling `__tests__/`; both are used.
+- Debug at runtime with `window.DEBUG = 'agenttic-client'` (see `client/utils/logger.ts`).
 
 ## Gotchas
 
--   Everything meaningful is externalized in the vite lib config (react, `@wordpress/*`, …).
-    A new runtime dependency must be added to both `package.json` and the
-    `rollupOptions.external` list, or it gets silently inlined into the bundle.
--   `marked` is an optional dependency, lazily `import()`ed — code must work when it's absent.
--   Tests are vitest and do not run under Calypso's jest-based `test-packages`; run them with
-    the workspace `test` script.
+- Everything meaningful is externalized in the vite lib config (react, `@wordpress/*`, …).
+  A new runtime dependency must be added to both `package.json` and the
+  `rollupOptions.external` list, or it gets silently inlined into the bundle.
+- `marked` is an optional dependency, lazily `import()`ed — code must work when it's absent.
+- Tests are vitest and do not run under Calypso's jest-based `test-packages`; run them with
+  the workspace `test` script.

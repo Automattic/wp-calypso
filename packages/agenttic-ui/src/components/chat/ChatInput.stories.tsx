@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { type ActionButton, ChatInput } from './ChatInput';
 import React, { useRef } from 'react';
+import { AgentUI } from '../AgentUI';
+import { CheckIcon } from '../icons/CheckIcon';
 import { CopyIcon } from '../icons/CopyIcon';
 import { ImageIcon } from '../icons/ImageIcon';
 import { PageIcon } from '../icons/PageIcon';
 import { StylesIcon } from '../icons/StylesIcon';
-import { CheckIcon } from '../icons/CheckIcon';
-import { AgentUI } from '../AgentUI';
+import { type ActionButton, ChatInput } from './ChatInput';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
 	title: 'Chat/ChatInput',
@@ -33,9 +33,7 @@ export default meta;
 type Story = StoryObj< typeof meta >;
 
 // Wrapper component to handle state for stories
-const ChatInputWrapper = (
-	props: Partial< React.ComponentProps< typeof ChatInput > >
-) => {
+const ChatInputWrapper = ( props: Partial< React.ComponentProps< typeof ChatInput > > ) => {
 	const [ value, setValue ] = React.useState( props.value || '' );
 	const textareaRef = useRef< HTMLTextAreaElement >( null );
 
@@ -78,10 +76,7 @@ export const Processing: Story = {
 
 export const WithExpandButton: Story = {
 	render: () => (
-		<ChatInputWrapper
-			showExpandButton
-			onExpand={ () => console.log( 'Expand clicked!' ) }
-		/>
+		<ChatInputWrapper showExpandButton onExpand={ () => console.log( 'Expand clicked!' ) } />
 	),
 	args: {
 		value: '',
@@ -133,12 +128,7 @@ const customActions: ActionButton[] = [
 
 export const WithCustomActions: Story = {
 	render: () => {
-		return (
-			<ChatInputWrapper
-				customActions={ customActions }
-				actionOrder="before-submit"
-			/>
-		);
+		return <ChatInputWrapper customActions={ customActions } actionOrder="before-submit" />;
 	},
 	args: {
 		value: '',
@@ -152,12 +142,7 @@ export const WithCustomActions: Story = {
 
 export const WithCustomActionsAfterSubmit: Story = {
 	render: () => {
-		return (
-			<ChatInputWrapper
-				customActions={ customActions }
-				actionOrder="after-submit"
-			/>
-		);
+		return <ChatInputWrapper customActions={ customActions } actionOrder="after-submit" />;
 	},
 	args: {
 		value: '',
@@ -183,7 +168,8 @@ export const DisabledSubmit: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'The submit button is disabled when the `disabled` prop is set to true, even if there is text in the input field. This is useful for form validation scenarios.',
+				story:
+					'The submit button is disabled when the `disabled` prop is set to true, even if there is text in the input field. This is useful for form validation scenarios.',
 			},
 		},
 	},
@@ -201,12 +187,10 @@ const DisabledValidationWrapper = () => {
 	}, [ value ] );
 
 	return (
-		<div
-			style={ { display: 'flex', flexDirection: 'column', gap: '16px' } }
-		>
+		<div style={ { display: 'flex', flexDirection: 'column', gap: '16px' } }>
 			<div style={ { fontSize: '14px', color: '#666' } }>
-				<strong>Validation Demo:</strong> Submit button is disabled
-				until you type at least 5 characters.
+				<strong>Validation Demo:</strong> Submit button is disabled until you type at least 5
+				characters.
 			</div>
 			<ChatInput
 				value={ value }
@@ -224,9 +208,7 @@ const DisabledValidationWrapper = () => {
 					color: isValid ? '#22c55e' : '#ef4444',
 				} }
 			>
-				{ isValid
-					? '✓ Valid input'
-					: `✗ Need ${ 5 - value.trim().length } more characters` }
+				{ isValid ? '✓ Valid input' : `✗ Need ${ 5 - value.trim().length } more characters` }
 			</div>
 		</div>
 	);
@@ -246,7 +228,8 @@ export const DisabledWithValidation: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Interactive example showing how the `disabled` prop can be used for form validation. The submit button is disabled until the input meets validation criteria (5+ characters in this example).',
+				story:
+					'Interactive example showing how the `disabled` prop can be used for form validation. The submit button is disabled until the input meets validation criteria (5+ characters in this example).',
 			},
 		},
 	},

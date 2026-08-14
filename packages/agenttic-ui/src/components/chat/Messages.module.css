@@ -2,9 +2,9 @@
 	display: flex;
 	flex-direction: column;
 	flex: 1;
-	padding-top: var(--spacing-1);
-	padding-bottom: var(--spacing-6);
-	gap: var(--spacing-8);
+	padding-top: var( --spacing-1 );
+	padding-bottom: var( --spacing-6 );
+	gap: var( --spacing-8 );
 	overflow-y: auto;
 	height: 100%;
 	position: relative;
@@ -18,13 +18,14 @@
 }
 
 /* Hide scrollbar visually during animations */
-:global(.animating) .container::-webkit-scrollbar {
+/* stylelint-disable-next-line selector-pseudo-class-no-unknown -- CSS Modules :global */
+:global( .animating ) .container::-webkit-scrollbar {
 	display: none;
 }
 
 /* Reduce gap for consecutive messages from same role */
-.container [data-role="user"]:has(+ [data-role="user"]),
-.container [data-role="agent"]:has(+ [data-role="agent"]),
-.container [data-role="assistant"]:has(+ [data-role="assistant"]) {
-	margin-bottom: calc(-1 * var(--spacing-6));
+.container [data-role='user']:has( + [data-role='user'] ),
+.container [data-role='agent']:has( + [data-role='agent'] ),
+.container [data-role='assistant']:has( + [data-role='assistant'] ) {
+	margin-bottom: calc( -1 * var( --spacing-6 ) );
 }

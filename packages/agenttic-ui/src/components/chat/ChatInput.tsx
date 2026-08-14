@@ -1,16 +1,16 @@
-import React, { useCallback, useEffect, useId, useRef } from 'react';
-import { Button } from '../ui/button';
-import { Textarea } from '../ui/textarea';
-import { ArrowUpIcon } from '../icons/ArrowUpIcon';
-import { StopIcon } from '../icons/StopIcon';
-import { motion } from 'framer-motion';
-import { fastSpring, fastSpringWithDelay } from '../animations';
-import styles from './ChatInput.module.css';
-import { ChevronUpIcon } from '../icons/ChevronUpIcon';
 import { __ } from '@wordpress/i18n';
-import { AnimatedPlaceholder } from './AnimatedPlaceholder';
+import { motion } from 'framer-motion';
+import React, { useCallback, useEffect, useId, useRef } from 'react';
 import { useAgentUIContext } from '../../context/AgentUIContext';
 import { cn } from '../../utils/classNames';
+import { fastSpring, fastSpringWithDelay } from '../animations';
+import { ArrowUpIcon } from '../icons/ArrowUpIcon';
+import { ChevronUpIcon } from '../icons/ChevronUpIcon';
+import { StopIcon } from '../icons/StopIcon';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
+import { AnimatedPlaceholder } from './AnimatedPlaceholder';
+import styles from './ChatInput.module.css';
 
 interface ActionButton {
 	id: string;
@@ -75,13 +75,10 @@ export function ChatInput( {
 	layout = 'inline',
 }: ChatInputProps ) {
 	const textareaId = useId();
-	const { variant, floatingChatState, isInputOverLimit } =
-		useAgentUIContext();
+	const { variant, floatingChatState, isInputOverLimit } = useAgentUIContext();
 	const canSubmit =
 		// If the consumer actively sets `disabled` to `false` (vs undefined), that takes precedence.
-		disabled !== undefined
-			? ! disabled
-			: ( value.trim() || isProcessing ) && ! isInputOverLimit;
+		disabled !== undefined ? ! disabled : ( value.trim() || isProcessing ) && ! isInputOverLimit;
 
 	const handleTextareaKeyDown = useCallback(
 		( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
@@ -91,11 +88,7 @@ export function ChatInput( {
 			// Ignore keydowns from IMEs
 			// e.keyCode === 229: Workaround for Mac Safari where the final Enter/Backspace of an IME composition
 			// is `isComposing=false`, even though it's technically still part of the composition.
-			if (
-				key === 'enter' &&
-				! e.shiftKey &&
-				( e.nativeEvent.isComposing || e.keyCode === 229 )
-			) {
+			if ( key === 'enter' && ! e.shiftKey && ( e.nativeEvent.isComposing || e.keyCode === 229 ) ) {
 				e.preventDefault();
 				return;
 			}
@@ -116,8 +109,7 @@ export function ChatInput( {
 			// Stop undo/redo from bubbling to parent (e.g., Gutenberg editor)
 			// Supports: Cmd/Ctrl+Z, Cmd/Ctrl+Shift+Z, Ctrl+Y
 			const isUndoOrRedo =
-				( ( e.metaKey || e.ctrlKey ) && key === 'z' ) ||
-				( e.ctrlKey && key === 'y' );
+				( ( e.metaKey || e.ctrlKey ) && key === 'z' ) || ( e.ctrlKey && key === 'y' );
 			if ( isUndoOrRedo ) {
 				e.stopPropagation();
 			}
@@ -128,8 +120,7 @@ export function ChatInput( {
 	);
 
 	// Helper function to ensure text has ellipsis
-	const addEllipsis = ( text: string ) =>
-		text.endsWith( '…' ) ? text : `${ text }…`;
+	const addEllipsis = ( text: string ) => ( text.endsWith( '…' ) ? text : `${ text }…` );
 
 	// Determine if we should use animated placeholder (array) or native placeholder (string)
 	const isAnimated = Array.isArray( placeholder );
@@ -240,15 +231,11 @@ export function ChatInput( {
 				animate={ {
 					opacity: 1,
 					scale: 1,
-					transition: value.trim()
-						? { duration: 0 }
-						: fastSpringWithDelay,
+					transition: value.trim() ? { duration: 0 } : fastSpringWithDelay,
 				} }
 			>
 				{ ! value && isAnimated && (
-					<AnimatedPlaceholder
-						texts={ formattedPlaceholder as string[] }
-					/>
+					<AnimatedPlaceholder texts={ formattedPlaceholder as string[] } />
 				) }
 				<Textarea
 					id={ textareaId }
@@ -260,9 +247,7 @@ export function ChatInput( {
 					onBlur={ onBlur }
 					onFocus={ onFocus }
 					onClick={ onClick }
-					placeholder={
-						isAnimated ? '' : ( formattedPlaceholder as string )
-					}
+					placeholder={ isAnimated ? '' : ( formattedPlaceholder as string ) }
 					rows={ 1 }
 					aria-label={ __( 'Chat input', 'a8c-agenttic' ) }
 				/>

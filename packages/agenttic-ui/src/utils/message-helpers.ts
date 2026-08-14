@@ -88,17 +88,11 @@ export const isCompletedPlanMessage = ( message: Message ): boolean => {
  * @param text
  * @param imageUrls - Optional image URLs (will be converted to component parts)
  */
-export const createUserMessage = (
-	text: string,
-	imageUrls: string[] = []
-): Message => {
+export const createUserMessage = ( text: string, imageUrls: string[] = [] ): Message => {
 	return {
 		id: crypto.randomUUID(),
 		role: 'user',
-		content: [
-			{ type: 'text', text },
-			...imageUrls.map( ( url ) => createImageComponent( url ) ),
-		],
+		content: [ { type: 'text', text }, ...imageUrls.map( ( url ) => createImageComponent( url ) ) ],
 		timestamp: Date.now(),
 		archived: false,
 		showIcon: true,
@@ -151,8 +145,7 @@ export const getVisibleMessages = ( messages: Message[] ): Message[] => {
 		.map( ( message ) => ( {
 			...message,
 			content: message.content.filter(
-				( content ) =>
-					content.type !== 'context' && content.type !== 'data'
+				( content ) => content.type !== 'context' && content.type !== 'data'
 			),
 		} ) )
 		.filter( ( message ) => message.content.length > 0 );

@@ -1,5 +1,5 @@
-import React from 'react';
 import * as Popover from '@radix-ui/react-popover';
+import React from 'react';
 import styles from './AgentUIInputToolbar.module.css';
 
 export interface AgentUIInputToolbarProps {
@@ -39,9 +39,7 @@ export function AgentUIInputToolbar( {
 								viewBox="0 0 24 24"
 								fill="none"
 								aria-hidden="true"
-								className={ `${ styles.icon } ${
-									open ? styles.iconOpen : ''
-								}` }
+								className={ `${ styles.icon } ${ open ? styles.iconOpen : '' }` }
 							>
 								<path
 									fillRule="evenodd"

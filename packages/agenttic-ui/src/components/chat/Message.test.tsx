@@ -2,12 +2,10 @@
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { Message as MessageType } from '../../types';
 import { Message } from './Message';
+import type { Message as MessageType } from '../../types';
 
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 // The avatar is the only 28x28 mark on the message, so its viewBox identifies it.
 const AVATAR_SELECTOR = 'svg[viewBox="0 0 28 28"]';
@@ -41,14 +39,9 @@ describe( 'Message avatar gating', () => {
 		container.remove();
 	} );
 
-	async function renderMessage(
-		message: MessageType,
-		showAgentIcon: boolean
-	): Promise< void > {
+	async function renderMessage( message: MessageType, showAgentIcon: boolean ): Promise< void > {
 		await act( async () => {
-			root.render(
-				<Message message={ message } showAgentIcon={ showAgentIcon } />
-			);
+			root.render( <Message message={ message } showAgentIcon={ showAgentIcon } /> );
 		} );
 	}
 

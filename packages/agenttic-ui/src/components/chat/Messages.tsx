@@ -1,15 +1,15 @@
 import { AnimatePresence } from 'framer-motion';
 import { useMemo, useRef } from 'react';
-import type { ComponentType } from 'react';
-import type { Message as MessageType } from '../../types';
-import { cn } from '../../utils/classNames';
+import { useDebounce } from 'use-debounce';
 import { useAutoScroll } from '../../hooks/useAutoScroll';
-import { Message } from './Message';
+import { cn } from '../../utils/classNames';
+import { getVisibleMessages } from '../../utils/message-helpers';
 import { SourcesCard } from '../sources';
+import { Message } from './Message';
 import styles from './Messages.module.css';
 import { ThinkingMessage } from './ThinkingMessage';
-import { getVisibleMessages } from '../../utils/message-helpers';
-import { useDebounce } from 'use-debounce';
+import type { Message as MessageType } from '../../types';
+import type { ComponentType } from 'react';
 
 interface MessagesProps {
 	messages: MessageType[];
@@ -42,9 +42,7 @@ export function Messages( {
 
 	const liveRegionText = useMemo( () => {
 		// Find the last agent message
-		const agentMessages = visibleMessages.filter(
-			( msg ) => msg.role === 'agent'
-		);
+		const agentMessages = visibleMessages.filter( ( msg ) => msg.role === 'agent' );
 
 		if ( ! agentMessages.length ) {
 			return '';
@@ -77,9 +75,7 @@ export function Messages( {
 					className={ cn(
 						styles.container,
 						styles.emptyState,
-						messagesPosition === 'bottom'
-							? styles.bottomMessages
-							: ''
+						messagesPosition === 'bottom' ? styles.bottomMessages : ''
 					) }
 					ref={ scrollAreaRef }
 				>
@@ -124,15 +120,10 @@ export function Messages( {
 								showAgentIcon={ showAgentIcon }
 							/>,
 						];
-						if (
-							message.role === 'agent' &&
-							message.sources?.length
-						) {
+						if ( message.role === 'agent' && message.sources?.length ) {
 							nodes.push(
 								<SourcesCard
-									key={ `${
-										message.reactKey || message.id
-									}-sources` }
+									key={ `${ message.reactKey || message.id }-sources` }
 									sources={ message.sources }
 								/>
 							);

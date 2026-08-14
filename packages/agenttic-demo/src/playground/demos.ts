@@ -1,9 +1,9 @@
-import type React from 'react';
 import EmbeddedDemo from '../EmbeddedDemo';
-import FloatingDemo from '../FloatingDemo';
 import FloatingCompactDemo from '../FloatingCompactDemo';
-import SiteSpecDemo from '../SiteSpecDemo';
+import FloatingDemo from '../FloatingDemo';
 import SidebarDemo from '../SidebarDemo';
+import SiteSpecDemo from '../SiteSpecDemo';
+import type React from 'react';
 
 export interface DemoDefinition {
 	id: string;

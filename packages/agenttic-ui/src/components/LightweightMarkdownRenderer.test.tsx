@@ -4,9 +4,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { LightweightMarkdownRenderer } from './LightweightMarkdownRenderer';
 
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 describe( 'LightweightMarkdownRenderer', () => {
 	let container: HTMLDivElement;
@@ -27,11 +25,7 @@ describe( 'LightweightMarkdownRenderer', () => {
 
 	async function renderMarkdown( markdown: string ) {
 		await act( async () => {
-			root.render(
-				<LightweightMarkdownRenderer>
-					{ markdown }
-				</LightweightMarkdownRenderer>
-			);
+			root.render( <LightweightMarkdownRenderer>{ markdown }</LightweightMarkdownRenderer> );
 		} );
 	}
 
@@ -52,13 +46,9 @@ describe( 'LightweightMarkdownRenderer', () => {
 		);
 
 		expect( container.querySelector( 'h2' )?.textContent ).toBe( 'Answer' );
-		expect( container.querySelector( 'strong' )?.textContent ).toBe(
-			'bold'
-		);
+		expect( container.querySelector( 'strong' )?.textContent ).toBe( 'bold' );
 		expect( container.querySelector( 'em' )?.textContent ).toBe( 'italic' );
-		expect( container.querySelector( 'p code' )?.textContent ).toBe(
-			'code'
-		);
+		expect( container.querySelector( 'p code' )?.textContent ).toBe( 'code' );
 		expect( container.querySelectorAll( 'ul li' ) ).toHaveLength( 2 );
 		expect( container.querySelectorAll( 'ol li' ) ).toHaveLength( 2 );
 		expect( container.querySelector( 'a' ) ).toMatchObject( {
@@ -66,29 +56,21 @@ describe( 'LightweightMarkdownRenderer', () => {
 			target: '_blank',
 			rel: 'noreferrer',
 		} );
-		expect( container.querySelector( 'pre code' )?.textContent ).toBe(
-			'const answer = 42;'
-		);
+		expect( container.querySelector( 'pre code' )?.textContent ).toBe( 'const answer = 42;' );
 	} );
 
 	it( 'leaves unsafe links as text', async () => {
-		await renderMarkdown(
-			'[Unsafe](javascript:alert(1)) [Safe](mailto:test@example.com)'
-		);
+		await renderMarkdown( '[Unsafe](javascript:alert(1)) [Safe](mailto:test@example.com)' );
 
 		const links = Array.from( container.querySelectorAll( 'a' ) );
 		expect( links ).toHaveLength( 1 );
 		expect( links[ 0 ].textContent ).toBe( 'Safe' );
-		expect( container.textContent ).toContain(
-			'[Unsafe](javascript:alert(1))'
-		);
+		expect( container.textContent ).toContain( '[Unsafe](javascript:alert(1))' );
 	} );
 
 	it( 'keeps incomplete code fences renderable', async () => {
 		await renderMarkdown( '```\nunfinished' );
 
-		expect( container.querySelector( 'pre code' )?.textContent ).toBe(
-			'unfinished'
-		);
+		expect( container.querySelector( 'pre code' )?.textContent ).toBe( 'unfinished' );
 	} );
 } );

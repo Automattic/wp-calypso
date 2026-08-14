@@ -1,11 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAgentChat } from '@automattic/agenttic-client';
-import type { ContextProvider } from '@automattic/agenttic-client';
+import { getClientContext, getClientTools } from '@automattic/agenttic-client/mocks';
 import { createMessageRenderer } from '@automattic/agenttic-ui';
-import {
-	getClientContext,
-	getClientTools,
-} from '@automattic/agenttic-client/mocks';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { ContextProvider } from '@automattic/agenttic-client';
 
 // Chart styles are required by the `charts` markdown extension enabled below.
 import '../../../agenttic-ui/src/markdown-extensions/charts/charts.css';
@@ -24,7 +21,6 @@ interface UseDemoChatOptions {
  * Shared chat wiring for all playground demos: mock context/tool providers,
  * `useAgentChat` against the test agent, a chart/GFM-enabled message renderer,
  * and a submit handler that clears suggestions.
- *
  * @param options                    Demo chat options.
  * @param options.sessionId          Unique session id per demo view.
  * @param options.enableStreaming    Forwarded to `useAgentChat`.

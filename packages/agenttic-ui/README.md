@@ -10,15 +10,15 @@ npm install @automattic/agenttic-ui
 
 ## Key Features
 
--   Pure UI components with no agent communication logic
--   Composable architecture for complete layout flexibility
--   Floating and embedded chat variants
--   Controlled input support for external value management
--   Smooth animations and drag-and-drop positioning
--   Message actions and markdown rendering
--   Request cancellation UI with stop button functionality
--   TypeScript support with comprehensive types
--   Storybook component documentation
+- Pure UI components with no agent communication logic
+- Composable architecture for complete layout flexibility
+- Floating and embedded chat variants
+- Controlled input support for external value management
+- Smooth animations and drag-and-drop positioning
+- Message actions and markdown rendering
+- Request cancellation UI with stop button functionality
+- TypeScript support with comprehensive types
+- Storybook component documentation
 
 ## Quick Start
 
@@ -134,9 +134,9 @@ function ChatWithTypingStatus() {
 
 The `onTypingStatusChange` callback is triggered when the typing status changes. The user is considered "typing" when:
 
--   The input field is focused
--   The browser window is focused
--   The input contains text (length > 0)
+- The input field is focused
+- The browser window is focused
+- The input contains text (length > 0)
 
 ## Architecture
 
@@ -293,20 +293,12 @@ Or below input:
 Use individual components for complete customization:
 
 ```tsx
-import {
-	Messages,
-	Message,
-	ChatInput,
-	Suggestions,
-} from '@automattic/agenttic-ui';
+import { Messages, Message, ChatInput, Suggestions } from '@automattic/agenttic-ui';
 
 function FullyCustomChat() {
 	return (
 		<div className="my-chat-container">
-			<Messages
-				messages={ messages }
-				messageRenderer={ messageRenderer }
-			/>
+			<Messages messages={ messages } messageRenderer={ messageRenderer } />
 			<ChatInput
 				value={ inputValue }
 				onChange={ setInputValue }
@@ -340,10 +332,10 @@ Stop button appears automatically during processing:
 
 Content items can have different types that determine how they're displayed:
 
--   `type: 'text'` - Normal text content (visible)
--   `type: 'image_url'` - Image content (visible)
--   `type: 'component'` - React component (visible)
--   `type: 'context'` - Context information sent as text to the agent but hidden from UI
+- `type: 'text'` - Normal text content (visible)
+- `type: 'image_url'` - Image content (visible)
+- `type: 'component'` - React component (visible)
+- `type: 'context'` - Context information sent as text to the agent but hidden from UI
 
 ```tsx
 // Example: Mixing visible and context content
@@ -453,11 +445,7 @@ The `minimized` state docks a bar to the bottom edge showing the trigger icon
 and a title (`triggerTitle`, defaults to `Ask AI`); clicking it expands the chat:
 
 ```tsx
-<AgentUI
-	variant="floating"
-	floatingChatState="minimized"
-	triggerTitle="Ask AI"
-/>
+<AgentUI variant="floating" floatingChatState="minimized" triggerTitle="Ask AI" />
 ```
 
 ## Hooks
@@ -482,13 +470,12 @@ const {
 Manages input state with auto-resize:
 
 ```tsx
-const { value, setValue, clear, textareaRef, handleKeyDown, adjustHeight } =
-	useInput( {
-		value: inputValue,
-		setValue: setInputValue,
-		onSubmit: handleSubmit,
-		isProcessing: false,
-	} );
+const { value, setValue, clear, textareaRef, handleKeyDown, adjustHeight } = useInput( {
+	value: inputValue,
+	setValue: setInputValue,
+	onSubmit: handleSubmit,
+	isProcessing: false,
+} );
 ```
 
 ## Type Definitions

@@ -1,19 +1,14 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useMotionValue } from 'framer-motion';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
 	type ChatPosition,
 	DEFAULT_CHAT_POSITION,
 	getInitialChatPosition,
 } from '../utils/chatPosition';
-import type {
-	BoundaryInsets,
-	ChatSize,
-	ChatState,
-	LayoutCommand,
-} from '../types';
 import { DEFAULT_BOUNDARY_INSETS } from '../utils/constants';
-import { useResizablePanel } from './useResizablePanel';
 import { useFloatingPanelPosition } from './useFloatingPanelPosition';
+import { useResizablePanel } from './useResizablePanel';
+import type { BoundaryInsets, ChatSize, ChatState, LayoutCommand } from '../types';
 
 export interface UseFloatingPanelArgs {
 	resizable?: boolean | 'horizontal' | 'vertical';
@@ -66,8 +61,7 @@ export function useFloatingPanel( {
 	// the fixed compact footprint, and a 600-wide seed would dock a 372-wide
 	// launcher 228px off its corner.
 	const [ seed ] = useState( () => {
-		const mountsAtCustomSize =
-			Boolean( resizable ) && chatState === 'expanded';
+		const mountsAtCustomSize = Boolean( resizable ) && chatState === 'expanded';
 		return getInitialChatPosition( {
 			freeDrag,
 			initialFreeDragPosition,
@@ -83,9 +77,7 @@ export function useFloatingPanel( {
 	// The drag→resize bridge. Resize is created before drag, so it can't reference
 	// drag's repositionForResize yet; it calls this stable proxy, which the layout
 	// effect below points at the real function after both hooks exist.
-	const repositionForResizeRef = useRef< ( deltaWidth: number ) => void >(
-		() => {}
-	);
+	const repositionForResizeRef = useRef< ( deltaWidth: number ) => void >( () => {} );
 
 	const resize = useResizablePanel( {
 		resizable,
@@ -98,8 +90,7 @@ export function useFloatingPanel( {
 		insets,
 		x,
 		y,
-		repositionForResize: ( deltaWidth ) =>
-			repositionForResizeRef.current( deltaWidth ),
+		repositionForResize: ( deltaWidth ) => repositionForResizeRef.current( deltaWidth ),
 		onResize,
 		// Free-drag persists an absolute x/y; a left/bottom-edge resize shifts x/y
 		// to pin the opposite edge, so report the moved position or a close→reopen
@@ -134,10 +125,7 @@ export function useFloatingPanel( {
 	// new frame; both fire the standard persistence callbacks.
 	const lastLayoutCommandIdRef = useRef( layoutCommand?.id );
 	useEffect( () => {
-		if (
-			! layoutCommand ||
-			layoutCommand.id === lastLayoutCommandIdRef.current
-		) {
+		if ( ! layoutCommand || layoutCommand.id === lastLayoutCommandIdRef.current ) {
 			return;
 		}
 

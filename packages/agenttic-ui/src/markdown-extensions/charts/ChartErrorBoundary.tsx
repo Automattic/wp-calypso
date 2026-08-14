@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-
-/**
- * Internal dependencies
- */
 import { ChartError } from './ChartError';
 
 interface Props {
@@ -51,10 +44,7 @@ export class ChartErrorBoundary extends Component< Props, State > {
 		console.error( 'Error info:', errorInfo );
 
 		if ( this.props.chartData ) {
-			console.error(
-				'Chart data that caused the error:',
-				this.props.chartData
-			);
+			console.error( 'Chart data that caused the error:', this.props.chartData );
 
 			try {
 				const parsed = JSON.parse( this.props.chartData );
@@ -72,19 +62,13 @@ export class ChartErrorBoundary extends Component< Props, State > {
 	render() {
 		if ( this.state.hasError ) {
 			const errorMessage =
-				this.state.error?.message ||
-				'An error occurred while rendering the chart';
+				this.state.error?.message || 'An error occurred while rendering the chart';
 			const errorDetails = [
 				'The chart could not be rendered due to an error.',
 				'The error has been logged to the console.',
 			];
 
-			return (
-				<ChartError
-					message={ errorMessage }
-					details={ errorDetails.join( '\n' ) }
-				/>
-			);
+			return <ChartError message={ errorMessage } details={ errorDetails.join( '\n' ) } />;
 		}
 
 		return this.props.children;

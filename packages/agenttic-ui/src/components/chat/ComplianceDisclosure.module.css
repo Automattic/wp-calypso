@@ -1,9 +1,9 @@
 .disclosure {
 	margin: 0;
-	padding-top: var(--spacing-2);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	color: var(--color-muted-foreground);
+	padding-top: var( --spacing-2 );
+	font-size: var( --text-xs );
+	line-height: var( --text-xs--line-height );
+	color: var( --color-muted-foreground );
 	text-align: center;
 }
 

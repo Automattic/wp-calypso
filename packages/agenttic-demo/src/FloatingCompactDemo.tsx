@@ -1,21 +1,11 @@
+import { AgentUI, EmptyView, ZoomIcon, ZoomIconFilled } from '@automattic/agenttic-ui';
 import React, { useEffect, useState } from 'react';
-import type { UIMessage } from '@automattic/agenttic-client';
-import {
-	AgentUI,
-	EmptyView,
-	ZoomIcon,
-	ZoomIconFilled,
-} from '@automattic/agenttic-ui';
-
 import MessageTester from './MessageTester';
-import {
-	ToolButton,
-	usePlaygroundHeaderHeight,
-	ViewTools,
-} from './playground/PlaygroundShell';
-import { SuggestionsTool } from './playground/SuggestionsTool';
 import { useDemoChat } from './hooks/useDemoChat';
 import { useDemoFeedback } from './hooks/useDemoFeedback';
+import { ToolButton, usePlaygroundHeaderHeight, ViewTools } from './playground/PlaygroundShell';
+import { SuggestionsTool } from './playground/SuggestionsTool';
+import type { UIMessage } from '@automattic/agenttic-client';
 
 const FloatingCompactDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 	currentTheme,
@@ -86,11 +76,7 @@ const FloatingCompactDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 				>
 					Free Drag: { freeDragEnabled ? 'ON' : 'OFF' }
 				</ToolButton>
-				<ToolButton
-					onClick={ () => setRemountKey( ( prev ) => prev + 1 ) }
-				>
-					Remount
-				</ToolButton>
+				<ToolButton onClick={ () => setRemountKey( ( prev ) => prev + 1 ) }>Remount</ToolButton>
 				<MessageTester
 					addMessage={ addMessage }
 					loadMessages={ loadMessages }

@@ -1,8 +1,4 @@
-import type {
-	MessageActionsRegistration,
-	UIMessage,
-	UIMessageAction,
-} from '../react/useAgentChat';
+import type { MessageActionsRegistration, UIMessage, UIMessageAction } from '../react/useAgentChat';
 
 /**
  * Resolves message actions for a specific message

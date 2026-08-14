@@ -12,11 +12,10 @@ export interface OdieBotConfig {
 /**
  * Create an Odie bot ID from an agent ID.
  * Converts agent ID format (with hyphens) to bot ID format.
- *
  * @param agentId - The agent ID (e.g., 'wp-orchestrator')
  * @param type    - Bot type (default: 'agent')
  * @param product - Product name (default: 'wpcom')
- * @return Full Odie bot ID (e.g., 'wpcom-agent-wp_orchestrator')
+ * @returns Full Odie bot ID (e.g., 'wpcom-agent-wp_orchestrator')
  * @example
  * createOdieBotId('wp-orchestrator')
  * // Returns: 'wpcom-agent-wp_orchestrator'
@@ -38,9 +37,8 @@ export function createOdieBotId(
 
 /**
  * Parse an Odie bot ID back into its components.
- *
  * @param odieBotId - The full Odie bot ID (e.g., 'wpcom-agent-wp_orchestrator')
- * @return Parsed bot configuration with all components
+ * @returns Parsed bot configuration with all components
  * @example
  * parseOdieBotId('wpcom-agent-wp_orchestrator')
  * // Returns: {
@@ -86,9 +84,8 @@ export function parseOdieBotId( odieBotId: string ): OdieBotConfig {
 
 /**
  * Check if a string is a valid Odie bot ID format.
- *
  * @param value - String to check
- * @return True if valid Odie bot ID format
+ * @returns True if valid Odie bot ID format
  * @example
  * isOdieBotId('wpcom-agent-wp_orchestrator') // true
  * isOdieBotId('just-a-string') // false

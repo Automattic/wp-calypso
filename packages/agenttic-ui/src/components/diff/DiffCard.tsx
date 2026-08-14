@@ -52,10 +52,8 @@ function toChanges( diff: DiffCardContent ): DiffCardChange[] {
 }
 
 function renderChange( change: DiffCardChange, index: number ): ReactNode {
-	const hasOriginal =
-		typeof change.original === 'string' && change.original.length > 0;
-	const hasReplacement =
-		typeof change.replacement === 'string' && change.replacement.length > 0;
+	const hasOriginal = typeof change.original === 'string' && change.original.length > 0;
+	const hasReplacement = typeof change.replacement === 'string' && change.replacement.length > 0;
 
 	return (
 		<div key={ index } className={ styles.change } data-slot="change">
@@ -65,18 +63,12 @@ function renderChange( change: DiffCardChange, index: number ): ReactNode {
 				</span>
 			) : null }
 			{ hasOriginal ? (
-				<pre
-					className={ cn( styles.diff, styles.removed ) }
-					data-slot="original"
-				>
+				<pre className={ cn( styles.diff, styles.removed ) } data-slot="original">
 					{ change.original }
 				</pre>
 			) : null }
 			{ hasReplacement ? (
-				<pre
-					className={ cn( styles.diff, styles.added ) }
-					data-slot="replacement"
-				>
+				<pre className={ cn( styles.diff, styles.added ) } data-slot="replacement">
 					{ change.replacement }
 				</pre>
 			) : null }
@@ -115,11 +107,7 @@ export function DiffCard( {
 
 	return (
 		<section
-			className={ cn(
-				styles.card,
-				isResolved ? styles.isResolved : undefined,
-				className
-			) }
+			className={ cn( styles.card, isResolved ? styles.isResolved : undefined, className ) }
 			data-agenttic-diff-card
 			data-slot="card"
 		>

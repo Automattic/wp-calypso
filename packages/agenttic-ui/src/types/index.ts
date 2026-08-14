@@ -1,6 +1,6 @@
 // UI package should not import agent communication types
-import type { ComponentType } from 'react';
 import type { ChatPosition } from '../utils/chatPosition';
+import type { ComponentType } from 'react';
 
 // Define UI-specific types locally
 

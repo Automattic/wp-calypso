@@ -11,13 +11,9 @@ export function cn( ...inputs: ClassValue[] ): string {
 			if ( typeof input === 'string' ) {
 				return input;
 			}
-			if (
-				typeof input === 'object' &&
-				! Array.isArray( input ) &&
-				input !== null
-			) {
+			if ( typeof input === 'object' && ! Array.isArray( input ) && input !== null ) {
 				return Object.entries( input )
-					.filter( ( [ _, value ] ) => value )
+					.filter( ( [ , value ] ) => value )
 					.map( ( [ key ] ) => key )
 					.join( ' ' );
 			}

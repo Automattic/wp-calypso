@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import { BarChart as AutomatticBarChart } from '@automattic/charts';
-import type { FC } from 'react';
-
-/**
- * Internal dependencies
- */
-import type { BaseChartProps } from './BaseChart';
 import { BaseChart } from './BaseChart';
 import {
 	calculateBottomMargin,
 	getDefaultChartMargins,
 	getTimeAxisConfig,
 } from './utils/chartUtils';
+import type { BaseChartProps } from './BaseChart';
+import type { FC } from 'react';
 
 export interface BarChartProps extends BaseChartProps {
 	mode?: 'time-comparison' | 'item-comparison';
@@ -84,8 +77,7 @@ export const BarChart: FC< BarChartProps > = ( props ) => {
 				axis: {
 					x: {
 						orientation: 'bottom' as const,
-						tickFormat: ( value: string ) =>
-							truncateText( value, maxLabelLength ),
+						tickFormat: ( value: string ) => truncateText( value, maxLabelLength ),
 						tickLabelProps: {
 							fontSize: 11,
 							textAnchor: 'end' as const,
@@ -123,9 +115,7 @@ export const BarChart: FC< BarChartProps > = ( props ) => {
 		// TODO: Fix this inconsistency that seems to be in @automattic/charts
 		// Item-comparison mode requires axis config wrapped in 'options' prop
 		// Time-comparison mode requires axis config spread directly
-		...( mode === 'item-comparison'
-			? { options: axisConfig }
-			: axisConfig ),
+		...( mode === 'item-comparison' ? { options: axisConfig } : axisConfig ),
 		...( currency && { currency } ),
 		...restProps,
 	};
