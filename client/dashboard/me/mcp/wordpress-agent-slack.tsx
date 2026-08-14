@@ -212,7 +212,9 @@ export default function WordPressAgentSlack( {
 						isBusy={ oauthMutation.isPending }
 						disabled={ isActionPending }
 					>
-						{ pairToken ? __( 'Install in another workspace' ) : __( 'Add to Slack' ) }
+						{ pairToken
+							? __( 'Install in another workspace' )
+							: __( 'Install to a new Slack instance' ) }
 					</Button>
 				</CardBody>
 
