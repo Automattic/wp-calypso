@@ -4,10 +4,13 @@ import {
 	wordpressAgentSlackOauthMutation,
 	wordpressAgentSlackPairMutation,
 } from '@automattic/api-queries';
+import { Badge } from '@automattic/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Notice, Spinner, __experimentalVStack as VStack } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import SlackMark from 'calypso/assets/images/logos/slack-mark.svg';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { Card, CardBody, CardDivider } from '../../components/card';
@@ -114,9 +117,17 @@ export default function WordPressAgentSlack( {
 					<SectionHeader
 						level={ 3 }
 						title={ connection.team_name }
+						actions={
+							connection.installed && connection.is_owner ? (
+								<Badge intent="info">{ __( 'Integration owner' ) }</Badge>
+							) : undefined
+						}
 						description={
 							connection.installed
-								? __( 'Connected' )
+								? createInterpolateElement(
+										__( 'Your account is <connected>connected</connected>.' ),
+										{ connected: <strong /> }
+								  )
 								: __( 'The app is no longer installed in this workspace.' )
 						}
 					/>
@@ -189,7 +200,12 @@ export default function WordPressAgentSlack( {
 
 			<Card>
 				<CardBody className="wordpress-agent-connection__row">
-					<SectionHeader level={ 3 } title={ installTitle } description={ installDescription } />
+					<SectionHeader
+						level={ 3 }
+						title={ installTitle }
+						description={ installDescription }
+						decoration={ <img src={ SlackMark } alt="" width={ 24 } height={ 24 } /> }
+					/>
 					<Button
 						variant="primary"
 						onClick={ install }

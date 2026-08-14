@@ -3,6 +3,7 @@ export interface WordPressAgentSlackConnection {
 	team_name: string;
 	slack_user_id: string;
 	installed: boolean;
+	is_owner?: boolean;
 }
 
 export interface WordPressAgentSlackConnectionsResponse {

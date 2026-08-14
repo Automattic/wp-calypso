@@ -5,10 +5,24 @@
 	gap: 24px;
 }
 
-.wordpress-agent-slack__loading {
+.wordpress-agent-slack__loading,
+.wordpress-agent-email__loading {
 	display: flex;
 	justify-content: center;
 	padding-block: 48px;
+}
+
+.wordpress-agent-email__footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px 24px;
+}
+
+.wordpress-agent-email__sender {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow-wrap: anywhere;
 }
 
 .wordpress-agent-connection__actions {
@@ -34,5 +48,14 @@
 
 	.wordpress-agent-connection__actions {
 		justify-content: flex-end;
+	}
+
+	.wordpress-agent-email__footer {
+		align-items: stretch;
+		flex-direction: column;
+
+		.wordpress-agent-connection__actions {
+			justify-content: flex-start;
+		}
 	}
 }

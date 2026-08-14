@@ -25,6 +25,7 @@ import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { SectionHeader } from '../../components/section-header';
 import { isWriteTool } from './categories';
+import WordPressAgentEmail from './wordpress-agent-email';
 import WordPressAgentSlack from './wordpress-agent-slack';
 import WordPressAgentTelegram from './wordpress-agent-telegram';
 
@@ -293,38 +294,36 @@ function McpComponent() {
 					) }
 				</VStack>
 
-				{ ( config.isEnabled( 'wordpress-agent-slack' ) ||
-					config.isEnabled( 'dolly/telegram' ) ) && (
-					<VStack spacing={ 4 }>
-						<SectionHeader
-							level={ 2 }
-							title={ __( 'WordPress Agent' ) }
-							description={ __(
-								'Your AI assistant for building, managing, and growing your WordPress.com sites.'
-							) }
-							decoration={ <BigSkyLogo.CentralLogo heartless size={ 32 } /> }
-						/>
-						<SectionHeader
-							level={ 3 }
-							title={ __( 'Connections' ) }
-							description={ __( 'Talk to WordPress Agent where you already are.' ) }
-						/>
-						{ config.isEnabled( 'dolly/telegram' ) && (
-							<WordPressAgentTelegram
-								telegramId={ connectionCallbacks.telegramId }
-								token={ connectionCallbacks.telegramToken }
-								timestamp={ connectionCallbacks.telegramTimestamp }
-								bot={ connectionCallbacks.telegramBot }
-							/>
+				<VStack spacing={ 4 }>
+					<SectionHeader
+						level={ 2 }
+						title={ __( 'WordPress Agent' ) }
+						description={ __(
+							'Your AI assistant for building, managing, and growing your WordPress.com sites.'
 						) }
-						{ config.isEnabled( 'wordpress-agent-slack' ) && (
-							<WordPressAgentSlack
-								pairToken={ connectionCallbacks.pairToken }
-								slackStatus={ connectionCallbacks.slackStatus }
-							/>
-						) }
-					</VStack>
-				) }
+						decoration={ <BigSkyLogo.CentralLogo heartless size={ 32 } /> }
+					/>
+					<SectionHeader
+						level={ 3 }
+						title={ __( 'Connections' ) }
+						description={ __( 'Talk to WordPress Agent where you already are.' ) }
+					/>
+					{ config.isEnabled( 'dolly/telegram' ) && (
+						<WordPressAgentTelegram
+							telegramId={ connectionCallbacks.telegramId }
+							token={ connectionCallbacks.telegramToken }
+							timestamp={ connectionCallbacks.telegramTimestamp }
+							bot={ connectionCallbacks.telegramBot }
+						/>
+					) }
+					<WordPressAgentEmail />
+					{ config.isEnabled( 'wordpress-agent-slack' ) && (
+						<WordPressAgentSlack
+							pairToken={ connectionCallbacks.pairToken }
+							slackStatus={ connectionCallbacks.slackStatus }
+						/>
+					) }
+				</VStack>
 			</VStack>
 		</PageLayout>
 	);

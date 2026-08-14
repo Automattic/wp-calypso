@@ -12,6 +12,13 @@ const CONNECTION: WordPressAgentSlackConnection = {
 	team_name: 'Example workspace',
 	slack_user_id: 'U123',
 	installed: true,
+	is_owner: true,
+};
+const MEMBER_CONNECTION: WordPressAgentSlackConnection = {
+	...CONNECTION,
+	team_id: 'T456',
+	team_name: 'Member workspace',
+	is_owner: false,
 };
 const USER = {
 	ID: 1,
@@ -51,6 +58,9 @@ describe( '<WordPressAgentSlack />', () => {
 			} )
 		).toBeVisible();
 		expect( await screen.findByRole( 'heading', { name: CONNECTION.team_name } ) ).toBeVisible();
+		expect(
+			screen.getByText( 'connected', { selector: 'strong' } ).parentElement
+		).toHaveTextContent( 'Your account is connected.' );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_wordpress_agent_slack_pair_success'
 		);
@@ -75,15 +85,30 @@ describe( '<WordPressAgentSlack />', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_wordpress_agent_slack_disconnect' );
 	} );
 
+	test( 'distinguishes workspaces whose integration the user owns', async () => {
+		interceptConnections( [ CONNECTION, MEMBER_CONNECTION ] );
+
+		render( <WordPressAgentSlack />, { user: USER } );
+
+		const ownerWorkspace = await screen.findByRole( 'heading', { name: CONNECTION.team_name } );
+		const memberWorkspace = screen.getByRole( 'heading', { name: MEMBER_CONNECTION.team_name } );
+
+		expect( ownerWorkspace.parentElement?.parentElement ).toHaveTextContent( 'Integration owner' );
+		expect( memberWorkspace.parentElement?.parentElement ).not.toHaveTextContent(
+			'Integration owner'
+		);
+	} );
+
 	test( 'shows the Slack installation callback status', async () => {
 		interceptConnections( [] );
 
-		render( <WordPressAgentSlack slackStatus="connected" />, { user: USER } );
+		const { container } = render( <WordPressAgentSlack slackStatus="connected" />, { user: USER } );
 
 		expect(
 			await screen.findByText( 'WordPress Agent was installed successfully.', {
 				selector: '.components-notice__content',
 			} )
 		).toBeVisible();
+		expect( container.querySelector( '.dashboard-section-header__decoration img' ) ).toBeVisible();
 	} );
 } );

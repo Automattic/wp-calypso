@@ -61,8 +61,15 @@ import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { isWriteTool } from '../../me/mcp/categories';
+import {
+	getAgentEmailAddress,
+	getAgentEmailVCardDataUrl,
+	getAgentEmailVCardFileName,
+} from '../../utils/wordpress-agent-email';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import upsellIllustrationUrl from './upsell-illustration.svg';
+
+export { getAgentEmailAddress, getAgentEmailVCard } from '../../utils/wordpress-agent-email';
 
 interface McpAbility {
 	title: string;
@@ -128,69 +135,6 @@ function UpgradeRequiredBadge() {
 
 const TELEGRAM_CONNECTION_PATH = '/me/preferences/mcp';
 
-const INVALID_POST_BY_EMAIL_VALUES = new Set( [
-	'',
-	'null',
-	'noop',
-	'create',
-	'regenerate',
-	'delete',
-] );
-
-export function getAgentEmailAddress( postByEmailAddress?: string | null ) {
-	const trimmedAddress = postByEmailAddress?.trim() ?? '';
-	const normalizedAddress = trimmedAddress.toLowerCase();
-
-	if ( INVALID_POST_BY_EMAIL_VALUES.has( normalizedAddress ) ) {
-		return null;
-	}
-
-	const [ localPart, domain, ...extraParts ] = trimmedAddress.split( '@' );
-
-	if ( ! localPart || ! domain || extraParts.length > 0 ) {
-		return null;
-	}
-
-	const agentLocalPart = localPart.startsWith( 'agent+' ) ? localPart : `agent+${ localPart }`;
-
-	return `${ agentLocalPart }@${ domain }`;
-}
-
-function escapeVCardValue( value: string ) {
-	return value
-		.replace( /\\/g, '\\\\' )
-		.replace( /\r\n|\r|\n/g, '\\n' )
-		.replace( /,/g, '\\,' )
-		.replace( /;/g, '\\;' );
-}
-
-export function getAgentEmailVCard( siteDomain: string, agentEmailAddress: string ) {
-	const escapedSiteDomain = escapeVCardValue( siteDomain );
-	const escapedAgentEmailAddress = escapeVCardValue( agentEmailAddress );
-
-	return [
-		'BEGIN:VCARD',
-		'VERSION:3.0',
-		`FN:${ escapedSiteDomain }`,
-		`N:${ escapedSiteDomain };;;;`,
-		`EMAIL;TYPE=INTERNET:${ escapedAgentEmailAddress }`,
-		'END:VCARD',
-		'',
-	].join( '\r\n' );
-}
-
-function getVCardDataUrl( siteDomain: string, agentEmailAddress: string ) {
-	return `data:text/vcard;charset=utf-8,${ encodeURIComponent(
-		getAgentEmailVCard( siteDomain, agentEmailAddress )
-	) }`;
-}
-
-function getVCardFileName( siteDomain: string ) {
-	const fileName = siteDomain.replace( /[^a-z0-9.-]+/gi, '-' ).replace( /^-+|-+$/g, '' );
-
-	return `${ fileName || 'ai-agent' }.vcf`;
-}
-
 function EmailAssistantCard( {
 	site,
 	recordTracksEvent,
@@ -206,8 +150,10 @@ function EmailAssistantCard( {
 	} );
 	const agentEmailAddress = getAgentEmailAddress( postByEmailSettings?.post_by_email_address );
 	const isAgentEmailEnabled = !! agentEmailAddress;
-	const vCardHref = agentEmailAddress ? getVCardDataUrl( site.slug, agentEmailAddress ) : undefined;
-	const vCardFileName = getVCardFileName( site.slug );
+	const vCardHref = agentEmailAddress
+		? getAgentEmailVCardDataUrl( site.slug, agentEmailAddress )
+		: undefined;
+	const vCardFileName = getAgentEmailVCardFileName( site.slug );
 
 	const emailAddressMutation = useMutation(
 		withSnackbar( sitePostByEmailSettingsMutation( site ), {
