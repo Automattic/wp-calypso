@@ -18,6 +18,7 @@ import { getBrandMeta } from './get-brand-meta';
 import {
 	DIRECTORY_NAMES,
 	getDirectoryStatusBadge,
+	hasApprovedDirectory,
 	isAgencyProfileComplete,
 	isApplicationCompleted,
 } from './lib';
@@ -67,7 +68,7 @@ interface Props {
  * hosts can't drift apart.
  */
 export const getProfilePublishedMessage = () => __( 'Profile published.' );
-export const getProfilePublishFailedMessage = () => __( 'Failed to publish your profile.' );
+export const getProfilePublishFailedMessage = () => __( 'Failed to publish profile.' );
 
 export default function PartnerDirectoryDashboardContent( {
 	agency,
@@ -102,7 +103,7 @@ export default function PartnerDirectoryDashboardContent( {
 		badge: getDirectoryStatusBadge( status ),
 	} ) );
 
-	const hasDirectoryApproval = directories.some( ( { status } ) => status === 'approved' );
+	const hasDirectoryApproval = hasApprovedDirectory( application );
 	// The "not approved" popover only auto-opens for a single, unambiguous rejection.
 	const showPopoverOnLoad =
 		directories.filter( ( { status } ) => status === 'rejected' ).length === 1;

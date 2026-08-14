@@ -19,12 +19,14 @@ import {
 	referralsQuery,
 	referralCommissionPayoutQuery,
 	tipaltiPayeeQuery,
+	wooCountryRegionsQuery,
 	wooPaymentsLicensesQuery,
 	WOOPAYMENTS_PLUGIN,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
 import {
 	PARTNER_DIRECTORY_DETAILS_SEGMENT,
 	PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
@@ -209,7 +211,23 @@ export const agencyPartnerDirectoryDetailsRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyPartnerDirectoryRoute,
 	path: PARTNER_DIRECTORY_DETAILS_SEGMENT,
-	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		// Mirror the classic app: the profile details are only editable once a
+		// directory was approved.
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! hasApprovedDirectory( agency?.profile?.partner_directory_application ) ) {
+			throw redirectAsNotAllowed( { to: PARTNER_DIRECTORY_ROUTE } );
+		}
+	},
+	loader: () =>
+		Promise.all( [
+			queryClient.ensureQueryData( activeAgencyQuery() ),
+			queryClient.ensureQueryData( wooCountryRegionsQuery() ),
+		] ),
 } ).lazy( () =>
 	import( '../../agency/partner-directory/details' ).then( ( d ) =>
 		createLazyRoute( 'agency-partner-directory-details' )( {
