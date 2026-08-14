@@ -1,5 +1,6 @@
 import fs from 'fs';
 import FormData from 'form-data';
+import { debugThrottle, recordThrottle } from './lib/throttle-flags';
 import { SecretsManager } from './secrets';
 import {
 	BearerTokenErrorResponse,
@@ -247,6 +248,8 @@ export class RestAPIClient {
 	 * @throws {ErrorResponse} If API responded with an error.
 	 */
 	async createSite( newSiteParams: NewSiteParams ): Promise< NewSiteResponse > {
+		debugThrottle( 'signup' );
+
 		const body = {
 			client_id: SecretsManager.secrets.calypsoOauthApplication.client_id,
 			client_secret: SecretsManager.secrets.calypsoOauthApplication.client_secret,
@@ -268,7 +271,23 @@ export class RestAPIClient {
 			body: JSON.stringify( body ),
 		};
 
-		const response = await this.sendRequest( this.getRequestURL( '1.1', '/sites/new' ), params );
+		const url = this.getRequestURL( '1.1', '/sites/new' );
+
+		let response;
+		try {
+			response = await this.sendRequest( url, params );
+		} catch ( error ) {
+			// A refusal that is not JSON is something `sendRequest` cannot parse, so
+			// the throttle reaches us as a thrown error rather than a response body.
+			// Recorded either way, and rethrown untouched. The endpoint travels
+			// alongside: neither shape names it, and a bare `throttled` code means
+			// nothing without it.
+			// Not awaited: the worker knows about the ban the moment this returns,
+			// and telling the rest of the project runs behind it.
+			void recordThrottle( error, url.href );
+			throw error;
+		}
+		void recordThrottle( response, url.href );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
