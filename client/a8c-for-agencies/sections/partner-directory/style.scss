@@ -10,9 +10,11 @@
 }
 
 // Match the dashboard's base typography (its body font) so the shared
-// expertise screen renders the same in both hosts, and provide the
-// dashboard token its error text reads, which only the dashboard apps define.
-.partner-directory-agency-expertise {
+// expertise and details screens render the same in both hosts, and provide
+// the dashboard token their error text reads, which only the dashboard apps
+// define.
+.partner-directory-agency-expertise,
+.partner-directory-agency-details {
 	--dashboard__foreground-color-error: var(--color-error);
 
 	font-size: $font-size-medium;
