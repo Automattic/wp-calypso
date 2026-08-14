@@ -150,7 +150,9 @@ function ConnectedOmnibar( { user }: { user?: User } ) {
 	const helpCenterPluginNode = useHelpCenterPlugin();
 	const aiChatPluginNode = useAiChatPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
-	const languageSwitcherNode = useLanguageSwitcherPlugin( { user } );
+	const { node: languageSwitcherNode, panel: languageSwitcherPanel } = useLanguageSwitcherPlugin( {
+		user,
+	} );
 	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
 	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const launchSiteNode = useLaunchSitePlugin( { site } );
@@ -188,6 +190,7 @@ function ConnectedOmnibar( { user }: { user?: User } ) {
 				className={ isSupportSession() ? 'is-support-session' : undefined }
 			/>
 			{ shoppingCartPanel }
+			{ languageSwitcherPanel }
 		</>
 	);
 }
