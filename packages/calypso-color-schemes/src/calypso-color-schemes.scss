@@ -22,6 +22,9 @@
 @import "shared/color-schemes/sunset";
 @import "shared/color-schemes/jetpack-cloud";
 
-// Core's own per-scheme interactive colour, generated from @wordpress/base-styles. The selectors
-// are more specific than the scheme blocks above, so they win wherever this sits in the list.
+// Core's own per-scheme interactive colour, generated from @wordpress/base-styles. The scheme
+// blocks above match <body> and set the same property to `var(--color-accent)`; these set it on
+// descendants of <body>, so they override by inheritance rather than by cascade order — position in
+// this list does not matter. A Stats surface on a scheme with no block here keeps inheriting the
+// decorative accent, which is the behaviour that predates this file.
 @import "__wp-base-styles/admin-theme-colors";

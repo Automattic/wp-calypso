@@ -5,19 +5,25 @@
 // `--wp-admin-theme-color` on these roots is not enough on its own — the accent that
 // client/assets/stylesheets/_wp-components-overrides.scss pins on every button ships in Odyssey too.
 //
-// In Calypso the roots match the portal list in
-// packages/calypso-color-schemes/bin/prepare-sass-assets.js, which puts the token on the same
-// elements — keep the two in step. They are qualified with `.is-section-stats`, the class Calypso
-// puts on <body> for the section, because the roots are generic: an unqualified `.popover` would
-// recolour every popover in Calypso, and every Modal in the product carries
-// `.components-modal__screen-overlay`.
+// In Calypso the portal roots below are the same ones `CALYPSO_PORTAL_ROOTS` in
+// packages/calypso-color-schemes/bin/prepare-sass-assets.js puts the token on — this mixin reads
+// what that list sets, so a root in one and not the other silently does nothing. A test in that
+// package compares the two; it will fail if they drift.
 //
-// Odyssey portals into a single <body> child instead, tagged by its own RootChild
+// They are qualified with `.is-section-stats`, the class Calypso puts on <body> for the section,
+// because the roots are generic: an unqualified `.popover` would recolour every popover in Calypso,
+// and every Modal in the product carries `.components-modal__screen-overlay`. The qualification
+// bounds this to Stats *pages*, not to Stats' own overlays — shared chrome opened over a Stats page
+// (Help Center, masterbar menus) is recoloured too. That is accepted: those roots carry nothing
+// that distinguishes ours from the rest.
+//
+// Odyssey portals into <body> children tagged by its own RootChild
 // (apps/odyssey-stats/src/components/root-child.tsx). Calypso's portal wrapper is a bare div and its
-// <body> carries the class rather than a child, so `body > .color-scheme` picks out the Odyssey one
-// alone. The Modal overlay is the exception there — it has no scheme class, so wp-admin's <body>
-// gives it nothing to match, and Odyssey covers it from its own
-// apps/odyssey-stats/src/styles/theme.scss.
+// <body> carries the class rather than a child, so `body > .color-scheme` picks out the Odyssey ones
+// alone. Two separate reasons keep the Modal overlay out of both: it carries no scheme class, so
+// `body > .color-scheme` misses it, and wp-admin's <body> has no `.is-section-stats`, so the group
+// above misses it as well. Odyssey covers it from its own apps/odyssey-stats/src/styles/theme.scss,
+// where the rule cannot reach the rest of the product.
 .stats-main,
 body.is-section-stats
 	:is(

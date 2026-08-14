@@ -538,6 +538,8 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
+    "@types/chroma-js": "npm:^2.4.5"
+    "@types/jest": "npm:^29.5.14"
     "@types/node": "npm:^24.12.2"
     "@wordpress/base-styles": "npm:^9.1.0"
     chroma-js: "npm:^2.6.0"

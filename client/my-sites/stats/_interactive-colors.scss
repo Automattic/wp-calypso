@@ -2,7 +2,7 @@
 // rather than `--color-accent` — wp-admin's decorative `$highlight-color`, which fails WCAG AA on
 // several admin colour schemes.
 //
-// This lives in a mixin because it is applied at four roots across two apps, each loading its CSS
+// This lives in a mixin because four stylesheets across two apps apply it, each loading its CSS
 // separately: the Stats mount and the overlays it portals to, Store Stats under `.woocommerce`,
 // and — in Odyssey — the dashboard widget's own entry point and the modal overlay on `body`.
 //

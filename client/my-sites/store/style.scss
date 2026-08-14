@@ -8,7 +8,10 @@
 
 .woocommerce {
 	// Store Stats reuses the Stats chart and controls, so it follows the same admin theme colour.
-	// It mounts under .woocommerce rather than .stats-main, hence the separate include.
+	// It has its own roots rather than .stats-main, hence the separate include. `.woocommerce` is
+	// the one class all of them share — the main page mounts as `store-stats woocommerce`, the
+	// Products/Categories/Coupons views as `store-stats__list-view woocommerce` — so it is also
+	// where packages/calypso-color-schemes sets the token this mixin reads. Keep those two the same.
 	@include stats-interactive-colors;
 
 	@import "app/store-stats/store-stats-chart/style";

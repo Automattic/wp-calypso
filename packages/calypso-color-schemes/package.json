@@ -29,6 +29,8 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/color-studio": "^4.1.0",
+		"@types/chroma-js": "^2.4.5",
+		"@types/jest": "^29.5.14",
 		"@types/node": "^24.12.2",
 		"@wordpress/base-styles": "^9.1.0",
 		"chroma-js": "^2.6.0",
