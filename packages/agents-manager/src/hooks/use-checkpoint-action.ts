@@ -100,6 +100,20 @@ export function invalidateCheckpointAction( checkpointId: string ): void {
 	invalidatedCheckpointIds.add( checkpointId );
 }
 
+export function isCheckpointActionInvalidated( checkpointId: string ): boolean {
+	return invalidatedCheckpointIds.has( checkpointId );
+}
+
+export function setCheckpointActionReverted( checkpointId: string, isReverted: boolean ): boolean {
+	const wasReverted = revertedCheckpointIds.has( checkpointId );
+	if ( isReverted ) {
+		revertedCheckpointIds.add( checkpointId );
+	} else {
+		revertedCheckpointIds.delete( checkpointId );
+	}
+	return wasReverted !== isReverted;
+}
+
 /**
  * Registers an undo action on agent messages that have a checkpoint.
  */
@@ -175,11 +189,7 @@ export default function useCheckpointAction(
 					await checkpointToRestore.restoreCheckpoint( checkpointInfo.checkpointId );
 				}
 
-				if ( revert ) {
-					revertedCheckpointIds.add( checkpointInfo.checkpointId );
-				} else {
-					revertedCheckpointIds.delete( checkpointInfo.checkpointId );
-				}
+				setCheckpointActionReverted( checkpointInfo.checkpointId, revert );
 				outcome = 'success';
 				return true;
 			} catch ( error ) {

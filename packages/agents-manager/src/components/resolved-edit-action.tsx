@@ -1,4 +1,4 @@
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { check, closeSmall, Icon, redo, undo } from '@wordpress/icons';
 
@@ -15,6 +15,7 @@ export default function ResolvedEditAction( {
 }: ResolvedEditActionProps ) {
 	const [ isReverted, setIsReverted ] = useState( initiallyReverted );
 	const [ isPending, setIsPending ] = useState( false );
+	useEffect( () => setIsReverted( initiallyReverted ), [ initiallyReverted ] );
 	const action = isReverted ? onRedo : onUndo;
 	const handleAction = async () => {
 		if ( ! action || isPending ) {

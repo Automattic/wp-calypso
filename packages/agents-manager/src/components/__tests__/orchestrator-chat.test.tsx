@@ -31,6 +31,18 @@ const mockUseImageUpload = jest.fn();
 const mockIsReaderChatAgent = jest.fn();
 const mockInvalidateCheckpointAction = jest.fn();
 const mockInvalidatedCheckpointIds = new Set< string >();
+const mockRevertedCheckpointIds = new Set< string >();
+const mockSetCheckpointActionReverted = jest.fn(
+	( checkpointId: string, isReverted: boolean ): boolean => {
+		const wasReverted = mockRevertedCheckpointIds.has( checkpointId );
+		if ( isReverted ) {
+			mockRevertedCheckpointIds.add( checkpointId );
+		} else {
+			mockRevertedCheckpointIds.delete( checkpointId );
+		}
+		return wasReverted !== isReverted;
+	}
+);
 let mockSelectedBlockType: string | undefined;
 let mockBlockEditorStoreThrows = false;
 let mockHasEditorRedo = false;
@@ -81,13 +93,21 @@ const mockCheckpointActions = () => {
 		const canAct =
 			! mockInvalidatedCheckpointIds.has( checkpointId ) &&
 			( isCheckpointActionAvailable?.( checkpointId ) ?? true );
+		const isReverted = mockRevertedCheckpointIds.has( checkpointId );
+		let label = canAct ? 'Updated and Undo' : 'Updated';
+		if ( isReverted ) {
+			label = canAct ? 'Reverted and Redo' : 'Reverted';
+		}
 		return [
 			{
 				type: 'component',
 				id: 'checkpoint',
-				label: canAct ? 'Updated and Undo' : 'Updated',
+				label,
 				component: () => null,
-				componentProps: canAct ? { onUndo: jest.fn(), onRedo: jest.fn() } : {},
+				componentProps: {
+					initiallyReverted: isReverted,
+					...( canAct && { onUndo: jest.fn(), onRedo: jest.fn() } ),
+				},
 				order: 1,
 			},
 		];
@@ -310,10 +330,14 @@ jest.mock( '../../hooks/use-checkpoint-action', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockUseCheckpointAction( ...args ),
 	getCheckpointIdForMessage: mockGetCheckpointIdForMessage,
+	isCheckpointActionInvalidated: ( checkpointId: string ) =>
+		mockInvalidatedCheckpointIds.has( checkpointId ),
 	invalidateCheckpointAction: ( checkpointId: string ) => {
 		mockInvalidatedCheckpointIds.add( checkpointId );
 		mockInvalidateCheckpointAction( checkpointId );
 	},
+	setCheckpointActionReverted: ( checkpointId: string, isReverted: boolean ) =>
+		mockSetCheckpointActionReverted( checkpointId, isReverted ),
 } ) );
 jest.mock( '../../hooks/use-feedback-action', () => () => ( {
 	showFeedbackInput: false,
@@ -513,6 +537,7 @@ describe( 'OrchestratorChat', () => {
 		mockEditorBlocks = [];
 		mockDataStoreSubscribers.clear();
 		mockInvalidatedCheckpointIds.clear();
+		mockRevertedCheckpointIds.clear();
 		mockAgentChatConfig = undefined;
 		mockConversationConfig = undefined;
 	} );
@@ -1459,34 +1484,105 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'keeps checkpoint controls hidden after Gutenberg Undo and Redo', () => {
+	it( 'updates the checkpoint status after native Undo and exact native Redo', () => {
 		const checkpointMessage = createCheckpointMessage(
 			'agent-native-undo',
 			'native-undo-checkpoint'
 		);
+		let canSwapCheckpoint = true;
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
 		mockCheckpointActions();
 		mockUseAgentChat.mockReturnValue(
 			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
 		);
-		const view = render( chat() );
+		render( chat( { useCheckpoint } ) );
 
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe(
+			'Updated and Undo'
+		);
 		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
 			'onUndo'
 		);
 
-		mockHasEditorRedo = true;
-		view.rerender( chat() );
+		act( () => {
+			canSwapCheckpoint = false;
+			mockHasEditorRedo = true;
+			mockEditorBlocks = [ { clientId: 'native-undo-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Reverted' );
 		expect(
 			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
 		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
 		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith( 'native-undo-checkpoint' );
 
-		mockHasEditorRedo = false;
-		view.rerender( chat() );
+		act( () => {
+			canSwapCheckpoint = true;
+			mockHasEditorRedo = false;
+			mockEditorBlocks = [ { clientId: 'native-redo-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
 		expect(
 			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
 		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
 		expect( mockInvalidateCheckpointAction ).toHaveBeenLastCalledWith( 'native-undo-checkpoint' );
+	} );
+
+	it( 'does not mark an unsupported checkpoint Reverted after native Undo', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-unsupported-native-undo',
+			'unsupported-native-undo-checkpoint'
+		);
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		act( () => {
+			mockHasEditorRedo = true;
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect( mockSetCheckpointActionReverted ).not.toHaveBeenCalledWith(
+			'unsupported-native-undo-checkpoint',
+			true
+		);
 	} );
 
 	it( 'hides checkpoint controls when the editor content drifts without Gutenberg Undo', async () => {
@@ -1533,6 +1629,7 @@ describe( 'OrchestratorChat', () => {
 		expect( checkpoint.canSwapCheckpoint ).toHaveBeenLastCalledWith( 'editor-drift-checkpoint' );
 		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith( 'editor-drift-checkpoint' );
 		const actionAfterDrift = getDisplayedCheckpointAction( checkpointMessage.id );
+		expect( actionAfterDrift?.label ).toBe( 'Updated' );
 		const staleOnUndo = actionAfterDrift?.componentProps?.onUndo;
 		// Exercise the unfixed path so the failed-event assertion below is meaningful.
 		if ( typeof staleOnUndo === 'function' ) {

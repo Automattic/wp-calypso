@@ -21,6 +21,8 @@ import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conv
 import useCheckpointAction, {
 	getCheckpointIdForMessage,
 	invalidateCheckpointAction,
+	isCheckpointActionInvalidated,
+	setCheckpointActionReverted,
 } from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
@@ -624,7 +626,9 @@ export default function OrchestratorChat( {
 	const hasPendingCheckpointSwap =
 		supportsCheckpointSwap &&
 		[ ...checkpointIdsByTurn.current ].some(
-			( checkpointId ) => ! sourceDriftInvalidatedCheckpointIds.has( checkpointId )
+			( checkpointId ) =>
+				! sourceDriftInvalidatedCheckpointIds.has( checkpointId ) &&
+				! isCheckpointActionInvalidated( checkpointId )
 		);
 	const checkpointEditorBlocks = useSelect(
 		( select ) => {
@@ -656,6 +660,7 @@ export default function OrchestratorChat( {
 		if ( supportsCheckpointSwap && currentCheckpoint ) {
 			for ( const checkpointId of checkpointIdsByTurn.current ) {
 				if (
+					! hasEditorRedo &&
 					! nextInvalidatedCheckpointIds.has( checkpointId ) &&
 					! pendingCheckpointActionIdsRef.current.has( checkpointId ) &&
 					currentCheckpoint.canSwapCheckpoint?.( checkpointId ) === false
@@ -674,6 +679,7 @@ export default function OrchestratorChat( {
 		checkpointEditorBlocks,
 		checkpointIdsByTurn,
 		checkpointSessionIdentity,
+		hasEditorRedo,
 		sourceDriftInvalidatedCheckpointIds,
 		supportsCheckpointSwap,
 		useCheckpoint,
@@ -682,6 +688,7 @@ export default function OrchestratorChat( {
 	const nativeUndoInvalidatedTurnRef = useRef(
 		hasEditorRedo ? checkpointIdsByTurn.userMessageId : undefined
 	);
+	const nativeUndoRevertedTurnRef = useRef< string | undefined >( undefined );
 	const getCheckpointActionsForMessage = useCheckpointAction(
 		registerMessageActions,
 		checkpoint,
@@ -695,12 +702,46 @@ export default function OrchestratorChat( {
 	);
 
 	useEffect( () => {
-		if ( previousHasEditorRedoRef.current === false && hasEditorRedo ) {
+		const currentCheckpointIds = [ ...checkpointIdsByTurn.current ];
+		const hasPendingCheckpointAction = currentCheckpointIds.some( ( checkpointId ) =>
+			pendingCheckpointActionIdsRef.current.has( checkpointId )
+		);
+		const didNativeUndo =
+			previousHasEditorRedoRef.current === false && hasEditorRedo && ! hasPendingCheckpointAction;
+		const didNativeRedo = previousHasEditorRedoRef.current === true && ! hasEditorRedo;
+		if ( didNativeUndo ) {
 			nativeUndoInvalidatedTurnRef.current = checkpointIdsByTurn.userMessageId;
+			nativeUndoRevertedTurnRef.current = checkpointIdsByTurn.userMessageId;
 		}
 		previousHasEditorRedoRef.current = hasEditorRedo;
 
-		for ( const checkpointId of checkpointIdsByTurn.current ) {
+		const latestCheckpointId = currentCheckpointIds[ currentCheckpointIds.length - 1 ];
+		let didChangeStatus = false;
+		let confirmedNativeRedo = false;
+		if (
+			didNativeRedo &&
+			latestCheckpointId &&
+			checkpointIdsByTurn.userMessageId &&
+			nativeUndoRevertedTurnRef.current === checkpointIdsByTurn.userMessageId &&
+			checkpointRef.current?.canSwapCheckpoint?.( latestCheckpointId ) === true
+		) {
+			didChangeStatus = setCheckpointActionReverted( latestCheckpointId, false );
+			nativeUndoRevertedTurnRef.current = undefined;
+			confirmedNativeRedo = true;
+		}
+		if (
+			! confirmedNativeRedo &&
+			latestCheckpointId &&
+			checkpointIdsByTurn.userMessageId &&
+			nativeUndoRevertedTurnRef.current === checkpointIdsByTurn.userMessageId &&
+			! sourceDriftInvalidatedCheckpointIds.has( latestCheckpointId ) &&
+			! isCheckpointActionInvalidated( latestCheckpointId ) &&
+			checkpointRef.current?.canSwapCheckpoint?.( latestCheckpointId ) === false
+		) {
+			didChangeStatus = setCheckpointActionReverted( latestCheckpointId, true );
+		}
+
+		for ( const checkpointId of currentCheckpointIds ) {
 			if (
 				checkpointIdsByTurn.userMessageId &&
 				nativeUndoInvalidatedTurnRef.current === checkpointIdsByTurn.userMessageId
@@ -708,7 +749,10 @@ export default function OrchestratorChat( {
 				invalidateCheckpointAction( checkpointId );
 			}
 		}
-	}, [ checkpointIdsByTurn, hasEditorRedo ] );
+		if ( didChangeStatus ) {
+			setCheckpointActionRevision( ( revision ) => revision + 1 );
+		}
+	}, [ checkpointIdsByTurn, hasEditorRedo, sourceDriftInvalidatedCheckpointIds ] );
 
 	// TODO (ability-migration): Remove once the last checkpoint-writing Big Sky
 	// ability migrates. Keeps the provider checkpoint store reachable for the

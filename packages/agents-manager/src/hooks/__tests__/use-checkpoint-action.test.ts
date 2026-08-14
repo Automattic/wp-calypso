@@ -12,7 +12,10 @@ import {
 } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
-import useCheckpointAction, { invalidateCheckpointAction } from '../use-checkpoint-action';
+import useCheckpointAction, {
+	invalidateCheckpointAction,
+	setCheckpointActionReverted,
+} from '../use-checkpoint-action';
 import type { UseCheckpointReturn } from '../../utils/load-external-providers';
 import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
 
@@ -170,6 +173,48 @@ describe( 'useCheckpointAction', () => {
 		expect( getActions( registration, message )[ 0 ] ).toMatchObject( {
 			label: 'Reverted',
 		} );
+	} );
+
+	it( 'updates a mounted resolved edit action from external checkpoint state', () => {
+		const registerMessageActions = jest.fn() as UseAgentChatReturn[ 'registerMessageActions' ];
+		const checkpoint = createCheckpoint();
+		const message = createToolMessage( {
+			toolCallId: 'native-status-tool-call',
+			data: {
+				result: {
+					success: true,
+					outcome: 'updated',
+					changeType: 'text-content',
+				},
+			},
+		} );
+		const { result } = renderHook( () =>
+			useCheckpointAction( registerMessageActions, checkpoint )
+		);
+		const updatedAction = result.current( message )[ 0 ];
+		if ( updatedAction?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		const view = render( createElement( updatedAction.component, updatedAction.componentProps ) );
+
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Updated' );
+		expect( screen.getByRole( 'button', { name: 'Undo' } ) ).toBeInTheDocument();
+
+		expect( setCheckpointActionReverted( 'native-status-tool-call', true ) ).toBe( true );
+		invalidateCheckpointAction( 'native-status-tool-call' );
+		const revertedAction = result.current( message )[ 0 ];
+		expect( revertedAction ).toMatchObject( { label: 'Reverted' } );
+		if ( revertedAction?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		view.rerender( createElement( revertedAction.component, revertedAction.componentProps ) );
+
+		const status = screen.getByRole( 'status' );
+		expect( status ).toHaveTextContent( 'Reverted' );
+		expect( within( status ).getByTestId( 'icon-closeSmall' ) ).toBeInTheDocument();
+		expect( status ).toHaveClass( 'agents-manager-resolved-edit-action__status--reverted' );
+		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Redo' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 're-enables Undo when restoring the checkpoint fails', async () => {
