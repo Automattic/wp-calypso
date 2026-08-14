@@ -76,7 +76,14 @@ test.describe(
 			} );
 
 			await test.step( 'And I customize the site inside Playground', async () => {
-				const playground = page.frameLocator( 'iframe[title="WordPress Playground"]' );
+				const playground = page
+					.frameLocator( 'iframe[title="WordPress Playground"]' )
+					.frameLocator( 'iframe[title="The WordPress site"]' );
+				await expect( playground.locator( '#wpadminbar' ) ).toBeVisible( {
+					timeout: 60 * 1000,
+				} );
+				await playground.locator( '#wp-admin-bar-site-name' ).hover();
+				await playground.locator( '#wp-admin-bar-dashboard > a' ).click();
 				await playground.getByRole( 'link', { name: 'Settings', exact: true } ).first().click();
 
 				const siteTitle = playground.getByRole( 'textbox', { name: 'Site Title' } );
