@@ -129,6 +129,7 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
  */
 export function recordAgentsManagerTracksEvent( eventName: string, props: TracksProps = {} ): void {
 	const isA11n = getIsA11n();
+	const blogId = getBlogId();
 	const baseProps: TracksProps = {
 		ai_session_id: getSessionId(),
 		agent_name: DOLLY_AGENT_ID,
@@ -136,6 +137,7 @@ export function recordAgentsManagerTracksEvent( eventName: string, props: Tracks
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
+		...( blogId !== undefined ? { blog_id: blogId } : {} ),
 	};
 
 	recordTracksEvent( `${ AM_UNIFIED_EVENT_PREFIX }${ eventName }`, { ...baseProps, ...props } );

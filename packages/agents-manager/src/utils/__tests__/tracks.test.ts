@@ -154,6 +154,28 @@ describe( 'tracks wrappers', () => {
 			expect( lastEventProps().surface ).toBe( 'reader-chat' );
 		} );
 
+		it( 'adds the canonical server-provided blog ID when available', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+				isDevMode: false,
+				site: { ID: 12345 },
+			};
+
+			recordAgentsManagerTracksEvent( 'chat_minimize' );
+
+			expect( lastEventProps().blog_id ).toBe( 12345 );
+		} );
+
+		it( 'omits blog_id when the server payload has no valid site ID', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+				isDevMode: false,
+				site: { ID: 0 },
+			};
+
+			recordAgentsManagerTracksEvent( 'chat_minimize' );
+
+			expect( lastEventProps() ).not.toHaveProperty( 'blog_id' );
+		} );
+
 		it( 'fires even when the resolved agent id is a reader-chat agent', () => {
 			setResolvedAgentId( 'reader-chat' );
 			recordAgentsManagerTracksEvent( 'chat_minimize' );

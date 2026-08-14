@@ -31,13 +31,13 @@ import {
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
-import { getBulkResponseActionOutcome } from '../utils/response-action';
+import { getBulkResponseActionOutcome, type OnResponseAction } from '../utils/response-action';
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
+import useLatestResponseAction from '../utils/use-latest-response-action';
 import BlockRef, { getBlockTypeName, type BlockSnapshot } from './block-ref';
 import ReviewCard, { ReviewCardActions, type ReviewCardRow } from './review-card';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
 import SplitScreenGuide from './split-screen-guide';
-import type { OnResponseAction, ResponseAction } from '../utils/response-action';
 
 /**
  * Types mirroring the wpcom `AI_Editorial_Review_Ability` structured output.
@@ -457,10 +457,7 @@ export default function AiEditorialReview( {
 		[ getClientId, isPostStale ]
 	);
 	const focusCurrentPostBlock = isPostStale ? undefined : focusBlock;
-	const fireResponseAction = useCallback(
-		( action: ResponseAction ) => onResponseAction?.( action ),
-		[ onResponseAction ]
-	);
+	const fireResponseAction = useLatestResponseAction( onResponseAction, isLatestPostContextStale );
 
 	const handleRootMouseDown = useCallback( ( event: { target: EventTarget | null } ) => {
 		clearActiveBlockFocusUnlessBlockReferenceClick( event.target );

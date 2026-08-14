@@ -114,8 +114,12 @@ const items: FeedbackListItem[] = [
 	},
 ];
 
-function renderFeedbackList( onResponseAction: jest.Mock, listItems = items ) {
-	return render(
+function feedbackList(
+	onResponseAction: jest.Mock | undefined,
+	listItems = items,
+	props: Partial< React.ComponentProps< typeof FeedbackList > > = {}
+) {
+	return (
 		<FeedbackList
 			componentType="proofread"
 			summary="Review complete."
@@ -126,8 +130,13 @@ function renderFeedbackList( onResponseAction: jest.Mock, listItems = items ) {
 			failureMessage="Could not apply."
 			enableBulkApply
 			onResponseAction={ onResponseAction }
+			{ ...props }
 		/>
 	);
+}
+
+function renderFeedbackList( onResponseAction: jest.Mock, listItems = items ) {
+	return render( feedbackList( onResponseAction, listItems ) );
 }
 
 beforeEach( () => {
@@ -206,4 +215,110 @@ it( 'reports one aggregate action for a partial bulk apply', async () => {
 		outcome: 'partial_failed',
 		itemCount: 2,
 	} );
+} );
+
+it( 'does not report an in-flight action after the host revokes tracking', async () => {
+	const onResponseAction = jest.fn();
+	let resolveApply: ( value: {
+		success: boolean;
+		clientId: string;
+		contentBefore: string;
+		contentAfter: string;
+	} ) => void = () => {};
+	mockApplyReviewEdit.mockImplementationOnce(
+		() =>
+			new Promise( ( resolve ) => {
+				resolveApply = resolve;
+			} )
+	);
+	const { rerender } = renderFeedbackList( onResponseAction, [ items[ 0 ] ] );
+
+	fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
+	rerender( feedbackList( undefined, [ items[ 0 ] ], { isMessageStale: true } ) );
+
+	await act( async () => {
+		resolveApply( {
+			success: true,
+			clientId: 'block-1',
+			contentBefore: 'First source',
+			contentAfter: 'First replacement',
+		} );
+	} );
+
+	expect( onResponseAction ).not.toHaveBeenCalled();
+} );
+
+it( 'does not report an in-flight action after the response unmounts', async () => {
+	const onResponseAction = jest.fn();
+	let resolveApply: ( value: {
+		success: boolean;
+		clientId: string;
+		contentBefore: string;
+		contentAfter: string;
+	} ) => void = () => {};
+	mockApplyReviewEdit.mockImplementationOnce(
+		() =>
+			new Promise( ( resolve ) => {
+				resolveApply = resolve;
+			} )
+	);
+	const { unmount } = renderFeedbackList( onResponseAction, [ items[ 0 ] ] );
+
+	fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
+	unmount();
+	await act( async () => {
+		resolveApply( {
+			success: true,
+			clientId: 'block-1',
+			contentBefore: 'First source',
+			contentAfter: 'First replacement',
+		} );
+	} );
+
+	expect( onResponseAction ).not.toHaveBeenCalled();
+} );
+
+it( 'stops bulk reporting when the post changes during an apply', async () => {
+	const onResponseAction = jest.fn();
+	let resolveFirstApply: ( value: { success: boolean } ) => void = () => {};
+	mockApplyReviewEdit.mockImplementationOnce(
+		() =>
+			new Promise( ( resolve ) => {
+				resolveFirstApply = resolve;
+			} )
+	);
+	const { rerender } = renderFeedbackList( onResponseAction );
+
+	fireEvent.click( screen.getByRole( 'button', { name: 'Apply all (2)' } ) );
+	await waitFor( () => expect( mockApplyReviewEdit ).toHaveBeenCalledTimes( 1 ) );
+
+	mockCurrentPostId = 2;
+	rerender( feedbackList( onResponseAction ) );
+	await act( async () => resolveFirstApply( { success: true } ) );
+
+	expect( mockApplyReviewEdit ).toHaveBeenCalledTimes( 1 );
+	expect( onResponseAction ).not.toHaveBeenCalled();
+} );
+
+it( 'does not report a failed undo when the post is stale', async () => {
+	const onResponseAction = jest.fn();
+	mockApplyReviewEdit.mockResolvedValueOnce( {
+		success: true,
+		clientId: 'block-1',
+		contentBefore: 'First source',
+		contentAfter: 'First replacement',
+	} );
+	const { rerender } = renderFeedbackList( onResponseAction, [ items[ 0 ] ] );
+
+	await act( async () => {
+		fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
+	} );
+	onResponseAction.mockClear();
+	mockCurrentPostId = 2;
+	rerender( feedbackList( onResponseAction, [ items[ 0 ] ] ) );
+
+	fireEvent.click( screen.getByRole( 'button', { name: 'Undo' } ) );
+
+	expect( mockUndoBlockEdit ).not.toHaveBeenCalled();
+	expect( onResponseAction ).not.toHaveBeenCalled();
 } );

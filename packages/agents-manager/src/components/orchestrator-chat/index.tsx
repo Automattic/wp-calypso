@@ -1007,25 +1007,35 @@ export default function OrchestratorChat( {
 		)
 			? selectedBlockType
 			: undefined;
-	const renderedSuggestionsKey = JSON.stringify( [
-		displayedSuggestionIds,
-		renderedSuggestionsBlockType ?? null,
-	] );
-	const lastTrackedSuggestionsKeyRef = useRef< string | null >( null );
+	const lastTrackedSuggestionsRef = useRef< {
+		ids: string;
+		blockType?: string;
+	} | null >( null );
 	useEffect( () => {
 		if ( displayedEmptyViewSuggestions.length === 0 ) {
 			return;
 		}
-		if ( lastTrackedSuggestionsKeyRef.current !== renderedSuggestionsKey ) {
-			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
-				suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
-				...( renderedSuggestionsBlockType ? { block_type: renderedSuggestionsBlockType } : {} ),
-			} );
-			lastTrackedSuggestionsKeyRef.current = renderedSuggestionsKey;
+		const previous = lastTrackedSuggestionsRef.current;
+		if (
+			previous?.ids === displayedSuggestionIds &&
+			( previous.blockType === renderedSuggestionsBlockType ||
+				// The suggestion store can retain contextual chips for one render after
+				// block deselection. Do not reclassify that exposure as post-level.
+				( previous.blockType && ! renderedSuggestionsBlockType ) )
+		) {
+			return;
 		}
+		recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
+			suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
+			...( renderedSuggestionsBlockType ? { block_type: renderedSuggestionsBlockType } : {} ),
+		} );
+		lastTrackedSuggestionsRef.current = {
+			ids: displayedSuggestionIds,
+			blockType: renderedSuggestionsBlockType,
+		};
 		// `displayedEmptyViewSuggestions` identity is unstable; key on its ids and block context.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ renderedSuggestionsKey ] );
+	}, [ displayedSuggestionIds, renderedSuggestionsBlockType ] );
 
 	return (
 		<AgentChat

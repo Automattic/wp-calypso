@@ -42,12 +42,12 @@ import {
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
-import { getBulkResponseActionOutcome } from '../utils/response-action';
+import { getBulkResponseActionOutcome, type OnResponseAction } from '../utils/response-action';
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
+import useLatestResponseAction from '../utils/use-latest-response-action';
 import { type BlockSnapshot } from './block-ref';
 import ReviewCard, { type ReviewCardRow } from './review-card';
 import SplitScreenGuide from './split-screen-guide';
-import type { OnResponseAction } from '../utils/response-action';
 
 export interface FeedbackListItem {
 	title: string;
@@ -255,6 +255,7 @@ export default function FeedbackList( {
 	const setItemStatus = useCallback( ( key: string, status: ItemStatus ) => {
 		setItemStatuses( ( prev ) => ( { ...prev, [ key ]: status } ) );
 	}, [] );
+	const fireResponseAction = useLatestResponseAction( onResponseAction, isLatestPostContextStale );
 
 	const focusBlock = useCallback(
 		( index: number ) => {
@@ -286,7 +287,11 @@ export default function FeedbackList( {
 		): Promise< boolean > => {
 			const key = getItemKey( sectionIndex, itemIndex );
 			const block = item.block_index === null ? null : flatBlocks[ item.block_index ];
-			if ( isLatestPostContextStale() || getApplyUnavailableReason( item, block ) ) {
+			const previousStatus = itemStatuses[ key ] ?? 'pending';
+			if ( isLatestPostContextStale() ) {
+				return false;
+			}
+			if ( getApplyUnavailableReason( item, block ) ) {
 				setItemStatus( key, 'failed' );
 				return false;
 			}
@@ -309,7 +314,16 @@ export default function FeedbackList( {
 					item.editable_attribute
 				);
 			} catch {
+				if ( isLatestPostContextStale() ) {
+					setItemStatus( key, previousStatus );
+					return false;
+				}
 				setItemStatus( key, 'failed' );
+				return false;
+			}
+
+			if ( isLatestPostContextStale() ) {
+				setItemStatus( key, previousStatus );
 				return false;
 			}
 
@@ -332,7 +346,7 @@ export default function FeedbackList( {
 			setItemStatus( key, 'failed' );
 			return false;
 		},
-		[ flatBlocks, isLatestPostContextStale, setItemStatus ]
+		[ flatBlocks, isLatestPostContextStale, itemStatuses, setItemStatus ]
 	);
 
 	// Pending, one-click-applicable items, used for the "Apply all" action.
@@ -362,27 +376,36 @@ export default function FeedbackList( {
 		if ( bulkRunning || isLatestPostContextStale() ) {
 			return;
 		}
-		let successCount = 0;
-		let failureCount = 0;
 		setBulkRunning( true );
-		for ( const target of applyAllTargets ) {
-			// Apply sequentially so each edit validates against the live block.
-			// eslint-disable-next-line no-await-in-loop
-			const succeeded = await applyItem( target.item, target.sectionIndex, target.itemIndex );
-			if ( succeeded ) {
-				successCount++;
-			} else {
-				failureCount++;
+		try {
+			let successCount = 0;
+			let failureCount = 0;
+			for ( const target of applyAllTargets ) {
+				if ( isLatestPostContextStale() ) {
+					return;
+				}
+				// Apply sequentially so each edit validates against the live block.
+				// eslint-disable-next-line no-await-in-loop
+				const succeeded = await applyItem( target.item, target.sectionIndex, target.itemIndex );
+				if ( isLatestPostContextStale() ) {
+					return;
+				}
+				if ( succeeded ) {
+					successCount++;
+				} else {
+					failureCount++;
+				}
 			}
+			fireResponseAction( {
+				action: 'bulk_accept',
+				target: 'edit',
+				outcome: getBulkResponseActionOutcome( successCount, failureCount ),
+				itemCount: successCount + failureCount,
+			} );
+		} finally {
+			setBulkRunning( false );
 		}
-		setBulkRunning( false );
-		onResponseAction?.( {
-			action: 'bulk_accept',
-			target: 'edit',
-			outcome: getBulkResponseActionOutcome( successCount, failureCount ),
-			itemCount: successCount + failureCount,
-		} );
-	}, [ applyAllTargets, applyItem, bulkRunning, isLatestPostContextStale, onResponseAction ] );
+	}, [ applyAllTargets, applyItem, bulkRunning, fireResponseAction, isLatestPostContextStale ] );
 
 	const undoItem = useCallback(
 		( key: string, status: ItemStatus ) => {
@@ -555,7 +578,10 @@ export default function FeedbackList( {
 										failureMessage={ failureMessage }
 										onApply={ () => {
 											void applyItem( item, sectionIndex, itemIndex ).then( ( succeeded ) => {
-												onResponseAction?.( {
+												if ( isLatestPostContextStale() ) {
+													return;
+												}
+												fireResponseAction( {
 													action: 'accept',
 													target: 'edit',
 													outcome: succeeded ? 'success' : 'failed',
@@ -574,7 +600,7 @@ export default function FeedbackList( {
 										} }
 										onDismiss={ () => {
 											if ( dismissItem( key ) ) {
-												onResponseAction?.( {
+												fireResponseAction( {
 													action: 'dismiss',
 													target: 'edit',
 													outcome: 'success',
@@ -583,7 +609,10 @@ export default function FeedbackList( {
 										} }
 										onUndo={ () => {
 											const succeeded = undoItem( key, status );
-											onResponseAction?.( {
+											if ( isLatestPostContextStale() ) {
+												return;
+											}
+											fireResponseAction( {
 												action: 'undo',
 												target: 'edit',
 												outcome: succeeded ? 'success' : 'failed',

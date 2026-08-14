@@ -750,6 +750,29 @@ describe( 'OrchestratorChat', () => {
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 2 );
 	} );
 
+	it( 'does not re-track lingering contextual suggestions when a block is deselected', () => {
+		mockSelectedBlockType = 'core/paragraph';
+		const blockSuggestions: Suggestion[] = [
+			{ id: 'change-tone', label: 'Change tone', prompt: 'Change the tone' },
+			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
+		];
+		const useSuggestions = jest.fn( () => ( {
+			suggestions: blockSuggestions,
+			replaceEmptyViewSuggestions: true,
+		} ) );
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { suggestions: blockSuggestions } ) );
+
+		const { rerender } = render( chat( { useSuggestions } ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		mockSelectedBlockType = undefined;
+		rerender( chat( { useSuggestions } ) );
+		mockSelectedBlockType = 'core/paragraph';
+		rerender( chat( { useSuggestions } ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'falls back to the static empty-view suggestions when the provider has none', () => {
 		const staticDefaults: Suggestion[] = [
 			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
