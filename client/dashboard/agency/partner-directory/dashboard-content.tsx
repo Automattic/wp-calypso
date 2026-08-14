@@ -10,6 +10,7 @@ import {
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ActionList from '../../components/action-list';
+import { Card, CardBody } from '../../components/card';
 import IconList from '../../components/icon-list';
 import { SectionHeader } from '../../components/section-header';
 import { getBrandMeta } from './get-brand-meta';
@@ -188,48 +189,52 @@ export default function PartnerDirectoryDashboardContent( {
 						approvedCount
 					) }
 				/>
-				<IconList>
-					{ directoryStatuses.map( ( { directory, badge } ) => {
-						const brandMeta = getBrandMeta( directory, agency );
+				<Card>
+					<CardBody>
+						<VStack spacing={ 6 }>
+							{ directoryStatuses.map( ( { directory, badge } ) => {
+								const brandMeta = getBrandMeta( directory, agency );
 
-						return (
-							<IconList.Item
-								key={ directory }
-								decoration={ brandMeta.icon }
-								title={ DIRECTORY_NAMES[ directory ] }
-								description={
-									badge.key === 'approved' && brandMeta.isAvailable ? (
-										<VStack spacing={ 1 } alignment="flex-start" as="span">
-											<ExternalLink href={ brandMeta.url }>
-												{ sprintf(
-													/* translators: %s is the brand name, e.g. WordPress.com */
-													__( '%s Partner Directory' ),
-													DIRECTORY_NAMES[ directory ]
-												) }
-											</ExternalLink>
-											<ExternalLink href={ brandMeta.profileUrl }>
-												{ __( 'Your agency’s profile' ) }
-											</ExternalLink>
-										</VStack>
-									) : (
-										<VStack spacing={ 1 } alignment="flex-start" as="span">
-											{ /* No auto-open here: it would cover the congratulations screen. */ }
-											<StatusBadge
-												badge={ badge }
-												showPopoverOnLoad={ false }
-												expertiseUrl={ expertiseUrl }
-												recordTracksEvent={ recordTracksEvent }
-											/>
-											{ badge.key === 'approved' && ! brandMeta.isAvailable && (
-												<Text>{ __( 'This Partner Directory is launching soon.' ) }</Text>
-											) }
-										</VStack>
-									)
-								}
-							/>
-						);
-					} ) }
-				</IconList>
+								return (
+									<IconList.Item
+										key={ directory }
+										decoration={ brandMeta.icon }
+										title={ DIRECTORY_NAMES[ directory ] }
+										description={
+											badge.key === 'approved' && brandMeta.isAvailable ? (
+												<VStack spacing={ 1 } alignment="flex-start" as="span">
+													<ExternalLink href={ brandMeta.url }>
+														{ sprintf(
+															/* translators: %s is the brand name, e.g. WordPress.com */
+															__( '%s Partner Directory' ),
+															DIRECTORY_NAMES[ directory ]
+														) }
+													</ExternalLink>
+													<ExternalLink href={ brandMeta.profileUrl }>
+														{ __( 'Your agency’s profile' ) }
+													</ExternalLink>
+												</VStack>
+											) : (
+												<VStack spacing={ 1 } alignment="flex-start" as="span">
+													{ /* No auto-open here: it would cover the congratulations screen. */ }
+													<StatusBadge
+														badge={ badge }
+														showPopoverOnLoad={ false }
+														expertiseUrl={ expertiseUrl }
+														recordTracksEvent={ recordTracksEvent }
+													/>
+													{ badge.key === 'approved' && ! brandMeta.isAvailable && (
+														<Text>{ __( 'This Partner Directory is launching soon.' ) }</Text>
+													) }
+												</VStack>
+											)
+										}
+									/>
+								);
+							} ) }
+						</VStack>
+					</CardBody>
+				</Card>
 				<SectionHeader
 					level={ 3 }
 					title={ __( 'Edit your agency’s information' ) }
