@@ -16,6 +16,15 @@ const mockToggleEditorPanelOpened = jest.fn( ( panelName: string ) => {
 } );
 
 let mockStoresRegistered = true;
+// wp.data throws for a store that was never registered, which is what happens
+// to core/editor outside the post editor.
+let mockEditorStoreRegistered = true;
+
+function mockAssertEditorStore(): void {
+	if ( ! mockEditorStoreRegistered ) {
+		throw new Error( "Store 'core/editor' is not registered." );
+	}
+}
 
 jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn( ( store: string ) => {
@@ -29,12 +38,14 @@ jest.mock( '@wordpress/data', () => ( {
 			return { enableComplementaryArea: mockEnableComplementaryArea };
 		}
 		if ( store === 'core/editor' ) {
+			mockAssertEditorStore();
 			return { toggleEditorPanelOpened: mockToggleEditorPanelOpened };
 		}
 		return {};
 	} ),
 	select: jest.fn( ( store: string ) => {
 		if ( store === 'core/editor' ) {
+			mockAssertEditorStore();
 			return {
 				isEditorPanelOpened: ( panelName: string ) => mockOpenPanels.includes( panelName ),
 				isEditorPanelRemoved: ( panelName: string ) => mockRemovedPanels.includes( panelName ),
@@ -76,6 +87,17 @@ describe( 'revealSidebarField', () => {
 		mockOpenPanels = [];
 		mockRemovedPanels = [];
 		mockStoresRegistered = true;
+		mockEditorStoreRegistered = true;
+	} );
+
+	it( 'still reveals a rendered field when the editor store is not registered', async () => {
+		mockEditorStoreRegistered = false;
+		const field = renderField();
+
+		await expect( revealSidebarField( 'excerpt' ) ).resolves.toBe( true );
+		expect( field.scrollIntoView ).toHaveBeenCalled();
+		// Panel state is unreadable, so toggling one blind could close the field.
+		expect( mockToggleEditorPanelOpened ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not write preferences for panels the editor has removed', async () => {

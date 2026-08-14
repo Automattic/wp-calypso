@@ -103,31 +103,48 @@ async function waitForField(
 	return found;
 }
 
+/** `core/editor` is absent outside the post editor, where `select` throws. */
 function editorSelectors() {
-	return select( 'core/editor' ) as unknown as {
-		isEditorPanelOpened?: ( panelName: string ) => boolean;
-		isEditorPanelRemoved?: ( panelName: string ) => boolean;
-	};
+	try {
+		return select( 'core/editor' ) as unknown as {
+			isEditorPanelOpened?: ( panelName: string ) => boolean;
+			isEditorPanelRemoved?: ( panelName: string ) => boolean;
+		};
+	} catch {
+		return undefined;
+	}
 }
 
 /**
  * Whether a panel needs opening. Panels the editor has removed are skipped, so
- * a variant this editor cannot render costs no preference writes.
+ * a variant this editor cannot render costs no preference writes. Panels whose
+ * state cannot be read are skipped too, because toggling one blind could close
+ * the very panel holding the field.
  * @param panelName - Panel preference name.
  * @returns Whether the panel should be opened.
  */
 function needsOpening( panelName: string ): boolean {
-	const { isEditorPanelOpened, isEditorPanelRemoved } = editorSelectors();
+	const selectors = editorSelectors();
 
-	return ! isEditorPanelRemoved?.( panelName ) && ! isEditorPanelOpened?.( panelName );
+	if ( ! selectors?.isEditorPanelOpened ) {
+		return false;
+	}
+
+	return (
+		! selectors.isEditorPanelRemoved?.( panelName ) && ! selectors.isEditorPanelOpened( panelName )
+	);
 }
 
 function togglePanel( panelName: string ): void {
-	const editorDispatch = dispatch( 'core/editor' ) as unknown as {
-		toggleEditorPanelOpened?: ( panelName: string ) => void;
-	};
+	try {
+		const editorDispatch = dispatch( 'core/editor' ) as unknown as {
+			toggleEditorPanelOpened?: ( panelName: string ) => void;
+		};
 
-	editorDispatch?.toggleEditorPanelOpened?.( panelName );
+		editorDispatch?.toggleEditorPanelOpened?.( panelName );
+	} catch {
+		// The panel stays as the user left it.
+	}
 }
 
 /**
