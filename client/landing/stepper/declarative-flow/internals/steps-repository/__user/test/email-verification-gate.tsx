@@ -638,7 +638,7 @@ describe( 'account step email verification gate', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
 
-		expect( screen.queryByTestId( 'one-tap-auth-loader-overlay' ) ).not.toBeInTheDocument();
+		expect( document.querySelector( '.one-tap-auth-loader-overlay' ) ).not.toBeInTheDocument();
 	} );
 
 	// A stored social failure carries a log-in link, which is a way past the gate.
