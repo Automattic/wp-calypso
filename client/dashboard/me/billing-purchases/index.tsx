@@ -107,10 +107,8 @@ export default function PurchasesList() {
 		siteFilter: currentSearchParams.site,
 		visibleFields: view.fields,
 	} );
-
-	// A removed subscription is not an upgrade the viewer still holds, and nothing
-	// on this page can act on one — whether they cancelled it or support did.
 	// Filtered here rather than in the query, because other readers of it (e.g.
+	// account deletion) do need to see removed subscriptions.
 	// account deletion) do need to see removed subscriptions.
 	const allSubscriptions = useMemo( () => {
 		return isLoading
