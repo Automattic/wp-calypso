@@ -38,6 +38,7 @@ import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestio
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
 import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
+import useReconcileDeliveryStatus from '../../hooks/use-reconcile-delivery-status';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import {
@@ -69,6 +70,7 @@ import { isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import RetryFailedMessage from '../retry-failed-message';
 import type { BigSkyMessage } from '../../types';
 import type {
 	AbilitiesSetupHook,
@@ -792,6 +794,55 @@ export default function OrchestratorChat( {
 		},
 	} );
 
+	// Reconcile an in-flight turn that was orphaned by a page change before the
+	// reply came back (WOOAI-872 / WOOAI-847). On mount the hook checks the
+	// server: it adopts the real transcript when the turn landed, or reports it
+	// `failed` so we can surface a retry when it never did.
+	const { isReconciling, result: reconcileResult } = useReconcileDeliveryStatus();
+	const [ failedRetries, setFailedRetries ] = useState< Array< { id: string; text: string } > >(
+		[]
+	);
+	const reconcileSyncedRef = useRef( false );
+	useEffect( () => {
+		if ( ! reconcileResult ) {
+			return;
+		}
+
+		// One-time side effects: adopt the server session and attach retry
+		// affordances. Guarded separately from the transcript load below so they
+		// never repeat if the load has to re-run.
+		if ( ! reconcileSyncedRef.current ) {
+			reconcileSyncedRef.current = true;
+
+			if ( reconcileResult.outcome === 'server' && reconcileResult.serverSessionId ) {
+				// The server had the turn: point future sends at the real session.
+				getAgentManager().updateSessionId( agentConfig!.agentId, reconcileResult.serverSessionId );
+				// Persist it as this tab's session the same way `useConversation`'s
+				// onSuccess does, so it writes under the site the config was
+				// created for.
+				if ( agentConfig!.sessionId !== reconcileResult.serverSessionId ) {
+					agentConfig!.onSessionIdChange?.( reconcileResult.serverSessionId );
+				}
+			}
+
+			if ( reconcileResult.failedTexts.length > 0 ) {
+				setFailedRetries(
+					reconcileResult.failedTexts.map( ( text, index ) => ( {
+						id: `${ reconcileResult.storageKey }-${ index }`,
+						text,
+					} ) )
+				);
+			}
+		}
+
+		// Show the reconciled transcript, and re-assert it if `useAgentChat`'s own
+		// mount-init clears the panel out from under us before the merchant has
+		// interacted. Once messages are present (or the merchant sends), stop.
+		if ( messages.length === 0 && ! hasUserSentMessage ) {
+			loadMessages( reconcileResult.messages );
+		}
+	}, [ reconcileResult, messages.length, hasUserSentMessage, loadMessages, agentConfig ] );
+
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
 	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions );
@@ -1378,6 +1429,16 @@ export default function OrchestratorChat( {
 
 	useRegisterCustomActions( { setChatInput, submitChatMessage } );
 
+	// Retry a failed turn: drop its affordance and re-send the original prompt as
+	// a fresh turn. Deliberately does not repopulate the composer.
+	const handleRetryFailed = useCallback(
+		( id: string, text: string ) => {
+			setFailedRetries( ( previous ) => previous.filter( ( retry ) => retry.id !== id ) );
+			void submitChatMessage( text );
+		},
+		[ submitChatMessage ]
+	);
+
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
 			if ( ! action.prompt ) {
@@ -1690,12 +1751,60 @@ export default function OrchestratorChat( {
 			};
 		} );
 
+		// Render an inline retry affordance beneath each failed user turn. Matched
+		// by text to its user message; any left over (text not on screen) trail the
+		// transcript so the affordance is never lost.
+		if ( failedRetries.length > 0 ) {
+			const makeRetryMessage = (
+				retry: { id: string; text: string },
+				anchor?: AgentsManagerUIMessage
+			): AgentsManagerUIMessage => ( {
+				id: `failed-retry-${ retry.id }`,
+				role: 'agent',
+				content: [
+					{
+						type: 'component',
+						component: RetryFailedMessage as React.ComponentType,
+						componentProps: {
+							onRetry: () => handleRetryFailed( retry.id, retry.text ),
+						},
+					},
+				],
+				timestamp: ( anchor?.timestamp ?? Date.now() ) + 1,
+				archived: false,
+				showIcon: false,
+				suppressThinking: true,
+			} );
+
+			const remainingRetries = [ ...failedRetries ];
+			const messagesWithRetries: AgentsManagerUIMessage[] = [];
+			for ( const message of currentMessages ) {
+				messagesWithRetries.push( message );
+				if ( message.role !== 'user' ) {
+					continue;
+				}
+				const text = message.content?.find( ( content ) => content.type === 'text' )?.text;
+				const matchIndex = remainingRetries.findIndex( ( retry ) => retry.text === text );
+				if ( matchIndex !== -1 ) {
+					const [ retry ] = remainingRetries.splice( matchIndex, 1 );
+					messagesWithRetries.push( makeRetryMessage( retry, message ) );
+				}
+			}
+			for ( const retry of remainingRetries ) {
+				messagesWithRetries.push(
+					makeRetryMessage( retry, currentMessages[ currentMessages.length - 1 ] )
+				);
+			}
+			currentMessages = messagesWithRetries;
+		}
+
 		return currentMessages;
 	}, [
 		checkpointActionRevision,
 		checkpointSessionIdentity,
 		currentPostId,
 		deletedMessageIds,
+		failedRetries,
 		getChatComponent,
 		getCopyActionsForMessage,
 		getCheckpointActionsForMessage,
@@ -1703,6 +1812,7 @@ export default function OrchestratorChat( {
 		getFeedbackActionsForMessage,
 		getTraceIdForMessage,
 		getRegenerateActionsForMessage,
+		handleRetryFailed,
 		hasEditorRedo,
 		isBuildingSite,
 		isProcessing,
@@ -1733,7 +1843,8 @@ export default function OrchestratorChat( {
 		latestDisplayedMessage?.role === 'agent' && latestDisplayedMessage.suppressThinking
 	);
 	const showProcessingIndicator =
-		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
+		( isProcessing || isReconciling || ( isThinking && ! isBuildingSite ) ) &&
+		! shouldSuppressTransientThinking;
 
 	// Determine which suggestions to show following Big Sky's logic:
 	// - Empty chat: show provider empty-view chips plus dynamic chips.
@@ -1815,9 +1926,15 @@ export default function OrchestratorChat( {
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ showProcessingIndicator || isUploadingImages }
-			thinkingMessage={
-				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
-			}
+			thinkingMessage={ ( () => {
+				if ( isUploadingImages ) {
+					return __( 'Uploading images…', __i18n_text_domain__ );
+				}
+				if ( isReconciling ) {
+					return __( 'Picking up your previous question…', __i18n_text_domain__ );
+				}
+				return progressMessage;
+			} )() }
 			error={ chatError || uploadError }
 			onSubmit={ onSubmitWithImages }
 			onAbort={ handleAbort }
