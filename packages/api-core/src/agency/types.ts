@@ -130,13 +130,6 @@ export interface Agency {
 	user?: {
 		capabilities: string[];
 	};
-	profile?: {
-		partner_directory_application?: null | {
-			directories: {
-				status: 'pending' | 'approved' | 'rejected' | 'closed';
-			}[];
-		};
-	};
 	third_party?: null | {
 		pressable?: null | {
 			usage?: null | {
