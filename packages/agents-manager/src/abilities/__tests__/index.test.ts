@@ -7,7 +7,7 @@ jest.mock( '@wordpress/abilities', () => ( {
 	registerAbilityCategory: jest.fn(),
 	unregisterAbility: jest.fn(),
 } ) );
-jest.mock( '@wordpress/data', () => ( { select: () => undefined } ) );
+jest.mock( '@wordpress/data', () => ( { select: () => undefined, dispatch: () => undefined } ) );
 jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,
@@ -39,6 +39,12 @@ async function load() {
 		registerAbilityCategory: jest.Mock;
 		unregisterAbility: jest.Mock;
 	};
+}
+
+// Asserting against the real list keeps these counts correct as abilities
+// migrate in.
+async function editorAbilityCount() {
+	return ( await import( '../editor-abilities' ) ).getEditorAbilities().length;
 }
 
 // The facade gates on `isEditorPage()`, which reads the admin body classes.
@@ -78,7 +84,7 @@ describe( 'abilities facade', () => {
 		// Registration runs fire-and-forget with the load — let it settle.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-		expect( registerAbility ).toHaveBeenCalledTimes( 3 );
+		expect( registerAbility ).toHaveBeenCalledTimes( await editorAbilityCount() );
 	} );
 
 	it.each( [
@@ -88,7 +94,9 @@ describe( 'abilities facade', () => {
 		document.body.classList.add( ...bodyClasses );
 		const { amToolProvider } = await load();
 
-		await expect( amToolProvider.getAbilities() ).resolves.toHaveLength( 3 );
+		await expect( amToolProvider.getAbilities() ).resolves.toHaveLength(
+			await editorAbilityCount()
+		);
 	} );
 
 	it( 'stays closed on a custom-post-type editor screen', async () => {
@@ -107,7 +115,7 @@ describe( 'abilities facade', () => {
 		// Registration runs fire-and-forget with the load — let it settle.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-		expect( registerAbility ).toHaveBeenCalledTimes( 3 );
+		expect( registerAbility ).toHaveBeenCalledTimes( await editorAbilityCount() );
 	} );
 
 	it( 'loads on the first execution, with no prior call', async () => {
@@ -292,9 +300,12 @@ describe( 'registerEditorAbilities', () => {
 		expect( registerAbilityCategory ).toHaveBeenCalledTimes( 1 );
 		expect( registerAbilityCategory ).toHaveBeenCalledWith( 'big-sky', expect.any( Object ) );
 
-		expect( registerAbility ).toHaveBeenCalledTimes( 3 );
+		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.getEditorAbilities().length );
 		expect( registerAbility ).toHaveBeenCalledWith(
 			expect.objectContaining( { name: 'big-sky/restore-checkpoint' } )
+		);
+		expect( registerAbility ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'big-sky/set-site-logo' } )
 		);
 		expect( registerAbility ).toHaveBeenCalledWith(
 			expect.objectContaining( { name: 'big-sky/show-component' } )
@@ -318,7 +329,10 @@ describe( 'registerEditorAbilities', () => {
 		await editorAbilities.registerEditorAbilities();
 
 		expect( unregisterAbility ).toHaveBeenCalledWith( 'big-sky/restore-checkpoint' );
-		expect( registerAbility ).toHaveBeenCalledTimes( 4 );
+		// One extra call: the collision is retried after unregistering.
+		expect( registerAbility ).toHaveBeenCalledTimes(
+			editorAbilities.getEditorAbilities().length + 1
+		);
 	} );
 
 	it( 'does not unregister when the failure is not a collision', async () => {
@@ -330,7 +344,7 @@ describe( 'registerEditorAbilities', () => {
 		await editorAbilities.registerEditorAbilities();
 
 		expect( unregisterAbility ).not.toHaveBeenCalled();
-		expect( registerAbility ).toHaveBeenCalledTimes( 3 );
+		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.getEditorAbilities().length );
 		expect( warn ).toHaveBeenCalled();
 		warn.mockRestore();
 	} );

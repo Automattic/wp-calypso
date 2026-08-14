@@ -3,6 +3,7 @@
  */
 import { amToolProvider } from '../../abilities';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
+import { setSiteLogoAbility } from '../../abilities/set-site-logo';
 import { showComponentAbility } from '../../abilities/show-component';
 import { showTemplateAbility } from '../../abilities/show-template';
 import * as canvasBinding from '../canvas-binding';
@@ -216,6 +217,7 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				restoreCheckpointAbility,
+				setSiteLogoAbility,
 				showComponentAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
@@ -249,6 +251,7 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				restoreCheckpointAbility,
+				setSiteLogoAbility,
 				showComponentAbility,
 				showTemplateAbility,
 				createAbility( 'shared/action' ),
@@ -336,6 +339,7 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				restoreCheckpointAbility,
+				setSiteLogoAbility,
 				showComponentAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
@@ -810,6 +814,7 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				restoreCheckpointAbility,
+				setSiteLogoAbility,
 				showComponentAbility,
 				showTemplateAbility,
 				createAbility( 'big-sky/apply-block-edits' ),
