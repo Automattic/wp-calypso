@@ -100,6 +100,15 @@ describe( 'useEmailVerificationGate', () => {
 
 		expect( statusFor() ).toBe( 'clear' );
 	} );
+
+	// The arm check sits above the phone-account check, so Variant B clears a phone account without
+	// ever reaching it. Reordering the two would gate phone accounts under Variant B — this pins it.
+	it( 'clears a phone account under the post-plan-selection arm', () => {
+		assign( 'treatment_post_plan_selection' );
+		mockUser( { email_verified: false, phone_account: true } );
+
+		expect( statusFor() ).toBe( 'clear' );
+	} );
 } );
 
 describe( 'useIsPostPlanSelectionEmailVerification', () => {
@@ -125,6 +134,14 @@ describe( 'useIsPostPlanSelectionEmailVerification', () => {
 
 		expect( deferredFor() ).toBe( false );
 	} );
+
+	// While the assignment loads the arm is unknown, so it must read as control (false) — this is
+	// what makes the flow route as control mid-load rather than guessing the deferred gate.
+	it( 'is false while the assignment is loading', () => {
+		assign( 'treatment_post_plan_selection', { isLoading: true } );
+
+		expect( deferredFor() ).toBe( false );
+	} );
 } );
 
 describe( 'useIsPostAccountCreationEmailVerification', () => {
@@ -147,6 +164,13 @@ describe( 'useIsPostAccountCreationEmailVerification', () => {
 
 	it( 'is false under the post-plan-selection arm', () => {
 		assign( 'treatment_post_plan_selection' );
+
+		expect( accountCreationFor() ).toBe( false );
+	} );
+
+	// Loading reads as control (false), so the account step doesn't gate on a not-yet-known arm.
+	it( 'is false while the assignment is loading', () => {
+		assign( 'treatment_post_account_creation', { isLoading: true } );
 
 		expect( accountCreationFor() ).toBe( false );
 	} );

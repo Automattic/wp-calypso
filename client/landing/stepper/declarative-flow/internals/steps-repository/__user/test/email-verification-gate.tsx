@@ -77,6 +77,10 @@ jest.mock( '../handle-social-response', () => ( {
 jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 	__esModule: true,
 	// A stand-in whose button fires the real form's `goToNextStep` + `onCreateAccountSuccess`.
+	// CONTRACT: this encodes two behaviours of the real SignupFormSocialFirst that these tests
+	// depend on — it takes its email once on mount, and it calls `goToNextStep` before
+	// `onCreateAccountSuccess`. If the real form's callback order or email handling changes, update
+	// this stand-in to match; otherwise these tests pass while production is broken.
 	default: ( {
 		onCreateAccountSuccess,
 		goToNextStep,
@@ -222,6 +226,45 @@ describe( 'account step email verification gate', () => {
 		renderUser( makeLoggedOutStore() );
 
 		expect( activationEmailFromProp ).toBeUndefined();
+	} );
+
+	// The other half of the same enablement: the send is recorded on account creation under a
+	// treatment. This is the analytics companion to the activationEmailFrom prop above.
+	it( 'records the activation-email send on account creation under a treatment', async () => {
+		const user = userEvent.setup();
+		renderUser( makeLoggedOutStore() );
+
+		await user.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_sent',
+			{ flow: 'onboarding', is_resend: false }
+		);
+	} );
+
+	// Control gets the confirmation email like everyone, but the gate's own send-tracking is a
+	// treatment behaviour, so control records nothing here.
+	it( 'records no activation-email send on account creation under control', async () => {
+		mockGateVariant = 'control';
+		const user = userEvent.setup();
+		renderUser( makeLoggedOutStore() );
+
+		await user.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
+
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_sent',
+			expect.anything()
+		);
+	} );
+
+	// Variant B never opens the account-step gate: an unverified user sees the account form and the
+	// gate heading never appears (the gate moves to after plan selection).
+	it( 'shows the account form and never the gate under the post-plan-selection arm', async () => {
+		mockGateVariant = 'treatment_post_plan_selection';
+		renderUser( makeLoggedOutStore() );
+
+		expect( await screen.findByRole( 'button', { name: 'create-email-account' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
 	} );
 
 	// It belongs to the account the gate handed back, not to the step.
@@ -579,7 +622,11 @@ describe( 'account step email verification gate', () => {
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
 
 		expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
-		expect( document.querySelector( '.step-container-v2--user-mobile' ) ).not.toBeInTheDocument();
+		// The compact frame's own heading offers to start a site; its absence is the user-visible
+		// signal that we're on the standard account screen, not the mobile-compact one.
+		expect(
+			screen.queryByRole( 'heading', { name: 'Welcome to WordPress.com' } )
+		).not.toBeInTheDocument();
 	} );
 
 	// It is fixed and full-screen, so it would sit over the field.
@@ -591,7 +638,7 @@ describe( 'account step email verification gate', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
 
-		expect( document.querySelector( '.one-tap-auth-loader-overlay' ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'one-tap-auth-loader-overlay' ) ).not.toBeInTheDocument();
 	} );
 
 	// A stored social failure carries a log-in link, which is a way past the gate.

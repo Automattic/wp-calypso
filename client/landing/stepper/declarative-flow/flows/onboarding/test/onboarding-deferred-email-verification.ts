@@ -8,6 +8,8 @@ import onboarding from '../onboarding';
 
 // Variant B (post-plan-selection gate) vs. control, driven by the experiment assignment.
 let mockVariant = 'treatment_post_plan_selection';
+// Whether the assignment is still resolving; while true the flow can't know the arm yet.
+let mockLoading = false;
 let mockQueryParams = new URLSearchParams( '' );
 
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
@@ -159,11 +161,12 @@ const submitPlans = async ( providedDependencies: Record< string, unknown > ) =>
 describe( 'onboarding deferred email verification (Variant B)', () => {
 	beforeEach( () => {
 		mockVariant = 'treatment_post_plan_selection';
+		mockLoading = false;
 		mockQueryParams = new URLSearchParams( '' );
 		jest.clearAllMocks();
 		( useExperiment as jest.Mock ).mockImplementation(
 			( _name: string, opts?: { isEligible?: boolean } ) =>
-				opts?.isEligible ? [ false, { variationName: mockVariant } ] : [ false, null ]
+				opts?.isEligible ? [ mockLoading, { variationName: mockVariant } ] : [ false, null ]
 		);
 	} );
 
@@ -181,6 +184,19 @@ describe( 'onboarding deferred email verification (Variant B)', () => {
 		const { navigate } = await submitPlans( { cartItems: [ { product_id: 1 } ] } );
 
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
+	} );
+
+	// The deferred gate is guarded on `! pickedPlan`, i.e. presence not price: once any plan is
+	// picked the free-order gate is skipped. Dropping that guard would defer picked plans too.
+	it( 'skips the verification step once a plan is picked, even under Variant B', async () => {
+		const { navigate } = await submitPlans( { cartItems: [ { product_id: 1, is_free: true } ] } );
+
+		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
+		expect( navigate ).not.toHaveBeenCalledWith(
+			expect.stringContaining( 'email-verification' ),
+			expect.anything(),
+			expect.anything()
+		);
 	} );
 
 	it( 'keeps the free order on site creation under the control arm', async () => {
@@ -210,6 +226,25 @@ describe( 'onboarding deferred email verification (Variant B)', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'post-checkout-onboarding' );
 	} );
 
+	// Without a `next`, the verification step falls back to site creation rather than a blank target.
+	it( 'advances the verification step to site creation when no next query param is set', async () => {
+		const navigate = jest.fn();
+		const { result } = renderHook( () =>
+			onboarding.useStepNavigation.call(
+				onboarding,
+				'email-verification' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
+				navigate
+			)
+		);
+
+		await result.current.submit?.( {
+			slug: 'email-verification',
+			providedDependencies: {},
+		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
+
+		expect( navigate ).toHaveBeenCalledWith( 'create-site' );
+	} );
+
 	it( 'points a paid order back at the verification step on return from checkout', async () => {
 		const checkoutUrl = await submitPaidProcessing();
 
@@ -227,5 +262,29 @@ describe( 'onboarding deferred email verification (Variant B)', () => {
 
 		expect( checkoutUrl ).toContain( '/setup/onboarding/post-checkout-onboarding' );
 		expect( checkoutUrl ).not.toContain( 'email-verification' );
+	} );
+
+	// While the assignment is still resolving the flow can't know the arm, so it routes as control
+	// rather than guessing. This never strands a real Variant-B user, because the account step holds
+	// them on the verification gate's `pending` state until the assignment settles — so by the time
+	// they can submit a plan the arm is known. These cases pin the mid-load fallback so a future
+	// change can't turn it into a silent gate-skip that also survives after the assignment resolves.
+	describe( 'while the assignment is still loading', () => {
+		beforeEach( () => {
+			mockLoading = true;
+		} );
+
+		it( 'does not defer a free order to the verification step', async () => {
+			const { navigate } = await submitPlans( { cartItems: [] } );
+
+			expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
+		} );
+
+		it( 'does not route a paid order back through the verification step on checkout return', async () => {
+			const checkoutUrl = await submitPaidProcessing();
+
+			expect( checkoutUrl ).toContain( '/setup/onboarding/post-checkout-onboarding' );
+			expect( checkoutUrl ).not.toContain( 'email-verification' );
+		} );
 	} );
 } );
