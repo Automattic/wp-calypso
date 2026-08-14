@@ -33,12 +33,6 @@
 	}
 }
 
-// wp-admin modals must render above the docked chat: release the strip's
-// stacking while one is open.
-body.wp-admin.modal-open .agents-manager-chat--docked {
-	z-index: unset;
-}
-
 /* Agenttic UI */
 // Shared styles for the docked and undocked chat.
 .agenttic {
@@ -307,20 +301,15 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 	z-index: $agents-manager-z-index-docked;
 }
 
-// Any open @wordpress/components modal must stack above the floating chat.
-// The modal overlay portals to document.body at z-index 100000, while the
-// floating chat holds the shared overlay-panel band (999990/999995) — so
-// without this rule a wp-admin dialog's footer actions render underneath
-// the chat wherever the two overlap (e.g. WooCommerce AI's governed-review
-// dialog, WOOAI-825). The docked chat already yields: the settled shrink
-// layout released its z-index (#113160); this closes the same gap for the
-// undocked chat. Keyed on the overlay's presence in the DOM rather than
-// Modal's `bodyOpenClassName`, which consumers can (and do) override.
-// 99998 keeps the chat above page chrome but below the overlay while a
-// modal is up; both selectors are needed to out-rank the focused offset.
-body:has( .components-modal__screen-overlay ) .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating,
-body:has( .components-modal__screen-overlay ) .agents-manager-chat--undocked.is-focused .agenttic.Chat-module_container.Chat-module_floating {
-	z-index: 99998;
+// Let open modals render above the chat. Both keys are load-bearing:
+// `wp.media` frames set only `modal-open`; dialogs that override
+// `bodyOpenClassName` leave only the overlay. The nested selector outranks
+// the focused offset above: tied on classes, it wins on the `body` type.
+body:is( .modal-open, :has( .components-modal__screen-overlay ) ) {
+	.agents-manager-chat--docked,
+	.agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
+		z-index: unset;
+	}
 }
 
 /* Docked split-screen */
