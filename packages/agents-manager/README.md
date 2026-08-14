@@ -29,20 +29,6 @@ function MyApp() {
 }
 ```
 
-### Headless Agent Initialization
-
-Use `HeadlessAgentInitializer` when you need to create the agent without rendering the chat UI (e.g., for Image Studio in the Media Library):
-
-```tsx
-import { HeadlessAgentInitializer } from '@automattic/agents-manager';
-
-function MyApp() {
-	const site = { ID: 456, URL: 'https://example.com' };
-
-	return <HeadlessAgentInitializer site={ site } currentRoute="/media" />;
-}
-```
-
 ### External Provider Extensions
 
 Custom tools, context providers, suggestions, and markdown extensions are loaded automatically from external plugins via the `loadExternalProviders()` utility. Plugins can register their providers by implementing the extension API.
@@ -126,7 +112,6 @@ Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `ra
 ```tsx
 import type {
 	AgentsManagerProps,
-	HeadlessAgentInitializerProps,
 	Ability,
 	ToolProvider,
 	ContextProvider,
