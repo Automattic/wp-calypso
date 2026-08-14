@@ -414,9 +414,7 @@ export default function OrchestratorChat( {
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
-	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
-		suggestionsVisible,
-	} );
+	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const replaceEmptyViewSuggestions = dynamicSuggestions?.replaceEmptyViewSuggestions === true;
 	const dynamicSuggestionsKey = JSON.stringify(
@@ -1008,24 +1006,47 @@ export default function OrchestratorChat( {
 
 	// Track when a set of suggestions is rendered — the dynamic block-context
 	// suggestions or, on an empty chat, the empty-view starter chips. Mirrors
-	// Big Sky, which tracked the empty view too. Dedupe on the rendered ids so
-	// re-renders with the same set don't re-fire; a set that empties and returns
-	// to the same content isn't re-tracked.
+	// Big Sky, which tracked the empty view too. Dedupe on the rendered ids and
+	// block context so the same actions appearing for a different block type are
+	// tracked as a distinct exposure.
 	const displayedSuggestionIds = displayedEmptyViewSuggestions.map( ( s ) => s.id ).join( '|' );
-	const lastTrackedSuggestionsRef = useRef< string | null >( null );
+	const renderedSuggestionsBlockType =
+		selectedBlockType &&
+		displayedEmptyViewSuggestions.length > 0 &&
+		displayedEmptyViewSuggestions.every( ( suggestion ) =>
+			contextualSuggestionIds.has( suggestion.id )
+		)
+			? selectedBlockType
+			: undefined;
+	const lastTrackedSuggestionsRef = useRef< {
+		ids: string;
+		blockType?: string;
+	} | null >( null );
 	useEffect( () => {
 		if ( displayedEmptyViewSuggestions.length === 0 ) {
 			return;
 		}
-		if ( lastTrackedSuggestionsRef.current !== displayedSuggestionIds ) {
-			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
-				suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
-			} );
-			lastTrackedSuggestionsRef.current = displayedSuggestionIds;
+		const previous = lastTrackedSuggestionsRef.current;
+		if (
+			previous?.ids === displayedSuggestionIds &&
+			( previous.blockType === renderedSuggestionsBlockType ||
+				// The suggestion store can retain contextual chips for one render after
+				// block deselection. Do not reclassify that exposure as post-level.
+				( previous.blockType && ! renderedSuggestionsBlockType ) )
+		) {
+			return;
 		}
-		// `displayedEmptyViewSuggestions` identity is unstable; key on its ids.
+		recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
+			suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
+			...( renderedSuggestionsBlockType ? { block_type: renderedSuggestionsBlockType } : {} ),
+		} );
+		lastTrackedSuggestionsRef.current = {
+			ids: displayedSuggestionIds,
+			blockType: renderedSuggestionsBlockType,
+		};
+		// `displayedEmptyViewSuggestions` identity is unstable; key on its ids and block context.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ displayedSuggestionIds ] );
+	}, [ displayedSuggestionIds, renderedSuggestionsBlockType ] );
 
 	return (
 		<AgentChat

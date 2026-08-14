@@ -335,15 +335,11 @@ function installAiEditorialReviewData( features: Record< string, boolean > = {} 
 function SuggestionsProbe( {
 	onSuggestions,
 	maxSuggestions,
-	suggestionsVisible = true,
 }: {
 	onSuggestions: ( suggestions: any[], replaceEmptyViewSuggestions?: boolean ) => void;
 	maxSuggestions?: number;
-	suggestionsVisible?: boolean;
 } ) {
-	const { suggestions, replaceEmptyViewSuggestions } = useSuggestions( maxSuggestions, {
-		suggestionsVisible,
-	} );
+	const { suggestions, replaceEmptyViewSuggestions } = useSuggestions( maxSuggestions );
 	React.useEffect( () => {
 		onSuggestions( suggestions, replaceEmptyViewSuggestions );
 	}, [ onSuggestions, replaceEmptyViewSuggestions, suggestions ] );
@@ -2239,25 +2235,6 @@ describe( 'useSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'does not track rendered suggestions when the suggestions are not visible', () => {
-		installAiEditorialReviewData();
-		mockSelectedBlock = { clientId: 'b-hidden', name: 'core/paragraph' };
-		const onSuggestions = jest.fn();
-
-		render( React.createElement( SuggestionsProbe, { onSuggestions, suggestionsVisible: false } ) );
-
-		const latestSuggestions =
-			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'Translate content',
-			'Change tone',
-			'Check grammar',
-			'Simplify text',
-		] );
-		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
-	} );
-
 	it( 'shows only block-specific suggestions when a block is selected', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
@@ -2274,44 +2251,6 @@ describe( 'useSuggestions', () => {
 			'Simplify text',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'translate',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'change-tone',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'check-grammar',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'simplify-text',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-		] );
 	} );
 
 	it( 'replaces editor-level empty-view suggestions when a block is selected', () => {
@@ -2377,11 +2316,8 @@ describe( 'useSuggestions', () => {
 		expect( emptyViewLabels ).toContain( 'Optimize Title' );
 		expect( emptyViewLabels ).toContain( 'Editorial Review' );
 
-		// The rendered event fires once per page load (module-level guard), so
-		// only the first render with the chip available can assert it — which is
-		// this test: every earlier test either selects a block or uses an
-		// unsupported post type.
-		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toHaveLength( 1 );
+		// Chip exposure is tracked by Agents Manager's jetpack_big_sky_chat_suggestions_rendered.
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
 	it( 'keeps selected-block suggestions on template entities', () => {
@@ -2421,35 +2357,6 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 		] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'translate',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'change-tone',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'check-grammar',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-		] );
 	} );
 
 	it( 'returns no suggestions after the selected-block chip is cleared', () => {
@@ -2476,6 +2383,8 @@ describe( 'useSuggestions', () => {
 		latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions ).toEqual( [] );
+		// Chip exposure is tracked by Agents Manager's jetpack_big_sky_chat_suggestions_rendered.
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
 	it( 'tracks rendered image block transformation suggestions', () => {
@@ -2489,17 +2398,6 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Generate alt text',
-		] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'generate-alt-text',
-					suggestion_type: 'image',
-					block_type: 'core/image',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
 		] );
 	} );
 
@@ -2602,7 +2500,6 @@ describe( 'useSuggestions', () => {
 
 		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_click' ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
 	} );
 
 	it( 'exposes tone and language dropdown options on the block suggestions', () => {
@@ -3278,6 +3175,41 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
+			expect( parsed.data.responseTrackingProperties ).toBeUndefined();
+		} );
+
+		it.each( [
+			[ 'proofread', { items: [ {}, {} ] }, { suggested_edit_count: 2 } ],
+			[ 'post-feedback', { items: [ {} ] }, { suggested_edit_count: 1 } ],
+			[
+				'ai-editorial-review',
+				{
+					suggested_edits: [ {}, {} ],
+					conflicts: [ {} ],
+					implications: [],
+					guideline_violations: [
+						{ guideline_quote: 'Use sentence case.' },
+						{ guideline_quote: '' },
+						{ guideline_quote: 'Prefer active voice.' },
+					],
+					review_context: 'notes_and_guidelines',
+				},
+				{
+					suggested_edit_count: 2,
+					conflict_count: 1,
+					implication_count: 0,
+					guideline_violation_count: 2,
+					review_context: 'notes_and_guidelines',
+				},
+			],
+		] )( 'adds privacy-safe response metadata for %s', async ( type, props, expected ) => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type,
+				props,
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.responseTrackingProperties ).toEqual( expected );
 		} );
 
 		it( 'echoes the tool call id at the envelope top level', async () => {

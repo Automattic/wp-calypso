@@ -69,11 +69,7 @@ import {
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
 } from './utils/tool-provider';
-import {
-	type BlockTransformationSuggestionType,
-	trackAiEditorialReviewSuggestionRendered,
-	trackBlockTransformationSuggestionRendered,
-} from './utils/tracking';
+import { getResponseRenderedTrackingProperties } from './utils/tracking';
 import type { SuggestionOption } from '@automattic/agenttic-client';
 import type { ComponentType } from 'react';
 
@@ -97,13 +93,6 @@ type BlockEditSnapshot = {
 };
 
 const blockEditSnapshots = new Map< string, BlockEditSnapshot >();
-
-/** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
-let suggestionRenderedFiredOnce = false;
-
-/** Block transformation suggestions whose rendered event has fired this page life. */
-const blockTransformationSuggestionRenderedKeys = new Set< string >();
-
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
@@ -339,14 +328,6 @@ function isProofreadAvailable(
 	);
 }
 
-function trackAiEditorialReviewSuggestionRenderedOnce(): void {
-	if ( suggestionRenderedFiredOnce ) {
-		return;
-	}
-	suggestionRenderedFiredOnce = true;
-	trackAiEditorialReviewSuggestionRendered();
-}
-
 function getAiEditorialReviewSuggestions( currentPostType?: string ) {
 	if ( ! isAiEditorialReviewAvailable( currentPostType ) ) {
 		return [];
@@ -506,6 +487,10 @@ function handleShowComponent( input: any ): any {
 		isCurrent: true,
 		hideZoomAction: true,
 	};
+	const responseTrackingProperties = getResponseRenderedTrackingProperties( type, componentProps );
+	if ( responseTrackingProperties ) {
+		data.responseTrackingProperties = responseTrackingProperties;
+	}
 	if ( type === 'ai-editorial-review' || type === 'post-feedback' || type === 'proofread' ) {
 		const reviewedPostId =
 			normalizeEditorPostId( componentProps.postId ) ?? getCurrentEditorPostId();
@@ -1052,7 +1037,6 @@ type BlockSuggestion = {
 	id: string;
 	label: string;
 	prompt: string;
-	type: BlockTransformationSuggestionType;
 	condition: ( block: any ) => boolean;
 	options?: SuggestionOption[];
 	// Runs on click instead of sending the prompt. AgentUI submits the prompt
@@ -1185,7 +1169,6 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 		label: __( 'Translate content', __i18n_text_domain__ ),
 		// Empty prompt — the picked option's `value` is the full prompt sent.
 		prompt: '',
-		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 		options: TRANSLATE_LANGUAGE_OPTIONS,
 	},
@@ -1193,7 +1176,6 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 		id: 'change-tone',
 		label: __( 'Change tone', __i18n_text_domain__ ),
 		prompt: '',
-		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 		options: CHANGE_TONE_OPTIONS,
 	},
@@ -1201,21 +1183,18 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 		id: 'check-grammar',
 		label: __( 'Check grammar', __i18n_text_domain__ ),
 		prompt: __( 'Check the grammar and spelling of this text', __i18n_text_domain__ ),
-		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'simplify-text',
 		label: __( 'Simplify text', __i18n_text_domain__ ),
 		prompt: __( 'Simplify this text to make it easier to read', __i18n_text_domain__ ),
-		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'generate-alt-text',
 		label: __( 'Generate alt text', __i18n_text_domain__ ),
 		prompt: __( 'Generate descriptive alt text for this image', __i18n_text_domain__ ),
-		type: 'image',
 		condition: ( block: any ) => IMAGE_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
@@ -1223,7 +1202,6 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 		label: __( 'Generate image', __i18n_text_domain__ ),
 		// Empty prompt — opening Image Studio replaces sending anything to the agent.
 		prompt: '',
-		type: 'image',
 		condition: ( block: any ) => block?.name === 'core/image' && isImageStudioAvailable(),
 		action: () => ! openImageStudioForBlock( getSelectedOrRememberedBlock(), 'generate' ),
 	},
@@ -1231,34 +1209,11 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 		id: 'edit-image',
 		label: __( 'Edit image', __i18n_text_domain__ ),
 		prompt: '',
-		type: 'image',
 		condition: ( block: any ) =>
 			block?.name === 'core/image' && !! block?.attributes?.id && isImageStudioAvailable(),
 		action: () => ! openImageStudioForBlock( getSelectedOrRememberedBlock(), 'edit' ),
 	},
 ];
-
-function trackRenderedBlockTransformationSuggestions(
-	suggestions: BlockSuggestion[],
-	block: any
-): void {
-	if ( typeof block?.name !== 'string' ) {
-		return;
-	}
-
-	suggestions.forEach( ( suggestion ) => {
-		const renderedKey = `${ suggestion.id }:${ block.name }`;
-		if ( blockTransformationSuggestionRenderedKeys.has( renderedKey ) ) {
-			return;
-		}
-		blockTransformationSuggestionRenderedKeys.add( renderedKey );
-		trackBlockTransformationSuggestionRendered( {
-			suggestionId: suggestion.id,
-			suggestionType: suggestion.type,
-			blockType: block.name,
-		} );
-	} );
-}
 
 // ---------- capabilities ----------
 
@@ -1285,10 +1240,7 @@ export const capabilities = {
  * while the chat and its input are empty.
  * @returns {Object} Object containing a suggestions array.
  */
-export function useSuggestions(
-	maxSuggestions?: number,
-	{ suggestionsVisible = true }: { suggestionsVisible?: boolean } = {}
-): {
+export function useSuggestions( maxSuggestions?: number ): {
 	suggestions: Array< {
 		id: string;
 		label: string;
@@ -1407,60 +1359,11 @@ export function useSuggestions(
 		}
 		return applySuggestionLimit( blockTransformationSuggestions, maxSuggestions );
 	}, [ blockTransformationSuggestions, hidden, maxSuggestions, selectedBlock ] );
-	const visibleSuggestionIds = useMemo(
-		() => new Set( visibleSuggestions.map( ( suggestion ) => suggestion.id ) ),
-		[ visibleSuggestions ]
-	);
-	const visibleBlockTransformationSuggestions = useMemo(
-		() => applicable.filter( ( suggestion ) => visibleSuggestionIds.has( suggestion.id ) ),
-		[ applicable, visibleSuggestionIds ]
-	);
-	const visibleBlockTransformationSuggestionsKey = visibleBlockTransformationSuggestions
-		.map( ( suggestion ) => suggestion.id )
-		.join( '|' );
-	// The AI Editorial Review chip renders through the empty view, which is a
-	// plain function with no render signal, so the availability that puts the
-	// chip there is tracked from this hook instead.
-	const isAiEditorialReviewSuggestionAvailable =
-		! selectedBlock && isAiEditorialReviewAvailable( editorContext.postType );
-
 	useEffect( () => {
 		if ( editorContext.selectedBlock ) {
 			rememberSelectedBlock( editorContext.selectedBlock );
 		}
 	}, [ editorContext.selectedBlock?.clientId, editorContext.selectedBlock ] );
-
-	useEffect( () => {
-		if ( ! suggestionsVisible || hidden || ! isAiEditorialReviewSuggestionAvailable ) {
-			return;
-		}
-		trackAiEditorialReviewSuggestionRenderedOnce();
-	}, [ hidden, isAiEditorialReviewSuggestionAvailable, suggestionsVisible ] );
-
-	useEffect( () => {
-		if (
-			! suggestionsVisible ||
-			hidden ||
-			! selectedBlock ||
-			! blockTransformationsEnabled ||
-			visibleBlockTransformationSuggestions.length === 0
-		) {
-			return;
-		}
-		trackRenderedBlockTransformationSuggestions(
-			visibleBlockTransformationSuggestions,
-			selectedBlock
-		);
-	}, [
-		blockTransformationsEnabled,
-		hidden,
-		selectedBlock,
-		selectedBlock?.name,
-		suggestionsVisible,
-		visibleBlockTransformationSuggestions,
-		visibleBlockTransformationSuggestions.length,
-		visibleBlockTransformationSuggestionsKey,
-	] );
 
 	return {
 		suggestions: visibleSuggestions,

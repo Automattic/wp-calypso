@@ -19,6 +19,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import BaseSuggestionPicker from './base-suggestion-picker';
+import type { OnResponseAction } from '../utils/response-action';
 
 /**
  * Jetpack SEO post meta key for the custom HTML <title> override.
@@ -37,14 +38,15 @@ interface SeoTitleOption {
 interface SeoTitlePickerProps {
 	titles: SeoTitleOption[];
 	onComplete?: () => void;
+	onResponseAction?: OnResponseAction;
 }
 
-/**
- * SeoTitlePicker component for the chat sidebar.
- * @param {SeoTitlePickerProps} props - Component props.
- * @returns {import('react').ReactElement} The rendered component.
- */
-export default function SeoTitlePicker( { titles, onComplete }: SeoTitlePickerProps ) {
+/** Renders SEO title suggestions and applies the selected title to post meta. */
+export default function SeoTitlePicker( {
+	titles,
+	onComplete,
+	onResponseAction,
+}: SeoTitlePickerProps ) {
 	const { editPost } = useDispatch( 'core/editor' );
 	const currentSeoTitle = useSelect( ( select ) => {
 		const meta = (
@@ -58,9 +60,8 @@ export default function SeoTitlePicker( { titles, onComplete }: SeoTitlePickerPr
 	const handleApply = useCallback(
 		( title: string ) => {
 			editPost( { meta: { [ SEO_TITLE_META_KEY ]: title } } );
-			onComplete?.();
 		},
-		[ editPost, onComplete ]
+		[ editPost ]
 	);
 
 	return (
@@ -68,8 +69,10 @@ export default function SeoTitlePicker( { titles, onComplete }: SeoTitlePickerPr
 			intro={ __( 'Choose an SEO title for your post:', 'jetpack' ) }
 			options={ titles.map( ( option ) => option.title ) }
 			onApply={ handleApply }
+			onComplete={ onComplete }
 			appliedMessage={ __( 'SEO title updated.', 'jetpack' ) }
 			currentValue={ typeof currentSeoTitle === 'string' ? currentSeoTitle : undefined }
+			onResponseAction={ onResponseAction }
 		/>
 	);
 }

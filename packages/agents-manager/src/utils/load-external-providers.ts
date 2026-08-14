@@ -72,10 +72,7 @@ export type AbilitiesSetupHook = ( actions: {
  * Suggestions hook type - for providing dynamic suggestions based on context
  * (e.g., selected block in editor). Returns an array of suggestions.
  */
-export type UseSuggestionsHook = (
-	maxSuggestions?: number,
-	options?: { suggestionsVisible?: boolean }
-) => {
+export type UseSuggestionsHook = ( maxSuggestions?: number ) => {
 	suggestions: Suggestion[];
 	/** Whether contextual suggestions replace, rather than extend, the empty-view suggestions. */
 	replaceEmptyViewSuggestions?: boolean;
@@ -227,10 +224,10 @@ export function mergeUseSuggestionsHooks(
 		return hooks[ 0 ];
 	}
 
-	return ( maxSuggestions?: number, options?: { suggestionsVisible?: boolean } ) => {
+	return ( maxSuggestions?: number ) => {
 		const combined: Suggestion[] = [];
 		const seenIds = new Set< string >();
-		const results = hooks.map( ( hook ) => hook( maxSuggestions, options ) );
+		const results = hooks.map( ( hook ) => hook( maxSuggestions ) );
 		const replaceEmptyViewSuggestions = results.some(
 			( result ) => result?.replaceEmptyViewSuggestions === true
 		);

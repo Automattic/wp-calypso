@@ -319,60 +319,6 @@ describe( 'AiEditorialReview — smoke render', () => {
 		).toBeInTheDocument();
 	} );
 
-	it( 'tracks the rendered result with aggregate counts', async () => {
-		render(
-			<AiEditorialReview
-				{ ...basePayload( {
-					review_context: 'notes_and_guidelines',
-					conflicts: [
-						{
-							subject: 'Procedural framing',
-							positions: [],
-							guideline_anchor: null,
-							recommended_resolution: '',
-						},
-					],
-					implications: [
-						{ change: 'Tone shift', implies: 'Update related FAQ.', affected_blocks: [ 1 ] },
-					],
-					suggested_edits: [
-						{
-							block_index: 1,
-							current_text: 'voted last Tuesday',
-							suggested_text: 'voted on Tuesday',
-							rationale: 'Concise.',
-							supported_by_reviewers: [],
-						},
-					],
-					guideline_violations: [
-						{
-							category: 'copy',
-							block_name: null,
-							guideline_quote: 'Avoid passive voice.',
-							block_index: 1,
-							violating_text: 'was voted upon',
-							issue: 'Passive voice detected.',
-						},
-					],
-				} ) }
-			/>
-		);
-
-		await waitFor( () => {
-			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-				'jetpack_ai_editorial_review_result_rendered',
-				{
-					outcome: 'success',
-					conflict_count: 1,
-					implication_count: 1,
-					suggested_edit_count: 1,
-					guideline_violation_count: 1,
-					review_context: 'notes_and_guidelines',
-				}
-			);
-		} );
-	} );
-
 	it( 'marks a review for another post as stale and non-actionable', () => {
 		// Review was generated for post 2 (postId prop); editor is currently on post 1 (mockCurrentPostId).
 		render(
@@ -791,8 +737,9 @@ describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 
 	it( 'applies the edit and collapses the card on Accept', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
+		const onResponseAction = jest.fn();
 
-		render( <AiEditorialReview { ...editsPayload } /> );
+		render( <AiEditorialReview { ...editsPayload } onResponseAction={ onResponseAction } /> );
 
 		// Pre-accept: full card visible with rationale.
 		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
@@ -813,18 +760,14 @@ describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 		await waitFor( () => {
 			expect( screen.getByText( 'Applied' ) ).toBeInTheDocument();
 		} );
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_item_action',
-			{
-				action: 'accept',
-				target: 'edit',
-				outcome: 'success',
-			}
-		);
-
 		// Collapsed: rationale gone, Undo present.
 		expect( screen.queryByText( 'Concise.' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Undo' ) ).toBeInTheDocument();
+		expect( onResponseAction ).toHaveBeenCalledWith( {
+			action: 'accept',
+			target: 'edit',
+			outcome: 'success',
+		} );
 	} );
 
 	it( 'falls to Go to section, not a stuck Applying, if the review goes stale mid-apply', async () => {
@@ -892,7 +835,11 @@ describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 	} );
 
 	it( 'restores the full card from the collapsed row on Undo', async () => {
-		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
+		mockApplyReviewEdit.mockResolvedValueOnce( {
+			success: true,
+			contentBefore: 'The council voted last Tuesday on the procedural matter.',
+			contentAfter: 'The council voted on Tuesday on the procedural matter.',
+		} );
 
 		render( <AiEditorialReview { ...editsPayload } /> );
 
@@ -945,8 +892,9 @@ describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 			contentAfter: 'The council voted on Tuesday on the procedural matter.',
 		} );
 		mockUndoBlockEdit.mockReturnValueOnce( false ).mockReturnValueOnce( true );
+		const onResponseAction = jest.fn();
 
-		render( <AiEditorialReview { ...editsPayload } /> );
+		render( <AiEditorialReview { ...editsPayload } onResponseAction={ onResponseAction } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
@@ -962,18 +910,29 @@ describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 		expect( screen.getByText( 'Applied' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Concise.' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Undo' ) ).toBeInTheDocument();
+		expect( onResponseAction ).toHaveBeenLastCalledWith( {
+			action: 'undo',
+			target: 'edit',
+			outcome: 'failed',
+		} );
 
 		fireEvent.click( screen.getByText( 'Undo' ) );
 
 		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 2 );
 		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Apply change' } ) ).toBeInTheDocument();
+		expect( onResponseAction ).toHaveBeenLastCalledWith( {
+			action: 'undo',
+			target: 'edit',
+			outcome: 'success',
+		} );
 	} );
 
 	it( 'marks the row failed (and not collapsed) when applyReviewEdit rejects', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: false } );
+		const onResponseAction = jest.fn();
 
-		render( <AiEditorialReview { ...editsPayload } /> );
+		render( <AiEditorialReview { ...editsPayload } onResponseAction={ onResponseAction } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
@@ -988,6 +947,11 @@ describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 			screen.getByText( 'Could not apply automatically. The original text may have changed.' )
 		).toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
+		expect( onResponseAction ).toHaveBeenCalledWith( {
+			action: 'accept',
+			target: 'edit',
+			outcome: 'failed',
+		} );
 	} );
 
 	it( 'offers Go to section instead of Apply when the block has no editable text target', () => {
@@ -1246,7 +1210,8 @@ describe( 'AiEditorialReview — guideline violations', () => {
 	} );
 
 	it( 'collapses to a Dismissed row on Dismiss and restores the card on Undo', () => {
-		render( <AiEditorialReview { ...violationsPayload } /> );
+		const onResponseAction = jest.fn();
+		render( <AiEditorialReview { ...violationsPayload } onResponseAction={ onResponseAction } /> );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
 
@@ -1255,12 +1220,22 @@ describe( 'AiEditorialReview — guideline violations', () => {
 		expect( screen.getByText( 'Dismissed' ) ).toBeInTheDocument();
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
 		expect( mockUndoBlockEdit ).not.toHaveBeenCalled();
+		expect( onResponseAction ).toHaveBeenLastCalledWith( {
+			action: 'dismiss',
+			target: 'guideline_violation',
+			outcome: 'success',
+		} );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Undo' } ) );
 
 		// Back to the active advisory card.
 		expect( screen.getByText( 'Passive voice detected.' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).toBeInTheDocument();
+		expect( onResponseAction ).toHaveBeenLastCalledWith( {
+			action: 'undo',
+			target: 'guideline_violation',
+			outcome: 'success',
+		} );
 	} );
 
 	it( 'disables Go to section when the referenced block is gone and omits the excerpt row', () => {
@@ -1448,7 +1423,11 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 	} );
 
 	it( 'resolves in place on apply — keeps the header, shows Applied + Undo, and Undo restores the options', async () => {
-		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
+		mockApplyReviewEdit.mockResolvedValueOnce( {
+			success: true,
+			contentBefore: 'The council voted last Tuesday on the procedural matter.',
+			contentAfter: 'The council voted on Tuesday on the procedural matter.',
+		} );
 
 		render( <AiEditorialReview { ...conflictPayload } /> );
 
@@ -1675,6 +1654,7 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 describe( 'AiEditorialReview — bulk Apply all', () => {
 	it( 'applies only supported pending edits sequentially', async () => {
 		mockApplyReviewEdit.mockResolvedValue( { success: true } );
+		const onResponseAction = jest.fn();
 		mockBlocks = [
 			...blocks,
 			{ clientId: 'b3', name: 'core/list', attributes: { content: 'List content' } },
@@ -1736,6 +1716,7 @@ describe( 'AiEditorialReview — bulk Apply all', () => {
 						},
 					],
 				} ) }
+				onResponseAction={ onResponseAction }
 			/>
 		);
 
@@ -1770,6 +1751,13 @@ describe( 'AiEditorialReview — bulk Apply all', () => {
 		// Footer disappears once everything is accepted (totalPendingCount === 0).
 		await waitFor( () => {
 			expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
+		} );
+		expect( onResponseAction ).toHaveBeenCalledTimes( 1 );
+		expect( onResponseAction ).toHaveBeenCalledWith( {
+			action: 'bulk_accept',
+			target: 'mixed',
+			outcome: 'success',
+			itemCount: 2,
 		} );
 	} );
 
