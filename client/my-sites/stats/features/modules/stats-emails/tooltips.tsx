@@ -48,6 +48,28 @@ export const hasUniqueMetrics = ( uniqueValue: number, totalValue: number ) => {
 	return uniqueValue > 0 && totalValue > 0;
 };
 
+export const getOpensDisplayValue = (
+	item: Pick< EmailStatsItem, 'unique_opens' | 'opens' | 'opens_rate' >
+) => {
+	const opensUnique = parseInt( String( item.unique_opens ), 10 );
+	const opens = parseInt( String( item.opens ), 10 );
+	const hasUniques = hasUniqueMetrics( opensUnique, opens );
+
+	if ( hasUniques ) {
+		return `${ formatNumber( item.opens_rate, {
+			numberFormatOptions: {
+				maximumFractionDigits: 2,
+			},
+		} ) }%`;
+	}
+
+	if ( opens > 0 ) {
+		return formatNumber( item.opens );
+	}
+
+	return '—';
+};
+
 export const getClicksDisplayValue = (
 	item: Pick< EmailStatsItem, 'unique_clicks' | 'clicks' | 'clicks_rate' >
 ) => {

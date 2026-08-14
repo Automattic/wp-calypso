@@ -1,6 +1,5 @@
 import { StatsCard } from '@automattic/components';
 import { mail } from '@automattic/components/src/icons';
-import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -22,8 +21,8 @@ import {
 	TooltipWrapper,
 	OpensTooltipContent,
 	ClicksTooltipContent,
-	hasUniqueMetrics,
 	getClicksDisplayValue,
+	getOpensDisplayValue,
 	EmailStatsItem,
 } from './tooltips';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
@@ -88,26 +87,13 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					}
 					additionalColumns={ {
 						header: <span>{ translate( 'Opens' ) }</span>,
-						body: ( item: EmailStatsItem ) => {
-							const opensUnique = parseInt( String( item.unique_opens ), 10 );
-							const opens = parseInt( String( item.opens ), 10 );
-							const hasUniques = hasUniqueMetrics( opensUnique, opens );
-							return (
-								<TooltipWrapper
-									value={
-										hasUniques
-											? `${ formatNumber( item.opens_rate, {
-													numberFormatOptions: {
-														maximumFractionDigits: 2,
-													},
-											  } ) }%`
-											: '—'
-									}
-									item={ item }
-									TooltipContent={ OpensTooltipContent }
-								/>
-							);
-						},
+						body: ( item: EmailStatsItem ) => (
+							<TooltipWrapper
+								value={ getOpensDisplayValue( item ) }
+								item={ item }
+								TooltipContent={ OpensTooltipContent }
+							/>
+						),
 					} }
 					moduleStrings={ moduleStrings }
 					period={ forcedDailyPeriodForStatsModule }
