@@ -10,7 +10,7 @@ import React from 'react';
 import SeoTitlePicker from './seo-title-picker';
 
 const mockEditPost = jest.fn();
-const mockRevealSidebarField = jest.fn();
+const mockRevealSidebarField = jest.fn().mockResolvedValue( true );
 let mockCurrentMeta: Record< string, string > | undefined;
 
 jest.mock( '../utils/reveal-sidebar-field', () => ( {

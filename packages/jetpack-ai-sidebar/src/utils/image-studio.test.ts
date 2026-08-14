@@ -17,7 +17,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 } ) );
 
 jest.mock( './reveal-sidebar-field', () => ( {
-	revealSidebarField: jest.fn(),
+	revealSidebarField: jest.fn().mockResolvedValue( true ),
 } ) );
 
 const mockDispatch = dispatch as unknown as jest.Mock;
@@ -180,21 +180,13 @@ describe( 'openImageStudioForFeaturedImage', () => {
 		expect( editPost ).not.toHaveBeenCalled();
 	} );
 
-	it( 'sets the featured image on close', () => {
+	it( 'sets the featured image on close and reveals where it landed', () => {
 		openImageStudioForFeaturedImage();
 		const onClose = openImageStudio.mock.calls[ 0 ][ 1 ];
 
 		onClose( { id: 99, url: 'https://example.com/new.jpg', alt: 'A cat' } );
 
 		expect( editPost ).toHaveBeenCalledWith( { featured_media: 99 } );
-	} );
-
-	it( 'reveals the featured image so the user can see where it landed', () => {
-		openImageStudioForFeaturedImage();
-		const onClose = openImageStudio.mock.calls[ 0 ][ 1 ];
-
-		onClose( { id: 99, url: 'https://example.com/new.jpg', alt: 'A cat' } );
-
 		expect( revealSidebarField ).toHaveBeenCalledWith( 'featuredImage' );
 	} );
 

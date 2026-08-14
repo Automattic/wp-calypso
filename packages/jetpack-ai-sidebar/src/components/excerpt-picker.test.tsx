@@ -11,7 +11,7 @@ import { SUGGESTION_ACTION_COMPLETE_EVENT } from '../utils/suggestion-events';
 import ExcerptPicker from './excerpt-picker';
 
 const mockEditPost = jest.fn();
-const mockRevealSidebarField = jest.fn();
+const mockRevealSidebarField = jest.fn().mockResolvedValue( true );
 let mockCurrentExcerpt: string | undefined;
 
 jest.mock( '../utils/reveal-sidebar-field', () => ( {

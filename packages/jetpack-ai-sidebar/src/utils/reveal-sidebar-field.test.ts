@@ -56,17 +56,16 @@ function renderSidebar( innerHTML: string ) {
 
 /**
  * Renders the excerpt field inside the document sidebar, mirroring the editor's
- * layout of excerpt text beside the edit button. jsdom implements neither
- * scrollIntoView nor focus tracking, so both are stubbed to make the calls
- * observable.
+ * layout of excerpt text beside the edit button. The field is focusable so a
+ * stray focus call would move `document.activeElement`; jsdom does not
+ * implement scrollIntoView, so that one is stubbed to make the call observable.
  */
 function renderField() {
 	const sidebar = renderSidebar(
-		'<div class="excerpt-row"><p>New excerpt</p><div class="editor-post-excerpt__dropdown"></div></div>'
+		'<div class="excerpt-row"><p>New excerpt</p><div class="editor-post-excerpt__dropdown" tabindex="-1"></div></div>'
 	);
 	const field = sidebar.querySelector< HTMLElement >( '.editor-post-excerpt__dropdown' )!;
 	field.scrollIntoView = jest.fn();
-	field.focus = jest.fn();
 	return field;
 }
 
@@ -97,43 +96,62 @@ describe( 'revealSidebarField', () => {
 		expect( mockClearSelectedBlock ).not.toHaveBeenCalled();
 	} );
 
-	it( "reveals Jetpack's AI excerpt panel, which replaces the core excerpt", async () => {
-		const sidebar = renderSidebar( '<div class="jetpack-ai-post-excerpt"></div>' );
-		const field = sidebar.querySelector< HTMLElement >( '.jetpack-ai-post-excerpt' )!;
-		field.scrollIntoView = jest.fn();
+	it( "prefers Jetpack's excerpt panel over the core excerpt dropdown", async () => {
+		// Core's dropdown comes first in the DOM, so a pass here proves the
+		// variant order decided it rather than document order.
+		const sidebar = renderSidebar(
+			'<div class="editor-post-excerpt__dropdown"></div><div class="jetpack-ai-post-excerpt"></div>'
+		);
+		const core = sidebar.querySelector< HTMLElement >( '.editor-post-excerpt__dropdown' )!;
+		const jetpack = sidebar.querySelector< HTMLElement >( '.jetpack-ai-post-excerpt' )!;
+		core.scrollIntoView = jest.fn();
+		jetpack.scrollIntoView = jest.fn();
 
-		const revealed = await revealSidebarField( 'excerpt' );
+		await revealSidebarField( 'excerpt' );
 
-		expect( revealed ).toBe( true );
-		expect( field.scrollIntoView ).toHaveBeenCalled();
+		expect( jetpack.scrollIntoView ).toHaveBeenCalled();
+		expect( core.scrollIntoView ).not.toHaveBeenCalled();
+		// The matched variant's panel stays open; `post-excerpt` was opened only
+		// to look inside it, so it closes again.
+		expect( mockOpenPanels ).toEqual( [ 'jetpack-ai-content-lens/ai-content-lens-plugin' ] );
 	} );
 
-	it( 'restores the panel preference when the field never appears', async () => {
+	it( 'stops polling at the timeout and puts panel preferences back', async () => {
 		mockOpenPanels = [ 'post-status' ];
 		renderSidebar( '' );
 
-		const revealed = await revealSidebarField( 'seo', { timeout: 0 } );
-
-		expect( revealed ).toBe( false );
+		await expect( revealSidebarField( 'excerpt', { timeout: 50 } ) ).resolves.toBe( false );
 		expect( mockOpenPanels ).toEqual( [ 'post-status' ] );
 	} );
 
-	it( 'clears the block selection and opens the document sidebar', async () => {
-		renderSidebar( '<div class="editor-post-excerpt__dropdown"></div>' );
+	it( 'clears the block selection so the document settings own the sidebar slot', async () => {
+		renderField();
 
-		const revealed = await revealSidebarField( 'excerpt' );
+		await revealSidebarField( 'excerpt' );
 
-		expect( revealed ).toBe( true );
 		expect( mockClearSelectedBlock ).toHaveBeenCalled();
+	} );
+
+	// Contract with @wordpress/interface. No test can catch Gutenberg renaming these.
+	it( 'opens the document sidebar in the core scope', async () => {
+		renderField();
+
+		await revealSidebarField( 'excerpt' );
+
 		expect( mockEnableComplementaryArea ).toHaveBeenCalledWith( 'core', 'edit-post/document' );
 	} );
 
-	it( 'returns false when the field never renders', async () => {
-		renderSidebar( '' );
+	it( 'finds a field the editor renders a frame or two late', async () => {
+		const sidebar = renderSidebar( '' );
+		const field = document.createElement( 'div' );
+		field.className = 'editor-post-excerpt__dropdown';
+		field.scrollIntoView = jest.fn();
 
-		const revealed = await revealSidebarField( 'excerpt', { timeout: 0 } );
+		const revealing = revealSidebarField( 'excerpt', { timeout: 500 } );
+		requestAnimationFrame( () => requestAnimationFrame( () => sidebar.appendChild( field ) ) );
 
-		expect( revealed ).toBe( false );
+		await expect( revealing ).resolves.toBe( true );
+		expect( field.scrollIntoView ).toHaveBeenCalled();
 	} );
 
 	it( 'ignores a matching element outside the document sidebar', async () => {
@@ -142,14 +160,6 @@ describe( 'revealSidebarField', () => {
 		const revealed = await revealSidebarField( 'excerpt', { timeout: 0 } );
 
 		expect( revealed ).toBe( false );
-	} );
-
-	it( 'opens a collapsed panel for fields that declare one', async () => {
-		renderSidebar( '<div class="jetpack-seo-panel"></div>' );
-
-		await revealSidebarField( 'seo' );
-
-		expect( mockToggleEditorPanelOpened ).toHaveBeenCalledWith( 'jetpack-seo/jetpack-seo' );
 	} );
 
 	it( 'leaves an already open panel alone', async () => {
@@ -161,36 +171,39 @@ describe( 'revealSidebarField', () => {
 		expect( mockToggleEditorPanelOpened ).not.toHaveBeenCalled();
 	} );
 
-	it( 'leaves panel preferences untouched when the matched variant needs no panel', async () => {
-		mockOpenPanels = [ 'post-status' ];
-		renderField();
-
-		await revealSidebarField( 'excerpt' );
-
-		expect( mockOpenPanels ).toEqual( [ 'post-status' ] );
-	} );
-
 	it( 'scrolls the field into view', async () => {
 		const field = renderField();
 
 		await revealSidebarField( 'excerpt' );
 
-		expect( field.scrollIntoView ).toHaveBeenCalledWith(
-			expect.objectContaining( { block: 'center' } )
-		);
+		expect( field.scrollIntoView ).toHaveBeenCalledWith( { behavior: 'smooth', block: 'center' } );
 	} );
 
-	it( 'resolves false rather than rejecting when the editor stores are missing', async () => {
+	it( 'skips the smooth scroll when the user prefers reduced motion', async () => {
+		// The shared jest setup stubs matchMedia as always-false; override one call.
+		( window.matchMedia as jest.Mock ).mockReturnValueOnce( { matches: true } );
+		const field = renderField();
+
+		await revealSidebarField( 'excerpt' );
+
+		expect( field.scrollIntoView ).toHaveBeenCalledWith( { behavior: 'auto', block: 'center' } );
+	} );
+
+	it( 'returns false without touching the editor when the interface store is unavailable', async () => {
 		mockStoresRegistered = false;
 		renderField();
 
 		await expect( revealSidebarField( 'excerpt' ) ).resolves.toBe( false );
+		expect( mockClearSelectedBlock ).not.toHaveBeenCalled();
 	} );
 
-	it( 'reveals the featured image where the summary renders it as a row', async () => {
+	it.each( [
+		'fields-controls__featured-image-image',
+		'fields-controls__featured-image-placeholder',
+	] )( 'reveals the featured image summary row rendered as .%s', async ( className ) => {
 		mockOpenPanels = [ 'post-status' ];
-		const sidebar = renderSidebar( '<span class="fields-controls__featured-image-image"></span>' );
-		const field = sidebar.querySelector< HTMLElement >( '.fields-controls__featured-image-image' )!;
+		const sidebar = renderSidebar( `<span class="${ className }"></span>` );
+		const field = sidebar.querySelector< HTMLElement >( `.${ className }` )!;
 		field.scrollIntoView = jest.fn();
 
 		const revealed = await revealSidebarField( 'featuredImage' );
@@ -199,21 +212,6 @@ describe( 'revealSidebarField', () => {
 		expect( field.scrollIntoView ).toHaveBeenCalled();
 		// A row is not a panel, so the classic panel opened to look inside it closes again.
 		expect( mockOpenPanels ).toEqual( [ 'post-status' ] );
-	} );
-
-	it( 'reveals the summary row while the post still has no featured image', async () => {
-		const sidebar = renderSidebar(
-			'<span class="fields-controls__featured-image-placeholder"></span>'
-		);
-		const field = sidebar.querySelector< HTMLElement >(
-			'.fields-controls__featured-image-placeholder'
-		)!;
-		field.scrollIntoView = jest.fn();
-
-		const revealed = await revealSidebarField( 'featuredImage' );
-
-		expect( revealed ).toBe( true );
-		expect( field.scrollIntoView ).toHaveBeenCalled();
 	} );
 
 	it( 'opens the classic featured image panel and leaves it open', async () => {
@@ -233,7 +231,7 @@ describe( 'revealSidebarField', () => {
 	} );
 
 	it( 'leaves focus where the user put it', async () => {
-		const field = renderField();
+		renderField();
 		const chatInput = document.createElement( 'textarea' );
 		document.body.appendChild( chatInput );
 		chatInput.focus();
@@ -241,6 +239,5 @@ describe( 'revealSidebarField', () => {
 		await revealSidebarField( 'excerpt' );
 
 		expect( document.activeElement ).toBe( chatInput );
-		expect( field.focus ).not.toHaveBeenCalled();
 	} );
 } );
