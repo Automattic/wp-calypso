@@ -61,4 +61,17 @@ describe( 'checkout routes', () => {
 		expect( genericIndex ).toBeGreaterThanOrEqual( 0 );
 		expect( wpcomIndex ).toBeLessThan( genericIndex );
 	} );
+
+	// Single-segment, so it competes with /checkout/:domainOrProduct rather than the two-segment
+	// route above.
+	it( 'registers the Studio return route ahead of the generic product route', () => {
+		registerCheckoutRoutes();
+
+		const studioReturnIndex = registrationIndexOf( '/checkout/studio-return' );
+		const genericIndex = registrationIndexOf( '/checkout/:domainOrProduct' );
+
+		expect( studioReturnIndex ).toBeGreaterThanOrEqual( 0 );
+		expect( genericIndex ).toBeGreaterThanOrEqual( 0 );
+		expect( studioReturnIndex ).toBeLessThan( genericIndex );
+	} );
 } );
