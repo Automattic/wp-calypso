@@ -77,6 +77,13 @@ describe( 'getSignupUrl', () => {
 		);
 	} );
 
+	test( 'should ignore invalid ref values', () => {
+		expect( getSignupUrl( { ref: { source: 'product' } }, '/log-in', null, 'en', '' ) ).toEqual(
+			'/start'
+		);
+		expect( getSignupUrl( { ref: '  ' }, '/log-in', null, 'en', '' ) ).toEqual( '/start' );
+	} );
+
 	test( 'should work for VaultPress route', () => {
 		const currentQuery = {
 			client_id: '930',

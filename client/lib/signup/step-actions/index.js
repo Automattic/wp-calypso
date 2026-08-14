@@ -828,6 +828,7 @@ export function createAccount(
 	const SIGNUP_TYPE_DEFAULT = 'default';
 
 	const params = new URLSearchParams( window.location.search );
+	const ref = typeof queryArgs.ref === 'string' ? queryArgs.ref.trim() : '';
 	const flowNameTracking =
 		null === params.get( 'variationName' )
 			? flowName
@@ -930,7 +931,7 @@ export function createAccount(
 				...userData,
 				tos: getToSAcceptancePayload(),
 				anon_id: getTracksAnonymousUserId(),
-				...( queryArgs.ref && { ref: queryArgs.ref } ),
+				...( ref && { ref } ),
 			},
 			responseHandler( SIGNUP_TYPE_SOCIAL )
 		);
@@ -950,7 +951,7 @@ export function createAccount(
 					client_secret: config( 'wpcom_signup_key' ),
 					tos: getToSAcceptancePayload(),
 					anon_id: getTracksAnonymousUserId(),
-					...( queryArgs.ref && { ref: queryArgs.ref } ),
+					...( ref && { ref } ),
 				},
 				oauth2Signup
 					? {
