@@ -10,7 +10,12 @@ import React from 'react';
 import SeoTitlePicker from './seo-title-picker';
 
 const mockEditPost = jest.fn();
+const mockRevealSidebarField = jest.fn();
 let mockCurrentMeta: Record< string, string > | undefined;
+
+jest.mock( '../utils/reveal-sidebar-field', () => ( {
+	revealSidebarField: ( ...args: unknown[] ) => mockRevealSidebarField( ...args ),
+} ) );
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: ( store: string ) => {
@@ -34,6 +39,7 @@ jest.mock( '@wordpress/data', () => ( {
 describe( 'SeoTitlePicker', () => {
 	beforeEach( () => {
 		mockEditPost.mockClear();
+		mockRevealSidebarField.mockClear();
 		mockCurrentMeta = undefined;
 	} );
 
@@ -41,6 +47,14 @@ describe( 'SeoTitlePicker', () => {
 		{ title: 'Best Vegetable Garden Guide for Beginners', explanation: 'a' },
 		{ title: 'Start a Vegetable Garden: Easy Beginner Steps', explanation: 'b' },
 	];
+
+	it( 'reveals the SEO panel once a title is applied', () => {
+		render( <SeoTitlePicker titles={ titles } /> );
+
+		fireEvent.click( screen.getByText( titles[ 0 ].title ) );
+
+		expect( mockRevealSidebarField ).toHaveBeenCalledWith( 'seo' );
+	} );
 
 	it( 'renders every suggested SEO title', () => {
 		render( <SeoTitlePicker titles={ titles } /> );

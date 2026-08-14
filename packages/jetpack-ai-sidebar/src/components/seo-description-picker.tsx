@@ -17,6 +17,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import { revealSidebarField } from '../utils/reveal-sidebar-field';
 import BaseSuggestionPicker from './base-suggestion-picker';
 import type { OnResponseAction } from '../utils/response-action';
 
@@ -59,6 +60,7 @@ export default function SeoDescriptionPicker( {
 	const handleApply = useCallback(
 		( description: string ) => {
 			editPost( { meta: { [ SEO_DESCRIPTION_META_KEY ]: description } } );
+			revealSidebarField( 'seo' );
 		},
 		[ editPost ]
 	);
