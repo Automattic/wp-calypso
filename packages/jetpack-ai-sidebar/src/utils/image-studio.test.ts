@@ -6,6 +6,7 @@ import {
 	openImageStudioForBlock,
 	openImageStudioForFeaturedImage,
 } from './image-studio';
+import { revealSidebarField } from './reveal-sidebar-field';
 
 jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn(),
@@ -13,6 +14,10 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
+} ) );
+
+jest.mock( './reveal-sidebar-field', () => ( {
+	revealSidebarField: jest.fn(),
 } ) );
 
 const mockDispatch = dispatch as unknown as jest.Mock;
@@ -184,6 +189,15 @@ describe( 'openImageStudioForFeaturedImage', () => {
 		expect( editPost ).toHaveBeenCalledWith( { featured_media: 99 } );
 	} );
 
+	it( 'reveals the featured image so the user can see where it landed', () => {
+		openImageStudioForFeaturedImage();
+		const onClose = openImageStudio.mock.calls[ 0 ][ 1 ];
+
+		onClose( { id: 99, url: 'https://example.com/new.jpg', alt: 'A cat' } );
+
+		expect( revealSidebarField ).toHaveBeenCalledWith( 'featuredImage' );
+	} );
+
 	it( 'clears the featured image when closed with a removed image', () => {
 		openImageStudioForFeaturedImage();
 		const onClose = openImageStudio.mock.calls[ 0 ][ 1 ];
@@ -191,6 +205,7 @@ describe( 'openImageStudioForFeaturedImage', () => {
 		onClose( null );
 
 		expect( editPost ).toHaveBeenCalledWith( { featured_media: 0 } );
+		expect( revealSidebarField ).not.toHaveBeenCalled();
 	} );
 
 	it( 'leaves the featured image untouched when closed without an image', () => {
@@ -200,5 +215,6 @@ describe( 'openImageStudioForFeaturedImage', () => {
 		onClose( undefined );
 
 		expect( editPost ).not.toHaveBeenCalled();
+		expect( revealSidebarField ).not.toHaveBeenCalled();
 	} );
 } );

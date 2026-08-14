@@ -187,6 +187,51 @@ describe( 'revealSidebarField', () => {
 		await expect( revealSidebarField( 'excerpt' ) ).resolves.toBe( false );
 	} );
 
+	it( 'reveals the featured image where the summary renders it as a row', async () => {
+		mockOpenPanels = [ 'post-status' ];
+		const sidebar = renderSidebar( '<span class="fields-controls__featured-image-image"></span>' );
+		const field = sidebar.querySelector< HTMLElement >( '.fields-controls__featured-image-image' )!;
+		field.scrollIntoView = jest.fn();
+
+		const revealed = await revealSidebarField( 'featuredImage' );
+
+		expect( revealed ).toBe( true );
+		expect( field.scrollIntoView ).toHaveBeenCalled();
+		// A row is not a panel, so the classic panel opened to look inside it closes again.
+		expect( mockOpenPanels ).toEqual( [ 'post-status' ] );
+	} );
+
+	it( 'reveals the summary row while the post still has no featured image', async () => {
+		const sidebar = renderSidebar(
+			'<span class="fields-controls__featured-image-placeholder"></span>'
+		);
+		const field = sidebar.querySelector< HTMLElement >(
+			'.fields-controls__featured-image-placeholder'
+		)!;
+		field.scrollIntoView = jest.fn();
+
+		const revealed = await revealSidebarField( 'featuredImage' );
+
+		expect( revealed ).toBe( true );
+		expect( field.scrollIntoView ).toHaveBeenCalled();
+	} );
+
+	it( 'opens the classic featured image panel and leaves it open', async () => {
+		renderSidebar( '<div class="editor-post-featured-image"></div>' );
+
+		const revealed = await revealSidebarField( 'featuredImage' );
+
+		expect( revealed ).toBe( true );
+		expect( mockOpenPanels ).toEqual( [ 'featured-image' ] );
+	} );
+
+	it( 'resolves false when opening the sidebar rejects', async () => {
+		mockEnableComplementaryArea.mockRejectedValueOnce( new Error( 'no such area' ) );
+		renderField();
+
+		await expect( revealSidebarField( 'excerpt' ) ).resolves.toBe( false );
+	} );
+
 	it( 'leaves focus where the user put it', async () => {
 		const field = renderField();
 		const chatInput = document.createElement( 'textarea' );

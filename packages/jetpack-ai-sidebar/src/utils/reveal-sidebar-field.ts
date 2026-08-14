@@ -28,6 +28,15 @@ export const SIDEBAR_TARGETS: Record< string, SidebarTarget[] > = {
 		{ panelName: 'post-excerpt', selector: '.editor-post-excerpt' },
 	],
 	seo: [ { panelName: 'jetpack-seo/jetpack-seo', selector: '.jetpack-seo-panel' } ],
+	featuredImage: [
+		// The Summary row is a thumbnail once an image is set and a placeholder
+		// until then, and the editor may still be on either as the reveal runs.
+		{
+			selector:
+				'.fields-controls__featured-image-image, .fields-controls__featured-image-placeholder',
+		},
+		{ panelName: 'featured-image', selector: '.editor-post-featured-image' },
+	],
 };
 
 const DOCUMENT_SIDEBAR = 'edit-post/document';
@@ -152,7 +161,11 @@ export async function revealSidebarField(
 		dispatch( 'core/block-editor' ) as unknown as { clearSelectedBlock?: () => void }
 	 )?.clearSelectedBlock?.();
 
-	await editorInterface.enableComplementaryArea( 'core', DOCUMENT_SIDEBAR );
+	try {
+		await editorInterface.enableComplementaryArea( 'core', DOCUMENT_SIDEBAR );
+	} catch {
+		return false;
+	}
 
 	// A collapsed panel does not render its contents, so every candidate panel
 	// has to be open before any of them can be found.
