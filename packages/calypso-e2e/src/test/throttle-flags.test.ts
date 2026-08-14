@@ -606,11 +606,34 @@ describe( 'readActiveThrottles', () => {
 
 	test( 'a build tagged for more than one throttle has its log read once', async () => {
 		fetchBuildsByTag.mockResolvedValue( [ taggedBuild( 11 ) ] );
-		fetchBuildLog.mockResolvedValue( states( 'signup', 1_600_000 ) );
+		fetchBuildLog.mockResolvedValue(
+			[ states( 'signup', 1_600_000 ), states( 'domain-availability', 1_700_000 ) ].join( '\n' )
+		);
 
-		await readActiveThrottles();
-
+		expect( await readActiveThrottles() ).toEqual( {
+			signup: 1_600_000,
+			'domain-suggestions': null,
+			'domain-availability': 1_700_000,
+		} );
 		expect( fetchBuildLog ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'a throttle each on two builds is two throttles, not one', async () => {
+		fetchBuildsByTag.mockImplementation( async ( tag ) => {
+			if ( tag === 'throttle-signup' ) {
+				return [ taggedBuild( 11 ) ];
+			}
+			return tag === 'throttle-domain-suggestions' ? [ taggedBuild( 22 ) ] : null;
+		} );
+		fetchBuildLog.mockImplementation( async ( buildId ) =>
+			buildId === 11 ? states( 'signup', 1_600_000 ) : states( 'domain-suggestions', 1_700_000 )
+		);
+
+		expect( await readActiveThrottles() ).toEqual( {
+			signup: 1_600_000,
+			'domain-suggestions': 1_700_000,
+			'domain-availability': null,
+		} );
 	} );
 
 	test( 'one silent build does not throw away what another wrote', async () => {
