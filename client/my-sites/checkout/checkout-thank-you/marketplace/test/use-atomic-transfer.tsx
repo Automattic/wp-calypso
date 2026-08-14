@@ -61,7 +61,7 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 const defaultState = { ...mockState };
 const renderAtomic = ( isRecoveryMode = false ) =>
 	renderHook( () => useAtomicTransfer( true, isRecoveryMode, true ) );
-const INITIAL_FETCH_OPTIONS = { resetPolling: true, retryOnFailure: true };
+const INITIAL_FETCH_OPTIONS = 'start';
 // Simulate a status response cycle so the hook observes the status from this wait.
 const observeStatus = ( rerender: () => void, status: string ) => {
 	mockState.isFetchingTransferStatus = true;
@@ -161,7 +161,7 @@ describe( 'useAtomicTransfer', () => {
 
 		expect( fetchAutomatedTransferStatus ).not.toHaveBeenCalled();
 		act( () => jest.advanceTimersByTime( THANK_YOU_RECOVERY_INTERVAL_MS ) );
-		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, { singleCheck: true } );
+		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, 'single' );
 	} );
 
 	it( 'waits for the durable deadline to initialize before starting status polling', () => {
@@ -177,10 +177,7 @@ describe( 'useAtomicTransfer', () => {
 
 		act( () => result.current.retry() );
 
-		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, {
-			resetPolling: true,
-			retryOnFailure: true,
-		} );
+		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, 'start' );
 		expect( result.current.isRetryingTransferStatus ).toBe( true );
 
 		mockState.isFetchingTransferStatus = true;
@@ -204,10 +201,7 @@ describe( 'useAtomicTransfer', () => {
 
 		jest.clearAllMocks();
 		act( () => jest.advanceTimersByTime( 3000 ) );
-		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, {
-			resetPolling: true,
-			retryOnFailure: true,
-		} );
+		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, 'start' );
 	} );
 
 	it( 'trusts a settled failure once every confirmation attempt still reports it', () => {
@@ -225,7 +219,7 @@ describe( 'useAtomicTransfer', () => {
 		expect( result.current.trustedTransferStatus ).toBe( transferStates.ERROR );
 	} );
 
-	it( 'trusts a failure immediately once this wait has seen the transfer progress', () => {
+	it( 'confirms a failure even after the transfer was seen progressing', () => {
 		const { result, rerender } = renderAtomic();
 
 		mockState.isFetchingTransferStatus = true;
@@ -240,6 +234,15 @@ describe( 'useAtomicTransfer', () => {
 		mockState.isFetchingTransferStatus = false;
 		mockState.transferStatus = transferStates.ERROR;
 		rerender();
+		expect( result.current.trustedTransferStatus ).toBe( transferStates.ACTIVE );
+
+		for ( let attempt = 0; attempt < FAILURE_CONFIRM_ATTEMPTS; attempt++ ) {
+			act( () => jest.advanceTimersByTime( 3000 ) );
+			mockState.isFetchingTransferStatus = true;
+			rerender();
+			mockState.isFetchingTransferStatus = false;
+			rerender();
+		}
 		expect( result.current.trustedTransferStatus ).toBe( transferStates.ERROR );
 	} );
 
@@ -255,10 +258,7 @@ describe( 'useAtomicTransfer', () => {
 
 		mockState.isFetchingTransferStatus = false;
 		rerender();
-		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, {
-			resetPolling: true,
-			retryOnFailure: true,
-		} );
+		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, 'start' );
 	} );
 
 	it( 'completes immediately once the site reports Atomic', () => {

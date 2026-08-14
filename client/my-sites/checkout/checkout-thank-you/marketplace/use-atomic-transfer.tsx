@@ -22,8 +22,8 @@ const ATOMIC_FLAG_POLL_INTERVAL_MS = 2000;
 
 // The status endpoint returns the site's *latest* transfer, so right after a purchase a
 // settled failure can belong to a previous transfer whose record has not been superseded
-// yet. Until this wait has seen the transfer progress, a failure is only trusted after a
-// few confirmations spaced far enough apart for the new record to appear.
+// yet. A failure is only trusted after a few confirmations spaced far enough apart for
+// the new record to appear.
 export const FAILURE_CONFIRM_ATTEMPTS = 3;
 const FAILURE_CONFIRM_INTERVAL_MS = 3000;
 
@@ -68,7 +68,6 @@ export function useAtomicTransfer(
 	const statusRequestSiteIdRef = useRef< number | null >( null );
 	const atomicFlagRequestSiteIdRef = useRef< number | null >( null );
 	const wasFetchingStatusRef = useRef( false );
-	const sawProgressRef = useRef( false );
 	const failureConfirmAttemptsRef = useRef( 0 );
 	const pendingRetryRef = useRef( false );
 	const confirmTimeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
@@ -105,11 +104,7 @@ export function useAtomicTransfer(
 		}
 
 		statusRequestSiteIdRef.current = siteId;
-		// resetPolling: a new wait owns a new deadline window — never inherit one left behind
-		// by an earlier wait or another surface's polling chain.
-		dispatch(
-			fetchAutomatedTransferStatus( siteId, { resetPolling: true, retryOnFailure: true } )
-		);
+		dispatch( fetchAutomatedTransferStatus( siteId, 'start' ) );
 	}, [
 		dispatch,
 		isAtomicNeeded,
@@ -124,9 +119,7 @@ export function useAtomicTransfer(
 	const performStatusRetry = useCallback(
 		( targetSiteId: number ) => {
 			statusRequestSiteIdRef.current = targetSiteId;
-			dispatch(
-				fetchAutomatedTransferStatus( targetSiteId, { resetPolling: true, retryOnFailure: true } )
-			);
+			dispatch( fetchAutomatedTransferStatus( targetSiteId, 'start' ) );
 		},
 		[ dispatch ]
 	);
@@ -152,31 +145,18 @@ export function useAtomicTransfer(
 		}
 
 		const isFailure = transferFailureStates.includes( transferStatus );
-		if (
-			isFailure &&
-			! sawProgressRef.current &&
-			failureConfirmAttemptsRef.current < FAILURE_CONFIRM_ATTEMPTS
-		) {
+		if ( isFailure && failureConfirmAttemptsRef.current < FAILURE_CONFIRM_ATTEMPTS ) {
 			failureConfirmAttemptsRef.current += 1;
 			confirmTimeoutRef.current = setTimeout( () => {
 				if ( siteId ) {
-					dispatch(
-						fetchAutomatedTransferStatus( siteId, { resetPolling: true, retryOnFailure: true } )
-					);
+					dispatch( fetchAutomatedTransferStatus( siteId, 'start' ) );
 				}
 			}, FAILURE_CONFIRM_INTERVAL_MS );
 			return;
 		}
 
-		// Only genuine transfer activity proves there is no stale failure to confirm away —
-		// a failed request or an expired wait says nothing about which record the backend has.
-		if (
-			! isFailure &&
-			transferStatus &&
-			transferStatus !== transferStates.REQUEST_FAILURE &&
-			transferStatus !== transferStates.CLIENT_TIMEOUT
-		) {
-			sawProgressRef.current = true;
+		if ( ! isFailure ) {
+			failureConfirmAttemptsRef.current = 0;
 		}
 		setTrustedTransferStatus( transferStatus );
 		setIsRetryingTransferStatus( false );
@@ -216,7 +196,7 @@ export function useAtomicTransfer(
 	useInterval(
 		() => {
 			if ( siteId && ! isFetchingTransferStatus ) {
-				dispatch( fetchAutomatedTransferStatus( siteId, { singleCheck: true } ) );
+				dispatch( fetchAutomatedTransferStatus( siteId, 'single' ) );
 			}
 		},
 		isRecoveryMode &&
@@ -243,7 +223,6 @@ export function useAtomicTransfer(
 			clearTimeout( confirmTimeoutRef.current );
 		}
 		failureConfirmAttemptsRef.current = 0;
-		sawProgressRef.current = false;
 		setIsRetryingTransferStatus( true );
 		if ( isFetchingTransferStatus ) {
 			pendingRetryRef.current = true;

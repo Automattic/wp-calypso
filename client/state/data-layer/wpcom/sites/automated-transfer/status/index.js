@@ -43,16 +43,12 @@ const getOrCreatePollDeadline = ( siteId ) => {
 };
 
 export const requestStatus = ( action ) => {
-	// A single recovery check must not touch the deadline state: a regular chain may be
-	// running for the same site, and deleting or reviving its entry would either kill its
-	// timeout or let it mint a fresh five-minute window. Only an explicit new wait
-	// (resetPolling + retryOnFailure) mints an entry: plain fetches would orphan one, and a
-	// chain re-dispatch minting one could resurrect a wait that has already settled.
-	if ( ! action.singleCheck && action.resetPolling ) {
+	// Only an explicit new wait touches the deadline state. Plain and 'single' fetches would
+	// orphan an entry (handing a later wait an already-expired window), and a 'continue' poll
+	// minting one could resurrect a wait that has already settled.
+	if ( action.pollingMode === 'start' ) {
 		pollDeadlines.delete( action.siteId );
-		if ( action.retryOnFailure ) {
-			getOrCreatePollDeadline( action.siteId );
-		}
+		getOrCreatePollDeadline( action.siteId );
 	}
 	return http(
 		{
@@ -65,10 +61,7 @@ export const requestStatus = ( action ) => {
 };
 
 export const receiveStatus =
-	(
-		{ siteId, singleCheck, retryOnFailure },
-		{ status, uploaded_plugin_slug, transfer_id: transferId }
-	) =>
+	( { siteId, pollingMode }, { status, uploaded_plugin_slug, transfer_id: transferId } ) =>
 	( dispatch ) => {
 		const pluginId = uploaded_plugin_slug;
 		const isSettled = transferSettledStates.includes( status );
@@ -86,7 +79,7 @@ export const receiveStatus =
 
 		dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
 
-		if ( singleCheck ) {
+		if ( pollingMode === 'single' ) {
 			// Inert with respect to the deadline state, and no polling chain of its own.
 		} else if ( isSettled ) {
 			pollDeadlines.delete( siteId );
@@ -95,13 +88,13 @@ export const receiveStatus =
 
 			if ( Date.now() < deadline ) {
 				pollDeadlines.set( siteId, { transferId, deadline } );
-				// The retry policy belongs to the wait, so it travels on the polling chain's own
-				// actions rather than on the shared deadline entry — a concurrent fetch from
-				// another surface must not inherit it, and a transfer_id change must not drop it.
+				// The wait's polling mode travels on the chain's own actions rather than on the
+				// shared deadline entry — a concurrent fetch from another surface must not inherit
+				// it, and a transfer_id change must not drop it.
 				setTimeout(
 					dispatch,
 					POLL_INTERVAL_MS,
-					fetchAutomatedTransferStatus( siteId, { retryOnFailure } )
+					fetchAutomatedTransferStatus( siteId, pollingMode ? 'continue' : null )
 				);
 			} else {
 				pollDeadlines.set( siteId, { transferId, deadline, hasTimedOut: true } );
@@ -116,27 +109,25 @@ export const receiveStatus =
 	};
 
 export const requestingStatusFailure = ( response ) => ( dispatch ) => {
-	const { siteId, singleCheck, retryOnFailure } = response;
+	const { siteId, pollingMode } = response;
 	const message = response.meta?.dataLayer?.error?.message;
 	dispatch( automatedTransferStatusFetchingFailure( { siteId, error: message } ) );
 
 	// Retrying failures — and eventually reporting CLIENT_TIMEOUT — is behavior only waits
-	// that asked for it (on this very action) should get. Other dispatchers expect a failed
-	// request to fail once and stop, exactly as it did before the retry logic existed — and
-	// they must not leave any deadline state behind for a later wait to inherit.
-	if ( singleCheck || ! retryOnFailure ) {
+	// get. Plain and 'single' fetches fail once and stop, exactly as they always did.
+	if ( pollingMode !== 'start' && pollingMode !== 'continue' ) {
 		return;
 	}
 
 	// No entry means the wait has ended (a settled response deletes it) or never started.
-	// A stale failure must not resurrect it — the retry flag on the action alone is not
-	// proof the wait is still alive.
+	// A stale failure must not resurrect it — the mode on the action alone is not proof
+	// the wait is still alive.
 	const recorded = pollDeadlines.get( siteId );
 	if ( ! recorded ) {
 		return;
 	}
 
-	const retryFetch = fetchAutomatedTransferStatus( siteId, { retryOnFailure: true } );
+	const retryFetch = fetchAutomatedTransferStatus( siteId, 'continue' );
 
 	// The reducer maps a missing record to the terminal NONE status, so once the retries run
 	// out the chain must end there — letting the deadline fire would replace a real "this site
