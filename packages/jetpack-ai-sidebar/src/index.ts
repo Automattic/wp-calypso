@@ -957,74 +957,6 @@ export const toolProvider = {
 	},
 };
 
-const WRITING_ONLY_ABILITY_NAMES = new Set( [
-	'jetpack-ai/optimize-title',
-	'jetpack-ai/generate-excerpt',
-	'jetpack-ai/generate-seo-title',
-	'jetpack-ai/generate-seo-description',
-	'jetpack-ai/generate-seo-image-alt-text',
-	'wpcom/proofread-content',
-	'wpcom/generate-feedback',
-	'wpcom/ai-editorial-review',
-	UPDATE_BLOCK_CONTENT_TOOL_ID,
-] );
-
-function isWritingAbilityName( name: string ): boolean {
-	return WRITING_ONLY_ABILITY_NAMES.has( name );
-}
-
-/**
- * Strict provider used by the writing-only Gutenberg entry. The server still
- * enforces the same allowlist; this client filter keeps unrelated abilities
- * out of the model context and prevents accidental local execution.
- */
-export const writingOnlyToolProvider = {
-	async getAbilities(): Promise< any[] > {
-		let registeredAbilities: any[] = [];
-		if ( hasAbilitiesApi() ) {
-			try {
-				registeredAbilities = await ( window as any ).wp.abilities.getAbilities();
-			} catch ( e ) {
-				// eslint-disable-next-line no-console
-				console.warn( '[Jetpack AI] Failed to load writing abilities:', e );
-			}
-		}
-
-		const strictRegisteredAbilities = Array.isArray( registeredAbilities )
-			? registeredAbilities.filter(
-					( ability ) =>
-						typeof ability?.name === 'string' &&
-						isWritingAbilityName( ability.name ) &&
-						ability.name !== UPDATE_BLOCK_CONTENT_TOOL_ID
-			  )
-			: [];
-		return [
-			...( isBlockTransformationsEnabled()
-				? [ { ...UPDATE_BLOCK_CONTENT_ABILITY, callback: handleUpdateBlockContent } ]
-				: [] ),
-			{ ...SHOW_COMPONENT_ABILITY, callback: handleShowComponent },
-			...strictRegisteredAbilities,
-		];
-	},
-	async executeAbility( name: string, args: any ): Promise< any > {
-		if ( isUpdateBlockContentTool( name ) ) {
-			const result = await handleUpdateBlockContent( args );
-			return { result, returnToAgent: false };
-		}
-		if ( name === SHOW_COMPONENT_ABILITY_NAME || name === SHOW_COMPONENT_TOOL_ID ) {
-			return { result: handleShowComponent( args ), returnToAgent: false };
-		}
-		if ( isWritingAbilityName( name ) ) {
-			const executeAbility = getAbilitiesExecuteAbility();
-			if ( executeAbility ) {
-				return executeAbility( name, args );
-			}
-			throw new Error( `WordPress abilities API is unavailable for: ${ name }` );
-		}
-		throw new Error( `Ability is not available in Jetpack AI writing mode: ${ name }` );
-	},
-};
-
 // ---------- contextProvider ----------
 
 /**
@@ -1621,25 +1553,4 @@ export function useSuggestions( maxSuggestions?: number ): {
 		// no contextual actions, so whole-post suggestions never leak into block context.
 		replaceEmptyViewSuggestions: !! selectedBlock,
 	};
-}
-
-/**
- * Writing-only variant used on Free Simple sites. Image Studio suggestions
- * execute a separate product action, so this surface does not advertise them.
- */
-export function useWritingOnlySuggestions(
-	maxSuggestions?: number,
-	options: { suggestionsVisible?: boolean } = {}
-): ReturnType< typeof useSuggestions > {
-	const result = useSuggestions( undefined, options );
-	const suggestions = useMemo(
-		() =>
-			applySuggestionLimit(
-				result.suggestions.filter( ( suggestion ) => ! suggestion.action ),
-				maxSuggestions
-			),
-		[ maxSuggestions, result.suggestions ]
-	);
-
-	return { ...result, suggestions };
 }

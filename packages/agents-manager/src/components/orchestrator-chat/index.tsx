@@ -21,7 +21,8 @@ import {
 import { __ } from '@wordpress/i18n';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
-import { useRegisterCustomActions } from '../../hooks/custom-actions/use-register-custom-actions';
+import { useRegisterCustomActions } from '../../hooks/custom-actions';
+import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
 import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
 import useCheckpointAction, {
@@ -32,6 +33,7 @@ import useCheckpointAction, {
 } from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
+import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
@@ -300,8 +302,6 @@ interface Props {
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
-	/** Full-Agent-owned structural editor component resolver. */
-	getAmChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
 	/** Rewrite the transcript before it is displayed. See `TransformMessages`. */
@@ -312,10 +312,6 @@ interface Props {
 	capabilities?: ProviderCapabilities;
 	/** Provider-owned, display-only notice derived from the backend's rejection text. */
 	useChatNotice?: UseChatNoticeHook;
-	/** Whether writing suggestions should use the editor-grouped labels. */
-	groupWritingSuggestions?: boolean;
-	/** Whether the host has a separate button that can reopen a closed chat. */
-	hasAiChatEntry?: boolean;
 	/** Renders the chat with a disabled input. Driven by `setChatEnabled( false )`. */
 	isChatInputDisabled?: boolean;
 	/** Called when the has-messages state changes. */
@@ -337,14 +333,11 @@ export default function OrchestratorChat( {
 	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
-	getAmChatComponent,
 	siteBuildUtils,
 	transformMessages,
 	useCheckpoint,
 	capabilities,
 	useChatNotice,
-	groupWritingSuggestions = false,
-	hasAiChatEntry = false,
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
@@ -1546,6 +1539,8 @@ export default function OrchestratorChat( {
 		setThinkingMessage,
 	} );
 
+	useAbilitiesRegistration();
+
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		// The stable checkpoint getter reads these values through refs.
 		void checkpointActionRevision;
@@ -1636,7 +1631,6 @@ export default function OrchestratorChat( {
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
 			getChatComponent,
-			getAmChatComponent,
 			currentPostId,
 		} );
 
@@ -1700,7 +1694,6 @@ export default function OrchestratorChat( {
 		checkpointSessionIdentity,
 		currentPostId,
 		deletedMessageIds,
-		getAmChatComponent,
 		getChatComponent,
 		getCopyActionsForMessage,
 		getCheckpointActionsForMessage,
@@ -1839,7 +1832,6 @@ export default function OrchestratorChat( {
 			imageUpload={ imageUpload }
 			isChatInputDisabled={ isChatInputDisabled }
 			notice={ chatNotice }
-			hasAiChatEntry={ hasAiChatEntry }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }

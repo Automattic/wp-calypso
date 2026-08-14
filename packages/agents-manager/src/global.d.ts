@@ -25,8 +25,6 @@ declare const agentsManagerData:
 			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
-			/** Strict provider URL used only by the writing-only Gutenberg entry. */
-			jetpackAiWritingProviderUrl?: string;
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;

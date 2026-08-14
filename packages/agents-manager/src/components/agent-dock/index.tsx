@@ -11,17 +11,14 @@ import { backup, cog, columns, comment, drawerRight, heading } from '@wordpress/
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
-import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
-import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { saveSessionId } from '../../utils/agent-session';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
-import { getAmChatComponent } from '../../utils/get-am-chat-component';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
@@ -87,9 +84,6 @@ export default function AgentDock( {
 	capabilities,
 	useChatNotice,
 }: Props ) {
-	// Full Agents Manager owns its editor abilities. The writing-only entry does
-	// not import this dock, so its graph cannot emit or load am-editor-abilities.
-	useAbilitiesRegistration();
 	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
@@ -116,7 +110,6 @@ export default function AgentDock( {
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
-	const { isPageOrSiteEditorSurface: groupWritingSuggestions } = usePageOrSiteEditorSurface();
 
 	// `agentConfig` is guaranteed non-null here because `AgentSetup` guards rendering.
 	const agentId = agentConfig!.agentId;
@@ -417,14 +410,11 @@ export default function AgentDock( {
 			useProviderAbilitiesSetup={ useProviderAbilitiesSetup }
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
-			getAmChatComponent={ getAmChatComponent }
 			siteBuildUtils={ siteBuildUtils }
 			transformMessages={ transformMessages }
 			useCheckpoint={ useCheckpoint }
 			capabilities={ capabilities }
 			useChatNotice={ useChatNotice }
-			groupWritingSuggestions={ groupWritingSuggestions }
-			hasAiChatEntry={ hasAiChatEntry }
 			isChatInputDisabled={ ! isChatEnabled }
 			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>

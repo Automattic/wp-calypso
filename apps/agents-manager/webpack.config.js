@@ -8,142 +8,6 @@ const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chu
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-class WritingOnlyBoundaryPlugin {
-	constructor( entryName ) {
-		this.entryName = entryName;
-	}
-
-	apply( compiler ) {
-		compiler.hooks.thisCompilation.tap( 'WritingOnlyBoundaryPlugin', ( compilation ) => {
-			compilation.hooks.afterOptimizeChunks.tap( 'WritingOnlyBoundaryPlugin', () => {
-				const entrypoint = compilation.entrypoints.get( this.entryName );
-				if ( ! entrypoint ) {
-					return;
-				}
-
-				const chunkGroups = new Set( [ entrypoint ] );
-				for ( const group of chunkGroups ) {
-					for ( const child of group.getChildren() ) {
-						chunkGroups.add( child );
-					}
-				}
-				const modules = new Set();
-				for ( const group of chunkGroups ) {
-					for ( const chunk of group.chunks ) {
-						for ( const module of compilation.chunkGraph.getChunkModulesIterable( chunk ) ) {
-							modules.add( module );
-						}
-					}
-				}
-
-				const forbidden = [
-					'agents-manager-with-provider',
-					'/packages/agents-manager/src/components/agents-manager.tsx',
-					'/packages/agents-manager/src/components/agent-dock/',
-					'/packages/agents-manager/src/components/button-picker/',
-					'/packages/agents-manager/src/components/color-picker/',
-					'/packages/agents-manager/src/components/font-picker/',
-					'/packages/agents-manager/src/hooks/use-abilities-registration',
-					'/packages/agents-manager/src/hooks/custom-actions/index',
-					'/packages/agents-manager/src/hooks/use-picker-variations',
-					'/packages/agents-manager/src/abilities/',
-					'/packages/agents-manager/src/utils/create-agent-config',
-					'/packages/agents-manager/src/utils/site-editor-context',
-					'/apps/big-sky/',
-					'/packages/big-sky/',
-				];
-				const violations = [ ...modules ]
-					.map( ( module ) => module.resource?.replace( /\\/g, '/' ) )
-					.filter( ( resource ) => {
-						if (
-							this.entryName === 'agents-manager-gutenberg-jetpack-ai' &&
-							resource?.endsWith( '/components/agent-dock/style.scss' )
-						) {
-							return false;
-						}
-
-						return forbidden.some( ( fragment ) => resource?.includes( fragment ) );
-					} );
-				if ( violations.length ) {
-					compilation.errors.push(
-						new webpack.WebpackError(
-							`Writing-only bundle ${
-								this.entryName
-							} crossed its dependency boundary:\n${ violations.join( '\n' ) }`
-						)
-					);
-				}
-			} );
-		} );
-	}
-}
-
-class EsmProviderAssetPlugin {
-	constructor( filename, dependencies, hostAssetFilename ) {
-		this.filename = filename;
-		this.dependencies = dependencies;
-		this.hostAssetFilename = hostAssetFilename;
-	}
-
-	apply( compiler ) {
-		compiler.hooks.beforeCompile.tap( 'EsmProviderAssetPlugin', () => {
-			// Externals are rediscovered on every incremental build. Do not keep
-			// dependencies that a prior watch compilation no longer imports.
-			this.dependencies.clear();
-		} );
-
-		compiler.hooks.thisCompilation.tap( 'EsmProviderAssetPlugin', ( compilation ) => {
-			compilation.hooks.processAssets.tap(
-				{
-					name: 'EsmProviderAssetPlugin',
-					stage: webpack.Compilation.PROCESS_ASSETS_STAGE_SUMMARIZE,
-				},
-				() => {
-					compilation.emitAsset(
-						this.filename,
-						new webpack.sources.RawSource(
-							JSON.stringify( {
-								dependencies: [ ...this.dependencies ].sort(),
-								version: compilation.hash,
-							} )
-						)
-					);
-				}
-			);
-		} );
-
-		if ( this.hostAssetFilename ) {
-			compiler.hooks.afterEmit.tap( 'EsmProviderAssetPlugin', ( compilation ) => {
-				const hostAssetPath = path.join( compilation.outputOptions.path, this.hostAssetFilename );
-				try {
-					const hostAsset = JSON.parse(
-						compiler.outputFileSystem.readFileSync( hostAssetPath, 'utf8' )
-					);
-					const hostDependencies = new Set( hostAsset.dependencies || [] );
-					const missingDependencies = [ ...this.dependencies ].filter(
-						( dependency ) => ! hostDependencies.has( dependency )
-					);
-					if ( missingDependencies.length ) {
-						compilation.errors.push(
-							new webpack.WebpackError(
-								`ESM provider runtime dependencies are missing from ${
-									this.hostAssetFilename
-								}:\n${ missingDependencies.join( '\n' ) }`
-							)
-						);
-					}
-				} catch ( error ) {
-					compilation.errors.push(
-						new webpack.WebpackError(
-							`Could not verify ESM provider runtime dependencies against ${ this.hostAssetFilename }: ${ error.message }`
-						)
-					);
-				}
-			} );
-		}
-	}
-}
-
 function applyPostCssConfig( rules, config ) {
 	return rules.map( ( rule ) => ( {
 		...rule,
@@ -180,7 +44,6 @@ function getIndividualConfig( options = {} ) {
 
 	return {
 		...webpackConfig,
-		name,
 		mode: isDevelopment ? 'development' : 'production',
 		entry: { [ name ]: path.join( __dirname, name ) },
 		output: {
@@ -276,82 +139,6 @@ function getIndividualConfig( options = {} ) {
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
-		],
-	};
-}
-
-function getEsmProviderConfig( options = {} ) {
-	const { name, env, argv } = options;
-	const webpackConfig = getIndividualConfig( { name, env, argv, injectPolyfill: false } );
-	const output = { ...webpackConfig.output };
-	delete output.libraryTarget;
-	const dependencies = new Set();
-	const toWpGlobal = ( packageName ) =>
-		packageName.replace( /-([a-z])/g, ( _, letter ) => letter.toUpperCase() );
-	const wpPackagesBundledForCompatibility = new Set( [
-		'@wordpress/abilities',
-		// The writing-only provider is imported at runtime, so these transitive
-		// packages cannot rely on its otherwise-unread asset manifest. They are
-		// also not safe dependencies on every WordPress version we support.
-		'@wordpress/a11y',
-		'@wordpress/deprecated',
-		'@wordpress/dom-ready',
-		'@wordpress/hooks',
-		'@wordpress/icons',
-		'@wordpress/private-apis',
-		'@wordpress/react-i18n',
-		'@wordpress/theme',
-		'@wordpress/ui',
-		'@wordpress/warning',
-	] );
-	const externalizeScriptGlobal = ( { request }, callback ) => {
-		if ( request === 'react' ) {
-			dependencies.add( 'react' );
-			return callback( null, [ 'React' ] );
-		}
-		if ( request === 'react-dom' || request === 'react-dom/client' ) {
-			dependencies.add( 'react-dom' );
-			return callback( null, [ 'ReactDOM' ] );
-		}
-		if (
-			request?.startsWith( '@wordpress/' ) &&
-			! wpPackagesBundledForCompatibility.has( request )
-		) {
-			const packageName = request.slice( '@wordpress/'.length );
-			dependencies.add( `wp-${ packageName }` );
-			return callback( null, [ 'wp', toWpGlobal( packageName ) ] );
-		}
-		return callback();
-	};
-
-	return {
-		...webpackConfig,
-		externals: [ ...( webpackConfig.externals || [] ), externalizeScriptGlobal ],
-		externalsType: 'window',
-		experiments: {
-			...( webpackConfig.experiments || {} ),
-			outputModule: true,
-		},
-		output: {
-			...output,
-			filename: '[name].mjs',
-			chunkFilename: `${ name }.[name].[contenthash:8].mjs`,
-			library: { type: 'module' },
-			module: true,
-			chunkFormat: 'module',
-			chunkLoading: 'import',
-		},
-		plugins: [
-			...webpackConfig.plugins.filter(
-				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
-			),
-			new EsmProviderAssetPlugin(
-				`${ name }.asset.json`,
-				dependencies,
-				name === 'jetpack-ai-sidebar-limited.provider'
-					? 'agents-manager-gutenberg-jetpack-ai.asset.json'
-					: undefined
-			),
 		],
 	};
 }
@@ -471,30 +258,9 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 
 	const configs = [
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg' } ),
-		( () => {
-			const config = getIndividualConfig( {
-				env,
-				argv,
-				name: 'agents-manager-gutenberg-jetpack-ai',
-			} );
-			config.plugins.push( new WritingOnlyBoundaryPlugin( 'agents-manager-gutenberg-jetpack-ai' ) );
-			return config;
-		} )(),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin' } ),
 		getIndividualConfig( { env, argv, name: 'image-studio' } ),
 		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
-		( () => {
-			const config = getEsmProviderConfig( {
-				env,
-				argv,
-				name: 'jetpack-ai-sidebar-limited.provider',
-			} );
-			config.plugins.push( new WritingOnlyBoundaryPlugin( 'jetpack-ai-sidebar-limited.provider' ) );
-			// The provider verifies its externals against the shell's emitted asset
-			// manifest, so Webpack must finish the shell compiler first.
-			config.dependencies = [ 'agents-manager-gutenberg-jetpack-ai' ];
-			return config;
-		} )(),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),

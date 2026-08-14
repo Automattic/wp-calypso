@@ -11,8 +11,8 @@ import type { ComponentProps, ReactNode, Ref } from 'react';
 const mockSetFloatingPosition = jest.fn();
 const mockContainerProps = jest.fn();
 const mockInputProps = jest.fn();
-const mockNoticeProps = jest.fn();
 const mockImageUploaderProps = jest.fn();
+const mockHasAiChatEntry = jest.fn();
 
 jest.mock(
 	'@automattic/agenttic-ui',
@@ -25,7 +25,6 @@ jest.mock(
 			floatingChatState,
 			suggestions = [],
 			onSuggestionClick,
-			notice,
 		}: {
 			children: ReactNode;
 			emptyView: ReactNode;
@@ -35,10 +34,8 @@ jest.mock(
 				selectedSuggestion: Suggestion,
 				availableSuggestions: Suggestion[]
 			) => void;
-			notice?: unknown;
 		} ) {
 			mockContainerProps( { floatingChatState } );
-			mockNoticeProps( notice );
 			return (
 				<div>
 					{ emptyView }
@@ -137,8 +134,7 @@ jest.mock(
 			return <>{ children }</>;
 		}
 
-		const MockImageUploader = React.forwardRef( ( props: unknown, ref ) => {
-			void ref;
+		const MockImageUploader = React.forwardRef( ( props: unknown ) => {
 			mockImageUploaderProps( props );
 			return null;
 		} );
@@ -184,7 +180,7 @@ jest.mock( '../../utils/tracks', () => ( {
 jest.mock( '../../stores', () => ( {
 	AGENTS_MANAGER_STORE: 'automattic/agents-manager',
 } ) );
-jest.mock( '../chat-header/view', () => ( {
+jest.mock( '../chat-header', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
@@ -210,6 +206,11 @@ jest.mock( '../../utils/is-plugin-compass-agent', () => ( {
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatHost: () => false,
 } ) );
+jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
+	__esModule: true,
+	default: () => mockHasAiChatEntry(),
+} ) );
+
 import AgentChat from '../agent-chat';
 
 function renderAgentChat( props: Partial< ComponentProps< typeof AgentChat > > = {} ) {
@@ -237,6 +238,7 @@ function renderAgentChat( props: Partial< ComponentProps< typeof AgentChat > > =
 describe( 'AgentChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockHasAiChatEntry.mockReturnValue( false );
 		document.body.className = '';
 	} );
 
@@ -299,19 +301,6 @@ describe( 'AgentChat', () => {
 				imageUploadDisabled: true,
 			} )
 		);
-	} );
-
-	it( 'forwards a persistent compose notice to Agenttic', () => {
-		const notice = {
-			message: 'You’re out of free credits.',
-			status: 'error' as const,
-			action: { label: 'Upgrade', onClick: jest.fn() },
-			dismissible: false,
-		};
-
-		renderAgentChat( { notice } );
-
-		expect( mockNoticeProps ).toHaveBeenLastCalledWith( notice );
 	} );
 
 	it( 'keeps the chat input disabled while images are pending', () => {
@@ -590,7 +579,9 @@ describe( 'AgentChat', () => {
 	} );
 
 	it( 'minimizes to the bar when closed with the AI chat entry button present', () => {
-		renderAgentChat( { isOpen: false, hasAiChatEntry: true } );
+		mockHasAiChatEntry.mockReturnValue( true );
+
+		renderAgentChat( { isOpen: false } );
 
 		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'minimized' } );
 	} );
