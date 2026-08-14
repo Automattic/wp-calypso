@@ -110,6 +110,11 @@ interface Props {
 	onContextCardAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
 	/** Called when a context card's dismiss button is clicked. */
 	onContextCardDismiss?: ( card: ExternalContextCard ) => void;
+	/**
+	 * Shows the selected-block chip above the input. Only hosts whose context
+	 * provider forwards the block selection should enable it.
+	 */
+	showSelectedBlock?: boolean;
 }
 
 // Carries the block-editor stack, so it loads on demand — and only on editor
@@ -191,6 +196,7 @@ export default function AgentChat( {
 	complianceDisclosure,
 	onContextCardAction,
 	onContextCardDismiss,
+	showSelectedBlock = false,
 }: Props ) {
 	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
 		useDispatch( AGENTS_MANAGER_STORE );
@@ -372,7 +378,7 @@ export default function AgentChat( {
 								dropZoneRef={ conversationViewRef as RefObject< HTMLElement > }
 							/>
 						) }
-						{ isEditorPage() && <SelectedBlock /> }
+						{ showSelectedBlock && isEditorPage() && <SelectedBlock /> }
 						{ /* `readOnly` (not `disabled`) so the stop button stays active while a batch uploads. */ }
 						{ /* Disabling the input takes BOTH props: agenttic forwards `readOnly` to the
 						     textarea but consumes `disabled` only to gate the submit button and

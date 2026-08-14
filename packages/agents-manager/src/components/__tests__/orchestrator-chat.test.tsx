@@ -35,6 +35,7 @@ const mockAgentChat = jest.fn(
 		inputValue?: string;
 		onInputChange?: ( value: string ) => void;
 		emptyViewSuggestions?: Suggestion[];
+		showSelectedBlock?: boolean;
 	} ) => (
 		<>
 			<button
@@ -1033,6 +1034,14 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Stop' ) );
 
 		expect( abortCurrentRequest ).toHaveBeenCalled();
+	} );
+
+	it( 'shows the selected-block chip only when a provider forwards the block selection', () => {
+		render( chat( { capabilities: { forwardsBlockSelection: true } } ) );
+		expect( mockAgentChat.mock.calls.at( -1 )![ 0 ].showSelectedBlock ).toBe( true );
+
+		render( chat() );
+		expect( mockAgentChat.mock.calls.at( -1 )![ 0 ].showSelectedBlock ).toBe( false );
 	} );
 
 	it( 'drops a same-tick duplicate send before upload state propagates', async () => {

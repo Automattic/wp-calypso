@@ -244,13 +244,20 @@ describe( 'AgentChat', () => {
 
 	it( 'renders the selected-block chip only on editor pages', async () => {
 		document.body.classList.add( 'post-php', 'post-type-post' );
-		renderAgentChat();
+		renderAgentChat( { showSelectedBlock: true } );
 		await waitFor( () => expect( mockSelectedBlock ).toHaveBeenCalled() );
 
 		mockSelectedBlock.mockClear();
 		document.body.className = '';
-		renderAgentChat();
+		renderAgentChat( { showSelectedBlock: true } );
 		// The lazy chunk resolves in a microtask — flush before asserting absence.
+		await act( () => Promise.resolve() );
+		expect( mockSelectedBlock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'hides the selected-block chip when the host does not forward the selection', async () => {
+		document.body.classList.add( 'post-php', 'post-type-post' );
+		renderAgentChat();
 		await act( () => Promise.resolve() );
 		expect( mockSelectedBlock ).not.toHaveBeenCalled();
 	} );

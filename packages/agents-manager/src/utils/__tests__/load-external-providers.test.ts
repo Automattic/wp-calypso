@@ -90,14 +90,15 @@ describe( 'mergeCapabilitiesInto', () => {
 		}
 	);
 
-	it.each( [ 'supportsSplitScreen', 'supportsRegenerateAction' ] as const )(
-		'sets %s when the provider declares it',
-		( flag ) => {
-			const merged: ProviderCapabilities = {};
-			mergeCapabilitiesInto( merged, { [ flag ]: true } );
-			expect( merged[ flag ] ).toBe( true );
-		}
-	);
+	it.each( [
+		'supportsSplitScreen',
+		'supportsRegenerateAction',
+		'forwardsBlockSelection',
+	] as const )( 'sets %s when the provider declares it', ( flag ) => {
+		const merged: ProviderCapabilities = {};
+		mergeCapabilitiesInto( merged, { [ flag ]: true } );
+		expect( merged[ flag ] ).toBe( true );
+	} );
 
 	it( 'leaves supportsSplitScreen unset when the provider declares false', () => {
 		const merged: ProviderCapabilities = {};

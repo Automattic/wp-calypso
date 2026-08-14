@@ -149,6 +149,12 @@ export interface ProviderCapabilities {
 	supportsSplitScreen?: boolean;
 	/** Adds Agenttic's built-in regenerate action to agent messages when true. */
 	supportsRegenerateAction?: boolean;
+	/**
+	 * Shows the selected-block chip above the chat input when true. Declare it
+	 * only if `contextProvider.getClientContext()` forwards the block selection;
+	 * otherwise the chip promises the agent context that is never sent.
+	 */
+	forwardsBlockSelection?: boolean;
 }
 
 /**
@@ -167,6 +173,9 @@ export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilitie
 	}
 	if ( caps.supportsRegenerateAction === true ) {
 		merged.supportsRegenerateAction = true;
+	}
+	if ( caps.forwardsBlockSelection === true ) {
+		merged.forwardsBlockSelection = true;
 	}
 }
 

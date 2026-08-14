@@ -1226,6 +1226,9 @@ export const capabilities = {
 	supportsSplitScreen: true,
 	// Flip to `true` to enable regenerate in the Jetpack AI sidebar.
 	supportsRegenerateAction: false,
+	// `contextProvider.getClientContext()` sends `selectedBlockClientId` and the
+	// `selected-block-content` context entry.
+	forwardsBlockSelection: true,
 };
 
 /**

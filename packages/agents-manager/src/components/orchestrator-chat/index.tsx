@@ -1081,6 +1081,7 @@ export default function OrchestratorChat( {
 			onCancelFeedback={ resetFeedback }
 			onContextCardAction={ handleContextCardAction }
 			onContextCardDismiss={ dismissContextCard }
+			showSelectedBlock={ capabilities?.forwardsBlockSelection === true }
 		/>
 	);
 }
