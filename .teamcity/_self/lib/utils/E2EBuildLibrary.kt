@@ -36,6 +36,31 @@ fun ParametrizedWithType.defaultE2eParams() {
     param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
     param("env.LOCALE", "en")
 	param("env.DEBUG", "")
+	throttleActionParams()
+}
+
+fun ParametrizedWithType.throttleActionParams() {
+	select(
+		name = "env.E2E_THROTTLE_SIGNUP_ACTION",
+		value = "skip",
+		label = "Signup throttle action",
+		description = "Action to take when the signup service is throttled",
+		options = listOf("skip", "fail")
+	)
+	select(
+		name = "env.E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION",
+		value = "skip",
+		label = "Domain suggestions throttle action",
+		description = "Action to take when domain suggestions are throttled",
+		options = listOf("skip", "fail")
+	)
+	select(
+		name = "env.E2E_THROTTLE_DOMAIN_AVAILABILITY_ACTION",
+		value = "skip",
+		label = "Domain availability throttle action",
+		description = "Action to take when domain availability checks are throttled",
+		options = listOf("skip", "fail")
+	)
 }
 
 fun ParametrizedWithType.calypsoBaseUrlParam( defaultUrl: String = "https://wordpress.com" ) {

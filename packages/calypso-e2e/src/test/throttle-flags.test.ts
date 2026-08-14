@@ -6,12 +6,17 @@ import {
 	flagsInLog,
 	flushThrottleWrites,
 	formatThrottleLine,
+	handleActiveThrottles,
 	raiseFlag,
 	readActiveThrottles,
 	recordThrottle,
+	registerThrottleActionHandler,
 	resetRaisedThrottles,
+	THROTTLE_ACTION_ENV_VARS,
+	throttleAction,
 	throttleEnvVar,
 	throttleTag,
+	validateThrottleActions,
 } from '../lib/throttle-flags';
 import type { ThrottleId } from '../lib/throttle-flags';
 
@@ -72,8 +77,70 @@ beforeEach( () => {
 	warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 	for ( const id of [ 'SIGNUP', 'DOMAIN_SUGGESTIONS', 'DOMAIN_AVAILABILITY' ] ) {
 		delete process.env[ `THROTTLE_${ id }_EXPIRATION` ];
+		delete process.env[ `E2E_THROTTLE_${ id }_ACTION` ];
 	}
 	resetRaisedThrottles();
+} );
+
+describe( 'throttle actions', () => {
+	test( 'maps each throttle to its public action variable', () => {
+		expect( THROTTLE_ACTION_ENV_VARS ).toEqual( {
+			signup: 'E2E_THROTTLE_SIGNUP_ACTION',
+			'domain-suggestions': 'E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION',
+			'domain-availability': 'E2E_THROTTLE_DOMAIN_AVAILABILITY_ACTION',
+		} );
+	} );
+
+	test( 'defaults to skip and accepts an explicit action', () => {
+		expect( throttleAction( 'signup' ) ).toBe( 'skip' );
+		process.env.E2E_THROTTLE_SIGNUP_ACTION = 'fail';
+		expect( throttleAction( 'signup' ) ).toBe( 'fail' );
+	} );
+
+	test( 'startup validation rejects any value outside exact lowercase actions', () => {
+		process.env.E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION = 'FAIL';
+		expect( validateThrottleActions ).toThrow(
+			'Invalid E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION value: FAIL. Expected skip or fail.'
+		);
+	} );
+
+	test( 'does nothing for clear and expired signals', () => {
+		const handler = jest.fn();
+		const unregister = registerThrottleActionHandler( handler );
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW - 1 );
+		handleActiveThrottles( [ 'signup', 'domain-suggestions' ] );
+		unregister();
+		expect( handler ).not.toHaveBeenCalled();
+	} );
+
+	test( 'uses the registered handler for an active throttle', () => {
+		const handler = jest.fn();
+		const unregister = registerThrottleActionHandler( handler );
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
+		handleActiveThrottles( [ 'signup' ] );
+		unregister();
+		expect( handler ).toHaveBeenCalledWith( 'skip', [ 'signup' ] );
+	} );
+
+	test( 'states the ban and leaves the caller alone without a runner handler', () => {
+		// No handler is a `beforeAll` or a setup project, where there is no one test
+		// to skip. Applying nothing here is what keeps the policy per test.
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
+		warn.mockClear();
+		expect( () => handleActiveThrottles( [ 'signup' ], NOW ) ).not.toThrow();
+		expect( warn.mock.calls[ 0 ]?.[ 0 ] ).toContain( 'signup is throttled' );
+	} );
+
+	test( 'gives fail precedence across active throttles', () => {
+		const handler = jest.fn();
+		const unregister = registerThrottleActionHandler( handler );
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
+		process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION = String( NOW + 1 );
+		process.env.E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION = 'fail';
+		handleActiveThrottles( [ 'signup', 'domain-suggestions' ] );
+		unregister();
+		expect( handler ).toHaveBeenCalledWith( 'fail', [ 'domain-suggestions' ] );
+	} );
 } );
 
 afterEach( () => {
@@ -691,5 +758,15 @@ describe( 'detectThrottle', () => {
 		);
 
 		expect( published() ).toEqual( [ expect.stringContaining( 'duration=600000' ) ] );
+	} );
+
+	test( 'recording returns the throttle it detected', async () => {
+		await expect(
+			recordThrottle(
+				{ error: 'domain_suggestions_throttled' },
+				'https://public-api.wordpress.com/rest/v1.1/domains/suggestions'
+			)
+		).resolves.toBe( 'domain-suggestions' );
+		await expect( recordThrottle( { success: true } ) ).resolves.toBeNull();
 	} );
 } );

@@ -3,6 +3,17 @@ import type { TaggedBuild } from './teamcity';
 
 export const THROTTLE_IDS = [ 'signup', 'domain-suggestions', 'domain-availability' ] as const;
 export type ThrottleId = ( typeof THROTTLE_IDS )[ number ];
+export type ThrottleAction = 'skip' | 'fail';
+
+export const THROTTLE_ACTION_ENV_VARS = {
+	signup: 'E2E_THROTTLE_SIGNUP_ACTION',
+	'domain-suggestions': 'E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION',
+	'domain-availability': 'E2E_THROTTLE_DOMAIN_AVAILABILITY_ACTION',
+} as const satisfies Record< ThrottleId, string >;
+
+export type ThrottleActionHandler = ( action: ThrottleAction, ids: readonly ThrottleId[] ) => void;
+
+let actionHandler: ThrottleActionHandler | null = null;
 
 export interface ThrottleFlag {
 	id: ThrottleId;
@@ -129,6 +140,40 @@ export function resetRaisedThrottles(): void {
 	tagging.clear();
 	reportedHere.clear();
 	publishing.clear();
+}
+
+/**
+ * Installs the runner-specific operation used to skip or fail the current test.
+ */
+export function registerThrottleActionHandler( handler: ThrottleActionHandler ): () => void {
+	actionHandler = handler;
+	return () => {
+		if ( actionHandler === handler ) {
+			actionHandler = null;
+		}
+	};
+}
+
+/**
+ * The configured action for an active throttle. An unset value defaults to skip.
+ */
+export function throttleAction( id: ThrottleId ): ThrottleAction {
+	const variable = THROTTLE_ACTION_ENV_VARS[ id ];
+	const value = process.env[ variable ];
+	if ( ! value ) {
+		return 'skip';
+	}
+	if ( value === 'skip' || value === 'fail' ) {
+		return value;
+	}
+	throw new Error( `Invalid ${ variable } value: ${ value }. Expected skip or fail.` );
+}
+
+/**
+ * Validates every action at startup, before Playwright starts collecting tests.
+ */
+export function validateThrottleActions(): void {
+	THROTTLE_IDS.forEach( throttleAction );
 }
 
 /**
@@ -322,16 +367,21 @@ async function tagOnce( id: ThrottleId ): Promise< void > {
 }
 
 /**
- * Records a throttle if this response or error signals one. Never throws.
+ * Records a throttle if this response or error signals one, and returns its id.
+ * Never throws and never waits for the build publication it starts.
  *
  * The endpoint is given separately by callers whose payload does not carry it:
  * what a bare `throttled` code means depends on which endpoint answered with it.
  */
-export async function recordThrottle( responseOrError: unknown, url?: string ): Promise< void > {
+export async function recordThrottle(
+	responseOrError: unknown,
+	url?: string
+): Promise< ThrottleId | null > {
 	const id = detectThrottle( responseOrError, url );
 	if ( id ) {
-		await raiseFlag( id );
+		void raiseFlag( id );
 	}
+	return id;
 }
 
 /**
@@ -360,6 +410,34 @@ function activeThrottle(
 }
 
 /**
+ * Applies the configured policy when any of the given throttles is in force.
+ * A failing policy wins when a group contains both actions.
+ *
+ * No handler means no test to skip or fail: the fixture that registers one runs
+ * per test, and Playwright leaves it out of `beforeAll` and `afterAll`. A ban met
+ * there is stated in the log and nothing more, so the tests that go on to touch
+ * the banned endpoint each take the policy for themselves rather than the whole
+ * describe block taking it for tests that never reach one.
+ */
+export function handleActiveThrottles(
+	ids: Iterable< ThrottleId >,
+	nowMs: number = Date.now()
+): void {
+	const active = [ ...new Set( ids ) ].filter( ( id ) => activeThrottle( id, nowMs ) );
+	if ( ! active.length ) {
+		return;
+	}
+
+	// Once per worker per ban, and the only place a build states how long it has
+	// left: the tag and the line say what a peer reads, not what this log shows.
+	active.forEach( ( id ) => debugThrottle( id, nowMs ) );
+
+	const action = active.some( ( id ) => throttleAction( id ) === 'fail' ) ? 'fail' : 'skip';
+	const selected = active.filter( ( id ) => throttleAction( id ) === action );
+	actionHandler?.( action, selected );
+}
+
+/**
  * Rounds a span to whatever unit reads plainly in a log line.
  */
 function approximately( ms: number ): string {
@@ -374,9 +452,8 @@ function approximately( ms: number ): string {
 /**
  * Reports that a call is about to run into a throttle we already know about.
  *
- * Reporting only: the call goes ahead. What a build does about a known throttle
- * — skip, fail, wait — is a later decision, and until it is taken the log is
- * where it shows. The line is deliberately not one `EVERY_LINE` matches, so a
+ * Reporting only: `handleActiveThrottles` calls this before it decides what to
+ * do about the ban. The line is deliberately not one `EVERY_LINE` matches, so a
  * build cannot re-report a peer's ban as its own.
  *
  * Said once per worker per ban: a build runs hundreds of specs, and the line
