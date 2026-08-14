@@ -4,12 +4,18 @@ import {
 	fetchAgencyScheduleCallLink,
 	fetchAgencyMcpSettings,
 	updateAgencyMcpSettings,
+	updateAgencyPartnerDirectoryApplication,
 	fetchTipaltiIFrameUrl,
 	fetchTipaltiPayee,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
-import type { Agency, McpSettings, McpSettingsUpdate } from '@automattic/api-core';
+import type {
+	Agency,
+	AgencyPartnerDirectoryApplicationUpdate,
+	McpSettings,
+	McpSettingsUpdate,
+} from '@automattic/api-core';
 
 // Mirror the server's response shape so the optimistic snapshot matches what
 // onSuccess later writes.
@@ -107,6 +113,27 @@ export const tipaltiPayeeQuery = ( agencyId: number ) =>
 		queryKey: [ 'agency', agencyId, 'tipalti-payee' ] as const,
 		queryFn: () => fetchTipaltiPayee( agencyId ),
 		enabled: !! agencyId,
+	} );
+
+export const agencyPartnerDirectoryApplicationMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-pd-application-update' },
+		mutationFn: async ( update: AgencyPartnerDirectoryApplicationUpdate ) => {
+			const agency = await updateAgencyPartnerDirectoryApplication( agencyId, update );
+			// A 2xx without the saved application means the write didn't take;
+			// surface it as an error instead of reporting success.
+			if ( ! agency?.profile?.partner_directory_application?.status ) {
+				throw new Error( 'The response did not include the saved application.' );
+			}
+			return agency;
+		},
+		onSuccess: ( agency: Agency ) => {
+			// Merge rather than replace: the PUT response may omit fields the
+			// GET provides (e.g. `user.capabilities`), which gate routes and menus.
+			queryClient.setQueryData( activeAgencyQuery().queryKey, ( previous ) =>
+				previous ? { ...previous, ...agency } : agency
+			);
+		},
 	} );
 
 export const mcpSettingsQuery = ( agencyId: number ) =>
