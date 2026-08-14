@@ -81,6 +81,7 @@ import {
 	SiteSelectComponent,
 	SignupPickPlanPage,
 	TestAccount,
+	TestAccountName,
 	ThemesDetailPage,
 	ThemesPage,
 	UserSignupPage,
@@ -88,8 +89,19 @@ import {
 	PlansPage,
 	UseADomainIOwnPage,
 	SelectItemsComponent,
+	THROTTLE_IDS,
+	debugThrottle,
+	flushThrottleWrites,
+	mayBeThrottled,
+	recordThrottle,
 } from '@automattic/calypso-e2e';
-import { test as base, expect } from '@playwright/test';
+import {
+	test as base,
+	expect,
+	type BrowserContext,
+	type Page,
+	type Response,
+} from '@playwright/test';
 import {
 	apiCloseAccount,
 	apiWaitForBearerTokenAcceptance,
@@ -98,53 +110,140 @@ import {
 import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
 import { snoozeAccountRecoveryInterstitial } from './dashboard-helpers';
 import { getAccount } from './get-account';
+import { withDeadline } from './with-deadline';
 
 export type CustomOptions = {
 	/**
 	 * Viewport name used to configure device-specific behavior in page objects.
-	 * Set per-project in playwright.config.ts. Valid values: 'desktop' | 'mobile' | 'tablet'.
+	 * Set per-project in playwright.config.ts. Valid values: 'desktop' | 'mobile'.
 	 */
 	viewportName: string;
 };
 
+/**
+ * Test accounts exposed as a fixture of the same name, logged in on first use.
+ *
+ * The `prime-logins` setup project logs in as each of these before the suite starts, so
+ * an account added here is primed rather than logged in inline. Two accounts are fixtures
+ * without belonging here: `accountGivenByEnvironment`, which resolves at run time, and
+ * `accountSMS`, whose 2FA code costs a Mailosaur email only a couple of specs need.
+ */
+export const fixtureAccounts = {
+	accountAtomic: 'atomicUser',
+	accountDefaultUser: 'defaultUser',
+	accountGutenbergSimple: 'gutenbergSimpleSiteUser',
+	accounti18n: 'i18nUser',
+	accountP2: 'p2User',
+	accountPreRelease: 'calypsoPreReleaseUser',
+	accountSimpleSiteFreePlan: 'simpleSiteFreePlanUser',
+} as const satisfies Record< string, TestAccountName >;
+
+type AccountFixture = (
+	args: { page: Page },
+	use: ( account: TestAccount ) => Promise< void >
+) => Promise< void >;
+
+const WPCOM_HOST = /^https?:\/\/([^/]*\.)?wordpress\.com(?::\d+)?\//;
+
+// The response event fires on headers, and `response.text()` has no deadline of
+// its own, so without these a stalled body would hang the teardown that waits
+// for it. The flush covers a body read and the two tag POSTs a detection makes,
+// which is what has to land before a worker exits: a flag whose tag never landed
+// leaves its line in a build no peer can find. Charged to the test's own timeout,
+// so it must stay well under it and must not fail a spec that had already passed.
+const BODY_TIMEOUT = 2 * 1000;
+const FLUSH_TIMEOUT = 7 * 1000;
+
+/**
+ * Records a throttle whenever wpcom rate-limits one of the endpoints the suite
+ * depends on, including calls the app makes in the background.
+ *
+ * Watches the whole context, not one page: a signup popup or a tab a spec opens
+ * reaches the same endpoints, and the context reports for all of them.
+ *
+ * The host and path are filtered first so that only a handful of responses are
+ * ever read, and the path comes from detection itself: an endpoint nothing can be
+ * concluded about is one whose body is better left unread. Anything from 400 up
+ * is read — wpcom refuses these with a 403 or a 429 — and a success only when
+ * Calypso asked for the answer to be enveloped, which is how a refusal comes back
+ * as a 200. The body is never logged: a failed `/sites/new` carries the
+ * credentials of the user it was creating a site for.
+ *
+ * Reports a throttle already known when the context is handed over, so a worker
+ * states a ban at the first test that runs after it becomes known rather than
+ * before every call that might run into it, and returns the teardown for these
+ * listeners: a listener raises its flag with no test awaiting it, so without it
+ * a worker can exit between detecting a throttle and tagging the build for it.
+ */
+function watchForThrottle( context: BrowserContext ): () => Promise< void > {
+	const pending = new Set< Promise< unknown > >();
+
+	THROTTLE_IDS.forEach( ( id ) => debugThrottle( id ) );
+
+	const onResponse = ( response: Response ) => {
+		const url = response.url();
+		const status = response.status();
+		if (
+			! WPCOM_HOST.test( url ) ||
+			! mayBeThrottled( url ) ||
+			( status < 400 && ! /[?&]http_envelope=1/.test( url ) )
+		) {
+			return;
+		}
+
+		const reading = ( async () => {
+			try {
+				const body = await withDeadline( response.text(), BODY_TIMEOUT );
+				// An enveloped success carries no error key, and a domain search
+				// result can hold anything a caller typed — including our own
+				// tokens — so it is never handed to detection.
+				if ( status < 400 && ! /"error"\s*:/.test( body ) ) {
+					return;
+				}
+				await recordThrottle( { url, status, body } );
+			} catch {
+				// Detection never fails a test.
+			}
+		} )();
+		pending.add( reading );
+		void reading.finally( () => pending.delete( reading ) );
+	};
+	context.on( 'response', onResponse );
+
+	return async () => {
+		// Off first: a response arriving while this drains would start a read
+		// nothing is waiting for, and print its line into the next test.
+		context.off( 'response', onResponse );
+
+		// A listener can be mid-read when the test ends, so settle until the set
+		// is empty rather than settling a snapshot of it. Raced rather than
+		// checked between rounds: this runs inside the test's own timeout, and a
+		// lost flag costs a peer build a warning where an overrun costs this
+		// build a spec that had already passed.
+		// The listeners above, and the writes they and the REST client started:
+		// a worker that exits with one in flight leaves the build untagged.
+		const drain = ( async () => {
+			while ( pending.size ) {
+				await Promise.allSettled( [ ...pending ] );
+			}
+			await flushThrottleWrites();
+		} )();
+		await withDeadline( drain, FLUSH_TIMEOUT ).catch( () => {} );
+	};
+}
+
 export const test = base.extend<
 	CustomOptions & {
-		/**
-		 * Test account used to test atomic sites (Business plans)
-		 */
-		accountAtomic: TestAccount;
+		[ K in keyof typeof fixtureAccounts ]: TestAccount;
+	} & {
 		/**
 		 * Test account selected based on the current environment variables.
 		 */
 		accountGivenByEnvironment: TestAccount;
 		/**
-		 * Default test account.
-		 */
-		accountDefaultUser: TestAccount;
-		/**
-		 * Test account with a simple Gutenberg site.
-		 */
-		accountGutenbergSimple: TestAccount;
-		/**
-		 * Test account used for i18n locale switching.
-		 */
-		accounti18n: TestAccount;
-		/**
-		 * Test account used for pre-release testing.
-		 */
-		accountPreRelease: TestAccount;
-		/**
-		 * Test account used to test atomic sites (Business plans)
-		 */
-		accountSimpleSiteFreePlan: TestAccount;
-		/**
 		 * Test account used for SMS-based 2FA.
 		 */
 		accountSMS: TestAccount;
-		/**
-		 * Test account used for P2 tests.
-		 */
-		accountP2: TestAccount;
 		/**
 		 * Client for interacting with emails during tests.
 		 */
@@ -389,43 +488,28 @@ export const test = base.extend<
 			await useBlackboxTestKeyForCollect( page );
 		}
 
+		const flushThrottleWatchers = watchForThrottle( page.context() );
+
 		await use( page );
+
+		await flushThrottleWatchers();
 	},
-	accountAtomic: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'atomicUser' );
-		await use( testAccount );
-	},
+	...( Object.fromEntries(
+		Object.entries( fixtureAccounts ).map( ( [ fixtureName, accountName ] ) => [
+			fixtureName,
+			async ( { page }, use ) => {
+				const testAccount = await getAccount( page, accountName );
+				await use( testAccount );
+			},
+		] )
+	) as Record< keyof typeof fixtureAccounts, AccountFixture > ),
 	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		const testAccount = await getAccount( page, accountName );
 		await use( testAccount );
 	},
-	accountDefaultUser: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'defaultUser' );
-		await use( testAccount );
-	},
-	accountGutenbergSimple: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'gutenbergSimpleSiteUser' );
-		await use( testAccount );
-	},
-	accounti18n: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'i18nUser' );
-		await use( testAccount );
-	},
-	accountPreRelease: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'calypsoPreReleaseUser' );
-		await use( testAccount );
-	},
-	accountSimpleSiteFreePlan: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'simpleSiteFreePlanUser' );
-		await use( testAccount );
-	},
 	accountSMS: async ( { page }, use ) => {
 		const testAccount = await getAccount( page, 'smsUser' );
-		await use( testAccount );
-	},
-	accountP2: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'p2User' );
 		await use( testAccount );
 	},
 	clientEmail: async ( {}, use ) => {
@@ -577,7 +661,9 @@ export const test = base.extend<
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
 		await incognitoPage.spawn();
+		const flushThrottleWatchers = watchForThrottle( incognitoPage.getPage().context() );
 		await use( incognitoPage );
+		await flushThrottleWatchers();
 		await incognitoPage.close();
 	},
 	pageJetpackTraffic: async ( { page }, use ) => {
@@ -738,7 +824,6 @@ export const tags = {
 	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
 	LEGAL: '@legal',
 	P2: '@p2',
-	QUARANTINED: '@quarantined',
 	SETTINGS: '@settings',
 };
 

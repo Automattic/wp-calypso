@@ -41,7 +41,7 @@ interface SurveyResponse {
 // through `@automattic/api-queries` (e.g. the manage-purchase page) won't see the
 // change until their queries are refetched. Invalidate the `[ 'upgrades' ]` root
 // key on the app's query client to cover every purchase query at once.
-function invalidatePurchaseQueries() {
+export function invalidatePurchaseQueries() {
 	getCalypsoQueryClient()?.invalidateQueries( userPurchasesQuery() );
 }
 

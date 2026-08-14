@@ -20,6 +20,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
 import PostByline from './byline';
 import ConversationPost from './conversation-post';
+import { getFreshlyPressedOn } from './freshly-pressed-badge';
 import GalleryPost from './gallery';
 import PostPhoto from './photo';
 import PostCardComments from './post-card-comments';
@@ -175,6 +176,7 @@ class ReaderPostCard extends Component {
 
 		const shouldShowPostCardComments = ! isConversations;
 		const showSuggestedFollows = isReaderSearchPage || isDiscoverPage;
+		const freshlyPressedOn = getFreshlyPressedOn( this.props.streamKey, post );
 
 		const classes = clsx( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
@@ -239,6 +241,7 @@ class ReaderPostCard extends Component {
 					site={ site }
 					postKey={ postKey }
 					postByline={ postByline }
+					freshlyPressedOn={ freshlyPressedOn }
 					onClick={ this.handleCardClick }
 					openSuggestedFollows={ this.openSuggestedFollowsModal }
 				>

@@ -17,6 +17,7 @@ import {
 	creditCardExpiresBeforeSubscription,
 	getRenewalUrlFromPurchase,
 	isPurchaseDowngradeEligible,
+	isWithinRefundWindowDowngradeEligible,
 } from '../purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -489,9 +490,56 @@ describe( 'isPurchaseDowngradeEligible', () => {
 				makePurchase( {
 					is_plan: true,
 					is_plan_type_downgradable: true,
-					is_within_initial_refund_window: true,
+					is_refundable: true,
 				} )
 			)
 		).toBe( true );
+	} );
+} );
+
+describe( 'isWithinRefundWindowDowngradeEligible', () => {
+	const downgradablePlan = ( overrides: Partial< Purchase > = {} ) =>
+		makePurchase( { is_plan: true, is_plan_type_downgradable: true, ...overrides } );
+
+	test( 'is true for a refundable plan', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible( downgradablePlan( { is_refundable: true } ) )
+		).toBe( true );
+	} );
+
+	test( 'is true for a refundable renewal outside the initial refund window', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				downgradablePlan( { is_within_initial_refund_window: false, is_refundable: true } )
+			)
+		).toBe( true );
+	} );
+
+	test( 'is false once no receipt is refundable, even inside the initial refund window', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				downgradablePlan( { is_within_initial_refund_window: true, is_refundable: false } )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false for a plan in its post-expiry grace period even when refundable', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				downgradablePlan( {
+					is_refundable: true,
+					expiry_status: 'expired',
+					subscription_status: 'active',
+				} )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false for a non-plan product', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				makePurchase( { is_plan: false, is_plan_type_downgradable: true, is_refundable: true } )
+			)
+		).toBe( false );
 	} );
 } );

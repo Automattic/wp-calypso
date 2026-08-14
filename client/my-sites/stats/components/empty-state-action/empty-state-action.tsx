@@ -1,6 +1,8 @@
 import { Card, CardBody, Icon } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { JSX } from 'react';
 
 import './styles.scss';
@@ -21,8 +23,13 @@ const EmptyStateAction: React.FC< EmptyStateActionProps > = ( {
 	analyticsDetails,
 	onClick,
 } ) => {
+	const siteId = useSelector( getSelectedSiteId );
+
 	const handleClick = () => {
-		trackStatsAnalyticsEvent( 'empty_state_interaction', analyticsDetails );
+		trackStatsAnalyticsEvent( 'empty_state_interaction', {
+			...analyticsDetails,
+			blog_id: siteId,
+		} );
 
 		onClick();
 	};

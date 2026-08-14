@@ -253,7 +253,7 @@ function renderRenewsOrExpiresOn( {
 	}
 
 	if ( isRenewingBeforeExpiration( purchase ) ) {
-		return <>{ moment( purchase.renew_date ).format( 'LL' ) }</>;
+		return <>{ moment( purchase.renew_date ?? '' ).format( 'LL' ) }</>;
 	}
 
 	if ( isPurchaseOneTimePurchase( purchase ) ) {

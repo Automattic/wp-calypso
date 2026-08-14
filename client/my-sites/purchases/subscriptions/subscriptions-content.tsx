@@ -1,6 +1,8 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
@@ -14,11 +16,6 @@ import { PurchasesDataViews } from 'calypso/me/purchases/purchases-list-in-datav
 import PurchasesSite from 'calypso/me/purchases/purchases-site';
 import { useSelector } from 'calypso/state';
 import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
-import {
-	getSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-	isFetchingSitePurchases,
-} from 'calypso/state/purchases/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
@@ -28,11 +25,16 @@ import './style.scss';
 export default function SubscriptionsContentWrapper() {
 	const translate = useTranslate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
-	const isFetchingPurchases = useSelector( isFetchingSitePurchases );
-	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSite = useSelector( getSelectedSite );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
+	const {
+		data: purchases = [],
+		isLoading: isFetchingPurchases,
+		isSuccess: hasLoadedPurchases,
+	} = useQuery( {
+		...sitePurchasesQuery( selectedSiteId ?? 0 ),
+		enabled: Boolean( selectedSiteId ),
+	} );
 	const sites = useSelector( getSites ).filter( isValueTruthy );
 	const getManagePurchaseUrlFor: GetManagePurchaseUrlFor = useCallback(
 		( siteSlug, purchaseId ) => `/purchases/subscriptions/${ siteSlug }/${ purchaseId }`,

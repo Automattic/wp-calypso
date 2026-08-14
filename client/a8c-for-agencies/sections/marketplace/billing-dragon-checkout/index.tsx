@@ -17,8 +17,10 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import CartMessageCleanup from './cart-message-cleanup';
 import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
+import getSuccessRedirectUrl from './lib/get-success-redirect-url';
 import type { ShoppingCartItem } from '../types';
 
 import './style.scss';
@@ -33,11 +35,13 @@ function BillingDragonCheckoutContent( {
 	withA8cLogo = true,
 	siteSlug,
 	planSlug,
+	shouldClearCartOnSuccess = false,
 }: {
 	cartItems: ShoppingCartItem[];
 	withA8cLogo?: boolean;
 	siteSlug?: string;
 	planSlug?: string;
+	shouldClearCartOnSuccess?: boolean;
 } ) {
 	const translate = useTranslate();
 	const [ isReady, setIsReady ] = useState( false );
@@ -248,7 +252,10 @@ function BillingDragonCheckoutContent( {
 			) }
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ window.location.origin + '/purchases/licenses' }
+				redirectTo={ getSuccessRedirectUrl(
+					window.location.origin,
+					shouldClearCartOnSuccess && ! isPlanCheckout
+				) }
 				customizedPreviousPath="/marketplace"
 				siteSlug={ siteSlug ?? '' }
 				siteId={ siteId ?? 0 }
@@ -262,11 +269,13 @@ export default function BillingDragonCheckout( {
 	withA8cLogo = true,
 	siteSlug,
 	planSlug,
+	shouldClearCartOnSuccess = false,
 }: {
 	cartItems: ShoppingCartItem[];
 	withA8cLogo?: boolean;
 	siteSlug?: string;
 	planSlug?: string;
+	shouldClearCartOnSuccess?: boolean;
 } ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -276,12 +285,14 @@ export default function BillingDragonCheckout( {
 			errorMessage={ translate( 'Sorry, there was an error loading the checkout page.' ) }
 		>
 			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
+				<CartMessageCleanup />
 				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
 					<BillingDragonCheckoutContent
 						cartItems={ cartItems }
 						withA8cLogo={ withA8cLogo }
 						siteSlug={ siteSlug }
 						planSlug={ planSlug }
+						shouldClearCartOnSuccess={ shouldClearCartOnSuccess }
 					/>
 				</StripeHookProvider>
 			</CalypsoShoppingCartProvider>

@@ -33,6 +33,18 @@ export const CANCEL_FLOW_TYPE = {
 export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
 
 /**
+ * Once expiration is this close, a subscription that will not renew itself is a
+ * problem worth raising rather than a date still comfortably far off.
+ */
+export const EXPIRY_WARNING_DAYS = 60;
+
+/**
+ * Once expiration is this close, losing the subscription is the most likely
+ * outcome rather than a distant possibility.
+ */
+export const EXPIRY_ERROR_DAYS = 7;
+
+/**
  * Returns true if the purchase is auto-renewing and not yet expired.
  */
 export function isRenewingBeforeExpiration( purchase: Purchase ): boolean {
@@ -637,14 +649,21 @@ function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
 
 export function getRenewalUrlFromPurchase(
 	purchase: Purchase,
-	checkoutSiteSlugForUrl?: string
+	checkoutSiteSlugForUrl?: string,
+	backUrl?: string
 ): string {
-	return getRenewUrlForPurchases( [ purchase ], checkoutSiteSlugForUrl );
+	return getRenewUrlForPurchases( [ purchase ], checkoutSiteSlugForUrl, backUrl );
 }
 
+/**
+ * `backUrl` is where checkout returns to, whether the renewal goes through or is
+ * abandoned. It defaults to the dashboard page the user is on, so surfaces
+ * outside the dashboard have to say where they are.
+ */
 export function getRenewUrlForPurchases(
 	purchases: Purchase[],
-	checkoutSiteSlugForUrl?: string
+	checkoutSiteSlugForUrl?: string,
+	backUrl: string = redirectToDashboardLink()
 ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
@@ -657,7 +676,6 @@ export function getRenewUrlForPurchases(
 		checkoutSiteSlugForUrl || getCheckoutSiteSlugForPurchase( firstPurchase );
 	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
-	const backUrl = redirectToDashboardLink();
 	return addQueryArgs(
 		wpcomLink(
 			`/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`
@@ -771,12 +789,17 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 
 /**
  * Returns true if the plan is eligible for an instant, self-serve downgrade: the
- * plan is still within its initial refund window (not a renewal) and has neither
- * expired nor entered its post-expiry grace period.
+ * plan has a refundable receipt and has neither expired nor entered its
+ * post-expiry grace period.
  *
- * Note: this intentionally does NOT require a refundable amount. Instant
- * downgrades are also offered for plans that were paid with credits or are
- * otherwise free, where no money would be refunded.
+ * `is_refundable` covers any refundable receipt, so it holds both for an initial
+ * purchase and for a renewal that is still within its own refund window — both
+ * cases where an instant downgrade costs neither side money.
+ *
+ * Note: this intentionally does NOT require a refundable amount. A refundable
+ * receipt worth nothing generally means the purchase was free (or fully paid
+ * with credits), which is still a valid instant downgrade — it just issues no
+ * refund, and the confirmation modal drops its refund line accordingly.
  *
  * This is distinct from {@link isExpiredAndInGracePeriod}, which gates the
  * downgrade-to-checkout flow for plans whose expiry date has already passed.
@@ -785,7 +808,7 @@ export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boo
 	return (
 		purchase.is_plan_type_downgradable &&
 		purchase.is_plan &&
-		purchase.is_within_initial_refund_window &&
+		purchase.is_refundable &&
 		! isExpiredOrRemoved( purchase )
 	);
 }

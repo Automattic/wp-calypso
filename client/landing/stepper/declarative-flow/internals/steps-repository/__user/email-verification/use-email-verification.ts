@@ -1,60 +1,73 @@
-import { fetchUser } from '@automattic/api-core';
-import { useCallback, useEffect, useState } from 'react';
-import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useState } from 'react';
 import {
 	resendAcceptedRetryAfter,
 	resendThrottleRetryAfter,
-} from 'calypso/lib/email-verification/resend';
-import { useResendCooldown } from 'calypso/lib/email-verification/use-resend-cooldown';
-import { EVERY_FIVE_SECONDS, useInterval } from 'calypso/lib/interval';
+} from 'calypso/dashboard/utils/email-verification-resend';
+import { useResendCooldown } from 'calypso/dashboard/utils/use-resend-cooldown';
+import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch, useSelector } from 'calypso/state';
-import { fetchCurrentUser, setUserEmailVerified } from 'calypso/state/current-user/actions';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import { gateResendAvailableAt, markResendUnavailableUntil } from './storage';
+import { useBackoffPoll } from '../use-backoff-poll';
+import { PENDING_CHANGE_RESEND_SECONDS, useEmailChangeRequest } from '../use-email-change-request';
+import { ACTIVATION_EMAIL_SOURCE } from '../use-email-verification-gate';
+import { gateResendAvailableAt, markResendUnavailableUntil, pendingChangeScope } from './storage';
 
-// Cross-device confirmation only reaches this tab by polling `/me` (`UserVerificationChecker`
-// covers the same browser instantly). Cap it so a tab left open overnight doesn't poll forever.
-const POLL_LIMIT_MS = 15 * 60 * 1000;
-
-// `error` (the request failed) is kept distinct from `unconfirmed` so a network failure
-// isn't mistaken for an unverified email.
-type CheckStatus = 'idle' | 'checking' | 'unconfirmed' | 'error';
-
-// `throttled` is distinct from `error` for the same reason: the send was refused, not failed. It
-// says only why the button is held — the countdown says whether it still is.
+// `throttled` is distinct from `error`: the send was refused, not failed. It says only why the
+// button is held — the countdown says whether it still is.
 type SendStatus = 'idle' | 'sending' | 'error' | 'throttled';
 
-export function useEmailVerification( flow: string, scope: string ) {
-	const dispatch = useDispatch();
-	const isVerified = useSelector( isCurrentUserEmailVerified );
-	const sendVerificationEmail = useSendEmailVerification();
-
-	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
-
-	const { secondsUntilResend, hold: holdResend } = useResendCooldown( {
+// Kept across reloads, so a wait the server is still enforcing survives one.
+function usePersistedCooldown( scope: string ) {
+	return useResendCooldown( {
 		initialDeadline: gateResendAvailableAt( scope ),
 		onHold: ( deadline ) => markResendUnavailableUntil( scope, deadline ),
 	} );
-	const [ isPollingExpired, setIsPollingExpired ] = useState( false );
-	const [ pollWindowKey, setPollWindowKey ] = useState( 0 );
-	const [ checkStatus, setCheckStatus ] = useState< CheckStatus >( 'idle' );
-	const [ isVisible, setIsVisible ] = useState( () => document.visibilityState === 'visible' );
+}
+
+// `pendingEmail` is set while a correction waits to be confirmed, when the dedicated endpoint
+// would mail the address being left rather than the one waiting.
+export function useEmailVerification( flow: string, scope: string, pendingEmail?: string ) {
+	const dispatch = useDispatch();
+	const isVerified = useSelector( isCurrentUserEmailVerified );
+	const sendVerificationEmail = useSendEmailVerification( { from: ACTIVATION_EMAIL_SOURCE } );
+	const { request: askAgain } = useEmailChangeRequest();
+
+	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
+
+	// One wait per path. The server limits them separately, and a wait only ever lengthens, so a
+	// long one earned against the address being left would otherwise outlast the correction that
+	// was made to escape it.
+	const originalCooldown = usePersistedCooldown( scope );
+	const pendingCooldown = usePersistedCooldown( pendingChangeScope( scope ) );
+	const { secondsUntilResend, hold: holdResend } = pendingEmail
+		? pendingCooldown
+		: originalCooldown;
+	// A confirmation on another device raises no signal — `UserVerificationChecker` covers the same
+	// browser — so polling is the only thing that notices it.
+	const { restart: restartPoll } = useBackoffPoll(
+		() => dispatch( fetchCurrentUser() ),
+		! isVerified
+	);
 
 	// The initial email is the activation email from account creation; this only resends.
 	const resend = async () => {
 		setSendStatus( 'sending' );
 
 		try {
-			const response = await sendVerificationEmail();
-			if ( ! response?.success ) {
-				throw new Error( 'unsuccessful_response' );
+			if ( pendingEmail ) {
+				await askAgain( pendingEmail );
+				holdResend( PENDING_CHANGE_RESEND_SECONDS );
+			} else {
+				const response = await sendVerificationEmail();
+				if ( ! response?.success ) {
+					throw new Error( 'unsuccessful_response' );
+				}
+				holdResend( resendAcceptedRetryAfter( response ) );
 			}
-			holdResend( resendAcceptedRetryAfter( response ) );
-			// A fresh link restarts the polling window; it may be confirmed long after the last.
-			setIsPollingExpired( false );
-			setPollWindowKey( ( key ) => key + 1 );
-			setCheckStatus( 'idle' );
+			// A fresh link is about to be opened, so poll tightly again from here.
+			restartPoll();
 			setSendStatus( 'idle' );
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
 				flow,
@@ -66,8 +79,11 @@ export function useEmailVerification( flow: string, scope: string ) {
 				holdResend( retryAfter );
 			}
 			setSendStatus( retryAfter !== null ? 'throttled' : 'error' );
-			// Unchanged for ordinary failures, so their existing aggregation isn't split.
-			const failure = error instanceof Error ? error.message : String( error );
+			// Unchanged for the dedicated endpoint, so its existing aggregation isn't split. A
+			// refusal from the other names the address of a change already pending, which has no
+			// business in analytics.
+			const reported = error instanceof Error ? error.message : String( error );
+			const failure = pendingEmail ? 'pending_change_request_failed' : reported;
 			recordTracksEvent( 'calypso_signup_email_verification_email_send_failed', {
 				flow,
 				is_resend: true,
@@ -76,59 +92,9 @@ export function useEmailVerification( flow: string, scope: string ) {
 		}
 	};
 
-	// On becoming visible, check `/me` without waiting for the next poll tick.
-	useEffect( () => {
-		const onVisibilityChange = () => {
-			const visible = document.visibilityState === 'visible';
-			setIsVisible( visible );
-			if ( visible && ! isVerified ) {
-				dispatch( fetchCurrentUser() );
-			}
-		};
-		document.addEventListener( 'visibilitychange', onVisibilityChange );
-		return () => document.removeEventListener( 'visibilitychange', onVisibilityChange );
-	}, [ isVerified, dispatch ] );
-
-	useEffect( () => {
-		if ( isVerified ) {
-			return;
-		}
-		const timer = setTimeout( () => setIsPollingExpired( true ), POLL_LIMIT_MS );
-		return () => clearTimeout( timer );
-	}, [ isVerified, pollWindowKey ] );
-
-	useInterval(
-		() => dispatch( fetchCurrentUser() ),
-		isVisible && ! isVerified && ! isPollingExpired && EVERY_FIVE_SECONDS
-	);
-
-	const checkNow = useCallback( async () => {
-		setCheckStatus( 'checking' );
-		// Clear a stale send failure, but not a throttle — that one is still true, and the
-		// button is still counting down against it.
-		setSendStatus( ( status ) => ( status === 'error' ? 'idle' : status ) );
-		recordTracksEvent( 'calypso_signup_email_verification_check_click', { flow } );
-
-		try {
-			// `fetchUser` throws on a failed request, so a network problem can't be
-			// mistaken for an unconfirmed email the way `fetchCurrentUser` would.
-			const { email_verified } = await fetchUser();
-			if ( email_verified ) {
-				dispatch( setUserEmailVerified( true ) );
-			} else {
-				setCheckStatus( 'unconfirmed' );
-			}
-		} catch {
-			setCheckStatus( 'error' );
-		}
-	}, [ dispatch, flow ] );
-
 	return {
-		isVerified,
 		sendStatus,
 		secondsUntilResend,
-		checkStatus,
-		checkNow,
 		resend,
 	};
 }

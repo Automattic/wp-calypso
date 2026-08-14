@@ -14,6 +14,7 @@ export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
 export const WRITE_ON_FLOW = 'write-on';
+export const WRITE_NEW_SITE_FLOW = 'write-new-site';
 export const START_WRITING_FLOW = 'start-writing';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';

@@ -1,6 +1,5 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
-import { DataViews } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, type ComponentType, type ReactNode, useState } from 'react';
 import RequestReviewModal from '../request-review-modal';
@@ -15,27 +14,6 @@ type ActiveModal =
 	| { kind: 'request-review'; site: TaggedSite }
 	| null;
 
-// `type`/`layout` are the only viewport-dependent parts of the view: a table on
-// desktop, stacked list cards on narrow viewports.
-function responsiveViewParts( isDesktop: boolean ): Pick< View, 'type' | 'layout' > {
-	if ( ! isDesktop ) {
-		return { type: 'list', layout: {} };
-	}
-
-	return {
-		type: 'table',
-		layout: {
-			styles: {
-				site: { width: '40%' },
-				migratedOn: { width: '25%' },
-				reviewStatus: { width: '25%' },
-			},
-		},
-	};
-}
-
-// The stable, user-mutable parts of the view. `type`/`layout` are viewport-derived
-// and applied in `responsiveView`, so the placeholders here are always overridden.
 const INITIAL_VIEW: View = {
 	search: '',
 	filters: [],
@@ -47,7 +25,13 @@ const INITIAL_VIEW: View = {
 	titleField: 'site',
 	fields: [ 'migratedOn', 'reviewStatus' ],
 	type: 'table',
-	layout: {},
+	layout: {
+		styles: {
+			site: { width: '40%' },
+			migratedOn: { width: '25%' },
+			reviewStatus: { width: '25%' },
+		},
+	},
 };
 
 const DefaultTableWrapper = ( { children }: { children: ReactNode } ) => <>{ children }</>;
@@ -69,13 +53,7 @@ export default function MigrationsCommissionsList( {
 	locale: string;
 	TableWrapper?: ComponentType< { children: ReactNode } >;
 } ) {
-	const isDesktop = useViewportMatch( 'large' );
-
 	const [ view, setView ] = useState< View >( INITIAL_VIEW );
-
-	// `type`/`layout` follow the viewport; derive them at render so we don't sync
-	// derived state through an effect. User-driven view changes stay in `view`.
-	const responsiveView: View = { ...view, ...responsiveViewParts( isDesktop ) };
 
 	const [ activeModal, setActiveModal ] = useState< ActiveModal >( null );
 
@@ -93,18 +71,14 @@ export default function MigrationsCommissionsList( {
 
 	const actions = useCommissionListActions( { onUntagSite, onRequestReview } );
 
-	const pagination = {
-		totalItems: items.length,
-		totalPages: 1,
-	};
-
 	const fields: Field< TaggedSite >[] = useMemo(
 		() => [
 			{
 				id: 'site',
 				label: __( 'Site' ),
-				getValue: () => '-',
+				getValue: ( { item }: { item: TaggedSite } ) => item.url,
 				render: ( { item }: { item: TaggedSite } ): ReactNode => <SiteColumn site={ item.url } />,
+				enableGlobalSearch: true,
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -139,28 +113,33 @@ export default function MigrationsCommissionsList( {
 		[ locale ]
 	);
 
+	const { data, paginationInfo } = useMemo(
+		() => filterSortAndPaginate( items, view, fields ),
+		[ items, view, fields ]
+	);
+
 	return (
 		<>
 			<TableWrapper>
 				<DataViews
-					data={ items }
-					view={ responsiveView }
+					data={ data }
+					view={ view }
 					onChangeView={ setView }
 					fields={ fields }
-					search={ false }
+					searchLabel={ __( 'Search by site' ) }
 					actions={ actions }
 					getItemId={ ( item ) => `${ item.id }` }
-					paginationInfo={ pagination }
-					defaultLayouts={ { table: {}, list: {} } }
+					paginationInfo={ paginationInfo }
+					defaultLayouts={ { table: {} } }
 				>
-					{ isDesktop && (
-						<HStack
-							className="dataviews__view-actions commissions-list__view-actions"
-							justify="end"
-						>
-							<DataViews.ViewConfig />
-						</HStack>
-					) }
+					<HStack
+						className="dataviews__view-actions commissions-list__view-actions"
+						justify="space-between"
+						alignment="center"
+					>
+						<DataViews.Search />
+						<DataViews.ViewConfig />
+					</HStack>
 					<DataViews.Layout />
 					<DataViews.Footer />
 				</DataViews>

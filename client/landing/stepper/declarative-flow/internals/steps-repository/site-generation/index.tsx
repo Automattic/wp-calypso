@@ -12,26 +12,32 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const query = useMemo( () => new URLSearchParams( window.location.search ), [] );
 	const siteIdentifier = query.get( 'siteId' ) || query.get( 'siteSlug' );
 	const editorUrl = getSafeEditorUrl( query.get( 'editorUrl' ) );
+	const specId = query.get( 'specId' );
+	// Fallback checklist only: the server-computed ui.steps from the status
+	// endpoint is authoritative (labels included, already localized). This
+	// list covers the moments before the first response arrives, and backends
+	// that do not send the ui block yet.
 	const steps = useMemo(
 		() => [
 			{ id: 'preparing', label: translate( 'Preparing your site' ) },
 			{ id: 'designing', label: translate( 'Choosing your design' ) },
 			{ id: 'building', label: translate( 'Building your pages' ) },
-			{ id: 'polishing', label: translate( 'Polishing your design' ) },
-			{ id: 'finalizing', label: translate( 'Getting everything ready' ) },
+			{ id: 'images', label: translate( 'Adding your images' ) },
+			{ id: 'polishing', label: translate( 'Polishing your site' ) },
+			{ id: 'publishing', label: translate( 'Publishing your site' ) },
 		],
 		[ translate ]
 	);
-	const state = useSiteGeneration( { siteIdentifier, editorUrl, steps } );
+	const state = useSiteGeneration( { siteIdentifier, editorUrl, specId, steps } );
 
-	const retry = () => {
+	const reload = () => {
 		window.location.reload();
 	};
 
 	return (
 		<>
 			<DocumentHead title={ translate( 'Generating your site' ) } />
-			<SiteGenerationView onRetry={ retry } state={ state } />
+			<SiteGenerationView onReload={ reload } state={ state } />
 		</>
 	);
 };

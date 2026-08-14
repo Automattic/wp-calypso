@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import Notice from 'calypso/components/notice';
+import Notice from 'calypso/dashboard/components/notice';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -116,9 +116,8 @@ export default function ProductPlanOverlapNotices( {
 			<QueryProductsList />
 
 			{ showOverlap && (
-				<Notice
-					showDismiss={ false }
-					text={ translate(
+				<Notice variant="info">
+					{ translate(
 						'Your %(planName)s Plan includes:' +
 							'{{list/}}' +
 							'Consider removing conflicting products.',
@@ -137,7 +136,7 @@ export default function ProductPlanOverlapNotices( {
 							},
 						}
 					) }
-				/>
+				</Notice>
 			) }
 		</>
 	);

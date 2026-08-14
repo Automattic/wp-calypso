@@ -201,11 +201,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		}
 	}
 
-	&.highlight-card__settings-tooltip {
-		// Make the popover under `.page-modules-settings-popover` of z-index: 175.
-		z-index: z-index("root", ".tooltip.popover.highlight-card__settings-tooltip");
-	}
-
 	// @TODO: Introduce the support for the border of white background arrows in the popover component.
 	// Set the border of the white background bottom arrows.
 	&.highlight-card-popover {
@@ -344,29 +339,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	color: var(--studio-gray-30);
 	font-size: $font-body-small;
 }
-.highlight-card__settings-tooltip {
-	.highlight-card-tooltip-content {
-		flex-direction: column;
-		align-items: flex-end;
-
-		p {
-			margin-bottom: 24px;
-		}
-
-		button {
-			font-family: $font-sf-pro-text;
-			font-weight: 600;
-			font-size: $font-body-extra-small;
-			line-height: 20px;
-			color: var(--studio-black);
-			padding: 4px 8px;
-			background-color: var(--studio-white);
-			border-radius: 4px;
-			cursor: pointer;
-		}
-	}
-}
-
 @media (max-width: $custom-mobile-breakpoint) {
 	.highlight-cards-heading {
 		margin-left: $font-body-small;

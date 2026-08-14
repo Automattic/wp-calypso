@@ -26,7 +26,8 @@ declare module '@tanstack/react-router' {
 	interface StaticDataRouteOption {
 		/**
 		 * If set, the route is only accessible when the site type supports this feature.
-		 * The check is performed in siteRoute.beforeLoad against getSiteTypeFeatureSupports(site).
+		 * The check is performed in siteRoute.beforeLoad and agencySiteRoute.beforeLoad
+		 * against getSiteTypeFeatureSupports(site).
 		 */
 		requiresSiteTypeSupport?: SiteTypeFeature;
 		availableToInaccessibleJetpackSites?: boolean;

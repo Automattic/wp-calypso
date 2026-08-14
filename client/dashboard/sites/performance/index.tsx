@@ -13,8 +13,7 @@ import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callou
 import { SiteLaunchButton } from '../site-launch-button';
 import { getPerformanceCalloutProps } from './performance-callout';
 
-function SitePerformance() {
-	const { siteSlug } = siteRoute.useParams();
+export function SitePerformanceContent( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	return (
@@ -47,6 +46,11 @@ function SitePerformance() {
 			<PerformanceTrackerStop />
 		</HostingFeatureGatedWithCallout>
 	);
+}
+
+function SitePerformance() {
+	const { siteSlug } = siteRoute.useParams();
+	return <SitePerformanceContent siteSlug={ siteSlug } />;
 }
 
 export default SitePerformance;

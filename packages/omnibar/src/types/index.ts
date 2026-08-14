@@ -1,2 +1,8 @@
 export type { AdminBarNode } from './admin-bar';
-export type { OmnibarNode, OmnibarNodes, OmnibarProps } from './omnibar';
+export type {
+	OmnibarHrefResolver,
+	OmnibarNode,
+	OmnibarNodeBuilders,
+	OmnibarNodes,
+	OmnibarProps,
+} from './omnibar';

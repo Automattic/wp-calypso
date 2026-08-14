@@ -293,6 +293,25 @@ export function getWpcomPlanChangeUrl(
 	return getWpcomPlanChangeTarget( purchase, input )?.href;
 }
 
+/**
+ * Where a plan change started from the Dashboard ends up: abandoning it returns
+ * the user to where they were, and completing it lands them on the new purchase.
+ * Shared by everything that offers a plan change, so they can't send people to
+ * different places.
+ *
+ * Not the plan-change URL itself — that comes back from
+ * {@link getWpcomPlanChangeTarget}, which these are an input to.
+ */
+export function getPlanChangeReturnUrls(): {
+	cancelTo: string;
+	redirectTo: string;
+} {
+	return {
+		cancelTo: redirectToDashboardLink(),
+		redirectTo: getPurchaseSettingsRedirectBase(),
+	};
+}
+
 function buildSitePlanUpgradeUrl( {
 	siteSlug,
 	isTrial,

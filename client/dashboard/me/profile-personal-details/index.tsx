@@ -1,5 +1,6 @@
 import {
 	isAutomatticianQuery,
+	userEmailSettingsMutation,
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
@@ -35,12 +36,11 @@ export default function PersonalDetailsSection() {
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 	const [ isEmailValid, setIsEmailValid ] = useState< boolean >( true );
 
-	const mutation = useMutation(
-		withSnackbar( userSettingsMutation(), {
-			success: __( 'Settings saved.' ),
-			error: { source: 'server' },
-		} )
-	);
+	const snackbar = { success: __( 'Settings saved.' ), error: { source: 'server' as const } };
+	const mutation = useMutation( withSnackbar( userSettingsMutation(), snackbar ) );
+	// Two instances rather than one whose options change with the payload, which a save already
+	// in flight would pick up.
+	const emailMutation = useMutation( withSnackbar( userEmailSettingsMutation(), snackbar ) );
 
 	const data = useMemo( () => ( { ...userSettings, ...edits } ), [ userSettings, edits ] );
 
@@ -63,7 +63,8 @@ export default function PersonalDetailsSection() {
 			return;
 		}
 
-		mutation.mutate( submissionEdits, {
+		const save = 'user_email' in submissionEdits ? emailMutation : mutation;
+		save.mutate( submissionEdits, {
 			onSuccess: () => {
 				setEdits( {} );
 			},
@@ -85,7 +86,7 @@ export default function PersonalDetailsSection() {
 		return data[ key as keyof UserSettings ] !== userSettings[ key as keyof UserSettings ];
 	} );
 
-	const isSaving = mutation.isPending;
+	const isSaving = mutation.isPending || emailMutation.isPending;
 
 	// DataForm fields
 	const nameFields: Field< UserSettings >[] = [

@@ -76,6 +76,8 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 				onSearch={ setSearchQueryAndEmailSubject }
 				location="help-center"
 				isVisible
+				blogId={ site?.ID }
+				siteContextSource="help_center_context"
 				placeholder={ __( 'Search guides…', __i18n_text_domain__ ) }
 				sectionName={ sectionName }
 				useSearchControl

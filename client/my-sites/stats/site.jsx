@@ -31,8 +31,6 @@ import {
 	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
 import { useMomentInSite } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
-import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import {
@@ -208,9 +206,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentInSite = useMomentInSite( siteId );
 	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
-	const [ isPageSettingsTooltipDismissed, setIsPageSettingsTooltipDismissed ] = useState(
-		!! localStorage.getItem( 'notices_dismissed__traffic_page_settings' )
-	);
 
 	// Determine module visibility based on user settings, VideoPress availability, AND defaults.
 	const moduleVisibility = useMemo(
@@ -548,25 +543,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		getJetpackStatsAdminVersion( state, siteId )
 	);
 
-	const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
-		siteId,
-		'traffic_page_settings'
-	);
-	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
-		siteId,
-		'traffic_page_settings'
-	);
-
-	const onTooltipDismiss = () => {
-		if ( isPageSettingsTooltipDismissed || ! showSettingsTooltip ) {
-			return;
-		}
-
-		setIsPageSettingsTooltipDismissed( true );
-		localStorage.setItem( 'notices_dismissed__traffic_page_settings', 1 );
-		mutateNoticeVisbilityAsync().finally( refetchNotices );
-	};
-
 	// Module settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
 	const isModuleSettingsSupported =
 		! config.isEnabled( 'is_running_in_jetpack_site' ) ||
@@ -610,8 +586,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 									selectedItem="traffic"
 									moduleToggles={ moduleToggles }
 									siteId={ siteId }
-									isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-									onTooltipDismiss={ onTooltipDismiss }
 									customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
 								/>
 							)

@@ -7,6 +7,8 @@ export type AgencyTierId =
 
 export type AgencyTierStatus = 'early_access' | 'tier_protected';
 
+export type AgencyApprovalStatus = 'pending' | 'approved' | 'rejected';
+
 export interface AgencyTier {
 	id?: AgencyTierId;
 	label?: string;
@@ -38,6 +40,72 @@ export type AgencyCapability =
 	| 'a4a_remove_payment_methods'
 	| 'a4a_remove_managed_sites';
 
+export type AgencyPartnerDirectorySlug =
+	| 'wordpress'
+	| 'jetpack'
+	| 'woocommerce'
+	| 'pressable'
+	| 'vip';
+
+export type AgencyPartnerDirectoryEntryStatus = 'pending' | 'approved' | 'rejected' | 'closed';
+
+export interface AgencyPartnerDirectoryEntry {
+	status?: AgencyPartnerDirectoryEntryStatus;
+	directory: AgencyPartnerDirectorySlug;
+	urls: string[];
+	note: string;
+	is_published?: boolean;
+}
+
+export interface AgencyPartnerDirectoryApplication {
+	status?: 'pending' | 'in-progress' | 'completed';
+	directories: AgencyPartnerDirectoryEntry[];
+	feedback_url: string;
+	is_published?: boolean;
+}
+
+export interface AgencyProfile {
+	company_details: {
+		name: string;
+		email: string;
+		website: string;
+		bio_description: string;
+		logo_url: string;
+		landing_page_url: string;
+		country: string;
+	};
+	listing_details: {
+		is_available: boolean;
+		is_global: boolean;
+		industries: string[];
+		services: string[];
+		products: string[];
+		languages_spoken: string[];
+	};
+	budget_details: {
+		budget_lower_range: string;
+		budget_upper_range: string;
+		has_hourly_rate: boolean;
+		hourly_rate_value: string;
+	};
+	partner_directory_application: AgencyPartnerDirectoryApplication | null;
+}
+
+/**
+ * Body of PUT /wpcom/v2/agency/$agencyId/profile/application.
+ */
+export interface AgencyPartnerDirectoryApplicationUpdate {
+	services: string[];
+	products: string[];
+	directories: {
+		directory: AgencyPartnerDirectorySlug;
+		urls: string[];
+		note?: string;
+	}[];
+	feedback_url: string;
+	is_published?: boolean;
+}
+
 /**
  * A single agency, as returned by GET /wpcom/v2/agency. Only the fields
  * consumed by the dashboard are modeled here.
@@ -51,6 +119,12 @@ export interface Agency {
 		allowed: boolean;
 	};
 	influenced_revenue?: number;
+	approval_status?: AgencyApprovalStatus | '';
+	profile?: AgencyProfile;
+	partner_directory?: {
+		allowed: boolean;
+		directories: AgencyPartnerDirectorySlug[];
+	};
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
 	user?: {

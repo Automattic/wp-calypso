@@ -48,6 +48,12 @@ export interface CancelPurchaseButtonProps {
 	isLinkStyle?: boolean;
 	isInline?: boolean;
 	cancelIntentOverride?: 'refund' | 'autorenew';
+	/**
+	 * True once the cancel mutation has already fired at confirm-time, so the
+	 * in-dialog survey is a post-cancellation questionnaire rather than the
+	 * thing that performs the cancellation.
+	 */
+	cancellationCompleted?: boolean;
 	activeSubscriptions: Array< { id: number; productName: string } >;
 	onCancellationStart: null | ( ( intent?: 'refund' | 'autorenew' ) => void );
 	onCancellationComplete: () => void;
@@ -231,6 +237,7 @@ class CancelPurchaseButton extends Component<
 						flowType={ flowType }
 						isAkismet={ isAkismet }
 						cancellationInProgress={ isLoading }
+						cancellationCompleted={ this.props.cancellationCompleted }
 					/>
 				) }
 
@@ -243,6 +250,7 @@ class CancelPurchaseButton extends Component<
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.props.onSurveyComplete }
 						cancellationInProgress={ isLoading }
+						cancellationCompleted={ this.props.cancellationCompleted }
 						intent={ this.props.displayVariant === 'remove' ? 'remove' : 'cancel' }
 					/>
 				) }

@@ -1,8 +1,8 @@
-[← Writing tests](./writing_tests.md) | [Top](../README.md) | [Style Guide →](./style_guide.md)
+[← Documentation index](./overview.md)
 
 # Library Objects
 
-The `@automattic/calypso-e2e` package offers a robust set of library objects patterned after the Page Object Model. When developing a new test spec, try to leverage these objects as much as possible. Doing so will reduce code duplication and make test development faster.
+The `@automattic/calypso-e2e` package offers a set of library objects patterned after the Page Object Model. When developing a new test spec, try to leverage these objects as much as possible. Doing so will reduce code duplication and make test development faster.
 
 For a brief introduction to Page Object Models, please refer to [this page](https://playwright.dev/docs/test-pom).
 
@@ -43,33 +43,49 @@ Components represent a sub-portion of the page, and are typically shared across 
 The SidebarComponent, as an example, encapsulates element selectors and actions for only the Sidebar, leaving interactions on the main content pane for the respective Page objects.
 
 ```typescript
+const selectors = {
+	sidebar: '.sidebar',
+	linkWithText: ( text: string ) => `a:has-text("${ text }")`,
+};
+
 /**
- * Represents a reusable component for interacting with the sidebar.
+ * Component representing the sidebar on the dashboard of WPCOM.
  */
-export class SomeComponent {
-	/**
-	 * JSDoc is expected for constructor if present.
-	 *
-	 * @param {Page} page Page object.
-	 */
-	constructor( page: Page ) {}
+export class SidebarComponent {
+	private page: Page;
 
 	/**
-	 * JSDoc is expected for functions.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {string} menu Menu to be clicked.
-	 * @returns {Promise<void>} No return value.
+	 * @param {Page} page The underlying page.
 	 */
-	async clickOnMenu( menu: string ): Promise< void > {
-		await this.page.click( selectors.myHome );
-		await this.page.waitForNavigation();
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
+	/**
+	 * Navigates to the given (sub)item of the sidebar menu.
+	 *
+	 * @param {string} item Plaintext representation of the top level heading.
+	 * @param {string} subitem Plaintext representation of the child level heading.
+	 */
+	async navigate( item: string, subitem?: string ): Promise< void > {
+		await this.page.locator( selectors.sidebar ).waitFor();
+		// ...
 	}
 }
+```
 
-// Then, in a test file, page, or flow...
+Then in a test spec (using a custom fixture)
 
-const someComponent = new SomeComponent( page );
-await someComponent.clickOnMenu( 'My Home' );
+```typescript
+test( 'As a user, I can reach the Posts list from the sidebar', async ( {
+	componentSidebar,
+} ) => {
+	await test.step( 'When I select "Posts" in the sidebar', async function () {
+		await componentSidebar.navigate( 'Posts' );
+	} );
+} );
 ```
 
 ---
@@ -85,48 +101,77 @@ A well-implemented page object will abstract complex interactions on the page to
 
 ```typescript
 /**
- * JSDoc is expected for Class definitions.
+ * Represents the generic Import Content page.
  */
-export class FormPage {
+export class ImportContentPage {
+	private page: Page;
+
+	readonly heading: Locator;
+	readonly importFileContentPage: ImportFileContentPage;
+
+	/**
+	 * Constructs an instance of the page.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+
+		this.heading = this.page.getByRole( 'heading', { name: 'Import Content' } );
+		this.importFileContentPage = new ImportFileContentPage( page );
+	}
+
+	/**
+	 * Navigates to the import content from Medium page.
+	 *
+	 * @param siteSlug Site slug.
+	 */
+	async visit( siteSlug: string ): Promise< void > {
+		await this.page.goto( DataHelper.getCalypsoURL( `import/${ siteSlug }` ) );
+	}
+}
+```
+
+Then in a test spec (using a custom fixture)
+
+```typescript
+test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Medium account', async ( {
+	sitePublic,
+	pageImportContent,
+} ) => {
+	await test.step( 'When I visit the "Import Content" page for my new site', async function () {
+		await pageImportContent.visit( sitePublic.blog_details.site_slug );
+	} );
+} );
+```
+
+## Flows
+
+Flows capture a process that spans across multiple pages or components. Its purpose is to abstract a multi-step flow into one call which clearly articulates its intention. Creating a single flow that has ten "steps" can be more efficient that creating ten different page objects to represent every step.
+
+```typescript
+/**
+ * Class encapsulating the flow when starting a new site (`/start`)
+ */
+export class StartSiteFlow {
 	private page: Page;
 
 	/**
-	 * JSDoc is expected for constructor.
+	 * Constructs an instance of the flow.
 	 *
-	 * @param {Page} page Page object.
+	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
 		this.page = page;
 	}
 
 	/**
-	 * JSDoc is expected for functions.
-	 *
-	 * @param {string} text Text to be entered into the field.
-	 * @returns {Promise<void>} No return value.
+	 * Clicks a button with the specified name.
+	 * @param {string} name Name of the button.
+	 * @returns {Promise<void>}
 	 */
-	async enterText( text: string ): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
-
-		// Some tricky section of code
-		await this.page.fill( selectors.staticSelector );
+	async clickButton( name: string ): Promise< void > {
+		await this.page.getByRole( 'button', { name } ).click();
 	}
 }
-
-// Then, in a test file...
-
-it( 'Test case', async function () {
-	const somePage = new FormPage( this.page );
-	await somePage.enterText( 'blah' );
-} );
-```
-
----
-
-## Flows
-
-Flows capture a process that spans across multiple pages or components. Its purpose is to abstract a multi-step flow into one call which clearly articulates its intention.
-
-```typescript
-
 ```

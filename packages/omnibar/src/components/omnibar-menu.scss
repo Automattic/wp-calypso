@@ -1,0 +1,88 @@
+@import './variables';
+
+.omnibar__popover {
+	// All colors used by the Menu's internal Emotion styles read from these
+	// CSS custom properties (see node_modules/@wordpress/components/src/menu/styles.ts).
+	// Setting them here re-skins the entire popover without specificity wars.
+	--wp-components-color-background: var( --omnibar-submenu-background );
+	--wp-components-color-foreground: var( --omnibar-submenu-text-color );
+	--wp-components-color-accent: transparent; // hover/active item bg
+	--wp-components-color-accent-inverted: var(
+		--omnibar-submenu-highlight-color
+	); // hover/active item text
+	--wp-components-color-gray-100: transparent; // submenu-trigger-open bg
+	--wp-components-color-gray-700: var( --omnibar-submenu-text-color ); // prefix / suffix text
+
+	// Padding, border-radius, and the elevation portion of the popover's
+	// box-shadow are hardcoded (not tokens). Class is doubled to outrank
+	// Emotion's auto-generated selector at the popover level.
+	&.omnibar__popover {
+		border-radius: 0;
+		box-shadow: none;
+		padding-inline: 0;
+	}
+
+	[role='menuitem'],
+	[role='menuitemradio'],
+	[role='menuitemcheckbox'],
+	.omnibar__menu-static-item {
+		min-height: 42px;
+		padding-block: 8px;
+		padding-inline: 16px;
+		font-size: 16px;
+		line-height: 1.6;
+
+		@media ( min-width: 782px ) {
+			min-height: 26px;
+			padding-block: 0;
+			padding-inline: 10px;
+			font-size: $omnibar-font-size;
+			line-height: 20px;
+		}
+	}
+
+	[role='menuitem'],
+	[role='menuitemradio'],
+	[role='menuitemcheckbox'] {
+		border-radius: 0;
+		grid-template-columns: minmax( 0, max-content ) 1fr;
+
+		&[data-focus-visible] {
+			box-shadow: none;
+			color: var( --omnibar-submenu-highlight-color );
+		}
+	}
+
+	.omnibar__menu-static-item {
+		box-sizing: border-box;
+		grid-column: 1 / -1;
+		display: grid;
+		grid-template-columns: minmax( 0, max-content ) 1fr;
+		align-items: center;
+		color: var( --omnibar-submenu-text-color );
+
+		> * {
+			grid-column: 2;
+		}
+	}
+
+	.omnibar__menu-group.is-secondary {
+		grid-column: 1 / -1;
+		margin-block-start: 8px;
+		padding-block: 4px;
+		background-color: var( --omnibar-secondary-group-background );
+
+		&:first-child {
+			margin-block-start: -4px;
+		}
+
+		&:last-child {
+			margin-block-end: -4px;
+		}
+
+		@supports ( grid-template-columns: subgrid ) {
+			display: grid;
+			grid-template-columns: subgrid;
+		}
+	}
+}

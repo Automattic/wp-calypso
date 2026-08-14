@@ -1,4 +1,3 @@
-import { useWindowDimensions } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import {
@@ -15,8 +14,6 @@ import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
 import observeEditorCanvasPointerDown from '../../utils/observe-editor-canvas-pointerdown';
 
-const SIDEBAR_TRANSITION_DURATION_MS = 200;
-
 // On Gutenberg editor screens, only dock when fullscreen mode is on —
 // otherwise wp-admin's chrome leaves too little room for the editor.
 const FULLSCREEN_GATED_BODY_CLASSES = [ 'post-php', 'post-new-php', 'site-editor-php' ];
@@ -30,7 +27,6 @@ const CHAT_PORTAL_CLASS = 'agents-manager-chat';
 // Container classes that reserve layout space for the docked sidebar.
 const SIDEBAR_CONTAINER_CLASS = 'agents-manager-sidebar-container';
 const SIDEBAR_OPEN_CLASS = 'agents-manager-sidebar-container--sidebar-open';
-const SIDEBAR_CLOSING_CLASS = 'agents-manager-sidebar-container--closing';
 
 function getIsFullscreenGateOpen(): boolean {
 	const { classList } = document.body;
@@ -47,34 +43,20 @@ function subscribeToBodyClasses( notify: () => void ): () => void {
 }
 
 /**
- * Prevents docking the assistant when the user is browsing with certain conditions.
+ * Whether the assistant can dock: requires a desktop viewport and, on Gutenberg
+ * editor screens, fullscreen mode.
  *
  * IMPORTANT: Keep this logic in sync with
  * `jetpack/projects/packages/agents-manager/src/js/sidebar-docking-gate.ts`.
  */
 const useCanDock = ( { desktopMediaQuery }: { desktopMediaQuery: string } ) => {
 	const isDesktop = useMediaQuery( desktopMediaQuery );
-	const { height } = useWindowDimensions();
-	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
-	const hasEnoughHeight = height >= adminMenuHeight;
 	const isFullscreenGateOpen = useSyncExternalStore(
 		subscribeToBodyClasses,
 		getIsFullscreenGateOpen
 	);
 
-	const calculateAdminMenuHeight = useCallback( () => {
-		const adminMenu = document.getElementById( 'adminmenu' );
-		if ( adminMenu ) {
-			const adminBar = document.getElementById( 'wpadminbar' );
-			const adminBarHeight = adminBar ? adminBar.offsetHeight : 32;
-			setAdminMenuHeight( adminMenu.offsetHeight + adminBarHeight + 20 );
-		}
-	}, [] );
-
-	return {
-		canDock: isDesktop && hasEnoughHeight && isFullscreenGateOpen,
-		calculateAdminMenuHeight,
-	};
+	return isDesktop && isFullscreenGateOpen;
 };
 
 interface Options {
@@ -117,10 +99,9 @@ export default function useAgentLayoutManager( {
 	const portalRef = useRef< HTMLDivElement | undefined >( undefined );
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
-	const { canDock, calculateAdminMenuHeight } = useCanDock( { desktopMediaQuery } );
+	const canDock = useCanDock( { desktopMediaQuery } );
 	const shouldRenderSidebar = canDock && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
-	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
 	const defaultDockedRef = useRef( defaultDocked );
@@ -155,8 +136,6 @@ export default function useAgentLayoutManager( {
 		if ( ! isReady || ! container ) {
 			return;
 		}
-
-		calculateAdminMenuHeight();
 
 		// Set initial docked state
 		if ( isDocked === null ) {
@@ -197,12 +176,7 @@ export default function useAgentLayoutManager( {
 			// Cancel the sidebar-open `dock()` scheduled — its closure captured
 			// `canDock` as true, so it would otherwise open the just-undocked sidebar.
 			clearTimeout( openSidebarTimeoutRef.current );
-			clearTimeout( closeSidebarTimeoutRef.current );
-			container.classList.remove(
-				SIDEBAR_CONTAINER_CLASS,
-				SIDEBAR_OPEN_CLASS,
-				SIDEBAR_CLOSING_CLASS
-			);
+			container.classList.remove( SIDEBAR_CONTAINER_CLASS, SIDEBAR_OPEN_CLASS );
 			portalRef.current.classList.add( 'agents-manager-chat--undocked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--docked' );
 			setIsSidebarOpen( false );
@@ -269,7 +243,6 @@ export default function useAgentLayoutManager( {
 	useLayoutEffect(
 		() => () => {
 			clearTimeout( openSidebarTimeoutRef.current );
-			clearTimeout( closeSidebarTimeoutRef.current );
 			setIsDocked( null );
 			setIsPortalReady( false );
 
@@ -277,7 +250,6 @@ export default function useAgentLayoutManager( {
 				container.classList.remove(
 					SIDEBAR_CONTAINER_CLASS,
 					SIDEBAR_OPEN_CLASS,
-					SIDEBAR_CLOSING_CLASS,
 					'is-split-screen'
 				);
 
@@ -296,8 +268,6 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		clearTimeout( closeSidebarTimeoutRef.current );
-		container.classList.remove( SIDEBAR_CLOSING_CLASS );
 		setIsSidebarOpen( true );
 
 		onOpenSidebarRef.current();
@@ -308,20 +278,9 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		const wasSidebarOpen = isSidebarOpen;
 		setIsSidebarOpen( false );
-
-		// Only suppress admin bar pointer events during an actual sidebar-close transition.
-		if ( wasSidebarOpen ) {
-			container.classList.add( SIDEBAR_CLOSING_CLASS );
-			clearTimeout( closeSidebarTimeoutRef.current );
-			closeSidebarTimeoutRef.current = setTimeout( () => {
-				container?.classList.remove( SIDEBAR_CLOSING_CLASS );
-			}, SIDEBAR_TRANSITION_DURATION_MS );
-		}
-
 		onCloseSidebarRef.current();
-	}, [ canDock, container, isReady, isSidebarOpen ] );
+	}, [ canDock, container, isReady ] );
 
 	const dock = useCallback( () => {
 		if ( ! isReady || ! container ) {

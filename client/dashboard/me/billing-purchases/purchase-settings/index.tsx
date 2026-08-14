@@ -69,11 +69,13 @@ import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { getPlanExpiryUrgency, hasPlanExpiryNotice } from '../../../components/plan-expiry-notice';
 import SiteIcon from '../../../components/site-icon';
+import { Text as IntentText } from '../../../components/text';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
-import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
+import { wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
 	getTitleForDisplay,
@@ -106,7 +108,7 @@ import {
 	hasAmountAvailableToRefund,
 } from '../../../utils/purchase';
 import {
-	getPurchaseSettingsRedirectBase,
+	getPlanChangeReturnUrls,
 	getSitePurchaseUpgradeUrl,
 	getSitePurchaseStorageUpgradeUrl,
 	getUpgradedPurchaseRedirectUrl,
@@ -200,9 +202,8 @@ function getHeaderUpgradeAction( purchase: Purchase ): { href: string; title: st
 	// WordPress.com plans go through the shared helper. A plan that gets nothing
 	// back has no upgrade to offer, and the non-plan path rejects it too.
 	const planAction = getPlanChangeAction( purchase, {
+		...getPlanChangeReturnUrls(),
 		upgradeOnly: true,
-		cancelTo: redirectToDashboardLink(),
-		redirectTo: getPurchaseSettingsRedirectBase(),
 	} );
 	if ( planAction ) {
 		return { href: planAction.href, title: planAction.title };
@@ -257,6 +258,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const hasEnTranslation = useHasEnTranslation();
 	const { user } = useAuth();
 	const isOwner = String( user.ID ) === String( purchase.user_id );
+	// The purchase list gates its renewal link on these same two conditions.
 	const canBeRenewed = purchase.can_explicit_renew && isOwner;
 	const upgradeAction = getHeaderUpgradeAction( purchase );
 	const storageUpgradeUrl = getSitePurchaseStorageUpgradeUrl( purchase );
@@ -293,6 +295,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 				onClick={ () => {
 					recordTracksEvent( 'calypso_purchases_renew_now_click', {
 						product_slug: purchase.product_slug,
+						position: 'purchase-settings',
 					} );
 					renewPurchase( purchase );
 				} }
@@ -515,10 +518,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 		} );
 
 	if ( isDotcomPlan( purchase ) ) {
-		const action = getPlanChangeAction( purchase, {
-			cancelTo: redirectToDashboardLink(),
-			redirectTo: getPurchaseSettingsRedirectBase(),
-		} );
+		const action = getPlanChangeAction( purchase, getPlanChangeReturnUrls() );
 		if ( ! action ) {
 			return null;
 		}
@@ -579,6 +579,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 
 function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
+	// The purchase list gates its renewal link on these same two conditions.
 	const canBeRenewed =
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
 	const { recordTracksEvent } = useAnalytics();
@@ -597,6 +598,7 @@ function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 					onClick={ () => {
 						recordTracksEvent( 'calypso_purchases_renew_now_click', {
 							product_slug: purchase.product_slug,
+							position: 'purchase-settings',
 						} );
 						renewPurchase( purchase );
 					} }
@@ -804,7 +806,9 @@ function getFields( {
 					) {
 						// translators: %(date)s is a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {
-							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
+							date: formatDate( new Date( purchase.renew_date ?? '' ), locale, {
+								dateStyle: 'long',
+							} ),
 						} );
 					}
 					if ( ! purchase.is_auto_renew_enabled && purchase.expiry_date ) {
@@ -826,6 +830,18 @@ function getFields( {
 					}
 					return undefined;
 				} )();
+				// The first branch above reads "You will be billed on 1 August", a
+				// statement of what is going to happen; coloring it would contradict
+				// it. Only the expiry wordings take a color.
+				const expiryUrgency = isRenewingBeforeExpiration( purchase )
+					? null
+					: getPlanExpiryUrgency( purchase );
+				const help =
+					helpText && ( expiryUrgency === 'warning' || expiryUrgency === 'error' ) ? (
+						<IntentText intent={ expiryUrgency }>{ helpText }</IntentText>
+					) : (
+						helpText
+					);
 				if ( purchase.is_auto_renew_enabled && ! purchase.is_rechargeable ) {
 					if ( String( user.ID ) !== String( purchase.user_id ) ) {
 						return null;
@@ -867,7 +883,7 @@ function getFields( {
 						checked={ getValue( { item: purchase } ) }
 						disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
 						onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
-						help={ helpText }
+						help={ help }
 					/>
 				);
 			},
@@ -1471,13 +1487,23 @@ export default function PurchaseSettings() {
 	} );
 	const features = cancelFeaturesResponse?.features ?? null;
 	const hasExpiryInfo = ! purchase.partner_name || isA4ABillingDragonPurchase( purchase );
+	// These two are deliberately separate: the header stands down whenever there
+	// is a notice at all, while the expiry card only takes a color when there is
+	// something the customer has to act on. While a renewal is still expected the
+	// card reads "Auto-renew is enabled", or "Pending renewal" once past the
+	// expiry date; coloring either would contradict what they say.
+	const expiryUrgency = mightStillAutoRenew( purchase ) ? null : getPlanExpiryUrgency( purchase );
+	const planExpiryNoticeShowing = hasPlanExpiryNotice( purchase );
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
 	const isCurrentPurchaseOwner = String( user.ID ) === String( purchase.user_id );
 	const canHeaderUpgrade = Boolean( upgradeAction );
-	const shouldShowHeaderUpgradeAction = canHeaderUpgrade && isCurrentPurchaseOwner;
+	// While the plan-expiry notice is up, keep the header on the one thing that
+	// needs doing. The quick-actions menu still holds everything else.
+	const shouldShowHeaderUpgradeAction =
+		canHeaderUpgrade && isCurrentPurchaseOwner && ! planExpiryNoticeShowing;
 	const shouldShowHeaderActionMenu =
 		isCurrentPurchaseOwner && ( canHeaderUpgrade || purchase.can_explicit_renew );
 	const shouldShowHeaderActions =
@@ -1591,6 +1617,7 @@ export default function PurchaseSettings() {
 							<OverviewCard
 								icon={ calendar }
 								title={ expiryDateTitle }
+								intent={ expiryUrgency === 'info' ? undefined : expiryUrgency ?? undefined }
 								heading={ ( () => {
 									if ( isIncluded && parentPurchase ) {
 										return parentWillRenew ? formattedParentRenewal : formattedParentExpiry;

@@ -529,6 +529,7 @@ export function noSite( context, next ) {
 	);
 
 	const isUnifiedCheckoutFlow = context.pathname.includes( '/checkout/unified' );
+	const isWpcomCheckoutFlow = context.pathname.includes( '/checkout/wpcom' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
@@ -539,6 +540,7 @@ export function noSite( context, next ) {
 		! isAkismetCheckoutFlow &&
 		! isMarketplaceSitelessCheckoutFlow &&
 		! isUnifiedCheckoutFlow &&
+		! isWpcomCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
 		! is100YearCheckoutFlow &&
@@ -779,6 +781,22 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 				}
 			} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
 				navigate( getJetpackAuthorizeURL( context, site ) );
+			} else if (
+				context.pathname.includes( '/checkout/' ) &&
+				context.pathname.includes( '/renew/' )
+			) {
+				// On a checkout renewal URL that carries an explicit site slug, an
+				// intermittently failed/unresolvable site fetch must not strip the slug:
+				// the all-sites redirect below would drop the user onto the slug-less
+				// no-site renewal route. Let checkout render with the slug intact and
+				// handle its own missing-site state instead. See CHE-512.
+				//
+				// Clear any stale selection first: unlike the redirect branch below
+				// (which re-enters siteSelection with no fragment and clears it there),
+				// this path calls next() directly, so a selectedSiteId left over from a
+				// prior SPA navigation would otherwise leak into checkout.
+				dispatch( setAllSitesSelected() );
+				next();
 			} else {
 				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 				const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );

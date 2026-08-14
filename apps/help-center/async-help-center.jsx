@@ -12,6 +12,16 @@ export default function loadHelpCenter() {
 	container.id = 'jetpack-help-center';
 	document.body.appendChild( container );
 
+	const customProps = {};
+
+	if ( helpCenterData?.newInteractionsBotSlug ) {
+		customProps.newInteractionsBotSlug = helpCenterData.newInteractionsBotSlug;
+	}
+
+	if ( helpCenterData?.newLoggedOutInteractionsBotSlug ) {
+		customProps.newLoggedOutInteractionsBotSlug = helpCenterData.newLoggedOutInteractionsBotSlug;
+	}
+
 	return import( '@automattic/help-center' ).then( ( { default: HelpCenter } ) =>
 		createRoot( container ).render(
 			<QueryClientProvider client={ queryClient }>
@@ -24,8 +34,7 @@ export default function loadHelpCenter() {
 					onboardingUrl="https://wordpress.com/start"
 					handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
 					product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
-					newInteractionsBotSlug={ helpCenterData.newInteractionsBotSlug }
-					newLoggedOutInteractionsBotSlug={ helpCenterData.newLoggedOutInteractionsBotSlug }
+					{ ...customProps }
 				/>
 			</QueryClientProvider>
 		)

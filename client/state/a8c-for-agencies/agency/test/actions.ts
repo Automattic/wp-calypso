@@ -1,40 +1,10 @@
-jest.mock( '@automattic/calypso-config', () => {
-	const isEnabled = jest.fn();
-	const enable = jest.fn();
-
-	return {
-		__esModule: true,
-		default: {
-			isEnabled,
-			enable,
-		},
-		isEnabled,
-		enable,
-	};
-} );
-
-jest.mock(
-	'calypso/a8c-for-agencies/sections/partner-directory/lib/lead-matching-visibility',
-	() => ( {
-		A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG: 'a4a-partner-directory-lead-matching',
-	} )
-);
-
-import config from '@automattic/calypso-config';
-import { A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG } from 'calypso/a8c-for-agencies/sections/partner-directory/lib/lead-matching-visibility';
 import { JETPACK_CURRENT_AGENCY_UPDATE } from '../action-types';
-import {
-	receiveAgencies,
-	updateActiveAgencyAvailability,
-	updateActiveAgencyLeadMatching,
-} from '../actions';
+import { updateActiveAgencyAvailability, updateActiveAgencyLeadMatching } from '../actions';
 import type { A4AStore, Agency } from '../../types';
 import type {
 	AgencyLeadMatchingProfile,
 	LeadMatchingDetails,
 } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
-
-const mockedConfig = config as jest.Mocked< typeof config >;
 
 const createLeadMatchingDraft = (
 	overrides: Partial< LeadMatchingDetails > = {}
@@ -208,12 +178,6 @@ const isCurrentAgencyUpdateAction = ( action: unknown ): action is CurrentAgency
 	'activeAgency' in action;
 
 describe( 'a8c-for-agencies agency actions', () => {
-	beforeEach( () => {
-		mockedConfig.isEnabled.mockReset();
-		mockedConfig.enable.mockReset();
-		mockedConfig.isEnabled.mockReturnValue( false );
-	} );
-
 	describe( '#updateActiveAgencyLeadMatching()', () => {
 		test( 'merges draft updates against the latest active agency state', () => {
 			let state = createState(
@@ -332,91 +296,6 @@ describe( 'a8c-for-agencies agency actions', () => {
 				state.a8cForAgencies.agencies.activeAgency?.lead_matching?.profile?.availability
 					.accepting_work
 			).toBe( false );
-		} );
-	} );
-
-	describe( '#receiveAgencies()', () => {
-		test( 'enables the lead matching feature flag for allowed agencies', () => {
-			let state = createState( createAgency() );
-			const getState = () => state;
-			const dispatch: jest.Mock = jest.fn( ( actionOrThunk: unknown ) => {
-				if ( typeof actionOrThunk === 'function' ) {
-					return actionOrThunk( dispatch, getState, undefined );
-				}
-
-				if ( isCurrentAgencyUpdateAction( actionOrThunk ) ) {
-					state = {
-						...state,
-						a8cForAgencies: {
-							...state.a8cForAgencies,
-							agencies: {
-								...state.a8cForAgencies.agencies,
-								activeAgency: actionOrThunk.activeAgency,
-							},
-						},
-					};
-				}
-
-				return actionOrThunk;
-			} );
-
-			receiveAgencies( [
-				createAgency( {
-					lead_matching: {
-						allowed: true,
-						draft: null,
-						profile: null,
-						sync: undefined,
-					},
-				} ),
-			] )( dispatch, getState, undefined );
-
-			expect( mockedConfig.enable ).toHaveBeenCalledWith(
-				A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG
-			);
-		} );
-
-		test( 'does not enable the lead matching feature flag when access is false', () => {
-			const getState = () => createState( createAgency() );
-			const dispatch: jest.Mock = jest.fn( ( actionOrThunk: unknown ) => {
-				if ( typeof actionOrThunk === 'function' ) {
-					return actionOrThunk( dispatch, getState, undefined );
-				}
-
-				return actionOrThunk;
-			} );
-
-			receiveAgencies( [
-				createAgency( {
-					lead_matching: {
-						allowed: false,
-						draft: null,
-						profile: null,
-						sync: undefined,
-					},
-				} ),
-			] )( dispatch, getState, undefined );
-
-			expect( mockedConfig.enable ).not.toHaveBeenCalledWith(
-				A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG
-			);
-		} );
-
-		test( 'does not enable the lead matching feature flag when access is missing', () => {
-			const getState = () => createState( createAgency() );
-			const dispatch: jest.Mock = jest.fn( ( actionOrThunk: unknown ) => {
-				if ( typeof actionOrThunk === 'function' ) {
-					return actionOrThunk( dispatch, getState, undefined );
-				}
-
-				return actionOrThunk;
-			} );
-
-			receiveAgencies( [ createAgency() ] )( dispatch, getState, undefined );
-
-			expect( mockedConfig.enable ).not.toHaveBeenCalledWith(
-				A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG
-			);
 		} );
 	} );
 } );

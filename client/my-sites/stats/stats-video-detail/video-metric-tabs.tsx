@@ -1,8 +1,8 @@
-import { Gridicon } from '@automattic/components';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
-import { chartBar, Icon, seen, video } from '@wordpress/icons';
+import { chartBar, Icon, seen, video, scheduled } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { formatHoursWatched } from '../utils/format-hours-watched';
 
 export type VideoStatType = 'views' | 'impressions' | 'watch_time' | 'retention_rate';
 
@@ -16,10 +16,7 @@ export function formatValue( statType: VideoStatType, value: number | null ) {
 
 	switch ( statType ) {
 		case 'watch_time':
-			if ( value === 0 || value >= 1 ) {
-				return formatNumber( value, { decimals: 1 } );
-			}
-			return `< ${ formatNumber( 1, { decimals: 1 } ) }`;
+			return formatHoursWatched( value );
 		case 'retention_rate':
 			return `${ formatNumber( value, { decimals: 1 } ) }%`;
 		default:
@@ -52,7 +49,7 @@ export default function VideoMetricTabs( {
 		{
 			key: 'watch_time',
 			label: translate( 'Hours watched', { textOnly: true } ),
-			icon: <Gridicon icon="time" size={ 24 } />,
+			icon: <Icon icon={ scheduled } />,
 		},
 		{
 			key: 'retention_rate',

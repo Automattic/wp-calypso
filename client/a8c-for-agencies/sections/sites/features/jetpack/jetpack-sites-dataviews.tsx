@@ -1,9 +1,8 @@
 import config from '@automattic/calypso-config';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon, starFilled } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useContext, useMemo, useState, ReactNode } from 'react';
+import { useCallback, useEffect, useContext, useMemo, useRef, useState, ReactNode } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import {
@@ -11,6 +10,7 @@ import {
 	ItemsDataViewsType,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
+import SitesEmptyState from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/sites-empty-state';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { SitesDataViewsProps } from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/interfaces';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
@@ -25,6 +25,8 @@ import { useSiteActionsDataViews } from '../../site-actions/use-site-actions';
 import useGetSiteErrors from '../../sites-dataviews/hooks/use-get-site-errors';
 import { AllowedTypes, Site, SiteData } from '../../types';
 import type { Action, Field } from '@wordpress/dataviews';
+
+const EMPTY_SELECTION: string[] = [];
 
 const SitePreviewTourTarget = ( { children }: { children: ReactNode } ) => {
 	const [ context, setContext ] = useState< HTMLElement | null >();
@@ -102,6 +104,26 @@ export const JetpackSitesDataViews = ( {
 			} ) );
 		},
 		[ isNotProduction, setDataViewsState ]
+	);
+
+	const selectedSiteId = dataViewsState.selectedItem?.blog_id;
+
+	const selection = useMemo(
+		() => ( selectedSiteId ? [ String( selectedSiteId ) ] : EMPTY_SELECTION ),
+		[ selectedSiteId ]
+	);
+
+	const sitesRef = useRef( sites );
+	sitesRef.current = sites;
+
+	const onSelectionChange = useCallback(
+		( items: string[] ) => {
+			const selectedItem = sitesRef.current.find( ( site ) => String( site.ref ) === items[ 0 ] );
+			if ( selectedItem ) {
+				openSitePreviewPane( selectedItem.site.value );
+			}
+		},
+		[ openSitePreviewPane ]
 	);
 
 	const renderField = useCallback(
@@ -196,19 +218,13 @@ export const JetpackSitesDataViews = ( {
 					const isSitePreviewTourTarget = site.blog_id === sitePreviewTourTargetId;
 
 					const siteField = (
-						<div
-							className={ clsx( {
-								'is-site-selected': site.blog_id === dataViewsState.selectedItem?.blog_id,
-							} ) }
-						>
-							<SiteDataField
-								site={ site }
-								isLoading={ isLoading }
-								isDevSite={ item.isDevSite }
-								onSiteTitleClick={ openSitePreviewPane }
-								errors={ getSiteErrors( item ) }
-							/>
-						</div>
+						<SiteDataField
+							site={ site }
+							isLoading={ isLoading }
+							isDevSite={ item.isDevSite }
+							onSiteTitleClick={ openSitePreviewPane }
+							errors={ getSiteErrors( item ) }
+						/>
 					);
 
 					return isSitePreviewTourTarget ? (
@@ -413,7 +429,6 @@ export const JetpackSitesDataViews = ( {
 			pluginsRef,
 			sitePreviewTourTargetId,
 			isLoading,
-			dataViewsState.selectedItem?.blog_id,
 			openSitePreviewPane,
 			getSiteErrors,
 			renderField,
@@ -437,22 +452,16 @@ export const JetpackSitesDataViews = ( {
 		actions: [],
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
-		onSelectionChange: ( items: string[] ) => {
-			const selectedItem = sites.find( ( site ) => site.ref === items[ 0 ] );
-			if ( selectedItem ) {
-				openSitePreviewPane( selectedItem.site.value );
-			}
-		},
+		selection,
+		onSelectionChange,
 		defaultLayouts: { table: {}, list: {} },
 	} );
 
 	useEffect( () => {
-		// If the user clicks on a row, open the preview pane by triggering the View details button click.
+		// Only the table layout needs this; the list layout ships its own full-row button.
 		const handleRowClick = ( event: Event ) => {
 			const target = event.target as HTMLElement;
-			const row = target.closest(
-				'.dataviews-view-table__row, li:has(.dataviews-view-list__item)'
-			);
+			const row = target.closest( '.dataviews-view-table__row' );
 
 			if ( row ) {
 				const isButtonOrLink = target.closest( 'button, a' );
@@ -465,23 +474,10 @@ export const JetpackSitesDataViews = ( {
 			}
 		};
 
-		const rowsContainer = document.querySelector( '.dataviews-view-table, .dataviews-view-list' );
+		const rowsContainer = document.querySelector( '.dataviews-view-table' );
 
 		if ( rowsContainer ) {
 			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
-		}
-
-		// We need to trigger the click event on the View details button when the selected item changes to ensure highlighted row is correct.
-		if (
-			rowsContainer?.classList.contains( 'dataviews-view-list' ) &&
-			dataViewsState?.selectedItem?.client_id
-		) {
-			const trigger: HTMLButtonElement | null = rowsContainer.querySelector(
-				'li:not(.is-selected) .sites-dataviews__site'
-			);
-			if ( trigger ) {
-				trigger.click();
-			}
 		}
 
 		return () => {
@@ -512,12 +508,25 @@ export const JetpackSitesDataViews = ( {
 			},
 			setDataViewsState: setDataViewsState,
 			dataViewsState: dataViewsState,
-			selectedItem: dataViewsState.selectedItem,
+			selection,
+			onSelectionChange,
 		} ) );
-	}, [ fields, dataViewsState, setDataViewsState, data, actions ] );
+	}, [ fields, dataViewsState, setDataViewsState, data, actions, selection, onSelectionChange ] );
 
 	return (
-		<ItemsDataViews data={ itemsData } isLoading={ isLoading } className={ className }>
+		<ItemsDataViews
+			data={ itemsData }
+			isLoading={ isLoading }
+			className={ className }
+			empty={
+				<SitesEmptyState
+					filters={ dataViewsState.filters }
+					search={ dataViewsState.search }
+					showOnlyFavorites={ showOnlyFavorites }
+					showOnlyDevelopmentSites={ showOnlyDevelopmentSites }
+				/>
+			}
+		>
 			<HStack
 				className="dataviews__view-actions"
 				alignment="top"

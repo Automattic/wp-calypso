@@ -76,6 +76,7 @@ import '@automattic/components/src/button/style.scss';
 import '@automattic/components/src/card/style.scss';
 
 import 'calypso/reader/color-scheme/dark-mode.scss';
+import './masterbar/omnibar.scss';
 import './style.scss';
 
 const loadWooCoreProfiler = () =>
@@ -132,10 +133,22 @@ const loadLegalUpdatesBanner = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-blocks-legal-updates-banner" */ 'calypso/blocks/legal-updates-banner'
 	);
+const loadOmnibar = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-omnibar" */ './masterbar/omnibar'
+	);
 const loadGlobalNotifications = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-global-notifications" */ 'calypso/layout/global-notifications'
 	);
+
+const Omnibar = ( props ) => (
+	<AsyncLoad
+		require={ loadOmnibar }
+		placeholder={ <div id="wpcom-omnibar" className="masterbar-omnibar-placeholder" /> }
+		{ ...props }
+	/>
+);
 
 const READER_DARK_MODE_BODY_CLASS = 'is-reader-dark-mode';
 
@@ -260,9 +273,16 @@ class Layout extends Component {
 			return null;
 		}
 
-		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
-			? JetpackCloudMasterbar
-			: MasterbarLoggedIn;
+		let MasterbarComponent = MasterbarLoggedIn;
+		if ( config.isEnabled( 'jetpack-cloud' ) ) {
+			MasterbarComponent = JetpackCloudMasterbar;
+		} else if (
+			config.isEnabled( 'dashboard/omnibar-radical' ) &&
+			this.props.sectionName !== 'checkout' &&
+			this.props.sectionName !== 'checkout-pending'
+		) {
+			MasterbarComponent = Omnibar;
+		}
 
 		const isCheckoutFailed =
 			this.props.sectionName === 'checkout' &&

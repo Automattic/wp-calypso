@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EXTENSION_THRESHOLD_IN_MILLION } from 'calypso/my-sites/stats/hooks/use-available-upgrade-tiers';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { StatsPlanTierUI } from '../types';
 
 import './styles.scss';
@@ -79,6 +81,7 @@ function StatsCommercialUpgradeSlider( {
 }: StatsCommercialUpgradeSliderProps ) {
 	const translate = useTranslate();
 	const uiStrings = useTranslatedStrings();
+	const siteId = useSelector( getSelectedSiteId );
 
 	// TODO: Guard against bad data.
 	// The code below assumes we have a valid tier listing with at least one item.
@@ -127,6 +130,7 @@ function StatsCommercialUpgradeSlider( {
 			recordTracksEvent( analyticsEventName, {
 				tier_views: quantity,
 				default_changed: index !== 0, // 0 is the default initialVlaue value for <TierUpgradeSlider />
+				blog_id: siteId,
 			} );
 		}
 
