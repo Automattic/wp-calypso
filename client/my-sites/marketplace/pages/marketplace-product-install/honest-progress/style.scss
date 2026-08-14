@@ -131,6 +131,17 @@
 	font-variant-numeric: tabular-nums;
 }
 
+.marketplace-honest-progress__education {
+	margin-block-start: 24px;
+	max-width: 380px;
+	padding: 12px 16px;
+	border-radius: 4px;
+	background: var( --color-neutral-0 );
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	text-align: center;
+}
+
 .marketplace-honest-progress__overrun {
 	margin-block-start: 8px;
 	max-width: 380px;

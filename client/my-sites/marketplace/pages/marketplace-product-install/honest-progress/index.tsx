@@ -134,6 +134,11 @@ export default function HonestInstallProgress( {
 					) }
 				</p>
 			) }
+			<p className="marketplace-honest-progress__education">
+				{ translate(
+					'Why the wait? Your site is moving to its own dedicated server — that’s what makes premium plugins possible, and it only happens once.'
+				) }
+			</p>
 		</div>
 	);
 }
