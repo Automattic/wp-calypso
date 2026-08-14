@@ -434,6 +434,8 @@ export function handleActiveThrottles(
 
 	const action = active.some( ( id ) => throttleAction( id ) === 'fail' ) ? 'fail' : 'skip';
 	const selected = active.filter( ( id ) => throttleAction( id ) === action );
+	// Optional: a `beforeAll` has no handler, and skipping there would take down
+	// every test in the block, including the ones that never reach the endpoint.
 	actionHandler?.( action, selected );
 }
 
