@@ -9,26 +9,28 @@ const studioCredits = {
 
 describe( 'getLabel', () => {
 	describe( 'Studio Code AI Credits', () => {
-		it( 'includes the credit quantity at the minimum purchase', () => {
-			expect( getLabel( { ...studioCredits, quantity: 100 } ) ).toBe(
-				'Studio Code AI Credits (100 credits)'
-			);
-		} );
-
 		it( 'includes the credit quantity', () => {
 			expect( getLabel( { ...studioCredits, quantity: 500 } ) ).toBe(
 				'Studio Code AI Credits (500 credits)'
 			);
 		} );
 
-		it( 'separates thousands in the credit quantity', () => {
+		it( 'uses the singular form for one credit', () => {
+			expect( getLabel( { ...studioCredits, quantity: 1 } ) ).toBe(
+				'Studio Code AI Credits (1 credit)'
+			);
+		} );
+
+		it( 'uses a separator for thousands of credits', () => {
 			expect( getLabel( { ...studioCredits, quantity: 1000 } ) ).toBe(
 				'Studio Code AI Credits (1,000 credits)'
 			);
 		} );
 
-		it( 'returns the product name alone for a quantity of one', () => {
-			expect( getLabel( { ...studioCredits, quantity: 1 } ) ).toBe( 'Studio Code AI Credits' );
+		it( 'shows zero credits when the cart has no quantity', () => {
+			expect( getLabel( { ...studioCredits, quantity: null } ) ).toBe(
+				'Studio Code AI Credits (0 credits)'
+			);
 		} );
 	} );
 
