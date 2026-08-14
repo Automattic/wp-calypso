@@ -57,6 +57,7 @@ import {
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
 import { generateUUID } from '../../utils/generate-uuid';
+import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
@@ -341,7 +342,7 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getTabSessionId, siteKey, currentUser } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, site, siteKey, currentUser } = useAgentsManagerContext();
 
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -359,6 +360,7 @@ export default function OrchestratorChat( {
 	>( new Map() );
 	const [ isRegenerating, setIsRegenerating ] = useState( false );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
+	const [ settledRequestCount, setSettledRequestCount ] = useState( 0 );
 	const currentPostId = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
 		return editor?.getCurrentPostId?.();
@@ -638,6 +640,7 @@ export default function OrchestratorChat( {
 					await handler();
 				} finally {
 					streamedCheckpointMessagesRef.current.regeneratingMessageId = undefined;
+					setSettledRequestCount( ( count ) => count + 1 );
 				}
 			};
 		},
@@ -771,7 +774,13 @@ export default function OrchestratorChat( {
 			}
 		},
 	} );
-	const providerNotice = useChatNotice?.( { error } );
+	const providerNotice = useChatNotice?.( {
+		error,
+		enabled: ! isReaderChat,
+		isWpcomPlatform: getAgentsManagerInlineData()?.isWpcomPlatform,
+		settledRequestCount,
+		siteId: typeof site?.ID === 'number' ? site.ID : undefined,
+	} );
 	// Reader Chat has its own Search quota and must not inherit Jetpack AI metering UI.
 	const chatNotice = isReaderChat ? undefined : providerNotice;
 	// A provider notice replaces the matching transient chat error instead of
@@ -1313,6 +1322,8 @@ export default function OrchestratorChat( {
 				submitDispatchedRef.current = false;
 				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
 				return;
+			} finally {
+				setSettledRequestCount( ( count ) => count + 1 );
 			}
 
 			consumeNextMessageExternalContextEntries();
@@ -1394,12 +1405,16 @@ export default function OrchestratorChat( {
 	useNavigationContinuation?.( {
 		isProcessing,
 		sendToolResult: async ( params ) => {
-			await onSubmit( params.message, {
-				type: 'tool_result',
-				toolCallId: params.toolCallId,
-				toolId: params.toolId,
-				sessionId: params.sessionId,
-			} );
+			try {
+				await onSubmit( params.message, {
+					type: 'tool_result',
+					toolCallId: params.toolCallId,
+					toolId: params.toolId,
+					sessionId: params.sessionId,
+				} );
+			} finally {
+				setSettledRequestCount( ( count ) => count + 1 );
+			}
 		},
 		sessionId: getTabSessionId(),
 		pathname: window.location.pathname,

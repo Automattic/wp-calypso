@@ -18,7 +18,7 @@ import {
 	getEmptyViewSuggestions,
 	useSuggestions,
 	useCheckpoint,
-	useChatNotice,
+	useJetpackFreeCreditChatNotice,
 	capabilities,
 	registerBlockEditorFilters,
 } from '@automattic/jetpack-ai-sidebar';
@@ -37,6 +37,6 @@ window.__JetpackAIProvider = {
 	getEmptyViewSuggestions,
 	useSuggestions,
 	useCheckpoint,
-	useChatNotice,
+	useChatNotice: useJetpackFreeCreditChatNotice,
 	capabilities,
 };

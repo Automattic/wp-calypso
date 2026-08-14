@@ -188,9 +188,9 @@ describe( 'Jetpack AI sidebar tracking', () => {
 				surface: 'block_editor',
 			}
 		);
-			expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
-				allowPostType: true,
-			} );
+		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
+			allowPostType: true,
+		} );
 	} );
 
 	it( 'uses the server-provided Automattician tracking value', () => {
@@ -243,13 +243,13 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		trackJetpackAiUpgrade();
 
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith( 'jetpack_ai_upgrade_button', {
-			blog_id: 12345,
 			ai_session_id: 'test-session-id',
 			is_a11n: false,
 			placement: 'jetpack-ai-sidebar-quota-notice',
 			sessionid: 'test-session-id',
 			surface: 'block_editor',
 		} );
+		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'blog_id' );
 		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
 	} );
 

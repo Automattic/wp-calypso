@@ -155,14 +155,24 @@ export interface ProviderCapabilities {
 }
 
 /**
- * Hook that turns the backend's rejection text into a persistent notice above
- * the composer. Agenttic clears `error` when the next send starts, so a provider
- * that wants the notice to survive has to latch on it itself.
+ * Hook that returns a provider-owned notice above the composer. Agenttic clears
+ * `error` when the next send starts, so a provider that wants an error-derived
+ * notice to survive has to latch on it itself.
  *
  * Display only: the return value never reaches the submit path, and the backend
  * stays the sole authority on whether a turn is allowed to run.
  */
-export type UseChatNoticeHook = ( props: { error: string | null } ) =>
+export type UseChatNoticeHook = ( props: {
+	error: string | null;
+	/** False on surfaces whose usage must not be fetched or displayed. */
+	enabled: boolean;
+	/** Whether the site is WordPress.com-hosted; absent when the host does not publish it. */
+	isWpcomPlatform?: boolean;
+	/** Changes only after the complete request or stream promise settles. */
+	settledRequestCount: number;
+	/** Current site identity for provider-owned status requests. */
+	siteId?: number;
+} ) =>
 	| ( NoticeConfig & {
 			/** Hide only the current error that this notice replaces. */
 			suppressCurrentError?: boolean;
