@@ -3,8 +3,12 @@
  */
 import fs from 'fs';
 import path from 'path';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { CALYPSO_STATS_ROOTS, CALYPSO_PORTAL_ROOTS } = require( '../bin/prepare-sass-assets' );
+const {
+	CALYPSO_STATS_ROOTS,
+	CALYPSO_PORTAL_ROOTS,
+	getAdminSchemes,
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
+} = require( '../bin/prepare-sass-assets' );
 
 // This package sets `--wp-admin-theme-color`; `stats-interactive-colors` reads it. Nothing in the
 // CSS makes them agree — a root that includes the mixin but is absent from this package's lists
@@ -24,7 +28,29 @@ const CONSUMERS = [
 // scheme class rather than a child, so the selector never matches here and needs no token.
 const ODYSSEY_ONLY_ROOTS = [ '.color-scheme' ];
 
+// Odyssey's mirror of the scheme list. It hands `--wp-admin-theme-color` back to wp-admin for the
+// schemes wp-admin ships; this package supplies a value for the same set in Calypso. The two are
+// written independently and neither imports the other.
+const ODYSSEY_HANDBACK = 'apps/odyssey-stats/src/styles/_admin-theme-handback.scss';
+
 const read = ( file: string ) => fs.readFileSync( path.join( REPO_ROOT, file ), 'utf8' );
+
+const odysseySchemes = (): string[] => {
+	const list = read( ODYSSEY_HANDBACK ).match( /\$wp-admin-schemes:\s*([^;]*);/ );
+
+	if ( ! list ) {
+		throw new Error( `Could not find $wp-admin-schemes in ${ ODYSSEY_HANDBACK }.` );
+	}
+
+	return [ ...list[ 1 ].matchAll( /"([a-z-]+)"/g ) ].map( ( m ) => m[ 1 ] ).sort();
+};
+
+const calypsoSchemes = (): string[] =>
+	Object.keys(
+		getAdminSchemes(
+			fs.readFileSync( require.resolve( '@wordpress/base-styles/_mixins.scss' ), 'utf8' )
+		)
+	).sort();
 
 /**
  * The innermost selector group enclosing each `@include stats-interactive-colors`, as written.
@@ -108,6 +134,15 @@ describe( 'admin theme colour consumers', () => {
 			// bin/prepare-sass-assets.js, or narrow the selector.
 			expect( { file, root, covered } ).toEqual( { file, root, covered: true } );
 		} );
+	} );
+
+	it( 'covers exactly the schemes Odyssey hands back to wp-admin', () => {
+		// The two environments have to agree on which schemes get core's interactive colour. Odyssey
+		// takes it from wp-admin, Calypso from this package, and the lists are maintained separately —
+		// so a scheme in one and not the other means Stats looks different in wp-admin than it does
+		// on WordPress.com. That is exactly how `fresh`, the default scheme, came to be missing here
+		// while Odyssey had it all along.
+		expect( calypsoSchemes() ).toEqual( odysseySchemes() );
 	} );
 
 	it( 'applies the mixin at every root this package sets the token on', () => {
