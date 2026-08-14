@@ -192,7 +192,7 @@ export function PurchaseExpiryStatus( {
 	}
 
 	const isA4ABDPurchase = isA4ABillingDragonPurchase( purchase );
-	const temporarySitePurchaseProductTypes = [ 'saas_plugin', 'jetpack', 'akismet' ];
+	const temporarySitePurchaseProductTypes = [ 'saas_plugin', 'jetpack', 'akismet', 'studio_code' ];
 	const isKnownTemporarySiteProductType =
 		purchase.is_attached_to_holding_site &&
 		temporarySitePurchaseProductTypes.includes( purchase.product_type );
