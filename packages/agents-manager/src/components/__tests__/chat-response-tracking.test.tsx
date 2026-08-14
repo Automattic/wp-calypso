@@ -74,6 +74,54 @@ describe( 'ChatResponseRenderedTracker', () => {
 			tool_id: 'jetpack_ai__show_component',
 		} );
 	} );
+
+	it( 'records supported response properties', () => {
+		render(
+			<ChatResponseRenderedTracker
+				componentType="ai-editorial-review"
+				toolId="jetpack_ai__show_component"
+				responseTrackingProperties={ {
+					suggested_edit_count: 2,
+					conflict_count: 1,
+					implication_count: 0,
+					guideline_violation_count: 3,
+					review_context: 'notes_and_guidelines',
+				} }
+			/>
+		);
+
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_response_rendered', {
+			component_type: 'ai-editorial-review',
+			tool_id: 'jetpack_ai__show_component',
+			suggested_edit_count: 2,
+			conflict_count: 1,
+			implication_count: 0,
+			guideline_violation_count: 3,
+			review_context: 'notes_and_guidelines',
+		} );
+	} );
+
+	it( 'omits unsupported and invalid response properties', () => {
+		render(
+			<ChatResponseRenderedTracker
+				componentType="ai-editorial-review"
+				toolId="jetpack_ai__show_component"
+				responseTrackingProperties={ {
+					suggested_edit_count: -1,
+					conflict_count: 1.5,
+					implication_count: 2,
+					review_context: 'unknown-context',
+					private_text: 'do not record',
+				} }
+			/>
+		);
+
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_response_rendered', {
+			component_type: 'ai-editorial-review',
+			tool_id: 'jetpack_ai__show_component',
+			implication_count: 2,
+		} );
+	} );
 } );
 
 describe( 'createChatResponseActionCallback', () => {

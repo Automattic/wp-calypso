@@ -65,6 +65,7 @@ import {
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
 } from './utils/tool-provider';
+import { getResponseRenderedTrackingProperties } from './utils/tracking';
 import type { SuggestionOption } from '@automattic/agenttic-client';
 import type { ComponentType } from 'react';
 
@@ -463,6 +464,10 @@ function handleShowComponent( input: any ): any {
 		isCurrent: true,
 		hideZoomAction: true,
 	};
+	const responseTrackingProperties = getResponseRenderedTrackingProperties( type, componentProps );
+	if ( responseTrackingProperties ) {
+		data.responseTrackingProperties = responseTrackingProperties;
+	}
 	if ( type === 'ai-editorial-review' || type === 'post-feedback' || type === 'proofread' ) {
 		const reviewedPostId =
 			normalizeEditorPostId( componentProps.postId ) ?? getCurrentEditorPostId();

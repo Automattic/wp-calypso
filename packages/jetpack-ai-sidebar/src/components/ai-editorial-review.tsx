@@ -97,12 +97,6 @@ interface GuidelineViolation {
 }
 
 type EditorPostId = number | string;
-type ReviewContext =
-	| 'notes_and_guidelines'
-	| 'notes_only'
-	| 'guidelines_only'
-	| 'content_only'
-	| 'insufficient_input';
 
 interface AiEditorialReviewProps {
 	summary: string;
@@ -115,7 +109,6 @@ interface AiEditorialReviewProps {
 	implications?: Implication[] | null;
 	suggested_edits?: SuggestedEdit[] | null;
 	guideline_violations?: GuidelineViolation[] | null;
-	review_context?: ReviewContext;
 	/** Source post the review was generated for. Used to detect navigation to a different post. */
 	postId?: EditorPostId;
 	/** Whether the containing chat message is no longer interactive. */

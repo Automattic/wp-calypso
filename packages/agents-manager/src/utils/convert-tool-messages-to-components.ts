@@ -280,7 +280,15 @@ export default function convertToolMessagesToComponents( {
 		// Handle `show-component` tool message
 		if ( isShowComponentTool( textData.tool_id ) ) {
 			const toolData = textData.data ?? {};
-			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
+			const {
+				type: contentType,
+				props,
+				followUpTasks,
+				isCurrent,
+				postId,
+				summary,
+				responseTrackingProperties,
+			} = toolData;
 			const toolCallId =
 				typeof textData.tool_call_id === 'string' && textData.tool_call_id
 					? textData.tool_call_id
@@ -375,6 +383,7 @@ export default function convertToolMessagesToComponents( {
 										componentType: contentType,
 										toolId: textData.tool_id,
 										...( toolCallId ? { toolCallId } : {} ),
+										...( responseTrackingProperties ? { responseTrackingProperties } : {} ),
 									},
 								},
 						  ]

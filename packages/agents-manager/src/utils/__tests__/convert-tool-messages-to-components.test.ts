@@ -177,6 +177,7 @@ describe( 'convertToolMessagesToComponents', () => {
 						data: {
 							type: 'my-component',
 							props: { name: 'test' },
+							responseTrackingProperties: { suggested_edit_count: 2 },
 							summary: 'Choose one of these options.',
 							isCurrent: true,
 						},
@@ -213,6 +214,7 @@ describe( 'convertToolMessagesToComponents', () => {
 				componentType: 'my-component',
 				toolId: SHOW_COMPONENT_TOOL_ID,
 				toolCallId: 'tool-call-1',
+				responseTrackingProperties: { suggested_edit_count: 2 },
 			},
 		} );
 	} );

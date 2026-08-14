@@ -11,7 +11,11 @@ jest.mock( '@wordpress/data', () => ( {
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
-import { trackSplitScreenGuideClick, trackSplitScreenGuideRendered } from './tracking';
+import {
+	getResponseRenderedTrackingProperties,
+	trackSplitScreenGuideClick,
+	trackSplitScreenGuideRendered,
+} from './tracking';
 
 const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 	typeof recordTracksEvent
@@ -93,6 +97,53 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
 			allowPostType: true,
 		} );
+	} );
+
+	it.each( [ 'proofread', 'post-feedback' ] )(
+		'counts suggested edits in %s responses',
+		( componentType ) => {
+			expect(
+				getResponseRenderedTrackingProperties( componentType, {
+					items: [ { title: 'First' }, null, { title: 'Second' } ],
+				} )
+			).toEqual( { suggested_edit_count: 2 } );
+		}
+	);
+
+	it( 'counts each AI Editorial Review finding type', () => {
+		expect(
+			getResponseRenderedTrackingProperties( 'ai-editorial-review', {
+				suggested_edits: [ {}, {} ],
+				conflicts: [ {} ],
+				implications: [ {}, null ],
+				guideline_violations: [
+					{ guideline_quote: 'Use sentence case.' },
+					{ guideline_quote: '' },
+					{ guideline_quote: 'Prefer active voice.' },
+				],
+				review_context: 'notes_and_guidelines',
+			} )
+		).toEqual( {
+			suggested_edit_count: 2,
+			conflict_count: 1,
+			implication_count: 1,
+			guideline_violation_count: 2,
+			review_context: 'notes_and_guidelines',
+		} );
+	} );
+
+	it( 'omits an unknown AI Editorial Review context', () => {
+		expect(
+			getResponseRenderedTrackingProperties( 'ai-editorial-review', {
+				review_context: 'unknown-context',
+			} )
+		).not.toHaveProperty( 'review_context' );
+	} );
+
+	it( 'omits response metadata for components without review findings', () => {
+		expect(
+			getResponseRenderedTrackingProperties( 'title-picker', { titles: [ { title: 'Title' } ] } )
+		).toBeUndefined();
 	} );
 
 	it( 'tracks a split-screen guide impression with stable component metadata', () => {

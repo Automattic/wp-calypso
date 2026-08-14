@@ -3117,6 +3117,41 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
+			expect( parsed.data.responseTrackingProperties ).toBeUndefined();
+		} );
+
+		it.each( [
+			[ 'proofread', { items: [ {}, {} ] }, { suggested_edit_count: 2 } ],
+			[ 'post-feedback', { items: [ {} ] }, { suggested_edit_count: 1 } ],
+			[
+				'ai-editorial-review',
+				{
+					suggested_edits: [ {}, {} ],
+					conflicts: [ {} ],
+					implications: [],
+					guideline_violations: [
+						{ guideline_quote: 'Use sentence case.' },
+						{ guideline_quote: '' },
+						{ guideline_quote: 'Prefer active voice.' },
+					],
+					review_context: 'notes_and_guidelines',
+				},
+				{
+					suggested_edit_count: 2,
+					conflict_count: 1,
+					implication_count: 0,
+					guideline_violation_count: 2,
+					review_context: 'notes_and_guidelines',
+				},
+			],
+		] )( 'adds privacy-safe response metadata for %s', async ( type, props, expected ) => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type,
+				props,
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.responseTrackingProperties ).toEqual( expected );
 		} );
 
 		it( 'echoes the tool call id at the envelope top level', async () => {
