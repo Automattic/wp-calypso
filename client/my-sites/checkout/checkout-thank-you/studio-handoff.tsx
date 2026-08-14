@@ -31,14 +31,14 @@ const StudioHandoff: FunctionComponent< StudioHandoffProps > = ( { siteId, recei
 	const studioCheckoutParams = useMemo( () => getStudioCheckoutParams( getQueryArgs() ), [] );
 
 	const openStudio = useCallback(
-		( click: boolean ) => {
+		( { fromUserClick }: { fromUserClick: boolean } ) => {
 			if ( ! studioCheckoutParams ) {
 				return;
 			}
 			dispatch(
 				recordTracksEvent( 'calypso_studio_checkout_return', {
 					checkout_result: 'success',
-					click,
+					click: fromUserClick,
 					studio_site_id: studioCheckoutParams.studioSiteId,
 					studio_return_to: studioCheckoutParams.studioReturnTo,
 					blog_id: siteId,
@@ -59,7 +59,7 @@ const StudioHandoff: FunctionComponent< StudioHandoffProps > = ( { siteId, recei
 			return;
 		}
 		hasAttemptedHandoff.current = true;
-		openStudio( false );
+		openStudio( { fromUserClick: false } );
 	}, [ studioCheckoutParams, openStudio ] );
 
 	if ( ! studioCheckoutParams ) {
@@ -75,7 +75,7 @@ const StudioHandoff: FunctionComponent< StudioHandoffProps > = ( { siteId, recei
 			showDismiss={ false }
 			status="is-info"
 		>
-			<NoticeAction onClick={ () => openStudio( true ) } external>
+			<NoticeAction onClick={ () => openStudio( { fromUserClick: true } ) } external>
 				{ translate( 'Open Studio' ) }
 			</NoticeAction>
 		</Notice>

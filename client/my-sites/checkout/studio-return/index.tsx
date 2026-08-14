@@ -25,11 +25,11 @@ const StudioReturn: FunctionComponent< StudioReturnProps > = ( {
 	const dispatch = useDispatch();
 
 	const openStudio = useCallback(
-		( click: boolean ) => {
+		( { fromUserClick }: { fromUserClick: boolean } ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_studio_checkout_return', {
 					checkout_result: 'cancelled',
-					click,
+					click: fromUserClick,
 					studio_site_id: studioSiteId,
 					studio_return_to: studioReturnTo,
 				} )
@@ -49,7 +49,7 @@ const StudioReturn: FunctionComponent< StudioReturnProps > = ( {
 			return;
 		}
 		hasAttemptedHandoff.current = true;
-		openStudio( false );
+		openStudio( { fromUserClick: false } );
 	}, [ openStudio ] );
 
 	// This route runs in the checkout section, where the masterbar renders a close button that would
@@ -73,7 +73,7 @@ const StudioReturn: FunctionComponent< StudioReturnProps > = ( {
 						{ translate( 'You haven’t been charged. Return to WordPress Studio to keep working.' ) }
 					</p>
 
-					<Button primary onClick={ () => openStudio( true ) }>
+					<Button primary onClick={ () => openStudio( { fromUserClick: true } ) }>
 						{ translate( 'Open Studio' ) }
 					</Button>
 
