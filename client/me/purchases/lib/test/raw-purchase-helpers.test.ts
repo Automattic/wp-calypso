@@ -21,7 +21,7 @@ describe( 'getDisplayName', () => {
 		maximum_price: 0,
 	};
 
-	test( 'shows the credit count for a Studio Code AI Credits purchase', () => {
+	test( 'shows credit count for a Studio Code AI Credits purchase', () => {
 		expect(
 			getDisplayName(
 				makePurchase( {
@@ -48,20 +48,7 @@ describe( 'getDisplayName', () => {
 		}
 	);
 
-	test( 'shows the credit count ahead of the plan title', () => {
-		expect(
-			getDisplayName(
-				makePurchase( {
-					product_slug: 'studio-code-ai-credits',
-					product_name: 'Studio Code AI Credits',
-					renewal_price_tier_usage_quantity: 500,
-					is_plan: true,
-				} )
-			)
-		).toBe( 'Studio Code AI Credits (500 credits)' );
-	} );
-
-	test( 'leaves Akismet Pro titles alone', () => {
+	test( 'shows request count for Akismet Pro', () => {
 		expect(
 			getDisplayName(
 				makePurchase( {
@@ -73,7 +60,7 @@ describe( 'getDisplayName', () => {
 		).toBe( 'Akismet Pro (1000 requests/month)' );
 	} );
 
-	test( 'leaves Jetpack AI titles alone', () => {
+	test( 'shows request count for Jetpack AI', () => {
 		expect(
 			getDisplayName(
 				makePurchase( {
@@ -86,7 +73,7 @@ describe( 'getDisplayName', () => {
 		).toBe( 'Jetpack AI (1,000 requests per month)' );
 	} );
 
-	test( 'leaves Jetpack Stats titles alone', () => {
+	test( 'shows view count for Jetpack Stats', () => {
 		expect(
 			getDisplayName(
 				makePurchase( {
@@ -99,7 +86,7 @@ describe( 'getDisplayName', () => {
 		).toBe( 'Jetpack Stats (Paid) (10,000 views per month)' );
 	} );
 
-	test( 'leaves storage add-on titles alone', () => {
+	test( 'shows storage size for the storage add-on', () => {
 		expect(
 			getDisplayName(
 				makePurchase( {

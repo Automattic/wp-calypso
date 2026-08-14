@@ -361,31 +361,31 @@ describe( 'utils', () => {
 			type: 'new purchase',
 		} );
 
-		test( 'should name Studio Code AI Credits in credits', () => {
+		test( 'shows credit quantity for Studio Code AI Credits', () => {
 			expect(
 				renderTransactionQuantitySummary( item( 'studio-code-ai-credits', 500 ), translate )
-			).toEqual( 'Purchase of 500 credits' );
+			).toEqual( 'Purchase of 500 AI credits' );
 		} );
 
-		test( 'should use the singular form for a count of one', () => {
+		test( 'uses the singular form for one credit', () => {
 			expect(
 				renderTransactionQuantitySummary( item( 'studio-code-ai-credits', 1 ), translate )
-			).toEqual( 'Purchase of 1 credit' );
+			).toEqual( 'Purchase of 1 AI credit' );
 		} );
 
-		test( 'should separate thousands', () => {
+		test( 'uses a separator for thousands of credits', () => {
 			expect(
 				renderTransactionQuantitySummary( item( 'studio-code-ai-credits', 30000 ), translate )
-			).toEqual( 'Purchase of 30,000 credits' );
+			).toEqual( 'Purchase of 30,000 AI credits' );
 		} );
 
-		test( 'should leave Akismet Pro unchanged', () => {
+		test( 'shows license quantity for Akismet Pro', () => {
 			expect( renderTransactionQuantitySummary( item( 'ak_pro5h_yearly', 3 ), translate ) ).toEqual(
 				'Purchase of 3 500 API call licenses'
 			);
 		} );
 
-		test( 'should leave unmatched products on the generic summary', () => {
+		test( 'shows item quantity for other products', () => {
 			expect(
 				renderTransactionQuantitySummary( item( 'jetpack_ai_yearly', 3 ), translate )
 			).toEqual( 'Purchase of 3 items' );

@@ -323,17 +323,17 @@ function renderStudioCodeAiCreditsQuantitySummary(
 	translate: LocalizeProps[ 'translate' ]
 ) {
 	if ( isRenewal ) {
-		return translate( 'Renewal for %(quantity)s credit', 'Renewal for %(quantity)s credits', {
+		return translate( 'Renewal for %(quantity)s AI credit', 'Renewal for %(quantity)s AI credits', {
 			args: { quantity: formatNumber( licensed_quantity ) },
 			count: licensed_quantity,
-			comment: '%(quantity)s is the number of credits',
+			comment: '%(quantity)s is the number of AI credits',
 		} );
 	}
 
-	return translate( 'Purchase of %(quantity)s credit', 'Purchase of %(quantity)s credits', {
+	return translate( 'Purchase of %(quantity)s AI credit', 'Purchase of %(quantity)s AI credits', {
 		args: { quantity: formatNumber( licensed_quantity ) },
 		count: licensed_quantity,
-		comment: '%(quantity)s is the number of credits',
+		comment: '%(quantity)s is the number of AI credits',
 	} );
 }
 

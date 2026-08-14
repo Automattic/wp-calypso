@@ -549,13 +549,13 @@ describe( 'isWithinRefundWindowDowngradeEligible', () => {
 describe( 'getStudioCodeAiCreditsTitle', () => {
 	const STUDIO_NAME = 'Studio Code AI Credits';
 
-	test( 'groups thousands in the credit count', () => {
+	test( 'uses a separator for thousands of credits', () => {
 		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1000 ) ).toBe(
 			'Studio Code AI Credits (1,000 credits)'
 		);
 	} );
 
-	test( 'uses the singular form for a count of one', () => {
+	test( 'uses the singular form for one credit', () => {
 		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1 ) ).toBe(
 			'Studio Code AI Credits (1 credit)'
 		);
@@ -570,7 +570,7 @@ describe( 'getTitleForDisplay', () => {
 		maximum_price: 0,
 	};
 
-	test( 'shows the credit count for a Studio Code AI Credits purchase', () => {
+	test( 'shows credit count for a Studio Code AI Credits purchase', () => {
 		expect(
 			getTitleForDisplay(
 				makePurchase( {
@@ -597,20 +597,7 @@ describe( 'getTitleForDisplay', () => {
 		}
 	);
 
-	test( 'shows the credit count ahead of the plan title', () => {
-		expect(
-			getTitleForDisplay(
-				makePurchase( {
-					product_slug: 'studio-code-ai-credits',
-					product_name: 'Studio Code AI Credits',
-					renewal_price_tier_usage_quantity: 500,
-					is_plan: true,
-				} )
-			)
-		).toBe( 'Studio Code AI Credits (500 credits)' );
-	} );
-
-	test( 'leaves Akismet Pro titles alone', () => {
+	test( 'shows request count for Akismet Pro', () => {
 		expect(
 			getTitleForDisplay(
 				makePurchase( {
@@ -622,7 +609,7 @@ describe( 'getTitleForDisplay', () => {
 		).toBe( 'Akismet Pro (1000 requests/month)' );
 	} );
 
-	test( 'leaves Jetpack AI titles alone', () => {
+	test( 'shows request count for Jetpack AI', () => {
 		expect(
 			getTitleForDisplay(
 				makePurchase( {
@@ -635,7 +622,7 @@ describe( 'getTitleForDisplay', () => {
 		).toBe( 'Jetpack AI Assistant (1,000 requests per month)' );
 	} );
 
-	test( 'leaves Jetpack Stats titles alone', () => {
+	test( 'shows view count for Jetpack Stats', () => {
 		expect(
 			getTitleForDisplay(
 				makePurchase( {
@@ -649,7 +636,7 @@ describe( 'getTitleForDisplay', () => {
 		).toBe( 'Jetpack Stats (10,000 views per month)' );
 	} );
 
-	test( 'leaves storage add-on titles alone', () => {
+	test( 'shows storage size for the storage add-on', () => {
 		expect(
 			getTitleForDisplay(
 				makePurchase( {

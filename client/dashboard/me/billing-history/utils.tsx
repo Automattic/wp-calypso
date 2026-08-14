@@ -191,15 +191,15 @@ function renderSpaceAddOnquantitySummary( licensedQuantity: number, isRenewal: b
 function renderStudioCodeAiCreditsQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
 	if ( isRenewal ) {
 		return sprintf(
-			/* translators: %s: formatted number of credits */
-			_n( 'Renewal for %s credit', 'Renewal for %s credits', licensedQuantity ),
+			/* translators: %s: formatted number of AI credits */
+			_n( 'Renewal for %s AI credit', 'Renewal for %s AI credits', licensedQuantity ),
 			formatNumber( licensedQuantity )
 		);
 	}
 
 	return sprintf(
-		/* translators: %s: formatted number of credits */
-		_n( 'Purchase of %s credit', 'Purchase of %s credits', licensedQuantity ),
+		/* translators: %s: formatted number of AI credits */
+		_n( 'Purchase of %s AI credit', 'Purchase of %s AI credits', licensedQuantity ),
 		formatNumber( licensedQuantity )
 	);
 }
