@@ -83,6 +83,7 @@
 		"login/magic-login": true,
 		"mailchimp": false,
 		"marketplace-fetch-all-dynamic-products": true,
+		"marketplace-honest-install-progress": true,
 		"marketplace-personal-premium": false,
 		"marketplace-redesign": true,
 		"marketplace-reviews-notification": false,

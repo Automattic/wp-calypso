@@ -1,0 +1,140 @@
+.marketplace-honest-progress {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	max-width: 460px;
+	margin-inline: auto;
+	padding-block-start: 48px;
+	padding-inline: 16px;
+}
+
+.marketplace-honest-progress__heading {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var( --color-text );
+	text-align: center;
+}
+
+.marketplace-honest-progress__stages {
+	list-style: none;
+	width: 100%;
+	margin: 32px 0 0;
+	padding: 0;
+}
+
+.marketplace-honest-progress__stage {
+	display: flex;
+	gap: 14px;
+	align-items: flex-start;
+	padding-block: 10px;
+}
+
+.marketplace-honest-progress__stage-indicator {
+	box-sizing: border-box;
+	flex: none;
+	width: 22px;
+	height: 22px;
+	margin-block-start: 1px;
+	border: 2px solid var( --color-neutral-10 );
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var( --color-text-inverted );
+}
+
+.marketplace-honest-progress__stage.is-active .marketplace-honest-progress__stage-indicator {
+	border-color: var( --color-primary );
+}
+
+.marketplace-honest-progress__stage.is-active .marketplace-honest-progress__stage-indicator::after {
+	content: '';
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var( --color-primary );
+	animation: marketplace-honest-progress-pulse 1.4s ease-in-out infinite;
+}
+
+.marketplace-honest-progress__stage.is-done .marketplace-honest-progress__stage-indicator {
+	border-color: var( --color-success );
+	background: var( --color-success );
+}
+
+@keyframes marketplace-honest-progress-pulse {
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale( 1 );
+	}
+
+	50% {
+		opacity: 0.4;
+		transform: scale( 0.75 );
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.marketplace-honest-progress__stage.is-active
+		.marketplace-honest-progress__stage-indicator::after {
+		animation: none;
+	}
+}
+
+.marketplace-honest-progress__stage-body {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.marketplace-honest-progress__stage-title {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var( --color-text-subtle );
+}
+
+.marketplace-honest-progress__stage.is-active .marketplace-honest-progress__stage-title,
+.marketplace-honest-progress__stage.is-done .marketplace-honest-progress__stage-title {
+	color: var( --color-text );
+}
+
+.marketplace-honest-progress__stage-description {
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	min-height: 18px;
+}
+
+.marketplace-honest-progress__stage-bar {
+	height: 5px;
+	border-radius: 3px;
+	background: var( --color-neutral-0 );
+	margin-block-start: 7px;
+	overflow: hidden;
+}
+
+.marketplace-honest-progress__stage-bar-fill {
+	display: block;
+	height: 100%;
+	border-radius: 3px;
+	background: var( --color-primary );
+	transition: width 0.4s linear;
+}
+
+.marketplace-honest-progress__stage.is-done .marketplace-honest-progress__stage-bar-fill {
+	background: var( --color-success );
+}
+
+.marketplace-honest-progress__meta {
+	margin-block-start: 20px;
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	font-variant-numeric: tabular-nums;
+}
+
+.marketplace-honest-progress__overrun {
+	margin-block-start: 8px;
+	max-width: 380px;
+	text-align: center;
+	font-size: 0.75rem;
+	color: var( --color-warning-60 );
+}

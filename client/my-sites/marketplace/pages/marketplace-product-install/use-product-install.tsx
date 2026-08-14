@@ -1,4 +1,5 @@
 import { marketplacePluginQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
@@ -367,6 +368,11 @@ export function useProductInstall( {
 			current_step: currentStep,
 			install_strategy: installStrategy,
 			is_atomic_flow: atomicFlow,
+			// Which wait UI was on screen, so the honest-progress experiment can compare
+			// abandonment between variants (DOTCOM-17970).
+			wait_variant: atomicFlow
+				? ( isEnabled( 'marketplace-honest-install-progress' ) && 'honest_progress' ) || 'control'
+				: null,
 			outcome: error?.type ?? ( hasSucceeded ? 'succeeded' : null ),
 		},
 	} );
@@ -451,6 +457,8 @@ export function useProductInstall( {
 		steps,
 		additionalSteps,
 		error,
+		atomicFlow,
+		transferStatus: automatedTransferStatus,
 		onActivateTheme: () => setUserDirectInstallationAllowed( true ),
 	};
 }
