@@ -54,6 +54,30 @@ describe( 'verify-css-scope findScopeFailures', () => {
 		);
 	} );
 
+	it.each( [
+		'.foo .jp-stats-dashboard .bar',
+		'.foo>.jp-stats-widget',
+		'.a .b .components-popover__fallback-container .c',
+	] )( 'flags `%s` — an entry-point root is dead wherever in the chain it sits', ( selector ) => {
+		const css = `
+			${ PREFIX } ${ selector }{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [ expect.stringContaining( 'Dead rule found' ) ] );
+	} );
+
+	it( 'does not flag a class that merely starts with an entry-point root name', () => {
+		const css = `
+			${ PREFIX } .foo .jp-stats-dashboard-extra .bar{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [] );
+	} );
+
 	it( 'flags .components-popover__fallback-container self-nesting — the @wordpress/components Popover fallback', () => {
 		const css = `
 			${ PREFIX } .card{color:red}

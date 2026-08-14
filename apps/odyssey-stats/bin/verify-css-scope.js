@@ -10,9 +10,10 @@
  * 2. Every root in `prefix` is classified in `entryPointRoots` or `portalRoots` — otherwise a new
  *    root added to `prefix` without also classifying it would silently skip check 3 below.
  * 3. No compiled rule self-nests an `entryPointRoots` selector under `prefix` — i.e.
- *    `:where(<roots>) X` where X's compound contains one of them. That's always dead: those roots
- *    are placed directly on the page and never nested inside another root, so they can never
- *    satisfy the ancestor requirement the prefix just added. This is the STATS-368 failure mode.
+ *    `:where(<roots>) X` where one of them appears anywhere in X's descendant chain. That's always
+ *    dead: those roots are placed directly on the page and never nested inside another root, so
+ *    they can never satisfy the ancestor requirement the prefix just added, whether the root leads
+ *    the chain or hides behind an earlier compound. This is the STATS-368 failure mode.
  * 4. No compiled rule contains a top-level `html`, `body` or `:root` after the prefix, wherever in
  *    the chain it sits — plus a matches-any group whose every branch is one, e.g. `:is(html,body)`.
  *    The prefix requires a mount-point ancestor, which the document root can never have, so the
@@ -80,14 +81,17 @@ function getPrefixRoots( prefixToParse ) {
 }
 
 /**
- * Given a rule selector starting with the `:where(<roots>)` prefix, returns the simple selectors
- * making up the compound immediately following it (e.g. `['.jp-stats-widget', '.is-ready']`) — top
+ * Given a rule selector starting with the `:where(<roots>)` prefix, returns every simple selector
+ * after it (e.g. `['.jp-stats-widget', '.is-ready']`), at any depth in the descendant chain — top
  * level only, so it doesn't descend into `:where(...)`'s own argument list.
+ *
+ * The whole chain matters, not just the compound nearest the prefix: an `entryPointRoots` member is
+ * body-appended and never nested inside another root, so `.foo .jp-stats-dashboard .bar` is as dead
+ * as `.jp-stats-dashboard .bar` — it just hides the root behind a leading compound.
  */
-function getCompoundAfterPrefix( selector ) {
-	const compoundNodes = [];
+function getSimpleSelectorsAfterPrefix( selector ) {
+	const simpleSelectors = [];
 	let sawWhere = false;
-	let sawFirstCombinator = false;
 
 	selectorParser( ( selectors ) => {
 		for ( const node of selectors.first.nodes ) {
@@ -95,18 +99,13 @@ function getCompoundAfterPrefix( selector ) {
 				sawWhere = node.type === 'pseudo' && node.value === ':where';
 				continue;
 			}
-			if ( node.type === 'combinator' ) {
-				if ( ! sawFirstCombinator ) {
-					sawFirstCombinator = true;
-					continue;
-				}
-				break;
+			if ( node.type !== 'combinator' ) {
+				simpleSelectors.push( node.toString() );
 			}
-			compoundNodes.push( node.toString() );
 		}
 	} ).processSync( selector );
 
-	return compoundNodes;
+	return simpleSelectors;
 }
 
 // Tags that can never be a descendant of a mount point, so prefixing them always kills the rule.
@@ -226,9 +225,9 @@ function findScopeFailures(
 				continue;
 			}
 
-			const compoundNodes = getCompoundAfterPrefix( selector );
+			const simpleSelectors = getSimpleSelectorsAfterPrefix( selector );
 			const selfNestedRoot = entryPointRootsToCheck.find( ( root ) =>
-				compoundNodes.includes( root )
+				simpleSelectors.includes( root )
 			);
 
 			if ( selfNestedRoot ) {
