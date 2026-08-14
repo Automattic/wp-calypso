@@ -5,13 +5,15 @@ import {
 	type NewSiteResponse,
 	type NewUserResponse,
 } from '@automattic/calypso-e2e';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 import { apiCancelAtomicPlan, apiCloseAccount, recordAccountLeakMarker } from '../shared';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Onboarding: Publish a Playground site to Atomic' ),
 	{ tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS, tags.DESKTOP_ONLY ] },
 	() => {
+		skipIfNotTrunk();
+
 		const testUser = DataHelper.getNewTestUser( { usernamePrefix: 'playground' } );
 		const blogName = testUser.siteName;
 		const playgroundSiteTitle = `Playground import ${ blogName }`;
