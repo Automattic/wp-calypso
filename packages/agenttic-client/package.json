@@ -25,14 +25,14 @@
 		"README.md"
 	],
 	"scripts": {
-		"build": "pnpm run clean && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"build": "yarn run clean && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
 		"dev": "vite build --watch",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",
 		"lint": "ESLINT_USE_FLAT_CONFIG=false eslint src --ext .ts,.tsx",
 		"lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint src --ext .ts,.tsx --fix",
 		"test": "vitest run",
-		"prepublishOnly": "pnpm run build"
+		"prepublishOnly": "yarn run build"
 	},
 	"keywords": [
 		"agent2agent",
