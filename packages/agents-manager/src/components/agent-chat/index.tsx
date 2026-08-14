@@ -14,13 +14,14 @@ import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
+import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import lazyComponent from '../../utils/lazy-component';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
-import ChatHeaderView, { type Options as ChatHeaderOptions } from '../chat-header/view';
+import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
@@ -109,8 +110,6 @@ interface Props {
 	onContextCardAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
 	/** Called when a context card's dismiss button is clicked. */
 	onContextCardDismiss?: ( card: ExternalContextCard ) => void;
-	/** Whether the host has a separate button that can reopen a closed chat. */
-	hasAiChatEntry?: boolean;
 }
 
 // Carries the block-editor stack, so it loads on demand — and only on editor
@@ -192,7 +191,6 @@ export default function AgentChat( {
 	complianceDisclosure,
 	onContextCardAction,
 	onContextCardDismiss,
-	hasAiChatEntry = false,
 }: Props ) {
 	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
 		useDispatch( AGENTS_MANAGER_STORE );
@@ -232,7 +230,7 @@ export default function AgentChat( {
 	);
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
-	let floatingChatState: ChatState = hasAiChatEntry ? 'minimized' : 'collapsed';
+	let floatingChatState: ChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
 	if ( isOpen ) {
 		floatingChatState = 'expanded';
 	} else if ( isCompactMode ) {
@@ -342,12 +340,7 @@ export default function AgentChat( {
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
-				<ChatHeaderView
-					onClose={ onClose }
-					options={ chatHeaderOptions }
-					isDocked={ isDocked }
-					hasAiChatEntry={ hasAiChatEntry }
-				/>
+				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />

@@ -1,3 +1,4 @@
+import { BigSkyLogo } from '@automattic/components';
 import { BlockControls } from '@wordpress/block-editor';
 import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -29,17 +30,6 @@ const AGENTS_MANAGER_STORE = 'automattic/agents-manager';
 type AgentsManagerStoreSelectors = {
 	getAgentsManagerState: () => { isOpen?: boolean; isMinimized?: boolean };
 };
-
-function JetpackAiToolbarIcon() {
-	return (
-		<svg aria-hidden="true" height="20" viewBox="0 0 24 24" width="20">
-			<path
-				fill="currentColor"
-				d="m19.223 11.55-3.095-1.068a4.21 4.21 0 0 1-2.61-2.61L12.45 4.777c-.145-.426-.755-.426-.9 0l-1.068 3.095a4.21 4.21 0 0 1-2.61 2.61L4.777 11.55c-.426.145-.426.755 0 .9l3.095 1.068a4.21 4.21 0 0 1 2.61 2.61l1.068 3.095c.145.426.755.426.9 0l1.068-3.095a4.21 4.21 0 0 1 2.61-2.61l3.095-1.068c.426-.145.426-.755 0-.9Zm-3.613.68-1.547.533a2.105 2.105 0 0 0-1.306 1.305l-.533 1.548a.24.24 0 0 1-.453 0l-.534-1.548a2.105 2.105 0 0 0-1.305-1.305l-1.548-.534a.24.24 0 0 1 0-.453l1.548-.534a2.105 2.105 0 0 0 1.305-1.305l.534-1.547a.24.24 0 0 1 .453 0l.534 1.547c.21.615.695 1.095 1.305 1.305l1.547.534a.24.24 0 0 1 0 .453Z"
-			/>
-		</svg>
-	);
-}
 
 let isWaitingForAgentsManagerReady = false;
 
@@ -115,7 +105,7 @@ export const withJetpackAiToolbarButton = createHigherOrderComponent(
 					<BlockControls group="default">
 						<ToolbarGroup>
 							<ToolbarButton
-								icon={ <JetpackAiToolbarIcon /> }
+								icon={ <BigSkyLogo.CentralLogo fill="currentColor" heartless size={ 20 } /> }
 								label={ __( 'Ask AI', __i18n_text_domain__ ) }
 								isPressed={ isChatVisible }
 								onClick={ toggleJetpackAiSidebarChat }
