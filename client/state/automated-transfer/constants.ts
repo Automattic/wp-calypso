@@ -1,9 +1,19 @@
 /**
  * Error message the status endpoint returns when the site has no transfer record.
  * Maps to `transferStates.NONE`.
- * TODO : [MARKETPLACE] rely on a tangible status from the backend instead of this message
+ * Legacy fallback — matching on prose is fragile. The backend is gaining a proper
+ * `no_transfer_record` error code; once it has been deployed for a while this message
+ * match can be removed (tracked in DOTCOM-18223).
  */
 export const NO_TRANSFER_RECORD_ERROR = 'An invalid transfer ID was passed.';
+
+export const NO_TRANSFER_RECORD_ERROR_CODE = 'no_transfer_record';
+
+export const isNoTransferRecordError = ( error: {
+	error?: string | null;
+	message?: string | null;
+} ): boolean =>
+	error.error === NO_TRANSFER_RECORD_ERROR_CODE || error.message === NO_TRANSFER_RECORD_ERROR;
 
 export const transferStates = {
 	/**

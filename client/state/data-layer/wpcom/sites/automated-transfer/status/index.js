@@ -5,7 +5,7 @@ import {
 	automatedTransferStatusFetchingFailure,
 } from 'calypso/state/automated-transfer/actions';
 import {
-	NO_TRANSFER_RECORD_ERROR,
+	isNoTransferRecordError,
 	transferSettledStates,
 	transferStates,
 } from 'calypso/state/automated-transfer/constants';
@@ -110,8 +110,14 @@ export const receiveStatus =
 
 export const requestingStatusFailure = ( response ) => ( dispatch ) => {
 	const { siteId, pollingMode } = response;
-	const message = response.meta?.dataLayer?.error?.message;
-	dispatch( automatedTransferStatusFetchingFailure( { siteId, error: message } ) );
+	const error = response.meta?.dataLayer?.error;
+	dispatch(
+		automatedTransferStatusFetchingFailure( {
+			siteId,
+			error: error?.message,
+			errorCode: error?.error,
+		} )
+	);
 
 	// Retrying failures — and eventually reporting CLIENT_TIMEOUT — is behavior only waits
 	// get. Plain and 'single' fetches fail once and stop, exactly as they always did.
@@ -132,7 +138,7 @@ export const requestingStatusFailure = ( response ) => ( dispatch ) => {
 	// The reducer maps a missing record to the terminal NONE status, so once the retries run
 	// out the chain must end there — letting the deadline fire would replace a real "this site
 	// has no transfer" answer with a timeout.
-	if ( message === NO_TRANSFER_RECORD_ERROR ) {
+	if ( isNoTransferRecordError( error ?? {} ) ) {
 		const missingRecordAttempts = ( recorded.missingRecordAttempts ?? 0 ) + 1;
 		if ( missingRecordAttempts >= MISSING_RECORD_ATTEMPTS ) {
 			pollDeadlines.delete( siteId );
