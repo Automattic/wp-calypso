@@ -13,6 +13,7 @@ import type { UIMessage, UIMessageAction, UseAgentChatReturn } from '@automattic
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
 type IsCheckpointActionAvailable = ( checkpointId: string ) => boolean;
+type OnCheckpointActionPendingChange = ( checkpointId: string, isPending: boolean ) => void;
 
 const revertedCheckpointIds = new Set< string >();
 const invalidatedCheckpointIds = new Set< string >();
@@ -105,13 +106,17 @@ export function invalidateCheckpointAction( checkpointId: string ): void {
 export default function useCheckpointAction(
 	registerMessageActions: RegisterMessageActions,
 	checkpoint?: UseCheckpointReturn,
-	isCheckpointActionAvailable?: IsCheckpointActionAvailable
+	isCheckpointActionAvailable?: IsCheckpointActionAvailable,
+	onCheckpointActionPendingChange?: OnCheckpointActionPendingChange
 ): ( message: UIMessage ) => UIMessageAction[] {
 	// Refs avoid infinite re-renders caused by unstable provider values.
 	const checkpointRef = useRef( checkpoint );
 	checkpointRef.current = checkpoint;
 	const isCheckpointActionAvailableRef = useRef( isCheckpointActionAvailable );
 	isCheckpointActionAvailableRef.current = isCheckpointActionAvailable;
+	const onCheckpointActionPendingChangeRef = useRef( onCheckpointActionPendingChange );
+	onCheckpointActionPendingChangeRef.current = onCheckpointActionPendingChange;
+	const pendingSwapCheckpointIdsRef = useRef( new Set< string >() );
 	const getCheckpointActionsForMessage = useCallback( ( message: UIMessage ): UIMessageAction[] => {
 		const currentCheckpoint = checkpointRef.current;
 
@@ -133,11 +138,17 @@ export default function useCheckpointAction(
 			isActionAvailable &&
 			typeof currentCheckpoint.canSwapCheckpoint === 'function' &&
 			typeof currentCheckpoint.swapCheckpoint === 'function'
-				? currentCheckpoint.canSwapCheckpoint( checkpointInfo.checkpointId )
+				? pendingSwapCheckpointIdsRef.current.has( checkpointInfo.checkpointId ) ||
+				  currentCheckpoint.canSwapCheckpoint( checkpointInfo.checkpointId )
 				: undefined;
 		const supportsSwap = swapAvailability !== undefined;
 		const applyCheckpointAction = async ( revert: boolean ): Promise< boolean > => {
+			if ( pendingSwapCheckpointIdsRef.current.has( checkpointInfo.checkpointId ) ) {
+				return false;
+			}
+
 			let outcome: 'success' | 'failed' = 'failed';
+			let didStartSwap = false;
 			try {
 				const checkpointToRestore = checkpointRef.current;
 				if (
@@ -156,6 +167,9 @@ export default function useCheckpointAction(
 					) {
 						return false;
 					}
+					pendingSwapCheckpointIdsRef.current.add( checkpointInfo.checkpointId );
+					onCheckpointActionPendingChangeRef.current?.( checkpointInfo.checkpointId, true );
+					didStartSwap = true;
 					await checkpointToRestore.swapCheckpoint( checkpointInfo.checkpointId );
 				} else {
 					await checkpointToRestore.restoreCheckpoint( checkpointInfo.checkpointId );
@@ -173,6 +187,10 @@ export default function useCheckpointAction(
 				console.error( '[useCheckpointAction] Failed to restore checkpoint:', error );
 				return false;
 			} finally {
+				if ( didStartSwap ) {
+					pendingSwapCheckpointIdsRef.current.delete( checkpointInfo.checkpointId );
+					onCheckpointActionPendingChangeRef.current?.( checkpointInfo.checkpointId, false );
+				}
 				recordBigSkyTracksEvent( 'restore_checkpoint_action', {
 					action: revert ? 'undo' : 'redo',
 					id: checkpointInfo.checkpointId,

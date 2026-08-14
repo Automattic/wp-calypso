@@ -256,6 +256,8 @@ export default function OrchestratorChat( {
 	const [ sourceDriftInvalidatedCheckpointIds, setSourceDriftInvalidatedCheckpointIds ] = useState<
 		Set< string >
 	>( new Set() );
+	const pendingCheckpointActionIdsRef = useRef( new Set< string >() );
+	const [ checkpointActionRevision, setCheckpointActionRevision ] = useState( 0 );
 	const [ retainedShowComponentMessages, setRetainedShowComponentMessages ] = useState<
 		Map< string, UIMessage >
 	>( new Map() );
@@ -585,6 +587,19 @@ export default function OrchestratorChat( {
 	const checkpoint = useCheckpoint?.();
 	const checkpointRef = useRef( checkpoint );
 	checkpointRef.current = checkpoint;
+	const handleCheckpointActionPendingChange = useCallback(
+		( checkpointId: string, isPending: boolean ) => {
+			if ( isPending ) {
+				pendingCheckpointActionIdsRef.current.add( checkpointId );
+				return;
+			}
+
+			if ( pendingCheckpointActionIdsRef.current.delete( checkpointId ) ) {
+				setCheckpointActionRevision( ( revision ) => revision + 1 );
+			}
+		},
+		[]
+	);
 	const checkpointIdsByTurn = useMemo( () => {
 		const latestUserMessageIndex = getLatestUserMessageIndex( messages );
 		const current = new Set< string >();
@@ -627,6 +642,7 @@ export default function OrchestratorChat( {
 		[ checkpointIdsByTurn, checkpointSessionIdentity, hasPendingCheckpointSwap, useCheckpoint ]
 	);
 	useEffect( () => {
+		void checkpointActionRevision;
 		void checkpointEditorBlocks;
 		void checkpointSessionIdentity;
 		void useCheckpoint;
@@ -641,6 +657,7 @@ export default function OrchestratorChat( {
 			for ( const checkpointId of checkpointIdsByTurn.current ) {
 				if (
 					! nextInvalidatedCheckpointIds.has( checkpointId ) &&
+					! pendingCheckpointActionIdsRef.current.has( checkpointId ) &&
 					currentCheckpoint.canSwapCheckpoint?.( checkpointId ) === false
 				) {
 					nextInvalidatedCheckpointIds.add( checkpointId );
@@ -653,6 +670,7 @@ export default function OrchestratorChat( {
 			setSourceDriftInvalidatedCheckpointIds( nextInvalidatedCheckpointIds );
 		}
 	}, [
+		checkpointActionRevision,
 		checkpointEditorBlocks,
 		checkpointIdsByTurn,
 		checkpointSessionIdentity,
@@ -672,7 +690,8 @@ export default function OrchestratorChat( {
 			! sourceDriftInvalidatedCheckpointIds.has( checkpointId ) &&
 			checkpointIdsByTurn.current.has( checkpointId ) &&
 			( ! checkpointIdsByTurn.userMessageId ||
-				nativeUndoInvalidatedTurnRef.current !== checkpointIdsByTurn.userMessageId )
+				nativeUndoInvalidatedTurnRef.current !== checkpointIdsByTurn.userMessageId ),
+		handleCheckpointActionPendingChange
 	);
 
 	useEffect( () => {
@@ -1063,6 +1082,7 @@ export default function OrchestratorChat( {
 
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		// The stable checkpoint getter reads this value through a ref.
+		void checkpointActionRevision;
 		void hasEditorRedo;
 		void sourceDriftInvalidatedCheckpointIds;
 		let currentMessages: AgentsManagerUIMessage[] = messages;
@@ -1178,6 +1198,7 @@ export default function OrchestratorChat( {
 
 		return currentMessages;
 	}, [
+		checkpointActionRevision,
 		currentPostId,
 		deletedMessageIds,
 		getChatComponent,
