@@ -1,6 +1,7 @@
 import { agencyPartnerDirectoryApplicationMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
+	BaseControl,
 	Button,
 	CheckboxControl,
 	TextControl,
@@ -173,7 +174,9 @@ export default function PartnerDirectoryExpertiseContent( {
 
 						<VStack spacing={ 3 }>
 							<VStack spacing={ 1 }>
-								<Text weight={ 500 }>{ __( 'Automattic Partner Directories' ) }</Text>
+								<BaseControl.VisualLabel style={ { marginBottom: 0 } }>
+									{ __( 'Automattic Partner Directories' ) }
+								</BaseControl.VisualLabel>
 								<Text variant="muted">
 									{ __( 'Select the Automattic directories you would like to appear on.' ) }
 								</Text>
@@ -201,7 +204,9 @@ export default function PartnerDirectoryExpertiseContent( {
 						{ pendingDirectories.length > 0 && (
 							<VStack spacing={ 4 }>
 								<VStack spacing={ 1 }>
-									<Text weight={ 500 }>{ __( 'Client sites' ) }</Text>
+									<BaseControl.VisualLabel style={ { marginBottom: 0 } }>
+										{ __( 'Client sites' ) }
+									</BaseControl.VisualLabel>
 									<Text variant="muted">
 										{ __(
 											'For each directory you selected, provide URLs of 5 client sites you’ve worked on. This helps us gauge your expertise.'
