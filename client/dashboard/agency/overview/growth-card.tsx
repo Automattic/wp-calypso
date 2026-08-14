@@ -2,16 +2,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { Button, Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
-import {
-	chartBar,
-	currencyDollar,
-	globe,
-	help,
-	payment,
-	people,
-	store,
-	trendingUp,
-} from '@wordpress/icons';
+import { currencyDollar, globe, help, payment, store } from '@wordpress/icons';
 import { Fragment } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
@@ -22,7 +13,6 @@ import getCurrentAgencyTier from '../tiers/get-current-agency-tier';
 import { PARTNER_PROGRAM_GUIDE_URL, PROGRAM_INCENTIVES_URL } from './constants';
 import NewTabLabel from './new-tab-label';
 import OverviewLinkButton from './overview-link-button';
-import useWooPaymentsStoreCount from './use-woopayments-store-count';
 import type { AgencyOverviewLinks } from './overview-content';
 import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
 import type { AgencyCapability } from '@automattic/api-core';
@@ -60,48 +50,16 @@ interface GrowthContent {
 }
 
 interface GrowthCardProps {
-	agencyId: number;
 	/** Shows the “While you wait” variant for accounts still under review. */
 	isPending?: boolean;
-	/** Disables the WooPayments store lookup for users without earnings access. */
-	canAccessEarnings?: boolean;
 	/** The current user's agency capabilities; rows the user can't act on are hidden. */
 	capabilities?: string[];
 	/** Swaps Premier’s “get listed” move for moving more sites once the agency has an approved listing. */
 	hasPartnerDirectoryListing?: boolean;
 	tierId?: AgencyTierType;
-	influencedRevenue: number;
 	links: GrowthCardLinks;
 	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
-}
-
-/**
- * Replaces the “set up WooPayments” move once the agency already has
- * WooPayments stores — the next best move then is growing IAR itself.
- */
-function getGrowRevenueItem(
-	target: number,
-	influencedRevenue: number,
-	links: GrowthCardLinks
-): GrowthItem {
-	return {
-		id: 'grow-influenced-revenue',
-		icon: trendingUp,
-		title: sprintf(
-			/* translators: %s is the influenced revenue target, e.g. $250,000 */
-			__( 'Grow influenced revenue to %s' ),
-			formatCurrency( target, 'USD', { stripZeros: true } )
-		),
-		description: sprintf(
-			/* translators: %s is the remaining influenced revenue to reach the target, e.g. $171,600 */
-			__( '%s to go — move client sites to Automattic hosting & set up WooPayments' ),
-			formatCurrency( Math.max( target - influencedRevenue, 0 ), 'USD', { stripZeros: true } )
-		),
-		actionLabel: __( 'Review' ),
-		href: links.tiers,
-		requiredCapability: 'a4a_read_agency_tier',
-	};
 }
 
 function getPendingContent( links: GrowthCardLinks ): GrowthContent {
@@ -130,45 +88,52 @@ function getPendingContent( links: GrowthCardLinks ): GrowthContent {
 	};
 }
 
+/** The three IAR-growing paths shared by the “grow toward the next tier” states. */
+function getGrowTowardItems( links: GrowthCardLinks ): GrowthItem[] {
+	return [
+		{
+			id: 'refer-products-hosting',
+			icon: globe,
+			title: __( 'Refer products & hosting' ),
+			description: __( 'Earn up to 50% recurring commission on client purchases.' ),
+			actionLabel: __( 'Refer' ),
+			href: links.referrals,
+			requiredCapability: 'a4a_read_referrals',
+		},
+		{
+			id: 'purchase-products-hosting',
+			icon: store,
+			title: __( 'Directly purchase products & hosting' ),
+			description: __( 'Get exclusive wholesale agency discounts on products & hosting.' ),
+			actionLabel: __( 'Browse' ),
+			href: links.marketplace,
+			requiredCapability: MARKETPLACE_CAPABILITIES,
+		},
+		{
+			id: 'set-up-woopayments',
+			icon: currencyDollar,
+			title: __( 'Set up WooPayments' ),
+			description: __(
+				'Earn commission of up to 5 basis points on payment volume across your client sites.'
+			),
+			actionLabel: __( 'Set up' ),
+			href: links.woopayments,
+			requiredCapability: 'a4a_read_referrals',
+		},
+	];
+}
+
 function getEmergingContent( links: GrowthCardLinks ): GrowthContent {
 	return {
 		title: __( 'Grow toward Agency Partner' ),
 		description: sprintf(
 			/* translators: %s is the influenced revenue target, e.g. $1,200 */
 			__(
-				'Reach %s to become an Agency Partner — unlocks directory listings and a partner badge.'
+				'Reach %s IAR to become an Agency Partner and unlock directory listings and a partner badge. All three paths below count toward your IAR.'
 			),
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'agency-partner' ], 'USD', { stripZeros: true } )
 		),
-		items: [
-			{
-				id: 'refer-hosting',
-				icon: globe,
-				title: __( 'Refer sites' ),
-				description: __( 'Client spend counts toward IAR · you earn 20% recurring' ),
-				actionLabel: __( 'Refer' ),
-				href: links.referrals,
-				requiredCapability: 'a4a_read_referrals',
-			},
-			{
-				id: 'refer-products',
-				icon: currencyDollar,
-				title: __( 'Refer products' ),
-				description: __( 'Counts toward IAR · 50% recurring on renewals' ),
-				actionLabel: __( 'Refer' ),
-				href: links.marketplace,
-				requiredCapability: MARKETPLACE_CAPABILITIES,
-			},
-			{
-				id: 'browse-marketplace',
-				icon: store,
-				title: __( 'Buy & resell from the Marketplace' ),
-				description: __( '60+ products at up to 80% off — purchases count toward IAR' ),
-				actionLabel: __( 'Browse' ),
-				href: links.marketplace,
-				requiredCapability: MARKETPLACE_CAPABILITIES,
-			},
-		],
+		items: getGrowTowardItems( links ),
 	};
 }
 
@@ -178,95 +143,29 @@ function getAgencyContent( links: GrowthCardLinks ): GrowthContent {
 		description: sprintf(
 			/* translators: %s is the influenced revenue target, e.g. $5,000 */
 			__(
-				'Reach %s to become a Pro Partner — unlocks free agency hosting, a dedicated Partner Manager, and priority support.'
+				'Reach %s IAR to become a Pro Partner and unlock free agency hosting, a dedicated Partner Manager, and priority support. All three paths below count toward your IAR.'
 			),
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ], 'USD', {
 				stripZeros: true,
 			} )
 		),
-		items: [
-			{
-				id: 'refer-hosting',
-				icon: globe,
-				title: __( 'Refer more sites' ),
-				description: __( 'Client spend counts toward IAR · you earn 20% recurring' ),
-				actionLabel: __( 'Refer' ),
-				href: links.referrals,
-				requiredCapability: 'a4a_read_referrals',
-			},
-			{
-				id: 'set-up-woopayments',
-				icon: currencyDollar,
-				title: __( 'Set up WooPayments for clients' ),
-				description: __( '$1 of IAR for every $100 in sales · earn 0.05% TPV' ),
-				actionLabel: __( 'Set up' ),
-				href: links.woopayments,
-				requiredCapability: 'a4a_read_referrals',
-			},
-			{
-				id: 'refer-products',
-				icon: store,
-				title: __( 'Refer products' ),
-				description: __( 'Counts toward IAR · 50% recurring on renewals' ),
-				actionLabel: __( 'Refer' ),
-				href: links.marketplace,
-				requiredCapability: MARKETPLACE_CAPABILITIES,
-			},
-		],
+		items: getGrowTowardItems( links ),
 	};
 }
 
-function getProContent(
-	links: GrowthCardLinks,
-	influencedRevenue: number,
-	hasWooPaymentsStores?: boolean
-): GrowthContent {
-	// While the store count loads, hold the row rather than flashing the wrong one.
-	let wooPaymentsItem: GrowthItem | null = null;
-	if ( hasWooPaymentsStores === true ) {
-		wooPaymentsItem = getGrowRevenueItem(
-			TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
-			influencedRevenue,
-			links
-		);
-	} else if ( hasWooPaymentsStores === false ) {
-		wooPaymentsItem = {
-			id: 'set-up-woopayments',
-			icon: payment,
-			title: __( 'Set up WooPayments for clients' ),
-			description: __( '$1 of IAR for every $100 in sales · earn 0.05% TPV' ),
-			actionLabel: __( 'Set up' ),
-			href: links.woopayments,
-			requiredCapability: 'a4a_read_referrals',
-		};
-	}
-
+function getProContent( links: GrowthCardLinks ): GrowthContent {
 	return {
 		title: __( 'Grow toward Premier Partner' ),
-		description: __(
-			'The Premier Partner tier unlocks Marketing Development Funds and a Parse.ly trial. It takes more than revenue.'
+		description: sprintf(
+			/* translators: %s is the influenced revenue target, e.g. $250,000 */
+			__(
+				'Reach %s IAR to become a Premier Partner and unlock Marketing Development Funds and a Parse.ly trial. All three paths below count toward your IAR.'
+			),
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'premier-partner' ], 'USD', {
+				stripZeros: true,
+			} )
 		),
-		items: [
-			...( wooPaymentsItem ? [ wooPaymentsItem ] : [] ),
-			{
-				id: 'enterprise-projects',
-				icon: chartBar,
-				title: __( 'Deliver 3 enterprise-scale projects' ),
-				description: __( 'Or onboard 3 shared anchor customers' ),
-				actionLabel: __( 'Learn more' ),
-				href: PROGRAM_INCENTIVES_URL,
-				isExternal: true,
-			},
-			{
-				id: 'certify-developers',
-				icon: people,
-				title: __( 'Certify 30% of your developers' ),
-				description: __( 'Across Automattic certifications' ),
-				actionLabel: __( 'Start' ),
-				href: PROGRAM_INCENTIVES_URL,
-				isExternal: true,
-			},
-		],
+		items: getGrowTowardItems( links ),
 	};
 }
 
@@ -327,8 +226,6 @@ function getContent(
 	isPending: boolean,
 	tierLevel: number,
 	links: GrowthCardLinks,
-	influencedRevenue: number,
-	hasWooPaymentsStores?: boolean,
 	hasPartnerDirectoryListing?: boolean
 ): GrowthContent {
 	if ( isPending ) {
@@ -338,7 +235,7 @@ function getContent(
 		return getPremierContent( links, hasPartnerDirectoryListing );
 	}
 	if ( tierLevel >= 2 ) {
-		return getProContent( links, influencedRevenue, hasWooPaymentsStores );
+		return getProContent( links );
 	}
 	if ( tierLevel >= 1 ) {
 		return getAgencyContent( links );
@@ -374,13 +271,10 @@ function GrowthItemIcon( { icon }: { icon: JSX.Element } ) {
  * Premier (top tier) shifts to getting the most out of its benefits.
  */
 export default function GrowthCard( {
-	agencyId,
 	isPending,
-	canAccessEarnings = true,
 	capabilities,
 	hasPartnerDirectoryListing,
 	tierId,
-	influencedRevenue,
 	links,
 	shouldUseRouterLink,
 	recordTracksEvent,
@@ -388,26 +282,7 @@ export default function GrowthCard( {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const tier = getCurrentAgencyTier( tierId );
 	const tierLevel = tier?.level ?? 0;
-	// Only the Pro/VIP content swaps a row on the store count, so don't fire the
-	// lookup for other tiers.
-	const needsStoreCount = ! isPending && canAccessEarnings && tierLevel >= 2 && tierLevel < 4;
-	const { storeCount, isLoading: isLoadingStoreCount } = useWooPaymentsStoreCount(
-		agencyId,
-		needsStoreCount
-	);
-	// undefined = still loading; getProContent holds the row until it resolves.
-	let hasWooPaymentsStores: boolean | undefined = false;
-	if ( needsStoreCount ) {
-		hasWooPaymentsStores = isLoadingStoreCount ? undefined : storeCount > 0;
-	}
-	const content = getContent(
-		!! isPending,
-		tierLevel,
-		links,
-		influencedRevenue,
-		hasWooPaymentsStores,
-		hasPartnerDirectoryListing
-	);
+	const content = getContent( !! isPending, tierLevel, links, hasPartnerDirectoryListing );
 
 	// Rows the user can't act on would only bounce off the route guards.
 	const canActOn = ( item: GrowthItem ) => {

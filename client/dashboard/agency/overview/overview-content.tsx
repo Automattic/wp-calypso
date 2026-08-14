@@ -96,13 +96,10 @@ export default function AgencyOverviewContent( {
 				) }
 				{ ! isRejected && (
 					<GrowthCard
-						agencyId={ agencyId }
 						isPending={ isPending }
-						canAccessEarnings={ canAccessEarnings }
 						capabilities={ capabilities }
 						hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
 						tierId={ tierId }
-						influencedRevenue={ influencedRevenue }
 						links={ links }
 						shouldUseRouterLink={ shouldUseRouterLink }
 						recordTracksEvent={ recordTracksEvent }
