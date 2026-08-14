@@ -479,7 +479,11 @@ export const test = base.extend<
 		async ( {}, use, testInfo ) => {
 			let actionApplied = false;
 			const unregister = registerThrottleActionHandler( ( action, ids ) => {
-				if ( actionApplied || testInfo.errors.length ) {
+				// A test that already failed or skipped for a reason of its own keeps
+				// it: the policy runs from teardown too, and stating a ban there would
+				// append a second skip reason the test never earned, or turn its skip
+				// into a failure outright.
+				if ( actionApplied || testInfo.errors.length || testInfo.status === 'skipped' ) {
 					return;
 				}
 				actionApplied = true;

@@ -47,4 +47,21 @@ test.describe( 'Throttle action', { tag: [ tags.CALYPSO_PR ] }, () => {
 			'WordPress.com throttle active: domain-suggestions.'
 		);
 	} );
+
+	// The policy runs from teardown too, so it meets tests that stopped for a
+	// reason of their own. Asserted from an `afterEach` because a body stops at
+	// its own skip: the hook runs after it and before the fixture teardown that
+	// unregisters the handler, which is where the policy would meet it, and by
+	// then the status already reads `skipped`. Under the `fail` action set above,
+	// a policy that acted here would report this test as a failure rather than
+	// the skip it asked for.
+	test.describe( 'A test that stopped for a reason of its own', () => {
+		test.afterEach( () => {
+			expect( () => handleActiveThrottles( [ 'domain-suggestions' ] ) ).not.toThrow();
+		} );
+
+		test( 'keeps it', async () => {
+			test.skip( true, 'A reason that is not a throttle.' );
+		} );
+	} );
 } );
