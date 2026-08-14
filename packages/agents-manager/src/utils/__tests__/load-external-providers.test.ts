@@ -860,16 +860,15 @@ describe( 'mergeUseSuggestionsHooks', () => {
 		} );
 	} );
 
-	it( 'forwards suggestion visibility options to provider hooks', () => {
+	it( 'forwards the suggestion limit to provider hooks', () => {
 		const firstHook = jest.fn( () => ( { suggestions: [] } ) ) as UseSuggestionsHook;
 		const secondHook = jest.fn( () => ( { suggestions: [] } ) ) as UseSuggestionsHook;
 		const merged = mergeUseSuggestionsHooks( [ firstHook, secondHook ] );
-		const options = { suggestionsVisible: false };
 
-		merged?.( undefined, options );
+		merged?.( 3 );
 
-		expect( firstHook ).toHaveBeenCalledWith( undefined, options );
-		expect( secondHook ).toHaveBeenCalledWith( undefined, options );
+		expect( firstHook ).toHaveBeenCalledWith( 3 );
+		expect( secondHook ).toHaveBeenCalledWith( 3 );
 	} );
 
 	it( 'uses only contextual suggestions when any provider replaces the empty view', () => {

@@ -554,7 +554,7 @@ describe( 'OrchestratorChat', () => {
 
 		render( chat( { useSuggestions: useSuggestions } ) );
 
-		expect( useSuggestions ).toHaveBeenCalledWith( 3, { suggestionsVisible: true } );
+		expect( useSuggestions ).toHaveBeenCalledWith( 3 );
 	} );
 
 	it( 'does not limit external provider suggestions while docked', () => {
@@ -562,7 +562,7 @@ describe( 'OrchestratorChat', () => {
 
 		render( chat( { isDocked: true, useSuggestions: useSuggestions } ) );
 
-		expect( useSuggestions ).toHaveBeenCalledWith( undefined, { suggestionsVisible: true } );
+		expect( useSuggestions ).toHaveBeenCalledWith( undefined );
 	} );
 
 	it( 'uses the current Gutenberg block type when the selected block changes', () => {
