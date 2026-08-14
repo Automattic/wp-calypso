@@ -58,6 +58,9 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 	hasTimedOut: boolean;
 	hasTransferFailed: boolean;
 	diagnostics: InstallWaitDiagnostics;
+	transfer: AtomicTransfer | undefined;
+	isTransferFresh: boolean;
+	isTransferLookupComplete: boolean;
 } {
 	const [ now, setNow ] = useState( () => Date.now() );
 	// Null while the wait is not running. The clock is stamped when it starts, never while it is
@@ -184,5 +187,8 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 		hasTimedOut: haltedOutcome === 'timeout' || isDeadlineExceeded,
 		hasTransferFailed: haltedOutcome === 'transfer-failed' || hasTransferFailed,
 		diagnostics,
+		transfer,
+		isTransferFresh: isFetchedAfterMount && isSuccess,
+		isTransferLookupComplete: isFetchedAfterMount,
 	};
 }

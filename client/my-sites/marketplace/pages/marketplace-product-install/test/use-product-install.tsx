@@ -18,12 +18,27 @@ const reducers = {
 };
 
 // The deadline hook has its own suite; here we only assert how this hook arms it.
-type DeadlineArgs = { siteId: number; productSlug: string; enabled: boolean };
+type DeadlineArgs = { siteId: number; enabled: boolean };
+
+const diagnostics = {
+	has_transfer: false,
+	transfer_status: null,
+	transfer_age_seconds: null,
+	transfer_is_stuck: null,
+	transfer_in_lossless_revert: null,
+	waited_seconds: 0,
+	anchored_to: 'wait_start' as const,
+	deadline_seconds: 300,
+};
 
 const deadlineVerdict =
 	( verdict: { hasTimedOut: boolean; hasTransferFailed: boolean } ) => ( args: DeadlineArgs ) => ( {
 		...verdict,
 		receivedEnabled: args.enabled,
+		diagnostics,
+		transfer: undefined,
+		isTransferFresh: false,
+		isTransferLookupComplete: true,
 	} );
 
 const noDeadlineVerdict = deadlineVerdict( { hasTimedOut: false, hasTransferFailed: false } );
