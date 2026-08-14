@@ -13,6 +13,7 @@ export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/agency/tiers',
 	'/agency/partner-directory',
 	'/agency/partner-directory/expertise',
+	'/agency/partner-directory/details',
 	'/resources/learn',
 	'/resources/ai-mcp',
 	'/resources/ai-mcp/read',

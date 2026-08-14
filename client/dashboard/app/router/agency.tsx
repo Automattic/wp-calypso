@@ -26,6 +26,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
+	PARTNER_DIRECTORY_DETAILS_SEGMENT,
 	PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
 	PARTNER_DIRECTORY_ROUTE,
 } from '../../agency/partner-directory/paths';
@@ -192,6 +193,26 @@ export const agencyPartnerDirectoryExpertiseRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../agency/partner-directory/expertise' ).then( ( d ) =>
 		createLazyRoute( 'agency-partner-directory-expertise' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/agency/partner-directory/details` – the agency's public profile details
+export const agencyPartnerDirectoryDetailsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Agency details' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyPartnerDirectoryRoute,
+	path: PARTNER_DIRECTORY_DETAILS_SEGMENT,
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+} ).lazy( () =>
+	import( '../../agency/partner-directory/details' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory-details' )( {
 			component: d.default,
 		} )
 	)
@@ -896,6 +917,7 @@ export const createAgencyRoutes = () => [
 		agencyPartnerDirectoryRoute.addChildren( [
 			agencyPartnerDirectoryIndexRoute,
 			agencyPartnerDirectoryExpertiseRoute,
+			agencyPartnerDirectoryDetailsRoute,
 		] ),
 		exclusiveOffersRoute,
 		learnRoute,
