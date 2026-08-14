@@ -1,43 +1,37 @@
 /**
  * @jest-environment jsdom
  */
-import config from '@automattic/calypso-config';
 import { renderHook } from '@testing-library/react';
+import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import {
-	isDeferredEmailVerification,
-	isEmailVerificationEnabled,
+	useIsPostPlanSelectionEmailVerification,
+	useIsEmailVerificationEnabled,
 	useEmailVerificationGate,
 } from '../use-email-verification-gate';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
-	const enabledFlags = new Set< string >();
-	const configFn = ( key: string ) => actual( key );
-	Object.assign( configFn, actual, {
-		enabledFlags,
-		isEnabled: ( flag: string ) => enabledFlags.has( flag ) || actual.isEnabled( flag ),
-	} );
-	return configFn;
-} );
-
+jest.mock( 'calypso/lib/explat', () => ( { useExperiment: jest.fn() } ) );
 jest.mock( 'calypso/state', () => ( { useSelector: jest.fn() } ) );
 
-const mockConfig = config as unknown as { enabledFlags: Set< string > };
+const mockUseExperiment = useExperiment as jest.Mock;
 const mockUser = ( user: object | null ) =>
 	( useSelector as unknown as jest.Mock ).mockReturnValue( user );
+
+// Mirrors ExPlat: an ineligible call yields no assignment, so only onboarding gets an arm.
+const assign = (
+	variationName: string | null,
+	{ isLoading = false }: { isLoading?: boolean } = {}
+) =>
+	mockUseExperiment.mockImplementation( ( _name: string, opts?: { isEligible?: boolean } ) =>
+		opts?.isEligible ? [ isLoading, variationName ? { variationName } : null ] : [ false, null ]
+	);
 
 const statusFor = ( flow = 'onboarding' ) =>
 	renderHook( () => useEmailVerificationGate( flow ) ).result.current.status;
 
 describe( 'useEmailVerificationGate', () => {
-	beforeEach( () => {
-		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
-	} );
-	afterEach( () => {
-		mockConfig.enabledFlags.clear();
-		jest.clearAllMocks();
-	} );
+	beforeEach( () => assign( 'treatment_post_account_creation' ) );
+	afterEach( () => jest.clearAllMocks() );
 
 	it( 'gates an unverified email account', () => {
 		mockUser( { email_verified: false } );
@@ -67,14 +61,22 @@ describe( 'useEmailVerificationGate', () => {
 		expect( statusFor() ).toBe( 'pending' );
 	} );
 
+	// Deciding the gate on a not-yet-loaded assignment would advance a would-be-gated account.
+	it( 'holds rather than clears while the assignment is loading', () => {
+		assign( 'treatment_post_account_creation', { isLoading: true } );
+		mockUser( { email_verified: false } );
+
+		expect( statusFor() ).toBe( 'pending' );
+	} );
+
 	it( 'clears every flow but onboarding', () => {
 		mockUser( { email_verified: false } );
 
 		expect( statusFor( 'newsletter' ) ).toBe( 'clear' );
 	} );
 
-	describe( 'with the flag off', () => {
-		beforeEach( () => mockConfig.enabledFlags.clear() );
+	describe( 'under the control arm', () => {
+		beforeEach( () => assign( 'control' ) );
 
 		it( 'clears an unverified account rather than gating it', () => {
 			mockUser( { email_verified: false } );
@@ -82,8 +84,8 @@ describe( 'useEmailVerificationGate', () => {
 			expect( statusFor() ).toBe( 'clear' );
 		} );
 
-		// Not `clear`: turning the flag off is not the user having confirmed, and treating it as
-		// one would record a confirmation and spend the attempt that a real one needed.
+		// Not `clear`: a control assignment is not the user having confirmed, and treating it as one
+		// would record a confirmation and spend the attempt that a real one needed.
 		it( 'still reports a verified account as verified', () => {
 			mockUser( { email_verified: true } );
 
@@ -91,61 +93,68 @@ describe( 'useEmailVerificationGate', () => {
 		} );
 	} );
 
-	// The deferred flag (Variant B) must not open the account-step gate: it moves later in the flow.
-	it( 'does not gate the account step under the deferred flag alone', () => {
-		mockConfig.enabledFlags.clear();
-		mockConfig.enabledFlags.add( 'onboarding/email-verification-deferred' );
+	// The post-plan-selection arm (Variant B) must not open the account-step gate: it moves later.
+	it( 'does not gate the account step under the post-plan-selection arm', () => {
+		assign( 'treatment_post_plan_selection' );
 		mockUser( { email_verified: false } );
 
 		expect( statusFor() ).toBe( 'clear' );
 	} );
 } );
 
-describe( 'isDeferredEmailVerification', () => {
-	afterEach( () => mockConfig.enabledFlags.clear() );
+describe( 'useIsPostPlanSelectionEmailVerification', () => {
+	afterEach( () => jest.clearAllMocks() );
 
-	it( 'is true for onboarding with the deferred flag on', () => {
-		mockConfig.enabledFlags.add( 'onboarding/email-verification-deferred' );
+	const deferredFor = ( flow = 'onboarding' ) =>
+		renderHook( () => useIsPostPlanSelectionEmailVerification( flow ) ).result.current;
 
-		expect( isDeferredEmailVerification( 'onboarding' ) ).toBe( true );
+	it( 'is true for onboarding under the post-plan-selection arm', () => {
+		assign( 'treatment_post_plan_selection' );
+
+		expect( deferredFor() ).toBe( true );
 	} );
 
 	it( 'is false for other flows', () => {
-		mockConfig.enabledFlags.add( 'onboarding/email-verification-deferred' );
+		assign( 'treatment_post_plan_selection' );
 
-		expect( isDeferredEmailVerification( 'newsletter' ) ).toBe( false );
+		expect( deferredFor( 'newsletter' ) ).toBe( false );
 	} );
 
-	it( 'is false when only the account-step flag is on', () => {
-		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
+	it( 'is false under the account-step arm', () => {
+		assign( 'treatment_post_account_creation' );
 
-		expect( isDeferredEmailVerification( 'onboarding' ) ).toBe( false );
+		expect( deferredFor() ).toBe( false );
 	} );
 } );
 
-describe( 'isEmailVerificationEnabled', () => {
-	afterEach( () => mockConfig.enabledFlags.clear() );
+describe( 'useIsEmailVerificationEnabled', () => {
+	afterEach( () => jest.clearAllMocks() );
 
-	// Either variant sends the activation email and points it back at onboarding.
-	it( 'is true under the account-step flag', () => {
-		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
+	const enabledFor = ( flow = 'onboarding' ) =>
+		renderHook( () => useIsEmailVerificationEnabled( flow ) ).result.current;
 
-		expect( isEmailVerificationEnabled( 'onboarding' ) ).toBe( true );
+	// Either treatment sends the activation email and points it back at onboarding.
+	it( 'is true under the account-step arm', () => {
+		assign( 'treatment_post_account_creation' );
+
+		expect( enabledFor() ).toBe( true );
 	} );
 
-	it( 'is true under the deferred flag', () => {
-		mockConfig.enabledFlags.add( 'onboarding/email-verification-deferred' );
+	it( 'is true under the post-plan-selection arm', () => {
+		assign( 'treatment_post_plan_selection' );
 
-		expect( isEmailVerificationEnabled( 'onboarding' ) ).toBe( true );
+		expect( enabledFor() ).toBe( true );
 	} );
 
-	it( 'is false with neither flag on', () => {
-		expect( isEmailVerificationEnabled( 'onboarding' ) ).toBe( false );
+	it( 'is false under the control arm', () => {
+		assign( 'control' );
+
+		expect( enabledFor() ).toBe( false );
 	} );
 
 	it( 'is false for other flows', () => {
-		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
+		assign( 'treatment_post_account_creation' );
 
-		expect( isEmailVerificationEnabled( 'newsletter' ) ).toBe( false );
+		expect( enabledFor( 'newsletter' ) ).toBe( false );
 	} );
 } );

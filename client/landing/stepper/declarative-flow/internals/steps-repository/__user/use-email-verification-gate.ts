@@ -1,5 +1,5 @@
-import config from '@automattic/calypso-config';
-import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { isOnboardingFlow } from '@automattic/onboarding';
+import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
@@ -7,20 +7,47 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 // back here. Matched as an exact string: changing it here alone sends them somewhere else.
 export const ACTIVATION_EMAIL_SOURCE = 'onboarding-with-email-verification';
 
-// Variant A: the gate holds the user on the account step, right after creation.
-const ACCOUNT_STEP_FLAG = 'onboarding/email-verification';
-// Variant B: the account step never gates; the gate is met later, after the free plan selection
-// or after checkout. Wired by the flow, not by this hook.
-const DEFERRED_FLAG = 'onboarding/email-verification-deferred';
+// 3-arm placement test for the onboarding email-verification gate.
+//   control                         -> no step (current default)
+//   treatment_post_account_creation -> gate right after account creation (Variant A)
+//   treatment_post_plan_selection   -> gate after free-plan selection or after checkout (Variant B)
+const EXPERIMENT_NAME = 'calypso_signup_onboarding_email_verification_202608';
+
+type EmailVerificationVariant =
+	| 'control'
+	| 'treatment_post_account_creation'
+	| 'treatment_post_plan_selection';
 
 /**
- * Whether either variant is live for this flow. Both send the same activation email on account
+ * The assigned arm of the email-verification experiment, defaulting to `control` while the
+ * assignment loads or for any flow but onboarding.
+ *
+ * Enrolment happens where this is first read — the account step, which every onboarding signup
+ * passes through — matching the experiment's "attribution at account creation" design.
+ */
+function useEmailVerificationVariant( flow: string ): {
+	isLoading: boolean;
+	variant: EmailVerificationVariant;
+} {
+	const [ isLoading, assignment ] = useExperiment( EXPERIMENT_NAME, {
+		isEligible: isOnboardingFlow( flow ),
+	} );
+
+	const variant = (
+		isLoading ? 'control' : assignment?.variationName ?? 'control'
+	) as EmailVerificationVariant;
+
+	return { isLoading, variant };
+}
+
+/**
+ * Whether either treatment is live for this flow. Both send the same activation email on account
  * creation and point its link back here, so the account step asks for that whichever gates.
  */
-export function isEmailVerificationEnabled( flow: string ): boolean {
+export function useIsEmailVerificationEnabled( flow: string ): boolean {
+	const { variant } = useEmailVerificationVariant( flow );
 	return (
-		flow === ONBOARDING_FLOW &&
-		( config.isEnabled( ACCOUNT_STEP_FLAG ) || config.isEnabled( DEFERRED_FLAG ) )
+		variant === 'treatment_post_account_creation' || variant === 'treatment_post_plan_selection'
 	);
 }
 
@@ -28,8 +55,9 @@ export function isEmailVerificationEnabled( flow: string ): boolean {
  * Whether the gate is deferred past the account step (Variant B). The flow reads this to move the
  * gate to after the free plan selection or after checkout.
  */
-export function isDeferredEmailVerification( flow: string ): boolean {
-	return flow === ONBOARDING_FLOW && config.isEnabled( DEFERRED_FLAG );
+export function useIsPostPlanSelectionEmailVerification( flow: string ): boolean {
+	const { variant } = useEmailVerificationVariant( flow );
+	return variant === 'treatment_post_plan_selection';
 }
 
 // `pending` is not a kind of `clear`: the user's ID survives a reload but the user object does
@@ -37,7 +65,7 @@ export function isDeferredEmailVerification( flow: string ): boolean {
 // those absent fields as an unverified email opens the gate onto a blank address.
 //
 // `verified` is not a kind of `clear` either. Only `/me` saying so means an attempt was actually
-// confirmed; `clear` also covers the flag being off, which is not the same thing at all.
+// confirmed; `clear` also covers the arm being control, which is not the same thing at all.
 type GateStatus = 'pending' | 'clear' | 'verified' | 'gated';
 
 interface EmailVerificationGate {
@@ -55,20 +83,22 @@ interface EmailVerificationGate {
  *
  * This opens the gate and closes it: the account step renders the gate while `gated`, and finishes
  * the attempt when this turns `verified`.
- *
- * The experiment arm joins this expression once the experiment exists, rather than `/me`, so that
- * enrolment happens where the user meets the gate.
  */
 export function useEmailVerificationGate( flow: string ): EmailVerificationGate {
 	const currentUser = useSelector( getCurrentUser );
+	const { isLoading, variant } = useEmailVerificationVariant( flow );
 
-	const isEnabled = config.isEnabled( ACCOUNT_STEP_FLAG ) && flow === ONBOARDING_FLOW;
+	const isEnabled = variant === 'treatment_post_account_creation';
 
-	// Verification is read before enablement, so turning the flag off mid-attempt can't be
-	// mistaken for the user having confirmed.
+	// Verification is read before enablement, so a control assignment can't be mistaken for the
+	// user having confirmed.
 	let status: GateStatus = 'clear';
 	if ( currentUser?.email_verified ) {
 		status = 'verified';
+	} else if ( isLoading ) {
+		// Hold rather than clear until the arm is known, so a would-be-gated account isn't advanced
+		// past the step before the assignment resolves.
+		status = 'pending';
 	} else if ( ! isEnabled ) {
 		status = 'clear';
 	} else if ( ! currentUser ) {

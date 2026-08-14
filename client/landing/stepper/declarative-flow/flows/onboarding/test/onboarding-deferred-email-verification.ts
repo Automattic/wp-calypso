@@ -2,23 +2,13 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { useExperiment } from 'calypso/lib/explat';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
 
-let mockDeferredFlagOn = true;
+// Variant B (post-plan-selection gate) vs. control, driven by the experiment assignment.
+let mockVariant = 'treatment_post_plan_selection';
 let mockQueryParams = new URLSearchParams( '' );
-
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
-	const configFn = ( key: string ) => actual( key );
-	Object.assign( configFn, actual, {
-		isEnabled: ( flag: string ) =>
-			flag === 'onboarding/email-verification-deferred'
-				? mockDeferredFlagOn
-				: actual.isEnabled( flag ),
-	} );
-	return configFn;
-} );
 
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
 	clearSessionStorageQuery: jest.fn(),
@@ -55,7 +45,10 @@ jest.mock( 'calypso/state', () => ( {
 
 jest.mock( 'calypso/lib/analytics/survicate', () => ( { addSurvicate: jest.fn() } ) );
 jest.mock( 'calypso/lib/analytics/signup', () => ( { SIGNUP_DOMAIN_ORIGIN: {} } ) );
-jest.mock( 'calypso/lib/explat', () => ( { loadExperimentAssignment: jest.fn() } ) );
+jest.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: jest.fn(),
+	useExperiment: jest.fn(),
+} ) );
 
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
@@ -85,6 +78,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 	ONBOARDING_FLOW: 'onboarding',
 	SITE_SETUP_FLOW: 'site-setup',
 	clearStepPersistedState: jest.fn(),
+	isOnboardingFlow: ( flow: string ) => flow === 'onboarding',
 } ) );
 
 jest.mock( 'calypso/lib/ai-launchpad', () => ( {
@@ -164,9 +158,13 @@ const submitPlans = async ( providedDependencies: Record< string, unknown > ) =>
 
 describe( 'onboarding deferred email verification (Variant B)', () => {
 	beforeEach( () => {
-		mockDeferredFlagOn = true;
+		mockVariant = 'treatment_post_plan_selection';
 		mockQueryParams = new URLSearchParams( '' );
 		jest.clearAllMocks();
+		( useExperiment as jest.Mock ).mockImplementation(
+			( _name: string, opts?: { isEligible?: boolean } ) =>
+				opts?.isEligible ? [ false, { variationName: mockVariant } ] : [ false, null ]
+		);
 	} );
 
 	it( 'sends a fully free order to the verification step before the site is created', async () => {
@@ -185,8 +183,8 @@ describe( 'onboarding deferred email verification (Variant B)', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 	} );
 
-	it( 'keeps the free order on site creation when the deferred flag is off', async () => {
-		mockDeferredFlagOn = false;
+	it( 'keeps the free order on site creation under the control arm', async () => {
+		mockVariant = 'control';
 
 		const { navigate } = await submitPlans( { cartItems: [] } );
 
@@ -222,8 +220,8 @@ describe( 'onboarding deferred email verification (Variant B)', () => {
 		expect( checkoutUrl ).toContain( 'next=post-checkout-onboarding' );
 	} );
 
-	it( 'sends a paid order straight to post-checkout-onboarding when the deferred flag is off', async () => {
-		mockDeferredFlagOn = false;
+	it( 'sends a paid order straight to post-checkout-onboarding under the control arm', async () => {
+		mockVariant = 'control';
 
 		const checkoutUrl = await submitPaidProcessing();
 

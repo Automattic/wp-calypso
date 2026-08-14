@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import config from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -12,6 +11,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { applyMiddleware, createStore, type Reducer } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -34,6 +34,8 @@ let activationEmailFromProp: string | undefined;
 let signupFormProps: { userEmail?: string; notice?: unknown } = {};
 let mockHeldEmail: string | null = null;
 let mockSocialNotice: ReactNode = <div>That account already exists. Log in instead.</div>;
+// The account-step gate is the `treatment_post_account_creation` arm; `control` turns it off.
+let mockGateVariant = 'treatment_post_account_creation';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 
@@ -46,14 +48,15 @@ jest.mock( 'calypso/state/current-user/actions', () => ( {
 
 jest.mock( '@automattic/calypso-config', () => {
 	const actual = jest.requireActual( '@automattic/calypso-config' );
-	const enabledFlags = new Set< string >();
 	const configFn = ( key: string ) => actual( key );
-	Object.assign( configFn, actual, {
-		enabledFlags,
-		isEnabled: ( flag: string ) => enabledFlags.has( flag ) || actual.isEnabled( flag ),
-	} );
+	Object.assign( configFn, actual );
 	return configFn;
 } );
+
+jest.mock( 'calypso/lib/explat', () => ( {
+	...jest.requireActual( 'calypso/lib/explat' ),
+	useExperiment: jest.fn(),
+} ) );
 
 jest.mock( 'calypso/lib/partner-branding', () => ( { usePartnerBranding: jest.fn() } ) );
 jest.mock( '@wordpress/compose', () => ( {
@@ -126,7 +129,7 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 	MobileCompactTosNotice: () => null,
 } ) );
 
-const mockConfig = config as unknown as { enabledFlags: Set< string > };
+const mockUseExperiment = useExperiment as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
 const mockUseAccountCreationExperiment = useAccountCreationExperiment as unknown as jest.Mock;
 
@@ -176,7 +179,10 @@ describe( 'account step email verification gate', () => {
 	beforeEach( () => {
 		( useViewportMatch as unknown as jest.Mock ).mockReturnValue( false );
 		mockUserId++;
-		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
+		mockGateVariant = 'treatment_post_account_creation';
+		mockUseExperiment.mockImplementation( ( _name: string, opts?: { isEligible?: boolean } ) =>
+			opts?.isEligible ? [ false, { variationName: mockGateVariant } ] : [ false, null ]
+		);
 		mockUsePartnerBranding.mockReturnValue( {
 			hasCustomBranding: false,
 			partnerConfig: null,
@@ -196,7 +202,6 @@ describe( 'account step email verification gate', () => {
 		mockSocialNotice = <div>That account already exists. Log in instead.</div>;
 		// A test that fails before restoring them would otherwise time out every test after it.
 		jest.useRealTimers();
-		mockConfig.enabledFlags.clear();
 		localStorage.clear();
 		jest.clearAllMocks();
 		nock.cleanAll();
@@ -206,7 +211,7 @@ describe( 'account step email verification gate', () => {
 		renderUser( makeLoggedOutStore() ).unmount();
 		expect( activationEmailFromProp ).toBe( 'onboarding-with-email-verification' );
 
-		mockConfig.enabledFlags.clear();
+		mockGateVariant = 'control';
 		renderUser( makeLoggedOutStore() );
 
 		expect( activationEmailFromProp ).toBeUndefined();
@@ -741,21 +746,21 @@ describe( 'account step email verification gate', () => {
 		expect( confirmations ).toHaveLength( 1 );
 	} );
 
-	// Turning the flag off is not the user having confirmed anything. Recording it as one would
+	// A control assignment is not the user having confirmed anything. Recording it as one would
 	// also burn the attempt, so a real confirmation later would go unrecorded.
-	it( 'does not record a confirmation when the flag goes off mid-attempt', async () => {
+	it( 'does not record a confirmation when the arm goes control mid-attempt', async () => {
 		const shown = renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 		shown.unmount();
 		jest.clearAllMocks();
 
-		mockConfig.enabledFlags.clear();
+		mockGateVariant = 'control';
 		const off = renderUser( makeStore( false ) );
 		await waitFor( () => expect( recordTracksEvent ).not.toHaveBeenCalled() );
 		off.unmount();
 
-		// And the attempt is still there to be confirmed once the flag comes back.
-		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
+		// And the attempt is still there to be confirmed once the treatment comes back.
+		mockGateVariant = 'treatment_post_account_creation';
 		renderUser( makeStore( true ) );
 
 		await waitFor( () =>

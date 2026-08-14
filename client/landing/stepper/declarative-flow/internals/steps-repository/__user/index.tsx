@@ -43,7 +43,7 @@ import useAccountCreationExperiment from './use-account-creation-experiment';
 import { useBackoffPoll } from './use-backoff-poll';
 import {
 	ACTIVATION_EMAIL_SOURCE,
-	isEmailVerificationEnabled,
+	useIsEmailVerificationEnabled,
 	useEmailVerificationGate,
 } from './use-email-verification-gate';
 import { useSocialService } from './use-social-service';
@@ -94,7 +94,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// Sending the activation email and aiming it back at onboarding is shared by both variants: the
 	// account step gates in Variant A, but in Variant B the same link is what the deferred gate,
 	// met after checkout, goes on to wait for.
-	const emailVerificationEnabled = isEmailVerificationEnabled( flow );
+	const emailVerificationEnabled = useIsEmailVerificationEnabled( flow );
 	const gateScopeForUser = gateScope( flow, userId );
 	// Scoped, since `/me` resolving a different account is a case this step already handles and the
 	// gate is keyed on the same scope for it. Derived once: the address it was opened with is both

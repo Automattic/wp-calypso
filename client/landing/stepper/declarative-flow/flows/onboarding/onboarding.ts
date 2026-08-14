@@ -48,7 +48,7 @@ import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboardi
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
-import { isDeferredEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
+import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
@@ -78,7 +78,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		const flowName = this.name;
 		// Variant B: the account step doesn't gate; the verification step is met after the free plan
 		// selection or, for a paid order, on return from checkout.
-		const deferredEmailVerification = isDeferredEmailVerification( flowName );
+		const postPlanSelectionEmailVerification = useIsPostPlanSelectionEmailVerification( flowName );
 
 		const {
 			setDomain,
@@ -279,7 +279,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					// A fully free order never reaches checkout, so the deferred gate is met here,
 					// right after the plan is chosen, before the site is created.
-					if ( deferredEmailVerification && ! pickedPlan ) {
+					if ( postPlanSelectionEmailVerification && ! pickedPlan ) {
 						return navigate(
 							'email-verification?next=create-site' as typeof currentStepSlug,
 							undefined,
@@ -452,7 +452,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							// Variant B: a paid order meets the deferred gate on return from checkout,
 							// before post-checkout-onboarding. The Playground import path keeps its own
 							// return target.
-							if ( deferredEmailVerification && ! playgroundId ) {
+							if ( postPlanSelectionEmailVerification && ! playgroundId ) {
 								redirectTo = addQueryArgs(
 									withLocale( '/setup/onboarding/email-verification', locale ),
 									{
