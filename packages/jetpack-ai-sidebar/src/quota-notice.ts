@@ -6,7 +6,7 @@ const QUOTA_EXHAUSTED_CODE_MESSAGE =
 	/^(?:(?:(?:protocol request|streaming) error|http \d{3}):\s*)?jetpack_ai_quota_exhausted(?:[.!:\s]|$)/i;
 const QUOTA_EXHAUSTED_MESSAGE =
 	/^(?:(?:(?:protocol request|streaming) error|http \d{3}):\s*)?(?:you have reached your jetpack ai usage limit|jetpack ai usage limit reached)(?:[.!:\s]|$)/i;
-const TRUSTED_UPGRADE_HOSTS = [ 'wordpress.com', 'jetpack.com' ];
+const TRUSTED_UPGRADE_ORIGINS = [ 'https://wordpress.com', 'https://jetpack.com' ];
 
 export interface JetpackAiChatNotice {
 	message: string;
@@ -17,19 +17,28 @@ export interface JetpackAiChatNotice {
 	suppressCurrentError?: boolean;
 }
 
-function getTrustedUpgradeUrl( value: string ): string | null {
+export function getTrustedUpgradeUrl( value: string ): string | null {
 	try {
 		const url = new URL( value.replace( /[.,;:!?)\]}]+$/, '' ) );
-		return url.protocol === 'https:' && TRUSTED_UPGRADE_HOSTS.includes( url.hostname )
-			? url.href
-			: null;
+		const isTrustedHostedUrl =
+			url.username === '' && url.password === '' && TRUSTED_UPGRADE_ORIGINS.includes( url.origin );
+		const isSameOriginMyJetpackUrl =
+			typeof window !== 'undefined' &&
+			url.origin === window.location.origin &&
+			url.username === '' &&
+			url.password === '' &&
+			/(?:^|\/)wp-admin\/admin\.php$/.test( url.pathname ) &&
+			url.search === '?page=my-jetpack' &&
+			url.hash === '#/add-jetpack-ai';
+
+		return isTrustedHostedUrl || isSameOriginMyJetpackUrl ? url.href : null;
 	} catch {
 		return null;
 	}
 }
 
 function findUpgradeUrlInMessage( message: string ): string | null {
-	for ( const [ candidate ] of message.matchAll( /https:\/\/[^\s<>"']+/g ) ) {
+	for ( const [ candidate ] of message.matchAll( /https?:\/\/[^\s<>"']+/g ) ) {
 		const url = getTrustedUpgradeUrl( candidate );
 		if ( url ) {
 			return url;

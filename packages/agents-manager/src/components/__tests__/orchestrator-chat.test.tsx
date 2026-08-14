@@ -145,7 +145,9 @@ const mockCheckpointActions = () => {
 		}
 	);
 };
-
+const testGlobal = globalThis as typeof globalThis & {
+	agentsManagerData?: { isWpcomPlatform?: boolean };
+};
 const mockAgentChat = jest.fn(
 	( {
 		onSuggestionClick,
@@ -334,6 +336,7 @@ jest.mock( '../../contexts', () => {
 				onSessionIdChange: ( sessionId: string ) => saveSessionId( sessionId, 'wp-orchestrator' ),
 			},
 			getTabSessionId: () => mockTabSessionId ?? '',
+			site: { ID: 123 },
 			siteKey: mockSiteKey,
 			currentUser: mockCurrentUserId === undefined ? undefined : { ID: mockCurrentUserId },
 		} ),
@@ -622,6 +625,7 @@ const countShowComponentMessages = () => {
 
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
+		delete testGlobal.agentsManagerData;
 		jest.clearAllMocks();
 		mockUseCheckpointAction.mockReturnValue( () => [] );
 		// Default getter: contributes no actions.
@@ -1193,6 +1197,102 @@ describe( 'OrchestratorChat', () => {
 		} );
 	} );
 
+	it( 'refreshes provider status only after the submitted request settles', async () => {
+		let resolveSubmit: () => void = () => {};
+		const submitPromise = new Promise< void >( ( resolve ) => {
+			resolveSubmit = resolve;
+		} );
+		const useChatNotice = jest.fn();
+		const onSubmit = jest.fn( () => submitPromise );
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+
+		render( chat( { useChatNotice } ) );
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		await waitFor( () => expect( onSubmit ).toHaveBeenCalled() );
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { settledRequestCount: 0 } )
+		);
+
+		await act( async () => {
+			resolveSubmit();
+			await submitPromise;
+		} );
+
+		await waitFor( () =>
+			expect( useChatNotice ).toHaveBeenLastCalledWith(
+				expect.objectContaining( { settledRequestCount: 1 } )
+			)
+		);
+	} );
+
+	it( 'refreshes provider status only after regeneration settles', async () => {
+		let resolveRegenerate: () => void = () => {};
+		const regeneratePromise = new Promise< void >( ( resolve ) => {
+			resolveRegenerate = resolve;
+		} );
+		const useChatNotice = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { getRegenerateHandler: jest.fn( () => () => regeneratePromise ) } )
+		);
+
+		render( chat( { useChatNotice } ) );
+		const config = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | undefined;
+		};
+		const regenerate = config.getRegenerateHandler?.( { id: 'agent-1' } );
+		let pendingRegenerate: Promise< void > | undefined;
+		act( () => {
+			pendingRegenerate = regenerate?.();
+		} );
+
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { settledRequestCount: 0 } )
+		);
+		await act( async () => {
+			resolveRegenerate();
+			await pendingRegenerate;
+		} );
+		await waitFor( () =>
+			expect( useChatNotice ).toHaveBeenLastCalledWith(
+				expect.objectContaining( { settledRequestCount: 1 } )
+			)
+		);
+	} );
+
+	it( 'refreshes provider status only after a navigation tool result settles', async () => {
+		let resolveSubmit: () => void = () => {};
+		const submitPromise = new Promise< void >( ( resolve ) => {
+			resolveSubmit = resolve;
+		} );
+		const useChatNotice = jest.fn();
+		const useNavigationContinuation = jest.fn();
+		const onSubmit = jest.fn( () => submitPromise );
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+
+		render( chat( { useChatNotice, useNavigationContinuation } ) );
+		const continuation = useNavigationContinuation.mock.calls.at( -1 )![ 0 ];
+		const pendingSubmit = continuation.sendToolResult( {
+			message: 'Continue',
+			toolCallId: 'call-1',
+			toolId: 'navigate',
+			sessionId: 'session-id',
+		} );
+
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { settledRequestCount: 0 } )
+		);
+		await act( async () => {
+			resolveSubmit();
+			await pendingSubmit;
+		} );
+		await waitFor( () =>
+			expect( useChatNotice ).toHaveBeenLastCalledWith(
+				expect.objectContaining( { settledRequestCount: 1 } )
+			)
+		);
+	} );
+
 	it( 'renders the provider notice derived from the agent error', () => {
 		const notice = {
 			message: 'You’re out of free credits.',
@@ -1206,9 +1306,26 @@ describe( 'OrchestratorChat', () => {
 
 		render( chat( { useChatNotice } ) );
 
-		expect( useChatNotice ).toHaveBeenCalledWith( { error: 'jetpack_ai_quota_exhausted' } );
+		expect( useChatNotice ).toHaveBeenCalledWith( {
+			error: 'jetpack_ai_quota_exhausted',
+			enabled: true,
+			isWpcomPlatform: undefined,
+			settledRequestCount: 0,
+			siteId: 123,
+		} );
 		expect( mockAgentChat.mock.calls.at( -1 )![ 0 ] ).toEqual(
 			expect.objectContaining( { notice, error: null } )
+		);
+	} );
+
+	it( 'preserves a false WordPress.com platform flag for the provider notice hook', () => {
+		testGlobal.agentsManagerData = { isWpcomPlatform: false };
+		const useChatNotice = jest.fn();
+
+		render( chat( { useChatNotice } ) );
+
+		expect( useChatNotice ).toHaveBeenCalledWith(
+			expect.objectContaining( { isWpcomPlatform: false } )
 		);
 	} );
 
@@ -1238,6 +1355,7 @@ describe( 'OrchestratorChat', () => {
 		expect( mockAgentChat.mock.calls.at( -1 )![ 0 ] ).toEqual(
 			expect.objectContaining( { notice: undefined } )
 		);
+		expect( useChatNotice ).toHaveBeenCalledWith( expect.objectContaining( { enabled: false } ) );
 	} );
 
 	it( 'fires `file_upload_success` after images upload on send, with the uploaded media count', async () => {

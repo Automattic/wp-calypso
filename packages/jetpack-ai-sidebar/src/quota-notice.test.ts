@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
-import { useChatNotice } from './quota-notice';
+import { getTrustedUpgradeUrl, useChatNotice } from './quota-notice';
 import { trackJetpackAiUpgrade } from './utils/tracking';
 
 jest.mock( './utils/tracking', () => ( {
@@ -24,6 +24,25 @@ beforeAll( () => {
 beforeEach( () => {
 	mockTrackJetpackAiUpgrade.mockReset();
 	mockAssign.mockReset();
+} );
+
+describe( 'getTrustedUpgradeUrl', () => {
+	it.each( [
+		'http://localhost/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
+		'http://localhost/wordpress/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
+	] )( 'allows the exact same-origin My Jetpack upgrade URL: %s', ( upgradeUrl ) => {
+		expect( getTrustedUpgradeUrl( upgradeUrl ) ).toBe( upgradeUrl );
+	} );
+
+	it.each( [
+		'http://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
+		'http://localhost/wp-admin/admin.php?page=other#/add-jetpack-ai',
+		'http://localhost/wp-admin/admin.php?page=my-jetpack#/other',
+		'http://localhost/wp-admin/options-general.php?page=my-jetpack#/add-jetpack-ai',
+		'http://localhost/wp-admin/admin.php?page=my-jetpack&other=value#/add-jetpack-ai',
+	] )( 'rejects other same-origin or My Jetpack-shaped URLs: %s', ( upgradeUrl ) => {
+		expect( getTrustedUpgradeUrl( upgradeUrl ) ).toBeNull();
+	} );
 } );
 
 describe( 'useChatNotice', () => {
@@ -70,6 +89,7 @@ describe( 'useChatNotice', () => {
 	it.each( [
 		'https://wordpress.com/checkout/example.com/ai-monthly',
 		'https://jetpack.com/upgrade/ai',
+		'http://localhost/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
 	] )( 'uses a trusted backend upgrade URL: %s', ( upgradeUrl ) => {
 		const { result } = renderHook( () =>
 			useChatNotice( {
@@ -87,6 +107,9 @@ describe( 'useChatNotice', () => {
 		'https://wordpress.com.evil.example/checkout',
 		'https://cdn.wordpress.com/checkout',
 		'https://evil.example/checkout',
+		'http://wordpress.com/checkout',
+		'https://wordpress.com:444/checkout',
+		'https://user:password@wordpress.com/checkout',
 	] )( 'does not offer an action for an untrusted URL: %s', ( upgradeUrl ) => {
 		const { result } = renderHook( () =>
 			useChatNotice( {
