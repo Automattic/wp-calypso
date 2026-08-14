@@ -89,11 +89,12 @@ import {
 	PlansPage,
 	UseADomainIOwnPage,
 	SelectItemsComponent,
-	THROTTLE_IDS,
-	debugThrottle,
+	type ThrottleId,
 	flushThrottleWrites,
+	handleActiveThrottles,
 	mayBeThrottled,
 	recordThrottle,
+	registerThrottleActionHandler,
 } from '@automattic/calypso-e2e';
 import {
 	test as base,
@@ -169,16 +170,13 @@ const FLUSH_TIMEOUT = 7 * 1000;
  * as a 200. The body is never logged: a failed `/sites/new` carries the
  * credentials of the user it was creating a site for.
  *
- * Reports a throttle already known when the context is handed over, so a worker
- * states a ban at the first test that runs after it becomes known rather than
- * before every call that might run into it, and returns the teardown for these
- * listeners: a listener raises its flag with no test awaiting it, so without it
+ * Returns the teardown for these listeners. It drains recording first, then
+ * applies policy to the throttle types this test encountered; without the drain,
  * a worker can exit between detecting a throttle and tagging the build for it.
  */
 function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 	const pending = new Set< Promise< unknown > >();
-
-	THROTTLE_IDS.forEach( ( id ) => debugThrottle( id ) );
+	const detected = new Set< ThrottleId >();
 
 	const onResponse = ( response: Response ) => {
 		const url = response.url();
@@ -200,7 +198,10 @@ function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 				if ( status < 400 && ! /"error"\s*:/.test( body ) ) {
 					return;
 				}
-				await recordThrottle( { url, status, body } );
+				const throttle = await recordThrottle( { url, status, body } );
+				if ( throttle ) {
+					detected.add( throttle );
+				}
 			} catch {
 				// Detection never fails a test.
 			}
@@ -229,6 +230,7 @@ function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 			await flushThrottleWrites();
 		} )();
 		await withDeadline( drain, FLUSH_TIMEOUT ).catch( () => {} );
+		handleActiveThrottles( detected );
 	};
 }
 
@@ -236,6 +238,7 @@ export const test = base.extend<
 	CustomOptions & {
 		[ K in keyof typeof fixtureAccounts ]: TestAccount;
 	} & {
+		_throttleActionHandler: void;
 		/**
 		 * Test account selected based on the current environment variables.
 		 */
@@ -472,6 +475,31 @@ export const test = base.extend<
 	}
 >( {
 	viewportName: [ 'desktop', { option: true } ],
+	_throttleActionHandler: [
+		async ( {}, use, testInfo ) => {
+			let actionApplied = false;
+			const unregister = registerThrottleActionHandler( ( action, ids ) => {
+				if ( actionApplied || testInfo.errors.length ) {
+					return;
+				}
+				actionApplied = true;
+				const names = ids.join( ', ' );
+				const message = `WordPress.com throttle active: ${ names }.`;
+				if ( action === 'skip' ) {
+					base.skip( true, message );
+					return;
+				}
+				throw new Error( `${ message } E2E throttle action is fail.` );
+			} );
+
+			try {
+				await use();
+			} finally {
+				unregister();
+			}
+		},
+		{ auto: true },
+	],
 	page: async ( { page, viewportName }, use, testInfo ) => {
 		// Set process.env.VIEWPORT_NAME so page objects/components can access it via envVariables.
 		process.env.VIEWPORT_NAME = viewportName;
@@ -663,8 +691,13 @@ export const test = base.extend<
 		await incognitoPage.spawn();
 		const flushThrottleWatchers = watchForThrottle( incognitoPage.getPage().context() );
 		await use( incognitoPage );
-		await flushThrottleWatchers();
-		await incognitoPage.close();
+		// The flush applies the throttle policy, which throws to skip or fail:
+		// closing has to happen either way or the context outlives the test.
+		try {
+			await flushThrottleWatchers();
+		} finally {
+			await incognitoPage.close();
+		}
 	},
 	pageJetpackTraffic: async ( { page }, use ) => {
 		const jetpackTrafficPage = new JetpackTrafficPage( page );
