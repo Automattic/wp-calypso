@@ -148,7 +148,7 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 		'body > .color-scheme',
 		'body+.x',
 		'body~.x',
-		'.foo>body .x',
+		'.foo body .x',
 		'html>body .x',
 	] )( 'leaves `%s` unprefixed, whatever combinator spacing Sass emitted', ( selector ) => {
 		const compiled = compile( `${ selector } { --color-accent: rgb(7, 8, 9); }` );
@@ -157,9 +157,14 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 	} );
 
 	// Excluding these to save their dead `body` branch would ship the live branches unscoped into
-	// wp-admin, which is the worse trade. They stay prefixed; verify-css-scope.js flags the ones
-	// that are dead outright.
-	it.each( [ ':is(.foo,body>.x) .card', ':is(html,body) .card' ] )(
+	// wp-admin, which is the worse trade — and the post-build check cannot see it, since it only
+	// inspects rules that were prefixed. They stay prefixed instead; verify-css-scope.js reports the
+	// ones that are dead outright as a build failure.
+	it.each( [
+		':is(.foo,body>.x) .card',
+		':is(.foo>body,.admin-panel) .card',
+		':is(html,body) .card',
+	] )(
 		'still prefixes `%s` — a root inside a matches-any group must not exclude the whole rule',
 		( selector ) => {
 			const compiled = compile( `${ selector } { color: red; }` );
@@ -167,6 +172,18 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 			expect( compiled ).toContain( ':where(' );
 		}
 	);
+
+	// The price of keeping the left side narrow enough to protect those mixed groups: a root after a
+	// combinator is not excluded, so it is prefixed and dead. The safe direction — check 4 turns it
+	// into a build failure, where an unscoped rule would pass unnoticed.
+	it( 'prefixes `.foo>body .x`, leaving verify-css-scope.js to report it as dead', () => {
+		const compiled = compile( '.foo>body .x { color: red; }' );
+
+		expect( compiled ).toContain( ':where(' );
+		expect(
+			findScopeFailures( `${ compiled }\n.jp-stats-dashboard{--x:1}\n.jp-stats-widget{--y:2}` )
+		).toEqual( [ expect.stringContaining( 'Dead rule found' ) ] );
+	} );
 
 	// Known limitation, unchanged by the combinator widening: whitespace before a root inside a
 	// functional pseudo is indistinguishable from the descendant combinator in `.foo body .x`, which
