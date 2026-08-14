@@ -307,6 +307,22 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 	z-index: $agents-manager-z-index-docked;
 }
 
+// Any open @wordpress/components modal must stack above the floating chat.
+// The modal overlay portals to document.body at z-index 100000, while the
+// floating chat holds the shared overlay-panel band (999990/999995) — so
+// without this rule a wp-admin dialog's footer actions render underneath
+// the chat wherever the two overlap (e.g. WooCommerce AI's governed-review
+// dialog, WOOAI-825). The docked chat already yields: the settled shrink
+// layout released its z-index (#113160); this closes the same gap for the
+// undocked chat. Keyed on the overlay's presence in the DOM rather than
+// Modal's `bodyOpenClassName`, which consumers can (and do) override.
+// 99998 keeps the chat above page chrome but below the overlay while a
+// modal is up; both selectors are needed to out-rank the focused offset.
+body:has( .components-modal__screen-overlay ) .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating,
+body:has( .components-modal__screen-overlay ) .agents-manager-chat--undocked.is-focused .agenttic.Chat-module_container.Chat-module_floating {
+	z-index: 99998;
+}
+
 /* Docked split-screen */
 // Flip `--am-sidebar-width` to 50vw; `$sidebar-width` resolves through this
 // variable so every consumer picks it up.
