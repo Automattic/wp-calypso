@@ -159,6 +159,7 @@ describe( 'useCheckpointAction', () => {
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'restore_checkpoint_action', {
+			action: 'undo',
 			id: 'tool-call-1',
 			outcome: 'success',
 		} );
@@ -215,6 +216,7 @@ describe( 'useCheckpointAction', () => {
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'restore_checkpoint_action', {
+			action: 'undo',
 			id: 'tool-call-failure',
 			outcome: 'failed',
 		} );
@@ -233,6 +235,7 @@ describe( 'useCheckpointAction', () => {
 		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 2 );
 		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'restore_checkpoint_action', {
+			action: 'undo',
 			id: 'tool-call-failure',
 			outcome: 'success',
 		} );
@@ -269,6 +272,11 @@ describe( 'useCheckpointAction', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Undo' } ) );
 		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Redo' } ) ).toBeEnabled() );
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Reverted' );
+		expect( recordBigSkyTracksEvent ).toHaveBeenNthCalledWith( 1, 'restore_checkpoint_action', {
+			action: 'undo',
+			id: 'swappable-tool-call',
+			outcome: 'success',
+		} );
 		( checkpoint.canSwapCheckpoint as jest.Mock ).mockReturnValue( false );
 		const driftedAction = getActions( registration, message )[ 0 ];
 		expect( driftedAction ).toMatchObject( { label: 'Reverted' } );
@@ -281,6 +289,11 @@ describe( 'useCheckpointAction', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Redo' } ) );
 		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Undo' } ) ).toBeEnabled() );
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Updated' );
+		expect( recordBigSkyTracksEvent ).toHaveBeenNthCalledWith( 2, 'restore_checkpoint_action', {
+			action: 'redo',
+			id: 'swappable-tool-call',
+			outcome: 'success',
+		} );
 		expect( checkpoint.swapCheckpoint ).toHaveBeenNthCalledWith( 1, 'swappable-tool-call' );
 		expect( checkpoint.swapCheckpoint ).toHaveBeenNthCalledWith( 2, 'swappable-tool-call' );
 		expect( checkpoint.restoreCheckpoint ).not.toHaveBeenCalled();
@@ -360,6 +373,7 @@ describe( 'useCheckpointAction', () => {
 		}
 		expect( invalidatedAction.componentProps ).not.toHaveProperty( 'onUndo' );
 		expect( invalidatedAction.componentProps ).not.toHaveProperty( 'onRedo' );
+		expect( checkpoint.canSwapCheckpoint ).not.toHaveBeenCalled();
 	} );
 
 	it( 'uses the Jetpack tool call id for its block edit checkpoint', async () => {

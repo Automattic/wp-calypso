@@ -253,6 +253,9 @@ export default function OrchestratorChat( {
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
+	const [ sourceDriftInvalidatedCheckpointIds, setSourceDriftInvalidatedCheckpointIds ] = useState<
+		Set< string >
+	>( new Set() );
 	const [ retainedShowComponentMessages, setRetainedShowComponentMessages ] = useState<
 		Map< string, UIMessage >
 	>( new Map() );
@@ -580,6 +583,8 @@ export default function OrchestratorChat( {
 
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();
+	const checkpointRef = useRef( checkpoint );
+	checkpointRef.current = checkpoint;
 	const checkpointIdsByTurn = useMemo( () => {
 		const latestUserMessageIndex = getLatestUserMessageIndex( messages );
 		const current = new Set< string >();
@@ -598,6 +603,63 @@ export default function OrchestratorChat( {
 			userMessageId: messages[ latestUserMessageIndex ]?.id,
 		};
 	}, [ messages ] );
+	const supportsCheckpointSwap =
+		typeof checkpoint?.canSwapCheckpoint === 'function' &&
+		typeof checkpoint.swapCheckpoint === 'function';
+	const hasPendingCheckpointSwap =
+		supportsCheckpointSwap &&
+		[ ...checkpointIdsByTurn.current ].some(
+			( checkpointId ) => ! sourceDriftInvalidatedCheckpointIds.has( checkpointId )
+		);
+	const checkpointEditorBlocks = useSelect(
+		( select ) => {
+			if ( ! hasPendingCheckpointSwap ) {
+				return undefined;
+			}
+
+			try {
+				const blockEditor = select( 'core/block-editor' ) as { getBlocks?: () => unknown[] };
+				return blockEditor?.getBlocks?.();
+			} catch {
+				return undefined;
+			}
+		},
+		[ checkpointIdsByTurn, checkpointSessionIdentity, hasPendingCheckpointSwap, useCheckpoint ]
+	);
+	useEffect( () => {
+		void checkpointEditorBlocks;
+		void checkpointSessionIdentity;
+		void useCheckpoint;
+		const currentCheckpoint = checkpointRef.current;
+		const nextInvalidatedCheckpointIds = new Set(
+			[ ...sourceDriftInvalidatedCheckpointIds ].filter( ( checkpointId ) =>
+				checkpointIdsByTurn.current.has( checkpointId )
+			)
+		);
+		let didChange = nextInvalidatedCheckpointIds.size !== sourceDriftInvalidatedCheckpointIds.size;
+		if ( supportsCheckpointSwap && currentCheckpoint ) {
+			for ( const checkpointId of checkpointIdsByTurn.current ) {
+				if (
+					! nextInvalidatedCheckpointIds.has( checkpointId ) &&
+					currentCheckpoint.canSwapCheckpoint?.( checkpointId ) === false
+				) {
+					nextInvalidatedCheckpointIds.add( checkpointId );
+					invalidateCheckpointAction( checkpointId );
+					didChange = true;
+				}
+			}
+		}
+		if ( didChange ) {
+			setSourceDriftInvalidatedCheckpointIds( nextInvalidatedCheckpointIds );
+		}
+	}, [
+		checkpointEditorBlocks,
+		checkpointIdsByTurn,
+		checkpointSessionIdentity,
+		sourceDriftInvalidatedCheckpointIds,
+		supportsCheckpointSwap,
+		useCheckpoint,
+	] );
 	const previousHasEditorRedoRef = useRef( hasEditorRedo );
 	const nativeUndoInvalidatedTurnRef = useRef(
 		hasEditorRedo ? checkpointIdsByTurn.userMessageId : undefined
@@ -607,6 +669,7 @@ export default function OrchestratorChat( {
 		checkpoint,
 		( checkpointId ) =>
 			! hasEditorRedo &&
+			! sourceDriftInvalidatedCheckpointIds.has( checkpointId ) &&
 			checkpointIdsByTurn.current.has( checkpointId ) &&
 			( ! checkpointIdsByTurn.userMessageId ||
 				nativeUndoInvalidatedTurnRef.current !== checkpointIdsByTurn.userMessageId )
@@ -1001,6 +1064,7 @@ export default function OrchestratorChat( {
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		// The stable checkpoint getter reads this value through a ref.
 		void hasEditorRedo;
+		void sourceDriftInvalidatedCheckpointIds;
 		let currentMessages: AgentsManagerUIMessage[] = messages;
 
 		// Let the provider rewrite the transcript first, while the messages are
@@ -1129,6 +1193,7 @@ export default function OrchestratorChat( {
 		messages,
 		retainedShowComponentMessages,
 		siteBuildUtils,
+		sourceDriftInvalidatedCheckpointIds,
 		thinkingMessage,
 		transformMessages,
 	] );

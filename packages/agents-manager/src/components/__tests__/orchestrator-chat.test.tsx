@@ -34,6 +34,24 @@ const mockInvalidatedCheckpointIds = new Set< string >();
 let mockSelectedBlockType: string | undefined;
 let mockBlockEditorStoreThrows = false;
 let mockHasEditorRedo = false;
+let mockEditorBlocks: unknown[] = [];
+const mockDataStoreSubscribers = new Set< () => void >();
+
+const mockSelectDataStore = ( storeName: string ) => {
+	if ( storeName === 'core/editor' ) {
+		return { hasEditorRedo: () => mockHasEditorRedo };
+	}
+	if ( storeName === 'core/block-editor' ) {
+		if ( mockBlockEditorStoreThrows ) {
+			throw new Error( 'Block editor store unavailable' );
+		}
+		return {
+			getSelectedBlock: () => ( mockSelectedBlockType ? { name: mockSelectedBlockType } : null ),
+			getBlocks: () => mockEditorBlocks,
+		};
+	}
+	return {};
+};
 
 function mockGetCheckpointIdForMessage( message: {
 	content?: Array< { text?: string } >;
@@ -229,24 +247,36 @@ jest.mock(
 	} ),
 	{ virtual: true }
 );
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: ( mapSelect: ( select: ( storeName: string ) => object ) => unknown ) =>
-		mapSelect( ( storeName: string ) => {
-			if ( storeName === 'core/editor' ) {
-				return { hasEditorRedo: () => mockHasEditorRedo };
-			}
-			if ( storeName === 'core/block-editor' ) {
-				if ( mockBlockEditorStoreThrows ) {
-					throw new Error( 'Block editor store unavailable' );
-				}
-				return {
-					getSelectedBlock: () =>
-						mockSelectedBlockType ? { name: mockSelectedBlockType } : null,
+jest.mock( '@wordpress/data', () => {
+	const { useEffect, useReducer, useRef } = jest.requireActual< typeof import('react') >( 'react' );
+
+	return {
+		useSelect: ( mapSelect: ( select: ( storeName: string ) => object ) => unknown ) => {
+			const selectorRef = useRef( mapSelect );
+			selectorRef.current = mapSelect;
+			const selectedValue = mapSelect( mockSelectDataStore );
+			const selectedValueRef = useRef( selectedValue );
+			selectedValueRef.current = selectedValue;
+			const [ , forceRender ] = useReducer( ( count: number ) => count + 1, 0 );
+
+			useEffect( () => {
+				const updateSelectedValue = () => {
+					const nextValue = selectorRef.current( mockSelectDataStore );
+					if ( ! Object.is( selectedValueRef.current, nextValue ) ) {
+						selectedValueRef.current = nextValue;
+						forceRender();
+					}
 				};
-			}
-			return {};
-		} ),
-} ) );
+				mockDataStoreSubscribers.add( updateSelectedValue );
+				return () => {
+					mockDataStoreSubscribers.delete( updateSelectedValue );
+				};
+			}, [] );
+
+			return selectedValue;
+		},
+	};
+} );
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( 'react-router-dom', () => ( {
@@ -408,7 +438,11 @@ const showComponentMessage = ( id: string, content: string = SHOW_COMPONENT_CONT
 	showIcon: true,
 } );
 
-const createCheckpointMessage = ( id: string, checkpointId: string ) => ( {
+const createCheckpointMessage = (
+	id: string,
+	checkpointId: string,
+	changeType?: 'text-content'
+) => ( {
 	id,
 	role: 'agent',
 	content: [
@@ -417,7 +451,13 @@ const createCheckpointMessage = ( id: string, checkpointId: string ) => ( {
 			text: JSON.stringify( {
 				tool_id: 'big_sky__apply_block_edits',
 				tool_call_id: checkpointId,
-				data: { result: { success: true, outcome: 'updated' } },
+				data: {
+					result: {
+						success: true,
+						outcome: 'updated',
+						...( changeType && { changeType } ),
+					},
+				},
 			} ),
 		},
 	],
@@ -466,6 +506,8 @@ describe( 'OrchestratorChat', () => {
 		sessionStorage.clear();
 		mockManagerHasAgent = true;
 		mockHasEditorRedo = false;
+		mockEditorBlocks = [];
+		mockDataStoreSubscribers.clear();
 		mockInvalidatedCheckpointIds.clear();
 		mockAgentChatConfig = undefined;
 		mockConversationConfig = undefined;
@@ -1441,6 +1483,75 @@ describe( 'OrchestratorChat', () => {
 			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
 		).not.toHaveProperty( 'onUndo' );
 		expect( mockInvalidateCheckpointAction ).toHaveBeenLastCalledWith( 'native-undo-checkpoint' );
+	} );
+
+	it( 'hides checkpoint controls when the editor content drifts without Gutenberg Undo', async () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-editor-drift',
+			'editor-drift-checkpoint',
+			'text-content'
+		);
+		let canSwapCheckpoint = true;
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		const actualUseCheckpointAction = jest.requireActual(
+			'../../hooks/use-checkpoint-action'
+		).default;
+		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+
+		act( () => {
+			canSwapCheckpoint = false;
+			mockEditorBlocks = [ { clientId: 'edited-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+
+		expect( checkpoint.canSwapCheckpoint ).toHaveBeenLastCalledWith( 'editor-drift-checkpoint' );
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith( 'editor-drift-checkpoint' );
+		const actionAfterDrift = getDisplayedCheckpointAction( checkpointMessage.id );
+		const staleOnUndo = actionAfterDrift?.componentProps?.onUndo;
+		// Exercise the unfixed path so the failed-event assertion below is meaningful.
+		if ( typeof staleOnUndo === 'function' ) {
+			await act( async () => staleOnUndo() );
+		}
+		expect( actionAfterDrift?.componentProps ).not.toHaveProperty( 'onUndo' );
+		expect( actionAfterDrift?.componentProps ).not.toHaveProperty( 'onRedo' );
+		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'restore_checkpoint_action',
+			expect.objectContaining( { id: 'editor-drift-checkpoint', outcome: 'failed' } )
+		);
+
+		const canSwapCallCount = checkpoint.canSwapCheckpoint.mock.calls.length;
+		act( () => {
+			canSwapCheckpoint = true;
+			mockEditorBlocks = [ { clientId: 'edited-again' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( checkpoint.canSwapCheckpoint ).toHaveBeenCalledTimes( canSwapCallCount );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
 	} );
 
 	it( 'invalidates a checkpoint that arrives after Gutenberg Undo', () => {

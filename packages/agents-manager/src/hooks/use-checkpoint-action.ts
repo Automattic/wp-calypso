@@ -125,16 +125,17 @@ export default function useCheckpointAction(
 			return [];
 		}
 
+		const isReverted = revertedCheckpointIds.has( checkpointInfo.checkpointId );
+		const isActionAvailable =
+			! invalidatedCheckpointIds.has( checkpointInfo.checkpointId ) &&
+			( isCheckpointActionAvailableRef.current?.( checkpointInfo.checkpointId ) ?? true );
 		const swapAvailability =
+			isActionAvailable &&
 			typeof currentCheckpoint.canSwapCheckpoint === 'function' &&
 			typeof currentCheckpoint.swapCheckpoint === 'function'
 				? currentCheckpoint.canSwapCheckpoint( checkpointInfo.checkpointId )
 				: undefined;
 		const supportsSwap = swapAvailability !== undefined;
-		const isReverted = revertedCheckpointIds.has( checkpointInfo.checkpointId );
-		const isActionAvailable =
-			! invalidatedCheckpointIds.has( checkpointInfo.checkpointId ) &&
-			( isCheckpointActionAvailableRef.current?.( checkpointInfo.checkpointId ) ?? true );
 		const applyCheckpointAction = async ( revert: boolean ): Promise< boolean > => {
 			let outcome: 'success' | 'failed' = 'failed';
 			try {
@@ -173,6 +174,7 @@ export default function useCheckpointAction(
 				return false;
 			} finally {
 				recordBigSkyTracksEvent( 'restore_checkpoint_action', {
+					action: revert ? 'undo' : 'redo',
 					id: checkpointInfo.checkpointId,
 					outcome,
 				} );
