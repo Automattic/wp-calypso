@@ -6,6 +6,8 @@ import { Text } from '../../../components/text';
 const REQUIRED_WIDTH = 800;
 const REQUIRED_HEIGHT = 320;
 const DIMENSIONS_TOLERANCE = 5;
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_MIME_TYPES = [ 'image/png', 'image/jpeg' ];
 
 const getImageDimensions = ( file: File ): Promise< { width: number; height: number } > =>
 	new Promise( ( resolve, reject ) => {
@@ -27,12 +29,12 @@ const getImageDimensions = ( file: File ): Promise< { width: number; height: num
 
 interface LogoPickerProps {
 	logo?: string | null;
-	onPick: ( url: string ) => void;
+	onPick: ( file: File ) => void;
 }
 
 /**
- * Picks the agency logo. The picked image is kept as a local object URL until
- * the form is saved, which uploads it.
+ * Picks the agency logo. The picked file stays local until the form is saved,
+ * which uploads it.
  */
 export default function LogoPicker( { logo, onPick }: LogoPickerProps ) {
 	const [ error, setError ] = useState< string | null >( null );
@@ -44,24 +46,34 @@ export default function LogoPicker( { logo, onPick }: LogoPickerProps ) {
 
 		setError( null );
 
-		let width = 0;
-		let height = 0;
+		// The `accept` attribute is advisory: drag and drop bypasses it.
+		if ( ! ALLOWED_MIME_TYPES.includes( file.type ) ) {
+			setError( __( 'The image could not be read. Please use a valid JPG or PNG.' ) );
+			return;
+		}
+
+		if ( file.size > MAX_FILE_SIZE_BYTES ) {
+			setError( __( 'File is too large. Please upload a logo under 10 MB.' ) );
+			return;
+		}
+
+		let dimensions;
 		try {
-			( { width, height } = await getImageDimensions( file ) );
+			dimensions = await getImageDimensions( file );
 		} catch {
 			setError( __( 'The image could not be read. Please use a valid JPG or PNG.' ) );
 			return;
 		}
 
 		if (
-			Math.abs( width - REQUIRED_WIDTH ) > DIMENSIONS_TOLERANCE ||
-			Math.abs( height - REQUIRED_HEIGHT ) > DIMENSIONS_TOLERANCE
+			Math.abs( dimensions.width - REQUIRED_WIDTH ) > DIMENSIONS_TOLERANCE ||
+			Math.abs( dimensions.height - REQUIRED_HEIGHT ) > DIMENSIONS_TOLERANCE
 		) {
 			setError( __( 'Company logo must have 800px width and 320px height.' ) );
 			return;
 		}
 
-		onPick( URL.createObjectURL( file ) );
+		onPick( file );
 	};
 
 	return (

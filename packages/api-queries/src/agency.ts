@@ -118,6 +118,14 @@ export const tipaltiPayeeQuery = ( agencyId: number ) =>
 		enabled: !! agencyId,
 	} );
 
+// Merge rather than replace: the PUT responses may omit fields the
+// GET provides (e.g. `user.capabilities`), which gate routes and menus.
+const mergeIntoActiveAgency = ( agency: Agency ) => {
+	queryClient.setQueryData( activeAgencyQuery().queryKey, ( previous ) =>
+		previous ? { ...previous, ...agency } : agency
+	);
+};
+
 export const agencyPartnerDirectoryApplicationMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-pd-application-update' },
@@ -130,13 +138,7 @@ export const agencyPartnerDirectoryApplicationMutation = ( agencyId: number ) =>
 			}
 			return agency;
 		},
-		onSuccess: ( agency: Agency ) => {
-			// Merge rather than replace: the PUT response may omit fields the
-			// GET provides (e.g. `user.capabilities`), which gate routes and menus.
-			queryClient.setQueryData( activeAgencyQuery().queryKey, ( previous ) =>
-				previous ? { ...previous, ...agency } : agency
-			);
-		},
+		onSuccess: mergeIntoActiveAgency,
 	} );
 
 export const agencyProfileMutation = ( agencyId: number ) =>
@@ -151,13 +153,7 @@ export const agencyProfileMutation = ( agencyId: number ) =>
 			}
 			return agency;
 		},
-		onSuccess: ( agency: Agency ) => {
-			// Merge rather than replace: the PUT response may omit fields the
-			// GET provides (e.g. `user.capabilities`), which gate routes and menus.
-			queryClient.setQueryData( activeAgencyQuery().queryKey, ( previous ) =>
-				previous ? { ...previous, ...agency } : agency
-			);
-		},
+		onSuccess: mergeIntoActiveAgency,
 	} );
 
 export const agencyPartnerDirectoryLogoMutation = ( agencyId: number ) =>

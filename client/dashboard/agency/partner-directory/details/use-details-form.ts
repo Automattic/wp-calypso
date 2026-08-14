@@ -27,21 +27,23 @@ export function getDetailsFormData( profile?: AgencyProfile | null ): DetailsFor
 		return null;
 	}
 
+	// Despite the types, a partially built profile can arrive with any of
+	// these absent (see the guards in `lib.ts` and `dashboard-content.tsx`).
 	return {
-		name: profile.company_details.name,
-		email: profile.company_details.email,
-		website: profile.company_details.website,
-		bioDescription: profile.company_details.bio_description,
-		logoUrl: profile.company_details.logo_url,
-		landingPageUrl: profile.company_details.landing_page_url,
-		country: profile.company_details.country,
-		isAvailable: profile.listing_details.is_available,
-		isGlobal: profile.listing_details.is_global,
-		industries: profile.listing_details.industries,
-		services: profile.listing_details.services,
-		products: profile.listing_details.products,
-		languagesSpoken: profile.listing_details.languages_spoken ?? [],
-		budgetLowerRange: profile.budget_details.budget_lower_range,
+		name: profile.company_details?.name ?? '',
+		email: profile.company_details?.email ?? '',
+		website: profile.company_details?.website ?? '',
+		bioDescription: profile.company_details?.bio_description ?? '',
+		logoUrl: profile.company_details?.logo_url ?? '',
+		landingPageUrl: profile.company_details?.landing_page_url ?? '',
+		country: profile.company_details?.country ?? '',
+		isAvailable: profile.listing_details?.is_available ?? true,
+		isGlobal: profile.listing_details?.is_global ?? false,
+		industries: profile.listing_details?.industries ?? [],
+		services: profile.listing_details?.services ?? [],
+		products: profile.listing_details?.products ?? [],
+		languagesSpoken: profile.listing_details?.languages_spoken ?? [],
+		budgetLowerRange: profile.budget_details?.budget_lower_range ?? '0',
 	};
 }
 

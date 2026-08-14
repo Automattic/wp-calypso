@@ -37,7 +37,7 @@ export default function useDetailsFormValidation() {
 		if ( payload.email === '' ) {
 			newValidationError.email = __( 'Email can’t be empty' );
 		} else if ( ! emailValidator.validate( payload.email ) ) {
-			newValidationError.email = __( 'Please provide correct email address' );
+			newValidationError.email = __( 'Please provide a valid email address' );
 		}
 
 		if ( payload.website === '' ) {
@@ -54,7 +54,7 @@ export default function useDetailsFormValidation() {
 			newValidationError.bio = __( 'Bio description can’t be empty' );
 		}
 
-		if ( payload.country === '' || payload.country === null ) {
+		if ( ! payload.country ) {
 			newValidationError.country = __( 'Company location can’t be empty' );
 		}
 
