@@ -105,7 +105,11 @@ export function useAtomicTransfer(
 		}
 
 		statusRequestSiteIdRef.current = siteId;
-		dispatch( fetchAutomatedTransferStatus( siteId, { retryOnFailure: true } ) );
+		// resetPolling: a new wait owns a new deadline window — never inherit one left behind
+		// by an earlier wait or another surface's polling chain.
+		dispatch(
+			fetchAutomatedTransferStatus( siteId, { resetPolling: true, retryOnFailure: true } )
+		);
 	}, [
 		dispatch,
 		isAtomicNeeded,
@@ -164,7 +168,14 @@ export function useAtomicTransfer(
 			return;
 		}
 
-		if ( ! isFailure ) {
+		// Only genuine transfer activity proves there is no stale failure to confirm away —
+		// a failed request or an expired wait says nothing about which record the backend has.
+		if (
+			! isFailure &&
+			transferStatus &&
+			transferStatus !== transferStates.REQUEST_FAILURE &&
+			transferStatus !== transferStates.CLIENT_TIMEOUT
+		) {
 			sawProgressRef.current = true;
 		}
 		setTrustedTransferStatus( transferStatus );
@@ -188,7 +199,9 @@ export function useAtomicTransfer(
 		);
 	}, [ dispatch, siteId ] );
 
-	const isTransferComplete = transferCompleteStates.includes( transferStatus );
+	// Gate on the trusted status, not the raw shared one: a stale persisted COMPLETE from an
+	// earlier transfer must not start the atomic-flag poll or short-circuit "Check again".
+	const isTransferComplete = transferCompleteStates.includes( trustedTransferStatus );
 	const isWaitingForAtomicFlag =
 		!! siteId && isTransferComplete && ! isSiteAtomic && ! isJetpackSelfHosted && isAtomicNeeded;
 	let atomicFlagPollInterval: number | null = null;

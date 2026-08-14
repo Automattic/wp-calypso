@@ -14,7 +14,6 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { transferCompleteStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
-import { isRequesting } from 'calypso/state/plugins/installed/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
@@ -46,9 +45,6 @@ const MarketplaceThankYou = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const isRequestingPlugins = useSelector( ( state ) =>
-		siteId ? isRequesting( state, siteId ) : false
-	);
 	const productKey = useMemo(
 		() =>
 			`plugins:${ [ ...pluginSlugs ].sort().join( ',' ) };themes:${ [ ...themeSlugs ]
@@ -161,7 +157,7 @@ const MarketplaceThankYou = ( {
 			dispatch( requestAdminMenu( siteId ) );
 			return;
 		}
-	}, [ isRequestingPlugins, isPageReady, dispatch, siteId, transferStatus, isJetpackSelfHosted ] );
+	}, [ isPageReady, dispatch, siteId, transferStatus, isJetpackSelfHosted ] );
 
 	useEffect( () => {
 		if ( isPageReady ) {

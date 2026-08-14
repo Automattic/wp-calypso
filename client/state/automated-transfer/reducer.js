@@ -42,8 +42,9 @@ export const status = withPersistence(
 		return state;
 	},
 	{
-		serialize: () => null,
-		deserialize: () => null,
+		// CLIENT_TIMEOUT is client-only. Persisting it would render a stale error on screens that
+		// stop polling once they see it, leaving nothing able to clear it.
+		serialize: ( state ) => ( state === transferStates.CLIENT_TIMEOUT ? null : state ),
 	}
 );
 

@@ -39,7 +39,7 @@ describe( 'state', () => {
 				} );
 			} );
 
-			test( 'should persist eligibility but not live transfer status or fetching state', () => {
+			test( 'should persist all state keys except fetchingStatus', () => {
 				const SITE_ID = 12345;
 				const AT_STATE = {
 					[ SITE_ID ]: {
@@ -54,12 +54,12 @@ describe( 'state', () => {
 				};
 
 				const serialized = serialize( reducer, AT_STATE ).root();
-				expect( serialized[ SITE_ID ] ).toHaveProperty( 'status', null );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'status' );
 				expect( serialized[ SITE_ID ] ).toHaveProperty( 'eligibility' );
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'fetchingStatus' );
 
 				const deserialized = deserialize( reducer, AT_STATE );
-				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'status', null );
+				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'status', transferStates.BACKFILLING );
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'eligibility' );
 				// The non-persisted property has default value, persisted value is ignored
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'fetchingStatus', false );

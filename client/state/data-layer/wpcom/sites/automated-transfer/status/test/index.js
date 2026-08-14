@@ -64,12 +64,12 @@ describe( 'requestStatus', () => {
 	test( 'should restart the polling deadline when requested', () => {
 		const start = 1000000;
 		jest.setSystemTime( start );
-		requestStatus( { siteId, retryOnFailure: true } );
+		requestStatus( { siteId, resetPolling: true, retryOnFailure: true } );
 		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
 
 		requestStatus( { siteId, resetPolling: true, retryOnFailure: true } );
 		const dispatch = jest.fn();
-		requestingStatusFailure( { siteId } )( dispatch );
+		requestingStatusFailure( { siteId, retryOnFailure: true } )( dispatch );
 
 		expect( dispatch ).not.toHaveBeenCalledWith(
 			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT )
@@ -87,9 +87,10 @@ describe( 'requestingStatusFailure', () => {
 	test( 'should retry failed requests at the polling cadence when the wait opted in', () => {
 		const response = {
 			siteId,
+			retryOnFailure: true,
 			meta: { dataLayer: { error: { message: 'Service unavailable' } } },
 		};
-		requestStatus( { siteId, retryOnFailure: true } );
+		requestStatus( { siteId, resetPolling: true, retryOnFailure: true } );
 		const dispatch = jest.fn();
 
 		requestingStatusFailure( response )( dispatch );
@@ -101,7 +102,9 @@ describe( 'requestingStatusFailure', () => {
 				error: 'Service unavailable',
 			} )
 		);
-		expect( dispatch ).toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
+		expect( dispatch ).toHaveBeenCalledWith(
+			fetchAutomatedTransferStatus( siteId, { retryOnFailure: true } )
+		);
 	} );
 
 	test( 'should not retry or time out a failure when the wait did not opt in', () => {
@@ -129,11 +132,11 @@ describe( 'requestingStatusFailure', () => {
 	test( 'should time out repeated request failures against the original request', () => {
 		const start = 1000000;
 		jest.setSystemTime( start );
-		requestStatus( { siteId, retryOnFailure: true } );
+		requestStatus( { siteId, resetPolling: true, retryOnFailure: true } );
 		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
 		const dispatch = jest.fn();
 
-		requestingStatusFailure( { siteId } )( dispatch );
+		requestingStatusFailure( { siteId, retryOnFailure: true } )( dispatch );
 
 		expect( dispatch ).toHaveBeenLastCalledWith(
 			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT )
@@ -143,9 +146,10 @@ describe( 'requestingStatusFailure', () => {
 	test( 'should stop retrying a missing transfer record after a few attempts', () => {
 		const response = {
 			siteId,
+			retryOnFailure: true,
 			meta: { dataLayer: { error: { message: NO_TRANSFER_RECORD_ERROR } } },
 		};
-		requestStatus( { siteId, retryOnFailure: true } );
+		requestStatus( { siteId, resetPolling: true, retryOnFailure: true } );
 		const dispatch = jest.fn();
 
 		for ( let attempt = 0; attempt < MISSING_RECORD_ATTEMPTS; attempt++ ) {
@@ -157,6 +161,7 @@ describe( 'requestingStatusFailure', () => {
 			( [ action ] ) => action?.type === fetchAutomatedTransferStatus( siteId ).type
 		);
 		expect( retries ).toHaveLength( MISSING_RECORD_ATTEMPTS - 1 );
+		retries.forEach( ( [ action ] ) => expect( action.retryOnFailure ).toBe( true ) );
 		expect( dispatch ).not.toHaveBeenCalledWith(
 			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT )
 		);
@@ -165,16 +170,76 @@ describe( 'requestingStatusFailure', () => {
 	test( 'should not turn a missing transfer record into a client timeout at the deadline', () => {
 		const start = 1000000;
 		jest.setSystemTime( start );
-		requestStatus( { siteId, retryOnFailure: true } );
+		requestStatus( { siteId, resetPolling: true, retryOnFailure: true } );
 		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
 		const dispatch = jest.fn();
 
 		requestingStatusFailure( {
 			siteId,
+			retryOnFailure: true,
 			meta: { dataLayer: { error: { message: NO_TRANSFER_RECORD_ERROR } } },
 		} )( dispatch );
 
 		expect( dispatch ).not.toHaveBeenCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT )
+		);
+	} );
+
+	test( 'should not leave deadline state behind after a fail-once request', () => {
+		const start = 1000000;
+		jest.setSystemTime( start );
+		requestStatus( { siteId } );
+		const dispatch = jest.fn();
+		requestingStatusFailure( {
+			siteId,
+			meta: { dataLayer: { error: { message: 'Service unavailable' } } },
+		} )( dispatch );
+
+		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 60000 );
+		requestStatus( { siteId, resetPolling: true, retryOnFailure: true } );
+		const waitDispatch = jest.fn();
+		receiveStatus( { siteId, retryOnFailure: true }, IN_PROGRESS_RESPONSE )( waitDispatch );
+
+		expect( waitDispatch ).not.toHaveBeenCalledWith(
+			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
+		);
+		expect( waitDispatch ).toHaveBeenCalledWith(
+			setAutomatedTransferStatus( siteId, 'uploading', 'hello-dolly' )
+		);
+	} );
+
+	test( 'should not let a concurrent wait opt other dispatchers into retries', () => {
+		requestStatus( { siteId, resetPolling: true, retryOnFailure: true } );
+		const dispatch = jest.fn();
+
+		requestingStatusFailure( {
+			siteId,
+			meta: { dataLayer: { error: { message: 'Service unavailable' } } },
+		} )( dispatch );
+		jest.runAllTimers();
+
+		expect( dispatch ).not.toHaveBeenCalledWith(
+			expect.objectContaining( { type: fetchAutomatedTransferStatus( siteId ).type } )
+		);
+	} );
+
+	test( 'should not let a stale failure resurrect a wait that has settled', () => {
+		requestStatus( { siteId, resetPolling: true, retryOnFailure: true } );
+		const dispatch = jest.fn();
+		receiveStatus( { siteId, retryOnFailure: true }, settledResponse( 'complete' ) )( dispatch );
+
+		const staleDispatch = jest.fn();
+		requestingStatusFailure( {
+			siteId,
+			retryOnFailure: true,
+			meta: { dataLayer: { error: { message: 'Service unavailable' } } },
+		} )( staleDispatch );
+		jest.runAllTimers();
+
+		expect( staleDispatch ).not.toHaveBeenCalledWith(
+			expect.objectContaining( { type: fetchAutomatedTransferStatus( siteId ).type } )
+		);
+		expect( staleDispatch ).not.toHaveBeenCalledWith(
 			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT )
 		);
 	} );
@@ -253,6 +318,23 @@ describe( 'receiveStatus', () => {
 		expect( dispatch ).toHaveBeenLastCalledWith(
 			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
 		);
+	} );
+
+	test( 'should keep the retry opt-in when the transfer record changes mid-wait', () => {
+		const dispatch = jest.fn();
+
+		receiveStatus( { siteId, retryOnFailure: true }, IN_PROGRESS_RESPONSE )( dispatch );
+		receiveStatus(
+			{ siteId, retryOnFailure: true },
+			{ ...IN_PROGRESS_RESPONSE, transfer_id: 2 }
+		)( dispatch );
+		jest.runAllTimers();
+
+		const scheduled = dispatch.mock.calls.filter(
+			( [ action ] ) => action?.type === fetchAutomatedTransferStatus( siteId ).type
+		);
+		expect( scheduled.length ).toBeGreaterThan( 0 );
+		scheduled.forEach( ( [ action ] ) => expect( action.retryOnFailure ).toBe( true ) );
 	} );
 
 	test( 'should keep polling until the deadline arrives', () => {

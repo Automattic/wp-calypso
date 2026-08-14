@@ -61,6 +61,15 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 const defaultState = { ...mockState };
 const renderAtomic = ( isRecoveryMode = false ) =>
 	renderHook( () => useAtomicTransfer( true, isRecoveryMode, true ) );
+const INITIAL_FETCH_OPTIONS = { resetPolling: true, retryOnFailure: true };
+// Simulate a status response cycle so the hook observes the status from this wait.
+const observeStatus = ( rerender: () => void, status: string ) => {
+	mockState.isFetchingTransferStatus = true;
+	rerender();
+	mockState.isFetchingTransferStatus = false;
+	mockState.transferStatus = status;
+	rerender();
+};
 
 describe( 'useAtomicTransfer', () => {
 	beforeEach( () => {
@@ -77,7 +86,7 @@ describe( 'useAtomicTransfer', () => {
 	it( 'starts one transfer-status polling chain for the selected site', () => {
 		const { rerender } = renderAtomic();
 
-		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, { retryOnFailure: true } );
+		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, INITIAL_FETCH_OPTIONS );
 		mockState.transferStatus = transferStates.PROVISIONED;
 		rerender();
 
@@ -95,12 +104,12 @@ describe( 'useAtomicTransfer', () => {
 		mockState.transferStatus = transferStatus;
 		renderAtomic();
 
-		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, { retryOnFailure: true } );
+		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, INITIAL_FETCH_OPTIONS );
 	} );
 
 	it( 'polls site data for either completed spelling', () => {
-		mockState.transferStatus = transferStates.COMPLETED;
-		const { result } = renderAtomic();
+		const { result, rerender } = renderAtomic();
+		observeStatus( rerender, transferStates.COMPLETED );
 
 		act( () => jest.advanceTimersByTime( 2000 ) );
 
@@ -108,8 +117,16 @@ describe( 'useAtomicTransfer', () => {
 		expect( result.current.currentStep ).toBe( 3 );
 	} );
 
-	it( 'does not overlap site-data requests', async () => {
+	it( 'does not start the atomic-flag poll from a stale persisted complete status', () => {
 		mockState.transferStatus = transferStates.COMPLETE;
+		renderAtomic();
+
+		act( () => jest.advanceTimersByTime( 10000 ) );
+
+		expect( requestSite ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not overlap site-data requests', async () => {
 		let resolveRequest: () => void = () => {};
 		const pendingRequest = new Promise< void >( ( resolve ) => {
 			resolveRequest = resolve;
@@ -117,7 +134,8 @@ describe( 'useAtomicTransfer', () => {
 		mockDispatch.mockImplementation( ( action ) =>
 			action.type === 'REQUEST_SITE' ? pendingRequest : undefined
 		);
-		renderAtomic();
+		const { rerender } = renderAtomic();
+		observeStatus( rerender, transferStates.COMPLETE );
 
 		act( () => jest.advanceTimersByTime( 10000 ) );
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
@@ -128,8 +146,8 @@ describe( 'useAtomicTransfer', () => {
 	} );
 
 	it( 'uses slow background checks after the page deadline', () => {
-		mockState.transferStatus = transferStates.COMPLETE;
-		renderAtomic( true );
+		const { rerender } = renderAtomic( true );
+		observeStatus( rerender, transferStates.COMPLETE );
 
 		act( () => jest.advanceTimersByTime( THANK_YOU_RECOVERY_INTERVAL_MS - 1 ) );
 		expect( requestSite ).not.toHaveBeenCalled();
