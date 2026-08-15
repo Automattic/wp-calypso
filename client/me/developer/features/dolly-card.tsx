@@ -13,7 +13,7 @@ export const DollyCard = () => {
 	const { translate, isConfigured, isConnected, isStatusReady, containerRef, handleDisconnect } =
 		useTelegramBotWidget( {
 			trackAuthCallback: ( user: TelegramAuthPayload ) =>
-				recordTracksEvent( 'calypso_dolly_telegram_widget_auth_callback', {
+				recordTracksEvent( 'wpcom_dolly_agent_auth_callback', {
 					has_username: user?.username ? 1 : 0,
 					auth_date: user?.auth_date,
 				} ),
