@@ -161,6 +161,7 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 		<Menu open={ isOpen } onOpenChange={ handleOpenChange }>
 			<Menu.TriggerButton
 				ref={ triggerRef }
+				onClick={ node.onClick }
 				onMouseEnter={ () => setIsOpen( true ) }
 				onMouseLeave={ handleMouseLeave }
 				onTouchEnd={ handleTouchEnd }

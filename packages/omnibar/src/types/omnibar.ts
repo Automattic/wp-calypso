@@ -23,6 +23,8 @@ export type OmnibarNodeBuilders = Record<
 
 export type OmnibarHrefResolver = ( href: string ) => string;
 
+export type OmnibarNodeTransformer = ( node: OmnibarNode ) => OmnibarNode;
+
 export interface SiteActionNodeMeta {
 	subtitle?: string;
 }
