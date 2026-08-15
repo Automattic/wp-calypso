@@ -3,6 +3,7 @@ export type {
 	OmnibarHrefResolver,
 	OmnibarNode,
 	OmnibarNodeBuilders,
+	OmnibarNodeTransformer,
 	OmnibarNodes,
 	OmnibarProps,
 } from './omnibar';

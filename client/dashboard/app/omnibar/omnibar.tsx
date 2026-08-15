@@ -26,6 +26,7 @@ import { useShoppingCartPlugin } from './plugin-shopping-cart';
 import { buildSiteBadgeNode } from './plugin-site-badges';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
 import { buildWpcomAccountNode } from './plugin-wpcom-account';
+import { RESPONSIVE_MENU_NODE_ID, trackOmnibarNodes, useRecordOmnibarNodeClick } from './tracking';
 import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
 import type { OmnibarNodeBuilders } from '@automattic/omnibar';
@@ -76,6 +77,7 @@ export default function OmnibarContainer( {
 
 function ConnectedOmnibar( { user }: { user?: User } ) {
 	const { supports } = useAppContext();
+	const recordNodeClick = useRecordOmnibarNodeClick();
 	const [ hydrated, setHydrated ] = useState( false );
 	useEffect( () => {
 		setHydrated( true );
@@ -173,10 +175,18 @@ function ConnectedOmnibar( { user }: { user?: User } ) {
 		  ]
 		: [];
 
-	const omnibarNodes = {
-		...baseOmnibarNodes,
-		siteActions,
-		plugins,
+	const omnibarNodes = trackOmnibarNodes(
+		{
+			...baseOmnibarNodes,
+			siteActions,
+			plugins,
+		},
+		recordNodeClick
+	);
+
+	const handleClickResponsiveMenu = () => {
+		recordNodeClick( RESPONSIVE_MENU_NODE_ID );
+		onClickResponsiveMenu();
 	};
 
 	if ( ! hydrated ) {
@@ -186,7 +196,7 @@ function ConnectedOmnibar( { user }: { user?: User } ) {
 		<>
 			<Omnibar
 				nodes={ omnibarNodes }
-				onClickResponsiveMenu={ onClickResponsiveMenu }
+				onClickResponsiveMenu={ handleClickResponsiveMenu }
 				className={ isSupportSession() ? 'is-support-session' : undefined }
 			/>
 			{ shoppingCartPanel }

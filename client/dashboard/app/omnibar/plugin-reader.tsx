@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { wpcomLink } from '../../utils/link';
-import { useAnalytics } from '../analytics';
 import type { OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-reader.scss';
@@ -20,14 +19,11 @@ function ReaderIcon() {
 }
 
 export function useReaderPlugin(): OmnibarNode {
-	const { recordTracksEvent } = useAnalytics();
-
 	return {
 		id: 'reader',
 		title: __( 'Reader' ),
 		icon: <ReaderIcon />,
 		className: 'omnibar__reader',
 		href: wpcomLink( '/reader' ),
-		onClick: () => recordTracksEvent( 'calypso_masterbar_reader_clicked' ),
 	};
 }
