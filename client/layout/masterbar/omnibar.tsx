@@ -48,6 +48,9 @@ function useOmnibarBridge() {
 	}, [ isNotificationsOpen ] );
 
 	useOmnibarEvent( 'notifications', () => {
+		if ( window.location.pathname === '/reader/notifications' ) {
+			return;
+		}
 		dispatch( toggleNotificationsPanel() );
 	} );
 
