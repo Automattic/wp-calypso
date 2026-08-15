@@ -12,7 +12,7 @@ import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { useSiteListQuery, filterSortAndPaginateSites } from '../sites';
+import { useSiteListQuery, filterSortAndPaginateSites, useEngagementSort } from '../sites';
 import {
 	SitesDataViews,
 	useActions,
@@ -55,6 +55,8 @@ export default function CIABSites() {
 		isAutomattician,
 	} );
 
+	const { sortedSites, engagementStatsAreLoading } = useEngagementSort( sites, view );
+
 	const fields = useFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
 
@@ -93,7 +95,7 @@ export default function CIABSites() {
 	} );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
-		sites ?? [],
+		sortedSites ?? [],
 		view,
 		totalItems ?? 0
 	);
@@ -162,7 +164,11 @@ export default function CIABSites() {
 					sites={ filteredData }
 					fields={ fields }
 					actions={ actions }
-					isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }
+					isLoading={
+						isLoadingSites ||
+						( isPlaceholderData && sites?.length === 0 ) ||
+						engagementStatsAreLoading
+					}
 					paginationInfo={ paginationInfo }
 					empty={ emptyState }
 					onChangeView={ handleViewChange }
