@@ -725,10 +725,16 @@ export default function OrchestratorChat( {
 			)
 		);
 		let didChange = nextInvalidatedCheckpointIds.size !== sourceDriftInvalidatedCheckpointIds.size;
+		const shouldDeferSourceDriftInvalidation =
+			hasEditorRedo &&
+			!! checkpointIdsByTurn.userMessageId &&
+			( previousHasEditorRedoRef.current === false ||
+				pendingNativeUndoTurnRef.current === checkpointIdsByTurn.userMessageId ||
+				nativeUndoInvalidatedTurnRef.current === checkpointIdsByTurn.userMessageId );
 		if ( supportsCheckpointSwap && currentCheckpoint ) {
 			for ( const checkpointId of checkpointIdsByTurn.current ) {
 				if (
-					! hasEditorRedo &&
+					! shouldDeferSourceDriftInvalidation &&
 					! nextInvalidatedCheckpointIds.has( checkpointId ) &&
 					! pendingCheckpointActionIdsRef.current.has( checkpointId ) &&
 					currentCheckpoint.canSwapCheckpoint?.( checkpointId ) === false

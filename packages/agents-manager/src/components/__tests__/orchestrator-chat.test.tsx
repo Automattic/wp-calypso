@@ -1736,10 +1736,26 @@ describe( 'OrchestratorChat', () => {
 		expect(
 			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
 		).not.toHaveProperty( 'onRedo' );
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith(
+			'unrelated-native-history-checkpoint'
+		);
 		expect( mockSetCheckpointActionReverted ).not.toHaveBeenCalledWith(
 			'unrelated-native-history-checkpoint',
 			true
 		);
+
+		act( () => {
+			canSwapCheckpoint = true;
+			mockEditorBlocks = [ { clientId: 'later-restored-ai-state-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
 	} );
 
 	it( 'does not mark an unsupported checkpoint Reverted after native Undo', () => {

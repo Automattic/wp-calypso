@@ -84,6 +84,15 @@ function appendBlockInRootLayout(
 	return { layout, block };
 }
 
+const mockSerializeBlocks = jest.fn( ( blocks: any[] ) => {
+	const normalize = ( block: any ): any => ( {
+		name: block.name,
+		attributes: block.attributes,
+		innerBlocks: ( block.innerBlocks ?? [] ).map( normalize ),
+	} );
+	return JSON.stringify( blocks.map( normalize ) );
+} );
+
 jest.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
 	// BlockRef renders the block-type icon via BlockIcon; a stub keeps these
@@ -107,6 +116,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 	// Nothing is registered in the test env, so block chips fall back to their
 	// prettified slug — which is all these tests assert about the block ref.
 	getBlockType: () => undefined,
+	serialize: ( blocks: any[] ) => mockSerializeBlocks( blocks ),
 } ) );
 
 jest.mock( '@wordpress/components', () => {
@@ -156,6 +166,10 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 	select: jest.fn( ( store: string ) => {
 		if ( store === 'core/block-editor' ) {
+			const windowStore = ( globalThis as any ).wp?.data?.select?.( store );
+			if ( windowStore ) {
+				return windowStore;
+			}
 			return {
 				getSelectedBlockClientId: () => mockSelectedBlockClientId,
 			};
@@ -3077,6 +3091,112 @@ describe( 'toolProvider', () => {
 			);
 			expect( blockUpdates ).toHaveLength( 1 );
 			checkpoint.clearCheckpoint( 'call-stale-swap' );
+		} );
+
+		it( 'does not swap a block checkpoint after another block is added', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-block-added-after-edit',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			blocks[ 'new-paragraph-client-id' ] = {
+				name: 'core/paragraph',
+				attributes: { content: 'A new line.' },
+			};
+			expect( checkpoint.canSwapCheckpoint( 'call-block-added-after-edit' ) ).toBe( false );
+			await expect( checkpoint.swapCheckpoint( 'call-block-added-after-edit' ) ).rejects.toThrow(
+				'Failed to swap block edit checkpoint.'
+			);
+			await expect( checkpoint.restoreCheckpoint( 'call-block-added-after-edit' ) ).rejects.toThrow(
+				'Failed to restore block edit checkpoint.'
+			);
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'Corrected block content.'
+			);
+			expect( blocks[ 'new-paragraph-client-id' ].attributes.content ).toBe( 'A new line.' );
+			expect( blockUpdates ).toHaveLength( 1 );
+			checkpoint.clearCheckpoint( 'call-block-added-after-edit' );
+		} );
+
+		it( 'does not swap a block checkpoint without a safe editor signature', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+			mockSerializeBlocks.mockImplementationOnce( () => {
+				throw new Error( 'Block serialization failed.' );
+			} );
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-unsafe-editor-signature',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			expect( checkpoint.canSwapCheckpoint( 'call-unsafe-editor-signature' ) ).toBe( false );
+			await expect( checkpoint.swapCheckpoint( 'call-unsafe-editor-signature' ) ).rejects.toThrow(
+				'Failed to swap block edit checkpoint.'
+			);
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'Corrected block content.'
+			);
+			expect( blockUpdates ).toHaveLength( 1 );
+			checkpoint.clearCheckpoint( 'call-unsafe-editor-signature' );
+		} );
+
+		it( 'does not redo a reverted block checkpoint after another block is added', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-block-added-after-undo',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+			await checkpoint.swapCheckpoint( 'call-block-added-after-undo' );
+
+			blocks[ 'new-paragraph-after-undo' ] = {
+				name: 'core/paragraph',
+				attributes: { content: 'A new line after Undo.' },
+			};
+			expect( checkpoint.canSwapCheckpoint( 'call-block-added-after-undo' ) ).toBe( false );
+			await expect( checkpoint.swapCheckpoint( 'call-block-added-after-undo' ) ).rejects.toThrow(
+				'Failed to swap block edit checkpoint.'
+			);
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'original block content'
+			);
+			expect( blocks[ 'new-paragraph-after-undo' ].attributes.content ).toBe(
+				'A new line after Undo.'
+			);
+			expect( blockUpdates ).toHaveLength( 2 );
+			checkpoint.clearCheckpoint( 'call-block-added-after-undo' );
 		} );
 
 		it( 'surfaces a failed block checkpoint restore', async () => {

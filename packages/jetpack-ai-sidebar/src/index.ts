@@ -9,7 +9,8 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
+import { serialize } from '@wordpress/blocks';
+import { select as selectDataStore, useSelect } from '@wordpress/data';
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __, _x } from '@wordpress/i18n';
 /**
@@ -91,9 +92,59 @@ type BlockEditSnapshot = {
 	contentBefore: string;
 	contentAfter: string;
 	editableAttribute?: string;
+	editorBlocksSignatureAfter: string | undefined;
 };
 
 const blockEditSnapshots = new Map< string, BlockEditSnapshot >();
+const editorBlocksSignatures = new WeakMap< any[], string >();
+
+function getCurrentEditorBlocks(): any[] | undefined {
+	try {
+		const blockEditor = selectDataStore( 'core/block-editor' ) as {
+			getBlocks?: () => any[];
+		};
+		const blocks = blockEditor?.getBlocks?.();
+		return Array.isArray( blocks ) ? blocks : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+function getEditorBlocksSignature( blocks: any[] | undefined ): string | undefined {
+	if ( ! blocks ) {
+		return undefined;
+	}
+	const cachedSignature = editorBlocksSignatures.get( blocks );
+	if ( cachedSignature !== undefined ) {
+		return cachedSignature;
+	}
+
+	try {
+		const signature = serialize( blocks );
+		editorBlocksSignatures.set( blocks, signature );
+		return signature;
+	} catch {
+		return undefined;
+	}
+}
+
+function canSwapBlockEditSnapshot( snapshot: BlockEditSnapshot ): boolean {
+	if (
+		! canUndoBlockEdit( snapshot.clientId, snapshot.contentAfter, snapshot.editableAttribute )
+	) {
+		return false;
+	}
+	if ( snapshot.editorBlocksSignatureAfter === undefined ) {
+		return false;
+	}
+
+	const currentEditorBlocks = getCurrentEditorBlocks();
+	return (
+		currentEditorBlocks !== undefined &&
+		getEditorBlocksSignature( currentEditorBlocks ) === snapshot.editorBlocksSignatureAfter
+	);
+}
+
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
@@ -704,10 +755,12 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 			typeof result.contentBefore === 'string' &&
 			typeof result.contentAfter === 'string'
 		) {
+			const editorBlocksAfter = getCurrentEditorBlocks();
 			blockEditSnapshots.set( toolCallId, {
 				clientId: result.clientId,
 				contentBefore: result.contentBefore,
 				contentAfter: result.contentAfter,
+				editorBlocksSignatureAfter: getEditorBlocksSignature( editorBlocksAfter ),
 				...( typeof result.editableAttribute === 'string' && {
 					editableAttribute: result.editableAttribute,
 				} ),
@@ -987,14 +1040,13 @@ export function useCheckpoint(): any {
 		},
 		canSwapCheckpoint( id: string ): boolean | undefined {
 			const snapshot = blockEditSnapshots.get( id );
-			return snapshot
-				? canUndoBlockEdit( snapshot.clientId, snapshot.contentAfter, snapshot.editableAttribute )
-				: undefined;
+			return snapshot ? canSwapBlockEditSnapshot( snapshot ) : undefined;
 		},
 		async swapCheckpoint( id: string ): Promise< void > {
 			const snapshot = blockEditSnapshots.get( id );
 			if (
 				! snapshot ||
+				! canSwapBlockEditSnapshot( snapshot ) ||
 				! undoBlockEdit(
 					snapshot.clientId,
 					snapshot.contentBefore,
@@ -1005,15 +1057,20 @@ export function useCheckpoint(): any {
 				throw new Error( 'Failed to swap block edit checkpoint.' );
 			}
 
+			const editorBlocksAfter = getCurrentEditorBlocks();
 			blockEditSnapshots.set( id, {
 				...snapshot,
 				contentBefore: snapshot.contentAfter,
 				contentAfter: snapshot.contentBefore,
+				editorBlocksSignatureAfter: getEditorBlocksSignature( editorBlocksAfter ),
 			} );
 		},
 		async restoreCheckpoint( id: string ): Promise< void > {
 			const blockEditSnapshot = blockEditSnapshots.get( id );
 			if ( blockEditSnapshot ) {
+				if ( ! canSwapBlockEditSnapshot( blockEditSnapshot ) ) {
+					throw new Error( 'Failed to restore block edit checkpoint.' );
+				}
 				const didRestore = undoBlockEdit(
 					blockEditSnapshot.clientId,
 					blockEditSnapshot.contentBefore,
