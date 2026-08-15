@@ -604,10 +604,14 @@ describe( 'useCheckpointAction', () => {
 			useCheckpointAction( registerMessageActions, checkpoint, () => actionState )
 		);
 		const activeAction = result.current( message )[ 0 ];
-		if ( activeAction?.type !== 'component' || ! activeAction.componentProps?.onUndo ) {
+		if ( activeAction?.type !== 'component' ) {
 			throw new Error( 'Expected an Undo action.' );
 		}
-		await expect( activeAction.componentProps.onUndo() ).resolves.toBe( true );
+		const onUndo = activeAction.componentProps?.onUndo;
+		if ( typeof onUndo !== 'function' ) {
+			throw new Error( 'Expected an Undo action.' );
+		}
+		await expect( onUndo() ).resolves.toBe( true );
 
 		actionState = 'disabled';
 		canSwapCheckpoint = undefined;
