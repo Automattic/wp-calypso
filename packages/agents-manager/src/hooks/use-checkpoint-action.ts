@@ -13,7 +13,11 @@ import type { UIMessage, UIMessageAction, UseAgentChatReturn } from '@automattic
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
 type IsCheckpointActionAvailable = ( checkpointId: string ) => boolean;
-type OnCheckpointActionPendingChange = ( checkpointId: string, isPending: boolean ) => void;
+type OnCheckpointActionPendingChange = (
+	checkpointId: string,
+	isPending: boolean,
+	completedAction?: 'undo' | 'redo'
+) => void;
 type OnCheckpointActionInvalidated = ( checkpointId: string ) => void;
 
 const revertedCheckpointIds = new Set< string >();
@@ -214,7 +218,15 @@ export default function useCheckpointAction(
 			} finally {
 				if ( didStartSwap ) {
 					pendingSwapCheckpointIdsRef.current.delete( checkpointInfo.checkpointId );
-					onCheckpointActionPendingChangeRef.current?.( checkpointInfo.checkpointId, false );
+					let completedAction: 'undo' | 'redo' | undefined;
+					if ( outcome === 'success' ) {
+						completedAction = revert ? 'undo' : 'redo';
+					}
+					onCheckpointActionPendingChangeRef.current?.(
+						checkpointInfo.checkpointId,
+						false,
+						completedAction
+					);
 				}
 				if ( didAttemptAction ) {
 					recordBigSkyTracksEvent( 'restore_checkpoint_action', {

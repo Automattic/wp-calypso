@@ -9,7 +9,7 @@ import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
-import { useSelect } from '@wordpress/data';
+import { select as selectDataStore, useSelect } from '@wordpress/data';
 import { useState, useCallback, useMemo, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
@@ -294,6 +294,7 @@ export default function OrchestratorChat( {
 		Set< string >
 	>( new Set() );
 	const pendingCheckpointActionIdsRef = useRef( new Set< string >() );
+	const completedInlineUndoCheckpointIdRef = useRef< string | undefined >( undefined );
 	const [ checkpointActionRevision, setCheckpointActionRevision ] = useState( 0 );
 	const [ retainedShowComponentMessages, setRetainedShowComponentMessages ] = useState<
 		Map< string, UIMessage >
@@ -323,6 +324,7 @@ export default function OrchestratorChat( {
 			return false;
 		}
 	}, [] );
+	const previousHasEditorRedoRef = useRef( hasEditorRedo );
 	const { isPageOrSiteEditorSurface: groupWritingSuggestions } = usePageOrSiteEditorSurface();
 	const checkpointSessionIdentity = `${ agentConfig?.agentId ?? '' }:${
 		agentConfig?.sessionId ?? getActiveSessionId() ?? ''
@@ -627,13 +629,28 @@ export default function OrchestratorChat( {
 	const checkpointRef = useRef( checkpoint );
 	checkpointRef.current = checkpoint;
 	const handleCheckpointActionPendingChange = useCallback(
-		( checkpointId: string, isPending: boolean ) => {
+		( checkpointId: string, isPending: boolean, completedAction?: 'undo' | 'redo' ) => {
 			if ( isPending ) {
+				completedInlineUndoCheckpointIdRef.current = undefined;
 				pendingCheckpointActionIdsRef.current.add( checkpointId );
 				return;
 			}
 
 			if ( pendingCheckpointActionIdsRef.current.delete( checkpointId ) ) {
+				let hasEditorRedoNow = false;
+				try {
+					const editor = selectDataStore( 'core/editor' ) as {
+						hasEditorRedo?: () => boolean;
+					};
+					hasEditorRedoNow = editor?.hasEditorRedo?.() ?? false;
+				} catch {
+					// The editor store is optional outside Gutenberg.
+				}
+				// The provider can settle after history renders but before the history effect processes it.
+				completedInlineUndoCheckpointIdRef.current =
+					completedAction === 'undo' && ! previousHasEditorRedoRef.current && hasEditorRedoNow
+						? checkpointId
+						: undefined;
 				setCheckpointActionRevision( ( revision ) => revision + 1 );
 			}
 		},
@@ -660,7 +677,6 @@ export default function OrchestratorChat( {
 			userMessageId: messages[ latestUserMessageIndex ]?.id,
 		};
 	}, [ messages ] );
-	const previousHasEditorRedoRef = useRef( hasEditorRedo );
 	const nativeUndoInvalidatedTurnRef = useRef(
 		hasEditorRedo ? checkpointIdsByTurn.userMessageId : undefined
 	);
@@ -672,7 +688,8 @@ export default function OrchestratorChat( {
 		typeof checkpoint.swapCheckpoint === 'function';
 	const isWatchingNativeHistory =
 		!! checkpointIdsByTurn.userMessageId &&
-		nativeUndoRevertedTurn === checkpointIdsByTurn.userMessageId;
+		( nativeUndoRevertedTurn === checkpointIdsByTurn.userMessageId ||
+			pendingNativeUndoTurnRef.current === checkpointIdsByTurn.userMessageId );
 	const hasPendingCheckpointSwap =
 		supportsCheckpointSwap &&
 		( isWatchingNativeHistory ||
@@ -743,6 +760,8 @@ export default function OrchestratorChat( {
 			! sourceDriftInvalidatedCheckpointIds.has( checkpointId ) &&
 			checkpointIdsByTurn.current.has( checkpointId ) &&
 			( ! checkpointIdsByTurn.userMessageId ||
+				pendingNativeUndoTurnRef.current !== checkpointIdsByTurn.userMessageId ) &&
+			( ! checkpointIdsByTurn.userMessageId ||
 				nativeUndoInvalidatedTurnRef.current !== checkpointIdsByTurn.userMessageId ),
 		handleCheckpointActionPendingChange,
 		handleCheckpointActionInvalidated
@@ -768,29 +787,48 @@ export default function OrchestratorChat( {
 			previousHasEditorRedoRef.current === false && hasEditorRedo;
 		const didEditorRedoBecomeUnavailable =
 			previousHasEditorRedoRef.current === true && ! hasEditorRedo;
+		const didInlineUndoCreateEditorRedo =
+			didEditorRedoBecomeAvailable &&
+			completedInlineUndoCheckpointIdRef.current !== undefined &&
+			checkpointIdsByTurn.current.has( completedInlineUndoCheckpointIdRef.current );
+		const wasPendingNativeUndo =
+			!! checkpointIdsByTurn.userMessageId &&
+			pendingNativeUndoTurnRef.current === checkpointIdsByTurn.userMessageId;
 		let shouldConfirmNativeUndo = false;
+		let didCheckpointActionAvailabilityChange = false;
 		if ( hasPendingCheckpointAction ) {
+			if ( pendingNativeUndoTurnRef.current !== undefined ) {
+				didCheckpointActionAvailabilityChange = true;
+			}
 			pendingNativeUndoTurnRef.current = undefined;
 			pendingNativeRedoTurnRef.current = undefined;
 		}
 		if ( didEditorRedoBecomeAvailable ) {
+			completedInlineUndoCheckpointIdRef.current = undefined;
 			pendingNativeRedoTurnRef.current = undefined;
+			if ( pendingNativeUndoTurnRef.current !== undefined ) {
+				didCheckpointActionAvailabilityChange = true;
+			}
 			pendingNativeUndoTurnRef.current = undefined;
 			if (
+				! didInlineUndoCreateEditorRedo &&
 				! hasPendingCheckpointAction &&
-				! didCheckpointEditorBlocksChange &&
 				latestCheckpointId &&
-				latestCheckpointCanSwap === true
+				checkpointIdsByTurn.userMessageId
 			) {
-				pendingNativeUndoTurnRef.current = checkpointIdsByTurn.userMessageId;
+				if ( didCheckpointEditorBlocksChange && latestCheckpointCanSwap === false ) {
+					shouldConfirmNativeUndo = true;
+				} else if ( latestCheckpointCanSwap !== undefined ) {
+					pendingNativeUndoTurnRef.current = checkpointIdsByTurn.userMessageId;
+					didCheckpointActionAvailabilityChange = true;
+				} else {
+					nativeUndoInvalidatedTurnRef.current = checkpointIdsByTurn.userMessageId;
+				}
 			} else if (
+				! didInlineUndoCreateEditorRedo &&
 				! hasPendingCheckpointAction &&
-				didCheckpointEditorBlocksChange &&
-				latestCheckpointId &&
-				latestCheckpointCanSwap === false
+				latestCheckpointCanSwap === undefined
 			) {
-				shouldConfirmNativeUndo = true;
-			} else if ( latestCheckpointCanSwap === undefined ) {
 				nativeUndoInvalidatedTurnRef.current = checkpointIdsByTurn.userMessageId;
 			}
 		}
@@ -800,9 +838,10 @@ export default function OrchestratorChat( {
 			didCheckpointEditorBlocksChange &&
 			latestCheckpointId &&
 			checkpointIdsByTurn.userMessageId &&
-			pendingNativeUndoTurnRef.current === checkpointIdsByTurn.userMessageId
+			wasPendingNativeUndo
 		) {
 			pendingNativeUndoTurnRef.current = undefined;
+			didCheckpointActionAvailabilityChange = true;
 			if ( latestCheckpointCanSwap === false ) {
 				shouldConfirmNativeUndo = true;
 			}
@@ -827,6 +866,12 @@ export default function OrchestratorChat( {
 			// Exact checkpoint content confirms Updated, even when the user recreates it manually.
 			pendingNativeRedoTurnRef.current = checkpointIdsByTurn.userMessageId;
 		}
+		if ( didEditorRedoBecomeUnavailable ) {
+			if ( pendingNativeUndoTurnRef.current !== undefined ) {
+				didCheckpointActionAvailabilityChange = true;
+			}
+			pendingNativeUndoTurnRef.current = undefined;
+		}
 		previousHasEditorRedoRef.current = hasEditorRedo;
 
 		if (
@@ -843,13 +888,19 @@ export default function OrchestratorChat( {
 			pendingNativeRedoTurnRef.current = undefined;
 		}
 
+		let didInvalidateCheckpointAction = false;
 		for ( const checkpointId of currentCheckpointIds ) {
 			if (
 				checkpointIdsByTurn.userMessageId &&
-				nativeUndoInvalidatedTurnRef.current === checkpointIdsByTurn.userMessageId
+				nativeUndoInvalidatedTurnRef.current === checkpointIdsByTurn.userMessageId &&
+				! isCheckpointActionInvalidated( checkpointId )
 			) {
 				invalidateCheckpointAction( checkpointId );
+				didInvalidateCheckpointAction = true;
 			}
+		}
+		if ( didInvalidateCheckpointAction || didCheckpointActionAvailabilityChange ) {
+			setCheckpointActionRevision( ( revision ) => revision + 1 );
 		}
 	}, [
 		checkpointEditorBlocks,
