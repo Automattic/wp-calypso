@@ -83,20 +83,25 @@ function mockGetCheckpointIdForMessage( message: {
 }
 
 const mockCheckpointActions = () => {
-	let isCheckpointActionAvailable: ( ( checkpointId: string ) => boolean ) | undefined;
+	let getCheckpointActionState:
+		| ( ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden' )
+		| undefined;
 	const getActions = ( message: { content?: Array< { text?: string } > } ) => {
 		const checkpointId = mockGetCheckpointIdForMessage( message );
 		if ( ! checkpointId ) {
 			return [];
 		}
 
-		const canAct =
-			! mockInvalidatedCheckpointIds.has( checkpointId ) &&
-			( isCheckpointActionAvailable?.( checkpointId ) ?? true );
+		const actionState = mockInvalidatedCheckpointIds.has( checkpointId )
+			? 'hidden'
+			: getCheckpointActionState?.( checkpointId ) ?? 'enabled';
+		const canAct = actionState === 'enabled';
 		const isReverted = mockRevertedCheckpointIds.has( checkpointId );
-		let label = canAct ? 'Updated and Undo' : 'Updated';
+		const showDisabledAction = actionState === 'disabled';
+		const showAction = canAct || showDisabledAction;
+		let label = showAction ? 'Updated and Undo' : 'Updated';
 		if ( isReverted ) {
-			label = canAct ? 'Reverted and Redo' : 'Reverted';
+			label = showAction ? 'Reverted and Redo' : 'Reverted';
 		}
 		return [
 			{
@@ -106,6 +111,7 @@ const mockCheckpointActions = () => {
 				component: () => null,
 				componentProps: {
 					initiallyReverted: isReverted,
+					...( showDisabledAction && { disabled: true } ),
 					...( canAct && { onUndo: jest.fn(), onRedo: jest.fn() } ),
 				},
 				order: 1,
@@ -116,9 +122,9 @@ const mockCheckpointActions = () => {
 		(
 			_registerMessageActions: unknown,
 			_checkpoint: unknown,
-			nextIsCheckpointActionAvailable?: ( checkpointId: string ) => boolean
+			nextGetCheckpointActionState?: ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden'
 		) => {
-			isCheckpointActionAvailable = nextIsCheckpointActionAvailable;
+			getCheckpointActionState = nextGetCheckpointActionState;
 			return getActions;
 		}
 	);
@@ -1425,7 +1431,7 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'hides checkpoint controls after a later user message', () => {
+	it( 'disables checkpoint controls after a later user message', () => {
 		const checkpointMessage = createCheckpointMessage( 'agent-checkpoint', 'history-checkpoint' );
 		mockCheckpointActions();
 		const initialMessages = [ userMessage, checkpointMessage ];
@@ -1461,6 +1467,12 @@ describe( 'OrchestratorChat', () => {
 		);
 		view.rerender( chat() );
 
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe(
+			'Updated and Undo'
+		);
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toMatchObject( {
+			disabled: true,
+		} );
 		expect(
 			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
 		).not.toHaveProperty( 'onUndo' );
@@ -1580,6 +1592,78 @@ describe( 'OrchestratorChat', () => {
 			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
 		).not.toHaveProperty( 'onRedo' );
 		expect( mockInvalidateCheckpointAction ).toHaveBeenLastCalledWith( 'native-undo-checkpoint' );
+	} );
+
+	it( 'keeps a pending native Undo hidden after a later user message', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-pending-native-undo',
+			'pending-native-undo-checkpoint'
+		);
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn().mockReturnValue( true ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		const view = render( chat( { useCheckpoint } ) );
+
+		act( () => {
+			mockHasEditorRedo = true;
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					userMessage,
+					checkpointMessage,
+					{
+						id: 'user-after-pending-native-undo',
+						role: 'user',
+						content: [ { type: 'text', text: 'Make another edit' } ],
+						timestamp: 2,
+					},
+				],
+			} )
+		);
+		view.rerender( chat( { useCheckpoint } ) );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'disabled' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith(
+			'pending-native-undo-checkpoint'
+		);
+
+		act( () => {
+			mockHasEditorRedo = false;
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'disabled' );
 	} );
 
 	it( 'updates the checkpoint status when native Undo stores notify together', () => {
@@ -2209,6 +2293,51 @@ describe( 'OrchestratorChat', () => {
 		);
 		view.rerender( chat() );
 
+		expect( getDisplayedCheckpointAction( firstCheckpoint.id )?.label ).toBe( 'Updated' );
+		expect( getDisplayedCheckpointAction( secondCheckpoint.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+	} );
+
+	it( 'disables an earlier checkpoint while enabling a later turn', () => {
+		const firstCheckpoint = createCheckpointMessage(
+			'agent-disabled-first-turn',
+			'disabled-first-turn-checkpoint'
+		);
+		const secondCheckpoint = createCheckpointMessage(
+			'agent-enabled-second-turn',
+			'enabled-second-turn-checkpoint'
+		);
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, firstCheckpoint ] } )
+		);
+		const view = render( chat() );
+
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					userMessage,
+					firstCheckpoint,
+					{
+						id: 'user-enabled-second-turn',
+						role: 'user',
+						content: [ { type: 'text', text: 'Make another edit' } ],
+						timestamp: 2,
+					},
+					secondCheckpoint,
+				],
+			} )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( firstCheckpoint.id )?.label ).toBe( 'Updated and Undo' );
+		expect( getDisplayedCheckpointAction( firstCheckpoint.id )?.componentProps ).toMatchObject( {
+			disabled: true,
+		} );
+		expect( getDisplayedCheckpointAction( firstCheckpoint.id )?.componentProps ).not.toHaveProperty(
+			'onUndo'
+		);
 		expect( getDisplayedCheckpointAction( secondCheckpoint.id )?.componentProps ).toHaveProperty(
 			'onUndo'
 		);

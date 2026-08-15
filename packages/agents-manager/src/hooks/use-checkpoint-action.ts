@@ -12,7 +12,8 @@ import type { UseCheckpointReturn } from '../utils/load-external-providers';
 import type { UIMessage, UIMessageAction, UseAgentChatReturn } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
-type IsCheckpointActionAvailable = ( checkpointId: string ) => boolean;
+type CheckpointActionState = 'disabled' | 'enabled' | 'hidden';
+type GetCheckpointActionState = ( checkpointId: string ) => CheckpointActionState;
 type OnCheckpointActionPendingChange = (
 	checkpointId: string,
 	isPending: boolean,
@@ -22,6 +23,7 @@ type OnCheckpointActionInvalidated = ( checkpointId: string ) => void;
 
 const revertedCheckpointIds = new Set< string >();
 const invalidatedCheckpointIds = new Set< string >();
+const redoableCheckpointIds = new Set< string >();
 
 function isTextContentEdit( toolId: unknown, data: unknown ): boolean {
 	if ( toolId === UPDATE_BLOCK_CONTENT_TOOL_ID ) {
@@ -115,6 +117,7 @@ export function setCheckpointActionReverted( checkpointId: string, isReverted: b
 		revertedCheckpointIds.add( checkpointId );
 	} else {
 		revertedCheckpointIds.delete( checkpointId );
+		redoableCheckpointIds.delete( checkpointId );
 	}
 	return wasReverted !== isReverted;
 }
@@ -125,15 +128,15 @@ export function setCheckpointActionReverted( checkpointId: string, isReverted: b
 export default function useCheckpointAction(
 	registerMessageActions: RegisterMessageActions,
 	checkpoint?: UseCheckpointReturn,
-	isCheckpointActionAvailable?: IsCheckpointActionAvailable,
+	getCheckpointActionState?: GetCheckpointActionState,
 	onCheckpointActionPendingChange?: OnCheckpointActionPendingChange,
 	onCheckpointActionInvalidated?: OnCheckpointActionInvalidated
 ): ( message: UIMessage ) => UIMessageAction[] {
 	// Refs avoid infinite re-renders caused by unstable provider values.
 	const checkpointRef = useRef( checkpoint );
 	checkpointRef.current = checkpoint;
-	const isCheckpointActionAvailableRef = useRef( isCheckpointActionAvailable );
-	isCheckpointActionAvailableRef.current = isCheckpointActionAvailable;
+	const getCheckpointActionStateRef = useRef( getCheckpointActionState );
+	getCheckpointActionStateRef.current = getCheckpointActionState;
 	const onCheckpointActionPendingChangeRef = useRef( onCheckpointActionPendingChange );
 	onCheckpointActionPendingChangeRef.current = onCheckpointActionPendingChange;
 	const onCheckpointActionInvalidatedRef = useRef( onCheckpointActionInvalidated );
@@ -142,28 +145,42 @@ export default function useCheckpointAction(
 	const getCheckpointActionsForMessage = useCallback( ( message: UIMessage ): UIMessageAction[] => {
 		const currentCheckpoint = checkpointRef.current;
 
-		if ( ! currentCheckpoint || message.role !== 'agent' ) {
+		if ( message.role !== 'agent' ) {
 			return [];
 		}
 
 		const checkpointInfo = getCheckpointInfo( message );
 
-		if ( ! checkpointInfo || ! currentCheckpoint.hasCheckpoint( checkpointInfo.checkpointId ) ) {
+		if ( ! checkpointInfo ) {
+			return [];
+		}
+
+		const getCurrentActionState = (): CheckpointActionState =>
+			invalidatedCheckpointIds.has( checkpointInfo.checkpointId )
+				? 'hidden'
+				: getCheckpointActionStateRef.current?.( checkpointInfo.checkpointId ) ?? 'enabled';
+		const actionState = getCurrentActionState();
+		if (
+			actionState !== 'disabled' &&
+			( ! currentCheckpoint || ! currentCheckpoint.hasCheckpoint( checkpointInfo.checkpointId ) )
+		) {
 			return [];
 		}
 
 		const isReverted = revertedCheckpointIds.has( checkpointInfo.checkpointId );
-		const isActionAvailable =
-			! invalidatedCheckpointIds.has( checkpointInfo.checkpointId ) &&
-			( isCheckpointActionAvailableRef.current?.( checkpointInfo.checkpointId ) ?? true );
-		const swapAvailability =
-			isActionAvailable &&
+		const isActionAvailable = actionState === 'enabled';
+		const canCheckSwapAvailability =
+			!! currentCheckpoint &&
 			typeof currentCheckpoint.canSwapCheckpoint === 'function' &&
-			typeof currentCheckpoint.swapCheckpoint === 'function'
+			typeof currentCheckpoint.swapCheckpoint === 'function';
+		const swapAvailability =
+			canCheckSwapAvailability &&
+			( isActionAvailable || ( actionState === 'disabled' && isReverted ) )
 				? pendingSwapCheckpointIdsRef.current.has( checkpointInfo.checkpointId ) ||
-				  currentCheckpoint.canSwapCheckpoint( checkpointInfo.checkpointId )
+				  currentCheckpoint.canSwapCheckpoint?.( checkpointInfo.checkpointId )
 				: undefined;
-		const supportsSwap = swapAvailability !== undefined;
+		const supportsSwap =
+			swapAvailability !== undefined || redoableCheckpointIds.has( checkpointInfo.checkpointId );
 		const applyCheckpointAction = async ( revert: boolean ): Promise< boolean > => {
 			if ( pendingSwapCheckpointIdsRef.current.has( checkpointInfo.checkpointId ) ) {
 				return false;
@@ -180,9 +197,12 @@ export default function useCheckpointAction(
 			};
 			try {
 				const checkpointToRestore = checkpointRef.current;
+				const latestActionState = getCurrentActionState();
+				if ( latestActionState === 'disabled' ) {
+					return false;
+				}
 				if (
-					invalidatedCheckpointIds.has( checkpointInfo.checkpointId ) ||
-					isCheckpointActionAvailableRef.current?.( checkpointInfo.checkpointId ) === false ||
+					latestActionState === 'hidden' ||
 					! checkpointToRestore ||
 					! checkpointToRestore.hasCheckpoint( checkpointInfo.checkpointId )
 				) {
@@ -203,6 +223,9 @@ export default function useCheckpointAction(
 					didStartSwap = true;
 					didAttemptAction = true;
 					await checkpointToRestore.swapCheckpoint( checkpointInfo.checkpointId );
+					if ( revert ) {
+						redoableCheckpointIds.add( checkpointInfo.checkpointId );
+					}
 				} else {
 					didAttemptAction = true;
 					await checkpointToRestore.restoreCheckpoint( checkpointInfo.checkpointId );
@@ -240,12 +263,14 @@ export default function useCheckpointAction(
 
 		if ( checkpointInfo.showResolvedEditAction ) {
 			const canAct = isActionAvailable && ( ! supportsSwap || swapAvailability === true );
-			let label: string = canAct
+			const showDisabledAction = actionState === 'disabled' && ( ! isReverted || supportsSwap );
+			const showAction = canAct || showDisabledAction;
+			let label: string = showAction
 				? __( 'Updated and Undo', __i18n_text_domain__ )
 				: __( 'Updated', __i18n_text_domain__ );
 			if ( isReverted ) {
 				label =
-					canAct && supportsSwap
+					showAction && supportsSwap
 						? __( 'Reverted and Redo', __i18n_text_domain__ )
 						: __( 'Reverted', __i18n_text_domain__ );
 			}
@@ -257,6 +282,7 @@ export default function useCheckpointAction(
 					component: ResolvedEditAction,
 					componentProps: {
 						initiallyReverted: isReverted,
+						...( showDisabledAction && { disabled: true } ),
 						...( canAct && { onUndo: () => applyCheckpointAction( true ) } ),
 						...( canAct &&
 							supportsSwap && {

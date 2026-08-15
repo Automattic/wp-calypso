@@ -662,11 +662,19 @@ export default function OrchestratorChat( {
 	const checkpointIdsByTurn = useMemo( () => {
 		const latestUserMessageIndex = getLatestUserMessageIndex( messages );
 		const current = new Set< string >();
+		const userMessageIdByCheckpointId = new Map< string, string | undefined >();
+		let userMessageId: string | undefined;
 
 		messages.forEach( ( message, index ) => {
+			if ( message.role === 'user' && ! isContextOnlyMessage( message ) ) {
+				userMessageId = message.id;
+			}
 			const checkpointMessage =
 				streamedCheckpointMessagesRef.current.byFinalMessageId.get( message.id ) ?? message;
 			const checkpointId = getCheckpointIdForMessage( checkpointMessage );
+			if ( checkpointId ) {
+				userMessageIdByCheckpointId.set( checkpointId, userMessageId );
+			}
 			if ( checkpointId && index > latestUserMessageIndex ) {
 				current.add( checkpointId );
 			}
@@ -674,6 +682,7 @@ export default function OrchestratorChat( {
 
 		return {
 			current,
+			userMessageIdByCheckpointId,
 			userMessageId: messages[ latestUserMessageIndex ]?.id,
 		};
 	}, [ messages ] );
@@ -761,14 +770,28 @@ export default function OrchestratorChat( {
 	const getCheckpointActionsForMessage = useCheckpointAction(
 		registerMessageActions,
 		checkpoint,
-		( checkpointId ) =>
-			( ! hasEditorRedo || checkpointRef.current?.canSwapCheckpoint?.( checkpointId ) === true ) &&
-			! sourceDriftInvalidatedCheckpointIds.has( checkpointId ) &&
-			checkpointIdsByTurn.current.has( checkpointId ) &&
-			( ! checkpointIdsByTurn.userMessageId ||
-				pendingNativeUndoTurnRef.current !== checkpointIdsByTurn.userMessageId ) &&
-			( ! checkpointIdsByTurn.userMessageId ||
-				nativeUndoInvalidatedTurnRef.current !== checkpointIdsByTurn.userMessageId ),
+		( checkpointId ) => {
+			if ( sourceDriftInvalidatedCheckpointIds.has( checkpointId ) ) {
+				return 'hidden';
+			}
+			const checkpointUserMessageId =
+				checkpointIdsByTurn.userMessageIdByCheckpointId.get( checkpointId );
+			if (
+				checkpointUserMessageId &&
+				( pendingNativeUndoTurnRef.current === checkpointUserMessageId ||
+					nativeUndoInvalidatedTurnRef.current === checkpointUserMessageId )
+			) {
+				return 'hidden';
+			}
+			if ( ! checkpointIdsByTurn.current.has( checkpointId ) ) {
+				return 'disabled';
+			}
+			if ( hasEditorRedo && checkpointRef.current?.canSwapCheckpoint?.( checkpointId ) !== true ) {
+				return 'hidden';
+			}
+
+			return 'enabled';
+		},
 		handleCheckpointActionPendingChange,
 		handleCheckpointActionInvalidated
 	);
@@ -789,6 +812,7 @@ export default function OrchestratorChat( {
 		const hasPendingCheckpointAction = currentCheckpointIds.some( ( checkpointId ) =>
 			pendingCheckpointActionIdsRef.current.has( checkpointId )
 		);
+		let didInvalidateCheckpointAction = false;
 		const didEditorRedoBecomeAvailable =
 			previousHasEditorRedoRef.current === false && hasEditorRedo;
 		const didEditorRedoBecomeUnavailable =
@@ -802,6 +826,28 @@ export default function OrchestratorChat( {
 			pendingNativeUndoTurnRef.current === checkpointIdsByTurn.userMessageId;
 		let shouldConfirmNativeUndo = false;
 		let didCheckpointActionAvailabilityChange = false;
+		const supersededPendingNativeUndoTurn =
+			pendingNativeUndoTurnRef.current &&
+			pendingNativeUndoTurnRef.current !== checkpointIdsByTurn.userMessageId
+				? pendingNativeUndoTurnRef.current
+				: undefined;
+		if ( supersededPendingNativeUndoTurn ) {
+			pendingNativeUndoTurnRef.current = undefined;
+			nativeUndoInvalidatedTurnRef.current = supersededPendingNativeUndoTurn;
+			didCheckpointActionAvailabilityChange = true;
+			for ( const [
+				checkpointId,
+				userMessageId,
+			] of checkpointIdsByTurn.userMessageIdByCheckpointId ) {
+				if (
+					userMessageId === supersededPendingNativeUndoTurn &&
+					! isCheckpointActionInvalidated( checkpointId )
+				) {
+					invalidateCheckpointAction( checkpointId );
+					didInvalidateCheckpointAction = true;
+				}
+			}
+		}
 		if ( hasPendingCheckpointAction ) {
 			if ( pendingNativeUndoTurnRef.current !== undefined ) {
 				didCheckpointActionAvailabilityChange = true;
@@ -894,7 +940,6 @@ export default function OrchestratorChat( {
 			pendingNativeRedoTurnRef.current = undefined;
 		}
 
-		let didInvalidateCheckpointAction = false;
 		for ( const checkpointId of currentCheckpointIds ) {
 			if (
 				checkpointIdsByTurn.userMessageId &&

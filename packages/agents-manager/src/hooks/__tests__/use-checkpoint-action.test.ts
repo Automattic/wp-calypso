@@ -344,6 +344,40 @@ describe( 'useCheckpointAction', () => {
 		expect( checkpoint.restoreCheckpoint ).not.toHaveBeenCalled();
 	} );
 
+	it( 'uses restore-based Undo when the merged provider cannot swap this checkpoint', async () => {
+		let registration: MessageActionsRegistration | undefined;
+		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+			registration = nextRegistration;
+		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
+		const checkpoint = createCheckpoint();
+		checkpoint.canSwapCheckpoint = jest.fn().mockReturnValue( undefined );
+		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
+		const message = createToolMessage( {
+			toolCallId: 'restore-only-tool-call',
+			data: {
+				result: {
+					success: true,
+					outcome: 'updated',
+					changeType: 'text-content',
+				},
+			},
+		} );
+
+		renderHook( () => useCheckpointAction( registerMessageActions, checkpoint ) );
+
+		const action = getActions( registration, message )[ 0 ];
+		expect( action ).toMatchObject( { label: 'Updated and Undo' } );
+		if ( action?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		render( createElement( action.component, action.componentProps ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Undo' } ) );
+
+		await waitFor( () => expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Reverted' ) );
+		expect( checkpoint.restoreCheckpoint ).toHaveBeenCalledWith( 'restore-only-tool-call' );
+		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
+	} );
+
 	it( 'invalidates a rendered Undo when the checkpoint drifts before the click', async () => {
 		let registration: MessageActionsRegistration | undefined;
 		const registerMessageActions = jest.fn( ( nextRegistration ) => {
@@ -438,7 +472,7 @@ describe( 'useCheckpointAction', () => {
 		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
 	} );
 
-	it( 'hides unavailable and invalidated checkpoint controls', () => {
+	it( 'disables superseded checkpoint controls and hides invalidated controls', () => {
 		const registerMessageActions = jest.fn() as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
 		checkpoint.canSwapCheckpoint = jest.fn().mockReturnValue( true );
@@ -453,20 +487,31 @@ describe( 'useCheckpointAction', () => {
 				},
 			},
 		} );
-		let isAvailable = false;
+		( checkpoint.hasCheckpoint as jest.Mock ).mockReturnValue( false );
+		let actionState: 'disabled' | 'enabled' | 'hidden' = 'disabled';
 		const { result, rerender } = renderHook( () =>
-			useCheckpointAction( registerMessageActions, checkpoint, () => isAvailable )
+			useCheckpointAction( registerMessageActions, checkpoint, () => actionState )
 		);
 
-		const unavailableAction = result.current( message )[ 0 ];
-		expect( unavailableAction ).toMatchObject( { label: 'Updated' } );
-		if ( unavailableAction?.type !== 'component' ) {
+		const supersededAction = result.current( message )[ 0 ];
+		expect( supersededAction ).toMatchObject( { label: 'Updated and Undo' } );
+		if ( supersededAction?.type !== 'component' ) {
 			throw new Error( 'Expected a component action.' );
 		}
-		expect( unavailableAction.componentProps ).not.toHaveProperty( 'onUndo' );
-		expect( unavailableAction.componentProps ).not.toHaveProperty( 'onRedo' );
+		expect( supersededAction.componentProps ).toMatchObject( { disabled: true } );
+		expect( supersededAction.componentProps ).not.toHaveProperty( 'onUndo' );
+		expect( supersededAction.componentProps ).not.toHaveProperty( 'onRedo' );
+		const view = render(
+			createElement( supersededAction.component, supersededAction.componentProps )
+		);
+		const disabledUndo = screen.getByRole( 'button', { name: 'Undo' } );
+		expect( disabledUndo ).toBeDisabled();
+		fireEvent.click( disabledUndo );
+		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
 
-		isAvailable = true;
+		( checkpoint.hasCheckpoint as jest.Mock ).mockReturnValue( true );
+		actionState = 'enabled';
 		rerender();
 		invalidateCheckpointAction( 'invalidated-tool-call' );
 		const invalidatedAction = result.current( message )[ 0 ];
@@ -474,9 +519,118 @@ describe( 'useCheckpointAction', () => {
 		if ( invalidatedAction?.type !== 'component' ) {
 			throw new Error( 'Expected a component action.' );
 		}
+		view.rerender( createElement( invalidatedAction.component, invalidatedAction.componentProps ) );
 		expect( invalidatedAction.componentProps ).not.toHaveProperty( 'onUndo' );
 		expect( invalidatedAction.componentProps ).not.toHaveProperty( 'onRedo' );
+		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
 		expect( checkpoint.canSwapCheckpoint ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps a stale Undo inert when a later message disables it', async () => {
+		let registration: MessageActionsRegistration | undefined;
+		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+			registration = nextRegistration;
+		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
+		const checkpoint = createCheckpoint();
+		checkpoint.canSwapCheckpoint = jest.fn().mockReturnValue( true );
+		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
+		const onCheckpointActionInvalidated = jest.fn();
+		const message = createToolMessage( {
+			toolCallId: 'superseded-stale-tool-call',
+			data: {
+				result: {
+					success: true,
+					outcome: 'updated',
+					changeType: 'text-content',
+				},
+			},
+		} );
+		let actionState: 'disabled' | 'enabled' | 'hidden' = 'enabled';
+
+		renderHook( () =>
+			useCheckpointAction(
+				registerMessageActions,
+				checkpoint,
+				() => actionState,
+				undefined,
+				onCheckpointActionInvalidated
+			)
+		);
+
+		const renderedAction = getActions( registration, message )[ 0 ];
+		if ( renderedAction?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		const staleOnUndo = renderedAction.componentProps?.onUndo;
+		if ( typeof staleOnUndo !== 'function' ) {
+			throw new Error( 'Expected an Undo action.' );
+		}
+
+		actionState = 'disabled';
+		await expect( staleOnUndo() ).resolves.toBe( false );
+
+		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
+		expect( onCheckpointActionInvalidated ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
+		const disabledAction = getActions( registration, message )[ 0 ];
+		expect( disabledAction ).toMatchObject( {
+			label: 'Updated and Undo',
+			componentProps: { disabled: true },
+		} );
+		if ( disabledAction?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		expect( disabledAction.componentProps ).not.toHaveProperty( 'onUndo' );
+	} );
+
+	it( 'keeps a successful Reverted action as a disabled Redo after its checkpoint clears', async () => {
+		const registerMessageActions = jest.fn() as UseAgentChatReturn[ 'registerMessageActions' ];
+		const checkpoint = createCheckpoint();
+		let canSwapCheckpoint: boolean | undefined = true;
+		checkpoint.canSwapCheckpoint = jest.fn( () => canSwapCheckpoint );
+		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
+		const message = createToolMessage( {
+			toolCallId: 'superseded-reverted-tool-call',
+			data: {
+				result: {
+					success: true,
+					outcome: 'updated',
+					changeType: 'text-content',
+				},
+			},
+		} );
+		let actionState: 'disabled' | 'enabled' | 'hidden' = 'enabled';
+		const { result } = renderHook( () =>
+			useCheckpointAction( registerMessageActions, checkpoint, () => actionState )
+		);
+		const activeAction = result.current( message )[ 0 ];
+		if ( activeAction?.type !== 'component' || ! activeAction.componentProps?.onUndo ) {
+			throw new Error( 'Expected an Undo action.' );
+		}
+		await expect( activeAction.componentProps.onUndo() ).resolves.toBe( true );
+
+		actionState = 'disabled';
+		canSwapCheckpoint = undefined;
+		( checkpoint.hasCheckpoint as jest.Mock ).mockReturnValue( false );
+
+		const action = result.current( message )[ 0 ];
+		expect( action ).toMatchObject( {
+			label: 'Reverted and Redo',
+			componentProps: { disabled: true, initiallyReverted: true },
+		} );
+		if ( action?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		expect( action.componentProps ).not.toHaveProperty( 'onUndo' );
+		expect( action.componentProps ).not.toHaveProperty( 'onRedo' );
+		render( createElement( action.component, action.componentProps ) );
+
+		const disabledRedo = screen.getByRole( 'button', { name: 'Redo' } );
+		expect( disabledRedo ).toBeDisabled();
+		const trackCalls = ( recordBigSkyTracksEvent as jest.Mock ).mock.calls.length;
+		fireEvent.click( disabledRedo );
+		expect( checkpoint.swapCheckpoint ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( trackCalls );
 	} );
 
 	it( 'uses the Jetpack tool call id for its block edit checkpoint', async () => {

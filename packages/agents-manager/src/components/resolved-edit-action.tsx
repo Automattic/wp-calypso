@@ -3,12 +3,14 @@ import { __ } from '@wordpress/i18n';
 import { check, closeSmall, Icon, redo, undo } from '@wordpress/icons';
 
 type ResolvedEditActionProps = {
+	disabled?: boolean;
 	initiallyReverted?: boolean;
 	onRedo?: () => Promise< boolean >;
 	onUndo?: () => Promise< boolean >;
 };
 
 export default function ResolvedEditAction( {
+	disabled = false,
 	initiallyReverted = false,
 	onRedo,
 	onUndo,
@@ -18,7 +20,7 @@ export default function ResolvedEditAction( {
 	useEffect( () => setIsReverted( initiallyReverted ), [ initiallyReverted ] );
 	const action = isReverted ? onRedo : onUndo;
 	const handleAction = async () => {
-		if ( ! action || isPending ) {
+		if ( ! action || disabled || isPending ) {
 			return;
 		}
 
@@ -51,12 +53,12 @@ export default function ResolvedEditAction( {
 					? __( 'Reverted', __i18n_text_domain__ )
 					: __( 'Updated', __i18n_text_domain__ ) }
 			</span>
-			{ action && (
+			{ ( action || disabled ) && (
 				<button
 					type="button"
 					className="agents-manager-resolved-edit-action__undo"
 					onClick={ () => void handleAction() }
-					disabled={ isPending }
+					disabled={ disabled || isPending }
 				>
 					<Icon
 						className="agents-manager-resolved-edit-action__icon"
