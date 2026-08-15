@@ -1,4 +1,3 @@
-import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/components';
@@ -8,11 +7,11 @@ import { useState } from 'react';
 import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
 import CheckoutTermsModal from './checkout-terms-modal';
 import { getRefundWindowSummary } from './refund-policies';
+import {
+	getStudioCodeAiCreditsGuidelinesUrl,
+	hasStudioCodeAiCredits,
+} from './studio-code-ai-credits-guidelines';
 import type { ResponseCart } from '@automattic/shopping-cart';
-
-// TODO: SHILL-2355 - swap in the real URL once Legal publishes the AI Credits Guidelines doc.
-// Wrap it in localizeUrl() like the tos and pp links below if the doc has localized versions.
-const AI_CREDITS_GUIDELINES_URL = '#ai-credits-guidelines-pending';
 
 const Wrapper = styled.div`
 	display: flex;
@@ -79,11 +78,7 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 	const translate = useTranslate();
 	const [ isTermsModalOpen, setIsTermsModalOpen ] = useState( false );
 	const hasRefundWindow = getRefundWindowSummary( cart ) !== null;
-	const hasStudioCodeAiCredits = cart.products.some(
-		( product ) => PRODUCT_STUDIO_CODE_AI_CREDITS === product.product_slug
-	);
 
-	// Only the tags a string uses get looked up, so both sentences share one map.
 	const components = {
 		tos: (
 			<a
@@ -92,7 +87,6 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 				rel="noopener noreferrer"
 			/>
 		),
-		guidelines: <a href={ AI_CREDITS_GUIDELINES_URL } target="_blank" rel="noopener noreferrer" />,
 		pp: (
 			<a
 				href={ localizeUrl( 'https://automattic.com/privacy/' ) }
@@ -102,18 +96,6 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 		),
 		readmore: <button type="button" onClick={ () => setIsTermsModalOpen( true ) } />,
 	};
-
-	// Studio carts get their own sentence instead of editing the shared one - that would change its
-	// msgid and drop every checkout in every locale to English until GlotPress catches up.
-	const legalNotice = hasStudioCodeAiCredits
-		? translate(
-				'By checking out, you agree to our {{tos}}Terms of Service{{/tos}} and {{guidelines}}AI Credits Guidelines{{/guidelines}}, and have read our {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
-				{ components }
-		  )
-		: translate(
-				'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
-				{ components }
-		  );
 
 	return (
 		<Wrapper className="checkout-pay-button-footer">
@@ -130,7 +112,28 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 
 			<Divider />
 
-			<LegalNotice>{ legalNotice }</LegalNotice>
+			<LegalNotice>
+				{ hasStudioCodeAiCredits( cart )
+					? translate(
+							'By checking out, you agree to our {{tos}}Terms of Service{{/tos}} and {{guidelines}}AI Credits Guidelines{{/guidelines}}, and have read our {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
+							{
+								components: {
+									...components,
+									guidelines: (
+										<a
+											href={ getStudioCodeAiCreditsGuidelinesUrl() }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+					  )
+					: translate(
+							'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
+							{ components }
+					  ) }
+			</LegalNotice>
 
 			<CheckoutTermsModal
 				cart={ cart }
