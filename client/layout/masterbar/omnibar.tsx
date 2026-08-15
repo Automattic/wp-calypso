@@ -61,7 +61,13 @@ function useOmnibarBridge() {
 	} );
 }
 
-export default function Omnibar( { loadHelpCenterIcon }: { loadHelpCenterIcon?: boolean } ) {
+export default function Omnibar( {
+	section,
+	loadHelpCenterIcon,
+}: {
+	section?: string;
+	loadHelpCenterIcon?: boolean;
+} ) {
 	useOmnibarBridge();
 
 	const config: AppConfig = {
@@ -83,7 +89,7 @@ export default function Omnibar( { loadHelpCenterIcon }: { loadHelpCenterIcon?: 
 						<OmnibarContainer
 							user={ window.currentUser }
 							cartManagerClient={ cartManagerClient }
-							isWithinSiteContext
+							section={ section }
 						/>
 					</div>
 				</AnalyticsProvider>

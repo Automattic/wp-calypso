@@ -18,12 +18,13 @@ function ReaderIcon() {
 	);
 }
 
-export function useReaderPlugin(): OmnibarNode {
+export function useReaderPlugin( { section }: { section?: string } ): OmnibarNode {
 	return {
 		id: 'reader',
 		title: __( 'Reader' ),
 		icon: <ReaderIcon />,
 		className: 'omnibar__reader',
 		href: wpcomLink( '/reader' ),
+		active: section === 'reader',
 	};
 }
