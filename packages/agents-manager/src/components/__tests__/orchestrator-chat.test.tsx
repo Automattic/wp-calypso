@@ -1484,7 +1484,7 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'updates the checkpoint status after native Undo and exact native Redo', () => {
+	it( 'updates the checkpoint status when native Undo and Redo stores notify separately', () => {
 		const checkpointMessage = createCheckpointMessage(
 			'agent-native-undo',
 			'native-undo-checkpoint'
@@ -1519,8 +1519,15 @@ describe( 'OrchestratorChat', () => {
 		);
 
 		act( () => {
-			canSwapCheckpoint = false;
 			mockHasEditorRedo = true;
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe(
+			'Updated and Undo'
+		);
+
+		act( () => {
+			canSwapCheckpoint = false;
 			mockEditorBlocks = [ { clientId: 'native-undo-block' } ];
 			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
 		} );
@@ -1534,8 +1541,13 @@ describe( 'OrchestratorChat', () => {
 		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith( 'native-undo-checkpoint' );
 
 		act( () => {
-			canSwapCheckpoint = true;
 			mockHasEditorRedo = false;
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Reverted' );
+
+		act( () => {
+			canSwapCheckpoint = true;
 			mockEditorBlocks = [ { clientId: 'native-redo-block' } ];
 			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
 		} );
@@ -1547,6 +1559,152 @@ describe( 'OrchestratorChat', () => {
 			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
 		).not.toHaveProperty( 'onRedo' );
 		expect( mockInvalidateCheckpointAction ).toHaveBeenLastCalledWith( 'native-undo-checkpoint' );
+	} );
+
+	it( 'updates the checkpoint status when native Undo stores notify together', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-native-undo-combined',
+			'native-undo-combined-checkpoint'
+		);
+		let canSwapCheckpoint = true;
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		act( () => {
+			mockHasEditorRedo = true;
+			canSwapCheckpoint = false;
+			mockEditorBlocks = [ { clientId: 'native-undo-combined-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Reverted' );
+		expect( mockSetCheckpointActionReverted ).toHaveBeenCalledWith(
+			'native-undo-combined-checkpoint',
+			true
+		);
+	} );
+
+	it( 'keeps a source-drifted checkpoint Updated across later native history', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-source-drift-native-history',
+			'source-drift-native-history-checkpoint'
+		);
+		let canSwapCheckpoint = true;
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		const view = render( chat( { useCheckpoint } ) );
+
+		canSwapCheckpoint = false;
+		mockEditorBlocks = [ { clientId: 'manually-drifted-block' } ];
+		view.rerender( chat( { useCheckpoint } ) );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+
+		mockHasEditorRedo = true;
+		view.rerender( chat( { useCheckpoint } ) );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+
+		canSwapCheckpoint = true;
+		mockEditorBlocks = [ { clientId: 'restored-ai-state-block' } ];
+		view.rerender( chat( { useCheckpoint } ) );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+
+		mockHasEditorRedo = false;
+		view.rerender( chat( { useCheckpoint } ) );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect( mockSetCheckpointActionReverted ).not.toHaveBeenCalledWith(
+			'source-drift-native-history-checkpoint',
+			true
+		);
+	} );
+
+	it( 'does not treat later source drift as a delayed native Undo', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-unrelated-native-history',
+			'unrelated-native-history-checkpoint'
+		);
+		let canSwapCheckpoint = true;
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		act( () => {
+			mockHasEditorRedo = true;
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe(
+			'Updated and Undo'
+		);
+
+		act( () => {
+			mockEditorBlocks = [ { clientId: 'unrelated-native-undo-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe(
+			'Updated and Undo'
+		);
+
+		act( () => {
+			canSwapCheckpoint = false;
+			mockEditorBlocks = [ { clientId: 'later-source-drift-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect( mockSetCheckpointActionReverted ).not.toHaveBeenCalledWith(
+			'unrelated-native-history-checkpoint',
+			true
+		);
 	} );
 
 	it( 'does not mark an unsupported checkpoint Reverted after native Undo', () => {
@@ -2004,6 +2162,104 @@ describe( 'OrchestratorChat', () => {
 		} >;
 		expect( regeneratedMessages[ 0 ].actions ).not.toEqual(
 			expect.arrayContaining( [ expect.objectContaining( { id: 'checkpoint' } ) ] )
+		);
+	} );
+
+	it( 'keeps a later-turn checkpoint action from a structured continuation result', async () => {
+		const firstCheckpoint = createCheckpointMessage(
+			'agent-first-structured-turn',
+			'first-structured-checkpoint'
+		);
+		const laterUserMessage = {
+			id: 'user-structured-continuation',
+			role: 'user',
+			content: [ { type: 'text', text: 'Make another edit' } ],
+			timestamp: 2,
+		};
+		const initialMessages = [ userMessage, firstCheckpoint, laterUserMessage ];
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { messages: initialMessages } ) );
+		const view = render( chat() );
+		const checkpointResult = JSON.stringify( {
+			tool_id: 'big_sky__apply_block_edits',
+			tool_call_id: 'tool-call-structured-continuation',
+			data: {
+				result: {
+					success: true,
+					outcome: 'updated',
+					changeType: 'text-content',
+				},
+			},
+		} );
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-structured-continuation',
+				status: {
+					state: 'working',
+					message: {
+						messageId: 'tool-result-structured-continuation',
+						role: 'agent',
+						kind: 'message',
+						parts: [
+							{
+								type: 'data',
+								data: {
+									toolCallId: 'tool-call-structured-continuation',
+									toolId: 'big_sky__apply_block_edits',
+									result: {
+										result: {
+											success: true,
+											outcome: 'updated',
+											changeType: 'text-content',
+										},
+										returnToAgent: true,
+										agentMessage: checkpointResult,
+									},
+								},
+							},
+						],
+					},
+				},
+				text: '',
+				final: false,
+				kind: 'status',
+			} );
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-structured-continuation',
+				status: {
+					state: 'completed',
+					message: {
+						messageId: 'agent-structured-final',
+						role: 'agent',
+						kind: 'message',
+						parts: [],
+					},
+				},
+				text: 'The paragraph has been updated again.',
+				final: true,
+				kind: 'status',
+			} );
+		} );
+
+		const finalMessage = {
+			id: 'agent-structured-final',
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated again.' } ],
+			timestamp: 3,
+			archived: false,
+			showIcon: true,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ ...initialMessages, finalMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id ) ).toEqual(
+			expect.objectContaining( {
+				label: 'Updated and Undo',
+				componentProps: expect.objectContaining( { onUndo: expect.any( Function ) } ),
+			} )
 		);
 	} );
 

@@ -150,6 +150,41 @@ function getToolMessageData( message: Pick< UIMessage, 'content' > ):
 	}
 }
 
+function getBlockEditAgentMessageText( update: TaskUpdate ): string | undefined {
+	const candidateTexts = update.text ? [ update.text ] : [];
+
+	for ( const message of [ update.status.message, update.agentMessage ] ) {
+		for ( const part of message?.parts ?? [] ) {
+			if ( part.type !== 'data' || typeof part.data !== 'object' || part.data === null ) {
+				continue;
+			}
+
+			if ( ! ( 'result' in part.data ) ) {
+				continue;
+			}
+
+			const result = part.data.result;
+			if ( typeof result !== 'object' || result === null ) {
+				continue;
+			}
+
+			const agentMessage = ( result as { agentMessage?: unknown } ).agentMessage;
+			if ( typeof agentMessage === 'string' ) {
+				candidateTexts.push( agentMessage );
+			}
+		}
+	}
+
+	for ( const candidateText of candidateTexts ) {
+		const candidateMessage = { content: [ { type: 'text' as const, text: candidateText } ] };
+		if ( isBlockEditToolId( getToolMessageData( candidateMessage )?.toolId ) ) {
+			return candidateText;
+		}
+	}
+
+	return undefined;
+}
+
 function isShowComponentMessage( message: Pick< UIMessage, 'content' > ): boolean {
 	const toolData = getToolMessageData( message );
 	return isShowComponentTool( toolData?.toolId );
@@ -316,18 +351,20 @@ export default function OrchestratorChat( {
 			...agentConfig,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
 				const streamedMessages = streamedCheckpointMessagesRef.current;
-				if ( streamedMessages.sessionIdentity === checkpointSessionIdentity && update.text ) {
+				const blockEditAgentMessageText = getBlockEditAgentMessageText( update );
+				if (
+					streamedMessages.sessionIdentity === checkpointSessionIdentity &&
+					blockEditAgentMessageText
+				) {
 					const message: UIMessage = {
 						id: update.status.message?.messageId ?? update.agentMessage?.messageId ?? update.id,
 						role: 'agent',
-						content: [ { type: 'text', text: update.text } ],
+						content: [ { type: 'text', text: blockEditAgentMessageText } ],
 						timestamp: Date.now(),
 						archived: false,
 						showIcon: true,
 					};
-					if ( isBlockEditToolId( getToolMessageData( message )?.toolId ) ) {
-						streamedMessages.pendingByTaskId.set( update.id, message );
-					}
+					streamedMessages.pendingByTaskId.set( update.id, message );
 				}
 
 				const isTerminal =
@@ -623,16 +660,27 @@ export default function OrchestratorChat( {
 			userMessageId: messages[ latestUserMessageIndex ]?.id,
 		};
 	}, [ messages ] );
+	const previousHasEditorRedoRef = useRef( hasEditorRedo );
+	const nativeUndoInvalidatedTurnRef = useRef(
+		hasEditorRedo ? checkpointIdsByTurn.userMessageId : undefined
+	);
+	const [ nativeUndoRevertedTurn, setNativeUndoRevertedTurn ] = useState< string | undefined >();
+	const pendingNativeUndoTurnRef = useRef< string | undefined >( undefined );
+	const pendingNativeRedoTurnRef = useRef< string | undefined >( undefined );
 	const supportsCheckpointSwap =
 		typeof checkpoint?.canSwapCheckpoint === 'function' &&
 		typeof checkpoint.swapCheckpoint === 'function';
+	const isWatchingNativeHistory =
+		!! checkpointIdsByTurn.userMessageId &&
+		nativeUndoRevertedTurn === checkpointIdsByTurn.userMessageId;
 	const hasPendingCheckpointSwap =
 		supportsCheckpointSwap &&
-		[ ...checkpointIdsByTurn.current ].some(
-			( checkpointId ) =>
-				! sourceDriftInvalidatedCheckpointIds.has( checkpointId ) &&
-				! isCheckpointActionInvalidated( checkpointId )
-		);
+		( isWatchingNativeHistory ||
+			[ ...checkpointIdsByTurn.current ].some(
+				( checkpointId ) =>
+					! sourceDriftInvalidatedCheckpointIds.has( checkpointId ) &&
+					! isCheckpointActionInvalidated( checkpointId )
+			) );
 	const checkpointEditorBlocks = useSelect(
 		( select ) => {
 			if ( ! hasPendingCheckpointSwap ) {
@@ -687,11 +735,6 @@ export default function OrchestratorChat( {
 		supportsCheckpointSwap,
 		useCheckpoint,
 	] );
-	const previousHasEditorRedoRef = useRef( hasEditorRedo );
-	const nativeUndoInvalidatedTurnRef = useRef(
-		hasEditorRedo ? checkpointIdsByTurn.userMessageId : undefined
-	);
-	const nativeUndoRevertedTurnRef = useRef< string | undefined >( undefined );
 	const getCheckpointActionsForMessage = useCheckpointAction(
 		registerMessageActions,
 		checkpoint,
@@ -704,8 +747,15 @@ export default function OrchestratorChat( {
 		handleCheckpointActionPendingChange,
 		handleCheckpointActionInvalidated
 	);
+	const previousCheckpointEditorBlocksRef = useRef( checkpointEditorBlocks );
 
 	useEffect( () => {
+		// Native history can notify before block content; a later or combined block change confirms Undo.
+		const didCheckpointEditorBlocksChange =
+			previousCheckpointEditorBlocksRef.current !== undefined &&
+			checkpointEditorBlocks !== undefined &&
+			previousCheckpointEditorBlocksRef.current !== checkpointEditorBlocks;
+		previousCheckpointEditorBlocksRef.current = checkpointEditorBlocks;
 		const currentCheckpointIds = [ ...checkpointIdsByTurn.current ];
 		const latestCheckpointId = currentCheckpointIds[ currentCheckpointIds.length - 1 ];
 		const latestCheckpointCanSwap = latestCheckpointId
@@ -714,42 +764,83 @@ export default function OrchestratorChat( {
 		const hasPendingCheckpointAction = currentCheckpointIds.some( ( checkpointId ) =>
 			pendingCheckpointActionIdsRef.current.has( checkpointId )
 		);
-		// Inline swaps create redo history too, but remain swappable after their own editor update.
-		const didNativeUndo =
-			previousHasEditorRedoRef.current === false &&
+		const didEditorRedoBecomeAvailable =
+			previousHasEditorRedoRef.current === false && hasEditorRedo;
+		const didEditorRedoBecomeUnavailable =
+			previousHasEditorRedoRef.current === true && ! hasEditorRedo;
+		let shouldConfirmNativeUndo = false;
+		if ( hasPendingCheckpointAction ) {
+			pendingNativeUndoTurnRef.current = undefined;
+			pendingNativeRedoTurnRef.current = undefined;
+		}
+		if ( didEditorRedoBecomeAvailable ) {
+			pendingNativeRedoTurnRef.current = undefined;
+			pendingNativeUndoTurnRef.current = undefined;
+			if (
+				! hasPendingCheckpointAction &&
+				! didCheckpointEditorBlocksChange &&
+				latestCheckpointId &&
+				latestCheckpointCanSwap === true
+			) {
+				pendingNativeUndoTurnRef.current = checkpointIdsByTurn.userMessageId;
+			} else if (
+				! hasPendingCheckpointAction &&
+				didCheckpointEditorBlocksChange &&
+				latestCheckpointId &&
+				latestCheckpointCanSwap === false
+			) {
+				shouldConfirmNativeUndo = true;
+			} else if ( latestCheckpointCanSwap === undefined ) {
+				nativeUndoInvalidatedTurnRef.current = checkpointIdsByTurn.userMessageId;
+			}
+		}
+		if (
 			hasEditorRedo &&
 			! hasPendingCheckpointAction &&
-			latestCheckpointCanSwap !== true;
-		const didNativeRedo = previousHasEditorRedoRef.current === true && ! hasEditorRedo;
-		if ( didNativeUndo ) {
+			didCheckpointEditorBlocksChange &&
+			latestCheckpointId &&
+			checkpointIdsByTurn.userMessageId &&
+			pendingNativeUndoTurnRef.current === checkpointIdsByTurn.userMessageId
+		) {
+			pendingNativeUndoTurnRef.current = undefined;
+			if ( latestCheckpointCanSwap === false ) {
+				shouldConfirmNativeUndo = true;
+			}
+		}
+		if ( shouldConfirmNativeUndo && latestCheckpointId && checkpointIdsByTurn.userMessageId ) {
 			nativeUndoInvalidatedTurnRef.current = checkpointIdsByTurn.userMessageId;
-			nativeUndoRevertedTurnRef.current = checkpointIdsByTurn.userMessageId;
+			if (
+				! sourceDriftInvalidatedCheckpointIds.has( latestCheckpointId ) &&
+				! isCheckpointActionInvalidated( latestCheckpointId )
+			) {
+				if ( setCheckpointActionReverted( latestCheckpointId, true ) ) {
+					setCheckpointActionRevision( ( revision ) => revision + 1 );
+				}
+				setNativeUndoRevertedTurn( checkpointIdsByTurn.userMessageId );
+			}
+		}
+		if (
+			didEditorRedoBecomeUnavailable &&
+			checkpointIdsByTurn.userMessageId &&
+			nativeUndoRevertedTurn === checkpointIdsByTurn.userMessageId
+		) {
+			// Exact checkpoint content confirms Updated, even when the user recreates it manually.
+			pendingNativeRedoTurnRef.current = checkpointIdsByTurn.userMessageId;
 		}
 		previousHasEditorRedoRef.current = hasEditorRedo;
 
-		let didChangeStatus = false;
-		let confirmedNativeRedo = false;
 		if (
-			didNativeRedo &&
+			! hasEditorRedo &&
 			latestCheckpointId &&
 			checkpointIdsByTurn.userMessageId &&
-			nativeUndoRevertedTurnRef.current === checkpointIdsByTurn.userMessageId &&
+			pendingNativeRedoTurnRef.current === checkpointIdsByTurn.userMessageId &&
 			checkpointRef.current?.canSwapCheckpoint?.( latestCheckpointId ) === true
 		) {
-			didChangeStatus = setCheckpointActionReverted( latestCheckpointId, false );
-			nativeUndoRevertedTurnRef.current = undefined;
-			confirmedNativeRedo = true;
-		}
-		if (
-			! confirmedNativeRedo &&
-			latestCheckpointId &&
-			checkpointIdsByTurn.userMessageId &&
-			nativeUndoRevertedTurnRef.current === checkpointIdsByTurn.userMessageId &&
-			! sourceDriftInvalidatedCheckpointIds.has( latestCheckpointId ) &&
-			! isCheckpointActionInvalidated( latestCheckpointId ) &&
-			checkpointRef.current?.canSwapCheckpoint?.( latestCheckpointId ) === false
-		) {
-			didChangeStatus = setCheckpointActionReverted( latestCheckpointId, true );
+			if ( setCheckpointActionReverted( latestCheckpointId, false ) ) {
+				setCheckpointActionRevision( ( revision ) => revision + 1 );
+			}
+			setNativeUndoRevertedTurn( undefined );
+			pendingNativeRedoTurnRef.current = undefined;
 		}
 
 		for ( const checkpointId of currentCheckpointIds ) {
@@ -760,10 +851,13 @@ export default function OrchestratorChat( {
 				invalidateCheckpointAction( checkpointId );
 			}
 		}
-		if ( didChangeStatus ) {
-			setCheckpointActionRevision( ( revision ) => revision + 1 );
-		}
-	}, [ checkpointIdsByTurn, hasEditorRedo, sourceDriftInvalidatedCheckpointIds ] );
+	}, [
+		checkpointEditorBlocks,
+		checkpointIdsByTurn,
+		hasEditorRedo,
+		nativeUndoRevertedTurn,
+		sourceDriftInvalidatedCheckpointIds,
+	] );
 
 	// TODO (ability-migration): Remove once the last checkpoint-writing Big Sky
 	// ability migrates. Keeps the provider checkpoint store reachable for the
