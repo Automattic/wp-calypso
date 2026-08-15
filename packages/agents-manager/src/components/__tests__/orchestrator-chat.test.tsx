@@ -524,6 +524,18 @@ const getDisplayedCheckpointAction = ( messageId: string ) => {
 		?.actions?.find( ( action ) => action.id === 'checkpoint' );
 };
 
+const getDisplayedMessage = ( messageId: string ) => {
+	const messages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+		disabled?: boolean;
+		id: string;
+	} >;
+	const message = messages.find( ( displayedMessage ) => displayedMessage.id === messageId );
+	if ( ! message ) {
+		throw new Error( `Expected message ${ messageId } to be displayed.` );
+	}
+	return message;
+};
+
 const countShowComponentMessages = () => {
 	const messages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
 		content?: Array< { text?: string } >;
@@ -1441,6 +1453,7 @@ describe( 'OrchestratorChat', () => {
 		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
 			'onUndo'
 		);
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBeUndefined();
 
 		const contextOnlyMessage = {
 			id: 'context-only',
@@ -1455,6 +1468,7 @@ describe( 'OrchestratorChat', () => {
 		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
 			'onUndo'
 		);
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBeUndefined();
 
 		const nextUserMessage = {
 			id: 'user-2',
@@ -1479,6 +1493,8 @@ describe( 'OrchestratorChat', () => {
 		expect(
 			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
 		).not.toHaveProperty( 'onRedo' );
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBe( true );
+		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
 	} );
 
 	it( 'hides checkpoint controls in loaded conversation history', () => {
@@ -1652,6 +1668,7 @@ describe( 'OrchestratorChat', () => {
 		expect(
 			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
 		).not.toHaveProperty( 'onRedo' );
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBeUndefined();
 		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith(
 			'pending-native-undo-checkpoint'
 		);
@@ -1823,6 +1840,7 @@ describe( 'OrchestratorChat', () => {
 		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith(
 			'unrelated-native-history-checkpoint'
 		);
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBeUndefined();
 		expect( mockSetCheckpointActionReverted ).not.toHaveBeenCalledWith(
 			'unrelated-native-history-checkpoint',
 			true
@@ -2338,9 +2356,11 @@ describe( 'OrchestratorChat', () => {
 		expect( getDisplayedCheckpointAction( firstCheckpoint.id )?.componentProps ).not.toHaveProperty(
 			'onUndo'
 		);
+		expect( getDisplayedMessage( firstCheckpoint.id ).disabled ).toBe( true );
 		expect( getDisplayedCheckpointAction( secondCheckpoint.id )?.componentProps ).toHaveProperty(
 			'onUndo'
 		);
+		expect( getDisplayedMessage( secondCheckpoint.id ).disabled ).toBeUndefined();
 	} );
 
 	it( 'keeps streamed checkpoint actions through final prose and remounts', async () => {
@@ -2395,6 +2415,7 @@ describe( 'OrchestratorChat', () => {
 		expect( messages[ 0 ].actions ).toEqual( [
 			expect.objectContaining( { id: 'checkpoint', label: 'Updated and Undo' } ),
 		] );
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBeUndefined();
 		view.unmount();
 
 		const remountedView = render( chat() );

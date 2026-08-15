@@ -1412,11 +1412,25 @@ export default function OrchestratorChat( {
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
 
 		currentMessages = currentMessages.map( ( message ) => {
+			const checkpointActions = checkpointActionsByMessageId.get( message.id ) ?? [];
+			const hasDisabledCheckpointAction = checkpointActions.some(
+				( action ) =>
+					action.type === 'component' &&
+					action.id === 'checkpoint' &&
+					action.componentProps?.disabled === true
+			);
 			const traceId = getTraceIdForMessage( message.id );
-			const messageWithTraceId = traceId ? { ...message, traceId } : message;
+			const messageWithTraceId =
+				traceId || hasDisabledCheckpointAction
+					? {
+							...message,
+							...( traceId && { traceId } ),
+							...( hasDisabledCheckpointAction && { disabled: true } ),
+					  }
+					: message;
 
 			const directActions = [
-				...( checkpointActionsByMessageId.get( message.id ) ?? [] ),
+				...checkpointActions,
 				...getFeedbackActionsForMessage( message ),
 				...getCopyActionsForMessage( message ),
 				...getRegenerateActionsForMessage( message, {
