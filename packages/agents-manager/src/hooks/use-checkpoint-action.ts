@@ -14,6 +14,7 @@ import type { UIMessage, UIMessageAction, UseAgentChatReturn } from '@automattic
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
 type IsCheckpointActionAvailable = ( checkpointId: string ) => boolean;
 type OnCheckpointActionPendingChange = ( checkpointId: string, isPending: boolean ) => void;
+type OnCheckpointActionInvalidated = ( checkpointId: string ) => void;
 
 const revertedCheckpointIds = new Set< string >();
 const invalidatedCheckpointIds = new Set< string >();
@@ -121,7 +122,8 @@ export default function useCheckpointAction(
 	registerMessageActions: RegisterMessageActions,
 	checkpoint?: UseCheckpointReturn,
 	isCheckpointActionAvailable?: IsCheckpointActionAvailable,
-	onCheckpointActionPendingChange?: OnCheckpointActionPendingChange
+	onCheckpointActionPendingChange?: OnCheckpointActionPendingChange,
+	onCheckpointActionInvalidated?: OnCheckpointActionInvalidated
 ): ( message: UIMessage ) => UIMessageAction[] {
 	// Refs avoid infinite re-renders caused by unstable provider values.
 	const checkpointRef = useRef( checkpoint );
@@ -130,6 +132,8 @@ export default function useCheckpointAction(
 	isCheckpointActionAvailableRef.current = isCheckpointActionAvailable;
 	const onCheckpointActionPendingChangeRef = useRef( onCheckpointActionPendingChange );
 	onCheckpointActionPendingChangeRef.current = onCheckpointActionPendingChange;
+	const onCheckpointActionInvalidatedRef = useRef( onCheckpointActionInvalidated );
+	onCheckpointActionInvalidatedRef.current = onCheckpointActionInvalidated;
 	const pendingSwapCheckpointIdsRef = useRef( new Set< string >() );
 	const getCheckpointActionsForMessage = useCallback( ( message: UIMessage ): UIMessageAction[] => {
 		const currentCheckpoint = checkpointRef.current;
@@ -163,6 +167,13 @@ export default function useCheckpointAction(
 
 			let outcome: 'success' | 'failed' = 'failed';
 			let didStartSwap = false;
+			let didAttemptAction = false;
+			const invalidateAction = () => {
+				if ( ! invalidatedCheckpointIds.has( checkpointInfo.checkpointId ) ) {
+					invalidateCheckpointAction( checkpointInfo.checkpointId );
+					onCheckpointActionInvalidatedRef.current?.( checkpointInfo.checkpointId );
+				}
+			};
 			try {
 				const checkpointToRestore = checkpointRef.current;
 				if (
@@ -171,6 +182,7 @@ export default function useCheckpointAction(
 					! checkpointToRestore ||
 					! checkpointToRestore.hasCheckpoint( checkpointInfo.checkpointId )
 				) {
+					invalidateAction();
 					return false;
 				}
 
@@ -179,13 +191,16 @@ export default function useCheckpointAction(
 						checkpointToRestore.canSwapCheckpoint?.( checkpointInfo.checkpointId ) !== true ||
 						! checkpointToRestore.swapCheckpoint
 					) {
+						invalidateAction();
 						return false;
 					}
 					pendingSwapCheckpointIdsRef.current.add( checkpointInfo.checkpointId );
 					onCheckpointActionPendingChangeRef.current?.( checkpointInfo.checkpointId, true );
 					didStartSwap = true;
+					didAttemptAction = true;
 					await checkpointToRestore.swapCheckpoint( checkpointInfo.checkpointId );
 				} else {
+					didAttemptAction = true;
 					await checkpointToRestore.restoreCheckpoint( checkpointInfo.checkpointId );
 				}
 
@@ -201,11 +216,13 @@ export default function useCheckpointAction(
 					pendingSwapCheckpointIdsRef.current.delete( checkpointInfo.checkpointId );
 					onCheckpointActionPendingChangeRef.current?.( checkpointInfo.checkpointId, false );
 				}
-				recordBigSkyTracksEvent( 'restore_checkpoint_action', {
-					action: revert ? 'undo' : 'redo',
-					id: checkpointInfo.checkpointId,
-					outcome,
-				} );
+				if ( didAttemptAction ) {
+					recordBigSkyTracksEvent( 'restore_checkpoint_action', {
+						action: revert ? 'undo' : 'redo',
+						id: checkpointInfo.checkpointId,
+						outcome,
+					} );
+				}
 			}
 		};
 

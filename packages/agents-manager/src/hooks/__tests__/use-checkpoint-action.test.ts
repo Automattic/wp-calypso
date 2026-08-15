@@ -344,6 +344,64 @@ describe( 'useCheckpointAction', () => {
 		expect( checkpoint.restoreCheckpoint ).not.toHaveBeenCalled();
 	} );
 
+	it( 'invalidates a rendered Undo when the checkpoint drifts before the click', async () => {
+		let registration: MessageActionsRegistration | undefined;
+		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+			registration = nextRegistration;
+		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
+		const checkpoint = createCheckpoint();
+		let canSwapCheckpoint = true;
+		checkpoint.canSwapCheckpoint = jest.fn( () => canSwapCheckpoint );
+		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
+		const onCheckpointActionInvalidated = jest.fn();
+		const message = createToolMessage( {
+			toolCallId: 'stale-rendered-tool-call',
+			data: {
+				result: {
+					success: true,
+					outcome: 'updated',
+					changeType: 'text-content',
+				},
+			},
+		} );
+
+		renderHook( () =>
+			useCheckpointAction(
+				registerMessageActions,
+				checkpoint,
+				undefined,
+				undefined,
+				onCheckpointActionInvalidated
+			)
+		);
+
+		const renderedAction = getActions( registration, message )[ 0 ];
+		if ( renderedAction?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		const staleOnUndo = renderedAction.componentProps?.onUndo;
+		if ( typeof staleOnUndo !== 'function' ) {
+			throw new Error( 'Expected an Undo action.' );
+		}
+
+		canSwapCheckpoint = false;
+		await expect( staleOnUndo() ).resolves.toBe( false );
+
+		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
+		expect( onCheckpointActionInvalidated ).toHaveBeenCalledWith( 'stale-rendered-tool-call' );
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
+		const refreshedAction = getActions( registration, message )[ 0 ];
+		if ( refreshedAction?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		expect( refreshedAction.componentProps ).not.toHaveProperty( 'onUndo' );
+		expect( refreshedAction.componentProps ).not.toHaveProperty( 'onRedo' );
+
+		await expect( staleOnUndo() ).resolves.toBe( false );
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
+		expect( onCheckpointActionInvalidated ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'does not offer Undo when a swappable text checkpoint has drifted', () => {
 		let registration: MessageActionsRegistration | undefined;
 		const registerMessageActions = jest.fn( ( nextRegistration ) => {

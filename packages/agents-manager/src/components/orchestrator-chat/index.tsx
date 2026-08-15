@@ -602,6 +602,9 @@ export default function OrchestratorChat( {
 		},
 		[]
 	);
+	const handleCheckpointActionInvalidated = useCallback( () => {
+		setCheckpointActionRevision( ( revision ) => revision + 1 );
+	}, [] );
 	const checkpointIdsByTurn = useMemo( () => {
 		const latestUserMessageIndex = getLatestUserMessageIndex( messages );
 		const current = new Set< string >();
@@ -693,21 +696,30 @@ export default function OrchestratorChat( {
 		registerMessageActions,
 		checkpoint,
 		( checkpointId ) =>
-			! hasEditorRedo &&
+			( ! hasEditorRedo || checkpointRef.current?.canSwapCheckpoint?.( checkpointId ) === true ) &&
 			! sourceDriftInvalidatedCheckpointIds.has( checkpointId ) &&
 			checkpointIdsByTurn.current.has( checkpointId ) &&
 			( ! checkpointIdsByTurn.userMessageId ||
 				nativeUndoInvalidatedTurnRef.current !== checkpointIdsByTurn.userMessageId ),
-		handleCheckpointActionPendingChange
+		handleCheckpointActionPendingChange,
+		handleCheckpointActionInvalidated
 	);
 
 	useEffect( () => {
 		const currentCheckpointIds = [ ...checkpointIdsByTurn.current ];
+		const latestCheckpointId = currentCheckpointIds[ currentCheckpointIds.length - 1 ];
+		const latestCheckpointCanSwap = latestCheckpointId
+			? checkpointRef.current?.canSwapCheckpoint?.( latestCheckpointId )
+			: undefined;
 		const hasPendingCheckpointAction = currentCheckpointIds.some( ( checkpointId ) =>
 			pendingCheckpointActionIdsRef.current.has( checkpointId )
 		);
+		// Inline swaps create redo history too, but remain swappable after their own editor update.
 		const didNativeUndo =
-			previousHasEditorRedoRef.current === false && hasEditorRedo && ! hasPendingCheckpointAction;
+			previousHasEditorRedoRef.current === false &&
+			hasEditorRedo &&
+			! hasPendingCheckpointAction &&
+			latestCheckpointCanSwap !== true;
 		const didNativeRedo = previousHasEditorRedoRef.current === true && ! hasEditorRedo;
 		if ( didNativeUndo ) {
 			nativeUndoInvalidatedTurnRef.current = checkpointIdsByTurn.userMessageId;
@@ -715,7 +727,6 @@ export default function OrchestratorChat( {
 		}
 		previousHasEditorRedoRef.current = hasEditorRedo;
 
-		const latestCheckpointId = currentCheckpointIds[ currentCheckpointIds.length - 1 ];
 		let didChangeStatus = false;
 		let confirmedNativeRedo = false;
 		if (
