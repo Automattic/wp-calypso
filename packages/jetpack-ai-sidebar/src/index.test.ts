@@ -2967,6 +2967,59 @@ describe( 'toolProvider', () => {
 			checkpoint.clearCheckpoint( 'call-update-block' );
 		} );
 
+		it( 'checkpoints the re-resolved clientId after a delayed block reparse', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor( {
+				'first-live-client-id': {
+					name: 'core/paragraph',
+					attributes: { content: 'Teh quick fox jump over teh dog.' },
+				},
+			} );
+			const checkpoint = useCheckpoint();
+			const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: 'stale-client-id',
+				content: 'A quick fox leaps over the dog.',
+				currentText: 'Teh quick fox jump over teh dog.',
+				toolCallId: 'call-reparsed-block',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			blocks[ 'second-live-client-id' ] = {
+				...blocks[ 'first-live-client-id' ],
+				attributes: { ...blocks[ 'first-live-client-id' ].attributes },
+			};
+			delete blocks[ 'first-live-client-id' ];
+			jest.advanceTimersByTime( 1000 );
+			const result = await pending;
+
+			expect( result ).toMatchObject( {
+				success: true,
+				clientId: 'second-live-client-id',
+				contentBefore: 'Teh quick fox jump over teh dog.',
+				contentAfter: 'A quick fox leaps over the dog.',
+			} );
+			expect( warn ).toHaveBeenCalledWith( '[Jetpack AI] stale clientId matched by currentText', {
+				clientId: 'stale-client-id',
+				targetClientId: 'first-live-client-id',
+			} );
+			expect( blockUpdates[ 0 ] ).toEqual( {
+				clientId: 'second-live-client-id',
+				attrs: { content: 'A quick fox leaps over the dog.' },
+			} );
+			expect( checkpoint.canSwapCheckpoint( 'call-reparsed-block' ) ).toBe( true );
+			await checkpoint.swapCheckpoint( 'call-reparsed-block' );
+			expect( blocks[ 'second-live-client-id' ].attributes.content ).toBe(
+				'Teh quick fox jump over teh dog.'
+			);
+			checkpoint.clearCheckpoint( 'call-reparsed-block' );
+			warn.mockRestore();
+		} );
+
 		it( 'swaps a block checkpoint between the updated and original content', async () => {
 			jest.useFakeTimers();
 			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
@@ -3096,6 +3149,46 @@ describe( 'toolProvider', () => {
 			} );
 			expect( blockUpdates ).toEqual( [] );
 			expect( checkpoint.hasCheckpoint( 'call-no-block-change' ) ).toBe( false );
+		} );
+
+		it( 'surfaces a delayed block update failure without checkpointing', async () => {
+			jest.useFakeTimers();
+			const { blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				currentText: 'original block content',
+				toolCallId: 'call-missing-target',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			delete blocks[ '550e8400-e29b-41d4-a716-446655440000' ];
+			jest.advanceTimersByTime( 1000 );
+			const result = await pending;
+
+			expect( result ).toMatchObject( {
+				success: false,
+				error: 'block not found',
+				returnToAgent: false,
+			} );
+			expect( JSON.parse( result.agentMessage ) ).toEqual( {
+				tool_id: UPDATE_BLOCK_CONTENT_TOOL_ID,
+				tool_call_id: 'call-missing-target',
+				data: {
+					result: {
+						success: false,
+						message: 'I could not update the block. Please try again.',
+						error: 'block not found',
+					},
+					followUpTasks: false,
+				},
+			} );
+			expect( checkpoint.hasCheckpoint( 'call-missing-target' ) ).toBe( false );
 		} );
 
 		it( 'documents the completed-edit summary contract in the update-block-content schema', async () => {

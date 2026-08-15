@@ -716,6 +716,7 @@ export function handleUpdateBlockContent( input: any ): any {
 			returnToAgent: false,
 		};
 	}
+	const snapshotAttribute = snapshot.attributeName;
 
 	// Substring replace when currentText is a non-empty span present in the block.
 	// If that span no longer exists, fail rather than replacing the whole block
@@ -753,11 +754,7 @@ export function handleUpdateBlockContent( input: any ): any {
 	// Short delay so the shimmer is visible before content swaps
 	return new Promise< any >( ( resolve ) => {
 		setTimeout( () => {
-			const latestSnapshot = getBlockSnapshot(
-				targetClientId,
-				snapshot?.attributeName,
-				currentText
-			);
+			let latestSnapshot = getBlockSnapshot( targetClientId, snapshotAttribute, currentText );
 			const resolveFailure = ( error: string ) => {
 				if ( blockEl ) {
 					removeProcessingEffect( blockEl );
@@ -771,6 +768,25 @@ export function handleUpdateBlockContent( input: any ): any {
 				resolveFailure( 'context changed' );
 				return;
 			}
+
+			if ( ! latestSnapshot && hasCurrentText ) {
+				const fallback = findBlockSnapshotByCurrentText( currentText, snapshotAttribute );
+				if ( fallback.error ) {
+					resolveFailure( fallback.error );
+					return;
+				}
+				if ( fallback.snapshot ) {
+					latestSnapshot = getBlockSnapshot(
+						fallback.snapshot.clientId,
+						fallback.snapshot.attributeName,
+						currentText
+					);
+					if ( latestSnapshot ) {
+						targetClientId = latestSnapshot.clientId;
+					}
+				}
+			}
+
 			if ( ! latestSnapshot ) {
 				resolveFailure( 'block not found' );
 				return;

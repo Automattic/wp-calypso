@@ -651,6 +651,20 @@ function isLegacyShowComponentTool( toolId: string ): boolean {
 	return toolId === LEGACY_SHOW_COMPONENT_TOOL_ID || toolId === LEGACY_SHOW_COMPONENT_ABILITY_NAME;
 }
 
+function createUpdateBlockContentAgentMessage(
+	toolCallId: string,
+	result: Record< string, unknown >
+): string {
+	return JSON.stringify( {
+		tool_id: UPDATE_BLOCK_CONTENT_AGENT_TOOL_ID,
+		tool_call_id: toolCallId,
+		data: {
+			result,
+			followUpTasks: false,
+		},
+	} );
+}
+
 async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 	const toolCallId =
 		typeof input?.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
@@ -659,7 +673,21 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 		if ( toolCallId ) {
 			blockEditSnapshots.delete( toolCallId );
 		}
-		return result;
+		const error =
+			typeof result?.error === 'string' && result.error ? result.error : 'Block update failed';
+		const message = __( 'I could not update the block. Please try again.', __i18n_text_domain__ );
+		const agentMessage = toolCallId
+			? createUpdateBlockContentAgentMessage( toolCallId, {
+					success: false,
+					message,
+					error,
+			  } )
+			: result?.agentMessage;
+		return {
+			...result,
+			returnToAgent: false,
+			...( agentMessage && { agentMessage } ),
+		};
 	}
 
 	const outcome =
@@ -697,17 +725,10 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 				: __( 'No changes were needed.', __i18n_text_domain__ );
 	}
 	const agentMessage = toolCallId
-		? JSON.stringify( {
-				tool_id: UPDATE_BLOCK_CONTENT_AGENT_TOOL_ID,
-				tool_call_id: toolCallId,
-				data: {
-					result: {
-						success: true,
-						message,
-						outcome,
-					},
-					followUpTasks: false,
-				},
+		? createUpdateBlockContentAgentMessage( toolCallId, {
+				success: true,
+				message,
+				outcome,
 		  } )
 		: result.agentMessage;
 
