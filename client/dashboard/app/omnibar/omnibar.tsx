@@ -16,6 +16,7 @@ import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import { useAiChatPlugin } from './plugin-ai-chat';
+import { addDashboardNode, useDashboardPlugin } from './plugin-dashboard';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
 import { useLaunchSitePlugin } from './plugin-launch-site';
@@ -64,18 +65,26 @@ function createHrefResolver( adminUrl?: string ) {
 export default function OmnibarContainer( {
 	user,
 	cartManagerClient,
+	isWithinSiteContext,
 }: {
 	user?: User;
 	cartManagerClient: ShoppingCartManagerClient;
+	isWithinSiteContext?: boolean;
 } ) {
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
-			<ConnectedOmnibar user={ user } />
+			<ConnectedOmnibar user={ user } isWithinSiteContext={ isWithinSiteContext } />
 		</ShoppingCartProvider>
 	);
 }
 
-function ConnectedOmnibar( { user }: { user?: User } ) {
+function ConnectedOmnibar( {
+	user,
+	isWithinSiteContext,
+}: {
+	user?: User;
+	isWithinSiteContext?: boolean;
+} ) {
 	const { supports } = useAppContext();
 	const recordNodeClick = useRecordOmnibarNodeClick();
 	const [ hydrated, setHydrated ] = useState( false );
@@ -158,6 +167,8 @@ function ConnectedOmnibar( { user }: { user?: User } ) {
 	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
 	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const launchSiteNode = useLaunchSitePlugin( { site } );
+	const dashboardNode = useDashboardPlugin( { site, isWithinSiteContext } );
+	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
 	const siteActions = [
 		...( baseOmnibarNodes.siteActions ?? [] ),
 		statsSparklineNode,
@@ -178,6 +189,7 @@ function ConnectedOmnibar( { user }: { user?: User } ) {
 	const omnibarNodes = trackOmnibarNodes(
 		{
 			...baseOmnibarNodes,
+			site: siteNode,
 			siteActions,
 			plugins,
 		},

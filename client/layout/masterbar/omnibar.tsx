@@ -80,7 +80,11 @@ export default function Omnibar( { loadHelpCenterIcon }: { loadHelpCenterIcon?: 
 			<QueryClientProvider client={ queryClient }>
 				<AnalyticsProvider client={ analyticsClient }>
 					<div id="wpcom-omnibar">
-						<OmnibarContainer user={ window.currentUser } cartManagerClient={ cartManagerClient } />
+						<OmnibarContainer
+							user={ window.currentUser }
+							cartManagerClient={ cartManagerClient }
+							isWithinSiteContext
+						/>
 					</div>
 				</AnalyticsProvider>
 			</QueryClientProvider>
