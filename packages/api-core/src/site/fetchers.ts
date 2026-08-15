@@ -66,6 +66,7 @@ export const SITE_OPTIONS = [
 	'software_version',
 	'updated_at',
 	'woocommerce_is_active',
+	'wpcom_admin_interface',
 	'wpcom_ai_launchpad_enabled',
 	'wpcom_ai_launchpad_dismissed',
 	'wpcom_ai_launchpad_completed',

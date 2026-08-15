@@ -13,6 +13,8 @@ const LEGACY_MASTERBAR_EVENTS: Record< string, string > = {
 	about: 'calypso_masterbar_about_wordpress_clicked',
 	contribute: 'calypso_masterbar_get_involved_clicked',
 	'view-site': 'calypso_masterbar_visit_site_clicked',
+	dashboard: 'calypso_masterbar_dashboard_clicked',
+	'my-home': 'calypso_masterbar_my_home_clicked',
 	'wpcom-stats': 'calypso_masterbar_stats_clicked',
 	'site-plan-badge': 'calypso_masterbar_plan_clicked',
 	'new-post': 'calypso_masterbar_new_post_clicked',
