@@ -1550,7 +1550,9 @@ describe( 'OrchestratorChat', () => {
 		const checkpointId = mockGetCheckpointIdForMessage( checkpointMessage )!;
 		const checkpointResult = checkpointMessage.content[ 0 ].text;
 		const loadMessages = jest.fn();
-		mockUseAgentChat.mockReturnValue( agentChatReturn( { loadMessages } ) );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { loadMessages, messages: [ checkpointMessage ] } )
+		);
 
 		render( chat() );
 		act( () => {
@@ -2469,6 +2471,27 @@ describe( 'OrchestratorChat', () => {
 			'onUndo'
 		);
 		view.unmount();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage ] } )
+		);
+		const remountedView = render( chat() );
+		act( () => {
+			mockConversationConfig?.onSuccess?.(
+				[
+					{
+						messageId: finalMessage.id,
+						role: 'agent',
+						parts: [ { type: 'text', text: finalMessage.content[ 0 ].text } ],
+						kind: 'message',
+					},
+				],
+				'server-session-promoted-after-completion'
+			);
+		} );
+		remountedView.rerender( chat() );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
 
 		const laterUserMessage = {
 			id: 'user-after-promoted-session',
@@ -2479,7 +2502,7 @@ describe( 'OrchestratorChat', () => {
 		mockUseAgentChat.mockReturnValue(
 			agentChatReturn( { messages: [ userMessage, finalMessage, laterUserMessage ] } )
 		);
-		const remountedView = render( chat() );
+		remountedView.rerender( chat() );
 
 		expect( getDisplayedCheckpointAction( finalMessage.id )?.label ).toBe( 'Updated' );
 		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toMatchObject( {
@@ -2490,12 +2513,37 @@ describe( 'OrchestratorChat', () => {
 		);
 		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBe( true );
 		expect( getDisplayedMessage( laterUserMessage.id ).disabled ).toBeUndefined();
+		act( () => {
+			mockConversationConfig?.onSuccess?.(
+				[
+					{
+						messageId: finalMessage.id,
+						role: 'agent',
+						parts: [ { type: 'text', text: finalMessage.content[ 0 ].text } ],
+						kind: 'message',
+					},
+				],
+				'server-session-promoted-after-completion'
+			);
+		} );
+		remountedView.rerender( chat() );
+		expect( mockInvalidateCheckpointAction ).not.toHaveBeenCalled();
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toMatchObject( {
+			disabled: true,
+		} );
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBe( true );
+		remountedView.unmount();
+		const coldView = render( chat() );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toMatchObject( {
+			disabled: true,
+		} );
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBe( true );
 
 		mockAgentConfig = {
 			agentId: 'wp-orchestrator',
 			sessionId: 'different-server-session',
 		};
-		remountedView.rerender( chat() );
+		coldView.rerender( chat() );
 		expect( getDisplayedCheckpointAction( finalMessage.id ) ).toBeUndefined();
 		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBeUndefined();
 	} );

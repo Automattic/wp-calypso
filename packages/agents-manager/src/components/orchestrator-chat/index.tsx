@@ -600,6 +600,9 @@ export default function OrchestratorChat( {
 				return;
 			}
 
+			const currentLiveMessageIds = new Set(
+				messagesRef.current.map( ( currentMessage ) => currentMessage.id )
+			);
 			loadedMessages.forEach( ( message ) => {
 				const checkpointMessage = streamedCheckpointMessagesRef.current.byFinalMessageId.get(
 					message.messageId
@@ -611,10 +614,11 @@ export default function OrchestratorChat( {
 						.map( ( part ) => ( { type: 'text', text: part.text } ) ),
 				};
 				const checkpointId = getCheckpointIdForMessage( checkpointMessage );
-				const isLiveStreamedMessage = streamedCheckpointMessagesRef.current.liveFinalMessageIds.has(
-					message.messageId
-				);
-				if ( checkpointId && ! isLiveStreamedMessage ) {
+				const isCurrentLiveMessage =
+					streamedCheckpointMessagesRef.current.liveFinalMessageIds.has( message.messageId ) ||
+					( streamedCheckpointMessagesRef.current.byFinalMessageId.has( message.messageId ) &&
+						currentLiveMessageIds.has( message.messageId ) );
+				if ( checkpointId && ! isCurrentLiveMessage ) {
 					invalidateCheckpointAction( checkpointId );
 				}
 			} );
