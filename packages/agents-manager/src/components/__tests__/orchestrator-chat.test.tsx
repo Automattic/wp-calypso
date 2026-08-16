@@ -1604,6 +1604,40 @@ describe( 'OrchestratorChat', () => {
 		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
 	} );
 
+	it( 'dims a persisted checkpoint message after a later user message', () => {
+		const persistedCheckpointMessage = {
+			id: 'agent-persisted-checkpoint',
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 2,
+			actions: [
+				{
+					type: 'component' as const,
+					id: 'checkpoint',
+					label: 'Updated',
+					component: () => null,
+					order: 1,
+				},
+			],
+		};
+		const nextUserMessage = {
+			id: 'user-after-persisted-checkpoint',
+			role: 'user',
+			content: [ { type: 'text', text: 'What did you change?' } ],
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [ userMessage, persistedCheckpointMessage, nextUserMessage ],
+			} )
+		);
+
+		render( chat() );
+
+		expect( getDisplayedMessage( persistedCheckpointMessage.id ).disabled ).toBe( true );
+		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
+	} );
+
 	it( 'hides checkpoint controls in loaded conversation history', () => {
 		const checkpointMessage = createCheckpointMessage(
 			'agent-history',
@@ -1637,22 +1671,6 @@ describe( 'OrchestratorChat', () => {
 		);
 		view.rerender( chat() );
 		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBeUndefined();
-
-		mockUseAgentChat.mockReturnValue(
-			agentChatReturn( {
-				messages: [
-					checkpointMessage,
-					{
-						id: 'user-after-loaded-history',
-						role: 'user',
-						content: [ { type: 'text', text: 'Start a new request' } ],
-						timestamp: 2,
-					},
-				],
-			} )
-		);
-		view.rerender( chat() );
-		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBe( true );
 	} );
 
 	it( 'updates the checkpoint status when native Undo and Redo stores notify separately', () => {

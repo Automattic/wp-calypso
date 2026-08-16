@@ -791,7 +791,7 @@ export default function OrchestratorChat( {
 		} );
 
 		return {
-			currentCheckpointIds: current,
+			current,
 			userMessageIdByCheckpointId,
 			userMessageId: messages[ latestUserMessageIndex ]?.id,
 		};
@@ -812,7 +812,7 @@ export default function OrchestratorChat( {
 	const hasPendingCheckpointSwap =
 		supportsCheckpointSwap &&
 		( isWatchingNativeHistory ||
-			[ ...checkpointIdsByTurn.currentCheckpointIds ].some(
+			[ ...checkpointIdsByTurn.current ].some(
 				( checkpointId ) =>
 					! sourceDriftInvalidatedCheckpointIds.has( checkpointId ) &&
 					! isCheckpointActionInvalidated( checkpointId )
@@ -840,7 +840,7 @@ export default function OrchestratorChat( {
 		const currentCheckpoint = checkpointRef.current;
 		const nextInvalidatedCheckpointIds = new Set(
 			[ ...sourceDriftInvalidatedCheckpointIds ].filter( ( checkpointId ) =>
-				checkpointIdsByTurn.currentCheckpointIds.has( checkpointId )
+				checkpointIdsByTurn.current.has( checkpointId )
 			)
 		);
 		let didChange = nextInvalidatedCheckpointIds.size !== sourceDriftInvalidatedCheckpointIds.size;
@@ -851,7 +851,7 @@ export default function OrchestratorChat( {
 				pendingNativeUndoTurnRef.current === checkpointIdsByTurn.userMessageId ||
 				nativeUndoInvalidatedTurnRef.current === checkpointIdsByTurn.userMessageId );
 		if ( supportsCheckpointSwap && currentCheckpoint ) {
-			for ( const checkpointId of checkpointIdsByTurn.currentCheckpointIds ) {
+			for ( const checkpointId of checkpointIdsByTurn.current ) {
 				if (
 					! shouldDeferSourceDriftInvalidation &&
 					! nextInvalidatedCheckpointIds.has( checkpointId ) &&
@@ -893,7 +893,7 @@ export default function OrchestratorChat( {
 			) {
 				return 'hidden';
 			}
-			if ( ! checkpointIdsByTurn.currentCheckpointIds.has( checkpointId ) ) {
+			if ( ! checkpointIdsByTurn.current.has( checkpointId ) ) {
 				return 'disabled';
 			}
 			if ( hasEditorRedo && checkpointRef.current?.canSwapCheckpoint?.( checkpointId ) !== true ) {
@@ -914,7 +914,7 @@ export default function OrchestratorChat( {
 			checkpointEditorBlocks !== undefined &&
 			previousCheckpointEditorBlocksRef.current !== checkpointEditorBlocks;
 		previousCheckpointEditorBlocksRef.current = checkpointEditorBlocks;
-		const currentCheckpointIds = [ ...checkpointIdsByTurn.currentCheckpointIds ];
+		const currentCheckpointIds = [ ...checkpointIdsByTurn.current ];
 		const latestCheckpointId = currentCheckpointIds[ currentCheckpointIds.length - 1 ];
 		const latestCheckpointCanSwap = latestCheckpointId
 			? checkpointRef.current?.canSwapCheckpoint?.( latestCheckpointId )
@@ -930,7 +930,7 @@ export default function OrchestratorChat( {
 		const didInlineUndoCreateEditorRedo =
 			didEditorRedoBecomeAvailable &&
 			completedInlineUndoCheckpointIdRef.current !== undefined &&
-			checkpointIdsByTurn.currentCheckpointIds.has( completedInlineUndoCheckpointIdRef.current );
+			checkpointIdsByTurn.current.has( completedInlineUndoCheckpointIdRef.current );
 		const wasPendingNativeUndo =
 			!! checkpointIdsByTurn.userMessageId &&
 			pendingNativeUndoTurnRef.current === checkpointIdsByTurn.userMessageId;
@@ -1493,26 +1493,24 @@ export default function OrchestratorChat( {
 			);
 		}
 
-		const checkpointDetails = currentMessages.map( ( message ) => {
-			const checkpointMessage =
-				streamedCheckpointMessagesRef.current.byFinalMessageId.get( message.id ) ?? message;
-			return {
-				messageId: message.id,
-				actions: getCheckpointActionsForMessage( checkpointMessage ),
-				checkpointId: getCheckpointIdForMessage( checkpointMessage ),
-			};
-		} );
 		const checkpointActionsByMessageId = new Map(
-			checkpointDetails.map( ( details ) => [ details.messageId, details.actions ] )
+			currentMessages.map( ( message ) => [
+				message.id,
+				getCheckpointActionsForMessage(
+					streamedCheckpointMessagesRef.current.byFinalMessageId.get( message.id ) ?? message
+				),
+			] )
 		);
+		const latestUserMessageIndex = getLatestUserMessageIndex( currentMessages );
 		const supersededCheckpointMessageIds = new Set(
-			checkpointDetails
+			currentMessages
 				.filter(
-					( details ) =>
-						details.checkpointId &&
-						! checkpointIdsByTurn.currentCheckpointIds.has( details.checkpointId )
+					( message, messageIndex ) =>
+						messageIndex < latestUserMessageIndex &&
+						( ( checkpointActionsByMessageId.get( message.id )?.length ?? 0 ) > 0 ||
+							message.actions?.some( ( action ) => action.id === 'checkpoint' ) )
 				)
-				.map( ( details ) => details.messageId )
+				.map( ( message ) => message.id )
 		);
 
 		// Group site-build messages only when needed
@@ -1590,7 +1588,6 @@ export default function OrchestratorChat( {
 		return currentMessages;
 	}, [
 		checkpointActionRevision,
-		checkpointIdsByTurn,
 		checkpointSessionIdentity,
 		currentPostId,
 		deletedMessageIds,
