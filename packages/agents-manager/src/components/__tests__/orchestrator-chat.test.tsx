@@ -1604,9 +1604,76 @@ describe( 'OrchestratorChat', () => {
 		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
 	} );
 
-	it( 'dims a persisted checkpoint message after a later user message', () => {
+	it( 'dims streamed final prose when its checkpoint action is unavailable', async () => {
+		mockUseCheckpointAction.mockReturnValue( () => [] );
+		const view = render( chat() );
+		const taskId = 'task-unavailable-streamed-checkpoint';
+		const finalMessageId = 'agent-unavailable-streamed-checkpoint';
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.(
+				createWorkingCheckpointUpdate(
+					taskId,
+					createJetpackCheckpointResult( 'unavailable-streamed-checkpoint' )
+				)
+			);
+			await mockAgentChatConfig?.onTaskUpdate?.(
+				createCompletedCheckpointUpdate( taskId, finalMessageId )
+			);
+		} );
+
+		const finalMessage = {
+			id: finalMessageId,
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 2,
+		};
+		const nextUserMessage = {
+			id: 'user-after-unavailable-streamed-checkpoint',
+			role: 'user',
+			content: [ { type: 'text', text: 'What did you change?' } ],
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage, nextUserMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id ) ).toBeUndefined();
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBe( true );
+		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
+	} );
+
+	it( 'dims a persisted raw checkpoint message after a later user message', () => {
 		const persistedCheckpointMessage = {
 			id: 'agent-persisted-checkpoint',
+			role: 'agent' as const,
+			content: [
+				{ type: 'text' as const, text: createJetpackCheckpointResult( 'persisted-checkpoint' ) },
+			],
+			timestamp: 2,
+		};
+		const nextUserMessage = {
+			id: 'user-after-persisted-checkpoint',
+			role: 'user',
+			content: [ { type: 'text', text: 'What did you change?' } ],
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [ userMessage, persistedCheckpointMessage, nextUserMessage ],
+			} )
+		);
+
+		render( chat() );
+
+		expect( getDisplayedMessage( persistedCheckpointMessage.id ).disabled ).toBe( true );
+		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
+	} );
+
+	it( 'dims a persisted checkpoint action after a later user message', () => {
+		const persistedCheckpointMessage = {
+			id: 'agent-persisted-checkpoint-action',
 			role: 'agent' as const,
 			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
 			timestamp: 2,
@@ -1621,7 +1688,7 @@ describe( 'OrchestratorChat', () => {
 			],
 		};
 		const nextUserMessage = {
-			id: 'user-after-persisted-checkpoint',
+			id: 'user-after-persisted-checkpoint-action',
 			role: 'user',
 			content: [ { type: 'text', text: 'What did you change?' } ],
 			timestamp: 3,

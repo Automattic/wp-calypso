@@ -1507,7 +1507,10 @@ export default function OrchestratorChat( {
 				.filter(
 					( message, messageIndex ) =>
 						messageIndex < latestUserMessageIndex &&
-						( ( checkpointActionsByMessageId.get( message.id )?.length ?? 0 ) > 0 ||
+						( getCheckpointIdForMessage(
+							streamedCheckpointMessagesRef.current.byFinalMessageId.get( message.id ) ?? message
+						) !== null ||
+							( checkpointActionsByMessageId.get( message.id )?.length ?? 0 ) > 0 ||
 							message.actions?.some( ( action ) => action.id === 'checkpoint' ) )
 				)
 				.map( ( message ) => message.id )
