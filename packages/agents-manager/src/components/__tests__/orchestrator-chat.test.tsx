@@ -1547,6 +1547,63 @@ describe( 'OrchestratorChat', () => {
 		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
 	} );
 
+	it( 'dims a superseded streamed checkpoint message when its action is already hidden', async () => {
+		mockCheckpointActions();
+		const view = render( chat() );
+		const checkpointId = 'hidden-streamed-checkpoint';
+		const taskId = 'task-hidden-streamed-checkpoint';
+		const finalMessageId = 'agent-hidden-streamed-checkpoint';
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.(
+				createWorkingCheckpointUpdate( taskId, createJetpackCheckpointResult( checkpointId ) )
+			);
+			await mockAgentChatConfig?.onTaskUpdate?.(
+				createCompletedCheckpointUpdate( taskId, finalMessageId )
+			);
+		} );
+
+		const finalMessage = {
+			id: finalMessageId,
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 2,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBeUndefined();
+		mockInvalidatedCheckpointIds.add( checkpointId );
+
+		const nextUserMessage = {
+			id: 'user-after-hidden-checkpoint',
+			role: 'user',
+			content: [ { type: 'text', text: 'What did you change?' } ],
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [ userMessage, finalMessage, nextUserMessage ],
+			} )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.label ).toBe( 'Updated' );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).not.toHaveProperty(
+			'disabled'
+		);
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).not.toHaveProperty(
+			'onUndo'
+		);
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBe( true );
+		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
+	} );
+
 	it( 'hides checkpoint controls in loaded conversation history', () => {
 		const checkpointMessage = createCheckpointMessage(
 			'agent-history',
@@ -1559,7 +1616,7 @@ describe( 'OrchestratorChat', () => {
 			agentChatReturn( { loadMessages, messages: [ checkpointMessage ] } )
 		);
 
-		render( chat() );
+		const view = render( chat() );
 		act( () => {
 			mockConversationConfig?.onSuccess?.(
 				[
@@ -1578,6 +1635,24 @@ describe( 'OrchestratorChat', () => {
 		expect( loadMessages ).toHaveBeenCalledWith(
 			expect.arrayContaining( [ expect.objectContaining( { messageId: checkpointMessage.id } ) ] )
 		);
+		view.rerender( chat() );
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBeUndefined();
+
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					checkpointMessage,
+					{
+						id: 'user-after-loaded-history',
+						role: 'user',
+						content: [ { type: 'text', text: 'Start a new request' } ],
+						timestamp: 2,
+					},
+				],
+			} )
+		);
+		view.rerender( chat() );
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBe( true );
 	} );
 
 	it( 'updates the checkpoint status when native Undo and Redo stores notify separately', () => {
@@ -1662,7 +1737,7 @@ describe( 'OrchestratorChat', () => {
 		expect( mockInvalidateCheckpointAction ).toHaveBeenLastCalledWith( 'native-undo-checkpoint' );
 	} );
 
-	it( 'keeps a pending native Undo hidden after a later user message', () => {
+	it( 'keeps a pending native Undo hidden and dims it after a later user message', () => {
 		const checkpointMessage = createCheckpointMessage(
 			'agent-pending-native-undo',
 			'pending-native-undo-checkpoint'
@@ -1720,7 +1795,7 @@ describe( 'OrchestratorChat', () => {
 		expect(
 			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
 		).not.toHaveProperty( 'onRedo' );
-		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBeUndefined();
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBe( true );
 		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith(
 			'pending-native-undo-checkpoint'
 		);
@@ -1733,6 +1808,7 @@ describe( 'OrchestratorChat', () => {
 		expect(
 			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
 		).not.toHaveProperty( 'disabled' );
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBe( true );
 	} );
 
 	it( 'updates the checkpoint status when native Undo stores notify together', () => {
