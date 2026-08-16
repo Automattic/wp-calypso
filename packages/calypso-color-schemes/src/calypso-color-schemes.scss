@@ -21,9 +21,3 @@
 @import "shared/color-schemes/sunrise";
 @import "shared/color-schemes/sunset";
 @import "shared/color-schemes/jetpack-cloud";
-
-// `__wp-base-styles/admin-theme-colors` is deliberately not imported here. It defines core's
-// per-scheme interactive colour as a map and a mixin, and emits nothing until a caller applies it
-// to roots it owns — see client/my-sites/stats/components/stats-main/style.scss. Importing it into
-// this shared stylesheet would give every consumer of this package rules for surfaces only Stats
-// renders.
