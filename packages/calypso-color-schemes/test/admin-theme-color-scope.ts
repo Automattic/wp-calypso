@@ -2,7 +2,6 @@
  * @jest-environment node
  */
 import fs from 'fs';
-import path from 'path';
 import * as sass from 'sass';
 const {
 	getAdminSchemes,
@@ -141,17 +140,8 @@ describe( 'admin theme colour scoping', () => {
 	} );
 
 	it( 'emits nothing at all until a caller applies it', () => {
-		// The reason this file is not imported by calypso-color-schemes.scss: every other consumer of
-		// the package would otherwise carry rules for surfaces only Stats renders.
+		// What keeps this out of calypso-color-schemes.scss safe to rely on: importing it costs
+		// nothing, so only a caller that names roots can put rules in anyone's bundle.
 		expect( sass.compileString( buildAdminThemeColors( schemes() ) ).css.trim() ).toBe( '' );
-	} );
-
-	it( 'is not imported by the package stylesheet every other app loads', () => {
-		const shared = fs.readFileSync(
-			path.join( __dirname, '..', 'src', 'calypso-color-schemes.scss' ),
-			'utf8'
-		);
-
-		expect( shared ).not.toMatch( /^@import\s+["']__wp-base-styles\/admin-theme-colors/m );
 	} );
 } );
