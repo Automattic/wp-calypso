@@ -326,23 +326,53 @@ export default function OrchestratorChat( {
 	}, [] );
 	const previousHasEditorRedoRef = useRef( hasEditorRedo );
 	const { isPageOrSiteEditorSurface: groupWritingSuggestions } = usePageOrSiteEditorSurface();
-	const checkpointSessionIdentity = `${ agentConfig?.agentId ?? '' }:${
-		agentConfig?.sessionId ?? getActiveSessionId() ?? ''
-	}`;
+	const checkpointAgentId = agentConfig?.agentId ?? '';
+	const checkpointSessionId = agentConfig?.sessionId ?? getTabSessionId() ?? '';
+	const checkpointSessionIdentity = `${ checkpointAgentId }:${ checkpointSessionId }`;
 	const streamedCheckpointMessagesRef = useRef( {
+		agentId: checkpointAgentId,
+		sessionId: checkpointSessionId,
 		sessionIdentity: checkpointSessionIdentity,
+		streamGeneration: Symbol(),
 		pendingByTaskId: new Map< string, UIMessage >(),
 		byFinalMessageId: getStreamedCheckpointMessages( checkpointSessionIdentity ),
 		regeneratingMessageId: undefined as string | undefined,
 	} );
 	if ( streamedCheckpointMessagesRef.current.sessionIdentity !== checkpointSessionIdentity ) {
+		const previousStreamedMessages = streamedCheckpointMessagesRef.current;
+		const byFinalMessageId = getStreamedCheckpointMessages( checkpointSessionIdentity );
+		const isSessionBootstrap =
+			previousStreamedMessages.agentId === checkpointAgentId &&
+			previousStreamedMessages.sessionId === '' &&
+			checkpointSessionId !== '';
+
+		if ( isSessionBootstrap ) {
+			previousStreamedMessages.byFinalMessageId.forEach( ( message, messageId ) => {
+				if ( ! byFinalMessageId.has( messageId ) ) {
+					byFinalMessageId.set( messageId, message );
+				}
+			} );
+			if (
+				streamedCheckpointMessagesBySession.get( previousStreamedMessages.sessionIdentity ) ===
+				previousStreamedMessages.byFinalMessageId
+			) {
+				streamedCheckpointMessagesBySession.delete( previousStreamedMessages.sessionIdentity );
+			}
+		}
+
 		streamedCheckpointMessagesRef.current = {
+			agentId: checkpointAgentId,
+			sessionId: checkpointSessionId,
 			sessionIdentity: checkpointSessionIdentity,
-			pendingByTaskId: new Map(),
-			byFinalMessageId: getStreamedCheckpointMessages( checkpointSessionIdentity ),
-			regeneratingMessageId: undefined,
+			streamGeneration: isSessionBootstrap ? previousStreamedMessages.streamGeneration : Symbol(),
+			pendingByTaskId: isSessionBootstrap ? previousStreamedMessages.pendingByTaskId : new Map(),
+			byFinalMessageId,
+			regeneratingMessageId: isSessionBootstrap
+				? previousStreamedMessages.regeneratingMessageId
+				: undefined,
 		};
 	}
+	const checkpointStreamGeneration = streamedCheckpointMessagesRef.current.streamGeneration;
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
 			return null;
@@ -353,11 +383,10 @@ export default function OrchestratorChat( {
 			...agentConfig,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
 				const streamedMessages = streamedCheckpointMessagesRef.current;
+				const isCurrentStreamGeneration =
+					streamedMessages.streamGeneration === checkpointStreamGeneration;
 				const blockEditAgentMessageText = getBlockEditAgentMessageText( update );
-				if (
-					streamedMessages.sessionIdentity === checkpointSessionIdentity &&
-					blockEditAgentMessageText
-				) {
+				if ( isCurrentStreamGeneration && blockEditAgentMessageText ) {
 					const message: UIMessage = {
 						id: update.status.message?.messageId ?? update.agentMessage?.messageId ?? update.id,
 						role: 'agent',
@@ -372,7 +401,7 @@ export default function OrchestratorChat( {
 				const isTerminal =
 					update.final === true ||
 					[ 'completed', 'canceled', 'failed' ].includes( update.status.state );
-				if ( isTerminal ) {
+				if ( isTerminal && isCurrentStreamGeneration ) {
 					const finalMessageId = update.status.message?.messageId ?? update.agentMessage?.messageId;
 					const completedSuccessfully =
 						update.status.state === 'completed' ||
@@ -396,7 +425,7 @@ export default function OrchestratorChat( {
 				await onTaskUpdate?.( update );
 			},
 		};
-	}, [ agentConfig, checkpointSessionIdentity ] );
+	}, [ agentConfig, checkpointStreamGeneration ] );
 
 	const {
 		addMessage,
@@ -660,6 +689,8 @@ export default function OrchestratorChat( {
 		setCheckpointActionRevision( ( revision ) => revision + 1 );
 	}, [] );
 	const checkpointIdsByTurn = useMemo( () => {
+		// Session promotion changes the ref-backed messages without changing the raw message list.
+		void checkpointSessionIdentity;
 		const latestUserMessageIndex = getLatestUserMessageIndex( messages );
 		const current = new Set< string >();
 		const userMessageIdByCheckpointId = new Map< string, string | undefined >();
@@ -685,7 +716,7 @@ export default function OrchestratorChat( {
 			userMessageIdByCheckpointId,
 			userMessageId: messages[ latestUserMessageIndex ]?.id,
 		};
-	}, [ messages ] );
+	}, [ checkpointSessionIdentity, messages ] );
 	const nativeUndoInvalidatedTurnRef = useRef(
 		hasEditorRedo ? checkpointIdsByTurn.userMessageId : undefined
 	);
@@ -1332,8 +1363,9 @@ export default function OrchestratorChat( {
 	useAbilitiesRegistration();
 
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
-		// The stable checkpoint getter reads this value through a ref.
+		// The stable checkpoint getter reads these values through refs.
 		void checkpointActionRevision;
+		void checkpointSessionIdentity;
 		void hasEditorRedo;
 		void sourceDriftInvalidatedCheckpointIds;
 		let currentMessages: AgentsManagerUIMessage[] = messages;
@@ -1464,6 +1496,7 @@ export default function OrchestratorChat( {
 		return currentMessages;
 	}, [
 		checkpointActionRevision,
+		checkpointSessionIdentity,
 		currentPostId,
 		deletedMessageIds,
 		getChatComponent,

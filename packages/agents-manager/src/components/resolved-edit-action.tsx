@@ -53,7 +53,7 @@ export default function ResolvedEditAction( {
 					? __( 'Reverted', __i18n_text_domain__ )
 					: __( 'Updated', __i18n_text_domain__ ) }
 			</span>
-			{ ( action || disabled ) && (
+			{ action && (
 				<button
 					type="button"
 					className="agents-manager-resolved-edit-action__undo"

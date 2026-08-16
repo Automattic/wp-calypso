@@ -263,14 +263,13 @@ export default function useCheckpointAction(
 
 		if ( checkpointInfo.showResolvedEditAction ) {
 			const canAct = isActionAvailable && ( ! supportsSwap || swapAvailability === true );
-			const showDisabledAction = actionState === 'disabled' && ( ! isReverted || supportsSwap );
-			const showAction = canAct || showDisabledAction;
-			let label: string = showAction
+			const showDisabledAction = actionState === 'disabled';
+			let label: string = canAct
 				? __( 'Updated and Undo', __i18n_text_domain__ )
 				: __( 'Updated', __i18n_text_domain__ );
 			if ( isReverted ) {
 				label =
-					showAction && supportsSwap
+					canAct && supportsSwap
 						? __( 'Reverted and Redo', __i18n_text_domain__ )
 						: __( 'Reverted', __i18n_text_domain__ );
 			}

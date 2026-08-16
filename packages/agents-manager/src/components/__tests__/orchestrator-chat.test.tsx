@@ -29,6 +29,10 @@ const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
 const mockIsReaderChatAgent = jest.fn();
+let mockAgentConfig: { agentId: string; sessionId?: string } = {
+	agentId: 'wp-orchestrator',
+};
+let mockTabSessionId: string | undefined = 'session-id';
 const mockInvalidateCheckpointAction = jest.fn();
 const mockInvalidatedCheckpointIds = new Set< string >();
 const mockRevertedCheckpointIds = new Set< string >();
@@ -98,10 +102,9 @@ const mockCheckpointActions = () => {
 		const canAct = actionState === 'enabled';
 		const isReverted = mockRevertedCheckpointIds.has( checkpointId );
 		const showDisabledAction = actionState === 'disabled';
-		const showAction = canAct || showDisabledAction;
-		let label = showAction ? 'Updated and Undo' : 'Updated';
+		let label = canAct ? 'Updated and Undo' : 'Updated';
 		if ( isReverted ) {
-			label = showAction ? 'Reverted and Redo' : 'Reverted';
+			label = canAct ? 'Reverted and Redo' : 'Reverted';
 		}
 		return [
 			{
@@ -314,10 +317,11 @@ jest.mock( '../../contexts', () => {
 	return {
 		useAgentsManagerContext: () => ( {
 			agentConfig: {
-				agentId: 'wp-orchestrator',
+				...mockAgentConfig,
 				onSessionIdChange: ( sessionId: string ) => saveSessionId( sessionId, 'wp-orchestrator' ),
 			},
-			getTabSessionId: () => 'session-id',
+			getTabSessionId: () => mockTabSessionId ?? '',
+			siteKey: 'site-1',
 		} ),
 	};
 } );
@@ -495,6 +499,47 @@ const createCheckpointMessage = (
 	timestamp: 1,
 } );
 
+const createJetpackCheckpointResult = ( checkpointId: string ) =>
+	JSON.stringify( {
+		tool_id: 'wpcom__update_block_content',
+		tool_call_id: checkpointId,
+		data: {
+			result: {
+				success: true,
+				outcome: 'updated',
+				message: 'Updated the selected block.',
+			},
+			followUpTasks: false,
+		},
+	} );
+
+const createWorkingCheckpointUpdate = (
+	taskId: string,
+	checkpointResult: string
+): TaskUpdate => ( {
+	id: taskId,
+	status: { state: 'working' },
+	text: checkpointResult,
+	final: false,
+	kind: 'status',
+} );
+
+const createCompletedCheckpointUpdate = ( taskId: string, messageId: string ): TaskUpdate => ( {
+	id: taskId,
+	status: {
+		state: 'completed',
+		message: {
+			messageId,
+			role: 'agent',
+			kind: 'message',
+			parts: [],
+		},
+	},
+	text: 'The paragraph has been updated.',
+	final: true,
+	kind: 'status',
+} );
+
 const createSwappableCheckpoint = () => ( {
 	getLastEditorState: jest.fn(),
 	setCheckpoint: jest.fn(),
@@ -563,6 +608,8 @@ describe( 'OrchestratorChat', () => {
 		mockUseAgentChat.mockReturnValue( agentChatReturn() );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
 		mockIsReaderChatAgent.mockReturnValue( false );
+		mockAgentConfig = { agentId: 'wp-orchestrator' };
+		mockTabSessionId = 'session-id';
 		mockSelectedBlockType = undefined;
 		mockBlockEditorStoreThrows = false;
 		sessionStorage.clear();
@@ -1443,7 +1490,7 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'disables checkpoint controls after a later user message', () => {
+	it( 'hides checkpoint controls and dims the edit message after a later user message', () => {
 		const checkpointMessage = createCheckpointMessage( 'agent-checkpoint', 'history-checkpoint' );
 		mockCheckpointActions();
 		const initialMessages = [ userMessage, checkpointMessage ];
@@ -1481,9 +1528,7 @@ describe( 'OrchestratorChat', () => {
 		);
 		view.rerender( chat() );
 
-		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe(
-			'Updated and Undo'
-		);
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
 		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toMatchObject( {
 			disabled: true,
 		} );
@@ -2317,7 +2362,7 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'disables an earlier checkpoint while enabling a later turn', () => {
+	it( 'dims an earlier checkpoint while enabling a later turn', () => {
 		const firstCheckpoint = createCheckpointMessage(
 			'agent-disabled-first-turn',
 			'disabled-first-turn-checkpoint'
@@ -2349,7 +2394,7 @@ describe( 'OrchestratorChat', () => {
 		);
 		view.rerender( chat() );
 
-		expect( getDisplayedCheckpointAction( firstCheckpoint.id )?.label ).toBe( 'Updated and Undo' );
+		expect( getDisplayedCheckpointAction( firstCheckpoint.id )?.label ).toBe( 'Updated' );
 		expect( getDisplayedCheckpointAction( firstCheckpoint.id )?.componentProps ).toMatchObject( {
 			disabled: true,
 		} );
@@ -2361,6 +2406,158 @@ describe( 'OrchestratorChat', () => {
 			'onUndo'
 		);
 		expect( getDisplayedMessage( secondCheckpoint.id ).disabled ).toBeUndefined();
+	} );
+
+	it( 'keeps a streamed checkpoint when a fresh session is promoted after completion', async () => {
+		mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: '' };
+		mockTabSessionId = 'stale-session-that-must-not-own-the-checkpoint';
+		mockCheckpointActions();
+		const view = render( chat() );
+		const checkpointResult = createJetpackCheckpointResult(
+			'checkpoint-session-promoted-after-completion'
+		);
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.(
+				createWorkingCheckpointUpdate( 'task-session-promoted-after-completion', checkpointResult )
+			);
+			await mockAgentChatConfig?.onTaskUpdate?.(
+				createCompletedCheckpointUpdate(
+					'task-session-promoted-after-completion',
+					'agent-session-promoted-after-completion'
+				)
+			);
+		} );
+
+		const finalMessage = {
+			id: 'agent-session-promoted-after-completion',
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 2,
+			archived: false,
+			showIcon: true,
+		};
+		mockAgentConfig = {
+			agentId: 'wp-orchestrator',
+			sessionId: 'server-session-promoted-after-completion',
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.label ).toBe( 'Updated and Undo' );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+		view.unmount();
+
+		const laterUserMessage = {
+			id: 'user-after-promoted-session',
+			role: 'user',
+			content: [ { type: 'text', text: 'What did you change?' } ],
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage, laterUserMessage ] } )
+		);
+		const remountedView = render( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.label ).toBe( 'Updated' );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toMatchObject( {
+			disabled: true,
+		} );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).not.toHaveProperty(
+			'onUndo'
+		);
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBe( true );
+		expect( getDisplayedMessage( laterUserMessage.id ).disabled ).toBeUndefined();
+
+		mockAgentConfig = {
+			agentId: 'wp-orchestrator',
+			sessionId: 'different-server-session',
+		};
+		remountedView.rerender( chat() );
+		expect( getDisplayedCheckpointAction( finalMessage.id ) ).toBeUndefined();
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBeUndefined();
+	} );
+
+	it( 'keeps in-flight streamed checkpoints when a fresh session is promoted', async () => {
+		mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: '' };
+		mockTabSessionId = 'stale-session-that-must-not-own-the-in-flight-checkpoint';
+		mockCheckpointActions();
+		const view = render( chat() );
+		const onTaskUpdateBeforePromotion = mockAgentChatConfig?.onTaskUpdate;
+
+		await act( async () => {
+			await onTaskUpdateBeforePromotion?.(
+				createWorkingCheckpointUpdate(
+					'task-started-before-session-promotion',
+					createJetpackCheckpointResult( 'checkpoint-started-before-session-promotion' )
+				)
+			);
+		} );
+
+		mockAgentConfig = {
+			agentId: 'wp-orchestrator',
+			sessionId: 'server-session-promoted-in-flight',
+		};
+		view.rerender( chat() );
+
+		await act( async () => {
+			await onTaskUpdateBeforePromotion?.(
+				createWorkingCheckpointUpdate(
+					'task-delivered-after-session-promotion',
+					createJetpackCheckpointResult( 'checkpoint-delivered-after-session-promotion' )
+				)
+			);
+			await onTaskUpdateBeforePromotion?.(
+				createCompletedCheckpointUpdate(
+					'task-started-before-session-promotion',
+					'agent-started-before-session-promotion'
+				)
+			);
+			await onTaskUpdateBeforePromotion?.(
+				createCompletedCheckpointUpdate(
+					'task-delivered-after-session-promotion',
+					'agent-delivered-after-session-promotion'
+				)
+			);
+		} );
+
+		const finalMessageStartedBeforePromotion = {
+			id: 'agent-started-before-session-promotion',
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 2,
+			archived: false,
+			showIcon: true,
+		};
+		const finalMessageDeliveredAfterPromotion = {
+			...finalMessageStartedBeforePromotion,
+			id: 'agent-delivered-after-session-promotion',
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					userMessage,
+					finalMessageStartedBeforePromotion,
+					finalMessageDeliveredAfterPromotion,
+				],
+			} )
+		);
+		view.rerender( chat() );
+
+		for ( const finalMessage of [
+			finalMessageStartedBeforePromotion,
+			finalMessageDeliveredAfterPromotion,
+		] ) {
+			expect( getDisplayedCheckpointAction( finalMessage.id )?.label ).toBe( 'Updated and Undo' );
+			expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toHaveProperty(
+				'onUndo'
+			);
+		}
 	} );
 
 	it( 'keeps streamed checkpoint actions through final prose and remounts', async () => {

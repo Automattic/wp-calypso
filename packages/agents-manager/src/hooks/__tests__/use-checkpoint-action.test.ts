@@ -127,8 +127,11 @@ describe( 'useCheckpointAction', () => {
 				},
 			},
 		} );
+		let actionState: 'disabled' | 'enabled' = 'enabled';
 
-		renderHook( () => useCheckpointAction( registerMessageActions, checkpoint ) );
+		renderHook( () =>
+			useCheckpointAction( registerMessageActions, checkpoint, () => actionState )
+		);
 
 		const actions = getActions( registration, message );
 		expect( actions ).toHaveLength( 1 );
@@ -141,7 +144,7 @@ describe( 'useCheckpointAction', () => {
 		if ( actions[ 0 ]?.type !== 'component' ) {
 			throw new Error( 'Expected a component action.' );
 		}
-		render( createElement( actions[ 0 ].component, actions[ 0 ].componentProps ) );
+		const view = render( createElement( actions[ 0 ].component, actions[ 0 ].componentProps ) );
 		const status = screen.getByRole( 'status' );
 		expect( status ).toHaveTextContent( 'Updated' );
 		expect( within( status ).getByTestId( 'icon-check' ) ).toBeInTheDocument();
@@ -173,6 +176,22 @@ describe( 'useCheckpointAction', () => {
 		expect( getActions( registration, message )[ 0 ] ).toMatchObject( {
 			label: 'Reverted',
 		} );
+
+		actionState = 'disabled';
+		( checkpoint.hasCheckpoint as jest.Mock ).mockReturnValue( false );
+		const supersededAction = getActions( registration, message )[ 0 ];
+		expect( supersededAction ).toMatchObject( {
+			label: 'Reverted',
+			componentProps: { disabled: true, initiallyReverted: true },
+		} );
+		if ( supersededAction?.type !== 'component' ) {
+			throw new Error( 'Expected a component action.' );
+		}
+		expect( supersededAction.componentProps ).not.toHaveProperty( 'onUndo' );
+		expect( supersededAction.componentProps ).not.toHaveProperty( 'onRedo' );
+		view.rerender( createElement( supersededAction.component, supersededAction.componentProps ) );
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Reverted' );
+		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'updates a mounted resolved edit action from external checkpoint state', () => {
@@ -472,7 +491,7 @@ describe( 'useCheckpointAction', () => {
 		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
 	} );
 
-	it( 'disables superseded checkpoint controls and hides invalidated controls', () => {
+	it( 'hides superseded and invalidated checkpoint controls', () => {
 		const registerMessageActions = jest.fn() as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
 		checkpoint.canSwapCheckpoint = jest.fn().mockReturnValue( true );
@@ -494,7 +513,7 @@ describe( 'useCheckpointAction', () => {
 		);
 
 		const supersededAction = result.current( message )[ 0 ];
-		expect( supersededAction ).toMatchObject( { label: 'Updated and Undo' } );
+		expect( supersededAction ).toMatchObject( { label: 'Updated' } );
 		if ( supersededAction?.type !== 'component' ) {
 			throw new Error( 'Expected a component action.' );
 		}
@@ -504,9 +523,8 @@ describe( 'useCheckpointAction', () => {
 		const view = render(
 			createElement( supersededAction.component, supersededAction.componentProps )
 		);
-		const disabledUndo = screen.getByRole( 'button', { name: 'Undo' } );
-		expect( disabledUndo ).toBeDisabled();
-		fireEvent.click( disabledUndo );
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Updated' );
+		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
 		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
 
@@ -574,7 +592,7 @@ describe( 'useCheckpointAction', () => {
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
 		const disabledAction = getActions( registration, message )[ 0 ];
 		expect( disabledAction ).toMatchObject( {
-			label: 'Updated and Undo',
+			label: 'Updated',
 			componentProps: { disabled: true },
 		} );
 		if ( disabledAction?.type !== 'component' ) {
@@ -583,7 +601,7 @@ describe( 'useCheckpointAction', () => {
 		expect( disabledAction.componentProps ).not.toHaveProperty( 'onUndo' );
 	} );
 
-	it( 'keeps a successful Reverted action as a disabled Redo after its checkpoint clears', async () => {
+	it( 'keeps a successful Reverted status after its checkpoint clears', async () => {
 		const registerMessageActions = jest.fn() as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
 		let canSwapCheckpoint: boolean | undefined = true;
@@ -619,7 +637,7 @@ describe( 'useCheckpointAction', () => {
 
 		const action = result.current( message )[ 0 ];
 		expect( action ).toMatchObject( {
-			label: 'Reverted and Redo',
+			label: 'Reverted',
 			componentProps: { disabled: true, initiallyReverted: true },
 		} );
 		if ( action?.type !== 'component' ) {
@@ -629,10 +647,9 @@ describe( 'useCheckpointAction', () => {
 		expect( action.componentProps ).not.toHaveProperty( 'onRedo' );
 		render( createElement( action.component, action.componentProps ) );
 
-		const disabledRedo = screen.getByRole( 'button', { name: 'Redo' } );
-		expect( disabledRedo ).toBeDisabled();
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Reverted' );
+		expect( screen.queryByRole( 'button', { name: 'Redo' } ) ).not.toBeInTheDocument();
 		const trackCalls = ( recordBigSkyTracksEvent as jest.Mock ).mock.calls.length;
-		fireEvent.click( disabledRedo );
 		expect( checkpoint.swapCheckpoint ).toHaveBeenCalledTimes( 1 );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( trackCalls );
 	} );
