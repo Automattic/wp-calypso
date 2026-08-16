@@ -336,6 +336,7 @@ export default function OrchestratorChat( {
 		streamGeneration: Symbol(),
 		pendingByTaskId: new Map< string, UIMessage >(),
 		byFinalMessageId: getStreamedCheckpointMessages( checkpointSessionIdentity ),
+		liveFinalMessageIds: new Set< string >(),
 		regeneratingMessageId: undefined as string | undefined,
 	} );
 	if ( streamedCheckpointMessagesRef.current.sessionIdentity !== checkpointSessionIdentity ) {
@@ -367,6 +368,9 @@ export default function OrchestratorChat( {
 			streamGeneration: isSessionBootstrap ? previousStreamedMessages.streamGeneration : Symbol(),
 			pendingByTaskId: isSessionBootstrap ? previousStreamedMessages.pendingByTaskId : new Map(),
 			byFinalMessageId,
+			liveFinalMessageIds: isSessionBootstrap
+				? previousStreamedMessages.liveFinalMessageIds
+				: new Set(),
 			regeneratingMessageId: isSessionBootstrap
 				? previousStreamedMessages.regeneratingMessageId
 				: undefined,
@@ -410,12 +414,15 @@ export default function OrchestratorChat( {
 					const regeneratingMessageId = streamedMessages.regeneratingMessageId;
 					if ( completedSuccessfully && regeneratingMessageId ) {
 						streamedMessages.byFinalMessageId.delete( regeneratingMessageId );
+						streamedMessages.liveFinalMessageIds.delete( regeneratingMessageId );
 					}
 					if ( finalMessageId && completedSuccessfully && checkpointMessage ) {
 						streamedMessages.byFinalMessageId.set( finalMessageId, checkpointMessage );
+						streamedMessages.liveFinalMessageIds.add( finalMessageId );
 					} else if ( completedSuccessfully && regeneratingMessageId ) {
 						if ( finalMessageId ) {
 							streamedMessages.byFinalMessageId.delete( finalMessageId );
+							streamedMessages.liveFinalMessageIds.delete( finalMessageId );
 						}
 					}
 					streamedMessages.pendingByTaskId.delete( update.id );
@@ -604,7 +611,10 @@ export default function OrchestratorChat( {
 						.map( ( part ) => ( { type: 'text', text: part.text } ) ),
 				};
 				const checkpointId = getCheckpointIdForMessage( checkpointMessage );
-				if ( checkpointId ) {
+				const isLiveStreamedMessage = streamedCheckpointMessagesRef.current.liveFinalMessageIds.has(
+					message.messageId
+				);
+				if ( checkpointId && ! isLiveStreamedMessage ) {
 					invalidateCheckpointAction( checkpointId );
 				}
 			} );

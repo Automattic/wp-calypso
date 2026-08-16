@@ -2450,6 +2450,24 @@ describe( 'OrchestratorChat', () => {
 		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toHaveProperty(
 			'onUndo'
 		);
+		act( () => {
+			mockConversationConfig?.onSuccess?.(
+				[
+					{
+						messageId: finalMessage.id,
+						role: 'agent',
+						parts: [ { type: 'text', text: finalMessage.content[ 0 ].text } ],
+						kind: 'message',
+					},
+				],
+				'server-session-promoted-after-completion'
+			);
+		} );
+		expect( mockInvalidateCheckpointAction ).not.toHaveBeenCalled();
+		view.rerender( chat() );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
 		view.unmount();
 
 		const laterUserMessage = {
