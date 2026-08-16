@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components';
 import { css, Global, ThemeProvider } from '@emotion/react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -9,6 +8,8 @@ import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/prog
 import theme from 'calypso/my-sites/marketplace/theme';
 import './style.scss';
 import HonestInstallProgress from './honest-progress';
+import { getWaitVariant } from './honest-progress/get-wait-variant';
+import HonestInstallScene from './honest-progress/scene';
 import ProductInstallErrorView from './product-install-error';
 import { useProductInstall } from './use-product-install';
 
@@ -35,7 +36,7 @@ const MarketplaceProductInstall = ( {
 
 	// The honest wait narrates the real transfer stages, so it only applies to the path that
 	// runs a transfer; every other path keeps the classic bar.
-	const showHonestProgress = atomicFlow && isEnabled( 'marketplace-honest-install-progress' );
+	const waitVariant = atomicFlow ? getWaitVariant() : 'control';
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -64,10 +65,13 @@ const MarketplaceProductInstall = ( {
 						onActivateTheme={ onActivateTheme }
 					/>
 				) }
-				{ ! error && showHonestProgress && (
+				{ ! error && waitVariant === 'honest_progress' && (
 					<HonestInstallProgress transferStatus={ transferStatus } currentStep={ currentStep } />
 				) }
-				{ ! error && ! showHonestProgress && (
+				{ ! error && waitVariant === 'honest_scene' && (
+					<HonestInstallScene transferStatus={ transferStatus } currentStep={ currentStep } />
+				) }
+				{ ! error && waitVariant === 'control' && (
 					<MarketplaceProgressBar
 						steps={ steps }
 						currentStep={ currentStep }

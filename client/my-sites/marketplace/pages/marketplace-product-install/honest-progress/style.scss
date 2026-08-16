@@ -149,3 +149,140 @@
 	font-size: 0.75rem;
 	color: var( --color-warning-60 );
 }
+
+/* Graphic variant */
+
+.marketplace-honest-scene__canvas {
+	width: 100%;
+	max-width: 480px;
+	height: auto;
+	margin-block-start: 8px;
+}
+
+.marketplace-honest-scene__rack {
+	fill: var( --color-neutral-80 );
+}
+
+.marketplace-honest-scene__slot {
+	fill: var( --color-neutral-70 );
+}
+
+.marketplace-honest-scene__slot-line {
+	fill: var( --color-neutral-60 );
+}
+
+.marketplace-honest-scene__light {
+	fill: var( --color-neutral-60 );
+	transition: fill 0.5s;
+}
+
+.marketplace-honest-scene__light.is-on {
+	fill: var( --color-success );
+}
+
+.marketplace-honest-scene__site {
+	opacity: 0;
+	transform: translateX( -140px );
+	transition:
+		transform 1.2s cubic-bezier( 0.5, 0, 0.2, 1 ),
+		opacity 0.6s;
+}
+
+.marketplace-honest-scene__site.is-moving {
+	opacity: 1;
+	transform: translateX( 0 );
+}
+
+.marketplace-honest-scene__site-card {
+	fill: var( --color-surface );
+	stroke: var( --color-neutral-10 );
+}
+
+.marketplace-honest-scene__site-bar {
+	fill: var( --color-neutral-5 );
+}
+
+.marketplace-honest-scene__site-dot {
+	fill: var( --color-neutral-20 );
+}
+
+.marketplace-honest-scene__site-title {
+	fill: var( --color-primary );
+}
+
+.marketplace-honest-scene__site-line {
+	fill: var( --color-neutral-10 );
+}
+
+.marketplace-honest-scene__glow {
+	fill: var( --color-success );
+	opacity: 0;
+	transition: opacity 0.4s;
+}
+
+.marketplace-honest-scene__glow.is-on {
+	opacity: 1;
+	animation: marketplace-honest-scene-glow 1.6s ease-in-out infinite;
+}
+
+@keyframes marketplace-honest-scene-glow {
+	0%,
+	100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.35;
+	}
+}
+
+.marketplace-honest-scene__caption {
+	margin-block-start: 12px;
+	font-size: 1rem;
+	font-weight: 600;
+	color: var( --color-text );
+	text-align: center;
+}
+
+.marketplace-honest-scene__caption-detail {
+	margin-block-start: 4px;
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+	text-align: center;
+	min-height: 20px;
+}
+
+.marketplace-honest-scene__dots {
+	list-style: none;
+	display: flex;
+	gap: 8px;
+	margin: 14px 0 0;
+	padding: 0;
+}
+
+.marketplace-honest-scene__dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var( --color-neutral-10 );
+}
+
+.marketplace-honest-scene__dot.is-active {
+	background: var( --color-primary );
+}
+
+.marketplace-honest-scene__dot.is-done {
+	background: var( --color-success );
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.marketplace-honest-scene__site,
+	.marketplace-honest-scene__light,
+	.marketplace-honest-scene__glow {
+		transition: none;
+	}
+
+	.marketplace-honest-scene__glow.is-on {
+		animation: none;
+	}
+}

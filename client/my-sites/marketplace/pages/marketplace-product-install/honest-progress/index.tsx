@@ -3,17 +3,9 @@ import './style.scss';
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
-import { getHonestStage, HONEST_STAGES } from './get-honest-stage';
-
-const TICK_MS = 500;
-
-// A stage's bar approaches but never reaches full until the server confirms the stage —
-// the visual must not outrun the transfer.
-const MAX_UNCONFIRMED_PROGRESS = 92;
-
-// How far past a stage's typical duration we wait before saying it's running long.
-const OVERRUN_FACTOR = 1.6;
+import { useHonestFooterCopy, useHonestStageCopy } from './copy';
+import { HONEST_STAGES } from './get-honest-stage';
+import { useHonestProgress } from './use-honest-progress';
 
 export default function HonestInstallProgress( {
 	transferStatus,
@@ -23,43 +15,12 @@ export default function HonestInstallProgress( {
 	currentStep: number;
 } ) {
 	const translate = useTranslate();
-	const stage = getHonestStage( { transferStatus, currentStep } );
-
-	const [ elapsed, setElapsed ] = useState( 0 );
-	const [ stageElapsed, setStageElapsed ] = useState( 0 );
-	const previousStageRef = useRef( stage );
-
-	useEffect( () => {
-		const id = setInterval( () => {
-			setElapsed( ( seconds ) => seconds + TICK_MS / 1000 );
-			setStageElapsed( ( seconds ) => seconds + TICK_MS / 1000 );
-		}, TICK_MS );
-		return () => clearInterval( id );
-	}, [] );
-
-	useEffect( () => {
-		if ( previousStageRef.current !== stage ) {
-			previousStageRef.current = stage;
-			setStageElapsed( 0 );
-		}
-	}, [ stage ] );
-
-	const stages = [
-		{
-			title: translate( 'Preparing a dedicated server for your site' ),
-			description: translate( 'Your site is getting its own hardware — this is the longest part.' ),
-		},
-		{
-			title: translate( 'Moving your site to its new server' ),
-			description: translate( 'Content, media, and settings come along.' ),
-		},
-		{
-			title: translate( 'Finishing up' ),
-			description: translate( 'Installing and activating your plugin.' ),
-		},
-	];
-
-	const isOverrun = stageElapsed > HONEST_STAGES[ stage ].expectedSeconds * OVERRUN_FACTOR;
+	const { stage, elapsed, isOverrun, getStageProgress } = useHonestProgress( {
+		transferStatus,
+		currentStep,
+	} );
+	const stages = useHonestStageCopy();
+	const footer = useHonestFooterCopy();
 
 	return (
 		<div className="marketplace-honest-progress">
@@ -70,15 +31,7 @@ export default function HonestInstallProgress( {
 				{ stages.map( ( { title, description }, index ) => {
 					const isDone = index < stage;
 					const isActive = index === stage;
-					let progress = 0;
-					if ( isDone ) {
-						progress = 100;
-					} else if ( isActive ) {
-						progress = Math.min(
-							( stageElapsed / HONEST_STAGES[ index ].expectedSeconds ) * 100,
-							MAX_UNCONFIRMED_PROGRESS
-						);
-					}
+					const progress = getStageProgress( index );
 					let stageNote: React.ReactNode = '';
 					if ( isActive ) {
 						stageNote = description;
@@ -122,23 +75,13 @@ export default function HonestInstallProgress( {
 					);
 				} ) }
 			</ol>
-			<p className="marketplace-honest-progress__meta">
-				{ translate( 'Elapsed: %(elapsed)ds · usually takes about a minute', {
-					args: { elapsed: Math.floor( elapsed ) },
-				} ) }
-			</p>
+			<p className="marketplace-honest-progress__meta">{ footer.elapsed( elapsed ) }</p>
 			{ isOverrun && (
 				<p className="marketplace-honest-progress__overrun" role="status">
-					{ translate(
-						'This step is taking longer than usual. We’re still working on it — nothing is wrong.'
-					) }
+					{ footer.overrun }
 				</p>
 			) }
-			<p className="marketplace-honest-progress__education">
-				{ translate(
-					'Why the wait? Your site is moving to its own dedicated server — that’s what makes premium plugins possible, and it only happens once.'
-				) }
-			</p>
+			<p className="marketplace-honest-progress__education">{ footer.education }</p>
 		</div>
 	);
 }

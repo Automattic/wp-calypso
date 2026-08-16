@@ -1,5 +1,4 @@
 import { marketplacePluginQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
@@ -40,6 +39,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { getWaitVariant } from './honest-progress/get-wait-variant';
 import { chooseInstallStrategy } from './install-strategy';
 import { useDelayedCondition } from './use-delayed-condition';
 import { useInstallDeadline } from './use-install-deadline';
@@ -370,9 +370,7 @@ export function useProductInstall( {
 			is_atomic_flow: atomicFlow,
 			// Which wait UI was on screen, so the honest-progress experiment can compare
 			// abandonment between variants (DOTCOM-17970).
-			wait_variant: atomicFlow
-				? ( isEnabled( 'marketplace-honest-install-progress' ) && 'honest_progress' ) || 'control'
-				: null,
+			wait_variant: atomicFlow ? getWaitVariant() : null,
 			outcome: error?.type ?? ( hasSucceeded ? 'succeeded' : null ),
 		},
 	} );
