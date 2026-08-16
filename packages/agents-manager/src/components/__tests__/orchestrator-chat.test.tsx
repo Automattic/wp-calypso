@@ -33,6 +33,8 @@ let mockAgentConfig: { agentId: string; sessionId?: string } = {
 	agentId: 'wp-orchestrator',
 };
 let mockTabSessionId: string | undefined = 'session-id';
+let mockSiteKey = 'site-1';
+let mockCurrentUserId: number | undefined = 1;
 const mockInvalidateCheckpointAction = jest.fn();
 const mockInvalidatedCheckpointIds = new Set< string >();
 const mockRevertedCheckpointIds = new Set< string >();
@@ -321,7 +323,8 @@ jest.mock( '../../contexts', () => {
 				onSessionIdChange: ( sessionId: string ) => saveSessionId( sessionId, 'wp-orchestrator' ),
 			},
 			getTabSessionId: () => mockTabSessionId ?? '',
-			siteKey: 'site-1',
+			siteKey: mockSiteKey,
+			currentUser: mockCurrentUserId === undefined ? undefined : { ID: mockCurrentUserId },
 		} ),
 	};
 } );
@@ -610,6 +613,8 @@ describe( 'OrchestratorChat', () => {
 		mockIsReaderChatAgent.mockReturnValue( false );
 		mockAgentConfig = { agentId: 'wp-orchestrator' };
 		mockTabSessionId = 'session-id';
+		mockSiteKey = 'site-1';
+		mockCurrentUserId = 1;
 		mockSelectedBlockType = undefined;
 		mockBlockEditorStoreThrows = false;
 		sessionStorage.clear();
@@ -2471,9 +2476,8 @@ describe( 'OrchestratorChat', () => {
 			'onUndo'
 		);
 		view.unmount();
-		mockUseAgentChat.mockReturnValue(
-			agentChatReturn( { messages: [ userMessage, finalMessage ] } )
-		);
+		const remountLoadMessages = jest.fn();
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { loadMessages: remountLoadMessages } ) );
 		const remountedView = render( chat() );
 		act( () => {
 			mockConversationConfig?.onSuccess?.(
@@ -2488,6 +2492,10 @@ describe( 'OrchestratorChat', () => {
 				'server-session-promoted-after-completion'
 			);
 		} );
+		expect( remountLoadMessages ).toHaveBeenCalled();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage ] } )
+		);
 		remountedView.rerender( chat() );
 		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toHaveProperty(
 			'onUndo'
@@ -2546,6 +2554,29 @@ describe( 'OrchestratorChat', () => {
 		coldView.rerender( chat() );
 		expect( getDisplayedCheckpointAction( finalMessage.id ) ).toBeUndefined();
 		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBeUndefined();
+
+		mockInvalidateCheckpointAction.mockClear();
+		mockAgentConfig = {
+			agentId: 'wp-orchestrator',
+			sessionId: 'server-session-promoted-after-completion',
+		};
+		coldView.rerender( chat() );
+		act( () => {
+			mockConversationConfig?.onSuccess?.(
+				[
+					{
+						messageId: finalMessage.id,
+						role: 'agent',
+						parts: [ { type: 'text', text: finalMessage.content[ 0 ].text } ],
+						kind: 'message',
+					},
+				],
+				'server-session-promoted-after-completion'
+			);
+		} );
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith(
+			'checkpoint-session-promoted-after-completion'
+		);
 	} );
 
 	it( 'keeps in-flight streamed checkpoints when a fresh session is promoted', async () => {
@@ -2624,6 +2655,51 @@ describe( 'OrchestratorChat', () => {
 				'onUndo'
 			);
 		}
+	} );
+
+	it( 'drops in-flight streamed checkpoints when the tab session scope changes', async () => {
+		mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: '' };
+		mockTabSessionId = '';
+		mockCheckpointActions();
+		const view = render( chat() );
+		const onTaskUpdateBeforeScopeChange = mockAgentChatConfig?.onTaskUpdate;
+
+		await act( async () => {
+			await onTaskUpdateBeforeScopeChange?.(
+				createWorkingCheckpointUpdate(
+					'task-started-before-scope-change',
+					createJetpackCheckpointResult( 'checkpoint-started-before-scope-change' )
+				)
+			);
+		} );
+
+		mockSiteKey = 'site-2';
+		mockCurrentUserId = 2;
+		view.rerender( chat() );
+
+		await act( async () => {
+			await onTaskUpdateBeforeScopeChange?.(
+				createCompletedCheckpointUpdate(
+					'task-started-before-scope-change',
+					'agent-started-before-scope-change'
+				)
+			);
+		} );
+
+		const finalMessage = {
+			id: 'agent-started-before-scope-change',
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 2,
+			archived: false,
+			showIcon: true,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id ) ).toBeUndefined();
 	} );
 
 	it( 'keeps streamed checkpoint actions through final prose and remounts', async () => {

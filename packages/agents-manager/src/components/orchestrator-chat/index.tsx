@@ -10,7 +10,14 @@ import {
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
 import { select as selectDataStore, useSelect } from '@wordpress/data';
-import { useState, useCallback, useMemo, useEffect, useRef } from '@wordpress/element';
+import {
+	useState,
+	useCallback,
+	useMemo,
+	useEffect,
+	useLayoutEffect,
+	useRef,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
@@ -65,6 +72,14 @@ import type {
 } from '../../utils/load-external-providers';
 
 const streamedCheckpointMessagesBySession = new Map< string, Map< string, UIMessage > >();
+let activeStreamedCheckpointSession:
+	| {
+			scopeIdentity: string;
+			sessionId: string;
+			sessionIdentity: string;
+			liveFinalMessageIds: Set< string >;
+	  }
+	| undefined;
 
 function getStreamedCheckpointMessages( sessionIdentity: string ): Map< string, UIMessage > {
 	const existing = streamedCheckpointMessagesBySession.get( sessionIdentity );
@@ -75,6 +90,40 @@ function getStreamedCheckpointMessages( sessionIdentity: string ): Map< string, 
 	const messages = new Map< string, UIMessage >();
 	streamedCheckpointMessagesBySession.set( sessionIdentity, messages );
 	return messages;
+}
+
+function getLiveStreamedCheckpointMessageIds( sessionIdentity: string ): Set< string > {
+	return activeStreamedCheckpointSession?.sessionIdentity === sessionIdentity
+		? activeStreamedCheckpointSession.liveFinalMessageIds
+		: new Set< string >();
+}
+
+function activateLiveStreamedCheckpointSession(
+	scopeIdentity: string,
+	sessionId: string,
+	sessionIdentity: string,
+	liveFinalMessageIds: Set< string >
+): Set< string > {
+	const previousSession = activeStreamedCheckpointSession;
+	if ( previousSession?.sessionIdentity === sessionIdentity ) {
+		return previousSession.liveFinalMessageIds;
+	}
+
+	const isSessionBootstrap =
+		previousSession?.scopeIdentity === scopeIdentity &&
+		previousSession.sessionId === '' &&
+		sessionId !== '';
+	const nextLiveFinalMessageIds =
+		previousSession && isSessionBootstrap
+			? previousSession.liveFinalMessageIds
+			: liveFinalMessageIds;
+	activeStreamedCheckpointSession = {
+		scopeIdentity,
+		sessionId,
+		sessionIdentity,
+		liveFinalMessageIds: nextLiveFinalMessageIds,
+	};
+	return nextLiveFinalMessageIds;
 }
 
 function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
@@ -283,7 +332,7 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getTabSessionId } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, siteKey, currentUser } = useAgentsManagerContext();
 
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -328,22 +377,33 @@ export default function OrchestratorChat( {
 	const { isPageOrSiteEditorSurface: groupWritingSuggestions } = usePageOrSiteEditorSurface();
 	const checkpointAgentId = agentConfig?.agentId ?? '';
 	const checkpointSessionId = agentConfig?.sessionId ?? getTabSessionId() ?? '';
-	const checkpointSessionIdentity = `${ checkpointAgentId }:${ checkpointSessionId }`;
+	const checkpointScopeIdentity = JSON.stringify( [
+		siteKey,
+		currentUser?.ID ?? null,
+		checkpointAgentId,
+	] );
+	const checkpointSessionIdentity = JSON.stringify( [
+		siteKey,
+		currentUser?.ID ?? null,
+		checkpointAgentId,
+		checkpointSessionId,
+	] );
+	const liveFinalMessageIds = getLiveStreamedCheckpointMessageIds( checkpointSessionIdentity );
 	const streamedCheckpointMessagesRef = useRef( {
-		agentId: checkpointAgentId,
+		scopeIdentity: checkpointScopeIdentity,
 		sessionId: checkpointSessionId,
 		sessionIdentity: checkpointSessionIdentity,
 		streamGeneration: Symbol(),
 		pendingByTaskId: new Map< string, UIMessage >(),
 		byFinalMessageId: getStreamedCheckpointMessages( checkpointSessionIdentity ),
-		liveFinalMessageIds: new Set< string >(),
+		liveFinalMessageIds,
 		regeneratingMessageId: undefined as string | undefined,
 	} );
 	if ( streamedCheckpointMessagesRef.current.sessionIdentity !== checkpointSessionIdentity ) {
 		const previousStreamedMessages = streamedCheckpointMessagesRef.current;
 		const byFinalMessageId = getStreamedCheckpointMessages( checkpointSessionIdentity );
 		const isSessionBootstrap =
-			previousStreamedMessages.agentId === checkpointAgentId &&
+			previousStreamedMessages.scopeIdentity === checkpointScopeIdentity &&
 			previousStreamedMessages.sessionId === '' &&
 			checkpointSessionId !== '';
 
@@ -362,7 +422,7 @@ export default function OrchestratorChat( {
 		}
 
 		streamedCheckpointMessagesRef.current = {
-			agentId: checkpointAgentId,
+			scopeIdentity: checkpointScopeIdentity,
 			sessionId: checkpointSessionId,
 			sessionIdentity: checkpointSessionIdentity,
 			streamGeneration: isSessionBootstrap ? previousStreamedMessages.streamGeneration : Symbol(),
@@ -370,12 +430,21 @@ export default function OrchestratorChat( {
 			byFinalMessageId,
 			liveFinalMessageIds: isSessionBootstrap
 				? previousStreamedMessages.liveFinalMessageIds
-				: new Set(),
+				: liveFinalMessageIds,
 			regeneratingMessageId: isSessionBootstrap
 				? previousStreamedMessages.regeneratingMessageId
 				: undefined,
 		};
 	}
+	useLayoutEffect( () => {
+		streamedCheckpointMessagesRef.current.liveFinalMessageIds =
+			activateLiveStreamedCheckpointSession(
+				checkpointScopeIdentity,
+				checkpointSessionId,
+				checkpointSessionIdentity,
+				streamedCheckpointMessagesRef.current.liveFinalMessageIds
+			);
+	}, [ checkpointScopeIdentity, checkpointSessionId, checkpointSessionIdentity ] );
 	const checkpointStreamGeneration = streamedCheckpointMessagesRef.current.streamGeneration;
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
@@ -600,9 +669,6 @@ export default function OrchestratorChat( {
 				return;
 			}
 
-			const currentLiveMessageIds = new Set(
-				messagesRef.current.map( ( currentMessage ) => currentMessage.id )
-			);
 			loadedMessages.forEach( ( message ) => {
 				const checkpointMessage = streamedCheckpointMessagesRef.current.byFinalMessageId.get(
 					message.messageId
@@ -614,10 +680,9 @@ export default function OrchestratorChat( {
 						.map( ( part ) => ( { type: 'text', text: part.text } ) ),
 				};
 				const checkpointId = getCheckpointIdForMessage( checkpointMessage );
-				const isCurrentLiveMessage =
-					streamedCheckpointMessagesRef.current.liveFinalMessageIds.has( message.messageId ) ||
-					( streamedCheckpointMessagesRef.current.byFinalMessageId.has( message.messageId ) &&
-						currentLiveMessageIds.has( message.messageId ) );
+				const isCurrentLiveMessage = streamedCheckpointMessagesRef.current.liveFinalMessageIds.has(
+					message.messageId
+				);
 				if ( checkpointId && ! isCurrentLiveMessage ) {
 					invalidateCheckpointAction( checkpointId );
 				}
