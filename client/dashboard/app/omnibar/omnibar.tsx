@@ -65,25 +65,29 @@ function createHrefResolver( adminUrl?: string ) {
 export default function OmnibarContainer( {
 	user,
 	cartManagerClient,
-	isWithinSiteContext,
+	sectionGroup,
+	sectionName,
 }: {
 	user?: User;
 	cartManagerClient: ShoppingCartManagerClient;
-	isWithinSiteContext?: boolean;
+	sectionGroup?: string;
+	sectionName?: string;
 } ) {
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
-			<ConnectedOmnibar user={ user } isWithinSiteContext={ isWithinSiteContext } />
+			<ConnectedOmnibar user={ user } sectionGroup={ sectionGroup } sectionName={ sectionName } />
 		</ShoppingCartProvider>
 	);
 }
 
 function ConnectedOmnibar( {
 	user,
-	isWithinSiteContext,
+	sectionGroup,
+	sectionName,
 }: {
 	user?: User;
-	isWithinSiteContext?: boolean;
+	sectionGroup?: string;
+	sectionName?: string;
 } ) {
 	const { supports } = useAppContext();
 	const recordNodeClick = useRecordOmnibarNodeClick();
@@ -157,9 +161,9 @@ function ConnectedOmnibar( {
 		return result;
 	}, [ dashboardNodes, siteNodes, site, supports, nodeBuilders ] );
 
-	const readerPluginNode = useReaderPlugin();
-	const helpCenterPluginNode = useHelpCenterPlugin();
-	const aiChatPluginNode = useAiChatPlugin();
+	const readerPluginNode = useReaderPlugin( { sectionGroup } );
+	const helpCenterPluginNode = useHelpCenterPlugin( { sectionName } );
+	const aiChatPluginNode = useAiChatPlugin( { sectionName } );
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const { node: languageSwitcherNode, panel: languageSwitcherPanel } = useLanguageSwitcherPlugin( {
 		user,
@@ -167,7 +171,7 @@ function ConnectedOmnibar( {
 	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
 	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const launchSiteNode = useLaunchSitePlugin( { site } );
-	const dashboardNode = useDashboardPlugin( { site, isWithinSiteContext } );
+	const dashboardNode = useDashboardPlugin( { site, sectionGroup } );
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
 	const siteActions = [
 		...( baseOmnibarNodes.siteActions ?? [] ),

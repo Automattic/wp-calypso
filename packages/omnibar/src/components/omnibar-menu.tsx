@@ -88,7 +88,7 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 
 export function OmnibarMenu( { node, className }: { node: OmnibarNode; className?: string } ) {
 	const label = node.title || node.label || '';
-	const menuClassName = [ 'omnibar__menu', className, node.className ]
+	const menuClassName = [ 'omnibar__menu', className, node.className, node.active && 'is-active' ]
 		.filter( Boolean )
 		.join( ' ' );
 	const [ isOpen, setIsOpen ] = useState( false );

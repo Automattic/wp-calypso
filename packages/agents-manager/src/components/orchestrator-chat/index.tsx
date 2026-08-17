@@ -7,7 +7,6 @@ import {
 import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useMemo, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
@@ -21,9 +20,7 @@ import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestio
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
-import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
-import { markSessionUsed } from '../../utils/agent-session';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
 } from '../../utils/convert-tool-messages-to-components';
@@ -37,7 +34,6 @@ import {
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
-import { persistLastActivity } from '../../utils/persist-last-activity';
 import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
@@ -217,9 +213,8 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId } = useAgentsManagerContext();
 
-	const navigate = useNavigate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
@@ -400,14 +395,23 @@ export default function OrchestratorChat( {
 				return;
 			}
 
+			// The agent may have been discarded (e.g. a site switch) while this
+			// fetch was in flight — its result belongs to the previous scope.
+			const agentManager = getAgentManager();
+			if ( ! agentManager.hasAgent( agentConfig!.agentId ) ) {
+				return;
+			}
+
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
 			// Make sure future messages go to the right session
-			getAgentManager().updateSessionId( agentConfig!.agentId, serverSessionId );
+			agentManager.updateSessionId( agentConfig!.agentId, serverSessionId );
 
-			// Sync local session ID with the server's
+			// Persist the server's canonical ID as this tab's session through the
+			// config's callback, so it writes under the site the config was
+			// created for.
 			if ( agentConfig!.sessionId !== serverSessionId ) {
-				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
+				agentConfig!.onSessionIdChange?.( serverSessionId );
 			}
 		},
 	} );
@@ -442,9 +446,6 @@ export default function OrchestratorChat( {
 		// return a fresh empty array on each render.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ dynamicSuggestionsKey, registerSuggestions, clearSuggestions ] );
-
-	// Persist the chat route so the conversation can be resumed later.
-	useSaveNewChatRoute( hasUserSentMessage );
 
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();
@@ -524,7 +525,6 @@ export default function OrchestratorChat( {
 
 			setHasUserSentMessage( true );
 			setUploadError( null );
-			persistLastActivity( siteKey );
 
 			recordBigSkyTracksEvent( 'chat_input_send_message', {
 				message_length: message?.length || 0,
@@ -609,20 +609,13 @@ export default function OrchestratorChat( {
 			}
 
 			consumeNextMessageExternalContextEntries();
-
-			if ( isReaderChat ) {
-				markSessionUsed( agentConfig?.agentId );
-			}
 		},
 		[
-			agentConfig?.agentId,
 			inputValue,
-			isReaderChat,
 			isUploadingImages,
 			onSubmit,
 			pendingImages.length,
 			setChatInput,
-			siteKey,
 			uploadImagesToWordPress,
 		]
 	);
@@ -699,7 +692,7 @@ export default function OrchestratorChat( {
 				sessionId: params.sessionId,
 			} );
 		},
-		sessionId: getActiveSessionId(),
+		sessionId: getTabSessionId(),
 		pathname: window.location.pathname,
 	} );
 
@@ -821,7 +814,7 @@ export default function OrchestratorChat( {
 		},
 		// This ensures the same session ID is used between Big Sky and Calypso agents,
 		// so that messages will be stored in the same conversation.
-		getSessionId: getActiveSessionId,
+		getSessionId: getTabSessionId,
 		setIsBuildingSite,
 		setThinkingMessage,
 	} );
