@@ -546,7 +546,7 @@ function withEditorTargetGuard( toolProvider: ToolProvider | undefined ): ToolPr
 			if ( CANVAS_BOUND_ABILITIES.has( normalizedName ) ) {
 				const violation = getTargetViolation();
 				if ( violation ) {
-					blockCurrentRequest();
+					blockCurrentRequest( violation );
 					return buildTargetRefusal( violation );
 				}
 			}

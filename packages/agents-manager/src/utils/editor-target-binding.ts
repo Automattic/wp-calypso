@@ -37,9 +37,16 @@ export type TargetViolation =
 let reportedTarget: EditorTarget | null = null;
 let liveTarget: EditorTarget | null = null;
 
-// Set once a request has been refused or aborted for moving off its canvas, so
-// the model cannot simply retry onto the page the user moved to.
-let requestBlocked = false;
+// The violation that caused the current request to be blocked, if any. Set once
+// a request has been refused or aborted for moving off its canvas, so the model
+// cannot simply retry onto the page the user moved to.
+//
+// Storing the cause rather than a bare flag makes "blocked without a violation"
+// unrepresentable. That matters because the fail-open branch below sits *under*
+// this check: a flag could be set on a host that never reported a target, and
+// would then refuse canvas writes there is no basis to refuse. Requiring the
+// violation means only a real one can get here.
+let blockedViolation: TargetViolation | null = null;
 
 /**
  * Validate a client-context `editorTarget` value.
@@ -110,9 +117,12 @@ export function clearTargetBinding(): void {
 
 /**
  * Refuse canvas writes for the remainder of the current request.
+ *
+ * @param violation The violation that caused the block. Required so a block can
+ *                  never outrun an actual violation — see `blockedViolation`.
  */
-export function blockCurrentRequest(): void {
-	requestBlocked = true;
+export function blockCurrentRequest( violation: TargetViolation ): void {
+	blockedViolation = violation;
 }
 
 /**
@@ -120,7 +130,7 @@ export function blockCurrentRequest(): void {
  */
 export function startNewUserRequest(): void {
 	clearTargetBinding();
-	requestBlocked = false;
+	blockedViolation = null;
 }
 
 function describeTarget( target: EditorTarget | null ): string | null {
@@ -137,12 +147,11 @@ function describeTarget( target: EditorTarget | null ): string | null {
  * @returns The violation, or null when the write may proceed.
  */
 export function getTargetViolation(): TargetViolation | null {
-	if ( requestBlocked ) {
-		return {
-			code: 'moved',
-			from: describeTarget( reportedTarget ),
-			to: describeTarget( liveTarget ),
-		};
+	// Every refusal after the first names the pages from the violation that
+	// caused the block, rather than re-deriving them from a binding that has
+	// since rebound to the page the user moved to.
+	if ( blockedViolation ) {
+		return blockedViolation;
 	}
 
 	// No contract from this host, or no reading yet: nothing to enforce against.

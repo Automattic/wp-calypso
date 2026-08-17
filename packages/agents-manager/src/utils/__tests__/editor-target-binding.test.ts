@@ -61,6 +61,23 @@ describe( 'getTargetViolation', () => {
 		expect( getTargetViolation() ).toBeNull();
 	} );
 
+	it( 'never yields a violation to block with when the host reports no target', () => {
+		// The fail-open branch sits *under* the block check, so a request blocked
+		// on a host that never implemented the contract would refuse every canvas
+		// write over a deploy-order mismatch neither side controls.
+		// `blockCurrentRequest` takes the violation rather than a bare flag
+		// precisely so it cannot be reached without one — and on this host there
+		// is never one to pass, however far the canvas moves.
+		recordReportedTarget( undefined );
+		expect( getTargetViolation() ).toBeNull();
+
+		recordLiveTarget( { available: false } );
+		expect( getTargetViolation() ).toBeNull();
+
+		recordLiveTarget( { available: true, key: 'page:9', label: 'Contact' } );
+		expect( getTargetViolation() ).toBeNull();
+	} );
+
 	it( 'is null when the canvas has not moved', () => {
 		recordReportedTarget( { available: true, key: 'page:4', label: 'About' } );
 		expect( getTargetViolation() ).toBeNull();
@@ -130,20 +147,38 @@ describe( 'getTargetViolation', () => {
 		// attempt write the user's request onto the page they moved to.
 		recordReportedTarget( { available: true, key: 'page:4', label: 'About' } );
 		recordLiveTarget( { available: true, key: 'page:9', label: 'Contact' } );
-		blockCurrentRequest();
+		const violation = getTargetViolation();
+		blockCurrentRequest( violation! );
 
 		recordReportedTarget( { available: true, key: 'page:9', label: 'Contact' } );
 
+		// Still naming both real pages after the rebind. Re-deriving them from the
+		// rebound binding would name Contact twice, so the refusal would tell the
+		// user — and the model — nothing about which page the work was meant for.
 		expect( getTargetViolation() ).toEqual( {
 			code: 'moved',
-			from: 'Contact',
+			from: 'About',
 			to: 'Contact',
 		} );
 	} );
 
+	it( 'keeps the original violation code once blocked', () => {
+		// A block caused by the editor closing must keep reporting `no-editor`
+		// even after a canvas mounts and rebinds: the refusal message is chosen
+		// from the code, and "the page you asked for is no longer open" is the
+		// wrong thing to say about a request made with no page open at all.
+		recordReportedTarget( { available: true, key: 'page:4', label: 'About' } );
+		recordLiveTarget( { available: false } );
+		blockCurrentRequest( { code: 'no-editor' } );
+
+		recordReportedTarget( { available: true, key: 'page:9', label: 'Contact' } );
+
+		expect( getTargetViolation() ).toEqual( { code: 'no-editor' } );
+	} );
+
 	it( 'unblocks on the next user message', () => {
 		recordReportedTarget( { available: true, key: 'page:4' } );
-		blockCurrentRequest();
+		blockCurrentRequest( { code: 'moved', from: 'page:4', to: 'page:9' } );
 		startNewUserRequest();
 		recordReportedTarget( { available: true, key: 'page:9' } );
 
@@ -156,5 +191,21 @@ describe( 'getTargetViolation', () => {
 		recordLiveTarget( { available: true, key: 'page:9' } );
 
 		expect( getTargetViolation() ).toBeNull();
+	} );
+
+	it( 'keeps a block in place when the agent navigates mid-request', () => {
+		// Only a new user message lifts a block. An agent-driven move clears the
+		// binding, and if that also lifted the block the model could navigate and
+		// then write the refused change onto the page it navigated to.
+		recordReportedTarget( { available: true, key: 'page:4', label: 'About' } );
+		blockCurrentRequest( { code: 'moved', from: 'About', to: 'Contact' } );
+
+		clearTargetBinding();
+
+		expect( getTargetViolation() ).toEqual( {
+			code: 'moved',
+			from: 'About',
+			to: 'Contact',
+		} );
 	} );
 } );

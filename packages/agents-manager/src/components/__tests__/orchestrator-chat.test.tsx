@@ -230,6 +230,12 @@ jest.mock( '../agent-chat', () => ( {
 	default: ( props: unknown ) => mockAgentChat( props as Parameters< typeof mockAgentChat >[ 0 ] ),
 } ) );
 
+import {
+	blockCurrentRequest,
+	getTargetViolation,
+	recordReportedTarget,
+	startNewUserRequest,
+} from '../../utils/editor-target-binding';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
 
@@ -283,6 +289,16 @@ const createImageUpload = ( overrides: Record< string, unknown > = {} ) => ( {
 const renderWithImageUpload = ( imageUpload: ReturnType< typeof createImageUpload > ) => {
 	mockUseImageUpload.mockReturnValue( imageUpload );
 	return render( chat() );
+};
+
+// The host's canvas-change event, as Big Sky dispatches it when the editor
+// opens a different page.
+const dispatchEditorTargetChange = ( target: unknown ) => {
+	act( () => {
+		window.dispatchEvent(
+			new CustomEvent( 'big-sky-editor-target-change', { detail: { target } } )
+		);
+	} );
 };
 
 // Show-component fixtures shared by the retention tests.
@@ -1405,5 +1421,96 @@ describe( 'OrchestratorChat', () => {
 		rerender( chat() );
 
 		expect( countShowComponentMessages() ).toBe( 1 );
+	} );
+
+	describe( 'editor canvas binding', () => {
+		const ABOUT_PAGE = { available: true, key: 'page:4', label: 'About' };
+		const CONTACT_PAGE = { available: true, key: 'page:9', label: 'Contact' };
+
+		beforeEach( () => {
+			// The binding is module-level state, so each test has to start from the
+			// unbound, unblocked position a fresh page load would give it.
+			startNewUserRequest();
+		} );
+
+		it( 'aborts and blocks the request when the canvas moves mid-request', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			// The canvas the model was looking at when it decided what to do.
+			recordReportedTarget( ABOUT_PAGE );
+
+			dispatchEditorTargetChange( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+			// Blocked as well as aborted, and carrying the pages it was blocked
+			// for: a tool call already in flight when the abort loses the race must
+			// still be refused, with a message that names the page it was meant for.
+			expect( getTargetViolation() ).toEqual( {
+				code: 'moved',
+				from: 'About',
+				to: 'Contact',
+			} );
+		} );
+
+		it( 'leaves the request running when the canvas has not moved', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			recordReportedTarget( ABOUT_PAGE );
+
+			// The host re-announces the canvas on editor changes that do not move it.
+			dispatchEditorTargetChange( ABOUT_PAGE );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( getTargetViolation() ).toBeNull();
+		} );
+
+		it( 'does not abort when no request is running', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: false } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			recordReportedTarget( ABOUT_PAGE );
+
+			dispatchEditorTargetChange( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		} );
+
+		it( 'stops listening for canvas moves once unmounted', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			const { unmount } = render( chat() );
+			recordReportedTarget( ABOUT_PAGE );
+			unmount();
+
+			dispatchEditorTargetChange( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		} );
+
+		it( 'lifts the block when the composer submits the next message', async () => {
+			// The rebind has to sit on the callback the composer is wired to. In
+			// `submitChatMessage` — which only serves custom actions and context
+			// cards — one canvas-move abort would latch the block for the rest of
+			// the page session, refusing every canvas write until a reload.
+			const { onSubmit } = mockUseAgentChat();
+
+			render( chat() );
+			recordReportedTarget( ABOUT_PAGE );
+			blockCurrentRequest( { code: 'moved', from: 'About', to: 'Contact' } );
+			expect( getTargetViolation() ).not.toBeNull();
+
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Submit message' ) );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
+			expect( getTargetViolation() ).toBeNull();
+		} );
 	} );
 } );

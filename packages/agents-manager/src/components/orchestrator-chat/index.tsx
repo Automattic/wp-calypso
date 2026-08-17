@@ -303,13 +303,15 @@ export default function OrchestratorChat( {
 		const handleEditorTargetChange = ( event: Event ) => {
 			recordLiveTarget( ( event as CustomEvent ).detail?.target );
 
-			if ( ! isProcessing || ! getTargetViolation() ) {
+			const violation = getTargetViolation();
+
+			if ( ! isProcessing || ! violation ) {
 				return;
 			}
 
 			// Blocked as well as aborted: an abort that loses the race to an
 			// in-flight tool call must not let that call land on the new page.
-			blockCurrentRequest();
+			blockCurrentRequest( violation );
 			abortCurrentRequest();
 		};
 
