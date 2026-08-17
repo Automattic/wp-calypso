@@ -18,7 +18,6 @@ import { encodePatternId } from 'calypso/my-sites/patterns/lib/encode-pattern-id
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import type { Pattern, PatternGalleryProps } from 'calypso/my-sites/patterns/types';
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -156,13 +155,11 @@ function PatternPreviewFragment( {
 			  } );
 	}
 
-	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 	const recordCopyEvent = ( tracksEventName: string ) => {
 		recordTracksEvent( tracksEventName, {
 			name: pattern?.name,
 			category,
 			type: getTracksPatternType( patternTypeFilter ),
-			user_is_dev_account: isDevAccount ? '1' : '0',
 			view: isGridView ? 'grid' : 'list',
 		} );
 	};
@@ -393,7 +390,6 @@ export function PatternPreview( props: PatternPreviewProps ) {
 
 	const isMobile = useMobileBreakpoint();
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 	const isRtl = useRtl();
 
 	if ( ! pattern ) {
@@ -410,7 +406,6 @@ export function PatternPreview( props: PatternPreviewProps ) {
 			category,
 			type: getTracksPatternType( patternTypeFilter ),
 			is_logged_in: isLoggedIn,
-			user_is_dev_account: isDevAccount ? '1' : '0',
 		} );
 	};
 
