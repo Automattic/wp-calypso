@@ -462,6 +462,9 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupWoo( email: string ): Promise< NewUserResponse > {
+		// This flow drives the form itself instead of going through `signupWithEmail`,
+		// so the ban has to be met here or it is not met at all.
+		handleActiveThrottles( [ 'signup' ] );
 		await this.waitForSignupForm();
 		await this.emailInput.fill( email );
 
@@ -503,6 +506,9 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupThroughInvite( email: string ): Promise< NewUserResponse > {
+		// This flow drives the form itself instead of going through `signupWithEmail`,
+		// so the ban has to be met here or it is not met at all.
+		handleActiveThrottles( [ 'signup' ] );
 		await this.emailInput.fill( email );
 
 		const responsePromise = this.page.waitForResponse(
