@@ -17,6 +17,9 @@ import {
 	exclusiveOffersRoute,
 	isRouteAllowedByCapabilities,
 	learnRoute,
+	marketplaceHostingRoute,
+	marketplaceProductsRoute,
+	marketplacePurchasesRoute,
 	mcpRoute,
 } from '../router/agency';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -38,6 +41,19 @@ export default function AgencySidebar() {
 	const canAccessPartnerDirectory =
 		!! ( supports.agency.partnerDirectory && activeAgency?.partner_directory?.allowed ) &&
 		canAccess( agencyPartnerDirectoryRoute );
+	const canAccessMarketplaceHosting =
+		!! supports.agency.marketplace && canAccess( marketplaceHostingRoute );
+	const canAccessMarketplaceProducts =
+		!! supports.agency.marketplace && canAccess( marketplaceProductsRoute );
+	const canAccessMarketplacePurchases =
+		!! supports.agency.marketplace && canAccess( marketplacePurchasesRoute );
+	const canAccessExclusiveOffers =
+		!! supports.agency.exclusiveOffers && canAccess( exclusiveOffersRoute );
+	const canAccessMarketplace =
+		canAccessMarketplaceHosting ||
+		canAccessMarketplaceProducts ||
+		canAccessMarketplacePurchases ||
+		canAccessExclusiveOffers;
 	const canAccessLearn = !! supports.agency.learn && canAccess( learnRoute );
 	const canAccessMcp =
 		!! ( supports.agency.mcp && activeAgency?.mcp?.allowed ) && canAccess( mcpRoute );
@@ -82,15 +98,22 @@ export default function AgencySidebar() {
 					) }
 				</SidebarExpandableMenuItem>
 			) }
-			{ supports.agency.exclusiveOffers && canAccess( exclusiveOffersRoute ) && (
-				<SidebarExpandableMenuItem
-					label={ __( 'Marketplace' ) }
-					icon={ tag }
-					to="/marketplace/exclusive-offers"
-				>
-					<SidebarMenuItem to="/marketplace/exclusive-offers">
-						{ __( 'Exclusive offers' ) }
-					</SidebarMenuItem>
+			{ canAccessMarketplace && (
+				<SidebarExpandableMenuItem label={ __( 'Marketplace' ) } icon={ tag } to="/marketplace">
+					{ canAccessMarketplaceHosting && (
+						<SidebarMenuItem to="/marketplace/hosting">{ __( 'Hosting' ) }</SidebarMenuItem>
+					) }
+					{ canAccessMarketplaceProducts && (
+						<SidebarMenuItem to="/marketplace/products">{ __( 'Products' ) }</SidebarMenuItem>
+					) }
+					{ canAccessExclusiveOffers && (
+						<SidebarMenuItem to="/marketplace/exclusive-offers">
+							{ __( 'Exclusive offers' ) }
+						</SidebarMenuItem>
+					) }
+					{ canAccessMarketplacePurchases && (
+						<SidebarMenuItem to="/marketplace/purchases">{ __( 'Purchases' ) }</SidebarMenuItem>
+					) }
 				</SidebarExpandableMenuItem>
 			) }
 			{ ( canAccessLearn || canAccessMcp ) && (

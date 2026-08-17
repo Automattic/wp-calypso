@@ -65,3 +65,28 @@ export interface FetchJetpackLicensesOptions {
 	sortField: JetpackLicenseSortField;
 	sortDirection: JetpackLicenseSortDirection;
 }
+
+export interface JetpackLicenseCounts {
+	attached: number;
+	detached: number;
+	revoked: number;
+	not_revoked: number;
+	all: number;
+	standard: number;
+}
+
+/** The compact license shape returned by the issue/assign/revoke endpoints. */
+export interface IssuedJetpackLicense {
+	license_id: number;
+	license_key: string;
+	quantity: number | null;
+	parent_jetpack_license_id: string | null;
+	issued_at: string;
+	revoked_at: string | null;
+}
+
+export interface IssueJetpackLicensesInput {
+	product: string;
+	quantity: number;
+	bundle?: boolean;
+}

@@ -200,6 +200,26 @@ export const agencyPartnerDirectoryExpertiseRoute = createRoute( {
 	)
 );
 
+// `/marketplace/hosting` – hosting plans an agency can buy or refer
+export const marketplaceHostingRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_marketplace' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Hosting' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/hosting',
+} ).lazy( () =>
+	import( '../../agency/marketplace/hosting' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-hosting' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/agency/partner-directory/details` – the agency's public profile details
 export const agencyPartnerDirectoryDetailsRoute = createRoute( {
 	head: () => ( {
@@ -236,6 +256,46 @@ export const agencyPartnerDirectoryDetailsRoute = createRoute( {
 	)
 );
 
+// `/marketplace/products` – à la carte products an agency can buy or refer
+export const marketplaceProductsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_marketplace' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Products' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/products',
+} ).lazy( () =>
+	import( '../../agency/marketplace/products' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-products' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/marketplace/purchases` – licenses, invoices, and payment methods
+export const marketplacePurchasesRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_jetpack_licensing' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Purchases' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/purchases',
+} ).lazy( () =>
+	import( '../../agency/marketplace/purchases' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-purchases' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/marketplace/exclusive-offers` – partner offers (Refer / Resell)
 export const exclusiveOffersRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_exclusive_offers' },
@@ -255,6 +315,33 @@ export const exclusiveOffersRoute = createRoute( {
 		} )
 	)
 );
+
+// `/marketplace` – no screen of its own; sends the user to the first Marketplace
+// section their capabilities allow, so stale `/marketplace` links keep working.
+export const marketplaceRoute = createRoute( {
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const activeAgency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		const capabilities = activeAgency?.user?.capabilities ?? [];
+		const destination = [
+			marketplaceHostingRoute,
+			marketplaceProductsRoute,
+			exclusiveOffersRoute,
+			marketplacePurchasesRoute,
+		].find( ( route ) => isRouteAllowedByCapabilities( route, capabilities ) );
+
+		if ( ! destination ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+
+		throw dashboardRedirect( { to: destination.fullPath } );
+	},
+} );
 
 // `/resources/learn` – guides, articles, and training for agencies
 export const learnRoute = createRoute( {
@@ -937,6 +1024,10 @@ export const createAgencyRoutes = () => [
 			agencyPartnerDirectoryExpertiseRoute,
 			agencyPartnerDirectoryDetailsRoute,
 		] ),
+		marketplaceRoute,
+		marketplaceHostingRoute,
+		marketplaceProductsRoute,
+		marketplacePurchasesRoute,
 		exclusiveOffersRoute,
 		learnRoute,
 		mcpRoute.addChildren( [
