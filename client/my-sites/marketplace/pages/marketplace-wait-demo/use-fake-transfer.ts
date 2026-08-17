@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 
 export type DemoScenario = 'typical' | 'slow' | 'failure';
@@ -14,14 +14,14 @@ const TIMELINES: Record< DemoScenario, Beat[] > = {
 		{ status: transferStates.ACTIVE, seconds: 22 },
 		{ status: transferStates.PROVISIONED, seconds: 3 },
 		{ status: transferStates.RELOCATING, seconds: 6 },
-		{ status: transferStates.COMPLETE, seconds: 7 },
+		{ status: transferStates.COMPLETED, seconds: 7 },
 	],
 	slow: [
 		{ status: transferStates.PENDING, seconds: 3 },
 		{ status: transferStates.ACTIVE, seconds: 70 },
 		{ status: transferStates.PROVISIONED, seconds: 3 },
 		{ status: transferStates.RELOCATING, seconds: 8 },
-		{ status: transferStates.COMPLETE, seconds: 9 },
+		{ status: transferStates.COMPLETED, seconds: 9 },
 	],
 	failure: [
 		{ status: transferStates.PENDING, seconds: 3 },
@@ -47,7 +47,10 @@ export type FakeTransfer = {
 
 /**
  * Walks a fake transfer through the statuses the real endpoint reports, on the real timings
- * (divided by `speed`), so the wait UIs can be watched and replayed without a site.
+ * (multiplied by `speed`), so the wait UIs can be watched and replayed without a site.
+ *
+ * Wall-clock based, like the UIs it drives: the interval only re-renders, so a throttled
+ * background tab slows the redraw, not the transfer. Changing scenario or speed starts over.
  */
 export function useFakeTransfer( {
 	scenario,
@@ -56,19 +59,20 @@ export function useFakeTransfer( {
 	scenario: DemoScenario;
 	speed: number;
 } ): FakeTransfer {
-	const [ elapsed, setElapsed ] = useState( 0 );
 	const [ run, setRun ] = useState( 0 );
+	const [ startedAt, setStartedAt ] = useState( () => Date.now() );
+	const [ now, setNow ] = useState( startedAt );
 	const timeline = TIMELINES[ scenario ];
-	const speedRef = useRef( speed );
-	speedRef.current = speed;
 
 	useEffect( () => {
-		setElapsed( 0 );
-		const id = setInterval( () => {
-			setElapsed( ( seconds ) => seconds + ( TICK_MS / 1000 ) * speedRef.current );
-		}, TICK_MS );
+		const began = Date.now();
+		setStartedAt( began );
+		setNow( began );
+		const id = setInterval( () => setNow( Date.now() ), TICK_MS );
 		return () => clearInterval( id );
-	}, [ scenario, run ] );
+	}, [ scenario, speed, run ] );
+
+	const elapsed = ( ( now - startedAt ) / 1000 ) * speed;
 
 	let cursor = 0;
 	let transferStatus: string | null = null;
@@ -84,7 +88,7 @@ export function useFakeTransfer( {
 	const isDone = ! isFailed && elapsed >= total;
 	// The real page moves to its activation step once the transfer completes; mirror that so the
 	// "finishing up" stage lights the same way it does in production.
-	const currentStep = isDone || transferStatus === transferStates.COMPLETE ? 2 : 1;
+	const currentStep = isDone || transferStatus === transferStates.COMPLETED ? 2 : 1;
 
 	const replay = useCallback( () => setRun( ( n ) => n + 1 ), [] );
 

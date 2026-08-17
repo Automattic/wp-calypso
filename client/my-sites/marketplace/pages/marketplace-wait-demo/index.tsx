@@ -9,17 +9,19 @@ import Masterbar from 'calypso/layout/masterbar/masterbar';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import HonestInstallProgress from '../marketplace-product-install/honest-progress';
+import HonestInstallCombined from '../marketplace-product-install/honest-progress/combined';
 import HonestInstallScene from '../marketplace-product-install/honest-progress/scene';
 import ProductInstallErrorView from '../marketplace-product-install/product-install-error';
 import useMarketplaceAdditionalSteps from '../marketplace-product-install/use-marketplace-additional-steps';
 import { useFakeTransfer } from './use-fake-transfer';
 import type { DemoScenario } from './use-fake-transfer';
 
-type Variant = 'control' | 'honest_progress' | 'honest_scene';
+type Variant = 'control' | 'honest_progress' | 'honest_scene' | 'honest_combined';
 
 const VARIANTS: { value: Variant; label: string }[] = [
 	{ value: 'honest_progress', label: 'Narrated list' },
 	{ value: 'honest_scene', label: 'Illustrated scene' },
+	{ value: 'honest_combined', label: 'Scene + list' },
 	{ value: 'control', label: 'Classic bar (today)' },
 ];
 
@@ -83,6 +85,10 @@ export default function MarketplaceWaitDemo() {
 		setScenario( next );
 		replay();
 	};
+	const changeRealTime = ( next: boolean ) => {
+		setRealTime( next );
+		replay();
+	};
 	// Memoised as on the real page: the classic bar re-arms its simulated-progress timer whenever
 	// `steps` changes identity, and this page re-renders on every fake-transfer tick.
 	const classicSteps = useMemo(
@@ -117,6 +123,8 @@ export default function MarketplaceWaitDemo() {
 		stage = <HonestInstallProgress transferStatus={ transferStatus } currentStep={ currentStep } />;
 	} else if ( variant === 'honest_scene' ) {
 		stage = <HonestInstallScene transferStatus={ transferStatus } currentStep={ currentStep } />;
+	} else if ( variant === 'honest_combined' ) {
+		stage = <HonestInstallCombined transferStatus={ transferStatus } currentStep={ currentStep } />;
 	} else {
 		stage = (
 			<MarketplaceProgressBar
@@ -157,7 +165,7 @@ export default function MarketplaceWaitDemo() {
 						__nextHasNoMarginBottom
 						label="Real time (off = 4× speed)"
 						checked={ realTime }
-						onChange={ setRealTime }
+						onChange={ changeRealTime }
 					/>
 					<span className="marketplace-wait-demo__clock">
 						{ transferStatus ?? 'idle' } · { Math.floor( elapsed ) } s

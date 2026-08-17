@@ -18,7 +18,7 @@ describe( 'useFakeTransfer', () => {
 		expect( result.current.currentStep ).toBe( 1 );
 
 		act( () => jest.advanceTimersByTime( 30_000 ) );
-		expect( result.current.transferStatus ).toBe( transferStates.COMPLETE );
+		expect( result.current.transferStatus ).toBe( transferStates.COMPLETED );
 		expect( result.current.currentStep ).toBe( 2 );
 		expect( result.current.isDone ).toBe( false );
 

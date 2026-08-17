@@ -286,3 +286,12 @@
 		animation: none;
 	}
 }
+
+.marketplace-honest-scene__canvas.is-compact {
+	max-width: 300px;
+	margin-block: 4px 0;
+}
+
+.marketplace-honest-scene .marketplace-honest-progress__stages {
+	margin-block-start: 20px;
+}
