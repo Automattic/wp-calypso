@@ -1,7 +1,4 @@
 import { __ } from '@wordpress/i18n';
-import AccountEmailBouncingNotice, {
-	useShouldShowAccountEmailBouncingNotice,
-} from '../../app/account-email-bouncing-notice';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
@@ -11,12 +8,9 @@ import GravatarProfileSection from '../profile-gravatar';
 import PersonalDetailsSection from '../profile-personal-details';
 
 export default function Account() {
-	const isAccountEmailBouncing = useShouldShowAccountEmailBouncingNotice();
-
 	return (
 		<PageLayout
 			size="small"
-			notices={ isAccountEmailBouncing && <AccountEmailBouncingNotice source="account" /> }
 			header={
 				<PageHeader
 					description={

@@ -28,7 +28,7 @@ describe( '<AccountEmailBouncingNotice>', () => {
 	test( 'renders the warning and records an impression', async () => {
 		mockUserSettings( { user_email_bouncing: true } );
 
-		const { recordTracksEvent } = render( <AccountEmailBouncingNotice source="sites" /> );
+		const { recordTracksEvent } = render( <AccountEmailBouncingNotice /> );
 
 		expect(
 			await screen.findByText( 'Your account email isn’t receiving our messages' )
@@ -36,14 +36,14 @@ describe( '<AccountEmailBouncingNotice>', () => {
 		expect( screen.getByText( new RegExp( ACCOUNT_EMAIL ) ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_account_email_bouncing_notice_impression',
-			{ source: 'sites' }
+			undefined
 		);
 	} );
 
 	test( 'cannot be dismissed', async () => {
 		mockUserSettings( { user_email_bouncing: true } );
 
-		render( <AccountEmailBouncingNotice source="sites" /> );
+		render( <AccountEmailBouncingNotice /> );
 
 		await screen.findByText( 'Your account email isn’t receiving our messages' );
 		expect( screen.queryByRole( 'button', { name: 'Dismiss' } ) ).not.toBeInTheDocument();
@@ -53,33 +53,18 @@ describe( '<AccountEmailBouncingNotice>', () => {
 		mockUserSettings( { user_email_bouncing: true } );
 		const user = userEvent.setup();
 
-		const { recordTracksEvent } = render( <AccountEmailBouncingNotice source="sites" /> );
+		const { recordTracksEvent } = render( <AccountEmailBouncingNotice /> );
 
 		await user.click( await screen.findByRole( 'link', { name: 'Update your email address' } ) );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_account_email_bouncing_notice_click',
-			{ cta: 'update_email', source: 'sites' }
+			{ cta: 'update_email' }
 		);
 
 		await user.click( screen.getByRole( 'link', { name: 'Add a recovery email' } ) );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_account_email_bouncing_notice_click',
-			{ cta: 'add_recovery_email', source: 'sites' }
-		);
-	} );
-
-	test( 'drops the update-email link on the account page, where the email field already lives', async () => {
-		mockUserSettings( { user_email_bouncing: true } );
-
-		const { recordTracksEvent } = render( <AccountEmailBouncingNotice source="account" /> );
-
-		expect( await screen.findByRole( 'link', { name: 'Add a recovery email' } ) ).toBeVisible();
-		expect(
-			screen.queryByRole( 'link', { name: 'Update your email address' } )
-		).not.toBeInTheDocument();
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_account_email_bouncing_notice_impression',
-			{ source: 'account' }
+			{ cta: 'add_recovery_email' }
 		);
 	} );
 
