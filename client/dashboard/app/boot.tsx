@@ -10,6 +10,7 @@ import wpcom from 'calypso/lib/wp';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from './auth';
 import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
+import { installDomMutationGuard } from './dom-mutation-guard';
 import Layout from './layout';
 import { omnibarEvents } from './omnibar/events';
 import limitTotalSnackbars from './snackbars/limit-total-snackbars';
@@ -25,6 +26,8 @@ import './omnibar/style.scss';
 import '@automattic/omnibar/style.scss';
 
 function boot( config: AppConfig ) {
+	installDomMutationGuard();
+
 	if ( handleOAuthCallback() ) {
 		return;
 	}
