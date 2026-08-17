@@ -256,7 +256,7 @@ export default function Sites() {
 				}
 				notices={
 					<SitesNoticeArbiter>
-						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
+						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice source="sites" /> }
 						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
 						{ ! isDashboardBackport() && isRestoringAccount && <RestoringSitesNotices /> }
 					</SitesNoticeArbiter>

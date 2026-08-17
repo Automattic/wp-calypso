@@ -16,32 +16,45 @@ export function useShouldShowAccountEmailBouncingNotice() {
 	return !! userSettings.user_email_bouncing;
 }
 
-export default function AccountEmailBouncingNotice() {
+export default function AccountEmailBouncingNotice( {
+	source,
+}: {
+	/** The page rendering the notice. Recorded on the impression and click events. */
+	source: 'sites' | 'account';
+} ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
+	// The account page holds the email field right below the notice, so a link back to it adds nothing.
+	const showUpdateEmailAction = source !== 'account';
+
 	const recordCtaClick = ( cta: 'update_email' | 'add_recovery_email' ) => {
-		recordTracksEvent( 'calypso_dashboard_account_email_bouncing_notice_click', { cta } );
+		recordTracksEvent( 'calypso_dashboard_account_email_bouncing_notice_click', { cta, source } );
 	};
 
 	return (
 		<>
-			<ComponentViewTracker eventName="calypso_dashboard_account_email_bouncing_notice_impression" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_account_email_bouncing_notice_impression"
+				properties={ { source } }
+			/>
 			<Notice
 				variant="warning"
 				title={ __( 'Your account email isn’t receiving our messages' ) }
 				actions={
 					<>
-						<RouterLinkButton
-							to="/me/account"
-							variant="primary"
-							onClick={ () => recordCtaClick( 'update_email' ) }
-						>
-							{ __( 'Update your email address' ) }
-						</RouterLinkButton>
+						{ showUpdateEmailAction && (
+							<RouterLinkButton
+								to="/me/account"
+								variant="primary"
+								onClick={ () => recordCtaClick( 'update_email' ) }
+							>
+								{ __( 'Update your email address' ) }
+							</RouterLinkButton>
+						) }
 						<RouterLinkButton
 							to="/me/security/account-recovery"
-							variant="secondary"
+							variant={ showUpdateEmailAction ? 'secondary' : 'primary' }
 							onClick={ () => recordCtaClick( 'add_recovery_email' ) }
 						>
 							{ __( 'Add a recovery email' ) }
