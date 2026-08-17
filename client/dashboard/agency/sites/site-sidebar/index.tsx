@@ -3,7 +3,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { backup, category, chartBar, formatListBullets, shield } from '@wordpress/icons';
+import { backup, category, chartBar, formatListBullets, pending, shield } from '@wordpress/icons';
 import { agencySiteRoute } from '../../../app/router/agency';
 import {
 	SidebarBackButton,
@@ -19,6 +19,7 @@ export default function AgencySiteSidebar() {
 	const { data: site } = useQuery( agencySiteQuery( siteSlug ) );
 	const { data: fullSite } = useQuery( siteBySlugQuery( siteSlug ) );
 	const supportsPerformance = fullSite ? siteTypeSupportsFeature( fullSite, 'performance' ) : false;
+	const supportsMonitoring = fullSite ? siteTypeSupportsFeature( fullSite, 'monitoring' ) : false;
 	const isApmEnabled = isEnabled( 'performance/apm' );
 
 	return (
@@ -74,6 +75,11 @@ export default function AgencySiteSidebar() {
 									{ __( 'History' ) }
 								</SidebarMenuItem>
 							</SidebarExpandableMenuItem>
+						) }
+						{ supportsMonitoring && (
+							<SidebarMenuItem icon={ pending } to={ `/sites/${ siteSlug }/monitoring` }>
+								{ __( 'Monitoring' ) }
+							</SidebarMenuItem>
 						) }
 						<SidebarExpandableMenuItem
 							label={ __( 'Logs' ) }

@@ -12,10 +12,7 @@ jest.mock( '@wordpress/data', () => ( {
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import {
-	trackAiEditorialReviewItemAction,
-	trackAiEditorialReviewResultRendered,
-	trackAiEditorialReviewSuggestionRendered,
-	trackBlockTransformationSuggestionRendered,
+	getResponseRenderedTrackingProperties,
 	trackSplitScreenGuideClick,
 	trackSplitScreenGuideRendered,
 } from './tracking';
@@ -60,7 +57,11 @@ type WindowWithAgentsManagerActions = Window & {
 describe( 'Jetpack AI sidebar tracking', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		( globalThis as Record< string, unknown > ).agentsManagerData = { isDevMode: false };
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			isDevMode: false,
+			isA11n: false,
+			site: { ID: 12345 },
+		};
 		window.bigSkyInitialState = {
 			isFreeTrial: '',
 			currentScreen: { screen: 'post' },
@@ -79,91 +80,15 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		delete ( window as WindowWithAgentsManagerActions ).__agentsManagerActions;
 	} );
 
-	it( 'tracks suggestion exposure with only session context', () => {
-		trackAiEditorialReviewSuggestionRendered();
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_suggestion_rendered',
-			{
-				sessionid: 'test-session-id',
-			}
-		);
-		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
-	} );
-
-	it( 'tracks rendered results as aggregate usefulness counts', () => {
-		trackAiEditorialReviewResultRendered( {
-			outcome: 'success',
-			conflictCount: 2,
-			implicationCount: 3,
-			suggestedEditCount: 8,
-			guidelineViolationCount: 0,
-			reviewContext: 'notes_and_guidelines',
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_result_rendered',
-			{
-				outcome: 'success',
-				conflict_count: 2,
-				implication_count: 3,
-				suggested_edit_count: 8,
-				guideline_violation_count: 0,
-				review_context: 'notes_and_guidelines',
-				sessionid: 'test-session-id',
-			}
-		);
-		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
-	} );
-
-	it( 'tracks item actions after completion without row identifiers', () => {
-		trackAiEditorialReviewItemAction( {
-			action: 'bulk_accept',
-			target: 'mixed',
-			outcome: 'partial_failed',
-			itemCount: 4,
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_item_action',
-			{
-				action: 'bulk_accept',
-				target: 'mixed',
-				outcome: 'partial_failed',
-				item_count: 4,
-				sessionid: 'test-session-id',
-			}
-		);
-		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
-	} );
-
-	it( 'tracks block transformation suggestion exposure with stable metadata', () => {
-		trackBlockTransformationSuggestionRendered( {
-			suggestionId: 'check-grammar',
-			suggestionType: 'text',
-			blockType: 'core/paragraph',
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_block_transformation_suggestion_rendered',
-			{
-				suggestion_id: 'check-grammar',
-				suggestion_type: 'text',
-				block_type: 'core/paragraph',
-				surface: 'jetpack_ai_sidebar',
-				sessionid: 'test-session-id',
-			}
-		);
-		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
-	} );
-
 	it( 'tracks split-screen guide clicks with stable component metadata', () => {
 		trackSplitScreenGuideClick( { componentType: 'post-feedback' } );
 
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith( 'jetpack_ai_split_screen_guide_click', {
+			blog_id: 12345,
 			component_type: 'post-feedback',
 			guide_variant: 'inline_action_card',
 			is_test: false,
+			is_a11n: false,
 			post_type: 'post',
 			screen: 'post',
 			sessionid: 'test-session-id',
@@ -174,15 +99,64 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		} );
 	} );
 
+	it.each( [ 'proofread', 'post-feedback' ] )(
+		'counts suggested edits in %s responses',
+		( componentType ) => {
+			expect(
+				getResponseRenderedTrackingProperties( componentType, {
+					items: [ { title: 'First' }, null, { title: 'Second' } ],
+				} )
+			).toEqual( { suggested_edit_count: 2 } );
+		}
+	);
+
+	it( 'counts each AI Editorial Review finding type', () => {
+		expect(
+			getResponseRenderedTrackingProperties( 'ai-editorial-review', {
+				suggested_edits: [ {}, {} ],
+				conflicts: [ {} ],
+				implications: [ {}, null ],
+				guideline_violations: [
+					{ guideline_quote: 'Use sentence case.' },
+					{ guideline_quote: '' },
+					{ guideline_quote: 'Prefer active voice.' },
+				],
+				review_context: 'notes_and_guidelines',
+			} )
+		).toEqual( {
+			suggested_edit_count: 2,
+			conflict_count: 1,
+			implication_count: 1,
+			guideline_violation_count: 2,
+			review_context: 'notes_and_guidelines',
+		} );
+	} );
+
+	it( 'omits an unknown AI Editorial Review context', () => {
+		expect(
+			getResponseRenderedTrackingProperties( 'ai-editorial-review', {
+				review_context: 'unknown-context',
+			} )
+		).not.toHaveProperty( 'review_context' );
+	} );
+
+	it( 'omits response metadata for components without review findings', () => {
+		expect(
+			getResponseRenderedTrackingProperties( 'title-picker', { titles: [ { title: 'Title' } ] } )
+		).toBeUndefined();
+	} );
+
 	it( 'tracks a split-screen guide impression with stable component metadata', () => {
 		trackSplitScreenGuideRendered( { componentType: 'ai-editorial-review' } );
 
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_ai_split_screen_guide_rendered',
 			{
+				blog_id: 12345,
 				component_type: 'ai-editorial-review',
 				guide_variant: 'inline_action_card',
 				is_test: false,
+				is_a11n: false,
 				post_type: 'post',
 				screen: 'post',
 				sessionid: 'test-session-id',
@@ -192,6 +166,40 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
 			allowPostType: true,
 		} );
+	} );
+
+	it( 'uses the server-provided Automattician tracking value', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			isDevMode: false,
+			isA11n: true,
+		};
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_split_screen_guide_click',
+			expect.objectContaining( { is_a11n: true } )
+		);
+	} );
+
+	it( 'omits is_a11n when the server payload predates the signal', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = { isDevMode: false };
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'is_a11n' );
+	} );
+
+	it( 'omits blog_id when the server payload has no valid site ID', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			isDevMode: false,
+			isA11n: false,
+			site: { ID: 0 },
+		};
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'blog_id' );
 	} );
 
 	it( 'uses Agents Manager test and Big Sky free-trial and screen context', () => {

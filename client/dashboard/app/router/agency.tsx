@@ -1,9 +1,4 @@
 import {
-	JetpackLicenseFilter,
-	JetpackLicenseSortField,
-	JetpackLicenseSortDirection,
-} from '@automattic/api-core';
-import {
 	activeAgencyQuery,
 	agencyProductsQuery,
 	agencyQuery,
@@ -11,7 +6,6 @@ import {
 	agencySiteQuery,
 	agencySitesWithPluginsQuery,
 	agencyWooPaymentsDataQuery,
-	jetpackAgencyLicensesQuery,
 	mcpSettingsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -25,6 +19,8 @@ import {
 	referralsQuery,
 	referralCommissionPayoutQuery,
 	tipaltiPayeeQuery,
+	wooPaymentsLicensesQuery,
+	WOOPAYMENTS_PLUGIN,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
@@ -141,6 +137,37 @@ export const agencyTiersRoute = createRoute( {
 	)
 );
 
+// `/agency/partner-directory` – partner directory application dashboard
+export const agencyPartnerDirectoryRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_partner_directory' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Partner Directories' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'agency/partner-directory',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.partner_directory?.allowed ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+} ).lazy( () =>
+	import( '../../agency/partner-directory' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/marketplace/exclusive-offers` – partner offers (Refer / Resell)
 export const exclusiveOffersRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_exclusive_offers' },
@@ -193,7 +220,7 @@ const ensureMcpSettings = async () => {
 
 export const mcpRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
-	head: () => ( { meta: [ { title: __( 'MCP' ) } ] } ),
+	head: () => ( { meta: [ { title: __( 'AI and MCP' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'resources/ai-mcp',
 	beforeLoad: async ( { cause } ) => {
@@ -219,13 +246,23 @@ const mcpOverviewRoute = createRoute( {
 );
 
 const mcpAvailableToolsRoute = createRoute( {
-	head: () => ( { meta: [ { title: __( 'Available tools' ) } ] } ),
+	head: () => ( { meta: [ { title: __( 'Read' ) } ] } ),
 	getParentRoute: () => mcpRoute,
 	path: 'tools',
 	loader: ensureMcpSettings,
 } ).lazy( () =>
-	import( '../../agency/resources/mcp/available-tools' ).then( ( d ) =>
-		createLazyRoute( 'resources-mcp-tools' )( { component: d.default } )
+	import( '../../agency/resources/mcp/read-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-read' )( { component: d.default } )
+	)
+);
+
+const mcpStarterPromptsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Starter prompts' ) } ] } ),
+	getParentRoute: () => mcpRoute,
+	path: 'prompts',
+} ).lazy( () =>
+	import( '../../agency/resources/mcp/starter-prompts' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-prompts' )( { component: d.default } )
 	)
 );
 
@@ -312,16 +349,9 @@ export const earnWooPaymentsRoute = createRoute( {
 		}
 		const [ sitesWithPlugins, licenses ] = await Promise.all( [
 			queryClient.ensureQueryData(
-				agencySitesWithPluginsQuery( agency.id, [ 'woocommerce-payments/woocommerce-payments' ] )
+				agencySitesWithPluginsQuery( agency.id, [ WOOPAYMENTS_PLUGIN ] )
 			),
-			queryClient.ensureQueryData(
-				jetpackAgencyLicensesQuery( agency.id, {
-					filter: JetpackLicenseFilter.Attached,
-					search: 'woopayments',
-					sortField: JetpackLicenseSortField.IssuedAt,
-					sortDirection: JetpackLicenseSortDirection.Descending,
-				} )
-			),
+			queryClient.ensureQueryData( wooPaymentsLicensesQuery( agency.id ) ),
 		] );
 		if ( sitesWithPlugins.length > 0 || licenses.length > 0 ) {
 			await Promise.all( [
@@ -805,13 +835,33 @@ export const agencySitePerformanceBackendRequestDetailRoute = createRoute( {
 	)
 );
 
+// `/sites/$siteSlug/monitoring` – server stats detailed view (WP.com sites only)
+export const agencySiteMonitoringRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'monitoring' },
+	head: () => ( { meta: [ { title: __( 'Monitoring' ) } ] } ),
+	getParentRoute: () => agencySiteRoute,
+	path: 'monitoring',
+} ).lazy( () =>
+	import( '../../agency/sites/site/monitoring' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-monitoring' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
+		agencyPartnerDirectoryRoute,
 		exclusiveOffersRoute,
 		learnRoute,
-		mcpRoute.addChildren( [ mcpOverviewRoute, mcpAvailableToolsRoute, mcpConnectRoute ] ),
+		mcpRoute.addChildren( [
+			mcpOverviewRoute,
+			mcpAvailableToolsRoute,
+			mcpStarterPromptsRoute,
+			mcpConnectRoute,
+		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
 		earnOverviewRoute,
@@ -851,6 +901,7 @@ export const createAgencyRoutes = () => [
 					agencySitePerformanceBackendRequestDetailRoute,
 				] ),
 			] ),
+			agencySiteMonitoringRoute,
 			agencySiteLogsRoute.addChildren( [ agencySiteLogsIndexRoute, agencySiteActivityRoute ] ),
 		] ),
 	] ),

@@ -60,13 +60,6 @@
 }
 
 .wpcom-plan-selector__owned-plan {
-	@include heading-medium;
-
-	display: inline-block;
-	border: 1px solid var( --color-neutral-5 );
-	background-color: var( --color-neutral-0 );
-	padding: 4px 16px;
-	border-radius: 16px;
 	margin-block-end: 8px;
 }
 

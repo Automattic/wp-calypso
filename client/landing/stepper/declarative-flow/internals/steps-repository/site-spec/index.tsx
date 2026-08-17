@@ -17,6 +17,7 @@ import {
 	waitForBlueprintImportComplete,
 } from 'calypso/landing/stepper/utils/blueprint-archive-import';
 import {
+	getBuildWowGraph,
 	getBuildWowSiteIdentifier,
 	isBuildWowEnabled,
 	logBuildWowEvent,
@@ -25,9 +26,9 @@ import {
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import {
+	getBlueprintSiteSpecConfig,
 	getBuildWowSiteSpecConfig,
 	getCiabSiteSpecConfig,
-	getDefaultSiteSpecConfig,
 	getEarlyProvisionSiteSpecConfig,
 	type SiteSpecConfig,
 } from 'calypso/lib/site-spec/utils';
@@ -278,7 +279,11 @@ const SiteSpec: StepType = function SiteSpec() {
 					site_identifier: buildWowSiteIdentifier,
 				} );
 
-				const response = await requestBuildWowSite( buildWowSiteIdentifier, specId );
+				const response = await requestBuildWowSite(
+					buildWowSiteIdentifier,
+					specId,
+					getBuildWowGraph( queryParams )
+				);
 				responseBlogId = response.blog_id;
 
 				logBuildWowEvent(
@@ -300,6 +305,7 @@ const SiteSpec: StepType = function SiteSpec() {
 					throw new Error( 'Build-wow response is missing the Site Editor URL.' );
 				}
 
+				const ref = queryParams.get( 'ref' );
 				const source = queryParams.get( 'source' );
 				const destination = addQueryArgs( response.site_editor_url, {
 					spec_id: specId,
@@ -321,6 +327,8 @@ const SiteSpec: StepType = function SiteSpec() {
 					siteSlug: buildWowSiteIdentifier,
 					specId,
 					editorUrl: destination,
+					...( ref ? { ref } : {} ),
+					...( source ? { source } : {} ),
 				} );
 			} catch ( error ) {
 				logBuildWowEvent(
@@ -456,7 +464,9 @@ const SiteSpec: StepType = function SiteSpec() {
 	} else if ( shouldImportBlueprint ) {
 		siteSpecStep = (
 			<SiteSpecContainer
-				siteSpecConfig={ getDefaultSiteSpecConfig() }
+				siteSpecConfig={ getBlueprintSiteSpecConfig( {
+					blueprintId: blueprintArchiveSlug,
+				} ) }
 				onSpecConfirm={ handleBlueprintArchiveSpecConfirm }
 			/>
 		);

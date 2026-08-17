@@ -1,4 +1,11 @@
-import { DataHelper, PostResponse, TestAccount } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	PostResponse,
+	TestAccount,
+	envToFeatureKey,
+	getTestAccountByFeature,
+} from '@automattic/calypso-e2e';
+import { getAccount } from '../../lib/get-account';
 import { expect, tags, test } from '../../lib/pw-base';
 import { TEST_IMAGE_PATH } from '../constants';
 
@@ -21,8 +28,6 @@ test.describe(
 		} );
 
 		test( 'As a WordPress.com user, I can promote my content using Jetpack Blaze', async ( {
-			accountGivenByEnvironment,
-			accountSimpleSiteFreePlan,
 			environment,
 			helperData,
 			helperMedia,
@@ -35,9 +40,14 @@ test.describe(
 				'Blaze is unavailable on private sites'
 			);
 
-			testAccount = environment.TEST_ON_ATOMIC
-				? accountGivenByEnvironment
-				: accountSimpleSiteFreePlan;
+			// Resolved here rather than taken as a fixture: declaring both accounts as
+			// fixtures logs in as both, and this test promotes from one of them.
+			testAccount = await getAccount(
+				page,
+				environment.TEST_ON_ATOMIC
+					? getTestAccountByFeature( envToFeatureKey( environment ) )
+					: 'simpleSiteFreePlanUser'
+			);
 			const pageTitle = helperData.getRandomPhrase().slice( 0, 20 );
 			const snippet = Array( 2 ).fill( helperData.getRandomPhrase() ).toString();
 

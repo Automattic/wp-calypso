@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import type { AgentsManagerContextType } from '../../contexts';
 
@@ -12,9 +12,12 @@ const mockSetIsDocked = jest.fn();
 const mockSetIsMinimized = jest.fn();
 const mockSetIsSplitScreen = jest.fn();
 const mockUseAgentLayoutManager = jest.fn();
-const mockResumeActiveChat = jest.fn();
+const mockResumeChat = jest.fn();
 const mockCloseSidebar = jest.fn();
 let mockLayoutIsDocked = false;
+// Overrides the layout mock's `canDock` (which otherwise follows
+// `mockLayoutIsDocked`) so floating-but-dockable states are testable.
+let mockCanDock: boolean | null = null;
 let mockContext: Partial< AgentsManagerContextType > = {};
 let mockAgentsManagerState: {
 	isOpen?: boolean;
@@ -46,11 +49,12 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( '@wordpress/icons', () => ( {
+	backup: 'backup',
+	cog: 'cog',
 	columns: 'columns',
 	comment: 'comment',
 	drawerRight: 'drawerRight',
-	lineSolid: 'lineSolid',
-	login: 'login',
+	heading: 'heading',
 } ) );
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => mockContext,
@@ -68,7 +72,7 @@ jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) =>
 	return {
 		isDocked: mockLayoutIsDocked,
 		isSidebarOpen: mockLayoutIsDocked && mockAgentsManagerState.isOpen !== false,
-		canDock: mockLayoutIsDocked,
+		canDock: mockCanDock ?? mockLayoutIsDocked,
 		dock: jest.fn(),
 		undock: jest.fn(),
 		openSidebar: jest.fn(),
@@ -83,9 +87,6 @@ jest.mock( '../../hooks/use-should-use-unified-agent', () => ( {
 	useShouldUseUnifiedAgent: () => mockShouldUseUnifiedAgent,
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
-jest.mock( '../../utils/persist-last-activity', () => ( {
-	persistLastActivity: jest.fn(),
-} ) );
 jest.mock( '../agent-dock/style.scss', () => ( {} ) );
 jest.mock( '../editor-ai-chat-button', () => ( {
 	__esModule: true,
@@ -103,22 +104,25 @@ jest.mock( '../orchestrator-chat', () => ( {
 		onExpand,
 		onClose,
 	}: {
-		chatHeaderOptions: { title: string; onClick?: () => void; isDisabled?: boolean }[];
+		chatHeaderOptions: { title: string; onClick?: () => void; isDisabled?: boolean }[][];
 		isOpen: boolean;
 		onExpand: () => void;
 		onClose: () => void;
 	} ) => (
 		<div data-testid="orchestrator-chat" data-chat-open={ String( isOpen ) }>
-			{ chatHeaderOptions.map( ( option ) => (
-				<button
-					key={ option.title }
-					type="button"
-					onClick={ option.onClick }
-					disabled={ option.isDisabled }
-				>
-					{ option.title }
-				</button>
-			) ) }
+			{ chatHeaderOptions.map( ( group, groupIndex ) =>
+				group.map( ( option ) => (
+					<button
+						key={ option.title }
+						type="button"
+						data-group={ groupIndex }
+						onClick={ option.onClick }
+						disabled={ option.isDisabled }
+					>
+						{ option.title }
+					</button>
+				) )
+			) }
 			<button onClick={ onExpand }>Expand chat</button>
 			<button onClick={ onClose }>Close chat</button>
 		</div>
@@ -138,10 +142,26 @@ jest.mock( '../zendesk-chat', () => ( {
 } ) );
 jest.mock( '../agent-history', () => ( {
 	__esModule: true,
-	default: ( { onExpand }: { onExpand: () => void } ) => (
+	default: ( {
+		onExpand,
+		onSelectConversation,
+		chatHeaderOptions,
+	}: {
+		onExpand: () => void;
+		onSelectConversation: ( conversation: { session_id: string } ) => void;
+		chatHeaderOptions: { title: string; onClick?: () => void; isDisabled?: boolean }[][];
+	} ) => (
 		<div data-testid="agent-history">
 			History
+			{ chatHeaderOptions.flat().map( ( option ) => (
+				<button key={ option.title } onClick={ option.onClick } disabled={ option.isDisabled }>
+					{ option.title }
+				</button>
+			) ) }
 			<button onClick={ onExpand }>Expand history</button>
+			<button onClick={ () => onSelectConversation( { session_id: 'conversation-session-id' } ) }>
+				Select conversation
+			</button>
 		</div>
 	),
 } ) );
@@ -160,8 +180,10 @@ jest.mock( '../support-guides', () => ( {
 } ) );
 
 import AgentDock from '../agent-dock';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { getSessionId } from '../../utils/agent-session';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 
+const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.Mock;
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.Mock;
 
 function LocationProbe() {
@@ -189,8 +211,8 @@ function useWpAdminAgent() {
 		agentConfig: {
 			agentId: 'wp-orchestrator',
 		},
-		getActiveSessionId: () => 'session-123',
-		resumeActiveChat: mockResumeActiveChat,
+		getTabSessionId: () => 'session-123',
+		resumeChat: mockResumeChat,
 		zendeskConversationTags: [],
 	} as unknown as Partial< AgentsManagerContextType >;
 }
@@ -201,6 +223,8 @@ describe( 'AgentDock', () => {
 		mockHasAdminBar = false;
 		mockShouldUseUnifiedAgent = false;
 		mockLayoutIsDocked = false;
+		mockCanDock = null;
+		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 		mockAgentsManagerState = { isOpen: true, isDocked: false };
 		mockContext = {
 			siteKey: 'site-1',
@@ -208,8 +232,8 @@ describe( 'AgentDock', () => {
 			agentConfig: {
 				agentId: 'reader-chat',
 			},
-			getActiveSessionId: () => 'session-123',
-			resumeActiveChat: mockResumeActiveChat,
+			getTabSessionId: () => 'session-123',
+			resumeChat: mockResumeChat,
 			zendeskConversationTags: [],
 		} as unknown as Partial< AgentsManagerContextType >;
 	} );
@@ -271,7 +295,7 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Expand history' ) );
 
 		// Expanding restores the last view instead of jumping back to the chat.
-		expect( mockResumeActiveChat ).not.toHaveBeenCalled();
+		expect( mockResumeChat ).not.toHaveBeenCalled();
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
 	} );
 
@@ -296,7 +320,7 @@ describe( 'AgentDock', () => {
 		renderAgentDock( '/support-guides' );
 		fireEvent.click( screen.getByText( 'Expand guides' ) );
 
-		expect( mockResumeActiveChat ).not.toHaveBeenCalled();
+		expect( mockResumeChat ).not.toHaveBeenCalled();
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
 	} );
 
@@ -420,6 +444,191 @@ describe( 'AgentDock', () => {
 		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
 	} );
 
+	it( 'offers View history in More Options after New chat', () => {
+		useWpAdminAgent();
+
+		renderAgentDock();
+
+		const options = within( screen.getByTestId( 'orchestrator-chat' ) ).getAllByRole( 'button' );
+
+		expect( options[ 0 ] ).toHaveTextContent( 'New chat' );
+		expect( options[ 1 ] ).toHaveTextContent( 'View history' );
+	} );
+
+	it( 'omits View history from More Options on reader chat', () => {
+		renderAgentDock();
+
+		expect( screen.queryByText( 'View history' ) ).toBeNull();
+	} );
+
+	it( 'omits View history from More Options while on the history view', () => {
+		useWpAdminAgent();
+
+		renderAgentDock( '/history' );
+
+		expect( screen.getByText( 'New chat' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'View history' ) ).toBeNull();
+	} );
+
+	it( 'dual-fires the unified and Big Sky events for New chat', () => {
+		useWpAdminAgent();
+
+		renderAgentDock( '/history' );
+		fireEvent.click( screen.getByText( 'New chat' ) );
+
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'ai_chat_more_options_click',
+			{
+				type: 'reset_chat',
+			}
+		);
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
+			type: 'reset_chat',
+		} );
+	} );
+
+	it( 'offers the guidelines and settings items when wp-admin injects the site', () => {
+		useWpAdminAgent();
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			site: { domain: 'example.com' },
+			isWpcomPlatform: true,
+		};
+
+		renderAgentDock();
+
+		expect( screen.getByText( 'Knowledge and memory' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'AI Agent settings' ) ).toBeInTheDocument();
+	} );
+
+	it( 'omits the settings item on non-WordPress.com-hosted sites', () => {
+		useWpAdminAgent();
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			site: { domain: 'example.com' },
+		};
+
+		renderAgentDock();
+
+		expect( screen.getByText( 'Knowledge and memory' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'AI Agent settings' ) ).toBeNull();
+	} );
+
+	it( 'omits the guidelines and settings items without the injected site', () => {
+		useWpAdminAgent();
+
+		renderAgentDock();
+
+		expect( screen.queryByText( 'Knowledge and memory' ) ).toBeNull();
+		expect( screen.queryByText( 'AI Agent settings' ) ).toBeNull();
+	} );
+
+	it( 'navigates to history from More Options', () => {
+		useWpAdminAgent();
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'View history' ) );
+
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'ai_chat_more_options_click',
+			{
+				type: 'view_history',
+			}
+		);
+		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/history' );
+	} );
+
+	it( 'selecting a past conversation saves it as the tab session and opens the chat', () => {
+		sessionStorage.clear();
+		useWpAdminAgent();
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'View history' ) );
+		fireEvent.click( screen.getByText( 'Select conversation' ) );
+
+		expect( getSessionId( undefined, 'site-1' ) ).toBe( 'conversation-session-id' );
+		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/chat' );
+	} );
+
+	it( 'opens the guidelines page from More Options', () => {
+		useWpAdminAgent();
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			site: { domain: 'example.com' },
+		};
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'Knowledge and memory' ) );
+
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'ai_chat_more_options_click',
+			{
+				type: 'knowledge_memory',
+			}
+		);
+		expect( openSpy ).toHaveBeenCalledWith(
+			'/wp-admin/options-general.php?page=guidelines-wp-admin',
+			'_blank',
+			'noopener,noreferrer'
+		);
+
+		openSpy.mockRestore();
+	} );
+
+	it( 'opens the AI Agent settings for the injected site', () => {
+		useWpAdminAgent();
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			site: { domain: 'example.com' },
+			isWpcomPlatform: true,
+		};
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'AI Agent settings' ) );
+
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'ai_chat_more_options_click',
+			{
+				type: 'ai_agent_settings',
+			}
+		);
+		expect( openSpy ).toHaveBeenCalledWith(
+			'https://my.wordpress.com/sites/example.com/settings/ai-tools',
+			'_blank',
+			'noopener,noreferrer'
+		);
+
+		openSpy.mockRestore();
+	} );
+
+	it( 'offers Switch to floating behind the divider while docked', () => {
+		useWpAdminAgent();
+		mockLayoutIsDocked = true;
+
+		renderAgentDock();
+
+		expect( screen.getByText( 'New chat' ) ).toHaveAttribute( 'data-group', '0' );
+		expect( screen.getByText( 'Switch to floating' ) ).toHaveAttribute( 'data-group', '1' );
+		expect( screen.queryByText( 'Switch to sidebar' ) ).toBeNull();
+	} );
+
+	it( 'offers Switch to sidebar while floating and docking is available', () => {
+		useWpAdminAgent();
+		mockCanDock = true;
+
+		renderAgentDock();
+
+		expect( screen.getByText( 'Switch to sidebar' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Switch to floating' ) ).toBeNull();
+	} );
+
+	it( 'omits the switch options on reader chat', () => {
+		mockLayoutIsDocked = true;
+
+		renderAgentDock();
+
+		expect( screen.queryByText( 'Switch to floating' ) ).toBeNull();
+		expect( screen.queryByText( 'Switch to sidebar' ) ).toBeNull();
+	} );
+
 	it.each( [
 		{
 			isSplitScreen: false,
@@ -447,9 +656,12 @@ describe( 'AgentDock', () => {
 			renderAgentDock( '/chat', { capabilities: { supportsSplitScreen: true } } );
 			fireEvent.click( screen.getByRole( 'button', { name: label } ) );
 
-			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
-				type,
-			} );
+			expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+				'ai_chat_more_options_click',
+				{
+					type,
+				}
+			);
 			expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( nextState );
 		}
 	);

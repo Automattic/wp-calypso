@@ -3,7 +3,7 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { ComponentProps, ReactNode, Ref } from 'react';
@@ -195,9 +195,10 @@ jest.mock( '../feedback-input', () => ( {
 jest.mock( '../icons', () => ( {
 	AI: () => null,
 } ) );
+const mockSelectedBlock = jest.fn( () => null );
 jest.mock( '../selected-block', () => ( {
 	__esModule: true,
-	default: () => null,
+	default: mockSelectedBlock,
 } ) );
 jest.mock( '../../utils/is-plugin-compass-agent', () => ( {
 	isPluginCompassHost: () => false,
@@ -241,6 +242,19 @@ describe( 'AgentChat', () => {
 		document.body.className = '';
 	} );
 
+	it( 'renders the selected-block chip only on editor pages', async () => {
+		document.body.classList.add( 'post-php', 'post-type-post' );
+		renderAgentChat();
+		await waitFor( () => expect( mockSelectedBlock ).toHaveBeenCalled() );
+
+		mockSelectedBlock.mockClear();
+		document.body.className = '';
+		renderAgentChat();
+		// The lazy chunk resolves in a microtask — flush before asserting absence.
+		await act( () => Promise.resolve() );
+		expect( mockSelectedBlock ).not.toHaveBeenCalled();
+	} );
+
 	const imageUpload = ( isUploadingImages: boolean ) =>
 		( {
 			pendingImages: [],
@@ -271,6 +285,43 @@ describe( 'AgentChat', () => {
 		);
 		expect( mockImageUploaderProps ).toHaveBeenCalledWith(
 			expect.objectContaining( { disabled: false } )
+		);
+	} );
+
+	it( 'blocks typing as well as sending when the chat input is disabled', () => {
+		// Both props are required: agenttic forwards `readOnly` to the textarea
+		// but consumes `disabled` only for the submit button and Enter-to-submit,
+		// so `disabled` on its own leaves the field typeable.
+		renderAgentChat( { isOpen: true, isChatInputDisabled: true } );
+
+		expect( mockInputProps ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				readOnly: true,
+				disabled: true,
+				imageUploadDisabled: true,
+			} )
+		);
+	} );
+
+	it( 'keeps the chat input disabled while images are pending', () => {
+		// The pending-images branch passes `disabled: false` to keep the composer
+		// live mid-upload; a non-operational chat has to win over it.
+		renderAgentChat( {
+			isOpen: true,
+			isChatInputDisabled: true,
+			imageUpload: {
+				pendingImages: [ { id: 'p1' } ],
+				uploadingImages: [],
+				isUploadingImages: false,
+				handleFilesSelected: jest.fn(),
+				handleRemoveImage: jest.fn(),
+				uploadImagesToWordPress: jest.fn(),
+				abortUpload: jest.fn( () => false ),
+			} as never,
+		} );
+
+		expect( mockInputProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { readOnly: true, disabled: true } )
 		);
 	} );
 
@@ -428,6 +479,28 @@ describe( 'AgentChat', () => {
 
 		await user.click( writingToggle );
 		expect( screen.queryByRole( 'button', { name: 'Proofread' } ) ).toBeNull();
+	} );
+
+	it( 'keeps the featured image suggestion out of the writing group', () => {
+		const suggestions = [
+			{ id: 'customize-colors', label: 'Customize colors', prompt: 'Customize colors' },
+			{
+				id: 'generate-featured-image',
+				label: 'Generate featured image',
+				description: 'Create a new image with AI and set it as the featured image.',
+				prompt: '',
+			},
+			{ id: 'optimize-title', label: 'Optimize Title', prompt: 'Optimize the title' },
+		];
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: suggestions,
+			groupWritingSuggestions: true,
+		} );
+
+		const button = screen.getByRole( 'button', { name: 'Generate featured image' } );
+		expect( button.closest( '.agents-manager-writing-suggestions' ) ).toBeNull();
 	} );
 
 	it( 'keeps the flat empty view when there are no writing suggestions', () => {

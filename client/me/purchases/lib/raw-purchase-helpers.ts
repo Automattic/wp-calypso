@@ -3,6 +3,7 @@ import {
 	getPurchasePriceTierList,
 	isPurchaseExpiring,
 	isPurchaseOneTimePurchase,
+	PRODUCT_STUDIO_CODE_AI_CREDITS,
 } from '@automattic/api-core';
 import {
 	findPlansKeys,
@@ -43,6 +44,7 @@ import {
 	isMarketplaceHoldingSitePurchase,
 	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
+import { getStudioCodeAiCreditsTitle } from 'calypso/dashboard/utils/studio-code-ai-credits';
 import { addPaymentMethod, changePaymentMethod } from '../paths';
 import type { MarketingSurveyResponses, Purchase } from '@automattic/api-core';
 import type { TranslateResult } from 'i18n-calypso';
@@ -201,6 +203,18 @@ export function paymentLogoType( purchase: Purchase ): string | null | undefined
 
 export function isWithinIntroductoryOfferPeriod( purchase: Purchase ): boolean {
 	return purchase.introductory_offer?.is_within_period ?? false;
+}
+
+export function isIntroductoryOfferFreeTrial( purchase: Purchase ): boolean {
+	return purchase.introductory_offer?.cost_per_interval === 0;
+}
+
+export function mightStillAutoRenew( purchase: Purchase ): boolean {
+	return purchase.might_still_auto_renew;
+}
+
+export function getPartnerName( purchase: Purchase ): string | null {
+	return isPartnerPurchase( purchase ) ? purchase.partner_name ?? null : null;
 }
 
 export function canEditPaymentDetails( purchase: Purchase ): boolean {
@@ -386,7 +400,7 @@ export function getDowngradePlanFromPurchase( purchase: Purchase ) {
 }
 
 export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
-	return purchase.is_within_initial_refund_window && ! isExpiredOrRemoved( purchase );
+	return purchase.is_refundable && ! isExpiredOrRemoved( purchase );
 }
 
 export function getDisplayName( purchase: Purchase ): TranslateResult {
@@ -416,6 +430,10 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 
 	if ( jetpackProductsDisplayNames[ productSlug ] ) {
 		return jetpackProductsDisplayNames[ productSlug ];
+	}
+
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === productSlug && quantity ) {
+		return getStudioCodeAiCreditsTitle( productName, quantity );
 	}
 
 	if ( isTieredVolumeSpaceAddon( purchase ) ) {

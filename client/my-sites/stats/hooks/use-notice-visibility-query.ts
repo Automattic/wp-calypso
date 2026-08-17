@@ -7,13 +7,15 @@ export const NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL = 'show_floating_user
 
 const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	opt_in_new_stats: false,
-	traffic_page_highlights_module_settings: false,
-	traffic_page_settings: false,
 	do_you_love_jetpack_stats: false,
 	commercial_site_upgrade: false,
 	// Defaults to hidden until the server includes it in the notices response,
 	// so the client can ship ahead of the WPCOM allow-list change.
 	free_site_upgrade: false,
+	// The server reports this id (true until a dismissal is in effect), so the
+	// default only covers request failures: the grid stays hidden rather than
+	// rendering without a working dismissal round-trip.
+	pricing_grid: false,
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
 	gdpr_cookie_consent: false,
@@ -33,8 +35,12 @@ export type NoticeIdType = keyof Notices;
 
 // These notices are mutually exclusive, so if one is active, the other should be hidden.
 // The IDs are sorted by priory from high to low.
+// `pricing_grid` is deliberately NOT in this group even though the grid trumps every
+// notice: it replaces the whole dashboard, so StatsNotices never mounts alongside it
+// and no suppression is needed. Listing it here would instead suppress every other
+// notice on all the sites that never see the grid (pre-launch sites, sites with
+// plans), since the server reports the id as visible until a dismissal is recorded.
 const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
-	settings_tool_tips: [ 'traffic_page_settings', 'traffic_page_highlights_module_settings' ],
 	dashboard_notices: [
 		// Set the highest priority to prevent blocking Stats under any circumstances.
 		'gdpr_cookie_consent',

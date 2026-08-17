@@ -1,13 +1,9 @@
 import {
-	JetpackLicenseFilter,
-	JetpackLicenseSortField,
-	JetpackLicenseSortDirection,
-} from '@automattic/api-core';
-import {
 	agencySitesWithPluginsQuery,
 	agencyWooPaymentsDataQuery,
-	jetpackAgencyLicensesQuery,
 	jetpackTestConnectionQuery,
+	wooPaymentsLicensesQuery,
+	WOOPAYMENTS_PLUGIN,
 } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
@@ -54,12 +50,7 @@ export interface WooPaymentsDashboardData {
  */
 export default function useWooPaymentsDashboardData( agencyId: number ): WooPaymentsDashboardData {
 	const { data: licenseSites, isLoading: isLoadingLicensesWithWooPayments } = useQuery( {
-		...jetpackAgencyLicensesQuery( agencyId, {
-			filter: JetpackLicenseFilter.Attached,
-			search: 'woopayments',
-			sortField: JetpackLicenseSortField.IssuedAt,
-			sortDirection: JetpackLicenseSortDirection.Descending,
-		} ),
+		...wooPaymentsLicensesQuery( agencyId ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
 		select: ( licenses ) =>
@@ -71,7 +62,7 @@ export default function useWooPaymentsDashboardData( agencyId: number ): WooPaym
 	} );
 
 	const { isLoading: isLoadingSitesWithPlugins, data: sitesWithPlugins } = useQuery( {
-		...agencySitesWithPluginsQuery( agencyId, [ 'woocommerce-payments/woocommerce-payments' ] ),
+		...agencySitesWithPluginsQuery( agencyId, [ WOOPAYMENTS_PLUGIN ] ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
 	} );

@@ -26,6 +26,7 @@ const defaultValues: Required< UserPreferences > = {
 	'reader-profile-sites-visibility': 'public',
 	'reader-profile-hidden-sites': [],
 	two_step_security_key_reregister_required: false,
+	'a4a-dashboard-pd-not-approved-popover': false,
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -45,6 +46,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'reader-profile-sites-visibility': 'sitevis',
 	'reader-profile-hidden-sites': 'hidsit',
 	two_step_security_key_reregister_required: '2fakey',
+	'a4a-dashboard-pd-not-approved-popover': 'a4apd',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {

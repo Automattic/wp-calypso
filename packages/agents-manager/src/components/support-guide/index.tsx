@@ -6,6 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FROM_CHAT } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -47,13 +48,13 @@ export default function SupportGuide( {
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
 	const closedChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
-	const isFromChat = !! ( state?.sessionId || state?.conversationId );
+	const isFromChat = state?.from === FROM_CHAT || !! state?.conversationId;
 	const title = __( 'Support Guides', __i18n_text_domain__ );
 
 	// Navigate back to the source route, preserving relevant state.
 	const handleBack = () => {
-		if ( state?.sessionId ) {
-			navigate( '/chat', { state } );
+		if ( state?.from === FROM_CHAT ) {
+			navigate( '/chat' );
 		} else if ( state?.conversationId ) {
 			navigate( '/zendesk', { state } );
 		} else {
@@ -99,6 +100,7 @@ export default function SupportGuide( {
 							currentSiteDomain={ site?.domain }
 							isEligibleForChat={ isEligibleForChat }
 							forceEmailSupport={ false }
+							siteId={ site?.ID }
 						/>
 					</div>
 					{ ! isFromChat && (

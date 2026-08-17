@@ -1,11 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { backup, chevronRight, external, Icon, page, rss, video } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useHelpCenterCTA } from '../hooks';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HelpCenterCTA } from './help-center-cta';
 
 import './help-center-more-resources.scss';
@@ -16,6 +16,7 @@ export const HelpCenterMoreResources = () => {
 	const featureConfig = useFeatureConfig();
 	const navigate = useNavigate();
 	const cta = useHelpCenterCTA( 'link-list-item' );
+	const recordTracksEvent = useHelpCenterTracksEvent();
 
 	const trackMoreResourcesButtonClick = ( resource: string ) => {
 		recordTracksEvent( 'calypso_help_moreresources_click', {

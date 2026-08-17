@@ -90,8 +90,7 @@
 	}
 
 	// Use base component styling of `@automattic/components/Button`
-	.inner-notice-container .banner__action a.button,
-	.button.jetpack-emerald-button {
+	.inner-notice-container .banner__action a.button {
 		padding: 0.5em 1.5em;
 		font-size: 1rem;
 		line-height: 1.375;

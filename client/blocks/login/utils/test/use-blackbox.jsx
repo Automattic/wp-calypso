@@ -8,6 +8,7 @@ import { loadBlackboxSdk } from '../blackbox-sdk';
 import { useBlackbox } from '../use-blackbox';
 
 jest.mock( '../blackbox-sdk', () => ( {
+	getBlackboxApiKey: jest.fn( () => 'test-api-key' ),
 	loadBlackboxSdk: jest.fn( () => Promise.resolve() ),
 } ) );
 

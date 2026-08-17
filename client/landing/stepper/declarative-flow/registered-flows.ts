@@ -23,6 +23,7 @@ import {
 	ART_PROMO_FLOW,
 	DIRECT_TO_CART_FLOW,
 	WRITE_ON_FLOW,
+	WRITE_NEW_SITE_FLOW,
 	EDUCATION_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
@@ -78,6 +79,9 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ WRITE_ON_FLOW ]: () =>
 		import( /* webpackChunkName: "write-on-flow" */ './flows/write-on/write-on' ),
+
+	[ WRITE_NEW_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "write-new-site-flow" */ './flows/write-new-site/write-new-site' ),
 };
 
 /**

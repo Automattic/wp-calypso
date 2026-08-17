@@ -1,17 +1,16 @@
 import { Button } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Button as WPButton, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { arrowUpRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { formatCooldown } from 'calypso/dashboard/utils/email-verification-resend';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { useIsEmailWriteInFlight } from '../use-email-change-request';
 import { getInboxLink } from './inbox-links';
 import { markGateShown } from './storage';
 import { useEmailVerification } from './use-email-verification';
@@ -27,15 +26,40 @@ interface Props {
 	scope: string;
 	// Partner/Woo branding, so the top bar doesn't change when the gate replaces the form.
 	logo?: ReactNode;
+	// The address the activation email went to, which after a correction is the one just accepted
+	// rather than the one `/me` still reports.
+	email: string;
+	// Returns to the account step to correct the address this was sent to.
+	onEditEmail: () => void;
+	// Set while a correction is waiting to be confirmed, which changes what resending has to do.
+	pendingEmail?: string;
+	// Whether the address above is the one being waited on, or is standing in until the settings
+	// answer. What would go somewhere on its strength waits for it — correcting it does not, since
+	// a correction of the wrong address asks for no change and is answered as none.
+	addressSettled: boolean;
 }
 
-const EmailVerificationGate = ( { flow, scope, logo }: Props ) => {
+const EmailVerificationGate = ( {
+	flow,
+	scope,
+	logo,
+	email,
+	onEditEmail,
+	pendingEmail,
+	addressSettled,
+}: Props ) => {
 	const { __ } = useI18n();
-	const email = useSelector( getCurrentUserEmail );
-	const { sendStatus, secondsUntilResend, resend } = useEmailVerification( flow, scope );
+	const isWriteInFlight = useIsEmailWriteInFlight();
+	const { sendStatus, secondsUntilResend, resend } = useEmailVerification(
+		flow,
+		scope,
+		pendingEmail
+	);
 
 	const headingRef = useRef< HTMLDivElement >( null );
-	const inboxLink = getInboxLink( email ?? undefined );
+	// Either kind of send: one shares a mutation scope, the other is only known to this component.
+	const isSending = isWriteInFlight || sendStatus === 'sending';
+	const inboxLink = getInboxLink( email );
 	// A stable dependency: `inboxLink` is a fresh object every render.
 	const provider = inboxLink?.provider ?? 'none';
 
@@ -70,19 +94,29 @@ const EmailVerificationGate = ( { flow, scope, logo }: Props ) => {
 			provider: inboxLink?.provider,
 		} );
 
-	const subText = useMemo(
-		() =>
-			createInterpolateElement(
-				sprintf(
-					// translators: %s is the email address the verification link was sent to.
-					__(
-						'We just sent an email to <email>%s</email>. Click the link in the email to verify your account.'
-					),
-					email ?? ''
-				),
-				{ email: <strong /> }
+	const subText = createInterpolateElement(
+		sprintf(
+			// translators: %s is the email address the verification link was sent to.
+			__(
+				'We just sent an email to <email>%s</email> (<edit>edit</edit>). Click the link in the email to verify your account.'
 			),
-		[ __, email ]
+			email
+		),
+		{
+			email: <strong />,
+			edit: (
+				<WPButton
+					variant="link"
+					// A correction submitted now would queue behind the send, and a reload while it
+					// waited would leave the address written down with nothing able to carry it out.
+					disabled={ isSending }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_signup_email_verification_edit_click', { flow } );
+						onEditEmail();
+					} }
+				/>
+			),
+		}
 	);
 
 	return (
@@ -113,7 +147,14 @@ const EmailVerificationGate = ( { flow, scope, logo }: Props ) => {
 				}
 			>
 				<VStack spacing={ 8 }>
-					<p className="onboarding-email-verification__sub-text" id={ SUB_TEXT_ID }>
+					{ /* The address can be replaced once the settings answer, after this has been read
+					   out and focus has moved on. */ }
+					<p
+						className="onboarding-email-verification__sub-text"
+						id={ SUB_TEXT_ID }
+						aria-live="polite"
+						aria-atomic="true"
+					>
 						{ subText }
 					</p>
 
@@ -121,7 +162,7 @@ const EmailVerificationGate = ( { flow, scope, logo }: Props ) => {
 						{ /* Calypso's Button, not the Step.* ones: the design follows its outline, radius,
 						   and weight. A known provider gets an inbox deep link; confirming there — or
 						   anywhere else — resolves the gate by polling, so nothing else is needed. */ }
-						{ inboxLink && (
+						{ inboxLink && addressSettled && (
 							<Button
 								primary
 								href={ inboxLink.url }
@@ -136,7 +177,7 @@ const EmailVerificationGate = ( { flow, scope, logo }: Props ) => {
 
 						<Button
 							onClick={ resend }
-							disabled={ sendStatus === 'sending' || secondsUntilResend > 0 }
+							disabled={ isSending || secondsUntilResend > 0 || ! addressSettled }
 							busy={ sendStatus === 'sending' }
 						>
 							{ resendLabel }

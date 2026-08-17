@@ -27,7 +27,6 @@ boot( {
 		sites: true,
 		domains: true,
 		emails: true,
-		themes: true,
 		reader: true,
 		help: true,
 		notifications: true,

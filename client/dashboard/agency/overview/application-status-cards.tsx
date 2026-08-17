@@ -7,10 +7,9 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { published } from '@wordpress/icons';
+import { error, published } from '@wordpress/icons';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
-import { caution } from '../../components/notice/icons';
 import { Text } from '../../components/text';
 import { PARTNER_PROGRAM_GUIDE_URL } from './constants';
 import NewTabLabel from './new-tab-label';
@@ -105,7 +104,7 @@ export function RejectedTierCard( { contactSupportHref }: { contactSupportHref: 
 		<ApplicationStatusCard
 			decoration={
 				<Text intent="error" as="span">
-					<Icon icon={ caution } size={ 24 } fill="currentColor" />
+					<Icon icon={ error } size={ 24 } fill="currentColor" />
 				</Text>
 			}
 			label={ __( 'Application status' ) }
@@ -113,8 +112,7 @@ export function RejectedTierCard( { contactSupportHref }: { contactSupportHref: 
 		>
 			<Text variant="muted" lineHeight="20px">
 				{ __( 'We have not approved your application for the Automattic for Agencies program.' ) }
-			</Text>
-			<Text variant="muted" lineHeight="20px">
+				<br />
 				{ createInterpolateElement(
 					__(
 						'Please <a>contact support</a> to discuss this further if you think this was done in error.'
