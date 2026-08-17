@@ -174,7 +174,14 @@ export async function revealSidebarField(
 		return false;
 	}
 
-	// A block the sidebar focused dims the rest of the editor, and
+	try {
+		await editorInterface.enableComplementaryArea( 'core', DOCUMENT_SIDEBAR );
+	} catch {
+		return false;
+	}
+
+	// Clearing costs the user their place, so it waits until the sidebar opens.
+	// A block the sidebar focused also dims the rest of the editor, and
 	// clearSelectedBlock on its own leaves that dimming in place.
 	clearActiveBlockFocus();
 
@@ -183,12 +190,6 @@ export async function revealSidebarField(
 	(
 		dispatch( 'core/block-editor' ) as unknown as { clearSelectedBlock?: () => void }
 	 )?.clearSelectedBlock?.();
-
-	try {
-		await editorInterface.enableComplementaryArea( 'core', DOCUMENT_SIDEBAR );
-	} catch {
-		return false;
-	}
 
 	// A collapsed panel does not render its contents, so every candidate panel
 	// has to be open before any of them can be found.

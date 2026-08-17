@@ -265,6 +265,18 @@ describe( 'revealSidebarField', () => {
 		await expect( revealSidebarField( 'excerpt' ) ).resolves.toBe( false );
 	} );
 
+	it( 'keeps the block selection when opening the sidebar rejects', async () => {
+		// The sidebar never opens, so taking the selection costs the user their
+		// place and reveals nothing in return.
+		mockEnableComplementaryArea.mockRejectedValueOnce( new Error( 'no such area' ) );
+		renderField();
+
+		await revealSidebarField( 'excerpt' );
+
+		expect( mockClearActiveBlockFocus ).not.toHaveBeenCalled();
+		expect( mockClearSelectedBlock ).not.toHaveBeenCalled();
+	} );
+
 	it( 'leaves focus where the user put it', async () => {
 		renderField();
 		const chatInput = document.createElement( 'textarea' );
