@@ -144,7 +144,9 @@ function EmailPlan( {
 		event.preventDefault();
 
 		dispatch(
-			handleRenewNowClick( purchase, selectedSite.slug, {
+			// Temporary bridge (SHILL-2256): this page still reads the camelCase
+			// Purchase from Redux. Remove once it reads the raw shape.
+			handleRenewNowClick( purchase.rawPurchase, selectedSite.slug, {
 				tracksProps: { source: 'email-plan-view' },
 			} )
 		);

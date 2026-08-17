@@ -6,12 +6,12 @@ import type { OmnibarNode } from '@automattic/omnibar';
 
 export function useDashboardPlugin( {
 	site,
-	isWithinSiteContext,
+	sectionGroup,
 }: {
 	site?: Site;
-	isWithinSiteContext?: boolean;
+	sectionGroup?: string;
 } ): OmnibarNode | undefined {
-	if ( ! site || isWithinSiteContext ) {
+	if ( ! site || sectionGroup === 'sites' ) {
 		return undefined;
 	}
 

@@ -53,7 +53,6 @@ import {
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { handleRenewNowClick } from 'calypso/lib/purchases';
-import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import {
 	getDisplayName,
 	isExpiredOrRemoved,
@@ -433,19 +432,11 @@ function UrgentExpiryStatus( {
 					// listing page can run on other hosts like Jetpack Cloud and A4A.
 					const backUrl = window.location.href;
 					dispatch(
-						// Temporary bridge (SHILL-2256): handleRenewNowClick still expects
-						// the camelCase Purchase. Remove once it reads the raw shape.
-						handleRenewNowClick(
-							createPurchaseObject(
-								purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-							),
-							purchase.site_slug ?? '',
-							{
-								redirectTo: backUrl,
-								cancelTo: backUrl,
-								tracksProps: { position: 'purchase-list' },
-							}
-						)
+						handleRenewNowClick( purchase, purchase.site_slug ?? '', {
+							redirectTo: backUrl,
+							cancelTo: backUrl,
+							tracksProps: { position: 'purchase-list' },
+						} )
 					);
 				} }
 			>

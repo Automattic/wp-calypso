@@ -103,7 +103,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain, resolveDomainStatus } from 'calypso/lib/domains';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { handleRenewMultiplePurchasesClick, handleRenewNowClick } from 'calypso/lib/purchases';
-import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import ProductLink from 'calypso/me/purchases/product-link';
@@ -301,13 +300,7 @@ class ManagePurchase extends Component<
 			isA4AHoldingSitePurchase( purchase );
 
 		// If this renewal is for a siteless purchase, we'll drop the site slug
-		// Temporary bridge (SHILL-2256): handleRenewNowClick still expects the
-		// camelCase Purchase. Remove once it reads the raw shape.
-		this.props.handleRenewNowClick(
-			createPurchaseObject( purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ] ),
-			! isSitelessRenewal ? siteSlug : '',
-			options
-		);
+		this.props.handleRenewNowClick( purchase, ! isSitelessRenewal ? siteSlug : '', options );
 	};
 
 	handleRenewMonthly = () => {
@@ -332,15 +325,7 @@ class ManagePurchase extends Component<
 	handleRenewMultiplePurchases = ( purchases: Purchase[] ) => {
 		const { siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
-		// Temporary bridge (SHILL-2256): handleRenewMultiplePurchasesClick still
-		// expects the camelCase Purchase. Remove once it reads the raw shape.
-		this.props.handleRenewMultiplePurchasesClick(
-			purchases.map( ( p ) =>
-				createPurchaseObject( p as unknown as Parameters< typeof createPurchaseObject >[ 0 ] )
-			),
-			siteSlug,
-			options
-		);
+		this.props.handleRenewMultiplePurchasesClick( purchases, siteSlug, options );
 	};
 
 	isPendingDomainRegistration( purchase: Purchase ): boolean {
@@ -1752,11 +1737,6 @@ function PlanOverlapNotice( {
 	siteId: number;
 	purchase: Purchase;
 } ) {
-	// Temporary bridge (SHILL-2256): ProductPlanOverlapNotices still expects the
-	// camelCase Purchase. Remove once it reads the raw shape.
-	const currentPurchase = createPurchaseObject(
-		purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-	);
 	if ( isSiteLevel ) {
 		if ( ! selectedSiteId ) {
 			// Probably still loading
@@ -1769,7 +1749,7 @@ function PlanOverlapNotice( {
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }
 				siteId={ selectedSiteId }
-				currentPurchase={ currentPurchase }
+				currentPurchase={ purchase }
 			/>
 		);
 	}
@@ -1784,7 +1764,7 @@ function PlanOverlapNotice( {
 			plans={ JETPACK_PLANS }
 			products={ JETPACK_PRODUCTS_LIST }
 			siteId={ siteId }
-			currentPurchase={ currentPurchase }
+			currentPurchase={ purchase }
 		/>
 	);
 }

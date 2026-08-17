@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/utils/build-wow';
 import { pollForBuildWowStatus } from './build-status-poller';
 import type { BuildWowUi } from './build-status-poller';
+import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 
 export type SiteGenerationStep = {
 	id: string;
@@ -59,11 +60,14 @@ export function useSiteGeneration( {
 	siteIdentifier,
 	editorUrl,
 	specId,
+	graph,
 	steps,
 }: {
 	siteIdentifier: string | null;
 	editorUrl: string | null;
 	specId?: string | null;
+	/** Graph the build was queued with, so a retry rebuilds on the same one. */
+	graph?: BuildWowGraph;
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >;
 } ): SiteGenerationState {
 	const [ serverSteps, setServerSteps ] = useState< SiteGenerationStep[] | null >( null );
@@ -123,7 +127,7 @@ export function useSiteGeneration( {
 			spec_id: specId,
 		} );
 		try {
-			await requestBuildWowSite( siteIdentifier, specId );
+			await requestBuildWowSite( siteIdentifier, specId, graph );
 			setFallbackStartedAt( Date.now() );
 			setServerSteps( null );
 			setFailure( null );
@@ -138,7 +142,7 @@ export function useSiteGeneration( {
 			isRetryingRef.current = false;
 			setIsRetryingBuild( false );
 		}
-	}, [ siteIdentifier, specId ] );
+	}, [ siteIdentifier, specId, graph ] );
 
 	let failureReason: SiteGenerationFailureReason | undefined;
 	if ( ! hasRequiredParameters ) {

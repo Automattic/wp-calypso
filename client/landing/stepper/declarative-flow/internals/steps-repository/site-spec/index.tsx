@@ -17,6 +17,7 @@ import {
 	waitForBlueprintImportComplete,
 } from 'calypso/landing/stepper/utils/blueprint-archive-import';
 import {
+	getBuildWowGraph,
 	getBuildWowSiteIdentifier,
 	isBuildWowEnabled,
 	logBuildWowEvent,
@@ -278,7 +279,11 @@ const SiteSpec: StepType = function SiteSpec() {
 					site_identifier: buildWowSiteIdentifier,
 				} );
 
-				const response = await requestBuildWowSite( buildWowSiteIdentifier, specId );
+				const response = await requestBuildWowSite(
+					buildWowSiteIdentifier,
+					specId,
+					getBuildWowGraph( queryParams )
+				);
 				responseBlogId = response.blog_id;
 
 				logBuildWowEvent(

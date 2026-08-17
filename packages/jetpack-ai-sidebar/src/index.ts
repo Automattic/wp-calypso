@@ -9,7 +9,8 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
+import { serialize } from '@wordpress/blocks';
+import { select as selectDataStore, useSelect } from '@wordpress/data';
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __, _x } from '@wordpress/i18n';
 /**
@@ -45,6 +46,7 @@ import {
 	rememberSelectedBlock,
 	clearRememberedSelectedBlock,
 	notifyBlockActionComplete,
+	canUndoBlockEdit,
 	undoBlockEdit,
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
@@ -90,9 +92,59 @@ type BlockEditSnapshot = {
 	contentBefore: string;
 	contentAfter: string;
 	editableAttribute?: string;
+	editorBlocksSignatureAfter: string | undefined;
 };
 
 const blockEditSnapshots = new Map< string, BlockEditSnapshot >();
+const editorBlocksSignatures = new WeakMap< any[], string >();
+
+function getCurrentEditorBlocks(): any[] | undefined {
+	try {
+		const blockEditor = selectDataStore( 'core/block-editor' ) as {
+			getBlocks?: () => any[];
+		};
+		const blocks = blockEditor?.getBlocks?.();
+		return Array.isArray( blocks ) ? blocks : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+function getEditorBlocksSignature( blocks: any[] | undefined ): string | undefined {
+	if ( ! blocks ) {
+		return undefined;
+	}
+	const cachedSignature = editorBlocksSignatures.get( blocks );
+	if ( cachedSignature !== undefined ) {
+		return cachedSignature;
+	}
+
+	try {
+		const signature = serialize( blocks );
+		editorBlocksSignatures.set( blocks, signature );
+		return signature;
+	} catch {
+		return undefined;
+	}
+}
+
+function canSwapBlockEditSnapshot( snapshot: BlockEditSnapshot ): boolean {
+	if (
+		! canUndoBlockEdit( snapshot.clientId, snapshot.contentAfter, snapshot.editableAttribute )
+	) {
+		return false;
+	}
+	if ( snapshot.editorBlocksSignatureAfter === undefined ) {
+		return false;
+	}
+
+	const currentEditorBlocks = getCurrentEditorBlocks();
+	return (
+		currentEditorBlocks !== undefined &&
+		getEditorBlocksSignature( currentEditorBlocks ) === snapshot.editorBlocksSignatureAfter
+	);
+}
+
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
@@ -650,6 +702,20 @@ function isLegacyShowComponentTool( toolId: string ): boolean {
 	return toolId === LEGACY_SHOW_COMPONENT_TOOL_ID || toolId === LEGACY_SHOW_COMPONENT_ABILITY_NAME;
 }
 
+function createUpdateBlockContentAgentMessage(
+	toolCallId: string,
+	result: Record< string, unknown >
+): string {
+	return JSON.stringify( {
+		tool_id: UPDATE_BLOCK_CONTENT_AGENT_TOOL_ID,
+		tool_call_id: toolCallId,
+		data: {
+			result,
+			followUpTasks: false,
+		},
+	} );
+}
+
 async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 	const toolCallId =
 		typeof input?.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
@@ -658,7 +724,21 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 		if ( toolCallId ) {
 			blockEditSnapshots.delete( toolCallId );
 		}
-		return result;
+		const error =
+			typeof result?.error === 'string' && result.error ? result.error : 'Block update failed';
+		const message = __( 'I could not update the block. Please try again.', __i18n_text_domain__ );
+		const agentMessage = toolCallId
+			? createUpdateBlockContentAgentMessage( toolCallId, {
+					success: false,
+					message,
+					error,
+			  } )
+			: result?.agentMessage;
+		return {
+			...result,
+			returnToAgent: false,
+			...( agentMessage && { agentMessage } ),
+		};
 	}
 
 	const outcome =
@@ -675,10 +755,12 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 			typeof result.contentBefore === 'string' &&
 			typeof result.contentAfter === 'string'
 		) {
+			const editorBlocksAfter = getCurrentEditorBlocks();
 			blockEditSnapshots.set( toolCallId, {
 				clientId: result.clientId,
 				contentBefore: result.contentBefore,
 				contentAfter: result.contentAfter,
+				editorBlocksSignatureAfter: getEditorBlocksSignature( editorBlocksAfter ),
 				...( typeof result.editableAttribute === 'string' && {
 					editableAttribute: result.editableAttribute,
 				} ),
@@ -696,17 +778,10 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 				: __( 'No changes were needed.', __i18n_text_domain__ );
 	}
 	const agentMessage = toolCallId
-		? JSON.stringify( {
-				tool_id: UPDATE_BLOCK_CONTENT_AGENT_TOOL_ID,
-				tool_call_id: toolCallId,
-				data: {
-					result: {
-						success: true,
-						message,
-						outcome,
-					},
-					followUpTasks: false,
-				},
+		? createUpdateBlockContentAgentMessage( toolCallId, {
+				success: true,
+				message,
+				outcome,
 		  } )
 		: result.agentMessage;
 
@@ -944,8 +1019,8 @@ export function getChatComponent( type: string ): ComponentType | null {
  * checkpoint must not clobber another field's later edits. Block-edit snapshots
  * are captured by `handleUpdateBlockContentForChat`; meta (SEO pickers) and
  * image alt text changes are not checkpointed. Stubs the rest of AM's
- * `UseCheckpointReturn` interface — only the three methods above are used on
- * this path.
+ * `UseCheckpointReturn` interface; block-edit checkpoints also support safe
+ * inline Undo and Redo through `canSwapCheckpoint` and `swapCheckpoint`.
  * @returns {Object} The checkpoint API AM consumes.
  */
 const postSnapshots: Map< string, Partial< Record< CheckpointField, string > > > = new Map();
@@ -963,9 +1038,39 @@ export function useCheckpoint(): any {
 		hasCheckpoint( id: string ): boolean {
 			return postSnapshots.has( id ) || blockEditSnapshots.has( id );
 		},
+		canSwapCheckpoint( id: string ): boolean | undefined {
+			const snapshot = blockEditSnapshots.get( id );
+			return snapshot ? canSwapBlockEditSnapshot( snapshot ) : undefined;
+		},
+		async swapCheckpoint( id: string ): Promise< void > {
+			const snapshot = blockEditSnapshots.get( id );
+			if (
+				! snapshot ||
+				! canSwapBlockEditSnapshot( snapshot ) ||
+				! undoBlockEdit(
+					snapshot.clientId,
+					snapshot.contentBefore,
+					snapshot.contentAfter,
+					snapshot.editableAttribute
+				)
+			) {
+				throw new Error( 'Failed to swap block edit checkpoint.' );
+			}
+
+			const editorBlocksAfter = getCurrentEditorBlocks();
+			blockEditSnapshots.set( id, {
+				...snapshot,
+				contentBefore: snapshot.contentAfter,
+				contentAfter: snapshot.contentBefore,
+				editorBlocksSignatureAfter: getEditorBlocksSignature( editorBlocksAfter ),
+			} );
+		},
 		async restoreCheckpoint( id: string ): Promise< void > {
 			const blockEditSnapshot = blockEditSnapshots.get( id );
 			if ( blockEditSnapshot ) {
+				if ( ! canSwapBlockEditSnapshot( blockEditSnapshot ) ) {
+					throw new Error( 'Failed to restore block edit checkpoint.' );
+				}
 				const didRestore = undoBlockEdit(
 					blockEditSnapshot.clientId,
 					blockEditSnapshot.contentBefore,

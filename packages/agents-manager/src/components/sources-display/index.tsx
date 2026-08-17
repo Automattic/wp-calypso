@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, chevronRight, page } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAgentsManagerContext } from '../../contexts';
+import { FROM_CHAT } from '../../constants';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import './style.scss';
 
@@ -22,7 +22,6 @@ interface Props {
 export default function SourcesDisplay( { sources }: Props ) {
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
-	const { getActiveSessionId } = useAgentsManagerContext();
 
 	const uniqueSources = useMemo(
 		() => [ ...new Map( sources.map( ( source ) => [ source.url, source ] ) ).values() ],
@@ -40,7 +39,7 @@ export default function SourcesDisplay( { sources }: Props ) {
 		if ( isSupportArticle ) {
 			e.preventDefault();
 			navigate( `/post?link=${ encodeURIComponent( url ) }`, {
-				state: isFromOrchestrator ? { ...state, sessionId: getActiveSessionId() } : state,
+				state: isFromOrchestrator ? { from: FROM_CHAT } : state,
 			} );
 		}
 

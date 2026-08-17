@@ -299,6 +299,7 @@ class Layout extends Component {
 				<MasterbarComponent
 					siteId={ this.props.siteIdForLaunch }
 					section={ this.props.sectionGroup }
+					sectionGroup={ this.props.sectionGroup }
 					isCheckout={ this.props.sectionName === 'checkout' }
 					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
 					isCheckoutFailed={ isCheckoutFailed }
