@@ -19,14 +19,13 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import lazyComponent from '../../utils/lazy-component';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
-import { AI } from '../icons';
-import SelectedBlock from '../selected-block';
 import getSuggestionClickPayload from './get-suggestion-click-payload';
 import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
@@ -99,6 +98,8 @@ interface Props {
 	onCancelFeedback?: () => void;
 	/** Alternative footer to render instead of the default footer. */
 	alternativeFooter?: React.ReactNode;
+	/** Disables the chat input: grayed out, typing and submission blocked. */
+	isChatInputDisabled?: boolean;
 	/**
 	 * AI-interaction disclosure shown below the input (EU AI Act Art. 50(1)).
 	 * Defaults to the shared "You're chatting with AI" line; pass `false` to
@@ -110,6 +111,12 @@ interface Props {
 	/** Called when a context card's dismiss button is clicked. */
 	onContextCardDismiss?: ( card: ExternalContextCard ) => void;
 }
+
+// Carries the block-editor stack, so it loads on demand — and only on editor
+// pages, keeping the chunk out of every other chat.
+const SelectedBlock = lazyComponent(
+	() => import( /* webpackChunkName: "am-selected-block" */ '../selected-block' )
+);
 
 const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 	'image/jpeg',
@@ -173,6 +180,7 @@ export default function AgentChat( {
 	onTypingStatusChange,
 	inputValue,
 	onInputChange,
+	isChatInputDisabled,
 	isCompactMode = false,
 	imageUpload,
 	acceptedImageFileTypes = DEFAULT_ACCEPTED_IMAGE_TYPES,
@@ -327,7 +335,6 @@ export default function AgentChat( {
 						suggestions={ emptyViewSuggestions }
 						groupWritingSuggestions={ groupWritingSuggestions }
 						onSuggestionClick={ onSuggestionClick }
-						icon={ <AI size={ 32 } /> }
 					/>
 				)
 			}
@@ -365,15 +372,22 @@ export default function AgentChat( {
 								dropZoneRef={ conversationViewRef as RefObject< HTMLElement > }
 							/>
 						) }
-						<SelectedBlock />
+						{ isEditorPage() && <SelectedBlock /> }
 						{ /* `readOnly` (not `disabled`) so the stop button stays active while a batch uploads. */ }
+						{ /* Disabling the input takes BOTH props: agenttic forwards `readOnly` to the
+						     textarea but consumes `disabled` only to gate the submit button and
+						     Enter-to-submit. `disabled` alone leaves the field typeable. */ }
+						{ /* `isChatInputDisabled` must win over the pending-images `false` — a
+						     non-operational chat stays disabled regardless of upload state. */ }
 						<AgentUI.Input
 							imageUploaderRef={
 								imageUpload ? ( imageUploaderRef as RefObject< ImageUploaderHandle > ) : undefined
 							}
-							imageUploadDisabled={ imageUpload?.isUploadingImages }
-							readOnly={ imageUpload?.isUploadingImages }
-							disabled={ imageUpload?.pendingImages?.length ? false : undefined }
+							imageUploadDisabled={ isChatInputDisabled || imageUpload?.isUploadingImages }
+							readOnly={ isChatInputDisabled || imageUpload?.isUploadingImages }
+							disabled={
+								isChatInputDisabled || ( imageUpload?.pendingImages?.length ? false : undefined )
+							}
 						/>
 					</AgentUI.Footer>
 				) }

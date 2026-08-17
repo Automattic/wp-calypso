@@ -142,7 +142,7 @@
 		"push-notifications": true,
 		"resurrected-users/90-day-eligibility": true,
 		"reader/social": true,
-		"reader/spaces": false,
+		"reader/shelves": false,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": true,
@@ -182,6 +182,7 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"use-translation-chunks": true,
+		"wordpress-agent-slack": false,
 		"wordpress-ai-tools": true,
 		"wpcom-user-bootstrap": true
 	},

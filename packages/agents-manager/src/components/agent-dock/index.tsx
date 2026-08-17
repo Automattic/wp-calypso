@@ -7,7 +7,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { columns, comment, drawerRight, login } from '@wordpress/icons';
+import { backup, cog, columns, comment, drawerRight, heading } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
@@ -17,13 +17,15 @@ import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
+import { saveSessionId } from '../../utils/agent-session';
+import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
-import { persistLastActivity } from '../../utils/persist-last-activity';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import EditorAiChatButton from '../editor-ai-chat-button';
 import EditorHelpCenterButton from '../editor-help-center-button';
+import { SwitchToFloating } from '../icons';
 import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
@@ -34,6 +36,7 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
+	TransformMessages,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
@@ -49,14 +52,15 @@ interface Props {
 	markdownExtensions?: MarkdownExtensions;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
-	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
-	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** The external providers' abilities-setup hook (e.g. Big Sky, jetpack-ai-sidebar). Invoked after custom actions registration. */
+	useProviderAbilitiesSetup?: AbilitiesSetupHook;
 	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
+	transformMessages?: TransformMessages;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
@@ -68,14 +72,15 @@ export default function AgentDock( {
 	markdownComponents = {},
 	markdownExtensions = {},
 	useNavigationContinuation,
-	useAbilitiesSetup,
+	useProviderAbilitiesSetup,
 	getChatComponent,
 	useSuggestions,
 	siteBuildUtils,
+	transformMessages,
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { siteKey, agentConfig } = useAgentsManagerContext();
+	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -251,53 +256,48 @@ export default function AgentDock( {
 			}
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
-			const sessionId = conversation.session_id || '';
+			if ( conversation.session_id ) {
+				saveSessionId( conversation.session_id, agentConfig?.agentId, siteKey, currentUser?.ID );
+			}
 
-			persistLastActivity( siteKey );
 			handleAbort();
-			navigate( '/chat', { state: { sessionId } } );
+			navigate( '/chat' );
 		}
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
-		return [
+		// The server injects `site` on wp-admin only, so its domain gates
+		// the site-based links.
+		const inlineData = getAgentsManagerInlineData();
+		const siteDomain = inlineData?.site?.domain;
+
+		// Every item fires the unified AM event; items whose Big Sky event
+		// is already live also dual-fire it so those dashboards keep working.
+		const recordMoreOptionsClick = ( type: string ) =>
+			recordAgentsManagerTracksEvent( 'ai_chat_more_options_click', { type } );
+
+		const options = [
 			{
 				icon: comment,
 				title: __( 'New chat', __i18n_text_domain__ ),
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
 				onClick: () => {
+					recordMoreOptionsClick( 'reset_chat' );
 					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 						type: 'reset_chat',
 					} );
 					navigate( '/' );
 				},
 			},
-			// Sidebar docking only makes sense in wp-admin where a block-editor
-			// sidebar slot exists. On public reader-chat frontends there's no
-			// sidebar to dock into — the click does nothing, so hide the option.
+			// Reader chat runs on public blog frontends where session history
+			// isn't user-accessible (no account, per-visit local storage).
 			! isReaderChat &&
-				isDocked && {
-					icon: login,
-					title: __( 'Pop out sidebar', __i18n_text_domain__ ),
+				pathname !== '/history' && {
+					icon: backup,
+					title: __( 'View history', __i18n_text_domain__ ),
 					onClick: () => {
-						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
-							type: 'undock',
-						} );
-						undock();
-						setIsDocked( false );
-					},
-				},
-			! isReaderChat &&
-				! isDocked &&
-				canDock && {
-					icon: drawerRight,
-					title: __( 'Move to sidebar', __i18n_text_domain__ ),
-					onClick: () => {
-						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
-							type: 'dock',
-						} );
-						dock();
-						setIsDocked( true );
+						recordMoreOptionsClick( 'view_history' );
+						navigate( '/history' );
 					},
 				},
 			// Split-screen toggle — gated to providers that opt in via
@@ -310,13 +310,76 @@ export default function AgentDock( {
 						? __( 'Exit split screen', __i18n_text_domain__ )
 						: __( 'Split screen sidebar', __i18n_text_domain__ ),
 					onClick: () => {
+						recordMoreOptionsClick( isSplitScreen ? 'exit_split_screen' : 'split_screen' );
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: isSplitScreen ? 'exit_split_screen' : 'split_screen',
 						} );
 						setIsSplitScreen( ! isSplitScreen );
 					},
 				},
-		].filter( Boolean ) as ChatHeaderOptions;
+			!! siteDomain && {
+				icon: heading,
+				title: __( 'Knowledge and memory', __i18n_text_domain__ ),
+				onClick: () => {
+					recordMoreOptionsClick( 'knowledge_memory' );
+					window.open(
+						'/wp-admin/options-general.php?page=guidelines-wp-admin',
+						'_blank',
+						'noopener,noreferrer'
+					);
+				},
+			},
+			// The linked settings page only exists on WordPress.com-hosted
+			// (Simple/WoA) sites.
+			!! siteDomain &&
+				inlineData?.isWpcomPlatform && {
+					icon: cog,
+					title: __( 'AI Agent settings', __i18n_text_domain__ ),
+					onClick: () => {
+						recordMoreOptionsClick( 'ai_agent_settings' );
+						window.open(
+							`https://my.wordpress.com/sites/${ siteDomain }/settings/ai-tools`,
+							'_blank',
+							'noopener,noreferrer'
+						);
+					},
+				},
+		].filter( ( option ) => !! option );
+
+		// Public reader-chat frontends have no sidebar layout to dock into —
+		// the click would do nothing, so hide the switch option there.
+		const switchOptions = [
+			! isReaderChat &&
+				isDocked && {
+					icon: <SwitchToFloating />,
+					title: __( 'Switch to floating', __i18n_text_domain__ ),
+					onClick: () => {
+						recordMoreOptionsClick( 'undock' );
+						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+							type: 'undock',
+						} );
+						undock();
+						setIsDocked( false );
+					},
+				},
+			! isReaderChat &&
+				! isDocked &&
+				canDock && {
+					icon: drawerRight,
+					title: __( 'Switch to sidebar', __i18n_text_domain__ ),
+					onClick: () => {
+						recordMoreOptionsClick( 'dock' );
+						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+							type: 'dock',
+						} );
+						dock();
+						setIsDocked( true );
+					},
+				},
+		].filter( ( option ) => !! option );
+
+		// A second control set renders the switch option behind a divider.
+		return switchOptions.length ? [ options, switchOptions ] : [ options ];
 	};
 
 	const chatHeaderOptions = getChatHeaderOptions();
@@ -340,12 +403,14 @@ export default function AgentDock( {
 			markdownExtensions={ markdownExtensions }
 			isCompactMode={ isCompactMode }
 			useNavigationContinuation={ useNavigationContinuation }
-			useAbilitiesSetup={ useAbilitiesSetup }
+			useProviderAbilitiesSetup={ useProviderAbilitiesSetup }
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
 			siteBuildUtils={ siteBuildUtils }
+			transformMessages={ transformMessages }
 			useCheckpoint={ useCheckpoint }
 			capabilities={ capabilities }
+			isChatInputDisabled={ ! isChatEnabled }
 			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>
 	);
@@ -395,12 +460,6 @@ export default function AgentDock( {
 			chatHeaderOptions={ chatHeaderOptions }
 		/>
 	);
-
-	// When the chat is disabled there's nothing to open, so render nothing — the editor
-	// entry-point buttons would otherwise be dead.
-	if ( ! isChatEnabled ) {
-		return null;
-	}
 
 	return (
 		<>

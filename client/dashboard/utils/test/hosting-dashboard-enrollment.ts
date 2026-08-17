@@ -116,12 +116,9 @@ describe( 'isAdvancedNoticeVisible', () => {
 	describe( 'with the rollout-advance-notice flag on', () => {
 		beforeEach( () => enableFlags( 'dashboard/rollout-advance-notice' ) );
 
-		it( 'shows the banner to users who can still opt in', () => {
+		it( 'shows the banner to every user, regardless of cohort', () => {
 			expect( isAdvancedNoticeVisible( undefined, IN_COHORT ) ).toBe( true );
-		} );
-
-		it( 'hides the banner from non-cohort users', () => {
-			expect( isAdvancedNoticeVisible( undefined, OUT_OF_COHORT ) ).toBe( false );
+			expect( isAdvancedNoticeVisible( undefined, OUT_OF_COHORT ) ).toBe( true );
 		} );
 
 		it( 'hides the banner from escape-hatched (forced-opt-in) users', () => {

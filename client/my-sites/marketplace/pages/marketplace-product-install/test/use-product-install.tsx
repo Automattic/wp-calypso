@@ -8,6 +8,7 @@ import themesReducer from 'calypso/state/themes/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useProductInstall } from '../use-product-install';
+import type { AtomicTransfer } from '@automattic/api-core';
 
 // useProductInstall reads several section-lazy slices that the bare test store doesn't register.
 const reducers = {
@@ -16,6 +17,43 @@ const reducers = {
 	marketplace: marketplaceReducer,
 	ui: uiReducer,
 };
+
+// The deadline hook has its own suite; here we only assert how this hook arms it.
+type DeadlineArgs = {
+	siteId: number;
+	enabled: boolean;
+	isTransferFromAttempt?: ( transfer: AtomicTransfer ) => boolean;
+};
+
+const diagnostics = {
+	has_transfer: false,
+	transfer_status: null,
+	transfer_age_seconds: null,
+	transfer_is_stuck: null,
+	transfer_in_lossless_revert: null,
+	waited_seconds: 0,
+	anchored_to: 'wait_start' as const,
+	deadline_seconds: 300,
+};
+
+const deadlineVerdict =
+	( verdict: { hasTimedOut: boolean; hasTransferFailed: boolean } ) => ( args: DeadlineArgs ) => ( {
+		...verdict,
+		receivedEnabled: args.enabled,
+		diagnostics,
+		transfer: undefined,
+		isTransferFresh: false,
+		isTransferLookupComplete: true,
+	} );
+
+const noDeadlineVerdict = deadlineVerdict( { hasTimedOut: false, hasTransferFailed: false } );
+
+const mockUseInstallDeadline = jest.fn( noDeadlineVerdict );
+
+jest.mock( '../use-install-deadline', () => ( {
+	...jest.requireActual( '../use-install-deadline' ),
+	useInstallDeadline: ( args: DeadlineArgs ) => mockUseInstallDeadline( args ),
+} ) );
 
 const SITE_ID = 1;
 
@@ -47,6 +85,44 @@ type PluginStatuses = {
 };
 const activationOf = ( store: { getState: () => PluginStatuses } ) =>
 	store.getState().plugins.installed.status?.[ SITE_ID ]?.[ 'uploaded/uploaded' ]?.action;
+
+// The browser is still sending the file: the upload is in progress and nothing has landed yet.
+const uploadInFlight = () => ( {
+	ui: { selectedSiteId: SITE_ID },
+	sites: { items: { [ SITE_ID ]: { ID: SITE_ID, options: { is_automated_transfer: true } } } },
+	marketplace: {
+		purchaseFlow: {
+			primaryDomain: 'example.wordpress.com',
+			pluginInstallationStatus: 'in-progress',
+		},
+	},
+	plugins: {
+		upload: {
+			inProgress: { [ SITE_ID ]: true },
+			progressPercent: { [ SITE_ID ]: 12 },
+		},
+	},
+} );
+
+// The bytes are up but the transfer they kicked off is still running, so the upload slice stays in
+// progress and no plugin id exists yet.
+const uploadTransferring = () => ( {
+	ui: { selectedSiteId: SITE_ID },
+	sites: { items: { [ SITE_ID ]: { ID: SITE_ID, options: { is_automated_transfer: true } } } },
+	marketplace: {
+		purchaseFlow: {
+			primaryDomain: 'example.wordpress.com',
+			pluginInstallationStatus: 'in-progress',
+		},
+	},
+	plugins: {
+		upload: {
+			inProgress: { [ SITE_ID ]: true },
+			progressPercent: { [ SITE_ID ]: 100 },
+			uploadMethod: { [ SITE_ID ]: 'transfer' },
+		},
+	},
+} );
 
 const withUploadError = ( uploadError: object ) => ( {
 	ui: { selectedSiteId: SITE_ID },
@@ -116,6 +192,10 @@ describe( 'useProductInstall', () => {
 	} );
 
 	describe( 'error', () => {
+		afterEach( () => {
+			mockUseInstallDeadline.mockImplementation( noDeadlineVerdict );
+		} );
+
 		it( 'has no error before any grace period elapses', () => {
 			const { result } = renderProductInstall( { pluginSlug: 'give' } );
 			expect( result.current.error ).toBeNull();
@@ -147,5 +227,57 @@ describe( 'useProductInstall', () => {
 				expect( result.current.error ).toEqual( { type: 'rejected-upload', reason } );
 			}
 		);
+
+		it( 'reports the dedicated timeout error when the wait runs out', () => {
+			mockUseInstallDeadline.mockImplementation(
+				deadlineVerdict( { hasTimedOut: true, hasTransferFailed: false } )
+			);
+
+			const { result } = renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+
+			expect( result.current.error ).toEqual( { type: 'timeout' } );
+		} );
+
+		it( 'reports the transfer failure ahead of a timeout', () => {
+			mockUseInstallDeadline.mockImplementation(
+				deadlineVerdict( { hasTimedOut: true, hasTransferFailed: true } )
+			);
+
+			const { result } = renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+
+			expect( result.current.error ).toEqual( { type: 'transfer-failed' } );
+		} );
+
+		// The upload page sends the customer here as soon as the upload starts. Counting that time
+		// against a deadline calibrated for server-side transfers would fail a large file on a slow
+		// connection — an install that was going to succeed.
+		it( 'leaves the deadline disarmed while the browser is still sending the upload', () => {
+			renderProductInstall( {}, uploadInFlight() );
+
+			expect( mockUseInstallDeadline ).toHaveBeenCalled();
+			expect( mockUseInstallDeadline.mock.calls.at( -1 )?.[ 0 ] ).toMatchObject( {
+				enabled: false,
+			} );
+		} );
+
+		it( 'arms the deadline once the upload has landed', () => {
+			renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+
+			expect( mockUseInstallDeadline.mock.calls.at( -1 )?.[ 0 ] ).toMatchObject( {
+				enabled: true,
+			} );
+		} );
+
+		// A zip that triggers a transfer keeps the upload marked in progress for the whole transfer,
+		// so waiting for the upload to be "complete" would leave the transfer — the thing actually
+		// worth bounding — with no deadline at all. The transmitted bytes are the only signal that
+		// separates the customer's bandwidth from our wait.
+		it( 'arms the deadline once the bytes are sent, even while the transfer runs on', () => {
+			renderProductInstall( {}, uploadTransferring() );
+
+			expect( mockUseInstallDeadline.mock.calls.at( -1 )?.[ 0 ] ).toMatchObject( {
+				enabled: true,
+			} );
+		} );
 	} );
 } );

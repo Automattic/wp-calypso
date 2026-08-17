@@ -3,6 +3,17 @@ import { loadScript } from '@automattic/load-script';
 
 let loadPromise = null;
 
+export function getBlackboxApiKey() {
+	if ( process.env.NODE_ENV === 'development' ) {
+		// Guarded require so the dev-only override module is dead-code
+		// eliminated from production bundles.
+		const { resolveBlackboxApiKey } = require( 'calypso/lib/blackbox-helper/api-key' );
+		return resolveBlackboxApiKey( config( 'blackbox_api_key' ) );
+	}
+
+	return config( 'blackbox_api_key' );
+}
+
 /**
  * Inject the Blackbox SDK script once.
  * Returns a Promise that always resolves (never rejects) so Blackbox can never block login.
@@ -16,7 +27,7 @@ export function loadBlackboxSdk() {
 		return Promise.resolve();
 	}
 
-	const apiKey = config( 'blackbox_api_key' );
+	const apiKey = getBlackboxApiKey();
 	if ( ! config.isEnabled( 'blackbox' ) || ! apiKey ) {
 		return Promise.resolve();
 	}

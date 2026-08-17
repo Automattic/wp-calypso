@@ -1,4 +1,4 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -45,7 +45,7 @@ export default function useAdminBarIntegration( {
 }: UseAdminBarIntegrationOptions ): boolean {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
-	const { resumeActiveChat, sectionName } = useAgentsManagerContext();
+	const { resumeChat, sectionName, site } = useAgentsManagerContext();
 	const { isOpen, isMinimized } = useSelect(
 		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerState(),
 		[]
@@ -56,8 +56,8 @@ export default function useAdminBarIntegration( {
 	openChatRef.current = openChat;
 	const closeChatRef = useRef( closeChat );
 	closeChatRef.current = closeChat;
-	const resumeActiveChatRef = useRef( resumeActiveChat );
-	resumeActiveChatRef.current = resumeActiveChat;
+	const resumeChatRef = useRef( resumeChat );
+	resumeChatRef.current = resumeChat;
 
 	const hasAiChatEntry = useHasAiChatEntryButton();
 
@@ -77,19 +77,32 @@ export default function useAdminBarIntegration( {
 
 		const handleMenuPanelClick = () => {
 			// Track icon interaction
-			recordTracksEvent( 'wpcom_help_center_icon_interaction', {
-				is_help_center_visible: isOpen,
-				section: sectionName || 'wp-admin',
-				is_menu_panel_enabled: false,
-				is_assignment_loaded: true,
-			} );
+			recordTracksEvent(
+				'wpcom_help_center_icon_interaction',
+				withSiteContext(
+					{
+						is_help_center_visible: isOpen,
+						section: sectionName || 'wp-admin',
+						is_menu_panel_enabled: false,
+						is_assignment_loaded: true,
+					},
+					'agents_manager_context',
+					site?.ID
+				)
+			);
 
 			// Track the toggle action
-			recordTracksEvent( `calypso_inlinehelp_${ isOpen ? 'close' : 'show' }`, {
-				force_site_id: true,
-				location: 'help-center',
-				section: sectionName || 'wp-admin',
-			} );
+			recordTracksEvent(
+				`calypso_inlinehelp_${ isOpen ? 'close' : 'show' }`,
+				withSiteContext(
+					{
+						location: 'help-center',
+						section: sectionName || 'wp-admin',
+					},
+					'agents_manager_context',
+					site?.ID
+				)
+			);
 
 			// Toggle submenu visibility by toggling the open-click class
 			button?.classList.toggle( OPEN_CLICK_CLASS );
@@ -98,7 +111,7 @@ export default function useAdminBarIntegration( {
 		if ( button ) {
 			button.onclick = handleMenuPanelClick;
 		}
-	}, [ isOpen, sectionName ] );
+	}, [ isOpen, sectionName, site?.ID ] );
 
 	// Close submenu when clicking outside
 	useEffect( () => {
@@ -117,7 +130,7 @@ export default function useAdminBarIntegration( {
 	}, [] );
 
 	// The standalone AI button toggles the chat: close it if it's already showing,
-	// otherwise resume the active conversation and open it.
+	// otherwise resume the tab's conversation and open it.
 	useEffect( () => {
 		const aiChatButton = document.getElementById( ADMIN_BAR_AI_CHAT_BUTTON_ID );
 		if ( ! aiChatButton ) {
@@ -133,7 +146,7 @@ export default function useAdminBarIntegration( {
 				closeChatRef.current();
 				return;
 			}
-			resumeActiveChatRef.current();
+			resumeChatRef.current();
 			openChatRef.current();
 		};
 
@@ -144,12 +157,12 @@ export default function useAdminBarIntegration( {
 	// Wire each Help menu item's click: track it, then open or close the chat.
 	useEffect( () => {
 		const menuItems = [
-			// Chat Support resumes the active conversation, matching the AI button.
+			// Chat Support resumes the tab's conversation, matching the AI button.
 			{
 				id: ADMIN_BAR_CHAT_ITEM_ID,
 				destination: DESTINATION_CHAT,
 				route: '/chat',
-				action: () => resumeActiveChatRef.current(),
+				action: () => resumeChatRef.current(),
 			},
 			{
 				id: ADMIN_BAR_HISTORY_ITEM_ID,

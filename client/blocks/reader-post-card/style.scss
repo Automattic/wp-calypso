@@ -223,6 +223,12 @@
 					@include breakpoint-deprecated( "<660px" ) {
 						width: auto !important;
 						height: 300px !important;
+
+						img {
+							width: 100% !important;
+							height: 100% !important;
+							object-fit: contain;
+						}
 					}
 
 					@include breakpoint-deprecated( "<480px" ) {
@@ -527,6 +533,25 @@
 	padding: 0 9px 2px;
 	background-color: var(--color-neutral-0);
 	align-self: center;
+}
+
+.reader-post-card__freshly-pressed-badge {
+	display: inline-flex;
+	align-items: center;
+	width: fit-content;
+	max-width: 100%;
+	margin-block-end: 6px;
+	border-radius: 4px;
+	padding: 1px 9px;
+	background-color: var(--color-neutral-0);
+	color: var(--color-neutral-70);
+	font-size: 12px;
+	line-height: 1.6;
+	overflow-wrap: anywhere;
+
+	@include ui-mixins.when-dark-theme {
+		background-color: var(--color-border-subtle);
+	}
 }
 
 .reader-post-card__byline .site-icon {

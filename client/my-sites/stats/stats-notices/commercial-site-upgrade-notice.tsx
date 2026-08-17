@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -42,9 +43,13 @@ const CommercialSiteUpgradeNotice = ( {
 
 	const dismissNotice = () => {
 		if ( isOdysseyStats ) {
-			recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_dismissed' );
+			recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_dismissed', {
+				blog_id: siteId,
+			} );
 		} else {
-			recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_dismissed' );
+			recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_dismissed', {
+				blog_id: siteId,
+			} );
 		}
 
 		setNoticeDismissed( true );
@@ -54,14 +59,18 @@ const CommercialSiteUpgradeNotice = ( {
 	const gotoJetpackStatsProduct = () => {
 		if ( isOdysseyStats ) {
 			recordTracksEvent(
-				'jetpack_odyssey_stats_commercial_site_upgrade_notice_support_button_clicked'
+				'jetpack_odyssey_stats_commercial_site_upgrade_notice_support_button_clicked',
+				{ blog_id: siteId }
 			);
 		} else {
-			recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_support_button_clicked' );
+			recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_support_button_clicked', {
+				blog_id: siteId,
+			} );
 		}
 
 		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
 			type: 'notice-commercial',
+			blog_id: siteId,
 		} );
 
 		// Allow some time for the event to be recorded before redirecting.
@@ -71,12 +80,16 @@ const CommercialSiteUpgradeNotice = ( {
 	useEffect( () => {
 		if ( ! noticeDismissed ) {
 			if ( isOdysseyStats ) {
-				recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_viewed' );
+				recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_viewed', {
+					blog_id: siteId,
+				} );
 			} else {
-				recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_viewed' );
+				recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_viewed', {
+					blog_id: siteId,
+				} );
 			}
 		}
-	}, [ noticeDismissed, isOdysseyStats ] );
+	}, [ noticeDismissed, isOdysseyStats, siteId ] );
 
 	if ( noticeDismissed ) {
 		return null;
@@ -93,13 +106,7 @@ const CommercialSiteUpgradeNotice = ( {
 	const sharedTranslationComponents = {
 		p: <p />,
 		b: <strong />,
-		jetpackStatsProductLink: (
-			<button
-				type="button"
-				className="notice-banner__action-button"
-				onClick={ gotoJetpackStatsProduct }
-			/>
-		),
+		jetpackStatsProductLink: <Button variant="primary" onClick={ gotoJetpackStatsProduct } />,
 		commercialUpgradeLink: (
 			<a
 				className="notice-banner__action-link"

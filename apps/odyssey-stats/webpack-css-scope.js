@@ -57,7 +57,24 @@ const ignoreFiles = [
 // the rule would just go dead. Leave them unscoped instead.
 const exclude = [
 	/^:root(?![\w-])/, // :root, :root[data-theme=dark] .foo
-	/(^|[\s,])(html|body)(?=$|[\s.[:#,])/, // html.rtl, body.lockscroll
+	// Production Sass output is compressed, so `body > .x` arrives here as `body>.x`. The lookahead
+	// accepts combinators for that reason — without it the compressed form gets prefixed and dies.
+	//
+	// The left side stays narrow, start-or-whitespace only, and the asymmetry is deliberate. The
+	// plugin applies `exclude` per selector, having already split on top-level commas, so anything
+	// other than whitespace before a root comes from inside an `:is()`/`:where()`/`:not()` argument
+	// list. Matching there excludes the whole rule to save one dead branch, shipping its live
+	// branches unscoped into wp-admin — worse than the dead branch, and invisible to the post-build
+	// check, which only inspects rules that were prefixed.
+	//
+	// The cost is that a root after a combinator (`.foo>body .x`) is no longer excluded, so it is
+	// prefixed and dead. That is the safe direction: verify-css-scope.js reports it as a build
+	// failure, where a leak would pass silently.
+	//
+	// Whitespace before a root inside such a list still over-matches (`:is(.foo, body .x)`), because
+	// it is indistinguishable from the descendant combinator in `.foo body .x`. Telling them apart
+	// needs paren-awareness a regex list cannot express; css-scope.test.js pins the behaviour.
+	/(^|\s)(html|body)(?=$|[\s.[:#,>+~])/, // html.rtl, body.lockscroll, body>.color-scheme
 	/^\.rtl(?![\w-])/, // .rtl button
 	/^:lang\(/, // :lang(he) .rtl
 	/^\[lang/, // [lang*=fr] .wp-brand-font
@@ -71,8 +88,9 @@ const exclude = [
 	// .color-scheme.is-<scheme> sets vars on the element that carries the class itself. Anchored
 	// to the full compound so nested rules like `.color-scheme.is-light .masterbar` still prefix.
 	/^\.color-scheme\.is-[\w-]+$/,
-	// .stats-widget-content.color-scheme: widget's primary→accent remap on its own root element.
-	/^\.stats-widget-content\.color-scheme$/,
+	// .stats-widget-content.color-scheme: widget's primary→accent remap on its own root element,
+	// and the admin-theme-colour handback compounded with the scheme (`.is-coffee` and friends).
+	/^\.stats-widget-content\.color-scheme(\.is-[\w-]+)?$/,
 	// @wordpress/components' Tooltip (Ariakit, not @wordpress/ui) portals to document.body with no
 	// class/attribute on the wrapper — only its content carries `.components-tooltip`. Nothing
 	// targets it today; excluded pre-emptively so that stays true if something ever does.

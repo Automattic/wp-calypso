@@ -1,5 +1,6 @@
 import fs from 'fs';
 import FormData from 'form-data';
+import { debugThrottle, recordThrottle } from './lib/throttle-flags';
 import { SecretsManager } from './secrets';
 import {
 	BearerTokenErrorResponse,
@@ -247,6 +248,8 @@ export class RestAPIClient {
 	 * @throws {ErrorResponse} If API responded with an error.
 	 */
 	async createSite( newSiteParams: NewSiteParams ): Promise< NewSiteResponse > {
+		debugThrottle( 'signup' );
+
 		const body = {
 			client_id: SecretsManager.secrets.calypsoOauthApplication.client_id,
 			client_secret: SecretsManager.secrets.calypsoOauthApplication.client_secret,
@@ -268,7 +271,23 @@ export class RestAPIClient {
 			body: JSON.stringify( body ),
 		};
 
-		const response = await this.sendRequest( this.getRequestURL( '1.1', '/sites/new' ), params );
+		const url = this.getRequestURL( '1.1', '/sites/new' );
+
+		let response;
+		try {
+			response = await this.sendRequest( url, params );
+		} catch ( error ) {
+			// A refusal that is not JSON is something `sendRequest` cannot parse, so
+			// the throttle reaches us as a thrown error rather than a response body.
+			// Recorded either way, and rethrown untouched. The endpoint travels
+			// alongside: neither shape names it, and a bare `throttled` code means
+			// nothing without it.
+			// Not awaited: the worker knows about the ban the moment this returns,
+			// and telling the rest of the project runs behind it.
+			void recordThrottle( error, url.href );
+			throw error;
+		}
+		void recordThrottle( response, url.href );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
@@ -931,6 +950,94 @@ export class RestAPIClient {
 		}
 
 		return response;
+	}
+
+	/**
+	 * Deletes form responses (feedback entries) matching a search term.
+	 *
+	 * Deliberately scoped by search rather than deleting every response on the
+	 * site. These sites are shared, and a run that wiped the feedback list
+	 * would fail any other run working through its own responses at the time.
+	 * Callers should pass something unique to their run, such as the address
+	 * they submitted the form with.
+	 *
+	 * Feedback cannot be created over REST — the post type sets
+	 * `create_posts => do_not_allow` — so this is cleanup only.
+	 *
+	 * Individual delete failures are reported and skipped rather than thrown, so
+	 * one bad response cannot strand the rest.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {string} search Search term identifying the caller's own responses.
+	 * @returns {Promise<number>} Count of responses actually deleted.
+	 * @throws If the listing request itself fails.
+	 */
+	async deleteFeedbackBySearch( siteID: number, search: string ): Promise< number > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const buildURL = ( page: number ): URL => {
+			const url = this.getRequestURL( '1.1', `/sites/${ siteID }/posts/` );
+			url.searchParams.set( 'type', 'feedback' );
+			// Not `any`: WP_Query excludes statuses registered `exclude_from_search`,
+			// which covers core's `trash` and the `spam` status jetpack-forms registers.
+			// Those are exactly what a failed run leaves behind, since this flow walks a
+			// response through Spam and Trash. Verified against the endpoint: `any`
+			// returned 0 on a site holding 21 trashed responses, `trash` returned all 21.
+			// Unrecognised values are ignored rather than rejected, so listing `spam`
+			// is safe even where it is not a supported filter.
+			url.searchParams.set( 'status', 'publish,draft,pending,private,future,trash,spam' );
+			url.searchParams.set( 'search', search );
+			url.searchParams.set( 'number', '100' );
+			url.searchParams.set( 'page', String( page ) );
+			return url;
+		};
+
+		let deleted = 0;
+
+		// Paginate: a caller passing a unique term expects one or two matches, but
+		// nothing enforces that, and a single page would silently leave the rest.
+		for ( let page = 1; ; page++ ) {
+			const response = await this.sendRequest( buildURL( page ), params );
+
+			if ( response.hasOwnProperty( 'error' ) ) {
+				throw new Error(
+					`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+				);
+			}
+
+			const posts = response?.posts ?? [];
+			if ( ! posts.length ) {
+				return deleted;
+			}
+
+			for ( const post of posts ) {
+				try {
+					await this.deletePost( siteID, post.ID );
+					deleted++;
+				} catch ( error ) {
+					// deletePost throws, which would abandon every remaining response.
+					// Report and continue: partial cleanup beats none. TeamCity service
+					// message format so CI can collect these; it must not contain quotes.
+					const message = `Could not delete feedback ${ post.ID } on site ${ siteID }: ${ error }`
+						.replace( /'/g, '' )
+						.replace( /[|[\]]/g, ' ' )
+						.replace( /\s+/g, ' ' );
+					// eslint-disable-next-line no-console
+					console.log( `##teamcity[message text='${ message }' status='WARNING']` );
+				}
+			}
+
+			// A short page means there is nothing after it.
+			if ( posts.length < 100 ) {
+				return deleted;
+			}
+		}
 	}
 
 	/* Comments */

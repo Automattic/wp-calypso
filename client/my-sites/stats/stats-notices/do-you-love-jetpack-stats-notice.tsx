@@ -5,6 +5,7 @@ import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -50,7 +51,8 @@ const DoYouLoveJetpackStatsNotice = ( {
 		recordTracksEvent(
 			isOdysseyStats
 				? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_dismissed'
-				: 'calypso_stats_do_you_love_jetpack_stats_notice_dismissed'
+				: 'calypso_stats_do_you_love_jetpack_stats_notice_dismissed',
+			{ blog_id: siteId }
 		);
 
 		setNoticeDismissed( true );
@@ -58,7 +60,9 @@ const DoYouLoveJetpackStatsNotice = ( {
 	};
 
 	const openWPCOMPaidStatsUpsellModal = () => {
-		recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_upgrade_button_clicked' );
+		recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_upgrade_button_clicked', {
+			blog_id: siteId,
+		} );
 		dispatch( toggleUpsellModal( siteId, STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE ) );
 	};
 
@@ -66,11 +70,13 @@ const DoYouLoveJetpackStatsNotice = ( {
 		recordTracksEvent(
 			isOdysseyStats
 				? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
-				: 'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
+				: 'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked',
+			{ blog_id: siteId }
 		);
 
 		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
 			type: 'notice-love-stats',
+			blog_id: siteId,
 		} );
 
 		// Allow some time for the event to be recorded before redirecting.
@@ -89,10 +95,11 @@ const DoYouLoveJetpackStatsNotice = ( {
 			recordTracksEvent(
 				isOdysseyStats
 					? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_viewed'
-					: 'calypso_stats_do_you_love_jetpack_stats_notice_viewed'
+					: 'calypso_stats_do_you_love_jetpack_stats_notice_viewed',
+				{ blog_id: siteId }
 			);
 		}
-	}, [ noticeDismissed, isOdysseyStats ] );
+	}, [ noticeDismissed, isOdysseyStats, siteId ] );
 
 	if ( noticeDismissed ) {
 		return null;
@@ -156,9 +163,9 @@ const DoYouLoveJetpackStatsNotice = ( {
 			>
 				<p key="desc">{ description }</p>
 				<p key="cta">
-					<button type="button" className="notice-banner__action-button" onClick={ handleCTAClick }>
+					<Button variant="primary" onClick={ handleCTAClick }>
 						{ CTAText }
-					</button>
+					</Button>
 					<a
 						className="notice-banner__action-link"
 						href={ localizedLearnMoreLink }

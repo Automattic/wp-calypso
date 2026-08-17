@@ -55,7 +55,8 @@ describe( 'ImageAltTextPicker', () => {
 	} );
 
 	it( 'applies alt text to every image in one click and confirms', () => {
-		render( <ImageAltTextPicker images={ images } /> );
+		const onResponseAction = jest.fn();
+		render( <ImageAltTextPicker images={ images } onResponseAction={ onResponseAction } /> );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Apply to all 2 images' } ) );
 
 		expect( mockUpdateBlockAttributes ).toHaveBeenCalledTimes( 2 );
@@ -71,6 +72,12 @@ describe( 'ImageAltTextPicker', () => {
 		// The button is replaced by the confirmation, and the images stay visible.
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'A cat on a sofa' ) ).toBeInTheDocument();
+		expect( onResponseAction ).toHaveBeenCalledWith( {
+			action: 'bulk_accept',
+			target: 'image',
+			outcome: 'success',
+			itemCount: 2,
+		} );
 	} );
 
 	it( 'calls onComplete after applying', () => {
@@ -78,6 +85,36 @@ describe( 'ImageAltTextPicker', () => {
 		render( <ImageAltTextPicker images={ images } onComplete={ onComplete } /> );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Apply to all 2 images' } ) );
 		expect( onComplete ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'reports a partial failure when a later image update throws', () => {
+		const onComplete = jest.fn();
+		const onResponseAction = jest.fn();
+		mockUpdateBlockAttributes
+			.mockImplementationOnce( () => undefined )
+			.mockImplementationOnce( () => {
+				throw new Error( 'Could not update image' );
+			} );
+		render(
+			<ImageAltTextPicker
+				images={ images }
+				onComplete={ onComplete }
+				onResponseAction={ onResponseAction }
+			/>
+		);
+
+		const preventUnhandledError = ( event: ErrorEvent ) => event.preventDefault();
+		window.addEventListener( 'error', preventUnhandledError );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Apply to all 2 images' } ) );
+		window.removeEventListener( 'error', preventUnhandledError );
+		expect( screen.getByRole( 'button', { name: 'Apply to all 2 images' } ) ).toBeInTheDocument();
+		expect( onComplete ).not.toHaveBeenCalled();
+		expect( onResponseAction ).toHaveBeenCalledWith( {
+			action: 'bulk_accept',
+			target: 'image',
+			outcome: 'partial_failed',
+			itemCount: 2,
+		} );
 	} );
 
 	it( 'uses singular copy for a single image', () => {

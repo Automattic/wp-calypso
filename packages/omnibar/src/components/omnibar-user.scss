@@ -1,7 +1,8 @@
 .omnibar,
 .omnibar__popover {
 	.omnibar__user {
-		padding-top: 8px;
+		padding-top: 4px;
+		padding-bottom: 10px;
 	}
 
 	.omnibar__user-avatar {
@@ -39,9 +40,13 @@
 		gap: 6px;
 	}
 
-	.omnibar__user-info {
-		opacity: 0.8;
+	.omnibar__user-username {
 		font-size: 11px;
+		color: var( --omnibar-submenu-text-color );
+	}
+
+	.omnibar__user-details > span {
+		line-height: 18px;
 	}
 }
 
@@ -55,10 +60,24 @@
 	}
 }
 
+.omnibar__popover:has( .omnibar__user ) {
+	min-width: 270px;
+}
+
 .omnibar__popover {
 	.omnibar__user-avatar {
 		width: 64px;
 		height: 64px;
 		border: 0;
+	}
+
+	[role='group']:has( .omnibar__user ) [role='menuitem'] {
+		padding-inline-start: 96px;
+	}
+
+	.omnibar__user .omnibar__user-avatar {
+		top: 10px;
+		margin-inline-start: -80px;
+		margin-inline-end: 8px;
 	}
 }

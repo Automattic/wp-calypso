@@ -16,6 +16,7 @@ import {
 	checkoutJetpackSiteless,
 	checkoutMarketplaceSiteless,
 	checkoutUnifiedSiteless,
+	checkoutWpcomSiteless,
 	checkoutA4ASiteless,
 	checkoutRenewalBySubscriptionId,
 	checkoutThankYou,
@@ -35,6 +36,7 @@ import {
 	transferDomainToAnyUser,
 	checkoutFailedPurchases,
 	refreshUserSession,
+	studioCheckoutReturn,
 } from './controller';
 
 export default function () {
@@ -220,6 +222,17 @@ export default function () {
 		clientRender
 	);
 
+	// WordPress.com siteless checkout is logged-in only, so it keeps redirectLoggedOut.
+	page(
+		'/checkout/wpcom/:productSlug',
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutWpcomSiteless,
+		makeLayout,
+		clientRender
+	);
+
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
 	page( '/checkout/gift/thank-you/:site', giftThankYou, makeLayout, clientRender );
@@ -290,6 +303,17 @@ export default function () {
 	);
 
 	page( '/checkout/failed-purchases', checkoutFailedPurchases, makeLayout, clientRender );
+
+	// Must stay ahead of the generic `/checkout/:domainOrProduct` route below, which would
+	// otherwise match this as a product slug.
+	page(
+		'/checkout/studio-return',
+		redirectLoggedOut,
+		noSite,
+		studioCheckoutReturn,
+		makeLayout,
+		clientRender
+	);
 
 	page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
 

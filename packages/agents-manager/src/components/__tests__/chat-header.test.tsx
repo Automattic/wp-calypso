@@ -28,11 +28,9 @@ jest.mock( '@wordpress/components', () => ( {
 } ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( '@wordpress/icons', () => ( {
-	backup: 'backup',
 	chevronLeft: 'chevronLeft',
 	close: 'close',
 	Icon: () => null,
-	lineSolid: 'lineSolid',
 	moreVertical: 'moreVertical',
 } ) );
 jest.mock( '@wordpress/data', () => ( {
@@ -57,13 +55,6 @@ function installAdminBarTrigger() {
 	const el = document.createElement( 'div' );
 	el.id = 'wp-admin-bar-agents-manager-ai-chat';
 	document.body.appendChild( el );
-}
-
-// `isReaderChatHost()` reads the agent ID from this global.
-function installReaderChatHost() {
-	( globalThis as { agentsManagerData?: { agentId?: string } } ).agentsManagerData = {
-		agentId: 'reader-chat',
-	};
 }
 
 function installMasterbarTrigger() {
@@ -99,20 +90,6 @@ describe( 'ChatHeader', () => {
 		const { container } = renderChatHeader();
 
 		expect( container.querySelector( '.agents-manager-chat-header__title' ) ).toBeNull();
-	} );
-
-	it( 'shows the history button by default', () => {
-		renderChatHeader();
-
-		expect( screen.getByText( 'View history' ) ).toBeInTheDocument();
-	} );
-
-	it( 'hides the history button on reader-chat hosts', () => {
-		installReaderChatHost();
-
-		renderChatHeader();
-
-		expect( screen.queryByText( 'View history' ) ).toBeNull();
 	} );
 
 	it( 'minimizes the chat when the Minimize button is clicked', () => {

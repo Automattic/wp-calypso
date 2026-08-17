@@ -1,16 +1,19 @@
-import { BadgeType, Button, Badge } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect, ComponentProps } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import A4APopover from '../../../components/a4a-popover';
 
+export type StatusBadgeIntent = ComponentProps< typeof Badge >[ 'intent' ];
+
 interface Props {
 	statusProps: {
 		status: string;
-		type: BadgeType;
+		intent: StatusBadgeIntent;
 	};
 	showPopoverOnLoad: boolean;
 }
@@ -66,11 +69,9 @@ export default function DashboardStatusBadge( { statusProps, showPopoverOnLoad }
 	if ( ! popoverContent ) {
 		return (
 			<span>
-				<Badge
-					className="step-section-item__status"
-					children={ statusProps.status }
-					type={ statusProps.type }
-				/>
+				<Badge className="step-section-item__status" intent={ statusProps.intent }>
+					{ statusProps.status }
+				</Badge>
 			</span>
 		);
 	}
@@ -88,11 +89,9 @@ export default function DashboardStatusBadge( { statusProps, showPopoverOnLoad }
 			tabIndex={ 0 }
 			ref={ wrapperRef }
 		>
-			<Badge
-				className="step-section-item__status"
-				children={ statusProps.status }
-				type={ statusProps.type }
-			/>
+			<Badge className="step-section-item__status" intent={ statusProps.intent }>
+				{ statusProps.status }
+			</Badge>
 			{ showPopover && popoverContent && (
 				<A4APopover
 					title={ translate(

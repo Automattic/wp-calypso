@@ -58,6 +58,7 @@ import {
 	isRechargeable,
 	isRenewingBeforeExpiration,
 	needsToRenewSoon,
+	purchaseType,
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
@@ -1470,6 +1471,30 @@ class PurchaseNotice extends Component<
 		);
 	}
 
+	/**
+	 * Tells the customer that a partner provisioned and bills this subscription,
+	 * so changes have to go through the partner. It carries the whole explanation
+	 * for why the page has no management actions, which is why it is a notice
+	 * rather than a line of metadata beside the price.
+	 *
+	 * The caller gates this on `purchase.is_partner_managed`.
+	 */
+	renderPartnerManagedNotice() {
+		const { purchase, translate } = this.props;
+		const subtitle = purchaseType( purchase );
+		if ( ! subtitle || ! purchase.partner_name ) {
+			return null;
+		}
+
+		return (
+			<Notice variant="info">
+				{ translate( '%(subtitle)s. Please contact %(partnerName)s for details.', {
+					args: { subtitle, partnerName: purchase.partner_name },
+				} ) }
+			</Notice>
+		);
+	}
+
 	renderNonProductOwnerNotice() {
 		const { translate } = this.props;
 
@@ -1658,6 +1683,13 @@ class PurchaseNotice extends Component<
 
 		if ( this.shouldRenderConciergeConsumedNotice() ) {
 			return this.renderConciergeConsumedNotice();
+		}
+
+		// Takes precedence over every notice below, including the expiry ones: those
+		// all push the customer toward a renewal or a payment method that the
+		// partner controls rather than WordPress.com.
+		if ( purchase.is_partner_managed ) {
+			return this.renderPartnerManagedNotice();
 		}
 
 		// A plan that is expiring, expired, or otherwise at risk of not renewing

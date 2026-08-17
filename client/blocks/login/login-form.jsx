@@ -483,10 +483,6 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your username' );
 		}
 
-		if ( this.isPasswordView() ) {
-			return this.renderChangeUsername();
-		}
-
 		return (
 			// Since the input receives focus on page load, screen reader users don't have any context
 			// for what credentials to use. Unlike other users, they won't have seen the informative
@@ -787,6 +783,8 @@ export class LoginForm extends Component {
 				<div className="login__form-userdata">
 					{ linkingSocialUser && renderSocialLinkingNotice() }
 					{ isUserAccountEmailUpdateRedirect && renderUserAccountEmailUpdateNotice() }
+
+					{ this.isPasswordView() && this.renderChangeUsername() }
 
 					<FormLabel
 						htmlFor="usernameOrEmail"
