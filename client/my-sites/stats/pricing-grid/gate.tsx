@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { useEffect, useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -11,6 +13,8 @@ import useIsPricingGridEligible from './hooks/use-eligibility';
 import type { Callback } from '@automattic/calypso-router';
 import type { ReactNode } from 'react';
 
+const PRE_CONNECTION_RETURN_ARGS = [ PLAN_CHOSEN_QUERY_ARG, 'force_refresh' ];
+
 const loadPricingGrid = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-stats-pricing-grid" */ './pricing-grid'
@@ -21,10 +25,61 @@ const loadPricingGrid = () =>
  * asks exactly what this gate asks — but before the site had a blog id to record the answer
  * against, so the answer travels back as a query arg on the page the connection flow lands on.
  *
+ * Remembered after the first read: those args are then stripped from the address bar so they do
+ * not sit in the Referer of every dashboard REST request, and the gate remounts on route changes.
+ *
  * Exported for tests: too eager and a site never sees the grid, too shy and it is asked twice.
  */
+let rememberedChoiceBeforeConnecting = false;
+
 export function hasChosenBeforeConnecting(): boolean {
-	return new URLSearchParams( window.location.search ).get( PLAN_CHOSEN_QUERY_ARG ) === '1';
+	if ( rememberedChoiceBeforeConnecting ) {
+		return true;
+	}
+
+	rememberedChoiceBeforeConnecting =
+		new URLSearchParams( window.location.search ).get( PLAN_CHOSEN_QUERY_ARG ) === '1';
+
+	return rememberedChoiceBeforeConnecting;
+}
+
+/** Clears the in-memory plan-chosen flag so tests can set a fresh query string. */
+export function resetHasChosenBeforeConnecting() {
+	rememberedChoiceBeforeConnecting = false;
+}
+
+/**
+ * Drops the pre-connection return args from a URL. `force_refresh` in particular is read from the
+ * Referer on every Odyssey REST request and bypasses both server caches while it stays in the bar.
+ */
+export function getUrlWithPreConnectionReturnArgsRemoved( url: string ): URL {
+	const next = new URL( url );
+
+	PRE_CONNECTION_RETURN_ARGS.forEach( ( arg ) => next.searchParams.delete( arg ) );
+
+	return next;
+}
+
+function stripPreConnectionReturnArgsFromCurrentUrl() {
+	const current = new URL( window.location.href );
+
+	if ( ! PRE_CONNECTION_RETURN_ARGS.some( ( arg ) => current.searchParams.has( arg ) ) ) {
+		return;
+	}
+
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
+	// Odyssey rewrites the URL on load to drop duplicate params; wait for that to finish. The
+	// URL is read inside the timeout so a rewrite by another stripper in the same load (the
+	// `statsPurchaseSuccess` one) is kept rather than overwritten with a stale copy.
+	setTimeout( () => {
+		const next = getUrlWithPreConnectionReturnArgsRemoved( window.location.href );
+
+		window.history.replaceState( null, '', next.toString() );
+		if ( isOdysseyStats ) {
+			page.base( `${ next.pathname }${ next.search }` );
+		}
+	}, 300 );
 }
 
 // The query arg is gone on the next visit, so the choice has to be recorded server-side once the
@@ -52,6 +107,10 @@ function PricingGridGate( { children }: { children: ReactNode } ) {
 		'pricing_grid',
 		isApplicable
 	);
+
+	useEffect( () => {
+		stripPreConnectionReturnArgsFromCurrentUrl();
+	}, [] );
 
 	useEffect( () => {
 		if ( ! siteId || hasRecordedChoiceBeforeConnecting || ! hasChosenBeforeConnecting() ) {

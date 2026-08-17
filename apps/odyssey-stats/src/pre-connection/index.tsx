@@ -24,9 +24,9 @@ const STATS_ADMIN_PATH = 'admin.php?page=stats';
  * plan question was already answered here — it cannot be recorded against the site at the time it
  * is asked, since the site has no blog id yet.
  *
- * `force_refresh` drops what the site cached while it had no connection. Everything Stats asked
- * for back then failed for want of a token, and those answers outlive the connection that fixes
- * them, so without this the dashboard greets a newly connected site with nothing in it.
+ * `force_refresh` drops what the site cached while it had no connection. The pricing grid gate
+ * strips it (and the plan-chosen marker) from the address bar once the dashboard has read them,
+ * so later REST requests do not keep bypassing the server caches via the Referer.
  */
 const AUTHORIZE_REDIRECT_URI = `${ STATS_ADMIN_PATH }&${ PLAN_CHOSEN_QUERY_ARG }=1&force_refresh=1`;
 
