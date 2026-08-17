@@ -4,7 +4,7 @@ import { WordPressLogo } from '@automattic/components';
 import { css, Global, ThemeProvider } from '@emotion/react';
 import { Button, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
@@ -83,11 +83,16 @@ export default function MarketplaceWaitDemo() {
 		setScenario( next );
 		replay();
 	};
-	const classicSteps = [
-		translate( 'Setting up plugin installation' ),
-		translate( 'Installing plugin' ),
-		translate( 'Activating plugin' ),
-	];
+	// Memoised as on the real page: the classic bar re-arms its simulated-progress timer whenever
+	// `steps` changes identity, and this page re-renders on every fake-transfer tick.
+	const classicSteps = useMemo(
+		() => [
+			translate( 'Setting up plugin installation' ),
+			translate( 'Installing plugin' ),
+			translate( 'Activating plugin' ),
+		],
+		[ translate ]
+	);
 
 	let stage: React.ReactNode;
 	if ( isFailed ) {
