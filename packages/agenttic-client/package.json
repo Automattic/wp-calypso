@@ -26,6 +26,7 @@
 	],
 	"scripts": {
 		"build": "yarn run clean && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"prepare": "yarn run build",
 		"dev": "vite build --watch",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",
