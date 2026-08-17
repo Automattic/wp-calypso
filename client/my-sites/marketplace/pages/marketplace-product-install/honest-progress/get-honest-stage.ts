@@ -30,6 +30,10 @@ const PREPARING_STATUSES: ReadonlyArray< string | null > = [
 	transferStates.UPLOADING,
 ];
 
+// Not listed on purpose: `renaming`, `exporting`, `importing`, `cleanup` are the lossless-revert
+// pipeline (wpcom `reverts/class-lossless.php`), never a forward step of a transfer. A revert of
+// this wait's transfer is a failure, reported by useInstallDeadline rather than shown as a stage.
+
 /**
  * Which honest stage the install is in.
  *

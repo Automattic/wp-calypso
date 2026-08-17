@@ -344,11 +344,12 @@ export function useProductInstall( {
 		enabled: !! siteId && ! preflightError && ! isUploadStillSending,
 	} );
 
-	// The path that runs a transfer, known from the strategy rather than from `atomicFlow`, which
-	// only flips once the install effect fires — so the wait UI and its telemetry agree from the
-	// first render instead of after a classic-bar flash.
+	// The path that runs a transfer. Known from the strategy before the install effect flips
+	// `atomicFlow`, so the wait UI and its telemetry agree from the first render; latched on
+	// `atomicFlow` afterwards, because once the transfer completes the site reads as Atomic and the
+	// strategy becomes 'in-place' while this wait is still finishing.
 	const isTransferWait =
-		installStrategy === 'atomic-transfer' && ! themeSlug && ! isPluginUploadFlow;
+		atomicFlow || ( installStrategy === 'atomic-transfer' && ! themeSlug && ! isPluginUploadFlow );
 
 	// The Redux slice only ever hears `start` and `complete` on this path (the theme-transfer poller's
 	// reducer drops everything in between), so the honest wait reads the fine-grained status from the
