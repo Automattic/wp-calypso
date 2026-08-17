@@ -3,6 +3,7 @@
  */
 
 const mockClearSelectedBlock = jest.fn();
+const mockClearActiveBlockFocus = jest.fn();
 const mockEnableComplementaryArea = jest.fn();
 let mockOpenPanels: string[] = [];
 let mockRemovedPanels: string[] = [];
@@ -53,6 +54,10 @@ jest.mock( '@wordpress/data', () => ( {
 		}
 		return {};
 	} ),
+} ) );
+
+jest.mock( './block-actions', () => ( {
+	clearActiveBlockFocus: () => mockClearActiveBlockFocus(),
 } ) );
 
 import { revealSidebarField } from './reveal-sidebar-field';
@@ -152,6 +157,14 @@ describe( 'revealSidebarField', () => {
 		await revealSidebarField( 'excerpt' );
 
 		expect( mockClearSelectedBlock ).toHaveBeenCalled();
+	} );
+
+	it( 'drops the sidebar block focus so the editor does not stay dimmed', async () => {
+		renderField();
+
+		await revealSidebarField( 'excerpt' );
+
+		expect( mockClearActiveBlockFocus ).toHaveBeenCalled();
 	} );
 
 	// Contract with @wordpress/interface. No test can catch Gutenberg renaming these.

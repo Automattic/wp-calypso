@@ -10,6 +10,7 @@
  */
 
 import { dispatch, select } from '@wordpress/data';
+import { clearActiveBlockFocus } from './block-actions';
 
 export interface SidebarTarget {
 	/** Panel preference name, for variants the editor renders as a collapsible panel. */
@@ -173,7 +174,12 @@ export async function revealSidebarField(
 		return false;
 	}
 
+	// A block the sidebar focused dims the rest of the editor, and
+	// clearSelectedBlock on its own leaves that dimming in place.
+	clearActiveBlockFocus();
+
 	// A selected block takes the sidebar slot over the document settings.
+	// clearActiveBlockFocus spares a selection the user made, so clear that too.
 	(
 		dispatch( 'core/block-editor' ) as unknown as { clearSelectedBlock?: () => void }
 	 )?.clearSelectedBlock?.();
