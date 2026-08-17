@@ -108,9 +108,7 @@ export default function EmailSection( {
 		! recoveryEmailMatchesAccountEmail( accountRecovery.email, userSettings.user_email );
 	const hasRecoveryMethod = hasUsableRecoveryEmail || !! accountRecovery?.phone;
 
-	// Only while the field still holds the bouncing address. Once the user types a different one,
-	// the validation messages below are what they need to see.
-	const showBouncingError =
+	const showBouncingEmailError =
 		! isEmailPending && !! userSettings.user_email_bouncing && value === userSettings.user_email;
 
 	const showCustomDomainWarning =
@@ -125,7 +123,7 @@ export default function EmailSection( {
 		if ( isEmailPending ) {
 			return '';
 		}
-		if ( showBouncingError ) {
+		if ( showBouncingEmailError ) {
 			return 'has-error';
 		}
 		if ( showCustomDomainWarning ) {
@@ -168,7 +166,7 @@ export default function EmailSection( {
 			);
 		}
 
-		if ( showBouncingError ) {
+		if ( showBouncingEmailError ) {
 			return (
 				<>
 					<Icon icon={ info } size={ 16 } />
@@ -225,7 +223,7 @@ export default function EmailSection( {
 	}, [
 		isEmailPending,
 		isEmailVerified,
-		showBouncingError,
+		showBouncingEmailError,
 		showCustomDomainWarning,
 		value,
 		currentEmail,
