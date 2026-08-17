@@ -20,10 +20,6 @@ export default function AccountEmailBouncingNotice() {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
-	const recordCtaClick = ( cta: 'update_email' | 'add_recovery_email' ) => {
-		recordTracksEvent( 'calypso_dashboard_account_email_bouncing_notice_click', { cta } );
-	};
-
 	return (
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_account_email_bouncing_notice_impression" />
@@ -31,22 +27,15 @@ export default function AccountEmailBouncingNotice() {
 				variant="warning"
 				title={ __( 'Your account email isn’t receiving our messages' ) }
 				actions={
-					<>
-						<RouterLinkButton
-							to="/me/account"
-							variant="primary"
-							onClick={ () => recordCtaClick( 'update_email' ) }
-						>
-							{ __( 'Update your email address' ) }
-						</RouterLinkButton>
-						<RouterLinkButton
-							to="/me/security/account-recovery"
-							variant="secondary"
-							onClick={ () => recordCtaClick( 'add_recovery_email' ) }
-						>
-							{ __( 'Add a recovery email' ) }
-						</RouterLinkButton>
-					</>
+					<RouterLinkButton
+						to="/me/account"
+						variant="primary"
+						onClick={ () =>
+							recordTracksEvent( 'calypso_dashboard_account_email_bouncing_notice_click' )
+						}
+					>
+						{ __( 'Update your email address' ) }
+					</RouterLinkButton>
 				}
 			>
 				{ sprintf(

@@ -49,22 +49,19 @@ describe( '<AccountEmailBouncingNotice>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Dismiss' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'records which CTA was followed', async () => {
+	test( 'offers updating the email address as its only action', async () => {
 		mockUserSettings( { user_email_bouncing: true } );
 		const user = userEvent.setup();
 
 		const { recordTracksEvent } = render( <AccountEmailBouncingNotice /> );
 
-		await user.click( await screen.findByRole( 'link', { name: 'Update your email address' } ) );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_account_email_bouncing_notice_click',
-			{ cta: 'update_email' }
-		);
+		const links = await screen.findAllByRole( 'link' );
+		expect( links ).toHaveLength( 1 );
+		expect( links[ 0 ] ).toHaveAccessibleName( 'Update your email address' );
 
-		await user.click( screen.getByRole( 'link', { name: 'Add a recovery email' } ) );
+		await user.click( links[ 0 ] );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_account_email_bouncing_notice_click',
-			{ cta: 'add_recovery_email' }
+			'calypso_dashboard_account_email_bouncing_notice_click'
 		);
 	} );
 
