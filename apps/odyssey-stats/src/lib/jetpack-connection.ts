@@ -79,7 +79,10 @@ export async function registerSite( redirectUri: string ): Promise< string > {
 			// bundle is served from a CDN, so it can run against either.
 			registration_nonce: state.registrationNonce,
 			redirect_uri: redirectUri,
-			from: 'jetpack-stats',
+			// The sanctioned value for a new caller, per `client/jetpack-connect/AGENTS.md`. It is
+			// also what returns the visitor to `redirect_uri`: an unrecognised `from` falls through
+			// to Calypso's default target, which is the Jetpack plans page.
+			from: 'jetpack-connector',
 		} ),
 	} );
 

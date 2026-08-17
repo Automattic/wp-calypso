@@ -86,7 +86,7 @@ describe( 'registerSite', () => {
 		expect( JSON.parse( options.body ) ).toEqual( {
 			registration_nonce: 'registration-nonce',
 			redirect_uri: REDIRECT_URI,
-			from: 'jetpack-stats',
+			from: 'jetpack-connector',
 		} );
 	} );
 
