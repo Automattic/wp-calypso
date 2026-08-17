@@ -10,7 +10,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Notice from '../../components/notice';
 
-const SUPPORT_URL = 'https://jetpack.com/support/getting-started-with-jetpack/known-issues/';
+const SUPPORT_URL = 'https://jetpack.com/support/getting-started-with-jetpack/known-issues/#backup';
 
 /**
  * Warns that restoring the database can re-run subscription renewals that were

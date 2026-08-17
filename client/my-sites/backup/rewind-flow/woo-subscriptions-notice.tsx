@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import type { FunctionComponent } from 'react';
 
-const SUPPORT_URL = 'https://jetpack.com/support/getting-started-with-jetpack/known-issues/';
+const SUPPORT_URL = 'https://jetpack.com/support/getting-started-with-jetpack/known-issues/#backup';
 
 interface Props {
 	siteId: number;
