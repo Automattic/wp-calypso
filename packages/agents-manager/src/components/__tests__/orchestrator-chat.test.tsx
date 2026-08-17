@@ -233,6 +233,7 @@ jest.mock( '../agent-chat', () => ( {
 import {
 	blockCurrentRequest,
 	getTargetViolation,
+	recordLiveTarget,
 	recordReportedTarget,
 	startNewUserRequest,
 } from '../../utils/editor-target-binding';
@@ -1493,6 +1494,32 @@ describe( 'OrchestratorChat', () => {
 			expect( abortCurrentRequest ).not.toHaveBeenCalled();
 		} );
 
+		it( 'does not abort again on a canvas event that moved nothing', () => {
+			// The abort keys off the live move, not the block. Keying it off the
+			// block would abort on every later canvas event for the rest of the page
+			// session — including events that re-announce the canvas the request is
+			// now bound to, and including a later, unrelated request.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			recordReportedTarget( ABOUT_PAGE );
+			dispatchEditorTargetChange( CONTACT_PAGE );
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+
+			// The refused tool call's continuation rebinds to the page now open.
+			recordReportedTarget( CONTACT_PAGE );
+			dispatchEditorTargetChange( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+			// The block is untouched by any of that: the refused write stays refused.
+			expect( getTargetViolation() ).toEqual( {
+				code: 'moved',
+				from: 'About',
+				to: 'Contact',
+			} );
+		} );
+
 		it( 'lifts the block when the composer submits the next message', async () => {
 			// The rebind has to sit on the callback the composer is wired to. In
 			// `submitChatMessage` — which only serves custom actions and context
@@ -1502,7 +1529,8 @@ describe( 'OrchestratorChat', () => {
 
 			render( chat() );
 			recordReportedTarget( ABOUT_PAGE );
-			blockCurrentRequest( { code: 'moved', from: 'About', to: 'Contact' } );
+			recordLiveTarget( CONTACT_PAGE );
+			blockCurrentRequest();
 			expect( getTargetViolation() ).not.toBeNull();
 
 			await act( async () => {
@@ -1510,6 +1538,28 @@ describe( 'OrchestratorChat', () => {
 			} );
 
 			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
+			expect( getTargetViolation() ).toBeNull();
+		} );
+
+		it( 'lifts the block when the turn is regenerated', async () => {
+			// A regeneration is a fresh dispatch that rebinds on its own outbound
+			// message, so it is a new request for the binding too. It goes through
+			// agenttic's own handler rather than the composer, so without this the
+			// block would survive into a request it has nothing to do with.
+			render( chat() );
+			recordReportedTarget( ABOUT_PAGE );
+			recordLiveTarget( CONTACT_PAGE );
+			blockCurrentRequest();
+			expect( getTargetViolation() ).not.toBeNull();
+
+			const config = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+				getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+			};
+			const wrappedHandler = config.getRegenerateHandler?.( showComponentMessage( 'agent-1' ) );
+			await act( async () => {
+				await wrappedHandler?.();
+			} );
+
 			expect( getTargetViolation() ).toBeNull();
 		} );
 	} );

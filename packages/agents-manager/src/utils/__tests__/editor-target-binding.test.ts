@@ -4,6 +4,7 @@
 import {
 	blockCurrentRequest,
 	clearTargetBinding,
+	getLiveTargetMove,
 	getTargetViolation,
 	parseEditorTarget,
 	recordLiveTarget,
@@ -65,16 +66,19 @@ describe( 'getTargetViolation', () => {
 		// The fail-open branch sits *under* the block check, so a request blocked
 		// on a host that never implemented the contract would refuse every canvas
 		// write over a deploy-order mismatch neither side controls.
-		// `blockCurrentRequest` takes the violation rather than a bare flag
+		// `blockCurrentRequest` latches the live move rather than accepting one,
 		// precisely so it cannot be reached without one — and on this host there
-		// is never one to pass, however far the canvas moves.
+		// is never one to latch, however far the canvas moves.
 		recordReportedTarget( undefined );
+		expect( blockCurrentRequest() ).toBe( false );
 		expect( getTargetViolation() ).toBeNull();
 
 		recordLiveTarget( { available: false } );
+		expect( blockCurrentRequest() ).toBe( false );
 		expect( getTargetViolation() ).toBeNull();
 
 		recordLiveTarget( { available: true, key: 'page:9', label: 'Contact' } );
+		expect( blockCurrentRequest() ).toBe( false );
 		expect( getTargetViolation() ).toBeNull();
 	} );
 
@@ -147,8 +151,7 @@ describe( 'getTargetViolation', () => {
 		// attempt write the user's request onto the page they moved to.
 		recordReportedTarget( { available: true, key: 'page:4', label: 'About' } );
 		recordLiveTarget( { available: true, key: 'page:9', label: 'Contact' } );
-		const violation = getTargetViolation();
-		blockCurrentRequest( violation! );
+		expect( blockCurrentRequest() ).toBe( true );
 
 		recordReportedTarget( { available: true, key: 'page:9', label: 'Contact' } );
 
@@ -169,7 +172,7 @@ describe( 'getTargetViolation', () => {
 		// wrong thing to say about a request made with no page open at all.
 		recordReportedTarget( { available: true, key: 'page:4', label: 'About' } );
 		recordLiveTarget( { available: false } );
-		blockCurrentRequest( { code: 'no-editor' } );
+		blockCurrentRequest();
 
 		recordReportedTarget( { available: true, key: 'page:9', label: 'Contact' } );
 
@@ -178,7 +181,8 @@ describe( 'getTargetViolation', () => {
 
 	it( 'unblocks on the next user message', () => {
 		recordReportedTarget( { available: true, key: 'page:4' } );
-		blockCurrentRequest( { code: 'moved', from: 'page:4', to: 'page:9' } );
+		recordLiveTarget( { available: true, key: 'page:9' } );
+		blockCurrentRequest();
 		startNewUserRequest();
 		recordReportedTarget( { available: true, key: 'page:9' } );
 
@@ -198,7 +202,8 @@ describe( 'getTargetViolation', () => {
 		// binding, and if that also lifted the block the model could navigate and
 		// then write the refused change onto the page it navigated to.
 		recordReportedTarget( { available: true, key: 'page:4', label: 'About' } );
-		blockCurrentRequest( { code: 'moved', from: 'About', to: 'Contact' } );
+		recordLiveTarget( { available: true, key: 'page:9', label: 'Contact' } );
+		blockCurrentRequest();
 
 		clearTargetBinding();
 
@@ -207,5 +212,63 @@ describe( 'getTargetViolation', () => {
 			from: 'About',
 			to: 'Contact',
 		} );
+	} );
+} );
+
+describe( 'getLiveTargetMove', () => {
+	it( 'stops reporting a move once the canvas is back in agreement', () => {
+		// The latch-free reading, which is what the abort keys off. After a
+		// refusal the model's continuation re-reports the new canvas, so the two
+		// agree again — and a host event that re-announces that same canvas is not
+		// a move, however long the request stays blocked.
+		recordReportedTarget( { available: true, key: 'page:4', label: 'About' } );
+		recordLiveTarget( { available: true, key: 'page:9', label: 'Contact' } );
+		blockCurrentRequest();
+
+		recordReportedTarget( { available: true, key: 'page:9', label: 'Contact' } );
+		recordLiveTarget( { available: true, key: 'page:9', label: 'Contact' } );
+
+		expect( getLiveTargetMove() ).toBeNull();
+		// The block itself is untouched: the write still may not proceed.
+		expect( getTargetViolation() ).toEqual( {
+			code: 'moved',
+			from: 'About',
+			to: 'Contact',
+		} );
+	} );
+
+	it( 'keeps reporting a move while the canvas is still away', () => {
+		recordReportedTarget( { available: true, key: 'page:4', label: 'About' } );
+		recordLiveTarget( { available: true, key: 'page:9', label: 'Contact' } );
+
+		expect( getLiveTargetMove() ).toEqual( {
+			code: 'moved',
+			from: 'About',
+			to: 'Contact',
+		} );
+	} );
+} );
+
+describe( 'blockCurrentRequest', () => {
+	it( 'latches nothing when the canvas has not moved', () => {
+		// A block is only ever created from a real live move, so a caller cannot
+		// refuse writes the binding has no basis to refuse.
+		recordReportedTarget( { available: true, key: 'page:4', label: 'About' } );
+
+		expect( blockCurrentRequest() ).toBe( false );
+		expect( getTargetViolation() ).toBeNull();
+	} );
+
+	it( 'keeps the first block rather than replacing it', () => {
+		recordReportedTarget( { available: true, key: 'page:4', label: 'About' } );
+		recordLiveTarget( { available: false } );
+		expect( blockCurrentRequest() ).toBe( true );
+
+		// A second call once the canvas has mounted elsewhere must not overwrite
+		// the original cause — the refusal message is chosen from its code.
+		recordLiveTarget( { available: true, key: 'page:9', label: 'Contact' } );
+		expect( blockCurrentRequest() ).toBe( true );
+
+		expect( getTargetViolation() ).toEqual( { code: 'no-editor' } );
 	} );
 } );

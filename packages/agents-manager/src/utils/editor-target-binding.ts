@@ -31,6 +31,15 @@ export type TargetViolation =
 	| { code: 'no-editor' }
 	| { code: 'moved'; from: string | null; to: string | null };
 
+/**
+ * The host's canvas-change event.
+ *
+ * Must stay byte-identical to Big Sky's `EDITOR_TARGET_CHANGE_EVENT` in
+ * `src/ai/wp-orchestrator/editor-target.ts` — with the shape parser above, this
+ * is the whole cross-repo seam, so both halves of it live in this module.
+ */
+export const EDITOR_TARGET_CHANGE_EVENT = 'big-sky-editor-target-change';
+
 // `null` means the host never reported a target — an older plugin, or a host
 // that does not implement the contract. The guard disables itself rather than
 // refusing writes it has no basis to refuse.
@@ -42,10 +51,11 @@ let liveTarget: EditorTarget | null = null;
 // cannot simply retry onto the page the user moved to.
 //
 // Storing the cause rather than a bare flag makes "blocked without a violation"
-// unrepresentable. That matters because the fail-open branch below sits *under*
-// this check: a flag could be set on a host that never reported a target, and
-// would then refuse canvas writes there is no basis to refuse. Requiring the
-// violation means only a real one can get here.
+// unrepresentable, and `blockCurrentRequest()` can only ever fill it from a live
+// move. That matters because the fail-open branch below sits *under* this check:
+// a flag could be set on a host that never reported a target, and would then
+// refuse canvas writes there is no basis to refuse. Deriving the violation from
+// the live reading means only a real one can get here.
 let blockedViolation: TargetViolation | null = null;
 
 /**
@@ -118,11 +128,21 @@ export function clearTargetBinding(): void {
 /**
  * Refuse canvas writes for the remainder of the current request.
  *
- * @param violation The violation that caused the block. Required so a block can
- *                  never outrun an actual violation — see `blockedViolation`.
+ * Latches whatever move is live right now rather than accepting one, so a block
+ * can never outrun an actual violation — on a host that reports no target there
+ * is nothing to latch, and the fail-open guarantee holds by construction.
+ * Idempotent: an existing block is kept, never replaced or cleared.
+ *
+ * @returns Whether a block is in place.
  */
-export function blockCurrentRequest( violation: TargetViolation ): void {
-	blockedViolation = violation;
+export function blockCurrentRequest(): boolean {
+	if ( blockedViolation ) {
+		return true;
+	}
+
+	blockedViolation = getLiveTargetMove();
+
+	return null !== blockedViolation;
 }
 
 /**
@@ -142,18 +162,14 @@ function describeTarget( target: EditorTarget | null ): string | null {
 }
 
 /**
- * Whether the pending canvas write would land somewhere it was not meant to.
+ * Whether the live canvas differs from the one the model last saw.
  *
- * @returns The violation, or null when the write may proceed.
+ * The latch-free reading. Use it to decide whether something just moved; use
+ * `getTargetViolation()` to decide whether a write may proceed.
+ *
+ * @returns The violation, or null when the live canvas still matches.
  */
-export function getTargetViolation(): TargetViolation | null {
-	// Every refusal after the first names the pages from the violation that
-	// caused the block, rather than re-deriving them from a binding that has
-	// since rebound to the page the user moved to.
-	if ( blockedViolation ) {
-		return blockedViolation;
-	}
-
+export function getLiveTargetMove(): TargetViolation | null {
 	// No contract from this host, or no reading yet: nothing to enforce against.
 	if ( ! reportedTarget || ! liveTarget ) {
 		return null;
@@ -182,4 +198,16 @@ export function getTargetViolation(): TargetViolation | null {
 		from: describeTarget( reportedTarget ),
 		to: describeTarget( liveTarget ),
 	};
+}
+
+/**
+ * Whether the pending canvas write would land somewhere it was not meant to.
+ *
+ * @returns The violation, or null when the write may proceed.
+ */
+export function getTargetViolation(): TargetViolation | null {
+	// Every refusal after the first names the pages from the violation that
+	// caused the block, rather than re-deriving them from a binding that has
+	// since rebound to the page the user moved to.
+	return blockedViolation ?? getLiveTargetMove();
 }

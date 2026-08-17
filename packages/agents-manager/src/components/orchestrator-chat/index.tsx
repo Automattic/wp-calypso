@@ -28,8 +28,9 @@ import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
 } from '../../utils/convert-tool-messages-to-components';
 import {
+	EDITOR_TARGET_CHANGE_EVENT,
 	blockCurrentRequest,
-	getTargetViolation,
+	getLiveTargetMove,
 	recordLiveTarget,
 	startNewUserRequest,
 } from '../../utils/editor-target-binding';
@@ -303,22 +304,23 @@ export default function OrchestratorChat( {
 		const handleEditorTargetChange = ( event: Event ) => {
 			recordLiveTarget( ( event as CustomEvent ).detail?.target );
 
-			const violation = getTargetViolation();
-
-			if ( ! isProcessing || ! violation ) {
+			// Keyed off the live move rather than `getTargetViolation()`: a request
+			// already blocked would otherwise abort on every later canvas event,
+			// including ones where the canvas did not move at all.
+			if ( ! isProcessing || ! getLiveTargetMove() ) {
 				return;
 			}
 
 			// Blocked as well as aborted: an abort that loses the race to an
 			// in-flight tool call must not let that call land on the new page.
-			blockCurrentRequest( violation );
+			blockCurrentRequest();
 			abortCurrentRequest();
 		};
 
-		window.addEventListener( 'big-sky-editor-target-change', handleEditorTargetChange );
+		window.addEventListener( EDITOR_TARGET_CHANGE_EVENT, handleEditorTargetChange );
 
 		return () => {
-			window.removeEventListener( 'big-sky-editor-target-change', handleEditorTargetChange );
+			window.removeEventListener( EDITOR_TARGET_CHANGE_EVENT, handleEditorTargetChange );
 		};
 	}, [ isProcessing, abortCurrentRequest ] );
 
@@ -338,6 +340,11 @@ export default function OrchestratorChat( {
 				// rewound, so a leftover picker would otherwise reappear once
 				// regeneration settles if the new response omits the component.
 				clearRetainedShowComponentMessages();
+				// A regeneration is a fresh dispatch that rebinds via
+				// `getClientContext()` on its own outbound message, so it starts a
+				// new request for the binding too — carrying a previous request's
+				// block into it would refuse writes the new canvas is bound to.
+				startNewUserRequest();
 				await handler();
 			};
 		},

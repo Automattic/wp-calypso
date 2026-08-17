@@ -933,9 +933,12 @@ describe( 'editor target guard', () => {
 	const APPLY_BLOCK_EDITS = 'big_sky__apply_block_edits';
 	const RESTORE_CHECKPOINT = 'big_sky__restore_checkpoint';
 	const UPDATE_THEME = 'big_sky__apply_update_theme';
+	const EDIT_ENTITY_RECORD = 'big_sky__edit_entity_record';
 	const EDITOR_NAVIGATE = 'big_sky__editor_navigate';
+	const WP_ADMIN_NAVIGATE = 'wp_admin__navigate';
 
 	const OPEN_PAGE = { available: true, key: 'page:4', label: 'About' };
+	const CONTACT_PAGE = { available: true, key: 'page:9', label: 'Contact' };
 
 	// Asks `setUpProvider` to leave `editorTarget` out of the client context. A
 	// sentinel rather than `undefined`, because passing `undefined` to a parameter
@@ -953,7 +956,8 @@ describe( 'editor target guard', () => {
 	} );
 
 	// Registers one external provider serving `abilityNames`, reporting `About`
-	// (page 4) as the open canvas.
+	// (page 4) as the open canvas. `editorTarget` may be a function, for hosts
+	// whose reported canvas changes between messages.
 	function setUpProvider(
 		abilityNames: string[],
 		executeAbility = jest.fn( () => Promise.resolve( { ok: true } ) ),
@@ -964,13 +968,17 @@ describe( 'editor target guard', () => {
 			executeAbility,
 		};
 		const contextProvider = {
-			getClientContext: () => ( {
-				url: '',
-				pathname: '',
-				search: '',
-				environment: 'wp-admin',
-				...( editorTarget === NO_EDITOR_TARGET ? {} : { editorTarget } ),
-			} ),
+			getClientContext: () => {
+				const target = typeof editorTarget === 'function' ? editorTarget() : editorTarget;
+
+				return {
+					url: '',
+					pathname: '',
+					search: '',
+					environment: 'wp-admin',
+					...( target === NO_EDITOR_TARGET ? {} : { editorTarget: target } ),
+				};
+			},
 		};
 
 		setAgentsManagerData( { agentProviders: [ { toolProvider, contextProvider } ] } );
@@ -1067,6 +1075,103 @@ describe( 'editor target guard', () => {
 		expect( executeAbility ).toHaveBeenCalled();
 	} );
 
+	it( 'does not guard an ability that names its own target', async () => {
+		// `edit-entity-record` addresses records explicitly (`entityType` /
+		// `entityName` / `recordId`), and most of them — site metadata, navigation
+		// menus — are not page-scoped at all. Moving the canvas cannot redirect its
+		// write, so guarding it would only refuse legitimate site-level edits from
+		// screens that have no canvas, such as a list view.
+		const { executeAbility } = setUpProvider( [ 'big-sky/edit-entity-record' ] );
+		const providers = await loadExternalProviders();
+
+		providers.contextProvider?.getClientContext();
+		recordLiveTarget( { available: false } );
+
+		await providers.toolProvider?.executeAbility( EDIT_ENTITY_RECORD, {} );
+
+		expect( executeAbility ).toHaveBeenCalledWith( EDIT_ENTITY_RECORD, {} );
+	} );
+
+	it( 'stays refused for the rest of the request once a write has been refused', async () => {
+		// The refusal goes back to the model as a tool result, and agenttic asks
+		// for the client context again on that continuation — which rebinds to the
+		// page the user moved to. Without the latch, the retry would then write the
+		// original request onto the new page.
+		let reportedTarget: unknown = OPEN_PAGE;
+		const { executeAbility } = setUpProvider(
+			[ 'big-sky/apply-block-edits' ],
+			jest.fn( () => Promise.resolve( { ok: true } ) ),
+			() => reportedTarget
+		);
+		const providers = await loadExternalProviders();
+
+		providers.contextProvider?.getClientContext();
+		recordLiveTarget( CONTACT_PAGE );
+
+		const first: any = await providers.toolProvider?.executeAbility( APPLY_BLOCK_EDITS, {} );
+		expect( first.result.error ).toBe( 'editor_target_moved' );
+
+		// The continuation: the host now reports Contact, so the binding agrees
+		// with the live canvas again.
+		reportedTarget = CONTACT_PAGE;
+		providers.contextProvider?.getClientContext();
+
+		const second: any = await providers.toolProvider?.executeAbility( APPLY_BLOCK_EDITS, {} );
+
+		expect( second.result.error ).toBe( 'editor_target_moved' );
+		// Still naming the page the work was meant for, not Contact twice.
+		expect( second.result.message ).toContain( 'About' );
+		expect( executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'binds through a merged context provider that only one host reports on', async () => {
+		// The binding wraps the *merged* provider. Wrapping each external one would
+		// let a provider that reports no canvas overwrite the reading from one that
+		// does, depending on registration order — here the non-reporting provider
+		// is registered first, and is also the one serving the write.
+		const executeAbility = jest.fn( () => Promise.resolve( { ok: true } ) );
+		setAgentsManagerData( {
+			agentProviders: [
+				{
+					toolProvider: {
+						getAbilities: jest.fn( () =>
+							Promise.resolve( [ createAbility( 'big-sky/apply-block-edits' ) ] )
+						),
+						executeAbility,
+					},
+					contextProvider: {
+						getClientContext: () => ( {
+							url: '',
+							pathname: '',
+							search: '',
+							environment: 'wp-admin',
+						} ),
+					},
+				},
+				{
+					contextProvider: {
+						getClientContext: () => ( {
+							url: '',
+							pathname: '',
+							search: '',
+							environment: 'wp-admin',
+							editorTarget: OPEN_PAGE,
+						} ),
+					},
+				},
+			],
+		} );
+		const providers = await loadExternalProviders();
+
+		providers.contextProvider?.getClientContext();
+		recordLiveTarget( CONTACT_PAGE );
+
+		const result: any = await providers.toolProvider?.executeAbility( APPLY_BLOCK_EDITS, {} );
+
+		expect( executeAbility ).not.toHaveBeenCalled();
+		expect( result.result.error ).toBe( 'editor_target_moved' );
+	} );
+
 	it( 'clears the binding before a navigation ability runs, not after', async () => {
 		// The navigation itself makes the canvas move, so a binding still in
 		// place while it executes would abort the agent's own request.
@@ -1083,6 +1188,27 @@ describe( 'editor target guard', () => {
 
 		await providers.toolProvider?.executeAbility( EDITOR_NAVIGATE, {} );
 
+		expect( violationDuringExecution ).toBeNull();
+	} );
+
+	it( 'clears the binding before a wp-admin navigation runs', async () => {
+		// The other canvas-moving ability: leaving for a wp-admin screen takes the
+		// canvas away entirely, so a binding still in place would read as
+		// `no-editor` and abort the agent's own request.
+		let violationDuringExecution: unknown = 'not captured';
+		const executeAbility = jest.fn( () => {
+			violationDuringExecution = getTargetViolation();
+			return Promise.resolve( { ok: true } );
+		} );
+		setUpProvider( [ 'wp-admin/navigate' ], executeAbility );
+		const providers = await loadExternalProviders();
+
+		providers.contextProvider?.getClientContext();
+		recordLiveTarget( { available: false } );
+
+		await providers.toolProvider?.executeAbility( WP_ADMIN_NAVIGATE, {} );
+
+		expect( executeAbility ).toHaveBeenCalledWith( WP_ADMIN_NAVIGATE, {} );
 		expect( violationDuringExecution ).toBeNull();
 	} );
 
