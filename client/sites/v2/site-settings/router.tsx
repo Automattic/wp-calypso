@@ -3,6 +3,7 @@ import { Router, createLazyRoute, createRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
 import { handleOnCatch } from 'calypso/dashboard/app/logger';
+import { trackPreviousPath } from 'calypso/dashboard/app/logger/previous-path';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
@@ -292,6 +293,8 @@ export const getRouter = ( config: AppConfig ) => {
 			} );
 		},
 	} );
+
+	trackPreviousPath( router );
 
 	return router;
 };

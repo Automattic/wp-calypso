@@ -6,6 +6,7 @@ import { captureException } from '@automattic/calypso-sentry';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { maybeReloadForChunkError } from '../../chunk-load-recovery';
 import { handleOnCatch } from '../index';
+import { trackPreviousPath } from '../previous-path';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
@@ -29,13 +30,30 @@ beforeEach( () => {
 	mockedMaybeReloadForChunkError.mockReturnValue( false );
 } );
 
-const createRouter = ( params: Record< string, string >, previousHref?: string ): AnyRouter =>
-	( {
+type ResolvedListener = ( event: { fromLocation?: { href: string } } ) => void;
+
+/**
+ * A router that can replay `onResolved`, so tests can navigate the way
+ * `trackPreviousPath` observes it: `fromLocation` is absent on the first
+ * resolve and holds the origin route afterwards.
+ */
+const createRouter = ( params: Record< string, string > ) => {
+	const listeners: ResolvedListener[] = [];
+
+	return {
 		state: {
 			matches: [ { params } ],
-			resolvedLocation: previousHref ? { href: previousHref } : undefined,
 		},
-	} ) as unknown as AnyRouter;
+		subscribe: ( _eventType: string, listener: ResolvedListener ) => {
+			listeners.push( listener );
+			return () => {};
+		},
+		resolveNavigation: ( fromHref?: string ) =>
+			listeners.forEach( ( listener ) =>
+				listener( { fromLocation: fromHref ? { href: fromHref } : undefined } )
+			),
+	} as unknown as AnyRouter & { resolveNavigation: ( fromHref?: string ) => void };
+};
 
 const createErrorInfo = ( stack = 'at SomeComponent' ): ErrorInfo => ( {
 	componentStack: stack,
@@ -62,7 +80,11 @@ describe( 'handleOnCatch', () => {
 	it( 'logs and captures a non-benign error', () => {
 		const error = new Error( 'Boom' );
 		const errorInfo = createErrorInfo( 'at SitePage' );
-		const router = createRouter( { siteSlug: 'my-site', someId: '123' }, '/sites/my-site' );
+		const router = createRouter( { siteSlug: 'my-site', someId: '123' } );
+
+		trackPreviousPath( router );
+		router.resolveNavigation();
+		router.resolveNavigation( '/sites/my-site' );
 
 		handleOnCatch( error, errorInfo, router, {
 			severity: 'error',
@@ -103,8 +125,12 @@ describe( 'handleOnCatch', () => {
 
 	it( 'reports no previous path when the error happens on a fresh page load', () => {
 		const error = new Error( 'Boom' );
+		const router = createRouter( { siteSlug: 'my-site' } );
 
-		handleOnCatch( error, createErrorInfo(), createRouter( { siteSlug: 'my-site' } ), {
+		trackPreviousPath( router );
+		router.resolveNavigation();
+
+		handleOnCatch( error, createErrorInfo(), router, {
 			severity: 'error',
 			dashboard_backport: false,
 			calypso_section: 'dashboard',

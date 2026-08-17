@@ -3,6 +3,7 @@ import { createRouter, createRoute } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
 import { handleOnCatch } from '../logger';
+import { trackPreviousPath } from '../logger/previous-path';
 import { startPerformanceTracking } from '../performance-tracking';
 import { createAgencyRoutes } from './agency';
 import { createAgencyClientRoutes } from './agency-client';
@@ -129,6 +130,8 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultViewTransition: true,
 		scrollRestoration: true,
 	} );
+
+	trackPreviousPath( router );
 
 	router.subscribe( 'onBeforeLoad', () => {
 		const routeId = router.state.pendingMatches?.at( -1 )?.routeId;

@@ -4,6 +4,7 @@ import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { maybeReloadForChunkError } from '../chunk-load-recovery';
+import { getPreviousPath } from './previous-path';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
@@ -54,6 +55,8 @@ export function handleOnCatch(
 		] )
 	);
 
+	const previousPath = getPreviousPath( router );
+
 	logToLogstash( {
 		feature: 'calypso_client',
 		message: error.message,
@@ -65,7 +68,7 @@ export function handleOnCatch(
 			message: error.message,
 			stack: errorInfo.componentStack,
 			path: window.location.href,
-			previous_path: router.state.resolvedLocation?.href,
+			previous_path: previousPath,
 			params: routeParams,
 		},
 	} );
@@ -77,7 +80,7 @@ export function handleOnCatch(
 				calypso_section: options.calypso_section,
 				...routeParams,
 			},
-			extra: { previous_path: router.state.resolvedLocation?.href },
+			extra: { previous_path: previousPath },
 		} );
 	}
 }
