@@ -28,6 +28,12 @@ import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
 } from '../../utils/convert-tool-messages-to-components';
 import {
+	blockCurrentRequest,
+	getTargetViolation,
+	recordLiveTarget,
+	startNewUserRequest,
+} from '../../utils/editor-target-binding';
+import {
 	consumeNextMessageExternalContextEntries,
 	removeExternalContextCard,
 	removeExternalContextEntry,
@@ -288,6 +294,31 @@ export default function OrchestratorChat( {
 			setIsRegenerating( false );
 		}
 	}, [ isProcessing, isRegenerating ] );
+
+	// Stop a request the moment the canvas it was made for goes away. The guard
+	// in `load-external-providers` would refuse the eventual write anyway, but
+	// only once the model got there — the user would sit and watch a request run
+	// against a page they have already left.
+	useEffect( () => {
+		const handleEditorTargetChange = ( event: Event ) => {
+			recordLiveTarget( ( event as CustomEvent ).detail?.target );
+
+			if ( ! isProcessing || ! getTargetViolation() ) {
+				return;
+			}
+
+			// Blocked as well as aborted: an abort that loses the race to an
+			// in-flight tool call must not let that call land on the new page.
+			blockCurrentRequest();
+			abortCurrentRequest();
+		};
+
+		window.addEventListener( 'big-sky-editor-target-change', handleEditorTargetChange );
+
+		return () => {
+			window.removeEventListener( 'big-sky-editor-target-change', handleEditorTargetChange );
+		};
+	}, [ isProcessing, abortCurrentRequest ] );
 
 	// While a regeneration runs, the component being regenerated is deliberately
 	// dropped from the live messages (Agenttic sends `preserveUiOnlyMessages:
@@ -594,6 +625,13 @@ export default function OrchestratorChat( {
 				// unrelated draft in it).
 				setInputValue( ( currentValue ) => ( currentValue === message ? '' : currentValue ) );
 			}
+
+			// A new user message is a new intent: rebind to whatever canvas is open
+			// now, and lift any block left by a previous request. This sits on the
+			// dispatch path rather than in `submitChatMessage` — the composer calls
+			// this callback directly, and the sends above that bail out early must
+			// not disturb a binding that still belongs to a running request.
+			startNewUserRequest();
 
 			submitDispatchedRef.current = true;
 			try {
