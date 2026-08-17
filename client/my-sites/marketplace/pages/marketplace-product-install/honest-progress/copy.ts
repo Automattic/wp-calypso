@@ -26,8 +26,9 @@ export function useHonestFooterCopy() {
 	const translate = useTranslate();
 	return {
 		elapsed: ( seconds: number ) =>
-			translate( 'Elapsed: %(elapsed)ds · usually takes about a minute', {
+			translate( 'Elapsed: %(elapsed)d s · usually takes about a minute', {
 				args: { elapsed: Math.floor( seconds ) },
+				comment: '%(elapsed)d is a number of seconds; "s" is the unit abbreviation.',
 			} ),
 		overrun: translate(
 			'This step is taking longer than usual. We’re still working on it — nothing is wrong.'

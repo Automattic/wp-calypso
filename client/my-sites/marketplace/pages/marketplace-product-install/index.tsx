@@ -26,8 +26,9 @@ const MarketplaceProductInstall = ( {
 		steps,
 		additionalSteps,
 		error,
-		atomicFlow,
+		isTransferWait,
 		transferStatus,
+		transferStartedAt,
 		onActivateTheme,
 	} = useProductInstall( {
 		pluginSlug,
@@ -36,7 +37,7 @@ const MarketplaceProductInstall = ( {
 
 	// The honest wait narrates the real transfer stages, so it only applies to the path that
 	// runs a transfer; every other path keeps the classic bar.
-	const waitVariant = atomicFlow ? getWaitVariant() : 'control';
+	const waitVariant = isTransferWait ? getWaitVariant() : 'control';
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -66,10 +67,18 @@ const MarketplaceProductInstall = ( {
 					/>
 				) }
 				{ ! error && waitVariant === 'honest_progress' && (
-					<HonestInstallProgress transferStatus={ transferStatus } currentStep={ currentStep } />
+					<HonestInstallProgress
+						transferStatus={ transferStatus }
+						currentStep={ currentStep }
+						startedAt={ transferStartedAt }
+					/>
 				) }
 				{ ! error && waitVariant === 'honest_scene' && (
-					<HonestInstallScene transferStatus={ transferStatus } currentStep={ currentStep } />
+					<HonestInstallScene
+						transferStatus={ transferStatus }
+						currentStep={ currentStep }
+						startedAt={ transferStartedAt }
+					/>
 				) }
 				{ ! error && waitVariant === 'control' && (
 					<MarketplaceProgressBar

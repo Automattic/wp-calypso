@@ -57,6 +57,11 @@ export type InstallWaitDiagnostics = {
 export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabled: boolean } ): {
 	hasTimedOut: boolean;
 	hasTransferFailed: boolean;
+	// The transfer this wait is about, as the endpoint last reported it: its raw status and when it
+	// started. Null until a transfer of ours has been seen. This is the only fine-grained status
+	// source on this page — the Redux slice hears just start and complete on the plugin path.
+	transferStatus: string | null;
+	transferStartedAt: number | null;
 	diagnostics: InstallWaitDiagnostics;
 } {
 	const [ now, setNow ] = useState( () => Date.now() );
@@ -117,6 +122,16 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 
 	const isInFlight = !! transfer && ! isSettled( transfer.status );
 	const hasFreshInFlightTransfer = isFetchedAfterMount && isSuccess && isInFlight;
+
+	// Ours: seen in flight during this wait, or created after it began. A settled record that is
+	// neither is the previous attempt's, still the site's latest because ours does not exist yet.
+	const isOurTransfer =
+		!! transfer &&
+		isFetchedAfterMount &&
+		isSuccess &&
+		( isInFlight ||
+			transfer.atomic_transfer_id === seenInFlightId.current ||
+			( waitBeganAt !== null && Date.parse( transfer.created_at ) >= waitBeganAt ) );
 
 	useEffect( () => {
 		if ( ! transfer || waitBeganAt === null ) {
@@ -183,6 +198,8 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 	return {
 		hasTimedOut: haltedOutcome === 'timeout' || isDeadlineExceeded,
 		hasTransferFailed: haltedOutcome === 'transfer-failed' || hasTransferFailed,
+		transferStatus: isOurTransfer ? transfer.status : null,
+		transferStartedAt: isOurTransfer ? Date.parse( transfer.created_at ) : null,
 		diagnostics,
 	};
 }

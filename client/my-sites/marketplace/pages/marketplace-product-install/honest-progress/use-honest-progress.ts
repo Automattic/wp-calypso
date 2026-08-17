@@ -14,34 +14,42 @@ const OVERRUN_FACTOR = 1.6;
  * The honest wait's shared clock: which real stage the transfer is in, how long the wait
  * and the current stage have been running, and a per-stage progress figure that never
  * claims more than the server confirmed. Both wait variants render from this.
+ *
+ * Time is wall-clock, anchored to when the transfer started when that is known (it survives
+ * a refresh and background-tab timer throttling; the interval only re-renders), otherwise to
+ * when this UI mounted.
  */
 export function useHonestProgress( {
 	transferStatus,
 	currentStep,
+	startedAt,
 }: {
 	transferStatus: string | null;
 	currentStep: number;
+	startedAt?: number | null;
 } ) {
 	const stage = getHonestStage( { transferStatus, currentStep } );
 
-	const [ elapsed, setElapsed ] = useState( 0 );
-	const [ stageElapsed, setStageElapsed ] = useState( 0 );
+	const [ now, setNow ] = useState( () => Date.now() );
+	const mountedAt = useRef( now );
+	const stageStartedAt = useRef( now );
 	const previousStageRef = useRef( stage );
 
+	if ( previousStageRef.current !== stage ) {
+		previousStageRef.current = stage;
+		stageStartedAt.current = now;
+	}
+
 	useEffect( () => {
-		const id = setInterval( () => {
-			setElapsed( ( seconds ) => seconds + TICK_MS / 1000 );
-			setStageElapsed( ( seconds ) => seconds + TICK_MS / 1000 );
-		}, TICK_MS );
+		const id = setInterval( () => setNow( Date.now() ), TICK_MS );
 		return () => clearInterval( id );
 	}, [] );
 
-	useEffect( () => {
-		if ( previousStageRef.current !== stage ) {
-			previousStageRef.current = stage;
-			setStageElapsed( 0 );
-		}
-	}, [ stage ] );
+	const anchor = startedAt ?? mountedAt.current;
+	const elapsed = Math.max( 0, ( now - anchor ) / 1000 );
+	// The first stage began when the transfer did; later stages when they were first observed.
+	const stageElapsed =
+		stage === 0 ? elapsed : Math.max( 0, ( now - stageStartedAt.current ) / 1000 );
 
 	const isOverrun = stageElapsed > HONEST_STAGES[ stage ].expectedSeconds * OVERRUN_FACTOR;
 

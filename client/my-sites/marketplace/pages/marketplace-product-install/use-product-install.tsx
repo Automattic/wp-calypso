@@ -8,7 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useSelector, useDispatch } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { transferCompleteStates, transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
@@ -254,7 +254,11 @@ export function useProductInstall( {
 
 	// Validate completion of atomic transfer flow
 	useEffect( () => {
-		if ( atomicFlow && currentStep === 1 && transferStates.COMPLETE === automatedTransferStatus ) {
+		if (
+			atomicFlow &&
+			currentStep === 1 &&
+			transferCompleteStates.includes( automatedTransferStatus )
+		) {
 			setCurrentStep( 2 );
 		}
 	}, [ atomicFlow, automatedTransferStatus, currentStep ] );
@@ -329,10 +333,27 @@ export function useProductInstall( {
 	const hasTransferTimedOut =
 		atomicFlow && automatedTransferStatus === transferStates.CLIENT_TIMEOUT;
 
-	const { hasTimedOut, hasTransferFailed, diagnostics } = useInstallDeadline( {
+	const {
+		hasTimedOut,
+		hasTransferFailed,
+		diagnostics,
+		transferStatus: polledTransferStatus,
+		transferStartedAt,
+	} = useInstallDeadline( {
 		siteId,
 		enabled: !! siteId && ! preflightError && ! isUploadStillSending,
 	} );
+
+	// The path that runs a transfer, known from the strategy rather than from `atomicFlow`, which
+	// only flips once the install effect fires — so the wait UI and its telemetry agree from the
+	// first render instead of after a classic-bar flash.
+	const isTransferWait =
+		installStrategy === 'atomic-transfer' && ! themeSlug && ! isPluginUploadFlow;
+
+	// The Redux slice only ever hears `start` and `complete` on this path (the theme-transfer poller's
+	// reducer drops everything in between), so the honest wait reads the fine-grained status from the
+	// deadline hook's own poll and falls back to Redux only before that poll has seen our transfer.
+	const honestTransferStatus = polledTransferStatus ?? automatedTransferStatus;
 
 	// Which error screen to show, in priority order, or null for none. The presentational mapping
 	// lives in ProductInstallErrorView; keeping this as data makes the branching testable.
@@ -370,7 +391,7 @@ export function useProductInstall( {
 			is_atomic_flow: atomicFlow,
 			// Which wait UI was on screen, so the honest-progress experiment can compare
 			// abandonment between variants (DOTCOM-17970).
-			wait_variant: atomicFlow ? getWaitVariant() : null,
+			wait_variant: isTransferWait ? getWaitVariant() : null,
 			outcome: error?.type ?? ( hasSucceeded ? 'succeeded' : null ),
 		},
 	} );
@@ -455,8 +476,9 @@ export function useProductInstall( {
 		steps,
 		additionalSteps,
 		error,
-		atomicFlow,
-		transferStatus: automatedTransferStatus,
+		isTransferWait,
+		transferStatus: honestTransferStatus,
+		transferStartedAt,
 		onActivateTheme: () => setUserDirectInstallationAllowed( true ),
 	};
 }

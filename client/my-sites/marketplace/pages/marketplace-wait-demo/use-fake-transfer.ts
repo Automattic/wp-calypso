@@ -5,7 +5,8 @@ export type DemoScenario = 'typical' | 'slow' | 'failure';
 
 type Beat = { status: string; seconds: number };
 
-// Median production timings; the slow scenario stretches provisioning, the failure one dies
+// Median production timings, in the vocabulary of the latest-transfer endpoint the real page polls
+// (`completed`, not `complete`); the slow scenario stretches provisioning, the failure one dies
 // mid-move. The install/activate tail after the transfer is what the last beat stands for.
 const TIMELINES: Record< DemoScenario, Beat[] > = {
 	typical: [

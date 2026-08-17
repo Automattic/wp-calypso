@@ -16,14 +16,17 @@ const RACK_SLOTS = 4;
 export default function HonestInstallScene( {
 	transferStatus,
 	currentStep,
+	startedAt,
 }: {
 	transferStatus: string | null;
 	currentStep: number;
+	startedAt?: number | null;
 } ) {
 	const translate = useTranslate();
 	const { stage, elapsed, isOverrun, getStageProgress } = useHonestProgress( {
 		transferStatus,
 		currentStep,
+		startedAt,
 	} );
 	const stages = useHonestStageCopy();
 	const footer = useHonestFooterCopy();
