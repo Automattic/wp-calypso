@@ -13,7 +13,7 @@ import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-ope
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import type { AppConfig } from 'calypso/dashboard/app/context';
 
@@ -55,20 +55,21 @@ function useOmnibarBridge() {
 	} );
 
 	useOmnibarEvent( 'mobileMenu', () => {
-		recordTracksEvent( 'calypso_masterbar_menu_clicked' );
 		dispatch( setNextLayoutFocus( currentLayoutFocus === 'sidebar' ? 'content' : 'sidebar' ) );
 		dispatch( activateNextLayoutFocus() );
 	} );
 }
 
 export default function Omnibar( {
-	section,
+	sectionGroup,
 	loadHelpCenterIcon,
 }: {
-	section?: string;
+	sectionGroup?: string;
 	loadHelpCenterIcon?: boolean;
 } ) {
 	useOmnibarBridge();
+
+	const sectionName = useSelector( getSectionName );
 
 	const config: AppConfig = {
 		...APP_CONTEXT_DEFAULT_CONFIG,
@@ -89,7 +90,8 @@ export default function Omnibar( {
 						<OmnibarContainer
 							user={ window.currentUser }
 							cartManagerClient={ cartManagerClient }
-							section={ section }
+							sectionGroup={ sectionGroup }
+							sectionName={ sectionName ?? undefined }
 						/>
 					</div>
 				</AnalyticsProvider>

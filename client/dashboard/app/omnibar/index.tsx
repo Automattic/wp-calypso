@@ -29,6 +29,7 @@ export default function loadOmnibar( config: AppConfig ) {
 					<OmnibarContainer
 						user={ window.currentUser }
 						cartManagerClient={ shoppingCartManagerClient }
+						sectionName="dashboard"
 					/>
 				</AnalyticsProvider>
 			</QueryClientProvider>
