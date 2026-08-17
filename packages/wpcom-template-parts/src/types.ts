@@ -10,8 +10,6 @@ export interface HeaderProps {
 	variant?: 'default' | 'minimal';
 	startUrl?: string;
 	loginUrl?: string;
-	/** Opt into the 2026 Global Nav redesign. */
-	nav2026?: boolean;
 	/** Current user's avatar URL, used by the 2026 mobile menu footer when logged in. */
 	userAvatar?: string;
 	/** Current user's display name, used by the 2026 mobile menu footer when logged in. */
