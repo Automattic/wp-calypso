@@ -226,5 +226,13 @@ describe( 'SiteSpec Utils', () => {
 
 			expect( result.features?.siteBrief ).toBe( 'next' );
 		} );
+
+		it( 'should leave the other flows on the default spec preview', () => {
+			// The widget gates the brief on a truthy features.siteBrief, so any
+			// flow that grows one starts rendering the brief. Pin that this one
+			// is the only flow asking for it.
+			expect( getDefaultSiteSpecConfig().features ).toBeUndefined();
+			expect( getEarlyProvisionSiteSpecConfig().features ).toBeUndefined();
+		} );
 	} );
 } );
