@@ -7,6 +7,8 @@ import type { Suggestion } from '@automattic/agenttic-ui';
 import type { ComponentProps } from 'react';
 
 const mockUseAgentChat = jest.fn();
+const mockUpdateSessionId = jest.fn();
+let mockManagerHasAgent = true;
 const mockUseRegenerateAction = jest.fn();
 const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
@@ -147,7 +149,8 @@ jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
 		getAgentManager: () => ( {
-			updateSessionId: jest.fn(),
+			updateSessionId: mockUpdateSessionId,
+			hasAgent: () => mockManagerHasAgent,
 		} ),
 		useAgentChat: () => mockUseAgentChat(),
 	} ),
@@ -173,13 +176,18 @@ jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( 'react-router-dom', () => ( {
 	useNavigate: () => jest.fn(),
 } ) );
-jest.mock( '../../contexts', () => ( {
-	useAgentsManagerContext: () => ( {
-		agentConfig: { agentId: 'wp-orchestrator' },
-		getActiveSessionId: () => 'session-id',
-		siteKey: 'site-1',
-	} ),
-} ) );
+jest.mock( '../../contexts', () => {
+	const { saveSessionId } = jest.requireActual( '../../utils/agent-session' );
+	return {
+		useAgentsManagerContext: () => ( {
+			agentConfig: {
+				agentId: 'wp-orchestrator',
+				onSessionIdChange: ( sessionId: string ) => saveSessionId( sessionId, 'wp-orchestrator' ),
+			},
+			getTabSessionId: () => 'session-id',
+		} ),
+	};
+} );
 jest.mock( '../../hooks/custom-actions', () => ( {
 	useRegisterCustomActions: () => {},
 } ) );
@@ -188,8 +196,10 @@ jest.mock( '../../utils/tracks', () => ( {
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
 jest.mock( '../../hooks/use-abilities-registration', () => () => {} );
-jest.mock( '../../hooks/use-conversation', () => () => mockUseConversation() );
-jest.mock( '../../hooks/use-save-new-chat-route', () => () => {} );
+jest.mock(
+	'../../hooks/use-conversation',
+	() => ( config: unknown ) => mockUseConversation( config )
+);
 jest.mock( '../../hooks/use-checkpoint-action', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockUseCheckpointAction( ...args ),
@@ -209,7 +219,6 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
-jest.mock( '../../utils/agent-session', () => ( { markSessionUsed: jest.fn() } ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
 	default: ( { messages }: { messages: unknown[] } ) => messages,
@@ -222,14 +231,12 @@ jest.mock( '../../utils/external-context', () => ( {
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatAgent: () => mockIsReaderChatAgent(),
 } ) );
-jest.mock( '../../utils/persist-last-activity', () => ( {
-	persistLastActivity: jest.fn(),
-} ) );
 jest.mock( '../agent-chat', () => ( {
 	__esModule: true,
 	default: ( props: unknown ) => mockAgentChat( props as Parameters< typeof mockAgentChat >[ 0 ] ),
 } ) );
 
+import { getSessionId } from '../../utils/agent-session';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
 
@@ -339,6 +346,36 @@ describe( 'OrchestratorChat', () => {
 		mockIsReaderChatAgent.mockReturnValue( false );
 		mockSelectedBlockType = undefined;
 		mockBlockEditorStoreThrows = false;
+		sessionStorage.clear();
+		mockManagerHasAgent = true;
+	} );
+
+	it( 'ignores a conversation result for a discarded agent', () => {
+		mockManagerHasAgent = false;
+		render( chat() );
+
+		const { onSuccess } = mockUseConversation.mock.calls.at( -1 )![ 0 ] as {
+			onSuccess: ( messages: unknown[], sessionId: string ) => void;
+		};
+		act( () => {
+			onSuccess( [], 'canonical-session-id' );
+		} );
+
+		expect( mockUpdateSessionId ).not.toHaveBeenCalled();
+		expect( getSessionId( 'wp-orchestrator' ) ).toBe( '' );
+	} );
+
+	it( 'saves the server’s canonical session ID as the tab session', () => {
+		render( chat() );
+
+		const { onSuccess } = mockUseConversation.mock.calls.at( -1 )![ 0 ] as {
+			onSuccess: ( messages: unknown[], sessionId: string ) => void;
+		};
+		act( () => {
+			onSuccess( [], 'canonical-session-id' );
+		} );
+
+		expect( getSessionId( 'wp-orchestrator' ) ).toBe( 'canonical-session-id' );
 	} );
 
 	it( 'dispatches the inline suggestion event when an Agenttic suggestion is clicked', () => {
