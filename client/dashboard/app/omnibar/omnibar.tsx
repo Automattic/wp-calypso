@@ -65,26 +65,20 @@ function createHrefResolver( adminUrl?: string ) {
 export default function OmnibarContainer( {
 	user,
 	cartManagerClient,
-	isWithinSiteContext,
+	section,
 }: {
 	user?: User;
 	cartManagerClient: ShoppingCartManagerClient;
-	isWithinSiteContext?: boolean;
+	section?: string;
 } ) {
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
-			<ConnectedOmnibar user={ user } isWithinSiteContext={ isWithinSiteContext } />
+			<ConnectedOmnibar user={ user } section={ section } />
 		</ShoppingCartProvider>
 	);
 }
 
-function ConnectedOmnibar( {
-	user,
-	isWithinSiteContext,
-}: {
-	user?: User;
-	isWithinSiteContext?: boolean;
-} ) {
+function ConnectedOmnibar( { user, section }: { user?: User; section?: string } ) {
 	const { supports } = useAppContext();
 	const recordNodeClick = useRecordOmnibarNodeClick();
 	const [ hydrated, setHydrated ] = useState( false );
@@ -157,7 +151,7 @@ function ConnectedOmnibar( {
 		return result;
 	}, [ dashboardNodes, siteNodes, site, supports, nodeBuilders ] );
 
-	const readerPluginNode = useReaderPlugin();
+	const readerPluginNode = useReaderPlugin( { section } );
 	const helpCenterPluginNode = useHelpCenterPlugin();
 	const aiChatPluginNode = useAiChatPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
@@ -167,7 +161,7 @@ function ConnectedOmnibar( {
 	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
 	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const launchSiteNode = useLaunchSitePlugin( { site } );
-	const dashboardNode = useDashboardPlugin( { site, isWithinSiteContext } );
+	const dashboardNode = useDashboardPlugin( { site, section } );
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
 	const siteActions = [
 		...( baseOmnibarNodes.siteActions ?? [] ),
