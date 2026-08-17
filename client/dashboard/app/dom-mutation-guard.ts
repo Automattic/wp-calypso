@@ -5,7 +5,7 @@ let reported = false;
 function reportRecovery() {
 	if ( ! reported ) {
 		reported = true;
-		bumpStat( 'calypso_dashboard_dom_mutation_guard', 'recovered' );
+		bumpStat( 'dashboard_dom_guard', 'recovered' );
 	}
 }
 
