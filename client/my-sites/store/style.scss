@@ -8,7 +8,8 @@
 @import "@automattic/calypso-color-schemes/src/__wp-base-styles/admin-theme-colors";
 
 // Store Stats reuses the Stats chart and controls, so it follows the same admin theme colour. It has its own roots rather than .stats-main, hence the separate include. `.woocommerce` is the one class all of them share — the main page mounts as `store-stats woocommerce`, the Products/Categories/Coupons views as `store-stats__list-view woocommerce` — so it is the root that both sets the token and reads it.
-@include wp-admin-theme-colors(".woocommerce");
+// Qualified because `.woocommerce` is not ours alone: the WooCommerce landing page in client/my-sites/woocommerce mounts a bare `<div className="woocommerce">`. It is a different section, but section CSS outlives the navigation that loaded it, so unqualified this would recolour that page for anyone who had passed through /store first.
+@include wp-admin-theme-colors(".woocommerce", ".is-section-woocommerce");
 
 .woocommerce {
 	@include stats-interactive-colors;
