@@ -18,6 +18,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import { revealSidebarField } from '../utils/reveal-sidebar-field';
 import BaseSuggestionPicker from './base-suggestion-picker';
 import type { OnResponseAction } from '../utils/response-action';
 
@@ -60,6 +61,7 @@ export default function SeoTitlePicker( {
 	const handleApply = useCallback(
 		( title: string ) => {
 			editPost( { meta: { [ SEO_TITLE_META_KEY ]: title } } );
+			revealSidebarField( 'seo' );
 		},
 		[ editPost ]
 	);

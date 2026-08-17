@@ -16,6 +16,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import { revealSidebarField } from '../utils/reveal-sidebar-field';
 import { notifySuggestionActionComplete } from '../utils/suggestion-events';
 import BaseSuggestionPicker from './base-suggestion-picker';
 import type { OnResponseAction } from '../utils/response-action';
@@ -52,6 +53,7 @@ export default function ExcerptPicker( {
 	const handleApply = useCallback(
 		( excerpt: string ) => {
 			editPost( { excerpt } );
+			revealSidebarField( 'excerpt' );
 			notifySuggestionActionComplete();
 		},
 		[ editPost ]
