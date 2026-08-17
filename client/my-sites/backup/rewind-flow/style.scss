@@ -167,11 +167,11 @@ div.rewind-flow-notice__title-warning,
 a.rewind-flow-notice__title-warning,
 a.rewind-flow-notice__title-warning:visited {
 	.gridicon {
-		fill: var(--color-error);
+		fill: var(--color-warning-dark);
 	}
 
 	&:hover {
-		fill: var(--color-error-dark);
+		fill: var(--color-warning-dark);
 	}
 }
 
