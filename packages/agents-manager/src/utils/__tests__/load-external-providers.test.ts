@@ -4,6 +4,7 @@
 import { amToolProvider } from '../../abilities';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { showComponentAbility } from '../../abilities/show-component';
+import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
 import {
 	loadExternalProviders,
@@ -25,6 +26,11 @@ import type { UIMessage } from '@automattic/agenttic-client';
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,
 } );
+jest.mock( '../canvas-binding', () => ( {
+	...jest.requireActual( '../canvas-binding' ),
+	bindToOpenCanvas: jest.fn(),
+	getBlockingMove: jest.fn( () => null ),
+} ) );
 jest.mock( '../provider-checkpoints', () => ( {
 	...jest.requireActual( '../provider-checkpoints' ),
 	getProviderCheckpointRecords: jest.fn( () => [] ),
@@ -922,5 +928,59 @@ describe( 'mergeUseSuggestionsHooks', () => {
 			suggestions: [ { id: 'second', label: 'Second', prompt: 'Second prompt.' } ],
 			replaceEmptyViewSuggestions: true,
 		} );
+	} );
+} );
+
+describe( 'canvas guard wiring', () => {
+	// Drives the binding directly rather than through a mocked editor store: what
+	// is under test here is that the wrappers are actually applied to the providers
+	// `loadExternalProviders` hands back, not the state machine itself (covered in
+	// `canvas-binding.test.ts`).
+	const mockedBinding = jest.mocked( canvasBinding );
+
+	beforeEach( () => {
+		mockedBinding.getBlockingMove.mockReturnValue( null );
+		mockedBinding.bindToOpenCanvas.mockClear();
+	} );
+
+	// Both provider counts, because the loader assigns the merged tool provider on
+	// two separate paths and only one of them runs for a given surface. A guard
+	// applied on the multi-provider path alone would be inert wherever a single
+	// provider is registered — which is most editor surfaces.
+	it.each( [ 1, 2 ] )( 'refuses a moved canvas write with %i tool provider(s)', async ( count ) => {
+		mockedBinding.getBlockingMove.mockReturnValue( { from: 'About', to: 'Contact' } );
+		const executeAbility = jest.fn();
+		setAgentsManagerData( {
+			agentProviders: Array.from( { length: count }, ( _unused, index ) => ( {
+				toolProvider: {
+					getAbilities: jest.fn( () =>
+						Promise.resolve( [ createAbility( `big-sky/apply-block-edits-${ index }` ) ] )
+					),
+					executeAbility,
+				},
+			} ) ),
+		} );
+
+		const providers = await loadExternalProviders();
+		const result = await providers.toolProvider?.executeAbility( 'big_sky__apply_block_edits', {} );
+
+		expect( executeAbility ).not.toHaveBeenCalled();
+		expect( result ).toMatchObject( {
+			returnToAgent: true,
+			result: { success: false, error: 'editor_canvas_moved' },
+		} );
+	} );
+
+	it( 'binds to the open canvas when the client context is built', async () => {
+		setAgentsManagerData( {
+			agentProviders: [ { contextProvider: { getClientContext: () => ( { url: 'https://x' } ) } } ],
+		} );
+
+		const providers = await loadExternalProviders();
+		const context = providers.contextProvider?.getClientContext();
+
+		expect( mockedBinding.bindToOpenCanvas ).toHaveBeenCalled();
+		// Nothing is added to the wire — the canvas is read from the editor store.
+		expect( context ).not.toHaveProperty( 'editorTarget' );
 	} );
 } );
