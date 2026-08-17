@@ -26,8 +26,6 @@ import './omnibar/style.scss';
 import '@automattic/omnibar/style.scss';
 
 function boot( config: AppConfig ) {
-	installDomMutationGuard();
-
 	if ( handleOAuthCallback() ) {
 		return;
 	}
@@ -37,6 +35,7 @@ function boot( config: AppConfig ) {
 	loadPreferencesHelper();
 	limitTotalSnackbars();
 	initSentry();
+	installDomMutationGuard();
 
 	const rootElement = document.getElementById( 'wpcom' );
 	if ( rootElement === null ) {
