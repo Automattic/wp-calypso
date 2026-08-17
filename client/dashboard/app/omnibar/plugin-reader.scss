@@ -57,7 +57,7 @@ $omnibar-reader-active-radius: 4px;
 		@include omnibar-reader-active-corner( 100% );
 	}
 
-	body.rtl & {
+	[dir="rtl"] & {
 		&::before {
 			@include omnibar-reader-active-corner( 100% );
 		}
