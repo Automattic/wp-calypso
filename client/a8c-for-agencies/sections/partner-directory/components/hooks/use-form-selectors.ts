@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { availableLanguages } from '../../lib/available-languages';
+import { getAvailableLanguages } from 'calypso/dashboard/agency/partner-directory/options';
 
 export function reverseMap< T >( obj: Record< string, T > ): Record< string, string > {
 	return Object.fromEntries( Object.entries( obj ).map( ( [ key, value ] ) => [ value, key ] ) );
@@ -126,7 +126,7 @@ export function useFormSelectors() {
 	};
 
 	return {
-		availableLanguages,
+		availableLanguages: getAvailableLanguages(),
 		availableRegions,
 		availableBusinessTypes,
 		availableCompanySizes,
