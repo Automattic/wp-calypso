@@ -35,6 +35,7 @@ import {
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
+import type { AgencySupports } from '../context';
 import type { AgencyCapability } from '@automattic/api-core';
 import type { AnyRoute, StaticDataRouteOption } from '@tanstack/react-router';
 
@@ -316,24 +317,64 @@ export const exclusiveOffersRoute = createRoute( {
 	)
 );
 
+export type MarketplaceSection = {
+	route: AnyRoute;
+	supports: keyof AgencySupports;
+	label: () => string;
+};
+
+// The Marketplace sections in sidebar order: the sidebar renders one sub-item
+// per accessible section, and the `/marketplace` redirect sends the user to
+// the first section their app variant supports and their capabilities allow.
+// Purchases is part of the Marketplace feature, so it shares the flag.
+export const marketplaceSections: MarketplaceSection[] = [
+	{ route: marketplaceHostingRoute, supports: 'marketplace', label: () => __( 'Hosting' ) },
+	{ route: marketplaceProductsRoute, supports: 'marketplace', label: () => __( 'Products' ) },
+	{
+		route: exclusiveOffersRoute,
+		supports: 'exclusiveOffers',
+		label: () => __( 'Exclusive offers' ),
+	},
+	{ route: marketplacePurchasesRoute, supports: 'marketplace', label: () => __( 'Purchases' ) },
+];
+
+export function isMarketplaceSectionAvailable(
+	section: MarketplaceSection,
+	agencySupports: AgencySupports,
+	capabilities: readonly string[]
+): boolean {
+	return (
+		agencySupports[ section.supports ] &&
+		isRouteAllowedByCapabilities( section.route, capabilities )
+	);
+}
+
 // `/marketplace` – no screen of its own; sends the user to the first Marketplace
 // section their capabilities allow, so stale `/marketplace` links keep working.
 export const marketplaceRoute = createRoute( {
+	// Any-of: reaching the redirect only requires access to one of the sections.
+	staticData: {
+		requiresAgencyCapability: [
+			'a4a_read_marketplace',
+			'a4a_read_exclusive_offers',
+			'a4a_jetpack_licensing',
+		],
+	},
 	getParentRoute: () => agencyRoute,
 	path: 'marketplace',
-	beforeLoad: async ( { cause } ) => {
+	beforeLoad: async ( { cause, context } ) => {
 		if ( cause === 'preload' ) {
 			return;
 		}
 
+		const agencySupports = context.config.supports.agency;
 		const activeAgency = await queryClient.ensureQueryData( activeAgencyQuery() );
 		const capabilities = activeAgency?.user?.capabilities ?? [];
-		const destination = [
-			marketplaceHostingRoute,
-			marketplaceProductsRoute,
-			exclusiveOffersRoute,
-			marketplacePurchasesRoute,
-		].find( ( route ) => isRouteAllowedByCapabilities( route, capabilities ) );
+		const destination = agencySupports
+			? marketplaceSections.find( ( section ) =>
+					isMarketplaceSectionAvailable( section, agencySupports, capabilities )
+			  )?.route
+			: undefined;
 
 		if ( ! destination ) {
 			throw redirectAsNotAllowed( { to: '/overview' } );

@@ -5,6 +5,9 @@ export async function issueJetpackLicenses(
 	agencyId: number,
 	{ product, quantity, bundle = false }: IssueJetpackLicensesInput
 ): Promise< IssuedJetpackLicense[] > {
+	if ( ! agencyId ) {
+		throw new Error( 'Agency ID is required to issue a license' );
+	}
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: '/jetpack-licensing/licenses',
@@ -17,6 +20,9 @@ export async function assignJetpackLicenseToSite(
 	licenseKey: string,
 	siteId: number
 ): Promise< IssuedJetpackLicense > {
+	if ( ! agencyId ) {
+		throw new Error( 'Agency ID is required to assign a license' );
+	}
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: `/jetpack-licensing/license/${ licenseKey }/site`,
