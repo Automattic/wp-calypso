@@ -652,10 +652,9 @@ function detectThrottleId( text: string ): ThrottleId | null {
 	if ( THROTTLED_PATHS[ 'domain-suggestions' ].test( text ) ) {
 		return 'domain-suggestions';
 	}
-	// `/users/new` wraps a Blackbox block in this same code, and that refuses one
-	// attempt rather than banning the address, so the code alone settles it only
-	// on `/sites/new`, where nothing else raises it. Little is lost: the ban is on
-	// the address, not the endpoint, and a run inside one reaches `/sites/new`
-	// too, every time it makes a site.
+	// `/users/new` answers in this same code, but never for a ban: the signup
+	// throttle exempts the addresses our tests sign up with, so what is left there
+	// is a Blackbox block, which refuses one attempt rather than banning anything.
+	// `/sites/new` gets no such exemption, so the code settles it there.
 	return THROTTLED_PATHS.signup.test( text ) ? 'signup' : null;
 }
