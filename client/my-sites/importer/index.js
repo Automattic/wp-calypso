@@ -6,7 +6,9 @@ import addTracker from './tracker';
 
 export default function () {
 	page( '/import', () => {
-		page.redirect( '/setup/site-migration/sitePicker?platform=unknown&ref=calypso-importer' );
+		window.location.assign(
+			'/setup/site-migration/sitePicker?platform=unknown&ref=calypso-importer'
+		);
 	} );
 
 	page(
