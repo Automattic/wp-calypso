@@ -268,16 +268,18 @@ const StatsCommercialPurchase = ( {
 		hasAnyStatsPlan && isOdysseyStats && ! connectionStatus?.isSiteFullyConnected;
 
 	/*
-	 * Putting the decision off is only what the secondary button offers once the site is fully
-	 * connected. Short of that, taking the free plan still needs an account attached, so the
-	 * button says so and goes and gets one.
+	 * Putting the decision off is only what the secondary button offers once the site is
+	 * registered. Keyed on registration, not full connection: `isSiteFullyConnected` is also
+	 * false for a second admin on a site someone else connected, and that admin can already
+	 * take the free plan. The pre-connection screen covers the unregistered case with
+	 * `onPostpone`.
 	 *
 	 * Deliberately narrow: only when we are in wp-admin AND have an answer about the connection.
 	 * Simple and Atomic sites are always connected and report nothing here, and an absent answer
 	 * must not be read as "not connected".
 	 */
 	const needsConnectionForFreePlan =
-		isOdysseyStats && !! connectionStatus && ! connectionStatus.isSiteFullyConnected;
+		isOdysseyStats && !! connectionStatus && ! connectionStatus.isRegistered;
 
 	const handleSliderChanged = useCallback( ( value: number ) => {
 		setPurchaseTierQuantity( value );
