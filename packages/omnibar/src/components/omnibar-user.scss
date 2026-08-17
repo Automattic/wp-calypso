@@ -1,7 +1,8 @@
 .omnibar,
 .omnibar__popover {
 	.omnibar__user {
-		padding-top: 8px;
+		padding-top: 4px;
+		padding-bottom: 10px;
 	}
 
 	.omnibar__user-avatar {
@@ -71,10 +72,12 @@
 	}
 
 	[role='group']:has( .omnibar__user ) [role='menuitem'] {
-		padding-inline-start: 88px;
+		padding-inline-start: 96px;
 	}
 
 	.omnibar__user .omnibar__user-avatar {
-		margin-inline-start: -72px;
+		top: 10px;
+		margin-inline-start: -80px;
+		margin-inline-end: 8px;
 	}
 }

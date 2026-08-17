@@ -26,6 +26,7 @@ import { filterVisibleTools, isReadTool, isWriteTool } from './categories';
 import { getOverridesToMatch, groupIntentKey } from './group-intents';
 import { getAccessSummaryBadge, getWriteAccessBadge } from './hub-helpers';
 import { useMcpPageChrome } from './mcp-page-header';
+import { useMcpTracksAudienceProps } from './tracks';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
@@ -40,6 +41,7 @@ function McpComponent( { path } ) {
 	const { documentTitle, navigationHeaderProps } = useMcpPageChrome();
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const {
 		data: userSettings,
 		isLoading: isLoadingUserSettings,
@@ -119,7 +121,11 @@ function McpComponent( { path } ) {
 			},
 			{
 				onSuccess: () => {
-					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { path, enabled } );
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', {
+						...tracksAudienceProps,
+						path,
+						enabled,
+					} );
 				},
 			}
 		);

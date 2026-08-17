@@ -18,6 +18,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { STATS_HEADER_TITLE } from '../../constants';
 import type { JetpackFooterMenuItem } from 'calypso/components/jetpack/jetpack-footer';
 
+import './style.scss';
+
 export interface BreadcrumbItem {
 	label: string;
 	to?: string;

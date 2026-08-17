@@ -26,7 +26,7 @@ interface Props {
 export default function EditorHelpCenterButton( { onClose, onOpenChat }: Props ) {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
-	const { resumeActiveChat, sectionName } = useAgentsManagerContext();
+	const { resumeChat, sectionName } = useAgentsManagerContext();
 	const { isOpen, isMinimized } = useSelect(
 		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerState(),
 		[]
@@ -68,7 +68,7 @@ export default function EditorHelpCenterButton( { onClose, onOpenChat }: Props )
 			{
 				title: __( 'Chat support', __i18n_text_domain__ ),
 				icon: comment,
-				onClick: () => selectChatRoute( 'agents-manager-chat', '/chat', resumeActiveChat ),
+				onClick: () => selectChatRoute( 'agents-manager-chat', '/chat', resumeChat ),
 			},
 			{
 				title: __( 'Chat history', __i18n_text_domain__ ),

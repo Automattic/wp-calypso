@@ -184,10 +184,14 @@ function BlueprintCtaButton( {
 		return null;
 	}
 
-	// The onboarding blueprint step (getBlueprintID) accepts a numeric
-	// blueprint-library id via ?blueprint=<id>.
+	// The onboarding blueprint step accepts a blueprint-library post id or slug
+	// via ?blueprint=. build_dest=wow asks for the theme demo to be restored onto
+	// an Atomic site from the blueprint's archive, which keeps the plugins the
+	// Simple-site blueprint runner would drop; the step falls back to that runner
+	// when the blueprint has no archive.
 	const href = addQueryArgs( '/setup/onboarding/blueprint', {
 		blueprint: blueprintId,
+		build_dest: 'wow',
 		ref: `theme-${ themeId }`,
 	} );
 

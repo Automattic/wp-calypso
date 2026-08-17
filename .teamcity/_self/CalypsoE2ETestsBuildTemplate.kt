@@ -1,5 +1,6 @@
 package _self
 
+import _self.lib.utils.cancelSupersededBuilds
 import _self.lib.utils.mergeTrunk
 import _self.lib.utils.allBranchesExceptMergeQueue
 
@@ -61,6 +62,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 	}
 
   	steps {
+		cancelSupersededBuilds()
+
 		mergeTrunk( skipIfConflict = true )
 
     	bashNodeScript {
@@ -293,7 +296,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
 		nonZeroExitCode = false
 
-		// Support retries using the --onlyFailures flag in Jest.
 		supportTestRetry = true
 
 		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.

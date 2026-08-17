@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import {
 	A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
 	A4A_AI_MCP_CONNECT_LINK,
+	A4A_AI_MCP_STARTER_PROMPTS_LINK,
 	A4A_AI_MCP_LINK,
 	A4A_AGENT_STUDIO_LINK,
 	A4A_BENCHMARKS_LINK,
@@ -22,6 +23,7 @@ import {
 } from '../agent-studio/controller';
 import {
 	aiMcpAvailableToolsContext,
+	aiMcpStarterPromptsContext,
 	aiMcpConnectContext,
 	aiMcpOverviewContext,
 } from '../ai-mcp/controller';
@@ -80,6 +82,14 @@ export default function () {
 		requireAccessContext,
 		requireMcpBetaAccessContext,
 		aiMcpAvailableToolsContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		A4A_AI_MCP_STARTER_PROMPTS_LINK,
+		requireAccessContext,
+		requireMcpBetaAccessContext,
+		aiMcpStarterPromptsContext,
 		makeLayout,
 		clientRender
 	);

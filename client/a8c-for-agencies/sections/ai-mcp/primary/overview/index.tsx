@@ -5,6 +5,7 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
+	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import AiMcpOverviewContent from './overview-content';
@@ -17,6 +18,11 @@ export default function AiMcpOverview() {
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>
+					<Subtitle>
+						{ __(
+							'Control how AI assistants interact with your Automattic for Agencies account and sites.'
+						) }
+					</Subtitle>
 					<Actions>
 						<MobileSidebarNavigation />
 					</Actions>

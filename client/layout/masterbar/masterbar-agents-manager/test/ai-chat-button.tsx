@@ -1,13 +1,13 @@
 /**
  * @jest-environment jsdom
  */
+import { closeAgentsManagerChat, openAgentsManagerChat } from '@automattic/agents-manager';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createReduxStore, dispatch, register } from '@wordpress/data';
 import React from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import MasterbarAiChatButton from '../ai-chat-button';
-import { closeAgentsManagerChat, openAgentsManagerChat } from '../chat-actions';
 
 type ChatState = { isOpen: boolean; isMinimized: boolean };
 
@@ -15,13 +15,11 @@ const TEST_STORE = 'automattic/agents-manager-test';
 
 jest.mock( '@automattic/agents-manager', () => ( {
 	AGENTS_MANAGER_STORE: 'automattic/agents-manager-test',
+	closeAgentsManagerChat: jest.fn(),
+	openAgentsManagerChat: jest.fn(),
 } ) );
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
-} ) );
-jest.mock( '../chat-actions', () => ( {
-	closeAgentsManagerChat: jest.fn(),
-	openAgentsManagerChat: jest.fn(),
 } ) );
 
 const testStore = createReduxStore( TEST_STORE, {

@@ -18,6 +18,11 @@ cd desktop
 corepack enable
 yarn install --immutable --inline-builds
 
+# The only desktop step that runs on trunk, so this doubles as the post-merge
+# guard for the signing routing/arg logic.
+echo "--- :jest: Running unit tests"
+yarn run test:unit
+
 echo "--- :ruby: Setting up Ruby tooling"
 install_gems
 
@@ -44,6 +49,9 @@ echo "RELEASE_BUILD=$RELEASE_BUILD"
 
 echo "--- Building the app"
 yarn run ci:build-mac
+
+echo "--- :lock: Verifying code signing"
+bundle exec fastlane verify_code_signing
 
 echo "--- Running E2E smoke tests"
 yarn run test:e2e

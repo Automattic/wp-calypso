@@ -1,5 +1,5 @@
 import { afterAll, beforeEach, describe, expect, test } from '@jest/globals';
-import envVariables from '../env-variables';
+import envVariables, { ATOMIC_VARIATIONS } from '../env-variables';
 
 const URL_ENV_VARS = [
 	'A8C_FOR_AGENCIES_URL',
@@ -55,6 +55,71 @@ describe( 'EnvVariables Tests', function () {
 			process.env[ name ] = 'not-a-url';
 
 			expect( () => envVariables[ name ] ).toThrow( `Invalid ${ name } value` );
+		} );
+	} );
+
+	describe( 'Test: a mixed Atomic run picks its variation from the run key', function () {
+		const ambientVariation = process.env.ATOMIC_VARIATION;
+		const ambientKey = process.env.ATOMIC_VARIATION_KEY;
+		const VARIATION_COUNT = ATOMIC_VARIATIONS.length;
+
+		beforeEach( function () {
+			process.env.ATOMIC_VARIATION = 'mixed';
+		} );
+
+		afterAll( function () {
+			restore( 'ATOMIC_VARIATION', ambientVariation );
+			restore( 'ATOMIC_VARIATION_KEY', ambientKey );
+		} );
+
+		/**
+		 * Restores an environment variable, which Jest workers carry into the next test file.
+		 */
+		function restore( name: string, ambient: string | undefined ) {
+			if ( ambient === undefined ) {
+				delete process.env[ name ];
+			} else {
+				process.env[ name ] = ambient;
+			}
+		}
+
+		/**
+		 * Resolves the variation the given commit SHA gets.
+		 */
+		function variationFor( sha: string ) {
+			process.env.ATOMIC_VARIATION_KEY = sha;
+			return envVariables.ATOMIC_VARIATION;
+		}
+
+		/**
+		 * Builds a commit SHA out of a counter.
+		 */
+		function sha( index: number ) {
+			return index.toString( 16 ).padStart( 40, '0' );
+		}
+
+		test( 'consecutive commits cover every variation', function () {
+			const variations = Array.from( { length: 30 }, ( _value, index ) =>
+				variationFor( sha( index ) )
+			);
+
+			expect( new Set( variations ).size ).toBe( VARIATION_COUNT );
+			expect( variations ).not.toContain( 'mixed' );
+		} );
+
+		// Every read within a run has to agree: a spec picks its account and builds its suite
+		// title when Playwright collects it, and resolves its skip guards in the worker. The same
+		// holds across builds, so a re-run retests the variation that failed.
+		test( 'the same commit always resolves to the same variation', function () {
+			expect( variationFor( sha( 12 ) ) ).toBe( variationFor( sha( 12 ) ) );
+		} );
+
+		// Silently running `default` would leave the other variations untested for as long as the
+		// key is missing, so a mixed run without one has to stop.
+		test( 'a run with no key stops the run', function () {
+			delete process.env.ATOMIC_VARIATION_KEY;
+
+			expect( () => envVariables.ATOMIC_VARIATION ).toThrow( 'ATOMIC_VARIATION_KEY' );
 		} );
 	} );
 } );

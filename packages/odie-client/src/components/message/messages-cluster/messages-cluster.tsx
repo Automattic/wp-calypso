@@ -10,6 +10,7 @@ import {
 	isHappinessEngineerMessage,
 	isZendeskChatStartedMessage,
 	isZendeskIntroMessage,
+	isZendeskSurveyMessage,
 } from '../../../utils/csat';
 import ChatWithSupportLabel from '../../chat-with-support';
 import { getMessageUniqueIdentifier } from '../utils/get-message-unique-identifier';
@@ -25,7 +26,7 @@ const EXCLUDED_MESSAGE_ROLES = [ 'zendesk-intro' ] as const;
  * @returns The presented role of the message.
  */
 function getPresentedRole( message: Message ) {
-	if ( isCSATMessage( message ) ) {
+	if ( isCSATMessage( message ) || isZendeskSurveyMessage( message ) ) {
 		return 'csat';
 	} else if ( isAttachment( message ) ) {
 		return 'attachment';
@@ -111,12 +112,16 @@ function clusterMessagesBySender( messages: Message[] ) {
 		role: MessageRole | 'csat' | 'attachment' | 'feedback' | 'zendesk-intro' | 'business-automated';
 		messages: Message[];
 	} = {
-		id: crypto.randomUUID(),
+		// A deterministic id, not crypto.randomUUID(): that was regenerated on every render (this
+		// function isn't memoized), so the Fragment keyed on it below force-remounted the entire
+		// cluster -- including any in-progress CSATForm state -- on every unrelated re-render.
+		id: String( getMessageUniqueIdentifier( messages[ 0 ], 'group-0' ) ),
 		role: getPresentedRole( messages[ 0 ] ),
 		messages: [],
 	};
 
 	const groups = [ currentGroup ];
+	let groupIndex = 1;
 
 	const sortedMessages = sortMessagesByTimestamp( messages );
 	const lastCSATMessage = sortedMessages.filter( isCSATMessage ).at( -1 );
@@ -135,11 +140,12 @@ function clusterMessagesBySender( messages: Message[] ) {
 
 		if ( shouldStartNewGroup( message, currentGroup ) ) {
 			currentGroup = {
-				id: crypto.randomUUID(),
+				id: String( getMessageUniqueIdentifier( message, `group-${ groupIndex }` ) ),
 				role: getPresentedRole( message ),
 				messages: [],
 			};
 			groups.push( currentGroup );
+			groupIndex++;
 		}
 
 		currentGroup.messages.push( message );
@@ -153,7 +159,9 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 
 	return groups.map( ( group ) => {
 		const startingHumanSupport = group.messages.some( isZendeskChatStartedMessage );
-		const endingHumanSupport = group.messages.some( isCSATMessage );
+		const endingHumanSupport = group.messages.some(
+			( message ) => isCSATMessage( message ) || isZendeskSurveyMessage( message )
+		);
 
 		const messageHeader = () => {
 			// Real Happiness Engineer messages always show the "Happiness Engineer" override so that

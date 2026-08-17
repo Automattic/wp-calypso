@@ -7,7 +7,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { backup, cog, columns, comment, heading } from '@wordpress/icons';
+import { backup, cog, columns, comment, drawerRight, heading } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
@@ -17,15 +17,15 @@ import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
+import { saveSessionId } from '../../utils/agent-session';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
-import { persistLastActivity } from '../../utils/persist-last-activity';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import EditorAiChatButton from '../editor-ai-chat-button';
 import EditorHelpCenterButton from '../editor-help-center-button';
-import { SwitchToFloating, SwitchToSidebar } from '../icons';
+import { SwitchToFloating } from '../icons';
 import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
@@ -36,6 +36,7 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
+	TransformMessages,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
@@ -51,14 +52,15 @@ interface Props {
 	markdownExtensions?: MarkdownExtensions;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
-	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
-	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** The external providers' abilities-setup hook (e.g. Big Sky, jetpack-ai-sidebar). Invoked after custom actions registration. */
+	useProviderAbilitiesSetup?: AbilitiesSetupHook;
 	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
+	transformMessages?: TransformMessages;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
@@ -70,14 +72,15 @@ export default function AgentDock( {
 	markdownComponents = {},
 	markdownExtensions = {},
 	useNavigationContinuation,
-	useAbilitiesSetup,
+	useProviderAbilitiesSetup,
 	getChatComponent,
 	useSuggestions,
 	siteBuildUtils,
+	transformMessages,
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { siteKey, agentConfig } = useAgentsManagerContext();
+	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -253,11 +256,12 @@ export default function AgentDock( {
 			}
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
-			const sessionId = conversation.session_id || '';
+			if ( conversation.session_id ) {
+				saveSessionId( conversation.session_id, agentConfig?.agentId, siteKey, currentUser?.ID );
+			}
 
-			persistLastActivity( siteKey );
 			handleAbort();
-			navigate( '/chat', { state: { sessionId } } );
+			navigate( '/chat' );
 		}
 	};
 
@@ -361,7 +365,7 @@ export default function AgentDock( {
 			! isReaderChat &&
 				! isDocked &&
 				canDock && {
-					icon: <SwitchToSidebar />,
+					icon: drawerRight,
 					title: __( 'Switch to sidebar', __i18n_text_domain__ ),
 					onClick: () => {
 						recordMoreOptionsClick( 'dock' );
@@ -399,12 +403,14 @@ export default function AgentDock( {
 			markdownExtensions={ markdownExtensions }
 			isCompactMode={ isCompactMode }
 			useNavigationContinuation={ useNavigationContinuation }
-			useAbilitiesSetup={ useAbilitiesSetup }
+			useProviderAbilitiesSetup={ useProviderAbilitiesSetup }
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
 			siteBuildUtils={ siteBuildUtils }
+			transformMessages={ transformMessages }
 			useCheckpoint={ useCheckpoint }
 			capabilities={ capabilities }
+			isChatInputDisabled={ ! isChatEnabled }
 			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>
 	);
@@ -454,12 +460,6 @@ export default function AgentDock( {
 			chatHeaderOptions={ chatHeaderOptions }
 		/>
 	);
-
-	// When the chat is disabled there's nothing to open, so render nothing — the editor
-	// entry-point buttons would otherwise be dead.
-	if ( ! isChatEnabled ) {
-		return null;
-	}
 
 	return (
 		<>

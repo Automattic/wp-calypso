@@ -16,7 +16,7 @@ export const HelpCenterSupportGuides = ( {
 	onSearchChange,
 	currentRoute,
 }: HelpCenterSupportGuidesProps ) => {
-	const { sectionName } = useHelpCenterContext();
+	const { sectionName, site } = useHelpCenterContext();
 	const { searchQuery, setSearchQueryAndEmailSubject, redirectToArticle } =
 		useHelpCenterSearch( onSearchChange );
 
@@ -27,6 +27,8 @@ export const HelpCenterSupportGuides = ( {
 				onSearch={ setSearchQueryAndEmailSubject }
 				location="help-center"
 				isVisible
+				blogId={ site?.ID }
+				siteContextSource="help_center_context"
 				placeholder={ __( 'Search guides…', __i18n_text_domain__ ) }
 				sectionName={ sectionName }
 				useSearchControl

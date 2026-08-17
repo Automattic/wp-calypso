@@ -36,7 +36,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/agenttic-ui": "^0.1.84",
+		"@automattic/agenttic-ui": "^0.1.89",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
@@ -51,8 +51,8 @@
 		"@wordpress/react-i18n": "^4.48.0",
 		"@wordpress/url": "^4.48.0",
 		"clsx": "^2.1.1",
-		"dompurify": "3.4.12",
-		"react-router-dom": "7.18.0",
+		"dompurify": "3.4.13",
+		"react-router-dom": "7.18.2",
 		"smooch": "^5.7.17",
 		"tslib": "^2.8.1",
 		"wpcom-proxy-request": "workspace:^"

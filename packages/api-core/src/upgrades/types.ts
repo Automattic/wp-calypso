@@ -324,6 +324,25 @@ export interface Purchase {
 	 */
 	ownership_id: number;
 
+	/**
+	 * True when a Jetpack Start partner provisioned this subscription and bills
+	 * the customer for it, so WordPress.com is not the merchant and self-serve
+	 * subscription management does not apply. Shown as a "Host Managed Plan" or
+	 * an "Agency Managed Plan" depending on `partner_type`.
+	 *
+	 * A4A subscriptions bought through the store carry partner details (see
+	 * `partner_name`) but are billed here, so this is false for them.
+	 */
+	is_partner_managed: boolean;
+
+	/**
+	 * True for the `is_partner_managed` subscriptions a hosting partner rather
+	 * than an agency provisioned. `is_cancelable` and `is_removable` are false
+	 * for these, since cancelling has to happen at the host; agency-provisioned
+	 * plans are bought through WordPress.com and can still be cancelled here.
+	 */
+	is_host_managed: boolean;
+
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
 	partner_type: string | undefined;

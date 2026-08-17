@@ -13,16 +13,29 @@ jest.mock( '../../../utils/csat', () => ( {
 		!! message?.metadata?.[ '__zendesk_msg.agent.id' ],
 	isZendeskChatStartedMessage: () => false,
 	isZendeskIntroMessage: () => false,
+	isZendeskSurveyMessage: () => false,
 } ) );
+
+// Tracks every mount of the mocked ChatMessage below, so tests can assert a re-render did (or
+// didn't) force React to remount a message -- which is exactly the failure mode of DOTCOM-18205:
+// an unstable message-cluster key wiped CSATForm's local rating state on every unrelated re-render.
+const mockMountSpy = jest.fn();
 
 jest.mock( '..', () => ( {
 	__esModule: true,
-	default: ( { message, header }: { message: Message; header?: React.ReactNode } ) => (
-		<div>
-			{ header }
-			<div>{ message.content }</div>
-		</div>
-	),
+	default: ( { message, header }: { message: Message; header?: React.ReactNode } ) => {
+		// eslint-disable-next-line react-hooks/rules-of-hooks
+		jest.requireActual( 'react' ).useEffect( () => {
+			mockMountSpy( message.content );
+		}, [] );
+
+		return (
+			<div>
+				{ header }
+				<div>{ message.content }</div>
+			</div>
+		);
+	},
 } ) );
 
 jest.mock( '../../chat-with-support', () => () => null );
@@ -72,6 +85,7 @@ describe( 'MessagesClusterizer', () => {
 
 	afterEach( () => {
 		jest.restoreAllMocks();
+		mockMountSpy.mockClear();
 	} );
 
 	it( 'splits automated business message groups when the display name changes', () => {
@@ -126,5 +140,44 @@ describe( 'MessagesClusterizer', () => {
 
 		expect( screen.getByText( 'CSAT prompt' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Follow-up message' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not remount a message when re-rendered with an equivalent (but new) messages array', () => {
+		// A fresh array reference each time, as happens when a parent re-renders in response to an
+		// unrelated Zendesk conversation event -- e.g. after submitting a CSAT comment. Regression
+		// test for DOTCOM-18205: an unstable crypto.randomUUID() group key was force-remounting the
+		// whole message cluster (and resetting CSATForm's local rating state) on every such re-render.
+		const buildMessages = (): Message[] => [
+			createCSATMessage( { content: 'CSAT prompt', received: 1 } ),
+		];
+
+		const { rerender } = render( <MessagesClusterizer messages={ buildMessages() } /> );
+		expect( mockMountSpy ).toHaveBeenCalledTimes( 1 );
+
+		rerender( <MessagesClusterizer messages={ buildMessages() } /> );
+
+		expect( mockMountSpy ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'remounts a message when a genuinely new message is appended', () => {
+		const first = [ createCSATMessage( { content: 'CSAT prompt', received: 1 } ) ];
+		const { rerender } = render( <MessagesClusterizer messages={ first } /> );
+		expect( mockMountSpy ).toHaveBeenCalledTimes( 1 );
+
+		rerender(
+			<MessagesClusterizer
+				messages={ [
+					...first,
+					createBusinessMessage( {
+						content: 'Follow-up message',
+						displayName: 'WordPress.com',
+						received: 2,
+					} ),
+				] }
+			/>
+		);
+
+		expect( mockMountSpy ).toHaveBeenCalledTimes( 2 );
+		expect( mockMountSpy ).toHaveBeenNthCalledWith( 2, 'Follow-up message' );
 	} );
 } );

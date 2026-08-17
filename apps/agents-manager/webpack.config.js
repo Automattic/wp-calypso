@@ -32,7 +32,15 @@ function getIndividualConfig( options = {} ) {
 	const { name, env, argv, injectPolyfill = true } = options;
 
 	const outputPath = path.join( __dirname, 'dist' );
-	const webpackConfig = getBaseWebpackConfig( env, argv );
+	// Every entry emits into the shared `dist/`, so chunk files (JS and the
+	// CSS the base config derives from this name) must be entry-unique —
+	// same-named files from another entry's build would overwrite these. The
+	// content hash busts CDN caches: chunk URLs carry no `?ver` query, unlike
+	// the entries enqueued via `asset.json`.
+	const webpackConfig = getBaseWebpackConfig( env, {
+		...argv,
+		'output-chunk-filename': `${ name }.[name].[contenthash:8].min.js`,
+	} );
 
 	return {
 		...webpackConfig,
@@ -42,6 +50,10 @@ function getIndividualConfig( options = {} ) {
 			...webpackConfig.output,
 			path: outputPath,
 			filename: '[name].min.js',
+			// Entries loaded on the same page (e.g. wp-admin + image-studio)
+			// must not share a chunk-loading runtime global.
+			chunkLoadingGlobal: `webpackChunk_${ name.replace( /-/g, '_' ) }`,
+			uniqueName: name,
 			library: 'agentsManager',
 		},
 		module: {
@@ -98,12 +110,10 @@ function getIndividualConfig( options = {} ) {
 					}
 					// TODO: Remove this override when @wordpress/abilities ships with
 					// WordPress core (expected in WP 7.0).
-					// Bundle @wordpress/abilities into image-studio so it works on
-					// self-hosted sites where the package isn't registered as a script.
-					if (
-						( name === 'image-studio' || name === 'jetpack-ai-sidebar' ) &&
-						request === '@wordpress/abilities'
-					) {
+					// Bundle @wordpress/abilities so bundles work on sites where the
+					// package isn't registered as a script — WP_Scripts silently skips
+					// scripts with unregistered dependencies.
+					if ( request === '@wordpress/abilities' ) {
 						return null;
 					}
 					// Bundle @wordpress/ui: neither WordPress core nor the Gutenberg
@@ -147,7 +157,12 @@ function getIndividualConfig( options = {} ) {
 function getReaderConfig( options = {} ) {
 	const { env, argv } = options;
 	const outputPath = path.join( __dirname, 'dist' );
-	const webpackConfig = getBaseWebpackConfig( env, argv );
+	// Chunk files must be entry-unique and content-hashed in the shared
+	// `dist/` — see `getIndividualConfig`.
+	const webpackConfig = getBaseWebpackConfig( env, {
+		...argv,
+		'output-chunk-filename': 'reader-chat.[name].[contenthash:8].min.js',
+	} );
 
 	return {
 		...webpackConfig,

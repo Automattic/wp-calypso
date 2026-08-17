@@ -8,9 +8,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { Icon, check, closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -51,21 +53,26 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const dismissPricingGrid = useDismissPricingGrid( siteId );
 
+	useEffect( () => {
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_view', { blog_id: siteId } );
+	}, [ siteId ] );
+
 	const product = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
 	) as ProductsList.RawAPIProduct | null;
 
-	const includedLabel = String( translate( 'Included' ) );
-	// The four paid differentiators lead; everything below them is shared by both plans.
+	// The four paid differentiators lead (bolded via `strong`, with the default
+	// Included / feature-name labels so the mobile fallback still names the feature);
+	// everything below them is shared by both plans.
 	const features: Feature[] = [
 		{
 			name: String( translate( 'UTM tracking' ) ),
-			paid: { isIncluded: true, label: includedLabel, strong: true },
+			paid: { isIncluded: true, strong: true },
 			free: { isIncluded: false },
 		},
 		{
 			name: String( translate( 'Device stats' ) ),
-			paid: { isIncluded: true, label: includedLabel, strong: true },
+			paid: { isIncluded: true, strong: true },
 			free: { isIncluded: false },
 		},
 		{
@@ -75,7 +82,7 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 		},
 		{
 			name: String( translate( 'Priority support' ) ),
-			paid: { isIncluded: true, label: includedLabel, strong: true },
+			paid: { isIncluded: true, strong: true },
 			free: { isIncluded: false },
 		},
 		{
@@ -130,6 +137,10 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 
 	// Starting for free is a plan choice: record the dismissal and reveal the dashboard.
 	const startForFree = () => {
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_free_cta_clicked', {
+			blog_id: siteId,
+			cta: 'free',
+		} );
 		dismissPricingGrid();
 		onDismiss?.();
 	};
@@ -140,21 +151,28 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 	// programmatically rather than via href so the link also works under Odyssey's
 	// hashbang routing when the wp-admin click shim doesn't apply (e.g. middle-click).
 	const goToPurchase = () => {
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_paid_cta_clicked', {
+			blog_id: siteId,
+			cta: 'paid',
+		} );
 		page( `/stats/purchase/${ siteSlug }?from=${ PRICING_GRID_REFERRER }` );
 	};
 
 	const renderPrice = ( value: number, currency: string, hidePriceFraction: boolean ) => {
-		const { symbol, integer, fraction } = getCurrencyObject( value, currency );
+		const { symbol, symbolPosition, integer, fraction } = getCurrencyObject( value, currency );
 		const showPriceFraction = ! hidePriceFraction || ! fraction.endsWith( '00' );
+		// Some locales put the currency symbol after the amount (e.g. de-DE EUR).
+		const symbolElement = <sup className="stats-pricing-grid__price-symbol">{ symbol }</sup>;
 		return (
 			<p className="stats-pricing-grid__price">
-				<sup className="stats-pricing-grid__price-symbol">{ symbol }</sup>
+				{ symbolPosition === 'before' && symbolElement }
 				{ integer }
 				{ showPriceFraction && (
 					<sup className="stats-pricing-grid__price-fraction">
 						<strong>{ fraction }</strong>
 					</sup>
 				) }
+				{ symbolPosition === 'after' && symbolElement }
 			</p>
 		);
 	};
@@ -292,7 +310,7 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 							{ createInterpolateElement(
 								String(
 									translate(
-										'By clicking <strong>%(paid)s</strong> or <strong>%(free)s</strong>, you agree to our <tosLink>Terms of Service</tosLink> and to <shareDetailsLink>sync your site‘s data</shareDetailsLink> with us.',
+										'By clicking <strong>%(paid)s</strong> or <strong>%(free)s</strong>, you agree to our <tosLink>Terms of Service</tosLink> and to <shareDetailsLink>sync your site’s data</shareDetailsLink> with us.',
 										{ args: { paid: paidLabel, free: freeLabel } }
 									)
 								),

@@ -1,6 +1,6 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { Banner, LinkListItem } from './help-center-cta-variants';
 import './help-center-cta.scss';
 import type { HelpCenterCTAVariantProps } from './help-center-cta-variants';
@@ -50,6 +50,8 @@ type CTAEventProps = {
 };
 
 function useCTATracking( eventProps: CTAEventProps | null, purchasedAt?: number ) {
+	const recordTracksEvent = useHelpCenterTracksEvent();
+
 	useEffect( () => {
 		if ( ! eventProps || reportedCtaIds.has( eventProps.cta_id ) ) {
 			return;

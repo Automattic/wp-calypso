@@ -11,6 +11,7 @@ import type { HelpCenterCTAVariant } from '../help-center-cta';
 
 const mockRecordTracksEvent = jest.fn();
 jest.mock( '@automattic/calypso-analytics', () => ( {
+	...jest.requireActual( '@automattic/calypso-analytics' ),
 	recordTracksEvent: ( ...args: unknown[] ) => mockRecordTracksEvent( ...args ),
 } ) );
 
@@ -56,6 +57,7 @@ describe( 'HelpCenterCTA', () => {
 				variant: 'banner',
 				placement: 'help-center-home',
 				locale: 'en',
+				site_context_source: 'none',
 			} );
 		} );
 
@@ -74,6 +76,7 @@ describe( 'HelpCenterCTA', () => {
 				variant: 'banner',
 				placement: 'help-center-home',
 				locale: 'en',
+				site_context_source: 'none',
 			} );
 		} );
 
@@ -110,6 +113,7 @@ describe( 'HelpCenterCTA', () => {
 				variant: 'banner',
 				placement: 'help-center-home',
 				locale: 'en',
+				site_context_source: 'none',
 			} );
 		} );
 
@@ -126,6 +130,7 @@ describe( 'HelpCenterCTA', () => {
 				variant: 'banner',
 				placement: 'help-center-home',
 				locale: 'en',
+				site_context_source: 'none',
 			} );
 		} );
 	} );
@@ -172,6 +177,7 @@ describe( 'HelpCenterCTA', () => {
 				variant: 'link-list-item',
 				placement: 'help-center-more-resources',
 				locale: 'en',
+				site_context_source: 'none',
 			} );
 		} );
 
@@ -192,6 +198,7 @@ describe( 'HelpCenterCTA', () => {
 				variant: 'link-list-item',
 				placement: 'help-center-more-resources',
 				locale: 'en',
+				site_context_source: 'none',
 			} );
 		} );
 
@@ -288,6 +295,7 @@ describe( 'HelpCenterCTA', () => {
 				plan_family: 'business',
 				locale: 'en',
 				days_since_purchase: 3,
+				site_context_source: 'none',
 			} );
 		} );
 
@@ -315,6 +323,7 @@ describe( 'HelpCenterCTA', () => {
 				plan_family: 'business',
 				locale: 'en',
 				days_since_purchase: 3,
+				site_context_source: 'none',
 			} );
 		} );
 

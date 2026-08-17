@@ -34,9 +34,10 @@ export default function DomainOverview() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 
-	const { data: purchase } = useSuspenseQuery(
-		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
-	);
+	const { data: purchase } = useQuery( {
+		...purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) ),
+		enabled: !! domain.subscription_id,
+	} );
 
 	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 
@@ -98,7 +99,7 @@ export default function DomainOverview() {
 							</HStack>
 						}
 						actions={
-							purchase.can_explicit_renew &&
+							purchase?.can_explicit_renew &&
 							domain.current_user_is_owner && (
 								<Button
 									variant="primary"
