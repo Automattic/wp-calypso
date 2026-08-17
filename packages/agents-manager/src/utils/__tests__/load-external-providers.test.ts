@@ -6,6 +6,11 @@ import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { showComponentAbility } from '../../abilities/show-component';
 import { getAvailableCheckpoints } from '../checkpoints';
 import {
+	getTargetViolation,
+	recordLiveTarget,
+	startNewUserRequest,
+} from '../editor-target-binding';
+import {
 	loadExternalProviders,
 	mergeCapabilitiesInto,
 	mergeUseSuggestionsHooks,
@@ -917,5 +922,185 @@ describe( 'mergeUseSuggestionsHooks', () => {
 			suggestions: [ { id: 'second', label: 'Second', prompt: 'Second prompt.' } ],
 			replaceEmptyViewSuggestions: true,
 		} );
+	} );
+} );
+
+describe( 'editor target guard', () => {
+	// Every ability name below is in the agent's tool-id form (`/` → `__`,
+	// `-` → `_`), which is what actually reaches `executeAbility`. Writing these
+	// in the registered form would pass against a guard that never fires in
+	// production.
+	const APPLY_BLOCK_EDITS = 'big_sky__apply_block_edits';
+	const RESTORE_CHECKPOINT = 'big_sky__restore_checkpoint';
+	const UPDATE_THEME = 'big_sky__apply_update_theme';
+	const EDITOR_NAVIGATE = 'big_sky__editor_navigate';
+
+	const OPEN_PAGE = { available: true, key: 'page:4', label: 'About' };
+
+	// Asks `setUpProvider` to leave `editorTarget` out of the client context. A
+	// sentinel rather than `undefined`, because passing `undefined` to a parameter
+	// that has a default re-triggers the default — the key would still be there
+	// and the version-skew test would silently assert the opposite of its name.
+	const NO_EDITOR_TARGET = Symbol( 'host reports no editorTarget' );
+
+	beforeEach( () => {
+		startNewUserRequest();
+	} );
+
+	afterEach( () => {
+		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
+		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
+	} );
+
+	// Registers one external provider serving `abilityNames`, reporting `About`
+	// (page 4) as the open canvas.
+	function setUpProvider(
+		abilityNames: string[],
+		executeAbility = jest.fn( () => Promise.resolve( { ok: true } ) ),
+		editorTarget: unknown = OPEN_PAGE
+	) {
+		const toolProvider = {
+			getAbilities: jest.fn( () => Promise.resolve( abilityNames.map( createAbility ) ) ),
+			executeAbility,
+		};
+		const contextProvider = {
+			getClientContext: () => ( {
+				url: '',
+				pathname: '',
+				search: '',
+				environment: 'wp-admin',
+				...( editorTarget === NO_EDITOR_TARGET ? {} : { editorTarget } ),
+			} ),
+		};
+
+		setAgentsManagerData( { agentProviders: [ { toolProvider, contextProvider } ] } );
+
+		return { executeAbility };
+	}
+
+	it( 'refuses a provider-owned canvas write after the canvas moves', async () => {
+		const { executeAbility } = setUpProvider( [ 'big-sky/apply-block-edits' ] );
+		const providers = await loadExternalProviders();
+
+		// The model saw page 4 when it decided to call the tool.
+		providers.contextProvider?.getClientContext();
+		recordLiveTarget( { available: true, key: 'page:9', label: 'Contact' } );
+
+		const result: any = await providers.toolProvider?.executeAbility( APPLY_BLOCK_EDITS, {} );
+
+		expect( executeAbility ).not.toHaveBeenCalled();
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toBe( 'editor_target_moved' );
+		expect( result.result.message ).toContain( 'Contact' );
+		expect( result.returnToAgent ).toBe( true );
+	} );
+
+	it( 'refuses an AM-owned canvas write after the canvas moves', async () => {
+		// `restore-checkpoint` has already migrated to AM, so it executes through
+		// `amToolProvider` and never reaches the external provider. A guard placed
+		// in the external provider would not fire here — this is the case that
+		// breaks silently as each remaining ability migrates.
+		setUpProvider( [ 'big-sky/apply-block-edits' ] );
+		const providers = await loadExternalProviders();
+
+		providers.contextProvider?.getClientContext();
+		recordLiveTarget( { available: false } );
+
+		const result: any = await providers.toolProvider?.executeAbility( RESTORE_CHECKPOINT, {} );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toBe( 'editor_target_no_editor' );
+	} );
+
+	it( 'guards the path where AM is the only tool provider', async () => {
+		// No external provider serves tools, so `mergedToolProvider` is assigned
+		// straight from `allToolProviders[ 0 ]` and never enters the merging
+		// closure. A guard applied inside that closure would not exist here.
+		setAgentsManagerData( {
+			agentProviders: [
+				{
+					contextProvider: {
+						getClientContext: () => ( {
+							url: '',
+							pathname: '',
+							search: '',
+							environment: 'wp-admin',
+							editorTarget: OPEN_PAGE,
+						} ),
+					},
+				},
+			],
+		} );
+		const providers = await loadExternalProviders();
+
+		providers.contextProvider?.getClientContext();
+		recordLiveTarget( { available: false } );
+
+		const result: any = await providers.toolProvider?.executeAbility( RESTORE_CHECKPOINT, {} );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toBe( 'editor_target_no_editor' );
+	} );
+
+	it( 'lets a canvas write through when the canvas has not moved', async () => {
+		const { executeAbility } = setUpProvider( [ 'big-sky/apply-block-edits' ] );
+		const providers = await loadExternalProviders();
+
+		providers.contextProvider?.getClientContext();
+
+		await providers.toolProvider?.executeAbility( APPLY_BLOCK_EDITS, {} );
+
+		expect( executeAbility ).toHaveBeenCalledWith( APPLY_BLOCK_EDITS, {} );
+	} );
+
+	it( 'does not guard site-wide abilities', async () => {
+		// Global styles and the site logo are not page-scoped, so moving between
+		// pages does not make them wrong.
+		const { executeAbility } = setUpProvider( [ 'big-sky/apply-update-theme' ] );
+		const providers = await loadExternalProviders();
+
+		providers.contextProvider?.getClientContext();
+		recordLiveTarget( { available: false } );
+
+		await providers.toolProvider?.executeAbility( UPDATE_THEME, {} );
+
+		expect( executeAbility ).toHaveBeenCalled();
+	} );
+
+	it( 'clears the binding before a navigation ability runs, not after', async () => {
+		// The navigation itself makes the canvas move, so a binding still in
+		// place while it executes would abort the agent's own request.
+		let violationDuringExecution: unknown = 'not captured';
+		const executeAbility = jest.fn( () => {
+			violationDuringExecution = getTargetViolation();
+			return Promise.resolve( { ok: true } );
+		} );
+		setUpProvider( [ 'big-sky/editor-navigate' ], executeAbility );
+		const providers = await loadExternalProviders();
+
+		providers.contextProvider?.getClientContext();
+		recordLiveTarget( { available: true, key: 'page:9' } );
+
+		await providers.toolProvider?.executeAbility( EDITOR_NAVIGATE, {} );
+
+		expect( violationDuringExecution ).toBeNull();
+	} );
+
+	it( 'stays disabled when the host reports no editorTarget', async () => {
+		// An older Big Sky plugin against a newer Calypso: refusing here would
+		// break every canvas write on the site over a deploy-order mismatch.
+		const { executeAbility } = setUpProvider(
+			[ 'big-sky/apply-block-edits' ],
+			jest.fn( () => Promise.resolve( { ok: true } ) ),
+			NO_EDITOR_TARGET
+		);
+		const providers = await loadExternalProviders();
+
+		providers.contextProvider?.getClientContext();
+		recordLiveTarget( { available: false } );
+
+		await providers.toolProvider?.executeAbility( APPLY_BLOCK_EDITS, {} );
+
+		expect( executeAbility ).toHaveBeenCalled();
 	} );
 } );
