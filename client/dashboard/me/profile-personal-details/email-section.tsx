@@ -110,7 +110,7 @@ export default function EmailSection( {
 
 	// Only while the field still holds the bouncing address. Once the user types a different one,
 	// the validation messages below are what they need to see.
-	const showBouncingWarning =
+	const showBouncingError =
 		! isEmailPending && !! userSettings.user_email_bouncing && value === userSettings.user_email;
 
 	const showCustomDomainWarning =
@@ -125,7 +125,10 @@ export default function EmailSection( {
 		if ( isEmailPending ) {
 			return '';
 		}
-		if ( showBouncingWarning || showCustomDomainWarning ) {
+		if ( showBouncingError ) {
+			return 'has-error';
+		}
+		if ( showCustomDomainWarning ) {
 			return 'has-warning';
 		}
 		if ( emailValidationState === 'valid' ) {
@@ -165,20 +168,11 @@ export default function EmailSection( {
 			);
 		}
 
-		if ( showBouncingWarning ) {
+		if ( showBouncingError ) {
 			return (
 				<>
 					<Icon icon={ info } size={ 16 } />
-					<span>
-						{ createInterpolateElement(
-							__(
-								'Messages we send to this address are bouncing back, so you may not receive password resets or important account notices. Enter a different address, or <a>set up a recovery email</a> to keep access to your account.'
-							),
-							{
-								a: <Link to="/me/security/account-recovery" />,
-							}
-						) }
-					</span>
+					{ __( 'Messages we send to this address are bouncing back. Please update your email.' ) }
 				</>
 			);
 		}
@@ -231,7 +225,7 @@ export default function EmailSection( {
 	}, [
 		isEmailPending,
 		isEmailVerified,
-		showBouncingWarning,
+		showBouncingError,
 		showCustomDomainWarning,
 		value,
 		currentEmail,

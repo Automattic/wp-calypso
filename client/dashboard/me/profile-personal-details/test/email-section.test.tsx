@@ -27,7 +27,7 @@ const userSettings = { user_email: ACCOUNT_EMAIL } as UserSettings;
 const noop = () => {};
 
 const CUSTOM_DOMAIN_WARNING = /uses a custom domain/;
-const BOUNCING_WARNING = /bouncing back/;
+const BOUNCING_ERROR = /bouncing back/;
 
 describe( '<EmailSection>', () => {
 	test( 'shows the custom-domain warning when the only recovery email matches the account email', async () => {
@@ -64,7 +64,7 @@ describe( '<EmailSection>', () => {
 		} );
 	} );
 
-	test( 'warns below the field when the account email is bouncing', async () => {
+	test( 'flags the field when the account email is bouncing', async () => {
 		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
 
 		render(
@@ -76,11 +76,10 @@ describe( '<EmailSection>', () => {
 			/>
 		);
 
-		expect( await screen.findByText( BOUNCING_WARNING ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'set up a recovery email' } ) ).toBeVisible();
+		expect( await screen.findByText( BOUNCING_ERROR ) ).toBeVisible();
 	} );
 
-	test( 'drops the bouncing warning once a different address is typed', async () => {
+	test( 'drops the bouncing message once a different address is typed', async () => {
 		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
 
 		render(
@@ -93,10 +92,10 @@ describe( '<EmailSection>', () => {
 		);
 
 		expect( await screen.findByText( 'Email address looks good!' ) ).toBeVisible();
-		expect( screen.queryByText( BOUNCING_WARNING ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( BOUNCING_ERROR ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'hides the bouncing warning when the account email is fine', async () => {
+	test( 'hides the bouncing message when the account email is fine', async () => {
 		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
 
 		render(
@@ -109,7 +108,7 @@ describe( '<EmailSection>', () => {
 		);
 
 		await waitFor( () => {
-			expect( screen.queryByText( BOUNCING_WARNING ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( BOUNCING_ERROR ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
