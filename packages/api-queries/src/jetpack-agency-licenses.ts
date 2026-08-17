@@ -1,6 +1,14 @@
-import { fetchJetpackLicenses } from '@automattic/api-core';
-import { queryOptions } from '@tanstack/react-query';
-import type { FetchJetpackLicensesOptions } from '@automattic/api-core';
+import {
+	assignJetpackLicenseToSite,
+	fetchJetpackLicenseCounts,
+	fetchJetpackLicenseDownloadUrl,
+	fetchJetpackLicenses,
+	issueJetpackLicenses,
+	revokeJetpackLicense,
+} from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { queryClient } from './query-client';
+import type { FetchJetpackLicensesOptions, IssueJetpackLicensesInput } from '@automattic/api-core';
 
 export const jetpackAgencyLicensesQuery = (
 	agencyId: number,
@@ -9,4 +17,47 @@ export const jetpackAgencyLicensesQuery = (
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', options ],
 		queryFn: () => fetchJetpackLicenses( agencyId, options ),
+	} );
+
+export const jetpackAgencyLicenseCountsQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'counts' ],
+		queryFn: () => fetchJetpackLicenseCounts( agencyId ),
+		enabled: !! agencyId,
+	} );
+
+function invalidateAgencyLicenses( agencyId: number ) {
+	queryClient.invalidateQueries( {
+		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses' ],
+	} );
+}
+
+export const jetpackAgencyLicensesIssueMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-license-issue' },
+		mutationFn: ( input: IssueJetpackLicensesInput ) => issueJetpackLicenses( agencyId, input ),
+		onSuccess: () => invalidateAgencyLicenses( agencyId ),
+	} );
+
+export const jetpackAgencyLicenseAssignMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-license-assign' },
+		mutationFn: ( { licenseKey, siteId }: { licenseKey: string; siteId: number } ) =>
+			assignJetpackLicenseToSite( agencyId, licenseKey, siteId ),
+		onSuccess: () => invalidateAgencyLicenses( agencyId ),
+	} );
+
+export const jetpackAgencyLicenseRevokeMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-license-revoke' },
+		mutationFn: ( licenseKey: string ) => revokeJetpackLicense( licenseKey ),
+		onSuccess: () => invalidateAgencyLicenses( agencyId ),
+	} );
+
+// Technically a read, but exposed as a mutation because the download URL is
+// requested imperatively (on click) and should never be cached.
+export const jetpackAgencyLicenseDownloadUrlMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-license-download-url' },
+		mutationFn: ( licenseKey: string ) => fetchJetpackLicenseDownloadUrl( agencyId, licenseKey ),
 	} );
