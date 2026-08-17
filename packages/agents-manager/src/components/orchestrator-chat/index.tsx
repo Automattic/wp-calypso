@@ -38,6 +38,12 @@ import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
+import {
+	blockCurrentRequest,
+	buildCanvasKey,
+	getCanvasMove,
+	startNewUserRequest,
+} from '../../utils/canvas-binding';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
 	isContextOnlyMessage,
@@ -49,6 +55,7 @@ import {
 	type ExternalContextCard,
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
+import { generateUUID } from '../../utils/generate-uuid';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
@@ -354,6 +361,17 @@ export default function OrchestratorChat( {
 		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
 		return editor?.getCurrentPostId?.();
 	}, [] );
+	// The canvas the editor has open, as the value the abort effect watches. A
+	// separate select from `currentPostId` above: that one feeds message rendering
+	// and stays a bare id, while this needs the post type too — a page and a
+	// template can share an id, and a move between them must not read as a stay.
+	const canvasKey = useSelect( ( select ) => {
+		const editor = select( 'core/editor' ) as {
+			getCurrentPostId?: () => number | string | undefined;
+			getCurrentPostType?: () => string | undefined;
+		};
+		return buildCanvasKey( editor?.getCurrentPostType?.(), editor?.getCurrentPostId?.() );
+	}, [] );
 	const selectedBlockType = useSelect( ( select ) => {
 		try {
 			const blockEditor = select( 'core/block-editor' ) as {
@@ -526,6 +544,49 @@ export default function OrchestratorChat( {
 	const wasProcessingRef = useRef( isProcessing );
 	messagesRef.current = messages;
 
+	// Stop a request the moment the canvas it was made for goes away. The guard in
+	// `load-external-providers` would refuse the eventual write anyway, but only
+	// once the model got there — the user would sit and watch a request run against
+	// a page they have already left.
+	//
+	// Driven by the editor store rather than a host event: AM runs in the same
+	// realm as the editor, so `useSelect` is the whole signal. It lands a tick
+	// later than a synchronous listener would, which is why `blockCurrentRequest()`
+	// below is not optional — the guard is what actually stops the write.
+	useEffect( () => {
+		// Keyed off the live move rather than `getBlockingMove()`: a request already
+		// blocked would otherwise abort again on every later canvas change.
+		if ( ! isProcessing || ! getCanvasMove() ) {
+			return;
+		}
+
+		// Blocked as well as aborted: an abort that loses the race to an in-flight
+		// tool call must not let that call land on the new page.
+		blockCurrentRequest();
+		abortCurrentRequest();
+
+		// Say why, or the reply just stops mid-sentence and reads as a failure.
+		// UI-only: the message carries an id the agent's client history does not
+		// have, so `filterUiOnlyMessages` keeps it on screen and it is never sent
+		// back to the server as conversation history.
+		addMessage( {
+			id: `canvas-move-abort-${ generateUUID() }`,
+			role: 'agent',
+			content: [
+				{
+					type: 'text',
+					text: __(
+						'You switched pages, so I stopped that request before it changed the wrong one. Ask again to apply it here.',
+						__i18n_text_domain__
+					),
+				},
+			],
+			timestamp: Date.now(),
+			archived: false,
+			showIcon: true,
+		} );
+	}, [ canvasKey, isProcessing, abortCurrentRequest, addMessage ] );
+
 	// Drop all retained placeholders, keeping the map reference stable when
 	// already empty so no re-render is triggered.
 	const clearRetainedShowComponentMessages = useCallback( () => {
@@ -563,6 +624,11 @@ export default function OrchestratorChat( {
 				// rewound, so a leftover picker would otherwise reappear once
 				// regeneration settles if the new response omits the component.
 				clearRetainedShowComponentMessages();
+				// A regeneration is a fresh dispatch that rebinds via
+				// `getClientContext()` on its own outbound message, so it starts a
+				// new request for the binding too — carrying a previous request's
+				// block into it would refuse writes the new canvas is bound to.
+				startNewUserRequest();
 				try {
 					await handler();
 				} finally {
@@ -1214,6 +1280,13 @@ export default function OrchestratorChat( {
 				// unrelated draft in it).
 				setInputValue( ( currentValue ) => ( currentValue === message ? '' : currentValue ) );
 			}
+
+			// A new user message is a new intent: rebind to whatever canvas is open
+			// now, and lift any block left by a previous request. This sits on the
+			// dispatch path rather than in `submitChatMessage` — the composer calls
+			// this callback directly, and the sends above that bail out early must
+			// not disturb a binding that still belongs to a running request.
+			startNewUserRequest();
 
 			submitDispatchedRef.current = true;
 			try {

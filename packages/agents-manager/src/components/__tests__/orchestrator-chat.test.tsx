@@ -51,13 +51,24 @@ const mockSetCheckpointActionReverted = jest.fn(
 );
 let mockSelectedBlockType: string | undefined;
 let mockBlockEditorStoreThrows = false;
+let mockOpenPost: { id?: number | string; type?: string; title?: string } | null = null;
+
 let mockHasEditorRedo = false;
 let mockEditorBlocks: unknown[] = [];
 const mockDataStoreSubscribers = new Set< () => void >();
 
 const mockSelectDataStore = ( storeName: string ) => {
 	if ( storeName === 'core/editor' ) {
-		return { hasEditorRedo: () => mockHasEditorRedo };
+		return {
+			hasEditorRedo: () => mockHasEditorRedo,
+			// The open canvas, read by the component's own `useSelect` and by
+			// `canvas-binding` through `select` — the same object, so the two can
+			// never disagree about what is open.
+			getCurrentPostId: () => mockOpenPost?.id,
+			getCurrentPostType: () => mockOpenPost?.type,
+			getEditedPostAttribute: ( attribute: string ) =>
+				attribute === 'title' ? mockOpenPost?.title : undefined,
+		};
 	}
 	if ( storeName === 'core/block-editor' ) {
 		if ( mockBlockEditorStoreThrows ) {
@@ -396,6 +407,12 @@ jest.mock( '../agent-chat', () => ( {
 } ) );
 
 import { getSessionId } from '../../utils/agent-session';
+import {
+	bindToOpenCanvas,
+	blockCurrentRequest,
+	getBlockingMove,
+	startNewUserRequest,
+} from '../../utils/canvas-binding';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
 
@@ -620,6 +637,7 @@ describe( 'OrchestratorChat', () => {
 		sessionStorage.clear();
 		mockManagerHasAgent = true;
 		mockHasEditorRedo = false;
+		mockOpenPost = null;
 		mockEditorBlocks = [];
 		mockDataStoreSubscribers.clear();
 		mockInvalidatedCheckpointIds.clear();
@@ -3303,5 +3321,164 @@ describe( 'OrchestratorChat', () => {
 		rerender( chat() );
 
 		expect( countShowComponentMessages() ).toBe( 1 );
+	} );
+
+	describe( 'editor canvas binding', () => {
+		const ABOUT_PAGE = { id: 4, type: 'page', title: 'About' };
+		const CONTACT_PAGE = { id: 9, type: 'page', title: 'Contact' };
+
+		// The canvas moving, as the editor store does it: change what the store
+		// reports, then notify its subscribers. That is the whole signal — there is
+		// no host event to dispatch.
+		const openPage = ( post: typeof ABOUT_PAGE | null ) => {
+			act( () => {
+				mockOpenPost = post;
+				mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+			} );
+		};
+
+		beforeEach( () => {
+			// The binding is module-level state, so each test has to start from the
+			// unbound, unblocked position a fresh page load would give it.
+			startNewUserRequest();
+			mockOpenPost = ABOUT_PAGE;
+		} );
+
+		it( 'aborts and blocks the request when the canvas moves mid-request', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			// The canvas the model was looking at when it decided what to do.
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+			// Blocked as well as aborted, and carrying the pages it was blocked for:
+			// a tool call already in flight when the abort loses the race must still
+			// be refused, naming the page it was meant for.
+			expect( getBlockingMove() ).toEqual( { from: 'About', to: 'Contact' } );
+		} );
+
+		it( 'explains the cancellation in the thread, without sending it to the server', () => {
+			// An aborted turn otherwise stops mid-sentence and reads as a failure.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			expect( addMessage ).toHaveBeenCalledTimes( 1 );
+
+			const message = addMessage.mock.calls[ 0 ][ 0 ];
+			expect( message.id ).toContain( 'canvas-move-abort-' );
+			expect( message.role ).toBe( 'agent' );
+			expect( message.content[ 0 ].text ).toContain( 'switched pages' );
+			// `addMessage` only touches the UI list. Anything that dispatched to the
+			// agent would restart the request the abort just stopped.
+			expect( mockUseAgentChat().onSubmit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'leaves the request running while the canvas has not moved', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest, addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			// Editor churn that does not move the canvas — a block selection, a
+			// keystroke — must not read as a move.
+			mockSelectedBlockType = 'core/heading';
+			openPage( ABOUT_PAGE );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( addMessage ).not.toHaveBeenCalled();
+			expect( getBlockingMove() ).toBeNull();
+		} );
+
+		it( 'does not abort on a title edit', () => {
+			// The title is part of what a refusal names, but editing it does not move
+			// the canvas — keying off it would abort on every keystroke in the title.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( { ...ABOUT_PAGE, title: 'About us' } );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not abort when no request is running', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: false } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not abort when the editor store stops resolving a canvas', () => {
+			// A store that has not settled is not a wrong canvas. Aborting here would
+			// kill legitimate requests for the width of a mount.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( null );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		} );
+
+		it( 'lifts the block when the composer submits the next message', async () => {
+			// The rebind has to sit on the callback the composer is wired to. One
+			// canvas-move abort would otherwise latch the block for the rest of the
+			// page session, refusing every canvas write until a reload.
+			const { onSubmit } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+			mockOpenPost = CONTACT_PAGE;
+			blockCurrentRequest();
+			expect( getBlockingMove() ).not.toBeNull();
+
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Submit message' ) );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
+			expect( getBlockingMove() ).toBeNull();
+		} );
+
+		it( 'lifts the block when the turn is regenerated', async () => {
+			// A regeneration is a fresh dispatch that rebinds on its own outbound
+			// message, so it is a new request for the binding too. It goes through
+			// agenttic's own handler rather than the composer, so without this the
+			// block would survive into a request it has nothing to do with.
+			render( chat() );
+			bindToOpenCanvas();
+			mockOpenPost = CONTACT_PAGE;
+			blockCurrentRequest();
+			expect( getBlockingMove() ).not.toBeNull();
+
+			const config = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+				getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+			};
+			const wrappedHandler = config.getRegenerateHandler?.( showComponentMessage( 'agent-1' ) );
+			await act( async () => {
+				await wrappedHandler?.();
+			} );
+
+			expect( getBlockingMove() ).toBeNull();
+		} );
 	} );
 } );

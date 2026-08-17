@@ -9,7 +9,7 @@ import {
 	startNewUserRequest,
 } from '../canvas-binding';
 import { withCanvasBinding, withCanvasGuard } from '../canvas-guard';
-import type { ToolProvider } from '../../types';
+import type { ClientContextType, ToolProvider } from '../../types';
 
 jest.mock( '@wordpress/data', () => ( { select: jest.fn() } ) );
 
@@ -39,6 +39,16 @@ function createToolProvider( executeAbility = jest.fn() ): ToolProvider {
 		getAbilities: jest.fn( () => Promise.resolve( [] ) ),
 		executeAbility,
 	} as unknown as ToolProvider;
+}
+
+function createClientContext( overrides: Partial< ClientContextType > = {} ): ClientContextType {
+	return {
+		url: 'https://example.com/wp-admin/site-editor.php',
+		pathname: '/wp-admin/site-editor.php',
+		search: '',
+		environment: 'wp-admin',
+		...overrides,
+	};
 }
 
 const ABOUT_PAGE = { id: 12, type: 'page', title: 'About' };
@@ -177,7 +187,7 @@ describe( 'withCanvasBinding', () => {
 
 	it( 'binds to the open canvas on every outgoing message', () => {
 		setOpenPost( ABOUT_PAGE );
-		const getClientContext = jest.fn().mockReturnValue( { url: 'https://example.com' } );
+		const getClientContext = jest.fn().mockReturnValue( createClientContext() );
 
 		const wrapped = withCanvasBinding( { getClientContext } );
 		wrapped!.getClientContext();
@@ -193,7 +203,7 @@ describe( 'withCanvasBinding', () => {
 		// Nothing is added to the wire: the binding is read from the editor store
 		// here, not carried in the client context.
 		setOpenPost( ABOUT_PAGE );
-		const context = { url: 'https://example.com', currentPageContent: [] };
+		const context = createClientContext( { currentPageContent: [] } );
 		const wrapped = withCanvasBinding( { getClientContext: () => context } );
 
 		expect( wrapped!.getClientContext() ).toBe( context );
@@ -201,7 +211,7 @@ describe( 'withCanvasBinding', () => {
 
 	it( 'rebinds on each call, so a later message follows the user', () => {
 		setOpenPost( ABOUT_PAGE );
-		const wrapped = withCanvasBinding( { getClientContext: () => ( {} ) } );
+		const wrapped = withCanvasBinding( { getClientContext: () => createClientContext() } );
 		wrapped!.getClientContext();
 
 		setOpenPost( CONTACT_PAGE );
