@@ -327,6 +327,66 @@ function currentPostTypeSupportsExcerpt(
 }
 
 /**
+ * Unresolved counts as supported: only posts and pages reach this chip, and
+ * both register it. Registering a support with arguments stores those
+ * arguments, so match the editor and treat any truthy value as support.
+ * @see checkSupport in @wordpress/editor
+ */
+function postTypeRecordSupportsThumbnail(
+	postTypeRecord: { supports?: Record< string, unknown > } | undefined
+): boolean {
+	if ( ! postTypeRecord ) {
+		return true;
+	}
+	return !! postTypeRecord.supports?.thumbnail;
+}
+
+/**
+ * Themes can pass a list of post types to add_theme_support, so the support is
+ * a boolean or a list.
+ * @see PostFeaturedImageCheck in @wordpress/editor
+ */
+function themeSupportsThumbnail(
+	currentPostType: string,
+	themeSupports: { 'post-thumbnails'?: boolean | string[] } | undefined
+): boolean {
+	// core-data returns {} until the theme resolves; a resolved theme always has the key.
+	const support = themeSupports?.[ 'post-thumbnails' ];
+	if ( support === undefined ) {
+		return true;
+	}
+	return Array.isArray( support ) ? support.includes( currentPostType ) : !! support;
+}
+
+/**
+ * The post type and theme checks the editor makes before it renders the
+ * featured image panel. The editor hides the panel while either one is still
+ * resolving; the chip shows instead, so a slow read never hides it for good.
+ */
+function currentPostTypeSupportsFeaturedImage(
+	currentPostType: string | undefined = getCurrentEditorPostType()
+): boolean {
+	if ( ! currentPostType ) {
+		return false;
+	}
+	const coreStore = ( window as any ).wp?.data?.select?.( 'core' );
+	return (
+		postTypeRecordSupportsThumbnail( coreStore?.getPostType?.( currentPostType ) ) &&
+		themeSupportsThumbnail( currentPostType, coreStore?.getThemeSupports?.() )
+	);
+}
+
+function isFeaturedImageSuggestionAvailable(
+	currentPostType: string | undefined = getCurrentEditorPostType()
+): boolean {
+	// Image Studio first: the core-store reads can trigger a REST resolution.
+	if ( ! isImageStudioAvailable() ) {
+		return false;
+	}
+	return currentPostTypeSupportsFeaturedImage( currentPostType );
+}
+
+/**
  * Editor entities that support whole-content Jetpack AI suggestions.
  */
 const EDITOR_LEVEL_SUGGESTION_POST_TYPES = new Set( [ 'post', 'page' ] );
@@ -397,7 +457,9 @@ function getPostLevelSuggestions(
 	}
 
 	return [
-		...( isImageStudioAvailable() ? [ GENERATE_FEATURED_IMAGE_SUGGESTION ] : [] ),
+		...( isFeaturedImageSuggestionAvailable( currentPostType )
+			? [ GENERATE_FEATURED_IMAGE_SUGGESTION ]
+			: [] ),
 		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
 		...( isExcerptSuggestionAvailable( currentPostType, supportsExcerpt )
 			? [ GENERATE_EXCERPT_SUGGESTION ]

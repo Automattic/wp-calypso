@@ -262,12 +262,48 @@ function installWpDataMock(
 	return state;
 }
 
+interface PostTypeMockOptions {
+	supportsExcerpt?: boolean;
+	postTypeRecordResolved?: boolean;
+	/** add_post_type_support with arguments stores an array instead of true. */
+	supportsThumbnail?: boolean | unknown[];
+	/** Mirrors the theme support, which is a boolean or a list of post types. */
+	themeSupportsThumbnails?: boolean | string[];
+	/** core-data returns an empty object until the active theme resolves. */
+	themeSupportsResolved?: boolean;
+	/** Whole getThemeSupports return value, for a store that returns something else. */
+	themeSupportsReturnValue?: unknown;
+}
+
 function installPostTypeMock(
 	postType?: string,
 	postId: EditorPostId | null = 123,
-	supportsExcerpt: boolean = postType === 'post',
-	postTypeRecordResolved = true
+	options: PostTypeMockOptions = {}
 ) {
+	const {
+		supportsExcerpt = postType === 'post',
+		postTypeRecordResolved = true,
+		themeSupportsThumbnails = true,
+		themeSupportsResolved = true,
+	} = options;
+
+	// remove_post_type_support unsets the key, so an explicit undefined omits it.
+	const supportsThumbnail =
+		'supportsThumbnail' in options
+			? options.supportsThumbnail
+			: postType === 'post' || postType === 'page';
+	const supports: Record< string, unknown > = { excerpt: supportsExcerpt };
+	if ( supportsThumbnail !== undefined ) {
+		supports.thumbnail = supportsThumbnail;
+	}
+
+	const getThemeSupports = () => {
+		if ( 'themeSupportsReturnValue' in options ) {
+			return options.themeSupportsReturnValue;
+		}
+		return themeSupportsResolved ? { 'post-thumbnails': themeSupportsThumbnails } : {};
+	};
+
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
@@ -287,9 +323,8 @@ function installPostTypeMock(
 				if ( store === 'core' ) {
 					return {
 						getPostType: ( name: string ) =>
-							postTypeRecordResolved && name === postType
-								? { supports: { excerpt: supportsExcerpt } }
-								: undefined,
+							postTypeRecordResolved && name === postType ? { supports } : undefined,
+						getThemeSupports,
 					};
 				}
 				return undefined;
@@ -1886,7 +1921,7 @@ describe( 'getEmptyViewSuggestions', () => {
 			excerptSuggestion: true,
 			proofreadContent: true,
 		} );
-		installPostTypeMock( 'page', 123, true );
+		installPostTypeMock( 'page', 123, { supportsExcerpt: true } );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
@@ -1908,7 +1943,7 @@ describe( 'getEmptyViewSuggestions', () => {
 				proofreadContent: true,
 				seoSuggestions: true,
 			} );
-			installPostTypeMock( postType, postId, true );
+			installPostTypeMock( postType, postId, { supportsExcerpt: true } );
 
 			const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
@@ -2067,7 +2102,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
 		// WordPress.com Simple / any site with the Jetpack SEO Tools module adds
 		// excerpt support to pages — the legacy AI Excerpt panel shows there too.
-		installPostTypeMock( 'page', 123, true );
+		installPostTypeMock( 'page', 123, { supportsExcerpt: true } );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2076,7 +2111,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'hides Generate Excerpt for site editor templates that support excerpts', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
-		installPostTypeMock( 'wp_template', 123, true );
+		installPostTypeMock( 'wp_template', 123, { supportsExcerpt: true } );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2087,7 +2122,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
 		// Core registers excerpt support for wp_block (patterns), but the excerpt
 		// field acts as a description there — the chip still excludes patterns.
-		installPostTypeMock( 'wp_block', 123, true );
+		installPostTypeMock( 'wp_block', 123, { supportsExcerpt: true } );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2096,7 +2131,10 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'shows Generate Excerpt for posts while the post type record is still resolving', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
-		installPostTypeMock( 'post', 123, true, false );
+		installPostTypeMock( 'post', 123, {
+			supportsExcerpt: true,
+			postTypeRecordResolved: false,
+		} );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2105,7 +2143,10 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'hides Generate Excerpt for pages while the post type record is still resolving', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
-		installPostTypeMock( 'page', 123, false, false );
+		installPostTypeMock( 'page', 123, {
+			supportsExcerpt: false,
+			postTypeRecordResolved: false,
+		} );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2141,6 +2182,112 @@ describe( 'getEmptyViewSuggestions', () => {
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
 		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image when the post type has no thumbnail support', () => {
+		// What remove_post_type_support leaves behind: the key is gone.
+		installPostTypeMock( 'post', 123, { supportsThumbnail: undefined } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image on pages that dropped thumbnail support', () => {
+		installPostTypeMock( 'page', 123, { supportsThumbnail: undefined } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image on pages that support featured images', () => {
+		installPostTypeMock( 'page', 123, { supportsThumbnail: true } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image when thumbnail support was registered with arguments', () => {
+		// add_post_type_support( 'post', 'thumbnail', $args ) stores the arguments,
+		// so the REST route reports an array. The editor treats that as supported.
+		installPostTypeMock( 'post', 123, { supportsThumbnail: [ [ 'custom' ] ] } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image when the theme does not support post thumbnails', () => {
+		// The post type keeps thumbnail support; the theme is what is missing.
+		installPostTypeMock( 'post', 123, { themeSupportsThumbnails: false } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image when the theme limits thumbnails to other post types', () => {
+		// add_theme_support( 'post-thumbnails', array( 'post' ) ) leaves pages out.
+		installPostTypeMock( 'page', 123, { themeSupportsThumbnails: [ 'post' ] } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image when the theme lists this post type', () => {
+		installPostTypeMock( 'page', 123, { themeSupportsThumbnails: [ 'post', 'page' ] } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image when the theme lists no post types', () => {
+		installPostTypeMock( 'post', 123, { themeSupportsThumbnails: [] } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image while the post type record is still resolving', () => {
+		installPostTypeMock( 'post', 123, { postTypeRecordResolved: false } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image when the theme supports are not an object', () => {
+		// core-data always returns an object, but the chip reads whichever store
+		// the page registered as 'core', so reading the key must not throw.
+		installPostTypeMock( 'post', 123, { themeSupportsReturnValue: true } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image while the theme supports are still resolving', () => {
+		installPostTypeMock( 'post', 123, { themeSupportsResolved: false } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
 	} );
 
 	it( "invoking the suggestion's action opens Image Studio and does not submit a prompt", () => {
