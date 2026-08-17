@@ -1,21 +1,16 @@
 import { useCallback } from 'react';
-import {
-	A4A_AI_MCP_READ_TOOLS_LINK,
-	A4A_AI_MCP_CONNECT_LINK,
-	A4A_AI_MCP_STARTER_PROMPTS_LINK,
-	A4A_AI_MCP_WRITE_TOOLS_LINK,
-} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchMcpSettings from 'calypso/a8c-for-agencies/data/mcp-ai/use-fetch-mcp-settings';
 import useSaveMcpSettings from 'calypso/a8c-for-agencies/data/mcp-ai/use-save-mcp-settings';
-import McpOverview from 'calypso/dashboard/agency/resources/mcp/overview-content';
+import McpTools from 'calypso/dashboard/agency/resources/mcp/tools-content';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { McpSettingsUpdate } from 'calypso/a8c-for-agencies/data/mcp-ai/types';
 
-export default function AiMcpOverviewContent() {
+export default function AiMcpReadToolsContent() {
 	const dispatch = useDispatch();
-	const { data: settings, isLoading } = useFetchMcpSettings();
+	const { data: settings } = useFetchMcpSettings();
 	const saveSettings = useSaveMcpSettings();
+	const { isPending: isSaving } = saveSettings;
 
 	const recordTracks = useCallback(
 		( eventName: string, properties?: Record< string, unknown > ) => {
@@ -30,16 +25,12 @@ export default function AiMcpOverviewContent() {
 	);
 
 	return (
-		<McpOverview
+		<McpTools
+			toolType="read"
 			settings={ settings }
-			isLoading={ isLoading }
-			isSaving={ saveSettings.isPending }
+			isSaving={ isSaving }
 			onSave={ onSave }
 			recordTracksEvent={ recordTracks }
-			readToolsPath={ A4A_AI_MCP_READ_TOOLS_LINK }
-			writeToolsPath={ A4A_AI_MCP_WRITE_TOOLS_LINK }
-			connectPath={ A4A_AI_MCP_CONNECT_LINK }
-			promptsPath={ A4A_AI_MCP_STARTER_PROMPTS_LINK }
 		/>
 	);
 }
