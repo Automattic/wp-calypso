@@ -390,10 +390,13 @@ export function getBuildWowSiteSpecConfig( {
 		...( source ? { source } : {} ),
 	} );
 
+	const defaultConfig = getDefaultSiteSpecConfig();
+
 	return {
-		...getDefaultSiteSpecConfig(),
+		...defaultConfig,
 		buildSiteUrl: `${ buildSiteUrl }${ buildSiteUrl.includes( '?' ) ? '&' : '?' }spec_id=`,
 		features: {
+			...defaultConfig.features,
 			siteBrief: 'next',
 		},
 	};
