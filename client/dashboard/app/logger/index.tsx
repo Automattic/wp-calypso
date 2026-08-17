@@ -65,6 +65,7 @@ export function handleOnCatch(
 			message: error.message,
 			stack: errorInfo.componentStack,
 			path: window.location.href,
+			previous_path: router.state.resolvedLocation?.href,
 			params: routeParams,
 		},
 	} );
@@ -76,6 +77,7 @@ export function handleOnCatch(
 				calypso_section: options.calypso_section,
 				...routeParams,
 			},
+			extra: { previous_path: router.state.resolvedLocation?.href },
 		} );
 	}
 }

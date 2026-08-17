@@ -29,10 +29,11 @@ beforeEach( () => {
 	mockedMaybeReloadForChunkError.mockReturnValue( false );
 } );
 
-const createRouter = ( params: Record< string, string > ): AnyRouter =>
+const createRouter = ( params: Record< string, string >, previousHref?: string ): AnyRouter =>
 	( {
 		state: {
 			matches: [ { params } ],
+			resolvedLocation: previousHref ? { href: previousHref } : undefined,
 		},
 	} ) as unknown as AnyRouter;
 
@@ -61,7 +62,7 @@ describe( 'handleOnCatch', () => {
 	it( 'logs and captures a non-benign error', () => {
 		const error = new Error( 'Boom' );
 		const errorInfo = createErrorInfo( 'at SitePage' );
-		const router = createRouter( { siteSlug: 'my-site', someId: '123' } );
+		const router = createRouter( { siteSlug: 'my-site', someId: '123' }, '/sites/my-site' );
 
 		handleOnCatch( error, errorInfo, router, {
 			severity: 'error',
@@ -81,6 +82,7 @@ describe( 'handleOnCatch', () => {
 				message: 'Boom',
 				stack: 'at SitePage',
 				path: 'https://example.com/',
+				previous_path: '/sites/my-site',
 				params: {
 					site_slug: 'my-site',
 					some_id: '123',
@@ -95,7 +97,24 @@ describe( 'handleOnCatch', () => {
 				site_slug: 'my-site',
 				some_id: '123',
 			},
+			extra: { previous_path: '/sites/my-site' },
 		} );
+	} );
+
+	it( 'reports no previous path when the error happens on a fresh page load', () => {
+		const error = new Error( 'Boom' );
+
+		handleOnCatch( error, createErrorInfo(), createRouter( { siteSlug: 'my-site' } ), {
+			severity: 'error',
+			dashboard_backport: false,
+			calypso_section: 'dashboard',
+		} );
+
+		expect( mockedLogToLogstash ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				properties: expect.objectContaining( { previous_path: undefined } ),
+			} )
+		);
 	} );
 
 	it( 'does not log or capture when a chunk load error triggers a reload', () => {
