@@ -103,7 +103,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain, resolveDomainStatus } from 'calypso/lib/domains';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { handleRenewMultiplePurchasesClick, handleRenewNowClick } from 'calypso/lib/purchases';
-import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import ProductLink from 'calypso/me/purchases/product-link';
