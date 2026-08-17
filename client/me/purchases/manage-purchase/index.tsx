@@ -1752,11 +1752,6 @@ function PlanOverlapNotice( {
 	siteId: number;
 	purchase: Purchase;
 } ) {
-	// Temporary bridge (SHILL-2256): ProductPlanOverlapNotices still expects the
-	// camelCase Purchase. Remove once it reads the raw shape.
-	const currentPurchase = createPurchaseObject(
-		purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-	);
 	if ( isSiteLevel ) {
 		if ( ! selectedSiteId ) {
 			// Probably still loading
@@ -1769,7 +1764,7 @@ function PlanOverlapNotice( {
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }
 				siteId={ selectedSiteId }
-				currentPurchase={ currentPurchase }
+				currentPurchase={ purchase }
 			/>
 		);
 	}
@@ -1784,7 +1779,7 @@ function PlanOverlapNotice( {
 			plans={ JETPACK_PLANS }
 			products={ JETPACK_PRODUCTS_LIST }
 			siteId={ siteId }
-			currentPurchase={ currentPurchase }
+			currentPurchase={ purchase }
 		/>
 	);
 }
