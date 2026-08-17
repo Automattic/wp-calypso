@@ -1455,6 +1455,38 @@ describe( 'OrchestratorChat', () => {
 			} );
 		} );
 
+		it( 'explains the cancellation in the thread, without sending it to the server', () => {
+			// An aborted turn otherwise stops mid-sentence and reads as a failure.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			recordReportedTarget( ABOUT_PAGE );
+
+			dispatchEditorTargetChange( CONTACT_PAGE );
+
+			expect( addMessage ).toHaveBeenCalledTimes( 1 );
+
+			const message = addMessage.mock.calls[ 0 ][ 0 ];
+			expect( message.role ).toBe( 'agent' );
+			expect( message.content[ 0 ].text ).toContain( 'switched pages' );
+			// `addMessage` only touches the UI list. Anything that dispatched to the
+			// agent would restart the request the abort just stopped.
+			expect( mockUseAgentChat().onSubmit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'says nothing when the canvas has not moved', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			recordReportedTarget( ABOUT_PAGE );
+
+			dispatchEditorTargetChange( ABOUT_PAGE );
+
+			expect( addMessage ).not.toHaveBeenCalled();
+		} );
+
 		it( 'leaves the request running when the canvas has not moved', () => {
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
 			const { abortCurrentRequest } = mockUseAgentChat();

@@ -41,6 +41,7 @@ import {
 	type ExternalContextCard,
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
+import { generateUUID } from '../../utils/generate-uuid';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
@@ -315,6 +316,27 @@ export default function OrchestratorChat( {
 			// in-flight tool call must not let that call land on the new page.
 			blockCurrentRequest();
 			abortCurrentRequest();
+
+			// Say why, or the reply just stops mid-sentence and reads as a failure.
+			// UI-only: the message carries an id the agent's client history does not
+			// have, so `filterUiOnlyMessages` keeps it on screen and it is never sent
+			// back to the server as conversation history.
+			addMessage( {
+				id: `editor-target-abort-${ generateUUID() }`,
+				role: 'agent',
+				content: [
+					{
+						type: 'text',
+						text: __(
+							'You switched pages, so I stopped that request before it changed the wrong one. Ask again to apply it here.',
+							__i18n_text_domain__
+						),
+					},
+				],
+				timestamp: Date.now(),
+				archived: false,
+				showIcon: true,
+			} );
 		};
 
 		window.addEventListener( EDITOR_TARGET_CHANGE_EVENT, handleEditorTargetChange );
@@ -322,7 +344,7 @@ export default function OrchestratorChat( {
 		return () => {
 			window.removeEventListener( EDITOR_TARGET_CHANGE_EVENT, handleEditorTargetChange );
 		};
-	}, [ isProcessing, abortCurrentRequest ] );
+	}, [ isProcessing, abortCurrentRequest, addMessage ] );
 
 	// While a regeneration runs, the component being regenerated is deliberately
 	// dropped from the live messages (Agenttic sends `preserveUiOnlyMessages:
