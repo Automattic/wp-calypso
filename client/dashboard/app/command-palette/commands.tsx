@@ -12,6 +12,7 @@ import {
 	receipt,
 	lock,
 } from '@wordpress/icons';
+import { PLUGINS_PATH } from '../../plugins/paths';
 import { useAppContext } from '../context';
 import type { AppConfig } from '../context';
 
@@ -57,7 +58,7 @@ export const navigationCommands: Command[] = [
 		name: 'dashboard-go-to-plugins',
 		label: __( 'Go to Plugins' ),
 		searchLabel: __( 'Navigate to Plugins management install plugins' ),
-		path: '/plugins',
+		path: PLUGINS_PATH,
 		icon: plugins,
 		isEnabled: ( supports ) => supports.plugins,
 	},

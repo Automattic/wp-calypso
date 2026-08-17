@@ -6,6 +6,7 @@ import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sid
 import { useAppContext } from '../context';
 import {
 	agencyPartnerDirectoryRoute,
+	agencyPluginsRoute,
 	agencySitesRoute,
 	agencyTeamRoute,
 	agencyTiersRoute,
@@ -19,6 +20,7 @@ import {
 	learnRoute,
 	mcpRoute,
 } from '../router/agency';
+import PluginsMenu from './plugins-menu';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export default function AgencySidebar() {
@@ -61,6 +63,7 @@ export default function AgencySidebar() {
 					{ __( 'Sites' ) }
 				</SidebarMenuItem>
 			) }
+			{ supports.agency.plugins && canAccess( agencyPluginsRoute ) && <PluginsMenu /> }
 			{ supports.agency.team && canAccess( agencyTeamRoute ) && (
 				<SidebarMenuItem icon={ people } to="/team">
 					{ __( 'Team' ) }

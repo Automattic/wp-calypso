@@ -6,11 +6,12 @@ import {
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { PLUGINS_MANAGE_PATH } from '../../plugins/paths';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import type { AnyRoute } from '@tanstack/react-router';
 
-export const pluginsRoute = createRoute( {
+const pluginsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -23,7 +24,7 @@ export const pluginsRoute = createRoute( {
 	component: Outlet,
 } );
 
-export const pluginsIndexRoute = createRoute( {
+const pluginsIndexRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -34,11 +35,11 @@ export const pluginsIndexRoute = createRoute( {
 	getParentRoute: () => pluginsRoute,
 	path: '/',
 	beforeLoad: () => {
-		throw dashboardRedirect( { to: '/plugins/manage' } );
+		throw dashboardRedirect( { to: PLUGINS_MANAGE_PATH } );
 	},
 } );
 
-export const pluginsManageRoute = createRoute( {
+const pluginsManageRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -55,7 +56,7 @@ export const pluginsManageRoute = createRoute( {
 	},
 } );
 
-export const pluginsManageIndexRoute = createRoute( {
+const pluginsManageIndexRoute = createRoute( {
 	getParentRoute: () => pluginsManageRoute,
 	path: '/',
 } ).lazy( () =>
@@ -66,16 +67,12 @@ export const pluginsManageIndexRoute = createRoute( {
 	)
 );
 
-export const pluginRoute = createRoute( {
+const pluginRoute = createRoute( {
 	getParentRoute: () => pluginsManageIndexRoute,
 	path: '$pluginId',
-	loader: async () => {
-		queryClient.prefetchQuery( marketplacePluginsQuery() );
-		queryClient.prefetchQuery( pluginsQuery() );
-	},
 } );
 
-export const pluginsScheduledUpdatesRoute = createRoute( {
+const pluginsScheduledUpdatesRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -87,7 +84,7 @@ export const pluginsScheduledUpdatesRoute = createRoute( {
 	path: 'scheduled-updates',
 } );
 
-export const pluginsScheduledUpdatesIndexRoute = createRoute( {
+const pluginsScheduledUpdatesIndexRoute = createRoute( {
 	getParentRoute: () => pluginsScheduledUpdatesRoute,
 	path: '/',
 } ).lazy( () =>
@@ -98,7 +95,7 @@ export const pluginsScheduledUpdatesIndexRoute = createRoute( {
 	)
 );
 
-export const pluginsScheduledUpdatesNewRoute = createRoute( {
+const pluginsScheduledUpdatesNewRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -119,7 +116,7 @@ export const pluginsScheduledUpdatesNewRoute = createRoute( {
 	)
 );
 
-export const pluginsScheduledUpdatesEditRoute = createRoute( {
+const pluginsScheduledUpdatesEditRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
