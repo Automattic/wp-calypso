@@ -10,6 +10,7 @@ import {
 	redirectToHome,
 	redirectToPlugins,
 	renderMarketplaceSignupSuccess,
+	renderMarketplaceWaitDemo,
 } from './controller';
 
 export default function () {
@@ -22,6 +23,11 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+	}
+
+	// A replayable stage for the transfer wait UIs; exists only where the honest wait does.
+	if ( config.isEnabled( 'marketplace-honest-install-progress' ) ) {
+		page( '/marketplace/wait-demo', renderMarketplaceWaitDemo, makeLayout, clientRender );
 	}
 
 	page(
