@@ -477,16 +477,21 @@ export const test = base.extend<
 	viewportName: [ 'desktop', { option: true } ],
 	_throttleActionHandler: [
 		async ( {}, use, testInfo ) => {
-			let actionApplied = false;
 			const unregister = registerThrottleActionHandler( ( action, ids ) => {
 				// A test that already failed or skipped for a reason of its own keeps
 				// it: the policy runs from teardown too, and stating a ban there would
 				// append a second skip reason the test never earned, or turn its skip
-				// into a failure outright.
-				if ( actionApplied || testInfo.errors.length || testInfo.status === 'skipped' ) {
+				// into a failure outright. Playwright's own state rather than a flag
+				// set here: it marks `expectedStatus` before `base.skip` throws, so a
+				// caller that swallows the throw cannot silence the policy for the
+				// rest of the test.
+				if (
+					testInfo.errors.length ||
+					testInfo.status === 'skipped' ||
+					testInfo.expectedStatus === 'skipped'
+				) {
 					return;
 				}
-				actionApplied = true;
 				const names = ids.join( ', ' );
 				const message = `WordPress.com throttle active: ${ names }.`;
 				if ( action === 'skip' ) {
