@@ -220,5 +220,11 @@ describe( 'SiteSpec Utils', () => {
 			expect( buildSiteUrl.searchParams.get( 'source' ) ).toBe( 'vega' );
 			expect( result.buildSiteUrl ).toContain( 'spec_id=' );
 		} );
+
+		it( 'should enable the next site brief', () => {
+			const result = getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com' } );
+
+			expect( result.features?.siteBrief ).toBe( 'next' );
+		} );
 	} );
 } );
