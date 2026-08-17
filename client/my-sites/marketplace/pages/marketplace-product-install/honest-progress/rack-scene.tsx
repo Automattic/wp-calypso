@@ -24,12 +24,16 @@ export default function RackScene( {
 		stage >= 1
 			? RACK_SLOTS
 			: Math.min( RACK_SLOTS - 1, Math.floor( ( preparingProgress / 100 ) * RACK_SLOTS ) );
+	const isPreparing = stage === 0;
 	const isSiteMoving = stage >= 1;
 	const isFinishing = stage >= 2;
 
 	return (
 		<svg
-			className={ clsx( 'marketplace-honest-scene__canvas', { 'is-compact': compact } ) }
+			className={ clsx( 'marketplace-honest-scene__canvas', {
+				'is-compact': compact,
+				'is-preparing': isPreparing,
+			} ) }
 			viewBox="0 0 480 220"
 			role="img"
 			aria-label={ label }
@@ -55,13 +59,18 @@ export default function RackScene( {
 							rx="4"
 						/>
 						<circle
-							className={ clsx( 'marketplace-honest-scene__light', { 'is-on': index < litSlots } ) }
+							className={ clsx( 'marketplace-honest-scene__light', {
+								'is-on': index < litSlots,
+								// The slot being prepared right now blinks until the server confirms it.
+								'is-booting': isPreparing && index === litSlots,
+							} ) }
 							cx="316"
 							cy={ y + 13 }
 							r="4"
 						/>
 						<rect
 							className="marketplace-honest-scene__slot-line"
+							style={ { animationDelay: `${ index * 0.35 }s` } }
 							x="330"
 							y={ y + 10 }
 							width="66"
@@ -72,48 +81,52 @@ export default function RackScene( {
 				);
 			} ) }
 			<g className={ clsx( 'marketplace-honest-scene__site', { 'is-moving': isSiteMoving } ) }>
-				<rect
-					className="marketplace-honest-scene__site-card"
-					x="70"
-					y="70"
-					width="120"
-					height="86"
-					rx="8"
-				/>
-				<rect
-					className="marketplace-honest-scene__site-bar"
-					x="70"
-					y="70"
-					width="120"
-					height="20"
-					rx="8"
-				/>
-				<circle className="marketplace-honest-scene__site-dot" cx="82" cy="80" r="3" />
-				<circle className="marketplace-honest-scene__site-dot" cx="93" cy="80" r="3" />
-				<rect
-					className="marketplace-honest-scene__site-title"
-					x="82"
-					y="100"
-					width="70"
-					height="7"
-					rx="3"
-				/>
-				<rect
-					className="marketplace-honest-scene__site-line"
-					x="82"
-					y="114"
-					width="94"
-					height="5"
-					rx="2.5"
-				/>
-				<rect
-					className="marketplace-honest-scene__site-line"
-					x="82"
-					y="126"
-					width="84"
-					height="5"
-					rx="2.5"
-				/>
+				<g
+					className={ clsx( 'marketplace-honest-scene__site-body', { 'is-waiting': isPreparing } ) }
+				>
+					<rect
+						className="marketplace-honest-scene__site-card"
+						x="70"
+						y="70"
+						width="120"
+						height="86"
+						rx="8"
+					/>
+					<rect
+						className="marketplace-honest-scene__site-bar"
+						x="70"
+						y="70"
+						width="120"
+						height="20"
+						rx="8"
+					/>
+					<circle className="marketplace-honest-scene__site-dot" cx="82" cy="80" r="3" />
+					<circle className="marketplace-honest-scene__site-dot" cx="93" cy="80" r="3" />
+					<rect
+						className="marketplace-honest-scene__site-title"
+						x="82"
+						y="100"
+						width="70"
+						height="7"
+						rx="3"
+					/>
+					<rect
+						className="marketplace-honest-scene__site-line"
+						x="82"
+						y="114"
+						width="94"
+						height="5"
+						rx="2.5"
+					/>
+					<rect
+						className="marketplace-honest-scene__site-line"
+						x="82"
+						y="126"
+						width="84"
+						height="5"
+						rx="2.5"
+					/>
+				</g>
 			</g>
 			<g className={ clsx( 'marketplace-honest-scene__glow', { 'is-on': isFinishing } ) }>
 				<circle cx="270" cy="46" r="4" />
