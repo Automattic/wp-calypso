@@ -554,7 +554,7 @@ describe( 'OrchestratorChat', () => {
 
 		render( chat( { useSuggestions: useSuggestions } ) );
 
-		expect( useSuggestions ).toHaveBeenCalledWith( 3, { suggestionsVisible: true } );
+		expect( useSuggestions ).toHaveBeenCalledWith( 3 );
 	} );
 
 	it( 'does not limit external provider suggestions while docked', () => {
@@ -562,7 +562,7 @@ describe( 'OrchestratorChat', () => {
 
 		render( chat( { isDocked: true, useSuggestions: useSuggestions } ) );
 
-		expect( useSuggestions ).toHaveBeenCalledWith( undefined, { suggestionsVisible: true } );
+		expect( useSuggestions ).toHaveBeenCalledWith( undefined );
 	} );
 
 	it( 'uses the current Gutenberg block type when the selected block changes', () => {
@@ -663,6 +663,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'replaces provider empty-view suggestions with contextual dynamic suggestions', () => {
+		mockSelectedBlockType = 'core/paragraph';
 		const emptySuggestions: Suggestion[] = [
 			{ id: 'simple-review', label: 'Simple Review', prompt: 'Review this page' },
 			{ id: 'proofread', label: 'Proofread', prompt: 'Proofread this page' },
@@ -712,6 +713,64 @@ describe( 'OrchestratorChat', () => {
 		expect( screen.queryByText( 'Proofread' ) ).toBeNull();
 		expect( screen.getByText( 'Change tone' ) ).toBeTruthy();
 		expect( screen.getByText( 'Check grammar' ) ).toBeTruthy();
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestions_rendered', {
+			suggestions: '|change-tone|check-grammar|',
+			block_type: 'core/paragraph',
+		} );
+	} );
+
+	it( 'tracks the same contextual suggestions again when the selected block type changes', () => {
+		mockSelectedBlockType = 'core/paragraph';
+		const blockSuggestions: Suggestion[] = [
+			{ id: 'change-tone', label: 'Change tone', prompt: 'Change the tone' },
+			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
+		];
+		const useSuggestions = jest.fn( () => ( {
+			suggestions: blockSuggestions,
+			replaceEmptyViewSuggestions: true,
+		} ) );
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { suggestions: blockSuggestions } ) );
+
+		const { rerender } = render( chat( { useSuggestions } ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'chat_suggestions_rendered', {
+			suggestions: '|change-tone|check-grammar|',
+			block_type: 'core/paragraph',
+		} );
+		rerender( chat( { useSuggestions } ) );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+
+		mockSelectedBlockType = 'core/heading';
+		rerender( chat( { useSuggestions } ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'chat_suggestions_rendered', {
+			suggestions: '|change-tone|check-grammar|',
+			block_type: 'core/heading',
+		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'does not re-track lingering contextual suggestions when a block is deselected', () => {
+		mockSelectedBlockType = 'core/paragraph';
+		const blockSuggestions: Suggestion[] = [
+			{ id: 'change-tone', label: 'Change tone', prompt: 'Change the tone' },
+			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
+		];
+		const useSuggestions = jest.fn( () => ( {
+			suggestions: blockSuggestions,
+			replaceEmptyViewSuggestions: true,
+		} ) );
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { suggestions: blockSuggestions } ) );
+
+		const { rerender } = render( chat( { useSuggestions } ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		mockSelectedBlockType = undefined;
+		rerender( chat( { useSuggestions } ) );
+		mockSelectedBlockType = 'core/paragraph';
+		rerender( chat( { useSuggestions } ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'falls back to the static empty-view suggestions when the provider has none', () => {
@@ -725,7 +784,8 @@ describe( 'OrchestratorChat', () => {
 		expect( screen.getByText( 'Getting started with WordPress' ) ).toBeTruthy();
 	} );
 
-	it( 'tracks chat_suggestions_rendered for the empty-view suggestions', () => {
+	it( 'does not add block context to non-contextual empty-view suggestions', () => {
+		mockSelectedBlockType = 'core/paragraph';
 		const staticDefaults: Suggestion[] = [
 			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
 		];
@@ -734,6 +794,24 @@ describe( 'OrchestratorChat', () => {
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestions_rendered', {
 			suggestions: '|getting-started|',
+		} );
+	} );
+
+	it( 'tracks suggestions without block context when the block editor store is unavailable', () => {
+		mockBlockEditorStoreThrows = true;
+		const blockSuggestions: Suggestion[] = [
+			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
+		];
+		const useSuggestions = jest.fn( () => ( {
+			suggestions: blockSuggestions,
+			replaceEmptyViewSuggestions: true,
+		} ) );
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { suggestions: blockSuggestions } ) );
+
+		render( chat( { useSuggestions } ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestions_rendered', {
+			suggestions: '|check-grammar|',
 		} );
 	} );
 

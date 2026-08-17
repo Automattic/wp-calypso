@@ -3,6 +3,7 @@ import {
 	getPurchasePriceTierList,
 	isPurchaseExpiring,
 	isPurchaseOneTimePurchase,
+	PRODUCT_STUDIO_CODE_AI_CREDITS,
 } from '@automattic/api-core';
 import {
 	findPlansKeys,
@@ -43,6 +44,7 @@ import {
 	isMarketplaceHoldingSitePurchase,
 	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
+import { getStudioCodeAiCreditsTitle } from 'calypso/dashboard/utils/studio-code-ai-credits';
 import { addPaymentMethod, changePaymentMethod } from '../paths';
 import type { MarketingSurveyResponses, Purchase } from '@automattic/api-core';
 import type { TranslateResult } from 'i18n-calypso';
@@ -428,6 +430,10 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 
 	if ( jetpackProductsDisplayNames[ productSlug ] ) {
 		return jetpackProductsDisplayNames[ productSlug ];
+	}
+
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === productSlug && quantity ) {
+		return getStudioCodeAiCreditsTitle( productName, quantity );
 	}
 
 	if ( isTieredVolumeSpaceAddon( purchase ) ) {

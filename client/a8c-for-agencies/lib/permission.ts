@@ -61,6 +61,7 @@ import {
 	A4A_AI_MCP_LINK,
 	A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
 	A4A_AI_MCP_CONNECT_LINK,
+	A4A_AI_MCP_STARTER_PROMPTS_LINK,
 	A4A_BENCHMARKS_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
 	A4A_AMPLIFY_LINK,
@@ -133,6 +134,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_AI_MCP_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_AI_MCP_AVAILABLE_TOOLS_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_AI_MCP_CONNECT_LINK ]: [ 'a4a_read_learn' ],
+	[ A4A_AI_MCP_STARTER_PROMPTS_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_BENCHMARKS_LINK ]: [ 'a4a_read_learn' ],
 };
 

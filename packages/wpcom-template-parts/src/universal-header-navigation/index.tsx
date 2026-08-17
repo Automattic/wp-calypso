@@ -43,14 +43,13 @@ const UniversalNavbarHeader = ( {
 	startUrl,
 	loginUrl,
 	nav2026 = false,
-	nav2026Variant = 1,
 	userAvatar,
 	userName,
 	userEmail,
 }: HeaderProps ) => {
 	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	// Mobile drill-down: which category is expanded (null = top level).
 	const [ currentDropdown, setCurrentDropdown ] = useState< string | null >( null );
@@ -74,7 +73,7 @@ const UniversalNavbarHeader = ( {
 	const prevDropdownRef = useRef< string | null >( null );
 	// The <nav> element, so the legacy arm can bind DOM-listener telemetry.
 	const legacyNavRef = useRef< HTMLElement >( null );
-	useDropdownOffset( nav2026, nav2026Variant );
+	useDropdownOffset( nav2026 );
 	useFooterHeight( {
 		nav2026,
 		isMobileMenuOpen,
@@ -86,10 +85,8 @@ const UniversalNavbarHeader = ( {
 
 	const nav2026Menus = useMemo(
 		() =>
-			nav2026
-				? getNav2026Menus( { __, localizeUrl, locale, isLoggedIn, variant: nav2026Variant } )
-				: [],
-		[ nav2026, __, localizeUrl, locale, isLoggedIn, nav2026Variant ]
+			nav2026 ? getNav2026Menus( { __, localizeUrl, locale, isLoggedIn, hasTranslation } ) : [],
+		[ nav2026, __, localizeUrl, locale, isLoggedIn, hasTranslation ]
 	);
 	const activeCategory = nav2026Menus.find( ( menu ) => menu.name === currentDropdown );
 

@@ -154,8 +154,6 @@
 		"me/legacy-contact": true,
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
-		"nav-redesign/2026": false,
-		"nav-redesign/2026-variant-2": false,
 		"notifications/redesign": true,
 		"oauth": false,
 		"oauth/unified-experience": true,
@@ -190,7 +188,7 @@
 		"push-notifications": true,
 		"resurrected-users/90-day-eligibility": true,
 		"reader/social": true,
-		"reader/spaces": true,
+		"reader/shelves": true,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": true,
@@ -231,6 +229,7 @@
 		"two-factor/enhanced-security": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
+		"wordpress-agent-slack": true,
 		"wordpress-ai-tools": true,
 		"wpcom-user-bootstrap": false
 	}

@@ -32,9 +32,6 @@ export function HelpCenterChat( {
 		newInteractionsBotVersion,
 	} = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
-	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging(
-		!! currentUser?.ID
-	);
 	const { search } = useLocation();
 	const { data } = useSupportStatus( ! featureConfig.chat.skipSupportStatus );
 	const params = new URLSearchParams( search );
@@ -44,6 +41,10 @@ export function HelpCenterChat( {
 	const requestedSiteId = Number( siteId ) || Number( site?.ID );
 	const selectedSiteId =
 		Number.isInteger( requestedSiteId ) && requestedSiteId > 0 ? requestedSiteId : undefined;
+	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging(
+		!! currentUser?.ID,
+		selectedSiteId ?? site?.ID
+	);
 	const recordTracksEvent = useHelpCenterTracksEvent( { explicitSiteId: selectedSiteId } );
 	const externalChatProvider = params.get( 'externalChatProvider' );
 	const externalChatId = params.get( 'externalChatId' );

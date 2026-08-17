@@ -209,6 +209,19 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: '/home/12345' } );
 	} );
 
+	it( 'preserves Studio query args while interpolating the receipt id', () => {
+		const studioSiteId = 'b419d647-95e0-4b32-95fc-6ee255aa465d';
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: `/checkout/thank-you/example.com/:receiptId?studioSiteId=${ studioSiteId }&studioReturnTo=publish-site`,
+			receiptId: 12345,
+			siteSlug: 'example.com',
+		} );
+		expect( actual ).toEqual( {
+			url: `/checkout/thank-you/example.com/12345?studioSiteId=${ studioSiteId }&studioReturnTo=publish-site`,
+		} );
+	} );
+
 	it( 'returns a simple absolute url if it is allowed and there is also a receipt', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,

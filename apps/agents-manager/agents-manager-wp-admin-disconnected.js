@@ -10,8 +10,9 @@
  * The help icon is already provided by the PHP admin bar Item component
  * as a direct link to the help page. This file just adds tracking for clicks.
  */
+/* global agentsManagerData */
 import './config';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 
 // Import WordPress admin bar integration styles
 import '@automattic/agents-manager/src/hooks/use-admin-bar-integration/style.scss';
@@ -31,11 +32,19 @@ function initHelpCenterTracking() {
 
 	// Track help center icon click
 	button.addEventListener( 'click', () => {
-		recordTracksEvent( 'calypso_inlinehelp_show', {
-			force_site_id: true,
-			location: 'help-center',
-			section: 'wp-admin',
-		} );
+		recordTracksEvent(
+			'calypso_inlinehelp_show',
+			withSiteContext(
+				{
+					location: 'help-center',
+					section: 'wp-admin',
+				},
+				'agents_manager_data',
+				typeof agentsManagerData !== 'undefined' && agentsManagerData?.isWpcomPlatform === true
+					? agentsManagerData?.site?.ID
+					: undefined
+			)
+		);
 	} );
 
 	// Prevent multiple initializations

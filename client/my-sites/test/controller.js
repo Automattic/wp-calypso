@@ -14,6 +14,7 @@ import {
 	recordNoVisibleSitesPageView,
 	redirectToPrimary,
 	siteSelection,
+	noSite,
 } from '../controller';
 
 jest.mock( 'calypso/state/sites/actions', () => ( {
@@ -486,5 +487,27 @@ describe( 'siteSelection — site fetch failure fallback', () => {
 
 		expect( redirect ).toHaveBeenCalledWith( `/stats/day?${ querystring }` );
 		expect( next ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'noSite', () => {
+	// Only a user with sites reaches siteSelection, so that is the state worth testing.
+	const stateWithSites = {
+		currentUser: { id: 7, user: { site_count: 2, visible_site_count: 2 }, capabilities: {} },
+		sites: { items: {} },
+		ui: { selectedSiteId: null },
+	};
+
+	// The dotted slug makes `getSiteFragment` see a site, so without the
+	// `isWpcomCheckoutFlow` exception this would fall through to the site selector.
+	it( 'lets the WordPress.com siteless checkout route through without a site', () => {
+		const pathname = '/checkout/wpcom/a.product';
+		const next = jest.fn();
+		const store = mockStore( stateWithSites );
+
+		noSite( { store, path: pathname, pathname, params: {}, query: {}, section: {} }, next );
+
+		expect( next ).toHaveBeenCalled();
+		expect( store.getActions() ).toContainEqual( expect.objectContaining( { siteId: null } ) );
 	} );
 } );

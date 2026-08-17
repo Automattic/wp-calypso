@@ -10,6 +10,7 @@ import {
 	isHappinessEngineerMessage,
 	isZendeskChatStartedMessage,
 	isZendeskIntroMessage,
+	isZendeskSurveyMessage,
 } from '../../../utils/csat';
 import ChatWithSupportLabel from '../../chat-with-support';
 import { getMessageUniqueIdentifier } from '../utils/get-message-unique-identifier';
@@ -25,7 +26,7 @@ const EXCLUDED_MESSAGE_ROLES = [ 'zendesk-intro' ] as const;
  * @returns The presented role of the message.
  */
 function getPresentedRole( message: Message ) {
-	if ( isCSATMessage( message ) ) {
+	if ( isCSATMessage( message ) || isZendeskSurveyMessage( message ) ) {
 		return 'csat';
 	} else if ( isAttachment( message ) ) {
 		return 'attachment';
@@ -158,7 +159,9 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 
 	return groups.map( ( group ) => {
 		const startingHumanSupport = group.messages.some( isZendeskChatStartedMessage );
-		const endingHumanSupport = group.messages.some( isCSATMessage );
+		const endingHumanSupport = group.messages.some(
+			( message ) => isCSATMessage( message ) || isZendeskSurveyMessage( message )
+		);
 
 		const messageHeader = () => {
 			// Real Happiness Engineer messages always show the "Happiness Engineer" override so that

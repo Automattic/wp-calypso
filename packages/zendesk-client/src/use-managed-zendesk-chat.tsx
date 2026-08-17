@@ -42,6 +42,7 @@ import { useConnectionStatusNotice } from './use-connection-status-notice';
 import {
 	convertZendeskMessageToAgentticFormat,
 	getSmoochContainer,
+	isCsatTriggerMessage,
 	isSupportedImageType,
 	isTestModeEnvironment,
 	MAX_ATTACHMENTS,
@@ -116,17 +117,14 @@ type TracksProperties = Record< string, unknown >;
  * which is installed outside React and so cannot read a hook.
  */
 function recordWithSmoochSite( eventName: string, properties: TracksProperties = {} ) {
-	recordTracksEvent(
-		eventName,
-		withSiteContext( properties, [ [ 'chat_site', getSmoochSiteId() ] ] )
-	);
+	recordTracksEvent( eventName, withSiteContext( properties, 'chat_site', getSmoochSiteId() ) );
 }
 
 /** Records against the site this hook instance was given. */
 function useZendeskTracksEvent( siteId: number | string | undefined ) {
 	return useCallback(
 		( eventName: string, properties: TracksProperties = {} ) =>
-			recordTracksEvent( eventName, withSiteContext( properties, [ [ 'chat_site', siteId ] ] ) ),
+			recordTracksEvent( eventName, withSiteContext( properties, 'chat_site', siteId ) ),
 		[ siteId ]
 	);
 }
@@ -334,7 +332,7 @@ export const useManagedZendeskChat = ( {
 
 	const hasCSAT = useMemo( () => {
 		const messages = conversation?.messages ?? [];
-		return messages.some( ( msg ) => msg.metadata?.type === 'csat' );
+		return messages.some( isCsatTriggerMessage );
 	}, [ conversation?.messages ] );
 
 	const disconnectedListener = useCallback( () => {
@@ -465,7 +463,7 @@ export const useManagedZendeskChat = ( {
 
 		let ticketId: number | null = null;
 		const messages = rawMessages.map( ( message ): AgentticMessage => {
-			const isCSAT = message.metadata?.type === 'csat';
+			const isCSAT = isCsatTriggerMessage( message );
 
 			if ( isCSAT ) {
 				ticketId = message.actions?.[ 0 ]?.metadata?.ticket_id ?? null;

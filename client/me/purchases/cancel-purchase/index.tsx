@@ -294,6 +294,13 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return false;
 		}
 
+		// A host-managed plan is billed by the partner, so there is nothing to
+		// cancel here. The CTA is hidden on the manage-purchase page; this also
+		// turns away anyone arriving from a stale link.
+		if ( purchase.is_host_managed ) {
+			return false;
+		}
+
 		const isDomainTransferCancelable = purchase.is_refundable || ! isDomainTransfer( purchase );
 		const isValidForCancellation =
 			canAutoRenewBeTurnedOff( purchase ) && isDomainTransferCancelable;

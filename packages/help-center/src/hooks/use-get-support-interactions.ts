@@ -14,11 +14,11 @@ export const useGetSupportInteractions = (
 	enabled = true
 ) => {
 	const isTestMode = isTestModeEnvironment();
-	const { currentUser } = useHelpCenterContext();
+	const { currentUser, site } = useHelpCenterContext();
 	// No auth cookie yet (e.g. right after in-stepper signup) means these authed requests
 	// would 401 and leave the panel stuck loading; skip them and render the logged-out home.
 	const isAuthed = !! currentUser?.ID && ! isCookieAuthMissing();
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( isAuthed );
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( isAuthed, site?.ID );
 
 	let shouldFetch = enabled && isAuthed;
 	// Only fetch Zendesk interactions if the user can connect to Zendesk.

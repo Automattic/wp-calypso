@@ -2,8 +2,7 @@
  * Agent Configuration Utilities
  *
  * Shared utilities for creating agent configurations and reading
- * agent overrides from URL parameters. Used by both the full
- * Agents Manager UI and headless mode.
+ * agent overrides from URL parameters.
  */
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
@@ -236,9 +235,6 @@ async function createDefaultContextProvider(
 
 /**
  * Create a complete agent configuration.
- *
- * Used by both the full Agents Manager UI and headless mode to ensure
- * consistent configuration.
  */
 export async function createAgentConfig(
 	options: CreateAgentConfigOptions

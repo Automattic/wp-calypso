@@ -216,8 +216,9 @@ export default function CheckoutMain( {
 			return marketplaceSiteSlug;
 		}
 
-		// Onboarding unified siteless checkout should return undefined to avoid using siteSlug which becomes "no-user"
-		if ( sitelessCheckoutType === 'unified' ) {
+		// Unified and WordPress.com siteless checkout have no site, so siteSlug would
+		// otherwise fall back to "no-user".
+		if ( sitelessCheckoutType === 'unified' || sitelessCheckoutType === 'wpcom' ) {
 			return undefined;
 		}
 

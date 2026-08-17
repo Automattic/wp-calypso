@@ -91,6 +91,8 @@ jest.mock( '../src/util', () => ( {
 		disabled: false,
 	} ) ),
 	getSmoochContainer: () => globalThis.document.createElement( 'div' ),
+	isCsatTriggerMessage: ( message: { metadata?: { type?: string } } ) =>
+		message?.metadata?.type === 'csat',
 	isSupportedImageType: ( type: string ) =>
 		[ 'image/jpeg', 'image/jpg', 'image/png', 'image/gif' ].includes( type ),
 	isTestModeEnvironment: () => false,

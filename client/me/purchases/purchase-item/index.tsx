@@ -41,6 +41,7 @@ import {
 	isJetpackHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
 	isPartnerPurchase,
+	isStudioCodeHoldingSitePurchase,
 	isTransferredOwnership,
 } from 'calypso/dashboard/utils/purchase';
 import {
@@ -505,6 +506,7 @@ export function PurchaseItemStatus( {
 		isDisconnectedSite &&
 		! isAkismetHoldingSitePurchase( purchase ) &&
 		! isMarketplaceHoldingSitePurchase( purchase ) &&
+		! isStudioCodeHoldingSitePurchase( purchase ) &&
 		! isA4AHoldingSitePurchase( purchase ) &&
 		! isA4ABillingDragonPurchase( purchase )
 	) {
