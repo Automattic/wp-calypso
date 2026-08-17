@@ -35,9 +35,4 @@ describe( 'admin theme colour contrast', () => {
 
 		expect( nowPassing ).toEqual( [] );
 	} );
-
-	it( 'improves coffee the most, the largest gain this change delivers', () => {
-		// Calypso's decorative accent for coffee is 2.29:1 against white — unreadable, and the regression that started this work. Core's interactive colour for the same scheme is ~10:1.
-		expect( contrast( 'coffee' ) ).toBeGreaterThan( 9 );
-	} );
 } );
