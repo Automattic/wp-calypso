@@ -40,6 +40,7 @@ boot( {
 		help: true,
 		notifications: false,
 		resurrectedWelcomeModal: false,
+		survicate: false,
 		me: false,
 		plugins: false,
 		commandPalette: false,
