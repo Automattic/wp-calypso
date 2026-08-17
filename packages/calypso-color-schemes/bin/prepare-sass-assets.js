@@ -26,16 +26,11 @@ const REQUIRED_SCHEMES = [
 	'sunrise',
 ];
 
-// wp-admin's default scheme. Core publishes it as an unconditional `:root` value rather than a
-// `body.admin-color-fresh` block, so it is absent from the mixin `parseAdminSchemes` reads. Odyssey
-// inherits it from wp-admin like any other; leaving it out here would make the two environments
-// disagree on the most common scheme of all.
+// wp-admin's default scheme. Core publishes it as an unconditional `:root` value rather than a `body.admin-color-fresh` block, so it is absent from the mixin `parseAdminSchemes` reads. Odyssey inherits it from wp-admin like any other; leaving it out here would make the two environments disagree on the most common scheme of all.
 const FRESH_ADMIN_THEME_COLOR = '#3858e9';
 
 function parseAdminSchemes( source ) {
-	// `\n\}` must stay anchored to column 0: the inner `body.admin-color-*` blocks close
-	// with an indented brace, so loosening this to allow leading whitespace makes the
-	// non-greedy match stop at the first scheme and silently capture only one of eight.
+	// `\n\}` must stay anchored to column 0: the inner `body.admin-color-*` blocks close with an indented brace, so loosening this to allow leading whitespace makes the non-greedy match stop at the first scheme and silently capture only one of eight.
 	const block = source.match( /@mixin\s+wordpress-admin-schemes\(\)\s*\{([\s\S]*?)\n\}/ );
 
 	if ( ! block ) {
@@ -57,11 +52,7 @@ function parseAdminSchemes( source ) {
 	const missing = REQUIRED_SCHEMES.filter( ( name ) => ! schemes[ name ] );
 
 	if ( missing.length ) {
-		// Both causes land here — a scheme genuinely removed upstream, and a scheme still present in
-		// a form the `entry` regex no longer recognises (a declaration or comment before the
-		// `@include`, a variable instead of a literal hex, an extra argument). Naming what was found
-		// tells the two apart; without it the message sends you looking for a `body.admin-color-blue`
-		// block that is sitting right there.
+		// Both causes land here — a scheme genuinely removed upstream, and a scheme still present in a form the `entry` regex no longer recognises (a declaration or comment before the `@include`, a variable instead of a literal hex, an extra argument). Naming what was found tells the two apart; without it the message sends you looking for a `body.admin-color-blue` block that is sitting right there.
 		throw new Error(
 			`Found the wordpress-admin-schemes() mixin and extracted ${
 				Object.keys( schemes ).length
@@ -83,22 +74,13 @@ function getAdminSchemes( source ) {
 /**
  * Emits the scheme colours as a Sass map plus a mixin that applies them to roots the caller names.
  *
- * Deliberately ships no selectors of its own. This package is loaded by Blaze Dashboard, Stepper,
- * reader-mobile, help-center, happy-blocks and the Odyssey widget, none of which render a Stats
- * surface — baking `.stats-main` in here would hand all of them rules that can never match.
- * `apps/odyssey-stats/src/styles/_admin-theme-handback.scss` takes selectors as arguments for the
- * same reason; this mirrors it.
+ * Deliberately ships no selectors of its own. This package is loaded by Blaze Dashboard, Stepper, reader-mobile, help-center, happy-blocks and the Odyssey widget, none of which render a Stats surface — baking `.stats-main` in here would hand all of them rules that can never match. `apps/odyssey-stats/src/styles/_admin-theme-handback.scss` takes selectors as arguments for the same reason; this mirrors it.
  *
- * Keeping the roots at the call site also collapses two lists into one. The token set here and the
- * `stats-interactive-colors` mixin that reads it have to name the same elements, and when the two
- * lived in separate files they drifted — Store Stats shipped the reader with no value to read.
+ * Keeping the roots at the call site also collapses two lists into one. The token set here and the `stats-interactive-colors` mixin that reads it have to name the same elements, and when the two lived in separate files they drifted — Store Stats shipped the reader with no value to read.
  *
- * `$body-qualifier` exists because the portal roots are already anchored at `<body>`, so they
- * cannot be reached by nesting: the scheme class and the section class have to compound into one
- * `body.is-<scheme>.is-section-stats` selector rather than becoming two descendant `body`s.
+ * `$body-qualifier` exists because the portal roots are already anchored at `<body>`, so they cannot be reached by nesting: the scheme class and the section class have to compound into one `body.is-<scheme>.is-section-stats` selector rather than becoming two descendant `body`s.
  *
- * Iterates the schemes it is given rather than REQUIRED_SCHEMES, which is only the floor: a scheme
- * added upstream should appear in the output, not be dropped because this file has not caught up.
+ * Iterates the schemes it is given rather than REQUIRED_SCHEMES, which is only the floor: a scheme added upstream should appear in the output, not be dropped because this file has not caught up.
  */
 function buildAdminThemeColors( schemes ) {
 	const entries = Object.keys( schemes )
@@ -114,8 +96,7 @@ function buildAdminThemeColors( schemes ) {
 		...entries,
 		');',
 		'',
-		'// Sets core’s interactive colour on `$roots` for every admin scheme. `$roots` is a selector',
-		'// list; `$body-qualifier` compounds onto `body` for roots that sit at the document root.',
+		'// Sets core’s interactive colour on `$roots` for every admin scheme. `$roots` is a selector list; `$body-qualifier` compounds onto `body` for roots that sit at the document root.',
 		'@mixin wp-admin-theme-colors($roots, $body-qualifier: "") {',
 		'\t@each $scheme, $hex in $wp-admin-theme-colors {',
 		'\t\tbody.is-#{$scheme}#{$body-qualifier} :is(#{$roots}) {',
