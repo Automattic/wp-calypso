@@ -93,18 +93,30 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 }
 
 .rewind-flow-notice {
-	margin-top: 32px;
+	margin-top: 24px;
+	padding: 16px;
+	border-radius: 4px;
+	// Tinted against whatever is behind it rather than a fixed color, so the
+	// notice follows the active color scheme instead of needing a dark override.
+	background-color: color-mix(in srgb, var(--color-neutral) 6%, transparent);
 
-	.gridicon {
-		margin-right: 5px;
+	// Consecutive notices read as separate cards, so they need less room between
+	// them than the first one needs from the content above.
+	+ .rewind-flow-notice {
+		margin-top: 8px;
 	}
 
-	// the component renders a top-level a or div, depending on if it is a link or not
-	a,
-	div {
+	.gridicon {
+		margin-inline-end: 5px;
+		flex-shrink: 0;
+	}
+
+	// the component renders a top-level a or div, depending on if it is a link or not.
+	// Direct children only: a link inside the message must stay inline.
+	> a,
+	> div {
 		display: flex;
 		flex-direction: row;
-		margin-bottom: 16px;
 		width: fit-content;
 	}
 
@@ -118,14 +130,22 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 	p {
 		margin: 0;
 	}
-	a {
+
+	> p {
+		margin-top: 4px;
+	}
+
+	> a {
 		align-items: center;
-		display: flex;
 	}
 
 	h4 {
 		text-wrap: wrap;
 	}
+}
+
+.rewind-flow-notice.is-warning {
+	background-color: color-mix(in srgb, var(--color-warning) 8%, transparent);
 }
 
 // when the reminder is default make the header more bold
