@@ -972,15 +972,22 @@ describe( 'canvas guard wiring', () => {
 	} );
 
 	it( 'binds to the open canvas when the client context is built', async () => {
+		const providerContext = {
+			url: 'https://x',
+			pathname: '/x',
+			search: '',
+			environment: 'wp-admin',
+		};
 		setAgentsManagerData( {
-			agentProviders: [ { contextProvider: { getClientContext: () => ( { url: 'https://x' } ) } } ],
+			agentProviders: [ { contextProvider: { getClientContext: () => providerContext } } ],
 		} );
 
 		const providers = await loadExternalProviders();
 		const context = providers.contextProvider?.getClientContext();
 
 		expect( mockedBinding.bindToOpenCanvas ).toHaveBeenCalled();
-		// Nothing is added to the wire — the canvas is read from the editor store.
-		expect( context ).not.toHaveProperty( 'editorTarget' );
+		// The binding adds nothing to the wire: it reads the canvas from the editor
+		// store, so what the server receives is exactly what the provider built.
+		expect( context ).toEqual( providerContext );
 	} );
 } );
