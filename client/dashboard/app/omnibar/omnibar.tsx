@@ -65,20 +65,30 @@ function createHrefResolver( adminUrl?: string ) {
 export default function OmnibarContainer( {
 	user,
 	cartManagerClient,
-	section,
+	sectionGroup,
+	sectionName,
 }: {
 	user?: User;
 	cartManagerClient: ShoppingCartManagerClient;
-	section?: string;
+	sectionGroup?: string;
+	sectionName?: string;
 } ) {
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
-			<ConnectedOmnibar user={ user } section={ section } />
+			<ConnectedOmnibar user={ user } sectionGroup={ sectionGroup } sectionName={ sectionName } />
 		</ShoppingCartProvider>
 	);
 }
 
-function ConnectedOmnibar( { user, section }: { user?: User; section?: string } ) {
+function ConnectedOmnibar( {
+	user,
+	sectionGroup,
+	sectionName,
+}: {
+	user?: User;
+	sectionGroup?: string;
+	sectionName?: string;
+} ) {
 	const { supports } = useAppContext();
 	const recordNodeClick = useRecordOmnibarNodeClick();
 	const [ hydrated, setHydrated ] = useState( false );
@@ -151,9 +161,9 @@ function ConnectedOmnibar( { user, section }: { user?: User; section?: string } 
 		return result;
 	}, [ dashboardNodes, siteNodes, site, supports, nodeBuilders ] );
 
-	const readerPluginNode = useReaderPlugin( { section } );
-	const helpCenterPluginNode = useHelpCenterPlugin();
-	const aiChatPluginNode = useAiChatPlugin();
+	const readerPluginNode = useReaderPlugin( { sectionGroup } );
+	const helpCenterPluginNode = useHelpCenterPlugin( { sectionName } );
+	const aiChatPluginNode = useAiChatPlugin( { sectionName } );
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const { node: languageSwitcherNode, panel: languageSwitcherPanel } = useLanguageSwitcherPlugin( {
 		user,
@@ -161,7 +171,7 @@ function ConnectedOmnibar( { user, section }: { user?: User; section?: string } 
 	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
 	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const launchSiteNode = useLaunchSitePlugin( { site } );
-	const dashboardNode = useDashboardPlugin( { site, section } );
+	const dashboardNode = useDashboardPlugin( { site, sectionGroup } );
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
 	const siteActions = [
 		...( baseOmnibarNodes.siteActions ?? [] ),

@@ -24,7 +24,11 @@ function BigSkyIcon() {
 	);
 }
 
-export function useAiChatPlugin(): OmnibarNode | undefined {
+export function useAiChatPlugin( {
+	sectionName,
+}: {
+	sectionName?: string;
+} ): OmnibarNode | undefined {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const { recordTracksEvent } = useAnalytics();
 
@@ -36,7 +40,7 @@ export function useAiChatPlugin(): OmnibarNode | undefined {
 		const isChatVisible = isAgentsManagerChatVisible();
 
 		recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
-			section: 'dashboard',
+			section: sectionName,
 			action: isChatVisible ? 'close' : 'open',
 		} );
 
