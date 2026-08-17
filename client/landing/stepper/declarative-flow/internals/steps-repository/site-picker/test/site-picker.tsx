@@ -34,6 +34,7 @@ describe( 'SitePicker', () => {
 		perPage: 96,
 		search: '',
 		status: DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE as GroupableSiteLaunchStatuses,
+		hasSourceSite: true,
 		onCreateSite: noop,
 		onSelectSite: noop,
 		onQueryParamChange: noop,
@@ -121,6 +122,13 @@ describe( 'SitePicker', () => {
 		const allLinks = container.getElementsByClassName( 'components-external-link' );
 		expect( allLinks.length ).toBeGreaterThan( 0 );
 		expect( allLinks[ 0 ] ).toHaveAttribute( 'href', initialState.sites.items[ 1 ].URL );
+	} );
+
+	test( 'renders import-specific copy when there is no source site', () => {
+		renderComponent( <SitePicker { ...defaultProps } hasSourceSite={ false } />, initialState );
+
+		expect( screen.getByText( 'Choose where to import' ) ).toBeVisible();
+		expect( screen.getByText( 'create a new site' ) ).toBeVisible();
 	} );
 
 	test( 'renders with correctly sorted list of sites', () => {

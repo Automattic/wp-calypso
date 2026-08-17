@@ -24,6 +24,7 @@ interface Props {
 	perPage?: number;
 	search: string;
 	status: GroupableSiteLaunchStatuses;
+	hasSourceSite: boolean;
 	onCreateSite: () => void;
 	onSelectSite: ( site: SiteExcerptData ) => void;
 	onQueryParamChange: ( params: Partial< SitesDashboardQueryParams > ) => void;
@@ -35,6 +36,7 @@ const SitePicker = function SitePicker( props: Props ) {
 		perPage = 96,
 		search,
 		status,
+		hasSourceSite,
 		onSelectSite,
 		onCreateSite,
 		onQueryParamChange,
@@ -48,12 +50,18 @@ const SitePicker = function SitePicker( props: Props ) {
 	return (
 		<div className="site-picker--container">
 			<div className="site-picker--title">
-				<Title>{ __( 'Pick your destination' ) }</Title>
+				<Title>
+					{ hasSourceSite ? __( 'Pick your destination' ) : __( 'Choose where to import' ) }
+				</Title>
 				<SubTitle>
 					{ createInterpolateElement(
-						__(
-							'Select the WordPress.com site where you’ll move your old site or <button>create a new one</button>'
-						),
+						hasSourceSite
+							? __(
+									'Select the WordPress.com site where you’ll move your old site or <button>create a new one</button>'
+							  )
+							: __(
+									'Select a WordPress.com site to import into or <button>create a new site</button>'
+							  ),
 						{
 							button: <Button onClick={ onCreateSite } />,
 						}

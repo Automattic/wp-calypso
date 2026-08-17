@@ -86,6 +86,11 @@ const SitePickerStep: Step< {
 	};
 
 	const onSelectSite = ( site: SiteExcerptData ) => {
+		if ( ! sourceSiteSlug ) {
+			selectSite( site );
+			return;
+		}
+
 		setDestinationSite( site );
 		setShowConfirmModal( true );
 	};
@@ -127,6 +132,7 @@ const SitePickerStep: Step< {
 						page={ page }
 						search={ search }
 						status={ status }
+						hasSourceSite={ !! sourceSiteSlug }
 						onCreateSite={ createNewSite }
 						onSelectSite={ onSelectSite }
 						onQueryParamChange={ onQueryParamChange }
