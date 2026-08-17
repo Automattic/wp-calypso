@@ -96,9 +96,7 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 	margin-top: 24px;
 	padding: 16px;
 	border-radius: 4px;
-	// Tinted against whatever is behind it rather than a fixed color, so the
-	// notice follows the active color scheme instead of needing a dark override.
-	background-color: color-mix(in srgb, var(--color-neutral) 6%, transparent);
+	background-color: var(--color-neutral-0);
 
 	// Consecutive notices read as separate cards, so they need less room between
 	// them than the first one needs from the content above.
@@ -145,7 +143,7 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 }
 
 .rewind-flow-notice.is-warning {
-	background-color: color-mix(in srgb, var(--color-warning) 8%, transparent);
+	background-color: var(--color-warning-5);
 }
 
 // when the reminder is default make the header more bold
