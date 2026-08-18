@@ -232,9 +232,15 @@ const SignupFormSocialFirst = ( {
 		submitButtonLoadingLabel,
 	};
 
+	// Both screens stay mounted (stacked, toggled via CSS visibility) and share the
+	// global Blackbox singleton, so at most one PasswordlessSignupForm may be
+	// unsuspended at a time — each instance gates on its own screen being active.
 	const emailLoginBlock = isEmailFirstVariant ? (
 		<div className="signup-form-social-first-email">
-			<PasswordlessSignupForm { ...passwordlessFormProps } />
+			<PasswordlessSignupForm
+				{ ...passwordlessFormProps }
+				blackboxSuspended={ currentStep !== 'initial' }
+			/>
 		</div>
 	) : null;
 
@@ -251,6 +257,7 @@ const SignupFormSocialFirst = ( {
 		<div className="signup-form-social-first-email">
 			<PasswordlessSignupForm
 				{ ...passwordlessFormProps }
+				blackboxSuspended={ currentStep !== 'email' }
 				renderTerms={ renderEmailStepTermsOfService }
 				// Partner copy is positionally worded — Woo's says "the options below".
 				termsAfterActions={ ! showsPartnerTerms }

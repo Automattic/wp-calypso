@@ -585,13 +585,13 @@ class SignupForm extends Component {
 		return this.props.displayUsernameInput;
 	}
 
-	handlePasswordlessSubmit = ( passwordLessData ) => {
+	handlePasswordlessSubmit = ( passwordLessData, afterSubmit ) => {
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
 				this.setState( { submitting: false } );
 				return;
 			}
-			this.props.submitForm( this.state.form, passwordLessData );
+			this.props.submitForm( this.state.form, passwordLessData, undefined, afterSubmit );
 		} );
 	};
 

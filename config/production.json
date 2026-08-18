@@ -28,6 +28,7 @@
 		"blackbox": true,
 		"blackbox-login": true,
 		"blackbox-lost-password": true,
+		"blackbox-signup": false,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-site-builder-flow": true,
 		"calypso/all-domain-management": true,
