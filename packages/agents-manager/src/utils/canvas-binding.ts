@@ -14,10 +14,17 @@
  *
  * A canvas is a plain `postType:postId` string. Losing it counts as a move: once a
  * request is bound, the editor reporting no canvas means the user left the page the
- * request was for, not that the canvas is still coming up. Nothing can be bound
- * before the editor has mounted — the binding is taken when the message goes out —
- * and the one flow that legitimately runs against a mounting canvas, the agent
- * navigating itself, drops the binding first via `clearCanvasBinding()`.
+ * request was for, not that the canvas is still coming up.
+ *
+ * The one flow that legitimately runs against a canvas that is still arriving is the
+ * agent navigating itself, and dropping the binding for it is not enough. Binding is
+ * re-taken on every outgoing message, and a tool result is an outgoing message — so
+ * the navigate result rebinds within the same request, while the editor is still
+ * showing the page being left. Pages the server has only just created are never in
+ * the store yet, so that reading is reliably the stale one, and the arrival then
+ * reads as the user walking away from a page the agent moved off deliberately.
+ * `bindToNavigationTarget()` closes that by binding ahead to the destination and
+ * holding it until the editor gets there.
  *
  * That distinction matters because the write abilities *poll*: page-design's
  * `resolvePageDesignTargetRoot` returns null until a post resolves and the renderer
@@ -55,8 +62,15 @@ export function isCanvasWritingAgent( agentId: string | undefined | null ): bool
 	return !! agentId && CANVAS_WRITING_AGENT_IDS.has( agentId );
 }
 
-/** A canvas the model was looking at, as key plus the label a refusal names it by. */
-type BoundCanvas = { key: string; label: string | null };
+/**
+ * A canvas the model was looking at, as key plus the label a refusal names it by.
+ *
+ * `pending` marks a canvas bound ahead of the editor: the agent has been sent to
+ * this page but has not arrived. It is what separates "the navigation we asked
+ * for is still running" from "the user left", which read identically from a
+ * single live sample.
+ */
+type BoundCanvas = { key: string; label: string | null; pending: boolean };
 
 /**
  * A canvas change, described in the terms a refusal message uses.
@@ -144,14 +158,51 @@ function readOpenCanvas(): BoundCanvas | null {
 	return {
 		key,
 		label: typeof title === 'string' && title.trim() ? title.trim() : null,
+		pending: false,
 	};
+}
+
+/**
+ * Promote a destination binding to an ordinary one once the editor arrives.
+ *
+ * Re-reading rather than clearing the flag picks up the title, which a page bound
+ * before it loaded could not have.
+ */
+function settleNavigationArrival(): void {
+	if ( bound?.pending && resolveCanvasKey() === bound.key ) {
+		bound = readOpenCanvas();
+	}
 }
 
 /**
  * Bind to whatever canvas is open now. Called on every outgoing message.
  */
 export function bindToOpenCanvas(): void {
+	settleNavigationArrival();
+
+	// A destination outranks the live reading until the editor gets there. The
+	// tool result carrying the agent's own navigation goes out while the editor is
+	// still on the old page — rebinding then would pin the request to the page it
+	// is in the middle of leaving, and the arrival would read as the user walking
+	// away from it.
+	if ( bound?.pending ) {
+		return;
+	}
+
 	bound = readOpenCanvas();
+}
+
+/**
+ * Bind to the canvas an agent navigation is heading for, before it opens.
+ *
+ * Used in place of `clearCanvasBinding()` for a navigation whose destination is
+ * knowable, which keeps the request guarded across the move instead of leaving it
+ * unbound until something happens to rebind it.
+ *
+ * @param canvasKey The destination canvas key.
+ */
+export function bindToNavigationTarget( canvasKey: string ): void {
+	bound = { key: canvasKey, label: null, pending: true };
 }
 
 /**
@@ -196,6 +247,8 @@ export function startNewUserRequest(): void {
  * @returns The move, or null when the live canvas still matches.
  */
 export function getCanvasMove(): CanvasMove | null {
+	settleNavigationArrival();
+
 	if ( ! bound ) {
 		return null;
 	}
@@ -203,6 +256,12 @@ export function getCanvasMove(): CanvasMove | null {
 	const live = readOpenCanvas();
 
 	if ( live?.key === bound.key ) {
+		return null;
+	}
+
+	// Sent somewhere and not there yet: the mismatch is the navigation in flight,
+	// not the user leaving. Settling above means this only covers the trip.
+	if ( bound.pending ) {
 		return null;
 	}
 

@@ -210,6 +210,65 @@ describe( 'withCanvasGuard', () => {
 		expect( getCanvasMove() ).toBeNull();
 	} );
 
+	it( 'holds the destination while the navigation is still in flight', async () => {
+		// The gap a bare `clearCanvasBinding()` leaves. agenttic-client re-requests
+		// client context when it sends a tool result, so the navigate result rebinds
+		// before the editor has opened the page — and a page the server only just
+		// created is never in the store yet, so the editor still reports the old one.
+		// Binding to the destination up front is what stops that rebind latching the
+		// page the user is leaving and aborting the agent's own navigation.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		// `add-page` created page 34 server-side and asked the client to open it.
+		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
+
+		// The tool result goes out while the editor is still showing About.
+		bindToOpenCanvas();
+
+		// The editor arrives at the new page.
+		setOpenPost( CONTACT_PAGE );
+
+		expect( getCanvasMove() ).toBeNull();
+	} );
+
+	it( 'catches the user leaving once the navigation has landed', async () => {
+		// The binding must not stay pinned to the destination forever: once the
+		// editor arrives, an ordinary user navigation is a move again.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
+		setOpenPost( CONTACT_PAGE );
+		bindToOpenCanvas();
+
+		setOpenPost( ABOUT_PAGE );
+
+		expect( getCanvasMove() ).toEqual( { from: 'Contact', to: 'About' } );
+	} );
+
+	it( 'falls back to dropping the binding when the destination cannot be read', async () => {
+		// `wp-admin/navigate` takes a wp-admin path, not a canvas, and a malformed
+		// editor path names no page either. Unbound is the safe answer: it cannot
+		// pin the request to a page it guessed wrong.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		await guarded!.executeAbility( 'wp_admin__navigate', { path: '/wp-admin/plugins.php' } );
+		setOpenPost( CONTACT_PAGE );
+
+		expect( getCanvasMove() ).toBeNull();
+	} );
+
 	it( 'is a no-op without a tool provider', () => {
 		expect( withCanvasGuard( undefined ) ).toBeUndefined();
 	} );

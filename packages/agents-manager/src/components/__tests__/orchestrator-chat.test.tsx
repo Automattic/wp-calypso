@@ -408,6 +408,7 @@ jest.mock( '../agent-chat', () => ( {
 
 import { getSessionId } from '../../utils/agent-session';
 import {
+	bindToNavigationTarget,
 	bindToOpenCanvas,
 	blockCurrentRequest,
 	clearCanvasBinding,
@@ -3510,6 +3511,49 @@ describe( 'OrchestratorChat', () => {
 			openPage( CONTACT_PAGE );
 
 			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not abort when the agent opens a page it just had created', () => {
+			// The reported failure, end to end: `add-page` creates the page on the
+			// server and hands the client an `editor-navigate` call for it. That
+			// result is an outgoing message, so it rebinds — and a page created a
+			// moment ago on the server is not in the store, so the editor is still
+			// reporting the old one when it does. Binding ahead to the destination is
+			// what stops the arrival killing the turn that asked for it.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest, addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			// The guard, seeing `editor-navigate` bound for `/page/9`.
+			bindToNavigationTarget( 'page:9' );
+			// The navigate tool result, sent while the editor still shows About.
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( addMessage ).not.toHaveBeenCalled();
+		} );
+
+		it( 'still aborts when the user leaves a page the agent navigated to', () => {
+			// The destination binding must hand back to the ordinary rules on arrival,
+			// or one agent navigation would disarm the guard for the rest of the turn.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			bindToNavigationTarget( 'page:9' );
+			openPage( CONTACT_PAGE );
+			bindToOpenCanvas();
+
+			openPage( ABOUT_PAGE );
+
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+			expect( getBlockingMove() ).toEqual( { from: 'Contact', to: 'About' } );
 		} );
 
 		it( 'does not abort a new message sent after navigating between turns', async () => {

@@ -9,8 +9,10 @@
 
 import { normalizeAbilityName } from '../abilities/ability-name';
 import {
+	bindToNavigationTarget,
 	bindToOpenCanvas,
 	blockCurrentRequest,
+	buildCanvasKey,
 	clearCanvasBinding,
 	getBlockingMove,
 	type CanvasMove,
@@ -39,11 +41,44 @@ const CANVAS_BOUND_ABILITIES = new Set(
 	)
 );
 
-// Abilities whose whole job is to move the canvas. The binding is dropped before
-// they run, so the move they cause does not read as a violation.
+// Abilities whose whole job is to move the canvas, so the move they cause must not
+// read as a violation. Where the destination is knowable the binding follows them
+// to it; otherwise it is dropped. See `resolveNavigationTarget`.
 const CANVAS_MOVING_ABILITIES = new Set(
 	[ 'big-sky/editor-navigate', 'wp-admin/navigate' ].map( normalizeAbilityName )
 );
+
+const EDITOR_NAVIGATE_ABILITY = normalizeAbilityName( 'big-sky/editor-navigate' );
+
+// The editor path `editor-navigate` accepts, matching the shape Big Sky validates
+// before it will navigate: `/page/123`, with either slash optional.
+const EDITOR_PAGE_PATH = /^\/?page\/(\d+)\/?$/;
+
+/**
+ * The canvas a navigation ability is heading for.
+ *
+ * Only `editor-navigate` names one. `wp-admin/navigate` takes a wp-admin path and
+ * leaves the editor entirely, and a path that does not parse names no page — both
+ * answer null, which leaves the caller to drop the binding instead of guessing.
+ *
+ * @param normalizedName The normalized ability name.
+ * @param args           The ability arguments, untyped as they arrive off the wire.
+ * @returns The destination canvas key, or null when the ability names no page.
+ */
+function resolveNavigationTarget( normalizedName: string, args: unknown ): string | null {
+	if ( normalizedName !== EDITOR_NAVIGATE_ABILITY ) {
+		return null;
+	}
+
+	const path = ( args as { path?: unknown } | undefined )?.path;
+
+	if ( typeof path !== 'string' ) {
+		return null;
+	}
+
+	// Always a page: the path shape admits nothing else.
+	return buildCanvasKey( 'page', EDITOR_PAGE_PATH.exec( path )?.[ 1 ] );
+}
 
 function buildCanvasRefusal( move: CanvasMove ): AbilityResult {
 	// Untranslated on purpose: `returnToAgent: true` means these strings are read by
@@ -125,7 +160,13 @@ export function withCanvasGuard(
 			}
 
 			if ( CANVAS_MOVING_ABILITIES.has( normalizedName ) ) {
-				clearCanvasBinding();
+				const target = resolveNavigationTarget( normalizedName, args );
+
+				if ( target ) {
+					bindToNavigationTarget( target );
+				} else {
+					clearCanvasBinding();
+				}
 			}
 
 			return toolProvider.executeAbility( name, args );
