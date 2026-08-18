@@ -9,9 +9,9 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderSubtitle as Subtitle,
 } from 'calypso/layout/hosting-dashboard/header';
-import AiMcpAvailableToolsContent from './available-tools-content';
+import AiMcpReadToolsContent from './read-tools-content';
 
-export default function AiMcpAvailableTools() {
+export default function AiMcpReadTools() {
 	const title = __( 'Read' );
 
 	return (
@@ -39,7 +39,7 @@ export default function AiMcpAvailableTools() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<AiMcpAvailableToolsContent />
+				<AiMcpReadToolsContent />
 			</LayoutBody>
 		</Layout>
 	);

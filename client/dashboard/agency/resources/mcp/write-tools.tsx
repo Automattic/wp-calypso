@@ -1,37 +1,34 @@
-import { useNavigate } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../../app/analytics';
+import Breadcrumbs from '../../../app/breadcrumbs';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import McpOverview from './overview-content';
+import McpTools from './tools-content';
 import { useMcpSettings } from './use-mcp-settings';
 
-export default function Mcp() {
+export default function McpWriteToolsScreen() {
 	const { recordTracksEvent } = useAnalytics();
-	const navigate = useNavigate();
-	const { settings, isLoading, isSaving, save } = useMcpSettings();
+	const { settings, isSaving, save } = useMcpSettings();
 
 	return (
 		<PageLayout
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'AI and MCP' ) }
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Write' ) }
 					description={ __(
-						'Control how AI assistants interact with your Automattic for Agencies account and sites.'
+						'Control which actions your external AI assistant can take on your behalf.'
 					) }
 				/>
 			}
 		>
-			<McpOverview
+			<McpTools
+				toolType="write"
 				settings={ settings }
-				isLoading={ isLoading }
 				isSaving={ isSaving }
 				onSave={ save }
 				recordTracksEvent={ recordTracksEvent }
-				onNavigate={ ( path ) =>
-					navigate( { to: path as '/resources/ai-mcp/read' | '/resources/ai-mcp/write' } )
-				}
 			/>
 		</PageLayout>
 	);

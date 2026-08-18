@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import useFetchMcpSettings from 'calypso/a8c-for-agencies/data/mcp-ai/use-fetch-mcp-settings';
 import useSaveMcpSettings from 'calypso/a8c-for-agencies/data/mcp-ai/use-save-mcp-settings';
-import McpReadTools from 'calypso/dashboard/agency/resources/mcp/read-tools-content';
+import McpTools from 'calypso/dashboard/agency/resources/mcp/tools-content';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { McpSettingsUpdate } from 'calypso/a8c-for-agencies/data/mcp-ai/types';
 
-export default function AiMcpAvailableToolsContent() {
+export default function AiMcpWriteToolsContent() {
 	const dispatch = useDispatch();
 	const { data: settings } = useFetchMcpSettings();
 	const saveSettings = useSaveMcpSettings();
@@ -25,7 +25,8 @@ export default function AiMcpAvailableToolsContent() {
 	);
 
 	return (
-		<McpReadTools
+		<McpTools
+			toolType="write"
 			settings={ settings }
 			isSaving={ isSaving }
 			onSave={ onSave }

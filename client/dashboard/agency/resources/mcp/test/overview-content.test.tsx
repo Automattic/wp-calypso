@@ -8,8 +8,8 @@ import { render } from '../../../../test-utils';
 import McpOverview from '../overview-content';
 import type { McpAvailableAbility, McpSettings } from '@automattic/api-core';
 
-function ability( name: string, enabled: boolean ): McpAvailableAbility {
-	return { name, title: name, description: '', category: 'sites', enabled };
+function ability( name: string, enabled: boolean, isReadonly = true ): McpAvailableAbility {
+	return { name, title: name, description: '', category: 'sites', enabled, readonly: isReadonly };
 }
 
 function settings( enabled: boolean, abilities: McpAvailableAbility[] = [] ): McpSettings {
@@ -77,7 +77,7 @@ describe( '<McpOverview>', () => {
 
 		expect( screen.getByRole( 'link', { name: /^Read\b/ } ) ).toHaveAttribute(
 			'href',
-			'/resources/ai-mcp/tools'
+			'/resources/ai-mcp/read'
 		);
 		expect(
 			screen.getByRole( 'link', { name: /^Connect external AI assistant/ } )
@@ -99,7 +99,37 @@ describe( '<McpOverview>', () => {
 		expect( screen.queryByText( /^Starter prompts$/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows Write as coming soon', () => {
+	test( 'links Write to its screen once MCP access is enabled', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'submit-feedback', true, false ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'link', { name: /^Write\b/ } ) ).toHaveAttribute(
+			'href',
+			'/resources/ai-mcp/write'
+		);
+	} );
+
+	test( 'counts read and write tools separately', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [
+					ability( 'get-site-health', true ),
+					ability( 'list-invoices', false ),
+					ability( 'submit-feedback', true, false ),
+				] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'link', { name: /^Read\b/ } ) ).toHaveTextContent( '1 of 2 enabled' );
+		expect( screen.getByRole( 'link', { name: /^Write\b/ } ) ).toHaveTextContent( 'All enabled' );
+	} );
+
+	test( 'shows the Write row as empty when the account has no write tools', () => {
 		render(
 			<McpOverview
 				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
@@ -107,10 +137,8 @@ describe( '<McpOverview>', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Coming soon' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: /^Write\b/ } ) ).toHaveAttribute(
-			'aria-disabled',
-			'true'
+		expect( screen.getByRole( 'link', { name: /^Write\b/ } ) ).toHaveTextContent(
+			'No tools available'
 		);
 	} );
 
@@ -140,6 +168,6 @@ describe( '<McpOverview>', () => {
 
 		await userEvent.click( screen.getByRole( 'link', { name: /^Read\b/ } ) );
 
-		expect( onNavigate ).toHaveBeenCalledWith( '/resources/ai-mcp/tools' );
+		expect( onNavigate ).toHaveBeenCalledWith( '/resources/ai-mcp/read' );
 	} );
 } );

@@ -10,6 +10,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useCallback, useMemo, useState } from 'react';
 import { Card, CardBody, CardDivider } from '../../../components/card';
+import { getAbilitiesForToolType } from './tool-types';
+import type { McpToolType } from './tool-types';
 import type { RecordTracksEvent } from './types';
 import type {
 	McpAvailableAbility,
@@ -94,25 +96,32 @@ function toPayload( abilities: McpAvailableAbility[], enabled: boolean ) {
 	return payload;
 }
 
-interface McpReadToolsProps {
+interface McpToolsProps {
+	toolType: McpToolType;
 	settings: McpSettings | undefined;
 	isSaving?: boolean;
 	onSave: ( update: McpSettingsUpdate ) => void;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
-export default function McpReadTools( {
+export default function McpTools( {
+	toolType,
 	settings,
 	isSaving,
 	onSave,
-	recordTracksEvent = () => {},
-}: McpReadToolsProps ) {
+	recordTracksEvent: record = () => {},
+}: McpToolsProps ) {
 	const isDesktop = useViewportMatch( 'medium' );
 	const [ openGroups, setOpenGroups ] = useState( () => new Set< string >() );
 
+	const recordTracksEvent: RecordTracksEvent = useCallback(
+		( eventName, properties ) => record( eventName, { ...properties, tool_type: toolType } ),
+		[ record, toolType ]
+	);
+
 	const abilities = useMemo(
-		() => settings?.available_abilities ?? [],
-		[ settings?.available_abilities ]
+		() => getAbilitiesForToolType( settings?.available_abilities ?? [], toolType ),
+		[ settings?.available_abilities, toolType ]
 	);
 	const categories = useMemo(
 		() => settings?.available_categories ?? [],
@@ -181,7 +190,11 @@ export default function McpReadTools( {
 		return (
 			<Card>
 				<CardBody>
-					<Text variant="muted">{ __( 'No tools available.' ) }</Text>
+					<Text variant="muted">
+						{ toolType === 'write'
+							? __( 'No write tools are available for your account.' )
+							: __( 'No read tools are available for your account.' ) }
+					</Text>
 				</CardBody>
 			</Card>
 		);
