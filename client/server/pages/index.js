@@ -42,6 +42,7 @@ import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { getOAuth2RedirectUri } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
@@ -220,7 +221,8 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 
 	const showGdprBanner = shouldSeeCookieBanner(
 		validCountryCodeCookie || geoIPCountryCode,
-		trackingPrefs
+		trackingPrefs,
+		getOAuth2RedirectUri( request.query )
 	);
 
 	if ( ! validCountryCodeCookie && geoIPCountryCode ) {

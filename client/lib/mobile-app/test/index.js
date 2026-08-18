@@ -27,6 +27,21 @@ describe( 'isWpMobileApp', () => {
 
 		expect( isWpMobileApp() ).toBeFalsy();
 	} );
+
+	test( 'should identify the app login webview by its OAuth redirect_uri without an app user agent', () => {
+		global.navigator = {
+			userAgent:
+				'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+		};
+		const redirectTo = encodeURIComponent(
+			'https://example.com/authorize?redirect_uri=jetpack%3A%2F%2Foauth2-callback'
+		);
+		global.window = { location: { href: `/log-in?client_id=11&redirect_to=${ redirectTo }` } };
+
+		expect( isWpMobileApp() ).toBe( true );
+
+		delete global.window;
+	} );
 } );
 
 describe( 'isWcMobileApp', () => {
