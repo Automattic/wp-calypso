@@ -21,7 +21,7 @@
 	},
 	"files": [
 		"dist",
-		"README.md"
+		"!dist/tsconfig.tsbuildinfo"
 	],
 	"scripts": {
 		"build": "yarn run clean && yarn run i18n:download-json && vite build && tsc --project tsconfig.json --emitDeclarationOnly",

@@ -22,7 +22,7 @@
 	},
 	"files": [
 		"dist",
-		"README.md"
+		"!dist/tsconfig.tsbuildinfo"
 	],
 	"scripts": {
 		"build": "yarn run clean && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
