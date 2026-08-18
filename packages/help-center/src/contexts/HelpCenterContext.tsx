@@ -30,6 +30,10 @@ export type HelpCenterRequiredInformation = {
 	 * Product identifier. Defaults to 'wpcom' when omitted.
 	 */
 	product?: HelpCenterProduct;
+	/**
+	 * Page the launcher was opened from, when the host page sets one. Tailors the greeting and title.
+	 */
+	launcherContext?: string;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {

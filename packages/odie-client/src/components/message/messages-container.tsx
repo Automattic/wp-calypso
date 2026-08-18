@@ -29,7 +29,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
+	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport, launcherContext } =
 		useOdieAssistantContext();
 	const isTestMode = isTestModeEnvironment();
 	const hasEnTranslation = useHasEnTranslation();
@@ -150,7 +150,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						message={ getOdieInitialMessage(
 							supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY,
 							currentUser?.display_name,
-							hasEnTranslation
+							hasEnTranslation,
+							launcherContext
 						) }
 						key={ 0 }
 					/>

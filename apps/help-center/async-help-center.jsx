@@ -22,6 +22,10 @@ export default function loadHelpCenter() {
 		customProps.newLoggedOutInteractionsBotSlug = helpCenterData.newLoggedOutInteractionsBotSlug;
 	}
 
+	if ( helpCenterData?.launcherContext ) {
+		customProps.launcherContext = helpCenterData.launcherContext;
+	}
+
 	return import( '@automattic/help-center' ).then( ( { default: HelpCenter } ) =>
 		createRoot( container ).render(
 			<QueryClientProvider client={ queryClient }>
