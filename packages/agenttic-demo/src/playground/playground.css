@@ -1,0 +1,232 @@
+/* Playground shell chrome. Header styling is independent of the demo theme. */
+
+.playground {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+.playground-header {
+	position: relative;
+	z-index: 100;
+	flex: none;
+	background: #16161a;
+	color: #e0e0e4;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	border-bottom: 1px solid #34343c;
+}
+
+.playground-header__row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 4px 8px;
+
+	&:first-child {
+		border-bottom: 1px solid #232329;
+	}
+}
+
+.playground-tabs,
+.playground-theme {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px;
+}
+
+.playground-tab {
+	appearance: none;
+	border: none;
+	background: transparent;
+	color: #9c9ca6;
+	font: inherit;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	padding: 6px 10px;
+	border-radius: 4px;
+	cursor: pointer;
+
+	&:hover {
+		background: #26262e;
+		color: #fff;
+	}
+
+	&[aria-pressed='true'] {
+		background: #fff;
+		color: #16161a;
+	}
+}
+
+.playground-view-tools {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px;
+	min-height: 26px;
+	width: 100%;
+}
+
+.playground-tool {
+	appearance: none;
+	border: 1px solid #3a3a44;
+	background: #1e1e26;
+	color: #c8c8d2;
+	font-family: inherit;
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	padding: 4px 8px;
+	border-radius: 4px;
+	cursor: pointer;
+
+	&:hover {
+		background: #2a2a34;
+		color: #fff;
+	}
+
+	&[aria-pressed='true'] {
+		background: #2271b1;
+		border-color: #2271b1;
+		color: #fff;
+	}
+
+	&.is-accent {
+		border-color: #8a2c2e;
+		color: #e8a0a2;
+
+		&:hover {
+			background: #3a1e20;
+		}
+	}
+}
+
+.playground-status {
+	font-size: 11px;
+	color: #8a8a94;
+	padding: 4px 6px;
+	white-space: nowrap;
+}
+
+.playground-canvas {
+	position: relative;
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
+}
+
+/* Toolbar dropdowns (Messages tester, Suggestions picker). */
+
+.tool-dropdown {
+	position: relative;
+}
+
+.tool-dropdown__panel {
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	z-index: 10;
+	min-width: 160px;
+	width: max-content;
+	padding: 12px;
+	background: #1e1e26;
+	border: 1px solid #3a3a44;
+	border-radius: 6px;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+	font-size: 12px;
+}
+
+/* Suggestion set picker */
+
+.suggestions-tool {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.suggestions-tool__option {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	border-radius: 4px;
+	cursor: pointer;
+	color: #c8c8d2;
+
+	&:hover {
+		background: #2a2a34;
+		color: #fff;
+	}
+
+	& input {
+		accent-color: #2271b1;
+		margin: 0;
+	}
+}
+
+/* Message tester panel content */
+
+.message-tester {
+	width: 296px;
+}
+
+.message-tester__row {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.message-tester__select,
+.message-tester__textarea {
+	font-family: inherit;
+	font-size: 12px;
+	color: #e0e0e4;
+	background: #16161a;
+	border: 1px solid #3a3a44;
+	border-radius: 4px;
+}
+
+.message-tester__select {
+	padding: 4px 8px;
+}
+
+.message-tester__textarea {
+	width: 100%;
+	height: 80px;
+	padding: 8px;
+	resize: vertical;
+	box-sizing: border-box;
+}
+
+.message-tester__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 4px;
+	margin-top: 8px;
+}
+
+.message-tester__actions .playground-tool:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.message-tester__presets {
+	border-top: 1px solid #3a3a44;
+	margin-top: 12px;
+	padding-top: 8px;
+}
+
+.message-tester__presets-label {
+	font-size: 10px;
+	text-transform: uppercase;
+	color: #8a8a94;
+	margin-bottom: 6px;
+	letter-spacing: 0.5px;
+}
+
+.message-tester__presets-list {
+	display: flex;
+	gap: 4px;
+	flex-wrap: wrap;
+}

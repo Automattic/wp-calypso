@@ -1,0 +1,33 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": [ "ES2022", "DOM", "DOM.Iterable" ],
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"allowJs": true,
+		"strict": true,
+		"noEmit": true,
+		"moduleDetection": "force",
+		"allowImportingTsExtensions": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"baseUrl": ".",
+		"jsx": "react-jsx",
+		"paths": {
+			"@automattic/agenttic-ui": [ "../agenttic-ui/src" ],
+			"@automattic/agenttic-ui/*": [ "../agenttic-ui/src/*" ],
+			"@automattic/agenttic-client": [ "../agenttic-client/src" ],
+			"@automattic/agenttic-client/*": [ "../agenttic-client/src/*" ]
+		}
+	},
+	"include": [
+		"src/**/*",
+		"../agenttic-ui/src/**/*",
+		"../agenttic-client/src/**/*"
+	]
+}
