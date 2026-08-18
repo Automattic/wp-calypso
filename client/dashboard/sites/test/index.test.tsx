@@ -39,6 +39,15 @@ function mockSitesEndpoint( sites: Site[] ) {
 		.reply( 200, { sites, total: sites.length } );
 }
 
+// Register before mockSitesEndpoint so the catch-all interceptor doesn't
+// consume the deleted-sites check request.
+function mockDeletedSitesCheckEndpoint( total: number ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.3/me/sites' )
+		.query( ( query ) => query.site_visibility === 'deleted' )
+		.reply( 200, { sites: [], total } );
+}
+
 describe( '<Sites>', () => {
 	beforeEach( () => {
 		nock( 'https://public-api.wordpress.com' )
@@ -65,6 +74,7 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'renders empty state when the user has no sites', async () => {
+		mockDeletedSitesCheckEndpoint( 0 );
 		mockSitesEndpoint( mockSites );
 		render( <Sites />, {
 			user: {
@@ -77,6 +87,37 @@ describe( '<Sites>', () => {
 		).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Create a site' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the restore deleted sites notice when a zero-site user has deleted sites', async () => {
+		mockDeletedSitesCheckEndpoint( 1 );
+		mockSitesEndpoint( [] );
+		render( <Sites />, {
+			user: {
+				site_count: 0,
+			} as User,
+		} );
+
+		expect( await screen.findByText( 'You have deleted sites' ) ).toBeVisible();
+		const link = screen.getByRole( 'link', { name: 'View deleted sites' } );
+		expect( link ).toBeVisible();
+		expect( link ).toHaveAttribute( 'href', expect.stringContaining( 'is_deleted=true' ) );
+	} );
+
+	test( 'does not show the restore deleted sites notice when a zero-site user has no deleted sites', async () => {
+		const deletedCheckScope = mockDeletedSitesCheckEndpoint( 0 );
+		mockSitesEndpoint( [] );
+		render( <Sites />, {
+			user: {
+				site_count: 0,
+			} as User,
+		} );
+
+		expect(
+			await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
+		).toBeVisible();
+		await waitFor( () => expect( deletedCheckScope.isDone() ).toBe( true ) );
+		expect( screen.queryByText( 'You have deleted sites' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'collision listener rewrites wpcom site slug when it collides with a Jetpack site', async () => {
