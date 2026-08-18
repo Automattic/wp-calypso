@@ -167,8 +167,7 @@ const FLUSH_TIMEOUT = 7 * 1000;
  * as a 200. The body is never logged: a failed `/sites/new` carries the
  * credentials of the user it was creating a site for.
  *
- * Returns the teardown for these listeners. It drains recording first, then
- * applies policy to the throttle types this test encountered; without the drain,
+ * Returns the teardown for these listeners. It drains recording; without it,
  * a worker can exit between detecting a throttle and tagging the build for it.
  */
 function watchForThrottle( context: BrowserContext ): () => Promise< void > {
