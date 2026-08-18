@@ -95,30 +95,37 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 
 			&__status {
 				background: transparent;
-				color: #4ab866;
-				font-weight: 600;
+				color: var( --color-foreground );
+				font-weight: 500;
 
-				&--reverted {
-					background: transparent;
-					color: var( --color-foreground );
-					font-weight: 500;
+				&:not( .agents-manager-resolved-edit-action__status--reverted ) {
+					.agents-manager-resolved-edit-action__icon {
+						width: 22px;
+						height: 22px;
+						padding: 1px;
+						border-radius: 50%;
+						background-color: #3858e8;
+						color: var( --color-white, #fff );
+					}
 				}
 			}
 
 			&__undo {
 				border: 0;
 				background: transparent;
-				color: var( --color-foreground );
+				color: var( --color-muted-foreground );
 				font-family: inherit;
 				font-weight: 500;
 				cursor: pointer;
 
 				&:hover:not( :disabled ) {
 					background: var( --color-muted );
+					color: var( --color-foreground );
 				}
 
 				&:focus-visible:not( :disabled ) {
 					background: var( --color-muted );
+					color: var( --color-foreground );
 					outline: 2px solid var( --wp-admin-theme-color, #3858e9 );
 					outline-offset: 1px;
 				}
