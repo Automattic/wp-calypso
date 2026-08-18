@@ -28,13 +28,11 @@ describe( 'static site import session API', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'creates a preview from the source URL', async () => {
+	it( 'creates a capture-queued session from the source URL', async () => {
 		jest.mocked( wpcom.req.post ).mockResolvedValue( {
 			session_id: 'session-1',
-			plan_hash: 'hash-1',
 			status: 'pending',
-			state: 'preview_ready',
-			preview_summary: { pages: 2 },
+			state: 'capture_queued',
 		} );
 		const { result } = renderHook( useCreateStaticSiteImportSession, { wrapper } );
 

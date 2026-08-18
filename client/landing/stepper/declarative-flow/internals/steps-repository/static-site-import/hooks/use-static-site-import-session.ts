@@ -1,7 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-export type StaticSiteImportState = 'preview_ready' | 'queued' | 'applying' | 'finished' | 'failed';
+export type StaticSiteImportState =
+	| 'capture_queued'
+	| 'capturing'
+	| 'compiling'
+	| 'preview_ready'
+	| 'queued'
+	| 'applying'
+	| 'finished'
+	| 'failed';
 
 export type StaticSiteImportSession = {
 	session_id: string;

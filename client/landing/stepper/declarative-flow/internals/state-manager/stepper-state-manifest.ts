@@ -11,6 +11,7 @@ export type StepperMiscellaneousFields = Partial< {
 		entryPoint: string;
 	};
 	staticSiteImport: {
+		action: 'created' | 'approved';
 		sessionId: string;
 		planHash?: string;
 		status: string;

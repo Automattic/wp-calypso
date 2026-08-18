@@ -10,6 +10,7 @@ if ( process.env.STATIC_SITE_IMPORT_E2E ) {
 				page,
 			} ) => {
 				let approved = false;
+				let previewReady = false;
 				await accountDefaultUser.authenticate( page );
 				await page
 					.context()
@@ -26,19 +27,24 @@ if ( process.env.STATIC_SITE_IMPORT_E2E ) {
 								state: 'finished',
 							};
 						} else if ( request.method() === 'POST' ) {
+							previewReady = true;
 							body = {
 								session_id: 'session-1',
-								plan_hash: 'hash-1',
 								status: 'pending',
-								state: 'preview_ready',
-								preview_summary: { pages: 2, posts: 4 },
+								state: 'capture_queued',
 							};
 						} else {
+							let state = 'capture_queued';
+							if ( approved ) {
+								state = 'finished';
+							} else if ( previewReady ) {
+								state = 'preview_ready';
+							}
 							body = {
 								session_id: 'session-1',
 								plan_hash: 'hash-1',
 								status: approved ? 'completed' : 'pending',
-								state: approved ? 'finished' : 'preview_ready',
+								state,
 								preview_summary: { pages: 2, posts: 4 },
 							};
 						}

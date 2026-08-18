@@ -74,6 +74,16 @@ const StaticSiteImportReview: StepType< {
 
 	const previewCounts = Object.entries( session?.preview_summary ?? {} ).slice( 0, 3 );
 	const canApprove = session?.state === 'preview_ready' && Boolean( session.plan_hash );
+	let acquisitionMessage: string | undefined;
+	if ( session?.state === 'capture_queued' ) {
+		acquisitionMessage = translate( 'We are preparing to capture your site.' );
+	} else if ( session?.state === 'capturing' ) {
+		acquisitionMessage = translate(
+			'We are capturing your site content. This may take a few minutes.'
+		);
+	} else if ( session?.state === 'compiling' ) {
+		acquisitionMessage = translate( 'We are preparing your import preview.' );
+	}
 
 	return (
 		<>
@@ -112,12 +122,18 @@ const StaticSiteImportReview: StepType< {
 						) }
 						{ session && (
 							<>
-								<p>{ translate( 'Your import preview is ready.' ) }</p>
-								<ul>
-									{ previewCounts.map( ( [ type, count ] ) => (
-										<li key={ type }>{ `${ type }: ${ count }` }</li>
-									) ) }
-								</ul>
+								{ acquisitionMessage ? (
+									<p>{ acquisitionMessage }</p>
+								) : (
+									<>
+										<p>{ translate( 'Your import preview is ready.' ) }</p>
+										<ul>
+											{ previewCounts.map( ( [ type, count ] ) => (
+												<li key={ type }>{ `${ type }: ${ count }` }</li>
+											) ) }
+										</ul>
+									</>
+								) }
 								<Button
 									variant="primary"
 									disabled={ ! canApprove }

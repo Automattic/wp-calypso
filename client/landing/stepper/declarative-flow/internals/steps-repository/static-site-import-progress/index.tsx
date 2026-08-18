@@ -28,6 +28,8 @@ const StaticSiteImportProgress: StepType = function () {
 			! data ||
 			data.state !== 'preview_ready' ||
 			! data.plan_hash ||
+			savedSession?.action !== 'approved' ||
+			savedSession.planHash !== data.plan_hash ||
 			approvalRequested.current ||
 			savedSession?.approved
 		) {
@@ -40,6 +42,7 @@ const StaticSiteImportProgress: StepType = function () {
 			{
 				onSuccess: ( approvedSession ) =>
 					set( 'staticSiteImport', {
+						action: 'approved',
 						sessionId: approvedSession.session_id,
 						planHash: approvedSession.plan_hash,
 						status: approvedSession.status,
@@ -50,11 +53,21 @@ const StaticSiteImportProgress: StepType = function () {
 					} ),
 			}
 		);
-	}, [ approve, savedSession?.approved, session.data, set, siteId ] );
+	}, [
+		approve,
+		savedSession?.action,
+		savedSession?.approved,
+		savedSession?.planHash,
+		session.data,
+		set,
+		siteId,
+	] );
 
 	const state = session.data?.state;
 	let title = translate( 'Your site import is underway' );
-	if ( state === 'finished' ) {
+	if ( [ 'capture_queued', 'capturing', 'compiling' ].includes( state ?? '' ) ) {
+		title = translate( 'We are preparing your site import' );
+	} else if ( state === 'finished' ) {
 		title = translate( 'Your site import is complete' );
 	} else if ( state === 'failed' ) {
 		title = translate( 'Your site import could not be completed' );
@@ -74,6 +87,13 @@ const StaticSiteImportProgress: StepType = function () {
 						{ state === 'finished' && <p>{ translate( 'Your imported content is ready.' ) }</p> }
 						{ state === 'failed' && (
 							<p>{ translate( 'Please try again later or contact support.' ) }</p>
+						) }
+						{ [ 'capture_queued', 'capturing', 'compiling' ].includes( state ?? '' ) && (
+							<p>{ translate( 'We are preparing your site content for import.' ) }</p>
+						) }
+						{ state === 'queued' && <p>{ translate( 'Your site import is queued to start.' ) }</p> }
+						{ state === 'applying' && (
+							<p>{ translate( 'We are importing your site content.' ) }</p>
 						) }
 						{ state && ! [ 'finished', 'failed' ].includes( state ) && <ProgressBar /> }
 						{ session.error && <p>{ translate( 'We could not check your import status.' ) }</p> }

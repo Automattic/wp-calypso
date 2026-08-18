@@ -10,6 +10,7 @@ import StaticSiteImportProgress from '../index';
 
 const mockMutate = jest.fn();
 const mockSet = jest.fn();
+let mockSavedSession: unknown;
 const progressProps = {
 	navigation: { submit: jest.fn() },
 	stepName: 'static-site-import-progress',
@@ -38,19 +39,21 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( { siteId: 123 } ),
 } ) );
 jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
-	useFlowState: () => ( { get: () => undefined, set: mockSet } ),
+	useFlowState: () => ( { get: () => mockSavedSession, set: mockSet } ),
 } ) );
 jest.mock( '../../static-site-import/hooks/use-static-site-import-session' );
 
 describe( 'StaticSiteImportProgress', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockSavedSession = undefined;
 		jest
 			.mocked( useApproveStaticSiteImportSession )
 			.mockReturnValue( { mutate: mockMutate } as never );
 	} );
 
-	it( 'approves a preview-ready session once across rerenders', () => {
+	it( 'approves a preview-ready session once after explicit review with the exact plan hash', () => {
+		mockSavedSession = { action: 'approved', planHash: 'hash-1' };
 		jest.mocked( useStaticSiteImportSession ).mockReturnValue( {
 			data: {
 				session_id: 'session-1',
@@ -70,6 +73,21 @@ describe( 'StaticSiteImportProgress', () => {
 		);
 	} );
 
+	it( 'does not approve a preview-ready session without explicit review', () => {
+		jest.mocked( useStaticSiteImportSession ).mockReturnValue( {
+			data: {
+				session_id: 'session-1',
+				plan_hash: 'hash-1',
+				status: 'pending',
+				state: 'preview_ready',
+			},
+		} as never );
+
+		render( <StaticSiteImportProgress { ...progressProps } /> );
+
+		expect( mockMutate ).not.toHaveBeenCalled();
+	} );
+
 	it.each( [
 		[ 'finished', 'Your imported content is ready.' ],
 		[ 'failed', 'Please try again later or contact support.' ],
@@ -82,4 +100,17 @@ describe( 'StaticSiteImportProgress', () => {
 
 		expect( screen.getByText( message ) ).toBeVisible();
 	} );
+
+	it.each( [ 'capture_queued', 'capturing', 'compiling' ] )(
+		'renders %s as preparing',
+		( state ) => {
+			jest.mocked( useStaticSiteImportSession ).mockReturnValue( {
+				data: { session_id: 'session-1', status: 'pending', state },
+			} as never );
+
+			render( <StaticSiteImportProgress { ...progressProps } /> );
+
+			expect( screen.getByText( 'We are preparing your site content for import.' ) ).toBeVisible();
+		}
+	);
 } );
