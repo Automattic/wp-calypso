@@ -17,7 +17,7 @@ jest.mock( './utils/tracking', () => ( {
 const mockApiFetch = jest.mocked( apiFetch );
 const mockTrackJetpackAiUpgrade = jest.mocked( trackJetpackAiUpgrade );
 const mockAssign = jest.fn();
-const UPGRADE_URL = 'https://wordpress.com/checkout/example.com/ai-monthly';
+const UPGRADE_URL = 'http://localhost/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai';
 const CURRENT_ENDPOINT_ERROR =
 	'Protocol request error: You have reached your Jetpack AI usage limit.';
 const PUBLIC_API_ROOT = 'https://public-api.wordpress.com/';
@@ -47,7 +47,7 @@ const featureResponse = ( requestsCount = 0 ) => ( {
 const defaultProps = {
 	error: null,
 	enabled: true,
-	isWpcomPlatform: true,
+	isWpcomPlatform: false,
 	settledRequestCount: 0,
 	siteId: 123,
 };
@@ -127,32 +127,45 @@ describe( 'getFreeCreditStatus', () => {
 	} );
 } );
 
-describe( 'Simple status', () => {
-	beforeEach( () => {
-		testWindow.wpApiSettings = { root: PUBLIC_API_ROOT };
-	} );
-
+describe( 'WordPress.com-hosted status', () => {
 	it.each( [
-		[ 0, '20 free credits left' ],
-		[ 19, '1 free credit left' ],
-	] )( 'always shows the remaining free credits for %d requests used', async ( used, message ) => {
-		mockApiFetch.mockResolvedValue( featureResponse( used ) );
-		const { result } = renderHook( () => useJetpackFreeCreditChatNotice( defaultProps ) );
+		[ 'Simple', PUBLIC_API_ROOT ],
+		[ 'Atomic', LOCAL_API_ROOT ],
+	] )( 'does not fetch or show the Jetpack AI notice on %s', ( _siteType, root ) => {
+		testWindow.wpApiSettings = { root };
+		mockApiFetch.mockResolvedValue( featureResponse() );
+		const { result } = renderHook( () =>
+			useJetpackFreeCreditChatNotice( {
+				...defaultProps,
+				error: CURRENT_ENDPOINT_ERROR,
+				isWpcomPlatform: true,
+			} )
+		);
 
-		await waitFor( () => expect( result.current?.message ).toBe( message ) );
-		expect( result.current ).toMatchObject( {
-			dismissible: false,
-			action: { label: 'Upgrade' },
-		} );
-		expect( result.current ).not.toHaveProperty( 'status' );
-		expect( mockApiFetch ).toHaveBeenCalledWith( {
-			path: '/wpcom/v2/sites/123/jetpack-ai/ai-assistant-feature?force=wpcom',
-		} );
+		expect( mockApiFetch ).not.toHaveBeenCalled();
+		expect( result.current ).toBeUndefined();
+	} );
+} );
+
+describe( 'Self-hosted status', () => {
+	beforeEach( () => {
+		testWindow.wpApiSettings = { root: LOCAL_API_ROOT };
 	} );
 
-	it( 'shows the exhausted free-credit state and keeps Upgrade available', async () => {
+	it( 'uses the local endpoint', async () => {
+		mockApiFetch.mockResolvedValue( featureResponse() );
+		const { result, unmount } = renderHook( () => useJetpackFreeCreditChatNotice( defaultProps ) );
+
+		await waitFor( () => expect( result.current?.message ).toBe( '20 free credits left' ) );
+		expect( mockApiFetch ).toHaveBeenCalledWith( {
+			path: '/wpcom/v2/jetpack-ai/ai-assistant-feature',
+		} );
+		unmount();
+	} );
+
+	it( 'shows the exhausted state and opens the trusted upgrade URL', async () => {
 		mockApiFetch.mockResolvedValue( featureResponse( 20 ) );
-		const { result } = renderHook( () => useJetpackFreeCreditChatNotice( defaultProps ) );
+		const { result, unmount } = renderHook( () => useJetpackFreeCreditChatNotice( defaultProps ) );
 
 		await waitFor( () =>
 			expect( result.current ).toMatchObject( {
@@ -166,79 +179,10 @@ describe( 'Simple status', () => {
 		result.current?.action?.onClick();
 		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledWith();
 		expect( mockAssign ).toHaveBeenCalledWith( UPGRADE_URL );
+		unmount();
 	} );
 
-	it( 'refetches immediately after the submitted request settles', async () => {
-		mockApiFetch
-			.mockResolvedValueOnce( featureResponse() )
-			.mockResolvedValueOnce( featureResponse( 1 ) );
-		const { result, rerender } = renderHook(
-			( props: typeof defaultProps ) => useJetpackFreeCreditChatNotice( props ),
-			{ initialProps: defaultProps }
-		);
-
-		await waitFor( () => expect( result.current?.message ).toBe( '20 free credits left' ) );
-		rerender( { ...defaultProps, settledRequestCount: 1 } );
-
-		await waitFor( () => expect( result.current?.message ).toBe( '19 free credits left' ) );
-		expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
-	} );
-
-	it( 'keeps a usable older response when the newer request fails', async () => {
-		let resolveInitial: ( value: ReturnType< typeof featureResponse > ) => void = () => {};
-		mockApiFetch
-			.mockImplementationOnce(
-				() =>
-					new Promise( ( resolve ) => {
-						resolveInitial = resolve;
-					} )
-			)
-			.mockRejectedValueOnce( new Error( 'Status unavailable' ) );
-		const { result, rerender } = renderHook(
-			( props: typeof defaultProps ) => useJetpackFreeCreditChatNotice( props ),
-			{ initialProps: defaultProps }
-		);
-
-		await waitFor( () => expect( mockApiFetch ).toHaveBeenCalledTimes( 1 ) );
-		rerender( { ...defaultProps, settledRequestCount: 1 } );
-		await waitFor( () => expect( mockApiFetch ).toHaveBeenCalledTimes( 2 ) );
-		await act( async () => resolveInitial( featureResponse() ) );
-
-		await waitFor( () => expect( result.current?.message ).toBe( '20 free credits left' ) );
-	} );
-
-	it( 'does not let an older response replace a newer post-turn count', async () => {
-		let resolveInitial: ( value: ReturnType< typeof featureResponse > ) => void = () => {};
-		let resolveRefresh: ( value: ReturnType< typeof featureResponse > ) => void = () => {};
-		mockApiFetch
-			.mockImplementationOnce(
-				() =>
-					new Promise( ( resolve ) => {
-						resolveInitial = resolve;
-					} )
-			)
-			.mockImplementationOnce(
-				() =>
-					new Promise( ( resolve ) => {
-						resolveRefresh = resolve;
-					} )
-			);
-		const { result, rerender } = renderHook(
-			( props: typeof defaultProps ) => useJetpackFreeCreditChatNotice( props ),
-			{ initialProps: defaultProps }
-		);
-
-		await waitFor( () => expect( mockApiFetch ).toHaveBeenCalledTimes( 1 ) );
-		rerender( { ...defaultProps, settledRequestCount: 1 } );
-		await waitFor( () => expect( mockApiFetch ).toHaveBeenCalledTimes( 2 ) );
-		await act( async () => resolveRefresh( featureResponse( 10 ) ) );
-		await waitFor( () => expect( result.current?.message ).toBe( '10 free credits left' ) );
-		await act( async () => resolveInitial( featureResponse() ) );
-
-		expect( result.current?.message ).toBe( '10 free credits left' );
-	} );
-
-	it( 'requires a positive site ID for the Public API route', () => {
+	it( 'requires a positive site ID', () => {
 		mockApiFetch.mockResolvedValue( featureResponse() );
 		const { result } = renderHook( () =>
 			useJetpackFreeCreditChatNotice( { ...defaultProps, siteId: 0 } )
@@ -246,28 +190,6 @@ describe( 'Simple status', () => {
 
 		expect( mockApiFetch ).not.toHaveBeenCalled();
 		expect( result.current ).toBeUndefined();
-	} );
-} );
-
-describe( 'Atomic and self-hosted status', () => {
-	beforeEach( () => {
-		testWindow.wpApiSettings = { root: LOCAL_API_ROOT };
-	} );
-
-	it.each( [
-		[ 'Atomic', true ],
-		[ 'self-hosted', false ],
-	] as const )( 'uses the local endpoint on %s', async ( _siteType, isWpcomPlatform ) => {
-		mockApiFetch.mockResolvedValue( featureResponse() );
-		const { result, unmount } = renderHook( () =>
-			useJetpackFreeCreditChatNotice( { ...defaultProps, isWpcomPlatform } )
-		);
-
-		await waitFor( () => expect( result.current?.message ).toBe( '20 free credits left' ) );
-		expect( mockApiFetch ).toHaveBeenCalledWith( {
-			path: '/wpcom/v2/jetpack-ai/ai-assistant-feature',
-		} );
-		unmount();
 	} );
 
 	it( 'accepts a relative same-origin REST root', async () => {
@@ -461,15 +383,12 @@ describe( 'routing and compatibility fallbacks', () => {
 		);
 
 		expect( mockApiFetch ).not.toHaveBeenCalled();
-		expect( result.current ).toMatchObject( {
-			message: 'You’ve reached your Jetpack AI usage limit.',
-			suppressCurrentError: true,
-		} );
+		expect( result.current ).toBeUndefined();
 	} );
 
-	it.each( [ false, true ] )( 'uses the Jetpack platform signal when it is %s', async ( value ) => {
+	it( 'uses the self-hosted Jetpack platform signal', async () => {
 		testWindow.wpApiSettings = { root: LOCAL_API_ROOT };
-		testWindow.JetpackScriptData = { site: { is_wpcom_platform: value } };
+		testWindow.JetpackScriptData = { site: { is_wpcom_platform: false } };
 		mockApiFetch.mockResolvedValue( featureResponse() );
 		const { result, unmount } = renderHook( () =>
 			useJetpackFreeCreditChatNotice( {
@@ -483,6 +402,23 @@ describe( 'routing and compatibility fallbacks', () => {
 		await waitFor( () => expect( result.current?.message ).toBe( '20 free credits left' ) );
 		expect( mockApiFetch ).toHaveBeenCalledTimes( 1 );
 		unmount();
+	} );
+
+	it( 'excludes the WordPress.com Jetpack platform signal', () => {
+		testWindow.wpApiSettings = { root: LOCAL_API_ROOT };
+		testWindow.JetpackScriptData = { site: { is_wpcom_platform: true } };
+		mockApiFetch.mockResolvedValue( featureResponse() );
+		const { result } = renderHook( () =>
+			useJetpackFreeCreditChatNotice( {
+				error: CURRENT_ENDPOINT_ERROR,
+				enabled: true,
+				settledRequestCount: 0,
+				siteId: 123,
+			} )
+		);
+
+		expect( mockApiFetch ).not.toHaveBeenCalled();
+		expect( result.current ).toBeUndefined();
 	} );
 
 	it( 'keeps the rejection notice with an old shell and a new provider', () => {

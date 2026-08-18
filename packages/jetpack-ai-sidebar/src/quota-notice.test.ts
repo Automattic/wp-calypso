@@ -86,11 +86,8 @@ describe( 'useChatNotice', () => {
 		} );
 	} );
 
-	it.each( [
-		'https://wordpress.com/checkout/example.com/ai-monthly',
-		'https://jetpack.com/upgrade/ai',
-		'http://localhost/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
-	] )( 'uses a trusted backend upgrade URL: %s', ( upgradeUrl ) => {
+	it( 'uses the same-origin My Jetpack upgrade URL', () => {
+		const upgradeUrl = 'http://localhost/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai';
 		const { result } = renderHook( () =>
 			useChatNotice( {
 				error: `${ CURRENT_ENDPOINT_ERROR } Upgrade at ${ upgradeUrl }`,
@@ -104,6 +101,8 @@ describe( 'useChatNotice', () => {
 	} );
 
 	it.each( [
+		'https://wordpress.com/checkout/example.com/ai-monthly',
+		'https://jetpack.com/upgrade/ai',
 		'https://wordpress.com.evil.example/checkout',
 		'https://cdn.wordpress.com/checkout',
 		'https://evil.example/checkout',
@@ -121,7 +120,7 @@ describe( 'useChatNotice', () => {
 	} );
 
 	it( 'skips an untrusted URL and uses a later trusted URL', () => {
-		const trustedUrl = 'https://wordpress.com/checkout/example.com/personal';
+		const trustedUrl = 'http://localhost/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai';
 		const { result } = renderHook( () =>
 			useChatNotice( {
 				error: `${ CURRENT_ENDPOINT_ERROR } Ignore https://evil.example/checkout. Upgrade at ${ trustedUrl }`,

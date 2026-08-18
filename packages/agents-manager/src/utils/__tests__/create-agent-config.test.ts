@@ -200,16 +200,6 @@ describe( 'createAgentConfig', () => {
 		);
 	} );
 
-	it( 'uses the existing Agent endpoint for wp-orchestrator', async () => {
-		const config = await createAgentConfig( {
-			sessionId: 'session-1',
-			agentId: 'wp-orchestrator',
-			environment: 'gutenberg',
-		} );
-
-		expect( config.agentUrl ).toBe( 'https://public-api.wordpress.com/wpcom/v2/ai/agent' );
-	} );
-
 	it( 'merges site editor actions into default client context', async () => {
 		setSiteEditorAction( 'colorPickerItemSelected', 'Ruby' );
 

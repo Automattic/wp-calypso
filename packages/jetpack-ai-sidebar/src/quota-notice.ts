@@ -6,7 +6,6 @@ const QUOTA_EXHAUSTED_CODE_MESSAGE =
 	/^(?:(?:(?:protocol request|streaming) error|http \d{3}):\s*)?jetpack_ai_quota_exhausted(?:[.!:\s]|$)/i;
 const QUOTA_EXHAUSTED_MESSAGE =
 	/^(?:(?:(?:protocol request|streaming) error|http \d{3}):\s*)?(?:you have reached your jetpack ai usage limit|jetpack ai usage limit reached)(?:[.!:\s]|$)/i;
-const TRUSTED_UPGRADE_ORIGINS = [ 'https://wordpress.com', 'https://jetpack.com' ];
 
 export interface JetpackAiChatNotice {
 	message: string;
@@ -20,8 +19,6 @@ export interface JetpackAiChatNotice {
 export function getTrustedUpgradeUrl( value: string ): string | null {
 	try {
 		const url = new URL( value.replace( /[.,;:!?)\]}]+$/, '' ) );
-		const isTrustedHostedUrl =
-			url.username === '' && url.password === '' && TRUSTED_UPGRADE_ORIGINS.includes( url.origin );
 		const isSameOriginMyJetpackUrl =
 			typeof window !== 'undefined' &&
 			url.origin === window.location.origin &&
@@ -31,7 +28,7 @@ export function getTrustedUpgradeUrl( value: string ): string | null {
 			url.search === '?page=my-jetpack' &&
 			url.hash === '#/add-jetpack-ai';
 
-		return isTrustedHostedUrl || isSameOriginMyJetpackUrl ? url.href : null;
+		return isSameOriginMyJetpackUrl ? url.href : null;
 	} catch {
 		return null;
 	}
