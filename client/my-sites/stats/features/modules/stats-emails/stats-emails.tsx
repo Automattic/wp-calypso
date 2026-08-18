@@ -23,7 +23,6 @@ import {
 	OpensTooltipContent,
 	ClicksTooltipContent,
 	hasUniqueMetrics,
-	getClicksDisplayValue,
 	EmailStatsItem,
 } from './tooltips';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
@@ -87,7 +86,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						</StatsInfoArea>
 					}
 					additionalColumns={ {
-						header: <span>{ translate( 'Opens' ) }</span>,
+						header: <span>{ translate( 'Unique opens' ) }</span>,
 						body: ( item: EmailStatsItem ) => {
 							const opensUnique = parseInt( String( item.unique_opens ), 10 );
 							const opens = parseInt( String( item.opens ), 10 );
@@ -114,15 +113,26 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					query={ query }
 					statType={ statType }
 					mainItemLabel={ translate( 'Latest emails' ) }
-					metricLabel={ translate( 'Clicks' ) }
+					metricLabel={ translate( 'Unique clicks' ) }
 					valueField="clicks_rate"
 					formatValue={ ( value: number, item: EmailStatsItem ) => {
 						if ( ! item ) {
 							return value;
 						}
+						const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
+						const clicks = parseInt( String( item.clicks ), 10 );
+						const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
 						return (
 							<TooltipWrapper
-								value={ getClicksDisplayValue( item ) }
+								value={
+									hasUniques
+										? `${ formatNumber( item.clicks_rate, {
+												numberFormatOptions: {
+													maximumFractionDigits: 2,
+												},
+										  } ) }%`
+										: '—'
+								}
 								item={ item }
 								TooltipContent={ ClicksTooltipContent }
 							/>
