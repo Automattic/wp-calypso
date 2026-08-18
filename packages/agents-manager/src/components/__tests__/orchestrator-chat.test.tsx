@@ -3439,6 +3439,31 @@ describe( 'OrchestratorChat', () => {
 			expect( abortCurrentRequest ).not.toHaveBeenCalled();
 		} );
 
+		it( 'does not abort a new message sent after navigating between turns', async () => {
+			// The main hazard `startNewUserRequest()` closes, and it has nothing to do
+			// with the block: turn one binds to About, the user then moves to Contact
+			// with nothing running (so no abort), and sends a new message. The new turn
+			// flips `isProcessing` before its own outbound message rebinds, so a
+			// binding left over from turn one reads as a move and aborts the request
+			// the user just made — every time they ask a question after navigating.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: false } ) );
+			const { rerender } = render( chat() );
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Submit message' ) );
+			} );
+
+			const processingTurn = agentChatReturn( { isProcessing: true } );
+			mockUseAgentChat.mockReturnValue( processingTurn );
+			rerender( chat() );
+
+			expect( processingTurn.abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( processingTurn.addMessage ).not.toHaveBeenCalled();
+		} );
+
 		it( 'lifts the block when the composer submits the next message', async () => {
 			// The rebind has to sit on the callback the composer is wired to. One
 			// canvas-move abort would otherwise latch the block for the rest of the

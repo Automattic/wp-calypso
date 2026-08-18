@@ -1281,11 +1281,14 @@ export default function OrchestratorChat( {
 				setInputValue( ( currentValue ) => ( currentValue === message ? '' : currentValue ) );
 			}
 
-			// A new user message is a new intent: rebind to whatever canvas is open
-			// now, and lift any block left by a previous request. This sits on the
-			// dispatch path rather than in `submitChatMessage` — the composer calls
-			// this callback directly, and the sends above that bail out early must
-			// not disturb a binding that still belongs to a running request.
+			// A new user message is a new intent, so it starts unbound and unblocked:
+			// the previous turn's canvas must not judge this one (the effect above
+			// would abort it on sight if the user has navigated since), and any block
+			// that turn left behind must not refuse this one's writes.
+			//
+			// This sits on the dispatch path rather than in `submitChatMessage` — the
+			// composer calls this callback directly, and the sends above that bail out
+			// early must not disturb a binding that still belongs to a running request.
 			startNewUserRequest();
 
 			submitDispatchedRef.current = true;

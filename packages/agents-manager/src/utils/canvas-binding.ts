@@ -131,7 +131,21 @@ export function clearCanvasBinding(): void {
 }
 
 /**
- * Start a fresh binding for a new user message or a regenerate.
+ * Reset to the unbound, unblocked state for a new user message or a regenerate.
+ *
+ * Both halves matter, for different reasons.
+ *
+ * Dropping the binding is the load-bearing one, and it is not about the block at
+ * all. A new turn flips `isProcessing` before its own outbound message rebinds, so
+ * between those two moments the binding still names the *previous* turn's canvas.
+ * If the user navigated since that turn — the ordinary case of finishing on one
+ * page and asking about another — the abort effect reads the stale binding as a
+ * move and kills the request the user just made. Clearing here removes the window
+ * rather than racing it.
+ *
+ * Clearing the block is what keeps a refusal from outliving the request it was
+ * meant for. Nothing else ever clears `blockedMove`, so without this one canvas
+ * move would refuse every canvas write for the rest of the page load.
  */
 export function startNewUserRequest(): void {
 	clearCanvasBinding();
