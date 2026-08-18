@@ -280,10 +280,9 @@ export class DomainSearchComponent {
 		try {
 			await row.waitFor();
 		} catch ( error ) {
-			// The row never showed up. A ban is the one cause worth taking the policy
-			// for, and taking it throws, so the wait's own error survives only when no
-			// ban is in force. A row addressed by keyword can also be missing from a
-			// list that rendered perfectly well.
+			// If a domain-suggestions ban is in force, skip/fail accordingly; that throws.
+			// So reaching the throw means none was, and the wait's own error stands: a
+			// keyword row can be missing from a list that rendered fine.
 			handleActiveThrottles( [ 'domain-suggestions' ] );
 			throw error;
 		}
