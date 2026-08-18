@@ -27,7 +27,6 @@ jest.mock( '@wordpress/icons', () => {
 
 	return {
 		check: 'check',
-		closeSmall: 'closeSmall',
 		redo: 'redo',
 		undo: 'undo',
 		Icon: ( { className, icon }: { className?: string; icon: unknown } ) => {
@@ -171,7 +170,7 @@ describe( 'useCheckpointAction', () => {
 		} );
 		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
 		expect( status ).toHaveTextContent( 'Reverted' );
-		expect( within( status ).getByTestId( 'icon-closeSmall' ) ).toBeInTheDocument();
+		expect( within( status ).getByTestId( 'icon-undo' ) ).toBeInTheDocument();
 		expect( status ).toHaveClass( 'agents-manager-resolved-edit-action__status--reverted' );
 		expect( getActions( registration, message )[ 0 ] ).toMatchObject( {
 			label: 'Reverted',
@@ -230,7 +229,7 @@ describe( 'useCheckpointAction', () => {
 
 		const status = screen.getByRole( 'status' );
 		expect( status ).toHaveTextContent( 'Reverted' );
-		expect( within( status ).getByTestId( 'icon-closeSmall' ) ).toBeInTheDocument();
+		expect( within( status ).getByTestId( 'icon-undo' ) ).toBeInTheDocument();
 		expect( status ).toHaveClass( 'agents-manager-resolved-edit-action__status--reverted' );
 		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Redo' } ) ).not.toBeInTheDocument();
@@ -335,7 +334,10 @@ describe( 'useCheckpointAction', () => {
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Undo' } ) );
 		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Redo' } ) ).toBeEnabled() );
-		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Reverted' );
+		const status = screen.getByRole( 'status' );
+		const redoButton = screen.getByRole( 'button', { name: 'Redo' } );
+		expect( status ).toHaveTextContent( 'Reverted' );
+		expect( within( redoButton ).getByTestId( 'icon-redo' ) ).toBeInTheDocument();
 		expect( recordBigSkyTracksEvent ).toHaveBeenNthCalledWith( 1, 'restore_checkpoint_action', {
 			action: 'undo',
 			id: 'swappable-tool-call',

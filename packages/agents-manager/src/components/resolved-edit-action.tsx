@@ -1,6 +1,6 @@
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { check, closeSmall, Icon, redo, undo } from '@wordpress/icons';
+import { check, Icon, redo, undo } from '@wordpress/icons';
 
 type ResolvedEditActionProps = {
 	disabled?: boolean;
@@ -46,7 +46,7 @@ export default function ResolvedEditAction( {
 			>
 				<Icon
 					className="agents-manager-resolved-edit-action__icon"
-					icon={ isReverted ? closeSmall : check }
+					icon={ isReverted ? undo : check }
 					size={ 20 }
 				/>
 				{ isReverted
