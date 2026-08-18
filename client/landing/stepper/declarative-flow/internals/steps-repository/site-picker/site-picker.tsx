@@ -1,4 +1,3 @@
-import { WordPressLogo } from '@automattic/components';
 import { SubTitle, Title } from '@automattic/onboarding';
 import {
 	createSitesListComponent,
@@ -109,7 +108,7 @@ const SitePicker = function SitePicker( props: Props ) {
 														{ site.icon?.img ? (
 															<img src={ site.icon.img } alt="" />
 														) : (
-															<WordPressLogo size={ 24 } />
+															( site.title || site.name || '?' ).trim().charAt( 0 ).toUpperCase()
 														) }
 													</div>
 													<div className="site-picker--site-details">
