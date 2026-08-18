@@ -6,10 +6,13 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import EmailVerificationStep from '../index';
 
 let mockState = { userId: 7, email: 'person@example.com', verified: false };
+let mockQuery = new URLSearchParams();
 
 jest.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( mockState ),
 } ) );
+
+jest.mock( '../../../../../hooks/use-query', () => ( { useQuery: () => mockQuery } ) );
 
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserId: ( state: { userId: number } ) => state.userId,
@@ -38,6 +41,12 @@ jest.mock( '../../__user/email-verification/storage', () => ( {
 	claimGateConfirmation: jest.fn( () => ( { secondsOnStep: 12 } ) ),
 } ) );
 
+const mockConfirmationProps = jest.fn();
+jest.mock( '../confirmation', () => ( props: Record< string, unknown > ) => {
+	mockConfirmationProps( props );
+	return <div data-testid="confirmation" />;
+} );
+
 const renderStep = ( submit = jest.fn() ) => {
 	render(
 		<EmailVerificationStep
@@ -52,6 +61,7 @@ const renderStep = ( submit = jest.fn() ) => {
 describe( 'EmailVerificationStep', () => {
 	beforeEach( () => {
 		mockState = { userId: 7, email: 'person@example.com', verified: false };
+		mockQuery = new URLSearchParams();
 		jest.clearAllMocks();
 	} );
 
@@ -103,5 +113,42 @@ describe( 'EmailVerificationStep', () => {
 
 		expect( submit ).toHaveBeenCalledTimes( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	describe( 'confirmation-link tab (?confirmed=1)', () => {
+		beforeEach( () => {
+			mockQuery = new URLSearchParams( 'confirmed=1' );
+		} );
+
+		it( 'shows the static confirmation, without the gate', () => {
+			renderStep();
+
+			expect( screen.getByTestId( 'confirmation' ) ).toBeVisible();
+			expect( screen.queryByTestId( 'gate' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'never advances or records a confirmation, even when the account is verified', () => {
+			mockState = { ...mockState, verified: true };
+
+			const submit = renderStep();
+
+			expect( screen.getByTestId( 'confirmation' ) ).toBeVisible();
+			expect( screen.queryByTestId( 'loading' ) ).not.toBeInTheDocument();
+			expect( submit ).not.toHaveBeenCalled();
+			expect( recordTracksEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'restarts the flow from its beginning when the escape hatch is used', () => {
+			const assign = jest.fn();
+			Object.defineProperty( window, 'location', {
+				value: { assign },
+				writable: true,
+			} );
+
+			renderStep();
+
+			mockConfirmationProps.mock.calls[ 0 ][ 0 ].onContinue();
+			expect( assign ).toHaveBeenCalledWith( '/setup/onboarding' );
+		} );
 	} );
 } );
