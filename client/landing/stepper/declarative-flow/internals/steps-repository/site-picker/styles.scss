@@ -28,6 +28,18 @@
 		background: #f0f0f0;
 	}
 
+	.site-picker--error {
+		padding: rem( 24px );
+		border: 1px solid #dcdcde;
+		border-radius: rem( 4px );
+		background: #fff;
+		text-align: center;
+
+		p {
+			margin: 0 0 rem( 16px );
+		}
+	}
+
 	.site-picker--list {
 		display: grid;
 		grid-template-columns: minmax( 0, 1fr );

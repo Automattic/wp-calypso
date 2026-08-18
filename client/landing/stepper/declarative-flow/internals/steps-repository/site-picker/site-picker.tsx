@@ -45,7 +45,12 @@ const SitePicker = function SitePicker( props: Props ) {
 		onQueryParamChange,
 	} = props;
 	const { sitesSorting, onSitesSortingChange } = useSitesSorting();
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+	const {
+		data: allSites = [],
+		isLoading,
+		isError,
+		refetch,
+	} = useSiteExcerptsQuery(
 		SITE_PICKER_FILTER_CONFIG,
 		( site ) => ! site.is_wpcom_staging_site && ! site.is_deleted
 	);
@@ -80,6 +85,17 @@ const SitePicker = function SitePicker( props: Props ) {
 					const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 					const showControls =
 						allSites.length > 8 || !! search || status !== DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE;
+
+					if ( isError ) {
+						return (
+							<div className="site-picker--error" role="alert">
+								<p>{ __( 'We couldn’t load your sites. Please try again.' ) }</p>
+								<Button variant="secondary" onClick={ () => refetch() }>
+									{ __( 'Try again' ) }
+								</Button>
+							</div>
+						);
+					}
 
 					return (
 						<>

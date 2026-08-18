@@ -6,7 +6,7 @@ import {
 	GroupableSiteLaunchStatuses,
 } from '@automattic/sites';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -16,7 +16,7 @@ import type { JSX } from 'react';
 const renderComponent = ( component: JSX.Element, initialState = {} ) => {
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
-	const queryClient = new QueryClient();
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 	return render(
 		<Provider store={ store }>
@@ -180,5 +180,27 @@ describe( 'SitePicker', () => {
 		renderComponent( <SitePicker { ...props } />, initialState );
 
 		expect( screen.getByText( 'You have no private sites' ) ).toBeVisible();
+	} );
+
+	test( 'recovers when loading sites fails', async () => {
+		nock.cleanAll();
+		let requestCount = 0;
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( ( uri ) => uri.startsWith( '/rest/v1.2/me/sites' ) )
+			.reply( () =>
+				requestCount++ === 0
+					? [ 500, { error: 'fixture_site_fetch_failed' } ]
+					: [ 200, { sites: Object.values( initialState.sites.items ) } ]
+			);
+
+		renderComponent( <SitePicker { ...defaultProps } />, initialState );
+
+		expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+			'We couldn’t load your sites. Please try again.'
+		);
+		fireEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+		expect( await screen.findByText( 'A Test Site' ) ).toBeVisible();
 	} );
 } );
