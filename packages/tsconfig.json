@@ -15,6 +15,7 @@
 		{ "path": "./block-renderer" },
 		{ "path": "./browser-data-collector" },
 		{ "path": "./calypso-analytics" },
+		{ "path": "./calypso-color-schemes" },
 		{ "path": "./calypso-config" },
 		{ "path": "./calypso-e2e" },
 		{ "path": "./calypso-support-session" },
