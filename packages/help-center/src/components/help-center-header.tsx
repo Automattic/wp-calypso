@@ -1,6 +1,10 @@
 /* eslint-disable no-restricted-imports */
 import { useGetHistoryChats } from '@automattic/help-center/src/hooks/use-get-history-chats';
-import { PLANS_PRESALES_LAUNCHER_CONTEXT } from '@automattic/odie-client/src/constants';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
+import {
+	PLANS_PRESALES_INTRO_MESSAGE,
+	PLANS_PRESALES_LAUNCHER_CONTEXT,
+} from '@automattic/odie-client/src/constants';
 import { useCurrentSupportInteraction } from '@automattic/odie-client/src/data/use-current-support-interaction';
 import {
 	CardHeader,
@@ -154,11 +158,15 @@ const useHeaderText = () => {
 	const { pathname } = useLocation();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { launcherContext } = useHelpCenterContext();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const isConversationWithZendesk = currentSupportInteraction?.events.some(
 		( event ) => event.event_source === 'zendesk'
 	);
-	const isPlansPresales = launcherContext === PLANS_PRESALES_LAUNCHER_CONTEXT;
+	// Same gate as the greeting, so title and greeting switch together per locale.
+	const isPlansPresales =
+		launcherContext === PLANS_PRESALES_LAUNCHER_CONTEXT &&
+		hasEnTranslation( PLANS_PRESALES_INTRO_MESSAGE, undefined, __i18n_text_domain__ );
 
 	return useMemo( () => {
 		switch ( pathname ) {
