@@ -91,7 +91,6 @@ export const sitesRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			// Settle the restore-deleted-sites notice eligibility before first paint.
 			hasNoLiveSites( user ) &&
 				queryClient.ensureQueryData(
 					context.config.queries.paginatedSitesQuery( deletedSitesCheckFetchOptions )
