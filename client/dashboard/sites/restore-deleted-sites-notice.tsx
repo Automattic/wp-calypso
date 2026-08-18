@@ -6,13 +6,7 @@ import { useAppContext } from '../app/context';
 import ComponentViewTracker from '../components/component-view-tracker';
 import Notice from '../components/notice';
 import RouterLinkButton from '../components/router-link-button';
-import type { FetchPaginatedSitesOptions } from '@automattic/api-core';
-
-export const deletedSitesCheckFetchOptions: FetchPaginatedSitesOptions = {
-	site_visibility: 'deleted',
-	include_a8c_owned: false,
-	per_page: 1,
-};
+import { deletedSitesCheckFetchOptions, hasNoLiveSites } from './deleted-sites';
 
 /**
  * Whether the restore-deleted-sites notice is eligible to show. Read at the
@@ -22,16 +16,16 @@ export const deletedSitesCheckFetchOptions: FetchPaginatedSitesOptions = {
 export function useShouldShowRestoreDeletedSitesNotice() {
 	const { user } = useAuth();
 	const { queries } = useAppContext();
-	const hasNoLiveSites = user.site_count === 0;
+	const noLiveSites = hasNoLiveSites( user );
 
 	// Prefetched by the sitesRoute loader for zero-site users, so eligibility
 	// is settled before first paint.
 	const { data } = useQuery( {
 		...queries.paginatedSitesQuery( deletedSitesCheckFetchOptions ),
-		enabled: hasNoLiveSites,
+		enabled: noLiveSites,
 	} );
 
-	return hasNoLiveSites && ( data?.total ?? 0 ) > 0;
+	return noLiveSites && ( data?.total ?? 0 ) > 0;
 }
 
 export function RestoreDeletedSitesNotice() {

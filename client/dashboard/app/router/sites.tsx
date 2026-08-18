@@ -48,6 +48,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createLazyRoute, createRoute, lazyRouteComponent, notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { deletedSitesCheckFetchOptions, hasNoLiveSites } from '../../sites/deleted-sites';
 import {
 	canManageSite,
 	canOptOutOfWordPressBeta,
@@ -56,7 +57,6 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
-import { deletedSitesCheckFetchOptions } from '../../sites/restore-deleted-sites-notice';
 import { reauthRequiredLink } from '../../utils/link';
 import {
 	getActivityLogHiddenGroups,
@@ -92,7 +92,7 @@ export const sitesRoute = createRoute( {
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 			// Settle the restore-deleted-sites notice eligibility before first paint.
-			user?.site_count === 0 &&
+			hasNoLiveSites( user ) &&
 				queryClient.ensureQueryData(
 					context.config.queries.paginatedSitesQuery( deletedSitesCheckFetchOptions )
 				),
