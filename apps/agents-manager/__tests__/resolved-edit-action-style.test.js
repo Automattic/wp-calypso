@@ -59,6 +59,7 @@ describe( 'Resolved edit action CSS contract', () => {
 		const action = getDeclarations( '.agents-manager-resolved-edit-action__undo' );
 
 		expect( status.get( 'color' ) ).toBe( 'var(--color-foreground)' );
+		expect( status.get( 'padding-inline-start' ) ).toBe( '0' );
 		expect( confirmedIcon.get( 'border-radius' ) ).toBe( '50%' );
 		expect( confirmedIcon.get( 'background-color' ) ).toBe( '#3858e8' );
 		expect( confirmedIcon.get( 'color' ) ).toBe( 'var(--color-white, #fff)' );
