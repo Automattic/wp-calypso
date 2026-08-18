@@ -154,7 +154,7 @@ body:has( .omnibar ) {
 		}
 	}
 
-	.omnibar__label {
+	.omnibar__menu .omnibar__label {
 		display: none;
 
 		@media ( min-width: 782px ) {

@@ -7,6 +7,13 @@ import type { Notices } from 'calypso/my-sites/stats/hooks/use-notice-visibility
 export const PRICING_GRID_REFERRER = 'jetpack-stats-pricing-grid';
 
 /**
+ * Query arg that Odyssey's pre-connection screen carries back through the connection flow to say
+ * the plan question was already answered. It has to travel in the URL because the choice is made
+ * before the site has a blog id to record it against.
+ */
+export const PLAN_CHOSEN_QUERY_ARG = 'stats_plan_chosen';
+
+/**
  * Returns a function that records the pricing grid dismissal server-side and
  * patches the cached notices in place, so the gate sees the choice on SPA route
  * changes without waiting for a refetch. The patch can't cover every path — the

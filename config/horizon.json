@@ -93,7 +93,6 @@
 		"migration/ssh-migration": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
-		"onboarding/email-verification": false,
 		"onboarding/post-checkout-ai-step": true,
 		"onboarding/woo-hosting-post-purchase-setup-choice": true,
 		"p2/p2-plus": true,
