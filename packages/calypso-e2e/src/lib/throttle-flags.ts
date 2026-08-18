@@ -48,11 +48,10 @@ export function mayBeThrottled( url: string ): boolean {
 }
 
 /**
- * How long each ban lasts. The answer is not asked how long it lasts: it says so
- * only sometimes, in a translated sentence, and these are the numbers wpcom
- * enforces from an Automattic IP, which is where CI runs. `signup` bans for 10
- * minutes there; `domain-suggestions` for one; `is-available` states nothing at
- * all and its limiter counts over a sliding hour.
+ * How long each ban lasts. A refusal cannot be asked: it names a length only
+ * sometimes, in a translated sentence. These are the windows the limiters
+ * themselves apply to a request from an Automattic IP, which is where CI runs,
+ * not lengths guessed from what a refusal looked like.
  */
 const BAN_DURATIONS: Record< ThrottleId, number > = {
 	signup: 600_000,
