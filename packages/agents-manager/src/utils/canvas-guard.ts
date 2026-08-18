@@ -5,6 +5,12 @@
  * abilities are bound to the open canvas, which ones legitimately move it, and what
  * a refusal says. The ability lists live next to the state machine they encode
  * against rather than in the provider loader, which only composes them.
+ *
+ * The policy is installed on both dispatch paths, because agenttic-client picks
+ * between them per ability: it calls an ability's own `callback` when it has one and
+ * only falls back to the provider's `executeAbility` when it does not. Every Big Sky
+ * ability is registered with a callback, so guarding `executeAbility` alone leaves
+ * the guard switched off for exactly the abilities it exists to police.
  */
 
 import { normalizeAbilityName } from '../abilities/ability-name';
@@ -17,7 +23,7 @@ import {
 	getBlockingMove,
 	type CanvasMove,
 } from './canvas-binding';
-import type { AbilityResult } from '../abilities/types';
+import type { Ability, AbilityResult } from '../abilities/types';
 import type { ContextProvider, ToolProvider } from '../types';
 
 // Abilities that write to the page open in the editor. Deliberately excludes
@@ -48,6 +54,10 @@ const CANVAS_MOVING_ABILITIES = new Set(
 	[ 'big-sky/editor-navigate', 'wp-admin/navigate' ].map( normalizeAbilityName )
 );
 
+// Every ability the policy acts on, and so the only ones whose callbacks are worth
+// wrapping.
+const POLICED_ABILITIES = new Set( [ ...CANVAS_BOUND_ABILITIES, ...CANVAS_MOVING_ABILITIES ] );
+
 const EDITOR_NAVIGATE_ABILITY = normalizeAbilityName( 'big-sky/editor-navigate' );
 
 // The editor path `editor-navigate` accepts, matching the shape Big Sky validates
@@ -60,7 +70,6 @@ const EDITOR_PAGE_PATH = /^\/?page\/(\d+)\/?$/;
  * Only `editor-navigate` names one. `wp-admin/navigate` takes a wp-admin path and
  * leaves the editor entirely, and a path that does not parse names no page — both
  * answer null, which leaves the caller to drop the binding instead of guessing.
- *
  * @param normalizedName The normalized ability name.
  * @param args           The ability arguments, untyped as they arrive off the wire.
  * @returns The destination canvas key, or null when the ability names no page.
@@ -129,6 +138,75 @@ export function withCanvasBinding(
 }
 
 /**
+ * Applies the canvas policy to one about-to-run ability.
+ *
+ * Shared by both dispatch paths, which is the whole point: agenttic-client calls an
+ * ability's own `callback` when it has one and only falls back to the provider's
+ * `executeAbility` when it does not, so a policy installed on one path alone is
+ * inert for every ability that takes the other.
+ * @param name The ability name, in either form.
+ * @param args The ability arguments.
+ * @returns A refusal to return instead of running it, or null to let it run.
+ */
+function applyCanvasPolicy( name: string, args: unknown ): AbilityResult | null {
+	// Normalize the incoming name too: it may arrive in either form
+	// (`findAbilityByName` accepts both), and normalizing an already
+	// normalized name is a no-op.
+	const normalizedName = normalizeAbilityName( name );
+
+	if ( CANVAS_BOUND_ABILITIES.has( normalizedName ) ) {
+		const move = getBlockingMove();
+		if ( move ) {
+			blockCurrentRequest();
+			return buildCanvasRefusal( move );
+		}
+	}
+
+	if ( CANVAS_MOVING_ABILITIES.has( normalizedName ) ) {
+		const target = resolveNavigationTarget( normalizedName, args );
+
+		if ( target ) {
+			bindToNavigationTarget( target );
+		} else {
+			clearCanvasBinding();
+		}
+	}
+
+	return null;
+}
+
+/**
+ * Puts the policy on an ability's own callback.
+ *
+ * The refusal shape needs no translation: `AbilityResult` is what the abilities
+ * being guarded already return from their callbacks, and agenttic-client reads
+ * `returnToAgent` off that same object either way.
+ * @param ability The ability as its provider registered it.
+ * @returns The ability, with a guarded callback when it has one to guard.
+ */
+function guardAbilityCallback( ability: Ability ): Ability {
+	const { callback } = ability;
+
+	// Everything the policy has no opinion on is handed back as-is, identity and
+	// all: a wrapper there would buy nothing and put this module in the path of
+	// every ability on the site.
+	if ( ! callback || ! POLICED_ABILITIES.has( normalizeAbilityName( ability.name ) ) ) {
+		return ability;
+	}
+
+	return {
+		...ability,
+		callback: async ( input ) => {
+			// The callback path carries the arguments inline, alongside the ids
+			// agenttic-client adds — so `path` is read from the same object.
+			const refusal = applyCanvasPolicy( ability.name, input );
+
+			return refusal ?? callback( input );
+		},
+	};
+}
+
+/**
  * Refuses a canvas write whose canvas has moved since the model asked for it.
  *
  * Applied to the merged tool provider, so it is indifferent to which provider owns
@@ -144,32 +222,11 @@ export function withCanvasGuard(
 	}
 
 	return {
-		getAbilities: () => toolProvider.getAbilities(),
+		getAbilities: async () => ( await toolProvider.getAbilities() ).map( guardAbilityCallback ),
 		executeAbility: async ( name: string, args: unknown ) => {
-			// Normalize the incoming name too: it may arrive in either form
-			// (`findAbilityByName` accepts both), and normalizing an already
-			// normalized name is a no-op.
-			const normalizedName = normalizeAbilityName( name );
+			const refusal = applyCanvasPolicy( name, args );
 
-			if ( CANVAS_BOUND_ABILITIES.has( normalizedName ) ) {
-				const move = getBlockingMove();
-				if ( move ) {
-					blockCurrentRequest();
-					return buildCanvasRefusal( move );
-				}
-			}
-
-			if ( CANVAS_MOVING_ABILITIES.has( normalizedName ) ) {
-				const target = resolveNavigationTarget( normalizedName, args );
-
-				if ( target ) {
-					bindToNavigationTarget( target );
-				} else {
-					clearCanvasBinding();
-				}
-			}
-
-			return toolProvider.executeAbility( name, args );
+			return refusal ?? toolProvider.executeAbility( name, args );
 		},
 	};
 }

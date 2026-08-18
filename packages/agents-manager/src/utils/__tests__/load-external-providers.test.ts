@@ -68,6 +68,19 @@ function createAbility( name: string ): Ability {
 	};
 }
 
+/**
+ * An ability list compared without pinning callback identity.
+ *
+ * The canvas guard wraps the callback of every ability it polices, which is
+ * orthogonal to what these tests are about — merging, dedupe, ordering and
+ * resilience. Everything else still compares deeply.
+ * @param abilities The abilities to normalize.
+ * @returns The abilities without their callbacks.
+ */
+function abilityShapes( abilities: Ability[] = [] ) {
+	return abilities.map( ( { callback, ...rest } ) => rest );
+}
+
 function createCheckpointReturn(
 	overrides: Partial< UseCheckpointReturn > = {}
 ): UseCheckpointReturn {
@@ -199,12 +212,14 @@ describe( 'loadExternalProviders', () => {
 
 		const providers = await loadExternalProviders();
 
-		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
-			restoreCheckpointAbility,
-			showComponentAbility,
-			createAbility( 'host/navigate' ),
-			createAbility( 'woocommerce/get-products' ),
-		] );
+		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
+			abilityShapes( [
+				restoreCheckpointAbility,
+				showComponentAbility,
+				createAbility( 'host/navigate' ),
+				createAbility( 'woocommerce/get-products' ),
+			] )
+		);
 		await expect(
 			providers.toolProvider?.executeAbility( 'woocommerce__get_products', { limit: 5 } )
 		).resolves.toEqual( { handledBy: 'woo' } );
@@ -229,11 +244,13 @@ describe( 'loadExternalProviders', () => {
 
 		const providers = await loadExternalProviders();
 
-		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
-			restoreCheckpointAbility,
-			showComponentAbility,
-			createAbility( 'shared/action' ),
-		] );
+		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
+			abilityShapes( [
+				restoreCheckpointAbility,
+				showComponentAbility,
+				createAbility( 'shared/action' ),
+			] )
+		);
 		await expect( providers.toolProvider?.executeAbility( 'shared/action', {} ) ).resolves.toEqual(
 			{
 				handledBy: 'first',
@@ -313,11 +330,13 @@ describe( 'loadExternalProviders', () => {
 
 		const providers = await loadExternalProviders();
 
-		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
-			restoreCheckpointAbility,
-			showComponentAbility,
-			createAbility( 'host/navigate' ),
-		] );
+		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
+			abilityShapes( [
+				restoreCheckpointAbility,
+				showComponentAbility,
+				createAbility( 'host/navigate' ),
+			] )
+		);
 		expect( consoleWarn ).toHaveBeenCalledWith(
 			'[AgentsManager] Failed to load abilities from provider:',
 			expect.any( Error )
@@ -784,12 +803,14 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 		editorAbilityRegistered = true;
 
-		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
-			restoreCheckpointAbility,
-			showComponentAbility,
-			createAbility( 'big-sky/apply-block-edits' ),
-			createAbility( 'wpcom/manage-site' ),
-		] );
+		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
+			abilityShapes( [
+				restoreCheckpointAbility,
+				showComponentAbility,
+				createAbility( 'big-sky/apply-block-edits' ),
+				createAbility( 'wpcom/manage-site' ),
+			] )
+		);
 		await expect(
 			providers.toolProvider?.executeAbility( 'big_sky__apply_block_edits', { updates: [] } )
 		).resolves.toEqual( { handledBy: 'big-sky' } );

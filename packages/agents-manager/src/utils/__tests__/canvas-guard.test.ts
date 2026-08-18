@@ -17,7 +17,6 @@ const mockSelect = select as jest.MockedFunction< typeof select >;
 
 /**
  * Point the mocked `core/editor` store at a given post.
- *
  * @param post The post the editor is treated as having open, or null for no store.
  */
 function setOpenPost( post: { id?: number | string; type?: string; title?: string } | null ) {
@@ -271,6 +270,99 @@ describe( 'withCanvasGuard', () => {
 
 	it( 'is a no-op without a tool provider', () => {
 		expect( withCanvasGuard( undefined ) ).toBeUndefined();
+	} );
+} );
+
+// The path production actually takes. agenttic-client resolves an ability from
+// `getAbilities()` and calls `ability.callback` directly whenever it has one,
+// falling back to `executeAbility` only when it does not — and every Big Sky
+// ability is registered with a callback. A guard installed on `executeAbility`
+// alone never runs against them, which is invisible to any test that calls
+// `executeAbility` itself.
+describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
+	/**
+	 * Fetch a guarded ability the way agenttic-client does, then invoke it.
+	 * @param provider The guarded provider.
+	 * @param name     The registered ability name.
+	 * @param input    The arguments, as agenttic-client passes them inline.
+	 * @returns Whatever the callback answers.
+	 */
+	async function callAbility( provider: ToolProvider, name: string, input: unknown ) {
+		const abilities = await provider.getAbilities();
+		const ability = abilities.find( ( candidate ) => candidate.name === name );
+
+		return ability!.callback!( input as never );
+	}
+
+	function createCallbackProvider( callback: jest.Mock ): ToolProvider {
+		return {
+			getAbilities: jest.fn( () =>
+				Promise.resolve( [
+					{ name: 'big-sky/editor-navigate', callback },
+					{ name: 'big-sky/stream-page-design', callback },
+				] )
+			),
+			executeAbility: jest.fn(),
+		} as unknown as ToolProvider;
+	}
+
+	beforeEach( () => {
+		mockSelect.mockReset();
+		startNewUserRequest();
+	} );
+
+	it( 'follows the agent to the page it navigates to', async () => {
+		// The reported failure. `add-page` creates the page server-side and hands
+		// the client an `editor-navigate` call, which arrives as a callback — so
+		// this is the dispatch that has to move the binding.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		const callback = jest.fn().mockResolvedValue( { result: { success: true }, ok: true } );
+		const guarded = withCanvasGuard( createCallbackProvider( callback ) );
+
+		await callAbility( guarded!, 'big-sky/editor-navigate', { path: '/page/34' } );
+
+		// The navigate result rebinds before the editor has opened the new page.
+		bindToOpenCanvas();
+		setOpenPost( CONTACT_PAGE );
+
+		expect( callback ).toHaveBeenCalled();
+		expect( getCanvasMove() ).toBeNull();
+	} );
+
+	it( 'refuses a canvas write whose page has moved', async () => {
+		// The other half the callback path was skipping: with the guard only on
+		// `executeAbility`, a stale write was never actually refused.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+		setOpenPost( CONTACT_PAGE );
+
+		const callback = jest.fn();
+		const guarded = withCanvasGuard( createCallbackProvider( callback ) );
+
+		const result = await callAbility( guarded!, 'big-sky/stream-page-design', {} );
+
+		expect( callback ).not.toHaveBeenCalled();
+		// The same envelope the guarded abilities return from their own callbacks,
+		// so agenttic-client reads `returnToAgent` off it unchanged.
+		expect( result ).toMatchObject( {
+			returnToAgent: true,
+			result: { success: false, error: 'editor_canvas_moved' },
+		} );
+	} );
+
+	it( 'leaves an ability without a callback untouched', async () => {
+		// Nothing to wrap, and wrapping it would invent a callback that makes
+		// agenttic-client stop falling back to `executeAbility` for it.
+		const provider = {
+			getAbilities: jest.fn( () => Promise.resolve( [ { name: 'big-sky/editor-navigate' } ] ) ),
+			executeAbility: jest.fn(),
+		} as unknown as ToolProvider;
+
+		const abilities = await withCanvasGuard( provider )!.getAbilities();
+
+		expect( abilities[ 0 ].callback ).toBeUndefined();
 	} );
 } );
 
