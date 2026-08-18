@@ -22,7 +22,7 @@ interface ApplyResultLike {
 	editableAttribute?: string;
 }
 
-export type UndoSnapshotOutcome = 'success' | 'failed' | 'missing_snapshot';
+type UndoSnapshotOutcome = 'success' | 'failed' | 'missing_snapshot';
 
 /**
  * Keeps one undo snapshot per review item and reverts it on demand. Status
@@ -35,7 +35,7 @@ export default function useUndoSnapshots< Key extends string | number >(): {
 } {
 	const snapshots = useRef< Partial< Record< Key, UndoSnapshot > > >( {} );
 
-	/** Stores the snapshot when the apply result carries a complete one. */
+	// Stores the snapshot when the apply result carries a complete one.
 	const saveFromApplyResult = useCallback( ( key: Key, result: ApplyResultLike ): boolean => {
 		if (
 			result.success &&
@@ -54,11 +54,9 @@ export default function useUndoSnapshots< Key extends string | number >(): {
 		return false;
 	}, [] );
 
-	/**
-	 * Reverts the stored edit. Pass `requireSnapshot` for items whose applied
-	 * state must have a snapshot — losing it makes the undo a failure rather
-	 * than a plain status reset (as for a dismissed item).
-	 */
+	// Reverts the stored edit. Pass `requireSnapshot` for items whose applied
+	// state must have a snapshot — losing it makes the undo a failure rather
+	// than a plain status reset (as for a dismissed item).
 	const undo = useCallback( ( key: Key, requireSnapshot: boolean ): UndoSnapshotOutcome => {
 		const snapshot = snapshots.current[ key ];
 		if ( requireSnapshot && ! snapshot ) {

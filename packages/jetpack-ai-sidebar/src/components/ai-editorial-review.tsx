@@ -30,7 +30,6 @@ import {
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
-import { type OnResponseAction } from '../utils/response-action';
 import { useReviewPostContext, type EditorPostId } from '../utils/review-post-context';
 import useBulkApply, { type BulkApplyStep } from '../utils/use-bulk-apply';
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
@@ -40,6 +39,7 @@ import BlockRef, { getBlockTypeName, type BlockSnapshot } from './block-ref';
 import ReviewCard, { ReviewCardActions, type ReviewCardRow } from './review-card';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
 import SplitScreenGuide from './split-screen-guide';
+import type { OnResponseAction } from '../utils/response-action';
 
 /**
  * Types mirroring the wpcom `AI_Editorial_Review_Ability` structured output.

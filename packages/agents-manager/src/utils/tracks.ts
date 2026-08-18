@@ -75,10 +75,9 @@ function getIsTest(): boolean {
 }
 
 /**
- * `block_editor` only while the `core/editor` store is registered; omitted on
- * the plain wp-admin screens the dock can also mount on. The registry check
- * deliberately includes custom post types and the site editor, unlike the
- * screen-based `isEditorPage()` — `screen` carries the finer split.
+ * Claims `block_editor` only while the `core/editor` store is registered;
+ * omitted on plain wp-admin screens. Unlike `isEditorPage()`, the registry
+ * check includes custom post types and the site editor.
  */
 function getBigSkySurface(): 'block_editor' | undefined {
 	try {

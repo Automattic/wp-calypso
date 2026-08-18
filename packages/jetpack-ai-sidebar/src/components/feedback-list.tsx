@@ -41,7 +41,6 @@ import {
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
-import { type OnResponseAction } from '../utils/response-action';
 import { useReviewPostContext, type EditorPostId } from '../utils/review-post-context';
 import useBulkApply from '../utils/use-bulk-apply';
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
@@ -50,6 +49,7 @@ import useUndoSnapshots from '../utils/use-undo-snapshots';
 import { type BlockSnapshot } from './block-ref';
 import ReviewCard, { type ReviewCardRow } from './review-card';
 import SplitScreenGuide from './split-screen-guide';
+import type { OnResponseAction } from '../utils/response-action';
 
 export interface FeedbackListItem {
 	title: string;
