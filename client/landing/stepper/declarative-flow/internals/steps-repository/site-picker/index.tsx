@@ -123,7 +123,7 @@ const SitePickerStep: Step< {
 
 	return (
 		<>
-			<DocumentHead title={ __( 'Pick your destination' ) } />
+			<DocumentHead title={ __( 'Choose a destination site' ) } />
 			<StepContainer
 				stepName="site-picker"
 				goBack={ () => history.back() }

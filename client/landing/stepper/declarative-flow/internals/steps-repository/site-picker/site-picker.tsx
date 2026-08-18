@@ -1,5 +1,10 @@
+import { WordPressLogo } from '@automattic/components';
 import { SubTitle, Title } from '@automattic/onboarding';
-import { createSitesListComponent, GroupableSiteLaunchStatuses } from '@automattic/sites';
+import {
+	createSitesListComponent,
+	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
+	GroupableSiteLaunchStatuses,
+} from '@automattic/sites';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -49,17 +54,15 @@ const SitePicker = function SitePicker( props: Props ) {
 	return (
 		<div className="site-picker--container">
 			<div className="site-picker--title">
-				<Title>
-					{ hasSourceSite ? __( 'Pick your destination' ) : __( 'Choose where to import' ) }
-				</Title>
+				<Title>{ __( 'Choose a destination site' ) }</Title>
 				<SubTitle>
 					{ createInterpolateElement(
 						hasSourceSite
 							? __(
-									'Select the WordPress.com site where you’ll move your old site or <button>create a new one</button>'
+									'Choose the WordPress.com site where you want to move your old site, or <button>create a new site</button>'
 							  )
 							: __(
-									'Select a WordPress.com site to import into or <button>create a new site</button>'
+									'This is where we’ll add the content you import. Choose an existing site or <button>create a new site</button>'
 							  ),
 						{
 							button: <Button onClick={ onCreateSite } />,
@@ -76,20 +79,24 @@ const SitePicker = function SitePicker( props: Props ) {
 				{ ( { sites, statuses } ) => {
 					const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );
 					const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
+					const showControls =
+						allSites.length > 8 || !! search || status !== DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE;
 
 					return (
 						<>
-							<div className="site-picker--controls">
-								<SitesContentControls
-									initialSearch={ search }
-									onQueryParamChange={ onQueryParamChange }
-									sitesSorting={ sitesSorting }
-									onSitesSortingChange={ onSitesSortingChange }
-									statuses={ statuses }
-									selectedStatus={ selectedStatus }
-									hasSitesSortingPreferenceLoaded
-								/>
-							</div>
+							{ showControls && (
+								<div className="site-picker--controls">
+									<SitesContentControls
+										initialSearch={ search }
+										onQueryParamChange={ onQueryParamChange }
+										sitesSorting={ sitesSorting }
+										onSitesSortingChange={ onSitesSortingChange }
+										statuses={ statuses }
+										selectedStatus={ selectedStatus }
+										hasSitesSortingPreferenceLoaded
+									/>
+								</div>
+							) }
 							{ paginatedSites.length > 0 || isLoading ? (
 								<>
 									{ isLoading ? (
@@ -102,7 +109,7 @@ const SitePicker = function SitePicker( props: Props ) {
 														{ site.icon?.img ? (
 															<img src={ site.icon.img } alt="" />
 														) : (
-															( site.title || site.name || '?' ).trim().charAt( 0 ).toUpperCase()
+															<WordPressLogo size={ 24 } />
 														) }
 													</div>
 													<div className="site-picker--site-details">
@@ -115,7 +122,7 @@ const SitePicker = function SitePicker( props: Props ) {
 														) }
 													</div>
 													<Button variant="primary" onClick={ () => onSelectSite( site ) }>
-														{ __( 'Select' ) }
+														{ __( 'Choose' ) }
 													</Button>
 												</div>
 											) ) }

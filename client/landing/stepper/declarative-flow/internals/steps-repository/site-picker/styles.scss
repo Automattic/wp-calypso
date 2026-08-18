@@ -59,7 +59,10 @@
 		border-radius: rem( 4px );
 		background: #f0f0f0;
 		color: #50575e;
-		font-size: rem( 18px );
+
+		svg {
+			fill: currentColor;
+		}
 
 		img {
 			width: 100%;

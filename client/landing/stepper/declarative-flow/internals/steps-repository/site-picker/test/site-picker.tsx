@@ -117,9 +117,11 @@ describe( 'SitePicker', () => {
 			initialState
 		);
 
-		expect( getByText( 'Pick your destination' ) ).toBeInTheDocument();
+		expect( getByText( 'Choose a destination site' ) ).toBeInTheDocument();
 
-		expect( screen.getAllByRole( 'button', { name: 'Select' } ) ).toHaveLength( 2 );
+		expect( screen.getAllByRole( 'button', { name: 'Choose' } ) ).toHaveLength( 2 );
+		expect( container.querySelectorAll( '.site-picker--site-icon svg' ) ).toHaveLength( 2 );
+		expect( container.querySelector( '.site-picker--controls' ) ).not.toBeInTheDocument();
 		expect(
 			[ ...container.querySelectorAll( '.site-picker--site-details strong' ) ].map(
 				( element ) => element.textContent
@@ -130,7 +132,8 @@ describe( 'SitePicker', () => {
 	test( 'renders import-specific copy when there is no source site', () => {
 		renderComponent( <SitePicker { ...defaultProps } hasSourceSite={ false } />, initialState );
 
-		expect( screen.getByText( 'Choose where to import' ) ).toBeVisible();
+		expect( screen.getByText( 'Choose a destination site' ) ).toBeVisible();
+		expect( screen.getByText( /This is where we’ll add the content you import/ ) ).toBeVisible();
 		expect( screen.getByText( 'create a new site' ) ).toBeVisible();
 	} );
 
