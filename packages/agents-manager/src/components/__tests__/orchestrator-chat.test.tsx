@@ -3439,6 +3439,38 @@ describe( 'OrchestratorChat', () => {
 			expect( abortCurrentRequest ).not.toHaveBeenCalled();
 		} );
 
+		it( 'never aborts on a surface with no editor', () => {
+			// The same dock serves support guides, Reader and the editor, so this
+			// effect runs everywhere AM runs. On a surface with no `core/editor` — a
+			// help or settings context — nothing ever binds, so route changes there
+			// cannot abort anything however far the user or the agent navigates.
+			mockOpenPost = null;
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+
+			openPage( CONTACT_PAGE );
+			openPage( null );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not abort when the editor is left for a screen with no canvas', () => {
+			// Leaving the editor entirely resolves no canvas, which is "not settled"
+			// rather than "a different page" — so a support turn that sends the user
+			// to a settings screen is not killed on the way.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( null );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		} );
+
 		it( 'does not abort a new message sent after navigating between turns', async () => {
 			// The main hazard `startNewUserRequest()` closes, and it has nothing to do
 			// with the block: turn one binds to About, the user then moves to Contact
