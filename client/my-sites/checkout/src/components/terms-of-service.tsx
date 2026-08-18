@@ -25,6 +25,18 @@ export const TermsOfService = ( {
 	};
 
 	const renderTerms = () => {
+		// Show the extended ToS notice for renewable subscriptions, except gifts
+		if ( ! isGiftPurchase && hasRenewableSubscription ) {
+			return (
+				<TosText
+					isAkismetPurchase={ isAkismetCheckout() }
+					is100YearPlanPurchase={ is100YearPlanPurchase }
+					is100YearDomainPurchase={ is100YearDomainPurchase }
+					hasStudioCodeAiCredits={ hasStudioCodeAiCredits }
+				/>
+			);
+		}
+
 		const components = {
 			link: (
 				<a
@@ -39,37 +51,25 @@ export const TermsOfService = ( {
 			),
 		};
 
-		let message = hasStudioCodeAiCredits
-			? translate(
-					'You agree to our {{link}}Terms of Service{{/link}} and {{guidelines}}AI Credits Guidelines{{/guidelines}}.',
-					{
-						components: {
-							...components,
-							guidelines: (
-								<a
-									href={ getStudioCodeAiCreditsGuidelinesUrl() }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-			  )
-			: translate( 'You agree to our {{link}}Terms of Service{{/link}}.', { components } );
-
-		// Don't show the extended ToS notice for one-time purchases or gifts
-		if ( ! isGiftPurchase && hasRenewableSubscription ) {
-			message = (
-				<TosText
-					isAkismetPurchase={ isAkismetCheckout() }
-					is100YearPlanPurchase={ is100YearPlanPurchase }
-					is100YearDomainPurchase={ is100YearDomainPurchase }
-					hasStudioCodeAiCredits={ hasStudioCodeAiCredits }
-				/>
-			);
+		if ( ! hasStudioCodeAiCredits ) {
+			return translate( 'You agree to our {{link}}Terms of Service{{/link}}.', { components } );
 		}
 
-		return message;
+		return translate(
+			'You agree to our {{link}}Terms of Service{{/link}} and {{guidelines}}AI Credits Guidelines{{/guidelines}}.',
+			{
+				components: {
+					...components,
+					guidelines: (
+						<a
+							href={ getStudioCodeAiCreditsGuidelinesUrl() }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
+		);
 	};
 
 	return (
