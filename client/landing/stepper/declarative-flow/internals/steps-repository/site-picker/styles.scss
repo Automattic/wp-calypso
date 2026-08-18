@@ -1,7 +1,12 @@
-@import "@automattic/typography/styles/variables";
+@import '@automattic/typography/styles/variables';
 
 .site-picker--container {
-	padding-bottom: rem(28px);
+	box-sizing: border-box;
+	padding: 0 rem( 16px ) rem( 28px );
+
+	@media ( min-width: 660px ) {
+		padding-inline: rem( 32px );
+	}
 
 	.onboarding-subtitle button {
 		display: inline-block;
@@ -9,9 +14,92 @@
 		font-size: 1rem;
 		padding: 0;
 	}
+
+	@media ( max-width: 659px ) {
+		.site-picker--controls > div {
+			margin-bottom: rem( 24px );
+			padding-block: 0;
+		}
+	}
+
+	.site-picker--loading {
+		height: rem( 180px );
+		border-radius: rem( 4px );
+		background: #f0f0f0;
+	}
+
+	.site-picker--list {
+		display: grid;
+		grid-template-columns: minmax( 0, 1fr );
+		gap: rem( 12px );
+
+		@media ( min-width: 780px ) {
+			grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+		}
+	}
+
+	.site-picker--site {
+		display: flex;
+		align-items: center;
+		gap: rem( 12px );
+		min-width: 0;
+		padding: rem( 16px );
+		border: 1px solid #dcdcde;
+		border-radius: rem( 4px );
+		background: #fff;
+	}
+
+	.site-picker--site-icon {
+		display: flex;
+		flex: 0 0 rem( 40px );
+		align-items: center;
+		justify-content: center;
+		height: rem( 40px );
+		overflow: hidden;
+		border-radius: rem( 4px );
+		background: #f0f0f0;
+		color: #50575e;
+		font-size: rem( 18px );
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	.site-picker--site-details {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-width: 0;
+		line-height: 1.35;
+
+		strong,
+		span {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		span {
+			color: #646970;
+			font-size: rem( 13px );
+		}
+
+		small {
+			width: fit-content;
+			margin-top: rem( 4px );
+			padding: rem( 1px ) rem( 6px );
+			border: 1px solid #a7aaad;
+			border-radius: rem( 8px );
+			color: #50575e;
+			font-size: rem( 11px );
+		}
+	}
 }
 
 .site-picker--title {
 	text-align: center;
-	margin-bottom: rem(68px);
+	margin-bottom: rem( 32px );
 }

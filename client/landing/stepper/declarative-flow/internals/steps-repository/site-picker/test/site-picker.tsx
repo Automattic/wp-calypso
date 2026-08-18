@@ -119,9 +119,12 @@ describe( 'SitePicker', () => {
 
 		expect( getByText( 'Pick your destination' ) ).toBeInTheDocument();
 
-		const allLinks = container.getElementsByClassName( 'components-external-link' );
-		expect( allLinks.length ).toBeGreaterThan( 0 );
-		expect( allLinks[ 0 ] ).toHaveAttribute( 'href', initialState.sites.items[ 1 ].URL );
+		expect( screen.getAllByRole( 'button', { name: 'Select' } ) ).toHaveLength( 2 );
+		expect(
+			[ ...container.querySelectorAll( '.site-picker--site-details strong' ) ].map(
+				( element ) => element.textContent
+			)
+		).toEqual( [ 'A Test Site', 'Another test Site' ] );
 	} );
 
 	test( 'renders import-specific copy when there is no source site', () => {
@@ -143,9 +146,11 @@ describe( 'SitePicker', () => {
 
 		const { container } = renderComponent( <SitePicker { ...defaultProps } />, state );
 
-		const allLinks = container.getElementsByClassName( 'components-external-link' );
-		expect( allLinks.length ).toBeGreaterThan( 0 );
-		expect( allLinks[ 0 ] ).toHaveAttribute( 'href', initialState.sites.items[ 1 ].URL );
+		expect(
+			[ ...container.querySelectorAll( '.site-picker--site-details strong' ) ].map(
+				( element ) => element.textContent
+			)
+		).toEqual( [ 'A Test Site', 'Another test Site' ] );
 	} );
 
 	test( 'renders without sites when not valid search term', () => {

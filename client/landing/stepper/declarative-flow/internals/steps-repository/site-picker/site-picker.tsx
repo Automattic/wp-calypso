@@ -13,7 +13,6 @@ import {
 	SitesDashboardQueryParams,
 } from 'calypso/sites-dashboard/components/sites-content-controls';
 import { PageBodyBottomContainer } from 'calypso/sites-dashboard/components/sites-dashboard';
-import { SitesGrid } from 'calypso/sites-dashboard/components/sites-grid';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -80,22 +79,48 @@ const SitePicker = function SitePicker( props: Props ) {
 
 					return (
 						<>
-							<SitesContentControls
-								initialSearch={ search }
-								onQueryParamChange={ onQueryParamChange }
-								sitesSorting={ sitesSorting }
-								onSitesSortingChange={ onSitesSortingChange }
-								statuses={ statuses }
-								selectedStatus={ selectedStatus }
-								hasSitesSortingPreferenceLoaded
-							/>
+							<div className="site-picker--controls">
+								<SitesContentControls
+									initialSearch={ search }
+									onQueryParamChange={ onQueryParamChange }
+									sitesSorting={ sitesSorting }
+									onSitesSortingChange={ onSitesSortingChange }
+									statuses={ statuses }
+									selectedStatus={ selectedStatus }
+									hasSitesSortingPreferenceLoaded
+								/>
+							</div>
 							{ paginatedSites.length > 0 || isLoading ? (
 								<>
-									<SitesGrid
-										isLoading={ isLoading }
-										sites={ paginatedSites }
-										onSiteSelectBtnClick={ onSelectSite }
-									/>
+									{ isLoading ? (
+										<div className="site-picker--loading" aria-label={ __( 'Loading sites' ) } />
+									) : (
+										<div className="site-picker--list">
+											{ paginatedSites.map( ( site ) => (
+												<div className="site-picker--site" key={ site.ID }>
+													<div className="site-picker--site-icon" aria-hidden="true">
+														{ site.icon?.img ? (
+															<img src={ site.icon.img } alt="" />
+														) : (
+															( site.title || site.name || '?' ).trim().charAt( 0 ).toUpperCase()
+														) }
+													</div>
+													<div className="site-picker--site-details">
+														<strong>{ site.title || site.name }</strong>
+														<span>{ formatSiteDomain( site.URL ) }</span>
+														{ ( site.is_coming_soon || site.is_private ) && (
+															<small>
+																{ site.is_coming_soon ? __( 'Coming soon' ) : __( 'Private' ) }
+															</small>
+														) }
+													</div>
+													<Button variant="primary" onClick={ () => onSelectSite( site ) }>
+														{ __( 'Select' ) }
+													</Button>
+												</div>
+											) ) }
+										</div>
+									) }
 									{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
 										<PageBodyBottomContainer>
 											<Pagination
@@ -124,3 +149,11 @@ const SitePicker = function SitePicker( props: Props ) {
 };
 
 export default SitePicker;
+
+function formatSiteDomain( siteUrl: string ) {
+	try {
+		return new URL( siteUrl ).hostname;
+	} catch {
+		return siteUrl;
+	}
+}
