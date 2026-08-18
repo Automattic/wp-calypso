@@ -93,10 +93,15 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 }
 
 .rewind-flow-notice {
+	// Mirrors the Dashboard Notice: a 4% wash of the status color. The --dashboard__*
+	// tokens only exist on dashboard roots, so these use the Studio values behind them.
+	--rewind-flow-notice__status-color: var(--studio-gray-50);
+	--rewind-flow-notice__icon-color: var(--studio-gray-50);
+
 	margin-top: 24px;
 	padding: 16px;
 	border-radius: 4px;
-	background-color: var(--color-neutral-0);
+	background-color: color-mix(in srgb, var(--rewind-flow-notice__status-color) 4%, transparent);
 
 	// Consecutive notices read as separate cards, so they need less room between
 	// them than the first one needs from the content above.
@@ -143,7 +148,8 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 }
 
 .rewind-flow-notice.is-warning {
-	background-color: var(--color-warning-5);
+	--rewind-flow-notice__status-color: var(--studio-orange-40);
+	--rewind-flow-notice__icon-color: var(--studio-orange-50);
 }
 
 // when the reminder is default make the header more bold
@@ -167,11 +173,11 @@ div.rewind-flow-notice__title-warning,
 a.rewind-flow-notice__title-warning,
 a.rewind-flow-notice__title-warning:visited {
 	.gridicon {
-		fill: var(--color-warning-dark);
+		fill: var(--rewind-flow-notice__icon-color);
 	}
 
 	&:hover {
-		fill: var(--color-warning-dark);
+		fill: var(--rewind-flow-notice__icon-color);
 	}
 }
 
