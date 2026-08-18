@@ -230,7 +230,6 @@ function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 			await flushThrottleWrites();
 		} )();
 		await withDeadline( drain, FLUSH_TIMEOUT ).catch( () => {} );
-		handleActiveThrottles( detected );
 	};
 }
 
