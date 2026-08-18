@@ -123,7 +123,6 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 				border: 0;
 				background: transparent;
 				color: var( --color-foreground );
-				color: color-mix( in srgb, var( --color-foreground ) 75%, var( --color-background ) );
 				font-family: inherit;
 				font-weight: 500;
 				cursor: pointer;

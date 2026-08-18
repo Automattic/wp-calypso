@@ -75,9 +75,7 @@ describe( 'Resolved edit action CSS contract', () => {
 		expect( confirmedIcon.get( 'background-color' ) ).toBe( '#3858e8' );
 		expect( revertedIcon.get( 'background-color' ) ).toBe( '#5e5e5e' );
 		expect( revertedIcon.get( 'padding' ) ).toBe( '3.5px' );
-		expect( action.get( 'color' ) ).toBe(
-			'color-mix(in srgb, var(--color-foreground) 75%, var(--color-background))'
-		);
+		expect( action.get( 'color' ) ).toBe( 'var(--color-foreground)' );
 		expect( disabledAction.get( 'color' ) ).toBe( 'var(--color-muted-foreground)' );
 		expect( disabledAction.get( 'opacity' ) ).toBe( '0.66' );
 	} );
