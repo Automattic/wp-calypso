@@ -18,11 +18,12 @@ export function useHasOnlyDeletedSites() {
 	const { queries } = useAppContext();
 	const noLiveSites = hasNoLiveSites( user );
 
-	// Prefetched by the sitesRoute loader for zero-site users, so the
-	// deleted-aware empty state renders without a flash of onboarding copy.
+	// Holds the full-page loader so the onboarding empty state never
+	// flashes before the deleted-aware one.
 	const { data } = useQuery( {
 		...queries.paginatedSitesQuery( deletedSitesCheckFetchOptions ),
 		enabled: noLiveSites,
+		meta: { fullPageLoader: true },
 	} );
 
 	return noLiveSites && ( data?.total ?? 0 ) > 0;

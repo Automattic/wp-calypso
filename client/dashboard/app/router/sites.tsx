@@ -48,7 +48,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createLazyRoute, createRoute, lazyRouteComponent, notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { deletedSitesCheckFetchOptions, hasNoLiveSites } from '../../sites/deleted-sites';
 import {
 	canManageSite,
 	canOptOutOfWordPressBeta,
@@ -86,15 +85,10 @@ export const sitesRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: async ( { context } ) => {
-		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
+	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			hasNoLiveSites( user ) &&
-				queryClient.ensureQueryData(
-					context.config.queries.paginatedSitesQuery( deletedSitesCheckFetchOptions )
-				),
 		] );
 	},
 } );
