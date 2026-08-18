@@ -1,10 +1,7 @@
 import { Step } from '@automattic/onboarding';
-import { Button as WPButton, __experimentalVStack as VStack } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import DocumentHead from 'calypso/components/data/document-head';
 import type { ReactNode } from 'react';
-
-import './confirmation.scss';
 
 interface Props {
 	// Partner/Woo branding, so the top bar matches the rest of the flow.
@@ -29,25 +26,22 @@ const EmailVerifiedConfirmation = ( { logo, onContinue }: Props ) => {
 				columnWidth={ 4 }
 				headingColumnWidth={ 4 }
 				verticalAlign="center"
-				noGap
-				className="onboarding-email-verified step-container-v2--user"
+				// Opts into the account step's V2 layout contract, the same one the gate uses.
+				className="step-container-v2--user"
 				topBar={ <Step.TopBar logo={ logo } /> }
-				heading={ <Step.Heading align="left" text={ title } /> }
-			>
-				<VStack spacing={ 6 }>
-					<p className="onboarding-email-verified__sub-text">
-						{ __(
+				heading={
+					<Step.Heading
+						align="left"
+						text={ title }
+						subText={ __(
 							'Your email is confirmed. Return to the tab where you started to finish setting up your site.'
 						) }
-					</p>
-					<WPButton
-						className="onboarding-email-verified__continue"
-						variant="link"
-						onClick={ onContinue }
-					>
-						{ __( 'Closed your other tab? Continue setting up your site' ) }
-					</WPButton>
-				</VStack>
+					/>
+				}
+			>
+				<Step.LinkButton onClick={ onContinue }>
+					{ __( 'Closed your other tab? Continue setting up your site' ) }
+				</Step.LinkButton>
 			</Step.CenteredColumnLayout>
 		</>
 	);
