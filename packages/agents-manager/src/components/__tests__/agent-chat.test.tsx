@@ -108,16 +108,23 @@ jest.mock(
 		}
 
 		function MockEmptyView( {
+			help,
 			suggestions = [],
 			onSuggestionClick,
 		}: {
+			help?: string;
 			suggestions?: Suggestion[];
 			onSuggestionClick?: (
 				selectedSuggestion: Suggestion,
 				availableSuggestions: Suggestion[]
 			) => void;
 		} ) {
-			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />;
+			return (
+				<>
+					{ help && <p>{ help }</p> }
+					<MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />
+				</>
+			);
 		}
 
 		function MockSuggestions( {
@@ -323,6 +330,30 @@ describe( 'AgentChat', () => {
 		expect( mockInputProps ).toHaveBeenCalledWith(
 			expect.objectContaining( { readOnly: true, disabled: true } )
 		);
+	} );
+
+	it( 'explains the empty view when a suggestion is disabled', () => {
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [
+				{ id: 'optimize-title', label: 'Optimize title', prompt: 'Optimize.', disabled: true },
+			],
+		} );
+
+		expect(
+			screen.getByText(
+				'Some options need content in the post. Got a different request? Ask away.'
+			)
+		).toBeInTheDocument();
+	} );
+
+	it( 'keeps the plain help line when every suggestion is usable', () => {
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [ { id: 'optimize-title', label: 'Optimize title', prompt: 'Go.' } ],
+		} );
+
+		expect( screen.getByText( 'Got a different request? Ask away.' ) ).toBeInTheDocument();
 	} );
 
 	it( 'forwards empty view suggestion clicks to the shared suggestion handler', async () => {

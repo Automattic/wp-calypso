@@ -142,13 +142,19 @@ function getEmptyViewHeading(): string {
 	return __( 'Howdy! How can I help you today?', __i18n_text_domain__ );
 }
 
-function getEmptyViewHelp(): string {
+function getEmptyViewHelp( hasDisabledSuggestion = false ): string {
 	const override = getAgentsManagerInlineData()?.emptyViewHelp;
 	if ( override ) {
 		return override;
 	}
 	if ( isReaderChatHost() ) {
 		return __( 'Or type your own question below.', __i18n_text_domain__ );
+	}
+	if ( hasDisabledSuggestion ) {
+		return __(
+			'Some options need content in the post. Got a different request? Ask away.',
+			__i18n_text_domain__
+		);
 	}
 	return __( 'Got a different request? Ask away.', __i18n_text_domain__ );
 }
@@ -319,7 +325,13 @@ export default function AgentChat( {
 				) : (
 					<GroupedEmptyView
 						heading={ getEmptyViewHeading() }
-						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
+						help={
+							emptyViewSuggestions.length > 0
+								? getEmptyViewHelp(
+										emptyViewSuggestions.some( ( suggestion ) => suggestion.disabled )
+								  )
+								: undefined
+						}
 						suggestions={ emptyViewSuggestions }
 						groupWritingSuggestions={ groupWritingSuggestions }
 						onSuggestionClick={ onSuggestionClick }
