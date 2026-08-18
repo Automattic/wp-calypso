@@ -89,10 +89,8 @@ import {
 	PlansPage,
 	UseADomainIOwnPage,
 	SelectItemsComponent,
-	type ThrottleId,
 	flushThrottleWrites,
 	mayBeThrottled,
-	recordThrottle,
 	registerThrottleActionHandler,
 } from '@automattic/calypso-e2e';
 import {
@@ -175,7 +173,6 @@ const FLUSH_TIMEOUT = 7 * 1000;
  */
 function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 	const pending = new Set< Promise< unknown > >();
-	const detected = new Set< ThrottleId >();
 
 	const onResponse = ( response: Response ) => {
 		const url = response.url();
@@ -196,10 +193,6 @@ function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 				// tokens — so it is never handed to detection.
 				if ( status < 400 && ! /"error"\s*:/.test( body ) ) {
 					return;
-				}
-				const throttle = await recordThrottle( { url, status, body } );
-				if ( throttle ) {
-					detected.add( throttle );
 				}
 			} catch {
 				// Detection never fails a test.
