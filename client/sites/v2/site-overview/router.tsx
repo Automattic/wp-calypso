@@ -5,8 +5,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { useQuery } from '@tanstack/react-query';
 import { createLazyRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
-import { handleOnCatch } from 'calypso/dashboard/app/logger';
-import { trackPreviousPath } from 'calypso/dashboard/app/logger/previous-path';
+import { handleOnCatch, initLogger } from 'calypso/dashboard/app/logger';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { isInJetpackCriticalErrorState } from 'calypso/dashboard/utils/site-jetpack-critical-error';
 import CriticalErrorOverview from 'calypso/sites/overview/components/critical-error';
@@ -75,7 +74,7 @@ export const getRouter = ( config: AppConfig ) => {
 		},
 	} );
 
-	trackPreviousPath( router );
+	initLogger( router );
 
 	return router;
 };

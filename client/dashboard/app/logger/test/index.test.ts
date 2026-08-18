@@ -5,8 +5,7 @@
 import { captureException } from '@automattic/calypso-sentry';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { maybeReloadForChunkError } from '../../chunk-load-recovery';
-import { handleOnCatch } from '../index';
-import { trackPreviousPath } from '../previous-path';
+import { handleOnCatch, initLogger } from '../index';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
@@ -34,7 +33,7 @@ type ResolvedListener = ( event: { fromLocation?: { href: string } } ) => void;
 
 /**
  * A router that can replay `onResolved`, so tests can navigate the way
- * `trackPreviousPath` observes it: `fromLocation` is absent on the first
+ * `initLogger` observes it: `fromLocation` is absent on the first
  * resolve and holds the origin route afterwards.
  */
 const createRouter = ( params: Record< string, string > ) => {
@@ -82,7 +81,7 @@ describe( 'handleOnCatch', () => {
 		const errorInfo = createErrorInfo( 'at SitePage' );
 		const router = createRouter( { siteSlug: 'my-site', someId: '123' } );
 
-		trackPreviousPath( router );
+		initLogger( router );
 		router.resolveNavigation();
 		router.resolveNavigation( '/sites/my-site' );
 
@@ -127,7 +126,7 @@ describe( 'handleOnCatch', () => {
 		const error = new Error( 'Boom' );
 		const router = createRouter( { siteSlug: 'my-site' } );
 
-		trackPreviousPath( router );
+		initLogger( router );
 		router.resolveNavigation();
 
 		handleOnCatch( error, createErrorInfo(), router, {

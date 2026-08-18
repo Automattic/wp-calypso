@@ -4,9 +4,21 @@ import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { maybeReloadForChunkError } from '../chunk-load-recovery';
-import { getPreviousPath } from './previous-path';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
+
+const previousPaths = new WeakMap< AnyRouter, string >();
+
+// `router.state.resolvedLocation` is overwritten with the current location as
+// soon as a navigation settles, so `onResolved`'s `fromLocation` is used
+// instead. It is absent on the first load — a URL opened from outside the app.
+export function initLogger( router: AnyRouter ) {
+	return router.subscribe( 'onResolved', ( { fromLocation } ) => {
+		if ( fromLocation ) {
+			previousPaths.set( router, fromLocation.href );
+		}
+	} );
+}
 
 function isBenignError( error: Error ) {
 	// Ignore errors related to missing auth tokens.
@@ -55,7 +67,7 @@ export function handleOnCatch(
 		] )
 	);
 
-	const previousPath = getPreviousPath( router );
+	const previousPath = previousPaths.get( router );
 
 	logToLogstash( {
 		feature: 'calypso_client',
