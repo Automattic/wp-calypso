@@ -68,10 +68,13 @@ describe( 'Resolved edit action CSS contract', () => {
 		expect( status.get( 'color' ) ).toBe( 'var(--color-foreground)' );
 		expect( status.get( 'gap' ) ).toBe( '0.5rem' );
 		expect( status.get( 'padding-inline-start' ) ).toBe( '0' );
+		expect( statusIcon.get( 'width' ) ).toBe( '22px' );
+		expect( statusIcon.get( 'height' ) ).toBe( '22px' );
 		expect( statusIcon.get( 'border-radius' ) ).toBe( '50%' );
 		expect( statusIcon.get( 'color' ) ).toBe( 'var(--color-white, #fff)' );
 		expect( confirmedIcon.get( 'background-color' ) ).toBe( '#3858e8' );
 		expect( revertedIcon.get( 'background-color' ) ).toBe( '#5e5e5e' );
+		expect( revertedIcon.get( 'padding' ) ).toBe( '3.5px' );
 		expect( action.get( 'color' ) ).toBe(
 			'color-mix(in srgb, var(--color-foreground) 75%, var(--color-background))'
 		);
