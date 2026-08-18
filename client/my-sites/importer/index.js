@@ -6,7 +6,7 @@ import addTracker from './tracker';
 
 export default function () {
 	page( '/import', () => {
-		window.location.assign(
+		window.location.replace(
 			'/setup/site-migration/sitePicker?platform=unknown&ref=calypso-importer'
 		);
 	} );
