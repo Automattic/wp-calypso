@@ -11,7 +11,7 @@ import { trackJetpackAiUpgrade } from './utils/tracking';
 const FREE_TIER_SLUGS = new Set( [ 'jetpack_ai_free', 'ai-assistant-tier-free' ] );
 const LOCAL_STATUS_PATH = '/wpcom/v2/jetpack-ai/ai-assistant-feature';
 
-// Atomic and self-hosted status is cached for 60 seconds. Refresh after that response expires.
+// Self-hosted status is cached for 60 seconds. Refresh after that response expires.
 const JETPACK_REFRESH_DELAY_MS = 61_000;
 
 interface AiAssistantFeatureResponse {
@@ -60,8 +60,6 @@ type HostWindow = Window & {
 	wpApiSettings?: { root?: unknown };
 };
 
-type ApiFetchRootKind = 'public-api' | 'same-origin';
-
 function isNonNegativeInteger( value: unknown ): value is number {
 	return typeof value === 'number' && Number.isInteger( value ) && value >= 0;
 }
@@ -90,8 +88,8 @@ function getIsWpcomPlatform( isWpcomPlatform: unknown ): boolean | undefined {
 	return typeof scriptDataValue === 'boolean' ? scriptDataValue : undefined;
 }
 
-function getApiFetchRootKind(): ApiFetchRootKind | undefined {
-	if ( typeof window === 'undefined' ) {
+function getSelfHostedStatusPath( wpcomPlatform: boolean | undefined ): string | undefined {
+	if ( wpcomPlatform !== false || typeof window === 'undefined' ) {
 		return undefined;
 	}
 
@@ -105,35 +103,10 @@ function getApiFetchRootKind(): ApiFetchRootKind | undefined {
 		if ( url.username !== '' || url.password !== '' ) {
 			return undefined;
 		}
-		if ( url.origin === 'https://public-api.wordpress.com' ) {
-			return 'public-api';
-		}
-		return url.origin === window.location.origin ? 'same-origin' : undefined;
+		return url.origin === window.location.origin ? LOCAL_STATUS_PATH : undefined;
 	} catch {
 		return undefined;
 	}
-}
-
-function getStatusRequest(
-	rootKind: ApiFetchRootKind | undefined,
-	wpcomPlatform: boolean | undefined,
-	siteId: number | undefined
-): { path: string; refreshDelayMs: number } | undefined {
-	if ( rootKind === 'public-api' ) {
-		if ( wpcomPlatform !== true || ! isPositiveInteger( siteId ) ) {
-			return undefined;
-		}
-		return {
-			path: `/wpcom/v2/sites/${ siteId }/jetpack-ai/ai-assistant-feature?force=wpcom`,
-			refreshDelayMs: 0,
-		};
-	}
-
-	if ( rootKind === 'same-origin' ) {
-		return { path: LOCAL_STATUS_PATH, refreshDelayMs: JETPACK_REFRESH_DELAY_MS };
-	}
-
-	return undefined;
 }
 
 export function getFreeCreditStatus(
@@ -182,10 +155,9 @@ function useFreeCreditNotice( {
 	siteId,
 	statusPath,
 }: FreeCreditNoticeOptions ): JetpackAiChatNotice | undefined {
-	const rejectionNotice = useQuotaRejectionNotice( { error } );
+	const rejectionNotice = useQuotaRejectionNotice( { error: enabled ? error : null } );
 	const [ freeCreditState, setFreeCreditState ] = useState< FreeCreditState | undefined >();
 	const settledRequestCountRef = useRef( settledRequestCount );
-	const requestDirectRefresh = useRef< ( ( count: number ) => void ) | null >( null );
 	const requestCachedRefresh = useRef< ( ( count: number ) => void ) | null >( null );
 	settledRequestCountRef.current = settledRequestCount;
 
@@ -193,56 +165,7 @@ function useFreeCreditNotice( {
 		isPositiveInteger( siteId ) && statusPath ? `${ siteId }:${ statusPath }` : null;
 
 	useEffect( () => {
-		if ( ! fetchEnabled || refreshDelayMs !== 0 || ! statusKey || ! statusPath ) {
-			requestDirectRefresh.current = null;
-			return;
-		}
-
-		let active = true;
-		let observedSettledRequestCount = settledRequestCountRef.current;
-		let nextRequestId = 0;
-		let latestCommittedRequestId = 0;
-
-		const startStatusRequest = () => {
-			const requestId = ++nextRequestId;
-			void apiFetch< AiAssistantFeatureResponse >( { path: statusPath } )
-				.then( ( response ) => {
-					if ( ! active || requestId < latestCommittedRequestId ) {
-						return;
-					}
-
-					const status = getFreeCreditStatus( response );
-					if ( status !== undefined ) {
-						latestCommittedRequestId = requestId;
-						setFreeCreditState( { key: statusKey, status } );
-					}
-				} )
-				.catch( () => {
-					// The backend rejection remains the exhausted-state fallback.
-				} );
-		};
-
-		const handleSettledRequestCount = ( count: number ) => {
-			if ( count === observedSettledRequestCount ) {
-				return;
-			}
-			observedSettledRequestCount = count;
-			startStatusRequest();
-		};
-
-		requestDirectRefresh.current = handleSettledRequestCount;
-		startStatusRequest();
-
-		return () => {
-			active = false;
-			if ( requestDirectRefresh.current === handleSettledRequestCount ) {
-				requestDirectRefresh.current = null;
-			}
-		};
-	}, [ fetchEnabled, refreshDelayMs, siteId, statusKey, statusPath ] );
-
-	useEffect( () => {
-		if ( ! fetchEnabled || refreshDelayMs === 0 || ! statusKey || ! statusPath ) {
+		if ( ! fetchEnabled || ! statusKey || ! statusPath ) {
 			requestCachedRefresh.current = null;
 			return;
 		}
@@ -366,7 +289,6 @@ function useFreeCreditNotice( {
 	}, [ fetchEnabled, refreshDelayMs, siteId, statusKey, statusPath ] );
 
 	useEffect( () => {
-		requestDirectRefresh.current?.( settledRequestCount );
 		requestCachedRefresh.current?.( settledRequestCount );
 	}, [ settledRequestCount ] );
 
@@ -442,14 +364,15 @@ export function useJetpackFreeCreditChatNotice( {
 }: FreeCreditNoticeProps ): JetpackAiChatNotice | undefined {
 	const enabled = isNoticeEnabled( props.enabled );
 	const wpcomPlatform = getIsWpcomPlatform( isWpcomPlatform );
-	const statusRequest = getStatusRequest( getApiFetchRootKind(), wpcomPlatform, props.siteId );
+	const selfHostedEnabled = enabled && wpcomPlatform === false;
+	const statusPath = getSelfHostedStatusPath( wpcomPlatform );
 
 	return useFreeCreditNotice( {
 		...props,
-		enabled,
-		fetchEnabled: enabled && wpcomPlatform !== undefined && statusRequest !== undefined,
-		refreshDelayMs: statusRequest?.refreshDelayMs ?? 0,
+		enabled: selfHostedEnabled,
+		fetchEnabled: selfHostedEnabled && statusPath !== undefined,
+		refreshDelayMs: JETPACK_REFRESH_DELAY_MS,
 		settledRequestCount: getSettledRequestCount( props.settledRequestCount ),
-		statusPath: statusRequest?.path,
+		statusPath,
 	} );
 }

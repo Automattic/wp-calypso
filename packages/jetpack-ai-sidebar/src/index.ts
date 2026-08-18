@@ -76,7 +76,6 @@ import type { SuggestionOption } from '@automattic/agenttic-client';
 import type { ComponentType } from 'react';
 
 export { useJetpackFreeCreditChatNotice } from './free-credit-notice';
-export { useChatNotice } from './quota-notice';
 
 // Re-export block-action helpers as part of the package's public surface.
 export { applyReviewEdit, findBlockElement, findBlockListLayout };

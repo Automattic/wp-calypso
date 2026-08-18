@@ -60,7 +60,6 @@ export interface ImageStudioClientContext extends Record< string, unknown > {
 	constructorArguments?: {
 		skip_storage?: boolean;
 	};
-	selectedSiteId?: number;
 }
 
 const TEMPLATE_PART_SLUGS = [ 'header', 'header-hero', 'footer' ];
@@ -337,14 +336,6 @@ export function getClientContext(): ImageStudioClientContext {
 		search: window.location.search,
 		environment,
 	};
-	const selectedSiteId = Number(
-		window._currentSiteId ||
-			window.Jetpack_Editor_Initial_State?.wpcomBlogId ||
-			window.imageStudioData?.blogId
-	);
-	if ( Number.isFinite( selectedSiteId ) && selectedSiteId > 0 ) {
-		context.selectedSiteId = selectedSiteId;
-	}
 
 	if ( detected?.videoStudio ) {
 		context.videoStudio = detected.videoStudio;
