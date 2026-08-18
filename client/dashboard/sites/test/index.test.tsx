@@ -144,7 +144,7 @@ describe( '<Sites>', () => {
 		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows the restore deleted sites notice when a zero-site user has deleted sites', async () => {
+	test( 'renders the deleted-aware empty state when a zero-site user has deleted sites', async () => {
 		mockDeletedSitesCheckEndpoint( 1 );
 		mockSitesEndpoint( [] );
 		render( <Sites />, {
@@ -153,13 +153,16 @@ describe( '<Sites>', () => {
 			} as User,
 		} );
 
-		expect( await screen.findByText( 'You have deleted sites' ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'heading', { name: /You don.t have any active sites/ } )
+		).toBeVisible();
 		const link = screen.getByRole( 'link', { name: 'View deleted sites' } );
 		expect( link ).toBeVisible();
 		expect( link ).toHaveAttribute( 'href', expect.stringContaining( 'is_deleted=true' ) );
+		expect( screen.getByRole( 'link', { name: 'Create a site' } ) ).toBeVisible();
 	} );
 
-	test( 'does not show the restore deleted sites notice when a zero-site user has no deleted sites', async () => {
+	test( 'renders the onboarding empty state when a zero-site user has no deleted sites', async () => {
 		const deletedCheckScope = mockDeletedSitesCheckEndpoint( 0 );
 		mockSitesEndpoint( [] );
 		render( <Sites />, {
@@ -172,7 +175,7 @@ describe( '<Sites>', () => {
 			await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
 		).toBeVisible();
 		await waitFor( () => expect( deletedCheckScope.isDone() ).toBe( true ) );
-		expect( screen.queryByText( 'You have deleted sites' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'View deleted sites' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'collision listener rewrites wpcom site slug when it collides with a Jetpack site', async () => {

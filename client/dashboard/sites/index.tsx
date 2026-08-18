@@ -38,13 +38,14 @@ import {
 	recordViewChanges,
 	sanitizeFields,
 } from './dataviews';
-import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
+import { useHasOnlyDeletedSites } from './deleted-sites';
+import {
+	EmptyDeletedSitesStateContent,
+	EmptySitesStateContent,
+	EmptySitesSearchStateContent,
+} from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNoticeArbiter } from './notice-arbiter';
-import {
-	RestoreDeletedSitesNotice,
-	useShouldShowRestoreDeletedSitesNotice,
-} from './restore-deleted-sites-notice';
 import { RestoringSitesNotices } from './restoring-sites-notice';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
@@ -174,7 +175,7 @@ export default function Sites() {
 
 	const isSecurityKeyReregisterRequired = useShouldShowSecurityKeyReregisterNotice();
 	const showSecurityKeyReregisterNotice = supports.me && isSecurityKeyReregisterRequired;
-	const shouldShowRestoreDeletedSitesNotice = useShouldShowRestoreDeletedSitesNotice();
+	const hasOnlyDeletedSites = useHasOnlyDeletedSites();
 
 	const isAccountEmailBouncing = useShouldShowAccountEmailBouncingNotice();
 	const showAccountEmailBouncingNotice = supports.me && isAccountEmailBouncing;
@@ -218,6 +219,24 @@ export default function Sites() {
 		sites ?? [],
 		view,
 		totalItems ?? 0
+	);
+
+	const emptySitesState = hasOnlyDeletedSites ? (
+		<DataViewsEmptyStateLayout
+			title={ __( 'You don’t have any active sites' ) }
+			description={ __( 'Restore a deleted site, or start a new one.' ) }
+		>
+			<EmptyDeletedSitesStateContent />
+		</DataViewsEmptyStateLayout>
+	) : (
+		<DataViewsEmptyStateLayout
+			title={ __( 'You don’t have any sites yet' ) }
+			description={ __(
+				'Start a site and begin creating, coding, or exploring what WordPress can do.'
+			) }
+		>
+			<EmptySitesStateContent />
+		</DataViewsEmptyStateLayout>
 	);
 
 	const filters = view.filters ?? [];
@@ -264,9 +283,6 @@ export default function Sites() {
 						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
 						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
 						{ ! isDashboardBackport() && isRestoringAccount && <RestoringSitesNotices /> }
-						{ ! isRestoringAccount &&
-							! isDeletedFilterActive( filters ) &&
-							shouldShowRestoreDeletedSitesNotice && <RestoreDeletedSitesNotice /> }
 					</SitesNoticeArbiter>
 				}
 			>
@@ -314,14 +330,7 @@ export default function Sites() {
 						onReset={ resetView }
 					/>
 				) : (
-					<DataViewsEmptyStateLayout
-						title={ __( 'You don’t have any sites yet' ) }
-						description={ __(
-							'Start a site and begin creating, coding, or exploring what WordPress can do.'
-						) }
-					>
-						<EmptySitesStateContent />
-					</DataViewsEmptyStateLayout>
+					emptySitesState
 				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
