@@ -64,7 +64,7 @@ import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
 import { isBlockEditToolId } from '../../utils/tool-message-utils';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -565,6 +565,10 @@ export default function OrchestratorChat( {
 		// tool call must not let that call land on the new page.
 		blockCurrentRequest();
 		abortCurrentRequest();
+
+		recordAgentsManagerTracksEvent( 'editor_canvas_move_request_aborted', {
+			agent_id: agentConfig?.agentId,
+		} );
 
 		// Say why, or the reply just stops mid-sentence and reads as a failure.
 		// UI-only: the message carries an id the agent's client history does not
