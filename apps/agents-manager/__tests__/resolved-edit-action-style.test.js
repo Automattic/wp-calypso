@@ -51,19 +51,28 @@ describe( 'Resolved edit action CSS contract', () => {
 		expect( declarations.get( 'fill' ) ).toBe( 'currentColor' );
 	} );
 
-	it( 'uses a blue confirmation circle and muted Undo or Redo action', () => {
+	it( 'uses circular status icons and a muted Undo or Redo action', () => {
 		const status = getDeclarations( '.agents-manager-resolved-edit-action__status' );
+		const statusIcon = getDeclarations(
+			'.agents-manager-resolved-edit-action__status .agents-manager-resolved-edit-action__icon'
+		);
 		const confirmedIcon = getDeclarations(
 			'.agents-manager-resolved-edit-action__status:not(.agents-manager-resolved-edit-action__status--reverted) .agents-manager-resolved-edit-action__icon'
 		);
+		const revertedIcon = getDeclarations(
+			'.agents-manager-resolved-edit-action__status--reverted .agents-manager-resolved-edit-action__icon'
+		);
 		const action = getDeclarations( '.agents-manager-resolved-edit-action__undo' );
+		const disabledAction = getDeclarations( '.agents-manager-resolved-edit-action__undo:disabled' );
 
 		expect( status.get( 'color' ) ).toBe( 'var(--color-foreground)' );
 		expect( status.get( 'gap' ) ).toBe( '0.5rem' );
 		expect( status.get( 'padding-inline-start' ) ).toBe( '0' );
-		expect( confirmedIcon.get( 'border-radius' ) ).toBe( '50%' );
+		expect( statusIcon.get( 'border-radius' ) ).toBe( '50%' );
+		expect( statusIcon.get( 'color' ) ).toBe( 'var(--color-white, #fff)' );
 		expect( confirmedIcon.get( 'background-color' ) ).toBe( '#3858e8' );
-		expect( confirmedIcon.get( 'color' ) ).toBe( 'var(--color-white, #fff)' );
+		expect( revertedIcon.get( 'background-color' ) ).toBe( '#5e5e5e' );
 		expect( action.get( 'color' ) ).toBe( 'var(--color-muted-foreground)' );
+		expect( disabledAction.get( 'opacity' ) ).toBe( '0.66' );
 	} );
 } );

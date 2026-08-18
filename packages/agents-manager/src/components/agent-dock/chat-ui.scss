@@ -100,15 +100,21 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 				gap: 0.5rem;
 				padding-inline-start: 0;
 
-				&:not( .agents-manager-resolved-edit-action__status--reverted ) {
+				.agents-manager-resolved-edit-action__icon {
+					width: 22px;
+					height: 22px;
+					padding: 1px;
+					border-radius: 50%;
+					color: var( --color-white, #fff );
+				}
+
+				&:not( .agents-manager-resolved-edit-action__status--reverted )
 					.agents-manager-resolved-edit-action__icon {
-						width: 22px;
-						height: 22px;
-						padding: 1px;
-						border-radius: 50%;
-						background-color: #3858e8;
-						color: var( --color-white, #fff );
-					}
+					background-color: #3858e8;
+				}
+
+				&--reverted .agents-manager-resolved-edit-action__icon {
+					background-color: #5e5e5e;
 				}
 			}
 
@@ -134,12 +140,8 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 
 				&:disabled {
 					cursor: default;
+					opacity: 0.66;
 				}
-			}
-
-			&__status--reverted,
-			&__undo:disabled {
-				opacity: 0.66;
 			}
 
 			&__icon {
