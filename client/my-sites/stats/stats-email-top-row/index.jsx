@@ -42,10 +42,11 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 							icon={ <Icon icon={ send } /> }
 							emailIsSending={ emailIsSending }
 						/>
-						{ isRequesting || counts?.unique_opens ? (
+						{ /* Hidden only when uniques were never tracked (null); a genuine 0 shows. */ }
+						{ isRequesting || counts?.unique_opens != null ? (
 							<TopCard
 								heading={ translate( 'Unique opens' ) }
-								value={ counts?.unique_opens }
+								value={ counts?.unique_opens ?? 0 }
 								isLoading={ isRequesting && ! counts?.hasOwnProperty( 'unique_opens' ) }
 								icon={ <Icon icon={ seen } /> }
 							/>
@@ -58,7 +59,9 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 						/>
 						<TopCard
 							heading={ translate( 'Open rate' ) }
-							value={ counts?.opens_rate ? `${ Math.round( counts?.opens_rate * 100 ) }%` : null }
+							value={
+								counts?.opens_rate != null ? `${ Math.round( counts.opens_rate * 100 ) }%` : null
+							}
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'opens_rate' ) }
 							icon={ <Gridicon icon="trending" /> }
 							emailIsSending={ emailIsSending }
@@ -66,14 +69,27 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 					</>
 				);
 			case 'clicks':
+				// Mirrors the opens view: sends → uniques → totals → rate. The rate's
+				// denominator is total sends, so it belongs on screen; total opens
+				// lives on the Opens tab.
 				return (
 					<>
 						<TopCard
-							heading={ translate( 'Total opens' ) }
-							value={ counts?.total_opens ?? 0 }
-							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_opens' ) }
-							icon={ <Icon icon={ seen } /> }
+							heading={ translate( 'Total emails sent' ) }
+							value={ counts?.total_sends ?? 0 }
+							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_sends' ) }
+							icon={ <Icon icon={ send } /> }
+							emailIsSending={ emailIsSending }
 						/>
+						{ /* Hidden only when uniques were never tracked (null); a genuine 0 shows. */ }
+						{ isRequesting || counts?.unique_clicks != null ? (
+							<TopCard
+								heading={ translate( 'Unique clicks' ) }
+								value={ counts?.unique_clicks ?? 0 }
+								isLoading={ isRequesting && ! counts?.hasOwnProperty( 'unique_clicks' ) }
+								icon={ <Icon icon={ link } /> }
+							/>
+						) : null }
 						<TopCard
 							heading={ translate( 'Total clicks' ) }
 							value={ counts?.total_clicks ?? 0 }
@@ -82,9 +98,11 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 						/>
 						<TopCard
 							heading={ translate( 'Click rate' ) }
-							value={ counts?.clicks_rate ? `${ Math.round( counts?.clicks_rate * 100 ) }%` : null }
+							value={
+								counts?.clicks_rate != null ? `${ Math.round( counts.clicks_rate * 100 ) }%` : null
+							}
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'clicks_rate' ) }
-							icon={ <Icon icon={ link } /> }
+							icon={ <Gridicon icon="trending" /> }
 						/>
 					</>
 				);

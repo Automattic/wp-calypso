@@ -86,7 +86,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						</StatsInfoArea>
 					}
 					additionalColumns={ {
-						header: <span>{ translate( 'Unique opens' ) }</span>,
+						header: <span>{ translate( 'Unique open rate' ) }</span>,
 						body: ( item: EmailStatsItem ) => {
 							const opensUnique = parseInt( String( item.unique_opens ), 10 );
 							const opens = parseInt( String( item.opens ), 10 );
@@ -113,7 +113,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					query={ query }
 					statType={ statType }
 					mainItemLabel={ translate( 'Latest emails' ) }
-					metricLabel={ translate( 'Unique clicks' ) }
+					metricLabel={ translate( 'Unique click rate' ) }
 					valueField="clicks_rate"
 					formatValue={ ( value: number, item: EmailStatsItem ) => {
 						if ( ! item ) {
