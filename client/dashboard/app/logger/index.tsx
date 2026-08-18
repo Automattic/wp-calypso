@@ -7,6 +7,19 @@ import { maybeReloadForChunkError } from '../chunk-load-recovery';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
+const previousPaths = new WeakMap< AnyRouter, string >();
+
+// `router.state.resolvedLocation` is overwritten with the current location as
+// soon as a navigation settles, so `onResolved`'s `fromLocation` is used
+// instead. It is absent on the first load — a URL opened from outside the app.
+export function initLogger( router: AnyRouter ) {
+	return router.subscribe( 'onResolved', ( { fromLocation } ) => {
+		if ( fromLocation ) {
+			previousPaths.set( router, fromLocation.href );
+		}
+	} );
+}
+
 function isBenignError( error: Error ) {
 	// Ignore errors related to missing auth tokens.
 	// The user will get redirected to the login page / second auth factor.
@@ -54,6 +67,8 @@ export function handleOnCatch(
 		] )
 	);
 
+	const previousPath = previousPaths.get( router );
+
 	logToLogstash( {
 		feature: 'calypso_client',
 		message: error.message,
@@ -65,6 +80,7 @@ export function handleOnCatch(
 			message: error.message,
 			stack: errorInfo.componentStack,
 			path: window.location.href,
+			previous_path: previousPath,
 			params: routeParams,
 		},
 	} );
@@ -76,6 +92,7 @@ export function handleOnCatch(
 				calypso_section: options.calypso_section,
 				...routeParams,
 			},
+			extra: { previous_path: previousPath },
 		} );
 	}
 }
