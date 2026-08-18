@@ -18,11 +18,11 @@ export function useShouldShowRestoreDeletedSitesNotice() {
 	const { queries } = useAppContext();
 	const noLiveSites = hasNoLiveSites( user );
 
-	// Prefetched by the sitesRoute loader for zero-site users, so eligibility
-	// is settled before first paint.
+	// Holds the full-page loader so eligibility is settled before first paint.
 	const { data } = useQuery( {
 		...queries.paginatedSitesQuery( deletedSitesCheckFetchOptions ),
 		enabled: noLiveSites,
+		meta: { fullPageLoader: true },
 	} );
 
 	return noLiveSites && ( data?.total ?? 0 ) > 0;
