@@ -112,11 +112,24 @@ describe( 'canvas binding', () => {
 		expect( getCanvasMove() ).toBeNull();
 	} );
 
-	it( 'reports no move when the live canvas is unreadable', () => {
-		// A store that has not settled is not a wrong canvas. Refusing here would
-		// block legitimate writes for the width of a mount.
+	it( 'reports a move to nowhere when the canvas goes away', () => {
+		// Losing the canvas is a move, not a wait. A bound request was made while the
+		// editor was mounted, so an absent canvas means the user left — and the write
+		// abilities poll for a canvas, so letting this through loops forever.
+		setOpenPost( { id: 12, type: 'page', title: 'About' } );
+		bindToOpenCanvas();
+
+		setOpenPost( null );
+
+		expect( getCanvasMove() ).toEqual( { from: 'About', to: null } );
+	} );
+
+	it( 'reports no move for a mounting canvas when nothing is bound', () => {
+		// The agent navigating itself clears the binding first, so the mount that
+		// follows is unguarded and the write abilities do their own readiness retry.
 		setOpenPost( { id: 12, type: 'page' } );
 		bindToOpenCanvas();
+		clearCanvasBinding();
 
 		setOpenPost( null );
 

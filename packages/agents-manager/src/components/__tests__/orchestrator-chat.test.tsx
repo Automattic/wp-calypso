@@ -410,6 +410,7 @@ import { getSessionId } from '../../utils/agent-session';
 import {
 	bindToOpenCanvas,
 	blockCurrentRequest,
+	clearCanvasBinding,
 	getBlockingMove,
 	startNewUserRequest,
 } from '../../utils/canvas-binding';
@@ -3376,7 +3377,9 @@ describe( 'OrchestratorChat', () => {
 			const message = addMessage.mock.calls[ 0 ][ 0 ];
 			expect( message.id ).toContain( 'canvas-move-abort-' );
 			expect( message.role ).toBe( 'agent' );
-			expect( message.content[ 0 ].text ).toContain( 'switched pages' );
+			// Worded for both shapes of move — landing on another page and leaving the
+			// editor altogether both reach this message.
+			expect( message.content[ 0 ].text ).toContain( 'navigated away' );
 			// `addMessage` only touches the UI list. Anything that dispatched to the
 			// agent would restart the request the abort just stopped.
 			expect( mockUseAgentChat().onSubmit ).not.toHaveBeenCalled();
@@ -3425,9 +3428,10 @@ describe( 'OrchestratorChat', () => {
 			expect( abortCurrentRequest ).not.toHaveBeenCalled();
 		} );
 
-		it( 'does not abort when the editor store stops resolving a canvas', () => {
-			// A store that has not settled is not a wrong canvas. Aborting here would
-			// kill legitimate requests for the width of a mount.
+		it( 'aborts when the canvas goes away entirely', () => {
+			// Leaving the editor is as much a reason to stop as landing on another
+			// page — more so, because the write abilities poll for a canvas to appear,
+			// so a request left running against nothing retries until the turn dies.
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
 			const { abortCurrentRequest } = mockUseAgentChat();
 
@@ -3436,7 +3440,8 @@ describe( 'OrchestratorChat', () => {
 
 			openPage( null );
 
-			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+			expect( getBlockingMove() ).toEqual( { from: 'About', to: null } );
 		} );
 
 		it( 'never aborts on a surface with no editor', () => {
@@ -3456,17 +3461,19 @@ describe( 'OrchestratorChat', () => {
 			expect( abortCurrentRequest ).not.toHaveBeenCalled();
 		} );
 
-		it( 'does not abort when the editor is left for a screen with no canvas', () => {
-			// Leaving the editor entirely resolves no canvas, which is "not settled"
-			// rather than "a different page" — so a support turn that sends the user
-			// to a settings screen is not killed on the way.
+		it( 'does not abort while the agent is moving the canvas itself', () => {
+			// `editor-navigate` clears the binding before it runs, so the unmount and
+			// remount it causes are not read as the user walking away. Without this the
+			// agent's own navigation would abort the agent's own request.
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
 			const { abortCurrentRequest } = mockUseAgentChat();
 
 			render( chat() );
 			bindToOpenCanvas();
+			clearCanvasBinding();
 
 			openPage( null );
+			openPage( CONTACT_PAGE );
 
 			expect( abortCurrentRequest ).not.toHaveBeenCalled();
 		} );

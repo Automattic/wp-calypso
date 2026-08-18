@@ -46,18 +46,23 @@ const CANVAS_MOVING_ABILITIES = new Set(
 );
 
 function buildCanvasRefusal( move: CanvasMove ): AbilityResult {
+	// Untranslated on purpose: `returnToAgent: true` means these strings are read by
+	// the model, not shown to the user, unlike neighbouring abilities' messages.
+	//
+	// Both spell out "do not retry", and the no-canvas one says so hardest. The
+	// write abilities poll for a canvas to appear, so a model that responds to the
+	// refusal by trying another route into the same write can keep a doomed request
+	// alive indefinitely.
+	const message =
+		null === move.to
+			? `Nothing was changed: this was requested for ${ move.from }, but the editor is no longer open on it and there is no page on screen to change. Do not retry this or try another way to make the same change — nothing can be edited until a page is open. Tell the user the request stopped because they navigated away, and ask them to reopen the page if they still want it.`
+			: `Nothing was changed: this was requested for ${ move.from }, but the editor now has ${ move.to } open. Do not retry it here — tell the user what happened and ask whether they want the same change on the page they are now viewing.`;
+
 	return {
 		result: {
 			success: false,
-			// Untranslated on purpose: `returnToAgent: true` means this string is read
-			// by the model, not shown to the user, unlike neighbouring abilities'
-			// messages.
-			message: `Nothing was changed: this was requested for ${
-				move.from ?? 'a page that is no longer open'
-			}, but the editor now has ${
-				move.to ?? 'a different page'
-			} open. Do not retry it here — tell the user what happened and ask whether they want the same change on the page they are now viewing.`,
-			error: 'editor_canvas_moved',
+			message,
+			error: null === move.to ? 'editor_canvas_closed' : 'editor_canvas_moved',
 		},
 		returnToAgent: true,
 	};

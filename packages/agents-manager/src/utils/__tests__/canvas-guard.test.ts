@@ -97,6 +97,42 @@ describe( 'withCanvasGuard', () => {
 		expect( executeAbility ).not.toHaveBeenCalled();
 	} );
 
+	it( 'refuses a canvas write when the editor has no page open at all', async () => {
+		// The looping case: page-design polls for a canvas to appear, so letting this
+		// through leaves the agent retrying against a page that is never coming back.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+		setOpenPost( null );
+
+		const executeAbility = jest.fn();
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		const result = await guarded!.executeAbility( 'big_sky__stream_page_design', {} );
+
+		expect( executeAbility ).not.toHaveBeenCalled();
+		expect( result.result.error ).toBe( 'editor_canvas_closed' );
+		expect( result.result.message ).toContain( 'About' );
+		// The model is told not to route around the refusal, which is what keeps a
+		// doomed request from being kept alive by a different tool.
+		expect( result.result.message ).toContain( 'another way' );
+	} );
+
+	it( 'still allows a write while the canvas mounts after the agent navigates', async () => {
+		// `editor-navigate` clears the binding, so the mount that follows is
+		// unguarded and the ability's own readiness retry does its job.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		await guarded!.executeAbility( 'big_sky__editor_navigate', {} );
+		setOpenPost( null );
+		await guarded!.executeAbility( 'big_sky__stream_page_design', {} );
+
+		expect( executeAbility ).toHaveBeenCalledWith( 'big_sky__stream_page_design', {} );
+	} );
+
 	it( 'guards restore-checkpoint too', async () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();

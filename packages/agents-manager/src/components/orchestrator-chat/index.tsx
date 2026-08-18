@@ -576,7 +576,7 @@ export default function OrchestratorChat( {
 				{
 					type: 'text',
 					text: __(
-						'You switched pages, so I stopped that request before it changed the wrong one. Ask again to apply it here.',
+						'You navigated away from that page, so I stopped the request before it changed the wrong one. Open the page you want and ask again.',
 						__i18n_text_domain__
 					),
 				},
