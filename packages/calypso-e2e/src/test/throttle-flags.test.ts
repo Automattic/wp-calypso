@@ -14,6 +14,7 @@ import {
 	resetRaisedThrottles,
 	THROTTLE_ACTION_ENV_VARS,
 	throttleAction,
+	throttleActionMessage,
 	throttleEnvVar,
 	throttleTag,
 	validateThrottleActions,
@@ -129,6 +130,31 @@ describe( 'throttle actions', () => {
 		warn.mockClear();
 		expect( () => handleActiveThrottles( [ 'signup' ], NOW ) ).not.toThrow();
 		expect( warn.mock.calls[ 0 ]?.[ 0 ] ).toContain( 'signup is throttled' );
+	} );
+
+	test( 'names every selected throttle, and says so when the action is fail', () => {
+		const clean = { errors: [] };
+		expect( throttleActionMessage( 'skip', [ 'signup', 'domain-suggestions' ], clean ) ).toBe(
+			'WordPress.com throttle active: signup, domain-suggestions.'
+		);
+		expect( throttleActionMessage( 'fail', [ 'signup' ], clean ) ).toBe(
+			'WordPress.com throttle active: signup. E2E throttle action is fail.'
+		);
+	} );
+
+	test( 'has nothing to say to a test that stopped for a reason of its own', () => {
+		// The handler runs from fixture teardown too, so it meets tests that
+		// already failed or skipped. `expectedStatus` covers the moment between
+		// `skip` marking it and the status settling.
+		expect(
+			throttleActionMessage( 'fail', [ 'signup' ], { errors: [ new Error( 'own' ) ] } )
+		).toBeNull();
+		expect(
+			throttleActionMessage( 'fail', [ 'signup' ], { errors: [], status: 'skipped' } )
+		).toBeNull();
+		expect(
+			throttleActionMessage( 'fail', [ 'signup' ], { errors: [], expectedStatus: 'skipped' } )
+		).toBeNull();
 	} );
 
 	test( 'gives fail precedence across active throttles', () => {

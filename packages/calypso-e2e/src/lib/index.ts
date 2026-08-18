@@ -15,6 +15,7 @@ export {
 	readActiveThrottles,
 	recordThrottle,
 	registerThrottleActionHandler,
+	throttleActionMessage,
 	throttleEnvVar,
 	validateThrottleActions,
 } from './throttle-flags';

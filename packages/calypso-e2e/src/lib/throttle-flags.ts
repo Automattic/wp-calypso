@@ -440,6 +440,41 @@ export function handleActiveThrottles(
 }
 
 /**
+ * How much of a test's outcome the policy needs to know about. Playwright's
+ * `TestInfo` satisfies it; the fields are named here so the decision can be
+ * tested without a runner.
+ */
+export interface ThrottleTestState {
+	errors: readonly unknown[];
+	status?: string;
+	expectedStatus?: string;
+}
+
+/**
+ * What the policy has to say to a test in this state, or null when it has
+ * nothing to say to it.
+ *
+ * A test that already failed or skipped for a reason of its own keeps it: the
+ * handler runs from fixture teardown too, so it meets tests that stopped on
+ * their own account, and stating a ban there would append a skip reason the test
+ * never earned, or turn its skip into a failure outright. The runner's own state
+ * rather than a flag set by the handler: Playwright marks `expectedStatus`
+ * before `skip` throws, so a caller that swallows the throw cannot silence the
+ * policy for the rest of the test.
+ */
+export function throttleActionMessage(
+	action: ThrottleAction,
+	ids: readonly ThrottleId[],
+	state: ThrottleTestState
+): string | null {
+	if ( state.errors.length || state.status === 'skipped' || state.expectedStatus === 'skipped' ) {
+		return null;
+	}
+	const message = `WordPress.com throttle active: ${ ids.join( ', ' ) }.`;
+	return action === 'skip' ? message : `${ message } E2E throttle action is fail.`;
+}
+
+/**
  * Rounds a span to whatever unit reads plainly in a log line.
  */
 function approximately( ms: number ): string {

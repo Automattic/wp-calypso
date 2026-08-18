@@ -93,6 +93,7 @@ import {
 	mayBeThrottled,
 	recordThrottle,
 	registerThrottleActionHandler,
+	throttleActionMessage,
 } from '@automattic/calypso-e2e';
 import {
 	test as base,
@@ -479,27 +480,16 @@ export const test = base.extend<
 	_throttleActionHandler: [
 		async ( {}, use, testInfo ) => {
 			const unregister = registerThrottleActionHandler( ( action, ids ) => {
-				// A test that already failed or skipped for a reason of its own keeps
-				// it: the policy runs from teardown too, and stating a ban there would
-				// append a second skip reason the test never earned, or turn its skip
-				// into a failure outright. Playwright's own state rather than a flag
-				// set here: it marks `expectedStatus` before `base.skip` throws, so a
-				// caller that swallows the throw cannot silence the policy for the
-				// rest of the test.
-				if (
-					testInfo.errors.length ||
-					testInfo.status === 'skipped' ||
-					testInfo.expectedStatus === 'skipped'
-				) {
+				const message = throttleActionMessage( action, ids, testInfo );
+				// Nothing to say to a test that already stopped for a reason of its own.
+				if ( ! message ) {
 					return;
 				}
-				const names = ids.join( ', ' );
-				const message = `WordPress.com throttle active: ${ names }.`;
 				if ( action === 'skip' ) {
 					base.skip( true, message );
 					return;
 				}
-				throw new Error( `${ message } E2E throttle action is fail.` );
+				throw new Error( message );
 			} );
 
 			try {
