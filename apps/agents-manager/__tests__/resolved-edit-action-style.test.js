@@ -51,7 +51,7 @@ describe( 'Resolved edit action CSS contract', () => {
 		expect( declarations.get( 'fill' ) ).toBe( 'currentColor' );
 	} );
 
-	it( 'uses circular status icons and a muted Undo or Redo action', () => {
+	it( 'uses circular status icons and distinct active and disabled actions', () => {
 		const status = getDeclarations( '.agents-manager-resolved-edit-action__status' );
 		const statusIcon = getDeclarations(
 			'.agents-manager-resolved-edit-action__status .agents-manager-resolved-edit-action__icon'
@@ -72,7 +72,10 @@ describe( 'Resolved edit action CSS contract', () => {
 		expect( statusIcon.get( 'color' ) ).toBe( 'var(--color-white, #fff)' );
 		expect( confirmedIcon.get( 'background-color' ) ).toBe( '#3858e8' );
 		expect( revertedIcon.get( 'background-color' ) ).toBe( '#5e5e5e' );
-		expect( action.get( 'color' ) ).toBe( 'var(--color-muted-foreground)' );
+		expect( action.get( 'color' ) ).toBe(
+			'color-mix(in srgb, var(--color-foreground) 75%, var(--color-background))'
+		);
+		expect( disabledAction.get( 'color' ) ).toBe( 'var(--color-muted-foreground)' );
 		expect( disabledAction.get( 'opacity' ) ).toBe( '0.66' );
 	} );
 } );

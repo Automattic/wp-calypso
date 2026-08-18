@@ -121,7 +121,8 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 			&__undo {
 				border: 0;
 				background: transparent;
-				color: var( --color-muted-foreground );
+				color: var( --color-foreground );
+				color: color-mix( in srgb, var( --color-foreground ) 75%, var( --color-background ) );
 				font-family: inherit;
 				font-weight: 500;
 				cursor: pointer;
@@ -139,6 +140,7 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 				}
 
 				&:disabled {
+					color: var( --color-muted-foreground );
 					cursor: default;
 					opacity: 0.66;
 				}
