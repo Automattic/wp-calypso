@@ -26,8 +26,9 @@ jest.mock( 'calypso/lib/analytics/mc', () => ( { bumpStat: jest.fn() } ) );
 const mockStore = configureStore();
 
 describe( 'maybeRedirectToMultiSiteDashboard', () => {
-	// `config/test.json` enables `dashboard/enable-percentage-rollout`, which now
-	// enrols every user, so `forced-opt-out` is the only way to be unenrolled.
+	// `config/test.json` enables `dashboard/enable-percentage-rollout`, so the
+	// user ID has to fall outside the cohort (`id % 100 >= 50`, below the
+	// new-user threshold) for enrollment to be driven by the preference alone.
 	const targetPath = ( params ) => `/emails/choose-email-solution/${ params.domain }`;
 
 	const buildContext = ( optIn ) => ( {
@@ -50,11 +51,8 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 		dashboardLink.mockClear();
 	} );
 
-	it( 'does not redirect when the flag is disabled and the user is not enrolled', () => {
-		maybeRedirectToMultiSiteDashboard( targetPath, () => false )(
-			buildContext( 'forced-opt-out' ),
-			next
-		);
+	it( 'does not redirect when the flag is disabled and the user is not force-enrolled', () => {
+		maybeRedirectToMultiSiteDashboard( targetPath, () => false )( buildContext(), next );
 
 		expect( navigate ).not.toHaveBeenCalled();
 		expect( next ).toHaveBeenCalled();
