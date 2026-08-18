@@ -7,6 +7,10 @@ import { useState } from 'react';
 import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
 import CheckoutTermsModal from './checkout-terms-modal';
 import { getRefundWindowSummary } from './refund-policies';
+import {
+	getStudioCodeAiCreditsGuidelinesUrl,
+	hasStudioCodeAiCredits,
+} from './studio-code-ai-credits-guidelines';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 const Wrapper = styled.div`
@@ -75,6 +79,24 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 	const [ isTermsModalOpen, setIsTermsModalOpen ] = useState( false );
 	const hasRefundWindow = getRefundWindowSummary( cart ) !== null;
 
+	const components = {
+		tos: (
+			<a
+				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
+		),
+		pp: (
+			<a
+				href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
+		),
+		readmore: <button type="button" onClick={ () => setIsTermsModalOpen( true ) } />,
+	};
+
 	return (
 		<Wrapper className="checkout-pay-button-footer">
 			<TrustLine>
@@ -91,28 +113,26 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 			<Divider />
 
 			<LegalNotice>
-				{ translate(
-					'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
-					{
-						components: {
-							tos: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-							pp: (
-								<a
-									href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-							readmore: <button type="button" onClick={ () => setIsTermsModalOpen( true ) } />,
-						},
-					}
-				) }
+				{ hasStudioCodeAiCredits( cart )
+					? translate(
+							'By checking out, you agree to our {{tos}}Terms of Service{{/tos}} and {{guidelines}}AI Credits Guidelines{{/guidelines}}, and have read our {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
+							{
+								components: {
+									...components,
+									guidelines: (
+										<a
+											href={ getStudioCodeAiCreditsGuidelinesUrl() }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+					  )
+					: translate(
+							'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
+							{ components }
+					  ) }
 			</LegalNotice>
 
 			<CheckoutTermsModal
