@@ -37,12 +37,10 @@ export function useRestoreSitesBanner() {
 					>
 						{ createInterpolateElement(
 							__(
-								'<restoreSiteLink>Restore sites</restoreSiteLink> from the action menu. You’ll also need to <invitePeopleLink>invite any users</invitePeopleLink> that previously had access to your sites.'
+								'<deletedSitesLink>View your deleted sites</deletedSitesLink> and restore the ones you’d like to keep. You’ll also need to <invitePeopleLink>invite any users</invitePeopleLink> that previously had access to your sites.'
 							),
 							{
-								restoreSiteLink: (
-									<InlineSupportLink showIcon={ false } supportContext="restore-site" />
-								),
+								deletedSitesLink: <a href="/sites?is_deleted=true" />,
 								invitePeopleLink: (
 									<InlineSupportLink showIcon={ false } supportContext="invite-people" />
 								),

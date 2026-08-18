@@ -56,6 +56,7 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
+import { deletedSitesCheckFetchOptions } from '../../sites/restore-deleted-sites-notice';
 import { reauthRequiredLink } from '../../utils/link';
 import {
 	getActivityLogHiddenGroups,
@@ -85,10 +86,16 @@ export const sitesRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: async () => {
+	loader: async ( { context } ) => {
+		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// Settle the restore-deleted-sites notice eligibility before first paint.
+			user?.site_count === 0 &&
+				queryClient.ensureQueryData(
+					context.config.queries.paginatedSitesQuery( deletedSitesCheckFetchOptions )
+				),
 		] );
 	},
 } );
