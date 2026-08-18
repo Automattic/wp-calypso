@@ -342,7 +342,7 @@ describe( 'AgentChat', () => {
 
 		expect(
 			screen.getByText(
-				'Some options need content in the post. Got a different request? Ask away.'
+				'Some options are unavailable until the post has content. Got a different request? Ask away.'
 			)
 		).toBeInTheDocument();
 	} );

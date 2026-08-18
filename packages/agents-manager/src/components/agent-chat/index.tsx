@@ -152,7 +152,7 @@ function getEmptyViewHelp( hasDisabledSuggestion = false ): string {
 	}
 	if ( hasDisabledSuggestion ) {
 		return __(
-			'Some options need content in the post. Got a different request? Ask away.',
+			'Some options are unavailable until the post has content. Got a different request? Ask away.',
 			__i18n_text_domain__
 		);
 	}
