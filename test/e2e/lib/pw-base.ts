@@ -200,7 +200,9 @@ function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 				if ( status < 400 && ! /"error"\s*:/.test( body ) ) {
 					return;
 				}
-				// We ran into a throttle: let's record it but not alter the test pass/fail status.
+				// Whether this is a ban at all is `recordThrottle`'s to say: an
+				// invalid-domain 400 on `is-available` reaches here too. Recording is
+				// all it does; the test's outcome is no business of this listener.
 				await recordThrottle( { url, status, body } );
 			} catch {
 				// Detection never fails a test.
