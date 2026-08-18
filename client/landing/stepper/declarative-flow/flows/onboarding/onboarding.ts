@@ -48,6 +48,7 @@ import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboardi
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
+import { isDeferredEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
@@ -58,6 +59,7 @@ function initialize() {
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
+		STEPS.EMAIL_VERIFICATION,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
@@ -74,6 +76,9 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
+		// Variant B: the account step doesn't gate; the verification step is met after the free plan
+		// selection or, for a paid order, on return from checkout.
+		const deferredEmailVerification = isDeferredEmailVerification( flowName );
 
 		const {
 			setDomain,
@@ -271,7 +276,22 @@ const onboarding: FlowV2< typeof initialize > = {
 					setProductCartItems( products.filter( ( product ) => product !== null ) );
 
 					setSignupCompleteFlowName( flowName );
+
+					// A fully free order never reaches checkout, so the deferred gate is met here,
+					// right after the plan is chosen, before the site is created.
+					if ( deferredEmailVerification && ! pickedPlan ) {
+						return navigate(
+							'email-verification?next=create-site' as typeof currentStepSlug,
+							undefined,
+							false
+						);
+					}
+
 					return navigate( 'create-site', undefined, false );
+				}
+				case 'email-verification': {
+					const next = queryParams.get( 'next' ) || 'create-site';
+					return navigate( next as typeof currentStepSlug );
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
@@ -412,7 +432,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							 * redirect the user back to Playground to start the import.
 							 */
 							const playgroundId = getQueryArg( window.location.href, 'playground' );
-							const redirectTo: string =
+							let redirectTo: string =
 								playgroundId &&
 								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
 									? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -428,6 +448,21 @@ const onboarding: FlowV2< typeof initialize > = {
 												...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
 											}
 									  );
+
+							// Variant B: a paid order meets the deferred gate on return from checkout,
+							// before post-checkout-onboarding. The Playground import path keeps its own
+							// return target.
+							if ( deferredEmailVerification && ! playgroundId ) {
+								redirectTo = addQueryArgs(
+									withLocale( '/setup/onboarding/email-verification', locale ),
+									{
+										next: 'post-checkout-onboarding',
+										siteSlug,
+										...( refParameter ? { ref: refParameter } : {} ),
+										...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
+									}
+								);
+							}
 
 							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
 

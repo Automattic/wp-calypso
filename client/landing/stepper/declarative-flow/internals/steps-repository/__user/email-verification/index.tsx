@@ -29,8 +29,10 @@ interface Props {
 	// The address the activation email went to, which after a correction is the one just accepted
 	// rather than the one `/me` still reports.
 	email: string;
-	// Returns to the account step to correct the address this was sent to.
-	onEditEmail: () => void;
+	// Returns to the account step to correct the address this was sent to. Omitted where correcting
+	// the address isn't offered — the deferred gate, met after checkout, has no account form to
+	// return to.
+	onEditEmail?: () => void;
 	// Set while a correction is waiting to be confirmed, which changes what resending has to do.
 	pendingEmail?: string;
 	// Whether the address above is the one being waited on, or is standing in until the settings
@@ -94,30 +96,43 @@ const EmailVerificationGate = ( {
 			provider: inboxLink?.provider,
 		} );
 
-	const subText = createInterpolateElement(
-		sprintf(
-			// translators: %s is the email address the verification link was sent to.
-			__(
-				'We just sent an email to <email>%s</email> (<edit>edit</edit>). Click the link in the email to verify your account.'
-			),
-			email
-		),
-		{
-			email: <strong />,
-			edit: (
-				<WPButton
-					variant="link"
-					// A correction submitted now would queue behind the send, and a reload while it
-					// waited would leave the address written down with nothing able to carry it out.
-					disabled={ isSending }
-					onClick={ () => {
-						recordTracksEvent( 'calypso_signup_email_verification_edit_click', { flow } );
-						onEditEmail();
-					} }
-				/>
-			),
-		}
-	);
+	const subText = onEditEmail
+		? createInterpolateElement(
+				sprintf(
+					// translators: %s is the email address the verification link was sent to.
+					__(
+						'We just sent an email to <email>%s</email> (<edit>edit</edit>). Click the link in the email to verify your account.'
+					),
+					email
+				),
+				{
+					email: <strong />,
+					edit: (
+						<WPButton
+							variant="link"
+							// A correction submitted now would queue behind the send, and a reload while it
+							// waited would leave the address written down with nothing able to carry it out.
+							disabled={ isSending }
+							onClick={ () => {
+								recordTracksEvent( 'calypso_signup_email_verification_edit_click', { flow } );
+								onEditEmail();
+							} }
+						/>
+					),
+				}
+		  )
+		: createInterpolateElement(
+				sprintf(
+					// translators: %s is the email address the verification link was sent to.
+					__(
+						'We just sent an email to <email>%s</email>. Click the link in the email to verify your account.'
+					),
+					email
+				),
+				{
+					email: <strong />,
+				}
+		  );
 
 	return (
 		<>
