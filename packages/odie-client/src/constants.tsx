@@ -5,6 +5,9 @@ declare const __i18n_text_domain__: string;
 
 type HasEnTranslation = ( single: string, context?: string, domain?: string ) => boolean;
 
+// Set by the wpcom launcher on the pricing page so the assistant greets visitors as a pre-sales guide.
+export const PLANS_PRESALES_LAUNCHER_CONTEXT = 'plans-presales';
+
 export const getOdieErrorMessage = (): string =>
 	__(
 		"Sorry, I'm offline right now. Leave our Support team a note and they'll get back to you as soon as possible.",
@@ -263,12 +266,23 @@ const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | 
 	}
 };
 
-export const getOdieInitialMessage = (
-	botNameSlug: OdieAllowedBots,
-	displayName: string,
-	hasEnTranslation?: ( single: string, context?: string, domain?: string ) => boolean
-): Message => {
-	const introMessage = hasEnTranslation?.(
+const getOdieIntroMessage = (
+	launcherContext?: string,
+	hasEnTranslation?: HasEnTranslation
+): string => {
+	if ( launcherContext === PLANS_PRESALES_LAUNCHER_CONTEXT ) {
+		const presalesIntro =
+			"Not sure which plan fits? Tell me what kind of site you're building, and I'll help you choose.";
+
+		if ( hasEnTranslation?.( presalesIntro, undefined, __i18n_text_domain__ ) ) {
+			return __(
+				"Not sure which plan fits? Tell me what kind of site you're building, and I'll help you choose.",
+				__i18n_text_domain__
+			);
+		}
+	}
+
+	return hasEnTranslation?.(
 		"I'm your personal Support Assistant. I can help with any questions about your site or account.",
 		undefined,
 		__i18n_text_domain__
@@ -281,6 +295,15 @@ export const getOdieInitialMessage = (
 				"I'm your personal AI assistant. I can help with any questions about your site or account.",
 				__i18n_text_domain__
 		  );
+};
+
+export const getOdieInitialMessage = (
+	botNameSlug: OdieAllowedBots,
+	displayName: string,
+	hasEnTranslation?: ( single: string, context?: string, domain?: string ) => boolean,
+	launcherContext?: string
+): Message => {
+	const introMessage = getOdieIntroMessage( launcherContext, hasEnTranslation );
 
 	return {
 		content: `**${ sprintf(
