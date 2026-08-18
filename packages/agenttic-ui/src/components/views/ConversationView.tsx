@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import type { ComponentType } from 'react';
-import type { Message, NoticeConfig, Suggestion } from '../../types';
-import { ChatHeader } from '../chat/ChatHeader';
 import { ChatFooter } from '../chat/ChatFooter';
+import { ChatHeader } from '../chat/ChatHeader';
 import { Messages } from '../chat/Messages';
 import styles from './ConversationView.module.css';
+import type { Message, NoticeConfig, Suggestion } from '../../types';
+import type { ComponentType } from 'react';
 
 interface InputHandlers {
 	inputValue: string;
@@ -95,9 +95,7 @@ export function ConversationView( {
 	return (
 		<div
 			data-slot="conversation-view"
-			className={ `${ styles.container }${
-				showHeader ? ` ${ styles.withHeader }` : ''
-			}` }
+			className={ `${ styles.container }${ showHeader ? ` ${ styles.withHeader }` : '' }` }
 		>
 			{ showHeader && <ChatHeader onClose={ onClose } /> }
 			<Messages

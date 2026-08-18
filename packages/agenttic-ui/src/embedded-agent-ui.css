@@ -29,7 +29,7 @@
 .agenttic-embedded__bubble {
 	max-width: 100%;
 	padding: 10px 12px;
-	border-radius: 14px;
+	border-radius: 16px;
 	background: #f3f4f6;
 	line-height: 1.45;
 	overflow-wrap: anywhere;
@@ -98,7 +98,7 @@
 .agenttic-embedded__suggestions button,
 .agenttic-embedded__input button {
 	border: 1px solid #d1d5db;
-	border-radius: 999px;
+	border-radius: 24px;
 	background: #fff;
 	color: #111827;
 	cursor: pointer;

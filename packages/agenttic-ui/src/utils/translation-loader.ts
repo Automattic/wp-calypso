@@ -14,15 +14,11 @@ interface TranslationConfig {
 
 /**
  * Load translations from pre-parsed translation objects
- *
  * @param locale - Language locale (e.g., 'es', 'fr', 'de-DE')
  * @param config - Translation configuration
- * @return boolean - Success status
+ * @returns boolean - Success status
  */
-function loadJSONFromLocal(
-	locale: string,
-	config: TranslationConfig
-): boolean {
+function loadJSONFromLocal( locale: string, config: TranslationConfig ): boolean {
 	const { domain = 'a8c-agenttic' } = config;
 
 	try {
@@ -56,10 +52,7 @@ function loadJSONFromLocal(
 
 					// Strip everything before and including the delimiter
 					const delimiterIndex = key.indexOf( CONTEXT_DELIMITER );
-					const cleanKey =
-						delimiterIndex > -1
-							? key.slice( delimiterIndex + 1 )
-							: key;
+					const cleanKey = delimiterIndex > -1 ? key.slice( delimiterIndex + 1 ) : key;
 					return [ cleanKey, value ];
 				} )
 			);
@@ -72,20 +65,16 @@ function loadJSONFromLocal(
 		return true;
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
-		console.warn(
-			`Failed to load bundled translations for locale: ${ locale }`,
-			error
-		);
+		console.warn( `Failed to load bundled translations for locale: ${ locale }`, error );
 		return false;
 	}
 }
 
 /**
  * Load translations for agenttic packages from pre-parsed objects
- *
  * @param locale - Language locale (e.g., 'es', 'fr', 'de-DE'). Defaults to en.
  * @param config - Translation configuration
- * @return boolean - Success status
+ * @returns boolean - Success status
  */
 export function loadAgentticTranslations(
 	locale: string = 'en',
@@ -104,10 +93,7 @@ export function loadAgentticTranslations(
 		}
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
-		console.warn(
-			`Translation loading failed for locale ${ locale }`,
-			error
-		);
+		console.warn( `Translation loading failed for locale ${ locale }`, error );
 	}
 	return false;
 }

@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Notice } from './Notice';
-import { StylesIcon } from '../icons/StylesIcon';
 import { CheckIcon } from '../icons/CheckIcon';
+import { StylesIcon } from '../icons/StylesIcon';
 import { XIcon } from '../icons/XIcon';
+import { Notice } from './Notice';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
 	title: 'Chat/Notice',

@@ -9,13 +9,11 @@ const themeForDemo = ( demoId: string ): 'light' | 'dark' =>
 const App: React.FC = () => {
 	const [ currentDemoId, setCurrentDemoId ] = useState< string >( () => {
 		const saved = localStorage.getItem( 'selectedDemo' );
-		return DEMOS.some( ( demo ) => demo.id === saved )
-			? ( saved as string )
-			: DEMOS[ 0 ].id;
+		return DEMOS.some( ( demo ) => demo.id === saved ) ? ( saved as string ) : DEMOS[ 0 ].id;
 	} );
 
-	const [ currentTheme, setCurrentTheme ] = useState< 'light' | 'dark' >(
-		() => themeForDemo( currentDemoId )
+	const [ currentTheme, setCurrentTheme ] = useState< 'light' | 'dark' >( () =>
+		themeForDemo( currentDemoId )
 	);
 
 	useEffect( () => {
@@ -28,8 +26,7 @@ const App: React.FC = () => {
 		setCurrentTheme( themeForDemo( currentDemoId ) );
 	}, [ currentDemoId ] );
 
-	const currentDemo =
-		DEMOS.find( ( demo ) => demo.id === currentDemoId ) ?? DEMOS[ 0 ];
+	const currentDemo = DEMOS.find( ( demo ) => demo.id === currentDemoId ) ?? DEMOS[ 0 ];
 	const DemoComponent = currentDemo.component;
 
 	return (

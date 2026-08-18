@@ -1,9 +1,9 @@
-import React from 'react';
 import { __ } from '@wordpress/i18n';
-import type { Suggestion } from '../../types';
+import React from 'react';
 import { BigSkyIcon } from '../icons/BigSkyIcon';
-import { Suggestions } from './Suggestions';
 import styles from './EmptyView.module.css';
+import { Suggestions } from './Suggestions';
+import type { Suggestion } from '../../types';
 
 export interface EmptyViewProps {
 	suggestions?: Suggestion[];
@@ -19,13 +19,8 @@ export interface EmptyViewProps {
 export const EmptyView: React.FC< EmptyViewProps > = ( {
 	suggestions,
 	onSuggestionClick,
-	icon = (
-		<BigSkyIcon size={ 32 } fullBleed className={ styles.defaultIcon } />
-	),
-	heading = __(
-		'Your WordPress AI — ready to help design, edit, and launch.',
-		'a8c-agenttic'
-	),
+	icon = <BigSkyIcon size={ 32 } fullBleed className={ styles.defaultIcon } />,
+	heading = __( 'Your WordPress AI — ready to help design, edit, and launch.', 'a8c-agenttic' ),
 	help,
 } ) => {
 	return (

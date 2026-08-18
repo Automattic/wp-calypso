@@ -28,34 +28,32 @@ describe( 'createAgentsApiChatAdapter', () => {
 		await agentsApiMarkSessionRead( adapter, 'session/1' );
 		await agentsApiDeleteSession( adapter, 'session/1' );
 
-		expect( fetchFn.mock.calls.map( ( [ request ] ) => request ) ).toEqual(
-			[
-				{
-					path: '/frontend-agent-chat/v1/agents/example/chat',
-					method: 'POST',
-					data: {
-						agent: 'example',
-						message: 'Hello',
-						session_id: 'session/1',
-						attachments: [ { media_id: 123 } ],
-					},
+		expect( fetchFn.mock.calls.map( ( [ request ] ) => request ) ).toEqual( [
+			{
+				path: '/frontend-agent-chat/v1/agents/example/chat',
+				method: 'POST',
+				data: {
+					agent: 'example',
+					message: 'Hello',
+					session_id: 'session/1',
+					attachments: [ { media_id: 123 } ],
 				},
-				{
-					path: '/frontend-agent-chat/v1/agents/example/chat/sessions?agent=example',
-				},
-				{
-					path: '/frontend-agent-chat/v1/agents/example/chat/session%2F1?agent=example',
-				},
-				{
-					path: '/frontend-agent-chat/v1/agents/example/chat/sessions/session%2F1/read?agent=example',
-					method: 'POST',
-				},
-				{
-					path: '/frontend-agent-chat/v1/agents/example/chat/session%2F1?agent=example',
-					method: 'DELETE',
-				},
-			]
-		);
+			},
+			{
+				path: '/frontend-agent-chat/v1/agents/example/chat/sessions?agent=example',
+			},
+			{
+				path: '/frontend-agent-chat/v1/agents/example/chat/session%2F1?agent=example',
+			},
+			{
+				path: '/frontend-agent-chat/v1/agents/example/chat/sessions/session%2F1/read?agent=example',
+				method: 'POST',
+			},
+			{
+				path: '/frontend-agent-chat/v1/agents/example/chat/session%2F1?agent=example',
+				method: 'DELETE',
+			},
+		] );
 	} );
 
 	it( 'does not duplicate existing agent query parameters', async () => {

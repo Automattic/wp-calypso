@@ -12,9 +12,7 @@ export function MessageCard( { title, description, url }: MessageCardProps ) {
 		<>
 			<div className={ styles.content }>
 				<div className={ styles.title }>{ title }</div>
-				{ description && (
-					<p className={ styles.description }>{ description }</p>
-				) }
+				{ description && <p className={ styles.description }>{ description }</p> }
 			</div>
 			{ url && <ChevronRightIcon className={ styles.chevron } /> }
 		</>
@@ -22,12 +20,7 @@ export function MessageCard( { title, description, url }: MessageCardProps ) {
 
 	if ( url ) {
 		return (
-			<a
-				href={ url }
-				className={ styles.card }
-				target="_blank"
-				rel="noopener noreferrer"
-			>
+			<a href={ url } className={ styles.card } target="_blank" rel="noopener noreferrer">
 				{ content }
 			</a>
 		);

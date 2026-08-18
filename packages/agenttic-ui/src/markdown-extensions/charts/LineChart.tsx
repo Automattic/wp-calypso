@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { LineChart as AutomatticLineChart } from '@automattic/charts';
-import type { FC } from 'react';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import type { BaseChartProps } from './BaseChart';
 import { BaseChart } from './BaseChart';
 import { getDefaultChartMargins, getTimeAxisConfig } from './utils/chartUtils';
+import type { BaseChartProps } from './BaseChart';
+import type { FC } from 'react';
 
 export interface LineChartProps extends BaseChartProps {
 	withGradientFill?: boolean;

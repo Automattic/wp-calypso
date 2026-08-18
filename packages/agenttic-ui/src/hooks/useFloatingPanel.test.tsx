@@ -2,6 +2,8 @@
 import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useFloatingPanel, type UseFloatingPanelArgs } from './useFloatingPanel';
+import type { ChatSize } from '../types';
 
 // Spy on animate while keeping the real implementation so the springs still run
 // (matches the resize + position hook suites).
@@ -9,17 +11,10 @@ vi.mock( 'framer-motion', async ( importOriginal ) => {
 	const actual = await importOriginal< typeof import('framer-motion') >();
 	return { ...actual, animate: vi.fn( actual.animate ) };
 } );
-import type { ChatSize } from '../types';
-import {
-	useFloatingPanel,
-	type UseFloatingPanelArgs,
-} from './useFloatingPanel';
 
 // Opt into React's act environment so state updates don't warn (matches the
 // component + sub-hook test suites).
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 type Result = ReturnType< typeof useFloatingPanel >;
 type Args = Partial< UseFloatingPanelArgs >;
@@ -88,11 +83,7 @@ describe( 'useFloatingPanel', () => {
 		vi.restoreAllMocks();
 	} );
 
-	const startResize = (
-		handle: HTMLElement,
-		clientX: number,
-		clientY: number
-	) => {
+	const startResize = ( handle: HTMLElement, clientX: number, clientY: number ) => {
 		handle.setPointerCapture = () => {};
 		harness.captured.current!.handleResizePointerDown( {
 			currentTarget: handle,
@@ -221,9 +212,7 @@ describe( 'useFloatingPanel', () => {
 		expect( onChatPositionChange ).toHaveBeenCalledWith( 'right' );
 		const cornerX = window.innerWidth - 372 - 16 - 16;
 		expect( onFreeDragEnd ).toHaveBeenCalledWith( { x: cornerX, y: 0 } );
-		expect( ( harness.captured.current as Result ).currentSide ).toBe(
-			'right'
-		);
+		expect( ( harness.captured.current as Result ).currentSide ).toBe( 'right' );
 	} );
 
 	it( 'drops a command whole during an active gesture', async () => {

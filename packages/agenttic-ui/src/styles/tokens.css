@@ -1,95 +1,103 @@
 .agenttic {
-  /* === BASE === */
-  --base-font-size: 1rem;
+	/* === BASE === */
+	--base-font-size: 1rem;
 
-  /* === COLORS === */
-  --color-white: #FFFFFF;
-  --color-background: #FCFCFC;
-  --color-foreground: #1F1F1F;
-  --color-popover: #FCFCFC;
-  --color-popover-muted: #FCFCFC;
-  --color-primary: #2D5AF2;
-  --color-primary-foreground: var(--color-white);
-  --color-muted: #E9E9E9;
-  --color-muted-foreground: #757575;
-  --color-input-border: #E3E3E3;
-  --color-input-border-focused: #DDDDDD;
-  --color-ring: var(--color-primary);
-  --color-success-background: #F1F7F1;
-  --color-success: var(--color-foreground);
-  --color-warning-background: #F8F3E7;
-  --color-warning: var(--color-foreground);
-  --color-error-background: #FCF1F1;
-  --color-error: #E7000B;
-  --color-link: var(--color-primary);
+	/* === COLORS === */
+	--color-white: #fff;
+	--color-background: #fcfcfc;
+	--color-foreground: #1f1f1f;
+	--color-popover: #fcfcfc;
+	--color-popover-muted: #fcfcfc;
+	--color-primary: #2d5af2;
+	--color-primary-foreground: var( --color-white );
+	--color-muted: #e9e9e9;
+	--color-muted-foreground: #757575;
+	--color-input-border: #e3e3e3;
+	--color-input-border-focused: #ddd;
+	--color-ring: var( --color-primary );
+	--color-success-background: #f1f7f1;
+	--color-success: var( --color-foreground );
+	--color-warning-background: #f8f3e7;
+	--color-warning: var( --color-foreground );
+	--color-error-background: #fcf1f1;
+	--color-error: #e7000b;
+	--color-link: var( --color-primary );
 
-  /* === TYPOGRAPHY === */
-  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-  --font-weight-medium: 450;
-  --font-weight-semibold: 500;
-  --font-weight-bold: 600;
-  --text-xs: calc(0.8125 * var(--base-font-size));
-  --text-xs--line-height: 1.538;
-  --text-sm: calc(0.875 * var(--base-font-size));
-  --text-sm--line-height: 1.65;
-  --text-base: calc(0.9375 * var(--base-font-size));
-  --text-base--line-height: 1.625;
-  --text-base--tracking: -0.01em;
- 
-  /* === SPACING === */
-  --spacing: calc(0.25 * var(--base-font-size)); /* 4px */
-  --spacing-1: var(--spacing); /* 4px */
-  --spacing-1\.5: calc(var(--spacing) * 1.5); /* 6px */
-  --spacing-2: calc(var(--spacing) * 2); /* 8px */
-  --spacing-3: calc(var(--spacing) * 3); /* 12px */
-  --spacing-3\.5: calc(var(--spacing) * 3.5); /* 14px */
-  --spacing-4: calc(var(--spacing) * 4); /* 16px */
-  --spacing-5: calc(var(--spacing) * 5); /* 20px */
-  --spacing-6: calc(var(--spacing) * 6); /* 24px */
-  --spacing-7: calc(var(--spacing) * 7); /* 28px */
-  --spacing-8: calc(var(--spacing) * 8); /* 32px */
-  --spacing-9: calc(var(--spacing) * 9); /* 36px */
-  --spacing-10: calc(var(--spacing) * 10); /* 40px */
-  --spacing-12: calc(var(--spacing) * 12); /* 48px */
-  --spacing-20: calc(var(--spacing) * 20); /* 80px */
-  
-  /* === BORDER RADIUS === */
-  --radius: var(--base-font-size); /* 16px */
-  --radius-xs: calc(var(--radius) - 10px); /* 6px */
-  --radius-sm: calc(var(--radius) - 8px); /* 8px */
-  --radius-md: calc(var(--radius) - 2px); /* 14px */
-  --radius-lg: var(--radius); /* 16px */
-  --radius-xl: calc(var(--radius) + 8px); /* 24px */
-  --radius-full: 9999px;
-  
-  /* === SHADOWS === */
-  --shadow-sm: 0 0 0 1px color-mix(in srgb, var(--color-foreground) 10%, transparent), 0 0 6px color-mix(in srgb, var(--color-foreground) 5%, transparent); 
-  --shadow-lg: 0 0 0 1px rgba(0, 0, 0, 0.075), 0 2px 24px rgba(0, 0, 0, 0.075);
-  --shadow-outline: 0 0 0 1px color-mix(in srgb, var(--color-foreground) 10%, transparent);
-  --shadow-outline-strong: 0 0 0 1px color-mix(in srgb, var(--color-foreground) 25%, transparent);
-  /* === TRANSITIONS === */
-  
-  --transition-colors: color 150ms cubic-bezier(0.4, 0, 0.2, 1), background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), border-color 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1), fill 150ms cubic-bezier(0.4, 0, 0.2, 1), stroke 150ms cubic-bezier(0.4, 0, 0.2, 1);
+	/* === TYPOGRAPHY === */
+	--font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+		'Segoe UI Symbol', 'Noto Color Emoji';
+	--font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
+		monospace;
+	--font-weight-medium: 450;
+	--font-weight-semibold: 500;
+	--font-weight-bold: 600;
+	--text-xs: calc( 0.8125 * var( --base-font-size ) );
+	--text-xs--line-height: 1.538;
+	--text-sm: calc( 0.875 * var( --base-font-size ) );
+	--text-sm--line-height: 1.65;
+	--text-base: calc( 0.9375 * var( --base-font-size ) );
+	--text-base--line-height: 1.625;
+	--text-base--tracking: -0.01em;
+
+	/* === SPACING === */
+	--spacing: calc( 0.25 * var( --base-font-size ) ); /* 4px */
+	--spacing-1: var( --spacing ); /* 4px */
+	--spacing-1\.5: calc( var( --spacing ) * 1.5 ); /* 6px */
+	--spacing-2: calc( var( --spacing ) * 2 ); /* 8px */
+	--spacing-3: calc( var( --spacing ) * 3 ); /* 12px */
+	--spacing-3\.5: calc( var( --spacing ) * 3.5 ); /* 14px */
+	--spacing-4: calc( var( --spacing ) * 4 ); /* 16px */
+	--spacing-5: calc( var( --spacing ) * 5 ); /* 20px */
+	--spacing-6: calc( var( --spacing ) * 6 ); /* 24px */
+	--spacing-7: calc( var( --spacing ) * 7 ); /* 28px */
+	--spacing-8: calc( var( --spacing ) * 8 ); /* 32px */
+	--spacing-9: calc( var( --spacing ) * 9 ); /* 36px */
+	--spacing-10: calc( var( --spacing ) * 10 ); /* 40px */
+	--spacing-12: calc( var( --spacing ) * 12 ); /* 48px */
+	--spacing-20: calc( var( --spacing ) * 20 ); /* 80px */
+
+	/* === BORDER RADIUS === */
+	--radius: var( --base-font-size ); /* 16px */
+	--radius-xs: calc( var( --radius ) - 10px ); /* 6px */
+	--radius-sm: calc( var( --radius ) - 8px ); /* 8px */
+	--radius-md: calc( var( --radius ) - 2px ); /* 14px */
+	--radius-lg: var( --radius ); /* 16px */
+	--radius-xl: calc( var( --radius ) + 8px ); /* 24px */
+	--radius-full: 9999px;
+
+	/* === SHADOWS === */
+	--shadow-sm: 0 0 0 1px color-mix( in srgb, var( --color-foreground ) 10%, transparent ),
+		0 0 6px color-mix( in srgb, var( --color-foreground ) 5%, transparent );
+	--shadow-lg: 0 0 0 1px rgba( 0, 0, 0, 0.075 ), 0 2px 24px rgba( 0, 0, 0, 0.075 );
+	--shadow-outline: 0 0 0 1px color-mix( in srgb, var( --color-foreground ) 10%, transparent );
+	--shadow-outline-strong: 0 0 0 1px
+		color-mix( in srgb, var( --color-foreground ) 25%, transparent );
+	/* === TRANSITIONS === */
+
+	--transition-colors: color 150ms cubic-bezier( 0.4, 0, 0.2, 1 ),
+		background-color 150ms cubic-bezier( 0.4, 0, 0.2, 1 ),
+		border-color 150ms cubic-bezier( 0.4, 0, 0.2, 1 ),
+		box-shadow 150ms cubic-bezier( 0.4, 0, 0.2, 1 ), fill 150ms cubic-bezier( 0.4, 0, 0.2, 1 ),
+		stroke 150ms cubic-bezier( 0.4, 0, 0.2, 1 );
 }
 
 /* Dark mode */
 .agenttic.dark {
-  --color-background: #1F1F1F;
-  --color-foreground: #FFFFFF;
-  --color-popover: #1F1F1F;
-  --color-popover-muted: #2F2F2F;
-  --color-muted: #464646;
-  --color-muted-foreground: #8F8F8F;
-  --color-input-border: #3D3D3D;
-  --color-input-border-focused: #4F4F4F;
-  --color-success-background: #1F2E1F;
-  --color-warning-background: #2E281F;
-  --color-error-background: #2E1F1F;
-  --color-error: #FFDDDF;
-  --color-link: var(--color-white);
+	--color-background: #1f1f1f;
+	--color-foreground: #fff;
+	--color-popover: #1f1f1f;
+	--color-popover-muted: #2f2f2f;
+	--color-muted: #464646;
+	--color-muted-foreground: #8f8f8f;
+	--color-input-border: #3d3d3d;
+	--color-input-border-focused: #4f4f4f;
+	--color-success-background: #1f2e1f;
+	--color-warning-background: #2e281f;
+	--color-error-background: #2e1f1f;
+	--color-error: #ffdddf;
+	--color-link: var( --color-white );
 }
 
-.agenttic.dark [data-slot="collapsed-view"] svg {
-  color: var(--color-white);
+.agenttic.dark [data-slot='collapsed-view'] svg {
+	color: var( --color-white );
 }

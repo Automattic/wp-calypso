@@ -1,8 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import React from 'react';
-import { createMessageRenderer } from '../../utils/createMessageRenderer';
 import { Messages } from '../../components/chat/Messages';
-import type { Message } from '../../types';
+import { createMessageRenderer } from '../../utils/createMessageRenderer';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
 	title: 'Markdown Extensions/GFM (GitHub Flavored Markdown)',

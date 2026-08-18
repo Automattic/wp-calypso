@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { ChatFooter } from './ChatFooter';
 import React, { useRef } from 'react';
-import type { Suggestion } from '../../types';
 import { AgentUIProvider } from '../../context/AgentUIContext';
+import { ChatFooter } from './ChatFooter';
 import type { AgentUIContextValue } from '../../context/AgentUIContext';
+import type { Suggestion } from '../../types';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
 	title: 'Chat/ChatFooter',
@@ -27,18 +27,15 @@ const meta = {
 		},
 		disabled: {
 			control: 'boolean',
-			description:
-				'Whether the submit button should be disabled for validation',
+			description: 'Whether the submit button should be disabled for validation',
 		},
 		fromCompact: {
 			control: 'boolean',
-			description:
-				'Whether the footer is transitioning from compact view',
+			description: 'Whether the footer is transitioning from compact view',
 		},
 		focusOnMount: {
 			control: 'boolean',
-			description:
-				'Whether to focus the input field when the component mounts',
+			description: 'Whether to focus the input field when the component mounts',
 		},
 		actionOrder: {
 			description: 'Order of custom actions relative to submit button',
@@ -140,15 +137,9 @@ const mockContextValue = {
 } as AgentUIContextValue;
 
 // Wrapper component to handle state for stories
-const ChatFooterWrapper = (
-	args: React.ComponentProps< typeof ChatFooter >
-) => {
-	const [ inputValue, setInputValue ] = React.useState(
-		args.inputValue || ''
-	);
-	const [ suggestions, setSuggestions ] = React.useState(
-		args.suggestions || mockSuggestions
-	);
+const ChatFooterWrapper = ( args: React.ComponentProps< typeof ChatFooter > ) => {
+	const [ inputValue, setInputValue ] = React.useState( args.inputValue || '' );
+	const [ suggestions, setSuggestions ] = React.useState( args.suggestions || mockSuggestions );
 	const textareaRef = useRef< HTMLTextAreaElement >( null );
 
 	// Update state when args change
@@ -206,7 +197,8 @@ export const WithSuggestions: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Shows suggestions when the input is empty. Users can click on suggestions to populate the input field.',
+				story:
+					'Shows suggestions when the input is empty. Users can click on suggestions to populate the input field.',
 			},
 		},
 	},
@@ -251,7 +243,8 @@ export const WithDropdownSuggestions: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Suggestions can include a dropdown picker. Clicking a dropdown suggestion opens a list of options that complete the prompt.',
+				story:
+					'Suggestions can include a dropdown picker. Clicking a dropdown suggestion opens a list of options that complete the prompt.',
 			},
 		},
 	},
@@ -285,7 +278,8 @@ export const DisabledSubmit: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'The submit button is disabled when the `disabled` prop is set to true, even if there is text in the input field. This is useful for form validation scenarios where you want to prevent submission until certain criteria are met.',
+				story:
+					'The submit button is disabled when the `disabled` prop is set to true, even if there is text in the input field. This is useful for form validation scenarios where you want to prevent submission until certain criteria are met.',
 			},
 		},
 	},
@@ -302,7 +296,8 @@ export const FromCompact: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Shows the footer when transitioning from compact view, with different animation timing.',
+				story:
+					'Shows the footer when transitioning from compact view, with different animation timing.',
 			},
 		},
 	},
@@ -334,9 +329,7 @@ export const WithNotice: Story = {
 const ValidationDemoWrapper = () => {
 	const [ inputValue, setInputValue ] = React.useState( '' );
 	const [ isValid, setIsValid ] = React.useState( false );
-	const [ suggestions, setSuggestions ] = React.useState(
-		inputValue ? [] : mockSuggestions
-	);
+	const [ suggestions, setSuggestions ] = React.useState( inputValue ? [] : mockSuggestions );
 	const textareaRef = useRef< HTMLTextAreaElement >( null );
 
 	// Validation rules: must contain at least one word that's 3+ characters long
@@ -388,7 +381,8 @@ export const DisabledWithValidation: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Interactive example showing how the `disabled` prop can be used for form validation. The submit button is disabled until the input meets validation criteria. This example also demonstrates the notice system and suggestions integration.',
+				story:
+					'Interactive example showing how the `disabled` prop can be used for form validation. The submit button is disabled until the input meets validation criteria. This example also demonstrates the notice system and suggestions integration.',
 			},
 		},
 		controls: {

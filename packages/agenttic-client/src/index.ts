@@ -133,11 +133,7 @@ export type {
 } from './react/serverTypes';
 
 // Odie bot configuration utilities
-export {
-	createOdieBotId,
-	parseOdieBotId,
-	isOdieBotId,
-} from './react/odieConfig';
+export { createOdieBotId, parseOdieBotId, isOdieBotId } from './react/odieConfig';
 export type { OdieBotConfig } from './react/odieConfig';
 
 // Agents API REST adapter for WordPress-native chat surfaces.

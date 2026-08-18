@@ -1,12 +1,3 @@
-import type {
-	Client,
-	ClientConfig,
-	FilePart,
-	Message,
-	SendMessageParams,
-	Task,
-	TaskUpdate,
-} from '../client/types/index';
 import {
 	clearToolResultPromises,
 	createClient,
@@ -32,16 +23,22 @@ import {
 	extractToolResultsFromMessage,
 	messageCarriesToolPayload,
 } from './conversationUtils';
+import type {
+	Client,
+	ClientConfig,
+	FilePart,
+	Message,
+	SendMessageParams,
+	Task,
+	TaskUpdate,
+} from '../client/types/index';
 
 /**
  * Update localStorage with new session ID when server returns a stable session ID
  * @param storageKey   - The localStorage key to update
  * @param newSessionId - The new stable session ID from the server
  */
-function updateSessionIdInLocalStorage(
-	storageKey: string,
-	newSessionId: string
-): void {
+function updateSessionIdInLocalStorage( storageKey: string, newSessionId: string ): void {
 	// @ts-ignore - localStorage may not be available in all environments
 	if ( typeof localStorage === 'undefined' ) {
 		log( 'localStorage not available, cannot update session ID' );
@@ -49,7 +46,6 @@ function updateSessionIdInLocalStorage(
 	}
 
 	try {
-		// @ts-ignore
 		const stored = localStorage.getItem( storageKey );
 		if ( stored ) {
 			const session = JSON.parse( stored );
@@ -57,7 +53,6 @@ function updateSessionIdInLocalStorage(
 
 			// Update sessionId but preserve timestamp
 			session.sessionId = newSessionId;
-			// @ts-ignore
 			localStorage.setItem( storageKey, JSON.stringify( session ) );
 			log(
 				'Updated localStorage[%s] session ID: %s -> %s',
@@ -71,20 +66,11 @@ function updateSessionIdInLocalStorage(
 				sessionId: newSessionId,
 				timestamp: Date.now(),
 			};
-			// @ts-ignore
 			localStorage.setItem( storageKey, JSON.stringify( session ) );
-			log(
-				'Created new session in localStorage[%s]: %s',
-				storageKey,
-				newSessionId
-			);
+			log( 'Created new session in localStorage[%s]: %s', storageKey, newSessionId );
 		}
 	} catch ( error ) {
-		log(
-			'Failed to update localStorage sessionId to %s: %O',
-			newSessionId,
-			error
-		);
+		log( 'Failed to update localStorage sessionId to %s: %O', newSessionId, error );
 	}
 }
 
@@ -105,17 +91,21 @@ function notifySessionIdChange(
 	}
 }
 
-/** Omit client-minted `local-*` ids from outbound requests. */
-function toOutboundSessionId(
-	sessionId: string | null | undefined
-): string | undefined {
+/**
+ * Omit client-minted `local-*` ids from outbound requests.
+ * @param sessionId - The session id to filter.
+ */
+function toOutboundSessionId( sessionId: string | null | undefined ): string | undefined {
 	if ( ! sessionId || sessionId.startsWith( 'local-' ) ) {
 		return undefined;
 	}
 	return sessionId;
 }
 
-/** True when every part is a tool result (sendToolResult follow-ups). */
+/**
+ * True when every part is a tool result (sendToolResult follow-ups).
+ * @param message - The message to inspect.
+ */
 function isToolResultOnlyMessage( message: Message ): boolean {
 	return (
 		message.parts.length > 0 &&
@@ -133,7 +123,7 @@ function isToolResultOnlyMessage( message: Message ): boolean {
 /**
  * Resolve any promises in conversation history messages
  * @param conversationHistory - Array of messages that may contain tool results with promises
- * @return Updated conversation history with resolved promises
+ * @returns Updated conversation history with resolved promises
  */
 async function resolvePromisesInConversationHistory(
 	conversationHistory: Message[]
@@ -144,16 +134,11 @@ async function resolvePromisesInConversationHistory(
 		if ( message.parts && Array.isArray( message.parts ) ) {
 			// Check if this message has tool result parts that might contain promises
 			const hasToolResults = message.parts.some(
-				( part: any ) =>
-					part.type === 'data' &&
-					'toolCallId' in part.data &&
-					'result' in part.data
+				( part: any ) => part.type === 'data' && 'toolCallId' in part.data && 'result' in part.data
 			);
 
 			if ( hasToolResults ) {
-				const updatedParts = updateToolResultsWithResolvedPromises(
-					message.parts
-				);
+				const updatedParts = updateToolResultsWithResolvedPromises( message.parts );
 				resolvedHistory.push( {
 					...message,
 					parts: updatedParts,
@@ -202,10 +187,7 @@ interface ManagedAgent {
  * Agent manager interface
  */
 export interface AgentManager {
-	createAgent: (
-		key: string,
-		config: AgentManagerConfig
-	) => Promise< Client >;
+	createAgent: ( key: string, config: AgentManagerConfig ) => Promise< Client >;
 	getAgent: ( key: string ) => Client | null;
 	hasAgent: ( key: string ) => boolean;
 	removeAgent: ( key: string ) => boolean;
@@ -248,32 +230,19 @@ function createAgentManager(): AgentManager {
 	 * @param key
 	 * @param messages
 	 */
-	async function persistConversationHistory(
-		key: string,
-		messages: Message[]
-	): Promise< void > {
+	async function persistConversationHistory( key: string, messages: Message[] ): Promise< void > {
 		const agent = agents.get( key );
 		if ( agent?.sessionId ) {
 			try {
-				await storeConversation(
-					agent.sessionId,
-					messages,
-					agent.conversationStorageKey
-				);
+				await storeConversation( agent.sessionId, messages, agent.conversationStorageKey );
 			} catch ( error ) {
-				log(
-					`Failed to persist conversation history for agent ${ key }:`,
-					error
-				);
+				log( `Failed to persist conversation history for agent ${ key }:`, error );
 			}
 		}
 	}
 
 	return {
-		async createAgent(
-			key: string,
-			config: AgentManagerConfig
-		): Promise< Client > {
+		async createAgent( key: string, config: AgentManagerConfig ): Promise< Client > {
 			if ( agents.has( key ) ) {
 				return agents.get( key )!.client;
 			}
@@ -293,11 +262,7 @@ function createAgentManager(): AgentManager {
 			let conversationHistory: Message[] = [];
 			if ( sessionId ) {
 				try {
-					const result = await loadConversation(
-						sessionId,
-						conversationStorageKey,
-						storageConfig
-					);
+					const result = await loadConversation( sessionId, conversationStorageKey, storageConfig );
 					conversationHistory = result.messages;
 				} catch ( error ) {
 					log(
@@ -351,18 +316,12 @@ function createAgentManager(): AgentManager {
 
 			const messageObj: Message =
 				options.message ||
-				createTextMessageWithHistory(
-					message,
-					conversationHistory,
-					options.imageUrls
-				);
+				createTextMessageWithHistory( message, conversationHistory, options.imageUrls );
 
 			const task = await client.sendMessage( {
 				message: messageObj,
 				withHistory,
-				sessionId: toOutboundSessionId(
-					sessionId || managedAgent.sessionId
-				),
+				sessionId: toOutboundSessionId( sessionId || managedAgent.sessionId ),
 				...otherOptions,
 			} );
 
@@ -374,10 +333,7 @@ function createAgentManager(): AgentManager {
 				managedAgent.sessionId = task.sessionId;
 
 				if ( oldSessionId !== task.sessionId ) {
-					notifySessionIdChange(
-						managedAgent.onSessionIdChange,
-						task.sessionId
-					);
+					notifySessionIdChange( managedAgent.onSessionIdChange, task.sessionId );
 				}
 
 				// Update localStorage only when sessionId actually changes
@@ -394,10 +350,7 @@ function createAgentManager(): AgentManager {
 						oldSessionId,
 						task.sessionId
 					);
-					updateSessionIdInLocalStorage(
-						managedAgent.sessionIdStorageKey,
-						task.sessionId
-					);
+					updateSessionIdInLocalStorage( managedAgent.sessionIdStorageKey, task.sessionId );
 				}
 			}
 
@@ -414,9 +367,7 @@ function createAgentManager(): AgentManager {
 				);
 
 				// Extract text parts from final message
-				const textParts = task.status.message.parts.filter(
-					( part ) => part.type === 'text'
-				);
+				const textParts = task.status.message.parts.filter( ( part ) => part.type === 'text' );
 
 				// Create complete message with tool parts + text parts in proper order
 				completeAgentMessage = {
@@ -435,21 +386,14 @@ function createAgentManager(): AgentManager {
 				// Store only the new content from the user message (without history parts)
 				createTextMessage( message ),
 				// Add complete agent response with tool calls/results if present
-				...( completeAgentMessage
-					? [ extractNewContentFromMessage( completeAgentMessage ) ]
-					: [] ),
+				...( completeAgentMessage ? [ extractNewContentFromMessage( completeAgentMessage ) ] : [] ),
 			];
 
 			// Check if there's a separate agent message to add
 			let finalConversationHistory = newConversationHistory;
 			if ( ( task as any ).agentMessage ) {
-				const separateAgentMessage = extractNewContentFromMessage(
-					( task as any ).agentMessage
-				);
-				finalConversationHistory = [
-					...newConversationHistory,
-					separateAgentMessage,
-				];
+				const separateAgentMessage = extractNewContentFromMessage( ( task as any ).agentMessage );
+				finalConversationHistory = [ ...newConversationHistory, separateAgentMessage ];
 			}
 
 			// Update the agent's conversation history
@@ -457,10 +401,7 @@ function createAgentManager(): AgentManager {
 
 			// Persist the updated conversation history only if withHistory is true
 			if ( withHistory ) {
-				await persistConversationHistory(
-					key,
-					finalConversationHistory
-				);
+				await persistConversationHistory( key, finalConversationHistory );
 			}
 
 			return task;
@@ -498,24 +439,19 @@ function createAgentManager(): AgentManager {
 
 			// If caller provided their own abort signal, listen to it too
 			if ( abortSignal ) {
-				abortSignal.addEventListener( 'abort', () =>
-					abortController.abort()
-				);
+				abortSignal.addEventListener( 'abort', () => abortController.abort() );
 			}
 
 			// Track conversation history locally to avoid race conditions
-			let currentConversationHistory = [
-				...managedAgent.conversationHistory,
-			];
+			let currentConversationHistory = [ ...managedAgent.conversationHistory ];
 
 			// Track current tool call IDs to ensure we only capture matching tool results
 			let currentToolCallIds: string[] = [];
 
 			// Resolve any promises in conversation history before sending to agent
-			const resolvedConversationHistory =
-				await resolvePromisesInConversationHistory(
-					currentConversationHistory
-				);
+			const resolvedConversationHistory = await resolvePromisesInConversationHistory(
+				currentConversationHistory
+			);
 
 			// Update the agent's conversation history with resolved values
 			managedAgent.conversationHistory = resolvedConversationHistory;
@@ -523,19 +459,14 @@ function createAgentManager(): AgentManager {
 			currentConversationHistory = resolvedConversationHistory;
 			// Persist resolved conversation history if withHistory is true
 			if ( withHistory ) {
-				await persistConversationHistory(
-					key,
-					resolvedConversationHistory
-				);
+				await persistConversationHistory( key, resolvedConversationHistory );
 			}
 
 			let messageObj: Message;
 			if ( optionsMessage ) {
 				// When a pre-built message is provided (e.g., tool results),
 				// prepend conversation history so the server has full context.
-				const historyParts = conversationMessagesToDataParts(
-					resolvedConversationHistory
-				);
+				const historyParts = conversationMessagesToDataParts( resolvedConversationHistory );
 				messageObj = {
 					...optionsMessage,
 					parts: [ ...historyParts, ...optionsMessage.parts ],
@@ -550,13 +481,11 @@ function createAgentManager(): AgentManager {
 
 			// Add metadata to the message object that will be sent to the agent
 			if ( options.metadata && ! optionsMessage ) {
-				const { contentType: msgContentType, ...msgMetadata } =
-					options.metadata as any;
+				const { contentType: msgContentType, ...msgMetadata } = options.metadata as any;
 
 				// Add contentType to the TextPart metadata if provided
 				if ( msgContentType ) {
-					const lastPart =
-						messageObj.parts[ messageObj.parts.length - 1 ];
+					const lastPart = messageObj.parts[ messageObj.parts.length - 1 ];
 					if ( lastPart && lastPart.type === 'text' ) {
 						lastPart.metadata = {
 							...lastPart.metadata,
@@ -575,42 +504,29 @@ function createAgentManager(): AgentManager {
 
 			// Add user message to local conversation history before streaming (always)
 			// When a pre-built message is provided (e.g., tool results), use it directly.
-			const userMessage =
-				optionsMessage ||
-				createTextMessage( message, options.metadata );
+			const userMessage = optionsMessage || createTextMessage( message, options.metadata );
 
 			// Add image parts if present
 			if ( options.imageUrls && options.imageUrls.length > 0 ) {
-				const imageParts: FilePart[] = options.imageUrls.map(
-					( imageData ) => {
-						// Handle both string URLs and ImageData objects
-						const url =
-							typeof imageData === 'string'
-								? imageData
-								: imageData.url;
-						const imageMetadata =
-							typeof imageData === 'string'
-								? undefined
-								: imageData.metadata;
+				const imageParts: FilePart[] = options.imageUrls.map( ( imageData ) => {
+					// Handle both string URLs and ImageData objects
+					const url = typeof imageData === 'string' ? imageData : imageData.url;
+					const imageMetadata = typeof imageData === 'string' ? undefined : imageData.metadata;
 
-						// Get mimeType from metadata if available, otherwise default to image/jpeg
-						const mimeType =
-							( imageMetadata?.fileType as string ) ||
-							'image/jpeg';
-						const fileName =
-							( imageMetadata?.fileName as string ) || 'image';
+					// Get mimeType from metadata if available, otherwise default to image/jpeg
+					const mimeType = ( imageMetadata?.fileType as string ) || 'image/jpeg';
+					const fileName = ( imageMetadata?.fileName as string ) || 'image';
 
-						return {
-							type: 'file',
-							file: {
-								name: fileName,
-								mimeType,
-								uri: url,
-							},
-							metadata: imageMetadata,
-						};
-					}
-				);
+					return {
+						type: 'file',
+						file: {
+							name: fileName,
+							mimeType,
+							uri: url,
+						},
+						metadata: imageMetadata,
+					};
+				} );
 				userMessage.parts.push( ...imageParts );
 			}
 			// Tool-result follow-ups reuse the opener's in-flight id; only
@@ -623,10 +539,7 @@ function createAgentManager(): AgentManager {
 				managedAgent.inFlightUserMessageId = userMessage.messageId;
 			}
 
-			currentConversationHistory = [
-				...currentConversationHistory,
-				userMessage,
-			];
+			currentConversationHistory = [ ...currentConversationHistory, userMessage ];
 
 			// Update agent's conversation history immediately
 			managedAgent.conversationHistory = currentConversationHistory;
@@ -641,15 +554,10 @@ function createAgentManager(): AgentManager {
 
 			// Persist the user message only if withHistory is true
 			if ( withHistory ) {
-				await persistConversationHistory(
-					key,
-					currentConversationHistory
-				);
+				await persistConversationHistory( key, currentConversationHistory );
 			}
 
-			const outboundSessionId = toOutboundSessionId(
-				sessionId || managedAgent.sessionId
-			);
+			const outboundSessionId = toOutboundSessionId( sessionId || managedAgent.sessionId );
 
 			for await ( const update of client.sendMessageStream( {
 				message: messageObj,
@@ -670,10 +578,7 @@ function createAgentManager(): AgentManager {
 					managedAgent.sessionId = update.sessionId;
 
 					if ( oldSessionId !== update.sessionId ) {
-						notifySessionIdChange(
-							managedAgent.onSessionIdChange,
-							update.sessionId
-						);
+						notifySessionIdChange( managedAgent.onSessionIdChange, update.sessionId );
 					}
 
 					// Update localStorage only when sessionId actually changes
@@ -692,10 +597,7 @@ function createAgentManager(): AgentManager {
 								? `changed from ${ oldSessionId } to ${ update.sessionId }`
 								: `received: ${ update.sessionId }`
 						);
-						updateSessionIdInLocalStorage(
-							managedAgent.sessionIdStorageKey,
-							update.sessionId
-						);
+						updateSessionIdInLocalStorage( managedAgent.sessionIdStorageKey, update.sessionId );
 					}
 
 					// Persist under the server id and drop the temp local-* key
@@ -706,65 +608,37 @@ function createAgentManager(): AgentManager {
 						! managedAgent.conversationStorageKey
 					) {
 						if ( withHistory ) {
-							await persistConversationHistory(
-								key,
-								currentConversationHistory
-							);
+							await persistConversationHistory( key, currentConversationHistory );
 						}
 						await clearConversation( oldSessionId );
 					}
 				}
 
 				// Save tool interactions when input is required (this saves the agent message with tool calls)
-				if (
-					update.status?.state === 'input-required' &&
-					update.status?.message
-				) {
+				if ( update.status?.state === 'input-required' && update.status?.message ) {
 					// Capture the tool call IDs for this batch
-					const toolCalls = extractToolCallsFromMessage(
-						update.status.message
-					);
-					currentToolCallIds = toolCalls.map(
-						( call ) => call.data.toolCallId as string
-					);
+					const toolCalls = extractToolCallsFromMessage( update.status.message );
+					currentToolCallIds = toolCalls.map( ( call ) => call.data.toolCallId as string );
 
-					const toolMessage = extractNewContentFromMessage(
-						update.status.message
-					);
-					currentConversationHistory = [
-						...currentConversationHistory,
-						toolMessage,
-					];
+					const toolMessage = extractNewContentFromMessage( update.status.message );
+					currentConversationHistory = [ ...currentConversationHistory, toolMessage ];
 
 					// Update agent's conversation history immediately
-					managedAgent.conversationHistory =
-						currentConversationHistory;
+					managedAgent.conversationHistory = currentConversationHistory;
 					// Persist only if withHistory is true
 					if ( withHistory ) {
-						await persistConversationHistory(
-							key,
-							currentConversationHistory
-						);
+						await persistConversationHistory( key, currentConversationHistory );
 					}
 				}
 
 				// Capture tool results when tools are executed (state becomes 'working' after tool execution)
-				if (
-					update.status?.state === 'working' &&
-					update.status?.message &&
-					! update.final
-				) {
+				if ( update.status?.state === 'working' && update.status?.message && ! update.final ) {
 					// Extract ALL tool results first
-					const allToolResults = extractToolResultsFromMessage(
-						update.status.message
-					);
+					const allToolResults = extractToolResultsFromMessage( update.status.message );
 
 					// Filter to only include results that match current tool call IDs
-					const currentToolResults = allToolResults.filter(
-						( result ) =>
-							currentToolCallIds.includes(
-								result.data.toolCallId as string
-							)
+					const currentToolResults = allToolResults.filter( ( result ) =>
+						currentToolCallIds.includes( result.data.toolCallId as string )
 					);
 
 					if ( currentToolResults.length > 0 ) {
@@ -782,18 +656,12 @@ function createAgentManager(): AgentManager {
 						];
 
 						// Update agent's conversation history immediately
-						managedAgent.conversationHistory =
-							currentConversationHistory;
+						managedAgent.conversationHistory = currentConversationHistory;
 						// Persist only if withHistory is true
 						if ( withHistory ) {
-							await persistConversationHistory(
-								key,
-								currentConversationHistory
-							);
+							await persistConversationHistory( key, currentConversationHistory );
 						}
-					} else if (
-						messageCarriesToolPayload( update.status.message )
-					) {
+					} else if ( messageCarriesToolPayload( update.status.message ) ) {
 						// A tool produced a renderable agent message (e.g. a
 						// picker) and the turn is still continuing to the agent.
 						// Append it so it renders live, but deliberately leave
@@ -802,77 +670,54 @@ function createAgentManager(): AgentManager {
 						// in-flight tool calls.
 						currentConversationHistory = [
 							...currentConversationHistory,
-							extractNewContentFromMessage(
-								update.status.message
-							),
+							extractNewContentFromMessage( update.status.message ),
 						];
 
-						managedAgent.conversationHistory =
-							currentConversationHistory;
+						managedAgent.conversationHistory = currentConversationHistory;
 						if ( withHistory ) {
-							await persistConversationHistory(
-								key,
-								currentConversationHistory
-							);
+							await persistConversationHistory( key, currentConversationHistory );
 						}
 					}
 				}
 
-				if (
-					update.final &&
-					update.status?.state !== 'input-required'
-				) {
+				if ( update.final && update.status?.state !== 'input-required' ) {
 					// Clear tool call tracking for next batch
 					currentToolCallIds = [];
 
 					// Resolve only the in-flight opener; older pending stay.
 					const inFlightId = managedAgent.inFlightUserMessageId;
 					const nextStatus =
-						update.status?.state === 'failed' ||
-						update.status?.state === 'canceled'
+						update.status?.state === 'failed' || update.status?.state === 'canceled'
 							? 'failed'
 							: 'complete';
 					if ( inFlightId ) {
-						currentConversationHistory =
-							currentConversationHistory.map( ( m ) => {
-								if ( m.messageId !== inFlightId ) {
-									return m;
-								}
-								const status = m.metadata?.deliveryStatus;
-								if (
-									status === 'pending' ||
-									status === 'streaming'
-								) {
-									return {
-										...m,
-										metadata: {
-											...( m.metadata || {} ),
-											deliveryStatus: nextStatus,
-										},
-									};
-								}
+						currentConversationHistory = currentConversationHistory.map( ( m ) => {
+							if ( m.messageId !== inFlightId ) {
 								return m;
-							} );
+							}
+							const status = m.metadata?.deliveryStatus;
+							if ( status === 'pending' || status === 'streaming' ) {
+								return {
+									...m,
+									metadata: {
+										...( m.metadata || {} ),
+										deliveryStatus: nextStatus,
+									},
+								};
+							}
+							return m;
+						} );
 						managedAgent.inFlightUserMessageId = null;
 					}
 
 					if ( update.status?.message ) {
-						const finalAgentMessage = extractNewContentFromMessage(
-							update.status.message
-						);
-						currentConversationHistory = [
-							...currentConversationHistory,
-							finalAgentMessage,
-						];
+						const finalAgentMessage = extractNewContentFromMessage( update.status.message );
+						currentConversationHistory = [ ...currentConversationHistory, finalAgentMessage ];
 					}
 
-					managedAgent.conversationHistory =
-						currentConversationHistory;
+					managedAgent.conversationHistory = currentConversationHistory;
 					if ( withHistory ) {
-						await persistConversationHistory(
-							key,
-							currentConversationHistory
-						);
+						await persistConversationHistory( key, currentConversationHistory );
 					}
 				}
 
@@ -888,7 +733,6 @@ function createAgentManager(): AgentManager {
 		 * Removes any existing tool result for the same `toolCallId` from
 		 * conversation history before sending, so the server sees exactly
 		 * one result per call.
-		 *
 		 * @param key        - The agent key
 		 * @param toolCallId - The tool call ID to respond to
 		 * @param toolId     - The tool ID
@@ -911,18 +755,14 @@ function createAgentManager(): AgentManager {
 			}
 
 			const isMatchingToolResult = ( part: any ) =>
-				part.type === 'data' &&
-				part.data?.toolCallId === toolCallId &&
-				'result' in part.data;
+				part.type === 'data' && part.data?.toolCallId === toolCallId && 'result' in part.data;
 
 			// Remove existing tool result for this `toolCallId` from conversation
 			// history to prevent duplicate results (server rejects mismatched pairs).
 			managedAgent.conversationHistory = managedAgent.conversationHistory
 				.map( ( msg ) => ( {
 					...msg,
-					parts: msg.parts.filter(
-						( p ) => ! isMatchingToolResult( p )
-					),
+					parts: msg.parts.filter( ( p ) => ! isMatchingToolResult( p ) ),
 				} ) )
 				.filter( ( msg ) => msg.parts.length > 0 );
 
@@ -931,15 +771,7 @@ function createAgentManager(): AgentManager {
 				message: {
 					role: 'user',
 					kind: 'message',
-					parts: [
-						createToolResultDataPart(
-							toolCallId,
-							toolId,
-							result,
-							undefined,
-							fileParts
-						),
-					],
+					parts: [ createToolResultDataPart( toolCallId, toolId, result, undefined, fileParts ) ],
 					messageId: generateMessageId(),
 				},
 			} );
@@ -955,17 +787,11 @@ function createAgentManager(): AgentManager {
 
 			// Clear persistent storage as well
 			if ( managedAgent.sessionId ) {
-				await clearConversation(
-					managedAgent.sessionId,
-					managedAgent.conversationStorageKey
-				);
+				await clearConversation( managedAgent.sessionId, managedAgent.conversationStorageKey );
 			}
 		},
 
-		async replaceMessages(
-			key: string,
-			messages: Message[]
-		): Promise< void > {
+		async replaceMessages( key: string, messages: Message[] ): Promise< void > {
 			const managedAgent = agents.get( key );
 			if ( ! managedAgent ) {
 				throw new Error( `Agent with key "${ key }" not found` );
@@ -999,10 +825,7 @@ function createAgentManager(): AgentManager {
 
 			// Update localStorage if we have a storage key
 			if ( managedAgent.sessionIdStorageKey ) {
-				updateSessionIdInLocalStorage(
-					managedAgent.sessionIdStorageKey,
-					sessionId
-				);
+				updateSessionIdInLocalStorage( managedAgent.sessionIdStorageKey, sessionId );
 			}
 		},
 

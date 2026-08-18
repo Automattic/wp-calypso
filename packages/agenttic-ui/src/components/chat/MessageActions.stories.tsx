@@ -1,8 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { useEffect, useRef, useState } from 'react';
-import { MessageActions } from './MessageActions';
-import { Message } from './Message';
-import messageStyles from './Message.module.css';
+import { ThumbsDownIcon, ThumbsUpIcon } from '..';
+import { createFeedbackActions } from '../../message-actions/utils';
 import {
 	copyAction,
 	createMessageWithActions,
@@ -13,9 +11,11 @@ import {
 	retryAction,
 	shareAction,
 } from '../../stories/mocks/messageActions';
-import { ThumbsDownIcon, ThumbsUpIcon } from '..';
-import { createFeedbackActions } from '../../message-actions/utils';
+import { Message } from './Message';
+import messageStyles from './Message.module.css';
+import { MessageActions } from './MessageActions';
 import type { Message as MessageType } from '../../types';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
 	title: 'Chat/MessageActions',
@@ -24,8 +24,7 @@ const meta = {
 		layout: 'padded',
 		docs: {
 			description: {
-				component:
-					'MessageActions displays contextual action buttons for chat messages.',
+				component: 'MessageActions displays contextual action buttons for chat messages.',
 			},
 		},
 	},
@@ -37,11 +36,7 @@ type Story = StoryObj< typeof meta >;
 // Story 1: Component in isolation
 export const ComponentExample: Story = {
 	args: {
-		message: createMessageWithActions( mockAgentMessage, [
-			copyAction,
-			shareAction,
-			editAction,
-		] ),
+		message: createMessageWithActions( mockAgentMessage, [ copyAction, shareAction, editAction ] ),
 	},
 	render: ( args ) => (
 		<div style={ { padding: '20px' } }>
@@ -57,23 +52,16 @@ export const FeedbackExample: Story = {
 	},
 	render: () => {
 		const FeedbackDemo = () => {
-			const [ message, setMessage ] =
-				useState< MessageType >( mockAgentMessage );
-			const [ , forceUpdate ] = useState( {} );
+			const [ message, setMessage ] = useState< MessageType >( mockAgentMessage );
 
 			// Create feedback manager with ref to maintain instance
-			const feedbackManagerRef = useRef< ReturnType<
-				typeof createFeedbackActions
-			> | null >( null );
+			const feedbackManagerRef = useRef< ReturnType< typeof createFeedbackActions > | null >(
+				null
+			);
 			if ( ! feedbackManagerRef.current ) {
 				feedbackManagerRef.current = createFeedbackActions( {
-					onFeedback: async (
-						messageId: string,
-						feedback: 'up' | 'down'
-					) => {
-						console.log(
-							`Feedback submitted: ${ messageId } - ${ feedback }`
-						);
+					onFeedback: async ( messageId: string, feedback: 'up' | 'down' ) => {
+						console.log( `Feedback submitted: ${ messageId } - ${ feedback }` );
 					},
 					condition: ( msg: MessageType ) => msg.role === 'agent',
 					icons: {
@@ -93,8 +81,7 @@ export const FeedbackExample: Story = {
 			// Set up onChange listener
 			useEffect( () => {
 				const handleChange = () => {
-					const actions =
-						feedbackManager.getActionsForMessage( message );
+					const actions = feedbackManager.getActionsForMessage( message );
 					setMessage( ( prev ) => ( { ...prev, actions } ) );
 				};
 
@@ -203,7 +190,8 @@ export const NoActions: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'When a message has no actions defined, the MessageActions component returns null and nothing is rendered.',
+				story:
+					'When a message has no actions defined, the MessageActions component returns null and nothing is rendered.',
 			},
 		},
 	},
@@ -215,24 +203,21 @@ export const DisabledActions: Story = {
 		message: mockAgentMessage,
 	},
 	render: () => {
-		const messageWithDisabledActions = createMessageWithActions(
-			mockAgentMessage,
-			[
-				{
-					...copyAction,
-					disabled: true,
-					tooltip: 'Copy is currently disabled',
-				},
-				{
-					id: 'feedback-up',
-					label: 'Already liked',
-					icon: <ThumbsUpIcon />,
-					onClick: () => console.log( 'This should not fire' ),
-					disabled: true,
-					tooltip: 'You already liked this message',
-				},
-			]
-		);
+		const messageWithDisabledActions = createMessageWithActions( mockAgentMessage, [
+			{
+				...copyAction,
+				disabled: true,
+				tooltip: 'Copy is currently disabled',
+			},
+			{
+				id: 'feedback-up',
+				label: 'Already liked',
+				icon: <ThumbsUpIcon />,
+				onClick: () => console.log( 'This should not fire' ),
+				disabled: true,
+				tooltip: 'You already liked this message',
+			},
+		] );
 
 		return <Message message={ messageWithDisabledActions } />;
 	},

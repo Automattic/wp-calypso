@@ -20,7 +20,8 @@ export const getClientContext = () => {
 								name: 'Introduction',
 								patternCategory: 'intro',
 								remotePatternId: 14040,
-								reason: "Creates a strong first impression by highlighting Mama's Bread's reputation and inviting customers to discover more. Features key imagery. ",
+								reason:
+									"Creates a strong first impression by highlighting Mama's Bread's reputation and inviting customers to discover more. Features key imagery. ",
 							},
 							align: 'full',
 							className: 'is-style-section-default',
@@ -47,8 +48,7 @@ export const getClientContext = () => {
 								clientId: 'XfP9',
 								name: 'core/group',
 								isValid: true,
-								originalContent:
-									'<div class="wp-block-group alignwide">\n\n</div>',
+								originalContent: '<div class="wp-block-group alignwide">\n\n</div>',
 								validationIssues: [],
 								attributes: {
 									tagName: 'div',
@@ -111,8 +111,7 @@ export const getClientContext = () => {
 															'<h2 class="wp-block-heading">Welcome to Oakland\'s Favorite Bakery</h2>',
 														validationIssues: [],
 														attributes: {
-															content:
-																"Welcome to Oakland's Favorite Bakery",
+															content: "Welcome to Oakland's Favorite Bakery",
 															level: 2,
 														},
 														innerBlocks: [],
@@ -149,23 +148,19 @@ export const getClientContext = () => {
 														clientId: 'o-IA',
 														name: 'core/buttons',
 														isValid: true,
-														originalContent:
-															'<div class="wp-block-buttons"></div>',
+														originalContent: '<div class="wp-block-buttons"></div>',
 														validationIssues: [],
 														attributes: {},
 														innerBlocks: [
 															{
-																clientId:
-																	'wsbN',
+																clientId: 'wsbN',
 																name: 'core/button',
 																isValid: true,
 																originalContent:
 																	'<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="menu">Menu</a></div>',
-																validationIssues:
-																	[],
+																validationIssues: [],
 																attributes: {
-																	tagName:
-																		'a',
+																	tagName: 'a',
 																	type: 'button',
 																	url: 'menu',
 																	text: 'Menu',

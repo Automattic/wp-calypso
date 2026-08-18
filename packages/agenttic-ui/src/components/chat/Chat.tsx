@@ -1,21 +1,21 @@
+import { __ } from '@wordpress/i18n';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { __ } from '@wordpress/i18n';
-import { useChat } from '../../hooks/useChat';
-import { useInput } from '../../hooks/useInput';
-import { useFloatingPanel } from '../../hooks/useFloatingPanel';
 import { useBoundaryInsets } from '../../hooks/useBoundaryInsets';
-import type { ChatProps } from '../../types';
+import { useChat } from '../../hooks/useChat';
+import { useFloatingPanel } from '../../hooks/useFloatingPanel';
+import { useInput } from '../../hooks/useInput';
 import { cn } from '../../utils/classNames';
 import { STYLE_CONSTANTS } from '../../utils/constants';
-import { morphSpring } from '../animations';
 import { DragOverlay } from '../DragOverlay';
 import { ResizeHandles } from '../ResizeHandles';
+import { morphSpring } from '../animations';
 import { CollapsedView } from '../views/CollapsedView';
 import { CompactView } from '../views/CompactView';
 import { ConversationView } from '../views/ConversationView';
 import { MinimizedView } from '../views/MinimizedView';
 import styles from './Chat.module.css';
+import type { ChatProps } from '../../types';
 
 export function Chat( {
 	messages,
@@ -186,11 +186,7 @@ export function Chat( {
 	// Handle auto-collapse - return to initial state if no input value and not focused
 	const handleAutoCollapse = useCallback( () => {
 		// Only auto-collapse if initial state was collapsed
-		if (
-			chat.initialState === 'collapsed' &&
-			chat.state === 'compact' &&
-			shouldAutoCollapse()
-		) {
+		if ( chat.initialState === 'collapsed' && chat.state === 'compact' && shouldAutoCollapse() ) {
 			const timeoutId = setTimeout( () => {
 				if ( chat.state === 'compact' && shouldAutoCollapse() ) {
 					chat.setState( 'collapsed' );
@@ -233,8 +229,7 @@ export function Chat( {
 
 	// Track previous state for animation purposes
 	const prevStateRef = useRef( chat.state );
-	const fromCompact =
-		prevStateRef.current === 'compact' && chat.state === 'expanded';
+	const fromCompact = prevStateRef.current === 'compact' && chat.state === 'expanded';
 
 	useEffect( () => {
 		// Clear all timeouts when state changes (they're no longer valid)
@@ -256,8 +251,7 @@ export function Chat( {
 	// Measure the compact view height
 	useEffect( () => {
 		if ( chat.state === 'compact' && compactRef.current ) {
-			const measured =
-				compactRef.current.scrollHeight + STYLE_CONSTANTS.PADDING;
+			const measured = compactRef.current.scrollHeight + STYLE_CONSTANTS.PADDING;
 			setCompactHeight( measured );
 		}
 	}, [ chat.state, input.value ] );
@@ -320,9 +314,7 @@ export function Chat( {
 					[ styles.expanded ]: chat.state === 'expanded',
 					animating: isAnimating,
 				} ) }
-				onMouseLeave={
-					chat.state === 'compact' ? handleAutoCollapse : undefined
-				}
+				onMouseLeave={ chat.state === 'compact' ? handleAutoCollapse : undefined }
 				drag={ draggableStates.includes( chat.state ) }
 				dragControls={ dragControls }
 				dragListener={ false }
@@ -343,9 +335,7 @@ export function Chat( {
 					x,
 					y,
 					left: insets.left,
-					cursor: draggableStates.includes( chat.state )
-						? 'grab'
-						: 'default',
+					cursor: draggableStates.includes( chat.state ) ? 'grab' : 'default',
 				} }
 			>
 				<motion.div
@@ -367,22 +357,12 @@ export function Chat( {
 									height: getHeightForState( chat.state ),
 							  } ),
 						x:
-							chat.state === 'collapsed' &&
-							currentSide === 'right'
-								? STYLE_CONSTANTS.COMPACT_WIDTH -
-								  STYLE_CONSTANTS.COLLAPSED_SIZE
+							chat.state === 'collapsed' && currentSide === 'right'
+								? STYLE_CONSTANTS.COMPACT_WIDTH - STYLE_CONSTANTS.COLLAPSED_SIZE
 								: 0,
-						borderBottomLeftRadius:
-							chat.state === 'minimized'
-								? 0
-								: STYLE_CONSTANTS.BORDER_RADIUS,
-						borderBottomRightRadius:
-							chat.state === 'minimized'
-								? 0
-								: STYLE_CONSTANTS.BORDER_RADIUS,
-						transition: input.value.trim()
-							? { duration: 0 }
-							: morphSpring,
+						borderBottomLeftRadius: chat.state === 'minimized' ? 0 : STYLE_CONSTANTS.BORDER_RADIUS,
+						borderBottomRightRadius: chat.state === 'minimized' ? 0 : STYLE_CONSTANTS.BORDER_RADIUS,
+						transition: input.value.trim() ? { duration: 0 } : morphSpring,
 					} }
 					onAnimationStart={ () => setIsAnimating( true ) }
 					onAnimationComplete={ () => setIsAnimating( false ) }
@@ -444,7 +424,7 @@ export function Chat( {
 								placeholder={ placeholder }
 								isProcessing={ isProcessing }
 								onStop={ onStop }
-								showHeader={ true }
+								showHeader
 								onClose={ handleClose }
 								fromCompact={ fromCompact }
 								notice={ notice }
@@ -461,10 +441,7 @@ export function Chat( {
 					</AnimatePresence>
 				</motion.div>
 				{ showResizeHandles && (
-					<ResizeHandles
-						resizable={ resizable }
-						onPointerDown={ handleResizePointerDown }
-					/>
+					<ResizeHandles resizable={ resizable } onPointerDown={ handleResizePointerDown } />
 				) }
 			</motion.div>
 		</>

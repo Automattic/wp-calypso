@@ -1,8 +1,15 @@
 // @vitest-environment jsdom
+import { animate, type PanInfo, useMotionValue } from 'framer-motion';
 import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { animate, type PanInfo, useMotionValue } from 'framer-motion';
+import { STYLE_CONSTANTS } from '../utils/constants';
+import {
+	useFloatingPanelPosition,
+	type UseFloatingPanelPositionArgs,
+	type UseFloatingPanelPositionResult,
+} from './useFloatingPanelPosition';
+import type { ChatSize } from '../types';
 
 // Spy on animate while keeping the real implementation so the springs still run.
 vi.mock( 'framer-motion', async ( importOriginal ) => {
@@ -10,19 +17,10 @@ vi.mock( 'framer-motion', async ( importOriginal ) => {
 	return { ...actual, animate: vi.fn( actual.animate ) };
 } );
 const animateSpy = vi.mocked( animate );
-import { STYLE_CONSTANTS } from '../utils/constants';
-import type { ChatSize } from '../types';
-import {
-	useFloatingPanelPosition,
-	type UseFloatingPanelPositionArgs,
-	type UseFloatingPanelPositionResult,
-} from './useFloatingPanelPosition';
 
 // Opt into React's act environment so state updates don't warn (matches the
 // component + resize-hook test suites).
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 // Default size accessors the drag hook reads from the resize hook. Tests can
 // override per-case; clampResizedSize is a no-op since size clamping is the
@@ -65,9 +63,7 @@ function renderHook( initialArgs: Args ) {
 	function Probe() {
 		const x = useMotionValue( 0 );
 		const y = useMotionValue( 0 );
-		captured.current = useFloatingPanelPosition(
-			buildArgs( currentOverrides, x, y )
-		);
+		captured.current = useFloatingPanelPosition( buildArgs( currentOverrides, x, y ) );
 		return null;
 	}
 
@@ -116,10 +112,7 @@ describe( 'useFloatingPanelPosition', () => {
 		const position = result.calculateSnapPosition( 'right' );
 		// Analytic dock x = innerWidth - width - 2*offset; bottom-anchored y = 0.
 		expect( position ).toEqual( {
-			x:
-				window.innerWidth -
-				STYLE_CONSTANTS.COMPACT_WIDTH -
-				STYLE_CONSTANTS.VIEWPORT_OFFSET * 2,
+			x: window.innerWidth - STYLE_CONSTANTS.COMPACT_WIDTH - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2,
 			y: 0,
 		} );
 	} );
@@ -242,9 +235,7 @@ describe( 'useFloatingPanelPosition', () => {
 		// Pull the target of the animate() call for a given motion value. Asserts
 		// the position target (not just that something animated) per the contract.
 		const animateTargetFor = ( motionValue: unknown ) =>
-			animateSpy.mock.calls.find(
-				( call ) => call[ 0 ] === motionValue
-			)?.[ 1 ];
+			animateSpy.mock.calls.find( ( call ) => call[ 0 ] === motionValue )?.[ 1 ];
 
 		it( 'free-drag: clamps a grown right-side panel back on-screen (pins the right edge)', async () => {
 			const grownSize: ChatSize = { width: 900, height: 700 };
@@ -268,10 +259,7 @@ describe( 'useFloatingPanelPosition', () => {
 			} );
 
 			// maxX = innerWidth - width - 2*offset = 1280 - 900 - 32 = 348.
-			const maxX =
-				window.innerWidth -
-				grownSize.width -
-				STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
+			const maxX = window.innerWidth - grownSize.width - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
 
 			expect( animateTargetFor( result.x ) ).toBe( maxX );
 			// Bottom-docked (y=0) grow: the top does NOT overflow, so `y` is held
@@ -317,10 +305,7 @@ describe( 'useFloatingPanelPosition', () => {
 
 			// Panel dragged high (y very negative): with the new tall height the
 			// grown TOP edge crosses the top inset. minY = 32 + 700 - 1024 = -292.
-			const minY =
-				2 * STYLE_CONSTANTS.VIEWPORT_OFFSET +
-				grownSize.height -
-				window.innerHeight;
+			const minY = 2 * STYLE_CONSTANTS.VIEWPORT_OFFSET + grownSize.height - window.innerHeight;
 			await act( async () => {
 				result.x.set( 0 );
 				result.y.set( -500 ); // below minY: top overflows the inset
@@ -388,10 +373,7 @@ describe( 'useFloatingPanelPosition', () => {
 			animateSpy.mockClear();
 
 			// Right dock x = innerWidth - width - 2*offset = 1280 - 600 - 32 = 648.
-			const snapX =
-				window.innerWidth -
-				grownSize.width -
-				STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
+			const snapX = window.innerWidth - grownSize.width - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
 
 			await act( async () => {
 				result.repositionForResize();
@@ -419,10 +401,7 @@ describe( 'useFloatingPanelPosition', () => {
 			const result = harness.captured.current!;
 
 			// minY = 32 + 700 - 1024 = -292. Start below it (top overflows).
-			const minY =
-				2 * STYLE_CONSTANTS.VIEWPORT_OFFSET +
-				grownSize.height -
-				window.innerHeight;
+			const minY = 2 * STYLE_CONSTANTS.VIEWPORT_OFFSET + grownSize.height - window.innerHeight;
 			await act( async () => {
 				result.x.set( 0 );
 				result.y.set( -500 );
@@ -460,9 +439,7 @@ describe( 'useFloatingPanelPosition', () => {
 
 			// x docks; y is skipped (bottom:0 pins the minimized tab).
 			expect( animateTargetFor( result.x ) ).toBe(
-				window.innerWidth -
-					grownSize.width -
-					STYLE_CONSTANTS.VIEWPORT_OFFSET * 2
+				window.innerWidth - grownSize.width - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2
 			);
 			expect( animateTargetFor( result.y ) ).toBeUndefined();
 		} );
@@ -479,9 +456,7 @@ describe( 'useFloatingPanelPosition', () => {
 			} );
 
 			const cornerX =
-				window.innerWidth -
-				STYLE_CONSTANTS.COMPACT_WIDTH -
-				STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
+				window.innerWidth - STYLE_CONSTANTS.COMPACT_WIDTH - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
 			expect( animateTargetFor( result.x ) ).toBe( cornerX );
 			expect( animateTargetFor( result.y ) ).toBe( 0 );
 		} );
@@ -571,10 +546,7 @@ describe( 'useFloatingPanelPosition', () => {
 				result.repositionForResize( 200 );
 			} );
 
-			const maxX =
-				window.innerWidth -
-				grownSize.width -
-				STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
+			const maxX = window.innerWidth - grownSize.width - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
 			expect( animateTargetFor( result.x ) ).toBe( maxX );
 		} );
 
@@ -677,10 +649,7 @@ describe( 'useFloatingPanelPosition', () => {
 				window.innerHeight = 500;
 				window.dispatchEvent( new Event( 'resize' ) );
 			} );
-			const minY =
-				2 * STYLE_CONSTANTS.VIEWPORT_OFFSET +
-				FIXED_SIZE.height -
-				window.innerHeight;
+			const minY = 2 * STYLE_CONSTANTS.VIEWPORT_OFFSET + FIXED_SIZE.height - window.innerHeight;
 			expect( minY ).toBeGreaterThan( 0 );
 			expect( result.y.get() ).toBe( minY );
 
@@ -739,10 +708,7 @@ describe( 'useFloatingPanelPosition', () => {
 
 			// The free-drag clamp ceiling IS the right-corner x, so the panel stays
 			// cornered — as dragging a window edge past a breakpoint expects.
-			const cornerX =
-				window.innerWidth -
-				FIXED_SIZE.width -
-				2 * STYLE_CONSTANTS.VIEWPORT_OFFSET;
+			const cornerX = window.innerWidth - FIXED_SIZE.width - 2 * STYLE_CONSTANTS.VIEWPORT_OFFSET;
 			expect( result.x.get() ).toBe( cornerX );
 		} );
 
@@ -765,10 +731,7 @@ describe( 'useFloatingPanelPosition', () => {
 				window.dispatchEvent( new Event( 'resize' ) );
 			} );
 
-			const cornerX =
-				window.innerWidth -
-				FIXED_SIZE.width -
-				2 * STYLE_CONSTANTS.VIEWPORT_OFFSET;
+			const cornerX = window.innerWidth - FIXED_SIZE.width - 2 * STYLE_CONSTANTS.VIEWPORT_OFFSET;
 			expect( result.x.isAnimating() ).toBe( false );
 			expect( result.x.get() ).toBe( cornerX );
 
@@ -821,19 +784,14 @@ describe( 'useFloatingPanelPosition', () => {
 				result.handleDragEnd( null, PAN_INFO );
 			} );
 
-			const maxX =
-				window.innerWidth -
-				FIXED_SIZE.width -
-				STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
+			const maxX = window.innerWidth - FIXED_SIZE.width - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
 			expect( onFreeDragEnd ).toHaveBeenCalledWith( {
 				x: maxX,
 				y: 0,
 			} );
 			// The panel itself animates back inside the box too.
 			const animateTargetFor = ( motionValue: unknown ) =>
-				animateSpy.mock.calls.find(
-					( call ) => call[ 0 ] === motionValue
-				)?.[ 1 ];
+				animateSpy.mock.calls.find( ( call ) => call[ 0 ] === motionValue )?.[ 1 ];
 			expect( animateTargetFor( result.x ) ).toBe( maxX );
 			expect( animateTargetFor( result.y ) ).toBe( 0 );
 		} );
@@ -856,9 +814,7 @@ describe( 'useFloatingPanelPosition', () => {
 
 	describe( 'runtime insets change', () => {
 		const animateTargetFor = ( motionValue: unknown ) =>
-			animateSpy.mock.calls.find(
-				( call ) => call[ 0 ] === motionValue
-			)?.[ 1 ];
+			animateSpy.mock.calls.find( ( call ) => call[ 0 ] === motionValue )?.[ 1 ];
 
 		it( 're-clamps a free-drag panel out of a newly reserved top area', async () => {
 			const defaultInsets = {

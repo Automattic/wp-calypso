@@ -21,9 +21,7 @@ describe( 'getVisibleMessages', () => {
 		] );
 
 		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content ).toEqual( [
-			{ type: 'text', text: 'visible' },
-		] );
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: 'visible' } ] );
 	} );
 
 	it( 'strips `data` blocks (read programmatically, not rendered)', () => {
@@ -38,9 +36,7 @@ describe( 'getVisibleMessages', () => {
 		] );
 
 		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content ).toEqual( [
-			{ type: 'text', text: 'reply' },
-		] );
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: 'reply' } ] );
 	} );
 
 	it( 'drops messages with no renderable content', () => {
@@ -51,9 +47,7 @@ describe( 'getVisibleMessages', () => {
 		] );
 
 		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content ).toEqual( [
-			{ type: 'text', text: 'visible' },
-		] );
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: 'visible' } ] );
 	} );
 
 	it( 'preserves `text` and `component` blocks unchanged', () => {

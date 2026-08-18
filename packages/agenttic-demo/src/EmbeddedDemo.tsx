@@ -1,26 +1,16 @@
+import { AgentUI, EmptyView, ImageUploader, RegenerateAltIcon } from '@automattic/agenttic-ui';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import type { UIMessage } from '@automattic/agenttic-client';
-import {
-	AgentUI,
-	EmptyView,
-	ImageUploader,
-	RegenerateAltIcon,
-} from '@automattic/agenttic-ui';
-
 import DemoMoreMenu from './DemoMoreMenu';
 import MessageTester from './MessageTester';
-import { ToolButton, ViewTools } from './playground/PlaygroundShell';
-import { SuggestionsTool } from './playground/SuggestionsTool';
 import { useDemoChat } from './hooks/useDemoChat';
 import { useDemoFeedback } from './hooks/useDemoFeedback';
 import { useImageUploads } from './hooks/useImageUploads';
+import { ToolButton, ViewTools } from './playground/PlaygroundShell';
+import { SuggestionsTool } from './playground/SuggestionsTool';
+import type { UIMessage } from '@automattic/agenttic-client';
 
-const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
-	currentTheme,
-} ) => {
-	const [ manualThinkingMessage, setManualThinkingMessage ] = useState<
-		string | undefined
-	>();
+const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { currentTheme } ) => {
+	const [ manualThinkingMessage, setManualThinkingMessage ] = useState< string | undefined >();
 
 	const [ isTyping, setIsTyping ] = useState( false );
 
@@ -33,8 +23,7 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 					{ ...props }
 					style={ {
 						borderLeft: '4px solid #007cba',
-						backgroundColor:
-							currentTheme === 'dark' ? '#0d375c' : '#f0f8ff',
+						backgroundColor: currentTheme === 'dark' ? '#0d375c' : '#f0f8ff',
 						margin: '16px 0',
 						padding: '12px 16px',
 						fontStyle: 'italic',
@@ -145,17 +134,14 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 		console.log( 'Selected suggestion:', message );
 	}, [] );
 
-	const { uploadedImages, handleFilesSelected, handleRemoveImage } =
-		useImageUploads();
+	const { uploadedImages, handleFilesSelected, handleRemoveImage } = useImageUploads();
 
 	return (
 		<>
 			<style>
 				{ `
                 body {
-                    background-color: ${
-						currentTheme === 'dark' ? '#1F1F1F' : '#FCFCFC'
-					};
+                    background-color: ${ currentTheme === 'dark' ? '#1F1F1F' : '#FCFCFC' };
                 }
 
                 /* Override suggestions positioning to appear below footer */
@@ -180,20 +166,13 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 				<ToolButton
 					accent
 					onClick={ () => {
-						setManualThinkingMessage(
-							'Testing progress message...'
-						);
-						setTimeout(
-							() => setManualThinkingMessage( undefined ),
-							3000
-						);
+						setManualThinkingMessage( 'Testing progress message...' );
+						setTimeout( () => setManualThinkingMessage( undefined ), 3000 );
 					} }
 				>
 					Test Progress
 				</ToolButton>
-				<span className="playground-status">
-					{ isTyping ? '✍️ Typing…' : '💤 Not typing' }
-				</span>
+				<span className="playground-status">{ isTyping ? '✍️ Typing…' : '💤 Not typing' }</span>
 			</ViewTools>
 			<div
 				className="embedded-demo"
@@ -235,13 +214,8 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 								images={ uploadedImages }
 								onFilesSelected={ handleFilesSelected }
 								onRemoveImage={ handleRemoveImage }
-								acceptedFileTypes={ [
-									'image/jpeg',
-									'image/png',
-									'image/gif',
-									'image/webp',
-								] }
-								showFileMetadata={ true }
+								acceptedFileTypes={ [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ] }
+								showFileMetadata
 							/>
 							<AgentUI.Input />
 							<AgentUI.InputToolbar label="Custom Toolbar">
@@ -250,9 +224,7 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 								</div>
 							</AgentUI.InputToolbar>
 						</AgentUI.Footer>
-						<AgentUI.Suggestions
-							onSelect={ handleSuggestionSelect }
-						/>
+						<AgentUI.Suggestions onSelect={ handleSuggestionSelect } />
 					</AgentUI.ConversationView>
 				</AgentUI.Container>
 			</div>

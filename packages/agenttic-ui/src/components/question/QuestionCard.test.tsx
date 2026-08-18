@@ -2,12 +2,10 @@
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { QuestionPrompt } from '../../types';
 import { QuestionCard } from './QuestionCard';
+import type { QuestionPrompt } from '../../types';
 
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 describe( 'QuestionCard', () => {
 	let container: HTMLDivElement;
@@ -30,41 +28,27 @@ describe( 'QuestionCard', () => {
 		const onAnswer = vi.fn();
 		const prompt: QuestionPrompt = {
 			question: 'Which direction should we take?',
-			choices: [
-				{ label: 'Concise' },
-				{ label: 'Detailed', message: 'Use the detailed option.' },
-			],
+			choices: [ { label: 'Concise' }, { label: 'Detailed', message: 'Use the detailed option.' } ],
 		};
 
 		await act( async () => {
-			root.render(
-				<QuestionCard prompt={ prompt } onAnswer={ onAnswer } />
-			);
+			root.render( <QuestionCard prompt={ prompt } onAnswer={ onAnswer } /> );
 		} );
 
-		expect( container.textContent ).toContain(
-			'Which direction should we take?'
-		);
-		expect(
-			container.querySelector( '[data-agenttic-question-card]' )
-		).toBeTruthy();
-		expect(
-			container.querySelector( '[data-slot="choice"]' )?.textContent
-		).toContain( 'Concise' );
+		expect( container.textContent ).toContain( 'Which direction should we take?' );
+		expect( container.querySelector( '[data-agenttic-question-card]' ) ).toBeTruthy();
+		expect( container.querySelector( '[data-slot="choice"]' )?.textContent ).toContain( 'Concise' );
 		expect( container.textContent ).toContain( 'Concise' );
 
-		const detailed = Array.from(
-			container.querySelectorAll( 'button' )
-		).find( ( button ) => button.textContent?.includes( 'Detailed' ) );
+		const detailed = Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent?.includes( 'Detailed' )
+		);
 
 		await act( async () => {
 			detailed?.click();
 		} );
 
-		expect( onAnswer ).toHaveBeenCalledWith(
-			'Use the detailed option.',
-			prompt.choices[ 1 ]
-		);
+		expect( onAnswer ).toHaveBeenCalledWith( 'Use the detailed option.', prompt.choices[ 1 ] );
 	} );
 
 	it( 'lets consumers compose custom choice content', async () => {
@@ -85,11 +69,7 @@ describe( 'QuestionCard', () => {
 					prompt={ prompt }
 					onAnswer={ vi.fn() }
 					renderChoiceContent={ ( choice ) =>
-						choice.presentation ? (
-							<span data-slot="consumer-content">
-								Custom content
-							</span>
-						) : null
+						choice.presentation ? <span data-slot="consumer-content">Custom content</span> : null
 					}
 				/>
 			);
@@ -97,9 +77,7 @@ describe( 'QuestionCard', () => {
 
 		expect( container.textContent ).toContain( 'A composed option.' );
 		expect( container.textContent ).toContain( 'Custom content' );
-		expect(
-			container.querySelector( '[data-slot="consumer-content"]' )
-		).toBeTruthy();
+		expect( container.querySelector( '[data-slot="consumer-content"]' ) ).toBeTruthy();
 	} );
 
 	it( 'disables choices after answering', async () => {
@@ -111,12 +89,7 @@ describe( 'QuestionCard', () => {
 
 		await act( async () => {
 			root.render(
-				<QuestionCard
-					prompt={ prompt }
-					onAnswer={ onAnswer }
-					answered
-					answeredChoice="First"
-				/>
+				<QuestionCard prompt={ prompt } onAnswer={ onAnswer } answered answeredChoice="First" />
 			);
 		} );
 
@@ -128,23 +101,16 @@ describe( 'QuestionCard', () => {
 	it( 'uses the grid layout for four-choice questions', async () => {
 		const prompt: QuestionPrompt = {
 			question: 'Choose one',
-			choices: [
-				{ label: 'First' },
-				{ label: 'Second' },
-				{ label: 'Third' },
-				{ label: 'Fourth' },
-			],
+			choices: [ { label: 'First' }, { label: 'Second' }, { label: 'Third' }, { label: 'Fourth' } ],
 		};
 
 		await act( async () => {
-			root.render(
-				<QuestionCard prompt={ prompt } onAnswer={ vi.fn() } />
-			);
+			root.render( <QuestionCard prompt={ prompt } onAnswer={ vi.fn() } /> );
 		} );
 
-		expect(
-			container.querySelector( '[data-slot="choices"]' )?.className
-		).toContain( 'choicesGrid' );
+		expect( container.querySelector( '[data-slot="choices"]' )?.className ).toContain(
+			'choicesGrid'
+		);
 	} );
 
 	it( 'keeps two-choice questions stacked', async () => {
@@ -154,14 +120,12 @@ describe( 'QuestionCard', () => {
 		};
 
 		await act( async () => {
-			root.render(
-				<QuestionCard prompt={ prompt } onAnswer={ vi.fn() } />
-			);
+			root.render( <QuestionCard prompt={ prompt } onAnswer={ vi.fn() } /> );
 		} );
 
-		expect(
-			container.querySelector( '[data-slot="choices"]' )?.className
-		).not.toContain( 'choicesGrid' );
+		expect( container.querySelector( '[data-slot="choices"]' )?.className ).not.toContain(
+			'choicesGrid'
+		);
 		expect( container.querySelector( 'form' ) ).toBeNull();
 		expect( container.querySelector( 'input' ) ).toBeNull();
 	} );
@@ -179,14 +143,10 @@ describe( 'QuestionCard', () => {
 		};
 
 		await act( async () => {
-			root.render(
-				<QuestionCard prompt={ prompt } onAnswer={ vi.fn() } />
-			);
+			root.render( <QuestionCard prompt={ prompt } onAnswer={ vi.fn() } /> );
 		} );
 
-		expect(
-			container.querySelectorAll( '[data-slot="choice"]' )
-		).toHaveLength( 4 );
+		expect( container.querySelectorAll( '[data-slot="choice"]' ) ).toHaveLength( 4 );
 		expect( container.textContent ).not.toContain( 'Fifth' );
 	} );
 } );

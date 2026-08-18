@@ -1,17 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import type { UIMessage } from '@automattic/agenttic-client';
 import { AgentUI, CopyIcon, EmptyView } from '@automattic/agenttic-ui';
-import type { ChatState, LayoutCommand } from '@automattic/agenttic-ui';
-
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import MessageTester from './MessageTester';
-import {
-	ToolButton,
-	usePlaygroundHeaderHeight,
-	ViewTools,
-} from './playground/PlaygroundShell';
-import { SuggestionsTool } from './playground/SuggestionsTool';
 import { useDemoChat } from './hooks/useDemoChat';
 import { useDemoFeedback } from './hooks/useDemoFeedback';
+import { ToolButton, usePlaygroundHeaderHeight, ViewTools } from './playground/PlaygroundShell';
+import { SuggestionsTool } from './playground/SuggestionsTool';
+import type { UIMessage } from '@automattic/agenttic-client';
+import type { ChatState, LayoutCommand } from '@automattic/agenttic-ui';
 
 const FloatingDemo: React.FC< {
 	currentTheme: 'light' | 'dark';
@@ -71,25 +66,20 @@ const FloatingDemo: React.FC< {
 		'horizontal',
 		'vertical',
 	];
-	const [ resizableMode, setResizableMode ] = useState<
-		boolean | 'horizontal' | 'vertical'
-	>( false );
-	const RESIZABLE_LABELS = new Map<
-		boolean | 'horizontal' | 'vertical',
-		string
-	>( [
+	const [ resizableMode, setResizableMode ] = useState< boolean | 'horizontal' | 'vertical' >(
+		false
+	);
+	const RESIZABLE_LABELS = new Map< boolean | 'horizontal' | 'vertical', string >( [
 		[ false, 'OFF' ],
 		[ true, 'BOTH' ],
 		[ 'horizontal', 'HORIZONTAL' ],
 		[ 'vertical', 'VERTICAL' ],
 	] );
 	const resizableLabel = RESIZABLE_LABELS.get( resizableMode );
-	const [ chatSize, setChatSize ] = useState<
-		{ width: number; height: number } | undefined
-	>( undefined );
-	const [ layoutCommand, setLayoutCommand ] = useState<
-		LayoutCommand | undefined
-	>( undefined );
+	const [ chatSize, setChatSize ] = useState< { width: number; height: number } | undefined >(
+		undefined
+	);
+	const [ layoutCommand, setLayoutCommand ] = useState< LayoutCommand | undefined >( undefined );
 
 	const defaultSuggestions = useMemo(
 		() => [
@@ -149,8 +139,7 @@ const FloatingDemo: React.FC< {
 					label: 'Copy message',
 					icon: <CopyIcon />,
 					onClick: handleCopy,
-					condition: ( message: UIMessage ) =>
-						message.role === 'agent',
+					condition: ( message: UIMessage ) => message.role === 'agent',
 					tooltip: 'Copy message content',
 				},
 			],
@@ -180,9 +169,7 @@ const FloatingDemo: React.FC< {
 					active={ !! resizableMode }
 					onClick={ () =>
 						setResizableMode( ( prev ) => {
-							const next =
-								( RESIZABLE_MODES.indexOf( prev ) + 1 ) %
-								RESIZABLE_MODES.length;
+							const next = ( RESIZABLE_MODES.indexOf( prev ) + 1 ) % RESIZABLE_MODES.length;
 							return RESIZABLE_MODES[ next ];
 						} )
 					}
@@ -226,8 +213,7 @@ const FloatingDemo: React.FC< {
 				{ /* Live size readout for verifying resize clamping */ }
 				{ resizableMode && chatSize && (
 					<span className="playground-status">
-						{ Math.round( chatSize.width ) } ×{ ' ' }
-						{ Math.round( chatSize.height ) }
+						{ Math.round( chatSize.width ) } × { Math.round( chatSize.height ) }
 					</span>
 				) }
 				<MessageTester

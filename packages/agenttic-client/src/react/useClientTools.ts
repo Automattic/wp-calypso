@@ -10,10 +10,7 @@ export type GetClientToolsCallback = () => Promise< Tool[] >;
 /**
  * Callback function type for executing tools
  */
-export type ExecuteToolCallback = (
-	toolId: string,
-	args: any
-) => Promise< any >;
+export type ExecuteToolCallback = ( toolId: string, args: any ) => Promise< any >;
 
 /**
  * Callback function type for getting abilities
@@ -31,12 +28,11 @@ export interface UseClientToolsWithAbilitiesConfig {
 
 /**
  * Internal shared custom hook for all tool provider hooks
- *
  * @param root0                - Configuration object
  * @param root0.getClientTools - Function to get tools
  * @param root0.executeTool    - Function to execute tools
  * @param root0.getAbilities   - Function to get abilities
- * @return ToolProvider instance or undefined
+ * @returns ToolProvider instance or undefined
  */
 function useToolProviderFromConfig( {
 	getClientTools,
@@ -102,13 +98,7 @@ function useToolProviderFromConfig( {
 		}
 
 		return provider;
-	}, [
-		getAvailableTools,
-		executeToolCallback,
-		getClientTools,
-		executeTool,
-		getAbilities,
-	] );
+	}, [ getAvailableTools, executeToolCallback, getClientTools, executeTool, getAbilities ] );
 
 	return toolProvider;
 }
@@ -120,11 +110,9 @@ function useToolProviderFromConfig( {
  * It wraps them in the ToolProvider interface expected by the agenttic client.
  * The callbacks are called fresh each time, ensuring dynamic tool availability and execution.
  * Tool results are automatically handled by the client.
- *
  * @param getClientTools - Function that returns available tools as an array of Tool objects
  * @param executeTool    - Function that executes a tool with the arguments returned by the agent
- * @return ToolProvider instance or undefined if no getClientTools callback provided
- *
+ * @returns ToolProvider instance or undefined if no getClientTools callback provided
  * @example
  * ```typescript
  * const toolProvider = useClientTools(
@@ -151,10 +139,8 @@ export function useClientTools(
  *
  * This hook converts WordPress Abilities to tools and provides a ToolProvider
  * that executes them using the WordPress Abilities API.
- *
  * @param getAbilities - Function to fetch WordPress Abilities from @wordpress/abilities
- * @return ToolProvider instance or undefined if no abilities callback provided
- *
+ * @returns ToolProvider instance or undefined if no abilities callback provided
  * @example
  * ```typescript
  * import { getAbilities } from '@wordpress/abilities';
@@ -164,9 +150,7 @@ export function useClientTools(
  * });
  * ```
  */
-export function useClientAbilities(
-	getAbilities: GetAbilitiesCallback
-): ToolProvider | undefined {
+export function useClientAbilities( getAbilities: GetAbilitiesCallback ): ToolProvider | undefined {
 	return useToolProviderFromConfig( {
 		getClientTools: undefined,
 		executeTool: undefined,
@@ -179,10 +163,8 @@ export function useClientAbilities(
  *
  * This hook accepts a configuration object that supports both regular tools
  * and WordPress Abilities.
- *
  * @param config - Configuration object with tools and abilities
- * @return ToolProvider instance or undefined if no tools/abilities provided
- *
+ * @returns ToolProvider instance or undefined if no tools/abilities provided
  * @example
  * ```typescript
  * import { getAbilities } from '@wordpress/abilities';
@@ -208,9 +190,7 @@ export function useClientToolsWithAbilities(
 
 	// Validate executors are provided when needed
 	if ( getClientTools && ! executeTool ) {
-		throw new Error(
-			'executeTool is required when providing getClientTools.'
-		);
+		throw new Error( 'executeTool is required when providing getClientTools.' );
 	}
 
 	return useToolProviderFromConfig( {

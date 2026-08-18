@@ -6,9 +6,7 @@ import type { UploadedImage } from '@automattic/agenttic-ui';
  * removal.
  */
 export function useImageUploads() {
-	const [ uploadedImages, setUploadedImages ] = useState< UploadedImage[] >(
-		[]
-	);
+	const [ uploadedImages, setUploadedImages ] = useState< UploadedImage[] >( [] );
 
 	const handleFilesSelected = useCallback( ( files: File[] ) => {
 		const newImages: UploadedImage[] = files.map( ( file, index ) => ( {
@@ -21,9 +19,7 @@ export function useImageUploads() {
 	}, [] );
 
 	const handleRemoveImage = useCallback( ( image: UploadedImage ) => {
-		setUploadedImages( ( prev ) =>
-			prev.filter( ( img ) => img.id !== image.id )
-		);
+		setUploadedImages( ( prev ) => prev.filter( ( img ) => img.id !== image.id ) );
 		URL.revokeObjectURL( image.url );
 	}, [] );
 

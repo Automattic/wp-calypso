@@ -16,8 +16,8 @@
 		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
-		"baseUrl": ".",
 		"jsx": "react-jsx",
+		"types": [ "node" ],
 		"paths": {
 			"@automattic/agenttic-ui": [ "../agenttic-ui/src" ],
 			"@automattic/agenttic-ui/*": [ "../agenttic-ui/src/*" ],
@@ -25,9 +25,11 @@
 			"@automattic/agenttic-client/*": [ "../agenttic-client/src/*" ]
 		}
 	},
-	"include": [
-		"src/**/*",
-		"../agenttic-ui/src/**/*",
-		"../agenttic-client/src/**/*"
+	"include": [ "src/**/*", "../agenttic-ui/src/**/*", "../agenttic-client/src/**/*" ],
+	"exclude": [
+		"../agenttic-ui/src/**/*.test.*",
+		"../agenttic-ui/src/**/__tests__/**",
+		"../agenttic-client/src/**/*.test.*",
+		"../agenttic-client/src/**/__tests__/**"
 	]
 }

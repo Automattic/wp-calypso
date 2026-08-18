@@ -52,14 +52,10 @@ export function createTaskId(): string {
 
 /**
  * Create a simple text part for a message
- *
  * @param text     The text content
  * @param metadata Optional metadata for the text part
  */
-export function createTextPart(
-	text: string,
-	metadata?: Record< string, unknown >
-): TextPart {
+export function createTextPart( text: string, metadata?: Record< string, unknown > ): TextPart {
 	return {
 		type: 'text',
 		text,
@@ -123,9 +119,7 @@ export interface ExtractedProgress {
  * Returns the summary from the first progress part found
  * @param message
  */
-export function extractProgressFromMessage(
-	message: Message
-): string | undefined {
+export function extractProgressFromMessage( message: Message ): string | undefined {
 	return extractProgressDataFromMessage( message )?.summary;
 }
 
@@ -134,9 +128,7 @@ export function extractProgressFromMessage(
  * Returns the summary and phase from the first progress part found
  * @param message
  */
-export function extractProgressDataFromMessage(
-	message: Message
-): ExtractedProgress | undefined {
+export function extractProgressDataFromMessage( message: Message ): ExtractedProgress | undefined {
 	if ( ! message || ! message.parts || ! Array.isArray( message.parts ) ) {
 		return undefined;
 	}
@@ -147,9 +139,7 @@ export function extractProgressDataFromMessage(
 			return true;
 		}
 		if ( part.type === 'data' ) {
-			return (
-				'summary' in part.data && typeof part.data.summary === 'string'
-			);
+			return 'summary' in part.data && typeof part.data.summary === 'string';
 		}
 		return false;
 	} ) as ProgressDataPart | undefined;
@@ -205,9 +195,7 @@ export function createAbilityDataPart( ability: Ability ): AbilityDataPart {
  * Extract tool calls from a message
  * @param message
  */
-export function extractToolCallsFromMessage(
-	message: Message
-): ToolCallDataPart[] {
+export function extractToolCallsFromMessage( message: Message ): ToolCallDataPart[] {
 	if ( ! message || ! message.parts || ! Array.isArray( message.parts ) ) {
 		return [];
 	}
@@ -254,9 +242,7 @@ export function createToolResultDataPart(
  * Create a context data part from client context
  * @param clientContext
  */
-export function createContextDataPart(
-	clientContext: ClientContext
-): ContextDataPart {
+export function createContextDataPart( clientContext: ClientContext ): ContextDataPart {
 	return {
 		type: 'data',
 		data: {
@@ -268,14 +254,10 @@ export function createContextDataPart(
 
 /**
  * Create a simple text message with user role
- *
  * @param text     The text content
  * @param metadata Optional metadata. contentType is stored in TextPart.metadata, all other fields in Message.metadata
  */
-export function createTextMessage(
-	text: string,
-	metadata?: Record< string, unknown >
-): Message {
+export function createTextMessage( text: string, metadata?: Record< string, unknown > ): Message {
 	const { contentType, ...messageMetadata } = metadata || {};
 	const partMetadata = contentType ? { contentType } : undefined;
 
@@ -318,17 +300,12 @@ export function processToolExecutionResult( executionResult: any ): {
 	fileParts?: FilePart[];
 } {
 	// Check if result is a ToolExecutionResult object
-	if (
-		executionResult &&
-		typeof executionResult === 'object' &&
-		'result' in executionResult
-	) {
+	if ( executionResult && typeof executionResult === 'object' && 'result' in executionResult ) {
 		// `__file_parts` is the canonical key (it matches the wire), but accept
 		// a camelCased `fileParts` too: an untyped tool returning the wrong
 		// spelling would otherwise drop its images behind a success-shaped
 		// result, which is the exact silent failure this feature exists to fix.
-		const fileParts =
-			executionResult.__file_parts ?? executionResult.fileParts;
+		const fileParts = executionResult.__file_parts ?? executionResult.fileParts;
 
 		return {
 			result: executionResult.result,

@@ -33,9 +33,7 @@ async function getMarked() {
 	return markedModule;
 }
 
-export const parseMarkdownIntoBlocks = async (
-	markdown: string
-): Promise< string[] > => {
+export const parseMarkdownIntoBlocks = async ( markdown: string ): Promise< string[] > => {
 	const marked = await getMarked();
 	const tokens = marked.Lexer.lex( markdown, { gfm: true } );
 	const blocks = tokens.map( ( token: any ) => token.raw );
@@ -53,38 +51,27 @@ export const parseMarkdownIntoBlocks = async (
 			}
 
 			// Check if the previous block starts with $$ but doesn't end with $$
-			const prevStartsWith$$ = previousBlock
-				.trimStart()
-				.startsWith( '$$' );
-			const prevDollarCount = ( previousBlock.match( /\$\$/g ) || [] )
-				.length;
+			const prevStartsWith$$ = previousBlock.trimStart().startsWith( '$$' );
+			const prevDollarCount = ( previousBlock.match( /\$\$/g ) || [] ).length;
 
 			// If previous block has odd number of $$ and starts with $$, merge them
 			if ( prevStartsWith$$ && prevDollarCount % 2 === 1 ) {
-				mergedBlocks[ mergedBlocks.length - 1 ] =
-					previousBlock + currentBlock;
+				mergedBlocks[ mergedBlocks.length - 1 ] = previousBlock + currentBlock;
 				continue;
 			}
 		}
 
 		// Check if current block ends with $$ and previous block started with $$ but didn't close
-		if (
-			mergedBlocks.length > 0 &&
-			currentBlock.trimEnd().endsWith( '$$' )
-		) {
+		if ( mergedBlocks.length > 0 && currentBlock.trimEnd().endsWith( '$$' ) ) {
 			const previousBlock = mergedBlocks.at( -1 );
 
 			if ( ! previousBlock ) {
 				continue;
 			}
 
-			const prevStartsWith$$ = previousBlock
-				.trimStart()
-				.startsWith( '$$' );
-			const prevDollarCount = ( previousBlock.match( /\$\$/g ) || [] )
-				.length;
-			const currDollarCount = ( currentBlock.match( /\$\$/g ) || [] )
-				.length;
+			const prevStartsWith$$ = previousBlock.trimStart().startsWith( '$$' );
+			const prevDollarCount = ( previousBlock.match( /\$\$/g ) || [] ).length;
+			const currDollarCount = ( currentBlock.match( /\$\$/g ) || [] ).length;
 
 			// If previous block has unclosed math (odd $$) and current block ends with $$
 			// AND current block doesn't start with $$, it's likely a continuation
@@ -94,8 +81,7 @@ export const parseMarkdownIntoBlocks = async (
 				! currentBlock.trimStart().startsWith( '$$' ) &&
 				currDollarCount === 1
 			) {
-				mergedBlocks[ mergedBlocks.length - 1 ] =
-					previousBlock + currentBlock;
+				mergedBlocks[ mergedBlocks.length - 1 ] = previousBlock + currentBlock;
 				continue;
 			}
 		}

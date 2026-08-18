@@ -1,35 +1,35 @@
 .textarea {
-    display: flex;
-    width: 100%;
-    border-radius: var(--radius-md);
-    border: 0;
-    font-size: var(--text-sm);
-    line-height: var(--text-sm--line-height);
-    background-color: transparent;
-    padding: var(--spacing-2);
-    scrollbar-width: none;
-    resize: none;
+	display: flex;
+	width: 100%;
+	border-radius: var( --radius-md );
+	border: 0;
+	font-size: var( --text-sm );
+	line-height: var( --text-sm--line-height );
+	background-color: transparent;
+	padding: var( --spacing-2 );
+	scrollbar-width: none;
+	resize: none;
 }
 
 .textarea::placeholder {
-    color: var(--color-muted-foreground);
-    font-weight: var(--font-weight-medium);
+	color: var( --color-muted-foreground );
+	font-weight: var( --font-weight-medium );
 }
 
 .textarea:focus,
 .textarea:focus-visible {
-    outline: none;
-    border: 0;
-    box-shadow: none;
+	outline: none;
+	border: 0;
+	box-shadow: none;
 }
 
 .textarea:read-only {
-    /* Pin the background — wp-admin styles `textarea[readonly]` grey. */
-    background-color: transparent;
-    color: var(--color-muted-foreground);
+	/* Pin the background — wp-admin styles `textarea[readonly]` grey. */
+	background-color: transparent;
+	color: var( --color-muted-foreground );
 }
 
 .textarea:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
+	cursor: not-allowed;
+	opacity: 0.5;
 }

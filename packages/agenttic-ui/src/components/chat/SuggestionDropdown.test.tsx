@@ -1,23 +1,13 @@
 // eslint-disable-next-line jsdoc/check-tag-names -- Vitest environment directive
 /** @vitest-environment jsdom */
-import {
-	afterEach,
-	beforeAll,
-	beforeEach,
-	describe,
-	expect,
-	it,
-	vi,
-} from 'vitest';
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SuggestionDropdown } from './SuggestionDropdown';
 import type { Suggestion } from '../../types';
 
 // Required for React 18's `act` to flush effects (Radix relies on this).
-(
-	globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 // Radix Popover relies on browser APIs that jsdom does not implement.
 beforeAll( () => {
@@ -33,13 +23,8 @@ beforeAll( () => {
 	if ( ! HTMLElement.prototype.scrollIntoView ) {
 		HTMLElement.prototype.scrollIntoView = () => {};
 	}
-	if (
-		! ( globalThis as unknown as { ResizeObserver?: unknown } )
-			.ResizeObserver
-	) {
-		(
-			globalThis as unknown as { ResizeObserver: unknown }
-		 ).ResizeObserver = class {
+	if ( ! ( globalThis as unknown as { ResizeObserver?: unknown } ).ResizeObserver ) {
+		( globalThis as unknown as { ResizeObserver: unknown } ).ResizeObserver = class {
 			observe() {}
 			unobserve() {}
 			disconnect() {}
@@ -50,15 +35,9 @@ beforeAll( () => {
 // Radix Trigger opens on pointerdown (left button); jsdom's `.click()` alone
 // does not fire pointer events, so tests synthesize the full sequence.
 const pressTrigger = ( trigger: HTMLElement ) => {
-	trigger.dispatchEvent(
-		new MouseEvent( 'pointerdown', { bubbles: true, button: 0 } )
-	);
-	trigger.dispatchEvent(
-		new MouseEvent( 'mousedown', { bubbles: true, button: 0 } )
-	);
-	trigger.dispatchEvent(
-		new MouseEvent( 'pointerup', { bubbles: true, button: 0 } )
-	);
+	trigger.dispatchEvent( new MouseEvent( 'pointerdown', { bubbles: true, button: 0 } ) );
+	trigger.dispatchEvent( new MouseEvent( 'mousedown', { bubbles: true, button: 0 } ) );
+	trigger.dispatchEvent( new MouseEvent( 'pointerup', { bubbles: true, button: 0 } ) );
 	trigger.click();
 };
 
@@ -103,9 +82,7 @@ const getTrigger = () =>
 	container.querySelector< HTMLButtonElement >( '[aria-haspopup="dialog"]' )!;
 
 const getOptions = () =>
-	wrapper.querySelectorAll< HTMLButtonElement >(
-		'[data-slot="suggestion-option"]'
-	);
+	wrapper.querySelectorAll< HTMLButtonElement >( '[data-slot="suggestion-option"]' );
 
 const getOptionByText = ( text: string ) =>
 	Array.from( getOptions() ).find( ( el ) => el.textContent === text );
@@ -114,10 +91,7 @@ describe( 'SuggestionDropdown', () => {
 	it( 'renders the trigger button with the suggestion label', () => {
 		act( () => {
 			root.render(
-				<SuggestionDropdown
-					suggestion={ mockSuggestion }
-					availableSuggestions={ allSuggestions }
-				/>
+				<SuggestionDropdown suggestion={ mockSuggestion } availableSuggestions={ allSuggestions } />
 			);
 		} );
 
@@ -127,10 +101,7 @@ describe( 'SuggestionDropdown', () => {
 	it( 'shows options when clicked', () => {
 		act( () => {
 			root.render(
-				<SuggestionDropdown
-					suggestion={ mockSuggestion }
-					availableSuggestions={ allSuggestions }
-				/>
+				<SuggestionDropdown suggestion={ mockSuggestion } availableSuggestions={ allSuggestions } />
 			);
 		} );
 
@@ -149,10 +120,7 @@ describe( 'SuggestionDropdown', () => {
 
 		act( () => {
 			root.render(
-				<SuggestionDropdown
-					suggestion={ mockSuggestion }
-					availableSuggestions={ allSuggestions }
-				/>
+				<SuggestionDropdown suggestion={ mockSuggestion } availableSuggestions={ allSuggestions } />
 			);
 		} );
 
@@ -219,9 +187,7 @@ describe( 'SuggestionDropdown', () => {
 			getOptionByText( 'Blue' )!.click();
 		} );
 
-		expect( onSelect.mock.calls[ 0 ][ 0 ].prompt ).toBe(
-			'Change the button link to: blue'
-		);
+		expect( onSelect.mock.calls[ 0 ][ 0 ].prompt ).toBe( 'Change the button link to: blue' );
 	} );
 
 	it( 'closes the dropdown after selecting an option', async () => {
@@ -310,10 +276,7 @@ describe( 'SuggestionDropdown', () => {
 	it( 'toggles the dropdown open and closed', () => {
 		act( () => {
 			root.render(
-				<SuggestionDropdown
-					suggestion={ mockSuggestion }
-					availableSuggestions={ allSuggestions }
-				/>
+				<SuggestionDropdown suggestion={ mockSuggestion } availableSuggestions={ allSuggestions } />
 			);
 		} );
 
@@ -354,9 +317,7 @@ describe( 'SuggestionDropdown', () => {
 			getOptionByText( 'Pro' )!.click();
 		} );
 
-		expect( onSelect.mock.calls[ 0 ][ 0 ].prompt ).toBe(
-			'Tone: Professional'
-		);
+		expect( onSelect.mock.calls[ 0 ][ 0 ].prompt ).toBe( 'Tone: Professional' );
 	} );
 
 	const describedSuggestion: Suggestion = {
@@ -380,9 +341,7 @@ describe( 'SuggestionDropdown', () => {
 		} );
 
 		expect( getTrigger().textContent ).toContain( 'Change tone to' );
-		expect( getTrigger().textContent ).toContain(
-			'Adjust the tone of your post.'
-		);
+		expect( getTrigger().textContent ).toContain( 'Adjust the tone of your post.' );
 		// Label row + description span.
 		expect( getTriggerContent().children.length ).toBe( 2 );
 	} );
@@ -390,17 +349,12 @@ describe( 'SuggestionDropdown', () => {
 	it( 'omits the description when showDescription is not set', () => {
 		act( () => {
 			root.render(
-				<SuggestionDropdown
-					suggestion={ describedSuggestion }
-					availableSuggestions={ [] }
-				/>
+				<SuggestionDropdown suggestion={ describedSuggestion } availableSuggestions={ [] } />
 			);
 		} );
 
 		expect( getTrigger().textContent ).toContain( 'Change tone to' );
-		expect( getTrigger().textContent ).not.toContain(
-			'Adjust the tone of your post.'
-		);
+		expect( getTrigger().textContent ).not.toContain( 'Adjust the tone of your post.' );
 		expect( getTriggerContent().children.length ).toBe( 1 );
 	} );
 

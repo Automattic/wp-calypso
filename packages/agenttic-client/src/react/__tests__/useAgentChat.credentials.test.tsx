@@ -1,23 +1,12 @@
-import React from 'react';
+import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { act } from 'react';
-import {
-	afterEach,
-	beforeEach,
-	describe,
-	expect,
-	it,
-	vi,
-	type MockedFunction,
-} from 'vitest';
-import { type UseAgentChatReturn, useAgentChat } from '../useAgentChat';
+import { afterEach, beforeEach, describe, expect, it, vi, type MockedFunction } from 'vitest';
 import { getAgentManager } from '../agentManager';
+import { type UseAgentChatReturn, useAgentChat } from '../useAgentChat';
 import type { TaskUpdate } from '../../client/types/index';
 
 // Required for React 18's act() in jsdom.
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 vi.mock( '../agentManager', () => {
 	const createAgent = vi.fn().mockResolvedValue( {} );
@@ -65,9 +54,7 @@ function HookHarness( props: {
 describe( 'useAgentChat — credentials pass-through', () => {
 	let container: HTMLDivElement;
 	let root: Root;
-	let createAgent: MockedFunction<
-		ReturnType< typeof getAgentManager >[ 'createAgent' ]
-	>;
+	let createAgent: MockedFunction< ReturnType< typeof getAgentManager >[ 'createAgent' ] >;
 	let sendMessageStream: MockedFunction<
 		ReturnType< typeof getAgentManager >[ 'sendMessageStream' ]
 	>;
@@ -80,8 +67,7 @@ describe( 'useAgentChat — credentials pass-through', () => {
 		createAgent = getAgentManager().createAgent as MockedFunction<
 			ReturnType< typeof getAgentManager >[ 'createAgent' ]
 		>;
-		sendMessageStream = getAgentManager()
-			.sendMessageStream as MockedFunction<
+		sendMessageStream = getAgentManager().sendMessageStream as MockedFunction<
 			ReturnType< typeof getAgentManager >[ 'sendMessageStream' ]
 		>;
 	} );
@@ -95,9 +81,7 @@ describe( 'useAgentChat — credentials pass-through', () => {
 
 	it( "forwards credentials: 'include' to agentManager.createAgent when configured", async () => {
 		await act( async () => {
-			root.render(
-				React.createElement( HookHarness, { credentials: 'include' } )
-			);
+			root.render( React.createElement( HookHarness, { credentials: 'include' } ) );
 		} );
 
 		expect( createAgent ).toHaveBeenCalledTimes( 1 );
@@ -156,11 +140,7 @@ describe( 'useAgentChat — credentials pass-through', () => {
 			await onSubmit?.( 'Hello' );
 		} );
 
-		expect( sendMessageStream ).toHaveBeenCalledWith(
-			'test-agent',
-			'Hello',
-			{}
-		);
+		expect( sendMessageStream ).toHaveBeenCalledWith( 'test-agent', 'Hello', {} );
 		expect( onTaskUpdate ).toHaveBeenCalledTimes( updates.length );
 		expect( onTaskUpdate ).toHaveBeenNthCalledWith( 1, updates[ 0 ] );
 		expect( onTaskUpdate ).toHaveBeenNthCalledWith( 2, updates[ 1 ] );

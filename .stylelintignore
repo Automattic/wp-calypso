@@ -8,8 +8,3 @@ dist
 packages/calypso-color-schemes/css
 packages/calypso-color-schemes/root-only
 packages/calypso-color-schemes/src/__color-studio
-
-# Agenttic packages: lint deferred until the post-migration cleanup
-packages/agenttic-client
-packages/agenttic-ui
-packages/agenttic-demo

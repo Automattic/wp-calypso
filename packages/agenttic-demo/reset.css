@@ -11,7 +11,7 @@
 	}
 
 	* {
-		outline-color: var(--color-ring);
+		outline-color: var( --color-ring );
 	}
 
 	button,

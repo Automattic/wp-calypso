@@ -1,5 +1,4 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
-import type { Message } from '../client/types/index';
 import {
 	loadConversation,
 	storeConversation,
@@ -7,11 +6,9 @@ import {
 	reconcileWithServer,
 	type DeliveryStatus,
 } from './conversationStorage';
+import type { Message } from '../client/types/index';
 
-function makeUserMessage(
-	text: string,
-	deliveryStatus?: DeliveryStatus
-): Message {
+function makeUserMessage( text: string, deliveryStatus?: DeliveryStatus ): Message {
 	return {
 		role: 'user',
 		kind: 'message',
@@ -41,9 +38,7 @@ describe( 'conversationStorage — deliveryStatus reconciliation', () => {
 		const loaded = await loadConversation( sessionId );
 
 		expect( loaded.messages[ 0 ]?.metadata?.deliveryStatus ).toBe( 'sent' );
-		expect( loaded.messages[ 1 ]?.metadata?.deliveryStatus ).toBe(
-			'pending'
-		);
+		expect( loaded.messages[ 1 ]?.metadata?.deliveryStatus ).toBe( 'pending' );
 	} );
 
 	it( 'omits deliveryStatus when caller did not set it (back-compat)', async () => {
@@ -52,9 +47,7 @@ describe( 'conversationStorage — deliveryStatus reconciliation', () => {
 
 		const loaded = await loadConversation( sessionId );
 
-		expect(
-			loaded.messages[ 0 ]?.metadata?.deliveryStatus
-		).toBeUndefined();
+		expect( loaded.messages[ 0 ]?.metadata?.deliveryStatus ).toBeUndefined();
 	} );
 
 	it( 'getUnresolvedMessages returns pending + streaming, ignores others', () => {

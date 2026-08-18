@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import {
-	filterUiOnlyMessages,
-	transformClientMessageToUI,
-} from '../useAgentChat';
-import type { UIMessage } from '../useAgentChat';
+import { filterUiOnlyMessages, transformClientMessageToUI } from '../useAgentChat';
 import type { Message as ClientMessage, Part } from '../../client/types/index';
+import type { UIMessage } from '../useAgentChat';
 
 describe( 'useAgentChat', () => {
 	describe( 'UI-only message filtering', () => {
@@ -36,17 +33,11 @@ describe( 'useAgentChat', () => {
 			// Client history has neither of these (they were injected by tools)
 			const clientMessageIds = new Set< string >();
 
-			const preserved = filterUiOnlyMessages(
-				uiMessages,
-				clientMessageIds
-			);
+			const preserved = filterUiOnlyMessages( uiMessages, clientMessageIds );
 
 			// Both should be preserved - text AND component messages from tools
 			expect( preserved ).toHaveLength( 2 );
-			expect( preserved.map( ( m ) => m.id ) ).toEqual( [
-				'msg-1',
-				'msg-2',
-			] );
+			expect( preserved.map( ( m ) => m.id ) ).toEqual( [ 'msg-1', 'msg-2' ] );
 		} );
 
 		it( 'should not preserve user messages that are not in client history', () => {
@@ -59,10 +50,7 @@ describe( 'useAgentChat', () => {
 
 			const clientMessageIds = new Set< string >();
 
-			const preserved = filterUiOnlyMessages(
-				uiMessages,
-				clientMessageIds
-			);
+			const preserved = filterUiOnlyMessages( uiMessages, clientMessageIds );
 
 			// Only the agent message should be preserved
 			expect( preserved ).toHaveLength( 1 );
@@ -78,10 +66,7 @@ describe( 'useAgentChat', () => {
 			// server-msg-1 came from the server (in client history)
 			const clientMessageIds = new Set( [ 'server-msg-1' ] );
 
-			const preserved = filterUiOnlyMessages(
-				uiMessages,
-				clientMessageIds
-			);
+			const preserved = filterUiOnlyMessages( uiMessages, clientMessageIds );
 
 			// Only the tool-injected message should be preserved
 			expect( preserved ).toHaveLength( 1 );
@@ -99,17 +84,11 @@ describe( 'useAgentChat', () => {
 
 			const clientMessageIds = new Set< string >();
 
-			const preserved = filterUiOnlyMessages(
-				uiMessages,
-				clientMessageIds
-			);
+			const preserved = filterUiOnlyMessages( uiMessages, clientMessageIds );
 
 			// Both should be preserved for the UI
 			expect( preserved ).toHaveLength( 2 );
-			expect( preserved.map( ( m ) => m.content[ 0 ].type ) ).toEqual( [
-				'text',
-				'component',
-			] );
+			expect( preserved.map( ( m ) => m.content[ 0 ].type ) ).toEqual( [ 'text', 'component' ] );
 		} );
 	} );
 
@@ -175,9 +154,7 @@ describe( 'useAgentChat', () => {
 		it( 'drops a message that has no parts', () => {
 			// Nothing to render, so the message is dropped rather than left as
 			// an empty entry in the list.
-			expect(
-				transformClientMessageToUI( buildMessage( [] ) )
-			).toBeNull();
+			expect( transformClientMessageToUI( buildMessage( [] ) ) ).toBeNull();
 		} );
 
 		it( 'preserves `component` + `componentProps` data parts', () => {
@@ -203,9 +180,7 @@ describe( 'useAgentChat', () => {
 				buildMessage( [ { type: 'data', data: { sources } } ] )
 			);
 
-			expect( result?.content ).toEqual( [
-				{ type: 'data', data: { sources } },
-			] );
+			expect( result?.content ).toEqual( [ { type: 'data', data: { sources } } ] );
 		} );
 
 		it( 'preserves `forward_to_human_support` flag data parts', () => {
@@ -214,9 +189,7 @@ describe( 'useAgentChat', () => {
 				buildMessage( [ { type: 'data', data: { flags } } ] )
 			);
 
-			expect( result?.content ).toEqual( [
-				{ type: 'data', data: { flags } },
-			] );
+			expect( result?.content ).toEqual( [ { type: 'data', data: { flags } } ] );
 		} );
 
 		it( 'keeps `text` content and drops unknown `data` in the same message', () => {
@@ -227,9 +200,7 @@ describe( 'useAgentChat', () => {
 				] )
 			);
 
-			expect( result?.content ).toEqual( [
-				{ type: 'text', text: 'hello' },
-			] );
+			expect( result?.content ).toEqual( [ { type: 'text', text: 'hello' } ] );
 		} );
 	} );
 } );

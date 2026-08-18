@@ -1,12 +1,6 @@
 #!/usr/bin/env node
 
-import {
-	existsSync,
-	mkdirSync,
-	readdirSync,
-	unlinkSync,
-	writeFileSync,
-} from 'fs';
+import { existsSync, mkdirSync, readdirSync, unlinkSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -67,8 +61,7 @@ function cleanupExistingJsonFiles() {
 	console.log( '🧹 Cleaning up existing Jed JSON files...' );
 
 	const existingJsonFiles = readdirSync( languagesDir ).filter(
-		( file ) =>
-			file.endsWith( '.jed.json' ) && file.startsWith( 'wpcom-agenttic-' )
+		( file ) => file.endsWith( '.jed.json' ) && file.startsWith( 'wpcom-agenttic-' )
 	);
 
 	existingJsonFiles.forEach( ( file ) => {
@@ -78,9 +71,7 @@ function cleanupExistingJsonFiles() {
 	} );
 
 	if ( existingJsonFiles.length > 0 ) {
-		console.log(
-			`✅ Removed ${ existingJsonFiles.length } existing Jed JSON files\n`
-		);
+		console.log( `✅ Removed ${ existingJsonFiles.length } existing Jed JSON files\n` );
 	} else {
 		console.log( '   No existing Jed JSON files to remove\n' );
 	}
@@ -100,9 +91,7 @@ async function downloadJsonFile( locale ) {
 		const response = await fetch( url );
 
 		if ( ! response.ok ) {
-			console.warn(
-				`⚠️  ${ locale }: Translation not available (${ response.status })`
-			);
+			console.warn( `⚠️  ${ locale }: Translation not available (${ response.status })` );
 			return false;
 		}
 
@@ -120,9 +109,7 @@ async function downloadJsonFile( locale ) {
 		writeFileSync( filePath, JSON.stringify( jsonData, null, 2 ) );
 
 		console.log(
-			`✅ ${ locale }: Downloaded ${ filename } (${
-				JSON.stringify( jsonData ).length
-			} chars)`
+			`✅ ${ locale }: Downloaded ${ filename } (${ JSON.stringify( jsonData ).length } chars)`
 		);
 		return true;
 	} catch ( error ) {
@@ -135,9 +122,7 @@ async function downloadJsonFile( locale ) {
  * Download all Jed JSON files
  */
 async function downloadAllJsonFiles() {
-	console.log(
-		'🌍 Downloading Jed JSON translation files from GlotPress...\n'
-	);
+	console.log( '🌍 Downloading Jed JSON translation files from GlotPress...\n' );
 
 	// Clean up existing files first to ensure fresh downloads
 	cleanupExistingJsonFiles();
@@ -158,15 +143,11 @@ async function downloadAllJsonFiles() {
 	}
 
 	console.log( `\n📊 Download Summary:` );
-	console.log(
-		`✅ Successfully downloaded: ${ successCount }/${ totalCount } files`
-	);
+	console.log( `✅ Successfully downloaded: ${ successCount }/${ totalCount } files` );
 	console.log( `⚠️  Skipped/failed: ${ totalCount - successCount } files` );
 
 	if ( successCount > 0 ) {
-		console.log(
-			`\n🎉 Jed JSON files are ready in the languages/ folder!`
-		);
+		console.log( `\n🎉 Jed JSON files are ready in the languages/ folder!` );
 	} else {
 		console.log(
 			`\n⚠️  No Jed JSON files were downloaded. Check network connection or GlotPress availability.`

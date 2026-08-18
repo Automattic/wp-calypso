@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { cn } from '../../utils/classNames';
 import styles from './AnimatedPlaceholder.module.css';
 
@@ -18,9 +18,7 @@ export function AnimatedPlaceholder( {
 
 	useEffect( () => {
 		const intervalId = setInterval( () => {
-			setCurrentIndex(
-				( prevIndex ) => ( prevIndex + 1 ) % texts.length
-			);
+			setCurrentIndex( ( prevIndex ) => ( prevIndex + 1 ) % texts.length );
 		}, interval );
 
 		return () => clearInterval( intervalId );

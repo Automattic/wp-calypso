@@ -1,10 +1,6 @@
+import { createFeedbackActions, ThumbsDownIcon, ThumbsUpIcon } from '@automattic/agenttic-ui';
 import React, { useEffect, useRef } from 'react';
 import type { UIMessage } from '@automattic/agenttic-client';
-import {
-	createFeedbackActions,
-	ThumbsDownIcon,
-	ThumbsUpIcon,
-} from '@automattic/agenttic-ui';
 
 type RegisterMessageActions = ( registration: {
 	id: string;
@@ -14,12 +10,9 @@ type RegisterMessageActions = ( registration: {
 /**
  * Registers thumbs up/down feedback actions on agent messages, with
  * pressed/disabled/toggle-off state managed by `createFeedbackActions`.
- *
  * @param registerMessageActions The `registerMessageActions` from `useAgentChat`.
  */
-export function useDemoFeedback(
-	registerMessageActions: RegisterMessageActions
-) {
+export function useDemoFeedback( registerMessageActions: RegisterMessageActions ) {
 	const hasRegistered = useRef( false );
 
 	useEffect( () => {
@@ -28,13 +21,8 @@ export function useDemoFeedback(
 		}
 
 		const feedbackManager = createFeedbackActions( {
-			onFeedback: async (
-				messageId: string,
-				feedback: 'up' | 'down'
-			) => {
-				console.log(
-					`Feedback for message ${ messageId }: ${ feedback }`
-				);
+			onFeedback: async ( messageId: string, feedback: 'up' | 'down' ) => {
+				console.log( `Feedback for message ${ messageId }: ${ feedback }` );
 			},
 			condition: ( message: UIMessage ) => message.role === 'agent',
 			icons: {
@@ -44,8 +32,7 @@ export function useDemoFeedback(
 		} );
 		const feedbackRegistration = {
 			id: 'demo-feedback',
-			actions: ( message: UIMessage ) =>
-				feedbackManager.getActionsForMessage( message ),
+			actions: ( message: UIMessage ) => feedbackManager.getActionsForMessage( message ),
 		};
 		registerMessageActions( feedbackRegistration );
 

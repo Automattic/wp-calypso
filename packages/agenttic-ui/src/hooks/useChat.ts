@@ -22,9 +22,7 @@ export function useChat( chatState?: ChatState ): UseChatReturn {
 	}, [ initialState ] );
 
 	const toggle = useCallback( () => {
-		setState( ( prev ) =>
-			prev === 'collapsed' ? 'compact' : 'collapsed'
-		);
+		setState( ( prev ) => ( prev === 'collapsed' ? 'compact' : 'collapsed' ) );
 	}, [] );
 
 	return {

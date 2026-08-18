@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
+import { logger } from '../client/utils/logger';
+import { resolveActionsForMessage } from '../message-actions/resolver';
+import { useMessageActions } from '../message-actions/useMessageActions';
 import { getAgentManager } from './agentManager';
+import { useRegenerate } from './useRegenerate';
 import type {
 	AuthProvider,
 	Message as ClientMessage,
@@ -10,10 +13,7 @@ import type {
 	TaskUpdate,
 	ToolProvider,
 } from '../client/types/index';
-import { useMessageActions } from '../message-actions/useMessageActions';
-import { resolveActionsForMessage } from '../message-actions/resolver';
-import { logger } from '../client/utils/logger';
-import { useRegenerate } from './useRegenerate';
+import type { ReactNode } from 'react';
 
 // Utility function to sort UI messages by timestamp
 const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
@@ -28,18 +28,15 @@ const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
  * component). They are kept across a reconcile so they don't disappear when
  * the turn completes. User messages are excluded because the server echoes
  * them back with different IDs, so keeping the local copy would duplicate them.
- *
  * @param uiMessages       - Current UI messages
  * @param clientMessageIds - IDs present in the agent's client history
- * @return The UI-only messages that should be preserved
+ * @returns The UI-only messages that should be preserved
  */
 export const filterUiOnlyMessages = (
 	uiMessages: UIMessage[],
 	clientMessageIds: Set< string >
 ): UIMessage[] => {
-	return uiMessages.filter(
-		( msg ) => ! clientMessageIds.has( msg.id ) && msg.role !== 'user'
-	);
+	return uiMessages.filter( ( msg ) => ! clientMessageIds.has( msg.id ) && msg.role !== 'user' );
 };
 
 /**
@@ -165,16 +162,12 @@ export type MessageActionDefinition =
 
 export interface MessageActionsRegistration {
 	id: string;
-	actions:
-		| MessageActionDefinition[]
-		| ( ( message: UIMessage ) => MessageActionDefinition[] );
+	actions: MessageActionDefinition[] | ( ( message: UIMessage ) => MessageActionDefinition[] );
 }
 
 // Hook interface for managing message actions
 export interface UseMessageActionsReturn {
-	registerMessageActions: (
-		registration: MessageActionsRegistration
-	) => void;
+	registerMessageActions: ( registration: MessageActionsRegistration ) => void;
 	unregisterMessageActions: ( id: string ) => void;
 	clearAllMessageActions: () => void;
 }
@@ -203,9 +196,7 @@ export const transformClientMessageToUI = (
 		.map( ( part ) => {
 			if ( part.type === 'text' ) {
 				// Check metadata for content type (e.g., `text`, `context`)
-				const contentType =
-					( part.metadata?.contentType as ContentType | undefined ) ||
-					'text';
+				const contentType = ( part.metadata?.contentType as ContentType | undefined ) || 'text';
 				return {
 					type: contentType,
 					text: part.text,
@@ -246,10 +237,7 @@ export const transformClientMessageToUI = (
 					};
 				}
 				// Preserve `data` parts with `sources` array for article references
-				if (
-					Array.isArray( data.sources ) &&
-					data.sources.length > 0
-				) {
+				if ( Array.isArray( data.sources ) && data.sources.length > 0 ) {
 					return {
 						type: 'data' as const,
 						data,
@@ -267,9 +255,7 @@ export const transformClientMessageToUI = (
 				text: '[Unsupported content]',
 			};
 		} )
-		.filter(
-			( item ): item is NonNullable< typeof item > => item !== null
-		);
+		.filter( ( item ): item is NonNullable< typeof item > => item !== null );
 
 	// Drop messages with nothing to show. Keeping them would add empty
 	// entries to the list and throw off message counts.
@@ -278,8 +264,7 @@ export const transformClientMessageToUI = (
 	}
 
 	// Extract timestamp from message metadata or use current time as fallback
-	const timestamp =
-		( clientMessage.metadata?.timestamp as number ) ?? Date.now();
+	const timestamp = ( clientMessage.metadata?.timestamp as number ) ?? Date.now();
 
 	const uiMessage: UIMessage = {
 		id: clientMessage.messageId,
@@ -292,14 +277,8 @@ export const transformClientMessageToUI = (
 	};
 
 	// Resolve actions for agent messages
-	if (
-		clientMessage.role === 'agent' &&
-		messageActionsRegistrations.length > 0
-	) {
-		const resolvedActions = resolveActionsForMessage(
-			uiMessage,
-			messageActionsRegistrations
-		);
+	if ( clientMessage.role === 'agent' && messageActionsRegistrations.length > 0 ) {
+		const resolvedActions = resolveActionsForMessage( uiMessage, messageActionsRegistrations );
 
 		if ( resolvedActions.length > 0 ) {
 			uiMessage.actions = resolvedActions;
@@ -371,17 +350,13 @@ export interface UseAgentChatReturn {
 	clearSuggestions: () => void;
 
 	// Message actions methods
-	registerMessageActions: (
-		registration: MessageActionsRegistration
-	) => void;
+	registerMessageActions: ( registration: MessageActionsRegistration ) => void;
 	unregisterMessageActions: ( id: string ) => void;
 	clearAllMessageActions: () => void;
 	// Returns the regenerate handler for an eligible assistant message (or the
 	// latest eligible one when no message is given), or null when regeneration
 	// isn't possible. Consumers build the action spec (label, icon, order, …).
-	getRegenerateHandler: (
-		message?: UIMessage
-	) => ( () => Promise< void > ) | null;
+	getRegenerateHandler: ( message?: UIMessage ) => ( () => Promise< void > ) | null;
 
 	// Tool integration
 	addMessage: ( message: UIMessage ) => void;
@@ -480,9 +455,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	const transformMessages = useCallback(
 		( messages: ClientMessage[] ): UIMessage[] => {
 			return messages
-				.map( ( msg ) =>
-					transformClientMessageToUI( msg, registrationsRef.current )
-				)
+				.map( ( msg ) => transformClientMessageToUI( msg, registrationsRef.current ) )
 				.filter( ( msg ): msg is UIMessage => msg !== null );
 		},
 		[] // registrationsRef is stable, so no deps needed
@@ -508,10 +481,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					sessionId: agentConfig.sessionId, // Can be empty for new chats
 					sessionIdStorageKey: agentConfig.sessionIdStorageKey,
 					onSessionIdChange: config.onSessionIdChange,
-					contextProvider:
-						config.contextProvider || createNoOpContextProvider(),
-					toolProvider:
-						config.toolProvider || createNoOpToolProvider(),
+					contextProvider: config.contextProvider || createNoOpContextProvider(),
+					toolProvider: config.toolProvider || createNoOpToolProvider(),
 					authProvider: config.authProvider,
 					enableStreaming: config.enableStreaming,
 					odieBotId: config.odieBotId,
@@ -520,8 +491,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 				// Only load messages when creating a new agent (initial mount or after removeAgent)
 				if ( agentConfig.sessionId ) {
-					const clientHistory =
-						agentManager.getConversationHistory( agentKey );
+					const clientHistory = agentManager.getConversationHistory( agentKey );
 					setState( ( prev ) => {
 						const uiHistory = transformMessages( clientHistory );
 
@@ -542,8 +512,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				agentManager.updateSessionId( agentKey, agentConfig.sessionId );
 
 				// However, clear state if there are no messages yet (fresh load)
-				const currentHistory =
-					agentManager.getConversationHistory( agentKey );
+				const currentHistory = agentManager.getConversationHistory( agentKey );
 				if ( currentHistory.length === 0 ) {
 					setState( ( prev ) => ( {
 						...prev,
@@ -581,11 +550,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 	// Send message function
 	const sendMessage = useCallback(
-		async (
-			message: string,
-			options?: SubmitOptions,
-			internalOptions?: InternalSubmitOptions
-		) => {
+		async ( message: string, options?: SubmitOptions, internalOptions?: InternalSubmitOptions ) => {
 			if ( ! isValidConfig ) {
 				throw new Error( 'Invalid agent configuration' );
 			}
@@ -595,13 +560,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			// Validate before claiming the send lock — only the `finally` at
 			// the end of the send releases it, so a throw above that point
 			// would strand it and silently drop every later send.
-			if (
-				isToolResult &&
-				( ! options?.toolCallId || ! options?.toolId )
-			) {
-				throw new Error(
-					'`toolCallId` and `toolId` are required when type is `tool_result`'
-				);
+			if ( isToolResult && ( ! options?.toolCallId || ! options?.toolId ) ) {
+				throw new Error( '`toolCallId` and `toolId` are required when type is `tool_result`' );
 			}
 
 			if ( isSendingRef.current ) {
@@ -611,11 +571,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
-			const preserveUiOnlyMessages =
-				internalOptions?.preserveUiOnlyMessages ?? true;
-			const restoreMessagesOnError = async (
-				error: string | null
-			): Promise< boolean > => {
+			const preserveUiOnlyMessages = internalOptions?.preserveUiOnlyMessages ?? true;
+			const restoreMessagesOnError = async ( error: string | null ): Promise< boolean > => {
 				const restoreOnError = internalOptions?.restoreOnError;
 
 				if ( ! restoreOnError ) {
@@ -626,15 +583,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// original error and leave `isProcessing` stuck. Surface the
 				// original error regardless of whether persistence succeeds.
 				try {
-					await agentManager.replaceMessages(
-						agentKey,
-						restoreOnError.clientMessages
-					);
+					await agentManager.replaceMessages( agentKey, restoreOnError.clientMessages );
 				} catch ( restoreError ) {
-					logger(
-						'Failed to restore conversation history after a failed send',
-						restoreError
-					);
+					logger( 'Failed to restore conversation history after a failed send', restoreError );
 				}
 
 				setState( ( prev ) => ( {
@@ -657,10 +608,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			if ( ! isToolResult ) {
 				const contentType = ( options?.type || 'text' ) as ContentType;
 				const userMessage = internalOptions?.messageOverride
-					? transformClientMessageToUI(
-							internalOptions.messageOverride,
-							[]
-					  )
+					? transformClientMessageToUI( internalOptions.messageOverride, [] )
 					: ( {
 							id: `user-${ messageTimestamp }`,
 							role: 'user',
@@ -668,10 +616,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 								{ type: contentType, text: message },
 								// Map image URLs to component content parts
 								...( options?.imageUrls?.map( ( imageData ) => {
-									const url =
-										typeof imageData === 'string'
-											? imageData
-											: imageData.url;
+									const url = typeof imageData === 'string' ? imageData : imageData.url;
 									return createImageComponent( url );
 								} ) ?? [] ),
 							],
@@ -682,15 +627,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 				setState( ( prev ) => ( {
 					...prev,
-					clientMessages:
-						internalOptions?.initialClientMessages ??
-						prev.clientMessages,
+					clientMessages: internalOptions?.initialClientMessages ?? prev.clientMessages,
 					uiMessages: userMessage
-						? [
-								...( internalOptions?.initialUiMessages ??
-									prev.uiMessages ),
-								userMessage,
-						  ]
+						? [ ...( internalOptions?.initialUiMessages ?? prev.uiMessages ), userMessage ]
 						: internalOptions?.initialUiMessages ?? prev.uiMessages,
 					isProcessing: true,
 					error: null,
@@ -707,10 +646,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// Truncate history inside the guarded send so a concurrent
 				// no-op leaves history intact and any failure is restored.
 				if ( internalOptions?.truncateHistoryTo ) {
-					await agentManager.replaceMessages(
-						agentKey,
-						internalOptions.truncateHistoryTo
-					);
+					await agentManager.replaceMessages( agentKey, internalOptions.truncateHistoryTo );
 				}
 
 				// Track streaming message for incremental updates
@@ -751,21 +687,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							messageOptions,
 							options?.fileParts
 					  )
-					: agentManager.sendMessageStream(
-							agentKey,
-							message,
-							messageOptions
-					  );
+					: agentManager.sendMessageStream( agentKey, message, messageOptions );
 
 				for await ( const update of stream ) {
 					if ( onTaskUpdateRef.current ) {
 						try {
 							await onTaskUpdateRef.current( update );
 						} catch ( observerError ) {
-							logger(
-								'Error in onTaskUpdate callback: %O',
-								observerError
-							);
+							logger( 'Error in onTaskUpdate callback: %O', observerError );
 						}
 					}
 
@@ -786,9 +715,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							const streamingMessage: UIMessage = {
 								id: streamingMessageId,
 								role: 'agent',
-								content: [
-									{ type: 'text', text: update.text },
-								],
+								content: [ { type: 'text', text: update.text } ],
 								timestamp: Date.now(),
 								archived: false,
 								showIcon: true,
@@ -798,10 +725,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 							setState( ( prev ) => ( {
 								...prev,
-								uiMessages: [
-									...prev.uiMessages,
-									streamingMessage,
-								],
+								uiMessages: [ ...prev.uiMessages, streamingMessage ],
 							} ) );
 						} else {
 							// Update existing streaming message with accumulated text
@@ -838,11 +762,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 					// Handle final update - update message properties without changing ID
 					// Changing the ID causes React to unmount/remount (flicker)
-					if (
-						update.final &&
-						update.status?.message &&
-						streamingMessageId
-					) {
+					if ( update.final && update.status?.message && streamingMessageId ) {
 						finalMessageAdded = true;
 						const currentStreamingId = streamingMessageId;
 						const finalMessage = transformClientMessageToUI(
@@ -854,51 +774,33 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							setState( ( prev ) => {
 								// Update to use server ID while keeping stable reactKey
 								// This prevents React flicker while maintaining ID consistency
-								const updatedMessages = prev.uiMessages.map(
-									( msg ) => {
-										if ( msg.id === currentStreamingId ) {
-											// Use server content if it's longer (final message may have complete text)
-											// Otherwise keep streamed content to avoid flicker
-											const useServerContent =
-												finalMessage.content.length >
-													0 &&
-												finalMessage.content[ 0 ]
-													?.text &&
-												msg.content[ 0 ]?.text &&
-												finalMessage.content[ 0 ].text
-													.length >
-													msg.content[ 0 ].text
-														.length;
+								const updatedMessages = prev.uiMessages.map( ( msg ) => {
+									if ( msg.id === currentStreamingId ) {
+										// Use server content if it's longer (final message may have complete text)
+										// Otherwise keep streamed content to avoid flicker
+										const useServerContent =
+											finalMessage.content.length > 0 &&
+											finalMessage.content[ 0 ]?.text &&
+											msg.content[ 0 ]?.text &&
+											finalMessage.content[ 0 ].text.length > msg.content[ 0 ].text.length;
 
-											return {
-												...finalMessage,
-												reactKey:
-													msg.reactKey ||
-													currentStreamingId, // Keep stable reactKey
-												content: useServerContent
-													? finalMessage.content
-													: msg.content,
-											};
-										}
-										return msg;
+										return {
+											...finalMessage,
+											reactKey: msg.reactKey || currentStreamingId, // Keep stable reactKey
+											content: useServerContent ? finalMessage.content : msg.content,
+										};
 									}
-								);
+									return msg;
+								} );
 
 								// Update client messages from conversation history
-								const updatedClientHistory =
-									agentManager.getConversationHistory(
-										agentKey
-									);
+								const updatedClientHistory = agentManager.getConversationHistory( agentKey );
 								const clientMessageIds = new Set(
-									updatedClientHistory.map(
-										( msg ) => msg.messageId
-									)
+									updatedClientHistory.map( ( msg ) => msg.messageId )
 								);
 								const nextUIMessages = preserveUiOnlyMessages
 									? updatedMessages
-									: updatedMessages.filter( ( msg ) =>
-											clientMessageIds.has( msg.id )
-									  );
+									: updatedMessages.filter( ( msg ) => clientMessageIds.has( msg.id ) );
 
 								return {
 									...prev,
@@ -919,29 +821,19 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// Only update from conversation history if we didn't already handle the final message
 				if ( ! finalMessageAdded ) {
 					// Update internal messages and transform for UI
-					const updatedClientHistory =
-						agentManager.getConversationHistory( agentKey );
+					const updatedClientHistory = agentManager.getConversationHistory( agentKey );
 
 					setState( ( prev ) => {
 						// Remove any remaining streaming message
 						let filteredMessages = prev.uiMessages;
 						if ( streamingMessageId ) {
-							filteredMessages = prev.uiMessages.filter(
-								( msg ) => msg.id !== streamingMessageId
-							);
+							filteredMessages = prev.uiMessages.filter( ( msg ) => msg.id !== streamingMessageId );
 						}
 
 						// Transform client messages to UI format
 						const transformedClientMessages = updatedClientHistory
-							.map( ( msg ) =>
-								transformClientMessageToUI(
-									msg,
-									registrationsRef.current
-								)
-							)
-							.filter(
-								( msg ): msg is UIMessage => msg !== null
-							);
+							.map( ( msg ) => transformClientMessageToUI( msg, registrationsRef.current ) )
+							.filter( ( msg ): msg is UIMessage => msg !== null );
 
 						// Find UI-only messages (messages not in client history, e.g. injected by tools)
 						// Exclude user messages since they'll come back from server with different IDs
@@ -949,10 +841,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							updatedClientHistory.map( ( msg ) => msg.messageId )
 						);
 						const uiOnlyMessages = preserveUiOnlyMessages
-							? filterUiOnlyMessages(
-									filteredMessages,
-									clientMessageIds
-							  )
+							? filterUiOnlyMessages( filteredMessages, clientMessageIds )
 							: [];
 
 						// Merge client-based messages with UI-only component messages and sort by timestamp
@@ -988,10 +877,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					return; // Don't re-throw AbortError
 				}
 
-				const errorMessage =
-					error instanceof Error
-						? error.message
-						: 'Failed to send message';
+				const errorMessage = error instanceof Error ? error.message : 'Failed to send message';
 				const restored = await restoreMessagesOnError( errorMessage );
 				if ( ! restored ) {
 					setState( ( prev ) => ( {
@@ -1011,8 +897,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	);
 
 	const onSubmit = useCallback(
-		( message: string, options?: SubmitOptions ) =>
-			sendMessage( message, options ),
+		( message: string, options?: SubmitOptions ) => sendMessage( message, options ),
 		[ sendMessage ]
 	);
 
@@ -1059,20 +944,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 			// Find UI-only messages (messages not in client history, e.g. injected by tools)
 			// Exclude user messages since they'll come back from server with different IDs
-			const clientMessageIds = new Set(
-				prev.clientMessages.map( ( msg ) => msg.messageId )
-			);
+			const clientMessageIds = new Set( prev.clientMessages.map( ( msg ) => msg.messageId ) );
 			const uiOnlyMessages = prev.uiMessages.filter(
-				( msg ) =>
-					! clientMessageIds.has( msg.id ) && msg.role !== 'user'
+				( msg ) => ! clientMessageIds.has( msg.id ) && msg.role !== 'user'
 			);
 
 			return {
 				...prev,
-				uiMessages: sortUIMessagesByTime( [
-					...updatedUIMessages,
-					...uiOnlyMessages,
-				] ),
+				uiMessages: sortUIMessagesByTime( [ ...updatedUIMessages, ...uiOnlyMessages ] ),
 			};
 		} );
 	}, [ registrations, transformMessages ] );

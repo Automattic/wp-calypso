@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { ChartBlock } from '../../markdown-extensions/charts';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof ChartBlock > = {
 	title: 'Markdown Extensions/Charts/Bar Chart',

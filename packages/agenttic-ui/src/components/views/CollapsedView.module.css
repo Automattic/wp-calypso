@@ -1,5 +1,5 @@
 .button {
-    border-radius: var(--radius-lg);
-    height: var(--spacing-10);
-    width: var(--spacing-10);
+	border-radius: var( --radius-lg );
+	height: var( --spacing-10 );
+	width: var( --spacing-10 );
 }

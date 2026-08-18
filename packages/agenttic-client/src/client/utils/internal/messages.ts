@@ -1,17 +1,12 @@
-import type { ContextProvider, Message, ToolProvider } from '../../types/index';
+import { createAbilityDataPart, createContextDataPart, createToolDataPart } from '../core';
 import { logger } from '../logger';
-import {
-	createAbilityDataPart,
-	createContextDataPart,
-	createToolDataPart,
-} from '../core';
+import type { ContextProvider, Message, ToolProvider } from '../../types/index';
 
 /**
  * Enhance a message with available tools and abilities from the tool provider
- *
  * @param message      - The message to enhance
  * @param toolProvider - Optional tool provider to get tools and abilities from
- * @return Promise resolving to the enhanced message
+ * @returns Promise resolving to the enhanced message
  */
 export async function enhanceMessageWithTools(
 	message: Message,
@@ -58,10 +53,9 @@ export async function enhanceMessageWithTools(
 
 /**
  * Enhance a message with client context from the context provider
- *
  * @param message         - The message to enhance
  * @param contextProvider - Optional context provider to get context from
- * @return The enhanced message
+ * @returns The enhanced message
  */
 export function enhanceMessageWithContext(
 	message: Message,
@@ -90,11 +84,10 @@ export function enhanceMessageWithContext(
 
 /**
  * Enhance a message with both tools and context
- *
  * @param message         - The message to enhance
  * @param toolProvider    - Optional tool provider to get tools from
  * @param contextProvider - Optional context provider to get context from
- * @return Promise resolving to the enhanced message
+ * @returns Promise resolving to the enhanced message
  */
 export async function enhanceMessage(
 	message: Message,
@@ -102,16 +95,10 @@ export async function enhanceMessage(
 	contextProvider?: ContextProvider
 ): Promise< Message > {
 	// First enhance with tools (async)
-	let enhancedMessage = await enhanceMessageWithTools(
-		message,
-		toolProvider
-	);
+	let enhancedMessage = await enhanceMessageWithTools( message, toolProvider );
 
 	// Then enhance with context (sync)
-	enhancedMessage = enhanceMessageWithContext(
-		enhancedMessage,
-		contextProvider
-	);
+	enhancedMessage = enhanceMessageWithContext( enhancedMessage, contextProvider );
 
 	// Remove metadata before sending to agent (metadata is currently only client-side only to manage message timestammps)
 	const { metadata, ...messageForAgent } = enhancedMessage;

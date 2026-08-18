@@ -7,13 +7,10 @@
 
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import { mergeMarkdownComponents, processMarkdownExtensions } from '../markdown-extensions';
+import type { MarkdownExtensions } from '../markdown-extensions/types';
 import type { Components } from 'react-markdown';
 import type { PluggableList } from 'unified';
-import {
-	mergeMarkdownComponents,
-	processMarkdownExtensions,
-} from '../markdown-extensions';
-import type { MarkdownExtensions } from '../markdown-extensions/types';
 
 // Re-export types for consumers
 export type MarkdownComponents = Components;
@@ -59,26 +56,18 @@ interface CreateMessageRendererOptions {
 /**
  * Creates a message renderer component with pre-configured markdown settings
  * @param options - Configuration options for markdown rendering
- * @return A React component that renders markdown with the specified configuration
+ * @returns A React component that renders markdown with the specified configuration
  */
 export function createMessageRenderer(
 	options: CreateMessageRendererOptions = {}
 ): React.ComponentType< { children: string } > {
-	const {
-		components = {},
-		extensions = {},
-		remarkPlugins = [],
-		enableStreaming = false,
-	} = options;
+	const { components = {}, extensions = {}, remarkPlugins = [], enableStreaming = false } = options;
 
 	// Process extensions once when creating the renderer
 	const processed = processMarkdownExtensions( extensions );
 
 	// Merge extension components with user components (user takes precedence)
-	const finalComponents = mergeMarkdownComponents(
-		processed.components,
-		components
-	);
+	const finalComponents = mergeMarkdownComponents( processed.components, components );
 
 	// Merge extension plugins with user plugins
 	const finalPlugins = [ ...processed.remarkPlugins, ...remarkPlugins ];
@@ -91,13 +80,10 @@ export function createMessageRenderer(
 			if ( enableStreaming ) {
 				loadStreamingUtils()
 					.then( async ( utils ) => {
-						const blocks =
-							await utils.parseMarkdownIntoBlocks( children );
+						const blocks = await utils.parseMarkdownIntoBlocks( children );
 						const processedContent = blocks
 							.map( ( block ) => {
-								return utils.parseIncompleteMarkdown(
-									block.trim()
-								);
+								return utils.parseIncompleteMarkdown( block.trim() );
 							} )
 							.join( '\n\n' );
 						setProcessedText( processedContent );
@@ -111,10 +97,7 @@ export function createMessageRenderer(
 		}, [ children ] );
 
 		return (
-			<ReactMarkdown
-				components={ finalComponents }
-				remarkPlugins={ finalPlugins }
-			>
+			<ReactMarkdown components={ finalComponents } remarkPlugins={ finalPlugins }>
 				{ processedText }
 			</ReactMarkdown>
 		);

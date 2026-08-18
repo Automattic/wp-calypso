@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { Messages } from './Messages';
 import type { Message } from '../../types';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
 	title: 'Chat/Messages',

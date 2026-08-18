@@ -1,14 +1,5 @@
-import type {
-	AuthProvider,
-	JsonRpcResponse,
-	SendMessageParams,
-	Task,
-	TaskUpdate,
-} from '../../types/index';
 import { createSendMessageRequest } from '../core';
-import { enhanceMessage } from './messages';
 import { formatObject, logger } from '../logger';
-import { parseSSEStream } from './streaming';
 import {
 	createTimeoutHandler,
 	handleRequestError,
@@ -16,6 +7,15 @@ import {
 	validateJsonRpcResponse,
 	validateStreamingResponse,
 } from './errors';
+import { enhanceMessage } from './messages';
+import { parseSSEStream } from './streaming';
+import type {
+	AuthProvider,
+	JsonRpcResponse,
+	SendMessageParams,
+	Task,
+	TaskUpdate,
+} from '../../types/index';
 
 /**
  * Configuration for making requests
@@ -31,10 +31,9 @@ export interface RequestConfig {
 
 /**
  * Construct the full agent URL from base URL and agent ID
- *
  * @param agentUrl - Base agent URL (required)
  * @param agentId  - Agent ID to append to the URL
- * @return Full agent URL
+ * @returns Full agent URL
  */
 function constructAgentUrl( agentUrl: string, agentId: string ): string {
 	return `${ agentUrl }/${ agentId }`;
@@ -52,18 +51,12 @@ export interface RequestOptions {
 
 /**
  * Log request details if verbose logging is enabled
- *
  * @param method  - HTTP method
  * @param url     - Request URL
  * @param headers - Request headers
  * @param body    - Request body
  */
-function logRequest(
-	method: string,
-	url: string,
-	headers: Record< string, string >,
-	body?: any
-) {
+function logRequest( method: string, url: string, headers: Record< string, string >, body?: any ) {
 	logger( 'Request: %s %s', method, url );
 	logger( 'Headers: %o', headers );
 	if ( body ) {
@@ -73,10 +66,9 @@ function logRequest(
 
 /**
  * Get headers for requests
- *
  * @param authProvider - Optional auth provider
  * @param isStreaming  - Whether this is a streaming request
- * @return Promise resolving to headers object
+ * @returns Promise resolving to headers object
  */
 async function getHeaders(
 	authProvider?: AuthProvider,
@@ -100,15 +92,11 @@ async function getHeaders(
 
 /**
  * Combine two abort signals into one.
- *
  * @param signal1 - First abort signal
  * @param signal2 - Second abort signal (optional)
- * @return Combined abort signal
+ * @returns Combined abort signal
  */
-function combineSignals(
-	signal1: AbortSignal,
-	signal2?: AbortSignal
-): AbortSignal {
+function combineSignals( signal1: AbortSignal, signal2?: AbortSignal ): AbortSignal {
 	if ( ! signal2 ) {
 		return signal1;
 	}
@@ -143,12 +131,11 @@ function combineSignals(
 
 /**
  * Create fetch options for browser requests
- *
  * @param headers     - Request headers
  * @param body        - Request body
  * @param signal      - Abort signal
  * @param credentials - Optional fetch credentials mode
- * @return Basic fetch options
+ * @returns Basic fetch options
  */
 function createFetchOptions(
 	headers: Record< string, string >,
@@ -170,14 +157,13 @@ function createFetchOptions(
 
 /**
  * Prepare a request for execution
- *
  * @param params           - Send message parameters
  * @param config           - Request configuration
  * @param options          - Request options
  * @param toolProvider     - Optional tool provider
  * @param contextProvider  - Optional context provider
  * @param defaultSessionId - Default session ID
- * @return Promise resolving to prepared request data
+ * @returns Promise resolving to prepared request data
  */
 export async function prepareRequest(
 	params: SendMessageParams,
@@ -188,18 +174,14 @@ export async function prepareRequest(
 	defaultSessionId?: string
 ) {
 	const { message, sessionId, taskId, metadata } = params;
-	const { agentId, agentUrl, authProvider, proxy } = config;
+	const { agentId, agentUrl, authProvider } = config;
 	const { isStreaming = false, enableTokenStreaming = false } = options;
 
 	const effectiveSessionId = sessionId || defaultSessionId;
 	const fullAgentUrl = constructAgentUrl( agentUrl, agentId );
 
 	// Enhance message with tools and context
-	const enhancedMessage = await enhanceMessage(
-		message,
-		toolProvider,
-		contextProvider
-	);
+	const enhancedMessage = await enhanceMessage( message, toolProvider, contextProvider );
 
 	// Create request payload with token streaming flag
 	// Use message/stream for SSE, add tokenStreaming: true for token streaming
@@ -240,11 +222,10 @@ export async function prepareRequest(
 
 /**
  * Execute a non-streaming request
- *
  * @param preparedRequest - Prepared request data
  * @param config          - Request configuration
  * @param options         - Request options (including external abort signal)
- * @return Promise resolving to the response task
+ * @returns Promise resolving to the response task
  */
 export async function executeRequest(
 	preparedRequest: Awaited< ReturnType< typeof prepareRequest > >,
@@ -256,10 +237,7 @@ export async function executeRequest(
 	const { abortSignal: externalSignal } = options;
 
 	// Always create timeout protection
-	const { timeoutId, controller: timeoutController } = createTimeoutHandler(
-		timeout,
-		'request'
-	);
+	const { timeoutId, controller: timeoutController } = createTimeoutHandler( timeout );
 
 	// Combine external signal with timeout if provided
 	const signal = externalSignal
@@ -284,17 +262,12 @@ export async function executeRequest(
 		clearTimeout( timeoutId );
 
 		// Validate HTTP response
-		validateHttpResponse( response, 'request' );
+		validateHttpResponse( response );
 
 		const data = ( await response.json() ) as JsonRpcResponse< Task >;
 
 		// Log the response
-		logger(
-			'Response from %s: %d %O',
-			fullAgentUrl,
-			response.status,
-			formatObject( data )
-		);
+		logger( 'Response from %s: %d %O', fullAgentUrl, response.status, formatObject( data ) );
 
 		// Validate JSON-RPC response and return result
 		return validateJsonRpcResponse( data, 'request' );
@@ -305,11 +278,10 @@ export async function executeRequest(
 
 /**
  * Execute a streaming request
- *
  * @param preparedRequest - Prepared request data
  * @param config          - Request configuration
  * @param options         - Request options (including external abort signal)
- * @return Async iterable of task updates
+ * @returns Async iterable of task updates
  */
 export async function* executeStreamingRequest(
 	preparedRequest: Awaited< ReturnType< typeof prepareRequest > >,
@@ -324,10 +296,7 @@ export async function* executeStreamingRequest(
 		enableTokenStreaming = false,
 	} = options;
 
-	const { timeoutId, controller } = createTimeoutHandler(
-		streamingTimeout,
-		'streaming request'
-	);
+	const { timeoutId, controller } = createTimeoutHandler( streamingTimeout );
 
 	// Combine external signal with timeout if provided
 	const signal = externalSignal
@@ -337,12 +306,7 @@ export async function* executeStreamingRequest(
 	try {
 		const requestBody = JSON.stringify( request );
 
-		const fetchOptions = createFetchOptions(
-			headers,
-			requestBody,
-			signal,
-			credentials
-		);
+		const fetchOptions = createFetchOptions( headers, requestBody, signal, credentials );
 
 		const response = await fetch( fullAgentUrl, fetchOptions );
 
@@ -353,13 +317,10 @@ export async function* executeStreamingRequest(
 
 		// Check if response.body exists
 		if ( ! response.body ) {
-			throw new Error(
-				'Response body is null - server may not support streaming'
-			);
+			throw new Error( 'Response body is null - server may not support streaming' );
 		}
 
-		const supportDeltas =
-			enableTokenStreaming && request.tokenStreaming === true;
+		const supportDeltas = enableTokenStreaming && request.tokenStreaming === true;
 
 		yield* parseSSEStream( response.body as ReadableStream< Uint8Array >, {
 			supportDeltas,

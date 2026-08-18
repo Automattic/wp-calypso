@@ -14,10 +14,7 @@ interface MockSalesGraphProps {
 	timeframe?: string;
 }
 
-export const MockSalesGraph: React.FC< MockSalesGraphProps > = ( {
-	title,
-	data,
-} ) => {
+export const MockSalesGraph: React.FC< MockSalesGraphProps > = ( { title, data } ) => {
 	const totalSales = data.reduce( ( sum, item ) => sum + item.sales, 0 );
 	const avgSales = Math.round( totalSales / data.length );
 
@@ -32,8 +29,7 @@ export const MockSalesGraph: React.FC< MockSalesGraphProps > = ( {
 		>
 			<h3>{ title }</h3>
 			<p>
-				Total: ${ totalSales.toLocaleString() } | Avg: $
-				{ avgSales.toLocaleString() }
+				Total: ${ totalSales.toLocaleString() } | Avg: ${ avgSales.toLocaleString() }
 			</p>
 			<ul style={ { listStyle: 'none', padding: 0 } }>
 				{ data.map( ( item ) => (

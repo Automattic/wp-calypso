@@ -8,10 +8,7 @@ interface ResizeHandlesProps {
 
 // The floating panel's resize-handle overlay. Renders only the handles the mode
 // allows; each carries its edge in a data attribute the resize pointer loop reads.
-export function ResizeHandles( {
-	resizable,
-	onPointerDown,
-}: ResizeHandlesProps ) {
+export function ResizeHandles( { resizable, onPointerDown }: ResizeHandlesProps ) {
 	return (
 		<>
 			{ getVisibleResizeHandles( resizable ).map( ( handle ) => (

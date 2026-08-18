@@ -1,15 +1,12 @@
 import { motion } from 'framer-motion';
 import React, { useCallback } from 'react';
-import type { NoticeConfig, Suggestion } from '../../types';
 import { fastSpring } from '../animations';
+import styles from './ChatFooter.module.css';
 import { type ActionButton, ChatInput } from './ChatInput';
+import { ComplianceDisclosure, DefaultComplianceDisclosure } from './ComplianceDisclosure';
 import { Notice } from './Notice';
 import { Suggestions } from './Suggestions';
-import {
-	ComplianceDisclosure,
-	DefaultComplianceDisclosure,
-} from './ComplianceDisclosure';
-import styles from './ChatFooter.module.css';
+import type { NoticeConfig, Suggestion } from '../../types';
 
 interface ChatFooterProps {
 	// Input handlers
@@ -87,10 +84,7 @@ export function ChatFooter( {
 				transition={ { ...fastSpring } }
 			>
 				{ ! inputValue && (
-					<Suggestions
-						suggestions={ suggestions }
-						onSubmit={ handleSuggestionSubmit }
-					/>
+					<Suggestions suggestions={ suggestions } onSubmit={ handleSuggestionSubmit } />
 				) }
 				{ notice && (
 					<Notice
@@ -120,9 +114,7 @@ export function ChatFooter( {
 					disabled={ disabled }
 				/>
 			</motion.div>
-			<ComplianceDisclosure>
-				{ complianceDisclosure }
-			</ComplianceDisclosure>
+			<ComplianceDisclosure>{ complianceDisclosure }</ComplianceDisclosure>
 		</>
 	);
 }

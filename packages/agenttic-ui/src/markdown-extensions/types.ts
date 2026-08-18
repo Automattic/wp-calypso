@@ -17,6 +17,7 @@ export interface MarkdownExtensionConfigBase {
  * Configuration for chart extension
  */
 export interface ChartExtensionConfig extends MarkdownExtensionConfigBase {
+	// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- public extension point
 	config?: {
 		// Chart-specific options
 	};
@@ -27,6 +28,7 @@ export interface ChartExtensionConfig extends MarkdownExtensionConfigBase {
  * Enables tables, strikethrough, task lists, and other GFM features
  */
 export interface GfmExtensionConfig extends MarkdownExtensionConfigBase {
+	// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- public extension point
 	config?: {
 		// GFM-specific options could be added here
 	};

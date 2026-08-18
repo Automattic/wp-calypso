@@ -24,26 +24,18 @@ async function uploadFiles(
 }
 
 function unreadTotal( sessions: AgentsApiSession[] ): number {
-	return sessions.reduce(
-		( total, session ) => total + ( session.unread_count ?? 0 ),
-		0
-	);
+	return sessions.reduce( ( total, session ) => total + ( session.unread_count ?? 0 ), 0 );
 }
 
 function messageText( message: AgentsApiMessage ): string {
 	return message.content
-		.filter(
-			( part ) => part.type === 'text' && typeof part.text === 'string'
-		)
+		.filter( ( part ) => part.type === 'text' && typeof part.text === 'string' )
 		.map( ( part ) => part.text )
 		.join( '' )
 		.trim();
 }
 
-function containsUserMessage(
-	messages: AgentsApiMessage[],
-	message: AgentsApiMessage
-): boolean {
+function containsUserMessage( messages: AgentsApiMessage[], message: AgentsApiMessage ): boolean {
 	const submittedText = messageText( message );
 	return messages.some(
 		( candidate ) =>
@@ -94,8 +86,7 @@ export function useAgentsApiChat( {
 	}, [] );
 
 	const setNormalizedError = useCallback( ( err: unknown ) => {
-		const nextError =
-			err instanceof Error ? err : new Error( String( err ) );
+		const nextError = err instanceof Error ? err : new Error( String( err ) );
 		if ( ! mountedRef.current ) {
 			return;
 		}
@@ -104,9 +95,11 @@ export function useAgentsApiChat( {
 	}, [] );
 
 	const refreshSessions = useCallback( async () => {
+		/* eslint-disable @wordpress/no-unused-vars-before-return -- the request must complete before the staleness guard */
 		const requestId = ++refreshRequestRef.current;
 		const response = await adapter.listSessions();
 		const nextSessions = normalizeSessions( response );
+		/* eslint-enable @wordpress/no-unused-vars-before-return */
 		if ( ! mountedRef.current || requestId !== refreshRequestRef.current ) {
 			return;
 		}
@@ -137,14 +130,8 @@ export function useAgentsApiChat( {
 			);
 			setIsProcessing( true );
 			setError( null );
-			setMessages( ( currentMessages ) => [
-				...currentMessages,
-				submittedMessage,
-			] );
-			messageIdsRef.current = new Set( [
-				...messageIdsRef.current,
-				submittedMessage.id,
-			] );
+			setMessages( ( currentMessages ) => [ ...currentMessages, submittedMessage ] );
+			messageIdsRef.current = new Set( [ ...messageIdsRef.current, submittedMessage.id ] );
 			onMessageRef.current?.( submittedMessage );
 			try {
 				const attachments = await uploadFiles( files, mediaUploadFn );
@@ -154,29 +141,18 @@ export function useAgentsApiChat( {
 					sessionId,
 					attachments,
 				} );
-				const normalized = normalizeSendResponse(
-					response,
-					content,
-					attachments
-				);
+				const normalized = normalizeSendResponse( response, content, attachments );
 				if ( ! mountedRef.current ) {
 					return;
 				}
-				const nextMessages = containsUserMessage(
-					normalized.messages,
-					submittedMessage
-				)
+				const nextMessages = containsUserMessage( normalized.messages, submittedMessage )
 					? normalized.messages
 					: [ submittedMessage, ...normalized.messages ];
-				messageIdsRef.current = new Set(
-					nextMessages.map( ( item ) => item.id )
-				);
+				messageIdsRef.current = new Set( nextMessages.map( ( item ) => item.id ) );
 				setMessages( nextMessages );
 				setSessionId( normalized.sessionId ?? sessionId );
 				const nextRunId =
-					( getRunId && getRunId( normalized.metadata ) ) ??
-					normalized.runId ??
-					null;
+					( getRunId && getRunId( normalized.metadata ) ) ?? normalized.runId ?? null;
 				setRunId( nextRunId );
 				normalized.messages
 					.filter( ( item ) => ! existingMessageIds.has( item.id ) )
@@ -191,14 +167,7 @@ export function useAgentsApiChat( {
 				}
 			}
 		},
-		[
-			adapter,
-			getRunId,
-			mediaUploadFn,
-			refreshSessions,
-			setNormalizedError,
-			sessionId,
-		]
+		[ adapter, getRunId, mediaUploadFn, refreshSessions, setNormalizedError, sessionId ]
 	);
 
 	const loadSession = useCallback(
@@ -210,9 +179,7 @@ export function useAgentsApiChat( {
 				if ( ! mountedRef.current ) {
 					return;
 				}
-				messageIdsRef.current = new Set(
-					loaded.messages.map( ( item ) => item.id )
-				);
+				messageIdsRef.current = new Set( loaded.messages.map( ( item ) => item.id ) );
 				setSessionId( loaded.sessionId ?? nextSessionId );
 				setMessages( loaded.messages );
 				onResponseMetadataRef.current?.( loaded.metadata );

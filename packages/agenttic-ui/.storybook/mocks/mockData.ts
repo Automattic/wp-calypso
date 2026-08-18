@@ -40,10 +40,7 @@ export const createMockComponentMessage = (
 } );
 
 export const mockMessages: Message[] = [
-	createMockMessage(
-		'user',
-		'Hello! Can you help me with my WordPress site?'
-	),
+	createMockMessage( 'user', 'Hello! Can you help me with my WordPress site?' ),
 	createMockMessage(
 		'assistant',
 		"Hello! I'd be happy to help you with your WordPress site. I can assist with content creation, site optimization, SEO improvements, and much more. What would you like to work on?"
@@ -114,9 +111,7 @@ export const mockSuggestions: Suggestion[] = [
 	},
 ];
 
-export const getRegisteredSuggestionsForContext = (
-	context: string
-): Suggestion[] => {
+export const getRegisteredSuggestionsForContext = ( context: string ): Suggestion[] => {
 	const suggestionSets = {
 		button: [
 			{
@@ -181,10 +176,7 @@ export const getRegisteredSuggestionsForContext = (
 		},
 	];
 
-	return (
-		suggestionSets[ context as keyof typeof suggestionSets ] ||
-		defaultSuggestions
-	);
+	return suggestionSets[ context as keyof typeof suggestionSets ] || defaultSuggestions;
 };
 
 export const createMockToolResponse = (
@@ -207,26 +199,19 @@ export const mockSiteData = [
 	{ page: 'Services', views: 1234 },
 ];
 
-export const createErrorAgent = (
-	errorType: 'network' | 'auth' | 'timeout'
-) => {
+export const createErrorAgent = ( errorType: 'network' | 'auth' | 'timeout' ) => {
 	const errorMessages = {
-		network:
-			'Network connection failed. Please check your internet connection.',
+		network: 'Network connection failed. Please check your internet connection.',
 		auth: 'Authentication failed. Please log in again.',
 		timeout: 'Request timed out. The server took too long to respond.',
 	};
 
 	return {
 		sendMessage: async () => {
-			throw new Error(
-				`Mock ${ errorType } error: ${ errorMessages[ errorType ] }`
-			);
+			throw new Error( `Mock ${ errorType } error: ${ errorMessages[ errorType ] }` );
 		},
 		getContext: async () => {
-			throw new Error(
-				`Mock ${ errorType } error: ${ errorMessages[ errorType ] }`
-			);
+			throw new Error( `Mock ${ errorType } error: ${ errorMessages[ errorType ] }` );
 		},
 	};
 };
@@ -294,9 +279,7 @@ export const generateConversation = ( messageCount: number ): Message[] => {
 	for ( let i = 0; i < messageCount; i++ ) {
 		const isUser = i % 2 === 0;
 		const content = isUser
-			? `User message ${
-					Math.floor( i / 2 ) + 1
-			  }: This is a sample question or request.`
+			? `User message ${ Math.floor( i / 2 ) + 1 }: This is a sample question or request.`
 			: `Assistant response ${
 					Math.floor( i / 2 ) + 1
 			  }: This is a helpful response to the user's question.`;

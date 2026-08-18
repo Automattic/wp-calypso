@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { ThinkingMessage } from './ThinkingMessage';
 import { Message } from './Message';
+import { ThinkingMessage } from './ThinkingMessage';
 import type { Message as MessageType } from '../../types';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
 	title: 'Chat/ThinkingMessage',
@@ -49,9 +49,7 @@ const agentMessage: MessageType = {
 
 export const InConversation: Story = {
 	render: () => (
-		<div
-			style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }
-		>
+		<div style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
 			<Message message={ userMessage } />
 			<Message message={ agentMessage } />
 			<ThinkingMessage />

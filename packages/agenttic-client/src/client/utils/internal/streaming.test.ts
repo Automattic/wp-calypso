@@ -294,17 +294,14 @@ describe( 'parseSSEStream', () => {
 		const sawStaleToolCall = updates.some(
 			( u ) =>
 				u.status.message?.parts?.some(
-					( p: any ) =>
-						p.type === 'data' && p.data?.toolCallId === 'call-stale'
+					( p: any ) => p.type === 'data' && p.data?.toolCallId === 'call-stale'
 				)
 		);
 		expect( sawStaleToolCall ).toBe( true );
 
 		const lastUpdate = updates[ updates.length - 1 ];
 		expect( lastUpdate.text ).toBe( 'fresh start' );
-		expect( lastUpdate.status.message?.parts ).toEqual( [
-			{ type: 'text', text: 'fresh start' },
-		] );
+		expect( lastUpdate.status.message?.parts ).toEqual( [ { type: 'text', text: 'fresh start' } ] );
 	} );
 
 	it( 'accumulates tool names from tool_name deltas', async () => {
@@ -757,9 +754,7 @@ describe( 'parseSSEStream', () => {
 				},
 			},
 		};
-		const stream = streamFromRaw(
-			`  data: ${ JSON.stringify( event ) }\n\n`
-		);
+		const stream = streamFromRaw( `  data: ${ JSON.stringify( event ) }\n\n` );
 
 		for await ( const update of parseSSEStream( stream ) ) {
 			updates.push( update );
@@ -819,18 +814,14 @@ describe( 'parseSSEStream', () => {
 		};
 		const stream = new ReadableStream< Uint8Array >( {
 			start( controller ) {
-				controller.enqueue(
-					encoder.encode( `data: ${ JSON.stringify( event ) }` )
-				);
+				controller.enqueue( encoder.encode( `data: ${ JSON.stringify( event ) }` ) );
 			},
 		} );
 
 		const iterator = parseSSEStream( stream )[ Symbol.asyncIterator ]();
 		const result = await Promise.race( [
 			iterator.next(),
-			new Promise< 'timeout' >( ( resolve ) =>
-				setTimeout( () => resolve( 'timeout' ), 50 )
-			),
+			new Promise< 'timeout' >( ( resolve ) => setTimeout( () => resolve( 'timeout' ), 50 ) ),
 		] );
 
 		expect( result ).not.toBe( 'timeout' );
@@ -898,9 +889,7 @@ describe( 'parseSSEStream', () => {
 			};
 		}
 
-		function singleChunkStreamOf(
-			count: number
-		): ReadableStream< Uint8Array > {
+		function singleChunkStreamOf( count: number ): ReadableStream< Uint8Array > {
 			// One network chunk carrying the whole backlog, which is what the
 			// client sees when the server finished while events were buffered.
 			const payload = Array.from( { length: count }, ( _, index ) =>
@@ -911,18 +900,14 @@ describe( 'parseSSEStream', () => {
 
 		it( 'drains an already-buffered burst of deltas without pacing each one', async () => {
 			const rafSpy = vi.fn( ( callback: FrameRequestCallback ) => {
-				return setTimeout(
-					() => callback( performance.now() ),
-					0
-				) as unknown as number;
+				return setTimeout( () => callback( performance.now() ), 0 ) as unknown as number;
 			} );
 			vi.stubGlobal( 'requestAnimationFrame', rafSpy );
 
 			const updates = [];
-			for await ( const update of parseSSEStream(
-				singleChunkStreamOf( 60 ),
-				{ supportDeltas: true }
-			) ) {
+			for await ( const update of parseSSEStream( singleChunkStreamOf( 60 ), {
+				supportDeltas: true,
+			} ) ) {
 				updates.push( update );
 			}
 
@@ -940,15 +925,12 @@ describe( 'parseSSEStream', () => {
 			// Make every delta appear to exhaust the processing budget so
 			// the pacing path is exercised on each event.
 			let fakeNow = 0;
-			vi.spyOn( Date, 'now' ).mockImplementation(
-				() => ( fakeNow += 20 )
-			);
+			vi.spyOn( Date, 'now' ).mockImplementation( () => ( fakeNow += 20 ) );
 
 			const updates = [];
-			for await ( const update of parseSSEStream(
-				singleChunkStreamOf( 5 ),
-				{ supportDeltas: true }
-			) ) {
+			for await ( const update of parseSSEStream( singleChunkStreamOf( 5 ), {
+				supportDeltas: true,
+			} ) ) {
 				updates.push( update );
 			}
 
@@ -958,22 +940,16 @@ describe( 'parseSSEStream', () => {
 
 		it( 'still yields to a frame between deltas once the processing budget is exceeded', async () => {
 			const rafSpy = vi.fn( ( callback: FrameRequestCallback ) => {
-				return setTimeout(
-					() => callback( performance.now() ),
-					0
-				) as unknown as number;
+				return setTimeout( () => callback( performance.now() ), 0 ) as unknown as number;
 			} );
 			vi.stubGlobal( 'requestAnimationFrame', rafSpy );
 			let fakeNow = 0;
-			vi.spyOn( Date, 'now' ).mockImplementation(
-				() => ( fakeNow += 20 )
-			);
+			vi.spyOn( Date, 'now' ).mockImplementation( () => ( fakeNow += 20 ) );
 
 			const updates = [];
-			for await ( const update of parseSSEStream(
-				singleChunkStreamOf( 5 ),
-				{ supportDeltas: true }
-			) ) {
+			for await ( const update of parseSSEStream( singleChunkStreamOf( 5 ), {
+				supportDeltas: true,
+			} ) ) {
 				updates.push( update );
 			}
 

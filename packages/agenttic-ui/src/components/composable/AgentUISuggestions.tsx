@@ -14,23 +14,13 @@ export function AgentUISuggestions( {
 	showSuggestions,
 	onSelect,
 }: AgentUISuggestionsProps = {} ) {
-	const {
-		suggestions,
-		handleSuggestionSubmit,
-		inputValue,
-		messages,
-		variant,
-		emptyView,
-	} = useAgentUIContext();
+	const { suggestions, handleSuggestionSubmit, inputValue, messages, variant, emptyView } =
+		useAgentUIContext();
 
 	const handleSubmit = useCallback(
-		(
-			selectedSuggestion: Suggestion,
-			availableSuggestions: Suggestion[]
-		) => {
+		( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => {
 			try {
-				const value =
-					selectedSuggestion.prompt ?? selectedSuggestion.label;
+				const value = selectedSuggestion.prompt ?? selectedSuggestion.label;
 				onSelect?.( value );
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
@@ -57,10 +47,6 @@ export function AgentUISuggestions( {
 	}
 
 	return (
-		<Suggestions
-			suggestions={ suggestions }
-			onSubmit={ handleSubmit }
-			className={ className }
-		/>
+		<Suggestions suggestions={ suggestions } onSubmit={ handleSubmit } className={ className } />
 	);
 }

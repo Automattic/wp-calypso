@@ -1,14 +1,7 @@
-import {
-	useCallback,
-	useEffect,
-	useLayoutEffect,
-	useRef,
-	useState,
-} from 'react';
-
 import { animate, type MotionValue, useMotionValue } from 'framer-motion';
-import { DEFAULT_BOUNDARY_INSETS, STYLE_CONSTANTS } from '../utils/constants';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { morphSpring } from '../components/animations';
+import { DEFAULT_BOUNDARY_INSETS, STYLE_CONSTANTS } from '../utils/constants';
 import type { BoundaryInsets, ChatSize } from '../types';
 
 interface SizeBounds {
@@ -41,10 +34,7 @@ function clampSizeToBox(
 	const maxH = Math.min( bounds.maxHeight ?? box.height, box.height );
 	return {
 		width: Math.max( bounds.minWidth, Math.min( candidate.width, maxW ) ),
-		height: Math.max(
-			bounds.minHeight,
-			Math.min( candidate.height, maxH )
-		),
+		height: Math.max( bounds.minHeight, Math.min( candidate.height, maxH ) ),
 	};
 }
 
@@ -74,9 +64,7 @@ function footprintForState(
 	// Expanded: honor the resized size only when resize is enabled.
 	return {
 		width: expandedSize.width,
-		height: resizable
-			? expandedSize.height
-			: STYLE_CONSTANTS.EXPANDED_HEIGHT,
+		height: resizable ? expandedSize.height : STYLE_CONSTANTS.EXPANDED_HEIGHT,
 	};
 }
 
@@ -118,9 +106,7 @@ export interface UseResizablePanelResult {
 	// or null when resizing is off or a gesture is active.
 	resetToDefaultSize: () => ChatSize | null;
 	getHeightForState: ( state: string ) => number;
-	handleResizePointerDown: (
-		event: React.PointerEvent< HTMLDivElement >
-	) => void;
+	handleResizePointerDown: ( event: React.PointerEvent< HTMLDivElement > ) => void;
 }
 
 // Owns the resize concern: the live width/height motion values, gesture state,
@@ -167,12 +153,7 @@ export function useResizablePanel( {
 		);
 		return {
 			expanded,
-			footprint: footprintForState(
-				chatState,
-				expanded,
-				compactHeight,
-				Boolean( resizable )
-			),
+			footprint: footprintForState( chatState, expanded, compactHeight, Boolean( resizable ) ),
 		};
 	} );
 
@@ -223,9 +204,7 @@ export function useResizablePanel( {
 				return compactHeight;
 			}
 			// Expanded: honor the last resized height only when resize is enabled.
-			return resizable
-				? expandedSizeRef.current.height
-				: STYLE_CONSTANTS.EXPANDED_HEIGHT;
+			return resizable ? expandedSizeRef.current.height : STYLE_CONSTANTS.EXPANDED_HEIGHT;
 		},
 		[ compactHeight, resizable ]
 	);
@@ -330,21 +309,12 @@ export function useResizablePanel( {
 			if ( edge.includes( 'right' ) ) {
 				nextWidth = Math.min( nextWidth, box.width - resize.startPosX );
 			} else if ( edge.includes( 'left' ) ) {
-				nextWidth = Math.min(
-					nextWidth,
-					resize.startPosX + resize.startWidth
-				);
+				nextWidth = Math.min( nextWidth, resize.startPosX + resize.startWidth );
 			}
 			if ( edge.includes( 'bottom' ) ) {
-				nextHeight = Math.min(
-					nextHeight,
-					resize.startHeight - resize.startPosY
-				);
+				nextHeight = Math.min( nextHeight, resize.startHeight - resize.startPosY );
 			} else if ( edge.includes( 'top' ) ) {
-				nextHeight = Math.min(
-					nextHeight,
-					box.height + resize.startPosY
-				);
+				nextHeight = Math.min( nextHeight, box.height + resize.startPosY );
 			}
 
 			const clamped = clampSizeRef.current( {
@@ -357,22 +327,11 @@ export function useResizablePanel( {
 			// above keep these in bounds; the floors are a defensive guard for the
 			// min-wins case (viewport smaller than the size floor).
 			if ( edge.includes( 'left' ) ) {
-				x.set(
-					Math.max(
-						0,
-						resize.startPosX + ( resize.startWidth - clamped.width )
-					)
-				);
+				x.set( Math.max( 0, resize.startPosX + ( resize.startWidth - clamped.width ) ) );
 			}
 			if ( edge.includes( 'bottom' ) ) {
 				const minY = Math.min( 0, clamped.height - box.height );
-				y.set(
-					Math.max(
-						minY,
-						resize.startPosY +
-							( clamped.height - resize.startHeight )
-					)
-				);
+				y.set( Math.max( minY, resize.startPosY + ( clamped.height - resize.startHeight ) ) );
 			}
 
 			width.set( clamped.width );
@@ -395,15 +354,9 @@ export function useResizablePanel( {
 
 			const handleEl = event.currentTarget as HTMLElement | null;
 			handleEl?.releasePointerCapture?.( event.pointerId );
-			handleEl?.removeEventListener(
-				'pointermove',
-				handleResizePointerMove
-			);
+			handleEl?.removeEventListener( 'pointermove', handleResizePointerMove );
 			handleEl?.removeEventListener( 'pointerup', handleResizePointerUp );
-			handleEl?.removeEventListener(
-				'lostpointercapture',
-				handleResizePointerUp
-			);
+			handleEl?.removeEventListener( 'lostpointercapture', handleResizePointerUp );
 			setIsResizing( false );
 			onResizeEndRef.current?.( {
 				width: width.get(),
@@ -436,10 +389,7 @@ export function useResizablePanel( {
 
 			handleEl.addEventListener( 'pointermove', handleResizePointerMove );
 			handleEl.addEventListener( 'pointerup', handleResizePointerUp );
-			handleEl.addEventListener(
-				'lostpointercapture',
-				handleResizePointerUp
-			);
+			handleEl.addEventListener( 'lostpointercapture', handleResizePointerUp );
 		},
 		[ x, y, width, height, handleResizePointerMove, handleResizePointerUp ]
 	);
@@ -455,12 +405,7 @@ export function useResizablePanel( {
 			return;
 		}
 
-		const target = footprintForState(
-			chatState,
-			expandedSizeRef.current,
-			compactHeight,
-			true
-		);
+		const target = footprintForState( chatState, expandedSizeRef.current, compactHeight, true );
 
 		const wControls = animate( width, target.width, morphSpring );
 		const hControls = animate( height, target.height, morphSpring );
@@ -512,10 +457,8 @@ export function useResizablePanel( {
 		// COMMITTED size — the motion values lag mid-animation (e.g. a command's
 		// size reset) and would misread the echo as a new size.
 		if (
-			Math.round( expandedSizeRef.current.width ) ===
-				Math.round( target.width ) &&
-			Math.round( expandedSizeRef.current.height ) ===
-				Math.round( target.height )
+			Math.round( expandedSizeRef.current.width ) === Math.round( target.width ) &&
+			Math.round( expandedSizeRef.current.height ) === Math.round( target.height )
 		) {
 			expandedSizeRef.current = target;
 			return;

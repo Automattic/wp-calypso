@@ -2,12 +2,10 @@
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Message } from '../../types';
 import { MessageActions } from './MessageActions';
+import type { Message } from '../../types';
 
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 describe( 'MessageActions', () => {
 	let container: HTMLDivElement;
@@ -54,9 +52,7 @@ describe( 'MessageActions', () => {
 		) as HTMLButtonElement | null;
 
 		expect( button ).not.toBeNull();
-		expect(
-			button?.querySelector( '[data-testid="regenerate-icon"]' )
-		).not.toBeNull();
+		expect( button?.querySelector( '[data-testid="regenerate-icon"]' ) ).not.toBeNull();
 
 		await act( async () => {
 			button?.click();

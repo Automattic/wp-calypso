@@ -1,8 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import React from 'react';
 import { Chat } from '../chat/Chat';
 // MockProviders removed - use direct props for stories
 import type { Message } from '../../types';
+import type { Meta, StoryObj } from '@storybook/react';
 
 // Mock data for stories
 const mockMessages: Message[] = [
@@ -79,7 +78,8 @@ export const CollapsedView: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'The collapsed state shows as a floating button, typically used as the initial state for floating chat interfaces.',
+				story:
+					'The collapsed state shows as a floating button, typically used as the initial state for floating chat interfaces.',
 			},
 		},
 	},
@@ -100,7 +100,8 @@ export const MinimizedView: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'The minimized state shows a bar with an icon and a developer-defined title (via `triggerTitle`). Clicking it opens the full conversation.',
+				story:
+					'The minimized state shows a bar with an icon and a developer-defined title (via `triggerTitle`). Clicking it opens the full conversation.',
 			},
 		},
 	},
@@ -120,7 +121,8 @@ export const CompactView: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'The compact state shows only the input field, useful for space-constrained interfaces or as an intermediate state.',
+				story:
+					'The compact state shows only the input field, useful for space-constrained interfaces or as an intermediate state.',
 			},
 		},
 	},
@@ -140,7 +142,8 @@ export const ConversationView: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'The expanded state shows the full conversation interface with message history, input field, and suggestions.',
+				story:
+					'The expanded state shows the full conversation interface with message history, input field, and suggestions.',
 			},
 		},
 	},

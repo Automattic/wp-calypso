@@ -7,25 +7,23 @@
 
 .imageButton {
 	position: relative;
-	border: none;
 	background: none;
-	padding: 0;
 	cursor: pointer;
-	border-radius: calc(var(--radius-sm) + 1px);
+	border-radius: calc( var( --radius-sm ) + 2px );
 	overflow: hidden;
-	transition: var(--transition-colors);
+	transition: var( --transition-colors );
 	border: 1px solid transparent;
 	padding: 1px;
 }
 
 .imageButton:hover {
-	border-color: var(--color-muted-foreground);
+	border-color: var( --color-muted-foreground );
 }
 
 .imageButton.selected {
-	border-color: var(--color-primary);
-	box-shadow: 0 0 0 1px var(--color-primary);
-	border-radius: calc(var(--radius-sm) + 1px);
+	border-color: var( --color-primary );
+	box-shadow: 0 0 0 1px var( --color-primary );
+	border-radius: calc( var( --radius-sm ) + 2px );
 }
 
 .imageButton.disabled {
@@ -38,12 +36,12 @@
 	width: 100%;
 	height: auto;
 	display: block;
-	border-radius: var(--radius-sm);
+	border-radius: var( --radius-sm );
 	object-fit: cover;
 }
 
 .header {
 	display: flex;
-	margin-bottom: var(--spacing-1);
-	color: var(--color-muted-foreground);
+	margin-bottom: var( --spacing-1 );
+	color: var( --color-muted-foreground );
 }

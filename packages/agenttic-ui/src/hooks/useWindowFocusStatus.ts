@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 /**
  * Hook to track window focus status
- *
  * @returns boolean indicating if the window is currently focused
  */
 export function useWindowFocusStatus(): boolean {

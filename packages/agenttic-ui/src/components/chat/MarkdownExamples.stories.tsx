@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { createMessageRenderer } from '../../utils/createMessageRenderer';
 import { Messages } from './Messages';
 import type { Message } from '../../types';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
 	title: 'Markdown Extensions/Custom Components',
@@ -168,17 +168,13 @@ This function demonstrates template literals and console logging.`,
 
 // Custom markdown components to style the rendered markdown
 const customMarkdownComponents = {
-	blockquote: ( { children }: any ) => (
-		<BlockquoteComponent>{ children }</BlockquoteComponent>
-	),
+	blockquote: ( { children }: any ) => <BlockquoteComponent>{ children }</BlockquoteComponent>,
 	code: ( { inline, children, className }: any ) => {
 		const language = className?.replace( 'language-', '' );
 		return inline ? (
 			<InlineCodeComponent>{ children }</InlineCodeComponent>
 		) : (
-			<CodeBlockComponent language={ language }>
-				{ children }
-			</CodeBlockComponent>
+			<CodeBlockComponent language={ language }>{ children }</CodeBlockComponent>
 		);
 	},
 };

@@ -1,10 +1,7 @@
 import type { Message, MessageAction } from '../types';
 
 export interface FeedbackActionsConfig {
-	onFeedback: (
-		messageId: string,
-		feedback: 'up' | 'down'
-	) => void | Promise< void >;
+	onFeedback: ( messageId: string, feedback: 'up' | 'down' ) => void | Promise< void >;
 	condition?: ( message: Message ) => boolean;
 	icons: {
 		up: React.ReactNode;
@@ -22,13 +19,10 @@ export interface FeedbackActionsManager {
 
 /**
  * Creates a stateful feedback actions manager that tracks feedback state internally
- *
  * @param config - Configuration for feedback actions
- * @return FeedbackActionsManager with methods to get actions and manage state
+ * @returns FeedbackActionsManager with methods to get actions and manage state
  */
-export const createFeedbackActions = (
-	config: FeedbackActionsConfig
-): FeedbackActionsManager => {
+export const createFeedbackActions = ( config: FeedbackActionsConfig ): FeedbackActionsManager => {
 	const baseCondition = config.condition || ( () => true );
 	const feedbackByMessageId: Record< string, 'up' | 'down' > = {};
 	const changeListeners: Array< () => void > = [];
@@ -37,10 +31,7 @@ export const createFeedbackActions = (
 		changeListeners.forEach( ( listener ) => listener() );
 	};
 
-	const handleFeedback = async (
-		messageId: string,
-		feedback: 'up' | 'down'
-	) => {
+	const handleFeedback = async ( messageId: string, feedback: 'up' | 'down' ) => {
 		feedbackByMessageId[ messageId ] = feedback;
 		await config.onFeedback( messageId, feedback );
 		// Notify all listeners that state has changed

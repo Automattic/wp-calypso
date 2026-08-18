@@ -2,14 +2,10 @@
  * Service for loading conversations from WordPress.com odie-assistant API
  */
 
-import type { AuthProvider } from '../client/types/index';
-import type {
-	ServerChat,
-	ServerConversationListItem,
-	ServerLoadResult,
-} from './serverTypes';
-import { serverChatToLoadResult, ServerConversationError } from './serverTypes';
 import { logger } from '../client/utils/logger';
+import { serverChatToLoadResult, ServerConversationError } from './serverTypes';
+import type { ServerChat, ServerConversationListItem, ServerLoadResult } from './serverTypes';
+import type { AuthProvider } from '../client/types/index';
 
 export interface OdieServiceConfig {
 	botId: string;
@@ -38,9 +34,7 @@ export async function loadChatFromServer(
 
 	// Validate parameters
 	if ( ! chatId || ! botId ) {
-		throw new Error(
-			'chatId and botId are required to load conversation from server'
-		);
+		throw new Error( 'chatId and botId are required to load conversation from server' );
 	}
 
 	// Ensure page number is within limits (API limits to 100 pages)
@@ -49,18 +43,14 @@ export async function loadChatFromServer(
 
 	// Build API URL
 	const url = new URL(
-		`${ apiBaseUrl }/wpcom/v2/odie/chat/${ encodeURIComponent(
-			botId
-		) }/${ encodeURIComponent( chatId ) }`
+		`${ apiBaseUrl }/wpcom/v2/odie/chat/${ encodeURIComponent( botId ) }/${ encodeURIComponent(
+			chatId
+		) }`
 	);
 	url.searchParams.set( 'page_number', safePage.toString() );
 	url.searchParams.set( 'items_per_page', safeItemsPerPage.toString() );
 
-	logger(
-		'Loading conversation from server: %s (page %d)',
-		chatId,
-		safePage
-	);
+	logger( 'Loading conversation from server: %s (page %d)', chatId, safePage );
 
 	try {
 		// Get auth headers if provider is available
@@ -94,11 +84,7 @@ export async function loadChatFromServer(
 				// Ignore parse errors, use default message
 			}
 
-			const error = new ServerConversationError(
-				errorMessage,
-				response.status,
-				errorText
-			);
+			const error = new ServerConversationError( errorMessage, response.status, errorText );
 
 			logger( 'Failed to load conversation from server: %O', error );
 			throw error;
@@ -125,9 +111,7 @@ export async function loadChatFromServer(
 
 		// Wrap other errors
 		const wrappedError = new ServerConversationError(
-			`Network error loading conversation: ${
-				( error as Error ).message
-			}`,
+			`Network error loading conversation: ${ ( error as Error ).message }`,
 			undefined,
 			error
 		);
@@ -143,7 +127,7 @@ export async function loadChatFromServer(
  * @param botId           - The bot ID to get conversations for
  * @param config          - Service configuration (omit botId, will use parameter)
  * @param useFirstMessage - If `true`, show first message as preview; if `false`, show last message (default: `false`)
- * @return Array of conversation list items
+ * @returns Array of conversation list items
  */
 export async function listConversationsFromServer(
 	botId: string,
@@ -154,15 +138,10 @@ export async function listConversationsFromServer(
 
 	// Build API URL
 	const url = new URL(
-		`${ apiBaseUrl }/wpcom/v2/odie/conversations/${ encodeURIComponent(
-			botId
-		) }`
+		`${ apiBaseUrl }/wpcom/v2/odie/conversations/${ encodeURIComponent( botId ) }`
 	);
 
-	url.searchParams.set(
-		'truncation_method',
-		useFirstMessage ? 'first_message' : 'last_message'
-	);
+	url.searchParams.set( 'truncation_method', useFirstMessage ? 'first_message' : 'last_message' );
 
 	logger( 'Listing conversations from server for bot: %s', botId );
 
@@ -187,11 +166,7 @@ export async function listConversationsFromServer(
 		if ( ! response.ok ) {
 			const errorText = await response.text();
 			const errorMessage = `Failed to list conversations: ${ response.status } ${ response.statusText }`;
-			const error = new ServerConversationError(
-				errorMessage,
-				response.status,
-				errorText
-			);
+			const error = new ServerConversationError( errorMessage, response.status, errorText );
 			logger( 'Failed to list conversations: %O', error );
 			throw error;
 		}
@@ -208,9 +183,7 @@ export async function listConversationsFromServer(
 		}
 
 		const wrappedError = new ServerConversationError(
-			`Network error listing conversations: ${
-				( error as Error ).message
-			}`,
+			`Network error listing conversations: ${ ( error as Error ).message }`,
 			undefined,
 			error
 		);
@@ -234,13 +207,7 @@ export async function loadAllMessagesFromServer(
 	allowToolMessages = false
 ): Promise< ServerLoadResult > {
 	// Load first page to get pagination info
-	const firstPage = await loadChatFromServer(
-		chatId,
-		config,
-		1,
-		50,
-		allowToolMessages
-	);
+	const firstPage = await loadChatFromServer( chatId, config, 1, 50, allowToolMessages );
 
 	// If there's only one page, return it
 	if ( ! firstPage.pagination.hasMore ) {
@@ -248,18 +215,13 @@ export async function loadAllMessagesFromServer(
 	}
 
 	// Calculate how many more pages to load
-	const totalPagesToLoad = Math.min(
-		firstPage.pagination.totalPages,
-		maxPages
-	);
+	const totalPagesToLoad = Math.min( firstPage.pagination.totalPages, maxPages );
 	const allMessages = [ ...firstPage.messages ];
 
 	// Load remaining pages in parallel (up to maxPages)
 	const pagePromises: Promise< ServerLoadResult >[] = [];
 	for ( let page = 2; page <= totalPagesToLoad; page++ ) {
-		pagePromises.push(
-			loadChatFromServer( chatId, config, page, 50, allowToolMessages )
-		);
+		pagePromises.push( loadChatFromServer( chatId, config, page, 50, allowToolMessages ) );
 	}
 
 	try {

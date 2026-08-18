@@ -1,12 +1,6 @@
-import React, { createContext, useCallback, useContext } from 'react';
+import React, { createContext, useContext } from 'react';
+import type { ChatState, Message, NoticeConfig, Suggestion } from '../types';
 import type { ComponentType } from 'react';
-import type {
-	ChatState,
-	Message,
-	NoticeConfig,
-	Suggestion,
-	UseInputReturn,
-} from '../types';
 
 export interface AgentUIContextValue {
 	// Core data
@@ -74,9 +68,7 @@ const AgentUIContext = createContext< AgentUIContextValue | null >( null );
 export function useAgentUIContext(): AgentUIContextValue {
 	const context = useContext( AgentUIContext );
 	if ( ! context ) {
-		throw new Error(
-			'useAgentUIContext must be used within an AgentUIContainer'
-		);
+		throw new Error( 'useAgentUIContext must be used within an AgentUIContainer' );
 	}
 	return context;
 }
@@ -87,9 +79,5 @@ export interface AgentUIProviderProps {
 }
 
 export function AgentUIProvider( { children, value }: AgentUIProviderProps ) {
-	return (
-		<AgentUIContext.Provider value={ value }>
-			{ children }
-		</AgentUIContext.Provider>
-	);
+	return <AgentUIContext.Provider value={ value }>{ children }</AgentUIContext.Provider>;
 }

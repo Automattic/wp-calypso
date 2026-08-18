@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
+import React, { useMemo } from 'react';
 import { useAgentUIContext } from '../../context/AgentUIContext';
 import { type ActionButton, ChatInput } from '../chat/ChatInput';
-import type { ImageUploaderHandle } from '../chat/ImageUploader';
 import { PlusIcon } from '../icons/PlusIcon';
+import type { ImageUploaderHandle } from '../chat/ImageUploader';
 
 export interface AgentUIInputProps {
 	className?: string;
@@ -14,7 +14,7 @@ export interface AgentUIInputProps {
 	actionOrder?: 'before-submit' | 'after-submit';
 	onKeyDown?: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 	layout?: 'inline' | 'stacked';
-	imageUploaderRef?: React.RefObject< ImageUploaderHandle >;
+	imageUploaderRef?: React.RefObject< ImageUploaderHandle | null >;
 	// Disables the "+" upload action (e.g. while an upload is in flight)
 	imageUploadDisabled?: boolean;
 }
@@ -47,9 +47,7 @@ export function AgentUIInput( {
 		onInputBlur,
 	} = useAgentUIContext();
 
-	const onKeyDownHandler = (
-		e: React.KeyboardEvent< HTMLTextAreaElement >
-	) => {
+	const onKeyDownHandler = ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
 		onKeyDown?.( e );
 
 		if ( e.defaultPrevented ) {
@@ -78,8 +76,7 @@ export function AgentUIInput( {
 	}, [ imageUploaderRef, customActions, imageUploadDisabled ] );
 
 	// Default to stacked layout when image uploader is connected
-	const resolvedLayout =
-		layout ?? ( imageUploaderRef ? 'stacked' : 'inline' );
+	const resolvedLayout = layout ?? ( imageUploaderRef ? 'stacked' : 'inline' );
 
 	return (
 		<ChatInput

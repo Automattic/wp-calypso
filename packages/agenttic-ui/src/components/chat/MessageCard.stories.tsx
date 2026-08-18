@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { MessageCard } from './MessageCard';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
 	title: 'Chat/MessageCard',
@@ -19,8 +19,7 @@ const meta = {
 		},
 		url: {
 			control: 'text',
-			description:
-				'Optional URL the card links to. When provided, displays a chevron icon.',
+			description: 'Optional URL the card links to. When provided, displays a chevron icon.',
 		},
 	},
 } satisfies Meta< typeof MessageCard >;
@@ -46,7 +45,6 @@ export const WithoutDescription: Story = {
 export const WithoutUrl: Story = {
 	args: {
 		title: 'Card Without URL',
-		description:
-			'This card has no URL, so it displays as a div without a chevron',
+		description: 'This card has no URL, so it displays as a div without a chevron',
 	},
 };

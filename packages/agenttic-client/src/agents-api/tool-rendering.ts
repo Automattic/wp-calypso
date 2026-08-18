@@ -20,10 +20,7 @@ export interface PresentQuestionPrompt {
 
 export interface PresentQuestionCardProps {
 	prompt: PresentQuestionPrompt;
-	onAnswer: (
-		answer: string,
-		choice: PresentQuestionChoice
-	) => void | Promise< void >;
+	onAnswer: ( answer: string, choice: PresentQuestionChoice ) => void | Promise< void >;
 	disabled?: boolean;
 	answered?: boolean;
 	answeredChoice?: string;
@@ -31,9 +28,7 @@ export interface PresentQuestionCardProps {
 }
 
 function asRecord( value: unknown ): Record< string, unknown > {
-	return value && typeof value === 'object'
-		? ( value as Record< string, unknown > )
-		: {};
+	return value && typeof value === 'object' ? ( value as Record< string, unknown > ) : {};
 }
 
 function asString( value: unknown ): string {
@@ -69,20 +64,12 @@ function normalizeChoice( value: unknown ): PresentQuestionChoice | null {
 	return normalized;
 }
 
-export function normalizePresentQuestionPrompt(
-	input: unknown
-): PresentQuestionPrompt | null {
+export function normalizePresentQuestionPrompt( input: unknown ): PresentQuestionPrompt | null {
 	const value = asRecord( input );
 	const result = asRecord( value.result );
-	const payload =
-		asString( result.question ) || Array.isArray( result.choices )
-			? result
-			: value;
+	const payload = asString( result.question ) || Array.isArray( result.choices ) ? result : value;
 	const prompt = asRecord(
-		payload.prompt ??
-			payload.question_prompt ??
-			payload.questionPrompt ??
-			payload
+		payload.prompt ?? payload.question_prompt ?? payload.questionPrompt ?? payload
 	);
 	const question = asString( prompt.question );
 	const choices = Array.isArray( prompt.choices )
@@ -113,9 +100,7 @@ export interface PresentQuestionRendererOptions {
 	) => void | Promise< void >;
 	disabled?: boolean | ( ( group: AgentsApiToolGroup ) => boolean );
 	answered?: boolean | ( ( group: AgentsApiToolGroup ) => boolean );
-	answeredChoice?:
-		| string
-		| ( ( group: AgentsApiToolGroup ) => string | undefined );
+	answeredChoice?: string | ( ( group: AgentsApiToolGroup ) => string | undefined );
 }
 
 function resolveOption< T >(
@@ -134,10 +119,8 @@ export function createPresentQuestionRenderer( {
 	answered = false,
 	answeredChoice,
 }: PresentQuestionRendererOptions ): AgentsApiToolRenderers[ string ] {
-	return ( group ) => {
-		const prompt = normalizePresentQuestionPrompt(
-			group.result?.result ?? group.call?.args
-		);
+	return function PresentQuestionRenderer( group ) {
+		const prompt = normalizePresentQuestionPrompt( group.result?.result ?? group.call?.args );
 
 		if ( ! prompt ) {
 			return null;
@@ -148,9 +131,7 @@ export function createPresentQuestionRenderer( {
 			disabled: resolveOption( disabled, group ),
 			answered: resolveOption( answered, group ),
 			answeredChoice:
-				answeredChoice === undefined
-					? undefined
-					: resolveOption( answeredChoice, group ),
+				answeredChoice === undefined ? undefined : resolveOption( answeredChoice, group ),
 			onAnswer: ( answer, choice ) => onAnswer( answer, choice, group ),
 		} );
 	};
@@ -160,7 +141,6 @@ export function createPresentQuestionToolRenderers(
 	options: PresentQuestionRendererOptions
 ): AgentsApiToolRenderers {
 	return {
-		[ PRESENT_QUESTION_TOOL_NAME ]:
-			createPresentQuestionRenderer( options ),
+		[ PRESENT_QUESTION_TOOL_NAME ]: createPresentQuestionRenderer( options ),
 	};
 }

@@ -1,7 +1,7 @@
 import React, { useId, useState } from 'react';
-import type { Suggestion } from '@automattic/agenttic-ui';
-import { ToolDropdown } from './ToolDropdown';
 import { contextSuggestionSets } from '../data/suggestionSets';
+import { ToolDropdown } from './ToolDropdown';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 type SuggestionsChoice = 'default' | 'heading' | 'image' | 'pattern' | 'none';
 
@@ -23,7 +23,6 @@ interface SuggestionsToolProps {
  * View tool for switching the registered suggestion set: a dropdown with a
  * radio list of the demo's default set, the shared editor-context sets
  * (heading/image/pattern), or none.
- *
  * @param props                     Component props.
  * @param props.defaultSuggestions
  * @param props.registerSuggestions
@@ -32,26 +31,19 @@ export function SuggestionsTool( {
 	defaultSuggestions = [],
 	registerSuggestions,
 }: SuggestionsToolProps ) {
-	const [ selected, setSelected ] =
-		useState< SuggestionsChoice >( 'default' );
+	const [ selected, setSelected ] = useState< SuggestionsChoice >( 'default' );
 	const radioName = useId();
 
 	const handleChange = ( choice: SuggestionsChoice ) => {
 		setSelected( choice );
 		registerSuggestions(
-			choice === 'default'
-				? defaultSuggestions
-				: contextSuggestionSets[ choice ]
+			choice === 'default' ? defaultSuggestions : contextSuggestionSets[ choice ]
 		);
 	};
 
 	return (
 		<ToolDropdown label="Suggestions">
-			<div
-				className="suggestions-tool"
-				role="radiogroup"
-				aria-label="Suggestion set"
-			>
+			<div className="suggestions-tool" role="radiogroup" aria-label="Suggestion set">
 				{ CHOICES.map( ( choice ) => (
 					<label
 						key={ choice.id }

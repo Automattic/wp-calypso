@@ -2,7 +2,11 @@
 
 @layer base {
 	.agenttic {
-		*, ::before, ::after, ::backdrop, ::file-selector-button {
+		*,
+		::before,
+		::after,
+		::backdrop,
+		::file-selector-button {
 			box-sizing: border-box;
 			margin: 0;
 			padding: 0;
@@ -10,10 +14,15 @@
 		}
 
 		* {
-			outline-color: var(--color-ring);
+			outline-color: var( --color-ring );
 		}
 
-		button, input, select, optgroup, textarea, ::file-selector-button {
+		button,
+		input,
+		select,
+		optgroup,
+		textarea,
+		::file-selector-button {
 			font: inherit;
 			font-feature-settings: inherit;
 			font-variation-settings: inherit;
@@ -22,17 +31,21 @@
 			opacity: 1;
 		}
 
-		input, select, optgroup, textarea, ::file-selector-button {
+		input,
+		select,
+		optgroup,
+		textarea,
+		::file-selector-button {
 			color: inherit;
 			border-radius: 0;
 		}
 
 		/* Should reflect the constant NON_DRAGGABLE_SELECTORS */
-		[data-slot="messages"],
-		[data-slot="chat-input"],
-		[data-slot="chat-footer"],
-		[data-slot="chat-compliance-disclosure"],
-		[data-slot="chat-header"] [data-slot="button"] {
+		[data-slot='messages'],
+		[data-slot='chat-input'],
+		[data-slot='chat-footer'],
+		[data-slot='chat-compliance-disclosure'],
+		[data-slot='chat-header'] [data-slot='button'] {
 			cursor: default;
 		}
 	}

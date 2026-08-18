@@ -38,25 +38,13 @@ describe( 'createToolResultDataPart file parts', () => {
 	} );
 
 	it( 'omits the key for an empty array so file-less payloads are unchanged', () => {
-		const part = createToolResultDataPart(
-			'call-1',
-			'tool',
-			{ ok: true },
-			undefined,
-			[]
-		);
+		const part = createToolResultDataPart( 'call-1', 'tool', { ok: true }, undefined, [] );
 
 		expect( part.data ).not.toHaveProperty( '__file_parts' );
 	} );
 
 	it( 'carries file parts on an errored result', () => {
-		const part = createToolResultDataPart(
-			'call-1',
-			'tool',
-			undefined,
-			'boom',
-			[ screenshot ]
-		);
+		const part = createToolResultDataPart( 'call-1', 'tool', undefined, 'boom', [ screenshot ] );
 
 		expect( part.data.__file_parts ).toEqual( [ screenshot ] );
 		expect( part.metadata ).toEqual( { error: 'boom' } );
@@ -109,14 +97,10 @@ describe( 'processToolExecutionResult file parts', () => {
 	} );
 
 	it( 'leaves file parts undefined for results that carry none', () => {
-		expect(
-			processToolExecutionResult( { result: { ok: true } } ).fileParts
-		).toBeUndefined();
+		expect( processToolExecutionResult( { result: { ok: true } } ).fileParts ).toBeUndefined();
 
 		// Legacy direct-result format
-		expect(
-			processToolExecutionResult( 'plain string result' ).fileParts
-		).toBeUndefined();
+		expect( processToolExecutionResult( 'plain string result' ).fileParts ).toBeUndefined();
 	} );
 
 	it( 'preserves file parts when the tool opts out of returning to the agent', () => {

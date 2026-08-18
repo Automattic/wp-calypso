@@ -5,9 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AgentUIContainer } from '../AgentUIContainer';
 import { AgentUIConversationView } from './AgentUIConversationView';
 
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 describe( 'AgentUIConversationView Escape handling', () => {
 	let container: HTMLDivElement;

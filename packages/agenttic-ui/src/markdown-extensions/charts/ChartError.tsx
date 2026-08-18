@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import type { FC } from 'react';
 import React from 'react';
+import type { FC } from 'react';
 
 interface ChartErrorProps {
 	message: string;

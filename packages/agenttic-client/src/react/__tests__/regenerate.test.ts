@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import type { Message as ClientMessage } from '../../client/types/index';
 import {
 	canRegenerateAgentMessage,
 	getLatestRegeneratableAgentMessageId,
 	getRegenerateRequest,
 } from '../regenerate';
+import type { Message as ClientMessage } from '../../client/types/index';
 
 const clientMessage = (
 	messageId: string,
@@ -34,15 +34,9 @@ describe( 'regenerate message helpers', () => {
 			clientMessage( 'agent-2', 'agent', 'Second answer' ),
 		];
 
-		expect( canRegenerateAgentMessage( clientMessages, 'agent-2' ) ).toBe(
-			true
-		);
-		expect( canRegenerateAgentMessage( clientMessages, 'user-2' ) ).toBe(
-			false
-		);
-		expect(
-			canRegenerateAgentMessage( clientMessages, 'ui-only-agent' )
-		).toBe( false );
+		expect( canRegenerateAgentMessage( clientMessages, 'agent-2' ) ).toBe( true );
+		expect( canRegenerateAgentMessage( clientMessages, 'user-2' ) ).toBe( false );
+		expect( canRegenerateAgentMessage( clientMessages, 'ui-only-agent' ) ).toBe( false );
 	} );
 
 	it( 'builds a truncated retry from the matching user turn', () => {
@@ -70,23 +64,12 @@ describe( 'regenerate message helpers', () => {
 				},
 			],
 		};
-		const secondAgent = clientMessage(
-			'agent-2',
-			'agent',
-			'Second answer'
-		);
+		const secondAgent = clientMessage( 'agent-2', 'agent', 'Second answer' );
 		const laterUser = clientMessage( 'user-3', 'user', 'Later prompt' );
 		const laterAgent = clientMessage( 'agent-3', 'agent', 'Later answer' );
 
 		const request = getRegenerateRequest(
-			[
-				firstUser,
-				firstAgent,
-				secondUser,
-				secondAgent,
-				laterUser,
-				laterAgent,
-			],
+			[ firstUser, firstAgent, secondUser, secondAgent, laterUser, laterAgent ],
 			'agent-2'
 		);
 
@@ -103,10 +86,9 @@ describe( 'regenerate message helpers', () => {
 		if ( request.userMessage.parts[ 2 ].type === 'file' ) {
 			request.userMessage.parts[ 2 ].file.uri = 'changed';
 		}
-		expect(
-			secondUser.parts[ 2 ].type === 'file' &&
-				secondUser.parts[ 2 ].file.uri
-		).toBe( 'https://example.com/flower.png' );
+		expect( secondUser.parts[ 2 ].type === 'file' && secondUser.parts[ 2 ].file.uri ).toBe(
+			'https://example.com/flower.png'
+		);
 	} );
 
 	it( 'does not regenerate context-only user turns', () => {
@@ -117,9 +99,7 @@ describe( 'regenerate message helpers', () => {
 			clientMessage( 'agent-1', 'agent', 'Answer' ),
 		];
 
-		expect( canRegenerateAgentMessage( clientMessages, 'agent-1' ) ).toBe(
-			false
-		);
+		expect( canRegenerateAgentMessage( clientMessages, 'agent-1' ) ).toBe( false );
 		expect( getRegenerateRequest( clientMessages, 'agent-1' ) ).toBeNull();
 	} );
 
@@ -133,8 +113,6 @@ describe( 'regenerate message helpers', () => {
 			clientMessage( 'agent-2', 'agent', 'Context-only answer' ),
 		];
 
-		expect( getLatestRegeneratableAgentMessageId( clientMessages ) ).toBe(
-			'agent-1'
-		);
+		expect( getLatestRegeneratableAgentMessageId( clientMessages ) ).toBe( 'agent-1' );
 	} );
 } );

@@ -1,20 +1,17 @@
-import React, { useEffect, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import React, { useEffect, useMemo } from 'react';
 import { useAgentUIContext } from '../../context/AgentUIContext.tsx';
-import type { Suggestion } from '../../types';
 import { cn } from '../../utils/classNames';
+import { fastSpringWithDelay } from '../animations';
 import { Button } from '../ui/button';
 import { SuggestionDropdown } from './SuggestionDropdown';
-import { fastSpringWithDelay } from '../animations';
 import styles from './Suggestions.module.css';
+import type { Suggestion } from '../../types';
 
 export interface SuggestionsProps {
 	className?: string;
 	suggestions?: Suggestion[];
-	onSubmit?: (
-		selectedSuggestion: Suggestion,
-		availableSuggestions: Suggestion[]
-	) => void;
+	onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
 	layout?: 'horizontal' | 'vertical' | 'floating';
 	visible?: boolean;
 	onMouseEnter?: () => void;
@@ -38,8 +35,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 
 	// Limit suggestions for floating layout to prevent overflow
 	const internalSuggestions = useMemo(
-		() =>
-			variant === 'floating' ? suggestions?.slice( 0, 3 ) : suggestions,
+		() => ( variant === 'floating' ? suggestions?.slice( 0, 3 ) : suggestions ),
 		[ suggestions, variant ]
 	);
 
@@ -76,11 +72,8 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 					data-slot="suggestions"
 					className={ cn(
 						styles.container,
-						layout === 'vertical'
-							? styles.vertical
-							: layout === 'floating'
-							? styles.floating
-							: '',
+						layout === 'vertical' ? styles.vertical : undefined,
+						layout === 'floating' ? styles.floating : undefined,
 						className
 					) }
 					initial={ { opacity: 0, y: '-80%' } }
@@ -90,85 +83,55 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 					onMouseEnter={ onMouseEnter }
 					onMouseLeave={ onMouseLeave }
 				>
-					{ internalSuggestions.map(
-						( suggestion: Suggestion, index: number ) => {
-							const isEligibleForDescription =
-								!! suggestion.description &&
-								layout !== 'horizontal';
+					{ internalSuggestions.map( ( suggestion: Suggestion, index: number ) => {
+						const isEligibleForDescription = !! suggestion.description && layout !== 'horizontal';
 
-							return (
-								<motion.div
-									key={ suggestion.id }
-									initial={ { opacity: 0, y: 10 } }
-									animate={ { opacity: 1, y: 0 } }
-									exit={ { opacity: 0, y: 10 } }
-									transition={ {
-										...fastSpringWithDelay,
-										delay: index * 0.05,
-									} }
-								>
-									{ suggestion.options &&
-									suggestion.options.length > 0 ? (
-										<SuggestionDropdown
-											suggestion={ suggestion }
-											onSelect={ handleSuggestionClick }
-											availableSuggestions={
-												internalSuggestions
-											}
-											onOpenChange={
-												onDropdownOpenChange
-											}
-											showDescription={
+						return (
+							<motion.div
+								key={ suggestion.id }
+								initial={ { opacity: 0, y: 10 } }
+								animate={ { opacity: 1, y: 0 } }
+								exit={ { opacity: 0, y: 10 } }
+								transition={ {
+									...fastSpringWithDelay,
+									delay: index * 0.05,
+								} }
+							>
+								{ suggestion.options && suggestion.options.length > 0 ? (
+									<SuggestionDropdown
+										suggestion={ suggestion }
+										onSelect={ handleSuggestionClick }
+										availableSuggestions={ internalSuggestions }
+										onOpenChange={ onDropdownOpenChange }
+										showDescription={ isEligibleForDescription }
+									/>
+								) : (
+									<Button
+										onClick={ ( e ) => {
+											e.stopPropagation();
+											handleSuggestionClick( suggestion, internalSuggestions );
+										} }
+										variant="outline"
+										className={ styles.button }
+									>
+										<div
+											className={ cn(
+												styles[ 'suggestion-content' ],
 												isEligibleForDescription
-											}
-										/>
-									) : (
-										<Button
-											onClick={ ( e ) => {
-												e.stopPropagation();
-												handleSuggestionClick(
-													suggestion,
-													internalSuggestions
-												);
-											} }
-											variant="outline"
-											className={ styles.button }
+													? styles[ 'suggestion-content--with-description' ]
+													: ''
+											) }
 										>
-											<div
-												className={ cn(
-													styles[
-														'suggestion-content'
-													],
-													isEligibleForDescription
-														? styles[
-																'suggestion-content--with-description'
-														  ]
-														: ''
-												) }
-											>
-												<span
-													className={ styles.label }
-												>
-													{ suggestion.label }
-												</span>
-												{ isEligibleForDescription && (
-													<span
-														className={
-															styles.description
-														}
-													>
-														{
-															suggestion.description
-														}
-													</span>
-												) }
-											</div>
-										</Button>
-									) }
-								</motion.div>
-							);
-						}
-					) }
+											<span className={ styles.label }>{ suggestion.label }</span>
+											{ isEligibleForDescription && (
+												<span className={ styles.description }>{ suggestion.description }</span>
+											) }
+										</div>
+									</Button>
+								) }
+							</motion.div>
+						);
+					} ) }
 				</motion.div>
 			) }
 		</AnimatePresence>

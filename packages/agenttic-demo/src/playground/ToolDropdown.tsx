@@ -3,16 +3,13 @@ import React, { useEffect, useRef, useState } from 'react';
 interface ToolDropdownProps {
 	label: string;
 	/** Panel content; the render-prop form receives a close() callback. */
-	children:
-		| React.ReactNode
-		| ( ( args: { close: () => void } ) => React.ReactNode );
+	children: React.ReactNode | ( ( args: { close: () => void } ) => React.ReactNode );
 }
 
 /**
  * A toolbar dropdown: a `playground-tool` trigger with a floating panel,
  * closing on outside click or Escape. Shared by the Messages tester and the
  * Suggestions picker.
- *
  * @param props          Component props.
  * @param props.label
  * @param props.children
@@ -27,10 +24,7 @@ export function ToolDropdown( { label, children }: ToolDropdownProps ) {
 		}
 
 		const handleClickOutside = ( e: MouseEvent ) => {
-			if (
-				wrapperRef.current &&
-				! wrapperRef.current.contains( e.target as Node )
-			) {
+			if ( wrapperRef.current && ! wrapperRef.current.contains( e.target as Node ) ) {
 				setIsOpen( false );
 			}
 		};

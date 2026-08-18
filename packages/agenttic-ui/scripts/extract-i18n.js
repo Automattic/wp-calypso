@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const { GettextExtractor, JsExtractors } = require( 'gettext-extractor' );
-const path = require( 'path' );
 const fs = require( 'fs' );
+const path = require( 'path' );
+const { GettextExtractor, JsExtractors } = require( 'gettext-extractor' );
 
 const outputDir = path.join( __dirname, '..', 'languages' );
 const outputFile = path.join( outputDir, 'a8c-agenttic.pot' );
@@ -58,9 +58,7 @@ extractor.savePotFile( outputFile, {
 	'MIME-Version': '1.0',
 	'Content-Type': 'text/plain; charset=UTF-8',
 	'Content-Transfer-Encoding': '8bit',
-	'POT-Creation-Date': new Date()
-		.toISOString()
-		.replace( /\.\d{3}Z$/, '+00:00' ),
+	'POT-Creation-Date': new Date().toISOString().replace( /\.\d{3}Z$/, '+00:00' ),
 	'PO-Revision-Date': 'YEAR-MO-DA HO:MI+ZONE',
 	'X-Generator': 'gettext-extractor',
 	'X-Domain': 'a8c-agenttic',

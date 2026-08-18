@@ -1,22 +1,12 @@
 import React, { act } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { createRoot, type Root } from 'react-dom/client';
-import {
-	afterEach,
-	beforeEach,
-	describe,
-	expect,
-	it,
-	type MockedFunction,
-	vi,
-} from 'vitest';
-import { useAgentChat, type UseAgentChatReturn } from '../useAgentChat';
+import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from 'vitest';
 import { getAgentManager } from '../agentManager';
+import { useAgentChat, type UseAgentChatReturn } from '../useAgentChat';
 
 // Required for React 18's act() in jsdom.
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 vi.mock( '../agentManager', () => {
 	const agentManager = {
@@ -68,8 +58,7 @@ describe( 'useAgentChat — send lock', () => {
 		document.body.appendChild( container );
 		root = createRoot( container );
 		vi.clearAllMocks();
-		sendMessageStream = getAgentManager()
-			.sendMessageStream as MockedFunction<
+		sendMessageStream = getAgentManager().sendMessageStream as MockedFunction<
 			ReturnType< typeof getAgentManager >[ 'sendMessageStream' ]
 		>;
 		// The hook consumes the return value with `for await`.
@@ -96,9 +85,7 @@ describe( 'useAgentChat — send lock', () => {
 		} );
 
 		// A tool result missing its ids is rejected before anything is sent.
-		await expect(
-			onSubmit?.( 'result', { type: 'tool_result' } )
-		).rejects.toThrow( /toolCallId/ );
+		await expect( onSubmit?.( 'result', { type: 'tool_result' } ) ).rejects.toThrow( /toolCallId/ );
 		expect( sendMessageStream ).not.toHaveBeenCalled();
 
 		// The rejection must not have left the send lock held: an ordinary

@@ -27,9 +27,7 @@ describe( 'Agents API normalizers', () => {
 			showIcon: true,
 			metadata: { source: 'fixture' },
 		} );
-		expect( message.timestamp ).toBe(
-			Date.parse( '2026-06-06T00:00:00.000Z' )
-		);
+		expect( message.timestamp ).toBe( Date.parse( '2026-06-06T00:00:00.000Z' ) );
 	} );
 
 	it( 'preserves structured content arrays', () => {
@@ -147,9 +145,9 @@ describe( 'Agents API normalizers', () => {
 	} );
 
 	it( 'normalizeSources returns the first non-empty array candidate', () => {
-		expect(
-			normalizeSources( [], undefined, [ 'https://example.com/x' ] )
-		).toEqual( [ { url: 'https://example.com/x' } ] );
+		expect( normalizeSources( [], undefined, [ 'https://example.com/x' ] ) ).toEqual( [
+			{ url: 'https://example.com/x' },
+		] );
 		expect( normalizeSources( undefined, null ) ).toEqual( [] );
 	} );
 
@@ -221,9 +219,7 @@ describe( 'Agents API normalizers', () => {
 			normalizeLoadedSession( {
 				data: {
 					session_id: 'session-1',
-					conversation: [
-						{ id: 'msg-1', role: 'agent', content: 'Loaded' },
-					],
+					conversation: [ { id: 'msg-1', role: 'agent', content: 'Loaded' } ],
 					metadata: { fresh: true },
 				},
 			} )
@@ -233,9 +229,7 @@ describe( 'Agents API normalizers', () => {
 			metadata: { fresh: true },
 		} );
 
-		expect(
-			normalizeRunEvent( { event: 'completed', cursor: '2' }, 'run-1' )
-		).toMatchObject( {
+		expect( normalizeRunEvent( { event: 'completed', cursor: '2' }, 'run-1' ) ).toMatchObject( {
 			id: 'run-1-completed-2',
 			run_id: 'run-1',
 			type: 'completed',

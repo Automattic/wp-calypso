@@ -1,8 +1,15 @@
 // @vitest-environment jsdom
+import { animate, useMotionValue } from 'framer-motion';
 import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { animate, useMotionValue } from 'framer-motion';
+import { STYLE_CONSTANTS } from '../utils/constants';
+import {
+	useResizablePanel,
+	type UseResizablePanelArgs,
+	type UseResizablePanelResult,
+} from './useResizablePanel';
+import type { ChatSize } from '../types';
 
 // Spy on animate while keeping the real implementation so the springs still run.
 vi.mock( 'framer-motion', async ( importOriginal ) => {
@@ -10,19 +17,10 @@ vi.mock( 'framer-motion', async ( importOriginal ) => {
 	return { ...actual, animate: vi.fn( actual.animate ) };
 } );
 const animateSpy = vi.mocked( animate );
-import { STYLE_CONSTANTS } from '../utils/constants';
-import type { ChatSize } from '../types';
-import {
-	useResizablePanel,
-	type UseResizablePanelArgs,
-	type UseResizablePanelResult,
-} from './useResizablePanel';
 
 // Opt into React's act environment so state updates don't warn (matches the
 // component test suites).
-(
-	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
- ).IS_REACT_ACT_ENVIRONMENT = true;
+( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
 
 // Minimal renderHook: a probe component runs the hook and captures its return
 // (plus the x/y motion values it composes with) into a ref the test can read.
@@ -104,11 +102,7 @@ describe( 'useResizablePanel', () => {
 		await harness.unmount();
 	} );
 
-	const startResize = (
-		handle: HTMLElement,
-		clientX: number,
-		clientY: number
-	) => {
+	const startResize = ( handle: HTMLElement, clientX: number, clientY: number ) => {
 		handle.setPointerCapture = () => {};
 		harness.captured.current!.result.handleResizePointerDown( {
 			currentTarget: handle,
@@ -186,9 +180,7 @@ describe( 'useResizablePanel', () => {
 		} );
 		await harness.render();
 
-		expect( harness.captured.current!.result.getPanelSize() ).toEqual(
-			DEFAULT_SIZE
-		);
+		expect( harness.captured.current!.result.getPanelSize() ).toEqual( DEFAULT_SIZE );
 	} );
 
 	it( 'clampSize floors a too-small candidate at minSize', async () => {
@@ -261,16 +253,10 @@ describe( 'useResizablePanel', () => {
 		await harness.render();
 
 		const { result } = harness.captured.current!;
-		expect( result.getHeightForState( 'collapsed' ) ).toBe(
-			STYLE_CONSTANTS.COLLAPSED_SIZE
-		);
-		expect( result.getHeightForState( 'minimized' ) ).toBe(
-			STYLE_CONSTANTS.COLLAPSED_SIZE
-		);
+		expect( result.getHeightForState( 'collapsed' ) ).toBe( STYLE_CONSTANTS.COLLAPSED_SIZE );
+		expect( result.getHeightForState( 'minimized' ) ).toBe( STYLE_CONSTANTS.COLLAPSED_SIZE );
 		expect( result.getHeightForState( 'compact' ) ).toBe( 120 );
-		expect( result.getHeightForState( 'expanded' ) ).toBe(
-			DEFAULT_SIZE.height
-		);
+		expect( result.getHeightForState( 'expanded' ) ).toBe( DEFAULT_SIZE.height );
 	} );
 
 	it( 'getHeightForState ignores the resized height when not resizable', async () => {
@@ -282,9 +268,9 @@ describe( 'useResizablePanel', () => {
 		} );
 		await harness.render();
 
-		expect(
-			harness.captured.current!.result.getHeightForState( 'expanded' )
-		).toBe( STYLE_CONSTANTS.EXPANDED_HEIGHT );
+		expect( harness.captured.current!.result.getHeightForState( 'expanded' ) ).toBe(
+			STYLE_CONSTANTS.EXPANDED_HEIGHT
+		);
 	} );
 
 	it( 'fires onResize each pointermove and onResizeEnd once on pointer-up', async () => {
@@ -393,8 +379,7 @@ describe( 'useResizablePanel', () => {
 			} );
 			await harness.render();
 
-			const { width, height, expandedSizeRef } =
-				harness.captured.current!.result;
+			const { width, height, expandedSizeRef } = harness.captured.current!.result;
 			// Mounting collapsed paints the launcher footprint, not 600×600.
 			expect( width.get() ).toBe( STYLE_CONSTANTS.COLLAPSED_SIZE );
 			expect( height.get() ).toBe( STYLE_CONSTANTS.COLLAPSED_SIZE );
@@ -445,9 +430,7 @@ describe( 'useResizablePanel', () => {
 			} );
 			// Drag the left edge far left: the growing edge would cross the inset.
 			await act( async () => {
-				handle.dispatchEvent(
-					makePointerEvent( 'pointermove', -900, 0 )
-				);
+				handle.dispatchEvent( makePointerEvent( 'pointermove', -900, 0 ) );
 			} );
 
 			// The left edge is at the inset, so growth stops there: width is unchanged
@@ -481,9 +464,7 @@ describe( 'useResizablePanel', () => {
 			// The browser fires lostpointercapture synchronously inside
 			// releasePointerCapture; the guard must reject that re-entry.
 			handle.releasePointerCapture = () => {
-				handle.dispatchEvent(
-					makePointerEvent( 'lostpointercapture', 0, 0 )
-				);
+				handle.dispatchEvent( makePointerEvent( 'lostpointercapture', 0, 0 ) );
 			};
 			await act( async () => {
 				handle.dispatchEvent( makePointerEvent( 'pointerup', 0, 0 ) );
@@ -502,9 +483,7 @@ describe( 'useResizablePanel', () => {
 					return;
 				}
 				await act( async () => {
-					await new Promise( ( resolve ) =>
-						setTimeout( resolve, 20 )
-					);
+					await new Promise( ( resolve ) => setTimeout( resolve, 20 ) );
 				} );
 			}
 		};
@@ -538,9 +517,10 @@ describe( 'useResizablePanel', () => {
 
 			expect( Math.round( width.get() ) ).toBe( 700 );
 			expect( Math.round( height.get() ) ).toBe( 600 );
-			expect(
-				harness.captured.current!.result.expandedSizeRef.current
-			).toEqual( { width: 700, height: 600 } );
+			expect( harness.captured.current!.result.expandedSizeRef.current ).toEqual( {
+				width: 700,
+				height: 600,
+			} );
 		} );
 
 		it( 'clamps an oversized controlled size to max', async () => {
@@ -584,8 +564,7 @@ describe( 'useResizablePanel', () => {
 
 			const box = {
 				width: window.innerWidth - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2,
-				height:
-					window.innerHeight - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2,
+				height: window.innerHeight - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2,
 			};
 			const { width, height } = harness.captured.current!.result;
 
@@ -632,9 +611,7 @@ describe( 'useResizablePanel', () => {
 			expect( animateSpy ).not.toHaveBeenCalled();
 			expect( width.get() ).toBe( DEFAULT_SIZE.width );
 			expect( height.get() ).toBe( DEFAULT_SIZE.height );
-			expect(
-				harness.captured.current!.result.expandedSizeRef.current
-			).toEqual( DEFAULT_SIZE );
+			expect( harness.captured.current!.result.expandedSizeRef.current ).toEqual( DEFAULT_SIZE );
 		} );
 
 		it( 'updates only the ref when not expanded (morph animates on next expand)', async () => {
@@ -663,9 +640,10 @@ describe( 'useResizablePanel', () => {
 			// Ref reflects the controlled target; the live motion values stay at the
 			// compact footprint (the state morph will animate to the ref on the next
 			// expand). They are seeded at the mount-state footprint, not defaultSize.
-			expect(
-				harness.captured.current!.result.expandedSizeRef.current
-			).toEqual( { width: 700, height: 600 } );
+			expect( harness.captured.current!.result.expandedSizeRef.current ).toEqual( {
+				width: 700,
+				height: 600,
+			} );
 			expect( width.get() ).toBe( STYLE_CONSTANTS.COMPACT_WIDTH );
 			expect( height.get() ).toBe( 56 );
 		} );
@@ -774,9 +752,10 @@ describe( 'useResizablePanel', () => {
 			// Frame-width delta: committed 700 − live 500.
 			expect( repositionForResize ).toHaveBeenCalledWith( 200 );
 			// Fired after the ref is committed, so it reads the new size.
-			expect(
-				harness.captured.current!.result.expandedSizeRef.current
-			).toEqual( { width: 700, height: 600 } );
+			expect( harness.captured.current!.result.expandedSizeRef.current ).toEqual( {
+				width: 700,
+				height: 600,
+			} );
 		} );
 
 		it( 'does not call repositionForResize on the feedback echo', async () => {
@@ -862,13 +841,9 @@ describe( 'useResizablePanel', () => {
 			// Leaving expanded: the frame narrows from the resized 700 to the fixed
 			// COMPACT_WIDTH; without the re-dock a right-docked bubble strands
 			// (700 − 372)px away from its corner.
-			await harness.rerender(
-				argsFor( 'collapsed', repositionForResize )
-			);
+			await harness.rerender( argsFor( 'collapsed', repositionForResize ) );
 			expect( repositionForResize ).toHaveBeenCalledTimes( 1 );
-			expect( repositionForResize ).toHaveBeenCalledWith(
-				STYLE_CONSTANTS.COMPACT_WIDTH - 700
-			);
+			expect( repositionForResize ).toHaveBeenCalledWith( STYLE_CONSTANTS.COMPACT_WIDTH - 700 );
 
 			// collapsed → compact stays inside the fixed frame: no re-dock.
 			repositionForResize.mockClear();
@@ -876,13 +851,9 @@ describe( 'useResizablePanel', () => {
 			expect( repositionForResize ).not.toHaveBeenCalled();
 
 			// Re-entering expanded widens the frame back to the resized width.
-			await harness.rerender(
-				argsFor( 'expanded', repositionForResize )
-			);
+			await harness.rerender( argsFor( 'expanded', repositionForResize ) );
 			expect( repositionForResize ).toHaveBeenCalledTimes( 1 );
-			expect( repositionForResize ).toHaveBeenCalledWith(
-				700 - STYLE_CONSTANTS.COMPACT_WIDTH
-			);
+			expect( repositionForResize ).toHaveBeenCalledWith( 700 - STYLE_CONSTANTS.COMPACT_WIDTH );
 		} );
 	} );
 } );
