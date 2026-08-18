@@ -115,11 +115,15 @@ const SitePicker = function SitePicker( props: Props ) {
 							{ paginatedSites.length > 0 || isLoading ? (
 								<>
 									{ isLoading ? (
-										<div className="site-picker--loading" aria-label={ __( 'Loading sites' ) } />
+										<div
+											className="site-picker--loading"
+											role="status"
+											aria-label={ __( 'Loading sites' ) }
+										/>
 									) : (
-										<div className="site-picker--list">
+										<ul className="site-picker--list">
 											{ paginatedSites.map( ( site ) => (
-												<div className="site-picker--site" key={ site.ID }>
+												<li className="site-picker--site" key={ site.ID }>
 													<div className="site-picker--site-icon" aria-hidden="true">
 														{ site.icon?.img ? (
 															<img src={ site.icon.img } alt="" />
@@ -128,7 +132,9 @@ const SitePicker = function SitePicker( props: Props ) {
 														) }
 													</div>
 													<div className="site-picker--site-details">
-														<strong>{ site.title || site.name }</strong>
+														<strong id={ `site-picker--site-name-${ site.ID }` }>
+															{ site.title || site.name }
+														</strong>
 														<span>{ formatSiteDomain( site.URL ) }</span>
 														{ ( site.is_coming_soon || site.is_private ) && (
 															<small>
@@ -136,12 +142,17 @@ const SitePicker = function SitePicker( props: Props ) {
 															</small>
 														) }
 													</div>
-													<Button variant="primary" onClick={ () => onSelectSite( site ) }>
+													<Button
+														id={ `site-picker--choose-${ site.ID }` }
+														aria-labelledby={ `site-picker--choose-${ site.ID } site-picker--site-name-${ site.ID }` }
+														variant="primary"
+														onClick={ () => onSelectSite( site ) }
+													>
 														{ __( 'Choose' ) }
 													</Button>
-												</div>
+												</li>
 											) ) }
-										</div>
+										</ul>
 									) }
 									{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
 										<PageBodyBottomContainer>

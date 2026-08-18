@@ -119,7 +119,10 @@ describe( 'SitePicker', () => {
 
 		expect( getByText( 'Choose a destination site' ) ).toBeInTheDocument();
 
-		expect( screen.getAllByRole( 'button', { name: 'Choose' } ) ).toHaveLength( 2 );
+		expect( screen.getByRole( 'list' ) ).toBeVisible();
+		expect( screen.getAllByRole( 'listitem' ) ).toHaveLength( 2 );
+		expect( screen.getByRole( 'button', { name: 'Choose A Test Site' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Choose Another test Site' } ) ).toBeVisible();
 		expect(
 			[ ...container.querySelectorAll( '.site-picker--site-icon' ) ].map(
 				( element ) => element.textContent
