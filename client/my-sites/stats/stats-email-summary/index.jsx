@@ -118,18 +118,20 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 						additionalColumns={ {
 							header: (
 								<>
-									<span>{ translate( 'Opens' ) }</span>
+									<span>{ translate( 'Unique open rate' ) }</span>
 								</>
 							),
 							body: ( item ) => {
 								const opensUnique = parseInt( item.unique_opens, 10 );
 								const opens = parseInt( item.opens, 10 );
-								const hasUniquesData = opensUnique > 0 || opens === 0;
+								const sends = parseInt( item.total_sends, 10 );
+								// No recorded sends means 0/0: undefined, not 0%.
+								const rateKnown = sends > 0 && ( opensUnique > 0 || opens === 0 );
 								return (
 									<TooltipWrapper
 										value={
-											hasUniquesData
-												? `${ formatNumber( item.opens_rate, {
+											rateKnown
+												? `${ formatNumber( item.opens_rate ?? 0, {
 														numberFormatOptions: {
 															maximumFractionDigits: 2,
 														},
@@ -149,18 +151,20 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 						statType="statsEmailsSummary"
 						mainItemLabel={ translate( 'Latest Emails' ) }
 						hideSummaryLink
-						metricLabel={ translate( 'Clicks' ) }
+						metricLabel={ translate( 'Unique click rate' ) }
 						valueField="clicks_rate"
 						formatValue={ ( value, item ) => {
 							if ( item?.clicks !== undefined ) {
 								const clicksUnique = parseInt( item.unique_clicks, 10 );
 								const clicks = parseInt( item.clicks, 10 );
-								const hasUniquesData = clicksUnique > 0 || clicks === 0;
+								const sends = parseInt( item.total_sends, 10 );
+								// Same states as the Opens column, including the 0/0 guard.
+								const rateKnown = sends > 0 && ( clicksUnique > 0 || clicks === 0 );
 								return (
 									<TooltipWrapper
 										value={
-											hasUniquesData
-												? `${ formatNumber( item.clicks_rate, {
+											rateKnown
+												? `${ formatNumber( item.clicks_rate ?? 0, {
 														numberFormatOptions: {
 															maximumFractionDigits: 2,
 														},

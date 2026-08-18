@@ -42,8 +42,10 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 							icon={ <Icon icon={ send } /> }
 							emailIsSending={ emailIsSending }
 						/>
-						{ /* Hidden only when uniques were never tracked (null); a genuine 0 shows. */ }
-						{ isRequesting || counts?.unique_opens != null ? (
+						{ /* Three states: uniques known (> 0) show; a true zero (no opens at
+						     all) shows 0; opens recorded but none attributable means the
+						     unique count is unknown, so the card hides. */ }
+						{ isRequesting || counts?.unique_opens > 0 || counts?.total_opens === 0 ? (
 							<TopCard
 								heading={ translate( 'Unique opens' ) }
 								value={ counts?.unique_opens ?? 0 }
@@ -60,7 +62,10 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 						<TopCard
 							heading={ translate( 'Open rate' ) }
 							value={
-								counts?.opens_rate != null ? `${ Math.round( counts.opens_rate * 100 ) }%` : null
+								counts?.total_sends > 0 &&
+								( counts?.unique_opens > 0 || counts?.total_opens === 0 )
+									? `${ Math.round( ( counts.opens_rate ?? 0 ) * 100 ) }%`
+									: null
 							}
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'opens_rate' ) }
 							icon={ <Gridicon icon="trending" /> }
@@ -81,8 +86,8 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 							icon={ <Icon icon={ send } /> }
 							emailIsSending={ emailIsSending }
 						/>
-						{ /* Hidden only when uniques were never tracked (null); a genuine 0 shows. */ }
-						{ isRequesting || counts?.unique_clicks != null ? (
+						{ /* Same three states as Unique opens: known, true zero, or unknown. */ }
+						{ isRequesting || counts?.unique_clicks > 0 || counts?.total_clicks === 0 ? (
 							<TopCard
 								heading={ translate( 'Unique clicks' ) }
 								value={ counts?.unique_clicks ?? 0 }
@@ -99,7 +104,10 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 						<TopCard
 							heading={ translate( 'Click rate' ) }
 							value={
-								counts?.clicks_rate != null ? `${ Math.round( counts.clicks_rate * 100 ) }%` : null
+								counts?.total_sends > 0 &&
+								( counts?.unique_clicks > 0 || counts?.total_clicks === 0 )
+									? `${ Math.round( ( counts.clicks_rate ?? 0 ) * 100 ) }%`
+									: null
 							}
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'clicks_rate' ) }
 							icon={ <Gridicon icon="trending" /> }

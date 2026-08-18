@@ -22,7 +22,6 @@ import {
 	TooltipWrapper,
 	OpensTooltipContent,
 	ClicksTooltipContent,
-	hasUniqueMetrics,
 	EmailStatsItem,
 } from './tooltips';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
@@ -90,12 +89,17 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						body: ( item: EmailStatsItem ) => {
 							const opensUnique = parseInt( String( item.unique_opens ), 10 );
 							const opens = parseInt( String( item.opens ), 10 );
-							const hasUniques = hasUniqueMetrics( opensUnique, opens );
+							const sends = parseInt( String( item.total_sends ), 10 );
+							// The rate needs a denominator: no recorded sends means 0/0,
+							// which is undefined, not 0%. With sends recorded, uniques
+							// above zero show the rate, no opens at all is a true 0%,
+							// and opens with no attributable uniques are unknown.
+							const rateKnown = sends > 0 && ( opensUnique > 0 || opens === 0 );
 							return (
 								<TooltipWrapper
 									value={
-										hasUniques
-											? `${ formatNumber( item.opens_rate, {
+										rateKnown
+											? `${ formatNumber( item.opens_rate ?? 0, {
 													numberFormatOptions: {
 														maximumFractionDigits: 2,
 													},
@@ -121,12 +125,14 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						}
 						const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
 						const clicks = parseInt( String( item.clicks ), 10 );
-						const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
+						const sends = parseInt( String( item.total_sends ), 10 );
+						// Same states as the Opens column, including the 0/0 guard.
+						const rateKnown = sends > 0 && ( clicksUnique > 0 || clicks === 0 );
 						return (
 							<TooltipWrapper
 								value={
-									hasUniques
-										? `${ formatNumber( item.clicks_rate, {
+									rateKnown
+										? `${ formatNumber( item.clicks_rate ?? 0, {
 												numberFormatOptions: {
 													maximumFractionDigits: 2,
 												},
