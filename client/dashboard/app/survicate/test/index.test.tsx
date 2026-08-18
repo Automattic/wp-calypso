@@ -15,7 +15,6 @@ import { renderHook } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
 import React from 'react';
 import { AuthContext } from '../../auth';
-import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
 import { useSurvicate } from '../index';
 import type { User } from '@automattic/api-core';
 
@@ -68,19 +67,12 @@ function createUser( overrides: Partial< User > = {} ): User {
 	} as User;
 }
 
-function renderWithAuth( user: User, { survicateSupported = true } = {} ) {
-	const appConfig = {
-		...APP_CONTEXT_DEFAULT_CONFIG,
-		supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, survicate: survicateSupported },
-	};
-
+function renderWithAuth( user: User ) {
 	return renderHook( () => useSurvicate(), {
 		wrapper: ( { children } ) => (
-			<AppProvider config={ appConfig }>
-				<AuthContext.Provider value={ { user, logout: jest.fn() } }>
-					{ children }
-				</AuthContext.Provider>
-			</AppProvider>
+			<AuthContext.Provider value={ { user, logout: jest.fn() } }>
+				{ children }
+			</AuthContext.Provider>
 		),
 	} );
 }
@@ -116,17 +108,6 @@ describe( 'useSurvicate', () => {
 
 		const user = createUser();
 		renderWithAuth( user );
-
-		expect( mockedLoadScript ).not.toHaveBeenCalled();
-	} );
-
-	test( 'skips loading when the app variant does not support Survicate', () => {
-		mockedConfig.mockReturnValue( true );
-		mockedShouldLoad.mockReturnValue( true );
-		mockedUseViewportMatch.mockReturnValue( false );
-
-		const user = createUser();
-		renderWithAuth( user, { survicateSupported: false } );
 
 		expect( mockedLoadScript ).not.toHaveBeenCalled();
 	} );

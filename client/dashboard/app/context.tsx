@@ -65,7 +65,6 @@ export type AppConfig = {
 		help: boolean;
 		notifications: boolean;
 		resurrectedWelcomeModal: boolean;
-		survicate: boolean;
 		me: MeSupports | false;
 		commandPalette: boolean;
 		domainOnlySites: boolean;
@@ -113,7 +112,6 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		help: false,
 		notifications: false,
 		resurrectedWelcomeModal: false,
-		survicate: false,
 		me: false,
 		commandPalette: false,
 		domainOnlySites: false,

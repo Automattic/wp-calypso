@@ -9,6 +9,7 @@
 	"hostname_overrides": {
 		"my.a4a.localhost": {
 			"oauth_client_id": 95928,
+			"survicate_enabled": false,
 			"wpcom_login_url": false,
 			"features": { "oauth": true, "always_use_logout_url": true }
 		},

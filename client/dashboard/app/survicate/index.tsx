@@ -13,18 +13,16 @@ import { useQuery } from '@tanstack/react-query';
 import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useMemo } from 'react';
 import { useAuth } from '../auth';
-import { useAppContext } from '../context';
 import { useLocale } from '../locale';
 import { VISIT_AREAS } from './visit-areas';
 
 export function useSurvicate() {
 	const { user } = useAuth();
-	const { supports } = useAppContext();
 	const locale = useLocale();
 	const isMobile = useViewportMatch( 'mobile', '<' );
 
 	useEffect( () => {
-		if ( ! supports.survicate || ! config( 'survicate_enabled' ) ) {
+		if ( ! config( 'survicate_enabled' ) ) {
 			return;
 		}
 
@@ -65,7 +63,7 @@ export function useSurvicate() {
 		return () => {
 			controller.abort();
 		};
-	}, [ user, locale, isMobile, supports.survicate ] );
+	}, [ user, locale, isMobile ] );
 }
 
 /**
@@ -79,7 +77,6 @@ export function useSurvicate() {
  * `setSurvicateVisitorTraits` defers until `SurvicateReady` if needed.
  */
 export function useSurvicateVisitTraits() {
-	const { supports } = useAppContext();
 	const locale = useLocale();
 	const isMobile = useViewportMatch( 'mobile', '<' );
 	const { data: preferences } = useQuery( rawUserPreferencesQuery() );
@@ -100,7 +97,7 @@ export function useSurvicateVisitTraits() {
 	const traitsKey = JSON.stringify( traits );
 
 	useEffect( () => {
-		if ( ! supports.survicate || ! config( 'survicate_enabled' ) ) {
+		if ( ! config( 'survicate_enabled' ) ) {
 			return;
 		}
 
@@ -116,5 +113,5 @@ export function useSurvicateVisitTraits() {
 		// `traits` is captured via its serialized `traitsKey` to avoid re-pushing
 		// on unrelated preference changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ traitsKey, locale, isMobile, supports.survicate ] );
+	}, [ traitsKey, locale, isMobile ] );
 }

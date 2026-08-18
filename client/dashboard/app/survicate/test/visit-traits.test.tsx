@@ -9,7 +9,6 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
 import nock from 'nock';
 import { AuthContext } from '../../auth';
-import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
 import { useSurvicateVisitTraits } from '../index';
 import type { User } from '@automattic/api-core';
 
@@ -41,22 +40,15 @@ function mockGetPreferences( preferences: Record< string, unknown > ) {
 		.reply( 200, { calypso_preferences: preferences } );
 }
 
-function renderTraitsHook( { survicateSupported = true } = {} ) {
+function renderTraitsHook() {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-	const appConfig = {
-		...APP_CONTEXT_DEFAULT_CONFIG,
-		supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, survicate: survicateSupported },
-	};
-
 	return renderHook( () => useSurvicateVisitTraits(), {
 		wrapper: ( { children } ) => (
-			<AppProvider config={ appConfig }>
-				<QueryClientProvider client={ queryClient }>
-					<AuthContext.Provider value={ { user, logout: jest.fn() } }>
-						{ children }
-					</AuthContext.Provider>
-				</QueryClientProvider>
-			</AppProvider>
+			<QueryClientProvider client={ queryClient }>
+				<AuthContext.Provider value={ { user, logout: jest.fn() } }>
+					{ children }
+				</AuthContext.Provider>
+			</QueryClientProvider>
 		),
 	} );
 }
@@ -122,17 +114,6 @@ describe( 'useSurvicateVisitTraits', () => {
 		} );
 
 		renderTraitsHook();
-
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		expect( mockedSetTraits ).not.toHaveBeenCalled();
-	} );
-
-	test( 'does not push when the app variant does not support Survicate', async () => {
-		mockGetPreferences( {
-			'hosting-dashboard-visit-count-deployments': { count: 5, lastUpdated: 1 },
-		} );
-
-		renderTraitsHook( { survicateSupported: false } );
 
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		expect( mockedSetTraits ).not.toHaveBeenCalled();
