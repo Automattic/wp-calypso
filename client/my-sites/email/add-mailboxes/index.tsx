@@ -20,7 +20,9 @@ import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/add-mailboxes/add-users-placeholder';
 import EmailProviderPricingNotice from 'calypso/my-sites/email/add-mailboxes/email-provider-pricing-notice';
+import { getAddToCartErrorNoticeOptions } from 'calypso/my-sites/email/add-mailboxes/get-add-to-cart-error-notice-options';
 import {
+	EVENT_ADD_TO_CART_FAILURE,
 	EVENT_CANCEL_BUTTON_CLICK,
 	EVENT_CONTINUE_BUTTON_CLICK,
 	getTracksEventName,
@@ -46,7 +48,8 @@ import {
 	getMailboxesPath,
 	getTitanSetUpMailboxPath,
 } from 'calypso/my-sites/email/paths';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
@@ -56,6 +59,7 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { CartActionError } from '@automattic/shopping-cart';
 import type { HiddenFieldNames } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import type { translate } from 'i18n-calypso';
 
@@ -266,6 +270,7 @@ const MailboxesForm = ( {
 
 	const cartKey = useCartKey();
 	const cartManager = useShoppingCart( cartKey );
+	const reduxDispatch = useDispatch();
 
 	if ( isLoadingDomains || ! emailProduct ) {
 		return <AddEmailAddressesCardPlaceholder />;
@@ -333,8 +338,31 @@ const MailboxesForm = ( {
 				page( checkoutPath );
 			} )
 			.finally( () => setIsAddingToCart( false ) )
-			.catch( () => {
-				// Nothing needs to be done here. CartMessages will display the error to the user.
+			.catch( ( error: CartActionError ) => {
+				recordClickEvent( {
+					eventName: getTracksEventName( provider, EVENT_ADD_TO_CART_FAILURE ),
+					eventProps: {
+						error_code: error.code,
+						error_message: error.message,
+						mailbox_count: mailboxOperations.mailboxes.length,
+					},
+					provider,
+					selectedDomainName,
+					source,
+				} );
+
+				// CalypsoShoppingCartProvider also mounts CartMessages, whose effect runs
+				// after this handler and would replace the notice below with one that has
+				// no way to act on the error. Clear the cart messages so it stays quiet and
+				// the user sees a single notice.
+				cartManager.clearMessages().catch( () => undefined );
+
+				reduxDispatch(
+					errorNotice(
+						error.message,
+						getAddToCartErrorNoticeOptions( { checkoutPath, error, translate } )
+					)
+				);
 			} );
 	};
 
