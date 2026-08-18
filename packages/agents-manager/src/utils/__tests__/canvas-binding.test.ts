@@ -9,6 +9,7 @@ import {
 	clearCanvasBinding,
 	getBlockingMove,
 	getCanvasMove,
+	isCanvasWritingAgent,
 	resolveCanvasKey,
 	startNewUserRequest,
 } from '../canvas-binding';
@@ -41,6 +42,20 @@ describe( 'canvas binding', () => {
 		mockSelect.mockReset();
 		startNewUserRequest();
 	} );
+
+	it.each( [ 'wp-orchestrator', 'wpcom-workflow-unified_chat' ] )(
+		'treats %s as an agent that can write to the canvas',
+		( agentId ) => {
+			expect( isCanvasWritingAgent( agentId ) ).toBe( true );
+		}
+	);
+
+	it.each( [ 'reader-chat', 'wpcom-workflow-support_chat', 'dolly', undefined, '' ] )(
+		'treats %s as an agent that cannot',
+		( agentId ) => {
+			expect( isCanvasWritingAgent( agentId ) ).toBe( false );
+		}
+	);
 
 	it( 'builds a key from post type and id', () => {
 		expect( buildCanvasKey( 'page', 12 ) ).toBe( 'page:12' );

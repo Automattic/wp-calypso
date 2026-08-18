@@ -3444,6 +3444,40 @@ describe( 'OrchestratorChat', () => {
 			expect( getBlockingMove() ).toEqual( { from: 'About', to: null } );
 		} );
 
+		it( 'does not abort an agent whose turns cannot write to the canvas', () => {
+			// A support chat runs in this same dock, including inside the editor. Its
+			// turns never call a canvas ability, so stopping one because the user
+			// browsed to another page loses the answer for nothing — and tells them it
+			// was stopped "before it changed the wrong one", which it never would have.
+			mockAgentConfig = { agentId: 'wpcom-workflow-support_chat' };
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest, addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( addMessage ).not.toHaveBeenCalled();
+		} );
+
+		it( 'aborts for unified chat as well as the orchestrator', () => {
+			// The canvas abilities are migrating into AM, which serves them on
+			// unified-chat surfaces. Gating on the orchestrator alone would leave this
+			// switched off exactly where those abilities are heading.
+			mockAgentConfig = { agentId: 'wpcom-workflow-unified_chat' };
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+		} );
+
 		it( 'never aborts on a surface with no editor', () => {
 			// The same dock serves support guides, Reader and the editor, so this
 			// effect runs everywhere AM runs. On a surface with no `core/editor` — a

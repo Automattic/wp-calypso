@@ -29,6 +29,31 @@
  */
 
 import { select } from '@wordpress/data';
+import { ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../constants';
+
+// Agents whose turns can write to the editor canvas, and so are worth stopping
+// when it moves. The same dock serves support and Reader chats — including inside
+// the editor — and their turns never call a canvas ability, so aborting one for a
+// navigation is pure loss and the message would make no sense to the user.
+//
+// Both editor-capable agents are listed, not just the orchestrator: the canvas
+// abilities are migrating into AM, which serves them on unified-chat surfaces (see
+// the Big Sky plugin's AGENTS.md), so omitting unified chat would switch this off
+// exactly where the abilities are heading.
+const CANVAS_WRITING_AGENT_IDS = new Set< string >( [
+	ORCHESTRATOR_AGENT_ID,
+	UNIFIED_CHAT_AGENT_ID,
+] );
+
+/**
+ * Whether this agent's turns can write to the editor canvas.
+ *
+ * @param agentId The resolved agent id, from `useAgentConfig`.
+ * @returns Whether canvas binding applies to it.
+ */
+export function isCanvasWritingAgent( agentId: string | undefined | null ): boolean {
+	return !! agentId && CANVAS_WRITING_AGENT_IDS.has( agentId );
+}
 
 /** A canvas the model was looking at, as key plus the label a refusal names it by. */
 type BoundCanvas = { key: string; label: string | null };

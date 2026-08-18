@@ -42,6 +42,7 @@ import {
 	blockCurrentRequest,
 	buildCanvasKey,
 	getCanvasMove,
+	isCanvasWritingAgent,
 	startNewUserRequest,
 } from '../../utils/canvas-binding';
 import convertToolMessagesToComponents, {
@@ -556,7 +557,7 @@ export default function OrchestratorChat( {
 	useEffect( () => {
 		// Keyed off the live move rather than `getBlockingMove()`: a request already
 		// blocked would otherwise abort again on every later canvas change.
-		if ( ! isProcessing || ! getCanvasMove() ) {
+		if ( ! isCanvasWritingAgent( agentConfig?.agentId ) || ! isProcessing || ! getCanvasMove() ) {
 			return;
 		}
 
@@ -585,7 +586,7 @@ export default function OrchestratorChat( {
 			archived: false,
 			showIcon: true,
 		} );
-	}, [ canvasKey, isProcessing, abortCurrentRequest, addMessage ] );
+	}, [ agentConfig?.agentId, canvasKey, isProcessing, abortCurrentRequest, addMessage ] );
 
 	// Drop all retained placeholders, keeping the map reference stable when
 	// already empty so no re-render is triggered.
