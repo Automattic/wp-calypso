@@ -273,6 +273,9 @@ interface PostTypeMockOptions {
 	themeSupportsResolved?: boolean;
 	/** Whole getThemeSupports return value, for a store that returns something else. */
 	themeSupportsReturnValue?: unknown;
+	isPostEmpty?: boolean;
+	/** Drops the selector, as an editor predating it would. */
+	omitIsEditedPostEmpty?: boolean;
 }
 
 function installPostTypeMock(
@@ -285,6 +288,8 @@ function installPostTypeMock(
 		postTypeRecordResolved = true,
 		themeSupportsThumbnails = true,
 		themeSupportsResolved = true,
+		isPostEmpty = false,
+		omitIsEditedPostEmpty = false,
 	} = options;
 
 	// remove_post_type_support unsets the key, so an explicit undefined omits it.
@@ -311,6 +316,7 @@ function installPostTypeMock(
 					return {
 						getCurrentPostId: () => postId,
 						getCurrentPostType: () => postType,
+						...( omitIsEditedPostEmpty ? {} : { isEditedPostEmpty: () => isPostEmpty } ),
 					};
 				}
 				if ( store === 'core/block-editor' ) {
@@ -1874,6 +1880,86 @@ describe( 'Proofread', () => {
 			jest.advanceTimersByTime( 1000 );
 		} );
 		jest.useRealTimers();
+	} );
+} );
+
+describe( 'empty post gating', () => {
+	const CONTENT_DEPENDENT_IDS = [
+		'optimize-title',
+		'generate-excerpt',
+		'generate-feedback',
+		'proofread-content',
+		'ai-editorial-review',
+		'seo-enhancer',
+	];
+
+	const ALL_FEATURES = {
+		optimizeTitleSuggestion: true,
+		excerptSuggestion: true,
+		proofreadContent: true,
+		seoSuggestions: true,
+	};
+
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+		delete ( window as any ).wp;
+		mockImageStudioActions = null;
+	} );
+
+	function suggestionsFor( options: { isPostEmpty?: boolean; omitIsEditedPostEmpty?: boolean } ) {
+		installAiEditorialReviewData( ALL_FEATURES );
+		installPostTypeMock( 'post', 123, { supportsExcerpt: true, ...options } );
+		return getEmptyViewSuggestions();
+	}
+
+	it.each( CONTENT_DEPENDENT_IDS )( 'disables %s on an empty post', ( id ) => {
+		const suggestion = suggestionsFor( { isPostEmpty: true } ).find( ( s ) => s.id === id );
+
+		expect( suggestion ).toBeDefined();
+		expect( suggestion?.disabled ).toBe( true );
+	} );
+
+	it.each( CONTENT_DEPENDENT_IDS )( 'enables %s once the post has content', ( id ) => {
+		const suggestion = suggestionsFor( { isPostEmpty: false } ).find( ( s ) => s.id === id );
+
+		expect( suggestion ).toBeDefined();
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it( 'keeps the disabled suggestions in the list so a blank post still shows them', () => {
+		const ids = suggestionsFor( { isPostEmpty: true } ).map( ( suggestion ) => suggestion.id );
+
+		CONTENT_DEPENDENT_IDS.forEach( ( id ) => expect( ids ).toContain( id ) );
+	} );
+
+	it( 'leaves generate-featured-image enabled, since the user types their own prompt', () => {
+		// The chip only appears when Image Studio is available.
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		const suggestion = suggestionsFor( { isPostEmpty: true } ).find(
+			( s ) => s.id === 'generate-featured-image'
+		);
+
+		expect( suggestion ).toBeDefined();
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it( 'does not mutate the shared suggestion definitions', () => {
+		// They are module constants, so marking one disabled in place would leak into
+		// every later render.
+		suggestionsFor( { isPostEmpty: true } );
+		const suggestion = suggestionsFor( { isPostEmpty: false } ).find(
+			( s ) => s.id === 'optimize-title'
+		);
+
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it( 'enables the suggestions when the editor cannot say whether the post is empty', () => {
+		const suggestion = suggestionsFor( { omitIsEditedPostEmpty: true } ).find(
+			( s ) => s.id === 'optimize-title'
+		);
+
+		expect( suggestion?.disabled ).toBeFalsy();
 	} );
 } );
 

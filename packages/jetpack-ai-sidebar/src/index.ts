@@ -145,6 +145,18 @@ function canSwapBlockEditSnapshot( snapshot: BlockEditSnapshot ): boolean {
 	);
 }
 
+/**
+ * Uses the selector the legacy "Improve with AI" panel gates on. It is blocks-only
+ * and never reads the title, so a titled post with no body counts as empty. An
+ * editor that cannot answer reports "not empty", so nothing greys out on a store
+ * we cannot read.
+ */
+function isPostContentEmpty(): boolean {
+	const isEditedPostEmpty = ( window as any ).wp?.data?.select?.( 'core/editor' )
+		?.isEditedPostEmpty;
+	return typeof isEditedPostEmpty === 'function' && isEditedPostEmpty() === true;
+}
+
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
@@ -467,6 +479,19 @@ function getFeedbackSuggestions( currentPostType?: string, currentPostId?: Edito
 	];
 }
 
+/**
+ * `generate-featured-image` is absent on purpose: it opens Image Studio, where the
+ * user writes their own prompt.
+ */
+const CONTENT_DEPENDENT_SUGGESTION_IDS: Set< string > = new Set( [
+	OPTIMIZE_TITLE_SUGGESTION.id,
+	GENERATE_EXCERPT_SUGGESTION.id,
+	POST_FEEDBACK_SUGGESTION.id,
+	PROOFREAD_SUGGESTION.id,
+	AI_EDITORIAL_REVIEW_SUGGESTION.id,
+	SEO_ENHANCER_SUGGESTION.id,
+] );
+
 function getPostLevelSuggestions(
 	currentPostType?: string,
 	currentPostId?: EditorPostId | null,
@@ -476,7 +501,7 @@ function getPostLevelSuggestions(
 		return [];
 	}
 
-	return [
+	const suggestions = [
 		...( isFeaturedImageSuggestionAvailable( currentPostType )
 			? [ GENERATE_FEATURED_IMAGE_SUGGESTION ]
 			: [] ),
@@ -488,6 +513,17 @@ function getPostLevelSuggestions(
 		// Surface the SEO Enhancer dropdown last.
 		...( isSeoSuggestionsEnabled() ? [ SEO_ENHANCER_SUGGESTION ] : [] ),
 	];
+
+	if ( ! isPostContentEmpty() ) {
+		return suggestions;
+	}
+
+	// Greyed out rather than dropped, so a blank post still shows what is on offer.
+	return suggestions.map( ( suggestion ) =>
+		CONTENT_DEPENDENT_SUGGESTION_IDS.has( suggestion.id )
+			? { ...suggestion, disabled: true }
+			: suggestion
+	);
 }
 
 function getReservedSuggestions< T extends { id: string } >( suggestions: T[] ): T[] {

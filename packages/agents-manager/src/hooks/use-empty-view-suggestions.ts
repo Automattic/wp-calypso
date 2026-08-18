@@ -144,7 +144,7 @@ function readOverrideSuggestions(): Suggestion[] | null {
 
 function getSuggestionsKey( suggestions: Suggestion[] | null ): string | null {
 	return suggestions
-		? JSON.stringify( suggestions.map( ( s ) => [ s.id, s.label, s.prompt ] ) )
+		? JSON.stringify( suggestions.map( ( s ) => [ s.id, s.label, s.prompt, s.disabled ] ) )
 		: null;
 }
 
@@ -185,6 +185,23 @@ export function isPageOrSiteEditorSurface(
 	}
 
 	return sectionName === 'site-editor';
+}
+
+/**
+ * Providers key suggestions on this, so the effect below has to re-run when it
+ * flips. Hosts with no editor store (Reader chat, Plugin Compass) report false.
+ */
+function useIsEditedPostEmpty(): boolean {
+	return useSelect( ( select ) => {
+		try {
+			const editorStore = select( 'core/editor' ) as {
+				isEditedPostEmpty?: () => boolean;
+			};
+			return editorStore?.isEditedPostEmpty?.() === true;
+		} catch {
+			return false;
+		}
+	}, [] );
 }
 
 export function usePageOrSiteEditorSurface() {
@@ -228,6 +245,7 @@ export function useEmptyViewSuggestions( {
 	const isReaderChat = isReaderChatHost();
 	const { currentPostType, isPageOrSiteEditorSurface: shouldShowSiteEditorSuggestions } =
 		usePageOrSiteEditorSurface();
+	const isEditedPostEmpty = useIsEditedPostEmpty();
 
 	// Default suggestions - used when Big Sky doesn't provide custom ones
 	const defaultSuggestions = useMemo(
@@ -362,6 +380,7 @@ export function useEmptyViewSuggestions( {
 		overrideVersion,
 		shouldShowSiteEditorSuggestions,
 		currentPostType,
+		isEditedPostEmpty,
 	] );
 
 	return emptyViewSuggestions;
