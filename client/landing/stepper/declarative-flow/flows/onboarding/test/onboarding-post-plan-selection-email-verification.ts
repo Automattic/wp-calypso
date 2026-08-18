@@ -2,23 +2,15 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { useExperiment } from 'calypso/lib/explat';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
 
-let mockDeferredFlagOn = true;
+// Variant B (post-plan-selection gate) vs. control, driven by the experiment assignment.
+let mockVariant = 'treatment_post_plan_selection';
+// Whether the assignment is still resolving; while true the flow can't know the arm yet.
+let mockLoading = false;
 let mockQueryParams = new URLSearchParams( '' );
-
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
-	const configFn = ( key: string ) => actual( key );
-	Object.assign( configFn, actual, {
-		isEnabled: ( flag: string ) =>
-			flag === 'onboarding/email-verification-deferred'
-				? mockDeferredFlagOn
-				: actual.isEnabled( flag ),
-	} );
-	return configFn;
-} );
 
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
 	clearSessionStorageQuery: jest.fn(),
@@ -55,7 +47,10 @@ jest.mock( 'calypso/state', () => ( {
 
 jest.mock( 'calypso/lib/analytics/survicate', () => ( { addSurvicate: jest.fn() } ) );
 jest.mock( 'calypso/lib/analytics/signup', () => ( { SIGNUP_DOMAIN_ORIGIN: {} } ) );
-jest.mock( 'calypso/lib/explat', () => ( { loadExperimentAssignment: jest.fn() } ) );
+jest.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: jest.fn(),
+	useExperiment: jest.fn(),
+} ) );
 
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
@@ -85,6 +80,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 	ONBOARDING_FLOW: 'onboarding',
 	SITE_SETUP_FLOW: 'site-setup',
 	clearStepPersistedState: jest.fn(),
+	isOnboardingFlow: ( flow: string ) => flow === 'onboarding',
 } ) );
 
 jest.mock( 'calypso/lib/ai-launchpad', () => ( {
@@ -162,11 +158,16 @@ const submitPlans = async ( providedDependencies: Record< string, unknown > ) =>
 	return { navigate };
 };
 
-describe( 'onboarding deferred email verification (Variant B)', () => {
+describe( 'onboarding post-plan-selection email verification (Variant B)', () => {
 	beforeEach( () => {
-		mockDeferredFlagOn = true;
+		mockVariant = 'treatment_post_plan_selection';
+		mockLoading = false;
 		mockQueryParams = new URLSearchParams( '' );
 		jest.clearAllMocks();
+		( useExperiment as jest.Mock ).mockImplementation(
+			( _name: string, opts?: { isEligible?: boolean } ) =>
+				opts?.isEligible ? [ mockLoading, { variationName: mockVariant } ] : [ false, null ]
+		);
 	} );
 
 	it( 'sends a fully free order to the verification step before the site is created', async () => {
@@ -185,8 +186,21 @@ describe( 'onboarding deferred email verification (Variant B)', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 	} );
 
-	it( 'keeps the free order on site creation when the deferred flag is off', async () => {
-		mockDeferredFlagOn = false;
+	// The post-plan-selection gate is guarded on `! pickedPlan`, i.e. presence not price: once any plan is
+	// picked the free-order gate is skipped. Dropping that guard would defer picked plans too.
+	it( 'skips the verification step once a plan is picked, even under Variant B', async () => {
+		const { navigate } = await submitPlans( { cartItems: [ { product_id: 1, is_free: true } ] } );
+
+		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
+		expect( navigate ).not.toHaveBeenCalledWith(
+			expect.stringContaining( 'email-verification' ),
+			expect.anything(),
+			expect.anything()
+		);
+	} );
+
+	it( 'keeps the free order on site creation under the control arm', async () => {
+		mockVariant = 'control';
 
 		const { navigate } = await submitPlans( { cartItems: [] } );
 
@@ -212,22 +226,65 @@ describe( 'onboarding deferred email verification (Variant B)', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'post-checkout-onboarding' );
 	} );
 
+	// Without a `next`, the verification step falls back to site creation rather than a blank target.
+	it( 'advances the verification step to site creation when no next query param is set', async () => {
+		const navigate = jest.fn();
+		const { result } = renderHook( () =>
+			onboarding.useStepNavigation.call(
+				onboarding,
+				'email-verification' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
+				navigate
+			)
+		);
+
+		await result.current.submit?.( {
+			slug: 'email-verification',
+			providedDependencies: {},
+		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
+
+		expect( navigate ).toHaveBeenCalledWith( 'create-site' );
+	} );
+
 	it( 'points a paid order back at the verification step on return from checkout', async () => {
 		const checkoutUrl = await submitPaidProcessing();
 
 		expect( checkoutUrl ).toContain( '/checkout/' );
-		// The checkout return (redirect_to) lands on the deferred gate, which then advances to
+		// The checkout return (redirect_to) lands on the post-plan-selection gate, which then advances to
 		// post-checkout-onboarding once verified.
 		expect( checkoutUrl ).toContain( '/setup/onboarding/email-verification' );
 		expect( checkoutUrl ).toContain( 'next=post-checkout-onboarding' );
 	} );
 
-	it( 'sends a paid order straight to post-checkout-onboarding when the deferred flag is off', async () => {
-		mockDeferredFlagOn = false;
+	it( 'sends a paid order straight to post-checkout-onboarding under the control arm', async () => {
+		mockVariant = 'control';
 
 		const checkoutUrl = await submitPaidProcessing();
 
 		expect( checkoutUrl ).toContain( '/setup/onboarding/post-checkout-onboarding' );
 		expect( checkoutUrl ).not.toContain( 'email-verification' );
+	} );
+
+	// While the assignment is still resolving the flow can't know the arm, so it routes as control
+	// rather than guessing. This never strands a real Variant-B user, because the account step holds
+	// them on the verification gate's `pending` state until the assignment settles — so by the time
+	// they can submit a plan the arm is known. These cases pin the mid-load fallback so a future
+	// change can't turn it into a silent gate-skip that also survives after the assignment resolves.
+	describe( 'while the assignment is still loading', () => {
+		beforeEach( () => {
+			mockLoading = true;
+		} );
+
+		it( 'does not defer a free order to the verification step', async () => {
+			const { navigate } = await submitPlans( { cartItems: [] } );
+
+			expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
+		} );
+
+		it( 'does not route a paid order back through the verification step on checkout return', async () => {
+			const checkoutUrl = await submitPaidProcessing();
+
+			expect( checkoutUrl ).toContain( '/setup/onboarding/post-checkout-onboarding' );
+			expect( checkoutUrl ).not.toContain( 'email-verification' );
+		} );
 	} );
 } );

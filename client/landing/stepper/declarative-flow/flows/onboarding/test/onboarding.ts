@@ -38,6 +38,7 @@ jest.mock( 'calypso/lib/analytics/signup', () => ( {
 
 jest.mock( 'calypso/lib/explat', () => ( {
 	loadExperimentAssignment: jest.fn(),
+	useExperiment: jest.fn( () => [ false, null ] ),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
@@ -68,6 +69,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 	ONBOARDING_FLOW: 'onboarding',
 	SITE_SETUP_FLOW: 'site-setup',
 	clearStepPersistedState: jest.fn(),
+	isOnboardingFlow: ( flow: string ) => flow === 'onboarding',
 } ) );
 
 describe( 'onboarding flow side effects', () => {

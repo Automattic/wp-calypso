@@ -30,7 +30,7 @@ interface Props {
 	// rather than the one `/me` still reports.
 	email: string;
 	// Returns to the account step to correct the address this was sent to. Omitted where correcting
-	// the address isn't offered — the deferred gate, met after checkout, has no account form to
+	// the address isn't offered — the post-plan-selection gate, met after checkout, has no account form to
 	// return to.
 	onEditEmail?: () => void;
 	// Set while a correction is waiting to be confirmed, which changes what resending has to do.
