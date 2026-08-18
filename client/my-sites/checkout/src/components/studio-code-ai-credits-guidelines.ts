@@ -1,14 +1,12 @@
 import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
-import { localizeUrl } from '@automattic/i18n-utils';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-/**
- * TODO: SHILL-2355 - return the real URL once Legal publishes the AI Credits Guidelines doc.
- * Until then the anchor hangs off the Terms of Service page, so following the link lands
- * somewhere sensible instead of nowhere.
- */
+// The guidelines doc is published in English only, so this skips localizeUrl().
+const AI_CREDITS_GUIDELINES_URL =
+	'https://developer.wordpress.com/docs/developer-tools/studio/studio-code/ai-credits-guidelines/';
+
 export function getStudioCodeAiCreditsGuidelinesUrl() {
-	return `${ localizeUrl( 'https://wordpress.com/tos/' ) }#ai-credits-guidelines-pending`;
+	return AI_CREDITS_GUIDELINES_URL;
 }
 
 export function hasStudioCodeAiCredits( cart: ResponseCart ) {

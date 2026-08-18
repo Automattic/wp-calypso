@@ -60,10 +60,9 @@ describe( 'CheckoutPayButtonFooter', () => {
 	it( 'links the AI Credits Guidelines for a cart containing Studio Code AI Credits', () => {
 		renderFooter( cartWith( PLAN_PREMIUM, PRODUCT_STUDIO_CODE_AI_CREDITS ) );
 
-		// TODO: SHILL-2355 - update alongside getStudioCodeAiCreditsGuidelinesUrl().
 		expect( screen.getByRole( 'link', { name: 'AI Credits Guidelines' } ) ).toHaveAttribute(
 			'href',
-			'https://wordpress.com/tos/#ai-credits-guidelines-pending'
+			'https://developer.wordpress.com/docs/developer-tools/studio/studio-code/ai-credits-guidelines/'
 		);
 		// The standard notice is unaffected by the extra line.
 		expect(
