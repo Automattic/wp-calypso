@@ -1,0 +1,53 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
+.dashboard-referrals-guide {
+	// Turns the close button white since it overlays the dark preview artwork;
+	// reset back to the default for the text content below.
+	--wp-components-color-foreground: var(--studio-white, #fff);
+
+	@include break-small {
+		width: 400px;
+	}
+
+	.dashboard-referrals-guide__preview {
+		position: relative;
+		block-size: 240px;
+		padding-block-end: 1rem;
+		overflow: hidden;
+
+		img,
+		video {
+			display: block;
+			inline-size: 100%;
+			block-size: 100%;
+			object-fit: cover;
+		}
+
+		// Dark scrim that keeps the white close button legible over light artwork.
+		&::after {
+			content: "";
+			position: absolute;
+			inset-block-start: 0;
+			inset-inline: 0;
+			block-size: 30%;
+			background: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.65));
+			pointer-events: none;
+		}
+	}
+
+	.dashboard-referrals-guide__content {
+		--wp-components-color-foreground: #{$gray-900};
+
+		// Tall enough for the longest step, so the modal keeps a steady
+		// height while paging through the guide.
+		min-block-size: 150px;
+		padding-block: $grid-unit-20;
+		padding-inline: $grid-unit-30;
+	}
+
+	.dashboard-referrals-guide__title {
+		@include heading-large;
+	}
+}
