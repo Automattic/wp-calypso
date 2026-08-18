@@ -107,6 +107,7 @@ describe( 'useInstallDeadline', () => {
 		const { result } = renderDeadline();
 		await advance( 30000 );
 
+		expect( result.current.isTransferFresh ).toBe( true );
 		expect( result.current.hasTimedOut ).toBe( true );
 	} );
 

@@ -103,7 +103,6 @@ import {
 	isExpiredOrRemoved,
 	mightStillAutoRenew,
 	isWithinRefundWindowDowngradeEligible,
-	isA4ABillingDragonPurchase,
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
 } from '../../../utils/purchase';
@@ -165,9 +164,19 @@ function getNonPlanUpgradeAction(
 		: undefined;
 }
 
-/** Whether the storage upgrade action is offered. */
+/**
+ * Whether the storage upgrade action is offered.
+ *
+ * Partner-managed subscriptions are excluded for the same reason `is_upgradable`
+ * is false for them server-side: the partner does the buying. There is no
+ * server-side flag for the storage add-on specifically, so it is checked here.
+ */
 function isStorageUpgradeShown( purchase: Purchase ): boolean {
-	return isStorageUpgradeEligible( purchase ) && ! isExpiredOrRemoved( purchase );
+	return (
+		isStorageUpgradeEligible( purchase ) &&
+		! isExpiredOrRemoved( purchase ) &&
+		! purchase.is_partner_managed
+	);
 }
 
 /**
@@ -331,6 +340,15 @@ export function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase }
 	// A fully removed subscription (no longer active) has nothing left to
 	// cancel or remove.
 	if ( isRemoved( purchase ) ) {
+		return null;
+	}
+
+	// The host owns the billing relationship for these, so cancelling has to
+	// happen there. `is_cancelable` and `is_removable` are both false server-side
+	// for them, but visibility below is driven by auto-renew state rather than by
+	// those flags, so the check has to be repeated here. Agency-provisioned
+	// purchases are bought through WordPress.com and stay cancellable.
+	if ( purchase.is_host_managed ) {
 		return null;
 	}
 
@@ -694,6 +712,14 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
+	// Same for host-managed plans: upgrade and renew are false server-side and
+	// cancel/remove are gated above, so every action in the list resolves to
+	// nothing. Product links like CRM downloads still work, so the card stays
+	// when there is one of those to show.
+	if ( purchase.is_host_managed && ! hasProductAction ) {
+		return null;
+	}
+
 	// Users who don't own the purchase are only supposed to get a limited set
 	// of management links; if they aren't available, skip the card entirely so
 	// we don't render an empty shell.
@@ -911,7 +937,7 @@ const form = {
 	],
 };
 
-function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
+export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const {
 		mutate: setAutoRenew,
 		error,
@@ -921,7 +947,14 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
-	if ( String( user.ID ) !== String( purchase.user_id ) || isIncludedWithPlan( purchase ) ) {
+	// Auto-renew and the payment method are the partner's to manage rather than
+	// the customer's, so the whole card goes for a partner-managed subscription.
+	// The classic purchases page hides its equivalent block for the same reason.
+	if (
+		String( user.ID ) !== String( purchase.user_id ) ||
+		isIncludedWithPlan( purchase ) ||
+		purchase.is_partner_managed
+	) {
 		return null;
 	}
 
@@ -978,7 +1011,8 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			/>
 		);
 	}
-	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
+	// There is no WordPress.com price to show for a subscription the partner bills.
+	if ( purchase.is_partner_managed ) {
 		return null;
 	}
 	if ( purchase.is_trial_plan ) {
@@ -1412,18 +1446,10 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
-		return (
-			<MetadataItem
-				title={ sprintf(
-					// translators: %(subtitle)s is the type of purchase (e.g. "Host Managed Plan"), %(partnerName)s is the name of the business partner
-					__( '%(subtitle)s. Please contact %(partnerName)s for details.' ),
-					{ subtitle, partnerName: purchase.partner_name }
-				) }
-			/>
-		);
-	}
-
+	// For a partner-managed purchase the subtitle is just the product type ("Host
+	// Managed Plan" / "Agency Managed Plan"); PartnerManagedNotice carries the
+	// "contact the partner" guidance that used to be appended here, where it read
+	// as a minor detail next to the action list.
 	return <MetadataItem title={ subtitle } />;
 }
 
@@ -1486,7 +1512,7 @@ export default function PurchaseSettings() {
 		...purchaseCancelFeaturesQuery( purchase.ID ),
 	} );
 	const features = cancelFeaturesResponse?.features ?? null;
-	const hasExpiryInfo = ! purchase.partner_name || isA4ABillingDragonPurchase( purchase );
+	const hasExpiryInfo = ! purchase.is_partner_managed;
 	// These two are deliberately separate: the header stands down whenever there
 	// is a notice at all, while the expiry card only takes a color when there is
 	// something the customer has to act on. While a renewal is still expected the

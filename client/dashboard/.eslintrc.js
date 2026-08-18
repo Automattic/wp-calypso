@@ -74,6 +74,7 @@ module.exports = {
 							'!@automattic/languages',
 							'!@automattic/language-picker',
 							'!@automattic/load-script',
+							'!@automattic/mini-cart',
 							'!@automattic/number-formatters',
 							'!@automattic/search',
 							'!@automattic/calypso-stripe',

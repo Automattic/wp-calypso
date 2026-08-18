@@ -103,7 +103,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain, resolveDomainStatus } from 'calypso/lib/domains';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { handleRenewMultiplePurchasesClick, handleRenewNowClick } from 'calypso/lib/purchases';
-import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import ProductLink from 'calypso/me/purchases/product-link';
@@ -301,13 +300,7 @@ class ManagePurchase extends Component<
 			isA4AHoldingSitePurchase( purchase );
 
 		// If this renewal is for a siteless purchase, we'll drop the site slug
-		// Temporary bridge (SHILL-2256): handleRenewNowClick still expects the
-		// camelCase Purchase. Remove once it reads the raw shape.
-		this.props.handleRenewNowClick(
-			createPurchaseObject( purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ] ),
-			! isSitelessRenewal ? siteSlug : '',
-			options
-		);
+		this.props.handleRenewNowClick( purchase, ! isSitelessRenewal ? siteSlug : '', options );
 	};
 
 	handleRenewMonthly = () => {
@@ -332,15 +325,7 @@ class ManagePurchase extends Component<
 	handleRenewMultiplePurchases = ( purchases: Purchase[] ) => {
 		const { siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
-		// Temporary bridge (SHILL-2256): handleRenewMultiplePurchasesClick still
-		// expects the camelCase Purchase. Remove once it reads the raw shape.
-		this.props.handleRenewMultiplePurchasesClick(
-			purchases.map( ( p ) =>
-				createPurchaseObject( p as unknown as Parameters< typeof createPurchaseObject >[ 0 ] )
-			),
-			siteSlug,
-			options
-		);
+		this.props.handleRenewMultiplePurchasesClick( purchases, siteSlug, options );
 	};
 
 	isPendingDomainRegistration( purchase: Purchase ): boolean {
@@ -1008,6 +993,15 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		// The host owns the billing relationship for a host-managed plan, so
+		// cancelling has to happen there. `is_cancelable` is false server-side for
+		// these, but visibility here is driven by auto-renew state instead, so the
+		// check has to be repeated. Agency-provisioned purchases are bought through
+		// WordPress.com and stay cancellable.
+		if ( purchase.is_host_managed ) {
+			return null;
+		}
+
 		// Only show the Cancel button when auto-renew is still on (i.e. the user
 		// hasn't already cancelled the subscription). The Remove button owns the
 		// auto-renew-off state. `canAutoRenewBeTurnedOff` returns true for
@@ -1440,25 +1434,15 @@ class ManagePurchase extends Component<
 									: purchaseType( purchase ) }
 							</div>
 							<div className="manage-purchase__price">
-								{ isPartnerPurchase( purchase ) && ! isA4ABillingDragonPurchase( purchase ) ? (
-									<div className="manage-purchase__contact-partner">
-										{ translate( 'Please contact %(partnerName)s for details', {
-											args: {
-												partnerName: purchase.partner_name ?? '',
-											},
-										} ) }
-									</div>
-								) : (
-									<>
-										{ isPurchaseOneTimePurchase( purchase ) && (
-											<PlanPrice
-												rawPrice={ purchase.regular_price_integer }
-												isSmallestUnit
-												currencyCode={ purchase.currency_code }
-												isOnSale={ !! purchase.sale_amount }
-											/>
-										) }
-									</>
+								{ /* A partner-managed purchase has no WordPress.com price to show, and
+								     the "contact the partner" guidance now lives in PurchaseNotice. */ }
+								{ ! purchase.is_partner_managed && isPurchaseOneTimePurchase( purchase ) && (
+									<PlanPrice
+										rawPrice={ purchase.regular_price_integer }
+										isSmallestUnit
+										currencyCode={ purchase.currency_code }
+										isOnSale={ !! purchase.sale_amount }
+									/>
 								) }
 							</div>
 						</div>
@@ -1753,11 +1737,6 @@ function PlanOverlapNotice( {
 	siteId: number;
 	purchase: Purchase;
 } ) {
-	// Temporary bridge (SHILL-2256): ProductPlanOverlapNotices still expects the
-	// camelCase Purchase. Remove once it reads the raw shape.
-	const currentPurchase = createPurchaseObject(
-		purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-	);
 	if ( isSiteLevel ) {
 		if ( ! selectedSiteId ) {
 			// Probably still loading
@@ -1770,7 +1749,7 @@ function PlanOverlapNotice( {
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }
 				siteId={ selectedSiteId }
-				currentPurchase={ currentPurchase }
+				currentPurchase={ purchase }
 			/>
 		);
 	}
@@ -1785,7 +1764,7 @@ function PlanOverlapNotice( {
 			plans={ JETPACK_PLANS }
 			products={ JETPACK_PRODUCTS_LIST }
 			siteId={ siteId }
-			currentPurchase={ currentPurchase }
+			currentPurchase={ purchase }
 		/>
 	);
 }

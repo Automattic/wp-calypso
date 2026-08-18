@@ -29,7 +29,9 @@ export default function Mcp() {
 				isSaving={ isSaving }
 				onSave={ save }
 				recordTracksEvent={ recordTracksEvent }
-				onNavigate={ ( path ) => navigate( { to: path as '/resources/ai-mcp/tools' } ) }
+				onNavigate={ ( path ) =>
+					navigate( { to: path as '/resources/ai-mcp/read' | '/resources/ai-mcp/write' } )
+				}
 			/>
 		</PageLayout>
 	);

@@ -72,10 +72,7 @@ export type AbilitiesSetupHook = ( actions: {
  * Suggestions hook type - for providing dynamic suggestions based on context
  * (e.g., selected block in editor). Returns an array of suggestions.
  */
-export type UseSuggestionsHook = (
-	maxSuggestions?: number,
-	options?: { suggestionsVisible?: boolean }
-) => {
+export type UseSuggestionsHook = ( maxSuggestions?: number ) => {
 	suggestions: Suggestion[];
 	/** Whether contextual suggestions replace, rather than extend, the empty-view suggestions. */
 	replaceEmptyViewSuggestions?: boolean;
@@ -130,6 +127,8 @@ export type UseCheckpointReturn = {
 	setCheckpoint: ( id: string, keys?: string[], metadata?: Record< string, unknown > ) => void;
 	addCheckpointKeys: ( id: string, keys: string[] ) => void;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
+	canSwapCheckpoint?: ( id: string ) => boolean | undefined;
+	swapCheckpoint?: ( id: string ) => Promise< void >;
 	addNewPageToCheckpoint: ( pageId: string ) => void;
 	addPageRenameToCheckpoint: ( pageId: string, oldTitle: string, newTitle: string ) => void;
 	addPageRemovalToCheckpoint: (
@@ -227,10 +226,10 @@ export function mergeUseSuggestionsHooks(
 		return hooks[ 0 ];
 	}
 
-	return ( maxSuggestions?: number, options?: { suggestionsVisible?: boolean } ) => {
+	return ( maxSuggestions?: number ) => {
 		const combined: Suggestion[] = [];
 		const seenIds = new Set< string >();
-		const results = hooks.map( ( hook ) => hook( maxSuggestions, options ) );
+		const results = hooks.map( ( hook ) => hook( maxSuggestions ) );
 		const replaceEmptyViewSuggestions = results.some(
 			( result ) => result?.replaceEmptyViewSuggestions === true
 		);
@@ -283,6 +282,14 @@ export function mergeUseCheckpointHooks(
 				instances.some( ( instance ) => instance?.hasCheckpoint?.( id ) ),
 			restoreCheckpoint: async ( id: string ) => {
 				await findOwner( id )?.restoreCheckpoint?.( id );
+			},
+			canSwapCheckpoint: ( id: string ) => findOwner( id )?.canSwapCheckpoint?.( id ),
+			swapCheckpoint: async ( id: string ) => {
+				const owner = findOwner( id );
+				if ( owner?.canSwapCheckpoint?.( id ) !== true || ! owner.swapCheckpoint ) {
+					throw new Error( `Checkpoint "${ id }" does not support swapping.` );
+				}
+				await owner.swapCheckpoint( id );
 			},
 			clearCheckpoint: ( id: string ) => {
 				for ( const instance of instances ) {

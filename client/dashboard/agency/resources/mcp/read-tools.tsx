@@ -3,7 +3,7 @@ import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import McpReadTools from './read-tools-content';
+import McpTools from './tools-content';
 import { useMcpSettings } from './use-mcp-settings';
 
 export default function McpReadToolsScreen() {
@@ -23,7 +23,8 @@ export default function McpReadToolsScreen() {
 				/>
 			}
 		>
-			<McpReadTools
+			<McpTools
+				toolType="read"
 				settings={ settings }
 				isSaving={ isSaving }
 				onSave={ save }

@@ -1,27 +1,21 @@
 import page from '@automattic/calypso-router';
-import { createElement } from 'react';
 import { login } from 'calypso/lib/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import WordPressAgentPage from './main';
 
 export const WORDPRESS_AGENT_PATH = '/me/get-apps/wordpress-agent';
 
-export function wordpressAgent( context, next ) {
+export function wordpressAgent( context ) {
 	if ( ! isUserLoggedIn( context.store.getState() ) ) {
 		page.replace( login( { redirectTo: window.location.href } ) );
 		return;
 	}
 
-	const pairToken = context.query.pair_token;
-	if ( pairToken ) {
-		const url = new URL( window.location.href );
-		url.searchParams.delete( 'pair_token' );
-		window.history.replaceState( window.history.state, '', url.toString() );
+	const destination = new URL( '/me/preferences/mcp', window.location.origin );
+	if ( typeof context.query.pair_token === 'string' ) {
+		destination.searchParams.set( 'pair_token', context.query.pair_token );
 	}
-
-	context.primary = createElement( WordPressAgentPage, {
-		pairToken,
-		slackStatus: context.query.slack,
-	} );
-	next();
+	if ( typeof context.query.slack === 'string' ) {
+		destination.searchParams.set( 'slack', context.query.slack );
+	}
+	window.location.replace( destination.toString() );
 }

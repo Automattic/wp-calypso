@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 import {
-	A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
+	A4A_AI_MCP_READ_TOOLS_LINK,
 	A4A_AI_MCP_CONNECT_LINK,
 	A4A_AI_MCP_STARTER_PROMPTS_LINK,
+	A4A_AI_MCP_WRITE_TOOLS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchMcpSettings from 'calypso/a8c-for-agencies/data/mcp-ai/use-fetch-mcp-settings';
 import useSaveMcpSettings from 'calypso/a8c-for-agencies/data/mcp-ai/use-save-mcp-settings';
@@ -35,7 +36,8 @@ export default function AiMcpOverviewContent() {
 			isSaving={ saveSettings.isPending }
 			onSave={ onSave }
 			recordTracksEvent={ recordTracks }
-			toolsPath={ A4A_AI_MCP_AVAILABLE_TOOLS_LINK }
+			readToolsPath={ A4A_AI_MCP_READ_TOOLS_LINK }
+			writeToolsPath={ A4A_AI_MCP_WRITE_TOOLS_LINK }
 			connectPath={ A4A_AI_MCP_CONNECT_LINK }
 			promptsPath={ A4A_AI_MCP_STARTER_PROMPTS_LINK }
 		/>

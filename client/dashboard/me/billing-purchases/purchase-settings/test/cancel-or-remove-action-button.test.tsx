@@ -123,4 +123,22 @@ describe( '<CancelOrRemoveActionButton />', () => {
 		);
 		expect( container ).toBeEmptyDOMElement();
 	} );
+
+	test( 'renders nothing for a host-managed plan', () => {
+		const { container } = render(
+			<CancelOrRemoveActionButton
+				purchase={ makePurchase( { is_partner_managed: true, is_host_managed: true } ) }
+			/>
+		);
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'still offers Cancel for an agency-managed plan', () => {
+		render(
+			<CancelOrRemoveActionButton
+				purchase={ makePurchase( { is_partner_managed: true, is_host_managed: false } ) }
+			/>
+		);
+		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
+	} );
 } );

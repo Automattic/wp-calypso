@@ -24,6 +24,7 @@ boot( {
 		agency: {
 			overview: true,
 			tiers: true,
+			partnerDirectory: true,
 			exclusiveOffers: true,
 			learn: true,
 			mcp: true,

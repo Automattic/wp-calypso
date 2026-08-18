@@ -51,6 +51,7 @@ function handleMenuClick(
 	recordTracksEvent: RecordTracksEvent,
 	destination: string,
 	omnibarSiteId: number | null | undefined,
+	sectionName: string | undefined,
 	isExternal = false
 ) {
 	// Re-clicking the current route closes the chat; external links never do.
@@ -58,7 +59,7 @@ function handleMenuClick(
 		! isExternal && isAgentsManagerChatVisible() && getAgentsManagerChatRoute() === destination;
 
 	recordTracksEvent( 'calypso_dashboard_help_center_menu_panel_click', {
-		section: 'dashboard',
+		section: sectionName,
 		destination,
 		action: isClosing ? 'close' : 'open',
 	} );
@@ -74,7 +75,7 @@ function handleMenuClick(
 			withSiteContext(
 				{
 					location: 'help-center',
-					section: 'dashboard',
+					section: sectionName,
 				},
 				'omnibar',
 				omnibarSiteId
@@ -93,7 +94,7 @@ function handleMenuClick(
 		withSiteContext(
 			{
 				location: 'help-center',
-				section: 'dashboard',
+				section: sectionName,
 				destination,
 			},
 			'omnibar',
@@ -104,7 +105,8 @@ function handleMenuClick(
 
 function getAgentsManagerMenuNodes(
 	recordTracksEvent: RecordTracksEvent,
-	omnibarSiteId: number | null | undefined
+	omnibarSiteId: number | null | undefined,
+	sectionName: string | undefined
 ): OmnibarNode[] {
 	return [
 		{
@@ -115,13 +117,14 @@ function getAgentsManagerMenuNodes(
 					id: 'chat-support',
 					title: __( 'Chat support' ),
 					icon: menuIcon( comment ),
-					onClick: () => handleMenuClick( recordTracksEvent, '/chat', omnibarSiteId ),
+					onClick: () => handleMenuClick( recordTracksEvent, '/chat', omnibarSiteId, sectionName ),
 				},
 				{
 					id: 'chat-history',
 					title: __( 'Chat history' ),
 					icon: menuIcon( backup ),
-					onClick: () => handleMenuClick( recordTracksEvent, '/history', omnibarSiteId ),
+					onClick: () =>
+						handleMenuClick( recordTracksEvent, '/history', omnibarSiteId, sectionName ),
 				},
 			],
 		},
@@ -134,7 +137,8 @@ function getAgentsManagerMenuNodes(
 					id: 'support-guides',
 					title: __( 'Support guides' ),
 					icon: menuIcon( page ),
-					onClick: () => handleMenuClick( recordTracksEvent, '/support-guides', omnibarSiteId ),
+					onClick: () =>
+						handleMenuClick( recordTracksEvent, '/support-guides', omnibarSiteId, sectionName ),
 				},
 				{
 					id: 'courses',
@@ -145,6 +149,7 @@ function getAgentsManagerMenuNodes(
 							recordTracksEvent,
 							localizeUrl( 'https://wordpress.com/support/courses/' ),
 							omnibarSiteId,
+							sectionName,
 							true
 						),
 				},
@@ -157,6 +162,7 @@ function getAgentsManagerMenuNodes(
 							recordTracksEvent,
 							localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
 							omnibarSiteId,
+							sectionName,
 							true
 						),
 				},
@@ -165,7 +171,7 @@ function getAgentsManagerMenuNodes(
 	];
 }
 
-export function useHelpCenterPlugin(): OmnibarNode {
+export function useHelpCenterPlugin( { sectionName }: { sectionName?: string } ): OmnibarNode {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
@@ -176,7 +182,7 @@ export function useHelpCenterPlugin(): OmnibarNode {
 			id: 'help-center',
 			label: __( 'Help' ),
 			icon: <HelpIcon />,
-			children: getAgentsManagerMenuNodes( recordTracksEvent, omnibarSiteId ),
+			children: getAgentsManagerMenuNodes( recordTracksEvent, omnibarSiteId, sectionName ),
 		};
 	}
 

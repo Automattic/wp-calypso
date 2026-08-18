@@ -12,13 +12,16 @@ export function getSafeEditorUrl( rawUrl: string | null ): string | null {
 		return null;
 	}
 
-	if ( parsed.protocol !== 'https:' && parsed.protocol !== 'http:' ) {
+	const isCurrentHost = parsed.hostname === window.location.hostname;
+	const isLocalHttpDestination =
+		isCurrentHost && parsed.protocol === 'http:' && window.location.protocol === 'http:';
+	if ( parsed.protocol !== 'https:' && ! isLocalHttpDestination ) {
 		return null;
 	}
 
 	const { hostname } = parsed;
 	const isAllowedHost =
-		hostname === window.location.hostname ||
+		isCurrentHost ||
 		hostname === 'wordpress.com' ||
 		ALLOWED_HOST_SUFFIXES.some( ( suffix ) => hostname.endsWith( suffix ) );
 

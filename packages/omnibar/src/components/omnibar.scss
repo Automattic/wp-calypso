@@ -61,6 +61,7 @@ body:has( .omnibar ) {
 		font-family: inherit;
 		font-size: $omnibar-font-size;
 		line-height: var( --omnibar-height );
+		white-space: nowrap;
 		border: 0;
 		border-radius: 0;
 		text-decoration: none;
@@ -115,7 +116,6 @@ body:has( .omnibar ) {
 		}
 	}
 
-
 	.omnibar__home {
 		@media ( min-width: 782px ) {
 			padding-inline-start: 8px;
@@ -154,7 +154,7 @@ body:has( .omnibar ) {
 		}
 	}
 
-	.omnibar__label {
+	.omnibar__menu .omnibar__label {
 		display: none;
 
 		@media ( min-width: 782px ) {

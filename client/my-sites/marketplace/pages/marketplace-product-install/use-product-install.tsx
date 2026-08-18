@@ -2,8 +2,9 @@ import { marketplacePluginQuery } from '@automattic/api-queries';
 import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
+import { isRevertedTransferStatus } from 'calypso/landing/stepper/utils/atomic-transfer-outcome';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -41,15 +42,72 @@ import {
 } from 'calypso/state/ui/selectors';
 import { chooseInstallStrategy } from './install-strategy';
 import { useDelayedCondition } from './use-delayed-condition';
-import { useInstallDeadline } from './use-install-deadline';
+import { INSTALL_DEADLINE_MS, isSettled, useInstallDeadline } from './use-install-deadline';
 import useMarketplaceAdditionalSteps from './use-marketplace-additional-steps';
 import { useThankYouRedirect } from './use-thank-you-redirect';
+import type { AtomicTransfer } from '@automattic/api-core';
 
 // The state authorizing an install is handed off asynchronously, so allow for it arriving late.
 const INSTALL_HANDOFF_GRACE_PERIOD_MS = 2000;
 
+// Do not let a slow latest-transfer request block an authorized install indefinitely.
+const TRANSFER_LOOKUP_GRACE_PERIOD_MS = 2000;
+
 // The plan's feature list is fetched asynchronously; allow for it arriving late.
 const PLAN_FEATURES_GRACE_PERIOD_MS = 2000;
+
+// Attempts older than the maximum install wait are no longer recoverable by this screen.
+const ADOPTABLE_TRANSFER_AGE_MS = INSTALL_DEADLINE_MS;
+const TRANSFER_ATTEMPT_CLOCK_SKEW_MS = 60 * 1000;
+const TRANSFER_ATTEMPT_KEY_PREFIX = 'marketplace-product-install-transfer';
+
+type TransferAttempt = {
+	initiatedAt: number;
+	previousTransferId: number | null;
+};
+
+const getTransferAttemptKey = ( siteId: number, pluginSlug: string ) =>
+	`${ TRANSFER_ATTEMPT_KEY_PREFIX }:${ siteId }:${ pluginSlug }`;
+
+const readTransferAttempt = ( key: string ): TransferAttempt | null => {
+	if ( ! key || typeof window === 'undefined' ) {
+		return null;
+	}
+
+	try {
+		const value = JSON.parse( window.sessionStorage.getItem( key ) ?? 'null' );
+		return Number.isFinite( value?.initiatedAt ) &&
+			( Number.isFinite( value.previousTransferId ) || value.previousTransferId === null )
+			? value
+			: null;
+	} catch {
+		return null;
+	}
+};
+
+const clearTransferAttempt = ( key: string ) => {
+	if ( ! key || typeof window === 'undefined' ) {
+		return;
+	}
+
+	try {
+		window.sessionStorage.removeItem( key );
+	} catch {
+		// Nothing persisted, so there is nothing to recover or clear.
+	}
+};
+
+const writeTransferAttempt = ( key: string, attempt: TransferAttempt ) => {
+	if ( ! key || typeof window === 'undefined' ) {
+		return;
+	}
+
+	try {
+		window.sessionStorage.setItem( key, JSON.stringify( attempt ) );
+	} catch {
+		// Recovery can still use the current mount's ref when storage is unavailable.
+	}
+};
 
 const installFlowName = ( {
 	themeSlug,
@@ -134,6 +192,44 @@ export function useProductInstall( {
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
+	const transferAttemptKey =
+		siteId && pluginSlug ? getTransferAttemptKey( siteId, pluginSlug ) : '';
+	const transferAttemptRef = useRef< { key: string; attempt: TransferAttempt | null } >( {
+		key: '',
+		attempt: null,
+	} );
+	if ( transferAttemptRef.current.key !== transferAttemptKey ) {
+		transferAttemptRef.current = {
+			key: transferAttemptKey,
+			attempt: readTransferAttempt( transferAttemptKey ),
+		};
+	}
+	const persistedTransferAttempt = transferAttemptRef.current.attempt;
+	const transferAttemptAge = persistedTransferAttempt
+		? Date.now() - persistedTransferAttempt.initiatedAt
+		: NaN;
+	const hasCurrentTransferAttempt =
+		!! persistedTransferAttempt &&
+		transferAttemptAge >= -TRANSFER_ATTEMPT_CLOCK_SKEW_MS &&
+		transferAttemptAge <= ADOPTABLE_TRANSFER_AGE_MS;
+	const isTransferFromAttempt = useCallback(
+		( candidate: AtomicTransfer ) => {
+			if ( ! persistedTransferAttempt || ! hasCurrentTransferAttempt ) {
+				return false;
+			}
+
+			const createdAt = Date.parse( candidate.created_at );
+			const age = Date.now() - createdAt;
+			return (
+				! Number.isNaN( createdAt ) &&
+				age >= -TRANSFER_ATTEMPT_CLOCK_SKEW_MS &&
+				age <= ADOPTABLE_TRANSFER_AGE_MS &&
+				candidate.atomic_transfer_id !== persistedTransferAttempt.previousTransferId &&
+				createdAt >= persistedTransferAttempt.initiatedAt - TRANSFER_ATTEMPT_CLOCK_SKEW_MS
+			);
+		},
+		[ hasCurrentTransferAttempt, persistedTransferAttempt ]
+	);
 
 	const pluginInstallStatus = useSelector( ( state ) =>
 		getStatusForPlugin( state, siteId, pluginSlug )
@@ -196,96 +292,6 @@ export function useProductInstall( {
 		INSTALL_HANDOFF_GRACE_PERIOD_MS
 	);
 
-	// Upload flow startup
-	useEffect( () => {
-		if ( 100 !== pluginUploadProgress ) {
-			return;
-		}
-		// Let the upload step show briefly before advancing.
-		const id = setTimeout( () => setCurrentStep( 1 ), 1000 );
-		return () => clearTimeout( id );
-	}, [ pluginUploadProgress ] );
-
-	// Installing plugin flow startup
-	useEffect( () => {
-		if (
-			! ( marketplaceInstallationInProgress || directInstallationAllowed ) ||
-			isPluginUploadFlow ||
-			installFlowInitiatedRef.current ||
-			! ( wporgPlugin || wpOrgTheme )
-		) {
-			return;
-		}
-
-		// The site may not be installable yet — e.g. its feature data hasn't loaded. Leave the
-		// guard unset so a later update (features arriving) can still start the install.
-		if ( installStrategy === 'none' ) {
-			return;
-		}
-
-		installFlowInitiatedRef.current = true;
-
-		if ( installStrategy === 'in-place' ) {
-			if ( wpOrgTheme ) {
-				dispatch( installAndActivateTheme( wpOrgTheme.id, siteId ) );
-			} else {
-				dispatch( installPlugin( siteId, wporgPlugin, false ) );
-			}
-		} else if ( wpOrgTheme ) {
-			dispatch( initiateAtomicTransfer( siteId, { themeSlug, context: 'theme_install' } ) );
-		} else {
-			setAtomicFlow( true );
-			dispatch( initiateTransfer( siteId, null, pluginSlug, '', 'plugin_install' ) );
-		}
-		setCurrentStep( 1 );
-	}, [
-		marketplaceInstallationInProgress,
-		directInstallationAllowed,
-		isPluginUploadFlow,
-		siteId,
-		wporgPlugin,
-		wpOrgTheme,
-		pluginSlug,
-		themeSlug,
-		dispatch,
-		installStrategy,
-	] );
-
-	// Validate completion of atomic transfer flow
-	useEffect( () => {
-		if ( atomicFlow && currentStep === 1 && transferStates.COMPLETE === automatedTransferStatus ) {
-			setCurrentStep( 2 );
-		}
-	}, [ atomicFlow, automatedTransferStatus, currentStep ] );
-
-	// Activate once the plugin is installed and the installing step is reached. currentStep is a
-	// dependency so a plugin that appears before that step still activates when the step catches up.
-	useEffect( () => {
-		if (
-			installedPlugin &&
-			currentStep === 1 &&
-			( ! isPluginUploadFlow || pluginUploadComplete )
-		) {
-			if ( ! isTransferredUpload ) {
-				dispatch(
-					activatePlugin( siteId, {
-						slug: installedPlugin?.slug,
-						id: installedPlugin?.id,
-					} )
-				);
-			}
-			setCurrentStep( 2 );
-		}
-	}, [
-		installedPlugin,
-		currentStep,
-		isPluginUploadFlow,
-		isTransferredUpload,
-		pluginUploadComplete,
-		dispatch,
-		siteId,
-	] );
-
 	// Errors this page can tell apart before the wait even starts. They are also what says the wait
 	// is not really running, so the deadline below stays disarmed while one of them holds.
 	const preflightError: ProductInstallError | null = ( () => {
@@ -328,15 +334,185 @@ export function useProductInstall( {
 	const hasTransferTimedOut =
 		atomicFlow && automatedTransferStatus === transferStates.CLIENT_TIMEOUT;
 
-	const { hasTimedOut, hasTransferFailed, diagnostics } = useInstallDeadline( {
+	const {
+		hasTimedOut,
+		hasTransferFailed,
+		diagnostics,
+		transfer,
+		isTransferFresh,
+		isTransferLookupComplete,
+	} = useInstallDeadline( {
 		siteId,
 		enabled: !! siteId && ! preflightError && ! isUploadStillSending,
+		isTransferFromAttempt,
 	} );
+	const latestTransfer = isTransferFresh ? transfer : undefined;
+	const transferBelongsToAttempt = !! latestTransfer && isTransferFromAttempt( latestTransfer );
+	const transferInFlight = transferBelongsToAttempt && ! isSettled( latestTransfer.status );
+	const durableTransferCompleted =
+		transferBelongsToAttempt && latestTransfer.status === 'completed';
+	const durableTransferFailed =
+		transferBelongsToAttempt &&
+		( latestTransfer.status === 'error' || isRevertedTransferStatus( latestTransfer.status ) );
+	const transferHasFailed = hasTransferFailed || durableTransferFailed;
+	const transferLookupGraceElapsed = useDelayedCondition(
+		installStrategy === 'atomic-transfer' &&
+			!! pluginSlug &&
+			! hasCurrentTransferAttempt &&
+			! isTransferLookupComplete,
+		TRANSFER_LOOKUP_GRACE_PERIOD_MS
+	);
+
+	// Upload flow startup
+	useEffect( () => {
+		if ( 100 !== pluginUploadProgress ) {
+			return;
+		}
+		// Let the upload step show briefly before advancing.
+		const id = setTimeout( () => setCurrentStep( 1 ), 1000 );
+		return () => clearTimeout( id );
+	}, [ pluginUploadProgress ] );
+
+	// Installing plugin flow startup
+	useEffect( () => {
+		if (
+			isPluginUploadFlow ||
+			installFlowInitiatedRef.current ||
+			! ( wporgPlugin || wpOrgTheme )
+		) {
+			return;
+		}
+
+		const shouldRecoverTransfer =
+			!! pluginSlug && ( transferInFlight || durableTransferCompleted || durableTransferFailed );
+
+		if ( shouldRecoverTransfer ) {
+			installFlowInitiatedRef.current = true;
+			setAtomicFlow( true );
+			if ( ! durableTransferFailed ) {
+				setCurrentStep( durableTransferCompleted ? 2 : 1 );
+			}
+			return;
+		}
+
+		// The site may not be installable yet — e.g. its feature data hasn't loaded. Leave the
+		// guard unset so a later update (features arriving) can still start the install.
+		if ( installStrategy === 'none' ) {
+			return;
+		}
+
+		if ( transferHasFailed || hasTimedOut || hasTransferTimedOut ) {
+			return;
+		}
+
+		if ( ! ( marketplaceInstallationInProgress || directInstallationAllowed ) ) {
+			return;
+		}
+
+		// A persisted attempt must be resolved by a successful lookup before any install path starts.
+		if ( pluginSlug && hasCurrentTransferAttempt && ! isTransferFresh ) {
+			return;
+		}
+
+		// Without a marker, bound the initial lookup so an outage cannot block a newly authorized flow.
+		if (
+			installStrategy === 'atomic-transfer' &&
+			pluginSlug &&
+			! isTransferLookupComplete &&
+			! transferLookupGraceElapsed
+		) {
+			return;
+		}
+
+		installFlowInitiatedRef.current = true;
+
+		if ( installStrategy === 'in-place' ) {
+			if ( wpOrgTheme ) {
+				dispatch( installAndActivateTheme( wpOrgTheme.id, siteId ) );
+			} else {
+				dispatch( installPlugin( siteId, wporgPlugin, false ) );
+			}
+		} else if ( wpOrgTheme ) {
+			dispatch( initiateAtomicTransfer( siteId, { themeSlug, context: 'theme_install' } ) );
+		} else {
+			const attempt = {
+				initiatedAt: Date.now(),
+				previousTransferId: latestTransfer?.atomic_transfer_id ?? null,
+			};
+			transferAttemptRef.current = { key: transferAttemptKey, attempt };
+			writeTransferAttempt( transferAttemptKey, attempt );
+			setAtomicFlow( true );
+			dispatch( initiateTransfer( siteId, null, pluginSlug, '', 'plugin_install' ) );
+		}
+		setCurrentStep( 1 );
+	}, [
+		marketplaceInstallationInProgress,
+		directInstallationAllowed,
+		isPluginUploadFlow,
+		siteId,
+		wporgPlugin,
+		wpOrgTheme,
+		pluginSlug,
+		themeSlug,
+		dispatch,
+		installStrategy,
+		latestTransfer,
+		transferInFlight,
+		durableTransferCompleted,
+		durableTransferFailed,
+		transferHasFailed,
+		hasTimedOut,
+		hasTransferTimedOut,
+		hasCurrentTransferAttempt,
+		isTransferFresh,
+		isTransferLookupComplete,
+		transferLookupGraceElapsed,
+		transferAttemptKey,
+	] );
+
+	// Validate completion of atomic transfer flow
+	useEffect( () => {
+		if (
+			atomicFlow &&
+			currentStep === 1 &&
+			( transferStates.COMPLETE === automatedTransferStatus || durableTransferCompleted )
+		) {
+			setCurrentStep( 2 );
+		}
+	}, [ atomicFlow, automatedTransferStatus, currentStep, durableTransferCompleted ] );
+
+	// Activate once the plugin is installed and the installing step is reached. currentStep is a
+	// dependency so a plugin that appears before that step still activates when the step catches up.
+	useEffect( () => {
+		if (
+			installedPlugin &&
+			currentStep === 1 &&
+			( ! isPluginUploadFlow || pluginUploadComplete )
+		) {
+			if ( ! isTransferredUpload ) {
+				dispatch(
+					activatePlugin( siteId, {
+						slug: installedPlugin?.slug,
+						id: installedPlugin?.id,
+					} )
+				);
+			}
+			setCurrentStep( 2 );
+		}
+	}, [
+		installedPlugin,
+		currentStep,
+		isPluginUploadFlow,
+		isTransferredUpload,
+		pluginUploadComplete,
+		dispatch,
+		siteId,
+	] );
 
 	// Which error screen to show, in priority order, or null for none. The presentational mapping
 	// lives in ProductInstallErrorView; keeping this as data makes the branching testable.
 	let error: ProductInstallError | null = preflightError;
-	if ( ! error && hasTransferFailed ) {
+	if ( ! error && transferHasFailed ) {
 		error = { type: 'transfer-failed' };
 	}
 	if ( ! error && ( hasTimedOut || hasTransferTimedOut ) ) {
@@ -354,6 +530,15 @@ export function useProductInstall( {
 	hasSucceededRef.current =
 		hasSucceededRef.current || ( themeSlug ? isThemeActive : !! installedPlugin && pluginActive );
 	const hasSucceeded = hasSucceededRef.current;
+	const transferAttemptEnded =
+		hasSucceeded || ( !! error && error.type !== 'non-installable-plan' );
+	useEffect( () => {
+		if ( ! transferAttemptEnded || ! transferAttemptRef.current.attempt ) {
+			return;
+		}
+		transferAttemptRef.current = { key: transferAttemptKey, attempt: null };
+		clearTransferAttempt( transferAttemptKey );
+	}, [ transferAttemptEnded, transferAttemptKey ] );
 
 	// Whether anyone is still watching. The wait stops being one the moment it resolves, either into
 	// an error screen or into a success on its way out.
@@ -379,7 +564,7 @@ export function useProductInstall( {
 	diagnosticsRef.current = diagnostics;
 	useEffect( () => {
 		let outcome = null;
-		if ( hasTransferFailed ) {
+		if ( transferHasFailed ) {
 			outcome = 'transfer_failed';
 		} else if ( hasTimedOut || hasTransferTimedOut ) {
 			outcome = 'timeout';
@@ -403,7 +588,7 @@ export function useProductInstall( {
 	}, [
 		hasTimedOut,
 		hasTransferTimedOut,
-		hasTransferFailed,
+		transferHasFailed,
 		themeSlug,
 		installStrategy,
 		atomicFlow,
@@ -426,6 +611,7 @@ export function useProductInstall( {
 		pluginActive,
 		atomicFlow,
 		automatedTransferStatus,
+		durableTransferCompleted,
 		isTransferredUpload,
 		halted: !! error,
 	} );

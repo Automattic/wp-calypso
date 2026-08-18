@@ -137,6 +137,37 @@ export const agencyTiersRoute = createRoute( {
 	)
 );
 
+// `/agency/partner-directory` – partner directory application dashboard
+export const agencyPartnerDirectoryRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_partner_directory' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Partner Directories' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'agency/partner-directory',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.partner_directory?.allowed ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+} ).lazy( () =>
+	import( '../../agency/partner-directory' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/marketplace/exclusive-offers` – partner offers (Refer / Resell)
 export const exclusiveOffersRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_exclusive_offers' },
@@ -214,14 +245,25 @@ const mcpOverviewRoute = createRoute( {
 	)
 );
 
-const mcpAvailableToolsRoute = createRoute( {
+const mcpReadToolsRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Read' ) } ] } ),
 	getParentRoute: () => mcpRoute,
-	path: 'tools',
+	path: 'read',
 	loader: ensureMcpSettings,
 } ).lazy( () =>
 	import( '../../agency/resources/mcp/read-tools' ).then( ( d ) =>
 		createLazyRoute( 'resources-mcp-read' )( { component: d.default } )
+	)
+);
+
+const mcpWriteToolsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Write' ) } ] } ),
+	getParentRoute: () => mcpRoute,
+	path: 'write',
+	loader: ensureMcpSettings,
+} ).lazy( () =>
+	import( '../../agency/resources/mcp/write-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-write' )( { component: d.default } )
 	)
 );
 
@@ -822,11 +864,13 @@ export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
+		agencyPartnerDirectoryRoute,
 		exclusiveOffersRoute,
 		learnRoute,
 		mcpRoute.addChildren( [
 			mcpOverviewRoute,
-			mcpAvailableToolsRoute,
+			mcpReadToolsRoute,
+			mcpWriteToolsRoute,
 			mcpStarterPromptsRoute,
 			mcpConnectRoute,
 		] ),

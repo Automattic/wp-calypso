@@ -94,8 +94,7 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 			}
 
 			&__status {
-				// Agenttic's success token is white in dark mode; match the Editorial Review treatment.
-				background: rgba( 74, 184, 102, 0.2 );
+				background: transparent;
 				color: #4ab866;
 				font-weight: 600;
 
@@ -135,8 +134,15 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 			}
 
 			&__icon {
+				color: inherit;
 				flex: 0 0 auto;
 				fill: currentColor;
+
+				// Agenttic sets `color` directly on every message descendant.
+				path {
+					color: inherit;
+					fill: currentColor;
+				}
 			}
 		}
 	}

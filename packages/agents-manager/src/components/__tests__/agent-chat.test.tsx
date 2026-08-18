@@ -481,6 +481,28 @@ describe( 'AgentChat', () => {
 		expect( screen.queryByRole( 'button', { name: 'Proofread' } ) ).toBeNull();
 	} );
 
+	it( 'keeps the featured image suggestion out of the writing group', () => {
+		const suggestions = [
+			{ id: 'customize-colors', label: 'Customize colors', prompt: 'Customize colors' },
+			{
+				id: 'generate-featured-image',
+				label: 'Generate featured image',
+				description: 'Create a new image with AI and set it as the featured image.',
+				prompt: '',
+			},
+			{ id: 'optimize-title', label: 'Optimize Title', prompt: 'Optimize the title' },
+		];
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: suggestions,
+			groupWritingSuggestions: true,
+		} );
+
+		const button = screen.getByRole( 'button', { name: 'Generate featured image' } );
+		expect( button.closest( '.agents-manager-writing-suggestions' ) ).toBeNull();
+	} );
+
 	it( 'keeps the flat empty view when there are no writing suggestions', () => {
 		const suggestion = {
 			id: 'customize-colors',

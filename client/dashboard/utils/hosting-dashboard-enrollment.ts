@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
-const ROLLOUT_PERCENTAGE = 50;
+const ROLLOUT_PERCENTAGE = 100;
 
 // When rollout begins, users registered after this ID (i.e. new users) are enrolled.
 const NEW_USER_ID_THRESHOLD = 282953237;

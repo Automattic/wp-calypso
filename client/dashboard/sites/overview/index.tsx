@@ -39,6 +39,7 @@ import VisibilityCard from '../overview-visibility-card';
 import VisibilityCardCiab from '../overview-visibility-card-ciab';
 import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
+import { EmailBlockNotice, getEmailBlock } from './email-block-notice';
 import { StorageWarningBanner, useShouldShowStorageWarningBanner } from './storage-warning-banner';
 import type { Site } from '@automattic/api-core';
 import './style.scss';
@@ -259,6 +260,7 @@ function SiteOverview( {
 					{ site.__inaccessible_jetpack_error && (
 						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />
 					) }
+					{ !! getEmailBlock( site ) && <EmailBlockNotice site={ site } /> }
 					{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
 				</SitesNoticeArbiter>
 			}

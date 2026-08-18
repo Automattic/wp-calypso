@@ -51,6 +51,7 @@ const mockSelectBlock = jest.fn( ( clientId?: string | null ) => {
 const mockClearSelectedBlock = jest.fn( () => {
 	mockSelectedBlockClientId = null;
 } );
+const mockEditPost = jest.fn();
 const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 	typeof recordTracksEvent
 >;
@@ -58,6 +59,7 @@ let mockSelectedBlock: any = null;
 let mockCurrentPostType: string | undefined = 'post';
 let mockBlocksByClientId: Record< string, any > = {};
 let mockEditorBlocks: any[] = [];
+let mockImageStudioActions: { openImageStudio: jest.Mock } | null = null;
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
@@ -82,6 +84,15 @@ function appendBlockInRootLayout(
 	return { layout, block };
 }
 
+const mockSerializeBlocks = jest.fn( ( blocks: any[] ) => {
+	const normalize = ( block: any ): any => ( {
+		name: block.name,
+		attributes: block.attributes,
+		innerBlocks: ( block.innerBlocks ?? [] ).map( normalize ),
+	} );
+	return JSON.stringify( blocks.map( normalize ) );
+} );
+
 jest.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
 	// BlockRef renders the block-type icon via BlockIcon; a stub keeps these
@@ -105,6 +116,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 	// Nothing is registered in the test env, so block chips fall back to their
 	// prettified slug — which is all these tests assert about the block ref.
 	getBlockType: () => undefined,
+	serialize: ( blocks: any[] ) => mockSerializeBlocks( blocks ),
 } ) );
 
 jest.mock( '@wordpress/components', () => {
@@ -144,10 +156,20 @@ jest.mock( '@wordpress/data', () => ( {
 				clearSelectedBlock: mockClearSelectedBlock,
 			};
 		}
+		if ( store === 'image-studio' ) {
+			return mockImageStudioActions ?? {};
+		}
+		if ( store === 'core/editor' ) {
+			return { editPost: mockEditPost };
+		}
 		return {};
 	} ),
 	select: jest.fn( ( store: string ) => {
 		if ( store === 'core/block-editor' ) {
+			const windowStore = ( globalThis as any ).wp?.data?.select?.( store );
+			if ( windowStore ) {
+				return windowStore;
+			}
 			return {
 				getSelectedBlockClientId: () => mockSelectedBlockClientId,
 			};
@@ -240,12 +262,48 @@ function installWpDataMock(
 	return state;
 }
 
+interface PostTypeMockOptions {
+	supportsExcerpt?: boolean;
+	postTypeRecordResolved?: boolean;
+	/** add_post_type_support with arguments stores an array instead of true. */
+	supportsThumbnail?: boolean | unknown[];
+	/** Mirrors the theme support, which is a boolean or a list of post types. */
+	themeSupportsThumbnails?: boolean | string[];
+	/** core-data returns an empty object until the active theme resolves. */
+	themeSupportsResolved?: boolean;
+	/** Whole getThemeSupports return value, for a store that returns something else. */
+	themeSupportsReturnValue?: unknown;
+}
+
 function installPostTypeMock(
 	postType?: string,
 	postId: EditorPostId | null = 123,
-	supportsExcerpt: boolean = postType === 'post',
-	postTypeRecordResolved = true
+	options: PostTypeMockOptions = {}
 ) {
+	const {
+		supportsExcerpt = postType === 'post',
+		postTypeRecordResolved = true,
+		themeSupportsThumbnails = true,
+		themeSupportsResolved = true,
+	} = options;
+
+	// remove_post_type_support unsets the key, so an explicit undefined omits it.
+	const supportsThumbnail =
+		'supportsThumbnail' in options
+			? options.supportsThumbnail
+			: postType === 'post' || postType === 'page';
+	const supports: Record< string, unknown > = { excerpt: supportsExcerpt };
+	if ( supportsThumbnail !== undefined ) {
+		supports.thumbnail = supportsThumbnail;
+	}
+
+	const getThemeSupports = () => {
+		if ( 'themeSupportsReturnValue' in options ) {
+			return options.themeSupportsReturnValue;
+		}
+		return themeSupportsResolved ? { 'post-thumbnails': themeSupportsThumbnails } : {};
+	};
+
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
@@ -265,9 +323,8 @@ function installPostTypeMock(
 				if ( store === 'core' ) {
 					return {
 						getPostType: ( name: string ) =>
-							postTypeRecordResolved && name === postType
-								? { supports: { excerpt: supportsExcerpt } }
-								: undefined,
+							postTypeRecordResolved && name === postType ? { supports } : undefined,
+						getThemeSupports,
 					};
 				}
 				return undefined;
@@ -327,15 +384,11 @@ function installAiEditorialReviewData( features: Record< string, boolean > = {} 
 function SuggestionsProbe( {
 	onSuggestions,
 	maxSuggestions,
-	suggestionsVisible = true,
 }: {
 	onSuggestions: ( suggestions: any[], replaceEmptyViewSuggestions?: boolean ) => void;
 	maxSuggestions?: number;
-	suggestionsVisible?: boolean;
 } ) {
-	const { suggestions, replaceEmptyViewSuggestions } = useSuggestions( maxSuggestions, {
-		suggestionsVisible,
-	} );
+	const { suggestions, replaceEmptyViewSuggestions } = useSuggestions( maxSuggestions );
 	React.useEffect( () => {
 		onSuggestions( suggestions, replaceEmptyViewSuggestions );
 	}, [ onSuggestions, replaceEmptyViewSuggestions, suggestions ] );
@@ -1819,6 +1872,7 @@ describe( 'getEmptyViewSuggestions', () => {
 	afterEach( () => {
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
+		mockImageStudioActions = null;
 	} );
 
 	it( 'hides post suggestions without a sidebar config', () => {
@@ -1867,7 +1921,7 @@ describe( 'getEmptyViewSuggestions', () => {
 			excerptSuggestion: true,
 			proofreadContent: true,
 		} );
-		installPostTypeMock( 'page', 123, true );
+		installPostTypeMock( 'page', 123, { supportsExcerpt: true } );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
@@ -1889,7 +1943,7 @@ describe( 'getEmptyViewSuggestions', () => {
 				proofreadContent: true,
 				seoSuggestions: true,
 			} );
-			installPostTypeMock( postType, postId, true );
+			installPostTypeMock( postType, postId, { supportsExcerpt: true } );
 
 			const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
@@ -2048,7 +2102,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
 		// WordPress.com Simple / any site with the Jetpack SEO Tools module adds
 		// excerpt support to pages — the legacy AI Excerpt panel shows there too.
-		installPostTypeMock( 'page', 123, true );
+		installPostTypeMock( 'page', 123, { supportsExcerpt: true } );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2057,7 +2111,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'hides Generate Excerpt for site editor templates that support excerpts', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
-		installPostTypeMock( 'wp_template', 123, true );
+		installPostTypeMock( 'wp_template', 123, { supportsExcerpt: true } );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2068,7 +2122,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
 		// Core registers excerpt support for wp_block (patterns), but the excerpt
 		// field acts as a description there — the chip still excludes patterns.
-		installPostTypeMock( 'wp_block', 123, true );
+		installPostTypeMock( 'wp_block', 123, { supportsExcerpt: true } );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2077,7 +2131,10 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'shows Generate Excerpt for posts while the post type record is still resolving', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
-		installPostTypeMock( 'post', 123, true, false );
+		installPostTypeMock( 'post', 123, {
+			supportsExcerpt: true,
+			postTypeRecordResolved: false,
+		} );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2086,11 +2143,169 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'hides Generate Excerpt for pages while the post type record is still resolving', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
-		installPostTypeMock( 'page', 123, false, false );
+		installPostTypeMock( 'page', 123, {
+			supportsExcerpt: false,
+			postTypeRecordResolved: false,
+		} );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
 		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'shows Generate Featured Image when Image Studio is available', () => {
+		installPostTypeMock( 'post' );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const chip = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-featured-image'
+		);
+
+		expect( chip?.label ).toBe( 'Generate featured image' );
+		expect( chip?.prompt ).toBe( '' );
+		expect( typeof chip?.action ).toBe( 'function' );
+	} );
+
+	it( 'hides Generate Featured Image when Image Studio is not available', () => {
+		installPostTypeMock( 'post' );
+		mockImageStudioActions = null;
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image for unsupported post-level entities', () => {
+		installPostTypeMock( 'wp_template', 123 );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image when the post type has no thumbnail support', () => {
+		// What remove_post_type_support leaves behind: the key is gone.
+		installPostTypeMock( 'post', 123, { supportsThumbnail: undefined } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image on pages that dropped thumbnail support', () => {
+		installPostTypeMock( 'page', 123, { supportsThumbnail: undefined } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image on pages that support featured images', () => {
+		installPostTypeMock( 'page', 123, { supportsThumbnail: true } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image when thumbnail support was registered with arguments', () => {
+		// add_post_type_support( 'post', 'thumbnail', $args ) stores the arguments,
+		// so the REST route reports an array. The editor treats that as supported.
+		installPostTypeMock( 'post', 123, { supportsThumbnail: [ [ 'custom' ] ] } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image when the theme does not support post thumbnails', () => {
+		// The post type keeps thumbnail support; the theme is what is missing.
+		installPostTypeMock( 'post', 123, { themeSupportsThumbnails: false } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image when the theme limits thumbnails to other post types', () => {
+		// add_theme_support( 'post-thumbnails', array( 'post' ) ) leaves pages out.
+		installPostTypeMock( 'page', 123, { themeSupportsThumbnails: [ 'post' ] } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image when the theme lists this post type', () => {
+		installPostTypeMock( 'page', 123, { themeSupportsThumbnails: [ 'post', 'page' ] } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image when the theme lists no post types', () => {
+		installPostTypeMock( 'post', 123, { themeSupportsThumbnails: [] } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image while the post type record is still resolving', () => {
+		installPostTypeMock( 'post', 123, { postTypeRecordResolved: false } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image when the theme supports are not an object', () => {
+		// core-data always returns an object, but the chip reads whichever store
+		// the page registered as 'core', so reading the key must not throw.
+		installPostTypeMock( 'post', 123, { themeSupportsReturnValue: true } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image while the theme supports are still resolving', () => {
+		installPostTypeMock( 'post', 123, { themeSupportsResolved: false } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( "invoking the suggestion's action opens Image Studio and does not submit a prompt", () => {
+		installPostTypeMock( 'post' );
+		const openImageStudio = jest.fn();
+		mockImageStudioActions = { openImageStudio };
+
+		const chip = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-featured-image'
+		);
+		const shouldSubmitPrompt = chip?.action?.();
+
+		expect( openImageStudio ).toHaveBeenCalledWith(
+			undefined,
+			expect.any( Function ),
+			'jetpack_ai_featured_image'
+		);
+		expect( shouldSubmitPrompt ).toBe( false );
 	} );
 
 	it( 'shows the SEO Enhancer dropdown when the seoSuggestions feature is enabled', () => {
@@ -2181,25 +2396,6 @@ describe( 'useSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'does not track rendered suggestions when the suggestions are not visible', () => {
-		installAiEditorialReviewData();
-		mockSelectedBlock = { clientId: 'b-hidden', name: 'core/paragraph' };
-		const onSuggestions = jest.fn();
-
-		render( React.createElement( SuggestionsProbe, { onSuggestions, suggestionsVisible: false } ) );
-
-		const latestSuggestions =
-			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'Translate content',
-			'Change tone',
-			'Check grammar',
-			'Simplify text',
-		] );
-		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
-	} );
-
 	it( 'shows only block-specific suggestions when a block is selected', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
@@ -2216,44 +2412,6 @@ describe( 'useSuggestions', () => {
 			'Simplify text',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'translate',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'change-tone',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'check-grammar',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'simplify-text',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-		] );
 	} );
 
 	it( 'replaces editor-level empty-view suggestions when a block is selected', () => {
@@ -2319,11 +2477,8 @@ describe( 'useSuggestions', () => {
 		expect( emptyViewLabels ).toContain( 'Optimize Title' );
 		expect( emptyViewLabels ).toContain( 'Editorial Review' );
 
-		// The rendered event fires once per page load (module-level guard), so
-		// only the first render with the chip available can assert it — which is
-		// this test: every earlier test either selects a block or uses an
-		// unsupported post type.
-		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toHaveLength( 1 );
+		// Chip exposure is tracked by Agents Manager's jetpack_big_sky_chat_suggestions_rendered.
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
 	it( 'keeps selected-block suggestions on template entities', () => {
@@ -2363,35 +2518,6 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 		] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'translate',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'change-tone',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'check-grammar',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-		] );
 	} );
 
 	it( 'returns no suggestions after the selected-block chip is cleared', () => {
@@ -2418,6 +2544,8 @@ describe( 'useSuggestions', () => {
 		latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions ).toEqual( [] );
+		// Chip exposure is tracked by Agents Manager's jetpack_big_sky_chat_suggestions_rendered.
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
 	it( 'tracks rendered image block transformation suggestions', () => {
@@ -2431,17 +2559,6 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Generate alt text',
-		] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'generate-alt-text',
-					suggestion_type: 'image',
-					block_type: 'core/image',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
 		] );
 	} );
 
@@ -2544,7 +2661,6 @@ describe( 'useSuggestions', () => {
 
 		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_click' ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
 	} );
 
 	it( 'exposes tone and language dropdown options on the block suggestions', () => {
@@ -3012,6 +3128,224 @@ describe( 'toolProvider', () => {
 			checkpoint.clearCheckpoint( 'call-update-block' );
 		} );
 
+		it( 'checkpoints the re-resolved clientId after a delayed block reparse', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor( {
+				'first-live-client-id': {
+					name: 'core/paragraph',
+					attributes: { content: 'Teh quick fox jump over teh dog.' },
+				},
+			} );
+			const checkpoint = useCheckpoint();
+			const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: 'stale-client-id',
+				content: 'A quick fox leaps over the dog.',
+				currentText: 'Teh quick fox jump over teh dog.',
+				toolCallId: 'call-reparsed-block',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			blocks[ 'second-live-client-id' ] = {
+				...blocks[ 'first-live-client-id' ],
+				attributes: { ...blocks[ 'first-live-client-id' ].attributes },
+			};
+			delete blocks[ 'first-live-client-id' ];
+			jest.advanceTimersByTime( 1000 );
+			const result = await pending;
+
+			expect( result ).toMatchObject( {
+				success: true,
+				clientId: 'second-live-client-id',
+				contentBefore: 'Teh quick fox jump over teh dog.',
+				contentAfter: 'A quick fox leaps over the dog.',
+			} );
+			expect( warn ).toHaveBeenCalledWith( '[Jetpack AI] stale clientId matched by currentText', {
+				clientId: 'stale-client-id',
+				targetClientId: 'first-live-client-id',
+			} );
+			expect( blockUpdates[ 0 ] ).toEqual( {
+				clientId: 'second-live-client-id',
+				attrs: { content: 'A quick fox leaps over the dog.' },
+			} );
+			expect( checkpoint.canSwapCheckpoint( 'call-reparsed-block' ) ).toBe( true );
+			await checkpoint.swapCheckpoint( 'call-reparsed-block' );
+			expect( blocks[ 'second-live-client-id' ].attributes.content ).toBe(
+				'Teh quick fox jump over teh dog.'
+			);
+			checkpoint.clearCheckpoint( 'call-reparsed-block' );
+			warn.mockRestore();
+		} );
+
+		it( 'swaps a block checkpoint between the updated and original content', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-swap-block',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			expect( checkpoint.canSwapCheckpoint( 'call-swap-block' ) ).toBe( true );
+			await checkpoint.swapCheckpoint( 'call-swap-block' );
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'original block content'
+			);
+
+			await checkpoint.swapCheckpoint( 'call-swap-block' );
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'Corrected block content.'
+			);
+			expect( blockUpdates ).toHaveLength( 3 );
+			checkpoint.clearCheckpoint( 'call-swap-block' );
+		} );
+
+		it( 'does not swap a block checkpoint after a later edit', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-stale-swap',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content = 'A later edit.';
+			expect( checkpoint.canSwapCheckpoint( 'call-stale-swap' ) ).toBe( false );
+			await expect( checkpoint.swapCheckpoint( 'call-stale-swap' ) ).rejects.toThrow(
+				'Failed to swap block edit checkpoint.'
+			);
+			expect( blockUpdates ).toHaveLength( 1 );
+			checkpoint.clearCheckpoint( 'call-stale-swap' );
+		} );
+
+		it( 'does not swap a block checkpoint after another block is added', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-block-added-after-edit',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			blocks[ 'new-paragraph-client-id' ] = {
+				name: 'core/paragraph',
+				attributes: { content: 'A new line.' },
+			};
+			expect( checkpoint.canSwapCheckpoint( 'call-block-added-after-edit' ) ).toBe( false );
+			await expect( checkpoint.swapCheckpoint( 'call-block-added-after-edit' ) ).rejects.toThrow(
+				'Failed to swap block edit checkpoint.'
+			);
+			await expect( checkpoint.restoreCheckpoint( 'call-block-added-after-edit' ) ).rejects.toThrow(
+				'Failed to restore block edit checkpoint.'
+			);
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'Corrected block content.'
+			);
+			expect( blocks[ 'new-paragraph-client-id' ].attributes.content ).toBe( 'A new line.' );
+			expect( blockUpdates ).toHaveLength( 1 );
+			checkpoint.clearCheckpoint( 'call-block-added-after-edit' );
+		} );
+
+		it( 'does not swap a block checkpoint without a safe editor signature', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+			mockSerializeBlocks.mockImplementationOnce( () => {
+				throw new Error( 'Block serialization failed.' );
+			} );
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-unsafe-editor-signature',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			expect( checkpoint.canSwapCheckpoint( 'call-unsafe-editor-signature' ) ).toBe( false );
+			await expect( checkpoint.swapCheckpoint( 'call-unsafe-editor-signature' ) ).rejects.toThrow(
+				'Failed to swap block edit checkpoint.'
+			);
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'Corrected block content.'
+			);
+			expect( blockUpdates ).toHaveLength( 1 );
+			checkpoint.clearCheckpoint( 'call-unsafe-editor-signature' );
+		} );
+
+		it( 'does not redo a reverted block checkpoint after another block is added', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-block-added-after-undo',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+			await checkpoint.swapCheckpoint( 'call-block-added-after-undo' );
+
+			blocks[ 'new-paragraph-after-undo' ] = {
+				name: 'core/paragraph',
+				attributes: { content: 'A new line after Undo.' },
+			};
+			expect( checkpoint.canSwapCheckpoint( 'call-block-added-after-undo' ) ).toBe( false );
+			await expect( checkpoint.swapCheckpoint( 'call-block-added-after-undo' ) ).rejects.toThrow(
+				'Failed to swap block edit checkpoint.'
+			);
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'original block content'
+			);
+			expect( blocks[ 'new-paragraph-after-undo' ].attributes.content ).toBe(
+				'A new line after Undo.'
+			);
+			expect( blockUpdates ).toHaveLength( 2 );
+			checkpoint.clearCheckpoint( 'call-block-added-after-undo' );
+		} );
+
 		it( 'surfaces a failed block checkpoint restore', async () => {
 			jest.useFakeTimers();
 			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
@@ -3082,6 +3416,46 @@ describe( 'toolProvider', () => {
 			} );
 			expect( blockUpdates ).toEqual( [] );
 			expect( checkpoint.hasCheckpoint( 'call-no-block-change' ) ).toBe( false );
+		} );
+
+		it( 'surfaces a delayed block update failure without checkpointing', async () => {
+			jest.useFakeTimers();
+			const { blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				currentText: 'original block content',
+				toolCallId: 'call-missing-target',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			delete blocks[ '550e8400-e29b-41d4-a716-446655440000' ];
+			jest.advanceTimersByTime( 1000 );
+			const result = await pending;
+
+			expect( result ).toMatchObject( {
+				success: false,
+				error: 'block not found',
+				returnToAgent: false,
+			} );
+			expect( JSON.parse( result.agentMessage ) ).toEqual( {
+				tool_id: UPDATE_BLOCK_CONTENT_TOOL_ID,
+				tool_call_id: 'call-missing-target',
+				data: {
+					result: {
+						success: false,
+						message: 'I could not update the block. Please try again.',
+						error: 'block not found',
+					},
+					followUpTasks: false,
+				},
+			} );
+			expect( checkpoint.hasCheckpoint( 'call-missing-target' ) ).toBe( false );
 		} );
 
 		it( 'documents the completed-edit summary contract in the update-block-content schema', async () => {
@@ -3220,6 +3594,41 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
+			expect( parsed.data.responseTrackingProperties ).toBeUndefined();
+		} );
+
+		it.each( [
+			[ 'proofread', { items: [ {}, {} ] }, { suggested_edit_count: 2 } ],
+			[ 'post-feedback', { items: [ {} ] }, { suggested_edit_count: 1 } ],
+			[
+				'ai-editorial-review',
+				{
+					suggested_edits: [ {}, {} ],
+					conflicts: [ {} ],
+					implications: [],
+					guideline_violations: [
+						{ guideline_quote: 'Use sentence case.' },
+						{ guideline_quote: '' },
+						{ guideline_quote: 'Prefer active voice.' },
+					],
+					review_context: 'notes_and_guidelines',
+				},
+				{
+					suggested_edit_count: 2,
+					conflict_count: 1,
+					implication_count: 0,
+					guideline_violation_count: 2,
+					review_context: 'notes_and_guidelines',
+				},
+			],
+		] )( 'adds privacy-safe response metadata for %s', async ( type, props, expected ) => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type,
+				props,
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.responseTrackingProperties ).toEqual( expected );
 		} );
 
 		it( 'echoes the tool call id at the envelope top level', async () => {
