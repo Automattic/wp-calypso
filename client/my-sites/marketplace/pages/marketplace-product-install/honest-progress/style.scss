@@ -9,10 +9,12 @@
 }
 
 .marketplace-honest-progress__heading {
-	font-size: 1.5rem;
-	font-weight: 600;
+	font-size: 2rem;
+	line-height: 1.25;
+	letter-spacing: -0.4px;
 	color: var( --color-text );
 	text-align: center;
+	text-wrap: balance;
 }
 
 .marketplace-honest-progress__stages {
@@ -133,13 +135,14 @@
 
 .marketplace-honest-progress__education {
 	margin-block-start: 24px;
-	max-width: 380px;
+	max-width: 460px;
 	padding: 12px 16px;
 	border-radius: 4px;
 	background: var( --color-neutral-0 );
 	font-size: 0.75rem;
 	color: var( --color-text-subtle );
 	text-align: center;
+	text-wrap: pretty;
 }
 
 .marketplace-honest-progress__overrun {
@@ -148,6 +151,49 @@
 	text-align: center;
 	font-size: 0.75rem;
 	color: var( --color-warning-60 );
+}
+
+/* Card variant */
+
+.marketplace-honest-card__progress {
+	width: 100%;
+	max-width: 460px;
+	margin-block-start: 40px;
+	line-height: 0;
+}
+
+.marketplace-honest-card__progress-bar {
+	width: 100% !important;
+	background: var( --color-neutral-5 );
+
+	> div {
+		inset-inline-start: 0;
+		background: var( --color-accent );
+	}
+}
+
+.marketplace-honest-card__stage {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin-block-start: 24px;
+	text-align: center;
+}
+
+.marketplace-honest-card__stage-title {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var( --color-text );
+}
+
+.marketplace-honest-card__stage-description {
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	min-height: 18px;
+}
+
+.marketplace-honest-card .expectation-checklist {
+	margin-block-start: 32px;
 }
 
 /* Graphic variant */

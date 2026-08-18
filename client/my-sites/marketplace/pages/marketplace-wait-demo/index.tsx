@@ -9,6 +9,7 @@ import Masterbar from 'calypso/layout/masterbar/masterbar';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import HonestInstallProgress from '../marketplace-product-install/honest-progress';
+import HonestInstallCard from '../marketplace-product-install/honest-progress/card';
 import HonestInstallCombined from '../marketplace-product-install/honest-progress/combined';
 import HonestInstallScene from '../marketplace-product-install/honest-progress/scene';
 import ProductInstallErrorView from '../marketplace-product-install/product-install-error';
@@ -16,12 +17,13 @@ import useMarketplaceAdditionalSteps from '../marketplace-product-install/use-ma
 import { useFakeTransfer } from './use-fake-transfer';
 import type { DemoScenario } from './use-fake-transfer';
 
-type Variant = 'control' | 'honest_progress' | 'honest_scene' | 'honest_combined';
+type Variant = 'control' | 'honest_progress' | 'honest_scene' | 'honest_combined' | 'honest_card';
 
 const VARIANTS: { value: Variant; label: string }[] = [
 	{ value: 'honest_progress', label: 'Narrated list' },
 	{ value: 'honest_scene', label: 'Illustrated scene' },
 	{ value: 'honest_combined', label: 'Scene + list' },
+	{ value: 'honest_card', label: 'Bar + card' },
 	{ value: 'control', label: 'Classic bar (today)' },
 ];
 
@@ -125,6 +127,8 @@ export default function MarketplaceWaitDemo() {
 		stage = <HonestInstallScene transferStatus={ transferStatus } currentStep={ currentStep } />;
 	} else if ( variant === 'honest_combined' ) {
 		stage = <HonestInstallCombined transferStatus={ transferStatus } currentStep={ currentStep } />;
+	} else if ( variant === 'honest_card' ) {
+		stage = <HonestInstallCard transferStatus={ transferStatus } currentStep={ currentStep } />;
 	} else {
 		stage = (
 			<MarketplaceProgressBar

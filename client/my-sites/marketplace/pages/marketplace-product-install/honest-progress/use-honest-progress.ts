@@ -66,5 +66,14 @@ export function useHonestProgress( {
 		);
 	};
 
-	return { stage, elapsed, stageElapsed, isOverrun, getStageProgress };
+	// One number for the whole wait: each stage weighted by its typical duration, fed by the
+	// same capped per-stage figure, so the overall bar cannot outrun the transfer either.
+	const totalExpected = HONEST_STAGES.reduce( ( sum, s ) => sum + s.expectedSeconds, 0 );
+	const overallProgress =
+		HONEST_STAGES.reduce(
+			( sum, s, index ) => sum + getStageProgress( index ) * s.expectedSeconds,
+			0
+		) / totalExpected;
+
+	return { stage, elapsed, stageElapsed, isOverrun, getStageProgress, overallProgress };
 }

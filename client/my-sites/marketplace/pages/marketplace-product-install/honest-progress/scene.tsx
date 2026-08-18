@@ -30,7 +30,7 @@ export default function HonestInstallScene( {
 
 	return (
 		<div className="marketplace-honest-progress marketplace-honest-scene">
-			<h1 className="marketplace-honest-progress__heading">
+			<h1 className="marketplace-honest-progress__heading wp-brand-font">
 				{ translate( 'Setting up your plugin' ) }
 			</h1>
 			<RackScene
