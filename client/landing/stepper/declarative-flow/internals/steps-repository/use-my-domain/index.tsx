@@ -263,13 +263,7 @@ const UseMyDomain: StepType< {
 						/>
 					}
 					columnWidth={ columnWidth }
-					heading={
-						<Step.Heading
-							text={ headingText }
-							subText={ subText }
-							align={ useMyDomainMode === 'domain-input' ? undefined : 'center' }
-						/>
-					}
+					heading={ <Step.Heading text={ headingText } subText={ subText } /> }
 					verticalAlign="center"
 					className="use-my-domain--redesign"
 				>
