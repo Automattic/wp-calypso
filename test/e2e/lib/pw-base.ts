@@ -91,6 +91,7 @@ import {
 	SelectItemsComponent,
 	flushThrottleWrites,
 	mayBeThrottled,
+	recordThrottle,
 	registerThrottleActionHandler,
 } from '@automattic/calypso-e2e';
 import {
@@ -167,8 +168,14 @@ const FLUSH_TIMEOUT = 7 * 1000;
  * as a 200. The body is never logged: a failed `/sites/new` carries the
  * credentials of the user it was creating a site for.
  *
- * Returns the teardown for these listeners. It drains recording; without it,
- * a worker can exit between detecting a throttle and tagging the build for it.
+ * Recording only: no skip, no fail. This sees every call the app makes, and most
+ * of them are ones the test never depended on — a page that renders a domain
+ * upsell hits `/domains/suggestions` whatever the test is about. A test that did
+ * depend on a banned call has already failed on the answer it got, so the policy
+ * belongs at the page objects that make those calls, not here.
+ *
+ * Returns the teardown for these listeners. It drains recording; without it, a
+ * worker can exit between detecting a throttle and tagging the build for it.
  */
 function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 	const pending = new Set< Promise< unknown > >();
@@ -193,6 +200,8 @@ function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 				if ( status < 400 && ! /"error"\s*:/.test( body ) ) {
 					return;
 				}
+				// We ran into a throttle: let's record it but not alter the test pass/fail status.
+				await recordThrottle( { url, status, body } );
 			} catch {
 				// Detection never fails a test.
 			}
@@ -690,13 +699,8 @@ export const test = base.extend<
 		await incognitoPage.spawn();
 		const flushThrottleWatchers = watchForThrottle( incognitoPage.getPage().context() );
 		await use( incognitoPage );
-		// The flush applies the throttle policy, which throws to skip or fail:
-		// closing has to happen either way or the context outlives the test.
-		try {
-			await flushThrottleWatchers();
-		} finally {
-			await incognitoPage.close();
-		}
+		await flushThrottleWatchers();
+		await incognitoPage.close();
 	},
 	pageJetpackTraffic: async ( { page }, use ) => {
 		const jetpackTrafficPage = new JetpackTrafficPage( page );
