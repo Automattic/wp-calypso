@@ -151,7 +151,7 @@ export default function PluginsList() {
 					<PluginSites selectedPluginSlug={ selectedPluginSlug } />
 				) : (
 					<PluginSwitcher
-						pluginsWithIcon={ pluginsWithIcon }
+						pluginsWithIcon={ sitesPluginsLoading ? undefined : pluginsWithIcon }
 						searchableFields={ searchableFields }
 						view={ view }
 						onChangeView={ setView }
@@ -175,7 +175,7 @@ export default function PluginsList() {
 		>
 			<Grid gap="md" templateColumns="392px 1fr">
 				<PluginSwitcher
-					pluginsWithIcon={ pluginsWithIcon }
+					pluginsWithIcon={ sitesPluginsLoading ? undefined : pluginsWithIcon }
 					searchableFields={ searchableFields }
 					selectedPluginSlug={ selectedPluginSlug }
 					view={ view }
