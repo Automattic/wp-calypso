@@ -38,9 +38,9 @@ describe( 'applyBlueprintSpec', () => {
 	it( 'posts the spec and blueprint to the apply endpoint', async () => {
 		mockPost.mockResolvedValue( { success: true } );
 
-		await expect( applyBlueprintSpec( 'example.wordpress.com', 'spec-123', 'coachava' ) ).resolves.toBe(
-			true
-		);
+		await expect(
+			applyBlueprintSpec( 'example.wordpress.com', 'spec-123', 'coachava' )
+		).resolves.toBe( true );
 
 		expect( mockPost ).toHaveBeenCalledWith(
 			{
