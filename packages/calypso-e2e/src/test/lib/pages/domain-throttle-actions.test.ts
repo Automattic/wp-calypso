@@ -46,6 +46,17 @@ function response( url: string, body: string, status = 200 ) {
 	};
 }
 
+/** A page whose first suggestion row never appears. */
+function suggestionRowPage(): Page {
+	const row = {
+		waitFor: jest.fn( async () => {
+			throw new Error( 'locator timeout' );
+		} ),
+	};
+	const listitem = { first: jest.fn( () => row ) };
+	return { getByRole: jest.fn( () => listitem ) } as unknown as Page;
+}
+
 describe( 'domain throttle actions', () => {
 	test( 'domain availability acts before sending a request for a known throttle', async () => {
 		const waitForResponse = jest.fn();
@@ -117,7 +128,7 @@ describe( 'domain throttle actions', () => {
 		expect( actionHandler ).not.toHaveBeenCalled();
 	} );
 
-	test( 'domain suggestions record a new throttle and act on the same search', async () => {
+	test( 'domain suggestions record a throttled search without acting on it', async () => {
 		const listitem = {
 			count: jest.fn( async () => 0 ),
 			first: jest.fn(),
@@ -145,6 +156,30 @@ describe( 'domain throttle actions', () => {
 		} as unknown as Page;
 
 		await new DomainSearchComponent( page ).search( 'example' );
-		expect( actionHandler ).toHaveBeenCalledWith( 'skip', [ 'domain-suggestions' ] );
+		// The search came back, so the caller that needed the list is the one to
+		// meet the ban. Recording is all that happens here.
+		expect( process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION ).toBeDefined();
+		expect( actionHandler ).not.toHaveBeenCalled();
+	} );
+
+	test( 'domain suggestions act when the list never renders under a ban', async () => {
+		const page = suggestionRowPage();
+		process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION = String( Date.now() + 60_000 );
+		actionHandler.mockImplementation( () => {
+			throw new Error( 'policy applied' );
+		} );
+
+		await expect( new DomainSearchComponent( page ).selectFirstSuggestion() ).rejects.toThrow(
+			'policy applied'
+		);
+	} );
+
+	test( 'a suggestion row that never appears keeps its own error when no ban is in force', async () => {
+		const page = suggestionRowPage();
+
+		await expect( new DomainSearchComponent( page ).selectFirstSuggestion() ).rejects.toThrow(
+			'locator timeout'
+		);
+		expect( actionHandler ).not.toHaveBeenCalled();
 	} );
 } );

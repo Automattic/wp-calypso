@@ -173,10 +173,10 @@ export class DomainSearchComponent {
 			// Domain lookup service is external to Automattic and sometimes it returns an error.
 			// Retry a few times when this is encountered.
 			await reloadAndRetry( this.page, searchDomainClosure );
-		} finally {
-			// On both outcomes on purpose: retrying into a ban is not worth doing,
-			// so a throttle met here outranks whatever the retry made of it.
+		} catch ( error ) {
+			// The failure might be due to a ban.
 			handleActiveThrottles( [ 'domain-suggestions' ] );
+			throw error;
 		}
 	}
 
@@ -280,8 +280,10 @@ export class DomainSearchComponent {
 		try {
 			await row.waitFor();
 		} catch ( error ) {
-			// The list never rendered. A ban is one reason for that, and the only one
-			// worth taking the policy for; anything else keeps its own error.
+			// The row never showed up. A ban is the one cause worth taking the policy
+			// for, and taking it throws, so the wait's own error survives only when no
+			// ban is in force. A row addressed by keyword can also be missing from a
+			// list that rendered perfectly well.
 			handleActiveThrottles( [ 'domain-suggestions' ] );
 			throw error;
 		}
