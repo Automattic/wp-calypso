@@ -154,9 +154,15 @@ function recordTracksEvent( eventName: string, properties: TrackProperties = {} 
 	const blogId = getBlogId();
 	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, {
 		...properties,
-		...( sessionId ? { sessionid: sessionId } : {} ),
+		// `ai_session_id` is the standard name; `sessionid` stays for existing
+		// consumers until the family migrates in one move.
+		...( sessionId ? { sessionid: sessionId, ai_session_id: sessionId } : {} ),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 		...( blogId !== undefined ? { blog_id: blogId } : {} ),
+		// Fixed broad-area label — this provider mounts only in Gutenberg.
+		// `screen` is Big Sky's field and can disagree (defaults `site-editor`);
+		// the AM parity recorder gates the same value on the editor store.
+		surface: 'block_editor',
 	} );
 }
 

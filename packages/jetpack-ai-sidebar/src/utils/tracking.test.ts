@@ -84,6 +84,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		trackSplitScreenGuideClick( { componentType: 'post-feedback' } );
 
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith( 'jetpack_ai_split_screen_guide_click', {
+			ai_session_id: 'test-session-id',
 			blog_id: 12345,
 			component_type: 'post-feedback',
 			guide_variant: 'inline_action_card',
@@ -93,6 +94,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 			screen: 'post',
 			sessionid: 'test-session-id',
 			session_type: 'paid-user-session',
+			surface: 'block_editor',
 		} );
 		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
 			allowPostType: true,
@@ -152,6 +154,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_ai_split_screen_guide_rendered',
 			{
+				ai_session_id: 'test-session-id',
 				blog_id: 12345,
 				component_type: 'ai-editorial-review',
 				guide_variant: 'inline_action_card',
@@ -161,6 +164,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 				screen: 'post',
 				sessionid: 'test-session-id',
 				session_type: 'paid-user-session',
+				surface: 'block_editor',
 			}
 		);
 		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
@@ -188,6 +192,18 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		trackSplitScreenGuideClick( { componentType: 'proofread' } );
 
 		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'is_a11n' );
+	} );
+
+	it( 'omits both session properties while no session exists yet', () => {
+		( window as WindowWithAgentsManagerActions ).__agentsManagerActions = {
+			getSessionId: jest.fn( () => '' ),
+		};
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		const properties = mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ];
+		expect( properties ).not.toHaveProperty( 'sessionid' );
+		expect( properties ).not.toHaveProperty( 'ai_session_id' );
 	} );
 
 	it( 'omits blog_id when the server payload has no valid site ID', () => {

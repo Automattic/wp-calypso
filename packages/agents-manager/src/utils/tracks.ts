@@ -75,6 +75,21 @@ function getIsTest(): boolean {
 }
 
 /**
+ * `block_editor` only while the `core/editor` store is registered; omitted on
+ * the plain wp-admin screens the dock can also mount on. The registry check
+ * deliberately includes custom post types and the site editor, unlike the
+ * screen-based `isEditorPage()` — `screen` carries the finer split.
+ */
+function getBigSkySurface(): 'block_editor' | undefined {
+	try {
+		const editor = select( 'core/editor' ) as EditorSelectStore;
+		return editor ? 'block_editor' : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+/**
  * Editor-surface page props, mirroring Big Sky's `getCurrentPageProperties`.
  */
 function getBigSkyPageProps(): TracksProps {
@@ -108,11 +123,17 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 	const bigSky = getBigSkyTracksData();
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
+	const sessionId = getSessionId();
+	const surface = getBigSkySurface();
 	const baseProps: TracksProps = {
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 		...( blogId !== undefined ? { blog_id: blogId } : {} ),
-		sessionid: getSessionId(),
+		sessionid: sessionId,
+		// `ai_session_id` is the standard name; `sessionid` stays until the Big
+		// Sky family migrates in one move. Omitted while no session exists yet.
+		...( sessionId ? { ai_session_id: sessionId } : {} ),
+		...( surface ? { surface } : {} ),
 		session_type: bigSky.sessionType,
 		// AM has no onboarding flow, so the phase is always the editor.
 		phase: 'editor',
@@ -131,6 +152,9 @@ export function recordAgentsManagerTracksEvent( eventName: string, props: Tracks
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
 	const baseProps: TracksProps = {
+		// The always-present (possibly empty) `ai_session_id` and the
+		// `editor`/`reader-chat` surface tokens predate the AI Tracks standard;
+		// this family migrates separately from the parity recorder above.
 		ai_session_id: getSessionId(),
 		agent_name: DOLLY_AGENT_ID,
 		surface: isReaderChatHost() ? 'reader-chat' : 'editor',

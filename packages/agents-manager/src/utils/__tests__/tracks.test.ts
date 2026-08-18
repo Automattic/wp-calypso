@@ -15,6 +15,7 @@ jest.mock( '../is-reader-chat-agent', () => {
 } );
 
 import { select } from '@wordpress/data';
+import { getSessionId } from '../agent-session';
 import { isReaderChatHost } from '../is-reader-chat-agent';
 import { setResolvedAgentId } from '../resolved-agent-id';
 import {
@@ -26,6 +27,7 @@ import {
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
 const mockIsReaderChatHost = isReaderChatHost as jest.MockedFunction< typeof isReaderChatHost >;
 const mockSelect = select as jest.MockedFunction< typeof select >;
+const mockGetSessionId = getSessionId as jest.MockedFunction< typeof getSessionId >;
 
 function lastEventProps(): Record< string, unknown > {
 	const call = mockRecordTracksEvent.mock.calls.at( -1 );
@@ -35,6 +37,8 @@ function lastEventProps(): Record< string, unknown > {
 describe( 'tracks wrappers', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		// clearAllMocks keeps implementations, so restore any per-test override.
+		mockSelect.mockImplementation( () => ( {} ) as ReturnType< typeof select > );
 		mockIsReaderChatHost.mockReturnValue( false );
 		setResolvedAgentId( undefined );
 		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: true };
@@ -117,6 +121,42 @@ describe( 'tracks wrappers', () => {
 			recordBigSkyTracksEvent( 'chat_input_send_message' );
 
 			expect( lastEventProps().blog_id ).toBe( 12345 );
+		} );
+
+		it( 'duplicates the session ID into the standard ai_session_id', () => {
+			recordBigSkyTracksEvent( 'chat_input_send_message' );
+
+			expect( lastEventProps() ).toMatchObject( {
+				sessionid: 'session-xyz',
+				ai_session_id: 'session-xyz',
+			} );
+		} );
+
+		it( 'omits ai_session_id while no session exists yet', () => {
+			mockGetSessionId.mockReturnValueOnce( '' );
+
+			recordBigSkyTracksEvent( 'chat_input_send_message' );
+
+			const props = lastEventProps();
+			expect( props.sessionid ).toBe( '' );
+			expect( props ).not.toHaveProperty( 'ai_session_id' );
+		} );
+
+		it( 'labels editor-hosted parity events with the block_editor surface', () => {
+			recordBigSkyTracksEvent( 'chat_input_send_message' );
+
+			expect( lastEventProps().surface ).toBe( 'block_editor' );
+		} );
+
+		it( 'omits surface when the editor store is not registered', () => {
+			mockSelect.mockImplementation(
+				( store ) =>
+					( store === 'core/editor' ? undefined : {} ) as unknown as ReturnType< typeof select >
+			);
+
+			recordBigSkyTracksEvent( 'chat_input_send_message' );
+
+			expect( lastEventProps() ).not.toHaveProperty( 'surface' );
 		} );
 
 		it( 'omits blog_id when the server payload has no valid site ID', () => {
