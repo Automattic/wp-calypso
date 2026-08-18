@@ -97,6 +97,7 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 				background: transparent;
 				color: var( --color-foreground );
 				font-weight: 500;
+				gap: 0.5rem;
 				padding-inline-start: 0;
 
 				&:not( .agents-manager-resolved-edit-action__status--reverted ) {
