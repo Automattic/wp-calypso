@@ -3,6 +3,7 @@
  */
 import { select } from '@wordpress/data';
 import {
+	bindToNavigationTarget,
 	bindToOpenCanvas,
 	blockCurrentRequest,
 	buildCanvasKey,
@@ -159,6 +160,51 @@ describe( 'canvas binding', () => {
 		setOpenPost( { id: 34, type: 'page' } );
 
 		expect( getCanvasMove() ).toBeNull();
+	} );
+
+	it( 'puts the previous binding back when a navigation never happens', () => {
+		// A destination is an assertion about a move that has not run yet. If it
+		// never runs, rolling back to the page that was bound — not to whatever is
+		// live — is what keeps a user navigation during the failed attempt visible.
+		setOpenPost( { id: 12, type: 'page', title: 'About' } );
+		bindToOpenCanvas();
+
+		const rollback = bindToNavigationTarget( 'page:34' );
+		rollback();
+
+		setOpenPost( { id: 56, type: 'page', title: 'Pricing' } );
+
+		expect( getCanvasMove() ).toEqual( { from: 'About', to: 'Pricing' } );
+	} );
+
+	it( 'keeps the destination when the editor arrived before the rollback', () => {
+		// An ability can report failure after it has already moved the editor. The
+		// page on screen is then the one the request belongs to, not the one it left.
+		setOpenPost( { id: 12, type: 'page', title: 'About' } );
+		bindToOpenCanvas();
+
+		const rollback = bindToNavigationTarget( 'page:34' );
+		setOpenPost( { id: 34, type: 'page', title: 'Contact' } );
+		rollback();
+
+		expect( getCanvasMove() ).toBeNull();
+	} );
+
+	it( 'leaves a binding taken since the navigation alone', () => {
+		// The rollback must not undo whatever replaced the binding after it. Object
+		// identity cannot tell that on its own: the unbound state reads as null
+		// however it was reached.
+		setOpenPost( { id: 12, type: 'page', title: 'About' } );
+		bindToOpenCanvas();
+
+		const rollback = clearCanvasBinding();
+		setOpenPost( { id: 34, type: 'page', title: 'Contact' } );
+		bindToOpenCanvas();
+		rollback();
+
+		setOpenPost( { id: 56, type: 'page', title: 'Pricing' } );
+
+		expect( getCanvasMove() ).toEqual( { from: 'Contact', to: 'Pricing' } );
 	} );
 
 	it( 'latches the move that blocked the request', () => {

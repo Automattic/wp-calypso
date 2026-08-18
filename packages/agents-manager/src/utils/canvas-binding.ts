@@ -24,7 +24,10 @@
  * the store yet, so that reading is reliably the stale one, and the arrival then
  * reads as the user walking away from a page the agent moved off deliberately.
  * `bindToNavigationTarget()` closes that by binding ahead to the destination and
- * holding it until the editor gets there.
+ * holding it until the editor gets there — for as long as the navigation is
+ * actually happening. A navigation that fails without moving hands the binding
+ * back, because a destination nothing is travelling to would suppress every move
+ * reading for the rest of the turn.
  *
  * That distinction matters because the write abilities *poll*: page-design's
  * `resolvePageDesignTargetRoot` returns null until a post resolves and the renderer
@@ -92,6 +95,11 @@ type EditorSelectStore =
 // deliberately moved the canvas. Nothing to enforce against either way.
 let bound: BoundCanvas | null = null;
 
+// Bumped by every write to `bound`, so a rollback can tell "nothing has touched
+// the binding since" from "it happens to look the same". Object identity cannot
+// answer that for the unbound state, which reads as null however it was reached.
+let bindingGeneration = 0;
+
 // The move that caused the current request to be blocked, if any. Set once a
 // request has been refused or aborted for leaving its canvas, so the model cannot
 // simply retry onto the page the user moved to.
@@ -100,6 +108,11 @@ let bound: BoundCanvas | null = null;
 // unrepresentable, and `blockCurrentRequest()` can only ever fill it from a live
 // reading — so a block can never name pages that did not actually move.
 let blockedMove: CanvasMove | null = null;
+
+function setBinding( next: BoundCanvas | null ): void {
+	bound = next;
+	bindingGeneration += 1;
+}
 
 function getEditorStore(): EditorSelectStore {
 	try {
@@ -170,8 +183,42 @@ function readOpenCanvas(): BoundCanvas | null {
  */
 function settleNavigationArrival(): void {
 	if ( bound?.pending && resolveCanvasKey() === bound.key ) {
-		bound = readOpenCanvas();
+		setBinding( readOpenCanvas() );
 	}
+}
+
+/**
+ * Hand the binding to a navigation that has not run yet, keeping a way back.
+ *
+ * Both ways of handing it over — forward to a destination, or off entirely when
+ * the ability names none — assert a move before it has happened. Abilities can
+ * answer `{ success: false }` or throw without ever navigating, and a destination
+ * left standing for a trip that never started is the worse half: `pending`
+ * suppresses every move reading until the editor reaches a page it is not going
+ * to reach, so the refusal and the abort both go quiet for the rest of the turn.
+ *
+ * The rollback restores the binding that was there rather than the live canvas:
+ * if the user left while the failed navigation ran, that is still a move to catch.
+ *
+ * @param next The binding the navigation takes.
+ * @returns The rollback, a no-op once anything else has taken the binding.
+ */
+function handBindingToNavigation( next: BoundCanvas | null ): () => void {
+	const previous = bound;
+
+	setBinding( next );
+
+	const generation = bindingGeneration;
+
+	return () => {
+		// An arrival counts even against a reported failure: the editor is on the
+		// destination, so that is the page the request belongs to now.
+		settleNavigationArrival();
+
+		if ( bindingGeneration === generation ) {
+			setBinding( previous );
+		}
+	};
 }
 
 /**
@@ -189,7 +236,7 @@ export function bindToOpenCanvas(): void {
 		return;
 	}
 
-	bound = readOpenCanvas();
+	setBinding( readOpenCanvas() );
 }
 
 /**
@@ -200,9 +247,10 @@ export function bindToOpenCanvas(): void {
  * unbound until something happens to rebind it.
  *
  * @param canvasKey The destination canvas key.
+ * @returns A rollback for a navigation that never happens; see `handBindingToNavigation`.
  */
-export function bindToNavigationTarget( canvasKey: string ): void {
-	bound = { key: canvasKey, label: null, pending: true };
+export function bindToNavigationTarget( canvasKey: string ): () => void {
+	return handBindingToNavigation( { key: canvasKey, label: null, pending: true } );
 }
 
 /**
@@ -211,9 +259,11 @@ export function bindToNavigationTarget( canvasKey: string ): void {
  * Called before a navigation ability runs, not after: the navigation changes the
  * canvas while it executes, and a binding still in place at that moment would read
  * as a move and abort the agent's own request.
+ *
+ * @returns A rollback for a navigation that never happens; see `handBindingToNavigation`.
  */
-export function clearCanvasBinding(): void {
-	bound = null;
+export function clearCanvasBinding(): () => void {
+	return handBindingToNavigation( null );
 }
 
 /**

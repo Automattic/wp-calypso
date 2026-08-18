@@ -138,6 +138,18 @@ export function withCanvasBinding(
 }
 
 /**
+ * What the policy decided about one about-to-run ability.
+ *
+ * `rollbackBinding` is set only for an ability that moves the canvas: it has been
+ * handed the binding for a move that has not happened yet, and this puts it back
+ * if the move turns out not to happen at all.
+ */
+type CanvasPolicy = {
+	refusal: AbilityResult | null;
+	rollbackBinding: ( () => void ) | null;
+};
+
+/**
  * Applies the canvas policy to one about-to-run ability.
  *
  * Shared by both dispatch paths, which is the whole point: agenttic-client calls an
@@ -146,9 +158,9 @@ export function withCanvasBinding(
  * inert for every ability that takes the other.
  * @param name The ability name, in either form.
  * @param args The ability arguments.
- * @returns A refusal to return instead of running it, or null to let it run.
+ * @returns The refusal to return instead of running it, and how to undo the binding it took.
  */
-function applyCanvasPolicy( name: string, args: unknown ): AbilityResult | null {
+function applyCanvasPolicy( name: string, args: unknown ): CanvasPolicy {
 	// Normalize the incoming name too: it may arrive in either form
 	// (`findAbilityByName` accepts both), and normalizing an already
 	// normalized name is a no-op.
@@ -158,21 +170,80 @@ function applyCanvasPolicy( name: string, args: unknown ): AbilityResult | null 
 		const move = getBlockingMove();
 		if ( move ) {
 			blockCurrentRequest();
-			return buildCanvasRefusal( move );
+			return { refusal: buildCanvasRefusal( move ), rollbackBinding: null };
 		}
 	}
 
 	if ( CANVAS_MOVING_ABILITIES.has( normalizedName ) ) {
 		const target = resolveNavigationTarget( normalizedName, args );
 
-		if ( target ) {
-			bindToNavigationTarget( target );
-		} else {
-			clearCanvasBinding();
-		}
+		return {
+			refusal: null,
+			rollbackBinding: target ? bindToNavigationTarget( target ) : clearCanvasBinding(),
+		};
 	}
 
-	return null;
+	return { refusal: null, rollbackBinding: null };
+}
+
+/**
+ * Whether an ability answered that it did not do what it was asked.
+ *
+ * Abilities answer with the `AbilityResult` envelope, but the provider contract
+ * types both dispatch paths as `Promise< any >`, so this reads defensively and
+ * accepts the bare form too. Anything it cannot recognize counts as success: a
+ * navigation whose result shape drifts should leave the binding where a working
+ * navigation leaves it, not somewhere new.
+ * @param result Whatever the ability answered.
+ * @returns Whether it reported failure.
+ */
+function reportsFailure( result: unknown ): boolean {
+	const answer = result as { success?: unknown; result?: { success?: unknown } } | undefined;
+
+	return false === ( answer?.result?.success ?? answer?.success );
+}
+
+/**
+ * Dispatches one ability under the policy, undoing a move that never happened.
+ *
+ * The abilities that take the binding forward can fail without navigating —
+ * `editor-navigate` answers `{ success: false }` on a save conflict, a stale page
+ * id or a network error, and can throw outright. Without this, the destination it
+ * was handed stays bound to a page the editor is never going to open, and every
+ * later canvas write in the turn goes through unguarded.
+ * @param name     The ability name, in either form.
+ * @param args     The ability arguments.
+ * @param dispatch Runs the ability itself.
+ * @returns The refusal, or whatever the ability answered.
+ */
+async function dispatchUnderCanvasPolicy(
+	name: string,
+	args: unknown,
+	dispatch: () => Promise< unknown >
+): Promise< unknown > {
+	const { refusal, rollbackBinding } = applyCanvasPolicy( name, args );
+
+	if ( refusal ) {
+		return refusal;
+	}
+
+	if ( ! rollbackBinding ) {
+		return dispatch();
+	}
+
+	try {
+		const result = await dispatch();
+
+		if ( reportsFailure( result ) ) {
+			rollbackBinding();
+		}
+
+		return result;
+	} catch ( error ) {
+		// Restored, not swallowed: the caller still sees the failure.
+		rollbackBinding();
+		throw error;
+	}
 }
 
 /**
@@ -196,13 +267,10 @@ function guardAbilityCallback( ability: Ability ): Ability {
 
 	return {
 		...ability,
-		callback: async ( input ) => {
-			// The callback path carries the arguments inline, alongside the ids
-			// agenttic-client adds — so `path` is read from the same object.
-			const refusal = applyCanvasPolicy( ability.name, input );
-
-			return refusal ?? callback( input );
-		},
+		// The callback path carries the arguments inline, alongside the ids
+		// agenttic-client adds — so `path` is read from the same object.
+		callback: ( input ) =>
+			dispatchUnderCanvasPolicy( ability.name, input, async () => callback( input ) ),
 	};
 }
 
@@ -223,10 +291,9 @@ export function withCanvasGuard(
 
 	return {
 		getAbilities: async () => ( await toolProvider.getAbilities() ).map( guardAbilityCallback ),
-		executeAbility: async ( name: string, args: unknown ) => {
-			const refusal = applyCanvasPolicy( name, args );
-
-			return refusal ?? toolProvider.executeAbility( name, args );
-		},
+		executeAbility: ( name: string, args: unknown ) =>
+			dispatchUnderCanvasPolicy( name, args, async () =>
+				toolProvider.executeAbility( name, args )
+			),
 	};
 }

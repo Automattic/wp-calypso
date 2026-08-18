@@ -252,6 +252,95 @@ describe( 'withCanvasGuard', () => {
 		expect( getCanvasMove() ).toEqual( { from: 'Contact', to: 'About' } );
 	} );
 
+	it( 'puts the binding back when a navigation reports failure', async () => {
+		// `editor-navigate` can answer `{ success: false }` without ever moving — a
+		// save conflict, a stale page id, a network error. A destination left bound
+		// for a trip that never started suppresses every move reading until the
+		// editor reaches a page it is not going to reach.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		const executeAbility = jest
+			.fn()
+			.mockResolvedValue( { result: { success: false, message: 'Could not open that page.' } } );
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
+
+		// The editor never left About, and then the user does.
+		setOpenPost( CONTACT_PAGE );
+
+		expect( getCanvasMove() ).toEqual( { from: 'About', to: 'Contact' } );
+	} );
+
+	it( 'puts the binding back when a navigation throws', async () => {
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		const executeAbility = jest.fn().mockRejectedValue( new Error( 'Network error' ) );
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		// The failure still reaches the caller: the guard restores the binding, it
+		// does not swallow the error.
+		await expect(
+			guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } )
+		).rejects.toThrow( 'Network error' );
+
+		setOpenPost( CONTACT_PAGE );
+
+		expect( getCanvasMove() ).toEqual( { from: 'About', to: 'Contact' } );
+	} );
+
+	it( 'keeps guarding later writes in a turn whose navigation failed', async () => {
+		// What the stuck destination cost: the write that follows a failed
+		// navigation is the one that lands on the page the user moved to.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		const executeAbility = jest.fn().mockResolvedValue( { result: { success: false } } );
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
+		setOpenPost( CONTACT_PAGE );
+		const result = await guarded!.executeAbility( 'big_sky__apply_block_edits', {} );
+
+		expect( executeAbility ).toHaveBeenCalledTimes( 1 );
+		expect( result.result.error ).toBe( 'editor_canvas_moved' );
+	} );
+
+	it( 'keeps the destination when a navigation reports failure after landing', async () => {
+		// The editor got there. A failure reported on the way out does not make the
+		// page now on screen the wrong one to write to.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		const executeAbility = jest.fn().mockImplementation( async () => {
+			setOpenPost( CONTACT_PAGE );
+			return { result: { success: false } };
+		} );
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
+
+		expect( getCanvasMove() ).toBeNull();
+	} );
+
+	it( 'puts the binding back when a navigation with no readable destination fails', async () => {
+		// The other branch: `wp-admin/navigate` names no canvas, so the binding is
+		// dropped rather than moved — but a navigation that never happened has to
+		// leave the guard exactly where it found it either way.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		const executeAbility = jest.fn().mockResolvedValue( { result: { success: false } } );
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		await guarded!.executeAbility( 'wp_admin__navigate', { path: '/wp-admin/plugins.php' } );
+		setOpenPost( CONTACT_PAGE );
+
+		expect( getCanvasMove() ).toEqual( { from: 'About', to: 'Contact' } );
+	} );
+
 	it( 'falls back to dropping the binding when the destination cannot be read', async () => {
 		// `wp-admin/navigate` takes a wp-admin path, not a canvas, and a malformed
 		// editor path names no page either. Unbound is the safe answer: it cannot
@@ -350,6 +439,37 @@ describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
 			returnToAgent: true,
 			result: { success: false, error: 'editor_canvas_moved' },
 		} );
+	} );
+
+	it( 'keeps guarding after a navigation callback reports failure', async () => {
+		// The same stuck destination on the dispatch that production uses. Big Sky
+		// registers `editor-navigate` with a callback, so this is the path a failed
+		// navigation actually takes.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		const failure = {
+			result: { success: false, message: 'Could not open that page.' },
+			returnToAgent: true,
+		};
+		const callback = jest.fn().mockResolvedValue( failure );
+		const guarded = withCanvasGuard( createCallbackProvider( callback ) );
+
+		const navigation = await callAbility( guarded!, 'big-sky/editor-navigate', {
+			path: '/page/34',
+		} );
+
+		// The tool result goes out while the editor is still on the page it never
+		// left, and the user moves off it.
+		bindToOpenCanvas();
+		setOpenPost( CONTACT_PAGE );
+
+		const design = await callAbility( guarded!, 'big-sky/stream-page-design', {} );
+
+		// The ability's own answer is handed back untouched.
+		expect( navigation ).toBe( failure );
+		expect( callback ).toHaveBeenCalledTimes( 1 );
+		expect( design ).toMatchObject( { result: { success: false, error: 'editor_canvas_moved' } } );
 	} );
 
 	it( 'leaves an ability without a callback untouched', async () => {
