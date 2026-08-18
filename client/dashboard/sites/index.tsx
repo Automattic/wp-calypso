@@ -41,6 +41,10 @@ import {
 import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNoticeArbiter } from './notice-arbiter';
+import {
+	RestoreDeletedSitesNotice,
+	useShouldShowRestoreDeletedSitesNotice,
+} from './restore-deleted-sites-notice';
 import { RestoringSitesNotices } from './restoring-sites-notice';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
@@ -170,6 +174,7 @@ export default function Sites() {
 
 	const isSecurityKeyReregisterRequired = useShouldShowSecurityKeyReregisterNotice();
 	const showSecurityKeyReregisterNotice = supports.me && isSecurityKeyReregisterRequired;
+	const shouldShowRestoreDeletedSitesNotice = useShouldShowRestoreDeletedSitesNotice();
 
 	const isAccountEmailBouncing = useShouldShowAccountEmailBouncingNotice();
 	const showAccountEmailBouncingNotice = supports.me && isAccountEmailBouncing;
@@ -259,6 +264,9 @@ export default function Sites() {
 						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
 						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
 						{ ! isDashboardBackport() && isRestoringAccount && <RestoringSitesNotices /> }
+						{ ! isRestoringAccount &&
+							! isDeletedFilterActive( filters ) &&
+							shouldShowRestoreDeletedSitesNotice && <RestoreDeletedSitesNotice /> }
 					</SitesNoticeArbiter>
 				}
 			>
