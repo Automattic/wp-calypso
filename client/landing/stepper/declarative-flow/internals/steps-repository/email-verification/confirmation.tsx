@@ -1,4 +1,5 @@
 import { Step } from '@automattic/onboarding';
+import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import DocumentHead from 'calypso/components/data/document-head';
 import type { ReactNode } from 'react';
@@ -23,8 +24,8 @@ const EmailVerifiedConfirmation = ( { logo, onContinue }: Props ) => {
 		<>
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
-				columnWidth={ 4 }
-				headingColumnWidth={ 4 }
+				columnWidth={ 5 }
+				headingColumnWidth={ 5 }
 				verticalAlign="center"
 				// Opts into the account step's V2 layout contract, the same one the gate uses.
 				className="step-container-v2--user"
@@ -33,14 +34,18 @@ const EmailVerifiedConfirmation = ( { logo, onContinue }: Props ) => {
 					<Step.Heading
 						align="left"
 						text={ title }
-						subText={ __(
-							'Your email is confirmed. Return to the tab where you started to finish setting up your site.'
+						subText={ createInterpolateElement(
+							__(
+								'<strong>Your email is confirmed!</strong><br/>Return to the tab where you started to finish setting up your site.'
+							),
+							{ strong: <strong />, br: <br /> }
 						) }
 					/>
 				}
 			>
+				<p>{ __( 'Accidentally closed the tab where you started?' ) }</p>
 				<Step.LinkButton onClick={ onContinue }>
-					{ __( 'Closed your other tab? Continue setting up your site' ) }
+					{ __( 'Click here to continue setting up your site' ) }
 				</Step.LinkButton>
 			</Step.CenteredColumnLayout>
 		</>
