@@ -91,7 +91,6 @@ import {
 	SelectItemsComponent,
 	type ThrottleId,
 	flushThrottleWrites,
-	handleActiveThrottles,
 	mayBeThrottled,
 	recordThrottle,
 	registerThrottleActionHandler,
