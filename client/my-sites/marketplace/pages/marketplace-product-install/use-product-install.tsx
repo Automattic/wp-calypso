@@ -4,7 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
-import { isRevertedTransferStatus } from 'calypso/landing/stepper/utils/atomic-transfer-outcome';
+import {
+	isRevertedTransferStatus,
+	transferStates as atomicTransferStates,
+} from 'calypso/landing/stepper/utils/atomic-transfer-outcome';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -64,6 +67,9 @@ const TRANSFER_ATTEMPT_KEY_PREFIX = 'marketplace-product-install-transfer';
 type TransferAttempt = {
 	initiatedAt: number;
 	previousTransferId: number | null;
+	// Whether the transfer lookup had answered by the time this attempt started. Without it, a null
+	// `previousTransferId` cannot tell "the site had no transfer" from "we never found out".
+	lookupSettled: boolean;
 };
 
 const getTransferAttemptKey = ( siteId: number, pluginSlug: string ) =>
@@ -76,10 +82,14 @@ const readTransferAttempt = ( key: string ): TransferAttempt | null => {
 
 	try {
 		const value = JSON.parse( window.sessionStorage.getItem( key ) ?? 'null' );
-		return Number.isFinite( value?.initiatedAt ) &&
-			( Number.isFinite( value.previousTransferId ) || value.previousTransferId === null )
-			? value
-			: null;
+		if (
+			! Number.isFinite( value?.initiatedAt ) ||
+			! ( Number.isFinite( value.previousTransferId ) || value.previousTransferId === null )
+		) {
+			return null;
+		}
+		// A marker from before this field existed is read as an unresolved lookup, the stricter rule.
+		return { ...value, lookupSettled: value.lookupSettled === true };
 	} catch {
 		return null;
 	}
@@ -198,11 +208,18 @@ export function useProductInstall( {
 		key: '',
 		attempt: null,
 	} );
+	// A transfer outcome outlives the poll that reported it, so it is latched rather than derived.
+	// Both belong to the attempt below and are cleared with it — a different product must not
+	// inherit the previous one's completion.
+	const durableTransferCompletedRef = useRef( false );
+	const durableTransferFailedRef = useRef( false );
 	if ( transferAttemptRef.current.key !== transferAttemptKey ) {
 		transferAttemptRef.current = {
 			key: transferAttemptKey,
 			attempt: readTransferAttempt( transferAttemptKey ),
 		};
+		durableTransferCompletedRef.current = false;
+		durableTransferFailedRef.current = false;
 	}
 	const persistedTransferAttempt = transferAttemptRef.current.attempt;
 	const transferAttemptAge = persistedTransferAttempt
@@ -220,12 +237,22 @@ export function useProductInstall( {
 
 			const createdAt = Date.parse( candidate.created_at );
 			const age = Date.now() - createdAt;
+			// Our own transfer is created after we ask for it, so clock skew is the only thing that can
+			// date it before this attempt. The grace for that is safe to give except when the lookup
+			// had not answered yet: a null `previousTransferId` then hides a transfer that already
+			// existed, and the grace would adopt it as ours.
+			const isPriorTransferUnknown =
+				persistedTransferAttempt.previousTransferId === null &&
+				! persistedTransferAttempt.lookupSettled;
+			const minimumCreatedAt = isPriorTransferUnknown
+				? persistedTransferAttempt.initiatedAt
+				: persistedTransferAttempt.initiatedAt - TRANSFER_ATTEMPT_CLOCK_SKEW_MS;
 			return (
 				! Number.isNaN( createdAt ) &&
 				age >= -TRANSFER_ATTEMPT_CLOCK_SKEW_MS &&
 				age <= ADOPTABLE_TRANSFER_AGE_MS &&
 				candidate.atomic_transfer_id !== persistedTransferAttempt.previousTransferId &&
-				createdAt >= persistedTransferAttempt.initiatedAt - TRANSFER_ATTEMPT_CLOCK_SKEW_MS
+				createdAt >= minimumCreatedAt
 			);
 		},
 		[ hasCurrentTransferAttempt, persistedTransferAttempt ]
@@ -341,6 +368,7 @@ export function useProductInstall( {
 		transfer,
 		isTransferFresh,
 		isTransferLookupComplete,
+		isTransferLookupNotFound,
 	} = useInstallDeadline( {
 		siteId,
 		enabled: !! siteId && ! preflightError && ! isUploadStillSending,
@@ -349,12 +377,20 @@ export function useProductInstall( {
 	const latestTransfer = isTransferFresh ? transfer : undefined;
 	const transferBelongsToAttempt = !! latestTransfer && isTransferFromAttempt( latestTransfer );
 	const transferInFlight = transferBelongsToAttempt && ! isSettled( latestTransfer.status );
-	const durableTransferCompleted =
-		transferBelongsToAttempt && latestTransfer.status === 'completed';
-	const durableTransferFailed =
+	if ( transferBelongsToAttempt && latestTransfer.status === atomicTransferStates.COMPLETED ) {
+		durableTransferCompletedRef.current = true;
+	}
+	if (
 		transferBelongsToAttempt &&
-		( latestTransfer.status === 'error' || isRevertedTransferStatus( latestTransfer.status ) );
+		( latestTransfer.status === atomicTransferStates.ERROR ||
+			isRevertedTransferStatus( latestTransfer.status ) )
+	) {
+		durableTransferFailedRef.current = true;
+	}
+	const durableTransferCompleted = durableTransferCompletedRef.current;
+	const durableTransferFailed = durableTransferFailedRef.current;
 	const transferHasFailed = hasTransferFailed || durableTransferFailed;
+	const transferTimedOut = ! durableTransferCompleted && ( hasTimedOut || hasTransferTimedOut );
 	const transferLookupGraceElapsed = useDelayedCondition(
 		installStrategy === 'atomic-transfer' &&
 			!! pluginSlug &&
@@ -401,7 +437,7 @@ export function useProductInstall( {
 			return;
 		}
 
-		if ( transferHasFailed || hasTimedOut || hasTransferTimedOut ) {
+		if ( transferHasFailed || transferTimedOut ) {
 			return;
 		}
 
@@ -410,7 +446,24 @@ export function useProductInstall( {
 		}
 
 		// A persisted attempt must be resolved by a successful lookup before any install path starts.
-		if ( pluginSlug && hasCurrentTransferAttempt && ! isTransferFresh ) {
+		if (
+			pluginSlug &&
+			hasCurrentTransferAttempt &&
+			! isTransferFresh &&
+			! isTransferLookupNotFound
+		) {
+			return;
+		}
+
+		// A latest non-settled transfer means the site is already moving toward Atomic. Its identity
+		// cannot be safely attributed after a marker expires, so never start another one on this site.
+		if (
+			installStrategy === 'atomic-transfer' &&
+			pluginSlug &&
+			isTransferFresh &&
+			!! latestTransfer &&
+			! isSettled( latestTransfer.status )
+		) {
 			return;
 		}
 
@@ -438,6 +491,7 @@ export function useProductInstall( {
 			const attempt = {
 				initiatedAt: Date.now(),
 				previousTransferId: latestTransfer?.atomic_transfer_id ?? null,
+				lookupSettled: isTransferFresh || isTransferLookupNotFound,
 			};
 			transferAttemptRef.current = { key: transferAttemptKey, attempt };
 			writeTransferAttempt( transferAttemptKey, attempt );
@@ -463,8 +517,10 @@ export function useProductInstall( {
 		transferHasFailed,
 		hasTimedOut,
 		hasTransferTimedOut,
+		transferTimedOut,
 		hasCurrentTransferAttempt,
 		isTransferFresh,
+		isTransferLookupNotFound,
 		isTransferLookupComplete,
 		transferLookupGraceElapsed,
 		transferAttemptKey,
@@ -515,7 +571,7 @@ export function useProductInstall( {
 	if ( ! error && transferHasFailed ) {
 		error = { type: 'transfer-failed' };
 	}
-	if ( ! error && ( hasTimedOut || hasTransferTimedOut ) ) {
+	if ( ! error && transferTimedOut ) {
 		error = { type: 'timeout' };
 	}
 
@@ -566,7 +622,7 @@ export function useProductInstall( {
 		let outcome = null;
 		if ( transferHasFailed ) {
 			outcome = 'transfer_failed';
-		} else if ( hasTimedOut || hasTransferTimedOut ) {
+		} else if ( transferTimedOut ) {
 			outcome = 'timeout';
 		}
 		if ( ! outcome || reportedOutcomeRef.current === outcome ) {
@@ -588,6 +644,7 @@ export function useProductInstall( {
 	}, [
 		hasTimedOut,
 		hasTransferTimedOut,
+		transferTimedOut,
 		transferHasFailed,
 		themeSlug,
 		installStrategy,
