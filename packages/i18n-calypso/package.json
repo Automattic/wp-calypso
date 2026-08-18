@@ -34,7 +34,7 @@
 	},
 	"dependencies": {
 		"@automattic/interpolate-components": "workspace:^",
-		"@babel/runtime": "^7.27.1",
+		"@babel/runtime": "^8.0.0",
 		"@tannin/sprintf": "^1.1.0",
 		"@wordpress/compose": "^8.2.0",
 		"debug": "^4.4.1",
