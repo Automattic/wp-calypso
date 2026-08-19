@@ -7,9 +7,9 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 	getPlan,
-	getYearlyPlanByMonthly,
 	isMonthly,
 	planMatches,
+	plansLink,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { getCalypsoUrl } from '@automattic/calypso-url';
@@ -404,15 +404,15 @@ const Home = () => {
 					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'peer-referral' );
-						if ( isMonthlyPlan && site?.slug && sitePlanSlug ) {
-							const annualPlanSlug = getYearlyPlanByMonthly( sitePlanSlug );
-							const planPath = annualPlanSlug || undefined;
-							if ( planPath ) {
-								page( `/checkout/${ site.slug }/${ planPath }` );
-								return;
-							}
+						if ( ! site?.slug ) {
+							return;
 						}
-						page( `/plans/${ site?.slug }` );
+						const url = plansLink( '/plans', site.slug, 'yearly', true );
+						if ( isSimple && isJetpackCloud() ) {
+							page( getCalypsoUrl( url ) );
+							return;
+						}
+						page( url );
 					},
 			  };
 
