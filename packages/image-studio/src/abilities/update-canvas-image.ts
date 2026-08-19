@@ -11,6 +11,7 @@ import { dispatch, resolveSelect, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
+import { isConnectedSelfHosted } from '../utils/is-connected-self-hosted';
 import { trackImageStudioError, trackImageStudioImageGenerated } from '../utils/tracking';
 import type { CanvasMetadata, ImageStudioActions } from '../store';
 import type { CurriedImageStudioSelectors, CoreDataDispatch } from '../types/wordpress.d';
@@ -328,6 +329,8 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 				return {
 					success: true,
 					message: 'Canvas image updated successfully.',
+					// On connected self-hosted sites the canvas update completes the metered request.
+					...( isConnectedSelfHosted() && { returnToAgent: false } ),
 				};
 			},
 		} );
