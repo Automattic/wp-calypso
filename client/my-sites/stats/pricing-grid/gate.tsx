@@ -5,6 +5,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageLoading from '../pages/shared/page-loading';
@@ -119,6 +120,9 @@ function PricingGridGate( { children }: { children: ReactNode } ) {
 
 		hasRecordedChoiceBeforeConnecting = true;
 		dismissPricingGrid();
+		// Where the free path ends: the site is connected, the plan it chose minutes ago is in
+		// effect, and this is the first moment that choice can be recorded against a blog id.
+		trackStatsAnalyticsEvent( 'stats_pre_connection_free_plan_completed', { blog_id: siteId } );
 	}, [ siteId, dismissPricingGrid ] );
 
 	if ( ! isApplicable || hasChosen ) {

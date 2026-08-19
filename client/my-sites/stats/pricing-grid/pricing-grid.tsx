@@ -46,6 +46,13 @@ interface PricingGridProps {
 	 * connection cannot form: it has no site slug yet.
 	 */
 	onSelectPaid?: () => void;
+	/**
+	 * Added to every event this grid records. A host with no blog id to be identified by has to
+	 * supply whatever key it does have, since `blog_id` is null there and nothing else on the
+	 * event would tie it to what the site does next. The view event depends on it, so pass a
+	 * stable reference.
+	 */
+	eventProps?: Record< string, string | number >;
 }
 
 /**
@@ -55,7 +62,12 @@ interface PricingGridProps {
  * to the Search one. Gating lives in `gate.tsx`; by the time this renders the site
  * is known to be eligible and undismissed.
  */
-export default function PricingGrid( { onDismiss, onSelectFree, onSelectPaid }: PricingGridProps ) {
+export default function PricingGrid( {
+	onDismiss,
+	onSelectFree,
+	onSelectPaid,
+	eventProps,
+}: PricingGridProps ) {
 	const translate = useTranslate();
 	// Same breakpoint the jetpack-components PricingTable uses via useViewportMatch.
 	const isLg = useViewportMatch( 'large' );
@@ -64,8 +76,8 @@ export default function PricingGrid( { onDismiss, onSelectFree, onSelectPaid }: 
 	const dismissPricingGrid = useDismissPricingGrid( siteId );
 
 	useEffect( () => {
-		trackStatsAnalyticsEvent( 'stats_pricing_grid_view', { blog_id: siteId } );
-	}, [ siteId ] );
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_view', { blog_id: siteId, ...eventProps } );
+	}, [ siteId, eventProps ] );
 
 	const product = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
@@ -150,6 +162,7 @@ export default function PricingGrid( { onDismiss, onSelectFree, onSelectPaid }: 
 		trackStatsAnalyticsEvent( 'stats_pricing_grid_free_cta_clicked', {
 			blog_id: siteId,
 			cta: 'free',
+			...eventProps,
 		} );
 
 		if ( onSelectFree ) {
@@ -170,6 +183,7 @@ export default function PricingGrid( { onDismiss, onSelectFree, onSelectPaid }: 
 		trackStatsAnalyticsEvent( 'stats_pricing_grid_paid_cta_clicked', {
 			blog_id: siteId,
 			cta: 'paid',
+			...eventProps,
 		} );
 
 		if ( onSelectPaid ) {

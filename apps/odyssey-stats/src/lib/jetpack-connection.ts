@@ -48,19 +48,29 @@ export function getSiteSuffix(): string {
 	return getInitialState()?.siteSuffix ?? '';
 }
 
+interface Registration {
+	/** Links the current user to a WordPress.com account. */
+	authorizeUrl: string;
+	/**
+	 * The blog id WordPress.com just assigned, read off the authorization URL's `client_id`. It is
+	 * the first identifier this site has ever had, and the only key that ties what happened before
+	 * registration — where events can be keyed by nothing but the site suffix — to everything
+	 * after. `null` if the URL carries no usable one; the site's own Jetpack builds it.
+	 */
+	blogId: number | null;
+}
+
 /**
- * Registers the site with WordPress.com and returns the URL that links the current user to a
- * WordPress.com account. Registration alone leaves the site connected but nobody signed in, so
- * every caller is expected to send the visitor on to this URL, sooner (the free plan) or later
- * (after checkout, via `connect_after_checkout`).
+ * Registers the site with WordPress.com. Registration alone leaves the site connected but nobody
+ * signed in, so every caller is expected to send the visitor on to `authorizeUrl`, sooner (the
+ * free plan) or later (after checkout, via `connect_after_checkout`).
  *
  * Rejects with the REST API's own (already localized) message where there is one; callers are
  * expected to supply a translated fallback for the rest.
- *
  * @param redirectUri Admin path to return to once the user has authorized, relative to `admin_url()`.
  * @throws {Error} When the site prints no connection state, or the request fails.
  */
-export async function registerSite( redirectUri: string ): Promise< string > {
+export async function registerSite( redirectUri: string ): Promise< Registration > {
 	const state = getInitialState();
 
 	if ( ! state?.apiRoot ) {
@@ -92,5 +102,15 @@ export async function registerSite( redirectUri: string ): Promise< string > {
 		throw new Error( body?.message ?? '' );
 	}
 
-	return body.authorizeUrl;
+	return { authorizeUrl: body.authorizeUrl, blogId: readBlogId( body.authorizeUrl ) };
+}
+
+function readBlogId( authorizeUrl: string ): number | null {
+	try {
+		const clientId = Number( new URL( authorizeUrl ).searchParams.get( 'client_id' ) );
+
+		return Number.isInteger( clientId ) && clientId > 0 ? clientId : null;
+	} catch {
+		return null;
+	}
 }

@@ -1,7 +1,7 @@
 import { PRODUCT_JETPACK_STATS_YEARLY } from '@automattic/calypso-products';
 import { Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import StatsMain from 'calypso/my-sites/stats/components/stats-main';
 import PageLoading from 'calypso/my-sites/stats/pages/shared/page-loading';
@@ -10,8 +10,10 @@ import {
 	PRICING_GRID_REFERRER,
 } from 'calypso/my-sites/stats/pricing-grid/hooks/use-dismiss-pricing-grid';
 import PricingGrid from 'calypso/my-sites/stats/pricing-grid/pricing-grid';
+import PageViewTracker from 'calypso/my-sites/stats/stats-page-view-tracker';
 import { StatsSingleItemPagePurchaseFrame } from 'calypso/my-sites/stats/stats-purchase/stats-purchase-shared';
 import { StatsCommercialPurchase } from 'calypso/my-sites/stats/stats-purchase/stats-purchase-single-item';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSiteSuffix, isOfflineMode, registerSite } from '../lib/jetpack-connection';
@@ -41,22 +43,61 @@ const AUTHORIZE_REDIRECT_URI = `${ STATS_ADMIN_PATH }&${ PLAN_CHOSEN_QUERY_ARG }
 export default function PreConnection() {
 	const translate = useTranslate();
 	const [ authorizeUrl, setAuthorizeUrl ] = useState< string | null >( null );
+	const [ blogId, setBlogId ] = useState< number | null >( null );
 	const [ isRegistering, setIsRegistering ] = useState( false );
 	const [ error, setError ] = useState< string | null >( null );
+
+	const isOffline = isOfflineMode();
+
+	/**
+	 * Nothing here has a blog id to be recorded against, so every event carries the site suffix
+	 * instead — the only identifier the site has until it registers, and what ties this screen to
+	 * the checkout it hands over to. `is_pre_connection` tells these apart from the same grid
+	 * shown on a connected site's dashboard.
+	 */
+	const eventProps = useMemo(
+		() => ( { site_suffix: getSiteSuffix(), is_pre_connection: 1 } ),
+		[]
+	);
 
 	const product = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
 	);
 
-	const connect = async () => {
+	useEffect( () => {
+		if ( isOffline ) {
+			trackStatsAnalyticsEvent( 'stats_pre_connection_offline_notice_view', eventProps );
+		}
+	}, [ isOffline, eventProps ] );
+
+	const connect = async ( plan: 'free' | 'paid' ) => {
 		setError( null );
 		setIsRegistering( true );
+		trackStatsAnalyticsEvent( 'stats_pre_connection_register_start', { ...eventProps, plan } );
 
 		try {
-			return await registerSite( AUTHORIZE_REDIRECT_URI );
+			const registration = await registerSite( AUTHORIZE_REDIRECT_URI );
+
+			// The one event carrying both keys, and so the join between everything above and
+			// everything the site does once it has an id.
+			trackStatsAnalyticsEvent( 'stats_pre_connection_register_success', {
+				...eventProps,
+				plan,
+				blog_id: registration.blogId,
+			} );
+			setBlogId( registration.blogId );
+
+			return registration.authorizeUrl;
 		} catch ( e ) {
+			const message = ( e as Error ).message;
+
+			trackStatsAnalyticsEvent( 'stats_pre_connection_register_failed', {
+				...eventProps,
+				plan,
+				error: message,
+			} );
 			setError(
-				( e as Error ).message ||
+				message ||
 					String(
 						translate( 'Jetpack could not connect this site to WordPress.com. Please try again.' )
 					)
@@ -67,7 +108,7 @@ export default function PreConnection() {
 	};
 
 	const startForFree = async () => {
-		const url = await connect();
+		const url = await connect( 'free' );
 
 		// Deliberately leaves the spinner up: the browser is on its way to WordPress.com.
 		if ( url ) {
@@ -76,7 +117,7 @@ export default function PreConnection() {
 	};
 
 	const goToPurchase = async () => {
-		const url = await connect();
+		const url = await connect( 'paid' );
 
 		if ( url ) {
 			setAuthorizeUrl( url );
@@ -85,7 +126,7 @@ export default function PreConnection() {
 	};
 
 	const renderStep = () => {
-		if ( isOfflineMode() ) {
+		if ( isOffline ) {
 			return (
 				<StatsMain fullWidthLayout>
 					<Notice status="warning" isDismissible={ false }>
@@ -112,10 +153,14 @@ export default function PreConnection() {
 								adminUrl={ getWpAdminUrl() }
 								redirectUri={ STATS_ADMIN_PATH }
 								from={ PRICING_GRID_REFERRER }
+								// Registration is behind us, so the blog id is known here even though the
+								// screen still runs without one.
+								eventProps={ blogId ? { ...eventProps, blog_id: blogId } : eventProps }
 								// Nobody is putting anything off here: this is the free plan, and taking it
 								// still needs an account attached. Reaching this screen already registered
 								// the site, so the URL to attach one is in hand.
 								postponeLabel={ String( translate( 'Start for free' ) ) }
+								postponeEventName="stats_purchase_commercial_start_for_free_button_clicked"
 								onPostpone={ () => {
 									window.location.href = authorizeUrl;
 								} }
@@ -130,11 +175,23 @@ export default function PreConnection() {
 			return PageLoading;
 		}
 
-		return <PricingGrid onSelectFree={ startForFree } onSelectPaid={ goToPurchase } />;
+		return (
+			<PricingGrid
+				onSelectFree={ startForFree }
+				onSelectPaid={ goToPurchase }
+				eventProps={ eventProps }
+			/>
+		);
 	};
 
 	return (
 		<>
+			<PageViewTracker
+				path="/stats/pricing"
+				title="Stats > Pricing"
+				site_suffix={ eventProps.site_suffix }
+				is_pre_connection={ eventProps.is_pre_connection }
+			/>
 			{ /* Mounted across every step: the tier slider reads the same product the grid prices,
 			     and unmounting mid-flight would lose the response that populates it. */ }
 			<QueryProductsList type="jetpack" />

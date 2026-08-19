@@ -227,6 +227,9 @@ const gotoCheckoutPage = ( {
 		type,
 		quantity,
 		blog_id: siteId,
+		// The only identifier a site that is not connected yet has, and so the only thing tying
+		// this click to the screens it came from.
+		site_slug: siteSlug,
 	} );
 
 	const redirectUrl = getRedirectUrl( { type, adminUrl, redirectUri, siteSlug } );
