@@ -2,6 +2,17 @@ import { Locator, Page } from 'playwright';
 import { envVariables } from '../..';
 
 /**
+ * How long a response action can take on the single response page.
+ *
+ * Jetpack gives the save itself 30 seconds, then spends up to another 10 waiting
+ * for the record cache to resolve, and keeps the "Actions" toggle disabled for
+ * both. Anything shorter than the sum gives up on a slow-but-healthy request.
+ *
+ * @see https://github.com/Automattic/jetpack/blob/trunk/projects/packages/forms/routes/responses/actions.tsx
+ */
+const RESPONSE_ACTION_TIMEOUT = 45 * 1000;
+
+/**
  * Page repsresenting the Feedback page, Inbox view variant. Accessed under Sidebar > Feedback.
  */
 export class FeedbackInboxPage {
@@ -25,6 +36,109 @@ export class FeedbackInboxPage {
 	 */
 	private getResponseRow( text: string ): Locator {
 		return this.page.locator( '.dataviews-view-table__row' ).filter( { hasText: text } ).first();
+	}
+
+	/**
+	 * Returns a locator for the standalone single response page.
+	 *
+	 * Jetpack Forms moved the "View" row action from an in-place inspector panel
+	 * to a full page at `/response/<id>`. Sites on an older Jetpack still open the
+	 * inspector, so both have to be supported.
+	 *
+	 * @see https://github.com/Automattic/jetpack/pull/51127
+	 * @returns {Locator} The single response page locator.
+	 */
+	private getSingleResponsePage(): Locator {
+		return this.page.locator( '.jp-forms__single-response' );
+	}
+
+	/**
+	 * Whether a response is currently open on the standalone single response page.
+	 *
+	 * @returns {Promise<boolean>} True if the single response page is showing.
+	 */
+	private async isOnSingleResponsePage(): Promise< boolean > {
+		// `isVisible()` returns immediately rather than waiting. Every caller is
+		// reached after an explicit wait on the response view, so by this point the
+		// DOM has already settled on one UI or the other.
+		return this.getSingleResponsePage()
+			.isVisible()
+			.catch( () => false );
+	}
+
+	/**
+	 * Runs an action from the single response page's "Actions" dropdown.
+	 *
+	 * That page keeps every action behind a three dot menu in the page header,
+	 * rather than rendering them as buttons the way the inspector and the legacy
+	 * panels do. Callers check `isOnSingleResponsePage` before reaching for this.
+	 *
+	 * @param {string} menuItemName The action's label within the dropdown.
+	 * @param {string} expectedFollowUpAction The action the menu should offer once the
+	 * change has been accepted. Pass this for status changes, so a rejected request
+	 * fails here rather than several steps later.
+	 */
+	private async clickSingleResponseMenuAction(
+		menuItemName: string,
+		expectedFollowUpAction?: string
+	): Promise< void > {
+		const actionsMenu = this.page.locator( '.jp-forms__single-response-actions' );
+		await actionsMenu.getByRole( 'button', { name: 'Actions' } ).click();
+
+		const menuItem = this.page.getByRole( 'menuitem', { name: menuItemName, exact: true } );
+		await menuItem.click();
+
+		// The page stays put after an action, so there's no panel closing or
+		// notification to wait on. The dropdown closes and disables its toggle in the
+		// same render, so once the item is gone a re-enabled toggle means the request
+		// settled.
+		await menuItem.waitFor( { state: 'detached', timeout: RESPONSE_ACTION_TIMEOUT } );
+		await actionsMenu
+			.getByRole( 'button', { name: 'Actions', disabled: false } )
+			.waitFor( { timeout: RESPONSE_ACTION_TIMEOUT } );
+
+		if ( ! expectedFollowUpAction ) {
+			return;
+		}
+
+		// Settled only means the request came back — the toggle re-enables whether it
+		// succeeded or failed, and this route renders no notice to tell the two apart.
+		// Jetpack rewrites the record (and so this menu) only for a change the server
+		// accepted, so the menu it now offers is what confirms the new status.
+		await actionsMenu.getByRole( 'button', { name: 'Actions' } ).click();
+		const followUpItem = this.page.getByRole( 'menuitem', {
+			name: expectedFollowUpAction,
+			exact: true,
+		} );
+		await followUpItem.waitFor( { state: 'visible', timeout: 10 * 1000 } );
+		// Same close-and-confirm dance as verifyActionExistsInMenu.
+		await this.page.keyboard.press( 'Escape' );
+		await followUpItem.waitFor( { state: 'detached' } );
+	}
+
+	/**
+	 * Returns to the responses list from the standalone single response page.
+	 *
+	 * Status actions leave the user on the page (the header badge changes instead),
+	 * so anything that needs the list has to navigate back first. There's no Close
+	 * button on this page — the "Forms" breadcrumb is the way back.
+	 */
+	private async leaveSingleResponsePage(): Promise< void > {
+		if ( ! ( await this.isOnSingleResponsePage() ) ) {
+			return;
+		}
+
+		await this.page
+			.locator( '.jp-forms__single-response-breadcrumbs' )
+			// Exact, so a form title containing "Forms" in the trailing crumb can't
+			// be picked up instead.
+			.getByRole( 'link', { name: 'Forms', exact: true } )
+			.click();
+		await this.getSingleResponsePage().waitFor( { state: 'hidden', timeout: 10 * 1000 } );
+		await this.page
+			.locator( '.dataviews-filters__summary-chip' )
+			.filter( { hasText: /Folder is:/i } )
+			.waitFor( { state: 'visible', timeout: 10 * 1000 } );
 	}
 
 	/**
@@ -72,8 +186,12 @@ export class FeedbackInboxPage {
 		await viewMenuItem.click();
 
 		if ( await this.isCentralFormManagement() ) {
-			// CFM uses the DataViews inspector on both desktop and mobile.
-			await this.page.locator( '.jp-forms-response-header' ).waitFor( { state: 'visible' } );
+			// "View" navigates to the standalone single response page on newer
+			// Jetpack versions, and opens the DataViews inspector on older ones.
+			await this.getSingleResponsePage()
+				.or( this.page.locator( '.jp-forms-response-header' ) )
+				.first()
+				.waitFor( { state: 'visible' } );
 		} else if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await this.page.locator( '.jp-forms__inbox-response' ).waitFor( { state: 'visible' } );
 		} else {
@@ -170,6 +288,10 @@ export class FeedbackInboxPage {
 	 */
 	async clickFolderTab( folderName: string ): Promise< void > {
 		if ( await this.isCentralFormManagement() ) {
+			// Status actions leave the user on the single response page, so get back
+			// to the list before reaching for the folder chips.
+			await this.leaveSingleResponsePage();
+
 			// On mobile, the DataViews inspector may overlap the filter chips.
 			// Close it first if it's open.
 			const closeButton = this.page.locator( '.jp-forms-response-header' ).getByRole( 'button', {
@@ -301,6 +423,10 @@ export class FeedbackInboxPage {
 	 * Clicks the "Not spam" action button for the current response.
 	 */
 	async clickNotSpamAction(): Promise< void > {
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.clickSingleResponseMenuAction( 'Not spam', 'Mark as spam' );
+			return;
+		}
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Not spam' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
@@ -323,6 +449,11 @@ export class FeedbackInboxPage {
 	 * Clicks the "Mark as spam" action button for the current response.
 	 */
 	async clickMarkAsSpamAction(): Promise< void > {
+		if ( await this.isOnSingleResponsePage() ) {
+			// The single response page spells this one out in full.
+			await this.clickSingleResponseMenuAction( 'Mark as spam', 'Not spam' );
+			return;
+		}
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Spam' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
@@ -341,6 +472,10 @@ export class FeedbackInboxPage {
 	 * Clicks the "Mark as read" action button for the current response.
 	 */
 	async clickMarkAsReadAction(): Promise< void > {
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.clickSingleResponseMenuAction( 'Mark as read' );
+			return;
+		}
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Mark as read' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
@@ -359,6 +494,10 @@ export class FeedbackInboxPage {
 	 * Clicks the "Mark as unread" action button for the current response.
 	 */
 	async clickMarkAsUnreadAction(): Promise< void > {
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.clickSingleResponseMenuAction( 'Mark as unread' );
+			return;
+		}
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Mark as unread' } ).last().click();
 		if ( await this.isCentralFormManagement() ) {
@@ -384,6 +523,10 @@ export class FeedbackInboxPage {
 	 * Clicks the "Move to trash" action button for the current response.
 	 */
 	async clickMoveToTrashAction(): Promise< void > {
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.clickSingleResponseMenuAction( 'Trash', 'Restore' );
+			return;
+		}
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Trash' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
@@ -402,6 +545,10 @@ export class FeedbackInboxPage {
 	 * Clicks the "Restore" action button for the current response.
 	 */
 	async clickRestoreAction(): Promise< void > {
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.clickSingleResponseMenuAction( 'Restore', 'Mark as spam' );
+			return;
+		}
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Restore' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
@@ -448,6 +595,13 @@ export class FeedbackInboxPage {
 	 * Clicks the "Close" button in the response view.
 	 */
 	async clickCloseResponse(): Promise< void > {
+		// The single response page has no Close button — the breadcrumb is the way
+		// back to the list.
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.leaveSingleResponsePage();
+			return;
+		}
+
 		await this.page.getByRole( 'button', { name: 'Close' } ).last().click();
 		// Wait for whichever panel was open (CFM inspector, legacy desktop side
 		// panel, or mobile dialog) to actually close.
@@ -492,7 +646,12 @@ export class FeedbackInboxPage {
 		}
 		// Detect by checking for the CFM-specific URL pattern or Forms tab
 		const url = this.page.url();
-		if ( url.includes( 'jetpack-forms-responses-wp-admin' ) || url.includes( '/responses/' ) ) {
+		if (
+			url.includes( 'jetpack-forms-responses-wp-admin' ) ||
+			url.includes( '/responses/' ) ||
+			// The standalone single response page, which is CFM-only.
+			url.includes( '/response/' )
+		) {
 			this.isCFM = true;
 			return true;
 		}
