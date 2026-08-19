@@ -7,6 +7,8 @@ import { envVariables } from '../..';
  * Jetpack gives the save itself 30 seconds, then spends up to another 10 waiting
  * for the record cache to resolve, and keeps the "Actions" toggle disabled for
  * both. Anything shorter than the sum gives up on a slow-but-healthy request.
+ * Specs driving these actions raise their own timeout to suit — the default 2
+ * minute budget cannot absorb this ceiling across a multi-action flow.
  *
  * @see https://github.com/Automattic/jetpack/blob/trunk/projects/packages/forms/routes/responses/actions.tsx
  */
@@ -75,8 +77,9 @@ export class FeedbackInboxPage {
 	 *
 	 * @param {string} menuItemName The action's label within the dropdown.
 	 * @param {string} expectedFollowUpAction The action the menu should offer once the
-	 * change has been accepted. Pass this for status changes, so a rejected request
-	 * fails here rather than several steps later.
+	 * change has been accepted, so a rejected request fails here rather than several
+	 * steps later. Read/unread qualifies too: it edits the record optimistically and
+	 * reverts on failure, and the toggle has settled by the time this is checked.
 	 */
 	private async clickSingleResponseMenuAction(
 		menuItemName: string,
@@ -113,7 +116,7 @@ export class FeedbackInboxPage {
 		await followUpItem.waitFor( { state: 'visible', timeout: 10 * 1000 } );
 		// Same close-and-confirm dance as verifyActionExistsInMenu.
 		await this.page.keyboard.press( 'Escape' );
-		await followUpItem.waitFor( { state: 'detached' } );
+		await followUpItem.waitFor( { state: 'detached', timeout: 5000 } );
 	}
 
 	/**
@@ -128,6 +131,20 @@ export class FeedbackInboxPage {
 			return;
 		}
 
+		// The breadcrumb always lands on the inbox. Arm the list wait before clicking:
+		// callers that then ask for the Inbox take `clickFolderTab`'s already-on-it
+		// early return, so this is the only chance to let the list settle before a
+		// search runs against it.
+		const listResponse = this.page.waitForResponse(
+			( response ) =>
+				( response.url().includes( '/wp-json/wp/v2/feedback' ) ||
+					!! response.url().match( /\/wp\/v2\/sites\/[0-9]+\/feedback/ ) ) &&
+				// The counts request shares the path and would resolve this early.
+				! response.url().includes( '/counts' ) &&
+				response.url().includes( `status=${ encodeURIComponent( 'draft,publish' ) }` ),
+			{ timeout: 15 * 1000 }
+		);
+
 		await this.page
 			.locator( '.jp-forms__single-response-breadcrumbs' )
 			// Exact, so a form title containing "Forms" in the trailing crumb can't
@@ -139,6 +156,10 @@ export class FeedbackInboxPage {
 			.locator( '.dataviews-filters__summary-chip' )
 			.filter( { hasText: /Folder is:/i } )
 			.waitFor( { state: 'visible', timeout: 10 * 1000 } );
+
+		// Tolerate the miss: the route's loader reads through the core-data cache, so
+		// a warm cache renders the list without issuing a request at all.
+		await listResponse.catch( () => undefined );
 	}
 
 	/**
@@ -473,7 +494,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickMarkAsReadAction(): Promise< void > {
 		if ( await this.isOnSingleResponsePage() ) {
-			await this.clickSingleResponseMenuAction( 'Mark as read' );
+			await this.clickSingleResponseMenuAction( 'Mark as read', 'Mark as unread' );
 			return;
 		}
 		// Use .last() to get the button in the side panel, not in the table row
@@ -495,7 +516,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickMarkAsUnreadAction(): Promise< void > {
 		if ( await this.isOnSingleResponsePage() ) {
-			await this.clickSingleResponseMenuAction( 'Mark as unread' );
+			await this.clickSingleResponseMenuAction( 'Mark as unread', 'Mark as read' );
 			return;
 		}
 		// Use .last() to get the button in the side panel, not in the table row

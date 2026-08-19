@@ -86,12 +86,9 @@ test.describe(
 				'Form submissions not supported on private sites'
 			);
 
-			// Central Form Management's row "View" opens a standalone response page,
-			// while FeedbackInboxPage drives the DataViews inspector: it waits on
-			// `.jp-forms-response-header`, clicks a Close button and an "Actions" row
-			// button, none of which that page renders. Simple and Atomic both fail this
-			// way. Porting the page object to the new route is the fix.
-			test.fixme();
+			// One status action can wait out Jetpack's 30s save plus a 10s record
+			// refresh, and this test drives several of them in a single flow.
+			test.setTimeout( 4 * 60 * 1000 );
 
 			let publishedFormLocator: Locator;
 			let restAPIClient: RestAPIClient;
@@ -255,7 +252,9 @@ test.describe(
 			await test.step( 'Navigate to Inbox tab if needed', async () => {
 				if ( isInSpam ) {
 					await feedbackInboxPage.clickFolderTab( 'Inbox' );
-					// Leaving the single response page drops the active search.
+					// Leaving the single response page drops the active search. Clear
+					// first: refilling an identical value fires no request.
+					await feedbackInboxPage.clearSearch( true );
 					await feedbackInboxPage.searchResponses( formData1.email );
 				}
 			} );
@@ -303,7 +302,9 @@ test.describe(
 			await test.step( 'Navigate to Inbox tab if needed', async () => {
 				if ( isInSpam ) {
 					await feedbackInboxPage.clickFolderTab( 'Inbox' );
-					// Leaving the single response page drops the active search.
+					// Leaving the single response page drops the active search. Clear
+					// first: refilling an identical value fires no request.
+					await feedbackInboxPage.clearSearch( true );
 					await feedbackInboxPage.searchResponses( formData2.email );
 				}
 			} );
