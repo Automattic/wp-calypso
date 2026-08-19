@@ -11,7 +11,7 @@ import { trackJetpackAiUpgrade } from './utils/tracking';
 const FREE_TIER_SLUGS = new Set( [ 'jetpack_ai_free', 'ai-assistant-tier-free' ] );
 const LOCAL_STATUS_PATH = '/wpcom/v2/jetpack-ai/ai-assistant-feature';
 
-// Self-hosted status is cached for 60 seconds. Refresh after that response expires.
+// Older Jetpack versions ignore skip_cache, so keep a delayed read after the 60-second cache expires.
 const JETPACK_REFRESH_DELAY_MS = 61_000;
 
 interface AiAssistantFeatureResponse {
@@ -158,7 +158,7 @@ function useFreeCreditNotice( {
 	const rejectionNotice = useQuotaRejectionNotice( { error: enabled ? error : null } );
 	const [ freeCreditState, setFreeCreditState ] = useState< FreeCreditState | undefined >();
 	const settledRequestCountRef = useRef( settledRequestCount );
-	const requestCachedRefresh = useRef< ( ( count: number ) => void ) | null >( null );
+	const requestStatusRefresh = useRef< ( ( count: number ) => void ) | null >( null );
 	settledRequestCountRef.current = settledRequestCount;
 
 	const statusKey =
@@ -166,13 +166,15 @@ function useFreeCreditNotice( {
 
 	useEffect( () => {
 		if ( ! fetchEnabled || ! statusKey || ! statusPath ) {
-			requestCachedRefresh.current = null;
+			requestStatusRefresh.current = null;
 			return;
 		}
 
+		const activeStatusKey = statusKey;
+		const activeStatusPath = statusPath;
 		let active = true;
-		let dirty = false;
-		let initialVerificationRequired = true;
+		let cachedFallbackNeeded = true;
+		let immediateRefreshPending = false;
 		let isRequestInFlight = false;
 		let consecutiveFailures = 0;
 		let lastCompletedAt: number | null = null;
@@ -186,42 +188,8 @@ function useFreeCreditNotice( {
 			}
 		};
 
-		const startStatusRequest = ( isInitialRequest: boolean ) => {
-			if ( ! active || isRequestInFlight ) {
-				return;
-			}
-
-			clearRefreshTimer();
-			isRequestInFlight = true;
-			dirty = false;
-			const coveredSettledRequestCount = observedSettledRequestCount;
-
-			void apiFetch< AiAssistantFeatureResponse >( { path: statusPath } )
-				.then( ( response ) => {
-					if ( ! active ) {
-						return;
-					}
-
-					const status = getFreeCreditStatus( response );
-					if ( status !== undefined ) {
-						setFreeCreditState( { key: statusKey, status } );
-					}
-
-					completeStatusRequest(
-						status !== undefined,
-						isInitialRequest,
-						coveredSettledRequestCount
-					);
-				} )
-				.catch( () => {
-					if ( active ) {
-						completeStatusRequest( false, isInitialRequest, coveredSettledRequestCount );
-					}
-				} );
-		};
-
-		const scheduleStatusRequest = () => {
-			if ( ! active || isRequestInFlight || refreshTimer !== null ) {
+		const scheduleCachedFallback = () => {
+			if ( ! active || ! cachedFallbackNeeded || isRequestInFlight || refreshTimer !== null ) {
 				return;
 			}
 
@@ -238,29 +206,57 @@ function useFreeCreditNotice( {
 			}, delay );
 		};
 
-		function completeStatusRequest(
-			isUsableResponse: boolean,
-			isInitialRequest: boolean,
-			coveredSettledRequestCount: number
-		) {
+		function startStatusRequest( skipCache: boolean, isInitialRequest = false ) {
+			if ( ! active || isRequestInFlight ) {
+				return;
+			}
+
+			isRequestInFlight = true;
+			if ( skipCache ) {
+				clearRefreshTimer();
+				cachedFallbackNeeded = true;
+			} else if ( ! isInitialRequest ) {
+				cachedFallbackNeeded = false;
+			}
+
+			void apiFetch< AiAssistantFeatureResponse >( {
+				path: skipCache ? `${ activeStatusPath }?skip_cache=true` : activeStatusPath,
+			} )
+				.then( ( response ) => {
+					if ( ! active ) {
+						return;
+					}
+
+					const status = getFreeCreditStatus( response );
+					if ( status !== undefined ) {
+						setFreeCreditState( { key: activeStatusKey, status } );
+					}
+
+					completeStatusRequest( status !== undefined, skipCache );
+				} )
+				.catch( () => {
+					if ( active ) {
+						completeStatusRequest( false, skipCache );
+					}
+				} );
+		}
+
+		function completeStatusRequest( isUsableResponse: boolean, skipCache: boolean ) {
 			isRequestInFlight = false;
 			lastCompletedAt = Date.now();
-			const hasUncoveredRequest = observedSettledRequestCount !== coveredSettledRequestCount;
 			consecutiveFailures = isUsableResponse ? 0 : consecutiveFailures + 1;
 
-			if ( ! isInitialRequest && isUsableResponse ) {
-				initialVerificationRequired = false;
-			}
-			if ( hasUncoveredRequest ) {
-				dirty = true;
+			if ( ! skipCache && ! isUsableResponse && consecutiveFailures < 2 ) {
+				cachedFallbackNeeded = true;
 			}
 
-			const needsCacheVerification =
-				isUsableResponse && ( isInitialRequest || initialVerificationRequired );
-			const canRetryFailure = ! isUsableResponse && consecutiveFailures < 2;
-			if ( dirty || needsCacheVerification || canRetryFailure ) {
-				scheduleStatusRequest();
+			if ( immediateRefreshPending ) {
+				immediateRefreshPending = false;
+				startStatusRequest( true );
+				return;
 			}
+
+			scheduleCachedFallback();
 		}
 
 		const handleSettledRequestCount = ( count: number ) => {
@@ -269,27 +265,30 @@ function useFreeCreditNotice( {
 			}
 
 			observedSettledRequestCount = count;
-			dirty = true;
+			cachedFallbackNeeded = true;
 			consecutiveFailures = 0;
-			if ( ! isRequestInFlight ) {
-				scheduleStatusRequest();
+			if ( isRequestInFlight ) {
+				immediateRefreshPending = true;
+				return;
 			}
+
+			startStatusRequest( true );
 		};
 
-		requestCachedRefresh.current = handleSettledRequestCount;
-		startStatusRequest( true );
+		requestStatusRefresh.current = handleSettledRequestCount;
+		startStatusRequest( false, true );
 
 		return () => {
 			active = false;
 			clearRefreshTimer();
-			if ( requestCachedRefresh.current === handleSettledRequestCount ) {
-				requestCachedRefresh.current = null;
+			if ( requestStatusRefresh.current === handleSettledRequestCount ) {
+				requestStatusRefresh.current = null;
 			}
 		};
 	}, [ fetchEnabled, refreshDelayMs, siteId, statusKey, statusPath ] );
 
 	useEffect( () => {
-		requestCachedRefresh.current?.( settledRequestCount );
+		requestStatusRefresh.current?.( settledRequestCount );
 	}, [ settledRequestCount ] );
 
 	const status =
