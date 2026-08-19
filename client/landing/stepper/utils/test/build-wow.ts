@@ -1,8 +1,11 @@
+import wpcom from 'calypso/lib/wp';
 import {
+	getBuildWowGraph,
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
 	isBuildWowEnabled,
 	isBuildWowSiteEditorReady,
+	requestBuildWowSite,
 } from '../build-wow';
 
 jest.mock( 'calypso/lib/logstash', () => ( {
@@ -85,5 +88,33 @@ describe( 'build-wow utilities', () => {
 				remote_option_ready: true,
 			} )
 		).toBe( false );
+	} );
+
+	it( 'reads the requested graph and ignores anything it does not know', () => {
+		expect( getBuildWowGraph( new URLSearchParams( 'graph=html-first' ) ) ).toBe( 'html-first' );
+		expect( getBuildWowGraph( new URLSearchParams( 'graph=legacy' ) ) ).toBe( 'legacy' );
+
+		// The server takes this as an enum and 400s on anything else, so a typo
+		// has to read as "no graph" rather than break the build request.
+		expect( getBuildWowGraph( new URLSearchParams( 'graph=htmlfirst' ) ) ).toBeUndefined();
+		expect( getBuildWowGraph( new URLSearchParams( 'graph=' ) ) ).toBeUndefined();
+		expect( getBuildWowGraph( new URLSearchParams( '' ) ) ).toBeUndefined();
+	} );
+
+	it( 'sends the graph only on the call that queues a build', async () => {
+		const post = wpcom.req.post as jest.Mock;
+		post.mockReset();
+		post.mockResolvedValue( {} );
+
+		await requestBuildWowSite( '123', 'spec-1', 'html-first' );
+		expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( { spec_id: 'spec-1', graph: 'html-first' } );
+
+		// No spec means nothing is queued, so there is no build to record a
+		// graph against.
+		await requestBuildWowSite( '123', undefined, 'html-first' );
+		expect( post.mock.calls[ 1 ][ 1 ] ).toEqual( {} );
+
+		await requestBuildWowSite( '123', 'spec-1' );
+		expect( post.mock.calls[ 2 ][ 1 ] ).toEqual( { spec_id: 'spec-1' } );
 	} );
 } );

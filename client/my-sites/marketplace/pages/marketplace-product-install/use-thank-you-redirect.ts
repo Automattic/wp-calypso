@@ -26,6 +26,7 @@ export function useThankYouRedirect( {
 	pluginActive,
 	atomicFlow,
 	automatedTransferStatus,
+	durableTransferCompleted,
 	isTransferredUpload,
 	halted = false,
 }: {
@@ -41,6 +42,7 @@ export function useThankYouRedirect( {
 	pluginActive: boolean;
 	atomicFlow: boolean;
 	automatedTransferStatus: string | null;
+	durableTransferCompleted: boolean;
 	isTransferredUpload: boolean;
 	/** The wait has been called off — an error screen is up, so nothing here should keep polling. */
 	halted?: boolean;
@@ -53,7 +55,9 @@ export function useThankYouRedirect( {
 		enabled:
 			! halted &&
 			!! siteId &&
-			( ! atomicFlow || transferCompleteStates.includes( automatedTransferStatus ) ),
+			( ! atomicFlow ||
+				transferCompleteStates.includes( automatedTransferStatus ) ||
+				durableTransferCompleted ),
 		refetchInterval: ( query ) =>
 			query.state.data && isAtomicTransferredSite( query.state.data ) ? false : 2000,
 		staleTime: 0,

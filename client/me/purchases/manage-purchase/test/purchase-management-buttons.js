@@ -208,6 +208,63 @@ describe( 'Purchase Management Buttons', () => {
 		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'hides the Remove button when is_manageable_by_user is false and auto-renew is OFF', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			is_auto_renew_enabled: false,
+			is_manageable_by_user: false,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		// Wait for component to fully render
+		expect( await findPaymentMethodNavItem() ).toBeInTheDocument();
+		expect( screen.queryByText( /Remove plan/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /will be removed immediately/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'hides the Cancel button when is_manageable_by_user is false and auto-renew is ON', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			is_auto_renew_enabled: true,
+			is_manageable_by_user: false,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		// Wait for component to fully render
+		expect( await findPaymentMethodNavItem() ).toBeInTheDocument();
+		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders a Remove button for a domain connection bundled with a plan, even though auto-renew is ON', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
@@ -656,5 +713,74 @@ describe( 'Purchase Management Buttons', () => {
 		// Wait for component to fully render
 		await findPaymentMethodNavItem();
 		expect( screen.queryByText( /Upgrade/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not render cancel or remove CTAs for a host-managed plan', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		// The server reports these as neither cancelable nor removable, but the CTA
+		// visibility here is driven by auto-renew state, so it needs the flag too.
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			is_auto_renew_enabled: true,
+			is_upgradable: false,
+			is_cancelable: false,
+			is_removable: false,
+			can_explicit_renew: false,
+			is_partner_managed: true,
+			is_host_managed: true,
+			partner_name: 'Bluehost',
+			partner_type: 'hosting_provider',
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect(
+			await screen.findByText( 'Host Managed Plan. Please contact Bluehost for details.' )
+		).toBeVisible();
+		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Remove plan/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'still renders a cancel CTA for an agency-managed plan', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			is_auto_renew_enabled: true,
+			is_upgradable: false,
+			is_partner_managed: true,
+			is_host_managed: false,
+			partner_name: 'Some Agency',
+			partner_type: 'a4a_agency',
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( /Cancel subscription/ ) ).toBeVisible();
 	} );
 } );

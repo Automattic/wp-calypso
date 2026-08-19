@@ -5,6 +5,7 @@ import {
 	GoogleWorkspaceSlugs,
 	JetpackSearchProducts,
 	PRODUCT_1GB_SPACE,
+	PRODUCT_STUDIO_CODE_AI_CREDITS,
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
@@ -19,6 +20,7 @@ import { isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
+import { getStudioCodeAiCreditsTitle } from './studio-code-ai-credits';
 import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase } from '@automattic/api-core';
 
@@ -91,6 +93,16 @@ export function isExpiredAndInGracePeriod( purchase: Purchase ): boolean {
  */
 export function isRemoved( purchase: Purchase ): boolean {
 	return 'active' !== purchase.subscription_status;
+}
+
+/**
+ * Returns true if the customer can refund, cancel or remove this purchase themselves.
+ *
+ * Defaults to true when the field is missing, so a server that predates it keeps
+ * today's behavior instead of locking every purchase.
+ */
+export function isManageableByUser( purchase: Purchase ): boolean {
+	return purchase.is_manageable_by_user !== false;
 }
 
 /**
@@ -292,6 +304,10 @@ export function isJetpackHoldingSitePurchase( purchase: Purchase ): boolean {
 	return purchase.is_attached_to_holding_site && purchase.product_type === 'jetpack';
 }
 
+export function isStudioCodeHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'studio_code';
+}
+
 /**
  * Whether site-scoped endpoints can be called for this purchase's `blog_id`.
  *
@@ -376,6 +392,16 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 			productName: purchase.product_name,
 			quantity: formatNumber( purchase.renewal_price_tier_usage_quantity ),
 		} );
+	}
+
+	if (
+		PRODUCT_STUDIO_CODE_AI_CREDITS === purchase.product_slug &&
+		purchase.renewal_price_tier_usage_quantity
+	) {
+		return getStudioCodeAiCreditsTitle(
+			purchase.product_name,
+			purchase.renewal_price_tier_usage_quantity
+		);
 	}
 
 	if (

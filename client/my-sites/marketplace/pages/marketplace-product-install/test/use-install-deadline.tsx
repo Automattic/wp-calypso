@@ -3,7 +3,7 @@
  */
 import { siteLatestAtomicTransferQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import React, { useState } from 'react';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { INSTALL_DEADLINE_MS, useInstallDeadline } from '../use-install-deadline';
@@ -90,6 +90,14 @@ describe( 'useInstallDeadline', () => {
 		expect( result.current.hasTimedOut ).toBe( true );
 	} );
 
+	it( 'reports a 404 lookup as an authoritative no-transfer result', async () => {
+		const { result } = renderDeadline();
+
+		await waitFor( () => expect( result.current.isTransferLookupComplete ).toBe( true ) );
+
+		expect( result.current.isTransferLookupNotFound ).toBe( true );
+	} );
+
 	it( 'stays disarmed when the wait is not running', async () => {
 		const { result } = renderDeadline( false );
 		await advance( INSTALL_DEADLINE_MS * 2 );
@@ -107,6 +115,7 @@ describe( 'useInstallDeadline', () => {
 		const { result } = renderDeadline();
 		await advance( 30000 );
 
+		expect( result.current.isTransferFresh ).toBe( true );
 		expect( result.current.hasTimedOut ).toBe( true );
 	} );
 

@@ -216,4 +216,29 @@ describe( 'PurchaseItem', () => {
 			screen.queryByText( 'You don’t have a payment method to renew this subscription' )
 		).toBeNull();
 	} );
+
+	describe( 'a purchase with no site of its own', () => {
+		const holdingSitePurchase = ( productType ) => ( {
+			product_slug: 'studio-code-ai-credits',
+			product_type: productType,
+			is_attached_to_holding_site: true,
+			subscription_status: 'active',
+		} );
+
+		test( 'should not warn about site access for Studio Code AI Credits', () => {
+			renderWithProvider(
+				<PurchaseItem purchase={ holdingSitePurchase( 'studio_code' ) } isDisconnectedSite />
+			);
+
+			expect( screen.queryByText( /no longer have access to this site/i ) ).toBeNull();
+		} );
+
+		test( 'should warn about site access for a product type with its own site', () => {
+			renderWithProvider(
+				<PurchaseItem purchase={ holdingSitePurchase( 'bundle' ) } isDisconnectedSite />
+			);
+
+			expect( screen.getByText( /no longer have access to this site/i ) ).toBeInTheDocument();
+		} );
+	} );
 } );

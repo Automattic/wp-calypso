@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import config from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -12,6 +11,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { applyMiddleware, createStore, type Reducer } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -34,6 +34,8 @@ let activationEmailFromProp: string | undefined;
 let signupFormProps: { userEmail?: string; notice?: unknown } = {};
 let mockHeldEmail: string | null = null;
 let mockSocialNotice: ReactNode = <div>That account already exists. Log in instead.</div>;
+// The account-step gate is the `treatment_post_account_creation` arm; `control` turns it off.
+let mockGateVariant = 'treatment_post_account_creation';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 
@@ -46,14 +48,15 @@ jest.mock( 'calypso/state/current-user/actions', () => ( {
 
 jest.mock( '@automattic/calypso-config', () => {
 	const actual = jest.requireActual( '@automattic/calypso-config' );
-	const enabledFlags = new Set< string >();
 	const configFn = ( key: string ) => actual( key );
-	Object.assign( configFn, actual, {
-		enabledFlags,
-		isEnabled: ( flag: string ) => enabledFlags.has( flag ) || actual.isEnabled( flag ),
-	} );
+	Object.assign( configFn, actual );
 	return configFn;
 } );
+
+jest.mock( 'calypso/lib/explat', () => ( {
+	...jest.requireActual( 'calypso/lib/explat' ),
+	useExperiment: jest.fn(),
+} ) );
 
 jest.mock( 'calypso/lib/partner-branding', () => ( { usePartnerBranding: jest.fn() } ) );
 jest.mock( '@wordpress/compose', () => ( {
@@ -74,6 +77,10 @@ jest.mock( '../handle-social-response', () => ( {
 jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 	__esModule: true,
 	// A stand-in whose button fires the real form's `goToNextStep` + `onCreateAccountSuccess`.
+	// CONTRACT: this encodes two behaviours of the real SignupFormSocialFirst that these tests
+	// depend on — it takes its email once on mount, and it calls `goToNextStep` before
+	// `onCreateAccountSuccess`. If the real form's callback order or email handling changes, update
+	// this stand-in to match; otherwise these tests pass while production is broken.
 	default: ( {
 		onCreateAccountSuccess,
 		goToNextStep,
@@ -126,7 +133,7 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 	MobileCompactTosNotice: () => null,
 } ) );
 
-const mockConfig = config as unknown as { enabledFlags: Set< string > };
+const mockUseExperiment = useExperiment as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
 const mockUseAccountCreationExperiment = useAccountCreationExperiment as unknown as jest.Mock;
 
@@ -176,7 +183,10 @@ describe( 'account step email verification gate', () => {
 	beforeEach( () => {
 		( useViewportMatch as unknown as jest.Mock ).mockReturnValue( false );
 		mockUserId++;
-		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
+		mockGateVariant = 'treatment_post_account_creation';
+		mockUseExperiment.mockImplementation( ( _name: string, opts?: { isEligible?: boolean } ) =>
+			opts?.isEligible ? [ false, { variationName: mockGateVariant } ] : [ false, null ]
+		);
 		mockUsePartnerBranding.mockReturnValue( {
 			hasCustomBranding: false,
 			partnerConfig: null,
@@ -196,20 +206,65 @@ describe( 'account step email verification gate', () => {
 		mockSocialNotice = <div>That account already exists. Log in instead.</div>;
 		// A test that fails before restoring them would otherwise time out every test after it.
 		jest.useRealTimers();
-		mockConfig.enabledFlags.clear();
 		localStorage.clear();
 		jest.clearAllMocks();
 		nock.cleanAll();
 	} );
 
-	it( 'asks for a link back to the flow only when the gate is on', async () => {
+	it( 'asks for a link back to the flow under either treatment, not control', async () => {
 		renderUser( makeLoggedOutStore() ).unmount();
 		expect( activationEmailFromProp ).toBe( 'onboarding-with-email-verification' );
 
-		mockConfig.enabledFlags.clear();
+		// Variant B doesn't gate the account step, but still needs the same link for the post-plan-selection gate.
+		activationEmailFromProp = undefined;
+		mockGateVariant = 'treatment_post_plan_selection';
+		renderUser( makeLoggedOutStore() ).unmount();
+		expect( activationEmailFromProp ).toBe( 'onboarding-with-email-verification' );
+
+		activationEmailFromProp = undefined;
+		mockGateVariant = 'control';
 		renderUser( makeLoggedOutStore() );
 
 		expect( activationEmailFromProp ).toBeUndefined();
+	} );
+
+	// The other half of the same enablement: the send is recorded on account creation under a
+	// treatment. This is the analytics companion to the activationEmailFrom prop above.
+	it( 'records the activation-email send on account creation under a treatment', async () => {
+		const user = userEvent.setup();
+		renderUser( makeLoggedOutStore() );
+
+		await user.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_sent',
+			{ flow: 'onboarding', is_resend: false }
+		);
+	} );
+
+	// Control gets the confirmation email like everyone, but the gate's own send-tracking is a
+	// treatment behaviour, so control records nothing here.
+	it( 'records no activation-email send on account creation under control', async () => {
+		mockGateVariant = 'control';
+		const user = userEvent.setup();
+		renderUser( makeLoggedOutStore() );
+
+		await user.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
+
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_sent',
+			expect.anything()
+		);
+	} );
+
+	// Variant B never opens the account-step gate: an unverified user sees the account form and the
+	// gate heading never appears (the gate moves to after plan selection).
+	it( 'shows the account form and never the gate under the post-plan-selection arm', async () => {
+		mockGateVariant = 'treatment_post_plan_selection';
+		renderUser( makeLoggedOutStore() );
+
+		expect( await screen.findByRole( 'button', { name: 'create-email-account' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
 	} );
 
 	// It belongs to the account the gate handed back, not to the step.
@@ -567,7 +622,11 @@ describe( 'account step email verification gate', () => {
 		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
 
 		expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
-		expect( document.querySelector( '.step-container-v2--user-mobile' ) ).not.toBeInTheDocument();
+		// The compact frame's own heading offers to start a site; its absence is the user-visible
+		// signal that we're on the standard account screen, not the mobile-compact one.
+		expect(
+			screen.queryByRole( 'heading', { name: 'Welcome to WordPress.com' } )
+		).not.toBeInTheDocument();
 	} );
 
 	// It is fixed and full-screen, so it would sit over the field.
@@ -741,21 +800,21 @@ describe( 'account step email verification gate', () => {
 		expect( confirmations ).toHaveLength( 1 );
 	} );
 
-	// Turning the flag off is not the user having confirmed anything. Recording it as one would
+	// A control assignment is not the user having confirmed anything. Recording it as one would
 	// also burn the attempt, so a real confirmation later would go unrecorded.
-	it( 'does not record a confirmation when the flag goes off mid-attempt', async () => {
+	it( 'does not record a confirmation when the arm goes control mid-attempt', async () => {
 		const shown = renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 		shown.unmount();
 		jest.clearAllMocks();
 
-		mockConfig.enabledFlags.clear();
+		mockGateVariant = 'control';
 		const off = renderUser( makeStore( false ) );
 		await waitFor( () => expect( recordTracksEvent ).not.toHaveBeenCalled() );
 		off.unmount();
 
-		// And the attempt is still there to be confirmed once the flag comes back.
-		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
+		// And the attempt is still there to be confirmed once the treatment comes back.
+		mockGateVariant = 'treatment_post_account_creation';
 		renderUser( makeStore( true ) );
 
 		await waitFor( () =>

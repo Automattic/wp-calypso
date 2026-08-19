@@ -4,6 +4,7 @@
 import { amToolProvider } from '../../abilities';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { showComponentAbility } from '../../abilities/show-component';
+import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
 import {
 	loadExternalProviders,
@@ -25,6 +26,11 @@ import type { UIMessage } from '@automattic/agenttic-client';
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,
 } );
+jest.mock( '../canvas-binding', () => ( {
+	...jest.requireActual( '../canvas-binding' ),
+	bindToOpenCanvas: jest.fn(),
+	getBlockingMove: jest.fn( () => null ),
+} ) );
 jest.mock( '../provider-checkpoints', () => ( {
 	...jest.requireActual( '../provider-checkpoints' ),
 	getProviderCheckpointRecords: jest.fn( () => [] ),
@@ -60,6 +66,19 @@ function createAbility( name: string ): Ability {
 		description: `${ name } description`,
 		category: 'test',
 	};
+}
+
+/**
+ * An ability list compared without pinning callback identity.
+ *
+ * The canvas guard wraps the callback of every ability it polices, which is
+ * orthogonal to what these tests are about — merging, dedupe, ordering and
+ * resilience. Everything else still compares deeply.
+ * @param abilities The abilities to normalize.
+ * @returns The abilities without their callbacks.
+ */
+function abilityShapes( abilities: Ability[] = [] ) {
+	return abilities.map( ( { callback, ...rest } ) => rest );
 }
 
 function createCheckpointReturn(
@@ -193,12 +212,14 @@ describe( 'loadExternalProviders', () => {
 
 		const providers = await loadExternalProviders();
 
-		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
-			restoreCheckpointAbility,
-			showComponentAbility,
-			createAbility( 'host/navigate' ),
-			createAbility( 'woocommerce/get-products' ),
-		] );
+		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
+			abilityShapes( [
+				restoreCheckpointAbility,
+				showComponentAbility,
+				createAbility( 'host/navigate' ),
+				createAbility( 'woocommerce/get-products' ),
+			] )
+		);
 		await expect(
 			providers.toolProvider?.executeAbility( 'woocommerce__get_products', { limit: 5 } )
 		).resolves.toEqual( { handledBy: 'woo' } );
@@ -223,11 +244,13 @@ describe( 'loadExternalProviders', () => {
 
 		const providers = await loadExternalProviders();
 
-		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
-			restoreCheckpointAbility,
-			showComponentAbility,
-			createAbility( 'shared/action' ),
-		] );
+		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
+			abilityShapes( [
+				restoreCheckpointAbility,
+				showComponentAbility,
+				createAbility( 'shared/action' ),
+			] )
+		);
 		await expect( providers.toolProvider?.executeAbility( 'shared/action', {} ) ).resolves.toEqual(
 			{
 				handledBy: 'first',
@@ -307,11 +330,13 @@ describe( 'loadExternalProviders', () => {
 
 		const providers = await loadExternalProviders();
 
-		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
-			restoreCheckpointAbility,
-			showComponentAbility,
-			createAbility( 'host/navigate' ),
-		] );
+		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
+			abilityShapes( [
+				restoreCheckpointAbility,
+				showComponentAbility,
+				createAbility( 'host/navigate' ),
+			] )
+		);
 		expect( consoleWarn ).toHaveBeenCalledWith(
 			'[AgentsManager] Failed to load abilities from provider:',
 			expect.any( Error )
@@ -778,12 +803,14 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 		editorAbilityRegistered = true;
 
-		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
-			restoreCheckpointAbility,
-			showComponentAbility,
-			createAbility( 'big-sky/apply-block-edits' ),
-			createAbility( 'wpcom/manage-site' ),
-		] );
+		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
+			abilityShapes( [
+				restoreCheckpointAbility,
+				showComponentAbility,
+				createAbility( 'big-sky/apply-block-edits' ),
+				createAbility( 'wpcom/manage-site' ),
+			] )
+		);
 		await expect(
 			providers.toolProvider?.executeAbility( 'big_sky__apply_block_edits', { updates: [] } )
 		).resolves.toEqual( { handledBy: 'big-sky' } );
@@ -800,6 +827,8 @@ describe( 'loadExternalProviders', () => {
 		} );
 		const secondReturn = createCheckpointReturn( {
 			hasCheckpoint: jest.fn( ( id: string ) => id === 'second-cp' ),
+			canSwapCheckpoint: jest.fn( ( id: string ) => id === 'second-cp' ),
+			swapCheckpoint: jest.fn( () => Promise.resolve() ),
 		} );
 		const firstHook = jest.fn( () => firstReturn );
 		const secondHook = jest.fn( () => secondReturn );
@@ -816,6 +845,9 @@ describe( 'loadExternalProviders', () => {
 		await checkpoint?.restoreCheckpoint( 'second-cp' );
 		expect( secondReturn.restoreCheckpoint ).toHaveBeenCalledWith( 'second-cp' );
 		expect( firstReturn.restoreCheckpoint ).not.toHaveBeenCalled();
+		expect( checkpoint?.canSwapCheckpoint?.( 'second-cp' ) ).toBe( true );
+		await checkpoint?.swapCheckpoint?.( 'second-cp' );
+		expect( secondReturn.swapCheckpoint ).toHaveBeenCalledWith( 'second-cp' );
 		checkpoint?.clearCheckpoint( 'second-cp' );
 		expect( secondReturn.clearCheckpoint ).toHaveBeenCalledWith( 'second-cp' );
 		expect( firstReturn.clearCheckpoint ).not.toHaveBeenCalled();
@@ -917,5 +949,66 @@ describe( 'mergeUseSuggestionsHooks', () => {
 			suggestions: [ { id: 'second', label: 'Second', prompt: 'Second prompt.' } ],
 			replaceEmptyViewSuggestions: true,
 		} );
+	} );
+} );
+
+describe( 'canvas guard wiring', () => {
+	// Drives the binding directly rather than through a mocked editor store: what
+	// is under test here is that the wrappers are actually applied to the providers
+	// `loadExternalProviders` hands back, not the state machine itself (covered in
+	// `canvas-binding.test.ts`).
+	const mockedBinding = jest.mocked( canvasBinding );
+
+	beforeEach( () => {
+		mockedBinding.getBlockingMove.mockReturnValue( null );
+		mockedBinding.bindToOpenCanvas.mockClear();
+	} );
+
+	// Both provider counts, because the loader assigns the merged tool provider on
+	// two separate paths and only one of them runs for a given surface. A guard
+	// applied on the multi-provider path alone would be inert wherever a single
+	// provider is registered — which is most editor surfaces.
+	it.each( [ 1, 2 ] )( 'refuses a moved canvas write with %i tool provider(s)', async ( count ) => {
+		mockedBinding.getBlockingMove.mockReturnValue( { from: 'About', to: 'Contact' } );
+		const executeAbility = jest.fn();
+		setAgentsManagerData( {
+			agentProviders: Array.from( { length: count }, ( _unused, index ) => ( {
+				toolProvider: {
+					getAbilities: jest.fn( () =>
+						Promise.resolve( [ createAbility( `big-sky/apply-block-edits-${ index }` ) ] )
+					),
+					executeAbility,
+				},
+			} ) ),
+		} );
+
+		const providers = await loadExternalProviders();
+		const result = await providers.toolProvider?.executeAbility( 'big_sky__apply_block_edits', {} );
+
+		expect( executeAbility ).not.toHaveBeenCalled();
+		expect( result ).toMatchObject( {
+			returnToAgent: true,
+			result: { success: false, error: 'editor_canvas_moved' },
+		} );
+	} );
+
+	it( 'binds to the open canvas when the client context is built', async () => {
+		const providerContext = {
+			url: 'https://x',
+			pathname: '/x',
+			search: '',
+			environment: 'wp-admin',
+		};
+		setAgentsManagerData( {
+			agentProviders: [ { contextProvider: { getClientContext: () => providerContext } } ],
+		} );
+
+		const providers = await loadExternalProviders();
+		const context = providers.contextProvider?.getClientContext();
+
+		expect( mockedBinding.bindToOpenCanvas ).toHaveBeenCalled();
+		// The binding adds nothing to the wire: it reads the canvas from the editor
+		// store, so what the server receives is exactly what the provider built.
+		expect( context ).toEqual( providerContext );
 	} );
 } );

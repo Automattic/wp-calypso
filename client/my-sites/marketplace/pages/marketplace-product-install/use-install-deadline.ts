@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import {
 	createRevertedTransferWatcher,
+	isRevertedTransferStatus,
 	transferStates,
 } from 'calypso/landing/stepper/utils/atomic-transfer-outcome';
 import { useInterval } from 'calypso/lib/interval';
@@ -26,7 +27,7 @@ const SETTLED_STATUSES: string[] = [
 	transferStates.RELOCATING_REVERT,
 ];
 
-const isSettled = ( status?: string ) => !! status && SETTLED_STATUSES.includes( status );
+export const isSettled = ( status?: string ) => !! status && SETTLED_STATUSES.includes( status );
 
 type HaltedOutcome = 'timeout' | 'transfer-failed';
 
@@ -54,7 +55,15 @@ export type InstallWaitDiagnostics = {
  * we have watched that same transfer id in flight. An `error` is attributed the same way, or by
  * having started after this wait did.
  */
-export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabled: boolean } ): {
+export function useInstallDeadline( {
+	siteId,
+	enabled,
+	isTransferFromAttempt,
+}: {
+	siteId: number;
+	enabled: boolean;
+	isTransferFromAttempt?: ( transfer: AtomicTransfer ) => boolean;
+} ): {
 	hasTimedOut: boolean;
 	hasTransferFailed: boolean;
 	// The transfer this wait is about, as the endpoint last reported it: its raw status and when it
@@ -63,6 +72,10 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 	transferStatus: string | null;
 	transferStartedAt: number | null;
 	diagnostics: InstallWaitDiagnostics;
+	transfer: AtomicTransfer | undefined;
+	isTransferFresh: boolean;
+	isTransferLookupComplete: boolean;
+	isTransferLookupNotFound: boolean;
 } {
 	const [ now, setNow ] = useState( () => Date.now() );
 	// Null while the wait is not running. The clock is stamped when it starts, never while it is
@@ -102,7 +115,9 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 	// deadline the moment this mounts — latching a timeout on an install that has since completed.
 	const {
 		data: transfer,
+		error: transferError,
 		isFetchedAfterMount,
+		isError: isTransferError,
 		isSuccess,
 	} = useQuery( {
 		...siteLatestAtomicTransferQuery( siteId ),
@@ -112,8 +127,9 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 			// A settled record only ends the poll once it is this wait's. Otherwise it is the previous
 			// attempt's, still the site's latest because ours has not been created yet.
 			const isOurs =
-				latest?.atomic_transfer_id !== undefined &&
-				latest.atomic_transfer_id === seenInFlightId.current;
+				!! latest &&
+				( latest.atomic_transfer_id === seenInFlightId.current ||
+					isTransferFromAttempt?.( latest ) );
 			return isSettled( latest?.status ) && isOurs ? false : POLL_MS;
 		},
 		// A site that has never transferred answers 404, which is an answer rather than an outage.
@@ -143,11 +159,20 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 			return;
 		}
 		const startedDuringThisWait = Date.parse( transfer.created_at ) >= waitBeganAt;
-		const isOurs = transfer.atomic_transfer_id === seenInFlightId.current || startedDuringThisWait;
-		if ( reverted || ( transfer.status === transferStates.ERROR && isOurs ) ) {
+		const isKnownAttempt =
+			isFetchedAfterMount && isSuccess && !! isTransferFromAttempt?.( transfer );
+		const isOurs =
+			transfer.atomic_transfer_id === seenInFlightId.current ||
+			startedDuringThisWait ||
+			isKnownAttempt;
+		if (
+			reverted ||
+			( transfer.status === transferStates.ERROR && isOurs ) ||
+			( isRevertedTransferStatus( transfer.status ) && isKnownAttempt )
+		) {
 			setFailureSeen( true );
 		}
-	}, [ transfer, waitBeganAt ] );
+	}, [ transfer, waitBeganAt, isFetchedAfterMount, isSuccess, isTransferFromAttempt ] );
 
 	// A live transfer is the thing being waited on, so it owns the clock; its start survives a
 	// refresh where a mount-anchored timer would not.
@@ -201,5 +226,12 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 		transferStatus: isOurTransfer ? transfer.status : null,
 		transferStartedAt: isOurTransfer ? Date.parse( transfer.created_at ) : null,
 		diagnostics,
+		transfer,
+		isTransferFresh: isFetchedAfterMount && isSuccess,
+		isTransferLookupComplete: isFetchedAfterMount,
+		isTransferLookupNotFound:
+			isFetchedAfterMount &&
+			isTransferError &&
+			( transferError as { status?: number } )?.status === 404,
 	};
 }

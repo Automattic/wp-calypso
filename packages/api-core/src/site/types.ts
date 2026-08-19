@@ -29,10 +29,15 @@ export interface SiteCapabilities {
 	view_stats: boolean;
 }
 
+interface DifmLiteSiteOptions {
+	is_website_content_submitted?: boolean;
+}
+
 export interface SiteOptions {
 	admin_url: string;
 	apm_enabled?: boolean;
 	created_at?: string;
+	difm_lite_site_options?: DifmLiteSiteOptions;
 	is_domain_only?: boolean;
 	is_redirect?: boolean;
 	is_difm_lite_in_progress?: boolean;
@@ -53,6 +58,7 @@ export interface SiteOptions {
 	unmapped_url?: string;
 	wordads?: boolean;
 	woocommerce_is_active?: boolean;
+	wpcom_admin_interface?: string;
 	wpcom_ai_launchpad_enabled?: boolean;
 	wpcom_ai_launchpad_dismissed?: boolean;
 	wpcom_ai_launchpad_completed?: boolean;

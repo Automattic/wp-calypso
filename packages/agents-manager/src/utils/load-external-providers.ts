@@ -14,6 +14,7 @@
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import { amToolProvider, getAmCheckpointContext } from '../abilities';
 import { findAbilityByName } from '../abilities/ability-name';
+import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import {
@@ -127,6 +128,8 @@ export type UseCheckpointReturn = {
 	setCheckpoint: ( id: string, keys?: string[], metadata?: Record< string, unknown > ) => void;
 	addCheckpointKeys: ( id: string, keys: string[] ) => void;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
+	canSwapCheckpoint?: ( id: string ) => boolean | undefined;
+	swapCheckpoint?: ( id: string ) => Promise< void >;
 	addNewPageToCheckpoint: ( pageId: string ) => void;
 	addPageRenameToCheckpoint: ( pageId: string, oldTitle: string, newTitle: string ) => void;
 	addPageRemovalToCheckpoint: (
@@ -280,6 +283,14 @@ export function mergeUseCheckpointHooks(
 				instances.some( ( instance ) => instance?.hasCheckpoint?.( id ) ),
 			restoreCheckpoint: async ( id: string ) => {
 				await findOwner( id )?.restoreCheckpoint?.( id );
+			},
+			canSwapCheckpoint: ( id: string ) => findOwner( id )?.canSwapCheckpoint?.( id ),
+			swapCheckpoint: async ( id: string ) => {
+				const owner = findOwner( id );
+				if ( owner?.canSwapCheckpoint?.( id ) !== true || ! owner.swapCheckpoint ) {
+					throw new Error( `Checkpoint "${ id }" does not support swapping.` );
+				}
+				await owner.swapCheckpoint( id );
 			},
 			clearCheckpoint: ( id: string ) => {
 				for ( const instance of instances ) {
@@ -710,7 +721,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 	}
 
-	const mergedContextProvider = withAmCheckpoints( mergeContextProviders( allContextProviders ) );
+	const mergedContextProvider = withCanvasBinding(
+		withAmCheckpoints( mergeContextProviders( allContextProviders ) )
+	);
 	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
 	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );
 
@@ -776,6 +789,11 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			},
 		};
 	}
+
+	// After the branch, deliberately: the single-provider path above assigns
+	// `allToolProviders[ 0 ]` straight through, so a guard applied inside the
+	// multi-provider closure would silently not exist on those surfaces.
+	mergedToolProvider = withCanvasGuard( mergedToolProvider );
 
 	// Merge transformMessages: compose in registration order, so each provider
 	// rewrites what the previous one produced. Unlike the singleton exports this

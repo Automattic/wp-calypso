@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { getBuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 import { getSafeEditorUrl } from './editor-url';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
@@ -13,6 +14,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const siteIdentifier = query.get( 'siteId' ) || query.get( 'siteSlug' );
 	const editorUrl = getSafeEditorUrl( query.get( 'editorUrl' ) );
 	const specId = query.get( 'specId' );
+	const graph = getBuildWowGraph( query );
 	// Fallback checklist only: the server-computed ui.steps from the status
 	// endpoint is authoritative (labels included, already localized). This
 	// list covers the moments before the first response arrives, and backends
@@ -28,7 +30,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		],
 		[ translate ]
 	);
-	const state = useSiteGeneration( { siteIdentifier, editorUrl, specId, steps } );
+	const state = useSiteGeneration( { siteIdentifier, editorUrl, specId, graph, steps } );
 
 	const reload = () => {
 		window.location.reload();

@@ -237,16 +237,6 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 .x-nav-item__wide {
 	display: none;
 	position: relative;
-
-	&:hover,
-	&:focus-within {
-		> .x-dropdown-content {
-			opacity: 1;
-			pointer-events: all;
-			transform: translateY(0) scale(1);
-			transition: all 450ms cubic-bezier(0.5, 1, 0.89, 1);
-		}
-	}
 }
 
 button.x-nav-link.x-link {
@@ -507,12 +497,6 @@ $x-dropdown-item-line-height: 19px;
 		width: 36px;
 		z-index: -1;
 	}
-}
-
-.x-dropdown-content-separator {
-	height: 1px;
-	background: $x-color-content-separator;
-	margin: 9px 0 12px;
 }
 
 .x-dropdown-link.x-dropdown-link {

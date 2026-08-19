@@ -8,6 +8,7 @@ import themesReducer from 'calypso/state/themes/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useProductInstall } from '../use-product-install';
+import type { AtomicTransfer } from '@automattic/api-core';
 
 // useProductInstall reads several section-lazy slices that the bare test store doesn't register.
 const reducers = {
@@ -18,12 +19,31 @@ const reducers = {
 };
 
 // The deadline hook has its own suite; here we only assert how this hook arms it.
-type DeadlineArgs = { siteId: number; productSlug: string; enabled: boolean };
+type DeadlineArgs = {
+	siteId: number;
+	enabled: boolean;
+	isTransferFromAttempt?: ( transfer: AtomicTransfer ) => boolean;
+};
+
+const diagnostics = {
+	has_transfer: false,
+	transfer_status: null,
+	transfer_age_seconds: null,
+	transfer_is_stuck: null,
+	transfer_in_lossless_revert: null,
+	waited_seconds: 0,
+	anchored_to: 'wait_start' as const,
+	deadline_seconds: 300,
+};
 
 const deadlineVerdict =
 	( verdict: { hasTimedOut: boolean; hasTransferFailed: boolean } ) => ( args: DeadlineArgs ) => ( {
 		...verdict,
 		receivedEnabled: args.enabled,
+		diagnostics,
+		transfer: undefined,
+		isTransferFresh: false,
+		isTransferLookupComplete: true,
 	} );
 
 const noDeadlineVerdict = deadlineVerdict( { hasTimedOut: false, hasTransferFailed: false } );

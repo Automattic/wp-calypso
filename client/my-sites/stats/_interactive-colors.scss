@@ -1,17 +1,8 @@
-// Interactive UI in Stats follows the colour WordPress publishes for it, `--wp-admin-theme-color`,
-// rather than `--color-accent` — wp-admin's decorative `$highlight-color`, which fails WCAG AA on
-// several admin colour schemes.
+// Interactive UI in Stats follows the colour WordPress publishes for it, `--wp-admin-theme-color`, rather than `--color-accent` — wp-admin's decorative `$highlight-color`, which fails WCAG AA on several admin colour schemes.
 //
-// This lives in a mixin because it is applied at more than one root: the Stats mount, and the
-// document-root wrapper that Odyssey portals its popovers and dialogs into.
+// This lives in a mixin because four stylesheets across two apps apply it, each loading its CSS separately: the Stats mount and the overlays it portals to, Store Stats under `.woocommerce`, and — in Odyssey — the dashboard widget's own entry point and the modal overlay on `body`.
 //
-// @wordpress/components resolves its accent as
-// `var(--wp-components-color-accent, var(--wp-admin-theme-color, …))`, and
-// client/assets/stylesheets/_wp-components-overrides.scss pins that first variable to
-// `--color-accent` directly on every button. Without re-pointing it, correcting
-// `--wp-admin-theme-color` has no visible effect: the accent shadows it. The button rules must
-// therefore target the button itself, not the root, because the declaration they override also
-// sits on the button.
+// @wordpress/components resolves its accent as `var(--wp-components-color-accent, var(--wp-admin-theme-color, …))`, and client/assets/stylesheets/_wp-components-overrides.scss pins that first variable to `--color-accent` directly on every button. Without re-pointing it, correcting `--wp-admin-theme-color` has no visible effect: the accent shadows it. The button rules must therefore target the button itself, not the root, because the declaration they override also sits on the button.
 @mixin stats-interactive-colors {
 	.components-button.is-primary:not(.is-destructive) {
 		--wp-components-color-accent: var(--wp-admin-theme-color);

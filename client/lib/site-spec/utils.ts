@@ -116,6 +116,11 @@ export interface SiteSpecConfig {
 		className?: string; // Custom class on root container
 		cssVariables?: Record< string, string >; // Arbitrary CSS custom props
 	};
+	features?: {
+		// `true` shows the site brief dialog in place of the basic spec preview;
+		// `'next'` also shows its socials/attachments sections.
+		siteBrief?: boolean | 'next';
+	};
 	tosConfig?: ToSConfig;
 	placeholder?: string | string[];
 	tracking?: {
@@ -385,8 +390,14 @@ export function getBuildWowSiteSpecConfig( {
 		...( source ? { source } : {} ),
 	} );
 
+	const defaultConfig = getDefaultSiteSpecConfig();
+
 	return {
-		...getDefaultSiteSpecConfig(),
+		...defaultConfig,
 		buildSiteUrl: `${ buildSiteUrl }${ buildSiteUrl.includes( '?' ) ? '&' : '?' }spec_id=`,
+		features: {
+			...defaultConfig.features,
+			siteBrief: 'next',
+		},
 	};
 }

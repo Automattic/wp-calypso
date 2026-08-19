@@ -3,17 +3,149 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import type { TaskUpdate } from '@automattic/agenttic-client';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { ComponentProps } from 'react';
 
 const mockUseAgentChat = jest.fn();
+const mockUpdateSessionId = jest.fn();
+let mockManagerHasAgent = true;
+let mockAgentChatConfig: { onTaskUpdate?: ( update: TaskUpdate ) => Promise< void > } | undefined;
+let mockConversationConfig:
+	| {
+			onSuccess?: (
+				messages: Array< {
+					messageId: string;
+					role: 'user' | 'agent';
+					parts: Array< { type: 'text'; text: string } >;
+					kind: 'message';
+				} >,
+				sessionId: string
+			) => void;
+	  }
+	| undefined;
 const mockUseRegenerateAction = jest.fn();
 const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
 const mockIsReaderChatAgent = jest.fn();
+let mockAgentConfig: { agentId: string; sessionId?: string } = {
+	agentId: 'wp-orchestrator',
+};
+let mockTabSessionId: string | undefined = 'session-id';
+let mockSiteKey = 'site-1';
+let mockCurrentUserId: number | undefined = 1;
+const mockInvalidateCheckpointAction = jest.fn();
+const mockInvalidatedCheckpointIds = new Set< string >();
+const mockRevertedCheckpointIds = new Set< string >();
+const mockSetCheckpointActionReverted = jest.fn(
+	( checkpointId: string, isReverted: boolean ): boolean => {
+		const wasReverted = mockRevertedCheckpointIds.has( checkpointId );
+		if ( isReverted ) {
+			mockRevertedCheckpointIds.add( checkpointId );
+		} else {
+			mockRevertedCheckpointIds.delete( checkpointId );
+		}
+		return wasReverted !== isReverted;
+	}
+);
 let mockSelectedBlockType: string | undefined;
 let mockBlockEditorStoreThrows = false;
+let mockOpenPost: { id?: number | string; type?: string; title?: string } | null = null;
+
+let mockHasEditorRedo = false;
+let mockEditorBlocks: unknown[] = [];
+const mockDataStoreSubscribers = new Set< () => void >();
+
+const mockSelectDataStore = ( storeName: string ) => {
+	if ( storeName === 'core/editor' ) {
+		return {
+			hasEditorRedo: () => mockHasEditorRedo,
+			// The open canvas, read by the component's own `useSelect` and by
+			// `canvas-binding` through `select` — the same object, so the two can
+			// never disagree about what is open.
+			getCurrentPostId: () => mockOpenPost?.id,
+			getCurrentPostType: () => mockOpenPost?.type,
+			getEditedPostAttribute: ( attribute: string ) =>
+				attribute === 'title' ? mockOpenPost?.title : undefined,
+		};
+	}
+	if ( storeName === 'core/block-editor' ) {
+		if ( mockBlockEditorStoreThrows ) {
+			throw new Error( 'Block editor store unavailable' );
+		}
+		return {
+			getSelectedBlock: () => ( mockSelectedBlockType ? { name: mockSelectedBlockType } : null ),
+			getBlocks: () => mockEditorBlocks,
+		};
+	}
+	return {};
+};
+
+function mockGetCheckpointIdForMessage( message: {
+	content?: Array< { text?: string } >;
+} ): string | null {
+	try {
+		const parsed = JSON.parse( message.content?.[ 0 ]?.text ?? '' );
+		if (
+			parsed.tool_id !== 'big_sky__apply_block_edits' &&
+			parsed.tool_id !== 'wpcom__update_block_content'
+		) {
+			return null;
+		}
+		return parsed.data?.calypsoCheckpointId ?? parsed.tool_call_id ?? null;
+	} catch {
+		return null;
+	}
+}
+
+const mockCheckpointActions = () => {
+	let getCheckpointActionState:
+		| ( ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden' )
+		| undefined;
+	const getActions = ( message: { content?: Array< { text?: string } > } ) => {
+		const checkpointId = mockGetCheckpointIdForMessage( message );
+		if ( ! checkpointId ) {
+			return [];
+		}
+
+		const actionState = mockInvalidatedCheckpointIds.has( checkpointId )
+			? 'hidden'
+			: getCheckpointActionState?.( checkpointId ) ?? 'enabled';
+		const canAct = actionState === 'enabled';
+		const isReverted = mockRevertedCheckpointIds.has( checkpointId );
+		const showDisabledAction = actionState === 'disabled';
+		let label = canAct ? 'Updated and Undo' : 'Updated';
+		if ( isReverted ) {
+			label = canAct ? 'Reverted and Redo' : 'Reverted';
+		}
+		return [
+			{
+				type: 'component',
+				id: 'checkpoint',
+				label,
+				component: () => null,
+				componentProps: {
+					initiallyReverted: isReverted,
+					...( showDisabledAction && { disabled: true } ),
+					...( canAct && { onUndo: jest.fn(), onRedo: jest.fn() } ),
+				},
+				order: 1,
+			},
+		];
+	};
+	mockUseCheckpointAction.mockImplementation(
+		(
+			_registerMessageActions: unknown,
+			_checkpoint: unknown,
+			nextGetCheckpointActionState?: ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden'
+		) => {
+			getCheckpointActionState = nextGetCheckpointActionState;
+			return getActions;
+		}
+	);
+};
+
 const mockAgentChat = jest.fn(
 	( {
 		onSuggestionClick,
@@ -147,39 +279,66 @@ jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
 		getAgentManager: () => ( {
-			updateSessionId: jest.fn(),
+			updateSessionId: mockUpdateSessionId,
+			hasAgent: () => mockManagerHasAgent,
 		} ),
-		useAgentChat: () => mockUseAgentChat(),
+		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
+			mockAgentChatConfig = config;
+			return mockUseAgentChat();
+		},
 	} ),
 	{ virtual: true }
 );
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: ( mapSelect: ( select: ( storeName: string ) => object ) => unknown ) =>
-		mapSelect( ( storeName: string ) => {
-			if ( storeName === 'core/block-editor' ) {
-				if ( mockBlockEditorStoreThrows ) {
-					throw new Error( 'Block editor store unavailable' );
-				}
-				return {
-					getSelectedBlock: () =>
-						mockSelectedBlockType ? { name: mockSelectedBlockType } : null,
+jest.mock( '@wordpress/data', () => {
+	const { useEffect, useReducer, useRef } = jest.requireActual< typeof import('react') >( 'react' );
+
+	return {
+		select: ( storeName: string ) => mockSelectDataStore( storeName ),
+		useSelect: ( mapSelect: ( select: ( storeName: string ) => object ) => unknown ) => {
+			const selectorRef = useRef( mapSelect );
+			selectorRef.current = mapSelect;
+			const selectedValue = mapSelect( mockSelectDataStore );
+			const selectedValueRef = useRef( selectedValue );
+			selectedValueRef.current = selectedValue;
+			const [ , forceRender ] = useReducer( ( count: number ) => count + 1, 0 );
+
+			useEffect( () => {
+				const updateSelectedValue = () => {
+					const nextValue = selectorRef.current( mockSelectDataStore );
+					if ( ! Object.is( selectedValueRef.current, nextValue ) ) {
+						selectedValueRef.current = nextValue;
+						forceRender();
+					}
 				};
-			}
-			return {};
-		} ),
-} ) );
+				mockDataStoreSubscribers.add( updateSelectedValue );
+				return () => {
+					mockDataStoreSubscribers.delete( updateSelectedValue );
+				};
+			}, [] );
+
+			return selectedValue;
+		},
+	};
+} );
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( 'react-router-dom', () => ( {
 	useNavigate: () => jest.fn(),
 } ) );
-jest.mock( '../../contexts', () => ( {
-	useAgentsManagerContext: () => ( {
-		agentConfig: { agentId: 'wp-orchestrator' },
-		getActiveSessionId: () => 'session-id',
-		siteKey: 'site-1',
-	} ),
-} ) );
+jest.mock( '../../contexts', () => {
+	const { saveSessionId } = jest.requireActual( '../../utils/agent-session' );
+	return {
+		useAgentsManagerContext: () => ( {
+			agentConfig: {
+				...mockAgentConfig,
+				onSessionIdChange: ( sessionId: string ) => saveSessionId( sessionId, 'wp-orchestrator' ),
+			},
+			getTabSessionId: () => mockTabSessionId ?? '',
+			siteKey: mockSiteKey,
+			currentUser: mockCurrentUserId === undefined ? undefined : { ID: mockCurrentUserId },
+		} ),
+	};
+} );
 jest.mock( '../../hooks/custom-actions', () => ( {
 	useRegisterCustomActions: () => {},
 } ) );
@@ -188,11 +347,22 @@ jest.mock( '../../utils/tracks', () => ( {
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
 jest.mock( '../../hooks/use-abilities-registration', () => () => {} );
-jest.mock( '../../hooks/use-conversation', () => () => mockUseConversation() );
-jest.mock( '../../hooks/use-save-new-chat-route', () => () => {} );
+jest.mock( '../../hooks/use-conversation', () => ( config: typeof mockConversationConfig ) => {
+	mockConversationConfig = config;
+	return mockUseConversation( config );
+} );
 jest.mock( '../../hooks/use-checkpoint-action', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockUseCheckpointAction( ...args ),
+	getCheckpointIdForMessage: mockGetCheckpointIdForMessage,
+	isCheckpointActionInvalidated: ( checkpointId: string ) =>
+		mockInvalidatedCheckpointIds.has( checkpointId ),
+	invalidateCheckpointAction: ( checkpointId: string ) => {
+		mockInvalidatedCheckpointIds.add( checkpointId );
+		mockInvalidateCheckpointAction( checkpointId );
+	},
+	setCheckpointActionReverted: ( checkpointId: string, isReverted: boolean ) =>
+		mockSetCheckpointActionReverted( checkpointId, isReverted ),
 } ) );
 jest.mock( '../../hooks/use-feedback-action', () => () => ( {
 	showFeedbackInput: false,
@@ -209,10 +379,19 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
-jest.mock( '../../utils/agent-session', () => ( { markSessionUsed: jest.fn() } ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
 	default: ( { messages }: { messages: unknown[] } ) => messages,
+	isContextOnlyMessage: ( message: {
+		context?: { flags?: { context_only?: boolean } };
+		content?: Array< { type?: string; data?: { flags?: { context_only?: boolean } } } >;
+	} ) =>
+		message.context?.flags?.context_only === true ||
+		message.content?.some(
+			( content ) =>
+				content.type === 'context' ||
+				( content.type === 'data' && content.data?.flags?.context_only === true )
+		),
 } ) );
 jest.mock( '../../utils/external-context', () => ( {
 	consumeNextMessageExternalContextEntries: jest.fn(),
@@ -222,14 +401,20 @@ jest.mock( '../../utils/external-context', () => ( {
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatAgent: () => mockIsReaderChatAgent(),
 } ) );
-jest.mock( '../../utils/persist-last-activity', () => ( {
-	persistLastActivity: jest.fn(),
-} ) );
 jest.mock( '../agent-chat', () => ( {
 	__esModule: true,
 	default: ( props: unknown ) => mockAgentChat( props as Parameters< typeof mockAgentChat >[ 0 ] ),
 } ) );
 
+import { getSessionId } from '../../utils/agent-session';
+import {
+	bindToNavigationTarget,
+	bindToOpenCanvas,
+	blockCurrentRequest,
+	clearCanvasBinding,
+	getBlockingMove,
+	startNewUserRequest,
+} from '../../utils/canvas-binding';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
 
@@ -310,6 +495,114 @@ const showComponentMessage = ( id: string, content: string = SHOW_COMPONENT_CONT
 	showIcon: true,
 } );
 
+const createCheckpointMessage = (
+	id: string,
+	checkpointId: string,
+	changeType?: 'text-content'
+) => ( {
+	id,
+	role: 'agent',
+	content: [
+		{
+			type: 'text',
+			text: JSON.stringify( {
+				tool_id: 'big_sky__apply_block_edits',
+				tool_call_id: checkpointId,
+				data: {
+					result: {
+						success: true,
+						outcome: 'updated',
+						...( changeType && { changeType } ),
+					},
+				},
+			} ),
+		},
+	],
+	timestamp: 1,
+} );
+
+const createJetpackCheckpointResult = ( checkpointId: string ) =>
+	JSON.stringify( {
+		tool_id: 'wpcom__update_block_content',
+		tool_call_id: checkpointId,
+		data: {
+			result: {
+				success: true,
+				outcome: 'updated',
+				message: 'Updated the selected block.',
+			},
+			followUpTasks: false,
+		},
+	} );
+
+const createWorkingCheckpointUpdate = (
+	taskId: string,
+	checkpointResult: string
+): TaskUpdate => ( {
+	id: taskId,
+	status: { state: 'working' },
+	text: checkpointResult,
+	final: false,
+	kind: 'status',
+} );
+
+const createCompletedCheckpointUpdate = ( taskId: string, messageId: string ): TaskUpdate => ( {
+	id: taskId,
+	status: {
+		state: 'completed',
+		message: {
+			messageId,
+			role: 'agent',
+			kind: 'message',
+			parts: [],
+		},
+	},
+	text: 'The paragraph has been updated.',
+	final: true,
+	kind: 'status',
+} );
+
+const createSwappableCheckpoint = () => ( {
+	getLastEditorState: jest.fn(),
+	setCheckpoint: jest.fn(),
+	addCheckpointKeys: jest.fn(),
+	restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+	canSwapCheckpoint: jest.fn().mockReturnValue( true ),
+	swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+	addNewPageToCheckpoint: jest.fn(),
+	addPageRenameToCheckpoint: jest.fn(),
+	addPageRemovalToCheckpoint: jest.fn(),
+	getLatestUserMessageId: jest.fn(),
+	clearCheckpoint: jest.fn(),
+	hasCheckpoint: jest.fn().mockReturnValue( true ),
+} );
+
+const getDisplayedCheckpointAction = ( messageId: string ) => {
+	const messages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+		id: string;
+		actions?: Array< {
+			id: string;
+			label?: string;
+			componentProps?: Record< string, unknown >;
+		} >;
+	} >;
+	return messages
+		.find( ( message ) => message.id === messageId )
+		?.actions?.find( ( action ) => action.id === 'checkpoint' );
+};
+
+const getDisplayedMessage = ( messageId: string ) => {
+	const messages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+		disabled?: boolean;
+		id: string;
+	} >;
+	const message = messages.find( ( displayedMessage ) => displayedMessage.id === messageId );
+	if ( ! message ) {
+		throw new Error( `Expected message ${ messageId } to be displayed.` );
+	}
+	return message;
+};
+
 const countShowComponentMessages = () => {
 	const messages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
 		content?: Array< { text?: string } >;
@@ -337,8 +630,50 @@ describe( 'OrchestratorChat', () => {
 		mockUseAgentChat.mockReturnValue( agentChatReturn() );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
 		mockIsReaderChatAgent.mockReturnValue( false );
+		mockAgentConfig = { agentId: 'wp-orchestrator' };
+		mockTabSessionId = 'session-id';
+		mockSiteKey = 'site-1';
+		mockCurrentUserId = 1;
 		mockSelectedBlockType = undefined;
 		mockBlockEditorStoreThrows = false;
+		sessionStorage.clear();
+		mockManagerHasAgent = true;
+		mockHasEditorRedo = false;
+		mockOpenPost = null;
+		mockEditorBlocks = [];
+		mockDataStoreSubscribers.clear();
+		mockInvalidatedCheckpointIds.clear();
+		mockRevertedCheckpointIds.clear();
+		mockAgentChatConfig = undefined;
+		mockConversationConfig = undefined;
+	} );
+
+	it( 'ignores a conversation result for a discarded agent', () => {
+		mockManagerHasAgent = false;
+		render( chat() );
+
+		const { onSuccess } = mockUseConversation.mock.calls.at( -1 )![ 0 ] as {
+			onSuccess: ( messages: unknown[], sessionId: string ) => void;
+		};
+		act( () => {
+			onSuccess( [], 'canonical-session-id' );
+		} );
+
+		expect( mockUpdateSessionId ).not.toHaveBeenCalled();
+		expect( getSessionId( 'wp-orchestrator' ) ).toBe( '' );
+	} );
+
+	it( 'saves the server’s canonical session ID as the tab session', () => {
+		render( chat() );
+
+		const { onSuccess } = mockUseConversation.mock.calls.at( -1 )![ 0 ] as {
+			onSuccess: ( messages: unknown[], sessionId: string ) => void;
+		};
+		act( () => {
+			onSuccess( [], 'canonical-session-id' );
+		} );
+
+		expect( getSessionId( 'wp-orchestrator' ) ).toBe( 'canonical-session-id' );
 	} );
 
 	it( 'dispatches the inline suggestion event when an Agenttic suggestion is clicked', () => {
@@ -1180,6 +1515,1589 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
+	it( 'hides checkpoint controls and dims the edit message after a later user message', () => {
+		const checkpointMessage = createCheckpointMessage( 'agent-checkpoint', 'history-checkpoint' );
+		mockCheckpointActions();
+		const initialMessages = [ userMessage, checkpointMessage ];
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { messages: initialMessages } ) );
+		const view = render( chat() );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBeUndefined();
+
+		const contextOnlyMessage = {
+			id: 'context-only',
+			role: 'user',
+			content: [ { type: 'context' } ],
+			timestamp: 2,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ ...initialMessages, contextOnlyMessage ] } )
+		);
+		view.rerender( chat() );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBeUndefined();
+
+		const nextUserMessage = {
+			id: 'user-2',
+			role: 'user',
+			content: [ { type: 'text', text: 'Make another edit' } ],
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ ...initialMessages, contextOnlyMessage, nextUserMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toMatchObject( {
+			disabled: true,
+		} );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBe( true );
+		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
+	} );
+
+	it( 'dims a superseded streamed checkpoint message when its action is already hidden', async () => {
+		mockCheckpointActions();
+		const view = render( chat() );
+		const checkpointId = 'hidden-streamed-checkpoint';
+		const taskId = 'task-hidden-streamed-checkpoint';
+		const finalMessageId = 'agent-hidden-streamed-checkpoint';
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.(
+				createWorkingCheckpointUpdate( taskId, createJetpackCheckpointResult( checkpointId ) )
+			);
+			await mockAgentChatConfig?.onTaskUpdate?.(
+				createCompletedCheckpointUpdate( taskId, finalMessageId )
+			);
+		} );
+
+		const finalMessage = {
+			id: finalMessageId,
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 2,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBeUndefined();
+		mockInvalidatedCheckpointIds.add( checkpointId );
+
+		const nextUserMessage = {
+			id: 'user-after-hidden-checkpoint',
+			role: 'user',
+			content: [ { type: 'text', text: 'What did you change?' } ],
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [ userMessage, finalMessage, nextUserMessage ],
+			} )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.label ).toBe( 'Updated' );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).not.toHaveProperty(
+			'disabled'
+		);
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).not.toHaveProperty(
+			'onUndo'
+		);
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBe( true );
+		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
+	} );
+
+	it( 'dims streamed final prose when its checkpoint action is unavailable', async () => {
+		mockUseCheckpointAction.mockReturnValue( () => [] );
+		const view = render( chat() );
+		const taskId = 'task-unavailable-streamed-checkpoint';
+		const finalMessageId = 'agent-unavailable-streamed-checkpoint';
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.(
+				createWorkingCheckpointUpdate(
+					taskId,
+					createJetpackCheckpointResult( 'unavailable-streamed-checkpoint' )
+				)
+			);
+			await mockAgentChatConfig?.onTaskUpdate?.(
+				createCompletedCheckpointUpdate( taskId, finalMessageId )
+			);
+		} );
+
+		const finalMessage = {
+			id: finalMessageId,
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 2,
+		};
+		const nextUserMessage = {
+			id: 'user-after-unavailable-streamed-checkpoint',
+			role: 'user',
+			content: [ { type: 'text', text: 'What did you change?' } ],
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage, nextUserMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id ) ).toBeUndefined();
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBe( true );
+		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
+	} );
+
+	it( 'dims a persisted raw checkpoint message after a later user message', () => {
+		const persistedCheckpointMessage = {
+			id: 'agent-persisted-checkpoint',
+			role: 'agent' as const,
+			content: [
+				{ type: 'text' as const, text: createJetpackCheckpointResult( 'persisted-checkpoint' ) },
+			],
+			timestamp: 2,
+		};
+		const nextUserMessage = {
+			id: 'user-after-persisted-checkpoint',
+			role: 'user',
+			content: [ { type: 'text', text: 'What did you change?' } ],
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [ userMessage, persistedCheckpointMessage, nextUserMessage ],
+			} )
+		);
+
+		render( chat() );
+
+		expect( getDisplayedMessage( persistedCheckpointMessage.id ).disabled ).toBe( true );
+		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
+	} );
+
+	it( 'dims a persisted checkpoint action after a later user message', () => {
+		const persistedCheckpointMessage = {
+			id: 'agent-persisted-checkpoint-action',
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 2,
+			actions: [
+				{
+					type: 'component' as const,
+					id: 'checkpoint',
+					label: 'Updated',
+					component: () => null,
+					order: 1,
+				},
+			],
+		};
+		const nextUserMessage = {
+			id: 'user-after-persisted-checkpoint-action',
+			role: 'user',
+			content: [ { type: 'text', text: 'What did you change?' } ],
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [ userMessage, persistedCheckpointMessage, nextUserMessage ],
+			} )
+		);
+
+		render( chat() );
+
+		expect( getDisplayedMessage( persistedCheckpointMessage.id ).disabled ).toBe( true );
+		expect( getDisplayedMessage( nextUserMessage.id ).disabled ).toBeUndefined();
+	} );
+
+	it( 'hides checkpoint controls in loaded conversation history', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-history',
+			`loaded-history-checkpoint-${ Date.now() }`
+		);
+		const checkpointId = mockGetCheckpointIdForMessage( checkpointMessage )!;
+		const checkpointResult = checkpointMessage.content[ 0 ].text;
+		const loadMessages = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { loadMessages, messages: [ checkpointMessage ] } )
+		);
+
+		const view = render( chat() );
+		act( () => {
+			mockConversationConfig?.onSuccess?.(
+				[
+					{
+						messageId: checkpointMessage.id,
+						role: 'agent',
+						parts: [ { type: 'text', text: checkpointResult } ],
+						kind: 'message',
+					},
+				],
+				'history-session'
+			);
+		} );
+
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith( checkpointId );
+		expect( loadMessages ).toHaveBeenCalledWith(
+			expect.arrayContaining( [ expect.objectContaining( { messageId: checkpointMessage.id } ) ] )
+		);
+		view.rerender( chat() );
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBeUndefined();
+	} );
+
+	it( 'updates the checkpoint status when native Undo and Redo stores notify separately', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-native-undo',
+			'native-undo-checkpoint'
+		);
+		let canSwapCheckpoint = true;
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe(
+			'Updated and Undo'
+		);
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+
+		act( () => {
+			mockHasEditorRedo = true;
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
+		expect( mockInvalidateCheckpointAction ).not.toHaveBeenCalledWith( 'native-undo-checkpoint' );
+
+		act( () => {
+			canSwapCheckpoint = false;
+			mockEditorBlocks = [ { clientId: 'native-undo-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Reverted' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith( 'native-undo-checkpoint' );
+
+		act( () => {
+			mockHasEditorRedo = false;
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Reverted' );
+
+		act( () => {
+			canSwapCheckpoint = true;
+			mockEditorBlocks = [ { clientId: 'native-redo-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
+		expect( mockInvalidateCheckpointAction ).toHaveBeenLastCalledWith( 'native-undo-checkpoint' );
+	} );
+
+	it( 'keeps a pending native Undo hidden and dims it after a later user message', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-pending-native-undo',
+			'pending-native-undo-checkpoint'
+		);
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn().mockReturnValue( true ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		const view = render( chat( { useCheckpoint } ) );
+
+		act( () => {
+			mockHasEditorRedo = true;
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					userMessage,
+					checkpointMessage,
+					{
+						id: 'user-after-pending-native-undo',
+						role: 'user',
+						content: [ { type: 'text', text: 'Make another edit' } ],
+						timestamp: 2,
+					},
+				],
+			} )
+		);
+		view.rerender( chat( { useCheckpoint } ) );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'disabled' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBe( true );
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith(
+			'pending-native-undo-checkpoint'
+		);
+
+		act( () => {
+			mockHasEditorRedo = false;
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'disabled' );
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBe( true );
+	} );
+
+	it( 'updates the checkpoint status when native Undo stores notify together', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-native-undo-combined',
+			'native-undo-combined-checkpoint'
+		);
+		let canSwapCheckpoint = true;
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		act( () => {
+			mockHasEditorRedo = true;
+			canSwapCheckpoint = false;
+			mockEditorBlocks = [ { clientId: 'native-undo-combined-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Reverted' );
+		expect( mockSetCheckpointActionReverted ).toHaveBeenCalledWith(
+			'native-undo-combined-checkpoint',
+			true
+		);
+	} );
+
+	it( 'keeps a source-drifted checkpoint Updated across later native history', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-source-drift-native-history',
+			'source-drift-native-history-checkpoint'
+		);
+		let canSwapCheckpoint = true;
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		const view = render( chat( { useCheckpoint } ) );
+
+		canSwapCheckpoint = false;
+		mockEditorBlocks = [ { clientId: 'manually-drifted-block' } ];
+		view.rerender( chat( { useCheckpoint } ) );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+
+		mockHasEditorRedo = true;
+		view.rerender( chat( { useCheckpoint } ) );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+
+		canSwapCheckpoint = true;
+		mockEditorBlocks = [ { clientId: 'restored-ai-state-block' } ];
+		view.rerender( chat( { useCheckpoint } ) );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+
+		mockHasEditorRedo = false;
+		view.rerender( chat( { useCheckpoint } ) );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect( mockSetCheckpointActionReverted ).not.toHaveBeenCalledWith(
+			'source-drift-native-history-checkpoint',
+			true
+		);
+	} );
+
+	it( 'does not treat later source drift as a delayed native Undo', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-unrelated-native-history',
+			'unrelated-native-history-checkpoint'
+		);
+		let canSwapCheckpoint = true;
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		act( () => {
+			mockHasEditorRedo = true;
+			mockEditorBlocks = [ { clientId: 'unrelated-native-undo-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
+
+		act( () => {
+			mockEditorBlocks = [ { clientId: 'settled-unrelated-native-undo-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe(
+			'Updated and Undo'
+		);
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+
+		act( () => {
+			canSwapCheckpoint = false;
+			mockEditorBlocks = [ { clientId: 'later-source-drift-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith(
+			'unrelated-native-history-checkpoint'
+		);
+		expect( getDisplayedMessage( checkpointMessage.id ).disabled ).toBeUndefined();
+		expect( mockSetCheckpointActionReverted ).not.toHaveBeenCalledWith(
+			'unrelated-native-history-checkpoint',
+			true
+		);
+
+		act( () => {
+			canSwapCheckpoint = true;
+			mockEditorBlocks = [ { clientId: 'later-restored-ai-state-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onRedo' );
+	} );
+
+	it( 'does not mark an unsupported checkpoint Reverted after native Undo', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-unsupported-native-undo',
+			'unsupported-native-undo-checkpoint'
+		);
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		act( () => {
+			mockHasEditorRedo = true;
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect( mockSetCheckpointActionReverted ).not.toHaveBeenCalledWith(
+			'unsupported-native-undo-checkpoint',
+			true
+		);
+	} );
+
+	it( 'hides checkpoint controls when the editor content drifts without Gutenberg Undo', async () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-editor-drift',
+			'editor-drift-checkpoint',
+			'text-content'
+		);
+		let canSwapCheckpoint = true;
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		const actualUseCheckpointAction = jest.requireActual(
+			'../../hooks/use-checkpoint-action'
+		).default;
+		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+
+		act( () => {
+			canSwapCheckpoint = false;
+			mockEditorBlocks = [ { clientId: 'edited-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+
+		expect( checkpoint.canSwapCheckpoint ).toHaveBeenLastCalledWith( 'editor-drift-checkpoint' );
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith( 'editor-drift-checkpoint' );
+		const actionAfterDrift = getDisplayedCheckpointAction( checkpointMessage.id );
+		expect( actionAfterDrift?.label ).toBe( 'Updated' );
+		const staleOnUndo = actionAfterDrift?.componentProps?.onUndo;
+		// Exercise the unfixed path so the failed-event assertion below is meaningful.
+		if ( typeof staleOnUndo === 'function' ) {
+			await act( async () => staleOnUndo() );
+		}
+		expect( actionAfterDrift?.componentProps ).not.toHaveProperty( 'onUndo' );
+		expect( actionAfterDrift?.componentProps ).not.toHaveProperty( 'onRedo' );
+		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'restore_checkpoint_action',
+			expect.objectContaining( { id: 'editor-drift-checkpoint', outcome: 'failed' } )
+		);
+
+		const canSwapCallCount = checkpoint.canSwapCheckpoint.mock.calls.length;
+		act( () => {
+			canSwapCheckpoint = true;
+			mockEditorBlocks = [ { clientId: 'edited-again' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+		expect( checkpoint.canSwapCheckpoint ).toHaveBeenCalledTimes( canSwapCallCount );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+	} );
+
+	it( 'removes a stale rendered Undo when drift is detected on click', async () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-stale-click',
+			'stale-click-checkpoint',
+			'text-content'
+		);
+		let canSwapCheckpoint = true;
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		const actualUseCheckpointAction = jest.requireActual(
+			'../../hooks/use-checkpoint-action'
+		).default;
+		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		const staleOnUndo = getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+			?.onUndo;
+		if ( typeof staleOnUndo !== 'function' ) {
+			throw new Error( 'Expected an Undo action.' );
+		}
+
+		canSwapCheckpoint = false;
+		await act( async () => staleOnUndo() );
+
+		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Updated' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps checkpoint controls while Undo swaps the editor content', async () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-checkpoint-swap',
+			'checkpoint-swap',
+			'text-content'
+		);
+		let canSwapCheckpoint = true;
+		let resolveSwap: ( () => void ) | undefined;
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: jest.fn(
+				() =>
+					new Promise< void >( ( resolve ) => {
+						canSwapCheckpoint = false;
+						mockEditorBlocks = [ { clientId: 'restored-block' } ];
+						mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+						resolveSwap = () => {
+							canSwapCheckpoint = true;
+							resolve();
+						};
+					} )
+			),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		const actualUseCheckpointAction = jest.requireActual(
+			'../../hooks/use-checkpoint-action'
+		).default;
+		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		const onUndo = getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps?.onUndo;
+		if ( typeof onUndo !== 'function' ) {
+			throw new Error( 'Expected an Undo action.' );
+		}
+
+		let undoPromise!: Promise< boolean >;
+		act( () => {
+			undoPromise = onUndo() as Promise< boolean >;
+		} );
+		await act( async () => Promise.resolve() );
+
+		expect( mockInvalidateCheckpointAction ).not.toHaveBeenCalledWith( 'checkpoint-swap' );
+		await expect( onUndo() ).resolves.toBe( false );
+		expect( checkpoint.swapCheckpoint ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+
+		await act( async () => {
+			resolveSwap?.();
+			await undoPromise;
+		} );
+
+		await waitFor( () => {
+			const revertedAction = getDisplayedCheckpointAction( checkpointMessage.id );
+			expect( revertedAction?.label ).toBe( 'Reverted and Redo' );
+			expect( revertedAction?.componentProps ).toHaveProperty( 'onRedo' );
+		} );
+		expect( mockInvalidateCheckpointAction ).not.toHaveBeenCalledWith( 'checkpoint-swap' );
+	} );
+
+	it( 'keeps Redo when an inline Undo creates Gutenberg redo history', async () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-inline-undo',
+			'inline-undo-checkpoint',
+			'text-content'
+		);
+		const checkpoint = {
+			getLastEditorState: jest.fn(),
+			setCheckpoint: jest.fn(),
+			addCheckpointKeys: jest.fn(),
+			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: jest.fn().mockReturnValue( true ),
+			swapCheckpoint: jest.fn( () => {
+				mockHasEditorRedo = true;
+				mockEditorBlocks = [ { clientId: 'inline-undo-restored-block' } ];
+				mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+				return Promise.resolve();
+			} ),
+			addNewPageToCheckpoint: jest.fn(),
+			addPageRenameToCheckpoint: jest.fn(),
+			addPageRemovalToCheckpoint: jest.fn(),
+			getLatestUserMessageId: jest.fn(),
+			clearCheckpoint: jest.fn(),
+			hasCheckpoint: jest.fn().mockReturnValue( true ),
+		};
+		const useCheckpoint = () => checkpoint;
+		const actualUseCheckpointAction = jest.requireActual(
+			'../../hooks/use-checkpoint-action'
+		).default;
+		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		const onUndo = getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps?.onUndo;
+		if ( typeof onUndo !== 'function' ) {
+			throw new Error( 'Expected an Undo action.' );
+		}
+
+		await act( async () => {
+			await onUndo();
+		} );
+
+		await waitFor( () => {
+			const revertedAction = getDisplayedCheckpointAction( checkpointMessage.id );
+			expect( revertedAction?.label ).toBe( 'Reverted and Redo' );
+			expect( revertedAction?.componentProps ).toHaveProperty( 'onRedo' );
+		} );
+		expect( mockInvalidateCheckpointAction ).not.toHaveBeenCalledWith( 'inline-undo-checkpoint' );
+	} );
+
+	it( 'keeps an earlier Redo when Gutenberg history updates after inline Undo completes', async () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-delayed-inline-undo',
+			'delayed-inline-undo-checkpoint',
+			'text-content'
+		);
+		const laterCheckpointMessage = createCheckpointMessage(
+			'agent-later-checkpoint',
+			'later-checkpoint',
+			'text-content'
+		);
+		const checkpoint = createSwappableCheckpoint();
+		checkpoint.swapCheckpoint.mockImplementation( () => {
+			mockHasEditorRedo = true;
+			return Promise.resolve();
+		} );
+		const useCheckpoint = () => checkpoint;
+		const actualUseCheckpointAction = jest.requireActual(
+			'../../hooks/use-checkpoint-action'
+		).default;
+		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [ userMessage, checkpointMessage, laterCheckpointMessage ],
+			} )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		const onUndo = getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps?.onUndo;
+		if ( typeof onUndo !== 'function' ) {
+			throw new Error( 'Expected an Undo action.' );
+		}
+
+		await act( async () => {
+			await onUndo();
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe(
+			'Reverted and Redo'
+		);
+
+		act( () => {
+			mockEditorBlocks = [ { clientId: 'delayed-inline-undo-restored-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+
+		const revertedAction = getDisplayedCheckpointAction( checkpointMessage.id );
+		expect( revertedAction?.label ).toBe( 'Reverted and Redo' );
+		expect( revertedAction?.componentProps ).toHaveProperty( 'onRedo' );
+		expect( getDisplayedCheckpointAction( laterCheckpointMessage.id )?.label ).toBe(
+			'Updated and Undo'
+		);
+		expect( mockInvalidateCheckpointAction ).not.toHaveBeenCalledWith(
+			'delayed-inline-undo-checkpoint'
+		);
+		expect( mockInvalidateCheckpointAction ).not.toHaveBeenCalledWith( 'later-checkpoint' );
+	} );
+
+	it( 'does not attribute a later native Undo to an inline Undo without editor history', async () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-inline-undo-without-history',
+			'inline-undo-without-history-checkpoint',
+			'text-content'
+		);
+		const laterCheckpointMessage = createCheckpointMessage(
+			'agent-later-native-undo',
+			'later-native-undo-checkpoint',
+			'text-content'
+		);
+		let canSwapLaterCheckpoint = true;
+		const checkpoint = createSwappableCheckpoint();
+		checkpoint.canSwapCheckpoint.mockImplementation( ( checkpointId: string ) =>
+			checkpointId === 'later-native-undo-checkpoint' ? canSwapLaterCheckpoint : true
+		);
+		const useCheckpoint = () => checkpoint;
+		const actualUseCheckpointAction = jest.requireActual(
+			'../../hooks/use-checkpoint-action'
+		).default;
+		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [ userMessage, checkpointMessage, laterCheckpointMessage ],
+			} )
+		);
+		render( chat( { useCheckpoint } ) );
+
+		const onUndo = getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps?.onUndo;
+		if ( typeof onUndo !== 'function' ) {
+			throw new Error( 'Expected an Undo action.' );
+		}
+		await act( async () => {
+			await onUndo();
+		} );
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe(
+			'Reverted and Redo'
+		);
+
+		act( () => {
+			canSwapLaterCheckpoint = false;
+			mockHasEditorRedo = true;
+			mockEditorBlocks = [ { clientId: 'later-native-undo-block' } ];
+			mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+		} );
+
+		expect( getDisplayedCheckpointAction( checkpointMessage.id )?.label ).toBe( 'Reverted' );
+		expect( mockSetCheckpointActionReverted ).toHaveBeenCalledWith(
+			'later-native-undo-checkpoint',
+			true
+		);
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith(
+			'inline-undo-without-history-checkpoint'
+		);
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith( 'later-native-undo-checkpoint' );
+	} );
+
+	it( 'invalidates a checkpoint that arrives after Gutenberg Undo', () => {
+		const checkpointMessage = createCheckpointMessage(
+			'agent-late-checkpoint',
+			'late-native-undo-checkpoint'
+		);
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { messages: [ userMessage ] } ) );
+		const view = render( chat() );
+
+		mockHasEditorRedo = true;
+		view.rerender( chat() );
+		mockHasEditorRedo = false;
+		view.rerender( chat() );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, checkpointMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith( 'late-native-undo-checkpoint' );
+		expect(
+			getDisplayedCheckpointAction( checkpointMessage.id )?.componentProps
+		).not.toHaveProperty( 'onUndo' );
+	} );
+
+	it( 'allows checkpoint controls on a later user turn', () => {
+		const firstCheckpoint = createCheckpointMessage( 'agent-first-turn', 'first-turn-checkpoint' );
+		const secondCheckpoint = createCheckpointMessage(
+			'agent-second-turn',
+			'second-turn-checkpoint'
+		);
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, firstCheckpoint ] } )
+		);
+		const view = render( chat() );
+
+		mockHasEditorRedo = true;
+		view.rerender( chat() );
+		mockHasEditorRedo = false;
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					userMessage,
+					firstCheckpoint,
+					{
+						id: 'user-second-turn',
+						role: 'user',
+						content: [ { type: 'text', text: 'Make another edit' } ],
+						timestamp: 2,
+					},
+					secondCheckpoint,
+				],
+			} )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( firstCheckpoint.id )?.label ).toBe( 'Updated' );
+		expect( getDisplayedCheckpointAction( secondCheckpoint.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+	} );
+
+	it( 'dims an earlier checkpoint while enabling a later turn', () => {
+		const firstCheckpoint = createCheckpointMessage(
+			'agent-disabled-first-turn',
+			'disabled-first-turn-checkpoint'
+		);
+		const secondCheckpoint = createCheckpointMessage(
+			'agent-enabled-second-turn',
+			'enabled-second-turn-checkpoint'
+		);
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, firstCheckpoint ] } )
+		);
+		const view = render( chat() );
+
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					userMessage,
+					firstCheckpoint,
+					{
+						id: 'user-enabled-second-turn',
+						role: 'user',
+						content: [ { type: 'text', text: 'Make another edit' } ],
+						timestamp: 2,
+					},
+					secondCheckpoint,
+				],
+			} )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( firstCheckpoint.id )?.label ).toBe( 'Updated' );
+		expect( getDisplayedCheckpointAction( firstCheckpoint.id )?.componentProps ).toMatchObject( {
+			disabled: true,
+		} );
+		expect( getDisplayedCheckpointAction( firstCheckpoint.id )?.componentProps ).not.toHaveProperty(
+			'onUndo'
+		);
+		expect( getDisplayedMessage( firstCheckpoint.id ).disabled ).toBe( true );
+		expect( getDisplayedCheckpointAction( secondCheckpoint.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+		expect( getDisplayedMessage( secondCheckpoint.id ).disabled ).toBeUndefined();
+	} );
+
+	it( 'keeps a streamed checkpoint when a fresh session is promoted after completion', async () => {
+		mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: '' };
+		mockTabSessionId = 'stale-session-that-must-not-own-the-checkpoint';
+		mockCheckpointActions();
+		const view = render( chat() );
+		const checkpointResult = createJetpackCheckpointResult(
+			'checkpoint-session-promoted-after-completion'
+		);
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.(
+				createWorkingCheckpointUpdate( 'task-session-promoted-after-completion', checkpointResult )
+			);
+			await mockAgentChatConfig?.onTaskUpdate?.(
+				createCompletedCheckpointUpdate(
+					'task-session-promoted-after-completion',
+					'agent-session-promoted-after-completion'
+				)
+			);
+		} );
+
+		const finalMessage = {
+			id: 'agent-session-promoted-after-completion',
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 2,
+			archived: false,
+			showIcon: true,
+		};
+		mockAgentConfig = {
+			agentId: 'wp-orchestrator',
+			sessionId: 'server-session-promoted-after-completion',
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.label ).toBe( 'Updated and Undo' );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+		act( () => {
+			mockConversationConfig?.onSuccess?.(
+				[
+					{
+						messageId: finalMessage.id,
+						role: 'agent',
+						parts: [ { type: 'text', text: finalMessage.content[ 0 ].text } ],
+						kind: 'message',
+					},
+				],
+				'server-session-promoted-after-completion'
+			);
+		} );
+		expect( mockInvalidateCheckpointAction ).not.toHaveBeenCalled();
+		view.rerender( chat() );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+		view.unmount();
+		const remountLoadMessages = jest.fn();
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { loadMessages: remountLoadMessages } ) );
+		const remountedView = render( chat() );
+		act( () => {
+			mockConversationConfig?.onSuccess?.(
+				[
+					{
+						messageId: finalMessage.id,
+						role: 'agent',
+						parts: [ { type: 'text', text: finalMessage.content[ 0 ].text } ],
+						kind: 'message',
+					},
+				],
+				'server-session-promoted-after-completion'
+			);
+		} );
+		expect( remountLoadMessages ).toHaveBeenCalled();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage ] } )
+		);
+		remountedView.rerender( chat() );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toHaveProperty(
+			'onUndo'
+		);
+
+		const laterUserMessage = {
+			id: 'user-after-promoted-session',
+			role: 'user',
+			content: [ { type: 'text', text: 'What did you change?' } ],
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage, laterUserMessage ] } )
+		);
+		remountedView.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.label ).toBe( 'Updated' );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toMatchObject( {
+			disabled: true,
+		} );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).not.toHaveProperty(
+			'onUndo'
+		);
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBe( true );
+		expect( getDisplayedMessage( laterUserMessage.id ).disabled ).toBeUndefined();
+		act( () => {
+			mockConversationConfig?.onSuccess?.(
+				[
+					{
+						messageId: finalMessage.id,
+						role: 'agent',
+						parts: [ { type: 'text', text: finalMessage.content[ 0 ].text } ],
+						kind: 'message',
+					},
+				],
+				'server-session-promoted-after-completion'
+			);
+		} );
+		remountedView.rerender( chat() );
+		expect( mockInvalidateCheckpointAction ).not.toHaveBeenCalled();
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toMatchObject( {
+			disabled: true,
+		} );
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBe( true );
+		remountedView.unmount();
+		const coldView = render( chat() );
+		expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toMatchObject( {
+			disabled: true,
+		} );
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBe( true );
+
+		mockAgentConfig = {
+			agentId: 'wp-orchestrator',
+			sessionId: 'different-server-session',
+		};
+		coldView.rerender( chat() );
+		expect( getDisplayedCheckpointAction( finalMessage.id ) ).toBeUndefined();
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBeUndefined();
+
+		mockInvalidateCheckpointAction.mockClear();
+		mockAgentConfig = {
+			agentId: 'wp-orchestrator',
+			sessionId: 'server-session-promoted-after-completion',
+		};
+		coldView.rerender( chat() );
+		act( () => {
+			mockConversationConfig?.onSuccess?.(
+				[
+					{
+						messageId: finalMessage.id,
+						role: 'agent',
+						parts: [ { type: 'text', text: finalMessage.content[ 0 ].text } ],
+						kind: 'message',
+					},
+				],
+				'server-session-promoted-after-completion'
+			);
+		} );
+		expect( mockInvalidateCheckpointAction ).toHaveBeenCalledWith(
+			'checkpoint-session-promoted-after-completion'
+		);
+	} );
+
+	it( 'keeps in-flight streamed checkpoints when a fresh session is promoted', async () => {
+		mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: '' };
+		mockTabSessionId = 'stale-session-that-must-not-own-the-in-flight-checkpoint';
+		mockCheckpointActions();
+		const view = render( chat() );
+		const onTaskUpdateBeforePromotion = mockAgentChatConfig?.onTaskUpdate;
+
+		await act( async () => {
+			await onTaskUpdateBeforePromotion?.(
+				createWorkingCheckpointUpdate(
+					'task-started-before-session-promotion',
+					createJetpackCheckpointResult( 'checkpoint-started-before-session-promotion' )
+				)
+			);
+		} );
+
+		mockAgentConfig = {
+			agentId: 'wp-orchestrator',
+			sessionId: 'server-session-promoted-in-flight',
+		};
+		view.rerender( chat() );
+
+		await act( async () => {
+			await onTaskUpdateBeforePromotion?.(
+				createWorkingCheckpointUpdate(
+					'task-delivered-after-session-promotion',
+					createJetpackCheckpointResult( 'checkpoint-delivered-after-session-promotion' )
+				)
+			);
+			await onTaskUpdateBeforePromotion?.(
+				createCompletedCheckpointUpdate(
+					'task-started-before-session-promotion',
+					'agent-started-before-session-promotion'
+				)
+			);
+			await onTaskUpdateBeforePromotion?.(
+				createCompletedCheckpointUpdate(
+					'task-delivered-after-session-promotion',
+					'agent-delivered-after-session-promotion'
+				)
+			);
+		} );
+
+		const finalMessageStartedBeforePromotion = {
+			id: 'agent-started-before-session-promotion',
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 2,
+			archived: false,
+			showIcon: true,
+		};
+		const finalMessageDeliveredAfterPromotion = {
+			...finalMessageStartedBeforePromotion,
+			id: 'agent-delivered-after-session-promotion',
+			timestamp: 3,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					userMessage,
+					finalMessageStartedBeforePromotion,
+					finalMessageDeliveredAfterPromotion,
+				],
+			} )
+		);
+		view.rerender( chat() );
+
+		for ( const finalMessage of [
+			finalMessageStartedBeforePromotion,
+			finalMessageDeliveredAfterPromotion,
+		] ) {
+			expect( getDisplayedCheckpointAction( finalMessage.id )?.label ).toBe( 'Updated and Undo' );
+			expect( getDisplayedCheckpointAction( finalMessage.id )?.componentProps ).toHaveProperty(
+				'onUndo'
+			);
+		}
+	} );
+
+	it( 'drops in-flight streamed checkpoints when the tab session scope changes', async () => {
+		mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: '' };
+		mockTabSessionId = '';
+		mockCheckpointActions();
+		const view = render( chat() );
+		const onTaskUpdateBeforeScopeChange = mockAgentChatConfig?.onTaskUpdate;
+
+		await act( async () => {
+			await onTaskUpdateBeforeScopeChange?.(
+				createWorkingCheckpointUpdate(
+					'task-started-before-scope-change',
+					createJetpackCheckpointResult( 'checkpoint-started-before-scope-change' )
+				)
+			);
+		} );
+
+		mockSiteKey = 'site-2';
+		mockCurrentUserId = 2;
+		view.rerender( chat() );
+
+		await act( async () => {
+			await onTaskUpdateBeforeScopeChange?.(
+				createCompletedCheckpointUpdate(
+					'task-started-before-scope-change',
+					'agent-started-before-scope-change'
+				)
+			);
+		} );
+
+		const finalMessage = {
+			id: 'agent-started-before-scope-change',
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 2,
+			archived: false,
+			showIcon: true,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, finalMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id ) ).toBeUndefined();
+	} );
+
+	it( 'keeps streamed checkpoint actions through final prose and remounts', async () => {
+		mockCheckpointActions();
+		const view = render( chat() );
+		const checkpointResult = JSON.stringify( {
+			tool_id: 'big_sky__apply_block_edits',
+			tool_call_id: 'tool-call-streamed',
+			data: {
+				result: {
+					success: true,
+					outcome: 'updated',
+					changeType: 'text-content',
+				},
+			},
+		} );
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-streamed',
+				status: { state: 'working' },
+				text: checkpointResult,
+				final: false,
+				kind: 'status',
+			} );
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-streamed',
+				status: {
+					state: 'completed',
+					message: { messageId: 'agent-final', role: 'agent', kind: 'message', parts: [] },
+				},
+				text: 'The paragraph has been updated.',
+				final: true,
+				kind: 'status',
+			} );
+		} );
+
+		const finalMessage = {
+			id: 'agent-final',
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated.' } ],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+		};
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { messages: [ finalMessage ] } ) );
+		view.rerender( chat() );
+
+		const messages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+			id: string;
+			actions?: Array< { id: string; label: string } >;
+		} >;
+		expect( messages[ 0 ].actions ).toEqual( [
+			expect.objectContaining( { id: 'checkpoint', label: 'Updated and Undo' } ),
+		] );
+		expect( getDisplayedMessage( finalMessage.id ).disabled ).toBeUndefined();
+		view.unmount();
+
+		const remountedView = render( chat() );
+		const remountedMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+			actions?: Array< { id: string; label: string } >;
+		} >;
+		expect( remountedMessages[ 0 ].actions ).toEqual( [
+			expect.objectContaining( { id: 'checkpoint', label: 'Updated and Undo' } ),
+		] );
+
+		const regenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			await regenerateConfig.getRegenerateHandler?.( finalMessage )?.();
+		} );
+		remountedView.rerender( chat() );
+
+		const restoredMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+			actions?: Array< { id: string; label: string } >;
+		} >;
+		expect( restoredMessages[ 0 ].actions ).toEqual( [
+			expect.objectContaining( { id: 'checkpoint', label: 'Updated and Undo' } ),
+		] );
+
+		let resolveRegenerate!: () => void;
+		const regeneration = new Promise< void >( ( resolve ) => {
+			resolveRegenerate = resolve;
+		} );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [ finalMessage ],
+				getRegenerateHandler: jest.fn( () => () => regeneration ),
+			} )
+		);
+		remountedView.rerender( chat() );
+		const successfulRegenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			const regenerate = successfulRegenerateConfig.getRegenerateHandler?.( finalMessage )?.();
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-regenerated',
+				status: {
+					state: 'completed',
+					message: { messageId: 'agent-final', role: 'agent', kind: 'message', parts: [] },
+				},
+				text: 'No edit was made.',
+				final: true,
+				kind: 'status',
+			} );
+			resolveRegenerate();
+			await regenerate;
+		} );
+		remountedView.rerender( chat() );
+
+		const regeneratedMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+			actions?: Array< { id: string } >;
+		} >;
+		expect( regeneratedMessages[ 0 ].actions ).not.toEqual(
+			expect.arrayContaining( [ expect.objectContaining( { id: 'checkpoint' } ) ] )
+		);
+	} );
+
+	it( 'keeps a later-turn checkpoint action from a structured continuation result', async () => {
+		const firstCheckpoint = createCheckpointMessage(
+			'agent-first-structured-turn',
+			'first-structured-checkpoint'
+		);
+		const laterUserMessage = {
+			id: 'user-structured-continuation',
+			role: 'user',
+			content: [ { type: 'text', text: 'Make another edit' } ],
+			timestamp: 2,
+		};
+		const initialMessages = [ userMessage, firstCheckpoint, laterUserMessage ];
+		mockCheckpointActions();
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { messages: initialMessages } ) );
+		const view = render( chat() );
+		const checkpointResult = JSON.stringify( {
+			tool_id: 'big_sky__apply_block_edits',
+			tool_call_id: 'tool-call-structured-continuation',
+			data: {
+				result: {
+					success: true,
+					outcome: 'updated',
+					changeType: 'text-content',
+				},
+			},
+		} );
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-structured-continuation',
+				status: {
+					state: 'working',
+					message: {
+						messageId: 'tool-result-structured-continuation',
+						role: 'agent',
+						kind: 'message',
+						parts: [
+							{
+								type: 'data',
+								data: {
+									toolCallId: 'tool-call-structured-continuation',
+									toolId: 'big_sky__apply_block_edits',
+									result: {
+										result: {
+											success: true,
+											outcome: 'updated',
+											changeType: 'text-content',
+										},
+										returnToAgent: true,
+										agentMessage: checkpointResult,
+									},
+								},
+							},
+						],
+					},
+				},
+				text: '',
+				final: false,
+				kind: 'status',
+			} );
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-structured-continuation',
+				status: {
+					state: 'completed',
+					message: {
+						messageId: 'agent-structured-final',
+						role: 'agent',
+						kind: 'message',
+						parts: [],
+					},
+				},
+				text: 'The paragraph has been updated again.',
+				final: true,
+				kind: 'status',
+			} );
+		} );
+
+		const finalMessage = {
+			id: 'agent-structured-final',
+			role: 'agent' as const,
+			content: [ { type: 'text' as const, text: 'The paragraph has been updated again.' } ],
+			timestamp: 3,
+			archived: false,
+			showIcon: true,
+		};
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ ...initialMessages, finalMessage ] } )
+		);
+		view.rerender( chat() );
+
+		expect( getDisplayedCheckpointAction( finalMessage.id ) ).toEqual(
+			expect.objectContaining( {
+				label: 'Updated and Undo',
+				componentProps: expect.objectContaining( { onUndo: expect.any( Function ) } ),
+			} )
+		);
+	} );
+
 	it( 'enables regenerate when a provider opts in', () => {
 		render( chat( { capabilities: { supportsRegenerateAction: true } } ) );
 
@@ -1405,5 +3323,304 @@ describe( 'OrchestratorChat', () => {
 		rerender( chat() );
 
 		expect( countShowComponentMessages() ).toBe( 1 );
+	} );
+
+	describe( 'editor canvas binding', () => {
+		const ABOUT_PAGE = { id: 4, type: 'page', title: 'About' };
+		const CONTACT_PAGE = { id: 9, type: 'page', title: 'Contact' };
+
+		// The canvas moving, as the editor store does it: change what the store
+		// reports, then notify its subscribers. That is the whole signal — there is
+		// no host event to dispatch.
+		const openPage = ( post: typeof ABOUT_PAGE | null ) => {
+			act( () => {
+				mockOpenPost = post;
+				mockDataStoreSubscribers.forEach( ( notify ) => notify() );
+			} );
+		};
+
+		beforeEach( () => {
+			// The binding is module-level state, so each test has to start from the
+			// unbound, unblocked position a fresh page load would give it.
+			startNewUserRequest();
+			mockOpenPost = ABOUT_PAGE;
+		} );
+
+		it( 'aborts and blocks the request when the canvas moves mid-request', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			// The canvas the model was looking at when it decided what to do.
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+			// Blocked as well as aborted, and carrying the pages it was blocked for:
+			// a tool call already in flight when the abort loses the race must still
+			// be refused, naming the page it was meant for.
+			expect( getBlockingMove() ).toEqual( { from: 'About', to: 'Contact' } );
+		} );
+
+		it( 'explains the cancellation in the thread, without sending it to the server', () => {
+			// An aborted turn otherwise stops mid-sentence and reads as a failure.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			expect( addMessage ).toHaveBeenCalledTimes( 1 );
+
+			const message = addMessage.mock.calls[ 0 ][ 0 ];
+			expect( message.id ).toContain( 'canvas-move-abort-' );
+			expect( message.role ).toBe( 'agent' );
+			// Worded for both shapes of move — landing on another page and leaving the
+			// editor altogether both reach this message.
+			expect( message.content[ 0 ].text ).toContain( 'navigated away' );
+			// `addMessage` only touches the UI list. Anything that dispatched to the
+			// agent would restart the request the abort just stopped.
+			expect( mockUseAgentChat().onSubmit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'leaves the request running while the canvas has not moved', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest, addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			// Editor churn that does not move the canvas — a block selection, a
+			// keystroke — must not read as a move.
+			mockSelectedBlockType = 'core/heading';
+			openPage( ABOUT_PAGE );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( addMessage ).not.toHaveBeenCalled();
+			expect( getBlockingMove() ).toBeNull();
+		} );
+
+		it( 'does not abort on a title edit', () => {
+			// The title is part of what a refusal names, but editing it does not move
+			// the canvas — keying off it would abort on every keystroke in the title.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( { ...ABOUT_PAGE, title: 'About us' } );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not abort when no request is running', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: false } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		} );
+
+		it( 'aborts when the canvas goes away entirely', () => {
+			// Leaving the editor is as much a reason to stop as landing on another
+			// page — more so, because the write abilities poll for a canvas to appear,
+			// so a request left running against nothing retries until the turn dies.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( null );
+
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+			expect( getBlockingMove() ).toEqual( { from: 'About', to: null } );
+		} );
+
+		it( 'does not abort an agent whose turns cannot write to the canvas', () => {
+			// A support chat runs in this same dock, including inside the editor. Its
+			// turns never call a canvas ability, so stopping one because the user
+			// browsed to another page loses the answer for nothing — and tells them it
+			// was stopped "before it changed the wrong one", which it never would have.
+			mockAgentConfig = { agentId: 'wpcom-workflow-support_chat' };
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest, addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( addMessage ).not.toHaveBeenCalled();
+		} );
+
+		it( 'aborts for unified chat as well as the orchestrator', () => {
+			// The canvas abilities are migrating into AM, which serves them on
+			// unified-chat surfaces. Gating on the orchestrator alone would leave this
+			// switched off exactly where those abilities are heading.
+			mockAgentConfig = { agentId: 'wpcom-workflow-unified_chat' };
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'never aborts on a surface with no editor', () => {
+			// The same dock serves support guides, Reader and the editor, so this
+			// effect runs everywhere AM runs. On a surface with no `core/editor` — a
+			// help or settings context — nothing ever binds, so route changes there
+			// cannot abort anything however far the user or the agent navigates.
+			mockOpenPost = null;
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+
+			openPage( CONTACT_PAGE );
+			openPage( null );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not abort while the agent is moving the canvas itself', () => {
+			// `editor-navigate` clears the binding before it runs, so the unmount and
+			// remount it causes are not read as the user walking away. Without this the
+			// agent's own navigation would abort the agent's own request.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+			clearCanvasBinding();
+
+			openPage( null );
+			openPage( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not abort when the agent opens a page it just had created', () => {
+			// The reported failure, end to end: `add-page` creates the page on the
+			// server and hands the client an `editor-navigate` call for it. That
+			// result is an outgoing message, so it rebinds — and a page created a
+			// moment ago on the server is not in the store, so the editor is still
+			// reporting the old one when it does. Binding ahead to the destination is
+			// what stops the arrival killing the turn that asked for it.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest, addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			// The guard, seeing `editor-navigate` bound for `/page/9`.
+			bindToNavigationTarget( 'page:9' );
+			// The navigate tool result, sent while the editor still shows About.
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( addMessage ).not.toHaveBeenCalled();
+		} );
+
+		it( 'still aborts when the user leaves a page the agent navigated to', () => {
+			// The destination binding must hand back to the ordinary rules on arrival,
+			// or one agent navigation would disarm the guard for the rest of the turn.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			bindToNavigationTarget( 'page:9' );
+			openPage( CONTACT_PAGE );
+			bindToOpenCanvas();
+
+			openPage( ABOUT_PAGE );
+
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+			expect( getBlockingMove() ).toEqual( { from: 'Contact', to: 'About' } );
+		} );
+
+		it( 'does not abort a new message sent after navigating between turns', async () => {
+			// The main hazard `startNewUserRequest()` closes, and it has nothing to do
+			// with the block: turn one binds to About, the user then moves to Contact
+			// with nothing running (so no abort), and sends a new message. The new turn
+			// flips `isProcessing` before its own outbound message rebinds, so a
+			// binding left over from turn one reads as a move and aborts the request
+			// the user just made — every time they ask a question after navigating.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: false } ) );
+			const { rerender } = render( chat() );
+			bindToOpenCanvas();
+
+			openPage( CONTACT_PAGE );
+
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Submit message' ) );
+			} );
+
+			const processingTurn = agentChatReturn( { isProcessing: true } );
+			mockUseAgentChat.mockReturnValue( processingTurn );
+			rerender( chat() );
+
+			expect( processingTurn.abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( processingTurn.addMessage ).not.toHaveBeenCalled();
+		} );
+
+		it( 'lifts the block when the composer submits the next message', async () => {
+			// The rebind has to sit on the callback the composer is wired to. One
+			// canvas-move abort would otherwise latch the block for the rest of the
+			// page session, refusing every canvas write until a reload.
+			const { onSubmit } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+			mockOpenPost = CONTACT_PAGE;
+			blockCurrentRequest();
+			expect( getBlockingMove() ).not.toBeNull();
+
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Submit message' ) );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
+			expect( getBlockingMove() ).toBeNull();
+		} );
+
+		it( 'lifts the block when the turn is regenerated', async () => {
+			// A regeneration is a fresh dispatch that rebinds on its own outbound
+			// message, so it is a new request for the binding too. It goes through
+			// agenttic's own handler rather than the composer, so without this the
+			// block would survive into a request it has nothing to do with.
+			render( chat() );
+			bindToOpenCanvas();
+			mockOpenPost = CONTACT_PAGE;
+			blockCurrentRequest();
+			expect( getBlockingMove() ).not.toBeNull();
+
+			const config = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+				getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+			};
+			const wrappedHandler = config.getRegenerateHandler?.( showComponentMessage( 'agent-1' ) );
+			await act( async () => {
+				await wrappedHandler?.();
+			} );
+
+			expect( getBlockingMove() ).toBeNull();
+		} );
 	} );
 } );

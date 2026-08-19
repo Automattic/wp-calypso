@@ -163,4 +163,5 @@ export * from './sites';
 export * from './upgrades';
 export * from './user';
 export * from './user-sites';
+export * from './wordpress-agent';
 export * from './wp-org-core-version';

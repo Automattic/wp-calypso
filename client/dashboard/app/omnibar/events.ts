@@ -26,7 +26,6 @@ export const omnibarEvents = {
 	notificationsOpen: createOmnibarEvent< boolean >(),
 	siteSwitcher: createOmnibarEvent(),
 	siteSwitcherAnchor: createOmnibarEvent< HTMLElement | null >(),
-	languageSwitcher: createOmnibarEvent(),
 	linkClick: createOmnibarEvent< { href: string; event: MouseEvent } >(),
 };
 
