@@ -46,7 +46,7 @@ const WooSubscriptionsNotice: FunctionComponent< Props > = ( {
 	return (
 		<RewindFlowNotice
 			gridicon="notice"
-			title={ translate( 'This restore may charge your customers twice.' ) }
+			title={ translate( 'This restore may charge your customers twice' ) }
 			message={ translate(
 				'This backup includes WooCommerce Subscriptions. Renewals that were charged after the selected restore point will look unpaid again once the database is restored, and may be processed a second time. {{a}}Learn more{{/a}}',
 				{
