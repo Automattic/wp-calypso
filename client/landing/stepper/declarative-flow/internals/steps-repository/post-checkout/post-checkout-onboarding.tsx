@@ -64,7 +64,10 @@ const PostCheckoutOnboarding: StepType< {
 	const showBigSkyChoice =
 		isEnabled( 'onboarding/post-checkout-ai-step' ) &&
 		!! site?.plan &&
-		( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) &&
+		( isPersonal( site.plan ) ||
+			isPremium( site.plan ) ||
+			isBusiness( site.plan ) ||
+			isEcommerce( site.plan ) ) &&
 		site.plan.features?.active?.includes( FEATURE_BIG_SKY );
 
 	const intent = useSelect(
