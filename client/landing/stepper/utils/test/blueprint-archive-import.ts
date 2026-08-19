@@ -99,8 +99,19 @@ describe( 'getSiteEditorUrl', () => {
 	 */
 	it( 'flags the walkthrough when the spec was applied', () => {
 		expect( getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: true } ) ).toBe(
-			'https://example.com/wp-admin/site-editor.php?blueprint-walkthrough=1'
+			'https://example.com/wp-admin/site-editor.php?canvas=edit&blueprint-walkthrough=1'
 		);
+	} );
+
+	/**
+	 * Big Sky only mounts on the editing canvas, so a walkthrough hand-off that
+	 * lands in the Site Editor's default view mode is inert — the flag arrives
+	 * but nothing is listening for it.
+	 */
+	it( 'opens the editing canvas alongside the walkthrough flag', () => {
+		expect(
+			getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: true } )
+		).toContain( 'canvas=edit' );
 	} );
 
 	it( 'leaves the flag off when the spec did not apply', () => {

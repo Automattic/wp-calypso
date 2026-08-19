@@ -294,9 +294,15 @@ export function getSiteEditorUrl(
 	// their new site and has to work out that saying "hi" is the way in. Big Sky
 	// reads the flag on arrival and opens the conversation for them.
 	//
+	// `canvas=edit` is not optional here: the Site Editor opens in view mode by
+	// default, and Big Sky only mounts on the editing canvas. Without it the flag
+	// arrives on a page where nothing is listening for it.
+	//
 	// Only worth setting when the spec actually applied: the walkthrough has
 	// nothing to personalize from otherwise.
-	return startWalkthrough ? addQueryArgs( url, { 'blueprint-walkthrough': '1' } ) : url;
+	return startWalkthrough
+		? addQueryArgs( url, { canvas: 'edit', 'blueprint-walkthrough': '1' } )
+		: url;
 }
 
 export function logBlueprintArchiveEvent(
