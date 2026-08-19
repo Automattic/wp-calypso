@@ -246,6 +246,9 @@ export function useFields( {
 				label: __( 'User agent' ),
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.http_user_agent,
+				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
+					<span className="site-logs-wrap">{ String( item.http_user_agent ) }</span>
+				),
 				filterBy: { operators: [] as Operator[] },
 			},
 			{
