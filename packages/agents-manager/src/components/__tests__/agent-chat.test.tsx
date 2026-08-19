@@ -12,6 +12,7 @@ const mockSetFloatingPosition = jest.fn();
 const mockContainerProps = jest.fn();
 const mockInputProps = jest.fn();
 const mockImageUploaderProps = jest.fn();
+const mockNoticeProps = jest.fn();
 const mockHasAiChatEntry = jest.fn();
 
 jest.mock(
@@ -147,7 +148,10 @@ jest.mock(
 				Messages: () => null,
 				Footer: MockFooter,
 				Suggestions: () => null,
-				Notice: () => null,
+				Notice: ( props: unknown ) => {
+					mockNoticeProps( props );
+					return null;
+				},
 				Input: ( props: unknown ) => {
 					mockInputProps( props );
 					return null;
@@ -323,6 +327,22 @@ describe( 'AgentChat', () => {
 		expect( mockInputProps ).toHaveBeenCalledWith(
 			expect.objectContaining( { readOnly: true, disabled: true } )
 		);
+	} );
+
+	it( 'uses the error treatment for error notices', () => {
+		renderAgentChat( {
+			notice: { message: 'You’re out of free credits.', status: 'error' },
+		} );
+
+		expect( mockNoticeProps ).toHaveBeenCalledWith( {
+			className: 'agents-manager-chat-notice--error',
+		} );
+	} );
+
+	it( 'keeps the default treatment for non-error notices', () => {
+		renderAgentChat( { notice: { message: '12 free credits left' } } );
+
+		expect( mockNoticeProps ).toHaveBeenCalledWith( { className: undefined } );
 	} );
 
 	it( 'forwards empty view suggestion clicks to the shared suggestion handler', async () => {

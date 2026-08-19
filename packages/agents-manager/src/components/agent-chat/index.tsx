@@ -353,7 +353,11 @@ export default function AgentChat( {
 				) : (
 					<AgentUI.Footer complianceDisclosure={ complianceDisclosure }>
 						<AgentUI.Suggestions />
-						<AgentUI.Notice />
+						<AgentUI.Notice
+							className={
+								notice?.status === 'error' ? 'agents-manager-chat-notice--error' : undefined
+							}
+						/>
 						{ imageUpload && (
 							<ImageUploader
 								ref={ imageUploaderRef }

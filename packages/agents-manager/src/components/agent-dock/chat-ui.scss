@@ -42,6 +42,24 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 /* Agenttic UI */
 // Shared styles for the docked and undocked chat.
 .agenttic {
+	.agents-manager-chat-notice--error {
+		background-color: $error-notice-background;
+		color: var( --color-white, #fff );
+
+		.Notice-module_icon svg path {
+			fill: currentColor;
+		}
+
+		.Notice-module_action,
+		.Notice-module_action:hover:not( :disabled ) {
+			color: var( --color-white, #fff );
+		}
+
+		.Notice-module_action:focus-visible {
+			outline-color: var( --color-white, #fff );
+		}
+	}
+
 	.Messages-module_container {
 		.big-sky__completed-plan:first-child {
 			margin-top: 0;
