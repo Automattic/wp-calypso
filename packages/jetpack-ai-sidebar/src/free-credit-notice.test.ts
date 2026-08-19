@@ -204,10 +204,151 @@ describe( 'Self-hosted status', () => {
 		unmount();
 	} );
 
-	it( 'refreshes only after the Jetpack cache expires', async () => {
+	it( 'refreshes immediately with a cache bypass and keeps the delayed cached fallback', async () => {
 		jest.useFakeTimers();
 		try {
 			mockApiFetch
+				.mockResolvedValueOnce( featureResponse() )
+				.mockResolvedValueOnce( featureResponse( 1 ) )
+				.mockResolvedValueOnce( featureResponse( 1 ) );
+			const { result, rerender, unmount } = renderHook(
+				( props: typeof defaultProps ) => useJetpackFreeCreditChatNotice( props ),
+				{ initialProps: defaultProps }
+			);
+
+			await act( async () => Promise.resolve() );
+			rerender( { ...defaultProps, settledRequestCount: 1 } );
+			await act( async () => Promise.resolve() );
+			expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
+			expect( mockApiFetch ).toHaveBeenNthCalledWith( 2, {
+				path: '/wpcom/v2/jetpack-ai/ai-assistant-feature?skip_cache=true',
+			} );
+			expect( result.current?.message ).toBe( '19 free credits left' );
+
+			act( () => jest.advanceTimersByTime( 60_999 ) );
+			expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
+
+			act( () => jest.advanceTimersByTime( 1 ) );
+			await act( async () => Promise.resolve() );
+			expect( mockApiFetch ).toHaveBeenCalledTimes( 3 );
+			expect( mockApiFetch ).toHaveBeenNthCalledWith( 3, {
+				path: '/wpcom/v2/jetpack-ai/ai-assistant-feature',
+			} );
+			expect( result.current?.message ).toBe( '19 free credits left' );
+			unmount();
+		} finally {
+			jest.clearAllTimers();
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'restarts the cached fallback delay after an immediate refresh', async () => {
+		jest.useFakeTimers();
+		try {
+			mockApiFetch
+				.mockResolvedValueOnce( featureResponse() )
+				.mockResolvedValueOnce( featureResponse( 1 ) )
+				.mockResolvedValueOnce( featureResponse( 1 ) );
+			const { rerender, unmount } = renderHook(
+				( props: typeof defaultProps ) => useJetpackFreeCreditChatNotice( props ),
+				{ initialProps: defaultProps }
+			);
+
+			await act( async () => Promise.resolve() );
+			act( () => jest.advanceTimersByTime( 30_000 ) );
+			rerender( { ...defaultProps, settledRequestCount: 1 } );
+			await act( async () => Promise.resolve() );
+			expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
+
+			act( () => jest.advanceTimersByTime( 30_999 ) );
+			expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
+			act( () => jest.advanceTimersByTime( 1 ) );
+			expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
+
+			act( () => jest.advanceTimersByTime( 29_999 ) );
+			expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
+			act( () => jest.advanceTimersByTime( 1 ) );
+			await act( async () => Promise.resolve() );
+			expect( mockApiFetch ).toHaveBeenCalledTimes( 3 );
+			expect( mockApiFetch ).toHaveBeenNthCalledWith( 3, {
+				path: '/wpcom/v2/jetpack-ai/ai-assistant-feature',
+			} );
+			unmount();
+		} finally {
+			jest.clearAllTimers();
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'coalesces changes during an in-flight request into one immediate follow-up', async () => {
+		let resolveRefresh: ( response: ReturnType< typeof featureResponse > ) => void = () => {};
+		mockApiFetch
+			.mockResolvedValueOnce( featureResponse() )
+			.mockImplementationOnce(
+				() =>
+					new Promise( ( resolve ) => {
+						resolveRefresh = resolve;
+					} )
+			)
+			.mockResolvedValueOnce( featureResponse( 3 ) );
+		const { result, rerender, unmount } = renderHook(
+			( props: typeof defaultProps ) => useJetpackFreeCreditChatNotice( props ),
+			{ initialProps: defaultProps }
+		);
+
+		await act( async () => Promise.resolve() );
+		rerender( { ...defaultProps, settledRequestCount: 1 } );
+		expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
+
+		rerender( { ...defaultProps, settledRequestCount: 2 } );
+		rerender( { ...defaultProps, settledRequestCount: 3 } );
+		expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
+
+		await act( async () => resolveRefresh( featureResponse( 1 ) ) );
+		expect( mockApiFetch ).toHaveBeenCalledTimes( 3 );
+		expect( mockApiFetch ).toHaveBeenNthCalledWith( 3, {
+			path: '/wpcom/v2/jetpack-ai/ai-assistant-feature?skip_cache=true',
+		} );
+		expect( result.current?.message ).toBe( '17 free credits left' );
+		unmount();
+	} );
+
+	it( 'preserves the displayed status when the immediate refresh fails', async () => {
+		jest.useFakeTimers();
+		try {
+			mockApiFetch
+				.mockResolvedValueOnce( featureResponse( 4 ) )
+				.mockRejectedValueOnce( new Error( 'Status unavailable' ) )
+				.mockResolvedValueOnce( featureResponse( 5 ) );
+			const { result, rerender, unmount } = renderHook(
+				( props: typeof defaultProps ) => useJetpackFreeCreditChatNotice( props ),
+				{ initialProps: defaultProps }
+			);
+
+			await act( async () => Promise.resolve() );
+			expect( result.current?.message ).toBe( '16 free credits left' );
+
+			rerender( { ...defaultProps, settledRequestCount: 1 } );
+			await act( async () => Promise.resolve() );
+			expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
+			expect( result.current?.message ).toBe( '16 free credits left' );
+
+			act( () => jest.advanceTimersByTime( 61_000 ) );
+			await act( async () => Promise.resolve() );
+			expect( mockApiFetch ).toHaveBeenCalledTimes( 3 );
+			expect( result.current?.message ).toBe( '15 free credits left' );
+			unmount();
+		} finally {
+			jest.clearAllTimers();
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'uses the delayed cached fallback when cache bypass is unsupported', async () => {
+		jest.useFakeTimers();
+		try {
+			mockApiFetch
+				.mockResolvedValueOnce( featureResponse() )
 				.mockResolvedValueOnce( featureResponse() )
 				.mockResolvedValueOnce( featureResponse( 1 ) );
 			const { result, rerender, unmount } = renderHook(
@@ -217,11 +358,11 @@ describe( 'Self-hosted status', () => {
 
 			await act( async () => Promise.resolve() );
 			rerender( { ...defaultProps, settledRequestCount: 1 } );
-			expect( mockApiFetch ).toHaveBeenCalledTimes( 1 );
+			await act( async () => Promise.resolve() );
+			expect( result.current?.message ).toBe( '20 free credits left' );
 
 			act( () => jest.advanceTimersByTime( 61_000 ) );
 			await act( async () => Promise.resolve() );
-			expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
 			expect( result.current?.message ).toBe( '19 free credits left' );
 			unmount();
 		} finally {
@@ -230,34 +371,40 @@ describe( 'Self-hosted status', () => {
 		}
 	} );
 
-	it( 'keeps the first refresh deadline across later turns', async () => {
-		jest.useFakeTimers();
-		try {
+	it.each( [ 'site change', 'unmount' ] as const )(
+		'drops a queued immediate follow-up after %s',
+		async ( transition ) => {
+			let resolveInitial: ( response: ReturnType< typeof featureResponse > ) => void = () => {};
 			mockApiFetch
-				.mockResolvedValueOnce( featureResponse() )
-				.mockResolvedValueOnce( featureResponse( 2 ) );
-			const { result, rerender, unmount } = renderHook(
+				.mockImplementationOnce(
+					() =>
+						new Promise( ( resolve ) => {
+							resolveInitial = resolve;
+						} )
+				)
+				.mockResolvedValueOnce( featureResponse() );
+			const { rerender, unmount } = renderHook(
 				( props: typeof defaultProps ) => useJetpackFreeCreditChatNotice( props ),
 				{ initialProps: defaultProps }
 			);
 
-			await act( async () => Promise.resolve() );
 			rerender( { ...defaultProps, settledRequestCount: 1 } );
-			act( () => jest.advanceTimersByTime( 30_000 ) );
-			rerender( { ...defaultProps, settledRequestCount: 2 } );
-			act( () => jest.advanceTimersByTime( 30_999 ) );
 			expect( mockApiFetch ).toHaveBeenCalledTimes( 1 );
+			if ( transition === 'site change' ) {
+				rerender( { ...defaultProps, settledRequestCount: 1, siteId: 456 } );
+				await act( async () => Promise.resolve() );
+			} else {
+				unmount();
+			}
 
-			act( () => jest.advanceTimersByTime( 1 ) );
-			await act( async () => Promise.resolve() );
-			expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
-			expect( result.current?.message ).toBe( '18 free credits left' );
-			unmount();
-		} finally {
-			jest.clearAllTimers();
-			jest.useRealTimers();
+			await act( async () => resolveInitial( featureResponse() ) );
+			expect( mockApiFetch ).toHaveBeenCalledTimes( transition === 'site change' ? 2 : 1 );
+
+			if ( transition !== 'unmount' ) {
+				unmount();
+			}
 		}
-	} );
+	);
 
 	it( 'stops retrying persistent failures until another request settles', async () => {
 		jest.useFakeTimers();
