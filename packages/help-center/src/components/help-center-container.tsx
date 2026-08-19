@@ -5,7 +5,7 @@ import observeEditorCanvasPointerDown from '@automattic/agents-manager/src/utils
 import { useWindowDimensions } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card, __experimentalElevation as Elevation } from '@wordpress/components';
-import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
+import { useFocusOnMount, useFocusReturn, useMergeRefs } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { useRef, useEffect, useCallback, FC, useState, type RefObject } from 'react';
@@ -79,7 +79,13 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 
 	const focusReturnRef = useFocusReturn();
 
-	const cardMergeRefs = useMergeRefs( [ nodeRef, focusReturnRef ] );
+	// Focus the dialog itself on open so keyboard/screen-reader users land in
+	// the Help Center (announcing its title) instead of having to tab through
+	// the whole page to reach it. The dialog is deliberately non-modal — no
+	// focus trap — so users can keep interacting with the page underneath.
+	const focusOnMountRef = useFocusOnMount( true );
+
+	const cardMergeRefs = useMergeRefs( [ nodeRef, focusReturnRef, focusOnMountRef ] );
 
 	const shouldCloseOnEscapeRef = useRef( false );
 
@@ -170,7 +176,13 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 				handle=".help-center-header__text"
 				bounds="body"
 			>
-				<Card className={ classNames } ref={ cardMergeRefs }>
+				<Card
+					className={ classNames }
+					ref={ cardMergeRefs }
+					role="dialog"
+					aria-labelledby="header-text"
+					tabIndex={ -1 }
+				>
 					<HelpCenterHeader onDismiss={ onDismiss } />
 					{ ! isMinimized && <ZendeskStagingNotice /> }
 					<HelpCenterContent currentRoute={ currentRoute } />
