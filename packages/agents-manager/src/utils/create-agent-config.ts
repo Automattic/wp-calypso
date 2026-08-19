@@ -269,6 +269,7 @@ export async function createAgentConfig(
 			saveSessionId( newSessionId, agentId, sessionSiteKey, sessionUserId ),
 		authProvider: createCalypsoAuthProvider( siteId, {
 			logWpcomJwtFailure: ! isReaderChatAgent( agentId ),
+			...( sessionUserId !== undefined && { userId: sessionUserId } ),
 		} ),
 		enableStreaming: true,
 	};

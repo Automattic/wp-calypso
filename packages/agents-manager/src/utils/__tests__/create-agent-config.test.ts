@@ -146,6 +146,20 @@ describe( 'createAgentConfig', () => {
 		expect( context ).toEqual( expect.objectContaining( { selectedSiteId: 247750866 } ) );
 	} );
 
+	it( 'binds the auth provider to the current user and site', async () => {
+		await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: '987',
+			sessionUserId: 123,
+			siteId: 987,
+		} );
+
+		expect( mockCreateCalypsoAuthProvider ).toHaveBeenCalledWith( 987, {
+			logWpcomJwtFailure: true,
+			userId: 123,
+		} );
+	} );
+
 	it( 'adds site editor constructor arguments from the host environment', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
