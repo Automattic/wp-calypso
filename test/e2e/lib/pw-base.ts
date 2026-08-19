@@ -91,9 +91,10 @@ import {
 	SelectItemsComponent,
 	flushThrottleWrites,
 	mayBeThrottled,
-	recordThrottle,
+	recordResponseThrottle,
 	registerThrottleActionHandler,
 	throttleActionMessage,
+	withDeadline,
 } from '@automattic/calypso-e2e';
 import {
 	test as base,
@@ -110,7 +111,6 @@ import {
 import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
 import { snoozeAccountRecoveryInterstitial } from './dashboard-helpers';
 import { getAccount } from './get-account';
-import { withDeadline } from './with-deadline';
 
 export type CustomOptions = {
 	/**
@@ -145,13 +145,10 @@ type AccountFixture = (
 
 const WPCOM_HOST = /^https?:\/\/([^/]*\.)?wordpress\.com(?::\d+)?\//;
 
-// The response event fires on headers, and `response.text()` has no deadline of
-// its own, so without these a stalled body would hang the teardown that waits
-// for it. The flush covers a body read and the two tag POSTs a detection makes,
-// which is what has to land before a worker exits: a flag whose tag never landed
-// leaves its line in a build no peer can find. Charged to the test's own timeout,
-// so it must stay well under it and must not fail a spec that had already passed.
-const BODY_TIMEOUT = 2 * 1000;
+// The flush covers a body read and the two tag POSTs a detection makes, which is
+// what has to land before a worker exits: a flag whose tag never landed leaves
+// its line in a build no peer can find. Charged to the test's own timeout, so it
+// must stay well under it and must not fail a spec that had already passed.
 const FLUSH_TIMEOUT = 7 * 1000;
 
 /**
@@ -194,17 +191,10 @@ function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 
 		const reading = ( async () => {
 			try {
-				const body = await withDeadline( response.text(), BODY_TIMEOUT );
-				// An enveloped success carries no error key, and a domain search
-				// result can hold anything a caller typed — including our own
-				// tokens — so it is never handed to detection.
-				if ( status < 400 && ! /"error"\s*:/.test( body ) ) {
-					return;
-				}
-				// Whether this is a ban at all is `recordThrottle`'s to say: an
+				// Whether this is a ban at all is detection's to say: an
 				// invalid-domain 400 on `is-available` reaches here too. Recording is
 				// all it does; the test's outcome is no business of this listener.
-				await recordThrottle( { url, status, body } );
+				await recordResponseThrottle( response );
 			} catch {
 				// Detection never fails a test.
 			}

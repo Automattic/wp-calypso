@@ -1,6 +1,6 @@
 import { Locator, Page, Response } from 'playwright';
 import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
-import { handleActiveThrottles, recordThrottle } from '../throttle-flags';
+import { handleActiveThrottles, recordResponseThrottle } from '../throttle-flags';
 
 type CartResponseDiagnostic = {
 	method: string;
@@ -143,11 +143,7 @@ export class DomainSearchComponent {
 				);
 			}
 
-			await recordThrottle( {
-				url: response.url(),
-				status: response.status(),
-				body: await response.text().catch( () => '' ),
-			} );
+			await recordResponseThrottle( response );
 
 			// Wait for the DOM to reflect the new search results. The API
 			// response resolves before React re-renders the suggestion list

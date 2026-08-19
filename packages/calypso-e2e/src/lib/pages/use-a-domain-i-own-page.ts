@@ -1,5 +1,5 @@
 import { Locator, Page } from 'playwright';
-import { handleActiveThrottles, recordThrottle } from '../throttle-flags';
+import { handleActiveThrottles, recordResponseThrottle } from '../throttle-flags';
 
 const selectors = {
 	ownedDomainInput: '.use-my-domain__domain-input-fieldset input',
@@ -115,11 +115,7 @@ export class UseADomainIOwnPage {
 			);
 		}
 
-		const throttle = await recordThrottle( {
-			url: response.url(),
-			status: response.status(),
-			body: await response.text().catch( () => '' ),
-		} );
+		const throttle = await recordResponseThrottle( response );
 		if ( throttle ) {
 			handleActiveThrottles( [ throttle ] );
 		}

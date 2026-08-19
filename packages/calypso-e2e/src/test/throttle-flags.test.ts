@@ -9,6 +9,7 @@ import {
 	handleActiveThrottles,
 	raiseFlag,
 	readActiveThrottles,
+	recordResponseThrottle,
 	recordThrottle,
 	registerThrottleActionHandler,
 	resetRaisedThrottles,
@@ -817,5 +818,47 @@ describe( 'detectThrottle', () => {
 			)
 		).resolves.toBe( 'domain-suggestions' );
 		await expect( recordThrottle( { success: true } ) ).resolves.toBeNull();
+	} );
+} );
+
+describe( 'recording a response', () => {
+	const SUGGESTIONS = 'https://public-api.wordpress.com/rest/v1.1/domains/suggestions?query=x';
+
+	/** A response whose body arrives, or never does. */
+	function response( status: number, body: string | Promise< string > ) {
+		return {
+			url: () => SUGGESTIONS,
+			status: () => status,
+			text: async () => body,
+		};
+	}
+
+	test( 'a refusal is recorded, and an enveloped one with it', async () => {
+		await expect(
+			recordResponseThrottle( response( 403, '{"error":"domain_suggestions_throttled"}' ) )
+		).resolves.toBe( 'domain-suggestions' );
+		await expect(
+			recordResponseThrottle( response( 200, '{"error":"domain_suggestions_throttled"}' ) )
+		).resolves.toBe( 'domain-suggestions' );
+	} );
+
+	test( 'a successful search is never read', async () => {
+		const text = jest.fn( async () => '{"suggestions":["error"]}' );
+		await expect(
+			recordResponseThrottle( { url: () => SUGGESTIONS, status: () => 200, text } )
+		).resolves.toBeNull();
+	} );
+
+	test( 'a body that never arrives leaves the caller its own timeout', async () => {
+		jest.useFakeTimers( { doNotFake: [ 'Date' ] } );
+		try {
+			const recording = recordResponseThrottle(
+				response( 429, new Promise< string >( () => {} ) )
+			);
+			await jest.advanceTimersByTimeAsync( 2 * 1000 );
+			await expect( recording ).resolves.toBeNull();
+		} finally {
+			jest.useRealTimers();
+		}
 	} );
 } );

@@ -1,4 +1,5 @@
 import { appendOwnBuildLog, fetchBuildLog, fetchBuildsByTag, tagOwnBuild } from './teamcity';
+import { withDeadline } from './with-deadline';
 import type { TaggedBuild } from './teamcity';
 
 export const THROTTLE_IDS = [ 'signup', 'domain-suggestions', 'domain-availability' ] as const;
@@ -381,6 +382,41 @@ export async function recordThrottle(
 		void raiseFlag( id );
 	}
 	return id;
+}
+
+/**
+ * How long a body has to arrive. `waitForResponse` and the context listener both
+ * hand over a response whose headers are in and whose body may still be in
+ * flight, and Playwright puts no timeout on reading one: an unbounded read holds
+ * the caller until the test times out. A body that slow says nothing about a ban.
+ */
+const BODY_TIMEOUT = 2 * 1000;
+
+/**
+ * A response as detection reads it.
+ */
+export interface ThrottleResponse {
+	url(): string;
+	status(): number;
+	text(): Promise< string >;
+}
+
+/**
+ * Records a throttle from a response, and returns its id.
+ *
+ * A plain success is never handed to detection: an enveloped success carries no
+ * error key, and a domain search result can hold anything a caller typed —
+ * including our own tokens.
+ */
+export async function recordResponseThrottle(
+	response: ThrottleResponse
+): Promise< ThrottleId | null > {
+	const status = response.status();
+	const body = await withDeadline( response.text(), BODY_TIMEOUT ).catch( () => '' );
+	if ( status < 400 && ! /"error"\s*:/.test( body ) ) {
+		return null;
+	}
+	return recordThrottle( { url: response.url(), status, body } );
 }
 
 /**

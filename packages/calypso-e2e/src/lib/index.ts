@@ -13,10 +13,11 @@ export {
 	flushThrottleWrites,
 	mayBeThrottled,
 	readActiveThrottles,
-	recordThrottle,
+	recordResponseThrottle,
 	registerThrottleActionHandler,
 	throttleActionMessage,
 	throttleEnvVar,
 	validateThrottleActions,
 } from './throttle-flags';
 export type { ThrottleId } from './throttle-flags';
+export { withDeadline } from './with-deadline';
