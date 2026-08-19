@@ -8,6 +8,7 @@ import { createAgencyRoutes } from './agency';
 import { createAgencyClientRoutes } from './agency-client';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
+import { importLabRoute } from './import-lab';
 import { createMeRoutes } from './me';
 import { createPluginsRoutes } from './plugins';
 import { dashboardRedirect } from './redirect';
@@ -97,6 +98,10 @@ const createRouteTree = ( config: AppConfig ) => {
 
 	if ( config.supports.startStoreRoute ) {
 		children.push( startStoreRoute );
+	}
+
+	if ( config.supports.importLab ) {
+		children.push( importLabRoute );
 	}
 
 	children.push( catchAllRoute );
