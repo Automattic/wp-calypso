@@ -163,7 +163,7 @@ export class DomainSearchComponent {
 
 		// Outside the retry: `reloadAndRetry` swallows the closure's error on every
 		// attempt but the last, and skipping or failing for a throttle is thrown,
-		// not returned. The check after it reads the flag the closure raised.
+		// not returned.
 		handleActiveThrottles( [ 'domain-suggestions' ] );
 		try {
 			// Domain lookup service is external to Automattic and sometimes it returns an error.

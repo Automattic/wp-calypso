@@ -499,6 +499,12 @@ export interface ThrottleTestState {
  * rather than a flag set by the handler: Playwright marks `expectedStatus`
  * before `skip` throws, so a caller that swallows the throw cannot silence the
  * policy for the rest of the test.
+ *
+ * A test that passed is not one of those states: `status` reads `passed` from
+ * the start, so nothing here can tell a call made by the test from one made by
+ * an `afterEach` cleaning up after it, and a ban met there would take a green
+ * test down. What keeps that from happening is where the policy is applied —
+ * every call site sits on a path the test has already failed on — not this.
  */
 export function throttleActionMessage(
 	action: ThrottleAction,
