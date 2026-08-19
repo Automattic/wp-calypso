@@ -1,4 +1,4 @@
-import { cancel, start, stop } from '@automattic/browser-data-collector';
+import { start, stop } from '@automattic/browser-data-collector';
 
 export type PerfReportName = 'notifications-panel-initial-fill' | 'notifications-panel-load-more';
 
@@ -18,7 +18,7 @@ export function startPerfReport( name: PerfReportName ) {
 		if ( Math.random() >= SAMPLE_RATES[ name ] ) {
 			return;
 		}
-		start( name, { fullPageLoad: false } )?.catch( () => {} );
+		start( name, { fullPageLoad: false } ).catch( () => {} );
 	} catch {
 		// Never let perf tracking crash the panel.
 	}
@@ -40,18 +40,7 @@ export function stopPerfReport(
 					return report;
 				},
 			],
-		} )?.catch( () => {} );
-	} catch {
-		// Never let perf tracking crash the panel.
-	}
-}
-
-/**
- * Discard an in-flight report without sending it (e.g. the request failed).
- */
-export function cancelPerfReport( name: PerfReportName ) {
-	try {
-		cancel( name );
+		} ).catch( () => {} );
 	} catch {
 		// Never let perf tracking crash the panel.
 	}
