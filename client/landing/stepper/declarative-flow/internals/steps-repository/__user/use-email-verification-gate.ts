@@ -67,6 +67,10 @@ type GateStatus = 'pending' | 'clear' | 'verified' | 'gated';
 
 interface EmailVerificationGate {
 	status: GateStatus;
+	// Whether the experiment assignment is still resolving. The account step holds the passwordless
+	// submit on this, so a create-account request can't fire before the arm decides the activation
+	// email's flavor.
+	isVariantLoading: boolean;
 }
 
 /**
@@ -100,5 +104,5 @@ export function useEmailVerificationGate( flow: string ): EmailVerificationGate 
 		status = 'gated';
 	}
 
-	return { status };
+	return { status, isVariantLoading: isLoading };
 }

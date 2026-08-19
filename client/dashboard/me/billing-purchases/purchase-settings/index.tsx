@@ -100,6 +100,7 @@ import {
 	isExpiredAndInGracePeriod,
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	isRemoved,
+	isManageableByUser,
 	isExpiredOrRemoved,
 	mightStillAutoRenew,
 	isWithinRefundWindowDowngradeEligible,
@@ -349,6 +350,11 @@ export function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase }
 	// those flags, so the check has to be repeated here. Agency-provisioned
 	// purchases are bought through WordPress.com and stay cancellable.
 	if ( purchase.is_host_managed ) {
+		return null;
+	}
+
+	// Only support can cancel or remove some purchases.
+	if ( ! isManageableByUser( purchase ) ) {
 		return null;
 	}
 
@@ -727,6 +733,12 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
+	// Skip the card for a purchase only support can change: cancel and remove are
+	// hidden above, and prepaid credits have nothing to renew or upgrade.
+	if ( ! isManageableByUser( purchase ) && ! hasProductAction ) {
+		return null;
+	}
+
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
@@ -868,7 +880,11 @@ function getFields( {
 					) : (
 						helpText
 					);
-				if ( purchase.is_auto_renew_enabled && ! purchase.is_rechargeable ) {
+				if (
+					! purchase.is_rechargeable &&
+					! purchase.is_iap_purchase &&
+					( purchase.is_auto_renew_enabled || isAutoRenewToggleDisabled( purchase, user ) )
+				) {
 					if ( String( user.ID ) !== String( purchase.user_id ) ) {
 						return null;
 					}

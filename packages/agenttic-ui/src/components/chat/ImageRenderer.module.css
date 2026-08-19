@@ -1,0 +1,47 @@
+.container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 2px;
+	width: 100%;
+}
+
+.imageButton {
+	position: relative;
+	background: none;
+	cursor: pointer;
+	border-radius: calc( var( --radius-sm ) + 2px );
+	overflow: hidden;
+	transition: var( --transition-colors );
+	border: 1px solid transparent;
+	padding: 1px;
+}
+
+.imageButton:hover {
+	border-color: var( --color-muted-foreground );
+}
+
+.imageButton.selected {
+	border-color: var( --color-primary );
+	box-shadow: 0 0 0 1px var( --color-primary );
+	border-radius: calc( var( --radius-sm ) + 2px );
+}
+
+.imageButton.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.image {
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: var( --radius-sm );
+	object-fit: cover;
+}
+
+.header {
+	display: flex;
+	margin-bottom: var( --spacing-1 );
+	color: var( --color-muted-foreground );
+}

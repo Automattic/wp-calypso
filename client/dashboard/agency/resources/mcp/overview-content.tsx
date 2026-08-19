@@ -4,15 +4,17 @@ import { connection, listView, pencil, seen } from '@wordpress/icons';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import SummaryButton from '../../../components/summary-button';
+import { getAbilitiesForToolType } from './tool-types';
 import type { RecordTracksEvent } from './types';
 import type { McpAvailableAbility, McpSettings, McpSettingsUpdate } from '@automattic/api-core';
 import type { MouseEvent } from 'react';
 
-const MCP_TOOLS_PATH = '/resources/ai-mcp/tools';
+const MCP_READ_TOOLS_PATH = '/resources/ai-mcp/read';
+const MCP_WRITE_TOOLS_PATH = '/resources/ai-mcp/write';
 const MCP_CONNECT_PATH = '/resources/ai-mcp/connect';
 const MCP_PROMPTS_PATH = '/resources/ai-mcp/prompts';
 
-function getReadBadge( abilities: McpAvailableAbility[] ) {
+function getToolsBadge( abilities: McpAvailableAbility[] ) {
 	if ( abilities.length === 0 ) {
 		return { text: __( 'No tools available' ) };
 	}
@@ -40,7 +42,8 @@ interface McpOverviewProps {
 	isSaving?: boolean;
 	onSave: ( update: McpSettingsUpdate ) => void;
 	recordTracksEvent?: RecordTracksEvent;
-	toolsPath?: string;
+	readToolsPath?: string;
+	writeToolsPath?: string;
 	connectPath?: string;
 	promptsPath?: string;
 	onNavigate?: ( path: string ) => void;
@@ -52,7 +55,8 @@ export default function McpOverview( {
 	isSaving,
 	onSave,
 	recordTracksEvent = () => {},
-	toolsPath = MCP_TOOLS_PATH,
+	readToolsPath = MCP_READ_TOOLS_PATH,
+	writeToolsPath = MCP_WRITE_TOOLS_PATH,
 	connectPath = MCP_CONNECT_PATH,
 	promptsPath = MCP_PROMPTS_PATH,
 	onNavigate,
@@ -67,6 +71,8 @@ export default function McpOverview( {
 		};
 
 	const availableAbilities = settings?.available_abilities ?? [];
+	const readAbilities = getAbilitiesForToolType( availableAbilities, 'read' );
+	const writeAbilities = getAbilitiesForToolType( availableAbilities, 'write' );
 	const mcpEnabled = !! settings?.enabled;
 
 	const onMainToggle = ( next: boolean ) => {
@@ -103,16 +109,20 @@ export default function McpOverview( {
 							density="medium"
 							title={ __( 'Read' ) }
 							decoration={ <Icon icon={ seen } size={ 24 } /> }
-							badges={ [ getReadBadge( availableAbilities ) ] }
-							href={ toolsPath }
-							onClick={ handleNavClick( toolsPath, 'calypso_a4a_ai_mcp_available_tools_click' ) }
+							badges={ [ getToolsBadge( readAbilities ) ] }
+							href={ readToolsPath }
+							onClick={ handleNavClick(
+								readToolsPath,
+								'calypso_a4a_ai_mcp_available_tools_click'
+							) }
 						/>
 						<SummaryButton
 							density="medium"
 							title={ __( 'Write' ) }
 							decoration={ <Icon icon={ pencil } size={ 24 } /> }
-							badges={ [ { text: __( 'Coming soon' ) } ] }
-							disabled
+							badges={ [ getToolsBadge( writeAbilities ) ] }
+							href={ writeToolsPath }
+							onClick={ handleNavClick( writeToolsPath, 'calypso_a4a_ai_mcp_write_tools_click' ) }
 						/>
 					</>
 				) }

@@ -91,7 +91,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const [ createdUserId, setCreatedUserId ] = useState< number | string | null >( null );
 
-	const { status: gateStatus } = useEmailVerificationGate( flow );
+	const { status: gateStatus, isVariantLoading } = useEmailVerificationGate( flow );
 	// Sending the activation email and aiming it back at onboarding is shared by both variants: the
 	// account step gates in Variant A, but in Variant B the same link is what the post-plan-selection gate,
 	// met after plan selection or checkout, goes on to wait for.
@@ -321,6 +321,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
 				activationEmailFrom={ emailVerificationEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
+				// The email submit stays held until the arm loads: the arm decides activationEmailFrom, so
+				// submitting first would send the wrong activation email. Social signups are verified on
+				// creation and never gated, so this leaves them untouched.
+				isSubmitBlocked={ isVariantLoading }
 				onUpdateEmail={ isEditingEmail ? updateEmail : undefined }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (

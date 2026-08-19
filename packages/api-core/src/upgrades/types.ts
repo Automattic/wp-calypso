@@ -265,6 +265,14 @@ export interface Purchase {
 	is_removable: boolean;
 
 	/**
+	 * True if the customer can refund, cancel or remove this purchase themselves.
+	 *
+	 * Set per product, not per user. Support can still act on the purchase.
+	 * Optional in the response, so read it through `isManageableByUser()`.
+	 */
+	is_manageable_by_user?: boolean;
+
+	/**
 	 * True if this subscription has refundable receipts.
 	 *
 	 * If this is true, it means that it's possible the subscription could
