@@ -86,6 +86,7 @@ describe( 'ChatResponseRenderedTracker', () => {
 					implication_count: 0,
 					guideline_violation_count: 3,
 					review_context: 'notes_and_guidelines',
+					cache_hit: true,
 				} }
 			/>
 		);
@@ -98,6 +99,7 @@ describe( 'ChatResponseRenderedTracker', () => {
 			implication_count: 0,
 			guideline_violation_count: 3,
 			review_context: 'notes_and_guidelines',
+			cache_hit: true,
 		} );
 	} );
 
@@ -111,6 +113,7 @@ describe( 'ChatResponseRenderedTracker', () => {
 					conflict_count: 1.5,
 					implication_count: 2,
 					review_context: 'unknown-context',
+					cache_hit: 'yes',
 					private_text: 'do not record',
 				} }
 			/>

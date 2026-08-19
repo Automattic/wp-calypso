@@ -142,6 +142,30 @@ describe( 'tracks wrappers', () => {
 			expect( props ).not.toHaveProperty( 'ai_session_id' );
 		} );
 
+		it( 'mirrors a caller-overridden sessionid into ai_session_id', () => {
+			recordBigSkyTracksEvent( 'x', { sessionid: 'override' } );
+
+			expect( lastEventProps() ).toMatchObject( {
+				sessionid: 'override',
+				ai_session_id: 'override',
+			} );
+		} );
+
+		it( 'omits ai_session_id when a caller overrides sessionid to empty', () => {
+			recordBigSkyTracksEvent( 'x', { sessionid: '' } );
+
+			expect( lastEventProps() ).not.toHaveProperty( 'ai_session_id' );
+		} );
+
+		it( 'lets a caller-supplied ai_session_id win over the mirror', () => {
+			recordBigSkyTracksEvent( 'x', { ai_session_id: 'custom' } );
+
+			expect( lastEventProps() ).toMatchObject( {
+				sessionid: 'session-xyz',
+				ai_session_id: 'custom',
+			} );
+		} );
+
 		it( 'labels editor-hosted parity events with the block_editor surface', () => {
 			recordBigSkyTracksEvent( 'chat_input_send_message' );
 

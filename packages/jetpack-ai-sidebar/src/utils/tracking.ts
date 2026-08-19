@@ -22,6 +22,7 @@ type ResponseRenderedTrackingProperties = {
 	implication_count?: number;
 	guideline_violation_count?: number;
 	review_context?: ReviewContext;
+	cache_hit?: boolean;
 };
 
 const REVIEW_CONTEXTS: ReadonlySet< string > = new Set< ReviewContext >( [
@@ -142,6 +143,8 @@ export function getResponseRenderedTrackingProperties(
 			implication_count: countResponseItems( props.implications ),
 			guideline_violation_count: countRenderableGuidelineViolations( props.guideline_violations ),
 			...( reviewContext ? { review_context: reviewContext } : {} ),
+			// Server-declared cache signal; older payloads omit it.
+			...( typeof props.cache_hit === 'boolean' ? { cache_hit: props.cache_hit } : {} ),
 		};
 	}
 

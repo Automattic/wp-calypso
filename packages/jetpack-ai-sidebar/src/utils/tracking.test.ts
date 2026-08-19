@@ -22,6 +22,8 @@ const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 >;
 const mockedSelect = select as jest.MockedFunction< typeof select >;
 
+// Guards the split-screen guide payloads specifically; the shared response
+// events carry their own allowlisted metadata (counts, review_context, cache_hit).
 const expectPrivacySafePayload = (
 	properties: Record< string, unknown >,
 	{ allowPostType = false }: { allowPostType?: boolean } = {}
@@ -140,6 +142,24 @@ describe( 'Jetpack AI sidebar tracking', () => {
 				review_context: 'unknown-context',
 			} )
 		).not.toHaveProperty( 'review_context' );
+	} );
+
+	it( 'relays the server-declared AI Editorial Review cache signal', () => {
+		expect(
+			getResponseRenderedTrackingProperties( 'ai-editorial-review', { cache_hit: true } )
+		).toMatchObject( { cache_hit: true } );
+		expect(
+			getResponseRenderedTrackingProperties( 'ai-editorial-review', { cache_hit: false } )
+		).toMatchObject( { cache_hit: false } );
+	} );
+
+	it( 'omits a non-boolean or absent cache signal', () => {
+		expect(
+			getResponseRenderedTrackingProperties( 'ai-editorial-review', { cache_hit: 'yes' } )
+		).not.toHaveProperty( 'cache_hit' );
+		expect( getResponseRenderedTrackingProperties( 'ai-editorial-review', {} ) ).not.toHaveProperty(
+			'cache_hit'
+		);
 	} );
 
 	it( 'omits response metadata for components without review findings', () => {

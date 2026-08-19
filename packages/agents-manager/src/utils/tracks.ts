@@ -122,16 +122,12 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 	const bigSky = getBigSkyTracksData();
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
-	const sessionId = getSessionId();
 	const surface = getBigSkySurface();
 	const baseProps: TracksProps = {
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 		...( blogId !== undefined ? { blog_id: blogId } : {} ),
-		sessionid: sessionId,
-		// `ai_session_id` is the standard name; `sessionid` stays until the Big
-		// Sky family migrates in one move. Omitted while no session exists yet.
-		...( sessionId ? { ai_session_id: sessionId } : {} ),
+		sessionid: getSessionId(),
 		...( surface ? { surface } : {} ),
 		session_type: bigSky.sessionType,
 		// AM has no onboarding flow, so the phase is always the editor.
@@ -141,7 +137,18 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 		...getBigSkyPageProps(),
 	};
 
-	recordTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, { ...baseProps, ...props } );
+	const mergedProps: TracksProps = { ...baseProps, ...props };
+	// `ai_session_id` is the standard name; `sessionid` stays until the Big Sky
+	// family migrates in one move. Mirror the effective (possibly caller-
+	// overridden) `sessionid`, omitted while no session exists yet.
+	if ( ! ( 'ai_session_id' in mergedProps ) ) {
+		const effectiveSessionId = mergedProps.sessionid;
+		if ( typeof effectiveSessionId === 'string' && effectiveSessionId !== '' ) {
+			mergedProps.ai_session_id = effectiveSessionId;
+		}
+	}
+
+	recordTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, mergedProps );
 }
 
 /**
