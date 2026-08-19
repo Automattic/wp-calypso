@@ -21,32 +21,47 @@ const loadPricingGrid = () =>
 		/* webpackChunkName: "async-load-calypso-my-sites-stats-pricing-grid" */ './pricing-grid'
 	);
 
+/** `unknown` is what a bundle that predates the marker naming the plan sends back. */
+type PlanChosenBeforeConnecting = 'free' | 'paid' | 'unknown';
+
 /**
- * Whether the visitor already answered the plan question on Odyssey's pre-connection screen, which
- * asks exactly what this gate asks — but before the site had a blog id to record the answer
- * against, so the answer travels back as a query arg on the page the connection flow lands on.
+ * Which plan the visitor picked on Odyssey's pre-connection screen, which asks exactly what this
+ * gate asks — but before the site had a blog id to record the answer against, so the answer travels
+ * back as a query arg on the page the connection flow lands on. `null` when the site was connected
+ * by any other route.
  *
  * Remembered after the first read: those args are then stripped from the address bar so they do
  * not sit in the Referer of every dashboard REST request, and the gate remounts on route changes.
  *
  * Exported for tests: too eager and a site never sees the grid, too shy and it is asked twice.
  */
-let rememberedChoiceBeforeConnecting = false;
+let rememberedChoiceBeforeConnecting: PlanChosenBeforeConnecting | null = null;
 
-export function hasChosenBeforeConnecting(): boolean {
-	if ( rememberedChoiceBeforeConnecting ) {
-		return true;
+function readChoiceBeforeConnecting(): PlanChosenBeforeConnecting | null {
+	const marker = new URLSearchParams( window.location.search ).get( PLAN_CHOSEN_QUERY_ARG );
+
+	if ( marker === 'free' || marker === 'paid' ) {
+		return marker;
 	}
 
-	rememberedChoiceBeforeConnecting =
-		new URLSearchParams( window.location.search ).get( PLAN_CHOSEN_QUERY_ARG ) === '1';
+	return marker === '1' ? 'unknown' : null;
+}
+
+export function getChoiceBeforeConnecting(): PlanChosenBeforeConnecting | null {
+	if ( ! rememberedChoiceBeforeConnecting ) {
+		rememberedChoiceBeforeConnecting = readChoiceBeforeConnecting();
+	}
 
 	return rememberedChoiceBeforeConnecting;
 }
 
+export function hasChosenBeforeConnecting(): boolean {
+	return getChoiceBeforeConnecting() !== null;
+}
+
 /** Clears the in-memory plan-chosen flag so tests can set a fresh query string. */
 export function resetHasChosenBeforeConnecting() {
-	rememberedChoiceBeforeConnecting = false;
+	rememberedChoiceBeforeConnecting = null;
 }
 
 /**
@@ -120,9 +135,15 @@ function PricingGridGate( { children }: { children: ReactNode } ) {
 
 		hasRecordedChoiceBeforeConnecting = true;
 		dismissPricingGrid();
-		// Where the free path ends: the site is connected, the plan it chose minutes ago is in
-		// effect, and this is the first moment that choice can be recorded against a blog id.
-		trackStatsAnalyticsEvent( 'stats_pre_connection_free_plan_completed', { blog_id: siteId } );
+		// Where the pre-connection flow ends: the site is connected, and this is the first moment
+		// the choice made minutes ago can be recorded against a blog id. `plan` is what was picked
+		// on the grid, which is all the marker can carry — a visitor who picked paid and then took
+		// free from the purchase page returns under the registration the paid choice made, and is
+		// counted as free by that page's own button event.
+		trackStatsAnalyticsEvent( 'stats_pre_connection_plan_completed', {
+			blog_id: siteId,
+			plan: getChoiceBeforeConnecting(),
+		} );
 	}, [ siteId, dismissPricingGrid ] );
 
 	if ( ! isApplicable || hasChosen ) {

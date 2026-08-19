@@ -182,6 +182,7 @@ const gotoCheckoutPage = ( {
 	isUpgrade = false,
 	isSiteFullyConnected = true,
 	redirect = true,
+	eventProps,
 }: {
 	from: string;
 	type: 'pwyw' | 'free' | 'commercial';
@@ -194,6 +195,12 @@ const gotoCheckoutPage = ( {
 	isUpgrade?: boolean;
 	isSiteFullyConnected?: boolean;
 	redirect?: boolean;
+	/**
+	 * Added to the purchase click. A caller with no blog id in `siteId` — the pre-connection
+	 * screens, which register the site only once the visitor picks a plan — supplies whatever keys
+	 * it does have here, so this click still joins the screens it came from.
+	 */
+	eventProps?: Record< string, string | number >;
 } ) => {
 	let eventName = '';
 	let product: string;
@@ -227,9 +234,8 @@ const gotoCheckoutPage = ( {
 		type,
 		quantity,
 		blog_id: siteId,
-		// The only identifier a site that is not connected yet has, and so the only thing tying
-		// this click to the screens it came from.
 		site_slug: siteSlug,
+		...eventProps,
 	} );
 
 	const redirectUrl = getRedirectUrl( { type, adminUrl, redirectUri, siteSlug } );

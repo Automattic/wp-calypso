@@ -16,21 +16,42 @@ import { StatsCommercialPurchase } from 'calypso/my-sites/stats/stats-purchase/s
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { getSiteSuffix, isOfflineMode, registerSite } from '../lib/jetpack-connection';
+import {
+	getRegistrationErrorCode,
+	getSiteSuffix,
+	isOfflineMode,
+	registerSite,
+} from '../lib/jetpack-connection';
 import getWpAdminUrl from '../lib/selectors/get-wp-admin-url';
 
 const STATS_ADMIN_PATH = 'admin.php?page=stats';
 
+type Plan = 'free' | 'paid';
+
+/**
+ * Tracks only queues an event; navigating in the same tick cancels the request that would have
+ * sent it. The purchase flow waits the same beat everywhere else it leaves the page.
+ */
+const TRACKS_FLUSH_DELAY = 250;
+
+const navigateOnceRecorded = ( url: string ) => {
+	setTimeout( () => {
+		window.location.href = url;
+	}, TRACKS_FLUSH_DELAY );
+};
+
 /**
  * Where authorizing returns the visitor to. The marker tells the dashboard's pricing grid that the
  * plan question was already answered here — it cannot be recorded against the site at the time it
- * is asked, since the site has no blog id yet.
+ * is asked, since the site has no blog id yet. It names the plan rather than merely reporting that
+ * one was picked: registration happens for both, so the marker alone says nothing about which.
  *
  * `force_refresh` drops what the site cached while it had no connection. The pricing grid gate
  * strips it (and the plan-chosen marker) from the address bar once the dashboard has read them,
  * so later REST requests do not keep bypassing the server caches via the Referer.
  */
-const AUTHORIZE_REDIRECT_URI = `${ STATS_ADMIN_PATH }&${ PLAN_CHOSEN_QUERY_ARG }=1&force_refresh=1`;
+const authorizeRedirectUri = ( plan: Plan ) =>
+	`${ STATS_ADMIN_PATH }&${ PLAN_CHOSEN_QUERY_ARG }=${ plan }&force_refresh=1`;
 
 /**
  * The plan choice a site sees before it is connected to WordPress.com.
@@ -70,13 +91,13 @@ export default function PreConnection() {
 		}
 	}, [ isOffline, eventProps ] );
 
-	const connect = async ( plan: 'free' | 'paid' ) => {
+	const connect = async ( plan: Plan ) => {
 		setError( null );
 		setIsRegistering( true );
 		trackStatsAnalyticsEvent( 'stats_pre_connection_register_start', { ...eventProps, plan } );
 
 		try {
-			const registration = await registerSite( AUTHORIZE_REDIRECT_URI );
+			const registration = await registerSite( authorizeRedirectUri( plan ) );
 
 			// The one event carrying both keys, and so the join between everything above and
 			// everything the site does once it has an id.
@@ -94,7 +115,9 @@ export default function PreConnection() {
 			trackStatsAnalyticsEvent( 'stats_pre_connection_register_failed', {
 				...eventProps,
 				plan,
-				error: message,
+				// Not the message: it arrives already translated, can name the site, and is empty
+				// for every failure that did not come from the API.
+				error_code: getRegistrationErrorCode( e ),
 			} );
 			setError(
 				message ||
@@ -112,7 +135,7 @@ export default function PreConnection() {
 
 		// Deliberately leaves the spinner up: the browser is on its way to WordPress.com.
 		if ( url ) {
-			window.location.href = url;
+			navigateOnceRecorded( url );
 		}
 	};
 
@@ -162,7 +185,7 @@ export default function PreConnection() {
 								postponeLabel={ String( translate( 'Start for free' ) ) }
 								postponeEventName="stats_purchase_commercial_start_for_free_button_clicked"
 								onPostpone={ () => {
-									window.location.href = authorizeUrl;
+									navigateOnceRecorded( authorizeUrl );
 								} }
 							/>
 						</StatsSingleItemPagePurchaseFrame>
@@ -176,22 +199,27 @@ export default function PreConnection() {
 		}
 
 		return (
-			<PricingGrid
-				onSelectFree={ startForFree }
-				onSelectPaid={ goToPurchase }
-				eventProps={ eventProps }
-			/>
+			<>
+				{ /* Recorded with the grid rather than above every step: an offline site never sees
+				     the grid and can never convert, so counting it here would inflate the top of
+				     the funnel against the view the grid records. */ }
+				<PageViewTracker
+					path="/stats/pricing"
+					title="Stats > Pricing"
+					site_suffix={ eventProps.site_suffix }
+					is_pre_connection={ eventProps.is_pre_connection }
+				/>
+				<PricingGrid
+					onSelectFree={ startForFree }
+					onSelectPaid={ goToPurchase }
+					eventProps={ eventProps }
+				/>
+			</>
 		);
 	};
 
 	return (
 		<>
-			<PageViewTracker
-				path="/stats/pricing"
-				title="Stats > Pricing"
-				site_suffix={ eventProps.site_suffix }
-				is_pre_connection={ eventProps.is_pre_connection }
-			/>
 			{ /* Mounted across every step: the tier slider reads the same product the grid prices,
 			     and unmounting mid-flight would lose the response that populates it. */ }
 			<QueryProductsList type="jetpack" />

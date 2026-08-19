@@ -58,8 +58,9 @@ interface StatsCommercialPurchaseProps {
 	 */
 	postponeEventName?: string;
 	/**
-	 * Added to the events this component records itself. A host with no blog id to be identified
-	 * by has to supply whatever key it does have, since `blog_id` is null there.
+	 * Added to the events this screen records, including the purchase click it hands to checkout.
+	 * A host with no blog id to be identified by has to supply whatever key it does have, since
+	 * `blog_id` is null there.
 	 */
 	eventProps?: Record< string, string | number >;
 }
@@ -406,6 +407,7 @@ const StatsCommercialPurchase = ( {
 							quantity: purchaseTierQuantity,
 							isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
 							isSiteFullyConnected: !! connectionStatus?.isSiteFullyConnected,
+							eventProps,
 						} )
 					}
 				>

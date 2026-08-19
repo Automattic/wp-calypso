@@ -61,20 +61,45 @@ interface Registration {
 }
 
 /**
+ * Why registration failed. The message cannot answer that: the REST API returns it already
+ * translated, it can name the site, and the failures that do not come from the API carry none at
+ * all — so only a code is worth recording.
+ */
+export type RegistrationErrorCode =
+	| 'no_connection_state'
+	| 'request_failed'
+	| 'http_error'
+	| 'no_authorize_url';
+
+interface RegistrationError extends Error {
+	code: RegistrationErrorCode;
+}
+
+function registrationError( code: RegistrationErrorCode, message = '' ): RegistrationError {
+	return Object.assign( new Error( message ), { code } );
+}
+
+/** Reads the code off a {@link registerSite} rejection; anything else is a request that never completed. */
+export function getRegistrationErrorCode( error: unknown ): RegistrationErrorCode {
+	return ( error as Partial< RegistrationError > | null )?.code ?? 'request_failed';
+}
+
+/**
  * Registers the site with WordPress.com. Registration alone leaves the site connected but nobody
  * signed in, so every caller is expected to send the visitor on to `authorizeUrl`, sooner (the
  * free plan) or later (after checkout, via `connect_after_checkout`).
  *
  * Rejects with the REST API's own (already localized) message where there is one; callers are
- * expected to supply a translated fallback for the rest.
+ * expected to supply a translated fallback for the rest, and to report the rejection's
+ * {@link getRegistrationErrorCode} rather than its message.
  * @param redirectUri Admin path to return to once the user has authorized, relative to `admin_url()`.
- * @throws {Error} When the site prints no connection state, or the request fails.
+ * @throws {RegistrationError} When the site prints no connection state, or the request fails.
  */
 export async function registerSite( redirectUri: string ): Promise< Registration > {
 	const state = getInitialState();
 
 	if ( ! state?.apiRoot ) {
-		throw new Error();
+		throw registrationError( 'no_connection_state' );
 	}
 
 	const response = await globalThis.fetch( `${ state.apiRoot }jetpack/v4/connection/register`, {
@@ -98,8 +123,12 @@ export async function registerSite( redirectUri: string ): Promise< Registration
 
 	const body = await response.json().catch( () => null );
 
-	if ( ! response.ok || ! body?.authorizeUrl ) {
-		throw new Error( body?.message ?? '' );
+	if ( ! response.ok ) {
+		throw registrationError( 'http_error', body?.message ?? '' );
+	}
+
+	if ( ! body?.authorizeUrl ) {
+		throw registrationError( 'no_authorize_url', body?.message ?? '' );
 	}
 
 	return { authorizeUrl: body.authorizeUrl, blogId: readBlogId( body.authorizeUrl ) };
