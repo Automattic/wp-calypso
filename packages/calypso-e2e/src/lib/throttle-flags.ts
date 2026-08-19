@@ -49,6 +49,35 @@ export function mayBeThrottled( url: string ): boolean {
 }
 
 /**
+ * The banned endpoint a URL is bound for, or null for one bound for none. For a
+ * caller that stops the request rather than reading the refusal: a call the ban
+ * is going to refuse anyway is one the limiter should never have to count.
+ */
+export function activeThrottleForUrl( url: string, nowMs: number = Date.now() ): ThrottleId | null {
+	return (
+		THROTTLE_IDS.find(
+			( id ) => THROTTLED_PATHS[ id ].test( url ) && activeThrottle( id, nowMs )
+		) ?? null
+	);
+}
+
+/**
+ * What the suite answers a request to a banned endpoint with, in place of making
+ * it. Lives beside detection because detection is the constraint on it: a body
+ * that reads as a ban would raise the flag from our own refusal, and go on
+ * raising it for as long as the tests run.
+ */
+export function throttleRefusalBody( id: ThrottleId ): string {
+	return JSON.stringify( {
+		error: 'e2e_throttle_blocked',
+		message:
+			`The E2E suite refused this request: a ${ id } ban is in force, and the request ` +
+			'never reached WordPress.com. If this call is on the success path of a test, guard ' +
+			'that test with handleActiveThrottles.',
+	} );
+}
+
+/**
  * How long each ban lasts. A refusal cannot be asked: it names a length only
  * sometimes, in a translated sentence. These are the windows the limiters
  * themselves apply to a request from an Automattic IP, which is where CI runs,

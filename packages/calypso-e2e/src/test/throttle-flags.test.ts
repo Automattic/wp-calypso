@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import * as teamcity from '../lib/teamcity';
 import {
+	activeThrottleForUrl,
 	debugThrottle,
 	detectThrottle,
 	flagsInLog,
@@ -14,9 +15,11 @@ import {
 	registerThrottleActionHandler,
 	resetThrottleState,
 	THROTTLE_ACTION_ENV_VARS,
+	THROTTLE_IDS,
 	throttleAction,
 	throttleActionMessage,
 	throttleEnvVar,
+	throttleRefusalBody,
 	throttleTag,
 	validateThrottleActions,
 } from '../lib/throttle-flags';
@@ -191,6 +194,19 @@ describe( 'throttle actions', () => {
 		handleActiveThrottles( [ 'signup', 'domain-suggestions' ] );
 		unregister();
 		expect( handler ).toHaveBeenCalledWith( 'fail', [ 'domain-suggestions' ] );
+	} );
+
+	test( 'names the banned endpoint a URL is bound for, and only while it is banned', () => {
+		const suggestions = 'https://public-api.wordpress.com/rest/v1.1/domains/suggestions?query=foo';
+		expect( activeThrottleForUrl( suggestions, NOW ) ).toBeNull();
+
+		process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION = String( NOW + 1 );
+		expect( activeThrottleForUrl( suggestions, NOW ) ).toBe( 'domain-suggestions' );
+		// A ban on one endpoint is no reason to refuse another.
+		expect(
+			activeThrottleForUrl( 'https://public-api.wordpress.com/rest/v1.1/sites/new', NOW )
+		).toBeNull();
+		expect( activeThrottleForUrl( suggestions, NOW + 2 ) ).toBeNull();
 	} );
 } );
 
@@ -743,6 +759,25 @@ describe( 'detectThrottle', () => {
 		expect(
 			detectThrottle( { url: users, status: 403, body: '{"error":"throttled"}' } )
 		).toBeNull();
+	} );
+
+	test( 'the suite’s own refusal is not a ban', () => {
+		// The route answers a banned endpoint with this instead of making the
+		// request, and the listener reads it back like any other response. Detect it
+		// and the flag is raised from our own answer, for as long as the build runs.
+		const urls: Record< ThrottleId, string > = {
+			signup: 'https://public-api.wordpress.com/rest/v1.1/sites/new',
+			'domain-suggestions':
+				'https://public-api.wordpress.com/rest/v1.1/domains/suggestions?query=x',
+			'domain-availability':
+				'https://public-api.wordpress.com/rest/v1.1/domains/x.com/is-available',
+		};
+		THROTTLE_IDS.forEach( ( id ) => {
+			expect( detectThrottle( throttleRefusalBody( id ), urls[ id ] ) ).toBeNull();
+			expect(
+				detectThrottle( { url: urls[ id ], status: 429, body: throttleRefusalBody( id ) } )
+			).toBeNull();
+		} );
 	} );
 
 	test( 'an endpoint the payload does not name is taken from the caller', () => {

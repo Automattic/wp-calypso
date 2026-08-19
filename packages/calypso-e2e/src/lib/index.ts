@@ -9,6 +9,7 @@ export * from './utils';
 // and its own tests.
 export {
 	THROTTLE_IDS,
+	activeThrottleForUrl,
 	flushThrottleWrites,
 	mayBeThrottled,
 	readActiveThrottles,
@@ -16,6 +17,7 @@ export {
 	registerThrottleActionHandler,
 	throttleActionMessage,
 	throttleEnvVar,
+	throttleRefusalBody,
 	validateThrottleActions,
 } from './throttle-flags';
 export type { ThrottleId } from './throttle-flags';

@@ -89,11 +89,13 @@ import {
 	PlansPage,
 	UseADomainIOwnPage,
 	SelectItemsComponent,
+	activeThrottleForUrl,
 	flushThrottleWrites,
 	mayBeThrottled,
 	recordResponseThrottle,
 	registerThrottleActionHandler,
 	throttleActionMessage,
+	throttleRefusalBody,
 	withDeadline,
 } from '@automattic/calypso-e2e';
 import {
@@ -102,6 +104,7 @@ import {
 	type BrowserContext,
 	type Page,
 	type Response,
+	type Route,
 } from '@playwright/test';
 import {
 	apiCloseAccount,
@@ -166,16 +169,20 @@ const FLUSH_TIMEOUT = 7 * 1000;
  * as a 200. The body is never logged: a failed `/sites/new` carries the
  * credentials of the user it was creating a site for.
  *
- * Recording only: no skip, no fail. This sees every call the app makes, and most
- * of them are ones the test never depended on — a page that renders a domain
- * upsell hits `/domains/suggestions` whatever the test is about. A test that did
- * depend on a banned call has already failed on the answer it got, so the policy
- * belongs at the page objects that make those calls, not here.
+ * Recording and refusing, never skipping or failing. This sees every call the
+ * app makes, and most of them are ones the test never depended on — a page that
+ * renders a domain upsell hits `/domains/suggestions` whatever the test is
+ * about. Those calls are answered here while a ban is in force, so a test the
+ * ban does not affect goes on passing without spending the endpoint on a request
+ * that would be refused. A test that did depend on a banned call has already
+ * failed on the answer it got, so the policy belongs at the page objects that
+ * make those calls, not here.
  *
- * Returns the teardown for these listeners. It drains recording; without it, a
- * worker can exit between detecting a throttle and tagging the build for it.
+ * Returns the teardown for the listener and the route. It drains recording;
+ * without it, a worker can exit between detecting a throttle and tagging the
+ * build for it.
  */
-function watchForThrottle( context: BrowserContext ): () => Promise< void > {
+async function watchForThrottle( context: BrowserContext ): Promise< () => Promise< void > > {
 	const pending = new Set< Promise< unknown > >();
 
 	const onResponse = ( response: Response ) => {
@@ -204,10 +211,28 @@ function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 	};
 	context.on( 'response', onResponse );
 
+	// A ban we already know about answers here rather than at wpcom: the call
+	// would be refused anyway, and the endpoint has better uses for it. Every
+	// other request, banned endpoint or not, falls through to the network.
+	const refuseBanned = async ( route: Route ) => {
+		const id = activeThrottleForUrl( route.request().url() );
+		if ( ! id ) {
+			return route.fallback();
+		}
+		await route.fulfill( {
+			status: 429,
+			contentType: 'application/json',
+			body: throttleRefusalBody( id ),
+		} );
+	};
+	const bannedRoute = ( url: URL ) => WPCOM_HOST.test( url.href ) && mayBeThrottled( url.href );
+	await context.route( bannedRoute, refuseBanned );
+
 	return async () => {
 		// Off first: a response arriving while this drains would start a read
 		// nothing is waiting for, and print its line into the next test.
 		context.off( 'response', onResponse );
+		await context.unroute( bannedRoute, refuseBanned ).catch( () => {} );
 
 		// A listener can be mid-read when the test ends, so settle until the set
 		// is empty rather than settling a snapshot of it. Raced rather than
@@ -506,7 +531,7 @@ export const test = base.extend<
 			await useBlackboxTestKeyForCollect( page );
 		}
 
-		const flushThrottleWatchers = watchForThrottle( page.context() );
+		const flushThrottleWatchers = await watchForThrottle( page.context() );
 
 		await use( page );
 
@@ -679,7 +704,7 @@ export const test = base.extend<
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
 		await incognitoPage.spawn();
-		const flushThrottleWatchers = watchForThrottle( incognitoPage.getPage().context() );
+		const flushThrottleWatchers = await watchForThrottle( incognitoPage.getPage().context() );
 		await use( incognitoPage );
 		await flushThrottleWatchers();
 		await incognitoPage.close();
