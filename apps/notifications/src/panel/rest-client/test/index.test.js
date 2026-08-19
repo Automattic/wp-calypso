@@ -15,7 +15,7 @@ import { init } from '../wpcom';
 jest.mock( '../../helpers/performance-tracking' );
 
 // Mirrors settings.max_limit in the client.
-const MAX_LIMIT = 200;
+const MAX_LIMIT = 1000;
 
 // Every filtered test here uses the Unread tab; its id list is cached under its name.
 const UNREAD_KEY = 'unread';
