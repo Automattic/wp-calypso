@@ -345,6 +345,7 @@ const StatsCommercialPurchase = ( {
 					isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
 				}_stats_purchase_commercial_slider_clicked` }
 				onSliderChange={ handleSliderChanged }
+				eventProps={ eventProps }
 			/>
 		</>
 	) : (
