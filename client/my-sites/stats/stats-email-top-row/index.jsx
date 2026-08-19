@@ -42,6 +42,12 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 							icon={ <Icon icon={ send } /> }
 							emailIsSending={ emailIsSending }
 						/>
+						<TopCard
+							heading={ translate( 'Total opens' ) }
+							value={ counts?.total_opens ?? 0 }
+							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_opens' ) }
+							icon={ <Icon icon={ seen } /> }
+						/>
 						{ /* Three states: uniques known (> 0) show; a true zero (no opens at
 						     all) shows 0; opens recorded but none attributable means the
 						     unique count is unknown, so the card hides. */ }
@@ -53,12 +59,6 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 								icon={ <Icon icon={ seen } /> }
 							/>
 						) : null }
-						<TopCard
-							heading={ translate( 'Total opens' ) }
-							value={ counts?.total_opens ?? 0 }
-							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_opens' ) }
-							icon={ <Icon icon={ seen } /> }
-						/>
 						<TopCard
 							heading={ translate( 'Open rate' ) }
 							value={
@@ -86,6 +86,12 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 							icon={ <Icon icon={ send } /> }
 							emailIsSending={ emailIsSending }
 						/>
+						<TopCard
+							heading={ translate( 'Total clicks' ) }
+							value={ counts?.total_clicks ?? 0 }
+							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_clicks' ) }
+							icon={ <Icon icon={ link } /> }
+						/>
 						{ /* Same three states as Unique opens: known, true zero, or unknown. */ }
 						{ isRequesting || counts?.unique_clicks > 0 || counts?.total_clicks === 0 ? (
 							<TopCard
@@ -95,12 +101,6 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 								icon={ <Icon icon={ link } /> }
 							/>
 						) : null }
-						<TopCard
-							heading={ translate( 'Total clicks' ) }
-							value={ counts?.total_clicks ?? 0 }
-							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_clicks' ) }
-							icon={ <Icon icon={ link } /> }
-						/>
 						<TopCard
 							heading={ translate( 'Click rate' ) }
 							value={
