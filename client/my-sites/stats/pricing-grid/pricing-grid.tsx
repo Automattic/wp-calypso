@@ -15,7 +15,7 @@ import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useDismissPricingGrid, { PRICING_GRID_REFERRER } from './hooks/use-dismiss-pricing-grid';
 import './style.scss';
@@ -46,7 +46,17 @@ interface PricingGridProps {
 	 * connection cannot form: it has no site slug yet.
 	 */
 	onSelectPaid?: () => void;
+	/**
+	 * Takes over the secondary action for a host that can connect the site, relabelling it "I
+	 * already have a plan". Redeeming a licence key is what that action offers a connected site,
+	 * and it is no use before then: the plan is held against a WordPress.com account this site is
+	 * not attached to yet, so connecting is what surfaces it.
+	 */
+	onSelectExistingPlan?: () => void;
 }
+
+/** My Jetpack's licence activation screen, where Jetpack Search's upsell sends its own visitors. */
+const LICENSE_ACTIVATION_PATH = 'admin.php?page=my-jetpack#/add-license';
 
 /**
  * Replicates the Jetpack Search upsell's PricingTable rendering (DOM structure and
@@ -55,12 +65,20 @@ interface PricingGridProps {
  * to the Search one. Gating lives in `gate.tsx`; by the time this renders the site
  * is known to be eligible and undismissed.
  */
-export default function PricingGrid( { onDismiss, onSelectFree, onSelectPaid }: PricingGridProps ) {
+export default function PricingGrid( {
+	onDismiss,
+	onSelectFree,
+	onSelectPaid,
+	onSelectExistingPlan,
+}: PricingGridProps ) {
 	const translate = useTranslate();
 	// Same breakpoint the jetpack-components PricingTable uses via useViewportMatch.
 	const isLg = useViewportMatch( 'large' );
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	// Built by hand rather than through the selector's `path` argument, which runs the query
+	// through URLSearchParams and would escape the fragment.
+	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const dismissPricingGrid = useDismissPricingGrid( siteId );
 
 	useEffect( () => {
@@ -180,6 +198,52 @@ export default function PricingGrid( { onDismiss, onSelectFree, onSelectPaid }: 
 		page( `/stats/purchase/${ siteSlug }?from=${ PRICING_GRID_REFERRER }` );
 	};
 
+	// Neither answers the plan question, so neither dismisses the grid: connecting comes back
+	// through the gate, which reads the plan the visitor says they have off their purchases, and
+	// redeeming a key comes back with a plan attached the same way.
+	const selectExistingPlan = () => {
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_existing_plan_cta_clicked', {
+			blog_id: siteId,
+			cta: 'existing_plan',
+		} );
+
+		onSelectExistingPlan?.();
+	};
+
+	const goToLicenseActivation = () => {
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_license_key_cta_clicked', {
+			blog_id: siteId,
+			cta: 'license_key',
+		} );
+	};
+
+	// The page header's action slot, where the Jetpack Search upsell puts "Use license key".
+	const renderSecondaryAction = () => {
+		if ( onSelectExistingPlan ) {
+			return (
+				<Button variant="secondary" size="compact" onClick={ selectExistingPlan }>
+					{ translate( 'I already have a plan' ) }
+				</Button>
+			);
+		}
+
+		// Nowhere to send anyone: the key is redeemed in the site's own wp-admin.
+		if ( ! adminUrl ) {
+			return null;
+		}
+
+		return (
+			<Button
+				variant="secondary"
+				size="compact"
+				href={ `${ adminUrl }${ LICENSE_ACTIVATION_PATH }` }
+				onClick={ goToLicenseActivation }
+			>
+				{ translate( 'Use license key' ) }
+			</Button>
+		);
+	};
+
 	const renderPrice = ( value: number, currency: string, hidePriceFraction: boolean ) => {
 		const { symbol, symbolPosition, integer, fraction } = getCurrencyObject( value, currency );
 		const showPriceFraction = ! hidePriceFraction || ! fraction.endsWith( '00' );
@@ -243,7 +307,7 @@ export default function PricingGrid( { onDismiss, onSelectFree, onSelectPaid }: 
 	const currencyCode = product?.currency_code ?? 'USD';
 
 	return (
-		<Main fullWidthLayout>
+		<Main fullWidthLayout pageActions={ renderSecondaryAction() }>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<div className="stats stats-pricing-grid">
 				<div className="stats-pricing-grid__container">

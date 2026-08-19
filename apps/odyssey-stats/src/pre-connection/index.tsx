@@ -20,15 +20,18 @@ import getWpAdminUrl from '../lib/selectors/get-wp-admin-url';
 const STATS_ADMIN_PATH = 'admin.php?page=stats';
 
 /**
- * Where authorizing returns the visitor to. The marker tells the dashboard's pricing grid that the
- * plan question was already answered here — it cannot be recorded against the site at the time it
- * is asked, since the site has no blog id yet.
- *
- * `force_refresh` drops what the site cached while it had no connection. The pricing grid gate
- * strips it (and the plan-chosen marker) from the address bar once the dashboard has read them,
- * so later REST requests do not keep bypassing the server caches via the Referer.
+ * Where authorizing returns the visitor to. `force_refresh` drops what the site cached while it had
+ * no connection; the pricing grid gate strips it from the address bar once the dashboard has read
+ * it, so later REST requests do not keep bypassing the server caches via the Referer.
  */
-const AUTHORIZE_REDIRECT_URI = `${ STATS_ADMIN_PATH }&${ PLAN_CHOSEN_QUERY_ARG }=1&force_refresh=1`;
+const RETURN_TO_DASHBOARD = `${ STATS_ADMIN_PATH }&force_refresh=1`;
+
+/**
+ * The same return, with a marker telling the dashboard's pricing grid that the plan question was
+ * already answered here — it cannot be recorded against the site at the time it is asked, since the
+ * site has no blog id yet. The gate strips the marker along with `force_refresh`.
+ */
+const AUTHORIZE_REDIRECT_URI = `${ RETURN_TO_DASHBOARD }&${ PLAN_CHOSEN_QUERY_ARG }=1`;
 
 /**
  * The plan choice a site sees before it is connected to WordPress.com.
@@ -48,12 +51,12 @@ export default function PreConnection() {
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
 	);
 
-	const connect = async () => {
+	const connect = async ( redirectUri: string ) => {
 		setError( null );
 		setIsRegistering( true );
 
 		try {
-			return await registerSite( AUTHORIZE_REDIRECT_URI );
+			return await registerSite( redirectUri );
 		} catch ( e ) {
 			setError(
 				( e as Error ).message ||
@@ -67,7 +70,7 @@ export default function PreConnection() {
 	};
 
 	const startForFree = async () => {
-		const url = await connect();
+		const url = await connect( AUTHORIZE_REDIRECT_URI );
 
 		// Deliberately leaves the spinner up: the browser is on its way to WordPress.com.
 		if ( url ) {
@@ -75,8 +78,22 @@ export default function PreConnection() {
 		}
 	};
 
+	/**
+	 * Returns without the plan-chosen marker, so the dashboard's gate asks the question again —
+	 * this time against the purchases the newly linked account holds. A visitor who really does
+	 * have a plan lands on the dashboard; one who does not sees this choice again, now offering a
+	 * licence key to redeem.
+	 */
+	const startWithExistingPlan = async () => {
+		const url = await connect( RETURN_TO_DASHBOARD );
+
+		if ( url ) {
+			window.location.href = url;
+		}
+	};
+
 	const goToPurchase = async () => {
-		const url = await connect();
+		const url = await connect( AUTHORIZE_REDIRECT_URI );
 
 		if ( url ) {
 			setAuthorizeUrl( url );
@@ -130,7 +147,13 @@ export default function PreConnection() {
 			return PageLoading;
 		}
 
-		return <PricingGrid onSelectFree={ startForFree } onSelectPaid={ goToPurchase } />;
+		return (
+			<PricingGrid
+				onSelectFree={ startForFree }
+				onSelectPaid={ goToPurchase }
+				onSelectExistingPlan={ startWithExistingPlan }
+			/>
+		);
 	};
 
 	return (
