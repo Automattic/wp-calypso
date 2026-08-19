@@ -282,9 +282,21 @@ export async function getSiteAdminUrl( siteIdentifier: string ): Promise< string
 /**
  * Build the Site Editor URL from a site's wp-admin URL.
  */
-export function getSiteEditorUrl( adminUrl: string ): string {
+export function getSiteEditorUrl(
+	adminUrl: string,
+	{ startWalkthrough = false }: { startWalkthrough?: boolean } = {}
+): string {
 	const base = adminUrl.endsWith( '/' ) ? adminUrl : `${ adminUrl }/`;
-	return `${ base }site-editor.php`;
+	const url = `${ base }site-editor.php`;
+
+	// The editor agent is ready to offer a copy walkthrough on a blueprint site,
+	// but it only speaks when spoken to — without this the customer lands on
+	// their new site and has to work out that saying "hi" is the way in. Big Sky
+	// reads the flag on arrival and opens the conversation for them.
+	//
+	// Only worth setting when the spec actually applied: the walkthrough has
+	// nothing to personalize from otherwise.
+	return startWalkthrough ? addQueryArgs( url, { 'blueprint-walkthrough': '1' } ) : url;
 }
 
 export function logBlueprintArchiveEvent(
