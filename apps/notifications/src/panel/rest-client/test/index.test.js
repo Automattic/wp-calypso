@@ -10,10 +10,6 @@ import getIsLoading from '../../state/selectors/get-is-loading';
 import Client from '../index';
 import { init } from '../wpcom';
 
-// Perf reports are sampled with Math.random and send network requests; keep
-// the suite deterministic and offline.
-jest.mock( '../../helpers/performance-tracking' );
-
 // Mirrors settings.max_limit in the client.
 const MAX_LIMIT = 1000;
 

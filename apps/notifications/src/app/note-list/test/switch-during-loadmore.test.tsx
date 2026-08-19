@@ -11,10 +11,6 @@ import { AppProvider } from '../../context';
 import NoteList from '../index';
 import type { FilterName } from '../../types';
 
-// Perf reports are sampled with Math.random and send network requests; keep
-// the suite deterministic and offline.
-jest.mock( '../../../panel/helpers/performance-tracking' );
-
 const noop = () => {};
 
 // Valid, monotonic timestamps (higher id = newer note).

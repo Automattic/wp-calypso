@@ -1,7 +1,6 @@
 import debugFactory from 'debug';
 import repliesCache from '../comment-replies-cache';
 import { logError } from '../helpers/log-error';
-import { startPerfReport, stopPerfReport } from '../helpers/performance-tracking';
 import { store } from '../state';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
@@ -217,34 +216,10 @@ function getNotes( before ) {
 		store.dispatch( actions.ui.loadNotes() );
 	}
 
-	// Time the first fill (empty cache) and load-more pages; steady-state
-	// background polls also land here but aren't worth measuring.
-	let perfReport = null;
-	if ( before ) {
-		perfReport = 'notifications-panel-load-more';
-	} else if ( ! notes.length ) {
-		perfReport = 'notifications-panel-initial-fill';
-	}
-	// Only the call that started a report may stop one: consecutive load-mores
-	// can overlap the previous stop (deferred a frame), and an unguarded stop
-	// would end the successor's report with this request's data.
-	const perfStarted = perfReport ? startPerfReport( perfReport ) : false;
-
 	listNotes( parameters, ( error, data ) => {
 		this.gettingNotes = false;
 
 		if ( error ) {
-			// Report failures too, with their duration — slow requests that die at
-			// depth are the most interesting ones, and dropping them would skew the
-			// latency data toward the successes.
-			if ( perfStarted ) {
-				stopPerfReport( perfReport, {
-					error: true,
-					status: error.status ?? 0,
-					notesRequested: parameters.number,
-					notesLoaded: loaded,
-				} );
-			}
 			logError( error, {
 				request: 'getNotes',
 				before: before ?? null,
@@ -327,20 +302,6 @@ function getNotes( before ) {
 		}
 
 		store.dispatch( actions.notes.addNotes( data.notes ) );
-
-		// Stop on the next frame so the duration covers the store update and the
-		// appended rows' render, not just the network round-trip.
-		if ( perfStarted ) {
-			const notesReturned = data.notes.length;
-			requestAnimationFrame( () =>
-				stopPerfReport( perfReport, {
-					notesRequested: parameters.number,
-					notesReturned,
-					notesLoaded: loaded,
-				} )
-			);
-		}
-
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
 
 		if ( this.allNotesLoaded ) {
