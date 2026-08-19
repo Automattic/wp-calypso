@@ -28,7 +28,7 @@ function GenAIButton( {
 	attachmentId,
 }: GenAIButtonProps ) {
 	const agentChatProps = useAgentChat( agentConfigState );
-	const { addNotice } = useDispatch( imageStudioStore );
+	const { addNotice, recordAgentRequestSettled } = useDispatch( imageStudioStore );
 
 	useEffect( () => {
 		setProcessing( agentChatProps.isProcessing );
@@ -37,22 +37,29 @@ function GenAIButton( {
 	// Metadata fields always operate on an existing attachment.
 	useErrorNotice( agentChatProps.error, addNotice, ImageStudioMode.Edit );
 
-	const handleClick = () => {
+	const handleClick = async () => {
 		// Track the GenAI button click
 		trackImageStudioGenAIButtonClick( {
 			field,
 			attachmentId,
 		} );
 
-		// Submit the prompt
-		agentChatProps.onSubmit?.( prompt );
+		if ( ! agentChatProps.onSubmit ) {
+			return;
+		}
+
+		try {
+			await agentChatProps.onSubmit( prompt );
+		} finally {
+			void recordAgentRequestSettled();
+		}
 	};
 
 	return (
 		<Button
 			icon={ <RegenerateIcon /> }
 			label={ __( 'Regenerate', __i18n_text_domain__ ) }
-			onClick={ handleClick }
+			onClick={ () => void handleClick() }
 			size="small"
 			disabled={ agentChatProps.isProcessing }
 		/>

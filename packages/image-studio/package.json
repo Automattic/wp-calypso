@@ -54,6 +54,7 @@
 		"@automattic/agenttic-client": "^0.1.89",
 		"@automattic/agenttic-ui": "^0.1.89",
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/jetpack-ai-sidebar": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
 		"@wordpress/abilities": "^0.14.0",
 		"@wordpress/api-fetch": "^7.48.0",

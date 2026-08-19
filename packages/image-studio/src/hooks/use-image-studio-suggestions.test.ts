@@ -28,6 +28,11 @@ let mockCurrentScreenState: {
 let mockAsyncSuggestions: any[] = [];
 const mockAbortLoading = jest.fn();
 let mockIsLoadingSuggestions = false;
+const mockUseAsyncSuggestionsLoader = jest.fn( () => ( {
+	suggestions: mockAsyncSuggestions,
+	abortLoading: mockAbortLoading,
+	isLoading: mockIsLoadingSuggestions,
+} ) );
 
 const mockSetAnnotationMode = jest.fn();
 const mockRegisterSuggestions = jest.fn();
@@ -66,6 +71,10 @@ jest.mock( '@wordpress/i18n', () => ( {
 	__: jest.fn( ( str ) => str ),
 } ) );
 
+jest.mock( '@automattic/agents-manager', () => ( {
+	getAgentsManagerInlineData: jest.fn(),
+} ) );
+
 jest.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
@@ -95,6 +104,9 @@ const {
 const { formatSuggestionIds: mockFormatSuggestionIds } = jest.requireMock(
 	'../utils/agenttic-tracking'
 ) as jest.Mocked< typeof import('../utils/agenttic-tracking') >;
+const { getAgentsManagerInlineData: mockGetAgentsManagerInlineData } = jest.requireMock(
+	'@automattic/agents-manager'
+) as { getAgentsManagerInlineData: jest.Mock };
 
 mockFormatSuggestionIds.mockImplementation(
 	( suggestions: any[] ) =>
@@ -102,11 +114,7 @@ mockFormatSuggestionIds.mockImplementation(
 );
 
 jest.mock( './use-async-suggestions-loader', () => ( {
-	useAsyncSuggestionsLoader: () => ( {
-		suggestions: mockAsyncSuggestions,
-		abortLoading: mockAbortLoading,
-		isLoading: mockIsLoadingSuggestions,
-	} ),
+	useAsyncSuggestionsLoader: ( options: unknown ) => mockUseAsyncSuggestionsLoader( options ),
 } ) );
 
 /**
@@ -145,6 +153,7 @@ describe( 'useImageStudioSuggestions', () => {
 
 		mockAsyncSuggestions = [];
 		mockIsLoadingSuggestions = false;
+		mockGetAgentsManagerInlineData.mockReturnValue( { isWpcomPlatform: true } );
 	} );
 
 	describe( 'edit mode suggestions', () => {
@@ -187,6 +196,42 @@ describe( 'useImageStudioSuggestions', () => {
 			expect( suggestions[ 0 ].id ).toBe( 'generate-image-a' );
 			expect( suggestions[ 1 ].id ).toBe( 'generate-image-b' );
 			expect( suggestions[ 2 ].id ).toBe( 'generate-image-c' );
+		} );
+
+		it( 'uses default suggestions without an Agent request on connected self-hosted sites', () => {
+			mockCurrentScreenState.isPostEditor = true;
+			mockGetAgentsManagerInlineData.mockReturnValue( { isWpcomPlatform: false } );
+
+			renderHook( () =>
+				useImageStudioSuggestions( createHookParams( { mode: ImageStudioMode.Generate } ) )
+			);
+
+			expect( mockUseAsyncSuggestionsLoader ).toHaveBeenCalledWith(
+				expect.objectContaining( { enabled: false } )
+			);
+			expect( mockRegisterSuggestions ).toHaveBeenCalledWith( [
+				expect.objectContaining( { id: 'generate-image-a' } ),
+				expect.objectContaining( { id: 'generate-image-b' } ),
+				expect.objectContaining( { id: 'generate-image-c' } ),
+			] );
+		} );
+
+		it.each( [
+			{ label: 'hosted sites', inlineData: { isWpcomPlatform: true } },
+			{ label: 'an unknown platform', inlineData: undefined },
+		] )( 'keeps contextual suggestions on $label', ( { inlineData } ) => {
+			mockCurrentScreenState.isPostEditor = true;
+			mockGetAgentsManagerInlineData.mockReturnValue( inlineData );
+			mockAsyncSuggestions = [ { id: 'async-1', label: 'Contextual suggestion' } ];
+
+			renderHook( () =>
+				useImageStudioSuggestions( createHookParams( { mode: ImageStudioMode.Generate } ) )
+			);
+
+			expect( mockUseAsyncSuggestionsLoader ).toHaveBeenCalledWith(
+				expect.objectContaining( { enabled: true } )
+			);
+			expect( mockRegisterSuggestions ).toHaveBeenCalledWith( mockAsyncSuggestions );
 		} );
 
 		it( 'does not register suggestions when async suggestions are empty', () => {

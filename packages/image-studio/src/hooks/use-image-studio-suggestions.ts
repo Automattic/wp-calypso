@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
 import { formatSuggestionIds } from '../utils/agenttic-tracking';
+import { isConnectedSelfHosted } from '../utils/is-connected-self-hosted';
 import {
 	trackImageStudioSuggestionClick,
 	trackImageStudioSuggestionsRendered,
@@ -158,7 +159,7 @@ export function useImageStudioSuggestions( {
 
 	// Get async suggestions config for current context
 	const asyncConfig = getAsyncSuggestionsConfig( isBlockEditor, postId );
-	const supportsAsyncSuggestions = asyncConfig !== null;
+	const supportsAsyncSuggestions = asyncConfig !== null && ! isConnectedSelfHosted();
 
 	// Async suggestions loader - loads when in generate mode within block editor
 	const {

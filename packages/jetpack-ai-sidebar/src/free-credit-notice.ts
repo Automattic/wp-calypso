@@ -1,12 +1,11 @@
 import apiFetch from '@wordpress/api-fetch';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { _n, __, sprintf } from '@wordpress/i18n';
-import {
-	getTrustedUpgradeUrl,
-	type JetpackAiChatNotice,
-	useChatNotice as useQuotaRejectionNotice,
-} from './quota-notice';
+import { getTrustedUpgradeUrl, useChatNotice as useQuotaRejectionNotice } from './quota-notice';
 import { trackJetpackAiUpgrade } from './utils/tracking';
+import type { FreeCreditNoticeProps, JetpackAiChatNotice } from './free-credit-notice-types';
+
+export type { JetpackAiChatNotice } from './free-credit-notice-types';
 
 const FREE_TIER_SLUGS = new Set( [ 'jetpack_ai_free', 'ai-assistant-tier-free' ] );
 const LOCAL_STATUS_PATH = '/wpcom/v2/jetpack-ai/ai-assistant-feature';
@@ -37,18 +36,12 @@ interface FreeCreditState {
 	status: FreeCreditStatus | null;
 }
 
-interface FreeCreditNoticeProps {
-	error: string | null;
-	enabled?: boolean;
-	isWpcomPlatform?: boolean;
-	settledRequestCount?: number;
-	siteId?: number;
-}
-
 interface FreeCreditNoticeOptions {
 	error: string | null;
 	enabled: boolean;
 	fetchEnabled: boolean;
+	onUpgradeClick?: ( upgradeUrl: string ) => void;
+	rejectionNotice?: JetpackAiChatNotice;
 	refreshDelayMs: number;
 	settledRequestCount: number;
 	siteId?: number;
@@ -150,12 +143,15 @@ function useFreeCreditNotice( {
 	error,
 	enabled,
 	fetchEnabled,
+	onUpgradeClick: injectedOnUpgradeClick,
+	rejectionNotice: injectedRejectionNotice,
 	refreshDelayMs,
 	settledRequestCount,
 	siteId,
 	statusPath,
 }: FreeCreditNoticeOptions ): JetpackAiChatNotice | undefined {
-	const rejectionNotice = useQuotaRejectionNotice( { error: enabled ? error : null } );
+	const quotaRejectionNotice = useQuotaRejectionNotice( { error: enabled ? error : null } );
+	const rejectionNotice = injectedRejectionNotice ?? quotaRejectionNotice;
 	const [ freeCreditState, setFreeCreditState ] = useState< FreeCreditState | undefined >();
 	const settledRequestCountRef = useRef( settledRequestCount );
 	const requestStatusRefresh = useRef< ( ( count: number ) => void ) | null >( null );
@@ -300,6 +296,10 @@ function useFreeCreditNotice( {
 		if ( ! upgradeUrl ) {
 			return;
 		}
+		if ( injectedOnUpgradeClick ) {
+			injectedOnUpgradeClick( upgradeUrl );
+			return;
+		}
 
 		try {
 			trackJetpackAiUpgrade();
@@ -307,7 +307,7 @@ function useFreeCreditNotice( {
 			// Analytics must never block checkout navigation.
 		}
 		window.location.assign( upgradeUrl );
-	}, [ upgradeUrl ] );
+	}, [ injectedOnUpgradeClick, upgradeUrl ] );
 
 	return useMemo( () => {
 		if ( ! enabled ) {
@@ -315,7 +315,7 @@ function useFreeCreditNotice( {
 		}
 
 		if ( status === null ) {
-			return rejectionNotice;
+			return rejectionNotice?.suppressCurrentError ? rejectionNotice : undefined;
 		}
 
 		if ( status && ( status.isExhausted || rejectionNotice ) ) {

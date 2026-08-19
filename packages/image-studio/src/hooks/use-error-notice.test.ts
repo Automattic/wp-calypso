@@ -264,6 +264,7 @@ describe( 'useErrorNotice', () => {
 				message: 'You’re out of free credits.',
 				status: 'error',
 				dismissible: false,
+				suppressCurrentError: true,
 				action: {
 					label: 'Upgrade',
 					onClick: expect.any( Function ),
@@ -315,6 +316,7 @@ describe( 'useErrorNotice', () => {
 				message: 'You’re out of free credits.',
 				status: 'error',
 				dismissible: false,
+				suppressCurrentError: false,
 			} );
 			expect( mockAddNotice ).not.toHaveBeenCalled();
 		} );

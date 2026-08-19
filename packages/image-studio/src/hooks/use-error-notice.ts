@@ -1,15 +1,17 @@
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { openImageStudioUpgradeUrl } from '../utils/open-upgrade-url';
 import { parseErrorUrl } from '../utils/parse-error-url';
 import {
-	trackImageStudioUpgradeNoticeShown,
 	trackImageStudioUpgradeNoticeClick,
+	trackImageStudioUpgradeNoticeShown,
 } from '../utils/tracking';
 import type { NoticeAction, NoticeType } from '../store';
 import type { ImageStudioMode } from '../types';
 import type { NoticeConfig } from '@automattic/agenttic-ui';
 
 type AddNoticeFunc = ( content: string, type: NoticeType, actions?: NoticeAction[] ) => void;
+type ImageStudioChatNotice = NoticeConfig & { suppressCurrentError?: boolean };
 
 export interface UseErrorNoticeOptions {
 	placement?: 'modal' | 'chat';
@@ -37,18 +39,47 @@ export function useErrorNotice(
 	// impression per distinct message rather than one per error.
 	const trackedImpressions = useRef< Set< string > >( new Set() );
 	// Agenttic clears request errors after settlement, but quota exhaustion persists.
-	const [ chatNotice, setChatNotice ] = useState< NoticeConfig >();
-
-	useEffect( () => {
+	const [ chatNotice, setChatNotice ] = useState< ImageStudioChatNotice >();
+	const errorDetails = useMemo( () => {
 		if ( ! error ) {
-			return;
+			return undefined;
 		}
 
 		const errorMessage =
 			( error as Error )?.message ||
 			String( error ) ||
 			__( 'An error occurred while generating content.', __i18n_text_domain__ );
-		const { content, url, isUpgradeUrl, isPlansPageUrl } = parseErrorUrl( errorMessage );
+
+		return parseErrorUrl( errorMessage );
+	}, [ error ] );
+	const currentChatNotice = useMemo< ImageStudioChatNotice | undefined >( () => {
+		if ( placement !== 'chat' || ! errorDetails?.url || ! errorDetails.isUpgradeUrl ) {
+			return undefined;
+		}
+		const upgradeUrl = errorDetails.url;
+
+		return {
+			message: __( 'You’re out of free credits.', __i18n_text_domain__ ),
+			status: 'error',
+			dismissible: false,
+			suppressCurrentError: true,
+			action: {
+				label: __( 'Upgrade', __i18n_text_domain__ ),
+				onClick: () => openImageStudioUpgradeUrl( upgradeUrl, mode ),
+			},
+		};
+	}, [ errorDetails, mode, placement ] );
+	const retainedChatNotice = useMemo< ImageStudioChatNotice | undefined >(
+		() => ( chatNotice ? { ...chatNotice, suppressCurrentError: false } : undefined ),
+		[ chatNotice ]
+	);
+
+	useEffect( () => {
+		if ( ! errorDetails ) {
+			return;
+		}
+
+		const { content, url, isUpgradeUrl, isPlansPageUrl } = errorDetails;
 
 		if ( url && isUpgradeUrl ) {
 			if ( ! trackedImpressions.current.has( content ) ) {
@@ -57,26 +88,7 @@ export function useErrorNotice(
 			}
 
 			if ( placement === 'chat' ) {
-				setChatNotice( {
-					message: __( 'You’re out of free credits.', __i18n_text_domain__ ),
-					status: 'error',
-					dismissible: false,
-					action: {
-						label: __( 'Upgrade', __i18n_text_domain__ ),
-						onClick: () => {
-							try {
-								trackImageStudioUpgradeNoticeClick( { mode } );
-							} catch {
-								// Analytics must never block checkout navigation.
-							}
-
-							const newWindow = window.open( url, '_blank' );
-							if ( newWindow ) {
-								newWindow.opener = null;
-							}
-						},
-					},
-				} );
+				setChatNotice( currentChatNotice );
 				return;
 			}
 
@@ -103,7 +115,7 @@ export function useErrorNotice(
 			// Plain errors show as snackbar
 			addNotice( content, 'error' );
 		}
-	}, [ error, addNotice, mode, placement ] );
+	}, [ addNotice, currentChatNotice, errorDetails, mode, placement ] );
 
-	return placement === 'chat' ? chatNotice : undefined;
+	return placement === 'chat' ? currentChatNotice ?? retainedChatNotice : undefined;
 }

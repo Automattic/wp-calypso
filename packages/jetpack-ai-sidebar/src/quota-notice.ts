@@ -1,20 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { trackJetpackAiUpgrade } from './utils/tracking';
+import type { JetpackAiChatNotice } from './free-credit-notice-types';
+
+export type { JetpackAiChatNotice } from './free-credit-notice-types';
 
 const QUOTA_EXHAUSTED_CODE_MESSAGE =
 	/^(?:(?:(?:protocol request|streaming) error|http \d{3}):\s*)?jetpack_ai_quota_exhausted(?:[.!:\s]|$)/i;
 const QUOTA_EXHAUSTED_MESSAGE =
 	/^(?:(?:(?:protocol request|streaming) error|http \d{3}):\s*)?(?:you have reached your jetpack ai usage limit|jetpack ai usage limit reached)(?:[.!:\s]|$)/i;
-
-export interface JetpackAiChatNotice {
-	message: string;
-	status?: 'success' | 'warning' | 'error';
-	action?: { label: string; onClick: () => void };
-	dismissible?: boolean;
-	/** The persistent notice replaces this specific backend rejection. */
-	suppressCurrentError?: boolean;
-}
 
 export function getTrustedUpgradeUrl( value: string ): string | null {
 	try {

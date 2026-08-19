@@ -15,6 +15,12 @@
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
 		},
+		"./free-credit-notice": {
+			"calypso:src": "./src/free-credit-notice.ts",
+			"types": "./dist/types/free-credit-notice.d.ts",
+			"import": "./dist/esm/free-credit-notice.js",
+			"require": "./dist/cjs/free-credit-notice.js"
+		},
 		"./src/*": {
 			"calypso:src": "./src/*"
 		}
