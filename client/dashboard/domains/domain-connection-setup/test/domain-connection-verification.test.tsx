@@ -168,10 +168,10 @@ describe( 'DomainConnectionVerification', () => {
 		test( 'renders the verification component with domain name', () => {
 			const { container } = render( <DomainConnectionVerification { ...defaultProps } /> );
 
-			const titleElement = container.querySelector(
-				'.dashboard-domain-connection-verification__title'
+			const statusCard = container.querySelector(
+				'.dashboard-domain-connection-verification__status-card'
 			);
-			expect( titleElement ).toHaveTextContent( 'example.com' );
+			expect( statusCard ).toHaveTextContent( 'example.com' );
 		} );
 
 		test( 'shows Active badge when domain is connected', () => {
@@ -258,25 +258,28 @@ describe( 'DomainConnectionVerification', () => {
 	} );
 
 	describe( 'Verification Status', () => {
-		test( 'displays info notice when domain is verifying', () => {
+		test( 'displays the verification handoff message', () => {
 			const domainMappingStatus = createMockDomainMappingStatus( {
 				has_wpcom_ip_addresses: false,
 				resolves_to_wpcom: false,
 			} );
 
-			const { container } = render(
+			render(
 				<DomainConnectionVerification
 					{ ...defaultProps }
 					domainMappingStatus={ domainMappingStatus }
 				/>
 			);
 
-			const noticeElement = container.querySelector( '.dashboard-notice.is-info' );
-			expect( noticeElement ).toBeInTheDocument();
-			expect( noticeElement?.textContent ).toContain( 'checking your DNS records' );
+			expect( screen.getByText( 'Your part is done. We’ll take it from here.' ) ).toBeVisible();
+			expect(
+				screen.getByText(
+					'This usually takes a few hours, though in some cases it can take up to 72 hours.'
+				)
+			).toBeVisible();
 		} );
 
-		test( 'does not display info notice when domain is connected', () => {
+		test( 'displays the connected message when the domain is active', () => {
 			const domainMappingStatus = createMockDomainMappingStatus( {
 				has_wpcom_ip_addresses: true,
 				resolves_to_wpcom: true,
@@ -289,11 +292,7 @@ describe( 'DomainConnectionVerification', () => {
 				/>
 			);
 
-			expect(
-				screen.queryByText(
-					/We're checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours./
-				)
-			).not.toBeInTheDocument();
+			expect( screen.getByText( 'Your domain is connected' ) ).toBeVisible();
 		} );
 
 		test( 'displays correct verification section title for Advanced mode', () => {
@@ -326,7 +325,7 @@ describe( 'DomainConnectionVerification', () => {
 			expect( screen.getByText( 'Name server verification' ) ).toBeVisible();
 		} );
 
-		test( 'displays "Recommended" section when domain is not primary but can be set as primary', () => {
+		test( 'links to the primary site address setting when available', () => {
 			render(
 				<DomainConnectionVerification
 					{ ...defaultProps }
@@ -337,12 +336,10 @@ describe( 'DomainConnectionVerification', () => {
 				/>
 			);
 
-			expect( screen.getByText( 'Recommended' ) ).toBeVisible();
-
-			expect( screen.getByText( 'Set example.com as your primary site address' ) ).toBeVisible();
+			expect( screen.getByText( 'set it as your primary site address' ) ).toBeVisible();
 		} );
 
-		test( 'does not display "Recommended" section when domain is not primary and cannot be set as primary', () => {
+		test( 'does not link to the primary site address setting when unavailable', () => {
 			render(
 				<DomainConnectionVerification
 					{ ...defaultProps }
@@ -353,10 +350,10 @@ describe( 'DomainConnectionVerification', () => {
 				/>
 			);
 
-			expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'set it as your primary site address' ) ).not.toBeInTheDocument();
 		} );
 
-		test( 'does not display "Recommended" section when domain is primary', () => {
+		test( 'does not link to the primary site address setting when already primary', () => {
 			render(
 				<DomainConnectionVerification
 					{ ...defaultProps }
@@ -367,14 +364,14 @@ describe( 'DomainConnectionVerification', () => {
 				/>
 			);
 
-			expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'set it as your primary site address' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
-	describe( 'While You Wait Section', () => {
-		test( 'displays "While you wait" section when domain is verifying', () => {
+	describe( 'Connecting Status', () => {
+		test( 'displays the background connection message after records are verified', () => {
 			const domainMappingStatus = createMockDomainMappingStatus( {
-				has_wpcom_ip_addresses: false,
+				has_wpcom_ip_addresses: true,
 				resolves_to_wpcom: false,
 			} );
 
@@ -385,11 +382,13 @@ describe( 'DomainConnectionVerification', () => {
 				/>
 			);
 
-			expect( screen.getByText( 'While you wait' ) ).toBeVisible();
-			expect( screen.getByText( 'Customize your site' ) ).toBeVisible();
+			expect(
+				screen.getByText( /example.com is being connected in the background/ )
+			).toBeVisible();
+			expect( screen.getAllByText( 'Verifying' )[ 0 ] ).toBeVisible();
 		} );
 
-		test( 'does not display "While you wait" heading when domain is connected', () => {
+		test( 'does not display the background connection message when active', () => {
 			const domainMappingStatus = createMockDomainMappingStatus( {
 				has_wpcom_ip_addresses: true,
 				resolves_to_wpcom: true,
@@ -402,28 +401,9 @@ describe( 'DomainConnectionVerification', () => {
 				/>
 			);
 
-			expect( screen.queryByText( 'While you wait' ) ).not.toBeInTheDocument();
-		} );
-
-		test( '"What happens next" card is expanded by default when domain is verifying', () => {
-			const domainMappingStatus = createMockDomainMappingStatus( {
-				has_wpcom_ip_addresses: false,
-				resolves_to_wpcom: false,
-			} );
-
-			render(
-				<DomainConnectionVerification
-					{ ...defaultProps }
-					domainMappingStatus={ domainMappingStatus }
-				/>
-			);
-
-			// Verify the "What happens next" section is visible and expanded
-			const whatHappensNextSection = screen.getByText( 'What happens next' );
-			expect( whatHappensNextSection ).toBeVisible();
-
-			// Verify content is visible (indicates expansion)
-			expect( screen.getByText( 'Automatic verification' ) ).toBeVisible();
+			expect(
+				screen.queryByText( /example.com is being connected in the background/ )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );

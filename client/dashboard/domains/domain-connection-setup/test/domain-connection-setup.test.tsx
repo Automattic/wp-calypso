@@ -148,9 +148,9 @@ describe( 'DomainConnectionSetup', () => {
 			await user.click( manualSetupButton );
 
 			// Should now show manual setup cards
-			expect( screen.getByText( 'I only use this domain name for my website' ) ).toBeVisible();
+			expect( screen.getByText( 'I only use this domain for my website' ) ).toBeVisible();
 			expect(
-				screen.getByText( 'I use this domain name for email or other services' )
+				screen.getByText( 'I use this domain for my website, email, or other services' )
 			).toBeVisible();
 
 			// Should show banner to switch back to DC
@@ -200,9 +200,9 @@ describe( 'DomainConnectionSetup', () => {
 			);
 
 			// Should show manual setup cards
-			expect( screen.getByText( 'I only use this domain name for my website' ) ).toBeVisible();
+			expect( screen.getByText( 'I only use this domain for my website' ) ).toBeVisible();
 			expect(
-				screen.getByText( 'I use this domain name for email or other services' )
+				screen.getByText( 'I use this domain for my website, email, or other services' )
 			).toBeVisible();
 
 			// Should NOT show Domain Connect card or banner
@@ -230,9 +230,9 @@ describe( 'DomainConnectionSetup', () => {
 			);
 
 			// Suggested mode card should be expanded (shows steps)
-			expect( screen.getByText( '1. Login to your domain name provider' ) ).toBeVisible();
-			expect( screen.getByText( '2. Back up DNS records' ) ).toBeVisible();
-			expect( screen.getByText( '3. Update name servers' ) ).toBeVisible();
+			expect( screen.getByText( 'Log in to your domain provider' ) ).toBeVisible();
+			expect( screen.getByText( 'Save your current name servers' ) ).toBeVisible();
+			expect( screen.getByText( 'Update name servers' ) ).toBeVisible();
 		} );
 
 		test( 'defaults to advanced mode when MX records detected', () => {
@@ -253,9 +253,9 @@ describe( 'DomainConnectionSetup', () => {
 			);
 
 			// Advanced mode card should be expanded (shows steps)
-			expect( screen.getByText( '1. Login to your domain name provider' ) ).toBeVisible();
-			expect( screen.getByText( '2. Back up DNS records' ) ).toBeVisible();
-			expect( screen.getByText( '3. Update DNS records' ) ).toBeVisible();
+			expect( screen.getByText( 'Log in to your domain provider' ) ).toBeVisible();
+			expect( screen.getByText( 'Back up DNS records' ) ).toBeVisible();
+			expect( screen.getByText( 'Update DNS records' ) ).toBeVisible();
 		} );
 	} );
 
@@ -283,7 +283,7 @@ describe( 'DomainConnectionSetup', () => {
 			await user.click( manualSetupButton );
 
 			// Verify we're at manual setup
-			expect( screen.getByText( 'I only use this domain name for my website' ) ).toBeVisible();
+			expect( screen.getByText( 'I only use this domain for my website' ) ).toBeVisible();
 
 			// Switch back to DC
 			const useDomainConnectButton = screen.getByRole( 'button', {
@@ -378,8 +378,8 @@ describe( 'DomainConnectionSetup', () => {
 				/>
 			);
 
-			// Check that "Registered by" text is displayed (unique to banner)
-			expect( screen.getByText( 'Registered by' ) ).toBeVisible();
+			// Check that "Registered with" text is displayed (unique to banner)
+			expect( screen.getByText( 'Registered with' ) ).toBeVisible();
 
 			// Check that registrar links are present with correct href
 			const registrarLinks = screen.getAllByRole( 'link', { name: /GoDaddy/i } );
@@ -406,7 +406,7 @@ describe( 'DomainConnectionSetup', () => {
 
 			// Check that reseller name is displayed
 			expect( screen.getByText( 'Reseller Name' ) ).toBeVisible();
-			expect( screen.getByText( 'Registered by' ) ).toBeVisible();
+			expect( screen.getByText( 'Registered with' ) ).toBeVisible();
 
 			// Check that there's no clickable link for reseller
 			const registrarLink = screen.queryByRole( 'link', { name: 'Reseller Name' } );
@@ -429,8 +429,8 @@ describe( 'DomainConnectionSetup', () => {
 				/>
 			);
 
-			// Check that "Registered by" text is not displayed
-			expect( screen.queryByText( 'Registered by' ) ).not.toBeInTheDocument();
+			// Check that "Registered with" text is not displayed
+			expect( screen.queryByText( 'Registered with' ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'displays registrar name in setup instructions when available', () => {
@@ -453,7 +453,7 @@ describe( 'DomainConnectionSetup', () => {
 			);
 
 			// Check that step 1 includes registrar name
-			expect( screen.getByText( '1. Login to Namecheap' ) ).toBeVisible();
+			expect( screen.getByText( 'Log in to Namecheap' ) ).toBeVisible();
 
 			// Check that registrar links exist (they appear in multiple places)
 			const registrarLinks = screen.getAllByRole( 'link', { name: /Namecheap/i } );
@@ -481,7 +481,7 @@ describe( 'DomainConnectionSetup', () => {
 			);
 
 			// Check that step 1 uses fallback text
-			expect( screen.getByText( '1. Login to your domain name provider' ) ).toBeVisible();
+			expect( screen.getByText( 'Log in to your domain provider' ) ).toBeVisible();
 		} );
 
 		test( 'does not display clickable registrar link for resellers in setup instructions', () => {
@@ -505,7 +505,7 @@ describe( 'DomainConnectionSetup', () => {
 			);
 
 			// When reseller is present, it takes precedence over registrar
-			expect( screen.getByText( '1. Login to Reseller Company' ) ).toBeVisible();
+			expect( screen.getByText( 'Log in to Reseller Company' ) ).toBeVisible();
 
 			// Reseller name should not be a clickable link in instructions
 			const resellerLinks = screen.queryAllByRole( 'link', { name: 'Reseller Company' } );
@@ -529,7 +529,7 @@ describe( 'DomainConnectionSetup', () => {
 			);
 
 			// Check that registrar banner is displayed in DC mode
-			expect( screen.getByText( 'Registered by' ) ).toBeVisible();
+			expect( screen.getByText( 'Registered with' ) ).toBeVisible();
 
 			// Check that registrar links are present (appears in banner and DC card)
 			const registrarLinks = screen.getAllByRole( 'link', { name: /GoDaddy/i } );
@@ -558,19 +558,21 @@ describe( 'DomainConnectionSetup', () => {
 			);
 
 			// Check in Suggested mode (default)
-			expect( screen.getByText( '1. Login to Bluehost' ) ).toBeVisible();
+			expect( screen.getByText( 'Log in to Bluehost' ) ).toBeVisible();
+			expect( screen.getByText( 'I have opened the name server settings' ) ).toBeVisible();
 			let registrarLinks = screen.getAllByRole( 'link', { name: /Bluehost/i } );
 			expect( registrarLinks.length ).toBeGreaterThan( 0 );
 			expect( registrarLinks[ 0 ] ).toHaveAttribute( 'href', 'https://www.bluehost.com' );
 
 			// Switch to Advanced mode
 			const advancedModeTitle = screen.getByText(
-				'I use this domain name for email or other services'
+				'I use this domain for my website, email, or other services'
 			);
 			await user.click( advancedModeTitle );
 
 			// Check in Advanced mode
-			expect( screen.getByText( '1. Login to Bluehost' ) ).toBeVisible();
+			expect( screen.getByText( 'Log in to Bluehost' ) ).toBeVisible();
+			expect( screen.getByText( 'I have opened the DNS settings' ) ).toBeVisible();
 			registrarLinks = screen.getAllByRole( 'link', { name: /Bluehost/i } );
 			expect( registrarLinks.length ).toBeGreaterThan( 0 );
 			expect( registrarLinks[ 0 ] ).toHaveAttribute( 'href', 'https://www.bluehost.com' );

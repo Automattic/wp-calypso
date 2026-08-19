@@ -29,7 +29,7 @@ export default function DomainRegistrarBanner( {
 					{ registrar && (
 						<HStack spacing={ 1 } justify="flex-end">
 							<Text variant="muted" size="small">
-								{ __( 'Registered by' ) }
+								{ __( 'Registered with' ) }
 							</Text>
 							{ ! isReseller && registrar_url ? (
 								<ExternalLink href={ registrar_url }>{ registrar }</ExternalLink>

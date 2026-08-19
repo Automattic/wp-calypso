@@ -6,11 +6,13 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { published, swatch } from '@wordpress/icons';
+import clsx from 'clsx';
 import { CollapsibleCard } from '../../components/collapsible-card';
 
 interface SetupStepProps {
 	expanded: boolean;
 	completed: boolean;
+	stepNumber?: number;
 	title: string;
 	label?: string;
 	children: React.ReactNode;
@@ -22,6 +24,7 @@ interface SetupStepProps {
 export default function SetupStep( {
 	expanded,
 	completed,
+	stepNumber,
 	title,
 	label,
 	children,
@@ -29,20 +32,31 @@ export default function SetupStep( {
 	onToggle,
 	className,
 }: SetupStepProps ) {
+	let stepIndicator: React.ReactNode = (
+		<Icon className="setup-step__pending-icon" size={ 20 } icon={ swatch } />
+	);
+
+	if ( stepNumber ) {
+		stepIndicator = (
+			<span
+				className={ clsx( 'setup-step__number', { 'is-current': expanded } ) }
+				aria-hidden="true"
+			>
+				{ stepNumber }
+			</span>
+		);
+	}
+
+	if ( completed ) {
+		stepIndicator = <Icon className="setup-step__completed-icon" size={ 20 } icon={ published } />;
+	}
+
 	return (
 		<CollapsibleCard
-			className={ className }
+			className={ clsx( 'setup-step', className ) }
 			header={
-				<HStack spacing={ 4 } justify="flex-start" alignment="left" expanded={ false }>
-					<Icon
-						size={ 24 }
-						icon={ completed ? published : swatch }
-						fill={
-							completed
-								? 'var(--dashboard__background-color-success)'
-								: 'var(--dashboard-menu-item__color)'
-						}
-					/>
+				<HStack spacing={ 3 } justify="flex-start" alignment="left">
+					{ stepIndicator }
 					<Text size={ 15 } weight={ 500 }>
 						{ title }
 					</Text>
@@ -53,7 +67,7 @@ export default function SetupStep( {
 			size={ { blockStart: 'medium', blockEnd: 'medium', inlineStart: 'none', inlineEnd: 'none' } }
 			isBorderless
 		>
-			<VStack spacing={ 6 } style={ { paddingInlineStart: '40px', paddingTop: '16px' } }>
+			<VStack spacing={ 4 } style={ { paddingInlineStart: '32px', paddingTop: '16px' } }>
 				{ children }
 				{ label && (
 					<CheckboxControl
