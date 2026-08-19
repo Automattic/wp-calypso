@@ -18,6 +18,7 @@ import {
 	getIsErrorMessage,
 	isStaleOdieChat,
 } from '../../utils';
+import { ApprovalRequest } from './approval-request';
 import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
 import { GetSupport } from './get-support';
@@ -91,6 +92,14 @@ export const UserMessage = ( {
 	// hanging off an abandoned interaction. The closed footer is the only way forward.
 	const showGetSupport =
 		isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage ) && ! isStaleOdieChat( chat );
+
+	// A pending write-approval only renders its approve/decline card while it is the live
+	// end of the conversation — after a decision the server-appended outcome message becomes
+	// the last message and the card retires with the refetch.
+	const showApprovalRequest =
+		isLastBotMessage &&
+		!! message.context?.flags?.wpcom_approval_required &&
+		! isStaleOdieChat( chat );
 	const showActionButtons = ! isRequestingHumanSupport && ! isErrorMessage;
 
 	const messageContent = () => {
@@ -129,6 +138,7 @@ export const UserMessage = ( {
 			</div>
 			{ isMessageWithEscalationOption && (
 				<>
+					{ showApprovalRequest && <ApprovalRequest message={ message } /> }
 					{ showGetSupport && (
 						<GetSupport
 							onClickAdditionalEvent={ ( destination, props ) => {

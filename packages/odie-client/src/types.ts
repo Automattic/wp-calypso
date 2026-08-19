@@ -121,6 +121,23 @@ export type Context = {
 		hide_disclaimer_content?: boolean;
 		show_ai_avatar?: boolean;
 		is_error_message?: boolean;
+		wpcom_approval_required?: boolean;
+		wpcom_approval_executed?: boolean;
+		wpcom_approval_declined?: boolean;
+	};
+	/**
+	 * A write-approval outcome riding on the message (see flags.wpcom_approval_*): while
+	 * pending it carries the token the approve/decline endpoints consume; executed and
+	 * declined messages carry the decided outcome for rendering.
+	 */
+	approval?: {
+		status?: 'pending_approval' | 'executed' | 'declined';
+		token?: string;
+		action?: string;
+		description?: string;
+		declared_destructive?: boolean | null;
+		how_to_approve?: string;
+		reason?: string;
 	};
 };
 
