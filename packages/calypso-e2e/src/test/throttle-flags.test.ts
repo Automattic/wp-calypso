@@ -97,12 +97,14 @@ describe( 'throttle actions', () => {
 		expect( throttleAction( 'signup' ) ).toBe( 'skip' );
 		process.env.E2E_THROTTLE_SIGNUP_ACTION = 'fail';
 		expect( throttleAction( 'signup' ) ).toBe( 'fail' );
+		process.env.E2E_THROTTLE_SIGNUP_ACTION = 'noop';
+		expect( throttleAction( 'signup' ) ).toBe( 'noop' );
 	} );
 
 	test( 'startup validation rejects any value outside exact lowercase actions', () => {
 		process.env.E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION = 'FAIL';
 		expect( validateThrottleActions ).toThrow(
-			'Invalid E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION value: FAIL. Expected skip or fail.'
+			'Invalid E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION value: FAIL. Expected skip, fail, or noop.'
 		);
 	} );
 
@@ -163,6 +165,28 @@ describe( 'throttle actions', () => {
 		const unregister = registerThrottleActionHandler( handler );
 		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
 		process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION = String( NOW + 1 );
+		process.env.E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION = 'fail';
+		handleActiveThrottles( [ 'signup', 'domain-suggestions' ] );
+		unregister();
+		expect( handler ).toHaveBeenCalledWith( 'fail', [ 'domain-suggestions' ] );
+	} );
+
+	test( 'does nothing for a noop action, even when the ban is active', () => {
+		const handler = jest.fn();
+		const unregister = registerThrottleActionHandler( handler );
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
+		process.env.E2E_THROTTLE_SIGNUP_ACTION = 'noop';
+		handleActiveThrottles( [ 'signup' ] );
+		unregister();
+		expect( handler ).not.toHaveBeenCalled();
+	} );
+
+	test( 'leaves a noop throttle out of the action on the ones that are not', () => {
+		const handler = jest.fn();
+		const unregister = registerThrottleActionHandler( handler );
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
+		process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION = String( NOW + 1 );
+		process.env.E2E_THROTTLE_SIGNUP_ACTION = 'noop';
 		process.env.E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION = 'fail';
 		handleActiveThrottles( [ 'signup', 'domain-suggestions' ] );
 		unregister();

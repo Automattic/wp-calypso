@@ -4,7 +4,7 @@ import type { TaggedBuild } from './teamcity';
 
 export const THROTTLE_IDS = [ 'signup', 'domain-suggestions', 'domain-availability' ] as const;
 export type ThrottleId = ( typeof THROTTLE_IDS )[ number ];
-export type ThrottleAction = 'skip' | 'fail';
+export type ThrottleAction = 'skip' | 'fail' | 'noop';
 
 export const THROTTLE_ACTION_ENV_VARS = {
 	signup: 'E2E_THROTTLE_SIGNUP_ACTION',
@@ -169,10 +169,10 @@ export function throttleAction( id: ThrottleId ): ThrottleAction {
 	if ( ! value ) {
 		return 'skip';
 	}
-	if ( value === 'skip' || value === 'fail' ) {
+	if ( value === 'skip' || value === 'fail' || value === 'noop' ) {
 		return value;
 	}
-	throw new Error( `Invalid ${ variable } value: ${ value }. Expected skip or fail.` );
+	throw new Error( `Invalid ${ variable } value: ${ value }. Expected skip, fail, or noop.` );
 }
 
 /**
@@ -473,8 +473,14 @@ export function handleActiveThrottles(
 	// left: the tag and the line say what a peer reads, not what this log shows.
 	active.forEach( ( id ) => debugThrottle( id, nowMs ) );
 
-	const action = active.some( ( id ) => throttleAction( id ) === 'fail' ) ? 'fail' : 'skip';
-	const selected = active.filter( ( id ) => throttleAction( id ) === action );
+	// A `noop` answers the ban with nothing: it never skips or fails, so it is
+	// left out of the action and the caller is not told to stop.
+	const acting = active.filter( ( id ) => throttleAction( id ) !== 'noop' );
+	if ( ! acting.length ) {
+		return;
+	}
+	const action = acting.some( ( id ) => throttleAction( id ) === 'fail' ) ? 'fail' : 'skip';
+	const selected = acting.filter( ( id ) => throttleAction( id ) === action );
 	// Optional: a `beforeAll` has no handler, and skipping there would take down
 	// every test in the block, including the ones that never reach the endpoint.
 	actionHandler?.( action, selected );
