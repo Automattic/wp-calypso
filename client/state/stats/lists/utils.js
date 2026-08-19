@@ -1224,7 +1224,16 @@ export const normalizers = {
 			return [];
 		}
 
-		const emailsData = data?.posts ?? [];
+		// Posts that were never emailed to anyone and carry no engagement at all
+		// don't belong in an Emails list. Rows with no recorded sends but with
+		// recorded engagement stay visible: hiding recorded data is the exact
+		// problem this display work set out to fix.
+		const emailsData = ( data?.posts ?? [] ).filter( ( post ) => {
+			const sends = parseInt( post.total_sends, 10 ) || 0;
+			const opens = parseInt( post.opens, 10 ) || 0;
+			const clicks = parseInt( post.clicks, 10 ) || 0;
+			return sends > 0 || opens > 0 || clicks > 0;
+		} );
 
 		return emailsData.map(
 			( {
