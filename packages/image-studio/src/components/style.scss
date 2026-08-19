@@ -224,6 +224,7 @@ body.js.is-image-studio-open {
 	}
 
 	.image-studio-chat-notice--error {
+		margin: -12px -12px 0;
 		background-color: $error-notice-background;
 		color: $color-foreground;
 
