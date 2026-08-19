@@ -7,7 +7,6 @@ import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
-	LayoutHeaderSubtitle as Subtitle,
 } from 'calypso/layout/hosting-dashboard/header';
 import AiMcpReadToolsContent from './read-tools-content';
 
@@ -30,9 +29,6 @@ export default function AiMcpReadTools() {
 							},
 						] }
 					/>
-					<Subtitle>
-						{ __( 'Control which AI tools are available to your external AI assistant.' ) }
-					</Subtitle>
 					<Actions useColumnAlignment>
 						<MobileSidebarNavigation />
 					</Actions>
