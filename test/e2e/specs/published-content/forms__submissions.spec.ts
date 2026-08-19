@@ -255,6 +255,8 @@ test.describe(
 			await test.step( 'Navigate to Inbox tab if needed', async () => {
 				if ( isInSpam ) {
 					await feedbackInboxPage.clickFolderTab( 'Inbox' );
+					// Leaving the single response page drops the active search.
+					await feedbackInboxPage.searchResponses( formData1.email );
 				}
 			} );
 
@@ -301,6 +303,8 @@ test.describe(
 			await test.step( 'Navigate to Inbox tab if needed', async () => {
 				if ( isInSpam ) {
 					await feedbackInboxPage.clickFolderTab( 'Inbox' );
+					// Leaving the single response page drops the active search.
+					await feedbackInboxPage.searchResponses( formData2.email );
 				}
 			} );
 
@@ -357,10 +361,10 @@ test.describe(
 				}
 			} );
 
-			await test.step( 'Close response modal (mobile only)', async () => {
-				if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-					await feedbackInboxPage.clickCloseResponse();
-				}
+			// The response opens on a standalone page on every viewport, so the list
+			// has to be restored before the next step reaches for a response row.
+			await test.step( 'Return to the responses list', async () => {
+				await feedbackInboxPage.clickCloseResponse();
 			} );
 
 			// --- Test response actions ---
