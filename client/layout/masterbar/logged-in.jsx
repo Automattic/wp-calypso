@@ -260,6 +260,7 @@ class MasterbarLoggedIn extends Component {
 				isActive={ this.isSidebarOpen() }
 				className="masterbar__item-sidebar-menu"
 				tooltip={ translate( 'Menu' ) }
+				ariaLabel={ translate( 'Menu' ) }
 			/>
 		);
 	}
@@ -927,6 +928,7 @@ class MasterbarLoggedIn extends Component {
 				isActive={ this.isActive( 'notifications' ) }
 				className="masterbar__item-notifications"
 				tooltip={ translate( 'Manage your notifications' ) }
+				ariaLabel={ translate( 'Notifications' ) }
 			>
 				<span className="masterbar__item-notifications-label">
 					{ translate( 'Notifications', {
