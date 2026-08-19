@@ -227,11 +227,12 @@ export class UserSignupPage {
 				// Not `ok()`: a refused signup carries the reason it was refused, and
 				// waiting for an ok response that is never coming turns it into a
 				// timeout. Still not a 5xx, which `captureUsersNewServerError` races
-				// this promise to reject with the retryable error the caller keys on.
+				// this promise to reject with the retryable error the caller keys on,
+				// and not a redirect, whose body is no answer to parse.
 				( response ) =>
 					/\/users\/new\?/.test( response.url() ) &&
 					response.request().method() === 'POST' &&
-					response.status() < 500,
+					( response.status() < 300 || ( response.status() >= 400 && response.status() < 500 ) ),
 				// Use an explicit timeout so the global actionTimeout (10s) does not
 				// apply here. The form load + fill + network round-trip can easily
 				// exceed 10s on a slow CI runner.
