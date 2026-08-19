@@ -1,0 +1,18 @@
+/* Screenshot-only exploration: the shared additional-columns wrapper is sized
+   for a single extra column (flex-basis 75px, 120px min per child). With three
+   extra columns the spans collapse into each other, so let the wrapper size to
+   its content and lay the columns out as a row. */
+.stats-emails--four-columns {
+	.stats-card-header__additional,
+	.horizontal-bar-list-item--additional {
+		display: flex;
+		flex: 0 0 auto;
+		justify-content: flex-end;
+		gap: 0 8px;
+
+		> span {
+			min-width: 0;
+			text-align: right;
+		}
+	}
+}

@@ -22,6 +22,7 @@ import StatsModule from '../stats-module';
 import PageViewTracker from '../stats-page-view-tracker';
 import '../summary/style.scss';
 import '../stats-module/summary-nav.scss';
+import '../features/modules/stats-emails/style.scss';
 
 // Inner component that records the current screen before the wrapper reads breadcrumb trail.
 // useLayoutEffect fires before the parent wrapper's useEffect in useStatsBreadcrumbTrail,
@@ -118,7 +119,9 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 						additionalColumns={ {
 							header: (
 								<>
-									<span>{ translate( 'Unique open rate' ) }</span>
+									<span style={ { minWidth: 80 } }>{ translate( 'Opens' ) }</span>
+									<span style={ { minWidth: 90 } }>{ translate( 'Open rate' ) }</span>
+									<span style={ { minWidth: 80 } }>{ translate( 'Clicks' ) }</span>
 								</>
 							),
 							body: ( item ) => {
@@ -128,19 +131,27 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 								// No recorded sends means 0/0: undefined, not 0%.
 								const rateKnown = sends > 0 && ( opensUnique > 0 || opens === 0 );
 								return (
-									<TooltipWrapper
-										value={
-											rateKnown
-												? `${ formatNumber( item.opens_rate ?? 0, {
-														numberFormatOptions: {
-															maximumFractionDigits: 2,
-														},
-												  } ) }%`
-												: '—'
-										}
-										item={ item }
-										TooltipContent={ OpensTooltipContent }
-									/>
+									<>
+										<span style={ { minWidth: 80 } }>{ formatNumber( opens || 0 ) }</span>
+										<span style={ { minWidth: 90 } }>
+											<TooltipWrapper
+												value={
+													rateKnown
+														? `${ formatNumber( item.opens_rate ?? 0, {
+																numberFormatOptions: {
+																	maximumFractionDigits: 2,
+																},
+														  } ) }%`
+														: '—'
+												}
+												item={ item }
+												TooltipContent={ OpensTooltipContent }
+											/>
+										</span>
+										<span style={ { minWidth: 80 } }>
+											{ formatNumber( parseInt( item.clicks, 10 ) || 0 ) }
+										</span>
+									</>
 								);
 							},
 						} }
@@ -151,7 +162,7 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 						statType="statsEmailsSummary"
 						mainItemLabel={ translate( 'Latest Emails' ) }
 						hideSummaryLink
-						metricLabel={ translate( 'Unique click rate' ) }
+						metricLabel={ translate( 'Click rate' ) }
 						valueField="clicks_rate"
 						formatValue={ ( value, item ) => {
 							if ( item?.clicks !== undefined ) {
@@ -179,6 +190,7 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 							return <span>{ value }</span>;
 						} }
 						listItemClassName="stats__summary--narrow-mobile"
+						className="stats-emails--four-columns"
 					/>
 				</div>
 			</div>

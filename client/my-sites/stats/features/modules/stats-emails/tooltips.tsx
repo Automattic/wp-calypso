@@ -85,11 +85,6 @@ export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { ite
 				} ) }
 			</div>
 			<div>
-				{ translate( 'Total opens: %(opensCountFormatted)s', {
-					args: { opensCountFormatted: formatNumber( item.opens ) },
-				} ) }
-			</div>
-			<div>
 				{ hasUniques
 					? translate( 'Unique opens: %(uniqueOpensCountFormatted)s (%(opensRate)s%)', {
 							args: {
@@ -117,11 +112,6 @@ export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { it
 			<div>
 				{ translate( 'Recipients: %(sendsCountFormatted)s', {
 					args: { sendsCountFormatted: formatNumber( item.total_sends ) },
-				} ) }
-			</div>
-			<div>
-				{ translate( 'Total clicks: %(clicksCountFormatted)s', {
-					args: { clicksCountFormatted: formatNumber( item.clicks ) },
 				} ) }
 			</div>
 			<div>

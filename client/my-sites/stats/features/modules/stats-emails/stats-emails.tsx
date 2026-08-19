@@ -1,6 +1,7 @@
 import { StatsCard } from '@automattic/components';
 import { mail } from '@automattic/components/src/icons';
 import { formatNumber } from '@automattic/number-formatters';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -25,6 +26,7 @@ import {
 	EmailStatsItem,
 } from './tooltips';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
+import './style.scss';
 
 const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 	period,
@@ -85,7 +87,13 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						</StatsInfoArea>
 					}
 					additionalColumns={ {
-						header: <span>{ translate( 'Unique open rate' ) }</span>,
+						header: (
+							<>
+								<span style={ { minWidth: 80 } }>{ translate( 'Opens' ) }</span>
+								<span style={ { minWidth: 90 } }>{ translate( 'Open rate' ) }</span>
+								<span style={ { minWidth: 80 } }>{ translate( 'Clicks' ) }</span>
+							</>
+						),
 						body: ( item: EmailStatsItem ) => {
 							const opensUnique = parseInt( String( item.unique_opens ), 10 );
 							const opens = parseInt( String( item.opens ), 10 );
@@ -96,19 +104,27 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							// and opens with no attributable uniques are unknown.
 							const rateKnown = sends > 0 && ( opensUnique > 0 || opens === 0 );
 							return (
-								<TooltipWrapper
-									value={
-										rateKnown
-											? `${ formatNumber( item.opens_rate ?? 0, {
-													numberFormatOptions: {
-														maximumFractionDigits: 2,
-													},
-											  } ) }%`
-											: '—'
-									}
-									item={ item }
-									TooltipContent={ OpensTooltipContent }
-								/>
+								<>
+									<span style={ { minWidth: 80 } }>{ formatNumber( opens || 0 ) }</span>
+									<span style={ { minWidth: 90 } }>
+										<TooltipWrapper
+											value={
+												rateKnown
+													? `${ formatNumber( item.opens_rate ?? 0, {
+															numberFormatOptions: {
+																maximumFractionDigits: 2,
+															},
+													  } ) }%`
+													: '—'
+											}
+											item={ item }
+											TooltipContent={ OpensTooltipContent }
+										/>
+									</span>
+									<span style={ { minWidth: 80 } }>
+										{ formatNumber( parseInt( String( item.clicks ), 10 ) || 0 ) }
+									</span>
+								</>
 							);
 						},
 					} }
@@ -117,7 +133,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					query={ query }
 					statType={ statType }
 					mainItemLabel={ translate( 'Latest emails' ) }
-					metricLabel={ translate( 'Unique click rate' ) }
+					metricLabel={ translate( 'Click rate' ) }
 					valueField="clicks_rate"
 					formatValue={ ( value: number, item: EmailStatsItem ) => {
 						if ( ! item ) {
@@ -144,7 +160,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							/>
 						);
 					} }
-					className={ className }
+					className={ clsx( className, 'stats-emails--four-columns' ) }
 					hasNoBackground
 					skipQuery
 				/>
