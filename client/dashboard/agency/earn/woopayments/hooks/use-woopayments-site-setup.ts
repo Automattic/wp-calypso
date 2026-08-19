@@ -5,7 +5,7 @@ import {
 	siteCorePluginActivateMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
 	WOOCOMMERCE_PLUGIN,
 	WOOCOMMERCE_PAYMENTS_PLUGIN,
@@ -14,9 +14,9 @@ import {
 } from '../lib/constants';
 import { derivePluginStatus } from '../lib/derive-plugin-status';
 import { getSiteSetupUrl } from '../lib/get-site-setup-url';
-import type { WooPaymentsSiteSetup } from '../types';
+import type { WooPaymentsSiteSetupData } from '../types';
 
-export function useWooPaymentsSiteSetup( siteId: number ): WooPaymentsSiteSetup {
+export function useWooPaymentsSiteSetup( siteId: number ): WooPaymentsSiteSetupData {
 	const { data: site, isLoading: isLoadingSite } = useQuery( {
 		...siteByIdQuery( siteId ),
 		enabled: !! siteId,
@@ -34,7 +34,7 @@ export function useWooPaymentsSiteSetup( siteId: number ): WooPaymentsSiteSetup 
 		siteCorePluginActivateMutation()
 	);
 
-	const status = derivePluginStatus( plugins );
+	const status = useMemo( () => derivePluginStatus( plugins ), [ plugins ] );
 	const { hasWooCommerce, hasWooPayments, isWooCommerceInactive, isWooPaymentsInactive } = status;
 
 	const installAndActivate = useCallback( async () => {

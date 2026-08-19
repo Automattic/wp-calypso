@@ -26,7 +26,7 @@ export type WooPaymentsPluginStatus = {
 	isWooPaymentsInactive: boolean;
 };
 
-export type WooPaymentsSiteSetup = {
+export type WooPaymentsSiteSetupData = {
 	site: Site | undefined;
 	isLoading: boolean;
 	status: WooPaymentsPluginStatus;

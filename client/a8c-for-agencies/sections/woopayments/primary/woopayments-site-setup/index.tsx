@@ -15,6 +15,7 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import { withoutHttp } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -100,7 +101,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 					<>
 						<h2 className="woopayments-site-setup__page-title">
 							{ translate( 'WooPayments is now ready to be configured on %s', {
-								args: site?.slug,
+								args: withoutHttp( site.URL ),
 							} ) }
 						</h2>
 						<div className="woopayments-site-setup__page-description">
