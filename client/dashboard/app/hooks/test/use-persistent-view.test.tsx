@@ -7,7 +7,7 @@ import { createRouter, RouterProvider, createRootRoute, createRoute } from '@tan
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Suspense } from 'react';
-import { usePersistentView } from '../use-persistent-view';
+import { useBasePersistentView, usePersistentView } from '../use-persistent-view';
 import type { View } from '@wordpress/dataviews';
 
 const defaultView: View = {
@@ -315,7 +315,156 @@ describe( 'usePersistentView', () => {
 		} );
 	} );
 
+	// These exercise query param changes across re-renders, which the router-based wrapper
+	// cannot do (it rebuilds the router, and so remounts the hook, on every render).
+	describe( 'transient filters', () => {
+		const renderTransientView = ( getQueryParams: () => any ) => {
+			const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+			const navigate = jest.fn();
+			const utils = renderHook(
+				() =>
+					useBasePersistentView( {
+						slug,
+						defaultView,
+						queryParams: getQueryParams(),
+						queryParamFilterFields: [ 'domainName' ],
+						navigate,
+					} ),
+				{
+					wrapper: ( { children } ) => (
+						<QueryClientProvider client={ queryClient }>
+							<Suspense fallback={ null }>{ children }</Suspense>
+						</QueryClientProvider>
+					),
+				}
+			);
+
+			return { ...utils, navigate };
+		};
+
+		it( 'should not persist a transient filter whose value was edited', async () => {
+			mockGetCalypsoPreferences( {} );
+			const unexpectedUpdatePreferences = mockUpdateCalypsoPreferences();
+
+			const queryParams = { 'current-param': 'current-value', domainName: 'a.com' };
+			const { result, navigate } = renderTransientView( () => queryParams );
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...defaultView,
+					filters: [ { field: 'domainName', operator: 'isAny', value: [ 'b.com' ] } ],
+				} );
+			} );
+
+			// The query param no longer describes the filter, so it is dropped from the URL.
+			expect( navigate ).toHaveBeenCalledWith( {
+				search: { 'current-param': 'current-value' },
+				replace: true,
+			} );
+
+			// The edited filter stays on the view, but only for this session.
+			expect( result.current.view.filters ).toEqual( [
+				{ field: 'domainName', operator: 'isAny', value: [ 'b.com' ] },
+			] );
+			expect( unexpectedUpdatePreferences.isDone() ).toBe( false );
+		} );
+
+		it( 'should keep a transient filter transient after its query param is dropped', async () => {
+			mockGetCalypsoPreferences( {} );
+			const unexpectedUpdatePreferences = mockUpdateCalypsoPreferences();
+
+			let queryParams: any = { domainName: 'a.com' };
+			const { result, rerender } = renderTransientView( () => queryParams );
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...defaultView,
+					filters: [ { field: 'domainName', operator: 'isAny', value: [ 'b.com' ] } ],
+				} );
+			} );
+
+			// Mirror the navigation that dropped the query param.
+			queryParams = {};
+			rerender();
+
+			expect( result.current.view.filters ).toEqual( [
+				{ field: 'domainName', operator: 'isAny', value: [ 'b.com' ] },
+			] );
+
+			act( () => {
+				result.current.updateView( {
+					...result.current.view,
+					filters: [ { field: 'domainName', operator: 'isAny', value: [ 'c.com' ] } ],
+				} );
+			} );
+
+			expect( result.current.view.filters ).toEqual( [
+				{ field: 'domainName', operator: 'isAny', value: [ 'c.com' ] },
+			] );
+			expect( unexpectedUpdatePreferences.isDone() ).toBe( false );
+		} );
+
+		it( 'should re-seed the transient filter when the query param value changes', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			let queryParams: any = { domainName: 'a.com' };
+			const { result, rerender } = renderTransientView( () => queryParams );
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'domainName', operator: 'isAny', value: [ 'a.com' ] },
+				] );
+			} );
+
+			queryParams = { domainName: 'b.com' };
+			rerender();
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'domainName', operator: 'isAny', value: [ 'b.com' ] },
+				] );
+			} );
+		} );
+	} );
+
 	describe( 'resetView', () => {
+		it( 'should be available while only a transient filter is active, and clear it', async () => {
+			mockGetCalypsoPreferences( {} );
+			mockUpdateCalypsoPreferences();
+
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = { 'current-param': 'current-value', domainName: 'a.com' };
+			const queryParamFilterFields = [ 'domainName' ];
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView, queryParams, queryParamFilterFields } ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.resetView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.resetView?.();
+			} );
+
+			await waitFor( () => {
+				expect( getRouter()?.state.location.search ).toEqual( {
+					'current-param': 'current-value',
+				} );
+			} );
+			expect( result.current.view.filters ).toBeUndefined();
+		} );
+
 		it( 'should clear the persisted view', async () => {
 			const persistedView = {
 				type: 'grid',
