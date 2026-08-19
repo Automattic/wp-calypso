@@ -135,6 +135,11 @@ export type Context = {
 		token?: string;
 		action?: string;
 		description?: string;
+		/**
+		 * The generic argument dump when `description` is an ability-authored headline —
+		 * what the approval actually binds, for a "view exact parameters" affordance.
+		 */
+		details?: string;
 		declared_destructive?: boolean | null;
 		how_to_approve?: string;
 		reason?: string;
