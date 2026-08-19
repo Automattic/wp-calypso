@@ -381,21 +381,25 @@ describe( 'useEmptyViewSuggestions post content changes', () => {
 		mockIsEditedPostEmpty = false;
 	} );
 
-	// The list is cached in state, so it has to be rebuilt when emptiness flips.
+	// The provider drops content-derived suggestions on an empty post, and the list is
+	// cached in state, so it has to be rebuilt when emptiness flips.
 	it( 'refreshes the suggestions when the post gains content', async () => {
-		const getEmptyViewSuggestions = jest.fn( () => [
-			{ ...jetpackSuggestion, disabled: mockIsEditedPostEmpty },
-		] );
+		// Generate featured image survives an empty post, so the provider keeps
+		// returning a list rather than nothing.
+		const featuredImage = { id: 'generate-featured-image', label: 'Generate', prompt: '' };
+		const getEmptyViewSuggestions = jest.fn( () =>
+			mockIsEditedPostEmpty ? [ featuredImage ] : [ featuredImage, jetpackSuggestion ]
+		);
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 		const { result, rerender } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
 
-		await waitFor( () => expect( result.current?.[ 0 ]?.disabled ).toBe( true ) );
+		await waitFor( () => expect( result.current ).toEqual( [ featuredImage ] ) );
 
 		mockIsEditedPostEmpty = false;
 		mockCoreStoreReady( true );
 		rerender();
 
-		await waitFor( () => expect( result.current?.[ 0 ]?.disabled ).toBe( false ) );
+		await waitFor( () => expect( result.current ).toEqual( [ featuredImage, jetpackSuggestion ] ) );
 	} );
 } );

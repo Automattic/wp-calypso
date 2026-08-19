@@ -144,7 +144,7 @@ function readOverrideSuggestions(): Suggestion[] | null {
 
 function getSuggestionsKey( suggestions: Suggestion[] | null ): string | null {
 	return suggestions
-		? JSON.stringify( suggestions.map( ( s ) => [ s.id, s.label, s.prompt, s.disabled ] ) )
+		? JSON.stringify( suggestions.map( ( s ) => [ s.id, s.label, s.prompt ] ) )
 		: null;
 }
 

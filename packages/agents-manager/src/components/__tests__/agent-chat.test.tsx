@@ -332,21 +332,6 @@ describe( 'AgentChat', () => {
 		);
 	} );
 
-	it( 'explains the empty view when a suggestion is disabled', () => {
-		renderAgentChat( {
-			isOpen: true,
-			emptyViewSuggestions: [
-				{ id: 'optimize-title', label: 'Optimize title', prompt: 'Optimize.', disabled: true },
-			],
-		} );
-
-		expect(
-			screen.getByText(
-				'Some options are unavailable until the post has content. Got a different request? Ask away.'
-			)
-		).toBeInTheDocument();
-	} );
-
 	it( 'keeps the plain help line when every suggestion is usable', () => {
 		renderAgentChat( {
 			isOpen: true,
