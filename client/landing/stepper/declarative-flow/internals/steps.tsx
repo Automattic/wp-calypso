@@ -253,11 +253,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
 	},
 
-	SITE_MIGRATION_STARTED: {
-		slug: 'site-migration-started',
-		asyncComponent: () => import( './steps-repository/site-migration-started' ),
-	},
-
 	SITE_MIGRATION_CREDENTIALS: {
 		slug: 'site-migration-credentials',
 		asyncComponent: () => import( './steps-repository/site-migration-credentials' ),
@@ -343,10 +338,6 @@ export const STEPS = {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
 	},
-	PLATFORM_IDENTIFICATION: {
-		slug: 'platform-identification',
-		asyncComponent: () => import( './steps-repository/platform-identification' ),
-	},
 	UNIFIED_PLANS: {
 		slug: 'plans',
 		asyncComponent: () =>
@@ -391,11 +382,6 @@ export const STEPS = {
 	HUNDRED_YEAR_PLAN_SETUP: {
 		slug: 'setup',
 		asyncComponent: () => import( './steps-repository/hundred-year-plan-setup' ),
-	},
-
-	SETUP_BLOG: {
-		slug: 'setup-blog',
-		asyncComponent: () => import( './steps-repository/setup-blog' ),
 	},
 
 	PLAYGROUND: {
