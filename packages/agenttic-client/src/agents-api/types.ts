@@ -140,6 +140,9 @@ export interface AgentsApiChatState {
 	messages: AgentsApiMessage[];
 	sessions: AgentsApiSession[];
 	sessionId: string | null;
+	hasLoadedSessions: boolean;
+	isLoadingSessions: boolean;
+	isLoadingSession: boolean;
 	isProcessing: boolean;
 	error: string | null;
 	sendMessage: ( message: string, files?: File[] ) => Promise< void >;

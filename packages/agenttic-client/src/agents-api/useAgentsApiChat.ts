@@ -61,7 +61,10 @@ export function useAgentsApiChat( {
 	const [ sessions, setSessions ] = useState< AgentsApiSession[] >( [] );
 	const [ sessionId, setSessionId ] = useState< string | null >( null );
 	const [ runId, setRunId ] = useState< string | null >( null );
-	const [ isProcessing, setIsProcessing ] = useState( false );
+	const [ hasLoadedSessions, setHasLoadedSessions ] = useState( false );
+	const [ isLoadingSessions, setIsLoadingSessions ] = useState( false );
+	const [ isLoadingSession, setIsLoadingSession ] = useState( false );
+	const [ isSending, setIsSending ] = useState( false );
 	const [ error, setError ] = useState< string | null >( null );
 	const messageIdsRef = useRef< Set< string > >( new Set() );
 	const onErrorRef = useRef( onError );
@@ -70,6 +73,8 @@ export function useAgentsApiChat( {
 	const onUnreadChangeRef = useRef( onUnreadChange );
 	const mountedRef = useRef( true );
 	const refreshRequestRef = useRef( 0 );
+	const loadRequestRef = useRef( 0 );
+	const isProcessing = isSending || isLoadingSession;
 
 	useEffect( () => {
 		onErrorRef.current = onError;
@@ -97,14 +102,32 @@ export function useAgentsApiChat( {
 	const refreshSessions = useCallback( async () => {
 		/* eslint-disable @wordpress/no-unused-vars-before-return -- the request must complete before the staleness guard */
 		const requestId = ++refreshRequestRef.current;
-		const response = await adapter.listSessions();
-		const nextSessions = normalizeSessions( response );
-		/* eslint-enable @wordpress/no-unused-vars-before-return */
-		if ( ! mountedRef.current || requestId !== refreshRequestRef.current ) {
-			return;
+		setIsLoadingSessions( true );
+		try {
+			const response = await adapter.listSessions();
+			const nextSessions = normalizeSessions( response );
+			/* eslint-enable @wordpress/no-unused-vars-before-return */
+			if ( ! mountedRef.current || requestId !== refreshRequestRef.current ) {
+				return;
+			}
+			setSessions( nextSessions );
+			setHasLoadedSessions( true );
+			onUnreadChangeRef.current?.( unreadTotal( nextSessions ) );
+		} finally {
+			if ( mountedRef.current && requestId === refreshRequestRef.current ) {
+				setIsLoadingSessions( false );
+			}
 		}
-		setSessions( nextSessions );
-		onUnreadChangeRef.current?.( unreadTotal( nextSessions ) );
+	}, [ adapter ] );
+
+	useEffect( () => {
+		refreshRequestRef.current += 1;
+		loadRequestRef.current += 1;
+		setSessions( [] );
+		setSessionId( null );
+		setHasLoadedSessions( false );
+		setIsLoadingSessions( false );
+		setIsLoadingSession( false );
 	}, [ adapter ] );
 
 	useEffect( () => {
@@ -128,7 +151,7 @@ export function useAgentsApiChat( {
 				},
 				'user'
 			);
-			setIsProcessing( true );
+			setIsSending( true );
 			setError( null );
 			setMessages( ( currentMessages ) => [ ...currentMessages, submittedMessage ] );
 			messageIdsRef.current = new Set( [ ...messageIdsRef.current, submittedMessage.id ] );
@@ -163,7 +186,7 @@ export function useAgentsApiChat( {
 				setNormalizedError( err );
 			} finally {
 				if ( mountedRef.current ) {
-					setIsProcessing( false );
+					setIsSending( false );
 				}
 			}
 		},
@@ -172,11 +195,13 @@ export function useAgentsApiChat( {
 
 	const loadSession = useCallback(
 		async ( nextSessionId: string ) => {
-			setIsProcessing( true );
+			const requestId = ++loadRequestRef.current;
+			setIsLoadingSession( true );
+			setError( null );
 			try {
 				const response = await adapter.loadSession( nextSessionId );
 				const loaded = normalizeLoadedSession( response );
-				if ( ! mountedRef.current ) {
+				if ( ! mountedRef.current || requestId !== loadRequestRef.current ) {
 					return;
 				}
 				messageIdsRef.current = new Set( loaded.messages.map( ( item ) => item.id ) );
@@ -184,12 +209,17 @@ export function useAgentsApiChat( {
 				setMessages( loaded.messages );
 				onResponseMetadataRef.current?.( loaded.metadata );
 				await adapter.markSessionRead( nextSessionId );
+				if ( requestId !== loadRequestRef.current ) {
+					return;
+				}
 				await refreshSessions();
 			} catch ( err ) {
-				setNormalizedError( err );
+				if ( requestId === loadRequestRef.current ) {
+					setNormalizedError( err );
+				}
 			} finally {
-				if ( mountedRef.current ) {
-					setIsProcessing( false );
+				if ( mountedRef.current && requestId === loadRequestRef.current ) {
+					setIsLoadingSession( false );
 				}
 			}
 		},
@@ -197,8 +227,10 @@ export function useAgentsApiChat( {
 	);
 
 	const newSession = useCallback( () => {
+		loadRequestRef.current += 1;
 		setSessionId( null );
 		setRunId( null );
+		setIsLoadingSession( false );
 		messageIdsRef.current = new Set();
 		setMessages( [] );
 		setError( null );
@@ -209,13 +241,16 @@ export function useAgentsApiChat( {
 			return;
 		}
 		await runAdapter.cancel( { runId, sessionId } );
-		setIsProcessing( false );
+		setIsSending( false );
 	}, [ runAdapter, runId, sessionId ] );
 
 	return {
 		messages,
 		sessions,
 		sessionId,
+		hasLoadedSessions,
+		isLoadingSessions,
+		isLoadingSession,
 		isProcessing,
 		error,
 		sendMessage,
