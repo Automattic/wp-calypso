@@ -57,7 +57,10 @@ export function mayBeThrottled( url: string ): boolean {
 const BAN_DURATIONS: Record< ThrottleId, number > = {
 	signup: 600_000,
 	'domain-suggestions': 60_000,
-	'domain-availability': 3_600_000,
+	// One of the ten windows the hour-long sliding limiter counts a request in,
+	// not the hour: the count comes down a window at a time, and a refusal is not
+	// counted, so being refused again costs nothing but the call that asked.
+	'domain-availability': 360_000,
 };
 
 /**
