@@ -234,7 +234,6 @@ const gotoCheckoutPage = ( {
 		type,
 		quantity,
 		blog_id: siteId,
-		site_slug: siteSlug,
 		...eventProps,
 	} );
 

@@ -41,16 +41,17 @@ const navigateOnceRecorded = ( url: string ) => {
 };
 
 /**
- * Where authorizing returns the visitor to. The marker tells the dashboard's pricing grid that the
- * plan question was already answered here — it cannot be recorded against the site at the time it
- * is asked, since the site has no blog id yet. It names the plan rather than merely reporting that
- * one was picked: registration happens for both, so the marker alone says nothing about which.
+ * Where the connection flow returns the visitor to — after authorizing on the free path, and after
+ * checkout on the paid one. The marker tells the dashboard's pricing grid which plan was picked
+ * here; it cannot be recorded against the site at the time it is asked, since the site has no blog
+ * id yet. It names the plan rather than merely reporting that one was picked: registration happens
+ * for both, so the marker alone says nothing about which.
  *
  * `force_refresh` drops what the site cached while it had no connection. The pricing grid gate
  * strips it (and the plan-chosen marker) from the address bar once the dashboard has read them,
  * so later REST requests do not keep bypassing the server caches via the Referer.
  */
-const authorizeRedirectUri = ( plan: Plan ) =>
+const preConnectionReturnUri = ( plan: Plan ) =>
 	`${ STATS_ADMIN_PATH }&${ PLAN_CHOSEN_QUERY_ARG }=${ plan }&force_refresh=1`;
 
 /**
@@ -97,7 +98,7 @@ export default function PreConnection() {
 		trackStatsAnalyticsEvent( 'stats_pre_connection_register_start', { ...eventProps, plan } );
 
 		try {
-			const registration = await registerSite( authorizeRedirectUri( plan ) );
+			const registration = await registerSite( preConnectionReturnUri( plan ) );
 
 			// The one event carrying both keys, and so the join between everything above and
 			// everything the site does once it has an id.
@@ -174,7 +175,10 @@ export default function PreConnection() {
 								planValue={ 0 }
 								currencyCode={ product?.currency_code ?? 'USD' }
 								adminUrl={ getWpAdminUrl() }
-								redirectUri={ STATS_ADMIN_PATH }
+								// Checkout returns here rather than through the URL registration stored, so
+								// the marker has to travel this path too — otherwise a purchase that
+								// completes never reports the end of the pre-connection flow.
+								redirectUri={ preConnectionReturnUri( 'paid' ) }
 								from={ PRICING_GRID_REFERRER }
 								// Registration is behind us, so the blog id is known here even though the
 								// screen still runs without one.

@@ -136,13 +136,13 @@ function PricingGridGate( { children }: { children: ReactNode } ) {
 		hasRecordedChoiceBeforeConnecting = true;
 		dismissPricingGrid();
 		// Where the pre-connection flow ends: the site is connected, and this is the first moment
-		// the choice made minutes ago can be recorded against a blog id. `plan` is what was picked
-		// on the grid, which is all the marker can carry — a visitor who picked paid and then took
-		// free from the purchase page returns under the registration the paid choice made, and is
-		// counted as free by that page's own button event.
+		// the choice made minutes ago can be recorded against a blog id. The property is named for
+		// what the marker carries — the plan picked on the grid, not necessarily the one the
+		// visitor left with, since taking free from the purchase page returns under the marker the
+		// paid choice set. That exit is counted by the purchase page's own button event.
 		trackStatsAnalyticsEvent( 'stats_pre_connection_plan_completed', {
 			blog_id: siteId,
-			plan: getChoiceBeforeConnecting(),
+			plan_chosen: getChoiceBeforeConnecting(),
 		} );
 	}, [ siteId, dismissPricingGrid ] );
 
