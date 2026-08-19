@@ -225,9 +225,10 @@ function getNotes( before ) {
 	} else if ( ! notes.length ) {
 		perfReport = 'notifications-panel-initial-fill';
 	}
-	if ( perfReport ) {
-		startPerfReport( perfReport );
-	}
+	// Only the call that started a report may stop one: consecutive load-mores
+	// can overlap the previous stop (deferred a frame), and an unguarded stop
+	// would end the successor's report with this request's data.
+	const perfStarted = perfReport ? startPerfReport( perfReport ) : false;
 
 	listNotes( parameters, ( error, data ) => {
 		this.gettingNotes = false;
@@ -236,7 +237,7 @@ function getNotes( before ) {
 			// Report failures too, with their duration — slow requests that die at
 			// depth are the most interesting ones, and dropping them would skew the
 			// latency data toward the successes.
-			if ( perfReport ) {
+			if ( perfStarted ) {
 				stopPerfReport( perfReport, {
 					error: true,
 					status: error.status ?? 0,
@@ -329,11 +330,12 @@ function getNotes( before ) {
 
 		// Stop on the next frame so the duration covers the store update and the
 		// appended rows' render, not just the network round-trip.
-		if ( perfReport ) {
+		if ( perfStarted ) {
+			const notesReturned = data.notes.length;
 			requestAnimationFrame( () =>
 				stopPerfReport( perfReport, {
 					notesRequested: parameters.number,
-					notesReturned: data.notes.length,
+					notesReturned,
 					notesLoaded: loaded,
 				} )
 			);
