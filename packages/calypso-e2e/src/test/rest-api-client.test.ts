@@ -4,7 +4,7 @@ import * as teamcity from '../lib/teamcity';
 import {
 	flushThrottleWrites,
 	registerThrottleActionHandler,
-	resetRaisedThrottles,
+	resetThrottleState,
 } from '../lib/throttle-flags';
 import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
@@ -225,7 +225,7 @@ describe( 'RestAPIClient: createSite', function () {
 		warn?.mockRestore();
 		unregisterThrottleActionHandler();
 		delete process.env.THROTTLE_SIGNUP_EXPIRATION;
-		resetRaisedThrottles();
+		resetThrottleState();
 	} );
 
 	test( 'An active signup throttle acts before the request is sent', async function () {

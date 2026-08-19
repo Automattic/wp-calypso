@@ -131,9 +131,12 @@ const tagging = new Map< ThrottleId, Promise< void > >();
 const reportedHere = new Map< ThrottleId, number >();
 
 /**
- * Forgets what this worker has raised. For tests: a worker never needs this.
+ * Forgets what this worker has raised and whatever handler was installed. For
+ * tests: a worker never needs this. A case that throws mid-policy would
+ * otherwise leave its handler registered for the rest of the file.
  */
-export function resetRaisedThrottles(): void {
+export function resetThrottleState(): void {
+	actionHandler = null;
 	raisedHere.clear();
 	tagSettled.clear();
 	tagAttempts.clear();

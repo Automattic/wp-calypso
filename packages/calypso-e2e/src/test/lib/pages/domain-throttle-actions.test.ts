@@ -4,7 +4,7 @@ import { UseADomainIOwnPage } from '../../../lib/pages/use-a-domain-i-own-page';
 import {
 	flushThrottleWrites,
 	registerThrottleActionHandler,
-	resetRaisedThrottles,
+	resetThrottleState,
 } from '../../../lib/throttle-flags';
 import type { Page } from 'playwright';
 
@@ -31,7 +31,7 @@ beforeEach( () => {
 afterEach( async () => {
 	unregister();
 	await flushThrottleWrites();
-	resetRaisedThrottles();
+	resetThrottleState();
 	[ ...ACTION_VARIABLES, ...EXPIRATION_VARIABLES ].forEach( ( name ) => {
 		delete process.env[ name ];
 	} );

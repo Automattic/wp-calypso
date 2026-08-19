@@ -12,7 +12,7 @@ import {
 	recordResponseThrottle,
 	recordThrottle,
 	registerThrottleActionHandler,
-	resetRaisedThrottles,
+	resetThrottleState,
 	THROTTLE_ACTION_ENV_VARS,
 	throttleAction,
 	throttleActionMessage,
@@ -81,7 +81,7 @@ beforeEach( () => {
 		delete process.env[ `THROTTLE_${ id }_EXPIRATION` ];
 		delete process.env[ `E2E_THROTTLE_${ id }_ACTION` ];
 	}
-	resetRaisedThrottles();
+	resetThrottleState();
 } );
 
 describe( 'throttle actions', () => {
