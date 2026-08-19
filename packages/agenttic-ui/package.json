@@ -1,0 +1,116 @@
+{
+	"name": "@automattic/agenttic-ui",
+	"version": "0.1.89",
+	"type": "module",
+	"description": "UI components for the Agenttic framework.",
+	"main": "dist/index.js",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./embedded-agent-ui": {
+			"types": "./dist/embedded-agent-ui.d.ts",
+			"import": "./dist/embedded-agent-ui.js"
+		},
+		"./global.css": "./dist/global.css",
+		"./embedded-agent-ui.css": "./dist/embedded-agent-ui.css",
+		"./index.css": "./dist/index.css"
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"scripts": {
+		"build": "yarn run clean && yarn run i18n:download-json && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"dev": "vite",
+		"clean": "rm -rf dist",
+		"type-check": "tsc --noEmit",
+		"lint": "ESLINT_USE_FLAT_CONFIG=false eslint src --ext .ts,.tsx",
+		"lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint src --ext .ts,.tsx --fix",
+		"test": "vitest run",
+		"prepublishOnly": "yarn run build",
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build -o storybook-static",
+		"i18n:download-json": "./scripts/download-translation-files.js"
+	},
+	"keywords": [
+		"agenttic",
+		"ui",
+		"components",
+		"react",
+		"typescript",
+		"ai",
+		"agent"
+	],
+	"author": "Automattic Inc.",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/agenttic-ui"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"engines": {
+		"node": ">=20.0.0"
+	},
+	"devDependencies": {
+		"@mdx-js/react": "^3.1.0",
+		"@storybook/addon-a11y": "^9.0.18",
+		"@storybook/addon-docs": "^9.0.18",
+		"@storybook/addon-essentials": "9.0.0-alpha.12",
+		"@storybook/addon-links": "^9.0.18",
+		"@storybook/addon-onboarding": "^9.0.18",
+		"@storybook/blocks": "9.0.0-alpha.17",
+		"@storybook/react": "^9.0.18",
+		"@storybook/react-vite": "^9.0.18",
+		"@storybook/test": "9.0.0-alpha.2",
+		"@types/node": "^20.0.0",
+		"@types/react": "^18.0.0 || ^19.0.0",
+		"@types/react-dom": "^18.0.0 || ^19.0.0",
+		"@vitejs/plugin-react": "^4.0.0",
+		"@wordpress/prettier-config": "^4.2.0",
+		"autoprefixer": "^10.4.0",
+		"jsdom": "^24.0.0",
+		"postcss": "^8.4.0",
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0",
+		"storybook": "^9.0.18",
+		"typescript": "^5.0.0",
+		"vite": "^5.0.0",
+		"vite-plugin-lib-inject-css": "^2.2.2",
+		"vitest": "^1.0.0"
+	},
+	"dependencies": {
+		"@automattic/charts": "^1.10.0",
+		"@radix-ui/react-popover": "^1.1.15",
+		"@radix-ui/react-scroll-area": "^1.2.9",
+		"@radix-ui/react-slot": "^1.2.3",
+		"@wordpress/i18n": "^6.1.0",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"framer-motion": "^12.23.0",
+		"lucide-react": "^0.525.0",
+		"react-markdown": "^10.1.0",
+		"react-textarea-autosize": "^8.5.9",
+		"remark-gfm": "^4.0.1",
+		"unified": "^11.0.5",
+		"use-debounce": "^10.0.6"
+	},
+	"optionalDependencies": {
+		"marked": "^16.2.1"
+	},
+	"peerDependencies": {
+		"react": "^18.0.0 || ^19.0.0",
+		"react-dom": "^18.0.0 || ^19.0.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"overrides": {
+		"esbuild": "0.24.0"
+	}
+}

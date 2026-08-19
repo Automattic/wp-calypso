@@ -41,6 +41,17 @@ interface StatsCommercialPurchaseProps {
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
+	/**
+	 * Replaces what "I will do it later" does. The default returns to the site's own dashboard and
+	 * records the dismissal server-side, neither of which a site with no WordPress.com connection
+	 * can do.
+	 */
+	onPostpone?: () => void;
+	/**
+	 * Replaces the label that goes with `onPostpone`. A site that is not connected yet has
+	 * something to do before it can come back to this, so it is not simply putting it off.
+	 */
+	postponeLabel?: string;
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -210,6 +221,8 @@ const StatsCommercialPurchase = ( {
 	from,
 	adminUrl,
 	redirectUri,
+	onPostpone,
+	postponeLabel,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -254,6 +267,20 @@ const StatsCommercialPurchase = ( {
 	const needsConnectionForUpgrade =
 		hasAnyStatsPlan && isOdysseyStats && ! connectionStatus?.isSiteFullyConnected;
 
+	/*
+	 * Putting the decision off is only what the secondary button offers once the site is
+	 * registered. Keyed on registration, not full connection: `isSiteFullyConnected` is also
+	 * false for a second admin on a site someone else connected, and that admin can already
+	 * take the free plan. The pre-connection screen covers the unregistered case with
+	 * `onPostpone`.
+	 *
+	 * Deliberately narrow: only when we are in wp-admin AND have an answer about the connection.
+	 * Simple and Atomic sites are always connected and report nothing here, and an absent answer
+	 * must not be read as "not connected".
+	 */
+	const needsConnectionForFreePlan =
+		isOdysseyStats && !! connectionStatus && ! connectionStatus.isRegistered;
+
 	const handleSliderChanged = useCallback( ( value: number ) => {
 		setPurchaseTierQuantity( value );
 	}, [] );
@@ -266,6 +293,17 @@ const StatsCommercialPurchase = ( {
 			blog_id: siteId,
 			from,
 		} );
+
+		if ( onPostpone ) {
+			onPostpone();
+			return;
+		}
+
+		if ( needsConnectionForFreePlan ) {
+			// Where the notice above sends anyone who still has to connect.
+			window.location.href = `${ adminUrl }admin.php?page=my-jetpack#/connection`;
+			return;
+		}
 
 		// Skipping is the visitor's plan decision — made on a page that shows the full
 		// paid pitch — so the pricing grid mustn't take over the dashboard afterwards,
@@ -361,7 +399,10 @@ const StatsCommercialPurchase = ( {
 					{ continueButtonText }
 				</ButtonComponent>
 				<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
-					{ translate( 'I will do it later' ) }
+					{ postponeLabel ??
+						( needsConnectionForFreePlan
+							? translate( 'Start for free' )
+							: translate( 'I will do it later' ) ) }
 				</ButtonComponent>
 			</div>
 			<div className="stats-purchase-page__footnotes">
@@ -492,4 +533,10 @@ const StatsSingleItemPagePurchase = ( {
 	);
 };
 
-export { StatsSingleItemPagePurchase, StatsSingleItemPersonalPurchasePage };
+export {
+	StatsSingleItemPagePurchase,
+	StatsSingleItemPersonalPurchasePage,
+	// Exported for Odyssey's pre-connection screen, which composes the same commercial pitch into
+	// its own frame rather than the site-scoped purchase page.
+	StatsCommercialPurchase,
+};

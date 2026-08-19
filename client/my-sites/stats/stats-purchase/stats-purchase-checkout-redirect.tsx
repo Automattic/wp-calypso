@@ -33,6 +33,7 @@ const getStatsCheckoutURL = (
 	let checkoutType;
 	let doRedirectToSitelessIfNotLoggedIn = false;
 	let isSitelessCheckout = false;
+	let isUnlinked = false;
 
 	// A NOTE: For normal checkout (not siteless), in the checkout url, if you use the siteId in place of the siteSlug, and
 	// also add a `source=my-jetpack` query param, then the Calypso routing middleware will redirect to siteless checkout
@@ -60,6 +61,13 @@ const getStatsCheckoutURL = (
 			// We know the site and we're in Calypso
 			checkoutType = siteSlug; // go to normal checkout (with site and user context (logged-in))
 		}
+	} else if ( isFromWpAdmin ) {
+		// A site with no WordPress.com connection has no id to scope checkout with, but it does
+		// know its own address. Buy first and let the return leg attach the licence and link the
+		// account — a site without an id cannot have a linked user either, hence `unlinked`.
+		isSitelessCheckout = true;
+		isUnlinked = true;
+		checkoutType = 'jetpack';
 	} else {
 		// We don't know the site and we're in Calypso
 		checkoutType = 'jetpack'; // go to siteless checkout
@@ -79,6 +87,9 @@ const getStatsCheckoutURL = (
 	if ( doRedirectToSitelessIfNotLoggedIn ) {
 		setUrlParam( checkoutProductUrl, 'site', siteSlug );
 		setUrlParam( checkoutProductUrl, 'source', 'my-jetpack' );
+	}
+	if ( isUnlinked ) {
+		setUrlParam( checkoutProductUrl, 'unlinked', '1' );
 	}
 
 	// Add redirect_to parameter

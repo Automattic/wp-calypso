@@ -96,6 +96,16 @@ export function isRemoved( purchase: Purchase ): boolean {
 }
 
 /**
+ * Returns true if the customer can refund, cancel or remove this purchase themselves.
+ *
+ * Defaults to true when the field is missing, so a server that predates it keeps
+ * today's behavior instead of locking every purchase.
+ */
+export function isManageableByUser( purchase: Purchase ): boolean {
+	return purchase.is_manageable_by_user !== false;
+}
+
+/**
  * Convenience check for "expired in any way" — either still active but past the
  * expiration date (grace period), or fully removed.
  */

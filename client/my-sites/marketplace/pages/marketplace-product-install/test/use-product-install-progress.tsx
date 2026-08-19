@@ -138,6 +138,10 @@ const marketplaceHandoff = {
 	},
 };
 
+const directInstallAuthorization = {
+	route: { query: { current: { directInstall: '1' } } },
+};
+
 const jetpackSite = {
 	ui: { selectedSiteId: SITE_ID },
 	sites: { items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }`, jetpack: true } } },
@@ -336,6 +340,37 @@ describe( 'useProductInstall progression', () => {
 		expect( installPlugin ).not.toHaveBeenCalled();
 	} );
 
+	it( 'does not initiate another transfer after a timed-out refresh sees one still running', async () => {
+		await beginAtomicPluginTransfer();
+		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'active' ) );
+
+		const firstRender = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...directInstallAuthorization,
+				...simpleAtomicEligibleSite,
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+		await waitFor( () => expect( firstRender.result.current.currentStep ).toBe( 1 ) );
+		firstRender.unmount();
+
+		initiatePluginTransfer.mockClear();
+		const { result } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...directInstallAuthorization,
+				...simpleAtomicEligibleSite,
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+
+		await advance( INSTALL_DEADLINE_MS + 10000 );
+
+		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
+		expect( result.current.error ).toEqual( { type: 'timeout' } );
+	} );
+
 	it.each( [
 		'pending',
 		'active',
@@ -384,6 +419,50 @@ describe( 'useProductInstall progression', () => {
 		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
 	} );
 
+	it( 'keeps a completed recovery latched after its marker expires', async () => {
+		await beginAtomicPluginTransfer();
+		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed' ) );
+
+		const { result } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...directInstallAuthorization,
+				...simpleAtomicEligibleSite,
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+		await waitFor( () => expect( result.current.currentStep ).toBe( 2 ) );
+
+		await advance( INSTALL_DEADLINE_MS + 10000 );
+
+		expect( result.current.currentStep ).toBe( 2 );
+		expect( result.current.error ).toBeNull();
+	} );
+
+	it( 'does not carry a completed transfer latch across products', async () => {
+		await beginAtomicPluginTransfer();
+		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed' ) );
+
+		const { result, rerender } = renderHookWithProvider(
+			( { pluginSlug }: { pluginSlug: string } ) => useProductInstall( { pluginSlug } ),
+			{
+				reducers,
+				initialState: {
+					...directInstallAuthorization,
+					...simpleAtomicEligibleSite,
+					plugins: { wporg: { items: wporgItems } },
+				},
+				initialProps: { pluginSlug: 'give' },
+			}
+		);
+		await waitFor( () => expect( result.current.currentStep ).toBe( 2 ) );
+
+		rerender( { pluginSlug: 'akismet' } );
+		await advance( INSTALL_DEADLINE_MS + 10000 );
+
+		expect( result.current.error ).toEqual( { type: 'timeout' } );
+	} );
+
 	it( 'adopts a recently completed transfer after refresh', async () => {
 		await beginAtomicPluginTransfer();
 		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed', 1000 ) );
@@ -417,6 +496,40 @@ describe( 'useProductInstall progression', () => {
 
 		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
 		expect( installPlugin ).not.toHaveBeenCalled();
+	} );
+
+	it( 'adopts its own transfer dated before the attempt by clock skew', async () => {
+		await beginAtomicPluginTransfer();
+		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed', 5000 ) );
+
+		const { result } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...directInstallAuthorization,
+				...simpleAtomicEligibleSite,
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+
+		await waitFor( () => expect( result.current.currentStep ).toBe( 2 ) );
+		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
+	} );
+
+	it( 'recovers through direct-install authorization after refresh', async () => {
+		await beginAtomicPluginTransfer();
+		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'active' ) );
+
+		const { result } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...directInstallAuthorization,
+				...simpleAtomicEligibleSite,
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+		await waitFor( () => expect( result.current.currentStep ).toBe( 1 ) );
+
+		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
 	} );
 
 	it( 'starts a fresh authorized transfer instead of adopting a stale completion', async () => {
@@ -455,10 +568,10 @@ describe( 'useProductInstall progression', () => {
 		expect( result.current.currentStep ).toBe( 1 );
 	} );
 
-	it( 'does not adopt a product-blind active transfer', async () => {
+	it( 'does not start beside a product-blind active transfer', async () => {
 		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'active' ) );
 
-		renderProgress(
+		const { result } = renderProgress(
 			{ pluginSlug: 'give' },
 			{
 				...marketplaceHandoff,
@@ -466,7 +579,9 @@ describe( 'useProductInstall progression', () => {
 				plugins: { wporg: { items: wporgItems } },
 			}
 		);
-		await waitFor( () => expect( initiatePluginTransfer ).toHaveBeenCalledTimes( 1 ) );
+		await waitFor( () => expect( mockFetchLatestAtomicTransfer ).toHaveBeenCalled() );
+		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
+		expect( result.current.error ).toBeNull();
 	} );
 
 	it( 'adopts its persisted transfer when the handoff survives', async () => {
@@ -529,6 +644,35 @@ describe( 'useProductInstall progression', () => {
 		expect( initiatePluginTransfer ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'does not adopt a previous failed transfer when lookup finishes after initiation', async () => {
+		let resolveLookup: ( transfer: unknown ) => void = () => {};
+		mockFetchLatestAtomicTransfer.mockReturnValue(
+			new Promise( ( resolve ) => {
+				resolveLookup = resolve;
+			} )
+		);
+
+		const { result } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...directInstallAuthorization,
+				...simpleAtomicEligibleSite,
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+
+		await advance( 2000 );
+		await waitFor( () => expect( initiatePluginTransfer ).toHaveBeenCalledTimes( 1 ) );
+
+		await act( async () => {
+			resolveLookup( latestTransfer( 'error', 40000 ) );
+		} );
+		await waitFor( () => expect( mockFetchLatestAtomicTransfer ).toHaveBeenCalled() );
+
+		expect( result.current.error ).toBeNull();
+		expect( initiatePluginTransfer ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'does not re-initiate a persisted attempt when the transfer lookup never settles', async () => {
 		await beginAtomicPluginTransfer();
 		mockFetchLatestAtomicTransfer.mockReturnValue( new Promise( () => undefined ) );
@@ -550,6 +694,7 @@ describe( 'useProductInstall progression', () => {
 
 	it( 'does not re-initiate a persisted attempt when the transfer lookup errors', async () => {
 		await beginAtomicPluginTransfer();
+		mockFetchLatestAtomicTransfer.mockRejectedValue( new Error( 'network failure' ) );
 
 		const { result } = renderProgress(
 			{ pluginSlug: 'give' },
@@ -565,6 +710,24 @@ describe( 'useProductInstall progression', () => {
 
 		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
 		expect( result.current.error ).toEqual( { type: 'timeout' } );
+	} );
+
+	it( 're-initiates a persisted attempt when lookup returns 404', async () => {
+		await beginAtomicPluginTransfer();
+		mockFetchLatestAtomicTransfer.mockRejectedValue(
+			Object.assign( new Error( '404' ), { status: 404 } )
+		);
+
+		renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...directInstallAuthorization,
+				...simpleAtomicEligibleSite,
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+
+		await waitFor( () => expect( initiatePluginTransfer ).toHaveBeenCalledTimes( 1 ) );
 	} );
 
 	it( 're-initiates a persisted attempt after a successful lookup proves no match', async () => {

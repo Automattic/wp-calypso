@@ -1,9 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
-	A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
+	A4A_AI_MCP_READ_TOOLS_LINK,
 	A4A_AI_MCP_CONNECT_LINK,
 	A4A_AI_MCP_STARTER_PROMPTS_LINK,
+	A4A_AI_MCP_WRITE_TOOLS_LINK,
 	A4A_AI_MCP_LINK,
 	A4A_AGENT_STUDIO_LINK,
 	A4A_BENCHMARKS_LINK,
@@ -22,7 +23,8 @@ import {
 	agentStudioOutputContext,
 } from '../agent-studio/controller';
 import {
-	aiMcpAvailableToolsContext,
+	aiMcpReadToolsContext,
+	aiMcpWriteToolsContext,
 	aiMcpStarterPromptsContext,
 	aiMcpConnectContext,
 	aiMcpOverviewContext,
@@ -78,10 +80,18 @@ export default function () {
 		clientRender
 	);
 	page(
-		A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
+		A4A_AI_MCP_READ_TOOLS_LINK,
 		requireAccessContext,
 		requireMcpBetaAccessContext,
-		aiMcpAvailableToolsContext,
+		aiMcpReadToolsContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		A4A_AI_MCP_WRITE_TOOLS_LINK,
+		requireAccessContext,
+		requireMcpBetaAccessContext,
+		aiMcpWriteToolsContext,
 		makeLayout,
 		clientRender
 	);

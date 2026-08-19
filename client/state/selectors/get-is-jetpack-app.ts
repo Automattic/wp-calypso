@@ -22,7 +22,14 @@ export default function getIsJetpackApp( state: AppState ): boolean {
 		return false;
 	}
 
-	const query = getCurrentQueryArguments( state ) ?? getInitialQueryArguments( state );
+	// The redirect_uri that distinguishes the Jetpack app from the WordPress app lives
+	// only on the initial login URL. Navigating to a 2FA sub-route (e.g. `/log-in/webauthn`)
+	// lands on a query that no longer carries it, and that query is a non-nullish object,
+	// so a whole-query `??` fallback would never reach the initial query. Fall back on the
+	// redirect_uri itself instead, so the app identity survives across the 2FA screens.
+	const redirectUri =
+		getOAuth2RedirectUri( getCurrentQueryArguments( state ) ) ??
+		getOAuth2RedirectUri( getInitialQueryArguments( state ) );
 
-	return isJetpackAppRedirectUri( getOAuth2RedirectUri( query ) );
+	return isJetpackAppRedirectUri( redirectUri );
 }
