@@ -29,7 +29,7 @@ jest.mock( '@wordpress/block-editor', () => {
 	};
 } );
 
-function renderCard( bodyRows: ReviewCardRow[] ) {
+function renderCard( bodyRows: ReviewCardRow[], overrides: Partial< ReviewCardProps > = {} ) {
 	const props: ReviewCardProps = {
 		model: {
 			badge: 'Clarity (1/1)',
@@ -50,8 +50,15 @@ function renderCard( bodyRows: ReviewCardRow[] ) {
 		onCopy: jest.fn(),
 		onDismiss: jest.fn(),
 		onUndo: jest.fn(),
+		...overrides,
 	};
 	return render( <ReviewCard { ...props } /> );
+}
+
+function getResolutionIconPath( container: HTMLElement ): string | null | undefined {
+	return container
+		.querySelector( '.jetpack-ai-feedback-list__resolution-icon path' )
+		?.getAttribute( 'd' );
 }
 
 describe( 'ReviewCard rich-text rows', () => {
@@ -178,5 +185,31 @@ describe( 'ReviewCard rich-text rows', () => {
 		expect( ins?.querySelector( 'strong' ) ).toHaveTextContent( 'safe preview' );
 		expect( ins ).not.toHaveTextContent( 'raw' );
 		expect( ( window as unknown as { pwned?: boolean } ).pwned ).toBeUndefined();
+	} );
+} );
+
+describe( 'ReviewCard resolved states', () => {
+	it( 'shows Applied with a status icon and an Undo action', () => {
+		const { container } = renderCard( [], { status: 'accepted' } );
+
+		expect( screen.getByText( 'Applied' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /Undo/ } ) ).toBeInTheDocument();
+		const resolution = container.querySelector( '.jetpack-ai-feedback-list__resolution' );
+		expect( resolution ).toHaveClass( 'is-accepted' );
+		expect( getResolutionIconPath( container ) ).toBeTruthy();
+	} );
+
+	it( 'shows Dismissed with a status icon distinct from the Applied check', () => {
+		const accepted = renderCard( [], { status: 'accepted' } );
+		const acceptedIconPath = getResolutionIconPath( accepted.container );
+		accepted.unmount();
+
+		const { container } = renderCard( [], { status: 'dismissed' } );
+
+		expect( screen.getByText( 'Dismissed' ) ).toBeInTheDocument();
+		const resolution = container.querySelector( '.jetpack-ai-feedback-list__resolution' );
+		expect( resolution ).toHaveClass( 'is-dismissed' );
+		expect( getResolutionIconPath( container ) ).toBeTruthy();
+		expect( getResolutionIconPath( container ) ).not.toEqual( acceptedIconPath );
 	} );
 } );
