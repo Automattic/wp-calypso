@@ -37,6 +37,7 @@ import {
 import { store as videoStudioStore } from '../stores/video-studio';
 import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
 import { defaultAgentConfigFactory } from '../utils/agent-config';
+import { isConnectedSelfHosted } from '../utils/is-connected-self-hosted';
 import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
 import AnnotationCanvas from './annotation-canvas';
 import { AspectRatioPicker } from './aspect-ratio-picker';
@@ -176,7 +177,9 @@ function ImageStudioAgentChat( {
 	const { error: agentError, ...agentUiProps } = agentChatProps;
 
 	useImageStudioErrorTracking( agentError, mode, attachmentId );
-	useErrorNotice( agentError, addNotice, mode );
+	const chatNotice = useErrorNotice( agentError, addNotice, mode, {
+		placement: isConnectedSelfHosted() ? 'chat' : 'modal',
+	} );
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
@@ -211,12 +214,17 @@ function ImageStudioAgentChat( {
 				onInputChange={ setInputValue }
 				onSuggestionClick={ handleSuggestionClick }
 				maxInputLength={ isVideoMode ? 2000 : 1000 }
+				notice={ chatNotice }
 			>
 				<AgentUI.ConversationView showHeader={ false }>
 					<AgentUI.Messages />
 					<AgentUI.Footer>
 						{ suggestionsComponent }
-						<AgentUI.Notice />
+						<AgentUI.Notice
+							className={
+								chatNotice?.status === 'error' ? 'image-studio-chat-notice--error' : undefined
+							}
+						/>
 						<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
 						<div className="image-studio-modal__input-toolbar">
 							{ mode === ImageStudioMode.Generate && isVideoMode && (

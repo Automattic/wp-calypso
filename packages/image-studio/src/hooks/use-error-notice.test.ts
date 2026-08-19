@@ -5,7 +5,7 @@
  * - No-op when error is falsy
  * - Plain errors show as snackbar
  * - Errors with URLs show "Learn more" action
- * - Upgrade URLs show persistent warning notice with correct label
+ * - Upgrade URLs render in the requested placement with the correct action
  */
 import { renderHook } from '@testing-library/react';
 import { ImageStudioMode } from '../types';
@@ -14,11 +14,6 @@ import {
 	trackImageStudioUpgradeNoticeClick,
 } from '../utils/tracking';
 import { useErrorNotice } from './use-error-notice';
-
-jest.mock( '@wordpress/element', () => ( {
-	...jest.requireActual( '@wordpress/element' ),
-	useEffect: ( fn: () => void ) => fn(),
-} ) );
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
@@ -250,6 +245,89 @@ describe( 'useErrorNotice', () => {
 					},
 				]
 			);
+		} );
+	} );
+
+	describe( 'chat placement', () => {
+		it( 'returns a non-dismissible Agenttic error notice without adding a modal notice', () => {
+			const { result } = renderHook( () =>
+				useErrorNotice(
+					'You have reached your Jetpack AI usage limit. Please upgrade to a paid plan to continue. https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
+					mockAddNotice,
+					ImageStudioMode.Generate,
+					{ placement: 'chat' }
+				)
+			);
+
+			expect( mockAddNotice ).not.toHaveBeenCalled();
+			expect( result.current ).toMatchObject( {
+				message: 'You’re out of free credits.',
+				status: 'error',
+				dismissible: false,
+				action: {
+					label: 'Upgrade',
+					onClick: expect.any( Function ),
+				},
+			} );
+		} );
+
+		it( 'opens the existing upgrade URL and tracks the action click', () => {
+			const openedWindow = { opener: window };
+			const openSpy = jest
+				.spyOn( window, 'open' )
+				.mockReturnValue( openedWindow as unknown as Window );
+			const upgradeUrl =
+				'https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge';
+			const { result } = renderHook( () =>
+				useErrorNotice( `Limit reached ${ upgradeUrl }`, mockAddNotice, ImageStudioMode.Generate, {
+					placement: 'chat',
+				} )
+			);
+
+			result.current?.action?.onClick();
+
+			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Generate,
+			} );
+			expect( openSpy ).toHaveBeenCalledWith( upgradeUrl, '_blank' );
+			expect( openedWindow.opener ).toBeNull();
+
+			openSpy.mockRestore();
+		} );
+
+		it( 'keeps the upgrade notice after the Agenttic error clears', () => {
+			const { result, rerender } = renderHook(
+				( { error }: { error: unknown } ) =>
+					useErrorNotice( error, mockAddNotice, ImageStudioMode.Generate, {
+						placement: 'chat',
+					} ),
+				{
+					initialProps: {
+						error:
+							'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
+					},
+				}
+			);
+
+			rerender( { error: null } );
+
+			expect( result.current ).toMatchObject( {
+				message: 'You’re out of free credits.',
+				status: 'error',
+				dismissible: false,
+			} );
+			expect( mockAddNotice ).not.toHaveBeenCalled();
+		} );
+
+		it( 'keeps plain errors in the existing snackbar path', () => {
+			const { result } = renderHook( () =>
+				useErrorNotice( 'Something went wrong', mockAddNotice, ImageStudioMode.Generate, {
+					placement: 'chat',
+				} )
+			);
+
+			expect( result.current ).toBeUndefined();
+			expect( mockAddNotice ).toHaveBeenCalledWith( 'Something went wrong', 'error' );
 		} );
 	} );
 
