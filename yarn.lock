@@ -1995,6 +1995,7 @@ __metadata:
   resolution: "@automattic/notifications@workspace:apps/notifications"
   dependencies:
     "@automattic/api-core": "workspace:^"
+    "@automattic/browser-data-collector": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"

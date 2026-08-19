@@ -1,6 +1,7 @@
 import debugFactory from 'debug';
 import repliesCache from '../comment-replies-cache';
 import { logError } from '../helpers/log-error';
+import { cancelPerfReport, startPerfReport, stopPerfReport } from '../helpers/performance-tracking';
 import { store } from '../state';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
@@ -216,10 +217,25 @@ function getNotes( before ) {
 		store.dispatch( actions.ui.loadNotes() );
 	}
 
+	// Time the first fill (empty cache) and load-more pages; steady-state
+	// background polls also land here but aren't worth measuring.
+	let perfReport = null;
+	if ( before ) {
+		perfReport = 'notifications-panel-load-more';
+	} else if ( ! notes.length ) {
+		perfReport = 'notifications-panel-initial-fill';
+	}
+	if ( perfReport ) {
+		startPerfReport( perfReport );
+	}
+
 	listNotes( parameters, ( error, data ) => {
 		this.gettingNotes = false;
 
 		if ( error ) {
+			if ( perfReport ) {
+				cancelPerfReport( perfReport );
+			}
 			logError( error, {
 				request: 'getNotes',
 				before: before ?? null,
@@ -247,6 +263,14 @@ function getNotes( before ) {
 			this.noteList = [];
 			this.reschedule( backoff_ms );
 			return;
+		}
+
+		if ( perfReport ) {
+			stopPerfReport( perfReport, {
+				notesRequested: parameters.number,
+				notesReturned: data.notes.length,
+				notesLoaded: loaded,
+			} );
 		}
 
 		store.dispatch( actions.ui.loadedNotes() );
