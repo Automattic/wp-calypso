@@ -108,6 +108,8 @@ export interface ImageStudioState {
 	selectedAspectRatio: string | null;
 	// Last agent message ID for feedback tracking
 	lastAgentMessageId: string | null;
+	// Monotonic counter used to refresh server-owned usage after an Agent request settles.
+	agentRequestSettledCount: number;
 	// Ratings the user has submitted in this session, keyed by attachment ID.
 	// Once a rating is recorded for an image it stays for the session so the
 	// buttons remain disabled when navigating back to that image.
@@ -261,6 +263,10 @@ type SetLastAgentMessageIdAction = {
 	payload: string | null;
 };
 
+type RecordAgentRequestSettledAction = {
+	type: 'RECORD_AGENT_REQUEST_SETTLED';
+};
+
 type SetImageRatingAction = {
 	type: 'SET_IMAGE_RATING';
 	payload: {
@@ -300,6 +306,7 @@ type ImageStudioAction =
 	| SetSelectedStyleAction
 	| SetSelectedAspectRatioAction
 	| SetLastAgentMessageIdAction
+	| RecordAgentRequestSettledAction
 	| SetImageRatingAction
 	| ResetCanvasHistoryAction;
 
@@ -368,6 +375,7 @@ const initialState: ImageStudioState = {
 	selectedStyle: null,
 	selectedAspectRatio: null,
 	lastAgentMessageId: null,
+	agentRequestSettledCount: 0,
 	imageRatings: {},
 };
 
@@ -651,6 +659,12 @@ const reducer = (
 				lastAgentMessageId: action.payload,
 			};
 
+		case 'RECORD_AGENT_REQUEST_SETTLED':
+			return {
+				...state,
+				agentRequestSettledCount: state.agentRequestSettledCount + 1,
+			};
+
 		case 'SET_IMAGE_RATING':
 			return {
 				...state,
@@ -738,6 +752,7 @@ export interface ImageStudioActions {
 	setSelectedStyle: ( style: string | null ) => Promise< SetSelectedStyleAction >;
 	setSelectedAspectRatio: ( aspectRatio: string | null ) => Promise< SetSelectedAspectRatioAction >;
 	setLastAgentMessageId: ( messageId: string | null ) => Promise< SetLastAgentMessageIdAction >;
+	recordAgentRequestSettled: () => Promise< RecordAgentRequestSettledAction >;
 	setImageRating: (
 		attachmentId: number,
 		rating: 'up' | 'down'
@@ -959,6 +974,12 @@ const actions = {
 		};
 	},
 
+	recordAgentRequestSettled(): RecordAgentRequestSettledAction {
+		return {
+			type: 'RECORD_AGENT_REQUEST_SETTLED',
+		};
+	},
+
 	setImageRating( attachmentId: number, rating: 'up' | 'down' ): SetImageRatingAction {
 		return {
 			type: 'SET_IMAGE_RATING',
@@ -1011,6 +1032,7 @@ export interface ImageStudioSelectors {
 	getSelectedStyle: ( state: ImageStudioState ) => string | null;
 	getSelectedAspectRatio: ( state: ImageStudioState ) => string | null;
 	getLastAgentMessageId: ( state: ImageStudioState ) => string | null;
+	getAgentRequestSettledCount: ( state: ImageStudioState ) => number;
 	getImageRatings: ( state: ImageStudioState ) => Record< number, 'up' | 'down' >;
 	getImageRating: ( state: ImageStudioState, attachmentId: number | null ) => 'up' | 'down' | null;
 	getSupportedMimeTypes: () => readonly string[];
@@ -1185,6 +1207,10 @@ const selectors = {
 
 	getLastAgentMessageId( state: ImageStudioState ): string | null {
 		return state.lastAgentMessageId;
+	},
+
+	getAgentRequestSettledCount( state: ImageStudioState ): number {
+		return state.agentRequestSettledCount;
 	},
 
 	getImageRatings( state: ImageStudioState ): Record< number, 'up' | 'down' > {

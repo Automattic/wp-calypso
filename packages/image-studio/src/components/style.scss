@@ -223,6 +223,25 @@ body.js.is-image-studio-open {
 		height: 100%;
 	}
 
+	.image-studio-chat-notice--error {
+		margin: -12px -12px 0;
+		background-color: $error-notice-background;
+		color: $color-foreground;
+
+		.Notice-module_icon svg path {
+			fill: currentColor;
+		}
+
+		.Notice-module_action,
+		.Notice-module_action:hover:not( :disabled ) {
+			color: $color-foreground;
+		}
+
+		.Notice-module_action:focus-visible {
+			outline-color: $color-foreground;
+		}
+	}
+
 	.ConversationView-module_container {
 		justify-content: end;
 	}

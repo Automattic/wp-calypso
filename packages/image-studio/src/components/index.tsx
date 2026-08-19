@@ -22,6 +22,7 @@ import { useImageStudioFeedback } from '../hooks/use-image-studio-feedback';
 import { useImageStudioMessageDisplay } from '../hooks/use-image-studio-message-display';
 import { useImageStudioSuggestions } from '../hooks/use-image-studio-suggestions';
 import { useImageUrl } from '../hooks/use-image-url';
+import { useJetpackAiCreditNotice } from '../hooks/use-jetpack-ai-credit-notice';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import {
@@ -37,6 +38,7 @@ import {
 import { store as videoStudioStore } from '../stores/video-studio';
 import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
 import { defaultAgentConfigFactory } from '../utils/agent-config';
+import { isConnectedSelfHosted } from '../utils/is-connected-self-hosted';
 import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
 import AnnotationCanvas from './annotation-canvas';
 import { AspectRatioPicker } from './aspect-ratio-picker';
@@ -73,7 +75,7 @@ function ImageStudioAgentChat( {
 	onChatSubmit?: () => Promise< void > | void;
 } ) {
 	const agentChatProps = useAgentChat( agentConfigProp );
-	const { addNotice } = useDispatch( imageStudioStore );
+	const { addNotice, recordAgentRequestSettled } = useDispatch( imageStudioStore );
 	// Storing the input value for detecting when it is cleared
 	const [ inputValue, setInputValue ] = useState( '' );
 
@@ -86,6 +88,12 @@ function ImageStudioAgentChat( {
 	}, [] );
 
 	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
+	const settledRequestCount = useSelect( ( select ) => {
+		return select( imageStudioStore ).getAgentRequestSettledCount();
+	}, [] );
+	const handleAgentRequestSettled = useCallback( () => {
+		void recordAgentRequestSettled();
+	}, [ recordAgentRequestSettled ] );
 
 	// Drives which suggestion-chip flavor the video-clip hook produces:
 	// Cinematic → cinematography prompts for the Veo render path,
@@ -167,16 +175,33 @@ function ImageStudioAgentChat( {
 				messageLength: message?.length || 0,
 			} );
 
-			await agentChatProps.onSubmit?.( message );
+			if ( ! agentChatProps.onSubmit ) {
+				return;
+			}
+
+			try {
+				await agentChatProps.onSubmit( message );
+			} finally {
+				handleAgentRequestSettled();
+			}
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ agentChatProps, onChatSubmit, mode ]
+		[ agentChatProps, handleAgentRequestSettled, onChatSubmit, mode ]
 	);
 
 	const { error: agentError, ...agentUiProps } = agentChatProps;
 
 	useImageStudioErrorTracking( agentError, mode, attachmentId );
-	useErrorNotice( agentError, addNotice, mode );
+	const rejectionNotice = useErrorNotice( agentError, addNotice, mode, {
+		placement: isConnectedSelfHosted() && ! isVideoMode ? 'chat' : 'modal',
+	} );
+	const chatNotice = useJetpackAiCreditNotice( {
+		error: agentError ?? null,
+		isVideoMode,
+		mode,
+		rejectionNotice,
+		settledRequestCount,
+	} );
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
@@ -211,12 +236,17 @@ function ImageStudioAgentChat( {
 				onInputChange={ setInputValue }
 				onSuggestionClick={ handleSuggestionClick }
 				maxInputLength={ isVideoMode ? 2000 : 1000 }
+				notice={ chatNotice }
 			>
 				<AgentUI.ConversationView showHeader={ false }>
 					<AgentUI.Messages />
 					<AgentUI.Footer>
 						{ suggestionsComponent }
-						<AgentUI.Notice />
+						<AgentUI.Notice
+							className={
+								chatNotice?.status === 'error' ? 'image-studio-chat-notice--error' : undefined
+							}
+						/>
 						<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
 						<div className="image-studio-modal__input-toolbar">
 							{ mode === ImageStudioMode.Generate && isVideoMode && (

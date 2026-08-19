@@ -95,6 +95,7 @@ describe( 'Image Studio Store', () => {
 				selectedStyle: null,
 				selectedAspectRatio: null,
 				lastAgentMessageId: null,
+				agentRequestSettledCount: 0,
 				imageRatings: {},
 			} );
 		} );
@@ -853,6 +854,13 @@ describe( 'Image Studio Store', () => {
 				expect( state.lastAgentMessageId ).toBe( 'msg-123' );
 			} );
 
+			it( 'RECORD_AGENT_REQUEST_SETTLED', () => {
+				const firstState = reducer( getInitialState(), actions.recordAgentRequestSettled() );
+				const secondState = reducer( firstState, actions.recordAgentRequestSettled() );
+
+				expect( secondState.agentRequestSettledCount ).toBe( 2 );
+			} );
+
 			it( 'SET_IMAGE_RATING records a rating for an attachment', () => {
 				const state = reducer( getInitialState(), actions.setImageRating( 123, 'up' ) );
 
@@ -1084,6 +1092,11 @@ describe( 'Image Studio Store', () => {
 		it( 'getLastAgentMessageId', () => {
 			const state: ImageStudioState = { ...getInitialState(), lastAgentMessageId: 'msg-123' };
 			expect( selectors.getLastAgentMessageId( state ) ).toBe( 'msg-123' );
+		} );
+
+		it( 'getAgentRequestSettledCount', () => {
+			const state: ImageStudioState = { ...getInitialState(), agentRequestSettledCount: 3 };
+			expect( selectors.getAgentRequestSettledCount( state ) ).toBe( 3 );
 		} );
 
 		describe( 'getImageRating', () => {

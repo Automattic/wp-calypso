@@ -182,6 +182,22 @@ describe( 'Self-hosted status', () => {
 		unmount();
 	} );
 
+	it( 'uses an injected upgrade handler for a status action', async () => {
+		const onUpgradeClick = jest.fn();
+		mockApiFetch.mockResolvedValue( featureResponse() );
+		const { result, unmount } = renderHook( () =>
+			useJetpackFreeCreditChatNotice( { ...defaultProps, onUpgradeClick } )
+		);
+
+		await waitFor( () => expect( result.current?.message ).toBe( '20 free credits left' ) );
+		result.current?.action?.onClick();
+
+		expect( onUpgradeClick ).toHaveBeenCalledWith( UPGRADE_URL );
+		expect( mockTrackJetpackAiUpgrade ).not.toHaveBeenCalled();
+		expect( mockAssign ).not.toHaveBeenCalled();
+		unmount();
+	} );
+
 	it( 'requires a positive site ID', () => {
 		mockApiFetch.mockResolvedValue( featureResponse() );
 		const { result } = renderHook( () =>
@@ -609,6 +625,25 @@ describe( 'notice composition', () => {
 		testWindow.wpApiSettings = { root: LOCAL_API_ROOT };
 	} );
 
+	it( 'prefers an injected rejection notice', () => {
+		const rejectionNotice = {
+			message: 'Surface-specific quota notice',
+			status: 'error' as const,
+			dismissible: false,
+		};
+		mockApiFetch.mockImplementation( () => new Promise( () => {} ) );
+		const { result, unmount } = renderHook( () =>
+			useJetpackFreeCreditChatNotice( {
+				...defaultProps,
+				error: CURRENT_ENDPOINT_ERROR,
+				rejectionNotice,
+			} )
+		);
+
+		expect( result.current ).toBe( rejectionNotice );
+		unmount();
+	} );
+
 	it( 'keeps the exhausted state when the cached count still has one credit', async () => {
 		mockApiFetch.mockResolvedValue( featureResponse( 19 ) );
 		const initialProps = {
@@ -672,6 +707,39 @@ describe( 'notice composition', () => {
 				suppressCurrentError: true,
 			} )
 		);
+		unmount();
+	} );
+
+	it( 'clears a retained rejection after an authoritative paid-tier response', async () => {
+		mockApiFetch.mockResolvedValue( {
+			...featureResponse(),
+			'current-tier': { slug: 'jetpack_ai_yearly', value: 1, limit: 100 },
+		} );
+		const activeRejection = {
+			message: 'Surface-specific quota notice',
+			status: 'error' as const,
+			dismissible: false,
+			suppressCurrentError: true,
+		};
+		const initialProps = {
+			...defaultProps,
+			error: CURRENT_ENDPOINT_ERROR as string | null,
+			isWpcomPlatform: false,
+			rejectionNotice: activeRejection,
+		};
+		const { result, rerender, unmount } = renderHook(
+			( props: typeof initialProps ) => useJetpackFreeCreditChatNotice( props ),
+			{ initialProps }
+		);
+
+		await waitFor( () => expect( result.current ).toBe( activeRejection ) );
+		rerender( {
+			...initialProps,
+			error: null,
+			rejectionNotice: { ...activeRejection, suppressCurrentError: false },
+		} );
+
+		expect( result.current ).toBeUndefined();
 		unmount();
 	} );
 
