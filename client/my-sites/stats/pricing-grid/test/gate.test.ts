@@ -71,6 +71,16 @@ describe( 'getUrlWithPlanChoiceReturnArgsRemoved', () => {
 		).toBe( 'https://example.com/wp-admin/admin.php?page=stats' );
 	} );
 
+	it( 'drops the marker when it arrives alone, as My Jetpack sends it', () => {
+		// My Jetpack redirects straight to the product's post-activation URL, so the marker
+		// arrives without the force_refresh its pre-connection sibling pairs it with.
+		expect(
+			getUrlWithPlanChoiceReturnArgsRemoved(
+				'https://example.com/wp-admin/admin.php?page=stats&stats_plan_chosen=1'
+			).toString()
+		).toBe( 'https://example.com/wp-admin/admin.php?page=stats' );
+	} );
+
 	it( 'leaves unrelated query args in place', () => {
 		expect(
 			getUrlWithPlanChoiceReturnArgsRemoved(
