@@ -14,6 +14,9 @@ jest.mock( '../agents-manager-with-provider', () => ( {
 		return null;
 	},
 } ) );
+jest.mock( '@automattic/agents-manager/src/utils/discard-current-agent', () => ( {
+	discardCurrentAgentsManagerAgent: jest.fn(),
+} ) );
 
 const mockRegisterPlugin = jest.fn();
 jest.mock( '@wordpress/plugins', () => ( { registerPlugin: mockRegisterPlugin } ) );
@@ -76,6 +79,7 @@ describe( 'agents-manager-gutenberg entry', () => {
 		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ JETPACK_PROVIDER ] );
 		const result = render();
 		expect( result ).not.toBeNull();
-		expect( result.type.name ).toBe( 'AgentsManagerWithProvider' );
+		expect( result.type.name ).toBe( 'JetpackAiSidebarPageGate' );
+		expect( result.props.children.type.name ).toBe( 'AgentsManagerWithProvider' );
 	} );
 } );

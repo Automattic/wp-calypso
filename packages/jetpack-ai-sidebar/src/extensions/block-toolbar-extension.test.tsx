@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { withJetpackAiToolbarButton } from './block-toolbar-extension';
 
@@ -53,14 +53,35 @@ jest.mock( '@wordpress/compose', () => ( {
 // Reactive pressed state comes from the shared Agents Manager store. `undefined`
 // models the store not being registered yet.
 let mockChatState: { isOpen?: boolean; isMinimized?: boolean } | undefined;
+let mockCurrentPostType: string | undefined;
+let mockCurrentPostId: string | number | undefined;
+const mockEditorStoreListeners = new Set< () => void >();
 
 jest.mock( '@wordpress/data', () => ( {
+	select: ( store: string ) =>
+		store === 'core/editor'
+			? {
+					getCurrentPostId: () => mockCurrentPostId,
+					getCurrentPostType: () => mockCurrentPostType,
+			  }
+			: undefined,
+	subscribe: ( listener: () => void ) => {
+		mockEditorStoreListeners.add( listener );
+		return () => mockEditorStoreListeners.delete( listener );
+	},
 	useSelect: ( mapSelect: ( select: ( store: string ) => unknown ) => unknown ) =>
-		mapSelect( ( store: string ) =>
-			store === 'automattic/agents-manager' && mockChatState
-				? { getAgentsManagerState: () => mockChatState }
-				: undefined
-		),
+		mapSelect( ( store: string ) => {
+			if ( store === 'automattic/agents-manager' && mockChatState ) {
+				return { getAgentsManagerState: () => mockChatState };
+			}
+			if ( store === 'core/editor' ) {
+				return {
+					getCurrentPostId: () => mockCurrentPostId,
+					getCurrentPostType: () => mockCurrentPostType,
+				};
+			}
+			return undefined;
+		} ),
 } ) );
 
 jest.mock( '@wordpress/element', () => ( {
@@ -86,9 +107,15 @@ declare global {
 }
 
 const BlockEdit = ( { name }: { name: string } ) => <div data-testid="block-edit">{ name }</div>;
+const nativeReplaceState = window.history.replaceState.bind( window.history );
 
-function installPreview( features: Record< string, boolean > = {}, enabled = true ) {
+function installPreview(
+	features: Record< string, boolean > = {},
+	enabled = true,
+	isWpcomPlatform?: boolean
+) {
 	( globalThis as Record< string, unknown > ).agentsManagerData = {
+		isWpcomPlatform,
 		jetpackAiSidebar: {
 			enabled,
 			features,
@@ -110,6 +137,11 @@ describe( 'withJetpackAiToolbarButton', () => {
 		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
 		delete window.__agentsManagerActions;
 		mockChatState = undefined;
+		mockCurrentPostType = undefined;
+		mockCurrentPostId = undefined;
+		mockEditorStoreListeners.clear();
+		document.body.className = '';
+		nativeReplaceState( {}, '', '/' );
 		jest.restoreAllMocks();
 	} );
 
@@ -144,6 +176,70 @@ describe( 'withJetpackAiToolbarButton', () => {
 
 		renderToolbar();
 
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the toolbar button on a connected self-hosted page editor', () => {
+		mockCurrentPostType = 'page';
+		mockCurrentPostId = 42;
+		document.body.className = 'post-php post-type-page';
+		nativeReplaceState( {}, '', '/wp-admin/post.php?post=42&action=edit' );
+		installPreview( { blockToolbarButton: true }, true, false );
+
+		renderToolbar();
+
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toBeInTheDocument();
+	} );
+
+	it.each( [
+		'post',
+		'wp_template',
+		'wp_template_part',
+		'wp_block',
+		'wp_navigation',
+		'wp_global_styles',
+		'product',
+		undefined,
+	] )( 'hides the connected self-hosted toolbar button for the %s entity', ( postType ) => {
+		mockCurrentPostType = postType;
+		document.body.className = 'post-php';
+		nativeReplaceState( {}, '', '/wp-admin/post.php?post=42&action=edit' );
+		installPreview( { blockToolbarButton: true }, true, false );
+
+		renderToolbar();
+
+		expect( screen.queryByRole( 'button', { name: 'Ask AI' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not mistake the Styles page preview for a page edit', () => {
+		mockCurrentPostType = 'page';
+		document.body.className = 'site-editor-php';
+		nativeReplaceState( {}, '', '/wp-admin/site-editor.php?p=%2Fstyles&canvas=edit' );
+		installPreview( { blockToolbarButton: true }, true, false );
+
+		renderToolbar();
+
+		expect( screen.queryByRole( 'button', { name: 'Ask AI' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'removes and restores the toolbar button during Site Editor navigation', () => {
+		mockCurrentPostType = 'page';
+		mockCurrentPostId = 42;
+		document.body.className = 'site-editor-php';
+		nativeReplaceState( {}, '', '/wp-admin/site-editor.php?canvas=edit&p=%2Fpage%2F42' );
+		installPreview( { blockToolbarButton: true }, true, false );
+
+		renderToolbar();
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toBeInTheDocument();
+
+		act( () => {
+			window.history.pushState( {}, '', '/wp-admin/site-editor.php?p=%2Fstyles&canvas=edit' );
+		} );
+		expect( screen.queryByRole( 'button', { name: 'Ask AI' } ) ).not.toBeInTheDocument();
+
+		act( () => {
+			window.history.replaceState( {}, '', '/wp-admin/site-editor.php?canvas=edit&p=%2Fpage%2F42' );
+		} );
 		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toBeInTheDocument();
 	} );
 
