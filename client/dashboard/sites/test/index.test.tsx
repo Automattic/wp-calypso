@@ -50,15 +50,6 @@ function mockSitesEndpoint( sites: Site[] ) {
 		.reply( 200, { sites, total: sites.length } );
 }
 
-// Registered per test rather than persisted in beforeEach: nock matches interceptors in
-// registration order, so a persistent one would always beat a per-test override.
-function mockUserSettings( { isBouncing }: { isBouncing: boolean } ) {
-	nock( 'https://public-api.wordpress.com' )
-		.get( '/rest/v1.1/me/settings' )
-		.query( true )
-		.reply( 200, { user_email: 'owner@example.com', user_email_bouncing: isBouncing } );
-}
-
 const BOUNCING_NOTICE_TITLE = 'Your account email isn’t receiving our messages';
 
 describe( '<Sites>', () => {
@@ -76,7 +67,6 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'renders Add new site button', async () => {
-		mockUserSettings( { isBouncing: false } );
 		mockSitesEndpoint( mockSites );
 		render( <Sites />, {
 			user: {
@@ -88,12 +78,12 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'shows the bouncing-email notice at the top of the sites list', async () => {
-		mockUserSettings( { isBouncing: true } );
 		mockSitesEndpoint( mockSites );
 
 		render( <Sites />, {
 			user: {
 				site_count: mockSites.length,
+				email_bouncing: true,
 			} as User,
 			config: configWithMeSupport,
 		} );
@@ -102,7 +92,6 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'hides the bouncing-email notice when the account email is fine', async () => {
-		mockUserSettings( { isBouncing: false } );
 		mockSitesEndpoint( mockSites );
 
 		render( <Sites />, {
@@ -117,12 +106,12 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'hides the bouncing-email notice in variants without /me support', async () => {
-		mockUserSettings( { isBouncing: true } );
 		mockSitesEndpoint( mockSites );
 
 		render( <Sites />, {
 			user: {
 				site_count: mockSites.length,
+				email_bouncing: true,
 			} as User,
 		} );
 
@@ -131,7 +120,6 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'renders empty state when the user has no sites', async () => {
-		mockUserSettings( { isBouncing: false } );
 		mockSitesEndpoint( mockSites );
 		render( <Sites />, {
 			user: {
@@ -147,7 +135,6 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'collision listener rewrites wpcom site slug when it collides with a Jetpack site', async () => {
-		mockUserSettings( { isBouncing: false } );
 		mockSitesEndpoint( [
 			{
 				ID: 10,
@@ -218,7 +205,6 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'renders DataViews when the user has sites', async () => {
-		mockUserSettings( { isBouncing: false } );
 		mockSitesEndpoint( mockSites );
 		render( <Sites />, {
 			user: {

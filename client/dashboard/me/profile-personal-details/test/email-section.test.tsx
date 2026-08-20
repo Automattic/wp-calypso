@@ -6,7 +6,7 @@ import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import EmailSection from '../email-section';
-import type { AccountRecovery, UserSettings } from '@automattic/api-core';
+import type { AccountRecovery, User, UserSettings } from '@automattic/api-core';
 
 const ACCOUNT_EMAIL = 'owner@mycompany.com';
 
@@ -24,6 +24,7 @@ function mockAccountRecovery( data: Partial< AccountRecovery > ) {
 }
 
 const userSettings = { user_email: ACCOUNT_EMAIL } as UserSettings;
+const bouncingUser = { ID: 1, email: ACCOUNT_EMAIL, email_bouncing: true } as User;
 const noop = () => {};
 
 const CUSTOM_DOMAIN_WARNING = /uses a custom domain/;
@@ -71,9 +72,10 @@ describe( '<EmailSection>', () => {
 			<EmailSection
 				value={ ACCOUNT_EMAIL }
 				onChange={ noop }
-				userSettings={ { ...userSettings, user_email_bouncing: true } }
+				userSettings={ userSettings }
 				isEmailVerified
-			/>
+			/>,
+			{ user: bouncingUser }
 		);
 
 		expect( await screen.findByText( BOUNCING_ERROR ) ).toBeVisible();
@@ -86,9 +88,10 @@ describe( '<EmailSection>', () => {
 			<EmailSection
 				value="new@example.com"
 				onChange={ noop }
-				userSettings={ { ...userSettings, user_email_bouncing: true } }
+				userSettings={ userSettings }
 				isEmailVerified
-			/>
+			/>,
+			{ user: bouncingUser }
 		);
 
 		expect( await screen.findByText( 'Email address looks good!' ) ).toBeVisible();

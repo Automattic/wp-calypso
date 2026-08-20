@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/utils';
 import { isCustomDomainEmail } from './email-utils';
@@ -101,6 +102,7 @@ export default function EmailSection( {
 		validateEmail( value );
 	}, [ value, validateEmail ] );
 
+	const { user } = useAuth();
 	const { data: accountRecovery } = useQuery( accountRecoveryQuery() );
 	const isAccountRecoveryReady = accountRecovery !== undefined;
 	const hasUsableRecoveryEmail =
@@ -109,7 +111,7 @@ export default function EmailSection( {
 	const hasRecoveryMethod = hasUsableRecoveryEmail || !! accountRecovery?.phone;
 
 	const showBouncingEmailError =
-		! isEmailPending && !! userSettings.user_email_bouncing && value === userSettings.user_email;
+		! isEmailPending && !! user.email_bouncing && value === userSettings.user_email;
 
 	const showCustomDomainWarning =
 		! isEmailPending &&

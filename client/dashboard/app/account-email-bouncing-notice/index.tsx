@@ -1,24 +1,26 @@
-import { userSettingsQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Notice } from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { useAnalytics } from '../analytics';
+import { useAuth } from '../auth';
 
 /**
  * Whether the bouncing-account-email notice is eligible to show. Read at the call site so the
  * notice never decides its own visibility inside the arbiter.
  * See client/dashboard/sites/AGENTS.md.
+ *
+ * The flag rides on the authenticated user, which the dashboard already has before the first
+ * paint, so eligibility costs no request and cannot arrive late.
  */
 export function useShouldShowAccountEmailBouncingNotice() {
-	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
-	return !! userSettings.user_email_bouncing;
+	const { user } = useAuth();
+	return !! user.email_bouncing;
 }
 
 export default function AccountEmailBouncingNotice() {
 	const { recordTracksEvent } = useAnalytics();
-	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const { user } = useAuth();
 
 	return (
 		<>
@@ -43,7 +45,7 @@ export default function AccountEmailBouncingNotice() {
 					__(
 						'Emails we send to %s are bouncing back, so you may not receive password resets or important account notices. Update your email address to make sure you can always get back into your account.'
 					),
-					userSettings.user_email
+					user.email
 				) }
 			</Notice>
 		</>

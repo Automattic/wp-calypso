@@ -89,7 +89,6 @@ export const sitesRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			queryClient.ensureQueryData( userSettingsQuery() ),
 		] );
 	},
 } );

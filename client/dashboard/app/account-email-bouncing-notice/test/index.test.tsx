@@ -3,22 +3,18 @@
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
 import { render } from '../../../test-utils';
 import AccountEmailBouncingNotice, { useShouldShowAccountEmailBouncingNotice } from '../index';
-import type { UserSettings } from '@automattic/api-core';
+import type { User } from '@automattic/api-core';
 
 const ACCOUNT_EMAIL = 'owner@example.com';
 
-function mockUserSettings( data: Partial< UserSettings > ) {
-	return nock( 'https://public-api.wordpress.com' )
-		.get( '/rest/v1.1/me/settings' )
-		.query( true )
-		.reply( 200, { user_email: ACCOUNT_EMAIL, ...data } );
+function accountUser( { isBouncing }: { isBouncing?: boolean } = {} ) {
+	return { ID: 1, email: ACCOUNT_EMAIL, email_bouncing: isBouncing } as User;
 }
 
-// The hook is exercised through a probe component so that the suspense boundary in render()
-// applies, the same way it will on the sites list.
+// The hook is exercised through a probe component so it runs inside the same providers
+// the notice has on the sites list.
 function HookProbe() {
 	const shouldShow = useShouldShowAccountEmailBouncingNotice();
 	return <div>{ shouldShow ? 'should show' : 'should not show' }</div>;
@@ -26,9 +22,9 @@ function HookProbe() {
 
 describe( '<AccountEmailBouncingNotice>', () => {
 	test( 'renders the warning and records an impression', async () => {
-		mockUserSettings( { user_email_bouncing: true } );
-
-		const { recordTracksEvent } = render( <AccountEmailBouncingNotice /> );
+		const { recordTracksEvent } = render( <AccountEmailBouncingNotice />, {
+			user: accountUser( { isBouncing: true } ),
+		} );
 
 		expect(
 			await screen.findByText( 'Your account email isn’t receiving our messages' )
@@ -41,19 +37,18 @@ describe( '<AccountEmailBouncingNotice>', () => {
 	} );
 
 	test( 'cannot be dismissed', async () => {
-		mockUserSettings( { user_email_bouncing: true } );
-
-		render( <AccountEmailBouncingNotice /> );
+		render( <AccountEmailBouncingNotice />, { user: accountUser( { isBouncing: true } ) } );
 
 		await screen.findByText( 'Your account email isn’t receiving our messages' );
 		expect( screen.queryByRole( 'button', { name: 'Dismiss' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'offers updating the email address as its only action', async () => {
-		mockUserSettings( { user_email_bouncing: true } );
 		const user = userEvent.setup();
 
-		const { recordTracksEvent } = render( <AccountEmailBouncingNotice /> );
+		const { recordTracksEvent } = render( <AccountEmailBouncingNotice />, {
+			user: accountUser( { isBouncing: true } ),
+		} );
 
 		const links = await screen.findAllByRole( 'link' );
 		expect( links ).toHaveLength( 1 );
@@ -66,25 +61,19 @@ describe( '<AccountEmailBouncingNotice>', () => {
 	} );
 
 	test( 'the hook is true only when the account email is bouncing', async () => {
-		mockUserSettings( { user_email_bouncing: true } );
-
-		render( <HookProbe /> );
+		render( <HookProbe />, { user: accountUser( { isBouncing: true } ) } );
 
 		expect( await screen.findByText( 'should show' ) ).toBeVisible();
 	} );
 
 	test( 'the hook is false when the field is false', async () => {
-		mockUserSettings( { user_email_bouncing: false } );
-
-		render( <HookProbe /> );
+		render( <HookProbe />, { user: accountUser( { isBouncing: false } ) } );
 
 		expect( await screen.findByText( 'should not show' ) ).toBeVisible();
 	} );
 
 	test( 'the hook is false when the field is absent, as it is before wpcom deploys', async () => {
-		mockUserSettings( {} );
-
-		render( <HookProbe /> );
+		render( <HookProbe />, { user: accountUser() } );
 
 		expect( await screen.findByText( 'should not show' ) ).toBeVisible();
 	} );
