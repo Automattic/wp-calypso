@@ -1,3 +1,4 @@
+import { speak } from '@wordpress/a11y';
 import apiFetch from '@wordpress/api-fetch';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { _n, __, sprintf } from '@wordpress/i18n';
@@ -159,6 +160,8 @@ function useFreeCreditNotice( {
 	const [ recoveryRevision, setRecoveryRevision ] = useState( 0 );
 	const settledRequestCountRef = useRef( settledRequestCount );
 	const requestStatusRefresh = useRef< ( ( count: number ) => void ) | null >( null );
+	const previousNoticeMessageRef = useRef< string | undefined >( undefined );
+	const previousSuppressCurrentErrorRef = useRef( false );
 	useEffect( () => {
 		settledRequestCountRef.current = settledRequestCount;
 	}, [ settledRequestCount ] );
@@ -319,7 +322,7 @@ function useFreeCreditNotice( {
 		openJetpackAiUpgrade( upgradeUrl );
 	}, [ upgradeUrl ] );
 
-	return useMemo( () => {
+	const notice = useMemo( () => {
 		if ( ! enabled ) {
 			return undefined;
 		}
@@ -370,6 +373,23 @@ function useFreeCreditNotice( {
 		suppressCurrentError,
 		upgradeUrl,
 	] );
+	const noticeMessage = notice?.message;
+	const noticeStatus = notice?.status;
+	const suppressesCurrentError = notice?.suppressCurrentError === true;
+
+	useEffect( () => {
+		const messageChanged = noticeMessage !== previousNoticeMessageRef.current;
+		const newQuotaRejection = suppressesCurrentError && ! previousSuppressCurrentErrorRef.current;
+
+		previousNoticeMessageRef.current = noticeMessage;
+		previousSuppressCurrentErrorRef.current = suppressesCurrentError;
+
+		if ( noticeMessage && ( messageChanged || newQuotaRejection ) ) {
+			speak( noticeMessage, noticeStatus === 'error' ? 'assertive' : 'polite' );
+		}
+	}, [ noticeMessage, noticeStatus, suppressesCurrentError ] );
+
+	return notice;
 }
 
 export function useJetpackFreeCreditChatNotice( {
