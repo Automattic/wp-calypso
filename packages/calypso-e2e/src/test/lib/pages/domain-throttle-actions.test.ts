@@ -46,6 +46,16 @@ function response( url: string, body: string, status = 200 ) {
 	};
 }
 
+/** A page whose "Bring it over" button never appears. */
+function bringItOverPage(): Page {
+	const button = {
+		click: jest.fn( async () => {
+			throw new Error( 'locator timeout' );
+		} ),
+	};
+	return { getByRole: jest.fn( () => button ) } as unknown as Page;
+}
+
 /** A page whose first suggestion row never appears. */
 function suggestionRowPage(): Page {
 	const row = {
@@ -188,6 +198,30 @@ describe( 'domain throttle actions', () => {
 			'policy applied'
 		);
 		expect( actionHandler ).toHaveBeenCalledWith( 'skip', [ 'domain-availability' ] );
+	} );
+
+	test( 'the "Bring it over" button acts on an availability ban when it never renders', async () => {
+		// The button is rendered off the availability query, so a ban leaves it
+		// absent and the click times out on a test that should have skipped.
+		const page = bringItOverPage();
+		process.env.THROTTLE_DOMAIN_AVAILABILITY_EXPIRATION = String( Date.now() + 60_000 );
+		actionHandler.mockImplementation( () => {
+			throw new Error( 'policy applied' );
+		} );
+
+		await expect( new DomainSearchComponent( page ).clickBringItOver() ).rejects.toThrow(
+			'policy applied'
+		);
+		expect( actionHandler ).toHaveBeenCalledWith( 'skip', [ 'domain-availability' ] );
+	} );
+
+	test( 'a "Bring it over" button that never appears keeps its own error when no ban is in force', async () => {
+		const page = bringItOverPage();
+
+		await expect( new DomainSearchComponent( page ).clickBringItOver() ).rejects.toThrow(
+			'locator timeout'
+		);
+		expect( actionHandler ).not.toHaveBeenCalled();
 	} );
 
 	test( 'a suggestion row that never appears keeps its own error when no ban is in force', async () => {
