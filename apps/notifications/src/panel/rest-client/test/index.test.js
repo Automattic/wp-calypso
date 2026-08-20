@@ -264,6 +264,62 @@ describe( 'RestClient', () => {
 		} );
 	} );
 
+	describe( 'load-more tracking', () => {
+		const trackedEvents = () =>
+			( window._tkq || [] )
+				.filter( ( [ , event ] ) => event === 'calypso_notification_load_more' )
+				.map( ( [ , , properties ] ) => properties );
+
+		beforeEach( () => {
+			window._tkq = [];
+		} );
+
+		it( 'records a Tracks event with the page ordinal when paging the all tab', () => {
+			seedFirstWindow(); // ids 100..91, 10 loaded
+
+			client.loadMore();
+
+			expect( trackedEvents() ).toEqual( [ { filter: 'all', notes_loaded: 10, page: 2 } ] );
+		} );
+
+		it( 'advances the page ordinal on each successive load-more', () => {
+			seedFirstWindow();
+
+			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 90 ), last_seen_time: 0 } ); // 90..81
+			getCalls.length = 0;
+			client.loadMore();
+
+			expect( trackedEvents() ).toEqual( [
+				{ filter: 'all', notes_loaded: 10, page: 2 },
+				{ filter: 'all', notes_loaded: 20, page: 3 },
+			] );
+		} );
+
+		it( 'records nothing when load-more is a no-op', () => {
+			seedFirstWindow();
+
+			client.loadMore();
+			// A short page exhausts the server; the next load-more sends no request.
+			getCalls[ 0 ].callback( null, { notes: fullPage( 5, 90 ), last_seen_time: 0 } );
+			window._tkq = [];
+
+			client.loadMore();
+
+			expect( trackedEvents() ).toEqual( [] );
+		} );
+
+		it( 'records the active tab when paging a filtered tab', () => {
+			client.setFilter( 'unread' );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
+			getCalls.length = 0;
+
+			client.loadMore();
+
+			expect( trackedEvents() ).toEqual( [ { filter: 'unread', notes_loaded: 10, page: 2 } ] );
+		} );
+	} );
+
 	describe( 'polling window', () => {
 		// Load-more pages with `before`; the poll/refresh must keep requesting a small
 		// fixed head window instead of growing to cover everything paged in (which

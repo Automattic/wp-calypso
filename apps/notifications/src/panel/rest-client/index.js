@@ -1,6 +1,7 @@
 import debugFactory from 'debug';
 import repliesCache from '../comment-replies-cache';
 import { logError } from '../helpers/log-error';
+import { recordTracksEvent } from '../helpers/stats';
 import { store } from '../state';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
@@ -722,6 +723,7 @@ function loadMore() {
 		if ( ! oldest ) {
 			return;
 		}
+		trackLoadMore( key, filteredIds.length );
 		this.getFilteredNotes( Math.floor( Date.parse( oldest.timestamp ) / 1000 ) );
 		return;
 	}
@@ -742,9 +744,21 @@ function loadMore() {
 		return;
 	}
 
+	trackLoadMore( 'all', this.noteList.length || allNotes.length );
+
 	// The endpoint's `before` cursor is UNIX epoch seconds, not the note's ISO
 	// timestamp; a raw string is ignored and load-more would refetch page one.
 	this.getNotes( Math.floor( Date.parse( oldest.timestamp ) / 1000 ) );
+}
+
+// Depth telemetry: which page ordinal this fetch begins (the initial window is
+// page 1). Fires only after loadMore's guards, so a no-op scroll records nothing.
+function trackLoadMore( filter, loaded ) {
+	recordTracksEvent( 'calypso_notification_load_more', {
+		filter,
+		notes_loaded: loaded,
+		page: Math.floor( loaded / settings.increment_limit ) + 1,
+	} );
 }
 
 // Whether the server may still have notes older than those already loaded.
