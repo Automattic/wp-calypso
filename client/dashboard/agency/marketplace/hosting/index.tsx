@@ -12,14 +12,13 @@ import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
-import CompareHosts from './compare-hosts';
 import {
 	ClientRelationships,
 	IncludedFeatures,
 	JetpackComplete,
 	Testimonials,
 } from './content-sections';
-import { hostingBrands, mockAgencyContext, pressableSignaturePlans } from './mock-data';
+import { hostingBrands, pressableSignaturePlans } from './mock-data';
 import OrderSummary from './order-summary';
 import PressableContent from './pressable-content';
 import ProductSelector from './product-selector';
@@ -99,11 +98,7 @@ function MoreAboutHosting( {
 }
 
 export default function MarketplaceHosting() {
-	const suggestedBrand: HostingBrand[ 'key' ] =
-		mockAgencyContext.managedSites >= 10 && ! mockAgencyContext.ownsPressablePlan
-			? 'pressable'
-			: 'wpcom';
-	const [ selectedBrand, setSelectedBrand ] = useState< HostingBrand[ 'key' ] >( suggestedBrand );
+	const [ selectedBrand, setSelectedBrand ] = useState< HostingBrand[ 'key' ] >( 'wpcom' );
 	const [ term, setTerm ] = useState< 'monthly' | 'yearly' >( 'yearly' );
 	const [ isReferralMode, setIsReferralMode ] = useState( false );
 	const [ quantity, setQuantity ] = useState( 3 );
@@ -164,32 +159,15 @@ export default function MarketplaceHosting() {
 		>
 			{ SHOW_MIGRATION_OFFER && <MigrationOffer /> }
 			<VStack spacing={ 4 }>
-				<SectionHeader
-					title={ __( '1. Choose the right host for your client' ) }
-					description={ sprintf(
-						/* translators: %d: number of sites the agency manages */
-						__(
-							'The suggestion is based on your portfolio — you manage %d sites without a pooled plan.'
-						),
-						mockAgencyContext.managedSites
-					) }
-					level={ 2 }
-				/>
+				<SectionHeader title={ __( 'Choose a hosting platform' ) } level={ 2 } />
 				<ProductSelector
 					brands={ hostingBrands }
 					selected={ selectedBrand }
-					recommended={ suggestedBrand }
 					onSelect={ setSelectedBrand }
 				/>
-				<CompareHosts />
 			</VStack>
 			{ selectedBrand === 'wpcom' && (
 				<VStack spacing={ 4 }>
-					<SectionHeader
-						title={ __( '2. Customize for your client' ) }
-						description={ __( 'Purchase sites individually or in bulk, as you need them.' ) }
-						level={ 2 }
-					/>
 					<div className="marketplace-hosting__configurator-row">
 						<WpcomConfigurator term={ term } onQuantityChange={ setQuantity } />
 						<OrderSummary
@@ -203,11 +181,6 @@ export default function MarketplaceHosting() {
 			) }
 			{ selectedBrand === 'pressable' && (
 				<VStack spacing={ 4 }>
-					<SectionHeader
-						title={ __( '2. Customize for your client' ) }
-						description={ __( 'Choose from a variety of high performance hosting plans.' ) }
-						level={ 2 }
-					/>
 					<div className="marketplace-hosting__configurator-row">
 						<PressableContent
 							planSlug={ pressablePlanSlug }

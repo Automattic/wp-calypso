@@ -106,17 +106,8 @@ export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConf
 
 					<VStack spacing={ 3 }>
 						<Heading level={ 3 } size={ 13 }>
-							{ sprintf(
-								/* translators: %d: number of WordPress.com sites */
-								_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
-								quantity
-							) }
+							{ __( 'Every site includes' ) }
 						</Heading>
-						<Text variant="muted">
-							{ __(
-								'Enjoy cumulative volume discounts on WordPress.com site purchases, regardless of when you buy. Every site includes:'
-							) }
-						</Text>
 						<div className="marketplace-hosting__includes">
 							{ EVERY_SITE_INCLUDES.map( ( feature ) => (
 								<HStack key={ feature } spacing={ 2 } justify="flex-start" alignment="center">
