@@ -124,3 +124,31 @@
 .marketplace-hosting__price-strikethrough {
 	text-decoration: line-through;
 }
+
+.marketplace-hosting__compare {
+	inline-size: 100%;
+	border-collapse: collapse;
+
+	th,
+	td {
+		padding: 12px 16px;
+		text-align: start;
+		vertical-align: top;
+		border-block-end: 1px solid var( --color-border-subtle );
+	}
+
+	thead th img {
+		block-size: 20px;
+		inline-size: auto;
+	}
+
+	tbody th {
+		font-weight: 500;
+		inline-size: 180px;
+	}
+
+	tbody tr:last-child th,
+	tbody tr:last-child td {
+		border-block-end: none;
+	}
+}
