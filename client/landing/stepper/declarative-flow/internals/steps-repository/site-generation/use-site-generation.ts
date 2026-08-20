@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/utils/build-wow';
 import { createBuildWowFeedReader } from './build-feed';
+import { EMPTY_LIVE_BUILD_STATE, foldFeedDelta } from './build-feed-state';
 import { pollForBuildWowStatus } from './build-status-poller';
+import type { LiveBuildState } from './build-feed-state';
 import type { BuildWowUi } from './build-status-poller';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 
@@ -20,6 +22,8 @@ export type SiteGenerationState = {
 	failureLabel?: string;
 	failureDetail?: string;
 	steps: SiteGenerationStep[];
+	/** Folded live-build feed snapshot; EMPTY_LIVE_BUILD_STATE until events arrive. */
+	liveBuild: LiveBuildState;
 	retryBuild: ( () => void ) | null;
 	isRetryingBuild: boolean;
 };
@@ -72,6 +76,7 @@ export function useSiteGeneration( {
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >;
 } ): SiteGenerationState {
 	const [ serverSteps, setServerSteps ] = useState< SiteGenerationStep[] | null >( null );
+	const [ liveBuild, setLiveBuild ] = useState< LiveBuildState >( EMPTY_LIVE_BUILD_STATE );
 	const [ fallbackStartedAt, setFallbackStartedAt ] = useState( Date.now );
 	const [ failure, setFailure ] = useState< GenerationFailure | null >( null );
 	const [ buildAttempt, setBuildAttempt ] = useState( 0 );
@@ -89,14 +94,12 @@ export function useSiteGeneration( {
 			GENERATION_TIMEOUT_MS
 		);
 		// Live-build feed: the status poll reports the newest feed sequence
-		// number, and the reader fetches the event delta only when it advanced.
-		// This change only receives and surfaces the data; the follow-up PR
-		// folds it into the waiting-screen UI.
+		// number, the reader fetches the event delta only when it advanced,
+		// and each delta folds into the snapshot the waiting screen renders.
 		const feedReader = createBuildWowFeedReader( {
 			siteIdentifier,
 			onDelta: ( delta ) => {
-				// eslint-disable-next-line no-console -- temporary: removed by the follow-up PR that renders the feed.
-				console.log( 'build-wow live-build feed delta', delta );
+				setLiveBuild( ( previous ) => foldFeedDelta( previous, delta ) );
 			},
 		} );
 		const stopStatusPolling = pollForBuildWowStatus( {
@@ -144,6 +147,7 @@ export function useSiteGeneration( {
 			await requestBuildWowSite( siteIdentifier, specId, graph );
 			setFallbackStartedAt( Date.now() );
 			setServerSteps( null );
+			setLiveBuild( EMPTY_LIVE_BUILD_STATE );
 			setFailure( null );
 			setBuildAttempt( ( attempt ) => attempt + 1 );
 		} catch ( error ) {
@@ -173,6 +177,7 @@ export function useSiteGeneration( {
 		failureReason,
 		failureLabel: failedUi?.label,
 		failureDetail: failedUi?.detail,
+		liveBuild,
 		steps:
 			serverSteps ??
 			steps.map( ( step, index ) => ( {
