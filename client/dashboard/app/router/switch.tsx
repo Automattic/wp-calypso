@@ -4,28 +4,28 @@ import { __ } from '@wordpress/i18n';
 import { redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
 
-export async function ensureImportLabAccess() {
+export async function ensureSwitchAccess() {
 	return queryClient.ensureQueryData( isAutomatticianQuery() );
 }
 
-export const importLabRoute = createRoute( {
+export const switchRoute = createRoute( {
 	getParentRoute: () => rootRoute,
-	path: 'import-lab',
+	path: 'switch',
 	head: () => ( {
-		meta: [ { title: __( 'Import Lab' ) } ],
+		meta: [ { title: __( 'Switch' ) } ],
 	} ),
 	beforeLoad: async ( { cause } ) => {
 		if ( cause === 'preload' ) {
 			return;
 		}
 
-		if ( ! ( await ensureImportLabAccess() ) ) {
+		if ( ! ( await ensureSwitchAccess() ) ) {
 			throw redirectAsNotAllowed( { to: '/sites' } );
 		}
 	},
 } ).lazy( () =>
-	import( '../../import-lab' ).then( ( module ) =>
-		createLazyRoute( 'import-lab' )( {
+	import( '../../switch' ).then( ( module ) =>
+		createLazyRoute( 'switch' )( {
 			component: module.default,
 		} )
 	)

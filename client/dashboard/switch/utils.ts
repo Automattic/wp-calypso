@@ -1,13 +1,13 @@
-export type ImportLabIssueCategory = 'journey' | 'capture' | 'content' | 'blocks' | 'evidence';
-export type ImportLabStrategy = 'ssi' | 'blueprint';
+export type SwitchIssueCategory = 'journey' | 'capture' | 'content' | 'blocks' | 'evidence';
+export type SwitchStrategy = 'ssi' | 'blueprint';
 
-export type ImportLabRepository = {
+export type SwitchRepository = {
 	label: string;
 	repository: string;
 	url?: string;
 };
 
-const REPOSITORIES: Record< ImportLabIssueCategory, ImportLabRepository > = {
+const REPOSITORIES: Record< SwitchIssueCategory, SwitchRepository > = {
 	journey: {
 		label: 'Import journey and Calypso UI',
 		repository: 'Automattic/wp-calypso',
@@ -34,11 +34,11 @@ const REPOSITORIES: Record< ImportLabIssueCategory, ImportLabRepository > = {
 	},
 };
 
-export function getImportLabRepository( category: ImportLabIssueCategory ) {
+export function getSwitchRepository( category: SwitchIssueCategory ) {
 	return REPOSITORIES[ category ];
 }
 
-export function normalizeImportLabUrl( value: string ) {
+export function normalizeSwitchUrl( value: string ) {
 	const url = new URL( value.trim() );
 	if ( ! [ 'http:', 'https:' ].includes( url.protocol ) ) {
 		throw new Error( 'Only HTTP and HTTPS URLs are supported.' );
@@ -54,8 +54,8 @@ export function getMshotsUrl( url: string ) {
 }
 
 type PromptInput = {
-	strategy: ImportLabStrategy;
-	category: ImportLabIssueCategory;
+	strategy: SwitchStrategy;
+	category: SwitchIssueCategory;
 	observation: string;
 	sourceUrl: string;
 	targetUrl: string;
@@ -76,8 +76,8 @@ function formatMetrics( metrics?: Record< string, unknown > ) {
 		.join( ', ' );
 }
 
-export function buildImportLabAgentPrompt( input: PromptInput ) {
-	const owner = getImportLabRepository( input.category );
+export function buildSwitchAgentPrompt( input: PromptInput ) {
+	const owner = getSwitchRepository( input.category );
 	const strategy =
 		input.strategy === 'ssi'
 			? 'Faithful reconstruction (SSI)'
@@ -86,7 +86,7 @@ export function buildImportLabAgentPrompt( input: PromptInput ) {
 		input.strategy === 'ssi'
 			? 'Re-run SSI and compare visual parity, imported content, preview metrics, and the terminal receipt.'
 			: 'Re-run blueprint extraction and mapping, then verify that source content and structure map into the destination theme templates, patterns, and styles.';
-	return `Investigate and fix this Import Lab finding in ${ owner.repository }.
+	return `Investigate and fix this Switch finding in ${ owner.repository }.
 
 Import evidence
 - Strategy: ${ strategy }

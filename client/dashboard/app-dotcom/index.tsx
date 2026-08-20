@@ -48,7 +48,7 @@ boot( {
 		},
 		colorScheme: isEnabled( 'dark-mode' ),
 		darkMode: isEnabled( 'dark-mode' ),
-		importLab: true,
+		switch: true,
 	},
 	optIn: true,
 	components: {

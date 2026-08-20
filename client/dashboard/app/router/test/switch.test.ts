@@ -3,7 +3,7 @@
  */
 
 import { queryClient } from '@automattic/api-queries';
-import { importLabRoute } from '../import-lab';
+import { switchRoute } from '../switch';
 
 jest.mock( '@automattic/api-queries', () => ( {
 	isAutomatticianQuery: jest.fn( () => ( { queryKey: [ 'is-automattician' ] } ) ),
@@ -14,13 +14,13 @@ jest.mock( '../root', () => {
 	return { rootRoute: createRootRoute() };
 } );
 
-const beforeLoad = importLabRoute.options.beforeLoad;
+const beforeLoad = switchRoute.options.beforeLoad;
 
 if ( ! beforeLoad ) {
-	throw new Error( 'Import Lab route must define an access guard.' );
+	throw new Error( 'Switch route must define an access guard.' );
 }
 
-describe( 'Import Lab route access', () => {
+describe( 'Switch route access', () => {
 	const ensureQueryData = jest.mocked( queryClient.ensureQueryData );
 
 	afterEach( () => {

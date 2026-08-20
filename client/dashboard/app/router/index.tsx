@@ -8,13 +8,13 @@ import { createAgencyRoutes } from './agency';
 import { createAgencyClientRoutes } from './agency-client';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
-import { importLabRoute } from './import-lab';
 import { createMeRoutes } from './me';
 import { createPluginsRoutes } from './plugins';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
 import { startStoreRoute } from './start-store';
+import { switchRoute } from './switch';
 import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
 import type { AgencyCapability } from '@automattic/api-core';
@@ -100,8 +100,8 @@ const createRouteTree = ( config: AppConfig ) => {
 		children.push( startStoreRoute );
 	}
 
-	if ( config.supports.importLab ) {
-		children.push( importLabRoute );
+	if ( config.supports.switch ) {
+		children.push( switchRoute );
 	}
 
 	children.push( catchAllRoute );

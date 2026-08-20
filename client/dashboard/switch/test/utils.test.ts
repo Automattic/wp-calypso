@@ -1,16 +1,16 @@
 import {
-	buildImportLabAgentPrompt,
-	getImportLabRepository,
+	buildSwitchAgentPrompt,
+	getSwitchRepository,
 	getMshotsUrl,
-	normalizeImportLabUrl,
+	normalizeSwitchUrl,
 } from '../utils';
 
-describe( 'Import Lab utilities', () => {
+describe( 'Switch utilities', () => {
 	it( 'normalizes public source URLs and rejects unsupported protocols', () => {
-		expect( normalizeImportLabUrl( ' https://example.com/path#section ' ) ).toBe(
+		expect( normalizeSwitchUrl( ' https://example.com/path#section ' ) ).toBe(
 			'https://example.com/path'
 		);
-		expect( () => normalizeImportLabUrl( 'file:///tmp/source.html' ) ).toThrow();
+		expect( () => normalizeSwitchUrl( 'file:///tmp/source.html' ) ).toThrow();
 	} );
 
 	it( 'builds an encoded mShots URL', () => {
@@ -20,11 +20,11 @@ describe( 'Import Lab utilities', () => {
 	} );
 
 	it( 'routes block rendering findings to Blocks Engine', () => {
-		expect( getImportLabRepository( 'blocks' ).repository ).toBe( 'Automattic/blocks-engine' );
+		expect( getSwitchRepository( 'blocks' ).repository ).toBe( 'Automattic/blocks-engine' );
 	} );
 
 	it( 'binds evidence and contribution requirements into the agent prompt', () => {
-		const prompt = buildImportLabAgentPrompt( {
+		const prompt = buildSwitchAgentPrompt( {
 			strategy: 'ssi',
 			category: 'content',
 			observation: 'The About page was not imported.',
@@ -46,7 +46,7 @@ describe( 'Import Lab utilities', () => {
 	} );
 
 	it( 'describes Blueprint as theme mapping rather than AI site generation', () => {
-		const prompt = buildImportLabAgentPrompt( {
+		const prompt = buildSwitchAgentPrompt( {
 			strategy: 'blueprint',
 			category: 'content',
 			observation: 'The source navigation did not map to the theme header.',
