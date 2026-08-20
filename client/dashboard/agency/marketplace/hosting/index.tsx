@@ -3,6 +3,7 @@ import {
 	Dropdown,
 	Guide,
 	ToggleControl,
+	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -228,40 +229,6 @@ function CartDropdown( {
 	);
 }
 
-function MoreAboutHosting( {
-	brandName,
-	children,
-}: {
-	brandName: string;
-	children: React.ReactNode;
-} ) {
-	const [ isExpanded, setIsExpanded ] = useState( false );
-
-	return (
-		<VStack spacing={ 6 }>
-			<Card>
-				<CardBody>
-					<HStack justify="space-between" alignment="center">
-						<Text weight={ 600 }>
-							{ sprintf(
-								/* translators: %s: hosting brand name */
-								__( 'More about %s hosting: features, Jetpack, and what agencies say' ),
-								brandName
-							) }
-						</Text>
-						<Button
-							icon={ isExpanded ? chevronUp : chevronDown }
-							label={ isExpanded ? __( 'Collapse details' ) : __( 'Expand details' ) }
-							onClick={ () => setIsExpanded( ! isExpanded ) }
-						/>
-					</HStack>
-				</CardBody>
-			</Card>
-			{ isExpanded && children }
-		</VStack>
-	);
-}
-
 export default function MarketplaceHosting() {
 	const [ selectedBrand, setSelectedBrand ] = useState< HostingBrand[ 'key' ] >( 'wpcom' );
 	const [ term, setTerm ] = useState< 'monthly' | 'yearly' >( 'yearly' );
@@ -385,30 +352,23 @@ export default function MarketplaceHosting() {
 				</div>
 			) }
 			{ selectedBrand === 'vip' && <VipContent /> }
+			<Divider style={ { color: 'var(--color-gray-100)' } } />
 			{ selectedBrand === 'wpcom' && (
-				<MoreAboutHosting brandName="WordPress.com">
-					<VStack spacing={ 6 }>
-						<IncludedFeatures brand="wpcom" />
-						<Testimonials brand="wpcom" />
-						<ClientRelationships />
-					</VStack>
-				</MoreAboutHosting>
+				<VStack spacing={ 8 }>
+					<IncludedFeatures brand="wpcom" />
+					<Testimonials brand="wpcom" />
+					<ClientRelationships />
+				</VStack>
 			) }
 			{ selectedBrand === 'pressable' && (
-				<MoreAboutHosting brandName="Pressable">
-					<VStack spacing={ 6 }>
-						<IncludedFeatures brand="pressable" />
-						<JetpackComplete />
-						<Testimonials brand="pressable" />
-						<ClientRelationships />
-					</VStack>
-				</MoreAboutHosting>
+				<VStack spacing={ 8 }>
+					<IncludedFeatures brand="pressable" />
+					<JetpackComplete />
+					<Testimonials brand="pressable" />
+					<ClientRelationships />
+				</VStack>
 			) }
-			{ selectedBrand === 'vip' && (
-				<MoreAboutHosting brandName="WordPress VIP">
-					<Testimonials brand="vip" />
-				</MoreAboutHosting>
-			) }
+			{ selectedBrand === 'vip' && <Testimonials brand="vip" /> }
 		</PageLayout>
 	);
 }
