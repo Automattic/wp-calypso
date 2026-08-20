@@ -408,7 +408,7 @@ const Home = () => {
 							return;
 						}
 						const url = plansLink( '/plans', site.slug, 'yearly', true );
-						if ( isSimple && isJetpackCloud() ) {
+						if ( isJetpackCloud() ) {
 							page( getCalypsoUrl( url ) );
 							return;
 						}
