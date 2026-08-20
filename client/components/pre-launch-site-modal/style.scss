@@ -1,0 +1,5 @@
+// Undo classic Calypso's global `iframe { max-width: 100% }`, which collapses
+// the scaled site-preview iframe to a sliver.
+.site-launch-pre-launch-modal__thumbnail iframe {
+	max-width: none;
+}

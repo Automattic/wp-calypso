@@ -6,6 +6,8 @@ import { isSitePlanPaid } from 'calypso/dashboard/sites/plans';
 import SiteLaunchModal from 'calypso/dashboard/sites/site-launch-modal';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
+import './style.scss';
+
 interface PreLaunchSiteModalProps {
 	siteId: number;
 	isOpen: boolean;
