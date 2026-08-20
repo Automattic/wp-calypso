@@ -65,11 +65,6 @@ import {
 	isOptimizeTitleSuggestionEnabled,
 	isSeoSuggestionsEnabled,
 } from './utils/preview-features';
-import {
-	getCurrentEditorPostIdFromStore as getCurrentEditorPostId,
-	normalizeEditorPostId,
-	type EditorPostId,
-} from './utils/review-post-context';
 import { SUGGESTION_ACTION_COMPLETE_EVENT } from './utils/suggestion-events';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
@@ -277,9 +272,27 @@ const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 	'generate-alt-text',
 ];
 
+type EditorPostId = number | string;
+
 function getCurrentEditorPostType(): string | undefined {
 	const postType = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostType?.();
 	return typeof postType === 'string' ? postType : undefined;
+}
+
+function normalizeEditorPostId( postId: unknown ): EditorPostId | undefined {
+	if ( typeof postId === 'number' && postId > 0 ) {
+		return postId;
+	}
+	if ( typeof postId === 'string' && postId.trim() ) {
+		return postId;
+	}
+	return undefined;
+}
+
+function getCurrentEditorPostId(): EditorPostId | undefined {
+	return normalizeEditorPostId(
+		( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.()
+	);
 }
 
 /**

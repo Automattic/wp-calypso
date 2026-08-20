@@ -21,7 +21,7 @@
  */
 import { Panel, PanelBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
@@ -34,6 +34,7 @@ import {
 	getEditableBlockContent,
 	hasEditableBlockTarget,
 	toggleBlockReferenceFocus,
+	undoBlockEdit,
 } from '../utils/block-actions';
 import {
 	flattenBlocks,
@@ -41,15 +42,12 @@ import {
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
-import { useReviewPostContext, type EditorPostId } from '../utils/review-post-context';
-import useBulkApply from '../utils/use-bulk-apply';
+import { getBulkResponseActionOutcome, type OnResponseAction } from '../utils/response-action';
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
 import useLatestResponseAction from '../utils/use-latest-response-action';
-import useUndoSnapshots from '../utils/use-undo-snapshots';
 import { type BlockSnapshot } from './block-ref';
 import ReviewCard, { type ReviewCardRow } from './review-card';
 import SplitScreenGuide from './split-screen-guide';
-import type { OnResponseAction } from '../utils/response-action';
 
 export interface FeedbackListItem {
 	title: string;
@@ -79,7 +77,7 @@ interface SummaryNote {
 /** Root class name; prefixes every class this component renders. */
 const CLASS_PREFIX = 'jetpack-ai-feedback-list';
 
-export type { EditorPostId } from '../utils/review-post-context';
+export type EditorPostId = number | string;
 
 /**
  * Per-flow copy and options. The data props (summary/items/sections/postId)
@@ -109,6 +107,43 @@ export interface FeedbackListProps {
 }
 
 type ItemStatus = 'pending' | 'applying' | 'accepted' | 'dismissed' | 'failed';
+
+interface EditSnapshot {
+	clientId: string;
+	contentBefore: string;
+	contentAfter: string;
+	editableAttribute?: string;
+}
+
+type WpCurrentPostStore = { getCurrentPostId?: () => EditorPostId | null };
+type WpDataWindow = {
+	wp?: {
+		data?: {
+			select?: ( store: string ) => WpCurrentPostStore | undefined;
+		};
+	};
+};
+
+function normalizeEditorPostId( postId: unknown ): EditorPostId | undefined {
+	if ( typeof postId === 'number' && postId > 0 ) {
+		return postId;
+	}
+	if ( typeof postId === 'string' && postId.trim() ) {
+		return postId;
+	}
+	return undefined;
+}
+
+function getCurrentEditorPostIdFromStore(): EditorPostId | undefined {
+	try {
+		const postId = ( window as unknown as WpDataWindow ).wp?.data
+			?.select?.( 'core/editor' )
+			?.getCurrentPostId?.();
+		return normalizeEditorPostId( postId );
+	} catch {
+		return undefined;
+	}
+}
 
 function getItemKey( sectionIndex: number, itemIndex: number ): string {
 	return `${ sectionIndex }:${ itemIndex }`;
@@ -187,9 +222,10 @@ export default function FeedbackList( {
 	enableBulkApply = false,
 }: FeedbackListProps ) {
 	const [ itemStatuses, setItemStatuses ] = useState< Record< string, ItemStatus > >( {} );
+	const [ bulkRunning, setBulkRunning ] = useState( false );
 	// Only one item shows "Copied" at a time; the shared hook owns that state.
 	const { clipboardSupported, copiedKey, copy: copyItem } = useCopyToClipboard();
-	const { saveFromApplyResult, undo: undoSnapshot } = useUndoSnapshots< string >();
+	const editSnapshots = useRef< Record< string, EditSnapshot > >( {} );
 
 	const blocks = useSelect(
 		( select ) =>
@@ -199,20 +235,27 @@ export default function FeedbackList( {
 			),
 		[]
 	);
+	const currentPostId = useSelect(
+		( select ) =>
+			normalizeEditorPostId(
+				( select( 'core/editor' ) as WpCurrentPostStore )?.getCurrentPostId?.()
+			),
+		[]
+	);
 	const flatBlocks = useMemo( () => flattenBlocks( blocks ), [ blocks ] );
 	const feedbackSections = useMemo(
 		() => normaliseSections( sectionFallbackTitle, items, sections ),
 		[ sectionFallbackTitle, items, sections ]
 	);
-	const { isPostStale, isLatestPostContextStale } = useReviewPostContext( postId );
+	const isPostStale = ! postId || ! currentPostId || String( postId ) !== String( currentPostId );
+	const isLatestPostContextStale = useCallback( () => {
+		const latestCurrentPostId = getCurrentEditorPostIdFromStore() ?? currentPostId;
+		return ! postId || ! latestCurrentPostId || String( postId ) !== String( latestCurrentPostId );
+	}, [ currentPostId, postId ] );
 	const setItemStatus = useCallback( ( key: string, status: ItemStatus ) => {
 		setItemStatuses( ( prev ) => ( { ...prev, [ key ]: status } ) );
 	}, [] );
 	const fireResponseAction = useLatestResponseAction( onResponseAction, isLatestPostContextStale );
-	const { bulkRunning, runBulkApply } = useBulkApply(
-		fireResponseAction,
-		isLatestPostContextStale
-	);
 
 	const focusBlock = useCallback(
 		( index: number ) => {
@@ -284,7 +327,18 @@ export default function FeedbackList( {
 				return false;
 			}
 
-			if ( saveFromApplyResult( key, result ) ) {
+			if (
+				result.success &&
+				result.clientId &&
+				typeof result.contentBefore === 'string' &&
+				typeof result.contentAfter === 'string'
+			) {
+				editSnapshots.current[ key ] = {
+					clientId: result.clientId,
+					contentBefore: result.contentBefore,
+					contentAfter: result.contentAfter,
+					editableAttribute: result.editableAttribute,
+				};
 				setItemStatus( key, 'accepted' );
 				return true;
 			}
@@ -292,7 +346,7 @@ export default function FeedbackList( {
 			setItemStatus( key, 'failed' );
 			return false;
 		},
-		[ flatBlocks, isLatestPostContextStale, itemStatuses, saveFromApplyResult, setItemStatus ]
+		[ flatBlocks, isLatestPostContextStale, itemStatuses, setItemStatus ]
 	);
 
 	// Pending, one-click-applicable items, used for the "Apply all" action.
@@ -319,27 +373,67 @@ export default function FeedbackList( {
 	}, [ enableBulkApply, flatBlocks, isPostStale, itemStatuses, feedbackSections ] );
 
 	const applyAll = useCallback( async () => {
-		await runBulkApply(
-			'edit',
-			applyAllTargets.map(
-				( target ) => () => applyItem( target.item, target.sectionIndex, target.itemIndex )
-			)
-		);
-	}, [ applyAllTargets, applyItem, runBulkApply ] );
+		if ( bulkRunning || isLatestPostContextStale() ) {
+			return;
+		}
+		setBulkRunning( true );
+		try {
+			let successCount = 0;
+			let failureCount = 0;
+			for ( const target of applyAllTargets ) {
+				if ( isLatestPostContextStale() ) {
+					return;
+				}
+				// Apply sequentially so each edit validates against the live block.
+				// eslint-disable-next-line no-await-in-loop
+				const succeeded = await applyItem( target.item, target.sectionIndex, target.itemIndex );
+				if ( isLatestPostContextStale() ) {
+					return;
+				}
+				if ( succeeded ) {
+					successCount++;
+				} else {
+					failureCount++;
+				}
+			}
+			fireResponseAction( {
+				action: 'bulk_accept',
+				target: 'edit',
+				outcome: getBulkResponseActionOutcome( successCount, failureCount ),
+				itemCount: successCount + failureCount,
+			} );
+		} finally {
+			setBulkRunning( false );
+		}
+	}, [ applyAllTargets, applyItem, bulkRunning, fireResponseAction, isLatestPostContextStale ] );
 
 	const undoItem = useCallback(
 		( key: string, status: ItemStatus ) => {
 			if ( isLatestPostContextStale() ) {
 				return false;
 			}
-			if ( undoSnapshot( key, status === 'accepted' ) !== 'success' ) {
+			const snapshot = editSnapshots.current[ key ];
+			if ( status === 'accepted' && ! snapshot ) {
 				setItemStatus( key, 'failed' );
 				return false;
+			}
+			if ( snapshot ) {
+				const didUndo = undoBlockEdit(
+					snapshot.clientId,
+					snapshot.contentBefore,
+					snapshot.contentAfter,
+					snapshot.editableAttribute
+				);
+				if ( ! didUndo ) {
+					setItemStatus( key, 'failed' );
+					return false;
+				}
+				delete editSnapshots.current[ key ];
 			}
 			setItemStatus( key, 'pending' );
 			return true;
 		},
-		[ isLatestPostContextStale, setItemStatus, undoSnapshot ]
+		[ isLatestPostContextStale, setItemStatus ]
 	);
 
 	const dismissItem = useCallback(
