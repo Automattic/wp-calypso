@@ -46,7 +46,7 @@ const REFERRAL_GUIDE_STEPS = [
 		description: __(
 			'Manage your clients’ products without the burden of managing the billing. Assemble a cart of products, send a request for payment to your clients, and make commissions based on what you sell.'
 		),
-		media: <img src={ referralStep1 } alt="" width={ 400 } />,
+		media: <img src={ referralStep1 } alt="" />,
 	},
 	{
 		title: __( 'Add the products your client needs' ),
@@ -101,7 +101,7 @@ const REFERRAL_GUIDE_STEPS = [
 		description: __(
 			'Clients will be billed at the end of every month for their products. When they pay, you’ll make commissions on those products, which you’ll be able to manage under the Referrals section, soon.'
 		),
-		media: <img src={ referralStep5 } alt="" width={ 400 } />,
+		media: <img src={ referralStep5 } alt="" />,
 	},
 ];
 
@@ -112,7 +112,7 @@ function ReferralGuide( { onClose }: { onClose: () => void } ) {
 			className="marketplace-hosting__referral-guide"
 			contentLabel={ __( 'How referral mode works' ) }
 			pages={ REFERRAL_GUIDE_STEPS.map( ( step ) => ( {
-				image: <div className="marketplace-hosting__referral-guide-media">{ step.media }</div>,
+				image: step.media,
 				content: (
 					<VStack spacing={ 2 } className="marketplace-hosting__referral-guide-text">
 						<Heading level={ 2 } size={ 16 }>
