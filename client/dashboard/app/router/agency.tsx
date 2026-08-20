@@ -379,6 +379,8 @@ export const earnWooPaymentsRoute = createRoute( {
 
 // `/earn/woopayments/setup/$siteId` – install + activate WooPayments on a managed site
 export const earnWooPaymentsSetupRoute = createRoute( {
+	// TODO: replace with a dedicated WooPayments capability when one exists.
+	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'Site setup' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/woopayments/setup/$siteId',
