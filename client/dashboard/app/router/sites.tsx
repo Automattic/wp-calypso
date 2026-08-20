@@ -91,9 +91,7 @@ export const sitesRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			// Settle the deleted-sites check before first paint so the empty
-			// state doesn't flash from the onboarding variant to the
-			// deleted-aware one.
+			// Settle the deleted-sites check before first paint.
 			...( hasNoLiveSites( user ) && context.config
 				? [
 						queryClient.ensureQueryData(
