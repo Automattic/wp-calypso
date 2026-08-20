@@ -163,89 +163,89 @@ function getWorkers(): number | string {
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig< CustomOptions >(
-	checkAccountsArePrimed( {
-		testDir: './specs',
-		/* Run tests in files in parallel */
-		fullyParallel: true,
-		/* Fail the build on CI if you accidentally left test.only in the source code. */
-		forbidOnly: !! process.env.CI,
-		/* Retry on CI only */
-		retries: process.env.CI ? 1 : 0,
-		workers: getWorkers(),
-		/* Global timeout for each test */
-		timeout: 120000, // 2 minutes
-		expect: {
-			timeout: 10000, // 10 seconds
-		},
-		/* Reporter to use. See https://playwright.dev/docs/test-reporters */
-		reporter,
-		/* Runs once before the suite, before any worker starts */
-		globalSetup: require.resolve( './lib/global-setup' ),
-		/* Runs once after the suite, when every worker has finished */
-		globalTeardown: require.resolve( './lib/global-teardown' ),
-		/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-		outputDir: `${ outputPath }/test-results`,
-		use: {
-			/* Base URL to use in actions like `await page.goto('/')`. */
-			// baseURL: 'http://localhost:3000',
-			/* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
-			actionTimeout: 10000, // 10 seconds
+const config: Config = {
+	testDir: './specs',
+	/* Run tests in files in parallel */
+	fullyParallel: true,
+	/* Fail the build on CI if you accidentally left test.only in the source code. */
+	forbidOnly: !! process.env.CI,
+	/* Retry on CI only */
+	retries: process.env.CI ? 1 : 0,
+	workers: getWorkers(),
+	/* Global timeout for each test */
+	timeout: 120000, // 2 minutes
+	expect: {
+		timeout: 10000, // 10 seconds
+	},
+	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
+	reporter,
+	/* Runs once before the suite, before any worker starts */
+	globalSetup: require.resolve( './lib/global-setup' ),
+	/* Runs once after the suite, when every worker has finished */
+	globalTeardown: require.resolve( './lib/global-teardown' ),
+	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+	outputDir: `${ outputPath }/test-results`,
+	use: {
+		/* Base URL to use in actions like `await page.goto('/')`. */
+		// baseURL: 'http://localhost:3000',
+		/* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
+		actionTimeout: 10000, // 10 seconds
 
-			/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-			trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
-			screenshot: { mode: 'only-on-failure', fullPage: true },
-			video: 'retain-on-failure',
-		},
+		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+		trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
+		screenshot: { mode: 'only-on-failure', fullPage: true },
+		video: 'retain-on-failure',
+	},
 
-		/* Configure projects per device */
-		// See https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json */
-		projects: [
-			{
-				name: 'mailosaur-usage-check',
-				testMatch: /mailosaur-usage\.setup\.ts/,
-				testDir: './setup',
-			},
-			{
-				name: 'throttle-check',
-				testMatch: /throttle-check\.setup\.ts/,
-				testDir: './setup',
-			},
-			// Shared by `chrome` and `mobile`, which take their accounts from AUTHENTICATE_ACCOUNTS
-			// and the run's own environment rather than from a project.
-			primeProject( 'prime-logins', getAccountNamesToPrime() ),
-			{
-				name: 'chrome',
-				dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
-				use: desktopUse,
-			},
-			{
-				name: 'mobile',
-				dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
-				use: mobileUse,
-				grepInvert: new RegExp( tags.DESKTOP_ONLY ),
-			},
-			...suiteProject( {
-				name: 'p2',
-				testDir: './specs/p2',
-				dependencies: [ 'throttle-check' ],
-				use: { ...desktopUse, accountsToPrime: [ 'p2User' ] },
-			} ),
-			...suiteProject( {
-				name: 'i18n',
-				testDir: './specs/i18n',
-				dependencies: [ 'throttle-check' ],
-				use: { ...desktopUse, accountsToPrime: [ 'i18nUser' ] },
-			} ),
-			{
-				name: 'authentication',
-				// No 'prime-logins': these specs exercise the login flow itself, so warming
-				// the cookie cache would only add wall clock.
-				dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
-				retries: 0,
-				testDir: './specs/authentication',
-				use: loginBrowserUse,
-			},
-		],
-	} )
-);
+	/* Configure projects per device */
+	// See https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json */
+	projects: [
+		{
+			name: 'mailosaur-usage-check',
+			testMatch: /mailosaur-usage\.setup\.ts/,
+			testDir: './setup',
+		},
+		{
+			name: 'throttle-check',
+			testMatch: /throttle-check\.setup\.ts/,
+			testDir: './setup',
+		},
+		// Shared by `chrome` and `mobile`, which take their accounts from AUTHENTICATE_ACCOUNTS
+		// and the run's own environment rather than from a project.
+		primeProject( 'prime-logins', getAccountNamesToPrime() ),
+		{
+			name: 'chrome',
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
+			use: desktopUse,
+		},
+		{
+			name: 'mobile',
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
+			use: mobileUse,
+			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
+		},
+		...suiteProject( {
+			name: 'p2',
+			testDir: './specs/p2',
+			dependencies: [ 'throttle-check' ],
+			use: { ...desktopUse, accountsToPrime: [ 'p2User' ] },
+		} ),
+		...suiteProject( {
+			name: 'i18n',
+			testDir: './specs/i18n',
+			dependencies: [ 'throttle-check' ],
+			use: { ...desktopUse, accountsToPrime: [ 'i18nUser' ] },
+		} ),
+		{
+			name: 'authentication',
+			// No 'prime-logins': these specs exercise the login flow itself, so warming
+			// the cookie cache would only add wall clock.
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
+			retries: 0,
+			testDir: './specs/authentication',
+			use: loginBrowserUse,
+		},
+	],
+};
+
+export default defineConfig< CustomOptions >( checkAccountsArePrimed( config ) );
