@@ -154,6 +154,12 @@ export const pressableSignaturePlans: PressablePlan[] = [
 	},
 ];
 
+// Prototype stand-in for real agency data (site counts come from agencySitesQuery).
+export const mockAgencyContext = {
+	managedSites: 12,
+	ownsPressablePlan: false,
+};
+
 export const PRESSABLE_OVERAGES = {
 	storagePerGB: 0.5,
 	trafficPer10kVisits: 8,
