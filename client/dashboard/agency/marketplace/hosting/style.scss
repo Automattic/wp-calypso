@@ -179,3 +179,11 @@
 }
 
 
+
+/* Upstream bug shim: core Guide's page-control <ul> sets margin: 0 but not
+   padding: 0, relying on wp-admin's global list reset. The dashboard has no
+   such reset, so the browser's 40px list padding shifts the dots off center.
+   Remove when fixed in @wordpress/components (guide/style.scss). */
+.marketplace-hosting__referral-guide .components-guide__page-control {
+	padding: 0;
+}
