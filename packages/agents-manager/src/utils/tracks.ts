@@ -75,38 +75,31 @@ function getIsTest(): boolean {
 }
 
 /**
- * Claims `block_editor` only while the `core/editor` store is registered;
- * omitted on plain wp-admin screens. Unlike `isEditorPage()`, the registry
- * check includes custom post types and the site editor.
- */
-function getBigSkySurface(): 'block_editor' | undefined {
-	try {
-		const editor = select( 'core/editor' ) as EditorSelectStore;
-		return editor ? 'block_editor' : undefined;
-	} catch {
-		return undefined;
-	}
-}
-
-/**
- * Editor-surface page props, mirroring Big Sky's `getCurrentPageProperties`.
+ * Editor-surface page props, mirroring Big Sky's `getCurrentPageProperties`,
+ * plus the `surface` claim derived from the same editor-store read.
  */
 function getBigSkyPageProps(): TracksProps {
+	// `block_editor` only while the `core/editor` store is registered (unlike
+	// `isEditorPage()`, this includes custom post types and the site editor);
+	// preserved by the catch, omitted on plain wp-admin screens.
+	let surfaceProps: TracksProps = {};
 	try {
 		const editor = select( 'core/editor' ) as EditorSelectStore;
-		const core = select( 'core' ) as CoreSelectStore;
+		surfaceProps = editor ? { surface: 'block_editor' } : {};
 
+		const core = select( 'core' ) as CoreSelectStore;
 		const postId = editor?.getCurrentPostId?.();
 		const siteRecord = core?.getEntityRecord?.( 'root', 'site' ) as
 			| { page_on_front?: number }
 			| undefined;
 
 		return {
+			...surfaceProps,
 			post_type: editor?.getCurrentPostType?.() ?? '',
 			is_home_page: postId !== undefined && postId === siteRecord?.page_on_front,
 		};
 	} catch {
-		return { post_type: '', is_home_page: false };
+		return { ...surfaceProps, post_type: '', is_home_page: false };
 	}
 }
 
@@ -122,13 +115,11 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 	const bigSky = getBigSkyTracksData();
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
-	const surface = getBigSkySurface();
 	const baseProps: TracksProps = {
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 		...( blogId !== undefined ? { blog_id: blogId } : {} ),
 		sessionid: getSessionId(),
-		...( surface ? { surface } : {} ),
 		session_type: bigSky.sessionType,
 		// AM has no onboarding flow, so the phase is always the editor.
 		phase: 'editor',

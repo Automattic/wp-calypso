@@ -325,6 +325,25 @@ describe( 'tracks wrappers', () => {
 			expect( () => recordBigSkyTracksEvent( 'chat_input_send_message' ) ).not.toThrow();
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
 			expect( lastEventProps() ).toMatchObject( { post_type: '', is_home_page: false } );
+			expect( lastEventProps() ).not.toHaveProperty( 'surface' );
+
+			mockSelect.mockImplementation( () => ( {} ) as ReturnType< typeof select > );
+		} );
+
+		it( 'keeps surface when a later selector throws after the editor store resolved', () => {
+			mockSelect.mockImplementation( ( store ) => {
+				if ( store === 'core/editor' ) {
+					return {} as ReturnType< typeof select >;
+				}
+				throw new Error( 'core-data selector failed' );
+			} );
+
+			expect( () => recordBigSkyTracksEvent( 'chat_input_send_message' ) ).not.toThrow();
+			expect( lastEventProps() ).toMatchObject( {
+				surface: 'block_editor',
+				post_type: '',
+				is_home_page: false,
+			} );
 
 			mockSelect.mockImplementation( () => ( {} ) as ReturnType< typeof select > );
 		} );
