@@ -1,12 +1,15 @@
 import {
 	Button,
+	Dropdown,
+	ExternalLink,
 	ToggleControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
+	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
-import { chevronDown, chevronUp } from '@wordpress/icons';
+import { cart, chevronDown, chevronUp } from '@wordpress/icons';
 import { useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
@@ -14,12 +17,12 @@ import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import {
 	ClientRelationships,
+	CheckList,
 	IncludedFeatures,
 	JetpackComplete,
 	Testimonials,
 } from './content-sections';
-import { hostingBrands, pressableSignaturePlans } from './mock-data';
-import OrderSummary from './order-summary';
+import { hostingBrands, formatUSD } from './mock-data';
 import PressableContent from './pressable-content';
 import ProductSelector from './product-selector';
 import VipContent from './vip-content';
@@ -30,6 +33,13 @@ import './style.scss';
 
 // Hidden while the design is iterated on.
 const SHOW_MIGRATION_OFFER = false;
+
+interface CartItem {
+	id: string;
+	family: 'wpcom-hosting' | 'pressable-hosting';
+	label: string;
+	total: number | null;
+}
 
 function MigrationOffer() {
 	const [ isExpanded, setIsExpanded ] = useState( false );
@@ -60,6 +70,116 @@ function MigrationOffer() {
 				</VStack>
 			</CardBody>
 		</Card>
+	);
+}
+
+function FreeDevSites() {
+	return (
+		<Card className="marketplace-hosting__dev-sites">
+			<CardBody>
+				<VStack spacing={ 3 }>
+					<Heading level={ 3 } size={ 16 }>
+						{ __( 'Start building for free' ) }
+					</Heading>
+					<Text as="p" variant="muted">
+						{ __(
+							'Included in your membership to Automattic for Agencies. Develop up to 5 WordPress.com sites with free development licenses. Only pay when you launch.'
+						) }
+					</Text>
+					<Text variant="muted" size={ 12 }>
+						{ __( '5 of 5 free licenses available' ) }
+					</Text>
+					<Button variant="secondary" __next40pxDefaultSize>
+						{ __( 'Create a development site' ) }
+					</Button>
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
+function ScheduleDemo() {
+	return (
+		<Card className="marketplace-hosting__dev-sites">
+			<CardBody>
+				<VStack spacing={ 3 }>
+					<Heading level={ 3 } size={ 16 }>
+						{ __( 'Schedule a demo' ) }
+					</Heading>
+					<Text as="p" variant="muted">
+						{ __(
+							'Our experts are happy to give you a one-on-one tour of our platform to discuss:'
+						) }
+					</Text>
+					<CheckList
+						items={ [
+							__( 'Our support, service, and pricing flexibility' ),
+							__( 'The best hosting plan for your needs' ),
+							__( 'How to launch and manage WordPress sites' ),
+							__( 'The free perks that come with Pressable' ),
+						] }
+					/>
+					<ExternalLink href="https://pressable.com/request-demo">
+						{ __( 'Schedule a demo' ) }
+					</ExternalLink>
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
+function CartDropdown( {
+	items,
+	onRemove,
+}: {
+	items: CartItem[];
+	onRemove: ( id: string ) => void;
+} ) {
+	const total = items.reduce( ( sum, item ) => sum + ( item.total ?? 0 ), 0 );
+
+	return (
+		<Dropdown
+			popoverProps={ { placement: 'bottom-end' } }
+			renderToggle={ ( { isOpen, onToggle } ) => (
+				<Button
+					icon={ cart }
+					label={ __( 'Shopping cart' ) }
+					aria-expanded={ isOpen }
+					onClick={ onToggle }
+					text={ items.length > 0 ? String( items.length ) : undefined }
+				/>
+			) }
+			renderContent={ () => (
+				<VStack spacing={ 3 } className="marketplace-hosting__cart">
+					<Heading level={ 3 } size={ 13 }>
+						{ __( 'Cart' ) }
+					</Heading>
+					{ items.length === 0 && <Text variant="muted">{ __( 'Your cart is empty.' ) }</Text> }
+					{ items.map( ( item ) => (
+						<HStack key={ item.id } justify="space-between" spacing={ 4 }>
+							<Text>{ item.label }</Text>
+							<HStack spacing={ 3 } justify="flex-end" expanded={ false }>
+								<Text>{ item.total !== null ? formatUSD( item.total ) : '—' }</Text>
+								<Button variant="link" isDestructive onClick={ () => onRemove( item.id ) }>
+									{ __( 'Remove' ) }
+								</Button>
+							</HStack>
+						</HStack>
+					) ) }
+					{ items.length > 0 && (
+						<>
+							<HStack justify="space-between">
+								<Text weight={ 600 }>{ __( 'Total per year' ) }</Text>
+								<Text weight={ 600 }>{ formatUSD( total ) }</Text>
+							</HStack>
+							<Button variant="primary" __next40pxDefaultSize>
+								{ __( 'Proceed to checkout' ) }
+							</Button>
+						</>
+					) }
+				</VStack>
+			) }
+		/>
 	);
 }
 
@@ -101,16 +221,18 @@ export default function MarketplaceHosting() {
 	const [ selectedBrand, setSelectedBrand ] = useState< HostingBrand[ 'key' ] >( 'wpcom' );
 	const [ term, setTerm ] = useState< 'monthly' | 'yearly' >( 'yearly' );
 	const [ isReferralMode, setIsReferralMode ] = useState( false );
-	const [ quantity, setQuantity ] = useState( 3 );
 	const [ pressablePlanSlug, setPressablePlanSlug ] = useState( 'pressable-signature-1' );
-	const [ cartCount, setCartCount ] = useState( 0 );
+	const [ cartItems, setCartItems ] = useState< CartItem[] >( [] );
 
-	const pressablePlan =
-		pressableSignaturePlans.find( ( p ) => p.slug === pressablePlanSlug ) ??
-		pressableSignaturePlans[ 0 ];
+	const addToCart = ( item: CartItem ) => {
+		setCartItems( ( current ) => [
+			...current.filter( ( existing ) => existing.family !== item.family ),
+			item,
+		] );
+	};
 
-	const handleCheckout = () => {
-		setCartCount( selectedBrand === 'wpcom' ? quantity : 1 );
+	const removeFromCart = ( id: string ) => {
+		setCartItems( ( current ) => current.filter( ( item ) => item.id !== id ) );
 	};
 
 	return (
@@ -144,15 +266,7 @@ export default function MarketplaceHosting() {
 								label={ __( 'Refer products' ) }
 								onChange={ setIsReferralMode }
 							/>
-							{ cartCount > 0 && (
-								<Text weight={ 600 }>
-									{ sprintf(
-										/* translators: %d: number of items in the cart */
-										_n( 'Cart: %d item', 'Cart: %d items', cartCount ),
-										cartCount
-									) }
-								</Text>
-							) }
+							<CartDropdown items={ cartItems } onRemove={ removeFromCart } />
 						</HStack>
 					}
 				/>
@@ -168,34 +282,45 @@ export default function MarketplaceHosting() {
 				/>
 			</VStack>
 			{ selectedBrand === 'wpcom' && (
-				<VStack spacing={ 4 }>
-					<div className="marketplace-hosting__configurator-row">
-						<WpcomConfigurator term={ term } onQuantityChange={ setQuantity } />
-						<OrderSummary
-							brand="wpcom"
-							term={ term }
-							quantity={ quantity }
-							onCheckout={ handleCheckout }
-						/>
-					</div>
-				</VStack>
+				<div className="marketplace-hosting__configurator-row">
+					<WpcomConfigurator
+						term={ term }
+						onAddToCart={ ( quantity, total ) =>
+							addToCart( {
+								id: 'wpcom-hosting',
+								family: 'wpcom-hosting',
+								label: sprintf(
+									/* translators: %d: number of sites */
+									_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
+									quantity
+								),
+								total,
+							} )
+						}
+					/>
+					<FreeDevSites />
+				</div>
 			) }
 			{ selectedBrand === 'pressable' && (
-				<VStack spacing={ 4 }>
-					<div className="marketplace-hosting__configurator-row">
-						<PressableContent
-							planSlug={ pressablePlanSlug }
-							onPlanChange={ setPressablePlanSlug }
-						/>
-						<OrderSummary
-							brand="pressable"
-							term={ term }
-							quantity={ 1 }
-							plan={ pressablePlan }
-							onCheckout={ handleCheckout }
-						/>
-					</div>
-				</VStack>
+				<div className="marketplace-hosting__configurator-row">
+					<PressableContent
+						planSlug={ pressablePlanSlug }
+						onPlanChange={ setPressablePlanSlug }
+						onAddToCart={ ( planName, total ) =>
+							addToCart( {
+								id: 'pressable-hosting',
+								family: 'pressable-hosting',
+								label: sprintf(
+									/* translators: %s: plan name */
+									__( 'Pressable %s' ),
+									planName
+								),
+								total,
+							} )
+						}
+					/>
+					<ScheduleDemo />
+				</div>
 			) }
 			{ selectedBrand === 'vip' && <VipContent /> }
 			{ selectedBrand === 'wpcom' && (

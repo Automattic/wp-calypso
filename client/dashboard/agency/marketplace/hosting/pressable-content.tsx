@@ -1,7 +1,9 @@
 import {
+	Button,
 	SelectControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
@@ -55,9 +57,11 @@ function planSizingLabel(
 export default function PressableContent( {
 	planSlug,
 	onPlanChange,
+	onAddToCart,
 }: {
 	planSlug: string;
 	onPlanChange: ( slug: string ) => void;
+	onAddToCart: ( planName: string, total: number | null ) => void;
 } ) {
 	const [ sizingBy, setSizingBy ] = useState< SizingDimension >( 'installs' );
 
@@ -156,6 +160,32 @@ export default function PressableContent( {
 							) }
 						</Text>
 					</VStack>
+
+					<CardDivider />
+
+					<HStack justify="space-between" alignment="center">
+						{ plan.yearly_price ? (
+							<VStack spacing={ 1 }>
+								<Heading level={ 3 } size={ 20 }>
+									{ formatUSD( plan.yearly_price ) }
+								</Heading>
+								<Text variant="muted">{ __( 'Per year, billed yearly.' ) }</Text>
+							</VStack>
+						) : (
+							<Text variant="muted">{ __( 'Prototype: price loads from the products API.' ) }</Text>
+						) }
+						<Button
+							variant="primary"
+							__next40pxDefaultSize
+							onClick={ () => onAddToCart( plan.name, plan.yearly_price ?? null ) }
+						>
+							{ sprintf(
+								/* translators: %s: plan name */
+								__( 'Add %s to cart' ),
+								plan.name
+							) }
+						</Button>
+					</HStack>
 				</VStack>
 			</CardBody>
 		</Card>
