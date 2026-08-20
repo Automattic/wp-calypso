@@ -38,8 +38,6 @@ export function Client() {
 	this.filterName = 'all';
 	// Per-tab load-more exhaustion, keyed by tab name.
 	this.filteredHasMore = {};
-	// Per-tab last page ordinal fetched; the initial window is page 1.
-	this.loadMorePage = {};
 	this.gettingFilteredNotes = false;
 	this.retries = 0;
 	this.subscribeTry = 0;
@@ -248,8 +246,6 @@ function getNotes( before ) {
 			);
 			debug( 'getNotes error, using backoff_ms=%d', backoff_ms );
 			this.noteList = [];
-			// The window restarts from the head, so paging depth restarts with it.
-			delete this.loadMorePage.all;
 			this.reschedule( backoff_ms );
 			return;
 		}
@@ -298,6 +294,7 @@ function getNotes( before ) {
 			// `before` echoes back isn't double-counted.
 			const known = new Set( this.noteList.map( ( n ) => n.id ) );
 			this.noteList = this.noteList.concat( pageList.filter( ( n ) => ! known.has( n.id ) ) );
+			trackLoadMore( 'all', this.noteList.length, ! this.hasMoreNotes( 'all' ) );
 		} else {
 			// Merge the head over the window, keeping the older paged-in tail.
 			const headIds = new Set( pageList.map( ( n ) => n.id ) );
@@ -524,6 +521,8 @@ function getFilteredNotes( before ) {
 				fresh.length > 0 &&
 				data.notes.length >= parameters.number &&
 				appended.length < settings.max_limit;
+
+			trackLoadMore( key, appended.length, ! this.filteredHasMore[ key ] );
 		} else {
 			// Merge the head over the list, keeping the older paged-in tail. Drop
 			// within-head ids the server no longer returns (read/deleted elsewhere).
@@ -727,7 +726,6 @@ function loadMore() {
 		if ( ! oldest ) {
 			return;
 		}
-		trackLoadMore.call( this, key, filteredIds.length );
 		this.getFilteredNotes( Math.floor( Date.parse( oldest.timestamp ) / 1000 ) );
 		return;
 	}
@@ -748,24 +746,18 @@ function loadMore() {
 		return;
 	}
 
-	trackLoadMore.call( this, 'all', this.noteList.length || allNotes.length );
-
 	// The endpoint's `before` cursor is UNIX epoch seconds, not the note's ISO
 	// timestamp; a raw string is ignored and load-more would refetch page one.
 	this.getNotes( Math.floor( Date.parse( oldest.timestamp ) / 1000 ) );
 }
 
-// Depth telemetry: which page ordinal this fetch begins (the initial window is
-// page 1). Fires only after loadMore's guards, so a no-op scroll records nothing.
-// The ordinal is an explicit counter: it can't be derived from the loaded count,
-// since the inclusive `before` echoes the anchor back and pages grow the list
-// by increment_limit - 1.
-function trackLoadMore( filter, loaded ) {
-	this.loadMorePage[ filter ] = ( this.loadMorePage[ filter ] ?? 1 ) + 1;
+// Depth telemetry, recorded once an older page has merged: how far down the tab
+// the reader got, and whether that exhausted the list.
+function trackLoadMore( filter, total, reachedEnd ) {
 	recordTracksEvent( 'calypso_notification_load_more', {
 		filter,
-		notes_loaded: loaded,
-		page: this.loadMorePage[ filter ],
+		total,
+		reached_end: reachedEnd,
 	} );
 }
 

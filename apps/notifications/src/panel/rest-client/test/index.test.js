@@ -274,65 +274,75 @@ describe( 'RestClient', () => {
 			window._tkq = [];
 		} );
 
-		it( 'records a Tracks event with the page ordinal when paging the all tab', () => {
+		it( 'records the total after a load-more response lands on the all tab', () => {
 			seedFirstWindow(); // ids 100..91, 10 loaded
 
 			client.loadMore();
-
-			expect( trackedEvents() ).toEqual( [ { filter: 'all', notes_loaded: 10, page: 2 } ] );
-		} );
-
-		it( 'advances the page ordinal on each successive load-more', () => {
-			seedFirstWindow();
-
-			client.loadMore();
-			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 90 ), last_seen_time: 0 } ); // 90..81
-			getCalls.length = 0;
-			client.loadMore();
-
-			expect( trackedEvents() ).toEqual( [
-				{ filter: 'all', notes_loaded: 10, page: 2 },
-				{ filter: 'all', notes_loaded: 20, page: 3 },
-			] );
-		} );
-
-		it( 'keeps advancing the page when the echoed anchor shrinks page growth to nine', () => {
-			seedFirstWindow(); // ids 100..91
-
-			client.loadMore();
+			expect( trackedEvents() ).toEqual( [] );
 			// The inclusive `before` echoes the anchor (91) back with nine older
-			// notes, so the loaded count grows to 19, not 20.
+			// notes, so the total grows to 19, not 20.
 			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 91 ), last_seen_time: 0 } );
-			getCalls.length = 0;
-			client.loadMore();
 
-			expect( trackedEvents() ).toEqual( [
-				{ filter: 'all', notes_loaded: 10, page: 2 },
-				{ filter: 'all', notes_loaded: 19, page: 3 },
-			] );
+			expect( trackedEvents() ).toEqual( [ { filter: 'all', total: 19, reached_end: false } ] );
 		} );
 
-		it( 'records nothing when load-more is a no-op', () => {
+		it( 'flags reached_end when a short page exhausts the server', () => {
 			seedFirstWindow();
 
 			client.loadMore();
-			// A short page exhausts the server; the next load-more sends no request.
-			getCalls[ 0 ].callback( null, { notes: fullPage( 5, 90 ), last_seen_time: 0 } );
-			window._tkq = [];
+			getCalls[ 0 ].callback( null, { notes: fullPage( 5, 90 ), last_seen_time: 0 } ); // 90..86
+
+			expect( trackedEvents() ).toEqual( [ { filter: 'all', total: 15, reached_end: true } ] );
+		} );
+
+		it( 'flags reached_end when a full page adds nothing new', () => {
+			seedFirstWindow();
 
 			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } ); // all known
+
+			expect( trackedEvents() ).toEqual( [ { filter: 'all', total: 10, reached_end: true } ] );
+		} );
+
+		it( 'records nothing for the initial window or a poll refresh', () => {
+			seedFirstWindow();
+
+			client.getNotesList();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+
+			expect( trackedEvents() ).toEqual( [] );
+		} );
+
+		it( 'records nothing when a load-more fails', () => {
+			seedFirstWindow();
+
+			client.loadMore();
+			getCalls[ 0 ].callback( { status: 500 }, null );
 
 			expect( trackedEvents() ).toEqual( [] );
 		} );
 
 		it( 'records the active tab when paging a filtered tab', () => {
 			client.setFilter( 'unread' );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } ); // 209..200
+			getCalls.length = 0;
+
+			client.loadMore();
+			// Echoed anchor (200) plus nine older notes.
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 200 ), last_seen_time: 0 } );
+
+			expect( trackedEvents() ).toEqual( [ { filter: 'unread', total: 19, reached_end: false } ] );
+		} );
+
+		it( 'flags reached_end when a filtered tab gets a short page', () => {
+			client.setFilter( 'unread' );
 			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
 			getCalls.length = 0;
 
 			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 3, 200 ), last_seen_time: 0 } ); // 200..198
 
-			expect( trackedEvents() ).toEqual( [ { filter: 'unread', notes_loaded: 10, page: 2 } ] );
+			expect( trackedEvents() ).toEqual( [ { filter: 'unread', total: 12, reached_end: true } ] );
 		} );
 	} );
 
