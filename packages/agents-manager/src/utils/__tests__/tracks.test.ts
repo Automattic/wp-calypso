@@ -149,6 +149,18 @@ describe( 'tracks wrappers', () => {
 			expect( props ).not.toHaveProperty( 'is_a11n' );
 		} );
 
+		it( 'sends the resolved agent id as agent_name when one is set', () => {
+			setResolvedAgentId( 'plugin-compass' );
+			recordAgentsManagerTracksEvent( 'chat_minimize' );
+			expect( lastEventProps().agent_name ).toBe( 'plugin-compass' );
+		} );
+
+		it( 'falls back to the Dolly agent id while no agent is resolved', () => {
+			setResolvedAgentId( undefined );
+			recordAgentsManagerTracksEvent( 'chat_minimize' );
+			expect( lastEventProps().agent_name ).toBe( 'dolly' );
+		} );
+
 		it( 'uses the reader-chat surface token off the editor', () => {
 			mockIsReaderChatHost.mockReturnValue( true );
 			recordAgentsManagerTracksEvent( 'x' );
