@@ -352,7 +352,10 @@ export default function MarketplaceHosting() {
 				</div>
 			) }
 			{ selectedBrand === 'vip' && <VipContent /> }
-			<Divider style={ { color: 'var(--color-gray-100)' } } />
+			<Divider
+				orientation="horizontal"
+				style={ { color: 'var(--dashboard-overview__divider-color)' } }
+			/>
 			{ selectedBrand === 'wpcom' && (
 				<VStack spacing={ 8 }>
 					<IncludedFeatures brand="wpcom" />
