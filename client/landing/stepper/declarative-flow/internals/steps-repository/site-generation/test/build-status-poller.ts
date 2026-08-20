@@ -429,3 +429,58 @@ describe( 'pollForBuildWowStatus', () => {
 		expect( onFailed ).toHaveBeenCalledWith( 'failed:generation_failed', failedUi );
 	} );
 } );
+
+describe( 'pollForBuildWowStatus feed_seq forwarding', () => {
+	beforeEach( () => {
+		jest.useFakeTimers();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	it( 'reports feed_seq to onFeedSeq, including on terminal responses', async () => {
+		const fetchStatus = jest
+			.fn()
+			.mockResolvedValueOnce( { build_status: 'delivering', feed_seq: 7 } )
+			.mockResolvedValueOnce( { build_status: 'failed:x', feed_seq: 9 } );
+		const onFeedSeq = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady: jest.fn(),
+			onFailed: jest.fn(),
+			onFeedSeq,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+		expect( onFeedSeq ).toHaveBeenCalledWith( 7 );
+
+		await jest.advanceTimersByTimeAsync( 1000 );
+		expect( onFeedSeq ).toHaveBeenCalledWith( 9 );
+	} );
+
+	it( 'does not report an absent or zero feed_seq', async () => {
+		const fetchStatus = jest
+			.fn()
+			.mockResolvedValueOnce( { build_status: 'delivering' } )
+			.mockResolvedValueOnce( { build_status: 'delivering', feed_seq: 0 } )
+			.mockResolvedValue( { build_status: 'live' } );
+		const onFeedSeq = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady: jest.fn(),
+			onFailed: jest.fn(),
+			onFeedSeq,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+		await jest.advanceTimersByTimeAsync( 1000 );
+		expect( onFeedSeq ).not.toHaveBeenCalled();
+	} );
+} );

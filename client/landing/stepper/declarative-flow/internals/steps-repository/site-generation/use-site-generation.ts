@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/utils/build-wow';
+import { createBuildWowFeedReader } from './build-feed';
 import { pollForBuildWowStatus } from './build-status-poller';
 import type { BuildWowUi } from './build-status-poller';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
@@ -87,6 +88,17 @@ export function useSiteGeneration( {
 			() => setFailure( ( previous ) => previous ?? { reason: 'timed-out' } ),
 			GENERATION_TIMEOUT_MS
 		);
+		// Live-build feed: the status poll reports the newest feed sequence
+		// number, and the reader fetches the event delta only when it advanced.
+		// This change only receives and surfaces the data; the follow-up PR
+		// folds it into the waiting-screen UI.
+		const feedReader = createBuildWowFeedReader( {
+			siteIdentifier,
+			onDelta: ( delta ) => {
+				// eslint-disable-next-line no-console -- temporary: removed by the follow-up PR that renders the feed.
+				console.log( 'build-wow live-build feed delta', delta );
+			},
+		} );
 		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
 			onReady: () => window.location.assign( editorUrl ),
@@ -103,6 +115,7 @@ export function useSiteGeneration( {
 					return nextSteps.length > 0 ? nextSteps : previousSteps;
 				} );
 			},
+			onFeedSeq: feedReader.onFeedSeq,
 			onRequestError: ( reason ) =>
 				logBuildWowEvent( 'site_generation_status_request_failed', {
 					site_identifier: siteIdentifier,
@@ -113,6 +126,7 @@ export function useSiteGeneration( {
 		return () => {
 			window.clearTimeout( generationTimeout );
 			stopStatusPolling();
+			feedReader.stop();
 		};
 	}, [ buildAttempt, editorUrl, failure, siteIdentifier ] );
 

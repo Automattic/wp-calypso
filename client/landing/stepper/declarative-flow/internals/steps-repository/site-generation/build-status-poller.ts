@@ -34,6 +34,11 @@ export type BuildWowStatusResponse = {
 	build_status?: string;
 	build_phase?: string;
 	ui?: BuildWowUi;
+	/**
+	 * Newest live-build feed sequence number (see build-feed.ts). 0 or absent
+	 * when the backend has no feed for this build.
+	 */
+	feed_seq?: number;
 };
 
 type FetchStatus = (
@@ -53,6 +58,7 @@ export function pollForBuildWowStatus( {
 	onReady,
 	onFailed,
 	onUpdate,
+	onFeedSeq,
 	onRequestError,
 	pollIntervalMs,
 	requestTimeoutMs,
@@ -62,6 +68,7 @@ export function pollForBuildWowStatus( {
 	onReady: () => void;
 	onFailed: ( status: string, ui?: BuildWowUi ) => void;
 	onUpdate?: ( ui: BuildWowUi ) => void;
+	onFeedSeq?: ( seq: number ) => void;
 	onRequestError?: ( reason: string ) => void;
 	pollIntervalMs?: number;
 	requestTimeoutMs?: number;
@@ -76,6 +83,13 @@ export function pollForBuildWowStatus( {
 			const ui = response.ui;
 			if ( ui ) {
 				reportSafely( () => onUpdate?.( ui ) );
+			}
+
+			// Before the terminal checks: a failed build's feed is what the
+			// failure screen renders, so its last delta must still be fetched.
+			const feedSeq = response.feed_seq;
+			if ( typeof feedSeq === 'number' && feedSeq > 0 ) {
+				reportSafely( () => onFeedSeq?.( feedSeq ) );
 			}
 
 			// Terminal handling prefers the server's ui verdict; the raw
