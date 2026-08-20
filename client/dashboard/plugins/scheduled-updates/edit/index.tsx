@@ -1,14 +1,11 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import {
-	pluginsScheduledUpdatesEditRoute,
-	pluginsScheduledUpdatesRoute,
-} from '../../../app/router/plugins';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { PLUGINS_SCHEDULED_UPDATES_PATH } from '../../paths';
 import {
 	ScheduledUpdatesForm,
 	type ScheduledUpdatesFormOnSubmit,
@@ -17,8 +14,8 @@ import { useLoadScheduleById } from '../hooks/use-load-schedule-by-id';
 import { useReconcileSchedules } from '../hooks/use-reconcile-schedules';
 
 export default function PluginsScheduledUpdatesEdit() {
-	const { scheduleId } = pluginsScheduledUpdatesEditRoute.useParams();
-	const navigate = useNavigate( { from: pluginsScheduledUpdatesEditRoute.fullPath } );
+	const { scheduleId = '' } = useParams( { strict: false } );
+	const navigate = useNavigate();
 
 	const { loading, error, initial } = useLoadScheduleById( scheduleId );
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
@@ -42,7 +39,7 @@ export default function PluginsScheduledUpdatesEdit() {
 			weekday: inputs.weekday,
 			time: inputs.time,
 		} );
-		navigate( { to: pluginsScheduledUpdatesRoute.to } );
+		navigate( { to: PLUGINS_SCHEDULED_UPDATES_PATH } );
 	};
 
 	return (

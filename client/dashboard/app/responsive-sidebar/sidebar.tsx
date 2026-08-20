@@ -1,19 +1,19 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { envelope, globe, layout, plugins } from '@wordpress/icons';
+import { envelope, globe, layout } from '@wordpress/icons';
 import { useRef } from 'react';
 import ReferralSidebar from '../../agency/earn/referrals/referral-sidebar';
 import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
-import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
+import { SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import SidebarNavigator from '../../components/sidebar-navigator';
 import DomainSidebar from '../../domains/domain-sidebar';
 import MeSidebar from '../../me/me-sidebar';
 import SiteSidebar from '../../sites/site-sidebar';
-import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 import AgencySidebar from './agency';
 import AgencyClientSidebar from './agency-client';
+import PluginsMenu from './plugins-menu';
 import { useSidebarScrollSync } from './use-sidebar-scroll-sync';
 
 import './sidebar.scss';
@@ -87,17 +87,7 @@ function PrimaryMenuSidebar() {
 					{ __( 'Emails' ) }
 				</SidebarMenuItem>
 			) }
-			{ supports.plugins && (
-				<SidebarExpandableMenuItem label={ __( 'Plugins' ) } icon={ plugins } to="/plugins">
-					<SidebarMenuItem to="/plugins/manage">{ __( 'Manage plugins' ) }</SidebarMenuItem>
-					<SidebarMenuItem to="/plugins/scheduled-updates">
-						{ __( 'Scheduled updates' ) }
-					</SidebarMenuItem>
-					<SidebarMenuItem href={ wpcomLink( '/plugins' ) }>
-						{ __( 'Browse plugins' ) }
-					</SidebarMenuItem>
-				</SidebarExpandableMenuItem>
-			) }
+			{ supports.plugins && <PluginsMenu /> }
 		</SidebarMenu>
 	);
 }

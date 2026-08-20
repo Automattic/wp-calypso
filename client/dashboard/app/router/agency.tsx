@@ -6,7 +6,9 @@ import {
 	agencySiteQuery,
 	agencySitesWithPluginsQuery,
 	agencyWooPaymentsDataQuery,
+	marketplacePluginsQuery,
 	mcpSettingsQuery,
+	pluginsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
 	siteApmAggregateRollingQuery,
@@ -25,6 +27,7 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { PLUGINS_MANAGE_PATH } from '../../plugins/paths';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -860,6 +863,127 @@ export const agencySiteMonitoringRoute = createRoute( {
 	)
 );
 
+// `/plugins` – manage plugins across the agency user's connected sites
+export const agencyPluginsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_managed_sites' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Plugins' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'plugins',
+	component: Outlet,
+} );
+
+const agencyPluginsIndexRoute = createRoute( {
+	getParentRoute: () => agencyPluginsRoute,
+	path: '/',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: PLUGINS_MANAGE_PATH } );
+	},
+} );
+
+const agencyPluginsManageRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Manage plugins' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyPluginsRoute,
+	path: 'manage',
+	loader: async () => {
+		queryClient.prefetchQuery( marketplacePluginsQuery() );
+		queryClient.prefetchQuery( pluginsQuery() );
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+	},
+} );
+
+const agencyPluginsManageIndexRoute = createRoute( {
+	getParentRoute: () => agencyPluginsManageRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../plugins/manage' ).then( ( d ) =>
+		createLazyRoute( 'agency-plugins-manage' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const agencyPluginRoute = createRoute( {
+	getParentRoute: () => agencyPluginsManageIndexRoute,
+	path: '$pluginId',
+} );
+
+const agencyPluginsScheduledUpdatesRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Scheduled updates' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyPluginsRoute,
+	path: 'scheduled-updates',
+} );
+
+const agencyPluginsScheduledUpdatesIndexRoute = createRoute( {
+	getParentRoute: () => agencyPluginsScheduledUpdatesRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../plugins/scheduled-updates' ).then( ( d ) =>
+		createLazyRoute( 'agency-plugins-scheduled-updates' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const agencyPluginsScheduledUpdatesNewRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'New schedule' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyPluginsScheduledUpdatesRoute,
+	path: '/new',
+	loader: async ( { context } ) => {
+		queryClient.prefetchQuery( context.config.queries.sitesQuery() );
+	},
+} ).lazy( () =>
+	import( '../../plugins/scheduled-updates/new' ).then( ( d ) =>
+		createLazyRoute( 'agency-plugins-scheduled-updates-new' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const agencyPluginsScheduledUpdatesEditRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Edit schedule' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyPluginsScheduledUpdatesRoute,
+	path: '/edit/$scheduleId',
+	loader: async ( { context } ) => {
+		queryClient.prefetchQuery( context.config.queries.sitesQuery() );
+	},
+} ).lazy( () =>
+	import( '../../plugins/scheduled-updates/edit' ).then( ( d ) =>
+		createLazyRoute( 'agency-plugins-scheduled-updates-edit' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
@@ -875,6 +999,15 @@ export const createAgencyRoutes = () => [
 			mcpConnectRoute,
 		] ),
 		agencySitesRoute,
+		agencyPluginsRoute.addChildren( [
+			agencyPluginsIndexRoute,
+			agencyPluginsManageRoute.addChildren( [ agencyPluginsManageIndexRoute, agencyPluginRoute ] ),
+			agencyPluginsScheduledUpdatesRoute.addChildren( [
+				agencyPluginsScheduledUpdatesIndexRoute,
+				agencyPluginsScheduledUpdatesNewRoute,
+				agencyPluginsScheduledUpdatesEditRoute,
+			] ),
+		] ),
 		agencyTeamRoute,
 		earnOverviewRoute,
 		earnReferralsRoute,

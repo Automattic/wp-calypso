@@ -20,6 +20,7 @@ import { useInView } from 'react-intersection-observer';
 import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
 import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
@@ -73,6 +74,28 @@ export function SiteLink( {
 	expanded,
 	...props
 }: ComponentProps< typeof Link > & { site: Site; expanded?: boolean } ) {
+	const { supports } = useAppContext();
+
+	// Apps without the generic sites section (e.g. A4A) don't register
+	// `/sites/<slug>` for arbitrary user sites, so render plain text instead
+	// of a link.
+	if ( ! supports.sites ) {
+		const { children } = props;
+		return (
+			<span
+				style={ {
+					width: expanded ? '100%' : 'auto',
+					minWidth: 'unset',
+					...props.style,
+				} }
+			>
+				{ typeof children === 'function'
+					? children( { isActive: false, isTransitioning: false } )
+					: children }
+			</span>
+		);
+	}
+
 	return (
 		<Link
 			{ ...props }

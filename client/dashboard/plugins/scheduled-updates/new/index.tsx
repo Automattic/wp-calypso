@@ -4,12 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useMemo, useState } from 'react';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import {
-	pluginsScheduledUpdatesNewRoute,
-	pluginsScheduledUpdatesRoute,
-} from '../../../app/router/plugins';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { PLUGINS_SCHEDULED_UPDATES_PATH } from '../../paths';
 import {
 	ScheduledUpdatesForm,
 	type ScheduledUpdatesFormOnSubmit,
@@ -17,7 +14,7 @@ import {
 import { useCreateSchedules } from '../hooks/use-create-schedules';
 
 function ScheduledUpdatesNew() {
-	const navigate = useNavigate( { from: pluginsScheduledUpdatesNewRoute.fullPath } );
+	const navigate = useNavigate();
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
 	const siteIdsAsNumbers = useMemo(
@@ -30,7 +27,7 @@ function ScheduledUpdatesNew() {
 		async ( inputs ) => {
 			await runCreate( inputs );
 			createSuccessNotice( __( 'Schedule created successfully.' ), { type: 'snackbar' } );
-			navigate( { to: pluginsScheduledUpdatesRoute.to } );
+			navigate( { to: PLUGINS_SCHEDULED_UPDATES_PATH } );
 		},
 		[ navigate, runCreate, createSuccessNotice ]
 	);

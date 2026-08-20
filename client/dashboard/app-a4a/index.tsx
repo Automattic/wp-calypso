@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import {
-	sitesQuery,
+	jetpackSitesQuery,
 	paginatedSitesQuery,
 	dashboardSiteFiltersQuery,
 	domainsQuery,
@@ -29,6 +29,7 @@ boot( {
 			learn: true,
 			mcp: true,
 			sites: true,
+			plugins: true,
 			team: true,
 			earn: true,
 		},
@@ -53,7 +54,8 @@ boot( {
 	optIn: false,
 	components: {},
 	queries: {
-		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
+		// A4A only deals with Jetpack-connected sites, mirroring the classic app.
+		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => jetpackSitesQuery( fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
 			paginatedSitesQuery( 'all', fetchSiteOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>

@@ -15,6 +15,14 @@ const defaultUser = {
 	language: 'en',
 } as User;
 
+// The screens under test are mounted in apps that support the generic sites
+// section, and components like SiteLink only render `/sites/<slug>` links
+// when the app does.
+const defaultConfig = {
+	...APP_CONTEXT_DEFAULT_CONFIG,
+	supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, sites: true },
+};
+
 function createTestRouter( ui: React.ReactElement ) {
 	const Component = () => ui;
 
@@ -57,7 +65,7 @@ export function render( ui: React.ReactElement, options: RenderOptions = {} ): R
 
 	const testingLibraryResult = testingLibraryRender(
 		<QueryClientProvider client={ queryClient }>
-			<AppProvider config={ APP_CONTEXT_DEFAULT_CONFIG }>
+			<AppProvider config={ defaultConfig }>
 				<AnalyticsProvider client={ { recordTracksEvent, recordPageView } }>
 					<AuthContext.Provider value={ { user, logout: jest.fn() } }>
 						<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />

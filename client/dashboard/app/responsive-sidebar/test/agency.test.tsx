@@ -17,6 +17,7 @@ const agencySupports: AgencySupports = {
 	learn: true,
 	mcp: true,
 	sites: true,
+	plugins: true,
 	team: true,
 	earn: true,
 };
@@ -67,6 +68,7 @@ describe( '<AgencySidebar>', () => {
 		] );
 
 		expect( screen.getByRole( 'link', { name: 'Sites' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Plugins' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Team' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Agency' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
@@ -78,6 +80,7 @@ describe( '<AgencySidebar>', () => {
 		await renderSidebar( [ 'a4a_read_managed_sites' ] );
 
 		expect( screen.getByRole( 'link', { name: 'Sites' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Plugins' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Team' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Agency' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Marketplace' } ) ).not.toBeInTheDocument();
@@ -90,6 +93,7 @@ describe( '<AgencySidebar>', () => {
 
 		expect( screen.getByRole( 'link', { name: 'Home' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Sites' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Plugins' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'keeps the Earn menu but drops the sub-items the user cannot reach', async () => {

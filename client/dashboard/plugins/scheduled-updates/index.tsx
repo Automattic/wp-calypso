@@ -8,10 +8,6 @@ import { info } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState, useCallback } from 'react';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import {
-	pluginsScheduledUpdatesEditRoute,
-	pluginsScheduledUpdatesNewRoute,
-} from '../../app/router/plugins';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
@@ -20,6 +16,7 @@ import RouterLinkButton from '../../components/router-link-button';
 import SiteIcon from '../../components/site-icon';
 import { SiteLink } from '../../sites/site-fields';
 import { formatDate } from '../../utils/datetime';
+import { getScheduledUpdatesEditPath, PLUGINS_SCHEDULED_UPDATES_NEW_PATH } from '../paths';
 import { prepareScheduleName } from './helpers';
 import { useDeleteSchedules } from './hooks/use-delete-schedules';
 import { useScheduledUpdates } from './hooks/use-scheduled-updates';
@@ -233,7 +230,7 @@ export default function PluginsScheduledUpdates() {
 						actions={
 							<RouterLinkButton
 								variant="primary"
-								to={ pluginsScheduledUpdatesNewRoute.to }
+								to={ PLUGINS_SCHEDULED_UPDATES_NEW_PATH }
 								__next40pxDefaultSize
 							>
 								{ __( 'New schedule' ) }
@@ -268,10 +265,9 @@ export default function PluginsScheduledUpdates() {
 								isPrimary: true,
 								callback: ( items ) => {
 									const item = items[ 0 ];
-									navigate( {
-										to: pluginsScheduledUpdatesEditRoute.fullPath,
-										params: { scheduleId: item?.scheduleId },
-									} );
+									if ( item ) {
+										navigate( { to: getScheduledUpdatesEditPath( item.scheduleId ) } );
+									}
 								},
 							},
 							{
