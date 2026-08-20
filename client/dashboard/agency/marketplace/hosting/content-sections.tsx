@@ -8,6 +8,12 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
+import enterpriseTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-1.webp';
+import enterpriseTestimonial2 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-2.webp';
+import premierTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.webp';
+import premierTestimonial2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.webp';
+import standardTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.webp';
+import standardTestimonial2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.webp';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import jetpackLogo from '../exclusive-offers/images/jetpack-descriptor.svg';
@@ -139,6 +145,12 @@ export function IncludedFeatures( { brand }: { brand: 'wpcom' | 'pressable' } ) 
 	);
 }
 
+const TESTIMONIAL_AVATARS: Record< 'wpcom' | 'pressable' | 'vip', string[] > = {
+	wpcom: [ standardTestimonial1, standardTestimonial2 ],
+	pressable: [ premierTestimonial1, premierTestimonial2 ],
+	vip: [ enterpriseTestimonial1, enterpriseTestimonial2 ],
+};
+
 const TESTIMONIAL_HEADINGS: Record< 'wpcom' | 'pressable' | 'vip', string > = {
 	wpcom: __( 'Love for WordPress.com hosting' ),
 	pressable: __( 'Love for Pressable hosting' ),
@@ -154,18 +166,25 @@ export function Testimonials( { brand }: { brand: 'wpcom' | 'pressable' | 'vip' 
 				level={ 2 }
 			/>
 			<div className="marketplace-hosting__grid-2">
-				{ testimonialsByBrand[ brand ].map( ( testimonial ) => (
+				{ testimonialsByBrand[ brand ].map( ( testimonial, index ) => (
 					<Card key={ testimonial.name }>
 						<CardBody>
 							<VStack spacing={ 4 }>
 								<Text as="p">{ testimonial.quote }</Text>
-								<VStack spacing={ 1 }>
-									<Text weight={ 600 }>{ testimonial.name }</Text>
-									<Text variant="muted">{ testimonial.role }</Text>
-									<ExternalLink href={ testimonial.linkUrl }>
-										{ testimonial.linkLabel }
-									</ExternalLink>
-								</VStack>
+								<HStack spacing={ 3 } justify="flex-start" alignment="center">
+									<img
+										src={ TESTIMONIAL_AVATARS[ brand ][ index ] }
+										alt={ testimonial.name }
+										className="marketplace-hosting__avatar"
+									/>
+									<VStack spacing={ 1 }>
+										<Text weight={ 600 }>{ testimonial.name }</Text>
+										<Text variant="muted">{ testimonial.role }</Text>
+										<ExternalLink href={ testimonial.linkUrl }>
+											{ testimonial.linkLabel }
+										</ExternalLink>
+									</VStack>
+								</HStack>
 							</VStack>
 						</CardBody>
 					</Card>
