@@ -13,7 +13,6 @@ import {
 	WOOCOMMERCE_PAYMENTS_PLUGIN_SLUG,
 } from '../lib/constants';
 import { derivePluginStatus } from '../lib/derive-plugin-status';
-import { getSiteDomain } from '../lib/get-site-domain';
 import { getSiteSetupUrl } from '../lib/get-site-setup-url';
 import type { WooPaymentsSiteSetupData } from '../types';
 
@@ -63,7 +62,6 @@ export function useWooPaymentsSiteSetup( siteId: number ): WooPaymentsSiteSetupD
 
 	return {
 		site,
-		siteDomain: site?.URL ? getSiteDomain( site.URL ) : undefined,
 		isLoading: isLoadingSite || isLoadingPlugins,
 		status,
 		setupUrl: site?.URL ? getSiteSetupUrl( site.URL ) : undefined,
