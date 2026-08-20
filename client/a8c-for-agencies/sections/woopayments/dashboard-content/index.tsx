@@ -38,6 +38,10 @@ const WooPaymentsDashboardContent = ( {
 		[ dispatch ]
 	);
 
+	const navigateToSiteSetup = useCallback( ( siteId: number ) => {
+		page.redirect( addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, { site_id: siteId } ) );
+	}, [] );
+
 	return (
 		<VStack spacing={ 6 }>
 			<ConsolidatedViews
@@ -52,9 +56,7 @@ const WooPaymentsDashboardContent = ( {
 					isLoadingWooPaymentsData={ isLoadingWooPaymentsData }
 					recordTracksEvent={ recordTracks }
 					onDownloadReport={ downloadCommissionsReport }
-					onContinueSetup={ ( siteId ) =>
-						page.redirect( addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, { site_id: siteId } ) )
-					}
+					onContinueSetup={ navigateToSiteSetup }
 				/>
 			</div>
 		</VStack>
