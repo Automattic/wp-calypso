@@ -46,7 +46,6 @@ import {
 } from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNoticeArbiter } from './notice-arbiter';
-import { RestoringSitesNotices } from './restoring-sites-notice';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -287,7 +286,6 @@ export default function Sites() {
 					<SitesNoticeArbiter>
 						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
 						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
-						{ ! isDashboardBackport() && isRestoringAccount && <RestoringSitesNotices /> }
 					</SitesNoticeArbiter>
 				}
 			>
