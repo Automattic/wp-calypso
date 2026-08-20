@@ -16,7 +16,7 @@ jest.mock( './utils/tracking', () => ( {
 
 const mockApiFetch = jest.mocked( apiFetch );
 const mockTrackJetpackAiUpgrade = jest.mocked( trackJetpackAiUpgrade );
-const mockAssign = jest.fn();
+const mockOpen = jest.fn();
 const UPGRADE_URL = 'http://localhost/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai';
 const CURRENT_ENDPOINT_ERROR =
 	'Protocol request error: You have reached your Jetpack AI usage limit.';
@@ -53,16 +53,16 @@ const defaultProps = {
 };
 
 beforeAll( () => {
-	Object.defineProperty( window, 'location', {
+	Object.defineProperty( window, 'open', {
 		configurable: true,
-		value: { ...window.location, assign: mockAssign },
+		value: mockOpen,
 	} );
 } );
 
 beforeEach( () => {
 	mockApiFetch.mockReset();
 	mockTrackJetpackAiUpgrade.mockReset();
-	mockAssign.mockReset();
+	mockOpen.mockReset();
 	delete testWindow.JetpackScriptData;
 	delete testWindow.wpApiSettings;
 } );
@@ -152,15 +152,28 @@ describe( 'Self-hosted status', () => {
 		testWindow.wpApiSettings = { root: LOCAL_API_ROOT };
 	} );
 
-	it( 'uses the local endpoint', async () => {
-		mockApiFetch.mockResolvedValue( featureResponse() );
-		const { result, unmount } = renderHook( () => useJetpackFreeCreditChatNotice( defaultProps ) );
+	it( 'uses the local endpoint without polling an idle session', async () => {
+		jest.useFakeTimers();
+		try {
+			mockApiFetch.mockResolvedValue( featureResponse() );
+			const { result, unmount } = renderHook( () =>
+				useJetpackFreeCreditChatNotice( defaultProps )
+			);
 
-		await waitFor( () => expect( result.current?.message ).toBe( '20 free credits left' ) );
-		expect( mockApiFetch ).toHaveBeenCalledWith( {
-			path: '/wpcom/v2/jetpack-ai/ai-assistant-feature',
-		} );
-		unmount();
+			await act( async () => Promise.resolve() );
+			expect( result.current?.message ).toBe( '20 free credits left' );
+			expect( mockApiFetch ).toHaveBeenCalledWith( {
+				path: '/wpcom/v2/jetpack-ai/ai-assistant-feature',
+			} );
+
+			act( () => jest.advanceTimersByTime( 61_000 ) );
+			await act( async () => Promise.resolve() );
+			expect( mockApiFetch ).toHaveBeenCalledTimes( 1 );
+			unmount();
+		} finally {
+			jest.clearAllTimers();
+			jest.useRealTimers();
+		}
 	} );
 
 	it( 'shows the exhausted state and opens the trusted upgrade URL', async () => {
@@ -178,7 +191,7 @@ describe( 'Self-hosted status', () => {
 
 		result.current?.action?.onClick();
 		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledWith();
-		expect( mockAssign ).toHaveBeenCalledWith( UPGRADE_URL );
+		expect( mockOpen ).toHaveBeenCalledWith( UPGRADE_URL, '_blank', 'noopener,noreferrer' );
 		unmount();
 	} );
 
@@ -447,7 +460,7 @@ describe( 'Self-hosted status', () => {
 	it( 'clears a pending refresh when the notice is disabled', async () => {
 		jest.useFakeTimers();
 		try {
-			mockApiFetch.mockResolvedValue( featureResponse() );
+			mockApiFetch.mockRejectedValue( new Error( 'Status unavailable' ) );
 			const { rerender, unmount } = renderHook(
 				( props: typeof defaultProps ) => useJetpackFreeCreditChatNotice( props ),
 				{ initialProps: defaultProps }
@@ -469,7 +482,9 @@ describe( 'Self-hosted status', () => {
 		async ( transition ) => {
 			jest.useFakeTimers();
 			try {
-				mockApiFetch.mockResolvedValue( featureResponse() );
+				mockApiFetch
+					.mockRejectedValueOnce( new Error( 'Status unavailable' ) )
+					.mockResolvedValue( featureResponse() );
 				const { rerender, unmount } = renderHook(
 					( props: typeof defaultProps ) => useJetpackFreeCreditChatNotice( props ),
 					{ initialProps: defaultProps }
@@ -485,7 +500,7 @@ describe( 'Self-hosted status', () => {
 
 				act( () => jest.advanceTimersByTime( 61_000 ) );
 				await act( async () => Promise.resolve() );
-				expect( mockApiFetch ).toHaveBeenCalledTimes( transition === 'site change' ? 3 : 1 );
+				expect( mockApiFetch ).toHaveBeenCalledTimes( transition === 'site change' ? 2 : 1 );
 
 				if ( transition !== 'unmount' ) {
 					unmount();
@@ -636,6 +651,155 @@ describe( 'notice composition', () => {
 			status: 'error',
 			suppressCurrentError: false,
 		} );
+		unmount();
+	} );
+
+	it( 'clears a latched rejection after the delayed status read confirms recovery', async () => {
+		jest.useFakeTimers();
+		try {
+			mockApiFetch
+				.mockResolvedValueOnce( featureResponse( 19 ) )
+				.mockResolvedValueOnce( featureResponse( 19 ) )
+				.mockResolvedValueOnce( featureResponse( 19 ) );
+			const initialProps = {
+				...defaultProps,
+				error: null as string | null,
+				isWpcomPlatform: false,
+			};
+			const { result, rerender, unmount } = renderHook(
+				( props: typeof initialProps ) => useJetpackFreeCreditChatNotice( props ),
+				{ initialProps }
+			);
+
+			await act( async () => Promise.resolve() );
+			expect( result.current?.message ).toBe( '1 free credit left' );
+
+			rerender( { ...initialProps, error: CURRENT_ENDPOINT_ERROR } );
+			expect( result.current?.message ).toBe( 'You’re out of free credits.' );
+
+			rerender( {
+				...initialProps,
+				error: CURRENT_ENDPOINT_ERROR,
+				settledRequestCount: 1,
+			} );
+			await act( async () => Promise.resolve() );
+			expect( result.current?.message ).toBe( 'You’re out of free credits.' );
+
+			act( () => jest.advanceTimersByTime( 61_000 ) );
+			await act( async () => Promise.resolve() );
+			expect( result.current?.message ).toBe( '1 free credit left' );
+			expect( result.current?.suppressCurrentError ).toBe( true );
+			unmount();
+		} finally {
+			jest.clearAllTimers();
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'clears a latched rejection after the delayed status read confirms a paid tier', async () => {
+		jest.useFakeTimers();
+		try {
+			const paidResponse = {
+				...featureResponse(),
+				'current-tier': { slug: 'jetpack_ai_yearly', value: 1, limit: 100 },
+			};
+			mockApiFetch
+				.mockResolvedValueOnce( featureResponse( 19 ) )
+				.mockResolvedValueOnce( paidResponse )
+				.mockResolvedValueOnce( paidResponse );
+			const initialProps = {
+				...defaultProps,
+				error: null as string | null,
+				isWpcomPlatform: false,
+			};
+			const { result, rerender, unmount } = renderHook(
+				( props: typeof initialProps ) => useJetpackFreeCreditChatNotice( props ),
+				{ initialProps }
+			);
+
+			await act( async () => Promise.resolve() );
+			rerender( { ...initialProps, error: CURRENT_ENDPOINT_ERROR } );
+			expect( result.current?.message ).toBe( 'You’re out of free credits.' );
+
+			rerender( {
+				...initialProps,
+				error: CURRENT_ENDPOINT_ERROR,
+				settledRequestCount: 1,
+			} );
+			await act( async () => Promise.resolve() );
+			expect( result.current?.message ).toBe( 'You’ve reached your Jetpack AI usage limit.' );
+
+			act( () => jest.advanceTimersByTime( 61_000 ) );
+			await act( async () => Promise.resolve() );
+			expect( result.current ).toEqual( { suppressCurrentError: true } );
+			unmount();
+		} finally {
+			jest.clearAllTimers();
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'keeps a paid-tier rejection when the delayed status still reports exhaustion', async () => {
+		jest.useFakeTimers();
+		try {
+			const paidExhaustedResponse = {
+				...featureResponse(),
+				'is-over-limit': true,
+				'current-tier': { slug: 'jetpack_ai_yearly', value: 1, limit: 100 },
+			};
+			mockApiFetch
+				.mockResolvedValueOnce( featureResponse( 19 ) )
+				.mockResolvedValueOnce( paidExhaustedResponse )
+				.mockResolvedValueOnce( paidExhaustedResponse );
+			const initialProps = {
+				...defaultProps,
+				error: null as string | null,
+				isWpcomPlatform: false,
+			};
+			const { result, rerender, unmount } = renderHook(
+				( props: typeof initialProps ) => useJetpackFreeCreditChatNotice( props ),
+				{ initialProps }
+			);
+
+			await act( async () => Promise.resolve() );
+			rerender( { ...initialProps, error: CURRENT_ENDPOINT_ERROR } );
+			rerender( {
+				...initialProps,
+				error: CURRENT_ENDPOINT_ERROR,
+				settledRequestCount: 1,
+			} );
+			await act( async () => Promise.resolve() );
+
+			act( () => jest.advanceTimersByTime( 61_000 ) );
+			await act( async () => Promise.resolve() );
+			expect( result.current?.message ).toBe( 'You’ve reached your Jetpack AI usage limit.' );
+			unmount();
+		} finally {
+			jest.clearAllTimers();
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'does not carry a latched rejection to another site', async () => {
+		mockApiFetch
+			.mockResolvedValueOnce( featureResponse( 19 ) )
+			.mockResolvedValueOnce( featureResponse( 5 ) );
+		const initialProps = {
+			...defaultProps,
+			error: null as string | null,
+			isWpcomPlatform: false,
+		};
+		const { result, rerender, unmount } = renderHook(
+			( props: typeof initialProps ) => useJetpackFreeCreditChatNotice( props ),
+			{ initialProps }
+		);
+
+		await waitFor( () => expect( result.current?.message ).toBe( '1 free credit left' ) );
+		rerender( { ...initialProps, error: CURRENT_ENDPOINT_ERROR } );
+		expect( result.current?.message ).toBe( 'You’re out of free credits.' );
+
+		rerender( { ...initialProps, siteId: 456 } );
+		await waitFor( () => expect( result.current?.message ).toBe( '15 free credits left' ) );
 		unmount();
 	} );
 

@@ -1318,6 +1318,17 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
+	it( 'suppresses a handled provider error without rendering an empty notice', () => {
+		const useChatNotice = jest.fn( () => ( { suppressCurrentError: true as const } ) );
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { error: 'jetpack_ai_quota_exhausted' } ) );
+
+		render( chat( { useChatNotice } ) );
+
+		expect( mockAgentChat.mock.calls.at( -1 )![ 0 ] ).toEqual(
+			expect.objectContaining( { notice: undefined, error: null } )
+		);
+	} );
+
 	it( 'preserves a false WordPress.com platform flag for the provider notice hook', () => {
 		testGlobal.agentsManagerData = { isWpcomPlatform: false };
 		const useChatNotice = jest.fn();

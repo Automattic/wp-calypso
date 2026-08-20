@@ -10,20 +10,20 @@ jest.mock( './utils/tracking', () => ( {
 } ) );
 
 const mockTrackJetpackAiUpgrade = jest.mocked( trackJetpackAiUpgrade );
-const mockAssign = jest.fn();
 const CURRENT_ENDPOINT_ERROR =
 	'Protocol request error: You have reached your Jetpack AI usage limit.';
+const mockOpen = jest.fn();
 
 beforeAll( () => {
-	Object.defineProperty( window, 'location', {
+	Object.defineProperty( window, 'open', {
 		configurable: true,
-		value: { ...window.location, assign: mockAssign },
+		value: mockOpen,
 	} );
 } );
 
 beforeEach( () => {
 	mockTrackJetpackAiUpgrade.mockReset();
-	mockAssign.mockReset();
+	mockOpen.mockReset();
 } );
 
 describe( 'getTrustedUpgradeUrl', () => {
@@ -86,6 +86,32 @@ describe( 'useChatNotice', () => {
 		} );
 	} );
 
+	it( 'suppresses a stale rejection after recovery and latches a later rejection', () => {
+		const { result, rerender } = renderHook(
+			( { error, recoveryRevision }: { error: string | null; recoveryRevision: number } ) =>
+				useChatNotice( { error, recoveryRevision, scopeKey: 'site-123' } ),
+			{
+				initialProps: {
+					error: CURRENT_ENDPOINT_ERROR as string | null,
+					recoveryRevision: 0,
+				},
+			}
+		);
+
+		rerender( { error: CURRENT_ENDPOINT_ERROR, recoveryRevision: 1 } );
+		expect( result.current ).toEqual( { suppressCurrentError: true } );
+
+		rerender( { error: null, recoveryRevision: 1 } );
+		expect( result.current ).toBeUndefined();
+
+		rerender( { error: CURRENT_ENDPOINT_ERROR, recoveryRevision: 1 } );
+
+		expect( result.current ).toMatchObject( {
+			message: 'You’ve reached your Jetpack AI usage limit.',
+			suppressCurrentError: true,
+		} );
+	} );
+
 	it( 'uses the same-origin My Jetpack upgrade URL', () => {
 		const upgradeUrl = 'http://localhost/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai';
 		const { result } = renderHook( () =>
@@ -97,7 +123,7 @@ describe( 'useChatNotice', () => {
 		result.current?.action?.onClick();
 
 		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledWith();
-		expect( mockAssign ).toHaveBeenCalledWith( upgradeUrl );
+		expect( mockOpen ).toHaveBeenCalledWith( upgradeUrl, '_blank', 'noopener,noreferrer' );
 	} );
 
 	it.each( [
@@ -129,6 +155,6 @@ describe( 'useChatNotice', () => {
 
 		result.current?.action?.onClick();
 
-		expect( mockAssign ).toHaveBeenCalledWith( trustedUrl );
+		expect( mockOpen ).toHaveBeenCalledWith( trustedUrl, '_blank', 'noopener,noreferrer' );
 	} );
 } );
