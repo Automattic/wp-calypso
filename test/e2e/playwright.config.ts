@@ -210,11 +210,11 @@ const config: Config = {
 			testMatch: /throttle-check\.setup\.ts/,
 			testDir: './setup',
 		},
-		// Shared by `chrome` and `mobile`, which take their accounts from AUTHENTICATE_ACCOUNTS
+		// Shared by `desktop` and `mobile`, which take their accounts from AUTHENTICATE_ACCOUNTS
 		// and the run's own environment rather than from a project.
 		primeProject( 'prime-logins', getAccountNamesToPrime() ),
 		{
-			name: 'chrome',
+			name: 'desktop',
 			dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
 			use: desktopUse,
 		},

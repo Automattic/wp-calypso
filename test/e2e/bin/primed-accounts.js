@@ -14,7 +14,7 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const { ATOMIC_VARIATIONS, getAccountNamesToPrime } = require( '@automattic/calypso-e2e' );
-const { scripts } = require( '../package.json' );
+const { loadConfigFromFile } = require( 'playwright/lib/common/configLoader' );
 
 const configsRoot = path.resolve( __dirname, '../../../.teamcity/target/generated-configs' );
 
@@ -30,27 +30,22 @@ const RELEVANT = [
 ];
 
 /**
- * Whether a build type's accounts come from AUTHENTICATE_ACCOUNTS, which is what the resolver
- * below answers for. Only the projects sharing `prime-logins` do; the rest name their accounts
- * in their own `accountsToPrime`, and `playwright test --project=<name> --list` reports those.
+ * The projects whose accounts come from AUTHENTICATE_ACCOUNTS, which is what the resolver
+ * below answers for: the ones sharing the `prime-logins` setup project. A suite project names
+ * its own in `accountsToPrime`, so this cannot answer for it, and neither can anything else
+ * outside the config — hence asking the config rather than restating it here.
  *
- * A build type can also leave PROJECT to the template default or set it per matrix leg, as
- * `matrix.value.PROJECT.N`; both run a device project, so an absent PROJECT is reported.
+ * Playwright's loader is private, so an upgrade can move it. It fails loudly when it does,
+ * which beats a copy of the project list quietly going stale.
  */
-function usesAuthenticateAccounts( project ) {
-	if ( ! project ) {
-		return true;
-	}
+async function projectsPrimedByEnvironment() {
+	const config = await loadConfigFromFile( path.resolve( __dirname, '../playwright.config.ts' ) );
 
-	const script = scripts[ `test:pw:${ project }` ];
-	if ( script === undefined ) {
-		// `yarn test:pw:%PROJECT%` is what the build step runs, so this build type cannot
-		// start. Worth more than being quietly left out of the table.
-		console.warn( `No test:pw:${ project } script: nothing can run PROJECT=${ project }.` );
-		return false;
-	}
-
-	return /--project=(chrome|mobile)\b/.test( script );
+	return new Set(
+		config.projects
+			.filter( ( { project } ) => project.dependencies?.includes( 'prime-logins' ) )
+			.map( ( { project } ) => project.name )
+	);
 }
 
 /**
@@ -176,7 +171,7 @@ for ( const file of files ) {
 	const runsPlaywright =
 		/yarn test:pw:/.test( source ) ||
 		templateRefs.some( ( ref ) => /E2ETestsBuildTemplate$/.test( ref ) );
-	if ( ! runsPlaywright || ! usesAuthenticateAccounts( merged.get( 'PROJECT' ) ) ) {
+	if ( ! runsPlaywright ) {
 		continue;
 	}
 
@@ -203,6 +198,9 @@ for ( const file of files ) {
 		rows.push( {
 			buildType: path.basename( file, '.xml' ).replace( /^RootProjectId_/, '' ),
 			leg: leg ? leg.label : '',
+			// Absent on a build type that leaves PROJECT to the template default or fans it
+			// out over a matrix, neither of which reaches a suite project.
+			project: merged.get( 'PROJECT' ),
 			// What this leg ends up with, which is not the build's own parameter when
 			// EXTRA_ENV_VARS overrides it.
 			configured: env.AUTHENTICATE_ACCOUNTS,
@@ -235,10 +233,25 @@ if ( ! rows.length ) {
 	process.exit( 1 );
 }
 
-for ( const row of rows.sort( ( a, b ) => a.buildType.localeCompare( b.buildType ) ) ) {
-	const name = row.leg ? `${ row.buildType } [${ row.leg }]` : row.buildType;
-	console.log( `\n${ name }` );
-	console.log( `  set:    ${ row.configured || '(empty)' }` );
-	console.log( `  primes: ${ row.primed.join( ', ' ) || '(nothing)' }` );
-}
-console.log( `\n${ rows.length } build type runs.` );
+projectsPrimedByEnvironment().then( ( primedByEnvironment ) => {
+	const reportable = rows.filter(
+		( row ) => ! row.project || primedByEnvironment.has( row.project )
+	);
+
+	for ( const row of reportable.sort( ( a, b ) => a.buildType.localeCompare( b.buildType ) ) ) {
+		const name = row.leg ? `${ row.buildType } [${ row.leg }]` : row.buildType;
+		console.log( `\n${ name }` );
+		console.log( `  set:    ${ row.configured || '(empty)' }` );
+		console.log( `  primes: ${ row.primed.join( ', ' ) || '(nothing)' }` );
+	}
+
+	console.log( `\n${ reportable.length } build type runs.` );
+
+	const skipped = rows.length - reportable.length;
+	if ( skipped ) {
+		console.log(
+			`${ skipped } left out, naming a project that primes its own accounts: ` +
+				'`yarn playwright test --project=<name> --list` reports those.'
+		);
+	}
+} );

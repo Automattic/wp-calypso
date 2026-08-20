@@ -119,7 +119,7 @@ A priming setup project logs in as a list of accounts before the main test suite
 yarn playwright test --project=p2 --list
 ```
 
-The `chrome` and `mobile` projects instead share the `prime-logins` project, whose list comes from `AUTHENTICATE_ACCOUNTS`. To prime a different set for those, name the accounts found in [Secret Manager](../../../packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
+The `desktop` and `mobile` projects instead share the `prime-logins` project, whose list comes from `AUTHENTICATE_ACCOUNTS`. To prime a different set for those, name the accounts found in [Secret Manager](../../../packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
 
 ```bash
 export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,atomicUser,defaultUser
@@ -133,7 +133,7 @@ Set it to an empty value to skip priming altogether; whatever needs an account t
 
 By default, tests run against the `desktop` viewport size, approximately 1920x1080. Two projects run specs:
 
-- `chrome`: Desktop Chrome HiDPI, the `desktop` viewport.
+- `desktop`: Desktop Chrome HiDPI, the `desktop` viewport.
 - `mobile`: Pixel 7, the `mobile` viewport. Specs tagged `@desktop-only` are skipped.
 
 To launch a spec with mobile viewport:
