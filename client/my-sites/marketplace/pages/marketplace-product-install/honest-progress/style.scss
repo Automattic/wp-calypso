@@ -155,45 +155,66 @@
 
 /* Card variant */
 
+.marketplace-honest-card {
+	max-width: 682px;
+	padding-block-start: 40px;
+	gap: 40px;
+}
+
+.marketplace-honest-card .marketplace-honest-progress__heading {
+	font-size: 2.75rem;
+	line-height: 1;
+	letter-spacing: 0;
+	color: var( --studio-gray-100 );
+
+	@media ( max-width: 660px ) {
+		font-size: 2rem;
+	}
+}
+
+.marketplace-honest-card__header {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	width: 100%;
+	text-align: center;
+}
+
+.marketplace-honest-card__stage {
+	margin: 0;
+	font-size: 1rem;
+	line-height: 1.5;
+	letter-spacing: -0.32px;
+	color: var( --studio-gray-50 );
+
+	strong {
+		font-weight: 500;
+		color: var( --studio-gray-100 );
+	}
+}
+
+.marketplace-honest-card__overrun {
+	margin: 0;
+	font-size: 0.75rem;
+	color: var( --color-warning-60 );
+}
+
 .marketplace-honest-card__progress {
 	width: 100%;
-	max-width: 460px;
-	margin-block-start: 40px;
+	max-width: 440px;
 	line-height: 0;
 }
 
 .marketplace-honest-card__progress-bar {
 	width: 100% !important;
-	background: var( --color-neutral-5 );
 
 	> div {
-		inset-inline-start: 0;
 		background: var( --color-accent );
 	}
 }
 
-.marketplace-honest-card__stage {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	margin-block-start: 24px;
-	text-align: center;
-}
-
-.marketplace-honest-card__stage-title {
-	font-size: 0.875rem;
-	font-weight: 600;
-	color: var( --color-text );
-}
-
-.marketplace-honest-card__stage-description {
-	font-size: 0.75rem;
-	color: var( --color-text-subtle );
-	min-height: 18px;
-}
-
 .marketplace-honest-card .expectation-checklist {
-	margin-block-start: 32px;
+	margin: 0;
 }
 
 /* Graphic variant */

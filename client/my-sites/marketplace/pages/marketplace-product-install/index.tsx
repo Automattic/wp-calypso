@@ -1,5 +1,6 @@
 import { WordPressLogo } from '@automattic/components';
 import { css, Global, ThemeProvider } from '@emotion/react';
+import clsx from 'clsx';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
@@ -7,7 +8,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import './style.scss';
-import HonestInstallProgress from './honest-progress';
+import MarketplaceInstallHelpLink from './help-link';
+import HonestInstallCard from './honest-progress/card';
 import { getWaitVariant } from './honest-progress/get-wait-variant';
 import HonestInstallScene from './honest-progress/scene';
 import ProductInstallErrorView from './product-install-error';
@@ -56,8 +58,13 @@ const MarketplaceProductInstall = ( {
 					` }
 				/>
 				<WordPressLogo className="marketplace-plugin-install__logo" size={ 24 } />
+				{ waitVariant !== 'control' && <MarketplaceInstallHelpLink /> }
 			</Masterbar>
-			<div className="marketplace-plugin-install__root">
+			<div
+				className={ clsx( 'marketplace-plugin-install__root', {
+					'is-top-aligned': waitVariant === 'honest_progress',
+				} ) }
+			>
 				{ error && (
 					<ProductInstallErrorView
 						error={ error }
@@ -67,7 +74,7 @@ const MarketplaceProductInstall = ( {
 					/>
 				) }
 				{ ! error && waitVariant === 'honest_progress' && (
-					<HonestInstallProgress
+					<HonestInstallCard
 						transferStatus={ transferStatus }
 						currentStep={ currentStep }
 						startedAt={ transferStartedAt }

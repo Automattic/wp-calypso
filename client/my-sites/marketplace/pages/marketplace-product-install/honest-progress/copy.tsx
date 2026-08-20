@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import type { ReactNode } from 'react';
 
 /**
  * The words for the three honest stages, shared by both wait variants so the narration
@@ -19,6 +20,28 @@ export function useHonestStageCopy() {
 			title: translate( 'Finishing up' ),
 			description: translate( 'Installing and activating your plugin.' ),
 		},
+	];
+}
+
+/**
+ * One narrated sentence per honest stage, with the key phrase emphasized. Used by the
+ * card variant, which shows a single line rather than the full stage list.
+ */
+export function useHonestStageSentences(): ReactNode[] {
+	const translate = useTranslate();
+	return [
+		translate( 'We’re {{strong}}preparing a dedicated server for your site{{/strong}}.', {
+			components: { strong: <strong /> },
+		} ),
+		translate(
+			'We’re {{strong}}moving your site to the new server{{/strong}}. Content, media, and settings come along.',
+			{
+				components: { strong: <strong /> },
+			}
+		),
+		translate( '{{strong}}Finishing up{{/strong}}. We’re installing and activating your plugin.', {
+			components: { strong: <strong /> },
+		} ),
 	];
 }
 

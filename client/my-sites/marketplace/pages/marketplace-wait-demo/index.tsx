@@ -3,11 +3,13 @@ import './style.scss';
 import { WordPressLogo } from '@automattic/components';
 import { css, Global, ThemeProvider } from '@emotion/react';
 import { Button, ToggleControl } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
+import MarketplaceInstallHelpLink from '../marketplace-product-install/help-link';
 import HonestInstallProgress from '../marketplace-product-install/honest-progress';
 import HonestInstallCard from '../marketplace-product-install/honest-progress/card';
 import HonestInstallCombined from '../marketplace-product-install/honest-progress/combined';
@@ -20,10 +22,10 @@ import type { DemoScenario } from './use-fake-transfer';
 type Variant = 'control' | 'honest_progress' | 'honest_scene' | 'honest_combined' | 'honest_card';
 
 const VARIANTS: { value: Variant; label: string }[] = [
+	{ value: 'honest_card', label: 'Bar + card (design)' },
 	{ value: 'honest_progress', label: 'Narrated list' },
 	{ value: 'honest_scene', label: 'Illustrated scene' },
 	{ value: 'honest_combined', label: 'Scene + list' },
-	{ value: 'honest_card', label: 'Bar + card' },
 	{ value: 'control', label: 'Classic bar (today)' },
 ];
 
@@ -68,7 +70,7 @@ function ChoiceRow< T extends string >( {
  */
 export default function MarketplaceWaitDemo() {
 	const translate = useTranslate();
-	const [ variant, setVariant ] = useState< Variant >( 'honest_progress' );
+	const [ variant, setVariant ] = useState< Variant >( 'honest_card' );
 	const [ scenario, setScenario ] = useState< DemoScenario >( 'typical' );
 	const [ realTime, setRealTime ] = useState( false );
 	const { transferStatus, currentStep, elapsed, isDone, isFailed, run, replay } = useFakeTransfer( {
@@ -150,6 +152,7 @@ export default function MarketplaceWaitDemo() {
 					` }
 				/>
 				<WordPressLogo className="marketplace-plugin-install__logo" size={ 24 } />
+				<MarketplaceInstallHelpLink />
 			</Masterbar>
 			<div className="marketplace-wait-demo__controls">
 				<ChoiceRow
@@ -183,7 +186,12 @@ export default function MarketplaceWaitDemo() {
 					is recorded.
 				</p>
 			</div>
-			<div key={ run } className="marketplace-plugin-install__root marketplace-wait-demo__stage">
+			<div
+				key={ run }
+				className={ clsx( 'marketplace-plugin-install__root', 'marketplace-wait-demo__stage', {
+					'is-top-aligned': variant === 'honest_card',
+				} ) }
+			>
 				{ stage }
 			</div>
 		</ThemeProvider>
