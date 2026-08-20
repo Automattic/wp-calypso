@@ -74,7 +74,7 @@ export function ExtrasToggleCard< Key extends keyof WpcomNotificationSettings & 
 						checked={ topToggleChecked }
 						label={
 							<Text weight="bold">
-								{ topToggleChecked ? __( 'Unsubscribe from all' ) : __( 'Subscribe to all' ) }
+								{ __( 'Get all email updates' ) }
 							</Text>
 						}
 						onChange={ handleTopToggle }

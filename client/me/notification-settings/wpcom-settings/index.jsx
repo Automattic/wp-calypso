@@ -99,11 +99,7 @@ class WPCOMNotifications extends Component {
 					__nextHasNoMarginBottom
 					checked={ this.toggleShouldBeOff( options ) }
 					className="wpcom-settings__notification-settings-emailsection-toggle"
-					label={
-						this.toggleShouldBeOff( options )
-							? this.props.translate( 'Unsubscribe from all' )
-							: this.props.translate( 'Subscribe to all' )
-					}
+					label={ this.props.translate( 'Get all email updates' ) }
 					onChange={ this.unsubscribeFromAll( options ) }
 					disabled={ this.props.isFetching }
 				/>
@@ -206,11 +202,7 @@ class WPCOMNotifications extends Component {
 							__nextHasNoMarginBottom
 							checked={ this.toggleShouldBeOff( jetpackOptions ) }
 							className="wpcom-settings__notification-settings-emailsection-toggle"
-							label={
-								this.toggleShouldBeOff( jetpackOptions )
-									? this.props.translate( 'Unsubscribe from all' )
-									: this.props.translate( 'Subscribe to all' )
-							}
+							label={ this.props.translate( 'Get all email updates' ) }
 							onChange={ this.unsubscribeFromAll( jetpackOptions ) }
 							disabled={ this.props.isFetching }
 						/>

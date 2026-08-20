@@ -379,7 +379,7 @@ describe( 'NotificationsExtras', () => {
 		);
 
 		const subscribeAllToggle = await screen.findAllByRole( 'checkbox', {
-			name: 'Subscribe to all',
+			name: 'Get all email updates',
 		} );
 
 		await userEvent.click( subscribeAllToggle[ 0 ] );

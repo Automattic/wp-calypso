@@ -89,14 +89,13 @@ describe( 'ExtrasToggleCard', () => {
 		).toBeVisible();
 	} );
 
-	it( 'shows "Subscribe to all" when no options are enabled', () => {
+	it( 'shows "Get all email updates" toggle when no options are enabled', () => {
 		renderExtrasToggleCard();
 
-		expect( screen.getByRole( 'checkbox', { name: 'Subscribe to all' } ) ).toBeVisible();
-		expect( screen.queryByText( 'Unsubscribe from all' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'checkbox', { name: 'Get all email updates' } ) ).toBeVisible();
 	} );
 
-	it( 'shows "Unsubscribe from all" when some options are enabled', () => {
+	it( 'shows "Get all email updates" toggle when some options are enabled', () => {
 		const extraSettings = {
 			...defaultExtraSettings,
 			marketing: true,
@@ -105,8 +104,7 @@ describe( 'ExtrasToggleCard', () => {
 
 		renderExtrasToggleCard( { extraSettings } );
 
-		expect( screen.getByRole( 'checkbox', { name: 'Unsubscribe from all' } ) ).toBeVisible();
-		expect( screen.queryByText( 'Subscribe to all' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'checkbox', { name: 'Get all email updates' } ) ).toBeVisible();
 	} );
 
 	it( 'reflects current settings in toggle states', () => {
@@ -126,10 +124,10 @@ describe( 'ExtrasToggleCard', () => {
 		expect( screen.getByLabelText( 'Reports' ) ).toBeChecked();
 	} );
 
-	it( 'calls onMutate when "Subscribe to all" is clicked', async () => {
+	it( 'calls onMutate when "Get all email updates" is clicked to subscribe', async () => {
 		renderExtrasToggleCard();
 
-		const subscribeAllToggle = screen.getByLabelText( 'Subscribe to all' );
+		const subscribeAllToggle = screen.getByLabelText( 'Get all email updates' );
 		await userEvent.click( subscribeAllToggle );
 
 		expect( mockOnMutate ).toHaveBeenCalledWith(
@@ -149,7 +147,7 @@ describe( 'ExtrasToggleCard', () => {
 		);
 	} );
 
-	it( 'calls onMutate with only changed values when "Unsubscribe from all" is clicked', async () => {
+	it( 'calls onMutate with only changed values when "Get all email updates" is clicked to unsubscribe', async () => {
 		const extraSettings = {
 			...defaultExtraSettings,
 			marketing: true,
@@ -159,7 +157,7 @@ describe( 'ExtrasToggleCard', () => {
 
 		renderExtrasToggleCard( { extraSettings } );
 
-		const unsubscribeAllToggle = screen.getByLabelText( 'Unsubscribe from all' );
+		const unsubscribeAllToggle = screen.getByLabelText( 'Get all email updates' );
 		await userEvent.click( unsubscribeAllToggle );
 
 		expect( mockOnMutate ).toHaveBeenCalledWith(
@@ -175,7 +173,7 @@ describe( 'ExtrasToggleCard', () => {
 	it( 'disables all toggles when isSaving is true', () => {
 		renderExtrasToggleCard( { isSaving: true } );
 
-		expect( screen.getByLabelText( 'Subscribe to all' ) ).toBeDisabled();
+		expect( screen.getByLabelText( 'Get all email updates' ) ).toBeDisabled();
 		expect( screen.getByLabelText( 'Suggestions' ) ).toBeDisabled();
 		expect( screen.getByLabelText( 'Research' ) ).toBeDisabled();
 		expect( screen.getByLabelText( 'Community' ) ).toBeDisabled();
@@ -184,7 +182,7 @@ describe( 'ExtrasToggleCard', () => {
 	it( 'disables all toggles when extraSettings is undefined', () => {
 		renderExtrasToggleCard( { extraSettings: undefined } );
 
-		expect( screen.getByLabelText( 'Subscribe to all' ) ).toBeDisabled();
+		expect( screen.getByLabelText( 'Get all email updates' ) ).toBeDisabled();
 		expect( screen.getByLabelText( 'Suggestions' ) ).toBeDisabled();
 		expect( screen.getByLabelText( 'Research' ) ).toBeDisabled();
 		expect( screen.getByLabelText( 'Community' ) ).toBeDisabled();
