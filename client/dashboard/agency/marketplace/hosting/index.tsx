@@ -2,7 +2,7 @@ import {
 	Button,
 	Dropdown,
 	ExternalLink,
-	Modal,
+	Guide,
 	ToggleControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -12,6 +12,11 @@ import {
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { cart, chevronDown, chevronUp, info } from '@wordpress/icons';
 import { useState } from 'react';
+import referralStep1 from 'calypso/assets/images/a8c-for-agencies/referral-step-1.jpg';
+import referralStep2 from 'calypso/assets/images/a8c-for-agencies/referral-step-2.jpg';
+import referralStep3 from 'calypso/assets/images/a8c-for-agencies/referral-step-3.jpg';
+import referralStep4 from 'calypso/assets/images/a8c-for-agencies/referral-step-4.jpg';
+import referralStep5 from 'calypso/assets/images/a8c-for-agencies/referral-step-5.jpg';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -41,11 +46,22 @@ const REFERRAL_GUIDE_STEPS = [
 		description: __(
 			'Manage your clients’ products without the burden of managing the billing. Assemble a cart of products, send a request for payment to your clients, and make commissions based on what you sell.'
 		),
+		media: <img src={ referralStep1 } alt="" />,
 	},
 	{
 		title: __( 'Add the products your client needs' ),
 		description: __(
 			'Ensure “Refer products” is toggled on, and add any mix of products to your cart.'
+		),
+		media: (
+			<video
+				src="https://automattic.com/wp-content/uploads/2024/05/referral-step-2.mp4"
+				preload="auto"
+				width={ 400 }
+				poster={ referralStep2 }
+				muted
+				autoPlay
+			/>
 		),
 	},
 	{
@@ -53,40 +69,62 @@ const REFERRAL_GUIDE_STEPS = [
 		description: __(
 			'During checkout, add your client’s email address and a note about the invoice for the selected products.'
 		),
+		media: (
+			<video
+				src="https://automattic.com/wp-content/uploads/2024/05/referral-step-3.mp4"
+				preload="auto"
+				width={ 400 }
+				poster={ referralStep3 }
+				muted
+				autoPlay
+			/>
+		),
 	},
 	{
 		title: __( 'Send your client the payment request' ),
 		description: __(
 			'Once sent, your client will get the invoice delivered to their inbox. After they pay, you’ll be able to assign the products to their site.'
 		),
+		media: (
+			<video
+				src="https://automattic.com/wp-content/uploads/2024/05/referral-step-4.mp4"
+				preload="auto"
+				width={ 400 }
+				poster={ referralStep4 }
+				muted
+				autoPlay
+			/>
+		),
 	},
 	{
 		title: __( 'Get paid real commissions' ),
 		description: __(
-			'Clients will be billed at the end of every month for their products. When they pay, you’ll make commissions on those products.'
+			'Clients will be billed at the end of every month for their products. When they pay, you’ll make commissions on those products, which you’ll be able to manage under the Referrals section, soon.'
 		),
+		media: <img src={ referralStep5 } alt="" />,
 	},
 ];
 
-function ReferralGuideModal( { onClose }: { onClose: () => void } ) {
+function ReferralGuide( { onClose }: { onClose: () => void } ) {
 	return (
-		<Modal title={ __( 'How referral mode works' ) } onRequestClose={ onClose } size="medium">
-			<VStack spacing={ 5 }>
-				{ REFERRAL_GUIDE_STEPS.map( ( step, index ) => (
-					<VStack key={ step.title } spacing={ 1 }>
-						<Text weight={ 600 }>{ `${ index + 1 }. ${ step.title }` }</Text>
+		<Guide
+			onFinish={ onClose }
+			className="marketplace-hosting__referral-guide"
+			contentLabel={ __( 'How referral mode works' ) }
+			pages={ REFERRAL_GUIDE_STEPS.map( ( step ) => ( {
+				image: step.media,
+				content: (
+					<VStack spacing={ 2 }>
+						<Heading level={ 2 } size={ 16 }>
+							{ step.title }
+						</Heading>
 						<Text as="p" variant="muted">
 							{ step.description }
 						</Text>
 					</VStack>
-				) ) }
-				<HStack justify="flex-end">
-					<Button variant="primary" __next40pxDefaultSize onClick={ onClose }>
-						{ __( 'Got it' ) }
-					</Button>
-				</HStack>
-			</VStack>
-		</Modal>
+				),
+			} ) ) }
+		/>
 	);
 }
 
@@ -346,7 +384,7 @@ export default function MarketplaceHosting() {
 				/>
 			}
 		>
-			{ isGuideOpen && <ReferralGuideModal onClose={ () => setIsGuideOpen( false ) } /> }
+			{ isGuideOpen && <ReferralGuide onClose={ () => setIsGuideOpen( false ) } /> }
 			{ SHOW_MIGRATION_OFFER && <MigrationOffer /> }
 			<VStack spacing={ 4 }>
 				<SectionHeader title={ __( 'Choose a hosting platform' ) } level={ 2 } />
