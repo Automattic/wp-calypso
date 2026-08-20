@@ -1,7 +1,6 @@
-import { getAccountNamesToPrime } from '@automattic/calypso-e2e';
+import { getAccountNamesToPrime, withDeadline } from '@automattic/calypso-e2e';
 import { getAccount } from '../lib/get-account';
 import { test as setup } from '../lib/pw-base';
-import { withDeadline } from '../lib/with-deadline';
 
 // Accounts logged in as before the suite starts, so the specs read cookies instead of all
 // logging in at once.

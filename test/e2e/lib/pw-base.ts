@@ -89,11 +89,15 @@ import {
 	PlansPage,
 	UseADomainIOwnPage,
 	SelectItemsComponent,
-	THROTTLE_IDS,
-	debugThrottle,
+	THROTTLED_PATH_PATTERN,
+	activeThrottleForUrl,
 	flushThrottleWrites,
 	mayBeThrottled,
-	recordThrottle,
+	recordResponseThrottle,
+	registerThrottleActionHandler,
+	throttleActionMessage,
+	throttleRefusalBody,
+	withDeadline,
 } from '@automattic/calypso-e2e';
 import {
 	test as base,
@@ -101,6 +105,7 @@ import {
 	type BrowserContext,
 	type Page,
 	type Response,
+	type Route,
 } from '@playwright/test';
 import {
 	apiCloseAccount,
@@ -110,7 +115,6 @@ import {
 import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
 import { snoozeAccountRecoveryInterstitial } from './dashboard-helpers';
 import { getAccount } from './get-account';
-import { withDeadline } from './with-deadline';
 
 export type CustomOptions = {
 	/**
@@ -145,13 +149,18 @@ type AccountFixture = (
 
 const WPCOM_HOST = /^https?:\/\/([^/]*\.)?wordpress\.com(?::\d+)?\//;
 
-// The response event fires on headers, and `response.text()` has no deadline of
-// its own, so without these a stalled body would hang the teardown that waits
-// for it. The flush covers a body read and the two tag POSTs a detection makes,
-// which is what has to land before a worker exits: a flag whose tag never landed
-// leaves its line in a build no peer can find. Charged to the test's own timeout,
-// so it must stay well under it and must not fail a spec that had already passed.
-const BODY_TIMEOUT = 2 * 1000;
+// A regular expression, and one object for the life of the module: a route
+// matched by a function makes Playwright intercept every request in the context
+// and hand it back to Node, and `unroute` finds a pattern by identity.
+const BANNED_ENDPOINT = new RegExp(
+	`${ WPCOM_HOST.source }.*(?:${ THROTTLED_PATH_PATTERN.source })`,
+	'i'
+);
+
+// The flush covers a body read and the two tag POSTs a detection makes, which is
+// what has to land before a worker exits: a flag whose tag never landed leaves
+// its line in a build no peer can find. Charged to the test's own timeout, so it
+// must stay well under it and must not fail a spec that had already passed.
 const FLUSH_TIMEOUT = 7 * 1000;
 
 /**
@@ -169,16 +178,21 @@ const FLUSH_TIMEOUT = 7 * 1000;
  * as a 200. The body is never logged: a failed `/sites/new` carries the
  * credentials of the user it was creating a site for.
  *
- * Reports a throttle already known when the context is handed over, so a worker
- * states a ban at the first test that runs after it becomes known rather than
- * before every call that might run into it, and returns the teardown for these
- * listeners: a listener raises its flag with no test awaiting it, so without it
- * a worker can exit between detecting a throttle and tagging the build for it.
+ * Recording and refusing, never skipping or failing. This sees every call the
+ * app makes, and most of them are ones the test never depended on — a page that
+ * renders a domain upsell hits `/domains/suggestions` whatever the test is
+ * about. Those calls are answered here while a ban is in force, so a test the
+ * ban does not affect goes on passing without spending the endpoint on a request
+ * that would be refused. A test that did depend on a banned call has already
+ * failed on the answer it got, so the policy belongs at the page objects that
+ * make those calls, not here.
+ *
+ * Returns the teardown for the listener and the route. It drains recording;
+ * without it, a worker can exit between detecting a throttle and tagging the
+ * build for it.
  */
-function watchForThrottle( context: BrowserContext ): () => Promise< void > {
+async function watchForThrottle( context: BrowserContext ): Promise< () => Promise< void > > {
 	const pending = new Set< Promise< unknown > >();
-
-	THROTTLE_IDS.forEach( ( id ) => debugThrottle( id ) );
 
 	const onResponse = ( response: Response ) => {
 		const url = response.url();
@@ -193,14 +207,10 @@ function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 
 		const reading = ( async () => {
 			try {
-				const body = await withDeadline( response.text(), BODY_TIMEOUT );
-				// An enveloped success carries no error key, and a domain search
-				// result can hold anything a caller typed — including our own
-				// tokens — so it is never handed to detection.
-				if ( status < 400 && ! /"error"\s*:/.test( body ) ) {
-					return;
-				}
-				await recordThrottle( { url, status, body } );
+				// Whether this is a ban at all is detection's to say: an
+				// invalid-domain 400 on `is-available` reaches here too. Recording is
+				// all it does; the test's outcome is no business of this listener.
+				await recordResponseThrottle( response );
 			} catch {
 				// Detection never fails a test.
 			}
@@ -210,10 +220,27 @@ function watchForThrottle( context: BrowserContext ): () => Promise< void > {
 	};
 	context.on( 'response', onResponse );
 
+	// A ban we already know about answers here rather than at wpcom: the call
+	// would be refused anyway, and the endpoint has better uses for it. Every
+	// other request, banned endpoint or not, falls through to the network.
+	const refuseBanned = async ( route: Route ) => {
+		const id = activeThrottleForUrl( route.request().url() );
+		if ( ! id ) {
+			return route.fallback();
+		}
+		await route.fulfill( {
+			status: 429,
+			contentType: 'application/json',
+			body: throttleRefusalBody( id ),
+		} );
+	};
+	await context.route( BANNED_ENDPOINT, refuseBanned );
+
 	return async () => {
 		// Off first: a response arriving while this drains would start a read
 		// nothing is waiting for, and print its line into the next test.
 		context.off( 'response', onResponse );
+		await context.unroute( BANNED_ENDPOINT, refuseBanned ).catch( () => {} );
 
 		// A listener can be mid-read when the test ends, so settle until the set
 		// is empty rather than settling a snapshot of it. Raced rather than
@@ -236,6 +263,7 @@ export const test = base.extend<
 	CustomOptions & {
 		[ K in keyof typeof fixtureAccounts ]: TestAccount;
 	} & {
+		_throttleActionHandler: void;
 		/**
 		 * Test account selected based on the current environment variables.
 		 */
@@ -472,6 +500,29 @@ export const test = base.extend<
 	}
 >( {
 	viewportName: [ 'desktop', { option: true } ],
+	_throttleActionHandler: [
+		async ( {}, use, testInfo ) => {
+			const unregister = registerThrottleActionHandler( ( action, ids ) => {
+				const message = throttleActionMessage( action, ids, testInfo );
+				// Nothing to say to a test that already stopped for a reason of its own.
+				if ( ! message ) {
+					return;
+				}
+				if ( action === 'skip' ) {
+					base.skip( true, message );
+					return;
+				}
+				throw new Error( message );
+			} );
+
+			try {
+				await use();
+			} finally {
+				unregister();
+			}
+		},
+		{ auto: true },
+	],
 	page: async ( { page, viewportName }, use, testInfo ) => {
 		// Set process.env.VIEWPORT_NAME so page objects/components can access it via envVariables.
 		process.env.VIEWPORT_NAME = viewportName;
@@ -488,7 +539,7 @@ export const test = base.extend<
 			await useBlackboxTestKeyForCollect( page );
 		}
 
-		const flushThrottleWatchers = watchForThrottle( page.context() );
+		const flushThrottleWatchers = await watchForThrottle( page.context() );
 
 		await use( page );
 
@@ -661,7 +712,7 @@ export const test = base.extend<
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
 		await incognitoPage.spawn();
-		const flushThrottleWatchers = watchForThrottle( incognitoPage.getPage().context() );
+		const flushThrottleWatchers = await watchForThrottle( incognitoPage.getPage().context() );
 		await use( incognitoPage );
 		await flushThrottleWatchers();
 		await incognitoPage.close();

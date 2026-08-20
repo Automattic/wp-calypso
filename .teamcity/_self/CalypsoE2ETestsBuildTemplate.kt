@@ -3,6 +3,7 @@ package _self
 import _self.lib.utils.cancelSupersededBuilds
 import _self.lib.utils.mergeTrunk
 import _self.lib.utils.allBranchesExceptMergeQueue
+import _self.lib.utils.throttleActionParams
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
@@ -24,6 +25,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.LOCALE", "en")
+		throttleActionParams()
 		// No AUTHENTICATE_ACCOUNTS here on purpose: it names the accounts the prime-logins
 		// setup project logs in as beyond the one the environment resolves to, and that is per
 		// test group, not per template. A build type running a group should set it; leaving it

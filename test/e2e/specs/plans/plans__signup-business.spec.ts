@@ -11,7 +11,6 @@ test.describe(
 	() => {
 		const planName = 'Business';
 
-		let siteCreatedFlag = false;
 		let newSiteDetails: NewSiteResponse | undefined;
 		let accountUsed: TestAccount;
 
@@ -39,13 +38,19 @@ test.describe(
 			} );
 
 			await test.step( 'And I skip domain selection', async function () {
-				await componentDomainSearch.search( 'foo' );
+				await componentDomainSearch.search( helperData.getBlogName() );
 				await componentDomainSearch.skipPurchase();
 			} );
 
 			await test.step( `And I select the WordPress.com ${ planName } plan`, async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
-				siteCreatedFlag = true;
+				try {
+					newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				} finally {
+					// selectPlan throws if the flow doesn't reach checkout in time, but the
+					// site is created before that. Take it from the page object so afterAll
+					// deletes it instead of leaking it onto the shared account.
+					newSiteDetails ??= pageSignupPickPlan.createdSite;
+				}
 			} );
 
 			await test.step( 'Then I see secure checkout with the plan in the cart', async function () {
@@ -76,7 +81,7 @@ test.describe(
 		} );
 
 		test.afterAll( 'Delete the created site', async function () {
-			if ( ! siteCreatedFlag || ! newSiteDetails || ! accountUsed ) {
+			if ( ! newSiteDetails || ! accountUsed ) {
 				return;
 			}
 
