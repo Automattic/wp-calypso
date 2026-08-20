@@ -1,4 +1,5 @@
 import { Locator, Page } from 'playwright';
+import { handleActiveThrottles, recordResponseThrottle } from '../../throttle-flags';
 import { PlansPage, Plans } from '../plans-page';
 import type { NewSiteResponse } from '../../../types/rest-api-client.types';
 
@@ -49,6 +50,14 @@ export class SignupPickPlanPage {
 						const body = await response.body();
 						await route.fulfill( { response } );
 
+						// `/sites/new` is where the signup ban is answered, and this is the
+						// only place the suite reads what it answers with. A refusal parses
+						// as nothing and would otherwise leave a syntax error behind.
+						const throttle = await recordResponseThrottle( response );
+						if ( throttle ) {
+							handleActiveThrottles( [ throttle ] );
+						}
+
 						const parsed = JSON.parse( body.toString() );
 						const siteDetails: NewSiteResponse = parsed.body;
 
@@ -85,14 +94,18 @@ export class SignupPickPlanPage {
 			redirectUrl ??= new RegExp( '.*(setup/site-setup|home/.+ref=onboarding).*' );
 		}
 
+		// Awaited alongside the redirect rather than after it: a refused creation
+		// never redirects, and a skip left to be read afterwards would spend the
+		// ninety seconds first and then be lost to the timeout that ends the wait.
 		const responsePromise = this.captureNewSiteResponse();
 
-		await Promise.all( [
+		const [ , , siteDetails ] = await Promise.all( [
 			this.page.waitForURL( redirectUrl, { timeout: 90 * 1000 } ),
 			this.plansPage.selectPlan( name ),
+			responsePromise,
 		] );
 
-		return responsePromise;
+		return siteDetails;
 	}
 
 	/**
