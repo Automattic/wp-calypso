@@ -18,7 +18,7 @@ import spotifyLogo from 'calypso/assets/images/logos/spotify.svg';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import vipLogo from '../exclusive-offers/images/vip-descriptor.svg';
-import { CheckList, Eyebrow } from './content-sections';
+import { CheckList } from './content-sections';
 import { VIP_CAPABILITIES, VIP_PITCH_CAPABILITIES } from './mock-data';
 
 const CLIENT_BRANDS = [
@@ -104,7 +104,6 @@ export default function VipContent() {
 			</Card>
 
 			<SectionHeader
-				prefix={ <Eyebrow>{ __( 'The leading content platform' ) }</Eyebrow> }
 				title={ __( 'VIP capabilities' ) }
 				description={ __(
 					'Combine the ease of WordPress with enterprise-grade security and scalability.'

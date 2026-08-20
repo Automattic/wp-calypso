@@ -98,14 +98,6 @@ const RELATIONSHIP_CARDS = [
 	},
 ];
 
-export function Eyebrow( { children }: { children: React.ReactNode } ) {
-	return (
-		<Text variant="muted" size={ 11 } upperCase weight={ 500 }>
-			{ children }
-		</Text>
-	);
-}
-
 export function CheckList( { items }: { items: string[] } ) {
 	return (
 		<VStack spacing={ 2 }>
@@ -123,7 +115,6 @@ export function IncludedFeatures( { brand }: { brand: 'wpcom' | 'pressable' } ) 
 	return (
 		<VStack spacing={ 4 }>
 			<SectionHeader
-				prefix={ <Eyebrow>{ __( 'World-class functionality' ) }</Eyebrow> }
 				title={
 					brand === 'pressable'
 						? __( 'Included with every Pressable site' )
@@ -167,11 +158,7 @@ const TESTIMONIAL_HEADINGS: Record< 'wpcom' | 'pressable' | 'vip', string > = {
 export function Testimonials( { brand }: { brand: 'wpcom' | 'pressable' | 'vip' } ) {
 	return (
 		<VStack spacing={ 4 }>
-			<SectionHeader
-				prefix={ <Eyebrow>{ __( 'What agencies say' ) }</Eyebrow> }
-				title={ TESTIMONIAL_HEADINGS[ brand ] }
-				level={ 2 }
-			/>
+			<SectionHeader title={ TESTIMONIAL_HEADINGS[ brand ] } level={ 2 } />
 			<div className="marketplace-hosting__grid-2">
 				{ testimonialsByBrand[ brand ].map( ( testimonial, index ) => (
 					<Card key={ testimonial.name }>
@@ -205,13 +192,12 @@ export function JetpackComplete() {
 	return (
 		<VStack spacing={ 4 }>
 			<SectionHeader
-				prefix={ <Eyebrow>{ __( 'Supercharge your clients’ sites' ) }</Eyebrow> }
 				title={ __( 'Jetpack Complete included' ) }
 				description={ __(
 					'Every Pressable site comes with a free Jetpack Complete license — a $899/year/site value.'
 				) }
 				level={ 2 }
-				decoration={ <img src={ jetpackLogo } alt="Jetpack" height={ 24 } /> }
+				decoration={ <img src={ jetpackLogo } alt="Jetpack" width={ 84 } height={ 24 } /> }
 			/>
 			<Card>
 				<CardBody>
@@ -237,7 +223,6 @@ export function ClientRelationships() {
 	return (
 		<VStack spacing={ 4 }>
 			<SectionHeader
-				prefix={ <Eyebrow>{ __( 'How Automattic can help' ) }</Eyebrow> }
 				title={ __( 'Improve your client relationships with our hosting' ) }
 				level={ 2 }
 			/>
