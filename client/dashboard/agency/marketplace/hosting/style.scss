@@ -186,8 +186,8 @@
 .marketplace-hosting__referral-guide-media img,
 .marketplace-hosting__referral-guide-media video {
 	display: block;
-	inline-size: 108%;
-	block-size: auto;
+	inline-size: 100%;
+	aspect-ratio: 1.64;
 	object-fit: cover;
-	object-position: left top;
+	object-position: left center;
 }
