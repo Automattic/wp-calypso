@@ -533,6 +533,14 @@ export const test = base.extend<
 				domain: '.wordpress.com',
 				path: '/',
 			},
+			{
+				// Opt out of the logged-in marketing homepage, so `/` keeps taking
+				// logged-in test accounts to the app.
+				name: 'wpcom_skip_lohp',
+				value: '1',
+				domain: '.wordpress.com',
+				path: '/',
+			},
 		] );
 
 		if ( testInfo.project.name === 'authentication' ) {
