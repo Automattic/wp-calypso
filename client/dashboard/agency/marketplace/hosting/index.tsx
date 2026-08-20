@@ -4,7 +4,6 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
-	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp } from '@wordpress/icons';
@@ -19,7 +18,8 @@ import {
 	JetpackComplete,
 	Testimonials,
 } from './content-sections';
-import { hostingBrands } from './mock-data';
+import { hostingBrands, pressableSignaturePlans } from './mock-data';
+import OrderSummary from './order-summary';
 import PressableContent from './pressable-content';
 import ProductSelector from './product-selector';
 import VipContent from './vip-content';
@@ -60,28 +60,37 @@ function MigrationOffer() {
 	);
 }
 
-function FreeDevSites() {
+function MoreAboutHosting( {
+	brandName,
+	children,
+}: {
+	brandName: string;
+	children: React.ReactNode;
+} ) {
+	const [ isExpanded, setIsExpanded ] = useState( false );
+
 	return (
-		<Card className="marketplace-hosting__dev-sites">
-			<CardBody>
-				<VStack spacing={ 3 }>
-					<Heading level={ 3 } size={ 16 }>
-						{ __( 'Start building for free' ) }
-					</Heading>
-					<Text as="p" variant="muted">
-						{ __(
-							'Included in your membership to Automattic for Agencies. Develop up to 5 WordPress.com sites with free development licenses. Only pay when you launch.'
-						) }
-					</Text>
-					<Text variant="muted" size={ 12 }>
-						{ __( '5 of 5 free licenses available' ) }
-					</Text>
-					<Button variant="secondary" __next40pxDefaultSize>
-						{ __( 'Create a development site' ) }
-					</Button>
-				</VStack>
-			</CardBody>
-		</Card>
+		<VStack spacing={ 6 }>
+			<Card>
+				<CardBody>
+					<HStack justify="space-between" alignment="center">
+						<Text weight={ 600 }>
+							{ sprintf(
+								/* translators: %s: hosting brand name */
+								__( 'More about %s hosting: features, Jetpack, and what agencies say' ),
+								brandName
+							) }
+						</Text>
+						<Button
+							icon={ isExpanded ? chevronUp : chevronDown }
+							label={ isExpanded ? __( 'Collapse details' ) : __( 'Expand details' ) }
+							onClick={ () => setIsExpanded( ! isExpanded ) }
+						/>
+					</HStack>
+				</CardBody>
+			</Card>
+			{ isExpanded && children }
+		</VStack>
 	);
 }
 
@@ -89,10 +98,16 @@ export default function MarketplaceHosting() {
 	const [ selectedBrand, setSelectedBrand ] = useState< HostingBrand[ 'key' ] >( 'wpcom' );
 	const [ term, setTerm ] = useState< 'monthly' | 'yearly' >( 'yearly' );
 	const [ isReferralMode, setIsReferralMode ] = useState( false );
+	const [ quantity, setQuantity ] = useState( 3 );
+	const [ pressablePlanSlug, setPressablePlanSlug ] = useState( 'pressable-signature-1' );
 	const [ cartCount, setCartCount ] = useState( 0 );
 
-	const handleAddToCart = ( quantity: number ) => {
-		setCartCount( quantity );
+	const pressablePlan =
+		pressableSignaturePlans.find( ( p ) => p.slug === pressablePlanSlug ) ??
+		pressableSignaturePlans[ 0 ];
+
+	const handleCheckout = () => {
+		setCartCount( selectedBrand === 'wpcom' ? quantity : 1 );
 	};
 
 	return (
@@ -161,19 +176,62 @@ export default function MarketplaceHosting() {
 						level={ 2 }
 					/>
 					<div className="marketplace-hosting__configurator-row">
-						<WpcomConfigurator term={ term } onAddToCart={ handleAddToCart } />
-						<FreeDevSites />
+						<WpcomConfigurator term={ term } onQuantityChange={ setQuantity } />
+						<OrderSummary
+							brand="wpcom"
+							term={ term }
+							quantity={ quantity }
+							onCheckout={ handleCheckout }
+						/>
 					</div>
 				</VStack>
 			) }
-			{ selectedBrand === 'pressable' && <PressableContent onAddToCart={ handleAddToCart } /> }
-			{ selectedBrand === 'vip' && <VipContent /> }
-			{ selectedBrand !== 'vip' && (
-				<IncludedFeatures brand={ selectedBrand as 'wpcom' | 'pressable' } />
+			{ selectedBrand === 'pressable' && (
+				<VStack spacing={ 4 }>
+					<SectionHeader
+						title={ __( '2. Choose from a variety of high performance hosting plans' ) }
+						level={ 2 }
+					/>
+					<div className="marketplace-hosting__configurator-row">
+						<PressableContent
+							planSlug={ pressablePlanSlug }
+							onPlanChange={ setPressablePlanSlug }
+						/>
+						<OrderSummary
+							brand="pressable"
+							term={ term }
+							quantity={ 1 }
+							plan={ pressablePlan }
+							onCheckout={ handleCheckout }
+						/>
+					</div>
+				</VStack>
 			) }
-			{ selectedBrand === 'pressable' && <JetpackComplete /> }
-			<Testimonials brand={ selectedBrand } />
-			{ selectedBrand !== 'vip' && <ClientRelationships /> }
+			{ selectedBrand === 'vip' && <VipContent /> }
+			{ selectedBrand === 'wpcom' && (
+				<MoreAboutHosting brandName="WordPress.com">
+					<VStack spacing={ 6 }>
+						<IncludedFeatures brand="wpcom" />
+						<Testimonials brand="wpcom" />
+						<ClientRelationships />
+					</VStack>
+				</MoreAboutHosting>
+			) }
+			{ selectedBrand === 'pressable' && (
+				<MoreAboutHosting brandName="Pressable">
+					<VStack spacing={ 6 }>
+						<IncludedFeatures brand="pressable" />
+						<JetpackComplete />
+						<Testimonials brand="pressable" />
+						<ClientRelationships />
+					</VStack>
+				</MoreAboutHosting>
+			) }
+			{ selectedBrand === 'vip' && (
+				<MoreAboutHosting brandName="WordPress VIP">
+					<Testimonials brand="vip" />
+				</MoreAboutHosting>
+			) }
 		</PageLayout>
 	);
 }

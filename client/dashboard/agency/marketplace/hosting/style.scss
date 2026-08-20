@@ -35,6 +35,11 @@
 	gap: 16px;
 	align-items: start;
 
+	.marketplace-hosting__summary {
+		position: sticky;
+		inset-block-start: 24px;
+	}
+
 	@media ( max-width: 782px ) {
 		grid-template-columns: 1fr;
 	}
