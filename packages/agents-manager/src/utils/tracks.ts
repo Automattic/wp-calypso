@@ -129,9 +129,9 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 	};
 
 	const mergedProps: TracksProps = { ...baseProps, ...props };
-	// `ai_session_id` is the standard name; `sessionid` stays until the Big Sky
-	// family migrates in one move. Mirror the effective (possibly caller-
-	// overridden) `sessionid`, omitted while no session exists yet.
+	// Send the session ID under both names: `ai_session_id` is the standard one,
+	// and `sessionid` is the older one that dashboards still use. The alias
+	// copies the final `sessionid`, so a caller-supplied value stays mirrored.
 	if ( ! ( 'ai_session_id' in mergedProps ) ) {
 		const effectiveSessionId = mergedProps.sessionid;
 		if ( typeof effectiveSessionId === 'string' && effectiveSessionId !== '' ) {

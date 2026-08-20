@@ -270,7 +270,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		);
 	} );
 
-	it( 'uses an empty post type when the editor store is unavailable', () => {
+	it( 'uses an empty post type and omits surface when the editor store read throws', () => {
 		mockedSelect.mockImplementation( () => {
 			throw new Error( 'Store unavailable' );
 		} );
@@ -281,5 +281,33 @@ describe( 'Jetpack AI sidebar tracking', () => {
 			'jetpack_ai_split_screen_guide_click',
 			expect.objectContaining( { post_type: '' } )
 		);
+		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'surface' );
+	} );
+
+	it( 'keeps surface and uses an empty post type when the selector itself throws', () => {
+		mockedSelect.mockReturnValue( {
+			getCurrentPostType: jest.fn( () => {
+				throw new Error( 'selector failed' );
+			} ),
+		} as ReturnType< typeof select > );
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_split_screen_guide_click',
+			expect.objectContaining( { post_type: '', surface: 'block_editor' } )
+		);
+	} );
+
+	it( 'omits surface when the editor store is not registered', () => {
+		mockedSelect.mockReturnValue( undefined as unknown as ReturnType< typeof select > );
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_split_screen_guide_click',
+			expect.objectContaining( { post_type: '' } )
+		);
+		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'surface' );
 	} );
 } );

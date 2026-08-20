@@ -60,10 +60,18 @@ function getSessionId(): string | undefined {
 	return typeof sessionId === 'string' && sessionId !== '' ? sessionId : undefined;
 }
 
+/** The `core/editor` store when registered — absent on non-editor surfaces. */
+function getEditorStore(): EditorSelectStore {
+	try {
+		return select( 'core/editor' ) as EditorSelectStore;
+	} catch {
+		return undefined;
+	}
+}
+
 function getCurrentPostType(): string {
 	try {
-		const editor = select( 'core/editor' ) as EditorSelectStore;
-		return editor?.getCurrentPostType?.() ?? '';
+		return getEditorStore()?.getCurrentPostType?.() ?? '';
 	} catch {
 		return '';
 	}
@@ -155,17 +163,16 @@ function recordTracksEvent( eventName: string, properties: TrackProperties = {} 
 	const sessionId = getSessionId();
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
+	const surface = getEditorStore() ? 'block_editor' : undefined;
 	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, {
+		// Defaults to block_editor unless caller overrides.
+		...( surface ? { surface } : {} ),
 		...properties,
-		// `ai_session_id` is the standard name; `sessionid` stays for existing
-		// consumers until the family migrates in one move.
+		// Send the session ID under both names: `ai_session_id` is the standard
+		// one, and `sessionid` is the older one that existing consumers still use.
 		...( sessionId ? { sessionid: sessionId, ai_session_id: sessionId } : {} ),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 		...( blogId !== undefined ? { blog_id: blogId } : {} ),
-		// Fixed broad-area label — this provider mounts only in Gutenberg.
-		// `screen` is Big Sky's field and can disagree (defaults `site-editor`);
-		// the AM parity recorder gates the same value on the editor store.
-		surface: 'block_editor',
 	} );
 }
 
