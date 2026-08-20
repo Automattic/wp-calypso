@@ -23,7 +23,6 @@ import {
 	getEditableBlockContent,
 	hasEditableBlockTarget,
 	toggleBlockReferenceFocus,
-	undoBlockEdit,
 } from '../utils/block-actions';
 import {
 	flattenBlocks,
@@ -31,9 +30,11 @@ import {
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
-import { getBulkResponseActionOutcome, type OnResponseAction } from '../utils/response-action';
+import { useReviewPostContext, type EditorPostId } from '../utils/review-post-context';
+import useBulkApply, { type BulkApplyStep } from '../utils/use-bulk-apply';
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
 import useLatestResponseAction from '../utils/use-latest-response-action';
+import useUndoSnapshots from '../utils/use-undo-snapshots';
 import BlockRef, { getBlockTypeName, type BlockSnapshot } from './block-ref';
 import ReviewCard, {
 	ReviewCardActions,
@@ -42,6 +43,7 @@ import ReviewCard, {
 } from './review-card';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
 import SplitScreenGuide from './split-screen-guide';
+import type { OnResponseAction } from '../utils/response-action';
 
 /**
  * Types mirroring the wpcom `AI_Editorial_Review_Ability` structured output.
@@ -100,8 +102,6 @@ interface GuidelineViolation {
 	issue: string;
 }
 
-type EditorPostId = number | string;
-
 interface AiEditorialReviewProps {
 	summary: string;
 	/**
@@ -136,32 +136,6 @@ interface AiEditorialReviewProps {
 }
 
 type EditStatus = 'pending' | 'applying' | 'accepted' | 'dismissed' | 'failed';
-type WpCurrentPostStore = { getCurrentPostId?: () => EditorPostId | null };
-type WpGlobal = Window & {
-	wp?: {
-		data?: {
-			select?: ( store: string ) => WpCurrentPostStore | undefined;
-		};
-	};
-};
-
-function normalizeEditorPostId( postId: unknown ): EditorPostId | undefined {
-	if ( typeof postId === 'number' && postId > 0 ) {
-		return postId;
-	}
-	if ( typeof postId === 'string' && postId.trim() ) {
-		return postId;
-	}
-	return undefined;
-}
-
-function getCurrentEditorPostIdFromStore(): EditorPostId | undefined {
-	if ( typeof window === 'undefined' ) {
-		return undefined;
-	}
-	const wp = ( window as WpGlobal ).wp;
-	return normalizeEditorPostId( wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.() );
-}
 
 /**
  * The five PanelBody sections we manage in controlled mode. Used as the
@@ -319,17 +293,7 @@ export default function AiEditorialReview( {
 		[ guidelineViolationsProp ]
 	);
 	// Review actions are only safe when the result can be tied to the current editor entity.
-	const currentPostId = useSelect( ( select ) => {
-		const editor = select( 'core/editor' ) as WpCurrentPostStore;
-		return normalizeEditorPostId( editor?.getCurrentPostId?.() );
-	}, [] );
-	const isPostStale = ! postId || ! currentPostId || String( postId ) !== String( currentPostId );
-	const isLatestPostContextStale = useCallback( () => {
-		// Async edit guards must read the editor store at call time so navigation
-		// between the click and delayed block write is observed immediately.
-		const latestCurrentPostId = getCurrentEditorPostIdFromStore() ?? currentPostId;
-		return ! postId || ! latestCurrentPostId || String( postId ) !== String( latestCurrentPostId );
-	}, [ currentPostId, postId ] );
+	const { isPostStale, isLatestPostContextStale } = useReviewPostContext( postId );
 
 	const [ editStatuses, setEditStatuses ] = useState< Record< number, EditStatus > >( {} );
 	const [ conflictStatuses, setConflictStatuses ] = useState< Record< number, EditStatus > >( {} );
@@ -337,18 +301,11 @@ export default function AiEditorialReview( {
 	const [ violationStatuses, setViolationStatuses ] = useState< Record< number, EditStatus > >(
 		{}
 	);
-	const [ bulkRunning, setBulkRunning ] = useState( false );
 	// Only one card shows "Copied" at a time; the shared hook owns that state.
 	const { clipboardSupported, copiedKey, copy: copyToClipboard } = useCopyToClipboard();
 
-	type UndoSnapshot = {
-		clientId: string;
-		contentBefore: string;
-		contentAfter: string;
-		editableAttribute?: string;
-	};
-	const editSnapshots = useRef< Record< number, UndoSnapshot > >( {} );
-	const conflictSnapshots = useRef< Record< number, UndoSnapshot > >( {} );
+	const editSnapshots = useUndoSnapshots< number >();
+	const conflictSnapshots = useUndoSnapshots< number >();
 
 	// Controlled open-state per PanelBody so the stats-strip click handler
 	// can programmatically expand a section before scrolling to it.
@@ -455,6 +412,10 @@ export default function AiEditorialReview( {
 	);
 	const focusCurrentPostBlock = isPostStale ? undefined : focusBlock;
 	const fireResponseAction = useLatestResponseAction( onResponseAction, isLatestPostContextStale );
+	const { bulkRunning, runBulkApply } = useBulkApply(
+		fireResponseAction,
+		isLatestPostContextStale
+	);
 
 	const handleRootMouseDown = useCallback( ( event: { target: EventTarget | null } ) => {
 		clearActiveBlockFocusUnlessBlockReferenceClick( event.target );
@@ -559,19 +520,7 @@ export default function AiEditorialReview( {
 				edit.current_text,
 				edit.editable_attribute
 			);
-			if (
-				result.success &&
-				result.clientId &&
-				typeof result.contentBefore === 'string' &&
-				typeof result.contentAfter === 'string'
-			) {
-				editSnapshots.current[ editIndex ] = {
-					clientId: result.clientId,
-					contentBefore: result.contentBefore,
-					contentAfter: result.contentAfter,
-					editableAttribute: result.editableAttribute,
-				};
-			}
+			editSnapshots.saveFromApplyResult( editIndex, result );
 			setEditStatus( editIndex, result.success ? 'accepted' : 'failed' );
 			fireResponseAction( {
 				action: 'accept',
@@ -579,36 +528,22 @@ export default function AiEditorialReview( {
 				outcome: result.success ? 'success' : 'failed',
 			} );
 		},
-		[ applyTextToBlock, fireResponseAction, isPostStale, setEditStatus ]
+		[ applyTextToBlock, editSnapshots, fireResponseAction, isPostStale, setEditStatus ]
 	);
 	const handleUndoEdit = useCallback(
 		( editIndex: number ) => {
 			if ( isPostStale ) {
 				return;
 			}
-			const snap = editSnapshots.current[ editIndex ];
-			if ( editStatuses[ editIndex ] === 'accepted' && ! snap ) {
+			const requireSnapshot = editStatuses[ editIndex ] === 'accepted';
+			if ( editSnapshots.undo( editIndex, requireSnapshot ) !== 'success' ) {
 				fireResponseAction( { action: 'undo', target: 'edit', outcome: 'failed' } );
 				return;
-			}
-			if ( snap ) {
-				if (
-					! undoBlockEdit(
-						snap.clientId,
-						snap.contentBefore,
-						snap.contentAfter,
-						snap.editableAttribute
-					)
-				) {
-					fireResponseAction( { action: 'undo', target: 'edit', outcome: 'failed' } );
-					return;
-				}
-				delete editSnapshots.current[ editIndex ];
 			}
 			setEditStatus( editIndex, 'pending' );
 			fireResponseAction( { action: 'undo', target: 'edit', outcome: 'success' } );
 		},
-		[ editStatuses, fireResponseAction, isPostStale, setEditStatus ]
+		[ editSnapshots, editStatuses, fireResponseAction, isPostStale, setEditStatus ]
 	);
 	const handleDismissEdit = useCallback(
 		( editIndex: number ) => {
@@ -678,19 +613,7 @@ export default function AiEditorialReview( {
 				candidate.current_text,
 				candidate.editable_attribute
 			);
-			if (
-				result.success &&
-				result.clientId &&
-				typeof result.contentBefore === 'string' &&
-				typeof result.contentAfter === 'string'
-			) {
-				conflictSnapshots.current[ conflictIndex ] = {
-					clientId: result.clientId,
-					contentBefore: result.contentBefore,
-					contentAfter: result.contentAfter,
-					editableAttribute: result.editableAttribute,
-				};
-			}
+			conflictSnapshots.saveFromApplyResult( conflictIndex, result );
 			setConflictStatus( conflictIndex, result.success ? 'accepted' : 'failed' );
 			fireResponseAction( {
 				action: 'accept',
@@ -700,6 +623,7 @@ export default function AiEditorialReview( {
 		},
 		[
 			applyTextToBlock,
+			conflictSnapshots,
 			fireResponseAction,
 			getBlockEditDisabledReason,
 			isPostStale,
@@ -711,29 +635,15 @@ export default function AiEditorialReview( {
 			if ( isPostStale ) {
 				return;
 			}
-			const snap = conflictSnapshots.current[ conflictIndex ];
-			if ( conflictStatuses[ conflictIndex ] === 'accepted' && ! snap ) {
+			const requireSnapshot = conflictStatuses[ conflictIndex ] === 'accepted';
+			if ( conflictSnapshots.undo( conflictIndex, requireSnapshot ) !== 'success' ) {
 				fireResponseAction( { action: 'undo', target: 'conflict', outcome: 'failed' } );
 				return;
-			}
-			if ( snap ) {
-				if (
-					! undoBlockEdit(
-						snap.clientId,
-						snap.contentBefore,
-						snap.contentAfter,
-						snap.editableAttribute
-					)
-				) {
-					fireResponseAction( { action: 'undo', target: 'conflict', outcome: 'failed' } );
-					return;
-				}
-				delete conflictSnapshots.current[ conflictIndex ];
 			}
 			setConflictStatus( conflictIndex, 'pending' );
 			fireResponseAction( { action: 'undo', target: 'conflict', outcome: 'success' } );
 		},
-		[ conflictStatuses, fireResponseAction, isPostStale, setConflictStatus ]
+		[ conflictSnapshots, conflictStatuses, fireResponseAction, isPostStale, setConflictStatus ]
 	);
 	const handleDismissConflict = useCallback(
 		( conflictIndex: number ) => {
@@ -789,7 +699,7 @@ export default function AiEditorialReview( {
 	const totalPendingCount = pendingAiConflictCount + pendingEditCount;
 
 	const handleAcceptAllAi = useCallback( async () => {
-		if ( isPostStale || bulkRunning || totalPendingCount === 0 ) {
+		if ( isPostStale || totalPendingCount === 0 ) {
 			return;
 		}
 		let bulkTarget: 'edit' | 'conflict' | 'mixed' = 'edit';
@@ -798,26 +708,20 @@ export default function AiEditorialReview( {
 		} else if ( pendingAiConflictCount > 0 ) {
 			bulkTarget = 'conflict';
 		}
-		let successCount = 0;
-		let failureCount = 0;
-		setBulkRunning( true );
-		try {
-			// Sequential so users see the shimmer on each block as it applies;
-			// parallel would race the same dispatch and confuse the state store.
-			for ( let i = 0; i < conflicts.length; i++ ) {
-				if ( isLatestPostContextStale() ) {
-					return;
-				}
-				const status = conflictStatuses[ i ] ?? 'pending';
-				if ( status !== 'pending' && status !== 'failed' ) {
-					continue;
-				}
-				const aiCandidate = findApplicableAiCandidate( conflicts[ i ] );
-				if ( ! aiCandidate ) {
-					continue;
-				}
+		// Sequential steps so users see the shimmer on each block as it applies;
+		// parallel would race the same dispatch and confuse the state store.
+		const steps: BulkApplyStep[] = [];
+		conflicts.forEach( ( conflict, i ) => {
+			const status = conflictStatuses[ i ] ?? 'pending';
+			if ( status !== 'pending' && status !== 'failed' ) {
+				return;
+			}
+			const aiCandidate = findApplicableAiCandidate( conflict );
+			if ( ! aiCandidate ) {
+				return;
+			}
+			steps.push( async () => {
 				setConflictStatus( i, 'applying' );
-				// eslint-disable-next-line no-await-in-loop
 				const result = await applyTextToBlock(
 					aiCandidate.block_index,
 					aiCandidate.text,
@@ -826,47 +730,28 @@ export default function AiEditorialReview( {
 				);
 				if ( isLatestPostContextStale() ) {
 					setConflictStatus( i, status );
-					return;
+					return undefined;
 				}
-				if (
-					result.success &&
-					result.clientId &&
-					typeof result.contentBefore === 'string' &&
-					typeof result.contentAfter === 'string'
-				) {
-					conflictSnapshots.current[ i ] = {
-						clientId: result.clientId,
-						contentBefore: result.contentBefore,
-						contentAfter: result.contentAfter,
-						editableAttribute: result.editableAttribute,
-					};
-				}
-				if ( result.success ) {
-					successCount++;
-				} else {
-					failureCount++;
-				}
+				conflictSnapshots.saveFromApplyResult( i, result );
 				setConflictStatus( i, result.success ? 'accepted' : 'failed' );
+				return result.success;
+			} );
+		} );
+		suggested_edits.forEach( ( edit, i ) => {
+			const status = editStatuses[ i ] ?? 'pending';
+			if ( status !== 'pending' && status !== 'failed' ) {
+				return;
 			}
-			for ( let i = 0; i < suggested_edits.length; i++ ) {
-				if ( isLatestPostContextStale() ) {
-					return;
-				}
-				const status = editStatuses[ i ] ?? 'pending';
-				if ( status !== 'pending' && status !== 'failed' ) {
-					continue;
-				}
-				const edit = suggested_edits[ i ];
-				if ( isManualSuggestedEdit( edit ) ) {
-					continue;
-				}
-				if (
-					getBlockEditDisabledReason( edit.block_index, edit.current_text, edit.editable_attribute )
-				) {
-					continue;
-				}
+			if ( isManualSuggestedEdit( edit ) ) {
+				return;
+			}
+			if (
+				getBlockEditDisabledReason( edit.block_index, edit.current_text, edit.editable_attribute )
+			) {
+				return;
+			}
+			steps.push( async () => {
 				setEditStatus( i, 'applying' );
-				// eslint-disable-next-line no-await-in-loop
 				const result = await applyTextToBlock(
 					edit.block_index,
 					edit.suggested_text,
@@ -875,55 +760,30 @@ export default function AiEditorialReview( {
 				);
 				if ( isLatestPostContextStale() ) {
 					setEditStatus( i, status );
-					return;
+					return undefined;
 				}
-				if (
-					result.success &&
-					result.clientId &&
-					typeof result.contentBefore === 'string' &&
-					typeof result.contentAfter === 'string'
-				) {
-					editSnapshots.current[ i ] = {
-						clientId: result.clientId,
-						contentBefore: result.contentBefore,
-						contentAfter: result.contentAfter,
-						editableAttribute: result.editableAttribute,
-					};
-				}
-				if ( result.success ) {
-					successCount++;
-				} else {
-					failureCount++;
-				}
+				editSnapshots.saveFromApplyResult( i, result );
 				setEditStatus( i, result.success ? 'accepted' : 'failed' );
-			}
-			if ( isLatestPostContextStale() ) {
-				return;
-			}
-			fireResponseAction( {
-				action: 'bulk_accept',
-				target: bulkTarget,
-				outcome: getBulkResponseActionOutcome( successCount, failureCount ),
-				itemCount: successCount + failureCount,
+				return result.success;
 			} );
-		} finally {
-			setBulkRunning( false );
-		}
+		} );
+		await runBulkApply( bulkTarget, steps );
 	}, [
-		bulkRunning,
 		totalPendingCount,
 		pendingAiConflictCount,
 		pendingEditCount,
 		conflicts,
 		conflictStatuses,
+		conflictSnapshots,
 		suggested_edits,
 		editStatuses,
+		editSnapshots,
 		applyTextToBlock,
 		findApplicableAiCandidate,
-		fireResponseAction,
 		getBlockEditDisabledReason,
 		isLatestPostContextStale,
 		isPostStale,
+		runBulkApply,
 		setConflictStatus,
 		setEditStatus,
 	] );
