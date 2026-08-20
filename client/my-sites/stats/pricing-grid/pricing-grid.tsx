@@ -51,6 +51,10 @@ interface PricingGridProps {
 	 * already have a plan". Redeeming a licence key is what that action offers a connected site,
 	 * and it is no use before then: the plan is held against a WordPress.com account this site is
 	 * not attached to yet, so connecting is what surfaces it.
+	 *
+	 * Its presence is what tells the two apart, the same way `onSelectFree` and `onSelectPaid`
+	 * replace their CTAs: a separate flag would have to agree with the handler, and disagreeing
+	 * would render a button that does nothing.
 	 */
 	onSelectExistingPlan?: () => void;
 	/**
@@ -63,6 +67,9 @@ interface PricingGridProps {
 
 /** My Jetpack's licence activation screen, where Jetpack Search's upsell sends its own visitors. */
 const LICENSE_ACTIVATION_PATH = 'admin.php?page=my-jetpack#/add-license';
+
+/** How long Tracks needs to get a queued event out before the page is allowed to go. */
+const TRACKS_FLUSH_DELAY = 250;
 
 /**
  * Replicates the Jetpack Search upsell's PricingTable rendering (DOM structure and
@@ -217,16 +224,30 @@ export default function PricingGrid( {
 		trackStatsAnalyticsEvent( 'stats_pricing_grid_existing_plan_cta_clicked', {
 			blog_id: siteId,
 			cta: 'existing_plan',
+			...eventProps,
 		} );
 
 		onSelectExistingPlan?.();
 	};
 
-	const goToLicenseActivation = () => {
+	const goToLicenseActivation = ( event: React.MouseEvent, url: string ) => {
 		trackStatsAnalyticsEvent( 'stats_pricing_grid_license_key_cta_clicked', {
 			blog_id: siteId,
 			cta: 'license_key',
+			...eventProps,
 		} );
+
+		// My Jetpack is outside the router's base path, so nothing intercepts the href and the page
+		// load would start in the same tick — cancelling the request Tracks has only queued. A
+		// modified click opens elsewhere and leaves this page alone, so let it through untouched.
+		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
+			return;
+		}
+
+		event.preventDefault();
+		setTimeout( () => {
+			window.location.href = url;
+		}, TRACKS_FLUSH_DELAY );
 	};
 
 	// The page header's action slot, where the Jetpack Search upsell puts "Use license key".
@@ -244,12 +265,16 @@ export default function PricingGrid( {
 			return null;
 		}
 
+		const licenseActivationUrl = `${ adminUrl }${ LICENSE_ACTIVATION_PATH }`;
+
 		return (
 			<Button
 				variant="secondary"
 				size="compact"
-				href={ `${ adminUrl }${ LICENSE_ACTIVATION_PATH }` }
-				onClick={ goToLicenseActivation }
+				href={ licenseActivationUrl }
+				onClick={ ( event: React.MouseEvent ) =>
+					goToLicenseActivation( event, licenseActivationUrl )
+				}
 			>
 				{ translate( 'Use license key' ) }
 			</Button>
