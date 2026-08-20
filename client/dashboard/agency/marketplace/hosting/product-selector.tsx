@@ -1,8 +1,10 @@
 import {
+	Icon,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import pressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import vipLogo from 'calypso/assets/images/a8c-for-agencies/vip-full-logo.svg';
@@ -45,18 +47,16 @@ export default function ProductSelector( { brands, selected, onSelect }: Product
 						} }
 					>
 						<CardBody>
-							<VStack spacing={ 2 }>
-								<HStack spacing={ 2 } justify="flex-start">
-									<span
-										className={ clsx( 'marketplace-hosting__selector-radio', {
-											'is-selected': isSelected,
-										} ) }
-									/>
+							<VStack spacing={ 3 }>
+								<HStack justify="space-between" alignment="center">
 									<img
 										src={ BRAND_LOGOS[ brand.key ] }
 										alt={ brand.name }
 										className="marketplace-hosting__selector-logo"
 									/>
+									{ isSelected && (
+										<Icon icon={ check } className="marketplace-hosting__selector-check" />
+									) }
 								</HStack>
 								<Text variant="muted">{ brand.description }</Text>
 								<Text weight={ 500 }>{ brand.priceNote }</Text>
