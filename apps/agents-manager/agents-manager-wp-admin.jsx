@@ -7,9 +7,14 @@
 import './config';
 import { createRoot } from 'react-dom/client';
 import AgentsManagerWithProvider from './agents-manager-with-provider';
+import JetpackAiSidebarPageGate from './jetpack-ai-sidebar-page-gate';
 
 const masterbarTarget = document.getElementById( 'agents-manager-masterbar' );
 
 if ( masterbarTarget ) {
-	createRoot( masterbarTarget ).render( <AgentsManagerWithProvider /> );
+	createRoot( masterbarTarget ).render(
+		<JetpackAiSidebarPageGate>
+			<AgentsManagerWithProvider />
+		</JetpackAiSidebarPageGate>
+	);
 }

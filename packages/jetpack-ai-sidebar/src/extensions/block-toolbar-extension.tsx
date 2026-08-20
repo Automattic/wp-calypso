@@ -5,6 +5,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useJetpackAiSidebarVisibility } from '../utils/page-editor-eligibility';
 import { isBlockToolbarButtonEnabled } from '../utils/preview-features';
 import type { ComponentType } from 'react';
 
@@ -94,8 +95,9 @@ export const withJetpackAiToolbarButton = createHigherOrderComponent(
 	( BlockEdit: ComponentType< BlockEditProps > ) => {
 		const JetpackAiToolbarButtonInner = ( props: BlockEditProps ) => {
 			const isChatVisible = useAgentsManagerChatVisible();
+			const { isVisible: isSidebarVisible } = useJetpackAiSidebarVisibility();
 
-			if ( ! isBlockToolbarButtonEnabled() ) {
+			if ( ! isBlockToolbarButtonEnabled() || ! isSidebarVisible ) {
 				return <BlockEdit { ...props } />;
 			}
 
