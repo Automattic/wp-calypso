@@ -180,7 +180,15 @@ export class DomainSearchComponent {
 	 * Clicks on the button to bring over an external domain to WordPress.com
 	 */
 	async clickBringItOver(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'Bring it over' } ).click();
+		try {
+			await this.page.getByRole( 'button', { name: 'Bring it over' } ).click();
+		} catch ( error ) {
+			// The button is rendered off the availability query, so a `domain-availability`
+			// ban leaves it absent and the click times out. Checking here rather than before
+			// the click keeps a button that did render clickable.
+			handleActiveThrottles( [ 'domain-availability' ] );
+			throw error;
+		}
 	}
 
 	/**
