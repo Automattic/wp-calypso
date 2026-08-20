@@ -1,7 +1,7 @@
 .marketplace-hosting__selector {
 	display: grid;
 	grid-template-columns: repeat( 3, 1fr );
-	gap: 16px;
+	gap: 24px;
 
 	@media ( max-width: 782px ) {
 		grid-template-columns: 1fr;
@@ -31,9 +31,13 @@
 
 .marketplace-hosting__configurator-row {
 	display: grid;
-	grid-template-columns: 2fr 1fr;
-	gap: 16px;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 24px;
 	align-items: start;
+
+	> :first-child {
+		grid-column: span 2;
+	}
 
 	.marketplace-hosting__summary {
 		position: sticky;
@@ -58,7 +62,7 @@
 .marketplace-hosting__grid-4 {
 	display: grid;
 	grid-template-columns: repeat( 4, 1fr );
-	gap: 16px;
+	gap: 24px;
 	align-items: stretch;
 
 	@media ( max-width: 1080px ) {
@@ -73,7 +77,7 @@
 .marketplace-hosting__grid-3 {
 	display: grid;
 	grid-template-columns: repeat( 3, 1fr );
-	gap: 16px;
+	gap: 24px;
 	align-items: stretch;
 
 	@media ( max-width: 1080px ) {
@@ -84,7 +88,7 @@
 .marketplace-hosting__grid-2 {
 	display: grid;
 	grid-template-columns: repeat( 2, 1fr );
-	gap: 16px;
+	gap: 24px;
 	align-items: stretch;
 
 	@media ( max-width: 782px ) {
@@ -151,4 +155,16 @@
 	tbody tr:last-child td {
 		border-block-end: none;
 	}
+}
+
+.marketplace-hosting__term-toggle .components-toggle-control label,
+.marketplace-hosting__term-toggle .components-base-control__label {
+	border: 0;
+	clip-path: inset( 50% );
+	block-size: 1px;
+	inline-size: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
 }

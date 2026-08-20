@@ -128,13 +128,14 @@ export default function MarketplaceHosting() {
 								<Text variant={ term === 'monthly' ? undefined : 'muted' }>
 									{ __( 'Monthly' ) }
 								</Text>
-								<ToggleControl
-									__nextHasNoMarginBottom
-									checked={ term === 'yearly' }
-									label={ __( 'Bill yearly' ) }
-									hideLabelFromVision
-									onChange={ ( checked ) => setTerm( checked ? 'yearly' : 'monthly' ) }
-								/>
+								<span className="marketplace-hosting__term-toggle">
+									<ToggleControl
+										__nextHasNoMarginBottom
+										checked={ term === 'yearly' }
+										label={ __( 'Bill yearly' ) }
+										onChange={ ( checked ) => setTerm( checked ? 'yearly' : 'monthly' ) }
+									/>
+								</span>
 								<Text variant={ term === 'yearly' ? undefined : 'muted' }>{ __( 'Yearly' ) }</Text>
 							</HStack>
 							<ToggleControl
