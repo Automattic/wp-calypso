@@ -94,4 +94,18 @@ describe( 'MasterbarAiChatButton', () => {
 			{ section: 'test-section', action: 'open' }
 		);
 	} );
+
+	it( 'records an unknown section when no section name is set', async () => {
+		setChatState( { isOpen: false, isMinimized: false } );
+
+		renderWithProvider( <MasterbarAiChatButton />, {
+			reducers: { ui: () => ( { section: { name: null } } ) },
+		} );
+		await userEvent.click( screen.getByRole( 'button' ) );
+
+		expect( recordFullNameAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_masterbar_agents_manager_ai_chat_clicked',
+			{ section: 'unknown', action: 'open' }
+		);
+	} );
 } );

@@ -1,11 +1,13 @@
 /**
  * Central Tracks wrappers for the Agents Manager.
  *
- * Two record functions because each injects a different base-prop set:
+ * Three record functions over two base-prop sets:
  * - `recordBigSkyTracksEvent` keeps Big Sky's exact event names and props so its
  *   live Looker dashboard keeps working. Removable once that parity is dropped.
  * - `recordAgentsManagerTracksEvent` uses the unified property schema shared across the new
- *   AI products.
+ *   AI products, under the `calypso_agents_manager_` prefix.
+ * - `recordFullNameAgentsManagerTracksEvent` sends the same unified props under a
+ *   caller-supplied full event name, for entry points whose events carry a host prefix.
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
