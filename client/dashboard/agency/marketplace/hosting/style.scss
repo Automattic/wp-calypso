@@ -157,44 +157,13 @@
 	}
 }
 
-.marketplace-hosting__term-toggle .components-toggle-control label,
-.marketplace-hosting__term-toggle .components-base-control__label {
-	border: 0;
-	clip-path: inset( 50% );
-	block-size: 1px;
-	inline-size: 1px;
-	margin: -1px;
-	overflow: hidden;
-	padding: 0;
-	position: absolute;
-}
 
 .marketplace-hosting__cart {
 	inline-size: 320px;
 	padding: 16px;
 }
 
-.marketplace-hosting__referral-guide {
-	max-inline-size: 512px;
-}
 
-.marketplace-hosting__referral-guide .components-guide__page {
-	justify-content: flex-start;
-}
 
-.marketplace-hosting__referral-guide .components-guide__container {
-	inline-size: 100%;
-}
 
-.marketplace-hosting__referral-guide img,
-.marketplace-hosting__referral-guide video {
-	display: block;
-	inline-size: 100%;
-	block-size: 260px;
-	object-fit: cover;
-	object-position: top;
-}
 
-.marketplace-hosting__referral-guide .components-guide__page > div:last-child {
-	padding: 24px;
-}

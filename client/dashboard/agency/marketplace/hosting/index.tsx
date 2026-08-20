@@ -46,7 +46,7 @@ const REFERRAL_GUIDE_STEPS = [
 		description: __(
 			'Manage your clients’ products without the burden of managing the billing. Assemble a cart of products, send a request for payment to your clients, and make commissions based on what you sell.'
 		),
-		media: <img src={ referralStep1 } alt="" />,
+		media: <img src={ referralStep1 } alt="" width={ 400 } />,
 	},
 	{
 		title: __( 'Add the products your client needs' ),
@@ -101,7 +101,7 @@ const REFERRAL_GUIDE_STEPS = [
 		description: __(
 			'Clients will be billed at the end of every month for their products. When they pay, you’ll make commissions on those products, which you’ll be able to manage under the Referrals section, soon.'
 		),
-		media: <img src={ referralStep5 } alt="" />,
+		media: <img src={ referralStep5 } alt="" width={ 400 } />,
 	},
 ];
 
@@ -356,14 +356,12 @@ export default function MarketplaceHosting() {
 								<Text variant={ term === 'monthly' ? undefined : 'muted' }>
 									{ __( 'Monthly' ) }
 								</Text>
-								<span className="marketplace-hosting__term-toggle">
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ term === 'yearly' }
-										label={ __( 'Bill yearly' ) }
-										onChange={ ( checked ) => setTerm( checked ? 'yearly' : 'monthly' ) }
-									/>
-								</span>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ term === 'yearly' }
+									label={ undefined }
+									onChange={ ( checked ) => setTerm( checked ? 'yearly' : 'monthly' ) }
+								/>
 								<Text variant={ term === 'yearly' ? undefined : 'muted' }>{ __( 'Yearly' ) }</Text>
 							</HStack>
 							<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
