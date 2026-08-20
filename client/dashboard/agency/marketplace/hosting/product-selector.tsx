@@ -2,11 +2,19 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
-	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import clsx from 'clsx';
+import pressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
+import vipLogo from 'calypso/assets/images/a8c-for-agencies/vip-full-logo.svg';
+import wpcomLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
 import { Card, CardBody } from '../../../components/card';
 import type { HostingBrand } from './mock-data';
+
+const BRAND_LOGOS: Record< HostingBrand[ 'key' ], string > = {
+	wpcom: wpcomLogo,
+	pressable: pressableLogo,
+	vip: vipLogo,
+};
 
 type ProductSelectorProps = {
 	brands: HostingBrand[];
@@ -44,9 +52,11 @@ export default function ProductSelector( { brands, selected, onSelect }: Product
 											'is-selected': isSelected,
 										} ) }
 									/>
-									<Heading level={ 3 } size={ 16 }>
-										{ brand.name }
-									</Heading>
+									<img
+										src={ BRAND_LOGOS[ brand.key ] }
+										alt={ brand.name }
+										className="marketplace-hosting__selector-logo"
+									/>
 								</HStack>
 								<Text variant="muted">{ brand.description }</Text>
 								<Text weight={ 500 }>{ brand.priceNote }</Text>

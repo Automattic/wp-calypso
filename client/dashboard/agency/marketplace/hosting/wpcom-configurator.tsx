@@ -12,6 +12,7 @@ import {
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import { useState } from 'react';
+import wpcomLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import { getNextDiscountNudge, getTieredPrice, formatUSD, wpcomHosting } from './mock-data';
 
@@ -21,9 +22,7 @@ const EVERY_SITE_INCLUDES = [
 	'50GB of storage',
 	'Free staging site',
 	'Unrestricted bandwidth',
-	'Global CDN with 28+ locations',
-	'Real-time backups',
-	'24/7 expert support',
+	'Everything listed below',
 ];
 
 type WpcomConfiguratorProps = {
@@ -46,10 +45,12 @@ export default function WpcomConfigurator( { term, onAddToCart }: WpcomConfigura
 		<Card>
 			<CardBody>
 				<VStack spacing={ 5 }>
-					<VStack spacing={ 1 }>
-						<Heading level={ 2 } size={ 16 }>
-							{ __( 'WordPress.com' ) }
-						</Heading>
+					<VStack spacing={ 2 }>
+						<img
+							src={ wpcomLogo }
+							alt="WordPress.com"
+							className="marketplace-hosting__brand-logo"
+						/>
 						<Text variant="muted">{ __( 'Managed hosting built by Automattic' ) }</Text>
 					</VStack>
 
@@ -102,8 +103,17 @@ export default function WpcomConfigurator( { term, onAddToCart }: WpcomConfigura
 
 					<VStack spacing={ 3 }>
 						<Heading level={ 3 } size={ 13 }>
-							{ __( 'Every site includes' ) }
+							{ sprintf(
+								/* translators: %d: number of WordPress.com sites */
+								_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
+								quantity
+							) }
 						</Heading>
+						<Text variant="muted">
+							{ __(
+								'Enjoy cumulative volume discounts on WordPress.com site purchases, regardless of when you buy. Every site includes:'
+							) }
+						</Text>
 						<div className="marketplace-hosting__includes">
 							{ EVERY_SITE_INCLUDES.map( ( feature ) => (
 								<HStack key={ feature } spacing={ 2 } justify="flex-start" alignment="center">

@@ -10,8 +10,10 @@ import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
+import jetpackLogo from '../exclusive-offers/images/jetpack-descriptor.svg';
+import { JETPACK_COMPLETE_FEATURES, testimonialsByBrand } from './mock-data';
 
-const FEATURE_COLUMNS = [
+const FEATURE_COLUMNS = ( brand: 'wpcom' | 'pressable' ) => [
 	{
 		title: __( 'Performance' ),
 		features: [
@@ -21,7 +23,7 @@ const FEATURE_COLUMNS = [
 			'High-burst capacity',
 			'Automated datacenter failover',
 			'Extremely fast DNS with SSL',
-			'10 PHP workers w/ auto-scaling',
+			brand === 'pressable' ? '5 PHP workers w/ auto-scaling' : '10 PHP workers w/ auto-scaling',
 			'Uptime monitoring',
 		],
 	},
@@ -62,28 +64,9 @@ const FEATURE_COLUMNS = [
 			'In-depth site analytics dashboard',
 			'Elastic-powered search',
 			'4K, unbranded VideoPress player',
-			'Free domain for one year',
+			...( brand === 'wpcom' ? [ 'Free domain for one year' ] : [] ),
 			'Smart redirects',
 		],
-	},
-];
-
-const TESTIMONIALS = [
-	{
-		quote:
-			'We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com.',
-		name: 'Ajit Bohra',
-		role: 'Founder, LUBUS',
-		linkLabel: 'lubus.in',
-		linkUrl: 'https://lubus.in',
-	},
-	{
-		quote:
-			'WordPress.com has been crucial to my agency’s growth. Its intuitive UI allows me to quickly create sleek, functional websites for my clients, and their reliable hosting and support enable me to rest easy, knowing my sites are in good hands.',
-		name: 'Brian Lalli',
-		role: 'President, Moon Rooster LLC',
-		linkLabel: 'moonrooster.com',
-		linkUrl: 'https://moonrooster.com',
 	},
 ];
 
@@ -105,7 +88,15 @@ const RELATIONSHIP_CARDS = [
 	},
 ];
 
-function CheckList( { items }: { items: string[] } ) {
+export function Eyebrow( { children }: { children: React.ReactNode } ) {
+	return (
+		<Text variant="muted" size={ 11 } upperCase weight={ 500 }>
+			{ children }
+		</Text>
+	);
+}
+
+export function CheckList( { items }: { items: string[] } ) {
 	return (
 		<VStack spacing={ 2 }>
 			{ items.map( ( item ) => (
@@ -118,12 +109,20 @@ function CheckList( { items }: { items: string[] } ) {
 	);
 }
 
-export function IncludedFeatures() {
+export function IncludedFeatures( { brand }: { brand: 'wpcom' | 'pressable' } ) {
 	return (
 		<VStack spacing={ 4 }>
-			<SectionHeader title={ __( 'Included with every WordPress.com site' ) } level={ 2 } />
+			<SectionHeader
+				prefix={ <Eyebrow>{ __( 'World-class functionality' ) }</Eyebrow> }
+				title={
+					brand === 'pressable'
+						? __( 'Included with every Pressable site' )
+						: __( 'Included with every WordPress.com site' )
+				}
+				level={ 2 }
+			/>
 			<div className="marketplace-hosting__grid-4">
-				{ FEATURE_COLUMNS.map( ( column ) => (
+				{ FEATURE_COLUMNS( brand ).map( ( column ) => (
 					<Card key={ column.title }>
 						<CardBody>
 							<VStack spacing={ 4 }>
@@ -140,12 +139,22 @@ export function IncludedFeatures() {
 	);
 }
 
-export function Testimonials() {
+const TESTIMONIAL_HEADINGS: Record< 'wpcom' | 'pressable' | 'vip', string > = {
+	wpcom: __( 'Love for WordPress.com hosting' ),
+	pressable: __( 'Love for Pressable hosting' ),
+	vip: __( 'Love for VIP hosting' ),
+};
+
+export function Testimonials( { brand }: { brand: 'wpcom' | 'pressable' | 'vip' } ) {
 	return (
 		<VStack spacing={ 4 }>
-			<SectionHeader title={ __( 'Love for WordPress.com hosting' ) } level={ 2 } />
+			<SectionHeader
+				prefix={ <Eyebrow>{ __( 'What agencies say' ) }</Eyebrow> }
+				title={ TESTIMONIAL_HEADINGS[ brand ] }
+				level={ 2 }
+			/>
 			<div className="marketplace-hosting__grid-2">
-				{ TESTIMONIALS.map( ( testimonial ) => (
+				{ testimonialsByBrand[ brand ].map( ( testimonial ) => (
 					<Card key={ testimonial.name }>
 						<CardBody>
 							<VStack spacing={ 4 }>
@@ -166,10 +175,43 @@ export function Testimonials() {
 	);
 }
 
+export function JetpackComplete() {
+	return (
+		<VStack spacing={ 4 }>
+			<SectionHeader
+				prefix={ <Eyebrow>{ __( 'Supercharge your clients’ sites' ) }</Eyebrow> }
+				title={ __( 'Jetpack Complete included' ) }
+				description={ __(
+					'Every Pressable site comes with a free Jetpack Complete license — a $899/year/site value.'
+				) }
+				level={ 2 }
+				decoration={ <img src={ jetpackLogo } alt="Jetpack" height={ 24 } /> }
+			/>
+			<Card>
+				<CardBody>
+					<div className="marketplace-hosting__includes">
+						{ JETPACK_COMPLETE_FEATURES.map( ( feature ) => (
+							<HStack key={ feature } spacing={ 2 } justify="flex-start" alignment="center">
+								<Icon icon={ check } className="marketplace-hosting__check" />
+								<Text>{ feature }</Text>
+							</HStack>
+						) ) }
+						<HStack spacing={ 2 } justify="flex-start" alignment="center">
+							<Icon icon={ check } className="marketplace-hosting__check" />
+							<ExternalLink href="https://jetpack.com/complete/">{ __( 'And more' ) }</ExternalLink>
+						</HStack>
+					</div>
+				</CardBody>
+			</Card>
+		</VStack>
+	);
+}
+
 export function ClientRelationships() {
 	return (
 		<VStack spacing={ 4 }>
 			<SectionHeader
+				prefix={ <Eyebrow>{ __( 'How Automattic can help' ) }</Eyebrow> }
 				title={ __( 'Improve your client relationships with our hosting' ) }
 				level={ 2 }
 			/>

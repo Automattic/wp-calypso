@@ -2,7 +2,8 @@
  * Prototype-only pricing data, shaped after the `/agency/products` response
  * (see APIProductFamilyProduct in client/a8c-for-agencies), so it can be
  * replaced by an @automattic/api-queries factory without reshaping the UI.
- * The WordPress.com yearly ladder mirrors production; monthly figures are
+ * The WordPress.com yearly ladder and the Pressable Signature plan specs
+ * mirror production; monthly figures and unlabeled Signature prices are
  * placeholders pending real Billing Dragon data.
  */
 
@@ -59,13 +60,103 @@ export const wpcomHosting: HostingProduct = {
 	tier_yearly_prices: WPCOM_YEARLY_LADDER,
 };
 
-export const pressableSignature1: HostingProduct = {
-	name: 'Pressable Signature 1',
-	slug: 'pressable-signature-1',
-	family_slug: 'pressable-hosting',
-	currency: 'USD',
-	monthly_price: 25,
-	yearly_price: 250,
+export interface PressablePlan {
+	slug: string;
+	name: string;
+	install: number;
+	visits: number;
+	storage: number;
+	worker: number;
+	yearly_price?: number;
+}
+
+export const pressableSignaturePlans: PressablePlan[] = [
+	{
+		slug: 'pressable-signature-1',
+		name: 'Signature 1',
+		install: 1,
+		visits: 30000,
+		storage: 20,
+		worker: 5,
+		yearly_price: 250,
+	},
+	{
+		slug: 'pressable-signature-2',
+		name: 'Signature 2',
+		install: 3,
+		visits: 50000,
+		storage: 30,
+		worker: 5,
+	},
+	{
+		slug: 'pressable-signature-3',
+		name: 'Signature 3',
+		install: 5,
+		visits: 75000,
+		storage: 35,
+		worker: 5,
+	},
+	{
+		slug: 'pressable-signature-4',
+		name: 'Signature 4',
+		install: 10,
+		visits: 150000,
+		storage: 50,
+		worker: 5,
+	},
+	{
+		slug: 'pressable-signature-5',
+		name: 'Signature 5',
+		install: 20,
+		visits: 400000,
+		storage: 80,
+		worker: 5,
+	},
+	{
+		slug: 'pressable-signature-6',
+		name: 'Signature 6',
+		install: 50,
+		visits: 1000000,
+		storage: 200,
+		worker: 5,
+	},
+	{
+		slug: 'pressable-signature-7',
+		name: 'Signature 7',
+		install: 80,
+		visits: 1600000,
+		storage: 275,
+		worker: 5,
+	},
+	{
+		slug: 'pressable-signature-8',
+		name: 'Signature 8',
+		install: 100,
+		visits: 2000000,
+		storage: 325,
+		worker: 5,
+	},
+	{
+		slug: 'pressable-signature-9',
+		name: 'Signature 9',
+		install: 120,
+		visits: 2400000,
+		storage: 375,
+		worker: 5,
+	},
+	{
+		slug: 'pressable-signature-10',
+		name: 'Signature 10',
+		install: 150,
+		visits: 3000000,
+		storage: 450,
+		worker: 5,
+	},
+];
+
+export const PRESSABLE_OVERAGES = {
+	storagePerGB: 0.5,
+	trafficPer10kVisits: 8,
 };
 
 export const hostingBrands: HostingBrand[] = [
@@ -83,7 +174,6 @@ export const hostingBrands: HostingBrand[] = [
 		description:
 			'Best for growing portfolios. Plans that pool traffic and storage across all your client sites.',
 		priceNote: 'From US$250 per year',
-		product: pressableSignature1,
 	},
 	{
 		key: 'vip',
@@ -92,6 +182,104 @@ export const hostingBrands: HostingBrand[] = [
 			'Best for enterprise clients. Enterprise-grade security, scale, and guided onboarding.',
 		priceNote: 'Custom pricing',
 	},
+];
+
+export interface Testimonial {
+	quote: string;
+	name: string;
+	role: string;
+	linkLabel: string;
+	linkUrl: string;
+}
+
+export const testimonialsByBrand: Record< 'wpcom' | 'pressable' | 'vip', Testimonial[] > = {
+	wpcom: [
+		{
+			quote:
+				'We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com.',
+			name: 'Ajit Bohra',
+			role: 'Founder, LUBUS',
+			linkLabel: 'lubus.in',
+			linkUrl: 'https://lubus.in',
+		},
+		{
+			quote:
+				'WordPress.com has been crucial to my agency’s growth. Its intuitive UI allows me to quickly create sleek, functional websites for my clients, and their reliable hosting and support enable me to rest easy, knowing my sites are in good hands.',
+			name: 'Brian Lalli',
+			role: 'President, Moon Rooster LLC',
+			linkLabel: 'moonrooster.com',
+			linkUrl: 'https://moonrooster.com',
+		},
+	],
+	pressable: [
+		{
+			quote:
+				'We needed a hosting provider that was as knowledgeable about WordPress as we are. With Pressable’s affiliation with Automattic, the same people behind WordPress.com and WordPress VIP, we knew we’d found the right home for our client portfolio.',
+			name: 'Ben Giordano',
+			role: 'Founder, Freshy',
+			linkLabel: 'freshysites.com',
+			linkUrl: 'https://freshysites.com',
+		},
+		{
+			quote:
+				'As an agency with hundreds of clients, Pressable changed the game for our ability to grow as a business and offer best-in-class products for our clients. With fantastic support, superior uptime, and solutions to make even the largest challenges possible, Pressable is always there.',
+			name: 'Justin Barrett',
+			role: 'Director of Technology, Autoshop Solutions',
+			linkLabel: 'autoshopsolutions.com',
+			linkUrl: 'https://autoshopsolutions.com',
+		},
+	],
+	vip: [
+		{
+			quote:
+				'In the past, the staff didn’t touch the CMS. They wrote things in Word, sent it to the production team, and they put it online. With WordPress, that workflow is changing slowly and dramatically. We’ve trained many of our content creators in the CMS. And, the closer the content creators are to it, the more creatively they are able to think about it.',
+			name: 'David Rousseau',
+			role: 'Vice President, Kaiser Family Foundation',
+			linkLabel: 'Read the case study',
+			linkUrl:
+				'https://wpvip.com/case-studies/evolving-the-kaiser-family-foundations-data-rich-platforms/',
+		},
+		{
+			quote:
+				'With Gutenberg, we were able to publish a breaking news story in two minutes versus five minutes in Classic [WordPress]. The main reason for this is the reusable blocks which have been renamed “The Game Changer.”',
+			name: 'Joel Davies',
+			role: 'Head of Editorial Operations, News UK',
+			linkLabel: 'Read the case study',
+			linkUrl:
+				'https://wpvip.com/case-studies/behind-the-scenes-of-news-uks-rampant-speed-to-value-with-gutenberg/',
+		},
+	],
+};
+
+export const JETPACK_COMPLETE_FEATURES = [
+	'VaultPress Backup w/ 1TB storage',
+	'Scan w/ WAF',
+	'Akismet Anti-spam w/ 60k API calls/mo',
+	'Stats (Paid) w/ 100k views/mo',
+	'VideoPress w/ 1TB storage',
+	'Boost w/ Auto CSS Generation',
+	'Social Advanced w/ unlimited shares',
+	'Site Search up to 100k records and 100k requests/mo',
+	'CRM Entrepreneur',
+	'All Jetpack features',
+];
+
+export const VIP_PITCH_CAPABILITIES = [
+	'Unmatched flexibility to build a customized web experience',
+	'Tools to increase customer engagement',
+	'Scalability to ensure top-notch site performance during campaigns or events',
+];
+
+export const VIP_CAPABILITIES = [
+	'Rapid content authoring',
+	'Experience creation',
+	'Content guidance',
+	'Headless CMS',
+	'Development tools',
+	'Scalable platform',
+	'Enterprise-grade security',
+	'Website management',
+	'Integrated commerce',
 ];
 
 export interface TieredPriceResult {
@@ -142,9 +330,15 @@ export function getNextDiscountNudge(
 }
 
 export function formatUSD( amount: number ): string {
-	const hasCents = Math.round( amount * 100 ) % 100 !== 0;
 	return `US$${ amount.toLocaleString( 'en-US', {
-		minimumFractionDigits: hasCents ? 2 : 2,
+		minimumFractionDigits: 2,
 		maximumFractionDigits: 2,
 	} ) }`;
+}
+
+export function formatCompactNumber( value: number ): string {
+	return value.toLocaleString( 'en-US', {
+		notation: 'compact',
+		maximumFractionDigits: 1,
+	} );
 }
