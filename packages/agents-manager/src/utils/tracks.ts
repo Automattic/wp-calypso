@@ -132,7 +132,7 @@ export function recordAgentsManagerTracksEvent( eventName: string, props: Tracks
 	const blogId = getBlogId();
 	const baseProps: TracksProps = {
 		ai_session_id: getSessionId(),
-		agent_name: DOLLY_AGENT_ID,
+		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
 		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),
