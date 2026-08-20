@@ -1,8 +1,10 @@
 import {
 	approveStaticSiteImportSession,
+	attachSwitchRun,
 	createSite,
-	createStaticSiteImportSession,
+	createSwitchRun,
 	fetchStaticSiteImportSession,
+	fetchSwitchRun,
 } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -23,17 +25,19 @@ import { useAuth } from '../app/auth';
 import { Card, CardBody } from '../components/card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { buildSwitchAgentPrompt, getMshotsUrl, normalizeSwitchUrl } from './utils';
+import {
+	buildSwitchAgentPrompt,
+	getMshotsUrl,
+	isSwitchRunTerminal,
+	isSwitchSessionReadyForReview,
+	normalizeSwitchUrl,
+} from './utils';
 import type { SwitchStrategy } from './utils';
 
 import './style.scss';
 
-type SwitchStep = 'source' | 'strategy' | 'running' | 'results' | 'prompt';
-
-type TestSite = {
-	siteId: number;
-	siteSlug: string;
-};
+type SwitchStep = 'source' | 'analysis' | 'attaching' | 'results' | 'prompt';
+type TestSite = { siteId: number; siteSlug: string };
 
 function StepScreen( {
 	step,
@@ -58,30 +62,27 @@ function StepScreen( {
 }
 
 function MetricList( { metrics }: { metrics?: Record< string, unknown > } ) {
-	const entries = Object.entries( metrics ?? {} ).filter(
-		( [ , value ] ) => typeof value === 'number' || typeof value === 'boolean'
-	);
-
-	if ( entries.length === 0 ) {
+	const entries = Object.entries( metrics ?? {} ).filter( ( [ , value ] ) => value !== undefined );
+	if ( ! entries.length ) {
 		return <p>{ __( 'No metrics are available yet.' ) }</p>;
 	}
-	const displayValue = ( value: unknown ) => {
-		if ( typeof value === 'boolean' ) {
-			return value ? __( 'Yes' ) : __( 'No' );
-		}
-		return String( value );
-	};
-
 	return (
 		<dl className="switch__metrics">
 			{ entries.map( ( [ label, value ] ) => (
 				<div key={ label }>
 					<dt>{ label.replaceAll( '_', ' ' ) }</dt>
-					<dd>{ displayValue( value ) }</dd>
+					<dd>{ String( value ) }</dd>
 				</div>
 			) ) }
 		</dl>
 	);
+}
+
+function messageForError( error?: { code?: string; message?: string } | string ) {
+	if ( typeof error === 'string' ) {
+		return error;
+	}
+	return error?.message ?? __( 'Switch could not complete this step.' );
 }
 
 export default function Switch() {
@@ -91,6 +92,7 @@ export default function Switch() {
 	const [ sourceInput, setSourceInput ] = useState( '' );
 	const [ sourceUrl, setSourceUrl ] = useState( '' );
 	const [ sourceError, setSourceError ] = useState( '' );
+	const [ runId, setRunId ] = useState< string >();
 	const [ strategy, setStrategy ] = useState< SwitchStrategy >( 'ssi' );
 	const [ testSite, setTestSite ] = useState< TestSite >();
 	const [ sessionId, setSessionId ] = useState< string >();
@@ -98,9 +100,72 @@ export default function Switch() {
 	const [ copied, setCopied ] = useState( false );
 	const [ screenshotVersion, setScreenshotVersion ] = useState( 0 );
 
-	const createSession = useMutation( {
-		mutationFn: ( { siteId, source }: { siteId: number; source: string } ) =>
-			createStaticSiteImportSession( siteId, source ),
+	const createRun = useMutation( {
+		mutationFn: ( source_url: string ) => createSwitchRun( { source_url } ),
+		onSuccess: ( run ) => {
+			setRunId( run.run_id );
+			setStep( 'analysis' );
+		},
+	} );
+	const runQuery = useQuery( {
+		queryKey: [ 'switch-run', runId ],
+		queryFn: () => fetchSwitchRun( runId! ),
+		enabled: Boolean( runId ),
+		refetchInterval: ( query ) => ( isSwitchRunTerminal( query.state.data?.state ) ? false : 5000 ),
+		refetchIntervalInBackground: true,
+	} );
+	const run = runQuery.data ?? createRun.data;
+	const analysisMetrics = run?.metrics;
+
+	const attachRun = useMutation( {
+		mutationFn: async () => {
+			if ( ! runId ) {
+				throw new Error( 'Switch analysis run is not available.' );
+			}
+			let destination = testSite;
+			if ( ! destination ) {
+				const siteTitle = `Switch: ${ new URL( sourceUrl ).hostname }`;
+				const created = await createSite( {
+					blog_name: siteTitle,
+					blog_title: siteTitle,
+					public: 0,
+					find_available_url: true,
+					validate: false,
+					locale: user.language,
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
+					options: {
+						site_creation_flow: 'switch',
+						site_intent: 'migration',
+						wpcom_public_coming_soon: 0,
+						site_information: { title: siteTitle },
+					},
+				} );
+				if ( ! created.success ) {
+					throw new Error( 'Destination site creation failed.' );
+				}
+				destination = {
+					siteId: created.blog_details.blogid,
+					siteSlug: new URL( created.blog_details.url ).hostname,
+				};
+				setTestSite( destination );
+			}
+			return attachSwitchRun( runId, { destination_blog_id: destination.siteId } );
+		},
+		onSuccess: ( attached ) => {
+			queryClient.setQueryData( [ 'switch-run', attached.run_id ], attached );
+			if ( attached.session_id ) {
+				setSessionId( attached.session_id );
+			}
+		},
+	} );
+	const session = useQuery( {
+		queryKey: [ 'static-site-import-session', testSite?.siteId, sessionId ],
+		queryFn: () => fetchStaticSiteImportSession( testSite!.siteId, sessionId! ),
+		enabled: Boolean( testSite && sessionId ),
+		refetchInterval: ( query ) =>
+			[ 'finished', 'failed' ].includes( query.state.data?.state ?? '' ) ? false : 5000,
+		refetchIntervalInBackground: true,
 	} );
 	const approveSession = useMutation( {
 		mutationFn: ( {
@@ -123,76 +188,17 @@ export default function Switch() {
 			setStep( 'results' );
 		},
 	} );
-	const session = useQuery( {
-		queryKey: [ 'static-site-import-session', testSite?.siteId, sessionId ],
-		queryFn: () => fetchStaticSiteImportSession( testSite!.siteId, sessionId! ),
-		enabled: Boolean( testSite && sessionId ),
-		refetchInterval: ( query ) =>
-			[ 'finished', 'failed' ].includes( query.state.data?.state ?? '' ) ? false : 5000,
-		refetchIntervalInBackground: true,
-	} );
-	const sessionData = session.data ?? createSession.data;
-
-	const runSwitch = useMutation( {
-		mutationFn: async ( selectedStrategy: SwitchStrategy ) => {
-			const siteTitle = `Switch: ${ new URL( sourceUrl ).hostname }`;
-			const created = await createSite( {
-				blog_name: siteTitle,
-				blog_title: siteTitle,
-				public: 1,
-				find_available_url: true,
-				validate: false,
-				locale: user.language,
-				client_id: config( 'wpcom_signup_id' ),
-				client_secret: config( 'wpcom_signup_key' ),
-				options: {
-					site_creation_flow: 'switch',
-					site_intent: 'migration',
-					wpcom_public_coming_soon: 0,
-					site_information: { title: siteTitle },
-				},
-			} );
-			if ( ! created.success ) {
-				throw new Error( 'Test site creation failed.' );
-			}
-			const site = {
-				siteId: created.blog_details.blogid,
-				siteSlug: new URL( created.blog_details.url ).hostname,
-			};
-			setTestSite( site );
-
-			if ( selectedStrategy === 'blueprint' ) {
-				return { site, session: undefined };
-			}
-
-			const createdSession = await createSession.mutateAsync( {
-				siteId: site.siteId,
-				source: sourceUrl,
-			} );
-			return { site, session: createdSession };
-		},
-		onSuccess: ( result ) => {
-			if ( result.session ) {
-				setSessionId( result.session.session_id );
-			} else {
-				setStep( 'results' );
-			}
-		},
-	} );
+	const sessionData = session.data;
 
 	useEffect( () => {
-		if ( step !== 'running' || strategy !== 'ssi' || ! sessionData ) {
+		if ( step !== 'attaching' || ! sessionData ) {
 			return;
 		}
-
-		if ( ! isApplying && sessionData.state === 'preview_ready' ) {
-			setStep( 'results' );
-		}
-		if ( [ 'finished', 'failed' ].includes( sessionData.state ) ) {
+		if ( isSwitchSessionReadyForReview( sessionData.state, isApplying ) ) {
 			setIsApplying( false );
 			setStep( 'results' );
 		}
-	}, [ isApplying, sessionData, step, strategy ] );
+	}, [ isApplying, sessionData, step ] );
 
 	const destinationUrl = testSite ? `https://${ testSite.siteSlug }` : '';
 	const sourceScreenshot = sourceUrl
@@ -202,27 +208,23 @@ export default function Switch() {
 		? `${ getMshotsUrl( destinationUrl ) }&switch_capture=${ screenshotVersion }`
 		: '';
 	const canApprove = sessionData?.state === 'preview_ready' && Boolean( sessionData.plan_hash );
-	const runError = runSwitch.error ?? createSession.error ?? session.error;
+	const recommendationLabel = run?.recommendation
+		? `${ run.recommendation.strategy.toUpperCase() } (${ run.recommendation.confidence })`
+		: __( 'No recommendation is available yet.' );
 	const prompt = buildSwitchAgentPrompt( {
 		strategy,
 		category: 'content',
-		observation:
-			strategy === 'ssi'
-				? 'Evaluate this Switch run for content completeness, editability, and visual parity.'
-				: 'Evaluate this Switch run for source-blueprint coverage and destination-theme mapping quality.',
+		observation: 'Evaluate this Switch run for source fidelity, editability, and visual parity.',
 		sourceUrl,
 		targetUrl: destinationUrl || 'not created',
-		sessionId: sessionData?.session_id,
-		state: strategy === 'blueprint' && testSite ? 'destination_ready' : sessionData?.state,
+		runId,
+		sessionId,
+		state: sessionData?.state ?? run?.state,
+		recommendation: recommendationLabel,
+		analysisMetrics,
 		previewSummary: sessionData?.preview_summary,
 		receipt: sessionData?.receipt,
 	} );
-	let runningLabel = __( 'Creating an isolated site…' );
-	if ( testSite ) {
-		runningLabel = isApplying
-			? __( 'Applying the approved import…' )
-			: __( 'Capturing and compiling the source…' );
-	}
 
 	const handleSource = ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -230,78 +232,51 @@ export default function Switch() {
 			const normalized = normalizeSwitchUrl( sourceInput );
 			setSourceError( '' );
 			setSourceUrl( normalized );
-			setStep( 'strategy' );
+			setStep( 'analysis' );
+			createRun.mutate( normalized );
 		} catch {
-			setSourceError( __( 'Enter a valid public HTTP or HTTPS URL.' ) );
+			setSourceError( __( 'Enter a valid public HTTPS URL.' ) );
 		}
 	};
-
-	const handleStrategy = ( selectedStrategy: SwitchStrategy ) => {
-		setStrategy( selectedStrategy );
-		setStep( 'running' );
-		runSwitch.mutate( selectedStrategy );
+	const handleAttach = () => {
+		attachRun.reset();
+		setStep( 'attaching' );
+		attachRun.mutate();
 	};
-
-	const handleRetry = () => {
-		runSwitch.reset();
-		createSession.reset();
-		if ( testSite && strategy === 'ssi' ) {
-			setStep( 'running' );
-			createSession.mutate(
-				{ siteId: testSite.siteId, source: sourceUrl },
-				{ onSuccess: ( created ) => setSessionId( created.session_id ) }
-			);
-			return;
-		}
-		handleStrategy( strategy );
-	};
-
 	const handleApprove = () => {
 		if ( ! testSite || ! sessionData?.plan_hash ) {
 			return;
 		}
 		setIsApplying( true );
-		setStep( 'running' );
+		setStep( 'attaching' );
 		approveSession.mutate( {
 			siteId: testSite.siteId,
 			activeSessionId: sessionData.session_id,
 			planHash: sessionData.plan_hash,
 		} );
 	};
-
-	const handleCopy = async () => {
-		await navigator.clipboard.writeText( prompt );
-		setCopied( true );
-		setTimeout( () => setCopied( false ), 2000 );
-	};
-
 	const handleReset = () => {
 		setStep( 'source' );
 		setSourceInput( '' );
 		setSourceUrl( '' );
+		setRunId( undefined );
 		setTestSite( undefined );
 		setSessionId( undefined );
 		setIsApplying( false );
 		setCopied( false );
-		runSwitch.reset();
-		createSession.reset();
+		createRun.reset();
+		attachRun.reset();
 		approveSession.reset();
 	};
 
 	let screen: React.ReactNode;
-
 	if ( step === 'source' ) {
 		screen = (
 			<StepScreen step={ __( 'Step 1 of 5' ) } title={ __( 'What site are you switching?' ) }>
-				<p>
-					{ __(
-						'Enter the public URL. Switch will create an isolated WordPress site for the run.'
-					) }
-				</p>
 				<form className="switch__form" onSubmit={ handleSource }>
 					<VStack spacing={ 4 }>
 						<TextControl
-							label={ __( 'Site URL' ) }
+							label={ __( 'Public HTTPS URL' ) }
 							value={ sourceInput }
 							onChange={ setSourceInput }
 							placeholder="https://example.com"
@@ -312,51 +287,126 @@ export default function Switch() {
 							</Notice>
 						) }
 						<Button type="submit" variant="primary" disabled={ ! sourceInput.trim() }>
-							{ __( 'Continue' ) }
+							{ __( 'Analyze site' ) }
 						</Button>
 					</VStack>
 				</form>
 			</StepScreen>
 		);
-	} else if ( step === 'strategy' ) {
+	} else if ( step === 'analysis' ) {
+		const isTerminal = [ 'failed', 'expired' ].includes( run?.state ?? '' );
+		let analysisContent: React.ReactNode;
+		if ( createRun.error || runQuery.error || isTerminal ) {
+			analysisContent = (
+				<>
+					<Notice status="error" isDismissible={ false }>
+						{ isTerminal
+							? messageForError( run?.error )
+							: __( 'Switch could not analyze this source. No destination was created.' ) }
+					</Notice>
+					<Button variant="primary" onClick={ () => createRun.mutate( sourceUrl ) }>
+						{ __( 'Try analysis again' ) }
+					</Button>
+				</>
+			);
+		} else if ( run?.state !== 'analysis_ready' ) {
+			analysisContent = (
+				<>
+					<HStack justify="flex-start">
+						<Spinner />
+						<strong>{ __( 'Analyzing the source…' ) }</strong>
+					</HStack>
+					<ProgressBar />
+				</>
+			);
+		} else {
+			analysisContent = (
+				<>
+					<Heading level={ 3 }>{ __( 'Analysis result' ) }</Heading>
+					<MetricList metrics={ analysisMetrics } />
+					<p>
+						<strong>{ __( 'Server recommendation:' ) }</strong> { recommendationLabel }
+					</p>
+					{ run.recommendation?.reasons.length ? (
+						<ul>
+							{ run.recommendation.reasons.map( ( reason ) => (
+								<li key={ reason }>{ reason.replaceAll( '_', ' ' ) }</li>
+							) ) }
+						</ul>
+					) : null }
+					<div className="switch__strategies">
+						<Button
+							className="switch__strategy"
+							variant="primary"
+							onClick={ () => {
+								setStrategy( 'ssi' );
+								handleAttach();
+							} }
+						>
+							<strong>{ __( 'Faithful reconstruction (SSI)' ) }</strong>
+							<span>
+								{ __(
+									'Use the server-captured artifact to reproduce the source as editable WordPress blocks.'
+								) }
+							</span>
+						</Button>
+						<Button className="switch__strategy" disabled>
+							<strong>{ __( 'Adapt to a WordPress theme (Blueprint)' ) }</strong>
+							<span>
+								{ __( 'Blueprint mapping will be available when the mapper is connected.' ) }
+							</span>
+						</Button>
+					</div>
+				</>
+			);
+		}
 		screen = (
-			<StepScreen step={ __( 'Step 2 of 5' ) } title={ __( 'How should Switch build the site?' ) }>
+			<StepScreen step={ __( 'Step 2 of 5' ) } title={ __( 'Analyze the source' ) }>
 				<p className="switch__source">{ sourceUrl }</p>
-				<div className="switch__strategies">
-					<Button className="switch__strategy" onClick={ () => handleStrategy( 'ssi' ) }>
-						<strong>{ __( 'Faithful reconstruction' ) }</strong>
-						<span>{ __( 'Use SSI to reproduce the source as editable WordPress blocks.' ) }</span>
-					</Button>
-					<Button className="switch__strategy" disabled>
-						<strong>{ __( 'Adapt to a WordPress theme' ) }</strong>
-						<span>
-							{ __( 'Blueprint mapping will be available when the mapper is connected.' ) }
-						</span>
-					</Button>
-				</div>
-				<Button variant="tertiary" onClick={ () => setStep( 'source' ) }>
-					{ __( 'Back' ) }
-				</Button>
+				{ analysisContent }
 			</StepScreen>
 		);
-	} else if ( step === 'running' ) {
+	} else if ( step === 'attaching' ) {
+		const operationError = attachRun.error ?? session.error ?? approveSession.error;
+		let runningLabel: React.ReactNode = __( 'Creating an isolated destination…' );
+		if ( isApplying ) {
+			runningLabel = __( 'Applying the exact approved plan…' );
+		} else if ( testSite ) {
+			runningLabel = __( 'Attaching the captured artifact…' );
+		}
 		screen = (
-			<StepScreen step={ __( 'Step 3 of 5' ) } title={ __( 'Building the WordPress site' ) }>
-				{ runError ? (
+			<StepScreen
+				step={ __( 'Step 3 of 5' ) }
+				title={
+					isApplying
+						? __( 'Applying the approved import' )
+						: __( 'Create and attach the destination' )
+				}
+			>
+				{ operationError ? (
 					<>
 						<Notice status="error" isDismissible={ false }>
-							{ __(
-								'Switch could not complete this step. The isolated site has not been modified.'
-							) }
+							{ testSite
+								? __(
+										'Switch could not complete this step. The existing destination will be reused.'
+								  )
+								: __( 'Switch could not create a destination.' ) }
 						</Notice>
-						{ destinationUrl && (
-							<p>
-								{ __( 'Created site:' ) } <a href={ destinationUrl }>{ destinationUrl }</a>
-							</p>
+						{ testSite && ! isApplying && (
+							<Button variant="primary" onClick={ handleAttach }>
+								{ __( 'Retry attach' ) }
+							</Button>
 						) }
-						<Button variant="primary" onClick={ handleRetry }>
-							{ __( 'Try again' ) }
-						</Button>
+						{ ! testSite && (
+							<Button variant="primary" onClick={ handleAttach }>
+								{ __( 'Retry destination creation' ) }
+							</Button>
+						) }
+						{ isApplying && (
+							<Button variant="primary" onClick={ handleApprove }>
+								{ __( 'Retry approval' ) }
+							</Button>
+						) }
 					</>
 				) : (
 					<>
@@ -365,7 +415,6 @@ export default function Switch() {
 							<strong>{ runningLabel }</strong>
 						</HStack>
 						<ProgressBar />
-						<p>{ __( 'You can leave this screen open while Switch works.' ) }</p>
 					</>
 				) }
 			</StepScreen>
@@ -384,7 +433,7 @@ export default function Switch() {
 						{ destinationUrl }
 					</a>
 				</p>
-				<Heading level={ 3 }>{ __( 'Import metrics' ) }</Heading>
+				<Heading level={ 3 }>{ __( 'Preview metrics' ) }</Heading>
 				<MetricList metrics={ sessionData?.preview_summary } />
 				{ sessionData?.receipt && <MetricList metrics={ sessionData.receipt } /> }
 				<div className="switch__screenshots">
@@ -420,12 +469,20 @@ export default function Switch() {
 			<StepScreen step={ __( 'Step 5 of 5' ) } title={ __( 'Continue with an AI coding agent' ) }>
 				<p>
 					{ __(
-						'This prompt includes the source, destination, run state, and available metrics.'
+						'This evidence-bound prompt includes the Switch run, session, source, destination, recommendation, metrics, and verification guidance.'
 					) }
 				</p>
 				<pre className="switch__prompt">{ prompt }</pre>
 				<HStack className="switch__actions" spacing={ 3 }>
-					<Button variant="primary" icon={ copied ? check : copy } onClick={ handleCopy }>
+					<Button
+						variant="primary"
+						icon={ copied ? check : copy }
+						onClick={ async () => {
+							await navigator.clipboard.writeText( prompt );
+							setCopied( true );
+							setTimeout( () => setCopied( false ), 2000 );
+						} }
+					>
 						{ copied ? __( 'Copied' ) : __( 'Copy prompt' ) }
 					</Button>
 					<Button variant="secondary" onClick={ () => setStep( 'results' ) }>
@@ -445,7 +502,7 @@ export default function Switch() {
 				<PageHeader
 					title={ __( 'Switch' ) }
 					description={ __(
-						'One URL in. An isolated WordPress site, evidence, and next steps out.'
+						'Analyze a public source before creating an isolated WordPress destination.'
 					) }
 				/>
 			}

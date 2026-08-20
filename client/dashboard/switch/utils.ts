@@ -1,6 +1,17 @@
 export type SwitchIssueCategory = 'journey' | 'capture' | 'content' | 'blocks' | 'evidence';
 export type SwitchStrategy = 'ssi' | 'blueprint';
 
+export function isSwitchRunTerminal( state?: string ) {
+	return [ 'analysis_ready', 'attached', 'failed', 'expired', 'completed' ].includes( state ?? '' );
+}
+
+export function isSwitchSessionReadyForReview( state?: string, isApplying = false ) {
+	return (
+		( ! isApplying && state === 'preview_ready' ) ||
+		[ 'finished', 'failed' ].includes( state ?? '' )
+	);
+}
+
 export type SwitchRepository = {
 	label: string;
 	repository: string;
@@ -40,8 +51,8 @@ export function getSwitchRepository( category: SwitchIssueCategory ) {
 
 export function normalizeSwitchUrl( value: string ) {
 	const url = new URL( value.trim() );
-	if ( ! [ 'http:', 'https:' ].includes( url.protocol ) ) {
-		throw new Error( 'Only HTTP and HTTPS URLs are supported.' );
+	if ( url.protocol !== 'https:' || ! url.hostname || url.username || url.password ) {
+		throw new Error( 'Only public HTTPS URLs are supported.' );
 	}
 	url.hash = '';
 	return url.href;
@@ -60,7 +71,10 @@ type PromptInput = {
 	sourceUrl: string;
 	targetUrl: string;
 	sessionId?: string;
+	runId?: string;
 	state?: string;
+	recommendation?: string;
+	analysisMetrics?: Record< string, number | undefined >;
 	previewSummary?: Record< string, number >;
 	receipt?: Record< string, boolean | number | string | undefined >;
 };
@@ -90,10 +104,13 @@ export function buildSwitchAgentPrompt( input: PromptInput ) {
 
 Import evidence
 - Strategy: ${ strategy }
+- Switch run: ${ input.runId ?? 'not assigned' }
 - Session: ${ input.sessionId ?? 'not assigned' }
 - Source: ${ input.sourceUrl }
 - Destination: ${ input.targetUrl }
 - State: ${ input.state ?? 'not available' }
+- Server recommendation: ${ input.recommendation ?? 'not available' }
+- Analysis metrics: ${ formatMetrics( input.analysisMetrics ) }
 - Preview metrics: ${ formatMetrics( input.previewSummary ) }
 - Import receipt: ${ formatMetrics( input.receipt ) }
 
