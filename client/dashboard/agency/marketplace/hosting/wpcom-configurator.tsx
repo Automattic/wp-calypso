@@ -20,9 +20,11 @@ const PRESET_QUANTITIES = [ 1, 3, 5 ];
 
 const EVERY_SITE_INCLUDES = [
 	'50GB of storage',
+	'Global CDN with 28+ locations',
 	'Free staging site',
+	'Real-time backups',
 	'Unrestricted bandwidth',
-	'Everything listed below',
+	'24/7 expert support',
 ];
 
 type WpcomConfiguratorProps = {
