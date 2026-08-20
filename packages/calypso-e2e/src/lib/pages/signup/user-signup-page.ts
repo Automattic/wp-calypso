@@ -1,6 +1,7 @@
 import { Page, Locator, Frame } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
-import type { NewSiteResponse, NewUserResponse } from '../../../types/rest-api-client.types';
+import { handleActiveThrottles } from '../../throttle-flags';
+import type { NewUserResponse } from '../../../types/rest-api-client.types';
 
 /**
  * Signals a transient upstream failure during signup (a 502/503/504 server-error
@@ -223,10 +224,15 @@ export class UserSignupPage {
 	private captureNewUserResponse(): Promise< NewUserResponse > {
 		return this.page
 			.waitForResponse(
+				// Not `ok()`: a refused signup carries the reason it was refused, and
+				// waiting for an ok response that is never coming turns it into a
+				// timeout. Still not a 5xx, which `captureUsersNewServerError` races
+				// this promise to reject with the retryable error the caller keys on,
+				// and not a redirect, whose body is no answer to parse.
 				( response ) =>
 					/\/users\/new\?/.test( response.url() ) &&
-					response.ok() &&
-					response.request().method() === 'POST',
+					response.request().method() === 'POST' &&
+					( response.status() < 300 || ( response.status() >= 400 && response.status() < 500 ) ),
 				// Use an explicit timeout so the global actionTimeout (10s) does not
 				// apply here. The form load + fill + network round-trip can easily
 				// exceed 10s on a slow CI runner.
@@ -244,6 +250,7 @@ export class UserSignupPage {
 	 * @returns Response from the REST API.
 	 */
 	async signup( email: string, username: string, password: string ): Promise< NewUserResponse > {
+		handleActiveThrottles( [ 'signup' ] );
 		await this.waitForSignupForm();
 		await this.emailInput.fill( email );
 		await this.usernameInput.fill( username );
@@ -275,6 +282,10 @@ export class UserSignupPage {
 		// timed out; the same-email retry then surfaces a "user exists" error
 		// instead of recovering, which is still preferable to masking the failure.
 		// Retry a bounded number of times before giving up.
+		//
+		// Outside the loop: the policy skips or fails by throwing, and the catch
+		// below turns a throw met on a server-error page into a retry.
+		handleActiveThrottles( [ 'signup' ] );
 		const maxAttempts = 3;
 		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 			try {
@@ -406,49 +417,6 @@ export class UserSignupPage {
 	}
 
 	/**
-	 * Signup with email and wait for site creation.
-	 *
-	 * This happens in the domain-only flow, where site creation happens after user login.
-	 *
-	 * @param email {string} Email address of the new user.
-	 * @returns {NewUserResponse, NewSiteResponse} Details of the new user and the newly created site.
-	 */
-	async signupWithEmailAndWaitForSiteCreation(
-		email: string
-	): Promise< [ NewUserResponse, NewSiteResponse ] > {
-		const newUserDetails = await this.signupWithEmail( email );
-		const newSiteDetails = await this.waitForSiteCreation();
-		return [ newUserDetails, newSiteDetails ];
-	}
-
-	/**
-	 * Waits for the site creation response and returns the details of the newly created site.
-	 *
-	 * Site creation happens with the `/sites/new` endpoint call
-	 *
-	 * @returns {NewSiteResponse} Details of the newly created site.
-	 */
-	private async waitForSiteCreation(): Promise< NewSiteResponse > {
-		const response = await this.page.waitForResponse( /.*sites\/new\?.*/, { timeout: 30 * 1000 } );
-
-		if ( ! response ) {
-			throw new Error( 'Failed to intercept response for new site creation.' );
-		}
-
-		const responseJSON = await response.json();
-		const body = responseJSON.body;
-
-		if ( ! body.blog_details.blogid ) {
-			console.error( body );
-			throw new Error( 'Failed to locate blog ID for the created site.' );
-		}
-
-		// Cast the blogID value to a number, in case it comes in as a string.
-		body.blog_details.blogid = Number( body.blog_details.blogid );
-		return body;
-	}
-
-	/**
 	 * Using the Social First signup, selects the Email option, then fill out required information
 	 * and then submit the form to complete the signup.
 	 *
@@ -495,6 +463,9 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupWoo( email: string ): Promise< NewUserResponse > {
+		// This flow drives the form itself instead of going through `signupWithEmail`,
+		// so the ban has to be met here or it is not met at all.
+		handleActiveThrottles( [ 'signup' ] );
 		await this.waitForSignupForm();
 		await this.emailInput.fill( email );
 
@@ -536,6 +507,9 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupThroughInvite( email: string ): Promise< NewUserResponse > {
+		// This flow drives the form itself instead of going through `signupWithEmail`,
+		// so the ban has to be met here or it is not met at all.
+		handleActiveThrottles( [ 'signup' ] );
 		await this.emailInput.fill( email );
 
 		const responsePromise = this.page.waitForResponse(

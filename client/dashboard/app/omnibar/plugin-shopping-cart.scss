@@ -1,4 +1,8 @@
 .omnibar .omnibar__secondary .omnibar__menu.omnibar__cart {
+	@media ( max-width: 480px ) {
+		min-width: 52px;
+	}
+
 	@media ( min-width: 782px ) {
 		padding-inline: 6px;
 	}
@@ -9,7 +13,7 @@
 }
 
 .omnibar .omnibar__cart-dot {
-	fill: var( --studio-wordpress-blue-20, #3858e9 );
+	fill: #adbaf3;
 	stroke: var( --omnibar-background );
 	stroke-width: 6%;
 }

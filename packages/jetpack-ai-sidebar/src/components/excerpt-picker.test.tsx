@@ -11,7 +11,12 @@ import { SUGGESTION_ACTION_COMPLETE_EVENT } from '../utils/suggestion-events';
 import ExcerptPicker from './excerpt-picker';
 
 const mockEditPost = jest.fn();
+const mockRevealSidebarField = jest.fn().mockResolvedValue( true );
 let mockCurrentExcerpt: string | undefined;
+
+jest.mock( '../utils/reveal-sidebar-field', () => ( {
+	revealSidebarField: ( ...args: unknown[] ) => mockRevealSidebarField( ...args ),
+} ) );
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: ( store: string ) => {
@@ -35,6 +40,7 @@ jest.mock( '@wordpress/data', () => ( {
 describe( 'ExcerptPicker', () => {
 	beforeEach( () => {
 		mockEditPost.mockClear();
+		mockRevealSidebarField.mockClear();
 		mockCurrentExcerpt = undefined;
 	} );
 
@@ -84,6 +90,14 @@ describe( 'ExcerptPicker', () => {
 		} finally {
 			window.removeEventListener( SUGGESTION_ACTION_COMPLETE_EVENT, handleComplete );
 		}
+	} );
+
+	it( 'reveals the excerpt in the document sidebar once applied', () => {
+		render( <ExcerptPicker excerpts={ excerpts } /> );
+
+		fireEvent.click( screen.getByText( excerpts[ 0 ].excerpt ) );
+
+		expect( mockRevealSidebarField ).toHaveBeenCalledWith( 'excerpt' );
 	} );
 
 	it( 'renders no options without crashing when the excerpts prop is malformed', () => {

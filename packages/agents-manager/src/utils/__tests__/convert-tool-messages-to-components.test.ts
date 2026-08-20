@@ -2,6 +2,12 @@ function mockEscalationButton() {
 	return null;
 }
 
+const mockResponseAction = jest.fn();
+
+function mockCreateChatResponseActionCallback() {
+	return mockResponseAction;
+}
+
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
@@ -26,10 +32,16 @@ jest.mock( '../../components/font-picker', () => ( {
 	__esModule: true,
 	default: jest.fn( () => null ),
 } ) );
+jest.mock( '../../components/chat-response-tracking', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+	createChatResponseActionCallback: mockCreateChatResponseActionCallback,
+} ) );
 
 import { render, waitFor } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
 import ButtonPicker from '../../components/button-picker';
+import ChatResponseRenderedTracker from '../../components/chat-response-tracking';
 import ColorPicker from '../../components/color-picker';
 import FontPicker from '../../components/font-picker';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
@@ -155,11 +167,23 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'renders tool messages as components', () => {
-		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
-			type: 'my-component',
-			props: { name: 'test' },
-			summary: 'Choose one of these options.',
-			isCurrent: true,
+		const message = createMessage( {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify( {
+						tool_id: SHOW_COMPONENT_TOOL_ID,
+						tool_call_id: 'tool-call-1',
+						data: {
+							type: 'my-component',
+							props: { name: 'test' },
+							responseTrackingProperties: { suggested_edit_count: 2 },
+							summary: 'Choose one of these options.',
+							isCurrent: true,
+						},
+					} ),
+				},
+			],
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
@@ -180,6 +204,17 @@ describe( 'convertToolMessagesToComponents', () => {
 				name: 'test',
 				summary: 'Choose one of these options.',
 				contentType: 'my-component',
+				onResponseAction: mockResponseAction,
+			},
+		} );
+		expect( result[ 0 ].content[ 2 ] ).toMatchObject( {
+			type: 'component',
+			component: ChatResponseRenderedTracker,
+			componentProps: {
+				componentType: 'my-component',
+				toolId: SHOW_COMPONENT_TOOL_ID,
+				toolCallId: 'tool-call-1',
+				responseTrackingProperties: { suggested_edit_count: 2 },
 			},
 		} );
 	} );
@@ -236,9 +271,12 @@ describe( 'convertToolMessagesToComponents', () => {
 			getChatComponent,
 		} );
 
-		expect( result[ 0 ].content ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toHaveLength( 2 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { type: 'component' } );
 		expect( result[ 0 ].content[ 0 ].componentProps.summary ).toBeUndefined();
+		expect( result[ 0 ].content[ 1 ] ).toMatchObject( {
+			component: ChatResponseRenderedTracker,
+		} );
 	} );
 
 	it( 'does not suppress the thinking indicator for component messages with follow-up tasks', () => {
@@ -273,6 +311,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
 		// History rows carry no `isCurrent`, so the message renders inert.
 		expect( result[ 0 ].disabled ).toBe( true );
+		expect( result[ 0 ].content ).toHaveLength( 1 );
 	} );
 
 	it( 'renders the notice for prototype-member component types', () => {
@@ -853,12 +892,54 @@ describe( 'convertToolMessagesToComponents', () => {
 			expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
 			const componentProps = (
 				result[ 0 ].content[ 0 ] as {
-					componentProps?: { isMessageStale?: boolean };
+					componentProps?: {
+						isMessageStale?: boolean;
+						onResponseAction?: typeof mockResponseAction;
+					};
 				}
 			 ).componentProps;
 			expect( componentProps?.isMessageStale === true ).toBe( disabled );
+			expect( componentProps?.onResponseAction ).toBe( disabled ? undefined : mockResponseAction );
+			expect(
+				result[ 0 ].content.some(
+					( content ) =>
+						content.type === 'component' && content.component === ChatResponseRenderedTracker
+				)
+			).toBe( ! disabled );
 		}
 	);
+
+	it( 'replaces a provider-supplied action callback with the host callback', () => {
+		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+			type: 'my-component',
+			props: { onResponseAction: 'untrusted-value' },
+			isCurrent: true,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result[ 0 ].content[ 0 ].componentProps.onResponseAction ).toBe( mockResponseAction );
+	} );
+
+	it( 'removes a provider-supplied action callback from stale responses', () => {
+		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+			type: 'my-component',
+			props: { onResponseAction: 'untrusted-value' },
+			isCurrent: false,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result[ 0 ].content[ 0 ].componentProps.onResponseAction ).toBeUndefined();
+	} );
 
 	describe( 'AM-owned components', () => {
 		// The AM components are lazy wrappers, so the assertion renders the

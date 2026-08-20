@@ -13,6 +13,7 @@
 
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { dispatch } from '@wordpress/data';
+import { revealSidebarField } from './reveal-sidebar-field';
 
 const IMAGE_STUDIO_STORE = 'image-studio';
 
@@ -84,7 +85,8 @@ export function openImageStudioForBlock( block: any, mode: ImageStudioMode ): bo
 	const attachmentId = block.attributes?.id;
 
 	const handleClose = ( image: ImageStudioImage | null ) => {
-		// A null image means the user removed it.
+		// Image Studio passes null only after deleting the attachment from the
+		// media library, so the block cannot keep pointing at it.
 		if ( image === null ) {
 			dispatch( blockEditorStore ).updateBlockAttributes( clientId, {
 				url: undefined,
@@ -135,7 +137,9 @@ export function openImageStudioForFeaturedImage(): boolean {
 			return;
 		}
 
-		// A null image means the user removed it; clear the featured image.
+		// Image Studio passes null only after deleting the attachment from the
+		// media library, so the featured image has to go with it. Closing without
+		// saving, or a generation that fails, never reaches this callback.
 		if ( image === null ) {
 			editor.editPost( { featured_media: 0 } );
 			return;
@@ -143,6 +147,7 @@ export function openImageStudioForFeaturedImage(): boolean {
 
 		if ( image?.id ) {
 			editor.editPost( { featured_media: image.id } );
+			revealSidebarField( 'featuredImage' );
 		}
 	};
 

@@ -152,6 +152,12 @@ export interface McpAvailableAbility {
 	description: string;
 	category: string;
 	enabled: boolean;
+	/**
+	 * Whether the ability only reads data. Write abilities are flagged with an
+	 * explicit `false`; abilities from a response predating the flag omit it and
+	 * are treated as read-only.
+	 */
+	readonly?: boolean;
 }
 
 export interface McpAvailableCategory {

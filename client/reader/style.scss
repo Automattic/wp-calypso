@@ -601,6 +601,10 @@ body.is-section-reader {
 			.x-nav-link-chevron::before {
 				color: var( --studio-gray-100 );
 			}
+
+			// Back on the white band, the CTA hover flips to the default dark fill.
+			--x-nav-2026-cta-hover-fill: var( --studio-gray-100 );
+			--x-nav-2026-cta-hover-ink: var( --studio-white );
 		}
 	}
 }

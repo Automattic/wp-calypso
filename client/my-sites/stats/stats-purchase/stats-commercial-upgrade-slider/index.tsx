@@ -63,6 +63,11 @@ type StatsCommercialUpgradeSliderProps = {
 	analyticsEventName?: string;
 	onSliderChange: ( quantity: number ) => void;
 	tiers: StatsPlanTierUI[];
+	/**
+	 * Added to the slider's own event. A host with no blog id to be identified by has to supply
+	 * whatever key it does have, since `blog_id` is null there.
+	 */
+	eventProps?: Record< string, string | number >;
 };
 
 const getTierQuantity = ( tiers: StatsPlanTierUI ) => {
@@ -78,6 +83,7 @@ function StatsCommercialUpgradeSlider( {
 	analyticsEventName,
 	onSliderChange,
 	tiers,
+	eventProps,
 }: StatsCommercialUpgradeSliderProps ) {
 	const translate = useTranslate();
 	const uiStrings = useTranslatedStrings();
@@ -131,6 +137,7 @@ function StatsCommercialUpgradeSlider( {
 				tier_views: quantity,
 				default_changed: index !== 0, // 0 is the default initialVlaue value for <TierUpgradeSlider />
 				blog_id: siteId,
+				...eventProps,
 			} );
 		}
 

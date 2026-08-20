@@ -54,6 +54,8 @@ export type ResolveDomainStatusOptionsBag = {
 
 export function resolveDomainStatus(
 	domain: ResponseDomain,
+	// Temporary bridge (SHILL-2256): callers still pass the camelCase Purchase,
+	// so the renewal handlers below are given `purchase.rawPurchase`.
 	purchase: Purchase | null = null,
 	translate: I18N[ 'translate' ],
 	dispatch: CalypsoDispatch,
@@ -320,7 +322,9 @@ export function resolveDomainStatus(
 											a: (
 												<Button
 													plain
-													onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
+													onClick={ () =>
+														dispatch( handleRenewNowClick( purchase.rawPurchase, siteSlug ) )
+													}
 												/>
 											),
 										},
@@ -349,7 +353,9 @@ export function resolveDomainStatus(
 											a: (
 												<Button
 													plain
-													onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
+													onClick={ () =>
+														dispatch( handleRenewNowClick( purchase.rawPurchase, siteSlug ) )
+													}
 												/>
 											),
 										},
@@ -402,7 +408,9 @@ export function resolveDomainStatus(
 									a: (
 										<Button
 											plain
-											onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
+											onClick={ () =>
+												dispatch( handleRenewNowClick( purchase.rawPurchase, siteSlug ) )
+											}
 										/>
 									),
 								},

@@ -41,7 +41,12 @@ import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
 import { useBackoffPoll } from './use-backoff-poll';
-import { ACTIVATION_EMAIL_SOURCE, useEmailVerificationGate } from './use-email-verification-gate';
+import {
+	ACTIVATION_EMAIL_SOURCE,
+	useIsPostAccountCreationEmailVerification,
+	useIsPostPlanSelectionEmailVerification,
+	useEmailVerificationGate,
+} from './use-email-verification-gate';
 import { useSocialService } from './use-social-service';
 import { useUpdateEmail } from './use-update-email';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
@@ -86,7 +91,14 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const [ createdUserId, setCreatedUserId ] = useState< number | string | null >( null );
 
-	const { isEnabled: gateEnabled, status: gateStatus } = useEmailVerificationGate( flow );
+	const { status: gateStatus, isVariantLoading } = useEmailVerificationGate( flow );
+	// Sending the activation email and aiming it back at onboarding is shared by both variants: the
+	// account step gates in Variant A, but in Variant B the same link is what the post-plan-selection gate,
+	// met after plan selection or checkout, goes on to wait for.
+	const isPostAccountCreationVerification = useIsPostAccountCreationEmailVerification( flow );
+	const isPostPlanSelectionVerification = useIsPostPlanSelectionEmailVerification( flow );
+	const emailVerificationEnabled =
+		isPostAccountCreationVerification || isPostPlanSelectionVerification;
 	const gateScopeForUser = gateScope( flow, userId );
 	// Scoped, since `/me` resolving a different account is a case this step already handles and the
 	// gate is keyed on the same scope for it. Derived once: the address it was opened with is both
@@ -237,7 +249,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 		setCreatedUserId( data.ID ?? null );
 		setSignupIsNewUser( data.ID );
-		if ( gateEnabled ) {
+		if ( emailVerificationEnabled ) {
 			// The activation email from account creation is the one the gate asks for, so the gate
 			// sends nothing on arrival — this only records the send the server just made.
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
@@ -308,7 +320,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				isMobileCompactVariant={ isMobileCompactLayout }
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
-				activationEmailFrom={ gateEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
+				activationEmailFrom={ emailVerificationEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
+				// The email submit stays held until the arm loads: the arm decides activationEmailFrom, so
+				// submitting first would send the wrong activation email. Social signups are verified on
+				// creation and never gated, so this leaves them untouched.
+				isSubmitBlocked={ isVariantLoading }
 				onUpdateEmail={ isEditingEmail ? updateEmail : undefined }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (

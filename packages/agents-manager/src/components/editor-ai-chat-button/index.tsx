@@ -22,7 +22,7 @@ interface Props {
  * The `PinnedItems/core` fill is inert outside the editor.
  */
 export default function EditorAiChatButton( { onClose, onOpenChat }: Props ) {
-	const { resumeActiveChat, sectionName } = useAgentsManagerContext();
+	const { resumeChat, sectionName } = useAgentsManagerContext();
 	const { isOpen, isMinimized } = useSelect(
 		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerState(),
 		[]
@@ -34,7 +34,7 @@ export default function EditorAiChatButton( { onClose, onOpenChat }: Props ) {
 
 	const isChatVisible = isOpen && ! isMinimized;
 
-	// Mirrors the admin-bar button: close if showing, else resume the active conversation and open.
+	// Mirrors the admin-bar button: close if showing, else resume the tab's conversation and open.
 	const handleToggle = () => {
 		recordTracksEvent( 'calypso_editor_agents_manager_ai_chat_clicked', {
 			section: sectionName || 'gutenberg',
@@ -46,7 +46,7 @@ export default function EditorAiChatButton( { onClose, onOpenChat }: Props ) {
 			return;
 		}
 
-		resumeActiveChat();
+		resumeChat();
 		onOpenChat();
 	};
 
