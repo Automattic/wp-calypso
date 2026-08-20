@@ -12,8 +12,8 @@ import {
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import { useState } from 'react';
-import wpcomLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
 import { Card, CardBody, CardDivider } from '../../../components/card';
+import wpcomLogo from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import { getNextDiscountNudge, getTieredPrice, formatUSD, wpcomHosting } from './mock-data';
 
 const PRESET_QUANTITIES = [ 1, 3, 5 ];

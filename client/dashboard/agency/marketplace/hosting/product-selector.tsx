@@ -6,10 +6,10 @@ import {
 } from '@wordpress/components';
 import { check } from '@wordpress/icons';
 import clsx from 'clsx';
-import pressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
-import vipLogo from 'calypso/assets/images/a8c-for-agencies/vip-full-logo.svg';
-import wpcomLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
 import { Card, CardBody } from '../../../components/card';
+import pressableLogo from '../exclusive-offers/images/pressable-descriptor.svg';
+import vipLogo from '../exclusive-offers/images/vip-descriptor.svg';
+import wpcomLogo from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import type { HostingBrand } from './mock-data';
 
 const BRAND_LOGOS: Record< HostingBrand[ 'key' ], string > = {

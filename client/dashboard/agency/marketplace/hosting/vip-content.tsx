@@ -8,7 +8,6 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import vipLogo from 'calypso/assets/images/a8c-for-agencies/vip-full-logo.svg';
 import cnnLogo from 'calypso/assets/images/logos/cnn.svg';
 import metaLogo from 'calypso/assets/images/logos/meta.svg';
 import newYorkPostLogo from 'calypso/assets/images/logos/new-york-post.svg';
@@ -18,6 +17,7 @@ import slackLogo from 'calypso/assets/images/logos/slack.svg';
 import spotifyLogo from 'calypso/assets/images/logos/spotify.svg';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
+import vipLogo from '../exclusive-offers/images/vip-descriptor.svg';
 import { CheckList, Eyebrow } from './content-sections';
 import { VIP_CAPABILITIES, VIP_PITCH_CAPABILITIES } from './mock-data';
 

@@ -11,9 +11,9 @@ import {
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import pressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
+import pressableLogo from '../exclusive-offers/images/pressable-descriptor.svg';
 import { CheckList } from './content-sections';
 import {
 	pressableSignaturePlans,
