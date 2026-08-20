@@ -296,6 +296,22 @@ describe( 'RestClient', () => {
 			] );
 		} );
 
+		it( 'keeps advancing the page when the echoed anchor shrinks page growth to nine', () => {
+			seedFirstWindow(); // ids 100..91
+
+			client.loadMore();
+			// The inclusive `before` echoes the anchor (91) back with nine older
+			// notes, so the loaded count grows to 19, not 20.
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 91 ), last_seen_time: 0 } );
+			getCalls.length = 0;
+			client.loadMore();
+
+			expect( trackedEvents() ).toEqual( [
+				{ filter: 'all', notes_loaded: 10, page: 2 },
+				{ filter: 'all', notes_loaded: 19, page: 3 },
+			] );
+		} );
+
 		it( 'records nothing when load-more is a no-op', () => {
 			seedFirstWindow();
 
