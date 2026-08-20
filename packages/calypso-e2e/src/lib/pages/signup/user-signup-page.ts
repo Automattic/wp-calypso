@@ -215,7 +215,11 @@ export class UserSignupPage {
 	 */
 	async visit( { path }: { path: string } = { path: '' } ): Promise< void > {
 		const targetUrl = path ? `start/${ path }` : 'start';
-		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
+		// Not 'networkidle': the bot-protection client keeps the signup page
+		// busy, and no navigationTimeout is configured, so waiting for idle
+		// burns the whole test budget. waitForSignupForm() does the real
+		// readiness wait, bounded.
+		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'domcontentloaded' } );
 	}
 	/**
 	 * Captures the response from the user creation API endpoint.
