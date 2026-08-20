@@ -183,9 +183,11 @@ function FreeDevSites() {
 					<Text variant="muted" size={ 12 }>
 						{ __( '5 of 5 free licenses available' ) }
 					</Text>
-					<Button variant="secondary" __next40pxDefaultSize>
-						{ __( 'Create a development site' ) }
-					</Button>
+					<HStack justify="flex-start">
+						<Button variant="secondary" __next40pxDefaultSize>
+							{ __( 'Create a development site' ) }
+						</Button>
+					</HStack>
 				</VStack>
 			</CardBody>
 		</Card>
