@@ -18,6 +18,11 @@ export class SignupPickPlanPage {
 	private page: Page;
 	private plansPage: PlansPage;
 	readonly theresAPlanForYouHeading: Locator;
+	/**
+	 * Site created by the last `selectPlan` call. Set as soon as `/sites/new` responds,
+	 * so a caller whose `selectPlan` then times out can still clean the site up.
+	 */
+	createdSite: NewSiteResponse | undefined;
 
 	/**
 	 * Constructs an instance of the component.
@@ -41,6 +46,8 @@ export class SignupPickPlanPage {
 	 * @returns {Promise<NewSiteResponse>}
 	 */
 	private captureNewSiteResponse(): Promise< NewSiteResponse > {
+		this.createdSite = undefined;
+
 		return new Promise< NewSiteResponse >( ( resolve, reject ) => {
 			this.page.route(
 				/.*\/sites\/new\?.*/,
@@ -68,6 +75,7 @@ export class SignupPickPlanPage {
 						}
 
 						siteDetails.blog_details.blogid = Number( siteDetails.blog_details.blogid );
+						this.createdSite = siteDetails;
 						resolve( siteDetails );
 					} catch ( error ) {
 						reject( error );
