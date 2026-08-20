@@ -24,25 +24,29 @@ const REVIEW_CONTEXTS = new Set( [
 ] );
 
 /** Keeps only supported response properties with valid values. */
-function getResponseTrackingProperties( value: unknown ): Record< string, string | number > {
+function getResponseTrackingProperties(
+	value: unknown
+): Record< string, string | number | boolean > {
 	if ( typeof value !== 'object' || value === null ) {
 		return {};
 	}
 
 	const properties = value as Record< string, unknown >;
-	const safeProperties = RESPONSE_COUNT_PROPERTIES.reduce< Record< string, string | number > >(
-		( result, property ) => {
-			const count = properties[ property ];
-			if ( typeof count === 'number' && Number.isSafeInteger( count ) && count >= 0 ) {
-				result[ property ] = count;
-			}
-			return result;
-		},
-		{}
-	);
+	const safeProperties = RESPONSE_COUNT_PROPERTIES.reduce<
+		Record< string, string | number | boolean >
+	>( ( result, property ) => {
+		const count = properties[ property ];
+		if ( typeof count === 'number' && Number.isSafeInteger( count ) && count >= 0 ) {
+			result[ property ] = count;
+		}
+		return result;
+	}, {} );
 	const reviewContext = properties.review_context;
 	if ( typeof reviewContext === 'string' && REVIEW_CONTEXTS.has( reviewContext ) ) {
 		safeProperties.review_context = reviewContext;
+	}
+	if ( typeof properties.cache_hit === 'boolean' ) {
+		safeProperties.cache_hit = properties.cache_hit;
 	}
 
 	return safeProperties;

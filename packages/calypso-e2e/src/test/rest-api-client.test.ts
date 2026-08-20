@@ -1,7 +1,11 @@
-import { afterEach, describe, expect, test, jest } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, test, jest } from '@jest/globals';
 import nock from 'nock';
 import * as teamcity from '../lib/teamcity';
-import { flushThrottleWrites, resetRaisedThrottles } from '../lib/throttle-flags';
+import {
+	flushThrottleWrites,
+	registerThrottleActionHandler,
+	resetThrottleState,
+} from '../lib/throttle-flags';
 import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import type { Secrets } from '../secrets';
@@ -202,6 +206,15 @@ describe( 'RestAPIClient: createSite', function () {
 	let tagOwnBuild: jest.SpiedFunction< typeof teamcity.tagOwnBuild >;
 	let appendOwnBuildLog: jest.SpiedFunction< typeof teamcity.appendOwnBuildLog >;
 	let warn: jest.SpiedFunction< typeof console.warn >;
+	let throttleActionHandler: jest.Mock;
+	let unregisterThrottleActionHandler: () => void;
+
+	beforeEach( () => {
+		throttleActionHandler = jest.fn();
+		unregisterThrottleActionHandler = registerThrottleActionHandler( throttleActionHandler );
+		delete process.env.THROTTLE_SIGNUP_EXPIRATION;
+		delete process.env.E2E_THROTTLE_SIGNUP_ACTION;
+	} );
 
 	// Restores only what the test below spies on: the file-level
 	// `SecretsManager.secrets` spy is what lets every test here run without a
@@ -210,7 +223,23 @@ describe( 'RestAPIClient: createSite', function () {
 		tagOwnBuild?.mockRestore();
 		appendOwnBuildLog?.mockRestore();
 		warn?.mockRestore();
-		resetRaisedThrottles();
+		unregisterThrottleActionHandler();
+		delete process.env.THROTTLE_SIGNUP_EXPIRATION;
+		resetThrottleState();
+	} );
+
+	test( 'An active signup throttle acts before the request is sent', async function () {
+		const sendRequest = jest.spyOn( restAPIClient, 'sendRequest' );
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( Date.now() + 60_000 );
+		throttleActionHandler.mockImplementation( () => {
+			throw new Error( 'policy applied' );
+		} );
+
+		await expect(
+			restAPIClient.createSite( { name: 'fake_blog_name', title: 'fake_blog_title' } )
+		).rejects.toThrow( 'policy applied' );
+		expect( sendRequest ).not.toHaveBeenCalled();
+		sendRequest.mockRestore();
 	} );
 
 	test( 'A throttled response raises a flag and still fails the call', async function () {
@@ -235,6 +264,7 @@ describe( 'RestAPIClient: createSite', function () {
 		expect( appendOwnBuildLog ).toHaveBeenCalledWith(
 			expect.stringContaining( 'duration=600000' )
 		);
+		expect( throttleActionHandler ).toHaveBeenCalledWith( 'skip', [ 'signup' ] );
 	} );
 
 	test( 'A throttled call answers without waiting for the write', async function () {
@@ -270,5 +300,27 @@ describe( 'RestAPIClient: createSite', function () {
 		).rejects.toThrow( 'throttled' );
 
 		expect( tagOwnBuild ).toHaveBeenCalledWith( 'throttle-signup' );
+	} );
+
+	test( 'A refusal that is not JSON acts on the call that met it', async function () {
+		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+		appendOwnBuildLog = jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
+		warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		const error = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
+		// A refusal a gateway wrapped in a page of its own: `sendRequest` cannot
+		// parse it, so the throttle arrives as a thrown error, not a response body.
+		nock( requestURL.origin )
+			.post( requestURL.pathname )
+			.reply( 403, '{"error":"throttled"}<!-- served by a gateway -->' );
+
+		await expect(
+			restAPIClient.createSite( { name: 'fake_blog_name', title: 'fake_blog_title' } )
+		).rejects.toThrow( 'Failed to parse JSON' );
+
+		// The policy applies here rather than to whichever test checks next.
+		expect( throttleActionHandler ).toHaveBeenCalledWith( 'skip', [ 'signup' ] );
+
+		await flushThrottleWrites();
+		error.mockRestore();
 	} );
 } );

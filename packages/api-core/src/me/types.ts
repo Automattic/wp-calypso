@@ -24,6 +24,7 @@ export interface User {
 	date: string;
 	display_name: string;
 	email: string;
+	email_bouncing?: boolean;
 	email_verified: boolean;
 	garden_site_count: number;
 	had_hosting_trial: boolean;

@@ -55,6 +55,9 @@ interface SignupFormSocialFirst {
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 	activationEmailFrom?: string;
+	// Holds the email submit (button and Enter) while true, leaving the social options and the email
+	// field alone. The onboarding account step keeps this on until the email-verification arm loads.
+	isSubmitBlocked?: boolean;
 	// Replaces account creation with a change to the account the caller already has, making this an
 	// email-only screen: nothing on it offers a second account. Submitting the address unchanged is
 	// how the caller gets its user back, so there is nothing else to leave by.
@@ -118,6 +121,7 @@ const SignupFormSocialFirst = ( {
 	allowedSocialServices,
 	customTosElement,
 	activationEmailFrom,
+	isSubmitBlocked,
 	onUpdateEmail,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
@@ -205,6 +209,7 @@ const SignupFormSocialFirst = ( {
 		stepName,
 		flowName,
 		activationEmailFrom,
+		isSubmitBlocked,
 		goToNextStep,
 		logInUrl,
 		queryArgs,

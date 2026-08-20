@@ -70,6 +70,7 @@ export function useInstallDeadline( {
 	transfer: AtomicTransfer | undefined;
 	isTransferFresh: boolean;
 	isTransferLookupComplete: boolean;
+	isTransferLookupNotFound: boolean;
 } {
 	const [ now, setNow ] = useState( () => Date.now() );
 	// Null while the wait is not running. The clock is stamped when it starts, never while it is
@@ -109,7 +110,9 @@ export function useInstallDeadline( {
 	// deadline the moment this mounts — latching a timeout on an install that has since completed.
 	const {
 		data: transfer,
+		error: transferError,
 		isFetchedAfterMount,
+		isError: isTransferError,
 		isSuccess,
 	} = useQuery( {
 		...siteLatestAtomicTransferQuery( siteId ),
@@ -209,5 +212,9 @@ export function useInstallDeadline( {
 		transfer,
 		isTransferFresh: isFetchedAfterMount && isSuccess,
 		isTransferLookupComplete: isFetchedAfterMount,
+		isTransferLookupNotFound:
+			isFetchedAfterMount &&
+			isTransferError &&
+			( transferError as { status?: number } )?.status === 404,
 	};
 }

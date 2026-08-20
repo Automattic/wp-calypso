@@ -1,6 +1,6 @@
 import fs from 'fs';
 import FormData from 'form-data';
-import { debugThrottle, recordThrottle } from './lib/throttle-flags';
+import { handleActiveThrottles, recordThrottle } from './lib/throttle-flags';
 import { SecretsManager } from './secrets';
 import {
 	BearerTokenErrorResponse,
@@ -248,7 +248,7 @@ export class RestAPIClient {
 	 * @throws {ErrorResponse} If API responded with an error.
 	 */
 	async createSite( newSiteParams: NewSiteParams ): Promise< NewSiteResponse > {
-		debugThrottle( 'signup' );
+		handleActiveThrottles( [ 'signup' ] );
 
 		const body = {
 			client_id: SecretsManager.secrets.calypsoOauthApplication.client_id,
@@ -282,12 +282,19 @@ export class RestAPIClient {
 			// Recorded either way, and rethrown untouched. The endpoint travels
 			// alongside: neither shape names it, and a bare `throttled` code means
 			// nothing without it.
-			// Not awaited: the worker knows about the ban the moment this returns,
-			// and telling the rest of the project runs behind it.
-			void recordThrottle( error, url.href );
+			const throttle = await recordThrottle( error, url.href );
+			if ( throttle ) {
+				// `raiseFlag` writes what this reads before `recordThrottle` returns,
+				// so the ban the throw is about is applied to this test rather than to
+				// the next one that happens to check.
+				handleActiveThrottles( [ throttle ] );
+			}
 			throw error;
 		}
-		void recordThrottle( response, url.href );
+		const throttle = await recordThrottle( response, url.href );
+		if ( throttle ) {
+			handleActiveThrottles( [ throttle ] );
+		}
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(

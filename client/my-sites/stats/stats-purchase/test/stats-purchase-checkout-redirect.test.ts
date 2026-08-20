@@ -65,6 +65,19 @@ describe( 'gotoCheckoutPage — site with no WordPress.com connection', () => {
 		);
 	} );
 
+	it( 'keeps what the caller put on the return path', () => {
+		// The pre-connection screen marks it with the plan picked, which is what tells the
+		// dashboard the flow completed once the site finally has an id.
+		const redirectTo = checkoutUrl( {
+			siteId: null,
+			redirectUri: 'admin.php?page=stats&stats_plan_chosen=paid&force_refresh=1',
+		} ).searchParams.get( 'redirect_to' );
+
+		expect( redirectTo ).toBe(
+			`${ ADMIN_URL }admin.php?page=stats&stats_plan_chosen=paid&force_refresh=1&statsPurchaseSuccess=paid`
+		);
+	} );
+
 	it( 'carries the chosen views tier', () => {
 		const url = checkoutUrl( { siteId: null, quantity: 50000 } );
 

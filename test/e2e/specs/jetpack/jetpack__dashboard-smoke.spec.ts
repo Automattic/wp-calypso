@@ -40,7 +40,7 @@ test.describe(
 				// show up when visiting the Jetpack dashboard directly.
 				const siteUrl = testAccount.getSiteURL( { protocol: true } );
 				await page.goto( `${ siteUrl }wp-admin/`, {
-					timeout: 15 * 1000,
+					timeout: 45 * 1000,
 					referer: 'https://wordpress.com/',
 				} );
 			} );

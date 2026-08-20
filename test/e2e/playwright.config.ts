@@ -1,13 +1,14 @@
 // Must come before ./lib/pw-base so .env is loaded before
 // @automattic/calypso-e2e's env-variables module is evaluated.
 import './load-env';
-import { envVariables } from '@automattic/calypso-e2e';
+import { envVariables, validateThrottleActions } from '@automattic/calypso-e2e';
 import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
 import { tags, type CustomOptions } from './lib/pw-base';
 
 // Reads every supported variable so an unsupported value fails here, before the suite starts,
 // instead of mid-spec on its first read.
 envVariables.validate();
+validateThrottleActions();
 
 /**
  * Creates a use config object with custom options.

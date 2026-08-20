@@ -53,6 +53,12 @@ interface PricingGridProps {
 	 * not attached to yet, so connecting is what surfaces it.
 	 */
 	onSelectExistingPlan?: () => void;
+	/**
+	 * Added to every event this grid records. A host with no blog id to be identified by has to
+	 * supply whatever key it does have, since `blog_id` is null there and nothing else on the
+	 * event would tie it to what the site does next.
+	 */
+	eventProps?: Record< string, string | number >;
 }
 
 /** My Jetpack's licence activation screen, where Jetpack Search's upsell sends its own visitors. */
@@ -70,6 +76,7 @@ export default function PricingGrid( {
 	onSelectFree,
 	onSelectPaid,
 	onSelectExistingPlan,
+	eventProps,
 }: PricingGridProps ) {
 	const translate = useTranslate();
 	// Same breakpoint the jetpack-components PricingTable uses via useViewportMatch.
@@ -82,7 +89,10 @@ export default function PricingGrid( {
 	const dismissPricingGrid = useDismissPricingGrid( siteId );
 
 	useEffect( () => {
-		trackStatsAnalyticsEvent( 'stats_pricing_grid_view', { blog_id: siteId } );
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_view', { blog_id: siteId, ...eventProps } );
+		// One view per grid: `eventProps` only labels it, and depending on it would re-record the
+		// view on every render of a host that builds the object inline.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ siteId ] );
 
 	const product = useSelector( ( state ) =>
@@ -168,6 +178,7 @@ export default function PricingGrid( {
 		trackStatsAnalyticsEvent( 'stats_pricing_grid_free_cta_clicked', {
 			blog_id: siteId,
 			cta: 'free',
+			...eventProps,
 		} );
 
 		if ( onSelectFree ) {
@@ -188,6 +199,7 @@ export default function PricingGrid( {
 		trackStatsAnalyticsEvent( 'stats_pricing_grid_paid_cta_clicked', {
 			blog_id: siteId,
 			cta: 'paid',
+			...eventProps,
 		} );
 
 		if ( onSelectPaid ) {

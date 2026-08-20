@@ -6,7 +6,12 @@ import userEvent from '@testing-library/user-event';
 import { registerSite } from '../../lib/jetpack-connection';
 import PreConnection from '../index';
 
-jest.mock( '../../lib/jetpack-connection' );
+jest.mock( '../../lib/jetpack-connection', () => ( {
+	...jest.requireActual( '../../lib/jetpack-connection' ),
+	registerSite: jest.fn(),
+	isOfflineMode: () => false,
+	getSiteSuffix: () => 'example.com',
+} ) );
 jest.mock( '../../lib/selectors/get-wp-admin-url', () => () => 'https://example.com/wp-admin/' );
 jest.mock( 'calypso/state', () => ( {
 	useSelector: jest.fn( ( selector ) => selector( {} ) ),
@@ -15,6 +20,10 @@ jest.mock( 'calypso/state/products-list/selectors', () => ( {
 	getProductBySlug: () => null,
 } ) );
 jest.mock( 'calypso/components/data/query-products-list', () => () => null );
+jest.mock( 'calypso/my-sites/stats/stats-page-view-tracker', () => () => null );
+jest.mock( 'calypso/my-sites/stats/utils', () => ( {
+	trackStatsAnalyticsEvent: jest.fn(),
+} ) );
 jest.mock( 'calypso/my-sites/stats/components/stats-main', () => ( {
 	__esModule: true,
 	default: ( { children } ) => <div>{ children }</div>,
@@ -49,20 +58,20 @@ const clickCta = async ( name ) => {
 describe( 'PreConnection', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		registerSite.mockResolvedValue( AUTHORIZE_URL );
+		registerSite.mockResolvedValue( { authorizeUrl: AUTHORIZE_URL, blogId: 123 } );
 		// Every path here ends in a navigation, which jsdom can only warn about.
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
 
-	it( 'tells the dashboard a plan was picked when the visitor picks one here', async () => {
+	it( 'names the free plan for the dashboard when the visitor picks it here', async () => {
 		expect( await clickCta( 'free' ) ).toBe(
-			'admin.php?page=stats&force_refresh=1&stats_plan_chosen=1'
+			'admin.php?page=stats&stats_plan_chosen=free&force_refresh=1'
 		);
 	} );
 
-	it( 'tells it the same before checking out, so an abandoned checkout is not asked twice', async () => {
+	it( 'names the paid plan before checking out, so an abandoned checkout is not asked twice', async () => {
 		expect( await clickCta( 'paid' ) ).toBe(
-			'admin.php?page=stats&force_refresh=1&stats_plan_chosen=1'
+			'admin.php?page=stats&stats_plan_chosen=paid&force_refresh=1'
 		);
 	} );
 

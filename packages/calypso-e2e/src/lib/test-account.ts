@@ -13,10 +13,6 @@ import { SidebarComponent } from './components/sidebar-component';
 import { LoginPage } from './pages/login-page';
 import type { TestAccountCredentials } from '../secrets';
 
-// Feature flags forced on for every E2E session, in the `flags` cookie format that
-// @automattic/calypso-config reads: a leading `-` disables.
-const FLAG_OVERRIDES = [ '-dashboard/enable-percentage-rollout' ];
-
 /**
  * Represents the WPCOM test account.
  */
@@ -58,7 +54,6 @@ export class TestAccount {
 	): Promise< void > {
 		const browserContext = page.context();
 		await browserContext.clearCookies();
-		await TestAccount.applyFlagOverrides( browserContext );
 
 		if ( await this.hasFreshAuthCookies() ) {
 			this.log( 'Found fresh cookies, skipping log in' );
@@ -75,27 +70,6 @@ export class TestAccount {
 		if ( waitUntilStable ) {
 			await TestAccount.waitForAppShell( page );
 		}
-	}
-
-	/**
-	 * Opts every E2E session out of the hosting dashboard rollout.
-	 *
-	 * These specs target classic Calypso, so they should not be moved onto the
-	 * dashboard by a percentage rollout they have no control over. Overrides are
-	 * honored in development, on the staging environments and on calypso.live, and
-	 * ignored on production, so release runs against production are unaffected.
-	 *
-	 * @param {BrowserContext} browserContext Browser context to set the cookie on.
-	 */
-	private static async applyFlagOverrides( browserContext: BrowserContext ): Promise< void > {
-		await browserContext.addCookies( [
-			{
-				name: 'flags',
-				value: FLAG_OVERRIDES.join( ',' ),
-				domain: new URL( getCalypsoURL( '/' ) ).hostname,
-				path: '/',
-			},
-		] );
 	}
 
 	/**

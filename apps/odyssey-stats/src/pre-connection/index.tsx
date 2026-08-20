@@ -1,7 +1,7 @@
 import { PRODUCT_JETPACK_STATS_YEARLY } from '@automattic/calypso-products';
 import { Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import StatsMain from 'calypso/my-sites/stats/components/stats-main';
 import PageLoading from 'calypso/my-sites/stats/pages/shared/page-loading';
@@ -10,28 +10,60 @@ import {
 	PRICING_GRID_REFERRER,
 } from 'calypso/my-sites/stats/pricing-grid/hooks/use-dismiss-pricing-grid';
 import PricingGrid from 'calypso/my-sites/stats/pricing-grid/pricing-grid';
+import PageViewTracker from 'calypso/my-sites/stats/stats-page-view-tracker';
 import { StatsSingleItemPagePurchaseFrame } from 'calypso/my-sites/stats/stats-purchase/stats-purchase-shared';
 import { StatsCommercialPurchase } from 'calypso/my-sites/stats/stats-purchase/stats-purchase-single-item';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { getSiteSuffix, isOfflineMode, registerSite } from '../lib/jetpack-connection';
+import {
+	getRegistrationErrorCode,
+	getSiteSuffix,
+	isOfflineMode,
+	registerSite,
+} from '../lib/jetpack-connection';
 import getWpAdminUrl from '../lib/selectors/get-wp-admin-url';
 
 const STATS_ADMIN_PATH = 'admin.php?page=stats';
 
 /**
- * Where authorizing returns the visitor to. `force_refresh` drops what the site cached while it had
- * no connection; the pricing grid gate strips it from the address bar once the dashboard has read
- * it, so later REST requests do not keep bypassing the server caches via the Referer.
+ * What the visitor answered the plan question with. `existing` is not a plan of its own — it says
+ * they already hold one, bought against a WordPress.com account this site is not attached to yet —
+ * but it registers the site exactly as the other two do, so it belongs in the same funnel.
  */
-const RETURN_TO_DASHBOARD = `${ STATS_ADMIN_PATH }&force_refresh=1`;
+type Plan = 'free' | 'paid' | 'existing';
 
 /**
- * The same return, with a marker telling the dashboard's pricing grid that the plan question was
- * already answered here — it cannot be recorded against the site at the time it is asked, since the
- * site has no blog id yet. The gate strips the marker along with `force_refresh`.
+ * Tracks only queues an event; navigating in the same tick cancels the request that would have
+ * sent it. The purchase flow waits the same beat everywhere else it leaves the page.
  */
-const AUTHORIZE_REDIRECT_URI = `${ RETURN_TO_DASHBOARD }&${ PLAN_CHOSEN_QUERY_ARG }=1`;
+const TRACKS_FLUSH_DELAY = 250;
+
+const navigateOnceRecorded = ( url: string ) => {
+	setTimeout( () => {
+		window.location.href = url;
+	}, TRACKS_FLUSH_DELAY );
+};
+
+/**
+ * Where the connection flow returns the visitor to — after authorizing on the free path, and after
+ * checkout on the paid one. The marker tells the dashboard's pricing grid which plan was picked
+ * here; it cannot be recorded against the site at the time it is asked, since the site has no blog
+ * id yet. It names the plan rather than merely reporting that one was picked: registration happens
+ * for both, so the marker alone says nothing about which.
+ *
+ * `existing` sends no marker at all: nothing was chosen here, so the gate has to put the question
+ * again once there is an account whose purchases can answer it.
+ *
+ * `force_refresh` drops what the site cached while it had no connection. The pricing grid gate
+ * strips it (and the plan-chosen marker) from the address bar once the dashboard has read them,
+ * so later REST requests do not keep bypassing the server caches via the Referer.
+ */
+const preConnectionReturnUri = ( plan: Plan ) => {
+	const planChosen = plan === 'existing' ? '' : `&${ PLAN_CHOSEN_QUERY_ARG }=${ plan }`;
+
+	return `${ STATS_ADMIN_PATH }${ planChosen }&force_refresh=1`;
+};
 
 /**
  * The plan choice a site sees before it is connected to WordPress.com.
@@ -44,22 +76,63 @@ const AUTHORIZE_REDIRECT_URI = `${ RETURN_TO_DASHBOARD }&${ PLAN_CHOSEN_QUERY_AR
 export default function PreConnection() {
 	const translate = useTranslate();
 	const [ authorizeUrl, setAuthorizeUrl ] = useState< string | null >( null );
+	const [ blogId, setBlogId ] = useState< number | null >( null );
 	const [ isRegistering, setIsRegistering ] = useState( false );
 	const [ error, setError ] = useState< string | null >( null );
+
+	const isOffline = isOfflineMode();
+
+	/**
+	 * Nothing here has a blog id to be recorded against, so every event carries the site suffix
+	 * instead — the only identifier the site has until it registers, and what ties this screen to
+	 * the checkout it hands over to. `is_pre_connection` tells these apart from the same grid
+	 * shown on a connected site's dashboard.
+	 */
+	const eventProps = useMemo(
+		() => ( { site_suffix: getSiteSuffix(), is_pre_connection: 1 } ),
+		[]
+	);
 
 	const product = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
 	);
 
-	const connect = async ( redirectUri: string ) => {
+	useEffect( () => {
+		if ( isOffline ) {
+			trackStatsAnalyticsEvent( 'stats_pre_connection_offline_notice_view', eventProps );
+		}
+	}, [ isOffline, eventProps ] );
+
+	const connect = async ( plan: Plan ) => {
 		setError( null );
 		setIsRegistering( true );
+		trackStatsAnalyticsEvent( 'stats_pre_connection_register_start', { ...eventProps, plan } );
 
 		try {
-			return await registerSite( redirectUri );
+			const registration = await registerSite( preConnectionReturnUri( plan ) );
+
+			// The one event carrying both keys, and so the join between everything above and
+			// everything the site does once it has an id.
+			trackStatsAnalyticsEvent( 'stats_pre_connection_register_success', {
+				...eventProps,
+				plan,
+				blog_id: registration.blogId,
+			} );
+			setBlogId( registration.blogId );
+
+			return registration.authorizeUrl;
 		} catch ( e ) {
+			const message = ( e as Error ).message;
+
+			trackStatsAnalyticsEvent( 'stats_pre_connection_register_failed', {
+				...eventProps,
+				plan,
+				// Not the message: it arrives already translated, can name the site, and is empty
+				// for every failure that did not come from the API.
+				error_code: getRegistrationErrorCode( e ),
+			} );
 			setError(
-				( e as Error ).message ||
+				message ||
 					String(
 						translate( 'Jetpack could not connect this site to WordPress.com. Please try again.' )
 					)
@@ -70,11 +143,11 @@ export default function PreConnection() {
 	};
 
 	const startForFree = async () => {
-		const url = await connect( AUTHORIZE_REDIRECT_URI );
+		const url = await connect( 'free' );
 
 		// Deliberately leaves the spinner up: the browser is on its way to WordPress.com.
 		if ( url ) {
-			window.location.href = url;
+			navigateOnceRecorded( url );
 		}
 	};
 
@@ -85,15 +158,15 @@ export default function PreConnection() {
 	 * licence key to redeem.
 	 */
 	const startWithExistingPlan = async () => {
-		const url = await connect( RETURN_TO_DASHBOARD );
+		const url = await connect( 'existing' );
 
 		if ( url ) {
-			window.location.href = url;
+			navigateOnceRecorded( url );
 		}
 	};
 
 	const goToPurchase = async () => {
-		const url = await connect( AUTHORIZE_REDIRECT_URI );
+		const url = await connect( 'paid' );
 
 		if ( url ) {
 			setAuthorizeUrl( url );
@@ -102,7 +175,7 @@ export default function PreConnection() {
 	};
 
 	const renderStep = () => {
-		if ( isOfflineMode() ) {
+		if ( isOffline ) {
 			return (
 				<StatsMain fullWidthLayout>
 					<Notice status="warning" isDismissible={ false }>
@@ -127,14 +200,21 @@ export default function PreConnection() {
 								planValue={ 0 }
 								currencyCode={ product?.currency_code ?? 'USD' }
 								adminUrl={ getWpAdminUrl() }
-								redirectUri={ STATS_ADMIN_PATH }
+								// Checkout returns here rather than through the URL registration stored, so
+								// the marker has to travel this path too — otherwise a purchase that
+								// completes never reports the end of the pre-connection flow.
+								redirectUri={ preConnectionReturnUri( 'paid' ) }
 								from={ PRICING_GRID_REFERRER }
+								// Registration is behind us, so the blog id is known here even though the
+								// screen still runs without one.
+								eventProps={ blogId ? { ...eventProps, blog_id: blogId } : eventProps }
 								// Nobody is putting anything off here: this is the free plan, and taking it
 								// still needs an account attached. Reaching this screen already registered
 								// the site, so the URL to attach one is in hand.
 								postponeLabel={ String( translate( 'Start for free' ) ) }
+								postponeEventName="stats_purchase_commercial_start_for_free_button_clicked"
 								onPostpone={ () => {
-									window.location.href = authorizeUrl;
+									navigateOnceRecorded( authorizeUrl );
 								} }
 							/>
 						</StatsSingleItemPagePurchaseFrame>
@@ -148,11 +228,23 @@ export default function PreConnection() {
 		}
 
 		return (
-			<PricingGrid
-				onSelectFree={ startForFree }
-				onSelectPaid={ goToPurchase }
-				onSelectExistingPlan={ startWithExistingPlan }
-			/>
+			<>
+				{ /* Recorded with the grid rather than above every step: an offline site never sees
+				     the grid and can never convert, so counting it here would inflate the top of
+				     the funnel against the view the grid records. */ }
+				<PageViewTracker
+					path="/stats/pricing"
+					title="Stats > Pricing"
+					site_suffix={ eventProps.site_suffix }
+					is_pre_connection={ eventProps.is_pre_connection }
+				/>
+				<PricingGrid
+					onSelectFree={ startForFree }
+					onSelectPaid={ goToPurchase }
+					onSelectExistingPlan={ startWithExistingPlan }
+					eventProps={ eventProps }
+				/>
+			</>
 		);
 	};
 

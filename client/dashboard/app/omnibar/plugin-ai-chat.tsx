@@ -2,10 +2,10 @@ import {
 	closeAgentsManagerChat,
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
+	recordFullNameAgentsManagerTracksEvent,
 	useShouldUseUnifiedAgent,
 } from '@automattic/agents-manager';
 import { __ } from '@wordpress/i18n';
-import { useAnalytics } from '../analytics';
 import type { OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-ai-chat.scss';
@@ -30,7 +30,6 @@ export function useAiChatPlugin( {
 	sectionName?: string;
 } ): OmnibarNode | undefined {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
-	const { recordTracksEvent } = useAnalytics();
 
 	if ( ! shouldUseUnifiedAgent ) {
 		return undefined;
@@ -39,8 +38,8 @@ export function useAiChatPlugin( {
 	const handleClick = () => {
 		const isChatVisible = isAgentsManagerChatVisible();
 
-		recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
-			section: sectionName,
+		recordFullNameAgentsManagerTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
+			section: sectionName || 'unknown',
 			action: isChatVisible ? 'close' : 'open',
 		} );
 

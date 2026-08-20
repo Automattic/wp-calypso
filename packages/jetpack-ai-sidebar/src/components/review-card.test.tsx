@@ -12,6 +12,26 @@ import ReviewCard, { type ReviewCardProps, type ReviewCardRow } from './review-c
 jest.mock( '@wordpress/blocks', () => ( {
 	getBlockType: jest.fn(),
 } ) );
+jest.mock( '@wordpress/icons', () => {
+	const { createElement: mockCreateElement } =
+		jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
+
+	return {
+		check: 'check',
+		close: 'close',
+		undo: 'undo',
+		Icon: ( { className, icon }: { className?: string; icon: unknown } ) => {
+			if ( typeof icon !== 'string' ) {
+				throw new Error( 'Unexpected unmocked icon' );
+			}
+
+			return mockCreateElement( 'span', {
+				className,
+				'data-testid': `icon-${ icon }`,
+			} );
+		},
+	};
+} );
 jest.mock( '@wordpress/block-editor', () => {
 	const react = jest.requireActual< typeof import('react') >( 'react' );
 	const { RawHTML } =
@@ -29,7 +49,7 @@ jest.mock( '@wordpress/block-editor', () => {
 	};
 } );
 
-function renderCard( bodyRows: ReviewCardRow[] ) {
+function renderCard( bodyRows: ReviewCardRow[], overrides: Partial< ReviewCardProps > = {} ) {
 	const props: ReviewCardProps = {
 		model: {
 			badge: 'Clarity (1/1)',
@@ -50,6 +70,7 @@ function renderCard( bodyRows: ReviewCardRow[] ) {
 		onCopy: jest.fn(),
 		onDismiss: jest.fn(),
 		onUndo: jest.fn(),
+		...overrides,
 	};
 	return render( <ReviewCard { ...props } /> );
 }
@@ -178,5 +199,34 @@ describe( 'ReviewCard rich-text rows', () => {
 		expect( ins?.querySelector( 'strong' ) ).toHaveTextContent( 'safe preview' );
 		expect( ins ).not.toHaveTextContent( 'raw' );
 		expect( ( window as unknown as { pwned?: boolean } ).pwned ).toBeUndefined();
+	} );
+} );
+
+describe( 'ReviewCard resolved states', () => {
+	it( 'shows Applied with the check status icon and an Undo action', () => {
+		const { container } = renderCard( [], { status: 'accepted' } );
+
+		expect( screen.getByText( 'Applied' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /Undo/ } ) ).toBeInTheDocument();
+		expect( container.querySelector( '.jetpack-ai-feedback-list__resolution' ) ).toHaveClass(
+			'is-accepted'
+		);
+		expect( screen.getByTestId( 'icon-check' ) ).toHaveClass(
+			'jetpack-ai-feedback-list__resolution-icon'
+		);
+		expect( screen.queryByTestId( 'icon-close' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows Dismissed with the close status icon', () => {
+		const { container } = renderCard( [], { status: 'dismissed' } );
+
+		expect( screen.getByText( 'Dismissed' ) ).toBeInTheDocument();
+		expect( container.querySelector( '.jetpack-ai-feedback-list__resolution' ) ).toHaveClass(
+			'is-dismissed'
+		);
+		expect( screen.getByTestId( 'icon-close' ) ).toHaveClass(
+			'jetpack-ai-feedback-list__resolution-icon'
+		);
+		expect( screen.queryByTestId( 'icon-check' ) ).not.toBeInTheDocument();
 	} );
 } );
