@@ -48,7 +48,7 @@
 .site-launch-pre-launch-modal__preview-card {
 	@extend %launch-modal-card;
 
-	border-radius: 4px;
+	border-radius: $radius-medium;
 }
 
 .site-launch-pre-launch-modal__thumbnail {
@@ -57,7 +57,23 @@
 	inline-size: 114px;
 	block-size: 88px;
 	overflow: hidden;
-	border-radius: 4px;
+	border-radius: $radius-medium;
+	background-color: var( --color-neutral-5 );
+
+	// Static placeholder that covers the preview until the iframe has finished
+	// loading. A loading iframe paints an opaque viewport, so the placeholder
+	// must sit on top rather than behind it.
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		background-color: var( --color-neutral-5 );
+	}
+
+	&[data-preview-loaded="true"]::before {
+		display: none;
+	}
 }
 
 .site-launch-pre-launch-modal__meta {
