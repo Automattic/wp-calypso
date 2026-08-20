@@ -6,16 +6,17 @@ import { earnWooPaymentsSetupRoute } from '../../../../app/router/agency';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
 import { TextSkeleton } from '../../../../components/text-skeleton';
+import { getSiteDisplayUrl } from '../../../../utils/site-url';
 import { useWooPaymentsSiteSetup } from '../hooks/use-woopayments-site-setup';
 import SetupSteps from './setup-steps';
 
 export default function EarnWooPaymentsSetup() {
 	const { siteId: siteIdParam } = earnWooPaymentsSetupRoute.useParams();
-	const siteId = parseInt( siteIdParam, 10 );
+	const siteId = Number( siteIdParam );
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 
-	const { site, siteDomain, isLoading, status, setupUrl, installAndActivate, isInstalling } =
+	const { site, isLoading, status, setupUrl, installAndActivate, isInstalling } =
 		useWooPaymentsSiteSetup( siteId );
 	const { woocommerceStatus, woocommercePaymentsStatus, isWooPaymentsActive } = status;
 
@@ -63,7 +64,7 @@ export default function EarnWooPaymentsSetup() {
 					title={ sprintf(
 						// translators: %s is the site domain, e.g. example.com
 						__( 'WooPayments is now ready to be configured on %s' ),
-						siteDomain ?? site.slug
+						getSiteDisplayUrl( site )
 					) }
 					description={ __(
 						'Follow the steps below to complete the process so you can earn commissions.'
