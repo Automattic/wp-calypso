@@ -46,35 +46,35 @@ const REFERRAL_GUIDE_STEPS = [
 		description: __(
 			'Manage your clients’ products without the burden of managing the billing. Assemble a cart of products, send a request for payment to your clients, and make commissions based on what you sell.'
 		),
-		media: <img src={ referralStep1 } alt="" />,
+		media: <img src={ referralStep1 } alt="" width={ 400 } height={ 260 } />,
 	},
 	{
 		title: __( 'Add the products your client needs' ),
 		description: __(
 			'Ensure “Refer products” is toggled on, and add any mix of products to your cart.'
 		),
-		media: <img src={ referralStep2 } alt="" />,
+		media: <img src={ referralStep2 } alt="" width={ 400 } height={ 260 } />,
 	},
 	{
 		title: __( 'Review your selection during checkout' ),
 		description: __(
 			'During checkout, add your client’s email address and a note about the invoice for the selected products.'
 		),
-		media: <img src={ referralStep3 } alt="" />,
+		media: <img src={ referralStep3 } alt="" width={ 400 } height={ 260 } />,
 	},
 	{
 		title: __( 'Send your client the payment request' ),
 		description: __(
 			'Once sent, your client will get the invoice delivered to their inbox. After they pay, you’ll be able to assign the products to their site.'
 		),
-		media: <img src={ referralStep4 } alt="" />,
+		media: <img src={ referralStep4 } alt="" width={ 400 } height={ 260 } />,
 	},
 	{
 		title: __( 'Get paid real commissions' ),
 		description: __(
 			'Clients will be billed at the end of every month for their products. When they pay, you’ll make commissions on those products, which you’ll be able to manage under the Referrals section, soon.'
 		),
-		media: <img src={ referralStep5 } alt="" />,
+		media: <img src={ referralStep5 } alt="" width={ 400 } height={ 260 } />,
 	},
 ];
 
