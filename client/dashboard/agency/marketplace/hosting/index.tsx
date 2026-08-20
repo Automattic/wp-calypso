@@ -1,8 +1,6 @@
 import {
 	Button,
 	ToggleControl,
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -101,8 +99,11 @@ function MoreAboutHosting( {
 }
 
 export default function MarketplaceHosting() {
-	const [ selectedBrand, setSelectedBrand ] = useState< HostingBrand[ 'key' ] >( 'wpcom' );
-	const [ clientNeed, setClientNeed ] = useState< string | undefined >( undefined );
+	const suggestedBrand: HostingBrand[ 'key' ] =
+		mockAgencyContext.managedSites >= 10 && ! mockAgencyContext.ownsPressablePlan
+			? 'pressable'
+			: 'wpcom';
+	const [ selectedBrand, setSelectedBrand ] = useState< HostingBrand[ 'key' ] >( suggestedBrand );
 	const [ term, setTerm ] = useState< 'monthly' | 'yearly' >( 'yearly' );
 	const [ isReferralMode, setIsReferralMode ] = useState( false );
 	const [ quantity, setQuantity ] = useState( 3 );
@@ -116,22 +117,6 @@ export default function MarketplaceHosting() {
 	const handleCheckout = () => {
 		setCartCount( selectedBrand === 'wpcom' ? quantity : 1 );
 	};
-
-	const NEED_TO_BRAND: Record< string, HostingBrand[ 'key' ] > = {
-		standard: 'wpcom',
-		portfolio: 'pressable',
-		enterprise: 'vip',
-	};
-
-	const handleNeedChange = ( value: string | number | undefined ) => {
-		const need = value ? String( value ) : undefined;
-		setClientNeed( need );
-		if ( need && NEED_TO_BRAND[ need ] ) {
-			setSelectedBrand( NEED_TO_BRAND[ need ] );
-		}
-	};
-
-	const recommendedBrand = clientNeed ? NEED_TO_BRAND[ clientNeed ] : null;
 
 	return (
 		<PageLayout
@@ -181,35 +166,19 @@ export default function MarketplaceHosting() {
 			<VStack spacing={ 4 }>
 				<SectionHeader
 					title={ __( '1. Choose the right host for your client' ) }
-					description={ __( 'Tell us what your client needs, or pick a host directly.' ) }
+					description={ sprintf(
+						/* translators: %d: number of sites the agency manages */
+						__(
+							'The suggestion is based on your portfolio — you manage %d sites without a pooled plan.'
+						),
+						mockAgencyContext.managedSites
+					) }
 					level={ 2 }
 				/>
-				<ToggleGroupControl
-					__nextHasNoMarginBottom
-					__next40pxDefaultSize
-					isDeselectable
-					hideLabelFromVision
-					label={ __( 'What does your client need?' ) }
-					value={ clientNeed }
-					onChange={ handleNeedChange }
-				>
-					<ToggleGroupControlOption
-						value="standard"
-						label={ __( 'A few standard client sites' ) }
-					/>
-					<ToggleGroupControlOption
-						value="portfolio"
-						label={ __( 'A large portfolio with pooled traffic' ) }
-					/>
-					<ToggleGroupControlOption
-						value="enterprise"
-						label={ __( 'Enterprise scale and compliance' ) }
-					/>
-				</ToggleGroupControl>
 				<ProductSelector
 					brands={ hostingBrands }
 					selected={ selectedBrand }
-					recommended={ recommendedBrand }
+					recommended={ suggestedBrand }
 					onSelect={ setSelectedBrand }
 				/>
 				<CompareHosts />
