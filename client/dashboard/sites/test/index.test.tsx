@@ -5,9 +5,20 @@
 import { startSiteCollisionListener } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../app/context';
 import { render } from '../../test-utils';
 import Sites from '../index';
+import type { AppConfig } from '../../app/context';
 import type { Site, User } from '@automattic/api-core';
+
+// The account-email-bouncing notice only renders where the dashboard variant supports /me.
+const configWithMeSupport: AppConfig = {
+	...APP_CONTEXT_DEFAULT_CONFIG,
+	supports: {
+		...APP_CONTEXT_DEFAULT_CONFIG.supports,
+		me: { billing: { monetizeSubscriptions: true }, security: { sshKey: true }, apps: true },
+	},
+};
 
 const mockSites = [
 	{
@@ -39,6 +50,8 @@ function mockSitesEndpoint( sites: Site[] ) {
 		.reply( 200, { sites, total: sites.length } );
 }
 
+const BOUNCING_NOTICE_TITLE = 'Your account email isn’t receiving our messages';
+
 describe( '<Sites>', () => {
 	beforeEach( () => {
 		nock( 'https://public-api.wordpress.com' )
@@ -62,6 +75,48 @@ describe( '<Sites>', () => {
 		} );
 
 		expect( await screen.findByRole( 'button', { name: 'Add new site' } ) ).toBeVisible();
+	} );
+
+	test( 'shows the bouncing-email notice at the top of the sites list', async () => {
+		mockSitesEndpoint( mockSites );
+
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+				email_bouncing: true,
+			} as User,
+			config: configWithMeSupport,
+		} );
+
+		expect( await screen.findByText( BOUNCING_NOTICE_TITLE ) ).toBeVisible();
+	} );
+
+	test( 'hides the bouncing-email notice when the account email is fine', async () => {
+		mockSitesEndpoint( mockSites );
+
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+			} as User,
+			config: configWithMeSupport,
+		} );
+
+		await screen.findByRole( 'button', { name: 'Add new site' } );
+		expect( screen.queryByText( BOUNCING_NOTICE_TITLE ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'hides the bouncing-email notice in variants without /me support', async () => {
+		mockSitesEndpoint( mockSites );
+
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+				email_bouncing: true,
+			} as User,
+		} );
+
+		await screen.findByRole( 'button', { name: 'Add new site' } );
+		expect( screen.queryByText( BOUNCING_NOTICE_TITLE ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders empty state when the user has no sites', async () => {

@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/utils';
 import { isCustomDomainEmail } from './email-utils';
@@ -101,12 +102,16 @@ export default function EmailSection( {
 		validateEmail( value );
 	}, [ value, validateEmail ] );
 
+	const { user } = useAuth();
 	const { data: accountRecovery } = useQuery( accountRecoveryQuery() );
 	const isAccountRecoveryReady = accountRecovery !== undefined;
 	const hasUsableRecoveryEmail =
 		!! accountRecovery?.email &&
 		! recoveryEmailMatchesAccountEmail( accountRecovery.email, userSettings.user_email );
 	const hasRecoveryMethod = hasUsableRecoveryEmail || !! accountRecovery?.phone;
+
+	const showBouncingEmailError =
+		! isEmailPending && !! user.email_bouncing && value === userSettings.user_email;
 
 	const showCustomDomainWarning =
 		! isEmailPending &&
@@ -119,6 +124,9 @@ export default function EmailSection( {
 	const getValidationClass = () => {
 		if ( isEmailPending ) {
 			return '';
+		}
+		if ( showBouncingEmailError ) {
+			return 'has-error';
 		}
 		if ( showCustomDomainWarning ) {
 			return 'has-warning';
@@ -156,6 +164,15 @@ export default function EmailSection( {
 							em: <em />,
 						} ) }
 					</Button>
+				</>
+			);
+		}
+
+		if ( showBouncingEmailError ) {
+			return (
+				<>
+					<Icon icon={ info } size={ 16 } />
+					{ __( 'Messages we send to this address are bouncing back. Please update your email.' ) }
 				</>
 			);
 		}
@@ -208,6 +225,7 @@ export default function EmailSection( {
 	}, [
 		isEmailPending,
 		isEmailVerified,
+		showBouncingEmailError,
 		showCustomDomainWarning,
 		value,
 		currentEmail,
