@@ -22,6 +22,11 @@ test.describe(
 		let newSiteDetails: NewSiteResponse | undefined;
 		let accountUsed: TestAccount;
 
+		test.skip(
+			true,
+			'calypsoPreReleaseUser owns thousands of leftover sites, so /me/sites takes about a minute and signup cannot reach checkout inside the 90s wait. Unskip once the backlog sweep in CHE-452 is done.'
+		);
+
 		test.afterAll( 'Delete the created site', async () => {
 			if ( ! newSiteDetails || ! accountUsed ) {
 				return;
