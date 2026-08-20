@@ -24,6 +24,8 @@ export interface SupportedEnvVariables {
 	readonly GUTENBERG_NIGHTLY: boolean;
 	readonly JETPACK_TARGET: JetpackTarget;
 	readonly PARTNER_DIRECTORY_BASE_URL: string;
+	readonly PROXY_BYPASS: string;
+	readonly PROXY_SERVER: string;
 	readonly RUN_ID: string;
 	readonly TEST_ON_ATOMIC: boolean;
 	readonly TIMEOUT: number;

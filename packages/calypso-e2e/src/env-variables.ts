@@ -32,6 +32,8 @@ class EnvVariables implements SupportedEnvVariables {
 		MAILOSAUR_LIMIT_REACHED: false,
 		JETPACK_TARGET: 'wpcom-production',
 		PARTNER_DIRECTORY_BASE_URL: 'https://wordpress.com/development-services',
+		PROXY_BYPASS: '',
+		PROXY_SERVER: '',
 		RUN_ID: '',
 		TEST_ON_ATOMIC: false,
 		TIMEOUT: 15000,
@@ -217,6 +219,31 @@ class EnvVariables implements SupportedEnvVariables {
 	 */
 	get WPCOM_BASE_URL(): string {
 		return this.getValidatedUrlEnvVar( 'WPCOM_BASE_URL' );
+	}
+
+	get PROXY_SERVER(): string {
+		const value = process.env.PROXY_SERVER;
+		if ( ! value ) {
+			return this._defaultEnvVariables.PROXY_SERVER;
+		}
+		// Playwright reads a bare `host:port` as an HTTP proxy, so only validate the
+		// scheme-bearing form: a typo there surfaces as ERR_PROXY_CONNECTION_FAILED
+		// mid-spec rather than at startup.
+		if ( value.includes( '://' ) ) {
+			try {
+				// eslint-disable-next-line no-new
+				new URL( value );
+			} catch {
+				throw new Error(
+					`Invalid PROXY_SERVER value: ${ value }.\nExpected a URL such as socks5://127.0.0.1:8080, or a bare host:port.`
+				);
+			}
+		}
+		return value;
+	}
+
+	get PROXY_BYPASS(): string {
+		return process.env.PROXY_BYPASS ?? this._defaultEnvVariables.PROXY_BYPASS;
 	}
 
 	get RUN_ID(): string {

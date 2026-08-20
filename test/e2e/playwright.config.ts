@@ -106,6 +106,16 @@ export default defineConfig( {
 		trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
 		screenshot: { mode: 'only-on-failure', fullPage: true },
 		video: 'retain-on-failure',
+
+		/* Route the browser through a proxy when PROXY_SERVER is set. Unset, the browser
+		   falls back to whatever proxy the host is configured with, which on an
+		   AutoProxy-configured machine is not the same thing as no proxy at all. */
+		...( envVariables.PROXY_SERVER && {
+			proxy: {
+				server: envVariables.PROXY_SERVER,
+				...( envVariables.PROXY_BYPASS && { bypass: envVariables.PROXY_BYPASS } ),
+			},
+		} ),
 	},
 
 	/* Configure projects per device */
