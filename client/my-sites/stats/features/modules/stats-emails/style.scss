@@ -2,6 +2,14 @@
    for a single extra column (flex-basis 75px, 120px min per child). With three
    extra columns the spans collapse into each other, so let the wrapper size to
    its content and lay the columns out as a row. */
+/* The rate tooltips carry a one-sentence explanation; cap the width so the
+   note wraps instead of stretching the popover across the card. */
+.stats-email__tooltip-note {
+	max-width: 220px;
+	white-space: normal;
+	overflow-wrap: break-word;
+}
+
 .stats-emails--four-columns {
 	.stats-card-header__additional,
 	.horizontal-bar-list-item--additional {

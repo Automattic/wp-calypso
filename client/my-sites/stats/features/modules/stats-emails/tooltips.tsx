@@ -72,10 +72,12 @@ export const getClicksDisplayValue = (
 
 export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { item } ) => {
 	const translate = useTranslate();
-	const hasUniques = hasUniqueMetrics(
-		parseInt( String( item.unique_opens ), 10 ),
-		parseInt( String( item.opens ), 10 )
-	);
+	const sends = parseInt( String( item.total_sends ), 10 ) || 0;
+	const opens = parseInt( String( item.opens ), 10 ) || 0;
+	const hasUniques = hasUniqueMetrics( parseInt( String( item.unique_opens ), 10 ), opens );
+	// A true zero (sent, nobody opened) is a known value too, so it reuses the
+	// detailed line with zeros instead of introducing a new string.
+	const uniquesKnown = hasUniques || ( sends > 0 && opens === 0 );
 
 	return (
 		<div className="stats-email__tooltip">
@@ -84,28 +86,41 @@ export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { ite
 					args: { sendsCountFormatted: formatNumber( item.total_sends ) },
 				} ) }
 			</div>
-			<div>
-				{ hasUniques
-					? translate( 'Unique opens: %(uniqueOpensCountFormatted)s (%(opensRate)s%)', {
-							args: {
-								uniqueOpensCountFormatted: formatNumber( item.unique_opens ),
-								opensRate: formatNumber( item.opens_rate, {
-									numberFormatOptions: { maximumFractionDigits: 2 },
-								} ),
-							},
-					  } )
-					: translate( 'Unique opens: —' ) }
-			</div>
+			{ /* The unavailable states explain themselves in the note below, so the
+			     unique line only renders when there is a number to show. */ }
+			{ uniquesKnown && (
+				<div>
+					{ translate( 'Unique opens: %(uniqueOpensCountFormatted)s (%(opensRate)s%)', {
+						args: {
+							uniqueOpensCountFormatted: formatNumber( item.unique_opens ),
+							opensRate: formatNumber( item.opens_rate, {
+								numberFormatOptions: { maximumFractionDigits: 2 },
+							} ),
+						},
+					} ) }
+				</div>
+			) }
+			{ sends === 0 && (
+				<div className="stats-email__tooltip-note">
+					{ translate( "This post wasn't emailed to any subscribers." ) }
+				</div>
+			) }
+			{ sends > 0 && ! hasUniques && opens > 0 && (
+				<div className="stats-email__tooltip-note">
+					{ translate( "Unique opens weren't tracked, so the open rate can't be calculated." ) }
+				</div>
+			) }
 		</div>
 	);
 };
 
 export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { item } ) => {
 	const translate = useTranslate();
-	const hasUniques = hasUniqueMetrics(
-		parseInt( String( item.unique_clicks ), 10 ),
-		parseInt( String( item.clicks ), 10 )
-	);
+	const sends = parseInt( String( item.total_sends ), 10 ) || 0;
+	const clicks = parseInt( String( item.clicks ), 10 ) || 0;
+	const hasUniques = hasUniqueMetrics( parseInt( String( item.unique_clicks ), 10 ), clicks );
+	// Same as the opens tooltip: a true zero is a known value.
+	const uniquesKnown = hasUniques || ( sends > 0 && clicks === 0 );
 
 	return (
 		<div className="stats-email__tooltip">
@@ -114,18 +129,29 @@ export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { it
 					args: { sendsCountFormatted: formatNumber( item.total_sends ) },
 				} ) }
 			</div>
-			<div>
-				{ hasUniques
-					? translate( 'Unique clicks: %(uniqueClicksCountFormatted)s (%(clicksRate)s%)', {
-							args: {
-								uniqueClicksCountFormatted: formatNumber( item.unique_clicks ),
-								clicksRate: formatNumber( item.clicks_rate, {
-									numberFormatOptions: { maximumFractionDigits: 2 },
-								} ),
-							},
-					  } )
-					: translate( 'Unique clicks: —' ) }
-			</div>
+			{ /* Same rule as the opens tooltip: numbers only, the note covers the rest. */ }
+			{ uniquesKnown && (
+				<div>
+					{ translate( 'Unique clicks: %(uniqueClicksCountFormatted)s (%(clicksRate)s%)', {
+						args: {
+							uniqueClicksCountFormatted: formatNumber( item.unique_clicks ),
+							clicksRate: formatNumber( item.clicks_rate, {
+								numberFormatOptions: { maximumFractionDigits: 2 },
+							} ),
+						},
+					} ) }
+				</div>
+			) }
+			{ sends === 0 && (
+				<div className="stats-email__tooltip-note">
+					{ translate( "This post wasn't emailed to any subscribers." ) }
+				</div>
+			) }
+			{ sends > 0 && ! hasUniques && clicks > 0 && (
+				<div className="stats-email__tooltip-note">
+					{ translate( "Unique clicks weren't tracked, so the click rate can't be calculated." ) }
+				</div>
+			) }
 		</div>
 	);
 };
