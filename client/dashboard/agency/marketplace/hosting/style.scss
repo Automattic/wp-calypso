@@ -89,6 +89,30 @@
 	}
 }
 
+.marketplace-hosting__brand-logo {
+	block-size: 24px;
+	inline-size: auto;
+	align-self: start;
+}
+
+.marketplace-hosting__selector-logo {
+	block-size: 20px;
+	inline-size: auto;
+}
+
+.marketplace-hosting__brand-strip {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px 32px;
+	align-items: center;
+
+	img {
+		block-size: 24px;
+		inline-size: auto;
+		opacity: 0.7;
+	}
+}
+
 .marketplace-hosting__check {
 	fill: var( --dashboard__foreground-color-success );
 	flex-shrink: 0;

@@ -12,9 +12,17 @@ import { useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { ClientRelationships, IncludedFeatures, Testimonials } from './content-sections';
-import { hostingBrands, formatUSD, pressableSignature1 } from './mock-data';
+import { SectionHeader } from '../../../components/section-header';
+import {
+	ClientRelationships,
+	IncludedFeatures,
+	JetpackComplete,
+	Testimonials,
+} from './content-sections';
+import { hostingBrands } from './mock-data';
+import PressableContent from './pressable-content';
 import ProductSelector from './product-selector';
+import VipContent from './vip-content';
 import WpcomConfigurator from './wpcom-configurator';
 import type { HostingBrand } from './mock-data';
 
@@ -62,85 +70,15 @@ function FreeDevSites() {
 					</Heading>
 					<Text as="p" variant="muted">
 						{ __(
-							'Included with Automattic for Agencies. Build up to 5 WordPress.com sites free, and pay only when you launch. 5 of 5 free licenses available.'
+							'Included in your membership to Automattic for Agencies. Develop up to 5 WordPress.com sites with free development licenses. Only pay when you launch.'
 						) }
+					</Text>
+					<Text variant="muted" size={ 12 }>
+						{ __( '5 of 5 free licenses available' ) }
 					</Text>
 					<Button variant="secondary" __next40pxDefaultSize>
 						{ __( 'Create a development site' ) }
 					</Button>
-				</VStack>
-			</CardBody>
-		</Card>
-	);
-}
-
-function PressableContent( { onAddToCart }: { onAddToCart: ( quantity: number ) => void } ) {
-	return (
-		<Card>
-			<CardBody>
-				<VStack spacing={ 4 }>
-					<VStack spacing={ 1 }>
-						<Heading level={ 2 } size={ 16 }>
-							{ __( 'Pressable' ) }
-						</Heading>
-						<Text variant="muted">
-							{ __( 'One pooled plan sized by total WordPress installs, traffic, and storage.' ) }
-						</Text>
-					</VStack>
-					<HStack justify="space-between" alignment="center">
-						<VStack spacing={ 1 }>
-							<Text weight={ 600 }>{ __( 'Signature 1' ) }</Text>
-							<Text variant="muted">
-								{ __( '1 WordPress install · 30K visits per month · 20GB storage' ) }
-							</Text>
-							<Text weight={ 600 }>{ `${ formatUSD( pressableSignature1.yearly_price ) } ${ __(
-								'per year'
-							) }` }</Text>
-						</VStack>
-						<Button variant="primary" __next40pxDefaultSize onClick={ () => onAddToCart( 1 ) }>
-							{ __( 'Add to cart' ) }
-						</Button>
-					</HStack>
-					<Text variant="muted">
-						{ __(
-							'Prototype note: full plan selection (Signature 1–17, Premium, sizing by installs, traffic, or storage) ports over from the current Marketplace in a follow-up.'
-						) }
-					</Text>
-				</VStack>
-			</CardBody>
-		</Card>
-	);
-}
-
-function VipContent() {
-	return (
-		<Card>
-			<CardBody>
-				<VStack spacing={ 4 }>
-					<VStack spacing={ 1 }>
-						<Heading level={ 2 } size={ 16 }>
-							{ __( 'WordPress VIP' ) }
-						</Heading>
-						<Text variant="muted">
-							{ __(
-								'Enterprise-grade WordPress with custom pricing, guided onboarding, and dedicated support.'
-							) }
-						</Text>
-					</VStack>
-					<HStack justify="flex-start" spacing={ 3 }>
-						<Button
-							variant="primary"
-							__next40pxDefaultSize
-							href="https://wpvip.com/get-a-demo/?utm_source=partner&utm_medium=referral&utm_campaign=a4a"
-							target="_blank"
-							rel="noreferrer"
-						>
-							{ __( 'Request a demo ↗' ) }
-						</Button>
-						<Button variant="secondary" __next40pxDefaultSize>
-							{ __( 'Refer your client to VIP hosting' ) }
-						</Button>
-					</HStack>
 				</VStack>
 			</CardBody>
 		</Card>
@@ -208,16 +146,25 @@ export default function MarketplaceHosting() {
 				onSelect={ setSelectedBrand }
 			/>
 			{ selectedBrand === 'wpcom' && (
-				<div className="marketplace-hosting__configurator-row">
-					<WpcomConfigurator term={ term } onAddToCart={ handleAddToCart } />
-					<FreeDevSites />
-				</div>
+				<VStack spacing={ 4 }>
+					<SectionHeader
+						title={ __( 'Purchase sites individually or in bulk, as you need them' ) }
+						level={ 2 }
+					/>
+					<div className="marketplace-hosting__configurator-row">
+						<WpcomConfigurator term={ term } onAddToCart={ handleAddToCart } />
+						<FreeDevSites />
+					</div>
+				</VStack>
 			) }
 			{ selectedBrand === 'pressable' && <PressableContent onAddToCart={ handleAddToCart } /> }
 			{ selectedBrand === 'vip' && <VipContent /> }
-			{ selectedBrand !== 'vip' && <IncludedFeatures /> }
-			<Testimonials />
-			<ClientRelationships />
+			{ selectedBrand !== 'vip' && (
+				<IncludedFeatures brand={ selectedBrand as 'wpcom' | 'pressable' } />
+			) }
+			{ selectedBrand === 'pressable' && <JetpackComplete /> }
+			<Testimonials brand={ selectedBrand } />
+			{ selectedBrand !== 'vip' && <ClientRelationships /> }
 		</PageLayout>
 	);
 }
