@@ -177,3 +177,17 @@
 .marketplace-hosting__referral-guide-text {
 	padding: 0 32px 32px;
 }
+
+/* Our own media wrapper: crops the letterboxing baked into the 2024 step videos. */
+.marketplace-hosting__referral-guide-media {
+	overflow: hidden;
+}
+
+.marketplace-hosting__referral-guide-media img,
+.marketplace-hosting__referral-guide-media video {
+	display: block;
+	inline-size: 108%;
+	block-size: auto;
+	object-fit: cover;
+	object-position: left top;
+}
