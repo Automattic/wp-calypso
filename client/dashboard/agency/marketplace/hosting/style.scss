@@ -173,3 +173,17 @@
 	inline-size: 320px;
 	padding: 16px;
 }
+
+.marketplace-hosting__referral-guide .components-guide__page {
+	justify-content: flex-start;
+}
+
+.marketplace-hosting__referral-guide img,
+.marketplace-hosting__referral-guide video {
+	inline-size: 100%;
+	block-size: auto;
+}
+
+.marketplace-hosting__referral-guide .components-guide__page > div:last-child {
+	padding: 24px;
+}
