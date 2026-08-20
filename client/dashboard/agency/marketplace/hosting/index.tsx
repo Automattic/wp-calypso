@@ -140,15 +140,24 @@ export default function MarketplaceHosting() {
 			}
 		>
 			<MigrationOffer />
-			<ProductSelector
-				brands={ hostingBrands }
-				selected={ selectedBrand }
-				onSelect={ setSelectedBrand }
-			/>
+			<VStack spacing={ 4 }>
+				<SectionHeader
+					title={ __( '1. Choose a hosting platform' ) }
+					description={ __(
+						'Compare Automattic’s hosting options and pick the right fit for your clients.'
+					) }
+					level={ 2 }
+				/>
+				<ProductSelector
+					brands={ hostingBrands }
+					selected={ selectedBrand }
+					onSelect={ setSelectedBrand }
+				/>
+			</VStack>
 			{ selectedBrand === 'wpcom' && (
 				<VStack spacing={ 4 }>
 					<SectionHeader
-						title={ __( 'Purchase sites individually or in bulk, as you need them' ) }
+						title={ __( '2. Purchase sites individually or in bulk, as you need them' ) }
 						level={ 2 }
 					/>
 					<div className="marketplace-hosting__configurator-row">

@@ -36,7 +36,7 @@ export default function VipContent() {
 		<VStack spacing={ 4 }>
 			<SectionHeader
 				title={ __(
-					'Deliver unmatched performance with the highest security standards on our enterprise platform'
+					'2. Deliver unmatched performance with the highest security standards on our enterprise platform'
 				) }
 				level={ 2 }
 			/>

@@ -70,7 +70,7 @@ export default function PressableContent( {
 	return (
 		<VStack spacing={ 4 }>
 			<SectionHeader
-				title={ __( 'Choose from a variety of high performance hosting plans' ) }
+				title={ __( '2. Choose from a variety of high performance hosting plans' ) }
 				level={ 2 }
 			/>
 			<div className="marketplace-hosting__configurator-row">
