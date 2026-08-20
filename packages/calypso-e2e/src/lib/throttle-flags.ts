@@ -49,6 +49,19 @@ export function mayBeThrottled( url: string ): boolean {
 }
 
 /**
+ * The same endpoints as one pattern, for a caller that has to hand the match to
+ * something else rather than run it. Playwright collapses a route matched by a
+ * function to `**\/*` and routes every request in the context through Node; a
+ * regular expression stops at these three.
+ */
+export const THROTTLED_PATH_PATTERN = new RegExp(
+	Object.values( THROTTLED_PATHS )
+		.map( ( path ) => path.source )
+		.join( '|' ),
+	'i'
+);
+
+/**
  * The banned endpoint a URL is bound for, or null for one bound for none. For a
  * caller that stops the request rather than reading the refusal: a call the ban
  * is going to refuse anyway is one the limiter should never have to count.

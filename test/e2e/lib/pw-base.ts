@@ -89,6 +89,7 @@ import {
 	PlansPage,
 	UseADomainIOwnPage,
 	SelectItemsComponent,
+	THROTTLED_PATH_PATTERN,
 	activeThrottleForUrl,
 	flushThrottleWrites,
 	mayBeThrottled,
@@ -147,6 +148,14 @@ type AccountFixture = (
 ) => Promise< void >;
 
 const WPCOM_HOST = /^https?:\/\/([^/]*\.)?wordpress\.com(?::\d+)?\//;
+
+// A regular expression, and one object for the life of the module: a route
+// matched by a function makes Playwright intercept every request in the context
+// and hand it back to Node, and `unroute` finds a pattern by identity.
+const BANNED_ENDPOINT = new RegExp(
+	`${ WPCOM_HOST.source }.*(?:${ THROTTLED_PATH_PATTERN.source })`,
+	'i'
+);
 
 // The flush covers a body read and the two tag POSTs a detection makes, which is
 // what has to land before a worker exits: a flag whose tag never landed leaves
@@ -225,14 +234,13 @@ async function watchForThrottle( context: BrowserContext ): Promise< () => Promi
 			body: throttleRefusalBody( id ),
 		} );
 	};
-	const bannedRoute = ( url: URL ) => WPCOM_HOST.test( url.href ) && mayBeThrottled( url.href );
-	await context.route( bannedRoute, refuseBanned );
+	await context.route( BANNED_ENDPOINT, refuseBanned );
 
 	return async () => {
 		// Off first: a response arriving while this drains would start a read
 		// nothing is waiting for, and print its line into the next test.
 		context.off( 'response', onResponse );
-		await context.unroute( bannedRoute, refuseBanned ).catch( () => {} );
+		await context.unroute( BANNED_ENDPOINT, refuseBanned ).catch( () => {} );
 
 		// A listener can be mid-read when the test ends, so settle until the set
 		// is empty rather than settling a snapshot of it. Raced rather than

@@ -16,6 +16,7 @@ import {
 	resetThrottleState,
 	THROTTLE_ACTION_ENV_VARS,
 	THROTTLE_IDS,
+	THROTTLED_PATH_PATTERN,
 	throttleAction,
 	throttleActionMessage,
 	throttleEnvVar,
@@ -919,5 +920,25 @@ describe( 'recording a response', () => {
 		} finally {
 			jest.useRealTimers();
 		}
+	} );
+} );
+
+describe( 'the endpoint pattern', () => {
+	// What a route matcher is built from, so it has to match what detection does.
+	test.each( [
+		'https://public-api.wordpress.com/rest/v1.1/sites/new',
+		'https://public-api.wordpress.com/rest/v1.1/domains/suggestions?query=x',
+		'https://public-api.wordpress.com/rest/v1.3/domains/example.com/is-available',
+	] )( 'matches %s', ( url ) => {
+		expect( THROTTLED_PATH_PATTERN.test( url ) ).toBe( true );
+	} );
+
+	test( 'leaves every other endpoint alone', () => {
+		expect(
+			THROTTLED_PATH_PATTERN.test( 'https://public-api.wordpress.com/rest/v1.1/sites/newsletter' )
+		).toBe( false );
+		expect( THROTTLED_PATH_PATTERN.test( 'https://public-api.wordpress.com/rest/v1.1/me' ) ).toBe(
+			false
+		);
 	} );
 } );

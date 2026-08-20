@@ -9,6 +9,7 @@ export * from './utils';
 // and its own tests.
 export {
 	THROTTLE_IDS,
+	THROTTLED_PATH_PATTERN,
 	activeThrottleForUrl,
 	flushThrottleWrites,
 	mayBeThrottled,
