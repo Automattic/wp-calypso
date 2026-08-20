@@ -465,7 +465,19 @@ export class DomainSearchComponent {
 	async skipPurchase(): Promise< string > {
 		const button = this.page.getByRole( 'button', { name: 'Skip purchase' } );
 
-		await button.waitFor();
+		try {
+			await button.waitFor();
+		} catch ( error ) {
+			// The button carries the free subdomain a second `/domains/suggestions`
+			// call answered with. `search` records a ban it meets mid-search but
+			// leaves acting to whichever caller needed the list, and this is one of
+			// them: without this the ban leaves the button absent and the wait spends
+			// its timeout. Never `domain-availability`: nothing on this button comes
+			// from `is-available`, and reading that ban here would skip a test it had
+			// no part in.
+			handleActiveThrottles( [ 'domain-suggestions' ] );
+			throw error;
+		}
 
 		let domain = await button.getAttribute( 'aria-label' );
 		domain = domain?.replace( 'Skip purchase and continue with ', '' ) ?? null;
