@@ -5,7 +5,7 @@
 
 %launch-modal-card {
 	padding: $grid-unit-20 $grid-unit-20;
-	background-color: var( --color-primary-5 );
+	background-color: var( --studio-blue-5 );
 
 	@include ui-mixins.when-dark-theme {
 		background-color: var( --wp-components-color-gray-200 );
