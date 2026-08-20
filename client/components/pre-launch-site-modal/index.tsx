@@ -32,10 +32,13 @@ function PreLaunchSiteModalContent( {
 }: PreLaunchSiteModalProps ) {
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
 
-	const { data: site } = useQuery( { ...siteByIdQuery( siteId ), enabled: isOpen } );
+	// Fetch as soon as there is a site (not only once open) so the qualification
+	// decision is already settled by the time the user clicks — otherwise the
+	// button appears unresponsive while these requests resolve.
+	const { data: site } = useQuery( { ...siteByIdQuery( siteId ), enabled: !! siteId } );
 	const domainsResult = useQuery( {
 		...domainsQuery(),
-		enabled: isOpen,
+		enabled: !! siteId,
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === siteId ),
 	} );
 
@@ -83,10 +86,12 @@ export default function PreLaunchSiteModal( props: PreLaunchSiteModalProps ) {
 		[]
 	);
 
-	if ( ! props.isOpen ) {
+	if ( ! props.siteId ) {
 		return null;
 	}
 
+	// Mounted (and prefetching) whenever a site is present, even while closed, so
+	// the modal can open instantly. It renders nothing until `isOpen`.
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<AnalyticsProvider client={ analyticsClient }>
