@@ -29,6 +29,9 @@ const assign = (
 const statusFor = ( flow = 'onboarding' ) =>
 	renderHook( () => useEmailVerificationGate( flow ) ).result.current.status;
 
+const variantLoadingFor = ( flow = 'onboarding' ) =>
+	renderHook( () => useEmailVerificationGate( flow ) ).result.current.isVariantLoading;
+
 describe( 'useEmailVerificationGate', () => {
 	beforeEach( () => assign( 'treatment_post_account_creation' ) );
 	afterEach( () => jest.clearAllMocks() );
@@ -108,6 +111,31 @@ describe( 'useEmailVerificationGate', () => {
 		mockUser( { email_verified: false, phone_account: true } );
 
 		expect( statusFor() ).toBe( 'clear' );
+	} );
+
+	// The account step holds the passwordless submit on this, so a create-account request can't fire
+	// with the wrong activation email before the arm resolves.
+	describe( 'isVariantLoading', () => {
+		it( 'is true while the assignment is loading', () => {
+			assign( 'treatment_post_account_creation', { isLoading: true } );
+			mockUser( null );
+
+			expect( variantLoadingFor() ).toBe( true );
+		} );
+
+		it( 'is false once the assignment resolves', () => {
+			mockUser( { email_verified: false } );
+
+			expect( variantLoadingFor() ).toBe( false );
+		} );
+
+		// An ineligible flow never fetches, so nothing is ever held on it.
+		it( 'is false for other flows', () => {
+			assign( 'treatment_post_account_creation', { isLoading: true } );
+			mockUser( null );
+
+			expect( variantLoadingFor( 'newsletter' ) ).toBe( false );
+		} );
 	} );
 } );
 

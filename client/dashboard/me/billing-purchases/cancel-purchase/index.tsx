@@ -63,6 +63,7 @@ import {
 	hasQueryableSite,
 	isAgencyPartnerType,
 	isRemoved,
+	isManageableByUser,
 	isJetpackHoldingSitePurchase,
 	isAkismetProduct,
 	isPartnerPurchase,
@@ -1534,6 +1535,20 @@ function CancelPurchaseInner() {
 						__( 'This subscription is managed by %s. Please contact them to make changes.' ),
 						purchase.partner_name ?? ''
 					),
+					{ type: 'snackbar' }
+				);
+				createdErrorNoticeForRedirect.current = true;
+			}
+			return false;
+		}
+
+		// Only support can cancel or remove these. The buttons are hidden on
+		// Purchase Settings, so this catches direct links, including the
+		// remove-and-refund one inside this flow.
+		if ( ! isManageableByUser( purchase ) ) {
+			if ( ! createdErrorNoticeForRedirect.current ) {
+				createErrorNotice(
+					__( 'Only our support team can change this subscription. Please contact support.' ),
 					{ type: 'snackbar' }
 				);
 				createdErrorNoticeForRedirect.current = true;

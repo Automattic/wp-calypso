@@ -95,6 +95,7 @@ import {
 	isAkismetHoldingSitePurchase,
 	isDotcomPlan,
 	isMarketplaceHoldingSitePurchase,
+	isManageableByUser,
 	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
 import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
@@ -844,6 +845,13 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		// Only support can cancel or remove some purchases. `is_removable` is false
+		// server-side for these, but visibility here is driven by auto-renew state
+		// instead, so the check has to be repeated.
+		if ( ! isManageableByUser( purchase ) ) {
+			return null;
+		}
+
 		const canRefund = hasAmountAvailableToRefund( purchase );
 		const autoRenewOn = !! purchase.is_auto_renew_enabled;
 		// A domain connection bundled with a plan renews with that plan, so Cancel
@@ -999,6 +1007,11 @@ class ManagePurchase extends Component<
 		// check has to be repeated. Agency-provisioned purchases are bought through
 		// WordPress.com and stay cancellable.
 		if ( purchase.is_host_managed ) {
+			return null;
+		}
+
+		// Only support can cancel or remove some purchases.
+		if ( ! isManageableByUser( purchase ) ) {
 			return null;
 		}
 

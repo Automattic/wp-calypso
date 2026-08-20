@@ -1,3 +1,5 @@
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import useFetchMcpSettings from 'calypso/a8c-for-agencies/data/mcp-ai/use-fetch-mcp-settings';
 import useSaveMcpSettings from 'calypso/a8c-for-agencies/data/mcp-ai/use-save-mcp-settings';
@@ -25,12 +27,17 @@ export default function AiMcpWriteToolsContent() {
 	);
 
 	return (
-		<McpTools
-			toolType="write"
-			settings={ settings }
-			isSaving={ isSaving }
-			onSave={ onSave }
-			recordTracksEvent={ recordTracks }
-		/>
+		<VStack spacing={ 6 }>
+			<Text size={ 15 }>
+				{ __( 'Control which actions your external AI assistant can take on your behalf.' ) }
+			</Text>
+			<McpTools
+				toolType="write"
+				settings={ settings }
+				isSaving={ isSaving }
+				onSave={ onSave }
+				recordTracksEvent={ recordTracks }
+			/>
+		</VStack>
 	);
 }

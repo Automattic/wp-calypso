@@ -1429,7 +1429,7 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 			contentAfter: 'The council voted on Tuesday on the procedural matter.',
 		} );
 
-		render( <AiEditorialReview { ...conflictPayload } /> );
+		const { container } = render( <AiEditorialReview { ...conflictPayload } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Apply AI change' } ) );
@@ -1438,6 +1438,9 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 		await waitFor( () => {
 			expect( screen.getByText( 'Applied' ) ).toBeInTheDocument();
 		} );
+		expect(
+			container.querySelector( '.jetpack-ai-editorial-review__resolution-icon' )
+		).toBeInTheDocument();
 		// Not collapsed to a one-liner: the subject header stays, and the row
 		// offers Undo — the shared resolved shape from GF / Proofreader.
 		expect( screen.getByText( 'Procedural framing' ) ).toBeInTheDocument();
