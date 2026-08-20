@@ -1,7 +1,6 @@
 import {
 	Button,
 	Dropdown,
-	ExternalLink,
 	Guide,
 	ToggleControl,
 	__experimentalHStack as HStack,
@@ -10,7 +9,7 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
-import { cart, chevronDown, chevronUp, info } from '@wordpress/icons';
+import { calendar, cart, chevronDown, chevronUp, info, wordpress } from '@wordpress/icons';
 import { useState } from 'react';
 import referralStep1 from 'calypso/assets/images/a8c-for-agencies/referral-step-1.jpg';
 import referralStep2 from 'calypso/assets/images/a8c-for-agencies/referral-step-2.jpg';
@@ -18,12 +17,12 @@ import referralStep3 from 'calypso/assets/images/a8c-for-agencies/referral-step-
 import referralStep4 from 'calypso/assets/images/a8c-for-agencies/referral-step-4.jpg';
 import referralStep5 from 'calypso/assets/images/a8c-for-agencies/referral-step-5.jpg';
 import { Card, CardBody } from '../../../components/card';
+import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import {
 	ClientRelationships,
-	CheckList,
 	IncludedFeatures,
 	JetpackComplete,
 	Testimonials,
@@ -142,58 +141,35 @@ function MigrationOffer() {
 
 function FreeDevSites() {
 	return (
-		<Card className="marketplace-hosting__dev-sites">
-			<CardBody>
-				<VStack spacing={ 3 }>
-					<Heading level={ 3 } size={ 16 }>
-						{ __( 'Start building for free' ) }
-					</Heading>
-					<Text as="p" variant="muted">
-						{ __(
-							'Included in your membership to Automattic for Agencies. Develop up to 5 WordPress.com sites with free development licenses. Only pay when you launch.'
-						) }
-					</Text>
-					<Text variant="muted" size={ 12 }>
-						{ __( '5 of 5 free licenses available' ) }
-					</Text>
-					<HStack justify="flex-start">
-						<Button variant="secondary" __next40pxDefaultSize>
-							{ __( 'Create a development site' ) }
-						</Button>
-					</HStack>
-				</VStack>
-			</CardBody>
-		</Card>
+		<OverviewCard
+			icon={ wordpress }
+			title={ __( 'Development licenses' ) }
+			heading={ __( 'Start building for free' ) }
+			description={ __(
+				'Develop up to 5 WordPress.com sites with free development licenses. Only pay when you launch. 5 of 5 available.'
+			) }
+			bottom={
+				<HStack justify="flex-start">
+					<Button variant="secondary" __next40pxDefaultSize>
+						{ __( 'Create a development site' ) }
+					</Button>
+				</HStack>
+			}
+		/>
 	);
 }
 
 function ScheduleDemo() {
 	return (
-		<Card className="marketplace-hosting__dev-sites">
-			<CardBody>
-				<VStack spacing={ 3 }>
-					<Heading level={ 3 } size={ 16 }>
-						{ __( 'Schedule a demo' ) }
-					</Heading>
-					<Text as="p" variant="muted">
-						{ __(
-							'Our experts are happy to give you a one-on-one tour of our platform to discuss:'
-						) }
-					</Text>
-					<CheckList
-						items={ [
-							__( 'Our support, service, and pricing flexibility' ),
-							__( 'The best hosting plan for your needs' ),
-							__( 'How to launch and manage WordPress sites' ),
-							__( 'The free perks that come with Pressable' ),
-						] }
-					/>
-					<ExternalLink href="https://pressable.com/request-demo">
-						{ __( 'Schedule a demo' ) }
-					</ExternalLink>
-				</VStack>
-			</CardBody>
-		</Card>
+		<OverviewCard
+			icon={ calendar }
+			title={ __( 'Pressable' ) }
+			heading={ __( 'Schedule a demo' ) }
+			description={ __(
+				'Our experts are happy to give you a one-on-one tour of our platform, the best plan for your needs, and the free perks that come with Pressable.'
+			) }
+			externalLink="https://pressable.com/request-demo"
+		/>
 	);
 }
 

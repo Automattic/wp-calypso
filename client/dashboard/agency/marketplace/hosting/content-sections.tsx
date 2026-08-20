@@ -7,7 +7,7 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { check } from '@wordpress/icons';
+import { check, code, lockOutline, plus, trendingUp } from '@wordpress/icons';
 import enterpriseTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-1.webp';
 import enterpriseTestimonial2 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-2.webp';
 import premierTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.webp';
@@ -21,6 +21,7 @@ import { JETPACK_COMPLETE_FEATURES, testimonialsByBrand } from './mock-data';
 
 const FEATURE_COLUMNS = ( brand: 'wpcom' | 'pressable' ) => [
 	{
+		icon: trendingUp,
 		title: __( 'Performance' ),
 		features: [
 			'Global edge caching',
@@ -34,6 +35,7 @@ const FEATURE_COLUMNS = ( brand: 'wpcom' | 'pressable' ) => [
 		],
 	},
 	{
+		icon: lockOutline,
 		title: __( 'Security' ),
 		features: [
 			'Real-time backups',
@@ -48,6 +50,7 @@ const FEATURE_COLUMNS = ( brand: 'wpcom' | 'pressable' ) => [
 		],
 	},
 	{
+		icon: code,
 		title: __( 'Dev tools' ),
 		features: [
 			'Local development environment',
@@ -62,6 +65,7 @@ const FEATURE_COLUMNS = ( brand: 'wpcom' | 'pressable' ) => [
 		],
 	},
 	{
+		icon: plus,
 		title: __( 'And more!' ),
 		features: [
 			'24/7 priority expert support',
@@ -132,9 +136,12 @@ export function IncludedFeatures( { brand }: { brand: 'wpcom' | 'pressable' } ) 
 					<Card key={ column.title }>
 						<CardBody>
 							<VStack spacing={ 4 }>
-								<Heading level={ 3 } size={ 13 } upperCase>
-									{ column.title }
-								</Heading>
+								<HStack spacing={ 2 } justify="flex-start" alignment="center">
+									<Icon icon={ column.icon } size={ 20 } />
+									<Heading level={ 3 } size={ 13 } upperCase>
+										{ column.title }
+									</Heading>
+								</HStack>
 								<CheckList items={ column.features } />
 							</VStack>
 						</CardBody>
