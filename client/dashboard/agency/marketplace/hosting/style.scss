@@ -174,14 +174,25 @@
 	padding: 16px;
 }
 
+.marketplace-hosting__referral-guide {
+	max-inline-size: 512px;
+}
+
 .marketplace-hosting__referral-guide .components-guide__page {
 	justify-content: flex-start;
 }
 
+.marketplace-hosting__referral-guide .components-guide__container {
+	inline-size: 100%;
+}
+
 .marketplace-hosting__referral-guide img,
 .marketplace-hosting__referral-guide video {
+	display: block;
 	inline-size: 100%;
-	block-size: auto;
+	block-size: 260px;
+	object-fit: cover;
+	object-position: top;
 }
 
 .marketplace-hosting__referral-guide .components-guide__page > div:last-child {
