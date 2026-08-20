@@ -43,7 +43,7 @@ describe( 'useAiChatPlugin', () => {
 
 	it( 'records the masterbar event with the section and opens the chat on click', () => {
 		const { result } = renderHook( () => useAiChatPlugin( { sectionName: 'sites' } ) );
-		result.current?.onClick?.();
+		result.current?.onClick?.( {} as React.MouseEvent );
 
 		expect( recordFullNameAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'calypso_masterbar_agents_manager_ai_chat_clicked',
@@ -57,7 +57,7 @@ describe( 'useAiChatPlugin', () => {
 		mockIsChatVisible.mockReturnValue( true );
 
 		const { result } = renderHook( () => useAiChatPlugin( {} ) );
-		result.current?.onClick?.();
+		result.current?.onClick?.( {} as React.MouseEvent );
 
 		expect( recordFullNameAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'calypso_masterbar_agents_manager_ai_chat_clicked',
