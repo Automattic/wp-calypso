@@ -31,6 +31,9 @@ import type { HostingBrand } from './mock-data';
 
 import './style.scss';
 
+// Hidden while the design is iterated on.
+const SHOW_MIGRATION_OFFER = false;
+
 function MigrationOffer() {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
@@ -174,7 +177,7 @@ export default function MarketplaceHosting() {
 				/>
 			}
 		>
-			<MigrationOffer />
+			{ SHOW_MIGRATION_OFFER && <MigrationOffer /> }
 			<VStack spacing={ 4 }>
 				<SectionHeader
 					title={ __( '1. Choose the right host for your client' ) }
