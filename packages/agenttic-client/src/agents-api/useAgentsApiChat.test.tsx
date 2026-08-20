@@ -17,10 +17,11 @@ function deferred< T >() {
 }
 
 let adapter: AgentsApiChatAdapter;
+let scopeKey: string;
 let latestHookValue: AgentsApiChatState | null = null;
 
 function HookHarness(): null {
-	latestHookValue = useAgentsApiChat( { adapter } );
+	latestHookValue = useAgentsApiChat( { adapter, scopeKey } );
 	return null;
 }
 
@@ -36,6 +37,7 @@ describe( 'useAgentsApiChat session hydration', () => {
 			markSessionRead: vi.fn().mockResolvedValue( {} ),
 			deleteSession: vi.fn(),
 		};
+		scopeKey = 'agent-1';
 		latestHookValue = null;
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
@@ -55,18 +57,18 @@ describe( 'useAgentsApiChat session hydration', () => {
 
 		await act( async () => root.render( <HookHarness /> ) );
 		expect( latestHookValue?.isLoadingSessions ).toBe( true );
-		expect( latestHookValue?.hasLoadedSessions ).toBe( false );
+		expect( latestHookValue?.hasResolvedSessions ).toBe( false );
 		expect( latestHookValue?.isProcessing ).toBe( false );
 
 		await act( async () => sessions.resolve( [ { id: 'session-1' } ] ) );
 		expect( latestHookValue?.isLoadingSessions ).toBe( false );
-		expect( latestHookValue?.hasLoadedSessions ).toBe( true );
+		expect( latestHookValue?.hasResolvedSessions ).toBe( true );
 
 		let loadPromise!: Promise< void >;
 		await act( async () => {
 			loadPromise = latestHookValue!.loadSession( 'session-1' );
 		} );
-		expect( latestHookValue?.isLoadingSession ).toBe( true );
+		expect( latestHookValue?.isLoadingTranscript ).toBe( true );
 		expect( latestHookValue?.isProcessing ).toBe( true );
 		expect( latestHookValue?.messages ).toEqual( [] );
 
@@ -77,7 +79,7 @@ describe( 'useAgentsApiChat session hydration', () => {
 			} );
 			await loadPromise;
 		} );
-		expect( latestHookValue?.isLoadingSession ).toBe( false );
+		expect( latestHookValue?.isLoadingTranscript ).toBe( false );
 		expect( latestHookValue?.sessionId ).toBe( 'session-1' );
 		expect( latestHookValue?.messages[ 0 ]?.id ).toBe( 'old-user' );
 	} );
@@ -92,7 +94,7 @@ describe( 'useAgentsApiChat session hydration', () => {
 			loadPromise = latestHookValue!.loadSession( 'session-1' );
 		} );
 		await act( async () => latestHookValue!.newSession() );
-		expect( latestHookValue?.isLoadingSession ).toBe( false );
+		expect( latestHookValue?.isLoadingTranscript ).toBe( false );
 
 		await act( async () => {
 			transcript.resolve( {
@@ -137,5 +139,111 @@ describe( 'useAgentsApiChat session hydration', () => {
 
 		expect( latestHookValue?.sessionId ).toBe( 'session-2' );
 		expect( latestHookValue?.messages[ 0 ]?.id ).toBe( 'second' );
+		expect( latestHookValue?.isLoadingTranscript ).toBe( false );
+		expect( latestHookValue?.isProcessing ).toBe( false );
+	} );
+
+	it( 'resolves initial session discovery after an error', async () => {
+		vi.mocked( adapter.listSessions ).mockRejectedValueOnce( new Error( 'Unavailable' ) );
+
+		await act( async () => root.render( <HookHarness /> ) );
+
+		expect( latestHookValue?.hasResolvedSessions ).toBe( true );
+		expect( latestHookValue?.isLoadingSessions ).toBe( false );
+		expect( latestHookValue?.error ).toBe( 'Unavailable' );
+	} );
+
+	it( 'preserves conversation state when only the adapter reference changes', async () => {
+		vi.mocked( adapter.loadSession ).mockResolvedValueOnce( {
+			session_id: 'session-1',
+			messages: [ { id: 'existing', role: 'user', content: 'Existing' } ],
+		} );
+		await act( async () => root.render( <HookHarness /> ) );
+		await act( async () => latestHookValue!.loadSession( 'session-1' ) );
+
+		adapter = {
+			...adapter,
+			listSessions: vi.fn().mockResolvedValue( [] ),
+		};
+		await act( async () => root.render( <HookHarness /> ) );
+
+		expect( latestHookValue?.sessionId ).toBe( 'session-1' );
+		expect( latestHookValue?.messages[ 0 ]?.id ).toBe( 'existing' );
+	} );
+
+	it( 'clears the old conversation and rejects its late load when scope changes', async () => {
+		const transcript = deferred< unknown >();
+		vi.mocked( adapter.loadSession )
+			.mockResolvedValueOnce( {
+				session_id: 'session-1',
+				messages: [ { id: 'existing', role: 'user', content: 'Existing' } ],
+			} )
+			.mockReturnValueOnce( transcript.promise );
+		await act( async () => root.render( <HookHarness /> ) );
+		await act( async () => latestHookValue!.loadSession( 'session-1' ) );
+
+		let loadPromise!: Promise< void >;
+		await act( async () => {
+			loadPromise = latestHookValue!.loadSession( 'session-2' );
+		} );
+		scopeKey = 'agent-2';
+		await act( async () => root.render( <HookHarness /> ) );
+		expect( latestHookValue?.sessionId ).toBeNull();
+		expect( latestHookValue?.messages ).toEqual( [] );
+
+		await act( async () => {
+			transcript.resolve( {
+				session_id: 'session-2',
+				messages: [ { id: 'late', role: 'user', content: 'Late' } ],
+			} );
+			await loadPromise;
+		} );
+		expect( latestHookValue?.sessionId ).toBeNull();
+		expect( latestHookValue?.messages ).toEqual( [] );
+		expect( latestHookValue?.isProcessing ).toBe( false );
+	} );
+
+	it( 'keeps New blank when an older send resolves late', async () => {
+		const send = deferred< unknown >();
+		vi.mocked( adapter.sendMessage ).mockReturnValueOnce( send.promise );
+		await act( async () => root.render( <HookHarness /> ) );
+
+		let sendPromise!: Promise< void >;
+		await act( async () => {
+			sendPromise = latestHookValue!.sendMessage( 'Hello' );
+		} );
+		await act( async () => latestHookValue!.newSession() );
+
+		await act( async () => {
+			send.resolve( { session_id: 'sent-session', response: 'Late reply' } );
+			await sendPromise;
+		} );
+		expect( latestHookValue?.sessionId ).toBeNull();
+		expect( latestHookValue?.messages ).toEqual( [] );
+		expect( latestHookValue?.isProcessing ).toBe( false );
+	} );
+
+	it( 'keeps a selected transcript when an older send resolves late', async () => {
+		const send = deferred< unknown >();
+		vi.mocked( adapter.sendMessage ).mockReturnValueOnce( send.promise );
+		vi.mocked( adapter.loadSession ).mockResolvedValueOnce( {
+			session_id: 'selected-session',
+			messages: [ { id: 'selected', role: 'user', content: 'Selected' } ],
+		} );
+		await act( async () => root.render( <HookHarness /> ) );
+
+		let sendPromise!: Promise< void >;
+		await act( async () => {
+			sendPromise = latestHookValue!.sendMessage( 'Hello' );
+		} );
+		await act( async () => latestHookValue!.loadSession( 'selected-session' ) );
+		await act( async () => {
+			send.resolve( { session_id: 'sent-session', response: 'Late reply' } );
+			await sendPromise;
+		} );
+
+		expect( latestHookValue?.sessionId ).toBe( 'selected-session' );
+		expect( latestHookValue?.messages[ 0 ]?.id ).toBe( 'selected' );
+		expect( latestHookValue?.isProcessing ).toBe( false );
 	} );
 } );
