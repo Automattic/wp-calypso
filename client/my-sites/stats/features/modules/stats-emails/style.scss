@@ -11,16 +11,49 @@
 }
 
 .stats-emails--four-columns {
+	/* The metric column's header lives outside the additional-columns wrapper;
+	   bottom-align the whole header row and give that label the same track
+	   width so it wraps like its siblings instead of floating at the top. */
+	.stats-card--column-header {
+		align-items: flex-end;
+	}
+
+	.stats-card--column-header__right {
+		max-width: 88px;
+		white-space: normal;
+		overflow-wrap: break-word;
+		hyphens: auto;
+		text-align: right;
+	}
+
+	/* The shared bar sizes itself for a single value column (fixed width calc,
+	   flex-shrink 0). With four columns that overflows the row in Firefox and
+	   the title stops truncating, so let the bar shrink and ellipsize. */
+	.horizontal-bar-list-item-bar {
+		width: auto;
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
 	.stats-card-header__additional,
 	.horizontal-bar-list-item--additional {
 		display: flex;
 		flex: 0 0 auto;
 		justify-content: flex-end;
+		align-items: flex-end;
 		gap: 0 8px;
 
+		/* Fixed tracks keep the header and every row vertically aligned no
+		   matter how long a translated header runs; long single-word headers
+		   (sv "Öppningsfrekvens") wrap via hyphenation instead of widening
+		   their column. */
 		> span {
+			flex: 0 0 88px;
 			min-width: 0;
 			text-align: right;
+			white-space: normal;
+			overflow-wrap: break-word;
+			hyphens: auto;
 		}
 	}
 }

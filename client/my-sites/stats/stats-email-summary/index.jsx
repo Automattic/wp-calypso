@@ -119,9 +119,9 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 						additionalColumns={ {
 							header: (
 								<>
-									<span style={ { minWidth: 80 } }>{ translate( 'Opens' ) }</span>
-									<span style={ { minWidth: 90 } }>{ translate( 'Open rate' ) }</span>
-									<span style={ { minWidth: 80 } }>{ translate( 'Clicks' ) }</span>
+									<span>{ translate( 'Opens' ) }</span>
+									<span>{ translate( 'Open rate' ) }</span>
+									<span>{ translate( 'Clicks' ) }</span>
 								</>
 							),
 							body: ( item ) => {
@@ -132,8 +132,8 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 								const rateKnown = sends > 0 && ( opensUnique > 0 || opens === 0 );
 								return (
 									<>
-										<span style={ { minWidth: 80 } }>{ formatNumber( opens || 0 ) }</span>
-										<span style={ { minWidth: 90 } }>
+										<span>{ formatNumber( opens || 0 ) }</span>
+										<span>
 											<TooltipWrapper
 												value={
 													rateKnown
@@ -148,7 +148,7 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 												TooltipContent={ OpensTooltipContent }
 											/>
 										</span>
-										<span style={ { minWidth: 80 } }>
+										<span>
 											{ formatNumber( parseInt( item.clicks, 10 ) || 0 ) }
 										</span>
 									</>

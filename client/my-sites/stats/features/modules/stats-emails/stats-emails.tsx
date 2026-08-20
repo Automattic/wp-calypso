@@ -89,9 +89,9 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					additionalColumns={ {
 						header: (
 							<>
-								<span style={ { minWidth: 80 } }>{ translate( 'Opens' ) }</span>
-								<span style={ { minWidth: 90 } }>{ translate( 'Open rate' ) }</span>
-								<span style={ { minWidth: 80 } }>{ translate( 'Clicks' ) }</span>
+								<span>{ translate( 'Opens' ) }</span>
+								<span>{ translate( 'Open rate' ) }</span>
+								<span>{ translate( 'Clicks' ) }</span>
 							</>
 						),
 						body: ( item: EmailStatsItem ) => {
@@ -105,8 +105,8 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							const rateKnown = sends > 0 && ( opensUnique > 0 || opens === 0 );
 							return (
 								<>
-									<span style={ { minWidth: 80 } }>{ formatNumber( opens || 0 ) }</span>
-									<span style={ { minWidth: 90 } }>
+									<span>{ formatNumber( opens || 0 ) }</span>
+									<span>
 										<TooltipWrapper
 											value={
 												rateKnown
@@ -121,7 +121,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 											TooltipContent={ OpensTooltipContent }
 										/>
 									</span>
-									<span style={ { minWidth: 80 } }>
+									<span>
 										{ formatNumber( parseInt( String( item.clicks ), 10 ) || 0 ) }
 									</span>
 								</>
