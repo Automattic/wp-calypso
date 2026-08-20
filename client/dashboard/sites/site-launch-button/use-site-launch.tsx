@@ -13,6 +13,7 @@ import {
 	isSitePlanBigSkyTrial,
 	isSitePlanPaid,
 } from '../plans';
+import SiteLaunchModal from '../site-launch-modal';
 import type { Site } from '@automattic/api-core';
 
 export type A4aLaunchModalComponent = ComponentType< {
@@ -76,8 +77,7 @@ export function useSiteLaunch(
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
 	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
 	const isDisabled = ! getIsSitePlanLaunchable( site );
-	const shouldImmediatelyLaunch =
-		isSitePlanPaidWithDomains || isSitePlanHostingTrial || site.is_wpcom_staging_site;
+	const shouldImmediatelyLaunch = isSitePlanHostingTrial || site.is_wpcom_staging_site;
 
 	const launchUrl = useMemo( () => {
 		if ( isSitePlanBigSkyTrial( site ) ) {
@@ -126,6 +126,15 @@ export function useSiteLaunch(
 		} );
 	};
 
+	const confirmPreLaunch = () => {
+		track();
+		launchMutation.mutate( undefined, {
+			onSuccess: () => redirectAfterLaunch(),
+			onError: onLaunchError,
+			onSettled: () => setIsModalOpen( false ),
+		} );
+	};
+
 	const baseResult = {
 		isLoading: isDomainsLoading,
 		isExperimentLoading,
@@ -160,6 +169,24 @@ export function useSiteLaunch(
 		}
 
 		return { ...baseResult, isHidden: true, onClick: () => {} };
+	}
+
+	if ( isSitePlanPaidWithDomains ) {
+		return {
+			...baseResult,
+			isHidden: false,
+			onClick: () => setIsModalOpen( true ),
+			modal: isModalOpen ? (
+				<SiteLaunchModal
+					variant="pre-launch"
+					isOpen
+					site={ site }
+					isLaunching={ launchMutation.isPending }
+					onClose={ () => setIsModalOpen( false ) }
+					onLaunch={ confirmPreLaunch }
+				/>
+			) : null,
+		};
 	}
 
 	if ( shouldImmediatelyLaunch ) {
