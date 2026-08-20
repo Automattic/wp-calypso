@@ -22,6 +22,7 @@ import {
 	getBigSkyTracksData,
 	recordAgentsManagerTracksEvent,
 	recordBigSkyTracksEvent,
+	recordFullNameAgentsManagerTracksEvent,
 } from '../tracks';
 
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
@@ -256,6 +257,27 @@ describe( 'tracks wrappers', () => {
 			setResolvedAgentId( 'reader-chat' );
 			recordAgentsManagerTracksEvent( 'chat_minimize' );
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	describe( 'recordFullNameAgentsManagerTracksEvent', () => {
+		it( 'records under the given name with the unified base-prop set', () => {
+			recordFullNameAgentsManagerTracksEvent( 'calypso_editor_agents_manager_ai_chat_clicked', {
+				section: 'gutenberg',
+				action: 'open',
+			} );
+
+			const [ eventName ] = mockRecordTracksEvent.mock.calls[ 0 ];
+			expect( eventName ).toBe( 'calypso_editor_agents_manager_ai_chat_clicked' );
+
+			expect( lastEventProps() ).toMatchObject( {
+				section: 'gutenberg',
+				action: 'open',
+				ai_session_id: 'session-xyz',
+				agent_name: 'dolly',
+				surface: 'editor',
+				is_test: true,
+			} );
 		} );
 	} );
 
