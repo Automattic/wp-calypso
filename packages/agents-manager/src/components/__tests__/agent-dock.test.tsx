@@ -479,7 +479,7 @@ describe( 'AgentDock', () => {
 		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'ai_chat_more_options_click',
 			{
-				type: 'reset_chat',
+				menu_item: 'reset_chat',
 			}
 		);
 		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
@@ -530,7 +530,7 @@ describe( 'AgentDock', () => {
 		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'ai_chat_more_options_click',
 			{
-				type: 'view_history',
+				menu_item: 'view_history',
 			}
 		);
 		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/history' );
@@ -561,7 +561,7 @@ describe( 'AgentDock', () => {
 		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'ai_chat_more_options_click',
 			{
-				type: 'knowledge_memory',
+				menu_item: 'knowledge_memory',
 			}
 		);
 		expect( openSpy ).toHaveBeenCalledWith(
@@ -587,7 +587,7 @@ describe( 'AgentDock', () => {
 		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'ai_chat_more_options_click',
 			{
-				type: 'ai_agent_settings',
+				menu_item: 'ai_agent_settings',
 			}
 		);
 		expect( openSpy ).toHaveBeenCalledWith(
@@ -659,7 +659,7 @@ describe( 'AgentDock', () => {
 			expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 				'ai_chat_more_options_click',
 				{
-					type,
+					menu_item: type,
 				}
 			);
 			expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( nextState );
