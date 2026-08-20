@@ -167,3 +167,13 @@
 
 
 
+
+/* Sized via our own className, the Guide consumer API — same pattern as
+   Gutenberg's WelcomeGuide (.edit-post-welcome-guide). No internals touched. */
+.marketplace-hosting__referral-guide {
+	inline-size: 400px;
+}
+
+.marketplace-hosting__referral-guide-text {
+	padding: 0 32px 32px;
+}
