@@ -28,10 +28,12 @@ export class DashboardMeSidebarComponent {
 			return;
 		}
 
-		// The toggle is an icon-only button whose accessible name is empty (the
-		// icon is a CSS pseudo-element and it carries no aria-label), so matching
-		// by role and name never resolves it. Match its `title` instead.
-		const menuToggle = this.page.getByTitle( 'Menu' ).first();
+		// Old masterbar labels the toggle with `title`, omnibar with `aria-label`;
+		// a flag decides which one renders, so match either.
+		const menuToggle = this.page
+			.locator( 'button[title="Menu"], button[aria-label="Menu"]' )
+			.filter( { visible: true } )
+			.first();
 		// The overlay is portalled into place only while the sidebar is open, so
 		// its presence is a reliable "sidebar is open" signal.
 		const openSidebar = this.page.getByTestId( 'dashboard-responsive-sidebar-overlay' );

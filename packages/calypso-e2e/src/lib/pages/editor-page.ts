@@ -1419,11 +1419,9 @@ export class EditorPage {
 		const actions: Promise< unknown >[] = [ navigationPromise ];
 
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// Mobile viewports do not use an EditorNavSidebar.
-			// Instead, the regular NavBar is used, and the
-			// `<` button exits the editor.
+			// Mobile has no EditorNavSidebar; My Sites doubles as the back button.
 			const navbarComponent = new NavbarComponent( this.page );
-			actions.push( navbarComponent.clickEditorBackButton() );
+			actions.push( navbarComponent.clickMySites() );
 		} else {
 			actions.push( this.editorToolbarComponent.closeEditor() );
 		}
