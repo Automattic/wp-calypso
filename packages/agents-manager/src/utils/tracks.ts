@@ -75,24 +75,31 @@ function getIsTest(): boolean {
 }
 
 /**
- * Editor-surface page props, mirroring Big Sky's `getCurrentPageProperties`.
+ * Editor-surface page props, mirroring Big Sky's `getCurrentPageProperties`,
+ * plus the `surface` claim derived from the same editor-store read.
  */
 function getBigSkyPageProps(): TracksProps {
+	// `block_editor` only while the `core/editor` store is registered (unlike
+	// `isEditorPage()`, this includes custom post types and the site editor);
+	// preserved by the catch, omitted on plain wp-admin screens.
+	let surfaceProps: TracksProps = {};
 	try {
 		const editor = select( 'core/editor' ) as EditorSelectStore;
-		const core = select( 'core' ) as CoreSelectStore;
+		surfaceProps = editor ? { surface: 'block_editor' } : {};
 
+		const core = select( 'core' ) as CoreSelectStore;
 		const postId = editor?.getCurrentPostId?.();
 		const siteRecord = core?.getEntityRecord?.( 'root', 'site' ) as
 			| { page_on_front?: number }
 			| undefined;
 
 		return {
+			...surfaceProps,
 			post_type: editor?.getCurrentPostType?.() ?? '',
 			is_home_page: postId !== undefined && postId === siteRecord?.page_on_front,
 		};
 	} catch {
-		return { post_type: '', is_home_page: false };
+		return { ...surfaceProps, post_type: '', is_home_page: false };
 	}
 }
 
@@ -121,7 +128,18 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 		...getBigSkyPageProps(),
 	};
 
-	recordTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, { ...baseProps, ...props } );
+	const mergedProps: TracksProps = { ...baseProps, ...props };
+	// Send the session ID under both names: `ai_session_id` is the standard one,
+	// and `sessionid` is the older one that dashboards still use. The alias
+	// copies the final `sessionid`, so a caller-supplied value stays mirrored.
+	if ( ! ( 'ai_session_id' in mergedProps ) ) {
+		const effectiveSessionId = mergedProps.sessionid;
+		if ( typeof effectiveSessionId === 'string' && effectiveSessionId !== '' ) {
+			mergedProps.ai_session_id = effectiveSessionId;
+		}
+	}
+
+	recordTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, mergedProps );
 }
 
 /**

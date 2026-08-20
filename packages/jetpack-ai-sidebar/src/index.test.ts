@@ -3612,6 +3612,7 @@ describe( 'toolProvider', () => {
 						{ guideline_quote: 'Prefer active voice.' },
 					],
 					review_context: 'notes_and_guidelines',
+					cache_hit: true,
 				},
 				{
 					suggested_edit_count: 2,
@@ -3619,6 +3620,7 @@ describe( 'toolProvider', () => {
 					implication_count: 0,
 					guideline_violation_count: 2,
 					review_context: 'notes_and_guidelines',
+					cache_hit: true,
 				},
 			],
 		] )( 'adds privacy-safe response metadata for %s', async ( type, props, expected ) => {

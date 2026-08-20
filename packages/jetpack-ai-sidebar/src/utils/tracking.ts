@@ -22,6 +22,7 @@ type ResponseRenderedTrackingProperties = {
 	implication_count?: number;
 	guideline_violation_count?: number;
 	review_context?: ReviewContext;
+	cache_hit?: boolean;
 };
 
 const REVIEW_CONTEXTS: ReadonlySet< string > = new Set< ReviewContext >( [
@@ -59,10 +60,18 @@ function getSessionId(): string | undefined {
 	return typeof sessionId === 'string' && sessionId !== '' ? sessionId : undefined;
 }
 
+/** The `core/editor` store when registered — absent on non-editor surfaces. */
+function getEditorStore(): EditorSelectStore {
+	try {
+		return select( 'core/editor' ) as EditorSelectStore;
+	} catch {
+		return undefined;
+	}
+}
+
 function getCurrentPostType(): string {
 	try {
-		const editor = select( 'core/editor' ) as EditorSelectStore;
-		return editor?.getCurrentPostType?.() ?? '';
+		return getEditorStore()?.getCurrentPostType?.() ?? '';
 	} catch {
 		return '';
 	}
@@ -142,6 +151,8 @@ export function getResponseRenderedTrackingProperties(
 			implication_count: countResponseItems( props.implications ),
 			guideline_violation_count: countRenderableGuidelineViolations( props.guideline_violations ),
 			...( reviewContext ? { review_context: reviewContext } : {} ),
+			// Server-declared cache signal; older payloads omit it.
+			...( typeof props.cache_hit === 'boolean' ? { cache_hit: props.cache_hit } : {} ),
 		};
 	}
 
@@ -152,9 +163,14 @@ function recordTracksEvent( eventName: string, properties: TrackProperties = {} 
 	const sessionId = getSessionId();
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
+	const surface = getEditorStore() ? 'block_editor' : undefined;
 	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, {
+		// Defaults to block_editor unless caller overrides.
+		...( surface ? { surface } : {} ),
 		...properties,
-		...( sessionId ? { sessionid: sessionId } : {} ),
+		// Send the session ID under both names: `ai_session_id` is the standard
+		// one, and `sessionid` is the older one that existing consumers still use.
+		...( sessionId ? { sessionid: sessionId, ai_session_id: sessionId } : {} ),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 		...( blogId !== undefined ? { blog_id: blogId } : {} ),
 	} );
