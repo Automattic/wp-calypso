@@ -19,7 +19,6 @@ class MasterbarItemNotifications extends Component {
 		isActive: PropTypes.bool,
 		className: PropTypes.string,
 		tooltip: TranslatableString,
-		ariaLabel: TranslatableString,
 		//connected
 		isNotificationsOpen: PropTypes.bool,
 		hasUnseenNotifications: PropTypes.bool,
@@ -101,7 +100,6 @@ class MasterbarItemNotifications extends Component {
 					onClick={ this.toggleNotesFrame }
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }
-					ariaLabel={ this.props.ariaLabel }
 					className={ classes }
 					key={ this.state.animationState }
 				/>

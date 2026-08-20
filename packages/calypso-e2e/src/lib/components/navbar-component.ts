@@ -3,7 +3,9 @@ import { Page } from 'playwright';
 const selectors = {
 	// Buttons on navbar
 	mySiteButton: '[data-tip-target="my-sites"]',
+	mobileMenuButton: '[data-tip-target="mobile-menu"]',
 	editorBackButton: '[data-tip-target="back-home"]',
+	notificationsButton: 'a.masterbar-notifications',
 	meButton: 'a[data-tip-target="me"]',
 };
 /**
@@ -36,7 +38,7 @@ export class NavbarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickMobileMenu(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'Menu', exact: true } ).first().click();
+		await this.page.click( selectors.mobileMenuButton );
 	}
 
 	/**
@@ -71,9 +73,7 @@ export class NavbarComponent {
 			return await this.page.keyboard.type( 'n' );
 		}
 
-		const notificationsButtonLocator = this.page
-			.getByLabel( 'Notifications', { exact: true } )
-			.first();
+		const notificationsButtonLocator = this.page.locator( selectors.notificationsButton );
 
 		return await notificationsButtonLocator.click();
 	}
