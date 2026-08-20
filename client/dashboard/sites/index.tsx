@@ -221,23 +221,28 @@ export default function Sites() {
 		totalItems ?? 0
 	);
 
-	const emptySitesState = hasOnlyDeletedSites ? (
-		<DataViewsEmptyStateLayout
-			title={ __( 'You don’t have any active sites' ) }
-			description={ __( 'Restore a deleted site, or start a new one.' ) }
-		>
-			<EmptyDeletedSitesStateContent />
-		</DataViewsEmptyStateLayout>
-	) : (
-		<DataViewsEmptyStateLayout
-			title={ __( 'You don’t have any sites yet' ) }
-			description={ __(
-				'Start a site and begin creating, coding, or exploring what WordPress can do.'
-			) }
-		>
-			<EmptySitesStateContent />
-		</DataViewsEmptyStateLayout>
-	);
+	let emptySitesState = null;
+	if ( hasOnlyDeletedSites === true ) {
+		emptySitesState = (
+			<DataViewsEmptyStateLayout
+				title={ __( 'You don’t have any active sites' ) }
+				description={ __( 'Restore a deleted site, or start a new one.' ) }
+			>
+				<EmptyDeletedSitesStateContent />
+			</DataViewsEmptyStateLayout>
+		);
+	} else if ( hasOnlyDeletedSites === false ) {
+		emptySitesState = (
+			<DataViewsEmptyStateLayout
+				title={ __( 'You don’t have any sites yet' ) }
+				description={ __(
+					'Start a site and begin creating, coding, or exploring what WordPress can do.'
+				) }
+			>
+				<EmptySitesStateContent />
+			</DataViewsEmptyStateLayout>
+		);
+	}
 
 	const filters = view.filters ?? [];
 	const hasActiveSearch = !! view.search;

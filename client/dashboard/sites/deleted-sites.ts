@@ -13,18 +13,26 @@ export function hasNoLiveSites( user: User | undefined ): boolean {
 	return user?.site_count === 0;
 }
 
-export function useHasOnlyDeletedSites() {
+// Returns `undefined` while the deleted-sites check is unresolved. The sites
+// route loader prefetches the check for zero-site users, so in practice this
+// settles before first paint.
+export function useHasOnlyDeletedSites(): boolean | undefined {
 	const { user } = useAuth();
 	const { queries } = useAppContext();
 	const noLiveSites = hasNoLiveSites( user );
 
-	// Holds the full-page loader so the onboarding empty state never
-	// flashes before the deleted-aware one.
-	const { data } = useQuery( {
+	const { data, isPending } = useQuery( {
 		...queries.paginatedSitesQuery( deletedSitesCheckFetchOptions ),
 		enabled: noLiveSites,
-		meta: { fullPageLoader: true },
 	} );
 
-	return noLiveSites && ( data?.total ?? 0 ) > 0;
+	if ( ! noLiveSites ) {
+		return false;
+	}
+
+	if ( isPending ) {
+		return undefined;
+	}
+
+	return ( data?.total ?? 0 ) > 0;
 }

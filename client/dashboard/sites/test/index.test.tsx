@@ -54,10 +54,11 @@ const BOUNCING_NOTICE_TITLE = 'Your account email isn’t receiving our messages
 
 // Register before mockSitesEndpoint so the catch-all interceptor doesn't
 // consume the deleted-sites check request.
-function mockDeletedSitesCheckEndpoint( total: number ) {
+function mockDeletedSitesCheckEndpoint( total: number, { delay = 0 } = {} ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.3/me/sites' )
 		.query( ( query ) => query.site_visibility === 'deleted' )
+		.delay( delay )
 		.reply( 200, { sites: [], total } );
 }
 
@@ -176,6 +177,28 @@ describe( '<Sites>', () => {
 		).toBeVisible();
 		await waitFor( () => expect( deletedCheckScope.isDone() ).toBe( true ) );
 		expect( screen.queryByRole( 'link', { name: 'View deleted sites' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not flash the onboarding empty state while the deleted-sites check is pending', async () => {
+		mockDeletedSitesCheckEndpoint( 1, { delay: 300 } );
+		mockSitesEndpoint( [] );
+		render( <Sites />, {
+			user: {
+				site_count: 0,
+			} as User,
+		} );
+
+		await screen.findByRole( 'heading', { name: 'Sites' } );
+		expect(
+			screen.queryByRole( 'heading', { name: /You don.t have any sites yet/ } )
+		).not.toBeInTheDocument();
+		expect(
+			await screen.findByRole(
+				'heading',
+				{ name: /You don.t have any active sites/ },
+				{ timeout: 3000 }
+			)
+		).toBeVisible();
 	} );
 
 	test( 'collision listener rewrites wpcom site slug when it collides with a Jetpack site', async () => {
