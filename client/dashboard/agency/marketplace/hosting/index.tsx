@@ -2,6 +2,7 @@ import {
 	Button,
 	Dropdown,
 	ExternalLink,
+	Modal,
 	ToggleControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -9,7 +10,7 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
-import { cart, chevronDown, chevronUp } from '@wordpress/icons';
+import { cart, chevronDown, chevronUp, info } from '@wordpress/icons';
 import { useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
@@ -33,6 +34,61 @@ import './style.scss';
 
 // Hidden while the design is iterated on.
 const SHOW_MIGRATION_OFFER = false;
+
+const REFERRAL_GUIDE_STEPS = [
+	{
+		title: __( 'Welcome to product referral mode' ),
+		description: __(
+			'Manage your clients’ products without the burden of managing the billing. Assemble a cart of products, send a request for payment to your clients, and make commissions based on what you sell.'
+		),
+	},
+	{
+		title: __( 'Add the products your client needs' ),
+		description: __(
+			'Ensure “Refer products” is toggled on, and add any mix of products to your cart.'
+		),
+	},
+	{
+		title: __( 'Review your selection during checkout' ),
+		description: __(
+			'During checkout, add your client’s email address and a note about the invoice for the selected products.'
+		),
+	},
+	{
+		title: __( 'Send your client the payment request' ),
+		description: __(
+			'Once sent, your client will get the invoice delivered to their inbox. After they pay, you’ll be able to assign the products to their site.'
+		),
+	},
+	{
+		title: __( 'Get paid real commissions' ),
+		description: __(
+			'Clients will be billed at the end of every month for their products. When they pay, you’ll make commissions on those products.'
+		),
+	},
+];
+
+function ReferralGuideModal( { onClose }: { onClose: () => void } ) {
+	return (
+		<Modal title={ __( 'How referral mode works' ) } onRequestClose={ onClose } size="medium">
+			<VStack spacing={ 5 }>
+				{ REFERRAL_GUIDE_STEPS.map( ( step, index ) => (
+					<VStack key={ step.title } spacing={ 1 }>
+						<Text weight={ 600 }>{ `${ index + 1 }. ${ step.title }` }</Text>
+						<Text as="p" variant="muted">
+							{ step.description }
+						</Text>
+					</VStack>
+				) ) }
+				<HStack justify="flex-end">
+					<Button variant="primary" __next40pxDefaultSize onClick={ onClose }>
+						{ __( 'Got it' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		</Modal>
+	);
+}
 
 interface CartItem {
 	id: string;
@@ -221,6 +277,16 @@ export default function MarketplaceHosting() {
 	const [ selectedBrand, setSelectedBrand ] = useState< HostingBrand[ 'key' ] >( 'wpcom' );
 	const [ term, setTerm ] = useState< 'monthly' | 'yearly' >( 'yearly' );
 	const [ isReferralMode, setIsReferralMode ] = useState( false );
+	const [ isGuideOpen, setIsGuideOpen ] = useState( false );
+	const [ hasSeenGuide, setHasSeenGuide ] = useState( false );
+
+	const handleReferralToggle = ( checked: boolean ) => {
+		setIsReferralMode( checked );
+		if ( checked && ! hasSeenGuide ) {
+			setHasSeenGuide( true );
+			setIsGuideOpen( true );
+		}
+	};
 	const [ pressablePlanSlug, setPressablePlanSlug ] = useState( 'pressable-signature-1' );
 	const [ cartItems, setCartItems ] = useState< CartItem[] >( [] );
 
@@ -260,18 +326,27 @@ export default function MarketplaceHosting() {
 								</span>
 								<Text variant={ term === 'yearly' ? undefined : 'muted' }>{ __( 'Yearly' ) }</Text>
 							</HStack>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								checked={ isReferralMode }
-								label={ __( 'Refer products' ) }
-								onChange={ setIsReferralMode }
-							/>
+							<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ isReferralMode }
+									label={ __( 'Refer products' ) }
+									onChange={ handleReferralToggle }
+								/>
+								<Button
+									icon={ info }
+									size="small"
+									label={ __( 'Learn how referral mode works' ) }
+									onClick={ () => setIsGuideOpen( true ) }
+								/>
+							</HStack>
 							<CartDropdown items={ cartItems } onRemove={ removeFromCart } />
 						</HStack>
 					}
 				/>
 			}
 		>
+			{ isGuideOpen && <ReferralGuideModal onClose={ () => setIsGuideOpen( false ) } /> }
 			{ SHOW_MIGRATION_OFFER && <MigrationOffer /> }
 			<VStack spacing={ 4 }>
 				<SectionHeader title={ __( 'Choose a hosting platform' ) } level={ 2 } />
