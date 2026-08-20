@@ -1,7 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { getSiteSuffix, isOfflineMode, registerSite } from '../jetpack-connection';
+import {
+	getRegistrationErrorCode,
+	getSiteSuffix,
+	isOfflineMode,
+	registerSite,
+} from '../jetpack-connection';
 
 const REDIRECT_URI = 'admin.php?page=stats';
 
@@ -60,19 +65,30 @@ describe( 'connection state readers', () => {
 	} );
 } );
 
-describe( 'registerSite', () => {
-	it( 'returns the authorization URL the site was given', async () => {
-		globalThis.fetch = mockResponse( {
-			body: { authorizeUrl: 'https://wordpress.com/authorize' },
-		} );
+const AUTHORIZE_URL = 'https://wordpress.com/jetpack/connect/authorize?client_id=123456789';
 
-		await expect( registerSite( REDIRECT_URI ) ).resolves.toBe( 'https://wordpress.com/authorize' );
+describe( 'registerSite', () => {
+	it( 'returns the authorization URL the site was given, and the blog id it names', async () => {
+		globalThis.fetch = mockResponse( { body: { authorizeUrl: AUTHORIZE_URL } } );
+
+		await expect( registerSite( REDIRECT_URI ) ).resolves.toEqual( {
+			authorizeUrl: AUTHORIZE_URL,
+			blogId: 123456789,
+		} );
+	} );
+
+	it.each( [
+		[ 'carries no client id', 'https://wordpress.com/jetpack/connect/authorize' ],
+		[ 'carries one that is not a number', 'https://wordpress.com/authorize?client_id=nonsense' ],
+		[ 'is not a URL at all', 'not-a-url' ],
+	] )( 'reports no blog id when the authorization URL %s', async ( _label, authorizeUrl ) => {
+		globalThis.fetch = mockResponse( { body: { authorizeUrl } } );
+
+		await expect( registerSite( REDIRECT_URI ) ).resolves.toEqual( { authorizeUrl, blogId: null } );
 	} );
 
 	it( 'posts to the site itself, authenticated by the wp-admin session', async () => {
-		globalThis.fetch = mockResponse( {
-			body: { authorizeUrl: 'https://wordpress.com/authorize' },
-		} );
+		globalThis.fetch = mockResponse( { body: { authorizeUrl: AUTHORIZE_URL } } );
 
 		await registerSite( REDIRECT_URI );
 
@@ -123,5 +139,37 @@ describe( 'registerSite', () => {
 
 		await expect( registerSite( REDIRECT_URI ) ).rejects.toThrow( Error );
 		expect( globalThis.fetch ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'getRegistrationErrorCode', () => {
+	// The message cannot stand in for these: it is translated, and empty for all but the first.
+	const codeOfRejection = ( registration ) =>
+		registration.then( () => null, getRegistrationErrorCode );
+
+	it( 'tells the API refusing apart from the API answering with nothing usable', async () => {
+		globalThis.fetch = mockResponse( { ok: false, body: { message: 'Nope.' } } );
+		await expect( codeOfRejection( registerSite( REDIRECT_URI ) ) ).resolves.toBe( 'http_error' );
+
+		globalThis.fetch = mockResponse( { body: {} } );
+		await expect( codeOfRejection( registerSite( REDIRECT_URI ) ) ).resolves.toBe(
+			'no_authorize_url'
+		);
+	} );
+
+	it( 'reports a site that printed no connection state', async () => {
+		delete window.JP_CONNECTION_INITIAL_STATE;
+
+		await expect( codeOfRejection( registerSite( REDIRECT_URI ) ) ).resolves.toBe(
+			'no_connection_state'
+		);
+	} );
+
+	it( 'reads a request that never completed off a bare browser error', async () => {
+		globalThis.fetch = jest.fn().mockRejectedValue( new TypeError( 'Failed to fetch' ) );
+
+		await expect( codeOfRejection( registerSite( REDIRECT_URI ) ) ).resolves.toBe(
+			'request_failed'
+		);
 	} );
 } );
