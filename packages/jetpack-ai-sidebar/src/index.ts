@@ -518,8 +518,11 @@ function getPostLevelSuggestions(
 		return suggestions;
 	}
 
-	return suggestions.filter(
-		( suggestion ) => ! CONTENT_DEPENDENT_SUGGESTION_IDS.has( suggestion.id )
+	// Greyed out rather than dropped, so a blank post still shows what is on offer.
+	return suggestions.map( ( suggestion ) =>
+		CONTENT_DEPENDENT_SUGGESTION_IDS.has( suggestion.id )
+			? { ...suggestion, disabled: true }
+			: suggestion
 	);
 }
 
