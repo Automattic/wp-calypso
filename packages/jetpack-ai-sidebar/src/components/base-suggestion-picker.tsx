@@ -16,6 +16,7 @@
  * External dependencies
  */
 import { useState, useCallback } from '@wordpress/element';
+import type { OnResponseAction } from '../utils/response-action';
 
 /**
  * Props for the BaseSuggestionPicker component.
@@ -24,6 +25,7 @@ interface BaseSuggestionPickerProps {
 	intro: string;
 	options: string[];
 	onApply: ( value: string ) => void;
+	onComplete?: () => void;
 	/** Optional confirmation shown inline once a value has been applied. */
 	appliedMessage?: string;
 	/**
@@ -32,28 +34,43 @@ interface BaseSuggestionPickerProps {
 	 * shows which suggestion was chosen.
 	 */
 	currentValue?: string;
+	onResponseAction?: OnResponseAction;
 }
 
-/**
- * BaseSuggestionPicker component for the chat sidebar.
- * @param {BaseSuggestionPickerProps} props - Component props.
- * @returns {import('react').ReactElement} The rendered component.
- */
+/** Renders a shared list of suggestions and applies the selected option. */
 export default function BaseSuggestionPicker( {
 	intro,
 	options,
 	onApply,
+	onComplete,
 	appliedMessage,
 	currentValue,
+	onResponseAction,
 }: BaseSuggestionPickerProps ) {
 	const [ appliedValue, setAppliedValue ] = useState< string | null >( null );
 
 	const handleApply = useCallback(
 		( value: string ) => {
-			onApply( value );
-			setAppliedValue( value );
+			// These editor callbacks return no result, so only a synchronous throw signals failure.
+			try {
+				onApply( value );
+				setAppliedValue( value );
+			} catch ( error ) {
+				onResponseAction?.( {
+					action: 'accept',
+					target: 'option',
+					outcome: 'failed',
+				} );
+				throw error;
+			}
+			onResponseAction?.( {
+				action: 'accept',
+				target: 'option',
+				outcome: 'success',
+			} );
+			onComplete?.();
 		},
-		[ onApply ]
+		[ onApply, onComplete, onResponseAction ]
 	);
 
 	const derivedAppliedValue =

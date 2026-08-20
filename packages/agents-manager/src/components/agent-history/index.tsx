@@ -36,7 +36,7 @@ export default function AgentHistory( {
 	onExpand,
 	onSelectConversation,
 }: Props ) {
-	const { resumeActiveChat } = useAgentsManagerContext();
+	const { resumeChat } = useAgentsManagerContext();
 
 	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
 		useDispatch( AGENTS_MANAGER_STORE );
@@ -49,7 +49,7 @@ export default function AgentHistory( {
 	const closedChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
 	const title = __( 'Past chats', __i18n_text_domain__ );
 
-	const handleBack = () => resumeActiveChat();
+	const handleBack = () => resumeChat();
 
 	return (
 		<AgentUI.Container

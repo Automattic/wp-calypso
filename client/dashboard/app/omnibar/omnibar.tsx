@@ -16,6 +16,7 @@ import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import { useAiChatPlugin } from './plugin-ai-chat';
+import { addDashboardNode, useDashboardPlugin } from './plugin-dashboard';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
 import { useLaunchSitePlugin } from './plugin-launch-site';
@@ -26,6 +27,7 @@ import { useShoppingCartPlugin } from './plugin-shopping-cart';
 import { buildSiteBadgeNode } from './plugin-site-badges';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
 import { buildWpcomAccountNode } from './plugin-wpcom-account';
+import { RESPONSIVE_MENU_NODE_ID, trackOmnibarNodes, useRecordOmnibarNodeClick } from './tracking';
 import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
 import type { OmnibarNodeBuilders } from '@automattic/omnibar';
@@ -63,19 +65,32 @@ function createHrefResolver( adminUrl?: string ) {
 export default function OmnibarContainer( {
 	user,
 	cartManagerClient,
+	sectionGroup,
+	sectionName,
 }: {
 	user?: User;
 	cartManagerClient: ShoppingCartManagerClient;
+	sectionGroup?: string;
+	sectionName?: string;
 } ) {
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
-			<ConnectedOmnibar user={ user } />
+			<ConnectedOmnibar user={ user } sectionGroup={ sectionGroup } sectionName={ sectionName } />
 		</ShoppingCartProvider>
 	);
 }
 
-function ConnectedOmnibar( { user }: { user?: User } ) {
+function ConnectedOmnibar( {
+	user,
+	sectionGroup,
+	sectionName,
+}: {
+	user?: User;
+	sectionGroup?: string;
+	sectionName?: string;
+} ) {
 	const { supports } = useAppContext();
+	const recordNodeClick = useRecordOmnibarNodeClick();
 	const [ hydrated, setHydrated ] = useState( false );
 	useEffect( () => {
 		setHydrated( true );
@@ -146,14 +161,18 @@ function ConnectedOmnibar( { user }: { user?: User } ) {
 		return result;
 	}, [ dashboardNodes, siteNodes, site, supports, nodeBuilders ] );
 
-	const readerPluginNode = useReaderPlugin();
-	const helpCenterPluginNode = useHelpCenterPlugin();
-	const aiChatPluginNode = useAiChatPlugin();
+	const readerPluginNode = useReaderPlugin( { sectionGroup } );
+	const helpCenterPluginNode = useHelpCenterPlugin( { sectionName } );
+	const aiChatPluginNode = useAiChatPlugin( { sectionName } );
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
-	const languageSwitcherNode = useLanguageSwitcherPlugin( { user } );
+	const { node: languageSwitcherNode, panel: languageSwitcherPanel } = useLanguageSwitcherPlugin( {
+		user,
+	} );
 	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
 	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const launchSiteNode = useLaunchSitePlugin( { site } );
+	const dashboardNode = useDashboardPlugin( { site, sectionGroup } );
+	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
 	const siteActions = [
 		...( baseOmnibarNodes.siteActions ?? [] ),
 		statsSparklineNode,
@@ -171,10 +190,19 @@ function ConnectedOmnibar( { user }: { user?: User } ) {
 		  ]
 		: [];
 
-	const omnibarNodes = {
-		...baseOmnibarNodes,
-		siteActions,
-		plugins,
+	const omnibarNodes = trackOmnibarNodes(
+		{
+			...baseOmnibarNodes,
+			site: siteNode,
+			siteActions,
+			plugins,
+		},
+		recordNodeClick
+	);
+
+	const handleClickResponsiveMenu = () => {
+		recordNodeClick( RESPONSIVE_MENU_NODE_ID );
+		onClickResponsiveMenu();
 	};
 
 	if ( ! hydrated ) {
@@ -184,10 +212,11 @@ function ConnectedOmnibar( { user }: { user?: User } ) {
 		<>
 			<Omnibar
 				nodes={ omnibarNodes }
-				onClickResponsiveMenu={ onClickResponsiveMenu }
+				onClickResponsiveMenu={ handleClickResponsiveMenu }
 				className={ isSupportSession() ? 'is-support-session' : undefined }
 			/>
 			{ shoppingCartPanel }
+			{ languageSwitcherPanel }
 		</>
 	);
 }

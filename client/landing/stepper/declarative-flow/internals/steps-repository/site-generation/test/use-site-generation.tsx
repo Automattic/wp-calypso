@@ -341,7 +341,7 @@ describe( 'useSiteGeneration', () => {
 			result.current.retryBuild?.();
 		} );
 
-		expect( requestBuildWowSiteMock ).toHaveBeenCalledWith( '123', 'spec-1' );
+		expect( requestBuildWowSiteMock ).toHaveBeenCalledWith( '123', 'spec-1', undefined );
 		expect( logMock ).toHaveBeenCalledWith( 'site_generation_retry_requested', {
 			site_identifier: '123',
 			spec_id: 'spec-1',

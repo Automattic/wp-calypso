@@ -3,6 +3,7 @@
  */
 
 import { render } from '@testing-library/react';
+import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import TransferPending from '..';
 
@@ -70,10 +71,48 @@ describe( 'TransferPending', () => {
 		}
 	);
 
-	test( 'redirects timed out transfers to stats with a timeout notice', () => {
+	test( 'requests the latest transfer for its site', () => {
+		render( <TransferPending siteId={ 123 } orderId={ 456 } /> );
+
+		expect( mockDispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( 123 ) );
+	} );
+
+	test( 'does not request a transfer until it has a site id', () => {
+		render( <TransferPending siteId={ 0 } orderId={ 456 } /> );
+
+		expect( mockDispatch ).not.toHaveBeenCalledWith( fetchAtomicTransfer( 0 ) );
+	} );
+
+	test( 'does not redirect on a stale client_timeout when the site id arrives late', () => {
+		const { rerender } = render( <TransferPending siteId={ 0 } orderId={ 456 } /> );
+
+		mockTransfer = { status: transferStates.CLIENT_TIMEOUT };
+		rerender( <TransferPending siteId={ 123 } orderId={ 456 } /> );
+
+		expect( mockPage ).not.toHaveBeenCalled();
+		expect( mockDispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( 123 ) );
+	} );
+
+	test( 'does not redirect when a client_timeout is already in the store at mount', () => {
 		mockTransfer = { status: transferStates.CLIENT_TIMEOUT };
 
 		render( <TransferPending siteId={ 123 } orderId={ 456 } /> );
+
+		expect( mockPage ).not.toHaveBeenCalled();
+		expect( mockDispatch ).not.toHaveBeenCalledWith(
+			expect.objectContaining( { notice: expect.anything() } )
+		);
+	} );
+
+	test( 'redirects to stats with a timeout notice when the store transitions to client_timeout after mount', () => {
+		mockTransfer = { status: transferStates.ACTIVE };
+
+		const { rerender } = render( <TransferPending siteId={ 123 } orderId={ 456 } /> );
+
+		expect( mockPage ).not.toHaveBeenCalled();
+
+		mockTransfer = { status: transferStates.CLIENT_TIMEOUT };
+		rerender( <TransferPending siteId={ 123 } orderId={ 456 } /> );
 
 		expect( mockDispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {

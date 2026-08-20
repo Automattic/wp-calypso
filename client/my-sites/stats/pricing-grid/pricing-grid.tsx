@@ -36,6 +36,22 @@ interface Feature {
 interface PricingGridProps {
 	/** Called when the visitor picks a plan, so the host can reveal the dashboard. */
 	onDismiss?: () => void;
+	/**
+	 * Replaces what the free CTA does. A site with no WordPress.com connection has no dashboard to
+	 * reveal and no notice to dismiss, so it starts the connection flow instead.
+	 */
+	onSelectFree?: () => void;
+	/**
+	 * Replaces what the paid CTA does. The default route is site-scoped, which a site with no
+	 * connection cannot form: it has no site slug yet.
+	 */
+	onSelectPaid?: () => void;
+	/**
+	 * Added to every event this grid records. A host with no blog id to be identified by has to
+	 * supply whatever key it does have, since `blog_id` is null there and nothing else on the
+	 * event would tie it to what the site does next.
+	 */
+	eventProps?: Record< string, string | number >;
 }
 
 /**
@@ -45,7 +61,12 @@ interface PricingGridProps {
  * to the Search one. Gating lives in `gate.tsx`; by the time this renders the site
  * is known to be eligible and undismissed.
  */
-export default function PricingGrid( { onDismiss }: PricingGridProps ) {
+export default function PricingGrid( {
+	onDismiss,
+	onSelectFree,
+	onSelectPaid,
+	eventProps,
+}: PricingGridProps ) {
 	const translate = useTranslate();
 	// Same breakpoint the jetpack-components PricingTable uses via useViewportMatch.
 	const isLg = useViewportMatch( 'large' );
@@ -54,7 +75,10 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 	const dismissPricingGrid = useDismissPricingGrid( siteId );
 
 	useEffect( () => {
-		trackStatsAnalyticsEvent( 'stats_pricing_grid_view', { blog_id: siteId } );
+		trackStatsAnalyticsEvent( 'stats_pricing_grid_view', { blog_id: siteId, ...eventProps } );
+		// One view per grid: `eventProps` only labels it, and depending on it would re-record the
+		// view on every render of a host that builds the object inline.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ siteId ] );
 
 	const product = useSelector( ( state ) =>
@@ -140,7 +164,14 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 		trackStatsAnalyticsEvent( 'stats_pricing_grid_free_cta_clicked', {
 			blog_id: siteId,
 			cta: 'free',
+			...eventProps,
 		} );
+
+		if ( onSelectFree ) {
+			onSelectFree();
+			return;
+		}
+
 		dismissPricingGrid();
 		onDismiss?.();
 	};
@@ -154,7 +185,14 @@ export default function PricingGrid( { onDismiss }: PricingGridProps ) {
 		trackStatsAnalyticsEvent( 'stats_pricing_grid_paid_cta_clicked', {
 			blog_id: siteId,
 			cta: 'paid',
+			...eventProps,
 		} );
+
+		if ( onSelectPaid ) {
+			onSelectPaid();
+			return;
+		}
+
 		page( `/stats/purchase/${ siteSlug }?from=${ PRICING_GRID_REFERRER }` );
 	};
 

@@ -47,8 +47,17 @@ export function useBlackbox( { containerRef, enabled } ) {
 
 	useEffect( () => {
 		if ( ! isEnabled ) {
+			// Covers the surface being suspended after a challenge appeared: drop
+			// all blocking state so the form isn't wedged when it re-enables.
+			setIsLoading( false );
+			setIsChallengeActive( false );
+			setHasChallengeContent( false );
 			return;
 		}
+
+		// The initial state only covers enabled-at-mount; this covers a surface
+		// that enables later (e.g. a hidden signup step becoming active).
+		setIsLoading( true );
 
 		let cancelled = false;
 		let hasStartedChallenge = false;

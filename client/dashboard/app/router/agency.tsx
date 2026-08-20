@@ -245,14 +245,25 @@ const mcpOverviewRoute = createRoute( {
 	)
 );
 
-const mcpAvailableToolsRoute = createRoute( {
+const mcpReadToolsRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Read' ) } ] } ),
 	getParentRoute: () => mcpRoute,
-	path: 'tools',
+	path: 'read',
 	loader: ensureMcpSettings,
 } ).lazy( () =>
 	import( '../../agency/resources/mcp/read-tools' ).then( ( d ) =>
 		createLazyRoute( 'resources-mcp-read' )( { component: d.default } )
+	)
+);
+
+const mcpWriteToolsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Write' ) } ] } ),
+	getParentRoute: () => mcpRoute,
+	path: 'write',
+	loader: ensureMcpSettings,
+} ).lazy( () =>
+	import( '../../agency/resources/mcp/write-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-write' )( { component: d.default } )
 	)
 );
 
@@ -858,7 +869,8 @@ export const createAgencyRoutes = () => [
 		learnRoute,
 		mcpRoute.addChildren( [
 			mcpOverviewRoute,
-			mcpAvailableToolsRoute,
+			mcpReadToolsRoute,
+			mcpWriteToolsRoute,
 			mcpStarterPromptsRoute,
 			mcpConnectRoute,
 		] ),

@@ -16,6 +16,8 @@
 import { useDispatch } from '@wordpress/data';
 import { useState, useCallback } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { getBulkResponseActionOutcome } from '../utils/response-action';
+import type { OnResponseAction } from '../utils/response-action';
 
 /**
  * One generated alt-text suggestion: the target block, its image URL (for the
@@ -31,28 +33,44 @@ interface AltTextSuggestion {
 interface ImageAltTextPickerProps {
 	images: AltTextSuggestion[];
 	onComplete?: () => void;
+	onResponseAction?: OnResponseAction;
 }
 
-/**
- * ImageAltTextPicker component for the chat sidebar.
- *
- * Renders each image next to its suggested alt text, then applies every
- * suggestion in one action via a single common Apply button and shows a
- * confirmation.
- * @param {ImageAltTextPickerProps} props - Component props.
- * @returns {import('react').ReactElement|null} The rendered component.
- */
-export default function ImageAltTextPicker( { images, onComplete }: ImageAltTextPickerProps ) {
+/** Renders image alt-text suggestions and applies them in one action. */
+export default function ImageAltTextPicker( {
+	images,
+	onComplete,
+	onResponseAction,
+}: ImageAltTextPickerProps ) {
 	const [ applied, setApplied ] = useState( false );
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 
 	const handleApplyAll = useCallback( () => {
-		images.forEach( ( image ) => {
-			updateBlockAttributes( image.clientId, { alt: image.alt } );
+		let completedCount = 0;
+		// Updates stop on the first throw; earlier completions produce `partial_failed`.
+		try {
+			images.forEach( ( image ) => {
+				updateBlockAttributes( image.clientId, { alt: image.alt } );
+				completedCount++;
+			} );
+			setApplied( true );
+		} catch ( error ) {
+			onResponseAction?.( {
+				action: 'bulk_accept',
+				target: 'image',
+				outcome: getBulkResponseActionOutcome( completedCount, 1 ),
+				itemCount: completedCount + 1,
+			} );
+			throw error;
+		}
+		onResponseAction?.( {
+			action: 'bulk_accept',
+			target: 'image',
+			outcome: 'success',
+			itemCount: completedCount,
 		} );
-		setApplied( true );
 		onComplete?.();
-	}, [ images, updateBlockAttributes, onComplete ] );
+	}, [ images, updateBlockAttributes, onComplete, onResponseAction ] );
 
 	if ( ! images?.length ) {
 		return null;

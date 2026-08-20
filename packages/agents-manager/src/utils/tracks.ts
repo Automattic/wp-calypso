@@ -11,6 +11,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import { DOLLY_AGENT_ID } from '../constants';
 import { getSessionId } from './agent-session';
+import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent, isReaderChatHost } from './is-reader-chat-agent';
 import { getResolvedAgentId } from './resolved-agent-id';
 
@@ -30,9 +31,18 @@ type CoreSelectStore =
 const BIG_SKY_EVENT_PREFIX = 'jetpack_big_sky_';
 const AM_UNIFIED_EVENT_PREFIX = 'calypso_agents_manager_';
 
-// FIXME: Agents Manager has no per-user a11n signal today
+/** Reads the optional server-provided Automattician tracking signal. */
 function getIsA11n(): boolean | undefined {
-	return undefined;
+	const isA11n = getAgentsManagerInlineData()?.isA11n;
+	return typeof isA11n === 'boolean' ? isA11n : undefined;
+}
+
+/** Reads the canonical server-provided blog ID when available. */
+function getBlogId(): number | undefined {
+	const blogId = getAgentsManagerInlineData()?.site?.ID;
+	return typeof blogId === 'number' && Number.isInteger( blogId ) && blogId > 0
+		? blogId
+		: undefined;
 }
 
 type BigSkyTracksData = {
@@ -96,8 +106,12 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 	}
 
 	const bigSky = getBigSkyTracksData();
+	const isA11n = getIsA11n();
+	const blogId = getBlogId();
 	const baseProps: TracksProps = {
 		is_test: getIsTest(),
+		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
+		...( blogId !== undefined ? { blog_id: blogId } : {} ),
 		sessionid: getSessionId(),
 		session_type: bigSky.sessionType,
 		// AM has no onboarding flow, so the phase is always the editor.
@@ -114,13 +128,16 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
  * Records an Agents Manager event using the shared unified property names.
  */
 export function recordAgentsManagerTracksEvent( eventName: string, props: TracksProps = {} ): void {
+	const isA11n = getIsA11n();
+	const blogId = getBlogId();
 	const baseProps: TracksProps = {
 		ai_session_id: getSessionId(),
 		agent_name: DOLLY_AGENT_ID,
 		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),
-		is_a11n: getIsA11n(),
+		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
+		...( blogId !== undefined ? { blog_id: blogId } : {} ),
 	};
 
 	recordTracksEvent( `${ AM_UNIFIED_EVENT_PREFIX }${ eventName }`, { ...baseProps, ...props } );

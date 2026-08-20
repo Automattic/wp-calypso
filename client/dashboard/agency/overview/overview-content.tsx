@@ -3,6 +3,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { PendingTierCard, RejectedTierCard } from './application-status-cards';
 import EventCard from './event-card';
+import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
 import ReferralEarningsCard from './referral-earnings-card';
 import TierOverviewCard from './tier-overview-card';
@@ -17,8 +18,11 @@ const REFERRALS_CAPABILITY = 'a4a_read_referrals';
 
 export interface AgencyOverviewLinks {
 	tiers: string;
+	sites: string;
 	referrals: string;
 	woopayments: string;
+	marketplace: string;
+	partnerDirectory: string;
 	contactSupport: string;
 	helpful: HelpfulLink[];
 }
@@ -31,6 +35,8 @@ export interface AgencyOverviewContentProps {
 	approvalStatus?: AgencyApprovalStatus | '';
 	/** The current user's agency capabilities; the earning cards lock without referrals access. */
 	capabilities?: string[];
+	/** Whether the agency already has an approved Partner Directory listing. */
+	hasPartnerDirectoryListing?: boolean;
 	links: AgencyOverviewLinks;
 	shouldUseRouterLink?: boolean;
 	onScheduleCall?: () => void;
@@ -50,6 +56,7 @@ export default function AgencyOverviewContent( {
 	influencedRevenue,
 	approvalStatus,
 	capabilities,
+	hasPartnerDirectoryListing,
 	links,
 	shouldUseRouterLink,
 	onScheduleCall,
@@ -84,6 +91,17 @@ export default function AgencyOverviewContent( {
 						shouldUseRouterLink={ shouldUseRouterLink }
 						onScheduleCall={ onScheduleCall }
 						isSchedulingCall={ isSchedulingCall }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
+				{ ! isRejected && (
+					<GrowthCard
+						isPending={ isPending }
+						capabilities={ capabilities }
+						hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+						tierId={ tierId }
+						links={ links }
+						shouldUseRouterLink={ shouldUseRouterLink }
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }

@@ -181,7 +181,7 @@ export default function useFeedbackAction( {
 	messages,
 	getTraceIdForMessage,
 }: UseFeedbackActionConfig ): UseFeedbackActionReturn {
-	const { agentConfig, isLoggedIn, getActiveSessionId } = useAgentsManagerContext();
+	const { agentConfig, isLoggedIn, getTabSessionId } = useAgentsManagerContext();
 	const { sessionId, authProvider } = agentConfig!;
 	const [ showFeedbackInput, setShowFeedbackInput ] = useState( false );
 	const [ feedbackMessageId, setFeedbackMessageId ] = useState< string | null >( null );
@@ -197,7 +197,7 @@ export default function useFeedbackAction( {
 	const handleFeedback = useCallback(
 		( messageId: string, feedback: 'up' | 'down' ) => {
 			const currentAuthProvider = authProviderRef.current;
-			const currentSessionId = getActiveSessionId();
+			const currentSessionId = getTabSessionId();
 
 			if ( ! currentSessionId || ! currentAuthProvider ) {
 				return;
@@ -230,7 +230,7 @@ export default function useFeedbackAction( {
 				setFeedbackMessageId( null );
 			}
 		},
-		[ getActiveSessionId ]
+		[ getTabSessionId ]
 	);
 
 	const feedbackManager = useMemo( () => {
@@ -293,7 +293,7 @@ export default function useFeedbackAction( {
 	const handleSubmitFeedbackText = useCallback(
 		async ( feedbackText: string ) => {
 			const currentAuthProvider = authProviderRef.current;
-			const currentSessionId = getActiveSessionId();
+			const currentSessionId = getTabSessionId();
 			const currentMessageId = feedbackMessageId;
 
 			if (
@@ -321,7 +321,7 @@ export default function useFeedbackAction( {
 				message_id: currentMessageId,
 			} );
 		},
-		[ feedbackMessageId, getActiveSessionId ]
+		[ feedbackMessageId, getTabSessionId ]
 	);
 
 	return {

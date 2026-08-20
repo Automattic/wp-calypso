@@ -1,5 +1,14 @@
 .omnibar {
 	.omnibar__menu.omnibar__responsive-menu {
+		@media ( max-width: 480px ) {
+			min-width: 48px;
+
+			.dashicons-before::before {
+				width: 48px;
+				inset-inline-start: 1px;
+			}
+		}
+
 		@media ( min-width: 782px ) {
 			display: none;
 		}

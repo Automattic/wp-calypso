@@ -3,6 +3,7 @@ import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -25,6 +26,10 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 	const siteId = useSelector( getSelectedSiteId );
 	const currentRoute = useSelector( getCurrentRoute );
 	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
+
+	// Siteless checkout (e.g. `/checkout/wpcom/:productSlug`) has no site in context, so the
+	// site-scoped subscriptions route would resolve to a nonexistent site.
+	const managePurchaseUrl = siteSlug ? `/purchases/subscriptions/${ siteSlug }` : purchasesRoot;
 
 	// When users purchase a domain registration, we'll have two separate purchase items in the list,
 	// one for domain registration and one for domain mapping. This filter ensures we exclude the redundant
@@ -68,11 +73,7 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 			<ThankYouProduct
 				key={ purchase.productSlug }
 				name={ purchase.productName }
-				actions={
-					<Button href={ `/purchases/subscriptions/${ siteSlug }` }>
-						{ translate( 'Manage purchase' ) }
-					</Button>
-				}
+				actions={ <Button href={ managePurchaseUrl }>{ translate( 'Manage purchase' ) }</Button> }
 			/>
 		);
 	} );

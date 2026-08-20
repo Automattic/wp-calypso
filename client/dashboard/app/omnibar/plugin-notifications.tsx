@@ -52,6 +52,7 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 		href: wpcomLink( '/notifications' ),
 		onClick: ( event ) => {
 			event.preventDefault();
+			event.stopPropagation();
 			omnibarEvents.notifications.emit();
 		},
 	};
