@@ -5,7 +5,12 @@ import observeEditorCanvasPointerDown from '@automattic/agents-manager/src/utils
 import { useWindowDimensions } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card, __experimentalElevation as Elevation } from '@wordpress/components';
-import { useFocusOnMount, useFocusReturn, useMergeRefs } from '@wordpress/compose';
+import {
+	useConstrainedTabbing,
+	useFocusOnMount,
+	useFocusReturn,
+	useMergeRefs,
+} from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { useRef, useEffect, useCallback, FC, useState, type RefObject } from 'react';
@@ -81,11 +86,20 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 
 	// Focus the dialog itself on open so keyboard/screen-reader users land in
 	// the Help Center (announcing its title) instead of having to tab through
-	// the whole page to reach it. The dialog is deliberately non-modal — no
-	// focus trap — so users can keep interacting with the page underneath.
+	// the whole page to reach it. On desktop the dialog is deliberately
+	// non-modal — no focus trap — so users can keep interacting with the page
+	// underneath. The mobile sheet covers the viewport behind a scrim, so there
+	// it presents as modal: constrain tabbing to match.
 	const focusOnMountRef = useFocusOnMount( true );
+	const constrainedTabbingRef = useConstrainedTabbing();
+	const isModalSheet = isMobile && ! isMinimized;
 
-	const cardMergeRefs = useMergeRefs( [ nodeRef, focusReturnRef, focusOnMountRef ] );
+	const cardMergeRefs = useMergeRefs( [
+		nodeRef,
+		focusReturnRef,
+		focusOnMountRef,
+		isModalSheet ? constrainedTabbingRef : null,
+	] );
 
 	const shouldCloseOnEscapeRef = useRef( false );
 
@@ -180,6 +194,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 					className={ classNames }
 					ref={ cardMergeRefs }
 					role="dialog"
+					aria-modal={ isModalSheet || undefined }
 					aria-labelledby="header-text"
 					tabIndex={ -1 }
 				>
