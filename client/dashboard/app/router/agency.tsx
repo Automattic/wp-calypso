@@ -19,6 +19,7 @@ import {
 	siteApmAggregateRollingQuery,
 	siteApmDetailQuery,
 	siteBackupsQuery,
+	siteByIdQuery,
 	siteBySlugQuery,
 	siteCrontabsQuery,
 	siteCurrentPlanQuery,
@@ -66,6 +67,7 @@ import {
 import { reauthRequiredLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
+import { getSiteDisplayUrl } from '../../utils/site-url';
 import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -73,6 +75,14 @@ import type { HostingSection } from '../../agency/marketplace/paths';
 import type { AgencySupports } from '../context';
 import type { AgencyCapability, User } from '@automattic/api-core';
 import type { AnyRoute, StaticDataRouteOption } from '@tanstack/react-router';
+
+/**
+ * Rejects `0`, which disables the setup screen's queries and leaves it on skeletons.
+ */
+export function parseSiteIdParam( siteId: string ): number | null {
+	const parsed = Number( siteId );
+	return Number.isInteger( parsed ) && parsed > 0 ? parsed : null;
+}
 
 /**
  * Any-of (OR): true when `capabilities` contains at least one required capability.
@@ -637,7 +647,18 @@ export const earnWooPaymentsSetupRoute = createRoute( {
 	getParentRoute: () => agencyRoute,
 	path: 'earn/woopayments/setup/$siteId',
 	beforeLoad: ( { params: { siteId } } ) => {
-		if ( Number.isNaN( parseInt( siteId, 10 ) ) ) {
+		if ( parseSiteIdParam( siteId ) === null ) {
+			throw dashboardRedirect( { to: '/earn/woopayments' } );
+		}
+	},
+	loader: async ( { params: { siteId } } ) => {
+		// `siteByIdQuery` reads the public `/sites/{id}` endpoint, so a valid id proves
+		// nothing about who manages the site.
+		const site = await queryClient.ensureQueryData( siteByIdQuery( Number( siteId ) ) );
+		const agencySite = await queryClient.ensureQueryData(
+			agencySiteQuery( getSiteDisplayUrl( site ) )
+		);
+		if ( ! agencySite ) {
 			throw dashboardRedirect( { to: '/earn/woopayments' } );
 		}
 	},
