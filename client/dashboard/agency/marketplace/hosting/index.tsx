@@ -112,7 +112,7 @@ function ReferralGuide( { onClose }: { onClose: () => void } ) {
 			className="marketplace-hosting__referral-guide"
 			contentLabel={ __( 'How referral mode works' ) }
 			pages={ REFERRAL_GUIDE_STEPS.map( ( step ) => ( {
-				image: step.media,
+				image: <div className="marketplace-hosting__referral-guide-media">{ step.media }</div>,
 				content: (
 					<VStack spacing={ 2 } className="marketplace-hosting__referral-guide-text">
 						<Heading level={ 2 } size={ 16 }>
