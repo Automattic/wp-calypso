@@ -512,13 +512,18 @@ export class UserSignupPage {
 		handleActiveThrottles( [ 'signup' ] );
 		await this.emailInput.fill( email );
 
-		const responsePromise = this.page.waitForResponse(
-			( response ) => /\/users\/new\?[^?]*$/.test( response.url() ) && response.ok()
-		);
-		await this.continueButton.click();
-		const response = await responsePromise;
+		// Read the response body as soon as it arrives; the accept-invite
+		// navigation that follows a successful signup evicts it from the
+		// browser cache before a later json() can get to it.
+		const responseBodyPromise = this.page
+			.waitForResponse(
+				( response ) => /\/users\/new\?[^?]*$/.test( response.url() ) && response.ok()
+			)
+			.then( ( response ): Promise< NewUserResponse > => response.json() );
 
-		return await response.json();
+		await this.continueButton.click();
+
+		return await responseBodyPromise;
 	}
 
 	/**
