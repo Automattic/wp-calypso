@@ -11,7 +11,6 @@ import './style.scss';
 import MarketplaceInstallHelpLink from './help-link';
 import HonestInstallCard from './honest-progress/card';
 import { getWaitVariant } from './honest-progress/get-wait-variant';
-import HonestInstallScene from './honest-progress/scene';
 import ProductInstallErrorView from './product-install-error';
 import { useProductInstall } from './use-product-install';
 
@@ -75,13 +74,6 @@ const MarketplaceProductInstall = ( {
 				) }
 				{ ! error && waitVariant === 'honest_progress' && (
 					<HonestInstallCard
-						transferStatus={ transferStatus }
-						currentStep={ currentStep }
-						startedAt={ transferStartedAt }
-					/>
-				) }
-				{ ! error && waitVariant === 'honest_scene' && (
-					<HonestInstallScene
 						transferStatus={ transferStatus }
 						currentStep={ currentStep }
 						startedAt={ transferStartedAt }

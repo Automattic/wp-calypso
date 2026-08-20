@@ -15,21 +15,8 @@ describe( 'getWaitVariant', () => {
 		expect( getWaitVariant() ).toBe( 'control' );
 	} );
 
-	it( 'is the narrated list with only the base flag on', () => {
+	it( 'is the honest progress card when the base flag is on', () => {
 		mockFlags( { 'marketplace-honest-install-progress': true } );
 		expect( getWaitVariant() ).toBe( 'honest_progress' );
-	} );
-
-	it( 'is the scene when both flags are on', () => {
-		mockFlags( {
-			'marketplace-honest-install-progress': true,
-			'marketplace-honest-install-progress-scene': true,
-		} );
-		expect( getWaitVariant() ).toBe( 'honest_scene' );
-	} );
-
-	it( 'never shows the scene without the base flag', () => {
-		mockFlags( { 'marketplace-honest-install-progress-scene': true } );
-		expect( getWaitVariant() ).toBe( 'control' );
 	} );
 } );

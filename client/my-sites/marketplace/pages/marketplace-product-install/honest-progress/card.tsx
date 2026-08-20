@@ -3,13 +3,13 @@ import './style.scss';
 import { ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ExpectationChecklist from 'calypso/components/expectation-checklist';
-import { useHonestFooterCopy, useHonestStageCopy, useHonestStageSentences } from './copy';
+import { useHonestOverrunCopy, useHonestStageSentences, useHonestStageTitles } from './copy';
 import { useHonestProgress } from './use-honest-progress';
 
 /**
- * The design-approved honest wait: a heading, one sentence naming the stage the transfer is
- * actually in, a single real overall bar, and the “what to expect” card. Same honest clock as
- * the other variants — the bar is fed by confirmed stages, never a timer.
+ * The honest wait: a heading, one sentence naming the stage the transfer is actually in, a
+ * single real overall bar, and the “what to expect” card. The bar is fed by confirmed stages,
+ * never a timer.
  */
 export default function HonestInstallCard( {
 	transferStatus,
@@ -26,9 +26,9 @@ export default function HonestInstallCard( {
 		currentStep,
 		startedAt,
 	} );
-	const stages = useHonestStageCopy();
+	const stageTitles = useHonestStageTitles();
 	const sentences = useHonestStageSentences();
-	const footer = useHonestFooterCopy();
+	const overrunCopy = useHonestOverrunCopy();
 
 	return (
 		<div className="marketplace-honest-progress marketplace-honest-card">
@@ -41,7 +41,7 @@ export default function HonestInstallCard( {
 				</p>
 				{ isOverrun && (
 					<p className="marketplace-honest-card__overrun" role="status">
-						{ footer.overrun }
+						{ overrunCopy }
 					</p>
 				) }
 			</div>
@@ -49,7 +49,7 @@ export default function HonestInstallCard( {
 				<ProgressBar
 					className="marketplace-honest-card__progress-bar"
 					value={ overallProgress }
-					aria-label={ String( stages[ stage ].title ) }
+					aria-label={ String( stageTitles[ stage ] ) }
 				/>
 			</div>
 			<ExpectationChecklist
