@@ -1831,6 +1831,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
+    "@wordpress/a11y": "npm:^4.48.0"
     "@wordpress/abilities": "npm:^0.14.0"
     "@wordpress/api-fetch": "npm:^7.48.0"
     "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch"

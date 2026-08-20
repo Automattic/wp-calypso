@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { speak } from '@wordpress/a11y';
 import apiFetch from '@wordpress/api-fetch';
 import { getFreeCreditStatus, useJetpackFreeCreditChatNotice } from './free-credit-notice';
 import { trackJetpackAiUpgrade } from './utils/tracking';
@@ -10,11 +11,15 @@ jest.mock( '@wordpress/api-fetch', () => ( {
 	__esModule: true,
 	default: jest.fn(),
 } ) );
+jest.mock( '@wordpress/a11y', () => ( {
+	speak: jest.fn(),
+} ) );
 jest.mock( './utils/tracking', () => ( {
 	trackJetpackAiUpgrade: jest.fn(),
 } ) );
 
 const mockApiFetch = jest.mocked( apiFetch );
+const mockSpeak = jest.mocked( speak );
 const mockTrackJetpackAiUpgrade = jest.mocked( trackJetpackAiUpgrade );
 const mockOpen = jest.fn();
 const UPGRADE_URL = 'http://localhost/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai';
@@ -61,6 +66,7 @@ beforeAll( () => {
 
 beforeEach( () => {
 	mockApiFetch.mockReset();
+	mockSpeak.mockReset();
 	mockTrackJetpackAiUpgrade.mockReset();
 	mockOpen.mockReset();
 	delete testWindow.JetpackScriptData;
@@ -162,6 +168,7 @@ describe( 'Self-hosted status', () => {
 
 			await act( async () => Promise.resolve() );
 			expect( result.current?.message ).toBe( '20 free credits left' );
+			expect( mockSpeak ).toHaveBeenCalledWith( '20 free credits left', 'polite' );
 			expect( mockApiFetch ).toHaveBeenCalledWith( {
 				path: '/wpcom/v2/jetpack-ai/ai-assistant-feature',
 			} );
@@ -188,10 +195,32 @@ describe( 'Self-hosted status', () => {
 				action: { label: 'Upgrade' },
 			} )
 		);
+		expect( mockSpeak ).toHaveBeenCalledWith( 'You’re out of free credits.', 'assertive' );
 
 		result.current?.action?.onClick();
 		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledWith();
 		expect( mockOpen ).toHaveBeenCalledWith( UPGRADE_URL, '_blank', 'noopener,noreferrer' );
+		unmount();
+	} );
+
+	it( 're-announces an unchanged exhausted notice after each rejected submit', async () => {
+		mockApiFetch.mockResolvedValue( featureResponse( 20 ) );
+		const initialProps = { ...defaultProps, error: null as string | null };
+		const { rerender, unmount } = renderHook(
+			( props: typeof initialProps ) => useJetpackFreeCreditChatNotice( props ),
+			{ initialProps }
+		);
+
+		await waitFor( () => expect( mockSpeak ).toHaveBeenCalledTimes( 1 ) );
+
+		rerender( { ...initialProps, error: CURRENT_ENDPOINT_ERROR } );
+		await waitFor( () => expect( mockSpeak ).toHaveBeenCalledTimes( 2 ) );
+		expect( mockSpeak ).toHaveBeenLastCalledWith( 'You’re out of free credits.', 'assertive' );
+
+		rerender( initialProps );
+		rerender( { ...initialProps, error: CURRENT_ENDPOINT_ERROR } );
+		await waitFor( () => expect( mockSpeak ).toHaveBeenCalledTimes( 3 ) );
+		expect( mockSpeak ).toHaveBeenLastCalledWith( 'You’re out of free credits.', 'assertive' );
 		unmount();
 	} );
 
@@ -203,6 +232,7 @@ describe( 'Self-hosted status', () => {
 
 		expect( mockApiFetch ).not.toHaveBeenCalled();
 		expect( result.current ).toBeUndefined();
+		expect( mockSpeak ).not.toHaveBeenCalled();
 	} );
 
 	it( 'accepts a relative same-origin REST root', async () => {
@@ -814,6 +844,7 @@ describe( 'notice composition', () => {
 
 		await waitFor( () => expect( mockApiFetch ).toHaveBeenCalledTimes( 1 ) );
 		expect( result.current ).toBeUndefined();
+		expect( mockSpeak ).not.toHaveBeenCalled();
 		unmount();
 	} );
 
