@@ -273,6 +273,12 @@ export class DomainSearchComponent {
 		row: Locator,
 		waitForContinueButton: boolean = true
 	): Promise< string | null > {
+		// Adding to the cart checks the domain's availability first, so this path
+		// runs into a `domain-availability` ban as surely as into a suggestions
+		// one, and the ban is answered before the request leaves the browser: the
+		// button lands in its error state and stays there until the test times out.
+		handleActiveThrottles( [ 'domain-availability' ] );
+
 		try {
 			await row.waitFor();
 		} catch ( error ) {
@@ -323,6 +329,12 @@ export class DomainSearchComponent {
 					const hasErrorClass = await addToCartButton.evaluate( ( el ) =>
 						el.classList.contains( 'domain-suggestion-cta--error' )
 					);
+
+					if ( hasErrorClass ) {
+						// The ban can be raised between the check above and this click,
+						// by this worker or by the pre-flight read of a peer's.
+						handleActiveThrottles( [ 'domain-availability' ] );
+					}
 
 					if ( ! hasErrorClass || attempt === maxRetries ) {
 						throw new Error(

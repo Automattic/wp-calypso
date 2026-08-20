@@ -174,6 +174,22 @@ describe( 'domain throttle actions', () => {
 		);
 	} );
 
+	test( 'adding to the cart acts on an availability ban before waiting on the row', async () => {
+		// Add to cart checks availability first, so the ban is answered in the
+		// browser and the button sticks in its error state: acting has to come
+		// before the wait, or the test spends its whole timeout on a lost cause.
+		const page = suggestionRowPage();
+		process.env.THROTTLE_DOMAIN_AVAILABILITY_EXPIRATION = String( Date.now() + 60_000 );
+		actionHandler.mockImplementation( () => {
+			throw new Error( 'policy applied' );
+		} );
+
+		await expect( new DomainSearchComponent( page ).selectFirstSuggestion() ).rejects.toThrow(
+			'policy applied'
+		);
+		expect( actionHandler ).toHaveBeenCalledWith( 'skip', [ 'domain-availability' ] );
+	} );
+
 	test( 'a suggestion row that never appears keeps its own error when no ban is in force', async () => {
 		const page = suggestionRowPage();
 
