@@ -26,6 +26,7 @@ export const DOTCOM_DASHBOARD_SECTION_PATHS = [
 	'/domains',
 	'/emails',
 	'/plugins',
+	'/switch',
 	'/me',
 	'/oauth/token',
 ];
