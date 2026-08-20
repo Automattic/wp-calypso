@@ -178,16 +178,4 @@
 	padding: 0 32px 32px;
 }
 
-/* Our own media wrapper: crops the letterboxing baked into the 2024 step videos. */
-.marketplace-hosting__referral-guide-media {
-	overflow: hidden;
-}
 
-.marketplace-hosting__referral-guide-media img,
-.marketplace-hosting__referral-guide-media video {
-	display: block;
-	inline-size: 100%;
-	aspect-ratio: 1.64;
-	object-fit: cover;
-	object-position: left center;
-}
