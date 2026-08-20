@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Icon,
 	__experimentalHStack as HStack,
@@ -22,21 +21,14 @@ const BRAND_LOGOS: Record< HostingBrand[ 'key' ], string > = {
 type ProductSelectorProps = {
 	brands: HostingBrand[];
 	selected: HostingBrand[ 'key' ];
-	recommended?: HostingBrand[ 'key' ] | null;
 	onSelect: ( key: HostingBrand[ 'key' ] ) => void;
 };
 
-export default function ProductSelector( {
-	brands,
-	selected,
-	recommended,
-	onSelect,
-}: ProductSelectorProps ) {
+export default function ProductSelector( { brands, selected, onSelect }: ProductSelectorProps ) {
 	return (
 		<div className="marketplace-hosting__selector" role="radiogroup" aria-label="Hosting product">
 			{ brands.map( ( brand ) => {
 				const isSelected = brand.key === selected;
-				const isRecommended = brand.key === recommended;
 				return (
 					<Card
 						key={ brand.key }
@@ -62,12 +54,9 @@ export default function ProductSelector( {
 										alt={ brand.name }
 										className="marketplace-hosting__selector-logo"
 									/>
-									<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
-										{ isRecommended && <Badge>Recommended</Badge> }
-										{ isSelected && (
-											<Icon icon={ check } className="marketplace-hosting__selector-check" />
-										) }
-									</HStack>
+									{ isSelected && (
+										<Icon icon={ check } className="marketplace-hosting__selector-check" />
+									) }
 								</HStack>
 								<Text variant="muted">{ brand.description }</Text>
 								<Text weight={ 500 }>{ brand.priceNote }</Text>
