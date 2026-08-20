@@ -17,6 +17,7 @@ import FeedbackList, {
 	type FeedbackListItem,
 	type FeedbackListSection,
 } from './feedback-list';
+import type { OnResponseAction } from '../utils/response-action';
 
 export interface ProofreadProps {
 	summary: string;
@@ -24,19 +25,17 @@ export interface ProofreadProps {
 	sections?: FeedbackListSection[];
 	postId?: EditorPostId;
 	isMessageStale?: boolean;
+	onResponseAction?: OnResponseAction;
 }
 
-/**
- * Render the proofreader component.
- * @param {ProofreadProps} props Component props.
- * @returns React element.
- */
+/** Configures the shared feedback list for proofreader results. */
 export default function Proofread( {
 	summary,
 	items,
 	sections,
 	postId,
 	isMessageStale,
+	onResponseAction,
 }: ProofreadProps ) {
 	return (
 		<FeedbackList
@@ -46,6 +45,7 @@ export default function Proofread( {
 			sections={ sections }
 			postId={ postId }
 			isMessageStale={ isMessageStale }
+			onResponseAction={ onResponseAction }
 			sectionFallbackTitle={ __( 'Suggested edits', __i18n_text_domain__ ) }
 			staleWarning={ __(
 				'Review context changed. Run the spelling and grammar check again for this post.',

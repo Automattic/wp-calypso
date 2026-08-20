@@ -28,6 +28,7 @@
 		"blackbox": true,
 		"blackbox-login": true,
 		"blackbox-lost-password": true,
+		"blackbox-signup": true,
 		"calypso/all-domain-management": true,
 		"calypso/domains-dataviews": true,
 		"catch-js-errors": false,
@@ -79,7 +80,6 @@
 		"migration/ssh-migration": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
-		"onboarding/email-verification": false,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
 		"onboarding/import-from-squarespace": true,
@@ -100,7 +100,7 @@
 		"purchases/split-cancel-remove": false,
 		"resurrected-users/90-day-eligibility": true,
 		"reader/social": true,
-		"reader/spaces": true,
+		"reader/shelves": true,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": true,
@@ -123,6 +123,7 @@
 		"themes/showcase-modern": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
+		"wordpress-agent-slack": true,
 		"wpcom-user-bootstrap": false
 	}
 }

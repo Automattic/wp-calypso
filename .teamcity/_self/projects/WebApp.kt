@@ -2,7 +2,6 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.mergeTrunk
@@ -25,12 +24,10 @@ object WebApp : Project({
 	buildType(Translate)
 	buildType(BuildDockerImage)
 	buildType(PlaywrightTestPRMatrix)
-	buildType(PlaywrightTestPreReleaseMatrix)
+	buildType(PreReleaseE2ETests)
 	buildType(PlaywrightTestDashboardPRMatrix)
 	buildType(PlaywrightTestA4APRMatrix)
-	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
-	buildType(QuarantinedE2ETests)
 })
 
 object BuildDockerImage : BuildType({
@@ -1028,12 +1025,12 @@ object PlaywrightTestPRMatrix : BuildType({
 
 })
 
-object PlaywrightTestPreReleaseMatrix : BuildType({
+object PreReleaseE2ETests : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
-	id("calypso_WebApp_Calypso_E2E_Playwright_Pre_Release_Matrix")
-	uuid = "a1b2c3d4-e5f6-7890-1234-56789abcdef0"
-	name = "Pre-Release E2E Tests (Playwright Test)"
-	description = "Runs Calypso pre-release e2e tests using Playwright Test runner with build matrix"
+	id("calypso_WebApp_Calypso_E2E_Pre_Release")
+	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
+	name = "Pre-Release E2E Tests"
+	description = "Runs pre-release suites of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
 
 	params {
 		text("TEST_GROUP", "@calypso-release")
@@ -1178,53 +1175,6 @@ object PlaywrightTestA4APRMatrix : BuildType({
 	}
 })
 
-object PreReleaseE2ETests : BuildType({
-	id("calypso_WebApp_Calypso_E2E_Pre_Release")
-	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
-	name = "Pre-Release E2E Tests"
-	description = "Aggregator build that runs pre-release suites of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
-
-	vcs {
-		root(Settings.WpCalypso)
-		branchFilter = allBranchesExceptMergeQueue()
-		cleanCheckout = true
-	}
-
-	dependencies {
-		snapshot(PlaywrightTestPreReleaseMatrix) {
-			onDependencyFailure = FailureAction.ADD_PROBLEM
-		}
-	}
-
-	features {
-		perfmon {
-		}
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = verboseMessageFormat {
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
-		}
-	}
-})
-
 object AuthenticationE2ETests : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
 	id("calypso_WebApp_Calypso_E2E_Authentication")
@@ -1266,32 +1216,3 @@ object AuthenticationE2ETests : BuildType({
 		}
 	}
 })
-
-object QuarantinedE2ETests: E2EBuildType(
-	buildId = "calypso_WebApp_Quarantined_E2E_Tests",
-	buildUuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c",
-	buildName = "Quarantined E2E Tests",
-	buildDescription = "E2E tests quarantined due to intermittent failures.",
-	concurrentBuilds = 1,
-	testGroup = "quarantined",
-	buildParams = {
-		param("env.VIEWPORT_NAME", "desktop")
-		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-		param("env.DASHBOARD_BASE_URL", "https://my.wordpress.com")
-	},
-	buildFeatures = {
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = simpleMessageFormat()
-			}
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
-		}
-	},
-	buildTriggers = {
-	}
-)

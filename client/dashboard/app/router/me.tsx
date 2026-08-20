@@ -1230,8 +1230,29 @@ export const mcpRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'mcp',
+	validateSearch: (
+		search
+	): {
+		pair_token?: string;
+		slack?: string;
+		telegram_id?: string;
+		token?: string;
+		ts?: string;
+		bot?: string;
+	} => ( {
+		...( typeof search.pair_token === 'string' ? { pair_token: search.pair_token } : {} ),
+		...( typeof search.slack === 'string' ? { slack: search.slack } : {} ),
+		...( typeof search.telegram_id === 'string' ? { telegram_id: search.telegram_id } : {} ),
+		...( typeof search.token === 'string' ? { token: search.token } : {} ),
+		...( typeof search.ts === 'string' ? { ts: search.ts } : {} ),
+		...( typeof search.bot === 'string' ? { bot: search.bot } : {} ),
+	} ),
 	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			// The MCP Tracks audience props read Automattician status on first render (view events).
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+		] );
 	},
 } );
 

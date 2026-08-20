@@ -33,6 +33,11 @@ export function createBlockTests(
 		] );
 
 		test( `${ specName }: smoke test blocks`, async ( { page, pageEditor } ) => {
+			// One test adds, configures and validates every flow in the list. The fixed cost —
+			// authenticate, load the editor on Atomic, publish — dominates and is what overruns the
+			// default, so most of the budget sits in the base and each flow adds a smaller share.
+			test.setTimeout( 180_000 + blockFlows.length * 45_000 );
+
 			let editorContext: EditorContext;
 			let publishedPostContext: PublishedPostContext;
 

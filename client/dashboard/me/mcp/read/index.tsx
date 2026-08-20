@@ -13,6 +13,7 @@ import { chevronDown, chevronUp } from '@wordpress/icons';
 import { Fragment, useRef, useState } from 'react';
 import { groupIntentKey, getOverridesToMatch } from '../../../../me/mcp/group-intents';
 import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/groups';
+import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import { getGroupDescriptors, getAccountMcpAbilities } from '../../../../me/mcp/utils';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -39,6 +40,7 @@ interface SubGroup {
 
 export default function McpRead() {
 	const { recordTracksEvent } = useAnalytics();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const isDesktop = useViewportMatch( 'medium' );
@@ -54,6 +56,7 @@ export default function McpRead() {
 		}
 		setOpenGroups( new Set( openGroupsRef.current ) );
 		recordTracksEvent( 'calypso_dashboard_mcp_read_group_toggled', {
+			...tracksAudienceProps,
 			group: groupName ?? 'other',
 			is_open: willBeOpen,
 		} );
@@ -84,6 +87,7 @@ export default function McpRead() {
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_read_tool_toggled', {
+						...tracksAudienceProps,
 						ability_name: toolId,
 						enabled,
 						group: groupName ?? 'other',
@@ -113,6 +117,7 @@ export default function McpRead() {
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_read_enable_all_toggled', {
+						...tracksAudienceProps,
 						enabled,
 						scope: 'page',
 					} );
@@ -147,6 +152,7 @@ export default function McpRead() {
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_read_enable_all_toggled', {
+						...tracksAudienceProps,
 						enabled,
 						scope: 'group',
 						group: groupName ?? 'other',
@@ -167,7 +173,10 @@ export default function McpRead() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_mcp_read_view" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_mcp_read_view"
+				properties={ tracksAudienceProps }
+			/>
 			<VStack spacing={ 4 }>
 				<Card>
 					<CardBody>

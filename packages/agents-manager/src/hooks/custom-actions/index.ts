@@ -72,7 +72,7 @@ export function useSetupCustomActions( {
 		return store.getAgentsManagerState();
 	}, [] );
 	const { setIsOpen, setIsDocked, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
-	const { agentConfig, getActiveSessionId, resumeActiveChat } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, resumeChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const location = useLocation();
 	// Keep the latest location in a ref so `getCurrentRoute` stays a stable
@@ -209,7 +209,7 @@ export function useSetupCustomActions( {
 		getChatState,
 		isChatVisible,
 		getCurrentRoute,
-		getSessionId: getActiveSessionId,
+		getSessionId: getTabSessionId,
 		setChatOpen,
 		setChatDocked,
 		setChatEnabled,
@@ -221,7 +221,7 @@ export function useSetupCustomActions( {
 		removeContextCard: removeExternalContextCard,
 		setSiteEditorAction,
 		chatNavigate: navigate,
-		resumeChat: resumeActiveChat,
+		resumeChat,
 		isReady: true,
 	} );
 

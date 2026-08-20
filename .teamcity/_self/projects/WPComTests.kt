@@ -223,12 +223,10 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		steps {
 			prepareE2eEnvironment()
 
-			runMigratedPlaywrightSpecs(
+			runTaggedPlaywrightSpecs(
 				tag = "@jetpack-wpcom-integration",
 				targetDevice = targetDevice,
 			)
-
-			collectE2eResults()
 		}
 
 		features {
@@ -288,20 +286,18 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			prepareE2eEnvironment()
 
 			atomicVariations.forEach { variation ->
-				runMigratedPlaywrightSpecs(
+				runTaggedPlaywrightSpecs(
 					tag = "@jetpack-wpcom-integration",
 					targetDevice = targetDevice,
 					additionalEnvVars = mapOf(
 						"ATOMIC_VARIATION" to variation,
 						"PW_WORKERS" to "5",
 					),
-					stepName = "Run migrated Playwright specs: $variation",
+					stepName = "Run Playwright specs: $variation",
 					// Per-variation report name so the loop's runs don't overwrite each other.
 					reportSuffix = variation,
 				)
 			}
-
-			collectE2eResults()
 		}
 
 		features {
@@ -340,7 +336,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 		id("WPComTests_jetpack_atomic_build_smoke_e2e_$targetDevice")
 		uuid = buildUuid
 		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
-		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations."
+		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. The Atomic environment variation follows the calypso revision under test, so builds on the same revision repeat it."
 
 		artifactRules = defaultE2eArtifactRules();
 
@@ -357,19 +353,21 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 			param("env.TEST_ON_ATOMIC", "true")
 			param("env.ATOMIC_VARIATION", "mixed")
+			// What "mixed" resolves against. Keyed on the commit so a re-run of a failed build
+			// repeats the variation that failed. This build has no VCS trigger, so every build
+			// on an unchanged calypso revision repeats it too: reproducibility over coverage.
+			param("env.ATOMIC_VARIATION_KEY", "%build.vcs.number%")
 			param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 		}
 
 		steps {
 			prepareE2eEnvironment()
 
-			runMigratedPlaywrightSpecs(
+			runTaggedPlaywrightSpecs(
 				tag = "@jetpack-wpcom-integration",
 				targetDevice = targetDevice,
 				additionalEnvVars = mapOf( "PW_WORKERS" to "14" ),
 			)
-
-			collectE2eResults()
 		}
 
 		features {
@@ -657,6 +655,9 @@ private object JetpackAtomicSmokeE2ETests : BuildType({
 		param("env.TEST_ON_ATOMIC", "true")
 		param("env.PW_WORKERS", "14")
 		param("env.ATOMIC_VARIATION", "mixed")
+		// What "mixed" resolves against. Keyed on the commit so a re-run of a failed build
+		// repeats the variation that failed.
+		param("env.ATOMIC_VARIATION_KEY", "%build.vcs.number%")
 		param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 	}
 })

@@ -1489,6 +1489,42 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/me/purchases/siteless.akismet.com/123abc' );
 	} );
 
+	it( 'redirects to the no-site thank you when the wpcom siteless arg is set', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			receiptId: 12342424241,
+			sitelessCheckoutType: 'wpcom',
+		} );
+		expect( url ).toBe( '/checkout/thank-you/no-site/12342424241' );
+	} );
+
+	it( 'redirects to the no-site thank you with a receipt placeholder when the wpcom siteless arg is set and no receipt is known', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			sitelessCheckoutType: 'wpcom',
+		} );
+		expect( url ).toBe( '/checkout/thank-you/no-site/:receiptId' );
+	} );
+
+	it( 'redirects to the bare no-site thank you when the wpcom siteless receipt id is not an integer', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			receiptId: 'pending',
+			sitelessCheckoutType: 'wpcom',
+		} );
+		expect( url ).toBe( '/checkout/thank-you/no-site' );
+	} );
+
+	it( 'ignores a disallowed external redirectTo and still uses the wpcom siteless thank you', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			receiptId: 12342424241,
+			redirectTo: 'https://not-an-allowed-host.example.com/somewhere',
+			sitelessCheckoutType: 'wpcom',
+		} );
+		expect( url ).toBe( '/checkout/thank-you/no-site/12342424241' );
+	} );
+
 	it( 'redirects to the jetpack checkout thank you with `no_product` when jetpack checkout arg is set and the cart is empty', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,

@@ -1,0 +1,121 @@
+// Interactive UI in Stats follows the colour WordPress publishes for it, `--wp-admin-theme-color`, rather than `--color-accent` — wp-admin's decorative `$highlight-color`, which fails WCAG AA on several admin colour schemes.
+//
+// This lives in a mixin because four stylesheets across two apps apply it, each loading its CSS separately: the Stats mount and the overlays it portals to, Store Stats under `.woocommerce`, and — in Odyssey — the dashboard widget's own entry point and the modal overlay on `body`.
+//
+// @wordpress/components resolves its accent as `var(--wp-components-color-accent, var(--wp-admin-theme-color, …))`, and client/assets/stylesheets/_wp-components-overrides.scss pins that first variable to `--color-accent` directly on every button. Without re-pointing it, correcting `--wp-admin-theme-color` has no visible effect: the accent shadows it. The button rules must therefore target the button itself, not the root, because the declaration they override also sits on the button.
+@mixin stats-interactive-colors {
+	.components-button.is-primary:not(.is-destructive) {
+		--wp-components-color-accent: var(--wp-admin-theme-color);
+		--wp-components-color-accent-darker-10: var(--wp-admin-theme-color-darker-10);
+		--wp-components-color-accent-darker-20: var(--wp-admin-theme-color-darker-20);
+	}
+
+	.components-button.is-secondary:not(.is-destructive),
+	.components-button.is-tertiary:not(.is-destructive),
+	.components-button.is-link:not(.is-destructive) {
+		--wp-components-color-accent: var(--wp-admin-theme-color);
+		--wp-components-color-accent-darker-20: var(--wp-admin-theme-color-darker-20);
+	}
+
+	// Calypso's own Button takes the same two roles from --color-accent that a design-system primary
+	// takes from the components accent: the resting fill, and a darker shade on hover.
+	.button.is-primary {
+		--color-accent: var(--wp-admin-theme-color);
+		--color-accent-60: var(--wp-admin-theme-color-darker-10);
+	}
+
+	// Calypso controls that derive their colours from --color-accent. Re-pointing the variable on
+	// each one covers whichever property it happens to use — background, text or border — without
+	// restating them here. Charts and data visualisation are deliberately absent: the decorative
+	// accent is the right colour there.
+	//
+	// Links are absent too. They resolve --color-link, and wp-admin keeps links a
+	// scheme-independent blue rather than tinting them with the theme colour, so following it here
+	// would diverge from the admin UI this work exists to match.
+	//
+	// Each entry is a bridge until its control moves to a design-system equivalent, at which point
+	// the line can go.
+	.stats-tab,
+	.segmented-control__item {
+		--color-accent: var(--wp-admin-theme-color);
+	}
+
+	// The endpoint pills of the selected range fill from --color-accent and carry white text, which
+	// the decorative accent renders at 2.29:1. The band between them mixes 40% of
+	// --color-accent-light and follows so the two read as one selection.
+	.date-range__picker {
+		--color-accent: var(--wp-admin-theme-color);
+		--color-accent-light: var(--wp-admin-theme-color-darker-10);
+	}
+
+	// A day inside the band has no hover circle of its own: the band sets the day background to
+	// transparent at a higher specificity than the hover it would come from. Giving it the solid
+	// colour puts the circle back and carries the white numeral at 10.2:1, where the band's own
+	// tint reaches 2.23:1. The colour is restated with it so the pair cannot drift apart.
+	.date-range__picker .DayPicker-Day--range:not(.DayPicker-Day--outside) .date-picker__day {
+		&:hover,
+		&:focus {
+			background-color: var(--wp-admin-theme-color);
+			color: var(--color-text-inverted);
+		}
+	}
+
+	// A day outside the band takes that same tint on hover, but with a white numeral, which reads
+	// at 2.23:1 against it. Keeping the numeral dark puts it at 5.76:1 and leaves the tint alone.
+	.date-range__picker .DayPicker-Day:not(.DayPicker-Day--range) .date-picker__day {
+		&:hover,
+		&:focus {
+			color: var(--color-text);
+		}
+	}
+
+	// The shortcut list beside the calendar tints its hover and selected rows from the 0 and 5
+	// steps of the scale, which the admin theme colour has no equivalent of, so both are mixed.
+	.date-range-picker-shortcuts__shortcut {
+		--color-accent-0: color-mix(in srgb, var(--wp-admin-theme-color) 6%, transparent);
+		--color-accent-5: color-mix(in srgb, var(--wp-admin-theme-color) 12%, transparent);
+	}
+
+	// The date inputs draw their focus border from --color-primary and the ring around it from the
+	// 10 and 20 steps. The admin theme colour has no such steps, so the ring is mixed from it.
+	.date-range__date-input .form-text-input {
+		--color-primary: var(--wp-admin-theme-color);
+		--color-primary-10: color-mix(in srgb, var(--wp-admin-theme-color) 20%, transparent);
+		--color-primary-20: color-mix(in srgb, var(--wp-admin-theme-color) 30%, transparent);
+	}
+
+	// The `primary` variant of SegmentedControl colours its focus, hover and adjacent-item border
+	// from --color-primary rather than --color-accent, in packages/components. Stats restates the
+	// resting selected state in --color-accent and so reaches it, but not those three, which stay
+	// on the scheme's primary — and the hover rule is qualified with `.notouch`, putting it out of
+	// specificity reach of anything declared here. Re-pointing the variable is what lets those
+	// rules resolve the admin theme colour without having to out-rank them.
+	//
+	// The shades map by role, not by name: the component uses `-light` for hover and `-dark` for
+	// focus, where a design-system button darkens for both.
+	.segmented-control.is-primary .segmented-control__item {
+		--color-primary: var(--wp-admin-theme-color);
+		--color-primary-light: var(--wp-admin-theme-color-darker-10);
+		--color-primary-dark: var(--wp-admin-theme-color-darker-20);
+	}
+
+	// The legend checkbox is styled to read as a pair with the chart type toggle beside it, and
+	// resolves --wp-components-color-accent to do so. Its own fallback names --color-accent rather
+	// than the admin theme colour, so wherever nothing pins the variable it lands on the accent and
+	// the pair drifts apart. Setting it here restores the intended match.
+	.chart__legend-checkbox {
+		--wp-components-color-accent: var(--wp-admin-theme-color);
+	}
+
+	// The button-group outline is pinned to --color-accent-60, which does not match the selected
+	// button's fill. Follow the fill so the outline and the button it surrounds are one colour.
+	//
+	// Held off while focused: @wordpress/components draws its focus ring on this same property, and
+	// this selector would otherwise outrank it and leave grouped buttons with no focus indicator.
+	.components-button-group .components-button {
+		&:not(:focus),
+		&.is-primary:not(:focus) {
+			box-shadow: inset 0 0 0 1px var(--wp-admin-theme-color);
+		}
+	}
+}

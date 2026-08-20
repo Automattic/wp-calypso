@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
 // custom properties for a8c-for-agencies
@@ -255,12 +256,6 @@
 		margin: 0 8px 0 0;
 	}
 
-	.components-checkbox-control__input[type="checkbox"]:checked,
-	.components-checkbox-control__input[type="checkbox"]:indeterminate {
-		background: var(--color-primary-50);
-		border-color: var(--color-primary-50);
-	}
-
 	.components-checkbox-control__input[type="checkbox"]:focus {
 		box-shadow: none;
 		outline: none;
@@ -450,6 +445,13 @@
 		border: none;
 		background: var(--color-surface);
 	}
+}
+
+// A4A checkout finishes on the wordpress.com pending page, which ships its own 24px rule for this title. That
+// stylesheet belongs to the checkout section and is never loaded here, so without this the title would jump from
+// 32px to 24px as the browser crosses over.
+.theme-a8c-for-agencies .checkout__pending-content .wpcom__loading-title {
+	font-size: $font-title-medium;
 }
 
 // Universal Text Styles

@@ -10,7 +10,12 @@ import React from 'react';
 import SeoDescriptionPicker from './seo-description-picker';
 
 const mockEditPost = jest.fn();
+const mockRevealSidebarField = jest.fn().mockResolvedValue( true );
 let mockCurrentMeta: Record< string, string > | undefined;
+
+jest.mock( '../utils/reveal-sidebar-field', () => ( {
+	revealSidebarField: ( ...args: unknown[] ) => mockRevealSidebarField( ...args ),
+} ) );
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: ( store: string ) => {
@@ -34,6 +39,7 @@ jest.mock( '@wordpress/data', () => ( {
 describe( 'SeoDescriptionPicker', () => {
 	beforeEach( () => {
 		mockEditPost.mockClear();
+		mockRevealSidebarField.mockClear();
 		mockCurrentMeta = undefined;
 	} );
 
@@ -47,6 +53,14 @@ describe( 'SeoDescriptionPicker', () => {
 			explanation: 'b',
 		},
 	];
+
+	it( 'reveals the SEO panel once a description is applied', () => {
+		render( <SeoDescriptionPicker descriptions={ descriptions } /> );
+
+		fireEvent.click( screen.getByText( descriptions[ 0 ].description ) );
+
+		expect( mockRevealSidebarField ).toHaveBeenCalledWith( 'seo' );
+	} );
 
 	it( 'renders every suggested SEO description', () => {
 		render( <SeoDescriptionPicker descriptions={ descriptions } /> );

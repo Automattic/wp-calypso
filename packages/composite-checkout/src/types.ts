@@ -137,6 +137,7 @@ export type PaymentMethodChangedCallback = ( method: string ) => void;
 export type PaymentEventCallback = ( args: PaymentEventCallbackArguments ) => void;
 export type PaymentErrorCallback = ( args: {
 	paymentMethodId: string | null | undefined;
+	paymentProcessorId: string | undefined;
 	transactionError: string | null;
 } ) => void;
 export type CheckoutPageErrorCallback = (
@@ -153,6 +154,8 @@ export type StepChangedEventArguments = {
 
 export type PaymentEventCallbackArguments = {
 	transactionLastResponse: PaymentProcessorResponseData;
+	paymentMethodId: string | null | undefined;
+	paymentProcessorId: string | undefined;
 };
 
 export type PaymentProcessorResponseData = unknown;

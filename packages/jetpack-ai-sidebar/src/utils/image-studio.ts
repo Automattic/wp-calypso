@@ -13,11 +13,15 @@
 
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { dispatch } from '@wordpress/data';
+import { revealSidebarField } from './reveal-sidebar-field';
 
 const IMAGE_STUDIO_STORE = 'image-studio';
 
 /** Mirrors ImageStudioEntryPoint.EditorSidebar, duplicated to avoid a package dependency. */
 const EDITOR_SIDEBAR_ENTRY_POINT = 'editor_sidebar';
+
+/** Mirrors ImageStudioEntryPoint.JetpackAIFeaturedImage, duplicated to avoid a package dependency. */
+const FEATURED_IMAGE_ENTRY_POINT = 'jetpack_ai_featured_image';
 
 export type ImageStudioMode = 'edit' | 'generate';
 
@@ -37,12 +41,27 @@ interface ImageStudioActions {
 	) => void;
 }
 
+interface EditorActions {
+	editPost: ( edits: Record< string, unknown > ) => void;
+}
+
 function getImageStudioActions(): ImageStudioActions | undefined {
 	const actions = dispatch( IMAGE_STUDIO_STORE ) as Partial< ImageStudioActions > | undefined;
 
 	return typeof actions?.openImageStudio === 'function'
 		? ( actions as ImageStudioActions )
 		: undefined;
+}
+
+/** `core/editor` is absent outside the post editor, where `dispatch` returns undefined. */
+function getEditorActions(): EditorActions | undefined {
+	try {
+		const actions = dispatch( 'core/editor' ) as Partial< EditorActions > | undefined;
+
+		return typeof actions?.editPost === 'function' ? ( actions as EditorActions ) : undefined;
+	} catch {
+		return undefined;
+	}
 }
 
 export function isImageStudioAvailable(): boolean {
@@ -66,7 +85,8 @@ export function openImageStudioForBlock( block: any, mode: ImageStudioMode ): bo
 	const attachmentId = block.attributes?.id;
 
 	const handleClose = ( image: ImageStudioImage | null ) => {
-		// A null image means the user removed it.
+		// Image Studio passes null only after deleting the attachment from the
+		// media library, so the block cannot keep pointing at it.
 		if ( image === null ) {
 			dispatch( blockEditorStore ).updateBlockAttributes( clientId, {
 				url: undefined,
@@ -93,6 +113,45 @@ export function openImageStudioForBlock( block: any, mode: ImageStudioMode ): bo
 		EDITOR_SIDEBAR_ENTRY_POINT,
 		block.name
 	);
+
+	return true;
+}
+
+/**
+ * Opens Image Studio in generate mode, writing the result back as the
+ * post's featured image on close.
+ * @returns Whether Image Studio was opened.
+ */
+export function openImageStudioForFeaturedImage(): boolean {
+	const imageStudioActions = getImageStudioActions();
+
+	// Without the editor store there is nowhere to write the result, so do not open at all.
+	if ( ! imageStudioActions || ! getEditorActions() ) {
+		return false;
+	}
+
+	const handleClose = ( image: ImageStudioImage | null ) => {
+		const editor = getEditorActions();
+
+		if ( ! editor ) {
+			return;
+		}
+
+		// Image Studio passes null only after deleting the attachment from the
+		// media library, so the featured image has to go with it. Closing without
+		// saving, or a generation that fails, never reaches this callback.
+		if ( image === null ) {
+			editor.editPost( { featured_media: 0 } );
+			return;
+		}
+
+		if ( image?.id ) {
+			editor.editPost( { featured_media: image.id } );
+			revealSidebarField( 'featuredImage' );
+		}
+	};
+
+	imageStudioActions.openImageStudio( undefined, handleClose, FEATURED_IMAGE_ENTRY_POINT );
 
 	return true;
 }

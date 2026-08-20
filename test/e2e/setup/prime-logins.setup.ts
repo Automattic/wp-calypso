@@ -1,4 +1,4 @@
-import { TEST_ACCOUNT_NAMES } from '@automattic/calypso-e2e';
+import { TEST_ACCOUNT_NAMES, withDeadline } from '@automattic/calypso-e2e';
 import { getAccount } from '../lib/get-account';
 import { primeLoginTitle, test as setup } from '../lib/pw-base';
 
@@ -21,26 +21,11 @@ const PRIME_TIMEOUT = 30 * 1000;
 
 for ( const accountName of TEST_ACCOUNT_NAMES ) {
 	setup( primeLoginTitle( accountName ), async ( { page } ) => {
-		let timer: NodeJS.Timeout | undefined;
 		try {
-			// Race our own deadline: Playwright's test timeout aborts from the outside and
-			// can't be caught here, and a setup project that ends with a failing test makes
-			// Playwright skip every project that depends on it. That would cost the whole
-			// run instead of one account's inline login.
-			const priming = getAccount( page, accountName, { isPriming: true } );
-			// When the deadline wins, the login keeps running until teardown closes the page
-			// and then rejects. Playwright charges an unhandled rejection to the test, which
-			// is the failure the deadline exists to avoid, so keep a handler on it.
-			priming.catch( () => {} );
-			await Promise.race( [
-				priming,
-				new Promise( ( _resolve, reject ) => {
-					timer = setTimeout(
-						() => reject( new Error( `timed out after ${ PRIME_TIMEOUT }ms` ) ),
-						PRIME_TIMEOUT
-					);
-				} ),
-			] );
+			// A setup project that ends with a failing test makes Playwright skip every
+			// project that depends on it, which would cost the whole run instead of one
+			// account's inline login.
+			await withDeadline( getAccount( page, accountName, { isPriming: true } ), PRIME_TIMEOUT );
 		} catch ( error ) {
 			const info = setup.info();
 			// Retrying is worth it, a stuck login usually succeeds second time round. Only
@@ -54,8 +39,6 @@ for ( const accountName of TEST_ACCOUNT_NAMES ) {
 				type: 'prime-failed',
 				description: `Could not prime login cookies for ${ accountName }: ${ error }`,
 			} );
-		} finally {
-			clearTimeout( timer );
 		}
 	} );
 }

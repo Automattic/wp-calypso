@@ -8,6 +8,7 @@ import themesReducer from 'calypso/state/themes/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useProductInstall } from '../use-product-install';
+import type { AtomicTransfer } from '@automattic/api-core';
 
 // useProductInstall reads several section-lazy slices that the bare test store doesn't register.
 const reducers = {
@@ -18,13 +19,36 @@ const reducers = {
 };
 
 // The deadline hook has its own suite; here we only assert how this hook arms it.
-type DeadlineArgs = { siteId: number; productSlug: string; enabled: boolean };
+type DeadlineArgs = {
+	siteId: number;
+	enabled: boolean;
+	isTransferFromAttempt?: ( transfer: AtomicTransfer ) => boolean;
+};
 
-const mockUseInstallDeadline = jest.fn( ( args: DeadlineArgs ) => ( {
-	hasTimedOut: false,
-	hasTransferFailed: false,
-	receivedEnabled: args.enabled,
-} ) );
+const diagnostics = {
+	has_transfer: false,
+	transfer_status: null,
+	transfer_age_seconds: null,
+	transfer_is_stuck: null,
+	transfer_in_lossless_revert: null,
+	waited_seconds: 0,
+	anchored_to: 'wait_start' as const,
+	deadline_seconds: 300,
+};
+
+const deadlineVerdict =
+	( verdict: { hasTimedOut: boolean; hasTransferFailed: boolean } ) => ( args: DeadlineArgs ) => ( {
+		...verdict,
+		receivedEnabled: args.enabled,
+		diagnostics,
+		transfer: undefined,
+		isTransferFresh: false,
+		isTransferLookupComplete: true,
+	} );
+
+const noDeadlineVerdict = deadlineVerdict( { hasTimedOut: false, hasTransferFailed: false } );
+
+const mockUseInstallDeadline = jest.fn( noDeadlineVerdict );
 
 jest.mock( '../use-install-deadline', () => ( {
 	...jest.requireActual( '../use-install-deadline' ),
@@ -168,6 +192,10 @@ describe( 'useProductInstall', () => {
 	} );
 
 	describe( 'error', () => {
+		afterEach( () => {
+			mockUseInstallDeadline.mockImplementation( noDeadlineVerdict );
+		} );
+
 		it( 'has no error before any grace period elapses', () => {
 			const { result } = renderProductInstall( { pluginSlug: 'give' } );
 			expect( result.current.error ).toBeNull();
@@ -199,6 +227,26 @@ describe( 'useProductInstall', () => {
 				expect( result.current.error ).toEqual( { type: 'rejected-upload', reason } );
 			}
 		);
+
+		it( 'reports the dedicated timeout error when the wait runs out', () => {
+			mockUseInstallDeadline.mockImplementation(
+				deadlineVerdict( { hasTimedOut: true, hasTransferFailed: false } )
+			);
+
+			const { result } = renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+
+			expect( result.current.error ).toEqual( { type: 'timeout' } );
+		} );
+
+		it( 'reports the transfer failure ahead of a timeout', () => {
+			mockUseInstallDeadline.mockImplementation(
+				deadlineVerdict( { hasTimedOut: true, hasTransferFailed: true } )
+			);
+
+			const { result } = renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+
+			expect( result.current.error ).toEqual( { type: 'transfer-failed' } );
+		} );
 
 		// The upload page sends the customer here as soon as the upload starts. Counting that time
 		// against a deadline calibrated for server-side transfers would fail a large file on a slow

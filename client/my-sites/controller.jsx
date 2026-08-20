@@ -22,6 +22,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
 import { withoutHttp } from 'calypso/lib/url';
+import { isPathAllowedForDIFMPreSubmitContentCollection } from 'calypso/my-sites/difm-route-utils';
 import {
 	domainManagementDns,
 	domainManagementEdit,
@@ -313,13 +314,23 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 /**
  * The paths allowed for domain-only sites and DIFM in-progress sites are the same
  * with one exception - /domains/add should be allowed for DIFM in-progress sites.
+ * Before the customer submits DIFM content, the content-gathering sections are
+ * also allowed so customers can reference existing site content while filling
+ * out the form.
  * @param {string} path The path to be checked
  * @param {string} slug The site slug
  * @param {Array} domains The list of site domains
  * @param {Object} contextParams Context parameters
+ * @param {boolean} isWebsiteContentSubmitted Whether the DIFM content form has been submitted
  * @returns {boolean} true if the path is allowed, false otherwise
  */
-function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams ) {
+function isPathAllowedForDIFMInProgressSite(
+	path,
+	slug,
+	domains,
+	contextParams,
+	isWebsiteContentSubmitted = true
+) {
 	const DIFMLiteInProgressAllowedPaths = [ domainAddNew(), getEmailManagementPath( slug ) ];
 
 	const isAllowedForDomainOnlySites = domains.some( ( domain ) =>
@@ -328,6 +339,7 @@ function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams 
 
 	return (
 		isAllowedForDomainOnlySites ||
+		isPathAllowedForDIFMPreSubmitContentCollection( path, isWebsiteContentSubmitted ) ||
 		DIFMLiteInProgressAllowedPaths.some( ( DIFMLiteInProgressAllowedPath ) =>
 			path.startsWith( DIFMLiteInProgressAllowedPath )
 		)
@@ -405,6 +417,8 @@ function onSelectedSiteAvailable( context ) {
 	 * Ignore this check if we are inside a support session.
 	 */
 	const domains = getDomainsBySiteId( state, selectedSite.ID );
+	const isDIFMWebsiteContentSubmitted =
+		selectedSite.options?.difm_lite_site_options?.is_website_content_submitted !== false;
 	if (
 		isDIFMLiteInProgress( state, selectedSite.ID ) &&
 		! isSupportSession( state ) &&
@@ -412,7 +426,8 @@ function onSelectedSiteAvailable( context ) {
 			context.pathname,
 			selectedSite.slug,
 			domains,
-			context.params
+			context.params,
+			isDIFMWebsiteContentSubmitted
 		)
 	) {
 		renderSelectedSiteIsDIFMLiteInProgress( context, selectedSite );
@@ -529,6 +544,7 @@ export function noSite( context, next ) {
 	);
 
 	const isUnifiedCheckoutFlow = context.pathname.includes( '/checkout/unified' );
+	const isWpcomCheckoutFlow = context.pathname.includes( '/checkout/wpcom' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
@@ -539,6 +555,7 @@ export function noSite( context, next ) {
 		! isAkismetCheckoutFlow &&
 		! isMarketplaceSitelessCheckoutFlow &&
 		! isUnifiedCheckoutFlow &&
+		! isWpcomCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
 		! is100YearCheckoutFlow &&
@@ -779,6 +796,22 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 				}
 			} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
 				navigate( getJetpackAuthorizeURL( context, site ) );
+			} else if (
+				context.pathname.includes( '/checkout/' ) &&
+				context.pathname.includes( '/renew/' )
+			) {
+				// On a checkout renewal URL that carries an explicit site slug, an
+				// intermittently failed/unresolvable site fetch must not strip the slug:
+				// the all-sites redirect below would drop the user onto the slug-less
+				// no-site renewal route. Let checkout render with the slug intact and
+				// handle its own missing-site state instead. See CHE-512.
+				//
+				// Clear any stale selection first: unlike the redirect branch below
+				// (which re-enters siteSelection with no fragment and clears it there),
+				// this path calls next() directly, so a selectedSiteId left over from a
+				// prior SPA navigation would otherwise leak into checkout.
+				dispatch( setAllSitesSelected() );
+				next();
 			} else {
 				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 				const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );

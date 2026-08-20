@@ -1,0 +1,31 @@
+{
+	"compilerOptions": {
+		"composite": true,
+		"target": "ES2022",
+		"lib": [ "DOM", "DOM.Iterable", "ES2022" ],
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"allowJs": true,
+		"strict": true,
+		"noEmit": false,
+		"emitDeclarationOnly": true,
+		"moduleDetection": "force",
+		"allowImportingTsExtensions": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"outDir": "dist",
+		"rootDir": "src",
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"jsx": "react-jsx",
+		"types": [ "vitest/globals" ]
+	},
+	"include": [ "src/**/*", "src/test/setup.ts" ],
+	"exclude": [ "node_modules", "dist" ]
+}

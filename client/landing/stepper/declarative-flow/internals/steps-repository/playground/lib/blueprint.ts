@@ -147,12 +147,11 @@ export function getBlueprintID( query: URLSearchParams ): string | null {
 
 /**
  * The blueprint identifier for the onboarding blueprint flow
- * (`/setup/onboarding/blueprint/?blueprint=<id>`). Unlike getBlueprintID — which
- * is scoped to numeric Playground / blueprint-library ids — this also accepts a
- * dotcomblueprints post slug, the value blueprint-archive-import resolves against
- * the dotcomblueprints host. The archive's existence is validated server-side
- * (checkBlueprintExists), so we only shape-check here: a non-empty numeric id or
- * slug (lowercase alphanumerics + hyphens).
+ * (`/setup/onboarding/blueprint/?blueprint=<id-or-slug>`). Unlike getBlueprintID —
+ * which is scoped to numeric ids — this also accepts a blueprint-library post
+ * slug; both forms resolve against blueprintlibrary.wordpress.com server-side.
+ * We only shape-check here: a non-empty numeric id or slug (lowercase
+ * alphanumerics + hyphens).
  */
 export function getBlueprintArchiveIdentifier( query: URLSearchParams ): string | null {
 	const raw = query.get( 'blueprint' )?.trim() ?? '';

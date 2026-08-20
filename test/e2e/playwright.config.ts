@@ -1,7 +1,12 @@
 // Must come before ./lib/pw-base so .env is loaded before
 // @automattic/calypso-e2e's env-variables module is evaluated.
 import './load-env';
-import { getAccountNamesToPrime, type TestAccountName } from '@automattic/calypso-e2e';
+import {
+	envVariables,
+	getAccountNamesToPrime,
+	validateThrottleActions,
+	type TestAccountName,
+} from '@automattic/calypso-e2e';
 import {
 	defineConfig,
 	devices,
@@ -10,6 +15,11 @@ import {
 	type ReporterDescription,
 } from 'playwright/test';
 import { primeLoginTitle, tags, type CustomOptions } from './lib/pw-base';
+
+// Reads every supported variable so an unsupported value fails here, before the suite starts,
+// instead of mid-spec on its first read.
+envVariables.validate();
+validateThrottleActions();
 
 type Config = PlaywrightTestConfig< CustomOptions >;
 type Project = PlaywrightTestProject< CustomOptions >;
@@ -196,35 +206,42 @@ export default defineConfig< CustomOptions >(
 				testMatch: /mailosaur-usage\.setup\.ts/,
 				testDir: './setup',
 			},
+			{
+				name: 'throttle-check',
+				testMatch: /throttle-check\.setup\.ts/,
+				testDir: './setup',
+			},
 			// Shared by `chrome` and `mobile`, which take their accounts from AUTHENTICATE_ACCOUNTS
 			// and the run's own environment rather than from a project.
 			primeProject( 'prime-logins', getAccountNamesToPrime() ),
 			{
 				name: 'chrome',
-				dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
+				dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
 				use: desktopUse,
 			},
 			{
 				name: 'mobile',
-				dependencies: [ 'mailosaur-usage-check', 'prime-logins' ],
+				dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
 				use: mobileUse,
 				grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 			},
 			...suiteProject( {
 				name: 'p2',
 				testDir: './specs/p2',
+				dependencies: [ 'throttle-check' ],
 				use: { ...desktopUse, accountsToPrime: [ 'p2User' ] },
 			} ),
 			...suiteProject( {
 				name: 'i18n',
 				testDir: './specs/i18n',
+				dependencies: [ 'throttle-check' ],
 				use: { ...desktopUse, accountsToPrime: [ 'i18nUser' ] },
 			} ),
 			{
 				name: 'authentication',
 				// No 'prime-logins': these specs exercise the login flow itself, so warming
 				// the cookie cache would only add wall clock.
-				dependencies: [ 'mailosaur-usage-check' ],
+				dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 				retries: 0,
 				testDir: './specs/authentication',
 				use: loginBrowserUse,

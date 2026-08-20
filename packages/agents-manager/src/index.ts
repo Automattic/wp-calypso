@@ -1,8 +1,6 @@
 // Main component exports
 export { default } from './components/agents-manager';
 export type { AgentsManagerProps } from './components/agents-manager';
-export { default as HeadlessAgentInitializer } from './components/headless-agent-initializer';
-export type { HeadlessAgentInitializerProps } from './components/headless-agent-initializer';
 
 export { AGENTS_MANAGER_STORE } from './stores';
 

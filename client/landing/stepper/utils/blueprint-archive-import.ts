@@ -8,6 +8,14 @@ export const BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE = '1';
 // Reuse the flow that already hosts the AI site-spec step.
 const BLUEPRINT_ARCHIVE_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
 
+export function getStandaloneBlueprintArchiveSlug(
+	blueprint: string | null,
+	playgroundId: string | null,
+	buildDest: string | null
+): string | null {
+	return ! playgroundId && buildDest === 'wow' ? blueprint : null;
+}
+
 type ImportStatusResponse = {
 	importId?: string | null;
 	siteId?: number | null;
@@ -212,6 +220,48 @@ export async function waitForAtomicTransferComplete(
 	throw new Error(
 		`Timed out waiting for Atomic transfer. Last status: ${ String( lastStatus ) }.`
 	);
+}
+
+/**
+ * Reconcile the confirmed site spec with the freshly imported blueprint site:
+ * writes the owner's site title/tagline, records which blueprint the site was
+ * built from, and stores the collected details as agent context so the editor
+ * can offer to personalize the blueprint's demo copy.
+ *
+ * Must run AFTER waitForBlueprintImportComplete(): the archive restore replaces
+ * the site's options wholesale, so anything written before it is overwritten.
+ *
+ * Resolves either way — a failure here costs the user personalization, not
+ * their site, so it must never block the hand-off to the editor.
+ */
+export async function applyBlueprintSpec(
+	siteIdentifier: string,
+	specId: string,
+	blueprintSlug?: string | null
+): Promise< boolean > {
+	if ( ! specId ) {
+		return false;
+	}
+
+	try {
+		await wpcom.req.post(
+			{
+				path: `/sites/${ siteIdentifier }/big-sky/apply-blueprint-spec`,
+				apiNamespace: 'wpcom/v2',
+			},
+			{
+				spec_id: specId,
+				...( blueprintSlug ? { blueprint_id: blueprintSlug } : {} ),
+			}
+		);
+		return true;
+	} catch ( error ) {
+		logBlueprintArchiveEvent( 'apply_spec_error', {
+			site_identifier: siteIdentifier,
+			error: error instanceof Error ? error.message : String( error ),
+		} );
+		return false;
+	}
 }
 
 export async function getSiteAdminUrl( siteIdentifier: string ): Promise< string > {

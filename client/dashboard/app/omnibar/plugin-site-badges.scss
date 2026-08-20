@@ -4,6 +4,10 @@
 		min-width: 260px;
 	}
 
+	.omnibar__menu-group:has( .omnibar__site-badge ) {
+		padding-block: 10px;
+	}
+
 	.omnibar__site-badge {
 		display: flex;
 		flex-direction: row;
@@ -19,8 +23,8 @@
 		padding-inline: 8px;
 		border-radius: 2px;
 		background-color: rgba( 255, 255, 255, 0.15 );
-		color: var( --omnibar-text-color );
+		color: var( --omnibar-submenu-text-color );
 		font-size: 12px;
-		line-height: 20px;
+		line-height: 24px;
 	}
 }
