@@ -149,9 +149,6 @@ export function recordAgentsManagerTracksEvent( eventName: string, props: Tracks
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
 	const baseProps: TracksProps = {
-		// The always-present (possibly empty) `ai_session_id` and the
-		// `editor`/`reader-chat` surface tokens predate the AI Tracks standard;
-		// this family migrates separately from the parity recorder above.
 		ai_session_id: getSessionId(),
 		agent_name: DOLLY_AGENT_ID,
 		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
