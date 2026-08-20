@@ -53,48 +53,21 @@ const REFERRAL_GUIDE_STEPS = [
 		description: __(
 			'Ensure “Refer products” is toggled on, and add any mix of products to your cart.'
 		),
-		media: (
-			<video
-				src="https://automattic.com/wp-content/uploads/2024/05/referral-step-2.mp4"
-				preload="auto"
-				width={ 400 }
-				poster={ referralStep2 }
-				muted
-				autoPlay
-			/>
-		),
+		media: <img src={ referralStep2 } alt="" />,
 	},
 	{
 		title: __( 'Review your selection during checkout' ),
 		description: __(
 			'During checkout, add your client’s email address and a note about the invoice for the selected products.'
 		),
-		media: (
-			<video
-				src="https://automattic.com/wp-content/uploads/2024/05/referral-step-3.mp4"
-				preload="auto"
-				width={ 400 }
-				poster={ referralStep3 }
-				muted
-				autoPlay
-			/>
-		),
+		media: <img src={ referralStep3 } alt="" />,
 	},
 	{
 		title: __( 'Send your client the payment request' ),
 		description: __(
 			'Once sent, your client will get the invoice delivered to their inbox. After they pay, you’ll be able to assign the products to their site.'
 		),
-		media: (
-			<video
-				src="https://automattic.com/wp-content/uploads/2024/05/referral-step-4.mp4"
-				preload="auto"
-				width={ 400 }
-				poster={ referralStep4 }
-				muted
-				autoPlay
-			/>
-		),
+		media: <img src={ referralStep4 } alt="" />,
 	},
 	{
 		title: __( 'Get paid real commissions' ),
