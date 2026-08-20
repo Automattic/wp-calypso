@@ -34,6 +34,10 @@ const WooPaymentsDashboardEmptyState = () => {
 		[ dispatch ]
 	);
 
+	const navigateToSiteSetup = useCallback( ( siteId: number ) => {
+		page.redirect( addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, { site_id: siteId } ) );
+	}, [] );
+
 	return (
 		<div className="woopayments-dashboard-empty-state__content">
 			<img src={ wooPaymentsLogo } alt="WooPayments" />
@@ -60,11 +64,7 @@ const WooPaymentsDashboardEmptyState = () => {
 								agencyId={ agencyId }
 								excludedSiteIds={ EXCLUDED_SITE_IDS }
 								recordTracksEvent={ recordTracks }
-								onSelectSite={ ( siteId ) =>
-									page.redirect(
-										addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, { site_id: siteId } )
-									)
-								}
+								onSelectSite={ navigateToSiteSetup }
 							/>
 						</HStack>
 					</CardBody>

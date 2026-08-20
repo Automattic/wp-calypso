@@ -46,6 +46,10 @@ const WooPaymentsDashboard = () => {
 		[ dispatch ]
 	);
 
+	const navigateToSiteSetup = useCallback( ( siteId: number ) => {
+		page.redirect( addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, { site_id: siteId } ) );
+	}, [] );
+
 	const excludedSiteIds = useMemo(
 		() => sitesWithPluginsStates.map( ( site ) => site.blogId ),
 		[ sitesWithPluginsStates ]
@@ -100,11 +104,7 @@ const WooPaymentsDashboard = () => {
 									agencyId={ agencyId }
 									excludedSiteIds={ excludedSiteIds }
 									recordTracksEvent={ recordTracks }
-									onSelectSite={ ( siteId ) =>
-										page.redirect(
-											addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, { site_id: siteId } )
-										)
-									}
+									onSelectSite={ navigateToSiteSetup }
 								/>
 							) }
 						</div>
