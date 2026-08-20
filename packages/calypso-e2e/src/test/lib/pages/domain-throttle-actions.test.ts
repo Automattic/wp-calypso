@@ -63,6 +63,16 @@ function bringItOverPage(): Page {
 	return { getByRole: jest.fn( () => button ) } as unknown as Page;
 }
 
+/** A page whose "Skip purchase" button never appears. */
+function skipPurchasePage(): Page {
+	const button = {
+		waitFor: jest.fn( async () => {
+			throw new Error( 'locator timeout' );
+		} ),
+	};
+	return { getByRole: jest.fn( () => button ) } as unknown as Page;
+}
+
 /** A page whose first suggestion row never appears. */
 function suggestionRowPage(): Page {
 	const row = {
@@ -226,6 +236,43 @@ describe( 'domain throttle actions', () => {
 		const page = bringItOverPage();
 
 		await expect( new DomainSearchComponent( page ).clickBringItOver() ).rejects.toThrow(
+			'locator timeout'
+		);
+		expect( actionHandler ).not.toHaveBeenCalled();
+	} );
+
+	test( 'the "Skip purchase" button acts on a suggestions ban when it never renders', async () => {
+		// `search` records a ban it meets mid-search and leaves acting to whichever
+		// caller needed the list. This is one of them: the button carries the free
+		// subdomain a second `/domains/suggestions` call answered with.
+		const page = skipPurchasePage();
+		process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION = String( Date.now() + 60_000 );
+		actionHandler.mockImplementation( () => {
+			throw new Error( 'policy applied' );
+		} );
+
+		await expect( new DomainSearchComponent( page ).skipPurchase() ).rejects.toThrow(
+			'policy applied'
+		);
+		expect( actionHandler ).toHaveBeenCalledWith( 'skip', [ 'domain-suggestions' ] );
+	} );
+
+	test( 'an availability ban leaves a missing "Skip purchase" button its own error', async () => {
+		// Nothing on this button comes from `is-available`. Reading that ban here
+		// would skip a test it had no part in, which is how a real failure hides.
+		const page = skipPurchasePage();
+		process.env.THROTTLE_DOMAIN_AVAILABILITY_EXPIRATION = String( Date.now() + 60_000 );
+
+		await expect( new DomainSearchComponent( page ).skipPurchase() ).rejects.toThrow(
+			'locator timeout'
+		);
+		expect( actionHandler ).not.toHaveBeenCalled();
+	} );
+
+	test( 'a "Skip purchase" button that never appears keeps its own error when no ban is in force', async () => {
+		const page = skipPurchasePage();
+
+		await expect( new DomainSearchComponent( page ).skipPurchase() ).rejects.toThrow(
 			'locator timeout'
 		);
 		expect( actionHandler ).not.toHaveBeenCalled();
