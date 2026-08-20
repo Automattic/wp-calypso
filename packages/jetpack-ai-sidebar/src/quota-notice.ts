@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { trackJetpackAiUpgrade } from './utils/tracking';
 
@@ -16,9 +16,21 @@ export interface JetpackAiChatNotice {
 	suppressCurrentError?: boolean;
 }
 
+// Keep this structural result compatible with ChatNoticeResult across the provider boundary.
+export type JetpackAiChatNoticeResult =
+	| JetpackAiChatNotice
+	| {
+			message?: never;
+			status?: never;
+			action?: never;
+			dismissible?: never;
+			suppressCurrentError: true;
+	  };
+
 export function getTrustedUpgradeUrl( value: string ): string | null {
 	try {
 		const url = new URL( value.replace( /[.,;:!?)\]}]+$/, '' ) );
+		// The self-hosted backend emits this exact My Jetpack product route.
 		const isSameOriginMyJetpackUrl =
 			typeof window !== 'undefined' &&
 			url.origin === window.location.origin &&
@@ -32,6 +44,15 @@ export function getTrustedUpgradeUrl( value: string ): string | null {
 	} catch {
 		return null;
 	}
+}
+
+export function openJetpackAiUpgrade( upgradeUrl: string ): void {
+	try {
+		trackJetpackAiUpgrade();
+	} catch {
+		// Analytics must never block checkout navigation.
+	}
+	window.open( upgradeUrl, '_blank', 'noopener,noreferrer' );
 }
 
 function findUpgradeUrlInMessage( message: string ): string | null {
@@ -53,6 +74,8 @@ function isQuotaExhaustedError( error: string | null ): error is string {
 }
 
 interface ExhaustedState {
+	recoveryRevision: number;
+	scopeKey: string | null;
 	upgradeUrl: string | null;
 }
 
@@ -60,46 +83,78 @@ interface ExhaustedState {
  * Show a persistent notice after the backend rejects an exhausted request.
  * The backend remains the only admission authority and every later submit is
  * still sent for a fresh quota check.
- * @param props       - Hook props.
- * @param props.error - Agenttic's current error string.
+ * @param props                  - Hook props.
+ * @param props.error            - Agenttic's current error string.
+ * @param props.recoveryRevision - Increments after a fresh status read confirms recovery.
+ * @param props.scopeKey         - Site-specific scope for the persistent notice.
  */
 export function useChatNotice( {
 	error,
+	recoveryRevision = 0,
+	scopeKey = null,
 }: {
 	error: string | null;
-} ): JetpackAiChatNotice | undefined {
+	recoveryRevision?: number;
+	scopeKey?: string | null;
+} ): JetpackAiChatNoticeResult | undefined {
 	const [ exhausted, setExhausted ] = useState< ExhaustedState | null >( null );
+	const previousErrorRef = useRef< string | null >( null );
 	const currentErrorIsQuotaExhaustion = isQuotaExhaustedError( error );
 	const rejectionUpgradeUrl = currentErrorIsQuotaExhaustion
 		? findUpgradeUrlInMessage( error )
 		: null;
+	const scopedExhausted = exhausted?.scopeKey === scopeKey ? exhausted : null;
+	const recoverySupersedesRejection =
+		currentErrorIsQuotaExhaustion &&
+		scopedExhausted !== null &&
+		recoveryRevision > scopedExhausted.recoveryRevision;
+	const visibleExhausted =
+		scopedExhausted && recoveryRevision <= scopedExhausted.recoveryRevision
+			? scopedExhausted
+			: null;
 
 	useEffect( () => {
-		if ( ! currentErrorIsQuotaExhaustion ) {
+		const isNewQuotaRejection = currentErrorIsQuotaExhaustion && error !== previousErrorRef.current;
+		previousErrorRef.current = error;
+
+		if ( isNewQuotaRejection ) {
+			setExhausted( ( current ) => ( {
+				recoveryRevision,
+				scopeKey,
+				upgradeUrl:
+					rejectionUpgradeUrl ?? ( current?.scopeKey === scopeKey ? current.upgradeUrl : null ),
+			} ) );
+			return;
+		}
+		if ( currentErrorIsQuotaExhaustion ) {
 			return;
 		}
 
-		setExhausted( ( current ) => ( {
-			upgradeUrl: rejectionUpgradeUrl ?? current?.upgradeUrl ?? null,
-		} ) );
-	}, [ currentErrorIsQuotaExhaustion, rejectionUpgradeUrl ] );
+		setExhausted( ( current ) => {
+			if ( ! current ) {
+				return current;
+			}
+			if ( current.scopeKey !== scopeKey || recoveryRevision > current.recoveryRevision ) {
+				return null;
+			}
+			return current;
+		} );
+	}, [ error, currentErrorIsQuotaExhaustion, recoveryRevision, rejectionUpgradeUrl, scopeKey ] );
 
-	const upgradeUrl = rejectionUpgradeUrl ?? exhausted?.upgradeUrl ?? null;
+	const upgradeUrl = rejectionUpgradeUrl ?? visibleExhausted?.upgradeUrl ?? null;
 	const onUpgradeClick = useCallback( () => {
 		if ( ! upgradeUrl ) {
 			return;
 		}
 
-		try {
-			trackJetpackAiUpgrade();
-		} catch {
-			// Analytics must never block checkout navigation.
-		}
-		window.location.assign( upgradeUrl );
+		openJetpackAiUpgrade( upgradeUrl );
 	}, [ upgradeUrl ] );
 
 	return useMemo( () => {
-		if ( ! currentErrorIsQuotaExhaustion && ! exhausted ) {
+		if ( recoverySupersedesRejection ) {
+			return { suppressCurrentError: true };
+		}
+		if ( ! currentErrorIsQuotaExhaustion && ! visibleExhausted ) {
 			return undefined;
 		}
 
@@ -112,5 +167,11 @@ export function useChatNotice( {
 				? { label: __( 'Upgrade', __i18n_text_domain__ ), onClick: onUpgradeClick }
 				: undefined,
 		};
-	}, [ currentErrorIsQuotaExhaustion, exhausted, onUpgradeClick, upgradeUrl ] );
+	}, [
+		currentErrorIsQuotaExhaustion,
+		onUpgradeClick,
+		recoverySupersedesRejection,
+		upgradeUrl,
+		visibleExhausted,
+	] );
 }

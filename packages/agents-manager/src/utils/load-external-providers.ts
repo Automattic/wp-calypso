@@ -162,6 +162,17 @@ export interface ProviderCapabilities {
  * Display only: the return value never reaches the submit path, and the backend
  * stays the sole authority on whether a turn is allowed to run.
  */
+// Keep this structural result compatible with JetpackAiChatNoticeResult across the provider boundary.
+export type ChatNoticeResult =
+	| ( NoticeConfig & {
+			/** Hide only the current error that this notice replaces. */
+			suppressCurrentError?: boolean;
+	  } )
+	| {
+			/** The provider handled the current error without rendering a notice. */
+			suppressCurrentError: true;
+	  };
+
 export type UseChatNoticeHook = ( props: {
 	error: string | null;
 	/** False on surfaces whose usage must not be fetched or displayed. */
@@ -172,12 +183,7 @@ export type UseChatNoticeHook = ( props: {
 	settledRequestCount: number;
 	/** Current site identity for provider-owned status requests. */
 	siteId?: number;
-} ) =>
-	| ( NoticeConfig & {
-			/** Hide only the current error that this notice replaces. */
-			suppressCurrentError?: boolean;
-	  } )
-	| undefined;
+} ) => ChatNoticeResult | undefined;
 
 /**
  * OR-merge a provider's `capabilities` into the running map. Works on both

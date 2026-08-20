@@ -524,6 +524,7 @@ export default function OrchestratorChat( {
 			},
 		};
 	}, [ agentConfig, checkpointStreamGeneration ] );
+
 	const {
 		addMessage,
 		messages,
@@ -774,19 +775,22 @@ export default function OrchestratorChat( {
 			}
 		},
 	} );
-	const providerNotice = useChatNotice?.( {
+	// Providers resolve before this component mounts, so this hook stays stable for its lifetime.
+	const providerNoticeResult = useChatNotice?.( {
 		error,
 		enabled: ! isReaderChat,
 		isWpcomPlatform: getAgentsManagerInlineData()?.isWpcomPlatform,
 		settledRequestCount,
 		siteId: typeof site?.ID === 'number' ? site.ID : undefined,
 	} );
+	const providerNotice =
+		providerNoticeResult && 'message' in providerNoticeResult ? providerNoticeResult : undefined;
 	// Reader Chat has its own Search quota and must not inherit Jetpack AI metering UI.
 	const chatNotice = isReaderChat ? undefined : providerNotice;
 	// A provider notice replaces the matching transient chat error instead of
 	// rendering the same backend rejection twice.
 	const displayedChatError =
-		! isReaderChat && providerNotice?.suppressCurrentError ? null : chatError;
+		! isReaderChat && providerNoticeResult?.suppressCurrentError ? null : chatError;
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
@@ -1311,6 +1315,7 @@ export default function OrchestratorChat( {
 			// composer calls this callback directly, and the sends above that bail out
 			// early must not disturb a binding that still belongs to a running request.
 			startNewUserRequest();
+
 			submitDispatchedRef.current = true;
 			try {
 				// Images dispatch via agenttic's `imageUrls` option — the resulting
@@ -1329,13 +1334,11 @@ export default function OrchestratorChat( {
 			consumeNextMessageExternalContextEntries();
 		},
 		[
-			agentConfig?.agentId,
 			inputValue,
 			isUploadingImages,
 			onSubmit,
 			pendingImages.length,
 			setChatInput,
-			siteKey,
 			uploadImagesToWordPress,
 		]
 	);
@@ -1405,6 +1408,7 @@ export default function OrchestratorChat( {
 	useNavigationContinuation?.( {
 		isProcessing,
 		sendToolResult: async ( params ) => {
+			// Tool results call Agenttic directly, bypassing onSubmitWithImages's settle counter.
 			try {
 				await onSubmit( params.message, {
 					type: 'tool_result',

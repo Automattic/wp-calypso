@@ -3,10 +3,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/el
 import { _n, __, sprintf } from '@wordpress/i18n';
 import {
 	getTrustedUpgradeUrl,
-	type JetpackAiChatNotice,
+	openJetpackAiUpgrade,
+	type JetpackAiChatNoticeResult,
 	useChatNotice as useQuotaRejectionNotice,
 } from './quota-notice';
-import { trackJetpackAiUpgrade } from './utils/tracking';
 
 const FREE_TIER_SLUGS = new Set( [ 'jetpack_ai_free', 'ai-assistant-tier-free' ] );
 const LOCAL_STATUS_PATH = '/wpcom/v2/jetpack-ai/ai-assistant-feature';
@@ -154,15 +154,24 @@ function useFreeCreditNotice( {
 	settledRequestCount,
 	siteId,
 	statusPath,
-}: FreeCreditNoticeOptions ): JetpackAiChatNotice | undefined {
-	const rejectionNotice = useQuotaRejectionNotice( { error: enabled ? error : null } );
+}: FreeCreditNoticeOptions ): JetpackAiChatNoticeResult | undefined {
 	const [ freeCreditState, setFreeCreditState ] = useState< FreeCreditState | undefined >();
+	const [ recoveryRevision, setRecoveryRevision ] = useState( 0 );
 	const settledRequestCountRef = useRef( settledRequestCount );
 	const requestStatusRefresh = useRef< ( ( count: number ) => void ) | null >( null );
-	settledRequestCountRef.current = settledRequestCount;
+	useEffect( () => {
+		settledRequestCountRef.current = settledRequestCount;
+	}, [ settledRequestCount ] );
 
 	const statusKey =
 		isPositiveInteger( siteId ) && statusPath ? `${ siteId }:${ statusPath }` : null;
+	const quotaResult = useQuotaRejectionNotice( {
+		error: enabled ? error : null,
+		recoveryRevision,
+		scopeKey: statusKey,
+	} );
+	const rejectionNotice = quotaResult && 'message' in quotaResult ? quotaResult : undefined;
+	const suppressCurrentError = quotaResult?.suppressCurrentError === true;
 
 	useEffect( () => {
 		if ( ! fetchEnabled || ! statusKey || ! statusPath ) {
@@ -173,7 +182,7 @@ function useFreeCreditNotice( {
 		const activeStatusKey = statusKey;
 		const activeStatusPath = statusPath;
 		let active = true;
-		let cachedFallbackNeeded = true;
+		let cachedFallbackNeeded = false;
 		let immediateRefreshPending = false;
 		let isRequestInFlight = false;
 		let consecutiveFailures = 0;
@@ -230,6 +239,12 @@ function useFreeCreditNotice( {
 					const status = getFreeCreditStatus( response );
 					if ( status !== undefined ) {
 						setFreeCreditState( { key: activeStatusKey, status } );
+						const hasRecovered =
+							status === null ? response[ 'is-over-limit' ] === false : ! status.isExhausted;
+						// Only the cache-expired fallback can prove the rejection latch is stale.
+						if ( hasRecovered && ! skipCache && ! isInitialRequest ) {
+							setRecoveryRevision( ( revision ) => revision + 1 );
+						}
 					}
 
 					completeStatusRequest( status !== undefined, skipCache );
@@ -301,12 +316,7 @@ function useFreeCreditNotice( {
 			return;
 		}
 
-		try {
-			trackJetpackAiUpgrade();
-		} catch {
-			// Analytics must never block checkout navigation.
-		}
-		window.location.assign( upgradeUrl );
+		openJetpackAiUpgrade( upgradeUrl );
 	}, [ upgradeUrl ] );
 
 	return useMemo( () => {
@@ -315,7 +325,7 @@ function useFreeCreditNotice( {
 		}
 
 		if ( status === null ) {
-			return rejectionNotice;
+			return quotaResult;
 		}
 
 		if ( status && ( status.isExhausted || rejectionNotice ) ) {
@@ -328,10 +338,6 @@ function useFreeCreditNotice( {
 					? { label: __( 'Upgrade', __i18n_text_domain__ ), onClick: onUpgradeClick }
 					: rejectionNotice?.action,
 			};
-		}
-
-		if ( rejectionNotice?.suppressCurrentError ) {
-			return rejectionNotice;
 		}
 
 		if ( status ) {
@@ -347,20 +353,29 @@ function useFreeCreditNotice( {
 					status.remaining
 				),
 				dismissible: false,
+				...( suppressCurrentError && { suppressCurrentError: true as const } ),
 				action: upgradeUrl
 					? { label: __( 'Upgrade', __i18n_text_domain__ ), onClick: onUpgradeClick }
 					: undefined,
 			};
 		}
 
-		return rejectionNotice;
-	}, [ enabled, onUpgradeClick, rejectionNotice, status, upgradeUrl ] );
+		return quotaResult;
+	}, [
+		enabled,
+		onUpgradeClick,
+		quotaResult,
+		rejectionNotice,
+		status,
+		suppressCurrentError,
+		upgradeUrl,
+	] );
 }
 
 export function useJetpackFreeCreditChatNotice( {
 	isWpcomPlatform,
 	...props
-}: FreeCreditNoticeProps ): JetpackAiChatNotice | undefined {
+}: FreeCreditNoticeProps ): JetpackAiChatNoticeResult | undefined {
 	const enabled = isNoticeEnabled( props.enabled );
 	const wpcomPlatform = getIsWpcomPlatform( isWpcomPlatform );
 	const selfHostedEnabled = enabled && wpcomPlatform === false;
