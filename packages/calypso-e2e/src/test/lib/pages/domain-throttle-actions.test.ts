@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { DomainSearchComponent } from '../../../lib/components/domain-search-component';
 import { UseADomainIOwnPage } from '../../../lib/pages/use-a-domain-i-own-page';
+import * as teamcity from '../../../lib/teamcity';
 import {
 	flushThrottleWrites,
 	registerThrottleActionHandler,
@@ -21,6 +22,11 @@ let actionHandler: jest.Mock;
 let unregister: () => void;
 
 beforeEach( () => {
+	// These tests raise flags through the real helpers. Left alone, the helpers
+	// tag the build running the unit tests and write the ban to its log, and
+	// every E2E build in the project reads that for the next six hours.
+	jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+	jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
 	actionHandler = jest.fn();
 	unregister = registerThrottleActionHandler( actionHandler );
 	[ ...ACTION_VARIABLES, ...EXPIRATION_VARIABLES ].forEach( ( name ) => {
@@ -35,6 +41,7 @@ afterEach( async () => {
 	[ ...ACTION_VARIABLES, ...EXPIRATION_VARIABLES ].forEach( ( name ) => {
 		delete process.env[ name ];
 	} );
+	jest.restoreAllMocks();
 } );
 
 /** Builds the response shape used by the domain helpers. */
