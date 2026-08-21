@@ -273,8 +273,8 @@ export default function AgentDock( {
 
 		// Every item fires the unified AM event; items whose Big Sky event
 		// is already live also dual-fire it so those dashboards keep working.
-		const recordMoreOptionsClick = ( type: string ) =>
-			recordAgentsManagerTracksEvent( 'ai_chat_more_options_click', { type } );
+		const recordMoreOptionsClick = ( menuItem: string ) =>
+			recordAgentsManagerTracksEvent( 'ai_chat_more_options_click', { menu_item: menuItem } );
 
 		const options = [
 			{
