@@ -163,14 +163,25 @@ const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) 
 								</>
 							) }
 							<StatsModuleListing className={ className } siteId={ siteId }>
-								<Followers className="stats__flexible-grid-item--full" />
+								<Followers
+									className={ clsx(
+										{
+											'stats__flexible-grid-item--40--once-space': supportsEmailStats,
+											'stats__flexible-grid-item--full': ! supportsEmailStats,
+										},
+										'stats__flexible-grid-item--full--large'
+									) }
+								/>
 								{ supportsEmailStats && period && (
 									<StatsModuleEmails
 										period={ period }
 										moduleStrings={ moduleStrings }
 										query={ { period: period?.period, date: today } }
 										summaryUrl={ summaryUrl }
-										className="stats__flexible-grid-item--full"
+										className={ clsx(
+											'stats__flexible-grid-item--60',
+											'stats__flexible-grid-item--full--large'
+										) }
 									/>
 								) }
 							</StatsModuleListing>
