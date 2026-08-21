@@ -127,9 +127,18 @@ jest.mock( 'calypso/reader/onboarding-rsm/subscribe-modal', () => ( {
 } ) );
 
 jest.mock( 'calypso/reader/onboarding-rsm/early-readers-modal', () => ( {
-	EarlyReadersModal: ( { onDecline }: { onDecline: () => void } ) => (
-		<div data-testid="early-readers-modal-content">
+	EarlyReadersModal: ( {
+		hasSite,
+		onDecline,
+		onFinish,
+	}: {
+		hasSite: boolean;
+		onDecline: () => void;
+		onFinish: () => void;
+	} ) => (
+		<div data-testid="early-readers-modal-content" data-has-site={ String( hasSite ) }>
 			<button onClick={ onDecline }>No thanks</button>
+			<button onClick={ onFinish }>Back to Reader</button>
 		</div>
 	),
 } ) );
@@ -160,6 +169,7 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	// cases stay isolated. Individual tests can override per-case.
 	getCurrentUserDate: jest.fn().mockReturnValue( '2020-01-01T00:00:00Z' ),
 	isCurrentUserEmailVerified: jest.fn().mockReturnValue( true ),
+	getCurrentUserSiteCount: jest.fn().mockReturnValue( 0 ),
 } ) );
 
 const mockRefreshFollowingStreams = jest.fn();
@@ -1392,6 +1402,47 @@ describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
 			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
 			expect.any( Object )
 		);
+	} );
+
+	it( 'completes onboarding when finishing from the confirmation state', async () => {
+		setTreatmentAssignment();
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Back to Reader' } ) );
+
+		expect( screen.queryByTestId( 'early-readers-modal-content' ) ).not.toBeInTheDocument();
+		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( flushOnboardingWelcomeDigest ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.any( Object )
+		);
+	} );
+
+	it( 'passes the user’s site status through to the step', async () => {
+		setTreatmentAssignment();
+		const { getCurrentUserSiteCount } = jest.requireMock(
+			'calypso/state/current-user/selectors'
+		) as { getCurrentUserSiteCount: jest.Mock };
+		getCurrentUserSiteCount.mockReturnValue( 2 );
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( await screen.findByTestId( 'early-readers-modal-content' ) ).toHaveAttribute(
+			'data-has-site',
+			'true'
+		);
+
+		getCurrentUserSiteCount.mockReturnValue( 0 );
 	} );
 
 	it( 'navigates back to the discover step without completing', async () => {

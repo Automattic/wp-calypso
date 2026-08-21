@@ -33,6 +33,7 @@ import WelcomeModal from 'calypso/reader/onboarding-rsm/welcome-modal';
 import { useDispatch, useSelector } from 'calypso/state';
 import {
 	getCurrentUserDate,
+	getCurrentUserSiteCount,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -100,6 +101,8 @@ const ReaderOnboardingRsm = ( {
 	);
 	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
+	const currentUserSiteCount = useSelector( getCurrentUserSiteCount ) as number | null;
+	const hasSite = ( currentUserSiteCount ?? 0 ) > 0;
 
 	const hasCompletedOnboarding: boolean | null = useSelector( ( state ) =>
 		getPreference( state, READER_ONBOARDING_PREFERENCE_KEY )
@@ -369,6 +372,10 @@ const ReaderOnboardingRsm = ( {
 		completeOnboarding( 'early-readers' );
 	};
 
+	const handleEarlyReadersFinish = () => {
+		completeOnboarding( 'early-readers' );
+	};
+
 	const itemClickHandler = ( task: Task ) => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }task_click`, {
 			task: task.id,
@@ -593,7 +600,11 @@ const ReaderOnboardingRsm = ( {
 						/>
 					) }
 					{ currentStep === 'early-readers' && (
-						<EarlyReadersModal onDecline={ handleEarlyReadersDecline } />
+						<EarlyReadersModal
+							hasSite={ hasSite }
+							onDecline={ handleEarlyReadersDecline }
+							onFinish={ handleEarlyReadersFinish }
+						/>
 					) }
 				</Modal>
 			) }
