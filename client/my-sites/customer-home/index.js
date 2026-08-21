@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import renderHome, { maybeRedirect } from './controller';
+import renderHome, { maybeRedirect, redirectToLandingPage } from './controller';
 
 export default function () {
 	// Redirect old view routes to home
@@ -9,7 +9,7 @@ export default function () {
 	page( '/view/:siteId', ( context ) => page.redirect( `/home/${ context.params.siteId }` ) );
 
 	// Home routes
-	page( '/home', siteSelection, sites, makeLayout, clientRender );
+	page( '/home', siteSelection, redirectToLandingPage, sites, makeLayout, clientRender );
 
 	page(
 		'/home/:site',
