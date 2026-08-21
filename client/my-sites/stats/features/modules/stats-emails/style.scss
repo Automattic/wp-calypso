@@ -11,6 +11,29 @@
 }
 
 .stats-emails--four-columns {
+	/* Narrow-width fallback per design: instead of squeezing the title into
+	   ellipsis dust, the table keeps a minimum width and slides horizontally
+	   inside the card. The scroll lives on .stats-card__content because that
+	   element clips overflow; the card title and footer stay put while it
+	   slides. */
+	.stats-card__content {
+		overflow-x: auto;
+	}
+
+	.stats-card-header--main,
+	.stats-card--footer {
+		position: sticky;
+		left: 0;
+	}
+
+	/* Same box semantics on both sides: the header wrapper and each row carry
+	   the identical $padding-outside, so a shared min-width keeps their
+	   content boxes, and therefore the columns, in lockstep. */
+	.stats-card-header,
+	.horizontal-bar-list-item {
+		min-width: 620px;
+	}
+
 	/* The metric column's header lives outside the additional-columns wrapper;
 	   bottom-align the whole header row and give that label the same track
 	   width so it wraps like its siblings instead of floating at the top. */
@@ -18,12 +41,28 @@
 		align-items: flex-end;
 	}
 
+	/* Both sides anchor from the right with identical geometry: the metric
+	   cell matches the rows' value cell ($value-column-width), and the
+	   additional blocks push right, so header and row columns coincide at any
+	   scroll width. */
+	.stats-card--column-header__left {
+		width: auto;
+		flex: 1 1 auto;
+		min-width: 0;
+		justify-content: flex-start;
+	}
+
 	.stats-card--column-header__right {
-		max-width: 88px;
+		flex: 0 0 75px;
+		width: 75px;
 		white-space: normal;
 		overflow-wrap: break-word;
 		hyphens: auto;
 		text-align: right;
+	}
+
+	.stats-card-header__additional {
+		margin-left: auto;
 	}
 
 	/* The shared bar sizes itself for a single value column (fixed width calc,
