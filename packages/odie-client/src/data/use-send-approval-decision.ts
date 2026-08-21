@@ -14,7 +14,7 @@ type ApprovalDecisionResponse = {
 };
 
 /**
- * Approve or decline a pending write-approval proposal.
+ * Approve or decline a pending action-approval proposal.
  *
  * The chat reference (chat_id + bot_id) rides on the request so the server appends the
  * decided outcome to the stored chat as a bot message. The LIVE view deliberately ignores
@@ -36,7 +36,7 @@ export const useSendApprovalDecision = () => {
 		mutationFn: ( { token, decision }: { token: string; decision: 'approve' | 'decline' } ) => {
 			return wpcomRequest< ApprovalDecisionResponse >( {
 				method: 'POST',
-				path: `/ai/write-approvals/${ token }/${ decision }`,
+				path: `/ai/action-approvals/${ token }/${ decision }`,
 				apiNamespace: 'wpcom/v2',
 				body: { chat_id: chat.odieId, bot_id: botSlug },
 			} );

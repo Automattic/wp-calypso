@@ -126,7 +126,7 @@ export type Context = {
 		wpcom_approval_declined?: boolean;
 	};
 	/**
-	 * A write-approval outcome riding on the message (see flags.wpcom_approval_*): while
+	 * An action-approval outcome riding on the message (see flags.wpcom_approval_*): while
 	 * pending it carries the token the approve/decline endpoints consume; executed and
 	 * declined messages carry the decided outcome for rendering.
 	 */

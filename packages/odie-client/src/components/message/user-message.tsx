@@ -93,7 +93,7 @@ export const UserMessage = ( {
 	const showGetSupport =
 		isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage ) && ! isStaleOdieChat( chat );
 
-	// A pending write-approval only renders its approve/decline card while it is the live
+	// A pending action-approval only renders its approve/decline card while it is the live
 	// end of the conversation — after a decision the server-appended outcome message becomes
 	// the last message and the card retires with the refetch.
 	const showApprovalRequest =

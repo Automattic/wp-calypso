@@ -6,7 +6,7 @@ import type { Message } from '../../types';
 import './get-support.scss';
 
 /**
- * Approve / decline buttons for a pending write-approval message
+ * Approve / decline buttons for a pending action-approval message
  * (context.flags.wpcom_approval_required). The decision endpoints append the outcome to
  * the chat server-side; the hook's query invalidation refetches it, and because this
  * card only renders under the last bot message it disappears once the outcome message
