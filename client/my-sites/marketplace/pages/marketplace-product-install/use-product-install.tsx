@@ -149,7 +149,6 @@ export type InstallErrorTrackingProps = {
 	site_id: number | null;
 	current_step: number;
 	install_strategy: string;
-	wait_variant: string | null;
 };
 
 export function useProductInstall( {
@@ -691,18 +690,8 @@ export function useProductInstall( {
 			site_id: siteId,
 			current_step: currentStep,
 			install_strategy: installStrategy,
-			wait_variant: isTransferWait ? getWaitVariant() : null,
 		} ),
-		[
-			error?.type,
-			themeSlug,
-			isPluginUploadFlow,
-			pluginSlug,
-			siteId,
-			currentStep,
-			installStrategy,
-			isTransferWait,
-		]
+		[ error?.type, themeSlug, isPluginUploadFlow, pluginSlug, siteId, currentStep, installStrategy ]
 	);
 
 	const reportedErrorViewRef = useRef< string | null >( null );
