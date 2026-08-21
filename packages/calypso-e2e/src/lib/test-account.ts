@@ -9,7 +9,6 @@ import envVariables from '../env-variables';
 import { RestAPIClient } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import { TOTPClient } from '../totp-client';
-import { SidebarComponent } from './components/sidebar-component';
 import { LoginPage } from './pages/login-page';
 import type { TestAccountCredentials } from '../secrets';
 
@@ -45,17 +44,14 @@ export class TestAccount {
 	 * Authenticates the account using previously saved cookies or via the login
 	 * page UI if cookies are unavailable.
 	 *
-	 * Does not wait for the landing page to render: almost every spec navigates to
-	 * its own target next and never looks at it, and which shell `/` serves depends
-	 * on the account. Pass `waitUntilStable` to drive the page login lands on.
+	 * Does not wait for the landing page to render. Specs navigate to their own
+	 * target next; one that drives the page login lands on waits for the part of it
+	 * that it uses.
 	 *
 	 * @param {Page} page Page object.
 	 * @param {string} [url] URL to expect once authenticated and redirections are finished.
 	 */
-	async authenticate(
-		page: Page,
-		{ url, waitUntilStable = false }: { url?: string | RegExp; waitUntilStable?: boolean } = {}
-	): Promise< void > {
+	async authenticate( page: Page, { url }: { url?: string | RegExp } = {} ): Promise< void > {
 		const browserContext = page.context();
 		await browserContext.clearCookies();
 
@@ -70,33 +66,6 @@ export class TestAccount {
 
 		if ( url ) {
 			await page.waitForURL( url, { timeout: 20 * 1000 } );
-		}
-		if ( waitUntilStable ) {
-			await TestAccount.waitForAppShell( page );
-		}
-	}
-
-	/**
-	 * Waits for whichever app shell `/` rendered: rollout enrollment decides whether
-	 * an account lands in classic Calypso or the hosting dashboard.
-	 *
-	 * Waits for `attached` rather than `visible` because the dashboard sidebar is
-	 * rendered off-canvas below the `medium` breakpoint.
-	 *
-	 * @param {Page} page Page object.
-	 */
-	private static async waitForAppShell( page: Page ): Promise< void > {
-		try {
-			await Promise.any( [
-				new SidebarComponent( page ).waitForSidebarInitialization(),
-				page
-					.locator( '.dashboard-sidebar-navigator' )
-					.waitFor( { state: 'attached', timeout: 20 * 1000 } ),
-			] );
-		} catch {
-			throw new Error(
-				'Timed out waiting for an app shell: neither the classic Calypso sidebar nor the hosting dashboard rendered after logging in.'
-			);
 		}
 	}
 
