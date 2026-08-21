@@ -346,17 +346,17 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	height: 32px;
-	margin-block-end: 20px;
+	margin-block-end: 12px;
 	padding: 0;
 
 	@include break-medium {
-		height: 38px;
 		padding-inline: 8px;
 	}
 }
 
 .site-generation__assistant-icon {
+	display: flex;
+	margin-inline-start: -8px;
 	color: var( --studio-blue-50 );
 	fill: currentColor;
 }

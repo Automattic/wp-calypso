@@ -4,7 +4,7 @@
 		min-width: 260px;
 	}
 
-	.omnibar__menu-group:has( .omnibar__site-badge ) {
+	.omnibar__menu-group.is-secondary:has( .omnibar__site-badge ) {
 		padding-block: 10px;
 	}
 

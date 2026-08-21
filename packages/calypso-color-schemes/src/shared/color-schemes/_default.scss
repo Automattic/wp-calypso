@@ -222,7 +222,7 @@
 	--color-sidebar-submenu-background: #32373c; /* theme-default */
 	--color-sidebar-submenu-text: #b4b9be;
 	--color-sidebar-submenu-hover-background: transparent; /* theme-default */
-	--color-sidebar-submenu-hover-text: #00b9eb; /* theme-default */
+	--color-sidebar-submenu-hover-text: var(--theme-highlight-color);
 	--color-sidebar-submenu-selected-background: transparent; /* theme-default */
 	--color-sidebar-submenu-selected-text: var(--color-text-inverted); /* theme-default */
 

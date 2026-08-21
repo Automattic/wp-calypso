@@ -366,7 +366,9 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			runTaggedPlaywrightSpecs(
 				tag = "@jetpack-wpcom-integration",
 				targetDevice = targetDevice,
-				additionalEnvVars = mapOf( "PW_WORKERS" to "14" ),
+				// Every worker in this build shares one Atomic site and one account, so the
+				// count is bounded by what that single site serves, not by the agent's cores.
+				additionalEnvVars = mapOf( "PW_WORKERS" to "4" ),
 			)
 		}
 
