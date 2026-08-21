@@ -34,6 +34,35 @@ type CoreSelectStore =
 	| { getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown }
 	| undefined;
 
+/**
+ * IDs of the external providers that successfully loaded for this session.
+ *
+ * Collected once in `loadExternalProviders()` and published here so the
+ * Tracks wrappers can stamp them on every event, letting downstream analytics
+ * slice usage and feedback per product (e.g. `woocommerce-ai`,
+ * `jetpack-ai-sidebar`) without adding a prop at each call site.
+ */
+let loadedProviderIds: string[] = [];
+
+/**
+ * Publishes the loaded provider IDs so subsequent Tracks events include them.
+ * Called from the setup path once external providers resolve.
+ */
+export function setLoadedProviderIds( ids: readonly string[] | undefined ): void {
+	loadedProviderIds = Array.isArray( ids )
+		? ids.filter( ( id ): id is string => typeof id === 'string' && id !== '' )
+		: [];
+}
+
+/** Test-only accessor. */
+export function getLoadedProviderIdsForTests(): string[] {
+	return [ ...loadedProviderIds ];
+}
+
+function getLoadedProviderIdsProp(): TracksProps {
+	return loadedProviderIds.length ? { loaded_provider_ids: [ ...loadedProviderIds ] } : {};
+}
+
 /** Reads the optional server-provided Automattician tracking signal. */
 function getIsA11n(): boolean | undefined {
 	const isA11n = getAgentsManagerInlineData()?.isA11n;
@@ -131,6 +160,7 @@ export function recordBigSkyTracksEvent(
 		phase: 'editor',
 		big_sky_version: bigSky.bigSkyVersion,
 		screen: bigSky.screen,
+		...getLoadedProviderIdsProp(),
 		...getBigSkyPageProps(),
 	};
 
@@ -159,6 +189,7 @@ function getUnifiedBaseProps(): TracksProps {
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 		...( blogId !== undefined ? { blog_id: blogId } : {} ),
+		...getLoadedProviderIdsProp(),
 	};
 }
 
