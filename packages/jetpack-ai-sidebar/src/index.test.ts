@@ -3638,6 +3638,28 @@ describe( 'toolProvider', () => {
 			expect( result.result.error ).toMatch( /no component registered/ );
 		} );
 
+		it.each( [
+			[ 'omitted', undefined ],
+			[ 'empty', {} ],
+			[ 'not an object', 'some text' ],
+		] )( 'rejects %s props instead of rendering a picker that crashes', async ( _label, props ) => {
+			// Every picker maps straight over its options, so a component rendered
+			// without them throws. The registered type alone is not enough to
+			// render — reject here, where the agent can still recover.
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				SHOW_COMPONENT_TOOL_ID,
+				{
+					type: 'seo-description-picker',
+					props,
+				}
+			) ) as any;
+
+			expect( returnToAgent ).toBe( true );
+			expect( result.result.success ).toBe( false );
+			expect( result.result.error ).toMatch( /props/i );
+			expect( result.agentMessage ).toBeUndefined();
+		} );
+
 		it( 'returns an unknown-type failure to the agent so it can recover', async () => {
 			// `seo-description` is what the model sent when it skipped the
 			// generate-seo-description ability and called this tool itself. The

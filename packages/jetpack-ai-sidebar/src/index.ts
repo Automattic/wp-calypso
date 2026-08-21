@@ -663,7 +663,14 @@ function handleShowComponent( input: any ): any {
 		return showComponentError( `show-component: no component registered for type "${ type }"` );
 	}
 
-	const componentProps: Record< string, unknown > = { ...( props ?? {} ) };
+	// Every component maps straight over its options, so one rendered without
+	// props throws inside React and takes the chat down with it. A registered
+	// type is not enough. Mirrors `big-sky/show-component`.
+	if ( ! props || typeof props !== 'object' || Object.keys( props ).length === 0 ) {
+		return showComponentError( 'show-component: props must be an object with properties' );
+	}
+
+	const componentProps: Record< string, unknown > = { ...props };
 	const data: Record< string, unknown > = {
 		type,
 		props: componentProps,
