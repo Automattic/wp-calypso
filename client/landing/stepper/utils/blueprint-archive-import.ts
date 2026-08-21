@@ -294,14 +294,15 @@ export function getSiteEditorUrl(
 	// the editor URL, so a site that has already been personalized has to see it
 	// and do nothing. `reset` is the way to run it again.
 	//
-	// `canvas=edit` is required — Big Sky only mounts on the editing canvas, and
-	// the Site Editor opens in view mode.
+	// Deliberately no `canvas=edit`. Sending it made the Site Editor open its
+	// "Edit your site" welcome guide over the page and left a run of failed
+	// entity requests behind it; the same URL without it lands correctly and the
+	// personalization runs. The editor reaches its editing canvas on its own from
+	// here, so the parameter bought nothing and cost that.
 	//
 	// Only set when the spec applied; there is nothing to personalize from
 	// otherwise.
-	return startWalkthrough
-		? addQueryArgs( url, { canvas: 'edit', 'blueprint-walkthrough': 'go' } )
-		: url;
+	return startWalkthrough ? addQueryArgs( url, { 'blueprint-walkthrough': 'go' } ) : url;
 }
 
 export function logBlueprintArchiveEvent(
