@@ -33,17 +33,15 @@ test.describe(
 			} );
 
 			// Both inserters use the same a8c pattern; "pattern_name" in the
-			// Tracks event is the pattern slug. The inline inserter relies on the
-			// empty-canvas "Add block" appender, so it must run before the sidebar
-			// insert fills the canvas.
+			// Tracks event is the pattern slug.
 			const patternName = 'About: Profile';
 			const patternNameInEventProperty = 'a8c/about-profile';
 
-			// From the inline inserter
-			await test.step( `When I add pattern "${ patternName }" from inline inserter`, async () => {
-				const editorCanvas = await pageEditor.getEditorCanvas();
-				const inserterLocator = editorCanvas.locator( 'button[aria-label="Add block"]' );
-				await pageEditor.addPatternInline( patternName, inserterLocator );
+			// From the sidebar inserter. This runs first because the inline step below
+			// needs the trailing "Add block" appender, which the canvas only grows once
+			// it holds a block.
+			await test.step( `When I add pattern "${ patternName }" from sidebar inserter`, async () => {
+				await pageEditor.addPatternFromSidebar( patternName );
 			} );
 
 			await test.step( `Then "wpcom_pattern_inserted" event fires with "pattern_name" === "${ patternNameInEventProperty }"`, async () => {
@@ -62,9 +60,11 @@ test.describe(
 				await editorTracksEventManager.clearEvents();
 			} );
 
-			// From the sidebar inserter
-			await test.step( `When I add pattern "${ patternName }" from sidebar inserter`, async () => {
-				await pageEditor.addPatternFromSidebar( patternName );
+			// From the inline inserter
+			await test.step( `When I add pattern "${ patternName }" from inline inserter`, async () => {
+				const editorCanvas = await pageEditor.getEditorCanvas();
+				const inserterLocator = editorCanvas.locator( 'button[aria-label="Add block"]' ).last();
+				await pageEditor.addPatternInline( patternName, inserterLocator );
 			} );
 
 			await test.step( `Then "wpcom_pattern_inserted" event fires with "pattern_name" === "${ patternNameInEventProperty }"`, async () => {
