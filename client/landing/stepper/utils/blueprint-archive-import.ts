@@ -289,22 +289,16 @@ export function getSiteEditorUrl(
 	const base = adminUrl.endsWith( '/' ) ? adminUrl : `${ adminUrl }/`;
 	const url = `${ base }site-editor.php`;
 
-	// The editor agent is ready to offer a copy walkthrough on a blueprint site,
-	// but it only speaks when spoken to — without this the customer lands on
-	// their new site and has to work out that saying "hi" is the way in. Big Sky
-	// reads the flag on arrival and opens the conversation for them.
+	// `go` tells Big Sky this arrival came from onboarding, so it personalizes the
+	// copy instead of waiting to be spoken to. It never re-runs: the flag stays in
+	// the editor URL, so a site that has already been personalized has to see it
+	// and do nothing. `reset` is the way to run it again.
 	//
-	// `go` says this arrival came from onboarding. It is deliberately not a value
-	// that re-runs anything: it rides in the editor URL and comes back on every
-	// load of it, so a site whose copy has already been rewritten must be able to
-	// see it again and do nothing. `reset` is the way to run it a second time.
+	// `canvas=edit` is required — Big Sky only mounts on the editing canvas, and
+	// the Site Editor opens in view mode.
 	//
-	// `canvas=edit` is not optional here: the Site Editor opens in view mode by
-	// default, and Big Sky only mounts on the editing canvas. Without it the flag
-	// arrives on a page where nothing is listening for it.
-	//
-	// Only worth setting when the spec actually applied: the walkthrough has
-	// nothing to personalize from otherwise.
+	// Only set when the spec applied; there is nothing to personalize from
+	// otherwise.
 	return startWalkthrough
 		? addQueryArgs( url, { canvas: 'edit', 'blueprint-walkthrough': 'go' } )
 		: url;
