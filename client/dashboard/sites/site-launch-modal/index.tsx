@@ -1,3 +1,5 @@
+import CelebrationModal from '@automattic/site-launch-modals/src/celebration-modal';
+import PreLaunchModal from '@automattic/site-launch-modals/src/pre-launch-modal';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { useAnalytics } from '../../app/analytics';
@@ -5,8 +7,6 @@ import { useAppContext } from '../../app/context';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import SitePreview from '../site-preview';
-import CelebrationModal from './views/celebration-modal';
-import PreLaunchModal from './views/pre-launch-modal';
 import type { Site } from '@automattic/api-core';
 
 import './styles.scss';

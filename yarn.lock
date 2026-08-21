@@ -2453,6 +2453,33 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/site-launch-modals@workspace:packages/site-launch-modals":
+  version: 0.0.0-use.local
+  resolution: "@automattic/site-launch-modals@workspace:packages/site-launch-modals"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/react": "npm:^9.1.20"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/react": "npm:^16.0.1"
+    "@testing-library/user-event": "npm:^14.5.2"
+    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/components": "npm:^37.0.0"
+    "@wordpress/compose": "npm:^8.2.0"
+    "@wordpress/element": "npm:^8.0.0"
+    "@wordpress/i18n": "npm:^6.21.0"
+    "@wordpress/icons": "npm:^13.3.0"
+    canvas-confetti: "npm:^1.6.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^6.0.3"
+  peerDependencies:
+    react: ^18.3.1 || ^19.0.0
+    react-dom: ^18.3.1 || ^19.0.0
+  languageName: unknown
+  linkType: soft
+
 "@automattic/sites@workspace:^, @automattic/sites@workspace:packages/sites":
   version: 0.0.0-use.local
   resolution: "@automattic/sites@workspace:packages/sites"
@@ -9416,7 +9443,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^10.0.0, @testing-library/dom@npm:^10.4.1, @testing-library/dom@npm:^8.0.0 || ^9.0.0 || ^10.0.0":
+"@testing-library/dom@npm:^10.0.0, @testing-library/dom@npm:^10.4.0, @testing-library/dom@npm:^10.4.1, @testing-library/dom@npm:^8.0.0 || ^9.0.0 || ^10.0.0":
   version: 10.4.1
   resolution: "@testing-library/dom@npm:10.4.1"
   dependencies:
@@ -9479,7 +9506,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^16.3.0, @testing-library/react@npm:^16.3.2":
+"@testing-library/react@npm:^16.0.1, @testing-library/react@npm:^16.3.0, @testing-library/react@npm:^16.3.2":
   version: 16.3.2
   resolution: "@testing-library/react@npm:16.3.2"
   dependencies:
@@ -9505,6 +9532,15 @@ __metadata:
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
   checksum: 68a0c2aa28a3c8e6eb05cafee29705438d7d8a9427423ce5064d44f19c29e89b5636de46dd2f28620fb10abba75c67130185bbc3aa23ac1163a227a5f36641e1
+  languageName: node
+  linkType: hard
+
+"@testing-library/user-event@npm:^14.5.2":
+  version: 14.6.5
+  resolution: "@testing-library/user-event@npm:14.6.5"
+  peerDependencies:
+    "@testing-library/dom": ">=7.21.4"
+  checksum: 874ad9548fb286bf1b42d9bdc7080b5b9e82cf975608b5e082cc5bbb506816291b6117305477c0a30670914279c2b35039cd07e7559ee993c5f5211722a95660
   languageName: node
   linkType: hard
 

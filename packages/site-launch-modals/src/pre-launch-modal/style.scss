@@ -1,0 +1,30 @@
+@import "@wordpress/base-styles/variables";
+
+.site-launch-pre-launch-modal__preview-card {
+	padding: $grid-unit-20 $grid-unit-20;
+	background-color: var( --color-primary-5 );
+	border-radius: $radius-medium;
+}
+
+.site-launch-pre-launch-modal__meta {
+	min-width: 0;
+}
+
+.site-launch-pre-launch-modal__body {
+	position: relative;
+}
+
+// While launching, keep the confirmation content in place (invisible) so it
+// still defines the modal height, and center the spinner over it. This keeps
+// the modal from resizing between states regardless of the translated copy.
+.site-launch-pre-launch-modal__body[data-launching="true"] .site-launch-pre-launch-modal__confirmation {
+	visibility: hidden;
+}
+
+.site-launch-pre-launch-modal__spinner {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
