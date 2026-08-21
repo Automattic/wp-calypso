@@ -294,6 +294,11 @@ export function getSiteEditorUrl(
 	// their new site and has to work out that saying "hi" is the way in. Big Sky
 	// reads the flag on arrival and opens the conversation for them.
 	//
+	// `go` says this arrival came from onboarding. It is deliberately not a value
+	// that re-runs anything: it rides in the editor URL and comes back on every
+	// load of it, so a site whose copy has already been rewritten must be able to
+	// see it again and do nothing. `reset` is the way to run it a second time.
+	//
 	// `canvas=edit` is not optional here: the Site Editor opens in view mode by
 	// default, and Big Sky only mounts on the editing canvas. Without it the flag
 	// arrives on a page where nothing is listening for it.
@@ -301,7 +306,7 @@ export function getSiteEditorUrl(
 	// Only worth setting when the spec actually applied: the walkthrough has
 	// nothing to personalize from otherwise.
 	return startWalkthrough
-		? addQueryArgs( url, { canvas: 'edit', 'blueprint-walkthrough': '1' } )
+		? addQueryArgs( url, { canvas: 'edit', 'blueprint-walkthrough': 'go' } )
 		: url;
 }
 

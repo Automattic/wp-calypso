@@ -99,7 +99,7 @@ describe( 'getSiteEditorUrl', () => {
 	 */
 	it( 'flags the walkthrough when the spec was applied', () => {
 		expect( getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: true } ) ).toBe(
-			'https://example.com/wp-admin/site-editor.php?canvas=edit&blueprint-walkthrough=1'
+			'https://example.com/wp-admin/site-editor.php?canvas=edit&blueprint-walkthrough=go'
 		);
 	} );
 
