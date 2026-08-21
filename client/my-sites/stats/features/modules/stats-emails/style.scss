@@ -11,6 +11,8 @@
 }
 
 .stats-emails--four-columns {
+	$metric-column-width: 88px;
+
 	/* Narrow-width fallback per design: instead of squeezing the title into
 	   ellipsis dust, the table keeps a minimum width and slides horizontally
 	   inside the card. The scroll lives on .stats-card__content because that
@@ -46,7 +48,7 @@
 	}
 
 	/* Both sides anchor from the right with identical geometry: the metric
-	   cell matches the rows' value cell ($value-column-width), and the
+	   cell matches the rows' value cell ($metric-column-width), and the
 	   additional blocks push right, so header and row columns coincide at any
 	   scroll width. */
 	.stats-card--column-header__left {
@@ -54,11 +56,12 @@
 		flex: 1 1 auto;
 		min-width: 0;
 		justify-content: flex-start;
+		align-items: flex-end;
 	}
 
 	.stats-card--column-header__right {
-		flex: 0 0 75px;
-		width: 75px;
+		flex: 0 0 $metric-column-width;
+		width: $metric-column-width;
 		white-space: normal;
 		overflow-wrap: break-word;
 		hyphens: auto;
@@ -78,6 +81,10 @@
 		min-width: 0;
 	}
 
+	.value {
+		flex-basis: $metric-column-width;
+	}
+
 	.stats-card-header__additional,
 	.horizontal-bar-list-item--additional {
 		display: flex;
@@ -91,7 +98,7 @@
 		   (sv "Öppningsfrekvens") wrap via hyphenation instead of widening
 		   their column. */
 		> span {
-			flex: 0 0 88px;
+			flex: 0 0 $metric-column-width;
 			min-width: 0;
 			text-align: right;
 			white-space: normal;
