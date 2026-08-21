@@ -148,7 +148,7 @@ export function useInstallDeadline( {
 		isSuccess &&
 		( isInFlight ||
 			transfer.atomic_transfer_id === seenInFlightId.current ||
-			( waitBeganAt !== null && Date.parse( transfer.created_at ) >= waitBeganAt ) );
+			( waitBeganAt !== null && parseTransferCreatedAt( transfer.created_at ) >= waitBeganAt ) );
 
 	useEffect( () => {
 		if ( ! transfer || waitBeganAt === null ) {
@@ -230,7 +230,7 @@ export function useInstallDeadline( {
 		hasTimedOut: haltedOutcome === 'timeout' || isDeadlineExceeded,
 		hasTransferFailed: haltedOutcome === 'transfer-failed' || hasTransferFailed,
 		transferStatus: isOurTransfer ? transfer.status : null,
-		transferStartedAt: isOurTransfer ? Date.parse( transfer.created_at ) : null,
+		transferStartedAt: isOurTransfer ? parseTransferCreatedAt( transfer.created_at ) : null,
 		diagnostics,
 		transfer,
 		isTransferFresh: isFetchedAfterMount && isSuccess,
