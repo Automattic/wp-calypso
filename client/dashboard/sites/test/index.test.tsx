@@ -178,6 +178,24 @@ describe( '<Sites>', () => {
 		expect( screen.queryByRole( 'link', { name: 'View deleted sites' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'falls back to the onboarding empty state when the deleted-sites check fails', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.3/me/sites' )
+			.query( ( query ) => query.site_visibility === 'deleted' )
+			.reply( 403, { error: 'unauthorized' } );
+		mockSitesEndpoint( [] );
+		render( <Sites />, {
+			user: {
+				site_count: 0,
+			} as User,
+		} );
+
+		expect(
+			await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
+		).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'View deleted sites' } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'does not flash the onboarding empty state while the deleted-sites check is pending', async () => {
 		let resolveDeletedCheck: ( () => void ) | null = null;
 		nock( 'https://public-api.wordpress.com' )
