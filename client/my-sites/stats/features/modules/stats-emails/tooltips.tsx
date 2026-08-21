@@ -102,7 +102,7 @@ export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { ite
 			) }
 			{ sends === 0 && (
 				<div className="stats-email__tooltip-note">
-					{ translate( 'Not sent to any subscribers.' ) }
+					{ translate( 'No delivery data for this email.' ) }
 				</div>
 			) }
 			{ sends > 0 && ! hasUniques && opens > 0 && (
@@ -144,7 +144,7 @@ export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { it
 			) }
 			{ sends === 0 && (
 				<div className="stats-email__tooltip-note">
-					{ translate( 'Not sent to any subscribers.' ) }
+					{ translate( 'No delivery data for this email.' ) }
 				</div>
 			) }
 			{ sends > 0 && ! hasUniques && clicks > 0 && (
