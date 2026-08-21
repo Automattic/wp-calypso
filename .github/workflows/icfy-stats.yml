@@ -78,11 +78,17 @@ jobs:
           echo "found=true" >> "$GITHUB_OUTPUT"
       - name: Compare the stats with trunk
         if: steps.trunk_stats.outputs.found == 'true'
+        id: compare
         run: |
+          if ! node -e "process.exit( require( './package.json' ).scripts[ 'compare-icfy' ] ? 0 : 1 )"; then
+            echo "The branch predates the compare-icfy script, skipping the comparison with trunk."
+            exit 0
+          fi
           set -o pipefail
           yarn run compare-icfy icfy-stats-trunk icfy-stats | tee icfy-comment.md
+          echo "compared=true" >> "$GITHUB_OUTPUT"
       - name: Report the comparison on the pull request
-        if: steps.trunk_stats.outputs.found == 'true'
+        if: steps.compare.outputs.compared == 'true'
         uses: actions/github-script@v7
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
