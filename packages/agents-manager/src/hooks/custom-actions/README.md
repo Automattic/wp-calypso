@@ -17,7 +17,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | -------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------- |
 | `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.         |
 | `getSessionId`             | `() => string`                                          | Active session ID.                                                        |
-| `recordBigSkyTracksEvent`  | `(eventName: string, props?) => void`                   | Record a `jetpack_big_sky_` family Tracks event with the family's base props. `eventName` is the suffix after that prefix. Optional-chain the call — older Agents Manager bundles do not have it. |
+| `recordBigSkyTracksEvent`  | `(eventName: string, props?) => void`                   | Record a `jetpack_big_sky_` Tracks event; `eventName` omits that prefix.  |
 | `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                     |
 | `getCurrentRoute`          | `() => string`                                          | The chat's current route, e.g. `/chat`, `/history`, `/support-guides`.    |
 | `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat. Opening also expands it from the minimized bar.   |
@@ -37,6 +37,8 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                  |
 
 \* Available only while the chat panel is mounted. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
+
+`recordBigSkyTracksEvent` is absent on older Agents Manager bundles — optional-chain it too.
 
 ## Ready signal
 
