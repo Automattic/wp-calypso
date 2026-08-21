@@ -37,11 +37,21 @@ test.describe(
 			const patternName = 'About: Profile';
 			const patternNameInEventProperty = 'a8c/about-profile';
 
-			// From the sidebar inserter. This runs first because the inline step below
-			// needs the trailing "Add block" appender, which the canvas only grows once
-			// it holds a block.
-			await test.step( `When I add pattern "${ patternName }" from sidebar inserter`, async () => {
-				await pageEditor.addPatternFromSidebar( patternName );
+			// From the inline inserter. It is only rendered while an empty default
+			// block is selected, so the canvas is clicked first, and it is rendered
+			// as a popover in the editor parent rather than inside the canvas.
+			await test.step( `When I add pattern "${ patternName }" from inline inserter`, async () => {
+				const editorCanvas = await pageEditor.getEditorCanvas();
+				await editorCanvas
+					.locator( 'p[data-title="Paragraph"][data-empty="true"]' )
+					.first()
+					.click();
+
+				const editorParent = await pageEditor.getEditorParent();
+				const inserterLocator = editorParent.locator(
+					'.block-editor-block-list__empty-block-inserter button[aria-label="Add block"]'
+				);
+				await pageEditor.addPatternInline( patternName, inserterLocator );
 			} );
 
 			await test.step( `Then "wpcom_pattern_inserted" event fires with "pattern_name" === "${ patternNameInEventProperty }"`, async () => {
@@ -60,11 +70,9 @@ test.describe(
 				await editorTracksEventManager.clearEvents();
 			} );
 
-			// From the inline inserter
-			await test.step( `When I add pattern "${ patternName }" from inline inserter`, async () => {
-				const editorCanvas = await pageEditor.getEditorCanvas();
-				const inserterLocator = editorCanvas.locator( 'button[aria-label="Add block"]' ).last();
-				await pageEditor.addPatternInline( patternName, inserterLocator );
+			// From the sidebar inserter
+			await test.step( `When I add pattern "${ patternName }" from sidebar inserter`, async () => {
+				await pageEditor.addPatternFromSidebar( patternName );
 			} );
 
 			await test.step( `Then "wpcom_pattern_inserted" event fires with "pattern_name" === "${ patternNameInEventProperty }"`, async () => {
