@@ -24,7 +24,7 @@ test.describe(
 			const editorTracksEventManager = new EditorTracksEventManager( page );
 
 			await test.step( 'Given I am authenticated', async () => {
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 			} );
 
 			await test.step( 'When I start a new page', async () => {
