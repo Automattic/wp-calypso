@@ -4,9 +4,11 @@ const STORAGE_KEY = 'wpcom-dashboard-session-locale';
 
 /**
  * Session-local locale set by the omnibar language switcher. Changes the
- * dashboard's language for the current session without touching the account
- * setting. A module singleton so the omnibar and app (separate React trees,
- * one JS realm) share it.
+ * app's language for the current session without touching the account setting.
+ * Kept in `sessionStorage` for the lifetime of the tab so it survives full page
+ * loads, including navigation between the dashboard and classic Calypso. A
+ * module singleton so the omnibar and app (separate React trees, one JS realm)
+ * share it.
  */
 function readStoredLocale(): string | null {
 	if ( typeof window === 'undefined' ) {
@@ -14,9 +16,7 @@ function readStoredLocale(): string | null {
 	}
 
 	try {
-		const stored = window.sessionStorage.getItem( STORAGE_KEY );
-		window.sessionStorage.removeItem( STORAGE_KEY ); // Consumed by the reload that set it
-		return stored;
+		return window.sessionStorage.getItem( STORAGE_KEY );
 	} catch {
 		return null;
 	}
