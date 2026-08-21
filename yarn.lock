@@ -4881,10 +4881,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@date-fns/tz@npm:^1.4.1":
+  version: 1.5.0
+  resolution: "@date-fns/tz@npm:1.5.0"
+  checksum: 4ef25eedd55924938fa81b23b949a3425201597e2007f5323db54d50fc19283eca5e2a7963c3d82c99b3adf273e9ea9bc7adfd1c9076e15badd99c593a984ffa
+  languageName: node
+  linkType: hard
+
 "@date-fns/utc@npm:^2.1.1":
   version: 2.1.1
   resolution: "@date-fns/utc@npm:2.1.1"
   checksum: 796eaf66d4f2945ff336edad29714f5f6b3c64090f534febe0ca8359a61fba521076dd4974fe3a35ce8aeb964bf73d372a87eef5c2900d3334bcaa36fa1f0dd2
+  languageName: node
+  linkType: hard
+
+"@daypicker/react@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "@daypicker/react@npm:10.0.1"
+  dependencies:
+    react-day-picker: "npm:10.0.1"
+  peerDependencies:
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 0a31153456a41c83b7af4eda0a050a0e92777871187e14b3be2000c8bf055dc4eb2e83a5a7def1ce055a79f15a521774ddfd56b527309468823d37ff66504dec
   languageName: node
   linkType: hard
 
@@ -13405,6 +13427,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/style-runtime@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "@wordpress/style-runtime@npm:0.9.0"
+  checksum: 4b5516291a91cc60844c2bc898a4c9525490412b4506c5baf6deba233bb19a91b14bba5369510944e13387bb289fa4c6425ff1b71825d4799e189690605e3b9d
+  languageName: node
+  linkType: hard
+
 "@wordpress/stylelint-config@npm:^23.40.0":
   version: 23.40.0
   resolution: "@wordpress/stylelint-config@npm:23.40.0"
@@ -13478,22 +13507,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/ui@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@wordpress/ui@npm:0.18.0"
+"@wordpress/ui@npm:0.20.0":
+  version: 0.20.0
+  resolution: "@wordpress/ui@npm:0.20.0"
   dependencies:
     "@base-ui/react": "npm:^1.6.0"
-    "@wordpress/a11y": "npm:^4.51.0"
-    "@wordpress/compose": "npm:^8.4.0"
-    "@wordpress/element": "npm:^8.3.0"
-    "@wordpress/i18n": "npm:^6.24.0"
-    "@wordpress/icons": "npm:^15.2.0"
-    "@wordpress/keycodes": "npm:^4.51.0"
-    "@wordpress/primitives": "npm:^4.51.0"
-    "@wordpress/private-apis": "npm:^1.51.0"
-    "@wordpress/style-runtime": "npm:^0.7.0"
-    "@wordpress/theme": "npm:^1.0.0"
+    "@daypicker/react": "npm:^10.0.1"
+    "@wordpress/a11y": "npm:^4.53.0"
+    "@wordpress/compose": "npm:^8.6.0"
+    "@wordpress/element": "npm:^8.5.0"
+    "@wordpress/i18n": "npm:^6.26.0"
+    "@wordpress/icons": "npm:^15.4.0"
+    "@wordpress/keycodes": "npm:^4.53.0"
+    "@wordpress/primitives": "npm:^4.53.0"
+    "@wordpress/private-apis": "npm:^1.53.0"
+    "@wordpress/style-runtime": "npm:^0.9.0"
+    "@wordpress/theme": "npm:^1.2.0"
     clsx: "npm:^2.1.1"
+    date-fns: "npm:^4.4.0"
     tabbable: "npm:^6.4.0"
   peerDependencies:
     "@types/react": ^18 || ^19
@@ -13502,7 +13533,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: a2fcb7c5b183ece909e02c7adb915141489f8758ce808fbdc075f636d619f55eb2ae08a0bbcc2487edd01fb43fbdcf8dba8cea205406974fda9321b539f80f23
+  checksum: a397bce5e16af2b81df0e37b98d2fe08b7770ba090a35f77b11586d31e9cb8acfd48bf66fda7c0ea42398760b6edb4537a7c72d7b1f1ea889487c7053a396c97
   languageName: node
   linkType: hard
 
@@ -28672,6 +28703,22 @@ __metadata:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
   checksum: 48eb73cf71e10841c2a61b6b06ab81da9fffa9876134c239bfdebcf348ce2a47e56b146338e35dfb03512c85966bfc9a53844fc56bc50154e71f8daee59ff6f0
+  languageName: node
+  linkType: hard
+
+"react-day-picker@npm:10.0.1":
+  version: 10.0.1
+  resolution: "react-day-picker@npm:10.0.1"
+  dependencies:
+    "@date-fns/tz": "npm:^1.4.1"
+    date-fns: "npm:^4.1.0"
+  peerDependencies:
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 2ca2690f5e8c22b0fd24079b68959110ec199ec7d5ac74f26cfe6dad3cadf7d781458a9a654673dd47009e4fbb8548711ec0ae048e41dd3cf1d4ede16dadad55
   languageName: node
   linkType: hard
 
