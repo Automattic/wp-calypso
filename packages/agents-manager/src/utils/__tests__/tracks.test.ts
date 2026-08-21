@@ -4,9 +4,7 @@
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ), {
-	virtual: true,
-} );
+jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( '@wordpress/data', () => ( { select: jest.fn( () => ( {} ) ) } ) );
 jest.mock( '../agent-session', () => ( { getSessionId: jest.fn( () => 'session-xyz' ) } ) );
 jest.mock( '../is-reader-chat-agent', () => {

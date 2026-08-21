@@ -17,6 +17,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | -------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------- |
 | `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.         |
 | `getSessionId`             | `() => string`                                          | Active session ID.                                                        |
+| `recordBigSkyTracksEvent`  | `(eventName: string, props?) => void`                   | Record a `jetpack_big_sky_` family Tracks event with the family's base props. `eventName` is the suffix after that prefix. Optional-chain the call — older Agents Manager bundles do not have it. |
 | `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                     |
 | `getCurrentRoute`          | `() => string`                                          | The chat's current route, e.g. `/chat`, `/history`, `/support-guides`.    |
 | `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat. Opening also expands it from the minimized bar.   |
