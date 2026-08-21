@@ -34,6 +34,10 @@
 		min-width: 620px;
 	}
 
+	.stats-card-header {
+		box-sizing: border-box;
+	}
+
 	/* The metric column's header lives outside the additional-columns wrapper;
 	   bottom-align the whole header row and give that label the same track
 	   width so it wraps like its siblings instead of floating at the top. */
