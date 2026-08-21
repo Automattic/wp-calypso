@@ -28,16 +28,15 @@ import PreLaunchModal from '@automattic/site-launch-modals/pre-launch-modal';
 import CelebrationModal from '@automattic/site-launch-modals/celebration-modal';
 ```
 
-Named exports and prop types are also available from the same subpaths (and from
-the package root barrel):
+A consumer that uses both modals can import them from the package root barrel
+instead, along with their prop types:
 
 ```tsx
-import { PreLaunchModal, type PreLaunchModalProps } from '@automattic/site-launch-modals';
+import { PreLaunchModal, CelebrationModal, type PreLaunchModalProps } from '@automattic/site-launch-modals';
 ```
 
-> Inside the wp-calypso monorepo, import the source directly via the `/src/`
-> subpath (matching the `@automattic/components/src/*` convention), e.g.
-> `@automattic/site-launch-modals/src/pre-launch-modal`.
+Prefer the granular subpaths when a consumer only needs one modal, so it doesn't
+bundle the other.
 
 ## `PreLaunchModal`
 

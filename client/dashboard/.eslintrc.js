@@ -90,11 +90,6 @@ module.exports = {
 							'!@automattic/omnibar',
 							'!@automattic/posthog',
 							'!@automattic/site-launch-modals',
-							'@automattic/site-launch-modals/*',
-							'!@automattic/site-launch-modals/src',
-							'@automattic/site-launch-modals/src/*',
-							'!@automattic/site-launch-modals/src/pre-launch-modal',
-							'!@automattic/site-launch-modals/src/celebration-modal',
 							// Please do not add exceptions which pull in Calypso code/concepts.
 							// See docs/package-imports.md for policy.
 						],

@@ -1,5 +1,4 @@
-import CelebrationModal from '@automattic/site-launch-modals/src/celebration-modal';
-import PreLaunchModal from '@automattic/site-launch-modals/src/pre-launch-modal';
+import { PreLaunchModal, CelebrationModal } from '@automattic/site-launch-modals';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { useAnalytics } from '../../app/analytics';

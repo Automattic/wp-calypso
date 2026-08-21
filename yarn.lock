@@ -2453,7 +2453,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/site-launch-modals@workspace:packages/site-launch-modals":
+"@automattic/site-launch-modals@workspace:^, @automattic/site-launch-modals@workspace:packages/site-launch-modals":
   version: 0.0.0-use.local
   resolution: "@automattic/site-launch-modals@workspace:packages/site-launch-modals"
   dependencies:
@@ -15307,6 +15307,7 @@ __metadata:
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
+    "@automattic/site-launch-modals": "workspace:^"
     "@automattic/sites": "workspace:^"
     "@automattic/social-previews": "npm:^3.0.0"
     "@automattic/state-utils": "workspace:^"
