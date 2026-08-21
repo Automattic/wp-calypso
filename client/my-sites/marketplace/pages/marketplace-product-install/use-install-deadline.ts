@@ -7,6 +7,7 @@ import {
 	transferStates,
 } from 'calypso/landing/stepper/utils/atomic-transfer-outcome';
 import { useInterval } from 'calypso/lib/interval';
+import { parseTransferCreatedAt } from './transfer-created-at';
 import type { AtomicTransfer } from '@automattic/api-core';
 
 // Matches the wait in Stepper's useWaitForAtomic (1000 * 300), so both places give up on a transfer
@@ -158,7 +159,7 @@ export function useInstallDeadline( {
 			seenInFlightId.current = transfer.atomic_transfer_id;
 			return;
 		}
-		const startedDuringThisWait = Date.parse( transfer.created_at ) >= waitBeganAt;
+		const startedDuringThisWait = parseTransferCreatedAt( transfer.created_at ) >= waitBeganAt;
 		const isKnownAttempt =
 			isFetchedAfterMount && isSuccess && !! isTransferFromAttempt?.( transfer );
 		const isOurs =
@@ -176,7 +177,9 @@ export function useInstallDeadline( {
 
 	// A live transfer is the thing being waited on, so it owns the clock; its start survives a
 	// refresh where a mount-anchored timer would not.
-	const transferStartedAt = hasFreshInFlightTransfer ? Date.parse( transfer.created_at ) : NaN;
+	const transferStartedAt = hasFreshInFlightTransfer
+		? parseTransferCreatedAt( transfer.created_at )
+		: NaN;
 	const waitStartedAt =
 		waitBeganAt === null
 			? null
@@ -207,7 +210,10 @@ export function useInstallDeadline( {
 	// What the wait could see when it ended. `is_stuck` is the server's own verdict on the same
 	// question this hook answers — in flight and older than its threshold — so recording both says
 	// whether five minutes is measuring what the backend's thirty are.
-	const transferAgeMs = transfer?.created_at ? now - Date.parse( transfer.created_at ) : null;
+	const transferCreatedAt = transfer?.created_at
+		? parseTransferCreatedAt( transfer.created_at )
+		: NaN;
+	const transferAgeMs = Number.isFinite( transferCreatedAt ) ? now - transferCreatedAt : null;
 	const diagnostics: InstallWaitDiagnostics = {
 		has_transfer: !! transfer,
 		transfer_status: transfer?.status ?? null,
