@@ -22,6 +22,10 @@ import {
 	getStatusForPlugin,
 	isPluginActive,
 } from 'calypso/state/plugins/installed/selectors-ts';
+import {
+	PLUGIN_INSTALLATION_ERROR,
+	PLUGIN_INSTALLATION_IN_PROGRESS,
+} from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
@@ -258,9 +262,41 @@ export function useProductInstall( {
 		[ hasCurrentTransferAttempt, persistedTransferAttempt ]
 	);
 
+	// Statuses are keyed by the plugin id the install/activate dispatches carry (e.g.
+	// 'akismet/akismet'), not by the route slug — and the upload flow has no route slug at all.
+	// Read them under that same key, or a failed install or activation never surfaces and the
+	// page waits out the full deadline to report a real failure as a timeout.
 	const pluginInstallStatus = useSelector( ( state ) =>
-		getStatusForPlugin( state, siteId, pluginSlug )
+		getStatusForPlugin( state, siteId, installedPlugin?.id ?? wporgPlugin?.id ?? pluginSlug )
 	);
+
+	// Only a failure watched happening counts: the slice outlives the page, so a record left by an
+	// earlier attempt is already in the error state when this mounts, and the `error` field even
+	// survives the next request overwriting the status. Watching the in-progress → error transition
+	// attributes the failure to a request made while this page was open, whichever hook made it.
+	//
+	// Observed during render, as the transfer-attempt ref above is: this component instance
+	// survives an SPA navigation to another product's install, so on an identity change the new
+	// product's current status becomes the baseline — whatever state it is already in predates
+	// this page watching it — and the previous product's latch is dropped.
+	const [ installFailureSeen, setInstallFailureSeen ] = useState( false );
+	const previousInstallStatusRef = useRef< string | undefined >( undefined );
+	const installIdentity = `${ siteId }:${ pluginSlug }:${ themeSlug }`;
+	const installIdentityRef = useRef( installIdentity );
+	const observedInstallStatus = pluginInstallStatus?.status;
+	if ( installIdentityRef.current !== installIdentity ) {
+		installIdentityRef.current = installIdentity;
+		if ( installFailureSeen ) {
+			setInstallFailureSeen( false );
+		}
+	} else if (
+		observedInstallStatus === PLUGIN_INSTALLATION_ERROR &&
+		previousInstallStatusRef.current === PLUGIN_INSTALLATION_IN_PROGRESS &&
+		! installFailureSeen
+	) {
+		setInstallFailureSeen( true );
+	}
+	previousInstallStatusRef.current = observedInstallStatus;
 
 	const wpOrgTheme = useSelector( ( state ) => getTheme( state, 'wporg', themeSlug ) );
 	const isThemeActive = useSelector( ( state ) => getThemeActive( state, themeSlug, siteId ) );
@@ -342,7 +378,7 @@ export function useProductInstall( {
 		}
 		if (
 			pluginUploadError ||
-			pluginInstallStatus?.error ||
+			installFailureSeen ||
 			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
 		) {
 			return { type: 'generic' };
