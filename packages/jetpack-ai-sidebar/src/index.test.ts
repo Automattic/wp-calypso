@@ -1884,12 +1884,12 @@ describe( 'Proofread', () => {
 } );
 
 describe( 'empty post gating', () => {
+	// The three reviews sit inside the Get feedback dropdown, so that chip gates
+	// as a whole rather than each review separately.
 	const CONTENT_DEPENDENT_IDS = [
 		'optimize-title',
 		'generate-excerpt',
-		'generate-feedback',
-		'proofread-content',
-		'ai-editorial-review',
+		'get-feedback',
 		'seo-enhancer',
 	];
 
@@ -1924,6 +1924,32 @@ describe( 'empty post gating', () => {
 
 		expect( suggestion ).toBeDefined();
 		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it.each( CONTENT_DEPENDENT_IDS )( 'gives %s a reason for being disabled', ( id ) => {
+		const suggestion = suggestionsFor( { isPostEmpty: true } ).find( ( s ) => s.id === id );
+
+		expect( suggestion?.disabledReason ).toBe(
+			'This feature will be available once content is added to the post.'
+		);
+	} );
+
+	it( 'names the page rather than the post when editing a page', () => {
+		installAiEditorialReviewData( ALL_FEATURES );
+		installPostTypeMock( 'page', 123, { supportsExcerpt: true, isPostEmpty: true } );
+		const suggestion = getEmptyViewSuggestions().find( ( s ) => s.id === 'optimize-title' );
+
+		expect( suggestion?.disabledReason ).toBe(
+			'This feature will be available once content is added to the page.'
+		);
+	} );
+
+	it( 'gives no reason once the suggestion is usable', () => {
+		const suggestion = suggestionsFor( { isPostEmpty: false } ).find(
+			( s ) => s.id === 'optimize-title'
+		);
+
+		expect( suggestion?.disabledReason ).toBeUndefined();
 	} );
 
 	it( 'keeps the disabled suggestions in the list so a blank post still shows them', () => {

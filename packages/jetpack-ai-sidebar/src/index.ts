@@ -486,11 +486,27 @@ function getFeedbackSuggestions( currentPostType?: string, currentPostId?: Edito
 const CONTENT_DEPENDENT_SUGGESTION_IDS: Set< string > = new Set( [
 	OPTIMIZE_TITLE_SUGGESTION.id,
 	GENERATE_EXCERPT_SUGGESTION.id,
-	POST_FEEDBACK_SUGGESTION.id,
-	PROOFREAD_SUGGESTION.id,
-	AI_EDITORIAL_REVIEW_SUGGESTION.id,
+	// Every review behind this chip needs content, so the chip gates as a whole.
+	GET_FEEDBACK_SUGGESTION_ID,
 	SEO_ENHANCER_SUGGESTION.id,
 ] );
+
+/**
+ * Written out per post type rather than built from a noun, because a noun
+ * dropped into a sentence cannot agree with the rest of it in every language.
+ * Only posts and pages reach these suggestions.
+ */
+function getContentRequiredReason( currentPostType?: string ): string {
+	return currentPostType === 'page'
+		? __(
+				'This feature will be available once content is added to the page.',
+				__i18n_text_domain__
+		  )
+		: __(
+				'This feature will be available once content is added to the post.',
+				__i18n_text_domain__
+		  );
+}
 
 function getPostLevelSuggestions(
 	currentPostType?: string,
@@ -519,9 +535,11 @@ function getPostLevelSuggestions(
 	}
 
 	// Greyed out rather than dropped, so a blank post still shows what is on offer.
+	const disabledReason = getContentRequiredReason( currentPostType );
+
 	return suggestions.map( ( suggestion ) =>
 		CONTENT_DEPENDENT_SUGGESTION_IDS.has( suggestion.id )
-			? { ...suggestion, disabled: true }
+			? { ...suggestion, disabled: true, disabledReason }
 			: suggestion
 	);
 }
@@ -1239,6 +1257,8 @@ export function getEmptyViewSuggestions(): Array< {
 	description?: string;
 	prompt?: string;
 	options?: SuggestionOption[];
+	disabled?: boolean;
+	disabledReason?: string;
 	action?: () => boolean | Promise< boolean >;
 } > {
 	return getPostLevelSuggestions( getCurrentEditorPostType() );

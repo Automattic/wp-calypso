@@ -179,7 +179,10 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text, isRTL: () => false } ) );
+jest.mock( '@wordpress/i18n', () => ( {
+	__: ( text: string ) => text,
+	isRTL: () => false,
+} ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
@@ -332,28 +335,26 @@ describe( 'AgentChat', () => {
 		);
 	} );
 
-	it( 'explains the empty view when a suggestion is disabled', () => {
+	// The chip carries its own reason, so the help line stays the same whether or
+	// not anything is disabled.
+	it( 'keeps the plain help line when a suggestion is disabled', () => {
 		renderAgentChat( {
 			isOpen: true,
 			emptyViewSuggestions: [
-				{ id: 'optimize-title', label: 'Optimize title', prompt: 'Optimize.', disabled: true },
+				{
+					id: 'optimize-title',
+					label: 'Optimize title',
+					prompt: 'Optimize.',
+					disabled: true,
+					disabledReason: 'This feature will be available once content is added to the page.',
+				},
 			],
 		} );
 
-		expect(
-			screen.getByText(
-				'Some options are unavailable until the post has content. Got a different request? Ask away.'
-			)
-		).toBeInTheDocument();
-	} );
-
-	it( 'keeps the plain help line when every suggestion is usable', () => {
-		renderAgentChat( {
-			isOpen: true,
-			emptyViewSuggestions: [ { id: 'optimize-title', label: 'Optimize title', prompt: 'Go.' } ],
-		} );
-
 		expect( screen.getByText( 'Got a different request? Ask away.' ) ).toBeInTheDocument();
+		expect(
+			screen.queryByText( /This feature will be available once content is added/ )
+		).toBeNull();
 	} );
 
 	it( 'forwards empty view suggestion clicks to the shared suggestion handler', async () => {
