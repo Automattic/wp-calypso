@@ -272,8 +272,11 @@ beforeEach( () => {
 	) as {
 		useNonSelfSubscriptionsCount: jest.Mock;
 	};
-	const { getCurrentUserDate } = jest.requireMock( 'calypso/state/current-user/selectors' ) as {
+	const { getCurrentUserDate, getCurrentUserSiteCount } = jest.requireMock(
+		'calypso/state/current-user/selectors'
+	) as {
 		getCurrentUserDate: jest.Mock;
+		getCurrentUserSiteCount: jest.Mock;
 	};
 	useFollowedTags.mockImplementation( () => ( { data: [], isPending: false } ) );
 	useCachedSiteSubscriptions.mockReturnValue( { subscriptions: [] } );
@@ -282,7 +285,29 @@ beforeEach( () => {
 		nonSelfSubscriptionsCount: 0,
 	} ) );
 	getCurrentUserDate.mockReturnValue( '2020-01-01T00:00:00Z' );
+	getCurrentUserSiteCount.mockReturnValue( 0 );
 } );
+
+const setTreatmentAssignment = () => {
+	const { useExperiment } = jest.requireMock( 'calypso/lib/explat' ) as {
+		useExperiment: jest.Mock;
+	};
+	useExperiment.mockReturnValue( [ false, { variationName: 'treatment' } ] );
+};
+
+const navigateToDiscoverStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
+	await screen.findByTestId( 'welcome-modal-content' );
+	await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+	await screen.findByTestId( 'interests-modal-content' );
+	await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+	await screen.findByTestId( 'subscribe-modal-content' );
+};
+
+const navigateToEarlyReadersStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
+	await navigateToDiscoverStep( user );
+	await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+	await screen.findByTestId( 'early-readers-modal-content' );
+};
 
 describe( 'ReaderOnboardingRsm – back button navigation', () => {
 	// The welcome step auto-opens because hasSeenOnboarding is null (mocked via getPreference).
@@ -549,14 +574,6 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 } );
 
 describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
-	const navigateToDiscoverStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
-		await screen.findByTestId( 'welcome-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
-		await screen.findByTestId( 'interests-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
-	};
-
 	it( 'calls flushOnboardingWelcomeDigest when the user clicks Finish on the discover step', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
@@ -618,13 +635,7 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 } );
 
 describe( 'ReaderOnboardingRsm – onboarding completion', () => {
-	const navigateToSubscribeStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
-		await screen.findByTestId( 'welcome-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
-		await screen.findByTestId( 'interests-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
-	};
+	const navigateToSubscribeStep = navigateToDiscoverStep;
 
 	it( 'saves the completion preference and records completed when Finish is clicked', async () => {
 		const user = userEvent.setup();
@@ -1340,21 +1351,6 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 } );
 
 describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
-	const setTreatmentAssignment = () => {
-		const { useExperiment } = jest.requireMock( 'calypso/lib/explat' ) as {
-			useExperiment: jest.Mock;
-		};
-		useExperiment.mockReturnValue( [ false, { variationName: 'treatment' } ] );
-	};
-
-	const navigateToDiscoverStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
-		await screen.findByTestId( 'welcome-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
-		await screen.findByTestId( 'interests-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
-	};
-
 	it( 'shows the early-readers step after Finish instead of completing, and defers completion work', async () => {
 		setTreatmentAssignment();
 		const user = userEvent.setup();
@@ -1451,15 +1447,12 @@ describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
-		await navigateToDiscoverStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await navigateToEarlyReadersStep( user );
 
-		expect( await screen.findByTestId( 'early-readers-modal-content' ) ).toHaveAttribute(
+		expect( screen.getByTestId( 'early-readers-modal-content' ) ).toHaveAttribute(
 			'data-has-site',
 			'true'
 		);
-
-		getCurrentUserSiteCount.mockReturnValue( 0 );
 	} );
 
 	it( 'navigates back to the discover step without completing', async () => {
@@ -1494,7 +1487,24 @@ describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
 		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
 	} );
 
-	it( 'shows the early-readers step under reader/force-onboarding without an assignment', async () => {
+	it( 'shows the early-readers step under reader/early-readers without an assignment', async () => {
+		jest
+			.mocked( isEnabled )
+			.mockImplementation( ( flag: string ) => flag === 'reader/early-readers' );
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( await screen.findByTestId( 'early-readers-modal-content' ) ).toBeVisible();
+	} );
+
+	it( 'keeps the control experience under reader/force-onboarding alone', async () => {
+		// Forcing onboarding open is the only practical way to reach this flow
+		// without a fresh account, so it must not opt the developer into the
+		// experimental step.
 		jest
 			.mocked( isEnabled )
 			.mockImplementation( ( flag: string ) => flag === 'reader/force-onboarding' );
@@ -1505,7 +1515,8 @@ describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
 		await navigateToDiscoverStep( user );
 		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
-		expect( await screen.findByTestId( 'early-readers-modal-content' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'early-readers-modal-content' ) ).not.toBeInTheDocument();
+		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
 	} );
 
 	it( 'latches the joined state and hides the Back button after opting in', async () => {
@@ -1535,23 +1546,6 @@ describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
 } );
 
 describe( 'ReaderOnboardingRsm – Early Readers opt-in analytics', () => {
-	const setTreatmentAssignment = () => {
-		const { useExperiment } = jest.requireMock( 'calypso/lib/explat' ) as {
-			useExperiment: jest.Mock;
-		};
-		useExperiment.mockReturnValue( [ false, { variationName: 'treatment' } ] );
-	};
-
-	const navigateToEarlyReadersStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
-		await screen.findByTestId( 'welcome-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
-		await screen.findByTestId( 'interests-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
-		await screen.findByTestId( 'early-readers-modal-content' );
-	};
-
 	beforeEach( () => {
 		setTreatmentAssignment();
 	} );
@@ -1591,8 +1585,6 @@ describe( 'ReaderOnboardingRsm – Early Readers opt-in analytics', () => {
 			READER_EARLY_READERS_OPT_IN_EVENT,
 			expect.objectContaining( { has_site: true } )
 		);
-
-		getCurrentUserSiteCount.mockReturnValue( 0 );
 	} );
 
 	it( 'records an explicit decline with decline_method: button', async () => {

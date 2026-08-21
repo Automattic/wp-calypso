@@ -1,18 +1,9 @@
 @import '@wordpress/base-styles/breakpoints';
 
-// Frame sizing and the footer layout come from the shared
-// reader-onboarding-rsm modal styles (../style.scss); this file only styles
-// the early-readers step's own content.
-.early-readers-modal__content.early-readers-modal__content {
-	flex: 1 1 auto;
-	min-height: 0;
-	overflow-y: auto;
-	justify-content: flex-start;
+// Frame sizing, the footer layout, and the VStack scroll region come from the
+// shared reader-onboarding-rsm modal styles (../style.scss).
+.early-readers-modal__content {
 	padding: 4px 32px 40px;
-
-	> * {
-		flex-shrink: 0;
-	}
 
 	@media ( max-width: $break-medium ) {
 		padding-inline: 20px;
@@ -25,9 +16,9 @@
 }
 
 .early-readers-modal__title {
-	font-family: Recoleta, Georgia, "Times New Roman", serif;
+	font-family: Recoleta, sans-serif;
 	font-size: 2.75rem;
-	line-height: 1.1;
+	line-height: 1.15;
 	font-weight: 400;
 	margin: 0;
 
@@ -129,7 +120,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
-	border: 1px solid var( --color-neutral-10, #dcdcde );
+	border: 1px solid var( --color-border-subtle, #dcdcde );
 	background: var( --color-surface );
 	// Exceeds half the chip height, so the browser clamps it to a full pill.
 	border-radius: 24px;
