@@ -37,7 +37,7 @@ test.describe.fixme(
 
 			await test.step( 'Given I am authenticated', async () => {
 				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
@@ -73,7 +73,7 @@ test.describe.fixme(
 
 			await test.step( 'Given I am authenticated', async () => {
 				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
@@ -118,7 +118,7 @@ test.describe.fixme(
 
 			await test.step( 'Given I am authenticated', async () => {
 				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
@@ -169,7 +169,7 @@ test.describe.fixme(
 
 			await test.step( 'Given I am authenticated', async () => {
 				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );

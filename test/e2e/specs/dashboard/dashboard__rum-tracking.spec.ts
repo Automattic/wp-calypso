@@ -82,7 +82,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
 			await snoozeAccountRecoveryInterstitial( clientRestAPI );
-			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+			await accountGivenByEnvironment.authenticate( page );
 		} );
 
 		await test.step( 'When I navigate directly to the sites page', async function () {
@@ -114,7 +114,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
 			await snoozeAccountRecoveryInterstitial( clientRestAPI );
-			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+			await accountGivenByEnvironment.authenticate( page );
 		} );
 
 		await test.step( 'And I am on the sites page', async function () {

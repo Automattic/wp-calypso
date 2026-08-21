@@ -43,7 +43,7 @@ test.describe(
 				const editorTracksEventManager = new EditorTracksEventManager( page );
 
 				await test.step( 'Given I am authenticated', async () => {
-					await testAccount.authenticate( page, { waitUntilStable: false } );
+					await testAccount.authenticate( page );
 				} );
 
 				await test.step( 'When I start a new post', async () => {
@@ -113,7 +113,7 @@ test.describe(
 			const fullSiteEditorPage = new FullSiteEditorPage( page );
 
 			await test.step( 'Given I am authenticated', async () => {
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 			} );
 
 			await test.step( 'When I go to site editor', async () => {

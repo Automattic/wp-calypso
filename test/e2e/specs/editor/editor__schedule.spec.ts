@@ -33,7 +33,7 @@ test.describe(
 
 			await test.step( 'Given I am authenticated', async () => {
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 			} );
 
 			await test.step( 'When I go to the new post page', async () => {
@@ -144,7 +144,7 @@ test.describe(
 				const incognito = await browser!.newContext();
 				const tmpPage = await incognito.newPage();
 				const testAccount = new TestAccount( 'defaultUser' );
-				await testAccount.authenticate( tmpPage, { waitUntilStable: false } );
+				await testAccount.authenticate( tmpPage );
 				await tmpPage.goto( postURL!.href );
 				await new PublishedPostPage( tmpPage ).validateTextInPost( postContent );
 				await tmpPage.close();

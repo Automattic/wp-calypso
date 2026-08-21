@@ -27,7 +27,7 @@ test.describe(
 					},
 				] );
 				const testAccount = new TestAccount( testUser );
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 
 				siteUrl = testAccount
 					.getSiteURL( { protocol: false } )

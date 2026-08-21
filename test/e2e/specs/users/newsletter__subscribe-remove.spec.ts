@@ -107,7 +107,7 @@ test.describe(
 			} );
 
 			await test.step( 'Authenticate as the publishing user', async () => {
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 			} );
 
 			await test.step( 'Navigate to the Subscribers page', async () => {

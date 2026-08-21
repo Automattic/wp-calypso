@@ -20,7 +20,7 @@ test.describe( DataHelper.createSuiteTitle( 'P2: Post' ), { tag: [ tags.P2 ] }, 
 		accountP2,
 	} ) => {
 		await test.step( 'Given I am authenticated as a P2 user', async function () {
-			await accountP2.authenticate( page, { waitUntilStable: false } );
+			await accountP2.authenticate( page );
 			accountUsed = accountP2;
 		} );
 

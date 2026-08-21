@@ -33,7 +33,7 @@ test.describe(
 				const features = envToFeatureKey( envVariables );
 				const accountName = getTestAccountByFeature( features );
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 
 				const restAPIClient = new RestAPIClient( testAccount.credentials );
 

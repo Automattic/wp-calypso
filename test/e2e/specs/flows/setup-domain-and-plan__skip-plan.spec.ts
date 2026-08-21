@@ -15,7 +15,7 @@ test.describe( 'Domain: Upsell (Skip Plan)', { tag: [ tags.CALYPSO_RELEASE ] }, 
 		const siteId = accountAtomic.credentials.testSites?.primary?.id as number;
 
 		await test.step( `And I am authenticated as '${ accountAtomic.accountName }'`, async function () {
-			await accountAtomic.authenticate( page, { waitUntilStable: false } );
+			await accountAtomic.authenticate( page );
 		} );
 
 		await test.step( 'Given I clear any stale cart items', async function () {

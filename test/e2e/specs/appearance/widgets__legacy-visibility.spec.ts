@@ -18,7 +18,7 @@ test.describe(
 			);
 
 			await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-				await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+				await accountGivenByEnvironment.authenticate( page );
 			} );
 
 			await test.step( 'And I have cleared all widgets on my site', async function () {

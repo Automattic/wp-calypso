@@ -30,7 +30,7 @@ test.describe(
 			const editorTracksEventManager = new EditorTracksEventManager( page );
 
 			await test.step( 'Given I am authenticated', async () => {
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 			} );
 
 			await test.step( 'When I start a new post', async () => {
@@ -94,7 +94,7 @@ test.describe(
 
 				await test.step( 'Given I am authenticated', async () => {
 					const testAccount = new TestAccount( accountName );
-					await testAccount.authenticate( page, { waitUntilStable: false } );
+					await testAccount.authenticate( page );
 					siteSlug = testAccount.getSiteURL( { protocol: false } );
 					editorTracksEventManager = new EditorTracksEventManager( page );
 				} );
@@ -164,7 +164,7 @@ test.describe(
 
 				await test.step( 'Given I am authenticated', async () => {
 					testAccount = new TestAccount( siteEditorAccountName );
-					await testAccount.authenticate( page, { waitUntilStable: false } );
+					await testAccount.authenticate( page );
 					editorTracksEventManager = new EditorTracksEventManager( page );
 					fullSiteEditorPage = new FullSiteEditorPage( page );
 				} );
@@ -253,7 +253,7 @@ test.describe(
 
 					await test.step( 'Given I am authenticated', async () => {
 						testAccount = new TestAccount( siteEditorAccountName );
-						await testAccount.authenticate( page, { waitUntilStable: false } );
+						await testAccount.authenticate( page );
 						editorTracksEventManager = new EditorTracksEventManager( page );
 						fullSiteEditorPage = new FullSiteEditorPage( page );
 					} );

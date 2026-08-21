@@ -21,7 +21,7 @@ test.describe(
 			);
 
 			const testAccount = new TestAccount( testAccountName );
-			await testAccount.authenticate( page, { waitUntilStable: false } );
+			await testAccount.authenticate( page );
 
 			const postURL = `https://wordpress.com/post/${ testAccount.getSiteURL( {
 				protocol: false,

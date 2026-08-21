@@ -45,12 +45,16 @@ export class TestAccount {
 	 * Authenticates the account using previously saved cookies or via the login
 	 * page UI if cookies are unavailable.
 	 *
+	 * Does not wait for the landing page to render: almost every spec navigates to
+	 * its own target next and never looks at it, and which shell `/` serves depends
+	 * on the account. Pass `waitUntilStable` to drive the page login lands on.
+	 *
 	 * @param {Page} page Page object.
 	 * @param {string} [url] URL to expect once authenticated and redirections are finished.
 	 */
 	async authenticate(
 		page: Page,
-		{ url, waitUntilStable = true }: { url?: string | RegExp; waitUntilStable?: boolean } = {}
+		{ url, waitUntilStable = false }: { url?: string | RegExp; waitUntilStable?: boolean } = {}
 	): Promise< void > {
 		const browserContext = page.context();
 		await browserContext.clearCookies();

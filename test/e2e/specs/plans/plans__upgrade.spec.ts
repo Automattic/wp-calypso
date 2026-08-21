@@ -101,7 +101,7 @@ test.describe(
 					uploadedMediaUrl = uploadedMedia.URL;
 
 					const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
-					await testAccount.authenticate( page, { waitUntilStable: false } );
+					await testAccount.authenticate( page );
 				},
 				// Bound the API setup (createSite + posts + media) at 60s so a
 				// site-provisioning hang fails here, not as a generic test timeout.

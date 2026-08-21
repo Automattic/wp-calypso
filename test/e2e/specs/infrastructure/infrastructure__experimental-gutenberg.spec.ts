@@ -20,7 +20,7 @@ test.describe(
 
 			await test.step( 'Authenticate', async () => {
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 				editorPage = new EditorPage( page );
 			} );
 

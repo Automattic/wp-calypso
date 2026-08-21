@@ -43,7 +43,7 @@ export function createBlockTests(
 
 			await test.step( 'Given I am authenticated', async () => {
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 			} );
 
 			await test.step( 'When I visit the new post page', async () => {

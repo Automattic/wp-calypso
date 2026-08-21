@@ -57,7 +57,7 @@ test.describe(
 			test.setTimeout( 180 * 1000 );
 
 			await test.step( `Given I am authenticated as '${ accountPreRelease.accountName }'`, async () => {
-				await accountPreRelease.authenticate( page, { waitUntilStable: false } );
+				await accountPreRelease.authenticate( page );
 				accountUsed = accountPreRelease;
 			} );
 

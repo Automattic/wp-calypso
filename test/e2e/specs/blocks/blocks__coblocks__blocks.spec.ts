@@ -40,7 +40,7 @@ test.describe( 'CoBlocks: Blocks', { tag: [ tags.GUTENBERG ] }, () => {
 		await test.step( 'Given I am authenticated', async () => {
 			logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 			const testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page, { waitUntilStable: false } );
+			await testAccount.authenticate( page );
 		} );
 
 		await test.step( 'When I go to the new post page', async () => {

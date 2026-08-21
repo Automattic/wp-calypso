@@ -108,7 +108,7 @@ test.describe(
 					const siteId = testAccount.credentials.testSites?.primary?.id || 0;
 					const siteSlug = testAccount.getSiteURL( { protocol: false } );
 					const socialConnectionsManager = new SocialConnectionsManager( page, siteId );
-					await testAccount.authenticate( page, { waitUntilStable: false } );
+					await testAccount.authenticate( page );
 
 					if ( mockConnections ) {
 						await socialConnectionsManager.mockSocialConnections();

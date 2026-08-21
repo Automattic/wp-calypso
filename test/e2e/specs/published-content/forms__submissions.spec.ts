@@ -198,7 +198,7 @@ test.describe(
 			// --- Validate responses ---
 
 			await test.step( 'Authenticate as site owner', async () => {
-				await testAccount.authenticate( page, { waitUntilStable: false } );
+				await testAccount.authenticate( page );
 
 				// Atomic tests sites might have local users, so the Jetpack SSO login will
 				// show up when visiting the Jetpack dashboard directly. We can bypass it if

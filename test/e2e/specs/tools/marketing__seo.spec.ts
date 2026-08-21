@@ -15,7 +15,7 @@ test.describe(
 			const externalPreviewText = helperData.getRandomPhrase();
 
 			await test.step( `Given I am authenticated as '${ accountAtomic.accountName }'`, async function () {
-				await accountAtomic.authenticate( page, { waitUntilStable: false } );
+				await accountAtomic.authenticate( page );
 			} );
 
 			await test.step( 'When I visit the Tools > Marketing > Traffic page', async function () {
@@ -49,7 +49,7 @@ test.describe(
 			pageJetpackTraffic,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountSimpleSiteFreePlan.accountName }'`, async function () {
-				await accountSimpleSiteFreePlan.authenticate( page, { waitUntilStable: false } );
+				await accountSimpleSiteFreePlan.authenticate( page );
 			} );
 
 			await test.step( 'When I visit the Jetpack > Traffic page', async function () {
