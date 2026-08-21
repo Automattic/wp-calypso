@@ -9,7 +9,7 @@ export default function () {
 	page( '/view/:siteId', ( context ) => page.redirect( `/home/${ context.params.siteId }` ) );
 
 	// Home routes
-	page( '/home', siteSelection, redirectToLandingPage, sites, makeLayout, clientRender );
+	page( '/home', redirectToLandingPage, siteSelection, sites, makeLayout, clientRender );
 
 	page(
 		'/home/:site',

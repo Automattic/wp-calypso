@@ -6,8 +6,8 @@ import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-
 import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
 import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
-import { getQueryArgs } from 'calypso/lib/query-args';
 import { getLoggedInLandingPage } from 'calypso/lib/landing-page';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { getSiteFragment } from 'calypso/lib/route';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -55,7 +55,9 @@ export async function redirectToLandingPage( context, next ) {
 	}
 
 	if ( destination.startsWith( '/' ) ) {
-		page.redirect( destination );
+		page.redirect(
+			context.querystring ? `${ destination }?${ context.querystring }` : destination
+		);
 	} else {
 		window.location.assign( destination );
 	}

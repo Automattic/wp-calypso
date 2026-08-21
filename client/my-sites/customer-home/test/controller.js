@@ -23,7 +23,7 @@ const flushPromises = async () => {
 	}
 };
 
-const buildContext = () => ( {
+const buildContext = ( { querystring = '' } = {} ) => ( {
 	store: mockStore( {
 		currentUser: { id: 1, user: { primary_blog: 1, site_count: 3, visible_site_count: 3 } },
 		sites: { items: {} },
@@ -31,7 +31,7 @@ const buildContext = () => ( {
 	} ),
 	path: '/home',
 	pathname: '/home',
-	querystring: '',
+	querystring,
 	query: {},
 	params: {},
 } );
@@ -85,6 +85,16 @@ describe( 'redirectToLandingPage', () => {
 		expect( assign ).toHaveBeenCalledWith( destination );
 		expect( redirect ).not.toHaveBeenCalled();
 		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'carries the querystring across to the resolved destination', async () => {
+		getLoggedInLandingPage.mockResolvedValue( '/home/test.wordpress.com' );
+		const next = jest.fn();
+
+		redirectToLandingPage( buildContext( { querystring: 'verified=1' } ), next );
+		await flushPromises();
+
+		expect( redirect ).toHaveBeenCalledWith( '/home/test.wordpress.com?verified=1' );
 	} );
 
 	it( 'falls through to the site picker when the resolver produces nothing usable', async () => {
