@@ -55,17 +55,49 @@ export class TestAccount {
 		const browserContext = page.context();
 		await browserContext.clearCookies();
 
-		if ( await this.hasFreshAuthCookies() ) {
+		const hasFreshCookies = await this.hasFreshAuthCookies();
+
+		if ( hasFreshCookies ) {
 			this.log( 'Found fresh cookies, skipping log in' );
 			await browserContext.addCookies( await this.getAuthCookies() );
 			await page.goto( getCalypsoURL( '/' ) );
-		} else {
+		}
+
+		// Freshness is read off the cookie file's age, but the session behind it can be gone
+		// well inside that window, having expired or been invalidated by another run logging
+		// in as the same account. WordPress.com answers a rejected session by redirecting to
+		// the login page, which otherwise surfaces much later as a missing app shell.
+		const cookiesRejected = hasFreshCookies && TestAccount.isLoginPage( page.url() );
+
+		if ( cookiesRejected ) {
+			this.log( 'Saved cookies were rejected, discarding them' );
+			await browserContext.clearCookies();
+		}
+
+		if ( ! hasFreshCookies || cookiesRejected ) {
 			this.log( 'Logging in via Login Page' );
 			await this.logInViaLoginPage( page );
 		}
 
+		if ( cookiesRejected ) {
+			// Replace the file the rejected cookies came from, so the workers still to
+			// start reuse this session instead of tripping over the same dead one.
+			await this.saveAuthCookies( browserContext );
+		}
+
 		if ( url ) {
 			await page.waitForURL( url, { timeout: 20 * 1000 } );
+		}
+	}
+
+	/**
+	 * Whether a URL is the login page, including its locale-suffixed forms.
+	 */
+	private static isLoginPage( url: string ): boolean {
+		try {
+			return new URL( url ).pathname.startsWith( '/log-in' );
+		} catch {
+			return false;
 		}
 	}
 
