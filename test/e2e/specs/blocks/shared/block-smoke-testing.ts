@@ -43,7 +43,9 @@ export function createBlockTests(
 
 			await test.step( 'Given I am authenticated', async () => {
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				// The next step navigates straight to the editor by URL, so whichever shell `/`
+				// renders is never used. Waiting for one only adds a way to fail.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'When I visit the new post page', async () => {
