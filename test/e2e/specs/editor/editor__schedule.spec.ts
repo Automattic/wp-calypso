@@ -33,7 +33,9 @@ test.describe(
 
 			await test.step( 'Given I am authenticated', async () => {
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				// The next step navigates straight to the editor by URL, so whichever shell `/`
+				// renders is never used. Waiting for one only adds a way to fail.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'When I go to the new post page', async () => {
@@ -144,7 +146,7 @@ test.describe(
 				const incognito = await browser!.newContext();
 				const tmpPage = await incognito.newPage();
 				const testAccount = new TestAccount( 'defaultUser' );
-				await testAccount.authenticate( tmpPage );
+				await testAccount.authenticate( tmpPage, { waitUntilStable: false } );
 				await tmpPage.goto( postURL!.href );
 				await new PublishedPostPage( tmpPage ).validateTextInPost( postContent );
 				await tmpPage.close();
