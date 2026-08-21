@@ -95,9 +95,7 @@ export const sitesRoute = createRoute( {
 			// Settle the deleted-sites check before first paint. Prefetched rather
 			// than ensured so a failed check falls back to the onboarding empty
 			// state instead of erroring the whole route.
-			...( userHasNoLiveSites( user )
-				? [ queryClient.prefetchQuery( hasDeletedSitesQuery() ) ]
-				: [] ),
+			userHasNoLiveSites( user ) &&  queryClient.ensureQueryData( hasDeletedSitesQuery() )
 		] );
 	},
 } );
