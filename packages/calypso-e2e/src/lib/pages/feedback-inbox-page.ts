@@ -2,17 +2,25 @@ import { Locator, Page } from 'playwright';
 import { envVariables } from '../..';
 
 /**
- * How long a response action can take on the single response page.
+ * How long to wait for a response action to settle on the single response page.
  *
- * Jetpack gives the save itself 30 seconds, then spends up to another 10 waiting
- * for the record cache to resolve, and keeps the "Actions" toggle disabled for
- * both. Anything shorter than the sum gives up on a slow-but-healthy request.
- * Specs driving these actions raise their own timeout to suit — the default 2
- * minute budget cannot absorb this ceiling across a multi-action flow.
+ * Jetpack caps the save at 30 seconds and keeps the "Actions" toggle disabled
+ * until it resolves, so this matches that cap. It deliberately stops short of
+ * the further 10 seconds Jetpack may spend refreshing the record cache: a save
+ * that slow is already a failure, and a tighter bound keeps a wedged run failing
+ * here — where the error names the toggle — instead of as a bare test timeout.
  *
  * @see https://github.com/Automattic/jetpack/blob/trunk/projects/packages/forms/routes/responses/actions.tsx
  */
-const RESPONSE_ACTION_TIMEOUT = 45 * 1000;
+const RESPONSE_ACTION_TIMEOUT = 30 * 1000;
+
+/**
+ * How long to wait for the actions dropdown itself to open or close.
+ *
+ * The menu opens and closes in a single render, so this only has to absorb
+ * scheduling jitter — it must not soak up a whole request's worth of time.
+ */
+const RESPONSE_MENU_TIMEOUT = 10 * 1000;
 
 /**
  * Page repsresenting the Feedback page, Inbox view variant. Accessed under Sidebar > Feedback.
@@ -95,7 +103,7 @@ export class FeedbackInboxPage {
 		// notification to wait on. The dropdown closes and disables its toggle in the
 		// same render, so once the item is gone a re-enabled toggle means the request
 		// settled.
-		await menuItem.waitFor( { state: 'detached', timeout: RESPONSE_ACTION_TIMEOUT } );
+		await menuItem.waitFor( { state: 'detached', timeout: RESPONSE_MENU_TIMEOUT } );
 		await actionsMenu
 			.getByRole( 'button', { name: 'Actions', disabled: false } )
 			.waitFor( { timeout: RESPONSE_ACTION_TIMEOUT } );
@@ -113,10 +121,10 @@ export class FeedbackInboxPage {
 			name: expectedFollowUpAction,
 			exact: true,
 		} );
-		await followUpItem.waitFor( { state: 'visible', timeout: 10 * 1000 } );
+		await followUpItem.waitFor( { state: 'visible', timeout: RESPONSE_MENU_TIMEOUT } );
 		// Same close-and-confirm dance as verifyActionExistsInMenu.
 		await this.page.keyboard.press( 'Escape' );
-		await followUpItem.waitFor( { state: 'detached', timeout: 5000 } );
+		await followUpItem.waitFor( { state: 'detached', timeout: RESPONSE_MENU_TIMEOUT } );
 	}
 
 	/**
