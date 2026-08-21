@@ -1,22 +1,28 @@
+import { addQueryArgs } from '@wordpress/url';
+import { PLANS_PRESALES_LAUNCHER_CONTEXT } from './constants';
 import { HelpCenterThunkProps } from './types';
 import { getPersistedPreference } from './utils';
 
 export function isHelpCenterShown() {
 	return async ( { dispatch, select }: HelpCenterThunkProps ) => {
 		if ( select.hasLoggedOutOdieChat() ) {
-			// The plans-presales launcher reopens straight into the saved
-			// conversation; other surfaces keep landing on home.
-			// 'plans-presales' mirrors PLANS_PRESALES_LAUNCHER_CONTEXT in
-			// @automattic/odie-client (importing it would create a cycle).
+			// Presales reopens the saved conversation; other surfaces land on home.
+			const options = select.getHelpCenterOptions();
+			const isPresales = options?.launcherContext === PLANS_PRESALES_LAUNCHER_CONTEXT;
 			const chat =
-				select.getHelpCenterOptions()?.launcherContext === 'plans-presales'
-					? select.getAnyLoggedOutOdieChat()
+				isPresales && options?.loggedOutBotSlug
+					? select.getLoggedOutOdieChat( options.loggedOutBotSlug )
 					: undefined;
-			const route = chat
-				? `/odie?chatId=${ encodeURIComponent( chat.odieId ) }&sessionId=${ encodeURIComponent(
-						chat.sessionId
-				  ) }&botSlug=${ encodeURIComponent( chat.botSlug ) }`
-				: '/';
+			let route = '/';
+			if ( isPresales ) {
+				route = chat
+					? addQueryArgs( '/odie', {
+							chatId: chat.odieId,
+							sessionId: chat.sessionId,
+							botSlug: chat.botSlug,
+					  } )
+					: '/odie';
+			}
 			dispatch( {
 				type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
 				route,

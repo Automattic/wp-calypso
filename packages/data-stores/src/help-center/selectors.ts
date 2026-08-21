@@ -34,21 +34,6 @@ export const getLoggedOutOdieChat = ( state: State, botSlug: string ) => {
 	// Read the temporary keyed shape previously persisted under the singular field.
 	return legacySession?.[ botSlug ];
 };
-export const getAnyLoggedOutOdieChat = ( state: State ): LoggedOutOdieChat | undefined => {
-	const keyed = Object.values( state.loggedOutOdieChats ?? {} ).find( isLoggedOutOdieChat );
-
-	if ( keyed ) {
-		return keyed;
-	}
-
-	const legacySession = state.loggedOutOdieChat;
-
-	if ( isLoggedOutOdieChat( legacySession ) ) {
-		return legacySession;
-	}
-
-	return Object.values( legacySession ?? {} ).find( isLoggedOutOdieChat );
-};
 export const hasLoggedOutOdieChat = ( state: State ) => {
 	if ( state.loggedOutOdieChats && Object.keys( state.loggedOutOdieChats ).length ) {
 		return true;

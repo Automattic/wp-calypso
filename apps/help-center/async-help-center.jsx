@@ -32,6 +32,7 @@ export default function loadHelpCenter() {
 		if ( customProps.launcherContext ) {
 			dispatch( 'automattic/help-center' ).setHelpCenterOptions( {
 				launcherContext: customProps.launcherContext,
+				loggedOutBotSlug: customProps.newLoggedOutInteractionsBotSlug,
 			} );
 		}
 		return createRoot( container ).render(

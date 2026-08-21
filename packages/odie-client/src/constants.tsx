@@ -1,3 +1,4 @@
+import { HelpCenter } from '@automattic/data-stores';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
@@ -5,12 +6,19 @@ declare const __i18n_text_domain__: string;
 
 type HasEnTranslation = ( single: string, context?: string, domain?: string ) => boolean;
 
-// Set by the wpcom launcher on the pricing page so the assistant greets visitors as a pre-sales guide.
-export const PLANS_PRESALES_LAUNCHER_CONTEXT = 'plans-presales';
+export const PLANS_PRESALES_LAUNCHER_CONTEXT = HelpCenter.PLANS_PRESALES_LAUNCHER_CONTEXT;
 
 // Shared with the panel title gate so greeting and title switch together per locale.
 export const PLANS_PRESALES_INTRO_MESSAGE =
 	"Not sure which plan fits? Tell me what kind of site you're building, and I'll help you choose.";
+
+// Single gate for the presales surface, so greeting, title, and chips switch together per locale.
+export const isPlansPresalesExperience = (
+	launcherContext?: string,
+	hasEnTranslation?: HasEnTranslation
+): boolean =>
+	launcherContext === PLANS_PRESALES_LAUNCHER_CONTEXT &&
+	!! hasEnTranslation?.( PLANS_PRESALES_INTRO_MESSAGE, undefined, __i18n_text_domain__ );
 
 export const getOdieErrorMessage = (): string =>
 	__(
@@ -274,13 +282,11 @@ const getOdieIntroMessage = (
 	launcherContext?: string,
 	hasEnTranslation?: HasEnTranslation
 ): string => {
-	if ( launcherContext === PLANS_PRESALES_LAUNCHER_CONTEXT ) {
-		if ( hasEnTranslation?.( PLANS_PRESALES_INTRO_MESSAGE, undefined, __i18n_text_domain__ ) ) {
-			return __(
-				"Not sure which plan fits? Tell me what kind of site you're building, and I'll help you choose.",
-				__i18n_text_domain__
-			);
-		}
+	if ( isPlansPresalesExperience( launcherContext, hasEnTranslation ) ) {
+		return __(
+			"Not sure which plan fits? Tell me what kind of site you're building, and I'll help you choose.",
+			__i18n_text_domain__
+		);
 	}
 
 	return hasEnTranslation?.(
