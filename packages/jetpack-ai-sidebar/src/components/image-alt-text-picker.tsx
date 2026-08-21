@@ -31,7 +31,7 @@ interface AltTextSuggestion {
 }
 
 interface ImageAltTextPickerProps {
-	images: AltTextSuggestion[];
+	images?: AltTextSuggestion[];
 	onComplete?: () => void;
 	onResponseAction?: OnResponseAction;
 }
@@ -78,13 +78,17 @@ export default function ImageAltTextPicker( {
 
 	const count = images.length;
 
+	// The props arrive from an orchestrator tool payload, so guard the shape
+	// instead of trusting the TypeScript type.
+	const rows = Array.isArray( images ) ? images : [];
+
 	return (
 		<div className="jetpack-ai-image-alt-text-picker">
 			<p className="jetpack-ai-image-alt-text-picker__intro">
 				{ __( 'Suggested alt text for your images:', 'jetpack' ) }
 			</p>
 			<ul className="jetpack-ai-image-alt-text-picker__list">
-				{ images.map( ( image ) => (
+				{ rows.map( ( image ) => (
 					<li key={ image.clientId } className="jetpack-ai-image-alt-text-picker__row">
 						{ image.url && (
 							<img

@@ -117,4 +117,13 @@ describe( 'ExcerptPicker', () => {
 		expect( applied ).toHaveAttribute( 'aria-pressed', 'true' );
 		expect( screen.getByText( 'Excerpt updated.' ) ).toBeInTheDocument();
 	} );
+
+	it.each( [
+		[ 'omitted', undefined ],
+		[ 'not an array', 'text' as any ],
+	] )( 'renders without options when %s, instead of throwing', ( _label, excerpts ) => {
+		// History strips the picker options to save tokens, so a restored row can
+		// reach this component with nothing to show. Mirrors usePickerVariations.
+		expect( () => render( <ExcerptPicker excerpts={ excerpts } /> ) ).not.toThrow();
+	} );
 } );

@@ -37,7 +37,7 @@ interface SeoTitleOption {
 }
 
 interface SeoTitlePickerProps {
-	titles: SeoTitleOption[];
+	titles?: SeoTitleOption[];
 	onComplete?: () => void;
 	onResponseAction?: OnResponseAction;
 }
@@ -66,10 +66,14 @@ export default function SeoTitlePicker( {
 		[ editPost ]
 	);
 
+	// The props arrive from an orchestrator tool payload, so guard the shape
+	// instead of trusting the TypeScript type.
+	const options = Array.isArray( titles ) ? titles.map( ( option ) => option.title ) : [];
+
 	return (
 		<BaseSuggestionPicker
 			intro={ __( 'Choose an SEO title for your post:', 'jetpack' ) }
-			options={ titles.map( ( option ) => option.title ) }
+			options={ options }
 			onApply={ handleApply }
 			onComplete={ onComplete }
 			appliedMessage={ __( 'SEO title updated.', 'jetpack' ) }

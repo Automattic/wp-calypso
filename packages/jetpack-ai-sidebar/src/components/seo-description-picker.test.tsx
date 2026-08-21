@@ -96,4 +96,13 @@ describe( 'SeoDescriptionPicker', () => {
 		expect( applied ).toHaveAttribute( 'aria-pressed', 'true' );
 		expect( screen.getByText( 'SEO description updated.' ) ).toBeInTheDocument();
 	} );
+
+	it.each( [
+		[ 'omitted', undefined ],
+		[ 'not an array', 'text' as any ],
+	] )( 'renders without options when %s, instead of throwing', ( _label, descriptions ) => {
+		// History strips the picker options to save tokens, so a restored row can
+		// reach this component with nothing to show. Mirrors usePickerVariations.
+		expect( () => render( <SeoDescriptionPicker descriptions={ descriptions } /> ) ).not.toThrow();
+	} );
 } );

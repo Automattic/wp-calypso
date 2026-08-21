@@ -86,4 +86,13 @@ describe( 'SeoTitlePicker', () => {
 		expect( applied ).toHaveAttribute( 'aria-pressed', 'true' );
 		expect( screen.getByText( 'SEO title updated.' ) ).toBeInTheDocument();
 	} );
+
+	it.each( [
+		[ 'omitted', undefined ],
+		[ 'not an array', 'text' as any ],
+	] )( 'renders without options when %s, instead of throwing', ( _label, titles ) => {
+		// History strips the picker options to save tokens, so a restored row can
+		// reach this component with nothing to show. Mirrors usePickerVariations.
+		expect( () => render( <SeoTitlePicker titles={ titles } /> ) ).not.toThrow();
+	} );
 } );

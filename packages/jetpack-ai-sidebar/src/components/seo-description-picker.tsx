@@ -36,7 +36,7 @@ interface SeoDescriptionOption {
 }
 
 interface SeoDescriptionPickerProps {
-	descriptions: SeoDescriptionOption[];
+	descriptions?: SeoDescriptionOption[];
 	onComplete?: () => void;
 	onResponseAction?: OnResponseAction;
 }
@@ -65,10 +65,16 @@ export default function SeoDescriptionPicker( {
 		[ editPost ]
 	);
 
+	// The props arrive from an orchestrator tool payload, so guard the shape
+	// instead of trusting the TypeScript type.
+	const options = Array.isArray( descriptions )
+		? descriptions.map( ( option ) => option.description )
+		: [];
+
 	return (
 		<BaseSuggestionPicker
 			intro={ __( 'Choose an SEO description for your post:', 'jetpack' ) }
-			options={ descriptions.map( ( option ) => option.description ) }
+			options={ options }
 			onApply={ handleApply }
 			onComplete={ onComplete }
 			appliedMessage={ __( 'SEO description updated.', 'jetpack' ) }

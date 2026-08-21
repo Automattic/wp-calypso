@@ -28,7 +28,7 @@ interface TitleOption {
 }
 
 interface TitlePickerProps {
-	titles: TitleOption[];
+	titles?: TitleOption[];
 	onComplete?: () => void;
 	onResponseAction?: OnResponseAction;
 }
@@ -54,10 +54,14 @@ export default function TitlePicker( { titles, onComplete, onResponseAction }: T
 		[ editPost ]
 	);
 
+	// The props arrive from an orchestrator tool payload, so guard the shape
+	// instead of trusting the TypeScript type.
+	const options = Array.isArray( titles ) ? titles.map( ( option ) => option.title ) : [];
+
 	return (
 		<BaseSuggestionPicker
 			intro={ __( 'Choose a title for your post:', __i18n_text_domain__ ) }
-			options={ titles.map( ( option ) => option.title ) }
+			options={ options }
 			onApply={ handleApply }
 			onComplete={ onComplete }
 			appliedMessage={ __( 'Title updated.', __i18n_text_domain__ ) }
