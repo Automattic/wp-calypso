@@ -239,6 +239,17 @@ const mockAgentChat = jest.fn(
 			>
 				Click post dropdown suggestion
 			</button>
+			<button
+				onClick={ () =>
+					onSuggestionClick( {
+						id: 'get-feedback',
+						label: 'Get feedback Proofread',
+						prompt: 'Proofread this saved post',
+					} )
+				}
+			>
+				Click feedback dropdown without context
+			</button>
 			<button onClick={ () => onSuggestionClick( 'Check the grammar and spelling of this text' ) }>
 				Click string suggestion
 			</button>
@@ -881,6 +892,31 @@ describe( 'OrchestratorChat', () => {
 			suggestion_id: 'seo-enhancer',
 			available_suggestions: '|seo-enhancer|',
 			option_id: 'seo-title',
+		} );
+	} );
+
+	it( 'records the option when the click carries no available suggestions', () => {
+		// Agenttic's own container reports the footer list, which is empty while the
+		// chips live in the empty view.
+		const feedback = {
+			id: 'get-feedback',
+			label: 'Get feedback',
+			prompt: '',
+			options: [
+				{ id: 'proofread-content', label: 'Proofread', value: 'Proofread this saved post' },
+			],
+		};
+
+		render( chat( { emptyViewSuggestions: [ feedback ] } ) );
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+
+		fireEvent.click( screen.getByText( 'Click feedback dropdown without context' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
+			suggestion_text: 'Proofread this saved post',
+			suggestion_id: 'get-feedback',
+			available_suggestions: '|get-feedback|',
+			option_id: 'proofread-content',
 		} );
 	} );
 
