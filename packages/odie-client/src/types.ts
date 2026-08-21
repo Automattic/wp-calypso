@@ -140,7 +140,11 @@ export type Context = {
 		 * what the approval actually binds, for a "view exact parameters" affordance.
 		 */
 		details?: string;
-		declared_destructive?: boolean | null;
+		/**
+		 * The server's classification of the action when the proposal was minted
+		 * (e.g. 'needs_approval', 'always_confirm'); null when unclassified.
+		 */
+		tier?: string | null;
 		how_to_approve?: string;
 		reason?: string;
 	};
