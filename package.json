@@ -333,7 +333,6 @@
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {
-		"@ariakit/react": "0.4.37",
 		"@babel/core@npm:7.25.7": "7.29.7",
 		"@babel/runtime@npm:7.25.7": "7.29.2",
 		"@opentelemetry/core@npm:2.2.0": "2.8.0",
