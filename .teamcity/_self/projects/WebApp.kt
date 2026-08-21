@@ -1030,12 +1030,11 @@ object PreReleaseE2ETests : BuildType({
 	id("calypso_WebApp_Calypso_E2E_Pre_Release")
 	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
 	name = "Pre-Release E2E Tests"
-	description = "Runs pre-release suites of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
+	description = "Runs pre-release suites of E2E tests against the trunk build image, intended to be run after PR merge, but before deployment to production."
 
 	params {
 		text("TEST_GROUP", "@calypso-release")
-		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
+		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
 		param("env.AUTHENTICATE_ACCOUNTS", "atomicUser,calypsoPreReleaseUser,defaultUser,simpleSiteFreePlanUser,simpleSitePersonalPlanUser")
 	}
 
@@ -1059,6 +1058,12 @@ object PreReleaseE2ETests : BuildType({
 			buildFailed = true
 			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
+		}
+	}
+
+	dependencies {
+		snapshot(BuildDockerImage) {
+			onDependencyFailure = FailureAction.FAIL_TO_START
 		}
 	}
 })
