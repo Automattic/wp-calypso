@@ -44,6 +44,7 @@
 		"dark-mode": false,
 		"dashboard/enable-percentage-rollout": true,
 		"dashboard/force-opt-in-visibility": false,
+		"dashboard/omnibar-radical": true,
 		"dashboard/opt-in-welcome-modal": true,
 		"dashboard/rollout-advance-notice": true,
 		"dashboard/simulate-full-rollout": true,
