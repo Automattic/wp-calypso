@@ -32,7 +32,7 @@
 			display: block;
 			object-fit: cover;
 			border-radius: 50%;
-			background: var( --omnibar-avatar-ring-color );
+			background: var( --omnibar-avatar-background );
 		}
 	}
 
@@ -79,6 +79,10 @@
 			width: 64px;
 			height: 64px;
 			border: 0;
+
+			> * {
+				background: none;
+			}
 		}
 
 		[role='group']:has( .omnibar__user ) [role='menuitem'] {
