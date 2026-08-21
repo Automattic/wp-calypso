@@ -42,17 +42,16 @@ const VideoContainer = styled.div< { isMobile: boolean } >`
 		min-height: ${ ( { isMobile } ) => ( isMobile ? '100%' : 'unset' ) };
 	}
 `;
-const hundredYearProducts = [
-	PLAN_100_YEARS,
-	domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION,
-	domainProductSlugs.TRANSFER_IN,
-] as const;
+type HundredYearProduct =
+	| typeof PLAN_100_YEARS
+	| typeof domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
+	| typeof domainProductSlugs.TRANSFER_IN;
 
 interface Props {
 	siteId?: number;
 	siteSlug?: string;
 	receiptId: number;
-	productSlug: ( typeof hundredYearProducts )[ number ];
+	productSlug: HundredYearProduct;
 }
 
 const MasterBar = styled.div`
