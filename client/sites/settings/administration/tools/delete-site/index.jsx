@@ -158,7 +158,6 @@ class DeleteSite extends Component {
 		try {
 			this.setState( { isDeletingSite: true } );
 			await this.props.deleteSite( this.props.siteId );
-			page.redirect( '/sites' );
 		} finally {
 			this.setState( { isDeletingSite: false } );
 		}

@@ -87,6 +87,18 @@ describe( 'redirectToLandingPage', () => {
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
+	it( 'carries the querystring across to an absolute destination', async () => {
+		getLoggedInLandingPage.mockResolvedValue( 'https://my.wordpress.com/sites' );
+		const assign = jest.fn();
+		Object.defineProperty( window, 'location', { value: { assign }, configurable: true } );
+		const next = jest.fn();
+
+		redirectToLandingPage( buildContext( { querystring: 'verified=1' } ), next );
+		await flushPromises();
+
+		expect( assign ).toHaveBeenCalledWith( 'https://my.wordpress.com/sites?verified=1' );
+	} );
+
 	it( 'carries the querystring across to the resolved destination', async () => {
 		getLoggedInLandingPage.mockResolvedValue( '/home/test.wordpress.com' );
 		const next = jest.fn();

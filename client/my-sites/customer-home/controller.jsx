@@ -54,10 +54,12 @@ export async function redirectToLandingPage( context, next ) {
 		return;
 	}
 
+	if ( context.querystring ) {
+		destination += ( destination.includes( '?' ) ? '&' : '?' ) + context.querystring;
+	}
+
 	if ( destination.startsWith( '/' ) ) {
-		page.redirect(
-			context.querystring ? `${ destination }?${ context.querystring }` : destination
-		);
+		page.redirect( destination );
 	} else {
 		window.location.assign( destination );
 	}
