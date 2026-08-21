@@ -1,0 +1,111 @@
+import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
+import { fetchPreferences } from 'calypso/state/preferences/actions';
+import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import getIsSubscriptionOnly from 'calypso/state/selectors/get-is-subscription-only';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { requestSite } from 'calypso/state/sites/actions';
+import {
+	canCurrentUserUseCustomerHome,
+	getSite,
+	getSiteSlug,
+	getSiteAdminUrl,
+	isAdminInterfaceWPAdmin,
+} from 'calypso/state/sites/selectors';
+import { hasReadersAsLandingPage } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
+import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
+
+// Helper thunk that ensures that the requested site info is fetched into Redux state before we
+// continue working with it.
+// The `siteSelection` handler in `my-sites/controller` contains similar code.
+const waitForSite = ( siteId ) => async ( dispatch, getState ) => {
+	if ( getSite( getState(), siteId ) ) {
+		return;
+	}
+
+	try {
+		await dispatch( requestSite( siteId ) );
+	} catch {
+		// if the fetching of site info fails, return gracefully and proceed to redirect to Reader
+	}
+};
+
+// Helper thunk that ensures that the user preferences has been fetched into Redux state before we
+// continue working with it.
+const waitForPrefs = () => async ( dispatch, getState ) => {
+	if ( hasReceivedRemotePreferences( getState() ) ) {
+		return;
+	}
+
+	try {
+		await dispatch( fetchPreferences() );
+	} catch {
+		// if the fetching of preferences fails, return gracefully and proceed to the next landing page candidate
+	}
+};
+
+const getSitesLink = ( isDashboardOptIn ) => {
+	if ( isDashboardOptIn ) {
+		bumpStat( 'dashboard-redirect', 'landing-page' );
+		return dashboardLink( '/sites' );
+	}
+
+	return '/sites';
+};
+
+// Resolves the account's normal landing destination. Requires a booted Calypso
+// store; the login app's store has no `sites` reducer.
+export async function getLoggedInLandingPage( { dispatch, getState } ) {
+	await dispatch( waitForPrefs() );
+	const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
+	const dashboardOptIn = hasDashboardOptIn( getState() );
+
+	if ( useSitesAsLandingPage ) {
+		return getSitesLink( dashboardOptIn );
+	}
+
+	const useReaderAsLandingPage = hasReadersAsLandingPage( getState() );
+
+	if ( useReaderAsLandingPage ) {
+		return '/reader';
+	}
+
+	// determine the primary site ID (it's a property of "current user" object) and then
+	// ensure that the primary site info is loaded into Redux before proceeding.
+	const primarySiteId = getPrimarySiteId( getState() );
+	await dispatch( waitForSite( primarySiteId ) );
+	const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
+
+	if ( ! primarySiteSlug ) {
+		if ( getIsSubscriptionOnly( getState() ) ) {
+			return '/reader';
+		}
+
+		// there is no primary site or the site info couldn't be fetched. Redirect to Sites Dashboard.
+		return getSitesLink( dashboardOptIn );
+	}
+
+	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( getState(), primarySiteId );
+
+	if ( isCustomerHomeEnabled ) {
+		if ( isAdminInterfaceWPAdmin( getState(), primarySiteId ) ) {
+			return getSiteAdminUrl( getState(), primarySiteId );
+		}
+		return `/home/${ primarySiteSlug }`;
+	}
+
+	return `/stats/day/${ primarySiteSlug }`;
+}
+
+// Sends the user to their normal landing destination. Absolute URLs (wp-admin)
+// can't go through the in-app router.
+export async function navigateToLandingPage( store, page ) {
+	const destination = await getLoggedInLandingPage( store );
+
+	if ( destination.startsWith( '/' ) ) {
+		page( destination );
+	} else {
+		window.location.assign( destination );
+	}
+}
