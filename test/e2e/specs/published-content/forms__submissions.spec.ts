@@ -86,10 +86,6 @@ test.describe(
 				'Form submissions not supported on private sites'
 			);
 
-			// One status action can wait out Jetpack's 30s save plus a 10s record
-			// refresh, and this test drives several of them in a single flow.
-			test.setTimeout( 4 * 60 * 1000 );
-
 			let publishedFormLocator: Locator;
 			let restAPIClient: RestAPIClient;
 			let newPostDetails: PostResponse;
