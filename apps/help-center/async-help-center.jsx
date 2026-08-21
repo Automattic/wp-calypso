@@ -8,9 +8,6 @@ export default function loadHelpCenter() {
 		return Promise.resolve();
 	}
 	const queryClient = new QueryClient();
-	const container = document.createElement( 'div' );
-	container.id = 'jetpack-help-center';
-	document.body.appendChild( container );
 
 	const customProps = {};
 
@@ -27,6 +24,11 @@ export default function loadHelpCenter() {
 	}
 
 	return import( '@automattic/help-center' ).then( ( { default: HelpCenter } ) => {
+		// Only append once the chunk has loaded, so a failed import leaves no container behind and retries can mount.
+		const container = document.createElement( 'div' );
+		container.id = 'jetpack-help-center';
+		document.body.appendChild( container );
+
 		// Before the first render, so store resolvers (e.g. the logged-out
 		// auto-open route) already know which launcher surface this is.
 		if ( customProps.launcherContext ) {
