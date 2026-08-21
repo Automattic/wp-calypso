@@ -126,6 +126,22 @@ jest.mock( 'calypso/reader/onboarding-rsm/subscribe-modal', () => ( {
 	),
 } ) );
 
+jest.mock( 'calypso/reader/onboarding-rsm/early-readers-modal', () => ( {
+	EarlyReadersModal: ( { onDecline }: { onDecline: () => void } ) => (
+		<div data-testid="early-readers-modal-content">
+			<button onClick={ onDecline }>No thanks</button>
+		</div>
+	),
+} ) );
+
+// ── ExPlat ────────────────────────────────────────────────────────────────────
+
+// Default to no assignment (control experience) so the pre-existing 3-step
+// suites exercise the unchanged flow; treatment cases override per-test.
+jest.mock( 'calypso/lib/explat', () => ( {
+	useExperiment: jest.fn( () => [ false, null ] ),
+} ) );
+
 // ── Redux / selectors ─────────────────────────────────────────────────────────
 
 jest.mock( 'calypso/state/preferences/selectors', () => ( {
@@ -205,6 +221,11 @@ beforeEach( () => {
 	jest.mocked( savePreference ).mockClear();
 	jest.mocked( recordTracksEvent ).mockClear();
 	jest.mocked( isEnabled ).mockReturnValue( false );
+
+	const { useExperiment } = jest.requireMock( 'calypso/lib/explat' ) as {
+		useExperiment: jest.Mock;
+	};
+	useExperiment.mockReturnValue( [ false, null ] );
 
 	const { getPreference } = jest.requireMock( 'calypso/state/preferences/selectors' ) as {
 		getPreference: jest.Mock;
@@ -1288,5 +1309,134 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 		expect(
 			screen.queryByRole( 'button', { name: 'Dismiss onboarding checklist' } )
 		).not.toBeInTheDocument();
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
+	const setTreatmentAssignment = () => {
+		const { useExperiment } = jest.requireMock( 'calypso/lib/explat' ) as {
+			useExperiment: jest.Mock;
+		};
+		useExperiment.mockReturnValue( [ false, { variationName: 'treatment' } ] );
+	};
+
+	const navigateToDiscoverStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+	};
+
+	it( 'shows the early-readers step after Finish instead of completing, and defers completion work', async () => {
+		setTreatmentAssignment();
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( await screen.findByTestId( 'early-readers-modal-content' ) ).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }early_readers_modal_open`
+		);
+		// Discover's step side effects still ran on the transition.
+		expect( mockRefreshFollowingStreams ).toHaveBeenCalled();
+		// Completion work is deferred to the early-readers exits.
+		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.anything()
+		);
+	} );
+
+	it( 'completes onboarding when the user declines', async () => {
+		setTreatmentAssignment();
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
+
+		await user.click( screen.getByRole( 'button', { name: 'No thanks' } ) );
+
+		expect( screen.queryByTestId( 'early-readers-modal-content' ) ).not.toBeInTheDocument();
+		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( flushOnboardingWelcomeDigest ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.any( Object )
+		);
+	} );
+
+	it( 'completes onboarding when the step is dismissed (X / outside click)', async () => {
+		setTreatmentAssignment();
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( screen.queryByTestId( 'early-readers-modal-content' ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }early_readers_modal_close`
+		);
+		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( flushOnboardingWelcomeDigest ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.any( Object )
+		);
+	} );
+
+	it( 'navigates back to the discover step without completing', async () => {
+		setTreatmentAssignment();
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		expect( await screen.findByTestId( 'subscribe-modal-content' ) ).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }early_readers_modal_back`
+		);
+		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
+	} );
+
+	it( 'completes directly from Finish when the assignment is control', async () => {
+		// Default mock: no assignment. Finish must behave exactly as before the
+		// experiment existed.
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( screen.queryByTestId( 'early-readers-modal-content' ) ).not.toBeInTheDocument();
+		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+	} );
+
+	it( 'shows the early-readers step under reader/force-onboarding without an assignment', async () => {
+		jest
+			.mocked( isEnabled )
+			.mockImplementation( ( flag: string ) => flag === 'reader/force-onboarding' );
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( await screen.findByTestId( 'early-readers-modal-content' ) ).toBeVisible();
 	} );
 } );

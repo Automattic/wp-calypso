@@ -10,10 +10,12 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
+import { useExperiment } from 'calypso/lib/explat';
 import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import {
+	READER_EARLY_READERS_EXPERIMENT_NAME,
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
@@ -22,6 +24,7 @@ import {
 	READER_ONBOARDING_PREFERENCE_KEY,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
+import { EarlyReadersModal } from 'calypso/reader/onboarding-rsm/early-readers-modal';
 import InterestsModal from 'calypso/reader/onboarding-rsm/interests-modal';
 import { getPackBlogs } from 'calypso/reader/onboarding-rsm/interests-modal/get-pack-blogs';
 import { getTopicGroups } from 'calypso/reader/onboarding-rsm/interests-modal/topic-groups';
@@ -43,12 +46,13 @@ import './style.scss';
 // them feel seamless (no close/open animation between steps). The active
 // step's body is rendered as the only child of the shared modal; the
 // per-step CSS class on the modal frame keeps existing styles working.
-type Step = 'welcome' | 'interests' | 'discover';
+type Step = 'welcome' | 'interests' | 'discover' | 'early-readers';
 
 const STEP_FRAME_CLASS: Record< Step, string > = {
 	welcome: 'reader-welcome-modal',
 	interests: 'interests-modal',
 	discover: 'subscribe-modal',
+	'early-readers': 'early-readers-modal',
 };
 
 const ReaderOnboardingRsm = ( {
@@ -209,6 +213,20 @@ const ReaderOnboardingRsm = ( {
 
 	const shouldRenderOnboarding = shouldShowOnboarding && ! isSuppressed;
 
+	// Early Readers opt-in step (a 4th step after discover), throttled via
+	// ExPlat. `isEligible` restricts assignment to users who actually see
+	// onboarding, so the experiment's exposure population matches the
+	// onboarding-viewed population rather than every Reader visitor. While the
+	// assignment is loading (or for control/unassigned users) the flow behaves
+	// exactly as the 3-step original. `reader/force-onboarding` also forces the
+	// step so the flow is testable without a live assignment.
+	const [ , earlyReadersAssignment ] = useExperiment( READER_EARLY_READERS_EXPERIMENT_NAME, {
+		isEligible: shouldShowOnboarding,
+	} );
+	const showEarlyReadersStep =
+		isEnabled( 'reader/force-onboarding' ) || earlyReadersAssignment?.variationName === 'treatment';
+	const totalOnboardingSteps = showEarlyReadersStep ? 4 : 3;
+
 	// Lazy-initialize the blog map now that we know the modal will be shown.
 	// Placing this after shouldRenderOnboarding means getTopicGroups /
 	// getPackBlogs never run for the common case where onboarding is not shown.
@@ -245,6 +263,8 @@ const ReaderOnboardingRsm = ( {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
 		} else if ( step === 'discover' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_close` );
+		} else if ( step === 'early-readers' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }early_readers_modal_close` );
 		}
 	};
 
@@ -255,6 +275,8 @@ const ReaderOnboardingRsm = ( {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_open` );
 		} else if ( step === 'discover' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_open` );
+		} else if ( step === 'early-readers' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }early_readers_modal_open` );
 		}
 	};
 
@@ -263,9 +285,41 @@ const ReaderOnboardingRsm = ( {
 		setCurrentStep( step );
 	};
 
+	const recordOnboardingCompleted = () => {
+		// record tracks for completion regardless of setting, to still track it in flows that forceShow.
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`, {
+			followed_tags_count: followedTags?.length ?? 0,
+			followed_non_self_sites_count: followedNonSelfSitesCount,
+		} );
+		if ( hasCompletedOnboarding ) {
+			return;
+		}
+		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+	};
+
+	// Everything that must happen exactly once when the user leaves the flow as
+	// "finished" — from discover's Finish (control) or from any early-readers
+	// exit (treatment: join, decline, or dismiss).
+	const completeOnboarding = ( step: Step ) => {
+		// Fire-and-forget: errors are swallowed so Finish UI is never blocked.
+		void flushOnboardingWelcomeDigest().catch( () => {} );
+		recordOnboardingCompleted();
+		runStepSideEffects( step );
+		setCurrentStep( null );
+		hideOnboardingThisSession();
+	};
+
 	const handleStepClose = () => {
 		if ( currentStep ) {
 			recordStepClose( currentStep );
+			// The early-readers step only exists past the discover Finish, so the
+			// user has already completed onboarding proper — dismissing it must
+			// still run the completion work (digest flush, completed event,
+			// preference save) that Finish used to own.
+			if ( currentStep === 'early-readers' ) {
+				completeOnboarding( 'early-readers' );
+				return;
+			}
 			runStepSideEffects( currentStep );
 		}
 		setCurrentStep( null );
@@ -297,25 +351,22 @@ const ReaderOnboardingRsm = ( {
 		openStep( 'interests' );
 	};
 
-	const recordOnboardingCompleted = () => {
-		// record tracks for completion regardless of setting, to still track it in flows that forceShow.
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`, {
-			followed_tags_count: followedTags?.length ?? 0,
-			followed_non_self_sites_count: followedNonSelfSitesCount,
-		} );
-		if ( hasCompletedOnboarding ) {
+	const handleDiscoverFinish = () => {
+		if ( showEarlyReadersStep ) {
+			runStepSideEffects( 'discover' );
+			openStep( 'early-readers' );
 			return;
 		}
-		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+		completeOnboarding( 'discover' );
 	};
 
-	const handleDiscoverFinish = () => {
-		// Fire-and-forget: errors are swallowed so Finish UI is never blocked.
-		void flushOnboardingWelcomeDigest().catch( () => {} );
-		recordOnboardingCompleted();
-		runStepSideEffects( 'discover' );
-		setCurrentStep( null );
-		hideOnboardingThisSession();
+	const handleEarlyReadersBack = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }early_readers_modal_back` );
+		openStep( 'discover' );
+	};
+
+	const handleEarlyReadersDecline = () => {
+		completeOnboarding( 'early-readers' );
 	};
 
 	const itemClickHandler = ( task: Task ) => {
@@ -432,6 +483,16 @@ const ReaderOnboardingRsm = ( {
 				label={ translate( 'Back' ) }
 			/>
 		);
+	} else if ( currentStep === 'early-readers' ) {
+		modalBackButton = (
+			<Button
+				size="compact"
+				className="reader-onboarding-modal__back-button"
+				onClick={ handleEarlyReadersBack }
+				icon={ chevronLeft }
+				label={ translate( 'Back' ) }
+			/>
+		);
 	}
 
 	return (
@@ -506,7 +567,11 @@ const ReaderOnboardingRsm = ( {
 					headerActions={ modalBackButton }
 				>
 					{ currentStep === 'welcome' && (
-						<WelcomeModal onClose={ handleStepClose } onContinue={ handleWelcomeContinue } />
+						<WelcomeModal
+							onClose={ handleStepClose }
+							onContinue={ handleWelcomeContinue }
+							totalSteps={ totalOnboardingSteps }
+						/>
 					) }
 					{ currentStep === 'interests' && (
 						<InterestsModal
@@ -517,13 +582,18 @@ const ReaderOnboardingRsm = ( {
 							packBlogsById={ packBlogsByIdRef.current! }
 							relaxedPackCriteria={ relaxedPackCriteria }
 							onPackSubscribed={ handlePackSubscribed }
+							totalSteps={ totalOnboardingSteps }
 						/>
 					) }
 					{ currentStep === 'discover' && (
 						<SubscribeModal
 							onFinish={ handleDiscoverFinish }
 							promptVerification={ promptVerification }
+							totalSteps={ totalOnboardingSteps }
 						/>
+					) }
+					{ currentStep === 'early-readers' && (
+						<EarlyReadersModal onDecline={ handleEarlyReadersDecline } />
 					) }
 				</Modal>
 			) }

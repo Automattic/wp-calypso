@@ -1,4 +1,5 @@
 export const READER_ONBOARDING_PREFERENCE_KEY = 'has_completed_reader_onboarding';
+export const READER_EARLY_READERS_EXPERIMENT_NAME = 'calypso_reader_early_readers_v0';
 export const READER_ONBOARDING_SEEN_PREFERENCE_KEY = 'has_seen_reader_onboarding';
 export const READER_ONBOARDING_DISMISSED_PREFERENCE_KEY = 'has_dismissed_reader_onboarding';
 export const READER_ONBOARDING_TRACKS_EVENT_PREFIX = 'calypso_reader_onboarding_';

@@ -80,12 +80,14 @@ html:not( .accessible-focus ) .reader-onboarding-rsm-modal {
 }
 
 // Shared layout for all reader-onboarding-rsm modals (welcome, interests,
-// subscribe). All three share the same overall size, the same flex-column
-// scroll/footer architecture, and the same footer styling. Per-modal
-// stylesheets only handle modal-specific content, padding, and visuals.
+// subscribe, early-readers). All share the same overall size, the same
+// flex-column scroll/footer architecture, and the same footer styling.
+// Per-modal stylesheets only handle modal-specific content, padding, and
+// visuals.
 .reader-welcome-modal,
 .interests-modal,
-.subscribe-modal {
+.subscribe-modal,
+.early-readers-modal {
 	// Frame size: 980 × 740 max, clamped to the viewport in either axis when
 	// smaller, so the modal itself never forces page-level scrolling.
 	// `margin: auto` keeps WP's default centering working for both axes.

@@ -1,0 +1,30 @@
+// Frame sizing and the footer layout come from the shared
+// reader-onboarding-rsm modal styles (../style.scss); this file only styles
+// the early-readers step's own content.
+.early-readers-modal__content.early-readers-modal__content {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	justify-content: flex-start;
+	padding: 4px 32px 40px;
+
+	> * {
+		flex-shrink: 0;
+	}
+}
+
+.early-readers-modal__title {
+	font-family: Recoleta, Georgia, "Times New Roman", serif;
+	font-size: 2.75rem;
+	line-height: 1.1;
+	font-weight: 400;
+	margin: 0;
+}
+
+.early-readers-modal__subtitle {
+	max-width: 620px;
+	font-size: 1rem;
+	line-height: 1.5;
+	color: var( --color-text-subtle );
+	margin: 0;
+}
