@@ -629,19 +629,38 @@ function shouldDelegateLegacyShowComponent( input: any ): boolean {
  * @returns {Object} `{ result, returnToAgent, agentMessage }` — the picker
  * renders from `agentMessage`, and `result` tells the agent it was shown.
  */
+/**
+ * Build a show-component failure the agent can recover from.
+ *
+ * Returns to the agent: a withheld failure ends the turn silently, leaving the
+ * user with no picker and no explanation. The backend shows `message` to the
+ * user and hands `error` to the model, so a failure carries both.
+ * @param {string} error - Technical reason, for the model.
+ * @returns {Object} `{ result, returnToAgent }`.
+ */
+function showComponentError( error: string ): any {
+	return {
+		result: {
+			success: false,
+			message: __(
+				'There was an error with this request. Please try again.',
+				__i18n_text_domain__
+			),
+			error,
+		},
+		returnToAgent: true,
+	};
+}
+
 function handleShowComponent( input: any ): any {
 	const { type, props } = input || {};
 
 	if ( ! hasShowComponentType( type ) ) {
-		return { success: false, error: 'show-component: missing type', returnToAgent: false };
+		return showComponentError( 'show-component: missing type' );
 	}
 
 	if ( ! getChatComponent( type ) ) {
-		return {
-			success: false,
-			error: `show-component: no component registered for type "${ type }"`,
-			returnToAgent: false,
-		};
+		return showComponentError( `show-component: no component registered for type "${ type }"` );
 	}
 
 	const componentProps: Record< string, unknown > = { ...( props ?? {} ) };

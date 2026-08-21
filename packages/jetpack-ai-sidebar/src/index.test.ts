@@ -3602,8 +3602,8 @@ describe( 'toolProvider', () => {
 			} );
 
 			expect( executeAbility ).not.toHaveBeenCalled();
-			expect( result ).toMatchObject( { success: false } );
-			expect( result.error ).toMatch( /missing type/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'omits update-block-content when block transformations are disabled', async () => {
@@ -3625,8 +3625,8 @@ describe( 'toolProvider', () => {
 
 		it( 'returns an error when type is missing', async () => {
 			const { result } = await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {} );
-			expect( result ).toMatchObject( { success: false } );
-			expect( ( result as any ).error ).toMatch( /missing type/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'returns an error for an unknown component type', async () => {
@@ -3634,8 +3634,31 @@ describe( 'toolProvider', () => {
 				type: 'nonexistent-picker',
 				props: {},
 			} );
-			expect( result ).toMatchObject( { success: false } );
-			expect( ( result as any ).error ).toMatch( /no component registered/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /no component registered/ );
+		} );
+
+		it( 'returns an unknown-type failure to the agent so it can recover', async () => {
+			// `seo-description` is what the model sent when it skipped the
+			// generate-seo-description ability and called this tool itself. The
+			// registered type is `seo-description-picker`, so the call fails —
+			// and the agent has to hear about it to correct itself.
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				SHOW_COMPONENT_TOOL_ID,
+				{
+					type: 'seo-description',
+					props: { descriptions: [] },
+				}
+			) ) as any;
+
+			expect( returnToAgent ).toBe( true );
+			expect( result.result.error ).toBe(
+				'show-component: no component registered for type "seo-description"'
+			);
+			// The backend shows `message` to the user and hands `error` to the
+			// model, so a failure needs both.
+			expect( typeof result.result.message ).toBe( 'string' );
+			expect( result.result.message.length ).toBeGreaterThan( 0 );
 		} );
 
 		it.each( [ SHOW_COMPONENT_ABILITY_NAME, SHOW_COMPONENT_TOOL_ID ] )(
@@ -3865,11 +3888,11 @@ describe( 'toolProvider', () => {
 				props: {},
 			} ) ) as any;
 
-			expect( result ).toMatchObject( {
+			expect( result.result ).toMatchObject( {
 				success: false,
 				error: 'show-component: no component registered for type "unregistered-component"',
-				returnToAgent: false,
 			} );
+			expect( result.returnToAgent ).toBe( true );
 			expect( result.agentMessage ).toBeUndefined();
 		} );
 
@@ -3906,8 +3929,8 @@ describe( 'toolProvider', () => {
 			} );
 
 			expect( executeAbility ).not.toHaveBeenCalled();
-			expect( result ).toMatchObject( { success: false } );
-			expect( result.error ).toMatch( /missing type/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'does not attach a title checkpoint to AI Editorial Review components', async () => {
