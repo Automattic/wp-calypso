@@ -115,6 +115,7 @@ class MasterbarLoggedIn extends Component {
 		statsSparkline: PropTypes.node,
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
+		freeDomainChip: PropTypes.node,
 		sitePlanUrl: PropTypes.string,
 		commandPalette: PropTypes.bool,
 	};
@@ -1027,6 +1028,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderSidebarMobileMenu() }
 					{ this.renderMySites() }
 					{ this.renderSiteMenu() }
+					{ this.props.freeDomainChip }
 					{ this.props.commandPalette && this.renderCommandPalette() }
 					{ this.renderUpdatesMenu() }
 					{ this.renderCommentsMenu() }

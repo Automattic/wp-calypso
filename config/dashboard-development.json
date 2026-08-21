@@ -33,6 +33,7 @@
 		"dashboard/dark-mode-rollout": true,
 		"dashboard/enable-percentage-rollout": true,
 		"dashboard/force-opt-in-visibility": true,
+		"dashboard/omnibar-free-domain-chip": true,
 		"dashboard/omnibar-radical": true,
 		"dashboard/opt-in-welcome-modal": true,
 		"dashboard/plans": true,
