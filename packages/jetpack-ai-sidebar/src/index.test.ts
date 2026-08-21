@@ -3548,6 +3548,13 @@ describe( 'toolProvider', () => {
 			expect( summaryDescription ).not.toContain( 'brief user-friendly description' );
 		} );
 
+		it( 'asks for a step summary in the show-component schema', async () => {
+			const abilities = await toolProvider.getAbilities();
+			const showComponent = abilities.find( ( a: any ) => a.name === SHOW_COMPONENT_ABILITY_NAME );
+
+			expect( showComponent?.input_schema?.properties?.summary?.type ).toBe( 'string' );
+		} );
+
 		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
 			const args = {
 				type: 'color-picker',
@@ -3649,17 +3656,12 @@ describe( 'toolProvider', () => {
 				{ title: 'Title 2', explanation: 'b' },
 				{ title: 'Title 3', explanation: 'c' },
 			];
-			const { result, returnToAgent } = ( await toolProvider.executeAbility(
-				SHOW_COMPONENT_TOOL_ID,
-				{
-					type: 'title-picker',
-					props: { titles },
-					toolCallId: 'call_test_123',
-				}
-			) ) as any;
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles },
+				toolCallId: 'call_test_123',
+			} ) ) as any;
 
-			expect( returnToAgent ).toBe( false );
-			expect( result.returnToAgent ).toBe( false );
 			expect( typeof result.agentMessage ).toBe( 'string' );
 
 			const parsed = JSON.parse( result.agentMessage );
@@ -3671,6 +3673,53 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
 			expect( parsed.data.responseTrackingProperties ).toBeUndefined();
+		} );
+
+		it( 'returns to the agent with a structured success result', async () => {
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				SHOW_COMPONENT_TOOL_ID,
+				{
+					type: 'title-picker',
+					props: { titles: [] },
+				}
+			) ) as any;
+
+			// The backend acks a `{ success, message }` echo without another LLM
+			// turn. Withholding the result leaves the tool call unanswered, and
+			// the model re-plans the whole request instead of continuing it.
+			expect( returnToAgent ).toBe( true );
+			expect( result.returnToAgent ).toBe( true );
+			expect( result.result ).toEqual( {
+				success: true,
+				details: { type: 'title-picker' },
+			} );
+		} );
+
+		it( 'reports the supplied summary as the result message', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'proofread',
+				props: { items: [] },
+				summary: 'Proofread complete. Fixed 2 typos.',
+			} ) ) as any;
+
+			// The backend records this text as the completed step, so a
+			// multi-step request continues from it instead of starting over.
+			expect( result.result.message ).toBe( 'Proofread complete. Fixed 2 typos.' );
+		} );
+
+		it.each( [
+			[ 'no summary', undefined ],
+			[ 'a whitespace-only summary', '   ' ],
+		] )( 'omits the result message given %s', async ( _label, summary ) => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [] },
+				summary,
+			} ) ) as any;
+
+			// Omitted rather than defaulted, so the backend falls back to its
+			// own translated per-tool wording.
+			expect( result.result ).not.toHaveProperty( 'message' );
 		} );
 
 		it.each( [

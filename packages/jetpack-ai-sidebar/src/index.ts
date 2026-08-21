@@ -592,6 +592,11 @@ const SHOW_COMPONENT_ABILITY: any = {
 		properties: {
 			type: { type: 'string' },
 			props: { type: 'object' },
+			summary: {
+				type: 'string',
+				description:
+					'One line naming what this step produced, in the language of the current user message. Recorded as the completed step, so a multi-step request continues from it. For example: "Proofread the post and found 2 typos."',
+			},
 		},
 		required: [ 'type' ],
 	},
@@ -620,8 +625,9 @@ function shouldDelegateLegacyShowComponent( input: any ): boolean {
  * Handle Jetpack show-component calls by returning an agentMessage envelope.
  * Title picker opts into AM's
  * message-level Undo because the checkpoint API snapshots the post title.
- * @param {any} input - Tool call arguments: `{ type, props, toolCallId, ... }`.
- * @returns {Object} Result containing the `agentMessage` to re-emit.
+ * @param {any} input - Tool call arguments: `{ type, props, summary, toolCallId, ... }`.
+ * @returns {Object} `{ result, returnToAgent, agentMessage }` — the picker
+ * renders from `agentMessage`, and `result` tells the agent it was shown.
  */
 function handleShowComponent( input: any ): any {
 	const { type, props } = input || {};
@@ -700,9 +706,22 @@ function handleShowComponent( input: any ): any {
 		data,
 	} );
 
+	const summary = typeof input?.summary === 'string' ? input.summary.trim() : '';
+
+	// The picker renders from the structured `agentMessage`, while the tool
+	// result tells the agent the picker was shown. Always return to the agent:
+	// the backend acks a `{ success, message }` echo without another LLM turn,
+	// whereas a withheld result leaves the tool call unanswered and the model
+	// re-plans the whole request. Mirrors `big-sky/show-component`.
 	return {
-		result: 'Component displayed successfully',
-		returnToAgent: data.followUpTasks,
+		// `message` is omitted rather than defaulted when a caller sends no
+		// summary, so the backend falls back to its own per-tool wording.
+		result: {
+			success: true,
+			...( summary && { message: summary } ),
+			details: { type },
+		},
+		returnToAgent: true,
 		agentMessage,
 	};
 }
@@ -971,7 +990,12 @@ export const toolProvider = {
 		}
 
 		if ( isShowComponentTool( name ) ) {
-			return { result: handleShowComponent( args ), returnToAgent: false };
+			const result = handleShowComponent( args );
+			return {
+				result,
+				returnToAgent: result.returnToAgent,
+				...( result.agentMessage && { agentMessage: result.agentMessage } ),
+			};
 		}
 
 		const executeAbility = getAbilitiesExecuteAbility();
