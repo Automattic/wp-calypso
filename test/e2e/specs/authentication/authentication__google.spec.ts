@@ -9,7 +9,7 @@ test.describe( 'Authentication: Google', { tag: [ tags.AUTHENTICATION ] }, () =>
 	);
 
 	test( 'As a WordPress.com user, I can use my Google account to authenticate ', async ( {
-		page,
+		pageDashboard,
 		pageLogin,
 		secrets,
 	}, workerInfo ) => {
@@ -60,9 +60,8 @@ test.describe( 'Authentication: Google', { tag: [ tags.AUTHENTICATION ] }, () =>
 			await googlePopupPageClosePromise;
 		} );
 
-		await test.step( 'Then I can see My Home on WordPress.com', async function () {
-			await page.waitForURL( /.*\/home\/.*/ );
-			await expect( page.getByRole( 'heading', { name: 'My Home' } ) ).toBeVisible();
+		await test.step( 'Then I land on the WordPress.com dashboard', async function () {
+			await expect.poll( () => pageDashboard.isLoaded(), { timeout: 20_000 } ).toBe( true );
 		} );
 	} );
 } );

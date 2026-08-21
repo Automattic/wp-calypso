@@ -15,6 +15,7 @@ test.describe(
 		test( 'As a WordPress.com user, I can use a magic link to login to WordPress.com', async ( {
 			clientEmail,
 			page,
+			pageDashboard,
 			pageLogin,
 			secrets,
 		}, workerInfo ) => {
@@ -51,12 +52,8 @@ test.describe(
 				await page.goto( magicLinkURL.href );
 			} );
 
-			await test.step( 'Then I am redirected to the WordPress.com homepage', async function () {
-				await page.waitForURL( /home/, { timeout: 15 * 1000 } );
-			} );
-
-			await test.step( 'And I can see My Home on WordPress.com', async function () {
-				await expect( page.getByRole( 'heading', { name: 'My Home' } ) ).toBeVisible();
+			await test.step( 'Then I land on the WordPress.com dashboard', async function () {
+				await expect.poll( () => pageDashboard.isLoaded(), { timeout: 20_000 } ).toBe( true );
 			} );
 
 			await test.step( 'And I can delete the magic link email', async function () {

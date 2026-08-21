@@ -55,6 +55,17 @@ export class TestAccount {
 		const browserContext = page.context();
 		await browserContext.clearCookies();
 
+		// Re-add after the clear above: `/` serves the marketing homepage to
+		// logged-in visitors without it, and the app shell never renders.
+		await browserContext.addCookies( [
+			{
+				name: 'wpcom_skip_lohp',
+				value: '1',
+				domain: '.wordpress.com',
+				path: '/',
+			},
+		] );
+
 		if ( await this.hasFreshAuthCookies() ) {
 			this.log( 'Found fresh cookies, skipping log in' );
 			await browserContext.addCookies( await this.getAuthCookies() );

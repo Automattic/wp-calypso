@@ -15,7 +15,10 @@ test.describe(
 			'Skipping unless running on WordPress.com'
 		);
 
-		test( 'As a WordPress.com user, I can require 2fa via SMS', async ( { page }, workerInfo ) => {
+		test( 'As a WordPress.com user, I can require 2fa via SMS', async ( {
+			page,
+			pageDashboard,
+		}, workerInfo ) => {
 			test.skip(
 				workerInfo.project.name !== 'authentication',
 				'The authentication project is the only one that has the right browser settings for authentication tests'
@@ -28,9 +31,8 @@ test.describe(
 				await testAccount.logInViaLoginPage( page );
 			} );
 
-			await test.step( 'Then I am on the home page', async function () {
-				await page.waitForURL( /home/ );
-				await expect( page.getByRole( 'heading', { name: 'My Home' } ) ).toBeVisible();
+			await test.step( 'Then I land on the WordPress.com dashboard', async function () {
+				await expect.poll( () => pageDashboard.isLoaded(), { timeout: 20_000 } ).toBe( true );
 			} );
 		} );
 	}
