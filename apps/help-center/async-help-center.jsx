@@ -26,8 +26,15 @@ export default function loadHelpCenter() {
 		customProps.launcherContext = helpCenterData.launcherContext;
 	}
 
-	return import( '@automattic/help-center' ).then( ( { default: HelpCenter } ) =>
-		createRoot( container ).render(
+	return import( '@automattic/help-center' ).then( ( { default: HelpCenter } ) => {
+		// Before the first render, so store resolvers (e.g. the logged-out
+		// auto-open route) already know which launcher surface this is.
+		if ( customProps.launcherContext ) {
+			dispatch( 'automattic/help-center' ).setHelpCenterOptions( {
+				launcherContext: customProps.launcherContext,
+			} );
+		}
+		return createRoot( container ).render(
 			<QueryClientProvider client={ queryClient }>
 				<HelpCenter
 					locale={ helpCenterData.locale }
@@ -41,6 +48,6 @@ export default function loadHelpCenter() {
 					{ ...customProps }
 				/>
 			</QueryClientProvider>
-		)
-	);
+		);
+	} );
 }

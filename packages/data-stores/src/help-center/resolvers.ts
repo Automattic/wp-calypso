@@ -4,9 +4,22 @@ import { getPersistedPreference } from './utils';
 export function isHelpCenterShown() {
 	return async ( { dispatch, select }: HelpCenterThunkProps ) => {
 		if ( select.hasLoggedOutOdieChat() ) {
+			// The plans-presales launcher reopens straight into the saved
+			// conversation; other surfaces keep landing on home.
+			// 'plans-presales' mirrors PLANS_PRESALES_LAUNCHER_CONTEXT in
+			// @automattic/odie-client (importing it would create a cycle).
+			const chat =
+				select.getHelpCenterOptions()?.launcherContext === 'plans-presales'
+					? select.getAnyLoggedOutOdieChat()
+					: undefined;
+			const route = chat
+				? `/odie?chatId=${ encodeURIComponent( chat.odieId ) }&sessionId=${ encodeURIComponent(
+						chat.sessionId
+				  ) }&botSlug=${ encodeURIComponent( chat.botSlug ) }`
+				: '/';
 			dispatch( {
 				type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
-				route: '/',
+				route,
 				coalesceParams: false,
 			} as const );
 			dispatch( {

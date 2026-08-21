@@ -19,6 +19,8 @@ describe( 'Help Center resolvers', () => {
 		const dispatch = jest.fn();
 		const select = {
 			hasLoggedOutOdieChat: jest.fn( () => true ),
+			getHelpCenterOptions: jest.fn( () => ( {} ) ),
+			getAnyLoggedOutOdieChat: jest.fn(),
 		};
 
 		await isHelpCenterShown()( {
@@ -30,6 +32,34 @@ describe( 'Help Center resolvers', () => {
 		expect( dispatch ).toHaveBeenNthCalledWith( 1, {
 			type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
 			route: '/',
+			coalesceParams: false,
+		} );
+		expect( dispatch ).toHaveBeenNthCalledWith( 2, {
+			type: 'HELP_CENTER_SET_SHOW',
+			show: true,
+		} );
+	} );
+
+	it( 'reopens the saved conversation for the plans-presales launcher', async () => {
+		const dispatch = jest.fn();
+		const select = {
+			hasLoggedOutOdieChat: jest.fn( () => true ),
+			getHelpCenterOptions: jest.fn( () => ( { launcherContext: 'plans-presales' } ) ),
+			getAnyLoggedOutOdieChat: jest.fn( () => ( {
+				odieId: 123,
+				sessionId: 'abc-def',
+				botSlug: 'wpcom-workflow-chat',
+			} ) ),
+		};
+
+		await isHelpCenterShown()( {
+			dispatch,
+			select,
+		} as unknown as HelpCenterThunkProps );
+
+		expect( dispatch ).toHaveBeenNthCalledWith( 1, {
+			type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
+			route: '/odie?chatId=123&sessionId=abc-def&botSlug=wpcom-workflow-chat',
 			coalesceParams: false,
 		} );
 		expect( dispatch ).toHaveBeenNthCalledWith( 2, {
