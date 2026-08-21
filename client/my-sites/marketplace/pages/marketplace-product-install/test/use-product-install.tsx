@@ -232,8 +232,7 @@ describe( 'useProductInstall', () => {
 			}
 		);
 
-		// Statuses live under the plugin id the dispatches carry ('uploaded/uploaded'), which for an
-		// upload is the only identity there is — the flow has no route slug.
+		// Upload flow has no route slug; statuses live under the dispatched plugin id.
 		it( 'surfaces a failed activation instead of waiting out the deadline', () => {
 			jest.useFakeTimers();
 			try {
@@ -301,8 +300,7 @@ describe( 'useProductInstall', () => {
 
 				expect( result.current.error ).toBeNull();
 
-				// The retry's own request overwrites the status but keeps the old `error` field
-				// around; the attempt in flight must not be condemned by it.
+				// The retry's request overwrites the status but keeps the stale `error` field.
 				act( () => {
 					jest.advanceTimersByTime( 2000 );
 				} );
@@ -312,7 +310,7 @@ describe( 'useProductInstall', () => {
 			}
 		} );
 
-		// The component instance survives an SPA navigation to another product's install page.
+		// The component instance survives SPA navigation to another product's install page.
 		it( 'drops a latched failure when the product changes', () => {
 			const { result, store, rerender } = renderHookWithProvider(
 				( { slug }: { slug: string } ) => useProductInstall( { pluginSlug: slug } ),
@@ -346,8 +344,7 @@ describe( 'useProductInstall', () => {
 			expect( result.current.error ).toBeNull();
 		} );
 
-		// Arriving mid-request: the swap lands while both products read as in-progress, so the new
-		// product's failure must still be seen as a transition from its own baseline.
+		// The swap lands while both installs are in-progress; the new product's failure must still register.
 		it( 'still catches a failure after swapping products between two in-progress installs', () => {
 			const activationRequest = ( pluginId: string ) => ( {
 				type: PLUGIN_ACTIVATE_REQUEST,
