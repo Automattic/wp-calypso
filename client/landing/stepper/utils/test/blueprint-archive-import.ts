@@ -2,7 +2,11 @@
  * @jest-environment jsdom
  */
 import wpcom from 'calypso/lib/wp';
-import { applyBlueprintSpec, getStandaloneBlueprintArchiveSlug } from '../blueprint-archive-import';
+import {
+	applyBlueprintSpec,
+	getSiteEditorUrl,
+	getStandaloneBlueprintArchiveSlug,
+} from '../blueprint-archive-import';
 
 jest.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
@@ -73,5 +77,46 @@ describe( 'applyBlueprintSpec', () => {
 		mockPost.mockRejectedValue( new Error( 'nope' ) );
 
 		await expect( applyBlueprintSpec( '12345', 'spec-123', 'coachava' ) ).resolves.toBe( false );
+	} );
+} );
+
+describe( 'getSiteEditorUrl', () => {
+	it( 'returns a plain site editor URL by default', () => {
+		expect( getSiteEditorUrl( 'https://example.com/wp-admin/' ) ).toBe(
+			'https://example.com/wp-admin/site-editor.php'
+		);
+	} );
+
+	it( 'tolerates an admin URL without a trailing slash', () => {
+		expect( getSiteEditorUrl( 'https://example.com/wp-admin' ) ).toBe(
+			'https://example.com/wp-admin/site-editor.php'
+		);
+	} );
+
+	/**
+	 * The flag is how Big Sky knows to open the copy walkthrough instead of
+	 * waiting for the customer to speak first.
+	 */
+	it( 'flags the walkthrough when the spec was applied', () => {
+		expect( getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: true } ) ).toBe(
+			'https://example.com/wp-admin/site-editor.php?canvas=edit&blueprint-walkthrough=go'
+		);
+	} );
+
+	/**
+	 * Big Sky only mounts on the editing canvas, so a walkthrough hand-off that
+	 * lands in the Site Editor's default view mode is inert — the flag arrives
+	 * but nothing is listening for it.
+	 */
+	it( 'opens the editing canvas alongside the walkthrough flag', () => {
+		expect(
+			getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: true } )
+		).toContain( 'canvas=edit' );
+	} );
+
+	it( 'leaves the flag off when the spec did not apply', () => {
+		expect(
+			getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: false } )
+		).not.toContain( 'blueprint-walkthrough' );
 	} );
 } );
