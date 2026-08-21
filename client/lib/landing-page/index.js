@@ -99,6 +99,10 @@ export async function getLoggedInLandingPage( { dispatch, getState } ) {
 }
 
 // Absolute wp-admin URLs can't go through the in-app router.
+/**
+ * @param {{ dispatch: Function, getState: Function }} store
+ * @param {( destination: string ) => void} [navigate]
+ */
 export async function goToLandingPage( store, navigate = pageRouter ) {
 	const destination = await getLoggedInLandingPage( store );
 

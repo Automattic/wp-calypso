@@ -138,7 +138,7 @@ jest.mock( 'calypso/lib/navigate', () => ( {
 
 const mockNavigateToLandingPage = jest.fn( () => ( { type: 'TEST_NAVIGATE_TO_LANDING_PAGE' } ) );
 jest.mock( 'calypso/lib/landing-page', () => ( {
-	navigateToLandingPage: ( ...args: unknown[] ) => mockNavigateToLandingPage( ...args ),
+	navigateToLandingPage: () => mockNavigateToLandingPage(),
 } ) );
 
 const mockWooBranding = {
