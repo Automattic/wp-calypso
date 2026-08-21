@@ -102,12 +102,12 @@ export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { ite
 			) }
 			{ sends === 0 && (
 				<div className="stats-email__tooltip-note">
-					{ translate( "This post wasn't emailed to any subscribers." ) }
+					{ translate( 'Not sent to any subscribers.' ) }
 				</div>
 			) }
 			{ sends > 0 && ! hasUniques && opens > 0 && (
 				<div className="stats-email__tooltip-note">
-					{ translate( "Unique opens weren't tracked, so the open rate can't be calculated." ) }
+					{ translate( "Opens weren't linked to recipients." ) }
 				</div>
 			) }
 		</div>
@@ -144,12 +144,12 @@ export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { it
 			) }
 			{ sends === 0 && (
 				<div className="stats-email__tooltip-note">
-					{ translate( "This post wasn't emailed to any subscribers." ) }
+					{ translate( 'Not sent to any subscribers.' ) }
 				</div>
 			) }
 			{ sends > 0 && ! hasUniques && clicks > 0 && (
 				<div className="stats-email__tooltip-note">
-					{ translate( "Unique clicks weren't tracked, so the click rate can't be calculated." ) }
+					{ translate( "Clicks weren't linked to recipients." ) }
 				</div>
 			) }
 		</div>
