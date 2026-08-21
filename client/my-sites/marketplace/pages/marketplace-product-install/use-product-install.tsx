@@ -142,6 +142,16 @@ export type ProductInstallError =
 	| { type: 'timeout' }
 	| { type: 'generic' };
 
+export type InstallErrorTrackingProps = {
+	error_type: string | null;
+	flow: string;
+	product_slug: string | null;
+	site_id: number | null;
+	current_step: number;
+	install_strategy: string;
+	wait_variant: string | null;
+};
+
 export function useProductInstall( {
 	pluginSlug = '',
 	themeSlug = '',
@@ -673,6 +683,41 @@ export function useProductInstall( {
 		currentStep,
 	] );
 
+	// Covers every error screen, preflight errors included — those never arm the wait, so the
+	// heartbeat and wait_ended above cannot see them. Thin on purpose: wait_ended already carries
+	// the diagnostics for failures that ended a wait.
+	const errorTrackingProps: InstallErrorTrackingProps = useMemo(
+		() => ( {
+			error_type: error?.type ?? null,
+			flow: installFlowName( { themeSlug, isPluginUploadFlow } ),
+			product_slug: pluginSlug || themeSlug || null,
+			site_id: siteId,
+			current_step: currentStep,
+			install_strategy: installStrategy,
+			wait_variant: isTransferWait ? getWaitVariant() : null,
+		} ),
+		[
+			error?.type,
+			themeSlug,
+			isPluginUploadFlow,
+			pluginSlug,
+			siteId,
+			currentStep,
+			installStrategy,
+			isTransferWait,
+		]
+	);
+
+	const reportedErrorViewRef = useRef< string | null >( null );
+	useEffect( () => {
+		const errorType = errorTrackingProps.error_type;
+		if ( ! errorType || reportedErrorViewRef.current === errorType ) {
+			return;
+		}
+		reportedErrorViewRef.current = errorType;
+		recordTracksEvent( 'calypso_marketplace_install_error_view', errorTrackingProps );
+	}, [ errorTrackingProps ] );
+
 	useThankYouRedirect( {
 		siteId,
 		selectedSiteSlug,
@@ -712,6 +757,7 @@ export function useProductInstall( {
 		steps,
 		additionalSteps,
 		error,
+		errorTrackingProps,
 		isTransferWait,
 		transferStatus: honestTransferStatus,
 		transferStartedAt,

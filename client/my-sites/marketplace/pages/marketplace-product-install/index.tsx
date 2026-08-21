@@ -27,6 +27,7 @@ const MarketplaceProductInstall = ( {
 		steps,
 		additionalSteps,
 		error,
+		errorTrackingProps,
 		isTransferWait,
 		transferStatus,
 		transferStartedAt,
@@ -69,6 +70,7 @@ const MarketplaceProductInstall = ( {
 						error={ error }
 						pluginSlug={ pluginSlug }
 						themeSlug={ themeSlug }
+						trackingProps={ errorTrackingProps }
 						onActivateTheme={ onActivateTheme }
 					/>
 				) }
