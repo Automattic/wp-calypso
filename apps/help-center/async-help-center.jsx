@@ -1,9 +1,9 @@
 /* global helpCenterData */
-import { englishLocales } from '@automattic/i18n-utils';
+import { englishLocales } from '@automattic/i18n-utils/src/locales';
 import {
 	ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
 	PLANS_PRESALES_INTRO_MESSAGE,
-} from '@automattic/odie-client/src/constants';
+} from '@automattic/odie-client/src/presales-constants';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import { hasTranslation } from '@wordpress/i18n';
