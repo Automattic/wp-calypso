@@ -1,3 +1,4 @@
+import pageRouter from '@automattic/calypso-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -54,8 +55,7 @@ const getSitesLink = ( isDashboardOptIn ) => {
 	return '/sites';
 };
 
-// Resolves the account's normal landing destination. Requires a booted Calypso
-// store; the login app's store has no `sites` reducer.
+// Resolves the account's normal landing destination. Needs a booted Calypso store.
 export async function getLoggedInLandingPage( { dispatch, getState } ) {
 	await dispatch( waitForPrefs() );
 	const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
@@ -98,14 +98,17 @@ export async function getLoggedInLandingPage( { dispatch, getState } ) {
 	return `/stats/day/${ primarySiteSlug }`;
 }
 
-// Sends the user to their normal landing destination. Absolute URLs (wp-admin)
-// can't go through the in-app router.
-export async function navigateToLandingPage( store, page ) {
+// Absolute wp-admin URLs can't go through the in-app router.
+export async function goToLandingPage( store, navigate = pageRouter ) {
 	const destination = await getLoggedInLandingPage( store );
 
 	if ( destination.startsWith( '/' ) ) {
-		page( destination );
+		navigate( destination );
 	} else {
 		window.location.assign( destination );
 	}
 }
+
+// Thunk form, for connected components and anything holding a `dispatch`.
+export const navigateToLandingPage = () => ( dispatch, getState ) =>
+	goToLandingPage( { dispatch, getState } );

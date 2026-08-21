@@ -17,6 +17,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HundredYearLoaderView from 'calypso/components/hundred-year-loader-view';
+import { navigateToLandingPage } from 'calypso/lib/landing-page';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
@@ -221,7 +222,7 @@ export default function HundredYearThankYou( {
 		// and blog created after the purchase (siteId != null).
 		resolvedProductSlug !== domainProductSlugs.TRANSFER_IN
 	) {
-		page( '/' );
+		dispatch( navigateToLandingPage() );
 	}
 
 	const primaryDomainFromState = siteDomains.find( ( domain ) => domain.isPrimary )?.domain;
