@@ -51,7 +51,7 @@ test.describe(
 
 				await test.step( 'Given I am authenticated', async () => {
 					testAccount = new TestAccount( accountName );
-					await testAccount.authenticate( page );
+					await testAccount.authenticate( page, { waitUntilStable: false } );
 					editorTracksEventManager = new EditorTracksEventManager( page );
 					fullSiteEditorPage = new FullSiteEditorPage( page );
 					templatePartName = createTemplatePartName();
@@ -109,7 +109,7 @@ test.describe(
 
 				await test.step( 'Given I am authenticated', async () => {
 					testAccount = new TestAccount( accountName );
-					await testAccount.authenticate( page );
+					await testAccount.authenticate( page, { waitUntilStable: false } );
 					editorTracksEventManager = new EditorTracksEventManager( page );
 					fullSiteEditorPage = new FullSiteEditorPage( page );
 				} );
@@ -207,7 +207,7 @@ test.describe(
 
 					await test.step( 'Given I am authenticated', async () => {
 						testAccount = new TestAccount( accountName );
-						await testAccount.authenticate( page );
+						await testAccount.authenticate( page, { waitUntilStable: false } );
 						editorTracksEventManager = new EditorTracksEventManager( page );
 						fullSiteEditorPage = new FullSiteEditorPage( page );
 						templatePartName = createTemplatePartName();

@@ -52,7 +52,7 @@ test.describe(
 			const snippet = Array( 2 ).fill( helperData.getRandomPhrase() ).toString();
 
 			await test.step( `Given I am authenticated as '${ testAccount.accountName }'`, async function () {
-				await testAccount.authenticate( page );
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'And my site has a published post', async function () {

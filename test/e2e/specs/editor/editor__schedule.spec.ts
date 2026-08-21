@@ -33,8 +33,6 @@ test.describe(
 
 			await test.step( 'Given I am authenticated', async () => {
 				const testAccount = new TestAccount( accountName );
-				// The next step navigates straight to the editor by URL, so whichever shell `/`
-				// renders is never used. Waiting for one only adds a way to fail.
 				await testAccount.authenticate( page, { waitUntilStable: false } );
 			} );
 

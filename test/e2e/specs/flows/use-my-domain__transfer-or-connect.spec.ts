@@ -54,7 +54,7 @@ test.describe(
 			pageUseADomainIAlreadyOwn,
 		} ) => {
 			await test.step( 'Given I am authenticated', async () => {
-				await accountDefaultUser.authenticate( page );
+				await accountDefaultUser.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'And I am on the onboarding domains step', async () => {
@@ -76,7 +76,7 @@ test.describe(
 			pageUseADomainIAlreadyOwn,
 		} ) => {
 			await test.step( 'Given I am authenticated', async () => {
-				await accountDefaultUser.authenticate( page );
+				await accountDefaultUser.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'And I walk the newsletter preamble to the domains step', async () => {
@@ -100,7 +100,7 @@ test.describe(
 			pageUseADomainIAlreadyOwn,
 		} ) => {
 			await test.step( 'Given I am authenticated', async () => {
-				await accountDefaultUser.authenticate( page );
+				await accountDefaultUser.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'And I am on the reblogging domains step', async () => {
@@ -122,7 +122,7 @@ test.describe(
 			pageUseADomainIAlreadyOwn,
 		} ) => {
 			await test.step( 'Given I am authenticated with a site', async () => {
-				await accountAtomic.authenticate( page );
+				await accountAtomic.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'And I am on the domain-and-plan domains step', async () => {

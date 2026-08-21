@@ -25,7 +25,7 @@ test.describe(
 			pageSignupPickPlan,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountPreRelease.accountName }'`, async function () {
-				await accountPreRelease.authenticate( page );
+				await accountPreRelease.authenticate( page, { waitUntilStable: false } );
 				accountUsed = accountPreRelease;
 			} );
 

@@ -31,7 +31,7 @@ test.describe( 'CoBlocks: Extensions: Cover Styles', { tag: [ tags.GUTENBERG ] }
 		await test.step( 'Given I am authenticated', async () => {
 			imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 			const testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 		} );
 
 		await test.step( 'When I go to the new post page', async () => {

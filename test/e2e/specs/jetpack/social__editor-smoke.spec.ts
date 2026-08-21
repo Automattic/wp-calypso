@@ -31,7 +31,7 @@ test.describe(
 				const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 				const testAccount = new TestAccount( accountName );
 				siteSlug = testAccount.getSiteURL( { protocol: false } );
-				await testAccount.authenticate( page );
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'Verify that Social UI is visible', async () => {

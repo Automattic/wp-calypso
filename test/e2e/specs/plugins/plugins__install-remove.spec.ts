@@ -52,7 +52,7 @@ test.describe.fixme(
 			const context = await browser.newContext( contextOptions );
 			page = await context.newPage();
 			const testAccount = new TestAccount( 'jetpackRemoteSiteUser' );
-			await testAccount.authenticate( page );
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 			siteURL = SecretsManager.secrets.testAccounts.jetpackRemoteSiteUser.testSites?.primary
 				.url as string;
 			pluginsPage = new PluginsPage( page );

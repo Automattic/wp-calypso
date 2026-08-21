@@ -33,7 +33,7 @@ test.describe(
 			let jetpackDashboardPage: JetpackDashboardPage;
 
 			await test.step( 'Authenticate', async () => {
-				await testAccount.authenticate( page );
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 				jetpackDashboardPage = new JetpackDashboardPage( page );
 
 				// Atomic tests sites might have local users, so the Jetpack SSO login will

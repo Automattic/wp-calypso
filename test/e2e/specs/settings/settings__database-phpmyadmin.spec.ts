@@ -31,7 +31,7 @@ test.describe(
 
 			await test.step( 'Authenticate and setup the test', async () => {
 				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'Navigate to Settings > Hosting Configuration', async () => {

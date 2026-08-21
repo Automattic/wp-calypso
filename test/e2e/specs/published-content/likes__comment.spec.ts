@@ -81,7 +81,7 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 				}
 			}
 
-			await testAccount.authenticate( page );
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 		} );
 
 		await test.step( 'View the post', async () => {

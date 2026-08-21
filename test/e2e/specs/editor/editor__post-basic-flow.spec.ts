@@ -33,7 +33,7 @@ test.describe(
 
 			await test.step( 'Given I am authenticated', async () => {
 				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'When I go to the new post page', async () => {

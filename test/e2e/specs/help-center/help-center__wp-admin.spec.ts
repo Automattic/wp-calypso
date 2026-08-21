@@ -21,7 +21,7 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 			const testAccount = new TestAccount( 'defaultUser' );
 			pageUrl = `${ testAccount.getSiteURL( { protocol: true } ) }wp-admin/`;
 
-			await testAccount.authenticate( page, { waitUntilStable: true } );
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 			await page.goto( pageUrl );
 
 			helpCenterComponent = new HelpCenterComponent( page );
