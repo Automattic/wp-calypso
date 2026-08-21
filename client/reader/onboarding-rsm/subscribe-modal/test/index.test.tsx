@@ -275,8 +275,12 @@ describe( 'SubscribeModal – site preview analytics', () => {
 			<SubscribeModal onFinish={ jest.fn() } promptVerification={ false } />
 		);
 
-		const scrollContainer = container.querySelector( '.subscribe-modal__preview-stream-container' );
-		const inertWrapper = container.querySelector( '.subscribe-modal__preview-stream-inner' );
+		const scrollContainer = container.querySelector< HTMLElement >(
+			'.subscribe-modal__preview-stream-container'
+		);
+		const inertWrapper = container.querySelector< HTMLElement >(
+			'.subscribe-modal__preview-stream-inner'
+		);
 
 		// The scroll container must NOT be inert: an inert element hit-tests as
 		// `pointer-events: none`, so wheel/touch scrolls fall through it to its
@@ -284,6 +288,7 @@ describe( 'SubscribeModal – site preview analytics', () => {
 		// regressed once React 19 began emitting the `inert` attribute for real —
 		// under React 18 the boolean prop was silently dropped.)
 		expect( scrollContainer ).not.toBeNull();
+		expect( inertWrapper ).not.toBeNull();
 		expect( scrollContainer ).not.toHaveAttribute( 'inert' );
 		// `inert` still removes the non-interactive preview content from the tab
 		// order + a11y tree — just one level in, on the wrapper around the stream.
