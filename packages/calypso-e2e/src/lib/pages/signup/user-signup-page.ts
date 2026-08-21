@@ -1,5 +1,6 @@
 import { Page, Locator, Frame } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
+import { handleActiveThrottles } from '../../throttle-flags';
 import type { NewUserResponse } from '../../../types/rest-api-client.types';
 
 /**
@@ -214,7 +215,11 @@ export class UserSignupPage {
 	 */
 	async visit( { path }: { path: string } = { path: '' } ): Promise< void > {
 		const targetUrl = path ? `start/${ path }` : 'start';
-		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
+		// Not 'networkidle': the bot-protection client keeps the signup page
+		// busy, and no navigationTimeout is configured, so waiting for idle
+		// burns the whole test budget. waitForSignupForm() does the real
+		// readiness wait, bounded.
+		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'domcontentloaded' } );
 	}
 	/**
 	 * Captures the response from the user creation API endpoint.
@@ -223,10 +228,15 @@ export class UserSignupPage {
 	private captureNewUserResponse(): Promise< NewUserResponse > {
 		return this.page
 			.waitForResponse(
+				// Not `ok()`: a refused signup carries the reason it was refused, and
+				// waiting for an ok response that is never coming turns it into a
+				// timeout. Still not a 5xx, which `captureUsersNewServerError` races
+				// this promise to reject with the retryable error the caller keys on,
+				// and not a redirect, whose body is no answer to parse.
 				( response ) =>
 					/\/users\/new\?/.test( response.url() ) &&
-					response.ok() &&
-					response.request().method() === 'POST',
+					response.request().method() === 'POST' &&
+					( response.status() < 300 || ( response.status() >= 400 && response.status() < 500 ) ),
 				// Use an explicit timeout so the global actionTimeout (10s) does not
 				// apply here. The form load + fill + network round-trip can easily
 				// exceed 10s on a slow CI runner.
@@ -244,6 +254,7 @@ export class UserSignupPage {
 	 * @returns Response from the REST API.
 	 */
 	async signup( email: string, username: string, password: string ): Promise< NewUserResponse > {
+		handleActiveThrottles( [ 'signup' ] );
 		await this.waitForSignupForm();
 		await this.emailInput.fill( email );
 		await this.usernameInput.fill( username );
@@ -275,6 +286,10 @@ export class UserSignupPage {
 		// timed out; the same-email retry then surfaces a "user exists" error
 		// instead of recovering, which is still preferable to masking the failure.
 		// Retry a bounded number of times before giving up.
+		//
+		// Outside the loop: the policy skips or fails by throwing, and the catch
+		// below turns a throw met on a server-error page into a retry.
+		handleActiveThrottles( [ 'signup' ] );
 		const maxAttempts = 3;
 		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 			try {
@@ -452,6 +467,9 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupWoo( email: string ): Promise< NewUserResponse > {
+		// This flow drives the form itself instead of going through `signupWithEmail`,
+		// so the ban has to be met here or it is not met at all.
+		handleActiveThrottles( [ 'signup' ] );
 		await this.waitForSignupForm();
 		await this.emailInput.fill( email );
 
@@ -493,15 +511,23 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupThroughInvite( email: string ): Promise< NewUserResponse > {
+		// This flow drives the form itself instead of going through `signupWithEmail`,
+		// so the ban has to be met here or it is not met at all.
+		handleActiveThrottles( [ 'signup' ] );
 		await this.emailInput.fill( email );
 
-		const responsePromise = this.page.waitForResponse(
-			( response ) => /\/users\/new\?[^?]*$/.test( response.url() ) && response.ok()
-		);
-		await this.continueButton.click();
-		const response = await responsePromise;
+		// Read the response body as soon as it arrives; the accept-invite
+		// navigation that follows a successful signup evicts it from the
+		// browser cache before a later json() can get to it.
+		const responseBodyPromise = this.page
+			.waitForResponse(
+				( response ) => /\/users\/new\?[^?]*$/.test( response.url() ) && response.ok()
+			)
+			.then( ( response ): Promise< NewUserResponse > => response.json() );
 
-		return await response.json();
+		await this.continueButton.click();
+
+		return await responseBodyPromise;
 	}
 
 	/**

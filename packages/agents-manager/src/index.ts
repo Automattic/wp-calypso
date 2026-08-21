@@ -7,6 +7,9 @@ export { AGENTS_MANAGER_STORE } from './stores';
 // Utility for agents manager inline data
 export { getAgentsManagerInlineData } from './utils/get-agents-manager-inline-data';
 
+// Tracks wrapper, so entry points outside the package attach the unified base props
+export { recordFullNameAgentsManagerTracksEvent } from './utils/tracks';
+
 // Host-facing controls for the chat dock, for entry points outside it
 export {
 	closeAgentsManagerChat,

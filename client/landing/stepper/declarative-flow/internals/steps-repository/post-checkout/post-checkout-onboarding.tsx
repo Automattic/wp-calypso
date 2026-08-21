@@ -1,5 +1,4 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_BIG_SKY,
 	isBusiness,
@@ -62,7 +61,6 @@ const PostCheckoutOnboarding: StepType< {
 	} );
 
 	const showBigSkyChoice =
-		isEnabled( 'onboarding/post-checkout-ai-step' ) &&
 		!! site?.plan &&
 		( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) &&
 		site.plan.features?.active?.includes( FEATURE_BIG_SKY );

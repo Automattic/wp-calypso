@@ -52,6 +52,17 @@ interface StatsCommercialPurchaseProps {
 	 * something to do before it can come back to this, so it is not simply putting it off.
 	 */
 	postponeLabel?: string;
+	/**
+	 * Replaces the event name that goes with `onPostpone`, so a button that no longer skips
+	 * anything stops counting towards the skip metric. Prefixed like every other event here.
+	 */
+	postponeEventName?: string;
+	/**
+	 * Added to the events this screen records, including the purchase click it hands to checkout.
+	 * A host with no blog id to be identified by has to supply whatever key it does have, since
+	 * `blog_id` is null there.
+	 */
+	eventProps?: Record< string, string | number >;
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -223,6 +234,8 @@ const StatsCommercialPurchase = ( {
 	redirectUri,
 	onPostpone,
 	postponeLabel,
+	postponeEventName = 'stats_purchase_commercial_skip_button_clicked',
+	eventProps,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -289,9 +302,10 @@ const StatsCommercialPurchase = ( {
 
 	const handleCheckoutPostponed = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_commercial_skip_button_clicked`, {
+		recordTracksEvent( `${ event_from }_${ postponeEventName }`, {
 			blog_id: siteId,
 			from,
+			...eventProps,
 		} );
 
 		if ( onPostpone ) {
@@ -331,6 +345,7 @@ const StatsCommercialPurchase = ( {
 					isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
 				}_stats_purchase_commercial_slider_clicked` }
 				onSliderChange={ handleSliderChanged }
+				eventProps={ eventProps }
 			/>
 		</>
 	) : (
@@ -393,6 +408,7 @@ const StatsCommercialPurchase = ( {
 							quantity: purchaseTierQuantity,
 							isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
 							isSiteFullyConnected: !! connectionStatus?.isSiteFullyConnected,
+							eventProps,
 						} )
 					}
 				>

@@ -285,11 +285,6 @@
 			opacity: 0.85;
 		}
 
-		&.is-accepted {
-			opacity: 0.55;
-			border-color: rgba(74, 184, 102, 0.7);
-		}
-
 		&.is-dismissed {
 			opacity: 0.4;
 		}
@@ -417,30 +412,46 @@
 
 	// ---------- Resolved (accepted / dismissed) row ----------
 	// On accept/dismiss the card keeps its header and swaps the body for a
-	// resolution chip + Undo — the same shape the shared review-card uses in
-	// Generate Feedback / Proofreader, tuned for the dark chat surface.
+	// circled status icon + Undo — the same shape the shared review-card uses
+	// in Generate Feedback / Proofreader, matching the inline-edit
+	// confirmation badge in agents-manager (agent-dock/chat-ui.scss).
 	&__resolution {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.25rem;
+		gap: 0.5rem;
 		min-height: 32px;
-		padding: 0.4rem 0.75rem;
-		border-radius: 4px;
+		padding: 0.4rem 0.75rem 0.4rem 0;
 		font-size: 13px;
-		font-weight: 600;
+		font-weight: 500;
 
-		&.is-accepted {
-			background: rgba(74, 184, 102, 0.2);
-			color: #4ab866;
+		&.is-accepted .jetpack-ai-editorial-review__resolution-icon {
+			background-color: #3858e8;
 		}
 
-		&.is-dismissed {
-			background: rgba(255, 255, 255, 0.08);
-			opacity: 0.75;
+		&.is-dismissed .jetpack-ai-editorial-review__resolution-icon {
+			padding: 3.5px;
+			background-color: #5e5e5e;
 		}
 	}
 
-	&__resolution-check,
+	// Scoped to the badge (two classes) so the white glyph outranks agenttic's
+	// same-specificity `color` rule on message descendants.
+	&__resolution &__resolution-icon {
+		flex: 0 0 auto;
+		width: 22px;
+		height: 22px;
+		padding: 1px;
+		border-radius: 50%;
+		color: var(--color-white, #fff);
+		fill: currentColor;
+
+		// Agenttic sets `color` directly on every message descendant.
+		path {
+			color: inherit;
+			fill: currentColor;
+		}
+	}
+
 	&__undo-icon {
 		flex: 0 0 auto;
 		fill: currentColor;
@@ -666,23 +677,13 @@
 			opacity: 0.85;
 		}
 
-		&.is-accepted {
-			opacity: 0.6;
-			border-color: rgba(74, 184, 102, 0.7);
-		}
-
-		&.is-dismissed {
-			opacity: 0.4;
-		}
-
 		&.is-failed {
 			border-color: rgba(214, 54, 56, 0.7);
 		}
 
-		// Resolved cards keep full opacity + a neutral surface — the state is
-		// carried by the chip, matching the shared review-card silhouette.
+		// Resolved cards keep a neutral surface — the state is carried by the
+		// status badge, matching the shared review-card silhouette.
 		&.is-resolved {
-			opacity: 1;
 			border-color: rgba(255, 255, 255, 0.12);
 			background: rgba(255, 255, 255, 0.02);
 		}

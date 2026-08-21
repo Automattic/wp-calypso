@@ -1,4 +1,5 @@
 import { Locator, Page } from 'playwright';
+import { handleActiveThrottles, recordResponseThrottle } from '../throttle-flags';
 
 const selectors = {
 	ownedDomainInput: '.use-my-domain__domain-input-fieldset input',
@@ -95,6 +96,7 @@ export class UseADomainIOwnPage {
 	 * @param domainName Domain name to fill in the input
 	 */
 	async fillUseDomainIOwnInput( domainName: string ): Promise< void > {
+		handleActiveThrottles( [ 'domain-availability' ] );
 		const searchAndPressEnter = async () => {
 			const input = this.getContainer().locator( '.use-my-domain__domain-input input' );
 			await input.fill( domainName );
@@ -111,6 +113,11 @@ export class UseADomainIOwnPage {
 			throw new Error(
 				`Encountered error while trying to check availability of domain.\nOriginal error: ${ errorText }`
 			);
+		}
+
+		const throttle = await recordResponseThrottle( response );
+		if ( throttle ) {
+			handleActiveThrottles( [ throttle ] );
 		}
 	}
 

@@ -2157,6 +2157,9 @@ __metadata:
     "@babel/core": "npm:^7.27.1"
     "@size-limit/file": "npm:^8.2.6"
     "@tanstack/react-query": "npm:^5.83.0"
+    "@testing-library/dom": "npm:^10.4.1"
+    "@testing-library/react": "npm:^16.3.2"
+    "@testing-library/user-event": "npm:^14.6.1"
     "@wordpress/base-styles": "npm:^9.1.0"
     "@wordpress/data": "npm:^10.48.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
@@ -31894,6 +31897,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stream-chain@npm:^2.2.5":
+  version: 2.2.5
+  resolution: "stream-chain@npm:2.2.5"
+  checksum: c512f50190d7c92d688fa64e7af540c51b661f9c2b775fc72bca38ea9bca515c64c22c2197b1be463741daacbaaa2dde8a8ea24ebda46f08391224f15249121a
+  languageName: node
+  linkType: hard
+
+"stream-json@npm:^1.9.1":
+  version: 1.9.1
+  resolution: "stream-json@npm:1.9.1"
+  dependencies:
+    stream-chain: "npm:^2.2.5"
+  checksum: 0521e5cb3fb6b0e2561d715975e891bd81fa77d0239c8d0b1756846392bc3c7cdd7f1ddb0fe7ed77e6fdef58daab9e665d3b39f7d677bd0859e65a2bff59b92c
+  languageName: node
+  linkType: hard
+
 "strict-event-emitter@npm:^0.5.1":
   version: 0.5.1
   resolution: "strict-event-emitter@npm:0.5.1"
@@ -35275,6 +35294,7 @@ __metadata:
     stackframe: "npm:^1.1.1"
     stacktrace-gps: "npm:^3.0.3"
     storybook: "npm:^9.1.20"
+    stream-json: "npm:^1.9.1"
     stylelint: "npm:^16.15.0"
     stylelint-scss: "npm:^6.4.0"
     swiper: "npm:^12.1.2"

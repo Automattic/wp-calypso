@@ -54,6 +54,10 @@
 	justify-content: flex-end;
 	padding-inline-end: 10px;
 
+	@media ( max-width: 480px ) {
+		padding-inline-end: 7px;
+	}
+
 	@media ( min-width: 782px ) {
 		justify-content: center;
 		padding-inline-end: 8px;

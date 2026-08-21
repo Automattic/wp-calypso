@@ -13,6 +13,9 @@ import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
 import { useState, useEffect } from 'react';
 import { Experiment } from 'calypso/lib/explat';
+import AccountEmailBouncingNotice, {
+	useShouldShowAccountEmailBouncingNotice,
+} from '../app/account-email-bouncing-notice';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
@@ -168,6 +171,9 @@ export default function Sites() {
 	const isSecurityKeyReregisterRequired = useShouldShowSecurityKeyReregisterNotice();
 	const showSecurityKeyReregisterNotice = supports.me && isSecurityKeyReregisterRequired;
 
+	const isAccountEmailBouncing = useShouldShowAccountEmailBouncingNotice();
+	const showAccountEmailBouncingNotice = supports.me && isAccountEmailBouncing;
+
 	const defaultView = getDefaultView( {
 		siteCount: user.site_count,
 		isAutomattician,
@@ -251,6 +257,7 @@ export default function Sites() {
 				notices={
 					<SitesNoticeArbiter>
 						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
+						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
 						{ ! isDashboardBackport() && isRestoringAccount && <RestoringSitesNotices /> }
 					</SitesNoticeArbiter>
 				}
