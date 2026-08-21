@@ -100,7 +100,6 @@
 		"login/use-magic-code": true,
 		"mailchimp": true,
 		"marketplace-fetch-all-dynamic-products": false,
-		"marketplace-honest-install-progress": false,
 		"marketplace-personal-premium": false,
 		"marketplace-redesign": true,
 		"marketplace-reviews-notification": false,

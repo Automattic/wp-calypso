@@ -1,17 +1,19 @@
 import './style.scss';
 
+import { Step } from '@automattic/onboarding';
 import { ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ExpectationChecklist from 'calypso/components/expectation-checklist';
-import { useHonestOverrunCopy, useHonestStageSentences, useHonestStageTitles } from './copy';
-import { useHonestProgress } from './use-honest-progress';
+import { useOverrunCopy, useStageSentences, useStageTitles } from './copy';
+import { INSTALL_STAGES } from './get-install-stage';
+import { useInstallProgress } from './use-install-progress';
 
 /**
- * The honest wait: a heading, one sentence naming the stage the transfer is actually in, a
+ * The transfer wait: a heading, one sentence naming the stage the transfer is actually in, a
  * single real overall bar, and the “what to expect” card. The bar is fed by confirmed stages,
  * never a timer.
  */
-export default function HonestInstallCard( {
+export default function InstallProgressCard( {
 	transferStatus,
 	currentStep,
 	startedAt,
@@ -21,35 +23,34 @@ export default function HonestInstallCard( {
 	startedAt?: number | null;
 } ) {
 	const translate = useTranslate();
-	const { stage, isOverrun, overallProgress } = useHonestProgress( {
+	const { stage, isOverrun, overallProgress } = useInstallProgress( {
 		transferStatus,
 		currentStep,
 		startedAt,
 	} );
-	const stageTitles = useHonestStageTitles();
-	const sentences = useHonestStageSentences();
-	const overrunCopy = useHonestOverrunCopy();
+	const stageKey = INSTALL_STAGES[ stage ].key;
+	const stageTitles = useStageTitles();
+	const sentences = useStageSentences();
+	const overrunCopy = useOverrunCopy();
 
 	return (
-		<div className="marketplace-honest-progress marketplace-honest-card">
-			<div className="marketplace-honest-card__header">
-				<h1 className="marketplace-honest-progress__heading wp-brand-font">
-					{ translate( 'Setting up your plugin' ) }
-				</h1>
-				<p className="marketplace-honest-card__stage" role="status">
-					{ sentences[ stage ] }
+		<div className="marketplace-install-progress">
+			<div className="marketplace-install-progress__header">
+				<Step.Heading text={ translate( 'Setting up your plugin' ) } align="center" />
+				<p className="marketplace-install-progress__stage" role="status">
+					{ sentences[ stageKey ] }
 				</p>
 				{ isOverrun && (
-					<p className="marketplace-honest-card__overrun" role="status">
+					<p className="marketplace-install-progress__overrun" role="status">
 						{ overrunCopy }
 					</p>
 				) }
 			</div>
-			<div className="marketplace-honest-card__progress">
+			<div className="marketplace-install-progress__progress">
 				<ProgressBar
-					className="marketplace-honest-card__progress-bar"
+					className="marketplace-install-progress__progress-bar"
 					value={ overallProgress }
-					aria-label={ String( stageTitles[ stage ] ) }
+					aria-label={ String( stageTitles[ stageKey ] ) }
 				/>
 			</div>
 			<ExpectationChecklist

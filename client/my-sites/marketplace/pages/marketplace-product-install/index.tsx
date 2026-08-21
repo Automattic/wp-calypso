@@ -9,8 +9,7 @@ import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/prog
 import theme from 'calypso/my-sites/marketplace/theme';
 import './style.scss';
 import MarketplaceInstallHelpLink from './help-link';
-import HonestInstallCard from './honest-progress/card';
-import { getWaitVariant } from './honest-progress/get-wait-variant';
+import InstallProgressCard from './install-progress/card';
 import ProductInstallErrorView from './product-install-error';
 import { useProductInstall } from './use-product-install';
 
@@ -36,10 +35,6 @@ const MarketplaceProductInstall = ( {
 		themeSlug,
 	} );
 
-	// The honest wait narrates the real transfer stages, so it only applies to the path that
-	// runs a transfer; every other path keeps the classic bar.
-	const waitVariant = isTransferWait ? getWaitVariant() : 'control';
-
 	return (
 		<ThemeProvider theme={ theme }>
 			<PageViewTracker
@@ -57,11 +52,11 @@ const MarketplaceProductInstall = ( {
 					` }
 				/>
 				<WordPressLogo className="marketplace-plugin-install__logo" size={ 24 } />
-				{ waitVariant !== 'control' && <MarketplaceInstallHelpLink /> }
+				{ isTransferWait && <MarketplaceInstallHelpLink /> }
 			</Masterbar>
 			<div
 				className={ clsx( 'marketplace-plugin-install__root', {
-					'is-top-aligned': waitVariant === 'honest_progress',
+					'is-top-aligned': isTransferWait,
 				} ) }
 			>
 				{ error && (
@@ -72,14 +67,14 @@ const MarketplaceProductInstall = ( {
 						onActivateTheme={ onActivateTheme }
 					/>
 				) }
-				{ ! error && waitVariant === 'honest_progress' && (
-					<HonestInstallCard
+				{ ! error && isTransferWait && (
+					<InstallProgressCard
 						transferStatus={ transferStatus }
 						currentStep={ currentStep }
 						startedAt={ transferStartedAt }
 					/>
 				) }
-				{ ! error && waitVariant === 'control' && (
+				{ ! error && ! isTransferWait && (
 					<MarketplaceProgressBar
 						steps={ steps }
 						currentStep={ currentStep }

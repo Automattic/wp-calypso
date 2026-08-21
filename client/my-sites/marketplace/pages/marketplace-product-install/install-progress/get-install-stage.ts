@@ -7,16 +7,18 @@ import {
 /**
  * The three coarse stages the customer is shown, mapped from the transfer statuses the
  * server actually reports. Provisioning ('pending'/'active') is one opaque block on the
- * backend, so this is the finest honest granularity available.
+ * backend, so this is the finest granularity the statuses support.
  *
  * `finishing` is generous on purpose: after the transfer completes the page still waits on
  * capability propagation, a plugin-list refetch and activation before it can leave.
  */
-export const HONEST_STAGES = [
+export const INSTALL_STAGES = [
 	{ key: 'preparing', expectedSeconds: 25 },
 	{ key: 'moving', expectedSeconds: 10 },
 	{ key: 'finishing', expectedSeconds: 20 },
 ] as const;
+
+export type InstallStageKey = ( typeof INSTALL_STAGES )[ number ][ 'key' ];
 
 const MOVING_STATUSES: ReadonlyArray< string | null > = [
 	transferStates.PROVISIONED,
@@ -35,7 +37,7 @@ const PREPARING_STATUSES: ReadonlyArray< string | null > = [
 // this wait's transfer is a failure, reported by useInstallDeadline rather than shown as a stage.
 
 /**
- * Which honest stage the install is in.
+ * Which stage the install is in.
  *
  * Once the transfer reports complete, the plugin install/activation this page dispatches is
  * still running, so completion of the *transfer* maps to the "finishing" stage — the page
@@ -45,7 +47,7 @@ const PREPARING_STATUSES: ReadonlyArray< string | null > = [
  * activation step (a plugin row that already exists on the site) does not make the move done.
  * Only when no transfer status is known does the page's own step decide.
  */
-export function getHonestStage( {
+export function getInstallStage( {
 	transferStatus,
 	currentStep,
 }: {

@@ -43,7 +43,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { getWaitVariant } from './honest-progress/get-wait-variant';
 import { chooseInstallStrategy } from './install-strategy';
 import { useDelayedCondition } from './use-delayed-condition';
 import { INSTALL_DEADLINE_MS, isSettled, useInstallDeadline } from './use-install-deadline';
@@ -576,9 +575,9 @@ export function useProductInstall( {
 		atomicFlow || ( installStrategy === 'atomic-transfer' && ! themeSlug && ! isPluginUploadFlow );
 
 	// The Redux slice only ever hears `start` and `complete` on this path (the theme-transfer poller's
-	// reducer drops everything in between), so the honest wait reads the fine-grained status from the
+	// reducer drops everything in between), so the staged wait reads the fine-grained status from the
 	// deadline hook's own poll and falls back to Redux only before that poll has seen our transfer.
-	const honestTransferStatus = polledTransferStatus ?? automatedTransferStatus;
+	const resolvedTransferStatus = polledTransferStatus ?? automatedTransferStatus;
 
 	// Which error screen to show, in priority order, or null for none. The presentational mapping
 	// lives in ProductInstallErrorView; keeping this as data makes the branching testable.
@@ -623,9 +622,6 @@ export function useProductInstall( {
 			current_step: currentStep,
 			install_strategy: installStrategy,
 			is_atomic_flow: atomicFlow,
-			// Which wait UI was on screen, so the honest-progress experiment can compare
-			// abandonment between variants (DOTCOM-17970).
-			wait_variant: isTransferWait ? getWaitVariant() : null,
 			outcome: error?.type ?? ( hasSucceeded ? 'succeeded' : null ),
 		},
 	} );
@@ -713,7 +709,7 @@ export function useProductInstall( {
 		additionalSteps,
 		error,
 		isTransferWait,
-		transferStatus: honestTransferStatus,
+		transferStatus: resolvedTransferStatus,
 		transferStartedAt,
 		onActivateTheme: () => setUserDirectInstallationAllowed( true ),
 	};

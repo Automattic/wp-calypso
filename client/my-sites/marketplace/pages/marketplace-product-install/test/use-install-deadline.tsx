@@ -119,7 +119,7 @@ describe( 'useInstallDeadline', () => {
 		expect( result.current.hasTimedOut ).toBe( true );
 	} );
 
-	// The honest wait reads its stages from here: the raw status the endpoint reports, and when the
+	// The staged wait reads its stages from here: the raw status the endpoint reports, and when the
 	// transfer began, so the clock survives a refresh.
 	it( 'exposes the watched transfer’s status and start time as they change', async () => {
 		const startedAt = Date.now() - 8000;
