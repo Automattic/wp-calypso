@@ -33,7 +33,9 @@ test.describe(
 				editorPage = new EditorPage( page );
 
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				// The next step navigates straight to the editor by URL, so whichever shell `/`
+				// renders is never used. Waiting for one only adds a way to fail.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 				siteSlug = testAccount.getSiteURL( { protocol: false } );
 			} );
 
