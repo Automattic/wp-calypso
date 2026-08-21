@@ -6,6 +6,7 @@ import {
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
 	githubInstallationsQuery,
+	hasDeletedSitesQuery,
 	isAutomatticianQuery,
 	productsQuery,
 	rawUserPreferencesQuery,
@@ -48,7 +49,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createLazyRoute, createRoute, lazyRouteComponent, notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { deletedSitesCheckFetchOptions, hasNoLiveSites } from '../../sites/deleted-sites';
 import {
 	canManageSite,
 	canOptOutOfWordPressBeta,
@@ -69,6 +69,7 @@ import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/si
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { userHasNoLiveSites } from '../../utils/user';
 import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -86,18 +87,14 @@ export const sitesRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: async ( { context }: { context: { config?: AppConfig } } ) => {
+	loader: async () => {
 		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 			// Settle the deleted-sites check before first paint.
-			...( hasNoLiveSites( user ) && context.config
-				? [
-						queryClient.ensureQueryData(
-							context.config.queries.paginatedSitesQuery( deletedSitesCheckFetchOptions )
-						),
-				  ]
+			...( userHasNoLiveSites( user )
+				? [ queryClient.ensureQueryData( hasDeletedSitesQuery() ) ]
 				: [] ),
 		] );
 	},
