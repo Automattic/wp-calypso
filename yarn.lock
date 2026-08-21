@@ -19,6 +19,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ariakit/components@npm:0.1.10":
+  version: 0.1.10
+  resolution: "@ariakit/components@npm:0.1.10"
+  dependencies:
+    "@ariakit/store": "npm:0.1.8"
+    "@ariakit/utils": "npm:0.1.6"
+  checksum: 3ae16d98657bad8541c9a3e8156fac5c87aeb5df9de2a25eb8a08b519d14c82fce8206f24d8db2d8194ac436f004f5e243fdc69d59ce520a2b6c98feead17dd5
+  languageName: node
+  linkType: hard
+
 "@ariakit/components@npm:0.1.8":
   version: 0.1.8
   resolution: "@ariakit/components@npm:0.1.8"
@@ -53,6 +63,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ariakit/react-components@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@ariakit/react-components@npm:0.4.1"
+  dependencies:
+    "@ariakit/components": "npm:0.1.10"
+    "@ariakit/react-store": "npm:0.1.9"
+    "@ariakit/react-utils": "npm:0.2.4"
+    "@ariakit/store": "npm:0.1.8"
+    "@ariakit/utils": "npm:0.1.6"
+    "@floating-ui/dom": "npm:^1.0.0"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: f2841740fac3e1635e9c39ebefd28cf43e2af3566b9895b4b30402dfd2b17a212cb46c80ac544dd5384ceba54d056daa367033a4e8241126d943e016dce98700
+  languageName: node
+  linkType: hard
+
 "@ariakit/react-store@npm:0.1.8":
   version: 0.1.8
   resolution: "@ariakit/react-store@npm:0.1.8"
@@ -64,6 +91,20 @@ __metadata:
   peerDependencies:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 64ebcb01c52ec378b7aa72e96be35e0689bf505458ed7fb8c7c0f488c7fad6c6ebaa7dafb55a3dfa6d65e7a8c9438816a3673f0394c0fac33e5b2984696e23f2
+  languageName: node
+  linkType: hard
+
+"@ariakit/react-store@npm:0.1.9":
+  version: 0.1.9
+  resolution: "@ariakit/react-store@npm:0.1.9"
+  dependencies:
+    "@ariakit/react-utils": "npm:0.2.4"
+    "@ariakit/store": "npm:0.1.8"
+    "@ariakit/utils": "npm:0.1.6"
+    use-sync-external-store: "npm:^1.6.0"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: f1e5c8754221979466c580702ce95ce47cab8043f70545c74f84a5f77eac52cb2696e3fbb7dae5c76372aefd2efc163be50d73fb5403c26286f64330cb8fc949
   languageName: node
   linkType: hard
 
@@ -79,6 +120,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ariakit/react-utils@npm:0.2.4":
+  version: 0.2.4
+  resolution: "@ariakit/react-utils@npm:0.2.4"
+  dependencies:
+    "@ariakit/store": "npm:0.1.8"
+    "@ariakit/utils": "npm:0.1.6"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 11604075e37d394fb868ec0d2dab46a7a053180329c1c4ab4e151c7b25236b57bc698f6a9b96d38d96587eb3e4060f657735f6e3f7648ea151c42df4b217e2a8
+  languageName: node
+  linkType: hard
+
 "@ariakit/react@npm:^0.4.15, @ariakit/react@npm:^0.4.32":
   version: 0.4.35
   resolution: "@ariakit/react@npm:0.4.35"
@@ -91,12 +144,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ariakit/react@npm:^0.4.35":
+  version: 0.4.37
+  resolution: "@ariakit/react@npm:0.4.37"
+  dependencies:
+    "@ariakit/react-components": "npm:0.4.1"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 2a11e018c23bbe0ff848c52bdbf124302c23532f28d48c0835674a292ba1fa235ac9f1fa3c150d1113a1c232ab760180ec8510b83a75de2160c1669f77b18b3c
+  languageName: node
+  linkType: hard
+
 "@ariakit/store@npm:0.1.7":
   version: 0.1.7
   resolution: "@ariakit/store@npm:0.1.7"
   dependencies:
     "@ariakit/utils": "npm:0.1.5"
   checksum: 33b12327c94edee876e9789e0fd6f3de0e0544cb69065bf2dd2c76de442d93b2d42ba12cfd0060e239841d1137c592d79f8496ab43dba26657e9a52eae89856b
+  languageName: node
+  linkType: hard
+
+"@ariakit/store@npm:0.1.8":
+  version: 0.1.8
+  resolution: "@ariakit/store@npm:0.1.8"
+  dependencies:
+    "@ariakit/utils": "npm:0.1.6"
+  checksum: df642861f6626e7abc7c21c9f92db388b20a690edf7b582d7ebb7840b8f09b0256205a420a89db45ac536289b6ccd26104701e889fd3c2616cf88ce810d2cb5d
   languageName: node
   linkType: hard
 
@@ -125,6 +199,13 @@ __metadata:
   version: 0.1.5
   resolution: "@ariakit/utils@npm:0.1.5"
   checksum: 4cf92b66e2261d99ea4dabbd541e39a8743fa20a0dfa399dae25e0c589df1c5bf8593eafa548ac5623a43da29ab6d12cc1b56701f6d2e4d685d177a7efb5b8c3
+  languageName: node
+  linkType: hard
+
+"@ariakit/utils@npm:0.1.6":
+  version: 0.1.6
+  resolution: "@ariakit/utils@npm:0.1.6"
+  checksum: 155e34d69e666ab54a3f2985a0c3f8aa2f49e0a8fd1b7da5cb93803d7febd427422340734366fbc5ff61afc7ce3bf252034c37f8b6dd640aa1cd9ba09fe12818
   languageName: node
   linkType: hard
 
@@ -496,7 +577,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
-    "@wordpress/dataviews": "npm:^17.3.0"
+    "@wordpress/dataviews": "npm:^18.0.0"
     "@wordpress/html-entities": "npm:^4.48.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/url": "npm:^4.48.0"
@@ -2009,7 +2090,7 @@ __metadata:
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^8.2.0"
     "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/dataviews": "npm:^17.3.0"
+    "@wordpress/dataviews": "npm:^18.0.0"
     "@wordpress/element": "npm:^8.0.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
@@ -12240,27 +12321,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dataviews@npm:^17.3.0":
-  version: 17.3.0
-  resolution: "@wordpress/dataviews@npm:17.3.0"
+"@wordpress/dataviews@npm:^18.0.0":
+  version: 18.0.0
+  resolution: "@wordpress/dataviews@npm:18.0.0"
   dependencies:
-    "@ariakit/react": "npm:^0.4.32"
-    "@wordpress/a11y": "npm:^4.52.0"
-    "@wordpress/base-styles": "npm:^12.0.0"
-    "@wordpress/components": "npm:^38.0.0"
-    "@wordpress/compose": "npm:^8.5.0"
-    "@wordpress/data": "npm:^10.52.0"
-    "@wordpress/date": "npm:^5.52.0"
-    "@wordpress/deprecated": "npm:^4.52.0"
-    "@wordpress/element": "npm:^8.4.0"
-    "@wordpress/i18n": "npm:^6.25.0"
-    "@wordpress/icons": "npm:^15.3.0"
-    "@wordpress/keycodes": "npm:^4.52.0"
-    "@wordpress/primitives": "npm:^4.52.0"
-    "@wordpress/private-apis": "npm:^1.52.0"
-    "@wordpress/rich-text": "npm:^7.52.0"
-    "@wordpress/ui": "npm:^0.19.0"
-    "@wordpress/warning": "npm:^3.52.0"
+    "@ariakit/react": "npm:^0.4.35"
+    "@wordpress/a11y": "npm:^4.53.0"
+    "@wordpress/base-styles": "npm:^12.1.0"
+    "@wordpress/components": "npm:^39.0.0"
+    "@wordpress/compose": "npm:^8.6.0"
+    "@wordpress/data": "npm:^10.53.0"
+    "@wordpress/date": "npm:^5.53.0"
+    "@wordpress/deprecated": "npm:^4.53.0"
+    "@wordpress/element": "npm:^8.5.0"
+    "@wordpress/i18n": "npm:^6.26.0"
+    "@wordpress/icons": "npm:^15.4.0"
+    "@wordpress/kebab-case": "npm:^1.0.0"
+    "@wordpress/keycodes": "npm:^4.53.0"
+    "@wordpress/primitives": "npm:^4.53.0"
+    "@wordpress/private-apis": "npm:^1.53.0"
+    "@wordpress/ui": "npm:^0.20.0"
+    "@wordpress/warning": "npm:^3.53.0"
     clsx: "npm:^2.1.1"
     colord: "npm:^2.9.3"
     date-fns: "npm:^4.4.0"
@@ -12274,7 +12355,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 6bee02df11f3c7a5625329271685008efb865441cd590c3bc4d5cc7f07822ed5eb242c3d9bf8b5620ef2612d4653f0db69b81d05a6abfce160b5d59e254616df
+  checksum: 5a8c3cc49eb4c6615b177060d3c8726ed5299fad048b75ed9f2d6577d2d673a002a3760d72510d44a622a26bfc04041a1563bdbc9120c5ea4d902c461e1ec081
   languageName: node
   linkType: hard
 
@@ -12879,6 +12960,15 @@ __metadata:
   version: 5.48.0
   resolution: "@wordpress/is-shallow-equal@npm:5.48.0"
   checksum: d57b56e9eaf431ea196f04fc735eec979f94c1f728ea631baa681bb59c5fb734df49e1a865b4687376d0adb3e8f091b3ffa7f053c91aea9b81995e43de8fe3bd
+  languageName: node
+  linkType: hard
+
+"@wordpress/kebab-case@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@wordpress/kebab-case@npm:1.0.0"
+  dependencies:
+    change-case: "npm:^4.1.2"
+  checksum: 260813a1aa9af11fa38a149cfa91176388302e0be47790964b703366330dab57453e325cc027181a23a814c7f3437bb367e4d028de327d5cd7fb92df4d2f6e63
   languageName: node
   linkType: hard
 
@@ -15322,7 +15412,7 @@ __metadata:
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^8.2.0"
     "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/dataviews": "npm:^16.0.0"
+    "@wordpress/dataviews": "npm:^18.0.0"
     "@wordpress/date": "npm:^5.48.0"
     "@wordpress/dom": "npm:^4.48.0"
     "@wordpress/edit-post": "npm:^8.48.0"
