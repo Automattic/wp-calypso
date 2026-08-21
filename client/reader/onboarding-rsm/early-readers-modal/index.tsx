@@ -14,10 +14,13 @@ interface EarlyReadersModalProps {
 	// Whether the user already has a site — switches the copy between the
 	// "has a blog" and "no site yet" variants of the pitch.
 	hasSite: boolean;
+	// Whether the user has opted in, which swaps this step for its
+	// confirmation state. Owned by the parent because it also governs the
+	// modal frame's Back button and the dismiss path's decline event.
+	hasJoined: boolean;
 	onDecline: () => void;
-	// Called with the selected interest slug when the user joins. Optional so
-	// the analytics wiring can land separately from the UI.
-	onJoin?: ( interest: string ) => void;
+	// Called with the selected interest slug when the user joins.
+	onJoin: ( interest: string ) => void;
 	// Called from the confirmation state's "Back to Reader" button.
 	onFinish: () => void;
 }
@@ -29,12 +32,12 @@ interface EarlyReadersModalProps {
 // steps don't unmount/remount the modal frame.
 export const EarlyReadersModal = ( {
 	hasSite,
+	hasJoined,
 	onDecline,
 	onJoin,
 	onFinish,
 }: EarlyReadersModalProps ) => {
 	const [ selectedInterest, setSelectedInterest ] = useState< string | null >( null );
-	const [ hasJoined, setHasJoined ] = useState( false );
 
 	const interests = [
 		{ slug: 'travel-world', emoji: '✈️', label: __( 'Travel' ) },
@@ -78,8 +81,7 @@ export const EarlyReadersModal = ( {
 		if ( ! selectedInterest ) {
 			return;
 		}
-		onJoin?.( selectedInterest );
-		setHasJoined( true );
+		onJoin( selectedInterest );
 	};
 
 	return (

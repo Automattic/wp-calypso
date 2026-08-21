@@ -9,6 +9,9 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {
+	READER_EARLY_READERS_DECLINED_EVENT,
+	READER_EARLY_READERS_OPT_IN_EVENT,
+	READER_EARLY_READERS_SOURCE_STEP,
 	READER_ONBOARDING_DISMISSED_PREFERENCE_KEY,
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_PREFERENCE_KEY,
@@ -129,15 +132,24 @@ jest.mock( 'calypso/reader/onboarding-rsm/subscribe-modal', () => ( {
 jest.mock( 'calypso/reader/onboarding-rsm/early-readers-modal', () => ( {
 	EarlyReadersModal: ( {
 		hasSite,
+		hasJoined,
 		onDecline,
+		onJoin,
 		onFinish,
 	}: {
 		hasSite: boolean;
+		hasJoined: boolean;
 		onDecline: () => void;
+		onJoin: ( interest: string ) => void;
 		onFinish: () => void;
 	} ) => (
-		<div data-testid="early-readers-modal-content" data-has-site={ String( hasSite ) }>
+		<div
+			data-testid="early-readers-modal-content"
+			data-has-site={ String( hasSite ) }
+			data-has-joined={ String( hasJoined ) }
+		>
 			<button onClick={ onDecline }>No thanks</button>
+			<button onClick={ () => onJoin( 'travel-world' ) }>Join Early Readers</button>
 			<button onClick={ onFinish }>Back to Reader</button>
 		</div>
 	),
@@ -170,6 +182,11 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserDate: jest.fn().mockReturnValue( '2020-01-01T00:00:00Z' ),
 	isCurrentUserEmailVerified: jest.fn().mockReturnValue( true ),
 	getCurrentUserSiteCount: jest.fn().mockReturnValue( 0 ),
+} ) );
+
+jest.mock( 'calypso/state/selectors/get-primary-site-id', () => ( {
+	__esModule: true,
+	default: jest.fn().mockReturnValue( 4242 ),
 } ) );
 
 const mockRefreshFollowingStreams = jest.fn();
@@ -1489,5 +1506,167 @@ describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
 		expect( await screen.findByTestId( 'early-readers-modal-content' ) ).toBeVisible();
+	} );
+
+	it( 'latches the joined state and hides the Back button after opting in', async () => {
+		setTreatmentAssignment();
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
+
+		expect( screen.getByTestId( 'early-readers-modal-content' ) ).toHaveAttribute(
+			'data-has-joined',
+			'false'
+		);
+		expect( screen.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Join Early Readers' } ) );
+
+		expect( screen.getByTestId( 'early-readers-modal-content' ) ).toHaveAttribute(
+			'data-has-joined',
+			'true'
+		);
+		// Back would imply the opt-in can be walked back into the discover step.
+		expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – Early Readers opt-in analytics', () => {
+	const setTreatmentAssignment = () => {
+		const { useExperiment } = jest.requireMock( 'calypso/lib/explat' ) as {
+			useExperiment: jest.Mock;
+		};
+		useExperiment.mockReturnValue( [ false, { variationName: 'treatment' } ] );
+	};
+
+	const navigateToEarlyReadersStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
+	};
+
+	beforeEach( () => {
+		setTreatmentAssignment();
+	} );
+
+	it( 'records the opt-in event with the interest, site status, and blog id', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Join Early Readers' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( READER_EARLY_READERS_OPT_IN_EVENT, {
+			interest: 'travel-world',
+			has_site: false,
+			blog_id: 4242,
+			source_step: READER_EARLY_READERS_SOURCE_STEP,
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			READER_EARLY_READERS_DECLINED_EVENT,
+			expect.anything()
+		);
+	} );
+
+	it( 'reports has_site: true for a user who already has a site', async () => {
+		const { getCurrentUserSiteCount } = jest.requireMock(
+			'calypso/state/current-user/selectors'
+		) as { getCurrentUserSiteCount: jest.Mock };
+		getCurrentUserSiteCount.mockReturnValue( 1 );
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Join Early Readers' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			READER_EARLY_READERS_OPT_IN_EVENT,
+			expect.objectContaining( { has_site: true } )
+		);
+
+		getCurrentUserSiteCount.mockReturnValue( 0 );
+	} );
+
+	it( 'records an explicit decline with decline_method: button', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'No thanks' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( READER_EARLY_READERS_DECLINED_EVENT, {
+			has_site: false,
+			blog_id: 4242,
+			source_step: READER_EARLY_READERS_SOURCE_STEP,
+			decline_method: 'button',
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			READER_EARLY_READERS_OPT_IN_EVENT,
+			expect.anything()
+		);
+	} );
+
+	it( 'records a dismiss as an implicit decline so the opt-in rate keeps its denominator', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			READER_EARLY_READERS_DECLINED_EVENT,
+			expect.objectContaining( { decline_method: 'dismiss' } )
+		);
+	} );
+
+	it( 'does not record a decline when the confirmation state is dismissed after joining', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Join Early Readers' } ) );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			READER_EARLY_READERS_DECLINED_EVENT,
+			expect.anything()
+		);
+	} );
+
+	it( 'does not record a decline when the user navigates Back to discover', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		await screen.findByTestId( 'subscribe-modal-content' );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			READER_EARLY_READERS_DECLINED_EVENT,
+			expect.anything()
+		);
+	} );
+
+	it( 'records exactly one decline per exit', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'No thanks' } ) );
+
+		const declineCalls = jest
+			.mocked( recordTracksEvent )
+			.mock.calls.filter( ( [ eventName ] ) => eventName === READER_EARLY_READERS_DECLINED_EVENT );
+		expect( declineCalls ).toHaveLength( 1 );
 	} );
 } );

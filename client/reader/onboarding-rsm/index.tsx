@@ -15,7 +15,10 @@ import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/read
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import {
+	READER_EARLY_READERS_DECLINED_EVENT,
 	READER_EARLY_READERS_EXPERIMENT_NAME,
+	READER_EARLY_READERS_OPT_IN_EVENT,
+	READER_EARLY_READERS_SOURCE_STEP,
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
@@ -38,6 +41,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getReloadStep } from './get-reload-step';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
 import type { CuratedBlog } from 'calypso/reader/onboarding-rsm/curated-blogs';
@@ -103,6 +107,7 @@ const ReaderOnboardingRsm = ( {
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount ) as number | null;
 	const hasSite = ( currentUserSiteCount ?? 0 ) > 0;
+	const primarySiteId = useSelector( getPrimarySiteId ) as number | null;
 
 	const hasCompletedOnboarding: boolean | null = useSelector( ( state ) =>
 		getPreference( state, READER_ONBOARDING_PREFERENCE_KEY )
@@ -132,9 +137,15 @@ const ReaderOnboardingRsm = ( {
 	//   persists across remounts of `InterestsModal` — without that, a user
 	//   could subscribe to a tagless pack, advance to discover, click Back,
 	//   and find the relaxed Continue gate forgotten on the fresh modal.
+	// - `hasJoinedEarlyReaders`: latched when the user opts into the Early
+	//   Readers program. Owned here (not in `EarlyReadersModal`) because the
+	//   parent renders the modal's Back button, which must not offer a route
+	//   back to discover from the post-join confirmation state, and because the
+	//   dismiss path must not log a decline after an opt-in.
 	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
 	const [ hasHiddenOnboardingThisSession, setHasHiddenOnboardingThisSession ] = useState( false );
 	const [ hasFollowedInInterestsStep, setHasFollowedInInterestsStep ] = useState( false );
+	const [ hasJoinedEarlyReaders, setHasJoinedEarlyReaders ] = useState( false );
 	const [ isDismissConfirmOpen, setIsDismissConfirmOpen ] = useState( false );
 	const markFollowedInInterestsStep = () => setHasFollowedInInterestsStep( true );
 	const hideOnboardingThisSession = () => setHasHiddenOnboardingThisSession( true );
@@ -312,6 +323,25 @@ const ReaderOnboardingRsm = ( {
 		hideOnboardingThisSession();
 	};
 
+	// Shared identity for the opt-in and decline events so the two sides of the
+	// funnel can be joined on the same fields in the warehouse.
+	const earlyReadersEventProps = {
+		has_site: hasSite,
+		blog_id: primarySiteId,
+		source_step: READER_EARLY_READERS_SOURCE_STEP,
+	};
+
+	// `decline_method` separates an explicit "No thanks" from closing the modal.
+	// Both are non-participation and both belong in the opt-in rate's
+	// denominator, but a dismiss is weaker evidence of a real "no" — worth
+	// knowing before v1 rewrites the copy.
+	const recordEarlyReadersDeclined = ( declineMethod: 'button' | 'dismiss' ) => {
+		recordTracksEvent( READER_EARLY_READERS_DECLINED_EVENT, {
+			...earlyReadersEventProps,
+			decline_method: declineMethod,
+		} );
+	};
+
 	const handleStepClose = () => {
 		if ( currentStep ) {
 			recordStepClose( currentStep );
@@ -320,6 +350,12 @@ const ReaderOnboardingRsm = ( {
 			// still run the completion work (digest flush, completed event,
 			// preference save) that Finish used to own.
 			if ( currentStep === 'early-readers' ) {
+				// Closing the opt-in screen counts as a decline, so the opt-in
+				// rate's denominator stays whole. Skipped after a join: the user
+				// is dismissing the confirmation, not the offer.
+				if ( ! hasJoinedEarlyReaders ) {
+					recordEarlyReadersDeclined( 'dismiss' );
+				}
 				completeOnboarding( 'early-readers' );
 				return;
 			}
@@ -368,7 +404,16 @@ const ReaderOnboardingRsm = ( {
 		openStep( 'discover' );
 	};
 
+	const handleEarlyReadersJoin = ( interest: string ) => {
+		setHasJoinedEarlyReaders( true );
+		recordTracksEvent( READER_EARLY_READERS_OPT_IN_EVENT, {
+			...earlyReadersEventProps,
+			interest,
+		} );
+	};
+
 	const handleEarlyReadersDecline = () => {
+		recordEarlyReadersDeclined( 'button' );
 		completeOnboarding( 'early-readers' );
 	};
 
@@ -490,7 +535,9 @@ const ReaderOnboardingRsm = ( {
 				label={ translate( 'Back' ) }
 			/>
 		);
-	} else if ( currentStep === 'early-readers' ) {
+	} else if ( currentStep === 'early-readers' && ! hasJoinedEarlyReaders ) {
+		// Once the user is in, Back would walk them from the confirmation into
+		// the discover step, implying the opt-in can be undone. It can't.
 		modalBackButton = (
 			<Button
 				size="compact"
@@ -602,7 +649,9 @@ const ReaderOnboardingRsm = ( {
 					{ currentStep === 'early-readers' && (
 						<EarlyReadersModal
 							hasSite={ hasSite }
+							hasJoined={ hasJoinedEarlyReaders }
 							onDecline={ handleEarlyReadersDecline }
+							onJoin={ handleEarlyReadersJoin }
 							onFinish={ handleEarlyReadersFinish }
 						/>
 					) }
