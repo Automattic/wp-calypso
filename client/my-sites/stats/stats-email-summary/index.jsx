@@ -16,6 +16,7 @@ import {
 	TooltipWrapper,
 	OpensTooltipContent,
 	ClicksTooltipContent,
+	getClicksDisplayValue,
 } from '../features/modules/stats-emails/tooltips';
 import useStatsStrings from '../hooks/use-stats-strings';
 import StatsModule from '../stats-module';
@@ -153,20 +154,9 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 						valueField="clicks_rate"
 						formatValue={ ( value, item ) => {
 							if ( item?.clicks !== undefined ) {
-								const clicksUnique = parseInt( item.unique_clicks, 10 );
-								const clicks = parseInt( item.clicks, 10 );
-								const hasUniquesData = clicksUnique > 0 || clicks === 0;
 								return (
 									<TooltipWrapper
-										value={
-											hasUniquesData
-												? `${ formatNumber( item.clicks_rate, {
-														numberFormatOptions: {
-															maximumFractionDigits: 2,
-														},
-												  } ) }%`
-												: '—'
-										}
+										value={ getClicksDisplayValue( item ) }
 										item={ item }
 										TooltipContent={ ClicksTooltipContent }
 									/>
