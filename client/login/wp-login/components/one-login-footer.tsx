@@ -10,8 +10,8 @@ import './one-login-footer.scss';
 interface OneLoginFooterProps {
 	/**
 	 * When `isLoginView` is true, this is the "lost password" link. Below 960px it stays here,
-	 * where it has always been; desktop promotes it to the top bar and gives this slot to the
-	 * route to signup instead.
+	 * where it has always been; desktop moves it up beside the password field and gives this
+	 * slot to the route to signup instead.
 	 */
 	lostPasswordLink?: JSX.Element;
 	/**
@@ -71,10 +71,10 @@ const OneLoginFooter = ( {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 
 	if ( isLoginView ) {
-		// Desktop takes the route to signup and leaves password recovery to the top bar; below
-		// 960px the two swap back to where they have always been. Both are rendered and one is
-		// hidden in CSS, matching the top bar, because this page is server-rendered and a
-		// viewport hook would jump on hydration.
+		// Desktop takes the route to signup and leaves password recovery to the password field's
+		// label row; below 960px the two swap back to where they have always been. Both are
+		// rendered and one is hidden in CSS, matching the top bar, because this page is
+		// server-rendered and a viewport hook would jump on hydration.
 		return (
 			<div className="one-login__footer">
 				<div className="one-login__footer-links-wrapper one-login__footer-mobile">
