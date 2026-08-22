@@ -35,8 +35,9 @@ $breakpoint-mobile: 782px; //Mobile size.
 // Desktop puts the lost-password link on the password field's label row, beside the field it
 // resets, which also leaves the login top bar's right side empty, matching signup's. Below
 // 960px the footer keeps the link it has always had, so this one is hidden there rather than
-// shown twice. Same treatment as the footer's "Don't have an account?" line. Hardcoded
-// fallback rather than a `--wpds-*` token, for the reason given on the badge above.
+// shown twice. Link blue and a step smaller than the label, so it reads as the field's
+// secondary action rather than a second label. Hardcoded fallback rather than a `--wpds-*`
+// token, for the reason given on the badge above.
 .login__form-password-label-row {
 	display: flex;
 	align-items: baseline;
@@ -48,10 +49,15 @@ $breakpoint-mobile: 782px; //Mobile size.
 // underline from every link in the card at a specificity a lone class cannot beat.
 .login .login__form-password-label-row .login__form-lost-password {
 	display: none;
-	font-size: 0.875rem;
-	line-height: 20px;
-	color: var(--studio-gray-60, #50575e);
+	font-size: 0.75rem;
+	line-height: 16px;
+	color: var(--color-link, #3858e9);
 	text-decoration: underline;
+
+	&:hover,
+	&:focus {
+		color: var(--color-link-dark, #1d35b4);
+	}
 
 	@include break-large {
 		display: inline;
