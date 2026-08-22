@@ -448,7 +448,7 @@ export function Plan( {
 				<Text intent="error">
 					{ sprintf(
 						/* translators: %s: plan name */
-						__( '%s-expired' ),
+						__( '%s (expired)' ),
 						value
 					) }
 				</Text>
