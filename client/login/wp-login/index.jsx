@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Step } from '@automattic/onboarding';
 import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -72,6 +71,7 @@ export class Login extends Component {
 		twoFactorAuthType: PropTypes.string,
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
+		isWoo: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isLoginView: true };
@@ -198,18 +198,18 @@ export class Login extends Component {
 	}
 
 	/**
-	 * The same link for the desktop top bar, where it takes that slot's treatment rather than the
-	 * footer's lighter one. Only one of the two is ever visible: see one-login-layout.scss.
+	 * The same link for desktop, where it sits on the password field's label row, beside the
+	 * field it resets. Only one of the two is ever visible: see login-form.scss.
 	 */
-	getLostPasswordTopBarLink() {
+	getLostPasswordFormLink() {
 		if ( this.props.twoFactorAuthType ) {
 			return null;
 		}
 
 		return (
-			<Step.LinkButton href="/" onClick={ this.handleLostPasswordClick }>
+			<a className="login__form-lost-password" href="/" onClick={ this.handleLostPasswordClick }>
 				{ this.props.translate( 'Lost your password?' ) }
-			</Step.LinkButton>
+			</a>
 		);
 	}
 
@@ -291,6 +291,15 @@ export class Login extends Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
+				// Desktop only, and only on the main login view: the one that pairs with signup.
+				// Gravatar-powered clients carry their own link in their footer, and Woo renders
+				// its own "Forgot password?" inside the form, so neither gets a second one. Already
+				// null under 2FA, and never reaches the form while the password is hidden.
+				lostPasswordLink={
+					isLoginView && ! isGravPoweredClient && ! this.props.isWoo
+						? this.getLostPasswordFormLink()
+						: undefined
+				}
 				footer={
 					isGravPoweredLoginPage ? (
 						<GravPoweredLoginBlockFooter />
@@ -396,10 +405,10 @@ export class Login extends Component {
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
-						// Only the main login view swaps its top-right link, and only on desktop: it is
+						// Only the main login view empties its top-right slot, and only on desktop: it is
 						// the one that pairs with signup, and the one whose footer carries the route
-						// to signup there. Already null under 2FA, so those keep the top bar too.
-						lostPasswordLink={ isLoginView ? this.getLostPasswordTopBarLink() : undefined }
+						// to signup there. 2FA and the other mid-flow views keep the top bar.
+						signupLinkMobileOnly={ isLoginView }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 					>

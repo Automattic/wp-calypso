@@ -36,11 +36,12 @@ interface OneLoginLayoutProps {
 	loginUrl?: string;
 	isLostPasswordView?: boolean;
 	/**
-	 * Takes the top-right slot when provided, displacing the "Create an account" link, which the
-	 * main login view moves to its footer. Pass it only from views that actually offer password
-	 * recovery: mid-flow screens like 2FA have none and keep the signup link up there.
+	 * Keeps the "Create an account" link in the top bar below 960px only. The main login view
+	 * passes this: on desktop its footer carries the route to signup instead, matching signup,
+	 * and the top bar's right side is left empty, also matching signup. Mid-flow screens like
+	 * 2FA keep the link up there at every width.
 	 */
-	lostPasswordLink?: JSX.Element | null;
+	signupLinkMobileOnly?: boolean;
 	noThanksRedirectUrl?: string;
 	/**
 	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`. Defaults to 6.
@@ -68,7 +69,7 @@ const OneLoginLayout = ( {
 	isSectionSignup,
 	loginUrl,
 	isLostPasswordView,
-	lostPasswordLink,
+	signupLinkMobileOnly,
 	noThanksRedirectUrl,
 	columnWidth,
 	showLogo = true,
@@ -134,25 +135,23 @@ const OneLoginLayout = ( {
 		const signupOrLoginLink = isSectionSignup ? <LoginLink /> : <SignUpLink />;
 
 		// On the main login view, desktop moves the route to signup down to the footer, matching
-		// where signup puts its route to login, and password recovery takes the slot it vacates.
+		// where signup puts its route to login, and leaves this slot empty, also matching signup.
 		// Below 960px nothing moves: both screens keep the top-right link they have today.
 		//
-		// Both are rendered and chosen in CSS rather than by a viewport hook, because this page is
-		// server-rendered: a hook has no viewport on the server, so it would render the mobile
-		// arrangement and then visibly jump on hydration for every desktop visitor. The hidden one
-		// is `display: none`, so it stays out of the accessibility tree either way.
+		// Hidden in CSS rather than by a viewport hook, because this page is server-rendered: a
+		// hook has no viewport on the server, so it would render the mobile arrangement and then
+		// visibly jump on hydration for every desktop visitor. `display: none`, so the hidden
+		// link stays out of the accessibility tree rather than lingering as a second route.
 		//
-		// Everywhere else (2FA, magic login, the OAuth2 screen) no lostPasswordLink is passed and
-		// this collapses to exactly what it rendered before.
-		const rightElement = lostPasswordLink ? (
+		// Everywhere else (2FA, magic login, the OAuth2 screen) the flag is not passed and this
+		// collapses to exactly what it rendered before.
+		const rightElement = (
 			<nav className="wp-login__one-login-layout-top-right">
-				<span className="wp-login__top-right-desktop">{ lostPasswordLink }</span>
-				<span className="wp-login__top-right-mobile">{ signupOrLoginLink }</span>
-				{ noThanksRedirectUrl && <NoThanksLink /> }
-			</nav>
-		) : (
-			<nav className="wp-login__one-login-layout-top-right">
-				{ signupOrLoginLink }
+				{ signupLinkMobileOnly ? (
+					<span className="wp-login__top-right-mobile">{ signupOrLoginLink }</span>
+				) : (
+					signupOrLoginLink
+				) }
 				{ noThanksRedirectUrl && <NoThanksLink /> }
 			</nav>
 		);

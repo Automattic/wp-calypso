@@ -28,22 +28,14 @@
 	gap: rem( 16px );
 }
 
-// The main login view swaps its top-right link at the desktop breakpoint: password recovery
-// takes the slot and the route to signup moves to the footer, matching signup. Below 960px
-// nothing moves. Both are in the markup and one is hidden, rather than a viewport hook picking
-// one, because this page is server-rendered and a hook would jump on hydration.
+// The main login view drops its top-right link at the desktop breakpoint: the route to signup
+// moves to the footer, matching signup, and nothing takes the slot, also matching signup. Below
+// 960px nothing moves. Hidden in CSS rather than by a viewport hook, because this page is
+// server-rendered and a hook would jump on hydration.
 //
-// `display: contents` so the visible one still sits in the parent's flex gap, and
-// `display: none` so the hidden one leaves the accessibility tree rather than lingering
-// as a second, invisible route to the same place.
-.wp-login__top-right-desktop {
-	display: none;
-
-	@media ( min-width: 960px ) {
-		display: contents;
-	}
-}
-
+// `display: contents` so the link still sits in the parent's flex gap when shown, and
+// `display: none` so it leaves the accessibility tree when hidden, rather than lingering as a
+// second, invisible route to the same place.
 .wp-login__top-right-mobile {
 	display: contents;
 
