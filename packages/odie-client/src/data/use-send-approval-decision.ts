@@ -11,18 +11,29 @@ type ApprovalDecisionResponse = {
 	action?: string;
 	description?: string;
 	reason?: string;
+	/**
+	 * The bot's next message: the server resumes the paused chat turn with the decision as the
+	 * tool call's result, and this is what the bot said next (possibly another approval request).
+	 * Null when the turn could not be resumed; the decision itself still stands.
+	 */
+	continuation?: {
+		message_id?: number;
+		content?: string;
+		context?: Message[ 'context' ];
+	} | null;
 };
 
 /**
  * Approve or decline a pending action-approval proposal.
  *
- * The chat reference (chat_id + bot_id) rides on the request so the server appends the
- * decided outcome to the stored chat as a bot message. The LIVE view deliberately ignores
- * refetches of an unchanged interaction (it protects optimistic local messages — see
- * useGetCombinedChat), so the outcome message is also appended locally via addMessage,
- * the same way live bot replies land; the pending approval card (which only shows on the
- * last message) retires with it. The query invalidation keeps the cache fresh for the
- * next mount, where the server-stored copy is what loads.
+ * The chat reference (chat_id + bot_id) rides on the request so the server resumes the paused
+ * turn and returns the bot's continuation, already stored in the chat. The LIVE view deliberately
+ * ignores refetches of an unchanged interaction (it protects optimistic local messages — see
+ * useGetCombinedChat), so the continuation is appended locally via addMessage, the same way live
+ * bot replies land; the pending approval card (which only shows on the last message) retires with
+ * it, and a continuation that is itself a new approval request renders as the next card. The
+ * query invalidation keeps the cache fresh for the next mount, where the server-stored copy is
+ * what loads.
  * @returns useMutation return object.
  */
 export const useSendApprovalDecision = () => {
@@ -44,23 +55,38 @@ export const useSendApprovalDecision = () => {
 		onSuccess: ( response, { decision } ) => {
 			const executed = 'approve' === decision;
 			const description = response?.description ?? '';
-			const outcome: Message = {
-				content: executed
-					? `Done — you approved this action and it has been completed: ${ description }`
-					: `You declined this action — it has not been performed: ${ description }`,
-				role: 'bot',
-				type: 'message',
-				internal_message_id: generateUUID(),
-				context: {
-					site_id: null,
-					flags: executed ? { wpcom_approval_executed: true } : { wpcom_approval_declined: true },
-					approval: {
-						status: executed ? 'executed' : 'declined',
-						action: response?.action,
-						description,
-					},
-				},
-			};
+			const continuation = response?.continuation;
+
+			const outcome: Message = continuation
+				? {
+						message_id: continuation.message_id,
+						internal_message_id: generateUUID(),
+						content: continuation.content ?? '',
+						role: 'bot',
+						type: 'message',
+						context: continuation.context,
+				  }
+				: {
+						// The server recorded the decision but could not resume the turn (pause
+						// expired, bot updated). Say what happened; the next message starts fresh.
+						content: executed
+							? `Done — you approved this action and it has been completed: ${ description }`
+							: `You declined this action — it has not been performed: ${ description }`,
+						role: 'bot',
+						type: 'message',
+						internal_message_id: generateUUID(),
+						context: {
+							site_id: null,
+							flags: executed
+								? { wpcom_approval_executed: true }
+								: { wpcom_approval_declined: true },
+							approval: {
+								status: executed ? 'executed' : 'declined',
+								action: response?.action,
+								description,
+							},
+						},
+				  };
 			addMessage( outcome );
 			queryClient.invalidateQueries( { queryKey: [ 'odie-chat', botSlug, chat.odieId ] } );
 		},
