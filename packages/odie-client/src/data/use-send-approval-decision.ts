@@ -37,7 +37,7 @@ type ApprovalDecisionResponse = {
  * @returns useMutation return object.
  */
 export const useSendApprovalDecision = () => {
-	const { chat, addMessage } = useOdieAssistantContext();
+	const { chat, addMessage, setChatStatus } = useOdieAssistantContext();
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 	const queryClient = useQueryClient();
 
@@ -51,6 +51,14 @@ export const useSendApprovalDecision = () => {
 				apiNamespace: 'wpcom/v2',
 				body: { chat_id: chat.odieId, bot_id: botSlug },
 			} );
+		},
+		// The decision runs the bot's next turn server-side (execute, then a model call), so show
+		// the same "thinking" placeholder a live reply shows until the continuation arrives.
+		onMutate: () => {
+			setChatStatus( 'sending' );
+		},
+		onSettled: () => {
+			setChatStatus( 'loaded' );
 		},
 		onSuccess: ( response, { decision } ) => {
 			const executed = 'approve' === decision;

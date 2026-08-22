@@ -26,17 +26,22 @@ export const ApprovalRequest = ( { message }: { message: Message } ) => {
 		approvalDecision.mutate( { token, decision } );
 	};
 
-	// Once a decision succeeds the refetch replaces this card; keep the buttons locked
-	// meanwhile. On error (e.g. an expired token) they re-enable.
+	// Once a decision succeeds the continuation replaces this card; keep the buttons locked
+	// meanwhile and say which decision is in flight. On error (e.g. an expired token) they re-enable.
 	const isLocked = approvalDecision.isPending || approvalDecision.isSuccess;
+	const pendingDecision = isLocked ? approvalDecision.variables?.decision : undefined;
 
 	return (
 		<div className="odie__transfer-chat">
 			<button disabled={ isLocked } onClick={ () => decide( 'approve' ) }>
-				{ __( 'Approve and continue', __i18n_text_domain__ ) }
+				{ 'approve' === pendingDecision
+					? __( 'Approving…', __i18n_text_domain__ )
+					: __( 'Approve and continue', __i18n_text_domain__ ) }
 			</button>
 			<button disabled={ isLocked } onClick={ () => decide( 'decline' ) }>
-				{ __( 'Decline', __i18n_text_domain__ ) }
+				{ 'decline' === pendingDecision
+					? __( 'Declining…', __i18n_text_domain__ )
+					: __( 'Decline', __i18n_text_domain__ ) }
 			</button>
 		</div>
 	);

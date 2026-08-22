@@ -38,7 +38,12 @@
 				border-radius: 16px;
 			}
 
-			&:hover {
+			&:disabled {
+				color: var( --studio-gray-50 );
+				cursor: default;
+			}
+
+			&:hover:not( :disabled ) {
 				background: color-mix( in srgb, #fff 98%, var( --wp-admin-theme-color, #3858e9 ) );
 				color: var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
 				fill: var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
