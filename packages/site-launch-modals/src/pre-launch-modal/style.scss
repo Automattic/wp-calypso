@@ -1,4 +1,4 @@
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/variables';
 
 .site-launch-pre-launch-modal__preview-card {
 	padding: $grid-unit-20 $grid-unit-20;
@@ -17,7 +17,8 @@
 // While launching, keep the confirmation content in place (invisible) so it
 // still defines the modal height, and center the spinner over it. This keeps
 // the modal from resizing between states regardless of the translated copy.
-.site-launch-pre-launch-modal__body[data-launching="true"] .site-launch-pre-launch-modal__confirmation {
+.site-launch-pre-launch-modal__body[data-launching='true']
+	.site-launch-pre-launch-modal__confirmation {
 	visibility: hidden;
 }
 

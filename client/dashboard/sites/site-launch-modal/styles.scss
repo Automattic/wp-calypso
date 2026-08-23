@@ -1,6 +1,6 @@
-@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/variables';
 
 // Dark-mode tint for the card surfaces that @automattic/site-launch-modals ships
 // light-only.
