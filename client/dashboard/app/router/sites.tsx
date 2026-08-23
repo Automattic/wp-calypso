@@ -185,8 +185,12 @@ export const siteRoute = createRoute( {
 		queryClient.prefetchQuery( siteAdminBarQuery( site.ID ) );
 
 		await Promise.all( [
+			// Only the environment switcher needs the sibling environment, and a user with
+			// access to one environment doesn't necessarily have access to the other.
 			otherEnvironmentSiteId &&
-				queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) ),
+				queryClient
+					.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) )
+					.catch( () => undefined ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 

@@ -41,7 +41,15 @@ async function getSite( siteIdOrSlug: number | string ) {
 	} catch ( e ) {
 		// Force the site to be retrieved from wpcom if there is any issue with the Jetpack connection.
 		if ( isInaccessibleJetpackError( e ) ) {
-			const site = await fetchSite( siteIdOrSlug, { force: 'wpcom' } );
+			// wpcom applies its own access checks, so this fallback can fail where the proxied
+			// request didn't — a private staging site the caller isn't a member of, say. Without
+			// this, that rejection escapes uncaught and surfaces as a generic error page.
+			const site = await fetchSite( siteIdOrSlug, { force: 'wpcom' } ).catch( ( wpcomError ) => {
+				if ( isSiteNotFoundError( wpcomError ) ) {
+					throw notFound();
+				}
+				throw e;
+			} );
 
 			// Throw an error if site.slug is not available because it means there is a site slug collision.
 			if ( ! site.slug ) {
