@@ -208,7 +208,14 @@ describe( '<SiteOverview>', () => {
 		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
 
-		expect( await getCard( 'Plan' ) ).toBeVisible();
+		// The storage figure is unknown, so the stat says so rather than vanishing.
+		await screen.findByText( 'Unavailable' );
+		const planCard = await getCard( 'Plan' );
+		expect( planCard ).toBeVisible();
+		expect( within( planCard ).getByText( 'Storage' ) ).toBeVisible();
+		expect( within( planCard ).getByText( 'Unavailable' ) ).toBeVisible();
+
+		// Without a usage figure there is nothing to warn about.
 		expect( screen.queryByText( 'Your site is low on storage' ) ).not.toBeInTheDocument();
 	} );
 

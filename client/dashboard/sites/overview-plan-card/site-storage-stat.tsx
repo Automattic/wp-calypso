@@ -18,11 +18,20 @@ import type { Site } from '@automattic/api-core';
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 
 export default function SiteStorageStat( { site }: { site: Site } ) {
-	const { data: mediaStorage } = useQuery( siteMediaStorageQuery( site.ID ) );
+	const { data: mediaStorage, isLoading } = useQuery( siteMediaStorageQuery( site.ID ) );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
+	// Keep the stat in place when the usage figure is missing, so the card doesn't
+	// reflow while loading and doesn't silently lose a row when the request fails.
 	if ( ! mediaStorage ) {
-		return null;
+		return (
+			<Stat
+				density="high"
+				strapline={ __( 'Storage' ) }
+				metric={ isLoading ? undefined : __( 'Unavailable' ) }
+				isLoading={ isLoading }
+			/>
+		);
 	}
 
 	const storageUsagePercent = Math.round(
