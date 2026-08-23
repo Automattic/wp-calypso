@@ -253,21 +253,18 @@ describe( '<Sites>', () => {
 			plan: { product_slug: 'business-bundle', product_name_short: 'Business' },
 		} as Site;
 
-		function mockSitesByStagingParam() {
-			nock( 'https://public-api.wordpress.com' )
-				.persist()
-				.get( '/rest/v1.3/me/sites' )
-				.query( ( query ) => query.include_staging !== 'true' )
-				.reply( 200, { sites: [], total: 0 } );
-			nock( 'https://public-api.wordpress.com' )
+		// Register before mockSitesEndpoint so the catch-all interceptor doesn't
+		// consume the staging-sites check request.
+		function mockStagingSitesCheckEndpoint( sites: Site[] ) {
+			return nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.get( '/rest/v1.3/me/sites' )
 				.query( ( query ) => query.include_staging === 'true' )
-				.reply( 200, { sites: [ stagingSite ], total: 1 } );
+				.reply( 200, { sites, total: sites.length } );
 		}
 
-		test( 'offers to show hidden staging sites from the empty state', async () => {
-			// The view change is persisted as a user preference and refetched, so the mock must remember it.
+		// The view change is persisted as a user preference and refetched, so the mock must remember it.
+		function mockStatefulPreferencesEndpoint() {
 			nock.cleanAll();
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/rest/v1.2/read/teams' )
@@ -290,29 +287,70 @@ describe( '<Sites>', () => {
 					};
 					return { calypso_preferences: preferences };
 				} );
-			mockSitesByStagingParam();
+		}
+
+		test( 'offers to show staging sites when a zero-site user has them', async () => {
+			mockStatefulPreferencesEndpoint();
+			mockStagingSitesCheckEndpoint( [ stagingSite ] );
+			mockSitesEndpoint( [] );
 			queryClient.clear();
 			render( <Sites />, { user: { site_count: 0 } as User, queryClient } );
 
-			expect( await screen.findByText( 'You don’t have any sites yet' ) ).toBeVisible();
+			expect(
+				await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
+			).toBeVisible();
 
 			await userEvent.click( await screen.findByRole( 'button', { name: 'Show staging sites' } ) );
 
 			expect( await screen.findByText( 'My Staging Site' ) ).toBeVisible();
 		} );
 
-		test( 'does not offer staging sites when there are none', async () => {
-			nock( 'https://public-api.wordpress.com' )
-				.persist()
-				.get( '/rest/v1.3/me/sites' )
-				.query( true )
-				.reply( 200, { sites: [], total: 0 } );
+		test( 'offers to show staging sites when the list is empty for a user with sites', async () => {
+			mockStagingSitesCheckEndpoint( [ stagingSite ] );
+			mockSitesEndpoint( [] );
+			render( <Sites />, { user: { site_count: 1 } as User } );
+
+			expect( await screen.findByText( 'No sites match your search' ) ).toBeVisible();
+			expect( await screen.findByRole( 'button', { name: 'Show staging sites' } ) ).toBeVisible();
+		} );
+
+		test( 'renders the onboarding empty state when a zero-site user has no staging sites', async () => {
+			const checkScope = mockStagingSitesCheckEndpoint( [] );
+			mockSitesEndpoint( [] );
 			render( <Sites />, { user: { site_count: 0 } as User } );
 
-			expect( await screen.findByText( 'You don’t have any sites yet' ) ).toBeVisible();
-			await waitFor( () =>
-				expect( screen.queryByRole( 'button', { name: 'Show staging sites' } ) ).toBeNull()
-			);
+			expect(
+				await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
+			).toBeVisible();
+			await waitFor( () => expect( checkScope.isDone() ).toBe( true ) );
+			expect(
+				screen.queryByRole( 'button', { name: 'Show staging sites' } )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'does not flash the onboarding empty state while the staging-sites check is pending', async () => {
+			let resolveCheck: ( () => void ) | null = null;
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.3/me/sites' )
+				.query( ( query ) => query.include_staging === 'true' )
+				.reply(
+					200,
+					() =>
+						new Promise( ( resolve ) => {
+							resolveCheck = () => resolve( { sites: [ stagingSite ], total: 1 } );
+						} )
+				);
+			mockSitesEndpoint( [] );
+			render( <Sites />, { user: { site_count: 0 } as User } );
+
+			await screen.findByRole( 'heading', { name: 'Sites' } );
+			await waitFor( () => expect( resolveCheck ).not.toBeNull() );
+			expect(
+				screen.queryByRole( 'heading', { name: /You don.t have any sites yet/ } )
+			).not.toBeInTheDocument();
+
+			resolveCheck!();
+			expect( await screen.findByRole( 'button', { name: 'Show staging sites' } ) ).toBeVisible();
 		} );
 	} );
 } );

@@ -2,12 +2,13 @@ import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, reusableBlock, wordpress } from '@wordpress/icons';
+import { cloud, Icon, reusableBlock, wordpress } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
 import EmptyState from '../../components/empty-state';
 import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
+import type { ReactNode } from 'react';
 
 const CONTEXT = 'dashboard-sites';
 const EMPTY_STATE_REF = 'dashboard-sites-empty-state';
@@ -84,18 +85,43 @@ function EmptySitesStateUpsell() {
 	return <OfferCard onClick={ handleOfferClick } />;
 }
 
-export function EmptySitesSearchStateContent() {
+export function ShowStagingSitesAction( { onClick }: { onClick: () => void } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	const handleClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_empty_state_action_click', {
+			action: 'show-staging-sites',
+		} );
+		onClick();
+	};
+
+	return (
+		<EmptyState.ActionItem
+			title={ __( 'Looking for a staging site?' ) }
+			description={ __( 'Staging sites are hidden from this list until you choose to show them.' ) }
+			decoration={ <Icon icon={ cloud } size={ 24 } /> }
+			actions={
+				<Button variant="secondary" onClick={ handleClick } size="compact" __next40pxDefaultSize>
+					{ __( 'Show staging sites' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
+export function EmptySitesSearchStateContent( { children }: { children?: ReactNode } ) {
 	return (
 		<>
 			<EmptyState.ActionList>
 				<CreateAndBuildActions />
+				{ children }
 			</EmptyState.ActionList>
 			<EmptySitesStateUpsell />
 		</>
 	);
 }
 
-export function EmptySitesStateContent() {
+export function EmptySitesStateContent( { children }: { children?: ReactNode } ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	const handleMigrateClick = () => {
@@ -150,6 +176,7 @@ export function EmptySitesStateContent() {
 						</Button>
 					}
 				/>
+				{ children }
 			</EmptyState.ActionList>
 			<EmptySitesStateUpsell />
 		</>

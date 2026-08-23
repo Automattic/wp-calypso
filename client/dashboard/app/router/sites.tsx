@@ -6,6 +6,7 @@ import {
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
 	githubInstallationsQuery,
+	hasStagingSitesQuery,
 	isAutomatticianQuery,
 	productsQuery,
 	rawUserPreferencesQuery,
@@ -56,6 +57,7 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
 import {
 	getActivityLogHiddenGroups,
@@ -68,6 +70,7 @@ import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/si
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { userHasNoLiveSites } from '../../utils/user';
 import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -86,9 +89,16 @@ export const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: async () => {
+		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// Settle the staging-sites check before first paint. Prefetched rather
+			// than ensured so a failed check falls back to the onboarding empty
+			// state instead of erroring the whole route.
+			! isDashboardBackport() &&
+				userHasNoLiveSites( user ) &&
+				queryClient.prefetchQuery( hasStagingSitesQuery() ),
 		] );
 	},
 } );
