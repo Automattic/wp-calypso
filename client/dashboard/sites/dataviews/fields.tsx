@@ -6,6 +6,7 @@ import { useAppContext } from '../../app/context';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
 import TimeSince from '../../components/time-since';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
@@ -234,6 +235,20 @@ function getDefaultFields( {
 			render: ( { field, item } ) => field.getValue( { item } ),
 		},
 		{
+			id: 'staging',
+			type: 'boolean',
+			label: __( 'Staging sites' ),
+			elements: [
+				{ value: true, label: __( 'Show' ) },
+				{ value: false, label: __( 'Hide' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			render: ( { item } ) => ( item.is_wpcom_staging_site ? __( 'Yes' ) : __( 'No' ) ),
+			enableSorting: false,
+		},
+		{
 			id: 'is_deleted',
 			type: 'boolean',
 			label: __( 'Deleted' ),
@@ -263,6 +278,10 @@ export function useFields( {
 		const defaultFields = getDefaultFields( { viewType, queries } );
 		return defaultFields.filter( ( field ) => {
 			if ( field.id === 'is_a8c' && ! isAutomattician ) {
+				return false;
+			}
+
+			if ( field.id === 'staging' && isDashboardBackport() ) {
 				return false;
 			}
 

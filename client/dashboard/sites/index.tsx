@@ -55,7 +55,11 @@ function isDeletedFilterActive( filters: Filter[] ): boolean {
 	return filters.some( ( filter ) => filter.field === 'is_deleted' && filter.value === true );
 }
 
-const getFetchPaginatedSitesOptions = (
+function isStagingFilterActive( filters: Filter[] ) {
+	return filters.some( ( filter ) => filter.field === 'staging' && filter.value === true );
+}
+
+export const getFetchPaginatedSitesOptions = (
 	view: View,
 	{ isDefaultView, isRestoringAccount, isAutomattician }: SiteListQueryOptions,
 	siteFilters: DashboardFilters = {}
@@ -74,9 +78,8 @@ const getFetchPaginatedSitesOptions = (
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
 		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
-		// Exclude staging sites from the standalone dashboard list; the classic
-		// Calypso backport keeps them (the API includes them by default).
-		...( ! isDashboardBackport() && { include_staging: false } ),
+		// The classic Calypso backport keeps staging sites (the API includes them by default).
+		...( ! isDashboardBackport() && { include_staging: isStagingFilterActive( filters ) } ),
 		search: view.search,
 		sort_field: view.sort?.field,
 		sort_direction: view.sort?.direction,
