@@ -52,6 +52,15 @@ function mockSitesEndpoint( sites: Site[] ) {
 
 const BOUNCING_NOTICE_TITLE = 'Your account email isn’t receiving our messages';
 
+// Register before mockSitesEndpoint so the catch-all interceptor doesn't
+// consume the deleted-sites check request.
+function mockDeletedSitesCheckEndpoint( total: number ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.3/me/sites' )
+		.query( ( query ) => query.site_visibility === 'deleted' )
+		.reply( 200, { sites: [], total } );
+}
+
 describe( '<Sites>', () => {
 	beforeEach( () => {
 		nock( 'https://public-api.wordpress.com' )
@@ -120,6 +129,7 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'renders empty state when the user has no sites', async () => {
+		mockDeletedSitesCheckEndpoint( 0 );
 		mockSitesEndpoint( mockSites );
 		render( <Sites />, {
 			user: {
@@ -132,6 +142,89 @@ describe( '<Sites>', () => {
 		).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Create a site' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the deleted-aware empty state when a zero-site user has deleted sites', async () => {
+		mockDeletedSitesCheckEndpoint( 1 );
+		mockSitesEndpoint( [] );
+		render( <Sites />, {
+			user: {
+				site_count: 0,
+			} as User,
+		} );
+
+		expect(
+			await screen.findByRole( 'heading', { name: /You don.t have any active sites/ } )
+		).toBeVisible();
+		const link = screen.getByRole( 'link', { name: 'View deleted sites' } );
+		expect( link ).toBeVisible();
+		expect( link ).toHaveAttribute( 'href', expect.stringContaining( 'is_deleted=true' ) );
+		expect( screen.getByRole( 'link', { name: 'Create a site' } ) ).toBeVisible();
+	} );
+
+	test( 'renders the onboarding empty state when a zero-site user has no deleted sites', async () => {
+		const deletedCheckScope = mockDeletedSitesCheckEndpoint( 0 );
+		mockSitesEndpoint( [] );
+		render( <Sites />, {
+			user: {
+				site_count: 0,
+			} as User,
+		} );
+
+		expect(
+			await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
+		).toBeVisible();
+		await waitFor( () => expect( deletedCheckScope.isDone() ).toBe( true ) );
+		expect( screen.queryByRole( 'link', { name: 'View deleted sites' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'falls back to the onboarding empty state when the deleted-sites check fails', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.3/me/sites' )
+			.query( ( query ) => query.site_visibility === 'deleted' )
+			.reply( 403, { error: 'unauthorized' } );
+		mockSitesEndpoint( [] );
+		render( <Sites />, {
+			user: {
+				site_count: 0,
+			} as User,
+		} );
+
+		expect(
+			await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
+		).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'View deleted sites' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not flash the onboarding empty state while the deleted-sites check is pending', async () => {
+		let resolveDeletedCheck: ( () => void ) | null = null;
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.3/me/sites' )
+			.query( ( query ) => query.site_visibility === 'deleted' )
+			.reply(
+				200,
+				() =>
+					new Promise( ( resolve ) => {
+						resolveDeletedCheck = () => resolve( { sites: [], total: 1 } );
+					} )
+			);
+		mockSitesEndpoint( [] );
+		render( <Sites />, {
+			user: {
+				site_count: 0,
+			} as User,
+		} );
+
+		await screen.findByRole( 'heading', { name: 'Sites' } );
+		await waitFor( () => expect( resolveDeletedCheck ).not.toBeNull() );
+		expect(
+			screen.queryByRole( 'heading', { name: /You don.t have any sites yet/ } )
+		).not.toBeInTheDocument();
+
+		resolveDeletedCheck!();
+		expect(
+			await screen.findByRole( 'heading', { name: /You don.t have any active sites/ } )
+		).toBeVisible();
 	} );
 
 	test( 'collision listener rewrites wpcom site slug when it collides with a Jetpack site', async () => {

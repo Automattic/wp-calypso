@@ -38,10 +38,14 @@ import {
 	recordViewChanges,
 	sanitizeFields,
 } from './dataviews';
-import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
+import { useHasOnlyDeletedSites } from './deleted-sites';
+import {
+	EmptyDeletedSitesStateContent,
+	EmptySitesStateContent,
+	EmptySitesSearchStateContent,
+} from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNoticeArbiter } from './notice-arbiter';
-import { RestoringSitesNotices } from './restoring-sites-notice';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -170,6 +174,7 @@ export default function Sites() {
 
 	const isSecurityKeyReregisterRequired = useShouldShowSecurityKeyReregisterNotice();
 	const showSecurityKeyReregisterNotice = supports.me && isSecurityKeyReregisterRequired;
+	const hasOnlyDeletedSites = useHasOnlyDeletedSites();
 
 	const isAccountEmailBouncing = useShouldShowAccountEmailBouncingNotice();
 	const showAccountEmailBouncingNotice = supports.me && isAccountEmailBouncing;
@@ -215,6 +220,29 @@ export default function Sites() {
 		totalItems ?? 0
 	);
 
+	let emptySitesState = null;
+	if ( hasOnlyDeletedSites === true ) {
+		emptySitesState = (
+			<DataViewsEmptyStateLayout
+				title={ __( 'You don’t have any active sites' ) }
+				description={ __( 'Restore a deleted site, or start a new one.' ) }
+			>
+				<EmptyDeletedSitesStateContent />
+			</DataViewsEmptyStateLayout>
+		);
+	} else if ( hasOnlyDeletedSites === false ) {
+		emptySitesState = (
+			<DataViewsEmptyStateLayout
+				title={ __( 'You don’t have any sites yet' ) }
+				description={ __(
+					'Start a site and begin creating, coding, or exploring what WordPress can do.'
+				) }
+			>
+				<EmptySitesStateContent />
+			</DataViewsEmptyStateLayout>
+		);
+	}
+
 	const filters = view.filters ?? [];
 	const hasActiveSearch = !! view.search;
 	const hasActiveQuery = hasActiveSearch || filters.length > 0;
@@ -258,7 +286,6 @@ export default function Sites() {
 					<SitesNoticeArbiter>
 						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
 						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
-						{ ! isDashboardBackport() && isRestoringAccount && <RestoringSitesNotices /> }
 					</SitesNoticeArbiter>
 				}
 			>
@@ -306,14 +333,7 @@ export default function Sites() {
 						onReset={ resetView }
 					/>
 				) : (
-					<DataViewsEmptyStateLayout
-						title={ __( 'You don’t have any sites yet' ) }
-						description={ __(
-							'Start a site and begin creating, coding, or exploring what WordPress can do.'
-						) }
-					>
-						<EmptySitesStateContent />
-					</DataViewsEmptyStateLayout>
+					emptySitesState
 				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
