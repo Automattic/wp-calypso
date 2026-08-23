@@ -2470,10 +2470,13 @@ __metadata:
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
     canvas-confetti: "npm:^1.6.0"
+    postcss: "npm:^8.5.15"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    storybook: "npm:^9.1.20"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    webpack: "npm:^5.99.8"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0

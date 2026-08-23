@@ -72,9 +72,12 @@
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/react": "^16.0.1",
 		"@testing-library/user-event": "^14.5.2",
+		"postcss": "^8.5.15",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^6.0.3"
+		"storybook": "^9.1.20",
+		"typescript": "^6.0.3",
+		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1 || ^19.0.0",
