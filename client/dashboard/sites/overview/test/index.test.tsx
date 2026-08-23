@@ -53,6 +53,8 @@ const site = {
 	},
 } as unknown as Site;
 
+let mediaStorageResponse: [ number, unknown ];
+
 function mockSite( mockedSite: Site ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ mockedSite.slug }` )
@@ -120,10 +122,15 @@ describe( '<SiteOverview>', () => {
 			.query( true )
 			.reply( 200, { pages: [] } );
 
+		mediaStorageResponse = [
+			200,
+			{ max_storage_bytes: 1073741824, storage_used_bytes: 100000000 },
+		];
 		nock( 'https://public-api.wordpress.com' )
+			.persist()
 			.get( `/rest/v1.1/sites/${ site.ID }/media-storage` )
 			.query( true )
-			.reply( 200, { max_storage_bytes: 1073741824, storage_used_bytes: 100000000 } );
+			.reply( () => mediaStorageResponse );
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( `/rest/v1.4/sites/${ site.ID }/plans` )
@@ -189,6 +196,20 @@ describe( '<SiteOverview>', () => {
 		expect( await getCard( 'Plan' ) ).toBeVisible();
 		expect( await getCard( 'Latest activity' ) ).toBeVisible();
 		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
+	} );
+
+	test( 'renders the overview when the media storage request fails', async () => {
+		mediaStorageResponse = [
+			403,
+			{ error: 'unauthorized', message: 'User cannot access this private blog.' },
+		];
+		mockSite( site );
+
+		render( <SiteOverview siteSlug={ site.slug } /> );
+		await screen.findByRole( 'heading', { name: 'Test Site' } );
+
+		expect( await getCard( 'Plan' ) ).toBeVisible();
+		expect( screen.queryByText( 'Your site is low on storage' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders the overview of a site with a paid plan on Atomic', async () => {

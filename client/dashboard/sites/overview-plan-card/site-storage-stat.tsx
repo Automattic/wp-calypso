@@ -1,5 +1,5 @@
 import { siteMediaStorageQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalVStack as VStack,
@@ -18,8 +18,12 @@ import type { Site } from '@automattic/api-core';
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 
 export default function SiteStorageStat( { site }: { site: Site } ) {
-	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
+	const { data: mediaStorage } = useQuery( siteMediaStorageQuery( site.ID ) );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+
+	if ( ! mediaStorage ) {
+		return null;
+	}
 
 	const storageUsagePercent = Math.round(
 		( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10

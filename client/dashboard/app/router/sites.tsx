@@ -227,8 +227,9 @@ export const siteOverviewRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 
-			// Ensure storage specifically is loaded because the warning notice can cause a layout shift
-			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
+			// Ensure storage specifically is loaded because the warning notice can cause a layout
+			// shift. The notice is optional, so a failure here must not error the whole route.
+			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ).catch( () => undefined ),
 		] );
 	},
 } ).lazy( () =>
