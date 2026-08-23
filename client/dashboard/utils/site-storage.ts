@@ -29,7 +29,7 @@ export function getStorageUsagePercent( {
 }
 
 /**
- * Mirrors WordPress core's `size_format()` so storage figures match wp-admin.
+ * Mirrors WordPress core's `size_format()` so storage figures match wp-admin, minus a trailing `.0`.
  */
 export function formatStorage( bytes: number, decimals = 1 ): string {
 	let value = Math.max( bytes, 0 );
@@ -38,7 +38,10 @@ export function formatStorage( bytes: number, decimals = 1 ): string {
 		value /= 1024;
 		unitIndex++;
 	}
-	return `${ formatNumber( value, { decimals } ) } ${ STORAGE_UNITS[ unitIndex ] }`;
+	const isWhole = Number( value.toFixed( decimals ) ) % 1 === 0;
+	return `${ formatNumber( value, { decimals: isWhole ? 0 : decimals } ) } ${
+		STORAGE_UNITS[ unitIndex ]
+	}`;
 }
 
 /**
