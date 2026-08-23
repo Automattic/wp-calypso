@@ -27,9 +27,18 @@ export const ApprovalRequest = ( { message }: { message: Message } ) => {
 	};
 
 	// Once a decision succeeds the continuation replaces this card; keep the buttons locked
-	// meanwhile and say which decision is in flight. On error (e.g. an expired token) they re-enable.
+	// meanwhile and say which decision is in flight. A request error means the decision itself
+	// could not be made (expired or already-decided token, signed out): say so under the buttons
+	// and re-enable them. A failure of the approved action is not an error here — the server
+	// reports it as the decision's outcome and the bot explains it in the continuation.
 	const isLocked = approvalDecision.isPending || approvalDecision.isSuccess;
 	const pendingDecision = isLocked ? approvalDecision.variables?.decision : undefined;
+	const errorMessage = approvalDecision.isError
+		? __(
+				'This approval could not be recorded — it may have expired. Ask again to get a new request.',
+				__i18n_text_domain__
+		  )
+		: null;
 
 	return (
 		<div className="odie__transfer-chat">
@@ -43,6 +52,7 @@ export const ApprovalRequest = ( { message }: { message: Message } ) => {
 					? __( 'Declining…', __i18n_text_domain__ )
 					: __( 'Decline', __i18n_text_domain__ ) }
 			</button>
+			{ errorMessage && <p className="odie__transfer-chat--error">{ errorMessage }</p> }
 		</div>
 	);
 };

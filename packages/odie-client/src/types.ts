@@ -131,7 +131,7 @@ export type Context = {
 	 * declined messages carry the decided outcome for rendering.
 	 */
 	approval?: {
-		status?: 'pending_approval' | 'executed' | 'declined';
+		status?: 'pending_approval' | 'executed' | 'declined' | 'failed';
 		token?: string;
 		action?: string;
 		description?: string;

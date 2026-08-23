@@ -9,6 +9,13 @@
 		border-radius: 16px;
 		margin-top: 16px;
 
+		.odie__transfer-chat--error {
+			padding: 12px 16px;
+			margin: 0;
+			font-size: 0.75rem;
+			color: var( --studio-red-50 );
+		}
+
 		button {
 			display: flex;
 			justify-content: space-between;

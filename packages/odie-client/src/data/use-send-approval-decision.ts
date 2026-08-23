@@ -7,10 +7,12 @@ import { useCurrentSupportInteraction } from './use-current-support-interaction'
 import type { Message } from '../types';
 
 type ApprovalDecisionResponse = {
-	status: 'executed' | 'declined';
+	/** `failed`: the approval was recorded but the action did not run (see `error`). */
+	status: 'executed' | 'declined' | 'failed';
 	action?: string;
 	description?: string;
 	reason?: string;
+	error?: string;
 	/**
 	 * The bot's next message: the server resumes the paused chat turn with the decision as the
 	 * tool call's result, and this is what the bot said next (possibly another approval request).
@@ -61,9 +63,20 @@ export const useSendApprovalDecision = () => {
 			setChatStatus( 'loaded' );
 		},
 		onSuccess: ( response, { decision } ) => {
-			const executed = 'approve' === decision;
+			const failed = 'failed' === response?.status;
+			const executed = 'approve' === decision && ! failed;
 			const description = response?.description ?? '';
 			const continuation = response?.continuation;
+
+			let fallbackStatus: 'executed' | 'declined' | 'failed' = 'declined';
+			let fallbackContent = `You declined this action — it has not been performed: ${ description }`;
+			if ( failed ) {
+				fallbackStatus = 'failed';
+				fallbackContent = `You approved this action, but it could not be completed: ${ description }`;
+			} else if ( executed ) {
+				fallbackStatus = 'executed';
+				fallbackContent = `Done — you approved this action and it has been completed: ${ description }`;
+			}
 
 			const outcome: Message = continuation
 				? {
@@ -77,9 +90,7 @@ export const useSendApprovalDecision = () => {
 				: {
 						// The server recorded the decision but could not resume the turn (pause
 						// expired, bot updated). Say what happened; the next message starts fresh.
-						content: executed
-							? `Done — you approved this action and it has been completed: ${ description }`
-							: `You declined this action — it has not been performed: ${ description }`,
+						content: fallbackContent,
 						role: 'bot',
 						type: 'message',
 						internal_message_id: generateUUID(),
@@ -89,7 +100,7 @@ export const useSendApprovalDecision = () => {
 								? { wpcom_approval_executed: true }
 								: { wpcom_approval_declined: true },
 							approval: {
-								status: executed ? 'executed' : 'declined',
+								status: fallbackStatus,
 								action: response?.action,
 								description,
 							},
