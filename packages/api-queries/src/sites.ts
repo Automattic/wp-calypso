@@ -34,14 +34,3 @@ export const paginatedSitesQuery = (
 };
 
 export const allSitesQuery = () => sitesQuery( 'all' );
-
-export const hasStagingSitesQuery = () =>
-	queryOptions( {
-		...paginatedSitesQuery( 'all', {
-			site_visibility: 'visible',
-			include_a8c_owned: false,
-			include_staging: true,
-			per_page: 1,
-		} ),
-		select: ( data ) => data.total > 0,
-	} );

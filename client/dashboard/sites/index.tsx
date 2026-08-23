@@ -39,15 +39,10 @@ import {
 	sanitizeFields,
 	STAGING_FILTER_FIELD,
 } from './dataviews';
-import {
-	EmptySitesStateContent,
-	EmptySitesSearchStateContent,
-	ShowStagingSitesAction,
-} from './empty-sites-state';
+import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNoticeArbiter } from './notice-arbiter';
 import { RestoringSitesNotices } from './restoring-sites-notice';
-import { useHasOnlyStagingSites } from './staging-sites';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -234,33 +229,6 @@ export default function Sites() {
 		! hasActiveSearch &&
 		filters.every( ( filter ) => filter.field === 'is_deleted' );
 
-	const isListEmpty =
-		! hasActiveQuery && ! isLoadingSites && ! isPlaceholderData && totalItems === 0;
-	const hasOnlyStagingSites = useHasOnlyStagingSites( isListEmpty );
-	const showStagingSites = () =>
-		handleViewChange( {
-			...view,
-			page: 1,
-			filters: [ ...filters, { field: STAGING_FILTER_FIELD, operator: 'is', value: true } ],
-		} );
-	const showStagingSitesAction = hasOnlyStagingSites && (
-		<ShowStagingSitesAction onClick={ showStagingSites } />
-	);
-
-	let emptySitesState = null;
-	if ( hasOnlyStagingSites !== undefined ) {
-		emptySitesState = (
-			<DataViewsEmptyStateLayout
-				title={ __( 'You don’t have any sites yet' ) }
-				description={ __(
-					'Start a site and begin creating, coding, or exploring what WordPress can do.'
-				) }
-			>
-				<EmptySitesStateContent>{ showStagingSitesAction }</EmptySitesStateContent>
-			</DataViewsEmptyStateLayout>
-		);
-	}
-
 	return (
 		<>
 			<InviteAcceptedFlashMessage />
@@ -335,9 +303,7 @@ export default function Sites() {
 									description={ __( 'Try again, or start a new site with the options below.' ) }
 									isBorderless
 								>
-									<EmptySitesSearchStateContent>
-										{ showStagingSitesAction }
-									</EmptySitesSearchStateContent>
+									<EmptySitesSearchStateContent />
 								</DataViewsEmptyStateLayout>
 							)
 						}
@@ -346,7 +312,14 @@ export default function Sites() {
 						onReset={ resetView }
 					/>
 				) : (
-					emptySitesState
+					<DataViewsEmptyStateLayout
+						title={ __( 'You don’t have any sites yet' ) }
+						description={ __(
+							'Start a site and begin creating, coding, or exploring what WordPress can do.'
+						) }
+					>
+						<EmptySitesStateContent />
+					</DataViewsEmptyStateLayout>
 				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:

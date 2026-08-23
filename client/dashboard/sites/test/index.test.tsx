@@ -2,19 +2,14 @@
  * @jest-environment jsdom
  */
 
-import { startSiteCollisionListener, queryClient } from '@automattic/api-queries';
+import { startSiteCollisionListener } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../app/context';
 import { render } from '../../test-utils';
 import Sites from '../index';
 import type { AppConfig } from '../../app/context';
 import type { Site, User } from '@automattic/api-core';
-
-jest.mock( '../../utils/is-dashboard-backport', () => ( {
-	isDashboardBackport: () => false,
-} ) );
 
 // The account-email-bouncing notice only renders where the dashboard variant supports /me.
 const configWithMeSupport: AppConfig = {
@@ -238,119 +233,5 @@ describe( '<Sites>', () => {
 		expect( row2[ 0 ] ).toHaveTextContent( 'my-second-site.wordpress.com' );
 		expect( row2[ 1 ] ).toHaveTextContent( 'Coming soon' );
 		expect( row2[ 2 ] ).toHaveTextContent( 'Free' );
-	} );
-
-	describe( 'staging-only access', () => {
-		const stagingSite = {
-			ID: 3,
-			name: 'My Staging Site',
-			slug: 'my-staging-site.wpcomstaging.com',
-			URL: 'https://my-staging-site.wpcomstaging.com',
-			is_wpcom_staging_site: true,
-			is_coming_soon: false,
-			is_private: false,
-			site_migration: {},
-			plan: { product_slug: 'business-bundle', product_name_short: 'Business' },
-		} as Site;
-
-		// Register before mockSitesEndpoint so the catch-all interceptor doesn't
-		// consume the staging-sites check request.
-		function mockStagingSitesCheckEndpoint( sites: Site[] ) {
-			return nock( 'https://public-api.wordpress.com' )
-				.persist()
-				.get( '/rest/v1.3/me/sites' )
-				.query( ( query ) => query.include_staging === 'true' )
-				.reply( 200, { sites, total: sites.length } );
-		}
-
-		// The view change is persisted as a user preference and refetched, so the mock must remember it.
-		function mockStatefulPreferencesEndpoint() {
-			nock.cleanAll();
-			nock( 'https://public-api.wordpress.com' )
-				.get( '/rest/v1.2/read/teams' )
-				.query( true )
-				.reply( 200, { teams: [] } );
-			let preferences = {};
-			nock( 'https://public-api.wordpress.com' )
-				.persist()
-				.get( '/rest/v1.1/me/preferences' )
-				.query( true )
-				.reply( 200, () => ( { calypso_preferences: preferences } ) );
-			nock( 'https://public-api.wordpress.com' )
-				.persist()
-				.post( '/rest/v1.1/me/preferences' )
-				.query( true )
-				.reply( 200, ( _uri, body ) => {
-					preferences = {
-						...preferences,
-						...( body as { calypso_preferences: object } ).calypso_preferences,
-					};
-					return { calypso_preferences: preferences };
-				} );
-		}
-
-		test( 'offers to show staging sites when a zero-site user has them', async () => {
-			mockStatefulPreferencesEndpoint();
-			mockStagingSitesCheckEndpoint( [ stagingSite ] );
-			mockSitesEndpoint( [] );
-			queryClient.clear();
-			render( <Sites />, { user: { site_count: 0 } as User, queryClient } );
-
-			expect(
-				await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
-			).toBeVisible();
-
-			await userEvent.click( await screen.findByRole( 'button', { name: 'Show staging sites' } ) );
-
-			expect( await screen.findByText( 'My Staging Site' ) ).toBeVisible();
-		} );
-
-		test( 'offers to show staging sites when the list is empty for a user with sites', async () => {
-			mockStagingSitesCheckEndpoint( [ stagingSite ] );
-			mockSitesEndpoint( [] );
-			render( <Sites />, { user: { site_count: 1 } as User } );
-
-			expect( await screen.findByText( 'No sites match your search' ) ).toBeVisible();
-			expect( await screen.findByRole( 'button', { name: 'Show staging sites' } ) ).toBeVisible();
-		} );
-
-		test( 'renders the onboarding empty state when a zero-site user has no staging sites', async () => {
-			const checkScope = mockStagingSitesCheckEndpoint( [] );
-			mockSitesEndpoint( [] );
-			render( <Sites />, { user: { site_count: 0 } as User } );
-
-			expect(
-				await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
-			).toBeVisible();
-			await waitFor( () => expect( checkScope.isDone() ).toBe( true ) );
-			expect(
-				screen.queryByRole( 'button', { name: 'Show staging sites' } )
-			).not.toBeInTheDocument();
-		} );
-
-		test( 'does not flash the onboarding empty state while the staging-sites check is pending', async () => {
-			let resolveCheck: ( () => void ) | null = null;
-			nock( 'https://public-api.wordpress.com' )
-				.get( '/rest/v1.3/me/sites' )
-				.query( ( query ) => query.include_staging === 'true' )
-				.reply(
-					200,
-					() =>
-						new Promise( ( resolve ) => {
-							resolveCheck = () => resolve( { sites: [ stagingSite ], total: 1 } );
-						} )
-				);
-			mockSitesEndpoint( [] );
-			render( <Sites />, { user: { site_count: 0 } as User } );
-
-			await screen.findByRole( 'heading', { name: 'Sites' } );
-			await waitFor( () => expect( resolveCheck ).not.toBeNull() );
-			expect(
-				screen.queryByRole( 'heading', { name: /You don.t have any sites yet/ } )
-			).not.toBeInTheDocument();
-
-			resolveCheck!();
-			expect( await screen.findByRole( 'button', { name: 'Show staging sites' } ) ).toBeVisible();
-		} );
 	} );
 } );
