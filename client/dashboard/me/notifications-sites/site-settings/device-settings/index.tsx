@@ -198,7 +198,6 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 					onChange={ handleDeviceChange }
 					disabled={ isUpdating || ! hasDevices }
 				>
-					{ /* Keep .map non-optional; optional chaining trips the Google Translate lint (react/react#11538) */ }
 					{ hasDevices &&
 						devices.map( ( device ) => (
 							<option key={ device.device_id } value={ device.device_id }>
