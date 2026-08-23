@@ -31,6 +31,8 @@ import type { AppConfig } from '../../app/context';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator, View } from '@wordpress/dataviews';
 
+export const STAGING_FILTER_FIELD = 'staging';
+
 function getDefaultFields( {
 	viewType,
 	queries,
@@ -235,7 +237,7 @@ function getDefaultFields( {
 			render: ( { field, item } ) => field.getValue( { item } ),
 		},
 		{
-			id: 'staging',
+			id: STAGING_FILTER_FIELD,
 			type: 'boolean',
 			label: __( 'Staging sites' ),
 			elements: [
@@ -281,7 +283,7 @@ export function useFields( {
 				return false;
 			}
 
-			if ( field.id === 'staging' && isDashboardBackport() ) {
+			if ( field.id === STAGING_FILTER_FIELD && isDashboardBackport() ) {
 				return false;
 			}
 

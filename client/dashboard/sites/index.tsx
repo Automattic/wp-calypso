@@ -37,8 +37,13 @@ import {
 	getDefaultView,
 	recordViewChanges,
 	sanitizeFields,
+	STAGING_FILTER_FIELD,
 } from './dataviews';
 import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
+import {
+	useHasHiddenStagingSites,
+	HiddenStagingSitesAction,
+} from './empty-sites-state/hidden-staging-sites';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNoticeArbiter } from './notice-arbiter';
 import { RestoringSitesNotices } from './restoring-sites-notice';
@@ -56,7 +61,9 @@ function isDeletedFilterActive( filters: Filter[] ): boolean {
 }
 
 function isStagingFilterActive( filters: Filter[] ) {
-	return filters.some( ( filter ) => filter.field === 'staging' && filter.value === true );
+	return filters.some(
+		( filter ) => filter.field === STAGING_FILTER_FIELD && filter.value === true
+	);
 }
 
 export const getFetchPaginatedSitesOptions = (
@@ -226,6 +233,20 @@ export default function Sites() {
 		! hasActiveSearch &&
 		filters.every( ( filter ) => filter.field === 'is_deleted' );
 
+	const isListEmpty = ! isLoadingSites && ! isPlaceholderData && totalItems === 0;
+	const hasHiddenStagingSites = useHasHiddenStagingSites(
+		! isDashboardBackport() && isListEmpty && ! hasActiveQuery
+	);
+	const showStagingSites = () =>
+		handleViewChange( {
+			...view,
+			page: 1,
+			filters: [ ...filters, { field: STAGING_FILTER_FIELD, operator: 'is', value: true } ],
+		} );
+	const hiddenStagingSitesAction = hasHiddenStagingSites && (
+		<HiddenStagingSitesAction onShow={ showStagingSites } />
+	);
+
 	return (
 		<>
 			<InviteAcceptedFlashMessage />
@@ -301,6 +322,7 @@ export default function Sites() {
 									isBorderless
 								>
 									<EmptySitesSearchStateContent />
+									{ hiddenStagingSitesAction }
 								</DataViewsEmptyStateLayout>
 							)
 						}
@@ -316,6 +338,7 @@ export default function Sites() {
 						) }
 					>
 						<EmptySitesStateContent />
+						{ hiddenStagingSitesAction }
 					</DataViewsEmptyStateLayout>
 				) }
 			</PageLayout>
