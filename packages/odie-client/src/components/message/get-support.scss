@@ -9,10 +9,15 @@
 		border-radius: 16px;
 		margin-top: 16px;
 
-		.odie__transfer-chat--error {
+		.odie__transfer-chat--error,
+		.odie__transfer-chat--note {
 			padding: 12px 16px;
 			margin: 0;
 			font-size: 0.75rem;
+			color: var( --studio-gray-50 );
+		}
+
+		.odie__transfer-chat--error {
 			color: var( --studio-red-50 );
 		}
 

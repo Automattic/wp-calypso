@@ -21,6 +21,23 @@ export const ApprovalRequest = ( { message }: { message: Message } ) => {
 		return null;
 	}
 
+	// The server stops accepting a decision after expires_at. Past it, the card would only invite a
+	// click that fails, so say so instead of offering buttons.
+	const expiresAt = message.context?.approval?.expires_at;
+	const isExpired = typeof expiresAt === 'number' && Date.now() / 1000 >= expiresAt;
+	if ( isExpired ) {
+		return (
+			<div className="odie__transfer-chat">
+				<p className="odie__transfer-chat--note">
+					{ __(
+						'This request has expired and was not performed. Ask again if you still want it.',
+						__i18n_text_domain__
+					) }
+				</p>
+			</div>
+		);
+	}
+
 	const decide = ( decision: 'approve' | 'decline' ) => {
 		trackEvent( 'chat_write_approval_decision', { decision } );
 		approvalDecision.mutate( { token, decision } );

@@ -145,6 +145,8 @@ export type Context = {
 		 * (e.g. 'needs_approval', 'always_confirm'); null when unclassified.
 		 */
 		tier?: string | null;
+		/** Unix time (seconds) after which the server no longer accepts a decision on this token. */
+		expires_at?: number;
 		how_to_approve?: string;
 		reason?: string;
 	};
