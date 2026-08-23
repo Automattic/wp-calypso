@@ -92,10 +92,8 @@ export const sitesRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			// Settle the deleted-sites check before first paint. Prefetched rather
-			// than ensured so a failed check falls back to the onboarding empty
-			// state instead of erroring the whole route.
-			userHasNoLiveSites( user ) &&  queryClient.ensureQueryData( hasDeletedSitesQuery() )
+			// Settle the deleted-sites check before first paint.
+			userHasNoLiveSites( user ) && queryClient.ensureQueryData( hasDeletedSitesQuery() ),
 		] );
 	},
 } );
