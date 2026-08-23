@@ -6,6 +6,26 @@ import wpcom from 'calypso/lib/wp';
 
 const ALLOWED_ORIGINS = [ 'https://my.wordpress.com' ];
 
+// Placeholder base for parsing relative redirect paths; never a real destination.
+const RELATIVE_URL_BASE = 'https://relative-url.invalid';
+
+export function isAllowedRedirectUrl( url ) {
+	let origin;
+	try {
+		( { origin } = new URL( url, RELATIVE_URL_BASE ) );
+	} catch {
+		return false;
+	}
+
+	if ( ALLOWED_ORIGINS.includes( origin ) ) {
+		return true;
+	}
+
+	// A same-site path: resolves against the placeholder base, so it isn't absolute
+	// or protocol-relative (URL parsing also treats `\` as `/`, catching `/\evil.com`).
+	return origin === RELATIVE_URL_BASE && url.startsWith( '/' );
+}
+
 function loginEndpointData() {
 	return {
 		client_id: config( 'wpcom_signup_id' ),
@@ -68,11 +88,7 @@ function redirectToCalypso( request, response, next ) {
 		state: state.oauth2State,
 	} );
 
-	const isRelativeUrl = originalUrlPath.startsWith( '/' ) && ! originalUrlPath.startsWith( '//' );
-	if (
-		! isRelativeUrl &&
-		! ALLOWED_ORIGINS.some( ( origin ) => originalUrlPath.startsWith( origin ) )
-	) {
+	if ( ! isAllowedRedirectUrl( originalUrlPath ) ) {
 		return next();
 	}
 
