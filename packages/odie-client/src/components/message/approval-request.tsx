@@ -5,19 +5,36 @@ import type { Message } from '../../types';
 
 import './get-support.scss';
 
+const DECIDED_LABELS: Record< string, string > = {
+	executed: __( 'You approved this action and it was completed.', __i18n_text_domain__ ),
+	declined: __( 'You declined this action. It was not performed.', __i18n_text_domain__ ),
+	failed: __( 'You approved this action, but it could not be completed.', __i18n_text_domain__ ),
+};
+
 /**
- * Approve / decline buttons for a pending action-approval message
- * (context.flags.wpcom_approval_required). The decision endpoints append the outcome to
- * the chat server-side; the hook's query invalidation refetches it, and because this
- * card only renders under the last bot message it disappears once the outcome message
- * arrives.
+ * The card under an action-approval message (context.flags.wpcom_approval_required).
+ *
+ * Once a decision is recorded the server marks the message's `approval.status` and drops the
+ * token, so a decided card shows a label on every later load. A pending card offers the
+ * buttons only while it is the live end of the conversation; a pending card that is no longer
+ * last was superseded (the user typed instead) and shows nothing.
  */
-export const ApprovalRequest = ( { message }: { message: Message } ) => {
-	const { trackEvent } = useOdieAssistantContext();
+export const ApprovalRequest = ( { message, isLive }: { message: Message; isLive: boolean } ) => {
+	const { trackEvent, chat } = useOdieAssistantContext();
+	const chatStatus = chat.status;
 	const approvalDecision = useSendApprovalDecision();
 
+	const status = message.context?.approval?.status;
+	if ( status && status in DECIDED_LABELS ) {
+		return (
+			<div className="odie__transfer-chat">
+				<p className="odie__transfer-chat--note">{ DECIDED_LABELS[ status ] }</p>
+			</div>
+		);
+	}
+
 	const token = message.context?.approval?.token;
-	if ( ! token ) {
+	if ( ! token || ! isLive ) {
 		return null;
 	}
 
@@ -44,30 +61,41 @@ export const ApprovalRequest = ( { message }: { message: Message } ) => {
 	};
 
 	// Once a decision succeeds the continuation replaces this card; keep the buttons locked
-	// meanwhile and say which decision is in flight. A request error means the decision itself
-	// could not be made (expired or already-decided token, signed out): say so under the buttons
-	// and re-enable them. A failure of the approved action is not an error here — the server
-	// reports it as the decision's outcome and the bot explains it in the continuation.
-	const isLocked = approvalDecision.isPending || approvalDecision.isSuccess;
+	// meanwhile and say which decision is in flight. On a request error the hook reloads the chat
+	// from the server, which replaces this card with its recorded state (decided label, outcome
+	// or continuation message). The buttons stay locked while that happens; they come back only
+	// if the reload still shows this card pending — i.e. the request genuinely never reached the
+	// server — with a note that says so. A failure of the approved action is not an error here —
+	// the server reports it as the decision's outcome and the bot explains it in the continuation.
+	const isReloading = approvalDecision.isError && chatStatus === 'loading';
+	const isLocked = approvalDecision.isPending || approvalDecision.isSuccess || isReloading;
 	const pendingDecision = isLocked ? approvalDecision.variables?.decision : undefined;
-	const errorMessage = approvalDecision.isError
-		? __(
-				'This approval could not be recorded — it may have expired. Ask again to get a new request.',
-				__i18n_text_domain__
-		  )
-		: null;
+	const errorMessage =
+		approvalDecision.isError && ! isReloading
+			? __( 'That didn’t go through. Check your connection and try again.', __i18n_text_domain__ )
+			: null;
+
+	const labelFor = ( decision: 'approve' | 'decline' ) => {
+		if ( decision !== pendingDecision ) {
+			return 'approve' === decision
+				? __( 'Approve and continue', __i18n_text_domain__ )
+				: __( 'Decline', __i18n_text_domain__ );
+		}
+		if ( isReloading ) {
+			return __( 'Checking…', __i18n_text_domain__ );
+		}
+		return 'approve' === decision
+			? __( 'Approving…', __i18n_text_domain__ )
+			: __( 'Declining…', __i18n_text_domain__ );
+	};
 
 	return (
 		<div className="odie__transfer-chat">
 			<button disabled={ isLocked } onClick={ () => decide( 'approve' ) }>
-				{ 'approve' === pendingDecision
-					? __( 'Approving…', __i18n_text_domain__ )
-					: __( 'Approve and continue', __i18n_text_domain__ ) }
+				{ labelFor( 'approve' ) }
 			</button>
 			<button disabled={ isLocked } onClick={ () => decide( 'decline' ) }>
-				{ 'decline' === pendingDecision
-					? __( 'Declining…', __i18n_text_domain__ )
-					: __( 'Decline', __i18n_text_domain__ ) }
+				{ labelFor( 'decline' ) }
 			</button>
 			{ errorMessage && <p className="odie__transfer-chat--error">{ errorMessage }</p> }
 		</div>

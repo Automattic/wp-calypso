@@ -252,7 +252,15 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 			const currentScreen = { url };
 			const isAgentsManagerAvailable = getIsAgentsManagerAvailable();
-			const context = { selectedSiteId, currentScreen, pathname, isAgentsManagerAvailable };
+			// This client renders action-approval cards (ApprovalRequest), so the bot may pause on a
+			// proposal instead of hiding the actions that need one.
+			const context = {
+				selectedSiteId,
+				currentScreen,
+				pathname,
+				isAgentsManagerAvailable,
+				supports_action_approval: true,
+			};
 
 			if ( canAccessWpcomApis() ) {
 				if ( isLoggedOutSession ) {

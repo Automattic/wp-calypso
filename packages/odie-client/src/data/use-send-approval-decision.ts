@@ -6,6 +6,9 @@ import { generateUUID } from '../utils';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import type { Message } from '../types';
 
+/** How long after a failed decision request to reload once more for a late continuation. */
+const CONTINUATION_RELOAD_DELAY_MS = 20000;
+
 type ApprovalDecisionResponse = {
 	/** `failed`: the approval was recorded but the action did not run (see `error`). */
 	status: 'executed' | 'declined' | 'failed';
@@ -16,7 +19,8 @@ type ApprovalDecisionResponse = {
 	/**
 	 * The bot's next message: the server resumes the paused chat turn with the decision as the
 	 * tool call's result, and this is what the bot said next (possibly another approval request).
-	 * Null when the turn could not be resumed; the decision itself still stands.
+	 * When the turn could not be resumed the server stores and returns a plain outcome message
+	 * instead, so this is null only when the proposal was not found in the chat.
 	 */
 	continuation?: {
 		message_id?: number;
@@ -59,54 +63,36 @@ export const useSendApprovalDecision = () => {
 		onMutate: () => {
 			setChatStatus( 'sending' );
 		},
-		onSettled: () => {
-			setChatStatus( 'loaded' );
+		// A failed request does not mean a failed decision: the token is consumed before the action
+		// runs, and the request can die while the server is still generating the continuation. So
+		// never re-offer the buttons on our own judgement — reload the chat from the server, which
+		// now records the truth on the card itself (approval.status) and in the stored outcome or
+		// continuation message. Setting the chat to `loading` is what makes the LIVE view adopt the
+		// refetched chat (useGetCombinedChat ignores refetches otherwise).
+		onError: () => {
+			const reload = () => {
+				setChatStatus( 'loading' );
+				queryClient.invalidateQueries( { queryKey: [ 'odie-chat', botSlug, chat.odieId ] } );
+			};
+			reload();
+			// The usual reason for the error is a timeout while the server is still writing the bot's
+			// continuation; the first reload shows the decided card, this one picks up the reply.
+			window.setTimeout( reload, CONTINUATION_RELOAD_DELAY_MS );
 		},
-		onSuccess: ( response, { decision } ) => {
-			const failed = 'failed' === response?.status;
-			const executed = 'approve' === decision && ! failed;
-			const description = response?.description ?? '';
+		onSuccess: ( response ) => {
+			setChatStatus( 'loaded' );
 			const continuation = response?.continuation;
-
-			let fallbackStatus: 'executed' | 'declined' | 'failed' = 'declined';
-			let fallbackContent = `You declined this action — it has not been performed: ${ description }`;
-			if ( failed ) {
-				fallbackStatus = 'failed';
-				fallbackContent = `You approved this action, but it could not be completed: ${ description }`;
-			} else if ( executed ) {
-				fallbackStatus = 'executed';
-				fallbackContent = `Done — you approved this action and it has been completed: ${ description }`;
+			if ( continuation ) {
+				addMessage( {
+					message_id: continuation.message_id,
+					internal_message_id: generateUUID(),
+					content: continuation.content ?? '',
+					role: 'bot',
+					type: 'message',
+					context: continuation.context,
+				} );
 			}
-
-			const outcome: Message = continuation
-				? {
-						message_id: continuation.message_id,
-						internal_message_id: generateUUID(),
-						content: continuation.content ?? '',
-						role: 'bot',
-						type: 'message',
-						context: continuation.context,
-				  }
-				: {
-						// The server recorded the decision but could not resume the turn (pause
-						// expired, bot updated). Say what happened; the next message starts fresh.
-						content: fallbackContent,
-						role: 'bot',
-						type: 'message',
-						internal_message_id: generateUUID(),
-						context: {
-							site_id: null,
-							flags: executed
-								? { wpcom_approval_executed: true }
-								: { wpcom_approval_declined: true },
-							approval: {
-								status: fallbackStatus,
-								action: response?.action,
-								description,
-							},
-						},
-				  };
-			addMessage( outcome );
+			// The card's own message was marked decided server-side; the refetch picks that up.
 			queryClient.invalidateQueries( { queryKey: [ 'odie-chat', botSlug, chat.odieId ] } );
 		},
 	} );

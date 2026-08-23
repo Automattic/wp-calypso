@@ -93,13 +93,10 @@ export const UserMessage = ( {
 	const showGetSupport =
 		isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage ) && ! isStaleOdieChat( chat );
 
-	// A pending action-approval only renders its approve/decline card while it is the live
-	// end of the conversation — after a decision the server-appended outcome message becomes
-	// the last message and the card retires with the refetch.
-	const showApprovalRequest =
-		isLastBotMessage &&
-		!! message.context?.flags?.wpcom_approval_required &&
-		! isStaleOdieChat( chat );
+	// An action-approval card renders for every proposal message; ApprovalRequest decides
+	// between buttons (still pending and the live end of the conversation), a decided label
+	// (the server marked the card when it recorded the decision), or nothing.
+	const showApprovalRequest = !! message.context?.flags?.wpcom_approval_required;
 	const showActionButtons = ! isRequestingHumanSupport && ! isErrorMessage;
 
 	const messageContent = () => {
@@ -138,7 +135,12 @@ export const UserMessage = ( {
 			</div>
 			{ isMessageWithEscalationOption && (
 				<>
-					{ showApprovalRequest && <ApprovalRequest message={ message } /> }
+					{ showApprovalRequest && (
+						<ApprovalRequest
+							message={ message }
+							isLive={ isLastBotMessage && ! isStaleOdieChat( chat ) }
+						/>
+					) }
 					{ showGetSupport && (
 						<GetSupport
 							onClickAdditionalEvent={ ( destination, props ) => {

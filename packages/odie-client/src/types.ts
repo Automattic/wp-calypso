@@ -132,7 +132,10 @@ export type Context = {
 	 */
 	approval?: {
 		status?: 'pending_approval' | 'executed' | 'declined' | 'failed';
+		/** Present only while the proposal is still pending; removed once decided. */
 		token?: string;
+		/** Unix seconds of the decision, set on the card when the server records it. */
+		decided_at?: number;
 		action?: string;
 		description?: string;
 		/**
