@@ -373,11 +373,11 @@ export class FeedbackInboxPage {
 			await listResponse;
 
 			// Selecting a folder leaves the popover open over the table, where it
-			// swallows clicks on the rows underneath. Dismiss unconditionally:
-			// isVisible() is point-in-time, so polled mid-transition it reports
-			// false and the popover survives — the state this block exists to
-			// prevent. Escape on an already-closed popover is a no-op.
-			await this.page.keyboard.press( 'Escape' );
+			// swallows clicks on the rows underneath. Toggle it shut with the chip:
+			// an Escape landing within ~500ms of the filter's re-render segfaults the
+			// renderer on Atomic (SIGSEGV, null deref on CrRendererMain), and the run
+			// then dies at whatever call comes next.
+			await folderChip.click();
 			await folderOption.waitFor( { state: 'hidden', timeout: 5000 } );
 			return;
 		}
