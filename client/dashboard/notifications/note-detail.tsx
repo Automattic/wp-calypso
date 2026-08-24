@@ -6,7 +6,7 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { closeSmall } from '@wordpress/icons';
+import { arrowLeft } from '@wordpress/icons';
 import { useEffect, useState } from 'react';
 import { Card, CardBody } from '../components/card';
 import { getRelativeTimeString } from '../utils/datetime';
@@ -24,9 +24,13 @@ function DetailFrame( { onClose, children }: { onClose: () => void; children: Re
 		<Card className="dashboard-notifications-inbox__detail">
 			<CardBody>
 				<VStack spacing={ 4 }>
-					<HStack justify="flex-end">
-						<Button icon={ closeSmall } label={ __( 'Close notification' ) } onClick={ onClose } />
-					</HStack>
+					<Button
+						className="dashboard-notifications-inbox__back"
+						icon={ arrowLeft }
+						onClick={ onClose }
+					>
+						{ __( 'Back to list' ) }
+					</Button>
 					{ children }
 				</VStack>
 			</CardBody>
@@ -72,20 +76,21 @@ export default function NoteDetail( { noteId, onClose }: { noteId: string; onClo
 
 	return (
 		<DetailFrame onClose={ onClose }>
-			<NoteActions key={ note.id } note={ note } />
-			<HStack spacing={ 3 } justify="flex-start" alignment="center">
-				<img
-					className="dashboard-notifications-inbox__note-avatar"
-					src={ note.icon }
-					alt=""
-					width={ 40 }
-					height={ 40 }
-				/>
-				<VStack spacing={ 0 }>
-					<Text weight={ 600 }>{ getNoteTitle( note ) }</Text>
-					<Text variant="muted">{ getRelativeTimeString( new Date( note.timestamp ) ) }</Text>
-				</VStack>
-			</HStack>
+			<NoteActions key={ note.id } note={ note }>
+				<HStack spacing={ 3 } justify="flex-start" alignment="center" style={ { width: 'auto' } }>
+					<img
+						className="dashboard-notifications-inbox__note-avatar"
+						src={ note.icon }
+						alt=""
+						width={ 40 }
+						height={ 40 }
+					/>
+					<VStack spacing={ 0 }>
+						<Text weight={ 600 }>{ getNoteTitle( note ) }</Text>
+						<Text variant="muted">{ getRelativeTimeString( new Date( note.timestamp ) ) }</Text>
+					</VStack>
+				</HStack>
+			</NoteActions>
 			{ excerpt && <Text>{ excerpt }</Text> }
 			{ bodyParagraphs.map( ( text, index ) => (
 				<Text as="p" key={ index }>

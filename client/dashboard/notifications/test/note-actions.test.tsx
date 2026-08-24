@@ -78,10 +78,15 @@ describe( 'NoteActions', () => {
 		expect( screen.queryByRole( 'button', { name: 'Trash' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders nothing when the note supports no actions', () => {
+	it( 'renders only the identity when the note supports no actions', () => {
 		mockActions( {} );
-		const { container } = render( <NoteActions note={ note } /> );
-		expect( container ).toBeEmptyDOMElement();
+		render(
+			<NoteActions note={ note }>
+				<span>Identity</span>
+			</NoteActions>
+		);
+		expect( screen.getByText( 'Identity' ) ).toBeInTheDocument();
+		expect( screen.queryAllByRole( 'button' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'toggles approval with the opposite of the current state', async () => {

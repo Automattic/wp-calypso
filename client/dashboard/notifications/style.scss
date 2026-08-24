@@ -10,6 +10,10 @@
 	top: 24px;
 }
 
+.dashboard-notifications-inbox__back {
+	display: none;
+}
+
 .dashboard-notifications-inbox__detail-placeholder {
 	padding: 80px 0;
 	border: 1px dashed var(--dashboard-header__border-color, #ddd);
@@ -29,6 +33,11 @@
 
 	.dashboard-notifications-inbox__detail-pane {
 		position: static;
+	}
+
+	.dashboard-notifications-inbox__back {
+		display: inline-flex;
+		align-self: flex-start;
 	}
 }
 
