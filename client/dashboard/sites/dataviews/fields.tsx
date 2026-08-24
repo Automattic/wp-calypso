@@ -240,6 +240,7 @@ function getDefaultFields( {
 			id: STAGING_FILTER_FIELD,
 			type: 'boolean',
 			label: __( 'Staging sites' ),
+			header: __( 'Staging' ),
 			elements: [
 				{ value: true, label: __( 'Show' ) },
 				{ value: false, label: __( 'Hide' ) },
