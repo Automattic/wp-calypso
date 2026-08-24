@@ -215,7 +215,11 @@ export class UserSignupPage {
 	 */
 	async visit( { path }: { path: string } = { path: '' } ): Promise< void > {
 		const targetUrl = path ? `start/${ path }` : 'start';
-		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
+		// Not 'networkidle': the bot-protection client keeps the signup page
+		// busy, and no navigationTimeout is configured, so waiting for idle
+		// burns the whole test budget. waitForSignupForm() does the real
+		// readiness wait, bounded.
+		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'domcontentloaded' } );
 	}
 	/**
 	 * Captures the response from the user creation API endpoint.
@@ -512,13 +516,18 @@ export class UserSignupPage {
 		handleActiveThrottles( [ 'signup' ] );
 		await this.emailInput.fill( email );
 
-		const responsePromise = this.page.waitForResponse(
-			( response ) => /\/users\/new\?[^?]*$/.test( response.url() ) && response.ok()
-		);
-		await this.continueButton.click();
-		const response = await responsePromise;
+		// Read the response body as soon as it arrives; the accept-invite
+		// navigation that follows a successful signup evicts it from the
+		// browser cache before a later json() can get to it.
+		const responseBodyPromise = this.page
+			.waitForResponse(
+				( response ) => /\/users\/new\?[^?]*$/.test( response.url() ) && response.ok()
+			)
+			.then( ( response ): Promise< NewUserResponse > => response.json() );
 
-		return await response.json();
+		await this.continueButton.click();
+
+		return await responseBodyPromise;
 	}
 
 	/**

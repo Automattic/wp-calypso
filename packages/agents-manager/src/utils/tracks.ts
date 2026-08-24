@@ -1,11 +1,13 @@
 /**
  * Central Tracks wrappers for the Agents Manager.
  *
- * Two record functions because each injects a different base-prop set:
+ * Three record functions over two base-prop sets:
  * - `recordBigSkyTracksEvent` keeps Big Sky's exact event names and props so its
  *   live Looker dashboard keeps working. Removable once that parity is dropped.
  * - `recordAgentsManagerTracksEvent` uses the unified property schema shared across the new
- *   AI products.
+ *   AI products, under the `calypso_agents_manager_` prefix.
+ * - `recordFullNameAgentsManagerTracksEvent` sends the same unified props under a
+ *   caller-supplied full event name, for entry points whose events carry a host prefix.
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
@@ -75,24 +77,31 @@ function getIsTest(): boolean {
 }
 
 /**
- * Editor-surface page props, mirroring Big Sky's `getCurrentPageProperties`.
+ * Editor-surface page props, mirroring Big Sky's `getCurrentPageProperties`,
+ * plus the `surface` claim derived from the same editor-store read.
  */
 function getBigSkyPageProps(): TracksProps {
+	// `block_editor` only while the `core/editor` store is registered (unlike
+	// `isEditorPage()`, this includes custom post types and the site editor);
+	// preserved by the catch, omitted on plain wp-admin screens.
+	let surfaceProps: TracksProps = {};
 	try {
 		const editor = select( 'core/editor' ) as EditorSelectStore;
-		const core = select( 'core' ) as CoreSelectStore;
+		surfaceProps = editor ? { surface: 'block_editor' } : {};
 
+		const core = select( 'core' ) as CoreSelectStore;
 		const postId = editor?.getCurrentPostId?.();
 		const siteRecord = core?.getEntityRecord?.( 'root', 'site' ) as
 			| { page_on_front?: number }
 			| undefined;
 
 		return {
+			...surfaceProps,
 			post_type: editor?.getCurrentPostType?.() ?? '',
 			is_home_page: postId !== undefined && postId === siteRecord?.page_on_front,
 		};
 	} catch {
-		return { post_type: '', is_home_page: false };
+		return { ...surfaceProps, post_type: '', is_home_page: false };
 	}
 }
 
@@ -121,24 +130,50 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 		...getBigSkyPageProps(),
 	};
 
-	recordTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, { ...baseProps, ...props } );
+	const mergedProps: TracksProps = { ...baseProps, ...props };
+	// Send the session ID under both names: `ai_session_id` is the standard one,
+	// and `sessionid` is the older one that dashboards still use. The alias
+	// copies the final `sessionid`, so a caller-supplied value stays mirrored.
+	if ( ! ( 'ai_session_id' in mergedProps ) ) {
+		const effectiveSessionId = mergedProps.sessionid;
+		if ( typeof effectiveSessionId === 'string' && effectiveSessionId !== '' ) {
+			mergedProps.ai_session_id = effectiveSessionId;
+		}
+	}
+
+	recordTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, mergedProps );
 }
 
-/**
- * Records an Agents Manager event using the shared unified property names.
- */
-export function recordAgentsManagerTracksEvent( eventName: string, props: TracksProps = {} ): void {
+function getUnifiedBaseProps(): TracksProps {
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
-	const baseProps: TracksProps = {
+	return {
 		ai_session_id: getSessionId(),
-		agent_name: DOLLY_AGENT_ID,
+		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
 		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 		...( blogId !== undefined ? { blog_id: blogId } : {} ),
 	};
+}
 
-	recordTracksEvent( `${ AM_UNIFIED_EVENT_PREFIX }${ eventName }`, { ...baseProps, ...props } );
+/**
+ * Records an Agents Manager event using the shared unified property names.
+ * `eventName` is a suffix appended to the `calypso_agents_manager_` prefix.
+ */
+export function recordAgentsManagerTracksEvent( eventName: string, props: TracksProps = {} ): void {
+	recordFullNameAgentsManagerTracksEvent( `${ AM_UNIFIED_EVENT_PREFIX }${ eventName }`, props );
+}
+
+/**
+ * Records an event under its full name with the same unified base props as
+ * `recordAgentsManagerTracksEvent` — for the entry-point events that carry
+ * their own host prefix (e.g. `calypso_editor_agents_manager_ai_chat_clicked`).
+ */
+export function recordFullNameAgentsManagerTracksEvent(
+	eventName: string,
+	props: TracksProps = {}
+): void {
+	recordTracksEvent( eventName, { ...getUnifiedBaseProps(), ...props } );
 }

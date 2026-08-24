@@ -282,9 +282,27 @@ export async function getSiteAdminUrl( siteIdentifier: string ): Promise< string
 /**
  * Build the Site Editor URL from a site's wp-admin URL.
  */
-export function getSiteEditorUrl( adminUrl: string ): string {
+export function getSiteEditorUrl(
+	adminUrl: string,
+	{ startWalkthrough = false }: { startWalkthrough?: boolean } = {}
+): string {
 	const base = adminUrl.endsWith( '/' ) ? adminUrl : `${ adminUrl }/`;
-	return `${ base }site-editor.php`;
+	const url = `${ base }site-editor.php`;
+
+	// `go` tells Big Sky this arrival came from onboarding, so it personalizes the
+	// copy instead of waiting to be spoken to. It never re-runs: the flag stays in
+	// the editor URL, so a site that has already been personalized has to see it
+	// and do nothing. `reset` is the way to run it again.
+	//
+	// Deliberately no `canvas=edit`. Sending it made the Site Editor open its
+	// "Edit your site" welcome guide over the page and left a run of failed
+	// entity requests behind it; the same URL without it lands correctly and the
+	// personalization runs. The editor reaches its editing canvas on its own from
+	// here, so the parameter bought nothing and cost that.
+	//
+	// Only set when the spec applied; there is nothing to personalize from
+	// otherwise.
+	return startWalkthrough ? addQueryArgs( url, { 'blueprint-walkthrough': 'go' } ) : url;
 }
 
 export function logBlueprintArchiveEvent(

@@ -40,7 +40,7 @@ export default function CustomALink( {
 
 				recordAgentsManagerTracksEvent( 'link_click', {
 					href: transformedHref,
-					type: isSupportArticle ? 'support_article' : 'external',
+					link_type: isSupportArticle ? 'support_article' : 'external',
 					source: isFromOrchestrator ? 'orchestrator' : 'zendesk',
 				} );
 			} }

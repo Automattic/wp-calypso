@@ -6,7 +6,7 @@ import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import EmailSection from '../email-section';
-import type { AccountRecovery, UserSettings } from '@automattic/api-core';
+import type { AccountRecovery, User, UserSettings } from '@automattic/api-core';
 
 const ACCOUNT_EMAIL = 'owner@mycompany.com';
 
@@ -24,9 +24,11 @@ function mockAccountRecovery( data: Partial< AccountRecovery > ) {
 }
 
 const userSettings = { user_email: ACCOUNT_EMAIL } as UserSettings;
+const bouncingUser = { ID: 1, email: ACCOUNT_EMAIL, email_bouncing: true } as User;
 const noop = () => {};
 
 const CUSTOM_DOMAIN_WARNING = /uses a custom domain/;
+const BOUNCING_ERROR = /bouncing back/;
 
 describe( '<EmailSection>', () => {
 	test( 'shows the custom-domain warning when the only recovery email matches the account email', async () => {
@@ -60,6 +62,56 @@ describe( '<EmailSection>', () => {
 
 		await waitFor( () => {
 			expect( screen.queryByText( CUSTOM_DOMAIN_WARNING ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	test( 'flags the field when the account email is bouncing', async () => {
+		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
+
+		render(
+			<EmailSection
+				value={ ACCOUNT_EMAIL }
+				onChange={ noop }
+				userSettings={ userSettings }
+				isEmailVerified
+			/>,
+			{ user: bouncingUser }
+		);
+
+		expect( await screen.findByText( BOUNCING_ERROR ) ).toBeVisible();
+	} );
+
+	test( 'drops the bouncing message once a different address is typed', async () => {
+		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
+
+		render(
+			<EmailSection
+				value="new@example.com"
+				onChange={ noop }
+				userSettings={ userSettings }
+				isEmailVerified
+			/>,
+			{ user: bouncingUser }
+		);
+
+		expect( await screen.findByText( 'Email address looks good!' ) ).toBeVisible();
+		expect( screen.queryByText( BOUNCING_ERROR ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'hides the bouncing message when the account email is fine', async () => {
+		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
+
+		render(
+			<EmailSection
+				value={ ACCOUNT_EMAIL }
+				onChange={ noop }
+				userSettings={ userSettings }
+				isEmailVerified
+			/>
+		);
+
+		await waitFor( () => {
+			expect( screen.queryByText( BOUNCING_ERROR ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

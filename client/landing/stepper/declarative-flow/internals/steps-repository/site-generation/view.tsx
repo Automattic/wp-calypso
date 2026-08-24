@@ -1,5 +1,4 @@
-import { WordPressWordmark } from '@automattic/components';
-import { sparkles } from '@automattic/components/src/icons';
+import { BigSkyLogo, WordPressWordmark } from '@automattic/components';
 import { Button, Icon, Notice } from '@wordpress/components';
 import { check, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -249,12 +248,9 @@ export function SiteGenerationView( {
 				className="site-generation__sidebar"
 			>
 				<div className="site-generation__sidebar-header">
-					<Icon
-						aria-hidden="true"
-						className="site-generation__assistant-icon"
-						icon={ sparkles }
-						size={ 32 }
-					/>
+					<span aria-hidden="true" className="site-generation__assistant-icon">
+						<BigSkyLogo.CentralLogo fill="currentColor" heartless size={ 48 } />
+					</span>
 				</div>
 				<div className="site-generation__conversation">
 					<p className="site-generation__conversation-message">

@@ -171,11 +171,8 @@ function formatSuggestionIds( suggestions: Suggestion[] ): string {
  */
 function getSelectedOptionId(
 	selectedSuggestion: Suggestion,
-	availableSuggestions: Suggestion[]
+	originalSuggestion: Suggestion | undefined
 ): string | undefined {
-	const originalSuggestion = availableSuggestions.find(
-		( suggestion ) => suggestion.id === selectedSuggestion.id
-	);
 	return originalSuggestion?.options?.find(
 		( option ) => option.value === selectedSuggestion.prompt
 	)?.id;
@@ -1424,6 +1421,8 @@ export default function OrchestratorChat( {
 		};
 	}, [] );
 
+	const renderedSuggestionsRef = useRef< Suggestion[] >( [] );
+
 	const handleSuggestionClick = useCallback(
 		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
 			const value =
@@ -1431,9 +1430,18 @@ export default function OrchestratorChat( {
 
 			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
 			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
+			// A click routed through Agenttic's own container reports the footer list,
+			// which is empty while the chips live in the empty view.
+			const knownSuggestions = availableSuggestions?.length
+				? availableSuggestions
+				: renderedSuggestionsRef.current;
+			const originalSuggestion =
+				typeof suggestion !== 'string'
+					? knownSuggestions.find( ( available ) => available.id === suggestion.id )
+					: undefined;
 			const optionId =
 				typeof suggestion !== 'string'
-					? getSelectedOptionId( suggestion, availableSuggestions ?? [] )
+					? getSelectedOptionId( suggestion, originalSuggestion )
 					: undefined;
 			const blockType =
 				typeof suggestion !== 'string' && contextualSuggestionIds.has( suggestion.id )
@@ -1444,7 +1452,7 @@ export default function OrchestratorChat( {
 				recordBigSkyTracksEvent( 'chat_suggestion_click', {
 					suggestion_text: suggestion.prompt || '',
 					suggestion_id: suggestion.id || '',
-					available_suggestions: formatSuggestionIds( availableSuggestions ?? [] ),
+					available_suggestions: formatSuggestionIds( knownSuggestions ),
 					...( optionId ? { option_id: optionId } : {} ),
 					...( blockType ? { block_type: blockType } : {} ),
 				} );
@@ -1738,6 +1746,7 @@ export default function OrchestratorChat( {
 	} else if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
 	}
+	renderedSuggestionsRef.current = displayedEmptyViewSuggestions;
 
 	// Track when a set of suggestions is rendered — the dynamic block-context
 	// suggestions or, on an empty chat, the empty-view starter chips. Mirrors

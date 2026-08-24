@@ -15,17 +15,20 @@ jest.mock( '../is-reader-chat-agent', () => {
 } );
 
 import { select } from '@wordpress/data';
+import { getSessionId } from '../agent-session';
 import { isReaderChatHost } from '../is-reader-chat-agent';
 import { setResolvedAgentId } from '../resolved-agent-id';
 import {
 	getBigSkyTracksData,
 	recordAgentsManagerTracksEvent,
 	recordBigSkyTracksEvent,
+	recordFullNameAgentsManagerTracksEvent,
 } from '../tracks';
 
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
 const mockIsReaderChatHost = isReaderChatHost as jest.MockedFunction< typeof isReaderChatHost >;
 const mockSelect = select as jest.MockedFunction< typeof select >;
+const mockGetSessionId = getSessionId as jest.MockedFunction< typeof getSessionId >;
 
 function lastEventProps(): Record< string, unknown > {
 	const call = mockRecordTracksEvent.mock.calls.at( -1 );
@@ -35,6 +38,8 @@ function lastEventProps(): Record< string, unknown > {
 describe( 'tracks wrappers', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		// clearAllMocks keeps implementations, so restore any per-test override.
+		mockSelect.mockImplementation( () => ( {} ) as ReturnType< typeof select > );
 		mockIsReaderChatHost.mockReturnValue( false );
 		setResolvedAgentId( undefined );
 		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: true };
@@ -119,6 +124,66 @@ describe( 'tracks wrappers', () => {
 			expect( lastEventProps().blog_id ).toBe( 12345 );
 		} );
 
+		it( 'duplicates the session ID into the standard ai_session_id', () => {
+			recordBigSkyTracksEvent( 'chat_input_send_message' );
+
+			expect( lastEventProps() ).toMatchObject( {
+				sessionid: 'session-xyz',
+				ai_session_id: 'session-xyz',
+			} );
+		} );
+
+		it( 'omits ai_session_id while no session exists yet', () => {
+			mockGetSessionId.mockReturnValueOnce( '' );
+
+			recordBigSkyTracksEvent( 'chat_input_send_message' );
+
+			const props = lastEventProps();
+			expect( props.sessionid ).toBe( '' );
+			expect( props ).not.toHaveProperty( 'ai_session_id' );
+		} );
+
+		it( 'mirrors a caller-overridden sessionid into ai_session_id', () => {
+			recordBigSkyTracksEvent( 'x', { sessionid: 'override' } );
+
+			expect( lastEventProps() ).toMatchObject( {
+				sessionid: 'override',
+				ai_session_id: 'override',
+			} );
+		} );
+
+		it( 'omits ai_session_id when a caller overrides sessionid to empty', () => {
+			recordBigSkyTracksEvent( 'x', { sessionid: '' } );
+
+			expect( lastEventProps() ).not.toHaveProperty( 'ai_session_id' );
+		} );
+
+		it( 'lets a caller-supplied ai_session_id win over the mirror', () => {
+			recordBigSkyTracksEvent( 'x', { ai_session_id: 'custom' } );
+
+			expect( lastEventProps() ).toMatchObject( {
+				sessionid: 'session-xyz',
+				ai_session_id: 'custom',
+			} );
+		} );
+
+		it( 'labels editor-hosted parity events with the block_editor surface', () => {
+			recordBigSkyTracksEvent( 'chat_input_send_message' );
+
+			expect( lastEventProps().surface ).toBe( 'block_editor' );
+		} );
+
+		it( 'omits surface when the editor store is not registered', () => {
+			mockSelect.mockImplementation(
+				( store ) =>
+					( store === 'core/editor' ? undefined : {} ) as unknown as ReturnType< typeof select >
+			);
+
+			recordBigSkyTracksEvent( 'chat_input_send_message' );
+
+			expect( lastEventProps() ).not.toHaveProperty( 'surface' );
+		} );
+
 		it( 'omits blog_id when the server payload has no valid site ID', () => {
 			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 				isDevMode: false,
@@ -146,6 +211,18 @@ describe( 'tracks wrappers', () => {
 				is_test: true,
 			} );
 			expect( props ).not.toHaveProperty( 'is_a11n' );
+		} );
+
+		it( 'sends the resolved agent id as agent_name when one is set', () => {
+			setResolvedAgentId( 'plugin-compass' );
+			recordAgentsManagerTracksEvent( 'chat_minimize' );
+			expect( lastEventProps().agent_name ).toBe( 'plugin-compass' );
+		} );
+
+		it( 'falls back to the Dolly agent id while no agent is resolved', () => {
+			setResolvedAgentId( undefined );
+			recordAgentsManagerTracksEvent( 'chat_minimize' );
+			expect( lastEventProps().agent_name ).toBe( 'dolly' );
 		} );
 
 		it( 'uses the reader-chat surface token off the editor', () => {
@@ -180,6 +257,27 @@ describe( 'tracks wrappers', () => {
 			setResolvedAgentId( 'reader-chat' );
 			recordAgentsManagerTracksEvent( 'chat_minimize' );
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	describe( 'recordFullNameAgentsManagerTracksEvent', () => {
+		it( 'records under the given name with the unified base-prop set', () => {
+			recordFullNameAgentsManagerTracksEvent( 'calypso_editor_agents_manager_ai_chat_clicked', {
+				section: 'gutenberg',
+				action: 'open',
+			} );
+
+			const [ eventName ] = mockRecordTracksEvent.mock.calls[ 0 ];
+			expect( eventName ).toBe( 'calypso_editor_agents_manager_ai_chat_clicked' );
+
+			expect( lastEventProps() ).toMatchObject( {
+				section: 'gutenberg',
+				action: 'open',
+				ai_session_id: 'session-xyz',
+				agent_name: 'dolly',
+				surface: 'editor',
+				is_test: true,
+			} );
 		} );
 	} );
 
@@ -261,6 +359,25 @@ describe( 'tracks wrappers', () => {
 			expect( () => recordBigSkyTracksEvent( 'chat_input_send_message' ) ).not.toThrow();
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
 			expect( lastEventProps() ).toMatchObject( { post_type: '', is_home_page: false } );
+			expect( lastEventProps() ).not.toHaveProperty( 'surface' );
+
+			mockSelect.mockImplementation( () => ( {} ) as ReturnType< typeof select > );
+		} );
+
+		it( 'keeps surface when a later selector throws after the editor store resolved', () => {
+			mockSelect.mockImplementation( ( store ) => {
+				if ( store === 'core/editor' ) {
+					return {} as ReturnType< typeof select >;
+				}
+				throw new Error( 'core-data selector failed' );
+			} );
+
+			expect( () => recordBigSkyTracksEvent( 'chat_input_send_message' ) ).not.toThrow();
+			expect( lastEventProps() ).toMatchObject( {
+				surface: 'block_editor',
+				post_type: '',
+				is_home_page: false,
+			} );
 
 			mockSelect.mockImplementation( () => ( {} ) as ReturnType< typeof select > );
 		} );

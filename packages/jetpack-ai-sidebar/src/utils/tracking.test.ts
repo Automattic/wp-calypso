@@ -22,6 +22,8 @@ const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 >;
 const mockedSelect = select as jest.MockedFunction< typeof select >;
 
+// Guards the split-screen guide payloads specifically; the shared response
+// events carry their own allowlisted metadata (counts, review_context, cache_hit).
 const expectPrivacySafePayload = (
 	properties: Record< string, unknown >,
 	{ allowPostType = false }: { allowPostType?: boolean } = {}
@@ -84,6 +86,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		trackSplitScreenGuideClick( { componentType: 'post-feedback' } );
 
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith( 'jetpack_ai_split_screen_guide_click', {
+			ai_session_id: 'test-session-id',
 			blog_id: 12345,
 			component_type: 'post-feedback',
 			guide_variant: 'inline_action_card',
@@ -93,6 +96,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 			screen: 'post',
 			sessionid: 'test-session-id',
 			session_type: 'paid-user-session',
+			surface: 'block_editor',
 		} );
 		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
 			allowPostType: true,
@@ -140,6 +144,24 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		).not.toHaveProperty( 'review_context' );
 	} );
 
+	it( 'relays the server-declared AI Editorial Review cache signal', () => {
+		expect(
+			getResponseRenderedTrackingProperties( 'ai-editorial-review', { cache_hit: true } )
+		).toMatchObject( { cache_hit: true } );
+		expect(
+			getResponseRenderedTrackingProperties( 'ai-editorial-review', { cache_hit: false } )
+		).toMatchObject( { cache_hit: false } );
+	} );
+
+	it( 'omits a non-boolean or absent cache signal', () => {
+		expect(
+			getResponseRenderedTrackingProperties( 'ai-editorial-review', { cache_hit: 'yes' } )
+		).not.toHaveProperty( 'cache_hit' );
+		expect( getResponseRenderedTrackingProperties( 'ai-editorial-review', {} ) ).not.toHaveProperty(
+			'cache_hit'
+		);
+	} );
+
 	it( 'omits response metadata for components without review findings', () => {
 		expect(
 			getResponseRenderedTrackingProperties( 'title-picker', { titles: [ { title: 'Title' } ] } )
@@ -152,6 +174,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_ai_split_screen_guide_rendered',
 			{
+				ai_session_id: 'test-session-id',
 				blog_id: 12345,
 				component_type: 'ai-editorial-review',
 				guide_variant: 'inline_action_card',
@@ -161,6 +184,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 				screen: 'post',
 				sessionid: 'test-session-id',
 				session_type: 'paid-user-session',
+				surface: 'block_editor',
 			}
 		);
 		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
@@ -188,6 +212,18 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		trackSplitScreenGuideClick( { componentType: 'proofread' } );
 
 		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'is_a11n' );
+	} );
+
+	it( 'omits both session properties while no session exists yet', () => {
+		( window as WindowWithAgentsManagerActions ).__agentsManagerActions = {
+			getSessionId: jest.fn( () => '' ),
+		};
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		const properties = mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ];
+		expect( properties ).not.toHaveProperty( 'sessionid' );
+		expect( properties ).not.toHaveProperty( 'ai_session_id' );
 	} );
 
 	it( 'omits blog_id when the server payload has no valid site ID', () => {
@@ -234,7 +270,7 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		);
 	} );
 
-	it( 'uses an empty post type when the editor store is unavailable', () => {
+	it( 'uses an empty post type and omits surface when the editor store read throws', () => {
 		mockedSelect.mockImplementation( () => {
 			throw new Error( 'Store unavailable' );
 		} );
@@ -245,5 +281,33 @@ describe( 'Jetpack AI sidebar tracking', () => {
 			'jetpack_ai_split_screen_guide_click',
 			expect.objectContaining( { post_type: '' } )
 		);
+		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'surface' );
+	} );
+
+	it( 'keeps surface and uses an empty post type when the selector itself throws', () => {
+		mockedSelect.mockReturnValue( {
+			getCurrentPostType: jest.fn( () => {
+				throw new Error( 'selector failed' );
+			} ),
+		} as ReturnType< typeof select > );
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_split_screen_guide_click',
+			expect.objectContaining( { post_type: '', surface: 'block_editor' } )
+		);
+	} );
+
+	it( 'omits surface when the editor store is not registered', () => {
+		mockedSelect.mockReturnValue( undefined as unknown as ReturnType< typeof select > );
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_split_screen_guide_click',
+			expect.objectContaining( { post_type: '' } )
+		);
+		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'surface' );
 	} );
 } );

@@ -154,10 +154,6 @@ function canSwapBlockEditSnapshot( snapshot: BlockEditSnapshot ): boolean {
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
 	label: __( 'Optimize Title', __i18n_text_domain__ ),
-	description: __(
-		'Refine the title based on your post’s content and SEO best practices.',
-		__i18n_text_domain__
-	),
 	prompt: __( 'Optimize the title of this post', __i18n_text_domain__ ),
 };
 
@@ -171,10 +167,6 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 const GENERATE_FEATURED_IMAGE_SUGGESTION = {
 	id: 'generate-featured-image',
 	label: __( 'Generate featured image', __i18n_text_domain__ ),
-	description: __(
-		'Create a new image with AI and set it as the featured image.',
-		__i18n_text_domain__
-	),
 	prompt: '',
 	action: () => ! openImageStudioForFeaturedImage(),
 };
@@ -188,7 +180,6 @@ const GENERATE_FEATURED_IMAGE_SUGGESTION = {
 const GENERATE_EXCERPT_SUGGESTION = {
 	id: 'generate-excerpt',
 	label: __( 'Generate Excerpt', __i18n_text_domain__ ),
-	description: __( 'Generate an excerpt for your post.', __i18n_text_domain__ ),
 	prompt: __( 'Generate an excerpt for this post', __i18n_text_domain__ ),
 };
 
@@ -211,10 +202,6 @@ const GENERATE_EXCERPT_SUGGESTION = {
 const SEO_ENHANCER_SUGGESTION = {
 	id: 'seo-enhancer',
 	label: __( 'SEO Enhancer', __i18n_text_domain__ ),
-	description: __(
-		'Generate metadata for the contents of the post to optimize SEO.',
-		__i18n_text_domain__
-	),
 	prompt: '',
 	options: [
 		{
@@ -238,36 +225,48 @@ const SEO_ENHANCER_SUGGESTION = {
 	],
 };
 
-/** Editor-level suggestion to run AI Editorial Review on saved content. */
-const AI_EDITORIAL_REVIEW_SUGGESTION = {
+/**
+ * The three review tools share one dropdown. Each option's `value` is the whole
+ * prompt, which the dropdown submits verbatim because the parent `prompt` is empty
+ * — the same arrangement SEO Enhancer uses.
+ */
+const GET_FEEDBACK_SUGGESTION_ID = 'get-feedback';
+
+const AI_EDITORIAL_REVIEW_OPTION = {
 	id: 'ai-editorial-review',
-	label: __( 'Editorial Review', __i18n_text_domain__ ),
-	description: __( 'In-depth review against your content guidelines.', __i18n_text_domain__ ),
-	prompt: __(
+	label: __( 'In-depth review against guidelines', __i18n_text_domain__ ),
+	value: __(
 		'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
 		__i18n_text_domain__
 	),
 };
 
-const POST_FEEDBACK_SUGGESTION = {
+const POST_FEEDBACK_OPTION = {
 	id: 'generate-feedback',
-	label: __( 'Simple Review', __i18n_text_domain__ ),
-	description: __( 'Quick feedback on your content’s structure.', __i18n_text_domain__ ),
-	prompt: __(
+	label: __( 'Quick feedback on structure', __i18n_text_domain__ ),
+	value: __(
 		'Generate feedback for this saved post. Review the saved title and saved block content for content structure, reader clarity, completeness, media/caption/link issues, and obvious publishability concerns. Return practical feedback with one-click suggestions when safe.',
 		__i18n_text_domain__
 	),
 };
 
-const PROOFREAD_SUGGESTION = {
+const PROOFREAD_OPTION = {
 	id: 'proofread-content',
-	label: __( 'Proofread', __i18n_text_domain__ ),
-	description: __( 'Correct spelling, grammar, and punctuation.', __i18n_text_domain__ ),
-	prompt: __(
+	label: __( 'Spelling and grammar check', __i18n_text_domain__ ),
+	value: __(
 		'Proofread this saved post for spelling, grammar, and punctuation. Review the saved title and saved block content, and return practical fixes with one-click suggestions when safe.',
 		__i18n_text_domain__
 	),
 };
+
+/**
+ * Both abilities read the saved post, so the edited page content would mislead
+ * them. Matched by prompt rather than id: a dropdown submits its parent's id.
+ */
+const SAVED_POST_PROMPTS: Set< string > = new Set( [
+	POST_FEEDBACK_OPTION.value,
+	PROOFREAD_OPTION.value,
+] );
 
 const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 	'translate',
@@ -427,11 +426,32 @@ function isProofreadAvailable(
 	);
 }
 
-function getAiEditorialReviewSuggestions( currentPostType?: string ) {
-	if ( ! isAiEditorialReviewAvailable( currentPostType ) ) {
+/**
+ * The review tools as one dropdown, carrying only the options this post qualifies
+ * for. With none available the dropdown is dropped entirely.
+ */
+function getFeedbackSuggestions( currentPostType?: string, currentPostId?: EditorPostId | null ) {
+	const options = [
+		...( isGenerateFeedbackAvailable( currentPostType, currentPostId )
+			? [ POST_FEEDBACK_OPTION ]
+			: [] ),
+		...( isProofreadAvailable( currentPostType, currentPostId ) ? [ PROOFREAD_OPTION ] : [] ),
+		...( isAiEditorialReviewAvailable( currentPostType ) ? [ AI_EDITORIAL_REVIEW_OPTION ] : [] ),
+	];
+
+	if ( options.length === 0 ) {
 		return [];
 	}
-	return [ AI_EDITORIAL_REVIEW_SUGGESTION ];
+
+	return [
+		{
+			id: GET_FEEDBACK_SUGGESTION_ID,
+			label: __( 'Get feedback', __i18n_text_domain__ ),
+			// Empty, so the dropdown submits the picked option's value verbatim.
+			prompt: '',
+			options,
+		},
+	];
 }
 
 function getPostLevelSuggestions(
@@ -451,18 +471,14 @@ function getPostLevelSuggestions(
 		...( isExcerptSuggestionAvailable( currentPostType, supportsExcerpt )
 			? [ GENERATE_EXCERPT_SUGGESTION ]
 			: [] ),
-		...( isGenerateFeedbackAvailable( currentPostType, currentPostId )
-			? [ POST_FEEDBACK_SUGGESTION ]
-			: [] ),
-		...( isProofreadAvailable( currentPostType, currentPostId ) ? [ PROOFREAD_SUGGESTION ] : [] ),
-		...getAiEditorialReviewSuggestions( currentPostType ),
+		...getFeedbackSuggestions( currentPostType, currentPostId ),
 		// Surface the SEO Enhancer dropdown last.
 		...( isSeoSuggestionsEnabled() ? [ SEO_ENHANCER_SUGGESTION ] : [] ),
 	];
 }
 
 function getReservedSuggestions< T extends { id: string } >( suggestions: T[] ): T[] {
-	return [ POST_FEEDBACK_SUGGESTION.id, PROOFREAD_SUGGESTION.id, AI_EDITORIAL_REVIEW_SUGGESTION.id ]
+	return [ GET_FEEDBACK_SUGGESTION_ID ]
 		.map( ( id ) => suggestions.find( ( suggestion ) => suggestion.id === id ) )
 		.filter( Boolean ) as T[];
 }
@@ -1421,10 +1437,7 @@ export function useSuggestions( maxSuggestions?: number ): {
 				? getSelectedOrRememberedBlock()?.clientId ?? null
 				: null;
 
-			if ( matchesSuggestion( POST_FEEDBACK_SUGGESTION ) ) {
-				suppressCurrentPageContentForNextContext = true;
-			}
-			if ( matchesSuggestion( PROOFREAD_SUGGESTION ) ) {
+			if ( typeof value === 'string' && SAVED_POST_PROMPTS.has( value ) ) {
 				suppressCurrentPageContentForNextContext = true;
 			}
 		};
