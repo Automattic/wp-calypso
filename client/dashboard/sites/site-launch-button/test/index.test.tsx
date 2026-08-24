@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { SiteLaunchButton } from '..';
@@ -51,16 +51,22 @@ describe( '<SiteLaunchButton>', () => {
 			createMockDomain( 'kaonashi.wordpress.com', false ),
 			createMockDomain( 'kaonashi.com' ),
 		] );
-		const launchScope = mockLaunchApi();
+		// Deliberately no launch interceptor: nock.disableNetConnect() makes any
+		// premature launch request throw, so reaching the modal proves the launch
+		// was gated rather than merely not-yet-completed.
 
 		render( <SiteLaunchButton site={ createMockSite() } tracksContext="test" /> );
 
 		await user.click( await screen.findByRole( 'button', { name: 'Launch your site' } ) );
 
+		// The dialog's accessible name is "Launching makes your site public" only
+		// while not launching (it becomes "Launching site…" once the mutation
+		// runs), so finding it — with the confirm button still present — proves
+		// the flow paused for confirmation instead of launching.
 		expect(
 			await screen.findByRole( 'dialog', { name: 'Launching makes your site public' } )
 		).toBeVisible();
-		expect( launchScope.isDone() ).toBe( false );
+		expect( screen.getByRole( 'button', { name: 'Yes, launch site!' } ) ).toBeVisible();
 	} );
 
 	test( 'launches the site when the pre-launch modal is confirmed', async () => {
@@ -74,9 +80,49 @@ describe( '<SiteLaunchButton>', () => {
 		render( <SiteLaunchButton site={ createMockSite() } tracksContext="test" /> );
 
 		await user.click( await screen.findByRole( 'button', { name: 'Launch your site' } ) );
+		await screen.findByRole( 'dialog', { name: 'Launching makes your site public' } );
+
+		// The launch must fire from the confirm click, not from merely opening the
+		// modal: it hasn't happened yet with the modal open…
+		expect( launchScope.isDone() ).toBe( false );
+
 		await user.click( await screen.findByRole( 'button', { name: 'Yes, launch site!' } ) );
 
+		// …and only happens once the user confirms.
 		await waitFor( () => expect( launchScope.isDone() ).toBe( true ) );
+	} );
+
+	test( 'does not open the modal for a paid site without a custom domain', async () => {
+		// A paid site whose only domain is its default *.wordpress.com address
+		// has domains.length === 1, so isSitePlanPaidWithDomains is false and the
+		// launch is not gated behind the modal — it routes to the launch flow.
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+
+		render( <SiteLaunchButton site={ createMockSite() } tracksContext="test" /> );
+
+		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
+		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/start/launch-site' ) );
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'closing the pre-launch modal does not launch the site', async () => {
+		const user = userEvent.setup();
+		mockDomainsApi( [
+			createMockDomain( 'kaonashi.wordpress.com', false ),
+			createMockDomain( 'kaonashi.com' ),
+		] );
+		const launchScope = mockLaunchApi();
+
+		render( <SiteLaunchButton site={ createMockSite() } tracksContext="test" /> );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Launch your site' } ) );
+		const dialog = await screen.findByRole( 'dialog', {
+			name: 'Launching makes your site public',
+		} );
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+		await waitForElementToBeRemoved( dialog );
+		expect( launchScope.isDone() ).toBe( false );
 	} );
 
 	test( 'does not open the modal and launches immediately for a hosting-trial site', async () => {
