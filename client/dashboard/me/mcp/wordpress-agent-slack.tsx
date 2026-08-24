@@ -51,12 +51,10 @@ export default function WordPressAgentSlack( {
 				username
 		  )
 		: __( 'Connect your WordPress.com account to this Slack workspace?' );
-	const installTitle = pairToken
-		? __( 'Install WordPress Agent in another Slack workspace' )
-		: __( 'Install WordPress Agent in Slack' );
+	const installTitle = __( 'Slack' );
 	const installDescription = pairToken
 		? __( 'This is a separate step for adding WordPress Agent to a different Slack workspace.' )
-		: __( 'Add WordPress Agent to a Slack workspace, then connect your WordPress.com account.' );
+		: __( 'Add WordPress Agent to your Slack workspaces.' );
 	const isActionPending =
 		oauthMutation.isPending || pairMutation.isPending || disconnectMutation.isPending;
 	const error =
@@ -200,21 +198,16 @@ export default function WordPressAgentSlack( {
 
 			<Card>
 				<CardBody className="wordpress-agent-connection__row">
-					<SectionHeader
-						level={ 3 }
-						title={ installTitle }
-						description={ installDescription }
-						decoration={ <img src={ SlackMark } alt="" width={ 24 } height={ 24 } /> }
-					/>
+					<SectionHeader level={ 3 } title={ installTitle } description={ installDescription } />
 					<Button
 						variant="primary"
+						className="wordpress-agent-slack__install-button"
 						onClick={ install }
 						isBusy={ oauthMutation.isPending }
 						disabled={ isActionPending }
 					>
-						{ pairToken
-							? __( 'Install in another workspace' )
-							: __( 'Install to a new Slack instance' ) }
+						<img src={ SlackMark } alt="" width={ 20 } height={ 20 } />
+						{ pairToken ? __( 'Add to another workspace' ) : __( 'Add to Slack' ) }
 					</Button>
 				</CardBody>
 

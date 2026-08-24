@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
@@ -9,7 +8,6 @@ import { agentRoute } from '../../../app/router/me';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { SectionHeader } from '../../../components/section-header';
 import WordPressAgentEmail from '../../mcp/wordpress-agent-email';
 import WordPressAgentSlack from '../../mcp/wordpress-agent-slack';
 import WordPressAgentTelegram from '../../mcp/wordpress-agent-telegram';
@@ -54,7 +52,7 @@ export default function WordPressAgent() {
 				<PageHeader
 					title={ __( 'WordPress Agent' ) }
 					description={ __(
-						'Your AI assistant for building, managing, and growing your WordPress.com sites.'
+						'WordPress Agent helps you manage your site, create content, and monitor performance. Message your agent from where it’s convenient: via Telegram, Email, or Slack.'
 					) }
 					prefix={ <Breadcrumbs length={ 2 } /> }
 				/>
@@ -64,13 +62,7 @@ export default function WordPressAgent() {
 				eventName="calypso_dashboard_wordpress_agent_connections_view"
 				properties={ tracksAudienceProps }
 			/>
-			<VStack spacing={ 4 }>
-				<SectionHeader
-					level={ 2 }
-					title={ __( 'Connections' ) }
-					description={ __( 'Talk to WordPress Agent where you already are.' ) }
-					decoration={ <BigSkyLogo.CentralLogo heartless size={ 32 } /> }
-				/>
+			<VStack spacing={ 8 }>
 				<WordPressAgentEmail />
 				{ config.isEnabled( 'dolly/telegram' ) && (
 					<WordPressAgentTelegram

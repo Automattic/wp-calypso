@@ -3,11 +3,9 @@ import {
 	sitePostByEmailSettingsMutation,
 	sitePostByEmailSettingsQuery,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Button,
-	Icon,
 	Notice,
 	Spinner,
 	__experimentalText as Text,
@@ -15,7 +13,6 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { envelope } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
@@ -41,7 +38,7 @@ function getErrorMessage( error: unknown, fallback: string ): string {
 function ManageEmailButton( { site }: { site: Site } ) {
 	return (
 		<RouterLinkButton
-			variant="secondary"
+			variant="primary"
 			to={ siteSettingsAIToolsRoute.fullPath }
 			params={ { siteSlug: site.slug } }
 		>
@@ -110,15 +107,10 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 
 	if ( ! isAvailable ) {
 		return (
-			<CardBody className="wordpress-agent-connection__row">
-				<SectionHeader
-					level={ 3 }
-					title={ __( 'Unavailable' ) }
-					description={ __(
-						'Upgrade this site’s plan to enable its WordPress Agent email address.'
-					) }
-				/>
-				<ManageEmailButton site={ site } />
+			<CardBody>
+				<Text as="p" variant="muted">
+					{ __( 'Upgrade this site’s plan to enable WordPress Agent email address.' ) }
+				</Text>
 			</CardBody>
 		);
 	}
@@ -146,16 +138,30 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 	return (
 		<CardBody>
 			<VStack spacing={ 3 }>
-				<ClipboardInputControl
-					label={ __( 'WordPress Agent email address' ) }
-					value={ agentEmailAddress }
-					readOnly
-					onCopy={ () => {
-						recordTracksEvent( 'calypso_wordpress_agent_email_address_copied', {
-							site_id: site.ID,
-						} );
-					} }
-				/>
+				<div className="wordpress-agent-email__address-row">
+					<ClipboardInputControl
+						label={ __( 'AI agent email address' ) }
+						value={ agentEmailAddress }
+						readOnly
+						onCopy={ () => {
+							recordTracksEvent( 'calypso_wordpress_agent_email_address_copied', {
+								site_id: site.ID,
+							} );
+						} }
+					/>
+					<Button
+						variant="secondary"
+						href={ vCardHref }
+						download={ vCardFileName }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_wordpress_agent_email_vcard_downloaded', {
+								site_id: site.ID,
+							} );
+						} }
+					>
+						{ __( 'Add to contacts' ) }
+					</Button>
+				</div>
 				<div className="wordpress-agent-email__footer">
 					<Text
 						as="p"
@@ -168,21 +174,6 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 							email: <strong>{ user.email }</strong>,
 						} ) }
 					</Text>
-					<div className="wordpress-agent-connection__actions">
-						<Button
-							variant="secondary"
-							href={ vCardHref }
-							download={ vCardFileName }
-							onClick={ () => {
-								recordTracksEvent( 'calypso_wordpress_agent_email_vcard_downloaded', {
-									site_id: site.ID,
-								} );
-							} }
-						>
-							{ __( 'Add to contacts' ) }
-						</Button>
-						<ManageEmailButton site={ site } />
-					</div>
 				</div>
 			</VStack>
 		</CardBody>
@@ -224,16 +215,18 @@ export default function WordPressAgentEmail() {
 						description={ __(
 							'Email WordPress Agent through a private address unique to each site.'
 						) }
-						decoration={ <Icon icon={ envelope } size={ 24 } /> }
-						actions={ <Badge intent="info">{ __( 'Per site' ) }</Badge> }
 					/>
-					<PreferencesLoginSiteDropdown
-						sites={ sites }
-						value={ selectedSite?.ID.toString() ?? '' }
-						onChange={ selectSite }
-						label={ __( 'Site' ) }
-						isLoading={ sitesQuery.isLoading }
-					/>
+					<div className="wordpress-agent-email__site-row">
+						<PreferencesLoginSiteDropdown
+							sites={ sites }
+							value={ selectedSite?.ID.toString() ?? '' }
+							onChange={ selectSite }
+							label={ __( 'Select site' ) }
+							isLoading={ sitesQuery.isLoading }
+							useSiteUrlAsLabel
+						/>
+						{ selectedSite && <ManageEmailButton site={ selectedSite } /> }
+					</div>
 					{ ! sitesQuery.isLoading && sites.length === 0 && (
 						<Notice status="info" isDismissible={ false }>
 							{ __( 'You do not have any sites that can use a WordPress Agent email address.' ) }
