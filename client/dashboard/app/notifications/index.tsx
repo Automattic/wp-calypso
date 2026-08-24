@@ -1,3 +1,5 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { useRouterState } from '@tanstack/react-router';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -7,6 +9,7 @@ import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react
 import wpcom from 'calypso/lib/wp';
 import { dashboardLink } from '../../utils/link';
 import { useAuth } from '../auth';
+import { useAppContext } from '../context';
 import { useHelpCenter } from '../help-center';
 import { useLocale } from '../locale';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
@@ -23,6 +26,7 @@ export default function Notifications( {
 	anchor?: boolean;
 } ) {
 	const { user } = useAuth();
+	const { supports } = useAppContext();
 	const locale = useLocale();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
@@ -44,7 +48,17 @@ export default function Notifications( {
 		[ anchorEl ]
 	);
 
+	// Gated like the route registration, so flag-off behavior is untouched.
+	const pathname = useRouterState( { select: ( state ) => state.location.pathname } );
+	const isInboxRouteActive =
+		supports.notificationsInbox &&
+		isEnabled( 'dashboard/notifications-inbox' ) &&
+		( pathname === '/notifications' || pathname.startsWith( '/notifications/' ) );
+
 	const handleToggle = ( willOpen: boolean ) => {
+		if ( willOpen && isInboxRouteActive ) {
+			return;
+		}
 		if ( willOpen ) {
 			setShowHelpCenter( false, undefined, true );
 		}
@@ -57,6 +71,15 @@ export default function Notifications( {
 			setIsOpen( false );
 		}
 	}, [ isHelpCenterShown ] );
+
+	// The full-page inbox and this dropdown share one engine singleton (a
+	// single isShowing flag and a global filter), so they must never be
+	// mounted at once: force-close on inbox route enter.
+	useEffect( () => {
+		if ( isInboxRouteActive ) {
+			setIsOpen( false );
+		}
+	}, [ isInboxRouteActive ] );
 
 	// Keep the omnibar button in sync with the panel open state.
 	useEffect( () => {
@@ -114,12 +137,15 @@ export default function Notifications( {
 
 	const handleOmnibarToggle = useCallback( () => {
 		setIsOpen( ( prev ) => {
+			if ( isInboxRouteActive ) {
+				return false;
+			}
 			if ( ! prev ) {
 				setShowHelpCenter( false, undefined, true );
 			}
 			return ! prev;
 		} );
-	}, [ setShowHelpCenter ] );
+	}, [ isInboxRouteActive, setShowHelpCenter ] );
 
 	useOmnibarEvent( 'notificationsAnchor', setAnchorEl );
 	useOmnibarEvent( 'notifications', handleOmnibarToggle );
