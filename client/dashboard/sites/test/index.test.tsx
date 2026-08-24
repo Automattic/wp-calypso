@@ -227,6 +227,52 @@ describe( '<Sites>', () => {
 		).toBeVisible();
 	} );
 
+	test( 'lists deleted sites alongside live ones when the deleted filter is on', async () => {
+		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/read/teams' )
+			.query( true )
+			.reply( 200, { teams: [] } );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.reply( 200, {
+				calypso_preferences: {
+					'hosting-dashboard-dataviews-view-sites': {
+						type: 'table',
+						perPage: 12,
+						fields: [ 'visibility', 'plan' ],
+						sort: { field: 'name', direction: 'asc' },
+						titleField: 'name',
+						mediaField: 'icon.ico',
+						descriptionField: 'URL',
+						showTitle: true,
+						showMedia: true,
+						showDescription: true,
+						filters: [ { field: 'is_deleted', operator: 'is', value: true } ],
+					},
+				},
+			} );
+
+		const deletedSite = { ...mockSites[ 1 ], ID: 3, name: 'My Deleted Site', is_deleted: true };
+		// Only a request that widens visibility returns both; a deleted-only
+		// request returns just the deleted site.
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.3/me/sites' )
+			.query( ( query ) => query.site_visibility === 'all' )
+			.reply( 200, { sites: [ mockSites[ 0 ], deletedSite ], total: 2 } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.3/me/sites' )
+			.query( true )
+			.reply( 200, { sites: [ deletedSite ], total: 1 } );
+
+		render( <Sites />, { user: { site_count: 2 } as User } );
+
+		expect( await screen.findByText( 'My Deleted Site' ) ).toBeVisible();
+		expect( screen.getByText( 'My First Site' ) ).toBeVisible();
+	} );
+
 	test( 'collision listener rewrites wpcom site slug when it collides with a Jetpack site', async () => {
 		mockSitesEndpoint( [
 			{
