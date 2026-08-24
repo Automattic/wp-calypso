@@ -49,9 +49,9 @@ export default function YourPlan( { brand, term, quantity, plan, onAddToCart }: 
 			  );
 
 	return (
-		<Card className="marketplace-hosting__summary">
+		<Card>
 			<CardBody>
-				<VStack spacing={ 3 }>
+				<VStack spacing={ 3 } justify="flex-start">
 					<Heading level={ 3 } size={ 16 }>
 						{ __( 'Your plan' ) }
 					</Heading>
@@ -74,7 +74,8 @@ export default function YourPlan( { brand, term, quantity, plan, onAddToCart }: 
 									__( 'Save %s' ),
 									formatUSD( price.actualCost - price.discountedCost )
 								) }
-								{ term === 'yearly' ? __( '· billed yearly' ) : __( '· billed monthly' ) }
+								{ ' · ' }
+								{ term === 'yearly' ? __( 'billed yearly' ) : __( 'billed monthly' ) }
 							</Text>
 						) }
 						{ brand === 'pressable' && total === null && (

@@ -42,7 +42,7 @@ export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConf
 		<Card>
 			<CardBody>
 				<div className="marketplace-hosting__config-grid">
-					<VStack spacing={ 3 }>
+					<VStack spacing={ 3 } justify="flex-start">
 						<Heading level={ 3 } size={ 15 }>
 							{ __( 'How many sites do you need?' ) }
 						</Heading>
@@ -93,7 +93,7 @@ export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConf
 							</Text>
 						) }
 					</VStack>
-					<VStack spacing={ 3 }>
+					<VStack spacing={ 3 } justify="flex-start">
 						<Heading level={ 3 } size={ 15 }>
 							{ __( 'What’s included' ) }
 						</Heading>
