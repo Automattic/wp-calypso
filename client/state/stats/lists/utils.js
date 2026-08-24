@@ -1224,24 +1224,11 @@ export const normalizers = {
 			return [];
 		}
 
-		// Posts that were never emailed to anyone and carry no engagement at all
-		// don't belong in an Emails list. Rows with no recorded sends but with
-		// recorded engagement stay visible: hiding recorded data is the exact
-		// problem this display work set out to fix. Recent posts are exempt,
-		// since stats for a fresh send lag behind the send itself and this
-		// filter runs after server-side pagination, so a filtered fresh send
-		// could blank the whole card instead of being backfilled.
-		const RECENT_SEND_GRACE_PERIOD_MS = 48 * 60 * 60 * 1000;
-		const emailsData = ( data?.posts ?? [] ).filter( ( post ) => {
-			const sends = parseInt( post.total_sends, 10 ) || 0;
-			const opens = parseInt( post.opens, 10 ) || 0;
-			const clicks = parseInt( post.clicks, 10 ) || 0;
-			if ( sends > 0 || opens > 0 || clicks > 0 ) {
-				return true;
-			}
-			const postTime = Date.parse( post.date );
-			return Number.isFinite( postTime ) && Date.now() - postTime < RECENT_SEND_GRACE_PERIOD_MS;
-		} );
+		// Never-emailed, engagement-free posts belong filtered out of this list,
+		// but that has to happen server-side, before pagination, so freed slots
+		// backfill and the CSV export agrees with the UI (STATS-452). The client
+		// renders what the API returns.
+		const emailsData = data?.posts ?? [];
 
 		return emailsData.map(
 			( {

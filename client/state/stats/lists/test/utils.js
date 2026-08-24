@@ -2546,56 +2546,22 @@ describe( 'utils', () => {
 				expect( normalizers.statsEmailsSummary() ).toEqual( [] );
 			} );
 
-			test( 'should drop never-emailed posts with no engagement', () => {
+			test( 'should render every row the API returns, including all-zero rows', () => {
+				// Filtering never-emailed posts is a server-side concern (STATS-452):
+				// dropping rows after pagination would leave the card short-handed
+				// and out of sync with the CSV export.
 				expect(
 					normalizers.statsEmailsSummary(
 						{
 							posts: [
 								{
 									id: 1,
-									title: 'Old draft, never emailed',
+									title: 'Never emailed',
 									date: '2020-01-01 00:00:00',
 									total_sends: 0,
 									opens: 0,
 									clicks: 0,
 								},
-							],
-						},
-						{},
-						10,
-						site
-					)
-				).toEqual( [] );
-			} );
-
-			test( 'should keep an all-zero post published within the grace period', () => {
-				const oneHourAgo = new Date( Date.now() - 60 * 60 * 1000 ).toISOString();
-				expect(
-					normalizers.statsEmailsSummary(
-						{
-							posts: [
-								{
-									id: 2,
-									title: 'Fresh send, stats still lagging',
-									date: oneHourAgo,
-									total_sends: 0,
-									opens: 0,
-									clicks: 0,
-								},
-							],
-						},
-						{},
-						10,
-						site
-					)
-				).toMatchObject( [ { id: 2, label: 'Fresh send, stats still lagging' } ] );
-			} );
-
-			test( 'should keep a post with engagement even when sends are missing', () => {
-				expect(
-					normalizers.statsEmailsSummary(
-						{
-							posts: [
 								{
 									id: 3,
 									title: 'Legacy send with engagement',
@@ -2610,7 +2576,7 @@ describe( 'utils', () => {
 						10,
 						site
 					)
-				).toMatchObject( [ { id: 3, opens: 5, clicks: 2 } ] );
+				).toMatchObject( [ { id: 1 }, { id: 3, opens: 5, clicks: 2 } ] );
 			} );
 
 			test( 'should map fields and default missing counts to zero strings', () => {
