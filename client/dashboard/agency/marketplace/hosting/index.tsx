@@ -2,6 +2,7 @@ import {
 	Button,
 	Dropdown,
 	Guide,
+	TabPanel,
 	ToggleControl,
 	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
@@ -21,7 +22,6 @@ import { Callout } from '../../../components/callout';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { SectionHeader } from '../../../components/section-header';
 import difmIllustrationUrl from '../../../sites/overview-difm-upsell-card/upsell-illustration.svg';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
 import { IncludedFeatures, JetpackComplete, Testimonials } from './content-sections';
@@ -33,7 +33,6 @@ import {
 	wpcomHosting,
 } from './mock-data';
 import PressableContent from './pressable-content';
-import ProductSelector from './product-selector';
 import VipContent from './vip-content';
 import WpcomConfigurator from './wpcom-configurator';
 import YourPlan from './your-plan';
@@ -336,14 +335,13 @@ export default function MarketplaceHosting() {
 		>
 			{ isGuideOpen && <ReferralGuide onClose={ () => setIsGuideOpen( false ) } /> }
 			{ SHOW_MIGRATION_OFFER && <MigrationOffer /> }
-			<VStack spacing={ 4 }>
-				<SectionHeader title={ __( 'Choose a hosting platform' ) } level={ 2 } />
-				<ProductSelector
-					brands={ hostingBrands }
-					selected={ selectedBrand }
-					onSelect={ setSelectedBrand }
-				/>
-			</VStack>
+			<TabPanel
+				tabs={ hostingBrands.map( ( brand ) => ( { name: brand.key, title: brand.name } ) ) }
+				initialTabName={ selectedBrand }
+				onSelect={ ( tabName ) => setSelectedBrand( tabName as HostingBrand[ 'key' ] ) }
+			>
+				{ () => null }
+			</TabPanel>
 			{ selectedBrand === 'wpcom' && (
 				<div className="marketplace-hosting__layout">
 					<VStack spacing={ 8 } justify="flex-start">

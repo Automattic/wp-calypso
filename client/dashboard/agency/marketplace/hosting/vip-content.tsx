@@ -20,7 +20,7 @@ import { Card, CardBody, CardDivider, CardHeader } from '../../../components/car
 import { SectionHeader } from '../../../components/section-header';
 import vipLogo from '../exclusive-offers/images/vip-descriptor.svg';
 import { CheckList, Testimonials } from './content-sections';
-import { VIP_CAPABILITIES, VIP_PITCH_CAPABILITIES } from './mock-data';
+import { hostingBrands, VIP_CAPABILITIES, VIP_PITCH_CAPABILITIES } from './mock-data';
 
 const CLIENT_BRANDS = [
 	{ name: 'Salesforce', logo: salesforceLogo },
@@ -40,6 +40,7 @@ function VipPitchCard() {
 					title={ __(
 						'Deliver unmatched performance with the highest security standards on our enterprise platform'
 					) }
+					description={ hostingBrands.find( ( brand ) => brand.key === 'vip' )?.description }
 					level={ 3 }
 				/>
 			</CardHeader>
@@ -125,9 +126,10 @@ function VipRailCard() {
 							),
 							{
 								a: (
-									<ExternalLink href="https://automattic.com/for-agencies/program-incentives">
-										{ /* children replaced by i18n */ }
-									</ExternalLink>
+									<ExternalLink
+										href="https://automattic.com/for-agencies/program-incentives"
+										children={ null }
+									/>
 								),
 							}
 						) }
