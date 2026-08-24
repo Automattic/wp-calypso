@@ -119,8 +119,7 @@ export default function SegmentedBar( {
 							>
 								<span className="dashboard-segmented-bar__label-dot" style={ dotStyle } />
 								<span className="dashboard-segmented-bar__label-text">
-									{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-									{ segment.label && <span>{ `${ segment.label }: ` }</span> }
+									{ segment.label ? `${ segment.label }: ` : '' }
 									{ value }
 								</span>
 							</div>

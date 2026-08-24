@@ -61,29 +61,25 @@ export default function SecurityTwoStepAuthMainPage( {
 					</>
 				) }
 
-				{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-				{ two_step_app_enabled && (
-					<span>
-						{ two_step_enhanced_security_forced
-							? enforcedByOrganizationText
-							: createInterpolateElement(
-									__(
-										/* translators: followStepsLink is a link to the support article */
-										'Switching to a new device? <followStepsLink>Follow these steps</followStepsLink> to avoid losing access to your account.'
+				{ two_step_app_enabled &&
+					( two_step_enhanced_security_forced
+						? enforcedByOrganizationText
+						: createInterpolateElement(
+								__(
+									/* translators: followStepsLink is a link to the support article */
+									'Switching to a new device? <followStepsLink>Follow these steps</followStepsLink> to avoid losing access to your account.'
+								),
+								{
+									followStepsLink: (
+										<InlineSupportLink
+											supportPostId={ 39178 }
+											supportLink={ localizeUrl(
+												'https://wordpress.com/support/security/two-step-authentication/#moving-to-a-new-device'
+											) }
+										/>
 									),
-									{
-										followStepsLink: (
-											<InlineSupportLink
-												supportPostId={ 39178 }
-												supportLink={ localizeUrl(
-													'https://wordpress.com/support/security/two-step-authentication/#moving-to-a-new-device'
-												) }
-											/>
-										),
-									}
-							  ) }
-					</span>
-				) }
+								}
+						  ) ) }
 			</Notice>
 			<SecurityKeys />
 			<ApplicationPasswords />

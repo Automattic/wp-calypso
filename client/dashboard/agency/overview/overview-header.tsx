@@ -23,18 +23,13 @@ export function AgencyOverviewHeaderInfo( {
 	return (
 		<Text variant="muted" size={ 13 } lineHeight="20px">
 			{ url && <ExternalLink href={ url }>{ url.replace( /^https?:\/\//, '' ) }</ExternalLink> }
-			{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-			{ url && joinedDate && <span>{ ' · ' }</span> }
-			{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-			{ joinedDate && (
-				<span>
-					{ sprintf(
-						/* translators: %s is the date the agency joined the program. */
-						__( 'Joined %s' ),
-						formatDate( joinedDate, locale )
-					) }
-				</span>
-			) }
+			{ url && joinedDate && ' · ' }
+			{ joinedDate &&
+				sprintf(
+					/* translators: %s is the date the agency joined the program. */
+					__( 'Joined %s' ),
+					formatDate( joinedDate, locale )
+				) }
 		</Text>
 	);
 }

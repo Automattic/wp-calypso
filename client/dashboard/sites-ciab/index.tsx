@@ -134,34 +134,36 @@ export default function CIABSites() {
 	);
 
 	return (
-		<PageLayout
-			header={
-				<PageHeader
-					actions={
-						<Button
-							variant="primary"
-							href={ addNewStoreUrl }
-							onClick={ handleAddNewStore }
-							__next40pxDefaultSize
-						>
-							{ __( 'Add new store' ) }
-						</Button>
-					}
+		<>
+			<PageLayout
+				header={
+					<PageHeader
+						actions={
+							<Button
+								variant="primary"
+								href={ addNewStoreUrl }
+								onClick={ handleAddNewStore }
+								__next40pxDefaultSize
+							>
+								{ __( 'Add new store' ) }
+							</Button>
+						}
+					/>
+				}
+				notices={ <SitesNoticeArbiter /> }
+			>
+				<SitesDataViews
+					view={ view }
+					sites={ filteredData }
+					fields={ fields }
+					actions={ actions }
+					isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }
+					paginationInfo={ paginationInfo }
+					empty={ emptyState }
+					onChangeView={ handleViewChange }
+					onReset={ resetView }
 				/>
-			}
-			notices={ <SitesNoticeArbiter /> }
-		>
-			<SitesDataViews
-				view={ view }
-				sites={ filteredData }
-				fields={ fields }
-				actions={ actions }
-				isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }
-				paginationInfo={ paginationInfo }
-				empty={ emptyState }
-				onChangeView={ handleViewChange }
-				onReset={ resetView }
-			/>
-		</PageLayout>
+			</PageLayout>
+		</>
 	);
 }

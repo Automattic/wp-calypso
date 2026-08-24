@@ -70,13 +70,15 @@ export default function ReportLoading( {
 	};
 
 	return (
-		<VStack justify="flex-start">
-			{ steps.map( ( heading, index ) => (
-				<HStack justify="flex-start" key={ index } spacing={ 1 }>
-					{ getIcon( index, step ) }
-					<Text>{ heading }</Text>
-				</HStack>
-			) ) }
-		</VStack>
+		<>
+			<VStack justify="flex-start">
+				{ steps.map( ( heading, index ) => (
+					<HStack justify="flex-start" key={ index } spacing={ 1 }>
+						{ getIcon( index, step ) }
+						<Text>{ heading }</Text>
+					</HStack>
+				) ) }
+			</VStack>
+		</>
 	);
 }

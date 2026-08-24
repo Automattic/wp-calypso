@@ -188,17 +188,19 @@ const AddProfessionalEmail = () => {
 				showEmailPurchaseDisabledMessage && <EmailNonDomainOwnerNotice domain={ domain } />
 			}
 		>
-			{ isAddMailboxRoute &&
-				mailboxCost &&
-				( mailboxCost.notice ? (
-					<Notice status="info" isDismissible={ false }>
-						{ /* eslint-disable-next-line react/no-danger */ }
-						<div dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
-					</Notice>
-				) : (
-					// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
-					<Text size={ 16 } as="p" dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
-				) ) }
+			{ isAddMailboxRoute && mailboxCost && (
+				<>
+					{ mailboxCost.notice ? (
+						<Notice status="info" isDismissible={ false }>
+							{ /* eslint-disable-next-line react/no-danger */ }
+							<div dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
+						</Notice>
+					) : (
+						// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
+						<Text size={ 16 } as="p" dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
+					) }
+				</>
+			) }
 
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 6 }>
