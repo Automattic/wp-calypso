@@ -170,7 +170,7 @@ function ConnectedOmnibar( {
 	} );
 	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
 	const statsSparklineNode = useStatsSparklinePlugin( { site } );
-	const launchSiteNode = useLaunchSitePlugin( { site } );
+	const { node: launchSiteNode, panel: launchSitePanel } = useLaunchSitePlugin( { site } );
 	const dashboardNode = useDashboardPlugin( { site, sectionGroup } );
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
 	const siteActions = [
@@ -217,6 +217,7 @@ function ConnectedOmnibar( {
 			/>
 			{ shoppingCartPanel }
 			{ languageSwitcherPanel }
+			{ launchSitePanel }
 		</>
 	);
 }
