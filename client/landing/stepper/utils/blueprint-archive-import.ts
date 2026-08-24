@@ -316,9 +316,8 @@ export function getSiteEditorUrl(
  * login form for a site they had just made — asking them to sign in to
  * something they had not been told was separate. Jetpack SSO trades the session
  * they have for the one they need and forwards them on.
- *
  * @param adminUrl Absolute wp-admin URL to land on.
- * @return The SSO URL, or the original when it cannot be parsed.
+ * @returns The SSO URL, or the original when it cannot be parsed.
  */
 function withJetpackSso( adminUrl: string ): string {
 	let target: URL;
