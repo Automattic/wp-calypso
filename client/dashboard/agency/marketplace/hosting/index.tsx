@@ -348,7 +348,6 @@ export default function MarketplaceHosting() {
 				<div className="marketplace-hosting__layout">
 					<VStack spacing={ 8 } justify="flex-start">
 						<VStack spacing={ 4 }>
-							<SectionHeader title={ __( 'Configure WordPress.com' ) } level={ 2 } />
 							<WpcomConfigurator term={ term } onQuantityChange={ setQuantity } />
 							<DevSitesBanner />
 						</VStack>
@@ -384,7 +383,6 @@ export default function MarketplaceHosting() {
 				<div className="marketplace-hosting__layout">
 					<VStack spacing={ 8 } justify="flex-start">
 						<VStack spacing={ 4 }>
-							<SectionHeader title={ __( 'Configure Pressable' ) } level={ 2 } />
 							<PressableContent
 								planSlug={ pressablePlanSlug }
 								onPlanChange={ setPressablePlanSlug }

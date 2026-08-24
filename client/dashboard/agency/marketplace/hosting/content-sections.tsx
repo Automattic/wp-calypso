@@ -15,7 +15,7 @@ import premierTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/
 import premierTestimonial2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.webp';
 import standardTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.webp';
 import standardTestimonial2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.webp';
-import { Card, CardBody } from '../../../components/card';
+import { Card, CardBody, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { JETPACK_COMPLETE_FEATURES, testimonialsByBrand } from './mock-data';
 
@@ -95,39 +95,39 @@ export function CheckList( { items }: { items: string[] } ) {
 
 export function IncludedFeatures( { brand }: { brand: 'wpcom' | 'pressable' } ) {
 	return (
-		<VStack spacing={ 4 }>
-			<SectionHeader
-				title={
-					brand === 'pressable'
-						? __( 'More Pressable features' )
-						: __( 'More WordPress.com features' )
-				}
-				level={ 2 }
-			/>
-			<Card>
-				<CardBody>
-					<div className="marketplace-hosting__grid-4">
-						{ FEATURE_COLUMNS( brand ).map( ( column ) => (
-							<VStack spacing={ 3 } key={ column.title } justify="flex-start">
-								<HStack spacing={ 2 } alignment="center" justify="flex-start">
-									<Icon className="marketplace-hosting__feature-icon" icon={ column.icon } />
-									<Text variant="muted" lineHeight="16px" size={ 11 } weight={ 500 } upperCase>
-										{ column.title }
+		<Card>
+			<CardHeader>
+				<SectionHeader
+					title={
+						brand === 'pressable'
+							? __( 'More Pressable features' )
+							: __( 'More WordPress.com features' )
+					}
+					level={ 3 }
+				/>
+			</CardHeader>
+			<CardBody>
+				<div className="marketplace-hosting__grid-4">
+					{ FEATURE_COLUMNS( brand ).map( ( column ) => (
+						<VStack spacing={ 3 } key={ column.title } justify="flex-start">
+							<HStack spacing={ 2 } alignment="center" justify="flex-start">
+								<Icon className="marketplace-hosting__feature-icon" icon={ column.icon } />
+								<Text variant="muted" lineHeight="16px" size={ 11 } weight={ 500 } upperCase>
+									{ column.title }
+								</Text>
+							</HStack>
+							<VStack spacing={ 2 }>
+								{ column.features.map( ( feature ) => (
+									<Text key={ feature } variant="muted">
+										{ feature }
 									</Text>
-								</HStack>
-								<VStack spacing={ 2 }>
-									{ column.features.map( ( feature ) => (
-										<Text key={ feature } variant="muted">
-											{ feature }
-										</Text>
-									) ) }
-								</VStack>
+								) ) }
 							</VStack>
-						) ) }
-					</div>
-				</CardBody>
-			</Card>
-		</VStack>
+						</VStack>
+					) ) }
+				</div>
+			</CardBody>
+		</Card>
 	);
 }
 
@@ -139,50 +139,52 @@ const TESTIMONIAL_AVATARS: Record< 'wpcom' | 'pressable' | 'vip', string[] > = {
 
 export function Testimonials( { brand }: { brand: 'wpcom' | 'pressable' | 'vip' } ) {
 	return (
-		<VStack spacing={ 4 }>
-			<SectionHeader title={ __( 'What agencies say' ) } level={ 2 } />
-			<div className="marketplace-hosting__grid-2">
-				{ testimonialsByBrand[ brand ].map( ( testimonial, index ) => (
-					<Card key={ testimonial.name }>
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<Text as="p">{ testimonial.quote }</Text>
-								<HStack spacing={ 3 } justify="flex-start" alignment="center">
-									<img
-										src={ TESTIMONIAL_AVATARS[ brand ][ index ] }
-										alt={ testimonial.name }
-										className="marketplace-hosting__avatar"
-									/>
-									<VStack spacing={ 1 }>
-										<Text weight={ 600 }>{ testimonial.name }</Text>
-										<Text variant="muted">{ testimonial.role }</Text>
-										<ExternalLink href={ testimonial.linkUrl }>
-											{ testimonial.linkLabel }
-										</ExternalLink>
-									</VStack>
-								</HStack>
-							</VStack>
-						</CardBody>
-					</Card>
-				) ) }
-			</div>
-		</VStack>
+		<Card>
+			<CardHeader>
+				<SectionHeader title={ __( 'What agencies say' ) } level={ 3 } />
+			</CardHeader>
+			<CardBody>
+				<div className="marketplace-hosting__grid-2">
+					{ testimonialsByBrand[ brand ].map( ( testimonial, index ) => (
+						<VStack spacing={ 4 } key={ testimonial.name } justify="flex-start">
+							<Text as="p">{ testimonial.quote }</Text>
+							<HStack spacing={ 3 } justify="flex-start" alignment="center">
+								<img
+									src={ TESTIMONIAL_AVATARS[ brand ][ index ] }
+									alt={ testimonial.name }
+									className="marketplace-hosting__avatar"
+								/>
+								<VStack spacing={ 1 }>
+									<Text weight={ 600 }>{ testimonial.name }</Text>
+									<Text variant="muted">{ testimonial.role }</Text>
+									<ExternalLink href={ testimonial.linkUrl }>
+										{ testimonial.linkLabel }
+									</ExternalLink>
+								</VStack>
+							</HStack>
+						</VStack>
+					) ) }
+				</div>
+			</CardBody>
+		</Card>
 	);
 }
 
 export function JetpackComplete() {
 	return (
-		<VStack spacing={ 4 }>
-			<SectionHeader
-				title={ __( 'Jetpack Complete included' ) }
-				description={ __(
-					'Every Pressable site comes with a free Jetpack Complete license — a $899/year/site value.'
-				) }
-				level={ 2 }
-				decoration={ <JetpackLogo size={ 24 } /> }
-			/>
-			<Card>
-				<CardBody>
+		<Card>
+			<CardHeader>
+				<SectionHeader
+					title={ __( 'Jetpack Complete included' ) }
+					description={ __(
+						'Every Pressable site comes with a free Jetpack Complete license — a $899/year/site value.'
+					) }
+					level={ 3 }
+					decoration={ <JetpackLogo size={ 24 } /> }
+				/>
+			</CardHeader>
+			<CardBody>
+				<VStack spacing={ 4 }>
 					<div className="marketplace-hosting__includes">
 						{ JETPACK_COMPLETE_FEATURES.map( ( feature ) => (
 							<Text key={ feature } variant="muted">
@@ -190,12 +192,10 @@ export function JetpackComplete() {
 							</Text>
 						) ) }
 					</div>
-				</CardBody>
-			</Card>
-			<HStack justify="center">
-				<ExternalLink href="https://jetpack.com/complete/">{ __( 'And more' ) }</ExternalLink>
-			</HStack>
-		</VStack>
+					<ExternalLink href="https://jetpack.com/complete/">{ __( 'And more' ) }</ExternalLink>
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }
 
