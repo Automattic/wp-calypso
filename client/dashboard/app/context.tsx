@@ -64,6 +64,7 @@ export type AppConfig = {
 		reader: boolean;
 		help: boolean;
 		notifications: boolean;
+		notificationsInbox: boolean;
 		resurrectedWelcomeModal: boolean;
 		me: MeSupports | false;
 		commandPalette: boolean;
@@ -111,6 +112,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		reader: false,
 		help: false,
 		notifications: false,
+		notificationsInbox: false,
 		resurrectedWelcomeModal: false,
 		me: false,
 		commandPalette: false,

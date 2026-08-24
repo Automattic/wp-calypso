@@ -33,6 +33,7 @@ boot( {
 		reader: false,
 		help: true,
 		notifications: false,
+		notificationsInbox: false,
 		resurrectedWelcomeModal: false,
 		me: {
 			billing: {

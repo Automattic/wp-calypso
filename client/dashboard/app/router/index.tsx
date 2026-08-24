@@ -1,4 +1,4 @@
-import calypsoConfig from '@automattic/calypso-config';
+import calypsoConfig, { isEnabled } from '@automattic/calypso-config';
 import { createRouter, createRoute } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
@@ -9,6 +9,7 @@ import { createAgencyClientRoutes } from './agency-client';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
+import { createNotificationsInboxRoutes } from './notifications';
 import { createPluginsRoutes } from './plugins';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
@@ -89,6 +90,10 @@ const createRouteTree = ( config: AppConfig ) => {
 
 	if ( config.supports.emails ) {
 		children.push( ...createEmailsRoutes() );
+	}
+
+	if ( config.supports.notificationsInbox && isEnabled( 'dashboard/notifications-inbox' ) ) {
+		children.push( ...createNotificationsInboxRoutes() );
 	}
 
 	if ( config.supports.me ) {

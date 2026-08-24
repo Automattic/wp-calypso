@@ -30,6 +30,7 @@ boot( {
 		reader: true,
 		help: true,
 		notifications: true,
+		notificationsInbox: true,
 		resurrectedWelcomeModal: true,
 		me: {
 			billing: {
