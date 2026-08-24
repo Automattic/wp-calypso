@@ -103,8 +103,9 @@ export function FixThreatConfirmation( {
 			) }
 
 			<Text>
+				{ /* Wrap in span not fragment; a fragment is not a DOM element and does not avoid the Google Translate DOM crash (react/react#11538) */ }
 				{ threat.extension?.type === 'plugin' && (
-					<>
+					<span>
 						{ createInterpolateElement(
 							__(
 								'To confirm you have read and understood the consequences, please enter the plugin slug <pluginSlug/> in the field below.'
@@ -113,10 +114,10 @@ export function FixThreatConfirmation( {
 								pluginSlug: <code>{ slug }</code>,
 							}
 						) }
-					</>
+					</span>
 				) }
 				{ threat.extension?.type === 'theme' && (
-					<>
+					<span>
 						{ createInterpolateElement(
 							__(
 								'To confirm you have read and understood the consequences, please enter the theme slug <themeSlug/> in the field below.'
@@ -125,7 +126,7 @@ export function FixThreatConfirmation( {
 								themeSlug: <code>{ slug }</code>,
 							}
 						) }
-					</>
+					</span>
 				) }
 			</Text>
 
