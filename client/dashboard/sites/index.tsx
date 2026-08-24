@@ -56,13 +56,9 @@ function isDeletedFilterActive( filters: Filter[] ): boolean {
 	return filters.some( ( filter ) => filter.field === 'is_deleted' && filter.value === true );
 }
 
-function getIncludeStaging( filters: Filter[] ): boolean | undefined {
+function getIncludeStaging( filters: Filter[] ): boolean {
 	const stagingFilter = filters.find( ( filter ) => filter.field === STAGING_FILTER_FIELD );
-	if ( stagingFilter ) {
-		return stagingFilter.value === true;
-	}
-	// The classic Calypso backport keeps the API default of listing staging sites.
-	return isDashboardBackport() ? undefined : false;
+	return stagingFilter ? stagingFilter.value === true : false;
 }
 
 export const getFetchPaginatedSitesOptions = (

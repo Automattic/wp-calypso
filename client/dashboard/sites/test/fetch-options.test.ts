@@ -39,20 +39,9 @@ describe( 'getFetchPaginatedSitesOptions', () => {
 		expect( options.include_staging ).toBe( false );
 	} );
 
-	describe( 'in the classic Calypso backport', () => {
-		beforeEach( () => {
-			isDashboardBackport.mockReturnValue( true );
-		} );
-
-		it( 'leaves the API default when no staging filter is set', () => {
-			const options = getFetchPaginatedSitesOptions( makeView(), queryOptions );
-			expect( options.include_staging ).toBeUndefined();
-		} );
-
-		it( 'excludes staging sites when the staging filter is set to no', () => {
-			const view = makeView( [ { field: 'staging', operator: 'is', value: false } ] );
-			const options = getFetchPaginatedSitesOptions( view, queryOptions );
-			expect( options.include_staging ).toBe( false );
-		} );
+	it( 'excludes staging sites by default in the classic Calypso backport too', () => {
+		isDashboardBackport.mockReturnValue( true );
+		const options = getFetchPaginatedSitesOptions( makeView(), queryOptions );
+		expect( options.include_staging ).toBe( false );
 	} );
 } );
