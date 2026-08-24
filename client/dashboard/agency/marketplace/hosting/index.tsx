@@ -10,7 +10,7 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
-import { calendar, cart, chevronDown, chevronUp, info, wordpress } from '@wordpress/icons';
+import { cart, chevronDown, chevronUp, info } from '@wordpress/icons';
 import { useState } from 'react';
 import referralStep1 from 'calypso/assets/images/a8c-for-agencies/referral-step-1.jpg';
 import referralStep2 from 'calypso/assets/images/a8c-for-agencies/referral-step-2.jpg';
@@ -18,21 +18,22 @@ import referralStep3 from 'calypso/assets/images/a8c-for-agencies/referral-step-
 import referralStep4 from 'calypso/assets/images/a8c-for-agencies/referral-step-4.jpg';
 import referralStep5 from 'calypso/assets/images/a8c-for-agencies/referral-step-5.jpg';
 import { Card, CardBody } from '../../../components/card';
-import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
+import { IncludedFeatures, JetpackComplete, Testimonials } from './content-sections';
 import {
-	ClientRelationships,
-	IncludedFeatures,
-	JetpackComplete,
-	Testimonials,
-} from './content-sections';
-import { hostingBrands, formatUSD } from './mock-data';
+	hostingBrands,
+	formatUSD,
+	getTieredPrice,
+	pressableSignaturePlans,
+	wpcomHosting,
+} from './mock-data';
 import PressableContent from './pressable-content';
 import ProductSelector from './product-selector';
 import VipContent from './vip-content';
 import WpcomConfigurator from './wpcom-configurator';
+import YourPlan from './your-plan';
 import type { HostingBrand } from './mock-data';
 
 import './style.scss';
@@ -140,37 +141,53 @@ function MigrationOffer() {
 	);
 }
 
-function FreeDevSites() {
+function DevSitesBanner() {
 	return (
-		<OverviewCard
-			icon={ wordpress }
-			title={ __( 'Development licenses' ) }
-			heading={ __( 'Start building for free' ) }
-			description={ __(
-				'Develop up to 5 WordPress.com sites with free development licenses. Only pay when you launch. 5 of 5 available.'
-			) }
-			bottom={
-				<HStack justify="flex-start">
+		<Card>
+			<CardBody>
+				<HStack justify="space-between" alignment="center" spacing={ 6 }>
+					<VStack spacing={ 1 }>
+						<Text weight={ 600 }>{ __( 'Not ready to launch yet? Start building for free' ) }</Text>
+						<Text variant="muted">
+							{ __(
+								'Create up to 5 WordPress.com development sites and only pay when you launch. 5 of 5 available.'
+							) }
+						</Text>
+					</VStack>
 					<Button variant="secondary" __next40pxDefaultSize>
 						{ __( 'Create a development site' ) }
 					</Button>
 				</HStack>
-			}
-		/>
+			</CardBody>
+		</Card>
 	);
 }
 
-function ScheduleDemo() {
+function ScheduleDemoBanner() {
 	return (
-		<OverviewCard
-			icon={ calendar }
-			title={ __( 'Pressable' ) }
-			heading={ __( 'Schedule a demo' ) }
-			description={ __(
-				'Our experts are happy to give you a one-on-one tour of our platform, the best plan for your needs, and the free perks that come with Pressable.'
-			) }
-			externalLink="https://pressable.com/request-demo"
-		/>
+		<Card>
+			<CardBody>
+				<HStack justify="space-between" alignment="center" spacing={ 6 }>
+					<VStack spacing={ 1 }>
+						<Text weight={ 600 }>{ __( 'Want a guided tour? Schedule a demo' ) }</Text>
+						<Text variant="muted">
+							{ __(
+								'Our experts are happy to give you a one-on-one tour of our platform and the free perks that come with Pressable.'
+							) }
+						</Text>
+					</VStack>
+					<Button
+						variant="secondary"
+						__next40pxDefaultSize
+						href="https://pressable.com/request-demo"
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ __( 'Schedule a demo ↗' ) }
+					</Button>
+				</HStack>
+			</CardBody>
+		</Card>
 	);
 }
 
@@ -243,7 +260,12 @@ export default function MarketplaceHosting() {
 			setIsGuideOpen( true );
 		}
 	};
+	const [ quantity, setQuantity ] = useState( 3 );
 	const [ pressablePlanSlug, setPressablePlanSlug ] = useState( 'pressable-signature-1' );
+
+	const pressablePlan =
+		pressableSignaturePlans.find( ( p ) => p.slug === pressablePlanSlug ) ??
+		pressableSignaturePlans[ 0 ];
 	const [ cartItems, setCartItems ] = useState< CartItem[] >( [] );
 
 	const addToCart = ( item: CartItem ) => {
@@ -311,45 +333,64 @@ export default function MarketplaceHosting() {
 				/>
 			</VStack>
 			{ selectedBrand === 'wpcom' && (
-				<div className="marketplace-hosting__configurator-row">
-					<WpcomConfigurator
-						term={ term }
-						onAddToCart={ ( quantity, total ) =>
-							addToCart( {
-								id: 'wpcom-hosting',
-								family: 'wpcom-hosting',
-								label: sprintf(
-									/* translators: %d: number of sites */
-									_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
-									quantity
-								),
-								total,
-							} )
-						}
-					/>
-					<FreeDevSites />
-				</div>
+				<VStack spacing={ 6 }>
+					<VStack spacing={ 4 }>
+						<SectionHeader title={ __( 'Configure WordPress.com' ) } level={ 2 } />
+						<div className="marketplace-hosting__configurator-row">
+							<WpcomConfigurator term={ term } onQuantityChange={ setQuantity } />
+							<YourPlan
+								brand="wpcom"
+								term={ term }
+								quantity={ quantity }
+								onAddToCart={ () =>
+									addToCart( {
+										id: 'wpcom-hosting',
+										family: 'wpcom-hosting',
+										label: sprintf(
+											/* translators: %d: number of sites */
+											_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
+											quantity
+										),
+										total: getTieredPrice( wpcomHosting, quantity, term ).discountedCost,
+									} )
+								}
+							/>
+						</div>
+					</VStack>
+					<DevSitesBanner />
+				</VStack>
 			) }
 			{ selectedBrand === 'pressable' && (
-				<div className="marketplace-hosting__configurator-row">
-					<PressableContent
-						planSlug={ pressablePlanSlug }
-						onPlanChange={ setPressablePlanSlug }
-						onAddToCart={ ( planName, total ) =>
-							addToCart( {
-								id: 'pressable-hosting',
-								family: 'pressable-hosting',
-								label: sprintf(
-									/* translators: %s: plan name */
-									__( 'Pressable %s' ),
-									planName
-								),
-								total,
-							} )
-						}
-					/>
-					<ScheduleDemo />
-				</div>
+				<VStack spacing={ 6 }>
+					<VStack spacing={ 4 }>
+						<SectionHeader title={ __( 'Configure Pressable' ) } level={ 2 } />
+						<div className="marketplace-hosting__configurator-row">
+							<PressableContent
+								planSlug={ pressablePlanSlug }
+								onPlanChange={ setPressablePlanSlug }
+							/>
+							<YourPlan
+								brand="pressable"
+								term={ term }
+								quantity={ 1 }
+								plan={ pressablePlan }
+								onAddToCart={ () =>
+									addToCart( {
+										id: 'pressable-hosting',
+										family: 'pressable-hosting',
+										label: sprintf(
+											/* translators: %s: plan name */
+											__( 'Pressable %s' ),
+											pressablePlan.name
+										),
+										total: pressablePlan.yearly_price ?? null,
+									} )
+								}
+							/>
+						</div>
+					</VStack>
+					<ScheduleDemoBanner />
+				</VStack>
 			) }
 			{ selectedBrand === 'vip' && <VipContent /> }
 			<Divider
@@ -360,7 +401,6 @@ export default function MarketplaceHosting() {
 				<VStack spacing={ 8 }>
 					<IncludedFeatures brand="wpcom" />
 					<Testimonials brand="wpcom" />
-					<ClientRelationships />
 				</VStack>
 			) }
 			{ selectedBrand === 'pressable' && (
@@ -368,7 +408,6 @@ export default function MarketplaceHosting() {
 					<IncludedFeatures brand="pressable" />
 					<JetpackComplete />
 					<Testimonials brand="pressable" />
-					<ClientRelationships />
 				</VStack>
 			) }
 			{ selectedBrand === 'vip' && <Testimonials brand="vip" /> }
