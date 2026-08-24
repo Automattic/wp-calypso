@@ -21,6 +21,12 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
 	const [ launchUrl, setLaunchUrl ] = useState( '' );
 
+	// A free site can never qualify for the pre-launch modal (it needs a paid
+	// plan), so skip mounting the bridge for it — the redirect stays instant with
+	// no site/domains fetch. Unknown plans (site not loaded yet) fall through to
+	// the bridge, which settles the decision against authoritative data.
+	const isFreePlan = site?.plan?.is_free ?? false;
+
 	const onLaunchSiteClick = () => {
 		dispatch( recordTracksEvent( 'calypso_masterbar_launch_site', { source: sectionName } ) );
 
@@ -34,12 +40,17 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 			case 'semi_gated_site_launch':
 			case null:
 			default: {
-				setLaunchUrl(
-					addQueryArgs( '/start/launch-site', {
-						siteSlug: site?.slug,
-						back_to: window.location.pathname,
-					} )
-				);
+				const url = addQueryArgs( '/start/launch-site', {
+					siteSlug: site?.slug,
+					back_to: window.location.pathname,
+				} );
+
+				if ( isFreePlan ) {
+					window.location.assign( url );
+					return;
+				}
+
+				setLaunchUrl( url );
 				setIsLaunchModalOpen( true );
 				return;
 			}
@@ -71,12 +82,14 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 			>
 				{ translate( 'Launch site' ) }
 			</Item>
-			<PreLaunchSiteModal
-				siteId={ siteId }
-				isOpen={ isLaunchModalOpen }
-				onClose={ () => setIsLaunchModalOpen( false ) }
-				launchUrl={ launchUrl }
-			/>
+			{ ! isFreePlan && (
+				<PreLaunchSiteModal
+					siteId={ siteId }
+					isOpen={ isLaunchModalOpen }
+					onClose={ () => setIsLaunchModalOpen( false ) }
+					launchUrl={ launchUrl }
+				/>
+			) }
 		</>
 	);
 };

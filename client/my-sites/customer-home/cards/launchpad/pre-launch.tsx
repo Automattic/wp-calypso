@@ -25,6 +25,12 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 
 	const launchUrl = addQueryArgs( '/start/launch-site', { siteSlug: site?.slug } );
 
+	// A free site can never qualify for the pre-launch modal (it needs a paid
+	// plan), so skip mounting the bridge for it — the redirect stays instant with
+	// no site/domains fetch. Unknown plans (site not loaded yet) fall through to
+	// the bridge, which settles the decision against authoritative data.
+	const isFreePlan = site?.plan?.is_free ?? false;
+
 	const handleTaskClick = ( task: Task ) => {
 		if ( task.id !== 'site_launched' ) {
 			return;
@@ -33,6 +39,11 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 		// Open the shared pre-launch bridge. It shows the confirmation modal for
 		// paid-plan + custom-domain sites and otherwise hands off to the
 		// `launchUrl` flow, matching the previous behavior.
+		if ( isFreePlan ) {
+			window.location.assign( launchUrl );
+			return false;
+		}
+
 		setIsLaunchModalOpen( true );
 		return false;
 	};
@@ -44,12 +55,14 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 				onTaskClick={ handleTaskClick }
 				onSiteLaunched={ () => onSiteLaunched( !! site?.is_wpcom_atomic ) }
 			/>
-			<PreLaunchSiteModal
-				siteId={ siteId }
-				isOpen={ isLaunchModalOpen }
-				onClose={ () => setIsLaunchModalOpen( false ) }
-				launchUrl={ launchUrl }
-			/>
+			{ ! isFreePlan && (
+				<PreLaunchSiteModal
+					siteId={ siteId }
+					isOpen={ isLaunchModalOpen }
+					onClose={ () => setIsLaunchModalOpen( false ) }
+					launchUrl={ launchUrl }
+				/>
+			) }
 		</>
 	);
 };
