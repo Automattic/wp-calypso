@@ -126,6 +126,30 @@ function areVisibleNotesEqual( a: VisibleNotes, b: VisibleNotes ): boolean {
 	);
 }
 
+export function countUnreadNotes(
+	allNotes: Note[],
+	hiddenNoteIds: Record< number, boolean >,
+	matches: ( note: Note ) => boolean
+): number {
+	return allNotes.filter( ( note ) => matches( note ) && hiddenNoteIds[ note.id ] !== true ).length;
+}
+
+/**
+ * The number of loaded, non-hidden notes that are unread (server value +
+ * local optimistic reads). Counts what the store holds, so it is a lower
+ * bound — the engine pages notes in and the API exposes no total. Derived
+ * from store data, never from the unseen stream (guardrail 11).
+ */
+export function useUnreadCount(): number {
+	return useNotesSelector( ( state ) =>
+		countUnreadNotes(
+			( getAllNotes( state ) || [] ) as Note[],
+			getHiddenNoteIds( state ),
+			getFilters().unread.filter
+		)
+	);
+}
+
 export function useNote( id: number | string | undefined ): Note | undefined {
 	const noteId = normalizeNoteId( id );
 	return useNotesSelector( ( state ) =>

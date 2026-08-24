@@ -6,6 +6,7 @@ import { store } from '@automattic/notifications/src/panel/state';
 import {
 	acquireEngineVisibility,
 	computeVisibleNotes,
+	countUnreadNotes,
 	hasMoreNotesFor,
 	loadMoreFor,
 	normalizeNoteId,
@@ -269,6 +270,20 @@ describe( 'setActiveTab', () => {
 	it( 'tolerates the engine not being booted yet', () => {
 		mockGetClient.mockReturnValue( undefined );
 		expect( () => setActiveTab( 'likes' ) ).not.toThrow();
+	} );
+} );
+
+describe( 'countUnreadNotes', () => {
+	const isUnread = ( note: Note ) => ! note.read;
+
+	it( 'counts unread notes, skipping hidden ones', () => {
+		const notes = [ makeNote( 1 ), makeNote( 2, { read: 1 } ), makeNote( 3 ), makeNote( 4 ) ];
+		expect( countUnreadNotes( notes, {}, isUnread ) ).toBe( 3 );
+		expect( countUnreadNotes( notes, { 3: true }, isUnread ) ).toBe( 2 );
+	} );
+
+	it( 'returns 0 for an empty store', () => {
+		expect( countUnreadNotes( [], {}, isUnread ) ).toBe( 0 );
 	} );
 } );
 
