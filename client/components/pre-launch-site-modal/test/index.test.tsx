@@ -1,11 +1,13 @@
 /**
  * @jest-environment jsdom
  */
+import { queryClient } from '@automattic/api-queries';
 import { render, screen, waitFor } from '@testing-library/react';
 import PreLaunchSiteModal from '../index';
 
 let mockSite: unknown;
 let mockDomains: unknown;
+let mockSiteError = false;
 let mockDomainsError = false;
 let mockIsPaid = true;
 
@@ -16,7 +18,12 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ),
 	siteByIdQuery: ( siteId: number ) => ( {
 		queryKey: [ 'site', siteId ],
-		queryFn: async () => mockSite,
+		queryFn: async () => {
+			if ( mockSiteError ) {
+				throw new Error( 'boom' );
+			}
+			return mockSite;
+		},
 	} ),
 	domainsQuery: () => ( {
 		queryKey: [ 'domains' ],
@@ -61,6 +68,9 @@ describe( 'PreLaunchSiteModal', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		// The mocked queryClient is a module-level singleton, so clear its cache
+		// between tests to keep them isolated and order-independent.
+		queryClient.clear();
 		Object.defineProperty( window, 'location', {
 			configurable: true,
 			value: { assign, pathname: '/home' },
@@ -72,6 +82,7 @@ describe( 'PreLaunchSiteModal', () => {
 			URL: 'https://example.com',
 		};
 		mockDomains = [ customDomain ];
+		mockSiteError = false;
 		mockDomainsError = false;
 		mockIsPaid = true;
 	} );
@@ -128,6 +139,22 @@ describe( 'PreLaunchSiteModal', () => {
 
 	it( 'falls back to the launch flow when the domains query errors', async () => {
 		mockDomainsError = true;
+
+		render(
+			<PreLaunchSiteModal
+				siteId={ 1 }
+				isOpen
+				onClose={ jest.fn() }
+				launchUrl="/start/launch-site?siteSlug=example.wordpress.com"
+			/>
+		);
+
+		await waitFor( () => expect( assign ).toHaveBeenCalled() );
+		expect( screen.queryByTestId( 'pre-launch-modal' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'falls back to the launch flow when the site query errors', async () => {
+		mockSiteError = true;
 
 		render(
 			<PreLaunchSiteModal

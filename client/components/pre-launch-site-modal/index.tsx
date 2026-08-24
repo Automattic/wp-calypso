@@ -43,23 +43,32 @@ function PreLaunchSiteModalContent( {
 	// Fetch as soon as there is a site (not only once open) so the qualification
 	// decision is already settled by the time the user clicks — otherwise the
 	// button appears unresponsive while these requests resolve.
-	const { data: site } = useQuery( { ...siteByIdQuery( siteId ), enabled: !! siteId } );
+	const siteResult = useQuery( { ...siteByIdQuery( siteId ), enabled: !! siteId } );
+	const site = siteResult.data;
 	const domainsResult = useQuery( {
 		...domainsQuery(),
 		enabled: !! siteId,
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === siteId ),
 	} );
 
-	// Wait until the site is loaded and the domains query has settled (success or
-	// error) before deciding. On a domains error we fall back to the flow so the
-	// launch action is never silently swallowed.
-	const isReady = isOpen && !! site && ( domainsResult.isSuccess || domainsResult.isError );
+	// Wait until both queries have settled (success or error) before deciding. On
+	// either error we fall back to the flow so the launch action is never silently
+	// swallowed — otherwise a failed site/domains fetch would leave the caller
+	// stuck with the modal neither open nor redirecting.
+	const isReady =
+		isOpen &&
+		( siteResult.isSuccess || siteResult.isError ) &&
+		( domainsResult.isSuccess || domainsResult.isError );
 	const customDomains = ( domainsResult.data ?? [] ).filter(
 		( domain ) => domain.subscription_id !== null
 	);
 	const hasCustomDomain = customDomains.length > 0;
 	const qualifiesForPreLaunch =
-		!! site && domainsResult.isSuccess && isSitePlanPaid( site ) && hasCustomDomain;
+		!! site &&
+		siteResult.isSuccess &&
+		domainsResult.isSuccess &&
+		isSitePlanPaid( site ) &&
+		hasCustomDomain;
 
 	useEffect( () => {
 		if ( isReady && ! qualifiesForPreLaunch && launchUrl ) {
