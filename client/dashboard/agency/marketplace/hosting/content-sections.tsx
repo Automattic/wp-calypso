@@ -109,7 +109,7 @@ export function IncludedFeatures( { brand }: { brand: 'wpcom' | 'pressable' } ) 
 					<Card key={ column.title }>
 						<CardBody>
 							<VStack spacing={ 4 }>
-								<HStack spacing={ 2 } alignment="center" expanded={ false }>
+								<HStack spacing={ 2 } alignment="center" justify="flex-start">
 									<Icon className="marketplace-hosting__feature-icon" icon={ column.icon } />
 									<Text variant="muted" lineHeight="16px" size={ 11 } weight={ 500 } upperCase>
 										{ column.title }
