@@ -92,5 +92,5 @@ them from its own data:
 ## Styles
 
 Each component imports its own light-mode stylesheet. Colors use CSS custom
-properties (e.g. `--color-primary-5`); define these in the host app if they are not
+properties (e.g. `--studio-blue-5`); define these in the host app if they are not
 already present. Dark-mode overrides are the consumer's responsibility.
