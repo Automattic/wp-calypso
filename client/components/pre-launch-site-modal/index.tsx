@@ -1,3 +1,4 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { queryClient, siteByIdQuery, domainsQuery } from '@automattic/api-queries';
 import { PreLaunchModal } from '@automattic/site-launch-modals';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
@@ -59,8 +60,14 @@ function PreLaunchSiteModalContent( {
 		isOpen &&
 		( siteResult.isSuccess || siteResult.isError ) &&
 		( domainsResult.isSuccess || domainsResult.isError );
+	// Mirror the launch flow's domain-skip rule so the modal's "custom domain"
+	// set matches the set of sites for which `/start/launch-site` skips its
+	// domain step. That flow's `isDomainFulfilled` skips the step when the site
+	// has any non-WPCOM domain (`! isWPCOMDomain`) — i.e. anything other than the
+	// default `*.wordpress.com` address. Gating on the same signal guarantees
+	// that confirming "launch" never drops the user onto a domain step.
 	const customDomains = ( domainsResult.data ?? [] ).filter(
-		( domain ) => domain.subscription_id !== null
+		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
 	const hasCustomDomain = customDomains.length > 0;
 	const qualifiesForPreLaunch =

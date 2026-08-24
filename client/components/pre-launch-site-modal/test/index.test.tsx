@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { DomainSubtype } from '@automattic/api-core';
 import { queryClient } from '@automattic/api-queries';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -82,8 +83,21 @@ jest.mock( '@automattic/site-launch-modals', () => ( {
 } ) );
 
 const LAUNCH_URL = '/start/launch-site?siteSlug=example.wordpress.com';
-const customDomain = { blog_id: 1, domain: 'example.com', subscription_id: 42 };
-const wpcomDomain = { blog_id: 1, domain: 'example.wordpress.com', subscription_id: null };
+const registeredDomain = {
+	blog_id: 1,
+	domain: 'example.com',
+	subtype: { id: DomainSubtype.DOMAIN_REGISTRATION },
+};
+const connectedDomain = {
+	blog_id: 1,
+	domain: 'connected.example',
+	subtype: { id: DomainSubtype.DOMAIN_CONNECTION },
+};
+const wpcomDomain = {
+	blog_id: 1,
+	domain: 'example.wordpress.com',
+	subtype: { id: DomainSubtype.DEFAULT_ADDRESS },
+};
 
 function renderBridge( props: Partial< ComponentProps< typeof PreLaunchSiteModal > > = {} ) {
 	return render(
@@ -115,7 +129,7 @@ describe( 'PreLaunchSiteModal', () => {
 			slug: 'example.wordpress.com',
 			URL: 'https://example.com',
 		};
-		mockDomains = [ customDomain ];
+		mockDomains = [ registeredDomain ];
 		mockSiteError = false;
 		mockDomainsError = false;
 		mockIsPaid = true;
@@ -176,13 +190,26 @@ describe( 'PreLaunchSiteModal', () => {
 		expect( screen.queryByTestId( 'pre-launch-modal' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'redirects when the site has no custom domain', async () => {
+	it( 'redirects when the site only has the default WPCOM address', async () => {
 		mockDomains = [ wpcomDomain ];
 
 		renderBridge();
 
 		await waitFor( () => expect( assign ).toHaveBeenCalledWith( LAUNCH_URL ) );
 		expect( screen.queryByTestId( 'pre-launch-modal' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows the modal for a connected (mapped) domain, matching the flow skip rule', async () => {
+		// A connected domain has no subscription of its own, but the launch flow
+		// still skips its domain step because it is not a WPCOM address — so the
+		// modal must appear here too.
+		mockDomains = [ wpcomDomain, connectedDomain ];
+
+		renderBridge();
+
+		expect( await screen.findByTestId( 'pre-launch-modal' ) ).toBeVisible();
+		expect( screen.getByText( 'connected.example' ) ).toBeVisible();
+		expect( assign ).not.toHaveBeenCalled();
 	} );
 
 	it( 'falls back to the launch flow when the domains query errors', async () => {
