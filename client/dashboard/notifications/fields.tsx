@@ -66,6 +66,7 @@ export function buildTypeField( types: string[] ): Field< Note > {
 		} ) ),
 		filterBy: {
 			operators: [ 'isAny' ],
+			isPrimary: true,
 		},
 		enableSorting: false,
 	};
