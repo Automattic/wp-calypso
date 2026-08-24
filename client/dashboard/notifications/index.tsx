@@ -21,7 +21,7 @@ import {
 	setActiveTab,
 	useVisibleNotes,
 } from './engine';
-import { buildTypeField, getFields } from './fields';
+import { getFields } from './fields';
 import NoteDetail from './note-detail';
 import type { FilterName, Note } from './engine';
 import type { View } from '@wordpress/dataviews';
@@ -99,23 +99,11 @@ function InboxList( {
 	const view = { ...initialView, perPage: NOTES_PER_PAGE };
 	const startPosition = view.startPosition ?? 1;
 
-	// Field identities must stay stable or DataViews remounts every cell per
-	// re-render; the type filter's options are keyed by the loaded types.
-	const typesKey = useMemo(
-		() =>
-			Array.from( new Set( notes.map( ( note ) => note.type ) ) )
-				.sort()
-				.join( ',' ),
-		[ notes ]
-	);
-	const fields = useMemo(
-		() => [ ...getFields(), buildTypeField( typesKey ? typesKey.split( ',' ) : [] ) ],
-		[ typesKey ]
-	);
+	// Field identities must stay stable or DataViews remounts every cell per re-render.
+	const fields = useMemo( () => getFields(), [] );
 
-	// Search and the type filter run client-side over the loaded notes only —
-	// the engine's server filter is driven by the sidebar categories, never by
-	// DataViews view state.
+	// Search runs client-side over the loaded notes only — the engine's server
+	// filter is driven by the sidebar categories, never by DataViews view state.
 	const { data, paginationInfo } = filterSortAndPaginate( notes, view, fields );
 
 	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
@@ -172,7 +160,7 @@ function InboxList( {
 				) : (
 					<VStack alignment="center" style={ { padding: '40px 0' } }>
 						<Text size={ 15 } weight={ 500 }>
-							{ view.search || view.filters?.length
+							{ view.search
 								? __( 'No notifications match your search.' )
 								: EMPTY_MESSAGES[ category ] }
 						</Text>
@@ -190,13 +178,9 @@ function InboxList( {
 				spacing={ 2 }
 				className="dashboard-notifications-inbox__list-toolbar"
 			>
-				<HStack justify="flex-start" spacing={ 2 }>
-					<DataViews.Search />
-					<DataViews.FiltersToggle />
-				</HStack>
+				<DataViews.Search />
 				<DataViews.ViewConfig />
 			</HStack>
-			<DataViews.FiltersToggled className="dataviews-filters__container" />
 			<DataViews.Layout />
 			{ hasMore && data.length > 0 && isLoading && (
 				// DataViews suppresses its own load-more spinner when notes are

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { buildTypeField, getFields, getNoteSender } from '../fields';
+import { getFields, getNoteSender } from '../fields';
 import type { Note } from '../engine';
 import type { View } from '@wordpress/dataviews';
 
@@ -65,7 +65,7 @@ describe( 'search fields', () => {
 			subject: [ { text: 'Bob Brown liked your post' } ],
 		} ),
 	];
-	const fields = [ ...getFields(), buildTypeField( [ 'comment' ] ) ];
+	const fields = getFields();
 	const view: View = { type: 'list', fields: [], page: 1, perPage: 20 };
 
 	it( 'matches the sender name', () => {
