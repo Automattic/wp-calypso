@@ -15,6 +15,7 @@ import newsCorpLogo from 'calypso/assets/images/logos/news-corp.svg';
 import salesforceLogo from 'calypso/assets/images/logos/salesforce.svg';
 import slackLogo from 'calypso/assets/images/logos/slack.svg';
 import spotifyLogo from 'calypso/assets/images/logos/spotify.svg';
+import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import vipLogo from '../exclusive-offers/images/vip-descriptor.svg';
@@ -102,7 +103,7 @@ function VipRailCard() {
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<img src={ vipLogo } alt="WordPress VIP" className="marketplace-hosting__brand-logo" />
-					<VStack spacing={ 2 } alignment="flex-start">
+					<ButtonStack justify="flex-start" expanded={ false } wrap>
 						<Button
 							variant="primary"
 							__next40pxDefaultSize
@@ -115,7 +116,7 @@ function VipRailCard() {
 						<Button variant="secondary" __next40pxDefaultSize>
 							{ __( 'Refer your client to VIP hosting' ) }
 						</Button>
-					</VStack>
+					</ButtonStack>
 					<CardDivider />
 					<Text variant="muted">
 						{ createInterpolateElement(
