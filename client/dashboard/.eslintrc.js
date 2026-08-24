@@ -89,6 +89,8 @@ module.exports = {
 							'!@automattic/browser-data-collector',
 							'!@automattic/omnibar',
 							'!@automattic/posthog',
+							// Temporary D2 concession for the notifications inbox adapter; remove with the D3 native data layer.
+							'!@automattic/notifications',
 							// Please do not add exceptions which pull in Calypso code/concepts.
 							// See docs/package-imports.md for policy.
 						],
