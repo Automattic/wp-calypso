@@ -109,7 +109,7 @@ export function useTeamFields(): Field< TeamMember >[] {
 			getValue: ( { item } ) => item.dateAdded ?? '',
 			render: ( { item } ) => {
 				const formatted = formatAddedDate( item.dateAdded );
-				return formatted ? <>{ formatted }</> : <>—</>;
+				return formatted ? formatted : '—';
 			},
 		},
 	];

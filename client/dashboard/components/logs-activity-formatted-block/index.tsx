@@ -14,7 +14,7 @@
  * // Renders: Updated <a href="/reader/blogs/123/posts/456">Hello World</a>
  */
 import { ExternalLink } from '@wordpress/components';
-import { Fragment, type MouseEvent, type ReactNode } from 'react';
+import { type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
@@ -51,11 +51,11 @@ const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	const { url, activity, section, intent } = content;
 
 	if ( ! url ) {
-		return <Fragment>{ children }</Fragment>;
+		return children;
 	}
 
 	if ( isWordPressDotComUrl( url ) && ( isJetpackCloud() || isA8CForAgencies() ) ) {
-		return <Fragment>{ children }</Fragment>;
+		return children;
 	}
 
 	return (
@@ -79,13 +79,13 @@ const FilePath = ( { children }: { children: ReactNode } ) => (
 
 const Post: BlockRenderer = ( { content, children, onClick } ) => {
 	if ( isJetpackCloud() || isA8CForAgencies() ) {
-		return <Fragment>{ children }</Fragment>;
+		return children;
 	}
 
 	const { siteId, postId, isTrashed } = content;
 
 	if ( ! siteId ) {
-		return <Fragment>{ children }</Fragment>;
+		return children;
 	}
 
 	const href = isTrashed
@@ -101,13 +101,13 @@ const Post: BlockRenderer = ( { content, children, onClick } ) => {
 
 const Comment: BlockRenderer = ( { content, children, onClick } ) => {
 	if ( isJetpackCloud() || isA8CForAgencies() ) {
-		return <Fragment>{ children }</Fragment>;
+		return children;
 	}
 
 	const { siteId, postId, commentId } = content;
 
 	if ( ! siteId || ! postId || ! commentId ) {
-		return <Fragment>{ children }</Fragment>;
+		return children;
 	}
 
 	return (
@@ -146,13 +146,13 @@ const Person: BlockRenderer = ( { content, children, onClick, meta } ) => {
 
 const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	if ( isJetpackCloud() || isA8CForAgencies() ) {
-		return <Fragment>{ children }</Fragment>;
+		return children;
 	}
 
 	const { siteSlug, pluginSlug, activity, section, intent } = content;
 
 	if ( ! siteSlug || ! pluginSlug ) {
-		return <Fragment>{ children }</Fragment>;
+		return children;
 	}
 
 	const url = `/plugins/${ pluginSlug }/${ siteSlug }`;
@@ -177,16 +177,16 @@ const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	const { themeUri, themeSlug, siteSlug, activity, intent, section } = content;
 
 	if ( ! themeUri ) {
-		return <Fragment>{ children }</Fragment>;
+		return children;
 	}
 
 	if ( /wordpress\.com/.test( themeUri ) ) {
 		if ( isJetpackCloud() || isA8CForAgencies() ) {
-			return <Fragment>{ children }</Fragment>;
+			return children;
 		}
 
 		if ( ! themeSlug || ! siteSlug ) {
-			return <Fragment>{ children }</Fragment>;
+			return children;
 		}
 
 		return (
@@ -223,7 +223,7 @@ const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	const href = url ?? ( siteSlug ? `/backup/${ siteSlug }` : null );
 
 	if ( ! href ) {
-		return <Fragment>{ children }</Fragment>;
+		return children;
 	}
 
 	return (
@@ -260,14 +260,14 @@ const blockTypeMapping: Record< string, BlockRenderer > = {
 export const createFormattedBlock = ( mapping: Record< string, BlockRenderer > ) => {
 	const FormattedBlock = ( { content, onClick, meta }: FormattedBlockProps ): ReactNode => {
 		if ( typeof content === 'string' ) {
-			return <>{ content }</>;
+			return content;
 		}
 
 		const nestedContent = content.children ?? [];
 		const { type, text } = content;
 
 		if ( type === undefined && nestedContent.length === 0 ) {
-			return text ? <>{ text }</> : null;
+			return text ? text : null;
 		}
 
 		const children = nestedContent.map( ( child, index ) => (
@@ -281,7 +281,7 @@ export const createFormattedBlock = ( mapping: Record< string, BlockRenderer > )
 			}
 		}
 
-		return <>{ children }</>;
+		return children;
 	};
 
 	return FormattedBlock;

@@ -687,18 +687,16 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 		<ActionList.ActionItem
 			title={ __( 'Reinstall plugins' ) }
 			actions={
-				<>
-					<Button
-						variant="secondary"
-						size="compact"
-						disabled={ isMutationPending }
-						onClick={ () => {
-							reinstallPlugins();
-						} }
-					>
-						{ __( 'Reinstall plugins' ) }
-					</Button>
-				</>
+				<Button
+					variant="secondary"
+					size="compact"
+					disabled={ isMutationPending }
+					onClick={ () => {
+						reinstallPlugins();
+					} }
+				>
+					{ __( 'Reinstall plugins' ) }
+				</Button>
 			}
 		/>
 	);

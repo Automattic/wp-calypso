@@ -34,7 +34,7 @@ const INITIAL_VIEW: View = {
 	},
 };
 
-const DefaultTableWrapper = ( { children }: { children: ReactNode } ) => <>{ children }</>;
+const DefaultTableWrapper = ( { children }: { children: ReactNode } ) => children;
 
 export default function MigrationsCommissionsList( {
 	items,
