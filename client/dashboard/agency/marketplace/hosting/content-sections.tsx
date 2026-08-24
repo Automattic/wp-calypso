@@ -185,16 +185,18 @@ export function JetpackComplete() {
 				/>
 			</CardHeader>
 			<CardBody>
-				<VStack spacing={ 4 }>
-					<div className="marketplace-hosting__includes">
-						{ JETPACK_COMPLETE_FEATURES.map( ( feature ) => (
-							<Text key={ feature } variant="muted">
-								{ feature }
-							</Text>
-						) ) }
-					</div>
-					<ExternalLink href="https://jetpack.com/complete/">{ __( 'And more' ) }</ExternalLink>
-				</VStack>
+				<div className="marketplace-hosting__includes">
+					{ JETPACK_COMPLETE_FEATURES.filter(
+						( feature ) => feature !== 'All Jetpack features'
+					).map( ( feature ) => (
+						<Text key={ feature } variant="muted">
+							{ feature }
+						</Text>
+					) ) }
+					<ExternalLink href="https://jetpack.com/complete/">
+						{ __( 'All Jetpack features and more' ) }
+					</ExternalLink>
+				</div>
 			</CardBody>
 		</Card>
 	);
