@@ -4,6 +4,9 @@ import envVariables from '../env-variables';
 
 const POLL_INTERVAL_MS = 250;
 
+// Bumped when a test ends, so waiters that test left behind stop polling.
+let waitGeneration = 0;
+
 // Locks this process holds right now, so the exit handler can drop them.
 const heldLocks = new Set< string >();
 
@@ -29,7 +32,16 @@ export async function withLoginLock< T >(
 	fs.mkdirSync( envVariables.COOKIES_PATH, { recursive: true } );
 	const lockPath = path.join( envVariables.COOKIES_PATH, `${ accountName }.lock` );
 
+	const generation = waitGeneration;
+
 	for (;;) {
+		// Checked before mkdir, not just before the sleep: an abandoned waiter whose timer
+		// already fired must not take the lock on its way out.
+		if ( generation !== waitGeneration ) {
+			throw new Error(
+				`Abandoned the wait for the ${ accountName } login lock: the test that wanted it has ended.`
+			);
+		}
 		try {
 			fs.mkdirSync( lockPath );
 			break;
@@ -53,6 +65,19 @@ export async function withLoginLock< T >(
 			heldLocks.delete( lockPath );
 		} catch {}
 	}
+}
+
+/**
+ * Abandons every withLoginLock call still waiting for its lock.
+ *
+ * Called from fixture teardown: Playwright abandons a timed-out test's await but cannot
+ * cancel its promises, so a waiter it started would keep polling and could take the lock
+ * during worker teardown. Once any teardown runs the test body is over, so a wait still
+ * pending belongs to no live test and aborting it cannot fail one. Only the wait is
+ * abandoned; a holder already past it finishes and releases as usual.
+ */
+export function abandonPendingLoginLockWaits(): void {
+	waitGeneration++;
 }
 
 /**

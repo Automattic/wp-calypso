@@ -29,6 +29,7 @@
  */
 /* eslint-disable react-hooks/rules-of-hooks */
 import {
+	abandonPendingLoginLockWaits,
 	AddPeoplePage,
 	AdvertisingPage,
 	AppleLoginPage,
@@ -262,6 +263,7 @@ export const test = base.extend<
 	CustomOptions & {
 		[ K in keyof typeof fixtureAccounts ]: TestAccount;
 	} & {
+		_abandonLoginLockWaits: void;
 		_throttleActionHandler: void;
 		/**
 		 * Test account selected based on the current environment variables.
@@ -499,6 +501,17 @@ export const test = base.extend<
 	}
 >( {
 	viewportName: [ 'desktop', { option: true } ],
+	_abandonLoginLockWaits: [
+		async ( {}, use ) => {
+			await use();
+			// A timed-out test's await is abandoned, not cancelled, so a withLoginLock call it
+			// left waiting would keep polling and could take the lock during worker teardown.
+			// Any teardown running means the test body is over: a wait still pending belongs to
+			// no live test, so abandoning it here cannot fail one.
+			abandonPendingLoginLockWaits();
+		},
+		{ auto: true },
+	],
 	_throttleActionHandler: [
 		async ( {}, use, testInfo ) => {
 			const unregister = registerThrottleActionHandler( ( action, ids ) => {

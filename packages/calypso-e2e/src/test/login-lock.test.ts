@@ -2,7 +2,11 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, test } from '@jest/globals';
-import { clearStaleLoginLocks, withLoginLock } from '../lib/login-lock';
+import {
+	abandonPendingLoginLockWaits,
+	clearStaleLoginLocks,
+	withLoginLock,
+} from '../lib/login-lock';
 
 const cookiesPath = mkdtempSync( path.join( tmpdir(), 'login-lock-' ) );
 process.env.COOKIES_PATH = cookiesPath;
@@ -32,6 +36,31 @@ describe( 'withLoginLock', () => {
 		await expect(
 			withLoginLock( 'defaultUser', () => withLoginLock( 'otherUser', async () => 'acquired' ) )
 		).resolves.toBe( 'acquired' );
+	} );
+
+	test( 'abandons a waiter without touching the holder', async () => {
+		let release: () => void = () => {};
+		const holder = withLoginLock( 'defaultUser', async () => {
+			await new Promise< void >( ( resolve ) => {
+				release = resolve;
+			} );
+			return 'held to completion';
+		} );
+
+		// Let the holder take the lock so the second call has to poll.
+		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+		const waiter = withLoginLock( 'defaultUser', async () => 'acquired' );
+
+		abandonPendingLoginLockWaits();
+		await expect( waiter ).rejects.toThrow( 'Abandoned the wait' );
+
+		release();
+		await expect( holder ).resolves.toBe( 'held to completion' );
+
+		// The lock is free again for the next test's waiters.
+		await expect( withLoginLock( 'defaultUser', async () => 'acquired' ) ).resolves.toBe(
+			'acquired'
+		);
 	} );
 
 	test( 'releases the lock after the callback throws', async () => {

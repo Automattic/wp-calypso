@@ -153,7 +153,8 @@ export class TestAccount {
 	/**
 	 * Runs a login that bypasses the shared cookie file, holding the account's lock for it.
 	 *
-	 * Discards the file up front, because this login invalidates the session it names.
+	 * Discards the session file and logs in again. This does not invalidate sessions
+	 * already in use.
 	 */
 	async logInExclusively( fn: () => Promise< void > ): Promise< void > {
 		await withLoginLock( this.accountName, async () => {
