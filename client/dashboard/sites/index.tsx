@@ -56,10 +56,13 @@ function isDeletedFilterActive( filters: Filter[] ): boolean {
 	return filters.some( ( filter ) => filter.field === 'is_deleted' && filter.value === true );
 }
 
-function isStagingFilterActive( filters: Filter[] ) {
-	return filters.some(
-		( filter ) => filter.field === STAGING_FILTER_FIELD && filter.value === true
-	);
+function getIncludeStaging( filters: Filter[] ): boolean | undefined {
+	const stagingFilter = filters.find( ( filter ) => filter.field === STAGING_FILTER_FIELD );
+	if ( stagingFilter ) {
+		return stagingFilter.value === true;
+	}
+	// The classic Calypso backport keeps the API default of listing staging sites.
+	return isDashboardBackport() ? undefined : false;
 }
 
 export const getFetchPaginatedSitesOptions = (
@@ -81,8 +84,7 @@ export const getFetchPaginatedSitesOptions = (
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
 		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
-		// The classic Calypso backport keeps staging sites (the API includes them by default).
-		...( ! isDashboardBackport() && { include_staging: isStagingFilterActive( filters ) } ),
+		include_staging: getIncludeStaging( filters ),
 		search: view.search,
 		sort_field: view.sort?.field,
 		sort_direction: view.sort?.direction,

@@ -6,7 +6,6 @@ import { useAppContext } from '../../app/context';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
 import TimeSince from '../../components/time-since';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
@@ -280,10 +279,6 @@ export function useFields( {
 		const defaultFields = getDefaultFields( { viewType, queries } );
 		return defaultFields.filter( ( field ) => {
 			if ( field.id === 'is_a8c' && ! isAutomattician ) {
-				return false;
-			}
-
-			if ( field.id === STAGING_FILTER_FIELD && isDashboardBackport() ) {
 				return false;
 			}
 
