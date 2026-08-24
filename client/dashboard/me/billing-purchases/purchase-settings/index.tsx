@@ -900,9 +900,7 @@ function getFields( {
 										),
 										{
 											dateSpan,
-											inlineSupportLink: (
-												<InlineSupportLink supportContext="autorenewal" showIcon={ false } />
-											),
+											inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
 										}
 									) }
 								</InfoPopover>
