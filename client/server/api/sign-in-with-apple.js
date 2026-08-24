@@ -21,6 +21,10 @@ export function isAllowedRedirectUrl( url ) {
 		return false;
 	}
 
+	if ( ! [ 'https:', 'http:' ].includes( parsed[ 0 ].protocol ) ) {
+		return false;
+	}
+
 	if ( ALLOWED_ORIGINS.includes( parsed[ 0 ].origin ) ) {
 		return true;
 	}

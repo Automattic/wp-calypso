@@ -24,6 +24,8 @@ describe( 'isAllowedRedirectUrl', () => {
 		'\\\\evil.com/path',
 		'https:/evil.com',
 		'javascript:alert(1)',
+		'blob:https://my.wordpress.com/x',
+		'filesystem:https://my.wordpress.com/temporary/x',
 		'relative-path',
 		'https://relative-url-a.invalid/path',
 		'//relative-url-a.invalid/path',
