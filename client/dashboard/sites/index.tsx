@@ -61,7 +61,7 @@ function getIncludeStaging( filters: Filter[] ): boolean {
 	return stagingFilter ? stagingFilter.value === true : false;
 }
 
-export const getFetchPaginatedSitesOptions = (
+const getFetchPaginatedSitesOptions = (
 	view: View,
 	{ isDefaultView, isRestoringAccount, isAutomattician }: SiteListQueryOptions,
 	siteFilters: DashboardFilters = {}
