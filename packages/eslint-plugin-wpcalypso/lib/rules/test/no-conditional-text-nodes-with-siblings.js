@@ -31,6 +31,14 @@ new RuleTester( {
 		{
 			code: '<Text>{ cond && __( "only" ) }</Text>',
 		},
+		// createInterpolateElement wrapped in a <span>
+		{
+			code: '<Text><span>{ cond && createInterpolateElement( __( "x <b/> y" ), { b: <b /> } ) }</span></Text>',
+		},
+		// createInterpolateElement as a single child, no siblings
+		{
+			code: '<Text>{ cond && createInterpolateElement( __( "x" ), {} ) }</Text>',
+		},
 		// not a JSX child — a prop value
 		{
 			code: '<Comp label={ cond && __( "x" ) } />',
@@ -56,6 +64,12 @@ new RuleTester( {
 		{
 			code: '<Text>{ a && b }{ __( "static" ) }</Text>',
 			errors: [ { messageId: 'text-node-preceded-by-conditional' } ],
+		},
+		// createInterpolateElement conditionally rendered next to an element
+		// sibling — one error on the call, not a second on the inner __
+		{
+			code: '<Text><span />{ cond && createInterpolateElement( __( "x <b/> y" ), { b: <b /> } ) }</Text>',
+			errors: [ { messageId: 'conditional-text-node' } ],
 		},
 	],
 } );

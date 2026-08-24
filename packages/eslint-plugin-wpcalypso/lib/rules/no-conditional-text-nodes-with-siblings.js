@@ -8,10 +8,13 @@
  * are extended to cover @wordpress/i18n (which the upstream rule does not recognise).
  */
 
-// Functions whose return value renders as a text node. Includes @wordpress/i18n
-// (__, _x, _n, _nx, sprintf), react-intl/generic (formatMessage, t) and i18n-calypso
-// (translate). The rule runs without type info, so we match these by callee name.
-const I18N_FUNCTION_NAMES = new Set( [
+// Functions whose return value renders as — or emits — bare text nodes. Includes
+// @wordpress/i18n (__, _x, _n, _nx, sprintf), react-intl/generic (formatMessage, t)
+// and i18n-calypso (translate). Also createInterpolateElement, which returns a
+// transparent Fragment, so its string children render as bare text nodes in the
+// parent — making a conditional call site the same crash vector as a bare __().
+// The rule runs without type info, so we match these by callee name.
+const TEXT_NODE_FUNCTION_NAMES = new Set( [
 	'formatMessage',
 	't',
 	'__',
@@ -20,6 +23,7 @@ const I18N_FUNCTION_NAMES = new Set( [
 	'_nx',
 	'sprintf',
 	'translate',
+	'createInterpolateElement',
 ] );
 
 /** @type {import('eslint').Rule.RuleModule} */
@@ -220,7 +224,7 @@ module.exports = {
 				}
 				if (
 					node.callee.type === 'Identifier' &&
-					I18N_FUNCTION_NAMES.has( node.callee.name ) &&
+					TEXT_NODE_FUNCTION_NAMES.has( node.callee.name ) &&
 					node.arguments.length > 0
 				) {
 					if ( isProblematicConditional( node ) ) {
