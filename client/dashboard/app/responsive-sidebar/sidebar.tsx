@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { __, sprintf } from '@wordpress/i18n';
 import { bell, envelope, globe, layout, plugins } from '@wordpress/icons';
-import { useRef } from 'react';
+import { Suspense, lazy, useRef } from 'react';
 import ReferralSidebar from '../../agency/earn/referrals/referral-sidebar';
 import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
@@ -16,6 +16,10 @@ import { useAppContext } from '../context';
 import AgencySidebar from './agency';
 import AgencyClientSidebar from './agency-client';
 import { useSidebarScrollSync } from './use-sidebar-scroll-sync';
+
+// Loaded only when its screen is active so the notifications engine stays out
+// of the entry bundle.
+const NotificationsSidebar = lazy( () => import( '../../notifications/sidebar' ) );
 
 import './sidebar.scss';
 
@@ -60,6 +64,11 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/me">
 					<MeSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/notifications">
+					<Suspense fallback={ null }>
+						<NotificationsSidebar />
+					</Suspense>
 				</SidebarNavigator.Screen>
 			</SidebarNavigator>
 		</div>
