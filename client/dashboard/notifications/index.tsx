@@ -1,8 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalVStack as VStack,
 	Spinner,
 } from '@wordpress/components';
@@ -21,26 +19,48 @@ import {
 	setActiveTab,
 	useVisibleNotes,
 } from './engine';
-import { getFields } from './fields';
+import { buildTypeField, getFields } from './fields';
+import NoteDetail from './note-detail';
 import type { FilterName, Note } from './engine';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
 
 // DataViews only loads more in response to scroll events, so the rendered
-// window (`perPage` rows) must be tall enough to overflow the page and produce
+// window (`perPage` rows) must be tall enough to overflow the pane and produce
 // a scrollbar. The REST client may fetch smaller network pages; the effect
 // below loads as many as needed to fill this window.
 const NOTES_PER_PAGE = 20;
 
-// Stable empty selection: rows are opened via `onChangeSelection` (the list
-// layout's only row-click hook) but never stay selected — opening navigates
-// to the note's own route.
-const NO_SELECTION: string[] = [];
+export type InboxCategory = 'all' | 'unread' | 'comments' | 'subscribers' | 'likes';
 
-function InboxList( { tab }: { tab: FilterName } ) {
-	const navigate = useNavigate();
-	const { recordTracksEvent } = useAnalytics();
+// The left sidebar's category URLs mapped to the engine's server filters.
+const CATEGORY_TO_TAB: Record< InboxCategory, FilterName > = {
+	all: 'all',
+	unread: 'unread',
+	comments: 'comments',
+	subscribers: 'follows',
+	likes: 'likes',
+};
+
+const EMPTY_MESSAGES: Record< InboxCategory, string > = {
+	all: __( 'No notifications yet.' ),
+	unread: __( 'You’re all caught up.' ),
+	comments: __( 'No comment notifications.' ),
+	subscribers: __( 'No subscriber notifications.' ),
+	likes: __( 'No like notifications.' ),
+};
+
+function InboxList( {
+	category,
+	selectedNoteId,
+	onSelectNote,
+}: {
+	category: InboxCategory;
+	selectedNoteId: string | undefined;
+	onSelectNote: ( noteId: string | undefined ) => void;
+} ) {
+	const tab = CATEGORY_TO_TAB[ category ];
 	const { notes, isLoading, hasInitiallyLoaded } = useVisibleNotes( tab );
 
 	// DataViews binds its infinite-scroll listener once, on mount, and only
@@ -58,6 +78,7 @@ function InboxList( { tab }: { tab: FilterName } ) {
 		mediaField: 'icon',
 		fields: [],
 		page: 1,
+		search: '',
 		infiniteScrollEnabled: true,
 		startPosition: 1,
 		// Group notes into time sections ("Today", "Yesterday", …). `direction`
@@ -68,9 +89,23 @@ function InboxList( { tab }: { tab: FilterName } ) {
 	const view = { ...initialView, perPage: NOTES_PER_PAGE };
 	const startPosition = view.startPosition ?? 1;
 
-	// Field identities must stay stable or DataViews remounts every cell per re-render.
-	const fields = useMemo( () => getFields(), [] );
+	// Field identities must stay stable or DataViews remounts every cell per
+	// re-render; the type filter's options are keyed by the loaded types.
+	const typesKey = useMemo(
+		() =>
+			Array.from( new Set( notes.map( ( note ) => note.type ) ) )
+				.sort()
+				.join( ',' ),
+		[ notes ]
+	);
+	const fields = useMemo(
+		() => [ ...getFields(), buildTypeField( typesKey ? typesKey.split( ',' ) : [] ) ],
+		[ typesKey ]
+	);
 
+	// Search and the type filter run client-side over the loaded notes only —
+	// the engine's server filter is driven by the sidebar categories, never by
+	// DataViews view state.
 	const { data, paginationInfo } = filterSortAndPaginate( notes, view, fields );
 
 	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
@@ -89,20 +124,12 @@ function InboxList( { tab }: { tab: FilterName } ) {
 	}, [ tab, isLoading ] );
 
 	// Fetch pages until the window is filled (a network page can be smaller), so
-	// a short list still overflows the page and gets a scrollbar to drive more.
+	// a short list still overflows the pane and gets a scrollbar to drive more.
 	useEffect( () => {
 		if ( startPosition + NOTES_PER_PAGE > notes.length && ! isLoading && hasMore ) {
 			infiniteScrollHandler();
 		}
 	}, [ startPosition, notes, isLoading, hasMore, infiniteScrollHandler ] );
-
-	const onChangeSelection = ( selection: string[] ) => {
-		const noteId = selection[ 0 ];
-		if ( noteId ) {
-			recordTracksEvent( 'calypso_dashboard_notifications_inbox_note_open' );
-			navigate( { to: '/notifications/$noteId', params: { noteId } } );
-		}
-	};
 
 	if ( ! hasInitiallyLoadedRef.current ) {
 		return (
@@ -124,7 +151,8 @@ function InboxList( { tab }: { tab: FilterName } ) {
 			// slot and the foot spinner after); DataViews must not hide the
 			// cached rows it just mounted with.
 			isLoading={ false }
-			defaultLayouts={ { list: {} } }
+			defaultLayouts={ { list: {}, table: {} } }
+			search
 			paginationInfo={ effectivePaginationInfo }
 			empty={
 				showEmptyLoader ? (
@@ -134,15 +162,17 @@ function InboxList( { tab }: { tab: FilterName } ) {
 				) : (
 					<VStack alignment="center" style={ { padding: '40px 0' } }>
 						<Text size={ 15 } weight={ 500 }>
-							{ tab === 'unread' ? __( 'You’re all caught up.' ) : __( 'No notifications yet.' ) }
+							{ view.search || view.filters?.length
+								? __( 'No notifications match your search.' )
+								: EMPTY_MESSAGES[ category ] }
 						</Text>
 					</VStack>
 				)
 			}
 			getItemId={ ( item ) => item.id.toString() }
-			selection={ NO_SELECTION }
+			selection={ selectedNoteId ? [ selectedNoteId ] : [] }
 			onChangeView={ setView }
-			onChangeSelection={ onChangeSelection }
+			onChangeSelection={ ( selection ) => onSelectNote( selection[ 0 ] ) }
 		>
 			<DataViews.Layout />
 			{ hasMore && data.length > 0 && isLoading && (
@@ -156,48 +186,79 @@ function InboxList( { tab }: { tab: FilterName } ) {
 	);
 }
 
-function NotificationsInbox() {
-	const [ tab, setTab ] = useState< FilterName >( 'all' );
+function NotificationsInbox( {
+	category,
+	note,
+}: {
+	category: InboxCategory;
+	note: string | undefined;
+} ) {
+	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 
 	useEffect( () => acquireEngineVisibility(), [] );
 
 	// The engine's filter is process-global and the bell dropdown resets it, so
-	// re-assert this screen's tab on mount and on every change.
+	// re-assert this screen's category on mount and on every change.
 	useEffect( () => {
-		setActiveTab( tab );
-	}, [ tab ] );
+		setActiveTab( CATEGORY_TO_TAB[ category ] );
+	}, [ category ] );
+
+	const setSelectedNote = ( noteId: string | undefined ) => {
+		if ( noteId ) {
+			recordTracksEvent( 'calypso_dashboard_notifications_inbox_note_open', {
+				category,
+			} );
+		}
+		navigate( {
+			to: category === 'all' ? '/notifications' : '/notifications/$category',
+			params: { category },
+			search: { note: noteId },
+		} );
+	};
 
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Notifications' ) } /> }>
-			<ToggleGroupControl
-				label={ __( 'Filter notifications' ) }
-				hideLabelFromVision
-				value={ tab }
-				__next40pxDefaultSize
-				__nextHasNoMarginBottom
-				onChange={ ( value ) => {
-					const nextTab = ( value as FilterName ) ?? 'all';
-					setTab( nextTab );
-					recordTracksEvent( 'calypso_dashboard_notifications_inbox_tab_change', {
-						tab: nextTab,
-					} );
-				} }
+			<div
+				className={ `dashboard-notifications-inbox__layout ${ note ? 'has-selected-note' : '' }` }
 			>
-				<ToggleGroupControlOption value="all" label={ __( 'All' ) } />
-				<ToggleGroupControlOption value="unread" label={ __( 'Unread' ) } />
-			</ToggleGroupControl>
-			<DataViewsCard>
-				<InboxList key={ tab } tab={ tab } />
-			</DataViewsCard>
+				<div className="dashboard-notifications-inbox__list">
+					<DataViewsCard>
+						<InboxList
+							key={ category }
+							category={ category }
+							selectedNoteId={ note }
+							onSelectNote={ setSelectedNote }
+						/>
+					</DataViewsCard>
+				</div>
+				<div className="dashboard-notifications-inbox__detail-pane">
+					{ note ? (
+						<NoteDetail noteId={ note } onClose={ () => setSelectedNote( undefined ) } />
+					) : (
+						<VStack
+							alignment="center"
+							className="dashboard-notifications-inbox__detail-placeholder"
+						>
+							<Text variant="muted">{ __( 'Select a notification to read it.' ) }</Text>
+						</VStack>
+					) }
+				</div>
+			</div>
 		</PageLayout>
 	);
 }
 
-export default function NotificationsInboxScreen() {
+export default function NotificationsInboxScreen( props: {
+	category: string;
+	note: string | undefined;
+} ) {
 	return (
 		<NotesProvider>
-			<NotificationsInbox />
+			<NotificationsInbox
+				category={ ( props.category as InboxCategory ) ?? 'all' }
+				note={ props.note }
+			/>
 		</NotesProvider>
 	);
 }

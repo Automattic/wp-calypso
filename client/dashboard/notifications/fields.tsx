@@ -41,6 +41,26 @@ export function getNoteExcerpt( note: Note ): string | null {
 	return note.subject.length > 1 ? note.subject[ 1 ].text : null;
 }
 
+const capitalize = ( value: string ) => value.charAt( 0 ).toUpperCase() + value.slice( 1 );
+
+// Client-side type filter over the loaded notes; options come from the types
+// actually present. Never wired to the engine's server filter.
+export function buildTypeField( types: string[] ): Field< Note > {
+	return {
+		id: 'type',
+		label: __( 'Type' ),
+		getValue: ( { item } ) => item.type,
+		elements: types.map( ( type ) => ( {
+			value: type,
+			label: capitalize( type.replace( /_/g, ' ' ) ),
+		} ) ),
+		filterBy: {
+			operators: [ 'isAny' ],
+		},
+		enableSorting: false,
+	};
+}
+
 export function getFields(): Field< Note >[] {
 	return [
 		{
