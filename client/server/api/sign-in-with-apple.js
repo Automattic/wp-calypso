@@ -6,24 +6,26 @@ import wpcom from 'calypso/lib/wp';
 
 const ALLOWED_ORIGINS = [ 'https://my.wordpress.com' ];
 
-// Placeholder base for parsing relative redirect paths; never a real destination.
-const RELATIVE_URL_BASE = 'https://relative-url.invalid';
+const RELATIVE_URL_BASES = [ 'https://relative-url-a.invalid', 'https://relative-url-b.invalid' ];
 
+/**
+ * Only origins from `ALLOWED_ORIGINS` or relative URLs are allowed.
+ * For completeness, we need two placeholder base URLs to check for relative URL-ness.
+ * It prevents us from incorrectly allowing a URL that actually did use `relative-url.invalid`.
+ */
 export function isAllowedRedirectUrl( url ) {
-	let origin;
+	let parsed;
 	try {
-		( { origin } = new URL( url, RELATIVE_URL_BASE ) );
+		parsed = RELATIVE_URL_BASES.map( ( base ) => new URL( url, base ) );
 	} catch {
 		return false;
 	}
 
-	if ( ALLOWED_ORIGINS.includes( origin ) ) {
+	if ( ALLOWED_ORIGINS.includes( parsed[ 0 ].origin ) ) {
 		return true;
 	}
 
-	// A same-site path: resolves against the placeholder base, so it isn't absolute
-	// or protocol-relative (URL parsing also treats `\` as `/`, catching `/\evil.com`).
-	return origin === RELATIVE_URL_BASE && url.startsWith( '/' );
+	return url.startsWith( '/' ) && parsed.every( ( p, i ) => p.origin === RELATIVE_URL_BASES[ i ] );
 }
 
 function loginEndpointData() {

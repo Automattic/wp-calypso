@@ -25,7 +25,11 @@ describe( 'isAllowedRedirectUrl', () => {
 		'https:/evil.com',
 		'javascript:alert(1)',
 		'relative-path',
-		'https://relative-url.invalid/path',
+		'https://relative-url-a.invalid/path',
+		'//relative-url-a.invalid/path',
+		'/\\relative-url-a.invalid/path',
+		'///relative-url-a.invalid/path',
+		'//relative-url-b.invalid/path',
 		'',
 	] )( 'rejects %s', ( url ) => {
 		expect( isAllowedRedirectUrl( url ) ).toBe( false );
