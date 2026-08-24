@@ -1028,7 +1028,6 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderSidebarMobileMenu() }
 					{ this.renderMySites() }
 					{ this.renderSiteMenu() }
-					{ this.props.freeDomainChip }
 					{ this.props.commandPalette && this.renderCommandPalette() }
 					{ this.renderUpdatesMenu() }
 					{ this.renderCommentsMenu() }
@@ -1036,6 +1035,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderStatsSparkline() }
 					{ this.renderLanguageSwitcher() }
 					{ this.renderLaunchButton() }
+					{ this.props.freeDomainChip }
 				</div>
 				<div className="masterbar__section masterbar__section--right">
 					{ this.renderCart() }
