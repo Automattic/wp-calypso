@@ -7,7 +7,7 @@
 
 .dashboard-notifications-inbox__detail-pane {
 	position: sticky;
-	top: 24px;
+	top: calc(var(--masterbar-height, 0px) + 24px);
 }
 
 .dashboard-notifications-inbox__back {
@@ -41,9 +41,19 @@
 	}
 }
 
+.dashboard-notifications-inbox__list .dataviews-view-list__media-wrapper {
+	background: transparent;
+
+	&::after {
+		border-radius: 50%;
+	}
+}
+
 .dashboard-notifications-inbox__avatar {
 	position: relative;
 	display: inline-flex;
+	width: 100%;
+	height: 100%;
 
 	img {
 		display: block;
@@ -53,13 +63,17 @@
 
 .dashboard-notifications-inbox__unread-dot {
 	position: absolute;
-	top: -2px;
-	inset-inline-end: -2px;
+	top: 2px;
+	inset-inline-end: 2px;
 	width: 10px;
 	height: 10px;
 	border-radius: 50%;
 	background: var(--wp-admin-theme-color, #3858e9);
 	border: 2px solid var(--dashboard__background-color, #fff);
+}
+
+.dashboard-notifications-inbox__list-toolbar.dataviews__view-actions {
+	border-bottom: 1px solid var(--dashboard-header__border-color, #ddd);
 }
 
 .dashboard-notifications-inbox__title.is-unread {
@@ -70,16 +84,32 @@
 	border-radius: 50%;
 }
 
+.dashboard-notifications-inbox__note-title-link {
+	&,
+	.components-text {
+		color: var(--wp-admin-theme-color, #3858e9);
+	}
+}
+
+.dashboard-sidebar__menu-item span:has(> .dashboard-notifications-inbox__unread-count) {
+	display: flex;
+	flex-grow: 1;
+	align-items: center;
+}
+
 .dashboard-notifications-inbox__unread-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
 	margin-inline-start: auto;
 	min-width: 20px;
+	height: 20px;
 	padding: 0 6px;
 	border-radius: 16px;
 	background: var(--wp-admin-theme-color, #3858e9);
 	color: #fff;
 	font-size: 11px;
-	line-height: 20px;
-	text-align: center;
 }
 
 .dashboard-notifications-inbox__undo-bar {
