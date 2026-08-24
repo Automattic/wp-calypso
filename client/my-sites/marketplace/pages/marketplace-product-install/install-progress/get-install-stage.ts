@@ -26,8 +26,11 @@ const MOVING_STATUSES: ReadonlyArray< string | null > = [
 	transferStates.BACKFILLING,
 ];
 
+// `transferInProgress` contains `provisioned`, which belongs to `moving` above. Subtracting it here
+// keeps the two lists disjoint, so the stage a status maps to does not depend on the order the
+// branches below happen to be written in.
 const PREPARING_STATUSES: ReadonlyArray< string | null > = [
-	...transferInProgress,
+	...transferInProgress.filter( ( status ) => ! MOVING_STATUSES.includes( status ) ),
 	transferStates.SETUP,
 	transferStates.UPLOADING,
 ];

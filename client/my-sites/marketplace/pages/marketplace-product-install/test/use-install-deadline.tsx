@@ -148,6 +148,18 @@ describe( 'useInstallDeadline', () => {
 		expect( result.current.transferStartedAt ).toBe( startedAt );
 	} );
 
+	it( 'reports no start time when the transfer’s timestamp cannot be parsed', async () => {
+		mockFetchLatestAtomicTransfer.mockResolvedValue( {
+			...transfer( { status: 'active' } ),
+			created_at: 'not a date',
+		} );
+		const { result } = renderDeadline();
+		await advance( 6000 );
+
+		expect( result.current.transferStatus ).toBe( 'active' );
+		expect( result.current.transferStartedAt ).toBeNull();
+	} );
+
 	it( 'does not expose a settled transfer this wait never watched running', async () => {
 		mockFetchLatestAtomicTransfer.mockResolvedValue(
 			transfer( { id: 99, status: 'completed', agoMs: 3 * 60 * 1000 } )

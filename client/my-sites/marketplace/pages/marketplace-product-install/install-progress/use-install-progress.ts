@@ -50,10 +50,18 @@ export function useInstallProgress( {
 	currentStep: number;
 	startedAt?: number | null;
 } ) {
-	const stage = getInstallStage( { transferStatus, currentStep } );
+	const reportedStage = getInstallStage( { transferStatus, currentStep } );
 
 	const [ now, setNow ] = useState( () => Date.now() );
 	const mountedAt = useRef( now );
+	// A status this mapping doesn't know, or a poll that momentarily loses sight of our transfer,
+	// both report stage 0. Holding the furthest stage reached stops the wait from rewinding — a bar
+	// that shrinks and a sentence that returns to "preparing" would be claiming the transfer went
+	// backwards, which it never does.
+	const furthestStage = useRef( reportedStage );
+	const stage = Math.max( reportedStage, furthestStage.current );
+	furthestStage.current = stage;
+
 	const stageStartedAt = useRef( estimateStageStartedAt( stage, startedAt, now ) );
 	const previousStageRef = useRef( stage );
 	const statusWasKnownRef = useRef( transferStatus != null );

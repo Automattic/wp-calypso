@@ -72,6 +72,35 @@ describe( 'useInstallProgress', () => {
 		expect( result.current.isOverrun ).toBe( false );
 	} );
 
+	it( 'holds the furthest stage when the status stops being recognised', () => {
+		let status: string | null = transferStates.RELOCATING;
+		const { result, rerender } = renderHook( () =>
+			useInstallProgress( { transferStatus: status, currentStep: 1 } )
+		);
+		expect( result.current.stage ).toBe( 1 );
+		// The poll loses sight of our transfer and the fallback only knows `start`.
+		status = transferStates.START;
+		rerender();
+		expect( result.current.stage ).toBe( 1 );
+		expect( result.current.getStageProgress( 0 ) ).toBe( 100 );
+		status = null;
+		rerender();
+		expect( result.current.stage ).toBe( 1 );
+	} );
+
+	it( 'falls back to this page’s own clock when the transfer start is unusable', () => {
+		const { result } = renderHook( () =>
+			useInstallProgress( {
+				transferStatus: transferStates.ACTIVE,
+				currentStep: 1,
+				startedAt: null,
+			} )
+		);
+		advance( 10_000 );
+		expect( result.current.elapsed ).toBeCloseTo( 10, 0 );
+		expect( Number.isNaN( result.current.overallProgress ) ).toBe( false );
+	} );
+
 	it( 'flags an overrun only well past the stage’s typical duration', () => {
 		const { result } = renderHook( () =>
 			useInstallProgress( { transferStatus: transferStates.ACTIVE, currentStep: 1 } )
