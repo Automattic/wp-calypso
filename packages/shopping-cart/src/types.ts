@@ -493,7 +493,12 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	cart_generated_at_timestamp: number;
 	tax: ResponseCartTaxData;
 	next_domain_is_free: boolean;
-	next_domain_condition: '' | 'blog';
+	/**
+	 * Comma-separated TLD allow-list the free-domain credit applies to ('' means no restriction).
+	 * The listed literals document known values for autocomplete; `string & {}` keeps the type from
+	 * collapsing to plain `string` so new backend values don't require a type change here.
+	 */
+	next_domain_condition: '' | 'blog' | 'blog,art' | ( string & {} );
 	bundled_domain?: string;
 
 	/**
@@ -949,6 +954,12 @@ export interface ResponseCartProductExtra {
 	agency_id?: number;
 
 	/**
+	 * A4A Pressable PHP Memory add-on target domain.
+	 * Sent with checkout cart items so WPCOM can provision the add-on for the selected Pressable site.
+	 */
+	a4a_pressable_site_domain?: string;
+
+	/**
 	 * Marketplace properties
 	 *
 	 * These extra properties are always set for marketplace products.
@@ -982,6 +993,7 @@ export type SitelessCheckoutType =
 	| 'marketplace'
 	| 'a4a'
 	| 'unified'
+	| 'wpcom'
 	| undefined;
 
 /**
@@ -1011,6 +1023,11 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 * Marks a product as having been added by the siteless `/checkout/unified` route.
 	 */
 	isUnifiedSitelessCheckout?: boolean;
+
+	/**
+	 * Marks a product as having been added by the siteless `/checkout/wpcom` route.
+	 */
+	isWpcomSitelessCheckout?: boolean;
 
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
@@ -1067,12 +1084,6 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 *
 	 */
 	hosting_intent?: string;
-
-	/**
-	 * Indicates the user was in the rolled-out pricing differentiation cohort.
-	 * Used to add the `gating-business-q1` blog sticker on purchase.
-	 */
-	is_gating_business_q1?: boolean;
 }
 
 export interface GSuiteProductUser {
@@ -1113,6 +1124,7 @@ export type DomainContactDetailsExtra = {
 	ca?: CaDomainContactExtraDetails | null;
 	uk?: UkDomainContactExtraDetails | null;
 	fr?: FrDomainContactExtraDetails | null;
+	in?: InDomainContactExtraDetails | null;
 };
 
 export type CaDomainContactExtraDetails = {
@@ -1132,6 +1144,11 @@ export type FrDomainContactExtraDetails = {
 	registrantVatId?: string;
 	trademarkNumber?: string;
 	sirenSiret?: string;
+};
+
+export type InDomainContactExtraDetails = {
+	nexusDeclaration?: boolean;
+	nexusConnectionType?: string;
 };
 
 export interface TermsOfServiceRecord {

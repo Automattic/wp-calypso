@@ -70,7 +70,7 @@ export default function SelectedBlock() {
 				icon={ close }
 				iconSize={ 16 }
 				onClick={ handleClearSelectedBlock }
-				label={ __( 'Clear selection', 'big-sky' ) }
+				label={ __( 'Clear selection', __i18n_text_domain__ ) }
 			/>
 		</motion.div>
 	);

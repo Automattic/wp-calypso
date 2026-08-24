@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { get } from 'lodash';
 import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './utils';
 
 import 'calypso/state/terms/init';
@@ -15,7 +14,7 @@ import 'calypso/state/terms/init';
  */
 export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
 	const serializedQuery = getSerializedTermsQuery( query );
-	return !! get( state.terms.queryRequests, [ siteId, taxonomy, serializedQuery ] );
+	return !! state.terms.queryRequests?.[ siteId ]?.[ taxonomy ]?.[ serializedQuery ];
 }
 
 /**
@@ -52,14 +51,14 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
  */
 export const getTermsForQuery = createSelector(
 	( state, siteId, taxonomy, query ) => {
-		const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+		const manager = state.terms.queries?.[ siteId ]?.[ taxonomy ];
 		if ( ! manager ) {
 			return null;
 		}
 
 		return manager.getItems( query );
 	},
-	( state, siteId, taxonomy ) => get( state.terms.queries, [ siteId, taxonomy ] ),
+	( state, siteId, taxonomy ) => state.terms.queries?.[ siteId ]?.[ taxonomy ],
 	( state, siteId, taxonomy, query ) => {
 		const serializedQuery = getSerializedTermsQuery( query );
 		return [ siteId, taxonomy, serializedQuery ].join();
@@ -77,14 +76,14 @@ export const getTermsForQuery = createSelector(
  */
 export const getTermsForQueryIgnoringPage = createSelector(
 	( state, siteId, taxonomy, query ) => {
-		const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+		const manager = state.terms.queries?.[ siteId ]?.[ taxonomy ];
 		if ( ! manager ) {
 			return null;
 		}
 
 		return manager.getItemsIgnoringPage( query );
 	},
-	( state, siteId, taxonomy ) => get( state.terms.queries, [ siteId, taxonomy ] ),
+	( state, siteId, taxonomy ) => state.terms.queries?.[ siteId ]?.[ taxonomy ],
 	( state, siteId, taxonomy, query ) => {
 		const serializedQuery = getSerializedTermsQueryWithoutPage( query );
 		return [ siteId, taxonomy, serializedQuery ].join();
@@ -101,7 +100,7 @@ export const getTermsForQueryIgnoringPage = createSelector(
  * @returns {?number}          Last terms page
  */
 export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+	const manager = state.terms.queries?.[ siteId ]?.[ taxonomy ];
 	if ( ! manager ) {
 		return null;
 	}
@@ -122,7 +121,7 @@ export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
  * @returns {?Array}          Terms
  */
 export function getTerms( state, siteId, taxonomy ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+	const manager = state.terms.queries?.[ siteId ]?.[ taxonomy ];
 	if ( ! manager ) {
 		return null;
 	}
@@ -139,7 +138,7 @@ export function getTerms( state, siteId, taxonomy ) {
  * @returns {?Object}         Term
  */
 export function getTerm( state, siteId, taxonomy, termId ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+	const manager = state.terms.queries?.[ siteId ]?.[ taxonomy ];
 	if ( ! manager ) {
 		return null;
 	}
@@ -162,7 +161,7 @@ export function getTerm( state, siteId, taxonomy, termId ) {
  * @returns {?number}          Count terms
  */
 export function countFoundTermsForQuery( state, siteId, taxonomy, query ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+	const manager = state.terms.queries?.[ siteId ]?.[ taxonomy ];
 	if ( ! manager ) {
 		return null;
 	}

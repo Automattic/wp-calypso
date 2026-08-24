@@ -5,6 +5,7 @@ import { queryClient } from './query-client';
 
 export const updateUsernameMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'username-update' },
 		mutationFn: ( { username, action }: { username: string; action: string } ) =>
 			updateUsername( username, action ),
 		onSuccess: () => {

@@ -1,5 +1,5 @@
+import { sortBy } from '@automattic/js-utils';
 import treeSelect from '@automattic/tree-select';
-import { sortBy } from 'lodash';
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 
 import 'calypso/state/comments/init';

@@ -5,7 +5,13 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import {
+	getLaunchpadPersonalizationDestination,
+	resolveLaunchpadPersonalizationVariation,
+	type LaunchpadPersonalizationVariation,
+} from 'calypso/lib/ai-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -27,11 +33,22 @@ import { isPlanProductFree } from '../../../../../../packages/data-stores/src/pl
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
+import {
+	getBlueprintArchiveSiteSpecUrl,
+	getStandaloneBlueprintArchiveSlug,
+} from '../../../utils/blueprint-archive-import';
+import {
+	getBuildWowSiteIdentifier,
+	getBuildWowSiteSpecUrl,
+	logBuildWowEvent,
+	requestBuildWowSite,
+} from '../../../utils/build-wow';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
+import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
@@ -42,6 +59,7 @@ function initialize() {
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
+		STEPS.EMAIL_VERIFICATION,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
@@ -58,6 +76,9 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
+		// Variant B: the account step doesn't gate; the verification step is met after the free plan
+		// selection or, for a paid order, on return from checkout.
+		const postPlanSelectionEmailVerification = useIsPostPlanSelectionEmailVerification( flowName );
 
 		const {
 			setDomain,
@@ -78,23 +99,32 @@ const onboarding: FlowV2< typeof initialize > = {
 			} ),
 			[]
 		);
-		const coupon = useQuery().get( 'coupon' );
-		const refParameter = useQuery().get( 'ref' );
-		const siteSlugParam = useQuery().get( 'siteSlug' );
+		const queryParams = useQuery();
+		const coupon = queryParams.get( 'coupon' );
+		const refParameter = queryParams.get( 'ref' );
+		const diyLaunchpad = queryParams.get( 'diy-launchpad' );
+		const siteSlugParam = queryParams.get( 'siteSlug' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
-		const playgroundId = useQuery().get( 'playground' );
+		const playgroundId = queryParams.get( 'playground' );
+		const buildDest = queryParams.get( 'build_dest' );
+		const blueprintArchiveSlug = getStandaloneBlueprintArchiveSlug(
+			blueprint,
+			playgroundId,
+			buildDest
+		);
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
 		const getPostCheckoutDestination = async (
 			providedDependencies: ProvidedDependencies,
-			planCartItem: MinimalRequestCartProduct | null
-		): Promise< [ string, string | null ] > => {
+			planCartItem: MinimalRequestCartProduct | null,
+			launchpadPersonalizationVariation: LaunchpadPersonalizationVariation
+		): Promise< [ string, string | null, string | null ] > => {
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
-				return [ `/home/${ providedDependencies.siteSlug }`, null ];
+				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 			}
 
 			if ( playgroundId || blueprint ) {
@@ -102,9 +132,9 @@ const onboarding: FlowV2< typeof initialize > = {
 				const isFree =
 					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
 
-				if ( isFree && ! blueprint ) {
+				if ( isFree && playgroundId ) {
 					// Redirect free plan users to a home page
-					return [ `/home/${ providedDependencies.siteSlug }`, null ];
+					return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 				}
 
 				const params: Record< string, string | number > = {
@@ -112,14 +142,33 @@ const onboarding: FlowV2< typeof initialize > = {
 					siteId: providedDependencies.siteId as number,
 				};
 
-				if ( blueprint ) {
-					params.blueprint = blueprint;
-				} else if ( playgroundId ) {
+				// build_dest=wow: skip the Playground-based importer and land on the AI
+				// site-spec, which kicks off the background transfer-to-Atomic +
+				// blueprint-archive import and, on confirm, polls the import and
+				// redirects to the Site Editor. The blueprint step already verified the
+				// archive exists (and stripped build_dest when it does not).
+				if ( blueprintArchiveSlug ) {
+					return [
+						getBlueprintArchiveSiteSpecUrl( {
+							siteSlug: providedDependencies.siteSlug as string,
+							siteId: providedDependencies.siteId as number,
+							blueprintSlug: blueprintArchiveSlug,
+							ref: refParameter,
+						} ),
+						null,
+						null,
+					];
+				}
+
+				if ( playgroundId ) {
 					params.playground = playgroundId;
+				} else if ( blueprint ) {
+					params.blueprint = blueprint;
 				}
 
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
+					null,
 					null,
 				];
 			}
@@ -128,7 +177,25 @@ const onboarding: FlowV2< typeof initialize > = {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
-				return [ `${ adminUrl }admin.php?page=wc-admin`, null ];
+				return [ `${ adminUrl }admin.php?page=wc-admin`, null, null ];
+			}
+
+			// Launchpad-personalization treatments replace only the default My Home landing:
+			// ai_launchpad lands in Site Setup, no_guidance on the wp-admin dashboard. The
+			// functional handoffs above (plugin install, playground/blueprint import, Woo)
+			// keep their destinations regardless of the assigned variation.
+			if ( launchpadPersonalizationVariation !== 'control' && providedDependencies.siteSlug ) {
+				const siteSlug = providedDependencies.siteSlug as string;
+				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+				const destination = getLaunchpadPersonalizationDestination( {
+					variation: launchpadPersonalizationVariation,
+					adminUrl,
+					enableAiLaunchpad: true,
+				} );
+				if ( destination ) {
+					return [ destination, null, null ];
+				}
 			}
 
 			return getOnboardingPostCheckoutDestination( {
@@ -171,7 +238,7 @@ const onboarding: FlowV2< typeof initialize > = {
 						providedDependencies.mode &&
 						providedDependencies.domain
 					) {
-						const destination = addQueryArgs( '/use-my-domain', {
+						const destination = addQueryArgs( 'use-my-domain', {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
@@ -209,7 +276,22 @@ const onboarding: FlowV2< typeof initialize > = {
 					setProductCartItems( products.filter( ( product ) => product !== null ) );
 
 					setSignupCompleteFlowName( flowName );
+
+					// A fully free order never reaches checkout, so the post-plan-selection gate is met here,
+					// right after the plan is chosen, before the site is created.
+					if ( postPlanSelectionEmailVerification && ! pickedPlan ) {
+						return navigate(
+							'email-verification?next=create-site' as typeof currentStepSlug,
+							undefined,
+							false
+						);
+					}
+
 					return navigate( 'create-site', undefined, false );
+				}
+				case 'email-verification': {
+					const next = queryParams.get( 'next' ) || 'create-site';
+					return navigate( next as typeof currentStepSlug );
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
@@ -238,15 +320,74 @@ const onboarding: FlowV2< typeof initialize > = {
 								} )
 							);
 							return;
-						case 'blank-site':
+						case 'generate-theme': {
+							// Automattician-only: provision an Atomic (WP Cloud) site up front so
+							// the custom AI-generated theme can be installed, then hand off to the
+							// build-wow site-spec step. Gated in the UI to Automatticians; the
+							// build-wow endpoint enforces the permission server-side.
+							const siteIdentifier = getBuildWowSiteIdentifier( {
+								siteSlug,
+								siteId,
+							} );
+
+							if ( ! siteIdentifier ) {
+								logBuildWowEvent( 'start_missing_site', {
+									site_slug: siteSlug,
+									site_id: siteId,
+								} );
+								return navigate( 'error' as typeof currentStepSlug );
+							}
+
+							try {
+								await requestBuildWowSite( siteIdentifier );
+								logBuildWowEvent( 'start_success', {
+									site_identifier: siteIdentifier,
+								} );
+							} catch ( error ) {
+								logBuildWowEvent( 'start_error', {
+									site_identifier: siteIdentifier,
+									error: error instanceof Error ? error.message : String( error ),
+								} );
+								return navigate( 'error' as typeof currentStepSlug );
+							}
+
+							window.location.assign(
+								getBuildWowSiteSpecUrl( {
+									siteSlug,
+									siteId,
+									ref: refParameter,
+								} )
+							);
+							return;
+						}
+						case 'blank-site': {
 							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
 								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
 								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
-							} else {
-								window.location.assign( `/sites/${ siteSlug }` );
+								return;
 							}
+
+							// Launchpad-personalization treatments land in wp-admin instead of My Home
+							// (which would bounce them there anyway, one redirect later).
+							const variation = await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
+							if ( variation !== 'control' ) {
+								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+								const destination = getLaunchpadPersonalizationDestination( {
+									variation,
+									adminUrl,
+									enableAiLaunchpad: true,
+								} );
+								if ( destination ) {
+									window.location.assign( destination );
+									return;
+								}
+							}
+
+							window.location.assign( `/home/${ siteSlug }` );
 							return;
+						}
 						default:
 							return;
 					}
@@ -264,15 +405,20 @@ const onboarding: FlowV2< typeof initialize > = {
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
 								...( refParameter ? { ref: refParameter } : {} ),
+								...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
 							} )
 						);
 						return;
 					}
 
-					const [ destination, backDestination ] = await getPostCheckoutDestination(
-						providedDependencies,
-						planCartItem
-					);
+					const launchpadPersonalizationVariation =
+						await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
+					const [ destination, backDestination, backDestinationDomains ] =
+						await getPostCheckoutDestination(
+							providedDependencies,
+							planCartItem,
+							launchpadPersonalizationVariation
+						);
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( flowName );
@@ -286,7 +432,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							 * redirect the user back to Playground to start the import.
 							 */
 							const playgroundId = getQueryArg( window.location.href, 'playground' );
-							const redirectTo: string =
+							let redirectTo: string =
 								playgroundId &&
 								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
 									? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -299,22 +445,48 @@ const onboarding: FlowV2< typeof initialize > = {
 											{
 												siteSlug,
 												...( refParameter ? { ref: refParameter } : {} ),
+												...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
 											}
 									  );
+
+							// Variant B: a paid order meets the post-plan-selection gate on return from checkout,
+							// before post-checkout-onboarding. The Playground import path keeps its own
+							// return target.
+							if ( postPlanSelectionEmailVerification && ! playgroundId ) {
+								redirectTo = addQueryArgs(
+									withLocale( '/setup/onboarding/email-verification', locale ),
+									{
+										next: 'post-checkout-onboarding',
+										siteSlug,
+										...( refParameter ? { ref: refParameter } : {} ),
+										...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
+									}
+								);
+							}
 
 							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
 
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									redirect_to: redirectTo,
+									// build_dest=wow goes straight from checkout to the AI site-spec
+									// (no post-checkout-onboarding hop, no chooser).
+									redirect_to: blueprintArchiveSlug ? destination : redirectTo,
 									signup: 1,
+									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									...( backDestinationDomains
+										? { checkoutBackUrlDomains: pathToUrl( backDestinationDomains ) }
+										: {} ),
 									coupon,
 									steps_current: checkoutStepperPosition.current,
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
+						} else if ( blueprintArchiveSlug ) {
+							// build_dest=wow never shows the setup-your-site-ai chooser; go
+							// straight to the AI site-spec destination.
+							window.location.replace( destination );
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
 							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
@@ -333,6 +505,16 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'playground':
 				case 'blueprint': {
+					const locationParams = new URLSearchParams( window.location.search );
+					if ( locationParams.get( 'intent' ) === 'woocommerce' ) {
+						const playgroundId = locationParams.get( 'playground' );
+						return window.location.assign(
+							addQueryArgs( '/setup/entrepreneur', {
+								from: 'playground-publish',
+								...( playgroundId ? { playground: playgroundId } : {} ),
+							} )
+						);
+					}
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(
 						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
@@ -370,6 +552,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				resetOnboardStore();
 				reduxDispatch( setSelectedSiteId( null ) );
 				clearStepPersistedState( this.name );
+				clearSessionStorageQuery();
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
@@ -387,9 +570,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		 */
 		useEffect( () => {
 			if ( isLoggedIn && user?.email && user?.date ) {
-				addSurvicate( { email: user.email, registrationDate: user.date } );
+				addSurvicate( { email: user.email, registrationDate: user.date, userId: user.ID } );
 			}
-		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date ] );
+		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date, user?.ID ] );
 
 		// Preload the visual split experiment
 		useEffect( () => {

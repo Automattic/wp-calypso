@@ -13,10 +13,6 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/data/themes/use-tier-retained-benefits-query', () => ( {
-	useTierRetainedBenefitsQuery: jest.fn(),
-} ) );
-
 const freeThemeTier = {
 	slug: 'free',
 	name: 'Free',

@@ -1,8 +1,8 @@
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';

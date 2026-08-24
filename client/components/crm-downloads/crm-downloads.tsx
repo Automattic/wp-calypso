@@ -1,7 +1,7 @@
 import { Card, Gridicon, Button } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import useFetchJetpackCRMExtensionsQuery, {
@@ -60,7 +60,10 @@ export function CrmDownloadsContent( { licenseKey, isLoading }: CrmDownloadsProp
 		refetch: refetchExtensions,
 	} = useFetchJetpackCRMExtensionsQuery( isValidKey );
 
-	if ( isError ) {
+	useEffect( () => {
+		if ( ! isError ) {
+			return;
+		}
 		if ( error instanceof Error ) {
 			dispatch(
 				errorNotice(
@@ -78,7 +81,7 @@ export function CrmDownloadsContent( { licenseKey, isLoading }: CrmDownloadsProp
 				)
 			);
 		}
-	}
+	}, [ isError, error, dispatch, translate ] );
 
 	const handleExtensionDownload = useCallback(
 		async ( extensionSlug: string, extension: Extension ) => {

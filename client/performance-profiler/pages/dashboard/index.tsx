@@ -65,13 +65,15 @@ const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps 
 
 	const siteUrl = new URL( url );
 
-	if ( isFetched && finalUrl ) {
-		performance.mark( 'test-started' );
-		recordTracksEvent( 'calypso_performance_profiler_test_started', {
-			url: finalUrl,
-			version: profilerVersion(),
-		} );
-	}
+	useEffect( () => {
+		if ( isFetched && finalUrl ) {
+			performance.mark( 'test-started' );
+			recordTracksEvent( 'calypso_performance_profiler_test_started', {
+				url: finalUrl,
+				version: profilerVersion(),
+			} );
+		}
+	}, [ isFetched, finalUrl ] );
 
 	// Append hash to the URL if it's not there to avoid losing it on page reload
 	useEffect( () => {

@@ -30,14 +30,6 @@ export function useStepNavigator(
 		navigation.goToStep?.( stepPath as string );
 	}
 
-	function goToIntentPage() {
-		navigation.goToStep?.( 'intent' );
-	}
-
-	function goToGoalsPage() {
-		navigation.goToStep?.( 'goals' );
-	}
-
 	function goToImportCapturePage() {
 		const migrationUrl = `/setup/site-migration?siteSlug=${ siteSlug }&ref=importer`;
 		const urlWithFromParam = fromSite ? `${ migrationUrl }&from=${ fromSite }` : migrationUrl;
@@ -133,8 +125,6 @@ export function useStepNavigator(
 	return {
 		flow,
 		supportLinkModal: false,
-		goToIntentPage,
-		goToGoalsPage,
 		goToImportCapturePage,
 		goToImportContentOnlyPage,
 		goToAdmin,

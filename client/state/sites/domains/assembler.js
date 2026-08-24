@@ -1,4 +1,4 @@
-import { camelCase } from 'lodash';
+import { camelCase } from '@automattic/js-utils';
 import {
 	getDomainRegistrationAgreementUrl,
 	getDomainType,

@@ -1,6 +1,6 @@
 import { Badge, Tooltip } from '@automattic/components';
 import clsx from 'clsx';
-import { useRef, useState, ComponentProps } from 'react';
+import { useRef, useState, ComponentProps, type JSX } from 'react';
 
 import './style.scss';
 

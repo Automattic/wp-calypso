@@ -4,6 +4,7 @@ import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { DefaultMasterbarContact } from './default-contact';
+import type { JSX } from 'react';
 import './style.scss';
 
 const MasterbarStyled = ( {

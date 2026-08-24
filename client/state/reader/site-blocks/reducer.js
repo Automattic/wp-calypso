@@ -1,4 +1,4 @@
-import { omit, reduce } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import {
 	READER_SITE_BLOCK,
 	READER_SITE_BLOCKS_RECEIVE,
@@ -41,14 +41,10 @@ export const items = ( state = {}, action ) => {
 				return state;
 			}
 
-			const newBlocks = reduce(
-				action.payload.sites,
-				( obj, site ) => {
-					obj[ site.ID ] = true;
-					return obj;
-				},
-				{}
-			);
+			const newBlocks = action.payload.sites.reduce( ( obj, site ) => {
+				obj[ site.ID ] = true;
+				return obj;
+			}, {} );
 
 			return {
 				...state,

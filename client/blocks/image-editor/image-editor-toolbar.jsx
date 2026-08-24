@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { values as objectValues } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -34,7 +33,7 @@ export class ImageEditorToolbar extends Component {
 		imageEditorRotateCounterclockwise: noop,
 		imageEditorFlip: noop,
 		setImageEditorAspectRatio: noop,
-		allowedAspectRatios: objectValues( AspectRatios ),
+		allowedAspectRatios: Object.values( AspectRatios ),
 		onShowNotice: noop,
 		isAspectRatioDisabled: false,
 		displayOnlyIcon: false,

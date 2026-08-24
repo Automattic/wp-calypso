@@ -7,11 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Onboard, useStarterDesignBySlug } from '@automattic/data-stores';
-import {
-	getDesignPreviewUrl,
-	PERSONAL_THEME,
-	getThemeIdFromDesign,
-} from '@automattic/design-picker';
+import { getDesignPreviewUrl, getThemeIdFromDesign } from '@automattic/design-picker';
 import DesignPreview, { useScreens, type DesignPreviewProps } from '@automattic/design-preview';
 import { StepContainer, Step } from '@automattic/onboarding';
 import { Modal } from '@wordpress/components';
@@ -35,7 +31,6 @@ import { urlToSlug } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purchased-domain';
-import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
@@ -155,9 +150,6 @@ const UnifiedDesignPickerPreview = ( {
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
-
-	// @TODO Cleanup once the test phase is over.
-	const isGlobalStylesOnPersonal = useSiteGlobalStylesOnPersonal( site?.ID );
 
 	const wpcomSiteSlug = useSelector( ( state ) => getSiteSlug( state, site?.ID ) );
 	const didPurchaseDomain = useSelector(
@@ -413,7 +405,7 @@ const UnifiedDesignPickerPreview = ( {
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 				// When the user is done with checkout, send them back to the current url
 				destination: window.location.href.replace( window.location.origin, '' ),
-				plan: isGlobalStylesOnPersonal ? 'personal' : 'premium',
+				plan: 'personal',
 			} );
 
 			setShowPremiumGlobalStylesModal( false );
@@ -462,25 +454,15 @@ const UnifiedDesignPickerPreview = ( {
 	}
 
 	function getPrimaryActionButtonAction(): () => void {
-		if ( isGlobalStylesOnPersonal ) {
-			if ( isLockedTheme ) {
-				return upgradePlan;
-			}
-
-			if ( shouldUnlockGlobalStyles ) {
-				return unlockPremiumGlobalStyles;
-			}
-
-			return pickDesign;
-		}
-
-		const isPersonalDesign = selectedDesign?.design_tier === PERSONAL_THEME;
 		if ( isLockedTheme ) {
-			// For personal themes we favor the GS Upgrade Modal over the Plan Upgrade Modal.
-			return isPersonalDesign && shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : upgradePlan;
+			return upgradePlan;
 		}
 
-		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : pickDesign;
+		if ( shouldUnlockGlobalStyles ) {
+			return unlockPremiumGlobalStyles;
+		}
+
+		return pickDesign;
 	}
 
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
@@ -519,9 +501,7 @@ const UnifiedDesignPickerPreview = ( {
 		limitGlobalStyles: shouldLimitGlobalStyles,
 		variations: styleVariations,
 		splitDefaultVariation:
-			( isGlobalStylesOnPersonal &&
-				selectedDesign?.design_tier === THEME_TIER_FREE &&
-				shouldLimitGlobalStyles ) ||
+			( selectedDesign?.design_tier === THEME_TIER_FREE && shouldLimitGlobalStyles ) ||
 			( ! ( selectedDesign?.design_tier === THEME_TIER_PREMIUM ) &&
 				! isBundled &&
 				! isPremiumThemeAvailable &&
@@ -586,16 +566,7 @@ const UnifiedDesignPickerPreview = ( {
 			tagline: shouldCustomizeText ? site?.description ?? '' : '',
 		},
 		splitDefaultVariation:
-			( isGlobalStylesOnPersonal &&
-				selectedDesign?.design_tier === THEME_TIER_FREE &&
-				shouldLimitGlobalStyles ) ||
-			( ! ( selectedDesign?.design_tier === THEME_TIER_PREMIUM ) &&
-				! isBundled &&
-				! isPremiumThemeAvailable &&
-				! didPurchaseSelectedTheme &&
-				! isPluginBundleEligible &&
-				! isGlobalStylesOnPersonal &&
-				shouldLimitGlobalStyles ),
+			selectedDesign?.design_tier === THEME_TIER_FREE && shouldLimitGlobalStyles,
 		needsUpgrade: shouldLimitGlobalStyles || isLockedTheme,
 		title: headerDesignTitle,
 		selectedDesignTitle: designTitle,

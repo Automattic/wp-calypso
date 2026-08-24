@@ -27,7 +27,7 @@ export default function SiteResultsContainer( {
 	onReceiveSearchResults,
 }: SiteResultsContainerProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const { data, fetchNextPage } = useFeedSearchInfiniteQuery( {
+	const { data, fetchNextPage, hasNextPage, isLoading } = useFeedSearchInfiniteQuery( {
 		query,
 		excludeFollowed: false,
 		sort,
@@ -59,17 +59,15 @@ export default function SiteResultsContainer( {
 		}
 	}, [ dedupedFeeds, onReceiveSearchResults ] );
 
-	const total = data?.pages?.[ 0 ]?.total ?? 0;
-	const cappedTotal = Math.min( total, 200 );
-
 	return (
 		<SiteResults
 			query={ query }
 			sort={ sort }
 			searchResults={ dedupedFeeds }
-			searchResultsCount={ cappedTotal }
+			hasNextPage={ hasNextPage }
+			isLoading={ isLoading }
 			isLoggedIn={ isLoggedIn }
-			fetchNextPage={ () => fetchNextPage() }
+			fetchNextPage={ fetchNextPage }
 		/>
 	);
 }

@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
 import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
@@ -44,7 +43,7 @@ export const sendSmsCode = ( flow ) => ( dispatch, getState ) => {
 					message,
 					status: 'is-success',
 				},
-				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
+				twoStepNonce: response?.body?.data?.two_step_nonce,
 			} );
 		} )
 		.catch( ( httpError ) => {
@@ -53,7 +52,7 @@ export const sendSmsCode = ( flow ) => ( dispatch, getState ) => {
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 				error,
-				twoStepNonce: get( httpError, 'response.body.data.two_step_nonce' ),
+				twoStepNonce: httpError?.response?.body?.data?.two_step_nonce,
 			} );
 		} );
 };

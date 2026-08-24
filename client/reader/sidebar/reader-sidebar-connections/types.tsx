@@ -1,6 +1,7 @@
 import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon';
 import { ReaderFediverseIcon } from 'calypso/reader/components/icons/fediverse-icon';
 import { ReaderMastodonIcon } from 'calypso/reader/components/icons/mastodon-icon';
+import type { JSX } from 'react';
 
 export type ConnectionProtocol = 'atmosphere' | 'mastodon' | 'fediverse';
 

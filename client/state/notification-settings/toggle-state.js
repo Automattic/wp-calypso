@@ -1,23 +1,21 @@
-import { find, findIndex, get, includes } from 'lodash';
-
 const replaceAtIndex = ( array, index, newItem ) =>
 	array.map( ( item, idx ) => ( idx === index ? newItem : item ) );
 
 const replaceOrAppend = ( array, originalItem, newItem ) =>
-	includes( array, originalItem )
-		? replaceAtIndex( array, findIndex( array, originalItem ), newItem )
+	array.includes( originalItem )
+		? replaceAtIndex( array, array.indexOf( originalItem ), newItem )
 		: [ ...array, newItem ];
 
 const toggleInStream = ( streamName, stream, setting ) => ( {
 	[ streamName ]: {
 		...stream,
-		[ setting ]: ! get( stream, setting ),
+		[ setting ]: ! stream?.[ setting ],
 	},
 } );
 
 const toggleInDevice = ( devices, deviceId, setting ) => {
-	const device = find( devices, { device_id: parseInt( deviceId, 10 ) } );
-	const deviceSetting = get( device, setting );
+	const device = devices?.find( ( item ) => item.device_id === parseInt( deviceId, 10 ) );
+	const deviceSetting = device?.[ setting ];
 
 	return {
 		devices: replaceOrAppend( devices, device, {
@@ -29,32 +27,32 @@ const toggleInDevice = ( devices, deviceId, setting ) => {
 
 export default {
 	wpcom( state, source, stream, setting ) {
-		return toggleInStream( 'wpcom', get( state, 'dirty.wpcom' ), setting );
+		return toggleInStream( 'wpcom', state?.dirty?.wpcom, setting );
 	},
 
 	other( state, source, stream, setting ) {
-		const devices = get( state, 'dirty.other.devices' );
+		const devices = state?.dirty?.other?.devices;
 
 		return {
 			other: {
-				...get( state, 'dirty.other' ),
+				...state?.dirty?.other,
 				...( isNaN( stream )
-					? toggleInStream( stream, get( state, [ 'dirty', 'other', stream ] ), setting )
+					? toggleInStream( stream, state?.dirty?.other?.[ stream ], setting )
 					: toggleInDevice( devices, stream, setting ) ),
 			},
 		};
 	},
 
 	blog( state, source, stream, setting ) {
-		const blogs = get( state, 'dirty.blogs' );
-		const blog = find( blogs, { blog_id: parseInt( source, 10 ) } );
-		const devices = get( blog, 'devices', [] );
+		const blogs = state?.dirty?.blogs;
+		const blog = blogs?.find( ( item ) => item.blog_id === parseInt( source, 10 ) );
+		const devices = blog?.devices ?? [];
 
 		return {
 			blogs: replaceOrAppend( blogs, blog, {
 				...blog,
 				...( isNaN( stream )
-					? toggleInStream( stream, get( blog, stream ), setting )
+					? toggleInStream( stream, blog?.[ stream ], setting )
 					: toggleInDevice( devices, stream, setting ) ),
 			} ),
 		};

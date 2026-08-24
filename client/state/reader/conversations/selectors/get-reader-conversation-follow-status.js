@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { key } from 'calypso/state/reader/conversations/utils';
 
 import 'calypso/state/reader/init';
@@ -11,5 +10,5 @@ import 'calypso/state/reader/init';
  * @returns {string|null} Conversation follow status (F for following, M for muting, or null)
  */
 export default function getReaderConversationFollowStatus( state, { siteId, postId } ) {
-	return get( state, [ 'reader', 'conversations', 'items', key( siteId, postId ) ], null );
+	return state?.reader?.conversations?.items?.[ key( siteId, postId ) ] ?? null;
 }

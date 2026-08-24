@@ -1,0 +1,48 @@
+@import "@wordpress/base-styles/colors";
+@import "variables";
+
+/**
+ * Storybook-only chrome for HelpCenterCTA: mocks the Help Center home panel
+ * so the CTA reads in context, without pulling in the real (store/router
+ * dependent) container, header, or search components.
+ */
+.help-center.help-center-cta-stories {
+	font-size: 16px;
+}
+
+.help-center-cta-stories__panel {
+	position: static;
+	width: 410px;
+	max-height: none;
+	height: auto;
+	margin: 24px auto;
+	border-radius: 16px;
+	box-shadow: 0 2px 12px rgba( 0, 0, 0, 0.15 );
+	overflow: hidden;
+
+	.help-center__container-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 9px 16px;
+		gap: 8px;
+	}
+}
+
+.help-center-cta-stories__header-actions {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	flex-shrink: 0;
+}
+
+.help-center-cta-stories__search {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	border: 1px solid var(--studio-gray-10);
+	border-radius: 4px;
+	padding: 8px 12px;
+	color: $gray-700;
+	font-size: $font-body-small;
+}

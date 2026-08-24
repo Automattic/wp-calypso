@@ -6,7 +6,7 @@ import type { MouseEvent, FC, SetStateAction, Dispatch, RefObject } from 'react'
 interface MobileMenuButtonProps {
 	isOpen: boolean;
 	setIsOpen: Dispatch< SetStateAction< boolean > >;
-	mobileMenu: RefObject< HTMLDivElement >;
+	mobileMenu: RefObject< HTMLDivElement | null >;
 }
 
 const MobileMenuButton: FC< MobileMenuButtonProps > = ( { isOpen, setIsOpen, mobileMenu } ) => {

@@ -45,6 +45,8 @@ const Preformatted = ( { children }: { children: ReactNode } ) => <pre>{ childre
 const isWordPressDotComUrl = ( url?: string | null ) =>
 	!! url && url.startsWith( 'https://wordpress.com/' ); // we want the extra slash at the end because other subdomains could be used to trick this check (e.g. wordpress.com.malicious-site.com)
 
+const getWpcomHref = ( url: string ) => ( url.startsWith( '/' ) ? wpcomLink( url ) : url );
+
 const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	const { url, activity, section, intent } = content;
 
@@ -58,7 +60,7 @@ const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
 
 	return (
 		<ExternalLink
-			href={ url }
+			href={ getWpcomHref( url ) }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section }
@@ -91,7 +93,7 @@ const Post: BlockRenderer = ( { content, children, onClick } ) => {
 		: `/reader/blogs/${ siteId }/posts/${ postId }`;
 
 	return (
-		<a href={ href } onClick={ onClick }>
+		<a href={ wpcomLink( href ) } onClick={ onClick }>
 			{ children }
 		</a>
 	);
@@ -110,7 +112,7 @@ const Comment: BlockRenderer = ( { content, children, onClick } ) => {
 
 	return (
 		<a
-			href={ `/reader/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` }
+			href={ wpcomLink( `/reader/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` ) }
 			onClick={ onClick }
 		>
 			{ children }
@@ -189,7 +191,7 @@ const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
 
 		return (
 			<a
-				href={ `/theme/${ themeSlug }/${ siteSlug }` }
+				href={ wpcomLink( `/theme/${ themeSlug }/${ siteSlug }` ) }
 				onClick={ onClick }
 				data-activity={ activity ?? meta.activity }
 				data-section={ section ?? meta.section ?? 'themes' }
@@ -226,7 +228,7 @@ const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
 
 	return (
 		<a
-			href={ href }
+			href={ getWpcomHref( href ) }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'backups' }

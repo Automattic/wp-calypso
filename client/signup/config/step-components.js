@@ -19,7 +19,7 @@ const stepNameToModuleName = {
 	plans: 'plans',
 	'plans-new': 'plans',
 	'plans-business': 'plans',
-	'plans-business-with-plugin': 'plans',
+	'plans-with-plugin': 'plans',
 	'plans-import': 'plans',
 	'plans-launch': 'plans',
 	'plans-personal': 'plans',

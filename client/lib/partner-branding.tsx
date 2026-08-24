@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, type JSX } from 'react';
 import wooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import { isCiabOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { useSelector } from 'calypso/state';

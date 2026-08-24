@@ -1,4 +1,4 @@
-import { map, size, filter, uniqBy } from 'lodash';
+import { uniqBy } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Gravatar from 'calypso/components/gravatar';
@@ -15,21 +15,21 @@ class GravatarCaterpillar extends Component {
 	render() {
 		const { users, onClick, maxGravatarsToDisplay } = this.props;
 
-		if ( size( users ) < 1 ) {
+		if ( users.length < 1 ) {
 			return null;
 		}
 
 		const gravatarSmallScreenThreshold = maxGravatarsToDisplay / 2;
 
 		// Only display authors with a gravatar, and only display each author once
-		const displayedUsers = filter( uniqBy( users, 'avatar_URL' ), 'avatar_URL' ).slice(
-			-1 * maxGravatarsToDisplay
-		);
-		const displayedUsersCount = size( displayedUsers );
+		const displayedUsers = uniqBy( users, 'avatar_URL' )
+			.filter( ( user ) => user?.avatar_URL )
+			.slice( -1 * maxGravatarsToDisplay );
+		const displayedUsersCount = displayedUsers.length;
 
 		return (
 			<div className="gravatar-caterpillar" onClick={ onClick } aria-hidden="true">
-				{ map( displayedUsers, ( user, index ) => {
+				{ displayedUsers.map( ( user, index ) => {
 					let gravClasses = 'gravatar-caterpillar__gravatar';
 					// If we have more than x gravs,
 					// add a additional class so we can hide some on small screens

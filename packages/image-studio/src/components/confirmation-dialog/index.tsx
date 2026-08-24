@@ -12,7 +12,7 @@ import { useEffect, useRef } from '@wordpress/element';
 
 type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
 
-interface ActionButton {
+export interface ActionButton {
 	text: string;
 	onClick: () => void | Promise< void >;
 	variant?: ButtonVariant;

@@ -155,6 +155,21 @@ export async function recordAddToCart( cartItem ) {
 		window.ttq.track( 'AddToCart', params );
 	}
 
+	if ( mayWeTrackByTracker( 'openai' ) ) {
+		const params = {
+			type: 'contents',
+			contents: [
+				{
+					id: cartItem.product_slug,
+					content_type: 'product',
+					quantity: 1,
+				},
+			],
+		};
+		debug( 'recordAddToCart: [OpenAI]', params );
+		window.oaiq( 'measure', 'items_added', params );
+	}
+
 	if ( mayWeTrackByTracker( 'quora' ) ) {
 		debug( 'recordAddToCart: [Quora]' );
 		window.qp( 'track', 'AddToCart' );

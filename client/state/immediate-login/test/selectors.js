@@ -1,4 +1,3 @@
-import { last } from 'lodash';
 import { REASONS_FOR_MANUAL_RENEWAL } from '../constants';
 import {
 	wasImmediateLoginAttempted,
@@ -49,7 +48,7 @@ describe( 'immediate-login/selectors', () => {
 		test( 'should return correct value from state [4]', () => {
 			expect(
 				wasManualRenewalImmediateLoginAttempted( {
-					immediateLogin: { reason: last( REASONS_FOR_MANUAL_RENEWAL ) },
+					immediateLogin: { reason: REASONS_FOR_MANUAL_RENEWAL.at( -1 ) },
 				} )
 			).toEqual( true );
 		} );

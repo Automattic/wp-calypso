@@ -41,10 +41,10 @@ export function useFormattedTime(
 		if ( isToday ) {
 			if ( formatOptions?.timeStyle ) {
 				if ( lowercaseCalendarLabel ) {
-					// translators: time today
+					// translators: %s: the time of day, e.g. 3:00 pm, or 15:00
 					return sprintf( __( 'today at %s' ), formatted );
 				}
-				// translators: time today
+				// translators: %s: the time of day, e.g. 3:00 pm, or 15:00
 				return sprintf( __( 'Today at %s' ), formatted );
 			}
 			return lowercaseCalendarLabel ? __( 'today' ) : __( 'Today' );

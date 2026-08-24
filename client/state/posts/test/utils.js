@@ -14,6 +14,7 @@ import {
 	mergePostEdits,
 	getEditURL,
 	getFeaturedImageId,
+	getUnappliedMetadataEdits,
 } from '../utils';
 
 describe( 'utils', () => {
@@ -779,6 +780,25 @@ describe( 'utils', () => {
 			} );
 
 			expect( id ).toBeUndefined();
+		} );
+	} );
+
+	describe( '#getUnappliedMetadataEdits()', () => {
+		const edits = [
+			{ key: 'geo_latitude', value: '10', operation: 'update' },
+			{ key: 'geo_longitude', operation: 'delete' },
+		];
+
+		test( 'should treat false saved metadata as empty (REST shape for a new post)', () => {
+			// The REST API returns `false` for a new post's metadata.
+			expect( getUnappliedMetadataEdits( edits, false ) ).toEqual( [
+				{ key: 'geo_latitude', value: '10', operation: 'update' },
+			] );
+		} );
+
+		test( 'should drop edits already reflected in saved metadata', () => {
+			const savedMetadata = [ { key: 'geo_latitude', value: '10' } ];
+			expect( getUnappliedMetadataEdits( edits, savedMetadata ) ).toEqual( [] );
 		} );
 	} );
 } );

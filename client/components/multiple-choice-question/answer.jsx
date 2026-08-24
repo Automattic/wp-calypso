@@ -5,12 +5,12 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 const MultipleChoiceAnswer = ( {
-	disabled,
+	disabled = false,
 	answer: { id, answerText, textInput, textInputPrompt, children },
 	name,
 	isSelected,
 	onAnswerChange,
-	selectedAnswerText,
+	selectedAnswerText = '',
 } ) => {
 	const [ textResponse, setTextResponse ] = useState( selectedAnswerText );
 
@@ -60,11 +60,6 @@ MultipleChoiceAnswer.propTypes = {
 	} ).isRequired,
 	selectedAnswerText: PropTypes.string,
 	name: PropTypes.string.isRequired,
-};
-
-MultipleChoiceAnswer.defaultProps = {
-	disabled: false,
-	selectedAnswerText: '',
 };
 
 export default MultipleChoiceAnswer;

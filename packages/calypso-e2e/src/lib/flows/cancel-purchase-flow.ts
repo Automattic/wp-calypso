@@ -35,31 +35,47 @@ async function clickWhenEnabled( button: Locator, timeout = 30 * 1000 ): Promise
 }
 
 /**
- * Cancels a purchased subscription.
+ * Completes the cancellation survey for a non-plan subscription (e.g. a storage
+ * add-on), whose survey is a single step.
+ *
+ * On the refund-and-remove (`intent=remove`) path the step button reads "Complete
+ * removal"; legacy/other variants read "Submit" or "Complete". `surveyStepButton`
+ * (scoped to the survey form) matches whichever renders, and `clickWhenEnabled`
+ * rides out the busy/disabled state while the request is in flight.
  */
 export async function cancelSubscriptionFlow( page: Page ) {
-	await page.getByRole( 'button', { name: 'Submit' } ).click();
+	await clickWhenEnabled( surveyStepButton( page ) );
 }
 
 /**
  * Returns a locator that matches the cancellation survey's primary step button.
  *
- * The button's label depends on the survey step and the active experiment
- * variant: a non-final step renders "Continue", while the final step renders
- * "Submit" (legacy variant) or "Complete" (the split cancel/remove experiment
- * with an `intent=cancel` deep link). Matching all three keeps the flow robust
- * regardless of which variant is served.
+ * The button's label depends on the survey step and the active intent/variant:
+ * - Legacy / `intent=cancel`: non-final step renders "Continue", final step
+ *   renders "Submit" (legacy) or "Complete" (split cancel/remove).
+ * - `intent=remove` (the refund-and-remove path this flow now drives): non-final
+ *   step renders "Continue removal", final step renders "Complete removal".
+ *
+ * Matching all of these keeps the flow robust regardless of which variant is
+ * served. `exact: true` ensures "Continue" does not also resolve "Continue
+ * removal" (and vice versa).
+ *
+ * The locator is scoped to the survey's `.cancel-purchase-form` container. The
+ * survey renders as an overlay on top of the cancellation confirmation screen,
+ * whose own primary button can share a label (e.g. "Continue removal"); scoping
+ * avoids matching that underlying button and tripping strict-mode violations.
  *
  * @param {Page} page Page object the survey is rendered on.
  * @returns {Locator} Locator matching the survey's primary step button.
  */
 function surveyStepButton( page: Page ): Locator {
-	// Exact matching avoids accidentally resolving to longer labels used by
-	// other survey variants (e.g. "Continue removal", "Complete removal").
-	return page
+	const surveyForm = page.locator( '.cancel-purchase-form' );
+	return surveyForm
 		.getByRole( 'button', { name: 'Submit', exact: true } )
-		.or( page.getByRole( 'button', { name: 'Continue', exact: true } ) )
-		.or( page.getByRole( 'button', { name: 'Complete', exact: true } ) );
+		.or( surveyForm.getByRole( 'button', { name: 'Continue', exact: true } ) )
+		.or( surveyForm.getByRole( 'button', { name: 'Complete', exact: true } ) )
+		.or( surveyForm.getByRole( 'button', { name: 'Continue removal', exact: true } ) )
+		.or( surveyForm.getByRole( 'button', { name: 'Complete removal', exact: true } ) );
 }
 
 /**
@@ -72,17 +88,21 @@ export async function cancelAtomicPurchaseFlow(
 		customReasonText: string;
 	}
 ) {
+	// The feedback question is worded by intent: "Why would you like to cancel?"
+	// on the cancel path and "Why would you like to remove?" on the refund-and-
+	// remove (`intent=remove`) path this flow now drives. Match either.
 	await page
-		.getByRole( 'combobox', { name: 'Why would you like to cancel?' } )
+		.getByRole( 'combobox', { name: /Why would you like to (cancel|remove)\?/ } )
 		.selectOption( feedback.reason );
 
 	await page
 		.getByRole( 'textbox', { name: 'Can you please specify?' } )
 		.fill( feedback.customReasonText );
 
-	// Submit the feedback step. This is not the final step, so the button is
-	// labelled "Continue", but match the other labels too to ride out variant
-	// differences.
+	// Submit the feedback step. This is not the final step, so under the
+	// refund-and-remove (`intent=remove`) path the button is labelled "Continue
+	// removal"; other variants label it "Continue". `surveyStepButton` matches
+	// whichever renders.
 	await clickWhenEnabled( surveyStepButton( page ) );
 
 	// The next (and final) step asks where the user is headed next. Selecting an

@@ -1,5 +1,4 @@
 import languages from '@automattic/languages';
-import { find } from 'lodash';
 import { stringify as stringifyQs } from 'qs';
 import { RequestError } from './request-error';
 
@@ -15,7 +14,9 @@ const WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.2/';
 const WPORG_CORE_VERSIONS_ENDPOINT = 'https://api.wordpress.org/core/version-check/1.7/';
 
 function getWporgLocaleCode( currentUserLocale ) {
-	let wpOrgLocaleCode = find( languages, { langSlug: currentUserLocale } ).wpLocale;
+	let wpOrgLocaleCode = languages.find(
+		( language ) => language.langSlug === currentUserLocale
+	).wpLocale;
 
 	if ( wpOrgLocaleCode === '' ) {
 		wpOrgLocaleCode = currentUserLocale;

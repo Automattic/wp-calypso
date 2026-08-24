@@ -1,5 +1,5 @@
+import { omit } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 

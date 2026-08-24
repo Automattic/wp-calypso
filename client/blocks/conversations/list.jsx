@@ -1,4 +1,4 @@
-import { map, size, filter, get, partition, pickBy, keyBy } from 'lodash';
+import { keyBy, partition, pickBy } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
@@ -135,7 +135,7 @@ export class ConversationCommentList extends Component {
 		const hiddenComments = this.getHiddenComments( commentsToShow );
 
 		// if we are running low on comments to expand then fetch more
-		if ( size( hiddenComments ) < FETCH_NEW_COMMENTS_THRESHOLD ) {
+		if ( Object.keys( hiddenComments ).length < FETCH_NEW_COMMENTS_THRESHOLD ) {
 			this.reqMoreComments();
 		}
 
@@ -156,19 +156,18 @@ export class ConversationCommentList extends Component {
 			} );
 	}
 
-	getParentId = ( commentsTree, childId ) =>
-		get( commentsTree, [ childId, 'data', 'parent', 'ID' ] );
+	getParentId = ( commentsTree, childId ) => commentsTree?.[ childId ]?.data?.parent?.ID;
 	commentHasParent = ( commentsTree, childId ) => !! this.getParentId( commentsTree, childId );
-	commentIsLoaded = ( commentsTree, commentId ) => !! get( commentsTree, commentId );
+	commentIsLoaded = ( commentsTree, commentId ) => !! commentsTree?.[ commentId ];
 
 	getInaccessibleParentsIds = ( commentsTree, commentIds ) => {
 		// base case
-		if ( size( commentIds ) === 0 ) {
+		if ( commentIds.length === 0 ) {
 			return [];
 		}
 
-		const withParents = filter( commentIds, ( id ) => this.commentHasParent( commentsTree, id ) );
-		const parentIds = map( withParents, ( id ) => this.getParentId( commentsTree, id ) );
+		const withParents = commentIds.filter( ( id ) => this.commentHasParent( commentsTree, id ) );
+		const parentIds = withParents.map( ( id ) => this.getParentId( commentsTree, id ) );
 
 		const [ accessible, inaccessible ] = partition( parentIds, ( id ) =>
 			this.commentIsLoaded( commentsTree, id )
@@ -232,8 +231,8 @@ export class ConversationCommentList extends Component {
 	};
 
 	setActiveReplyComment = ( commentId ) => {
-		const siteId = get( this.props, 'post.site_ID' );
-		const postId = get( this.props, 'post.ID' );
+		const siteId = this.props?.post?.site_ID;
+		const postId = this.props?.post?.ID;
 
 		if ( ! siteId || ! postId ) {
 			return;
@@ -265,10 +264,13 @@ export class ConversationCommentList extends Component {
 		// if you have finished loading comments, then lets use the comments we have as the final comment count
 		// if we are still loading comments, then assume what the server initially told us is right
 		const commentCount = isDoneLoadingComments
-			? filter( commentsTree, ( comment ) => get( comment, 'data.type' ) === 'comment' ).length // filter out pingbacks/trackbacks
+			? Object.values( commentsTree ?? {} ).filter(
+					( comment ) => comment?.data?.type === 'comment'
+			  ).length // filter out pingbacks/trackbacks
 			: post.discussion.comment_count;
 
-		const showCaterpillar = enableCaterpillar && size( commentsToShow ) < commentCount;
+		const showCaterpillar =
+			enableCaterpillar && Object.keys( commentsToShow ).length < commentCount;
 
 		return (
 			<div className="conversations__comment-list">
@@ -285,7 +287,7 @@ export class ConversationCommentList extends Component {
 							recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
 						/>
 					) }
-					{ map( commentsTree.children, ( commentId ) => {
+					{ commentsTree.children.map( ( commentId ) => {
 						return (
 							<PostComment
 								showNestingReplyArrow

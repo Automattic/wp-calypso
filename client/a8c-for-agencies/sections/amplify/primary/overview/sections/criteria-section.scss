@@ -1,0 +1,8 @@
+// The only custom CSS these sections need: cap the intro width so it stays
+// readable (roughly half-width on a wide section, full width on small screens).
+// `Text` has no width prop, so this can't be expressed as a component prop.
+// Everything else — eyebrow, heading, stat cards, and criteria cards — is
+// composed with core components (Grid, Card, VStack, Text, Heading).
+.amplify-criteria-intro {
+	max-inline-size: 600px;
+}

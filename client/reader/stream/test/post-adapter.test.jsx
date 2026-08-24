@@ -24,9 +24,7 @@ const renderPost = ( { post, queryClient = new QueryClient() } ) => {
 	const store = createStore(
 		(
 			state = {
-				reader: {
-					follows: { items: {} },
-				},
+				reader: {},
 			}
 		) => state
 	);

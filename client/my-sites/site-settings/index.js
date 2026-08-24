@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { get } from 'lodash';
 import { makeLayout, redirectIfDuplicatedView, render as clientRender } from 'calypso/controller';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import {
@@ -41,9 +40,9 @@ export default function () {
 
 	// Redirect settings pages for import and export now that they have their own sections.
 	page( '/settings/:importOrExport(import|export)/:subroute(.*)', ( context ) => {
-		const importOrExport = get( context, 'params.importOrExport' );
-		const subroute = get( context, 'params.subroute' );
-		const queryString = get( context, 'querystring' );
+		const importOrExport = context?.params?.importOrExport;
+		const subroute = context?.params?.subroute;
+		const queryString = context?.querystring;
 		let redirectPath = `/${ importOrExport }`;
 
 		if ( subroute ) {

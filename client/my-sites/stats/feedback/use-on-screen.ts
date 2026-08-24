@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState, RefObject } from 'react';
+import { useEffect, useMemo, useState, type RefObject } from 'react';
 
 // Determines if an element is visible on screen or not.
 
-function useOnScreen( ref: RefObject< HTMLElement > ): boolean {
+function useOnScreen( ref: RefObject< HTMLElement | null > ): boolean {
 	const [ isIntersecting, setIntersecting ] = useState( false );
 
 	const observer = useMemo(

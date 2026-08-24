@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/google-my-business/init';
 
 /**
@@ -11,5 +9,5 @@ import 'calypso/state/google-my-business/init';
  * @returns {string} interval 'week' | 'month' | 'quarter'
  */
 export function getStatsInterval( state, siteId, statType ) {
-	return get( state.googleMyBusiness, [ siteId, 'statsInterval', statType ], 'week' );
+	return state.googleMyBusiness?.[ siteId ]?.statsInterval?.[ statType ] ?? 'week';
 }

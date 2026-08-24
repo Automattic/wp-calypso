@@ -1,11 +1,17 @@
-import { Component, Children } from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+/**
+ * @jest-environment jsdom
+ */
+import { render } from '@testing-library/react';
+import { Component } from 'react';
 import passToChildren from '../';
 
 /**
  * Module variables
  */
 const DUMMY_PROPS = { data: [ 1, 2, 3 ] };
+
+// `data` is passed through to the DOM node; React serializes the array value.
+const SERIALIZED_DATA = String( DUMMY_PROPS.data );
 
 const PassThrough = class extends Component {
 	render() {
@@ -14,99 +20,84 @@ const PassThrough = class extends Component {
 };
 
 describe( 'index', () => {
-	let renderer;
-
-	beforeEach( () => {
-		renderer = new ShallowRenderer();
-	} );
-
 	test( 'should accept a single child and pass along props', () => {
-		renderer.render(
+		const { container } = render(
 			<PassThrough>
 				<div />
 			</PassThrough>
 		);
-		const result = renderer.getRenderOutput();
 
-		expect( result.type ).toEqual( 'div' );
-		expect( result.props ).toEqual( DUMMY_PROPS );
+		expect( container.childNodes ).toHaveLength( 1 );
+		const child = container.firstChild;
+		expect( child.tagName ).toBe( 'DIV' );
+		expect( child.getAttribute( 'data' ) ).toBe( SERIALIZED_DATA );
 	} );
 
 	test( 'should accept multiple children and wrap them in a div', () => {
-		renderer.render(
+		const { container } = render(
 			<PassThrough>
 				<div />
 				<div />
 			</PassThrough>
 		);
-		const result = renderer.getRenderOutput();
 
-		expect( Children.count( result ) ).toEqual( 1 );
-		expect( result.type ).toEqual( 'div' );
-		expect( Children.count( result.props.children ) ).toEqual( 2 );
+		expect( container.childNodes ).toHaveLength( 1 );
+		const wrapper = container.firstChild;
+		expect( wrapper.tagName ).toBe( 'DIV' );
+		expect( wrapper.childNodes ).toHaveLength( 2 );
 	} );
 
 	test( 'should accept multiple children and pass along props to each', () => {
-		return new Promise( ( done ) => {
-			renderer.render(
-				<PassThrough>
-					<div />
-					<div />
-				</PassThrough>
-			);
-			const result = renderer.getRenderOutput();
+		const { container } = render(
+			<PassThrough>
+				<div />
+				<div />
+			</PassThrough>
+		);
 
-			Children.forEach( result.props.children, function ( child, i ) {
-				expect( child.type ).toEqual( 'div' );
-				expect( child.props ).toEqual( DUMMY_PROPS );
-
-				if ( 1 === i ) {
-					done();
-				}
-			} );
+		const wrapper = container.firstChild;
+		wrapper.childNodes.forEach( ( child ) => {
+			expect( child.tagName ).toBe( 'DIV' );
+			expect( child.getAttribute( 'data' ) ).toBe( SERIALIZED_DATA );
 		} );
 	} );
 
 	test( 'should accept multiple children, including nulls', () => {
-		renderer.render(
+		const { container } = render(
 			<PassThrough>
 				{ null }
 				<div />
 			</PassThrough>
 		);
-		const result = renderer.getRenderOutput();
 
-		expect( Children.count( result.props.children ) ).toEqual( 1 );
-		expect( Children.toArray( result.props.children )[ 0 ].props ).toEqual( DUMMY_PROPS );
+		const wrapper = container.firstChild;
+		expect( wrapper.childNodes ).toHaveLength( 1 );
+		expect( wrapper.firstChild.getAttribute( 'data' ) ).toBe( SERIALIZED_DATA );
 	} );
 
 	test( 'should preserve props passed to the children', () => {
-		renderer.render(
+		const { container } = render(
 			<PassThrough>
 				<div data-preserve />
 			</PassThrough>
 		);
-		const result = renderer.getRenderOutput();
 
-		expect( result.type ).toEqual( 'div' );
-		expect( result.props ).toEqual( {
-			...DUMMY_PROPS,
-			'data-preserve': true,
-		} );
+		const child = container.firstChild;
+		expect( child.tagName ).toBe( 'DIV' );
+		expect( child.getAttribute( 'data' ) ).toBe( SERIALIZED_DATA );
+		expect( child.hasAttribute( 'data-preserve' ) ).toBe( true );
 	} );
 
 	test( 'should preserve props passed to the instance itself', () => {
-		renderer.render(
+		const { container } = render(
 			<PassThrough data-preserve>
 				<div />
 			</PassThrough>
 		);
-		const result = renderer.getRenderOutput();
 
-		expect( result.type ).toEqual( 'div' );
-		expect( result.props ).toEqual( {
-			...DUMMY_PROPS,
-			'data-preserve': true,
-		} );
+		const child = container.firstChild;
+		expect( child.tagName ).toBe( 'DIV' );
+		expect( child.getAttribute( 'data' ) ).toBe( SERIALIZED_DATA );
+		expect( child.hasAttribute( 'data-preserve' ) ).toBe( true );
 	} );
 } );

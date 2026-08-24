@@ -1,15 +1,30 @@
+import type { AdminBarNode } from './admin-bar';
+
 export interface OmnibarNode {
 	id: string;
 	title?: string;
 	label?: string;
 	icon?: React.ReactElement;
 	group?: boolean;
+	variant?: 'secondary';
 	href?: string;
-	onClick?: () => void;
+	onClick?: ( event: React.MouseEvent ) => void;
+	disabled?: boolean;
+	active?: boolean;
+	className?: string;
 	meta?: SiteActionNodeMeta & UserInfoNodeMeta;
 	render?: ( node: OmnibarNode ) => React.ReactNode;
 	children?: OmnibarNode[];
 }
+
+export type OmnibarNodeBuilders = Record<
+	string,
+	( adminBarNode: AdminBarNode ) => Partial< OmnibarNode >
+>;
+
+export type OmnibarHrefResolver = ( href: string ) => string;
+
+export type OmnibarNodeTransformer = ( node: OmnibarNode ) => OmnibarNode;
 
 export interface SiteActionNodeMeta {
 	subtitle?: string;
@@ -32,4 +47,5 @@ export interface OmnibarNodes {
 export interface OmnibarProps {
 	nodes: OmnibarNodes;
 	onClickResponsiveMenu?: () => void;
+	className?: string;
 }

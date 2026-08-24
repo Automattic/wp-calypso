@@ -1,6 +1,6 @@
 import { Gridicon, ProgressBar, Spinner } from '@automattic/components';
 import clsx from 'clsx';
-import { isEqual } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 import * as React from 'react';
 import { getMimePrefix } from 'calypso/lib/media/utils';
 import ListItemDocument from './list-item-document';
@@ -25,6 +25,7 @@ interface Props {
 	selectedIndex?: number;
 	onToggle?: ( media: Media | undefined, shiftKey: boolean ) => void;
 	style?: React.CSSProperties;
+	forwardedRef?: React.Ref< HTMLButtonElement >;
 }
 
 interface State {
@@ -112,6 +113,7 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 			selectedIndex,
 			onToggle,
 			style,
+			forwardedRef,
 			...otherProps
 		} = this.props;
 
@@ -138,6 +140,7 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 
 		return (
 			<button
+				ref={ forwardedRef }
 				className={ classes }
 				style={ styleWithDefaults }
 				onClick={ this.clickItem }

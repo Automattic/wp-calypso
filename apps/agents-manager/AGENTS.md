@@ -2,7 +2,7 @@
 
 Build and deployment layer for the Agents Manager. Most code lives in `packages/agents-manager/` — see its `AGENTS.md` for architecture and conventions.
 
-This app bundles the package into 8 webpack entry points deployed to `widgets.wp.com/agents-manager/`. Jetpack enqueues these on Simple, Atomic, and CIAB sites.
+This app bundles the package into 9 webpack entry points deployed to `widgets.wp.com/agents-manager/`. They are separate compilations sharing one `dist/`, so each entry's chunk filenames and chunk-loading global must stay entry-unique. Jetpack enqueues these on Simple, Atomic, and CIAB sites.
 
 ## Build & Sync
 
@@ -26,5 +26,5 @@ The `--sync` flag syncs bundles to `widgets.wp.com/agents-manager/` on your sand
 
 ## Pitfalls
 
-- **`wp-admin` entry point is dual-mode**: It renders full UI when `#agents-manager-masterbar` exists, otherwise runs headless (for Image Studio shared use). This is not obvious from the filename.
-- **`image-studio` and `block-notes` are separate bundles**: They're built here but are independent features, not part of the main Agents Manager UI.
+- **`wp-admin` entry point mounts into the admin bar**: It renders only when `#agents-manager-masterbar` exists. Admin screens with no admin bar (e.g. iframe requests) render no node, so the bundle loads and does nothing.
+- **`image-studio` is a separate bundle**: It's built here but is an independent feature, not part of the main Agents Manager UI.

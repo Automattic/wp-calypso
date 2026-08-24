@@ -1,4 +1,3 @@
-import { forEach } from 'lodash';
 import { ANALYTICS_STAT_BUMP } from 'calypso/state/action-types';
 import { setMediaModalView } from 'calypso/state/ui/media-modal/actions';
 import { MODAL_VIEW_STATS, setEditorMediaModalView } from '../actions';
@@ -7,7 +6,7 @@ describe( 'actions', () => {
 	describe( 'setEditorMediaModalView()', () => {
 		test( 'should dispatch setMediaModalView with analytics', () => {
 			expect.assertions( Object.entries( MODAL_VIEW_STATS ).length );
-			forEach( MODAL_VIEW_STATS, ( stat, view ) => {
+			Object.entries( MODAL_VIEW_STATS ).forEach( ( [ view, stat ] ) => {
 				expect( setEditorMediaModalView( view ) ).toEqual( {
 					...setMediaModalView( view ),
 					meta: {

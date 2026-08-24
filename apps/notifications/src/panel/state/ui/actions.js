@@ -19,12 +19,22 @@ export const closePanel = () => ( {
 	type: CLOSE_PANEL,
 } );
 
-export const loadNotes = () => ( {
+// Pass the in-flight filter fragment (e.g. `{ unread: 1 }`) for a filtered fetch,
+// or nothing for the unfiltered poll. See the `filteredLoading` reducer.
+/**
+ * @param {{ filter?: Object | null }} [options]
+ */
+export const loadNotes = ( { filter = null } = {} ) => ( {
 	type: NOTES_LOADING,
+	filter,
 } );
 
-export const loadedNotes = () => ( {
+/**
+ * @param {{ filter?: Object | null }} [options]
+ */
+export const loadedNotes = ( { filter = null } = {} ) => ( {
 	type: NOTES_LOADED,
+	filter,
 } );
 
 export const selectNote = ( noteId ) => ( {

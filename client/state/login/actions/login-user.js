@@ -1,7 +1,5 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { get } from 'lodash';
-import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
 	LOGIN_REQUEST,
@@ -10,6 +8,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
+import { isFormDisabled } from 'calypso/state/login/selectors';
 import {
 	getErrorFromHTTPError,
 	getSMSMessageFromResponse,
@@ -19,19 +18,24 @@ import 'calypso/state/login/init';
 
 /**
  * Logs a user in.
- * @param  {string}   usernameOrEmail Username or email of the user
- * @param  {string}   password        Password of the user
- * @param  {string}   redirectTo      Url to redirect the user to upon successful login
- * @param  {string}   domain          A domain to reverse login to
- * @returns {Function}                 A thunk that can be dispatched
+ * @param  {string}   usernameOrEmail 		Username or email of the user
+ * @param  {string}   password        		Password of the user
+ * @param  {string}   redirectTo      		Url to redirect the user to upon successful login
+ * @param  {string}   domain          		A domain to reverse login to
+ * @param  {Object}   blackbox        		Blackbox protection helpers from `useBlackboxProtection`.
+ * @returns {Function}                 		A thunk that resolves to `false` when no login request is started
  */
 export const loginUser =
-	( usernameOrEmail, password, redirectTo, domain ) => async ( dispatch ) => {
+	( usernameOrEmail, password, redirectTo, domain, blackbox ) => async ( dispatch, getState ) => {
+		if ( isFormDisabled( getState() ) ) {
+			return false;
+		}
+
 		dispatch( {
 			type: LOGIN_REQUEST,
 		} );
 
-		const blackboxSessionId = await getBlackboxSessionId();
+		const blackboxSessionId = await blackbox.getSessionId();
 
 		return postLoginRequest( 'login-endpoint', {
 			username: usernameOrEmail,
@@ -46,20 +50,20 @@ export const loginUser =
 			...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
 		} )
 			.then( ( response ) => {
-				if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
+				if ( response?.body?.data?.two_step_notification_sent === 'sms' ) {
 					dispatch( {
 						type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 						notice: {
 							message: getSMSMessageFromResponse( response ),
 							status: 'is-success',
 						},
-						twoStepNonce: get( response, 'body.data.two_step_nonce_sms' ),
+						twoStepNonce: response?.body?.data?.two_step_nonce_sms,
 					} );
 				}
 
 				// if the user has 2FA, in this stage he's not yet logged in.
-				if ( ! get( response, 'body.data.two_step_notification_sent' ) ) {
-					return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+				if ( ! response?.body?.data?.two_step_notification_sent ) {
+					return remoteLoginUser( response?.body?.data?.token_links ?? [] ).then( () => {
 						dispatch( {
 							type: LOGIN_REQUEST_SUCCESS,
 							data: response.body && response.body.data,
@@ -81,11 +85,7 @@ export const loginUser =
 				} );
 
 				// Reset Blackbox so the next login attempt gets a fresh session.
-				try {
-					window.Blackbox?.reset();
-				} catch {
-					// Intentionally ignored — Blackbox must never interfere with login.
-				}
+				blackbox.reset();
 
 				return Promise.reject( error );
 			} );

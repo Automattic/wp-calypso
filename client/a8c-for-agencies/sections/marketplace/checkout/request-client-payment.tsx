@@ -1,8 +1,11 @@
+import { referralsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { FormLabel, Tooltip } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
+	ExternalLink,
 	TextControl,
 	TextareaControl,
 	__experimentalVStack as VStack,
@@ -37,7 +40,6 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import useFetchReferrals from '../../referrals/hooks/use-fetch-referrals';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
@@ -120,7 +122,10 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const agencyId = useSelector( getActiveAgencyId );
 	const uploadLogo = useUploadLogo();
 	const { mutate: requestPayment, isPending } = useRequestClientPaymentMutation();
-	const { data: referrals, refetch: refetchReferrals } = useFetchReferrals();
+	const { data: referrals, refetch: refetchReferrals } = useQuery( {
+		...referralsQuery( agencyId ?? 0 ),
+		refetchOnWindowFocus: false,
+	} );
 
 	const hasCompletedForm = !! email && !! message;
 	// Disable Send/Copy when "Use a different logo" is selected but no logo is uploaded
@@ -173,11 +178,11 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					setIsUploadingLogo( true );
 					try {
 						const result = await uploadLogo( agencyId, referralLogo.file );
-						if ( result?.logo_url ) {
-							logoUrl = result.logo_url;
+						if ( result?.url ) {
+							logoUrl = result.url;
 							setLastUploadedFile( {
 								...fileSignature,
-								logoUrl: result.logo_url,
+								logoUrl: result.url,
 							} );
 						}
 					} catch ( error ) {
@@ -329,10 +334,9 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 											{
 												components: {
 													a: (
-														<a
+														<ExternalLink
 															href="https://automattic.com/for-agencies/program-incentives/"
-															target="_blank"
-															rel="noopener noreferrer"
+															children={ null }
 														/>
 													),
 												},
@@ -454,7 +458,11 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 							{
 								components: {
 									a: (
-										<a href="https://wordpress.com/me" target="_blank" rel="noopener noreferrer" />
+										<ExternalLink
+											href="https://wordpress.com/me"
+											style={ { color: 'var(--color-text-inverted)' } }
+											children={ null }
+										/>
 									),
 								},
 							}

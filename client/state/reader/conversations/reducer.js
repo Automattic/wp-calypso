@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,

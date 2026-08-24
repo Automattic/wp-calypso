@@ -160,11 +160,8 @@ describe( 'multiPartnerCardProcessor', () => {
 			device_id: undefined, // VGS flow doesn't provide deviceId
 			document: 'ebanx-document-code',
 			email: undefined,
-			gstin: undefined,
 			ideal_bank: undefined,
 			name: 'test name',
-			nik: undefined,
-			pan: undefined,
 			payment_key: 'ebanx-token',
 			payment_method: 'WPCOM_Billing_Ebanx',
 			payment_partner: undefined,

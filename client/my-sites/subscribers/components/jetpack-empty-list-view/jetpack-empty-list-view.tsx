@@ -15,7 +15,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Card, CardBody, Icon } from '@wordpress/components';
 import { copy, upload, reusableBlock, chevronRight } from '@wordpress/icons';
 import { useTranslate, default as i18n } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, type JSX } from 'react';
 import { useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

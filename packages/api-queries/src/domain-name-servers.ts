@@ -15,6 +15,7 @@ export const domainNameServersQuery = ( domainName: string ) =>
 
 export const domainNameServersMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-name-servers-update' },
 		mutationFn: ( nameServers: string[] ) => updateDomainNameServers( domainName, nameServers ),
 		onSuccess: ( _, data ) => {
 			const oldData = queryClient.getQueryData( domainNameServersQuery( domainName ).queryKey ) as

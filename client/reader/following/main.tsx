@@ -1,4 +1,3 @@
-import { Card, CardBody } from '@wordpress/components';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
@@ -6,22 +5,17 @@ import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
-import { QuickPostSkeleton } from 'calypso/reader/components/quick-post/skeleton';
 import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream from 'calypso/reader/stream';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { useDispatch } from 'calypso/state';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import Recent from '../recent';
 import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
+import { WriteButton } from './write-button';
 import './style.scss';
 
-const loadQuickPost = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-components-quick-post" */ 'calypso/reader/components/quick-post'
-	);
 const loadTrackResurrections = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
@@ -33,8 +27,6 @@ function FollowingStream( { ...props } ) {
 	const [ isResurrectedModalVisible, setIsResurrectedModalVisible ] = useState( false );
 	const [ shouldDelayReaderOnboarding, setShouldDelayReaderOnboarding ] = useState( false );
 	const [ readerOnboardingShouldShow, setReaderOnboardingShouldShow ] = useState( false );
-	const currentUser = useSelector( getCurrentUser );
-	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 
 	const handleReaderOnboardingRender = useCallback(
 		( willRender: boolean ) => {
@@ -67,7 +59,14 @@ function FollowingStream( { ...props } ) {
 	return (
 		<>
 			{ currentView === 'recent' ? (
-				<Recent viewToggle={ <ViewToggle /> } />
+				<Recent
+					viewToggle={
+						<>
+							<ViewToggle />
+							<WriteButton />
+						</>
+					}
+				/>
 			) : (
 				<ReaderStream { ...props } className="following">
 					<BloganuaryHeader />
@@ -81,14 +80,8 @@ function FollowingStream( { ...props } ) {
 						className={ clsx( 'following-stream-header' ) }
 					>
 						<ViewToggle />
+						<WriteButton />
 					</NavigationHeader>
-					{ hasSites && (
-						<Card className="following-stream__quick-post-card">
-							<CardBody>
-								<AsyncLoad require={ loadQuickPost } placeholder={ <QuickPostSkeleton /> } />
-							</CardBody>
-						</Card>
-					) }
 					<ReaderOnboardingGate
 						onRender={ handleReaderOnboardingRender }
 						isSuppressed={ suppressReaderOnboarding }

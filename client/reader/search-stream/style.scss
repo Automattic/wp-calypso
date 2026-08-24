@@ -1,8 +1,14 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/typography/styles/fonts";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/hide-content-accessibly";
 
 // .has-header-section only applies for logged out views
 .layout.has-header-section {

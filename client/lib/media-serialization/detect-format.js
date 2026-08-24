@@ -1,4 +1,3 @@
-import { includes } from 'lodash';
 import { getMimePrefix } from 'calypso/lib/media/utils';
 import { Formats, MediaTypes } from './constants';
 
@@ -16,11 +15,11 @@ export default function ( node ) {
 		return Formats.DOM;
 	}
 
-	if ( node && node.tag && includes( VALID_SHORTCODE_TYPES, node.type ) ) {
+	if ( node && node.tag && VALID_SHORTCODE_TYPES.includes( node.type ) ) {
 		return Formats.SHORTCODE;
 	}
 
-	if ( node && node.type && includes( MediaTypes, node.type ) ) {
+	if ( node && node.type && MediaTypes.includes( node.type ) ) {
 		return Formats.OBJECT;
 	}
 

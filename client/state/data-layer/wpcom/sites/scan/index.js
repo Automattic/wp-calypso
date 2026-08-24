@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import {
 	JETPACK_SCAN_UPDATE,
 	JETPACK_SCAN_REQUEST,

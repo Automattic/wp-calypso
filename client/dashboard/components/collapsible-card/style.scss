@@ -17,6 +17,14 @@
 		margin-inline-start: auto;
 	}
 
+	&.is-disabled {
+		opacity: 0.5;
+
+		.collapsible-card__header {
+			cursor: default;
+		}
+	}
+
 	// Make header clickable with visual feedback
 	.collapsible-card__header {
 		cursor: pointer;

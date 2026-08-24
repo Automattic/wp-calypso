@@ -26,6 +26,9 @@ export default function HostingDashboard() {
 	const { mutate: saveOptInPreference, isPending } = useMutation(
 		userPreferenceMutation( 'hosting-dashboard-opt-in' )
 	);
+	const { mutate: dismissWelcomeModal } = useMutation(
+		userPreferenceMutation( 'hosting-dashboard-opt-in-welcome-modal-dismissed' )
+	);
 
 	const isEnabled = optIn.value === 'opt-in';
 
@@ -37,6 +40,11 @@ export default function HostingDashboard() {
 		recordTracksEvent( 'calypso_dashboard_me_preferences_new_hosting_dashboard_submit', {
 			enabled,
 		} );
+
+		// A deliberate opt-in from inside the dashboard makes the welcome pitch redundant.
+		if ( enabled ) {
+			dismissWelcomeModal( new Date().toISOString() );
+		}
 
 		saveOptInPreference(
 			{

@@ -1,10 +1,9 @@
 import { FormLabel } from '@automattic/components';
+import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -147,14 +146,6 @@ class EditorMediaModalDetailFields extends Component {
 	getItemValue( attribute ) {
 		return this.state.modifiedChanges?.[ attribute ] ?? this.props.item?.[ attribute ];
 	}
-
-	scrollToShowVisibleDropdown = ( event ) => {
-		if ( ! event.open || ! ( 'scrollIntoView' in window.Element.prototype ) ) {
-			return;
-		}
-
-		ReactDom.findDOMNode( event.target ).scrollIntoView();
-	};
 
 	renderImageAltText() {
 		if ( ! this.isMimePrefix( 'image' ) ) {

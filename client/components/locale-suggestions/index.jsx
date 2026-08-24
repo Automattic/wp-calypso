@@ -1,6 +1,5 @@
 import { getLanguage, addLocaleToPath } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
-import startsWith from 'lodash/startsWith';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -75,7 +74,7 @@ export class LocaleSuggestions extends Component {
 		}
 
 		const usersOtherLocales = localeSuggestions.filter( function ( locale ) {
-			return ! startsWith( getLocaleSlug(), locale.locale );
+			return ! ( getLocaleSlug() ?? '' ).startsWith( locale.locale );
 		} );
 
 		if ( usersOtherLocales.length === 0 ) {

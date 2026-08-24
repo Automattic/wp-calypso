@@ -3,9 +3,9 @@ import {
 	// eslint-disable-next-line import/named
 	__experimentalInserterMenuExtension,
 } from '@wordpress/block-editor';
+import { debounce } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
-import { debounce } from 'lodash';
 import tracksRecordEvent from './track-record-event';
 
 // InserterMenuExtension has been made unstable in this PR: https://github.com/WordPress/gutenberg/pull/31417 / Gutenberg v10.7.0-rc.1.

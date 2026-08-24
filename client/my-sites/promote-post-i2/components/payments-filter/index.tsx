@@ -56,7 +56,11 @@ export default function PaymentsFilter( props: Props ) {
 							selected={ paymentsFilter === option.value }
 							onClick={ () => handleChange( option.value as PaymentsFilterType ) }
 						>
-							<span ref={ ( el ) => ( tabsRef.current[ option.value ] = el ) }>
+							<span
+								ref={ ( el ) => {
+									tabsRef.current[ option.value ] = el;
+								} }
+							>
 								{ option.label }
 							</span>
 						</SegmentedControl.Item>

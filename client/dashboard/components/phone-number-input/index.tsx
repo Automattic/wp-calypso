@@ -1,6 +1,11 @@
 import { smsCountryCodesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalHStack as HStack, privateApis, SelectControl } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	privateApis,
+	ComboboxControl,
+	Disabled,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 
@@ -38,7 +43,7 @@ export default function PhoneNumberInput( {
 			value: countryCode.code,
 		} ) ) ?? [];
 
-	const onChangeCountryCode = ( value: string ) => {
+	const onChangeCountryCode = ( value: string | null | undefined ) => {
 		const countryCode = smsCountryCodes?.find( ( countryCode ) => countryCode.code === value );
 		if ( ! countryCode ) {
 			return;
@@ -52,17 +57,19 @@ export default function PhoneNumberInput( {
 	};
 
 	return (
-		<HStack className="phone-number-input">
-			<SelectControl
-				label={ __( 'Country code' ) }
-				value={ data.countryCode ?? '' }
-				options={ countryCodes }
-				onChange={ onChangeCountryCode }
-				__next40pxDefaultSize
-				__nextHasNoMarginBottom
-				disabled={ isDisabled }
-				className="phone-number-input__country-code-input"
-			/>
+		<HStack className="phone-number-input" spacing={ 4 }>
+			<div className="phone-number-input__country-code-input">
+				<Disabled isDisabled={ isDisabled }>
+					<ComboboxControl
+						label={ __( 'Country code' ) }
+						value={ data.countryCode ?? '' }
+						options={ countryCodes }
+						onChange={ onChangeCountryCode }
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+					/>
+				</Disabled>
+			</div>
 			<ValidatedInputControl
 				customValidity={ customValidity }
 				__next40pxDefaultSize

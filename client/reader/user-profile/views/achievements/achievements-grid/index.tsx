@@ -120,6 +120,7 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 								key={ a.achievement_id }
 								achievement={ a }
 								achievements={ earned }
+								isOwnProfile={ isOwnProfile }
 							/>
 						);
 					} ) }

@@ -45,6 +45,11 @@ let mockState: {
 
 let mockReelSharePath: string | null;
 
+// When false, simulate the Jetpack Social plugin's editor data store not being
+// registered (e.g. Atomic sites without Jetpack Social active). `@wordpress/data`
+// then returns null from both select() and dispatch() for that store.
+let mockSocialStoreRegistered: boolean;
+
 jest.mock( '@wordpress/data', () => {
 	const select = ( storeName: string ) => {
 		if ( storeName === 'video-studio' ) {
@@ -68,10 +73,12 @@ jest.mock( '@wordpress/data', () => {
 			};
 		}
 		if ( storeName === 'jetpack-social-plugin' ) {
-			return {
-				getConnections: () => mockState.connections,
-				isSharingCurrentPost: () => mockState.isSharingCurrentPost,
-			};
+			return mockSocialStoreRegistered
+				? {
+						getConnections: () => mockState.connections,
+						isSharingCurrentPost: () => mockState.isSharingCurrentPost,
+				  }
+				: null;
 		}
 		return {};
 	};
@@ -83,7 +90,8 @@ jest.mock( '@wordpress/data', () => {
 				return { editPost: mockEditPost };
 			}
 			if ( storeName === 'jetpack-social-plugin' ) {
-				return { shareCurrentPost: mockShareCurrentPost };
+				// Registry.dispatch() returns null for an unregistered store.
+				return mockSocialStoreRegistered ? { shareCurrentPost: mockShareCurrentPost } : null;
 			}
 			if ( storeName === 'image-studio' ) {
 				return { addNotice: mockAddNotice };
@@ -158,6 +166,7 @@ describe( 'useReelShare', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockReelSharePath = '/wpcom/v2/publicize/share-post/{postId}';
+		mockSocialStoreRegistered = true;
 		mockState = {
 			currentVideoUrl: 'https://example.com/clip.mp4',
 			currentAttachmentId: 555,
@@ -541,6 +550,59 @@ describe( 'useReelShare', () => {
 			} );
 
 			expect( mockTrackNotPublished ).toHaveBeenCalledWith( { surface: 'modal' } );
+			expect( result.current.isConfirming ).toBe( false );
+			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'social store not registered (Atomic site regression)', () => {
+		it( 'renders without throwing when useDispatch( jetpack-social-plugin ) returns null', () => {
+			mockSocialStoreRegistered = false;
+
+			expect( () =>
+				renderHook( () =>
+					useReelShare( 'sidebar', {
+						url: 'https://example.com/clip.mp4',
+						attachmentId: 555,
+						durationSeconds: 12,
+					} )
+				)
+			).not.toThrow();
+		} );
+
+		it( 'keeps the share entry point visible so a late store registration can still hydrate', () => {
+			mockSocialStoreRegistered = false;
+
+			const { result } = renderHook( () =>
+				useReelShare( 'sidebar', {
+					url: 'https://example.com/clip.mp4',
+					attachmentId: 555,
+					durationSeconds: 12,
+				} )
+			);
+
+			expect( result.current.isVisible ).toBe( true );
+			expect( result.current.isConfirming ).toBe( false );
+		} );
+
+		it( 'does not dispatch a share when the social store is absent', async () => {
+			mockSocialStoreRegistered = false;
+
+			const { result } = renderHook( () =>
+				useReelShare( 'sidebar', {
+					url: 'https://example.com/clip.mp4',
+					attachmentId: 555,
+					durationSeconds: 12,
+				} )
+			);
+
+			// requestShare reads the social store fresh; with no IG connection it
+			// routes to the "connect Instagram" notice rather than opening the
+			// confirmation, so confirmShare can't dispatch a half-formed share.
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+
 			expect( result.current.isConfirming ).toBe( false );
 			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
 		} );

@@ -21,7 +21,7 @@ function SearchDomainsActionItem( { url }: { url: string } ) {
 					variant="secondary"
 					href={ addQueryArgs( wpcomLink( url ), { dashboard: getCurrentDashboard() } ) }
 					onClick={ () =>
-						recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
+						recordTracksEvent( 'calypso_dashboard_domains_empty_state_action_click', {
 							action: 'search-domains',
 						} )
 					}
@@ -48,7 +48,7 @@ function TransferDomainActionItem() {
 					variant="secondary"
 					href={ wpcomLink( '/setup/domain-transfer' ) }
 					onClick={ () =>
-						recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
+						recordTracksEvent( 'calypso_dashboard_domains_empty_state_action_click', {
 							action: 'transfer-domain',
 						} )
 					}
@@ -77,8 +77,8 @@ function ConnectDomainActionItem() {
 						dashboard: getCurrentDashboard(),
 					} ) }
 					onClick={ () =>
-						recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
-							action: 'transfer-domain',
+						recordTracksEvent( 'calypso_dashboard_domains_empty_state_action_click', {
+							action: 'connect-domain',
 						} )
 					}
 					size="compact"

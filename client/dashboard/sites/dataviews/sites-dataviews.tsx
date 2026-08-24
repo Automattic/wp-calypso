@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
@@ -57,7 +57,12 @@ export function SitesDataViews( {
 							{ ...props }
 							site={ item }
 							expanded={ view.type === 'grid' }
-							onClick={ () => recordTracksEvent( 'calypso_dashboard_sites_item_click' ) }
+							onClick={ () =>
+								recordTracksEvent( 'calypso_dashboard_sites_item_click', {
+									site_id: item.ID,
+									is_staging_site: item.is_wpcom_staging_site,
+								} )
+							}
 						/>
 					) }
 				/>
@@ -84,7 +89,9 @@ export function SitesDataViews( {
 			>
 				<GuidedTourStep
 					id="hosting-dashboard-tours-sites-switch-layouts"
-					selector={ `.dataviews__view-actions button[aria-label="${ __( 'Layout' ) }"]` }
+					selector={ `.dataviews__view-actions button[aria-label=${ CSS.escape(
+						__( 'Layout' )
+					) }]` }
 					placement="bottom"
 					inline
 					// The footer in DataViews uses a z-index of 2, so we need to apply the same value to ensure our element does not appear behind it.
@@ -92,7 +99,9 @@ export function SitesDataViews( {
 				/>
 				<GuidedTourStep
 					id="hosting-dashboard-tours-sites-appearance-options"
-					selector={ `.dataviews__view-actions button[aria-label="${ __( 'View options' ) }"]` }
+					selector={ `.dataviews__view-actions button[aria-label=${ CSS.escape(
+						_x( 'View options', 'View is used as a noun' )
+					) }]` }
 					placement="bottom"
 					inline
 					popoverStyle={ { zIndex: 2 } }

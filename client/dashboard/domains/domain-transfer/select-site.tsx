@@ -53,7 +53,9 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 				newSelection.includes( site.ID?.toString() ?? '' )
 			);
 
-			selectedSite && onSiteSelect( selectedSite );
+			if ( selectedSite ) {
+				onSiteSelect( selectedSite );
+			}
 		},
 		[ sites, onSiteSelect ]
 	);

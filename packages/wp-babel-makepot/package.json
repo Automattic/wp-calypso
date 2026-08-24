@@ -34,8 +34,7 @@
 		"@babel/preset-typescript": "^7.27.1",
 		"commander": "^5.1.0",
 		"gettext-parser": "^4.0.3",
-		"glob": "^7.2.3",
-		"lodash.mergewith": "^4.6.2"
+		"glob": "^7.2.3"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",

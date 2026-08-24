@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
 
 import 'calypso/state/themes/init';
@@ -10,5 +9,5 @@ import 'calypso/state/themes/init';
  * @returns {Object}         A list of filter terms, keyed by term slug
  */
 export function getThemeFilterTerms( state, filter ) {
-	return get( getThemeFilters( state ), filter );
+	return getThemeFilters( state )?.[ filter ];
 }

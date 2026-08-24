@@ -5,6 +5,10 @@ import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SecurityKeyForm } from '../security-key-form';
 
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: () => Promise.resolve(),
+} ) );
+
 describe( 'SecurityKeyForm', () => {
 	const currentUserId = 123;
 	const translate = ( str: string ) => str;

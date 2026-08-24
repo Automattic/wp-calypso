@@ -385,6 +385,7 @@ const SitesDashboard = ( {
 				recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
 					site_id: site.ID,
 					source,
+					is_staging_site: site.is_wpcom_staging_site ?? null,
 				} );
 				showSitesPage( sitePreviewPane.getUrl( site ), openInNewTab );
 			},

@@ -1,3 +1,8 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+
 $date-picker_caption_height: 50px;
 $date-picker_nav_button_size: 20px;
 

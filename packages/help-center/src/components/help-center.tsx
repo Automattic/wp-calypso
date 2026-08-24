@@ -4,6 +4,7 @@
  */
 import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
+import { HelpCenter as HelpCenterStore } from '@automattic/data-stores';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState } from '@wordpress/element';
@@ -35,9 +36,12 @@ const HelpCenter: React.FC< Container > = ( {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
-	const { currentUser } = useHelpCenterContext();
+	const { currentUser, site } = useHelpCenterContext();
 	const { setCurrentUser } = useDispatch( HELP_CENTER_STORE );
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
+		!! currentUser?.ID,
+		site?.ID
+	);
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
 	const hasOpenZendeskConversations =
@@ -58,9 +62,6 @@ const HelpCenter: React.FC< Container > = ( {
 		if ( ! shouldUseUnifiedAgent ) {
 			div = document.createElement( 'div' );
 			div.classList.add( 'help-center' );
-			div.setAttribute( 'role', 'dialog' );
-			div.setAttribute( 'aria-modal', 'true' );
-			div.setAttribute( 'aria-labelledby', 'header-text' );
 			document.body.appendChild( div );
 			setContainer( div );
 		}
@@ -102,6 +103,10 @@ export default function ContextualizedHelpCenter( {
 }: Container &
 	Partial< HelpCenterRequiredInformation > &
 	Pick< HelpCenterRequiredInformation, 'currentUser' | 'sectionName' > ) {
+	HelpCenterStore.setHelpCenterAppId(
+		props.product && props.product !== 'wpcom' ? props.product : undefined
+	);
+
 	return (
 		<HelpCenterRequiredContextProvider value={ props }>
 			<HelpCenter hidden={ hidden } currentRoute={ currentRoute } handleClose={ handleClose } />

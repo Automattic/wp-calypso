@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS,
@@ -22,7 +21,7 @@ export const getAuthAccountType = ( action ) =>
 	);
 
 export const receiveSuccess = ( action, data ) => {
-	const isPasswordless = get( data, 'passwordless' );
+	const isPasswordless = data?.passwordless;
 
 	return [
 		{

@@ -13,6 +13,7 @@ module.exports = {
 							'calypso/data/*',
 							'!calypso/data/data-center',
 							'!calypso/data/php-versions',
+							// Allowed: calypso/lib/ai-launchpad
 							// Allowed: calypso/lib/explat
 							// Allowed: calypso/lib/color-scheme
 							// Allowed: calypso/lib/interval/use-interval (temporary)
@@ -21,11 +22,15 @@ module.exports = {
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
+							'!calypso/lib/ai-launchpad',
 							'!calypso/lib/color-scheme',
 							'!calypso/lib/explat',
 							'!calypso/lib/interval',
+							// Allowed: calypso/lib/use-site-launch-gating-variant (temporary)
+							'!calypso/lib/use-site-launch-gating-variant',
 							'!calypso/lib/load-dev-helpers',
 							'!calypso/lib/logstash',
+							'!calypso/lib/version-compare',
 							'!calypso/lib/wp',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
@@ -57,6 +62,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
+							'!@automattic/components/src/resurrected-welcome-modal',
 							'!@automattic/date-range-picker',
 							'!@automattic/domain-search',
 							'!@automattic/domains-table',
@@ -66,7 +72,9 @@ module.exports = {
 							'!@automattic/agents-manager',
 							'!@automattic/i18n-utils',
 							'!@automattic/languages',
+							'!@automattic/language-picker',
 							'!@automattic/load-script',
+							'!@automattic/mini-cart',
 							'!@automattic/number-formatters',
 							'!@automattic/search',
 							'!@automattic/calypso-stripe',
@@ -85,11 +93,6 @@ module.exports = {
 							// See docs/package-imports.md for policy.
 						],
 						message: 'Importing from @automattic/ is not allowed in the dashboard folder.',
-					},
-					{
-						group: [ 'lodash' ],
-						message:
-							'Lodash is not allowed in the dashboard folder. Use native JavaScript methods instead.',
 					},
 				],
 				paths: [
@@ -111,10 +114,6 @@ module.exports = {
 					{
 						name: 'i18n-calypso',
 						message: 'Please use the @wordpress/i18n package instead of the i18n-calypso package.',
-					},
-					{
-						name: 'lodash',
-						message: 'Please use native JavaScript instead of lodash.',
 					},
 					{
 						name: 'moment',
@@ -184,5 +183,15 @@ module.exports = {
 			},
 		],
 		'@tanstack/query/exhaustive-deps': 'error',
+		'no-restricted-syntax': [
+			'error',
+			{
+				// Spreading an api-queries factory and then setting `meta` replaces the
+				// whole object, dropping the factory's `meta.statId`.
+				selector: "Property[key.name='meta'] > ObjectExpression > Property[key.name='snackbar']",
+				message:
+					'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
+			},
+		],
 	},
 };

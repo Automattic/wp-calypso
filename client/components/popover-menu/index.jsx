@@ -4,10 +4,6 @@ import { createRef, Children, cloneElement, Component } from 'react';
 
 import './style.scss';
 
-const isInvalidTarget = ( target ) => {
-	return target.tagName === 'HR';
-};
-
 class PopoverMenu extends Component {
 	static propTypes = {
 		autoPosition: PropTypes.bool,
@@ -107,58 +103,64 @@ class PopoverMenu extends Component {
 			return;
 		}
 
-		// When a menu opens, or when a menubar receives focus, keyboard focus is placed on the first item
-		// See: https://www.w3.org/TR/wai-aria-practices/#keyboard-interaction-12
-		const elementToFocus = this.menu.current.firstChild;
-
 		this._previouslyFocusedElement = document.activeElement;
 
-		if ( elementToFocus ) {
-			// Defer the focus a bit to make sure that the popover already has the final position.
-			// Initially, after first render, the popover is positioned outside the screen, at
-			// { top: -9999, left: -9999 } where it already has dimensions. These dimensions are measured
-			// and used to calculate the final position.
-			// Focusing the element while it's off the screen would cause unwanted scrolling.
-			this.delayedFocus = setTimeout( () => {
+		// Defer the focus a bit to make sure that the popover already has the final position.
+		// Initially, after first render, the popover is positioned outside the screen, at
+		// { top: -9999, left: -9999 } where it already has dimensions. These dimensions are measured
+		// and used to calculate the final position.
+		// Focusing the element while it's off the screen would cause unwanted scrolling.
+		this.delayedFocus = setTimeout( () => {
+			// When a menu opens, keyboard focus is placed on the first item.
+			// See: https://www.w3.org/TR/wai-aria-practices/#keyboard-interaction-12
+			const [ elementToFocus ] = this._getNavigableItems();
+			if ( elementToFocus ) {
 				elementToFocus.focus();
-			}, 1 );
-		}
+			}
+		}, 1 );
 	};
 
-	/*
-	 * Warning:
-	 *
-	 * This doesn't cover crazy things like a separator at the very top or
-	 * bottom.
-	 */
-	_getClosestSibling = ( target, isDownwardMotion = true ) => {
+	// The navigable items are every menu item in DOM order, regardless of how
+	// deeply they are nested. Querying by role (rather than walking direct
+	// siblings) means items grouped inside a wrapper element stay reachable and
+	// non-item content — separators, headings, wrappers — is skipped.
+	_getNavigableItems = () => {
 		const menu = this.menu.current;
-
-		let first = menu.firstChild;
-		let last = menu.lastChild;
-
-		if ( ! isDownwardMotion ) {
-			first = menu.lastChild;
-			last = menu.firstChild;
+		if ( ! menu ) {
+			return [];
 		}
 
-		if ( target === menu ) {
-			return first;
+		return Array.from( menu.querySelectorAll( '[role="menuitem"]' ) ).filter(
+			( item ) => ! item.disabled && item.getAttribute( 'aria-disabled' ) !== 'true'
+		);
+	};
+
+	_focusSibling = ( target, isDownwardMotion ) => {
+		const items = this._getNavigableItems();
+		if ( ! items.length ) {
+			return;
 		}
 
-		const closest = target[ isDownwardMotion ? 'nextSibling' : 'previousSibling' ];
+		const currentIndex = items.indexOf( target );
+		let nextIndex;
 
-		const sibling = closest || last;
+		if ( currentIndex === -1 ) {
+			// Focus is on the menu container itself: start at the appropriate end.
+			nextIndex = isDownwardMotion ? 0 : items.length - 1;
+		} else {
+			// Clamp at the ends, matching the previous behavior.
+			nextIndex = Math.min(
+				items.length - 1,
+				Math.max( 0, currentIndex + ( isDownwardMotion ? 1 : -1 ) )
+			);
+		}
 
-		return isInvalidTarget( sibling )
-			? this._getClosestSibling( sibling, isDownwardMotion )
-			: sibling;
+		items[ nextIndex ].focus();
 	};
 
 	_onKeyDown = ( event ) => {
 		const target = event.target;
 		let handled = false;
-		let elementToFocus;
 
 		switch ( event.keyCode ) {
 			case 9: // tab
@@ -166,19 +168,15 @@ class PopoverMenu extends Component {
 				handled = true;
 				break;
 			case 38: // up arrow
-				elementToFocus = this._getClosestSibling( target, false );
+				this._focusSibling( target, false );
 				handled = true;
 				break;
 			case 40: // down arrow
-				elementToFocus = this._getClosestSibling( target, true );
+				this._focusSibling( target, true );
 				handled = true;
 				break;
 			default:
 				break; // do nothing
-		}
-
-		if ( elementToFocus ) {
-			elementToFocus.focus();
 		}
 
 		if ( handled ) {

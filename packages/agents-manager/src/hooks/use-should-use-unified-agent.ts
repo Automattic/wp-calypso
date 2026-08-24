@@ -1,8 +1,11 @@
-/* eslint-disable no-restricted-imports */
 import { useUnifiedAiChat } from './use-unified-ai-chat';
+import type { QueryClient } from '@tanstack/react-query';
 
-export const useShouldUseUnifiedAgent = () => {
-	const { data: isEligibleViaAPI } = useUnifiedAiChat();
+/**
+ * Pass a `queryClient` when calling this outside a `QueryClientProvider`.
+ */
+export const useShouldUseUnifiedAgent = ( queryClient?: QueryClient ) => {
+	const { data: isEligibleViaAPI } = useUnifiedAiChat( true, queryClient );
 
 	return isEligibleViaAPI;
 };

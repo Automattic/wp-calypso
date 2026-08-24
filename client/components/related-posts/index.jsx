@@ -1,6 +1,6 @@
 import { SCOPE_OTHER, SCOPE_SAME } from '@automattic/api-core';
+import { times } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { times } from 'lodash';
 import RelatedPostCard from 'calypso/blocks/reader-related-card';
 import { useRelatedPosts } from 'calypso/components/data/with-reader-related-posts';
 

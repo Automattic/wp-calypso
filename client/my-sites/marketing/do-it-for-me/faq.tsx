@@ -4,13 +4,13 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatNumber } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
-import { RefObject } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { CHARACTER_LIMIT } from 'calypso/signup/steps/website-content/section-types/constants';
 import FoldableFAQComponent from '../../../components/foldable-faq';
 import { useDIFMPlanInfo } from './use-difm-plan-info';
+import type { Ref } from '@wordpress/element';
 
 const FAQHeader = styled.h1`
 	font-size: 2rem;
@@ -100,7 +100,7 @@ const CTASection = styled.div`
 `;
 
 interface FAQExpanderProps {
-	ref: RefObject< HTMLButtonElement >;
+	ref: Ref< HTMLButtonElement >;
 	onClick: () => void;
 	isFAQSectionOpen: boolean;
 	children: ReactNode;
@@ -150,7 +150,7 @@ export const DIFMFAQ = ( {
 		siteId,
 	} );
 
-	const faqHeader = useRef( null );
+	const faqHeader = useRef< HTMLButtonElement >( null );
 	const [ isFAQSectionOpen, setIsFAQSectionOpen ] = useState( false );
 	const onFAQButtonClick = useCallback( () => {
 		setIsFAQSectionOpen( ( isFAQSectionOpen ) => ! isFAQSectionOpen );

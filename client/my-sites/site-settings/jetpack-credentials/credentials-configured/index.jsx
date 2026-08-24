@@ -1,7 +1,6 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { CompactCard, Button, Gridicon, FoldableCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -124,7 +123,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 
 	return {
 		canAutoconfigure: canAutoconfigure || credentials.some( ( c ) => c.type === 'managed' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors
-		mainCredentials: find( credentials, { role: 'main' } ),
+		mainCredentials: credentials.find( ( c ) => c.role === 'main' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors
 		supportsRealtimeBackup: siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS ),
 	};
 };

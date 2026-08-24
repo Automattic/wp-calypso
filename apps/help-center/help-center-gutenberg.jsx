@@ -15,6 +15,7 @@ import { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks/use-canvas-mode';
 import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
+import { recordHostTracksEvent } from './tracks';
 import { getEditorType } from './utils';
 import './help-center.scss';
 
@@ -31,8 +32,18 @@ function HelpCenterContent() {
 
 	const canvasMode = useCanvasMode();
 
+	// Whether the Help button belongs in the admin bar rather than the editor toolbar. Snapshot it
+	// once at mount: the underlying signals change as the user toggles editor modes (fullscreen,
+	// distraction-free), and we don't want the button hopping between the toolbar and the admin bar.
+	const [ isAdminBarInEditor ] = useState(
+		() =>
+			!! window.__experimentalAdminBarInEditor ||
+			document.body.classList.contains( 'has-admin-bar-in-editor' ) ||
+			( document.getElementById( 'wpadminbar' )?.offsetHeight ?? 0 ) > 0
+	);
+
 	const trackIconInteraction = useCallback( () => {
-		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
+		recordHostTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
 			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
@@ -42,8 +53,7 @@ function HelpCenterContent() {
 
 	const handleToggleHelpCenter = useCallback( () => {
 		trackIconInteraction();
-		recordTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
-			force_site_id: true,
+		recordHostTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
 			location: 'help-center',
 			section: helpCenterData.sectionName || 'gutenberg-editor',
 			editor_type: getEditorType(),
@@ -69,8 +79,7 @@ function HelpCenterContent() {
 					setNavigateToRoute( destination );
 					setHelpCenterPage( destination );
 				} else {
-					recordTracksEvent( `calypso_inlinehelp_close`, {
-						force_site_id: true,
+					recordHostTracksEvent( `calypso_inlinehelp_close`, {
 						location: 'help-center',
 						section: helpCenterData.sectionName || 'wp-admin',
 					} );
@@ -82,8 +91,7 @@ function HelpCenterContent() {
 				setHelpCenterPage( destination );
 				setShowHelpCenter( true );
 
-				recordTracksEvent( `calypso_inlinehelp_show`, {
-					force_site_id: true,
+				recordHostTracksEvent( `calypso_inlinehelp_show`, {
 					location: 'help-center',
 					section: helpCenterData.sectionName || 'wp-admin',
 					destination,
@@ -105,14 +113,22 @@ function HelpCenterContent() {
 	const sidebarActionsContainer = document.querySelector( '.edit-site-site-hub__actions' );
 
 	const hasInitialized = useRef( false );
-	// On mobile the SlotFill button is hidden by Gutenberg's own CSS, so wire up the
-	// admin bar icon that our PHP adds for the gutenberg variant instead.
+	// When the toolbar SlotFill button isn't shown — on mobile (hidden by Gutenberg's CSS) or
+	// under the omnibar (where we hide it) — wire up the admin bar icon our PHP adds instead.
 	const adminBarButton = document.getElementById( 'wp-admin-bar-help-center' );
 	useEffect( () => {
-		if ( isDesktop || ! adminBarButton ) {
+		if ( ( isDesktop && ! isAdminBarInEditor ) || ! adminBarButton ) {
 			return;
 		}
 		adminBarButton.onclick = handleToggleHelpCenter;
+
+		// At >= 600px our PHP hides this admin bar item to avoid duplicating the toolbar button;
+		// under the omnibar that button is gone, so reveal it. Revealing from JS — which the
+		// unified experience dequeues with this bundle — keeps it hidden when unified, like the
+		// toolbar button.
+		if ( isAdminBarInEditor ) {
+			adminBarButton.style.setProperty( 'display', 'block', 'important' );
+		}
 
 		// make sure it's closed from the beginning
 		if ( ! hasInitialized.current ) {
@@ -132,9 +148,10 @@ function HelpCenterContent() {
 
 		return () => {
 			adminBarButton.onclick = null;
+			adminBarButton.style.removeProperty( 'display' );
 			document.documentElement.style.removeProperty( '--masterbar-height' );
 		};
-	}, [ isDesktop, adminBarButton, handleToggleHelpCenter, setShowHelpCenter ] );
+	}, [ isDesktop, isAdminBarInEditor, adminBarButton, handleToggleHelpCenter, setShowHelpCenter ] );
 
 	// On mobile, close the Help Center as soon as the user taps a button in
 	// the editor header or the admin bar. The panel has a very high z-index
@@ -231,9 +248,15 @@ function HelpCenterContent() {
 		/>
 	);
 
-	const botProps = helpCenterData.isCommerceGarden
-		? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
-		: {};
+	const customProps = {};
+
+	if ( helpCenterData?.newInteractionsBotSlug ) {
+		customProps.newInteractionsBotSlug = helpCenterData.newInteractionsBotSlug;
+	}
+
+	if ( helpCenterData?.newLoggedOutInteractionsBotSlug ) {
+		customProps.newLoggedOutInteractionsBotSlug = helpCenterData.newLoggedOutInteractionsBotSlug;
+	}
 
 	return (
 		<>
@@ -241,7 +264,9 @@ function HelpCenterContent() {
 				canvasMode === 'view' &&
 				sidebarActionsContainer &&
 				ReactDOM.createPortal( content, sidebarActionsContainer ) }
-			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
+			{ isDesktop && showHelpIcon && ! isAdminBarInEditor && (
+				<Fill name="PinnedItems/core">{ content }</Fill>
+			) }
 			<HelpCenter
 				locale={ helpCenterData.locale }
 				sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
@@ -251,7 +276,7 @@ function HelpCenterContent() {
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
 				product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
-				{ ...botProps }
+				{ ...customProps }
 			/>
 		</>
 	);

@@ -27,7 +27,7 @@ export function A4ARequestWPAdminAccess() {
 				</div>
 				<div className="a4a-request-wp-admin-access__description">
 					{ translate(
-						'Ask the Agency owner to provide you WP-Admin access to this site in order to manage its plugins and features.'
+						'Ask the Agency owner to provide you WP-Admin access to this site in order to access and manage this site’s features.'
 					) }
 				</div>
 				<Button

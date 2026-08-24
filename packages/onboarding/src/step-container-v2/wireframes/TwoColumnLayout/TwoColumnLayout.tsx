@@ -52,7 +52,10 @@ export const TwoColumnLayout = ( {
 		<StepContainerV2>
 			{ ( context ) => {
 				let childElements = typeof children === 'function' ? children( context ) : children;
-				if ( isValidElement( childElements ) && childElements.type === Fragment ) {
+				if (
+					isValidElement< { children?: ReactNode } >( childElements ) &&
+					childElements.type === Fragment
+				) {
 					childElements = childElements.props.children;
 				}
 

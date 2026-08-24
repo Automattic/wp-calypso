@@ -1,4 +1,4 @@
-import { times } from 'lodash';
+import { times } from '@automattic/js-utils';
 import Theme from 'calypso/components/theme';
 import ThemeCollectionItem from 'calypso/components/theme-collection/theme-collection-item';
 

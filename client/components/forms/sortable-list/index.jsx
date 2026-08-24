@@ -1,7 +1,6 @@
 import { ScreenReaderText, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { findIndex } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, Component } from 'react';
 import { hasTouch } from 'calypso/lib/touch-detect';
@@ -108,7 +107,7 @@ class SortableList extends Component {
 			.get( 'wrap-shadow-' + this.state.activeIndex )
 			.current.getBoundingClientRect();
 
-		const index = findIndex( this.props.children, ( child, i ) => {
+		const index = Children.toArray( this.props.children ).findIndex( ( child, i ) => {
 			let isBeyond;
 			let permittedVertical;
 

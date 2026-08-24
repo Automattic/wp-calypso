@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 import 'calypso/state/site-settings/init';
@@ -16,5 +15,5 @@ export default function getPodcastingCategoryId( state, siteId ) {
 		return null;
 	}
 
-	return get( state.siteSettings.items, [ siteId, 'podcasting_category_id' ], null );
+	return state.siteSettings.items?.[ siteId ]?.podcasting_category_id ?? null;
 }

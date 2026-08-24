@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import StatTab from './tab';
@@ -27,7 +26,7 @@ class StatsTabs extends Component {
 		const { activeIndex, activeKey, tabs } = this.props;
 		let activeData = {};
 		if ( ! aggregate ) {
-			activeData = find( data, { [ activeKey ]: activeIndex } );
+			activeData = data?.find( ( item ) => item[ activeKey ] === activeIndex );
 		} else {
 			data?.map( ( day ) =>
 				tabs.map( ( tab ) => {

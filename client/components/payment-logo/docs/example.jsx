@@ -1,13 +1,13 @@
-import { concat, filter, flow, map, sortBy } from 'lodash';
+import { flow, sortBy } from '@automattic/js-utils';
 import { PureComponent } from 'react';
 import PaymentLogo, { POSSIBLE_TYPES } from '../index';
 
 const genVendors = flow(
 	// 'placeholder' is a special case that needs to be demonstrated separately
-	( arr ) => filter( arr, ( type ) => type !== 'placeholder' ),
+	( arr ) => arr.filter( ( type ) => type !== 'placeholder' ),
 
-	( arr ) => map( arr, ( type ) => ( { type, isCompact: false } ) ),
-	( arr ) => concat( arr, [ { type: 'paypal', isCompact: true } ] ),
+	( arr ) => arr.map( ( type ) => ( { type, isCompact: false } ) ),
+	( arr ) => arr.concat( [ { type: 'paypal', isCompact: true } ] ),
 	( arr ) => sortBy( arr, [ 'type', 'isCompact' ] )
 );
 

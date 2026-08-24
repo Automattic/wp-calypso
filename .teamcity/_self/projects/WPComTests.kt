@@ -2,7 +2,6 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.*
 import _self.CalypsoE2ETestsBuildTemplate
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
@@ -23,6 +22,13 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.exec
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.matrix
+
+// Accounts the @jetpack-wpcom-integration specs log in as on top of the one the run's own
+// environment resolves to, which the prime-logins setup project adds by itself. On Simple
+// that is the Blaze spec's free plan site plus the site editor's own staging site; on Atomic
+// both of those resolve to the account the environment already gives us.
+const val jetpackWpcomIntegrationSimpleAccounts = "simpleSiteFreePlanUser,jetpackStagingFseUser"
+const val jetpackWpcomIntegrationAtomicAccounts = ""
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -80,7 +86,7 @@ object WPComTests : Project({
 	buildType(JetpackAtomicSmokeE2ETests);
 })
 
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, nightly: Boolean = false): E2EBuildType {
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, nightly: Boolean = false): BuildType {
 	var siteType = if (atomic) "atomic" else "simple";
 	var releaseType = when {
 		nightly -> "nightly"
@@ -90,20 +96,18 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 
 	val buildName = "Gutenberg $siteType E2E tests $releaseType ($targetDevice)"
 
-	return E2EBuildType (
-		buildId = "WPComTests_gutenberg_${siteType}_${releaseType}_$targetDevice",
-		buildUuid = buildUuid,
-		buildName = buildName,
-		buildDescription = "Runs Gutenberg $siteType E2E tests on $targetDevice size",
-		testGroup = "gutenberg",
-		buildParams = {
-			text(
-				name = "env.CALYPSO_BASE_URL",
-				value = "https://wordpress.com",
-				label = "Test URL",
-				description = "URL to test against",
-				allowEmpty = false
-			)
+	return BuildType({
+		templates(CalypsoE2ETestsBuildTemplate)
+		id("WPComTests_gutenberg_${siteType}_${releaseType}_$targetDevice")
+		uuid = buildUuid
+		name = buildName
+		description = "Runs Gutenberg $siteType E2E tests on $targetDevice size"
+		disableSettings("calypso_e2e_commit_status_publisher")
+
+		params {
+			param("TEST_GROUP", "@gutenberg")
+			param("PROJECT", targetDevice)
+			param("CALYPSO_BASE_URL", "https://wordpress.com")
 			checkbox(
 				name = "env.COBLOCKS_EDGE",
 				value = "false",
@@ -112,15 +116,23 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				checked = "true",
 				unchecked = "false"
 			)
-			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser,gutenbergAtomicSiteUser,gutenbergAtomicSiteEdgeUser,gutenbergAtomicSiteEdgeNightliesUser")
-			param("env.VIEWPORT_NAME", "$targetDevice")
+			// The account this build runs against is added by the prime-logins project itself.
+			// On top of it the @gutenberg specs log in as defaultUser to read a published post
+			// as a second user, as the site editor account for this leg (the environment key
+			// carries no variant, so that one is never derived), and, on stable Gutenberg on a
+			// Simple site only, resolve their criteria overrides to simpleSitePersonalPlanUser.
+			param("env.AUTHENTICATE_ACCOUNTS", when {
+				atomic && (edge || nightly) -> "defaultUser,siteEditorAtomicSiteEdgeUser"
+				atomic -> "defaultUser,siteEditorAtomicSiteUser"
+				edge || nightly -> "defaultUser,siteEditorSimpleSiteEdgeUser"
+				else -> "defaultUser,simpleSitePersonalPlanUser,siteEditorSimpleSiteUser"
+			})
 			if (atomic) {
 				param("env.TEST_ON_ATOMIC", "true")
 				// Overrides the inherited max workers settings and sets it to not run any tests in parallel.
 				// The reason for this is an inconsistent issue breaking the login in AT test sites when
 				// more than one test runs in parallel. Remove or set it to 16 after the issue is solved.
-				param("JEST_E2E_WORKERS", "1")
-
+				param("env.PW_WORKERS", "1")
 			}
 
 			if (nightly) {
@@ -136,40 +148,41 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 			// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (par of Gutenbot).
 			// password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
 			password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID", "credentialsJSON:b8ca97ea-322f-499f-aa21-ecdb8b373527", display = ParameterDisplay.HIDDEN);
+			// Set by an external trigger (Gutenbot's `announce.sh`) to thread the result under
+			// the corresponding GB version announcement. When empty, the helper script exits early.
 			text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
-		},
-		buildSteps = {
+		}
+
+		steps {
+			// These two steps post the build result as a *threaded reply* under the
+			// corresponding Gutenberg version announcement in Slack. They are only relevant
+			// when this build was kicked off by Gutenbot's `announce.sh`, which injects the
+			// announcement's `GB_E2E_ANNOUNCEMENT_THREAD_TS` (and channel/token).
+			//
+			// They run on every build (one per success/failure), but the helper script exits
+			// early and posts nothing when `GB_E2E_ANNOUNCEMENT_THREAD_TS` is empty — i.e. on
+			// normal scheduled or manual runs. This is separate from the `#gutenberg-e2e`
+			// channel notifications handled by the built-in notifier in `buildFeatures` below.
 			exec {
 				name = "Post Successful Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
 				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName passed successfully! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+				arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The $buildName passed successfully! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
 			}
 
 			exec {
 				name = "Post Failure Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
 				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+				arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The $buildName failed! Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
 			}
-		},
-		buildFeatures = {
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#gutenberg-e2e"
-					messageFormat = verboseMessageFormat {
-						addBranch = true
-						addStatusText = true
-						maximumNumberOfChanges = 10
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailed = true
-				buildFinishedSuccessfully = true
-			}
-		},
-		buildTriggers = {
+		}
+
+		features {
+			notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")
+		}
+
+		triggers {
 			schedule {
 				schedulingPolicy = daily {
 					hour = 4
@@ -181,7 +194,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				withPendingChangesOnly = false
 			}
 		}
-	)
+	})
 }
 
 fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
@@ -195,6 +208,7 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 
@@ -203,18 +217,22 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			calypsoBaseUrlParam()
 			param("env.VIEWPORT_NAME", "$targetDevice")
 			param("env.JETPACK_TARGET", "wpcom-deployment")
+			param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationSimpleAccounts)
 		}
 
 		steps {
 			prepareE2eEnvironment()
 
-			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
-
-			collectE2eResults()
+			runTaggedPlaywrightSpecs(
+				tag = "@jetpack-wpcom-integration",
+				targetDevice = targetDevice,
+			)
 		}
 
 		features {
 			perfmon {}
+
+			playwrightJUnitReport()
 
 			notifications {
 				notifierSettings = slackNotifier {
@@ -251,6 +269,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 
@@ -260,32 +279,31 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.VIEWPORT_NAME", "$targetDevice")
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 			param("env.TEST_ON_ATOMIC", "true")
-			// We run all the tests on all variations, and go through each variation sequentially.
-			// We can easily overwhlem the target Atomic site under test if we have too much parallelization.
-			// This number of works plays nicely with the expected load handling on these Atomic sites.
-			// See: pMz3w-ix0-p2
-			param("JEST_E2E_WORKERS", "5")
+			param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 		}
 
 		steps {
 			prepareE2eEnvironment()
 
 			atomicVariations.forEach { variation ->
-				runE2eTestsWithRetry(
-					testGroup = "jetpack-wpcom-integration",
+				runTaggedPlaywrightSpecs(
+					tag = "@jetpack-wpcom-integration",
+					targetDevice = targetDevice,
 					additionalEnvVars = mapOf(
 						"ATOMIC_VARIATION" to variation,
-						"RUN_ID" to "Atomic: $variation"
+						"PW_WORKERS" to "5",
 					),
-					stepName = "Run Atomic Jetpack E2E Tests: $variation",
+					stepName = "Run Playwright specs: $variation",
+					// Per-variation report name so the loop's runs don't overwrite each other.
+					reportSuffix = variation,
 				)
 			}
-
-			collectE2eResults()
 		}
 
 		features {
 			perfmon {}
+
+			playwrightJUnitReport()
 
 			notifications {
 				notifierSettings = slackNotifier {
@@ -318,12 +336,13 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 		id("WPComTests_jetpack_atomic_build_smoke_e2e_$targetDevice")
 		uuid = buildUuid
 		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
-		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations."
+		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. The Atomic environment variation follows the calypso revision under test, so builds on the same revision repeat it."
 
 		artifactRules = defaultE2eArtifactRules();
 
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 
@@ -334,22 +353,29 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 			param("env.TEST_ON_ATOMIC", "true")
 			param("env.ATOMIC_VARIATION", "mixed")
-			// We need to be careful of overwhelming the Atomic sites under test.
-			// The mixing of Atomic variations happens per-worker.
-			// There are currently 7 variations. So let's do 2 workers per variation for 14 workers total.
-			param("JEST_E2E_WORKERS", "14")
+			// What "mixed" resolves against. Keyed on the commit so a re-run of a failed build
+			// repeats the variation that failed. This build has no VCS trigger, so every build
+			// on an unchanged calypso revision repeats it too: reproducibility over coverage.
+			param("env.ATOMIC_VARIATION_KEY", "%build.vcs.number%")
+			param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 		}
 
 		steps {
 			prepareE2eEnvironment()
 
-			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
-
-			collectE2eResults()
+			runTaggedPlaywrightSpecs(
+				tag = "@jetpack-wpcom-integration",
+				targetDevice = targetDevice,
+				// Every worker in this build shares one Atomic site and one account, so the
+				// count is bounded by what that single site serves, not by the agent's cores.
+				additionalEnvVars = mapOf( "PW_WORKERS" to "4" ),
+			)
 		}
 
 		features {
 			perfmon {}
+
+			playwrightJUnitReport()
 
 			notifications {
 				notifierSettings = slackNotifier {
@@ -383,6 +409,9 @@ private object I18NTests : BuildType({
 	params {
 		param("PROJECT", "i18n")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
+		param("env.E2E_CTRF_APP_NAME", "i18n (calypso)")
+		param("env.AUTHENTICATE_ACCOUNTS", "i18nUser")
 	}
 
 	features {
@@ -425,6 +454,9 @@ private object P2E2ETests : BuildType({
 	params {
 		param("PROJECT", "p2")
 		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
+		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
+		param("env.E2E_CTRF_APP_NAME", "p2 (calypso)")
+		param("env.AUTHENTICATE_ACCOUNTS", "p2User")
 	}
 
 	features {
@@ -474,7 +506,37 @@ private object GutenbergPlaywrightTests : BuildType({
 	params {
 		param("TEST_GROUP", "@gutenberg")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
-		param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,simpleSitePersonalPlanUser,gutenbergAtomicSiteUser,gutenbergAtomicSiteEdgeUser,gutenbergAtomicSiteEdgeNightliesUser")
+		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
+		param("env.E2E_CTRF_APP_NAME", "gutenberg (calypso)")
+		// The Simple Production leg; the others override this through EXTRA_ENV_VARS below.
+		param(
+			"env.AUTHENTICATE_ACCOUNTS",
+			"defaultUser,simpleSitePersonalPlanUser,siteEditorSimpleSiteUser"
+		)
+		password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
+		// Uncomment the following to route it to the test channel, don't forget to change the reference in the exec() calls below, too.
+		// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (par of Gutenbot).
+		// password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
+		password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID", "credentialsJSON:b8ca97ea-322f-499f-aa21-ecdb8b373527", display = ParameterDisplay.HIDDEN);
+		// Set by an external trigger (Gutenbot's `announce.sh`) to thread the result under
+		// the corresponding GB version announcement. When empty, the helper script exits early.
+		text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
+	}
+
+	steps {
+		exec {
+			name = "Post Successful Message to Slack"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+			path = "./bin/post-threaded-slack-message.sh"
+			arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The Gutenberg E2E Tests matrix leg passed successfully: %PROJECT%, %EXTRA_ENV_VARS%. <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
+		}
+
+		exec {
+			name = "Post Failure Message to Slack"
+			executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
+			path = "./bin/post-threaded-slack-message.sh"
+			arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The Gutenberg E2E Tests failed: %PROJECT%, %EXTRA_ENV_VARS%. Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
+		}
 	}
 
 	features {
@@ -483,27 +545,18 @@ private object GutenbergPlaywrightTests : BuildType({
 				value("desktop", label = "Desktop"),
 				value("mobile", label = "Mobile"),
 			))
+			// Each leg carries the site editor account its own environment resolves to, which
+			// the prime-logins project cannot derive: the environment key holds no variant.
+			// The Simple Production leg takes the build's own AUTHENTICATE_ACCOUNTS above.
 			param("EXTRA_ENV_VARS", listOf(
 				value("", label = "Simple Production"),
-				value("GUTENBERG_EDGE=true", label = "Simple Edge"),
-				value("TEST_ON_ATOMIC=true,PW_WORKERS=1", label = "Atomic Production"),
-				value("TEST_ON_ATOMIC=true,GUTENBERG_EDGE=true,PW_WORKERS=1", label = "Atomic Edge"),
-				value("TEST_ON_ATOMIC=true,GUTENBERG_NIGHTLY=true,PW_WORKERS=1", label = "Atomic Nightly"),
+				value("GUTENBERG_EDGE=true;AUTHENTICATE_ACCOUNTS=defaultUser,siteEditorSimpleSiteEdgeUser", label = "Simple Edge"),
+				value("TEST_ON_ATOMIC=true;PW_WORKERS=1;AUTHENTICATE_ACCOUNTS=defaultUser,siteEditorAtomicSiteUser", label = "Atomic Production"),
+				value("TEST_ON_ATOMIC=true;GUTENBERG_EDGE=true;PW_WORKERS=1;AUTHENTICATE_ACCOUNTS=defaultUser,siteEditorAtomicSiteEdgeUser", label = "Atomic Edge"),
+				value("TEST_ON_ATOMIC=true;GUTENBERG_NIGHTLY=true;PW_WORKERS=1;AUTHENTICATE_ACCOUNTS=defaultUser,siteEditorAtomicSiteEdgeUser", label = "Atomic Nightly"),
 			))
 		}
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#gutenberg-e2e"
-				messageFormat = verboseMessageFormat {
-					addBranch = true
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailed = true
-			buildFinishedSuccessfully = true
-		}
+		notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")
 	}
 
 	triggers {
@@ -525,7 +578,9 @@ private object JetpackE2ETestsBuildTemplate : Template({
 	params {
 		param("TEST_GROUP", "@jetpack-wpcom-integration")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("env.E2E_CTRF_APP_NAME", "jetpack (calypso)")
 		param("env.JETPACK_TARGET", "wpcom-deployment")
+		param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationSimpleAccounts)
 	}
 
 	features {
@@ -574,6 +629,7 @@ private object JetpackAtomicE2ETests : BuildType({
 		param("PROJECT", "desktop")
 		param("env.TEST_ON_ATOMIC", "true")
 		param("env.PW_WORKERS", "5")
+		param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 	}
 
 	features {
@@ -603,5 +659,9 @@ private object JetpackAtomicSmokeE2ETests : BuildType({
 		param("env.TEST_ON_ATOMIC", "true")
 		param("env.PW_WORKERS", "14")
 		param("env.ATOMIC_VARIATION", "mixed")
+		// What "mixed" resolves against. Keyed on the commit so a re-run of a failed build
+		// repeats the variation that failed.
+		param("env.ATOMIC_VARIATION_KEY", "%build.vcs.number%")
+		param("env.AUTHENTICATE_ACCOUNTS", jetpackWpcomIntegrationAtomicAccounts)
 	}
 })

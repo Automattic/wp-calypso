@@ -15,6 +15,7 @@ import {
 	BillingTransaction,
 	BillingTransactionItem,
 } from 'calypso/state/billing-transactions/types';
+import { ReceiptItemTaxes } from '../receipt';
 import { TransactionAmount, transactionIncludesTax } from '../utils';
 
 const mockTransaction: BillingTransaction = {
@@ -244,6 +245,82 @@ test( 'tax includes with localized tax name', async () => {
 		</ReduxProvider>
 	);
 	expect( await screen.findByText( `(includes ${ transaction.tax } VAT)` ) ).toBeInTheDocument();
+} );
+
+test( 'receipt tax row shows business use state', async () => {
+	const transaction = {
+		...mockTransaction,
+		currency: 'USD',
+		tax_country_code: 'US',
+		tax_is_for_business: true,
+		tax_integer: 1224,
+		tax_state: 'OH',
+		items: [
+			{
+				...mockItem,
+				raw_tax: 12.24,
+				tax_integer: 1224,
+			},
+		],
+	};
+
+	const store = createTestReduxStore();
+	const queryClient = new QueryClient();
+	mockGetSupportedCountriesEndpoint( countryList );
+
+	render(
+		<ReduxProvider store={ store }>
+			<QueryClientProvider client={ queryClient }>
+				<ReceiptItemTaxes transaction={ transaction } />
+			</QueryClientProvider>
+		</ReduxProvider>
+	);
+
+	expect(
+		await screen.findByText(
+			( _content, element ) => element?.textContent === 'Tax (Ohio business use taxrate)'
+		)
+	).toBeInTheDocument();
+	expect( screen.getByText( 'Ohio business use taxrate' ).tagName ).toBe( 'EM' );
+	expect( screen.getByText( '$12.24' ) ).toBeInTheDocument();
+} );
+
+test( 'receipt tax row shows business use state when tax amount is zero', async () => {
+	const transaction = {
+		...mockTransaction,
+		currency: 'USD',
+		tax_country_code: 'US',
+		tax_is_for_business: true,
+		tax_integer: 0,
+		tax_state: 'OH',
+		items: [
+			{
+				...mockItem,
+				raw_tax: 0,
+				tax_integer: 0,
+			},
+		],
+	};
+
+	const store = createTestReduxStore();
+	const queryClient = new QueryClient();
+	mockGetSupportedCountriesEndpoint( countryList );
+
+	render(
+		<ReduxProvider store={ store }>
+			<QueryClientProvider client={ queryClient }>
+				<ReceiptItemTaxes transaction={ transaction } />
+			</QueryClientProvider>
+		</ReduxProvider>
+	);
+
+	expect(
+		await screen.findByText(
+			( _content, element ) => element?.textContent === 'Tax (Ohio business use taxrate)'
+		)
+	).toBeInTheDocument();
+	expect( screen.getByText( 'Ohio business use taxrate' ).tagName ).toBe( 'EM' );
+	expect( screen.getByText( '$0' ) ).toBeInTheDocument();
 } );
 
 test( 'tax hidden if not available', async () => {

@@ -161,8 +161,17 @@ export class PostsPage {
 	async clickPost( title: string ): Promise< void > {
 		await this.ensurePostShown( title );
 
-		const locator = this.page.locator( `${ selectors.postRow } ${ selectors.postItem( title ) }` );
-		await locator.click();
+		const locator = this.page.locator(
+			`${ selectors.postRow } a.row-title:has-text("${ title }")`
+		);
+		// Navigate via href instead of click(): some wp-admin column widgets (e.g. jetpack_seo_schema)
+		// overlay the row and intercept pointer events, causing click() to time out.
+		await locator.waitFor( { state: 'visible' } );
+		const href = await locator.getAttribute( 'href' );
+		if ( ! href ) {
+			throw new Error( `No href found on row-title for post "${ title }"` );
+		}
+		await this.page.goto( href, { waitUntil: 'domcontentloaded', timeout: 30 * 1000 } );
 	}
 
 	/**

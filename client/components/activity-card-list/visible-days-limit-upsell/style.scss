@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .visible-days-limit-upsell__next-activity {
 	@include breakpoint-deprecated( ">660px" ) {
 		height: 80px;

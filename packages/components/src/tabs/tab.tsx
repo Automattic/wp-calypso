@@ -1,9 +1,9 @@
 import * as Ariakit from '@ariakit/react';
 import { chevronRight } from '@wordpress/icons';
+import { Icon } from '@wordpress/ui';
 import warning from '@wordpress/warning';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
-import { Icon } from '../icon';
 import { useTabsContext } from './context';
 import styles from './style.module.scss';
 import type { TabProps } from './types';

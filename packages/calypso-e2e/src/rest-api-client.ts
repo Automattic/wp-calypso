@@ -1,5 +1,6 @@
 import fs from 'fs';
 import FormData from 'form-data';
+import { handleActiveThrottles, recordThrottle } from './lib/throttle-flags';
 import { SecretsManager } from './secrets';
 import {
 	BearerTokenErrorResponse,
@@ -20,6 +21,7 @@ import type {
 	MyAccountInformationResponse,
 	AccountClosureResponse,
 	SiteDeletionResponse,
+	CalypsoPreferences,
 	CalypsoPreferencesResponse,
 	ErrorResponse,
 	AccountCredentials,
@@ -43,6 +45,8 @@ import type {
 	JetpackSearchParams,
 	Subscriber,
 	SitePostState,
+	AllPurchasesResponse,
+	PurchaseCancelParams,
 } from './types';
 
 /* Internal types and interfaces */
@@ -152,6 +156,21 @@ export class RestAPIClient {
 	}
 
 	/**
+	 * Returns the store sandbox cookie header.
+	 *
+	 * E2E purchases are made in the browser with the `store_sandbox` cookie set
+	 * (see `BrowserManager.setStoreCookie`), which routes the request to the
+	 * sandboxed store and its own ownership registry. Store-facing REST calls
+	 * made from Node must carry the same cookie, or they read the production
+	 * store and see none of the purchases the tests created.
+	 *
+	 * @returns {string} Cookie header string.
+	 */
+	private getStoreSandboxCookieHeader(): string {
+		return `store_sandbox=${ SecretsManager.secrets.storeSandboxCookieValue }`;
+	}
+
+	/**
 	 * Returns a fully constructed URL object pointing to the request endpoint.
 	 *
 	 * @param {EndpointVersions} version Version of the API to use.
@@ -229,6 +248,8 @@ export class RestAPIClient {
 	 * @throws {ErrorResponse} If API responded with an error.
 	 */
 	async createSite( newSiteParams: NewSiteParams ): Promise< NewSiteResponse > {
+		handleActiveThrottles( [ 'signup' ] );
+
 		const body = {
 			client_id: SecretsManager.secrets.calypsoOauthApplication.client_id,
 			client_secret: SecretsManager.secrets.calypsoOauthApplication.client_secret,
@@ -250,7 +271,30 @@ export class RestAPIClient {
 			body: JSON.stringify( body ),
 		};
 
-		const response = await this.sendRequest( this.getRequestURL( '1.1', '/sites/new' ), params );
+		const url = this.getRequestURL( '1.1', '/sites/new' );
+
+		let response;
+		try {
+			response = await this.sendRequest( url, params );
+		} catch ( error ) {
+			// A refusal that is not JSON is something `sendRequest` cannot parse, so
+			// the throttle reaches us as a thrown error rather than a response body.
+			// Recorded either way, and rethrown untouched. The endpoint travels
+			// alongside: neither shape names it, and a bare `throttled` code means
+			// nothing without it.
+			const throttle = await recordThrottle( error, url.href );
+			if ( throttle ) {
+				// `raiseFlag` writes what this reads before `recordThrottle` returns,
+				// so the ban the throw is about is applied to this test rather than to
+				// the next one that happens to check.
+				handleActiveThrottles( [ throttle ] );
+			}
+			throw error;
+		}
+		const throttle = await recordThrottle( response, url.href );
+		if ( throttle ) {
+			handleActiveThrottles( [ throttle ] );
+		}
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
@@ -289,22 +333,39 @@ export class RestAPIClient {
 			return null;
 		}
 
-		console.log( `Deleting site ${ targetSite.domain }.` );
-
-		const scheme = 'http://';
-		const targetDomain = targetSite.domain.startsWith( scheme )
-			? targetSite.domain.replace( scheme, '' )
-			: targetSite.domain;
+		// `/all-domains/` returns scheme-less, lowercase `domain` values, while
+		// callers commonly pass `blog_details.url` (e.g.
+		// `https://e2eflowtesting….wordpress.com/`). Normalize both sides (strip
+		// scheme, path and trailing slash; lowercase) so the ownership comparison
+		// below is not defeated by a formatting or case difference, which would
+		// abort a legitimate cleanup and leak the site.
+		const normalizeDomain = ( value: string ): string =>
+			value
+				.trim()
+				.replace( /^https?:\/\//i, '' )
+				.replace( /\/.*$/, '' )
+				.toLowerCase();
+		const targetDomain = normalizeDomain( targetSite.domain );
 
 		const mySites: AllDomainsResponse = await this.getAllDomains();
 
-		const match = mySites.domains.filter( ( site: DomainData ) => {
-			site.blog_id === targetSite.id && site.domain === targetDomain;
-		} );
+		// Ensure the target site actually belongs to the authenticated user before
+		// issuing the deletion. The `.some()` predicate returns a real boolean; the
+		// previous `.filter()` callback returned no value (always an empty, truthy
+		// array), so this ownership guard never fired.
+		const isOwnedByUser = mySites.domains.some(
+			( site: DomainData ) =>
+				site.blog_id === targetSite.id && normalizeDomain( site.domain ) === targetDomain
+		);
 
-		if ( ! match ) {
+		if ( ! isOwnedByUser ) {
+			console.warn(
+				`Aborting site deletion: site ${ targetSite.id } (${ targetDomain }) is not owned by the authenticated user.`
+			);
 			return null;
 		}
+
+		console.log( `Deleting site ${ targetSite.domain }.` );
 
 		const params: RequestParams = {
 			method: 'post',
@@ -394,8 +455,10 @@ export class RestAPIClient {
 	/**
 	 *
 	 * @param siteID
+	 * @param pageSize Page size. The endpoint defaults to 25 and paginates; pass a
+	 * higher value (100 is the max page size) to fetch more in one request.
 	 */
-	async getInvites( siteID: number ): Promise< AllInvitesResponse > {
+	async getInvites( siteID: number, pageSize?: number ): Promise< AllInvitesResponse > {
 		const params: RequestParams = {
 			method: 'get',
 			headers: {
@@ -404,10 +467,12 @@ export class RestAPIClient {
 			},
 		};
 
-		const response = await this.sendRequest(
-			this.getRequestURL( '1.1', `/sites/${ siteID }/invites` ),
-			params
-		);
+		const url = this.getRequestURL( '1.1', `/sites/${ siteID }/invites` );
+		if ( pageSize !== undefined ) {
+			url.searchParams.set( 'number', String( pageSize ) );
+		}
+
+		const response = await this.sendRequest( url, params );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
@@ -426,24 +491,29 @@ export class RestAPIClient {
 	async deleteInvite( siteID: number, email: string ): Promise< boolean > {
 		const invites = await this.getInvites( siteID );
 
-		let inviteID = undefined;
+		const invite = Object.values( invites ).find(
+			( invite: Invite ) =>
+				invite.invited_by.site_ID === siteID && invite.is_pending && invite.user.email === email
+		);
 
-		Object.values( invites ).forEach( ( invite: Invite ) => {
-			if (
-				invite.invited_by.site_ID === siteID &&
-				invite.is_pending &&
-				invite.user.email === email
-			) {
-				inviteID = invite.invite_key;
-			}
-		} );
-
-		if ( inviteID === undefined ) {
+		if ( invite === undefined ) {
 			throw new Error(
 				`Aborting invite deletion: inviteID not found for email: ${ email } and siteID: ${ siteID }}`
 			);
 		}
 
+		const response = await this.deleteInvites( siteID, [ invite.invite_key ] );
+		return response.deleted.includes( invite.invite_key );
+	}
+
+	/**
+	 * Bulk-deletes pending invites by their invite keys in a single request.
+	 *
+	 * @param siteID Target site ID.
+	 * @param inviteKeys Invite keys to delete.
+	 * @returns The list of deleted and invalid invite keys.
+	 */
+	async deleteInvites( siteID: number, inviteKeys: string[] ): Promise< DeleteInvitesResponse > {
 		const params: RequestParams = {
 			method: 'post',
 			headers: {
@@ -451,23 +521,22 @@ export class RestAPIClient {
 				'Content-Type': this.getContentTypeHeader( 'json' ),
 			},
 			body: JSON.stringify( {
-				invite_ids: [ inviteID ],
+				invite_ids: inviteKeys,
 			} ),
 		};
 
-		const response: DeleteInvitesResponse = await this.sendRequest(
+		const response = await this.sendRequest(
 			this.getRequestURL( '2', `/sites/${ siteID }/invites/delete`, 'wpcom' ),
 			params
 		);
 
-		// This call does not return a traditional error that's in the
-		// format of ErrorResponse, instead returning a
-		// DeleteInvitesResponse which always has the `deleted` and
-		// `invalid` fields.
-		if ( response.deleted.includes( inviteID ) ) {
-			return true;
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
 		}
-		return false;
+
+		return response;
 	}
 
 	/* Me */
@@ -601,6 +670,109 @@ export class RestAPIClient {
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/account/close' ), params );
 	}
 
+	/* Purchases */
+
+	/**
+	 * Returns purchases belonging to the authenticated user.
+	 *
+	 * Discovery is bearer-scoped and needs no site ID, so it works even when the
+	 * test failed before a site slug/ID was known. Pass `siteId` to scope the
+	 * listing to one site: the long-lived shared accounts have accumulated enough
+	 * sandbox purchases that the unscoped listing times out at the gateway.
+	 *
+	 * @param {number|string} [siteId] List only this site's purchases.
+	 * @returns {Promise<AllPurchasesResponse>} Array of the user's purchases.
+	 * @throws {Error} If the API responded with an error.
+	 */
+	async getAllPurchases( siteId?: number | string ): Promise< AllPurchasesResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+				Cookie: this.getStoreSandboxCookieHeader(),
+			},
+		};
+
+		const endpoint = siteId === undefined ? '/me/purchases' : `/sites/${ siteId }/purchases`;
+		const response = await this.sendRequest( this.getRequestURL( '1.2', endpoint ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Cancels and refunds a purchase. Cancelling a Business-plan purchase on an
+	 * Atomic site triggers asynchronous deprovision of the site, the only lever
+	 * that later allows the account to be closed.
+	 *
+	 * Mirrors Calypso's cancel-and-refund call (POST wpcom/v2 /purchases/{id}/cancel).
+	 *
+	 * @param {string|number} purchaseId ID of the purchase to cancel.
+	 * @param {PurchaseCancelParams} body Cancellation parameters.
+	 * @returns {Promise<any>} Decoded JSON response.
+	 */
+	async cancelPurchase( purchaseId: string | number, body: PurchaseCancelParams ): Promise< any > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+				Cookie: this.getStoreSandboxCookieHeader(),
+			},
+			body: JSON.stringify( body ),
+		};
+
+		return await this.sendRequest(
+			this.getRequestURL( '2', `/purchases/${ purchaseId }/cancel`, 'wpcom' ),
+			params
+		);
+	}
+
+	/**
+	 * Cancels the Business-plan purchase, triggering asynchronous Atomic-site
+	 * deprovision (the only lever that later allows the account to be closed).
+	 *
+	 * The purchase is discovered bearer-scoped via `getAllPurchases`, so no site
+	 * slug/ID is required. When `siteId` is omitted the first Business plan found
+	 * is cancelled; pass `siteId` to restrict to that site's Business plan.
+	 *
+	 * @param {number|string} [siteId] Restrict cancellation to this site's Business plan.
+	 * @returns {Promise<any | null>} The cancel response, or null if no Business plan was found.
+	 * @throws {Error} If listing purchases responded with an error.
+	 */
+	async cancelAtomicPlan( siteId?: number | string ): Promise< any | null > {
+		const purchases = await this.getAllPurchases( siteId );
+
+		const plan = purchases.find(
+			( purchase ) =>
+				purchase.product_slug === 'business-bundle' &&
+				( siteId === undefined || Number( purchase.blog_id ) === Number( siteId ) )
+		);
+
+		if ( ! plan ) {
+			console.info(
+				siteId !== undefined
+					? `No Business plan purchase found for site ${ siteId }; skipping Atomic deprovision.`
+					: 'No Business plan purchase found; skipping Atomic deprovision.'
+			);
+			return null;
+		}
+
+		console.log( `Cancelling Business plan purchase ${ plan.ID } to deprovision Atomic site.` );
+
+		return await this.cancelPurchase( plan.ID, {
+			product_id: plan.product_id,
+			cancel_bundled_domain: 0,
+			email_variant: 'control',
+		} );
+	}
+
 	/**
 	 * Returns Calypso preferences for the user.
 	 *
@@ -613,6 +785,27 @@ export class RestAPIClient {
 				Authorization: await this.getAuthorizationHeader( 'bearer' ),
 				'Content-Type': this.getContentTypeHeader( 'json' ),
 			},
+		};
+
+		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
+	}
+
+	/**
+	 * Updates Calypso preferences for the user.
+	 *
+	 * @param {Partial<CalypsoPreferences>} preferences Key/value preferences to persist.
+	 * @returns {Promise<CalypsoPreferencesResponse>} JSON response containing the updated Calypso preferences.
+	 */
+	async setCalypsoPreferences(
+		preferences: Partial< CalypsoPreferences >
+	): Promise< CalypsoPreferencesResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( { calypso_preferences: preferences } ),
 		};
 
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
@@ -766,6 +959,94 @@ export class RestAPIClient {
 		return response;
 	}
 
+	/**
+	 * Deletes form responses (feedback entries) matching a search term.
+	 *
+	 * Deliberately scoped by search rather than deleting every response on the
+	 * site. These sites are shared, and a run that wiped the feedback list
+	 * would fail any other run working through its own responses at the time.
+	 * Callers should pass something unique to their run, such as the address
+	 * they submitted the form with.
+	 *
+	 * Feedback cannot be created over REST — the post type sets
+	 * `create_posts => do_not_allow` — so this is cleanup only.
+	 *
+	 * Individual delete failures are reported and skipped rather than thrown, so
+	 * one bad response cannot strand the rest.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {string} search Search term identifying the caller's own responses.
+	 * @returns {Promise<number>} Count of responses actually deleted.
+	 * @throws If the listing request itself fails.
+	 */
+	async deleteFeedbackBySearch( siteID: number, search: string ): Promise< number > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const buildURL = ( page: number ): URL => {
+			const url = this.getRequestURL( '1.1', `/sites/${ siteID }/posts/` );
+			url.searchParams.set( 'type', 'feedback' );
+			// Not `any`: WP_Query excludes statuses registered `exclude_from_search`,
+			// which covers core's `trash` and the `spam` status jetpack-forms registers.
+			// Those are exactly what a failed run leaves behind, since this flow walks a
+			// response through Spam and Trash. Verified against the endpoint: `any`
+			// returned 0 on a site holding 21 trashed responses, `trash` returned all 21.
+			// Unrecognised values are ignored rather than rejected, so listing `spam`
+			// is safe even where it is not a supported filter.
+			url.searchParams.set( 'status', 'publish,draft,pending,private,future,trash,spam' );
+			url.searchParams.set( 'search', search );
+			url.searchParams.set( 'number', '100' );
+			url.searchParams.set( 'page', String( page ) );
+			return url;
+		};
+
+		let deleted = 0;
+
+		// Paginate: a caller passing a unique term expects one or two matches, but
+		// nothing enforces that, and a single page would silently leave the rest.
+		for ( let page = 1; ; page++ ) {
+			const response = await this.sendRequest( buildURL( page ), params );
+
+			if ( response.hasOwnProperty( 'error' ) ) {
+				throw new Error(
+					`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+				);
+			}
+
+			const posts = response?.posts ?? [];
+			if ( ! posts.length ) {
+				return deleted;
+			}
+
+			for ( const post of posts ) {
+				try {
+					await this.deletePost( siteID, post.ID );
+					deleted++;
+				} catch ( error ) {
+					// deletePost throws, which would abandon every remaining response.
+					// Report and continue: partial cleanup beats none. TeamCity service
+					// message format so CI can collect these; it must not contain quotes.
+					const message = `Could not delete feedback ${ post.ID } on site ${ siteID }: ${ error }`
+						.replace( /'/g, '' )
+						.replace( /[|[\]]/g, ' ' )
+						.replace( /\s+/g, ' ' );
+					// eslint-disable-next-line no-console
+					console.log( `##teamcity[message text='${ message }' status='WARNING']` );
+				}
+			}
+
+			// A short page means there is nothing after it.
+			if ( posts.length < 100 ) {
+				return deleted;
+			}
+		}
+	}
+
 	/* Comments */
 
 	/**
@@ -837,17 +1118,12 @@ export class RestAPIClient {
 	}
 
 	/**
-	 * Method to perform two similar operations - like and unlike a comment.
+	 * Likes a comment.
 	 *
-	 * @param {'like'|'unlike'} action Action to perform on the comment.
 	 * @param {number} siteID Target site ID.
 	 * @param {number} commentID Target comment ID.
 	 */
-	async commentAction(
-		action: 'like' | 'unlike',
-		siteID: number,
-		commentID: number
-	): Promise< CommentLikeResponse > {
+	async likeComment( siteID: number, commentID: number ): Promise< CommentLikeResponse > {
 		const params: RequestParams = {
 			method: 'post',
 			headers: {
@@ -856,33 +1132,50 @@ export class RestAPIClient {
 			},
 		};
 
-		let endpoint: URL;
-		if ( action === 'like' ) {
-			endpoint = this.getRequestURL(
-				'1.1',
-				`/sites/${ siteID }/comments/${ commentID }/likes/new`
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/comments/${ commentID }/likes/new` ),
+			params
+		);
+
+		if ( ! response.i_like ) {
+			throw new Error(
+				`Failed to like ${ commentID } on site ${ siteID }. Response: ${ JSON.stringify(
+					response
+				) }`
 			);
-		} else {
-			endpoint = this.getRequestURL(
-				'1.1',
-				`/sites/${ siteID }/comments/${ commentID }/likes/mine/delete`
+		}
+
+		return response;
+	}
+
+	/**
+	 * Unlikes a comment.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} commentID Target comment ID.
+	 */
+	async unlikeComment( siteID: number, commentID: number ): Promise< CommentLikeResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/comments/${ commentID }/likes/mine/delete` ),
+			params
+		);
+
+		if ( response.i_like ) {
+			throw new Error(
+				`Failed to unlike ${ commentID } on site ${ siteID }. Response: ${ JSON.stringify(
+					response
+				) }`
 			);
 		}
 
-		const response = await this.sendRequest( endpoint, params );
-
-		// Tried to like the comment, but failed to do so
-		// and the user still has not liked the comment.
-		if ( action === 'like' && response.like_count !== 1 ) {
-			throw new Error( `Failed to like ${ commentID } on site ${ siteID }` );
-		}
-		// Tried to unlike the comment, but failed to do so
-		// and the user still likes the comment.
-		if ( action === 'unlike' && response.like_count !== 0 ) {
-			throw new Error( `Failed to unlike ${ commentID } on site ${ siteID }` );
-		}
-
-		// Otherwise, consider it a success.
 		return response;
 	}
 
@@ -937,7 +1230,14 @@ export class RestAPIClient {
 
 		if ( media ) {
 			const data = new FormData();
-			data.append( 'media[]', fs.createReadStream( media.fullpath ) );
+			// The request body below is built with `getBuffer()`, which cannot
+			// serialize a stream (it throws on the DelayedStream a read stream
+			// produces). Append the file contents as a Buffer instead, passing the
+			// filename explicitly so form-data still sets the Content-Disposition
+			// filename and the mime-derived Content-Type the stream's path supplied.
+			data.append( 'media[]', fs.readFileSync( media.fullpath ), {
+				filename: media.basename,
+			} );
 
 			params = {
 				method: 'post',
@@ -971,7 +1271,13 @@ export class RestAPIClient {
 			);
 		}
 
-		return response;
+		// `/sites/$site/media/new` wraps the uploaded item(s) in a `media` array;
+		// per-file rejections come back as `{ media: [], errors: [...] }` with no
+		// top-level `error` key.
+		if ( ! response.media?.length ) {
+			throw new Error( `Media upload failed: ${ JSON.stringify( response.errors ?? response ) }` );
+		}
+		return response.media[ 0 ];
 	}
 
 	/* Shopping Cart */

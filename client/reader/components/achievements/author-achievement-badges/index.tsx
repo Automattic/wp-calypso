@@ -1,6 +1,7 @@
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import useAchievementsVisibility from '../use-achievements-visibility';
 import { YearsOfServiceBadge } from '../years-of-service-badge';
+import type { JSX } from 'react';
 
 import './style.scss';
 

@@ -1,5 +1,5 @@
+import { keyBy, pickBy } from '@automattic/js-utils';
 import treeSelect from '@automattic/tree-select';
-import { keyBy, pickBy } from 'lodash';
 import { getExpansionsForPost } from 'calypso/state/comments/selectors/get-expansions-for-post';
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 

@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import ListItem from './list-item';
 
 // This is different than the item adder as this simply shows followed subscriptions to recommended
@@ -10,25 +9,25 @@ import ListItem from './list-item';
 // long list of subs.
 export default function SubscriptionItemAdder( { list, listItems, owner } ) {
 	const translate = useTranslate();
-	const [ renderAllFollows, setRenderAllFollows ] = useState( false );
+	const [ renderAllSubscriptions, setRenderAllSubscriptions ] = useState( false );
 
-	const allFollows = useSelector( ( state ) => getReaderFollows( state ) );
+	const { subscriptions } = useSiteSubscriptions( { fetchAllPages: renderAllSubscriptions } );
 
 	// Continue showing the subscriptions list if we have showed it once in this session.
 	useEffect( () => {
 		if ( listItems?.length === 0 ) {
-			setRenderAllFollows( true );
+			setRenderAllSubscriptions( true );
 		}
 	}, [ listItems ] );
 
-	if ( ! renderAllFollows || ! allFollows?.length ) {
+	if ( ! renderAllSubscriptions || ! subscriptions?.length ) {
 		return null;
 	}
 
 	return (
 		<>
 			<h2 className="list-manage__subscriptions-header">{ translate( 'Your subscriptions' ) }</h2>
-			{ allFollows.map( ( item ) => (
+			{ subscriptions.map( ( item ) => (
 				<ListItem
 					hideIfInList
 					isFollowed

@@ -1636,6 +1636,33 @@ describe( 'utils', () => {
 				expect( normalizers.statsVideo() ).toBeNull();
 			} );
 
+			test( 'should return empty data when the endpoint reports an empty window', () => {
+				// With no rows in the requested window, the endpoint returns a
+				// single object instead of the usual [ date, value ] tuples.
+				expect(
+					normalizers.statsVideo( {
+						data: { date: '7-10', p: '0' },
+						pages: [],
+					} )
+				).toEqual( { pages: [], data: [], post: null, metrics: null, rows: null, total: null } );
+			} );
+
+			test( 'should skip non-tuple entries in the data array', () => {
+				expect(
+					normalizers.statsVideo( {
+						data: [ [ '2016-11-12', 1 ], { date: '7-10', p: '0' } ],
+						pages: [],
+					} )
+				).toEqual( {
+					pages: [],
+					data: [ { period: '2016-11-12', value: 1 } ],
+					post: null,
+					metrics: null,
+					rows: null,
+					total: null,
+				} );
+			} );
+
 			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsVideo( {
@@ -1675,6 +1702,76 @@ describe( 'utils', () => {
 							link: 'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
 						},
 					],
+					post: null,
+					metrics: null,
+					rows: null,
+					total: null,
+				} );
+			} );
+
+			test( 'should pass through the attachment post', () => {
+				const post = {
+					ID: 43948,
+					post_title: 'blank-canvas-split-screen',
+					post_date: '2021-02-08 13:53:37',
+				};
+				expect( normalizers.statsVideo( { data: [], pages: [], post } ) ).toEqual( {
+					pages: [],
+					data: [],
+					post,
+					metrics: null,
+					rows: null,
+					total: null,
+				} );
+			} );
+
+			test( 'should key range-mode rows by the metric names in fields', () => {
+				expect(
+					normalizers.statsVideo( {
+						fields: [ 'period', 'plays', 'impressions', 'watch_time', 'retention_rate' ],
+						data: [
+							[ '2026-07-01', 3, 10, 0.5, 25.5 ],
+							[ '2026-07-02', '0', 4, 0, 0 ],
+						],
+						pages: [],
+						total: { plays: 3, impressions: 14, watch_time: 0.5, retention_rate: 25.5 },
+					} )
+				).toEqual( {
+					pages: [],
+					data: [
+						{ period: '2026-07-01', value: 3 },
+						{ period: '2026-07-02', value: '0' },
+					],
+					post: null,
+					metrics: [ 'plays', 'impressions', 'watch_time', 'retention_rate' ],
+					rows: [
+						{
+							period: '2026-07-01',
+							plays: 3,
+							impressions: 10,
+							watch_time: 0.5,
+							retention_rate: 25.5,
+						},
+						{ period: '2026-07-02', plays: 0, impressions: 4, watch_time: 0, retention_rate: 0 },
+					],
+					total: { plays: 3, impressions: 14, watch_time: 0.5, retention_rate: 25.5 },
+				} );
+			} );
+
+			test( 'should build single-metric rows from a two-column fields list', () => {
+				expect(
+					normalizers.statsVideo( {
+						fields: [ 'period', 'impressions' ],
+						data: [ [ '2026-07-01', 7 ] ],
+						pages: [],
+					} )
+				).toEqual( {
+					pages: [],
+					data: [ { period: '2026-07-01', value: 7 } ],
+					post: null,
+					metrics: [ 'impressions' ],
+					rows: [ { period: '2026-07-01', impressions: 7 } ],
+					total: null,
 				} );
 			} );
 		} );

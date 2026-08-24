@@ -42,7 +42,9 @@ export const usePurchaseActions = () => {
 			( p ) => p.id === parseInt( domain.subscriptionId ?? '', 10 )
 		);
 		if ( purchase ) {
-			dispatch( handleRenewNowClick( purchase, siteSlug ) );
+			// Temporary bridge (SHILL-2256): this hook still reads the camelCase
+			// Purchase from Redux. Remove once it reads the raw shape.
+			dispatch( handleRenewNowClick( purchase.rawPurchase, siteSlug ) );
 		}
 	};
 

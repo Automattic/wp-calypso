@@ -1,0 +1,43 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
+
+.dashboard-opt-in-welcome-modal {
+	@include break-small {
+		width: 409px;
+	}
+
+	// We hide the usual footer in order to properly handle RTL
+	.components-guide__footer {
+		display: none;
+	}
+
+	.dashboard-opt-in-welcome-modal__illustration {
+		position: relative;
+		block-size: 257px;
+		background-color: var( --studio-wordpress-blue-50, #3858e9 );
+		overflow: hidden;
+	}
+
+	.dashboard-opt-in-welcome-modal__pattern {
+		position: absolute;
+		inset: 0;
+		background-repeat: repeat;
+		background-size: 16px;
+		opacity: 0.6;
+	}
+
+	.dashboard-opt-in-welcome-modal__screenshot {
+		position: absolute;
+		inset-block-end: 0;
+		inset-inline-end: 0;
+		block-size: 209px;
+	}
+
+	.dashboard-opt-in-welcome-modal__content {
+		padding: $grid-unit-40;
+	}
+
+	.dashboard-opt-in-welcome-modal__title {
+		@include heading-x-large;
+	}
+}

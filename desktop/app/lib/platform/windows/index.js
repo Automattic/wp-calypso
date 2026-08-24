@@ -65,7 +65,7 @@ WindowsPlatform.prototype.showBackgroundBubble = function () {
 		Settings.saveSetting( TRAY_SETTING, true );
 
 		tray.displayBalloon( {
-			icon: assets.getPath( 'windows-tray-bubble.webp' ),
+			icon: assets.getPath( 'windows-tray-bubble.png' ),
 			title: 'WordPress.com',
 			content: "We've minimized WordPress.com to your tray. Click on the icon to restore it.",
 		} );

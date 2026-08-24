@@ -1,4 +1,5 @@
-import { Badge, Button } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 import { translate } from 'i18n-calypso';
 import SiteFavicon from 'calypso/blocks/site-favicon';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -35,19 +36,18 @@ const SiteDataField = ( {
 		>
 			<SiteFavicon
 				blogId={ site.blog_id }
-				fallback={ site.is_atomic ? 'wordpress-logo' : 'color' }
+				fallback={ site.is_atomic ? 'wordpress-logo' : 'first-grapheme' }
+				siteName={ site.blogname }
 				className="sites-dataviews__site-favicon"
 			/>
 			<div className="sites-dataviews__site-name">
 				<div>{ site.blogname }</div>
 				{ ! migrationInProgress && <div className="sites-dataviews__site-url">{ site.url }</div> }
 				{ migrationInProgress && (
-					<Badge className="status-badge" type="info-blue">
-						{ translate( 'Migration in progress' ) }
-					</Badge>
+					<Badge intent="info">{ translate( 'Migration in progress' ) }</Badge>
 				) }
 				{ isDevSite && (
-					<Badge className="status-badge" type="info-purple">
+					<Badge className="sites-dataviews__site-development-badge">
 						{ translate( 'Development' ) }
 					</Badge>
 				) }

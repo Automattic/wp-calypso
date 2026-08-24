@@ -3,7 +3,6 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
-import { ReactNode } from 'react';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
@@ -13,6 +12,7 @@ import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { SitePreviewEllipsisMenu } from './site-preview-ellipsis-menu';
+import type { JSX, ReactNode } from 'react';
 import './style.scss';
 
 interface ThumbnailWrapperProps {

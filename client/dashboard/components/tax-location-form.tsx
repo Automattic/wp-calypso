@@ -22,12 +22,15 @@ function getFields( {
 			id: 'country_code',
 			label: __( 'Country' ),
 			Edit: 'select',
-			elements: countryList
-				.filter( ( countryItem ) => countryItem.name )
-				.map( ( countryItem ) => ( {
-					label: countryItem.name,
-					value: countryItem.code,
-				} ) ),
+			elements: [
+				{ label: __( 'Select Country' ), value: '' },
+				...countryList
+					.filter( ( countryItem ) => countryItem.name )
+					.map( ( countryItem ) => ( {
+						label: countryItem.name,
+						value: countryItem.code,
+					} ) ),
+			],
 		},
 		{
 			id: 'postal_code',

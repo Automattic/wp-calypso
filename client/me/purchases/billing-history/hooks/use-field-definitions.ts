@@ -5,11 +5,12 @@ import type { BillingTransaction } from 'calypso/state/billing-transactions/type
 
 export function useFieldDefinitions(
 	transactions: BillingTransaction[] | null,
-	getReceiptUrlFor: ( receiptId: string ) => string
+	getReceiptUrlFor: ( receiptId: string ) => string,
+	visibleFields: string[]
 ) {
 	const translate = useTranslate();
 
 	return useMemo( () => {
-		return getFieldDefinitions( transactions, translate, getReceiptUrlFor );
-	}, [ transactions, translate, getReceiptUrlFor ] );
+		return getFieldDefinitions( transactions, translate, getReceiptUrlFor, visibleFields );
+	}, [ transactions, translate, getReceiptUrlFor, visibleFields ] );
 }

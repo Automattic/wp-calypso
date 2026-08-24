@@ -13,7 +13,7 @@ interface HealthSectionProps {
 	url?: string;
 	hash?: string;
 	hostingProvider?: HostingProvider;
-	healthMetricsRef: React.RefObject< HTMLObjectElement >;
+	healthMetricsRef: React.RefObject< HTMLElement | null >;
 	setIsGetReportFormOpen?: ( isOpen: boolean ) => void;
 }
 

@@ -21,6 +21,7 @@ function WpcomSmartDictationPlugin() {
 				name={ SMART_DICTATION_SIDEBAR_NAME }
 				title={ __( 'WP.com Smart Dictation', __i18n_text_domain__ ) }
 				icon={ MicrophoneIcon }
+				isPinnable={ false }
 			>
 				<div className="wpcom-smart-dictation-sidebar-root">
 					<LiveAIAssistant />

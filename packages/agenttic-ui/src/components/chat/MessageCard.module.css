@@ -1,0 +1,38 @@
+.card {
+	display: flex;
+	align-items: center;
+	gap: var( --spacing-3 );
+	padding: var( --spacing-4 );
+	background-color: var( --color-background );
+	border: 1px solid var( --color-muted );
+	border-radius: var( --radius-sm );
+	text-decoration: none;
+	color: inherit;
+	transition: var( --transition-colors );
+}
+
+.card:hover {
+	background-color: color-mix( in srgb, var( --color-foreground ) 15%, var( --color-background ) );
+}
+
+.content {
+	flex: 1;
+}
+
+.title {
+	font-size: var( --text-base );
+	font-weight: var( --font-weight-semibold );
+	color: var( --color-foreground );
+	margin-bottom: var( --spacing-1 );
+}
+
+.description {
+	font-size: var( --text-sm );
+	color: var( --color-muted-foreground );
+	line-height: var( --text-sm--line-height );
+}
+
+.chevron {
+	flex-shrink: 0;
+	color: var( --color-muted-foreground );
+}

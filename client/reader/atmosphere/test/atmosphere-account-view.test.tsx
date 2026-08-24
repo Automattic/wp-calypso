@@ -18,7 +18,7 @@ jest.mock(
 		}
 );
 
-// recordReaderTracksEvent is a thunk that reads state.reader.follows. The test
+// recordReaderTracksEvent is a thunk that reads the follows query cache. The test
 // store from renderWithProvider does not provide that slice. Replace it with a
 // no-op action creator so dispatch() does not throw.
 jest.mock( 'calypso/state/reader/analytics/actions', () => ( {

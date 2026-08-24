@@ -1,7 +1,6 @@
 import { __experimentalHStack as HStack, MenuItem as WPMenuItem } from '@wordpress/components';
 import { ComponentProps, ComponentType } from 'react';
 import RouterLinkButton from '../router-link-button';
-import type { ActiveOptions } from '@tanstack/react-router';
 import './style.scss';
 
 interface MenuItemLinkProps
@@ -13,17 +12,12 @@ interface MenuItemLinkProps
 
 const MenuItemLink = WPMenuItem as ComponentType< MenuItemLinkProps >;
 
-function MenuItem( {
-	to,
-	children,
-	activeOptions,
-	onClick,
-}: {
-	to: string;
-	children: React.ReactNode;
-	activeOptions?: ActiveOptions;
-	onClick?: () => void;
-} ) {
+type MenuItemProps = Pick<
+	ComponentProps< typeof RouterLinkButton >,
+	'to' | 'activeOptions' | 'onClick'
+> & { children: React.ReactNode };
+
+function MenuItem( { to, children, activeOptions, onClick }: MenuItemProps ) {
 	return (
 		<RouterLinkButton
 			className="dashboard-menu__item"

@@ -8,6 +8,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import { LogsDownloader } from '../downloader';
+import type { JSX } from 'react';
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( s: string ) => s,

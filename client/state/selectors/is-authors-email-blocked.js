@@ -1,4 +1,3 @@
-import { includes } from 'lodash';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 
 /**
@@ -11,7 +10,7 @@ import getSiteSetting from 'calypso/state/selectors/get-site-setting';
  */
 export const isAuthorsEmailBlocked = ( state, siteId, email = '' ) => {
 	const blocklist = getSiteSetting( state, siteId, 'disallowed_keys' ) || '';
-	return includes( blocklist.split( '\n' ), email );
+	return blocklist.split( '\n' ).includes( email );
 };
 
 export default isAuthorsEmailBlocked;

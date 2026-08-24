@@ -2,7 +2,7 @@ import '@automattic/calypso-polyfills';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import RenderDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import Main from 'calypso/components/main';
 import InvalidActionPage from './invalid-action';
 import RegistrantVerificationPage from './registrant-verification';
@@ -73,12 +73,13 @@ function boot() {
 		i18n.setLocale( i18nLocaleStringsObject );
 	}
 
-	RenderDom.render(
+	const root = createRoot( document.getElementById( 'primary' ) );
+
+	root.render(
 		<DomainsLandingPage
 			action={ window.domainsLandingData.action }
 			query={ window.domainsLandingData.query }
-		/>,
-		document.getElementById( 'primary' )
+		/>
 	);
 }
 

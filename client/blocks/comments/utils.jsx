@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 /**
  * @param {Object} ancestor potential ancestor comment
  * @param {Object} child potential child comment
@@ -11,7 +9,7 @@ export const isAncestor = ( ancestor, child, commentsTree ) => {
 		return false;
 	}
 
-	const nextParent = get( commentsTree, [ child.parent.ID, 'data' ] );
+	const nextParent = commentsTree?.[ child.parent.ID ]?.data;
 
 	return child.parent.ID === ancestor.ID || isAncestor( ancestor, nextParent, commentsTree );
 };

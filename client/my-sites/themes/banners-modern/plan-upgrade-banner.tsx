@@ -1,3 +1,4 @@
+import { plansQuery } from '@automattic/api-queries';
 import {
 	getFeatureByKey,
 	getPlan,
@@ -8,6 +9,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -35,6 +37,9 @@ const monthlyPlansMap = {
 const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerProps ) => {
 	const translate = useTranslate();
 	const [ isMonthly, setIsMonthly ] = useState< boolean >( false );
+	// The CTA links to a plan path slug from the loaded plans query, so keep it
+	// disabled until that data is available.
+	const { data: plans } = useQuery( plansQuery() );
 
 	const plan = getPlan( planSlug );
 
@@ -69,8 +74,10 @@ const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerPr
 
 	const amount = isMonthly ? displayCostMonth : displayCostYear;
 	const period = isMonthly ? translate( '/month' ) : translate( '/year' );
-	// @ts-ignore - if plan or monthlyPlan are null, the component doesn't render
-	const pathSlug = isMonthly ? monthlyPlan.getPathSlug() : plan.getPathSlug();
+	const selectedPlanSlug = isMonthly ? monthlyPlanSlug : planSlug;
+	const pathSlug =
+		plans?.find( ( { product_slug } ) => product_slug === selectedPlanSlug )?.path_slug ||
+		selectedPlanSlug;
 
 	// @ts-ignore - getSignupFeatures is not typed as existing on all plan types, but it is in practice
 	const featureSlugs: string[] = plan.getSignupFeatures();
@@ -132,7 +139,9 @@ const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerPr
 				<Button
 					className="plan-upgrade-banner__cta"
 					variant="primary"
-					href={ `/start/${ pathSlug }/?ref=themes-lp` }
+					href={ plans ? `/start/${ pathSlug }/?ref=themes-lp` : undefined }
+					disabled={ ! plans }
+					aria-disabled={ ! plans }
 					onClick={ trackClick }
 				>
 					{

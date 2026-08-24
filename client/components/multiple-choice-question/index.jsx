@@ -1,4 +1,4 @@
-import { memoize, pick, shuffle, values } from 'lodash';
+import { memoize, pick, shuffle } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -14,19 +14,19 @@ const shuffleAnswers = memoize(
 	},
 	( answers ) =>
 		answers
-			.map( ( answer ) => values( pick( answer, 'id', 'doNotShuffle' ) ).join( '_' ) )
+			.map( ( answer ) => Object.values( pick( answer, 'id', 'doNotShuffle' ) ).join( '_' ) )
 			.join( '-' )
 );
 
 const MultipleChoiceQuestion = ( {
-	disabled,
+	disabled = false,
 	answers,
 	name,
 	onAnswerChange,
 	question,
 	selectedAnswerId,
-	selectedAnswerText,
-	shouldShuffleAnswers,
+	selectedAnswerText = '',
+	shouldShuffleAnswers = true,
 } ) => {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( selectedAnswerId );
 	const shuffledAnswers = shouldShuffleAnswers ? shuffleAnswers( answers ) : answers;
@@ -76,13 +76,6 @@ MultipleChoiceQuestion.propTypes = {
 	selectedAnswerId: PropTypes.string,
 	selectedAnswerText: PropTypes.string,
 	shouldShuffleAnswers: PropTypes.bool,
-};
-
-MultipleChoiceQuestion.defaultProps = {
-	disabled: false,
-	selectedAnswerId: null,
-	selectedAnswerText: '',
-	shouldShuffleAnswers: true,
 };
 
 export default MultipleChoiceQuestion;

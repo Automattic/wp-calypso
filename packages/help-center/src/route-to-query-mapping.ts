@@ -22,8 +22,6 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/settings/performance/': __( 'performance settings' ),
 		'/settings/podcasting/': __( 'podcasting' ),
 		'/settings/reading/': __( 'reading settings' ),
-		'/settings/taxonomies/category/': __( 'site categories' ),
-		'/settings/taxonomies/post_tag/': __( 'post tag' ),
 		'/settings/writing/': __( 'writing settings' ),
 		'/tags': __( 'tags' ),
 		'/woocommerce': __( 'woocommerce' ),

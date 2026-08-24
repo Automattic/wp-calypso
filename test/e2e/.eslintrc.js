@@ -9,16 +9,21 @@ module.exports = {
 		{
 			files: [ 'specs/**/*' ],
 			rules: {
-				// We use jest-runner-groups to run spec suites, and these involve a custom doc header tag.
-				'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'group', 'browser' ] } ],
-				'jest/no-standalone-expect': [ 'error', { additionalTestBlockFunctions: [ 'skipItIf' ] } ],
+				// Specs that create a test account (getNewTestUser + a signup helper) must register
+				// an afterAll apiCloseAccount teardown, or the account and its blogs leak. Opt out
+				// via `allow` only with justification.
+				'wpcalypso/e2e-require-account-teardown': [ 'error', { allow: [] } ],
 			},
 		},
 		{
-			files: [ 'specs/**/shared/**/*', 'lib/shared-steps/**/*' ],
+			files: [ 'specs/**/*.spec.ts' ],
+			extends: [ 'plugin:playwright/recommended' ],
 			rules: {
-				// This directory is used to create shared specs that can be re-used in multiple places.
-				'jest/no-export': 'off',
+				// Specs frequently leave the browser in a state asserted by a later
+				// step rather than making an explicit top-level expect().
+				'playwright/expect-expect': 'off',
+				// Test titles are composed dynamically.
+				'playwright/valid-title': 'off',
 			},
 		},
 		{
@@ -30,17 +35,6 @@ module.exports = {
 	],
 	rules: {
 		...nodeConfig.rules,
-
-		// We have many tests that don't make an explicit `expect`, but instead puts the browser
-		// in certain state that will be used by the next test, or asserted by WebDriver
-		'jest/expect-expect': 'off',
-
-		// We compose the test titles dynamically
-		'jest/valid-title': 'off',
-
-		// The rule hasn't had the intended results (encouraging owners to re-enable and fix their tests).
-		// See GitHub issue #64870 for context (https://github.com/Automattic/wp-calypso/issues/64870).
-		'jest/no-disabled-tests': 'off',
 
 		'jsdoc/tag-lines': [ 'off' ],
 	},

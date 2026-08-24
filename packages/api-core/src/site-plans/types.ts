@@ -105,12 +105,12 @@ export interface SiteContextualPlan {
 	introductory_offer_raw_price_integer?: number;
 	introductory_offer_interval_unit?: string;
 	introductory_offer_interval_count?: number;
-	introductory_offer_end_date?: string | null; // Only when is_current_plan && has subscription
+	introductory_offer_end_date?: string | null; // Only when current_plan && has subscription
 
-	// Current plan fields (conditional - when is_current_plan is true)
+	// This means that the plan is active but it could be past its expiry date.
 	current_plan?: boolean;
 
-	// Subscription fields (conditional - when is_current_plan && !is_free)
+	// Subscription fields (conditional - when current_plan && !is_free)
 	user_is_owner?: boolean | null;
 	id?: number | null;
 	has_domain_credit?: boolean | null;
@@ -123,8 +123,30 @@ export interface SiteContextualPlan {
 	partner_name?: string;
 	user_facing_expiry?: string | null; // Deprecated, same as expiry
 
-	// Trial availability (conditional - when !is_current_plan && !is_free)
+	// Trial availability (conditional - when !current_plan && !is_free)
 	can_start_trial?: boolean;
+
+	/**
+	 * Whether the site's current plan can be upgraded to this plan. Computed by
+	 * the server from the same upgrade-path authority the shopping cart uses.
+	 * Present on non-current plans.
+	 */
+	available_for_upgrade?: boolean;
+
+	/**
+	 * Whether the site's current plan can be downgraded to this plan. Computed by
+	 * the server from the same plan-path authority the shopping cart uses.
+	 * Present on non-current plans.
+	 */
+	available_for_downgrade?: boolean;
+
+	/**
+	 * Whether this plan has passed its expiry date. If this is set on the
+	 * current plan, that means that the plan is still active but is now within
+	 * its grace period. Once the grace period ends, the plan will no longer be
+	 * returned with current_plan: true.
+	 */
+	is_expired?: boolean;
 
 	/**
 	 * Display order for plan cards on the comparison page. Lower values appear first.

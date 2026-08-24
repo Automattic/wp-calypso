@@ -1,4 +1,3 @@
-import { BadgeType } from '@automattic/components';
 import { Button, ExternalLink } from '@wordpress/components';
 import { check } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -27,7 +26,7 @@ import {
 	mapAgencyDetailsFormData,
 	mapApplicationFormData,
 } from '../utils/map-application-form-data';
-import DashboardStatusBadge from './status-badge';
+import DashboardStatusBadge, { StatusBadgeIntent } from './status-badge';
 
 import './style.scss';
 
@@ -35,13 +34,13 @@ interface DirectoryApplicationStatus {
 	key: string;
 	brand: string;
 	status: string;
-	type: BadgeType;
+	intent: StatusBadgeIntent;
 }
 
 interface StatusBadge {
 	key: string;
 	label: string;
-	type: BadgeType;
+	intent: StatusBadgeIntent;
 }
 
 const PartnerDirectoryDashboard = () => {
@@ -70,27 +69,27 @@ const PartnerDirectoryDashboard = () => {
 			pending: {
 				key: 'pending',
 				label: translate( 'Pending' ),
-				type: 'warning',
+				intent: 'warning',
 			},
 			approved: {
 				key: 'approved',
 				label: translate( 'Approved' ),
-				type: 'success',
+				intent: 'success',
 			},
 			rejected: {
 				key: 'rejected',
 				label: translate( 'Not approved' ),
-				type: 'error',
+				intent: 'error',
 			},
 			closed: {
 				key: 'closed',
 				label: translate( 'Closed' ),
-				type: 'info',
+				intent: 'default',
 			},
 			unknown: {
 				key: 'unknown',
 				label: '-',
-				type: 'info',
+				intent: 'default',
 			},
 		};
 	}, [ translate ] );
@@ -177,7 +176,7 @@ const PartnerDirectoryDashboard = () => {
 			statuses.push( {
 				brand: availableDirectories[ directory.directory ],
 				status: applicationStatusTypeMap[ directory.status || 'unknown' ].label,
-				type: applicationStatusTypeMap[ directory.status || 'unknown' ].type,
+				intent: applicationStatusTypeMap[ directory.status || 'unknown' ].intent,
 				key: applicationStatusTypeMap[ directory.status || 'unknown' ].key,
 			} );
 			return statuses;
@@ -266,7 +265,7 @@ const PartnerDirectoryDashboard = () => {
 					<DashboardStatusBadge
 						statusProps={ {
 							status: application.status,
-							type: application.type,
+							intent: application.intent,
 						} }
 						showPopoverOnLoad={ showPopoverOnLoad }
 					/>
@@ -361,7 +360,7 @@ const PartnerDirectoryDashboard = () => {
 					description={
 						applicationWasSubmitted && directoryApplicationStatuses.length > 0 ? (
 							<div className="partner-directory-dashboard__brand-status-section">
-								{ directoryApplicationStatuses.map( ( { brand, status, type } ) => {
+								{ directoryApplicationStatuses.map( ( { brand, status, intent } ) => {
 									const showPopoverOnLoad =
 										directoryApplicationStatuses.filter( ( { key } ) => key === 'rejected' )
 											.length === 1;
@@ -370,7 +369,7 @@ const PartnerDirectoryDashboard = () => {
 											<DashboardStatusBadge
 												statusProps={ {
 													status,
-													type,
+													intent,
 												} }
 												showPopoverOnLoad={ showPopoverOnLoad }
 											/>

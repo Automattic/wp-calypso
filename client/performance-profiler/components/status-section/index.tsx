@@ -12,7 +12,7 @@ type StatusSectionProps = {
 	value: Valuation;
 	activeTab: Metrics | null;
 	recommendationsQuantity?: number;
-	recommendationsRef?: React.RefObject< HTMLDivElement > | null;
+	recommendationsRef?: React.RefObject< HTMLDivElement | null > | null;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 

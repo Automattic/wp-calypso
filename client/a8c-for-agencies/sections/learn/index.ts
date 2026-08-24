@@ -1,8 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
-	A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
+	A4A_AI_MCP_READ_TOOLS_LINK,
 	A4A_AI_MCP_CONNECT_LINK,
+	A4A_AI_MCP_STARTER_PROMPTS_LINK,
+	A4A_AI_MCP_WRITE_TOOLS_LINK,
 	A4A_AI_MCP_LINK,
 	A4A_AGENT_STUDIO_LINK,
 	A4A_BENCHMARKS_LINK,
@@ -10,7 +12,10 @@ import {
 	A4A_LEARN_LINK,
 	A4A_RESOURCES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
+import {
+	requireAccessContext,
+	requireMcpBetaAccessContext,
+} from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	agentStudioBriefContext,
@@ -18,7 +23,9 @@ import {
 	agentStudioOutputContext,
 } from '../agent-studio/controller';
 import {
-	aiMcpAvailableToolsContext,
+	aiMcpReadToolsContext,
+	aiMcpWriteToolsContext,
+	aiMcpStarterPromptsContext,
 	aiMcpConnectContext,
 	aiMcpOverviewContext,
 } from '../ai-mcp/controller';
@@ -64,23 +71,46 @@ export default function () {
 		page( A4A_BENCHMARKS_LINK, requireAccessContext, benchmarksContext, makeLayout, clientRender );
 	}
 
-	if ( isEnabled( 'a4a-ai-mcp' ) ) {
-		page( A4A_AI_MCP_LINK, requireAccessContext, aiMcpOverviewContext, makeLayout, clientRender );
-		page(
-			A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
-			requireAccessContext,
-			aiMcpAvailableToolsContext,
-			makeLayout,
-			clientRender
-		);
-		page(
-			A4A_AI_MCP_CONNECT_LINK,
-			requireAccessContext,
-			aiMcpConnectContext,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		A4A_AI_MCP_LINK,
+		requireAccessContext,
+		requireMcpBetaAccessContext,
+		aiMcpOverviewContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		A4A_AI_MCP_READ_TOOLS_LINK,
+		requireAccessContext,
+		requireMcpBetaAccessContext,
+		aiMcpReadToolsContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		A4A_AI_MCP_WRITE_TOOLS_LINK,
+		requireAccessContext,
+		requireMcpBetaAccessContext,
+		aiMcpWriteToolsContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		A4A_AI_MCP_STARTER_PROMPTS_LINK,
+		requireAccessContext,
+		requireMcpBetaAccessContext,
+		aiMcpStarterPromptsContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		A4A_AI_MCP_CONNECT_LINK,
+		requireAccessContext,
+		requireMcpBetaAccessContext,
+		aiMcpConnectContext,
+		makeLayout,
+		clientRender
+	);
 
 	page( A4A_RESOURCES_LINK, () =>
 		page.redirect( isEnabled( 'a4a-agent-studio' ) ? A4A_AGENT_STUDIO_LINK : A4A_LEARN_LINK )

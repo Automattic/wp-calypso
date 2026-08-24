@@ -1,48 +1,23 @@
 /**
  * @jest-environment jsdom
  */
-import { createElement } from 'react';
-import TestUtils from 'react-dom/test-utils';
-import searchClass from '../';
+import { render, screen } from '@testing-library/react';
+import Search from '../';
 
 jest.mock( 'calypso/lib/analytics/ga', () => ( {} ) );
 
 describe( 'Search', () => {
 	describe( 'initialValue', () => {
-		let onSearch;
-		let rendered;
+		test( 'should seed the input with the initialValue after mount', () => {
+			render( <Search initialValue="hello" onSearch={ jest.fn() } /> );
 
-		beforeEach( () => {
-			onSearch = jest.fn();
+			expect( screen.getByRole( 'searchbox' ) ).toHaveValue( 'hello' );
 		} );
 
-		describe( 'with initialValue', () => {
-			const initialValue = 'hello';
+		test( 'should start with an empty input without an initialValue', () => {
+			render( <Search onSearch={ jest.fn() } /> );
 
-			beforeEach( () => {
-				const searchElement = createElement( searchClass, {
-					initialValue,
-					onSearch,
-				} );
-				rendered = TestUtils.renderIntoDocument( searchElement );
-			} );
-
-			test( 'should set state.keyword with the initialValue after mount', () => {
-				expect( rendered.state.keyword ).toEqual( initialValue );
-			} );
-		} );
-
-		describe( 'without initialValue', () => {
-			beforeEach( () => {
-				const searchElement = createElement( searchClass, {
-					onSearch,
-				} );
-				rendered = TestUtils.renderIntoDocument( searchElement );
-			} );
-
-			test( 'should set state.keyword empty string after mount', () => {
-				expect( rendered.state.keyword ).toEqual( '' );
-			} );
+			expect( screen.getByRole( 'searchbox' ) ).toHaveValue( '' );
 		} );
 	} );
 } );

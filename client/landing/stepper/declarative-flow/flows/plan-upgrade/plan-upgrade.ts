@@ -1,4 +1,5 @@
 import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
+import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import { resolveSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -10,6 +11,7 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { isExternal } from 'calypso/lib/url';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 
 const BASE_STEPS = [ STEPS.UNIFIED_PLANS ];
 
@@ -99,6 +101,8 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const siteSlug = query.get( 'siteSlug' );
 		const redirectTo = query.get( 'redirect_to' );
 
+		const extraProducts = query.get( 'products' );
+
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 
@@ -108,14 +112,33 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 					if ( providedDependencies?.cartItems && providedDependencies.cartItems.length > 0 ) {
 						const selectedPlan = providedDependencies.cartItems[ 0 ]?.product_slug;
 						if ( selectedPlan && siteSlug ) {
-							const checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }/${ selectedPlan }`;
+							const extras = extraProducts?.split( ',' ).filter( Boolean ) ?? [];
+							// Checkout encodes slashes in a slug its own way; the router won't take a
+							// percent-encoded one.
+							const products = [ selectedPlan, ...extras ].map( encodeProductForUrl ).join( ',' );
+							const checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }/${ products }`;
 							const currentPath = window.location.href.replace( window.location.origin, '' );
+
+							// The user can drop a product at checkout and buy the plan alone, so only a
+							// plan-only cart has a destination we can name up front. Otherwise checkout derives
+							// it from what was bought — but reads two things first, so clear both.
+							const checkoutChoosesDestination = extras.length > 0 && ! redirectTo;
+
+							// Signup leaves the page it meant to end on in a cookie, good for a day. This
+							// purchase isn't that signup finishing.
+							if ( checkoutChoosesDestination ) {
+								clearSignupDestinationCookie();
+							}
 
 							// Build checkout URL with query params
 							// Note: Not using goToCheckout utility because it hardcodes signup=1
 							// Checkout validates redirect_to to prevent open redirects
 							const finalUrl = addQueryArgs( checkoutUrl, {
-								redirect_to: redirectTo || dashboardLink( '/sites' ),
+								...( checkoutChoosesDestination
+									? // Declines checkout's upsell, which if taken leaves it an email cart the
+									  // plugin can't be read from.
+									  { upgrade: 1 }
+									: { redirect_to: redirectTo || dashboardLink( '/sites' ) } ),
 								cancel_to: currentPath,
 							} );
 

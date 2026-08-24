@@ -5,8 +5,7 @@
 		"checkJs": false,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
-		"rootDir": "src",
-		"jsx": "react"
+		"rootDir": "src"
 	},
 	"include": [ "src", "src/*.json", "types" ],
 	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],

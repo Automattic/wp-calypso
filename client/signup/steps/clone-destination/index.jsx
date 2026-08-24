@@ -1,7 +1,7 @@
 import { Card, Button, FormInputValidation, FormLabel, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { isEmpty } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

@@ -1,6 +1,6 @@
-import { action } from '@storybook/addon-actions';
-import { Story } from '@storybook/react';
+import { StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
+import { action } from 'storybook/actions';
 import { DoNotSellDialog } from '.';
 import type { DoNotSellDialogProps } from '.';
 
@@ -8,7 +8,7 @@ export default {
 	title: 'Do Not Sell Dialog',
 };
 
-export const Default: Story< DoNotSellDialogProps > = ( args ) => {
+export const Default: StoryFn< DoNotSellDialogProps > = ( args ) => {
 	const [ isActive, setActive ] = useState( false );
 	return <DoNotSellDialog { ...args } isActive={ isActive } onToggleActive={ setActive } isOpen />;
 };

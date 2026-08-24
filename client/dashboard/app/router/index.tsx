@@ -2,8 +2,10 @@ import calypsoConfig from '@automattic/calypso-config';
 import { createRouter, createRoute } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
-import { handleOnCatch } from '../logger';
+import { handleOnCatch, initLogger } from '../logger';
 import { startPerformanceTracking } from '../performance-tracking';
+import { createAgencyRoutes } from './agency';
+import { createAgencyClientRoutes } from './agency-client';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
@@ -14,6 +16,7 @@ import { createSitesRoutes } from './sites';
 import { startStoreRoute } from './start-store';
 import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
+import type { AgencyCapability } from '@automattic/api-core';
 import type { ErrorInfo } from 'react';
 
 /**
@@ -23,10 +26,16 @@ declare module '@tanstack/react-router' {
 	interface StaticDataRouteOption {
 		/**
 		 * If set, the route is only accessible when the site type supports this feature.
-		 * The check is performed in siteRoute.beforeLoad against getSiteTypeFeatureSupports(site).
+		 * The check is performed in siteRoute.beforeLoad and agencySiteRoute.beforeLoad
+		 * against getSiteTypeFeatureSupports(site).
 		 */
 		requiresSiteTypeSupport?: SiteTypeFeature;
 		availableToInaccessibleJetpackSites?: boolean;
+		/**
+		 * If set, the route is only accessible when the agency user holds at least one
+		 * of these capabilities. Enforced in agencyRoute.beforeLoad.
+		 */
+		requiresAgencyCapability?: AgencyCapability | AgencyCapability[];
 	}
 }
 
@@ -44,10 +53,27 @@ const indexRoute = createRoute( {
 	},
 } );
 
+// Catch-all so every unmatched path still resolves to a route. Without it, an
+// unmatched path renders the not-found component but has no matched route, and
+// navigation APIs like useBlocker throw "No route found for location".
+const catchAllRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: '$',
+	component: NotFound,
+} );
+
 const createRouteTree = ( config: AppConfig ) => {
 	const children = [];
 
 	children.push( indexRoute );
+
+	if ( config.supports.agency ) {
+		children.push( ...createAgencyRoutes() );
+	}
+
+	if ( config.supports.agencyClient ) {
+		children.push( ...createAgencyClientRoutes() );
+	}
 
 	if ( config.supports.sites ) {
 		children.push( ...createSitesRoutes( config ) );
@@ -72,6 +98,8 @@ const createRouteTree = ( config: AppConfig ) => {
 	if ( config.supports.startStoreRoute ) {
 		children.push( startStoreRoute );
 	}
+
+	children.push( catchAllRoute );
 
 	return rootRoute.addChildren( children );
 };
@@ -101,6 +129,8 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultViewTransition: true,
 		scrollRestoration: true,
 	} );
+
+	initLogger( router );
 
 	router.subscribe( 'onBeforeLoad', () => {
 		const routeId = router.state.pendingMatches?.at( -1 )?.routeId;

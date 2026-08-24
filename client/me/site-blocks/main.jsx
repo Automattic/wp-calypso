@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { times } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { times } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';

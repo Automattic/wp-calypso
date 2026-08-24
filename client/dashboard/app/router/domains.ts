@@ -177,13 +177,8 @@ export const domainRoute = createRoute( {
 
 		return domain;
 	},
-} ).lazy( () =>
-	import( '../../domains/domain' ).then( ( d ) =>
-		createLazyRoute( 'domain' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: Outlet,
+} );
 
 export const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,
@@ -193,9 +188,10 @@ export const domainOverviewRoute = createRoute( {
 
 		queryClient.prefetchQuery( siteByIdQuery( domain.blog_id ) );
 		queryClient.prefetchQuery( mailboxesQuery( domain.blog_id ) );
-		await queryClient.ensureQueryData(
-			purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
-		);
+
+		if ( domain.subscription_id ) {
+			await queryClient.ensureQueryData( purchaseQuery( parseInt( domain.subscription_id, 10 ) ) );
+		}
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-overview' ).then( ( d ) =>

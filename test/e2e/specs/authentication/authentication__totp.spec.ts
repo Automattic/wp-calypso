@@ -4,7 +4,7 @@ import { expect, tags, test } from '../../lib/pw-base';
 const WOO_LOGIN_TIMEOUT = 30_000;
 
 test.describe(
-	'Authentication: Time-based One Time Passcode (TOTP)',
+	DataHelper.createSuiteTitle( 'Authentication: Time-based One Time Passcode (TOTP)' ),
 	{ tag: [ tags.AUTHENTICATION ] },
 	() => {
 		test.describe.configure( { mode: 'serial' } ); // Since both tests use the same TOTP, they should not be run at the same time

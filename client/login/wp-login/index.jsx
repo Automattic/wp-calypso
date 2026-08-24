@@ -4,7 +4,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -40,6 +39,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsJetpackApp from 'calypso/state/selectors/get-is-jetpack-app';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow, {
@@ -110,6 +110,7 @@ export class Login extends Component {
 			'oauth2Client',
 			'isWooJPC',
 			'isJetpack',
+			'isJetpackApp',
 			'isWCCOM',
 			'isBlazePro',
 			'isFromAkismet',
@@ -186,7 +187,7 @@ export class Login extends Component {
 									? 'jetpack/lostpassword'
 									: 'lostpassword',
 							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							from: get( this.props.currentQuery, 'from' ),
+							from: this.props.currentQuery?.from,
 						} )
 					);
 				} }
@@ -208,7 +209,7 @@ export class Login extends Component {
 							redirectTo: this.props.redirectTo,
 							locale: this.props.locale,
 							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							from: get( this.props.currentQuery, 'from' ),
+							from: this.props.currentQuery?.from,
 							isJetpack: this.props.isJetpack,
 						} )
 					);
@@ -399,6 +400,7 @@ function getInitialHeadingState( props, translate ) {
 		oauth2Client,
 		isWooJPC,
 		isJetpack,
+		isJetpackApp,
 		isWCCOM,
 		isBlazePro,
 		isFromAkismet,
@@ -424,6 +426,7 @@ function getInitialHeadingState( props, translate ) {
 		oauth2Client,
 		isWooJPC,
 		isJetpack,
+		isJetpackApp,
 		isWCCOM,
 		isBlazePro,
 		isFromAkismet,
@@ -483,10 +486,10 @@ export default connect(
 		const currentRoute = getCurrentRoute( state );
 
 		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
-		const connectorFromParam = redirectParams.get( 'from' ) || get( currentQuery, 'from' );
+		const connectorFromParam = redirectParams.get( 'from' ) || currentQuery?.from;
 		const isFromJetpackConnector = connectorFromParam === 'jetpack-connector';
 		const connectorPlugins = isFromJetpackConnector
-			? ( redirectParams.get( 'plugins' ) || get( currentQuery, 'plugins' ) || '' )
+			? ( redirectParams.get( 'plugins' ) || currentQuery?.plugins || '' )
 					.split( ',' )
 					.map( trimString )
 					.filter( Boolean )
@@ -513,6 +516,7 @@ export default connect(
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),
 			isBlazePro: getIsBlazePro( state ),
+			isJetpackApp: getIsJetpackApp( state ),
 			// This applies to all oauth screens except for A4A, Blaze Pro, Jetpack, Woo.
 			isGenericOauth:
 				oauth2Client &&
@@ -527,7 +531,7 @@ export default connect(
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),
 			isFromAutomatticForAgenciesPlugin:
-				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
+				'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 			isFromJetpackConnector,

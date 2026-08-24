@@ -5,7 +5,6 @@ import {
 	type PlanSlug,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
-	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
@@ -23,6 +22,7 @@ import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selecto
 import { getSiteSlug, getSiteUrl, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
+import { useIsIndiaA4A } from './use-is-india-a4a';
 import { useNonOwnerHandler } from './use-non-owner-handler';
 import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -59,9 +59,7 @@ function useUpgradeHandler( {
 				return;
 			}
 
-			const planPath = cartItemForPlan?.product_slug
-				? getPlanPath( cartItemForPlan.product_slug )
-				: '';
+			const planPath = cartItemForPlan?.product_slug ?? '';
 
 			let checkoutUrl = cartItemForStorageAddOn
 				? `/checkout/${ siteSlug }/${ planPath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`
@@ -169,7 +167,6 @@ function useGenerateActionCallback( {
 	sitePlanSlug,
 	siteId,
 	coupon,
-	isGatingBusinessQ1,
 	redirectTo,
 	pluginSlug,
 }: {
@@ -178,15 +175,10 @@ function useGenerateActionCallback( {
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	flowName?: string | null;
 	intent?: PlansIntent | null;
-	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
+	showModalAndExit?: ( planSlug: PlanSlug ) => boolean | Promise< boolean >;
 	sitePlanSlug?: PlanSlug | null;
 	siteId?: number | null;
 	coupon?: string;
-	/**
-	 * When true, adds `is_gating_business_q1` to the plan cart item extra data
-	 * for the rolled-out pricing differentiation cohort.
-	 */
-	isGatingBusinessQ1?: boolean;
 	redirectTo?: string;
 	pluginSlug?: string;
 } ): UseActionCallback {
@@ -215,19 +207,30 @@ function useGenerateActionCallback( {
 		currentPlan,
 	} );
 	const handleNonOwnerClick = useNonOwnerHandler( { siteId, currentPlan } );
+	const isIndiaA4A = useIsIndiaA4A();
 
 	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) =>
 		async () => {
 			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 			const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
 
-			const earlyReturn = showModalAndExit?.( planSlug );
+			const earlyReturn = await showModalAndExit?.( planSlug );
 			if ( earlyReturn ) {
 				return;
 			}
 
 			/* 1. Send user to VIP if it's an enterprise plan */
 			if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+				// India A4A test: the Enterprise card is re-skinned as Automattic for Agencies.
+				if ( isIndiaA4A ) {
+					recordTracksEvent( 'calypso_plan_step_a4a_india_click', { flow: flowName } );
+					window.open(
+						'https://automattic.com/for-agencies/?ref=wordpressdotcomindiapricing',
+						'_blank'
+					);
+					return;
+				}
+
 				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
 				const vipLandingPageURL = 'https://wpvip.com/wordpress-vip-agile-content-platform';
 				window.open(
@@ -242,8 +245,7 @@ function useGenerateActionCallback( {
 				sitePlanSlug &&
 				currentPlan?.productSlug === planSlug &&
 				! flowName &&
-				intent !== 'plans-p2' &&
-				intent !== 'plans-blog-onboarding'
+				intent !== 'plans-p2'
 			) {
 				if ( isFreePlan( planSlug ) ) {
 					page.redirect( `/add-ons/${ siteSlug }` );
@@ -253,22 +255,17 @@ function useGenerateActionCallback( {
 				return;
 			}
 
-			if (
-				sitePlanSlug &&
-				! flowName &&
-				intent !== 'plans-p2' &&
-				intent !== 'plans-blog-onboarding' &&
-				! canUserManageCurrentPlan
-			) {
+			if ( sitePlanSlug && ! flowName && intent !== 'plans-p2' && ! canUserManageCurrentPlan ) {
 				await handleNonOwnerClick( { availableForPurchase } );
 				return;
 			}
 			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
 			if (
 				sitePlanSlug &&
-				( ! flowName || flowName === WOO_HOSTED_PLANS_FLOW ) &&
+				( ! flowName ||
+					flowName === WOO_HOSTED_PLANS_FLOW ||
+					intent === 'plans-upgrade-or-downgrade' ) &&
 				intent !== 'plans-p2' &&
-				intent !== 'plans-blog-onboarding' &&
 				! availableForPurchase
 			) {
 				recordTracksEvent?.( 'calypso_plan_features_downgrade_click', {
@@ -290,21 +287,8 @@ function useGenerateActionCallback( {
 				} );
 			}
 
-			// Augment the cart item with pricing differentiation experiment data if applicable.
-			let augmentedCartItemForPlan = cartItemForPlan;
-
-			if ( cartItemForPlan && isGatingBusinessQ1 ) {
-				augmentedCartItemForPlan = {
-					...cartItemForPlan,
-					extra: {
-						...cartItemForPlan.extra,
-						is_gating_business_q1: true,
-					},
-				};
-			}
-
 			handleUpgradeClick( {
-				cartItemForPlan: augmentedCartItemForPlan,
+				cartItemForPlan,
 				selectedStorageAddOn,
 			} );
 			return;

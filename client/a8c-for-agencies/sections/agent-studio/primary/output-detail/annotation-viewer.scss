@@ -1,0 +1,98 @@
+.a4a-annotation-viewer {
+	position: relative;
+}
+
+.a4a-annotation-viewer.is-annotating .a4a-one-pager-viewer {
+	cursor: crosshair;
+}
+
+.a4a-annotation-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 5;
+	pointer-events: none;
+}
+
+.a4a-annotation-overlay__highlight {
+	position: absolute;
+	border: 2px solid var(--color-primary);
+	background-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+	border-radius: 2px;
+	box-sizing: border-box;
+	transition: inset-block-start 60ms ease-out, inset-inline-start 60ms ease-out,
+		width 60ms ease-out, height 60ms ease-out;
+}
+
+.a4a-annotation-overlay__highlight.is-pending {
+	transition: none;
+}
+
+.a4a-annotation-overlay__pin {
+	position: absolute;
+	transform: translate(-50%, -50%);
+	display: inline-grid;
+	place-items: center;
+	width: 24px;
+	height: 24px;
+	margin: 0;
+	padding: 0;
+	border: 2px solid var(--color-text-inverted);
+	border-radius: 50%;
+	background-color: var(--color-primary);
+	color: var(--color-text-inverted);
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1;
+	cursor: pointer;
+	appearance: none;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+	pointer-events: auto;
+}
+
+.a4a-annotation-overlay__pin:hover {
+	background-color: var(--color-error);
+}
+
+.a4a-annotation-overlay__form {
+	position: absolute;
+	z-index: 6;
+	width: 260px;
+	max-width: 90%;
+	padding: 8px;
+	border-radius: 4px;
+	background-color: var(--color-surface);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32), 0 1px 3px rgba(0, 0, 0, 0.18);
+	pointer-events: auto;
+}
+
+.a4a-annotation-overlay__form-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 4px;
+	margin-block-start: 8px;
+}
+
+.a4a-annotation-toolbar {
+	position: sticky;
+	inset-block-end: 16px;
+	z-index: 7;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	width: fit-content;
+	margin-inline: auto;
+	margin-block-start: 12px;
+	padding-block: 8px;
+	padding-inline: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 24px;
+	background-color: rgba(18, 18, 18, 0.88);
+	box-shadow: 0 14px 32px rgba(0, 0, 0, 0.26);
+	backdrop-filter: blur(10px);
+}
+
+.a4a-annotation-toolbar__hint {
+	color: rgba(255, 255, 255, 0.95);
+	font-size: 0.875rem;
+}

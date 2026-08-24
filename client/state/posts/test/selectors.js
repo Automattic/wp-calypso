@@ -1361,5 +1361,34 @@ describe( 'selectors', () => {
 				expect.arrayContaining( [ postObjects[ 2916284 ][ '3d097cb7c5473c169bba0eb8e3c6cb64' ] ] )
 			);
 		} );
+
+		test( 'should match terms stored as an object map keyed by term ID', () => {
+			const postObjects = {
+				2916284: {
+					'3d097cb7c5473c169bba0eb8e3c6cb64': {
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						title: 'Hello World',
+						terms: {
+							category: { 10: { ID: 10 } },
+						},
+					},
+				},
+			};
+			const state = {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: postObjects[ 2916284 ],
+						} ),
+					},
+				},
+			};
+
+			expect( getSitePostsByTerm( state, 2916284, 'category', 10 ) ).toEqual(
+				expect.arrayContaining( [ postObjects[ 2916284 ][ '3d097cb7c5473c169bba0eb8e3c6cb64' ] ] )
+			);
+		} );
 	} );
 } );

@@ -1,6 +1,5 @@
 import { useResizeObserver } from '@wordpress/compose';
-import { useLayoutEffect, useRef } from 'react';
-import type { CSSProperties } from 'react';
+import { type JSX, useLayoutEffect, useRef, CSSProperties } from 'react';
 
 interface Props {
 	className?: string;

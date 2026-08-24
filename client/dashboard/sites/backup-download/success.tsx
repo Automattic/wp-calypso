@@ -1,6 +1,5 @@
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { download } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
@@ -28,7 +27,6 @@ function SiteBackupDownloadSuccess( {
 			actions={
 				<Button
 					variant="primary"
-					icon={ download }
 					text={ __( 'Download file' ) + ( fileSizeBytes ? ` (${ fileSizeBytes })` : '' ) }
 					onClick={ handleDownloadClick }
 				/>

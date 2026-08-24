@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import useProductsById from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-products-by-id';
 import { getClientReferralQueryArgs } from 'calypso/a8c-for-agencies/sections/marketplace/lib/get-client-referral-query-args';
+import { isWPCOMHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/src/lib/wpcom-store';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -36,6 +37,12 @@ export default function useClientCheckout( { expressMode = false }: Props ) {
 	const checkoutStoreDispatch = useDispatch( CHECKOUT_STORE );
 
 	const emailMismatchWithReferralClient = referral?.client?.email !== userEmail;
+
+	// Slug of the WordPress.com hosting product being purchased, if any. Used to surface a
+	// confirmation notice on the subscriptions page after the client completes checkout.
+	const wpcomHostingProductSlug = referredProducts?.find( ( product ) =>
+		isWPCOMHostingProduct( product.slug )
+	)?.slug;
 
 	// Add products to cart when referral data is loaded
 	useEffect( () => {
@@ -125,5 +132,6 @@ export default function useClientCheckout( { expressMode = false }: Props ) {
 		error,
 		emailMismatchWithReferralClient,
 		referral,
+		wpcomHostingProductSlug,
 	};
 }

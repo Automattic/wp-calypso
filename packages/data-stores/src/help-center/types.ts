@@ -54,6 +54,14 @@ export interface HelpCenterOptions {
 	hideBackButton?: boolean;
 }
 
+export type LoggedOutOdieChat = {
+	odieId: number;
+	sessionId: string;
+	botSlug: string;
+};
+
+export type LoggedOutOdieChats = Record< string, LoggedOutOdieChat >;
+
 export interface Preferences {
 	calypso_preferences: {
 		help_center_open: boolean | undefined;

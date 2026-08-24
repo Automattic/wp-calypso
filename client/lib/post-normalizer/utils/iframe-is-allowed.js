@@ -1,5 +1,4 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { some } from 'lodash';
 
 /**
  * Determines if an iframe is from a source we trust. We allow these to be the featured media and also give
@@ -45,7 +44,7 @@ export function iframeIsAllowed( iframe ) {
 	];
 	const hostName = iframe.src && getUrlParts( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
-	return some( allowedIframeHosts, function ( allowedHost ) {
+	return allowedIframeHosts.some( function ( allowedHost ) {
 		return `.${ iframeSrc }`.endsWith( '.' + allowedHost );
 	} );
 }

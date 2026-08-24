@@ -4,9 +4,15 @@ import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../lib/constants';
 import { useImportBlueprint } from '../../lib/import-blueprint';
-import { importPlaygroundSite } from '../../lib/import-playground';
+import {
+	importPlaygroundSite,
+	removeSandboxPlugins,
+	ImportTimeoutError,
+} from '../../lib/import-playground';
 import { PlaygroundIframe } from '../playground-iframe';
 import type { Step } from '../../../../types';
 import type { PlaygroundClient } from '../../lib/types';
@@ -78,7 +84,38 @@ export const PlaygroundSetupStep: Step< {
 			return;
 		}
 
-		await importPlaygroundSite( client, siteId );
+		const playgroundSlug = query.get( 'playground' );
+		if ( ! playgroundSlug ) {
+			return;
+		}
+
+		// When launched from the Playground publish flow (entrepreneur) there is no
+		// surrounding Redux importer machinery to handle the start trigger and
+		// polling — so importPlaygroundSite must block until the import completes.
+		const waitForCompletion = sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
+
+		if ( waitForCompletion ) {
+			await removeSandboxPlugins( client );
+			const importStartedAt = Date.now();
+			recordTracksEvent( 'calypso_playground_woo_import_started', { site_id: siteId } );
+			try {
+				await importPlaygroundSite( playgroundSlug, siteId, { waitForCompletion: true } );
+				recordTracksEvent( 'calypso_playground_woo_import_succeeded', {
+					site_id: siteId,
+					duration_seconds: Math.round( ( Date.now() - importStartedAt ) / 1000 ),
+				} );
+			} catch ( error ) {
+				recordTracksEvent( 'calypso_playground_woo_import_failed', {
+					site_id: siteId,
+					reason: error instanceof ImportTimeoutError ? 'timeout' : 'import_failure',
+					duration_seconds: Math.round( ( Date.now() - importStartedAt ) / 1000 ),
+				} );
+				throw error;
+			}
+		} else {
+			await importPlaygroundSite( playgroundSlug, siteId, { waitForCompletion: false } );
+		}
+
 		submit( {
 			siteSlug,
 			siteId,
@@ -94,7 +131,7 @@ export const PlaygroundSetupStep: Step< {
 				{ ! hasBlueprint && (
 					<PlaygroundIframe
 						className="playground__onboarding-iframe"
-						playgroundClient={ playgroundClientRef.current }
+						hasPlaygroundClient={ Boolean( playgroundClientRef.current ) }
 						setPlaygroundClient={ startImport }
 					/>
 				) }

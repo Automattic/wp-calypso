@@ -3,8 +3,8 @@ import {
 	WPCOM_FEATURES_ANTISPAM,
 	isJetpackAntiSpam,
 } from '@automattic/calypso-products';
+import { pick } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { pick } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';

@@ -14,7 +14,9 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
+	RtlCssDisabledHelper,
 	StoreSandboxHelper,
+	BlackboxHelper,
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -23,6 +25,10 @@ import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { InterimOmnibar } from 'calypso/dashboard/app/interim-omnibar/interim-omnibar';
 import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
+import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
+import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
+import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
+import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
@@ -67,11 +73,19 @@ class Document extends Component {
 			sectionGroup,
 			sectionName,
 			storeSandboxHelper,
+			blackboxHelper,
 			target,
 			user,
 			useTranslationChunks,
 			showStepContainerV2Loader,
 		} = this.props;
+
+		const theme = config( 'theme' );
+		const isRTL = isLocaleRtl( lang );
+		const isDevelopmentEnv = app?.isDevelopmentEnv || env === 'development';
+		const shouldBuildRtlCss = ! isDevelopmentEnv || process.env.BUILD_RTL_CSS === 'true';
+		const isRtlCssDisabled = isDevelopmentEnv && ! shouldBuildRtlCss;
+		const shouldUseRtlCss = isRTL && shouldBuildRtlCss;
 
 		const installedChunks = entrypoint.js
 			.concat( chunkFiles.js )
@@ -95,15 +109,22 @@ class Document extends Component {
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' ) +
+			`var RTL_CSS_ENABLED = ${ jsonStringifyForHtml( shouldBuildRtlCss ) };\n` +
 			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n` +
 			// Inject the locale if we can get it from the route via `getLanguageRouteParam`
 			( params && params.hasOwnProperty( 'lang' )
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
 
-		const theme = config( 'theme' );
+		const isDashboardSection =
+			sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
+			sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name ||
+			sectionName === A4A_DASHBOARD_SECTION_DEFINITION.name;
 
-		const isRTL = isLocaleRtl( lang );
+		const isDashboardOmnibarPage =
+			( isDashboardEnv() || env === 'development' ) &&
+			( sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
+				sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name );
 
 		let headTitle = head.title;
 		let headFaviconUrl;
@@ -140,6 +161,9 @@ class Document extends Component {
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
 					faviconUrl={ headFaviconUrl }
+					allowZoom={ isDashboardSection }
+					// Firefox can reuse the anonymous REST proxy prefetch after login; see https://github.com/Automattic/wp-calypso/pull/111842.
+					shouldPrefetchRestProxy={ ! app?.isFirefox }
 				>
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
@@ -147,8 +171,8 @@ class Document extends Component {
 					{ head.links.map( ( props, index ) => (
 						<link { ...props } key={ index } />
 					) ) }
-					{ chunkCssLinks( entrypoint, isRTL ) }
-					{ chunkCssLinks( chunkFiles, isRTL ) }
+					{ chunkCssLinks( entrypoint, shouldUseRtlCss ) }
+					{ chunkCssLinks( chunkFiles, shouldUseRtlCss ) }
 					{ chunkFiles.js.map( ( chunk ) => (
 						<link key={ chunk } rel="preload" as="script" href={ chunk } />
 					) ) }
@@ -164,24 +188,22 @@ class Document extends Component {
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
-					{ dashboard && config.isEnabled( 'dashboard/omnibar-radical' ) && (
+					{ isDashboardOmnibarPage && config.isEnabled( 'dashboard/omnibar-radical' ) && (
 						<div id="wpcom-omnibar">
 							<InitialOmnibar user={ user } />
 						</div>
 					) }
-					{ dashboard &&
-						config.isEnabled( 'dashboard/omnibar' ) &&
-						! config.isEnabled( 'dashboard/omnibar-radical' ) && (
-							<div id="wpcom-omnibar">
-								<I18NContext.Provider value={ this.props.i18nCalypso || defaultCalypsoI18n }>
-									<InterimOmnibar
-										user={ user || null }
-										site={ null }
-										currentRoute={ this.props.path ?? '/' }
-									/>
-								</I18NContext.Provider>
-							</div>
-						) }
+					{ isDashboardOmnibarPage && ! config.isEnabled( 'dashboard/omnibar-radical' ) && (
+						<div id="wpcom-omnibar">
+							<I18NContext.Provider value={ this.props.i18nCalypso || defaultCalypsoI18n }>
+								<InterimOmnibar
+									user={ user || null }
+									site={ null }
+									currentRoute={ this.props.path ?? '/' }
+								/>
+							</I18NContext.Provider>
+						</div>
+					) }
 					{ renderedLayout ? (
 						<div
 							id="wpcom"
@@ -223,6 +245,8 @@ class Document extends Component {
 							{ featuresHelper && <FeaturesHelper /> }
 							{ authHelper && <AuthHelper /> }
 							{ storeSandboxHelper && <StoreSandboxHelper /> }
+							{ blackboxHelper && <BlackboxHelper /> }
+							{ isRtlCssDisabled && <RtlCssDisabledHelper /> }
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }

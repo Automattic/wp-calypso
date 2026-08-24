@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 /* Purchase listing
 ================================================== */
 #purchases-list {
@@ -98,6 +100,11 @@
 		margin-right: 16px;
 		width: 230px;
 		white-space: break-spaces;
+	}
+
+	.dataviews-view-table__cell-content-wrapper .purchase-item__inline-status {
+		margin-top: 4px;
+		width: auto;
 	}
 
 	.dataviews-view-table__cell-content-wrapper .purchase-item__payment-method {

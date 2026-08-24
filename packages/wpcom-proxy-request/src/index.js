@@ -424,6 +424,11 @@ function onmessage( e ) {
 		return;
 	}
 
+	// Another string non-JSON message, client can ignore it.
+	if ( data === 'cookie-auth-ok' ) {
+		return;
+	}
+
 	if ( postStrings && 'string' === typeof data ) {
 		data = JSON.parse( data );
 	}
@@ -566,6 +571,7 @@ const localDevHosts = [
 	'agencies.localhost',
 	'my.localhost',
 	'my.woo.localhost',
+	'my.a4a.localhost',
 ];
 
 function isLocalDevOrigin( urlOrigin ) {

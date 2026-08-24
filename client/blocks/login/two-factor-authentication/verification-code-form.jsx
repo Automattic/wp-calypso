@@ -2,7 +2,6 @@ import { Card, FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -53,7 +52,7 @@ class VerificationCodeForm extends Component {
 		const isNewPage = prevProps.twoFactorAuthType !== twoFactorAuthType;
 
 		if ( isNewPage || ( hasNewError && twoFactorAuthRequestError.field === 'twoStepCode' ) ) {
-			defer( () => this.input.focus() );
+			setTimeout( () => this.input.focus(), 0 );
 		}
 	}
 

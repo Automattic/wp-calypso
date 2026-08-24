@@ -1,6 +1,6 @@
 # ComponentSwapper
 
-`ComponentSwapper` is a react component that can be used to swap components at a specified breakpoint. For example a buttons navigation to a dropdown for samll screens.
+`ComponentSwapper` is a react component that can be used to swap components at a specified breakpoint. For example a buttons navigation to a dropdown for small screens.
 
 ## Properties
 

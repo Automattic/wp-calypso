@@ -25,8 +25,8 @@ describe( 'Favicons', () => {
 
 	test( "should render environment favicons using the 'environmentFaviconURL' property", () => {
 		const arbitraryURL = 'https://arbitrary-favicon-url/';
-		const { container } = render( <Favicons environmentFaviconURL={ arbitraryURL } /> );
-		const links = Array.from( container.getElementsByTagName( 'link' ) );
+		render( <Favicons environmentFaviconURL={ arbitraryURL } /> );
+		const links = Array.from( document.getElementsByTagName( 'link' ) );
 
 		[
 			{ rel: 'shortcut icon', type: 'image/vnd.microsoft.icon' },
@@ -61,9 +61,9 @@ describe( 'Favicons', () => {
 		const baseUrl = '//s1.wp.com/i/favicons';
 
 		expect( isJetpackCloud() ).toEqual( false );
-		const { container } = render( <Favicons environmentFaviconURL="" /> );
+		render( <Favicons environmentFaviconURL="" /> );
 
-		const links = Array.from( container.getElementsByTagName( 'link' ) );
+		const links = Array.from( document.getElementsByTagName( 'link' ) );
 
 		favicons.forEach( ( icon ) => {
 			const [ rel, size, filename ] = icon;
@@ -79,10 +79,10 @@ describe( 'Favicons', () => {
 
 		isJetpackCloud.mockImplementation( () => true );
 		expect( isJetpackCloud() ).toEqual( true );
-		const { container } = render( <Favicons environmentFaviconURL="" /> );
+		render( <Favicons environmentFaviconURL="" /> );
 
-		const links = Array.from( container.getElementsByTagName( 'link' ) );
-		const metas = Array.from( container.getElementsByTagName( 'meta' ) );
+		const links = Array.from( document.getElementsByTagName( 'link' ) );
+		const metas = Array.from( document.getElementsByTagName( 'meta' ) );
 
 		// Safari pinned tab icon (foreground color should be Jetpack Green)
 		const safariLink = links.find(

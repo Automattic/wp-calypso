@@ -125,7 +125,7 @@ export function useTrackElementOffsetRect(
 ) {
 	const [ indicatorPosition, setIndicatorPosition ] =
 		useState< ElementOffsetRect >( NULL_ELEMENT_OFFSET_RECT );
-	const intervalRef = useRef< ReturnType< typeof setInterval > >();
+	const intervalRef = useRef< ReturnType< typeof setInterval > >( undefined );
 
 	const measure = useEvent( () => {
 		// Check that the targetElement is still attached to the DOM, in case

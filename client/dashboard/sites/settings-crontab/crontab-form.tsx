@@ -17,6 +17,7 @@ import {
 	siteSettingsCrontabEditRoute,
 	siteSettingsCrontabRoute,
 } from '../../app/router/sites';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -52,25 +53,19 @@ export default function CrontabForm( { crontab }: CrontabFormProps ) {
 		};
 	} );
 
-	const { mutate: createCrontab, isPending: isCreating } = useMutation( {
-		...siteCrontabCreateMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Scheduled job created.' ),
-				error: __( 'Failed to create scheduled job.' ),
-			},
-		},
-	} );
+	const { mutate: createCrontab, isPending: isCreating } = useMutation(
+		withSnackbar( siteCrontabCreateMutation( site.ID ), {
+			success: __( 'Scheduled job created.' ),
+			error: __( 'Failed to create scheduled job.' ),
+		} )
+	);
 
-	const { mutate: updateCrontab, isPending: isUpdating } = useMutation( {
-		...siteCrontabUpdateMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Scheduled job updated.' ),
-				error: __( 'Failed to update scheduled job.' ),
-			},
-		},
-	} );
+	const { mutate: updateCrontab, isPending: isUpdating } = useMutation(
+		withSnackbar( siteCrontabUpdateMutation( site.ID ), {
+			success: __( 'Scheduled job updated.' ),
+			error: __( 'Failed to update scheduled job.' ),
+		} )
+	);
 
 	const isPending = isEditMode ? isUpdating : isCreating;
 

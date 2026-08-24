@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { getLanguageRouteParam, getAnyLanguageRouteParam } from '@automattic/i18n-utils';
-import { startsWith } from 'lodash';
 import {
 	makeLayout,
 	redirectInvalidLanguage,
@@ -9,11 +8,12 @@ import {
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
-import { sidebar, setBeforePrimary } from 'calypso/reader/controller';
+import { sidebar } from 'calypso/reader/controller';
+import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import { tagListing } from './controller';
 
 const redirectHashtaggedTags = ( context, next ) => {
-	if ( context.hashstring && startsWith( context.pathname, '/tag/#' ) ) {
+	if ( context.hashstring && ( context.pathname ?? '' ).startsWith( '/tag/#' ) ) {
 		page.redirect( `/tag/${ context.hashstring }` );
 	}
 	next();
@@ -23,14 +23,13 @@ export default function () {
 	const langParam = getLanguageRouteParam();
 	const anyLangParam = getAnyLanguageRouteParam();
 
-	page( '/tag/*', setBeforePrimary, redirectHashtaggedTags );
+	page( '/tag/*', redirectHashtaggedTags );
 
-	page( `/${ anyLangParam }/tag/:tag`, setBeforePrimary, redirectInvalidLanguage );
+	page( `/${ anyLangParam }/tag/:tag`, redirectInvalidLanguage );
 
 	if ( isReaderTagEmbedPage( window.location ) ) {
 		page(
 			[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
-			setBeforePrimary,
 			setLocaleMiddleware(),
 			tagListing,
 			makeLayout,
@@ -41,7 +40,6 @@ export default function () {
 
 	page(
 		[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
-		setBeforePrimary,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
 		sidebar,
@@ -49,4 +47,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// Catch-all for unrecognized /tag/* paths (after the specific /tag/:tag route).
+	page( '/tag/*', readerNotFound );
 }

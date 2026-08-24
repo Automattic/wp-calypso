@@ -1,8 +1,8 @@
-import { get, isEqual, mapValues, omit, omitBy, reduce } from 'lodash';
+import { mapValues, omit, omitBy } from '@automattic/js-utils';
+import isEqual from 'fast-deep-equal/es6';
 import { SerializationResult } from 'calypso/state/serialization-result';
 import { serialize, deserialize, SerializableReducer } from './serialize';
 import { withPersistence } from './with-persistence';
-import type { PropertyPath } from 'lodash';
 import type { Action, AnyAction } from 'redux';
 
 type CalypsoInitAction = Action< '@@calypso/INIT' >;
@@ -21,7 +21,7 @@ export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInit
  * Note! This will only apply the supplied reducer to
  * the item referenced by the supplied key in the action.
  *
- * If no key exists whose name matches the given lodash style keyPath
+ * If no key exists whose name matches the given dot-separated keyPath
  * then this super-reducer will abort and return the
  * previous state.
  *
@@ -54,12 +54,12 @@ export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInit
  *         title: 'grunt',
  *     }
  * }
- * @param {string} keyPath lodash-style path to the key in action referencing item in state map
+ * @param {string} keyPath dot-separated path to the key in action referencing item in state map (e.g. `meta.dataLayer.requestKey`); bracket or quoted path syntax (e.g. `a[0].b`) is not supported
  * @param {Function} reducer applied to referenced item in state map
  * @returns {Function} super-reducer applying reducer over map of keyed items
  */
 export const keyedReducer = < TState, TAction extends AnyAction = Action >(
-	keyPath: PropertyPath,
+	keyPath: string,
 	reducer: SerializableReducer< TState, Action >
 ): SerializableReducer< Record< string | number, TState >, TAction > => {
 	// some keys are invalid
@@ -83,12 +83,18 @@ export const keyedReducer = < TState, TAction extends AnyAction = Action >(
 
 	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
 
+	// Parse the dot-separated `keyPath` once, rather than on every dispatched action.
+	const keyPathSegments = keyPath.split( '.' );
+
 	const combinedReducer = (
 		state: Record< string | number, TState > = {},
 		action: KeyedReducerAction< TAction >
 	) => {
-		// don't allow coercion of key name: null => 0
-		const itemKey = get( action, keyPath, undefined );
+		// don't allow coercion of key name: null => 0; walk each path segment.
+		const itemKey = keyPathSegments.reduce< unknown >(
+			( value, key ) => ( value as Record< string, unknown > )?.[ key ],
+			action
+		) as string | number | undefined | null;
 
 		// if the action doesn't contain a valid reference
 		// then return without any updates
@@ -122,9 +128,8 @@ export const keyedReducer = < TState, TAction extends AnyAction = Action >(
 
 	return withPersistence( combinedReducer, {
 		serialize: ( state ) =>
-			reduce(
-				state,
-				( result, itemValue, itemKey ) => {
+			Object.entries< TState >( state ?? {} ).reduce(
+				( result, [ itemKey, itemValue ] ) => {
 					const serializedValue = serialize( reducer, itemValue );
 					if ( serializedValue !== undefined && ! isEqual( serializedValue, initialState ) ) {
 						if ( ! result ) {

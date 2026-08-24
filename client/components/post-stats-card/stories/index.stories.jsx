@@ -40,3 +40,17 @@ export const WithoutAThumbnail = () => (
 		/>
 	</div>
 );
+
+export const WrappedHeading = () => (
+	<div className="post-stats-card-story" style={ { margin: 'auto', maxWidth: '500px' } }>
+		<PostStatsCardVariations
+			heading="Most popular post in the past year"
+			uploadHref="#"
+			post={ {
+				date: '2025-09-08T14:24:48+00:00',
+				post_thumbnail: null,
+				title: 'Gradle modularization delivers 3x faster Android builds',
+			} }
+		/>
+	</div>
+);

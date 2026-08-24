@@ -12,6 +12,7 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DoughnutChart from '../../doughnut-chart';
 import useBannerSubtitle from './use-banner-subtitle';
+import type { JSX } from 'react';
 import './style.scss';
 
 interface TrialBannerProps {

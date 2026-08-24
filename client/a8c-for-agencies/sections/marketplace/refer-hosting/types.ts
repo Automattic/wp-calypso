@@ -22,7 +22,7 @@ export type ReferHostingFormDataPayload = {
 	company_name: string;
 	address: string;
 	country_code: string;
-	state: string;
+	state?: string;
 	city: string;
 	zip: string;
 

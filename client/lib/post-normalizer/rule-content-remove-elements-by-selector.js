@@ -1,5 +1,3 @@
-import { forEach } from 'lodash';
-
 const thingsToRemove = [
 	'.sharedaddy', // share daddy
 	'script', // might be too late for these at this point...
@@ -27,7 +25,7 @@ export default function sanitizeContent( post, dom ) {
 
 	const elements = dom.querySelectorAll( thingsToRemove );
 	// using forEach because qsa doesn't return a real array
-	forEach( elements, removeElement );
+	Array.from( elements ).forEach( removeElement );
 
 	return post;
 }

@@ -1,33 +1,36 @@
-import { SubmitOptions } from '@automattic/agenttic-client';
 import {
 	AgentUI,
 	createMessageRenderer,
-	EmptyView,
 	ImageUploader,
 	type ImageUploaderHandle,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
 	type ChatState,
+	type UploadedImage,
 } from '@automattic/agenttic-ui';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useMemo, useRef } from '@wordpress/element';
+import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { AGENTS_MANAGER_STORE } from '../../stores';
-import { isPluginCompassHost } from '../../utils/is-plugin-compass-agent';
+import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
+import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
+import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
+import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
+import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import lazyComponent from '../../utils/lazy-component';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
-import { AI } from '../icons';
-import SelectedBlock from '../selected-block';
+import getSuggestionClickPayload from './get-suggestion-click-payload';
+import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
-import type { AgentsManagerSelect } from '@automattic/data-stores';
+import type { ComponentProps, RefObject } from 'react';
 
 interface Props {
 	/** Chat messages to display. */
@@ -40,6 +43,8 @@ interface Props {
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Suggestions displayed when the chat is empty. */
 	emptyViewSuggestions?: Suggestion[];
+	/** Whether editor writing suggestions should render in a section. */
+	groupWritingSuggestions?: boolean;
 	/** Indicates if the chat is processing a request. */
 	isProcessing: boolean;
 	/** Custom thinking message to display while the agent is processing. */
@@ -51,7 +56,7 @@ interface Props {
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
 	/** Called when the user submits a message. */
-	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void > | void;
+	onSubmit: ComponentProps< typeof AgentUI.Container >[ 'onSubmit' ];
 	/** Called when the user aborts the current request. */
 	onAbort: () => void;
 	/** Called when the chat is closed. */
@@ -91,11 +96,25 @@ interface Props {
 	onCancelFeedback?: () => void;
 	/** Alternative footer to render instead of the default footer. */
 	alternativeFooter?: React.ReactNode;
+	/** Disables the chat input: grayed out, typing and submission blocked. */
+	isChatInputDisabled?: boolean;
+	/**
+	 * AI-interaction disclosure shown below the input (EU AI Act Art. 50(1)).
+	 * Defaults to the shared "You're chatting with AI" line; pass `false` to
+	 * hide it on surfaces that connect the user to a human (e.g. Zendesk).
+	 */
+	complianceDisclosure?: React.ReactNode | false;
 	/** Called when a context card action button is clicked. */
 	onContextCardAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
 	/** Called when a context card's dismiss button is clicked. */
 	onContextCardDismiss?: ( card: ExternalContextCard ) => void;
 }
+
+// Carries the block-editor stack, so it loads on demand — and only on editor
+// pages, keeping the chunk out of every other chat.
+const SelectedBlock = lazyComponent(
+	() => import( /* webpackChunkName: "am-selected-block" */ '../selected-block' )
+);
 
 const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 	'image/jpeg',
@@ -107,54 +126,31 @@ const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 ];
 
 /**
- * Read a string override from `window.agentsManagerData[key]`. Embedded
- * hosts (reader-chat on blog frontends, Plugin Compass on Calypso's plugins
- * marketplace) can customize the empty-view greeting/help copy by setting
- * these keys before AgentsManager mounts.
- */
-function readAgentsManagerDataString(
-	key: 'emptyViewHeading' | 'emptyViewHelp'
-): string | undefined {
-	if ( typeof window === 'undefined' ) {
-		return undefined;
-	}
-
-	if ( ! isReaderChatHost() && ! isPluginCompassHost() ) {
-		return undefined;
-	}
-
-	const data = ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
-		.agentsManagerData;
-	const value = data?.[ key ];
-	return typeof value === 'string' ? value : undefined;
-}
-
-/**
  * Returns the empty-view greeting. Priority:
  *   1. Explicit host override via `window.agentsManagerData.emptyViewHeading`.
  *   2. Reader-chat default (contextual to blog frontends).
  *   3. Orchestrator default.
  */
 function getEmptyViewHeading(): string {
-	const override = readAgentsManagerDataString( 'emptyViewHeading' );
+	const override = getAgentsManagerInlineData()?.emptyViewHeading;
 	if ( override ) {
 		return override;
 	}
 	if ( isReaderChatHost() ) {
-		return __( 'Ask me anything about this blog.', '__i18n_text_domain__' );
+		return __( 'Ask me anything about this blog.', __i18n_text_domain__ );
 	}
-	return __( 'Howdy! How can I help you today?', '__i18n_text_domain__' );
+	return __( 'Howdy! How can I help you today?', __i18n_text_domain__ );
 }
 
 function getEmptyViewHelp(): string {
-	const override = readAgentsManagerDataString( 'emptyViewHelp' );
+	const override = getAgentsManagerInlineData()?.emptyViewHelp;
 	if ( override ) {
 		return override;
 	}
 	if ( isReaderChatHost() ) {
-		return __( 'Or type your own question below.', '__i18n_text_domain__' );
+		return __( 'Or type your own question below.', __i18n_text_domain__ );
 	}
-	return __( 'Got a different request? Ask away.', '__i18n_text_domain__' );
+	return __( 'Got a different request? Ask away.', __i18n_text_domain__ );
 }
 
 export default function AgentChat( {
@@ -163,6 +159,7 @@ export default function AgentChat( {
 	error = null,
 	chatHeaderOptions,
 	emptyViewSuggestions = [],
+	groupWritingSuggestions = false,
 	isProcessing,
 	thinkingMessage,
 	isLoadingConversation,
@@ -181,6 +178,7 @@ export default function AgentChat( {
 	onTypingStatusChange,
 	inputValue,
 	onInputChange,
+	isChatInputDisabled,
 	isCompactMode = false,
 	imageUpload,
 	acceptedImageFileTypes = DEFAULT_ACCEPTED_IMAGE_TYPES,
@@ -188,20 +186,31 @@ export default function AgentChat( {
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
 	alternativeFooter,
+	complianceDisclosure,
 	onContextCardAction,
 	onContextCardDismiss,
 }: Props ) {
-	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
 	const imageUploaderRef = useRef< ImageUploaderHandle >( null );
-	const { floatingPosition } = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
+	const floatingPanelProps = useFloatingPanelProps();
 
 	const mergedComponents = useMemo(
 		() => ( { a: CustomALink, ...markdownComponents } ),
 		[ markdownComponents ]
+	);
+	const shouldFormatWritingSuggestions = groupWritingSuggestions || isEditorPage();
+	const displayedSuggestions = useMemo(
+		() => formatWritingSuggestionLabels( suggestions, shouldFormatWritingSuggestions ),
+		[ shouldFormatWritingSuggestions, suggestions ]
+	);
+	const handleDisplayedSuggestionClick = useCallback(
+		( selectedSuggestion: Suggestion | string ) => {
+			onSuggestionClick?.(
+				getSuggestionClickPayload( selectedSuggestion, suggestions ),
+				suggestions
+			);
+		},
+		[ onSuggestionClick, suggestions ]
 	);
 
 	const messageRenderer = useMemo(
@@ -213,17 +222,75 @@ export default function AgentChat( {
 		[ mergedComponents, markdownExtensions ]
 	);
 
-	let floatingChatState: ChatState = 'collapsed';
+	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
+	let floatingChatState: ChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
 	if ( isOpen ) {
 		floatingChatState = 'expanded';
 	} else if ( isCompactMode ) {
 		floatingChatState = 'compact';
 	}
 
+	// Image-upload tracking mirrors Big Sky's `file_upload_*` events.
+	// Reader chat gets no `imageUpload`, but gate defensively so
+	// `jetpack_big_sky_*` never fires from that surface.
+	const trackImageUpload = ! isReaderChatHost() && !! imageUpload;
+
+	const handleFilesSelected = useCallback(
+		async ( files: File[] ) => {
+			await imageUpload?.handleFilesSelected( files );
+		},
+		[ imageUpload ]
+	);
+
+	const handleBrowse = useCallback(
+		( files: File[] ) => {
+			if ( trackImageUpload ) {
+				recordBigSkyTracksEvent( 'file_upload_click', {
+					count: files.length,
+				} );
+			}
+		},
+		[ trackImageUpload ]
+	);
+
+	const handleDrop = useCallback(
+		( files: File[] ) => {
+			if ( trackImageUpload ) {
+				recordBigSkyTracksEvent( 'file_upload_drop', {
+					count: files.length,
+				} );
+			}
+		},
+		[ trackImageUpload ]
+	);
+
+	const handleRemoveImage = useCallback(
+		( image: UploadedImage ) => {
+			if ( trackImageUpload ) {
+				recordBigSkyTracksEvent( 'file_upload_remove', {
+					image_id: image.id,
+				} );
+			}
+			imageUpload?.handleRemoveImage( image );
+		},
+		[ imageUpload, trackImageUpload ]
+	);
+
+	const handleImageDragStart = useCallback( () => {
+		if ( trackImageUpload ) {
+			recordBigSkyTracksEvent( 'file_upload_drag_start' );
+		}
+	}, [ trackImageUpload ] );
+
+	const handleUploadError = useCallback( () => {
+		if ( trackImageUpload ) {
+			recordBigSkyTracksEvent( 'file_upload_invalid' );
+		}
+	}, [ trackImageUpload ] );
+
 	return (
 		<AgentUI.Container
-			initialChatPosition={ floatingPosition }
-			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
+			{ ...floatingPanelProps }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
@@ -231,9 +298,11 @@ export default function AgentChat( {
 			error={ error }
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
-			suggestions={ suggestions }
+			freeDrag={ ! isDocked }
+			resizable={ ! isDocked }
+			suggestions={ displayedSuggestions }
 			clearSuggestions={ clearSuggestions }
-			onSuggestionClick={ onSuggestionClick }
+			onSuggestionClick={ onSuggestionClick ? handleDisplayedSuggestionClick : undefined }
 			floatingChatState={ floatingChatState }
 			onClose={ onClose }
 			onExpand={ onExpand }
@@ -248,18 +317,18 @@ export default function AgentChat( {
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
 				) : (
-					<EmptyView
+					<GroupedEmptyView
 						heading={ getEmptyViewHeading() }
 						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
 						suggestions={ emptyViewSuggestions }
+						groupWritingSuggestions={ groupWritingSuggestions }
 						onSuggestionClick={ onSuggestionClick }
-						icon={ <AI size={ 32 } /> }
 					/>
 				)
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
-				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
+				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
@@ -270,7 +339,7 @@ export default function AgentChat( {
 				{ alternativeFooter ? (
 					alternativeFooter
 				) : (
-					<AgentUI.Footer>
+					<AgentUI.Footer complianceDisclosure={ complianceDisclosure }>
 						<AgentUI.Suggestions />
 						<AgentUI.Notice />
 						{ imageUpload && (
@@ -278,18 +347,35 @@ export default function AgentChat( {
 								ref={ imageUploaderRef }
 								images={ imageUpload.pendingImages }
 								uploadingImages={ imageUpload.uploadingImages }
-								onFilesSelected={ imageUpload.handleFilesSelected }
-								onRemoveImage={ imageUpload.handleRemoveImage }
+								onFilesSelected={ handleFilesSelected }
+								onBrowse={ handleBrowse }
+								onDrop={ handleDrop }
+								onRemoveImage={ handleRemoveImage }
+								onImageDragStart={ handleImageDragStart }
+								onError={ handleUploadError }
 								acceptedFileTypes={ acceptedImageFileTypes }
 								showFileMetadata
 								allowDragToInsert={ false }
-								dropZoneRef={ conversationViewRef }
+								disabled={ imageUpload.isUploadingImages }
+								dropZoneRef={ conversationViewRef as RefObject< HTMLElement > }
 							/>
 						) }
-						<SelectedBlock />
+						{ isEditorPage() && <SelectedBlock /> }
+						{ /* `readOnly` (not `disabled`) so the stop button stays active while a batch uploads. */ }
+						{ /* Disabling the input takes BOTH props: agenttic forwards `readOnly` to the
+						     textarea but consumes `disabled` only to gate the submit button and
+						     Enter-to-submit. `disabled` alone leaves the field typeable. */ }
+						{ /* `isChatInputDisabled` must win over the pending-images `false` — a
+						     non-operational chat stays disabled regardless of upload state. */ }
 						<AgentUI.Input
-							imageUploaderRef={ imageUpload ? imageUploaderRef : undefined }
-							disabled={ imageUpload?.pendingImages?.length ? false : undefined }
+							imageUploaderRef={
+								imageUpload ? ( imageUploaderRef as RefObject< ImageUploaderHandle > ) : undefined
+							}
+							imageUploadDisabled={ isChatInputDisabled || imageUpload?.isUploadingImages }
+							readOnly={ isChatInputDisabled || imageUpload?.isUploadingImages }
+							disabled={
+								isChatInputDisabled || ( imageUpload?.pendingImages?.length ? false : undefined )
+							}
 						/>
 					</AgentUI.Footer>
 				) }

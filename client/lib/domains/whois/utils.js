@@ -1,10 +1,9 @@
-import { find } from 'lodash';
 import { whoisType } from './constants';
 
 export function findRegistrantWhois( whoisContacts ) {
-	return find( whoisContacts, { type: whoisType.REGISTRANT } );
+	return whoisContacts?.find( ( item ) => item.type === whoisType.REGISTRANT );
 }
 
 export function findPrivacyServiceWhois( whoisContacts ) {
-	return find( whoisContacts, { type: whoisType.PRIVACY_SERVICE } );
+	return whoisContacts?.find( ( item ) => item.type === whoisType.PRIVACY_SERVICE );
 }

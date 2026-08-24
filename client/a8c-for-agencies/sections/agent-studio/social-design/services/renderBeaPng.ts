@@ -275,6 +275,13 @@ function renderBlock(
 			input.pack.logoLightUrl,
 			input.pack.logoDarkUrl
 		);
+		// No resolved logo URL (e.g. the default logo-less pack) — render
+		// nothing rather than an `<img src="">`. An empty-src image stalls
+		// the load wait in `prepareBeaRenderElement` forever, which hangs the
+		// PNG download. Mirrors the `image` block's empty-src guard below.
+		if ( ! logo ) {
+			return '';
+		}
 		const overlay = block.overlay ? ' bea-logo--overlay' : '';
 		return `<figure class="${ baseClass } bea-logo${ overlay }" data-logo-light="${ attr(
 			input.pack.logoLightUrl
@@ -808,7 +815,12 @@ export async function prepareBeaRenderElement( container: HTMLElement ): Promise
 	const images = Array.from( container.querySelectorAll( 'img' ) );
 	await Promise.all(
 		images.map( ( img ) => {
-			if ( img.complete && img.naturalWidth > 0 ) {
+			// An `<img>` with no/empty `src` never fires `load` or `error`
+			// (and reports `complete === true` with `naturalWidth === 0`), so
+			// waiting on it hangs forever. Skip those, and skip any image that
+			// has already settled — `complete` is true once it has loaded OR
+			// errored, so there is nothing left to await.
+			if ( ! img.getAttribute( 'src' ) || img.complete ) {
 				return Promise.resolve();
 			}
 			return new Promise< void >( ( resolve ) => {

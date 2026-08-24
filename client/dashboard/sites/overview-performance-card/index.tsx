@@ -61,7 +61,7 @@ function PerformanceCardContentWithFinishedTests( {
 	} else {
 		const recommendationCount = Object.keys( report.audits ).length;
 		description = sprintf(
-			// translators: %(days) is the number of days until the link expires.
+			// translators: %d: the number of performance recommendations available.
 			_n( '%d recommendation available.', '%d recommendations available.', recommendationCount ),
 			recommendationCount
 		);
@@ -141,7 +141,7 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 				{ ...CARD_PROPS }
 				heading={ __( 'No results' ) }
 				description={ __( 'Launch your site to test performance.' ) }
-				link={ getSiteVisibilityURL( site, { back_to: 'site-overview' } ) }
+				link={ getSiteVisibilityURL( site ) }
 			/>
 		);
 	}
@@ -152,7 +152,7 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 				{ ...CARD_PROPS }
 				heading={ __( 'No results' ) }
 				description={ __( 'Make your site public to test performance.' ) }
-				link={ getSiteVisibilityURL( site, { back_to: 'site-overview' } ) }
+				link={ getSiteVisibilityURL( site ) }
 			/>
 		);
 	}

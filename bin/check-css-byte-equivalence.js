@@ -7,7 +7,7 @@ const os = require( 'os' );
 const path = require( 'path' );
 
 const DEFAULT_BUILD_COMMAND = 'yarn run build-css';
-const DEFAULT_CSS_FILES = [ 'public/directly.css', 'public/reader-mobile.css' ];
+const DEFAULT_CSS_FILES = [ 'public/reader-mobile.css' ];
 const DEFAULT_TARGETS = [
 	{
 		name: 'standalone-css',

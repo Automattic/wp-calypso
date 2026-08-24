@@ -4,23 +4,21 @@ import {
 	purchaseQuery,
 	domainDiagnosticsQuery,
 	domainMappingStatusQuery,
+	siteByIdQuery,
 } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useSearch } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
+import SnackbarBackButton from '../../app/snackbar-back-button';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
-import SnackbarBackButton, {
-	getSnackbarBackButtonText,
-} from '../../components/snackbar-back-button';
 import { formatDate } from '../../utils/datetime';
 import { getDomainRenewalUrl, isTldInMaintenance } from '../../utils/domain';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
@@ -36,9 +34,12 @@ export default function DomainOverview() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 
-	const { data: purchase } = useSuspenseQuery(
-		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
-	);
+	const { data: purchase } = useQuery( {
+		...purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) ),
+		enabled: !! domain.subscription_id,
+	} );
+
+	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 
 	const { data: domainMappingStatus } = useQuery( {
 		...domainMappingStatusQuery( domain.domain ),
@@ -66,9 +67,6 @@ export default function DomainOverview() {
 		dateStyle: 'long',
 	} );
 
-	const { back_to: domainsBackTo } = useSearch( { from: domainRoute.fullPath } );
-	const snackbarBackButtonText = getSnackbarBackButtonText( domainsBackTo );
-
 	return (
 		<>
 			<PageLayout
@@ -84,12 +82,12 @@ export default function DomainOverview() {
 									{ ( () => {
 										switch ( domain.subtype.id ) {
 											case DomainSubtype.DOMAIN_CONNECTION:
-												// translators: date is the date the domain was connected.
+												// translators: %(date)s: the date the domain was connected.
 												return sprintf( __( 'Connected on %(date)s' ), {
 													date: formattedRegistrationDate,
 												} );
 											case DomainSubtype.DOMAIN_REGISTRATION:
-												// translators: date is the date the domain was registered.
+												// translators: %(date)s: the date the domain was registered.
 												return sprintf( __( 'Registered on %(date)s' ), {
 													date: formattedRegistrationDate,
 												} );
@@ -101,7 +99,7 @@ export default function DomainOverview() {
 							</HStack>
 						}
 						actions={
-							purchase.can_explicit_renew &&
+							purchase?.can_explicit_renew &&
 							domain.current_user_is_owner && (
 								<Button
 									variant="primary"
@@ -148,9 +146,7 @@ export default function DomainOverview() {
 				) }
 				<Actions isDisabled={ isTldInMaintenance( domain ) } />
 			</PageLayout>
-			{ snackbarBackButtonText && (
-				<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
-			) }
+			<SnackbarBackButton backToParams={ { siteSlug: site?.slug ?? domain.site_slug } } />
 			<PerformanceTrackerStop />
 		</>
 	);

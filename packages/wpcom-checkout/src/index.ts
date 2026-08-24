@@ -26,6 +26,7 @@ export * from './checkout-labels';
 export * from './introductory-offer';
 export * from './join-classes';
 export * from './checkout-line-items';
+export * from './group-bundle-line-items';
 export * from './get-country-postal-code-support';
 export * from './get-country-tax-requirements';
 export * from './can-item-be-removed-from-cart';

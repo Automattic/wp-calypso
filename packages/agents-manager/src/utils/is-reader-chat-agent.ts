@@ -1,3 +1,5 @@
+import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
+
 /**
  * Reader-chat agent identification helpers.
  *
@@ -20,17 +22,15 @@ export function isReaderChatAgent( agentId: string | undefined | null ): boolean
 
 /**
  * True if the current host is running under a reader-chat agent.
- * Reads from `window.agentsManagerData.agentId` (set by the reader-chat
- * entry before AgentsManager mounts). Safe in SSR — returns `false` when
- * `window` is unavailable.
+ * Reads from `agentsManagerData.agentId` (set by the reader-chat entry before
+ * AgentsManager mounts). Safe in SSR — returns `false` when `window` is unavailable.
  */
 export function isReaderChatHost(): boolean {
 	if ( typeof window === 'undefined' ) {
 		return false;
 	}
-	const agentId = ( window as unknown as { agentsManagerData?: { agentId?: string } } )
-		.agentsManagerData?.agentId;
-	return isReaderChatAgent( agentId );
+
+	return isReaderChatAgent( getAgentsManagerInlineData()?.agentId );
 }
 
 export type { ReaderChatAgentId };

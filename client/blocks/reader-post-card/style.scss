@@ -1,5 +1,12 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/hide-content-accessibly";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+
 .reader-post-options-menu__ellipsis-menu {
 	margin-left: 16px;
 
@@ -216,6 +223,12 @@
 					@include breakpoint-deprecated( "<660px" ) {
 						width: auto !important;
 						height: 300px !important;
+
+						img {
+							width: 100% !important;
+							height: 100% !important;
+							object-fit: contain;
+						}
 					}
 
 					@include breakpoint-deprecated( "<480px" ) {
@@ -418,8 +431,9 @@
 
 .reader__content .reader-post-card__tag-link {
 	color: var(--color-neutral-100);
-	&:focus {
-		outline: dotted 1px;
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
 	}
 }
 
@@ -435,8 +449,15 @@
 	text-decoration: none;
 }
 
-.reader-feed-header__seen-button:focus {
-	outline: dotted 1px;
+.reader-feed-header__seen-button:focus-visible {
+	outline: 2px solid var( --studio-blue-50 );
+	outline-offset: 2px;
+}
+
+.reader-post-card__byline-secondary-item:focus-visible,
+.reader-post-card__byline-site:has( a:focus-visible ) {
+	outline: 2px solid var( --studio-blue-50 );
+	outline-offset: 2px;
 }
 
 .reader-post-card__byline-secondary-item {
@@ -514,6 +535,25 @@
 	align-self: center;
 }
 
+.reader-post-card__freshly-pressed-badge {
+	display: inline-flex;
+	align-items: center;
+	width: fit-content;
+	max-width: 100%;
+	margin-block-end: 6px;
+	border-radius: 4px;
+	padding: 1px 9px;
+	background-color: var(--color-neutral-0);
+	color: var(--color-neutral-70);
+	font-size: 12px;
+	line-height: 1.6;
+	overflow-wrap: anywhere;
+
+	@include ui-mixins.when-dark-theme {
+		background-color: var(--color-border-subtle);
+	}
+}
+
 .reader-post-card__byline .site-icon {
 	flex-shrink: 0;
 	margin: 0 12px 0 0;
@@ -579,6 +619,11 @@
 
 	&:hover {
 		color: var(--color-neutral-70);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
 	}
 }
 

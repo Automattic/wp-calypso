@@ -9,6 +9,7 @@ import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-ac
 import { useDispatch } from 'calypso/state';
 import { startMappingAuthors, cancelImport } from 'calypso/state/imports/actions';
 import { SummaryStat } from '../components';
+import type { JSX } from 'react';
 
 interface UnsupportedFilesType {
 	[ key: string ]: number;
@@ -180,7 +181,7 @@ const PostErrorsMessage = ( { postErrors }: { postErrors: PostErrorsType } ) => 
 									<p>
 										{ createInterpolateElement(
 											sprintf(
-												/* translators: %s is the node name, %s is the block name */
+												/* translators: %(nodeName)s is the node name, %(blockName)s is the block name */
 												__(
 													'%(nodeName)s can be added using the <supportLink>%(blockName)s</supportLink>.'
 												),

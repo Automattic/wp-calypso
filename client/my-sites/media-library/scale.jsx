@@ -1,6 +1,6 @@
 import { Gridicon, SegmentedControl } from '@automattic/components';
+import { debounce } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
-import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

@@ -1,4 +1,3 @@
-import { getPlan, type PlanSlug } from '@automattic/calypso-products';
 import { Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
@@ -35,10 +34,9 @@ const SiteMigrationUpgradePlan: StepType< {
 			const planCartItem = cartItems?.[ 0 ];
 
 			if ( planCartItem ) {
-				const plan = getPlan( planCartItem.product_slug as PlanSlug );
 				navigation?.submit?.( {
 					goToCheckout: true,
-					plan: plan?.getPathSlug ? plan.getPathSlug() : '',
+					plan: planCartItem.product_slug,
 				} );
 			}
 		},

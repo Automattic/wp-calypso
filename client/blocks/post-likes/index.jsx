@@ -1,9 +1,9 @@
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { withPostLikes } from 'calypso/components/data/post-likes';
 import Gravatar from 'calypso/components/gravatar';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
@@ -131,7 +131,7 @@ class PostLikes extends PureComponent {
 	}
 }
 
-export default flowRight(
+export default compose(
 	connect(
 		( state, { siteId } ) => {
 			const currentUserId = getCurrentUserId( state );

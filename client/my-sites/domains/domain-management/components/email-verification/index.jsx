@@ -1,7 +1,6 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -55,7 +54,7 @@ class EmailVerificationCard extends Component {
 
 		resendVerification( selectedDomainName, ( error ) => {
 			if ( error ) {
-				const message = get( error, 'message', errorMessage );
+				const message = error?.message ?? errorMessage;
 				this.props.errorNotice( message );
 			} else if ( compact ) {
 				this.props.successNotice(

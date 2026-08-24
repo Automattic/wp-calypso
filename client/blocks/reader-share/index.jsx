@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -65,10 +64,10 @@ class ReaderShare extends Component {
 			clearTimeout( this.closeHandle );
 		}
 
-		this.closeHandle = defer( () => {
+		this.closeHandle = setTimeout( () => {
 			this.closeHandle = null;
 			this.setState( { showingMenu: showing } );
-		} );
+		}, 0 );
 	};
 
 	toggle = () => {

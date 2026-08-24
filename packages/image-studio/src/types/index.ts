@@ -59,7 +59,7 @@ export enum MetadataField {
 
 /**
  * Supported image MIME types for Image Studio.
- * Keep in sync with the list in https://github.a8c.com/Automattic/wpcom/blob/14f1b110a11250b6a1834a31376c9a9f68ff1b0a/wp-content/lib/ai/tools/big-sky/images/class.image-utils.php#L783
+ * Keep in sync with the supported MIME types in the Big Sky backend image utilities.
  */
 export const IMAGE_STUDIO_SUPPORTED_MIME_TYPES = [
 	'image/jpeg',

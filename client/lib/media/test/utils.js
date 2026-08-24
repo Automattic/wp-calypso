@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { map } from 'lodash';
 import { ValidationErrors as MediaValidationErrors } from '../constants';
 import * as MediaUtils from '../utils';
 
@@ -280,7 +279,7 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should return a new array array, sorted descending by date', () => {
-			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).toEqual( [ 2, 1 ] );
+			expect( MediaUtils.sortItemsByDate( items ).map( ( item ) => item?.ID ) ).toEqual( [ 2, 1 ] );
 		} );
 
 		test( 'should return the item with the greater ID if the dates are not set', () => {
@@ -289,7 +288,7 @@ describe( 'MediaUtils', () => {
 				return item;
 			} );
 
-			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).toEqual( [ 2, 1 ] );
+			expect( MediaUtils.sortItemsByDate( items ).map( ( item ) => item?.ID ) ).toEqual( [ 2, 1 ] );
 		} );
 
 		test( 'should return the item with the greater ID if the dates are equal', () => {
@@ -298,7 +297,7 @@ describe( 'MediaUtils', () => {
 				return item;
 			} );
 
-			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).toEqual( [ 2, 1 ] );
+			expect( MediaUtils.sortItemsByDate( items ).map( ( item ) => item?.ID ) ).toEqual( [ 2, 1 ] );
 		} );
 
 		test( 'should parse dates in string format', () => {
@@ -307,12 +306,12 @@ describe( 'MediaUtils', () => {
 				return item;
 			} );
 
-			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).toEqual( [ 2, 1 ] );
+			expect( MediaUtils.sortItemsByDate( items ).map( ( item ) => item?.ID ) ).toEqual( [ 2, 1 ] );
 		} );
 
 		test( 'should not mutate the original array', () => {
 			MediaUtils.sortItemsByDate( items );
-			expect( map( items, 'ID' ) ).toEqual( [ 1, 2 ] );
+			expect( items.map( ( item ) => item?.ID ) ).toEqual( [ 1, 2 ] );
 		} );
 	} );
 

@@ -51,7 +51,6 @@ export function useFields( {
 						<Link
 							to={ siteSettingsRepositoriesManageRoute.fullPath }
 							params={ { siteSlug, deploymentId: item.code_deployment_id } }
-							search={ { back_to: 'site-deployments' } }
 						>
 							{ repo }
 						</Link>
@@ -77,7 +76,14 @@ export function useFields( {
 
 					return (
 						<VStack spacing={ 1 }>
-							<Text title={ commit_message }>{ commit_message }</Text>
+							<Text
+								title={ commit_message }
+								truncate
+								numberOfLines={ 3 }
+								style={ { whiteSpace: 'normal' } }
+							>
+								{ commit_message }
+							</Text>
 							<HStack spacing={ 3 } alignment="left" style={ { width: 'max-content' } }>
 								<ExternalLink
 									href={ `https://github.com/${ installation }/${ repo }/commit/${ commit_sha }` }

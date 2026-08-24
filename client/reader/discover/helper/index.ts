@@ -6,7 +6,7 @@ export const TAGS_TAB = 'tags';
 
 /**
  * Filters tags data and returns the tags intended to be loaded by the discover pages recommended
- * section. If tags is null, we return an empty array as we have yet to recieve the users followed
+ * section. If tags is null, we return an empty array as we have yet to receive the users followed
  * tags list. If the users followed tags list is empty, we return a default array of tags used to
  * load the feed. Otherwise, load the feed based on the users follwed tags.
  * @param {Array | null} tags Array of tag slugs to evaluate

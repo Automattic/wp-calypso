@@ -2,14 +2,8 @@ import ActionCard from '../index';
 
 ActionCard.displayName = 'ActionCard';
 
-function ActionCardExample( props ) {
-	return props.exampleCode;
-}
-
-ActionCardExample.displayName = 'ActionCard';
-
-ActionCardExample.defaultProps = {
-	exampleCode: (
+function ActionCardExample( {
+	exampleCode = (
 		<div>
 			<ActionCard
 				headerText="This is a header text"
@@ -33,6 +27,10 @@ ActionCardExample.defaultProps = {
 			/>
 		</div>
 	),
-};
+} ) {
+	return exampleCode;
+}
+
+ActionCardExample.displayName = 'ActionCard';
 
 export default ActionCardExample;

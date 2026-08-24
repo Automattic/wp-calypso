@@ -8,6 +8,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { DirectoryApplicationType } from '../../partner-directory/types';
 import type { AgencyTier } from '../types';
+import type { JSX } from 'react';
 
 function DownloadLink( {
 	product,

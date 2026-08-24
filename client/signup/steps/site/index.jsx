@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import { FormLabel } from '@automattic/components';
 import { getLanguage } from '@automattic/i18n-utils';
+import { isEmpty } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, map } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
@@ -109,7 +109,7 @@ class Site extends Component {
 				debug( error, response );
 
 				if ( error && error.message ) {
-					if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
+					if ( fields.site && ! siteUrlsSearched.includes( fields.site ) ) {
 						siteUrlsSearched.push( fields.site );
 
 						recordTracksEvent( 'calypso_signup_site_url_validation_failed', {
@@ -205,10 +205,10 @@ class Site extends Component {
 			return;
 		}
 
-		return map( messages, ( message, error_code ) => {
+		return Object.entries( messages ).map( ( [ error_code, message ] ) => {
 			if ( error_code === 'blog_name_reserved' ) {
 				return (
-					<span>
+					<span key={ error_code }>
 						<p>
 							{ message }
 							&nbsp;

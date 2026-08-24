@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { contextTypes } from '../context-types';
+import { TourContext } from '../context';
 import { targetForSlug } from '../positioning';
 
 export default class Quit extends Component {
@@ -13,11 +13,7 @@ export default class Quit extends Component {
 		target: PropTypes.string,
 	};
 
-	static contextTypes = contextTypes;
-
-	constructor( props, context ) {
-		super( props, context );
-	}
+	static contextType = TourContext;
 
 	componentDidMount() {
 		this.addTargetListener();

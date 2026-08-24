@@ -1,4 +1,4 @@
-@import "@automattic/typography/styles/variables";
+@import "@automattic/typography/styles/fonts";
 
 .plans-grid-next-header-price {
 	padding: 0 20px;
@@ -116,5 +116,20 @@
 	&.is-large-currency {
 		flex-direction: column;
 		align-items: flex-start;
+	}
+}
+
+.plan-features-2023-grid__table-item.plan-price:has(.plans-grid-next-header-price__enterprise-logos) {
+	vertical-align: bottom;
+}
+
+.plans-grid-next-header-price__enterprise-logos {
+	padding: 0 20px 10px;
+	column-gap: 18px;
+	row-gap: 8px;
+	align-items: center;
+
+	.plans-grid-next.is-large & {
+		justify-content: space-between;
 	}
 }

@@ -3,12 +3,16 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { Suggestion } from '@automattic/agenttic-ui';
-import type { ReactNode, Ref } from 'react';
+import type { ComponentProps, ReactNode, Ref } from 'react';
 
 const mockSetFloatingPosition = jest.fn();
+const mockContainerProps = jest.fn();
+const mockInputProps = jest.fn();
+const mockImageUploaderProps = jest.fn();
+const mockHasAiChatEntry = jest.fn();
 
 jest.mock(
 	'@automattic/agenttic-ui',
@@ -18,13 +22,24 @@ jest.mock(
 		function MockContainer( {
 			children,
 			emptyView,
+			floatingChatState,
+			suggestions = [],
+			onSuggestionClick,
 		}: {
 			children: ReactNode;
 			emptyView: ReactNode;
+			floatingChatState?: string;
+			suggestions?: Suggestion[];
+			onSuggestionClick?: (
+				selectedSuggestion: Suggestion,
+				availableSuggestions: Suggestion[]
+			) => void;
 		} ) {
+			mockContainerProps( { floatingChatState } );
 			return (
 				<div>
 					{ emptyView }
+					<MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />
 					{ children }
 				</div>
 			);
@@ -41,6 +56,57 @@ jest.mock(
 			return <div>{ children }</div>;
 		}
 
+		function MockSuggestionButtons( {
+			suggestions = [],
+			onSubmit,
+		}: {
+			suggestions?: Suggestion[];
+			onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
+		} ) {
+			return (
+				<div>
+					{ suggestions.flatMap( ( suggestion ) => {
+						const { options, ...suggestionWithoutOptions } = suggestion;
+						if ( ! options?.length ) {
+							return (
+								<button
+									key={ suggestion.id }
+									onClick={ () => onSubmit?.( suggestion, suggestions ) }
+								>
+									{ suggestion.label }
+								</button>
+							);
+						}
+
+						return options.map( ( option ) => {
+							const parentPrompt = suggestion.prompt ?? suggestion.label;
+							const separator =
+								parentPrompt &&
+								option.value &&
+								! /\s$/.test( parentPrompt ) &&
+								! /^\s/.test( option.value )
+									? ' '
+									: '';
+							const selectedSuggestion = {
+								...suggestionWithoutOptions,
+								label: `${ suggestion.label } ${ option.label }`,
+								prompt: `${ parentPrompt }${ separator }${ option.value }`,
+							};
+
+							return (
+								<button
+									key={ `${ suggestion.id }-${ option.id }` }
+									onClick={ () => onSubmit?.( selectedSuggestion, suggestions ) }
+								>
+									{ suggestion.label }: { option.label }
+								</button>
+							);
+						} );
+					} ) }
+				</div>
+			);
+		}
+
 		function MockEmptyView( {
 			suggestions = [],
 			onSuggestionClick,
@@ -51,25 +117,27 @@ jest.mock(
 				availableSuggestions: Suggestion[]
 			) => void;
 		} ) {
-			return (
-				<div>
-					{ suggestions.map( ( suggestion ) => (
-						<button
-							key={ suggestion.id }
-							onClick={ () => onSuggestionClick?.( suggestion, suggestions ) }
-						>
-							{ suggestion.label }
-						</button>
-					) ) }
-				</div>
-			);
+			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />;
+		}
+
+		function MockSuggestions( {
+			suggestions = [],
+			onSubmit,
+		}: {
+			suggestions?: Suggestion[];
+			onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
+		} ) {
+			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSubmit } />;
 		}
 
 		function MockMessageRenderer( { children }: { children: ReactNode } ) {
 			return <>{ children }</>;
 		}
 
-		const MockImageUploader = React.forwardRef( () => null );
+		const MockImageUploader = React.forwardRef( ( props: unknown ) => {
+			mockImageUploaderProps( props );
+			return null;
+		} );
 		MockImageUploader.displayName = 'MockImageUploader';
 
 		return {
@@ -80,10 +148,14 @@ jest.mock(
 				Footer: MockFooter,
 				Suggestions: () => null,
 				Notice: () => null,
-				Input: () => null,
+				Input: ( props: unknown ) => {
+					mockInputProps( props );
+					return null;
+				},
 			},
 			createMessageRenderer: () => MockMessageRenderer,
 			EmptyView: MockEmptyView,
+			Suggestions: MockSuggestions,
 			ImageUploader: MockImageUploader,
 		};
 	},
@@ -100,7 +172,11 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
+jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text, isRTL: () => false } ) );
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
+} ) );
 jest.mock( '../../stores', () => ( {
 	AGENTS_MANAGER_STORE: 'automattic/agents-manager',
 } ) );
@@ -119,9 +195,10 @@ jest.mock( '../feedback-input', () => ( {
 jest.mock( '../icons', () => ( {
 	AI: () => null,
 } ) );
+const mockSelectedBlock = jest.fn( () => null );
 jest.mock( '../selected-block', () => ( {
 	__esModule: true,
-	default: () => null,
+	default: mockSelectedBlock,
 } ) );
 jest.mock( '../../utils/is-plugin-compass-agent', () => ( {
 	isPluginCompassHost: () => false,
@@ -129,10 +206,125 @@ jest.mock( '../../utils/is-plugin-compass-agent', () => ( {
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatHost: () => false,
 } ) );
+jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
+	__esModule: true,
+	default: () => mockHasAiChatEntry(),
+} ) );
 
 import AgentChat from '../agent-chat';
 
+function renderAgentChat( props: Partial< ComponentProps< typeof AgentChat > > = {} ) {
+	return render(
+		<AgentChat
+			messages={ [] }
+			suggestions={ [] }
+			emptyViewSuggestions={ [] }
+			error={ null }
+			chatHeaderOptions={ [] }
+			isProcessing={ false }
+			isLoadingConversation={ false }
+			isDocked={ false }
+			isOpen={ false }
+			onSubmit={ jest.fn() }
+			onAbort={ jest.fn() }
+			onClose={ jest.fn() }
+			onExpand={ jest.fn() }
+			onSuggestionClick={ jest.fn() }
+			{ ...props }
+		/>
+	);
+}
+
 describe( 'AgentChat', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockHasAiChatEntry.mockReturnValue( false );
+		document.body.className = '';
+	} );
+
+	it( 'renders the selected-block chip only on editor pages', async () => {
+		document.body.classList.add( 'post-php', 'post-type-post' );
+		renderAgentChat();
+		await waitFor( () => expect( mockSelectedBlock ).toHaveBeenCalled() );
+
+		mockSelectedBlock.mockClear();
+		document.body.className = '';
+		renderAgentChat();
+		// The lazy chunk resolves in a microtask — flush before asserting absence.
+		await act( () => Promise.resolve() );
+		expect( mockSelectedBlock ).not.toHaveBeenCalled();
+	} );
+
+	const imageUpload = ( isUploadingImages: boolean ) =>
+		( {
+			pendingImages: [],
+			uploadingImages: isUploadingImages ? [ { id: 'p1' } ] : [],
+			isUploadingImages,
+			handleFilesSelected: jest.fn(),
+			handleRemoveImage: jest.fn(),
+			uploadImagesToWordPress: jest.fn(),
+			abortUpload: jest.fn( () => isUploadingImages ),
+		} ) as never;
+
+	it( 'locks the composer, the upload action, and the uploader while images upload', () => {
+		renderAgentChat( { isOpen: true, imageUpload: imageUpload( true ) } );
+
+		expect( mockInputProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { readOnly: true, imageUploadDisabled: true } )
+		);
+		expect( mockImageUploaderProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { disabled: true } )
+		);
+	} );
+
+	it( 'unlocks the composer when no upload is in flight', () => {
+		renderAgentChat( { isOpen: true, imageUpload: imageUpload( false ) } );
+
+		expect( mockInputProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { readOnly: false, imageUploadDisabled: false } )
+		);
+		expect( mockImageUploaderProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { disabled: false } )
+		);
+	} );
+
+	it( 'blocks typing as well as sending when the chat input is disabled', () => {
+		// Both props are required: agenttic forwards `readOnly` to the textarea
+		// but consumes `disabled` only for the submit button and Enter-to-submit,
+		// so `disabled` on its own leaves the field typeable.
+		renderAgentChat( { isOpen: true, isChatInputDisabled: true } );
+
+		expect( mockInputProps ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				readOnly: true,
+				disabled: true,
+				imageUploadDisabled: true,
+			} )
+		);
+	} );
+
+	it( 'keeps the chat input disabled while images are pending', () => {
+		// The pending-images branch passes `disabled: false` to keep the composer
+		// live mid-upload; a non-operational chat has to win over it.
+		renderAgentChat( {
+			isOpen: true,
+			isChatInputDisabled: true,
+			imageUpload: {
+				pendingImages: [ { id: 'p1' } ],
+				uploadingImages: [],
+				isUploadingImages: false,
+				handleFilesSelected: jest.fn(),
+				handleRemoveImage: jest.fn(),
+				uploadImagesToWordPress: jest.fn(),
+				abortUpload: jest.fn( () => false ),
+			} as never,
+		} );
+
+		expect( mockInputProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { readOnly: true, disabled: true } )
+		);
+	} );
+
 	it( 'forwards empty view suggestion clicks to the shared suggestion handler', async () => {
 		const user = userEvent.setup();
 		const suggestion = {
@@ -142,27 +334,255 @@ describe( 'AgentChat', () => {
 		};
 		const onSuggestionClick = jest.fn();
 
-		render(
-			<AgentChat
-				messages={ [] }
-				suggestions={ [] }
-				emptyViewSuggestions={ [ suggestion ] }
-				error={ null }
-				chatHeaderOptions={ [] }
-				isProcessing={ false }
-				isLoadingConversation={ false }
-				isDocked={ false }
-				isOpen
-				onSubmit={ jest.fn() }
-				onAbort={ jest.fn() }
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				onSuggestionClick={ onSuggestionClick }
-			/>
-		);
+		renderAgentChat( { isOpen: true, emptyViewSuggestions: [ suggestion ], onSuggestionClick } );
 
 		await user.click( screen.getByRole( 'button', { name: 'Check grammar' } ) );
 
 		expect( onSuggestionClick ).toHaveBeenCalledWith( suggestion, [ suggestion ] );
+	} );
+
+	it( 'preserves the selected prompt from an inline dropdown suggestion', async () => {
+		const user = userEvent.setup();
+		const option = {
+			id: 'formal',
+			label: 'Formal',
+			value: 'Change the tone of this text to be more formal',
+		};
+		const suggestion = {
+			id: 'change-tone',
+			label: 'Change tone',
+			prompt: '',
+			options: [ option ],
+		};
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( { isOpen: true, suggestions: [ suggestion ], onSuggestionClick } );
+
+		await user.click( screen.getByRole( 'button', { name: 'Change tone: Formal' } ) );
+
+		expect( onSuggestionClick ).toHaveBeenCalledWith( { ...suggestion, prompt: option.value }, [
+			suggestion,
+		] );
+	} );
+
+	it( 'preserves the selected prompt from an empty-view dropdown suggestion', async () => {
+		const user = userEvent.setup();
+		document.body.classList.add( 'post-php', 'post-type-post' );
+		const option = {
+			id: 'seo-description',
+			label: 'Description',
+			value: 'Generate an SEO meta description for this post',
+		};
+		const suggestion = {
+			id: 'seo-enhancer',
+			label: 'SEO Enhancer',
+			prompt: '',
+			options: [ option ],
+		};
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [ suggestion ],
+			onSuggestionClick,
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Optimize SEO: Description' } ) );
+
+		expect( onSuggestionClick ).toHaveBeenCalledWith( { ...suggestion, prompt: option.value }, [
+			suggestion,
+		] );
+	} );
+
+	it( 'expands when open', () => {
+		renderAgentChat( { isOpen: true } );
+
+		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'expanded' } );
+	} );
+
+	it( 'groups only writing suggestions while keeping design suggestions top level', async () => {
+		const user = userEvent.setup();
+		const designSuggestion = {
+			id: 'customize-colors',
+			label: 'Customize colors',
+			prompt: 'Customize colors',
+		};
+		const whatElseSuggestion = {
+			id: 'what-else-can-i-do',
+			label: 'What else can you do?',
+			prompt: 'What else can you do?',
+		};
+		const writingSuggestions = [
+			{
+				id: 'optimize-title',
+				label: 'Optimize Title',
+				prompt: 'Optimize the title of this post',
+			},
+			{
+				id: 'generate-excerpt',
+				label: 'Generate Excerpt',
+				prompt: 'Generate an excerpt',
+			},
+			{
+				id: 'seo-enhancer',
+				label: 'SEO Enhancer',
+				prompt: 'Optimize this content for search engines',
+			},
+			{
+				id: 'get-feedback',
+				label: 'Get feedback',
+				prompt: '',
+				options: [ { id: 'proofread-content', label: 'Proofread', value: 'Proofread this.' } ],
+			},
+		];
+		const suggestions = [ designSuggestion, whatElseSuggestion, ...writingSuggestions ];
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: suggestions,
+			groupWritingSuggestions: true,
+			onSuggestionClick,
+		} );
+
+		const designButton = screen.getByRole( 'button', { name: 'Customize colors' } );
+		expect( designButton.closest( '.agents-manager-writing-suggestions' ) ).toBeNull();
+		expect( screen.getByText( 'Enhance and review your content.' ) ).toBeInTheDocument();
+
+		const writingToggle = screen.getByRole( 'button', { name: /Writing/ } );
+		const whatElseButton = screen.getByRole( 'button', { name: 'What else can you do?' } );
+		expect( writingToggle.compareDocumentPosition( whatElseButton ) ).toBe(
+			Node.DOCUMENT_POSITION_FOLLOWING
+		);
+		expect( writingToggle ).toHaveAttribute( 'aria-expanded', 'false' );
+		expect( screen.queryByRole( 'button', { name: 'Optimize title' } ) ).toBeNull();
+
+		await user.click( writingToggle );
+		expect( writingToggle ).toHaveAttribute( 'aria-expanded', 'true' );
+		expect( screen.getByRole( 'button', { name: 'Optimize title' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Generate excerpt' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Optimize SEO' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Get feedback: Proofread' } ) ).toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Optimize title' } ) );
+		expect( onSuggestionClick ).toHaveBeenCalledWith( writingSuggestions[ 0 ], suggestions );
+
+		await user.click( writingToggle );
+		expect( screen.queryByRole( 'button', { name: 'Get feedback: Proofread' } ) ).toBeNull();
+	} );
+
+	it( 'keeps the featured image suggestion out of the writing group', () => {
+		const suggestions = [
+			{ id: 'customize-colors', label: 'Customize colors', prompt: 'Customize colors' },
+			{
+				id: 'generate-featured-image',
+				label: 'Generate featured image',
+				description: 'Create a new image with AI and set it as the featured image.',
+				prompt: '',
+			},
+			{ id: 'optimize-title', label: 'Optimize Title', prompt: 'Optimize the title' },
+		];
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: suggestions,
+			groupWritingSuggestions: true,
+		} );
+
+		const button = screen.getByRole( 'button', { name: 'Generate featured image' } );
+		expect( button.closest( '.agents-manager-writing-suggestions' ) ).toBeNull();
+	} );
+
+	it( 'keeps the flat empty view when there are no writing suggestions', () => {
+		const suggestion = {
+			id: 'customize-colors',
+			label: 'Customize colors',
+			prompt: 'Customize colors',
+		};
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [ suggestion ],
+			groupWritingSuggestions: true,
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Customize colors' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /Writing/ } ) ).toBeNull();
+	} );
+
+	it( 'keeps writing suggestions flat when there are no design suggestions', () => {
+		const suggestions = [
+			{
+				id: 'add-new-page',
+				label: 'Add new page',
+				prompt: 'Add a new page',
+			},
+			{
+				id: 'optimize-title',
+				label: 'Optimize Title',
+				prompt: 'Optimize the title of this post',
+			},
+		];
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: suggestions,
+			groupWritingSuggestions: true,
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Add new page' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Optimize title' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /Writing/ } ) ).toBeNull();
+	} );
+
+	it( 'uses sentence-case writing labels in ungrouped editor views', async () => {
+		const user = userEvent.setup();
+		document.body.classList.add( 'post-php', 'post-type-post' );
+		const suggestion = {
+			id: 'optimize-title',
+			label: 'Optimize Title',
+			prompt: 'Optimize the title of this post',
+		};
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [ suggestion ],
+			groupWritingSuggestions: false,
+			onSuggestionClick,
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Optimize title' } ) );
+		expect( onSuggestionClick ).toHaveBeenCalledWith( suggestion, [ suggestion ] );
+	} );
+
+	it( 'keeps provider writing labels in ungrouped non-editor views', () => {
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [
+				{
+					id: 'optimize-title',
+					label: 'Optimize Title',
+					prompt: 'Optimize the title of this post',
+				},
+			],
+			groupWritingSuggestions: false,
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Optimize Title' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'collapses to a button when closed without the AI chat entry button', () => {
+		renderAgentChat( { isOpen: false } );
+
+		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'collapsed' } );
+	} );
+
+	it( 'minimizes to the bar when closed with the AI chat entry button present', () => {
+		mockHasAiChatEntry.mockReturnValue( true );
+
+		renderAgentChat( { isOpen: false } );
+
+		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'minimized' } );
 	} );
 } );

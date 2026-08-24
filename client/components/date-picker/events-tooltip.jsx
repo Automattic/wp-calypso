@@ -1,6 +1,5 @@
 import { Tooltip } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { CalendarEvent } from './event';
@@ -59,8 +58,7 @@ class EventsTooltip extends Component {
 				<span>{ title }</span>
 				<hr className="date-picker__division" />
 				<ul>
-					{ map(
-						events,
+					{ events.map(
 						( event, i ) =>
 							i < maxEvents && (
 								<li key={ event.id }>

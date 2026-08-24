@@ -12,6 +12,13 @@ jest.mock( 'calypso/state', () => ( {
 	useSelector: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( {
+	__esModule: true,
+	default: ( { title }: { title: string } ) => (
+		<div data-testid="private-tab-notice">{ title }</div>
+	),
+} ) );
+
 // Mocking ReaderSitesList because it uses useDispatch internally which would require a full Redux store setup.
 jest.mock( 'calypso/reader/sites-list', () => ( {
 	ReaderSitesList: ( { sites }: { sites: ReaderSite[] } ) => (
@@ -147,5 +154,103 @@ describe( 'UserSites', () => {
 		expect( sitesList ).toBeVisible();
 		expect( screen.getByText( 'Test Site 1' ) ).toBeVisible();
 		expect( screen.getByText( 'Test Site 2' ) ).toBeVisible();
+	} );
+
+	test( 'should not render sites flagged as hidden for a public viewer', async () => {
+		const mockSites: UserSitesResponse[ 'sites' ] = [
+			{
+				ID: 1,
+				name: 'Visible Site',
+				description: '',
+				feed_ID: 101,
+				URL: 'https://visible.wordpress.com',
+				icon: {},
+				is_following: false,
+				last_published: '2024-01-01',
+				posts_count: 10,
+				subscribers_count: 100,
+			},
+			{
+				ID: 2,
+				name: 'Hidden Site',
+				description: '',
+				feed_ID: 102,
+				URL: 'https://hidden.wordpress.com',
+				icon: {},
+				is_following: false,
+				last_published: '2024-01-02',
+				posts_count: 20,
+				subscribers_count: 200,
+				is_hidden: true,
+			},
+		];
+
+		nockGetUserSites( defaultUser.ID, { sites: mockSites, total: 2, primary_site_id: 1 } );
+
+		renderWithClient( <UserSites user={ defaultUser } /> );
+
+		expect( await screen.findByText( 'Visible Site' ) ).toBeVisible();
+		expect( screen.queryByText( 'Hidden Site' ) ).not.toBeInTheDocument();
+	} );
+
+	test( "should exclude the owner's hidden sites based on their preference", async () => {
+		useSelector.mockReturnValue( { username: 'test_user' } );
+
+		const mockSites: UserSitesResponse[ 'sites' ] = [
+			{
+				ID: 1,
+				name: 'Kept Site',
+				description: '',
+				feed_ID: 101,
+				URL: 'https://kept.wordpress.com',
+				icon: {},
+				is_following: false,
+				last_published: '2024-01-01',
+				posts_count: 10,
+				subscribers_count: 100,
+			},
+			{
+				ID: 2,
+				name: 'Owner Hidden Site',
+				description: '',
+				feed_ID: 102,
+				URL: 'https://owner-hidden.wordpress.com',
+				icon: {},
+				is_following: false,
+				last_published: '2024-01-02',
+				posts_count: 20,
+				subscribers_count: 200,
+			},
+		];
+
+		nockGetUserSites( defaultUser.ID, { sites: mockSites, total: 2, primary_site_id: 1 } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/preferences' )
+			.reply( 200, { calypso_preferences: { 'reader-profile-hidden-sites': [ 2 ] } } );
+
+		renderWithClient( <UserSites user={ defaultUser } /> );
+
+		expect( await screen.findByText( 'Kept Site' ) ).toBeVisible();
+		expect( screen.queryByText( 'Owner Hidden Site' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the private-tab notice for the owner', async () => {
+		useSelector.mockReturnValue( { username: 'test_user' } );
+		nockGetUserSites( defaultUser.ID, { sites: [], total: 0, primary_site_id: 0 } );
+
+		renderWithClient( <UserSites user={ defaultUser } /> );
+
+		expect( await screen.findByTestId( 'private-tab-notice' ) ).toHaveTextContent(
+			'Your sites are private'
+		);
+	} );
+
+	test( 'does not render the private-tab notice for a public viewer', async () => {
+		nockGetUserSites( defaultUser.ID, { sites: [], total: 0, primary_site_id: 0 } );
+
+		renderWithClient( <UserSites user={ defaultUser } /> );
+
+		await screen.findByText( 'No sites have been created yet.' );
+		expect( screen.queryByTestId( 'private-tab-notice' ) ).not.toBeInTheDocument();
 	} );
 } );

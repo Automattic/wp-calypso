@@ -1,4 +1,5 @@
 import { FormLabel } from '@automattic/components';
+import { camelCase, kebabCase, pick, isEmpty } from '@automattic/js-utils';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import {
 	tryToGuessPostalCodeFormat,
@@ -6,8 +7,8 @@ import {
 } from '@automattic/wpcom-checkout';
 import { Notice } from '@wordpress/components';
 import clsx from 'clsx';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createElement } from 'react';
 import { connect } from 'react-redux';
@@ -167,8 +168,8 @@ export class ContactDetailsFormFields extends Component {
 		// domains registered according to ancient validation rules may have state set even though not required
 		if (
 			! hasCountryStates &&
-			( includes( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) ||
-				includes( CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) )
+			( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ||
+				CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) )
 		) {
 			state = '';
 		}
@@ -204,7 +205,7 @@ export class ContactDetailsFormFields extends Component {
 				if ( fieldName === 'postalCode' ) {
 					sanitizedFieldValues[ fieldName ] = tryToGuessPostalCodeFormat(
 						sanitizedFieldValues[ fieldName ].toUpperCase(),
-						get( sanitizedFieldValues, 'countryCode', null )
+						sanitizedFieldValues?.countryCode ?? null
 					);
 				}
 			}
@@ -363,7 +364,7 @@ export class ContactDetailsFormFields extends Component {
 	};
 
 	getCountryCode() {
-		return get( this.state.form, 'countryCode.value', '' );
+		return this.state.form?.countryCode?.value ?? '';
 	}
 
 	getCountryPostalCodeSupport = ( countryCode ) =>

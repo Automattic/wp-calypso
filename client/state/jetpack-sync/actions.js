@@ -1,5 +1,5 @@
+import { pick } from '@automattic/js-utils';
 import debugModule from 'debug';
-import { pick } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	JETPACK_SYNC_START_REQUEST,

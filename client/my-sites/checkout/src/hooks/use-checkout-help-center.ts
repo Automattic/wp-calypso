@@ -4,6 +4,7 @@ import {
 	useProductsCustomOptions,
 	useProductsWithPremiumSupport,
 } from '@automattic/help-center/src/hooks';
+import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	useDispatch as useDataStoreDispatch,
@@ -47,6 +48,16 @@ export const useCheckoutHelpCenter = (): {
 			force_site_id: true,
 			location: 'thank-you-help-center',
 		} );
+
+		// Unified onboarding help-adoption signal, tagged by step. Only in the
+		// onboarding-flow checkout and only when opening (matches the domains,
+		// use-my-domain and plans steps).
+		if ( ! isShowingHelpCenter ) {
+			const flow = new URLSearchParams( window.location.search ).get( 'flow' );
+			if ( flow === ONBOARDING_FLOW ) {
+				recordTracksEvent( 'calypso_onboarding_help_center_click', { flow, step: 'checkout' } );
+			}
+		}
 
 		setShowHelpCenter( ! isShowingHelpCenter, { hasPremiumSupport, ...helpCenterOptions } );
 		if ( hasPremiumSupport ) {

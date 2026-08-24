@@ -1,5 +1,5 @@
+import { truncate } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { truncate } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { POST_DELETE_FAILURE, POST_DELETE_SUCCESS, POST_DELETE } from 'calypso/state/action-types';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';

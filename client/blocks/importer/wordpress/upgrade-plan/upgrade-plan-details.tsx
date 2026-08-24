@@ -315,8 +315,10 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	}, [] );
 
 	useEffect( () => {
-		plan && plan.getPathSlug && setSelectedPlanSlug( plan.getPathSlug() );
-	}, [ plan ] );
+		if ( plan ) {
+			setSelectedPlanSlug( selectedPlan );
+		}
+	}, [ plan, selectedPlan, setSelectedPlanSlug ] );
 
 	return (
 		<div className="import__upgrade-plan-details">

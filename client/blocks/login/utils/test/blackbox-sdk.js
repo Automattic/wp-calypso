@@ -12,7 +12,7 @@ jest.mock( '@automattic/calypso-config', () => {
 		}
 		return undefined;
 	} );
-	config.isEnabled = jest.fn( ( flag ) => flag === 'blackbox-login' );
+	config.isEnabled = jest.fn( ( flag ) => flag === 'blackbox' );
 	return config;
 } );
 

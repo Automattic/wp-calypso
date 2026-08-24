@@ -1,9 +1,9 @@
 import { Card, FormLabel } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

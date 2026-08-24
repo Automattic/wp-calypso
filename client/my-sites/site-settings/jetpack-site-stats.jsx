@@ -1,7 +1,6 @@
 import { Button, FoldableCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -49,7 +48,7 @@ class JetpackSiteStats extends Component {
 
 			let groupFields = this.getCurrentGroupFields( groupName );
 
-			if ( includes( groupFields, fieldName ) ) {
+			if ( groupFields.includes( fieldName ) ) {
 				groupFields = groupFields.filter( ( field ) => field !== fieldName );
 			} else {
 				groupFields.push( fieldName );
@@ -123,9 +122,7 @@ class JetpackSiteStats extends Component {
 		return (
 			<PanelCard className="site-settings__traffic-settings">
 				<QueryJetpackConnection siteId={ siteId } />
-
 				<PanelCardHeading>{ translate( 'Jetpack Stats' ) }</PanelCardHeading>
-
 				<FoldableCard
 					className="site-settings__foldable-card is-top-level"
 					header={ header }
@@ -156,7 +153,7 @@ class JetpackSiteStats extends Component {
 								this.renderToggle(
 									'count_roles_' + role.name,
 									role.display_name,
-									includes( this.getCurrentGroupFields( 'count_roles' ), role.name ),
+									this.getCurrentGroupFields( 'count_roles' ).includes( role.name ),
 									this.onChangeToggleGroup( 'count_roles', role.name )
 								)
 							) }
@@ -169,13 +166,12 @@ class JetpackSiteStats extends Component {
 								this.renderToggle(
 									'roles_' + role.name,
 									role.display_name,
-									includes( this.getCurrentGroupFields( 'roles' ), role.name ),
+									this.getCurrentGroupFields( 'roles' ).includes( role.name ),
 									this.onChangeToggleGroup( 'roles', role.name )
 								)
 							) }
 					</FormFieldset>
 				</FoldableCard>
-
 				<Button href={ getStatsPathForTab( 'day', siteSlug ) }>
 					{ translate( 'View your site stats' ) }
 				</Button>

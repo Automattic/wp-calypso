@@ -26,7 +26,7 @@ When combined with other wrappers (like `localize()`):
 
 ```js
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { compose } from 'redux';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 
 class MyComponent {
@@ -35,5 +35,5 @@ class MyComponent {
 	}
 }
 
-export default flowRight( localize, withTrackingTool( 'HotJar' ) )( MyComponent );
+export default compose( localize, withTrackingTool( 'HotJar' ) )( MyComponent );
 ```

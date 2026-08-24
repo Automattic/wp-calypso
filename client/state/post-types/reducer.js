@@ -1,5 +1,5 @@
+import { keyBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { keyBy } from 'lodash';
 import { POST_TYPES_RECEIVE } from 'calypso/state/action-types';
 import {
 	combineReducers,

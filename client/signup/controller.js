@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { isEmpty } from '@automattic/js-utils';
 import { isOnboardingFlow } from '@automattic/onboarding';
-import { isEmpty } from 'lodash';
 import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
@@ -209,10 +209,8 @@ export default {
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const stepName = getStepName( context.params );
 		const stepSectionName = getStepSectionName( context.params );
-		const { providesDependenciesInQuery, excludeFromManageSiteFlows } = flows.getFlow(
-			flowName,
-			userLoggedIn
-		);
+		const { providesDependenciesInQuery, excludeFromManageSiteFlows, persistsDomainsOnReEntry } =
+			flows.getFlow( flowName, userLoggedIn );
 
 		// Update initialContext to help woocommerce-install support site switching.
 		if ( 'woocommerce-install' === flowName ) {
@@ -249,13 +247,13 @@ export default {
 		const isManageSiteFlow =
 			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
-		// Hydrate the store with domains dependencies from session storage,
-		// only in the onboarding flow.
+		// Hydrate the store with domains dependencies from session storage so re-entering via
+		// browser back from checkout skips the domains step instead of recreating the site.
 		const domainsDependencies = getDomainsDependencies();
 		if (
 			domainsDependencies &&
 			isManageSiteFlow &&
-			flowName === 'onboarding' &&
+			persistsDomainsOnReEntry &&
 			stepName !== 'domains'
 		) {
 			const { step, dependencies } = JSON.parse( domainsDependencies );
@@ -276,7 +274,7 @@ export default {
 		// Set referral parameter in signup dependency store so we can retrieve it in getSignupDestination().
 		const refParameter = query && query.ref;
 		const localeSlug = context.params.lang;
-		// Set design parameters in signup depencency store so we can retrieve it in getChecklistThemeDestination().
+		// Set design parameters in signup dependency store so we can retrieve it in getChecklistThemeDestination().
 		const themeParameter = query && query.theme;
 		const themeType = query && query.theme_type;
 		const styleVariation = query && query.style_variation;

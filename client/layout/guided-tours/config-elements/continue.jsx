@@ -2,13 +2,13 @@ import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { contextTypes } from '../context-types';
+import { TourContext } from '../context';
 import { targetForSlug } from '../positioning';
 
 export default class Continue extends Component {
 	static displayName = 'Continue';
 
-	static contextTypes = contextTypes;
+	static contextType = TourContext;
 
 	static propTypes = {
 		click: PropTypes.bool,
@@ -18,10 +18,6 @@ export default class Continue extends Component {
 		target: PropTypes.string,
 		when: PropTypes.func,
 	};
-
-	constructor( props, context ) {
-		super( props, context );
-	}
 
 	componentDidMount() {
 		this.addTargetListener();

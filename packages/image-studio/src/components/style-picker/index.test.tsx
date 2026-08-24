@@ -4,6 +4,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
 jest.mock( '@automattic/agenttic-ui', () => {
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const React = require( 'react' );
 	const { useState } = React;
 

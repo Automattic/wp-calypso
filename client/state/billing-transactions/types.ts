@@ -1,5 +1,5 @@
 import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
-import type { TaxVendorInfo } from '@automattic/wpcom-checkout';
+import type { TaxBreakdownEntry, TaxVendorInfo } from '@automattic/wpcom-checkout';
 
 export interface BillingTransaction {
 	address: string;
@@ -57,9 +57,20 @@ export interface BillingTransaction {
 	 */
 	tax_integer: number;
 
+	/**
+	 * Whether the tax on this transaction is a business use tax.
+	 */
+	tax_is_for_business?: boolean | null;
+
+	/**
+	 * The state/region for which the business use tax applies (e.g. 'CA').
+	 */
+	tax_state?: string;
+
 	url: string;
 
 	tax_vendor_info?: TaxVendorInfo;
+	tax_breakdown?: TaxBreakdownEntry[];
 }
 
 export interface BillingTransactionItem {

@@ -1,5 +1,5 @@
+import { merge } from '@automattic/js-utils';
 import deepFreeze from 'deep-freeze';
-import { merge } from 'lodash';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { retryOnFailure as rof } from '../';
 import { noRetry, exponentialBackoff } from '../policies';

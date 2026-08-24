@@ -1,5 +1,6 @@
 import { commentAuthorAvatar, search, video } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
+import type { JSX } from 'react';
 
 /**
  * Intervals
@@ -38,7 +39,7 @@ export const AVAILABLE_PAGE_MODULES: Record< string, ModuleToggleItem[] > = {
 				return translate( 'Search terms' );
 			},
 			icon: search,
-			defaultValue: false,
+			defaultValue: true,
 			disabled: false,
 		},
 		{

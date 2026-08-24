@@ -1,16 +1,21 @@
+import { userSettingsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { Step, StepContainer } from '@automattic/onboarding';
+import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useState } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-overlay';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import Notice from 'calypso/dashboard/components/notice';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -23,34 +28,92 @@ import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserEmail,
+	getCurrentUserId,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
+import EmailVerificationGate from './email-verification';
+import { claimGateConfirmation, gateScope } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
+import { useBackoffPoll } from './use-backoff-poll';
+import {
+	ACTIVATION_EMAIL_SOURCE,
+	useIsPostAccountCreationEmailVerification,
+	useIsPostPlanSelectionEmailVerification,
+	useEmailVerificationGate,
+} from './use-email-verification-gate';
 import { useSocialService } from './use-social-service';
+import { useUpdateEmail } from './use-update-email';
+import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
 import './style.scss';
 
-const UserStepComponent: StepType = function UserStep( {
+// Social providers shown on the mobile treatment per the design. Also keeps the
+// local-dev-only PayPal button off the treatment (the prod build never has that
+// flag enabled, but the local-dev one does).
+const MOBILE_SOCIAL_SERVICES: SignupAllowedService[] = [ 'google', 'apple', 'github' ];
+
+export type UserStepAccepts = {
+	headerText?: string;
+	subHeaderText?: string;
+	/**
+	 * Hides the top-level "Log in" link (V2 top bar / V1 footer). The email-first
+	 * account-step variant keeps its own in-form "Have an account? Log in" link.
+	 * Existing users can still sign in via the social / email buttons either way.
+	 */
+	hideLoginLink?: boolean;
+	allowedSocialServices?: SignupAllowedService[];
+};
+
+const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function UserStep( {
 	flow,
 	stepName,
 	navigation,
 	redirectTo = window.location.href,
 	signupUrl = window.location.href,
+	headerText,
+	subHeaderText,
+	hideLoginLink,
+	allowedSocialServices: allowedSocialServicesProp,
 } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const userId = useSelector( getCurrentUserId );
+	const currentEmail = useSelector( getCurrentUserEmail );
 	const queryArgs = useQuery();
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
+	const [ createdUserId, setCreatedUserId ] = useState< number | string | null >( null );
+
+	const { status: gateStatus, isVariantLoading } = useEmailVerificationGate( flow );
+	// Sending the activation email and aiming it back at onboarding is shared by both variants: the
+	// account step gates in Variant A, but in Variant B the same link is what the post-plan-selection gate,
+	// met after plan selection or checkout, goes on to wait for.
+	const isPostAccountCreationVerification = useIsPostAccountCreationEmailVerification( flow );
+	const isPostPlanSelectionVerification = useIsPostPlanSelectionEmailVerification( flow );
+	const emailVerificationEnabled =
+		isPostAccountCreationVerification || isPostPlanSelectionVerification;
+	const gateScopeForUser = gateScope( flow, userId );
+	// Scoped, since `/me` resolving a different account is a case this step already handles and the
+	// gate is keyed on the same scope for it. Derived once: the address it was opened with is both
+	// what the form starts from and what "unchanged" is measured against.
+	const [ editing, setEditing ] = useState< { scope: string; startedFrom: string } | null >( null );
+	const activeEdit = editing?.scope === gateScopeForUser ? editing : null;
+	const isEditingEmail = activeEdit !== null;
+	// The account exists and its token is loaded, but `/me` hasn't caught up — so nothing here
+	// knows who it is yet, and Redux still reports nobody logged in.
+	const isWaitingForCreatedAccount = !! wpAccountCreateResponse && gateStatus === 'pending';
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
 	// Woo-referrer users keep the permanent email-first + slider treatment from PR #110118.
-	// Everyone else is bucketed by calypso_account_step_improvement_202605_v2 (round 2):
+	// Everyone else is bucketed by calypso_account_step_improvement_202606_v2 (round 2):
 	//   - control                            -> default single-column signup
 	//   - treatment_email_slider_webp        -> open email + slider, email on top
 	//   - treatment_email_bottom_slider_webp -> open email + slider, email below social
@@ -59,24 +122,54 @@ const UserStepComponent: StepType = function UserStep( {
 		useAccountCreationExperiment( { flow } );
 	const isEmailFirstVariant = isWooReferrer || isEmailFirstFromExperiment;
 
+	// Load the new account's token and refresh the current user. Depends only on the
+	// account-create response, so gate/navigation state changes don't repeat it.
 	useEffect( () => {
-		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
-			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
-			if ( ! config.isEnabled( 'oauth' ) ) {
-				reloadProxy();
-				requestAllBlogsAccess();
-			}
-			// Allow retries of fetching new users after creation. New user sign-ups go to one DC
-			// but follow-up API calls go to the closest DC, which may be different and might not
-			// have replicated the user data yet.
-			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
+		if ( ! ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) ) {
+			return;
 		}
+		wpcom.loadToken( wpAccountCreateResponse.bearer_token );
+		if ( ! config.isEnabled( 'oauth' ) ) {
+			reloadProxy();
+			requestAllBlogsAccess();
+		}
+		// Allow retries of fetching new users after creation. New user sign-ups go to one DC
+		// but follow-up API calls go to the closest DC, which may be different and might not
+		// have replicated the user data yet.
+		dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
+	}, [ dispatch, wpAccountCreateResponse ] );
+
+	useEffect( () => {
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
-		} else {
+		} else if ( gateStatus === 'pending' ) {
+			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
+		} else if ( gateStatus !== 'gated' ) {
+			// The step owns the whole of finishing; the gate is presentation, and unmounting it is
+			// what this transition looks like. Only `/me` saying verified is a confirmation — the
+			// flag being off is not — and the claim decides which of several tabs records it.
+			if ( gateStatus === 'verified' ) {
+				const claim = claimGateConfirmation( gateScopeForUser );
+				if ( claim ) {
+					recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
+						flow,
+						seconds_on_step: claim.secondsOnStep,
+					} );
+				}
+			}
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, wpAccountCreateResponse ] );
+	}, [ dispatch, isLoggedIn, navigation, gateStatus, gateScopeForUser, flow ] );
+
+	// A retry batch is finite and swallows its failure, so nothing would ask again. An account just
+	// created isn't logged in until `/me` answers — the request that failed — so the tab that made
+	// it keeps asking on its own account.
+	useBackoffPoll(
+		() => dispatch( fetchCurrentUser() as unknown as AnyAction ),
+		( isLoggedIn && gateStatus === 'pending' ) ||
+			isWaitingForCreatedAccount ||
+			( isEditingEmail && gateStatus === 'gated' )
+	);
 
 	const locale = useFlowLocale();
 
@@ -87,11 +180,82 @@ const UserStepComponent: StepType = function UserStep( {
 		from: partnerConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
 	} );
 
+	const returnToGate = () => setEditing( null );
+
+	const {
+		updateEmail: writeEmail,
+		error: updateError,
+		forget: forgetUpdateError,
+		requestedEmail,
+	} = useUpdateEmail( { flow, scope: gateScopeForUser } );
+
+	// Where a pending correction is: `/me` still reports the address being left. An account made
+	// here cannot have one, so it is not asked for.
+	//
+	// Asked under this account and kept out of storage, because signup starts logged out and the
+	// cache this would persist into is the one every later signup in the browser opens.
+	// Only for the account this step created. A stale token can leave `/me` resolving a different
+	// one, which this step handles and which may have a correction waiting from before.
+	// Compared as strings: the two arrive by different routes and need not agree on their type.
+	const isAccountFromThisSession =
+		createdUserId !== null && String( createdUserId ) === String( userId );
+	const settings = userSettingsQuery();
+	const { data: userSettings, isSuccess: settingsRead } = useDataQuery( {
+		...settings,
+		queryKey: [ ...settings.queryKey, gateScopeForUser ],
+		enabled: gateStatus === 'gated' && ! isAccountFromThisSession,
+		meta: { persist: false },
+	} );
+	const pendingEmail =
+		requestedEmail ??
+		( userSettings?.user_email_change_pending ? userSettings.new_user_email : undefined );
+	// Both the address the gate names and the one a resend goes to, so they cannot disagree.
+	const awaitingEmail = pendingEmail ?? currentEmail;
+	// A correction made in an earlier session is invisible until the settings answer, and the
+	// address standing in for it meanwhile is the mistyped one it was made to get away from.
+	const addressSettled = isAccountFromThisSession || Boolean( requestedEmail ) || settingsRead;
+
+	// Submitted unchanged, nothing is being asked for and the user is already where they need to
+	// be. Writing a changed one is a change of its own.
+	const updateEmail = async ( email: string ) => {
+		if ( email === activeEdit?.startedFrom ) {
+			returnToGate();
+			return;
+		}
+		await writeEmail( email );
+		returnToGate();
+	};
+
+	const beginEmailEdit = () => {
+		forgetUpdateError();
+		setEditing( { scope: gateScopeForUser, startedFrom: awaitingEmail ?? '' } );
+	};
+
+	const updateErrorNotice = updateError ? (
+		// Inserted after the fact, in answer to something the reader did, so it is spoken rather
+		// than only shown.
+		<div role="alert">
+			<Notice variant="error">{ updateError }</Notice>
+		</div>
+	) : (
+		false
+	);
+
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
 	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
-		if ( 'ID' in data ) {
-			setSignupIsNewUser( data.ID );
+		if ( ! ( 'ID' in data ) ) {
+			return;
+		}
+		setCreatedUserId( data.ID ?? null );
+		setSignupIsNewUser( data.ID );
+		if ( emailVerificationEnabled ) {
+			// The activation email from account creation is the one the gate asks for, so the gate
+			// sends nothing on arrival — this only records the send the server just made.
+			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
+				flow,
+				is_resend: false,
+			} );
 		}
 	};
 
@@ -104,10 +268,37 @@ const UserStepComponent: StepType = function UserStep( {
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
 	const isLargeViewport = useViewportMatch( 'large' );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
+	// Thumb-friendly compact layout for mobile signup. Woo referrers keep their
+	// permanent email-first treatment and partner-branded flows keep their own
+	// SSO providers, ToS, and heading copy — both are excluded so the compact
+	// layout never overrides them. So is the screen the gate hands back, which the
+	// form renders in its standard shape: the compact frame pins a ToS that isn't
+	// there, and its heading offers to start a site rather than fix an address.
+	const isMobileCompactLayout =
+		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig && ! isEditingEmail;
+
+	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
+	// Partner branding always wins: isMobileCompactLayout is already false whenever
+	// partnerConfig is set, so the ! partnerConfig check here is belt-and-suspenders
+	// — it keeps the "partners never get the compact SSO set" invariant local to
+	// this line and safe if the eligibility above is ever refactored.
+	const allowedSocialServices =
+		allowedSocialServicesProp ??
+		( isMobileCompactLayout && ! partnerConfig
+			? MOBILE_SOCIAL_SERVICES
+			: partnerConfig?.ssoProviders );
+	// customTosElement is reserved for partner branding (legal); the form's
+	// mobile-compact branch renders MobileCompactTosNotice as its own fallback
+	// when no customTosElement is provided. Routing the notice through
+	// customTosElement would double-wrap it in <p>.
 	const stepContent = (
 		<>
-			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
+			{ isEditingEmail && <DocumentHead title={ translate( 'Create your account' ) } /> }
+			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && ! isEditingEmail && (
+				<OneTapAuthLoaderOverlay />
+			) }
 			<SignupFormSocialFirst
 				stepName={ stepName }
 				flowName={ flow }
@@ -118,16 +309,23 @@ const UserStepComponent: StepType = function UserStep( {
 				socialServiceResponse={ socialServiceResponse }
 				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
-				userEmail={ queryArgs.get( 'user_email' ) || '' }
-				notice={ notice }
+				userEmail={ ( activeEdit?.startedFrom ?? queryArgs.get( 'user_email' ) ) || '' }
+				notice={ isEditingEmail ? updateErrorNotice : notice }
 				isSocialFirst
 				onCreateAccountSuccess={ handleCreateAccountSuccess }
 				backButtonInFooter={ ! isStepContainerV2 }
-				emailLabelText={ isStepContainerV2 ? translate( 'Enter your email' ) : undefined }
+				emailLabelText={ emailLabelText }
 				isEmailFirstVariant={ isEmailFirstVariant }
 				isEmailAtBottom={ isEmailAtBottom }
-				allowedSocialServices={ partnerConfig?.ssoProviders }
+				isMobileCompactVariant={ isMobileCompactLayout }
+				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
+				activationEmailFrom={ emailVerificationEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
+				// The email submit stays held until the arm loads: the arm decides activationEmailFrom, so
+				// submitting first would send the wrong activation email. Social signups are verified on
+				// creation and never gated, so this leaves them untouched.
+				isSubmitBlocked={ isVariantLoading }
+				onUpdateEmail={ isEditingEmail ? updateEmail : undefined }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm
@@ -139,30 +337,67 @@ const UserStepComponent: StepType = function UserStep( {
 		</>
 	);
 
+	if ( gateStatus === 'gated' && ! isEditingEmail ) {
+		return (
+			<EmailVerificationGate
+				onEditEmail={ beginEmailEdit }
+				email={ awaitingEmail ?? '' }
+				pendingEmail={ pendingEmail }
+				addressSettled={ addressSettled }
+				// A different account is a different attempt: without this the cooldown, the send
+				// state and the poll's ladder would all carry over to whoever `/me` resolved.
+				key={ gateScopeForUser }
+				flow={ flow }
+				scope={ gateScopeForUser }
+				logo={ topBarLogo }
+			/>
+		);
+	}
+
+	// Nobody with an account has any business being offered another one — including someone whose
+	// account exists but whose `/me` hasn't landed, who would otherwise be looking at live social
+	// buttons and a "See all options" link moments after signing up.
+	if ( ( isLoggedIn || isWaitingForCreatedAccount ) && ! isEditingEmail ) {
+		return <Step.Loading />;
+	}
+
 	if ( isStepContainerV2 ) {
-		let headingText = translate( 'Create your account' );
+		let headingText = headerText ?? translate( 'Create your account' );
+		let headingSubText = subHeaderText;
 		if ( partnerConfig ) {
 			headingText = translate( 'Create an account for %(partner)s', {
 				args: { partner: partnerConfig.displayName },
 				textOnly: true,
 			} );
+		} else if ( isMobileCompactLayout ) {
+			headingText = translate( 'Welcome to WordPress.com' );
+			headingSubText = translate( 'Sign up free to start creating your site.' );
 		}
 		const heading = (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
-				<Step.Heading text={ headingText } align={ isEmailFirstVariant ? 'left' : undefined } />
+				<Step.Heading
+					text={ headingText }
+					subText={ headingSubText }
+					align={ isEmailFirstVariant ? 'left' : undefined }
+				/>
 			</>
 		);
+
+		// Leaving the flow would walk past a gate the user is still owed, and Continue is already
+		// the way back from the account screen.
+		const backButton =
+			navigation.goBack && ! isEditingEmail ? (
+				<Step.BackButton onClick={ navigation.goBack } />
+			) : undefined;
 
 		const topBar = (
 			<Step.TopBar
 				logo={ topBarLogo }
-				leftElement={
-					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
-				}
+				leftElement={ backButton }
 				rightElement={
-					isEmailFirstVariant ? null : (
+					hideLoginLink || isEmailFirstVariant || isEditingEmail ? null : (
 						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
 					)
 				}
@@ -196,7 +431,9 @@ const UserStepComponent: StepType = function UserStep( {
 
 		return (
 			<Step.CenteredColumnLayout
-				className="step-container-v2--user"
+				className={ clsx( 'step-container-v2--user', {
+					'step-container-v2--user-mobile': isMobileCompactLayout,
+				} ) }
 				verticalAlign="center"
 				columnWidth={ 4 }
 				heading={ heading }
@@ -222,7 +459,8 @@ const UserStepComponent: StepType = function UserStep( {
 					<>
 						<FormattedHeader
 							align="center"
-							headerText={ translate( 'Create your account' ) }
+							headerText={ headerText ?? translate( 'Create your account' ) }
+							subHeaderText={ subHeaderText }
 							brandFont
 						/>
 						{ stepContent }
@@ -230,13 +468,15 @@ const UserStepComponent: StepType = function UserStep( {
 				}
 				recordTracksEvent={ recordTracksEvent }
 				customizedActionButtons={
-					<Button
-						className="step-wrapper__navigation-link forward"
-						href={ loginLink }
-						variant="link"
-					>
-						<span>{ translate( 'Log in' ) }</span>
-					</Button>
+					hideLoginLink ? undefined : (
+						<Button
+							className="step-wrapper__navigation-link forward"
+							href={ loginLink }
+							variant="link"
+						>
+							<span>{ translate( 'Log in' ) }</span>
+						</Button>
+					)
 				}
 			/>
 		</>

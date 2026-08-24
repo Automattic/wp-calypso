@@ -9,7 +9,6 @@ import envVariables from '../env-variables';
 import { RestAPIClient } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import { TOTPClient } from '../totp-client';
-import { SidebarComponent } from './components/sidebar-component';
 import { LoginPage } from './pages/login-page';
 import type { TestAccountCredentials } from '../secrets';
 
@@ -45,31 +44,60 @@ export class TestAccount {
 	 * Authenticates the account using previously saved cookies or via the login
 	 * page UI if cookies are unavailable.
 	 *
+	 * Does not wait for the landing page to render. Specs navigate to their own
+	 * target next; one that drives the page login lands on waits for the part of it
+	 * that it uses.
+	 *
 	 * @param {Page} page Page object.
 	 * @param {string} [url] URL to expect once authenticated and redirections are finished.
 	 */
-	async authenticate(
-		page: Page,
-		{ url, waitUntilStable = true }: { url?: string | RegExp; waitUntilStable?: boolean } = {}
-	): Promise< void > {
+	async authenticate( page: Page, { url }: { url?: string | RegExp } = {} ): Promise< void > {
 		const browserContext = page.context();
 		await browserContext.clearCookies();
 
-		if ( await this.hasFreshAuthCookies() ) {
+		const hasFreshCookies = await this.hasFreshAuthCookies();
+
+		if ( hasFreshCookies ) {
 			this.log( 'Found fresh cookies, skipping log in' );
 			await browserContext.addCookies( await this.getAuthCookies() );
 			await page.goto( getCalypsoURL( '/' ) );
-		} else {
+		}
+
+		// Freshness is read off the cookie file's age, but the session behind it can be gone
+		// well inside that window, having expired or been invalidated by another run logging
+		// in as the same account. WordPress.com answers a rejected session by redirecting to
+		// the login page, which otherwise surfaces much later as a missing app shell.
+		const cookiesRejected = hasFreshCookies && TestAccount.isLoginPage( page.url() );
+
+		if ( cookiesRejected ) {
+			this.log( 'Saved cookies were rejected, discarding them' );
+			await browserContext.clearCookies();
+		}
+
+		if ( ! hasFreshCookies || cookiesRejected ) {
 			this.log( 'Logging in via Login Page' );
 			await this.logInViaLoginPage( page );
+		}
+
+		if ( cookiesRejected ) {
+			// Replace the file the rejected cookies came from, so the workers still to
+			// start reuse this session instead of tripping over the same dead one.
+			await this.saveAuthCookies( browserContext );
 		}
 
 		if ( url ) {
 			await page.waitForURL( url, { timeout: 20 * 1000 } );
 		}
-		if ( waitUntilStable ) {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.waitForSidebarInitialization();
+	}
+
+	/**
+	 * Whether a URL is the login page, including its locale-suffixed forms.
+	 */
+	private static isLoginPage( url: string ): boolean {
+		try {
+			return new URL( url ).pathname.startsWith( '/log-in' );
+		} catch {
+			return false;
 		}
 	}
 
@@ -103,12 +131,23 @@ export class TestAccount {
 		const loginPage = new LoginPage( page );
 
 		const { username, password } = this.credentials;
+
+		// On mobile viewports the cookie consent banner can overlay the login
+		// form's submit button, blocking the click and leaving the popup open.
+		await loginPage.dismissCookieBanner();
+
 		await loginPage.fillUsername( username );
 		await loginPage.clickSubmit();
 		await loginPage.fillPassword( password );
 
-		// Popup pages close once authentication is successful.
-		await Promise.all( [ page.waitForEvent( 'close' ), loginPage.clickSubmit() ] );
+		// Popup pages close once authentication is successful. The like/comment
+		// login runs a cross-domain "highlander" handshake (via r-login.wordpress.com)
+		// after submitting, which can take well over the default 10s before the
+		// popup closes, so wait longer.
+		await Promise.all( [
+			page.waitForEvent( 'close', { timeout: 30 * 1000 } ),
+			loginPage.clickSubmit(),
+		] );
 	}
 
 	/**
@@ -191,14 +230,17 @@ export class TestAccount {
 	async saveAuthCookies( browserContext: BrowserContext ): Promise< void > {
 		const cookiesPath = this.getAuthCookiesPath();
 
-		// Force remove existing cookies to prevent complaints if they don't exist.
-		// We need the remove step because otherwise, existing files will only be
-		// modified and the "created" date will stay the same, failing the freshness
-		// check.
-		await fs.rm( cookiesPath, { force: true } );
+		// Parallel workers share one cookie file per account. Writing in place
+		// lets a concurrent reader (getAuthCookies) observe a half-written file
+		// and throw a JSON parse error. Write to a per-process temp file and
+		// rename it into place: rename is atomic, so a reader always sees a
+		// complete file (old or new), never a torn one. The renamed file also
+		// gets a fresh birthtime, which the freshness check relies on.
+		const tempPath = `${ cookiesPath }.${ process.pid }.tmp`;
 
 		this.log( `Saving auth cookies to ${ cookiesPath }` );
-		await browserContext.storageState( { path: cookiesPath } );
+		await browserContext.storageState( { path: tempPath } );
+		await fs.rename( tempPath, cookiesPath );
 	}
 
 	/**

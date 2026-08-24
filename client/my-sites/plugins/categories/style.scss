@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
 .categories__menu {
 	.components-popover {
 		z-index: z-index("root", ".categories__menu .components-popover");

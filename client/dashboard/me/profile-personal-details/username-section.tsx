@@ -7,6 +7,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import { useState, useCallback } from 'react';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { reloadWithFlashMessage } from '../../components/flash-message';
 import UsernameUpdateForm from './update-username';
 import UsernameUpdateConfirmationModal from './update-username/confirmation-modal';
@@ -47,14 +48,11 @@ export default function UsernameSection( {
 	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
 
 	const { mutate: updateUsername, isPending } = useMutation( {
-		...updateUsernameMutation(),
+		...withSnackbar( updateUsernameMutation(), {
+			error: __( 'Failed to update username.' ),
+		} ),
 		onSuccess: () => {
 			reloadWithFlashMessage( 'username' );
-		},
-		meta: {
-			snackbar: {
-				error: __( 'Failed to update username.' ),
-			},
 		},
 	} );
 

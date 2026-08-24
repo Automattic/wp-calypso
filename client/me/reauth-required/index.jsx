@@ -12,6 +12,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';
 import WarningCard from 'calypso/components/warning-card';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import SecurityKeyForm from './security-key-form';
@@ -107,6 +108,15 @@ class ReauthRequired extends Component {
 				this.setState( { validatingCode: false } );
 				if ( error ) {
 					debug( 'There was an error validating that code: ' + JSON.stringify( error ) );
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'Reauth required: error validating 2fa code',
+						severity: 'error',
+						extra: {
+							type: 'reauth_code_validation_error',
+							error: error.error ?? error.message ?? String( error ),
+						},
+					} ).catch( () => undefined );
 				} else {
 					debug( 'The code validated!' + JSON.stringify( data ) );
 				}

@@ -282,7 +282,7 @@ describe( 'Site Actions', () => {
 			} );
 		} );
 
-		it( 'should request succesfully the Atomic transfer status', () => {
+		it( 'should request successfully the Atomic transfer status', () => {
 			const { requestLatestAtomicTransfer } = createActions( mockedClientCredentials );
 			const generator = requestLatestAtomicTransfer( siteId );
 			const transfer: LatestAtomicTransfer = {
@@ -351,7 +351,7 @@ describe( 'Site Actions', () => {
 			} );
 		} );
 
-		it( 'should request the Atomic software install status succesfully', () => {
+		it( 'should request the Atomic software install status successfully', () => {
 			const { requestAtomicSoftwareStatus } = createActions( mockedClientCredentials );
 			const softwareSet = 'woo-on-plans';
 			const generator = requestAtomicSoftwareStatus( siteId, softwareSet );

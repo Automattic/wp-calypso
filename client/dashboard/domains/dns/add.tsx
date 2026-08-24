@@ -4,6 +4,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import DnsDescription from '../domain-dns/dns-description';
@@ -17,16 +18,13 @@ export default function DomainAddDNS() {
 	const navigate = useNavigate();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const mutation = useMutation( {
-		...domainDnsMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'DNS record added successfully for %s.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( domainDnsMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'DNS record added successfully for %s.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const navigateToDNSOverviewPage = () => {
 		navigate( {

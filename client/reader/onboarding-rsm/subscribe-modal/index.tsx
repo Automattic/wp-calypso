@@ -7,14 +7,17 @@ import { Icon, check } from '@wordpress/icons';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback, useRef } from 'react';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
+import { StepIndicator } from 'calypso/reader/components/step-indicator';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { useSite } from 'calypso/reader/data/site';
 import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getFeedUrl } from 'calypso/reader/get-helpers';
-import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
-import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
+import {
+	READER_ONBOARDING_FOLLOW_SOURCE,
+	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
+} from 'calypso/reader/onboarding-rsm/constants';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { nextSelectedSite } from './selection';
@@ -218,10 +221,11 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 											url={ site.feed_URL }
 											// Pass the canonical feed URL from onboarding data so
 											// the list item does not derive subscribe URL from
-											// `site_URL` or wait on Redux `getFeedUrl` alone.
+											// `site_URL` alone.
 											showLastUpdatedDate={ false }
 											showNotificationSettings={ false }
 											showFollowedOnDate={ false }
+											followApiSource={ READER_ONBOARDING_FOLLOW_SOURCE }
 											followSource="reader-onboarding-modal"
 											replaceStreamClickWithItemClick
 											onItemClick={ () => handleItemClick( site ) }
@@ -255,9 +259,15 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												</span>
 											</div>
 											<ReaderFollowButton
+												// Remount per previewed site so the follow mutation's
+												// pending state (which lingers while follow-sensitive
+												// caches refetch) can't disable the button for the next
+												// site the user previews.
+												key={ selectedSite.feed_ID }
 												siteUrl={ selectedFollowUrl }
 												feedId={ selectedSite.feed_ID }
 												siteId={ selectedSite.site_ID }
+												followApiSource={ READER_ONBOARDING_FOLLOW_SOURCE }
 												followSource="reader-onboarding-modal"
 												hasButtonStyle
 												onFollowToggle={ ( isFollowing: boolean ) =>
@@ -274,20 +284,23 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												}
 											/>
 										</div>
-										<div
-											className="subscribe-modal__preview-stream-container"
-											// @ts-expect-error For some reason there's no inert type.
-											// `inert` removes preview stream from tab order + a11y tree (preview is non-interactive).
-											inert
-										>
-											<TypedStream
-												streamKey={ `feed:${ selectedSite.feed_ID }` }
-												className="is-site-stream subscribe-modal__preview-stream no-padding"
-												followSource="reader_subscribe_modal"
-												useCompactCards
-												showBylineSecondarySiteLink={ false }
-												trackScrollPage={ trackScrollPage.bind( null ) }
-											/>
+										<div className="subscribe-modal__preview-stream-container">
+											{ /* `inert` removes the preview stream from tab order + the a11y
+											     tree (preview is non-interactive). It lives on this inner
+											     wrapper — NOT the scroll container — because an inert element
+											     hit-tests as `pointer-events: none`, which would make wheel/
+											     touch scrolls fall through the scroll container to its
+											     `overflow: hidden` parent and stop the column scrolling. */ }
+											<div className="subscribe-modal__preview-stream-inner" inert>
+												<TypedStream
+													streamKey={ `feed:${ selectedSite.feed_ID }` }
+													className="is-site-stream subscribe-modal__preview-stream no-padding"
+													followSource="reader_subscribe_modal"
+													useCompactCards
+													showBylineSecondarySiteLink={ false }
+													trackScrollPage={ trackScrollPage.bind( null ) }
+												/>
+											</div>
 										</div>
 									</>
 								) }

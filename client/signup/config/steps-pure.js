@@ -269,15 +269,16 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-business-with-plugin': {
-			stepName: 'plans-business-with-plugin',
+		'plans-with-plugin': {
+			stepName: 'plans-with-plugin',
 			apiRequestFunction: addWithPluginPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug', 'plugin', 'billing_period' ],
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_BUSINESS,
+			props: {
+				hideFreePlan: true,
+				hideEnterprisePlan: true,
 			},
 		},
 

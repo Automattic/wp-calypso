@@ -1,25 +1,45 @@
-import {
-	AgentsManagerSelect,
-	PerSiteRouterHistory,
-	SingleRouterHistory,
-} from '@automattic/data-stores';
-import { select as storeSelect, useSelect } from '@wordpress/data';
 import { useState, useLayoutEffect, useCallback, useMemo } from '@wordpress/element';
 import { Action, Location } from 'history';
-import { AGENTS_MANAGER_STORE } from '../stores';
 import { generateUUID } from '../utils/generate-uuid';
-import { persistAgentsManagerState } from '../utils/persist-agents-manager-state';
 
-const DEFAULT_INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
+// Navigation history persists to `sessionStorage`, keyed per site, so each
+// tab restores its own routes across page loads.
+const STORAGE_KEY = 'agents-manager-router-history';
 
-/**
- * Get the inactivity timeout in milliseconds.
- * Supports a `?inactivity_timeout` query parameter override for testing (value in ms).
- */
-function getInactivityTimeoutMs(): number {
-	const param = new URLSearchParams( window.location.search ).get( 'inactivity_timeout' );
-	const parsed = param ? Number( param ) : NaN;
-	return parsed > 0 ? parsed : DEFAULT_INACTIVITY_TIMEOUT_MS;
+interface StoredHistory {
+	entries: Location[];
+	index: number;
+}
+
+function readStoredHistory( siteKey: string ): StoredHistory | undefined {
+	try {
+		const map = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
+		const history = map[ siteKey ];
+
+		// Corrupted storage must fall back to a fresh history — a malformed
+		// shape here would crash the router.
+		const isValidHistory =
+			Array.isArray( history?.entries ) &&
+			history.entries.every(
+				( entry: Location | undefined ) => typeof entry?.pathname === 'string'
+			) &&
+			Number.isInteger( history.index ) &&
+			history.index >= 0 &&
+			history.index < history.entries.length;
+		return isValidHistory ? history : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+function writeStoredHistory( siteKey: string, history: StoredHistory ): void {
+	try {
+		const map = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
+		map[ siteKey ] = history;
+		sessionStorage.setItem( STORAGE_KEY, JSON.stringify( map ) );
+	} catch {
+		// ignore
+	}
 }
 
 export interface HistoryEvent {
@@ -27,12 +47,11 @@ export interface HistoryEvent {
 	location: Location;
 }
 
-type PersistCallback = ( historyData: SingleRouterHistory ) => void;
+type PersistCallback = ( historyData: StoredHistory ) => void;
 
 /**
- * This is a custom implementation of the MemoryHistory class from the history package.
- * It is used to persist the navigation history of the agents manager.
- * It persists the history to the server via a callback provided by the hook.
+ * A custom implementation of the `history` package's `MemoryHistory` that
+ * reports every navigation through a persist callback provided by the hook.
  */
 class MemoryHistory {
 	private entries: Location[] = [];
@@ -51,11 +70,12 @@ class MemoryHistory {
 		this.push = this.push.bind( this );
 		this.replace = this.replace.bind( this );
 		this.go = this.go.bind( this );
-		this.goBack = this.goBack.bind( this );
-		this.goForward = this.goForward.bind( this );
+		this.back = this.back.bind( this );
+		this.forward = this.forward.bind( this );
 		this.listen = this.listen.bind( this );
 		this.createLocation = this.createLocation.bind( this );
 	}
+
 	get length(): number {
 		return this.entries.length;
 	}
@@ -82,15 +102,14 @@ class MemoryHistory {
 		const location = this.createLocation( path.pathname + path.search + path.hash, state );
 		this.entries = this.entries.slice( 0, this.index + 1 );
 		this.entries.push( location );
-		// Limit the number of entries to 50 to avoid the history getting too long.
-		if ( this.entries.length > 50 ) {
+		// Cap the history at 50 entries, dropping the oldest ones while
+		// keeping the start at root so the back button always works.
+		while ( this.entries.length > 50 ) {
 			this.entries.shift();
 			this.entries.shift();
-			// Keep the start at root so the back button always works.
 			this.entries.unshift( this.createLocation( '/' ) );
-		} else {
-			this.index++;
 		}
+		this.index = this.entries.length - 1;
 		this.notifyListeners( Action.Push );
 	}
 
@@ -108,11 +127,11 @@ class MemoryHistory {
 		}
 	}
 
-	goBack() {
+	back() {
 		this.go( -1 );
 	}
 
-	goForward() {
+	forward() {
 		this.go( 1 );
 	}
 
@@ -146,67 +165,36 @@ class MemoryHistory {
 	}
 }
 
-/**
- * Read the full router history map from the store (synchronous, outside React).
- */
-function getFullRouterHistory(): PerSiteRouterHistory | undefined {
-	return (
-		storeSelect( AGENTS_MANAGER_STORE ) as unknown as AgentsManagerSelect
-	 ).getAgentsManagerState().routerHistory;
-}
-
 export const usePersistedHistory = ( siteKey: string ) => {
-	const { persistedHistory, lastActive } = useSelect(
-		( select ) => {
-			const store = select( AGENTS_MANAGER_STORE ) as unknown as AgentsManagerSelect;
-			return {
-				persistedHistory: store.getRouterHistory( siteKey ),
-				lastActive: store.getLastActivity( siteKey ),
-			};
-		},
-		[ siteKey ]
-	);
-
-	// Skip restoring history if the site has been inactive beyond the timeout.
-	const isStale = lastActive ? Date.now() - lastActive > getInactivityTimeoutMs() : false;
-	const activeHistory = useMemo( () => {
-		if ( isStale ) {
-			// eslint-disable-next-line no-console
-			console.log( `[AgentsManager] Active chat expired for site key "${ siteKey }"` );
-			return;
-		}
-		return persistedHistory;
-	}, [ isStale, persistedHistory, siteKey ] );
-
-	// Build history from persisted data. Recreated when `activeHistory` changes,
-	// so `useLocation().state` (e.g., `sessionId`) is correct immediately.
-	// Safe to use `activeHistory` as dep directly because the store is only
-	// populated once from the server — local navigations don't update it.
-	const history = useMemo(
-		() => new MemoryHistory( activeHistory?.entries, activeHistory?.index ),
-		[ activeHistory ]
-	);
+	// Read once and key on `siteKey`: every site switch gets a fresh instance —
+	// even between sites with nothing stored — while later navigations persist
+	// to storage without recreating it.
+	const history = useMemo( () => {
+		const persisted = readStoredHistory( siteKey );
+		return new MemoryHistory( persisted?.entries, persisted?.index );
+	}, [ siteKey ] );
 
 	const [ state, setState ] = useState< HistoryEvent >( () => ( {
 		action: history.action,
 		location: history.location,
 	} ) );
 
-	// Create a persist callback that merges with existing per-site histories.
+	// Derive `state` in render when the instance changes (e.g. a site switch),
+	// so the router never commits the new history with the old site's location.
+	const [ previousHistory, setPreviousHistory ] = useState( history );
+	if ( previousHistory !== history ) {
+		setPreviousHistory( history );
+		setState( { action: history.action, location: history.location } );
+	}
+
 	const persistHistory = useCallback(
-		( historyData: SingleRouterHistory ) => {
-			const fullMap = getFullRouterHistory() || {};
-			persistAgentsManagerState( {
-				agents_manager_router_history: { ...fullMap, [ siteKey ]: historyData },
-			} );
-		},
+		( historyData: StoredHistory ) => writeStoredHistory( siteKey, historyData ),
 		[ siteKey ]
 	);
 
-	// Sync `state`, persist callback, and listener when `history` instance changes.
+	// Wire the persist callback and listener when the `history` instance changes.
 	useLayoutEffect( () => {
 		history.setOnPersist( persistHistory );
-		setState( { action: history.action, location: history.location } );
 		return history.listen( setState );
 	}, [ history, persistHistory ] );
 

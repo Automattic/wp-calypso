@@ -23,7 +23,7 @@ const useSitePurchasesByProductSlug = ( {
 
 		const found = Object.fromEntries(
 			Object.entries( sitePurchases.data ).filter(
-				( [ , purchase ] ) => purchase.productSlug === productSlug
+				( [ , purchase ] ) => purchase.product_slug === productSlug
 			)
 		);
 

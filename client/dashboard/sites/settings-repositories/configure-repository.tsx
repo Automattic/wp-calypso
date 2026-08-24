@@ -15,9 +15,6 @@ import {
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SnackbarBackButton, {
-	getSnackbarBackButtonText,
-} from '../../components/snackbar-back-button';
 import { ConnectRepositoryForm } from './connect-repository-form';
 
 export default function ConfigureRepository() {
@@ -30,8 +27,6 @@ export default function ConfigureRepository() {
 	const navigate = useNavigate( {
 		from: navigateFrom,
 	} );
-	const search = siteSettingsRepositoriesManageRoute.useSearch();
-	const snackbarBackButtonText = getSnackbarBackButtonText( search?.back_to );
 
 	const handleCancel = () => {
 		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
@@ -52,46 +47,41 @@ export default function ConfigureRepository() {
 	};
 
 	return (
-		<>
-			<PageLayout
-				size="small"
-				header={
-					<PageHeader
-						prefix={ <Breadcrumbs length={ 3 } /> }
-						title={ __( 'Configure Repository' ) }
-						description={ __(
-							'Update the GitHub repository connection to deploy code to your WordPress site.'
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
+					title={ __( 'Configure Repository' ) }
+					description={ __(
+						'Update the GitHub repository connection to deploy code to your WordPress site.'
+					) }
+				/>
+			}
+		>
+			<Card>
+				<CardBody>
+					<ConnectRepositoryForm
+						formTitle={ __( 'Update connection details' ) }
+						formDescription={ __(
+							'Configure a repository connection to deploy a GitHub repository to your WordPress.com site.'
 						) }
+						onCancel={ handleCancel }
+						mutation={ updateMutation }
+						initialValues={ initialValues }
+						submitText={ __( 'Update Connection' ) }
+						successMessage={ __( 'Repository settings updated successfully.' ) }
+						errorMessage={ ( reason ) =>
+							sprintf(
+								// translators: %(reason)s: why updating the repository failed.
+								__( 'Failed to update repository: %(reason)s' ),
+								{ reason }
+							)
+						}
+						navigateFrom={ navigateFrom }
 					/>
-				}
-			>
-				<Card>
-					<CardBody>
-						<ConnectRepositoryForm
-							formTitle={ __( 'Update connection details' ) }
-							formDescription={ __(
-								'Configure a repository connection to deploy a GitHub repository to your WordPress.com site.'
-							) }
-							onCancel={ handleCancel }
-							mutation={ updateMutation }
-							initialValues={ initialValues }
-							submitText={ __( 'Update Connection' ) }
-							successMessage={ __( 'Repository settings updated successfully.' ) }
-							errorMessage={ ( reason ) =>
-								sprintf(
-									// translators: %(reason)s: why updating the repository failed.
-									__( 'Failed to update repository: %(reason)s' ),
-									{ reason }
-								)
-							}
-							navigateFrom={ navigateFrom }
-						/>
-					</CardBody>
-				</Card>
-			</PageLayout>
-			{ snackbarBackButtonText && (
-				<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
-			) }
-		</>
+				</CardBody>
+			</Card>
+		</PageLayout>
 	);
 }

@@ -74,7 +74,7 @@ afterAll( () => {
 } );
 
 beforeEach( () => {
-	// recordReaderTracksEvent is a thunk that reads state.reader.follows.
+	// recordReaderTracksEvent is a thunk that reads the follows query cache.
 	// Stub it so the modal's _compose_opened effect doesn't hit the
 	// missing slice of the test store.
 	jest

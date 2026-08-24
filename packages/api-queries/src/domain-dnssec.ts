@@ -5,6 +5,7 @@ import { queryClient } from './query-client';
 
 export const domainDnssecMutation = ( domain: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-dnssec-update' },
 		mutationFn: ( enabled: boolean ) => updateDNSSEC( domain, enabled ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( domainQuery( domain ) );

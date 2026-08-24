@@ -337,6 +337,57 @@ describe( 'actions', () => {
 			} );
 		} );
 
+		test( 'should update post terms stored as an object map keyed by term ID', async () => {
+			const postObjects = {
+				[ siteId ]: {
+					'0fcb4eb16f493c19b627438fdc18d57c': {
+						ID: 120,
+						site_ID: siteId,
+						global_ID: 'f0cb4eb16f493c19b627438fdc18d57c',
+						title: 'Steak &amp; Eggs',
+						// Post terms can be stored as an object map, not only an array.
+						terms: {
+							[ categoryTaxonomyName ]: {
+								10: { ID: 10, name: 'old category name', slug: 'old' },
+							},
+						},
+					},
+				},
+			};
+			const state = {
+				posts: {
+					queries: {
+						[ siteId ]: new PostQueryManager( { items: postObjects[ siteId ] } ),
+					},
+				},
+				siteSettings: { items: { [ siteId ]: { default_category: 10 } } },
+				terms: {
+					queries: {
+						[ siteId ]: {
+							[ categoryTaxonomyName ]: new TermQueryManager( { items: {}, queries: {} } ),
+						},
+					},
+				},
+			};
+
+			const spy = jest.fn();
+			await updateTerm( siteId, categoryTaxonomyName, 10, 'rib', { name: 'ribs' } )(
+				spy,
+				() => state
+			);
+
+			expect( spy ).toHaveBeenCalledWith( {
+				type: POST_EDIT,
+				siteId: siteId,
+				postId: 120,
+				post: {
+					terms: {
+						[ categoryTaxonomyName ]: [ { ID: 123, name: 'ribs', description: '' } ],
+					},
+				},
+			} );
+		} );
+
 		test( 'should not dispatch SITE_SETTINGS_UPDATE on Success if the taxonomy is not equal to "category"', async () => {
 			const state = {
 				posts: { queries: {} },
@@ -461,6 +512,54 @@ describe( 'actions', () => {
 				siteId: siteId,
 				taxonomy: taxonomyName,
 				terms: [],
+			} );
+		} );
+
+		test( 'should drop the term from post terms stored as an object map keyed by term ID', async () => {
+			const postObjects = {
+				[ siteId ]: {
+					'0fcb4eb16f493c19b627438fdc18d57c': {
+						ID: 120,
+						site_ID: siteId,
+						global_ID: 'f0cb4eb16f493c19b627438fdc18d57c',
+						title: 'Steak &amp; Eggs',
+						// Post terms can be stored as an object map, not only an array.
+						terms: {
+							[ taxonomyName ]: { 10: { ID: 10, name: 'ribs', slug: 'ribs' } },
+						},
+					},
+				},
+			};
+			const state = {
+				posts: {
+					queries: {
+						[ siteId ]: new PostQueryManager( { items: postObjects[ siteId ] } ),
+					},
+				},
+				terms: {
+					queries: {
+						[ siteId ]: {
+							[ taxonomyName ]: new TermQueryManager( {
+								items: { 10: { ID: 10, name: 'ribs', slug: 'ribs', parent: 0 } },
+								queries: {},
+							} ),
+						},
+					},
+				},
+			};
+
+			const spy = jest.fn();
+			await deleteTerm( siteId, taxonomyName, 10, 'ribs' )( spy, () => state );
+
+			expect( spy ).toHaveBeenCalledWith( {
+				type: POST_EDIT,
+				siteId: siteId,
+				postId: 120,
+				post: {
+					terms: {
+						[ taxonomyName ]: [],
+					},
+				},
 			} );
 		} );
 

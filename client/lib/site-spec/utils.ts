@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { WooLogo } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { createElement, type ReactElement } from 'react';
 
 // Raw config structure from the server
@@ -32,6 +33,10 @@ export interface SiteSpecConfig {
 	agentUrl?: string;
 	agentId?: string;
 	buildSiteUrl?: string;
+	authProvider?: () => Promise< Record< string, string > >;
+	// Blueprint identifier when building from a blueprint. Forwarded by the widget
+	// to the agent (metadata.blueprint_id) so it can run a blueprint-aware interview.
+	blueprintId?: string;
 	theme?: {
 		// Branding
 		brandIcon?: ReactElement | string | null; // ReactElement or image URL; null hides
@@ -111,12 +116,17 @@ export interface SiteSpecConfig {
 		className?: string; // Custom class on root container
 		cssVariables?: Record< string, string >; // Arbitrary CSS custom props
 	};
+	features?: {
+		// `true` shows the site brief dialog in place of the basic spec preview;
+		// `'next'` also shows its socials/attachments sections.
+		siteBrief?: boolean | 'next';
+	};
 	tosConfig?: ToSConfig;
 	placeholder?: string | string[];
 	tracking?: {
 		enabled: boolean;
 		prefix: string;
-		getOverrides?: ( event: string ) => Record< string, any >;
+		getOverrides?: ( event: string ) => Record< string, unknown >;
 	};
 	backButton?: BackButtonConfig;
 	exitButton?: {
@@ -186,6 +196,25 @@ export function getDefaultSiteSpecConfig(): SiteSpecConfig {
 				client: 'calypso',
 			} ),
 		},
+	};
+}
+
+/**
+ * SiteSpec configuration for a site being built from a blueprint. Extends the
+ * default config with the blueprint identifier so the widget forwards it to the
+ * agent (as metadata.blueprint_id), which then runs a blueprint-aware interview.
+ * @param {Object} params            Params.
+ * @param {string} params.blueprintId Blueprint identifier (numeric library id or slug).
+ * @returns {SiteSpecConfig} Configuration object for the blueprint flow.
+ */
+export function getBlueprintSiteSpecConfig( {
+	blueprintId,
+}: {
+	blueprintId?: string;
+} ): SiteSpecConfig {
+	return {
+		...getDefaultSiteSpecConfig(),
+		...( blueprintId ? { blueprintId } : {} ),
 	};
 }
 
@@ -315,6 +344,60 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 		},
 		tosConfig: {
 			showToS: true,
+		},
+	};
+}
+
+/**
+ * Retrieves the SiteSpec configuration for WPCOM Atomic site provisioning.
+ *
+ * The widget may either call `onSpecConfirm` or navigate to `buildSiteUrl`
+ * with the spec id appended. Keep the navigation inside the Site Spec route so
+ * Calypso can pass the confirmed spec to the regular AI site builder flow.
+ * @returns {SiteSpecConfig} Configuration object for WPCOM Atomic site provisioning.
+ */
+export function getEarlyProvisionSiteSpecConfig(): SiteSpecConfig {
+	return {
+		...getDefaultSiteSpecConfig(),
+		buildSiteUrl: '/setup/ai-site-builder-spec/site-spec?provision_target=wpcom-atomic&spec_id=',
+	};
+}
+
+/**
+ * Retrieves the SiteSpec configuration for post-checkout build-wow provisioning.
+ *
+ * The widget may either call `onSpecConfirm` or navigate to `buildSiteUrl`
+ * with the spec id appended. Keep that navigation inside the Site Spec route
+ * so Calypso can attach the confirmed spec to the existing post-checkout site.
+ * @returns {SiteSpecConfig} Configuration object for build-wow provisioning.
+ */
+export function getBuildWowSiteSpecConfig( {
+	siteSlug,
+	siteId,
+	ref,
+	source,
+}: {
+	siteSlug?: string | null;
+	siteId?: string | number | null;
+	ref?: string | null;
+	source?: string | null;
+} = {} ): SiteSpecConfig {
+	const buildSiteUrl = addQueryArgs( '/setup/ai-site-builder-spec/site-spec', {
+		build_wow: '1',
+		...( siteSlug ? { siteSlug } : {} ),
+		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
+		...( ref ? { ref } : {} ),
+		...( source ? { source } : {} ),
+	} );
+
+	const defaultConfig = getDefaultSiteSpecConfig();
+
+	return {
+		...defaultConfig,
+		buildSiteUrl: `${ buildSiteUrl }${ buildSiteUrl.includes( '?' ) ? '&' : '?' }spec_id=`,
+		features: {
+			...defaultConfig.features,
+			siteBrief: 'next',
 		},
 	};
 }

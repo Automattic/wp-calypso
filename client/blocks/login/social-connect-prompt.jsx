@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
+import { capitalize } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { capitalize } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

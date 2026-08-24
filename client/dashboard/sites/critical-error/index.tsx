@@ -4,12 +4,13 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import {
 	Button,
+	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, envelope, formatListBullets, help } from '@wordpress/icons';
+import { Icon, envelope, formatListBullets, help, wordpress } from '@wordpress/icons';
 import { Fragment, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
@@ -107,6 +108,18 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 					'Search your admin email inbox for the keyword <q/> for troubleshooting instructions.'
 				),
 				{ q: <strong>{ __( 'critical error' ) }</strong> }
+			),
+		} );
+	}
+	if ( isAdmin && site.options?.admin_url ) {
+		items.push( {
+			icon: wordpress,
+			text: createInterpolateElement(
+				// translators: <a/> is a link to the site's wp-admin with the text "Visit your site"
+				__( '<a>Visit your site</a> to check available recovery options.' ),
+				{
+					a: <ExternalLink href={ site.options.admin_url } children={ null } />,
+				}
 			),
 		} );
 	}

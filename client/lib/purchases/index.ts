@@ -7,7 +7,6 @@ import {
 	isDomainTransfer,
 	isGSuiteOrGoogleWorkspace,
 	isMonthlyProduct,
-	isPlan,
 	isThemePurchase,
 	isTitanMail,
 	isConciergeSession,
@@ -27,7 +26,6 @@ import {
 	isJetpackStatsPaidProductSlug,
 	isAkismetPro500,
 	getAkismetPro500ProductDisplayName,
-	isAkismetFreeProduct,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
@@ -35,16 +33,19 @@ import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import i18n, { type TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
+import { isMarketplaceHoldingSitePurchase as isRawMarketplaceHoldingSitePurchase } from 'calypso/dashboard/utils/purchase';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { addQueryArgs } from 'calypso/lib/url';
 import {
 	isMarketplaceHoldingSitePurchase,
 	isA4AHoldingSitePurchase,
 } from 'calypso/me/purchases/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { Purchase } from './types';
+import type { Purchase as RawPurchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
@@ -149,7 +150,7 @@ function getPurchaseStatus( purchase: PurchaseWithStatus, userId?: number ) {
 	if ( purchase.isInAppPurchase || isPartnerPurchase( purchase ) ) {
 		return 'cannotManage';
 	}
-	if ( isExpired( purchase ) ) {
+	if ( isExpiredOrRemoved( purchase ) ) {
 		return 'expired';
 	}
 	if ( creditCardHasAlreadyExpired( purchase ) ) {
@@ -159,7 +160,7 @@ function getPurchaseStatus( purchase: PurchaseWithStatus, userId?: number ) {
 		( isExpiring( purchase ) &&
 			expiry < moment().add( 30, 'days' ) &&
 			! isRecentMonthlyPurchase( purchase ) ) ||
-		( isRenewing( purchase ) &&
+		( isRenewingBeforeExpiration( purchase ) &&
 			purchase.renewDate &&
 			creditCardExpiresBeforeSubscription( purchase ) )
 	) {
@@ -267,6 +268,7 @@ export function getName( purchase: Purchase ): string {
 	if ( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) {
 		return purchase.meta ?? '';
 	}
+
 	return purchase.productName;
 }
 
@@ -312,6 +314,14 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 		return getAkismetPro500ProductDisplayName( productName, purchaseRenewalQuantity );
 	}
 
+	if ( purchase.isPlan && productName ) {
+		return i18n.translate( '%(productName)s Plan', {
+			args: {
+				productName: productName.replace( /\s*\(.*$/, '' ).trim(),
+			},
+		} );
+	}
+
 	return getName( purchase );
 }
 
@@ -336,20 +346,24 @@ export function getSubscriptionEndDate( purchase: Purchase ): string {
  * @param {string} siteSlug - the site slug to renew the purchase for
  * @param {Object} [options] - optional information
  * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
+ * @param {string} [options.cancelTo] - Passed as cancel_to in checkout
  * @param {Object} [options.tracksProps] - where was the renew button clicked from
  */
 export function handleRenewNowClick(
-	purchase: Purchase,
+	purchase: RawPurchase,
 	siteSlug: string,
-	options: { redirectTo?: string; tracksProps?: TracksProps } = {}
+	options: { redirectTo?: string; cancelTo?: string; tracksProps?: TracksProps } = {}
 ) {
 	return ( dispatch: CalypsoDispatch ) => {
 		try {
-			const renewItem = getRenewalItemFromProduct( purchase, { domain: purchase.meta } );
+			const renewItem = getRenewalItemFromProduct(
+				{ ...purchase, id: Number( purchase.ID ), isRenewable: purchase.is_renewable },
+				{ domain: purchase.meta }
+			);
 
 			// Track the renew now submit.
 			recordTracksEvent( 'calypso_purchases_renew_now_click', {
-				product_slug: purchase.productSlug,
+				product_slug: purchase.product_slug,
 				...options.tracksProps,
 			} );
 
@@ -365,16 +379,18 @@ export function handleRenewNowClick(
 
 			if ( isAkismetProduct( { product_slug: productSlugs[ 0 ] } ) ) {
 				serviceSlug = 'akismet/';
-			} else if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
+			} else if ( isRawMarketplaceHoldingSitePurchase( purchase ) ) {
 				serviceSlug = 'marketplace/';
 			}
 
 			let renewalUrl = `/checkout/${ serviceSlug }${ productSlugs[ 0 ] }/renew/${
 				purchaseIds[ 0 ]
 			}/${ siteSlug || '' }`;
-			if ( options.redirectTo ) {
-				renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
-			}
+
+			renewalUrl = addQueryArgs(
+				{ redirect_to: options.redirectTo, cancel_to: options.cancelTo },
+				renewalUrl
+			);
 			debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
 			page(
@@ -395,7 +411,7 @@ export function handleRenewNowClick(
  * @param {Object} [options.tracksProps] - where was the renew button clicked from
  */
 export function handleRenewMultiplePurchasesClick(
-	purchases: Purchase[],
+	purchases: RawPurchase[],
 	siteSlug: string,
 	options: { redirectTo?: string; tracksProps?: TracksProps } = {}
 ) {
@@ -404,15 +420,20 @@ export function handleRenewMultiplePurchasesClick(
 			purchases.forEach( ( purchase ) => {
 				// Track the renew now submit.
 				recordTracksEvent( 'calypso_purchases_renew_multiple_click', {
-					product_slug: purchase.productSlug,
+					product_slug: purchase.product_slug,
 					...options.tracksProps,
 				} );
 			} );
 
 			const renewItems = purchases.map( ( otherPurchase ) =>
-				getRenewalItemFromProduct( otherPurchase, {
-					domain: otherPurchase.meta,
-				} )
+				getRenewalItemFromProduct(
+					{
+						...otherPurchase,
+						id: Number( otherPurchase.ID ),
+						isRenewable: otherPurchase.is_renewable,
+					},
+					{ domain: otherPurchase.meta }
+				)
 			);
 			const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
 
@@ -467,15 +488,17 @@ export function hasIncludedDomain( purchase: Purchase ) {
 	return Boolean( purchase.includedDomain );
 }
 
-export function isAutoRenewing( purchase: Purchase ) {
-	return 'autoRenewing' === purchase.expiryStatus;
-}
-
 /**
  * Checks if a purchase can be cancelled.
- * Returns true for purchases that aren't expired
- * Also returns true for purchases whether or not they are after the refund period.
- * Purchases included with a plan can't be cancelled.
+ *
+ * This is used to determine whether the user is allowed to go through the
+ * "cancellation" flow in the user interface (rather than the "removal" flow),
+ * but note that the meaning of these flows is imprecise; sometimes "cancel"
+ * means disabling auto-renew, but other times it means removing and refunding.
+ *
+ * As a result, this should be considered mostly deprecated, in favor of either
+ * isPurchaseCancelable() (which defers cancellation checks to the server-side
+ * code) or something else more precise.
  */
 export function isCancelable( purchase: Purchase ) {
 	if ( isIncludedWithPlan( purchase ) ) {
@@ -486,7 +509,12 @@ export function isCancelable( purchase: Purchase ) {
 		return false;
 	}
 
-	if ( isExpired( purchase ) ) {
+	// Subscriptions past their expiration date should really only be offered
+	// the option to remove the subscription (rather than "cancel" it), given
+	// how close they are to being automatically removed anyway. If the
+	// subscription still has grace period renewal attempts scheduled, the user
+	// can still disable auto-renew via the dedicated toggle instead.
+	if ( isExpiredOrRemoved( purchase ) ) {
 		return false;
 	}
 
@@ -498,18 +526,29 @@ export function isCancelable( purchase: Purchase ) {
 }
 
 /**
- * Similar to isCancelable, but doesn't rely on the purchase's cancelability
- * Checks if auto-renew is enabled for purchase, returns true if auto-renew is ON
- * Returns false if purchase is included in plan, purchases included with a plan can't be cancelled
- * Returns false if purchase is expired
+ * Similar to isCancelable, but doesn't rely on the purchase's cancelability.
+ *
+ * Note that this is poorly named -- it is effectively used to determine
+ * whether the user is allowed to go through the "cancellation" flow in the
+ * user interface (rather than the "removal" flow), but the meaning of these
+ * flows is imprecise; sometimes "cancel" means disabling auto-renew, but other
+ * times it means removing and refunding.
+ *
+ * As a result, this should be considered mostly deprecated, in favor of either
+ * isPurchaseCancelable() (which defers cancellation checks to the server-side
+ * code) or something else more precise.
  */
-
 export function canAutoRenewBeTurnedOff( purchase: Purchase ) {
 	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
 	}
 
-	if ( isExpired( purchase ) ) {
+	// Subscriptions past their expiration date should really only be offered
+	// the option to remove the subscription (rather than "cancel" it), given
+	// how close they are to being automatically removed anyway. If the
+	// subscription still has grace period renewal attempts scheduled, the user
+	// can still disable auto-renew via the dedicated toggle instead.
+	if ( isExpiredOrRemoved( purchase ) ) {
 		return false;
 	}
 
@@ -520,36 +559,89 @@ export function canAutoRenewBeTurnedOff( purchase: Purchase ) {
 	return purchase.isAutoRenewEnabled;
 }
 
-export function isExpired( purchase: Purchase ) {
-	return 'expired' === purchase.expiryStatus;
-}
-
+/**
+ * Returns true if the purchase is still active but will lapse unless renewed,
+ * because it is not set to auto-renew. Covers an `expiryStatus` of either
+ * `manualRenew` (not auto-renewing, with the expiry date not yet imminent) or
+ * `expiring` (not auto-renewing and expiring soon — the "needs attention"
+ * state).
+ *
+ * Note this describes a purchase that has not yet passed its expiry date — once
+ * the expiry date passes without renewal the status becomes `expired` (see
+ * {@link isExpiredAndInGracePeriod} and {@link isRemoved}).
+ */
 export function isExpiring( purchase: Purchase ) {
 	return [ 'manualRenew', 'expiring' ].includes( purchase.expiryStatus );
 }
 
-export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
-	if ( ! purchase.expiryDate ) {
-		return false;
-	}
+/**
+ * Returns true if the purchase has passed its expiration date but is still
+ * active — this covers the post-expiry grace period during which a
+ * subscription can still be renewed before being fully removed.
+ *
+ * If you also want to know whether the purchase could still have upcoming
+ * AUTO-RENEW attempts (which can occur even during the grace period), see
+ * {@link mightStillAutoRenew} or {@link isExpiredWithNoAutoRenewAttemptsLeft}.
+ *
+ * Note that during the grace period, the `purchase.renewDate` property may be
+ * empty even for subscriptions that auto-renew (this happens once the final
+ * auto-renewal attempt has passed), but regardless of whether it's empty, the
+ * focus of the user interface during this phase should not be on showing
+ * scheduled auto-renewal dates (which aren't very likely to succeed at this
+ * point anyway) but rather on encouraging the customer to manually renew.
+ */
+export function isExpiredAndInGracePeriod( purchase: Purchase ): boolean {
+	return 'expired' === purchase.expiryStatus && 'active' === purchase.subscriptionStatus;
+}
 
-	if ( ! moment( purchase.expiryDate ).isBefore( moment() ) ) {
-		return false;
-	}
+/**
+ * Returns true if the purchase's subscription is no longer active (removed).
+ */
+export function isRemoved( purchase: Purchase ): boolean {
+	return 'active' !== purchase.subscriptionStatus;
+}
 
-	if ( isExpired( purchase ) ) {
-		return false;
-	}
+/**
+ * Convenience check for "expired in any way" — either still active but past the
+ * expiration date (grace period), or fully removed.
+ */
+export function isExpiredOrRemoved( purchase: Purchase ): boolean {
+	return isExpiredAndInGracePeriod( purchase ) || isRemoved( purchase );
+}
 
-	if ( ! isRenewing( purchase ) && ! isExpiring( purchase ) ) {
-		return false;
-	}
+/**
+ * Returns true if the purchase may still auto-renew — i.e. a charge will
+ * actually be attempted: the subscription is active, auto-renew is enabled, a
+ * rechargeable payment method is attached, and it is not past its final
+ * auto-renewal attempt date.
+ *
+ * This is the "will be billed" signal and is a superset of the renewing
+ * `expiryStatus` values (`active`/`autoRenewing` already require a chargeable
+ * payment method on the backend), so it holds for both not-yet-expired
+ * auto-renewing purchases and grace-period purchases that may still recover.
+ * "Might" is intentional: the underlying dates are day-granular and a charge can
+ * still fail.
+ */
+export function mightStillAutoRenew( purchase: Purchase ): boolean {
+	return purchase.mightStillAutoRenew;
+}
 
-	if ( isAkismetFreeProduct( purchase ) ) {
-		return false;
-	}
-
-	return true;
+/**
+ * Returns true if the purchase has passed its expiry date (and is still in its
+ * grace period, not removed) with no remaining auto-renewal attempts on the
+ * schedule. This is the "expired and the auto-renew schedule is exhausted"
+ * state, independent of whether auto-renew is currently enabled or a payment
+ * method is attached.
+ *
+ * If this returns false, then there is still hope -- even if the purchase has
+ * auto-renew turned off or doesn't have a chargeable payment method attached,
+ * those are things which can be fixed and still end up with a successful
+ * auto-renewal in the end. Therefore, this is useful to check when deciding
+ * whether to allow the customer to do things like add a payment method or
+ * enable auto-renew on an already-expired subscription.
+ */
+export function isExpiredWithNoAutoRenewAttemptsLeft( purchase: Purchase ): boolean {
+	return isExpiredAndInGracePeriod( purchase ) && purchase.isPastLastAutoRenewAttemptDate;
 }
 
 export function isIncludedWithPlan( purchase: Purchase ) {
@@ -733,6 +825,29 @@ export function hasAmountAvailableToRefund( purchase: Purchase ): boolean {
 }
 
 /**
+ * Returns true if the plan is eligible for an instant, self-serve downgrade: the
+ * plan has a refundable receipt and has neither expired nor entered its
+ * post-expiry grace period.
+ *
+ * `isRefundable` covers any refundable receipt, so it holds both for an initial
+ * purchase and for a renewal that is still within its own refund window — both
+ * cases where an instant downgrade costs neither side money.
+ *
+ * Note: this intentionally does NOT require a refundable amount. A refundable
+ * receipt worth nothing generally means the purchase was free (or fully paid
+ * with credits), which is still a valid instant downgrade — it just issues no
+ * refund, and the confirmation modal drops its refund line accordingly.
+ *
+ * The caller is responsible for confirming the purchase is a plan (see `isPlan`
+ * from `@automattic/calypso-products`). This is distinct from
+ * `isExpiredAndInGracePeriod`, which gates the downgrade-to-checkout flow for
+ * plans whose expiry date has already passed.
+ */
+export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
+	return purchase.isRefundable && ! isExpiredOrRemoved( purchase );
+}
+
+/**
  * Checks whether the specified purchase can be removed from a user account.
  * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase can be removed, false otherwise
@@ -757,11 +872,17 @@ export function isRemovable( purchase: Purchase ): boolean {
 		return true;
 	}
 
+	// The "autoRenewing" check below means that domains which are scheduled to
+	// renew soon (within a few months) are always allowed to be removed
+	// directly, rather than going through a cancellation process like other
+	// renewing subscriptions typically do. It is unclear if that is the
+	// correct behavior. See:
+	// https://github.com/Automattic/wp-calypso/pull/41345#issuecomment-637597018
 	return (
 		isExpiring( purchase ) ||
-		isExpired( purchase ) ||
+		isExpiredOrRemoved( purchase ) ||
 		( isDomainTransfer( purchase ) && isPurchaseCancelable( purchase ) ) ||
-		( isDomainRegistration( purchase ) && isAutoRenewing( purchase ) )
+		( isDomainRegistration( purchase ) && 'autoRenewing' === purchase.expiryStatus )
 	);
 }
 
@@ -796,18 +917,11 @@ export function isRenewal( purchase: Purchase ): boolean {
 	return purchase.isRenewal;
 }
 
-export function isRenewing( purchase: Purchase ): boolean {
-	return [ 'active', 'autoRenewing' ].includes( purchase.expiryStatus );
-}
-
 /**
- * Returns true if the purchase is in grace period with a failed or missing auto-renewal.
+ * Returns true if the purchase is auto-renewing and not yet expired.
  */
-export function isFailedAutoRenewal( purchase: Purchase ): boolean {
-	return (
-		isInExpirationGracePeriod( purchase ) &&
-		( isRenewing( purchase ) || ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) )
-	);
+export function isRenewingBeforeExpiration( purchase: Purchase ): boolean {
+	return [ 'active', 'autoRenewing' ].includes( purchase.expiryStatus );
 }
 
 export function isWithinIntroductoryOfferPeriod( purchase: Purchase ): boolean {
@@ -905,7 +1019,7 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ) {
 
 export function shouldRenderExpiringCreditCard( purchase: Purchase ) {
 	return (
-		! isExpired( purchase ) &&
+		! isExpiredOrRemoved( purchase ) &&
 		! isExpiring( purchase ) &&
 		! isOneTimePurchase( purchase ) &&
 		! isIncludedWithPlan( purchase ) &&
@@ -978,8 +1092,8 @@ export function purchaseType( purchase: Purchase ): string | null {
 		return i18n.translate( 'Host Managed Plan' );
 	}
 
-	if ( isPlan( purchase ) ) {
-		return i18n.translate( 'Site Plan' );
+	if ( purchase.isPlan ) {
+		return null;
 	}
 
 	if ( isDomainRegistration( purchase ) ) {
@@ -1071,17 +1185,22 @@ export function shouldRenderMonthlyRenewalOption( purchase: Purchase ) {
 		return false;
 	}
 
-	const isAutorenewalEnabled = ! isExpiring( purchase );
+	// `isExpiring` is true when the purchase will expire on its expiry date
+	// because auto-renew is off (and it has not yet passed that date).
+	const willExpireWithoutRenewal = isExpiring( purchase );
 	const daysTillExpiry = moment( purchase.expiryDate ).diff( Date.now(), 'days' );
 
-	// Auto renew is off and expiration is <90 days from now
-	if ( ! isAutorenewalEnabled && daysTillExpiry < 90 ) {
+	// Auto-renew is off, so the purchase will expire unless renewed: offer the
+	// monthly option once it is within ~90 days of its expiry date.
+	if ( willExpireWithoutRenewal && daysTillExpiry < 90 ) {
 		return true;
 	}
 
-	// We attempted to bill them <30 days prior to their annual renewal and
-	// we weren’t able to do so for any other reason besides having auto renew off.
-	if ( isAutorenewalEnabled && daysTillExpiry < 30 ) {
+	// Otherwise the purchase is auto-renewing (a renewal is imminent, or a charge
+	// is failing) or has already passed its expiry date — e.g. it is in its grace
+	// period, where daysTillExpiry is negative. Offer the monthly option once it
+	// is within ~30 days of, or past, its expiry date.
+	if ( ! willExpireWithoutRenewal && daysTillExpiry < 30 ) {
 		return true;
 	}
 

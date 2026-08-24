@@ -4,7 +4,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { contextTypes } from '../context-types';
+import { TourContext } from '../context';
 
 class SiteLink extends Component {
 	static propTypes = {
@@ -20,7 +20,7 @@ class SiteLink extends Component {
 		newWindow: false,
 	};
 
-	static contextTypes = contextTypes;
+	static contextType = TourContext;
 
 	onClick = ( event ) => {
 		this.props.onClick && this.props.onClick( event );

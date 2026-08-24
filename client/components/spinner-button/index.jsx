@@ -1,5 +1,5 @@
 import { Spinner } from '@automattic/components';
-import { omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Button from 'calypso/components/forms/form-button';

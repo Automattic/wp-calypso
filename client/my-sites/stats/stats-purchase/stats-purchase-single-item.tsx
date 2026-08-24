@@ -1,26 +1,26 @@
 import config from '@automattic/calypso-config';
+import {
+	getPlan,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_GROWTH_YEARLY,
+	PLAN_JETPACK_BUSINESS,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
-import { Button, CheckboxControl } from '@wordpress/components';
+import { formatNumberCompact } from '@automattic/number-formatters';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import {
-	isJetpackSite,
-	getSiteAdminUrl,
-	getSiteOption,
-	getIsSimpleSite,
-} from 'calypso/state/sites/selectors';
-import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
-import { JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } from '../const';
+import { getSiteAdminUrl, getSiteOption, getIsSimpleSite } from 'calypso/state/sites/selectors';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
-import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
-import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
+import usePlanUsageQuery, { getUsageLimitStatus } from '../hooks/use-plan-usage-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
+import useDismissPricingGrid from '../pricing-grid/hooks/use-dismiss-pricing-grid';
 import { StatsCommercialUpgradeSlider, getTierQuantity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import {
@@ -30,11 +30,7 @@ import {
 	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
 } from './stats-purchase-consts';
 import PersonalPurchase from './stats-purchase-personal';
-import {
-	StatsBenefitsCommercial,
-	StatsSingleItemPagePurchaseFrame,
-	StatsSingleItemCard,
-} from './stats-purchase-shared';
+import { StatsBenefitsCommercial, StatsSingleItemPagePurchaseFrame } from './stats-purchase-shared';
 import './styles.scss';
 
 interface StatsCommercialPurchaseProps {
@@ -45,6 +41,28 @@ interface StatsCommercialPurchaseProps {
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
+	/**
+	 * Replaces what "I will do it later" does. The default returns to the site's own dashboard and
+	 * records the dismissal server-side, neither of which a site with no WordPress.com connection
+	 * can do.
+	 */
+	onPostpone?: () => void;
+	/**
+	 * Replaces the label that goes with `onPostpone`. A site that is not connected yet has
+	 * something to do before it can come back to this, so it is not simply putting it off.
+	 */
+	postponeLabel?: string;
+	/**
+	 * Replaces the event name that goes with `onPostpone`, so a button that no longer skips
+	 * anything stops counting towards the skip metric. Prefixed like every other event here.
+	 */
+	postponeEventName?: string;
+	/**
+	 * Added to the events this screen records, including the purchase click it hands to checkout.
+	 * A host with no blog id to be identified by has to supply whatever key it does have, since
+	 * `blog_id` is null there.
+	 */
+	eventProps?: Record< string, string | number >;
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -54,7 +72,6 @@ interface StatsSingleItemPagePurchaseProps {
 	redirectUri: string;
 	from: string;
 	siteId: number | null;
-	isCommercial: boolean | null;
 }
 
 interface StatsSingleItemPersonalPurchasePageProps {
@@ -84,28 +101,97 @@ interface StatsPersonalPurchaseProps {
 	disableFreeProduct: boolean;
 }
 
-interface StatsCommercialFlowOptOutFormProps {
-	siteId: number | null;
-	siteSlug: string;
-	isCommercial: boolean | null;
-}
+// A site could in theory hold more than one bundled plan purchase at once (e.g. mid-upgrade);
+// prefer naming the highest tier since that's the more relevant entitlement to call out.
+// The yearly slugs are used as stand-ins for their plan family (yearly vs. monthly share the
+// same title), since only the title is read from the returned plan object.
+export const getBundledPlanSlug = ( {
+	isCompletePlanOwned,
+	isGrowthPlanOwned,
+	isBusinessPlanOwned,
+}: {
+	isCompletePlanOwned: boolean;
+	isGrowthPlanOwned: boolean;
+	isBusinessPlanOwned: boolean;
+} ): string | undefined => {
+	if ( isCompletePlanOwned ) {
+		return PLAN_JETPACK_COMPLETE;
+	} else if ( isGrowthPlanOwned ) {
+		return PLAN_JETPACK_GROWTH_YEARLY;
+	} else if ( isBusinessPlanOwned ) {
+		return PLAN_JETPACK_BUSINESS;
+	}
+	return undefined;
+};
 
-const COMPONENT_CLASS_NAME = 'stats-purchase-single';
+const getBundledPlanNoticeText = (
+	translate: ReturnType< typeof useTranslate >,
+	planName: string,
+	viewsLimit?: number
+) =>
+	viewsLimit
+		? translate(
+				'Your %(planName)s plan already includes %(viewsLimit)s views per month for Stats. Views from this purchase will stack on top, so you keep what you already have.',
+				{ args: { planName, viewsLimit: formatNumberCompact( viewsLimit ) } }
+		  )
+		: translate(
+				'Your %(planName)s plan already includes views for Stats. Views from this purchase will stack on top, so you keep what you already have.',
+				{ args: { planName } }
+		  );
 
-const StatsUpgradeInstructions = () => {
+const StatsUpgradeInstructions = ( {
+	isNearLimit,
+	isOverLimit,
+	bundledPlanName,
+}: {
+	isNearLimit: boolean;
+	isOverLimit: boolean;
+	bundledPlanName?: string;
+} ) => {
 	const translate = useTranslate();
+
+	let leadText;
+	if ( isOverLimit ) {
+		leadText = translate(
+			'Your site has reached its views limit. Upgrade your tier to restore full access to advanced stats features.'
+		);
+	} else if ( isNearLimit ) {
+		leadText = translate(
+			'Your site is close to its monthly views limit. Upgrade your tier now to avoid any disruption to advanced stats features.'
+		);
+	} else {
+		leadText = translate(
+			'Upgrade and increase your site views limit to continue using our advanced stats features.'
+		);
+	}
+
 	return (
 		<div>
-			<p>
-				{ translate(
-					'Upgrade and increase your site views limit to continue using our advanced stats features.'
-				) }
-			</p>
 			<div className="stats-purchase-wizard__notice">
-				{ translate(
-					'The remainder of your current plan will be credited towards the upgrade, ensuring you only pay the price difference. Starting from the next billing cycle, standard charges will apply.'
-				) }
+				{ bundledPlanName && <p>{ getBundledPlanNoticeText( translate, bundledPlanName ) }</p> }
+				<p>
+					{ translate(
+						'The remainder of your current plan will be credited towards the upgrade, ensuring you only pay the price difference. Starting from the next billing cycle, standard charges will apply.'
+					) }
+				</p>
 			</div>
+			<p>{ leadText }</p>
+		</div>
+	);
+};
+
+const StatsBundledPlanNotice = ( {
+	viewsLimit,
+	planName,
+}: {
+	viewsLimit?: number;
+	planName: string;
+} ) => {
+	const translate = useTranslate();
+
+	return (
+		<div className="stats-purchase-wizard__notice">
+			<p>{ getBundledPlanNoticeText( translate, planName, viewsLimit ) }</p>
 		</div>
 	);
 };
@@ -116,17 +202,13 @@ const useLocalizedStrings = ( isCommercial: boolean ) => {
 	// Page title, info text, and button text depend on isCommercial status of site.
 	if ( isCommercial ) {
 		return {
-			pageTitle: translate( 'Upgrade and continue using %(product)s', {
+			pageTitle: translate( 'Upgrade %(product)s to unlock premium features', {
 				args: { product: STATS_PRODUCT_NAME },
 			} ),
 			infoText: translate(
-				'To continue using Stats and access its newest premium features you need to get a commercial license. {{link}}Learn more about this update{{/link}}.',
+				'Unlock UTM stats, device stats, and region and city stats with a paid plan.',
 				{
-					comment: '{{link}} links to explainer post on Jetpack blog.',
-					components: {
-						link: <a href={ JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } />,
-					},
-					context: 'Stats: Descriptive text in the commercial purchase flow',
+					context: 'Stats: Descriptive text in the purchase flow',
 				}
 			),
 			continueButtonText: translate( 'Upgrade now and continue' ),
@@ -136,7 +218,7 @@ const useLocalizedStrings = ( isCommercial: boolean ) => {
 	return {
 		pageTitle: translate( 'Simple, yet powerful stats to grow your site' ),
 		infoText: translate(
-			'%(product)s makes it easy to see how your site is doing. No data science skills needed. Start with a commercial license and get premium access to:',
+			'%(product)s makes it easy to see how your site is doing. No data science skills needed. Start with a paid plan and get premium access to:',
 			{ args: { product: STATS_PRODUCT_NAME } }
 		),
 		continueButtonText: translate( 'Get Stats to grow my site' ),
@@ -150,14 +232,43 @@ const StatsCommercialPurchase = ( {
 	from,
 	adminUrl,
 	redirectUri,
+	onPostpone,
+	postponeLabel,
+	postponeEventName = 'stats_purchase_commercial_skip_button_clicked',
+	eventProps,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const haveTiers = tiers.length > 0;
-	const { isCommercialOwned, hasAnyStatsPlan } = useStatsPurchases( siteId );
+	const {
+		isCommercialOwned,
+		hasAnyStatsPlan,
+		isCompletePlanOwned,
+		isGrowthPlanOwned,
+		isBusinessPlanOwned,
+	} = useStatsPurchases( siteId );
 	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state, siteId ) );
 	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
+	const { data: usageData } = usePlanUsageQuery( siteId );
+
+	// Site already has Stats access via a bundled plan (e.g. Jetpack Complete), independent of
+	// whether it has also purchased standalone Stats — both stack, so both notices can co-render.
+	const bundledPlanSlug = getBundledPlanSlug( {
+		isCompletePlanOwned,
+		isGrowthPlanOwned,
+		isBusinessPlanOwned,
+	} );
+	const bundledPlanTitle = bundledPlanSlug ? getPlan( bundledPlanSlug )?.getTitle() : undefined;
+	// "Jetpack" is a brand name, not translated; bundledPlanTitle is already a translated plan title.
+	// getTitle() is typed to return TranslateResult (which can be a React element), but the three
+	// bundled plans handled here never pass `components`, so it's always a plain string — guard
+	// with typeof rather than assuming, since it also flows into a sprintf-style translate() call
+	// downstream that only supports strings.
+	const bundledPlanName =
+		typeof bundledPlanTitle === 'string' ? `Jetpack ${ bundledPlanTitle }` : undefined;
+
+	const { isNearLimit, isOverLimit } = getUsageLimitStatus( usageData );
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
@@ -169,9 +280,55 @@ const StatsCommercialPurchase = ( {
 	const needsConnectionForUpgrade =
 		hasAnyStatsPlan && isOdysseyStats && ! connectionStatus?.isSiteFullyConnected;
 
+	/*
+	 * Putting the decision off is only what the secondary button offers once the site is
+	 * registered. Keyed on registration, not full connection: `isSiteFullyConnected` is also
+	 * false for a second admin on a site someone else connected, and that admin can already
+	 * take the free plan. The pre-connection screen covers the unregistered case with
+	 * `onPostpone`.
+	 *
+	 * Deliberately narrow: only when we are in wp-admin AND have an answer about the connection.
+	 * Simple and Atomic sites are always connected and report nothing here, and an absent answer
+	 * must not be read as "not connected".
+	 */
+	const needsConnectionForFreePlan =
+		isOdysseyStats && !! connectionStatus && ! connectionStatus.isRegistered;
+
 	const handleSliderChanged = useCallback( ( value: number ) => {
 		setPurchaseTierQuantity( value );
 	}, [] );
+
+	const dismissPricingGrid = useDismissPricingGrid( siteId );
+
+	const handleCheckoutPostponed = () => {
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_${ postponeEventName }`, {
+			blog_id: siteId,
+			from,
+			...eventProps,
+		} );
+
+		if ( onPostpone ) {
+			onPostpone();
+			return;
+		}
+
+		if ( needsConnectionForFreePlan ) {
+			// Where the notice above sends anyone who still has to connect.
+			window.location.href = `${ adminUrl }admin.php?page=my-jetpack#/connection`;
+			return;
+		}
+
+		// Skipping is the visitor's plan decision — made on a page that shows the full
+		// paid pitch — so the pricing grid mustn't take over the dashboard afterwards,
+		// regardless of how they got here. On sites where the grid never shows this is
+		// a harmless no-op.
+		dismissPricingGrid();
+
+		setTimeout( () => {
+			page( `/stats/day/${ siteSlug }` );
+		}, 250 );
+	};
 
 	const isCommercial = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'is_commercial' )
@@ -188,6 +345,7 @@ const StatsCommercialPurchase = ( {
 					isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
 				}_stats_purchase_commercial_slider_clicked` }
 				onSliderChange={ handleSliderChanged }
+				eventProps={ eventProps }
 			/>
 		</>
 	) : (
@@ -201,13 +359,28 @@ const StatsCommercialPurchase = ( {
 	return (
 		<>
 			<h1>{ pageTitle }</h1>
+			{ bundledPlanName && ! isCommercialOwned && (
+				<StatsBundledPlanNotice
+					viewsLimit={ usageData?.views_limit }
+					planName={ bundledPlanName }
+				/>
+			) }
 			{ ! isCommercialOwned && (
 				<>
-					<p>{ infoText }</p>
+					{ /* Hidden for bundled-plan sites: it contradicts the "already includes" notice above. */ }
+					{ ! bundledPlanName && <p>{ infoText }</p> }
 					<StatsBenefitsCommercial />
 				</>
 			) }
-			{ isCommercialOwned && <StatsUpgradeInstructions /> }
+			{ isCommercialOwned && (
+				<StatsUpgradeInstructions
+					isNearLimit={ isNearLimit }
+					isOverLimit={ isOverLimit }
+					bundledPlanName={ bundledPlanName }
+					// `usageData.views_limit` is the site's total stacked limit (bundled + standalone)
+					// once both are owned, so it can't be attributed to the bundled plan alone here.
+				/>
+			) }
 			{ tierSelectionElements }
 			{ needsConnectionForUpgrade && (
 				<div className="stats-purchase-wizard__notice connection-notice">
@@ -235,10 +408,17 @@ const StatsCommercialPurchase = ( {
 							quantity: purchaseTierQuantity,
 							isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
 							isSiteFullyConnected: !! connectionStatus?.isSiteFullyConnected,
+							eventProps,
 						} )
 					}
 				>
 					{ continueButtonText }
+				</ButtonComponent>
+				<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
+					{ postponeLabel ??
+						( needsConnectionForFreePlan
+							? translate( 'Start for free' )
+							: translate( 'I will do it later' ) ) }
 				</ButtonComponent>
 			</div>
 			<div className="stats-purchase-page__footnotes">
@@ -275,7 +455,9 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial` );
+		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial`, {
+			blog_id: siteId,
+		} );
 
 		page( `/stats/purchase/${ siteSlug }?productType=commercial&from=switch-from-personal` );
 	};
@@ -283,12 +465,12 @@ const StatsPersonalPurchase = ( {
 	return (
 		<>
 			<h1>
-				{ translate( 'Support %(product)s and set your price', {
+				{ translate( 'Support %(product)s and name your price', {
 					args: { product: STATS_PRODUCT_NAME },
 				} ) }
 			</h1>
 			<p>
-				{ translate( 'Help %(product)s with a non-commercial license and get these perks:', {
+				{ translate( 'Help %(product)s and get these perks:', {
 					args: { product: STATS_PRODUCT_NAME },
 				} ) }
 			</p>
@@ -349,268 +531,28 @@ const StatsSingleItemPagePurchase = ( {
 	redirectUri,
 	from,
 	siteId,
-	isCommercial,
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const { supportCommercialUse } = useStatsPurchases( siteId );
-	const { isNewSite } = useSiteCompulsoryPlanSelectionQualifiedCheck( siteId );
 
 	return (
-		<>
-			<StatsSingleItemPagePurchaseFrame>
-				<StatsCommercialPurchase
-					siteId={ siteId }
-					siteSlug={ siteSlug }
-					planValue={ planValue }
-					currencyCode={ currencyCode }
-					adminUrl={ adminUrl || '' }
-					redirectUri={ redirectUri }
-					from={ from }
-				/>
-			</StatsSingleItemPagePurchaseFrame>
-			{ ! supportCommercialUse && ! ( isNewSite && isCommercial ) && (
-				<StatsSingleItemCard>
-					<StatsCommercialFlowOptOutForm
-						isCommercial={ isCommercial }
-						siteId={ siteId }
-						siteSlug={ siteSlug }
-					/>
-				</StatsSingleItemCard>
-			) }
-		</>
+		<StatsSingleItemPagePurchaseFrame>
+			<StatsCommercialPurchase
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				planValue={ planValue }
+				currencyCode={ currencyCode }
+				adminUrl={ adminUrl || '' }
+				redirectUri={ redirectUri }
+				from={ from }
+			/>
+		</StatsSingleItemPagePurchaseFrame>
 	);
 };
 
-function StatsCommercialFlowOptOutForm( {
-	isCommercial,
-	siteId,
-	siteSlug,
-}: StatsCommercialFlowOptOutFormProps ) {
-	const translate = useTranslate();
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isJetpackSupport: boolean = useSelector( ( state ) =>
-		Boolean( isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ) )
-	);
-	const commercialReasons = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'is_commercial_reasons' )
-	) as string[];
-	const COMMERCIAL_REASONS = {
-		ads: translate( 'Ads' ),
-		adsense: 'Adsense',
-		taboola: 'Taboola',
-		infolink: 'InfoLink',
-		exoclick: 'ExoClick',
-		'live-chat': translate( 'Live Chat' ),
-		'commercial-dext': translate( 'Commercial Domain Extension' ),
-		'contact-details': translate( 'Business Contact Details' ),
-		'manual-override': translate( 'Manual Override' ),
-		'promotes-service': translate( 'Promotion of Service' ),
-		ecommerce: translate( 'Ecommerce' ),
-		donations: translate( 'Donations' ),
-	};
-	const { supportsOnDemandCommercialClassification } = useSelector( ( state ) =>
-		getEnvStatsFeatureSupportChecks( state, siteId )
-	);
-
-	// Checkbox state
-	const [ isAdsChecked, setAdsChecked ] = useState( false );
-	const [ isSellingChecked, setSellingChecked ] = useState( false );
-	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
-	const [ isDonationChecked, setDonationChecked ] = useState( false );
-	const [ comemercialClassificationRunAt, setComemercialClassificationRunAt ] = useState( 0 );
-	const [ errorMessage, setErrorMessage ] = useState( '' );
-
-	useEffect( () => {
-		setComemercialClassificationRunAt(
-			parseInt(
-				localStorage?.getItem( `commercial_classification__button_clicked_${ siteId }` ) ?? '0'
-			)
-		);
-	}, [ siteId ] );
-
-	const handleSwitchToPersonalClick = () => {
-		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked` );
-		setTimeout(
-			() =>
-				page( `/stats/purchase/${ siteSlug }?productType=personal&from=switch-from-commercial` ),
-			250
-		);
-	};
-
-	const handleRequestUpdateClick = () => {
-		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked` );
-
-		// For Jetpack sites, open the Jetpack support form. Do not prefill.
-		if ( isJetpackSupport ) {
-			window.open( `https://jetpack.com/contact-support/?url=${ siteSlug }` );
-			return;
-		}
-
-		// For Dotcom sites, open the Dotcom help page.
-		window.open( 'https://wordpress.com/help' );
-	};
-
-	const { mutateAsync: runCommercialClassificationAsync } =
-		useOnDemandCommercialClassificationMutation( siteId );
-	const handleCommercialClassification = async () => {
-		const now = Date.now();
-		localStorage?.setItem( `commercial_classification__button_clicked_${ siteId }`, `${ now }` );
-		setComemercialClassificationRunAt( now );
-		runCommercialClassificationAsync().catch( ( e ) => {
-			setErrorMessage( e.message );
-		} );
-	};
-	const commercialClassificationLastRunAt = useMemo(
-		() =>
-			parseInt(
-				localStorage?.getItem( `commercial_classification__button_clicked_${ siteId }` ) ?? '0'
-			),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ comemercialClassificationRunAt, siteId ]
-	);
-	const canReverify = Date.now() - commercialClassificationLastRunAt > 1000 * 60 * 60 * 24 * 1; // 1 day
-	const hasClassificationStarted = commercialClassificationLastRunAt > 0;
-	const isClassificationInProgress =
-		hasClassificationStarted && Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 30; // half an hour
-	const isClassificationFinished = hasClassificationStarted && ! isClassificationInProgress;
-
-	const isFormSubmissionDisabled =
-		! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
-
-	// Message, button text, and handler differ based on isCommercial flag.
-	const formMessage = isCommercial
-		? translate(
-				'Your site is identified as commercial, reasons being ’%(reasons)s’, which means it isn’t eligible for a non-commercial license. You can read more about {{link}}how we define a site as commercial{{/link}}. {{br/}}{{br/}} If you think this determination was made in error or you’ve made changes to comply with the non-commercial terms, you can request a reverification (this can be done once every 24 hours).',
-				{
-					args: {
-						reasons:
-							commercialReasons
-								?.map(
-									( reason: string ) =>
-										COMMERCIAL_REASONS[ reason as keyof typeof COMMERCIAL_REASONS ] ?? reason
-								)
-								.join( ' and/or ' ) ?? 'Unknown',
-					},
-					components: {
-						link: (
-							<a
-								target="_blank"
-								href="https://jetpack.com/support/jetpack-stats/free-or-paid/#how-is-a-commercial-site-defined"
-								rel="noreferrer noopener"
-							/>
-						),
-						br: <br />,
-					},
-				}
-		  )
-		: translate(
-				'For non-commercial use, get started with a non-commercial license, including an optional contribution. Please agree to the following terms:'
-		  );
-
-	return (
-		<>
-			<h1>{ translate( 'Continue with a non-commercial license' ) }</h1>
-			<p>{ formMessage }</p>
-			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist` }>
-				<ul>
-					<li>
-						<CheckboxControl
-							className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-							checked={ isAdsChecked }
-							label={ translate( "I don't have ads on my site" ) }
-							onChange={ ( value: boolean ) => {
-								setAdsChecked( value );
-							} }
-						/>
-					</li>
-					<li>
-						<CheckboxControl
-							className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-							checked={ isSellingChecked }
-							label={ translate( "I don't sell products/services on my site" ) }
-							onChange={ ( value: boolean ) => {
-								setSellingChecked( value );
-							} }
-						/>
-					</li>
-					<li>
-						<CheckboxControl
-							className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-							checked={ isBusinessChecked }
-							label={ translate( "I don't promote a business on my site" ) }
-							onChange={ ( value: boolean ) => {
-								setBusinessChecked( value );
-							} }
-						/>
-					</li>
-					<li>
-						<CheckboxControl
-							className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-							checked={ isDonationChecked }
-							label={ translate( "I don't solicit donations or sponsorships on my site" ) }
-							onChange={ ( value ) => {
-								setDonationChecked( value );
-							} }
-						/>
-					</li>
-				</ul>
-			</div>
-			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist-button` }>
-				{ ! isCommercial && (
-					<Button
-						variant="secondary"
-						disabled={ isFormSubmissionDisabled }
-						onClick={ handleSwitchToPersonalClick }
-					>
-						{ translate( 'Continue' ) }
-					</Button>
-				) }
-				{ isCommercial && (
-					<>
-						{ supportsOnDemandCommercialClassification && (
-							<Button
-								variant="secondary"
-								disabled={ ! canReverify || isFormSubmissionDisabled }
-								onClick={ handleCommercialClassification }
-							>
-								{ translate( 'Reverify' ) }
-							</Button>
-						) }
-						{ ( ! supportsOnDemandCommercialClassification ||
-							isClassificationFinished ||
-							errorMessage ) && (
-							<Button variant="secondary" onClick={ handleRequestUpdateClick }>
-								{ translate( 'Contact support' ) }
-							</Button>
-						) }
-					</>
-				) }
-			</div>
-			{ supportsOnDemandCommercialClassification && isCommercial && (
-				<>
-					{ errorMessage && (
-						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>{ errorMessage }</p>
-					) }
-					{ isClassificationInProgress && ! errorMessage && (
-						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-							{ translate(
-								'We are working on verifying your site… Please come back in about 30 minutes. You will have an option to contact support when the process is finished.'
-							) }
-						</p>
-					) }
-					{ isClassificationFinished && ! errorMessage && (
-						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-							{ translate(
-								'We have finished verifying your site. If you still think this is an error, please contact support by clicking the button above.'
-							) }
-						</p>
-					) }
-				</>
-			) }
-		</>
-	);
-}
-
-export { StatsSingleItemPagePurchase, StatsSingleItemPersonalPurchasePage };
+export {
+	StatsSingleItemPagePurchase,
+	StatsSingleItemPersonalPurchasePage,
+	// Exported for Odyssey's pre-connection screen, which composes the same commercial pitch into
+	// its own frame rather than the site-scoped purchase page.
+	StatsCommercialPurchase,
+};

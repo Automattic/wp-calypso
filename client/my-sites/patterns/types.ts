@@ -89,7 +89,7 @@ export type ReadymadeTemplateDetailsProps = {
 export type ReadymadeTemplateDetailsFC = React.FC< ReadymadeTemplateDetailsProps >;
 export type ReadymadeTemplatesProps = {
 	readymadeTemplates: ReadymadeTemplate[];
-	forwardRef: React.RefObject< HTMLDivElement > | null;
+	forwardRef: React.RefObject< HTMLDivElement | null > | null;
 };
 export type ReadymadeTemplatesFC = React.FC< ReadymadeTemplatesProps >;
 

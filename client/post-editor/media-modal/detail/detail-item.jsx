@@ -4,10 +4,10 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Gridicon, ScreenReaderText } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'calypso/lib/media/utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -311,4 +311,4 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( EditorMediaModalDetailItem );
+export default compose( connectComponent, localize )( EditorMediaModalDetailItem );

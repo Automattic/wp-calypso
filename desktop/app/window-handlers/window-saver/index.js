@@ -1,4 +1,4 @@
-const { debounce } = require( 'lodash' );
+const debounce = require( '../../lib/debounce' );
 const Settings = require( '../../lib/settings' );
 
 /**

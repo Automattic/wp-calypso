@@ -259,6 +259,7 @@ export interface SiteDetailsOptions {
 	image_thumbnail_height?: number;
 	image_thumbnail_width?: number;
 	import_engine?: string | null;
+	difm_lite_site_options?: DifmLiteSiteOptions;
 	is_automated_transfer?: boolean;
 	is_cloud_eligible?: boolean;
 	is_difm_lite_in_progress?: boolean;

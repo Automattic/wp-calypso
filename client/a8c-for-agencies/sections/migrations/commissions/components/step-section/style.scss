@@ -1,0 +1,27 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.commissions-step-section {
+	.commissions-step-section-header {
+		@include break-large {
+			gap: 8px;
+		}
+	}
+
+	.commissions-step-section-step-count {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		@include heading-small;
+		background: var( --color-primary-50 );
+		inline-size: 24px;
+		block-size: 24px;
+		border-radius: 50%;
+		color: var( --color-text-inverted );
+	}
+
+	.commissions-step-section-heading {
+		text-wrap: pretty;
+	}
+}

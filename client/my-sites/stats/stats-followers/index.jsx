@@ -1,8 +1,11 @@
+import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -22,6 +25,9 @@ const StatModuleFollowers = ( { className } ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 
 	const { data: subTotals, isLoading, isError: hasError } = useSubscribersTotalsQueries( siteId );
 
@@ -59,21 +65,50 @@ const StatModuleFollowers = ( { className } ) => {
 
 	const noData = ! subTotals.subscribers.length;
 	const summaryPageSlug = siteSlug || '';
+	// Odyssey Stats (wp-admin) can't route to the individual subscriber details
+	// page internally, so the name links out to the full wordpress.com /
+	// cloud.jetpack.com URL there and navigates in-app in Calypso.
+	const isOdysseyStats = config.isEnabled( 'is_odyssey' );
 	const useJetpackCloudLinks = isAtomic || isJetpack;
 	const subscriberManagementUrl = useJetpackCloudLinks
 		? `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`
 		: `https://wordpress.com/subscribers/${ summaryPageSlug }`;
+	const supportContext = isSiteJetpackNotAtomic ? 'stats-subscribers-jetpack' : 'stats-subscribers';
 
 	return (
 		<StatsListCard
 			moduleType="followers"
-			data={ subTotals.subscribers.map( ( dataPoint ) => ( {
-				...dataPoint,
-				value: calculateOffset( dataPoint.value?.value ),
-			} ) ) }
+			data={ subTotals.subscribers.map( ( dataPoint ) => {
+				// Link the subscriber name to its individual details page. `link` is kept
+				// for the right-side icon that opens the subscriber's own site. Odyssey
+				// (wp-admin) can't route there internally, so use the full URL; Calypso
+				// navigates in-app.
+				let detailPage;
+				if ( dataPoint.subscription_id ) {
+					detailPage = isOdysseyStats
+						? `${ subscriberManagementUrl }/${ dataPoint.subscription_id }`
+						: `/subscribers/${ summaryPageSlug }/${ dataPoint.subscription_id }`;
+				}
+				return {
+					...dataPoint,
+					value: calculateOffset( dataPoint.value?.value ),
+					page: detailPage,
+				};
+			} ) }
 			usePlainCard
 			hasNoBackground
 			title={ translate( 'Subscribers' ) }
+			titleNodes={
+				<StatsInfoArea>
+					{ translate( '{{link}}Latest subscribers{{/link}} and when they subscribed.', {
+						comment: '{{link}} links to support documentation.',
+						components: {
+							link: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
+						},
+						context: 'Stats: Header popover information when the Subscribers module has data.',
+					} ) }
+				</StatsInfoArea>
+			}
 			emptyMessage={ translate(
 				'Once you get a few, {{link}}your subscribers{{/link}} will appear here.',
 				{

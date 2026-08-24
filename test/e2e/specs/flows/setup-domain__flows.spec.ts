@@ -1,12 +1,12 @@
 import {
 	BrowserManager,
-	cancelAtomicPurchaseFlow,
+	cancelDashboardPurchaseFlow,
 	NewSiteResponse,
 	NewTestUserDetails,
 	NewUserResponse,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
-import { tags, test, expect } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test, expect } from '../../lib/pw-base';
 import { apiCloseAccount, apiCreateFreeSiteForUser, apiDeleteSite } from '../shared';
 
 test.describe(
@@ -15,6 +15,8 @@ test.describe(
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
+		skipIfNotTrunk();
+
 		const accountsToCleanup: {
 			testUser: NewTestUserDetails;
 			newUserDetails: NewUserResponse;
@@ -139,12 +141,17 @@ test.describe(
 			} );
 
 			await test.step( 'Given I have a free site', async function () {
+				const accountToCleanup: ( typeof accountsToCleanup )[ number ] = {
+					testUser,
+					newUserDetails,
+				};
+				accountsToCleanup.push( accountToCleanup );
 				newSiteDetails = await apiCreateFreeSiteForUser(
 					testUser,
 					newUserDetails,
 					helperData.getBlogName()
 				);
-				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
+				accountToCleanup.newSiteDetails = newSiteDetails;
 			} );
 
 			await test.step( 'And I enter the domain flow', async function () {
@@ -212,12 +219,17 @@ test.describe(
 			} );
 
 			await test.step( 'Given I have a free site', async function () {
+				const accountToCleanup: ( typeof accountsToCleanup )[ number ] = {
+					testUser,
+					newUserDetails,
+				};
+				accountsToCleanup.push( accountToCleanup );
 				newSiteDetails = await apiCreateFreeSiteForUser(
 					testUser,
 					newUserDetails,
 					helperData.getBlogName()
 				);
-				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
+				accountToCleanup.newSiteDetails = newSiteDetails;
 			} );
 
 			await test.step( 'And I enter the domain flow', async function () {
@@ -262,18 +274,17 @@ test.describe(
 
 		test( 'As a new user, I can create a paid site, add a domain, then cancel the plan', async ( {
 			page,
+			componentDashboardMeSidebar,
+			componentDashboardSnackbar,
 			componentDomainSearch,
 			componentSelectItems,
 			componentSiteSelect,
-			componentMeSidebar,
-			componentNotice,
 			helperData,
 			pageCartCheckout,
+			pageDashboardPurchases,
 			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 			pageUserSignUp,
-			pageMyProfile,
-			pagePurchases,
 		} ) => {
 			// This test chains several genuinely slow flows end to end: creating a
 			// paid site, completing checkout, adding a domain, and finally
@@ -355,39 +366,49 @@ test.describe(
 				);
 			} );
 
+			await test.step( 'And I skip the plan step if it appears', async function () {
+				// Adding a domain to a site that already has a paid plan normally lands
+				// straight on checkout, but a plan-eligibility propagation race can
+				// surface the "There's a plan for you" interstitial. When it does, take
+				// the free escape hatch to continue to checkout without adding a plan.
+				await page.waitForURL( /setup\/domain\/plans|\/checkout\// );
+				if ( /setup\/domain\/plans/.test( page.url() ) ) {
+					await pageSignupPickPlan.selectEscapeHatchWithoutSiteCreation( 'Free' );
+				}
+			} );
+
 			await test.step( 'Then I see the domain at checkout', async function () {
 				await pageCartCheckout.validateCartItem( selectedDomain );
 			} );
 
-			await test.step( 'And I navigate to Me > Purchases', async function () {
-				await pageMyProfile.visit();
-				await componentMeSidebar.openMobileMenu();
-				await componentMeSidebar.navigate( 'Purchases' );
+			await test.step( 'And I navigate to Billing > Active upgrades', async function () {
+				await page.goto( helperData.getDashboardURL( '/me' ) );
+				await componentDashboardMeSidebar.openMobileMenu();
+				await componentDashboardMeSidebar.navigate( 'Billing' );
+				await page.getByRole( 'link', { name: 'Active upgrades', exact: true } ).click();
 			} );
 
 			await test.step( 'And I view details of the purchased plan', async function () {
-				await pagePurchases.clickOnPurchase(
+				await pageDashboardPurchases.clickOnPurchase(
 					`WordPress.com ${ planName }`,
 					newSiteDetails.blog_details.site_slug as string
 				);
-				await pagePurchases.cancelPurchase( 'Cancel plan' );
 			} );
 
 			await test.step( 'And I cancel the plan renewal', async function () {
-				// cancelAtomicPurchaseFlow now blocks until the cancel-and-refund
-				// API request resolves, so by the time it returns the success
-				// notice is rendering. The notice still carries a 10s auto-dismiss
-				// duration, so keep a comfortable margin to observe it.
-				await cancelAtomicPurchaseFlow( page, {
+				await pageDashboardPurchases.cancelPurchase();
+
+				// cancelDashboardPurchaseFlow blocks until the cancel-and-refund API
+				// request resolves, so by the time it returns the success snackbar is
+				// rendering.
+				await cancelDashboardPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
 				} );
 
-				await componentNotice.noticeShown(
+				await componentDashboardSnackbar.noticeShown(
 					'Your refund has been processed and your purchase removed.',
-					{
-						timeout: 30 * 1000,
-					}
+					{ exact: true }
 				);
 			} );
 		} );
@@ -509,16 +530,15 @@ test.describe(
 
 		test( 'As a new user, I can create a paid site, add a domain using pre-selected site flow, then cancel the plan', async ( {
 			page,
+			componentDashboardMeSidebar,
+			componentDashboardSnackbar,
 			componentDomainSearch,
-			componentMeSidebar,
-			componentNotice,
 			helperData,
 			pageCartCheckout,
+			pageDashboardPurchases,
 			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 			pageUserSignUp,
-			pageMyProfile,
-			pagePurchases,
 		} ) => {
 			// This test chains several genuinely slow flows end to end: creating a
 			// paid site, completing checkout, adding a domain, and finally
@@ -593,35 +613,33 @@ test.describe(
 				await pageCartCheckout.validateCartItem( selectedDomain );
 			} );
 
-			await test.step( 'And I navigate to Me > Purchases', async function () {
-				await pageMyProfile.visit();
-				await componentMeSidebar.openMobileMenu();
-				await componentMeSidebar.navigate( 'Purchases' );
+			await test.step( 'And I navigate to Billing > Active upgrades', async function () {
+				await page.goto( helperData.getDashboardURL( '/me' ) );
+				await componentDashboardMeSidebar.openMobileMenu();
+				await componentDashboardMeSidebar.navigate( 'Billing' );
+				await page.getByRole( 'link', { name: 'Active upgrades', exact: true } ).click();
 			} );
 
 			await test.step( 'And I view details of the purchased plan', async function () {
-				await pagePurchases.clickOnPurchase(
+				await pageDashboardPurchases.clickOnPurchase(
 					`WordPress.com ${ planName }`,
 					newSiteDetails.blog_details.site_slug as string
 				);
-				await pagePurchases.cancelPurchase( 'Cancel plan' );
+				await pageDashboardPurchases.cancelPurchase();
 			} );
 
 			await test.step( 'And I cancel the plan renewal', async function () {
-				// cancelAtomicPurchaseFlow now blocks until the cancel-and-refund
-				// API request resolves, so by the time it returns the success
-				// notice is rendering. The notice still carries a 10s auto-dismiss
-				// duration, so keep a comfortable margin to observe it.
-				await cancelAtomicPurchaseFlow( page, {
+				// cancelDashboardPurchaseFlow blocks until the cancel-and-refund API
+				// request resolves, so by the time it returns the success snackbar is
+				// rendering.
+				await cancelDashboardPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
 				} );
 
-				await componentNotice.noticeShown(
+				await componentDashboardSnackbar.noticeShown(
 					'Your refund has been processed and your purchase removed.',
-					{
-						timeout: 30 * 1000,
-					}
+					{ exact: true }
 				);
 			} );
 		} );

@@ -1,14 +1,21 @@
+import { getAiLaunchpadStatus } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { captureException } from '@automattic/calypso-sentry';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
+import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getSiteFragment } from 'calypso/lib/route';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import isSiteBigSkyTrial from 'calypso/state/sites/plans/selectors/is-site-big-sky-trial';
-import { canCurrentUserUseCustomerHome, getSiteUrl } from 'calypso/state/sites/selectors';
+import {
+	canCurrentUserUseCustomerHome,
+	getSiteAdminUrl,
+	getSiteUrl,
+} from 'calypso/state/sites/selectors';
 import {
 	getSelectedSiteSlug,
 	getSelectedSiteId,
@@ -69,6 +76,35 @@ export async function maybeRedirect( context, next ) {
 	}
 
 	const site = getSelectedSite( state );
+
+	// The AI Launchpad replaces My Home: while it's active, setup happens on its
+	// wp-admin page; once completed, the wp-admin dashboard takes over (My Home
+	// stays hidden from the sidebar for these sites).
+	const aiLaunchpadStatus = site && getAiLaunchpadStatus( site );
+	if ( aiLaunchpadStatus ) {
+		const redirectUrl = getSiteAdminUrl(
+			state,
+			siteId,
+			aiLaunchpadStatus === 'active' ? 'admin.php?page=site-setup-wp-admin' : 'index.php'
+		);
+		if ( redirectUrl ) {
+			window.location.replace( redirectUrl );
+			return;
+		}
+	}
+
+	// The no_guidance launchpad-personalization variation gets no guidance surface at all:
+	// keep these sites off My Home, landing them on the plain wp-admin dashboard.
+	const personalizationAssignment = await loadExperimentAssignment(
+		LAUNCHPAD_PERSONALIZATION_EXPERIMENT
+	);
+	if ( normalizeVariation( personalizationAssignment?.variationName ) === 'no_guidance' ) {
+		const redirectUrl = getSiteAdminUrl( state, siteId, 'index.php' );
+		if ( redirectUrl ) {
+			window.location.replace( redirectUrl );
+			return;
+		}
+	}
 
 	try {
 		const isSiteLaunched = site?.launch_status === 'launched' || false;

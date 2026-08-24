@@ -83,7 +83,7 @@ function FediverseMediaTrigger( { connectionId, modeKind }: TriggerProps ) {
 
 	const handleClick = () => {
 		// Surface the section first, then fire telemetry. The order matters:
-		// `recordReaderTracksEvent` is a thunk that reads `state.reader.follows`
+		// `recordReaderTracksEvent` is a thunk that reads the follows query cache
 		// and can throw on a malformed store (seen in tests + on cold caches);
 		// the primary user-facing effect must not depend on its success.
 		markMediaHandoffRequested();

@@ -33,8 +33,11 @@ const isError = ( err: unknown ): err is Error => err instanceof Error;
 export interface SitePlanData {
 	autoRenew?: boolean;
 	autoRenewDate?: string;
+	availableForDowngrade?: boolean;
+	availableForUpgrade?: boolean;
 	currencyCode: string;
 	currentPlan?: boolean;
+	expired?: boolean;
 	expiry?: string;
 	expiryDate?: string;
 	freeTrial?: boolean;

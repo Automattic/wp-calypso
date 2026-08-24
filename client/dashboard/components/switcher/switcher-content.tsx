@@ -6,17 +6,19 @@ import {
 } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useMemo, type JSX, type PropsWithChildren } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
+import { Text } from '../text';
 import { RenderItem } from './types';
 import type { View, Field } from '@wordpress/dataviews';
-import type { PropsWithChildren } from 'react';
+
+import './switcher-content.scss';
 
 export default function SwitcherContent< T >( {
 	itemClassName,
 	items,
 	searchableFields,
-	searchClassName,
+	searchClassName = 'switcher-content__search',
 	view,
 	onChangeView,
 	width = '280px',
@@ -28,6 +30,7 @@ export default function SwitcherContent< T >( {
 	onItemClick,
 	filter,
 	filterField,
+	noResultsText = __( 'No results found.' ),
 }: PropsWithChildren< {
 	itemClassName?: string | ( ( item: T ) => string );
 	items?: T[];
@@ -43,6 +46,7 @@ export default function SwitcherContent< T >( {
 	onItemClick?: () => void;
 	filter?: JSX.Element;
 	filterField?: Field< T >;
+	noResultsText?: string;
 } > ) {
 	const fields = useMemo( () => {
 		const allFields = searchableFields.map( ( searchableField ) => ( {
@@ -61,7 +65,11 @@ export default function SwitcherContent< T >( {
 	}, [ searchableFields, filterField ] );
 
 	if ( ! items ) {
-		return __( 'Loading…' );
+		return (
+			<Text variant="muted" className="switcher-content__loading">
+				{ __( 'Loading…' ) }
+			</Text>
+		);
 	}
 
 	const { data: filteredData } = filterSortAndPaginate( items, view, fields );
@@ -79,37 +87,41 @@ export default function SwitcherContent< T >( {
 
 	return (
 		<NavigableMenu style={ { width } }>
-			<MenuGroup>
-				{ filter ? (
-					<HStack justify="flex-start">
-						{ search }
-						{ filter }
-					</HStack>
-				) : (
-					search
-				) }
-			</MenuGroup>
+			{ filter ? (
+				<HStack justify="flex-start">
+					{ search }
+					{ filter }
+				</HStack>
+			) : (
+				search
+			) }
 			<MenuGroup hideSeparator>
-				{ filteredData.map( ( item ) => {
-					const itemUrl = getItemUrl( item );
-					const className =
-						typeof itemClassName === 'function' ? itemClassName( item ) : itemClassName;
-					return (
-						<RouterLinkMenuItem
-							className={ className }
-							key={ itemUrl }
-							to={ itemUrl }
-							style={ { height: 'fit-content', minHeight: '40px' } }
-							onClick={ () => {
-								onClose();
-								onItemClick?.();
-							} }
-							resetScroll={ resetScroll }
-						>
-							{ renderItem( { item, context: 'list' } ) }
-						</RouterLinkMenuItem>
-					);
-				} ) }
+				{ filteredData.length === 0 ? (
+					<Text variant="muted" className="switcher-content__no-results">
+						{ noResultsText }
+					</Text>
+				) : (
+					filteredData.map( ( item ) => {
+						const itemUrl = getItemUrl( item );
+						const className =
+							typeof itemClassName === 'function' ? itemClassName( item ) : itemClassName;
+						return (
+							<RouterLinkMenuItem
+								className={ className }
+								key={ itemUrl }
+								to={ itemUrl }
+								style={ { height: 'fit-content', minHeight: '40px' } }
+								onClick={ () => {
+									onClose();
+									onItemClick?.();
+								} }
+								resetScroll={ resetScroll }
+							>
+								{ renderItem( { item, context: 'list' } ) }
+							</RouterLinkMenuItem>
+						);
+					} )
+				) }
 			</MenuGroup>
 			{ children }
 		</NavigableMenu>

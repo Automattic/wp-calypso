@@ -153,7 +153,10 @@ const Markup = {
 				'data-istransient': media.transient ? 'istransient' : null,
 			} );
 
-			let markup = renderToStaticMarkup( img );
+			// React 19 prepends a `<link rel="preload" as="image">` tag when rendering
+			// an `<img>`. We only want the image element itself for insertion into
+			// post content, so strip the preload tag from the output.
+			let markup = renderToStaticMarkup( img ).replace( /<link\b[^>]*\brel="preload"[^>]*>/g, '' );
 			if ( media.caption && width ) {
 				markup = stringify( {
 					tag: 'caption',

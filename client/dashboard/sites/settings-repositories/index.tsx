@@ -22,9 +22,6 @@ import {
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SnackbarBackButton, {
-	getSnackbarBackButtonText,
-} from '../../components/snackbar-back-button';
 import { hasHostingFeature } from '../../utils/site-features';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
 import GithubIcon from '../deployments/icons/github';
@@ -169,51 +166,44 @@ function SiteRepositories() {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const navigate = useNavigate( { from: siteSettingsRepositoriesRoute.fullPath } );
 	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
-	const search = siteSettingsRepositoriesRoute.useSearch();
-	const snackbarBackButtonText = getSnackbarBackButtonText( search?.back_to );
 
 	const handleConnectRepository = () => {
 		navigate( { to: siteSettingsRepositoriesConnectRoute.fullPath } );
 	};
 
 	return (
-		<>
-			<PageLayout
-				size="small"
-				header={
-					<PageHeader
-						prefix={ <Breadcrumbs length={ 2 } /> }
-						title={ __( 'Repositories' ) }
-						description={ __( 'Connect repositories to your WordPress site.' ) }
-						actions={
-							canConnect && (
-								<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
-									{ __( 'Connect repository' ) }
-								</Button>
-							)
-						}
-					/>
-				}
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Repositories' ) }
+					description={ __( 'Connect repositories to your WordPress site.' ) }
+					actions={
+						canConnect && (
+							<Button variant="primary" __next40pxDefaultSize onClick={ handleConnectRepository }>
+								{ __( 'Connect repository' ) }
+							</Button>
+						)
+					}
+				/>
+			}
+		>
+			<HostingFeatureGatedWithCallout
+				site={ site }
+				feature={ HostingFeatures.DEPLOYMENT }
+				upsellId="site-settings-repositories"
+				upsellFeatureId="site-deployments"
+				upsellIcon={ <GithubIcon aria-label={ __( 'GitHub logo' ) } /> }
+				upsellImage={ illustrationUrl }
+				upsellTitle={ __( 'Deploy from GitHub' ) }
+				upsellDescription={ __(
+					'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
+				) }
 			>
-				<HostingFeatureGatedWithCallout
-					site={ site }
-					feature={ HostingFeatures.DEPLOYMENT }
-					upsellId="site-settings-repositories"
-					upsellFeatureId="site-deployments"
-					upsellIcon={ <GithubIcon aria-label={ __( 'GitHub logo' ) } /> }
-					upsellImage={ illustrationUrl }
-					upsellTitle={ __( 'Deploy from GitHub' ) }
-					upsellDescription={ __(
-						'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
-					) }
-				>
-					<RepositoriesList />
-				</HostingFeatureGatedWithCallout>
-			</PageLayout>
-			{ snackbarBackButtonText && (
-				<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
-			) }
-		</>
+				<RepositoriesList />
+			</HostingFeatureGatedWithCallout>
+		</PageLayout>
 	);
 }
 

@@ -5,7 +5,6 @@ import {
 	domainQuery,
 	userMailboxesQuery,
 } from '@automattic/api-queries';
-import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -32,6 +31,7 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
+import { wpcomLink } from '../../utils/link';
 import AddNewDomain from '../components/add-new-domain';
 import { DnsRequirementsNotice } from './dns-requirements-notice';
 import { DEFAULT_MAX_DOMAIN_FORWARDS, useDomainMaxForwards } from './hooks/use-domain-max-forwards';
@@ -39,6 +39,8 @@ import { useForwardingAddresses } from './hooks/use-forwarding-addresses';
 import type { Field } from '@wordpress/dataviews';
 
 import '../style.scss';
+
+const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
 
 export interface FormData {
 	localPart: string;
@@ -60,9 +62,11 @@ function AddEmailForwarder() {
 		userMailboxesQuery()
 	);
 
+	// The endpoint emits a forwarding account for every domain that can host forwarding, whether
+	// or not any forwarders exist on it yet, so this covers the first-forwarder case too.
 	const eligibleDomains = useMemo( () => {
 		const forwardingAccounts = ( allEmailAccounts ?? [] ).filter(
-			( account ) => account.account_type === EmailProvider.Forwarding && account.can_user_add_email
+			( account ) => account.account_type === EmailProvider.Forwarding
 		);
 
 		return forwardingAccounts.flatMap( ( account ) =>
@@ -120,6 +124,7 @@ function AddEmailForwarder() {
 				id: 'localPart',
 				label: __( 'Email address' ),
 				type: 'text',
+				isValid: { required: true },
 			},
 			{
 				elements: [
@@ -132,6 +137,7 @@ function AddEmailForwarder() {
 				id: 'domain',
 				label: __( 'Domain' ),
 				type: 'text',
+				isValid: { required: true },
 			},
 		],
 		[ eligibleDomains ]
@@ -226,7 +232,10 @@ function AddEmailForwarder() {
 									message,
 								}
 							),
-							{ actions: [ { label: __( 'Support' ), url: CALYPSO_CONTACT } ], type: 'snackbar' }
+							{
+								actions: [ { label: __( 'Support' ), url: SUPPORT_CONTACT_URL } ],
+								type: 'snackbar',
+							}
 						);
 					} else {
 						createErrorNotice(
@@ -239,7 +248,10 @@ function AddEmailForwarder() {
 									emailAddress: variables.mailbox,
 								}
 							),
-							{ actions: [ { label: __( 'Support' ), url: CALYPSO_CONTACT } ], type: 'snackbar' }
+							{
+								actions: [ { label: __( 'Support' ), url: SUPPORT_CONTACT_URL } ],
+								type: 'snackbar',
+							}
 						);
 					}
 				},
@@ -301,6 +313,9 @@ function AddEmailForwarder() {
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
 									label={ __( 'Forward to' ) }
+									__experimentalValidateInput={ ( token ) =>
+										emailValidator.validate( token.trim() )
+									}
 									onInputChange={ ( val ) => {
 										setUntokenizedInput( val );
 									} }
@@ -321,6 +336,10 @@ function AddEmailForwarder() {
 										} ) );
 									} }
 								/>
+
+								{ untokenizedInput.trim() !== '' && ! isUntokenizedInputValidEmail && (
+									<Text intent="error">{ __( 'Please enter a valid email address.' ) }</Text>
+								) }
 
 								{ newForwardingAddresses.length > 0 && (
 									<Notice>
@@ -406,6 +425,14 @@ function AddEmailForwarder() {
 											/>
 										</VStack>
 									</Notice>
+								) }
+
+								{ ! allFieldsSet && (
+									<Text variant="muted">
+										{ __(
+											'Enter an email address, select a domain, and add at least one forwarding address to continue.'
+										) }
+									</Text>
 								) }
 
 								<ButtonStack justify="flex-start">

@@ -32,6 +32,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
+import { type CartBundleLineItem } from './group-bundle-line-items';
 import {
 	getIntroductoryOfferIntervalDisplay,
 	getItemIntroductoryOfferDisplay,
@@ -206,6 +207,53 @@ const DeleteButtonWrapper = styled.div`
 	justify-content: inherit;
 `;
 
+const BundleLineItemWrapper = styled.div< { theme?: Theme } >`
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 16px 0;
+	font-weight: ${ ( props ) => props.theme.weights.normal };
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 1.1em;
+	position: relative;
+
+	.checkout-line-item__price {
+		position: relative;
+	}
+`;
+
+const BundleMemberList = styled.div< { theme?: Theme } >`
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin-top: 8px;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 14px;
+	line-height: 1.4;
+`;
+
+const BundleTermRow = styled.div< { theme?: Theme } >`
+	box-sizing: border-box;
+	width: 100%;
+	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 16px;
+	padding: 16px;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 14px;
+`;
+
+const BundleTermPrice = styled.span`
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+`;
+
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
 	font-size: 0.75rem;
@@ -248,6 +296,7 @@ function WPNonProductLineItem( {
 	const actualAmountDisplay = lineItem.formattedAmount;
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
+	const isCartUpdating = formStatus === FormStatus.VALIDATING;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const translate = useTranslate();
 	const modalCopy = returnModalCopy(
@@ -264,10 +313,16 @@ function WPNonProductLineItem( {
 			data-e2e-product-slug={ lineItem.id }
 			data-product-type={ lineItem.type }
 		>
-			<LineItemTitle isSummary={ isSummary }>{ label }</LineItemTitle>
+			<LineItemTitle className="checkout-line-item__title" isSummary={ isSummary }>
+				{ label }
+			</LineItemTitle>
 
 			<span className="checkout-line-item__price">
-				<LineItemPrice actualAmount={ actualAmountDisplay } />
+				{ isCartUpdating ? (
+					<LoadingCopy width="60px" height="16px" noMargin />
+				) : (
+					<LineItemPrice actualAmount={ actualAmountDisplay } />
+				) }
 			</span>
 
 			{ hasDeleteButton && removeProductFromCart && (
@@ -410,6 +465,169 @@ function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRe
 			} ) }
 		</>
 	);
+}
+
+/**
+ * Render a domain bundle as a single grouped line item: one title and total, the
+ * member domains listed beneath, and a single remove action that clears every
+ * member from the cart at once (matching the backend's all-or-nothing rule).
+ */
+export function BundleLineItem( {
+	bundle,
+	className = null,
+	isSummary,
+	hasDeleteButton,
+	removeProductFromCart,
+	onRemoveBundle,
+}: {
+	bundle: CartBundleLineItem;
+	className?: string | null;
+	isSummary?: boolean;
+	hasDeleteButton?: boolean;
+	removeProductFromCart?: RemoveProductFromCart;
+	/**
+	 * Fired once when a bundle group is removed from the cart (after the user
+	 * confirms the removal modal). Threaded from the app layer so this package
+	 * stays free of a direct analytics dependency. Receives the bundle's group id
+	 * and its member count.
+	 */
+	onRemoveBundle?: ( groupId: string, memberCount: number ) => void;
+} ) {
+	const translate = useTranslate();
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+	const isCartUpdating = formStatus === FormStatus.VALIDATING;
+	const [ isModalVisible, setIsModalVisible ] = useState( false );
+
+	const { products } = bundle;
+	// All members of a bundle are guaranteed to share a currency, so the total can
+	// safely be summed in the smallest unit and rendered under the first member's currency.
+	const currency = products[ 0 ]?.currency ?? 'USD';
+	// Raw subtotals (coupon included) are correct on this surface: the order review
+	// shows post-coupon prices on every line item. The order summary's bundle row
+	// (BundleProductAndCostOverridesList in cost-overrides-list.tsx) intentionally
+	// differs — it excludes coupon discounts because that surface lists coupon
+	// savings on a dedicated line. Don't "harmonize" the two.
+	const bundleTotalInteger = products.reduce(
+		( total, product ) => total + product.item_subtotal_integer,
+		0
+	);
+	const bundleTotalDisplay = formatCurrency( bundleTotalInteger, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	// The backend applies the bundle discount as a cost override on each member, so
+	// the pre-discount group price is the sum of the members' original subtotals.
+	const bundleOriginalInteger = products.reduce(
+		( total, product ) => total + product.item_original_subtotal_integer,
+		0
+	);
+	const bundleOriginalDisplay = formatCurrency( bundleOriginalInteger, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	const isBundleDiscounted = bundleTotalInteger < bundleOriginalInteger;
+	const bundleLabel = String( translate( 'Domain Bundle' ) );
+
+	const removeBundleFromCart = () => {
+		products.forEach( ( product ) => {
+			removeProductFromCart?.( product.uuid );
+		} );
+		onRemoveBundle?.( bundle.groupId, products.length );
+	};
+
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return (
+		<BundleLineItemWrapper
+			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
+			data-e2e-product-slug="domain-bundle"
+			data-product-type="domain-bundle"
+		>
+			<LineItemTitle className="checkout-line-item__title" isSummary={ isSummary }>
+				{ bundleLabel }
+			</LineItemTitle>
+
+			<span className="checkout-line-item__price">
+				{ isCartUpdating ? (
+					<LoadingCopy width="60px" height="16px" noMargin />
+				) : (
+					<LineItemPrice
+						actualAmount={ bundleTotalDisplay }
+						crossedOutAmount={ isBundleDiscounted ? bundleOriginalDisplay : undefined }
+					/>
+				) }
+			</span>
+
+			<LineItemMeta>
+				<LineItemSublabelTitle>
+					{ translate( 'Domain Bundle Registration: billed annually' ) }
+				</LineItemSublabelTitle>
+				{ isBundleDiscounted && (
+					<DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>
+				) }
+			</LineItemMeta>
+
+			<BundleMemberList>
+				{ products.map( ( product ) => (
+					<span key={ product.uuid }>{ product.meta }</span>
+				) ) }
+			</BundleMemberList>
+
+			<BundleTermRow>
+				<span>{ translate( 'One year' ) }</span>
+				<BundleTermPrice>
+					<span>{ bundleTotalDisplay }</span>
+					<Gridicon icon="chevron-down" size={ 16 } aria-hidden="true" />
+				</BundleTermPrice>
+			</BundleTermRow>
+
+			{ hasDeleteButton && removeProductFromCart && (
+				<>
+					<DeleteButtonWrapper>
+						<DeleteButton
+							className="checkout-line-item__remove-product"
+							buttonType="text-button"
+							aria-label={ String(
+								translate( 'Remove %s from cart', {
+									args: bundleLabel,
+								} )
+							) }
+							disabled={ isDisabled }
+							onClick={ () => {
+								setIsModalVisible( true );
+							} }
+						>
+							{ translate( 'Remove from cart' ) }
+						</DeleteButton>
+					</DeleteButtonWrapper>
+
+					<CheckoutModal
+						isVisible={ isModalVisible }
+						closeModal={ () => {
+							setIsModalVisible( false );
+						} }
+						secondaryAction={ () => {
+							setIsModalVisible( false );
+						} }
+						primaryAction={ removeBundleFromCart }
+						secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
+						title={ String( translate( 'Remove domain bundle' ) ) }
+						copy={ String(
+							translate(
+								'Removing this domain bundle will remove its %(domainCount)d domain from your cart.',
+								'Removing this domain bundle will remove all %(domainCount)d domains from your cart.',
+								{
+									count: products.length,
+									args: { domainCount: products.length },
+								}
+							)
+						) }
+					/>
+				</>
+			) }
+		</BundleLineItemWrapper>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 interface ModalCopy {
@@ -697,11 +915,15 @@ export function LineItemSublabelAndPrice( {
 	shouldShowComparison,
 	compareToPrice,
 	isRenewalPricingExperiment,
+	isMobileCheckoutStickySummary,
+	isCartUpdating,
 }: {
 	product: ResponseCartProduct;
 	shouldShowComparison?: boolean;
 	compareToPrice?: number;
 	isRenewalPricingExperiment?: boolean;
+	isMobileCheckoutStickySummary?: boolean;
+	isCartUpdating?: boolean;
 } ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
@@ -709,6 +931,14 @@ export function LineItemSublabelAndPrice( {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
+	const actualSubtotal = formatCurrency( product.item_subtotal_integer, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+
+	if ( isCartUpdating ) {
+		return <>&nbsp;</>;
+	}
 
 	if ( isP2Plus( product ) ) {
 		// This is the price for one item for products with a quantity (eg. seats in a license).
@@ -865,9 +1095,13 @@ export function LineItemSublabelAndPrice( {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} );
+		// Gated off for the sticky summary: the strikethrough moves inline next to
+		// the price (see mobileCheckoutStickyMonthlyCycleCrossedOutDisplay), so without this
+		// it would render in both places.
 		const showCrossedOutPrice =
+			! isMobileCheckoutStickySummary &&
 			product.item_original_subtotal_integer / ( product.months_per_bill_period ?? 1 ) !==
-			compareToPrice;
+				compareToPrice;
 
 		// Renewal Pricing: Calculate actual monthly renewal price
 		const actualMonthlyPrice = formatCurrency(
@@ -902,15 +1136,25 @@ export function LineItemSublabelAndPrice( {
 			return (
 				<>
 					<LineItemSublabelTitle>
-						{ isRenewalPricingExperiment
-							? translate( 'Auto-renews at %(price)s/month. Billed every 12 months.', {
-									args: { price: actualMonthlyPrice },
-							  } )
-							: translate( 'Billed every year' ) }
+						{ isRenewalPricingExperiment &&
+							translate( 'Auto-renews at %(price)s/month. Billed every 12 months.', {
+								args: { price: actualMonthlyPrice },
+							} ) }
+						{ ! isRenewalPricingExperiment &&
+							isMobileCheckoutStickySummary &&
+							translate( '%(price)s billed annually', {
+								args: { price: actualSubtotal },
+								comment:
+									"Annual price formatted with the currency (e.g. '$99.99'); shown as the sublabel of a yearly plan line item in the mobile sticky checkout summary.",
+							} ) }
+						{ ! isRenewalPricingExperiment &&
+							! isMobileCheckoutStickySummary &&
+							translate( 'Billed every year' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
 						<s>
-							{ monthlyPrice } { translate( '/month' ) }
+							{ monthlyPrice }
+							{ ! isMobileCheckoutStickySummary && <> { translate( '/month' ) }</> }
 						</s>
 					) }
 				</>
@@ -921,11 +1165,20 @@ export function LineItemSublabelAndPrice( {
 			return (
 				<>
 					<LineItemSublabelTitle>
-						{ isRenewalPricingExperiment
-							? translate( 'Auto-renews at %(price)s/month. Billed every 24 months.', {
-									args: { price: actualMonthlyPrice },
-							  } )
-							: translate( 'Billed every 2 years' ) }
+						{ isRenewalPricingExperiment &&
+							translate( 'Auto-renews at %(price)s/month. Billed every 24 months.', {
+								args: { price: actualMonthlyPrice },
+							} ) }
+						{ ! isRenewalPricingExperiment &&
+							isMobileCheckoutStickySummary &&
+							translate( '%(price)s billed every two years', {
+								args: { price: actualSubtotal },
+								comment:
+									"Total price formatted with the currency (e.g. '$99.99'); shown as the sublabel of a two-year plan line item in the mobile sticky checkout summary.",
+							} ) }
+						{ ! isRenewalPricingExperiment &&
+							! isMobileCheckoutStickySummary &&
+							translate( 'Billed every 2 years' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
 						<s>
@@ -940,11 +1193,20 @@ export function LineItemSublabelAndPrice( {
 			return (
 				<>
 					<LineItemSublabelTitle>
-						{ isRenewalPricingExperiment
-							? translate( 'Auto-renews at %(price)s/month. Billed every 36 months.', {
-									args: { price: actualMonthlyPrice },
-							  } )
-							: translate( 'Billed every 3 years' ) }
+						{ isRenewalPricingExperiment &&
+							translate( 'Auto-renews at %(price)s/month. Billed every 36 months.', {
+								args: { price: actualMonthlyPrice },
+							} ) }
+						{ ! isRenewalPricingExperiment &&
+							isMobileCheckoutStickySummary &&
+							translate( '%(price)s billed every three years', {
+								args: { price: actualSubtotal },
+								comment:
+									"Total price formatted with the currency (e.g. '$99.99'); shown as the sublabel of a three-year plan line item in the mobile sticky checkout summary.",
+							} ) }
+						{ ! isRenewalPricingExperiment &&
+							! isMobileCheckoutStickySummary &&
+							translate( 'Billed every 3 years' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
 						<s>
@@ -1365,6 +1627,63 @@ const DesktopGiftWrapper = styled.div`
 	}
 `;
 
+function LineItemPriceContent( {
+	isCartUpdating,
+	shouldShowComparison,
+	isDiscounted,
+	isRenewalPricingExperiment,
+	monthlyAmountDisplay,
+	originalMonthlyAmountDisplay,
+	actualAmountDisplay,
+	originalAmountDisplay,
+	stackedCrossedOutDisplay,
+	isMobileCheckoutStickySummary,
+	mobileCheckoutStickyMonthlyCycleCrossedOutDisplay,
+}: {
+	isCartUpdating: boolean;
+	shouldShowComparison?: boolean;
+	isDiscounted: boolean;
+	isRenewalPricingExperiment?: boolean;
+	monthlyAmountDisplay: string;
+	originalMonthlyAmountDisplay: string;
+	actualAmountDisplay: string;
+	originalAmountDisplay: string;
+	stackedCrossedOutDisplay?: string;
+	isMobileCheckoutStickySummary?: boolean;
+	mobileCheckoutStickyMonthlyCycleCrossedOutDisplay?: string;
+} ) {
+	const translate = useTranslate();
+
+	if ( isCartUpdating ) {
+		return <LoadingCopy width="60px" height="16px" noMargin />;
+	}
+
+	if ( shouldShowComparison ) {
+		return (
+			<>
+				<LineItemPrice
+					actualAmount={ monthlyAmountDisplay }
+					crossedOutAmount={
+						isDiscounted && ! isRenewalPricingExperiment
+							? originalMonthlyAmountDisplay
+							: mobileCheckoutStickyMonthlyCycleCrossedOutDisplay
+					}
+				/>
+				{ isMobileCheckoutStickySummary ? translate( '/mo' ) : <> { translate( '/month' ) }</> }
+			</>
+		);
+	}
+
+	return (
+		<LineItemPrice
+			actualAmount={ actualAmountDisplay }
+			crossedOutAmount={
+				stackedCrossedOutDisplay ?? ( isDiscounted ? originalAmountDisplay : undefined )
+			}
+		/>
+	);
+}
+
 function CheckoutLineItem( {
 	children,
 	product,
@@ -1385,6 +1704,7 @@ function CheckoutLineItem( {
 	shouldShowComparison,
 	compareToPrice,
 	isRenewalPricingExperiment,
+	isMobileCheckoutStickySummary,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1405,6 +1725,7 @@ function CheckoutLineItem( {
 	shouldShowComparison?: boolean;
 	compareToPrice?: number;
 	isRenewalPricingExperiment?: boolean;
+	isMobileCheckoutStickySummary?: boolean;
 } > ) {
 	const translate = useTranslate();
 	const hasBundledDomainsInCart = responseCart.products.some(
@@ -1435,6 +1756,7 @@ function CheckoutLineItem( {
 		isPwpoUser || false
 	);
 	const isDisabled = formStatus !== FormStatus.READY;
+	const isCartUpdating = formStatus === FormStatus.VALIDATING;
 
 	const isRenewal = isWpComProductRenewal( product );
 
@@ -1482,6 +1804,22 @@ function CheckoutLineItem( {
 		itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
 	);
 
+	// Monthly-cycle strikethrough shown inline in the main price column (Figma
+	// 3838:3619/3620). Only fills in where control shows none — the consumer keeps
+	// the pre-discount strikethrough ahead of this. Gated on isRenewalPricingExperiment
+	// so it doesn't leak a strikethrough into that experiment's arm.
+	const mobileCheckoutStickyMonthlyCycleCrossedOutDisplay =
+		isMobileCheckoutStickySummary &&
+		! isRenewalPricingExperiment &&
+		shouldShowComparison &&
+		compareToPrice &&
+		pricePerMonth !== compareToPrice
+			? formatCurrency( compareToPrice, product.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+			  } )
+			: undefined;
+
 	// For products with stacked cost overrides (e.g. premium domains with a
 	// price-increasing intro offer + sale coupon: $80 → $1,100 → $275), show
 	// the pre-discount price ($1,100) crossed out next to the final price.
@@ -1501,6 +1839,42 @@ function CheckoutLineItem( {
 		isGoogleWorkspaceProductSlug( productSlug ) ||
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product );
+
+	// Under the mobile sticky experiment the remove link uses a per-product
+	// label ("Remove plan/domain/email/…") instead of the generic "Remove
+	// from cart" — Figma 2392:15397. Order matters: storage is also an
+	// add-on, Akismet has its own slug pattern distinct from Jetpack, so the
+	// specific checks come before the broader ones.
+	const removeLabel = ( () => {
+		if ( ! isMobileCheckoutStickySummary ) {
+			return translate( 'Remove from cart' );
+		}
+		if ( isPlan( product ) ) {
+			return translate( 'Remove plan' );
+		}
+		if ( isDomainRegistration( product ) ) {
+			return translate( 'Remove domain' );
+		}
+		if ( isEmail ) {
+			return translate( 'Remove email' );
+		}
+		if ( isTieredVolumeSpaceAddon( product ) ) {
+			return translate( 'Remove storage' );
+		}
+		if ( isDIFMProduct( product ) ) {
+			return translate( 'Remove service' );
+		}
+		if ( isAkismetProduct( product ) ) {
+			return translate( 'Remove Akismet' );
+		}
+		if ( isJetpackProductSlug( productSlug ) ) {
+			return translate( 'Remove Jetpack' );
+		}
+		if ( isAddOn( product ) ) {
+			return translate( 'Remove add-on' );
+		}
+		return translate( 'Remove from cart' );
+	} )();
 
 	const containsPartnerCoupon = getPartnerCoupon( {
 		coupon: responseCart.coupon,
@@ -1560,7 +1934,7 @@ function CheckoutLineItem( {
 					<GiftBadgeWithText />
 				</MobileGiftWrapper>
 			) }
-			<LineItemTitle isSummary={ isSummary }>
+			<LineItemTitle className="checkout-line-item__title" isSummary={ isSummary }>
 				{ label }
 				{ responseCart.is_gift_purchase && (
 					<DesktopGiftWrapper>
@@ -1570,28 +1944,21 @@ function CheckoutLineItem( {
 			</LineItemTitle>
 
 			<span className="checkout-line-item__price">
-				{ shouldShowComparison ? (
-					<>
-						<LineItemPrice
-							actualAmount={ monthlyAmountDisplay }
-							crossedOutAmount={
-								isDiscounted && ! isRenewalPricingExperiment
-									? originalMonthlyAmountDisplay
-									: undefined
-							}
-						/>{ ' ' }
-						{ translate( '/month' ) }
-					</>
-				) : (
-					<>
-						<LineItemPrice
-							actualAmount={ actualAmountDisplay }
-							crossedOutAmount={
-								stackedCrossedOutDisplay ?? ( isDiscounted ? originalAmountDisplay : undefined )
-							}
-						/>
-					</>
-				) }
+				<LineItemPriceContent
+					isCartUpdating={ isCartUpdating }
+					shouldShowComparison={ shouldShowComparison }
+					isDiscounted={ isDiscounted }
+					isRenewalPricingExperiment={ isRenewalPricingExperiment }
+					monthlyAmountDisplay={ monthlyAmountDisplay }
+					originalMonthlyAmountDisplay={ originalMonthlyAmountDisplay }
+					actualAmountDisplay={ actualAmountDisplay }
+					originalAmountDisplay={ originalAmountDisplay }
+					stackedCrossedOutDisplay={ stackedCrossedOutDisplay }
+					isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
+					mobileCheckoutStickyMonthlyCycleCrossedOutDisplay={
+						mobileCheckoutStickyMonthlyCycleCrossedOutDisplay
+					}
+				/>
 			</span>
 
 			{ ! containsPartnerCoupon && (
@@ -1606,6 +1973,8 @@ function CheckoutLineItem( {
 								shouldShowComparison={ shouldShowComparison }
 								compareToPrice={ compareToPrice }
 								isRenewalPricingExperiment={ isRenewalPricingExperiment }
+								isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
+								isCartUpdating={ isCartUpdating }
 							/>
 							<DomainDiscountCallout product={ product } />
 							<IntroductoryOfferCallout
@@ -1624,6 +1993,8 @@ function CheckoutLineItem( {
 					<LineItemSublabelAndPrice
 						product={ product }
 						isRenewalPricingExperiment={ isRenewalPricingExperiment }
+						isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
+						isCartUpdating={ isCartUpdating }
 					/>
 				</LineItemMeta>
 			) }
@@ -1675,7 +2046,7 @@ function CheckoutLineItem( {
 								onRemoveProductClick?.( label );
 							} }
 						>
-							{ translate( 'Remove from cart' ) }
+							{ removeLabel }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 

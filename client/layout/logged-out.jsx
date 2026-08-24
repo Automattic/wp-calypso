@@ -1,7 +1,7 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Step } from '@automattic/onboarding';
-import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -17,6 +17,7 @@ import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -280,7 +281,7 @@ const LayoutLoggedOut = ( {
 		} );
 
 		masterbar = (
-			<UniversalNavbarHeader
+			<Nav2026UniversalHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
 				className={ className }

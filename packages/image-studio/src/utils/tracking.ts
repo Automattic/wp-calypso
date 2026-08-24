@@ -7,11 +7,24 @@
 
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
-import { store as imageStudioStore, type ImageStudioEntryPoint } from '../store';
+// ImageStudioEntryPoint is a value import here, not type-only: the Feature Clip
+// wrapper reads the enum member at runtime.
+import { store as imageStudioStore, ImageStudioEntryPoint } from '../store';
+import { ImageStudioMode, type MetadataField } from '../types';
 import { getSessionId } from '../utils/session';
-import type { ImageStudioMode, MetadataField } from '../types';
+import { parseErrorUrl } from './parse-error-url';
 
 const TRACKS_PREFIX = 'jetpack_big_sky';
+const SITE_TYPES = [ 'simple', 'atomic', 'jetpack' ] as const;
+
+type ImageStudioSiteType = ( typeof SITE_TYPES )[ number ];
+type ImageStudioTrackingData = {
+	blogId?: number | string;
+	siteType?: string;
+	isA11n?: boolean;
+	isDevMode?: boolean;
+	version?: string;
+};
 
 /**
  * Format suggestion IDs into a pipe-delimited string for tracking
@@ -31,14 +44,48 @@ export function formatSuggestionIds( suggestions: Array< { id?: string } > ): st
  */
 function getImageStudioEntryPoint(): string | null {
 	try {
-		const imageStudioStoreData = select( imageStudioStore );
-		if ( imageStudioStoreData && imageStudioStoreData.getEntryPoint ) {
-			return imageStudioStoreData.getEntryPoint();
+		const imageStudioSelectors = select( imageStudioStore );
+		if ( imageStudioSelectors && imageStudioSelectors.getEntryPoint ) {
+			return imageStudioSelectors.getEntryPoint();
 		}
 	} catch ( error ) {
 		// Store may not be registered yet
 	}
 	return null;
+}
+
+function getImageStudioWindowData(): ImageStudioTrackingData | undefined {
+	return ( window as unknown as { imageStudioData?: ImageStudioTrackingData } ).imageStudioData;
+}
+
+function getTrackingBlogId(): number | null {
+	const blogId = getImageStudioWindowData()?.blogId;
+
+	if ( typeof blogId !== 'number' && typeof blogId !== 'string' ) {
+		return null;
+	}
+
+	const parsedBlogId = typeof blogId === 'number' ? blogId : Number( blogId );
+
+	return Number.isFinite( parsedBlogId ) && parsedBlogId > 0 ? parsedBlogId : null;
+}
+
+function getTrackingSiteType(): ImageStudioSiteType {
+	const siteType = getImageStudioWindowData()?.siteType;
+
+	if ( SITE_TYPES.includes( siteType as ImageStudioSiteType ) ) {
+		return siteType as ImageStudioSiteType;
+	}
+
+	if ( siteType === 'wpcom' ) {
+		return 'simple';
+	}
+
+	if ( siteType === 'woa' ) {
+		return 'atomic';
+	}
+
+	return 'jetpack';
 }
 
 /**
@@ -63,12 +110,32 @@ function recordImageStudioEvent(
 	properties: Record< string, string | number | boolean > = {}
 ): void {
 	const entryPoint = getImageStudioEntryPoint();
+	const blogId = getTrackingBlogId();
+	const siteType = getTrackingSiteType();
+	const imageStudioWindowData = getImageStudioWindowData();
+	const sessionId = getSessionId();
 	const baseProps: Record< string, string | number | boolean > = {
 		...properties,
-		sessionid: getSessionId(),
+		agent_name: 'image_studio',
+		// The standard prefers the string `none` over a missing value.
+		agent_version: imageStudioWindowData?.version || 'none',
+		ai_session_id: sessionId,
+		// The standard name is `ai_session_id`. Keep `sessionid` as well for backwards compatibility
+		sessionid: sessionId,
 	};
 
-	if ( entryPoint ) {
+	if ( blogId ) {
+		baseProps.blog_id = blogId;
+	}
+
+	baseProps.site_type = siteType;
+
+	// The store's entry point is only a fallback. An event that knows its own
+	// placement passes it explicitly, and must keep it: the store holds whichever
+	// entry point was used last in this page load, which for an event that fires
+	// on mount rather than on open would report where the user happened to have
+	// been rather than where the event came from.
+	if ( entryPoint && undefined === baseProps.placement ) {
 		baseProps.placement = entryPoint;
 	}
 
@@ -81,10 +148,37 @@ function recordImageStudioEvent(
 		baseProps.post_type = win.typenow;
 	}
 
+	baseProps.is_a11n = !! imageStudioWindowData?.isA11n;
+
 	// Add dev mode flag for filtering test/internal traffic
-	baseProps.is_test = !! win.imageStudioData?.isDevMode;
+	baseProps.is_test = !! imageStudioWindowData?.isDevMode;
 
 	recordTracksEvent( eventName, baseProps );
+}
+
+/**
+ * Records a Feature Clip event, always carrying the Feature Clip placement.
+ *
+ * Every event in this family belongs to the post-editor Feature Clip flow,
+ * whether it fires from the sidebar panel or from the modal opened out of it.
+ * The store can't be relied on for that: the panel and its share actions run
+ * before anything opens Image Studio, so the entry point is still null and the
+ * event would go out with no placement and no way to filter it.
+ *
+ * @param eventName  Event name, without the tracks prefix.
+ * @param properties Event-specific properties.
+ */
+function recordFeatureClipEvent(
+	eventName: string,
+	properties: Record< string, string | number | boolean > = {}
+): void {
+	recordImageStudioEvent( eventName, {
+		...properties,
+		// Last, so the placement is guaranteed rather than merely defaulted. An
+		// event that needs a different one doesn't belong in this family and
+		// should call recordImageStudioEvent directly.
+		placement: ImageStudioEntryPoint.PostEditorFeatureClip,
+	} );
 }
 
 interface TrackImageStudioOpenedOptions {
@@ -141,18 +235,21 @@ interface TrackImageStudioImageGeneratedOptions {
 	isAnnotated: boolean;
 }
 
+type ImageStudioErrorType =
+	| 'generation_failed'
+	| 'edit_failed'
+	| 'quota_exceeded'
+	| 'ability_failed'
+	| 'preparation_failed'
+	| 'draft_cleanup_failed'
+	| 'draft_cleanup_permission_denied'
+	| 'delete_permanently_failed'
+	| 'save_metadata_failed'
+	| 'other';
+
 interface TrackImageStudioErrorOptions {
 	mode: ImageStudioMode;
-	errorType:
-		| 'generation_failed'
-		| 'edit_failed'
-		| 'ability_failed'
-		| 'preparation_failed'
-		| 'draft_cleanup_failed'
-		| 'draft_cleanup_permission_denied'
-		| 'delete_permanently_failed'
-		| 'save_metadata_failed'
-		| 'other';
+	errorType: ImageStudioErrorType;
 	attachmentId?: number;
 }
 
@@ -165,6 +262,29 @@ interface TrackImageStudioImageFeedbackOptions {
 interface TrackImageStudioFileNavigatedOptions {
 	attachmentId: number;
 	direction: 'previous' | 'next';
+}
+
+/**
+ * Classifies request errors for Image Studio error tracking.
+ * @param error - The request error
+ * @param mode  - The active Image Studio mode
+ * @returns The corresponding tracking error type
+ */
+export function getImageStudioRequestErrorType(
+	error: unknown,
+	mode: ImageStudioMode
+): ImageStudioErrorType {
+	const message =
+		error && typeof error === 'object' && 'message' in error
+			? String( error.message )
+			: String( error ?? '' );
+
+	// The agent endpoint exposes usage-quota errors to the client through an appended upgrade URL.
+	if ( parseErrorUrl( message ).isUpgradeUrl ) {
+		return 'quota_exceeded';
+	}
+
+	return mode === ImageStudioMode.Edit ? 'edit_failed' : 'generation_failed';
 }
 
 /**
@@ -441,6 +561,29 @@ export function trackImageStudioError( {
 }
 
 /**
+ * Tracks when the limit-reached upgrade notice is shown
+ * @param options      - Tracking options
+ * @param options.mode - 'edit' or 'generate'
+ */
+export function trackImageStudioUpgradeNoticeShown( { mode }: { mode: ImageStudioMode } ): void {
+	recordImageStudioEvent( 'image_studio_upgrade_notice_shown', { mode } );
+}
+
+/**
+ * Tracks a click on the upgrade notice action. Also fires the product-wide
+ * `jetpack_ai_upgrade_button` event so this surface appears in the same
+ * funnel as every other Jetpack AI upgrade button.
+ * @param options      - Tracking options
+ * @param options.mode - 'edit' or 'generate'
+ */
+export function trackImageStudioUpgradeNoticeClick( { mode }: { mode: ImageStudioMode } ): void {
+	recordImageStudioEvent( 'image_studio_upgrade_notice_click', { mode } );
+	recordTracksEventBase( 'jetpack_ai_upgrade_button', {
+		placement: 'image-studio-limit-notice',
+	} );
+}
+
+/**
  * Tracks when a user provides thumbs up/down feedback on an image
  * @param options              - Tracking options
  * @param options.feedback     - User's feedback (up or down)
@@ -569,7 +712,7 @@ export function trackImageStudioReelShareClicked( {
 	if ( durationSeconds != null ) {
 		properties.duration_seconds = durationSeconds;
 	}
-	recordImageStudioEvent( 'image_studio_feature_clip_share_clicked', properties );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_clicked', properties );
 }
 
 /**
@@ -582,7 +725,7 @@ export function trackImageStudioReelShareNotConnected( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_not_connected', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_not_connected', { surface } );
 }
 
 /**
@@ -596,7 +739,7 @@ export function trackImageStudioReelShareConnectionDisabled( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_connection_disabled', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_connection_disabled', { surface } );
 }
 
 /**
@@ -609,7 +752,7 @@ export function trackImageStudioReelShareNotPublished( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_post_not_published', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_post_not_published', { surface } );
 }
 
 /**
@@ -622,7 +765,7 @@ export function trackImageStudioReelShareInvalidState( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_invalid_state', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_invalid_state', { surface } );
 }
 
 /**
@@ -631,7 +774,7 @@ export function trackImageStudioReelShareInvalidState( {
  * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
 export function trackImageStudioReelShareCancelled( { surface }: { surface: ShareSurface } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_cancelled', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_cancelled', { surface } );
 }
 
 /**
@@ -644,7 +787,7 @@ export function trackImageStudioReelShareDispatched( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_dispatched', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_dispatched', { surface } );
 }
 
 /**
@@ -664,7 +807,7 @@ export function trackImageStudioReelShareFailed( {
 	if ( errorMessage ) {
 		properties.error_message = errorMessage;
 	}
-	recordImageStudioEvent( 'image_studio_feature_clip_share_failed', properties );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_failed', properties );
 }
 
 /**
@@ -682,7 +825,7 @@ export function trackImageStudioGenericShareClicked( {
 	surface: ShareSurface;
 	method: 'web-share' | 'web-share-unsupported';
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_clicked', { surface, method } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_generic_share_clicked', { surface, method } );
 }
 
 /**
@@ -699,7 +842,7 @@ export function trackImageStudioGenericShareCompleted( {
 	surface: ShareSurface;
 	method: 'web-share';
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_completed', {
+	recordFeatureClipEvent( 'image_studio_feature_clip_generic_share_completed', {
 		surface,
 		method,
 	} );
@@ -731,7 +874,7 @@ export function trackImageStudioGenericShareFailed( {
 	if ( failureKind ) {
 		properties.failure_kind = failureKind;
 	}
-	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_failed', properties );
+	recordFeatureClipEvent( 'image_studio_feature_clip_generic_share_failed', properties );
 }
 
 /**
@@ -745,7 +888,7 @@ export function trackImageStudioFeatureClipAddedToPost( {
 }: {
 	attachmentId: number;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_added_to_post', {
+	recordFeatureClipEvent( 'image_studio_feature_clip_added_to_post', {
 		attachment_id: attachmentId,
 		surface: 'sidebar',
 	} );
@@ -757,5 +900,30 @@ export function trackImageStudioFeatureClipAddedToPost( {
  * engagement rates.
  */
 export function trackImageStudioFeatureClipPanelViewed(): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_panel_viewed' );
+	recordFeatureClipEvent( 'image_studio_feature_clip_panel_viewed' );
+}
+
+/**
+ * Tracks when the "generation in progress" close warning is shown — i.e. the
+ * user tried to close the modal while a clip was still rendering. The
+ * impression denominator for how often closing mid-generation happens.
+ */
+export function trackImageStudioFeatureClipCloseWarningShown(): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_close_warning_shown' );
+}
+
+/**
+ * Tracks when the user dismisses the close warning to let the clip keep
+ * generating ("Cancel").
+ */
+export function trackImageStudioFeatureClipCloseWarningKeptGenerating(): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_close_warning_kept_generating' );
+}
+
+/**
+ * Tracks when the user confirms the close warning, stopping the in-progress
+ * generation and closing the modal ("Stop and close").
+ */
+export function trackImageStudioFeatureClipCloseWarningStopped(): void {
+	recordFeatureClipEvent( 'image_studio_feature_clip_close_warning_stopped' );
 }

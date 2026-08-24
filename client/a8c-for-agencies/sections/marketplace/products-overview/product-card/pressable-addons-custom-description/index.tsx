@@ -9,13 +9,19 @@ import './style.scss';
 type Props = {
 	productName: string;
 	productSlug: string;
+	siteDomain?: string;
 };
 
-export default function PressableAddonsCustomDescription( { productName, productSlug }: Props ) {
+export default function PressableAddonsCustomDescription( {
+	productName,
+	productSlug,
+	siteDomain,
+}: Props ) {
 	const translate = useTranslate();
-	const { description } = useProductDescription( productSlug );
+	const { description } = useProductDescription( productSlug, siteDomain );
 	const context = getPressableAddonCapacityCopyContext( productSlug );
 	const addOnType = context?.type ?? 'unknown';
+	const normalizedSiteDomain = siteDomain?.trim();
 
 	const getCalloutCopy = () => {
 		if ( ! context ) {
@@ -57,8 +63,21 @@ export default function PressableAddonsCustomDescription( { productName, product
 		}
 
 		if ( addOnType === 'phpMemory' ) {
+			if ( normalizedSiteDomain ) {
+				return translate(
+					'PHP memory will be increased by %(phpMemory)s for each PHP worker/process on %(siteDomain)s.',
+					{
+						args: {
+							phpMemory: context.formattedPhpMemory,
+							siteDomain: normalizedSiteDomain,
+						},
+						comment: '%(siteDomain)s is the target site/domain for the add-on.',
+					}
+				);
+			}
+
 			return translate(
-				'PHP memory will be increased by %(phpMemory)s for each PHP worker/process on your Signature plan.',
+				'PHP memory will be increased by %(phpMemory)s for each PHP worker/process on one Pressable site/domain.',
 				{
 					args: {
 						phpMemory: context.formattedPhpMemory,
@@ -115,8 +134,21 @@ export default function PressableAddonsCustomDescription( { productName, product
 		}
 
 		if ( addOnType === 'phpMemory' ) {
+			if ( normalizedSiteDomain ) {
+				return translate(
+					'This add-on increases PHP memory by %(phpMemory)s for each PHP worker/process on %(siteDomain)s while your Signature plan is active.',
+					{
+						args: {
+							phpMemory: context.formattedPhpMemory,
+							siteDomain: normalizedSiteDomain,
+						},
+						comment: '%(siteDomain)s is the target site/domain for the add-on.',
+					}
+				);
+			}
+
 			return translate(
-				'This add-on increases PHP memory by %(phpMemory)s for each PHP worker/process while your Signature plan is active.',
+				'This add-on increases PHP memory by %(phpMemory)s for each PHP worker/process on one Pressable site/domain while your Signature plan is active.',
 				{
 					args: {
 						phpMemory: context.formattedPhpMemory,

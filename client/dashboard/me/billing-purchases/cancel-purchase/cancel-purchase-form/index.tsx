@@ -6,6 +6,7 @@ import { ButtonStack } from '../../../../components/button-stack';
 import { SectionHeader } from '../../../../components/section-header';
 import {
 	CANCEL_FLOW_TYPE,
+	isExpiredOrRemoved,
 	type CancelFlowType,
 	type CancelIntent,
 } from '../../../../utils/purchase';
@@ -13,7 +14,7 @@ import { getSolutionsForReason } from '../get-solutions-for-reason';
 import { useIsSplitCancelRemoveEnabled } from '../use-is-split-cancel-remove-enabled';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
-import FeedbackStep from './step-components/feedback-step';
+import FeedbackStep, { shouldShowCancellationReason } from './step-components/feedback-step';
 import JetpackCancellationOfferStep from './step-components/jetpack-cancellation-offer-step';
 import NextAdventureStep from './step-components/next-adventure-step';
 import SolutionsCardsUpsellStep from './step-components/solutions-cards-upsell-step';
@@ -91,6 +92,7 @@ interface CancelPurchaseFormProps {
 	questionTwoOrder?: string[];
 	questionTwoRadio?: string;
 	questionTwoText?: string;
+	recordEvent?: ( name: string, properties?: Record< string, unknown > ) => void;
 	refundAmount?: number;
 	siteSlug: string;
 	solution?: string;
@@ -141,6 +143,7 @@ function SurveyContent( {
 	isAkismet,
 	intent,
 	onSwitchToMonthly,
+	recordEvent,
 	yearlyPlanSlug,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
@@ -180,6 +183,7 @@ function SurveyContent( {
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
 					onSwitchToMonthly={ onSwitchToMonthly }
 					purchase={ purchase }
+					recordEvent={ recordEvent }
 					refundAmount={ refundAmount }
 					yearlyPlanSlug={ yearlyPlanSlug }
 				/>
@@ -262,25 +266,27 @@ function SurveyContent( {
 						}
 					) }
 				</span>
-				<span className="cancel-purchase-form__remove-plan-text">
-					{ createInterpolateElement(
-						sprintf(
-							/* Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022" */
-							__(
-								'If you keep your plan, you will be able to continue using your %(planName)s plan features until <strong>%(purchaseRenewalDate)s</strong>.'
+				{ ! isExpiredOrRemoved( purchase ) && (
+					<span className="cancel-purchase-form__remove-plan-text">
+						{ createInterpolateElement(
+							sprintf(
+								/* Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022" */
+								__(
+									'If you keep your plan, you will be able to continue using your %(planName)s plan features until <strong>%(purchaseRenewalDate)s</strong>.'
+								),
+								{
+									planName: productName,
+									purchaseRenewalDate: intlFormat( purchase.expiry_date, {
+										dateStyle: 'medium',
+									} ),
+								}
 							),
 							{
-								planName: productName,
-								purchaseRenewalDate: intlFormat( purchase.expiry_date, {
-									dateStyle: 'medium',
-								} ),
+								strong: <strong className="is-highlighted" />,
 							}
-						),
-						{
-							strong: <strong className="is-highlighted" />,
-						}
-					) }
-				</span>
+						) }
+					</span>
+				) }
 			</>
 		);
 	}
@@ -355,7 +361,7 @@ function StepButtons( {
 						disabled={ isCancelling }
 						onClick={ onSubmit }
 					>
-						{ __( 'No, thanks' ) }
+						{ __( 'Skip survey' ) }
 					</Button>
 				) }
 			</ButtonStack>
@@ -394,7 +400,7 @@ function StepButtons( {
 					disabled={ isApplyingOffer || Boolean( offerApplyError ) }
 					isBusy={ isApplyingOffer ?? false }
 					onClick={ () => {
-						onClickAcceptForCancellationOffer && onClickAcceptForCancellationOffer();
+						onClickAcceptForCancellationOffer?.();
 					} }
 					variant="primary"
 				>
@@ -456,7 +462,7 @@ function StepButtons( {
 					disabled={ isCancelling }
 					onClick={ onSubmit }
 				>
-					{ __( 'No, thanks' ) }
+					{ __( 'Skip survey' ) }
 				</Button>
 			) }
 		</ButtonStack>
@@ -483,6 +489,12 @@ function canGoToNextStep( {
 	}
 
 	if ( surveyStep === FEEDBACK_STEP ) {
+		// Nothing to answer, so nothing to wait for. Without this the step would
+		// render empty and leave the user unable to continue.
+		if ( ! shouldShowCancellationReason( purchase ) ) {
+			return true;
+		}
+
 		if ( isImport && ! importQuestionRadio ) {
 			return false;
 		}

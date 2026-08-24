@@ -1,4 +1,4 @@
-import { escapeRegExp } from 'lodash';
+import { escapeRegExp } from '@automattic/js-utils';
 import {
 	getSiteName,
 	getSiteUrl,

@@ -5,7 +5,7 @@ export function EmptyDomainsStateUpsell() {
 	const { recordTracksEvent } = useAnalytics();
 
 	const handleOfferClick = () => {
-		recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
+		recordTracksEvent( 'calypso_dashboard_domains_empty_state_action_click', {
 			action: 'offer',
 		} );
 	};

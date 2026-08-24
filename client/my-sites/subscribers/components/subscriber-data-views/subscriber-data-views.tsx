@@ -316,12 +316,18 @@ export default function SubscriberDataViews( {
 		is_owner_subscribed: isOwnerSubscribed,
 		pages,
 		total,
+		total_unfiltered: totalUnfiltered,
 	} = subscribersQueryResult || {
 		subscribers: [],
 		is_owner_subscribed: false,
 		pages: 0,
 		total: 0,
+		total_unfiltered: undefined,
 	};
+	// Prefer the list endpoint's unfiltered population over /counts so the
+	// "X out of Y total" denominator can't lag behind the filtered numerator.
+	// See NL-274 / 222712-ghe-Automattic/wpcom.
+	const denominator = totalUnfiltered ?? grandTotal;
 
 	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : JetpackEmptyListView;
 	const shouldShowLaunchpad =
@@ -687,15 +693,19 @@ export default function SubscriberDataViews( {
 	}, [ currentView.search, currentView.filters ] );
 
 	// Memoize the data and pagination info.
+	// totalItems is the count of rows being paged through: the filtered total
+	// from the list response, which always matches `pages`. Using the /counts
+	// grand total here would mismatch the data when a filter is active (and
+	// could drift from the list count even without filters — see NL-274).
 	const { data, paginationInfo } = useMemo( () => {
 		return {
 			data: subscribers,
 			paginationInfo: {
-				totalItems: grandTotal,
+				totalItems: total,
 				totalPages: pages,
 			},
 		};
-	}, [ subscribers, grandTotal, pages ] );
+	}, [ subscribers, total, pages ] );
 
 	return (
 		<div
@@ -777,7 +787,7 @@ export default function SubscriberDataViews( {
 					) : (
 						<>
 							<SubscriberTotals
-								totalSubscribers={ grandTotal }
+								totalSubscribers={ denominator }
 								filteredCount={ total }
 								filters={ filters }
 								searchTerm={ searchTerm }

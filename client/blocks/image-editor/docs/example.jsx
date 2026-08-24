@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -96,7 +95,7 @@ class ImageEditorExample extends Component {
 }
 
 const ConnectedImageEditorExample = connect( ( state ) => {
-	const primarySiteId = get( getCurrentUser( state ), 'primary_blog', null );
+	const primarySiteId = getCurrentUser( state )?.primary_blog ?? null;
 
 	return {
 		primarySiteId,

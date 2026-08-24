@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import './style.scss';
 import { Badge, Dialog, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Page } from '@wordpress/admin-ui';
 import { Button, DropdownMenu, Spinner } from '@wordpress/components';
 import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
@@ -29,6 +30,7 @@ import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-pos
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useJetpackBlazeVersionCheck } from 'calypso/lib/promote-post';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
+import { BlazeFooter } from 'calypso/my-sites/promote-post-i2/components/blaze-page';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 import CampaignDownloadStats from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/CampaignDownloadStats';
 import CampaignStatsLineChart from 'calypso/my-sites/promote-post-i2/components/campaign-stats-line-chart/index.tsx/campaign-stats-line-chart';
@@ -879,26 +881,29 @@ export default function CampaignItemDetails( props: Props ) {
 				<p>{ __( 'Please try again later or contact support if the problem persists.' ) }</p>
 			</Dialog>
 
-			<div className="promote-post-i2__top-bar-container">
-				<div className="promote-post-i2__top-bar">
-					<div className="advertising__page-header">
-						<Button
-							className="formatted-header__title"
-							onClick={ () =>
-								page.show( getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ) )
-							}
-							target="_blank"
-							variant="link"
-						>
-							<Icon icon={ chevronLeft } size={ 16 } />
-							{ translate( 'Go Back' ) }
-						</Button>
-					</div>
-
-					{ ! isLoading && status && (
-						<div className="promote-post-i2__top-bar-buttons">
-							{ status &&
-								canGetCampaignStats( status ) &&
+			{ /* Raw <Page> rather than <BlazePage>: the details view intentionally
+			     drops the Blaze logo/title/subtitle chrome in favor of a back link. */ }
+			<Page
+				className="promote-post-i2__page"
+				ariaLabel={ translate( 'Campaign details' ) as string }
+				showSidebarToggle={ false }
+				breadcrumbs={
+					<Button
+						className="campaign-item-details__go-back-button"
+						onClick={ () =>
+							page.show( getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ) )
+						}
+						variant="link"
+					>
+						<Icon icon={ chevronLeft } size={ 16 } />
+						{ translate( 'Go Back' ) }
+					</Button>
+				}
+				actions={
+					! isLoading &&
+					status && (
+						<>
+							{ canGetCampaignStats( status ) &&
 								campaign?.campaign_stats?.impressions_total > 0 && (
 									<CampaignDownloadStats
 										siteId={ siteId }
@@ -907,734 +912,724 @@ export default function CampaignItemDetails( props: Props ) {
 										setStatsError={ () => setShowReportErrorDialog( true ) }
 									/>
 								) }
+							{ canPromoteAgainCampaign( status ) && (
+								<Button
+									variant="primary"
+									className="promote-again-button"
+									disabled={ ! isLoadingBillingSummary && paymentBlocked }
+									onClick={ onClickPromote }
+								>
+									{ translate( 'Promote Again' ) }
+								</Button>
+							) }
+						</>
+					)
+				}
+			>
+				<header className="campaign-item-header">
+					<div>
+						<div className="campaign-item-details__header-title">
+							{ isLoading ? <FlexibleSkeleton /> : campaignTitleFormatted }
+						</div>
+
+						<div className="campaign-item__header-status">
 							{ ! isLoading && status ? (
+								<Badge type={ getCampaignStatusBadgeColor( ui_status ) }>
+									{ getCampaignStatus( ui_status ) }
+								</Badge>
+							) : (
+								<div
+									style={ {
+										height: '20px',
+									} }
+								>
+									<FlexibleSkeleton />
+								</div>
+							) }
+
+							{ ! isLoading ? (
 								<>
-									{ canPromoteAgainCampaign( status ) && (
-										<Button
-											variant="primary"
-											className="promote-again-button"
-											disabled={ ! isLoadingBillingSummary && paymentBlocked }
-											onClick={ onClickPromote }
-										>
-											{ translate( 'Promote Again' ) }
-										</Button>
-									) }
+									<span>&bull;</span>
+									<div className="campaign-item__header-status-item">
+										{ translate( 'Created:' ) } { campaignCreatedFormatted }
+									</div>
+									<span>&bull;</span>
+									<div className="campaign-item__header-status-item">
+										{ translate( 'Author:' ) } { display_name }
+									</div>
 								</>
 							) : (
 								<FlexibleSkeleton />
 							) }
 						</div>
-					) }
-				</div>
-			</div>
-
-			<header className="campaign-item-header">
-				<div>
-					<div className="campaign-item-details__header-title">
-						{ isLoading ? <FlexibleSkeleton /> : campaignTitleFormatted }
 					</div>
-
-					<div className="campaign-item__header-status">
-						{ ! isLoading && status ? (
-							<Badge type={ getCampaignStatusBadgeColor( ui_status ) }>
-								{ getCampaignStatus( ui_status ) }
-							</Badge>
-						) : (
-							<div
-								style={ {
-									height: '20px',
-								} }
-							>
-								<FlexibleSkeleton />
-							</div>
-						) }
-
-						{ ! isLoading ? (
-							<>
-								<span>&bull;</span>
-								<div className="campaign-item__header-status-item">
-									{ translate( 'Created:' ) } { campaignCreatedFormatted }
-								</div>
-								<span>&bull;</span>
-								<div className="campaign-item__header-status-item">
-									{ translate( 'Author:' ) } { display_name }
-								</div>
-							</>
-						) : (
-							<FlexibleSkeleton />
-						) }
-					</div>
-				</div>
-			</header>
-			<hr className="campaign-item-details-header-line" />
-			<Main wideLayout className="campaign-item-details">
-				{ status === 'rejected' && (
-					<Notice
-						theme="light"
-						showDismiss={ false }
-						status="is-error"
-						icon="notice-outline"
-						className="promote-post-notice campaign-item-details__notice"
-					>
-						{ translate(
-							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',
-							{
-								components: {
-									wpcomTos: (
-										<a
-											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-									advertisingTos: (
-										<a
-											href="https://automattic.com/advertising-policy/"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
-					</Notice>
-				) }
-
-				{ status === 'suspended' && payment_links && payment_links.length > 0 && (
-					<>
+				</header>
+				<hr className="campaign-item-details-header-line" />
+				<Main wideLayout className="campaign-item-details">
+					{ status === 'rejected' && (
 						<Notice
 							theme="light"
 							showDismiss={ false }
 							status="is-error"
 							icon="notice-outline"
-							className="promote-post-notice campaign-item-details__notice campaign-suspended"
-							text={ translate(
-								'Your campaigns are suspended due to exceeding the credit limit. Please complete the payments using the provided links to resume your campaigns.'
+							className="promote-post-notice campaign-item-details__notice"
+						>
+							{ translate(
+								'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',
+								{
+									components: {
+										wpcomTos: (
+											<a
+												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+										advertisingTos: (
+											<a
+												href="https://automattic.com/advertising-policy/"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
 							) }
-						/>
-					</>
-				) }
+						</Notice>
+					) }
 
-				<section className="campaign-item-details__wrapper">
-					<div className="campaign-item-details__main">
-						{ status === 'suspended' && payment_links && payment_links.length > 0 && (
-							<PaymentLinks payment_links={ payment_links } />
-						) }
+					{ status === 'suspended' && payment_links && payment_links.length > 0 && (
+						<>
+							<Notice
+								theme="light"
+								showDismiss={ false }
+								status="is-error"
+								icon="notice-outline"
+								className="promote-post-notice campaign-item-details__notice campaign-suspended"
+								text={ translate(
+									'Your campaigns are suspended due to exceeding the credit limit. Please complete the payments using the provided links to resume your campaigns.'
+								) }
+							/>
+						</>
+					) }
 
-						{ shouldShowStats && (
-							<div className="campaign-item-details__main-stats-container">
-								<div className="campaign-item-details__main-stats campaign-item-details__impressions">
-									{ !! duration_days && (
+					<section className="campaign-item-details__wrapper">
+						<div className="campaign-item-details__main">
+							{ status === 'suspended' && payment_links && payment_links.length > 0 && (
+								<PaymentLinks payment_links={ payment_links } />
+							) }
+
+							{ shouldShowStats && (
+								<div className="campaign-item-details__main-stats-container">
+									<div className="campaign-item-details__main-stats campaign-item-details__impressions">
+										{ !! duration_days && (
+											<div className="campaign-item-details__main-stats-row ">
+												<div>
+													<span className="campaign-item-details__label">
+														{ translate( 'Duration' ) }
+													</span>
+													<span className="campaign-item-details__text wp-brand-font">
+														{ isLoading && <FlexibleSkeleton /> }
+														{ ! isLoading && is_evergreen ? translate( 'Until stopped' ) : '' }
+														{ ! isLoading && ! is_evergreen && durationFormatted }
+													</span>
+												</div>
+												<div>
+													<span className="campaign-item-details__label">
+														{ translate( 'Run between' ) }
+														&nbsp;
+														<InfoPopover position="right">
+															<span className="popover-title">
+																{ ! isLoading ? (
+																	durationDateAndTimeFormatted
+																) : (
+																	<FlexibleSkeleton />
+																) }
+															</span>
+														</InfoPopover>
+													</span>
+													<span className="campaign-item-details__text wp-brand-font">
+														{ ! isLoading ? durationDateFormatted : <FlexibleSkeleton /> }
+													</span>
+												</div>
+											</div>
+										) }
 										<div className="campaign-item-details__main-stats-row ">
-											<div>
-												<span className="campaign-item-details__label">
-													{ translate( 'Duration' ) }
-												</span>
-												<span className="campaign-item-details__text wp-brand-font">
-													{ isLoading && <FlexibleSkeleton /> }
-													{ ! isLoading && is_evergreen ? translate( 'Until stopped' ) : '' }
-													{ ! isLoading && ! is_evergreen && durationFormatted }
+											<div className="campaign-item-details__main-stats-title">
+												<span className="campaign-item-details__title">
+													{ translate( 'Ad Performance' ) }
 												</span>
 											</div>
 											<div>
 												<span className="campaign-item-details__label">
-													{ translate( 'Run between' ) }
-													&nbsp;
-													<InfoPopover position="right">
-														<span className="popover-title">
-															{ ! isLoading ? durationDateAndTimeFormatted : <FlexibleSkeleton /> }
+													{ translate( 'Clicks' ) }
+												</span>
+												<span className="campaign-item-details__text">
+													<span className="wp-brand-font">
+														{ ! isLoading ? clicksFormatted : <FlexibleSkeleton /> }
+													</span>
+													{ !! clicksOutperformedPercentage && (
+														<span className="campaign-item-details__outperformed">
+															{ translate( 'Outperformed' ) }
 														</span>
-													</InfoPopover>
-												</span>
-												<span className="campaign-item-details__text wp-brand-font">
-													{ ! isLoading ? durationDateFormatted : <FlexibleSkeleton /> }
-												</span>
-											</div>
-										</div>
-									) }
-									<div className="campaign-item-details__main-stats-row ">
-										<div className="campaign-item-details__main-stats-title">
-											<span className="campaign-item-details__title">
-												{ translate( 'Ad Performance' ) }
-											</span>
-										</div>
-										<div>
-											<span className="campaign-item-details__label">
-												{ translate( 'Clicks' ) }
-											</span>
-											<span className="campaign-item-details__text">
-												<span className="wp-brand-font">
-													{ ! isLoading ? clicksFormatted : <FlexibleSkeleton /> }
+													) }
 												</span>
 												{ !! clicksOutperformedPercentage && (
-													<span className="campaign-item-details__outperformed">
-														{ translate( 'Outperformed' ) }
+													<span>
+														{ translate( '%(percentage)s% more than estimated', {
+															args: {
+																percentage: clicksOutperformedPercentage,
+															},
+														} ) }
 													</span>
 												) }
-											</span>
-											{ !! clicksOutperformedPercentage && (
-												<span>
-													{ translate( '%(percentage)s% more than estimated', {
-														args: {
-															percentage: clicksOutperformedPercentage,
-														},
-													} ) }
+											</div>
+											<div>
+												<span className="campaign-item-details__label">
+													{ translate( 'Ad views' ) }
 												</span>
-											) }
-										</div>
-										<div>
-											<span className="campaign-item-details__label">
-												{ translate( 'Ad views' ) }
-											</span>
-											<span className="campaign-item-details__text">
-												<span className="wp-brand-font">
-													{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
+												<span className="campaign-item-details__text">
+													<span className="wp-brand-font">
+														{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
+													</span>
+													{ !! impressionsOutperformedPercentage && (
+														<span className="campaign-item-details__outperformed">
+															{ translate( 'Outperformed' ) }
+														</span>
+													) }
 												</span>
 												{ !! impressionsOutperformedPercentage && (
-													<span className="campaign-item-details__outperformed">
-														{ translate( 'Outperformed' ) }
+													<span>
+														{ translate( '%(percentage)s% more than estimated', {
+															args: {
+																percentage: impressionsOutperformedPercentage,
+															},
+														} ) }
 													</span>
 												) }
-											</span>
-											{ !! impressionsOutperformedPercentage && (
-												<span>
-													{ translate( '%(percentage)s% more than estimated', {
-														args: {
-															percentage: impressionsOutperformedPercentage,
-														},
-													} ) }
-												</span>
+											</div>
+											{ isWooStore && status !== 'created' && (
+												<>
+													<div>
+														<span className="campaign-item-details__label">
+															{ translate( 'Conversion Value' ) }
+															<InfoPopover
+																className="campaign-item-data__info-button"
+																position="bottom right"
+															>
+																{ __( 'Conversion Value:' ) }
+																<br />
+																<span className="popover-title">
+																	{ __(
+																		'assigns a monetary value associated with each conversion. Example: If each sale is worth $50, and you had 10 sales, your conversion value would be $500.'
+																	) }
+																</span>
+															</InfoPopover>
+														</span>
+														<span className="campaign-item-details__text wp-brand-font">
+															{ ! isLoading ? conversionValueFormatted : <FlexibleSkeleton /> }
+														</span>
+													</div>
+													<div>
+														<span className="campaign-item-details__label">
+															{ translate( 'Conversions' ) }
+															<InfoPopover
+																className="campaign-item-data__info-button"
+																position="bottom right"
+															>
+																{ __( 'Conversions:' ) }
+																<br />
+																<span className="popover-title">
+																	{ __(
+																		'show how many people made a purchase or completed a specific goal that aligns with the objectives of the campaign.'
+																	) }
+																</span>
+															</InfoPopover>
+														</span>
+														<span className="campaign-item-details__text wp-brand-font">
+															{ ! isLoading ? conversionsTotalFormatted : <FlexibleSkeleton /> }
+														</span>
+													</div>
+													<div>
+														<span className="campaign-item-details__label">
+															{ translate( 'Conversion Rate' ) }
+															<InfoPopover
+																className="campaign-item-data__info-button"
+																position="bottom right"
+															>
+																{ __( 'Conversion Rate:' ) }
+																<br />
+																<span className="popover-title">
+																	{ __(
+																		'shows the percentage of users who made a purchase (or completed a specific goal that aligns with the objectives of the campaign) out of the total number of users who clicked on the ad. Example: If your ad receives 100 clicks, and 5 people make a purchase, your conversion rate would be 5%.'
+																	) }
+																</span>
+															</InfoPopover>
+														</span>
+														<span className="campaign-item-details__text wp-brand-font">
+															{ ! isLoading ? conversionsRateFormatted : <FlexibleSkeleton /> }
+														</span>
+													</div>
+												</>
 											) }
 										</div>
-										{ isWooStore && status !== 'created' && (
+
+										{ areStatsEnabled && (
 											<>
-												<div>
-													<span className="campaign-item-details__label">
-														{ translate( 'Conversion Value' ) }
-														<InfoPopover
-															className="campaign-item-data__info-button"
-															position="bottom right"
-														>
-															{ __( 'Conversion Value:' ) }
-															<br />
-															<span className="popover-title">
-																{ __(
-																	'assigns a monetary value associated with each conversion. Example: If each sale is worth $50, and you had 10 sales, your conversion value would be $500.'
-																) }
-															</span>
-														</InfoPopover>
-													</span>
-													<span className="campaign-item-details__text wp-brand-font">
-														{ ! isLoading ? conversionValueFormatted : <FlexibleSkeleton /> }
-													</span>
-												</div>
-												<div>
-													<span className="campaign-item-details__label">
-														{ translate( 'Conversions' ) }
-														<InfoPopover
-															className="campaign-item-data__info-button"
-															position="bottom right"
-														>
-															{ __( 'Conversions:' ) }
-															<br />
-															<span className="popover-title">
-																{ __(
-																	'show how many people made a purchase or completed a specific goal that aligns with the objectives of the campaign.'
-																) }
-															</span>
-														</InfoPopover>
-													</span>
-													<span className="campaign-item-details__text wp-brand-font">
-														{ ! isLoading ? conversionsTotalFormatted : <FlexibleSkeleton /> }
-													</span>
-												</div>
-												<div>
-													<span className="campaign-item-details__label">
-														{ translate( 'Conversion Rate' ) }
-														<InfoPopover
-															className="campaign-item-data__info-button"
-															position="bottom right"
-														>
-															{ __( 'Conversion Rate:' ) }
-															<br />
-															<span className="popover-title">
-																{ __(
-																	'shows the percentage of users who made a purchase (or completed a specific goal that aligns with the objectives of the campaign) out of the total number of users who clicked on the ad. Example: If your ad receives 100 clicks, and 5 people make a purchase, your conversion rate would be 5%.'
-																) }
-															</span>
-														</InfoPopover>
-													</span>
-													<span className="campaign-item-details__text wp-brand-font">
-														{ ! isLoading ? conversionsRateFormatted : <FlexibleSkeleton /> }
-													</span>
-												</div>
-											</>
-										) }
-									</div>
-
-									{ areStatsEnabled && (
-										<>
-											<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
-												<div>
-													<div className="campaign-item-page__graph">
-														<DropdownMenu
-															class="campaign-item-page__graph-selector"
-															controls={ chartControls }
-															icon={ chevronDown }
-															text={ ChartSourceDateRangeLabels[ selectedDateRange ] }
-															label={ ChartSourceDateRangeLabels[ selectedDateRange ] }
-														/>
-														<DropdownMenu
-															class="campaign-item-page__graph-selector"
-															controls={ [
-																{
-																	onClick: () => setChartSource( ChartSourceOptions.Clicks ),
-																	title: __( 'Clicks' ),
-																	isDisabled: chartSource === ChartSourceOptions.Clicks,
-																},
-																{
-																	onClick: () => setChartSource( ChartSourceOptions.Impressions ),
-																	title: __( 'Impressions' ),
-																	isDisabled: chartSource === ChartSourceOptions.Impressions,
-																},
-															] }
-															icon={ chevronDown }
-															text={
-																chartSource === ChartSourceOptions.Clicks
-																	? __( 'Clicks' )
-																	: __( 'Impressions' )
-															}
-															label={ chartSource }
-														/>
-														{ getCampaignStatsChart(
-															campaignStats?.series[ chartSource ] ?? null,
-															chartSource,
-															campaignsStatsIsLoading
-														) }
-													</div>
-												</div>
-											</div>
-
-											{ campaignStats && (
 												<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
 													<div>
-														<div className="campaign-item-page__locaton-charts">
-															<span className="campaign-item-details__label">
-																{ chartSource === ChartSourceOptions.Clicks
-																	? __( 'Clicks by location' )
-																	: __( 'Impressions by location' ) }
-															</span>
-															<div>
-																<LocationChart
-																	stats={ campaignStats?.total_stats.countryStats[ chartSource ] }
-																	total={ campaignStats.total_stats.total[ chartSource ] }
-																	source={ chartSource }
-																/>
-															</div>
+														<div className="campaign-item-page__graph">
+															<DropdownMenu
+																class="campaign-item-page__graph-selector"
+																controls={ chartControls }
+																icon={ chevronDown }
+																text={ ChartSourceDateRangeLabels[ selectedDateRange ] }
+																label={ ChartSourceDateRangeLabels[ selectedDateRange ] }
+															/>
+															<DropdownMenu
+																class="campaign-item-page__graph-selector"
+																controls={ [
+																	{
+																		onClick: () => setChartSource( ChartSourceOptions.Clicks ),
+																		title: __( 'Clicks' ),
+																		isDisabled: chartSource === ChartSourceOptions.Clicks,
+																	},
+																	{
+																		onClick: () => setChartSource( ChartSourceOptions.Impressions ),
+																		title: __( 'Impressions' ),
+																		isDisabled: chartSource === ChartSourceOptions.Impressions,
+																	},
+																] }
+																icon={ chevronDown }
+																text={
+																	chartSource === ChartSourceOptions.Clicks
+																		? __( 'Clicks' )
+																		: __( 'Impressions' )
+																}
+																label={ chartSource }
+															/>
+															{ getCampaignStatsChart(
+																campaignStats?.series[ chartSource ] ?? null,
+																chartSource,
+																campaignsStatsIsLoading
+															) }
 														</div>
 													</div>
 												</div>
-											) }
-										</>
-									) }
-									{ tsp && getCampaignTSPStats( true ) }
-								</div>
-							</div>
-						) }
 
-						<div className="campaign-item-details__main-stats-container">
-							<div className="campaign-item-details__secondary-stats">
-								<div className="campaign-item-details__secondary-stats-row">
-									{ campaignIsFinished ? (
-										<div>
-											<span className="campaign-item-details__label">
-												{ translate( 'Overall spending' ) }
-											</span>
-											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
-											</span>
-										</div>
-									) : (
-										<>
-											{ is_evergreen ? (
-												<div>
-													<span className="campaign-item-details__label">
-														{ __( 'Weekly spend' ) }
-													</span>
-													<span className="campaign-item-details__text wp-brand-font align-baseline">
-														{ ! isLoading ? (
-															<>
-																{ weeklySpendFormatted }{ ' ' }
-																<span className="campaign-item-details__details no-bottom-margin">
-																	/ { totalBudgetFormatted }
+												{ campaignStats && (
+													<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+														<div>
+															<div className="campaign-item-page__locaton-charts">
+																<span className="campaign-item-details__label">
+																	{ chartSource === ChartSourceOptions.Clicks
+																		? __( 'Clicks by location' )
+																		: __( 'Impressions by location' ) }
 																</span>
-															</>
-														) : (
-															<FlexibleSkeleton />
-														) }
-													</span>
-													<span className="campaign-item-details__details">
-														{ ! isLoading ? (
-															`${ overallSpendingFormatted } ${ __( 'total' ) }`
-														) : (
-															<FlexibleSkeleton />
-														) }
-													</span>
-													{ weeklySpend > displayBudget && (
-														<span className="campaign-item-details__details outperformed_notice">
-															{ __(
-																'Your campaign outperformed this week! You’ll only be charged up to your budget.'
-															) }
+																<div>
+																	<LocationChart
+																		stats={ campaignStats?.total_stats.countryStats[ chartSource ] }
+																		total={ campaignStats.total_stats.total[ chartSource ] }
+																		source={ chartSource }
+																	/>
+																</div>
+															</div>
+														</div>
+													</div>
+												) }
+											</>
+										) }
+										{ tsp && getCampaignTSPStats( true ) }
+									</div>
+								</div>
+							) }
+
+							<div className="campaign-item-details__main-stats-container">
+								<div className="campaign-item-details__secondary-stats">
+									<div className="campaign-item-details__secondary-stats-row">
+										{ campaignIsFinished ? (
+											<div>
+												<span className="campaign-item-details__label">
+													{ translate( 'Overall spending' ) }
+												</span>
+												<span className="campaign-item-details__text wp-brand-font">
+													{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
+												</span>
+											</div>
+										) : (
+											<>
+												{ is_evergreen ? (
+													<div>
+														<span className="campaign-item-details__label">
+															{ __( 'Weekly spend' ) }
 														</span>
-													) }
-												</div>
-											) : (
-												<div>
-													<span className="campaign-item-details__label">
-														{ __( 'Total Budget' ) }
-													</span>
-													<span className="campaign-item-details__text wp-brand-font">
-														{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
-													</span>
-													{ budgetRemainingFormatted !== '' && (
-														<span className="campaign-item-details__details">
+														<span className="campaign-item-details__text wp-brand-font align-baseline">
 															{ ! isLoading ? (
-																`${ budgetRemainingFormatted } remaining`
+																<>
+																	{ weeklySpendFormatted }{ ' ' }
+																	<span className="campaign-item-details__details no-bottom-margin">
+																		/ { totalBudgetFormatted }
+																	</span>
+																</>
 															) : (
 																<FlexibleSkeleton />
 															) }
 														</span>
-													) }
-												</div>
-											) }
-										</>
-									) }
-									<div>
-										<span className="campaign-item-details__label">{ __( 'Cost-Per-Click' ) }</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? cpcFormatted : <FlexibleSkeleton /> }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? (
-												`${ ctrFormatted } ${ __( 'Click-through rate' ) }`
-											) : (
-												<FlexibleSkeleton />
-											) }
-										</span>
-									</div>
-								</div>
-
-								<div className="campaign-item-details__secondary-stats-interests-mobile">
-									<>
-										<span className="campaign-item-details__label">
-											{ translate( 'Interests' ) }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
-										</span>
-									</>
-								</div>
-
-								{ areStatsEnabled && campaign?.campaign_stats?.impressions_total > 0 && (
-									<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
-										<div>
-											<div className="campaign-item-page__graph">
-												{ getCampaignStatsChart(
-													campaignStats?.series.spend ?? [],
-													ChartSourceOptions.Spend,
-													campaignsStatsIsLoading
-												) }
-											</div>
-										</div>
-									</div>
-								) }
-							</div>
-						</div>
-
-						{ ! shouldShowStats && tsp && (
-							<div className="campaign-item-details__main-stats-container">
-								{ getCampaignTSPStats( false ) }
-							</div>
-						) }
-
-						<div className="campaign-item-details__main-stats-container">
-							<div className="campaign-item-details__secondary-stats">
-								<div className="campaign-item-details__secondary-stats-row">
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Audience' ) }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? devicesListFormatted : <FlexibleSkeleton /> }
-										</span>
-									</div>
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Languages' ) }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
-										</span>
-									</div>
-									<div className="campaign-item-details-interests">
-										<span className="campaign-item-details__label">
-											{ translate( 'Interests' ) }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
-										</span>
-									</div>
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Location' ) }
-										</span>
-										<span className="campaign-item-details__details campaign-item-details__locations">
-											{ ! isLoading ? (
-												<TargetLocations audienceList={ audience_list } />
-											) : (
-												<FlexibleSkeleton />
-											) }
-										</span>
-									</div>
-									<div className="campaign-item-details__destination">
-										<span className="campaign-item-details__label">
-											{ translate( 'Destination' ) }
-										</span>
-										<div className="campaign-item-details__ad-destination-url-container">
-											{ ! isLoading ? (
-												<Button
-													className="campaign-item-details__ad-destination-url-link"
-													href={ clickUrl }
-													target="_blank"
-												>
-													{ getDestinationLabel() }
-													<Gridicon icon="external" size={ 16 } />
-												</Button>
-											) : (
-												<FlexibleSkeleton />
-											) }
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						{ canDisplayPaymentSection ? (
-							<div className="campaign-item-details__payment-container">
-								<div className="campaign-item-details__payment">
-									<div className="campaign-item-details__payment-row ">
-										{ orders && orders.length > 0 && (
-											<div className="campaign-item-details__weekly-orders-row">
-												<div className="campaign-item-details__weekly-label"></div>
-												<div className="campaign-item-details__weekly-duration">
-													<span className="campaign-item-details__label">
-														{ translate( 'Duration' ) }
-													</span>
-												</div>
-												<div className="campaign-item-details__weekly-amount">
-													<span className="campaign-item-details__label">
-														{ translate( 'Amount' ) }
-													</span>
-												</div>
-											</div>
-										) }
-										{ orders && orders.length > 0
-											? orders.map( ( order: Order, index: number ) => {
-													const { lineItems, createdAt } = order;
-
-													// Only sum the total of the line items that belong to the current
-													// campaign (orders can have multiple campaigns)
-													let campaignTotal = 0;
-													lineItems.forEach( ( item ) => {
-														if ( item.campaignId === campaignId ) {
-															campaignTotal += +item.total;
-														}
-													} );
-
-													// Format the total to display it
-													const campaignTotalFormatted = formatCents( campaignTotal, 2 );
-
-													// Format the date for display
-													const formatDuration = ( createdAt: string ) => {
-														const originalDate = moment( createdAt );
-
-														// We only have the "created at" date stored, so we need to subtract a week to match the billing cycle
-														let periodStart = originalDate.clone().subtract( 7, 'days' );
-
-														if ( periodStart.isBefore( moment( start_date ) ) ) {
-															periodStart = moment( start_date );
-														}
-
-														return `${ periodStart.format( 'MMM, D' ) } - ${ originalDate.format(
-															'MMM, D'
-														) }`;
-													};
-
-													const durationFormatted = formatDuration( createdAt );
-
-													if ( order.status !== 'COMPLETED' ) {
-														// we only want to display data when orders are in completed state
-														return null;
-													}
-
-													return (
-														<div key={ index } className="campaign-item-details__weekly-orders-row">
-															<div className="campaign-item-details__weekly-label">
-																{ is_evergreen ? __( 'Weekly spent' ) : __( 'Weekly total' ) }
-															</div>
-															<div className="campaign-item-details__weekly-duration">
-																{ durationFormatted }
-															</div>
-															<div className="campaign-item-details__weekly-amount">
-																${ campaignTotalFormatted }
-															</div>
-														</div>
-													);
-											  } )
-											: [] }
-										{ orders && orders.length > 0 && (
-											<div className="campaign-item-details__weekly-orders-row">
-												<div className="campaign-item-details__weekly-orders-seperator"></div>
-											</div>
-										) }
-										<div
-											className={ clsx( 'campaign-item-details__secondary-payment-row', {
-												'no-payment-method': ! payment_method || ! card_name,
-											} ) }
-										>
-											{ payment_method && card_name && (
-												<>
-													<div className="campaign-item-details__payment-method">
-														<span className="campaign-item-details__label">
-															{ translate( 'Payment method' ) }
+														<span className="campaign-item-details__details">
+															{ ! isLoading ? (
+																`${ overallSpendingFormatted } ${ __( 'total' ) }`
+															) : (
+																<FlexibleSkeleton />
+															) }
 														</span>
-														<span>{ card_name }</span>
-														{ payment_method && <span>{ payment_method }</span> }
+														{ weeklySpend > displayBudget && (
+															<span className="campaign-item-details__details outperformed_notice">
+																{ __(
+																	'Your campaign outperformed this week! You’ll only be charged up to your budget.'
+																) }
+															</span>
+														) }
 													</div>
-													<hr className="campaign-item-details-footer-line" />
-												</>
-											) }
-											<div className="campaign-item-details__total">
-												{ credits ? (
-													<span className="campaign-item-details__label">
-														<div>{ translate( 'Credits' ) }</div>
-														<div className="amount">{ creditsFormatted }</div>
-													</span>
 												) : (
-													[]
-												) }
-												{ ! isNaN( total || 0 ) ? (
 													<div>
 														<span className="campaign-item-details__label">
-															<div>{ translate( 'Total' ) }</div>
-															<div className="amount">{ totalFormatted }</div>
+															{ __( 'Total Budget' ) }
 														</span>
-														<p className="campaign-item-details__payment-charges-disclosure">
-															{ translate( 'Promotional codes are not included.' ) }
-															<br />
-															{ translate( 'All charges inclusive of VAT, if any.' ) }
-														</p>
+														<span className="campaign-item-details__text wp-brand-font">
+															{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
+														</span>
+														{ budgetRemainingFormatted !== '' && (
+															<span className="campaign-item-details__details">
+																{ ! isLoading ? (
+																	`${ budgetRemainingFormatted } remaining`
+																) : (
+																	<FlexibleSkeleton />
+																) }
+															</span>
+														) }
 													</div>
+												) }
+											</>
+										) }
+										<div>
+											<span className="campaign-item-details__label">
+												{ __( 'Cost-Per-Click' ) }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? cpcFormatted : <FlexibleSkeleton /> }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? (
+													`${ ctrFormatted } ${ __( 'Click-through rate' ) }`
 												) : (
-													[]
+													<FlexibleSkeleton />
+												) }
+											</span>
+										</div>
+									</div>
+
+									<div className="campaign-item-details__secondary-stats-interests-mobile">
+										<>
+											<span className="campaign-item-details__label">
+												{ translate( 'Interests' ) }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
+											</span>
+										</>
+									</div>
+
+									{ areStatsEnabled && campaign?.campaign_stats?.impressions_total > 0 && (
+										<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+											<div>
+												<div className="campaign-item-page__graph">
+													{ getCampaignStatsChart(
+														campaignStats?.series.spend ?? [],
+														ChartSourceOptions.Spend,
+														campaignsStatsIsLoading
+													) }
+												</div>
+											</div>
+										</div>
+									) }
+								</div>
+							</div>
+
+							{ ! shouldShowStats && tsp && (
+								<div className="campaign-item-details__main-stats-container">
+									{ getCampaignTSPStats( false ) }
+								</div>
+							) }
+
+							<div className="campaign-item-details__main-stats-container">
+								<div className="campaign-item-details__secondary-stats">
+									<div className="campaign-item-details__secondary-stats-row">
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Audience' ) }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? devicesListFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Languages' ) }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										<div className="campaign-item-details-interests">
+											<span className="campaign-item-details__label">
+												{ translate( 'Interests' ) }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Location' ) }
+											</span>
+											<span className="campaign-item-details__details campaign-item-details__locations">
+												{ ! isLoading ? (
+													<TargetLocations audienceList={ audience_list } />
+												) : (
+													<FlexibleSkeleton />
+												) }
+											</span>
+										</div>
+										<div className="campaign-item-details__destination">
+											<span className="campaign-item-details__label">
+												{ translate( 'Destination' ) }
+											</span>
+											<div className="campaign-item-details__ad-destination-url-container">
+												{ ! isLoading ? (
+													<Button
+														className="campaign-item-details__ad-destination-url-link"
+														href={ clickUrl }
+														target="_blank"
+													>
+														{ getDestinationLabel() }
+														<Gridicon icon="external" size={ 16 } />
+													</Button>
+												) : (
+													<FlexibleSkeleton />
 												) }
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						) : (
-							[]
-						) }
-						<div className="campaign-item-details__powered-by desktop">
-							{ isWooStore ? (
-								<span>{ translate( 'Blaze Ads - Powered by Jetpack' ) }</span>
+
+							{ canDisplayPaymentSection ? (
+								<div className="campaign-item-details__payment-container">
+									<div className="campaign-item-details__payment">
+										<div className="campaign-item-details__payment-row ">
+											{ orders && orders.length > 0 && (
+												<div className="campaign-item-details__weekly-orders-row">
+													<div className="campaign-item-details__weekly-label"></div>
+													<div className="campaign-item-details__weekly-duration">
+														<span className="campaign-item-details__label">
+															{ translate( 'Duration' ) }
+														</span>
+													</div>
+													<div className="campaign-item-details__weekly-amount">
+														<span className="campaign-item-details__label">
+															{ translate( 'Amount' ) }
+														</span>
+													</div>
+												</div>
+											) }
+											{ orders && orders.length > 0
+												? orders.map( ( order: Order, index: number ) => {
+														const { lineItems, createdAt } = order;
+
+														// Only sum the total of the line items that belong to the current
+														// campaign (orders can have multiple campaigns)
+														let campaignTotal = 0;
+														lineItems.forEach( ( item ) => {
+															if ( item.campaignId === campaignId ) {
+																campaignTotal += +item.total;
+															}
+														} );
+
+														// Format the total to display it
+														const campaignTotalFormatted = formatCents( campaignTotal, 2 );
+
+														// Format the date for display
+														const formatDuration = ( createdAt: string ) => {
+															const originalDate = moment( createdAt );
+
+															// We only have the "created at" date stored, so we need to subtract a week to match the billing cycle
+															let periodStart = originalDate.clone().subtract( 7, 'days' );
+
+															if ( periodStart.isBefore( moment( start_date ) ) ) {
+																periodStart = moment( start_date );
+															}
+
+															return `${ periodStart.format( 'MMM, D' ) } - ${ originalDate.format(
+																'MMM, D'
+															) }`;
+														};
+
+														const durationFormatted = formatDuration( createdAt );
+
+														if ( order.status !== 'COMPLETED' ) {
+															// we only want to display data when orders are in completed state
+															return null;
+														}
+
+														return (
+															<div
+																key={ index }
+																className="campaign-item-details__weekly-orders-row"
+															>
+																<div className="campaign-item-details__weekly-label">
+																	{ is_evergreen ? __( 'Weekly spent' ) : __( 'Weekly total' ) }
+																</div>
+																<div className="campaign-item-details__weekly-duration">
+																	{ durationFormatted }
+																</div>
+																<div className="campaign-item-details__weekly-amount">
+																	${ campaignTotalFormatted }
+																</div>
+															</div>
+														);
+												  } )
+												: [] }
+											{ orders && orders.length > 0 && (
+												<div className="campaign-item-details__weekly-orders-row">
+													<div className="campaign-item-details__weekly-orders-seperator"></div>
+												</div>
+											) }
+											<div
+												className={ clsx( 'campaign-item-details__secondary-payment-row', {
+													'no-payment-method': ! payment_method || ! card_name,
+												} ) }
+											>
+												{ payment_method && card_name && (
+													<>
+														<div className="campaign-item-details__payment-method">
+															<span className="campaign-item-details__label">
+																{ translate( 'Payment method' ) }
+															</span>
+															<span>{ card_name }</span>
+															{ payment_method && <span>{ payment_method }</span> }
+														</div>
+														<hr className="campaign-item-details-footer-line" />
+													</>
+												) }
+												<div className="campaign-item-details__total">
+													{ credits ? (
+														<span className="campaign-item-details__label">
+															<div>{ translate( 'Credits' ) }</div>
+															<div className="amount">{ creditsFormatted }</div>
+														</span>
+													) : (
+														[]
+													) }
+													{ ! isNaN( total || 0 ) ? (
+														<div>
+															<span className="campaign-item-details__label">
+																<div>{ translate( 'Total' ) }</div>
+																<div className="amount">{ totalFormatted }</div>
+															</span>
+															<p className="campaign-item-details__payment-charges-disclosure">
+																{ translate( 'Promotional codes are not included.' ) }
+																<br />
+																{ translate( 'All charges inclusive of VAT, if any.' ) }
+															</p>
+														</div>
+													) : (
+														[]
+													) }
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
 							) : (
-								<span>{ translate( 'Blaze powered by Jetpack' ) }</span>
+								[]
 							) }
 						</div>
-					</div>
-					<div className="campaign-item-details__preview">
-						<div className="campaign-item-details__preview-container">
-							<div className="campaign-item-details__preview-header">
-								<div className="campaign-item-details__preview-header-title">
-									{ translate( 'This ad is responsive' ) }
+						<div className="campaign-item-details__preview">
+							<div className="campaign-item-details__preview-container">
+								<div className="campaign-item-details__preview-header">
+									<div className="campaign-item-details__preview-header-title">
+										{ translate( 'This ad is responsive' ) }
+									</div>
+									<div className="campaign-item-details__preview-header-label">
+										{ ! isLoading ? <>{ adPreviewLabel }</> : <FlexibleSkeleton /> }
+									</div>
 								</div>
-								<div className="campaign-item-details__preview-header-label">
-									{ ! isLoading ? <>{ adPreviewLabel }</> : <FlexibleSkeleton /> }
+								<AdPreview
+									isLoading={ isLoading }
+									htmlCode={ creative_html || '' }
+									templateFormat={ format || '' }
+									width={ isWpcomHtmlFormat ? '100%' : '300px' }
+								/>
+								<div className="campaign-item-details__preview-disclosure">
+									{ getExternalTabletIcon() }
+									<span className="preview-disclosure-text">
+										{ translate(
+											'Depending on the platform, the ad may look different from the preview.'
+										) }
+									</span>
 								</div>
 							</div>
-							<AdPreview
-								isLoading={ isLoading }
-								htmlCode={ creative_html || '' }
-								templateFormat={ format || '' }
-								width={ isWpcomHtmlFormat ? '100%' : '300px' }
-							/>
-							<div className="campaign-item-details__preview-disclosure">
-								{ getExternalTabletIcon() }
-								<span className="preview-disclosure-text">
-									{ translate(
-										'Depending on the platform, the ad may look different from the preview.'
-									) }
-								</span>
-							</div>
-						</div>
 
-						<div className="campaign-item-details__support-buttons-container">
-							<div className="campaign-item-details__support-articles-wrapper">
-								<div className="campaign-item-details__support-heading">
-									{ translate( 'Support articles' ) }
-								</div>
-								{ /*
+							<div className="campaign-item-details__support-buttons-container">
+								<div className="campaign-item-details__support-articles-wrapper">
+									<div className="campaign-item-details__support-heading">
+										{ translate( 'Support articles' ) }
+									</div>
+									{ /*
 								commented out until we get the link
 								<Button className="is-link campaign-item-details__support-effective-ad-doc">
 									{ translate( 'What makes an effective ad?' ) }
 									{ getExternalLinkIcon() }
 								</Button>*/ }
 
-								<InlineSupportLink
-									className="is-link components-button campaign-item-details__support-link"
-									supportContext="advertising"
-									showIcon={ false }
-									showSupportModal={ ! isSelfHosted }
+									<InlineSupportLink
+										className="is-link components-button campaign-item-details__support-link"
+										supportContext="advertising"
+										showIcon={ false }
+										showSupportModal={ ! isSelfHosted }
+									>
+										{ translate( 'View documentation' ) }
+										<Gridicon icon="external" size={ 16 } />
+									</InlineSupportLink>
+								</div>
+
+								<Button
+									className="contact-support-button"
+									href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+									target="_blank"
 								>
-									{ translate( 'View documentation' ) }
-									<Gridicon icon="external" size={ 16 } />
-								</InlineSupportLink>
-							</div>
+									{ icon }
+									{ translate( 'Get support' ) }
+								</Button>
 
-							<Button
-								className="contact-support-button"
-								href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
-								target="_blank"
-							>
-								{ icon }
-								{ translate( 'Get support' ) }
-							</Button>
-
-							{ ! isLoading && status && (
-								<>
-									{ canCancelCampaign( status ) && (
-										<Button
-											className="cancel-campaign-button"
-											onClick={ () => setShowDeleteDialog( true ) }
-										>
-											{ cancelCampaignButtonText }
-										</Button>
-									) }
-								</>
-							) }
-							<div className="campaign-item-details__powered-by mobile">
-								{ isWooStore ? (
-									<span>{ translate( 'Blaze Ads - Powered by Jetpack' ) }</span>
-								) : (
-									<span>{ translate( 'Blaze powered by Jetpack' ) }</span>
+								{ ! isLoading && status && (
+									<>
+										{ canCancelCampaign( status ) && (
+											<Button
+												className="cancel-campaign-button"
+												onClick={ () => setShowDeleteDialog( true ) }
+											>
+												{ cancelCampaignButtonText }
+											</Button>
+										) }
+									</>
 								) }
 							</div>
 						</div>
-					</div>
-				</section>
-			</Main>
+					</section>
+				</Main>
+				<BlazeFooter />
+			</Page>
 		</div>
 	);
 }

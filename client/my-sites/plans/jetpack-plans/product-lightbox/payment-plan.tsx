@@ -3,7 +3,6 @@ import { PlanPrice } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { isNumber } from 'lodash';
 import { useCallback } from 'react';
 import TimeFrame from 'calypso/components/jetpack/card/jetpack-product-card/display-price/time-frame';
 import productTooltip from 'calypso/my-sites/plans/jetpack-plans/product-card/product-tooltip';
@@ -72,7 +71,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	};
 
 	const { originalCurrentTierPrice, currentTierPrice } = getCurrentTierPrice();
-	const currentPrice = isNumber( discountedPrice ) ? discountedPrice : originalPrice;
+	const currentPrice = typeof discountedPrice === 'number' ? discountedPrice : originalPrice;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
 	const tooltipText = productTooltip( product, priceTierList, currencyCode ?? 'USD' );
@@ -85,7 +84,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	const billingTerm = product.displayTerm || product.term;
 
 	const getDiscountedLabel = useCallback( () => {
-		if ( ! isNumber( discountedPrice ) ) {
+		if ( typeof discountedPrice !== 'number' ) {
 			return;
 		}
 
@@ -143,12 +142,12 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 									formattedOriginalPrice={ formatCurrency( originalPrice, currencyCode, {
 										stripZeros: true,
 									} ) }
-									isDiscounted={ isNumber( discountedPrice ) }
+									isDiscounted={ typeof discountedPrice === 'number' }
 									finalPrice={ currentPrice }
 								/>
 							</div>
 						</div>
-						{ isNumber( discountedPrice ) && (
+						{ typeof discountedPrice === 'number' && (
 							<div className={ labelClass }>
 								<span className="product-lightbox__variants-plan-card-old-price">
 									<PlanPrice

@@ -108,6 +108,11 @@
 		}
 	}
 
+	.achievement-card__caption-context::before {
+		content: "·";
+		margin-inline: 4px;
+	}
+
 	.achievement-card__progress {
 		align-items: center;
 		display: flex;

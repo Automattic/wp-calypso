@@ -1,6 +1,6 @@
 import { Card, Popover } from '@automattic/components';
 import clsx from 'clsx';
-import { useRef, useState } from 'react';
+import { useRef, useState, type JSX } from 'react';
 import { formatNumber } from './lib/numbers';
 import TooltipContent from './tooltip-content';
 
@@ -10,7 +10,9 @@ interface CountCardProps {
 	label?: string;
 	note?: string;
 	showValueTooltip?: boolean;
-	value: number | null;
+	// A string value is rendered verbatim (already formatted, e.g. a percentage
+	// or a "< 1.0" floor); a number is shortened via formatNumber.
+	value: number | string | null;
 	previousValue?: number | null;
 }
 

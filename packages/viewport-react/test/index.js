@@ -4,9 +4,10 @@
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["runComponentTests", "expect"] }] */
 
-import { Component, useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import { act, Component, useState, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 let helpers;
 
@@ -46,18 +47,18 @@ const matchMediaMock = jest.fn( ( query ) => {
 
 describe( '@automattic/viewport-react', () => {
 	let container;
+	let root;
 
 	// Auxiliary method to test a valid component.
 	function runComponentTests( TestComponent, query ) {
 		// Test initial state (defaults to true).
 		act( () => {
-			ReactDOM.render(
+			root.render(
 				<div>
 					<TestComponent />
 					<TestComponent />
 					<TestComponent />
-				</div>,
-				container
+				</div>
 			);
 		} );
 
@@ -75,7 +76,7 @@ describe( '@automattic/viewport-react', () => {
 
 		// Ensure that listeners are cleaned up when the component unmounts.
 		act( () => {
-			ReactDOM.render( <div />, container );
+			root.render( <div /> );
 		} );
 
 		expect( listeners[ query ].length ).toBe( 0 );
@@ -99,6 +100,7 @@ describe( '@automattic/viewport-react', () => {
 	beforeEach( () => {
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
+		root = createRoot( container );
 
 		matchesMock.mockClear();
 		addListenerMock.mockClear();
@@ -106,8 +108,11 @@ describe( '@automattic/viewport-react', () => {
 	} );
 
 	afterEach( () => {
+		act( () => {
+			root.unmount();
+		} );
 		document.body.removeChild( container );
-		ReactDOM.unmountComponentAtNode( container );
+		root = null;
 		container = null;
 	} );
 
@@ -123,7 +128,7 @@ describe( '@automattic/viewport-react', () => {
 			}
 
 			act( () => {
-				ReactDOM.render( <TestComponent />, container );
+				root.render( <TestComponent /> );
 			} );
 
 			expect( container.textContent ).toBe( 'undefined' );
@@ -136,7 +141,7 @@ describe( '@automattic/viewport-react', () => {
 			}
 
 			act( () => {
-				ReactDOM.render( <TestComponent />, container );
+				root.render( <TestComponent /> );
 			} );
 
 			expect( container.textContent ).toBe( 'undefined' );
@@ -168,11 +173,10 @@ describe( '@automattic/viewport-react', () => {
 
 			// Test initial state (defaults to true).
 			act( () => {
-				ReactDOM.render(
+				root.render(
 					<div>
 						<TestComponent />
-					</div>,
-					container
+					</div>
 				);
 			} );
 
@@ -195,7 +199,7 @@ describe( '@automattic/viewport-react', () => {
 
 			// Ensure that listeners are cleaned up when the component unmounts.
 			act( () => {
-				ReactDOM.render( <div />, container );
+				root.render( <div /> );
 			} );
 
 			expect( listeners[ '(max-width: 480px)' ].length ).toBe( 0 );
@@ -236,7 +240,7 @@ describe( '@automattic/viewport-react', () => {
 			const TestComponent = helpers.withBreakpoint()( ExpectUndefinedComponent );
 
 			act( () => {
-				ReactDOM.render( <TestComponent />, container );
+				root.render( <TestComponent /> );
 			} );
 
 			expect( container.textContent ).toBe( 'undefined' );
@@ -246,7 +250,7 @@ describe( '@automattic/viewport-react', () => {
 			const TestComponent = helpers.withBreakpoint( 'unknown' )( ExpectUndefinedComponent );
 
 			act( () => {
-				ReactDOM.render( <TestComponent />, container );
+				root.render( <TestComponent /> );
 			} );
 
 			expect( container.textContent ).toBe( 'undefined' );

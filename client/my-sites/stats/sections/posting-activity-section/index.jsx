@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { values } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -25,7 +24,7 @@ class PostingActivitySection extends Component {
 	getMonthComponents = () => {
 		const { streakData } = this.props;
 		// Compute maximum per-day post count from the streakData. It's used to scale the chart.
-		const maxPosts = Math.max( ...values( streakData ) );
+		const maxPosts = Math.max( ...Object.values( streakData || {} ) );
 		const months = [];
 
 		for ( let i = 11; i >= 0; i-- ) {

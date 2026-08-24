@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
 
 .jetpack-product-info__header {
 	align-items: center;
@@ -15,7 +16,6 @@
 
 	a {
 		text-decoration: underline;
-		color: var(--color-text);
 	}
 }
 
@@ -59,7 +59,6 @@
 	font-size: 1rem;
 
 	a {
-		color: var(--color-text);
 		text-decoration: underline;
 	}
 }
@@ -173,7 +172,6 @@
 
 	a {
 		text-decoration: underline;
-		color: var(--color-text);
 	}
 }
 

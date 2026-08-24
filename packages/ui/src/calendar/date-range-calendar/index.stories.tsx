@@ -1,4 +1,3 @@
-import { fn } from '@storybook/test';
 import {
 	enUS,
 	fr,
@@ -19,6 +18,7 @@ import {
 	sv,
 } from 'date-fns/locale';
 import { useState, useEffect } from 'react';
+import { fn } from 'storybook/test';
 import { DateRangeCalendar, TZDate } from '../';
 import type { Meta, StoryObj } from '@storybook/react';
 

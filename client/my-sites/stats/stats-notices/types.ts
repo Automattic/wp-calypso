@@ -18,7 +18,7 @@ export interface StatsNoticeProps {
 	isSiteJetpackNotAtomic?: boolean;
 	statsPurchaseSuccess?: string;
 	isCommercial?: boolean;
-	isCommercialOwned?: boolean;
+	supportCommercialUse?: boolean;
 	hasPWYWPlanOnly?: boolean;
 	showPaywallNotice?: boolean;
 	hasSignificantViews?: boolean;

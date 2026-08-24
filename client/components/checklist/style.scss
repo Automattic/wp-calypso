@@ -1,3 +1,8 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 $task-left-padding: 55px;
 $task-right-padding: 50px;
 $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );

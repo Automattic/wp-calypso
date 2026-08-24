@@ -1,10 +1,9 @@
-import { get } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { domainAvailability } from './constants';
 
 export function checkDomainAvailability( params, onComplete ) {
 	const { domainName, blogId } = params;
-	const isCartPreCheck = get( params, 'isCartPreCheck', false );
+	const isCartPreCheck = params?.isCartPreCheck ?? false;
 	if ( ! domainName ) {
 		onComplete( null, { status: domainAvailability.EMPTY_QUERY } );
 		return;

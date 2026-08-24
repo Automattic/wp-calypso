@@ -1,6 +1,7 @@
 import { handleSupportInteractionsFetch } from '@automattic/odie-client/src/data/handle-support-interactions-fetch';
 import { isTestModeEnvironment, useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
+import { isCookieAuthMissing } from 'wpcom-proxy-request';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import type { SupportProvider } from '../types';
 
@@ -13,10 +14,13 @@ export const useGetSupportInteractions = (
 	enabled = true
 ) => {
 	const isTestMode = isTestModeEnvironment();
-	const { currentUser } = useHelpCenterContext();
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
+	const { currentUser, site } = useHelpCenterContext();
+	// No auth cookie yet (e.g. right after in-stepper signup) means these authed requests
+	// would 401 and leave the panel stuck loading; skip them and render the logged-out home.
+	const isAuthed = !! currentUser?.ID && ! isCookieAuthMissing();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( isAuthed, site?.ID );
 
-	let shouldFetch = enabled && !! currentUser?.ID;
+	let shouldFetch = enabled && isAuthed;
 	// Only fetch Zendesk interactions if the user can connect to Zendesk.
 	if ( ( provider === 'zendesk' || provider === 'zendesk-staging' ) && ! canConnectToZendesk ) {
 		shouldFetch = false;

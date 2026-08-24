@@ -4,7 +4,7 @@ import { Button as WPButton } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useRef, useState, type JSX } from 'react';
 import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';

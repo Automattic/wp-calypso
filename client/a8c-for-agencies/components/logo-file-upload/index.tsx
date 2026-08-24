@@ -38,7 +38,9 @@ export interface LogoFileUploadProps {
 function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ error, setError ] = useState< LogoFileValidationError | 'dimensions' | null >( null );
+	const [ error, setError ] = useState< LogoFileValidationError | 'dimensions' | 'decode' | null >(
+		null
+	);
 	const maxLogoSizeMb = Math.floor( A4A_LOGO_MAX_FILE_SIZE_BYTES / ( 1024 * 1024 ) );
 
 	const handleFileSelect = useCallback(
@@ -58,10 +60,16 @@ function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
 				return;
 			}
 
-			const isValidDimensions = await validateLogoDimensions( file, {
-				requiredWidth: A4A_LOGO_REQUIRED_WIDTH,
-				requiredHeight: A4A_LOGO_REQUIRED_HEIGHT,
-			} );
+			let isValidDimensions = false;
+			try {
+				isValidDimensions = await validateLogoDimensions( file, {
+					requiredWidth: A4A_LOGO_REQUIRED_WIDTH,
+					requiredHeight: A4A_LOGO_REQUIRED_HEIGHT,
+				} );
+			} catch {
+				setError( 'decode' );
+				return;
+			}
 
 			if ( ! isValidDimensions ) {
 				setError( 'dimensions' );
@@ -93,6 +101,10 @@ function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
 				height: A4A_LOGO_REQUIRED_HEIGHT,
 			},
 		} );
+	}
+
+	if ( error === 'decode' ) {
+		errorMessage = translate( 'The image could not be read. Please use a valid JPG or PNG.' );
 	}
 
 	const uploadHelpText = translate(

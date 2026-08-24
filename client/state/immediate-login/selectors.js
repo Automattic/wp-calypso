@@ -1,4 +1,3 @@
-import { get, includes } from 'lodash';
 import { REASONS_FOR_MANUAL_RENEWAL } from './constants';
 
 import 'calypso/state/immediate-login/init';
@@ -11,7 +10,7 @@ import 'calypso/state/immediate-login/init';
  *                  login attempt was made
  */
 export const wasImmediateLoginAttempted = ( state ) => {
-	return get( state, 'immediateLogin.attempt', false );
+	return state?.immediateLogin?.attempt ?? false;
 };
 
 /**
@@ -28,7 +27,7 @@ export const wasImmediateLoginAttempted = ( state ) => {
  *                      login attempt was successful
  */
 export const wasImmediateLoginSuccessfulAccordingToClient = ( state ) => {
-	return get( state, 'immediateLogin.success', false );
+	return state?.immediateLogin?.success ?? false;
 };
 
 /**
@@ -38,7 +37,7 @@ export const wasImmediateLoginSuccessfulAccordingToClient = ( state ) => {
  * @returns {?string} - Reason for immediate login, or null
  */
 export const getImmediateLoginReason = ( state ) => {
-	return get( state, 'immediateLogin.reason', null );
+	return state?.immediateLogin?.reason ?? null;
 };
 
 /**
@@ -49,7 +48,7 @@ export const getImmediateLoginReason = ( state ) => {
  *                     null
  */
 export const getImmediateLoginEmail = ( state ) => {
-	return get( state, 'immediateLogin.email', null );
+	return state?.immediateLogin?.email ?? null;
 };
 
 /**
@@ -60,7 +59,7 @@ export const getImmediateLoginEmail = ( state ) => {
  *                     attempting to log in, or null
  */
 export const getImmediateLoginLocale = ( state ) => {
-	return get( state, 'immediateLogin.locale', null );
+	return state?.immediateLogin?.locale ?? null;
 };
 
 /**
@@ -73,5 +72,5 @@ export const getImmediateLoginLocale = ( state ) => {
  *                      login attempt was made from a manual renewal email
  */
 export const wasManualRenewalImmediateLoginAttempted = ( state ) => {
-	return includes( REASONS_FOR_MANUAL_RENEWAL, getImmediateLoginReason( state ) );
+	return REASONS_FOR_MANUAL_RENEWAL.includes( getImmediateLoginReason( state ) );
 };

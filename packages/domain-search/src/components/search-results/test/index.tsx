@@ -19,7 +19,10 @@ describe( 'SearchResults', () => {
 
 		render(
 			<TestDomainSearchWithSuggestions query="test">
-				<SearchResults suggestions={ [ 'test-regular.com', 'test-regular.net' ] } />
+				<SearchResults
+					suggestions={ [ 'test-regular.com', 'test-regular.net' ] }
+					getInlineBundle={ () => undefined }
+				/>
 			</TestDomainSearchWithSuggestions>
 		);
 
@@ -35,7 +38,7 @@ describe( 'SearchResults', () => {
 
 		const { container } = render(
 			<TestDomainSearchWithSuggestions query="test-no-suggestions">
-				<SearchResults suggestions={ [] } />
+				<SearchResults suggestions={ [] } getInlineBundle={ () => undefined } />
 			</TestDomainSearchWithSuggestions>
 		);
 
@@ -61,7 +64,7 @@ describe( 'SearchResults', () => {
 		render(
 			<TestDomainSearchWithSuggestions query="test-no-suggestions" events={ { onFilterReset } }>
 				<Filter />
-				<SearchResults suggestions={ [] } />
+				<SearchResults suggestions={ [] } getInlineBundle={ () => undefined } />
 			</TestDomainSearchWithSuggestions>
 		);
 
@@ -102,7 +105,7 @@ describe( 'SearchResults', () => {
 		render(
 			<TestDomainSearchWithSuggestions query="test-no-suggestions" events={ { onFilterReset } }>
 				<Filter />
-				<SearchResults suggestions={ [] } />
+				<SearchResults suggestions={ [] } getInlineBundle={ () => undefined } />
 			</TestDomainSearchWithSuggestions>
 		);
 

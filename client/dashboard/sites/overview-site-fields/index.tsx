@@ -1,6 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteAgencyBlogQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
@@ -46,7 +45,6 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 };
 
 const SiteOverviewFields = ( { site }: { site: Site } ) => {
-	const url = site.URL;
 	const wpVersion = getFormattedWordPressVersion( site );
 	const hasPHPFeature = hasHostingFeature( site, HostingFeatures.PHP );
 	const hasSiteRedirect = site.options?.is_redirect;
@@ -69,14 +67,6 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 						}
 					) }
 				</Text>
-			</MetadataItem>
-		);
-	} else if ( ! isEnabled( 'dashboard/omnibar' ) ) {
-		fields.push(
-			<MetadataItem key="url">
-				<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
-					{ getSiteDisplayUrl( site ) }
-				</ExternalLink>
 			</MetadataItem>
 		);
 	}

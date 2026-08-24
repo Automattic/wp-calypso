@@ -13,6 +13,7 @@ import { pencil as edit, trash } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
@@ -32,15 +33,12 @@ export default function SshKey( {
 
 	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );
 
-	const { mutate: deleteSshKey, isPending: isDeletingSshKey } = useMutation( {
-		...deleteSshKeyMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'SSH key deleted.' ),
-				error: __( 'Failed to delete SSH key.' ),
-			},
-		},
-	} );
+	const { mutate: deleteSshKey, isPending: isDeletingSshKey } = useMutation(
+		withSnackbar( deleteSshKeyMutation(), {
+			success: __( 'SSH key deleted.' ),
+			error: __( 'Failed to delete SSH key.' ),
+		} )
+	);
 
 	const handleEdit = () => {
 		recordTracksEvent( 'calypso_dashboard_security_ssh_key_edit_click' );

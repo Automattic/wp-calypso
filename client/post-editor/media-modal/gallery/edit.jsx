@@ -1,5 +1,5 @@
+import { sortBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { map, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -50,7 +50,7 @@ class EditorMediaModalGalleryEdit extends Component {
 		return (
 			<div>
 				<EllipsisMenu popoverClassName="gallery__order-popover" position="bottom right">
-					{ map( orders, ( orderedItems, name ) => {
+					{ Object.entries( orders ).map( ( [ name, orderedItems ] ) => {
 						const boundAction = () => onUpdateSetting( { items: orderedItems } );
 						return (
 							<PopoverMenuItem key={ name } onClick={ boundAction }>

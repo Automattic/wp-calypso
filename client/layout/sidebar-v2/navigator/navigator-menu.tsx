@@ -12,7 +12,7 @@ interface Props {
 	title?: React.ReactNode;
 	description?: string;
 	backButtonProps?: {
-		icon: JSX.Element;
+		icon: React.JSX.Element;
 		label?: string;
 		onClick: () => void;
 	};

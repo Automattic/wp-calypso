@@ -1,8 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
-import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
+import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import SignupFormSocialFirst, {
+	MobileCompactTosNotice,
+} from 'calypso/blocks/signup-form/signup-form-social-first';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -104,6 +107,235 @@ describe( 'SignupFormSocialFirst', () => {
 			// Verify filtered buttons are rendered
 			expect( screen.getByText( /Continue with Google/i ) ).toBeInTheDocument();
 			expect( screen.getByText( /Continue with PayPal/i ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'isMobileCompactVariant', () => {
+		test( 'renders the mobile-compact wrapper class', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant />
+			);
+
+			expect(
+				container.querySelector( '.signup-form-social-first--mobile-compact' )
+			).toBeInTheDocument();
+		} );
+
+		test( 'omits the "Have an account? Log in" paragraph', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant />
+			);
+
+			expect(
+				container.querySelector( '.signup-form-social-first__login-link' )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'renders the "options above" ToS when no customTosElement is provided', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant />
+			);
+
+			expect(
+				screen.getByText( /By continuing with any of the options above/i )
+			).toBeInTheDocument();
+			expect(
+				screen.queryByText( /By continuing with any of the options listed/i )
+			).not.toBeInTheDocument();
+			// Regression: exactly one tos-link <p> — guards against double-wrapping
+			// when a future caller routes <MobileCompactTosNotice /> through
+			// customTosElement (which renderTermsOfService would wrap in <p>).
+			expect( container.querySelectorAll( '.signup-form-social-first__tos-link' ) ).toHaveLength(
+				1
+			);
+		} );
+
+		test( 'renders the partner customTosElement instead of the default ToS', () => {
+			const customTos = <span data-testid="partner-tos">Partner terms</span>;
+
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					isMobileCompactVariant
+					customTosElement={ customTos }
+				/>
+			);
+
+			expect( screen.getByTestId( 'partner-tos' ) ).toBeInTheDocument();
+			expect(
+				screen.queryByText( /By continuing with any of the options above/i )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'renders the OR divider between social and email blocks', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant />
+			);
+
+			expect( container.querySelector( '.auth-form__separator' ) ).toBeInTheDocument();
+		} );
+
+		test( 'forwards allowedSocialServices to the social row', () => {
+			// `apple_oauth_client_id` isn't mocked, so the Apple button skips itself —
+			// use the same google/paypal pair the upstream allowedSocialServices test uses.
+			const allowedServices: SignupAllowedService[] = [ 'google', 'paypal' ];
+
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					isMobileCompactVariant
+					allowedSocialServices={ allowedServices }
+				/>
+			);
+
+			expect( screen.getByText( /Continue with Google/i ) ).toBeInTheDocument();
+			expect( screen.getByText( /Continue with PayPal/i ) ).toBeInTheDocument();
+			expect( screen.queryByText( /Continue with GitHub/i ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'emailUpdate', () => {
+		const renderUpdating = ( props = {} ) =>
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="typo@example.com"
+					onUpdateEmail={ jest.fn() }
+					{ ...props }
+				/>
+			);
+
+		beforeEach( () => jest.clearAllMocks() );
+
+		// Which of the two would otherwise render depends on where the step container puts its back
+		// button, so neither may.
+		it.each( [
+			[ 'the footer', true ],
+			[ 'the form', false ],
+		] )(
+			'offers no way back to signing up with the back button in %s',
+			( _label, backButtonInFooter ) => {
+				renderUpdating( { backButtonInFooter } );
+
+				expect(
+					screen.queryByRole( 'button', { name: 'See all options' } )
+				).not.toBeInTheDocument();
+				expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+			}
+		);
+
+		it( 'takes the standard layout rather than the compact one that shows social', () => {
+			renderUpdating( { isMobileCompactVariant: true } );
+
+			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'textbox' ) ).toBeVisible();
+		} );
+
+		it( 'puts the terms under the action they name', () => {
+			renderUpdating();
+			expect(
+				screen
+					.getByRole( 'button', { name: 'Continue' } )
+					.compareDocumentPosition( screen.getByText( /agree to our/ ) )
+			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+		} );
+
+		// Partner copy names its own position, so it has to keep it.
+		it( 'leaves copy that points below itself above the action', () => {
+			renderUpdating( {
+				customTosElement: <span>By continuing with any of the options below, you agree.</span>,
+			} );
+
+			expect(
+				screen
+					.getByText( /any of the options below/ )
+					.compareDocumentPosition( screen.getByRole( 'button', { name: 'Continue' } ) )
+			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+		} );
+
+		it( 'says it is updating, not signing up, while the request is in flight', async () => {
+			renderUpdating( {
+				onUpdateEmail: () => new Promise< void >( () => {} ),
+			} );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( await screen.findByRole( 'button', { name: 'Updating…' } ) ).toBeVisible();
+		} );
+
+		it( 'mounts the email field once, with nothing to sign up with', () => {
+			renderUpdating( {
+				isEmailFirstVariant: true,
+				customTosElement: <span>Partner terms apply.</span>,
+			} );
+
+			expect( screen.getAllByRole( 'textbox' ) ).toHaveLength( 1 );
+			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
+			expect( screen.getAllByText( 'Partner terms apply.' ) ).toHaveLength( 1 );
+		} );
+
+		it( 'shows the email screen even when it was given no address to start from', () => {
+			renderUpdating( { userEmail: '' } );
+
+			expect(
+				screen.getByRole( 'textbox' ).closest( '.signup-form-social-first-screen' )
+			).toHaveClass( 'visible' );
+		} );
+
+		it( 'shows what the caller has to say, and a partner its own terms', () => {
+			renderUpdating( {
+				notice: <div>That address is already in use.</div>,
+				customTosElement: <span>Partner terms apply.</span>,
+			} );
+
+			const emailScreenEl = screen
+				.getByRole( 'textbox' )
+				.closest( '.signup-form-social-first-screen' ) as HTMLElement;
+			const emailScreen = within( emailScreenEl );
+			expect( emailScreen.getByText( 'That address is already in use.' ) ).toBeVisible();
+			// On text content: the generic terms are split across links, so no node holds the phrase.
+			expect( emailScreenEl ).not.toHaveTextContent( 'By clicking' );
+			expect( emailScreen.getByText( 'Partner terms apply.' ) ).toBeVisible();
+		} );
+
+		// Otherwise a refusal leaves the field and the button with nothing to press.
+		it( 'gives the screen back when the change is refused', async () => {
+			renderUpdating( {
+				onUpdateEmail: () => Promise.reject( new Error( 'nope' ) ),
+			} );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( await screen.findByRole( 'button', { name: 'Continue' } ) ).toBeEnabled();
+		} );
+	} );
+
+	it.each( [
+		[ true, 'Back', 'See all options' ],
+		[ false, 'See all options', 'Back' ],
+	] )(
+		'leaves an ordinary signup its own way back, footer: %s',
+		( backButtonInFooter, shown, hidden ) => {
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="new@example.com"
+					backButtonInFooter={ backButtonInFooter }
+				/>
+			);
+
+			expect( screen.getByRole( 'button', { name: shown } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: hidden } ) ).not.toBeInTheDocument();
+		}
+	);
+
+	describe( 'MobileCompactTosNotice', () => {
+		test( 'renders the "options above" copy', () => {
+			render( <MobileCompactTosNotice /> );
+
+			expect(
+				screen.getByText( /By continuing with any of the options above/i )
+			).toBeInTheDocument();
 		} );
 	} );
 

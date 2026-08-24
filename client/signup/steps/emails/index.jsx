@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { defer } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmailSignupTitanCard from 'calypso/components/emails/email-signup-titan-card';
@@ -56,7 +55,7 @@ class EmailsStep extends Component {
 	};
 
 	submitEmailPurchase = ( emailItem ) => {
-		defer( () => {
+		setTimeout( () => {
 			const { goToNextStep, stepName, stepSectionName } = this.props;
 
 			this.props.submitSignupStep(
@@ -71,7 +70,7 @@ class EmailsStep extends Component {
 			);
 
 			goToNextStep();
-		} );
+		}, 0 );
 	};
 
 	renderSideContent = () => {

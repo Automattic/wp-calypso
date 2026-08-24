@@ -1,7 +1,7 @@
 import './style.scss';
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, type JSX } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 

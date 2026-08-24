@@ -12,6 +12,15 @@ import { leaveCheckout } from '../lib/leave-checkout';
 export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
+	// When a flow supplies a dedicated "back to domains" URL, emptying the cart
+	// sends the user there rather than to the plan-step back URL — the plan they
+	// were choosing no longer exists, so the domain step is the right restart
+	// point.
+	const forceCheckoutBackUrlDomains = useValidCheckoutBackUrl(
+		siteUrl,
+		undefined,
+		'checkoutBackUrlDomains'
+	);
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	// Used to lazily clear the siteless 'no-site'/'no-user' carts used by
@@ -30,6 +39,7 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	const closeAndLeave = ( options?: {
 		userHasClearedCart?: boolean;
 		closedWithoutConfirmation?: boolean;
+		forceBackUrl?: string;
 	} ) => {
 		const userHasClearedCart = options?.userHasClearedCart ?? false;
 		if ( ! options?.closedWithoutConfirmation ) {
@@ -39,7 +49,7 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		}
 		leaveCheckout( {
 			siteSlug: siteUrl,
-			forceCheckoutBackUrl,
+			forceCheckoutBackUrl: options?.forceBackUrl ?? forceCheckoutBackUrl,
 			previousPath,
 			tracksEvent: 'calypso_masterbar_close_clicked',
 			userHasClearedCart: userHasClearedCart,
@@ -90,6 +100,7 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		}
 		closeAndLeave( {
 			userHasClearedCart: true,
+			forceBackUrl: forceCheckoutBackUrlDomains,
 		} );
 	};
 

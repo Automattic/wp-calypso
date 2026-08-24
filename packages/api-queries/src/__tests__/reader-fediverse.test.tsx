@@ -677,7 +677,7 @@ describe( 'useFediverseNotificationsInfiniteQuery', () => {
 		await act( async () => {
 			await result.current.fetchNextPage();
 		} );
-		expect( result.current.data?.pages.length ).toBe( 2 );
+		await waitFor( () => expect( result.current.data?.pages.length ).toBe( 2 ) );
 		expect( result.current.hasNextPage ).toBe( false );
 	} );
 

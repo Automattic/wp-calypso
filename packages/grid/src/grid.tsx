@@ -7,6 +7,10 @@ import { resolveFillWidths } from './resolve-fill-widths';
 import type { GridLayoutItem, GridProps } from './types';
 import type { DragOverEvent } from '@dnd-kit/core';
 
+type GridChildProps = {
+	actionableArea?: React.ReactNode;
+};
+
 export function Grid( {
 	layout,
 	columns = 6,
@@ -72,11 +76,11 @@ export function Grid( {
 	}, [ items, layoutMap, effectiveColumns ] );
 
 	const [ childrenMap, remaining ] = useMemo( () => {
-		const map = new Map< string, React.ReactElement >();
+		const map = new Map< string, React.ReactElement< GridChildProps > >();
 		const rest: React.ReactNode[] = [];
 
 		Children.forEach( children, ( child ) => {
-			if ( ! isValidElement( child ) ) {
+			if ( ! isValidElement< GridChildProps >( child ) ) {
 				rest.push( child );
 				return;
 			}

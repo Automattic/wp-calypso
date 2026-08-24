@@ -8,7 +8,7 @@ import { useDomainSearch } from '../../page/context';
 import { DomainSearchSkipSuggestion } from '../../ui';
 
 const SkipSuggestion = () => {
-	const { queries, query, currentSiteUrl, events, setQuery } = useDomainSearch();
+	const { queries, query, currentSiteUrl, events, setQuery, config } = useDomainSearch();
 
 	const isMutating = useIsMutating();
 
@@ -36,6 +36,8 @@ const SkipSuggestion = () => {
 			<DomainSearchSkipSuggestion
 				freeSuggestion={ suggestion.domain_name }
 				unavailableDomain={ isUnavailable ? query : undefined }
+				title={ config.skipSuggestionCopy?.title }
+				buttonText={ config.skipSuggestionCopy?.buttonText }
 				onSkip={ () => events.onSkip( suggestion ) }
 				onSuggestionClick={ () => setQuery( suggestion.domain_name ) }
 				disabled={ !! isMutating }

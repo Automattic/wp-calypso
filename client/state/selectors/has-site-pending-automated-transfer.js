@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteOptions } from 'calypso/state/sites/selectors';
 
@@ -26,5 +25,5 @@ export default ( state, siteId ) => {
 		return false;
 	}
 
-	return get( siteOptions, 'has_pending_automated_transfer', false );
+	return siteOptions?.has_pending_automated_transfer ?? false;
 };

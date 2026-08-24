@@ -4,11 +4,9 @@ import { Button } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useExperiment } from 'calypso/lib/explat';
-import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
+import { useSiteLaunchGatingVariant } from 'calypso/lib/use-site-launch-gating-variant';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
@@ -20,31 +18,27 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 	const sectionName = useSelector( getSectionName );
 	const launchSiteMutation = useMutation( siteLaunchMutation( siteId ) );
 
-	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
-
-	const [ isLoading, data ] = useExperiment( 'calypso_standardized_site_launch_gating_202603_v1' );
+	const [ isLoading, variant ] = useSiteLaunchGatingVariant();
 
 	const onLaunchSiteClick = () => {
 		dispatch( recordTracksEvent( 'calypso_masterbar_launch_site', { source: sectionName } ) );
 
-		if ( data?.variationName === 'semi_gated_site_launch' ) {
-			window.location.assign(
-				addQueryArgs( '/start/launch-site', {
-					siteSlug: site?.slug,
-					back_to: window.location.pathname,
-				} )
-			);
-			return;
+		// Site launch gating: 'semi_gated_site_launch' is the shipped default.
+		// The other branches are scaffolding for future experiments; see
+		// useSiteLaunchGatingVariant().
+		switch ( variant ) {
+			case 'semi_gated_site_launch':
+			case null:
+			default: {
+				window.location.assign(
+					addQueryArgs( '/start/launch-site', {
+						siteSlug: site?.slug,
+						back_to: window.location.pathname,
+					} )
+				);
+				return;
+			}
 		}
-
-		if ( data?.variationName === 'ungated_site_launch' ) {
-			launchSiteMutation.mutate( undefined, {
-				onSuccess: () => onSiteLaunched( !! site?.is_wpcom_atomic ),
-			} );
-			return;
-		}
-
-		dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId ) );
 	};
 
 	return (

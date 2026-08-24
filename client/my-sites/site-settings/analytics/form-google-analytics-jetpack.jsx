@@ -10,7 +10,6 @@ import {
 } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
-import { find } from 'lodash';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
@@ -64,7 +63,7 @@ const GoogleAnalyticsJetpackForm = ( {
 		: 'https://jetpack.com/support/google-analytics/';
 	const nudgeTitle = translate( 'Connect your site to Google Analytics' );
 	// TODO: it would be better to get wooCommercePlugin directly in form-google-analytics using getAllPluginsIndexedByPluginSlug
-	const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
+	const wooCommercePlugin = sitePlugins?.find( ( plugin ) => plugin.slug === 'woocommerce' );
 	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.sites[ siteId ].active : false;
 	const dispatch = useDispatch();
 	const trackTracksEvent = ( name, props ) => dispatch( recordTracksEvent( name, props ) );

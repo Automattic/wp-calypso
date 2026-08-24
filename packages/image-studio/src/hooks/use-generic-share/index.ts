@@ -47,16 +47,21 @@ export function useGenericShare(
 ): UseGenericShareReturn {
 	const hasOverride = clip !== undefined;
 
-	const { storeUrl, storeAttachmentId, entryPoint, isAiProcessing } = useSelect( ( select ) => {
-		const videoStore = select( videoStudioStore );
-		const studio = select( imageStudioStore );
-		return {
-			storeUrl: videoStore.getCurrentVideoUrl?.() ?? null,
-			storeAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
-			entryPoint: studio.getEntryPoint?.() ?? null,
-			isAiProcessing: studio.getImageStudioAiProcessing?.() ?? false,
-		};
-	}, [] );
+	const { storeUrl, storeAttachmentId, entryPoint, isAiProcessing, postPermalink } = useSelect(
+		( select ) => {
+			const videoStore = select( videoStudioStore );
+			const studio = select( imageStudioStore );
+			const editor = select( 'core/editor' ) as { getPermalink?: () => string | null } | undefined;
+			return {
+				storeUrl: videoStore.getCurrentVideoUrl?.() ?? null,
+				storeAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
+				entryPoint: studio.getEntryPoint?.() ?? null,
+				isAiProcessing: studio.getImageStudioAiProcessing?.() ?? false,
+				postPermalink: editor?.getPermalink?.() ?? null,
+			};
+		},
+		[]
+	);
 
 	const currentVideoUrl = hasOverride ? clip.url : storeUrl;
 	const currentAttachmentId = hasOverride ? clip.attachmentId : storeAttachmentId;
@@ -149,6 +154,7 @@ export function useGenericShare(
 				await nav.share?.( {
 					files: [ file ],
 					title: __( 'Generated video clip', __i18n_text_domain__ ),
+					...( postPermalink ? { text: postPermalink } : {} ),
 				} );
 				trackImageStudioGenericShareCompleted( { surface, method: 'web-share' } );
 			} catch ( err ) {
@@ -171,7 +177,7 @@ export function useGenericShare(
 			isSharingRef.current = false;
 			setIsSharing( false );
 		}
-	}, [ showNotice, currentAttachmentId, currentVideoUrl, surface ] );
+	}, [ showNotice, currentAttachmentId, currentVideoUrl, surface, postPermalink ] );
 
 	return {
 		isVisible,

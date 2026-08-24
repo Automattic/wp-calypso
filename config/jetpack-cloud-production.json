@@ -59,7 +59,6 @@
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/support-article-dialog": false,
-		"logrocket": false,
 		"marketplace-test": false,
 		"newsletter-categories": true,
 		"oauth": true,

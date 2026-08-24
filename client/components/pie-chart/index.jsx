@@ -1,7 +1,7 @@
+import { throttle } from '@wordpress/compose';
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
 import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
 import { localize } from 'i18n-calypso';
-import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import DataType from './data-type';

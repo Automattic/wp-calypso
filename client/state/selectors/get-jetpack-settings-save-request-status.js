@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 
@@ -10,5 +9,5 @@ import getRequest from 'calypso/state/selectors/get-request';
  * @returns {string}            The request status (pending, success or error)
  */
 export default function getJetpackSettingsSaveRequestStatus( state, siteId, settings ) {
-	return get( getRequest( state, saveJetpackSettings( siteId, settings ) ), 'status' );
+	return getRequest( state, saveJetpackSettings( siteId, settings ) )?.status;
 }

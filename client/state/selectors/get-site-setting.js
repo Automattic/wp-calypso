@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 
 /**
@@ -9,5 +8,5 @@ import { getSiteSettings } from 'calypso/state/site-settings/selectors';
  * @returns {Object}         Site setting
  */
 export default function getSiteSetting( state, siteId, setting ) {
-	return get( getSiteSettings( state, siteId ), [ setting ], null );
+	return getSiteSettings( state, siteId )?.[ setting ] ?? null;
 }

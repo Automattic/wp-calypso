@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: dawidd6/action-download-artifact@v6
+      - uses: dawidd6/action-download-artifact@bf251b5aa9c2f7eeb574a96ee720e24f801b7c11 # v6
         if: github.event.inputs.repoCache != 'disabled'
         continue-on-error: true
         with:
@@ -83,10 +83,11 @@ jobs:
           # Unfortunately, the permissions expected within renovate's docker container
           # are different than the ones given after the cache is restored. We have to
           # change ownership to solve this.
-          sudo chown -R runneradmin:root /tmp/renovate/
+          RENOVATE_UID=$(docker run --rm --entrypoint id ghcr.io/renovatebot/renovate:${RENOVATE_VERSION} -u)  
+          sudo chown -R $RENOVATE_UID:root /tmp/renovate/
           ls -R $cache_dir
 
-      - uses: renovatebot/github-action@v39.0.1
+      - uses: renovatebot/github-action@23a02fe7be9e93f857a953cc8162e57d2c8401ef # v39.0.1
         with:
           configurationFile: renovate.json5
           token: ${{ secrets.RENOVATE_TOKEN }}

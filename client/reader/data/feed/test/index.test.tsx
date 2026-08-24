@@ -125,10 +125,11 @@ describe( 'feed data layer', () => {
 			.reply( 200, {
 				feeds: [ { feed_ID: '7', blog_ID: '8', name: 'First page' } ],
 				total: 2,
+				next_page: 'offset=10&algorithm=reader/manage/search:0',
 			} );
 		nock( BASE )
 			.get( '/rest/v1.1/read/feed' )
-			.query( { q: 'wordpress', offset: '1' } )
+			.query( { q: 'wordpress', offset: '10' } )
 			.reply( 200, {
 				feeds: [ { feed_ID: '9', blog_ID: '10', name: 'Second page' } ],
 				total: 2,

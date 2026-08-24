@@ -1,5 +1,6 @@
+import { mapValues, merge, omit, pickBy, isEmpty } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { isEmpty, mapValues, omit, pickBy, without, merge, isEqual } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import isTransientMediaId from 'calypso/lib/media/utils/is-transient-media-id';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
@@ -106,7 +107,7 @@ export const errors = ( state = {}, action ) => {
 				...state,
 				[ action.siteId ]: pickBy(
 					mapValues( state[ action.siteId ], ( mediaErrors ) =>
-						without( mediaErrors, action.errorType )
+						mediaErrors.filter( ( errorType ) => errorType !== action.errorType )
 					),
 					( mediaErrors ) => ! isEmpty( mediaErrors )
 				),

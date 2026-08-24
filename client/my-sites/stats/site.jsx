@@ -4,7 +4,6 @@ import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent, settings } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { find } from 'lodash';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -32,8 +31,6 @@ import {
 	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
 import { useMomentInSite } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
-import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import {
@@ -82,7 +79,11 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import StatsUpsell from './stats-upsell/traffic-upsell';
-import { appendQueryStringForRedirection, getPathWithUpdatedQueryString } from './utils';
+import {
+	appendQueryStringForRedirection,
+	buildSummaryUrl,
+	getPathWithUpdatedQueryString,
+} from './utils';
 
 const loadJetpackUpsellSection = () =>
 	import(
@@ -144,7 +145,8 @@ Object.defineProperty( CHART_COMMENTS, 'label', {
 	get: () => translate( 'Comments', { context: 'noun' } ),
 } );
 
-const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
+const getActiveTab = ( chartTab ) =>
+	CHARTS.find( ( chart ) => chart.attr === chartTab ) || CHARTS[ 0 ];
 
 // Return a default amount of days to subtracts from the present day depending on the period selected.
 // Used in case no starting date is present in the URL.
@@ -204,9 +206,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentInSite = useMomentInSite( siteId );
 	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
-	const [ isPageSettingsTooltipDismissed, setIsPageSettingsTooltipDismissed ] = useState(
-		!! localStorage.getItem( 'notices_dismissed__traffic_page_settings' )
-	);
 
 	// Determine module visibility based on user settings, VideoPress availability, AND defaults.
 	const moduleVisibility = useMemo(
@@ -353,20 +352,13 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	// Note: This is only used in the empty version of the module.
 	// There's a similar function inside stats-module/index.jsx that is used when we have content.
 	const getStatHref = ( modulePath, query ) => {
-		const paramsValid = props.period && modulePath && slug;
-		if ( ! paramsValid ) {
-			return undefined;
-		}
-
-		let url = `/stats/${ props.period.period }/${ modulePath }/${ slug }`;
-
-		if ( query?.start_date ) {
-			url += `?startDate=${ query.start_date }&endDate=${ query.date }`;
-		} else {
-			url += `?startDate=${ props.period.endOf.format( DATE_FORMAT ) }`;
-		}
-
-		return url;
+		return buildSummaryUrl( {
+			period: props.period,
+			module: modulePath,
+			siteSlug: slug,
+			query,
+			shortcut: context.query?.shortcut,
+		} );
 	};
 
 	// Set up a custom range for the chart.
@@ -551,25 +543,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		getJetpackStatsAdminVersion( state, siteId )
 	);
 
-	const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
-		siteId,
-		'traffic_page_settings'
-	);
-	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
-		siteId,
-		'traffic_page_settings'
-	);
-
-	const onTooltipDismiss = () => {
-		if ( isPageSettingsTooltipDismissed || ! showSettingsTooltip ) {
-			return;
-		}
-
-		setIsPageSettingsTooltipDismissed( true );
-		localStorage.setItem( 'notices_dismissed__traffic_page_settings', 1 );
-		mutateNoticeVisbilityAsync().finally( refetchNotices );
-	};
-
 	// Module settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
 	const isModuleSettingsSupported =
 		! config.isEnabled( 'is_running_in_jetpack_site' ) ||
@@ -613,8 +586,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 									selectedItem="traffic"
 									moduleToggles={ moduleToggles }
 									siteId={ siteId }
-									isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-									onTooltipDismiss={ onTooltipDismiss }
 									customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
 								/>
 							)

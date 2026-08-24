@@ -4,7 +4,7 @@ Disallows the anti-pattern of creating functions within the function that gets p
 
 ## Rule details
 
-Any function, whether anonymous or referred to using a variable, that is passed as `connect`'s first argument cannot contain any sort of function creation within its body. This includes explicit function creation and implicit creation using `Function#bind` and `lodash#bind`, as well as `lodash#partial` and `lodash#partialRight`.
+Any function, whether anonymous or referred to using a variable, that is passed as `connect`'s first argument cannot contain any sort of function creation within its body. This includes explicit function creation and implicit creation using `Function#bind` or partial-application helpers.
 
 ### Forbidden
 

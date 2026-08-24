@@ -8,7 +8,7 @@ import './style.scss';
 type PerformanceScoreProps = {
 	value: number;
 	recommendationsQuantity?: number;
-	recommendationsRef: React.RefObject< HTMLDivElement > | null;
+	recommendationsRef: React.RefObject< HTMLDivElement | null > | null;
 };
 
 const MAX_SCORE_BAR_WIDTH = 600;

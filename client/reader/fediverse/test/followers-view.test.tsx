@@ -15,8 +15,8 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { FollowersView } from '../followers-view';
 import type React from 'react';
 
-// `ReaderMain` mounts `<sync-reader-follows>`, which selects from a Redux
-// branch the test store doesn't seed. Stub to a passthrough.
+// `ReaderMain` mounts shared Reader shell concerns that are outside this
+// test's scope. Stub it to a passthrough.
 jest.mock(
 	'calypso/reader/components/reader-main',
 	() =>

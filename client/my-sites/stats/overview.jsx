@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
@@ -29,7 +28,7 @@ class StatsOverview extends Component {
 		const statsPath = path === '/stats' ? '/stats/day' : path;
 		const sitesSorted = sites.map( ( site ) => {
 			let momentSiteZone = moment();
-			const gmtOffset = get( site, 'options.gmt_offset' );
+			const gmtOffset = site?.options?.gmt_offset;
 			if ( Number.isFinite( gmtOffset ) ) {
 				momentSiteZone = moment().utcOffset( gmtOffset );
 			}
@@ -60,7 +59,7 @@ class StatsOverview extends Component {
 		} );
 
 		const sitesList = sitesSorted.map( ( site, index ) => {
-			const gmtOffset = get( site, 'options.gmt_offset' );
+			const gmtOffset = site?.options?.gmt_offset;
 			const date = moment()
 				.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 				.format( 'YYYY-MM-DD' );

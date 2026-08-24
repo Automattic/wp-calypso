@@ -16,7 +16,7 @@ import welcomeTimImage from 'calypso/assets/images/reader/onboarding/welcome-tim
 import welcomeTimeImage from 'calypso/assets/images/reader/onboarding/welcome-time.webp';
 import welcomeVarietyImage from 'calypso/assets/images/reader/onboarding/welcome-variety.webp';
 import welcomeWiredImage from 'calypso/assets/images/reader/onboarding/welcome-wired.webp';
-import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
+import { StepIndicator } from 'calypso/reader/components/step-indicator';
 
 import './style.scss';
 

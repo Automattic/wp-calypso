@@ -12,7 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { fixMe, translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
 import { errorNotice } from 'calypso/state/notices/actions';
 
@@ -36,7 +36,7 @@ interface Category {
 
 const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onContinue } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
-	const { data: followedTagsFromState } = useFollowedReaderTags();
+	const { data: followedTagsFromState } = useFollowedTags();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );

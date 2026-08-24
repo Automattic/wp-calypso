@@ -30,6 +30,6 @@ jobs:
         with:
           fetch-depth: 0
       # Pinned to v0.6.0 commit SHA for supply-chain safety
-      - uses: linear/linear-release-action@755d50b5adb7dd42b976ee9334952745d62ceb2d
+      - uses: linear/linear-release-action@755d50b5adb7dd42b976ee9334952745d62ceb2d # v0.6.0
         with:
           access_key: ${{ secrets.LINEAR_RELEASE_KEY_CREATORS }}

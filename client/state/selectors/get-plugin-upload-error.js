@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/plugins/init';
 
 /**
@@ -10,5 +8,5 @@ import 'calypso/state/plugins/init';
  * @returns {null|{error?: string, statusCode: number}} Error from upload, if any
  */
 export default function getPluginUploadError( state, siteId ) {
-	return get( state.plugins.upload.uploadError, siteId, null );
+	return state.plugins.upload.uploadError?.[ siteId ] ?? null;
 }

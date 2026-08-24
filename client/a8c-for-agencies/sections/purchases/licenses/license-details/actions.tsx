@@ -97,13 +97,15 @@ export default function LicenseDetailsActions( {
 
 	const download = useCallback( () => {
 		mutate( null );
-		dispatch( recordTracksEvent( 'calypso_a4a_license_details_download' ) );
-	}, [ dispatch, mutate ] );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_license_details_download', { license_state: licenseState } )
+		);
+	}, [ dispatch, mutate, licenseState ] );
 
 	return (
 		<div className="license-details__actions">
 			{ hasDownloads &&
-				licenseState === LicenseState.Attached &&
+				licenseState !== LicenseState.Revoked &&
 				licenseType === LicenseType.Partner && (
 					<Button
 						compact

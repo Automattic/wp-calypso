@@ -2,12 +2,13 @@ import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button, FormLabel } from '@automattic/components';
 import { suggestEmailCorrection } from '@automattic/onboarding';
+import { debounce } from '@wordpress/compose';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { withBlackboxProtection } from 'calypso/blocks/login/with-blackbox-protection';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
@@ -25,6 +26,12 @@ import SignupSubmitButton from './signup-submit-button';
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
+		blackbox: PropTypes.shape( {
+			isSubmitBlocked: PropTypes.bool.isRequired,
+			challenge: PropTypes.node.isRequired,
+			getSessionId: PropTypes.func.isRequired,
+			reset: PropTypes.func.isRequired,
+		} ).isRequired,
 		locale: PropTypes.string,
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
@@ -36,6 +43,16 @@ class PasswordlessSignupForm extends Component {
 		onCreateAccountError: PropTypes.func,
 		onCreateAccountSuccess: PropTypes.func,
 		disableTosText: PropTypes.bool,
+		termsAfterActions: PropTypes.bool,
+		// Replaces account creation with a change to the account the caller already has, and
+		// reports its own failures.
+		onUpdateEmail: PropTypes.func,
+		// Names the signup's origin to the backend, which aims the activation link on it.
+		activationEmailFrom: PropTypes.string,
+		// Holds account creation until the caller is ready — the onboarding account step keeps this on
+		// while the email-verification arm loads, so the request can't go out before the arm decides
+		// activationEmailFrom. Guards the submit itself, not just the button, so Enter can't slip past.
+		isSubmitBlocked: PropTypes.bool,
 		useConnectScreenActions: PropTypes.bool,
 	};
 
@@ -62,12 +79,33 @@ class PasswordlessSignupForm extends Component {
 	onFormSubmit = async ( event ) => {
 		event.preventDefault();
 
+		if ( this.props.isSubmitBlocked ) {
+			return;
+		}
+
 		if ( ! this.state.email || ! emailValidator.validate( this.state.email ) ) {
 			this.setState( {
 				errorMessages: [ this.props.translate( 'Please provide a valid email address.' ) ],
 				isSubmitting: false,
 			} );
-			this.submitTracksEvent( false, { action_message: 'Please provide a valid email address.' } );
+			if ( ! this.props.onUpdateEmail ) {
+				this.submitTracksEvent( false, {
+					action_message: 'Please provide a valid email address.',
+				} );
+			}
+			return;
+		}
+
+		if ( this.props.onUpdateEmail ) {
+			this.setState( { isSubmitting: true } );
+			try {
+				await this.props.onUpdateEmail( this.state.email.trim() );
+			} catch {
+				// The caller reports its own failures. This only keeps one it didn't from leaving
+				// the screen disabled with nothing to press.
+			} finally {
+				this.setState( { isSubmitting: false } );
+			}
 			return;
 		}
 
@@ -79,18 +117,31 @@ class PasswordlessSignupForm extends Component {
 			username: '',
 			password: '',
 		};
-		const { flowName, queryArgs = {} } = this.props;
+		const { activationEmailFrom, flowName, queryArgs = {} } = this.props;
 		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
 		const isDevAccount = devAccountLandingPageRefs.includes( queryArgs.ref );
 
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
 		if ( flowName === '' && this.props.submitForm ) {
-			this.props.submitForm( {
-				email: this.state.email,
-				is_passwordless: true,
-				is_dev_account: isDevAccount,
-			} );
+			const blackboxSessionId = await this.props.blackbox.getSessionId();
+
+			// The parent spreads this payload into its /users/new request body.
+			this.props.submitForm(
+				{
+					email: this.state.email,
+					is_passwordless: true,
+					is_dev_account: isDevAccount,
+					...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
+				},
+				( error ) => {
+					// The handed-off session was consumed by the parent's failed
+					// request; reset so a retry gets a verifiable one.
+					if ( error ) {
+						this.props.blackbox.reset();
+					}
+				}
+			);
 			return;
 		}
 		this.setState( {
@@ -110,6 +161,8 @@ class PasswordlessSignupForm extends Component {
 		const signup_flow_name = queryArgs.variationName === 'entrepreneur' ? 'entrepreneur' : flowName;
 
 		try {
+			const blackboxSessionId = await this.props.blackbox.getSessionId();
+
 			const body = {
 				email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
 				is_passwordless: true,
@@ -124,7 +177,11 @@ class PasswordlessSignupForm extends Component {
 				} ),
 				anon_id: getTracksAnonymousUserId(),
 				is_dev_account: isDevAccount,
-				extra: { has_segmentation_survey: queryArgs.variationName === 'entrepreneur' },
+				extra: {
+					has_segmentation_survey: queryArgs.variationName === 'entrepreneur',
+					...( activationEmailFrom && { from: activationEmailFrom } ),
+				},
+				...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
 			};
 
 			const { search = '' } = typeof window !== 'undefined' ? window.location : {};
@@ -145,6 +202,9 @@ class PasswordlessSignupForm extends Component {
 
 	createAccountError = async ( error ) => {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
+
+		// Reset Blackbox so the next signup attempt gets a fresh session.
+		this.props.blackbox.reset();
 
 		if ( ! isExistingAccountError( error.error ) ) {
 			if ( isThrottledError( error.error ) ) {
@@ -322,7 +382,11 @@ class PasswordlessSignupForm extends Component {
 	formFooter() {
 		const { isSubmitting } = this.state;
 		const isPrimaryDisabled =
-			isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton;
+			isSubmitting ||
+			!! this.props.disabled ||
+			!! this.props.disableSubmitButton ||
+			!! this.props.isSubmitBlocked ||
+			this.props.blackbox.isSubmitBlocked;
 		const submitButtonText = isSubmitting
 			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating Your Account…' )
 			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
@@ -383,17 +447,10 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.props.secondaryFooterButton ? (
-						<>
-							{ this.formFooter() }
-							{ terms }
-						</>
-					) : (
-						<>
-							{ terms }
-							{ this.formFooter() }
-						</>
-					) }
+					{ this.props.blackbox.challenge }
+					{ ! this.props.termsAfterActions && terms }
+					{ this.formFooter() }
+					{ this.props.termsAfterActions && terms }
 				</LoggedOutForm>
 			</div>
 		);
@@ -403,4 +460,4 @@ export default connect( null, {
 	recordTracksEvent,
 	saveSignupStep,
 	submitCreateAccountStep: submitSignupStep,
-} )( localize( PasswordlessSignupForm ) );
+} )( localize( withBlackboxProtection( PasswordlessSignupForm, { feature: 'blackbox-signup' } ) ) );

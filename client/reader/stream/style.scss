@@ -1,5 +1,12 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/typography";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/clear-fix";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
 @import 'calypso/assets/stylesheets/shared/mixins/long-content-fade';

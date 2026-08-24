@@ -64,12 +64,43 @@ export interface SocialEmbedAudio {
 	duration_seconds: number | null;
 }
 
+export interface SocialLongFormDocument {
+	title: string;
+	description: string;
+	/** Site-relative path; expected to start with `/`. */
+	path: string;
+	/** ISO-8601 timestamp, or empty string when unknown. */
+	published_at: string;
+	/** Cover-image URL (Bluesky CDN), or null when the post carries none. */
+	cover_image: string | null;
+	/** Reading time in minutes (AppView-computed), or null when unavailable. */
+	reading_time: number | null;
+}
+
+export interface SocialLongFormPublication {
+	name: string;
+	display_name: string;
+	description: string;
+	url: string;
+	/** Publisher's protocol handle (e.g. `jeremy.herve.bzh`). Empty when unresolved. */
+	handle: string;
+	/** Avatar URL (Bluesky CDN), or null when absent. */
+	avatar: string | null;
+}
+
+export interface SocialLongForm {
+	document: SocialLongFormDocument;
+	publication: SocialLongFormPublication;
+}
+
 export interface SocialEmbedExternal {
 	type: 'external';
 	uri: string;
 	title: string;
 	description: string;
 	thumb: string | null;
+	/** Present when the link resolves to a verified long-form record. */
+	long_form?: SocialLongForm;
 }
 
 // Sources differ on what metadata travels with a tombstone — atmosphere's

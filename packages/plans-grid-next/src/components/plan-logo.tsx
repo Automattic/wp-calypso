@@ -10,7 +10,7 @@ import {
 	PlanSlug,
 	isPartnerBundleOnboarding,
 } from '@automattic/calypso-products';
-import { CloudLogo, VIPLogo, WooLogo } from '@automattic/components';
+import { AutomatticLogo, CloudLogo, VIPLogo, WooLogo } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
@@ -30,7 +30,7 @@ const PlanLogo: React.FunctionComponent< {
 } > = ( { planSlug, isInSignup, renderedGridPlans, isTableCell, planIndex } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
-	const { gridPlansIndex, intent } = usePlansGridContext();
+	const { gridPlansIndex, intent, isEnterpriseA4AIndia } = usePlansGridContext();
 	const isWooHostingSolutionsIntent = intent === 'plans-woo-hosting-solutions';
 	const shouldShowWooLogo =
 		isWooHostingSolutionsIntent ||
@@ -100,16 +100,29 @@ const PlanLogo: React.FunctionComponent< {
 						<WooLogo />
 					</Plans2023Tooltip>
 				) }
-				{ ! isWooHostingSolutionsIntent && isWpcomEnterpriseGridPlan( planSlug ) && (
-					<Plans2023Tooltip
-						text={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
-						id="enterprise-logo"
-						setActiveTooltipId={ setActiveTooltipId }
-						activeTooltipId={ activeTooltipId }
-					>
-						<VIPLogo />
-					</Plans2023Tooltip>
-				) }
+				{ ! isWooHostingSolutionsIntent &&
+					isWpcomEnterpriseGridPlan( planSlug ) &&
+					( isEnterpriseA4AIndia ? (
+						<Plans2023Tooltip
+							text={ translate(
+								'The trusted WordPress platform for agencies managing client sites.'
+							) }
+							id="enterprise-logo"
+							setActiveTooltipId={ setActiveTooltipId }
+							activeTooltipId={ activeTooltipId }
+						>
+							<AutomatticLogo />
+						</Plans2023Tooltip>
+					) : (
+						<Plans2023Tooltip
+							text={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
+							id="enterprise-logo"
+							setActiveTooltipId={ setActiveTooltipId }
+							activeTooltipId={ activeTooltipId }
+						>
+							<VIPLogo />
+						</Plans2023Tooltip>
+					) ) }
 			</header>
 		</PlanDivOrTdContainer>
 	);

@@ -27,6 +27,7 @@ import {
 } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import * as React from 'react';
+import { useEffect } from 'react';
 import { useHelpCenter } from '../../../../../app/help-center';
 import { ButtonStack } from '../../../../../components/button-stack';
 import DashboardSummaryButton from '../../../../../components/summary-button';
@@ -163,7 +164,7 @@ function getCardTitle( cardId: string ): string {
 		case 'built-by':
 			return __( 'Let us build for you' );
 		case 'ask-ai-assistant':
-			return __( 'Ask our AI assistant' );
+			return __( 'Ask WordPress Agent' );
 		case 'upgrade-for-full-access':
 			return __( 'Pick another paid plan for access to more features' );
 		case 'get-theme-addon':
@@ -188,8 +189,7 @@ function getCardDescription( cardId: string ): string {
 		case 'change-plan':
 			return __( 'You can change to a plan with the features and pricing that work for you.' );
 		case 'renew-now-pay-less':
-			/* translators: % is the discount amount (e.g. 25%) */
-			return __( 'Get an exclusive 25% discount automatically applied at checkout.' );
+			return __( 'Get an exclusive 25%% discount automatically applied at checkout.' );
 		case 'switch-to-monthly':
 			return __( 'Keep things flexible with monthly billing.' );
 		case 'switch-to-yearly':
@@ -199,7 +199,7 @@ function getCardDescription( cardId: string ): string {
 		case 'built-by':
 			return __( 'Our team can build your site so you can focus on what matters.' );
 		case 'ask-ai-assistant':
-			return __( 'Use our AI assistant to quickly find solutions.' );
+			return __( 'Use WordPress Agent to quickly find solutions.' );
 		case 'upgrade-for-full-access':
 			return __( 'Get the business plan to access all available plugins and themes.' );
 		case 'get-theme-addon':
@@ -231,6 +231,7 @@ type SolutionsCardsUpsellStepProps = {
 	onDeclineUpsell?: () => void;
 	onSwitchToMonthly?: () => void;
 	purchase: Purchase;
+	recordEvent?: ( name: string, properties?: Record< string, unknown > ) => void;
 	refundAmount?: number;
 	yearlyPlanSlug?: string;
 };
@@ -247,6 +248,7 @@ export default function SolutionsCardsUpsellStep( {
 	onDeclineUpsell,
 	onSwitchToMonthly,
 	purchase,
+	recordEvent,
 	refundAmount,
 	yearlyPlanSlug,
 }: SolutionsCardsUpsellStepProps ) {
@@ -275,6 +277,16 @@ export default function SolutionsCardsUpsellStep( {
 		}
 		return true;
 	} );
+
+	useEffect( () => {
+		if ( filteredSolutions?.length ) {
+			recordEvent?.( 'calypso_cancellation_solution_cards_view', {
+				solution_ids: filteredSolutions.map( ( card ) => card.id ).join( ',' ),
+				cancellation_reason: cancellationReason,
+			} );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	if ( ! filteredSolutions?.length ) {
 		return null;
@@ -318,6 +330,11 @@ export default function SolutionsCardsUpsellStep( {
 		: undefined;
 
 	const handleCardAction = ( solutionId: string ) => {
+		recordEvent?.( 'calypso_cancellation_solution_card_click', {
+			solution_id: solutionId,
+			cancellation_reason: cancellationReason,
+		} );
+
 		switch ( solutionId ) {
 			case 'change-plan':
 			case 'upgrade-for-full-access':

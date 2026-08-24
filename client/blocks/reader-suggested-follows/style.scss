@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .reader-recommended-follows-dialog {
 	--feed-height: 90px;
 	border-radius: 6px; /* stylelint-disable scales/radii */

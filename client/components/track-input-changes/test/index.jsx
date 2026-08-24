@@ -1,9 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { Component } from 'react';
-import ReactDom from 'react-dom';
-import TestUtils from 'react-dom/test-utils';
+import { render } from '@testing-library/react';
+import { Component, createRef } from 'react';
 import TrackInputChanges from '../';
 
 /**
@@ -30,31 +29,20 @@ class DummyInput extends Component {
 }
 
 describe( 'TrackInputChanges#onNewValue', () => {
-	let tree;
 	let dummyInput;
-	let container;
-
-	beforeAll( () => {
-		container = document.createElement( 'div' );
-	} );
-
-	afterEach( () => {
-		ReactDom.unmountComponentAtNode( container );
-	} );
 
 	beforeEach( () => {
 		for ( const spy in spies ) {
 			spies[ spy ] = jest.fn();
 		}
-		tree = ReactDom.render(
+
+		const ref = createRef();
+		render(
 			<TrackInputChanges onNewValue={ spies.onNewValue }>
-				<DummyInput onChange={ spies.onChange } onBlur={ spies.onBlur } />
-			</TrackInputChanges>,
-			container
+				<DummyInput ref={ ref } onChange={ spies.onChange } onBlur={ spies.onBlur } />
+			</TrackInputChanges>
 		);
-		dummyInput = TestUtils.findRenderedComponentWithType( tree, DummyInput );
-		// Rendering appears to trigger a 'change' event on the input
-		TestUtils.findRenderedComponentWithType( tree, TrackInputChanges ).inputEdited = false;
+		dummyInput = ref.current;
 	} );
 
 	test( 'should pass through callbacks but not trigger on a change event', () => {
@@ -98,14 +86,19 @@ describe( 'TrackInputChanges#onNewValue', () => {
 	} );
 
 	test( 'should throw if multiple child elements', () => {
+		// React logs the expected render error to console.error; suppress it so real
+		// warnings stay visible.
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+
 		expect( () =>
-			ReactDom.render(
+			render(
 				<TrackInputChanges onNewValue={ spies.onNewValue }>
 					<DummyInput onChange={ spies.onChange } onBlur={ spies.onBlur } />
 					<DummyInput onChange={ spies.onChange } onBlur={ spies.onBlur } />
-				</TrackInputChanges>,
-				container
+				</TrackInputChanges>
 			)
 		).toThrow();
+
+		consoleError.mockRestore();
 	} );
 } );

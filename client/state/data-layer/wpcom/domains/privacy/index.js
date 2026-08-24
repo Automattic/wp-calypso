@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
 import {
 	DOMAIN_PRIVACY_ENABLE,
 	DOMAIN_PRIVACY_DISABLE,
@@ -62,11 +61,8 @@ const handleDomainPrivacySettingsSuccess =
 const handleDomainPrivacySettingsFailure =
 	( type ) =>
 	( { siteId, domain }, data ) => {
-		const notice = get(
-			data,
-			'message',
-			translate( 'Unknown error when updating the domain privacy settings' )
-		);
+		const notice =
+			data?.message ?? translate( 'Unknown error when updating the domain privacy settings' );
 		return [
 			{
 				type: type,

@@ -6,13 +6,10 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, type ReactNode } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { securitySshKeyRoute } from '../../app/router/me';
+import SnackbarBackButton from '../../app/snackbar-back-button';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SnackbarBackButton, {
-	getSnackbarBackButtonText,
-} from '../../components/snackbar-back-button';
 import SshKey from './ssh-key';
 import SshKeyForm from './ssh-key-form';
 
@@ -58,9 +55,6 @@ export default function SecuritySshKey() {
 		);
 	}
 
-	const search = securitySshKeyRoute.useSearch();
-	const snackbarBackButtonText = getSnackbarBackButtonText( search?.back_to );
-
 	return (
 		<>
 			<PageLayout
@@ -84,9 +78,7 @@ export default function SecuritySshKey() {
 					/>
 				) }
 			</PageLayout>
-			{ snackbarBackButtonText && (
-				<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
-			) }
+			<SnackbarBackButton />
 		</>
 	);
 }

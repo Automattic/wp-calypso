@@ -10,12 +10,12 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import getCurrentAgencyTier from 'calypso/dashboard/agency/tiers/get-current-agency-tier';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getCurrentAgencyTier from '../lib/get-current-agency-tier';
 import InfluencedRevenue from '../overview-content/influenced-revenue';
-import type { AgencyTierType } from '../overview-content/types';
+import type { AgencyTierType } from 'calypso/dashboard/agency/tiers/types';
 import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
 
 function getTierCtaLabel( tierId?: AgencyTierType ): string {

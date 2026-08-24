@@ -102,7 +102,7 @@ export function generateAdminSections(
 			icon: 'plans',
 		},
 		{
-			/* translators: %(googleMailService)s can be either "G Suite" or "Google Workspace */
+			/* translators: %s can be either "G Suite" or "Google Workspace" */
 			title: sprintf( __( 'Cancel %s', __i18n_text_domain__ ), googleMailService ),
 			link: '/me/purchases',
 			synonyms: [ 'upgrade', 'business', 'professional', 'personal', 'google' ],
@@ -250,12 +250,6 @@ export function generateAdminSections(
 			title: __( 'Manage how users can comment on my site', __i18n_text_domain__ ),
 			link: `/settings/discussion/${ siteSlug }`,
 			synonyms: [ 'discussion', 'moderation', 'blocklist' ],
-			icon: 'cog',
-		},
-		{
-			title: __( 'Manage post categories', __i18n_text_domain__ ),
-			link: `/settings/taxonomies/category/${ siteSlug }`,
-			synonyms: [ 'post', 'category' ],
 			icon: 'cog',
 		},
 		{

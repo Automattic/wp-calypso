@@ -57,6 +57,14 @@ export type WPCOMTransactionEndpointResponse =
 	| WPCOMTransactionEndpointResponsePayPal
 	| WPCOMTransactionEndpointResponseRedirect;
 
+export interface TaxBreakdownEntry {
+	label: string;
+	rate: number;
+	rate_display: string;
+	local_tax_collected: number;
+	local_tax_collected_integer: number;
+}
+
 export interface TaxVendorInfo {
 	/**
 	 * The country code for this info.
@@ -140,9 +148,6 @@ export interface TransactionRequest {
 	successUrl?: string | undefined;
 	cancelUrl?: string | undefined;
 	idealBank?: string | undefined;
-	pan?: string | undefined;
-	gstin?: string | undefined;
-	nik?: string | undefined;
 	// 6-digit BLIK code generated in the customer's banking app.
 	code?: string | undefined;
 	useForAllSubscriptions?: boolean;
@@ -196,9 +201,6 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	successUrl?: string;
 	cancelUrl?: string;
 	idealBank?: string;
-	pan?: string;
-	gstin?: string;
-	nik?: string;
 	// 6-digit BLIK code generated in the customer's banking app.
 	code?: string;
 	useForAllSubscriptions?: boolean;
@@ -266,6 +268,7 @@ type DomainContactDetailsErrorsExtra = {
 	ca?: CaDomainContactExtraDetailsErrors | null;
 	uk?: UkDomainContactExtraDetailsErrors | null;
 	fr?: FrDomainContactExtraDetailsErrors | null;
+	in?: InDomainContactExtraDetailsErrors | null;
 };
 
 export type CaDomainContactExtraDetailsErrors = {
@@ -285,6 +288,11 @@ export type FrDomainContactExtraDetailsErrors = {
 	registrantVatId?: string[] | TranslateResult[];
 	trademarkNumber?: string[] | TranslateResult[];
 	sirenSiret?: string[] | TranslateResult[];
+};
+
+export type InDomainContactExtraDetailsErrors = {
+	nexusDeclaration?: string | TranslateResult;
+	nexusConnectionType?: string | TranslateResult;
 };
 
 export type PayPalExpressEndpoint = (
@@ -308,6 +316,7 @@ export interface LineItemType {
 	id: string;
 	type: string;
 	label: string;
+	labelSuffix?: string;
 	formattedAmount: string;
 	hasDeleteButton?: boolean;
 }
@@ -327,7 +336,6 @@ export type CheckoutPaymentMethodSlug =
 	| 'bancontact'
 	| 'card'
 	| 'ebanx'
-	| 'netbanking'
 	| 'eps'
 	| 'ideal'
 	| 'p24'
@@ -360,7 +368,6 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_WPCOM'
 	| 'WPCOM_Billing_MoneyPress_Stored'
 	| 'WPCOM_Billing_Ebanx'
-	| 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking'
 	| 'WPCOM_Billing_PayPal_Direct'
 	| 'WPCOM_Billing_PayPal_Express'
 	| 'WPCOM_Billing_PayPal_PPCP'
@@ -413,6 +420,10 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 		registrantVatId?: T;
 		trademarkNumber?: T;
 		sirenSiret?: T;
+	};
+	in?: {
+		nexusDeclaration?: T;
+		nexusConnectionType?: T;
 	};
 };
 
@@ -582,6 +593,10 @@ export type DomainContactValidationRequestExtraFields = {
 		trademark_number?: string;
 		siren_siret?: string;
 	};
+	in?: {
+		nexus_declaration?: boolean;
+		nexus_connection_type?: string;
+	};
 	is_for_business?: boolean;
 };
 
@@ -600,6 +615,10 @@ export type ContactValidationResponseMessagesExtra = {
 		registrant_type?: string[];
 		trademark_number?: string[];
 		siren_siret?: string[];
+	};
+	in?: {
+		nexus_declaration?: string[];
+		nexus_connection_type?: string[];
 	};
 	is_for_business?: boolean;
 };

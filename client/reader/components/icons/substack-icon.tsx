@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 export default function ReaderSubstackIcon( { iconSize }: { iconSize: number } ): JSX.Element {
 	return (
 		<svg

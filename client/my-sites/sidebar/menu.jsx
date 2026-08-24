@@ -65,9 +65,19 @@ export const MySitesSidebarUnifiedMenu = ( menuProps ) => {
 	const handleMoreClick = useCallback( ( ev ) => {
 		ev.preventDefault();
 		ev.stopPropagation();
-		setMoveMenuOpen( ( open ) => ! open );
+		setMoveMenuOpen( ( open ) => {
+			if ( open && typeof moreRef.current?.blur === 'function' ) {
+				moreRef.current.blur();
+			}
+			return ! open;
+		} );
 	}, [] );
-	const handleMoveMenuClose = useCallback( () => setMoveMenuOpen( false ), [] );
+	const handleMoveMenuClose = useCallback( ( options = {} ) => {
+		setMoveMenuOpen( false );
+		if ( options.blurTrigger && typeof moreRef.current?.blur === 'function' ) {
+			moreRef.current.blur();
+		}
+	}, [] );
 	const showAsExpanded =
 		( isMobile && ( childIsSelected || isExpanded ) ) || // For mobile breakpoints, we dont' care about the sidebar collapsed status.
 		( isDesktop && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
@@ -171,7 +181,7 @@ export const MySitesSidebarUnifiedMenu = ( menuProps ) => {
 									}
 								} }
 							>
-								⋯
+								⋮
 							</span>
 							{ moveMenuOpen && (
 								<MoveMenu

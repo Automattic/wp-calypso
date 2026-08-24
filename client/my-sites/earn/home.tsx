@@ -7,7 +7,6 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 	getPlan,
-	getPlanPath,
 	getYearlyPlanByMonthly,
 	isMonthly,
 	planMatches,
@@ -17,7 +16,6 @@ import { getCalypsoUrl } from '@automattic/calypso-url';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { compact } from 'lodash';
 import { useState, useEffect } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
@@ -408,7 +406,7 @@ const Home = () => {
 						trackUpgrade( 'plans', 'peer-referral' );
 						if ( isMonthlyPlan && site?.slug && sitePlanSlug ) {
 							const annualPlanSlug = getYearlyPlanByMonthly( sitePlanSlug );
-							const planPath = annualPlanSlug ? getPlanPath( annualPlanSlug ) : undefined;
+							const planPath = annualPlanSlug || undefined;
 							if ( planPath ) {
 								page( `/checkout/${ site.slug }/${ planPath }` );
 								return;
@@ -538,7 +536,7 @@ const Home = () => {
 	};
 
 	const promos: PromoSectionProps = {
-		promos: compact( [
+		promos: [
 			getRecurringPaymentsCard(),
 			getDonationsCard(),
 			getPremiumContentCard(),
@@ -546,7 +544,7 @@ const Home = () => {
 			getSimplePaymentsCard(),
 			getAdsCard(),
 			getPeerReferralsCard(),
-		] ),
+		].filter( ( card ): card is PromoSectionCardProps => Boolean( card ) ),
 	};
 
 	if ( ! isUserAdmin ) {

@@ -17,13 +17,17 @@ import { useDraftCleanup } from '../hooks/use-draft-cleanup';
 import { useErrorNotice } from '../hooks/use-error-notice';
 import { useImageLoaded } from '../hooks/use-image-loaded';
 import { useImageStudioAgentSync } from '../hooks/use-image-studio-agent-sync';
+import { useImageStudioErrorTracking } from '../hooks/use-image-studio-error-tracking';
 import { useImageStudioFeedback } from '../hooks/use-image-studio-feedback';
 import { useImageStudioMessageDisplay } from '../hooks/use-image-studio-message-display';
 import { useImageStudioSuggestions } from '../hooks/use-image-studio-suggestions';
 import { useImageUrl } from '../hooks/use-image-url';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
-import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
+import {
+	type CloseDialogVariant,
+	useUnsavedChangesConfirmation,
+} from '../hooks/use-unsaved-changes-confirmation';
 import { useVideoClipSuggestions } from '../hooks/use-video-clip-suggestions';
 import {
 	ImageStudioEntryPoint,
@@ -37,7 +41,7 @@ import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/trac
 import AnnotationCanvas from './annotation-canvas';
 import { AspectRatioPicker } from './aspect-ratio-picker';
 import { CanvasControls } from './canvas-controls';
-import { ConfirmationDialog } from './confirmation-dialog';
+import { type ActionButton, ConfirmationDialog } from './confirmation-dialog';
 import { EditLayout } from './edit-layout';
 import { ExperimentalBadge } from './experimental-badge';
 import { Footer } from './footer';
@@ -48,6 +52,14 @@ import { ImageStudioNotice } from './notice';
 import { ImageStudioAltTextSidebar } from './sidebar';
 import { StylePicker } from './style-picker';
 import './style.scss';
+
+/** Content for one flavor of the modal's close-confirmation dialog. */
+type CloseDialogConfig = {
+	title: string;
+	message: string;
+	onClose: () => void;
+	actions: ActionButton[];
+};
 
 function ImageStudioAgentChat( {
 	agentConfig: agentConfigProp,
@@ -155,18 +167,7 @@ function ImageStudioAgentChat( {
 				messageLength: message?.length || 0,
 			} );
 
-			try {
-				await agentChatProps.onSubmit?.( message );
-			} catch ( error ) {
-				// Track the error
-				trackImageStudioError( {
-					mode,
-					errorType: mode === ImageStudioMode.Edit ? 'edit_failed' : 'generation_failed',
-					attachmentId,
-				} );
-				// Re-throw to allow error to be handled by the UI
-				throw error;
-			}
+			await agentChatProps.onSubmit?.( message );
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ agentChatProps, onChatSubmit, mode ]
@@ -174,7 +175,8 @@ function ImageStudioAgentChat( {
 
 	const { error: agentError, ...agentUiProps } = agentChatProps;
 
-	useErrorNotice( agentError, addNotice );
+	useImageStudioErrorTracking( agentError, mode, attachmentId );
+	useErrorNotice( agentError, addNotice, mode );
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
@@ -357,7 +359,7 @@ const ImageStudioContent = withInstanceId(
 		} );
 
 		// Track the last modal key to detect when modal reopens
-		const lastModalOpenKey = useRef< number | undefined >();
+		const lastModalOpenKey = useRef< number | undefined >( undefined );
 		// Track attachment ID to detect navigation
 		const prevAttachmentIdRef = useRef< number | null >( null );
 		// Track activeToolbarOption to detect user interaction (vs. programmatic changes)
@@ -447,16 +449,21 @@ const ImageStudioContent = withInstanceId(
 
 		const {
 			isConfirmDialogOpen,
+			closeDialogVariant,
 			isExiting,
 			setIsExiting,
 			handleRequestClose,
 			handleConfirmSave,
 			handleConfirmDiscard,
 			handleConfirmCancel,
+			handleConfirmKeepGenerating,
+			handleConfirmStopAndClose,
 		} = useUnsavedChangesConfirmation( {
 			onSave,
 			onDiscard,
 			onExit,
+			// Closing while a clip renders aborts it — warn first (Feature Clip only).
+			isGenerationInProgress: isVideoMode && isAiProcessing,
 		} );
 
 		// Revert to original functionality
@@ -533,6 +540,60 @@ const ImageStudioContent = withInstanceId(
 			/>
 		) : null;
 
+		// One close-confirmation dialog, parameterized by which flavor is active.
+		// Memoized on the (stable) handlers so it isn't rebuilt every render.
+		const closeDialogs = useMemo< Record< CloseDialogVariant, CloseDialogConfig > >(
+			() => ( {
+				unsaved: {
+					title: __( 'Unsaved changes', __i18n_text_domain__ ),
+					message: __( 'Do you want to save this image?', __i18n_text_domain__ ),
+					onClose: handleConfirmCancel,
+					actions: [
+						{
+							text: __( 'Discard', __i18n_text_domain__ ),
+							onClick: handleConfirmDiscard,
+							variant: 'secondary',
+							isDestructive: true,
+						},
+						{
+							text: __( 'Save', __i18n_text_domain__ ),
+							onClick: handleConfirmSave,
+							variant: 'primary',
+						},
+					],
+				},
+				generation: {
+					title: __( 'Video generation in progress', __i18n_text_domain__ ),
+					message: __(
+						'Your clip is still generating. Closing now will stop it and discard your progress.',
+						__i18n_text_domain__
+					),
+					onClose: handleConfirmKeepGenerating,
+					actions: [
+						{
+							text: __( 'Keep generating', __i18n_text_domain__ ),
+							onClick: handleConfirmKeepGenerating,
+							variant: 'secondary',
+						},
+						{
+							text: __( 'Stop and close', __i18n_text_domain__ ),
+							onClick: handleConfirmStopAndClose,
+							variant: 'primary',
+							isDestructive: true,
+						},
+					],
+				},
+			} ),
+			[
+				handleConfirmCancel,
+				handleConfirmDiscard,
+				handleConfirmSave,
+				handleConfirmKeepGenerating,
+				handleConfirmStopAndClose,
+			]
+		);
+		const activeCloseDialog = closeDialogs[ closeDialogVariant ];
+
 		return (
 			<>
 				<Modal
@@ -541,7 +602,11 @@ const ImageStudioContent = withInstanceId(
 					className={ modalClasses }
 					__experimentalHideHeader
 					onRequestClose={ handleRequestClose }
-					aria-label={ __( 'Image Studio', __i18n_text_domain__ ) }
+					aria-label={
+						isVideoMode
+							? __( 'Video Studio', __i18n_text_domain__ )
+							: __( 'Image Studio', __i18n_text_domain__ )
+					}
 				>
 					<div className="image-studio-modal__content">
 						<Header
@@ -608,7 +673,7 @@ const ImageStudioContent = withInstanceId(
 									/>
 								) : (
 									<div className="image-studio-agent-loading">
-										{ __( 'Loading AI assistant…', __i18n_text_domain__ ) }
+										{ __( 'Loading WordPress Agent…', __i18n_text_domain__ ) }
 									</div>
 								)
 							}
@@ -649,23 +714,11 @@ const ImageStudioContent = withInstanceId(
 				{ isConfirmDialogOpen && (
 					<ConfirmationDialog
 						isOpen={ isConfirmDialogOpen }
-						title={ __( 'Unsaved changes', __i18n_text_domain__ ) }
-						actions={ [
-							{
-								text: __( 'Discard', __i18n_text_domain__ ),
-								onClick: handleConfirmDiscard,
-								variant: 'secondary',
-								isDestructive: true,
-							},
-							{
-								text: __( 'Save', __i18n_text_domain__ ),
-								onClick: handleConfirmSave,
-								variant: 'primary',
-							},
-						] }
-						onClose={ handleConfirmCancel }
+						title={ activeCloseDialog.title }
+						actions={ activeCloseDialog.actions }
+						onClose={ activeCloseDialog.onClose }
 					>
-						{ __( 'Do you want to save this image?', __i18n_text_domain__ ) }
+						{ activeCloseDialog.message }
 					</ConfirmationDialog>
 				) }
 			</>

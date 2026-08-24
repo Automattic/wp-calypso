@@ -1,25 +1,25 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Icon, info } from '@wordpress/icons';
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useSupportStatus } from '../data/use-support-status';
 import useChatStatus from '../hooks/use-chat-status';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import './notices.scss';
 import { HELP_CENTER_STORE } from '../stores';
 
 export const BlockedZendeskNotice: React.FC = () => {
-	const { currentUser, sectionName } = useHelpCenterContext();
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
+	const { currentUser, sectionName, site } = useHelpCenterContext();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
+		!! currentUser?.ID,
+		site?.ID
+	);
 	const { isEligibleForChat } = useChatStatus();
 	const featureConfig = useFeatureConfig();
 	const { setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );
+	const recordTracksEvent = useHelpCenterTracksEvent();
 
 	const willShowNotice =
 		! canConnectToZendesk && ( isEligibleForChat || featureConfig.chat.hasPremiumSupport );
@@ -32,7 +32,7 @@ export const BlockedZendeskNotice: React.FC = () => {
 				section: sectionName,
 			} );
 		}
-	}, [ willShowNotice, sectionName ] );
+	}, [ recordTracksEvent, willShowNotice, sectionName ] );
 
 	if ( ! willShowNotice ) {
 		return null;
@@ -58,43 +58,6 @@ export const BlockedZendeskNotice: React.FC = () => {
 				>
 					{ __( 'Learn more.', __i18n_text_domain__ ) }
 				</Button>
-			</p>
-		</div>
-	);
-};
-
-export const EmailFallbackNotice: React.FC = () => {
-	const navigate = useNavigate();
-	const { search } = useLocation();
-	const { data: supportStatus } = useSupportStatus();
-	const params = new URLSearchParams( search );
-	params.set( 'wapuuFlow', 'true' );
-	const url = '/contact-form?' + params.toString();
-
-	const title = supportStatus?.eligibility?.is_chat_restricted
-		? __( 'Live chat is currently unavailable.', __i18n_text_domain__ )
-		: __( 'Live chat is temporarily unavailable for scheduled maintenance.', __i18n_text_domain__ );
-
-	const message = __(
-		'Please reach out via <email>email</email> if you need assistance.',
-		__i18n_text_domain__
-	);
-
-	return (
-		<div className="help-center__notice email-fallback-notice">
-			<Icon icon={ info } className="help-center__notice-icon" />
-			<p>
-				<strong>{ title }</strong>
-				&nbsp;
-				{ createInterpolateElement( message, {
-					email: (
-						<Button
-							variant="link"
-							className="help-center__notice-link"
-							onClick={ () => navigate( url ) }
-						/>
-					),
-				} ) }
 			</p>
 		</div>
 	);
