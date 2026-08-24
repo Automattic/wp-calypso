@@ -87,3 +87,8 @@
 	border-radius: 4px;
 	background: var(--dashboard__background-color-secondary, #f6f7f7);
 }
+
+.dashboard-notifications-inbox__footer {
+	border-top: 1px solid var(--dashboard-header__border-color, #ddd);
+	padding-top: 16px;
+}

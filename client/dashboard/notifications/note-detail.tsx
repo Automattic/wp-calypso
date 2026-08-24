@@ -76,7 +76,6 @@ export default function NoteDetail( { noteId, onClose }: { noteId: string; onClo
 
 	return (
 		<DetailFrame onClose={ onClose }>
-			<NoteActions key={ note.id } note={ note } />
 			<HStack spacing={ 3 } justify="flex-start" alignment="center">
 				<img
 					className="dashboard-notifications-inbox__note-avatar"
@@ -103,6 +102,9 @@ export default function NoteDetail( { noteId, onClose }: { noteId: string; onClo
 					</Button>
 				</HStack>
 			) }
+			<div className="dashboard-notifications-inbox__footer">
+				<NoteActions key={ note.id } note={ note } />
+			</div>
 		</DetailFrame>
 	);
 }
