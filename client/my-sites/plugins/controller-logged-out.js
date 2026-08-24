@@ -94,6 +94,22 @@ const prefetchPlugin = async ( queryClient, store, { locale, pluginSlug } ) => {
 	return data;
 };
 
+/**
+ * Read the marketplace product that `prefetchPlugin` just cached.
+ *
+ * `prefetchPlugin` cannot hand the product back directly: it caches through
+ * `queryClient.prefetchQuery`, which resolves to `undefined` by design. The
+ * cache is the only place the prefetched product is readable.
+ *
+ * `pluginSlug` must be the same value that was passed to `prefetchPlugin`,
+ * because that value builds the query key.
+ * @param {Object} queryClient The react-query client holding the prefetched data
+ * @param {string} pluginSlug The plugin slug used for the prefetch
+ * @returns {Object|undefined} The normalized product, or undefined for a non-marketplace plugin
+ */
+const getPrefetchedMarketplaceProduct = ( queryClient, pluginSlug ) =>
+	queryClient.getQueryData( getWPCOMPluginQueryParams( pluginSlug ).queryKey );
+
 const prefetchTimebox = ( prefetchPromises, context ) => {
 	const racingPromises = [ Promise.all( prefetchPromises ) ];
 	const isBot = context.res?.req?.useragent?.isBot;
@@ -245,6 +261,13 @@ export async function fetchPlugin( context, next ) {
 		if ( dataOrError.message !== PREFETCH_TIMEOUT_ERROR ) {
 			return next( 'route' );
 		}
+	}
+
+	// A retired marketplace product cannot be bought any more, so its detail page
+	// is a dead end. Send the request to the plugin browser instead. The redirect
+	// is temporary because a product can stop being retired.
+	if ( getPrefetchedMarketplaceProduct( queryClient, options.pluginSlug )?.is_retired ) {
+		return context.res.redirect( 302, '/plugins' );
 	}
 
 	next();

@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -182,6 +183,18 @@ function PluginDetails( props ) {
 		isFetched: isWpComPluginFetched,
 		isFetching: isWpComPluginFetching,
 	} = useWPCOMPlugin( props.pluginSlug, { enabled: isProductListFetched && isMarketplaceProduct } );
+
+	// A retired marketplace product cannot be bought any more, so its detail page
+	// is a dead end. Wait for the marketplace fetch to resolve so that a plugin is
+	// never treated as retired on partial data.
+	const isRetiredProduct =
+		isMarketplaceProduct && isWpComPluginFetched && !! wpComPluginData?.is_retired;
+
+	useEffect( () => {
+		if ( isRetiredProduct ) {
+			page.redirect( '/plugins' );
+		}
+	}, [ isRetiredProduct ] );
 
 	// Unify plugin details
 	const fullPlugin = useMemo( () => {
