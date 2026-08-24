@@ -104,23 +104,29 @@ export function IncludedFeatures( { brand }: { brand: 'wpcom' | 'pressable' } ) 
 				}
 				level={ 2 }
 			/>
-			<div className="marketplace-hosting__grid-4">
-				{ FEATURE_COLUMNS( brand ).map( ( column ) => (
-					<Card key={ column.title }>
-						<CardBody>
-							<VStack spacing={ 4 }>
+			<Card>
+				<CardBody>
+					<div className="marketplace-hosting__grid-4">
+						{ FEATURE_COLUMNS( brand ).map( ( column ) => (
+							<VStack spacing={ 3 } key={ column.title } justify="flex-start">
 								<HStack spacing={ 2 } alignment="center" justify="flex-start">
 									<Icon className="marketplace-hosting__feature-icon" icon={ column.icon } />
 									<Text variant="muted" lineHeight="16px" size={ 11 } weight={ 500 } upperCase>
 										{ column.title }
 									</Text>
 								</HStack>
-								<CheckList items={ column.features } />
+								<VStack spacing={ 2 }>
+									{ column.features.map( ( feature ) => (
+										<Text key={ feature } variant="muted">
+											{ feature }
+										</Text>
+									) ) }
+								</VStack>
 							</VStack>
-						</CardBody>
-					</Card>
-				) ) }
-			</div>
+						) ) }
+					</div>
+				</CardBody>
+			</Card>
 		</VStack>
 	);
 }
@@ -165,8 +171,6 @@ export function Testimonials( { brand }: { brand: 'wpcom' | 'pressable' | 'vip' 
 }
 
 export function JetpackComplete() {
-	const midpoint = Math.ceil( JETPACK_COMPLETE_FEATURES.length / 2 );
-
 	return (
 		<VStack spacing={ 4 }>
 			<SectionHeader
@@ -177,26 +181,20 @@ export function JetpackComplete() {
 				level={ 2 }
 				decoration={ <JetpackLogo size={ 24 } /> }
 			/>
-			<div className="marketplace-hosting__grid-2">
-				<Card>
-					<CardBody>
-						<CheckList items={ JETPACK_COMPLETE_FEATURES.slice( 0, midpoint ) } />
-					</CardBody>
-				</Card>
-				<Card>
-					<CardBody>
-						<VStack spacing={ 2 }>
-							<CheckList items={ JETPACK_COMPLETE_FEATURES.slice( midpoint ) } />
-							<HStack spacing={ 2 } justify="flex-start" alignment="center">
-								<Icon icon={ check } className="marketplace-hosting__check" />
-								<ExternalLink href="https://jetpack.com/complete/">
-									{ __( 'And more' ) }
-								</ExternalLink>
-							</HStack>
-						</VStack>
-					</CardBody>
-				</Card>
-			</div>
+			<Card>
+				<CardBody>
+					<div className="marketplace-hosting__includes">
+						{ JETPACK_COMPLETE_FEATURES.map( ( feature ) => (
+							<Text key={ feature } variant="muted">
+								{ feature }
+							</Text>
+						) ) }
+					</div>
+				</CardBody>
+			</Card>
+			<HStack justify="center">
+				<ExternalLink href="https://jetpack.com/complete/">{ __( 'And more' ) }</ExternalLink>
+			</HStack>
 		</VStack>
 	);
 }
