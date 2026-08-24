@@ -145,7 +145,7 @@ export type Context = {
 		details?: string;
 		/**
 		 * The server's classification of the action when the proposal was minted
-		 * (e.g. 'needs_approval', 'always_confirm'); null when unclassified.
+		 * (e.g. 'require_approval', 'require_approval_if_supported'); opaque here.
 		 */
 		tier?: string | null;
 		/** Unix time (seconds) after which the server no longer accepts a decision on this token. */
