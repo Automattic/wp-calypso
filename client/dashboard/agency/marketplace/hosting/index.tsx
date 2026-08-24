@@ -22,9 +22,9 @@ import { Callout } from '../../../components/callout';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import difmIllustrationUrl from '../../../sites/overview-difm-upsell-card/upsell-illustration.svg';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
 import { IncludedFeatures, JetpackComplete, Testimonials } from './content-sections';
+import demoIllustrationUrl from './demo-callout-illustration.svg';
 import {
 	hostingBrands,
 	formatUSD,
@@ -184,7 +184,7 @@ function ScheduleDemoBanner() {
 					) }
 				</Text>
 			}
-			image={ difmIllustrationUrl }
+			image={ demoIllustrationUrl }
 			imageAlt={ __( 'Responsive website design' ) }
 			imageVariant="full-bleed"
 			actions={
