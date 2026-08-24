@@ -12,7 +12,11 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useSelector, useDispatch } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
-import { transferCompleteStates, transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	transferCompleteStates,
+	transferSettledStates,
+	transferStates,
+} from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
@@ -616,7 +620,15 @@ export function useProductInstall( {
 	// The Redux slice only ever hears `start` and `complete` on this path (the theme-transfer poller's
 	// reducer drops everything in between), so the staged wait reads the fine-grained status from the
 	// deadline hook's own poll and falls back to Redux only before that poll has seen our transfer.
-	const resolvedTransferStatus = polledTransferStatus ?? automatedTransferStatus;
+	//
+	// Unlike the poll, Redux's status is not tied to a particular transfer: it outlives the wait that
+	// produced it. A settled value borrowed here would therefore describe someone else's transfer —
+	// and the staged wait never moves backwards, so a stale `complete` would pin it at "finishing"
+	// for the whole of the next one. Only borrow a status that still describes a transfer in flight;
+	// once ours settles, the page's own step carries the stage.
+	const resolvedTransferStatus =
+		polledTransferStatus ??
+		( transferSettledStates.includes( automatedTransferStatus ) ? null : automatedTransferStatus );
 
 	// Which error screen to show, in priority order, or null for none. The presentational mapping
 	// lives in ProductInstallErrorView; keeping this as data makes the branching testable.
@@ -723,15 +735,21 @@ export function useProductInstall( {
 		[ error?.type, themeSlug, isPluginUploadFlow, pluginSlug, siteId, currentStep, installStrategy ]
 	);
 
+	// Keyed by the product too, not just the error type: this component survives an SPA navigation
+	// from one install to the next, and two installs that both end in `timeout` are two impressions.
 	const reportedErrorViewRef = useRef< string | null >( null );
 	useEffect( () => {
 		const errorType = errorTrackingProps.error_type;
-		if ( ! errorType || reportedErrorViewRef.current === errorType ) {
+		if ( ! errorType ) {
 			return;
 		}
-		reportedErrorViewRef.current = errorType;
+		const reportKey = `${ installIdentity }:${ errorType }`;
+		if ( reportedErrorViewRef.current === reportKey ) {
+			return;
+		}
+		reportedErrorViewRef.current = reportKey;
 		recordTracksEvent( 'calypso_marketplace_install_error_view', errorTrackingProps );
-	}, [ errorTrackingProps ] );
+	}, [ errorTrackingProps, installIdentity ] );
 
 	useThankYouRedirect( {
 		siteId,

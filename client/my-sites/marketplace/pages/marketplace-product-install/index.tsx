@@ -70,7 +70,10 @@ const MarketplaceProductInstall = ( {
 					/>
 				) }
 				{ ! error && isTransferWait && (
+					// Keyed by product: an SPA navigation from one install to the next keeps this
+					// component mounted, and the wait's clock and furthest stage belong to one install.
 					<InstallProgressCard
+						key={ pluginSlug || themeSlug }
 						transferStatus={ transferStatus }
 						currentStep={ currentStep }
 						startedAt={ transferStartedAt }
