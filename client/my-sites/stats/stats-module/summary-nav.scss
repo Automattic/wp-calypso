@@ -25,8 +25,13 @@ $summary-nav-swap-width: 661px;
 		}
 	}
 
+	// The padding compensates for the date picker stacking above the heading
+	// at this width; a title-only nav (e.g. the Emails summary page) has
+	// nothing stacked, and the padding would render as a bare blank strip.
 	@media ( min-width: $break-medium ) and ( max-width: 1160px ) {
-		padding-bottom: 24px;
+		&:has( .stats-summary-nav__date-control ) {
+			padding-bottom: 24px;
+		}
 	}
 
 	@media ( max-width: $summary-nav-swap-width ) {
