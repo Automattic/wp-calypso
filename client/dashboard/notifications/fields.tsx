@@ -37,6 +37,16 @@ export function getNoteTitle( note: Note ): string {
 	return note.subject[ 0 ]?.text ?? note.title;
 }
 
+// The actor who triggered the note: the header's leading user range (how the
+// legacy panel identifies the sender), falling back to the body's user block.
+export function getNoteSender( note: Note ): string | null {
+	const header = note.header?.[ 0 ];
+	if ( header?.ranges?.[ 0 ]?.type === 'user' && header.text ) {
+		return header.text;
+	}
+	return note.body?.find( ( block ) => block.type === 'user' )?.text ?? null;
+}
+
 export function getNoteExcerpt( note: Note ): string | null {
 	return note.subject.length > 1 ? note.subject[ 1 ].text : null;
 }
@@ -78,6 +88,7 @@ export function getFields(): Field< Note >[] {
 		{
 			id: 'title',
 			label: __( 'Title' ),
+			enableGlobalSearch: true,
 			getValue: ( { item } ) => getNoteTitle( item ),
 			render: ( { item } ) => (
 				<span
@@ -92,7 +103,18 @@ export function getFields(): Field< Note >[] {
 		{
 			id: 'description',
 			label: __( 'Excerpt' ),
+			enableGlobalSearch: true,
+			getValue: ( { item } ) => getNoteExcerpt( item ) ?? '',
 			render: ( { item } ) => getNoteExcerpt( item ),
+		},
+		{
+			// Search-only field so typing a person's name narrows the list; never
+			// added to the view's `fields`, so it doesn't render as a column.
+			id: 'sender',
+			label: __( 'Sender' ),
+			enableGlobalSearch: true,
+			enableSorting: false,
+			getValue: ( { item } ) => getNoteSender( item ) ?? '',
 		},
 		{
 			// Group-only field for the time-section headers; never added to the

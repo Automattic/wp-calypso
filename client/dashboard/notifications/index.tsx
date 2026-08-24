@@ -4,6 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	Spinner,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -55,10 +56,12 @@ function InboxList( {
 	category,
 	selectedNoteId,
 	onSelectNote,
+	onFirstNoteLoaded,
 }: {
 	category: InboxCategory;
 	selectedNoteId: string | undefined;
 	onSelectNote: ( noteId: string | undefined ) => void;
+	onFirstNoteLoaded: ( noteId: string ) => void;
 } ) {
 	const tab = CATEGORY_TO_TAB[ category ];
 	const { notes, isLoading, hasInitiallyLoaded } = useVisibleNotes( tab );
@@ -85,6 +88,12 @@ function InboxList( {
 		// is required by the type but inert, since `timeGroup` opts out of sorting.
 		groupBy: { field: 'timeGroup', direction: 'asc', showLabel: false },
 	} );
+
+	useEffect( () => {
+		if ( hasInitiallyLoaded && notes.length > 0 ) {
+			onFirstNoteLoaded( notes[ 0 ].id.toString() );
+		}
+	}, [ hasInitiallyLoaded, notes, onFirstNoteLoaded ] );
 
 	const view = { ...initialView, perPage: NOTES_PER_PAGE };
 	const startPosition = view.startPosition ?? 1;
@@ -195,6 +204,22 @@ function NotificationsInbox( {
 } ) {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
+	const isDesktop = useViewportMatch( 'medium' );
+
+	// Whether this category has had a selection (auto or explicit). Auto-open
+	// runs once per category and never overrides a deep link, a user's pick,
+	// or an explicit close.
+	const hasSelectedRef = useRef( false );
+
+	useEffect( () => {
+		hasSelectedRef.current = false;
+	}, [ category ] );
+
+	useEffect( () => {
+		if ( note ) {
+			hasSelectedRef.current = true;
+		}
+	}, [ note ] );
 
 	useEffect( () => acquireEngineVisibility(), [] );
 
@@ -205,6 +230,7 @@ function NotificationsInbox( {
 	}, [ category ] );
 
 	const setSelectedNote = ( noteId: string | undefined ) => {
+		hasSelectedRef.current = true;
 		if ( noteId ) {
 			recordTracksEvent( 'calypso_dashboard_notifications_inbox_note_open', {
 				category,
@@ -216,6 +242,25 @@ function NotificationsInbox( {
 			search: { note: noteId },
 		} );
 	};
+
+	// Opening through the normal path (?note= renders the detail pane, which
+	// calls openNote) marks the note read, exactly like a real open. On mobile
+	// the detail pane replaces the list, so auto-open would hide it — skip.
+	const handleFirstNoteLoaded = useCallback(
+		( firstNoteId: string ) => {
+			if ( note || hasSelectedRef.current || ! isDesktop ) {
+				return;
+			}
+			hasSelectedRef.current = true;
+			navigate( {
+				to: category === 'all' ? '/notifications' : '/notifications/$category',
+				params: { category },
+				search: { note: firstNoteId },
+				replace: true,
+			} );
+		},
+		[ note, isDesktop, category, navigate ]
+	);
 
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Notifications' ) } /> }>
@@ -229,6 +274,7 @@ function NotificationsInbox( {
 							category={ category }
 							selectedNoteId={ note }
 							onSelectNote={ setSelectedNote }
+							onFirstNoteLoaded={ handleFirstNoteLoaded }
 						/>
 					</DataViewsCard>
 				</div>
