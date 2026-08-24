@@ -11,6 +11,7 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const onBackLinkClick = ( event ) => {
+		event.preventDefault();
 		recordTracksEvent( 'calypso_courses_mobile_back_click', {
 			course: course?.slug,
 		} );

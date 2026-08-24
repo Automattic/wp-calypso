@@ -55,7 +55,7 @@ export default function redirectLoggedIn( context, next ) {
 		// Redirect parameters should have higher priority.
 		let url = context?.query?.redirect_to;
 		if ( ! url || isUnsafeInternalUrl( url ) || isExternalUrl( url ) ) {
-			url = '/';
+			url = '/home';
 		}
 		window.location = url;
 		return;
