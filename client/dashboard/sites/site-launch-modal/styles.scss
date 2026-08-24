@@ -1,16 +1,4 @@
-@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
-
 @import '@wordpress/base-styles/variables';
-
-// Dark-mode tint for the card surfaces that @automattic/site-launch-modals ships
-// light-only.
-.celebration-modal--content,
-.site-launch-pre-launch-modal__preview-card {
-	@include ui-mixins.when-dark-theme {
-		background-color: var( --wp-components-color-gray-200 );
-		color: var( --dashboard__text-color );
-	}
-}
 
 // The preview thumbnail is rendered by this app and passed into the modal's
 // `preview` prop, so its styling stays here rather than in the package.
