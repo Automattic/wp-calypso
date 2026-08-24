@@ -8,9 +8,9 @@ import {
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
+import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
 import { CheckList } from './content-sections';
 import {
 	hostingBrands,
@@ -73,7 +73,9 @@ export default function PressableContent( {
 					level={ 3 }
 					title={ __( 'Configure Pressable' ) }
 					description={ hostingBrands.find( ( brand ) => brand.key === 'pressable' )?.description }
-					decoration={ <img src={ pressableIcon } alt="" width={ 24 } /> }
+					decoration={
+						<img src={ pressableDescriptor } alt="" className="marketplace-hosting__brand-mark" />
+					}
 				/>
 			</CardHeader>
 			<CardBody>
