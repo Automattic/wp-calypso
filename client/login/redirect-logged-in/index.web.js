@@ -54,7 +54,7 @@ export default function redirectLoggedIn( context, next ) {
 		// force full page reload to avoid SSR hydration issues.
 		// Redirect parameters should have higher priority.
 		let url = context?.query?.redirect_to;
-		if ( ! url || isUnsafeInternalUrl( url ) || isExternalUrl( url ) ) {
+		if ( ! url || url === '/' || isUnsafeInternalUrl( url ) || isExternalUrl( url ) ) {
 			url = '/home';
 		}
 		window.location = url;
