@@ -289,11 +289,13 @@ export function useProductInstall( {
 	// product's current status the baseline.
 	const [ installFailureSeen, setInstallFailureSeen ] = useState( false );
 	const previousInstallStatusRef = useRef< string | undefined >( undefined );
+	const hasSucceededRef = useRef( false );
 	const installIdentity = `${ siteId }:${ pluginSlug }:${ themeSlug }`;
 	const installIdentityRef = useRef( installIdentity );
 	const observedInstallStatus = pluginInstallStatus?.status;
 	if ( installIdentityRef.current !== installIdentity ) {
 		installIdentityRef.current = installIdentity;
+		hasSucceededRef.current = false;
 		if ( installFailureSeen ) {
 			setInstallFailureSeen( false );
 		}
@@ -442,10 +444,11 @@ export function useProductInstall( {
 	// next. Retiring it here rather than on unmount is what separates a finished install from a
 	// closed tab — the plugin flow leaves by full-page navigation, which React never sees.
 	//
-	// Latched, because an install does not un-succeed. The plugin list refetches while the redirect
-	// resolves, and the gap where it reads empty would otherwise close this wait and open a second
-	// one that lives for a second.
-	const hasSucceededRef = useRef( false );
+	// Latched, because an install does not un-succeed — but only for this install: the identity
+	// block above clears it when an SPA navigation brings the next product to this same mount,
+	// whose own wait must arm from scratch. The plugin list refetches while the redirect resolves,
+	// and the gap where it reads empty would otherwise close this wait and open a second one that
+	// lives for a second.
 	hasSucceededRef.current =
 		hasSucceededRef.current || ( themeSlug ? isThemeActive : !! installedPlugin && pluginActive );
 	const hasSucceeded = hasSucceededRef.current;

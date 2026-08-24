@@ -467,6 +467,46 @@ describe( 'useProductInstall progression', () => {
 		expect( result.current.error ).toBeNull();
 	} );
 
+	// This component survives an SPA navigation from one install to the next, and one install's
+	// success must not leave the next install's activation phase unbounded.
+	it( 'arms the activation deadline again for the next product after a success', async () => {
+		await beginAtomicPluginTransfer();
+		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed' ) );
+
+		const { result, store, rerender } = renderHookWithProvider(
+			( { pluginSlug }: { pluginSlug: string } ) => useProductInstall( { pluginSlug } ),
+			{
+				reducers,
+				initialState: {
+					...directInstallAuthorization,
+					...simpleAtomicEligibleSite,
+					plugins: { wporg: { items: wporgItems } },
+				},
+				initialProps: { pluginSlug: 'give' },
+			}
+		);
+		await waitFor( () => expect( result.current.currentStep ).toBe( 2 ) );
+		await act( async () => {
+			store.dispatch(
+				receiveSitePlugins( SITE_ID, [ { slug: 'give', id: 'give/give', active: true } ] )
+			);
+		} );
+
+		window.sessionStorage.setItem(
+			`marketplace-product-install-transfer:${ SITE_ID }:akismet`,
+			JSON.stringify( {
+				initiatedAt: Date.now() - 5000,
+				previousTransferId: null,
+				lookupSettled: true,
+			} )
+		);
+		rerender( { pluginSlug: 'akismet' } );
+
+		await advance( INSTALL_DEADLINE_MS + 10000 );
+
+		expect( result.current.error ).toEqual( { type: 'activation-timeout' } );
+	} );
+
 	it( 'does not carry a completed transfer latch across products', async () => {
 		await beginAtomicPluginTransfer();
 		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed' ) );
