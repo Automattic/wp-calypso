@@ -440,23 +440,15 @@ export function useProductInstall( {
 	const transferHasFailed = hasTransferFailed || durableTransferFailed;
 	const transferTimedOut = ! durableTransferCompleted && ( hasTimedOut || hasTransferTimedOut );
 
-	// The product is on the site and switched on: the wait is over, whatever the redirect below does
-	// next. Retiring it here rather than on unmount is what separates a finished install from a
-	// closed tab — the plugin flow leaves by full-page navigation, which React never sees.
-	//
-	// Latched, because an install does not un-succeed — but only for this install: the identity
-	// block above clears it when an SPA navigation brings the next product to this same mount,
-	// whose own wait must arm from scratch. The plugin list refetches while the redirect resolves,
-	// and the gap where it reads empty would otherwise close this wait and open a second one that
-	// lives for a second.
+	// The product is on the site and switched on: the wait is over. Latched, because an install does
+	// not un-succeed (the plugin list briefly reads empty while the redirect resolves); reset by the
+	// identity block above so the next product's wait arms from scratch.
 	hasSucceededRef.current =
 		hasSucceededRef.current || ( themeSlug ? isThemeActive : !! installedPlugin && pluginActive );
 	const hasSucceeded = hasSucceededRef.current;
 
-	// The completion latch above ends the transfer phase, but not the wait: activation still has to
-	// land, and nothing else bounds it — the transfer poll has stopped and the deadline hook's clock
-	// is anchored to a phase that is over. Restart the deadline for this phase rather than leaving
-	// it unbounded, so every wait still ends in a verdict.
+	// A completed transfer ends the transfer deadline, not the wait: activation still has to land.
+	// Restart the deadline for that phase so every wait ends in a verdict.
 	const activationTimedOut = useDelayedCondition(
 		durableTransferCompleted && ! preflightError && ! transferHasFailed && ! hasSucceeded,
 		INSTALL_DEADLINE_MS

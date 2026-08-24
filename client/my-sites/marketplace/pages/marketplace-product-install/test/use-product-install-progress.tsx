@@ -419,8 +419,6 @@ describe( 'useProductInstall progression', () => {
 		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
 	} );
 
-	// The transfer's own deadline must not condemn a transfer that completed — but the wait is not
-	// over, so the activation phase gets a fresh deadline of the same length rather than none.
 	it( 'gives activation its own deadline after a completed recovery', async () => {
 		await beginAtomicPluginTransfer();
 		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed' ) );
@@ -467,8 +465,7 @@ describe( 'useProductInstall progression', () => {
 		expect( result.current.error ).toBeNull();
 	} );
 
-	// This component survives an SPA navigation from one install to the next, and one install's
-	// success must not leave the next install's activation phase unbounded.
+	// The component survives SPA navigation between installs; one success must not disarm the next.
 	it( 'arms the activation deadline again for the next product after a success', async () => {
 		await beginAtomicPluginTransfer();
 		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed' ) );

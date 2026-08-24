@@ -126,8 +126,7 @@ export default function ProductInstallErrorView( {
 				/>
 			);
 		}
-		// Only the plugin transfer flow can reach this: the completion latch that starts the
-		// activation phase exists solely on that path, so the copy can name the plugin outright.
+		// Only the plugin transfer flow reaches this state, so the copy can name the plugin.
 		case 'activation-timeout':
 			return (
 				<EmptyContent
