@@ -81,7 +81,7 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 					</>
 				);
 			case 'clicks':
-				// Mirrors the opens view: sends → uniques → totals → rate. The rate's
+				// Mirrors the opens view: sends → totals → uniques → rate. The rate's
 				// denominator is total sends, so it belongs on screen; total opens
 				// lives on the Opens tab.
 				return (

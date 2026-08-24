@@ -166,11 +166,11 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 						valueField="clicks_rate"
 						formatValue={ ( value, item ) => {
 							if ( item?.clicks !== undefined ) {
-								const clicksUnique = parseInt( item.unique_clicks, 10 );
-								const clicks = parseInt( item.clicks, 10 );
-								const sends = parseInt( item.total_sends, 10 );
-								// Same states as the Opens column, including the 0/0 guard.
-								const rateKnown = sends > 0 && ( clicksUnique > 0 || clicks === 0 );
+								const rateKnown = isRateKnown( {
+									uniques: toCount( item.unique_clicks ),
+									totals: toCount( item.clicks ),
+									sends: toCount( item.total_sends ),
+								} );
 								return (
 									<TooltipWrapper
 										value={
