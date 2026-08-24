@@ -58,7 +58,7 @@ export class DashboardMeSidebarComponent {
 	 * @param item Plaintext label of the menu item (eg. "Billing").
 	 */
 	async navigate(
-		item: 'Account' | 'Preferences' | 'Billing' | 'Security' | 'Notifications' | 'Apps'
+		item: 'Account' | 'Preferences' | 'Billing' | 'Security' | 'Notifications' | 'AI & Apps'
 	) {
 		await this.page
 			.getByRole( 'navigation' )

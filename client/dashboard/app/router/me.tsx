@@ -1203,12 +1203,17 @@ export const appsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Apps' ),
+				title: __( 'AI & Apps' ),
 			},
 		],
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'apps',
+} );
+
+export const appsIndexRoute = createRoute( {
+	getParentRoute: () => appsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/apps' ).then( ( d ) =>
 		createLazyRoute( 'apps' )( {
@@ -1249,6 +1254,44 @@ export const profileLegacyRedirectRoute = createRoute( {
 	},
 } );
 
+const validateAgentConnectionSearch = (
+	search: Record< string, unknown >
+): {
+	pair_token?: string;
+	slack?: string;
+	telegram_id?: string;
+	token?: string;
+	ts?: string;
+	bot?: string;
+} => ( {
+	...( typeof search.pair_token === 'string' ? { pair_token: search.pair_token } : {} ),
+	...( typeof search.slack === 'string' ? { slack: search.slack } : {} ),
+	...( typeof search.telegram_id === 'string' ? { telegram_id: search.telegram_id } : {} ),
+	...( typeof search.token === 'string' ? { token: search.token } : {} ),
+	...( typeof search.ts === 'string' ? { ts: search.ts } : {} ),
+	...( typeof search.bot === 'string' ? { bot: search.bot } : {} ),
+} );
+
+export const agentRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress Agent' ),
+			},
+		],
+	} ),
+	getParentRoute: () => appsRoute,
+	path: 'agent',
+	validateSearch: validateAgentConnectionSearch,
+	loader: async () => queryClient.ensureQueryData( isAutomatticianQuery() ),
+} ).lazy( () =>
+	import( '../../me/apps/agent' ).then( ( d ) =>
+		createLazyRoute( 'agent' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const mcpRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1259,23 +1302,6 @@ export const mcpRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'mcp',
-	validateSearch: (
-		search
-	): {
-		pair_token?: string;
-		slack?: string;
-		telegram_id?: string;
-		token?: string;
-		ts?: string;
-		bot?: string;
-	} => ( {
-		...( typeof search.pair_token === 'string' ? { pair_token: search.pair_token } : {} ),
-		...( typeof search.slack === 'string' ? { slack: search.slack } : {} ),
-		...( typeof search.telegram_id === 'string' ? { telegram_id: search.telegram_id } : {} ),
-		...( typeof search.token === 'string' ? { token: search.token } : {} ),
-		...( typeof search.ts === 'string' ? { ts: search.ts } : {} ),
-		...( typeof search.bot === 'string' ? { bot: search.bot } : {} ),
-	} ),
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -1487,7 +1513,12 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	);
 
 	if ( config.supports.me.apps ) {
-		meRoutes.push( appsRoute );
+		meRoutes.push(
+			appsRoute.addChildren( [
+				appsIndexRoute,
+				...( isEnabled( 'mcp-settings' ) ? [ agentRoute ] : [] ),
+			] )
+		);
 	}
 
 	return [ meRoute.addChildren( meRoutes ) ];

@@ -70,7 +70,7 @@ function MeMenuSidebar() {
 			) }
 			{ hasAppSupport( supports, 'apps' ) && (
 				<SidebarMenuItem icon={ buttons } to="/me/apps">
-					{ __( 'Apps' ) }
+					{ __( 'AI & Apps' ) }
 				</SidebarMenuItem>
 			) }
 		</SidebarMenu>

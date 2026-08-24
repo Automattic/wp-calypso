@@ -311,7 +311,7 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.getByRole( 'heading', { name: 'Email WordPress Agent' } ) ).toBeVisible();
 		expect(
 			screen.getByRole( 'link', { name: /Connect WordPress Agent to Telegram/ } )
-		).toHaveAttribute( 'href', '/me/preferences/mcp' );
+		).toHaveAttribute( 'href', '/me/apps/agent' );
 		expect(
 			screen.getByText(
 				'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
