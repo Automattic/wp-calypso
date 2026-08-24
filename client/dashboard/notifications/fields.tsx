@@ -51,6 +51,30 @@ export function getNoteExcerpt( note: Note ): string | null {
 	return note.subject.length > 1 ? note.subject[ 1 ].text : null;
 }
 
+export type NoteBodyParts = {
+	/** Muted context lines (post title, prompt text, likers on non-comment notes). */
+	context: string[];
+	/** The quoted comment content, when the note carries one. */
+	comment: string | null;
+};
+
+/**
+ * Split the note's body blocks for display: the comment block becomes quoted
+ * content; the rest are context lines. On comment notes the user blocks are
+ * dropped (the header already names the sender), while on other note types
+ * they are real content (who liked/followed).
+ */
+export function getNoteBodyParts( note: Note ): NoteBodyParts {
+	const blocks = ( note.body ?? [] ).filter( ( block ) => block.text && block.text.trim() );
+	const commentBlock = blocks.find( ( block ) => block.type === 'comment' );
+	const context = blocks
+		.filter( ( block ) => block !== commentBlock )
+		.filter( ( block ) => ! ( commentBlock && block.type === 'user' ) )
+		.map( ( block ) => block.text );
+
+	return { context, comment: commentBlock?.text ?? null };
+}
+
 export function getFields(): Field< Note >[] {
 	return [
 		{

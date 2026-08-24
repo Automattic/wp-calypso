@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardBody } from '../components/card';
 import { getRelativeTimeString } from '../utils/datetime';
 import { openNote, useNote } from './engine';
-import { getNoteExcerpt, getNoteTitle } from './fields';
+import { getNoteBodyParts, getNoteExcerpt, getNoteTitle } from './fields';
 import NoteActions from './note-actions';
 
 // The engine has no error signal for a missing note: `openNote` just keeps
@@ -71,9 +71,8 @@ export default function NoteDetail( { noteId, onClose }: { noteId: string; onClo
 	}
 
 	const excerpt = getNoteExcerpt( note );
-	const bodyParagraphs = ( note.body ?? [] )
-		.map( ( block ) => block.text )
-		.filter( ( text ) => text && text.trim() );
+	const { context, comment } = getNoteBodyParts( note );
+	const commentParagraphs = comment ? comment.split( /\n+/ ).filter( ( line ) => line.trim() ) : [];
 
 	return (
 		<DetailFrame onClose={ onClose }>
@@ -100,12 +99,25 @@ export default function NoteDetail( { noteId, onClose }: { noteId: string; onClo
 					<Text variant="muted">{ getRelativeTimeString( new Date( note.timestamp ) ) }</Text>
 				</VStack>
 			</HStack>
-			{ excerpt && <Text>{ excerpt }</Text> }
-			{ bodyParagraphs.map( ( text, index ) => (
-				<Text as="p" key={ index }>
-					{ text }
-				</Text>
-			) ) }
+			<VStack spacing={ 3 } className="dashboard-notifications-inbox__body">
+				{ ! comment && excerpt && <Text>{ excerpt }</Text> }
+				{ context.map( ( text, index ) => (
+					<Text key={ index } variant="muted">
+						{ text }
+					</Text>
+				) ) }
+				{ comment && (
+					<blockquote className="dashboard-notifications-inbox__quote">
+						<VStack spacing={ 2 }>
+							{ commentParagraphs.map( ( text, index ) => (
+								<Text as="p" key={ index }>
+									{ text }
+								</Text>
+							) ) }
+						</VStack>
+					</blockquote>
+				) }
+			</VStack>
 			<div className="dashboard-notifications-inbox__footer">
 				<NoteActions key={ note.id } note={ note } />
 			</div>

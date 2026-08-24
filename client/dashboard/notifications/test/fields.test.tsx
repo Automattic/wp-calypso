@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { getFields, getNoteSender } from '../fields';
+import { getFields, getNoteBodyParts, getNoteSender } from '../fields';
 import type { Note } from '../engine';
 import type { View } from '@wordpress/dataviews';
 
@@ -81,5 +81,40 @@ describe( 'search fields', () => {
 	it( 'matches the excerpt text', () => {
 		const { data } = filterSortAndPaginate( notes, { ...view, search: 'Nice article' }, fields );
 		expect( data.map( ( note ) => note.id ) ).toEqual( [ 1 ] );
+	} );
+} );
+
+describe( 'getNoteBodyParts', () => {
+	it( 'quotes the comment block and drops the redundant user block', () => {
+		const parts = getNoteBodyParts(
+			makeNote( 1, {
+				body: [
+					{ text: 'Alice Adams', type: 'user' },
+					{ text: 'On the post: Hello world', type: 'post' },
+					{ text: 'Great write-up!\n\nThanks for sharing.', type: 'comment' },
+				],
+			} )
+		);
+		expect( parts.comment ).toBe( 'Great write-up!\n\nThanks for sharing.' );
+		expect( parts.context ).toEqual( [ 'On the post: Hello world' ] );
+	} );
+
+	it( 'keeps user blocks as context when there is no comment', () => {
+		const parts = getNoteBodyParts(
+			makeNote( 2, {
+				body: [
+					{ text: 'Alice Adams', type: 'user' },
+					{ text: 'Bob Brown', type: 'user' },
+				],
+			} )
+		);
+		expect( parts.comment ).toBeNull();
+		expect( parts.context ).toEqual( [ 'Alice Adams', 'Bob Brown' ] );
+	} );
+
+	it( 'ignores empty blocks', () => {
+		const parts = getNoteBodyParts( makeNote( 3, { body: [ { text: '  ' } ] } ) );
+		expect( parts.context ).toEqual( [] );
+		expect( parts.comment ).toBeNull();
 	} );
 } );

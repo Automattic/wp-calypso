@@ -92,3 +92,15 @@
 	border-top: 1px solid var(--dashboard-header__border-color, #ddd);
 	padding-top: 16px;
 }
+
+.dashboard-notifications-inbox__body {
+	line-height: 1.6;
+}
+
+.dashboard-notifications-inbox__quote {
+	margin: 0;
+	padding: 12px 16px;
+	border-inline-start: 3px solid var(--dashboard-header__border-color, #ddd);
+	background: var(--dashboard__background-color-secondary, #f6f7f7);
+	border-radius: 2px;
+}
