@@ -9,7 +9,6 @@ import {
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { Card, CardBody, CardDivider } from '../../../components/card';
-import pressableLogo from '../exclusive-offers/images/pressable-descriptor.svg';
 import { CheckList } from './content-sections';
 import {
 	pressableSignaturePlans,
@@ -68,8 +67,6 @@ export default function PressableContent( {
 		<Card>
 			<CardBody>
 				<VStack spacing={ 5 }>
-					<img src={ pressableLogo } alt="Pressable" className="marketplace-hosting__brand-logo" />
-
 					<VStack spacing={ 3 }>
 						<Heading level={ 3 } size={ 13 }>
 							{ __( 'Size plans by total' ) }
