@@ -52,38 +52,53 @@ export function FixThreatConfirmation( {
 		<VStack spacing={ 4 }>
 			{ threat.fixable?.extensionStatus === 'active' ? (
 				<Notice variant="error">
-					{ threat.extension?.type === 'plugin' &&
-						__(
-							'This plugin seems to be currently active on your site. Deleting it may break your site. Please disable it first and check if your site is still working as expected, then proceed with the fix.'
-						) }
-					{ threat.extension?.type === 'theme' &&
-						__(
-							'This theme seems to be currently active on your site. Deleting it may break your site. Please disable it first and check if your site is still working as expected, then proceed with the fix.'
-						) }
+					{ /* Wrap conditionals in spans; avoids a Google Translate DOM crash (react/react#11538) */ }
+					<span>
+						{ threat.extension?.type === 'plugin' &&
+							__(
+								'This plugin seems to be currently active on your site. Deleting it may break your site. Please disable it first and check if your site is still working as expected, then proceed with the fix.'
+							) }
+					</span>
+					<span>
+						{ threat.extension?.type === 'theme' &&
+							__(
+								'This theme seems to be currently active on your site. Deleting it may break your site. Please disable it first and check if your site is still working as expected, then proceed with the fix.'
+							) }
+					</span>
 				</Notice>
 			) : (
 				<Notice variant="warning">
-					{ threat.extension?.type === 'plugin' &&
-						__(
-							'This plugin seems to not currently be active on your site. Please note that deleting it may still have adverse effects and this action cannot be undone.'
-						) }
-					{ threat.extension?.type === 'theme' &&
-						__(
-							'This theme seems to not currently be active on your site. Please note that deleting it may still have adverse effects and this action cannot be undone.'
-						) }
+					{ /* Wrap conditionals in spans; avoids a Google Translate DOM crash (react/react#11538) */ }
+					<span>
+						{ threat.extension?.type === 'plugin' &&
+							__(
+								'This plugin seems to not currently be active on your site. Please note that deleting it may still have adverse effects and this action cannot be undone.'
+							) }
+					</span>
+					<span>
+						{ threat.extension?.type === 'theme' &&
+							__(
+								'This theme seems to not currently be active on your site. Please note that deleting it may still have adverse effects and this action cannot be undone.'
+							) }
+					</span>
 				</Notice>
 			) }
 
 			{ threat.fixable?.extras?.is_dotorg === false && (
 				<Text>
-					{ threat.extension?.type === 'plugin' &&
-						__(
-							'We did not find this plugin on WordPress.org. We encourage you to create a backup of your site before fixing this threat, to keep a copy of it.'
-						) }
-					{ threat.extension?.type === 'theme' &&
-						__(
-							'We did not find this theme on WordPress.org. We encourage you to create a backup of your site before fixing this threat, to keep a copy of it.'
-						) }
+					{ /* Wrap conditionals in spans; avoids a Google Translate DOM crash (react/react#11538) */ }
+					<span>
+						{ threat.extension?.type === 'plugin' &&
+							__(
+								'We did not find this plugin on WordPress.org. We encourage you to create a backup of your site before fixing this threat, to keep a copy of it.'
+							) }
+					</span>
+					<span>
+						{ threat.extension?.type === 'theme' &&
+							__(
+								'We did not find this theme on WordPress.org. We encourage you to create a backup of your site before fixing this threat, to keep a copy of it.'
+							) }
+					</span>
 				</Text>
 			) }
 
