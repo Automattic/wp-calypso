@@ -99,19 +99,19 @@ describe( 'getSiteEditorUrl', () => {
 	 */
 	it( 'flags the walkthrough when the spec was applied', () => {
 		expect( getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: true } ) ).toBe(
-			'https://example.com/wp-admin/site-editor.php?blueprint-walkthrough=go'
+			'https://example.com/wp-admin/site-editor.php?blueprint-walkthrough=go&canvas=edit'
 		);
 	} );
 
 	/**
-	 * `canvas=edit` used to ride along here. It made the Site Editor open its
-	 * welcome guide over the page on arrival, which is the first thing a customer
-	 * would have had to dismiss; the editor gets to its editing canvas without it.
+	 * Big Sky's assembler only mounts on the editing canvas; a plain
+	 * site-editor.php load stays in view mode and the walkthrough silently
+	 * never starts. The hand-off must force edit mode.
 	 */
-	it( 'does not force the editing canvas', () => {
+	it( 'forces the editing canvas so Big Sky mounts', () => {
 		expect(
 			getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: true } )
-		).not.toContain( 'canvas=edit' );
+		).toContain( 'canvas=edit' );
 	} );
 
 	it( 'leaves the flag off when the spec did not apply', () => {

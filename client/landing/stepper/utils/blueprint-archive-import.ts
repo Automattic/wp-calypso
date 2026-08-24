@@ -294,15 +294,20 @@ export function getSiteEditorUrl(
 	// the editor URL, so a site that has already been personalized has to see it
 	// and do nothing. `reset` is the way to run it again.
 	//
-	// Deliberately no `canvas=edit`. Sending it made the Site Editor open its
-	// "Edit your site" welcome guide over the page and left a run of failed
-	// entity requests behind it; the same URL without it lands correctly and the
-	// personalization runs. The editor reaches its editing canvas on its own from
-	// here, so the parameter bought nothing and cost that.
+	// `canvas=edit` is load-bearing: Big Sky's assembler only mounts on the
+	// editing canvas (useShouldLoadBigSky requires canvasMode === 'edit'), and a
+	// plain site-editor.php load stays in view mode — the kickoff, the copy
+	// mask, and the walkthrough all silently never run without it. The
+	// welcome-guide overlay this parameter was once blamed for came from sites
+	// where Big Sky had not been enabled by hand-off time (the enable race since
+	// fixed on the WordPress.com side); when Big Sky mounts, it suppresses the
+	// guide itself.
 	//
 	// Only set when the spec applied; there is nothing to personalize from
 	// otherwise.
-	return startWalkthrough ? addQueryArgs( url, { 'blueprint-walkthrough': 'go' } ) : url;
+	return startWalkthrough
+		? addQueryArgs( url, { 'blueprint-walkthrough': 'go', canvas: 'edit' } )
+		: url;
 }
 
 export function logBlueprintArchiveEvent(
