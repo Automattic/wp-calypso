@@ -38,13 +38,13 @@ describe( 'redirectLoggedIn', () => {
 
 		test( 'should redirect home when no redirect is passed', () => {
 			redirectLoggedIn( { ...context, query: {} }, next );
-			expect( window.location ).toBe( '/' );
+			expect( window.location ).toBe( '/home' );
 		} );
 
 		test( 'should redirect home when invalid internal url is passed', () => {
 			isUserLoggedIn.mockReturnValue( true );
 			redirectLoggedIn( { ...context, query: { redirect_to: '////test.com' } }, next );
-			expect( window.location ).toBe( '/' );
+			expect( window.location ).toBe( '/home' );
 		} );
 
 		test( 'should redirect according to valid internal redirect_to', () => {
@@ -56,7 +56,7 @@ describe( 'redirectLoggedIn', () => {
 		test( 'should redirect home when invalid external url is provided', () => {
 			isUserLoggedIn.mockReturnValue( true );
 			redirectLoggedIn( { ...context, query: { redirect_to: 'invalid-external-url' } }, next );
-			expect( window.location ).toBe( '/' );
+			expect( window.location ).toBe( '/home' );
 		} );
 
 		test( 'should redirect according to allowed external url', () => {
@@ -71,7 +71,7 @@ describe( 'redirectLoggedIn', () => {
 		test( 'redirects to homepage when not allowed external url is provided', () => {
 			isUserLoggedIn.mockReturnValue( true );
 			redirectLoggedIn( { ...context, query: { redirect_to: 'https://test.com' } }, next );
-			expect( window.location ).toBe( '/' );
+			expect( window.location ).toBe( '/home' );
 		} );
 	} );
 } );

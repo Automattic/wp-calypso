@@ -314,9 +314,9 @@ function useRedirectOnTransactionSuccess( {
 			if ( blogId && redirectTo?.includes( ':siteId' ) ) {
 				return redirectTo.replaceAll( ':siteId', String( blogId ) );
 			}
-			// A bare '/' that could not be resolved above is not a useful
+			// A bare relative '/' that could not be resolved above is not a useful
 			// post-checkout destination; fall back to the default thank-you URL.
-			if ( pathname === '/' ) {
+			if ( pathname === '/' && redirectTo?.startsWith( '/' ) && ! redirectTo.startsWith( '//' ) ) {
 				return undefined;
 			}
 			return redirectTo;
