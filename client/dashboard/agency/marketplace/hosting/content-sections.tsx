@@ -109,11 +109,11 @@ export function IncludedFeatures( { brand }: { brand: 'wpcom' | 'pressable' } ) 
 					<Card key={ column.title }>
 						<CardBody>
 							<VStack spacing={ 4 }>
-								<HStack spacing={ 2 } justify="flex-start" alignment="center">
-									<Icon icon={ column.icon } size={ 20 } />
-									<Heading level={ 3 } size={ 13 } upperCase>
+								<HStack spacing={ 2 } alignment="center" expanded={ false }>
+									<Icon className="marketplace-hosting__feature-icon" icon={ column.icon } />
+									<Text variant="muted" lineHeight="16px" size={ 11 } weight={ 500 } upperCase>
 										{ column.title }
-									</Heading>
+									</Text>
 								</HStack>
 								<CheckList items={ column.features } />
 							</VStack>
@@ -166,17 +166,17 @@ export function Testimonials( { brand }: { brand: 'wpcom' | 'pressable' | 'vip' 
 
 export function JetpackComplete() {
 	return (
-		<VStack spacing={ 4 }>
-			<SectionHeader
-				title={ __( 'Jetpack Complete included' ) }
-				description={ __(
-					'Every Pressable site comes with a free Jetpack Complete license — a $899/year/site value.'
-				) }
-				level={ 2 }
-				decoration={ <JetpackLogo size={ 24 } /> }
-			/>
-			<Card>
-				<CardBody>
+		<Card>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					<SectionHeader
+						title={ __( 'Jetpack Complete included' ) }
+						description={ __(
+							'Every Pressable site comes with a free Jetpack Complete license — a $899/year/site value.'
+						) }
+						level={ 3 }
+						decoration={ <JetpackLogo size={ 24 } /> }
+					/>
 					<div className="marketplace-hosting__includes">
 						{ JETPACK_COMPLETE_FEATURES.map( ( feature ) => (
 							<HStack key={ feature } spacing={ 2 } justify="flex-start" alignment="center">
@@ -189,9 +189,9 @@ export function JetpackComplete() {
 							<ExternalLink href="https://jetpack.com/complete/">{ __( 'And more' ) }</ExternalLink>
 						</HStack>
 					</div>
-				</CardBody>
-			</Card>
-		</VStack>
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }
 
