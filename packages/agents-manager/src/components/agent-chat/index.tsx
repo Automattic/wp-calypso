@@ -245,7 +245,7 @@ export default function AgentChat( {
 	const handleBrowse = useCallback(
 		( files: File[] ) => {
 			if ( trackImageUpload ) {
-				recordBigSkyTracksEvent( 'file_upload_click', {
+				recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_click', {
 					count: files.length,
 				} );
 			}
@@ -256,7 +256,7 @@ export default function AgentChat( {
 	const handleDrop = useCallback(
 		( files: File[] ) => {
 			if ( trackImageUpload ) {
-				recordBigSkyTracksEvent( 'file_upload_drop', {
+				recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_drop', {
 					count: files.length,
 				} );
 			}
@@ -267,7 +267,7 @@ export default function AgentChat( {
 	const handleRemoveImage = useCallback(
 		( image: UploadedImage ) => {
 			if ( trackImageUpload ) {
-				recordBigSkyTracksEvent( 'file_upload_remove', {
+				recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_remove', {
 					image_id: image.id,
 				} );
 			}
@@ -278,13 +278,13 @@ export default function AgentChat( {
 
 	const handleImageDragStart = useCallback( () => {
 		if ( trackImageUpload ) {
-			recordBigSkyTracksEvent( 'file_upload_drag_start' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_drag_start' );
 		}
 	}, [ trackImageUpload ] );
 
 	const handleUploadError = useCallback( () => {
 		if ( trackImageUpload ) {
-			recordBigSkyTracksEvent( 'file_upload_invalid' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_invalid' );
 		}
 	}, [ trackImageUpload ] );
 
