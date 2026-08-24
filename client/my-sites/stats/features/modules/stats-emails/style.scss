@@ -20,17 +20,19 @@
 
 	/* fit-content gives the sticky title slack inside its min-width containing
 	   block; without it the auto-width block fills the 620px header and the
-	   sticky clamp has nowhere to move, dragging the title off-screen. */
+	   sticky clamp has nowhere to move, dragging the title off-screen. The
+	   24px inset mirrors the card's own horizontal padding, so the stuck
+	   position matches the resting one and the title never appears to move. */
 	.stats-card-header--main {
 		position: sticky;
-		inset-inline-start: 0;
+		inset-inline-start: 24px;
 		width: fit-content;
 		max-width: 100%;
 	}
 
 	.stats-card--footer {
 		position: sticky;
-		inset-inline-start: 0;
+		inset-inline-start: 24px;
 	}
 
 	/* Same box semantics on both sides: the header wrapper and each row carry
