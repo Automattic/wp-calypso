@@ -239,11 +239,10 @@ function getDefaultFields( {
 		{
 			id: STAGING_FILTER_FIELD,
 			type: 'boolean',
-			label: __( 'Staging sites' ),
-			header: __( 'Staging' ),
+			label: __( 'Staging' ),
 			elements: [
-				{ value: true, label: __( 'Show' ) },
-				{ value: false, label: __( 'Hide' ) },
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
 			],
 			filterBy: {
 				operators: [ 'is' as Operator ],
