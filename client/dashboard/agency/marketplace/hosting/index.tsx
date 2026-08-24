@@ -419,16 +419,7 @@ export default function MarketplaceHosting() {
 					</div>
 				</div>
 			) }
-			{ selectedBrand === 'vip' && (
-				<>
-					<VipContent />
-					<Divider
-						orientation="horizontal"
-						style={ { color: 'var(--dashboard-overview__divider-color)' } }
-					/>
-					<Testimonials brand="vip" />
-				</>
-			) }
+			{ selectedBrand === 'vip' && <VipContent /> }
 		</PageLayout>
 	);
 }
