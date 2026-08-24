@@ -3,6 +3,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
+	ExternalLink,
 	Spinner,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -85,7 +86,17 @@ export default function NoteDetail( { noteId, onClose }: { noteId: string; onClo
 					height={ 40 }
 				/>
 				<VStack spacing={ 0 }>
-					<Text weight={ 600 }>{ getNoteTitle( note ) }</Text>
+					{ note.url ? (
+						<ExternalLink
+							className="dashboard-notifications-inbox__note-title-link"
+							href={ note.url }
+							aria-label={ __( 'Open on WordPress.com' ) }
+						>
+							<Text weight={ 600 }>{ getNoteTitle( note ) }</Text>
+						</ExternalLink>
+					) : (
+						<Text weight={ 600 }>{ getNoteTitle( note ) }</Text>
+					) }
 					<Text variant="muted">{ getRelativeTimeString( new Date( note.timestamp ) ) }</Text>
 				</VStack>
 			</HStack>
@@ -95,13 +106,6 @@ export default function NoteDetail( { noteId, onClose }: { noteId: string; onClo
 					{ text }
 				</Text>
 			) ) }
-			{ note.url && (
-				<HStack justify="flex-start">
-					<Button variant="secondary" href={ note.url } target="_blank" rel="noreferrer">
-						{ __( 'Open on WordPress.com' ) }
-					</Button>
-				</HStack>
-			) }
 			<div className="dashboard-notifications-inbox__footer">
 				<NoteActions key={ note.id } note={ note } />
 			</div>
