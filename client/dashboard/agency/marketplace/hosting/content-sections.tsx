@@ -148,7 +148,7 @@ export function Testimonials( { brand }: { brand: 'wpcom' | 'pressable' | 'vip' 
 					{ testimonialsByBrand[ brand ].map( ( testimonial, index ) => (
 						<VStack spacing={ 4 } key={ testimonial.name } justify="space-between">
 							<Text as="p">{ testimonial.quote }</Text>
-							<HStack spacing={ 3 } justify="flex-start" alignment="center">
+							<HStack spacing={ 3 } justify="flex-start" alignment="flex-start">
 								<img
 									src={ TESTIMONIAL_AVATARS[ brand ][ index ] }
 									alt={ testimonial.name }
