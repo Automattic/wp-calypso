@@ -56,7 +56,7 @@ function isDeletedFilterActive( filters: Filter[] ): boolean {
 	return filters.some( ( filter ) => filter.field === 'is_deleted' && filter.value === true );
 }
 
-export const getFetchPaginatedSitesOptions = (
+const getFetchPaginatedSitesOptions = (
 	view: View,
 	{ isDefaultView, isRestoringAccount, isAutomattician }: SiteListQueryOptions,
 	siteFilters: DashboardFilters = {}
