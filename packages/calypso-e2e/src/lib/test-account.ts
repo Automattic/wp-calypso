@@ -280,7 +280,7 @@ export class TestAccount {
 	/**
 	 * Checks whether the current account has fresh auth cookies file available or
 	 * not. Authentication cookies are considered to be fresh when they have less
-	 * than 3 days.
+	 * than 2 days.
 	 */
 	async hasFreshAuthCookies(): Promise< boolean > {
 		try {
