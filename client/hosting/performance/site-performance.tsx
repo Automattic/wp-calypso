@@ -7,7 +7,6 @@ import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
-import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import {
@@ -55,9 +54,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 	const { activeTab, setActiveTab } = useDeviceTab();
 	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
-	const { getSiteSetting } = useSiteSettings( site?.slug );
-	const blog_public = getSiteSetting( 'blog_public' );
-	const isSitePublic = site && blog_public === 1;
+	const isSitePublic = !! site && ! site.is_coming_soon && ! site.is_private;
 	const isSiteAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isSiteFlex = useSelector( ( state ) => isWpcomFlexSite( state, siteId ) );
 
