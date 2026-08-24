@@ -325,7 +325,8 @@ export function useIsNoteApproved( note: Note ): boolean {
 }
 
 export function useIsNoteLiked( note: Note ): boolean {
-	return useNotesSelector( ( state ) => !! getIsNoteLiked( state, note ) );
+	// getIsNoteLiked reads note.meta.ids unguarded; badge-style notes have none.
+	return useNotesSelector( ( state ) => !! note.meta?.ids && !! getIsNoteLiked( state, note ) );
 }
 
 export function setApprovalStatus( note: Note, isApproved: boolean ): void {

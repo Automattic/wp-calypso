@@ -76,6 +76,16 @@
 	border-bottom: 1px solid var(--dashboard-header__border-color, #ddd);
 }
 
+/* Even 16px rhythm around the toolbar border: no extra CardBody padding above
+   the search row, and the first group header keeps its distance below it. */
+.dashboard-notifications-inbox__list .components-card__body:has(> .dataviews-wrapper) {
+	padding-top: 0;
+}
+
+.dashboard-notifications-inbox__list .dataviews-view-list__group-header {
+	margin-block-start: 16px;
+}
+
 .dashboard-notifications-inbox__title.is-unread {
 	font-weight: 600;
 }
