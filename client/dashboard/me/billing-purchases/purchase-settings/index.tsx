@@ -687,16 +687,18 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 		<ActionList.ActionItem
 			title={ __( 'Reinstall plugins' ) }
 			actions={
-				<Button
-					variant="secondary"
-					size="compact"
-					disabled={ isMutationPending }
-					onClick={ () => {
-						reinstallPlugins();
-					} }
-				>
-					{ __( 'Reinstall plugins' ) }
-				</Button>
+				<>
+					<Button
+						variant="secondary"
+						size="compact"
+						disabled={ isMutationPending }
+						onClick={ () => {
+							reinstallPlugins();
+						} }
+					>
+						{ __( 'Reinstall plugins' ) }
+					</Button>
+				</>
 			}
 		/>
 	);
@@ -1155,35 +1157,29 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 	return (
 		<div>
 			<div>
-				{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-				<span>
-					{ tier0.maximum_units === 1
-						? __( 'A professionally built single page website in 4 business days or less.' )
-						: sprintf(
-								// translators: numberOfIncludedPages is a number of pages
-								__(
-									'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.'
-								),
-								{
-									numberOfIncludedPages: String( tier0.maximum_units ),
-								}
-						  ) }
-				</span>{ ' ' }
-				{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-				<span>
-					{ extraPageCount > 0 &&
-						sprintf(
-							// translators: %(numberOfPages)d is a number of pages
-							_n(
-								'This purchase includes %(numberOfPages)d extra page.',
-								'This purchase includes %(numberOfPages)d extra pages.',
-								extraPageCount ?? 0
+				{ tier0.maximum_units === 1
+					? __( 'A professionally built single page website in 4 business days or less.' )
+					: sprintf(
+							// translators: numberOfIncludedPages is a number of pages
+							__(
+								'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.'
 							),
 							{
-								numberOfPages: extraPageCount,
+								numberOfIncludedPages: String( tier0.maximum_units ),
 							}
-						) }
-				</span>
+					  ) }{ ' ' }
+				{ extraPageCount > 0 &&
+					sprintf(
+						// translators: %(numberOfPages)d is a number of pages
+						_n(
+							'This purchase includes %(numberOfPages)d extra page.',
+							'This purchase includes %(numberOfPages)d extra pages.',
+							extraPageCount ?? 0
+						),
+						{
+							numberOfPages: extraPageCount,
+						}
+					) }
 			</div>
 			<div>
 				{ isSubmitted

@@ -276,8 +276,7 @@ function PlanPrice( {
 					) }
 					<span className="site-plans__price-number">
 						{ introPriceObj.integer }
-						{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-						{ introPriceObj.hasNonZeroFraction && <span>{ introPriceObj.fraction }</span> }
+						{ introPriceObj.hasNonZeroFraction && introPriceObj.fraction }
 					</span>
 					{ introPriceObj.symbolPosition === 'after' && (
 						<sup className="site-plans__price-currency">{ introPriceObj.symbol }</sup>
@@ -290,8 +289,7 @@ function PlanPrice( {
 						) }
 						<span className="site-plans__price-number site-plans__price-number--original">
 							{ regularPriceObj.integer }
-							{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-							{ regularPriceObj.hasNonZeroFraction && <span>{ regularPriceObj.fraction }</span> }
+							{ regularPriceObj.hasNonZeroFraction && regularPriceObj.fraction }
 						</span>
 						{ regularPriceObj.symbolPosition === 'after' && (
 							<sup className="site-plans__price-currency site-plans__price-currency--original">
@@ -337,8 +335,7 @@ function PlanPrice( {
 					) }
 					<span className="site-plans__price-number">
 						{ perMonthObj.integer }
-						{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-						{ perMonthObj.hasNonZeroFraction && <span>{ perMonthObj.fraction }</span> }
+						{ perMonthObj.hasNonZeroFraction && perMonthObj.fraction }
 					</span>
 					{ perMonthObj.symbolPosition === 'after' && (
 						<sup className="site-plans__price-currency">{ perMonthObj.symbol }</sup>
@@ -368,8 +365,7 @@ function PlanPrice( {
 				) }
 				<span className="site-plans__price-number">
 					{ monthlyObj.integer }
-					{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-					{ monthlyObj.hasNonZeroFraction && <span>{ monthlyObj.fraction }</span> }
+					{ monthlyObj.hasNonZeroFraction && monthlyObj.fraction }
 				</span>
 				{ monthlyObj.symbolPosition === 'after' && (
 					<sup className="site-plans__price-currency">{ monthlyObj.symbol }</sup>
@@ -498,10 +494,9 @@ function PlanCard( {
 					{ isCurrentPlan && (
 						<span className="site-plans__current-badge">{ __( 'Your plan' ) }</span>
 					) }
-					{ /* Coalesce, don't optional-chain; `?.map` trips the Google Translate lint (react/react#11538) */ }
 					{ showBadgesAtTop &&
 						! isCurrentPlan &&
-						( sitePlan.badges ?? [] ).map( ( badge ) => (
+						sitePlan.badges?.map( ( badge ) => (
 							<span key={ badge } className="site-plans__plan-badge">
 								{ badge }
 							</span>
@@ -513,9 +508,8 @@ function PlanCard( {
 							<Text className="site-plans__plan-name" size={ 20 } weight={ 600 }>
 								{ sitePlan.plan_card_name ?? sitePlan.product_name }
 							</Text>
-							{ /* Coalesce, don't optional-chain; `?.map` trips the Google Translate lint (react/react#11538) */ }
 							{ ! showBadgesAtTop &&
-								( sitePlan.badges ?? [] ).map( ( badge ) => (
+								sitePlan.badges?.map( ( badge ) => (
 									<span key={ badge } className="site-plans__plan-badge">
 										{ badge }
 									</span>

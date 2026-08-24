@@ -41,10 +41,6 @@ useMutation( {
 
 - When calling locale-aware formatting functions (`toLocaleDateString`, `toLocaleString`, `Intl.*`, etc.), prefer passing the user's locale from `useLocale()` (`app/locale`) rather than `undefined`. Passing `undefined` falls back to the browser/OS locale, so output silently drifts from the user's WordPress.com language setting.
 
-### Google Translate crash safety
-
-When fixing a `react-google-translate` ESLint warning, leave a one-line comment noting the otherwise-pointless-looking change (an "unnecessary" `<span>`, a dropped `?.`) dodges a Google Translate DOM crash (react/react#11538) — else the next editor reverts it.
-
 ### Testing
 
 - Read [docs/testing.md](./docs/testing.md) before writing or modifying tests.

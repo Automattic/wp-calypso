@@ -245,53 +245,55 @@ export default function EmailVerificationBanner( {
 	}
 
 	return (
-		<Notice
-			variant="warning"
-			title={ __( 'Verify your email' ) }
-			actions={
-				<>
-					<Button
-						className="dashboard-email-verification-resend"
-						variant="primary"
-						__next40pxDefaultSize
-						onClick={ resendEmail }
-						disabled={ isEmailWritePending || isSendPending || isAwaitingResend }
-						isBusy={ isResendPending }
-					>
-						{ isAwaitingResend
-							? sprintf(
-									/* translators: %s is a countdown to when the email can be resent, e.g. 4:59 */
-									__( 'Resend email (%s)' ),
-									formatCooldown( secondsUntilResend )
-							  )
-							: __( 'Resend email' ) }
-					</Button>
-					{ isEmailChangePending && (
+		<>
+			<Notice
+				variant="warning"
+				title={ __( 'Verify your email' ) }
+				actions={
+					<>
 						<Button
-							variant="secondary"
+							className="dashboard-email-verification-resend"
+							variant="primary"
 							__next40pxDefaultSize
-							onClick={ () => cancelPendingEmail() }
-							disabled={ isEmailWritePending }
-							isBusy={ isCancelPending }
+							onClick={ resendEmail }
+							disabled={ isEmailWritePending || isSendPending || isAwaitingResend }
+							isBusy={ isResendPending }
 						>
-							{ __( 'Cancel the pending email change' ) }
+							{ isAwaitingResend
+								? sprintf(
+										/* translators: %s is a countdown to when the email can be resent, e.g. 4:59 */
+										__( 'Resend email (%s)' ),
+										formatCooldown( secondsUntilResend )
+								  )
+								: __( 'Resend email' ) }
 						</Button>
-					) }
-				</>
-			}
-		>
-			{ createInterpolateElement(
-				sprintf(
-					/* translators: %s is the email address awaiting verification */
-					__(
-						'Check your inbox at <strong>%s</strong> for the confirmation email, or click "Resend email" to get a new one.'
-					),
-					unverifiedEmail
-				),
-				{
-					strong: <strong />,
+						{ isEmailChangePending && (
+							<Button
+								variant="secondary"
+								__next40pxDefaultSize
+								onClick={ () => cancelPendingEmail() }
+								disabled={ isEmailWritePending }
+								isBusy={ isCancelPending }
+							>
+								{ __( 'Cancel the pending email change' ) }
+							</Button>
+						) }
+					</>
 				}
-			) }
-		</Notice>
+			>
+				{ createInterpolateElement(
+					sprintf(
+						/* translators: %s is the email address awaiting verification */
+						__(
+							'Check your inbox at <strong>%s</strong> for the confirmation email, or click "Resend email" to get a new one.'
+						),
+						unverifiedEmail
+					),
+					{
+						strong: <strong />,
+					}
+				) }
+			</Notice>
+		</>
 	);
 }

@@ -19,7 +19,7 @@ export default function OrderSummary( {
 	const names = getOrderProductNames( order, products );
 
 	if ( names.length <= MAX_SUMMARY_PRODUCT_NAMES ) {
-		return summary;
+		return <>{ summary }</>;
 	}
 
 	return (

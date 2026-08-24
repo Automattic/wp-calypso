@@ -85,16 +85,13 @@ export function WarningContentInfo( {
 				return warningsByType.map( ( warning ) => (
 					<VStack key={ warning.id } spacing={ 6 }>
 						<Text>
-							{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
 							{ warning.domain_names ? (
-								<span>
-									{ createInterpolateElement(
-										__(
-											'<strong>Your site’s address will change</strong> to the one below. Links to your old address will redirect automatically.'
-										),
-										{ strong: <strong /> }
-									) }
-								</span>
+								createInterpolateElement(
+									__(
+										'<strong>Your site’s address will change</strong> to the one below. Links to your old address will redirect automatically.'
+									),
+									{ strong: <strong /> }
+								)
 							) : (
 								<span
 									// eslint-disable-next-line react/no-danger

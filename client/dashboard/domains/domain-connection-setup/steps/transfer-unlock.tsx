@@ -91,12 +91,9 @@ export function TransferUnlock( {
 							{ ( isInitiallyUnknown || allowSkip ) && (
 								<>{ __( 'Please check that your domain is unlocked.' ) } </>
 							) }
-							{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-							<span>
-								{ __(
-									'Domain providers lock domains to prevent unauthorized transfers. You’ll need to unlock it on your domain provider’s settings page. Some domain providers require you to contact them via their customer support to unlock it.'
-								) }
-							</span>
+							{ __(
+								'Domain providers lock domains to prevent unauthorized transfers. You’ll need to unlock it on your domain provider’s settings page. Some domain providers require you to contact them via their customer support to unlock it.'
+							) }
 						</Text>
 						<Text as="p">
 							{ __( 'It might take a few minutes for any changes to take effect.' ) }

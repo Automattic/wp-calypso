@@ -147,12 +147,9 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 		return (
 			<Notice variant="success" title={ __( 'Transfer successful' ) }>
 				<Text>
-					{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-					<span>
-						{ registrarUrl
-							? __( 'Success! Please visit your new registrar to complete the transfer.' )
-							: __( 'Success! Contact your new registrar to complete the transfer.' ) }
-					</span>
+					{ registrarUrl
+						? __( 'Success! Please visit your new registrar to complete the transfer.' )
+						: __( 'Success! Contact your new registrar to complete the transfer.' ) }
 					{ registrarUrl && (
 						<>
 							{ ' ' }

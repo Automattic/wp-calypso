@@ -197,12 +197,14 @@ export const CompactWrapper: Story = {
 	),
 	args: {
 		children: (
-			<EmptyState.Header>
-				<EmptyState.Title>Site blocked</EmptyState.Title>
-				<EmptyState.Description>
-					This site has been blocked and is no longer accessible.
-				</EmptyState.Description>
-			</EmptyState.Header>
+			<>
+				<EmptyState.Header>
+					<EmptyState.Title>Site blocked</EmptyState.Title>
+					<EmptyState.Description>
+						This site has been blocked and is no longer accessible.
+					</EmptyState.Description>
+				</EmptyState.Header>
+			</>
 		),
 	},
 };

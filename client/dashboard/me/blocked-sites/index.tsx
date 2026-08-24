@@ -223,7 +223,9 @@ export default function BlockedSites() {
 						isLoading={ isLoading }
 						onChangeView={ handleChangeView }
 					>
-						<DataViews.Layout />
+						<>
+							<DataViews.Layout />
+						</>
 					</DataViews>
 				</DataViewsCard>
 			) }

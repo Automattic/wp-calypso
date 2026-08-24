@@ -199,7 +199,7 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 					disabled={ isUpdating || ! hasDevices }
 				>
 					{ hasDevices &&
-						devices.map( ( device ) => (
+						devices?.map( ( device ) => (
 							<option key={ device.device_id } value={ device.device_id }>
 								{ device.device_name }
 							</option>

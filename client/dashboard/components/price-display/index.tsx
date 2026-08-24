@@ -38,8 +38,7 @@ export function PriceDisplay( {
 				weight={ 400 }
 			>
 				{ priceObj.integer }
-				{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-				{ priceObj.hasNonZeroFraction && <span>{ priceObj.fraction }</span> }
+				{ priceObj.hasNonZeroFraction && priceObj.fraction }
 			</Text>
 			{ priceObj.symbolPosition === 'after' ? (
 				<Currency symbol={ priceObj.symbol } discounted={ discounted } />
