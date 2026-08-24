@@ -148,6 +148,7 @@ export type ProductInstallError =
 	| { type: 'rejected-upload'; reason: 'exists' | 'malicious' | 'too-big' }
 	| { type: 'transfer-failed' }
 	| { type: 'timeout' }
+	| { type: 'activation-timeout' }
 	| { type: 'generic' };
 
 export type InstallErrorTrackingProps = {
@@ -436,6 +437,27 @@ export function useProductInstall( {
 	const durableTransferFailed = durableTransferFailedRef.current;
 	const transferHasFailed = hasTransferFailed || durableTransferFailed;
 	const transferTimedOut = ! durableTransferCompleted && ( hasTimedOut || hasTransferTimedOut );
+
+	// The product is on the site and switched on: the wait is over, whatever the redirect below does
+	// next. Retiring it here rather than on unmount is what separates a finished install from a
+	// closed tab — the plugin flow leaves by full-page navigation, which React never sees.
+	//
+	// Latched, because an install does not un-succeed. The plugin list refetches while the redirect
+	// resolves, and the gap where it reads empty would otherwise close this wait and open a second
+	// one that lives for a second.
+	const hasSucceededRef = useRef( false );
+	hasSucceededRef.current =
+		hasSucceededRef.current || ( themeSlug ? isThemeActive : !! installedPlugin && pluginActive );
+	const hasSucceeded = hasSucceededRef.current;
+
+	// The completion latch above ends the transfer phase, but not the wait: activation still has to
+	// land, and nothing else bounds it — the transfer poll has stopped and the deadline hook's clock
+	// is anchored to a phase that is over. Restart the deadline for this phase rather than leaving
+	// it unbounded, so every wait still ends in a verdict.
+	const activationTimedOut = useDelayedCondition(
+		durableTransferCompleted && ! preflightError && ! transferHasFailed && ! hasSucceeded,
+		INSTALL_DEADLINE_MS
+	);
 	const transferLookupGraceElapsed = useDelayedCondition(
 		installStrategy === 'atomic-transfer' &&
 			!! pluginSlug &&
@@ -639,18 +661,10 @@ export function useProductInstall( {
 	if ( ! error && transferTimedOut ) {
 		error = { type: 'timeout' };
 	}
+	if ( ! error && activationTimedOut ) {
+		error = { type: 'activation-timeout' };
+	}
 
-	// The product is on the site and switched on: the wait is over, whatever the redirect below does
-	// next. Retiring it here rather than on unmount is what separates a finished install from a
-	// closed tab — the plugin flow leaves by full-page navigation, which React never sees.
-	//
-	// Latched, because an install does not un-succeed. The plugin list refetches while the redirect
-	// resolves, and the gap where it reads empty would otherwise close this wait and open a second
-	// one that lives for a second.
-	const hasSucceededRef = useRef( false );
-	hasSucceededRef.current =
-		hasSucceededRef.current || ( themeSlug ? isThemeActive : !! installedPlugin && pluginActive );
-	const hasSucceeded = hasSucceededRef.current;
 	const transferAttemptEnded =
 		hasSucceeded || ( !! error && error.type !== 'non-installable-plan' );
 	useEffect( () => {
@@ -689,6 +703,8 @@ export function useProductInstall( {
 			outcome = 'transfer_failed';
 		} else if ( transferTimedOut ) {
 			outcome = 'timeout';
+		} else if ( activationTimedOut ) {
+			outcome = 'activation_timeout';
 		}
 		if ( ! outcome || reportedOutcomeRef.current === outcome ) {
 			return;
@@ -710,6 +726,7 @@ export function useProductInstall( {
 		hasTimedOut,
 		hasTransferTimedOut,
 		transferTimedOut,
+		activationTimedOut,
 		transferHasFailed,
 		themeSlug,
 		installStrategy,

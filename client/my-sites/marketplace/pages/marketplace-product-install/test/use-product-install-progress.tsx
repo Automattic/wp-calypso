@@ -419,7 +419,9 @@ describe( 'useProductInstall progression', () => {
 		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
 	} );
 
-	it( 'keeps a completed recovery latched after its marker expires', async () => {
+	// The transfer's own deadline must not condemn a transfer that completed — but the wait is not
+	// over, so the activation phase gets a fresh deadline of the same length rather than none.
+	it( 'gives activation its own deadline after a completed recovery', async () => {
 		await beginAtomicPluginTransfer();
 		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed' ) );
 
@@ -433,9 +435,35 @@ describe( 'useProductInstall progression', () => {
 		);
 		await waitFor( () => expect( result.current.currentStep ).toBe( 2 ) );
 
+		await advance( INSTALL_DEADLINE_MS - 10000 );
+		expect( result.current.currentStep ).toBe( 2 );
+		expect( result.current.error ).toBeNull();
+
+		await advance( 20000 );
+		expect( result.current.error ).toEqual( { type: 'activation-timeout' } );
+	} );
+
+	it( 'reaches no activation verdict once the plugin is active', async () => {
+		await beginAtomicPluginTransfer();
+		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed' ) );
+
+		const { result, store } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...directInstallAuthorization,
+				...simpleAtomicEligibleSite,
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+		await waitFor( () => expect( result.current.currentStep ).toBe( 2 ) );
+
+		await act( async () => {
+			store.dispatch(
+				receiveSitePlugins( SITE_ID, [ { slug: 'give', id: 'give/give', active: true } ] )
+			);
+		} );
 		await advance( INSTALL_DEADLINE_MS + 10000 );
 
-		expect( result.current.currentStep ).toBe( 2 );
 		expect( result.current.error ).toBeNull();
 	} );
 

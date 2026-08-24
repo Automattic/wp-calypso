@@ -126,6 +126,23 @@ export default function ProductInstallErrorView( {
 				/>
 			);
 		}
+		// Only the plugin transfer flow can reach this: the completion latch that starts the
+		// activation phase exists solely on that path, so the copy can name the plugin outright.
+		case 'activation-timeout':
+			return (
+				<EmptyContent
+					title={ null }
+					line={ translate(
+						'Your site is ready, but we could not confirm the plugin was installed and activated. It may still finish on its own — check your installed plugins in a few minutes.'
+					) }
+					secondaryAction={ translate( 'Contact support' ) }
+					secondaryActionURL="/help/contact"
+					secondaryActionCallback={ () => recordCtaClick( 'contact_support' ) }
+					action={ translate( 'Go to plugins' ) }
+					actionURL={ pluginsPageURL }
+					actionCallback={ () => recordCtaClick( 'go_to_plugins' ) }
+				/>
+			);
 		case 'timeout':
 		case 'transfer-failed': {
 			// This screen also serves themes and zip uploads, so plugin-worded copy and a link to
