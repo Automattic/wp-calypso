@@ -22,6 +22,10 @@ import {
 	getStatusForPlugin,
 	isPluginActive,
 } from 'calypso/state/plugins/installed/selectors-ts';
+import {
+	PLUGIN_INSTALLATION_ERROR,
+	PLUGIN_INSTALLATION_IN_PROGRESS,
+} from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
@@ -44,6 +48,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import { chooseInstallStrategy } from './install-strategy';
+import { parseTransferCreatedAt } from './transfer-created-at';
 import { useDelayedCondition } from './use-delayed-condition';
 import { INSTALL_DEADLINE_MS, isSettled, useInstallDeadline } from './use-install-deadline';
 import useMarketplaceAdditionalSteps from './use-marketplace-additional-steps';
@@ -235,7 +240,7 @@ export function useProductInstall( {
 				return false;
 			}
 
-			const createdAt = Date.parse( candidate.created_at );
+			const createdAt = parseTransferCreatedAt( candidate.created_at );
 			const age = Date.now() - createdAt;
 			// Our own transfer is created after we ask for it, so clock skew is the only thing that can
 			// date it before this attempt. The grace for that is safe to give except when the lookup
@@ -258,9 +263,34 @@ export function useProductInstall( {
 		[ hasCurrentTransferAttempt, persistedTransferAttempt ]
 	);
 
+	// Statuses are keyed by the plugin id the dispatches carry (e.g. 'akismet/akismet'), not by
+	// the route slug — and the upload flow has no route slug at all.
 	const pluginInstallStatus = useSelector( ( state ) =>
-		getStatusForPlugin( state, siteId, pluginSlug )
+		getStatusForPlugin( state, siteId, installedPlugin?.id ?? wporgPlugin?.id ?? pluginSlug )
 	);
+
+	// Only an in-progress → error transition counts: the plugins slice outlives the page, so a
+	// record (or `error` field) left by an earlier attempt must not condemn a fresh one. The
+	// component survives SPA navigation, so an identity change resets the latch and makes the new
+	// product's current status the baseline.
+	const [ installFailureSeen, setInstallFailureSeen ] = useState( false );
+	const previousInstallStatusRef = useRef< string | undefined >( undefined );
+	const installIdentity = `${ siteId }:${ pluginSlug }:${ themeSlug }`;
+	const installIdentityRef = useRef( installIdentity );
+	const observedInstallStatus = pluginInstallStatus?.status;
+	if ( installIdentityRef.current !== installIdentity ) {
+		installIdentityRef.current = installIdentity;
+		if ( installFailureSeen ) {
+			setInstallFailureSeen( false );
+		}
+	} else if (
+		observedInstallStatus === PLUGIN_INSTALLATION_ERROR &&
+		previousInstallStatusRef.current === PLUGIN_INSTALLATION_IN_PROGRESS &&
+		! installFailureSeen
+	) {
+		setInstallFailureSeen( true );
+	}
+	previousInstallStatusRef.current = observedInstallStatus;
 
 	const wpOrgTheme = useSelector( ( state ) => getTheme( state, 'wporg', themeSlug ) );
 	const isThemeActive = useSelector( ( state ) => getThemeActive( state, themeSlug, siteId ) );
@@ -342,7 +372,7 @@ export function useProductInstall( {
 		}
 		if (
 			pluginUploadError ||
-			pluginInstallStatus?.error ||
+			installFailureSeen ||
 			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
 		) {
 			return { type: 'generic' };

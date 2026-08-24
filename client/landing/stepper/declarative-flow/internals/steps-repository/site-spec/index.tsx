@@ -406,7 +406,9 @@ const SiteSpec: StepType = function SiteSpec() {
 				} );
 
 				const adminUrl = await getSiteAdminUrl( blueprintArchiveSiteIdentifier );
-				const siteEditorUrl = getSiteEditorUrl( adminUrl );
+				const siteEditorUrl = getSiteEditorUrl( adminUrl, {
+					startWalkthrough: applied,
+				} );
 
 				logBlueprintArchiveEvent( 'redirect_site_editor', {
 					site_identifier: blueprintArchiveSiteIdentifier,

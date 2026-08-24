@@ -284,19 +284,23 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												}
 											/>
 										</div>
-										<div
-											className="subscribe-modal__preview-stream-container"
-											// `inert` removes preview stream from tab order + a11y tree (preview is non-interactive).
-											inert
-										>
-											<TypedStream
-												streamKey={ `feed:${ selectedSite.feed_ID }` }
-												className="is-site-stream subscribe-modal__preview-stream no-padding"
-												followSource="reader_subscribe_modal"
-												useCompactCards
-												showBylineSecondarySiteLink={ false }
-												trackScrollPage={ trackScrollPage.bind( null ) }
-											/>
+										<div className="subscribe-modal__preview-stream-container">
+											{ /* `inert` removes the preview stream from tab order + the a11y
+											     tree (preview is non-interactive). It lives on this inner
+											     wrapper — NOT the scroll container — because an inert element
+											     hit-tests as `pointer-events: none`, which would make wheel/
+											     touch scrolls fall through the scroll container to its
+											     `overflow: hidden` parent and stop the column scrolling. */ }
+											<div className="subscribe-modal__preview-stream-inner" inert>
+												<TypedStream
+													streamKey={ `feed:${ selectedSite.feed_ID }` }
+													className="is-site-stream subscribe-modal__preview-stream no-padding"
+													followSource="reader_subscribe_modal"
+													useCompactCards
+													showBylineSecondarySiteLink={ false }
+													trackScrollPage={ trackScrollPage.bind( null ) }
+												/>
+											</div>
 										</div>
 									</>
 								) }
