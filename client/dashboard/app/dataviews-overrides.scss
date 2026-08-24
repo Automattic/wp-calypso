@@ -52,13 +52,19 @@ a.dataviews-url-field {
 	}
 }
 
-// The 32px minimum cell height forces the primary column's text to sit lower than the
-// media thumbnail next to it. Let the content size itself and tighten the gap so the
-// media and the primary column line up.
-.dataviews-view-table tbody .dataviews-view-table__cell-content-wrapper {
-	min-height: auto !important;
+// DataViews gives every cell a 32px content box, which leaves the primary column's text
+// sitting lower than the media thumbnail beside it. Shrink the box rather than removing
+// it, and match the line box to it: every cell then resolves to the same height and its
+// contents share a center line, while the title and description stack on the same rhythm
+// without needing a gap of their own.
+.dataviews-view-table tbody .dataviews-view-table__cell-content-wrapper,
+.dataviews-view-table tbody .dataviews-title-field ~ * {
+	min-height: var( --wpds-dimension-size-sm, 24px ) !important;
+	line-height: var( --wpds-dimension-size-sm, 24px ) !important;
 }
 
-.dataviews-view-table__primary-column-content:not( .dataviews-column-primary__media ) {
-	gap: 6px;
+// The actions cell has no content wrapper of its own, so the rule above can't reach it and
+// its compact buttons keep a 32px box that sits below everything else in the row.
+.dataviews-view-table tbody .dataviews-item-actions .components-button.is-compact {
+	height: var( --wpds-dimension-size-sm, 24px );
 }
