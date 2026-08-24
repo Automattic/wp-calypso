@@ -3,6 +3,7 @@
  */
 
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import PreLaunchModal from '..';
 
 describe( '<PreLaunchModal>', () => {
@@ -31,5 +32,15 @@ describe( '<PreLaunchModal>', () => {
 
 		expect( screen.getByRole( 'dialog', { name: 'Launching site…' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Yes, launch site!' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'fires onLaunch when the launch button is clicked', async () => {
+		const user = userEvent.setup();
+		const onLaunch = jest.fn();
+		render( <PreLaunchModal { ...baseProps } isLaunching={ false } onLaunch={ onLaunch } /> );
+
+		await user.click( screen.getByRole( 'button', { name: 'Yes, launch site!' } ) );
+
+		expect( onLaunch ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
