@@ -35,13 +35,9 @@
 	gap: 24px;
 	align-items: start;
 
-	> :first-child {
+	> :first-child,
+	> .dashboard-callout {
 		grid-column: span 2;
-	}
-
-	.marketplace-hosting__summary {
-		position: sticky;
-		inset-block-start: 24px;
 	}
 
 	@media ( max-width: 782px ) {
@@ -118,6 +114,11 @@
 		inline-size: auto;
 		opacity: 0.7;
 	}
+}
+
+.marketplace-hosting__feature-icon {
+	color: var( --wp-admin-theme-color );
+	fill: var( --wp-admin-theme-color );
 }
 
 .marketplace-hosting__check {

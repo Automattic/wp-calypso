@@ -345,63 +345,59 @@ export default function MarketplaceHosting() {
 				/>
 			</VStack>
 			{ selectedBrand === 'wpcom' && (
-				<VStack spacing={ 6 }>
-					<VStack spacing={ 4 }>
-						<SectionHeader title={ __( 'Configure WordPress.com' ) } level={ 2 } />
-						<div className="marketplace-hosting__configurator-row">
-							<WpcomConfigurator term={ term } onQuantityChange={ setQuantity } />
-							<YourPlan
-								brand="wpcom"
-								term={ term }
-								quantity={ quantity }
-								onAddToCart={ () =>
-									addToCart( {
-										id: 'wpcom-hosting',
-										family: 'wpcom-hosting',
-										label: sprintf(
-											/* translators: %d: number of sites */
-											_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
-											quantity
-										),
-										total: getTieredPrice( wpcomHosting, quantity, term ).discountedCost,
-									} )
-								}
-							/>
-						</div>
-					</VStack>
-					<DevSitesBanner />
+				<VStack spacing={ 4 }>
+					<SectionHeader title={ __( 'Configure WordPress.com' ) } level={ 2 } />
+					<div className="marketplace-hosting__configurator-row">
+						<WpcomConfigurator term={ term } onQuantityChange={ setQuantity } />
+						<YourPlan
+							brand="wpcom"
+							term={ term }
+							quantity={ quantity }
+							onAddToCart={ () =>
+								addToCart( {
+									id: 'wpcom-hosting',
+									family: 'wpcom-hosting',
+									label: sprintf(
+										/* translators: %d: number of sites */
+										_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
+										quantity
+									),
+									total: getTieredPrice( wpcomHosting, quantity, term ).discountedCost,
+								} )
+							}
+						/>
+						<DevSitesBanner />
+					</div>
 				</VStack>
 			) }
 			{ selectedBrand === 'pressable' && (
-				<VStack spacing={ 6 }>
-					<VStack spacing={ 4 }>
-						<SectionHeader title={ __( 'Configure Pressable' ) } level={ 2 } />
-						<div className="marketplace-hosting__configurator-row">
-							<PressableContent
-								planSlug={ pressablePlanSlug }
-								onPlanChange={ setPressablePlanSlug }
-							/>
-							<YourPlan
-								brand="pressable"
-								term={ term }
-								quantity={ 1 }
-								plan={ pressablePlan }
-								onAddToCart={ () =>
-									addToCart( {
-										id: 'pressable-hosting',
-										family: 'pressable-hosting',
-										label: sprintf(
-											/* translators: %s: plan name */
-											__( 'Pressable %s' ),
-											pressablePlan.name
-										),
-										total: pressablePlan.yearly_price ?? null,
-									} )
-								}
-							/>
-						</div>
-					</VStack>
-					<ScheduleDemoBanner />
+				<VStack spacing={ 4 }>
+					<SectionHeader title={ __( 'Configure Pressable' ) } level={ 2 } />
+					<div className="marketplace-hosting__configurator-row">
+						<PressableContent
+							planSlug={ pressablePlanSlug }
+							onPlanChange={ setPressablePlanSlug }
+						/>
+						<YourPlan
+							brand="pressable"
+							term={ term }
+							quantity={ 1 }
+							plan={ pressablePlan }
+							onAddToCart={ () =>
+								addToCart( {
+									id: 'pressable-hosting',
+									family: 'pressable-hosting',
+									label: sprintf(
+										/* translators: %s: plan name */
+										__( 'Pressable %s' ),
+										pressablePlan.name
+									),
+									total: pressablePlan.yearly_price ?? null,
+								} )
+							}
+						/>
+						<ScheduleDemoBanner />
+					</div>
 				</VStack>
 			) }
 			{ selectedBrand === 'vip' && <VipContent /> }
