@@ -37,6 +37,7 @@ function VipPitchCard() {
 		<Card>
 			<CardHeader>
 				<SectionHeader
+					className="marketplace-hosting__card-header"
 					title={ __(
 						'Deliver unmatched performance with the highest security standards on our enterprise platform'
 					) }

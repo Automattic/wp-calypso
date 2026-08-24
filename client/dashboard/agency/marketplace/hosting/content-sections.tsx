@@ -175,7 +175,7 @@ export function JetpackComplete() {
 		<Card>
 			<CardHeader>
 				<SectionHeader
-					className="marketplace-hosting__jetpack-header"
+					className="marketplace-hosting__card-header"
 					title={ __( 'Jetpack Complete included' ) }
 					description={ __(
 						'Every Pressable site comes with a free Jetpack Complete license — a $899/year/site value.'

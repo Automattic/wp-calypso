@@ -203,7 +203,7 @@
 /* SectionHeader has no alignment prop; when a description makes the header
    two lines tall, center-aligned decoration floats between them. Top-align
    the icon with the title via the consumer className. */
-.marketplace-hosting__jetpack-header .dashboard-section-header__heading-row {
+.marketplace-hosting__card-header .dashboard-section-header__heading-row {
 	align-items: flex-start;
 }
 
