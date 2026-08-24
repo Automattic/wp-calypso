@@ -8,7 +8,8 @@ import {
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { Card, CardBody, CardDivider } from '../../../components/card';
+import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import { SectionHeader } from '../../../components/section-header';
 import { CheckList } from './content-sections';
 import {
 	pressableSignaturePlans,
@@ -65,6 +66,9 @@ export default function PressableContent( {
 
 	return (
 		<Card>
+			<CardHeader>
+				<SectionHeader level={ 3 } title={ __( 'Configure Pressable' ) } />
+			</CardHeader>
 			<CardBody>
 				<VStack spacing={ 5 }>
 					<VStack spacing={ 3 }>

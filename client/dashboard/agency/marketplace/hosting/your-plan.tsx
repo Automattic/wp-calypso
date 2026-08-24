@@ -4,11 +4,11 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
-	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
-import { Card, CardBody, CardDivider } from '../../../components/card';
+import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import { SectionHeader } from '../../../components/section-header';
 import { getTieredPrice, formatUSD, wpcomHosting } from './mock-data';
 import type { PressablePlan } from './mock-data';
 
@@ -53,11 +53,11 @@ export default function YourPlan( { brand, term, quantity, plan, onAddToCart }: 
 
 	return (
 		<Card>
+			<CardHeader>
+				<SectionHeader level={ 3 } title={ __( 'Your plan' ) } />
+			</CardHeader>
 			<CardBody>
 				<VStack spacing={ 3 } justify="flex-start">
-					<Heading level={ 3 } size={ 16 }>
-						{ __( 'Your plan' ) }
-					</Heading>
 					<Text>{ planLabel }</Text>
 					<VStack spacing={ 1 }>
 						<Text className="marketplace-hosting__plan-price">

@@ -15,7 +15,7 @@ import newsCorpLogo from 'calypso/assets/images/logos/news-corp.svg';
 import salesforceLogo from 'calypso/assets/images/logos/salesforce.svg';
 import slackLogo from 'calypso/assets/images/logos/slack.svg';
 import spotifyLogo from 'calypso/assets/images/logos/spotify.svg';
-import { Card, CardBody, CardDivider } from '../../../components/card';
+import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import vipLogo from '../exclusive-offers/images/vip-descriptor.svg';
 import { CheckList } from './content-sections';
@@ -33,14 +33,16 @@ const CLIENT_BRANDS = [
 
 export default function VipContent() {
 	return (
-		<VStack spacing={ 4 }>
-			<SectionHeader
-				title={ __(
-					'2. Deliver unmatched performance with the highest security standards on our enterprise platform'
-				) }
-				level={ 2 }
-			/>
+		<VStack spacing={ 6 }>
 			<Card>
+				<CardHeader>
+					<SectionHeader
+						title={ __(
+							'Deliver unmatched performance with the highest security standards on our enterprise platform'
+						) }
+						level={ 3 }
+					/>
+				</CardHeader>
 				<CardBody>
 					<VStack spacing={ 5 }>
 						<HStack spacing={ 3 } justify="flex-start" alignment="center">
@@ -103,14 +105,16 @@ export default function VipContent() {
 				</CardBody>
 			</Card>
 
-			<SectionHeader
-				title={ __( 'VIP capabilities' ) }
-				description={ __(
-					'Combine the ease of WordPress with enterprise-grade security and scalability.'
-				) }
-				level={ 2 }
-			/>
 			<Card>
+				<CardHeader>
+					<SectionHeader
+						title={ __( 'VIP capabilities' ) }
+						description={ __(
+							'Combine the ease of WordPress with enterprise-grade security and scalability.'
+						) }
+						level={ 3 }
+					/>
+				</CardHeader>
 				<CardBody>
 					<div className="marketplace-hosting__includes">
 						{ VIP_CAPABILITIES.map( ( capability ) => (
