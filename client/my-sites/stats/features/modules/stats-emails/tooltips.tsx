@@ -2,6 +2,7 @@ import { Tooltip } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useState } from 'react';
+import { isRateKnown, toCount } from './is-rate-known';
 
 export interface EmailStatsItem {
 	unique_opens: number;
@@ -44,18 +45,14 @@ export const TooltipWrapper: React.FC< TooltipWrapperProps > = ( {
 	);
 };
 
-export const hasUniqueMetrics = ( uniqueValue: number, totalValue: number ) => {
-	return uniqueValue > 0 && totalValue > 0;
-};
-
 export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { item } ) => {
 	const translate = useTranslate();
-	const sends = parseInt( String( item.total_sends ), 10 ) || 0;
-	const opens = parseInt( String( item.opens ), 10 ) || 0;
-	const hasUniques = hasUniqueMetrics( parseInt( String( item.unique_opens ), 10 ), opens );
-	// A true zero (sent, nobody opened) is a known value too, so it reuses the
-	// detailed line with zeros instead of introducing a new string.
-	const uniquesKnown = hasUniques || ( sends > 0 && opens === 0 );
+	const sends = toCount( item.total_sends );
+	const opens = toCount( item.opens );
+	// The same rule the cell uses, so the tooltip never shows a rate the cell
+	// just declared unknown. A true zero reuses the detailed line with zeros
+	// instead of introducing a new string.
+	const rateKnown = isRateKnown( { uniques: toCount( item.unique_opens ), totals: opens, sends } );
 
 	return (
 		<div className="stats-email__tooltip">
@@ -65,8 +62,8 @@ export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { ite
 				} ) }
 			</div>
 			{ /* The unavailable states explain themselves in the note below, so the
-			     unique line only renders when there is a number to show. */ }
-			{ uniquesKnown && (
+			     unique line only renders when the rate is a known value. */ }
+			{ rateKnown && (
 				<div>
 					{ translate( 'Unique opens: %(uniqueOpensCountFormatted)s (%(opensRate)s%)', {
 						args: {
@@ -83,7 +80,7 @@ export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { ite
 					{ translate( 'No delivery data for this email.' ) }
 				</div>
 			) }
-			{ sends > 0 && ! hasUniques && opens > 0 && (
+			{ sends > 0 && ! rateKnown && (
 				<div className="stats-email__tooltip-note">
 					{ translate( "Opens weren't linked to recipients." ) }
 				</div>
@@ -94,11 +91,14 @@ export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { ite
 
 export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { item } ) => {
 	const translate = useTranslate();
-	const sends = parseInt( String( item.total_sends ), 10 ) || 0;
-	const clicks = parseInt( String( item.clicks ), 10 ) || 0;
-	const hasUniques = hasUniqueMetrics( parseInt( String( item.unique_clicks ), 10 ), clicks );
-	// Same as the opens tooltip: a true zero is a known value.
-	const uniquesKnown = hasUniques || ( sends > 0 && clicks === 0 );
+	const sends = toCount( item.total_sends );
+	const clicks = toCount( item.clicks );
+	// Same rule as the cell; see OpensTooltipContent.
+	const rateKnown = isRateKnown( {
+		uniques: toCount( item.unique_clicks ),
+		totals: clicks,
+		sends,
+	} );
 
 	return (
 		<div className="stats-email__tooltip">
@@ -108,7 +108,7 @@ export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { it
 				} ) }
 			</div>
 			{ /* Same rule as the opens tooltip: numbers only, the note covers the rest. */ }
-			{ uniquesKnown && (
+			{ rateKnown && (
 				<div>
 					{ translate( 'Unique clicks: %(uniqueClicksCountFormatted)s (%(clicksRate)s%)', {
 						args: {
@@ -125,7 +125,7 @@ export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { it
 					{ translate( 'No delivery data for this email.' ) }
 				</div>
 			) }
-			{ sends > 0 && ! hasUniques && clicks > 0 && (
+			{ sends > 0 && ! rateKnown && (
 				<div className="stats-email__tooltip-note">
 					{ translate( "Clicks weren't linked to recipients." ) }
 				</div>

@@ -5,6 +5,10 @@ import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import {
+	isRateKnown,
+	toCount,
+} from 'calypso/my-sites/stats/features/modules/stats-emails/is-rate-known';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import {
 	getEmailStatsNormalizedData,
@@ -62,7 +66,11 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 						<TopCard
 							heading={ translate( 'Open rate' ) }
 							value={
-								counts?.total_sends > 0 && ( counts?.unique_opens > 0 || counts?.total_opens === 0 )
+								isRateKnown( {
+									uniques: toCount( counts?.unique_opens ),
+									totals: toCount( counts?.total_opens ),
+									sends: toCount( counts?.total_sends ),
+								} )
 									? `${ Math.round( ( counts.opens_rate ?? 0 ) * 100 ) }%`
 									: null
 							}
@@ -80,7 +88,7 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 					<>
 						<TopCard
 							heading={ translate( 'Total emails sent' ) }
-							value={ counts?.total_sends ?? 0 }
+							value={ counts?.total_sends ?? null }
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_sends' ) }
 							icon={ <Icon icon={ send } /> }
 							emailIsSending={ emailIsSending }
@@ -103,8 +111,11 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 						<TopCard
 							heading={ translate( 'Click rate' ) }
 							value={
-								counts?.total_sends > 0 &&
-								( counts?.unique_clicks > 0 || counts?.total_clicks === 0 )
+								isRateKnown( {
+									uniques: toCount( counts?.unique_clicks ),
+									totals: toCount( counts?.total_clicks ),
+									sends: toCount( counts?.total_sends ),
+								} )
 									? `${ Math.round( ( counts.clicks_rate ?? 0 ) * 100 ) }%`
 									: null
 							}

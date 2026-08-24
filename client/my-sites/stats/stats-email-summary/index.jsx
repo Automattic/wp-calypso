@@ -12,6 +12,7 @@ import DownloadCsvUpsell from 'calypso/my-sites/stats/stats-download-csv-upsell'
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
+import { isRateKnown, toCount } from '../features/modules/stats-emails/is-rate-known';
 import {
 	TooltipWrapper,
 	OpensTooltipContent,
@@ -125,14 +126,15 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 								</>
 							),
 							body: ( item ) => {
-								const opensUnique = parseInt( item.unique_opens, 10 );
-								const opens = parseInt( item.opens, 10 );
-								const sends = parseInt( item.total_sends, 10 );
-								// No recorded sends means 0/0: undefined, not 0%.
-								const rateKnown = sends > 0 && ( opensUnique > 0 || opens === 0 );
+								const opens = toCount( item.opens );
+								const rateKnown = isRateKnown( {
+									uniques: toCount( item.unique_opens ),
+									totals: opens,
+									sends: toCount( item.total_sends ),
+								} );
 								return (
 									<>
-										<span>{ formatNumber( opens || 0 ) }</span>
+										<span>{ formatNumber( opens ) }</span>
 										<span>
 											<TooltipWrapper
 												value={
@@ -148,7 +150,7 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 												TooltipContent={ OpensTooltipContent }
 											/>
 										</span>
-										<span>{ formatNumber( parseInt( item.clicks, 10 ) || 0 ) }</span>
+										<span>{ formatNumber( toCount( item.clicks ) ) }</span>
 									</>
 								);
 							},

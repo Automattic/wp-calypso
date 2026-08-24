@@ -19,6 +19,7 @@ import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionEmail } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
+import { isRateKnown, toCount } from './is-rate-known';
 import {
 	TooltipWrapper,
 	OpensTooltipContent,
@@ -95,17 +96,15 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							</>
 						),
 						body: ( item: EmailStatsItem ) => {
-							const opensUnique = parseInt( String( item.unique_opens ), 10 );
-							const opens = parseInt( String( item.opens ), 10 );
-							const sends = parseInt( String( item.total_sends ), 10 );
-							// The rate needs a denominator: no recorded sends means 0/0,
-							// which is undefined, not 0%. With sends recorded, uniques
-							// above zero show the rate, no opens at all is a true 0%,
-							// and opens with no attributable uniques are unknown.
-							const rateKnown = sends > 0 && ( opensUnique > 0 || opens === 0 );
+							const opens = toCount( item.opens );
+							const rateKnown = isRateKnown( {
+								uniques: toCount( item.unique_opens ),
+								totals: opens,
+								sends: toCount( item.total_sends ),
+							} );
 							return (
 								<>
-									<span>{ formatNumber( opens || 0 ) }</span>
+									<span>{ formatNumber( opens ) }</span>
 									<span>
 										<TooltipWrapper
 											value={
@@ -121,7 +120,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 											TooltipContent={ OpensTooltipContent }
 										/>
 									</span>
-									<span>{ formatNumber( parseInt( String( item.clicks ), 10 ) || 0 ) }</span>
+									<span>{ formatNumber( toCount( item.clicks ) ) }</span>
 								</>
 							);
 						},
@@ -137,11 +136,11 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						if ( ! item ) {
 							return value;
 						}
-						const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
-						const clicks = parseInt( String( item.clicks ), 10 );
-						const sends = parseInt( String( item.total_sends ), 10 );
-						// Same states as the Opens column, including the 0/0 guard.
-						const rateKnown = sends > 0 && ( clicksUnique > 0 || clicks === 0 );
+						const rateKnown = isRateKnown( {
+							uniques: toCount( item.unique_clicks ),
+							totals: toCount( item.clicks ),
+							sends: toCount( item.total_sends ),
+						} );
 						return (
 							<TooltipWrapper
 								value={
