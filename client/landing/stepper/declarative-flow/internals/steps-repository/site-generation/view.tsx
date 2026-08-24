@@ -104,11 +104,11 @@ function WaitingCanvas() {
 			<BuildVisualization />
 			<div className="site-generation__waiting-copy">
 				<h1 className="site-generation__waiting-title">
-					{ translate( 'We’re building your site' ) }
+					{ translate( 'All good things are worth the wait' ) }
 				</h1>
 				<p className="site-generation__waiting-description">
 					{ translate(
-						'This can take a few minutes. We’ll take you to the editor when your site is ready.'
+						'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
 					) }
 				</p>
 			</div>
@@ -120,13 +120,13 @@ function ErrorCanvas( { state, onReload }: { state: SiteGenerationState; onReloa
 	const translate = useTranslate();
 	const failureReason = state.failureReason ?? 'missing-parameters';
 
-	let title = translate( 'We couldn’t check your site' );
-	let description = translate( 'The site or editor destination is missing from this page.' );
+	let title = translate( 'I couldn’t check your site' );
+	let description = translate( 'I’m missing the site or editor destination for this page.' );
 	let actionLabel = translate( 'Reload' );
 
 	if ( failureReason === 'timed-out' || failureReason === 'build-failed' ) {
 		title = translate( 'This is taking longer than expected' );
-		description = translate( 'Your brief is saved.' );
+		description = translate( 'I’ve saved your brief.' );
 		actionLabel = translate( 'Check again' );
 	}
 
@@ -173,7 +173,7 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 		<div className="site-build-progress">
 			<div className="site-build-progress__header">
 				<span className="site-build-progress__title" id="site-generation-progress-title">
-					{ translate( 'Generating your site' ) }
+					{ translate( 'Follow my progress:' ) }
 				</span>
 			</div>
 			<p className="site-build-progress__announcement" role="status">
@@ -209,7 +209,7 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 			{ hasFailed && (
 				<Notice className="site-generation__sidebar-notice" isDismissible={ false } status="info">
 					<div className="site-generation__sidebar-notice-content">
-						<strong>{ translate( 'Your brief is saved' ) }</strong>
+						<strong>{ translate( 'I’ve saved your brief' ) }</strong>
 						<span className="site-generation__sidebar-notice-detail">
 							{ translate( 'You can safely check its status again.' ) }
 						</span>
@@ -254,7 +254,7 @@ export function SiteGenerationView( {
 				</div>
 				<div className="site-generation__conversation">
 					<p className="site-generation__conversation-message">
-						{ translate( 'Your site is being prepared. You can follow its progress here.' ) }
+						{ translate( 'Hello! I’m the WordPress Agent, and I’m building your site right now.' ) }
 					</p>
 					<BuildProgress state={ state } />
 				</div>

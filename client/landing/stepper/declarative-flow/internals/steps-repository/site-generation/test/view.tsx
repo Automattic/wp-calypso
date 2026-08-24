@@ -94,7 +94,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		);
 
 		expect( getByRole( 'heading', { name: 'This is taking longer than expected' } ) ).toBeVisible();
-		expect( getByText( 'Your brief is saved.' ) ).toBeVisible();
+		expect( getByText( 'I’ve saved your brief.' ) ).toBeVisible();
 		expect( getByRole( 'button', { name: 'Check again' } ) ).toBeVisible();
 
 		rerender(
@@ -213,7 +213,7 @@ describe( 'SiteGenerationView server recovery', () => {
 		);
 
 		expect( screen.getByText( 'This is taking longer than expected' ) ).toBeVisible();
-		expect( screen.getByText( 'Your brief is saved.' ) ).toBeVisible();
+		expect( screen.getByText( 'I’ve saved your brief.' ) ).toBeVisible();
 	} );
 
 	it( 'disables the rebuild button while the retry request is in flight', () => {
