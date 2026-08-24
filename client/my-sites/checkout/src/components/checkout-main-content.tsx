@@ -24,7 +24,7 @@ import {
 	TransactionStatus,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Step } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	styled,
@@ -51,6 +51,8 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
+import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
+import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -107,6 +109,7 @@ import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import CheckoutTrustCards from './checkout-trust-cards';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
+import { handleProgressStepSelect } from './handle-progress-step-select';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import { MobileCheckoutStickySummary } from './mobile-checkout-sticky-summary';
@@ -468,6 +471,13 @@ export default function CheckoutMainContent( {
 	);
 
 	const searchParams = new URLSearchParams( window.location.search );
+	const isOnboardingFlowCheckout = searchParams.get( 'flow' ) === ONBOARDING_FLOW;
+	const showProgress = useShowOnboardingProgress( isOnboardingFlowCheckout );
+	const forceCheckoutBackUrlDomains = useValidCheckoutBackUrl(
+		siteUrl ?? '',
+		undefined,
+		'checkoutBackUrlDomains'
+	);
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
 	// The flow that redirected to checkout may pass a step indicator via the
@@ -1122,10 +1132,29 @@ export default function CheckoutMainContent( {
 				<Step.TwoColumnLayout
 					firstColumnWidth={ 8 }
 					secondColumnWidth={ 4 }
+					heading={
+						showProgress ? (
+							<OnboardingProgress
+								currentStep="checkout"
+								onStepSelect={ ( step ) =>
+									handleProgressStepSelect( step, {
+										forceCheckoutBackUrlDomains,
+										forceCheckoutBackUrl,
+										clickStepBack: leaveModalProps.clickStepBack,
+										clickClose: leaveModalProps.clickClose,
+									} )
+								}
+							/>
+						) : undefined
+					}
 					topBar={ ( { isLargeViewport } ) => {
 						const topBar = (
 							<Step.TopBar
-								leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
+								leftElement={
+									showProgress ? undefined : (
+										<Step.BackButton onClick={ leaveModalProps.clickClose } />
+									)
+								}
 								rightElement={
 									<>
 										{ stepCounter && (
