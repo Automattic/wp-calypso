@@ -12,6 +12,7 @@ import { Card, CardBody } from '../components/card';
 import { getRelativeTimeString } from '../utils/datetime';
 import { openNote, useNote } from './engine';
 import { getNoteExcerpt, getNoteTitle } from './fields';
+import NoteActions from './note-actions';
 
 // The engine has no error signal for a missing note: `openNote` just keeps
 // waiting for it to land in the store. Fall back to an empty state after this
@@ -71,6 +72,7 @@ export default function NoteDetail( { noteId, onClose }: { noteId: string; onClo
 
 	return (
 		<DetailFrame onClose={ onClose }>
+			<NoteActions key={ note.id } note={ note } />
 			<HStack spacing={ 3 } justify="flex-start" alignment="center">
 				<img
 					className="dashboard-notifications-inbox__note-avatar"

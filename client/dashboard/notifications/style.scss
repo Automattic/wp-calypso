@@ -72,3 +72,9 @@
 	line-height: 20px;
 	text-align: center;
 }
+
+.dashboard-notifications-inbox__undo-bar {
+	padding: 8px 12px;
+	border-radius: 4px;
+	background: var(--dashboard__background-color-secondary, #f6f7f7);
+}
