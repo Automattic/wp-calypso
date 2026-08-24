@@ -2,6 +2,7 @@
 @import '@wordpress/base-styles/mixins';
 
 .step-container-v2__top-bar {
+	position: relative;
 	width: 100%;
 	box-sizing: border-box;
 	display: flex;
@@ -26,6 +27,15 @@
 
 .step-container-v2__top-bar-left-element,
 .step-container-v2__top-bar-right-element {
+	display: flex;
+	align-items: center;
+}
+
+.step-container-v2__top-bar-center-element {
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 50%;
+	transform: translate( -50%, -50% );
 	display: flex;
 	align-items: center;
 }

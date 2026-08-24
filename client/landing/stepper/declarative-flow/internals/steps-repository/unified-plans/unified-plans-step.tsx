@@ -747,6 +747,14 @@ function UnifiedPlansStep( {
 										<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
 									) : undefined
 								}
+								centerElement={
+									showProgress ? (
+										<OnboardingProgress
+											currentStep="plans"
+											onStepSelect={ () => wrapperProps.goBack?.() }
+										/>
+									) : undefined
+								}
 								rightElement={
 									isOnboardingFlow( flowName ) ? (
 										<>
@@ -766,12 +774,6 @@ function UnifiedPlansStep( {
 						}
 						heading={
 							<>
-								{ showProgress && (
-									<OnboardingProgress
-										currentStep="plans"
-										onStepSelect={ () => wrapperProps.goBack?.() }
-									/>
-								) }
 								{ ( intent === 'plans-website-builder' ||
 									intent === 'plans-wordpress-hosting' ) && (
 									<IntentToggle
