@@ -1,3 +1,4 @@
+import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import {
 	ExternalLink,
 	Icon,
@@ -16,7 +17,6 @@ import standardTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting
 import standardTestimonial2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.webp';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
-import jetpackLogo from '../exclusive-offers/images/jetpack-descriptor.svg';
 import { JETPACK_COMPLETE_FEATURES, testimonialsByBrand } from './mock-data';
 
 const FEATURE_COLUMNS = ( brand: 'wpcom' | 'pressable' ) => [
@@ -173,7 +173,7 @@ export function JetpackComplete() {
 					'Every Pressable site comes with a free Jetpack Complete license — a $899/year/site value.'
 				) }
 				level={ 2 }
-				decoration={ <img src={ jetpackLogo } alt="Jetpack" width={ 84 } height={ 24 } /> }
+				decoration={ <JetpackLogo size={ 24 } /> }
 			/>
 			<Card>
 				<CardBody>
