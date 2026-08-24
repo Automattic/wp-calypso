@@ -345,10 +345,21 @@ export default function MarketplaceHosting() {
 				/>
 			</VStack>
 			{ selectedBrand === 'wpcom' && (
-				<VStack spacing={ 4 }>
-					<SectionHeader title={ __( 'Configure WordPress.com' ) } level={ 2 } />
-					<div className="marketplace-hosting__configurator-row">
-						<WpcomConfigurator term={ term } onQuantityChange={ setQuantity } />
+				<div className="marketplace-hosting__layout">
+					<VStack spacing={ 8 } justify="flex-start">
+						<VStack spacing={ 4 }>
+							<SectionHeader title={ __( 'Configure WordPress.com' ) } level={ 2 } />
+							<WpcomConfigurator term={ term } onQuantityChange={ setQuantity } />
+							<DevSitesBanner />
+						</VStack>
+						<Divider
+							orientation="horizontal"
+							style={ { color: 'var(--dashboard-overview__divider-color)' } }
+						/>
+						<IncludedFeatures brand="wpcom" />
+						<Testimonials brand="wpcom" />
+					</VStack>
+					<div className="marketplace-hosting__rail">
 						<YourPlan
 							brand="wpcom"
 							term={ term }
@@ -366,18 +377,29 @@ export default function MarketplaceHosting() {
 								} )
 							}
 						/>
-						<DevSitesBanner />
 					</div>
-				</VStack>
+				</div>
 			) }
 			{ selectedBrand === 'pressable' && (
-				<VStack spacing={ 4 }>
-					<SectionHeader title={ __( 'Configure Pressable' ) } level={ 2 } />
-					<div className="marketplace-hosting__configurator-row">
-						<PressableContent
-							planSlug={ pressablePlanSlug }
-							onPlanChange={ setPressablePlanSlug }
+				<div className="marketplace-hosting__layout">
+					<VStack spacing={ 8 } justify="flex-start">
+						<VStack spacing={ 4 }>
+							<SectionHeader title={ __( 'Configure Pressable' ) } level={ 2 } />
+							<PressableContent
+								planSlug={ pressablePlanSlug }
+								onPlanChange={ setPressablePlanSlug }
+							/>
+							<ScheduleDemoBanner />
+						</VStack>
+						<Divider
+							orientation="horizontal"
+							style={ { color: 'var(--dashboard-overview__divider-color)' } }
 						/>
+						<IncludedFeatures brand="pressable" />
+						<JetpackComplete />
+						<Testimonials brand="pressable" />
+					</VStack>
+					<div className="marketplace-hosting__rail">
 						<YourPlan
 							brand="pressable"
 							term={ term }
@@ -396,29 +418,19 @@ export default function MarketplaceHosting() {
 								} )
 							}
 						/>
-						<ScheduleDemoBanner />
 					</div>
-				</VStack>
+				</div>
 			) }
-			{ selectedBrand === 'vip' && <VipContent /> }
-			<Divider
-				orientation="horizontal"
-				style={ { color: 'var(--dashboard-overview__divider-color)' } }
-			/>
-			{ selectedBrand === 'wpcom' && (
-				<VStack spacing={ 8 }>
-					<IncludedFeatures brand="wpcom" />
-					<Testimonials brand="wpcom" />
-				</VStack>
+			{ selectedBrand === 'vip' && (
+				<>
+					<VipContent />
+					<Divider
+						orientation="horizontal"
+						style={ { color: 'var(--dashboard-overview__divider-color)' } }
+					/>
+					<Testimonials brand="vip" />
+				</>
 			) }
-			{ selectedBrand === 'pressable' && (
-				<VStack spacing={ 8 }>
-					<IncludedFeatures brand="pressable" />
-					<JetpackComplete />
-					<Testimonials brand="pressable" />
-				</VStack>
-			) }
-			{ selectedBrand === 'vip' && <Testimonials brand="vip" /> }
 		</PageLayout>
 	);
 }

@@ -31,20 +31,20 @@
 	flex-shrink: 0;
 }
 
-.marketplace-hosting__configurator-row {
+.marketplace-hosting__layout {
 	display: grid;
-	grid-template-columns: repeat( 3, 1fr );
+	grid-template-columns: 2fr 1fr;
 	gap: 24px;
 	align-items: start;
 
-	> :first-child,
-	> .dashboard-callout {
-		grid-column: span 2;
-	}
-
-	@media ( max-width: 782px ) {
+	@media ( max-width: 1080px ) {
 		grid-template-columns: 1fr;
 	}
+}
+
+.marketplace-hosting__rail {
+	position: sticky;
+	inset-block-start: 24px;
 }
 
 .marketplace-hosting__includes {
