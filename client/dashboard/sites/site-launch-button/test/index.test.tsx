@@ -93,9 +93,6 @@ describe( '<SiteLaunchButton>', () => {
 	} );
 
 	test( 'does not open the modal for a paid site without a custom domain', async () => {
-		// A paid site whose only domain is its default *.wordpress.com address
-		// has domains.length === 1, so isSitePlanPaidWithDomains is false and the
-		// launch is not gated behind the modal — it routes to the launch flow.
 		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
 
 		render( <SiteLaunchButton site={ createMockSite() } tracksContext="test" /> );
