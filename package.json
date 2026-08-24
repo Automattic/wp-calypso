@@ -290,7 +290,6 @@
 		"eslint-plugin-md": "^1.0.19",
 		"eslint-plugin-prettier": "^5.2.3",
 		"eslint-plugin-react": "^7.37.4",
-		"eslint-plugin-react-google-translate": "^1.0.4",
 		"eslint-plugin-react-hooks": "^5.0.0",
 		"eslint-plugin-wpcalypso": "workspace:^",
 		"gettext-parser": "^4.0.3",

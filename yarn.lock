@@ -10792,7 +10792,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:^6.0.0 || ^7.0.0 || ^8.0.0, @typescript-eslint/utils@npm:^8.54.0, @typescript-eslint/utils@npm:^8.58.1":
+"@typescript-eslint/utils@npm:^6.0.0 || ^7.0.0 || ^8.0.0, @typescript-eslint/utils@npm:^8.58.1":
   version: 8.67.0
   resolution: "@typescript-eslint/utils@npm:8.67.0"
   dependencies:
@@ -19093,17 +19093,6 @@ __metadata:
     eslint-config-prettier:
       optional: true
   checksum: 60d9c03491ec6080ac1d71d0bee1361539ff6beb9b91ac98cfa7176c9ed52b7dbe7119ebee5b441b479d447d17d802a4a492ee06095ef2f22c460e3dd6459302
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-react-google-translate@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "eslint-plugin-react-google-translate@npm:1.0.4"
-  dependencies:
-    "@typescript-eslint/utils": "npm:^8.54.0"
-  peerDependencies:
-    eslint: ">=8"
-  checksum: e99a7158355da4f49222634e875325b49803e6a42dff139ec504235110dfa928dbe2c47d2577d20b1ac9e40b38e165e29340f05d26125711574c539076d21247
   languageName: node
   linkType: hard
 
@@ -35343,7 +35332,6 @@ __metadata:
     eslint-plugin-md: "npm:^1.0.19"
     eslint-plugin-prettier: "npm:^5.2.3"
     eslint-plugin-react: "npm:^7.37.4"
-    eslint-plugin-react-google-translate: "npm:^1.0.4"
     eslint-plugin-react-hooks: "npm:^5.0.0"
     eslint-plugin-wpcalypso: "workspace:^"
     fsevents: "npm:^2.3.3"
