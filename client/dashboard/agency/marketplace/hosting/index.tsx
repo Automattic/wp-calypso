@@ -17,10 +17,13 @@ import referralStep2 from 'calypso/assets/images/a8c-for-agencies/referral-step-
 import referralStep3 from 'calypso/assets/images/a8c-for-agencies/referral-step-3.jpg';
 import referralStep4 from 'calypso/assets/images/a8c-for-agencies/referral-step-4.jpg';
 import referralStep5 from 'calypso/assets/images/a8c-for-agencies/referral-step-5.jpg';
+import { Callout } from '../../../components/callout';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
+import difmIllustrationUrl from '../../../sites/overview-difm-upsell-card/upsell-illustration.svg';
+import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
 import { IncludedFeatures, JetpackComplete, Testimonials } from './content-sections';
 import {
 	hostingBrands,
@@ -143,51 +146,60 @@ function MigrationOffer() {
 
 function DevSitesBanner() {
 	return (
-		<Card>
-			<CardBody>
-				<HStack justify="space-between" alignment="center" spacing={ 6 }>
-					<VStack spacing={ 1 }>
-						<Text weight={ 600 }>{ __( 'Not ready to launch yet? Start building for free' ) }</Text>
-						<Text variant="muted">
-							{ __(
-								'Create up to 5 WordPress.com development sites and only pay when you launch. 5 of 5 available.'
-							) }
-						</Text>
-					</VStack>
-					<Button variant="secondary" __next40pxDefaultSize>
-						{ __( 'Create a development site' ) }
-					</Button>
-				</HStack>
-			</CardBody>
-		</Card>
+		<Callout
+			title={ __( 'Not ready to launch yet? Start building for free' ) }
+			titleAs="h2"
+			description={
+				<Text variant="muted">
+					{ __(
+						'Create up to 5 WordPress.com development sites and only pay when you launch. 5 of 5 available.'
+					) }
+				</Text>
+			}
+			image={
+				<DomainUpsellIllustraction
+					title={ __( 'Development site' ) }
+					domain="yourclient.wpcomstaging.com"
+					search="yourclient"
+				/>
+			}
+			imageVariant="full-bleed"
+			actions={
+				<Button variant="secondary" size="compact">
+					{ __( 'Create a development site' ) }
+				</Button>
+			}
+		/>
 	);
 }
 
 function ScheduleDemoBanner() {
 	return (
-		<Card>
-			<CardBody>
-				<HStack justify="space-between" alignment="center" spacing={ 6 }>
-					<VStack spacing={ 1 }>
-						<Text weight={ 600 }>{ __( 'Want a guided tour? Schedule a demo' ) }</Text>
-						<Text variant="muted">
-							{ __(
-								'Our experts are happy to give you a one-on-one tour of our platform and the free perks that come with Pressable.'
-							) }
-						</Text>
-					</VStack>
-					<Button
-						variant="secondary"
-						__next40pxDefaultSize
-						href="https://pressable.com/request-demo"
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ __( 'Schedule a demo ↗' ) }
-					</Button>
-				</HStack>
-			</CardBody>
-		</Card>
+		<Callout
+			title={ __( 'Want a guided tour? Schedule a demo' ) }
+			titleAs="h2"
+			description={
+				<Text variant="muted">
+					{ __(
+						'Our experts are happy to give you a one-on-one tour of our platform and the free perks that come with Pressable.'
+					) }
+				</Text>
+			}
+			image={ difmIllustrationUrl }
+			imageAlt={ __( 'Responsive website design' ) }
+			imageVariant="full-bleed"
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					href="https://pressable.com/request-demo"
+					target="_blank"
+					rel="noreferrer"
+				>
+					{ __( 'Schedule a demo ↗' ) }
+				</Button>
+			}
+		/>
 	);
 }
 
