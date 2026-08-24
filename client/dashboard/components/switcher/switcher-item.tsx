@@ -19,7 +19,7 @@ export default function SwitcherItem( {
 	alignment = 'center',
 }: SwitcherItemProps ) {
 	if ( ! media && ! description ) {
-		return <>{ title }</>;
+		return title;
 	}
 
 	return (

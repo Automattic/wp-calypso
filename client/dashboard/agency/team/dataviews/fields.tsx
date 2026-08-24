@@ -109,7 +109,8 @@ export function useTeamFields(): Field< TeamMember >[] {
 			getValue: ( { item } ) => item.dateAdded ?? '',
 			render: ( { item } ) => {
 				const formatted = formatAddedDate( item.dateAdded );
-				return formatted ? <>{ formatted }</> : <>—</>;
+				// Wrap in span; avoids a Google Translate DOM crash (react/react#11538)
+				return formatted ? <span>{ formatted }</span> : <span>—</span>;
 			},
 		},
 	];
