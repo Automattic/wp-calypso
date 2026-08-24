@@ -121,9 +121,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 											TooltipContent={ OpensTooltipContent }
 										/>
 									</span>
-									<span>
-										{ formatNumber( parseInt( String( item.clicks ), 10 ) || 0 ) }
-									</span>
+									<span>{ formatNumber( parseInt( String( item.clicks ), 10 ) || 0 ) }</span>
 								</>
 							);
 						},

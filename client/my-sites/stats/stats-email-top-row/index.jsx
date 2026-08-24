@@ -62,8 +62,7 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 						<TopCard
 							heading={ translate( 'Open rate' ) }
 							value={
-								counts?.total_sends > 0 &&
-								( counts?.unique_opens > 0 || counts?.total_opens === 0 )
+								counts?.total_sends > 0 && ( counts?.unique_opens > 0 || counts?.total_opens === 0 )
 									? `${ Math.round( ( counts.opens_rate ?? 0 ) * 100 ) }%`
 									: null
 							}

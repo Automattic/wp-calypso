@@ -148,9 +148,7 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 												TooltipContent={ OpensTooltipContent }
 											/>
 										</span>
-										<span>
-											{ formatNumber( parseInt( item.clicks, 10 ) || 0 ) }
-										</span>
+										<span>{ formatNumber( parseInt( item.clicks, 10 ) || 0 ) }</span>
 									</>
 								);
 							},
