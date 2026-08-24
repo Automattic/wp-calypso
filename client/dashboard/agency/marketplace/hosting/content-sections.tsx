@@ -146,7 +146,7 @@ export function Testimonials( { brand }: { brand: 'wpcom' | 'pressable' | 'vip' 
 			<CardBody>
 				<div className="marketplace-hosting__grid-2">
 					{ testimonialsByBrand[ brand ].map( ( testimonial, index ) => (
-						<VStack spacing={ 4 } key={ testimonial.name } justify="flex-start">
+						<VStack spacing={ 4 } key={ testimonial.name } justify="space-between">
 							<Text as="p">{ testimonial.quote }</Text>
 							<HStack spacing={ 3 } justify="flex-start" alignment="center">
 								<img
