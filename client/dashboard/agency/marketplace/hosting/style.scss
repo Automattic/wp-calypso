@@ -187,6 +187,12 @@
 	padding: 0;
 }
 
+/* TabPanel draws no baseline under the tab list; consumers add their own
+   (see stats-navigation). Use the page's divider token. */
+.marketplace-hosting__tabs .components-tab-panel__tabs {
+	border-block-end: 1px solid var( --dashboard-overview__divider-color );
+}
+
 /* SectionHeader has no alignment prop; when a description makes the header
    two lines tall, center-aligned decoration floats between them. Top-align
    the icon with the title via the consumer className. */

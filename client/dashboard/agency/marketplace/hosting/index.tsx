@@ -336,6 +336,7 @@ export default function MarketplaceHosting() {
 			{ isGuideOpen && <ReferralGuide onClose={ () => setIsGuideOpen( false ) } /> }
 			{ SHOW_MIGRATION_OFFER && <MigrationOffer /> }
 			<TabPanel
+				className="marketplace-hosting__tabs"
 				tabs={ hostingBrands.map( ( brand ) => ( { name: brand.key, title: brand.name } ) ) }
 				initialTabName={ selectedBrand }
 				onSelect={ ( tabName ) => setSelectedBrand( tabName as HostingBrand[ 'key' ] ) }
