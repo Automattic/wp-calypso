@@ -1,0 +1,28 @@
+.dashboard-notifications-inbox__avatar {
+	position: relative;
+	display: inline-flex;
+
+	img {
+		display: block;
+		border-radius: 50%;
+	}
+}
+
+.dashboard-notifications-inbox__unread-dot {
+	position: absolute;
+	top: -2px;
+	inset-inline-end: -2px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--wp-admin-theme-color, #3858e9);
+	border: 2px solid var(--dashboard__background-color, #fff);
+}
+
+.dashboard-notifications-inbox__title.is-unread {
+	font-weight: 600;
+}
+
+.dashboard-notifications-inbox__note-avatar {
+	border-radius: 50%;
+}

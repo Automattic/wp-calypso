@@ -13,6 +13,11 @@ export const notificationsInboxRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'notifications',
+} );
+
+export const notificationsInboxIndexRoute = createRoute( {
+	getParentRoute: () => notificationsInboxRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../notifications' ).then( ( d ) =>
 		createLazyRoute( 'notifications-inbox' )( {
@@ -21,4 +26,20 @@ export const notificationsInboxRoute = createRoute( {
 	)
 );
 
-export const createNotificationsInboxRoutes = (): AnyRoute[] => [ notificationsInboxRoute ];
+export const notificationsInboxNoteRoute = createRoute( {
+	getParentRoute: () => notificationsInboxRoute,
+	path: '$noteId',
+} ).lazy( () =>
+	import( '../../notifications/note' ).then( ( d ) =>
+		createLazyRoute( 'notifications-inbox-note' )( {
+			component: () => <d.default noteId={ notificationsInboxNoteRoute.useParams().noteId } />,
+		} )
+	)
+);
+
+export const createNotificationsInboxRoutes = (): AnyRoute[] => [
+	notificationsInboxRoute.addChildren( [
+		notificationsInboxIndexRoute,
+		notificationsInboxNoteRoute,
+	] ),
+];
