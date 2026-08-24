@@ -247,7 +247,7 @@ function getDefaultFields( {
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
-			render: ( { item } ) => ( item.is_wpcom_staging_site ? __( 'Yes' ) : __( 'No' ) ),
+			enableHiding: false,
 			enableSorting: false,
 		},
 		{
