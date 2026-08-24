@@ -156,7 +156,7 @@ describe( '<Sites>', () => {
 		expect(
 			await screen.findByRole( 'heading', { name: /You don.t have any active sites/ } )
 		).toBeVisible();
-		const link = screen.getByRole( 'link', { name: 'View deleted sites' } );
+		const link = screen.getByRole( 'link', { name: 'Show deleted sites' } );
 		expect( link ).toBeVisible();
 		expect( link ).toHaveAttribute( 'href', expect.stringContaining( 'is_deleted=true' ) );
 		expect( screen.getByRole( 'link', { name: 'Create a site' } ) ).toBeVisible();
@@ -175,7 +175,7 @@ describe( '<Sites>', () => {
 			await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
 		).toBeVisible();
 		await waitFor( () => expect( deletedCheckScope.isDone() ).toBe( true ) );
-		expect( screen.queryByRole( 'link', { name: 'View deleted sites' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Show deleted sites' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'falls back to the onboarding empty state when the deleted-sites check fails', async () => {
@@ -193,7 +193,7 @@ describe( '<Sites>', () => {
 		expect(
 			await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
 		).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'View deleted sites' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Show deleted sites' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'does not flash the onboarding empty state while the deleted-sites check is pending', async () => {

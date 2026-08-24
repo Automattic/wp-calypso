@@ -30,7 +30,7 @@ import type { AppConfig } from '../../app/context';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator, View } from '@wordpress/dataviews';
 
-function getDefaultFields( {
+export function getDefaultFields( {
 	viewType,
 	queries,
 }: {
@@ -236,7 +236,7 @@ function getDefaultFields( {
 		{
 			id: 'is_deleted',
 			type: 'boolean',
-			label: __( 'Deleted' ),
+			label: __( 'Deleted sites' ),
 			elements: [
 				{ value: true, label: __( 'Yes' ) },
 				{ value: false, label: __( 'No' ) },
@@ -245,7 +245,7 @@ function getDefaultFields( {
 				operators: [ 'is' as Operator ],
 			},
 			enableHiding: false,
-			enableSorting: false,
+			enableSorting: true,
 		},
 	];
 }
