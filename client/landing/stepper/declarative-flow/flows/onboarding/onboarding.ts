@@ -26,13 +26,25 @@ import {
 	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
-import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUser,
+	getCurrentUserName,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { State } from '../../../../../../packages/data-stores/src/plans/reducer';
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
+import {
+	getAtomicFunnelArgs,
+	getAtomicFunnelDest,
+	getAtomicFunnelSlug,
+	getRememberedAtomicFunnelSite,
+	startAtomicFunnelSite,
+	logAtomicFunnelEvent,
+} from '../../../utils/atomic-funnel';
 import {
 	getBlueprintArchiveSiteSpecUrl,
 	getStandaloneBlueprintArchiveSlug,
@@ -114,6 +126,8 @@ const onboarding: FlowV2< typeof initialize > = {
 			playgroundId,
 			buildDest
 		);
+		const atomicFunnelSlug = getAtomicFunnelSlug( queryParams );
+		const atomicFunnelDest = getAtomicFunnelDest( queryParams );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -123,6 +137,58 @@ const onboarding: FlowV2< typeof initialize > = {
 			planCartItem: MinimalRequestCartProduct | null,
 			launchpadPersonalizationVariation: LaunchpadPersonalizationVariation
 		): Promise< [ string, string | null, string | null ] > => {
+			if ( atomicFunnelSlug && atomicFunnelDest !== 'manual' ) {
+				const siteSlug = providedDependencies.siteSlug as string;
+				const siteId = providedDependencies.siteId as number;
+
+				// dest=site-spec: land on the AI site-spec. For the blueprint funnel, reuse the
+				// blueprint-archive site-spec URL, which polls the (already in-flight) import and
+				// then redirects to the Site Editor.
+				if ( atomicFunnelDest === 'site-spec' ) {
+					const blueprintSlug = queryParams.get( 'blueprint' );
+					logAtomicFunnelEvent( 'post_checkout_site_spec', {
+						funnel: atomicFunnelSlug,
+						blog_id: siteId,
+					} );
+					return [
+						blueprintSlug
+							? getBlueprintArchiveSiteSpecUrl( {
+									siteSlug,
+									siteId,
+									blueprintSlug,
+									ref: refParameter,
+							  } )
+							: addQueryArgs( withLocale( '/setup/ai-site-builder-spec/site-spec', locale ), {
+									siteSlug,
+									...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
+							  } ),
+						null,
+						null,
+					];
+				}
+
+				// dest=big-sky: hand off to the Big Sky AI builder.
+				if ( atomicFunnelDest === 'big-sky' ) {
+					logAtomicFunnelEvent( 'post_checkout_big_sky', {
+						funnel: atomicFunnelSlug,
+						blog_id: siteId,
+					} );
+					return [
+						addQueryArgs(
+							withLocale( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, locale ),
+							{
+								siteSlug,
+								...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
+								fromPostCheckoutSetupSite: '1',
+								...( refParameter ? { ref: refParameter } : {} ),
+							}
+						),
+						null,
+						null,
+					];
+				}
+			}
+
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 			}
@@ -469,9 +535,13 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// build_dest=wow goes straight from checkout to the AI site-spec
-									// (no post-checkout-onboarding hop, no chooser).
-									redirect_to: blueprintArchiveSlug ? destination : redirectTo,
+									// build_dest=wow and the atomic funnel (dest=site-spec/big-sky) go
+									// straight from checkout to their destination — no
+									// post-checkout-onboarding hop, no chooser.
+									redirect_to:
+										blueprintArchiveSlug || ( atomicFunnelSlug && atomicFunnelDest !== 'manual' )
+											? destination
+											: redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
@@ -483,9 +553,12 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( blueprintArchiveSlug ) {
-							// build_dest=wow never shows the setup-your-site-ai chooser; go
-							// straight to the AI site-spec destination.
+						} else if (
+							blueprintArchiveSlug ||
+							( atomicFunnelSlug && atomicFunnelDest !== 'manual' )
+						) {
+							// build_dest=wow and the atomic funnel never show the
+							// setup-your-site-ai chooser; go straight to their destination.
 							window.location.replace( destination );
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
@@ -541,6 +614,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const user = useSelector( getCurrentUser );
+		const username = useSelector( getCurrentUserName );
 
 		/**
 		 * Clears every state we're persisting during the flow
@@ -578,6 +652,29 @@ const onboarding: FlowV2< typeof initialize > = {
 		useEffect( () => {
 			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
 		}, [] );
+
+		// Atomic funnel: create the Simple site as soon as the customer is in the flow, so its
+		// Atomic host builds (and any follow-up, e.g. a blueprint import) while they pick a domain
+		// and check out. Single-flight — the create-site step consumes the same site rather than
+		// creating a second one. Only fires once the funnel step is known (currentStepSlug set) and
+		// the user is logged in.
+		useEffect( () => {
+			if ( ! currentStepSlug || ! isLoggedIn || ! username ) {
+				return;
+			}
+			const queryParams = new URLSearchParams( window.location.search );
+			const funnelSlug = getAtomicFunnelSlug( queryParams );
+			if ( ! funnelSlug || getRememberedAtomicFunnelSite( funnelSlug ) ) {
+				return;
+			}
+			void startAtomicFunnelSite( {
+				funnelSlug,
+				funnelArgs: getAtomicFunnelArgs( queryParams ),
+				username,
+			} ).catch( () => {
+				// Errors are logged in the util; the create-site step retries as a fallback.
+			} );
+		}, [ currentStepSlug, isLoggedIn, username ] );
 	},
 };
 

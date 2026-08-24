@@ -27,6 +27,11 @@ import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import {
+	getAtomicFunnelArgs,
+	getAtomicFunnelSlug,
+	startAtomicFunnelSite,
+} from 'calypso/landing/stepper/utils/atomic-funnel';
 import { resolveLaunchpadPersonalizationVariation } from 'calypso/lib/ai-launchpad';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
@@ -212,6 +217,36 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 			return {
 				siteSlug: getSignupCompleteSlug(),
+				goToCheckout: shouldGoToCheckout,
+				siteCreated: true,
+			};
+		}
+
+		// Atomic funnel: the Simple site was already created at flow entry (its Atomic host is
+		// building in the background). Consume that site instead of creating a second one; if the
+		// background request has not finished — or failed — fall back to creating it here, sharing
+		// the same single-flight request.
+		const atomicFunnelSlug = getAtomicFunnelSlug( urlQueryParams );
+		if ( atomicFunnelSlug ) {
+			const funnelSite = await startAtomicFunnelSite( {
+				funnelSlug: atomicFunnelSlug,
+				funnelArgs: getAtomicFunnelArgs( urlQueryParams ),
+				siteTitle: selectedSiteTitle,
+				username,
+			} );
+
+			const funnelCartItems = [
+				...( planCartItem ? [ planCartItem ] : [] ),
+				...( productCartItems ?? [] ),
+				...mergedDomainCartItems,
+			];
+			if ( funnelCartItems.length > 0 ) {
+				await addProductsToCart( funnelSite.siteSlug, flow, funnelCartItems );
+			}
+
+			return {
+				siteId: funnelSite.blogId,
+				siteSlug: funnelSite.siteSlug,
 				goToCheckout: shouldGoToCheckout,
 				siteCreated: true,
 			};

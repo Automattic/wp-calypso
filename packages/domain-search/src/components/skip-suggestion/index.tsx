@@ -17,7 +17,24 @@ const SkipSuggestion = () => {
 		? stripWpcomSubdomainSuffix( query )
 		: query;
 
-	const { data: suggestion } = useQuery( queries.freeSuggestion( normalizedQuery ) );
+	const { data: suggestion } = useQuery( {
+		...queries.freeSuggestion( normalizedQuery ),
+		enabled: ! config.hideFreeSubdomainSuggestion,
+	} );
+
+	// Flows that never keep a free subdomain (e.g. the atomic funnel) show only a skip control,
+	// no *.wordpress.com domain. Skipping with no suggestion records a "choose later" origin.
+	if ( config.hideFreeSubdomainSuggestion ) {
+		return (
+			<DomainSearchSkipSuggestion
+				chooseLaterOnly
+				title={ config.skipSuggestionCopy?.title }
+				buttonText={ config.skipSuggestionCopy?.buttonText }
+				onSkip={ () => events.onSkip() }
+				disabled={ !! isMutating }
+			/>
+		);
+	}
 
 	if ( currentSiteUrl ) {
 		return (
