@@ -38,6 +38,7 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 		if ( envVariables.TEST_ON_ATOMIC ) {
 			test.setTimeout( 450_000 );
 		}
+		const commentSyncTimeout = envVariables.TEST_ON_ATOMIC ? 150_000 : 15_000;
 
 		testAccount = new TestAccount( accountName );
 		restAPIClient = new RestAPIClient( testAccount.credentials );
@@ -69,14 +70,23 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 
 			// On Atomic the comment is created on the site and reaches WordPress.com
 			// only once Jetpack sync mirrors it, which can take over two minutes. Until then the
-			// likes endpoint answers `unknown_comment` and no like button renders. Since
-			// comments sync in creation order, once the second is likeable, the first is too.
+			// likes endpoint answers `unknown_comment` and no like button renders. Reading the
+			// comment is not a usable readiness signal: the GET succeeds while `likes/new` still
+			// answers `unknown_comment`, so each comment has to prove itself by being liked.
 			await expect( async () => {
-				await restAPIClient.likeComment(
-					testAccount.credentials.testSites?.primary.id as number,
-					commentToBeUnliked.ID
-				);
-			} ).toPass( { timeout: 150_000, intervals: [ 5000 ] } );
+				for ( const comment of [ commentToBeLiked, commentToBeUnliked ] ) {
+					await restAPIClient.likeComment(
+						testAccount.credentials.testSites?.primary.id as number,
+						comment.ID
+					);
+				}
+			} ).toPass( { timeout: commentSyncTimeout, intervals: [ 5000 ] } );
+
+			// Liking the first comment was only the readiness proof; the test likes it via the UI.
+			await restAPIClient.unlikeComment(
+				testAccount.credentials.testSites?.primary.id as number,
+				commentToBeLiked.ID
+			);
 
 			await testAccount.authenticate( page );
 		} );

@@ -1149,6 +1149,37 @@ export class RestAPIClient {
 	}
 
 	/**
+	 * Unlikes a comment.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} commentID Target comment ID.
+	 */
+	async unlikeComment( siteID: number, commentID: number ): Promise< CommentLikeResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/comments/${ commentID }/likes/mine/delete` ),
+			params
+		);
+
+		if ( response.i_like ) {
+			throw new Error(
+				`Failed to unlike ${ commentID } on site ${ siteID }. Response: ${ JSON.stringify(
+					response
+				) }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
 	 * Likes or unlikes a post.
 	 *
 	 * @param {'like'|'unlike'} action Action to perform on the post.
