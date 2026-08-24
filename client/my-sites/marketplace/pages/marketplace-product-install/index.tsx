@@ -1,4 +1,4 @@
-import { WordPressLogo } from '@automattic/components';
+import { WordPressWordmark } from '@automattic/components';
 import { css, Global, ThemeProvider } from '@emotion/react';
 import clsx from 'clsx';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -52,7 +52,7 @@ const MarketplaceProductInstall = ( {
 						}
 					` }
 				/>
-				<WordPressLogo className="marketplace-plugin-install__logo" size={ 24 } />
+				<WordPressWordmark className="marketplace-plugin-install__logo" />
 				{ isTransferWait && <MarketplaceInstallHelpLink /> }
 			</Masterbar>
 			<div
