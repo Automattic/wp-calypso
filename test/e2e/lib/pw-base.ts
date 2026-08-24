@@ -127,10 +127,9 @@ export type CustomOptions = {
 /**
  * Test accounts exposed as a fixture of the same name, logged in on first use.
  *
- * The `prime-logins` setup project logs in as each of these before the suite starts, so
- * an account added here is primed rather than logged in inline. Two accounts are fixtures
- * without belonging here: `accountGivenByEnvironment`, which resolves at run time, and
- * `accountSMS`, whose 2FA code costs a Mailosaur email only a couple of specs need.
+ * Two accounts are fixtures without belonging here: `accountGivenByEnvironment`, which
+ * resolves at run time, and `accountSMS`, whose 2FA code costs a Mailosaur email only a
+ * couple of specs need.
  */
 export const fixtureAccounts = {
 	accountAtomic: 'atomicUser',

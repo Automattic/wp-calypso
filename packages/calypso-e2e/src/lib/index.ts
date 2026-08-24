@@ -1,4 +1,5 @@
 export { TestAccount } from './test-account';
+export { clearStaleLoginLocks } from './login-lock';
 
 export * from './pages';
 export * from './flows';

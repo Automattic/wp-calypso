@@ -13,19 +13,11 @@ import { Page } from 'playwright';
  */
 export async function getAccount(
 	page: Page,
-	accountName: TestAccountName,
-	{ isPriming = false }: { isPriming?: boolean } = {}
+	accountName: TestAccountName
 ): Promise< TestAccount > {
 	const testAccount = new TestAccount( accountName );
 	if ( ! ( await testAccount.hasFreshAuthCookies() ) ) {
-		if ( ! isPriming ) {
-			// The prime-logins setup project should have left cookies for this account. Say so
-			// when it didn't: a quiet run means priming worked, and a noisy one names the
-			// accounts that fell back to logging in one worker at a time.
-			console.log( `Logging in as ${ accountName }, no primed cookies to reuse.` );
-		}
-		await testAccount.logInViaLoginPage( page );
-		await testAccount.saveAuthCookies( page.context() );
+		await testAccount.ensureFreshAuthCookies( page );
 	}
 	return testAccount;
 }
