@@ -24,8 +24,8 @@ Peer dependencies: `react` and `react-dom` (`^18.3.1 || ^19.0.0`).
 Import each modal from its own subpath so a consumer only bundles the one it uses:
 
 ```tsx
-import PreLaunchModal from '@automattic/site-launch-modals/pre-launch-modal';
 import CelebrationModal from '@automattic/site-launch-modals/celebration-modal';
+import PreLaunchModal from '@automattic/site-launch-modals/pre-launch-modal';
 ```
 
 A consumer that uses both modals can import them from the package root barrel
