@@ -1,11 +1,14 @@
 import {
 	Button,
+	Icon,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
-import { Card, CardBody } from '../../../components/card';
+import { check } from '@wordpress/icons';
+import { Card, CardBody, CardDivider } from '../../../components/card';
 import { getTieredPrice, formatUSD, wpcomHosting } from './mock-data';
 import type { PressablePlan } from './mock-data';
 
@@ -82,12 +85,16 @@ export default function YourPlan( { brand, term, quantity, plan, onAddToCart }: 
 							<Text variant="muted">{ __( 'Prototype: price loads from the products API.' ) }</Text>
 						) }
 					</VStack>
-					<VStack spacing={ 2 } alignment="flex-start">
+					<VStack spacing={ 4 } alignment="flex-start">
 						<Button variant="primary" __next40pxDefaultSize onClick={ onAddToCart }>
 							{ ctaLabel }
 						</Button>
-						<Text variant="muted">{ __( 'Cancel anytime.' ) }</Text>
 					</VStack>
+					<CardDivider />
+					<HStack spacing={ 2 } justify="flex-start" alignment="center">
+						<Icon icon={ check } className="marketplace-hosting__check" />
+						<Text variant="muted">{ __( 'Cancel anytime.' ) }</Text>
+					</HStack>
 				</VStack>
 			</CardBody>
 		</Card>
