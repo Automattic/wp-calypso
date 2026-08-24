@@ -11,7 +11,7 @@ import Client from '../index';
 import { init } from '../wpcom';
 
 // Mirrors settings.max_limit in the client.
-const MAX_LIMIT = 200;
+const MAX_LIMIT = 1000;
 
 // Every filtered test here uses the Unread tab; its id list is cached under its name.
 const UNREAD_KEY = 'unread';
@@ -179,7 +179,7 @@ describe( 'RestClient', () => {
 		// `before` cursor (production WP.com behavior): the window must page all the way
 		// to the cap despite each older page echoing the anchor back.
 		it( 'loads exactly max_limit unique notes by paging to the cap', () => {
-			const TOP_ID = 1000; // server has ids 1000..1, far more than the cap.
+			const TOP_ID = MAX_LIMIT + 500; // server has more notes than the cap.
 			// Map an inclusive `before` (epoch seconds) back to its anchor id and
 			// return the anchor plus the notes immediately older than it.
 			const epochBase = Math.floor( Date.parse( makeNote( 0 ).timestamp ) / 1000 );
@@ -196,7 +196,9 @@ describe( 'RestClient', () => {
 			client.getNotes();
 			respondInclusive( getCalls[ 0 ] );
 
-			for ( let i = 0; i < 100 && client.hasMoreNotes(); i++ ) {
+			// Bound is a runaway guard only; paging to the cap needs ~(MAX_LIMIT / 9)
+			// load-mores since each inclusive page echoes its anchor back.
+			for ( let i = 0; i < MAX_LIMIT && client.hasMoreNotes(); i++ ) {
 				getCalls.length = 0;
 				client.loadMore();
 				if ( ! getCalls.length ) {
@@ -553,11 +555,12 @@ describe( 'RestClient', () => {
 		// load-more fires a zero-count request (number = max_limit - 100).
 		it( 'stops filtered paging at the cap without a zero-count request', () => {
 			client.setFilter( 'unread' );
-			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, MAX_LIMIT + 9 ), last_seen_time: 0 } );
 
 			// Page in full older pages (10 at a time) until the list reaches max_limit.
-			// Starts at 10 loaded (ids 209..200); each page adds the next 10 older ids.
-			for ( let oldest = 199; oldest >= 219 - MAX_LIMIT; oldest -= 10 ) {
+			// Starts at 10 loaded; each page adds the next 10 older ids, ending at id 10
+			// so every id stays positive.
+			for ( let oldest = MAX_LIMIT - 1; oldest >= 19; oldest -= 10 ) {
 				getCalls.length = 0;
 				client.loadMore();
 				getCalls[ 0 ].callback( null, { notes: fullPage( 10, oldest ), last_seen_time: 0 } );
