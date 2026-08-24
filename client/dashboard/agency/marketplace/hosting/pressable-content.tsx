@@ -12,6 +12,7 @@ import { Card, CardBody, CardDivider, CardHeader } from '../../../components/car
 import { SectionHeader } from '../../../components/section-header';
 import { CheckList } from './content-sections';
 import {
+	hostingBrands,
 	pressableSignaturePlans,
 	PRESSABLE_OVERAGES,
 	formatUSD,
@@ -67,7 +68,11 @@ export default function PressableContent( {
 	return (
 		<Card>
 			<CardHeader>
-				<SectionHeader level={ 3 } title={ __( 'Configure Pressable' ) } />
+				<SectionHeader
+					level={ 3 }
+					title={ __( 'Configure Pressable' ) }
+					description={ hostingBrands.find( ( brand ) => brand.key === 'pressable' )?.description }
+				/>
 			</CardHeader>
 			<CardBody>
 				<VStack spacing={ 5 }>

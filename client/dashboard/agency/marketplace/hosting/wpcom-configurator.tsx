@@ -13,7 +13,7 @@ import { check } from '@wordpress/icons';
 import { useState } from 'react';
 import { Card, CardBody, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
-import { getNextDiscountNudge, wpcomHosting } from './mock-data';
+import { getNextDiscountNudge, hostingBrands, wpcomHosting } from './mock-data';
 
 const PRESET_QUANTITIES = [ 1, 3, 5 ];
 
@@ -42,7 +42,11 @@ export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConf
 	return (
 		<Card>
 			<CardHeader>
-				<SectionHeader level={ 3 } title={ __( 'Configure WordPress.com' ) } />
+				<SectionHeader
+					level={ 3 }
+					title={ __( 'Configure WordPress.com' ) }
+					description={ hostingBrands.find( ( brand ) => brand.key === 'wpcom' )?.description }
+				/>
 			</CardHeader>
 			<CardBody>
 				<div className="marketplace-hosting__config-grid">
