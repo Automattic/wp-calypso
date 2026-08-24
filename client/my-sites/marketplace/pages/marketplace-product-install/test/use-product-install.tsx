@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { act } from '@testing-library/react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_FAILURE,
@@ -58,6 +59,15 @@ jest.mock( '../use-install-deadline', () => ( {
 	...jest.requireActual( '../use-install-deadline' ),
 	useInstallDeadline: ( args: DeadlineArgs ) => mockUseInstallDeadline( args ),
 } ) );
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
+const errorViewEvents = () =>
+	jest
+		.mocked( recordTracksEvent )
+		.mock.calls.filter( ( [ name ] ) => name === 'calypso_marketplace_install_error_view' );
 
 const SITE_ID = 1;
 
@@ -430,6 +440,49 @@ describe( 'useProductInstall', () => {
 			expect( mockUseInstallDeadline.mock.calls.at( -1 )?.[ 0 ] ).toMatchObject( {
 				enabled: true,
 			} );
+		} );
+	} );
+
+	describe( 'error view impression', () => {
+		beforeEach( () => {
+			jest.mocked( recordTracksEvent ).mockClear();
+		} );
+		afterEach( () => {
+			mockUseInstallDeadline.mockImplementation( noDeadlineVerdict );
+		} );
+
+		it( 'fires once for a preflight error, which never reaches the wait telemetry', () => {
+			jest.useFakeTimers();
+			try {
+				const { rerender } = renderProductInstall( { pluginSlug: 'give' } );
+				expect( errorViewEvents() ).toHaveLength( 0 );
+
+				act( () => {
+					jest.advanceTimersByTime( 2000 );
+				} );
+				rerender();
+
+				expect( errorViewEvents() ).toHaveLength( 1 );
+				expect( errorViewEvents()[ 0 ][ 1 ] ).toMatchObject( {
+					error_type: 'non-installable-plan',
+					flow: 'plugin',
+					product_slug: 'give',
+				} );
+			} finally {
+				jest.useRealTimers();
+			}
+		} );
+
+		it( 'fires once for a transfer failure', () => {
+			mockUseInstallDeadline.mockImplementation(
+				deadlineVerdict( { hasTimedOut: true, hasTransferFailed: true } )
+			);
+
+			const { rerender } = renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+			rerender();
+
+			expect( errorViewEvents() ).toHaveLength( 1 );
+			expect( errorViewEvents()[ 0 ][ 1 ] ).toMatchObject( { error_type: 'transfer-failed' } );
 		} );
 	} );
 } );
