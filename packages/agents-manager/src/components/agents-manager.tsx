@@ -306,7 +306,6 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			emptyViewSuggestions={ emptyViewSuggestions }
 			markdownComponents={ loadedProviders.markdownComponents || {} }
 			markdownExtensions={ loadedProviders.markdownExtensions || {} }
-			useNavigationContinuation={ loadedProviders.useNavigationContinuation }
 			useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
 			useSuggestions={ loadedProviders.useSuggestions }
 			getChatComponent={ loadedProviders.getChatComponent }

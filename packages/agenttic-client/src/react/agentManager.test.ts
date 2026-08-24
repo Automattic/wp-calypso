@@ -4,7 +4,11 @@ import {
 	createClient,
 	updateToolResultsWithResolvedPromises,
 } from '../client/index';
-import { createTextMessage, extractToolCallsFromMessage } from '../client/utils/index';
+import {
+	createTextMessage,
+	createToolResultDataPart,
+	extractToolCallsFromMessage,
+} from '../client/utils/index';
 import { type AgentManager, getAgentManager } from './agentManager';
 import { clearConversation, loadConversation, storeConversation } from './conversationStorage';
 import type {
@@ -27,6 +31,7 @@ vi.mock( '../client/index', () => ( {
 
 vi.mock( '../client/utils/index', () => ( {
 	createTextMessage: vi.fn(),
+	createToolResultDataPart: vi.fn(),
 	extractToolCallsFromMessage: vi.fn(),
 	generateMessageId: vi.fn( () => 'test-message-id' ),
 } ) );
@@ -437,6 +442,48 @@ describe( 'agentManager', () => {
 	describe( 'sendMessageStream', () => {
 		beforeEach( async () => {
 			await agentManager.createAgent( 'test-key', testConfig );
+		} );
+
+		it( 'sendToolResult supersedes a stale recorded result for the same call', async () => {
+			// The executor records a local result for every executed tool; a
+			// later tool-result send must replace it, not duplicate it.
+			const callPart = {
+				type: 'data' as const,
+				data: { toolCallId: 'call-1', toolId: 'nav', arguments: {} },
+			};
+			const staleResultPart = {
+				type: 'data' as const,
+				data: { toolCallId: 'call-1', toolId: 'nav', result: { success: true } },
+			};
+			await agentManager.replaceMessages( 'test-key', [
+				{ role: 'agent', kind: 'message', parts: [ callPart ], messageId: 'm1' },
+				{ role: 'agent', kind: 'message', parts: [ staleResultPart ], messageId: 'm2' },
+			] as Message[] );
+
+			mockClient.sendMessageStream.mockImplementation( async function* () {} );
+			vi.mocked( createToolResultDataPart ).mockImplementationOnce(
+				( toolCallId: string, toolId: string, result: unknown ) => ( {
+					type: 'data',
+					data: { toolCallId, toolId, result },
+				} )
+			);
+
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			for await ( const update of agentManager.sendToolResult( 'test-key', 'call-1', 'nav', {
+				success: false,
+			} ) ) {
+				// Drain.
+			}
+
+			const parts = agentManager
+				.getConversationHistory( 'test-key' )
+				.flatMap( ( message ) => message.parts );
+			const resultParts = parts.filter(
+				( part: any ) => part.type === 'data' && 'result' in ( part.data ?? {} )
+			);
+			expect( resultParts ).toHaveLength( 1 );
+			expect( ( resultParts[ 0 ] as any ).data.result ).toEqual( { success: false } );
+			expect( parts.some( ( part: any ) => 'arguments' in ( part.data ?? {} ) ) ).toBe( true );
 		} );
 
 		it( 'should stream messages from agent', async () => {

@@ -10,15 +10,18 @@ import type { AbilityResult } from './types';
 
 /**
  * A successful ability result. `message` is what the user reads; `details`
- * carry structured data for the agent.
+ * carry structured data for the agent. `returnToAgent: false` ends the turn
+ * without a follow-up — for abilities whose outcome resolves later, like a
+ * navigation answered from the destination page.
  */
 export function successResult(
 	message: string,
-	details?: Record< string, unknown >
+	details?: Record< string, unknown >,
+	{ returnToAgent = true }: { returnToAgent?: boolean } = {}
 ): AbilityResult {
 	return {
 		result: { success: true, message, ...( details && { details } ) },
-		returnToAgent: true,
+		returnToAgent,
 	};
 }
 

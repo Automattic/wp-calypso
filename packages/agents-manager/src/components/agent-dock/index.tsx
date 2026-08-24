@@ -31,7 +31,6 @@ import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
 import ZendeskChat from '../zendesk-chat';
 import type {
-	NavigationContinuationHook,
 	AbilitiesSetupHook,
 	GetChatComponent,
 	UseSuggestionsHook,
@@ -50,8 +49,6 @@ interface Props {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
-	/** Navigation continuation hook for post-navigation conversation resumption. */
-	useNavigationContinuation?: NavigationContinuationHook;
 	/** The external providers' abilities-setup hook (e.g. Big Sky, jetpack-ai-sidebar). Invoked after custom actions registration. */
 	useProviderAbilitiesSetup?: AbilitiesSetupHook;
 	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
@@ -71,7 +68,6 @@ export default function AgentDock( {
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions = {},
-	useNavigationContinuation,
 	useProviderAbilitiesSetup,
 	getChatComponent,
 	useSuggestions,
@@ -404,7 +400,6 @@ export default function AgentDock( {
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 			isCompactMode={ isCompactMode }
-			useNavigationContinuation={ useNavigationContinuation }
 			useProviderAbilitiesSetup={ useProviderAbilitiesSetup }
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }

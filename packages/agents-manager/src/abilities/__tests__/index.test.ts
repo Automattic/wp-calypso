@@ -41,10 +41,24 @@ async function load() {
 	};
 }
 
-// Asserting against the real list keeps these counts correct as abilities
-// migrate in.
+// The editor count reads the real `EDITOR_ABILITIES` list, so it stays
+// correct as abilities migrate in; the all-surface names are mirrored by
+// hand (the facade does not export its list).
+// Compared by name: `load()` resets modules, so instances never match.
+const ALL_SURFACE_ABILITY_NAMES = [ 'wp-admin/navigate' ];
+
+async function ownedAbilityNames( provider: {
+	getAbilities: () => Promise< { name: string }[] >;
+} ) {
+	return ( await provider.getAbilities() ).map( ( { name } ) => name );
+}
+
 async function editorAbilityCount() {
 	return ( await import( '../editor-abilities' ) ).getEditorAbilities().length;
+}
+
+async function ownedAbilityCount() {
+	return ALL_SURFACE_ABILITY_NAMES.length + ( await editorAbilityCount() );
 }
 
 // The facade gates on `isEditorPage()`, which reads the admin body classes.
@@ -59,7 +73,7 @@ beforeEach( () => {
 } );
 
 describe( 'abilities facade', () => {
-	it( 'stays inert off the editor', async () => {
+	it( 'owns only the all-surface abilities off the editor', async () => {
 		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const { registerAmAbilities, amToolProvider, getAmCheckpointContext, registerAbility } =
 			await load();
@@ -67,7 +81,9 @@ describe( 'abilities facade', () => {
 		await registerAmAbilities();
 
 		expect( registerAbility ).not.toHaveBeenCalled();
-		await expect( amToolProvider.getAbilities() ).resolves.toEqual( [] );
+		await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual(
+			ALL_SURFACE_ABILITY_NAMES
+		);
 		expect( getAmCheckpointContext() ).toEqual( [] );
 		await expect( amToolProvider.executeAbility( 'big_sky__show_component', {} ) ).rejects.toThrow(
 			'Agents Manager does not own the ability: big_sky__show_component'
@@ -95,7 +111,7 @@ describe( 'abilities facade', () => {
 		const { amToolProvider } = await load();
 
 		await expect( amToolProvider.getAbilities() ).resolves.toHaveLength(
-			await editorAbilityCount()
+			await ownedAbilityCount()
 		);
 	} );
 
@@ -103,7 +119,9 @@ describe( 'abilities facade', () => {
 		document.body.classList.add( 'post-php', 'post-type-product' );
 		const { amToolProvider } = await load();
 
-		await expect( amToolProvider.getAbilities() ).resolves.toEqual( [] );
+		await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual(
+			ALL_SURFACE_ABILITY_NAMES
+		);
 	} );
 
 	it( 'registers on the first load even when the provider triggers it', async () => {
@@ -128,7 +146,7 @@ describe( 'abilities facade', () => {
 		);
 	} );
 
-	it( 'skips loading with `?am_abilities=0`', async () => {
+	it( 'skips loading with `?am_abilities=0`, keeping the all-surface abilities', async () => {
 		setEditorPage( true );
 		window.history.replaceState( {}, '', '/?am_abilities=0' );
 		const { registerAmAbilities, amToolProvider, registerAbility } = await load();
@@ -136,7 +154,9 @@ describe( 'abilities facade', () => {
 		await registerAmAbilities();
 
 		expect( registerAbility ).not.toHaveBeenCalled();
-		await expect( amToolProvider.getAbilities() ).resolves.toEqual( [] );
+		await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual(
+			ALL_SURFACE_ABILITY_NAMES
+		);
 	} );
 
 	it( 'stops advertising checkpoints when `?am_abilities=0` is set after a load', async () => {
@@ -182,8 +202,12 @@ describe( 'abilities facade', () => {
 		try {
 			const { amToolProvider } = await import( '..' );
 
-			await expect( amToolProvider.getAbilities() ).resolves.toEqual( [] );
-			await expect( amToolProvider.getAbilities() ).resolves.toHaveLength( 1 );
+			await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual(
+				ALL_SURFACE_ABILITY_NAMES
+			);
+			await expect( amToolProvider.getAbilities() ).resolves.toHaveLength(
+				ALL_SURFACE_ABILITY_NAMES.length + 1
+			);
 			expect( error ).toHaveBeenCalled();
 		} finally {
 			jest.dontMock( '../editor-abilities' );
@@ -225,7 +249,7 @@ describe( 'abilities facade', () => {
 		}
 	} );
 
-	it( 'degrades to no abilities when the chunk fails to load', async () => {
+	it( 'degrades to the all-surface abilities when the chunk fails to load', async () => {
 		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		setEditorPage( true );
 		jest.resetModules();
@@ -237,7 +261,9 @@ describe( 'abilities facade', () => {
 			const { registerAmAbilities, amToolProvider } = await import( '..' );
 
 			await expect( registerAmAbilities() ).resolves.toBeUndefined();
-			await expect( amToolProvider.getAbilities() ).resolves.toEqual( [] );
+			await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual(
+				ALL_SURFACE_ABILITY_NAMES
+			);
 			expect( error ).toHaveBeenCalledWith(
 				'[AgentsManager] Failed to load the editor abilities:',
 				expect.any( Error )
