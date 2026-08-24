@@ -11,6 +11,13 @@
 	}
 	.components-toggle-control__help {
 		margin-inline-start: 0;
+		.components-flex {
+			.info-popover {
+				border: none;
+				background: none;
+				padding: 0;
+			}
+		}
 	}
 }
 

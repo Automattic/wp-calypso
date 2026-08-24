@@ -1,7 +1,8 @@
-@import "@automattic/typography/styles/variables";
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .info-popover {
-	.gridicon {
+	svg {
 		cursor: pointer;
 		color: var(--color-text-subtle);
 	}
@@ -9,18 +10,19 @@
 	.accessible-focus &:focus,
 	&:hover,
 	&.is-active {
-		.gridicon {
+		svg {
 			color: var(--color-neutral-70);
 		}
 	}
 }
 
-.popover.info-popover__tooltip {
+.components-popover.info-popover__tooltip {
 	outline: none;
 
-	.popover__inner {
+	.components-popover__content {
 		color: var(--color-neutral-50);
-		font-size: $font-body-small;
+		font-size: $font-size-small;
+		min-width: 160px;
 		max-width: 220px;
 		padding: 16px;
 		text-align: start;

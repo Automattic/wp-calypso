@@ -883,9 +883,9 @@ function getFields( {
 					) {
 						const dateSpan = <span />;
 						return (
-							<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
+							<HStack spacing={ 1 } expanded={ false }>
 								<span>{ helpText }</span>
-								<InfoPopover style="border: none;" position="bottom right">
+								<InfoPopover icon="info" position="bottom left">
 									{ createInterpolateElement(
 										sprintf(
 											/* translators: %(expireDate)s is a date and inlineSupportLink is a web link. */
