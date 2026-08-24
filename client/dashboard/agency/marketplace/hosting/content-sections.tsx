@@ -24,13 +24,9 @@ const FEATURE_COLUMNS = ( brand: 'wpcom' | 'pressable' ) => [
 		icon: trendingUp,
 		title: __( 'Performance' ),
 		features: [
-			'Global edge caching',
-			'Global CDN with 28+ locations',
 			'High-frequency CPUs',
-			'High-burst capacity',
+			'Auto-scaling PHP workers',
 			'Automated datacenter failover',
-			'Extremely fast DNS with SSL',
-			brand === 'pressable' ? '5 PHP workers w/ auto-scaling' : '10 PHP workers w/ auto-scaling',
 			'Uptime monitoring',
 		],
 	},
@@ -38,44 +34,30 @@ const FEATURE_COLUMNS = ( brand: 'wpcom' | 'pressable' ) => [
 		icon: lockOutline,
 		title: __( 'Security' ),
 		features: [
-			'Real-time backups',
-			'DDoS protection and mitigation',
-			'Brute-force protection',
+			'DDoS protection',
+			'Web application firewall',
 			'Malware detection & removal',
-			'Spam protection with Akismet',
-			'Web application firewall (WAF)',
-			'One-click restores',
-			'Automated WordPress updates',
 			'Isolated site infrastructure',
 		],
 	},
 	{
 		icon: code,
-		title: __( 'Dev tools' ),
+		title: __( 'Developer tools' ),
 		features: [
-			'Local development environment',
-			'Free staging site',
 			'WP-CLI access',
 			'SSH/SFTP access',
 			'GitHub deployments',
-			'Plugin auto-updates',
-			'Centralized site management',
-			'Domain management',
-			'Site activity log',
+			'Local development environment',
 		],
 	},
 	{
 		icon: plus,
-		title: __( 'And more!' ),
+		title: __( 'Site management' ),
 		features: [
-			'24/7 priority expert support',
 			'Free managed migrations',
-			'Install plugins and themes',
-			'In-depth site analytics dashboard',
-			'Elastic-powered search',
-			'4K, unbranded VideoPress player',
-			...( brand === 'wpcom' ? [ 'Free domain for one year' ] : [] ),
-			'Smart redirects',
+			'Multi-site management',
+			'Site analytics',
+			...( brand === 'wpcom' ? [ 'Free domain for one year' ] : [ 'Smart redirects' ] ),
 		],
 	},
 ];
@@ -117,8 +99,8 @@ export function IncludedFeatures( { brand }: { brand: 'wpcom' | 'pressable' } ) 
 			<SectionHeader
 				title={
 					brand === 'pressable'
-						? __( 'Included with every Pressable site' )
-						: __( 'Included with every WordPress.com site' )
+						? __( 'More Pressable features' )
+						: __( 'More WordPress.com features' )
 				}
 				level={ 2 }
 			/>
@@ -149,16 +131,10 @@ const TESTIMONIAL_AVATARS: Record< 'wpcom' | 'pressable' | 'vip', string[] > = {
 	vip: [ enterpriseTestimonial1, enterpriseTestimonial2 ],
 };
 
-const TESTIMONIAL_HEADINGS: Record< 'wpcom' | 'pressable' | 'vip', string > = {
-	wpcom: __( 'Love for WordPress.com hosting' ),
-	pressable: __( 'Love for Pressable hosting' ),
-	vip: __( 'Love for VIP hosting' ),
-};
-
 export function Testimonials( { brand }: { brand: 'wpcom' | 'pressable' | 'vip' } ) {
 	return (
 		<VStack spacing={ 4 }>
-			<SectionHeader title={ TESTIMONIAL_HEADINGS[ brand ] } level={ 2 } />
+			<SectionHeader title={ __( 'What agencies say' ) } level={ 2 } />
 			<div className="marketplace-hosting__grid-2">
 				{ testimonialsByBrand[ brand ].map( ( testimonial, index ) => (
 					<Card key={ testimonial.name }>

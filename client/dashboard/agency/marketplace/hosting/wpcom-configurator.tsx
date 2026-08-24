@@ -1,5 +1,4 @@
 import {
-	Button,
 	Icon,
 	TextControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -12,52 +11,39 @@ import {
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import { useState } from 'react';
-import { Card, CardBody, CardDivider } from '../../../components/card';
-import wpcomLogo from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
-import { getNextDiscountNudge, getTieredPrice, formatUSD, wpcomHosting } from './mock-data';
+import { Card, CardBody } from '../../../components/card';
+import { getNextDiscountNudge, wpcomHosting } from './mock-data';
 
 const PRESET_QUANTITIES = [ 1, 3, 5 ];
 
-const EVERY_SITE_INCLUDES = [
+const WHATS_INCLUDED = [
 	'50GB of storage',
-	'Global CDN with 28+ locations',
 	'Free staging site',
-	'Real-time backups',
 	'Unrestricted bandwidth',
+	'Global CDN with 28+ locations',
+	'Real-time backups',
 	'24/7 expert support',
 ];
 
 type WpcomConfiguratorProps = {
 	term: 'monthly' | 'yearly';
-	onAddToCart: ( quantity: number, total: number ) => void;
+	onQuantityChange: ( quantity: number ) => void;
 };
 
-export default function WpcomConfigurator( { term, onAddToCart }: WpcomConfiguratorProps ) {
+export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConfiguratorProps ) {
 	const [ preset, setPreset ] = useState< string >( '3' );
 	const [ customQuantity, setCustomQuantity ] = useState( 10 );
 
 	const isCustom = preset === 'custom';
 	const quantity = isCustom ? customQuantity : Number( preset );
-	const price = getTieredPrice( wpcomHosting, quantity, term );
 	const nudge = getNextDiscountNudge( wpcomHosting, quantity, term );
-	const hasDiscount = price.discountPercent > 0;
-	const savedAmount = price.actualCost - price.discountedCost;
 
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 5 }>
-					<VStack spacing={ 2 }>
-						<img
-							src={ wpcomLogo }
-							alt="WordPress.com"
-							className="marketplace-hosting__brand-logo"
-						/>
-						<Text variant="muted">{ __( 'Managed hosting built by Automattic' ) }</Text>
-					</VStack>
-
+				<div className="marketplace-hosting__config-grid">
 					<VStack spacing={ 3 }>
-						<Heading level={ 3 } size={ 13 }>
+						<Heading level={ 3 } size={ 15 }>
 							{ __( 'How many sites do you need?' ) }
 						</Heading>
 						<ToggleGroupControl
@@ -67,7 +53,10 @@ export default function WpcomConfigurator( { term, onAddToCart }: WpcomConfigura
 							hideLabelFromVision
 							label={ __( 'Number of sites' ) }
 							value={ preset }
-							onChange={ ( value ) => setPreset( String( value ) ) }
+							onChange={ ( value ) => {
+								setPreset( String( value ) );
+								onQuantityChange( String( value ) === 'custom' ? customQuantity : Number( value ) );
+							} }
 						>
 							{ PRESET_QUANTITIES.map( ( q ) => (
 								<ToggleGroupControlOption key={ q } value={ String( q ) } label={ String( q ) } />
@@ -82,7 +71,11 @@ export default function WpcomConfigurator( { term, onAddToCart }: WpcomConfigura
 								min={ 1 }
 								label={ __( 'Number of sites' ) }
 								value={ String( customQuantity ) }
-								onChange={ ( value ) => setCustomQuantity( Math.max( 1, Number( value ) || 1 ) ) }
+								onChange={ ( value ) => {
+									const next = Math.max( 1, Number( value ) || 1 );
+									setCustomQuantity( next );
+									onQuantityChange( next );
+								} }
 							/>
 						) }
 						{ nudge && (
@@ -100,71 +93,20 @@ export default function WpcomConfigurator( { term, onAddToCart }: WpcomConfigura
 							</Text>
 						) }
 					</VStack>
-
-					<CardDivider />
-
 					<VStack spacing={ 3 }>
-						<Heading level={ 3 } size={ 13 }>
-							{ __( 'Every site includes' ) }
+						<Heading level={ 3 } size={ 15 }>
+							{ __( 'What’s included' ) }
 						</Heading>
-						<div className="marketplace-hosting__includes">
-							{ EVERY_SITE_INCLUDES.map( ( feature ) => (
+						<VStack spacing={ 2 }>
+							{ WHATS_INCLUDED.map( ( feature ) => (
 								<HStack key={ feature } spacing={ 2 } justify="flex-start" alignment="center">
 									<Icon icon={ check } className="marketplace-hosting__check" />
 									<Text>{ feature }</Text>
 								</HStack>
 							) ) }
-						</div>
-					</VStack>
-
-					<CardDivider />
-
-					<HStack justify="space-between" alignment="flex-start">
-						<VStack spacing={ 1 }>
-							<HStack spacing={ 2 } justify="flex-start" alignment="baseline">
-								{ hasDiscount && (
-									<Text variant="muted" className="marketplace-hosting__price-strikethrough">
-										{ formatUSD( price.actualCost ) }
-									</Text>
-								) }
-								<Heading level={ 3 } size={ 20 }>
-									{ formatUSD( price.discountedCost ) }
-								</Heading>
-								{ hasDiscount && (
-									<Text variant="muted">
-										{ sprintf(
-											/* translators: %d: discount percentage */
-											__( 'You save %d%%' ),
-											Math.round( price.discountPercent * 100 )
-										) }
-									</Text>
-								) }
-							</HStack>
-							<Text variant="muted">
-								{ term === 'yearly'
-									? sprintf(
-											/* translators: %s: amount saved per year */
-											__( 'Per year, billed yearly. You save %s.' ),
-											formatUSD( savedAmount )
-									  )
-									: __( 'Per month, billed monthly.' ) }
-							</Text>
 						</VStack>
-						<Button
-							variant="primary"
-							__next40pxDefaultSize
-							onClick={ () => onAddToCart( quantity, price.discountedCost ) }
-						>
-							{ sprintf(
-								/* translators: %d: number of sites */
-								_n( 'Add %d site to cart', 'Add %d sites to cart', quantity ),
-								quantity
-							) }
-						</Button>
-					</HStack>
-
-					<Text variant="muted">{ __( 'Cancel anytime. Free managed migrations included.' ) }</Text>
-				</VStack>
+					</VStack>
+				</div>
 			</CardBody>
 		</Card>
 	);
