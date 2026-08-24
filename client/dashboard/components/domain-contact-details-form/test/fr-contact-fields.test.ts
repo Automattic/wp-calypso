@@ -6,7 +6,6 @@ import {
 	isFrDomain,
 	mapWhoisExtraToFrContactExtra,
 	validateFrOrganization,
-	withFrOrganizationValidation,
 } from '../fr-contact-fields';
 import type { DomainContactDetails } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -299,45 +298,6 @@ describe( 'validateFrOrganization', () => {
 				organization: 'Some organization name',
 			} )
 		).toBeNull();
-	} );
-} );
-
-describe( 'withFrOrganizationValidation', () => {
-	const normalizedField = {} as Parameters<
-		NonNullable< NonNullable< Field< DomainContactDetails >[ 'isValid' ] >[ 'custom' ] >
-	>[ 1 ];
-
-	it( 'layers the rule onto the organization field and keeps its existing validator', async () => {
-		const baseCustom = jest.fn().mockResolvedValue( 'base error' );
-		const fields = withFrOrganizationValidation( [
-			{ id: 'organization', type: 'text', isValid: { custom: baseCustom } },
-			{ id: 'email', type: 'email' },
-		] );
-
-		const conflicted: DomainContactDetails = {
-			optOutTransferLock: false,
-			organization: 'Some organization name',
-			extra: { fr: { registrantType: 'individual' } },
-		};
-		await expect( fields[ 0 ].isValid?.custom?.( conflicted, normalizedField ) ).resolves.toEqual(
-			expect.any( String )
-		);
-		expect( baseCustom ).not.toHaveBeenCalled();
-
-		const fine: DomainContactDetails = {
-			optOutTransferLock: false,
-			organization: 'Some organization name',
-			extra: { fr: { registrantType: 'organization' } },
-		};
-		await expect( fields[ 0 ].isValid?.custom?.( fine, normalizedField ) ).resolves.toBe(
-			'base error'
-		);
-	} );
-
-	it( 'leaves other fields untouched', () => {
-		const emailField = { id: 'email', type: 'email' } as Field< DomainContactDetails >;
-
-		expect( withFrOrganizationValidation( [ emailField ] )[ 0 ] ).toBe( emailField );
 	} );
 } );
 

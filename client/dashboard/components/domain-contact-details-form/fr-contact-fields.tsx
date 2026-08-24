@@ -133,6 +133,10 @@ function setFrRegistrantType(
  * Guards the state setFrRegistrantType's clearing cannot reach: the registrant
  * typing an organization back in after selecting the individual type. Left
  * alone, that combination registers the contact as a legal entity at AFNIC.
+ *
+ * The form applies this against the whole item rather than as the organization
+ * field's own validator, so the error lifts when the registrant type changes
+ * and not only when the organization is edited again.
  */
 export function validateFrOrganization( data: DomainContactDetails ): string | null {
 	if ( 'individual' === getFrExtra( data ).registrantType && data.organization ) {
@@ -141,31 +145,6 @@ export function validateFrOrganization( data: DomainContactDetails ): string | n
 		);
 	}
 	return null;
-}
-
-/**
- * Layers the `.fr` individual-registrant rule onto the shared organization
- * field, ahead of whatever validation the field already carries.
- */
-export function withFrOrganizationValidation(
-	fields: Field< DomainContactDetails >[]
-): Field< DomainContactDetails >[] {
-	return fields.map( ( field ) => {
-		if ( field.id !== 'organization' ) {
-			return field;
-		}
-
-		const baseCustom = field.isValid?.custom;
-
-		return {
-			...field,
-			isValid: {
-				...field.isValid,
-				custom: async ( data, normalizedField ) =>
-					validateFrOrganization( data ) ?? ( await baseCustom?.( data, normalizedField ) ) ?? null,
-			},
-		};
-	} );
 }
 
 export function hasFrOrganizationFields( registrantType?: string ) {

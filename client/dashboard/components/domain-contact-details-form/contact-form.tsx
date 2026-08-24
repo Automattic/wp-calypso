@@ -24,7 +24,7 @@ import {
 	getFrContactFormLayout,
 	getFrExtra,
 	hasFrDomain,
-	withFrOrganizationValidation,
+	validateFrOrganization,
 } from './fr-contact-fields';
 import { RegionAddressFieldsLayout } from './region-address-fieldsets';
 import {
@@ -126,8 +126,8 @@ export default function ContactForm( {
 	const frRegistrantType = getFrExtra( normalizedFormData ).registrantType;
 	const needsCaFields = useMemo( () => hasCaDomain( domainNames ), [ domainNames ] );
 
-	const fields: Field< DomainContactDetails >[] = useMemo( () => {
-		const composedFields = [
+	const fields: Field< DomainContactDetails >[] = useMemo(
+		() => [
 			...getContactFormFields(
 				countryList ?? [],
 				statesList ?? [],
@@ -137,19 +137,19 @@ export default function ContactForm( {
 			...( needsUkFields ? getUkContactFormFields( ukRegistrantType ) : [] ),
 			...( needsFrFields ? getFrContactFormFields( frRegistrantType ) : [] ),
 			...( needsCaFields ? getCaContactFormFields() : [] ),
-		];
-		return needsFrFields ? withFrOrganizationValidation( composedFields ) : composedFields;
-	}, [
-		countryList,
-		statesList,
-		selectedCountryCode,
-		asyncValidator,
-		needsUkFields,
-		ukRegistrantType,
-		needsFrFields,
-		frRegistrantType,
-		needsCaFields,
-	] );
+		],
+		[
+			countryList,
+			statesList,
+			selectedCountryCode,
+			asyncValidator,
+			needsUkFields,
+			ukRegistrantType,
+			needsFrFields,
+			frRegistrantType,
+			needsCaFields,
+		]
+	);
 
 	const form = {
 		layout: { type: 'regular' as const },
@@ -193,37 +193,52 @@ export default function ContactForm( {
 		[ lastValidationResult ]
 	);
 
-	const validityWithServerErrors = useMemo( () => {
-		const fieldErrors = Object.entries( serverFieldErrors );
-		if ( ! isDirty || fieldErrors.length === 0 ) {
+	// Cross-field rules go through the same path, not through a field's own
+	// validator: useFormValidity only re-runs a field's validators when that
+	// field's value changes, so an error raised against the organization would
+	// outlive the registrant type change that resolves it. Derived from the data,
+	// it clears as soon as either side changes.
+	const crossFieldErrors = useMemo( () => {
+		const frOrganizationError = needsFrFields ? validateFrOrganization( normalizedFormData ) : null;
+		return frOrganizationError ? { organization: frOrganizationError } : {};
+	}, [ needsFrFields, normalizedFormData ] );
+
+	const fieldErrors = useMemo(
+		() => ( { ...serverFieldErrors, ...crossFieldErrors } ),
+		[ serverFieldErrors, crossFieldErrors ]
+	);
+
+	const validityWithFieldErrors = useMemo( () => {
+		const errors = Object.entries( fieldErrors );
+		if ( ! isDirty || errors.length === 0 ) {
 			return validity;
 		}
 		const merged: NonNullable< typeof validity > = { ...validity };
-		for ( const [ fieldId, message ] of fieldErrors ) {
+		for ( const [ fieldId, message ] of errors ) {
 			// Replace, not merge: a message-less `required` validity (empty required
 			// field) would otherwise take precedence over and hide this message.
 			merged[ fieldId ] = { custom: { type: 'invalid', message } };
 		}
 		return merged;
-	}, [ validity, serverFieldErrors, isDirty ] );
+	}, [ validity, fieldErrors, isDirty ] );
 
-	const canSave = isFormValid && Object.keys( serverFieldErrors ).length === 0;
+	const canSave = isFormValid && Object.keys( fieldErrors ).length === 0;
 
-	// DataForm hides a field's error until it's touched. Reveal server-flagged fields
-	// by re-running native validation when the flagged set changes (keyed on the set,
+	// DataForm hides a field's error until it's touched. Reveal flagged fields by
+	// re-running native validation when the flagged set changes (keyed on the set,
 	// not the messages, so it doesn't re-fire or move focus while the user types).
 	const fieldsContainerRef = useRef< HTMLDivElement >( null );
 	const revealedErrorKeyRef = useRef( '' );
-	const serverErrorKey = Object.keys( serverFieldErrors ).sort().join( ',' );
+	const fieldErrorKey = Object.keys( fieldErrors ).sort().join( ',' );
 	useEffect( () => {
-		if ( ! isDirty || ! serverErrorKey ) {
+		if ( ! isDirty || ! fieldErrorKey ) {
 			revealedErrorKeyRef.current = '';
 			return;
 		}
-		if ( revealedErrorKeyRef.current === serverErrorKey ) {
+		if ( revealedErrorKeyRef.current === fieldErrorKey ) {
 			return;
 		}
-		revealedErrorKeyRef.current = serverErrorKey;
+		revealedErrorKeyRef.current = fieldErrorKey;
 
 		// Defer so DataForm has applied the custom validity to the inputs first.
 		const raf = requestAnimationFrame( () => {
@@ -242,7 +257,7 @@ export default function ContactForm( {
 			invalidControls[ 0 ]?.focus();
 		} );
 		return () => cancelAnimationFrame( raf );
-	}, [ isDirty, serverErrorKey ] );
+	}, [ isDirty, fieldErrorKey ] );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -285,7 +300,7 @@ export default function ContactForm( {
 								data={ normalizedFormData }
 								fields={ fields }
 								form={ form }
-								validity={ validityWithServerErrors }
+								validity={ validityWithFieldErrors }
 								onChange={ ( edits: Partial< DomainContactDetails > ) => {
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
