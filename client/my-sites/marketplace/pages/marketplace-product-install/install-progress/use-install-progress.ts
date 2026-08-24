@@ -65,17 +65,21 @@ export function useInstallProgress( {
 	const stageStartedAt = useRef( estimateStageStartedAt( stage, startedAt, now ) );
 	const previousStageRef = useRef( stage );
 	const statusWasKnownRef = useRef( transferStatus != null );
+	const clockWasKnownRef = useRef( startedAt != null );
 
 	if ( previousStageRef.current !== stage ) {
 		previousStageRef.current = stage;
-		// A stage change observed while a status was already known is a live transition, so the
-		// stage starts now. Reached from an unknown status it is the first poll result after a
-		// refresh: the stage was already running, so estimate when it began.
-		stageStartedAt.current = statusWasKnownRef.current
-			? now
-			: estimateStageStartedAt( stage, startedAt, now );
+		// A stage change is a live transition only when this UI was already watching the transfer's
+		// own clock, in which case the stage starts now. A stage that arrives together with that
+		// clock — a first poll landing after a refresh, or after the coarse fallback status — was
+		// already running, so estimate when it began instead of restarting it.
+		stageStartedAt.current =
+			statusWasKnownRef.current && clockWasKnownRef.current
+				? now
+				: estimateStageStartedAt( stage, startedAt, now );
 	}
 	statusWasKnownRef.current = transferStatus != null;
+	clockWasKnownRef.current = startedAt != null;
 
 	useInterval( () => setNow( Date.now() ), TICK_MS );
 

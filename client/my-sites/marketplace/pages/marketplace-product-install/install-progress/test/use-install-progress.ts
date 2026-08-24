@@ -72,6 +72,28 @@ describe( 'useInstallProgress', () => {
 		expect( result.current.isOverrun ).toBe( false );
 	} );
 
+	it( 'estimates the stage start when the transfer clock arrives with the stage', () => {
+		const startedAt = Date.now() - 60_000;
+		// A refresh mid-transfer: the coarse fallback reports `start` before the poll lands, so a
+		// status is known while the transfer's own clock is not.
+		let status: string = transferStates.START;
+		let transferStartedAt: number | null = null;
+		const { result, rerender } = renderHook( () =>
+			useInstallProgress( {
+				transferStatus: status,
+				currentStep: 1,
+				startedAt: transferStartedAt,
+			} )
+		);
+		status = transferStates.RELOCATING;
+		transferStartedAt = startedAt;
+		rerender();
+		// The moving stage is estimated to have begun 25s into the transfer — 35s ago — rather than
+		// restarted, so the overrun line is not delayed by the late poll.
+		expect( result.current.stageElapsed ).toBeCloseTo( 35, 0 );
+		expect( result.current.isOverrun ).toBe( true );
+	} );
+
 	it( 'holds the furthest stage when the status stops being recognised', () => {
 		let status: string | null = transferStates.RELOCATING;
 		const { result, rerender } = renderHook( () =>
