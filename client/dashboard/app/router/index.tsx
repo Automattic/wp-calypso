@@ -1,4 +1,5 @@
 import calypsoConfig from '@automattic/calypso-config';
+import { addBreadcrumb, setTag } from '@automattic/calypso-sentry';
 import { createRouter, createRoute } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
@@ -137,6 +138,25 @@ export const getRouter = ( config: AppConfig ) => {
 		if ( routeId ) {
 			startPerformanceTracking( routeId );
 		}
+	} );
+
+	// Give Sentry navigation breadcrumbs and a route_id tag on the dashboard.
+	// `beforeBreadcrumb` drops navigation breadcrumbs lacking `should_capture`,
+	// and the route_id tag makes every event — including boundary-bypassing and
+	// non-React errors — facetable by page. See DOTMSD-1514.
+	router.subscribe( 'onResolved', ( { fromLocation, toLocation } ) => {
+		const routeId = router.state.matches.at( -1 )?.routeId;
+		if ( routeId ) {
+			setTag( 'route_id', String( routeId ) );
+		}
+		addBreadcrumb( {
+			category: 'navigation',
+			data: {
+				should_capture: true,
+				from: fromLocation?.href,
+				to: toLocation?.href,
+			},
+		} );
 	} );
 
 	return router;
