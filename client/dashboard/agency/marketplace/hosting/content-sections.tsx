@@ -165,33 +165,39 @@ export function Testimonials( { brand }: { brand: 'wpcom' | 'pressable' | 'vip' 
 }
 
 export function JetpackComplete() {
+	const midpoint = Math.ceil( JETPACK_COMPLETE_FEATURES.length / 2 );
+
 	return (
-		<Card>
-			<CardBody>
-				<VStack spacing={ 4 }>
-					<SectionHeader
-						title={ __( 'Jetpack Complete included' ) }
-						description={ __(
-							'Every Pressable site comes with a free Jetpack Complete license — a $899/year/site value.'
-						) }
-						level={ 3 }
-						decoration={ <JetpackLogo size={ 24 } /> }
-					/>
-					<div className="marketplace-hosting__includes">
-						{ JETPACK_COMPLETE_FEATURES.map( ( feature ) => (
-							<HStack key={ feature } spacing={ 2 } justify="flex-start" alignment="center">
+		<VStack spacing={ 4 }>
+			<SectionHeader
+				title={ __( 'Jetpack Complete included' ) }
+				description={ __(
+					'Every Pressable site comes with a free Jetpack Complete license — a $899/year/site value.'
+				) }
+				level={ 2 }
+				decoration={ <JetpackLogo size={ 24 } /> }
+			/>
+			<div className="marketplace-hosting__grid-2">
+				<Card>
+					<CardBody>
+						<CheckList items={ JETPACK_COMPLETE_FEATURES.slice( 0, midpoint ) } />
+					</CardBody>
+				</Card>
+				<Card>
+					<CardBody>
+						<VStack spacing={ 2 }>
+							<CheckList items={ JETPACK_COMPLETE_FEATURES.slice( midpoint ) } />
+							<HStack spacing={ 2 } justify="flex-start" alignment="center">
 								<Icon icon={ check } className="marketplace-hosting__check" />
-								<Text>{ feature }</Text>
+								<ExternalLink href="https://jetpack.com/complete/">
+									{ __( 'And more' ) }
+								</ExternalLink>
 							</HStack>
-						) ) }
-						<HStack spacing={ 2 } justify="flex-start" alignment="center">
-							<Icon icon={ check } className="marketplace-hosting__check" />
-							<ExternalLink href="https://jetpack.com/complete/">{ __( 'And more' ) }</ExternalLink>
-						</HStack>
-					</div>
-				</VStack>
-			</CardBody>
-		</Card>
+						</VStack>
+					</CardBody>
+				</Card>
+			</div>
+		</VStack>
 	);
 }
 
