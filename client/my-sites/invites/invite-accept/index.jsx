@@ -127,7 +127,8 @@ class InviteAccept extends Component {
 
 	isMatchEmailError = () => {
 		const { invite } = this.state;
-		return invite && invite.forceMatchingEmail && this.props.user.email !== invite.sentTo;
+		const { user } = this.props;
+		return !! ( invite && invite.forceMatchingEmail && user && user.email !== invite.sentTo );
 	};
 
 	isInvalidInvite = () => {
