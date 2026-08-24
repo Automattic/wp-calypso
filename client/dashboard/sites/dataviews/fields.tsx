@@ -30,7 +30,7 @@ import type { AppConfig } from '../../app/context';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator, View } from '@wordpress/dataviews';
 
-export function getDefaultFields( {
+function getDefaultFields( {
 	viewType,
 	queries,
 }: {
@@ -245,7 +245,7 @@ export function getDefaultFields( {
 				operators: [ 'is' as Operator ],
 			},
 			enableHiding: false,
-			enableSorting: true,
+			enableSorting: false,
 		},
 	];
 }
