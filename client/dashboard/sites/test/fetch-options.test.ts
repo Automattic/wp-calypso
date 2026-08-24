@@ -5,12 +5,6 @@
 import { getFetchPaginatedSitesOptions } from '../index';
 import type { View } from '@wordpress/dataviews';
 
-jest.mock( '../../utils/is-dashboard-backport', () => ( {
-	isDashboardBackport: jest.fn( () => false ),
-} ) );
-
-const { isDashboardBackport } = jest.requireMock( '../../utils/is-dashboard-backport' );
-
 const queryOptions = { isDefaultView: true, isRestoringAccount: false, isAutomattician: false };
 
 function makeView( filters: View[ 'filters' ] = [] ): View {
@@ -18,10 +12,6 @@ function makeView( filters: View[ 'filters' ] = [] ): View {
 }
 
 describe( 'getFetchPaginatedSitesOptions', () => {
-	beforeEach( () => {
-		isDashboardBackport.mockReturnValue( false );
-	} );
-
 	it( 'excludes staging sites by default', () => {
 		const options = getFetchPaginatedSitesOptions( makeView(), queryOptions );
 		expect( options.include_staging ).toBe( false );
@@ -36,12 +26,6 @@ describe( 'getFetchPaginatedSitesOptions', () => {
 	it( 'excludes staging sites when the staging filter is set to no', () => {
 		const view = makeView( [ { field: 'staging', operator: 'is', value: false } ] );
 		const options = getFetchPaginatedSitesOptions( view, queryOptions );
-		expect( options.include_staging ).toBe( false );
-	} );
-
-	it( 'excludes staging sites by default in the classic Calypso backport too', () => {
-		isDashboardBackport.mockReturnValue( true );
-		const options = getFetchPaginatedSitesOptions( makeView(), queryOptions );
 		expect( options.include_staging ).toBe( false );
 	} );
 } );
