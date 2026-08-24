@@ -17,8 +17,10 @@ jest.mock( '@automattic/notifications/src/app', () => ( {
 	default: () => <div data-testid="notifications-panel" />,
 } ) );
 
+const mockSetVisibility = jest.fn();
 jest.mock( '@automattic/notifications/src/app/client', () => ( {
 	subscribeUnseenCount: () => () => {},
+	getClient: () => ( { setVisibility: mockSetVisibility } ),
 } ) );
 
 jest.mock( '../../help-center', () => ( {
@@ -47,6 +49,7 @@ const setPath = ( path: string ) => {
 describe( 'Notifications bell / inbox mutual exclusion', () => {
 	afterEach( () => {
 		setPath( '/' );
+		mockSetVisibility.mockClear();
 	} );
 
 	it( 'opens the dropdown from the bell on a regular route', async () => {
@@ -67,6 +70,25 @@ describe( 'Notifications bell / inbox mutual exclusion', () => {
 		await waitFor( () => {
 			expect( screen.queryByTestId( 'notifications-panel' ) ).not.toBeInTheDocument();
 		} );
+	} );
+
+	it( 're-asserts engine visibility for the inbox while its route is active', async () => {
+		setPath( '/notifications' );
+		renderBell();
+
+		await waitFor( () => {
+			expect( mockSetVisibility ).toHaveBeenCalledWith( { isShowing: true, isVisible: true } );
+		} );
+	} );
+
+	it( 'does not touch engine visibility on other routes', async () => {
+		setPath( '/sites' );
+		renderBell();
+
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Notifications' } ) ).toBeInTheDocument();
+		} );
+		expect( mockSetVisibility ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not open the dropdown on an inbox detail route', async () => {

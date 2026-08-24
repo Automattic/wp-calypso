@@ -81,6 +81,18 @@ export default function Notifications( {
 		}
 	}, [ isInboxRouteActive ] );
 
+	// Unmounting the dropdown's panel unconditionally drops the shared
+	// isShowing flag — even when the inbox is on screen and just acquired it.
+	// Keyed on `isOpen` so it runs after the unmount commits, re-asserting
+	// deterministically.
+	useEffect( () => {
+		if ( isInboxRouteActive && ! isOpen ) {
+			import( '@automattic/notifications/src/app/client' ).then( ( { getClient } ) => {
+				getClient()?.setVisibility( { isShowing: true, isVisible: ! document.hidden } );
+			} );
+		}
+	}, [ isInboxRouteActive, isOpen ] );
+
 	// Keep the omnibar button in sync with the panel open state.
 	useEffect( () => {
 		omnibarEvents.notificationsOpen.emit( isOpen );
