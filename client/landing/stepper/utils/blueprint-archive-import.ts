@@ -302,7 +302,50 @@ export function getSiteEditorUrl(
 	//
 	// Only set when the spec applied; there is nothing to personalize from
 	// otherwise.
-	return startWalkthrough ? addQueryArgs( url, { 'blueprint-walkthrough': 'go' } ) : url;
+	const editorUrl = startWalkthrough ? addQueryArgs( url, { 'blueprint-walkthrough': 'go' } ) : url;
+
+	return withJetpackSso( editorUrl );
+}
+
+/**
+ * Route an Atomic wp-admin URL through Jetpack SSO so the customer arrives
+ * logged in.
+ *
+ * They have a WordPress.com session, not a session on their Atomic site, and
+ * those are different things. Sending them straight to wp-admin showed them a
+ * login form for a site they had just made — asking them to sign in to
+ * something they had not been told was separate. Jetpack SSO trades the session
+ * they have for the one they need and forwards them on.
+ *
+ * @param adminUrl Absolute wp-admin URL to land on.
+ * @return The SSO URL, or the original when it cannot be parsed.
+ */
+function withJetpackSso( adminUrl: string ): string {
+	let target: URL;
+	try {
+		target = new URL( adminUrl );
+	} catch {
+		// Not something we can rewrite. Hand back what we were given rather than
+		// dropping the customer's redirect entirely.
+		return adminUrl;
+	}
+
+	// SSO lives on the site's own host. A *.wordpress.com address is the
+	// WordPress.com side of an Atomic site rather than the site itself, and
+	// logging in there does not produce a session for wp-admin.
+	if ( target.hostname.endsWith( '.wordpress.com' ) ) {
+		target.hostname = target.hostname.replace( '.wordpress.com', '.wpcomstaging.com' );
+	}
+
+	const login = new URL( target.href );
+	login.pathname = '/wp-login.php';
+	login.search = '';
+
+	return addQueryArgs( login.href, {
+		action: 'jetpack-sso',
+		// Relative, so the redirect cannot be pointed off-site.
+		redirect_to: `${ target.pathname }${ target.search }`,
+	} );
 }
 
 export function logBlueprintArchiveEvent(
