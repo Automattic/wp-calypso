@@ -3,9 +3,11 @@
  */
 import { queryClient } from '@automattic/api-queries';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { type ComponentProps } from 'react';
 import PreLaunchSiteModal from '../index';
 
-let mockSite: unknown;
+let mockSite: Record< string, unknown >;
 let mockDomains: unknown;
 let mockSiteError = false;
 let mockDomainsError = false;
@@ -49,19 +51,51 @@ jest.mock( 'calypso/dashboard/sites/site-preview', () => ( {
 	default: () => <div data-testid="site-preview" />,
 } ) );
 
+// Stub the presentational package modal, but keep every prop the bridge is
+// responsible for wiring (name/domain/plan, the launch + close callbacks, and
+// the launching state) observable so this suite can assert the wiring.
 jest.mock( '@automattic/site-launch-modals', () => ( {
 	__esModule: true,
-	PreLaunchModal: ( { siteName, siteDomain, planName }: Record< string, string > ) => (
-		<div data-testid="pre-launch-modal">
+	PreLaunchModal: ( {
+		siteName,
+		siteDomain,
+		planName,
+		isLaunching,
+		onLaunch,
+		onClose,
+	}: {
+		siteName: string;
+		siteDomain: string;
+		planName: string;
+		isLaunching: boolean;
+		onLaunch: () => void;
+		onClose: () => void;
+	} ) => (
+		<div data-testid="pre-launch-modal" data-launching={ isLaunching }>
 			<span>{ siteName }</span>
 			<span>{ siteDomain }</span>
 			<span>{ planName }</span>
+			<button onClick={ onLaunch }>Yes, launch site!</button>
+			<button onClick={ onClose }>Close</button>
 		</div>
 	),
 } ) );
 
+const LAUNCH_URL = '/start/launch-site?siteSlug=example.wordpress.com';
 const customDomain = { blog_id: 1, domain: 'example.com', subscription_id: 42 };
 const wpcomDomain = { blog_id: 1, domain: 'example.wordpress.com', subscription_id: null };
+
+function renderBridge( props: Partial< ComponentProps< typeof PreLaunchSiteModal > > = {} ) {
+	return render(
+		<PreLaunchSiteModal
+			siteId={ 1 }
+			isOpen
+			onClose={ jest.fn() }
+			launchUrl={ LAUNCH_URL }
+			{ ...props }
+		/>
+	);
+}
 
 describe( 'PreLaunchSiteModal', () => {
 	const assign = jest.fn();
@@ -88,96 +122,99 @@ describe( 'PreLaunchSiteModal', () => {
 	} );
 
 	it( 'shows the modal for a paid plan + custom domain site', async () => {
-		render(
-			<PreLaunchSiteModal
-				siteId={ 1 }
-				isOpen
-				onClose={ jest.fn() }
-				launchUrl="/start/launch-site?siteSlug=example.wordpress.com"
-			/>
-		);
+		renderBridge();
 
 		expect( await screen.findByTestId( 'pre-launch-modal' ) ).toBeVisible();
 		expect( screen.getByText( 'My Site' ) ).toBeVisible();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
+		// No `plan` on the fixture, so the display-name fallback is what renders.
+		expect( screen.getByText( 'Business' ) ).toBeVisible();
+		expect( assign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'prefers the plan product name over the display-name fallback', async () => {
+		mockSite.plan = { product_name: 'Commerce' };
+
+		renderBridge();
+
+		expect( await screen.findByTestId( 'pre-launch-modal' ) ).toBeVisible();
+		expect( screen.getByText( 'Commerce' ) ).toBeVisible();
+		expect( screen.queryByText( 'Business' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'redirects to the launch flow on confirm, showing the launching state', async () => {
+		const user = userEvent.setup();
+		renderBridge();
+
+		const modal = await screen.findByTestId( 'pre-launch-modal' );
+		expect( modal ).toHaveAttribute( 'data-launching', 'false' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Yes, launch site!' } ) );
+
+		expect( assign ).toHaveBeenCalledWith( LAUNCH_URL );
+		expect( screen.getByTestId( 'pre-launch-modal' ) ).toHaveAttribute( 'data-launching', 'true' );
+	} );
+
+	it( 'passes the caller onClose through to the modal', async () => {
+		const user = userEvent.setup();
+		const onClose = jest.fn();
+		renderBridge( { onClose } );
+
+		await screen.findByTestId( 'pre-launch-modal' );
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
 		expect( assign ).not.toHaveBeenCalled();
 	} );
 
 	it( 'redirects straight to the launch flow when the plan is not paid', async () => {
 		mockIsPaid = false;
 
-		render(
-			<PreLaunchSiteModal
-				siteId={ 1 }
-				isOpen
-				onClose={ jest.fn() }
-				launchUrl="/start/launch-site?siteSlug=example.wordpress.com"
-			/>
-		);
+		renderBridge();
 
-		await waitFor( () =>
-			expect( assign ).toHaveBeenCalledWith( '/start/launch-site?siteSlug=example.wordpress.com' )
-		);
+		await waitFor( () => expect( assign ).toHaveBeenCalledWith( LAUNCH_URL ) );
 		expect( screen.queryByTestId( 'pre-launch-modal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'redirects when the site has no custom domain', async () => {
 		mockDomains = [ wpcomDomain ];
 
-		render(
-			<PreLaunchSiteModal
-				siteId={ 1 }
-				isOpen
-				onClose={ jest.fn() }
-				launchUrl="/start/launch-site?siteSlug=example.wordpress.com"
-			/>
-		);
+		renderBridge();
 
-		await waitFor( () => expect( assign ).toHaveBeenCalled() );
+		await waitFor( () => expect( assign ).toHaveBeenCalledWith( LAUNCH_URL ) );
 		expect( screen.queryByTestId( 'pre-launch-modal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'falls back to the launch flow when the domains query errors', async () => {
 		mockDomainsError = true;
 
-		render(
-			<PreLaunchSiteModal
-				siteId={ 1 }
-				isOpen
-				onClose={ jest.fn() }
-				launchUrl="/start/launch-site?siteSlug=example.wordpress.com"
-			/>
-		);
+		renderBridge();
 
-		await waitFor( () => expect( assign ).toHaveBeenCalled() );
+		await waitFor( () => expect( assign ).toHaveBeenCalledWith( LAUNCH_URL ) );
 		expect( screen.queryByTestId( 'pre-launch-modal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'falls back to the launch flow when the site query errors', async () => {
 		mockSiteError = true;
 
-		render(
-			<PreLaunchSiteModal
-				siteId={ 1 }
-				isOpen
-				onClose={ jest.fn() }
-				launchUrl="/start/launch-site?siteSlug=example.wordpress.com"
-			/>
-		);
+		renderBridge();
 
-		await waitFor( () => expect( assign ).toHaveBeenCalled() );
+		await waitFor( () => expect( assign ).toHaveBeenCalledWith( LAUNCH_URL ) );
 		expect( screen.queryByTestId( 'pre-launch-modal' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'renders nothing and never redirects without a site id', async () => {
+		renderBridge( { siteId: 0 } );
+
+		// Give the effect/queries a chance to run so a missing guard would surface.
+		await Promise.resolve();
+
+		expect( screen.queryByTestId( 'pre-launch-modal' ) ).not.toBeInTheDocument();
+		expect( assign ).not.toHaveBeenCalled();
+	} );
+
 	it( 'renders nothing while closed', () => {
-		render(
-			<PreLaunchSiteModal
-				siteId={ 1 }
-				isOpen={ false }
-				onClose={ jest.fn() }
-				launchUrl="/start/launch-site?siteSlug=example.wordpress.com"
-			/>
-		);
+		renderBridge( { isOpen: false } );
 
 		expect( screen.queryByTestId( 'pre-launch-modal' ) ).not.toBeInTheDocument();
 		expect( assign ).not.toHaveBeenCalled();
