@@ -109,9 +109,7 @@ describe( '<WordPressAgentSlack />', () => {
 				selector: '.components-notice__content',
 			} )
 		).toBeVisible();
-		expect(
-			screen.getByRole( 'button', { name: 'Install to a new Slack instance' } )
-		).toBeVisible();
-		expect( container.querySelector( '.dashboard-section-header__decoration img' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Add to Slack' } ) ).toBeVisible();
+		expect( container.querySelector( '.wordpress-agent-slack__install-button img' ) ).toBeVisible();
 	} );
 } );

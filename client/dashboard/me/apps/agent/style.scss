@@ -59,17 +59,20 @@
 }
 
 .wordpress-agent-slack__install-button.components-button {
+	--slack-brand-color: #4a154b;
+	--slack-brand-color-hover: #611f69;
+
 	gap: 8px;
-	background: #4a154b;
-	border-color: #4a154b;
+	background: var( --slack-brand-color );
+	border-color: var( --slack-brand-color );
 
 	img {
 		filter: invert( 1 );
 	}
 
 	&:hover:not( :disabled ) {
-		background: #611f69;
-		border-color: #611f69;
+		background: var( --slack-brand-color-hover );
+		border-color: var( --slack-brand-color-hover );
 	}
 }
 
