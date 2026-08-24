@@ -56,17 +56,7 @@ function UndoBar() {
  * Per-note actions at the top of the detail pane. Render keyed by note id so
  * drafts and modes reset when the selection changes.
  */
-/**
- * The detail-pane header: identity (children) on the left, the note's action
- * buttons on the right, with the undo bar and inline reply/edit inputs below.
- */
-export default function NoteActions( {
-	note,
-	children,
-}: {
-	note: Note;
-	children?: React.ReactNode;
-} ) {
+export default function NoteActions( { note }: { note: Note } ) {
 	const actions = useMemo( () => getAvailableNoteActions( note ), [ note ] );
 	const isApproved = useIsNoteApproved( note );
 	const isLiked = useIsNoteLiked( note );
@@ -88,6 +78,12 @@ export default function NoteActions( {
 		actions.trashComment ||
 		!! actions.answerPromptHref ||
 		!! follow;
+	const pendingUndoable = usePendingUndoableAction();
+
+	if ( ! hasButtons && ! pendingUndoable ) {
+		return null;
+	}
+
 	const sender = getNoteSender( note );
 	const replyPlaceholder = sender
 		? /* translators: %s: the person being replied to. */
@@ -169,78 +165,75 @@ export default function NoteActions( {
 	return (
 		<VStack spacing={ 3 } className="dashboard-notifications-inbox__actions">
 			<UndoBar />
-			<HStack justify="space-between" alignment="flex-start" spacing={ 3 } wrap>
-				{ children }
-				{ hasButtons && (
-					<HStack justify="flex-end" spacing={ 1 } wrap style={ { width: 'auto', flexShrink: 0 } }>
-						{ actions.approveComment && (
-							<Button
-								variant="tertiary"
-								icon={ check }
-								isPressed={ isApproved }
-								onClick={ () => setApprovalStatus( note, ! isApproved ) }
-							>
-								{ isApproved ? __( 'Approved' ) : __( 'Approve' ) }
-							</Button>
-						) }
-						{ actions.replyToComment && (
-							<Button variant="tertiary" isPressed={ mode === 'reply' } onClick={ startReply }>
-								{ __( 'Reply' ) }
-							</Button>
-						) }
-						{ canLike && (
-							<Button
-								variant="tertiary"
-								icon={ isLiked ? starFilled : starEmpty }
-								isPressed={ isLiked }
-								onClick={ () => setLikeStatus( note, ! isLiked ) }
-							>
-								{ isLiked ? __( 'Liked' ) : __( 'Like' ) }
-							</Button>
-						) }
-						{ actions.editComment && (
-							<Button
-								variant="tertiary"
-								icon={ pencil }
-								isPressed={ mode === 'edit' }
-								onClick={ startEdit }
-							>
-								{ __( 'Edit' ) }
-							</Button>
-						) }
-						{ actions.spamComment && (
-							<Button variant="tertiary" isDestructive onClick={ () => spamNote( note ) }>
-								{ __( 'Spam' ) }
-							</Button>
-						) }
-						{ actions.trashComment && (
-							<Button
-								variant="tertiary"
-								icon={ trash }
-								isDestructive
-								onClick={ () => trashNote( note ) }
-							>
-								{ __( 'Trash' ) }
-							</Button>
-						) }
-						{ actions.answerPromptHref && (
-							<Button
-								variant="tertiary"
-								href={ actions.answerPromptHref }
-								target="_blank"
-								rel="noreferrer"
-							>
-								{ __( 'Answer prompt' ) }
-							</Button>
-						) }
-						{ follow && (
-							<Button variant="tertiary" isPressed={ follow.isFollowing } onClick={ toggleFollow }>
-								{ follow.isFollowing ? __( 'Following' ) : __( 'Follow' ) }
-							</Button>
-						) }
-					</HStack>
-				) }
-			</HStack>
+			{ hasButtons && (
+				<HStack justify="flex-start" spacing={ 1 } wrap>
+					{ actions.approveComment && (
+						<Button
+							variant="tertiary"
+							icon={ check }
+							isPressed={ isApproved }
+							onClick={ () => setApprovalStatus( note, ! isApproved ) }
+						>
+							{ isApproved ? __( 'Approved' ) : __( 'Approve' ) }
+						</Button>
+					) }
+					{ actions.replyToComment && (
+						<Button variant="tertiary" isPressed={ mode === 'reply' } onClick={ startReply }>
+							{ __( 'Reply' ) }
+						</Button>
+					) }
+					{ canLike && (
+						<Button
+							variant="tertiary"
+							icon={ isLiked ? starFilled : starEmpty }
+							isPressed={ isLiked }
+							onClick={ () => setLikeStatus( note, ! isLiked ) }
+						>
+							{ isLiked ? __( 'Liked' ) : __( 'Like' ) }
+						</Button>
+					) }
+					{ actions.editComment && (
+						<Button
+							variant="tertiary"
+							icon={ pencil }
+							isPressed={ mode === 'edit' }
+							onClick={ startEdit }
+						>
+							{ __( 'Edit' ) }
+						</Button>
+					) }
+					{ actions.spamComment && (
+						<Button variant="tertiary" isDestructive onClick={ () => spamNote( note ) }>
+							{ __( 'Spam' ) }
+						</Button>
+					) }
+					{ actions.trashComment && (
+						<Button
+							variant="tertiary"
+							icon={ trash }
+							isDestructive
+							onClick={ () => trashNote( note ) }
+						>
+							{ __( 'Trash' ) }
+						</Button>
+					) }
+					{ actions.answerPromptHref && (
+						<Button
+							variant="tertiary"
+							href={ actions.answerPromptHref }
+							target="_blank"
+							rel="noreferrer"
+						>
+							{ __( 'Answer prompt' ) }
+						</Button>
+					) }
+					{ follow && (
+						<Button variant="tertiary" isPressed={ follow.isFollowing } onClick={ toggleFollow }>
+							{ follow.isFollowing ? __( 'Following' ) : __( 'Follow' ) }
+						</Button>
+					) }
+				</HStack>
+			) }
 			{ error && (
 				<Notice status="error" isDismissible onRemove={ () => setError( null ) }>
 					{ error }
