@@ -20,10 +20,6 @@ $button-padding: 8px 32px;
 .stats-purchase-page--is-wpcom {
 	.stats-purchase-wizard {
 		.components-button {
-			&.is-primary {
-				background-color: var(--color-accent);
-				border-color: var(--color-accent);
-			}
 			&.is-link {
 				color: var(--color-sidebar-menu-selected-background);
 			}
@@ -393,21 +389,11 @@ $button-padding: 8px 32px;
 	.components-button {
 		&.is-primary {
 			border-radius: 4px;
-			color: var(--jp-white);
-			background-color: #1a1a1a;
-			border-color: #1a1a1a;
 			transition: all 0.25s ease-out;
 			font-size: var(--font-body);
 			line-height: 24px;
 			padding: $button-padding;
 			height: auto;
-
-			&:hover,
-			&:active,
-			&:focus {
-				background: var(--studio-gray-80);
-				border-color: var(--studio-gray-80);
-			}
 
 			&[disabled],
 			&:disabled,
