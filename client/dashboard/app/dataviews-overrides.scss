@@ -51,3 +51,14 @@ a.dataviews-url-field {
 		padding-inline: #{$grid-unit-20} !important;
 	}
 }
+
+// The 32px minimum cell height forces the primary column's text to sit lower than the
+// media thumbnail next to it. Let the content size itself and tighten the gap so the
+// media and the primary column line up.
+.dataviews-view-table tbody .dataviews-view-table__cell-content-wrapper {
+	min-height: auto !important;
+}
+
+.dataviews-view-table__primary-column-content:not( .dataviews-column-primary__media ) {
+	gap: 6px;
+}
