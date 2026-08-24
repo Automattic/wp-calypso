@@ -149,6 +149,33 @@ describe( '<SiteLaunchButton>', () => {
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'launches a hosting-trial site immediately even when it has a custom domain', async () => {
+		const user = userEvent.setup();
+		mockDomainsApi( [
+			createMockDomain( 'kaonashi.wordpress.com', false ),
+			createMockDomain( 'kaonashi.com' ),
+		] );
+		const launchScope = mockLaunchApi();
+
+		render(
+			<SiteLaunchButton
+				site={ createMockSite( {
+					plan: {
+						product_slug: 'wp_bundle_hosting_trial_monthly',
+						product_name: 'Hosting Trial',
+						is_free: false,
+					},
+				} as Partial< Site > ) }
+				tracksContext="test"
+			/>
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: 'Launch your site' } ) );
+
+		await waitFor( () => expect( launchScope.isDone() ).toBe( true ) );
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'renders a link to the launch flow for a free site without an immediate launch', async () => {
 		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
 

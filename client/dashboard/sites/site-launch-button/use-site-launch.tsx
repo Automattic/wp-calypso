@@ -75,7 +75,8 @@ export function useSiteLaunch(
 	const [ isExperimentLoading, variant ] = useSiteLaunchGatingVariant();
 
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
-	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
+	const hasCustomDomain = domains.some( ( domain ) => domain.subscription_id !== null );
+	const isSitePlanPaidWithCustomDomain = isSitePlanPaid( site ) && hasCustomDomain;
 	const isDisabled = ! getIsSitePlanLaunchable( site );
 	const shouldImmediatelyLaunch = isSitePlanHostingTrial || site.is_wpcom_staging_site;
 
@@ -171,7 +172,21 @@ export function useSiteLaunch(
 		return { ...baseResult, isHidden: true, onClick: () => {} };
 	}
 
-	if ( isSitePlanPaidWithDomains ) {
+	if ( shouldImmediatelyLaunch ) {
+		return {
+			...baseResult,
+			isHidden: false,
+			onClick: () => {
+				track();
+				launchMutation.mutate( undefined, {
+					onSuccess: () => redirectAfterLaunch(),
+					onError: onLaunchError,
+				} );
+			},
+		};
+	}
+
+	if ( isSitePlanPaidWithCustomDomain ) {
 		return {
 			...baseResult,
 			isHidden: false,
@@ -186,20 +201,6 @@ export function useSiteLaunch(
 					onLaunch={ confirmPreLaunch }
 				/>
 			) : null,
-		};
-	}
-
-	if ( shouldImmediatelyLaunch ) {
-		return {
-			...baseResult,
-			isHidden: false,
-			onClick: () => {
-				track();
-				launchMutation.mutate( undefined, {
-					onSuccess: () => redirectAfterLaunch(),
-					onError: onLaunchError,
-				} );
-			},
 		};
 	}
 
