@@ -949,6 +949,33 @@ describe( 'useProductInstall progression', () => {
 		expect( initiatePluginTransfer ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'does not borrow a settled transfer status left in Redux by an earlier wait', async () => {
+		mockFetchLatestAtomicTransfer.mockRejectedValue( { status: 404 } );
+		const { result, store } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...marketplaceHandoff,
+				...simpleAtomicEligibleSite,
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+		await waitFor( () => expect( initiatePluginTransfer ).toHaveBeenCalledTimes( 1 ) );
+
+		// A previous wait's completion is still in the slice while our own transfer has not been
+		// polled yet. Borrowing it would put the staged wait on "finishing" for the whole transfer.
+		await act( async () => {
+			store.dispatch( setAutomatedTransferStatus( SITE_ID, transferStates.COMPLETE, '' ) );
+		} );
+		expect( result.current.isTransferWait ).toBe( true );
+		expect( result.current.transferStatus ).toBeNull();
+
+		// An in-flight status is still worth borrowing before the poll lands.
+		await act( async () => {
+			store.dispatch( setAutomatedTransferStatus( SITE_ID, transferStates.START, '' ) );
+		} );
+		expect( result.current.transferStatus ).toBe( transferStates.START );
+	} );
+
 	it( 'stays idle when revisited with a stale completed handoff', async () => {
 		const { result } = renderProgress(
 			{ pluginSlug: 'give' },

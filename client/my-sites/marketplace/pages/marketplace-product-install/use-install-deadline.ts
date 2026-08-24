@@ -67,6 +67,11 @@ export function useInstallDeadline( {
 } ): {
 	hasTimedOut: boolean;
 	hasTransferFailed: boolean;
+	// The transfer this wait is about, as the endpoint last reported it: its raw status and when it
+	// started. Null until a transfer of ours has been seen. This is the only fine-grained status
+	// source on this page — the Redux slice hears just start and complete on the plugin path.
+	transferStatus: string | null;
+	transferStartedAt: number | null;
 	diagnostics: InstallWaitDiagnostics;
 	transfer: AtomicTransfer | undefined;
 	isTransferFresh: boolean;
@@ -134,6 +139,18 @@ export function useInstallDeadline( {
 
 	const isInFlight = !! transfer && ! isSettled( transfer.status );
 	const hasFreshInFlightTransfer = isFetchedAfterMount && isSuccess && isInFlight;
+
+	// Ours: seen in flight during this wait, created after it began, or carrying this attempt's
+	// marker. A settled record that is none of those is the previous attempt's, still the site's
+	// latest because ours does not exist yet. Same three proofs the poll and the failure effect use.
+	const isOurTransfer =
+		!! transfer &&
+		isFetchedAfterMount &&
+		isSuccess &&
+		( isInFlight ||
+			transfer.atomic_transfer_id === seenInFlightId.current ||
+			!! isTransferFromAttempt?.( transfer ) ||
+			( waitBeganAt !== null && parseTransferCreatedAt( transfer.created_at ) >= waitBeganAt ) );
 
 	useEffect( () => {
 		if ( ! transfer || waitBeganAt === null ) {
@@ -211,9 +228,15 @@ export function useInstallDeadline( {
 		deadline_seconds: Math.round( INSTALL_DEADLINE_MS / 1000 ),
 	};
 
+	// An unparseable timestamp is no anchor at all: hand back null so the caller falls back to its
+	// own clock, rather than a NaN that silently poisons every duration derived from it.
+	const ourTransferStartedAt = isOurTransfer ? parseTransferCreatedAt( transfer.created_at ) : NaN;
+
 	return {
 		hasTimedOut: haltedOutcome === 'timeout' || isDeadlineExceeded,
 		hasTransferFailed: haltedOutcome === 'transfer-failed' || hasTransferFailed,
+		transferStatus: isOurTransfer ? transfer.status : null,
+		transferStartedAt: Number.isFinite( ourTransferStartedAt ) ? ourTransferStartedAt : null,
 		diagnostics,
 		transfer,
 		isTransferFresh: isFetchedAfterMount && isSuccess,

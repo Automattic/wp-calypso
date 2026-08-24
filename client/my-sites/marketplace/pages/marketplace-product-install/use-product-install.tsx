@@ -12,7 +12,11 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useSelector, useDispatch } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	transferCompleteStates,
+	transferSettledStates,
+	transferStates,
+} from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
@@ -145,6 +149,15 @@ export type ProductInstallError =
 	| { type: 'transfer-failed' }
 	| { type: 'timeout' }
 	| { type: 'generic' };
+
+export type InstallErrorTrackingProps = {
+	error_type: string | null;
+	flow: string;
+	product_slug: string | null;
+	site_id: number | null;
+	current_step: number;
+	install_strategy: string;
+};
 
 export function useProductInstall( {
 	pluginSlug = '',
@@ -399,6 +412,8 @@ export function useProductInstall( {
 		isTransferFresh,
 		isTransferLookupComplete,
 		isTransferLookupNotFound,
+		transferStatus: polledTransferStatus,
+		transferStartedAt,
 	} = useInstallDeadline( {
 		siteId,
 		enabled: !! siteId && ! preflightError && ! isUploadStillSending,
@@ -561,7 +576,7 @@ export function useProductInstall( {
 		if (
 			atomicFlow &&
 			currentStep === 1 &&
-			( transferStates.COMPLETE === automatedTransferStatus || durableTransferCompleted )
+			( transferCompleteStates.includes( automatedTransferStatus ) || durableTransferCompleted )
 		) {
 			setCurrentStep( 2 );
 		}
@@ -594,6 +609,26 @@ export function useProductInstall( {
 		dispatch,
 		siteId,
 	] );
+
+	// The path that runs a transfer. Known from the strategy before the install effect flips
+	// `atomicFlow`, so the wait UI and its telemetry agree from the first render; latched on
+	// `atomicFlow` afterwards, because once the transfer completes the site reads as Atomic and the
+	// strategy becomes 'in-place' while this wait is still finishing.
+	const isTransferWait =
+		atomicFlow || ( installStrategy === 'atomic-transfer' && ! themeSlug && ! isPluginUploadFlow );
+
+	// The Redux slice only ever hears `start` and `complete` on this path (the theme-transfer poller's
+	// reducer drops everything in between), so the staged wait reads the fine-grained status from the
+	// deadline hook's own poll and falls back to Redux only before that poll has seen our transfer.
+	//
+	// Unlike the poll, Redux's status is not tied to a particular transfer: it outlives the wait that
+	// produced it. A settled value borrowed here would therefore describe someone else's transfer —
+	// and the staged wait never moves backwards, so a stale `complete` would pin it at "finishing"
+	// for the whole of the next one. Only borrow a status that still describes a transfer in flight;
+	// once ours settles, the page's own step carries the stage.
+	const resolvedTransferStatus =
+		polledTransferStatus ??
+		( transferSettledStates.includes( automatedTransferStatus ) ? null : automatedTransferStatus );
 
 	// Which error screen to show, in priority order, or null for none. The presentational mapping
 	// lives in ProductInstallErrorView; keeping this as data makes the branching testable.
@@ -685,6 +720,37 @@ export function useProductInstall( {
 		currentStep,
 	] );
 
+	// Covers every error screen, preflight errors included — those never arm the wait, so the
+	// heartbeat and wait_ended above cannot see them. Thin on purpose: wait_ended already carries
+	// the diagnostics for failures that ended a wait.
+	const errorTrackingProps: InstallErrorTrackingProps = useMemo(
+		() => ( {
+			error_type: error?.type ?? null,
+			flow: installFlowName( { themeSlug, isPluginUploadFlow } ),
+			product_slug: pluginSlug || themeSlug || null,
+			site_id: siteId,
+			current_step: currentStep,
+			install_strategy: installStrategy,
+		} ),
+		[ error?.type, themeSlug, isPluginUploadFlow, pluginSlug, siteId, currentStep, installStrategy ]
+	);
+
+	// Keyed by the product too, not just the error type: this component survives an SPA navigation
+	// from one install to the next, and two installs that both end in `timeout` are two impressions.
+	const reportedErrorViewRef = useRef< string | null >( null );
+	useEffect( () => {
+		const errorType = errorTrackingProps.error_type;
+		if ( ! errorType ) {
+			return;
+		}
+		const reportKey = `${ installIdentity }:${ errorType }`;
+		if ( reportedErrorViewRef.current === reportKey ) {
+			return;
+		}
+		reportedErrorViewRef.current = reportKey;
+		recordTracksEvent( 'calypso_marketplace_install_error_view', errorTrackingProps );
+	}, [ errorTrackingProps, installIdentity ] );
+
 	useThankYouRedirect( {
 		siteId,
 		selectedSiteSlug,
@@ -724,6 +790,10 @@ export function useProductInstall( {
 		steps,
 		additionalSteps,
 		error,
+		errorTrackingProps,
+		isTransferWait,
+		transferStatus: resolvedTransferStatus,
+		transferStartedAt,
 		onActivateTheme: () => setUserDirectInstallationAllowed( true ),
 	};
 }
