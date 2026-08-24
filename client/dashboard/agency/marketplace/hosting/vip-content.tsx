@@ -8,7 +8,6 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import vipTileLogo from 'calypso/assets/images/a8c-for-agencies/events/vip-logo.svg';
 import cnnLogo from 'calypso/assets/images/logos/cnn.svg';
 import metaLogo from 'calypso/assets/images/logos/meta.svg';
 import newYorkPostLogo from 'calypso/assets/images/logos/new-york-post.svg';
@@ -43,7 +42,7 @@ function VipPitchCard() {
 					) }
 					description={ hostingBrands.find( ( brand ) => brand.key === 'vip' )?.description }
 					level={ 3 }
-					decoration={ <img src={ vipTileLogo } alt="" width={ 24 } /> }
+					decoration={ <img src={ vipLogo } alt="" className="marketplace-hosting__brand-mark" /> }
 				/>
 			</CardHeader>
 			<CardBody>

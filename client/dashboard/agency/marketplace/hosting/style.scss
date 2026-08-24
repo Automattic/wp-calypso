@@ -193,6 +193,13 @@
 	border-block-end: 1px solid var( --dashboard-overview__divider-color );
 }
 
+/* The round brand badge is the left cap of the descriptor lockups (the same
+   assets the Learn page uses); the decoration slot's object-fit: cover plus
+   a left anchor crops the lockup to just the badge. */
+.marketplace-hosting__brand-mark {
+	object-position: left;
+}
+
 /* SectionHeader has no alignment prop; when a description makes the header
    two lines tall, center-aligned decoration floats between them. Top-align
    the icon with the title via the consumer className. */
