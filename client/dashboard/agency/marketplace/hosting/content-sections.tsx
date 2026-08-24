@@ -194,7 +194,7 @@ export function JetpackComplete() {
 						</Text>
 					) ) }
 					<ExternalLink href="https://jetpack.com/complete/">
-						{ __( 'All Jetpack features and more' ) }
+						{ __( 'All Jetpack Complete features' ) }
 					</ExternalLink>
 				</div>
 			</CardBody>

@@ -1,3 +1,4 @@
+import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import {
 	Icon,
 	TextControl,
@@ -46,6 +47,11 @@ export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConf
 					level={ 3 }
 					title={ __( 'Configure WordPress.com' ) }
 					description={ hostingBrands.find( ( brand ) => brand.key === 'wpcom' )?.description }
+					decoration={
+						// An explicit className drops the component's default `wordpress-logo`
+						// class, whose bottom margin would inflate the icon box.
+						<WordPressLogo size={ 24 } className="marketplace-hosting__wordpress-mark" />
+					}
 				/>
 			</CardHeader>
 			<CardBody>
