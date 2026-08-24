@@ -44,6 +44,7 @@ export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConf
 		<Card>
 			<CardHeader>
 				<SectionHeader
+					className="marketplace-hosting__card-header"
 					level={ 3 }
 					title={ __( 'Configure WordPress.com' ) }
 					description={ hostingBrands.find( ( brand ) => brand.key === 'wpcom' )?.description }

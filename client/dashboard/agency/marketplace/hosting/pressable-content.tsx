@@ -70,6 +70,7 @@ export default function PressableContent( {
 		<Card>
 			<CardHeader>
 				<SectionHeader
+					className="marketplace-hosting__card-header"
 					level={ 3 }
 					title={ __( 'Configure Pressable' ) }
 					description={ hostingBrands.find( ( brand ) => brand.key === 'pressable' )?.description }
