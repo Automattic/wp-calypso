@@ -40,4 +40,36 @@ describe( '<CelebrationModal>', () => {
 
 		expect( screen.getByRole( 'link', { name: 'Get your domain' } ) ).toBeVisible();
 	} );
+
+	test( 'offers the annual-billing upsell for a monthly paid plan without a custom domain', () => {
+		render(
+			<CelebrationModal { ...baseProps } hasCustomDomain={ false } isPaidPlan isBilledMonthly />
+		);
+
+		expect( screen.getByText( /Interested in a custom domain/ ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Get your domain' } ) ).toBeVisible();
+	} );
+
+	test( 'offers the free-domain upsell for an annually billed paid plan without a custom domain', () => {
+		render(
+			<CelebrationModal
+				{ ...baseProps }
+				hasCustomDomain={ false }
+				isPaidPlan
+				isBilledMonthly={ false }
+			/>
+		);
+
+		expect( screen.getByRole( 'link', { name: 'Get your free domain' } ) ).toBeVisible();
+	} );
+
+	test( 'does not show an upsell when the site already has a custom domain', () => {
+		render(
+			<CelebrationModal { ...baseProps } hasCustomDomain isPaidPlan isBilledMonthly={ false } />
+		);
+
+		expect(
+			screen.queryByRole( 'link', { name: /Get your (free )?domain/ } )
+		).not.toBeInTheDocument();
+	} );
 } );
