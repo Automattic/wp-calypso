@@ -176,9 +176,11 @@ function InboxList( {
 				justify="space-between"
 				alignment="top"
 				spacing={ 2 }
-				className="dashboard-notifications-inbox__list-toolbar"
+				className="dashboard-notifications-inbox__list-toolbar dataviews__view-actions"
 			>
-				<DataViews.Search />
+				<div className="dataviews__search">
+					<DataViews.Search />
+				</div>
 				<DataViews.ViewConfig />
 			</HStack>
 			<DataViews.Layout />
