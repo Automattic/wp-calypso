@@ -9,6 +9,21 @@ import type { Message } from '../types';
 /** How long after a failed decision request to reload once more for a late continuation. */
 const CONTINUATION_RELOAD_DELAY_MS = 20000;
 
+/**
+ * Give up waiting for the decision response after this long. The request carries a whole bot turn
+ * (execute + model calls) so it is legitimately slow, but the error path (reload from the server)
+ * only works if the promise settles — wpcom-proxy-request has no timeout of its own.
+ */
+const DECISION_TIMEOUT_MS = 90000;
+
+const withTimeout = < T >( promise: Promise< T >, ms: number ): Promise< T > =>
+	Promise.race( [
+		promise,
+		new Promise< never >( ( _, reject ) =>
+			window.setTimeout( () => reject( new Error( 'approval-decision-timeout' ) ), ms )
+		),
+	] );
+
 type ApprovalDecisionResponse = {
 	/** `failed`: the approval was recorded but the action did not run (see `error`). */
 	status: 'executed' | 'declined' | 'failed';
@@ -51,12 +66,15 @@ export const useSendApprovalDecision = () => {
 
 	return useMutation( {
 		mutationFn: ( { token, decision }: { token: string; decision: 'approve' | 'decline' } ) => {
-			return wpcomRequest< ApprovalDecisionResponse >( {
-				method: 'POST',
-				path: `/ai/action-approvals/${ token }/${ decision }`,
-				apiNamespace: 'wpcom/v2',
-				body: { chat_id: chat.odieId, bot_id: botSlug },
-			} );
+			return withTimeout(
+				wpcomRequest< ApprovalDecisionResponse >( {
+					method: 'POST',
+					path: `/ai/action-approvals/${ token }/${ decision }`,
+					apiNamespace: 'wpcom/v2',
+					body: { chat_id: chat.odieId, bot_id: botSlug },
+				} ),
+				DECISION_TIMEOUT_MS
+			);
 		},
 		// The decision runs the bot's next turn server-side (execute, then a model call), so show
 		// the same "thinking" placeholder a live reply shows until the continuation arrives.
