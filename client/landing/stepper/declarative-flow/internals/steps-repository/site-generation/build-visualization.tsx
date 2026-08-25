@@ -2,7 +2,11 @@ import { Icon } from '@wordpress/components';
 import { useReducedMotion } from '@wordpress/compose';
 import { wordpress } from '@wordpress/icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { PointerEvent as ReactPointerEvent } from 'react';
+import type {
+	CSSProperties,
+	PointerEvent as ReactPointerEvent,
+	TransitionEvent as ReactTransitionEvent,
+} from 'react';
 
 // Each layout is a block of geometry in style.scss keyed by data-layout; the
 // atoms tween between them with CSS transitions. Desktop and mobile frames
@@ -17,14 +21,10 @@ export const PREVIEW_LAYOUTS = [
 ] as const;
 
 export const LAYOUT_HOLD_MS = 4000;
-// Keep in sync with --site-generation-morph-duration in style.scss.
 export const LAYOUT_MORPH_MS = 1000;
 
 export const MAX_TILT_DEG = 6;
 export const MAX_PARALLAX_PX = 8;
-
-// Keep in sync with the release transition duration in style.scss.
-export const PRESS_RELEASE_MS = 550;
 
 function clampUnit( value: number ) {
 	return Math.max( -1, Math.min( 1, value ) );
@@ -40,19 +40,11 @@ function usePreviewLayoutCycle(
 	const [ index, setIndex ] = useState( 0 );
 	const [ isMorphing, setIsMorphing ] = useState( false );
 	const [ holdKey, setHoldKey ] = useState( 0 );
-	const settleTimeoutRef = useRef< number | undefined >( undefined );
 
 	const advance = useCallback( () => {
 		setIndex( ( previous ) => ( previous + 1 ) % layoutCount );
 		setIsMorphing( true );
-		window.clearTimeout( settleTimeoutRef.current );
-		settleTimeoutRef.current = window.setTimeout(
-			() => setIsMorphing( false ),
-			LAYOUT_MORPH_MS / 2
-		);
 	}, [ layoutCount ] );
-
-	useEffect( () => () => window.clearTimeout( settleTimeoutRef.current ), [] );
 
 	useEffect( () => {
 		if ( layoutCount < 2 || isPaused || shouldReduceMotion ) {
@@ -63,13 +55,35 @@ function usePreviewLayoutCycle(
 
 		return () => window.clearInterval( interval );
 	}, [ advance, holdKey, isPaused, layoutCount, shouldReduceMotion ] );
+	useEffect( () => {
+		if ( shouldReduceMotion ) {
+			setIsMorphing( false );
+		}
+	}, [ shouldReduceMotion ] );
 
 	const advanceNow = () => {
 		advance();
 		setHoldKey( ( previous ) => previous + 1 );
 	};
 
-	return { index, isMorphing, advance: advanceNow };
+	const finishMorph = () => setIsMorphing( false );
+
+	return { index, isMorphing, advance: advanceNow, finishMorph };
+}
+
+function useIsDocumentVisible() {
+	const [ isVisible, setIsVisible ] = useState(
+		() => typeof document === 'undefined' || document.visibilityState !== 'hidden'
+	);
+
+	useEffect( () => {
+		const updateVisibility = () => setIsVisible( document.visibilityState !== 'hidden' );
+
+		document.addEventListener( 'visibilitychange', updateVisibility );
+		return () => document.removeEventListener( 'visibilitychange', updateVisibility );
+	}, [] );
+
+	return isVisible;
 }
 
 // Tilts the frame toward the pointer and offsets the atoms by depth. Bringing
@@ -150,9 +164,7 @@ function usePointerTilt( shouldReduceMotion: boolean ) {
 function usePressBounce( shouldReduceMotion: boolean ) {
 	const [ press, setPress ] = useState< 'down' | 'up' | null >( null );
 	const isDownRef = useRef( false );
-	const releaseTimeoutRef = useRef< number | undefined >( undefined );
 
-	useEffect( () => () => window.clearTimeout( releaseTimeoutRef.current ), [] );
 	useEffect( () => {
 		if ( shouldReduceMotion ) {
 			isDownRef.current = false;
@@ -164,7 +176,6 @@ function usePressBounce( shouldReduceMotion: boolean ) {
 		if ( shouldReduceMotion ) {
 			return;
 		}
-		window.clearTimeout( releaseTimeoutRef.current );
 		isDownRef.current = true;
 		setPress( 'down' );
 	};
@@ -175,23 +186,35 @@ function usePressBounce( shouldReduceMotion: boolean ) {
 		}
 		isDownRef.current = false;
 		setPress( 'up' );
-		releaseTimeoutRef.current = window.setTimeout( () => setPress( null ), PRESS_RELEASE_MS );
 	};
 
-	return { press, pressDown, release };
+	const finishRelease = () => setPress( ( current ) => ( current === 'up' ? null : current ) );
+
+	return { press, pressDown, release, finishRelease };
 }
 
 export function BuildVisualization( { onTap }: { onTap?: () => void } ) {
 	const [ isHovered, setIsHovered ] = useState( false );
 	const shouldReduceMotion = useReducedMotion();
-	const { index, isMorphing, advance } = usePreviewLayoutCycle(
+	const isDocumentVisible = useIsDocumentVisible();
+	const { index, isMorphing, advance, finishMorph } = usePreviewLayoutCycle(
 		PREVIEW_LAYOUTS.length,
-		isHovered,
+		isHovered || ! isDocumentVisible,
 		shouldReduceMotion
 	);
 	const { frameRef, onPointerMove, onPointerLeave } = usePointerTilt( shouldReduceMotion );
-	const { press, pressDown, release } = usePressBounce( shouldReduceMotion );
+	const { press, pressDown, release, finishRelease } = usePressBounce( shouldReduceMotion );
 	const layout = PREVIEW_LAYOUTS[ index ];
+	const previewStyle = {
+		'--site-generation-morph-duration': `${ LAYOUT_MORPH_MS }ms`,
+	} as CSSProperties;
+	const onTransitionEnd = ( event: ReactTransitionEvent< HTMLDivElement > ) => {
+		if ( event.currentTarget !== event.target || event.propertyName !== 'scale' ) {
+			return;
+		}
+		finishMorph();
+		finishRelease();
+	};
 
 	return (
 		<div className="site-generation__build-visual" aria-hidden="true">
@@ -201,6 +224,8 @@ export function BuildVisualization( { onTap }: { onTap?: () => void } ) {
 				data-layout={ layout.id }
 				data-morphing={ isMorphing }
 				data-press={ press ?? undefined }
+				onTransitionCancel={ onTransitionEnd }
+				onTransitionEnd={ onTransitionEnd }
 				onPointerCancel={ release }
 				onPointerDown={ ( event ) => {
 					if ( ! ( event.button > 0 ) ) {
@@ -215,13 +240,14 @@ export function BuildVisualization( { onTap }: { onTap?: () => void } ) {
 				} }
 				onPointerMove={ onPointerMove }
 				onPointerUp={ ( event ) => {
-					if ( ! ( event.button > 0 ) ) {
+					if ( ! ( event.button > 0 ) && ! shouldReduceMotion ) {
 						release();
 						advance();
 						onTap?.();
 					}
 				} }
 				ref={ frameRef }
+				style={ previewStyle }
 			>
 				<div className="site-generation__preview-bar">
 					<Icon className="site-generation__wordpress-mark" icon={ wordpress } />

@@ -4,7 +4,7 @@
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { SiteGenerationView, TINT_FADE_MS, TINT_HOLD_MS } from '../view';
+import { SiteGenerationView, TINT_HOLD_MS } from '../view';
 import type { SiteGenerationState, SiteGenerationStep } from '../use-site-generation';
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -23,6 +23,12 @@ const idleState = {
 	retryBuild: null,
 	isRetryingBuild: false,
 };
+
+function fireTransitionEnd( element: HTMLElement, propertyName: string ) {
+	const event = new Event( 'transitionend', { bubbles: true } );
+	Object.defineProperty( event, 'propertyName', { value: propertyName } );
+	fireEvent( element, event );
+}
 
 describe( 'SiteGenerationView progress and fallback states', () => {
 	it( 'shows an accessible elapsed time for the active step and updates it every second', () => {
@@ -278,7 +284,10 @@ describe( 'SiteGenerationView canvas tint', () => {
 			expect( editor ).toHaveAttribute( 'data-tint-fading', 'true' );
 			expect( container.querySelector( '.site-generation__tint' ) ).toBeVisible();
 
-			act( () => jest.advanceTimersByTime( TINT_FADE_MS ) );
+			fireTransitionEnd(
+				container.querySelector( '.site-generation__tint' ) as HTMLElement,
+				'background-color'
+			);
 			expect( editor ).toHaveAttribute( 'data-tint-fading', 'false' );
 			expect( editor.style.getPropertyValue( '--site-generation-hue' ) ).toBe( '' );
 			expect( container.querySelector( '.site-generation__tint' ) ).toBeNull();

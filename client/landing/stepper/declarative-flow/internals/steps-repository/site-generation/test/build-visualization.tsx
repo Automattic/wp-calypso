@@ -9,7 +9,6 @@ import {
 	LAYOUT_MORPH_MS,
 	MAX_PARALLAX_PX,
 	MAX_TILT_DEG,
-	PRESS_RELEASE_MS,
 	PREVIEW_LAYOUTS,
 } from '../build-visualization';
 
@@ -26,6 +25,20 @@ function mockMatchMedia( matches: boolean ) {
 		writable: true,
 		value: jest.fn( () => ( { matches } ) ),
 	} );
+}
+
+function setDocumentVisibility( visibilityState: DocumentVisibilityState ) {
+	Object.defineProperty( document, 'visibilityState', {
+		configurable: true,
+		value: visibilityState,
+	} );
+	document.dispatchEvent( new Event( 'visibilitychange' ) );
+}
+
+function fireTransitionEnd( element: HTMLElement, propertyName: string ) {
+	const event = new Event( 'transitionend', { bubbles: true } );
+	Object.defineProperty( event, 'propertyName', { value: propertyName } );
+	fireEvent( element, event );
 }
 
 function getFrame( container: HTMLElement ) {
@@ -48,6 +61,7 @@ class FakePointerEvent extends MouseEvent {
 describe( 'BuildVisualization', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
+		setDocumentVisibility( 'visible' );
 		Object.defineProperty( window, 'PointerEvent', {
 			configurable: true,
 			writable: true,
@@ -57,6 +71,7 @@ describe( 'BuildVisualization', () => {
 
 	afterEach( () => {
 		jest.useRealTimers();
+		delete ( document as { visibilityState?: unknown } ).visibilityState;
 		delete ( window as { matchMedia?: unknown } ).matchMedia;
 		delete ( window as { PointerEvent?: unknown } ).PointerEvent;
 	} );
@@ -86,7 +101,7 @@ describe( 'BuildVisualization', () => {
 		expect( frame ).toHaveAttribute( 'data-frame', PREVIEW_LAYOUTS[ 1 ].frame );
 		expect( frame ).toHaveAttribute( 'data-morphing', 'true' );
 
-		act( () => jest.advanceTimersByTime( LAYOUT_MORPH_MS / 2 ) );
+		fireTransitionEnd( frame, 'scale' );
 		expect( frame ).toHaveAttribute( 'data-morphing', 'false' );
 
 		act( () => jest.advanceTimersByTime( CYCLE_MS * ( PREVIEW_LAYOUTS.length - 1 ) ) );
@@ -173,6 +188,23 @@ describe( 'BuildVisualization', () => {
 		expect( frame ).toHaveAttribute( 'data-layout', PREVIEW_LAYOUTS[ 1 ].id );
 	} );
 
+	it( 'pauses the automatic layout cycle while the document is hidden', () => {
+		mockMatchMedia( false );
+		const { container } = render( <BuildVisualization /> );
+		const frame = getFrame( container );
+
+		act( () => setDocumentVisibility( 'hidden' ) );
+		act( () => jest.advanceTimersByTime( CYCLE_MS * 2 ) );
+		expect( frame ).toHaveAttribute( 'data-layout', PREVIEW_LAYOUTS[ 0 ].id );
+
+		act( () => setDocumentVisibility( 'visible' ) );
+		act( () => jest.advanceTimersByTime( CYCLE_MS - 1 ) );
+		expect( frame ).toHaveAttribute( 'data-layout', PREVIEW_LAYOUTS[ 0 ].id );
+
+		act( () => jest.advanceTimersByTime( 1 ) );
+		expect( frame ).toHaveAttribute( 'data-layout', PREVIEW_LAYOUTS[ 1 ].id );
+	} );
+
 	it( 'advances to the next layout on release, even while the cycle is paused', () => {
 		mockMatchMedia( false );
 		const { container } = render( <BuildVisualization /> );
@@ -185,7 +217,7 @@ describe( 'BuildVisualization', () => {
 		expect( frame ).toHaveAttribute( 'data-layout', PREVIEW_LAYOUTS[ 1 ].id );
 		expect( frame ).toHaveAttribute( 'data-morphing', 'true' );
 
-		act( () => jest.advanceTimersByTime( LAYOUT_MORPH_MS / 2 ) );
+		fireTransitionEnd( frame, 'scale' );
 		expect( frame ).toHaveAttribute( 'data-morphing', 'false' );
 
 		act( () => jest.advanceTimersByTime( CYCLE_MS * 2 ) );
@@ -213,7 +245,7 @@ describe( 'BuildVisualization', () => {
 		expect( onTap ).toHaveBeenCalledTimes( 1 );
 		expect( frame ).toHaveAttribute( 'data-press', 'up' );
 
-		act( () => jest.advanceTimersByTime( PRESS_RELEASE_MS ) );
+		fireTransitionEnd( frame, 'scale' );
 		expect( frame ).not.toHaveAttribute( 'data-press' );
 	} );
 

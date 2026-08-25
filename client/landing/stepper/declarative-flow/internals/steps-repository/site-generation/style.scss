@@ -56,8 +56,7 @@
 	--site-generation-canvas-text: var( --studio-gray-60 );
 	// Colours inside the canvas change faster than the background reveal, so
 	// they have caught up by the time the circle has passed over them. The
-	// drift back to the default palette is slow; its duration matches
-	// TINT_FADE_MS.
+	// drift back to the default palette is slow.
 	--site-generation-tint-duration: 0.4s;
 	--site-generation-tint-easing: ease-out;
 	position: relative;
@@ -203,7 +202,6 @@
 // on `transform` with its own short transition, and the parallax offsets it
 // sets are read by the atoms below.
 .site-generation__page-preview {
-	--site-generation-morph-duration: 1s;
 	--site-generation-morph-easing: cubic-bezier( 0.85, 0, 0.15, 1 );
 	--site-generation-settle-duration: calc( var( --site-generation-morph-duration ) / 2 );
 	--site-generation-settle-easing: cubic-bezier( 0.33, 1, 0.68, 1 );
@@ -261,9 +259,8 @@
 
 // Pressing slams the frame onto the canvas: it bounces inwards past its held
 // size, loses its shadow, and the parallax flattens for as long as the pointer
-// is down. Releasing springs it back past its resting size before settling;
-// the release duration matches PRESS_RELEASE_MS. These sit after the hover
-// rules so the held state wins while hovered.
+// is down. Releasing springs it back past its resting size before settling.
+// These sit after the hover rules so the held state wins while hovered.
 .site-generation__page-preview[data-press='down'] {
 	--site-generation-press: 0.92;
 	--site-generation-scale-duration: 220ms;

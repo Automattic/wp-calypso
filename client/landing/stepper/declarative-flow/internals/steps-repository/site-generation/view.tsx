@@ -1,5 +1,6 @@
 import { BigSkyLogo, WordPressWordmark } from '@automattic/components';
 import { Button, Icon, Notice } from '@wordpress/components';
+import { useReducedMotion } from '@wordpress/compose';
 import { check, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
@@ -24,8 +25,6 @@ const DEFAULT_CANVAS_HUE = CANVAS_TINT_HUES[ 0 ];
 
 // A tint holds, then drifts back to the default palette unless tapped again.
 export const TINT_HOLD_MS = 2000;
-// Keep in sync with the fading tint duration in style.scss.
-export const TINT_FADE_MS = 4000;
 
 type CanvasTint = {
 	hue: number | null;
@@ -38,14 +37,25 @@ type CanvasTint = {
 
 const UNTINTED: CanvasTint = { hue: null, baseColor: null, isFading: false, revealKey: 0 };
 
-function useCanvasTint() {
+function useCanvasTint( shouldReduceMotion: boolean ) {
 	const [ tint, setTint ] = useState< CanvasTint >( UNTINTED );
 	const layerRef = useRef< HTMLSpanElement >( null );
-	const timeoutsRef = useRef< number[] >( [] );
+	const holdTimeoutRef = useRef< number | undefined >( undefined );
 
-	useEffect( () => () => timeoutsRef.current.forEach( window.clearTimeout ), [] );
+	useEffect( () => () => window.clearTimeout( holdTimeoutRef.current ), [] );
+	useEffect( () => {
+		if ( shouldReduceMotion ) {
+			window.clearTimeout( holdTimeoutRef.current );
+			setTint( ( current ) =>
+				current.hue === null ? current : { ...UNTINTED, revealKey: current.revealKey }
+			);
+		}
+	}, [ shouldReduceMotion ] );
 
 	const cycleTint = () => {
+		if ( shouldReduceMotion ) {
+			return;
+		}
 		const currentHue = tint.hue ?? DEFAULT_CANVAS_HUE;
 		const candidates = CANVAS_TINT_HUES.filter( ( hue ) => hue !== currentHue );
 		const baseColor = layerRef.current
@@ -53,23 +63,25 @@ function useCanvasTint() {
 			: '';
 		const revealKey = tint.revealKey + 1;
 
-		timeoutsRef.current.forEach( window.clearTimeout );
+		window.clearTimeout( holdTimeoutRef.current );
 		setTint( {
 			hue: candidates[ Math.floor( Math.random() * candidates.length ) ],
 			baseColor: baseColor || null,
 			isFading: false,
 			revealKey,
 		} );
-		timeoutsRef.current = [
-			window.setTimeout(
-				() => setTint( ( current ) => ( { ...current, isFading: true } ) ),
-				TINT_HOLD_MS
-			),
-			window.setTimeout( () => setTint( { ...UNTINTED, revealKey } ), TINT_HOLD_MS + TINT_FADE_MS ),
-		];
+		holdTimeoutRef.current = window.setTimeout(
+			() => setTint( ( current ) => ( { ...current, isFading: true } ) ),
+			TINT_HOLD_MS
+		);
 	};
 
-	return { ...tint, layerRef, cycleTint };
+	const finishFade = () =>
+		setTint( ( current ) =>
+			current.isFading ? { ...UNTINTED, revealKey: current.revealKey } : current
+		);
+
+	return { ...tint, layerRef, cycleTint, finishFade };
 }
 
 function getElapsedDuration( startedAt: number, now: number ) {
@@ -249,7 +261,9 @@ export function SiteGenerationView( {
 	onReload: () => void;
 } ) {
 	const translate = useTranslate();
-	const { hue, baseColor, isFading, revealKey, layerRef, cycleTint } = useCanvasTint();
+	const shouldReduceMotion = useReducedMotion();
+	const { hue, baseColor, isFading, revealKey, layerRef, cycleTint, finishFade } =
+		useCanvasTint( shouldReduceMotion );
 	const tintStyle = {
 		'--site-generation-hue': hue ?? undefined,
 		'--site-generation-canvas-base': baseColor ?? undefined,
@@ -269,6 +283,15 @@ export function SiteGenerationView( {
 						aria-hidden="true"
 						className="site-generation__tint"
 						key={ revealKey }
+						onTransitionCancel={ finishFade }
+						onTransitionEnd={ ( event ) => {
+							if (
+								event.currentTarget === event.target &&
+								event.propertyName === 'background-color'
+							) {
+								finishFade();
+							}
+						} }
 						ref={ layerRef }
 					/>
 				) }
