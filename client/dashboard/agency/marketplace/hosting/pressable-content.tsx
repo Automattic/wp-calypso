@@ -1,7 +1,6 @@
 import {
+	RadioControl,
 	SelectControl,
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
@@ -25,42 +24,52 @@ export const PRESSABLE_CUSTOM_SLUG = 'pressable-custom';
 
 type PlanCategory = 'signature' | 'signature-high' | 'premium' | 'custom';
 
-const CATEGORY_LABELS: Record< PlanCategory, string > = {
-	signature: __( 'Signature' ),
-	'signature-high': __( 'Signature High' ),
-	premium: __( 'Premium' ),
-	custom: __( 'Custom' ),
-};
+const PLAN_TYPE_OPTIONS: { value: PlanCategory; label: string; description: string }[] = [
+	{
+		value: 'signature',
+		label: __( 'Signature' ),
+		description: __( 'Traffic and storage pooled across all your client sites.' ),
+	},
+	{
+		value: 'signature-high',
+		label: __( 'Signature High' ),
+		description: __( 'For large portfolios — 200 to 500 WordPress installs.' ),
+	},
+	{
+		value: 'premium',
+		label: __( 'Premium' ),
+		description: __(
+			'For mission critical sites that demand extra attention and resources. From US$350 per month.'
+		),
+	},
+	{
+		value: 'custom',
+		label: __( 'Custom' ),
+		description: __(
+			'More than 500 installs or 10M visits per month? We’ll size a plan to your portfolio.'
+		),
+	},
+];
 
-type SizingDimension = 'installs' | 'visits' | 'storage';
-
-const SIZING_LABELS: Record< SizingDimension, string > = {
-	installs: __( 'WordPress installs' ),
-	visits: __( 'Traffic' ),
-	storage: __( 'Storage' ),
-};
-
-function planSizingLabel( dimension: SizingDimension, plan: PressablePlan ) {
-	switch ( dimension ) {
-		case 'installs':
-			return sprintf(
-				/* translators: %d: number of WordPress installs */
-				_n( '%d install', '%d installs', plan.install ),
-				plan.install
-			);
-		case 'visits':
-			return sprintf(
-				/* translators: %s: number of visits per month */
-				__( '%s visits/mo' ),
-				formatCompactNumber( plan.visits )
-			);
-		case 'storage':
-			return sprintf(
-				/* translators: %d: storage in GB */
-				__( '%dGB storage' ),
-				plan.storage
-			);
+function planOptionLabel( plan: PressablePlan ) {
+	if ( plan.category === 'premium' ) {
+		return sprintf(
+			/* translators: %1$s: plan name, %2$s: monthly visits, %3$d: storage in GB, %4$d: PHP workers */
+			__( '%1$s — %2$s visits · %3$dGB · %4$d workers' ),
+			plan.name,
+			formatCompactNumber( plan.visits ),
+			plan.storage,
+			plan.worker
+		);
 	}
+	return sprintf(
+		/* translators: %1$s: plan name, %2$d: WordPress installs, %3$s: monthly visits, %4$d: storage in GB */
+		__( '%1$s — %2$d installs · %3$s visits · %4$dGB' ),
+		plan.name,
+		plan.install,
+		formatCompactNumber( plan.visits ),
+		plan.storage
+	);
 }
 
 function PlanSpecs( { category, plan }: { category: PlanCategory; plan?: PressablePlan } ) {
@@ -182,26 +191,19 @@ export default function PressableContent( {
 	onPlanChange: ( slug: string ) => void;
 } ) {
 	const [ category, setCategory ] = useState< PlanCategory >( 'signature' );
-	const [ sizingBy, setSizingBy ] = useState< SizingDimension >( 'installs' );
 
 	const categoryPlans = pressablePlans.filter( ( p ) => p.category === category );
 	const plan = pressablePlans.find( ( p ) => p.slug === planSlug );
 
-	const sizingDimensions: SizingDimension[] =
-		category === 'premium' ? [ 'visits', 'storage' ] : [ 'installs', 'visits', 'storage' ];
-
 	const handleCategoryChange = ( next: PlanCategory ) => {
 		setCategory( next );
-		if ( next === 'premium' && sizingBy === 'installs' ) {
-			setSizingBy( 'visits' );
-		}
 		if ( next === 'custom' ) {
 			onPlanChange( PRESSABLE_CUSTOM_SLUG );
-		} else {
-			const first = pressablePlans.find( ( p ) => p.category === next );
-			if ( first ) {
-				onPlanChange( first.slug );
-			}
+			return;
+		}
+		const first = pressablePlans.find( ( p ) => p.category === next );
+		if ( first ) {
+			onPlanChange( first.slug );
 		}
 	};
 
@@ -220,68 +222,25 @@ export default function PressableContent( {
 			</CardHeader>
 			<CardBody>
 				<VStack spacing={ 5 }>
-					<VStack spacing={ 3 }>
-						<Heading level={ 3 } size={ 13 }>
-							{ __( 'Choose a plan type' ) }
-						</Heading>
-						<ToggleGroupControl
-							__nextHasNoMarginBottom
-							__next40pxDefaultSize
-							isBlock
-							hideLabelFromVision
-							label={ __( 'Plan type' ) }
-							value={ category }
+					<VStack spacing={ 4 }>
+						<RadioControl
+							label={ __( 'Choose a plan type' ) }
+							selected={ category }
+							options={ PLAN_TYPE_OPTIONS }
 							onChange={ ( value ) => handleCategoryChange( value as PlanCategory ) }
-						>
-							{ ( Object.keys( CATEGORY_LABELS ) as PlanCategory[] ).map( ( key ) => (
-								<ToggleGroupControlOption
-									key={ key }
-									value={ key }
-									label={ CATEGORY_LABELS[ key ] }
-								/>
-							) ) }
-						</ToggleGroupControl>
+						/>
 						{ category !== 'custom' && (
-							<>
-								<Heading level={ 3 } size={ 13 }>
-									{ __( 'Size plans by total' ) }
-								</Heading>
-								<ToggleGroupControl
-									__nextHasNoMarginBottom
-									__next40pxDefaultSize
-									isBlock
-									hideLabelFromVision
-									label={ __( 'Size plans by' ) }
-									value={ sizingBy }
-									onChange={ ( value ) => setSizingBy( value as SizingDimension ) }
-								>
-									{ sizingDimensions.map( ( dimension ) => (
-										<ToggleGroupControlOption
-											key={ dimension }
-											value={ dimension }
-											label={ SIZING_LABELS[ dimension ] }
-										/>
-									) ) }
-								</ToggleGroupControl>
-								<SelectControl
-									__nextHasNoMarginBottom
-									__next40pxDefaultSize
-									label={ __( 'Plan' ) }
-									value={ planSlug }
-									options={ categoryPlans.map( ( p ) => ( {
-										label: `${ p.name } — ${ planSizingLabel( sizingBy, p ) }`,
-										value: p.slug,
-									} ) ) }
-									onChange={ onPlanChange }
-								/>
-							</>
-						) }
-						{ category === 'custom' && (
-							<Text variant="muted">
-								{ __(
-									'Need more than 500 WordPress installs or 10M visits per month? Our team will size a plan to your portfolio.'
-								) }
-							</Text>
+							<SelectControl
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								label={ __( 'Plan' ) }
+								value={ planSlug }
+								options={ categoryPlans.map( ( p ) => ( {
+									label: planOptionLabel( p ),
+									value: p.slug,
+								} ) ) }
+								onChange={ onPlanChange }
+							/>
 						) }
 					</VStack>
 
