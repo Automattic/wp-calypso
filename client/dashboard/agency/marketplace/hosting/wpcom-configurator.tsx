@@ -11,7 +11,7 @@ import {
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import { useState } from 'react';
-import { Card, CardBody, CardHeader } from '../../../components/card';
+import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import { getNextDiscountNudge, hostingBrands, wpcomHosting } from './mock-data';
@@ -54,9 +54,9 @@ export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConf
 				/>
 			</CardHeader>
 			<CardBody>
-				<div className="marketplace-hosting__config-grid">
-					<VStack spacing={ 3 } justify="flex-start">
-						<Heading level={ 3 } size={ 15 }>
+				<VStack spacing={ 5 }>
+					<VStack spacing={ 3 }>
+						<Heading level={ 3 } size={ 13 }>
 							{ __( 'How many sites do you need?' ) }
 						</Heading>
 						<ToggleGroupControl
@@ -106,20 +106,21 @@ export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConf
 							</Text>
 						) }
 					</VStack>
-					<VStack spacing={ 3 } justify="flex-start">
-						<Heading level={ 3 } size={ 15 }>
+					<CardDivider />
+					<VStack spacing={ 3 }>
+						<Heading level={ 3 } size={ 13 }>
 							{ __( 'What’s included' ) }
 						</Heading>
-						<VStack spacing={ 2 }>
+						<div className="marketplace-hosting__includes">
 							{ WHATS_INCLUDED.map( ( feature ) => (
 								<HStack key={ feature } spacing={ 2 } justify="flex-start" alignment="center">
 									<Icon icon={ check } className="marketplace-hosting__check" />
 									<Text>{ feature }</Text>
 								</HStack>
 							) ) }
-						</VStack>
+						</div>
 					</VStack>
-				</div>
+				</VStack>
 			</CardBody>
 		</Card>
 	);

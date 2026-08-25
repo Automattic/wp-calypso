@@ -211,16 +211,6 @@
 	align-items: flex-start;
 }
 
-.marketplace-hosting__config-grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 24px;
-
-	@media ( max-width: 660px ) {
-		grid-template-columns: 1fr;
-	}
-}
-
 .marketplace-hosting__plan-price {
 	font-size: 24px;
 	font-weight: 600;
