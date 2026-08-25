@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { SiteGenerationView } from '../view';
+import { SiteGenerationView, TINT_FADE_MS, TINT_HOLD_MS } from '../view';
 import type { SiteGenerationState, SiteGenerationStep } from '../use-site-generation';
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -225,5 +225,65 @@ describe( 'SiteGenerationView server recovery', () => {
 		);
 
 		expect( screen.getByRole( 'button', { name: 'Start again' } ) ).toBeDisabled();
+	} );
+} );
+
+describe( 'SiteGenerationView canvas tint', () => {
+	const workingState: SiteGenerationState = {
+		...idleState,
+		status: 'working',
+		steps: [ { id: 'preparing', label: 'Preparing the site', status: 'active' } ],
+	};
+
+	it( 'tints the canvas with a new hue on every tap of the preview', () => {
+		const { container } = render(
+			<SiteGenerationView onReload={ jest.fn() } state={ workingState } />
+		);
+		const editor = screen.getByRole( 'region', { name: 'Site generation' } );
+		const preview = container.querySelector( '.site-generation__page-preview' ) as HTMLElement;
+
+		expect( editor ).toHaveAttribute( 'data-tinted', 'false' );
+		expect( container.querySelector( '.site-generation__tint' ) ).toBeNull();
+
+		fireEvent.pointerUp( preview );
+
+		const firstHue = editor.style.getPropertyValue( '--site-generation-hue' );
+		expect( editor ).toHaveAttribute( 'data-tinted', 'true' );
+		expect( firstHue ).not.toBe( '' );
+		expect( container.querySelector( '.site-generation__tint' ) ).toBeVisible();
+
+		fireEvent.pointerUp( preview );
+
+		expect( editor ).toHaveAttribute( 'data-tinted', 'true' );
+		expect( editor.style.getPropertyValue( '--site-generation-hue' ) ).not.toBe( firstHue );
+	} );
+
+	it( 'holds the tint, then fades it back to the default palette', () => {
+		jest.useFakeTimers();
+
+		try {
+			const { container } = render(
+				<SiteGenerationView onReload={ jest.fn() } state={ workingState } />
+			);
+			const editor = screen.getByRole( 'region', { name: 'Site generation' } );
+			const preview = container.querySelector( '.site-generation__page-preview' ) as HTMLElement;
+
+			fireEvent.pointerUp( preview );
+			act( () => jest.advanceTimersByTime( TINT_HOLD_MS - 1 ) );
+			expect( editor ).toHaveAttribute( 'data-tinted', 'true' );
+			expect( editor ).toHaveAttribute( 'data-tint-fading', 'false' );
+
+			act( () => jest.advanceTimersByTime( 1 ) );
+			expect( editor ).toHaveAttribute( 'data-tinted', 'false' );
+			expect( editor ).toHaveAttribute( 'data-tint-fading', 'true' );
+			expect( container.querySelector( '.site-generation__tint' ) ).toBeVisible();
+
+			act( () => jest.advanceTimersByTime( TINT_FADE_MS ) );
+			expect( editor ).toHaveAttribute( 'data-tint-fading', 'false' );
+			expect( editor.style.getPropertyValue( '--site-generation-hue' ) ).toBe( '' );
+			expect( container.querySelector( '.site-generation__tint' ) ).toBeNull();
+		} finally {
+			jest.useRealTimers();
+		}
 	} );
 } );
