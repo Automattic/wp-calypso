@@ -19,7 +19,6 @@ import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
 import { UNLISTED_PLUGINS } from './constants';
-import PlanSetup from './jetpack-plugins-setup';
 import { MailPoetUpgradePage } from './mailpoet-upgrade';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
@@ -89,11 +88,23 @@ export function redirectMailPoetUpgrade( context, next ) {
 	next();
 }
 
-export function renderProvisionPlugins( context, next ) {
-	context.primary = createElement( PlanSetup, {
-		forSpecificPlugin: context.query.only || false,
-	} );
-	next();
+// The plugins bundled with the retired Jetpack Premium and Professional plans — the only two
+// values the old screen's `only` param could carry.
+const LEGACY_BUNDLED_PLUGIN_SLUGS = [ 'akismet', 'vaultpress' ];
+
+// `/plugins/setup` auto-installed those bundled plugins. The plans are gone and bundled plugins
+// are now features the site already carries, so the setup screen was removed — see
+// `usePreinstalledPremiumPlugin`. Plugin management is heading back to wp-admin, and keeping the
+// site in the path means that move can be made once for `/plugins` rather than special-cased here.
+export function redirectLegacyPluginsSetup( context ) {
+	const siteFragment = context.params.site || getSiteFragment( context.path );
+	const pluginSlug = LEGACY_BUNDLED_PLUGIN_SLUGS.includes( context.query.only )
+		? context.query.only
+		: null;
+
+	const segments = [ 'plugins', pluginSlug, siteFragment ].filter( Boolean );
+
+	page.redirect( `/${ segments.join( '/' ) }` );
 }
 
 export function plugins( context, next ) {
