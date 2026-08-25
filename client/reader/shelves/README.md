@@ -109,23 +109,23 @@ Notes:
 
 ## Error codes
 
-| HTTP | code                                 | when                                                                                                                 |
-| ---- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| 403  | `rest_forbidden`                    | not logged in                                                                                                       |
-| 404  | `reader_shelves_not_found`          | shelf doesn't exist or isn't yours                                                                                  |
-| 404  | `reader_shelves_item_not_found`     | removing a feed not in the shelf                                                                                    |
-| 400  | `reader_shelves_invalid_title`      | empty title (create or update)                                                                                      |
-| 400  | `reader_shelves_title_too_long`     | title over 50 characters                                                                                            |
-| 400  | `reader_shelves_invalid_feed`       | a feed isn't an existing feedbag feed                                                                               |
-| 400  | `reader_shelves_too_many_feeds`     | more than 50 feeds                                                                                                  |
-| 400  | `reader_shelves_invalid_tag`        | a tag slug isn't a valid Reader tag                                                                                 |
-| 400  | `reader_shelves_too_many_tags`      | more than 8 tags                                                                                                    |
-| 400  | `reader_shelves_too_many_languages` | more than 5 languages                                                                                               |
-| 400  | `reader_shelves_no_changes`         | `update` with no recognized fields                                                                                  |
-| 409  | `reader_shelves_duplicate_slug`     | a shelf with that title already exists                                                                              |
-| 409  | `reader_shelves_duplicate_feed`     | feed already in the shelf                                                                                           |
+| HTTP | code                                | when                                                                                                               |
+| ---- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| 403  | `rest_forbidden`                    | not logged in                                                                                                      |
+| 404  | `reader_shelves_not_found`          | shelf doesn't exist or isn't yours                                                                                 |
+| 404  | `reader_shelves_item_not_found`     | removing a feed not in the shelf                                                                                   |
+| 400  | `reader_shelves_invalid_title`      | empty title (create or update)                                                                                     |
+| 400  | `reader_shelves_title_too_long`     | title over 50 characters                                                                                           |
+| 400  | `reader_shelves_invalid_feed`       | a feed isn't an existing feedbag feed                                                                              |
+| 400  | `reader_shelves_too_many_feeds`     | more than 50 feeds                                                                                                 |
+| 400  | `reader_shelves_invalid_tag`        | a tag slug isn't a valid Reader tag                                                                                |
+| 400  | `reader_shelves_too_many_tags`      | more than 8 tags                                                                                                   |
+| 400  | `reader_shelves_too_many_languages` | more than 5 languages                                                                                              |
+| 400  | `reader_shelves_no_changes`         | `update` with no recognized fields                                                                                 |
+| 409  | `reader_shelves_duplicate_slug`     | a shelf with that title already exists                                                                             |
+| 409  | `reader_shelves_duplicate_feed`     | feed already in the shelf                                                                                          |
 | 429  | `reader_shelves_rate_limited`       | more than 20 writes in 5 minutes (create always; update only when the request includes `tags`/`feeds`/`languages`) |
-| 500  | `reader_shelves_delete_failed`      | delete didn't persist (rare)                                                                                        |
+| 500  | `reader_shelves_delete_failed`      | delete didn't persist (rare)                                                                                       |
 
 The upsert modal maps `rest_forbidden` / `reader_shelves_invalid_title` /
 `reader_shelves_title_too_long` / `reader_shelves_invalid_tag` /
