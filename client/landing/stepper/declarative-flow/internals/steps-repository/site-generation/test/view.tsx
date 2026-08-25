@@ -4,6 +4,7 @@
 
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { EMPTY_LIVE_BUILD_STATE } from '../build-feed-state';
 import { SiteGenerationView } from '../view';
 import type { SiteGenerationState, SiteGenerationStep } from '../use-site-generation';
 
@@ -22,6 +23,7 @@ jest.mock( 'i18n-calypso', () => ( {
 const idleState = {
 	retryBuild: null,
 	isRetryingBuild: false,
+	liveBuild: EMPTY_LIVE_BUILD_STATE,
 };
 
 describe( 'SiteGenerationView progress and fallback states', () => {
@@ -172,6 +174,7 @@ const failedState: SiteGenerationState = {
 	steps: [],
 	retryBuild: jest.fn(),
 	isRetryingBuild: false,
+	liveBuild: EMPTY_LIVE_BUILD_STATE,
 };
 
 describe( 'SiteGenerationView server recovery', () => {

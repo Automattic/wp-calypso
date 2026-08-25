@@ -3,6 +3,7 @@
  */
 
 import { fireEvent, render, screen } from '@testing-library/react';
+import { EMPTY_LIVE_BUILD_STATE } from '../build-feed-state';
 import SiteGeneration from '../index';
 import type { SiteGenerationState } from '../use-site-generation';
 
@@ -36,6 +37,7 @@ describe( 'SiteGeneration recovery', () => {
 			steps: [],
 			retryBuild: null,
 			isRetryingBuild: false,
+			liveBuild: EMPTY_LIVE_BUILD_STATE,
 		};
 		Object.defineProperty( window, 'location', {
 			value: {
