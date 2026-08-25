@@ -101,7 +101,6 @@ export const PluginSwitcher = ( {
 
 		return (
 			<SwitcherItem
-				alignment="start"
 				spacing={ 3 }
 				media={ <PluginIcon item={ item } /> }
 				title={ decodeEntities( item.name ) }

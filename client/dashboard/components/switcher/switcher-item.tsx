@@ -9,16 +9,9 @@ interface SwitcherItemProps {
 	title: React.ReactNode;
 	description?: React.ReactNode;
 	spacing?: number;
-	alignment?: string;
 }
 
-export default function SwitcherItem( {
-	media,
-	title,
-	description,
-	spacing,
-	alignment = 'center',
-}: SwitcherItemProps ) {
+export default function SwitcherItem( { media, title, description, spacing }: SwitcherItemProps ) {
 	const titleElement = (
 		<Text
 			className="switcher-item__title"
@@ -36,7 +29,7 @@ export default function SwitcherItem( {
 	}
 
 	return (
-		<HStack justify="flex-start" alignment={ alignment } expanded spacing={ spacing }>
+		<HStack justify="flex-start" alignment="center" expanded spacing={ spacing }>
 			{ media }
 			<VStack spacing={ 0 }>
 				{ titleElement }
