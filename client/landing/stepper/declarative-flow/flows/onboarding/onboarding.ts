@@ -51,7 +51,6 @@ import {
 } from '../../../utils/build-wow';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import {
-	getWowFunnelArgs,
 	getWowFunnelDest,
 	getWowFunnelSlug,
 	getRememberedWowFunnelSite,
@@ -155,32 +154,6 @@ const onboarding: FlowV2< typeof initialize > = {
 						blog_id: siteId,
 					} );
 					return [ `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&p=%2F`, null, null ];
-				}
-
-				// dest=site-spec: land on the AI site-spec. For the blueprint funnel, reuse the
-				// blueprint-archive site-spec URL, which polls the (already in-flight) import and
-				// then redirects to the Site Editor.
-				if ( wowFunnelDest === 'site-spec' ) {
-					const blueprintSlug = queryParams.get( 'blueprint' );
-					logWowFunnelEvent( 'post_checkout_site_spec', {
-						funnel: wowFunnelSlug,
-						blog_id: siteId,
-					} );
-					return [
-						blueprintSlug
-							? getBlueprintArchiveSiteSpecUrl( {
-									siteSlug,
-									siteId,
-									blueprintSlug,
-									ref: refParameter,
-							  } )
-							: addQueryArgs( withLocale( '/setup/ai-site-builder-spec/site-spec', locale ), {
-									siteSlug,
-									...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
-							  } ),
-						null,
-						null,
-					];
 				}
 
 				// dest=big-sky: hand off to the Big Sky AI builder.
@@ -551,7 +524,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// build_dest=wow and the WoW funnel (dest=site-spec/big-sky) go
+									// build_dest=wow and the WoW funnel (dest=editor/big-sky) go
 									// straight from checkout to their destination — no
 									// post-checkout-onboarding hop, no chooser.
 									redirect_to:
@@ -710,7 +683,6 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 			void startWowFunnelSite( {
 				funnelSlug,
-				funnelArgs: getWowFunnelArgs( queryParams ),
 				username,
 			} ).catch( () => {
 				// Errors are logged in the util; the create-site step retries as a fallback.
