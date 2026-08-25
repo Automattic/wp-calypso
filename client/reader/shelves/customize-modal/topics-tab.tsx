@@ -10,11 +10,20 @@ import {
 interface Props {
 	tags: string[];
 	onTagsChange: ( tags: string[] ) => void;
+	tagsError?: string | null;
 	languages: string[];
 	onLanguagesChange: ( languages: string[] ) => void;
+	languagesError?: string | null;
 }
 
-export function TopicsTab( { tags, onTagsChange, languages, onLanguagesChange }: Props ) {
+export function TopicsTab( {
+	tags,
+	onTagsChange,
+	tagsError,
+	languages,
+	onLanguagesChange,
+	languagesError,
+}: Props ) {
 	const translate = useTranslate();
 
 	return (
@@ -36,6 +45,11 @@ export function TopicsTab( { tags, onTagsChange, languages, onLanguagesChange }:
 				}
 				help={ translate( 'Type and press Enter to add; click x to remove.' ) }
 			/>
+			{ tagsError ? (
+				<p className="customize-shelf-modal__error" role="alert">
+					{ tagsError }
+				</p>
+			) : null }
 			<FormTokenField
 				__next40pxDefaultSize
 				__experimentalExpandOnFocus
@@ -54,6 +68,11 @@ export function TopicsTab( { tags, onTagsChange, languages, onLanguagesChange }:
 					'Filters Discover results to these languages. Starts from your account language; add more as needed.'
 				) }
 			/>
+			{ languagesError ? (
+				<p className="customize-shelf-modal__error" role="alert">
+					{ languagesError }
+				</p>
+			) : null }
 		</VStack>
 	);
 }
