@@ -205,14 +205,20 @@ function ScheduleDemoBanner() {
 function CartDropdown( {
 	items,
 	onRemove,
+	open,
+	onToggle,
 }: {
 	items: CartItem[];
 	onRemove: ( id: string ) => void;
+	open: boolean;
+	onToggle: ( willOpen: boolean ) => void;
 } ) {
 	const total = items.reduce( ( sum, item ) => sum + ( item.total ?? 0 ), 0 );
 
 	return (
 		<Dropdown
+			open={ open }
+			onToggle={ onToggle }
 			popoverProps={ { placement: 'bottom-end' } }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
@@ -278,12 +284,14 @@ export default function MarketplaceHosting() {
 		pressableSignaturePlans.find( ( p ) => p.slug === pressablePlanSlug ) ??
 		pressableSignaturePlans[ 0 ];
 	const [ cartItems, setCartItems ] = useState< CartItem[] >( [] );
+	const [ isCartOpen, setIsCartOpen ] = useState( false );
 
 	const addToCart = ( item: CartItem ) => {
 		setCartItems( ( current ) => [
 			...current.filter( ( existing ) => existing.family !== item.family ),
 			item,
 		] );
+		setIsCartOpen( true );
 	};
 
 	const removeFromCart = ( id: string ) => {
@@ -313,6 +321,10 @@ export default function MarketplaceHosting() {
 								/>
 								<Text variant={ term === 'yearly' ? undefined : 'muted' }>{ __( 'Yearly' ) }</Text>
 							</HStack>
+							<Divider
+								orientation="vertical"
+								style={ { color: 'var(--dashboard-overview__divider-color)', height: '24px' } }
+							/>
 							<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
 								<ToggleControl
 									__nextHasNoMarginBottom
@@ -327,7 +339,16 @@ export default function MarketplaceHosting() {
 									onClick={ () => setIsGuideOpen( true ) }
 								/>
 							</HStack>
-							<CartDropdown items={ cartItems } onRemove={ removeFromCart } />
+							<Divider
+								orientation="vertical"
+								style={ { color: 'var(--dashboard-overview__divider-color)', height: '24px' } }
+							/>
+							<CartDropdown
+								items={ cartItems }
+								onRemove={ removeFromCart }
+								open={ isCartOpen }
+								onToggle={ setIsCartOpen }
+							/>
 						</HStack>
 					}
 				/>
