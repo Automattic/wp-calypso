@@ -160,6 +160,10 @@
 .marketplace-hosting__cart {
 	inline-size: 320px;
 	padding: 16px;
+
+	.components-button.is-primary {
+		justify-content: center;
+	}
 }
 
 
