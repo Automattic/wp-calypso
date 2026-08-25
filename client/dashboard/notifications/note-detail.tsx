@@ -17,8 +17,8 @@ import {
 	getNoteBodyParts,
 	getNoteExcerpt,
 	getNoteSender,
-	getNoteTitle,
 	getNoteTypeLabel,
+	getTitleSegments,
 	getNoteUserRef,
 } from './fields';
 import NoteActions from './note-actions';
@@ -155,6 +155,13 @@ export default function NoteDetail( {
 		);
 	}
 
+	const title = (
+		<Text className="dashboard-notifications-inbox__note-title">
+			{ getTitleSegments( note ).map( ( segment, index ) =>
+				segment.bold ? <strong key={ index }>{ segment.text }</strong> : segment.text
+			) }
+		</Text>
+	);
 	const excerpt = getNoteExcerpt( note );
 	const { context, comment } = getNoteBodyParts( note );
 	const allUserBlocks = context.filter( ( block ) => block.type === 'user' );
@@ -205,10 +212,10 @@ export default function NoteDetail( {
 							href={ note.url }
 							aria-label={ __( 'Open on WordPress.com' ) }
 						>
-							<Text weight={ 600 }>{ getNoteTitle( note ) }</Text>
+							{ title }
 						</ExternalLink>
 					) : (
-						<Text weight={ 600 }>{ getNoteTitle( note ) }</Text>
+						title
 					) }
 					<Text variant="muted">{ getRelativeTimeString( new Date( note.timestamp ) ) }</Text>
 				</VStack>

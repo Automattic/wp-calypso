@@ -60,6 +60,43 @@ export function getNoteTitle( note: Note ): string {
 	return note.subject[ 0 ]?.text ?? note.title;
 }
 
+const TITLE_BOLD_RANGE_TYPES = new Set( [ 'user', 'post', 'b' ] );
+
+export type TitleSegment = { text: string; bold: boolean };
+
+/** The title split into spans, bolding the subject's user/post ranges. */
+export function getTitleSegments( note: Note ): TitleSegment[] {
+	const block = note.subject[ 0 ];
+	if ( ! block ) {
+		return [ { text: note.title, bold: false } ];
+	}
+
+	const boldRanges = ( block.ranges ?? [] )
+		.filter(
+			( range ) =>
+				TITLE_BOLD_RANGE_TYPES.has( range.type ) && range.indices[ 1 ] > range.indices[ 0 ]
+		)
+		.sort( ( a, b ) => a.indices[ 0 ] - b.indices[ 0 ] );
+
+	const segments: TitleSegment[] = [];
+	let cursor = 0;
+	for ( const range of boldRanges ) {
+		const [ start, end ] = range.indices;
+		if ( start < cursor || end > block.text.length ) {
+			continue;
+		}
+		if ( start > cursor ) {
+			segments.push( { text: block.text.slice( cursor, start ), bold: false } );
+		}
+		segments.push( { text: block.text.slice( start, end ), bold: true } );
+		cursor = end;
+	}
+	if ( cursor < block.text.length ) {
+		segments.push( { text: block.text.slice( cursor ), bold: false } );
+	}
+	return segments;
+}
+
 // The actor who triggered the note: the header's leading user range (how the
 // legacy panel identifies the sender), falling back to the body's user block.
 export function getNoteSender( note: Note ): string | null {
@@ -169,7 +206,9 @@ export function getFields(): Field< Note >[] {
 						'is-unread': ! item.read,
 					} ) }
 				>
-					{ getNoteTitle( item ) }
+					{ getTitleSegments( item ).map( ( segment, index ) =>
+						segment.bold ? <strong key={ index }>{ segment.text }</strong> : segment.text
+					) }
 				</span>
 			),
 		},

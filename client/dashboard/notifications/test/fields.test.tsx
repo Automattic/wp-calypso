@@ -8,6 +8,7 @@ import {
 	getNoteBodyParts,
 	getNoteSender,
 	getNoteUserRef,
+	getTitleSegments,
 } from '../fields';
 import type { Note } from '../engine';
 import type { View } from '@wordpress/dataviews';
@@ -127,6 +128,31 @@ describe( 'getNoteBodyParts', () => {
 		const parts = getNoteBodyParts( makeNote( 3, { body: [ { text: '  ' } ] } ) );
 		expect( parts.context ).toEqual( [] );
 		expect( parts.comment ).toBeNull();
+	} );
+} );
+
+describe( 'getTitleSegments', () => {
+	it( 'bolds the user and post ranges only', () => {
+		const note = makeNote( 1, {
+			subject: [
+				{
+					text: 'Aras mentioned you on Deep links',
+					ranges: [
+						{ type: 'user', indices: [ 0, 4 ], id: 1, parent: null },
+						{ type: 'post', indices: [ 22, 32 ], id: 2, parent: null },
+					],
+				},
+			],
+		} );
+		expect( getTitleSegments( note ) ).toEqual( [
+			{ text: 'Aras', bold: true },
+			{ text: ' mentioned you on ', bold: false },
+			{ text: 'Deep links', bold: true },
+		] );
+	} );
+
+	it( 'returns one plain segment without ranges', () => {
+		expect( getTitleSegments( makeNote( 2 ) ) ).toEqual( [ { text: 'Subject 2', bold: false } ] );
 	} );
 } );
 

@@ -133,11 +133,18 @@
 	}
 }
 
-/* Let long titles wrap instead of truncating to an ellipsis. */
+/* Let long titles wrap instead of truncating to an ellipsis, and leave bolding
+   to the subject's own user/post ranges. */
 .dashboard-notifications-inbox__list .dataviews-view-list .dataviews-title-field {
 	white-space: normal;
 	overflow: visible;
 	text-overflow: clip;
+	font-weight: 400;
+}
+
+.dashboard-notifications-inbox__title strong,
+.dashboard-notifications-inbox__note-title strong {
+	font-weight: 600;
 }
 
 .dashboard-notifications-inbox__noticon {
@@ -192,10 +199,6 @@
 
 .dashboard-notifications-inbox__list .dataviews-view-list__group-header {
 	margin-block-start: 16px;
-}
-
-.dashboard-notifications-inbox__title.is-unread {
-	font-weight: 600;
 }
 
 .dashboard-notifications-inbox__note-avatar {
