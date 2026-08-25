@@ -162,14 +162,34 @@ export function getBlockSegments( block: NoteBlock ): BlockSegment[] {
 	return segments;
 }
 
-export type NoteUserRef = { name: string; avatarUrl: string | null; url: string | null };
+export type NoteUserRef = {
+	name: string;
+	avatarUrl: string | null;
+	url: string | null;
+	siteId: number | null;
+	isFollowing: boolean;
+	canFollow: boolean;
+	homeTitle: string | null;
+	homeUrl: string | null;
+};
 
-/** Identity bits of a body `user` block: name, avatar, and profile link. */
+/** Identity bits of a body `user` block: name, avatar, links, and follow state. */
 export function getNoteUserRef( block: NoteBlock ): NoteUserRef {
+	const siteId = block.meta?.ids?.site ?? null;
+	const homeUrl = block.meta?.links?.home ?? null;
+	const homeTitle =
+		block.meta?.titles?.home ??
+		( homeUrl ? homeUrl.replace( /^https?:\/\//, '' ).replace( /\/$/, '' ) : null );
+
 	return {
 		name: block.text,
 		avatarUrl: block.media?.find( ( media ) => media.type === 'image' )?.url ?? null,
-		url: block.ranges?.find( ( range ) => range.type === 'user' && range.url )?.url ?? null,
+		url: block.ranges?.find( ( range ) => range.type === 'user' && range.url )?.url ?? homeUrl,
+		siteId,
+		isFollowing: !! ( block.actions && 'follow' in block.actions && block.actions.follow ),
+		canFollow: !! ( block.actions && siteId !== null ),
+		homeTitle,
+		homeUrl,
 	};
 }
 

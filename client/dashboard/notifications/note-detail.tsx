@@ -10,18 +10,18 @@ import { arrowLeft, chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { Fragment, useEffect, useState } from 'react';
 import { Card, CardBody } from '../components/card';
 import { getRelativeTimeString } from '../utils/datetime';
-import { openNote, useNote } from './engine';
+import { openNote, setFollowStatus, useNote } from './engine';
 import {
 	getBlockSegments,
 	getNoteBodyParts,
 	getNoteExcerpt,
-	getNoteSender,
 	getNoteTypeLabel,
 	getTitleSegments,
 	getNoteUserRef,
 } from './fields';
 import NoteActions from './note-actions';
 import { FALLBACK_NOTICON_ICON, NOTICON_ICONS } from './note-icons';
+import type { Note } from './engine';
 import type { NoteBlock } from './fields';
 
 // The engine has no error signal for a missing note: `openNote` just keeps
@@ -45,50 +45,70 @@ function BlockText( { block }: { block: NoteBlock } ) {
 	);
 }
 
-const FACEPILE_MAX = 3;
+function UserRow( { note, block }: { note: Note; block: NoteBlock } ) {
+	const user = getNoteUserRef( block );
+	const [ isFollowing, setIsFollowing ] = useState( user.isFollowing );
+	const [ isBusy, setIsBusy ] = useState( false );
 
-function Facepile( { blocks }: { blocks: NoteBlock[] } ) {
-	const users = blocks.map( getNoteUserRef );
-	const shown = users.slice( 0, FACEPILE_MAX );
-	const extra = users.length - shown.length;
+	const toggleFollow = async () => {
+		if ( user.siteId === null || isBusy ) {
+			return;
+		}
+		setIsBusy( true );
+		const previous = isFollowing;
+		setIsFollowing( ! previous );
+		try {
+			setIsFollowing( await setFollowStatus( note, user.siteId, ! previous ) );
+		} catch {
+			setIsFollowing( previous );
+		} finally {
+			setIsBusy( false );
+		}
+	};
+
+	const avatar = user.avatarUrl ? (
+		<img src={ user.avatarUrl } alt="" width={ 32 } height={ 32 } />
+	) : (
+		<span aria-hidden="true">{ user.name.charAt( 0 ).toUpperCase() }</span>
+	);
+
+	const name = <Text weight={ 600 }>{ user.name }</Text>;
 
 	return (
 		<HStack
-			className="dashboard-notifications-inbox__facepile"
-			justify="flex-start"
-			spacing={ 0 }
+			className="dashboard-notifications-inbox__user-row"
+			spacing={ 3 }
+			justify="space-between"
 			alignment="center"
 		>
-			{ shown.map( ( user, index ) => {
-				const avatar = user.avatarUrl ? (
-					<img src={ user.avatarUrl } alt="" width={ 28 } height={ 28 } />
-				) : (
-					<span aria-hidden="true">{ user.name.charAt( 0 ).toUpperCase() }</span>
-				);
-				return user.url ? (
-					<a
-						key={ index }
-						className="dashboard-notifications-inbox__facepile-item"
-						href={ user.url }
-						target="_blank"
-						rel="noreferrer"
-						title={ user.name }
-						aria-label={ user.name }
-					>
-						{ avatar }
-					</a>
-				) : (
-					<span
-						key={ index }
-						className="dashboard-notifications-inbox__facepile-item"
-						title={ user.name }
-					>
-						{ avatar }
-					</span>
-				);
-			} ) }
-			{ extra > 0 && (
-				<span className="dashboard-notifications-inbox__facepile-item is-overflow">+{ extra }</span>
+			<HStack spacing={ 3 } justify="flex-start" alignment="center">
+				<span className="dashboard-notifications-inbox__user-row-avatar">{ avatar }</span>
+				<VStack spacing={ 0 }>
+					{ user.url ? (
+						<a
+							className="dashboard-notifications-inbox__user-row-name"
+							href={ user.url }
+							target="_blank"
+							rel="noreferrer"
+						>
+							{ name }
+						</a>
+					) : (
+						name
+					) }
+					{ user.homeTitle && <Text variant="muted">{ user.homeTitle }</Text> }
+				</VStack>
+			</HStack>
+			{ user.canFollow && (
+				<Button
+					variant="secondary"
+					size="small"
+					isPressed={ isFollowing }
+					isBusy={ isBusy }
+					onClick={ toggleFollow }
+				>
+					{ isFollowing ? __( 'Subscribed' ) : __( 'Subscribe' ) }
+				</Button>
 			) }
 		</HStack>
 	);
@@ -170,10 +190,7 @@ export default function NoteDetail( {
 	);
 	const excerpt = getNoteExcerpt( note );
 	const { context, comment, postscript } = getNoteBodyParts( note );
-	const allUserBlocks = context.filter( ( block ) => block.type === 'user' );
-	// The pane header already identifies the sender; keep them out of the pile.
-	const senderIndex = allUserBlocks.findIndex( ( block ) => block.text === getNoteSender( note ) );
-	const userBlocks = allUserBlocks.filter( ( _, index ) => index !== senderIndex );
+	const userBlocks = context.filter( ( block ) => block.type === 'user' );
 	const otherContext = context.filter( ( block ) => block.type !== 'user' );
 
 	return (
@@ -223,7 +240,13 @@ export default function NoteDetail( {
 						<BlockText block={ block } />
 					</Text>
 				) ) }
-				{ userBlocks.length > 0 && <Facepile blocks={ userBlocks } /> }
+				{ userBlocks.length > 0 && (
+					<VStack spacing={ 2 }>
+						{ userBlocks.map( ( block, index ) => (
+							<UserRow key={ index } note={ note } block={ block } />
+						) ) }
+					</VStack>
+				) }
 				{ comment && (
 					<blockquote className="dashboard-notifications-inbox__quote">
 						<Text as="p">

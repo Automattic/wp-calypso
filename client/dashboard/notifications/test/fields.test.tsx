@@ -203,6 +203,34 @@ describe( 'getNoteUserRef', () => {
 			name: 'Ian Stewart',
 			avatarUrl: 'https://example.com/a.jpg',
 			url: 'https://example.com/ian',
+			siteId: null,
+			isFollowing: false,
+			canFollow: false,
+			homeTitle: null,
+			homeUrl: null,
+		} );
+	} );
+
+	it( 'exposes follow state and home site from the block meta', () => {
+		expect(
+			getNoteUserRef( {
+				text: 'Bob',
+				actions: { follow: true },
+				meta: {
+					ids: { site: 99, user: 5 },
+					links: { home: 'https://blog.example/' },
+					titles: { home: 'My Blog' },
+				},
+			} )
+		).toEqual( {
+			name: 'Bob',
+			avatarUrl: null,
+			url: 'https://blog.example/',
+			siteId: 99,
+			isFollowing: true,
+			canFollow: true,
+			homeTitle: 'My Blog',
+			homeUrl: 'https://blog.example/',
 		} );
 	} );
 
@@ -211,6 +239,11 @@ describe( 'getNoteUserRef', () => {
 			name: 'Bob',
 			avatarUrl: null,
 			url: null,
+			siteId: null,
+			isFollowing: false,
+			canFollow: false,
+			homeTitle: null,
+			homeUrl: null,
 		} );
 	} );
 } );
