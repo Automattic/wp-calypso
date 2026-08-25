@@ -56,6 +56,68 @@
 	}
 }
 
+/* Stock density rules only match div[role="row"], but infinite-scroll lists
+   render items as div[role="article"], leaving the Density control inert. */
+.dashboard-notifications-inbox__list .dataviews-view-list.has-compact-density div[role="article"] {
+	.dataviews-view-list__item-wrapper {
+		padding: var(--wpds-dimension-padding-sm, 8px) var(--wpds-dimension-padding-2xl, 24px);
+	}
+
+	.dataviews-view-list__title-field {
+		min-height: var(--wpds-dimension-size-2xs, 16px);
+		line-height: var(--wpds-typography-line-height-xs, 16px);
+	}
+
+	.dataviews-view-list__media-wrapper {
+		width: var(--wpds-dimension-size-md, 32px);
+		height: var(--wpds-dimension-size-md, 32px);
+	}
+
+	.dataviews-view-list__field-wrapper {
+		min-height: var(--wpds-dimension-size-md, 32px);
+	}
+
+	.dataviews-view-list__fields {
+		gap: var(--wpds-dimension-gap-sm, 8px);
+		row-gap: var(--wpds-dimension-gap-xs, 4px);
+	}
+
+	.dataviews-view-list__fields .dataviews-view-list__field-value {
+		min-height: var(--wpds-dimension-size-2xs, 16px);
+		line-height: var(--wpds-typography-line-height-xs, 16px);
+	}
+}
+
+.dashboard-notifications-inbox__list .dataviews-view-list.has-comfortable-density div[role="article"] {
+	.dataviews-view-list__item-wrapper {
+		padding: var(--wpds-dimension-padding-2xl, 24px) var(--wpds-dimension-padding-2xl, 24px);
+	}
+
+	.dataviews-view-list__title-field {
+		min-height: var(--wpds-dimension-size-md, 32px);
+		line-height: var(--wpds-typography-line-height-xl, 32px);
+	}
+
+	.dataviews-view-list__media-wrapper {
+		width: 64px;
+		height: 64px;
+	}
+
+	.dataviews-view-list__field-wrapper {
+		min-height: 64px;
+	}
+
+	.dataviews-view-list__fields {
+		gap: var(--wpds-dimension-gap-lg, 16px);
+		row-gap: var(--wpds-dimension-gap-sm, 8px);
+	}
+
+	.dataviews-view-list__fields .dataviews-view-list__field-value {
+		min-height: var(--wpds-dimension-size-md, 32px);
+		line-height: var(--wpds-typography-line-height-md, 24px);
+	}
+}
+
 .dashboard-notifications-inbox__list .dataviews-view-list__media-wrapper {
 	background: transparent;
 
