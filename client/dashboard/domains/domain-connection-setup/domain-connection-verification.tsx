@@ -72,7 +72,7 @@ export default function DomainConnectionVerification( {
 						<Text className="dashboard-domain-connection-verification__title" size={ 15 }>
 							{ domainName }
 						</Text>
-						<Badge intent={ status === 'connected' ? 'success' : 'warning' }>
+						<Badge intent={ status === 'connected' ? 'stable' : 'low' }>
 							{ status === 'connected' ? __( 'Active' ) : __( 'Verifying' ) }
 						</Badge>
 					</HStack>

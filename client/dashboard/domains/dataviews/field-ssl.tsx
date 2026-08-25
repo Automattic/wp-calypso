@@ -22,8 +22,8 @@ export const DomainSslField = ( { domain }: { domain: DomainSummary } ) => {
 		domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS ||
 		sslDetails?.certificate_provisioned
 	) {
-		return <Badge intent="success">{ __( 'SSL active' ) }</Badge>;
+		return <Badge intent="stable">{ __( 'SSL active' ) }</Badge>;
 	}
 
-	return <Badge intent="warning">{ __( 'SSL pending' ) }</Badge>;
+	return <Badge intent="low">{ __( 'SSL pending' ) }</Badge>;
 };

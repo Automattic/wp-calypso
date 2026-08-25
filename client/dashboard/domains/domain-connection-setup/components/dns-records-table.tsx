@@ -46,7 +46,7 @@ interface DnsRecordVerification {
 
 const VerificationBadge = ( { isVerified }: { isVerified: boolean } ) => {
 	return (
-		<Badge intent={ isVerified ? 'success' : 'warning' }>
+		<Badge intent={ isVerified ? 'stable' : 'low' }>
 			{ isVerified ? __( 'Verified' ) : __( 'Verifying' ) }
 		</Badge>
 	);

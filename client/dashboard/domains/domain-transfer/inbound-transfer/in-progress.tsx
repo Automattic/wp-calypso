@@ -21,7 +21,7 @@ export const InboundTransferInProgress = ( { domain }: { domain: Domain } ) => {
 		<InboundTransferStep
 			icon={ <Icon size={ 24 } icon={ drafts } /> }
 			title={ domainName }
-			badge={ <Badge intent="warning">{ __( 'In progress' ) }</Badge> }
+			badge={ <Badge intent="low">{ __( 'In progress' ) }</Badge> }
 			subtitle={ __( 'Estimated: 5–7 days' ) }
 			progress={ { currentStep: 2, color: 'var(--wp-admin-theme-color)' } }
 			domain={ domain }
