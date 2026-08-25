@@ -45,7 +45,6 @@ function Domains() {
 	const { recordTracksEvent } = useAnalytics();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
-	const actions = useActions( { user, sites } );
 	const searchParams = domainsIndexRoute.useSearch();
 
 	const { view, updateView, resetView } = usePersistentView( {
@@ -60,6 +59,8 @@ function Domains() {
 			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
 		},
 	} );
+
+	const actions = useActions( { user, sites, domains } );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		domains ?? [],

@@ -1,7 +1,11 @@
 import { DomainSubtype, DomainStatus } from '@automattic/api-core';
-import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
+import {
+	userPurchasesQuery,
+	siteSetPrimaryDomainMutation,
+	sslDetailsQuery,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueries } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
@@ -37,7 +41,15 @@ const SiteChangeAddressContent = lazy(
 
 const noop = () => {};
 
-export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) => {
+export const useActions = ( {
+	user,
+	sites,
+	domains,
+}: {
+	user: User;
+	sites?: Site[];
+	domains?: DomainSummary[];
+} ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice } = useDispatch( noticesStore );
@@ -61,6 +73,47 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			{} as Record< number, Site >
 		);
 	}, [ sites ] );
+	// A domain can only be made primary once its SSL certificate is provisioned.
+	// DomainSummary has no SSL field, so resolve it from the same query the SSL
+	// column uses, but only for domains that are otherwise eligible to avoid
+	// firing SSL requests for the whole list.
+	const primaryCandidateDomainNames = useMemo( () => {
+		return ( domains ?? [] )
+			.filter( ( item ) => {
+				const site = sitesByBlogId[ item.blog_id ];
+				const hasRedirect = site?.options?.is_redirect ?? false;
+				return (
+					!! site &&
+					item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS &&
+					canSetAsPrimary( { domain: item, site, user } ) &&
+					! hasRedirect
+				);
+			} )
+			.map( ( item ) => item.domain );
+	}, [ domains, sitesByBlogId, user ] );
+
+	const sslQueries = useQueries( {
+		queries: primaryCandidateDomainNames.map( ( domainName ) => ( {
+			...sslDetailsQuery( domainName ),
+			staleTime: 60_000,
+		} ) ),
+	} );
+
+	// Serialize into a stable primitive so the memo below (and the actions memo)
+	// don't depend on the non-referentially-stable useQueries result.
+	const sslActiveKey = primaryCandidateDomainNames
+		.filter( ( _domainName, index ) => sslQueries[ index ]?.data?.certificate_provisioned )
+		.join( ',' );
+
+	const sslActiveByDomain = useMemo( () => {
+		const activeDomains = new Set( sslActiveKey ? sslActiveKey.split( ',' ) : [] );
+		const map: Record< string, boolean > = {};
+		primaryCandidateDomainNames.forEach( ( domainName ) => {
+			map[ domainName ] = activeDomains.has( domainName );
+		} );
+		return map;
+	}, [ primaryCandidateDomainNames, sslActiveKey ] );
+
 	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
 			{
@@ -229,7 +282,15 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				isEligible: ( item: DomainSummary ) => {
 					const site = sitesByBlogId[ item.blog_id ];
 					const hasRedirect = site?.options?.is_redirect ?? false;
-					return !! site && canSetAsPrimary( { domain: item, site, user } ) && ! hasRedirect;
+					const isSslActive =
+						item.subtype.id === DomainSubtype.DEFAULT_ADDRESS ||
+						( sslActiveByDomain[ item.domain ] ?? false );
+					return (
+						!! site &&
+						canSetAsPrimary( { domain: item, site, user } ) &&
+						! hasRedirect &&
+						isSslActive
+					);
 				},
 				disabled: isSettingPrimaryDomain,
 			},
@@ -386,6 +447,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			isSettingPrimaryDomain,
 			createSuccessNotice,
 			sitesByBlogId,
+			sslActiveByDomain,
 			recordTracksEvent,
 		]
 	);

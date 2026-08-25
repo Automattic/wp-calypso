@@ -56,7 +56,10 @@ export default function DomainConnectionVerification( {
 	const hasCloudflareIpAddresses = domainMappingStatus.has_cloudflare_ip_addresses;
 
 	const connectedAndCanBeSetAsPrimary =
-		status === 'connected' && ! domainData.primary_domain && domainData.can_set_as_primary;
+		status === 'connected' &&
+		! domainData.primary_domain &&
+		domainData.can_set_as_primary &&
+		domainData.ssl_status === 'active';
 
 	return (
 		<Card
