@@ -70,7 +70,7 @@ function UnforwardedIconListItem(
 				<LayoutComponent
 					className={ layoutConfig.className }
 					alignment={ innerAlignment }
-					justify={ suffixAlignment === 'top' ? 'space-between' : undefined }
+					{ ...( suffixAlignment === 'top' && { justify: 'space-between' } ) }
 					spacing={ suffixSpacing }
 					as="span"
 				>
