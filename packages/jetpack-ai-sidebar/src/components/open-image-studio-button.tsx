@@ -33,7 +33,7 @@ function canEditBlockImage( block: any ): boolean {
  * Renders the "Edit image" button for the image block the agent was asked about.
  * @param props          Component props.
  * @param props.clientId The image block's clientId.
- * @returns The button, disabled when the block can no longer be edited.
+ * @returns The button (disabled when the block can no longer be edited), or null when Image Studio is not loaded.
  */
 export default function OpenImageStudioButton( { clientId }: OpenImageStudioButtonProps ) {
 	const block = useSelect(
@@ -44,16 +44,20 @@ export default function OpenImageStudioButton( { clientId }: OpenImageStudioButt
 		[ clientId ]
 	);
 	// Read at render time: the bundle cannot unload, but a button restored from
-	// history may render on a page where Image Studio is not loaded.
-	const isDisabled = ! canEditBlockImage( block ) || ! isImageStudioAvailable();
+	// history may render on a page where Image Studio is not loaded. The stored
+	// summary reads on its own, so render nothing rather than a dead button.
+	if ( ! isImageStudioAvailable() ) {
+		return null;
+	}
 
 	return (
 		<Button
 			variant="primary"
-			disabled={ isDisabled }
+			disabled={ ! canEditBlockImage( block ) }
 			onClick={ () => {
-				trackOpenImageStudioButtonClick();
-				openImageStudioForBlock( block, 'edit' );
+				if ( openImageStudioForBlock( block, 'edit' ) ) {
+					trackOpenImageStudioButtonClick();
+				}
 			} }
 		>
 			{ __( 'Edit image', __i18n_text_domain__ ) }

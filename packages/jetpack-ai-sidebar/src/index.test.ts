@@ -72,8 +72,11 @@ const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
 const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
 const OPEN_IMAGE_STUDIO_TOOL_ID = 'jetpack_ai__open_image_studio';
 const OPEN_IMAGE_STUDIO_ABILITY_NAME = 'jetpack-ai/open-image-studio';
-const NO_IMAGE_BLOCK_MESSAGE =
+const NO_IMAGE_BLOCK_MESSAGE = 'Select the image you want to edit, then ask again.';
+const NO_IMAGE_BLOCK_ERROR =
 	'No image block is selected. Ask the user to select the image they want to edit.';
+const DEFAULT_OPEN_IMAGE_STUDIO_SUMMARY =
+	"I can't change what's in the image from here, but the image editor can.";
 
 function appendRootBlockListLayout( doc: Document = document ): HTMLElement {
 	const layout = doc.createElement( 'div' );
@@ -3629,9 +3632,9 @@ describe( 'toolProvider', () => {
 			} );
 			const parsed = JSON.parse( response.agentMessage );
 
-			expect( response.result.message ).toBe( 'Click the button below to open the image editor.' );
+			expect( response.result.message ).toBe( DEFAULT_OPEN_IMAGE_STUDIO_SUMMARY );
 			expect( parsed ).not.toHaveProperty( 'tool_call_id' );
-			expect( parsed.data.summary ).toBe( 'Click the button below to open the image editor.' );
+			expect( parsed.data.summary ).toBe( DEFAULT_OPEN_IMAGE_STUDIO_SUMMARY );
 		} );
 
 		it( 'targets the remembered image block after the selection is cleared', async () => {
@@ -3663,9 +3666,26 @@ describe( 'toolProvider', () => {
 			} );
 
 			expect( response ).toEqual( {
-				result: { success: false, message: NO_IMAGE_BLOCK_MESSAGE },
+				result: { success: false, message: NO_IMAGE_BLOCK_MESSAGE, error: NO_IMAGE_BLOCK_ERROR },
 				returnToAgent: true,
 			} );
+		} );
+
+		it( 'keeps the user-facing message and the model-facing error apart on failure', async () => {
+			mockSelectedBlock = null;
+
+			const response = await toolProvider.executeAbility( OPEN_IMAGE_STUDIO_TOOL_ID, {
+				summary: 'Edit it here.',
+			} );
+
+			expect( response.result.success ).toBe( false );
+			expect( response.result.message ).toBe(
+				'Select the image you want to edit, then ask again.'
+			);
+			expect( response.result.error ).toBe(
+				'No image block is selected. Ask the user to select the image they want to edit.'
+			);
+			expect( response ).not.toHaveProperty( 'agentMessage' );
 		} );
 	} );
 

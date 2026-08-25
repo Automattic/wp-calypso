@@ -460,6 +460,39 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'renders the stored open-image-studio summary as plain text after a reload', () => {
+		// The server keeps only the tool call and its summary; the show-component
+		// envelope with the button is not persisted.
+		const summary = "I can't change what's in the image from here, but the image editor can.";
+		const message = createMessage( {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify( {
+						tool_id: 'jetpack_ai__open_image_studio',
+						tool_call_id: 'call-open-1',
+						data: { summary },
+					} ),
+				},
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: summary } ] );
+		expect( result[ 0 ].suppressThinking ).toBe( true );
+	} );
+
+	it( 'hides a failed open-image-studio result', () => {
+		const message = createToolMessage( 'jetpack_ai__open_image_studio', {
+			success: false,
+			summary: 'Select the image you want to edit, then ask again.',
+		} );
+
+		expect( convertToolMessagesToComponents( { messages: [ message ] } ) ).toEqual( [] );
+	} );
+
 	it.each( [ 'big_sky__apply_block_edits', 'wpcom__update_block_content' ] )(
 		'hides a request-shaped %s message until the client reports its outcome',
 		( toolId ) => {

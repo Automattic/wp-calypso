@@ -78,8 +78,21 @@ describe( 'OpenImageStudioButton', () => {
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Edit image' } ) );
 
-		expect( mockTrackClick ).toHaveBeenCalledTimes( 1 );
 		expect( mockOpenImageStudioForBlock ).toHaveBeenCalledWith( imageBlock, 'edit' );
+		expect( mockTrackClick ).toHaveBeenCalledTimes( 1 );
+		expect( mockTrackClick.mock.invocationCallOrder[ 0 ] ).toBeGreaterThan(
+			mockOpenImageStudioForBlock.mock.invocationCallOrder[ 0 ]
+		);
+	} );
+
+	it( 'does not record a click when Image Studio fails to open', () => {
+		mockOpenImageStudioForBlock.mockReturnValue( false );
+
+		render( <OpenImageStudioButton clientId="img-1" /> );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Edit image' } ) );
+
+		expect( mockOpenImageStudioForBlock ).toHaveBeenCalledWith( imageBlock, 'edit' );
+		expect( mockTrackClick ).not.toHaveBeenCalled();
 	} );
 
 	it.each( [
@@ -104,11 +117,12 @@ describe( 'OpenImageStudioButton', () => {
 		expect( mockTrackClick ).not.toHaveBeenCalled();
 	} );
 
-	it( 'disables the button when Image Studio is not loaded on the page', () => {
+	it( 'renders nothing when Image Studio is not loaded on the page', () => {
 		mockIsImageStudioAvailable.mockReturnValue( false );
 
-		render( <OpenImageStudioButton clientId="img-1" /> );
+		const { container } = render( <OpenImageStudioButton clientId="img-1" /> );
 
-		expect( screen.getByRole( 'button', { name: 'Edit image' } ) ).toBeDisabled();
+		expect( container ).toBeEmptyDOMElement();
+		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 	} );
 } );

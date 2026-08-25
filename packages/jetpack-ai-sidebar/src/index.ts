@@ -602,7 +602,7 @@ const OPEN_IMAGE_STUDIO_ABILITY: any = {
 			summary: {
 				type: 'string',
 				description:
-					"A short, friendly message in the agent's own voice inviting the user to click the button to open the image editor. Do NOT say that the editor is opening, has opened, or is being opened automatically.",
+					"A short, friendly message in the agent's own voice offering the image editor for this change. It must read correctly on its own: do not mention, point to, or describe the button (it renders separately and is not shown again after a page reload), and do not say the editor is opening or has opened.",
 			},
 		},
 		required: [ 'summary' ],
@@ -745,16 +745,23 @@ function handleOpenImageStudio( input: any ): any {
 		return {
 			result: {
 				success: false,
-				message: 'No image block is selected. Ask the user to select the image they want to edit.',
+				// The backend shows `message` to the user and leads the model with `error`.
+				message: __( 'Select the image you want to edit, then ask again.', __i18n_text_domain__ ),
+				error: 'No image block is selected. Ask the user to select the image they want to edit.',
 			},
 			returnToAgent: true,
 		};
 	}
 
+	// The summary must stand on its own: after a reload AM shows only the
+	// stored summary, not the button.
 	const summary =
 		typeof input?.summary === 'string' && input.summary.trim()
 			? input.summary.trim()
-			: __( 'Click the button below to open the image editor.', __i18n_text_domain__ );
+			: __(
+					"I can't change what's in the image from here, but the image editor can.",
+					__i18n_text_domain__
+			  );
 	const { agentMessage } = handleShowComponent( {
 		type: OPEN_IMAGE_STUDIO_BUTTON_TYPE,
 		props: { clientId: block.clientId },
