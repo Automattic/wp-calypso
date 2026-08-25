@@ -12,7 +12,15 @@ const BUTTON_STACK_CONFIG = {
 };
 
 function UnforwardedActionItem(
-	{ title, description, decoration, actions, className, layout = 'inline' }: ActionItemProps,
+	{
+		title,
+		description,
+		decoration,
+		actions,
+		className,
+		layout = 'inline',
+		suffixAlignment,
+	}: ActionItemProps,
 	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
 	const buttonConfig = BUTTON_STACK_CONFIG[ layout ];
@@ -23,6 +31,7 @@ function UnforwardedActionItem(
 			description={ description }
 			decoration={ decoration }
 			layout={ layout }
+			suffixAlignment={ suffixAlignment }
 			suffix={
 				<ButtonStack
 					className="action-item__actions"
