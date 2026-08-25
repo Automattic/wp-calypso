@@ -6,6 +6,7 @@ import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-
 import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
 import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { getLoggedInLandingPage } from 'calypso/lib/landing-page';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getSiteFragment } from 'calypso/lib/route';
 import { bumpStat } from 'calypso/state/analytics/actions';
@@ -36,6 +37,32 @@ export default async function renderHome( context, next ) {
 	context.primary = <CustomerHome key={ site.ID } site={ site } />;
 
 	next();
+}
+
+// Bare /home sends the user where they'd normally land, not to the site picker.
+export async function redirectToLandingPage( context, next ) {
+	let destination;
+
+	try {
+		destination = await getLoggedInLandingPage( context.store );
+	} catch ( error ) {
+		captureException( error );
+	}
+
+	if ( ! destination || destination === context.pathname ) {
+		next();
+		return;
+	}
+
+	if ( context.querystring ) {
+		destination += ( destination.includes( '?' ) ? '&' : '?' ) + context.querystring;
+	}
+
+	if ( destination.startsWith( '/' ) ) {
+		page.redirect( destination );
+	} else {
+		window.location.assign( destination );
+	}
 }
 
 export async function maybeRedirect( context, next ) {

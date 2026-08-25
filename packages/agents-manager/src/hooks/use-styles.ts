@@ -98,7 +98,9 @@ export default function useStyles() {
 					( merged.styles as Record< string, unknown > | undefined )?.css
 				);
 				if ( blocks.length ) {
-					recordBigSkyTracksEvent( 'legacy_css_found', { block_count: blocks.length } );
+					recordBigSkyTracksEvent( 'jetpack_big_sky_legacy_css_found', {
+						block_count: blocks.length,
+					} );
 					// eslint-disable-next-line no-console
 					console.warn(
 						'[AgentsManager] Legacy Easy Site Editor CSS found — font picks may not be visible until it is removed.'

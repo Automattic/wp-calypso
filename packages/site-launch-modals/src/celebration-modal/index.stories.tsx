@@ -1,12 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useState } from 'react';
-import CelebrationModal from './celebration-modal';
-import '../styles.scss';
+import CelebrationModal from '.';
 import type { Meta, StoryObj } from '@storybook/react';
-
-// Renders the real CelebrationModal view. The data/analytics container
-// (../index.tsx) is skipped because Storybook does not set up the app's query,
-// router, and analytics providers.
 
 interface CelebrationArgs {
 	domain: string;
@@ -46,7 +41,7 @@ function CelebrationModalPreview( {
 }
 
 const meta = {
-	title: 'client/dashboard/SiteLaunchModal/Celebration',
+	title: 'packages/SiteLaunchModals/Celebration',
 	component: CelebrationModalPreview,
 	parameters: { layout: 'fullscreen' },
 } satisfies Meta< typeof CelebrationModalPreview >;

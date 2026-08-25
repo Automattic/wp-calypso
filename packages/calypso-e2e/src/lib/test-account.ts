@@ -60,7 +60,7 @@ export class TestAccount {
 		if ( hasFreshCookies ) {
 			this.log( 'Found fresh cookies, skipping log in' );
 			await browserContext.addCookies( await this.getAuthCookies() );
-			await page.goto( getCalypsoURL( '/' ) );
+			await page.goto( getCalypsoURL( '/home' ) );
 		}
 
 		// Freshness is read off the cookie file's age, but the session behind it can be gone

@@ -2,7 +2,7 @@ import {
 	closeAgentsManagerChat,
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
-	recordFullNameAgentsManagerTracksEvent,
+	recordAgentsManagerTracksEvent,
 	useShouldUseUnifiedAgent,
 } from '@automattic/agents-manager';
 import { __ } from '@wordpress/i18n';
@@ -38,7 +38,7 @@ export function useAiChatPlugin( {
 	const handleClick = () => {
 		const isChatVisible = isAgentsManagerChatVisible();
 
-		recordFullNameAgentsManagerTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
+		recordAgentsManagerTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
 			section: sectionName || 'unknown',
 			action: isChatVisible ? 'close' : 'open',
 		} );

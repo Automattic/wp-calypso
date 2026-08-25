@@ -10,9 +10,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, globe } from '@wordpress/icons';
 import { useState } from 'react';
-import ConfettiAnimation from '../../../components/confetti';
+import ConfettiAnimation from '../confetti';
 
-interface CelebrationModalProps {
+import './style.scss';
+
+export interface CelebrationModalProps {
 	siteDomain: string;
 	siteUrl?: string;
 	hasCustomDomain: boolean;
