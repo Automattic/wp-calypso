@@ -19,6 +19,18 @@ export const getTwoFactorAuthNonce = ( state, nonceType ) =>
 	state.login.twoFactorAuth?.[ `two_step_nonce_${ nonceType }` ] ?? null;
 
 /**
+ * Retrieve the Blackbox session id captured on the password step of this login.
+ * Returns null if the password step did not produce one.
+ *
+ * Blackbox correlates the two-step outcome with the session that scored the
+ * password request, so consumers must read this rather than collect a new
+ * session id at the two-step step.
+ * @param  {Object}   state  Global state tree
+ * @returns {?string}         The Blackbox session id.
+ */
+export const getBlackboxSessionId = ( state ) => state.login.blackboxSessionId ?? null;
+
+/**
  * Retrieve the type of notification sent for the two factor authentication process.
  * Returns null if there is no such information yet, or user does not have 2FA enabled.
  * @param  {Object}   state  Global state tree
