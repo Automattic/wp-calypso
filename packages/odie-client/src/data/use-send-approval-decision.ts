@@ -35,7 +35,8 @@ type ApprovalDecisionResponse = {
 	 * The bot's next message: the server resumes the paused chat turn with the decision as the
 	 * tool call's result, and this is what the bot said next (possibly another approval request).
 	 * When the turn could not be resumed the server stores and returns a plain outcome message
-	 * instead, so this is null only when the proposal was not found in the chat.
+	 * instead, so this is null only when even that failed. (A token that is not pending in this
+	 * chat is a 404, checked before anything executes — not a null continuation.)
 	 */
 	continuation?: {
 		message_id?: number;
@@ -47,7 +48,8 @@ type ApprovalDecisionResponse = {
 /**
  * Approve or decline a pending action-approval proposal.
  *
- * The chat reference (chat_id + bot_id) rides on the request so the server resumes the paused
+ * The route is chat-scoped: the path names the bot, the chat, and the token, and the server
+ * verifies they belong together before anything executes. On success it resumes the paused
  * turn and returns the bot's continuation, already stored in the chat. The LIVE view deliberately
  * ignores refetches of an unchanged interaction (it protects optimistic local messages — see
  * useGetCombinedChat), so the continuation is appended locally via addMessage, the same way live
@@ -69,9 +71,8 @@ export const useSendApprovalDecision = () => {
 			return withTimeout(
 				wpcomRequest< ApprovalDecisionResponse >( {
 					method: 'POST',
-					path: `/ai/action-approvals/${ token }/${ decision }`,
+					path: `/ai/chat/${ botSlug }/${ chat.odieId }/approval/${ token }/${ decision }`,
 					apiNamespace: 'wpcom/v2',
-					body: { chat_id: chat.odieId, bot_id: botSlug },
 				} ),
 				DECISION_TIMEOUT_MS
 			);
