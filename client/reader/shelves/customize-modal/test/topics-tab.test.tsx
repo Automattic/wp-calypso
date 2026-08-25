@@ -50,4 +50,14 @@ describe( 'TopicsTab', () => {
 
 		expect( props.onLanguagesChange ).toHaveBeenCalledWith( [ 'en' ] );
 	} );
+
+	it( 'renders tag and language count errors', () => {
+		setup( {
+			tagsError: 'You can add up to 8 tags.',
+			languagesError: 'You can add up to 5 languages.',
+		} );
+
+		expect( screen.getByText( 'You can add up to 8 tags.' ) ).toBeVisible();
+		expect( screen.getByText( 'You can add up to 5 languages.' ) ).toBeVisible();
+	} );
 } );

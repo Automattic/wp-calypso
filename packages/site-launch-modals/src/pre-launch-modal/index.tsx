@@ -32,10 +32,13 @@ export default function PreLaunchModal( {
 	onLaunch,
 	onClose,
 }: PreLaunchModalProps ) {
+	const launchingTitle = __( 'Launching site…' );
+	const readyTitle = __( 'Launching makes your site public' );
+
 	return (
 		<Modal
 			className="site-launch-pre-launch-modal"
-			title={ isLaunching ? __( 'Launching site…' ) : __( 'Launching makes your site public' ) }
+			title={ isLaunching ? launchingTitle : readyTitle }
 			size="medium"
 			onRequestClose={ onClose }
 		>

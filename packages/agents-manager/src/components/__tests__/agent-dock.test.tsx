@@ -414,8 +414,12 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Close chat' ) );
 
 		// Undocked close collapses the floating panel and tracks the back button.
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'dock_back_button_click' );
-		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalledWith( 'sidebar_close_click' );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_dock_back_button_click'
+		);
+		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_sidebar_close_click'
+		);
 		expect( mockCloseSidebar ).not.toHaveBeenCalled();
 		expect( mockSetIsOpen ).toHaveBeenCalledWith( false, true );
 	} );
@@ -430,7 +434,9 @@ describe( 'AgentDock', () => {
 		// Docked close goes through closeSidebar, which fires sidebar_close_click
 		// via onCloseSidebar — so dock_back_button_click must not fire here.
 		expect( mockCloseSidebar ).toHaveBeenCalledTimes( 1 );
-		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalledWith( 'dock_back_button_click' );
+		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_dock_back_button_click'
+		);
 	} );
 
 	it( 'opens regular agents and saves shared Agents Manager state', () => {
@@ -477,14 +483,17 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'New chat' ) );
 
 		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'ai_chat_more_options_click',
+			'calypso_agents_manager_ai_chat_more_options_click',
 			{
 				menu_item: 'reset_chat',
 			}
 		);
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
-			type: 'reset_chat',
-		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_ai_chat_more_options_click',
+			{
+				type: 'reset_chat',
+			}
+		);
 	} );
 
 	it( 'offers the guidelines and settings items when wp-admin injects the site', () => {
@@ -528,7 +537,7 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'View history' ) );
 
 		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'ai_chat_more_options_click',
+			'calypso_agents_manager_ai_chat_more_options_click',
 			{
 				menu_item: 'view_history',
 			}
@@ -559,7 +568,7 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Knowledge and memory' ) );
 
 		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'ai_chat_more_options_click',
+			'calypso_agents_manager_ai_chat_more_options_click',
 			{
 				menu_item: 'knowledge_memory',
 			}
@@ -585,7 +594,7 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'AI Agent settings' ) );
 
 		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'ai_chat_more_options_click',
+			'calypso_agents_manager_ai_chat_more_options_click',
 			{
 				menu_item: 'ai_agent_settings',
 			}
@@ -657,7 +666,7 @@ describe( 'AgentDock', () => {
 			fireEvent.click( screen.getByRole( 'button', { name: label } ) );
 
 			expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-				'ai_chat_more_options_click',
+				'calypso_agents_manager_ai_chat_more_options_click',
 				{
 					menu_item: type,
 				}
