@@ -13,6 +13,11 @@ import {
 	PREVIEW_LAYOUTS,
 } from '../build-visualization';
 
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useReducedMotion: () => globalThis.matchMedia( '(prefers-reduced-motion: reduce)' ).matches,
+} ) );
+
 const CYCLE_MS = LAYOUT_HOLD_MS + LAYOUT_MORPH_MS;
 
 function mockMatchMedia( matches: boolean ) {
@@ -96,6 +101,21 @@ describe( 'BuildVisualization', () => {
 
 		expect( getFrame( container ) ).toHaveAttribute( 'data-layout', PREVIEW_LAYOUTS[ 0 ].id );
 		expect( getFrame( container ) ).toHaveAttribute( 'data-morphing', 'false' );
+	} );
+
+	it( 'stops cycling when the reduced-motion preference changes', () => {
+		mockMatchMedia( false );
+		const { container, rerender } = render( <BuildVisualization /> );
+		const frame = getFrame( container );
+
+		act( () => jest.advanceTimersByTime( CYCLE_MS ) );
+		expect( frame ).toHaveAttribute( 'data-layout', PREVIEW_LAYOUTS[ 1 ].id );
+
+		mockMatchMedia( true );
+		rerender( <BuildVisualization /> );
+		act( () => jest.advanceTimersByTime( CYCLE_MS * 2 ) );
+
+		expect( frame ).toHaveAttribute( 'data-layout', PREVIEW_LAYOUTS[ 1 ].id );
 	} );
 
 	it( 'tilts toward the pointer and settles back when it leaves', () => {
@@ -218,6 +238,6 @@ describe( 'BuildVisualization', () => {
 		fireEvent.pointerMove( frame, { clientX: 200, clientY: 100, pointerType: 'mouse' } );
 		act( () => jest.advanceTimersByTime( 16 ) );
 
-		expect( frame.style.getPropertyValue( '--site-generation-tilt-x' ) ).toBe( '' );
+		expect( frame.style.getPropertyValue( '--site-generation-tilt-x' ) ).toBe( '0deg' );
 	} );
 } );

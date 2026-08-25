@@ -1,4 +1,5 @@
 import { Icon } from '@wordpress/components';
+import { useReducedMotion } from '@wordpress/compose';
 import { wordpress } from '@wordpress/icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
@@ -25,20 +26,17 @@ export const MAX_PARALLAX_PX = 8;
 // Keep in sync with the release transition duration in style.scss.
 export const PRESS_RELEASE_MS = 550;
 
-function prefersReducedMotion() {
-	return (
-		typeof window.matchMedia === 'function' &&
-		window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches
-	);
-}
-
 function clampUnit( value: number ) {
 	return Math.max( -1, Math.min( 1, value ) );
 }
 
 // The hold restarts whenever the pointer leaves or a layout is advanced by
 // hand, so an automatic morph never lands right after either.
-function usePreviewLayoutCycle( layoutCount: number, isPaused: boolean ) {
+function usePreviewLayoutCycle(
+	layoutCount: number,
+	isPaused: boolean,
+	shouldReduceMotion: boolean
+) {
 	const [ index, setIndex ] = useState( 0 );
 	const [ isMorphing, setIsMorphing ] = useState( false );
 	const [ holdKey, setHoldKey ] = useState( 0 );
@@ -57,14 +55,14 @@ function usePreviewLayoutCycle( layoutCount: number, isPaused: boolean ) {
 	useEffect( () => () => window.clearTimeout( settleTimeoutRef.current ), [] );
 
 	useEffect( () => {
-		if ( layoutCount < 2 || isPaused || prefersReducedMotion() ) {
+		if ( layoutCount < 2 || isPaused || shouldReduceMotion ) {
 			return;
 		}
 
 		const interval = window.setInterval( advance, LAYOUT_HOLD_MS + LAYOUT_MORPH_MS );
 
 		return () => window.clearInterval( interval );
-	}, [ advance, holdKey, isPaused, layoutCount ] );
+	}, [ advance, holdKey, isPaused, layoutCount, shouldReduceMotion ] );
 
 	const advanceNow = () => {
 		advance();
@@ -80,11 +78,10 @@ function usePreviewLayoutCycle( layoutCount: number, isPaused: boolean ) {
 // displacement of the nearest layer and deeper ones take a fraction of it.
 // The values go straight to CSS custom properties on the frame, once per
 // animation frame, so pointer movement never re-renders the component.
-function usePointerTilt() {
+function usePointerTilt( shouldReduceMotion: boolean ) {
 	const frameRef = useRef< HTMLDivElement >( null );
 	const animationFrameRef = useRef< number | undefined >( undefined );
 	const pointerRef = useRef< { x: number; y: number } | null >( null );
-	const [ isEnabled ] = useState( () => ! prefersReducedMotion() );
 
 	const applyTilt = useCallback( ( x: number, y: number ) => {
 		const frame = frameRef.current;
@@ -97,6 +94,13 @@ function usePointerTilt() {
 		frame.style.setProperty( '--site-generation-parallax-y', `${ -y * MAX_PARALLAX_PX }px` );
 	}, [] );
 
+	useEffect( () => {
+		if ( shouldReduceMotion ) {
+			pointerRef.current = null;
+			applyTilt( 0, 0 );
+		}
+	}, [ applyTilt, shouldReduceMotion ] );
+
 	useEffect(
 		() => () => {
 			if ( animationFrameRef.current !== undefined ) {
@@ -107,7 +111,7 @@ function usePointerTilt() {
 	);
 
 	const onPointerMove = ( event: ReactPointerEvent< HTMLDivElement > ) => {
-		if ( ! isEnabled || event.pointerType === 'touch' ) {
+		if ( shouldReduceMotion || event.pointerType === 'touch' ) {
 			return;
 		}
 		pointerRef.current = { x: event.clientX, y: event.clientY };
@@ -130,7 +134,7 @@ function usePointerTilt() {
 	};
 
 	const onPointerLeave = () => {
-		if ( ! isEnabled ) {
+		if ( shouldReduceMotion ) {
 			return;
 		}
 		pointerRef.current = null;
@@ -143,15 +147,21 @@ function usePointerTilt() {
 // Pressing squeezes the frame for as long as the pointer is held; releasing
 // lets it spring back. The two phases carry different transition curves in
 // style.scss.
-function usePressBounce() {
+function usePressBounce( shouldReduceMotion: boolean ) {
 	const [ press, setPress ] = useState< 'down' | 'up' | null >( null );
 	const isDownRef = useRef( false );
 	const releaseTimeoutRef = useRef< number | undefined >( undefined );
 
 	useEffect( () => () => window.clearTimeout( releaseTimeoutRef.current ), [] );
+	useEffect( () => {
+		if ( shouldReduceMotion ) {
+			isDownRef.current = false;
+			setPress( null );
+		}
+	}, [ shouldReduceMotion ] );
 
 	const pressDown = () => {
-		if ( prefersReducedMotion() ) {
+		if ( shouldReduceMotion ) {
 			return;
 		}
 		window.clearTimeout( releaseTimeoutRef.current );
@@ -173,9 +183,14 @@ function usePressBounce() {
 
 export function BuildVisualization( { onTap }: { onTap?: () => void } ) {
 	const [ isHovered, setIsHovered ] = useState( false );
-	const { index, isMorphing, advance } = usePreviewLayoutCycle( PREVIEW_LAYOUTS.length, isHovered );
-	const { frameRef, onPointerMove, onPointerLeave } = usePointerTilt();
-	const { press, pressDown, release } = usePressBounce();
+	const shouldReduceMotion = useReducedMotion();
+	const { index, isMorphing, advance } = usePreviewLayoutCycle(
+		PREVIEW_LAYOUTS.length,
+		isHovered,
+		shouldReduceMotion
+	);
+	const { frameRef, onPointerMove, onPointerLeave } = usePointerTilt( shouldReduceMotion );
+	const { press, pressDown, release } = usePressBounce( shouldReduceMotion );
 	const layout = PREVIEW_LAYOUTS[ index ];
 
 	return (
