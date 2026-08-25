@@ -121,11 +121,9 @@ export function clearWowFunnelSite(): void {
 export function startWowFunnelSite( {
 	funnelSlug,
 	siteTitle,
-	username,
 }: {
 	funnelSlug: string;
 	siteTitle?: string;
-	username: string;
 } ): Promise< RememberedWowFunnelSite > {
 	const remembered = getRememberedWowFunnelSite( funnelSlug );
 	if ( remembered ) {
@@ -147,7 +145,9 @@ export function startWowFunnelSite( {
 			siteTitle ?? '',
 			'#113AF5', // accent — backend requires a value.
 			false, // useThemeHeadstart.
-			username,
+			// username: only ever a last-resort blog_name seed, and the server generates the
+			// funnel's arbitrary subdomain regardless — see /sites/new's wow-funnel block.
+			'',
 			null, // partnerBundle.
 			undefined, // storedSiteUrl — empty so the server generates an arbitrary subdomain.
 			undefined, // domainItem.

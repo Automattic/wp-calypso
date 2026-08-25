@@ -227,7 +227,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			const funnelSite = await startWowFunnelSite( {
 				funnelSlug: wowFunnelSlug,
 				siteTitle: selectedSiteTitle,
-				username,
 			} );
 
 			const funnelCartItems = [

@@ -26,11 +26,7 @@ import {
 	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
-import {
-	getCurrentUser,
-	getCurrentUserName,
-	isUserLoggedIn,
-} from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { State } from '../../../../../../packages/data-stores/src/plans/reducer';
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
@@ -577,7 +573,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const user = useSelector( getCurrentUser );
-		const username = useSelector( getCurrentUserName );
 
 		/**
 		 * Clears every state we're persisting during the flow
@@ -627,7 +622,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		// option it writes. For anyone else this creates the site the flow would create anyway,
 		// with the funnel option ignored.
 		useEffect( () => {
-			if ( ! currentStepSlug || ! isLoggedIn || ! username ) {
+			if ( ! currentStepSlug || ! isLoggedIn ) {
 				return;
 			}
 			const queryParams = new URLSearchParams( window.location.search );
@@ -635,13 +630,10 @@ const onboarding: FlowV2< typeof initialize > = {
 			if ( ! funnelSlug || getRememberedWowFunnelSite( funnelSlug ) ) {
 				return;
 			}
-			void startWowFunnelSite( {
-				funnelSlug,
-				username,
-			} ).catch( () => {
+			void startWowFunnelSite( { funnelSlug } ).catch( () => {
 				// Errors are logged in the util; the create-site step retries as a fallback.
 			} );
-		}, [ currentStepSlug, isLoggedIn, username ] );
+		}, [ currentStepSlug, isLoggedIn ] );
 	},
 };
 
