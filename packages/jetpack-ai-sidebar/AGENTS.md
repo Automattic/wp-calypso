@@ -41,6 +41,7 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 | `jetpack_ai__show_component` | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                       |
 | `big_sky__show_component`    | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types |
 | `wpcom/update-block-content` | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                |
+| `jetpack-ai/open-image-studio` | `handleOpenImageStudio`   | `OpenImageStudioButton` | Offers an "Edit image" button that opens Image Studio for the selected image block; advertised only while Image Studio is loaded |
 
 ### Show-component pattern
 

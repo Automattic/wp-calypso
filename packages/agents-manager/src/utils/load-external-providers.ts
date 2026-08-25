@@ -95,6 +95,7 @@ type ChatComponentType =
 	| 'color-picker'
 	| 'chat-suggestions'
 	| 'open-help-center-button'
+	| 'open-image-studio-button'
 	| 'title-picker'
 	| 'seo-title-picker';
 

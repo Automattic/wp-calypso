@@ -13,6 +13,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import {
 	getResponseRenderedTrackingProperties,
+	trackOpenImageStudioButtonClick,
 	trackSplitScreenGuideClick,
 	trackSplitScreenGuideRendered,
 } from './tracking';
@@ -184,6 +185,27 @@ describe( 'Jetpack AI sidebar tracking', () => {
 				screen: 'post',
 				sessionid: 'test-session-id',
 				session_type: 'paid-user-session',
+				surface: 'block_editor',
+			}
+		);
+		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ], {
+			allowPostType: true,
+		} );
+	} );
+
+	it( 'tracks the open-image-studio button click without block data', () => {
+		trackOpenImageStudioButtonClick();
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_open_image_studio_button_click',
+			{
+				ai_session_id: 'test-session-id',
+				blog_id: 12345,
+				component_type: 'open-image-studio-button',
+				is_test: false,
+				is_a11n: false,
+				post_type: 'post',
+				sessionid: 'test-session-id',
 				surface: 'block_editor',
 			}
 		);

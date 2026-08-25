@@ -23,6 +23,7 @@ import ExcerptPicker from './components/excerpt-picker';
 import './components/feedback-list.scss';
 import ImageAltTextPicker from './components/image-alt-text-picker';
 import './components/image-alt-text-picker.scss';
+import OpenImageStudioButton from './components/open-image-studio-button';
 import PostFeedback from './components/post-feedback';
 import Proofread from './components/proofread';
 import './components/split-screen-guide.scss';
@@ -545,6 +546,9 @@ const UPDATE_BLOCK_CONTENT_AGENT_TOOL_ID = 'wpcom__update_block_content';
 const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
 const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
 const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_TOOL_ID ];
+const OPEN_IMAGE_STUDIO_TOOL_ID = 'jetpack_ai__open_image_studio';
+const OPEN_IMAGE_STUDIO_ABILITY_NAME = 'jetpack-ai/open-image-studio';
+const OPEN_IMAGE_STUDIO_BUTTON_TYPE = 'open-image-studio-button';
 
 /**
  * Client-side ability definition for `jetpack-ai/show-component`.
@@ -573,6 +577,37 @@ const LEGACY_SHOW_COMPONENT_ABILITY: any = {
 	...SHOW_COMPONENT_ABILITY,
 	id: LEGACY_SHOW_COMPONENT_TOOL_ID,
 	name: LEGACY_SHOW_COMPONENT_ABILITY_NAME,
+};
+
+/**
+ * Client-side ability definition for `jetpack-ai/open-image-studio`.
+ *
+ * The agent cannot edit image files itself. When the user asks to change what
+ * is in the selected image, the orchestrator calls this ability and the chat
+ * renders an "Edit image" button that opens Image Studio for that block. Same
+ * shape as Big Sky's open-help-center ability. Advertised only while Image
+ * Studio is loaded on the page; the wpcom route settings decide which agents
+ * may call it.
+ */
+const OPEN_IMAGE_STUDIO_ABILITY: any = {
+	id: OPEN_IMAGE_STUDIO_TOOL_ID,
+	name: OPEN_IMAGE_STUDIO_ABILITY_NAME,
+	label: 'Open image editor',
+	category: 'jetpack-ai',
+	description:
+		'Show the user a button that opens the selected image in the image editor (Image Studio) for edits to the image itself — text inside the photo, removing or replacing objects, backgrounds, retouching, cropping, restyling. Use when an image block is selected. Does not open the editor automatically.',
+	input_schema: {
+		type: 'object',
+		properties: {
+			summary: {
+				type: 'string',
+				description:
+					"A short, friendly message in the agent's own voice inviting the user to click the button to open the image editor. Do NOT say that the editor is opening, has opened, or is being opened automatically.",
+			},
+		},
+		required: [ 'summary' ],
+		additionalProperties: false,
+	},
 };
 
 function hasShowComponentType( type: unknown ): type is string {
@@ -660,6 +695,12 @@ function handleShowComponent( input: any ): any {
 
 	data.followUpTasks = input?.followUpTasks ?? false;
 
+	// Optional text AM renders above the component (it reads `data.summary`).
+	// wpcom pickers send none; client abilities that offer a button do.
+	if ( typeof input?.summary === 'string' && input.summary.trim() ) {
+		data.summary = input.summary.trim();
+	}
+
 	// Echo the tool call id at the top level: the server-stored copy of this
 	// message carries it, and AM dedupes show-component messages by
 	// `tool_call_id|type|summary` — without it the two copies of the same tool
@@ -688,6 +729,44 @@ async function handleLegacyShowComponent( input: any ): Promise< any > {
 	}
 
 	return handleShowComponent( input );
+}
+
+/**
+ * Handle `jetpack-ai/open-image-studio`: offer an "Edit image" button for the
+ * selected image block. The envelope is built by `handleShowComponent`, so the
+ * tool call id echo and data shape live in one place; unlike pickers, the
+ * result goes back to the agent so the conversation can continue.
+ * @param {any} input - Tool call arguments: `{ summary, toolCallId }`.
+ * @returns {Object} Result for the agent, plus the `agentMessage` envelope when an image block is selected.
+ */
+function handleOpenImageStudio( input: any ): any {
+	const block = getSelectedOrRememberedBlock();
+	if ( block?.name !== 'core/image' || ! block?.attributes?.id ) {
+		return {
+			result: {
+				success: false,
+				message: 'No image block is selected. Ask the user to select the image they want to edit.',
+			},
+			returnToAgent: true,
+		};
+	}
+
+	const summary =
+		typeof input?.summary === 'string' && input.summary.trim()
+			? input.summary.trim()
+			: __( 'Click the button below to open the image editor.', __i18n_text_domain__ );
+	const { agentMessage } = handleShowComponent( {
+		type: OPEN_IMAGE_STUDIO_BUTTON_TYPE,
+		props: { clientId: block.clientId },
+		summary,
+		toolCallId: input?.toolCallId,
+	} );
+
+	return {
+		result: { success: true, message: summary },
+		returnToAgent: true,
+		agentMessage,
+	};
 }
 
 /**
@@ -778,6 +857,10 @@ function isShowComponentTool( toolId: string ): boolean {
 
 function isLegacyShowComponentTool( toolId: string ): boolean {
 	return toolId === LEGACY_SHOW_COMPONENT_TOOL_ID || toolId === LEGACY_SHOW_COMPONENT_ABILITY_NAME;
+}
+
+function isOpenImageStudioTool( toolId: string ): boolean {
+	return toolId === OPEN_IMAGE_STUDIO_TOOL_ID || toolId === OPEN_IMAGE_STUDIO_ABILITY_NAME;
 }
 
 function createUpdateBlockContentAgentMessage(
@@ -873,8 +956,9 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 export const toolProvider = {
 	/**
 	 * Client-side abilities this provider handles: `wpcom/update-block-content`
-	 * (block edits + summary) and Jetpack show-component tools (interactive
-	 * pickers, registered here so self-hosted Jetpack sees the tool_id).
+	 * (block edits + summary), Jetpack show-component tools (interactive
+	 * pickers, registered here so self-hosted Jetpack sees the tool_id), and
+	 * `jetpack-ai/open-image-studio` while Image Studio is loaded.
 	 * @returns {Promise<any[]>} Array of ability descriptors.
 	 */
 	async getAbilities(): Promise< any[] > {
@@ -897,6 +981,7 @@ export const toolProvider = {
 		for ( const toolId of SHOW_COMPONENT_TOOL_IDS ) {
 			abilities = filterAbility( abilities, toolId );
 		}
+		abilities = filterAbility( abilities, OPEN_IMAGE_STUDIO_TOOL_ID );
 		const jetpackAbilities = [
 			...( isBlockTransformationsEnabled()
 				? [
@@ -914,6 +999,16 @@ export const toolProvider = {
 				...LEGACY_SHOW_COMPONENT_ABILITY,
 				callback: handleLegacyShowComponent,
 			},
+			// AM calls getAbilities() fresh every turn, so this follows whether
+			// the Image Studio bundle is on the page.
+			...( isImageStudioAvailable()
+				? [
+						{
+							...OPEN_IMAGE_STUDIO_ABILITY,
+							callback: handleOpenImageStudio,
+						},
+				  ]
+				: [] ),
 		];
 		abilities.unshift( ...jetpackAbilities );
 		return abilities;
@@ -944,6 +1039,10 @@ export const toolProvider = {
 
 		if ( isShowComponentTool( name ) ) {
 			return { result: handleShowComponent( args ), returnToAgent: false };
+		}
+
+		if ( isOpenImageStudioTool( name ) ) {
+			return handleOpenImageStudio( args );
 		}
 
 		const executeAbility = getAbilitiesExecuteAbility();
@@ -1073,6 +1172,9 @@ export function getChatComponent( type: string ): ComponentType | null {
 	}
 	if ( type === 'image-alt-text-picker' ) {
 		return ImageAltTextPicker as ComponentType;
+	}
+	if ( type === OPEN_IMAGE_STUDIO_BUTTON_TYPE ) {
+		return OpenImageStudioButton as ComponentType;
 	}
 	if ( type === 'ai-editorial-review' ) {
 		return AiEditorialReview as ComponentType;

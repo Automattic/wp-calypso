@@ -439,6 +439,15 @@ describe( 'convertToolMessagesToComponents', () => {
 			},
 			expected: 'Updated the color palette.',
 		},
+		{
+			name: 'open-image-studio structured result',
+			toolId: 'jetpack_ai__open_image_studio',
+			data: {
+				result: { success: true, message: 'Click the button below to open the image editor.' },
+				returnToAgent: true,
+			},
+			expected: 'Click the button below to open the image editor.',
+		},
 	] )( 'renders $name as plain text', ( { toolId, data, expected } ) => {
 		const result = convertToolMessagesToComponents( {
 			messages: [ createToolMessage( toolId, data ) ],

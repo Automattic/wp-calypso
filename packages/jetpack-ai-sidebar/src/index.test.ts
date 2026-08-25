@@ -13,12 +13,17 @@ import React from 'react';
 import AiEditorialReview from './components/ai-editorial-review';
 import ExcerptPicker from './components/excerpt-picker';
 import ImageAltTextPicker from './components/image-alt-text-picker';
+import OpenImageStudioButton from './components/open-image-studio-button';
 import PostFeedback from './components/post-feedback';
 import Proofread from './components/proofread';
 import SeoDescriptionPicker from './components/seo-description-picker';
 import SeoTitlePicker from './components/seo-title-picker';
 import TitlePicker from './components/title-picker';
-import { clearActiveBlockFocus, undoBlockEdit } from './utils/block-actions';
+import {
+	clearActiveBlockFocus,
+	clearRememberedSelectedBlock,
+	undoBlockEdit,
+} from './utils/block-actions';
 import { SUGGESTION_ACTION_COMPLETE_EVENT } from './utils/suggestion-events';
 import {
 	applyReviewEdit,
@@ -65,6 +70,10 @@ const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
 const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
 const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
+const OPEN_IMAGE_STUDIO_TOOL_ID = 'jetpack_ai__open_image_studio';
+const OPEN_IMAGE_STUDIO_ABILITY_NAME = 'jetpack-ai/open-image-studio';
+const NO_IMAGE_BLOCK_MESSAGE =
+	'No image block is selected. Ask the user to select the image they want to edit.';
 
 function appendRootBlockListLayout( doc: Document = document ): HTMLElement {
 	const layout = doc.createElement( 'div' );
@@ -498,6 +507,10 @@ describe( 'getChatComponent', () => {
 
 	it( 'returns ExcerptPicker for type "excerpt-picker"', () => {
 		expect( getChatComponent( 'excerpt-picker' ) ).toBe( ExcerptPicker );
+	} );
+
+	it( 'returns OpenImageStudioButton for type "open-image-studio-button"', () => {
+		expect( getChatComponent( 'open-image-studio-button' ) ).toBe( OpenImageStudioButton );
 	} );
 
 	it( 'returns null for an unknown type', () => {
@@ -3020,6 +3033,7 @@ describe( 'toolProvider', () => {
 
 	afterEach( () => {
 		jest.useRealTimers();
+		mockImageStudioActions = null;
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
 	} );
@@ -3509,6 +3523,150 @@ describe( 'toolProvider', () => {
 			expect( names ).toContain( SHOW_COMPONENT_ABILITY_NAME );
 			expect( names ).toContain( LEGACY_SHOW_COMPONENT_ABILITY_NAME );
 		} );
+
+		it( 'omits open-image-studio when Image Studio is not loaded', async () => {
+			mockImageStudioActions = null;
+
+			const names = ( await toolProvider.getAbilities() ).map( ( a: any ) => a.name );
+
+			expect( names ).not.toContain( OPEN_IMAGE_STUDIO_ABILITY_NAME );
+		} );
+
+		it( 'advertises open-image-studio with a callback when Image Studio is loaded', async () => {
+			mockImageStudioActions = { openImageStudio: jest.fn() };
+
+			const abilities = await toolProvider.getAbilities();
+			const ability = abilities.find( ( a: any ) => a.name === OPEN_IMAGE_STUDIO_ABILITY_NAME );
+
+			expect( ability ).toMatchObject( {
+				id: OPEN_IMAGE_STUDIO_TOOL_ID,
+				category: 'jetpack-ai',
+				label: 'Open image editor',
+			} );
+			expect( ability.input_schema ).toMatchObject( {
+				required: [ 'summary' ],
+				additionalProperties: false,
+			} );
+			expect( typeof ability.callback ).toBe( 'function' );
+			expect( abilities.map( ( a: any ) => a.name ) ).not.toContain( OPEN_IMAGE_STUDIO_TOOL_ID );
+		} );
+
+		it( 'drops a registry copy of open-image-studio so it is advertised once', async () => {
+			mockImageStudioActions = { openImageStudio: jest.fn() };
+			( window as any ).wp.abilities = {
+				getAbilities: jest
+					.fn()
+					.mockResolvedValue( [ { name: OPEN_IMAGE_STUDIO_ABILITY_NAME }, { name: 'other' } ] ),
+			};
+
+			const names = ( await toolProvider.getAbilities() ).map( ( a: any ) => a.name );
+
+			expect(
+				names.filter( ( name: string ) => name === OPEN_IMAGE_STUDIO_ABILITY_NAME )
+			).toHaveLength( 1 );
+			expect( names ).toContain( 'other' );
+		} );
+	} );
+
+	describe( 'executeAbility for open-image-studio', () => {
+		const imageBlock = { clientId: 'img-1', name: 'core/image', attributes: { id: 42 } };
+
+		beforeEach( () => {
+			mockImageStudioActions = { openImageStudio: jest.fn() };
+			mockSelectedBlock = null;
+			mockBlocksByClientId = {};
+			clearRememberedSelectedBlock();
+			installPostTypeMock( 'post' );
+		} );
+
+		it( 'returns a show-component envelope for the selected image block', async () => {
+			mockSelectedBlock = imageBlock;
+
+			const response = await toolProvider.executeAbility( OPEN_IMAGE_STUDIO_TOOL_ID, {
+				summary: 'Click the button to edit this image.',
+				toolCallId: 'call_open_1',
+			} );
+
+			expect( response.result ).toEqual( {
+				success: true,
+				message: 'Click the button to edit this image.',
+			} );
+			expect( response.returnToAgent ).toBe( true );
+			// Built by handleShowComponent, so it carries the same envelope as the pickers.
+			expect( JSON.parse( response.agentMessage ) ).toEqual( {
+				tool_id: SHOW_COMPONENT_TOOL_ID,
+				tool_call_id: 'call_open_1',
+				data: {
+					type: 'open-image-studio-button',
+					props: { clientId: 'img-1' },
+					summary: 'Click the button to edit this image.',
+					isCurrent: true,
+					hideZoomAction: true,
+					followUpTasks: false,
+				},
+			} );
+		} );
+
+		it( 'runs the same handler from the ability callback and the ability name', async () => {
+			mockSelectedBlock = imageBlock;
+			const abilities = await toolProvider.getAbilities();
+			const ability = abilities.find( ( a: any ) => a.name === OPEN_IMAGE_STUDIO_ABILITY_NAME );
+
+			const fromCallback = await ability.callback( { summary: 'Go ahead.' } );
+			const fromName = await toolProvider.executeAbility( OPEN_IMAGE_STUDIO_ABILITY_NAME, {
+				summary: 'Go ahead.',
+			} );
+
+			expect( fromCallback ).toEqual( fromName );
+			expect( JSON.parse( fromName.agentMessage ).data.props ).toEqual( { clientId: 'img-1' } );
+		} );
+
+		it( 'falls back to a default summary and omits tool_call_id without a tool call id', async () => {
+			mockSelectedBlock = imageBlock;
+
+			const response = await toolProvider.executeAbility( OPEN_IMAGE_STUDIO_TOOL_ID, {
+				summary: '   ',
+			} );
+			const parsed = JSON.parse( response.agentMessage );
+
+			expect( response.result.message ).toBe( 'Click the button below to open the image editor.' );
+			expect( parsed ).not.toHaveProperty( 'tool_call_id' );
+			expect( parsed.data.summary ).toBe( 'Click the button below to open the image editor.' );
+		} );
+
+		it( 'targets the remembered image block after the selection is cleared', async () => {
+			mockSelectedBlock = imageBlock;
+			expect( contextProvider.getClientContext().selectedBlockClientId ).toBe( 'img-1' );
+			mockSelectedBlock = null;
+			mockBlocksByClientId = { 'img-1': imageBlock };
+
+			const response = await toolProvider.executeAbility( OPEN_IMAGE_STUDIO_TOOL_ID, {
+				summary: 'Edit it here.',
+			} );
+
+			expect( JSON.parse( response.agentMessage ).data.props ).toEqual( { clientId: 'img-1' } );
+		} );
+
+		it.each( [
+			[ 'no block is selected', null ],
+			[ 'a text block is selected', { clientId: 'p-1', name: 'core/paragraph', attributes: {} } ],
+			[
+				'the selected image has no attachment',
+				{ clientId: 'img-2', name: 'core/image', attributes: { url: 'https://example.com/a.png' } },
+			],
+		] )( 'tells the agent to ask for an image block when %s', async ( _label, block ) => {
+			mockSelectedBlock = block;
+
+			const response = await toolProvider.executeAbility( OPEN_IMAGE_STUDIO_TOOL_ID, {
+				summary: 'Edit it here.',
+				toolCallId: 'call_open_2',
+			} );
+
+			expect( response ).toEqual( {
+				result: { success: false, message: NO_IMAGE_BLOCK_MESSAGE },
+				returnToAgent: true,
+			} );
+		} );
 	} );
 
 	describe( 'executeAbility for show-component tools', () => {
@@ -3618,6 +3776,24 @@ describe( 'toolProvider', () => {
 
 			const parsed = JSON.parse( result.agentMessage );
 			expect( parsed.tool_call_id ).toBe( 'call_identity_1' );
+		} );
+
+		it( 'carries a non-empty summary into the envelope and drops a blank one', async () => {
+			const withSummary = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'T', explanation: 'a' } ] },
+				summary: '  Pick a title.  ',
+			} ) ) as any;
+			const withBlankSummary = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'T', explanation: 'a' } ] },
+				summary: '   ',
+			} ) ) as any;
+
+			expect( JSON.parse( withSummary.result.agentMessage ).data.summary ).toBe( 'Pick a title.' );
+			expect( JSON.parse( withBlankSummary.result.agentMessage ).data ).not.toHaveProperty(
+				'summary'
+			);
 		} );
 
 		it( 'omits tool_call_id from the envelope when the input has no tool call id', async () => {
