@@ -9,6 +9,7 @@ import { useParams } from '@tanstack/react-router';
 import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { filterSortAndPaginate, View } from '@wordpress/dataviews';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -29,11 +30,15 @@ const DEFAULT_VIEW: View = {
 	page: 1,
 	perPage: 100,
 	sort: { field: 'name', direction: 'asc' },
+	fields: [],
+	mediaField: 'icon',
+	titleField: 'name',
+	descriptionField: 'sites',
 };
 const searchableFields = [
 	{
 		id: 'name',
-		getValue: ( { item }: { item: PluginListRow } ) => item.name,
+		getValue: ( { item }: { item: PluginListRow } ) => decodeEntities( item.name ),
 	},
 	{
 		id: 'slug',
@@ -53,7 +58,7 @@ export default function PluginsList() {
 			enableGlobalSearch: true,
 		} ) );
 	}, [] );
-	const { data: plugins, paginationInfo } = useMemo(
+	const { data: plugins } = useMemo(
 		() =>
 			filterSortAndPaginate(
 				mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
@@ -154,7 +159,6 @@ export default function PluginsList() {
 						searchableFields={ searchableFields }
 						view={ view }
 						onChangeView={ setView }
-						paginationInfo={ paginationInfo }
 					/>
 				) }
 				{ ! sitesPluginsLoading && <PerformanceTrackerStop /> }
@@ -179,7 +183,6 @@ export default function PluginsList() {
 					selectedPluginSlug={ selectedPluginSlug }
 					view={ view }
 					onChangeView={ setView }
-					paginationInfo={ paginationInfo }
 				/>
 
 				<PluginSites selectedPluginSlug={ selectedPluginSlug } />

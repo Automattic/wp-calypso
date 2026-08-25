@@ -24,6 +24,10 @@ const baseView: View = {
 	page: 1,
 	perPage: 100,
 	sort: { field: 'name', direction: 'asc' },
+	fields: [],
+	mediaField: 'icon',
+	titleField: 'name',
+	descriptionField: 'sites',
 };
 
 describe( '<PluginSwitcher> – no-results empty state (DOTMSD-1343)', () => {
@@ -34,7 +38,6 @@ describe( '<PluginSwitcher> – no-results empty state (DOTMSD-1343)', () => {
 				searchableFields={ searchableFields }
 				view={ { ...baseView, search: 'zzznotarealplugin' } }
 				onChangeView={ () => {} }
-				paginationInfo={ { totalItems: 0, totalPages: 0 } }
 			/>
 		);
 
@@ -50,7 +53,6 @@ describe( '<PluginSwitcher> – no-results empty state (DOTMSD-1343)', () => {
 				searchableFields={ searchableFields }
 				view={ baseView }
 				onChangeView={ () => {} }
-				paginationInfo={ { totalItems: 0, totalPages: 0 } }
 			/>
 		);
 

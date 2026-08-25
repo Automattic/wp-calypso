@@ -1,13 +1,12 @@
+import { useNavigate } from '@tanstack/react-router';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { throttle } from '@wordpress/compose';
-import { Field, View } from '@wordpress/dataviews';
-import { decodeEntities } from '@wordpress/html-entities';
+import { DataViews, filterSortAndPaginate, Field, View } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { pluginRoute } from '../../../app/router/plugins';
 import { Card, CardBody } from '../../../components/card';
-import SwitcherContent from '../../../components/switcher/switcher-content';
-import SwitcherItem from '../../../components/switcher/switcher-item';
+import { Text } from '../../../components/text';
 import { PluginListRow } from '../types';
 import { PluginIcon } from './plugin-icon';
 import { PluginUpdatesFilter } from './plugin-updates-filter';
@@ -20,24 +19,86 @@ export const PluginSwitcher = ( {
 	selectedPluginSlug = '',
 	view,
 	onChangeView,
-	paginationInfo,
 }: {
 	pluginsWithIcon: PluginListRow[];
 	searchableFields: Field< PluginListRow >[];
 	selectedPluginSlug?: string;
 	view: View;
 	onChangeView: Dispatch< SetStateAction< View > >;
-	paginationInfo: { totalItems: number; totalPages: number };
 } ) => {
+	const navigate = useNavigate();
 	const scrollRef = useRef< HTMLDivElement >( null );
 	const [ itemsPerPage ] = useState( view.perPage );
 
+	const updatesField = useMemo(
+		() => ( {
+			id: 'hasUpdates',
+			label: __( 'Updates' ),
+			type: 'boolean' as const,
+			elements: [
+				{ value: true, label: __( 'Has updates' ) },
+				{ value: false, label: __( 'No updates' ) },
+			],
+			getValue: ( { item }: { item: PluginListRow } ) => item.sitesWithPluginUpdate.length > 0,
+		} ),
+		[]
+	);
+
+	const fields: Field< PluginListRow >[] = useMemo(
+		() => [
+			...searchableFields.map( ( searchableField ) => ( {
+				...searchableField,
+				enableGlobalSearch: true,
+			} ) ),
+			{
+				id: 'icon',
+				label: __( 'Plugin icon' ),
+				render: ( { item }: { item: PluginListRow } ) => <PluginIcon item={ item } />,
+				enableSorting: false,
+			},
+			{
+				id: 'sites',
+				label: __( 'Sites' ),
+				getValue: ( { item }: { item: PluginListRow } ) => item.sitesCount,
+				render: ( { item }: { item: PluginListRow } ) => {
+					const sitesText = sprintf(
+						// translators: %(siteCount)d is the number of sites the plugin is installed on.
+						_n( '%(siteCount)d site', '%(siteCount)d sites', item.sitesCount ),
+						{ siteCount: item.sitesCount }
+					);
+
+					const updatesText = item.sitesWithPluginUpdate.length
+						? sprintf(
+								// translators: %(updateCount)d is the number of updates available.
+								_n(
+									'%(updateCount)d update available',
+									'%(updateCount)d updates available',
+									item.sitesWithPluginUpdate.length
+								),
+								{ updateCount: item.sitesWithPluginUpdate.length }
+						  )
+						: '';
+
+					return (
+						<Text truncate numberOfLines={ 1 }>
+							{ updatesText ? `${ sitesText }, ${ updatesText }` : sitesText }
+						</Text>
+					);
+				},
+				enableSorting: false,
+			},
+			updatesField,
+		],
+		[ searchableFields, updatesField ]
+	);
+
+	const { data, paginationInfo } = useMemo(
+		() => filterSortAndPaginate( pluginsWithIcon, view, fields ),
+		[ pluginsWithIcon, view, fields ]
+	);
+
 	// Load next page when scrolling near bottom
 	const handleLoadMore = useCallback( () => {
-		if ( ! paginationInfo ) {
-			return;
-		}
-
 		if ( paginationInfo.totalPages > 1 ) {
 			onChangeView( ( currentView ) => ( {
 				...currentView,
@@ -51,7 +112,7 @@ export const PluginSwitcher = ( {
 	useEffect( () => {
 		const menuElement = scrollRef.current;
 
-		if ( ! menuElement || ! paginationInfo ) {
+		if ( ! menuElement ) {
 			return;
 		}
 
@@ -70,76 +131,33 @@ export const PluginSwitcher = ( {
 
 		menuElement.addEventListener( 'scroll', handleScroll );
 		return () => menuElement.removeEventListener( 'scroll', handleScroll );
-	}, [ handleLoadMore, paginationInfo ] );
-
-	const itemClassName = useCallback(
-		( item: PluginListRow ) =>
-			clsx( 'plugin-switcher-item', {
-				'is-selected': selectedPluginSlug === item.slug,
-			} ),
-		[ selectedPluginSlug ]
-	);
-
-	const renderItem = useCallback( ( { item }: { item: PluginListRow } ) => {
-		const sitesText = sprintf(
-			// translators: %(siteCount)d is the number of sites the plugin is installed on.
-			_n( '%(siteCount)d site', '%(siteCount)d sites', item.sitesCount ),
-			{ siteCount: item.sitesCount }
-		);
-
-		const updatesText = item.sitesWithPluginUpdate.length
-			? sprintf(
-					// translators: %(updateCount)d is the number of updates available.
-					_n(
-						'%(updateCount)d update available',
-						'%(updateCount)d updates available',
-						item.sitesWithPluginUpdate.length
-					),
-					{ updateCount: item.sitesWithPluginUpdate.length }
-			  )
-			: '';
-
-		return (
-			<SwitcherItem
-				alignment="start"
-				spacing={ 3 }
-				media={ <PluginIcon item={ item } /> }
-				title={ decodeEntities( item.name ) }
-				description={ updatesText ? `${ sitesText }, ${ updatesText }` : sitesText }
-			/>
-		);
-	}, [] );
-
-	const updatesField = useMemo(
-		() => ( {
-			id: 'hasUpdates',
-			type: 'boolean' as const,
-			elements: [
-				{ value: true, label: __( 'Has updates' ) },
-				{ value: false, label: __( 'No updates' ) },
-			],
-			getValue: ( { item }: { item: PluginListRow } ) => item.sitesWithPluginUpdate.length > 0,
-		} ),
-		[]
-	);
+	}, [ handleLoadMore ] );
 
 	return (
 		<Card className="plugin-switcher-card">
 			<CardBody className="plugin-switcher-card-body" ref={ scrollRef }>
-				<SwitcherContent
-					itemClassName={ itemClassName }
-					searchClassName="plugin-switcher-search"
+				<DataViews< PluginListRow >
+					data={ data }
+					fields={ fields }
 					view={ view }
 					onChangeView={ onChangeView }
-					items={ pluginsWithIcon }
-					resetScroll={ false }
-					getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }
-					renderItem={ renderItem }
-					searchableFields={ searchableFields }
-					noResultsText={ __( 'No plugins found.' ) }
-					onClose={ () => {} }
-					width="auto"
-					filter={
+					paginationInfo={ paginationInfo }
+					defaultLayouts={ { list: {} } }
+					getItemId={ ( item ) => item.slug }
+					selection={ selectedPluginSlug ? [ selectedPluginSlug ] : [] }
+					onChangeSelection={ ( slugs ) => {
+						if ( slugs[ 0 ] ) {
+							navigate( { to: pluginRoute.to, params: { pluginId: slugs[ 0 ] } } );
+						}
+					} }
+					empty={
+						<Text variant="muted" className="plugin-switcher-no-results">
+							{ __( 'No plugins found.' ) }
+						</Text>
+					}
+				>
+					<HStack className="plugin-switcher-header" justify="flex-start" spacing={ 1 }>
+						<DataViews.Search label={ __( 'Search' ) } />
 						<PluginUpdatesFilter
 							siteCount={
 								pluginsWithIcon.filter( ( plugin ) => plugin.sitesWithPluginUpdate.length > 0 )
@@ -149,9 +167,9 @@ export const PluginSwitcher = ( {
 							view={ view }
 							onChangeView={ onChangeView }
 						/>
-					}
-					filterField={ updatesField }
-				/>
+					</HStack>
+					<DataViews.Layout />
+				</DataViews>
 			</CardBody>
 		</Card>
 	);

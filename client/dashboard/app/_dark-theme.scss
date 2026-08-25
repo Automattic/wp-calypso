@@ -391,36 +391,6 @@
 		border-top-color: var( --dashboard-surface__border-color );
 	}
 
-	.plugin-switcher-item {
-		border-top-color: var( --dashboard-surface__border-color );
-
-		&:focus-visible:not( :disabled ) {
-			box-shadow: inset 0 0 0 2px var( --wp-admin-theme-color );
-			outline: none;
-		}
-
-		&:hover {
-			background-color: color-mix(
-				in srgb,
-				var( --dashboard-surface__background-color ) 82%,
-				var( --wp-admin-theme-color )
-			);
-		}
-
-		&.is-selected {
-			background: var( --dashboard-item-selected__background-color );
-			border-top-color: var( --dashboard-item-selected__border-color );
-
-			&:hover {
-				background: var( --dashboard-item-selected-hover__background-color );
-			}
-		}
-
-		&.is-selected + .plugin-switcher-item {
-			border-top-color: var( --dashboard-item-selected__border-color );
-		}
-	}
-
 	.plugin-icon-wrapper.is-fallback {
 		background: var( --wp-components-color-gray-200 );
 		border-color: var( --wp-components-color-gray-300 );

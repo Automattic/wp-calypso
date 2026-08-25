@@ -1,13 +1,16 @@
 @import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/variables';
 @import './variables.scss';
 
 .plugin-switcher-card {
 	overflow-y: hidden;
 }
 
-.plugin-switcher-card-body {
+// The shared DataViews override neutralizes CardBody padding and hides overflow;
+// here the body is the scroll container the list pages into as it grows.
+.components-card__body.plugin-switcher-card-body {
 	max-height: $card-height;
-	padding: 8px 0 0;
+	padding: $grid-unit-10 0 0;
 	overflow-y: auto;
 
 	@media ( max-width: $break-medium ) {
@@ -15,50 +18,15 @@
 	}
 }
 
-.plugin-switcher-search {
-	flex: 1 1 auto;
-	padding: calc(4px * 4) calc(4px * 1) calc(4px * 4) calc(4px * 6);
-	width: fit-content;
+.plugin-switcher-header {
+	padding: $grid-unit-20 $grid-unit-05 $grid-unit-20 $grid-unit-30;
+
+	.dataviews-search {
+		flex: 1 1 auto;
+	}
 }
 
-// Align the empty-state message with the search box and the plugin rows.
-.plugin-switcher-card-body .switcher-content__no-results {
-	padding: calc(4px * 4) calc(4px * 6);
-}
-
-.plugin-switcher-item {
-	border-top: 1px solid #f0f0f0;
-	border-radius: 0;
-	padding: calc(4px * 4) calc(4px * 6);
-
-	&.is-selected {
-		background: rgba(var(--wp-admin-theme-color--rgb), 0.04);
-		border-top: 1px solid rgba(var(--wp-admin-theme-color--rgb), 0.12);
-
-		&:hover {
-			background: rgba(var(--wp-admin-theme-color--rgb), 0.08);
-		}
-
-		.switcher-item__description {
-			color: var(--wp-admin-theme-color);
-		}
-	}
-
-	&.is-selected + & {
-		border-top: 1px solid rgba(var(--wp-admin-theme-color--rgb), 0.12);
-	}
-
-	&:hover {
-		background-color: #f8f8f8;
-
-		.switcher-item__description {
-			color: var(--wp-admin-theme-color);
-		}
-	}
-
-	&:focus:not(:disabled),
-	&:focus-visible:not(:disabled) {
-		box-shadow: none;
-		outline: none;
-	}
+.plugin-switcher-no-results {
+	display: block;
+	padding: $grid-unit-20 $grid-unit-30;
 }
