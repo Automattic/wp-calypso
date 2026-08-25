@@ -13,6 +13,7 @@ import {
 } from '../../app/router/sites';
 import MenuDivider from '../../components/menu-divider';
 import ResponsiveMenu from '../../components/responsive-menu';
+import { wpcomLink } from '../../utils/link';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
@@ -34,11 +35,29 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 	}
 
 	if ( site.options?.is_difm_lite_in_progress && ! isSupportSession() ) {
+		const shouldShowContentCollectionLinks =
+			site.options?.difm_lite_site_options?.is_website_content_submitted === false;
+
 		return (
 			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/site-building-in-progress` }>
 					{ __( 'Site building' ) }
 				</ResponsiveMenu.Item>
+				{ shouldShowContentCollectionLinks && (
+					<ResponsiveMenu.Item href={ wpcomLink( `/posts/${ siteSlug }` ) }>
+						{ __( 'Posts' ) }
+					</ResponsiveMenu.Item>
+				) }
+				{ shouldShowContentCollectionLinks && (
+					<ResponsiveMenu.Item href={ wpcomLink( `/media/${ siteSlug }` ) }>
+						{ __( 'Media' ) }
+					</ResponsiveMenu.Item>
+				) }
+				{ shouldShowContentCollectionLinks && (
+					<ResponsiveMenu.Item href={ wpcomLink( `/pages/${ siteSlug }` ) }>
+						{ __( 'Pages' ) }
+					</ResponsiveMenu.Item>
+				) }
 				{ siteTypeSupports.domains && (
 					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
 						{ __( 'Domains' ) }

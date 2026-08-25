@@ -51,6 +51,7 @@ const baseProps: DocumentProps = {
 	sectionName: 'stepper',
 	path: '/',
 	storeSandboxHelper: false,
+	blackboxHelper: false,
 	target: 'evergreen',
 	user: null,
 	useTranslationChunks: false,

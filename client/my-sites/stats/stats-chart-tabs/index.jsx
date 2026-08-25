@@ -161,7 +161,9 @@ class StatModuleChartTabs extends Component {
 		}
 
 		// Record the chart type change event
-		this.props.recordTracksEvent( CHART_TYPE_EVENTS[ event_from ][ newType ] );
+		this.props.recordTracksEvent( CHART_TYPE_EVENTS[ event_from ][ newType ], {
+			blog_id: siteId,
+		} );
 	};
 
 	formatLineChartTimeTick = ( date ) => {
@@ -415,8 +417,8 @@ const withCssColors = ( WrappedComponent ) => {
 	const WithCssColorsComponent = ( props ) => {
 		const chartContainerRef = useRef( null );
 
-		const primaryColor = useCssVariable( '--color-accent-light', chartContainerRef.current );
-		const secondaryColor = useCssVariable( '--color-accent-dark', chartContainerRef.current );
+		const primaryColor = useCssVariable( '--chart-series-views', chartContainerRef.current );
+		const secondaryColor = useCssVariable( '--chart-series-visitors', chartContainerRef.current );
 
 		return (
 			<WrappedComponent

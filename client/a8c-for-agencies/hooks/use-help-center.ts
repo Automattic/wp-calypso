@@ -6,6 +6,7 @@ import {
 import { useEffect } from 'react';
 import {
 	CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT,
+	CONTACT_URL_FOR_PRESSABLE_OFFER_HASH_FRAGMENT,
 	CONTACT_URL_HASH_FRAGMENT,
 	CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT,
 } from '../components/a4a-contact-support-widget';
@@ -47,16 +48,20 @@ export default function useHelpCenter() {
 			const hasSupportFormHash =
 				window.location.hash === CONTACT_URL_HASH_FRAGMENT ||
 				window.location.hash === CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT ||
-				window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT;
+				window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT ||
+				window.location.hash === CONTACT_URL_FOR_PRESSABLE_OFFER_HASH_FRAGMENT;
 
 			if ( hasSupportFormHash ) {
-				const isMigrationRequest =
-					window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT;
+				let contactFormRoute = '/contact-form';
+
+				if ( window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT ) {
+					contactFormRoute = '/contact-form?migration-request=1';
+				} else if ( window.location.hash === CONTACT_URL_FOR_PRESSABLE_OFFER_HASH_FRAGMENT ) {
+					contactFormRoute = '/contact-form?pressable-offer=1';
+				}
 
 				setShowHelpCenter( true );
-				setNavigateToRoute(
-					isMigrationRequest ? '/contact-form?migration-request=1' : '/contact-form'
-				);
+				setNavigateToRoute( contactFormRoute );
 				history.pushState( null, '', window.location.pathname + window.location.search );
 			}
 		};

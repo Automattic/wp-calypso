@@ -126,7 +126,6 @@ export interface Agency {
 		allowed: boolean;
 	};
 	lead_matching?: {
-		allowed?: boolean;
 		draft?: LeadMatchingDetails | null;
 		profile?: AgencyLeadMatchingProfile | null;
 		sync?: AgencyLeadMatchingSyncState;

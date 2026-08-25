@@ -23,7 +23,7 @@
 	@include body-x-large;
 
 	@include break-xlarge() {
-		grid-template-columns: 160px 1fr 100px 100px 128px;
+		grid-template-columns: 160px 1fr 120px 100px 128px;
 	}
 }
 

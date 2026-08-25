@@ -421,7 +421,7 @@ test.describe( 'Dashboard dark-mode surface', { tag: [ tags.DASHBOARD_PR ] }, ()
 		await forceDarkModePreference( page );
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async () => {
-			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+			await accountGivenByEnvironment.authenticate( page );
 		} );
 
 		await test.step( 'Then the Sites route renders in dark mode', async () => {
@@ -479,7 +479,7 @@ test.describe( 'Reader dark-mode surface', { tag: [ tags.CALYPSO_PR ] }, () => {
 		await forceDarkModePreference( page );
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async () => {
-			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+			await accountGivenByEnvironment.authenticate( page );
 		} );
 
 		await test.step( 'Then the Reader route renders in dark mode', async () => {
@@ -529,7 +529,7 @@ test.describe( 'Themes dark-mode surfaces', { tag: [ tags.CALYPSO_PR ] }, () => 
 		await forceDarkModePreference( page );
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async () => {
-			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+			await accountGivenByEnvironment.authenticate( page );
 		} );
 
 		await test.step( 'Then the Themes listing renders in dark mode', async () => {
@@ -571,7 +571,7 @@ test.describe( 'Themes dark-mode surfaces', { tag: [ tags.CALYPSO_PR ] }, () => 
 		await forceDarkModePreference( page );
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async () => {
-			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+			await accountGivenByEnvironment.authenticate( page );
 		} );
 
 		await test.step( 'Then the Primarium detail route renders download and support cards in dark mode', async () => {

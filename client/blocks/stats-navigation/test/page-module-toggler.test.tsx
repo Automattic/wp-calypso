@@ -62,8 +62,6 @@ jest.mock( '@wordpress/icons', () => ( {
 const defaultProps = {
 	selectedItem: 'traffic',
 	siteId: 123,
-	isTooltipShown: false,
-	onTooltipDismiss: jest.fn(),
 	customToggleIcon: <span>Settings</span>,
 };
 
@@ -91,6 +89,7 @@ describe( 'PageModuleToggler', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
 		expect( getToggle( 'Authors' ) ).toBeChecked();
+		expect( getToggle( 'Search terms' ) ).toBeChecked();
 		expect( getToggle( 'Videos' ) ).toBeChecked();
 
 		rerender(

@@ -3,14 +3,11 @@ import { isAkismetFreeProduct, isDomainTransfer } from '@automattic/calypso-prod
 import {
 	isAkismetHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
+	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
-import {
-	canEditPaymentDetails,
-	isPaidWithCreditCard,
-	isPartnerPurchase,
-} from '../lib/raw-purchase-helpers';
+import { canEditPaymentDetails, isPaidWithCreditCard } from '../lib/raw-purchase-helpers';
 import PaymentInfoBlock from './payment-info-block';
 import type { GetChangePaymentMethodUrlFor } from '../lib/types';
 import type { SiteDetails } from '@automattic/data-stores';

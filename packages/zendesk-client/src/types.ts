@@ -73,6 +73,7 @@ export type MessageAction = {
 	tooltip?: string;
 	icon?: React.ReactNode;
 	pressed?: boolean;
+	uri?: string;
 };
 
 export type ZendeskContentType =

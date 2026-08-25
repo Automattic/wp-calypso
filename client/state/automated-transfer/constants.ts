@@ -1,6 +1,23 @@
+/**
+ * Error message the status endpoint returns when the site has no transfer record.
+ * Maps to `transferStates.NONE`.
+ * Legacy fallback — matching on prose is fragile. The backend is gaining a proper
+ * `no_transfer_record` error code; once it has been deployed for a while this message
+ * match can be removed (tracked in DOTCOM-18223).
+ */
+export const NO_TRANSFER_RECORD_ERROR = 'An invalid transfer ID was passed.';
+
+export const NO_TRANSFER_RECORD_ERROR_CODE = 'no_transfer_record';
+
+export const isNoTransferRecordError = ( error: {
+	error?: string | null;
+	message?: string | null;
+} ): boolean =>
+	error.error === NO_TRANSFER_RECORD_ERROR_CODE || error.message === NO_TRANSFER_RECORD_ERROR;
+
 export const transferStates = {
 	/**
-	 * This is when the request to fetch the transfer returns the error 'An invalid transfer ID was passed.'
+	 * This is when the request to fetch the transfer returns the error `NO_TRANSFER_RECORD_ERROR`.
 	 */
 	NONE: 'none',
 	PENDING: 'pending',
@@ -27,7 +44,30 @@ export const transferStates = {
 	 * This is when the request to fetch the transfer status failed with an unknown error
 	 */
 	REQUEST_FAILURE: 'request_failure',
+	/**
+	 * Client-only: the status poller hit its deadline while the transfer was still in progress.
+	 */
+	CLIENT_TIMEOUT: 'client_timeout',
 } as const;
+
+export type TransferStates = ( typeof transferStates )[ keyof typeof transferStates ];
+
+export const transferCompleteStates: ReadonlyArray< string | null > = [
+	transferStates.COMPLETE,
+	transferStates.COMPLETED,
+];
+
+export const transferFailureStates: ReadonlyArray< string | null > = [
+	transferStates.ERROR,
+	transferStates.FAILURE,
+	transferStates.CONFLICTS,
+	transferStates.REVERTED,
+];
+
+export const transferSettledStates: ReadonlyArray< string | null > = [
+	...transferCompleteStates,
+	...transferFailureStates,
+];
 
 export const transferInProgress = [
 	transferStates.START,
@@ -37,8 +77,6 @@ export const transferInProgress = [
 ] as const;
 
 export const transferRevertingInProgress = [ transferStates.RELOCATING_REVERT ] as const;
-
-export type TransferStates = ( typeof transferStates )[ keyof typeof transferStates ];
 
 export const eligibilityHolds = {
 	BLOCKED_ATOMIC_TRANSFER: 'BLOCKED_ATOMIC_TRANSFER',

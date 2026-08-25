@@ -9,7 +9,6 @@ import envVariables from '../env-variables';
 import { RestAPIClient } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import { TOTPClient } from '../totp-client';
-import { SidebarComponent } from './components/sidebar-component';
 import { LoginPage } from './pages/login-page';
 import type { TestAccountCredentials } from '../secrets';
 
@@ -45,31 +44,60 @@ export class TestAccount {
 	 * Authenticates the account using previously saved cookies or via the login
 	 * page UI if cookies are unavailable.
 	 *
+	 * Does not wait for the landing page to render. Specs navigate to their own
+	 * target next; one that drives the page login lands on waits for the part of it
+	 * that it uses.
+	 *
 	 * @param {Page} page Page object.
 	 * @param {string} [url] URL to expect once authenticated and redirections are finished.
 	 */
-	async authenticate(
-		page: Page,
-		{ url, waitUntilStable = true }: { url?: string | RegExp; waitUntilStable?: boolean } = {}
-	): Promise< void > {
+	async authenticate( page: Page, { url }: { url?: string | RegExp } = {} ): Promise< void > {
 		const browserContext = page.context();
 		await browserContext.clearCookies();
 
-		if ( await this.hasFreshAuthCookies() ) {
+		const hasFreshCookies = await this.hasFreshAuthCookies();
+
+		if ( hasFreshCookies ) {
 			this.log( 'Found fresh cookies, skipping log in' );
 			await browserContext.addCookies( await this.getAuthCookies() );
 			await page.goto( getCalypsoURL( '/' ) );
-		} else {
+		}
+
+		// Freshness is read off the cookie file's age, but the session behind it can be gone
+		// well inside that window, having expired or been invalidated by another run logging
+		// in as the same account. WordPress.com answers a rejected session by redirecting to
+		// the login page, which otherwise surfaces much later as a missing app shell.
+		const cookiesRejected = hasFreshCookies && TestAccount.isLoginPage( page.url() );
+
+		if ( cookiesRejected ) {
+			this.log( 'Saved cookies were rejected, discarding them' );
+			await browserContext.clearCookies();
+		}
+
+		if ( ! hasFreshCookies || cookiesRejected ) {
 			this.log( 'Logging in via Login Page' );
 			await this.logInViaLoginPage( page );
+		}
+
+		if ( cookiesRejected ) {
+			// Replace the file the rejected cookies came from, so the workers still to
+			// start reuse this session instead of tripping over the same dead one.
+			await this.saveAuthCookies( browserContext );
 		}
 
 		if ( url ) {
 			await page.waitForURL( url, { timeout: 20 * 1000 } );
 		}
-		if ( waitUntilStable ) {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.waitForSidebarInitialization();
+	}
+
+	/**
+	 * Whether a URL is the login page, including its locale-suffixed forms.
+	 */
+	private static isLoginPage( url: string ): boolean {
+		try {
+			return new URL( url ).pathname.startsWith( '/log-in' );
+		} catch {
+			return false;
 		}
 	}
 

@@ -17,6 +17,10 @@ import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import ContactForm from '../../components/domain-contact-details-form/contact-form';
 import ContactFormPrivacy from '../../components/domain-contact-details-form/contact-form-privacy';
+import {
+	isUkDomain,
+	mapWhoisExtraToUkContactExtra,
+} from '../../components/domain-contact-details-form/uk-contact-fields';
 import { findRegistrantWhois } from '../../utils/domain';
 import { DomainContactDetailsLayout } from './layout';
 import type { DomainContactDetails } from '@automattic/api-core';
@@ -30,7 +34,11 @@ export default function DomainContactInfo() {
 	const registrantWhoisData = findRegistrantWhois( whoisData );
 
 	const { initialData, key } = useMemo( () => {
-		const initialData = {
+		const ukExtra = isUkDomain( domainName )
+			? mapWhoisExtraToUkContactExtra( registrantWhoisData?.extra )
+			: undefined;
+
+		const initialData: DomainContactDetails = {
 			firstName: registrantWhoisData?.fname ?? '',
 			lastName: registrantWhoisData?.lname ?? '',
 			organization: registrantWhoisData?.org ?? '',
@@ -44,10 +52,11 @@ export default function DomainContactInfo() {
 			postalCode: registrantWhoisData?.pc ?? '',
 			fax: registrantWhoisData?.fax ?? '',
 			optOutTransferLock: false,
+			...( ukExtra ? { extra: { uk: ukExtra } } : {} ),
 		};
 
 		return { initialData, key: JSON.stringify( initialData ) };
-	}, [ registrantWhoisData ] );
+	}, [ registrantWhoisData, domainName ] );
 
 	const validateMutation = useMutation(
 		withSnackbar( domainWhoisValidateMutation( [ domainName ] ), { error: { source: 'server' } } )
@@ -124,6 +133,7 @@ export default function DomainContactInfo() {
 	return (
 		<DomainContactDetailsLayout>
 			<ContactForm
+				domainNames={ [ domainName ] }
 				isSubmitting={ isSubmitting }
 				onSubmit={ handleSubmit }
 				beforeFormCard={

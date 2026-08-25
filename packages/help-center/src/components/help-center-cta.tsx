@@ -1,83 +1,110 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { calendar, external, Icon } from '@wordpress/icons';
+import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
+import { Banner, LinkListItem } from './help-center-cta-variants';
 import './help-center-cta.scss';
+import type { HelpCenterCTAVariantProps } from './help-center-cta-variants';
 
-export type HelpCenterCTAVariant = 'banner' | 'link-list-item';
+interface HelpCenterCTAVariantDefinition {
+	/** Where this variant renders. Reported with the Tracks events. */
+	placement: string;
+	Component: React.FC< HelpCenterCTAVariantProps >;
+}
 
-export interface HelpCenterCTAProps {
+/**
+ * Every variant the backend can ask for. A new one is a new entry here plus a
+ * component in `help-center-cta-variants.tsx` — nothing else knows the list.
+ */
+export const HELP_CENTER_CTA_VARIANTS = {
+	banner: { placement: 'help-center-home', Component: Banner },
+	'link-list-item': { placement: 'help-center-more-resources', Component: LinkListItem },
+} as const satisfies Record< string, HelpCenterCTAVariantDefinition >;
+
+export type HelpCenterCTAVariant = keyof typeof HELP_CENTER_CTA_VARIANTS;
+
+export interface HelpCenterCTAProps extends Omit< HelpCenterCTAVariantProps, 'onClick' > {
 	variant: HelpCenterCTAVariant;
 	ctaId: string;
+	purchasedAt?: number;
+	planFamily?: string;
+}
+
+// Module-level so it survives remounts (e.g. search filtering the More
+// resources list) and only resets on a full page load, per cta_id.
+const reportedCtaIds = new Set< string >();
+
+const DAYS_SINCE_PURCHASE_MAX = 29;
+
+/** `purchasedAt` is a unix timestamp in seconds. Clamped to the 0-29 day window. */
+function daysSincePurchase( purchasedAt: number ): number {
+	const days = Math.floor( ( Date.now() / 1000 - purchasedAt ) / 86400 );
+	return Math.min( Math.max( days, 0 ), DAYS_SINCE_PURCHASE_MAX );
+}
+
+type CTAEventProps = {
+	cta_id: string;
+	variant: string;
 	placement: string;
-	url: string;
-	title: string;
-	description?: string;
-	actionLabel?: string;
+	plan_family?: string;
+	locale?: string;
+};
+
+function useCTATracking( eventProps: CTAEventProps | null, purchasedAt?: number ) {
+	const recordTracksEvent = useHelpCenterTracksEvent();
+
+	useEffect( () => {
+		if ( ! eventProps || reportedCtaIds.has( eventProps.cta_id ) ) {
+			return;
+		}
+		reportedCtaIds.add( eventProps.cta_id );
+		recordTracksEvent( 'calypso_helpcenter_cta_impression', {
+			...eventProps,
+			...( Number.isFinite( purchasedAt ) && {
+				days_since_purchase: daysSincePurchase( purchasedAt as number ),
+			} ),
+		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ eventProps?.cta_id ] );
+
+	return () => {
+		if ( ! eventProps ) {
+			return;
+		}
+		recordTracksEvent( 'calypso_helpcenter_cta_click', {
+			...eventProps,
+			...( Number.isFinite( purchasedAt ) && {
+				days_since_purchase: daysSincePurchase( purchasedAt as number ),
+			} ),
+		} );
+	};
 }
 
 export const HelpCenterCTA: React.FC< HelpCenterCTAProps > = ( {
 	variant,
 	ctaId,
-	placement,
-	url,
-	title,
-	description,
-	actionLabel,
+	purchasedAt,
+	planFamily,
+	...content
 } ) => {
-	useEffect( () => {
-		recordTracksEvent( 'calypso_helpcenter_cta_impression', {
-			cta_id: ctaId,
-			variant,
-			placement,
-		} );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	const variantDefinition = HELP_CENTER_CTA_VARIANTS[ variant ];
+	const locale = useLocale();
+	const trackClick = useCTATracking(
+		variantDefinition
+			? {
+					cta_id: ctaId,
+					variant,
+					placement: variantDefinition.placement,
+					...( planFamily && { plan_family: planFamily } ),
+					...( locale && { locale } ),
+			  }
+			: null,
+		purchasedAt
+	);
 
-	const trackClick = () => {
-		recordTracksEvent( 'calypso_helpcenter_cta_click', {
-			cta_id: ctaId,
-			variant,
-			placement,
-		} );
-	};
-
-	if ( variant === 'link-list-item' ) {
-		return (
-			<li className="help-center-cta__resource-item help-center-link__item">
-				<div className="help-center-link__cell">
-					<a href={ url } target="_blank" rel="noreferrer" onClick={ trackClick }>
-						<Icon icon={ calendar } size={ 24 } />
-						<span>
-							<span className="help-center-cta__resource-title">{ title }</span>
-							{ description && (
-								<span className="help-center-cta__resource-description">{ description }</span>
-							) }
-						</span>
-						<Icon icon={ external } size={ 20 } />
-					</a>
-				</div>
-			</li>
-		);
+	if ( ! variantDefinition ) {
+		return null;
 	}
 
-	return (
-		<div className="help-center-cta__banner">
-			<p className="help-center-cta__title">
-				<strong>{ title }</strong>
-			</p>
-			{ description && <p className="help-center-cta__description">{ description }</p> }
-			{ actionLabel && (
-				<a
-					className="help-center-cta__action"
-					href={ url }
-					target="_blank"
-					rel="noreferrer"
-					onClick={ trackClick }
-				>
-					{ actionLabel }
-				</a>
-			) }
-		</div>
-	);
+	const { Component } = variantDefinition;
+	return <Component { ...content } onClick={ trackClick } />;
 };

@@ -3,39 +3,55 @@ import './style.scss';
 import { isAutomatticianQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DropdownMenu } from '@wordpress/components';
-import { check, moreHorizontal } from '@wordpress/icons';
+import { check, moreHorizontal, trash } from '@wordpress/icons';
 import { fixMe, useTranslate } from 'i18n-calypso';
 import { useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
+import { useUnsubscribeWithUndo } from 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 
 type MoreMenuActionsProps = {
-	identifier: string;
-	isSingleFeed?: boolean;
 	feedIds: number[];
 	feedUrls: string[];
+	identifier: string;
+	source: string;
 	unseenCount: number;
+
+	// Props for the single feed case.
+	isSingleFeed?: boolean;
+	siteName?: string;
+	onUnsubscribed?: () => void;
 };
 
-export function MoreMenuActions( {
+export default function MoreMenuActions( {
 	identifier,
 	isSingleFeed = true,
 	feedIds,
 	feedUrls,
+	source,
 	unseenCount,
+	siteName,
+	onUnsubscribed,
 }: MoreMenuActionsProps ) {
 	const translate = useTranslate();
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const { mutate: markAllAsSeen } = useMarkAllAsSeenMutation();
-
-	// Remove when "Mark all as seen" is available to all users.
-	if ( ! isAutomattician ) {
-		return null;
-	}
+	const unsubscribeWithUndo = useUnsubscribeWithUndo();
 
 	const handleMarkAllAsSeen = () => {
-		recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked', { source: identifier } );
+		recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked', { source } );
 		markAllAsSeen( { identifier, feedIds, feedUrls } );
+	};
+
+	const handleUnsubscribe = () => {
+		// A single feed always carries exactly one URL.
+		const feedUrl = isSingleFeed ? feedUrls[ 0 ] : undefined;
+		if ( ! feedUrl ) {
+			return;
+		}
+
+		unsubscribeWithUndo( { feedUrl, siteName, source } );
+		onUnsubscribed?.();
 	};
 
 	// The trigger sits inside an <a href> (menu-item rows) or an <a> with a
@@ -68,6 +84,32 @@ export function MoreMenuActions( {
 				oldCopy: translate( 'Mark all as seen' ),
 		  } ) as string );
 
+	const controls = [];
+
+	// Remove when SeenPost feature is available for all users.
+	if ( isAutomattician ) {
+		const markAsSeenControl = {
+			title,
+			icon: check,
+			onClick: handleMarkAllAsSeen,
+			isDisabled: unseenCount === 0,
+		};
+
+		controls.push( [ markAsSeenControl ] );
+	}
+
+	// Add the unsubscribe control if this is a single feed.
+	if ( isSingleFeed && feedUrls.length === 1 ) {
+		const unsubscribeControl = {
+			title: translate( 'Unsubscribe' ) as string,
+			icon: trash,
+			onClick: handleUnsubscribe,
+			isDisabled: false,
+		};
+
+		controls.push( [ unsubscribeControl ] );
+	}
+
 	return (
 		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 		<span
@@ -84,14 +126,7 @@ export function MoreMenuActions( {
 					focusOnMount: true,
 					placement: 'bottom-end',
 				} }
-				controls={ [
-					{
-						title,
-						icon: check,
-						onClick: handleMarkAllAsSeen,
-						isDisabled: unseenCount === 0,
-					},
-				] }
+				controls={ controls }
 			/>
 		</span>
 	);

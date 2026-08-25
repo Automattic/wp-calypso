@@ -1,5 +1,6 @@
 import { Locator, Page, Response } from 'playwright';
 import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
+import { handleActiveThrottles, recordResponseThrottle } from '../throttle-flags';
 
 type CartResponseDiagnostic = {
 	method: string;
@@ -142,6 +143,8 @@ export class DomainSearchComponent {
 				);
 			}
 
+			await recordResponseThrottle( response );
+
 			// Wait for the DOM to reflect the new search results. The API
 			// response resolves before React re-renders the suggestion list
 			// (TanStack Query keeps isLoading false on refetch while prior
@@ -158,23 +161,48 @@ export class DomainSearchComponent {
 			}
 		}
 
-		// Domain lookup service is external to Automattic and sometimes it returns an error.
-		// Retry a few times when this is encountered.
-		await reloadAndRetry( this.page, searchDomainClosure );
+		// Outside the retry: `reloadAndRetry` swallows the closure's error on every
+		// attempt but the last, and skipping or failing for a throttle is thrown,
+		// not returned.
+		handleActiveThrottles( [ 'domain-suggestions' ] );
+		try {
+			// Domain lookup service is external to Automattic and sometimes it returns an error.
+			// Retry a few times when this is encountered.
+			await reloadAndRetry( this.page, searchDomainClosure );
+		} catch ( error ) {
+			// The failure might be due to a ban.
+			handleActiveThrottles( [ 'domain-suggestions' ] );
+			throw error;
+		}
 	}
 
 	/**
 	 * Clicks on the button to bring over an external domain to WordPress.com
 	 */
 	async clickBringItOver(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'Bring it over' } ).click();
+		try {
+			await this.page.getByRole( 'button', { name: 'Bring it over' } ).click();
+		} catch ( error ) {
+			// The button is rendered off the availability query, so a `domain-availability`
+			// ban leaves it absent and the click times out. Checking here rather than before
+			// the click keeps a button that did render clickable.
+			handleActiveThrottles( [ 'domain-availability' ] );
+			throw error;
+		}
 	}
 
 	/**
-	 * Clicks on the button to use a domain I already own
+	 * Clicks on the button to use a domain I already own.
+	 *
+	 * The CTA has two copy variants depending on state: the top-bar "Use a domain I own"
+	 * link (shown once a search has been performed, or on mobile) and the empty-state card
+	 * "Already have a domain? Bring it over to WordPress.com." Match either.
 	 */
 	async clickUseADomainIAlreadyOwn(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'Use a domain I own' } ).click();
+		await this.page
+			.getByRole( 'button', { name: /Use a domain I own|Already have a domain/ } )
+			.first()
+			.click();
 	}
 
 	/**
@@ -253,7 +281,21 @@ export class DomainSearchComponent {
 		row: Locator,
 		waitForContinueButton: boolean = true
 	): Promise< string | null > {
-		await row.waitFor();
+		// Adding to the cart checks the domain's availability first, so this path
+		// runs into a `domain-availability` ban as surely as into a suggestions
+		// one, and the ban is answered before the request leaves the browser: the
+		// button lands in its error state and stays there until the test times out.
+		handleActiveThrottles( [ 'domain-availability' ] );
+
+		try {
+			await row.waitFor();
+		} catch ( error ) {
+			// If a domain-suggestions ban is in force, skip/fail accordingly; that throws.
+			// So reaching the throw means none was, and the wait's own error stands: a
+			// keyword row can be missing from a list that rendered fine.
+			handleActiveThrottles( [ 'domain-suggestions' ] );
+			throw error;
+		}
 
 		// List freshness is guaranteed by search(), which waits for the
 		// suggestions response and for the DOM to reflect it before returning,
@@ -295,6 +337,12 @@ export class DomainSearchComponent {
 					const hasErrorClass = await addToCartButton.evaluate( ( el ) =>
 						el.classList.contains( 'domain-suggestion-cta--error' )
 					);
+
+					if ( hasErrorClass ) {
+						// The ban can be raised between the check above and this click,
+						// by this worker or by the pre-flight read of a peer's.
+						handleActiveThrottles( [ 'domain-availability' ] );
+					}
 
 					if ( ! hasErrorClass || attempt === maxRetries ) {
 						throw new Error(
@@ -417,7 +465,19 @@ export class DomainSearchComponent {
 	async skipPurchase(): Promise< string > {
 		const button = this.page.getByRole( 'button', { name: 'Skip purchase' } );
 
-		await button.waitFor();
+		try {
+			await button.waitFor();
+		} catch ( error ) {
+			// The button carries the free subdomain a second `/domains/suggestions`
+			// call answered with. `search` records a ban it meets mid-search but
+			// leaves acting to whichever caller needed the list, and this is one of
+			// them: without this the ban leaves the button absent and the wait spends
+			// its timeout. Never `domain-availability`: nothing on this button comes
+			// from `is-available`, and reading that ban here would skip a test it had
+			// no part in.
+			handleActiveThrottles( [ 'domain-suggestions' ] );
+			throw error;
+		}
 
 		let domain = await button.getAttribute( 'aria-label' );
 		domain = domain?.replace( 'Skip purchase and continue with ', '' ) ?? null;

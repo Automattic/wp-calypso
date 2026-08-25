@@ -388,10 +388,14 @@ flows keep working unchanged:
   `hidePremiumPlan`, `hideEcommercePlan` and `hidePlanTypeSelector` (each OR-ed over today's
   computed value, so passing nothing preserves the theme- and downgrade-based defaults),
   `defaultInterval` (seeds the billing term — `monthly` / `yearly` / `2yearly` / `3yearly` —
-  while the URL still wins once the user switches), and `highlightLabelOverrides` (a
+  while the URL still wins once the user switches), `highlightLabelOverrides` (a
   `{ [PlanSlug]: TranslateResult }` map that re-labels a plan's highlight tag, threaded through
-  `PlansFeaturesMain` into the existing `plans-grid-next` override path). All optional and
-  default-safe. See
+  `PlansFeaturesMain` into the existing `plans-grid-next` override path), and `titleBadgeOverrides`
+  / `taglineOverrides` (both `{ [PlanSlug]: TranslateResult }` maps — the first overrides a plan's
+  `titleBadge`, the pill next to the plan title, resolved in `useTitleBadges`; the second overrides
+  a plan's `tagline`, the line under the title, winning over the computed and experiment copy in
+  `useGridPlans`. Both are honored by the features grid only — the comparison grid renders neither
+  field). All optional and default-safe. See
   [`steps-repository/unified-plans/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx).
 - The `__user` (`user`) step exposes `headerText`, `subHeaderText`, `hideLoginLink` (hides the
   top-level "Log in" link in the V2 top bar / V1 footer — note the email-first account-step
@@ -409,8 +413,8 @@ flows keep working unchanged:
   loading-carousel copy — the "Laying the foundations" / "Turning on the lights" / … sequence).
   When a flow passes it via `useStepsProps()` it replaces the default per-flow / per-intent carousel
   computed by `useProcessingLoadingMessages`; omitting it preserves today's messages. `duration` is
-  optional and falls back to `DEFAULT_LOADING_MESSAGE_DURATION`. The override applies to both the V2
-  `Step.Loading` and V1 `StepContainer` render paths; the tailored (`TailoredFlowPreCheckoutScreen`,
+  optional; `useLoadingMessageIndex` holds a message for 5s when it omits a usable duration. The
+  override applies to both the V2 `Step.Loading` and V1 `StepContainer` render paths; the tailored (`TailoredFlowPreCheckoutScreen`,
   newsletter / update-design) and hundred-year processing screens short-circuit earlier and keep
   their own dedicated copy, so they are intentionally out of scope. The pre-existing `title` /
   `subtitle` props still override the single visible frame and win over the carousel. See

@@ -3,7 +3,6 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isSiteRedirect,
-	isThemePurchase,
 	isTitanMail,
 } from '@automattic/calypso-products';
 import { type SiteDetails } from '@automattic/data-stores';
@@ -13,8 +12,10 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type { IAppState } from 'calypso/state/types';
+
+const isThemePurchase = ( purchase: Purchase ) => 'theme' === purchase.product_type;
 
 interface ProductLinkProps {
 	purchase: Purchase;
@@ -68,7 +69,7 @@ export default connect( ( state: IAppState, { purchase }: { purchase: Purchase }
 	if ( isThemePurchase( purchase ) ) {
 		return {
 			// No <QueryTheme /> component needed, since getThemeDetailsUrl() only needs the themeId which we pass here.
-			productUrl: getThemeDetailsUrl( state, purchase.meta as string, purchase.siteId ),
+			productUrl: getThemeDetailsUrl( state, purchase.meta as string, purchase.blog_id ),
 		};
 	}
 	return {};

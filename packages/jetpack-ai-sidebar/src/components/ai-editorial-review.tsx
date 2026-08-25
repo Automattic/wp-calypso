@@ -11,7 +11,7 @@ import { Panel, PanelBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Icon, check, undo } from '@wordpress/icons';
+import { Icon, undo } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
@@ -19,27 +19,29 @@ import {
 	applyReviewEdit,
 	clearActiveBlockFocus,
 	clearActiveBlockFocusUnlessBlockReferenceClick,
+	countCurrentTextOccurrences,
 	getEditableBlockContent,
 	hasEditableBlockTarget,
 	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
 import {
-	countOccurrences,
 	flattenBlocks,
 	getEditorContentBlocks,
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
-import {
-	trackAiEditorialReviewItemAction,
-	trackAiEditorialReviewResultRendered,
-	type ReviewContext,
-} from '../utils/tracking';
+import { getBulkResponseActionOutcome, type OnResponseAction } from '../utils/response-action';
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
+import useLatestResponseAction from '../utils/use-latest-response-action';
 import BlockRef, { getBlockTypeName, type BlockSnapshot } from './block-ref';
-import ReviewCard, { ReviewCardActions, type ReviewCardRow } from './review-card';
+import ReviewCard, {
+	ReviewCardActions,
+	ReviewCardResolution,
+	type ReviewCardRow,
+} from './review-card';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
+import SplitScreenGuide from './split-screen-guide';
 
 /**
  * Types mirroring the wpcom `AI_Editorial_Review_Ability` structured output.
@@ -63,7 +65,7 @@ interface CandidateResolution {
 
 interface Conflict {
 	subject: string;
-	positions: ReviewerPosition[];
+	positions?: ReviewerPosition[];
 	guideline_anchor: string | null;
 	recommended_resolution: string;
 	candidate_resolutions?: CandidateResolution[];
@@ -72,7 +74,7 @@ interface Conflict {
 interface Implication {
 	change: string;
 	implies: string;
-	affected_blocks: number[];
+	affected_blocks?: number[];
 }
 
 interface SuggestedEdit {
@@ -83,7 +85,7 @@ interface SuggestedEdit {
 	suggested_text: string;
 	suggested_text_html?: string;
 	rationale: string;
-	supported_by_reviewers: string[];
+	supported_by_reviewers?: string[];
 	requires_manual?: boolean;
 	/** Optional short editorial category for the card badge (e.g. "Tone"). */
 	feedback_category?: string;
@@ -102,13 +104,21 @@ type EditorPostId = number | string;
 
 interface AiEditorialReviewProps {
 	summary: string;
-	conflicts: Conflict[];
-	implications: Implication[];
-	suggested_edits: SuggestedEdit[];
-	guideline_violations: GuidelineViolation[];
-	review_context?: ReviewContext;
+	/**
+	 * The list props mirror required tool-schema fields, but chat history
+	 * re-renders payloads produced before the server-side guards existed, so
+	 * each one can arrive missing or null. Normalised through toList().
+	 */
+	conflicts?: Conflict[] | null;
+	implications?: Implication[] | null;
+	suggested_edits?: SuggestedEdit[] | null;
+	guideline_violations?: GuidelineViolation[] | null;
 	/** Source post the review was generated for. Used to detect navigation to a different post. */
 	postId?: EditorPostId;
+	/** Whether the containing chat message is no longer interactive. */
+	isMessageStale?: boolean;
+	/** Reports completed user actions to the host that rendered this response. */
+	onResponseAction?: OnResponseAction;
 	/**
 	 * Server-built map keyed by reviewer display name. Optional — older
 	 * reviews or the empty-state payload may omit it; consumers degrade
@@ -195,6 +205,16 @@ function formatRelativeTime( timestamp: number ): string {
 	);
 }
 
+/**
+ * Model-supplied list fields are typed as required by the tool schema, but the
+ * provider drops `strict`, so any of them can arrive missing, null, or with
+ * null items inside an otherwise valid list. Reading `.length`, `.map`, or a
+ * property off one of those unmounts the whole card.
+ */
+function toList< T >( value: ( T | null )[] | null | undefined ): T[] {
+	return Array.isArray( value ) ? value.filter( ( item ): item is T => item != null ) : [];
+}
+
 function getGuidelineCategoryLabel( category: GuidelineViolation[ 'category' ] ): string {
 	switch ( category ) {
 		case 'site':
@@ -242,7 +262,7 @@ function getTextTargetDisabledReason(
 	if ( ! hasEditableBlockTarget( block, editableAttribute, currentText ) ) {
 		return __( 'Needs manual edit — unsupported edit target', __i18n_text_domain__ );
 	}
-	const occurrences = countOccurrences(
+	const occurrences = countCurrentTextOccurrences(
 		getEditableBlockContent( block, editableAttribute, currentText ),
 		currentText
 	);
@@ -263,23 +283,6 @@ function isManualSuggestedEdit( edit: SuggestedEdit ): boolean {
 	return edit.requires_manual === true;
 }
 
-function deriveResultOutcome(
-	isCacheHit: boolean,
-	reviewContext: ReviewContext | undefined,
-	hasNoFindings: boolean
-): 'success' | 'cache_hit' | 'no_findings' | 'insufficient_input' {
-	if ( isCacheHit ) {
-		return 'cache_hit';
-	}
-	if ( reviewContext === 'insufficient_input' ) {
-		return 'insufficient_input';
-	}
-	if ( hasNoFindings ) {
-		return 'no_findings';
-	}
-	return 'success';
-}
-
 function getConflictApplyUnavailableReason(
 	reasons: Array< string | undefined >
 ): string | undefined {
@@ -293,22 +296,28 @@ function getConflictApplyUnavailableReason(
 	return __( 'Some resolutions need manual edit.', __i18n_text_domain__ );
 }
 
-/**
- * Main component.
- * @param {AiEditorialReviewProps} props - Structured review output.
- * @returns {import('react').ReactElement} The rendered component.
- */
+/** Renders an editorial review and applies supported review actions. */
 export default function AiEditorialReview( {
 	summary,
-	conflicts,
-	implications,
-	suggested_edits,
-	guideline_violations,
-	review_context,
+	conflicts: conflictsProp,
+	implications: implicationsProp,
+	suggested_edits: suggestedEditsProp,
+	guideline_violations: guidelineViolationsProp,
 	postId,
+	isMessageStale = false,
+	onResponseAction,
 	reviewers_metadata,
 	cached_at,
 }: AiEditorialReviewProps ) {
+	// Normalised once per payload; useMemo keeps each list's identity stable
+	// across renders for the hooks that list them as dependencies.
+	const conflicts = useMemo( () => toList( conflictsProp ), [ conflictsProp ] );
+	const implications = useMemo( () => toList( implicationsProp ), [ implicationsProp ] );
+	const suggested_edits = useMemo( () => toList( suggestedEditsProp ), [ suggestedEditsProp ] );
+	const guideline_violations = useMemo(
+		() => toList( guidelineViolationsProp ),
+		[ guidelineViolationsProp ]
+	);
 	// Review actions are only safe when the result can be tied to the current editor entity.
 	const currentPostId = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as WpCurrentPostStore;
@@ -445,18 +454,7 @@ export default function AiEditorialReview( {
 		[ getClientId, isPostStale ]
 	);
 	const focusCurrentPostBlock = isPostStale ? undefined : focusBlock;
-
-	const fireItemAction = useCallback(
-		( options: {
-			action: 'accept' | 'undo' | 'dismiss' | 'bulk_accept';
-			target: 'edit' | 'conflict' | 'mixed';
-			outcome: 'success' | 'failed' | 'partial_failed';
-			itemCount?: number;
-		} ) => {
-			trackAiEditorialReviewItemAction( options );
-		},
-		[]
-	);
+	const fireResponseAction = useLatestResponseAction( onResponseAction, isLatestPostContextStale );
 
 	const handleRootMouseDown = useCallback( ( event: { target: EventTarget | null } ) => {
 		clearActiveBlockFocusUnlessBlockReferenceClick( event.target );
@@ -547,7 +545,7 @@ export default function AiEditorialReview( {
 			}
 			if ( edit.block_index === null ) {
 				setEditStatus( editIndex, 'failed' );
-				fireItemAction( {
+				fireResponseAction( {
 					action: 'accept',
 					target: 'edit',
 					outcome: 'failed',
@@ -574,14 +572,14 @@ export default function AiEditorialReview( {
 					editableAttribute: result.editableAttribute,
 				};
 			}
-			fireItemAction( {
+			setEditStatus( editIndex, result.success ? 'accepted' : 'failed' );
+			fireResponseAction( {
 				action: 'accept',
 				target: 'edit',
 				outcome: result.success ? 'success' : 'failed',
 			} );
-			setEditStatus( editIndex, result.success ? 'accepted' : 'failed' );
 		},
-		[ applyTextToBlock, fireItemAction, isPostStale, setEditStatus ]
+		[ applyTextToBlock, fireResponseAction, isPostStale, setEditStatus ]
 	);
 	const handleUndoEdit = useCallback(
 		( editIndex: number ) => {
@@ -589,6 +587,10 @@ export default function AiEditorialReview( {
 				return;
 			}
 			const snap = editSnapshots.current[ editIndex ];
+			if ( editStatuses[ editIndex ] === 'accepted' && ! snap ) {
+				fireResponseAction( { action: 'undo', target: 'edit', outcome: 'failed' } );
+				return;
+			}
 			if ( snap ) {
 				if (
 					! undoBlockEdit(
@@ -598,37 +600,25 @@ export default function AiEditorialReview( {
 						snap.editableAttribute
 					)
 				) {
-					fireItemAction( {
-						action: 'undo',
-						target: 'edit',
-						outcome: 'failed',
-					} );
+					fireResponseAction( { action: 'undo', target: 'edit', outcome: 'failed' } );
 					return;
 				}
 				delete editSnapshots.current[ editIndex ];
 			}
-			fireItemAction( {
-				action: 'undo',
-				target: 'edit',
-				outcome: 'success',
-			} );
 			setEditStatus( editIndex, 'pending' );
+			fireResponseAction( { action: 'undo', target: 'edit', outcome: 'success' } );
 		},
-		[ fireItemAction, isPostStale, setEditStatus ]
+		[ editStatuses, fireResponseAction, isPostStale, setEditStatus ]
 	);
 	const handleDismissEdit = useCallback(
 		( editIndex: number ) => {
 			if ( isPostStale ) {
 				return;
 			}
-			fireItemAction( {
-				action: 'dismiss',
-				target: 'edit',
-				outcome: 'success',
-			} );
 			setEditStatus( editIndex, 'dismissed' );
+			fireResponseAction( { action: 'dismiss', target: 'edit', outcome: 'success' } );
 		},
-		[ fireItemAction, isPostStale, setEditStatus ]
+		[ fireResponseAction, isPostStale, setEditStatus ]
 	);
 
 	const handleDismissViolation = useCallback(
@@ -637,12 +627,28 @@ export default function AiEditorialReview( {
 				return;
 			}
 			setViolationStatuses( ( prev ) => ( { ...prev, [ index ]: 'dismissed' } ) );
+			fireResponseAction( {
+				action: 'dismiss',
+				target: 'guideline_violation',
+				outcome: 'success',
+			} );
 		},
-		[ isPostStale ]
+		[ fireResponseAction, isPostStale ]
 	);
-	const handleUndoViolation = useCallback( ( index: number ) => {
-		setViolationStatuses( ( prev ) => ( { ...prev, [ index ]: 'pending' } ) );
-	}, [] );
+	const handleUndoViolation = useCallback(
+		( index: number ) => {
+			if ( isPostStale ) {
+				return;
+			}
+			setViolationStatuses( ( prev ) => ( { ...prev, [ index ]: 'pending' } ) );
+			fireResponseAction( {
+				action: 'undo',
+				target: 'guideline_violation',
+				outcome: 'success',
+			} );
+		},
+		[ fireResponseAction, isPostStale ]
+	);
 
 	// ---------- Conflict handlers ----------
 	const handleAcceptCandidate = useCallback(
@@ -658,7 +664,7 @@ export default function AiEditorialReview( {
 				)
 			) {
 				setConflictStatus( conflictIndex, 'failed' );
-				fireItemAction( {
+				fireResponseAction( {
 					action: 'accept',
 					target: 'conflict',
 					outcome: 'failed',
@@ -685,14 +691,20 @@ export default function AiEditorialReview( {
 					editableAttribute: result.editableAttribute,
 				};
 			}
-			fireItemAction( {
+			setConflictStatus( conflictIndex, result.success ? 'accepted' : 'failed' );
+			fireResponseAction( {
 				action: 'accept',
 				target: 'conflict',
 				outcome: result.success ? 'success' : 'failed',
 			} );
-			setConflictStatus( conflictIndex, result.success ? 'accepted' : 'failed' );
 		},
-		[ applyTextToBlock, fireItemAction, getBlockEditDisabledReason, isPostStale, setConflictStatus ]
+		[
+			applyTextToBlock,
+			fireResponseAction,
+			getBlockEditDisabledReason,
+			isPostStale,
+			setConflictStatus,
+		]
 	);
 	const handleUndoConflict = useCallback(
 		( conflictIndex: number ) => {
@@ -700,6 +712,10 @@ export default function AiEditorialReview( {
 				return;
 			}
 			const snap = conflictSnapshots.current[ conflictIndex ];
+			if ( conflictStatuses[ conflictIndex ] === 'accepted' && ! snap ) {
+				fireResponseAction( { action: 'undo', target: 'conflict', outcome: 'failed' } );
+				return;
+			}
 			if ( snap ) {
 				if (
 					! undoBlockEdit(
@@ -709,54 +725,47 @@ export default function AiEditorialReview( {
 						snap.editableAttribute
 					)
 				) {
-					fireItemAction( {
-						action: 'undo',
-						target: 'conflict',
-						outcome: 'failed',
-					} );
+					fireResponseAction( { action: 'undo', target: 'conflict', outcome: 'failed' } );
 					return;
 				}
 				delete conflictSnapshots.current[ conflictIndex ];
 			}
-			fireItemAction( {
-				action: 'undo',
-				target: 'conflict',
-				outcome: 'success',
-			} );
 			setConflictStatus( conflictIndex, 'pending' );
+			fireResponseAction( { action: 'undo', target: 'conflict', outcome: 'success' } );
 		},
-		[ fireItemAction, isPostStale, setConflictStatus ]
+		[ conflictStatuses, fireResponseAction, isPostStale, setConflictStatus ]
 	);
 	const handleDismissConflict = useCallback(
 		( conflictIndex: number ) => {
 			if ( isPostStale ) {
 				return;
 			}
-			fireItemAction( {
-				action: 'dismiss',
-				target: 'conflict',
-				outcome: 'success',
-			} );
 			setConflictStatus( conflictIndex, 'dismissed' );
+			fireResponseAction( { action: 'dismiss', target: 'conflict', outcome: 'success' } );
 		},
-		[ fireItemAction, isPostStale, setConflictStatus ]
+		[ fireResponseAction, isPostStale, setConflictStatus ]
 	);
 
 	// ---------- Bulk apply ----------
+	const findApplicableAiCandidate = useCallback(
+		( conflict: Conflict ) =>
+			toList( conflict.candidate_resolutions ).find(
+				( c ) =>
+					c.source === 'ai' &&
+					! getBlockEditDisabledReason( c.block_index, c.current_text, c.editable_attribute )
+			),
+		[ getBlockEditDisabledReason ]
+	);
+
 	const pendingAiConflictCount = useMemo( () => {
 		return conflicts.reduce( ( acc, conflict, i ) => {
 			const status = conflictStatuses[ i ] ?? 'pending';
 			if ( status !== 'pending' && status !== 'failed' ) {
 				return acc;
 			}
-			const aiCandidate = conflict.candidate_resolutions?.find(
-				( c ) =>
-					c.source === 'ai' &&
-					! getBlockEditDisabledReason( c.block_index, c.current_text, c.editable_attribute )
-			);
-			return aiCandidate ? acc + 1 : acc;
+			return findApplicableAiCandidate( conflict ) ? acc + 1 : acc;
 		}, 0 );
-	}, [ conflicts, conflictStatuses, getBlockEditDisabledReason ] );
+	}, [ conflicts, conflictStatuses, findApplicableAiCandidate ] );
 
 	const pendingEditCount = useMemo( () => {
 		return suggested_edits.reduce( ( acc, edit, i ) => {
@@ -791,12 +800,6 @@ export default function AiEditorialReview( {
 		}
 		let successCount = 0;
 		let failureCount = 0;
-		const getBulkOutcome = () => {
-			if ( failureCount === 0 ) {
-				return 'success';
-			}
-			return successCount === 0 ? 'failed' : 'partial_failed';
-		};
 		setBulkRunning( true );
 		try {
 			// Sequential so users see the shimmer on each block as it applies;
@@ -809,11 +812,7 @@ export default function AiEditorialReview( {
 				if ( status !== 'pending' && status !== 'failed' ) {
 					continue;
 				}
-				const aiCandidate = conflicts[ i ].candidate_resolutions?.find(
-					( c ) =>
-						c.source === 'ai' &&
-						! getBlockEditDisabledReason( c.block_index, c.current_text, c.editable_attribute )
-				);
+				const aiCandidate = findApplicableAiCandidate( conflicts[ i ] );
 				if ( ! aiCandidate ) {
 					continue;
 				}
@@ -842,10 +841,10 @@ export default function AiEditorialReview( {
 						editableAttribute: result.editableAttribute,
 					};
 				}
-				if ( ! result.success ) {
-					failureCount++;
-				} else {
+				if ( result.success ) {
 					successCount++;
+				} else {
+					failureCount++;
 				}
 				setConflictStatus( i, result.success ? 'accepted' : 'failed' );
 			}
@@ -891,20 +890,20 @@ export default function AiEditorialReview( {
 						editableAttribute: result.editableAttribute,
 					};
 				}
-				if ( ! result.success ) {
-					failureCount++;
-				} else {
+				if ( result.success ) {
 					successCount++;
+				} else {
+					failureCount++;
 				}
 				setEditStatus( i, result.success ? 'accepted' : 'failed' );
 			}
 			if ( isLatestPostContextStale() ) {
 				return;
 			}
-			fireItemAction( {
+			fireResponseAction( {
 				action: 'bulk_accept',
 				target: bulkTarget,
-				outcome: getBulkOutcome(),
+				outcome: getBulkResponseActionOutcome( successCount, failureCount ),
 				itemCount: successCount + failureCount,
 			} );
 		} finally {
@@ -920,7 +919,8 @@ export default function AiEditorialReview( {
 		suggested_edits,
 		editStatuses,
 		applyTextToBlock,
-		fireItemAction,
+		findApplicableAiCandidate,
+		fireResponseAction,
 		getBlockEditDisabledReason,
 		isLatestPostContextStale,
 		isPostStale,
@@ -954,43 +954,16 @@ export default function AiEditorialReview( {
 		[ reviewers_metadata ]
 	);
 
-	// Latch on the first effect run so re-renders do not duplicate `_result_rendered`.
-	const hasTrackedResultRef = useRef( false );
-	useEffect( () => {
-		if ( isPostStale || hasTrackedResultRef.current ) {
-			return;
-		}
-		hasTrackedResultRef.current = true;
-		const isCacheHit = cached_at !== undefined;
-		const noReviewerSignal =
-			conflicts.length === 0 &&
-			implications.length === 0 &&
-			suggested_edits.length === 0 &&
-			renderedGuidelineViolations.length === 0;
-		trackAiEditorialReviewResultRendered( {
-			outcome: deriveResultOutcome( isCacheHit, review_context, noReviewerSignal ),
-			conflictCount: conflicts.length,
-			implicationCount: implications.length,
-			suggestedEditCount: suggested_edits.length,
-			guidelineViolationCount: renderedGuidelineViolations.length,
-			reviewContext: review_context,
-		} );
-	}, [
-		cached_at,
-		conflicts,
-		implications,
-		isPostStale,
-		renderedGuidelineViolations,
-		review_context,
-		suggested_edits,
-	] );
-
 	return (
 		<div
 			className={ `jetpack-ai-editorial-review${ isPostStale ? ' is-post-stale' : '' }` }
 			aria-disabled={ isPostStale || undefined }
 			onMouseDownCapture={ handleRootMouseDown }
 		>
+			<SplitScreenGuide
+				componentType="ai-editorial-review"
+				isStale={ isMessageStale || isPostStale }
+			/>
 			{ isPostStale && (
 				<p className="jetpack-ai-editorial-review__stale-warning" role="note">
 					{ __(
@@ -1138,7 +1111,7 @@ export default function AiEditorialReview( {
 								>
 									{ conflicts.map( ( conflict, i ) => {
 										const status = conflictStatuses[ i ] ?? 'pending';
-										const candidates = conflict.candidate_resolutions ?? [];
+										const candidates = toList( conflict.candidate_resolutions );
 										const getCandidateDisabledReason = ( candidate: CandidateResolution ) =>
 											getBlockEditDisabledReason(
 												candidate.block_index,
@@ -1210,20 +1183,10 @@ export default function AiEditorialReview( {
 														) }
 													</header>
 													<div className="jetpack-ai-editorial-review__actions">
-														<span
-															className={ `jetpack-ai-editorial-review__resolution is-${ status }` }
-														>
-															{ status === 'accepted' && (
-																<Icon
-																	className="jetpack-ai-editorial-review__resolution-check"
-																	icon={ check }
-																	size={ 20 }
-																/>
-															) }
-															{ status === 'accepted'
-																? __( 'Applied', __i18n_text_domain__ )
-																: __( 'Dismissed', __i18n_text_domain__ ) }
-														</span>
+														<ReviewCardResolution
+															classPrefix="jetpack-ai-editorial-review"
+															status={ status }
+														/>
 														<button
 															type="button"
 															className="jetpack-ai-editorial-review__resolution-undo"
@@ -1274,7 +1237,7 @@ export default function AiEditorialReview( {
 													) }
 												</header>
 												<ul className="jetpack-ai-editorial-review__positions">
-													{ conflict.positions.map( ( pos, j ) => (
+													{ toList( conflict.positions ).map( ( pos, j ) => (
 														<li
 															className="jetpack-ai-editorial-review__position"
 															key={ `pos-${ i }-${ j }` }
@@ -1381,27 +1344,31 @@ export default function AiEditorialReview( {
 									onToggle={ ( next: boolean ) => setSectionOpen( 'implications', next ) }
 								>
 									<ul>
-										{ implications.map( ( imp, i ) => (
-											<li key={ `imp-${ i }` }>
-												<strong>{ imp.change }</strong> — { imp.implies }
-												{ imp.affected_blocks.length > 0 && (
-													<span className="jetpack-ai-editorial-review__affected-blocks">
-														{ ' ' }
-														{ __( 'Affects:', __i18n_text_domain__ ) }{ ' ' }
-														{ imp.affected_blocks.map( ( b, j ) => (
-															<span key={ `imp-${ i }-aff-${ j }` }>
-																{ j > 0 && ', ' }
-																<BlockRef
-																	index={ b }
-																	blocks={ blocks }
-																	onFocus={ focusCurrentPostBlock }
-																/>
-															</span>
-														) ) }
-													</span>
-												) }
-											</li>
-										) ) }
+										{ implications.map( ( imp, i ) => {
+											// A non-strict payload can omit affected_blocks.
+											const affectedBlocks = toList( imp.affected_blocks );
+											return (
+												<li key={ `imp-${ i }` }>
+													<strong>{ imp.change }</strong> — { imp.implies }
+													{ affectedBlocks.length > 0 && (
+														<span className="jetpack-ai-editorial-review__affected-blocks">
+															{ ' ' }
+															{ __( 'Affects:', __i18n_text_domain__ ) }{ ' ' }
+															{ affectedBlocks.map( ( b, j ) => (
+																<span key={ `imp-${ i }-aff-${ j }` }>
+																	{ j > 0 && ', ' }
+																	<BlockRef
+																		index={ b }
+																		blocks={ blocks }
+																		onFocus={ focusCurrentPostBlock }
+																	/>
+																</span>
+															) ) }
+														</span>
+													) }
+												</li>
+											);
+										} ) }
 									</ul>
 								</PanelBody>
 							</div>
@@ -1445,7 +1412,7 @@ export default function AiEditorialReview( {
 											const currentTextPresent =
 												!! edit.current_text &&
 												!! targetBlock &&
-												countOccurrences(
+												countCurrentTextOccurrences(
 													getEditableBlockContent(
 														targetBlock,
 														edit.editable_attribute,
@@ -1501,11 +1468,12 @@ export default function AiEditorialReview( {
 													element: 'text',
 												} );
 											}
+											const supportedByReviewers = toList( edit.supported_by_reviewers );
 											const footer =
-												edit.supported_by_reviewers.length > 0 ? (
+												supportedByReviewers.length > 0 ? (
 													<p className="jetpack-ai-editorial-review__reviewers">
 														{ __( 'Requested by:', __i18n_text_domain__ ) }{ ' ' }
-														{ edit.supported_by_reviewers.map( ( r, j ) => (
+														{ supportedByReviewers.map( ( r, j ) => (
 															<span key={ `edit-${ i }-rev-${ j }` }>
 																{ j > 0 && ' ' }
 																<ReviewerChip

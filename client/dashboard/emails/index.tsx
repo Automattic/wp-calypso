@@ -1,4 +1,4 @@
-import { DomainSubtype, EmailBox } from '@automattic/api-core';
+import { DomainSubtype } from '@automattic/api-core';
 import { userMailboxesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -34,7 +34,7 @@ function Emails() {
 	const { domainName: domainNameFilter }: { domainName?: string } = emailsRoute.useSearch();
 	const { data: allDomains } = useSuspenseQuery( queries.domainsQuery() );
 	const domains = ( allDomains ?? [] ).filter(
-		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+		( d ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
 
 	// Aggregate all domains into a single array
@@ -44,15 +44,13 @@ function Emails() {
 		return domains.filter( ( d ) => domainsWithEmailsList.includes( d.domain ) );
 	}, [ allEmailAccounts, domains ] );
 
-	const emails: Email[] = useMemo( () => {
+	const emails = useMemo( () => {
 		if ( ! allEmailAccounts?.length ) {
 			return [];
 		}
-		return allEmailAccounts
-			.flatMap( ( account ) =>
-				account.emails.map( ( box: EmailBox ) => mapMailboxToEmail( box, account ) )
-			)
-			.filter( ( email ) => email.canUserManage ) as Email[];
+		return allEmailAccounts.flatMap( ( account ) =>
+			account.emails.map( ( box ) => mapMailboxToEmail( box, account ) )
+		);
 	}, [ allEmailAccounts ] );
 
 	// Gather domains with unused mailbox warnings

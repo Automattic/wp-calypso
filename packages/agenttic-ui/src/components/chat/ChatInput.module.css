@@ -1,0 +1,61 @@
+.container {
+	display: flex;
+	align-items: end;
+	gap: var( --spacing );
+}
+
+.container textarea {
+	color: var( --color-foreground );
+}
+
+.textareaContainer {
+	position: relative;
+	flex: 1;
+	width: 100%;
+}
+
+.actions {
+	display: flex;
+	flex-direction: row;
+	padding-left: var( --spacing );
+	padding-right: var( --spacing );
+	height: var( --spacing-10 );
+	gap: var( --spacing );
+	align-items: center;
+}
+
+.containerStacked {
+	flex-direction: column;
+	padding: 0 0 var( --spacing );
+	gap: var( --spacing-2 );
+}
+
+.containerStacked .actions {
+	width: 100%;
+	height: auto;
+	justify-content: space-between;
+	/* 12px visual inset on both sides: the ghost button on the left counts
+       from its icon (4px inside the button), the solid submit button on the
+       right from its own edge. */
+	padding-left: 0;
+	padding-right: var( --spacing );
+}
+
+.containerStacked .actions .button {
+	min-width: var( --spacing-8 );
+	min-height: var( --spacing-8 );
+}
+
+.button {
+	border-radius: var( --radius-full );
+}
+
+/* The disabled button underneath is `pointer-events: none`, so the wrapper
+   receives the hover and shows the disabled cursor. */
+.actionWrapper {
+	display: inline-flex;
+}
+
+.actionWrapperDisabled {
+	cursor: not-allowed;
+}

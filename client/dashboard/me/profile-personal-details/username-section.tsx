@@ -49,7 +49,7 @@ export default function UsernameSection( {
 
 	const { mutate: updateUsername, isPending } = useMutation( {
 		...withSnackbar( updateUsernameMutation(), {
-			error: __( 'Failed to update username.' ),
+			error: { source: 'server' },
 		} ),
 		onSuccess: () => {
 			reloadWithFlashMessage( 'username' );

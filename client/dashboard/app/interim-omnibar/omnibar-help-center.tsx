@@ -1,9 +1,36 @@
+import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { useQuery } from '@tanstack/react-query';
 import { Suspense, lazy, useCallback, useState } from 'react';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
+import type HelpCenterApp from '../help-center/help-center-app';
+import type { Site } from '@automattic/api-core';
 
 const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' ) );
+
+type HelpCenterSite = NonNullable< React.ComponentProps< typeof HelpCenterApp >[ 'site' ] >;
+
+// The dashboard has no `launchpad_screen` option, so the launchpad features it
+// gates simply stay off.
+function toHelpCenterSite( site: Site ): HelpCenterSite {
+	return {
+		ID: site.ID,
+		name: site.name,
+		URL: site.URL,
+		domain: site.slug,
+		plan: { product_slug: site.plan?.product_slug ?? '' },
+		is_wpcom_atomic: site.is_wpcom_atomic,
+		jetpack: site.jetpack,
+		logo: { id: 0, sizes: [], url: site.icon?.img ?? '' },
+		site_owner: site.site_owner,
+		options: {
+			launchpad_screen: '',
+			site_intent: site.options?.site_intent ?? '',
+			admin_url: site.options?.admin_url ?? '',
+		},
+	};
+}
 
 /**
  * The `help-center` query param is acted on by `useActionHooks` inside the
@@ -28,6 +55,11 @@ export default function OmnibarHelpCenter() {
 	const { user } = useAuth();
 	const { isShown, setShowHelpCenter } = useHelpCenter();
 	const [ shouldMount, setShouldMount ] = useState( hasHelpCenterQueryParam );
+	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
+	const { data: site } = useQuery( {
+		...siteByIdQuery( omnibarSiteId ?? 0 ),
+		enabled: !! omnibarSiteId,
+	} );
 
 	const handleClose = useCallback( () => {
 		setShowHelpCenter( false, undefined, true );
@@ -52,6 +84,7 @@ export default function OmnibarHelpCenter() {
 				locale={ user.language }
 				onboardingUrl={ config( 'wpcom_signup_url' ) }
 				sectionName="dashboard"
+				site={ site ? toHelpCenterSite( site ) : null }
 			/>
 		</Suspense>
 	);

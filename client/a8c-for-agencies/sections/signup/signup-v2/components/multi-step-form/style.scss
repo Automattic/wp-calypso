@@ -162,6 +162,10 @@
 				border-color: #E6F5FF1A;
 				color: var(--color-text-inverted);
 			}
+
+			.components-button.has-icon {
+				color: var(--color-neutral-40);
+			}
 		}
 
 		.form-checkbox:checked,

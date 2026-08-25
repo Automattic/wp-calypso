@@ -7,6 +7,7 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { SUGGESTION_ACTION_COMPLETE_EVENT } from '../utils/suggestion-events';
 import TitlePicker from './title-picker';
 
 const mockEditPost = jest.fn();
@@ -59,6 +60,20 @@ describe( 'TitlePicker', () => {
 		render( <TitlePicker titles={ titles } onComplete={ onComplete } /> );
 		fireEvent.click( screen.getByText( titles[ 1 ].title ) );
 		expect( onComplete ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'notifies the sidebar when a title is applied', () => {
+		const handleComplete = jest.fn();
+		window.addEventListener( SUGGESTION_ACTION_COMPLETE_EVENT, handleComplete );
+		try {
+			render( <TitlePicker titles={ titles } /> );
+
+			fireEvent.click( screen.getByText( titles[ 0 ].title ) );
+
+			expect( handleComplete ).toHaveBeenCalledTimes( 1 );
+		} finally {
+			window.removeEventListener( SUGGESTION_ACTION_COMPLETE_EVENT, handleComplete );
+		}
 	} );
 
 	it( 'marks the option matching the current post title as applied on mount', () => {

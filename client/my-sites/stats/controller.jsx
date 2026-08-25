@@ -16,7 +16,7 @@ import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
 import StatsPageLoader from './stats-page-loader';
-import { appendQueryStringForRedirection } from './utils';
+import { appendQueryStringForRedirection, normalizeChartDateParam } from './utils';
 
 const loadOverview = () =>
 	import( /* webpackChunkName: "async-load-calypso-my-sites-stats-overview" */ './overview' );
@@ -191,6 +191,18 @@ export function site( context, next ) {
 		store,
 	} = context;
 
+	// Normalize chartStart/chartEnd once, here at the route boundary, so every
+	// downstream consumer of context.query (StatsSite and its children, plus
+	// redirects that forward context.query as-is) only ever sees a canonical
+	// YYYY-MM-DD string instead of whatever a hand-edited or old-format URL
+	// (e.g. an unpadded '2026-7-28') supplied.
+	if ( queryOptions.chartStart ) {
+		queryOptions.chartStart = normalizeChartDateParam( queryOptions.chartStart );
+	}
+	if ( queryOptions.chartEnd ) {
+		queryOptions.chartEnd = normalizeChartDateParam( queryOptions.chartEnd );
+	}
+
 	const filters = getSiteFilters( givenSiteId );
 	const state = store.getState();
 
@@ -287,6 +299,19 @@ export function summary( context, next ) {
 	let siteId = context.params.site;
 	const siteFragment = getSiteFragment( context.path );
 	const queryOptions = context.query;
+
+	// See the matching comment in site() above: normalize chartStart/chartEnd
+	// once, here at the route boundary, before getSummaryDateRangeFromQuery's
+	// strict YYYY-MM-DD parsing ever sees them. An unpadded value otherwise
+	// fails that strict check, silently discarding the whole chartStart/
+	// chartEnd pair and falling back to the default range.
+	if ( queryOptions.chartStart ) {
+		queryOptions.chartStart = normalizeChartDateParam( queryOptions.chartStart );
+	}
+	if ( queryOptions.chartEnd ) {
+		queryOptions.chartEnd = normalizeChartDateParam( queryOptions.chartEnd );
+	}
+
 	const contextModule = context.params.module;
 	const filters = [
 		{

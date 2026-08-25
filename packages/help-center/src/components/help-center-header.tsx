@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useGetHistoryChats } from '@automattic/help-center/src/hooks/use-get-history-chats';
 import { useCurrentSupportInteraction } from '@automattic/odie-client/src/data/use-current-support-interaction';
 import {
@@ -27,8 +26,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
+import { ZendeskStagingBadge } from './help-center-zendesk-staging-badge';
 import type { Header } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -55,6 +56,7 @@ const EllipsisMenu = () => {
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
 	const { currentUser } = useHelpCenterContext();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 	const isLoggedIn = !! currentUser?.ID;
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -232,8 +234,8 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 		}
 	);
 
-	const userAskingSupport =
-		pathname.startsWith( '/odie' ) || pathname.startsWith( '/contact-form' );
+	const isOdieRoute = pathname.startsWith( '/odie' );
+	const userAskingSupport = isOdieRoute || pathname.startsWith( '/contact-form' );
 	const isHelpCenterHome = pathname === '/';
 	// Show the back button if it's not the help center home page and:
 	// - it's a chat and the hideBackButton option is not set
@@ -253,6 +255,7 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 				<HStack alignment="center" justify="space-between" spacing={ 5 }>
 					<HStack justify="flex-start">
 						<HeaderText />
+						{ isOdieRoute && <ZendeskStagingBadge /> }
 					</HStack>
 					<Icon icon={ chevronUp } />
 				</HStack>
@@ -265,6 +268,7 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 			<Flex>
 				{ shouldShowBackButton ? <BackButton /> : null }
 				<HeaderText />
+				{ isOdieRoute && <ZendeskStagingBadge /> }
 				{ featureConfig.header.ellipsisMenu ? (
 					<EllipsisMenu />
 				) : (

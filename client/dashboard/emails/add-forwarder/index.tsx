@@ -62,9 +62,11 @@ function AddEmailForwarder() {
 		userMailboxesQuery()
 	);
 
+	// The endpoint emits a forwarding account for every domain that can host forwarding, whether
+	// or not any forwarders exist on it yet, so this covers the first-forwarder case too.
 	const eligibleDomains = useMemo( () => {
 		const forwardingAccounts = ( allEmailAccounts ?? [] ).filter(
-			( account ) => account.account_type === EmailProvider.Forwarding && account.can_user_add_email
+			( account ) => account.account_type === EmailProvider.Forwarding
 		);
 
 		return forwardingAccounts.flatMap( ( account ) =>

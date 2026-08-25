@@ -36,9 +36,12 @@ const HelpCenter: React.FC< Container > = ( {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
-	const { currentUser } = useHelpCenterContext();
+	const { currentUser, site } = useHelpCenterContext();
 	const { setCurrentUser } = useDispatch( HELP_CENTER_STORE );
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
+		!! currentUser?.ID,
+		site?.ID
+	);
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
 	const hasOpenZendeskConversations =
@@ -59,9 +62,6 @@ const HelpCenter: React.FC< Container > = ( {
 		if ( ! shouldUseUnifiedAgent ) {
 			div = document.createElement( 'div' );
 			div.classList.add( 'help-center' );
-			div.setAttribute( 'role', 'dialog' );
-			div.setAttribute( 'aria-modal', 'true' );
-			div.setAttribute( 'aria-labelledby', 'header-text' );
 			document.body.appendChild( div );
 			setContainer( div );
 		}

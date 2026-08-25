@@ -146,6 +146,19 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	componentDidUpdate( prevProps: Readonly< AtomicTransferDialogProps > ): void {
 		const { siteId, siteSlug, uploadError, isJetpack, transferStatus } = this.props;
 
+		if (
+			transferStatus === transferStates.CLIENT_TIMEOUT &&
+			prevProps.transferStatus !== transferStates.CLIENT_TIMEOUT
+		) {
+			this.stopSitePolling();
+			this.setState( {
+				requestActiveThemeCount: 0,
+				errorMessage: translate(
+					'The site transfer is taking longer than expected. Please try again.'
+				),
+			} );
+		}
+
 		// After transfer completes, wait for the site to be recognized as Jetpack.
 		// requestActiveThemeCount > 0 ensures we only act if we initiated a transfer in this session.
 		if (

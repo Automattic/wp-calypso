@@ -56,7 +56,9 @@ export default function SiteActionInterstitial( {
 			return;
 		}
 		if ( purchase ) {
-			dispatch( handleRenewMultiplePurchasesClick( [ purchase ], siteSlug ) );
+			// Temporary bridge (SHILL-2256): this page still reads the camelCase
+			// Purchase from Redux. Remove once it reads the raw shape.
+			dispatch( handleRenewMultiplePurchasesClick( [ purchase.rawPurchase ], siteSlug ) );
 		} else {
 			page( managePurchase( siteSlug, String( purchaseId ) ) );
 		}
@@ -141,7 +143,12 @@ export default function SiteActionInterstitial( {
 	const handleContinue = () => {
 		const selectedPurchases = purchases.filter( ( p ) => selectedIds.has( p.id ) );
 		if ( actionType === 'renew' ) {
-			dispatch( handleRenewMultiplePurchasesClick( selectedPurchases, siteSlug ) );
+			dispatch(
+				handleRenewMultiplePurchasesClick(
+					selectedPurchases.map( ( p ) => p.rawPurchase ),
+					siteSlug
+				)
+			);
 			return;
 		}
 		const intent = actionType;
@@ -283,7 +290,9 @@ export default function SiteActionInterstitial( {
 					<PurchaseSiteHeader
 						siteId={ purchase.siteId }
 						name={ purchase.siteName }
-						purchase={ purchase }
+						// Temporary bridge (SHILL-2256): this page still reads the
+						// camelCase Purchase from Redux.
+						purchase={ purchase.rawPurchase }
 					/>
 				</div>
 			</div>

@@ -1,0 +1,11 @@
+.container {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	margin-top: var( --spacing-2 );
+	gap: var( --spacing-1 );
+}
+
+.container button[aria-hidden='true'] {
+	display: none;
+}
