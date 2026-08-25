@@ -188,6 +188,14 @@ export default function NoteDetail( {
 			} ) }
 		</Text>
 	);
+	// Like notes reiterate the subject in their liker rows; the top section
+	// shows what was liked instead (the header: author, then the post or
+	// comment linked to the note target), like the legacy panel.
+	const headerBlocks =
+		note.type === 'like' || note.type === 'comment_like' ? note.header ?? [] : [];
+	const headerUser = headerBlocks.length > 0 ? getNoteUserRef( headerBlocks[ 0 ] ) : null;
+	const headerSnippet = headerBlocks[ 1 ]?.text ?? null;
+
 	const excerpt = getNoteExcerpt( note );
 	const { context, comment, postscript } = getNoteBodyParts( note );
 	const userBlocks = context.filter( ( block ) => block.type === 'user' );
@@ -223,13 +231,37 @@ export default function NoteDetail( {
 			<HStack spacing={ 3 } justify="flex-start" alignment="center">
 				<img
 					className="dashboard-notifications-inbox__note-avatar"
-					src={ note.icon }
+					src={ headerUser?.avatarUrl ?? note.icon }
 					alt=""
 					width={ 40 }
 					height={ 40 }
 				/>
 				<VStack spacing={ 0 }>
-					{ title }
+					{ headerUser ? (
+						<>
+							{ headerUser.url ? (
+								<a
+									className="dashboard-notifications-inbox__user-row-name"
+									href={ headerUser.url }
+									target="_blank"
+									rel="noreferrer"
+								>
+									<Text weight={ 600 }>{ headerUser.name }</Text>
+								</a>
+							) : (
+								<Text weight={ 600 }>{ headerUser.name }</Text>
+							) }
+							{ headerSnippet && (
+								<Text className="dashboard-notifications-inbox__note-title">
+									<a href={ note.url } target="_blank" rel="noreferrer">
+										{ headerSnippet }
+									</a>
+								</Text>
+							) }
+						</>
+					) : (
+						title
+					) }
 					<Text variant="muted">{ getRelativeTimeString( new Date( note.timestamp ) ) }</Text>
 				</VStack>
 			</HStack>
