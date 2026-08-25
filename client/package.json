@@ -14,7 +14,7 @@
 	"dependencies": {
 		"@automattic/accessible-focus": "workspace:^",
 		"@automattic/agents-manager": "workspace:^",
-		"@automattic/agenttic-ui": "^0.1.89",
+		"@automattic/agenttic-ui": "workspace:^",
 		"@automattic/api-core": "workspace:^",
 		"@automattic/api-queries": "workspace:^",
 		"@automattic/block-renderer": "workspace:^",
@@ -66,6 +66,7 @@
 		"@automattic/request-external-access": "workspace:^",
 		"@automattic/search": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
+		"@automattic/site-launch-modals": "workspace:^",
 		"@automattic/sites": "workspace:^",
 		"@automattic/social-previews": "^3.0.0",
 		"@automattic/state-utils": "workspace:^",

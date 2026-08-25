@@ -1,43 +1,15 @@
-import { Gridicon } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
-import { Card, CardBody, ProgressBar } from '@wordpress/components';
+import { ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, type ReactNode } from 'react';
+import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import ExpectationChecklist from 'calypso/components/expectation-checklist';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { urlToDomain } from 'calypso/lib/url';
 import { useSSHMigrationStatus } from './hooks/use-ssh-migration-status';
 import type { Step as StepType } from '../../types';
 import './style.scss';
-
-type SiteMigrationSshInProgressChecklistItem = {
-	icon: string;
-	text: ReactNode;
-};
-
-const SiteMigrationSshInProgressChecklist = ( {
-	items,
-}: {
-	items: SiteMigrationSshInProgressChecklistItem[];
-} ) => {
-	return (
-		<div className="site-migration-ssh-in-progress__checklist-items">
-			{ items.map( ( item, index ) => (
-				<div key={ index } className="site-migration-ssh-in-progress__checklist-item">
-					<div className="site-migration-ssh-in-progress__checklist-item-icon">
-						<Gridicon
-							icon={ item.icon }
-							size={ 16 }
-							className="site-migration-ssh-in-progress__icon"
-						/>
-					</div>
-					<div className="site-migration-ssh-in-progress__checklist-item-text">{ item.text }</div>
-				</div>
-			) ) }
-		</div>
-	);
-};
 
 const SiteMigrationSshInProgress: StepType< {
 	submits: {
@@ -94,37 +66,31 @@ const SiteMigrationSshInProgress: StepType< {
 				<ProgressBar className="site-migration-ssh-in-progress__progress-container" />
 			</div>
 
-			<Card className="site-migration-ssh-in-progress__card">
-				<CardBody>
-					<div className="site-migration-ssh-in-progress__checklist-title">
-						{ translate( "Here's what to expect" ) }
-					</div>
-					<SiteMigrationSshInProgressChecklist
-						items={ [
+			<ExpectationChecklist
+				title={ translate( "Here's what to expect" ) }
+				items={ [
+					{
+						icon: 'checkmark',
+						text: translate(
+							'{{strong}}%(siteDomain)s{{/strong}} will still be accessible without\u00A0interruptions.',
 							{
-								icon: 'checkmark',
-								text: translate(
-									'{{strong}}%(siteDomain)s{{/strong}} will still be accessible without\u00A0interruptions.',
-									{
-										args: { siteDomain },
-										components: { strong: <strong /> },
-									}
-								),
-							},
-							{
-								icon: 'time',
-								text: translate( 'Migrations can take up to 30 minutes to complete.' ),
-							},
-							{
-								icon: 'mail',
-								text: translate(
-									"You can safely navigate away. We'll email you when your new site is ready to explore."
-								),
-							},
-						] }
-					/>
-				</CardBody>
-			</Card>
+								args: { siteDomain },
+								components: { strong: <strong /> },
+							}
+						),
+					},
+					{
+						icon: 'time',
+						text: translate( 'Migrations can take up to 30 minutes to complete.' ),
+					},
+					{
+						icon: 'mail',
+						text: translate(
+							"You can safely navigate away. We'll email you when your new site is ready to explore."
+						),
+					},
+				] }
+			/>
 		</div>
 	);
 

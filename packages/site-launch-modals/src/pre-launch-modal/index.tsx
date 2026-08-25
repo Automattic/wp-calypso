@@ -11,7 +11,9 @@ import { __ } from '@wordpress/i18n';
 import { globe, payment } from '@wordpress/icons';
 import type { ReactNode } from 'react';
 
-interface PreLaunchModalProps {
+import './style.scss';
+
+export interface PreLaunchModalProps {
 	siteName: string;
 	siteDomain: string;
 	planName: string;

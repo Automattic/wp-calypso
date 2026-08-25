@@ -19,6 +19,11 @@
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
 		"outDir": "dist",
+		// With a flat outDir the default buildinfo path is the package root, where it
+		// survives `rm -rf dist` and makes `tsc --build` skip re-emitting the deleted
+		// declarations. Keep it in dist so wiping dist forces a rebuild. Obsolete if
+		// the package ever moves to the standard dist/esm + dist/cjs layout.
+		"tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",
 		"rootDir": "src",
 		"declaration": true,
 		"declarationMap": true,
