@@ -74,8 +74,10 @@ export function BillingPurchaseInfoPopover( { children }: { children: ReactNode 
 }
 
 function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
-	const containerSize = 36;
-	const iconSize = 20;
+	// Matches the media size the other dashboard DataViews use, and the ratio
+	// SiteIcon's letter fallback draws its initial at.
+	const containerSize = 48;
+	const iconSize = 24;
 	return (
 		<span
 			aria-label={ label }
@@ -97,7 +99,7 @@ function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
 }
 
 function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purchase } ) {
-	const size = 36;
+	const size = 48;
 
 	if ( purchase.is_jetpack_plan_or_product ) {
 		return (
