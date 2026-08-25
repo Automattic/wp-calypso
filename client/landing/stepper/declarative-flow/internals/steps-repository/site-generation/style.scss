@@ -837,6 +837,7 @@
 	align-items: center;
 	margin-block-end: 12px;
 	padding: 0;
+	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 70ms backwards;
 
 	@include break-medium {
 		padding-inline-start: 16px;
@@ -868,6 +869,7 @@
 .site-generation__conversation-message {
 	margin: 0 0 24px;
 	color: var( --site-generation-color-sidebar-foreground );
+	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 130ms backwards;
 }
 .site-build-progress {
 	box-sizing: border-box;
@@ -882,6 +884,14 @@
 	align-items: center;
 	gap: 4px;
 	margin-block-end: 11px;
+	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 190ms backwards;
+}
+
+@keyframes site-generation-sidebar-enter {
+	from {
+		opacity: 0;
+		translate: 0 4px;
+	}
 }
 
 .site-build-progress__title {
@@ -915,6 +925,13 @@
 	align-items: center;
 	gap: 12px;
 	padding-block-end: 10px;
+	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 235ms backwards;
+
+	@for $step-index from 2 through 6 {
+		&:nth-child( #{ $step-index } ) {
+			animation-delay: #{190ms + ( $step-index - 1 ) * 45ms};
+		}
+	}
 
 	&::before {
 		position: absolute;
@@ -1211,6 +1228,10 @@
 		animation: none;
 	}
 	.site-generation__preview-scan,
+	.site-generation__sidebar-header,
+	.site-generation__conversation-message,
+	.site-build-progress__header,
+	.site-build-progress__item,
 	.site-build-progress__item::before,
 	.site-build-progress__indicator,
 	.site-build-progress__indicator::before,
