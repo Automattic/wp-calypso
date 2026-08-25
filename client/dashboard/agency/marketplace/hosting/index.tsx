@@ -1,3 +1,5 @@
+import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	Dropdown,
@@ -36,12 +38,21 @@ import PressableContent from './pressable-content';
 import VipContent from './vip-content';
 import WpcomConfigurator from './wpcom-configurator';
 import YourPlan from './your-plan';
-import type { HostingBrand } from './mock-data';
+import type { HostingBrand, HostingProduct, TierPrice } from './mock-data';
+import type { AgencyProduct } from '@automattic/api-core';
 
 import './style.scss';
 
 // Hidden while the design is iterated on.
 const SHOW_MIGRATION_OFFER = false;
+
+/** Pricing fields present in the API response but not yet declared on AgencyProduct. */
+type PricedProduct = AgencyProduct & {
+	monthly_price?: number;
+	yearly_price?: number;
+	tier_monthly_prices?: TierPrice[];
+	tier_yearly_prices?: TierPrice[];
+};
 
 const REFERRAL_GUIDE_STEPS = [
 	{
@@ -280,7 +291,30 @@ export default function MarketplaceHosting() {
 	const [ quantity, setQuantity ] = useState( 3 );
 	const [ pressablePlanSlug, setPressablePlanSlug ] = useState( 'pressable-signature-1' );
 
-	const pressablePlan = pressablePlans.find( ( p ) => p.slug === pressablePlanSlug );
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const { data: apiProducts } = useQuery( agencyProductsQuery( agency?.id ?? 0 ) );
+	const products = apiProducts as PricedProduct[] | undefined;
+
+	const wpcomApi = products?.find( ( p ) => p.family_slug === 'wpcom-hosting' );
+	const wpcomProduct: HostingProduct = wpcomApi
+		? {
+				...wpcomHosting,
+				monthly_price: wpcomApi.monthly_price ?? wpcomHosting.monthly_price,
+				yearly_price: wpcomApi.yearly_price ?? wpcomHosting.yearly_price,
+				tier_monthly_prices: wpcomApi.tier_monthly_prices ?? wpcomHosting.tier_monthly_prices,
+				tier_yearly_prices: wpcomApi.tier_yearly_prices ?? wpcomHosting.tier_yearly_prices,
+		  }
+		: wpcomHosting;
+
+	const pressableApi = products?.find( ( p ) => p.slug === pressablePlanSlug );
+	const pressablePlanData = pressablePlans.find( ( p ) => p.slug === pressablePlanSlug );
+	const pressablePlan = pressablePlanData
+		? {
+				...pressablePlanData,
+				yearly_price: pressableApi?.yearly_price ?? pressablePlanData.yearly_price,
+				monthly_price: pressableApi?.monthly_price ?? pressablePlanData.monthly_price,
+		  }
+		: undefined;
 	const [ cartItems, setCartItems ] = useState< CartItem[] >( [] );
 	const [ isCartOpen, setIsCartOpen ] = useState( false );
 
@@ -365,7 +399,11 @@ export default function MarketplaceHosting() {
 				<div className="marketplace-hosting__layout">
 					<VStack spacing={ 8 } justify="flex-start">
 						<VStack spacing={ 4 }>
-							<WpcomConfigurator term={ term } onQuantityChange={ setQuantity } />
+							<WpcomConfigurator
+								product={ wpcomProduct }
+								term={ term }
+								onQuantityChange={ setQuantity }
+							/>
 							<DevSitesBanner />
 						</VStack>
 						<Divider
@@ -378,6 +416,7 @@ export default function MarketplaceHosting() {
 					<div className="marketplace-hosting__rail">
 						<YourPlan
 							brand="wpcom"
+							product={ wpcomProduct }
 							term={ term }
 							quantity={ quantity }
 							onAddToCart={ () =>
@@ -389,7 +428,7 @@ export default function MarketplaceHosting() {
 										_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
 										quantity
 									),
-									total: getTieredPrice( wpcomHosting, quantity, term ).discountedCost,
+									total: getTieredPrice( wpcomProduct, quantity, term ).discountedCost,
 								} )
 							}
 						/>
@@ -429,7 +468,10 @@ export default function MarketplaceHosting() {
 										__( 'Pressable %s' ),
 										pressablePlan?.name ?? ''
 									),
-									total: pressablePlan?.yearly_price ?? null,
+									total:
+										( term === 'yearly'
+											? pressablePlan?.yearly_price
+											: pressablePlan?.monthly_price ) ?? null,
 								} )
 							}
 						/>

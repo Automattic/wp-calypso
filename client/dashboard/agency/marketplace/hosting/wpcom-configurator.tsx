@@ -13,6 +13,7 @@ import { SectionHeader } from '../../../components/section-header';
 import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import { CheckGrid } from './content-sections';
 import { getNextDiscountNudge, getTieredPrice, hostingBrands, wpcomHosting } from './mock-data';
+import type { HostingProduct } from './mock-data';
 
 const PRESET_QUANTITIES = [ 1, 3, 5 ];
 
@@ -28,16 +29,21 @@ const WHATS_INCLUDED = [
 type WpcomConfiguratorProps = {
 	term: 'monthly' | 'yearly';
 	onQuantityChange: ( quantity: number ) => void;
+	product?: HostingProduct;
 };
 
-export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConfiguratorProps ) {
+export default function WpcomConfigurator( {
+	term,
+	onQuantityChange,
+	product = wpcomHosting,
+}: WpcomConfiguratorProps ) {
 	const [ preset, setPreset ] = useState< string >( '3' );
 	const [ customQuantity, setCustomQuantity ] = useState( 10 );
 
 	const isCustom = preset === 'custom';
 	const quantity = isCustom ? customQuantity : Number( preset );
-	const nudge = getNextDiscountNudge( wpcomHosting, quantity, term );
-	const currentDiscount = getTieredPrice( wpcomHosting, quantity, term ).discountPercent;
+	const nudge = getNextDiscountNudge( product, quantity, term );
+	const currentDiscount = getTieredPrice( product, quantity, term ).discountPercent;
 
 	return (
 		<Card>
