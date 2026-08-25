@@ -1,0 +1,86 @@
+{
+	"name": "@automattic/site-launch-modals",
+	"version": "1.0.0",
+	"description": "Presentational modals for the WordPress.com site-launch flow (pre-launch confirmation and post-launch celebration).",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./pre-launch-modal": {
+			"calypso:src": "./src/pre-launch-modal/index.tsx",
+			"types": "./dist/types/pre-launch-modal/index.d.ts",
+			"import": "./dist/esm/pre-launch-modal/index.js",
+			"require": "./dist/cjs/pre-launch-modal/index.js"
+		},
+		"./celebration-modal": {
+			"calypso:src": "./src/celebration-modal/index.tsx",
+			"types": "./dist/types/celebration-modal/index.d.ts",
+			"import": "./dist/esm/celebration-modal/index.js",
+			"require": "./dist/cjs/celebration-modal/index.js"
+		},
+		"./src/*": {
+			"calypso:src": "./src/*"
+		}
+	},
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/site-launch-modals"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"types": "dist/types",
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@wordpress/base-styles": "^9.1.0",
+		"@wordpress/components": "^37.0.0",
+		"@wordpress/compose": "^8.2.0",
+		"@wordpress/element": "^8.0.0",
+		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/icons": "^13.3.0",
+		"canvas-confetti": "^1.6.0",
+		"tslib": "^2.8.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/react": "^9.1.20",
+		"@testing-library/dom": "^10.4.0",
+		"@testing-library/react": "^16.0.1",
+		"@testing-library/user-event": "^14.6.1",
+		"postcss": "^8.5.15",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"storybook": "^9.1.20",
+		"typescript": "^6.0.3",
+		"webpack": "^5.99.8"
+	},
+	"peerDependencies": {
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
+	}
+}
