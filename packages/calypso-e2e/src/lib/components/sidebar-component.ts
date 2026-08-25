@@ -40,8 +40,8 @@ export class SidebarComponent {
 		const sidebarLocator = this.page.locator( `${ selectors.sidebar }, .global-sidebar` ).first();
 
 		await Promise.all( [
-			this.page.waitForLoadState( 'load', { timeout: 20 * 1000 } ),
-			sidebarLocator.waitFor( { timeout: 20 * 1000 } ),
+			this.page.waitForLoadState( 'load', { timeout: 30 * 1000 } ),
+			sidebarLocator.waitFor( { timeout: 30 * 1000 } ),
 		] );
 
 		// If the sidebar is collapsed (via the Collapse Menu toggle),

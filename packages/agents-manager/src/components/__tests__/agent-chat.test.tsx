@@ -429,19 +429,10 @@ describe( 'AgentChat', () => {
 				prompt: 'Optimize this content for search engines',
 			},
 			{
-				id: 'generate-feedback',
-				label: 'Simple Review',
-				prompt: 'Review this saved content',
-			},
-			{
-				id: 'proofread-content',
-				label: 'Proofread',
-				prompt: 'Proofread this saved content',
-			},
-			{
-				id: 'ai-editorial-review',
-				label: 'Editorial Review',
-				prompt: 'Run an AI Editorial Review',
+				id: 'get-feedback',
+				label: 'Get feedback',
+				prompt: '',
+				options: [ { id: 'proofread-content', label: 'Proofread', value: 'Proofread this.' } ],
 			},
 		];
 		const suggestions = [ designSuggestion, whatElseSuggestion, ...writingSuggestions ];
@@ -471,14 +462,13 @@ describe( 'AgentChat', () => {
 		expect( screen.getByRole( 'button', { name: 'Optimize title' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Generate excerpt' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Optimize SEO' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Simple review' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Editorial review' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Get feedback: Proofread' } ) ).toBeInTheDocument();
 
 		await user.click( screen.getByRole( 'button', { name: 'Optimize title' } ) );
 		expect( onSuggestionClick ).toHaveBeenCalledWith( writingSuggestions[ 0 ], suggestions );
 
 		await user.click( writingToggle );
-		expect( screen.queryByRole( 'button', { name: 'Proofread' } ) ).toBeNull();
+		expect( screen.queryByRole( 'button', { name: 'Get feedback: Proofread' } ) ).toBeNull();
 	} );
 
 	it( 'keeps the featured image suggestion out of the writing group', () => {

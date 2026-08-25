@@ -42,11 +42,15 @@ export function getDirectoryStatusBadge(
 	}
 }
 
-function isValidUrl( url: string ): boolean {
+export function isValidUrl( url: string ): boolean {
 	return (
 		url.length > 3 &&
 		/^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:[0-9]{1,5})?(\/[^\s]*)?$/i.test( url )
 	);
+}
+
+export function areUrlsUnique( urls: string[] ): boolean {
+	return new Set( urls ).size === urls.length;
 }
 
 /**

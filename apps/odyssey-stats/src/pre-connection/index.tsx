@@ -26,7 +26,12 @@ import getWpAdminUrl from '../lib/selectors/get-wp-admin-url';
 
 const STATS_ADMIN_PATH = 'admin.php?page=stats';
 
-type Plan = 'free' | 'paid';
+/**
+ * What the visitor answered the plan question with. `existing` is not a plan of its own — it says
+ * they already hold one, bought against a WordPress.com account this site is not attached to yet —
+ * but it registers the site exactly as the other two do, so it belongs in the same funnel.
+ */
+type Plan = 'free' | 'paid' | 'existing';
 
 /**
  * Tracks only queues an event; navigating in the same tick cancels the request that would have
@@ -47,12 +52,18 @@ const navigateOnceRecorded = ( url: string ) => {
  * id yet. It names the plan rather than merely reporting that one was picked: registration happens
  * for both, so the marker alone says nothing about which.
  *
+ * `existing` sends no marker at all: nothing was chosen here, so the gate has to put the question
+ * again once there is an account whose purchases can answer it.
+ *
  * `force_refresh` drops what the site cached while it had no connection. The pricing grid gate
  * strips it (and the plan-chosen marker) from the address bar once the dashboard has read them,
  * so later REST requests do not keep bypassing the server caches via the Referer.
  */
-const preConnectionReturnUri = ( plan: Plan ) =>
-	`${ STATS_ADMIN_PATH }&${ PLAN_CHOSEN_QUERY_ARG }=${ plan }&force_refresh=1`;
+const preConnectionReturnUri = ( plan: Plan ) => {
+	const planChosen = plan === 'existing' ? '' : `&${ PLAN_CHOSEN_QUERY_ARG }=${ plan }`;
+
+	return `${ STATS_ADMIN_PATH }${ planChosen }&force_refresh=1`;
+};
 
 /**
  * The plan choice a site sees before it is connected to WordPress.com.
@@ -140,6 +151,20 @@ export default function PreConnection() {
 		}
 	};
 
+	/**
+	 * Returns without the plan-chosen marker, so the dashboard's gate asks the question again —
+	 * this time against the purchases the newly linked account holds. A visitor who really does
+	 * have a plan lands on the dashboard; one who does not sees this choice again, now offering a
+	 * licence key to redeem.
+	 */
+	const startWithExistingPlan = async () => {
+		const url = await connect( 'existing' );
+
+		if ( url ) {
+			navigateOnceRecorded( url );
+		}
+	};
+
 	const goToPurchase = async () => {
 		const url = await connect( 'paid' );
 
@@ -216,6 +241,7 @@ export default function PreConnection() {
 				<PricingGrid
 					onSelectFree={ startForFree }
 					onSelectPaid={ goToPurchase }
+					onSelectExistingPlan={ startWithExistingPlan }
 					eventProps={ eventProps }
 				/>
 			</>

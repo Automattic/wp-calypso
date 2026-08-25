@@ -7,6 +7,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ActionList from '../../components/action-list';
@@ -73,6 +74,8 @@ export default function PartnerDirectoryDashboardContent( {
 }: Props ) {
 	const profile = agency.profile;
 	const application = profile?.partner_directory_application;
+	const isMobile = useViewportMatch( 'mobile', '<' );
+	const itemLayout = isMobile ? 'stacked' : 'inline';
 
 	const { mutate: publishProfile, isPending: isPublishingProfile } = useMutation(
 		withSnackbar( agencyPartnerDirectoryApplicationMutation( agency.id ), {
@@ -269,6 +272,10 @@ export default function PartnerDirectoryDashboardContent( {
 				<SectionHeader level={ 3 } title={ __( 'How do I start?' ) } />
 				<ActionList>
 					<ActionList.ActionItem
+						layout={ itemLayout }
+						suffixAlignment={
+							applicationWasSubmitted && directoryStatuses.length > 0 ? 'top' : undefined
+						}
 						title={ __( 'Share your expertise' ) }
 						description={
 							applicationWasSubmitted && directoryStatuses.length > 0
@@ -290,6 +297,7 @@ export default function PartnerDirectoryDashboardContent( {
 				</ActionList>
 				<ActionList>
 					<ActionList.ActionItem
+						layout={ itemLayout }
 						title={ __( 'Finish adding details to your public profile' ) }
 						description={ __(
 							'When approved, add details to your agency’s public profile for clients to see.'
@@ -312,17 +320,11 @@ export default function PartnerDirectoryDashboardContent( {
 				</ActionList>
 				<ActionList>
 					<ActionList.ActionItem
+						layout={ itemLayout }
 						title={ __( 'New clients will find you' ) }
-						description={
-							<VStack spacing={ 1 } as="span">
-								<Text>
-									{ __(
-										'Your agency will appear in the Partner Directories you select and get approved for, including WordPress.com, Woo.com, Pressable.com, and Jetpack.com.'
-									) }
-								</Text>
-								<Text>{ __( 'These Partner Directories are launching soon.' ) }</Text>
-							</VStack>
-						}
+						description={ __(
+							'Your agency will appear in the Partner Directories you select and get approved for, including WordPress.com, Woo.com, Pressable.com, and Jetpack.com.'
+						) }
 						actions={
 							<Button
 								variant={ applicationWasSubmitted ? 'primary' : 'secondary' }

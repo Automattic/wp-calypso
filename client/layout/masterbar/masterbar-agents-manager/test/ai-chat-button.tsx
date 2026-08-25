@@ -1,7 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { closeAgentsManagerChat, openAgentsManagerChat } from '@automattic/agents-manager';
+import {
+	closeAgentsManagerChat,
+	openAgentsManagerChat,
+	recordAgentsManagerTracksEvent,
+} from '@automattic/agents-manager';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createReduxStore, dispatch, register } from '@wordpress/data';
@@ -17,9 +21,7 @@ jest.mock( '@automattic/agents-manager', () => ( {
 	AGENTS_MANAGER_STORE: 'automattic/agents-manager-test',
 	closeAgentsManagerChat: jest.fn(),
 	openAgentsManagerChat: jest.fn(),
-} ) );
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
 
 const testStore = createReduxStore( TEST_STORE, {
@@ -73,6 +75,10 @@ describe( 'MasterbarAiChatButton', () => {
 
 		expect( closeAgentsManagerChat ).toHaveBeenCalled();
 		expect( openAgentsManagerChat ).not.toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_masterbar_agents_manager_ai_chat_clicked',
+			{ section: 'test-section', action: 'close' }
+		);
 	} );
 
 	it( 'opens the chat when clicked while the chat is hidden', async () => {
@@ -83,5 +89,23 @@ describe( 'MasterbarAiChatButton', () => {
 
 		expect( openAgentsManagerChat ).toHaveBeenCalled();
 		expect( closeAgentsManagerChat ).not.toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_masterbar_agents_manager_ai_chat_clicked',
+			{ section: 'test-section', action: 'open' }
+		);
+	} );
+
+	it( 'records an unknown section when no section name is set', async () => {
+		setChatState( { isOpen: false, isMinimized: false } );
+
+		renderWithProvider( <MasterbarAiChatButton />, {
+			reducers: { ui: () => ( { section: { name: null } } ) },
+		} );
+		await userEvent.click( screen.getByRole( 'button' ) );
+
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_masterbar_agents_manager_ai_chat_clicked',
+			{ section: 'unknown', action: 'open' }
+		);
 	} );
 } );

@@ -6,6 +6,7 @@ import {
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
 	githubInstallationsQuery,
+	hasDeletedSitesQuery,
 	isAutomatticianQuery,
 	productsQuery,
 	rawUserPreferencesQuery,
@@ -68,6 +69,7 @@ import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/si
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { userHasNoLiveSites } from '../../utils/user';
 import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -86,9 +88,12 @@ export const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: async () => {
+		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// Settle the deleted-sites check before first paint.
+			userHasNoLiveSites( user ) && queryClient.ensureQueryData( hasDeletedSitesQuery() ),
 		] );
 	},
 } );
@@ -184,11 +189,11 @@ export const siteRoute = createRoute( {
 		queryClient.prefetchQuery( siteAdminMenuQuery( site.ID ) );
 		queryClient.prefetchQuery( siteAdminBarQuery( site.ID ) );
 
-		await Promise.all( [
-			otherEnvironmentSiteId &&
-				queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) ),
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-		] );
+		if ( otherEnvironmentSiteId ) {
+			queryClient.prefetchQuery( siteByIdQuery( otherEnvironmentSiteId ) );
+		}
+
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 
 		return { site };
 	},

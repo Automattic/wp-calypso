@@ -94,7 +94,6 @@
 		"migration/ssh-migration": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
-		"onboarding/post-checkout-ai-step": true,
 		"onboarding/woo-hosting-post-purchase-setup-choice": true,
 		"p2/p2-plus": true,
 		"performance/apm": false,
@@ -147,6 +146,7 @@
 		"use-translation-chunks": true,
 		"wordpress-agent-slack": true,
 		"wordpress-ai-tools": true,
+		"wordpress-labs": false,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "a4f69f6759",

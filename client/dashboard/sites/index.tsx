@@ -13,6 +13,9 @@ import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
 import { useState, useEffect } from 'react';
 import { Experiment } from 'calypso/lib/explat';
+import AccountEmailBouncingNotice, {
+	useShouldShowAccountEmailBouncingNotice,
+} from '../app/account-email-bouncing-notice';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
@@ -35,10 +38,14 @@ import {
 	recordViewChanges,
 	sanitizeFields,
 } from './dataviews';
-import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
+import { useHasOnlyDeletedSites } from './deleted-sites';
+import {
+	EmptyDeletedSitesStateContent,
+	EmptySitesStateContent,
+	EmptySitesSearchStateContent,
+} from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNoticeArbiter } from './notice-arbiter';
-import { RestoringSitesNotices } from './restoring-sites-notice';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -167,6 +174,10 @@ export default function Sites() {
 
 	const isSecurityKeyReregisterRequired = useShouldShowSecurityKeyReregisterNotice();
 	const showSecurityKeyReregisterNotice = supports.me && isSecurityKeyReregisterRequired;
+	const hasOnlyDeletedSites = useHasOnlyDeletedSites();
+
+	const isAccountEmailBouncing = useShouldShowAccountEmailBouncingNotice();
+	const showAccountEmailBouncingNotice = supports.me && isAccountEmailBouncing;
 
 	const defaultView = getDefaultView( {
 		siteCount: user.site_count,
@@ -208,6 +219,29 @@ export default function Sites() {
 		view,
 		totalItems ?? 0
 	);
+
+	let emptySitesState = null;
+	if ( hasOnlyDeletedSites === true ) {
+		emptySitesState = (
+			<DataViewsEmptyStateLayout
+				title={ __( 'You don’t have any active sites' ) }
+				description={ __( 'Restore a deleted site, or start a new one.' ) }
+			>
+				<EmptyDeletedSitesStateContent />
+			</DataViewsEmptyStateLayout>
+		);
+	} else if ( hasOnlyDeletedSites === false ) {
+		emptySitesState = (
+			<DataViewsEmptyStateLayout
+				title={ __( 'You don’t have any sites yet' ) }
+				description={ __(
+					'Start a site and begin creating, coding, or exploring what WordPress can do.'
+				) }
+			>
+				<EmptySitesStateContent />
+			</DataViewsEmptyStateLayout>
+		);
+	}
 
 	const filters = view.filters ?? [];
 	const hasActiveSearch = !! view.search;
@@ -251,7 +285,7 @@ export default function Sites() {
 				notices={
 					<SitesNoticeArbiter>
 						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
-						{ ! isDashboardBackport() && isRestoringAccount && <RestoringSitesNotices /> }
+						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
 					</SitesNoticeArbiter>
 				}
 			>
@@ -299,14 +333,7 @@ export default function Sites() {
 						onReset={ resetView }
 					/>
 				) : (
-					<DataViewsEmptyStateLayout
-						title={ __( 'You don’t have any sites yet' ) }
-						description={ __(
-							'Start a site and begin creating, coding, or exploring what WordPress can do.'
-						) }
-					>
-						<EmptySitesStateContent />
-					</DataViewsEmptyStateLayout>
+					emptySitesState
 				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
