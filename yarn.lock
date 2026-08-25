@@ -294,8 +294,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.89"
-    "@automattic/agenttic-ui": "npm:^0.1.89"
+    "@automattic/agenttic-client": "workspace:^"
+    "@automattic/agenttic-ui": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -342,25 +342,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.89":
-  version: 0.1.89
-  resolution: "@automattic/agenttic-client@npm:0.1.89"
-  dependencies:
-    "@types/react": "npm:^18.0.0 || ^19.0.0"
-    marked: "npm:^16.2.1"
-  peerDependencies:
-    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
-    react: ^18.0.0 || ^19.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  peerDependenciesMeta:
-    "@wordpress/api-fetch":
-      optional: true
-  checksum: 4cac4119dd28f042e1e71f14ae3f16fdc61583f804fc260c4bc1b54f41e3987233ab3ef04d72666e38b0f203e6c8c25d68aba652dc72219154dbdb615e37fde3
-  languageName: node
-  linkType: hard
-
 "@automattic/agenttic-client@workspace:^, @automattic/agenttic-client@workspace:packages/agenttic-client":
   version: 0.0.0-use.local
   resolution: "@automattic/agenttic-client@workspace:packages/agenttic-client"
@@ -406,35 +387,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-ui@npm:^0.1.89":
-  version: 0.1.89
-  resolution: "@automattic/agenttic-ui@npm:0.1.89"
-  dependencies:
-    "@automattic/charts": "npm:^1.10.0"
-    "@radix-ui/react-popover": "npm:^1.1.15"
-    "@radix-ui/react-scroll-area": "npm:^1.2.9"
-    "@radix-ui/react-slot": "npm:^1.2.3"
-    "@wordpress/i18n": "npm:^6.1.0"
-    class-variance-authority: "npm:^0.7.1"
-    clsx: "npm:^2.1.1"
-    framer-motion: "npm:^12.23.0"
-    lucide-react: "npm:^0.525.0"
-    marked: "npm:^16.2.1"
-    react-markdown: "npm:^10.1.0"
-    react-textarea-autosize: "npm:^8.5.9"
-    remark-gfm: "npm:^4.0.1"
-    unified: "npm:^11.0.5"
-    use-debounce: "npm:^10.0.6"
-  peerDependencies:
-    react: ^18.0.0 || ^19.0.0
-    react-dom: ^18.0.0 || ^19.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  checksum: 68eee5766e2ef691ab8efa5c5e99503a6ce1bab52585a5c7a9bd351b1483da4e9a0916b38df21dd7d0b7a8d63ae054df874142a6ff347e551a95a8114cfb5c3d
-  languageName: node
-  linkType: hard
-
 "@automattic/agenttic-ui@workspace:^, @automattic/agenttic-ui@workspace:packages/agenttic-ui":
   version: 0.0.0-use.local
   resolution: "@automattic/agenttic-ui@workspace:packages/agenttic-ui"
@@ -458,7 +410,6 @@ __metadata:
     "@types/react-dom": "npm:^18.0.0 || ^19.0.0"
     "@vitejs/plugin-react": "npm:^4.0.0"
     "@wordpress/i18n": "npm:^6.1.0"
-    "@wordpress/prettier-config": "npm:^4.2.0"
     autoprefixer: "npm:^10.4.0"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
@@ -1735,8 +1686,8 @@ __metadata:
   resolution: "@automattic/image-studio@workspace:packages/image-studio"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-client": "npm:^0.1.89"
-    "@automattic/agenttic-ui": "npm:^0.1.89"
+    "@automattic/agenttic-client": "workspace:^"
+    "@automattic/agenttic-ui": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
@@ -1824,7 +1775,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/jetpack-ai-sidebar@workspace:packages/jetpack-ai-sidebar"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.89"
+    "@automattic/agenttic-client": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
@@ -2091,7 +2042,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.89"
+    "@automattic/agenttic-ui": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -2448,6 +2399,36 @@ __metadata:
     webpack: "npm:^5.99.8"
   peerDependencies:
     "@wordpress/data": ^10.48.0
+    react: ^18.3.1 || ^19.0.0
+    react-dom: ^18.3.1 || ^19.0.0
+  languageName: unknown
+  linkType: soft
+
+"@automattic/site-launch-modals@workspace:^, @automattic/site-launch-modals@workspace:packages/site-launch-modals":
+  version: 0.0.0-use.local
+  resolution: "@automattic/site-launch-modals@workspace:packages/site-launch-modals"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/react": "npm:^9.1.20"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/react": "npm:^16.0.1"
+    "@testing-library/user-event": "npm:^14.6.1"
+    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/components": "npm:^37.0.0"
+    "@wordpress/compose": "npm:^8.2.0"
+    "@wordpress/element": "npm:^8.0.0"
+    "@wordpress/i18n": "npm:^6.21.0"
+    "@wordpress/icons": "npm:^13.3.0"
+    canvas-confetti: "npm:^1.6.0"
+    postcss: "npm:^8.5.15"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    storybook: "npm:^9.1.20"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^6.0.3"
+    webpack: "npm:^5.99.8"
+  peerDependencies:
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
   languageName: unknown
@@ -2937,7 +2918,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/zendesk-client@workspace:packages/zendesk-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.89"
+    "@automattic/agenttic-ui": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
@@ -9438,7 +9419,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^10.0.0, @testing-library/dom@npm:^10.4.1, @testing-library/dom@npm:^8.0.0 || ^9.0.0 || ^10.0.0":
+"@testing-library/dom@npm:^10.0.0, @testing-library/dom@npm:^10.4.0, @testing-library/dom@npm:^10.4.1, @testing-library/dom@npm:^8.0.0 || ^9.0.0 || ^10.0.0":
   version: 10.4.1
   resolution: "@testing-library/dom@npm:10.4.1"
   dependencies:
@@ -9501,7 +9482,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^16.3.0, @testing-library/react@npm:^16.3.2":
+"@testing-library/react@npm:^16.0.1, @testing-library/react@npm:^16.3.0, @testing-library/react@npm:^16.3.2":
   version: 16.3.2
   resolution: "@testing-library/react@npm:16.3.2"
   dependencies:
@@ -9531,11 +9512,11 @@ __metadata:
   linkType: hard
 
 "@testing-library/user-event@npm:^14.6.1":
-  version: 14.6.1
-  resolution: "@testing-library/user-event@npm:14.6.1"
+  version: 14.6.5
+  resolution: "@testing-library/user-event@npm:14.6.5"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
-  checksum: 75fea130a52bf320d35d46ed54f3eec77e71a56911b8b69a3fe29497b0b9947b2dc80d30f04054ad4ce7f577856ae3e5397ea7dff0ef14944d3909784c7a93fe
+  checksum: 874ad9548fb286bf1b42d9bdc7080b5b9e82cf975608b5e082cc5bbb506816291b6117305477c0a30670914279c2b35039cd07e7559ee993c5f5211722a95660
   languageName: node
   linkType: hard
 
@@ -15258,7 +15239,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.89"
+    "@automattic/agenttic-ui": "workspace:^"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
@@ -15311,6 +15292,7 @@ __metadata:
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
+    "@automattic/site-launch-modals": "workspace:^"
     "@automattic/sites": "workspace:^"
     "@automattic/social-previews": "npm:^3.0.0"
     "@automattic/state-utils": "workspace:^"

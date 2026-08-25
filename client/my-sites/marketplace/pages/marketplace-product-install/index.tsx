@@ -1,5 +1,6 @@
-import { WordPressLogo } from '@automattic/components';
+import { WordPressWordmark } from '@automattic/components';
 import { css, Global, ThemeProvider } from '@emotion/react';
+import clsx from 'clsx';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
@@ -7,6 +8,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import './style.scss';
+import MarketplaceInstallHelpLink from './help-link';
+import InstallProgressCard from './install-progress/card';
 import ProductInstallErrorView from './product-install-error';
 import { useProductInstall } from './use-product-install';
 
@@ -17,12 +20,21 @@ const MarketplaceProductInstall = ( {
 	pluginSlug?: string;
 	themeSlug?: string;
 } ) => {
-	const { siteId, currentStep, steps, additionalSteps, error, onActivateTheme } = useProductInstall(
-		{
-			pluginSlug,
-			themeSlug,
-		}
-	);
+	const {
+		siteId,
+		currentStep,
+		steps,
+		additionalSteps,
+		error,
+		errorTrackingProps,
+		isTransferWait,
+		transferStatus,
+		transferStartedAt,
+		onActivateTheme,
+	} = useProductInstall( {
+		pluginSlug,
+		themeSlug,
+	} );
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -40,17 +52,34 @@ const MarketplaceProductInstall = ( {
 						}
 					` }
 				/>
-				<WordPressLogo className="marketplace-plugin-install__logo" size={ 24 } />
+				<WordPressWordmark className="marketplace-plugin-install__logo" />
+				{ isTransferWait && <MarketplaceInstallHelpLink /> }
 			</Masterbar>
-			<div className="marketplace-plugin-install__root">
-				{ error ? (
+			<div
+				className={ clsx( 'marketplace-plugin-install__root', {
+					'is-top-aligned': isTransferWait,
+				} ) }
+			>
+				{ error && (
 					<ProductInstallErrorView
 						error={ error }
 						pluginSlug={ pluginSlug }
 						themeSlug={ themeSlug }
+						trackingProps={ errorTrackingProps }
 						onActivateTheme={ onActivateTheme }
 					/>
-				) : (
+				) }
+				{ ! error && isTransferWait && (
+					// Keyed by product: an SPA navigation from one install to the next keeps this
+					// component mounted, and the wait's clock and furthest stage belong to one install.
+					<InstallProgressCard
+						key={ pluginSlug || themeSlug }
+						transferStatus={ transferStatus }
+						currentStep={ currentStep }
+						startedAt={ transferStartedAt }
+					/>
+				) }
+				{ ! error && ! isTransferWait && (
 					<MarketplaceProgressBar
 						steps={ steps }
 						currentStep={ currentStep }

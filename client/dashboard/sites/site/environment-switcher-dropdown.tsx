@@ -49,6 +49,7 @@ const StagingSiteActionButton = ( {
 const EnvironmentSwitcherDropdown = ( {
 	currentSite,
 	productionSite,
+	stagingSiteId,
 	stagingSite,
 	onClose,
 	onAddStagingSite,
@@ -57,6 +58,7 @@ const EnvironmentSwitcherDropdown = ( {
 }: {
 	currentSite: Site;
 	productionSite: Site | undefined;
+	stagingSiteId: number | undefined;
 	stagingSite: Site | undefined;
 	onClose: () => void;
 	onAddStagingSite: () => void;
@@ -75,7 +77,7 @@ const EnvironmentSwitcherDropdown = ( {
 		! isStagingSiteCreating;
 
 	const showActionButton =
-		( ! currentSite.is_wpcom_staging_site && productionSite && ! stagingSite ) ||
+		( ! currentSite.is_wpcom_staging_site && productionSite && ! stagingSiteId ) ||
 		isStagingSiteCreating ||
 		isStagingSiteDeleting;
 

@@ -189,11 +189,11 @@ export const siteRoute = createRoute( {
 		queryClient.prefetchQuery( siteAdminMenuQuery( site.ID ) );
 		queryClient.prefetchQuery( siteAdminBarQuery( site.ID ) );
 
-		await Promise.all( [
-			otherEnvironmentSiteId &&
-				queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) ),
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-		] );
+		if ( otherEnvironmentSiteId ) {
+			queryClient.prefetchQuery( siteByIdQuery( otherEnvironmentSiteId ) );
+		}
+
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 
 		return { site };
 	},
