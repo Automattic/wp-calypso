@@ -1090,6 +1090,35 @@ export const hostingDashboardRoute = createRoute( {
 	)
 );
 
+export const wordpressLabsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress Labs' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'wordpress-labs',
+	beforeLoad: async () => {
+		if ( ! isEnabled( 'wordpress-labs' ) ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			queryClient.prefetchQuery( allSitesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/wordpress-labs' ).then( ( d ) =>
+		createLazyRoute( 'wordpress-labs' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const appearanceRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1364,6 +1393,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	}
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
+	}
+	if ( isEnabled( 'wordpress-labs' ) ) {
+		preferencesChildren.push( wordpressLabsRoute );
 	}
 	if ( config.supports.darkMode && config.supports.colorScheme ) {
 		preferencesChildren.push( appearanceRoute );
