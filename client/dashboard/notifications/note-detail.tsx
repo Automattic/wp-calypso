@@ -16,6 +16,7 @@ import {
 	getBlockSegments,
 	getNoteBodyParts,
 	getNoteExcerpt,
+	getNoteSender,
 	getNoteTitle,
 	getNoteTypeLabel,
 	getNoteUserRef,
@@ -156,7 +157,10 @@ export default function NoteDetail( {
 
 	const excerpt = getNoteExcerpt( note );
 	const { context, comment } = getNoteBodyParts( note );
-	const userBlocks = context.filter( ( block ) => block.type === 'user' );
+	const allUserBlocks = context.filter( ( block ) => block.type === 'user' );
+	// The pane header already identifies the sender; keep them out of the pile.
+	const senderIndex = allUserBlocks.findIndex( ( block ) => block.text === getNoteSender( note ) );
+	const userBlocks = allUserBlocks.filter( ( _, index ) => index !== senderIndex );
 	const otherContext = context.filter( ( block ) => block.type !== 'user' );
 
 	return (
