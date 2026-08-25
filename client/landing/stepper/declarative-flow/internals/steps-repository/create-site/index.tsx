@@ -28,10 +28,10 @@ import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommer
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import {
-	getAtomicFunnelArgs,
-	getAtomicFunnelSlug,
-	startAtomicFunnelSite,
-} from 'calypso/landing/stepper/utils/atomic-funnel';
+	getWowFunnelArgs,
+	getWowFunnelSlug,
+	startWowFunnelSite,
+} from 'calypso/landing/stepper/utils/wow-funnel';
 import { resolveLaunchpadPersonalizationVariation } from 'calypso/lib/ai-launchpad';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
@@ -222,15 +222,15 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		// Atomic funnel: the Simple site was already created at flow entry (its Atomic host is
+		// WoW funnel: the Simple site was already created at flow entry (its Atomic host is
 		// building in the background). Consume that site instead of creating a second one; if the
 		// background request has not finished — or failed — fall back to creating it here, sharing
 		// the same single-flight request.
-		const atomicFunnelSlug = getAtomicFunnelSlug( urlQueryParams );
-		if ( atomicFunnelSlug ) {
-			const funnelSite = await startAtomicFunnelSite( {
-				funnelSlug: atomicFunnelSlug,
-				funnelArgs: getAtomicFunnelArgs( urlQueryParams ),
+		const wowFunnelSlug = getWowFunnelSlug( urlQueryParams );
+		if ( wowFunnelSlug ) {
+			const funnelSite = await startWowFunnelSite( {
+				funnelSlug: wowFunnelSlug,
+				funnelArgs: getWowFunnelArgs( urlQueryParams ),
 				siteTitle: selectedSiteTitle,
 				username,
 			} );

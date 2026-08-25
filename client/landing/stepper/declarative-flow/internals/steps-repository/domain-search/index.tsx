@@ -139,9 +139,9 @@ const DomainSearchStep: StepType< {
 	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flow ) );
-	// Atomic funnel: the site is always transferred to Atomic, so there is no free-subdomain
+	// WoW funnel: the site is always transferred to Atomic, so there is no free-subdomain
 	// option to offer — show only a "Set up a domain later" skip control.
-	const isAtomicFunnel = !! queryParams.get( 'atomic_funnel' );
+	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
 
 	const storedSiteTitle = useSelect(
@@ -202,12 +202,12 @@ const DomainSearchStep: StepType< {
 				! isDomainAndPlanFlow( flow ),
 			// AI Website Builder onboarding requires a paid plan, so skipping the
 			// domain doesn't start a free site — drop the "start free" framing.
-			skipSuggestionCopy: isAtomicFunnel
+			skipSuggestionCopy: isWowFunnel
 				? { title: __( 'Set up a domain later' ), buttonText: __( 'Set up a domain later' ) }
 				: getSkipSuggestionCopy( flow, __ ),
-			// Atomic funnel: hide the free *.wordpress.com subdomain card entirely and offer only
+			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
 			// the skip control.
-			hideFreeSubdomainSuggestion: isAtomicFunnel,
+			hideFreeSubdomainSuggestion: isWowFunnel,
 			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
@@ -222,16 +222,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [
-		__,
-		flow,
-		isCiab,
-		isWooHostingSolutions,
-		isAtomicFunnel,
-		tldQuery,
-		query,
-		allowedTldsProp,
-	] );
+	}, [ __, flow, isCiab, isWooHostingSolutions, isWowFunnel, tldQuery, query, allowedTldsProp ] );
 
 	const { submit } = navigation;
 

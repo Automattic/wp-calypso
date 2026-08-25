@@ -3,12 +3,12 @@ import { ONBOARDING_FLOW, createSite } from '@automattic/onboarding';
 import { logToLogstash } from 'calypso/lib/logstash';
 
 /**
- * An atomic funnel is a CTA-selected onboarding path whose end state is always an Atomic site,
+ * A WoW funnel is a CTA-selected onboarding path whose end state is always an Atomic site,
  * with the Atomic build started before the customer picks a domain or pays. The funnel slug is
  * validated server-side against the registry in wp-content/lib/atomic/funnels.php; the client only
  * passes it through.
  *
- * Entry URL shape: /setup/onboarding?atomic_funnel=<slug>&dest=<dest>[&blueprint=<id>]
+ * Entry URL shape: /setup/onboarding?wow_funnel=<slug>&dest=<dest>[&blueprint=<id>]
  */
 
 /**
@@ -18,30 +18,30 @@ import { logToLogstash } from 'calypso/lib/logstash';
  * - `big-sky`   — the Big Sky / AI setup chooser.
  * - `manual`    — the default post-checkout onboarding (Launchpad / My Home).
  */
-export type AtomicFunnelDest = 'site-spec' | 'big-sky' | 'manual';
+export type WowFunnelDest = 'site-spec' | 'big-sky' | 'manual';
 
-const ATOMIC_FUNNEL_DESTS: AtomicFunnelDest[] = [ 'site-spec', 'big-sky', 'manual' ];
+const WOW_FUNNEL_DESTS: WowFunnelDest[] = [ 'site-spec', 'big-sky', 'manual' ];
 
 /**
  * A funnel site created for this flow, remembered so the create-site step can consume it rather
  * than creating a second site. Persisted in sessionStorage so it survives a refresh mid-flow.
  */
-export type RememberedAtomicFunnelSite = {
+export type RememberedWowFunnelSite = {
 	funnelSlug: string;
 	blogId: number;
 	siteSlug: string;
 };
 
-const SESSION_KEY = 'atomic-funnel-created-site';
+const SESSION_KEY = 'wow-funnel-created-site';
 
 /**
  * In-flight background-creation promises, keyed by funnel slug. Lets the create-site step await the
  * same request the flow-entry side effect started, so we never create two sites for one funnel.
  */
-const inFlight: Record< string, Promise< RememberedAtomicFunnelSite > | undefined > = {};
+const inFlight: Record< string, Promise< RememberedWowFunnelSite > | undefined > = {};
 
-export function getAtomicFunnelSlug( queryParams: URLSearchParams ): string | null {
-	const raw = queryParams.get( 'atomic_funnel' );
+export function getWowFunnelSlug( queryParams: URLSearchParams ): string | null {
+	const raw = queryParams.get( 'wow_funnel' );
 	if ( ! raw ) {
 		return null;
 	}
@@ -50,16 +50,16 @@ export function getAtomicFunnelSlug( queryParams: URLSearchParams ): string | nu
 	return slug || null;
 }
 
-export function getAtomicFunnelDest( queryParams: URLSearchParams ): AtomicFunnelDest {
+export function getWowFunnelDest( queryParams: URLSearchParams ): WowFunnelDest {
 	const dest = queryParams.get( 'dest' );
-	return ATOMIC_FUNNEL_DESTS.find( ( d ) => d === dest ) ?? 'manual';
+	return WOW_FUNNEL_DESTS.find( ( d ) => d === dest ) ?? 'manual';
 }
 
 /**
- * Funnel-specific args pulled from the entry URL, forwarded to the server as atomic_funnel_args.
+ * Funnel-specific args pulled from the entry URL, forwarded to the server as wow_funnel_args.
  * Currently just the blueprint slug for the blueprint funnel.
  */
-export function getAtomicFunnelArgs( queryParams: URLSearchParams ): Record< string, string > {
+export function getWowFunnelArgs( queryParams: URLSearchParams ): Record< string, string > {
 	const args: Record< string, string > = {};
 	const blueprint = queryParams.get( 'blueprint' );
 	if ( blueprint ) {
@@ -68,28 +68,28 @@ export function getAtomicFunnelArgs( queryParams: URLSearchParams ): Record< str
 	return args;
 }
 
-export function logAtomicFunnelEvent(
+export function logWowFunnelEvent(
 	type: string,
 	properties: Record< string, unknown > = {}
 ): void {
 	void logToLogstash( {
 		feature: 'calypso_client',
-		message: 'Atomic funnel onboarding',
+		message: 'WoW funnel onboarding',
 		severity: 'debug',
 		properties: {
-			type: `atomic_funnel_${ type }`,
+			type: `wow_funnel_${ type }`,
 			...properties,
 		},
 	} ).catch( () => {} );
 }
 
-function readRemembered(): RememberedAtomicFunnelSite | null {
+function readRemembered(): RememberedWowFunnelSite | null {
 	try {
 		const raw = window.sessionStorage.getItem( SESSION_KEY );
 		if ( ! raw ) {
 			return null;
 		}
-		const parsed = JSON.parse( raw ) as RememberedAtomicFunnelSite;
+		const parsed = JSON.parse( raw ) as RememberedWowFunnelSite;
 		if ( parsed && parsed.funnelSlug && parsed.blogId && parsed.siteSlug ) {
 			return parsed;
 		}
@@ -99,14 +99,12 @@ function readRemembered(): RememberedAtomicFunnelSite | null {
 	return null;
 }
 
-export function getRememberedAtomicFunnelSite(
-	funnelSlug: string
-): RememberedAtomicFunnelSite | null {
+export function getRememberedWowFunnelSite( funnelSlug: string ): RememberedWowFunnelSite | null {
 	const remembered = readRemembered();
 	return remembered && remembered.funnelSlug === funnelSlug ? remembered : null;
 }
 
-function rememberAtomicFunnelSite( site: RememberedAtomicFunnelSite ): void {
+function rememberWowFunnelSite( site: RememberedWowFunnelSite ): void {
 	try {
 		window.sessionStorage.setItem( SESSION_KEY, JSON.stringify( site ) );
 	} catch {
@@ -115,7 +113,7 @@ function rememberAtomicFunnelSite( site: RememberedAtomicFunnelSite ): void {
 	}
 }
 
-export function clearAtomicFunnelSite(): void {
+export function clearWowFunnelSite(): void {
 	try {
 		window.sessionStorage.removeItem( SESSION_KEY );
 	} catch {
@@ -131,7 +129,7 @@ export function clearAtomicFunnelSite(): void {
  * arbitrary subdomain (empty blog_name + find_available_url on the onboarding flow), so no
  * siteUrl/title is needed here.
  */
-export function startAtomicFunnelSite( {
+export function startWowFunnelSite( {
 	funnelSlug,
 	funnelArgs,
 	siteTitle,
@@ -141,8 +139,8 @@ export function startAtomicFunnelSite( {
 	funnelArgs: Record< string, string >;
 	siteTitle?: string;
 	username: string;
-} ): Promise< RememberedAtomicFunnelSite > {
-	const remembered = getRememberedAtomicFunnelSite( funnelSlug );
+} ): Promise< RememberedWowFunnelSite > {
+	const remembered = getRememberedWowFunnelSite( funnelSlug );
 	if ( remembered ) {
 		return Promise.resolve( remembered );
 	}
@@ -153,7 +151,7 @@ export function startAtomicFunnelSite( {
 	}
 
 	const request = ( async () => {
-		logAtomicFunnelEvent( 'start_site_creation', { funnel: funnelSlug } );
+		logWowFunnelEvent( 'start_site_creation', { funnel: funnelSlug } );
 
 		const site = await createSite(
 			ONBOARDING_FLOW,
@@ -180,16 +178,16 @@ export function startAtomicFunnelSite( {
 		);
 
 		if ( ! site ) {
-			throw new Error( 'Failed to create atomic funnel site' );
+			throw new Error( 'Failed to create WoW funnel site' );
 		}
 
-		const result: RememberedAtomicFunnelSite = {
+		const result: RememberedWowFunnelSite = {
 			funnelSlug,
 			blogId: site.siteId,
 			siteSlug: site.siteSlug,
 		};
-		rememberAtomicFunnelSite( result );
-		logAtomicFunnelEvent( 'start_site_created', {
+		rememberWowFunnelSite( result );
+		logWowFunnelEvent( 'start_site_created', {
 			funnel: funnelSlug,
 			blog_id: result.blogId,
 			site_slug: result.siteSlug,
@@ -199,7 +197,7 @@ export function startAtomicFunnelSite( {
 
 	inFlight[ funnelSlug ] = request;
 	request.catch( ( error ) => {
-		logAtomicFunnelEvent( 'start_site_error', {
+		logWowFunnelEvent( 'start_site_error', {
 			funnel: funnelSlug,
 			error: error instanceof Error ? error.message : String( error ),
 		} );

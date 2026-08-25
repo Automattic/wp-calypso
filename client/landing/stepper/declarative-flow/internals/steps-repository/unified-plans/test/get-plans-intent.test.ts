@@ -42,14 +42,14 @@ describe( 'getPlansIntent', () => {
 		} );
 	} );
 
-	describe( 'onboarding flow atomic_funnel param', () => {
-		it( 'hides the free plan for any atomic_funnel value', () => {
-			window.history.replaceState( {}, '', '/?atomic_funnel=blueprint' );
+	describe( 'onboarding flow wow_funnel param', () => {
+		it( 'hides the free plan for any wow_funnel value', () => {
+			window.history.replaceState( {}, '', '/?wow_funnel=blueprint' );
 			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-ai-assembler-paid-only' );
 		} );
 
-		it( 'keeps playground precedence over atomic_funnel', () => {
-			window.history.replaceState( {}, '', '/?atomic_funnel=blueprint&playground=abc' );
+		it( 'keeps playground precedence over wow_funnel', () => {
+			window.history.replaceState( {}, '', '/?wow_funnel=blueprint&playground=abc' );
 			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-playground' );
 		} );
 	} );

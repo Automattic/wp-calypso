@@ -1,7 +1,9 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -38,14 +40,6 @@ import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
-	getAtomicFunnelArgs,
-	getAtomicFunnelDest,
-	getAtomicFunnelSlug,
-	getRememberedAtomicFunnelSite,
-	startAtomicFunnelSite,
-	logAtomicFunnelEvent,
-} from '../../../utils/atomic-funnel';
-import {
 	getBlueprintArchiveSiteSpecUrl,
 	getStandaloneBlueprintArchiveSlug,
 } from '../../../utils/blueprint-archive-import';
@@ -56,6 +50,14 @@ import {
 	requestBuildWowSite,
 } from '../../../utils/build-wow';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
+import {
+	getWowFunnelArgs,
+	getWowFunnelDest,
+	getWowFunnelSlug,
+	getRememberedWowFunnelSite,
+	startWowFunnelSite,
+	logWowFunnelEvent,
+} from '../../../utils/wow-funnel';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
@@ -126,8 +128,8 @@ const onboarding: FlowV2< typeof initialize > = {
 			playgroundId,
 			buildDest
 		);
-		const atomicFunnelSlug = getAtomicFunnelSlug( queryParams );
-		const atomicFunnelDest = getAtomicFunnelDest( queryParams );
+		const wowFunnelSlug = getWowFunnelSlug( queryParams );
+		const wowFunnelDest = getWowFunnelDest( queryParams );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -137,17 +139,17 @@ const onboarding: FlowV2< typeof initialize > = {
 			planCartItem: MinimalRequestCartProduct | null,
 			launchpadPersonalizationVariation: LaunchpadPersonalizationVariation
 		): Promise< [ string, string | null, string | null ] > => {
-			if ( atomicFunnelSlug && atomicFunnelDest !== 'manual' ) {
+			if ( wowFunnelSlug && wowFunnelDest !== 'manual' ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const siteId = providedDependencies.siteId as number;
 
 				// dest=site-spec: land on the AI site-spec. For the blueprint funnel, reuse the
 				// blueprint-archive site-spec URL, which polls the (already in-flight) import and
 				// then redirects to the Site Editor.
-				if ( atomicFunnelDest === 'site-spec' ) {
+				if ( wowFunnelDest === 'site-spec' ) {
 					const blueprintSlug = queryParams.get( 'blueprint' );
-					logAtomicFunnelEvent( 'post_checkout_site_spec', {
-						funnel: atomicFunnelSlug,
+					logWowFunnelEvent( 'post_checkout_site_spec', {
+						funnel: wowFunnelSlug,
 						blog_id: siteId,
 					} );
 					return [
@@ -168,9 +170,9 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 
 				// dest=big-sky: hand off to the Big Sky AI builder.
-				if ( atomicFunnelDest === 'big-sky' ) {
-					logAtomicFunnelEvent( 'post_checkout_big_sky', {
-						funnel: atomicFunnelSlug,
+				if ( wowFunnelDest === 'big-sky' ) {
+					logWowFunnelEvent( 'post_checkout_big_sky', {
+						funnel: wowFunnelSlug,
 						blog_id: siteId,
 					} );
 					return [
@@ -535,11 +537,11 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// build_dest=wow and the atomic funnel (dest=site-spec/big-sky) go
+									// build_dest=wow and the WoW funnel (dest=site-spec/big-sky) go
 									// straight from checkout to their destination — no
 									// post-checkout-onboarding hop, no chooser.
 									redirect_to:
-										blueprintArchiveSlug || ( atomicFunnelSlug && atomicFunnelDest !== 'manual' )
+										blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest !== 'manual' )
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -553,11 +555,8 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if (
-							blueprintArchiveSlug ||
-							( atomicFunnelSlug && atomicFunnelDest !== 'manual' )
-						) {
-							// build_dest=wow and the atomic funnel never show the
+						} else if ( blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest !== 'manual' ) ) {
+							// build_dest=wow and the WoW funnel never show the
 							// setup-your-site-ai chooser; go straight to their destination.
 							window.location.replace( destination );
 						} else if (
@@ -653,28 +652,56 @@ const onboarding: FlowV2< typeof initialize > = {
 			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
 		}, [] );
 
-		// Atomic funnel: create the Simple site as soon as the customer is in the flow, so its
-		// Atomic host builds (and any follow-up, e.g. a blueprint import) while they pick a domain
-		// and check out. Single-flight — the create-site step consumes the same site rather than
-		// creating a second one. Only fires once the funnel step is known (currentStepSlug set) and
-		// the user is logged in.
+		// WoW funnel: create the Simple site as soon as the customer is in the flow, so its
+		// Atomic host builds (and any follow-up work) while they pick a domain and check out.
+		// Single-flight — the create-site step consumes the same site rather than creating a
+		// second one. Only fires once the funnel step is known (currentStepSlug set) and the
+		// user is logged in.
+		//
+		// Internal-only: the funnel is an Automattician experiment (the server enforces the same
+		// boundary). For anyone else the params are stripped so the flow — domains, plans,
+		// post-checkout — degrades to ordinary onboarding.
+		const hasWowFunnelParam = !! getWowFunnelSlug( new URLSearchParams( window.location.search ) );
+		const { data: isAutomattician } = useReactQuery( {
+			...isAutomatticianQuery(),
+			enabled: hasWowFunnelParam && isLoggedIn,
+		} );
 		useEffect( () => {
 			if ( ! currentStepSlug || ! isLoggedIn || ! username ) {
 				return;
 			}
 			const queryParams = new URLSearchParams( window.location.search );
-			const funnelSlug = getAtomicFunnelSlug( queryParams );
-			if ( ! funnelSlug || getRememberedAtomicFunnelSite( funnelSlug ) ) {
+			const funnelSlug = getWowFunnelSlug( queryParams );
+			if ( ! funnelSlug ) {
 				return;
 			}
-			void startAtomicFunnelSite( {
+			if ( isAutomattician === undefined ) {
+				// Still resolving; the effect re-runs when the answer lands.
+				return;
+			}
+			if ( ! isAutomattician ) {
+				logWowFunnelEvent( 'denied_not_automattician', { funnel: funnelSlug } );
+				queryParams.delete( 'wow_funnel' );
+				queryParams.delete( 'dest' );
+				const search = queryParams.toString();
+				window.history.replaceState(
+					{},
+					'',
+					window.location.pathname + ( search ? `?${ search }` : '' )
+				);
+				return;
+			}
+			if ( getRememberedWowFunnelSite( funnelSlug ) ) {
+				return;
+			}
+			void startWowFunnelSite( {
 				funnelSlug,
-				funnelArgs: getAtomicFunnelArgs( queryParams ),
+				funnelArgs: getWowFunnelArgs( queryParams ),
 				username,
 			} ).catch( () => {
 				// Errors are logged in the util; the create-site step retries as a fallback.
 			} );
-		}, [ currentStepSlug, isLoggedIn, username ] );
+		}, [ currentStepSlug, isLoggedIn, username, isAutomattician ] );
 	},
 };
 
