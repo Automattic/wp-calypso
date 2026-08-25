@@ -1,9 +1,7 @@
-import { isAutomatticianQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -154,27 +152,6 @@ const onboarding: FlowV2< typeof initialize > = {
 						blog_id: siteId,
 					} );
 					return [ `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&p=%2F`, null, null ];
-				}
-
-				// dest=big-sky: hand off to the Big Sky AI builder.
-				if ( wowFunnelDest === 'big-sky' ) {
-					logWowFunnelEvent( 'post_checkout_big_sky', {
-						funnel: wowFunnelSlug,
-						blog_id: siteId,
-					} );
-					return [
-						addQueryArgs(
-							withLocale( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, locale ),
-							{
-								siteSlug,
-								...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
-								fromPostCheckoutSetupSite: '1',
-								...( refParameter ? { ref: refParameter } : {} ),
-							}
-						),
-						null,
-						null,
-					];
 				}
 			}
 
@@ -524,7 +501,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// build_dest=wow and the WoW funnel (dest=editor/big-sky) go
+									// build_dest=wow and the WoW funnel (dest=editor) go
 									// straight from checkout to their destination — no
 									// post-checkout-onboarding hop, no chooser.
 									redirect_to:
@@ -645,40 +622,17 @@ const onboarding: FlowV2< typeof initialize > = {
 		// second one. Only fires once the funnel step is known (currentStepSlug set) and the
 		// user is logged in.
 		//
-		// Internal-only: the funnel is an Automattician experiment (the server enforces the same
-		// boundary). For anyone else the params are stripped so the flow — domains, plans,
-		// post-checkout — degrades to ordinary onboarding.
-		const hasWowFunnelParam = !! getWowFunnelSlug( new URLSearchParams( window.location.search ) );
-		const { data: isAutomattician } = useReactQuery( {
-			...isAutomatticianQuery(),
-			enabled: hasWowFunnelParam && isLoggedIn,
-		} );
+		// The funnel is an internal-only experiment, but the gate lives server-side: /sites/new
+		// only honours the option for Automatticians and the plan-gate skip is bound to the
+		// option it writes. For anyone else this creates the site the flow would create anyway,
+		// with the funnel option ignored.
 		useEffect( () => {
 			if ( ! currentStepSlug || ! isLoggedIn || ! username ) {
 				return;
 			}
 			const queryParams = new URLSearchParams( window.location.search );
 			const funnelSlug = getWowFunnelSlug( queryParams );
-			if ( ! funnelSlug ) {
-				return;
-			}
-			if ( isAutomattician === undefined ) {
-				// Still resolving; the effect re-runs when the answer lands.
-				return;
-			}
-			if ( ! isAutomattician ) {
-				logWowFunnelEvent( 'denied_not_automattician', { funnel: funnelSlug } );
-				queryParams.delete( 'wow_funnel' );
-				queryParams.delete( 'dest' );
-				const search = queryParams.toString();
-				window.history.replaceState(
-					{},
-					'',
-					window.location.pathname + ( search ? `?${ search }` : '' )
-				);
-				return;
-			}
-			if ( getRememberedWowFunnelSite( funnelSlug ) ) {
+			if ( ! funnelSlug || getRememberedWowFunnelSite( funnelSlug ) ) {
 				return;
 			}
 			void startWowFunnelSite( {
@@ -687,7 +641,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			} ).catch( () => {
 				// Errors are logged in the util; the create-site step retries as a fallback.
 			} );
-		}, [ currentStepSlug, isLoggedIn, username, isAutomattician ] );
+		}, [ currentStepSlug, isLoggedIn, username ] );
 	},
 };
 
