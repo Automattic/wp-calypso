@@ -9,7 +9,7 @@ interface TokenSelectorProps {
 	/** The selected option slugs. */
 	value: string[];
 	onChange: ( slugs: string[] ) => void;
-	/** Hides the suggestions once this many options are selected. */
+	/** Caps the selection at this many options and hides the suggestions once reached. */
 	maxItems?: number;
 }
 
@@ -42,12 +42,12 @@ export default function TokenSelector( {
 	);
 
 	const onLabelsChange = ( tokens: ( string | TokenItem )[] ) => {
-		onChange(
-			tokens.flatMap( ( token ) => {
-				const slug = slugsByLabel[ typeof token === 'string' ? token : token.value ];
-				return slug ? [ slug ] : [];
-			} )
-		);
+		const slugs = tokens.flatMap( ( token ) => {
+			const slug = slugsByLabel[ typeof token === 'string' ? token : token.value ];
+			return slug ? [ slug ] : [];
+		} );
+
+		onChange( maxItems === undefined ? slugs : slugs.slice( 0, maxItems ) );
 	};
 
 	const suggestions =
@@ -60,7 +60,9 @@ export default function TokenSelector( {
 			<FormTokenField
 				__experimentalAutoSelectFirstMatch
 				__experimentalExpandOnFocus
-				__experimentalValidateInput={ ( token ) => token in slugsByLabel }
+				__experimentalValidateInput={ ( token ) =>
+					token in slugsByLabel && ( maxItems === undefined || value.length < maxItems )
+				}
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
 				help=""

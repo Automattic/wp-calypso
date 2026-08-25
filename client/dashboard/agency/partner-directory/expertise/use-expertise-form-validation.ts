@@ -1,6 +1,7 @@
-import { __ } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 import { useCallback, useState } from 'react';
 import { areUrlsUnique, isValidUrl } from '../lib';
+import { CLIENT_SITE_URLS_COUNT } from './use-expertise-form';
 import type { ExpertiseFormData } from './use-expertise-form';
 
 export interface ExpertiseValidationState {
@@ -41,8 +42,12 @@ export default function useExpertiseFormValidation() {
 					continue;
 				}
 
-				if ( directory.urls.length < 1 ) {
-					newValidationError.clientSites = __( 'Client sites can’t be empty' );
+				if ( directory.urls.length < CLIENT_SITE_URLS_COUNT ) {
+					newValidationError.clientSites = sprintf(
+						/* translators: %d is the number of client site URLs required per directory */
+						__( 'Please provide %d client site URLs for each directory' ),
+						CLIENT_SITE_URLS_COUNT
+					);
 					break;
 				}
 				if ( directory.urls.some( ( url ) => ! isValidUrl( url ) ) ) {

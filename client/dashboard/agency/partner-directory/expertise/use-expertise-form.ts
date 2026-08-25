@@ -5,6 +5,9 @@ import type {
 	AgencyProfile,
 } from '@automattic/api-core';
 
+/** The number of client site URLs required for each directory applied to. */
+export const CLIENT_SITE_URLS_COUNT = 5;
+
 export interface ExpertiseDirectoryEntry {
 	directory: AgencyPartnerDirectorySlug;
 	urls: string[];
@@ -39,7 +42,13 @@ export function getExpertiseFormData( profile?: AgencyProfile | null ): Expertis
 				status,
 				directory,
 				isPublished: is_published,
-				urls,
+				// Pad short URL lists so pending directories always render — and
+				// require — the full set of client site fields. Approved
+				// directories keep their reviewed URLs untouched.
+				urls:
+					status === 'approved' || urls.length >= CLIENT_SITE_URLS_COUNT
+						? urls
+						: [ ...urls, ...Array( CLIENT_SITE_URLS_COUNT - urls.length ).fill( '' ) ],
 				note,
 			} )
 		),
@@ -88,7 +97,7 @@ export default function useExpertiseForm( {
 								status: 'pending' as const,
 								directory: name,
 								isPublished: false,
-								urls: [ '', '', '', '', '' ],
+								urls: Array( CLIENT_SITE_URLS_COUNT ).fill( '' ),
 								note: '',
 							},
 						],
