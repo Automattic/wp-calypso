@@ -11,10 +11,12 @@
 
 .site-generation {
 	// Gutenberg editor-chrome colors with no color-studio token equivalent.
-	--site-generation-color-frame: #1e1e1e;
 	--site-generation-color-surface: #f0f0f0;
 	--site-generation-color-surface-muted: #e2e4e7;
-	--site-generation-color-notice-surface: #24272b;
+	// Match the docked Agents Manager shell and its dark-mode palette.
+	--site-generation-color-frame: #1e1e1e;
+	--site-generation-color-sidebar-foreground: var( --studio-white );
+	--site-generation-color-notice-surface: #2f2f2f;
 	--site-generation-color-frame-muted: #8f8f8f;
 	position: fixed;
 	z-index: 1000000;
@@ -812,19 +814,20 @@
 	min-height: 0;
 	padding-block: 28px calc( 24px + env( safe-area-inset-bottom ) );
 	padding-inline: 20px;
-	color: var( --site-generation-color-surface );
+	background-color: var( --site-generation-color-frame );
+	color: var( --site-generation-color-sidebar-foreground );
+	font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+		'Segoe UI Symbol', 'Noto Color Emoji';
+	font-size: $font-body-small;
+	line-height: 1.65;
+	letter-spacing: -0.01em;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
 
 	@include break-medium {
-		width: 310px;
+		width: 350px;
 		height: 100%;
-		padding-block: 32px 12px;
-		padding-inline: 12px;
-	}
-
-	@include break-large {
-		width: 328px;
-		padding-block-start: 48px;
-		padding-inline: 20px 16px;
+		padding: 16px;
 	}
 }
 
@@ -834,15 +837,19 @@
 	align-items: center;
 	margin-block-end: 12px;
 	padding: 0;
+	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 70ms backwards;
 
 	@include break-medium {
-		padding-inline: 8px;
+		margin-block-start: 16px;
+		padding-inline-start: 16px;
 	}
 }
 
 .site-generation__assistant-icon {
 	display: flex;
-	margin-inline-start: -8px;
+	// The mark has about 10px of whitespace inside its 48px viewBox.
+	// Compensate for it so the visible sparkle aligns with the text.
+	margin-inline-start: -10px;
 	color: var( --studio-blue-50 );
 	fill: currentColor;
 }
@@ -851,22 +858,19 @@
 	flex: none;
 	padding: 0;
 	overflow: visible;
-	font-size: $font-body-small;
-	line-height: 1.5;
+	font-size: inherit;
+	line-height: inherit;
 
 	@include break-medium {
 		flex: 1;
-		padding: 8px;
+		padding-inline: 16px;
 		overflow: auto;
 	}
 }
 .site-generation__conversation-message {
 	margin: 0 0 24px;
-	color: var( --site-generation-color-surface );
-
-	@include break-medium {
-		margin-block-end: 28px;
-	}
+	color: var( --site-generation-color-sidebar-foreground );
+	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 130ms backwards;
 }
 .site-build-progress {
 	box-sizing: border-box;
@@ -881,12 +885,21 @@
 	align-items: center;
 	gap: 4px;
 	margin-block-end: 11px;
+	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 190ms backwards;
+}
+
+@keyframes site-generation-sidebar-enter {
+	from {
+		opacity: 0;
+		translate: 0 4px;
+	}
 }
 
 .site-build-progress__title {
-	color: var( --studio-white );
-	font-size: $font-body-small;
+	color: var( --site-generation-color-sidebar-foreground );
+	font-size: inherit;
 	font-weight: 500;
+	line-height: inherit;
 }
 
 .site-build-progress__announcement {
@@ -913,9 +926,12 @@
 	align-items: center;
 	gap: 12px;
 	padding-block-end: 10px;
+	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 235ms backwards;
 
-	@include break-mobile {
-		gap: 15px;
+	@for $step-index from 2 through 6 {
+		&:nth-child( #{ $step-index } ) {
+			animation-delay: #{190ms + ( $step-index - 1 ) * 45ms};
+		}
 	}
 
 	&::before {
@@ -929,6 +945,9 @@
 
 	&[data-next-reached='true']::before {
 		background-color: var( --studio-blue-50 );
+		transform-origin: top;
+		animation: site-build-progress-connector-enter 420ms cubic-bezier( 0.22, 1, 0.36, 1 ) 120ms
+			backwards;
 	}
 
 	&[data-last='true'] {
@@ -940,7 +959,20 @@
 	}
 }
 
+@keyframes site-build-progress-connector-enter {
+	from {
+		opacity: 0;
+		transform: scaleY( 0 );
+	}
+
+	to {
+		opacity: 1;
+		transform: scaleY( 1 );
+	}
+}
+
 .site-build-progress__indicator {
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -949,38 +981,108 @@
 	width: 16px;
 	height: 16px;
 	border-radius: 50%;
+
+	&::before {
+		position: absolute;
+		box-sizing: border-box;
+		inset: 1px;
+		border: 2px solid transparent;
+		border-radius: inherit;
+		content: '';
+	}
 }
 
 .site-build-progress__indicator--done {
 	background-color: var( --studio-blue-50 );
 	color: var( --studio-white );
+	animation: site-build-progress-complete 320ms cubic-bezier( 0.22, 1, 0.36, 1 ) both;
 }
 
 .site-build-progress__indicator--active {
 	background-color: transparent;
+
+	&::before {
+		border-color: var( --site-generation-color-frame-muted );
+		opacity: 0;
+		animation: site-build-progress-idle-indicator-exit 240ms ease-out 220ms both;
+	}
 }
 
 .site-build-progress__indicator--idle {
-	border: 2px solid var( --site-generation-color-frame-muted );
 	background-color: transparent;
+
+	&::before {
+		border-color: var( --site-generation-color-frame-muted );
+	}
 }
 
 .site-build-progress__check {
-	width: 8px;
-	height: 8px;
+	width: 14px;
+	height: 14px;
+	color: var( --studio-white );
+	fill: currentColor;
+	transform-origin: center;
+	animation: site-build-progress-check-enter 280ms cubic-bezier( 0.34, 1.56, 0.64, 1 ) 80ms
+		backwards;
+}
+
+@keyframes site-build-progress-complete {
+	from {
+		background-color: transparent;
+		transform: scale( 0.82 );
+	}
+
+	to {
+		background-color: var( --studio-blue-50 );
+		transform: scale( 1 );
+	}
+}
+
+@keyframes site-build-progress-check-enter {
+	from {
+		opacity: 0;
+		transform: scale( 0.4 ) rotate( -8deg );
+	}
+
+	to {
+		opacity: 1;
+		transform: scale( 1 ) rotate( 0 );
+	}
+}
+
+@keyframes site-build-progress-idle-indicator-exit {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
 }
 
 .site-build-progress__activity {
 	display: block;
 	flex-shrink: 0;
 	box-sizing: border-box;
-	width: 14px;
-	height: 14px;
+	width: 16px;
+	height: 16px;
 	border: 2px solid transparent;
 	border-block-start-color: var( --studio-blue-50 );
 	border-inline-end-color: var( --studio-blue-50 );
 	border-radius: 50%;
-	animation: site-build-spin 0.8s linear infinite;
+	animation:
+		site-build-spin 0.8s linear infinite,
+		site-build-progress-activity-enter 280ms ease-out 220ms backwards;
+}
+
+@keyframes site-build-progress-activity-enter {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
 }
 
 @keyframes site-build-spin {
@@ -992,10 +1094,13 @@
 .site-build-progress__text {
 	flex: 1;
 	min-width: 0;
-	color: var( --studio-white );
-	font-size: $font-body-small;
+	color: var( --site-generation-color-sidebar-foreground );
+	font-size: inherit;
 	font-weight: 400;
-	line-height: 1.4;
+	line-height: inherit;
+	transition:
+		color 240ms cubic-bezier( 0.22, 1, 0.36, 1 ),
+		font-weight 240ms cubic-bezier( 0.22, 1, 0.36, 1 );
 }
 
 .site-build-progress__elapsed {
@@ -1004,7 +1109,7 @@
 	color: var( --site-generation-color-frame-muted );
 	font-size: $font-body-extra-small;
 	font-variant-numeric: tabular-nums;
-	line-height: 1.4;
+	line-height: inherit;
 }
 
 .site-build-progress__item--idle .site-build-progress__text {
@@ -1013,7 +1118,72 @@
 
 .site-build-progress__item--active .site-build-progress__text {
 	font-weight: 500;
+	transition-delay: 0ms, 220ms;
 }
+
+.site-build-progress__label {
+	display: inline-block;
+}
+
+.site-build-progress__item--active .site-build-progress__elapsed {
+	animation: site-build-progress-elapsed-enter 240ms ease-out 260ms backwards;
+}
+
+@keyframes site-build-progress-elapsed-enter {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+.site-build-progress__text-wave {
+	background-color: var( --studio-white );
+	background-image: linear-gradient(
+		90deg,
+		var( --studio-white ) 0%,
+		var( --studio-white ) 35%,
+		color-mix( in srgb, var( --studio-white ) 60%, var( --site-generation-color-frame-muted ) ) 45%,
+		var( --site-generation-color-frame-muted ) 50%,
+		color-mix( in srgb, var( --studio-white ) 60%, var( --site-generation-color-frame-muted ) ) 55%,
+		var( --studio-white ) 65%,
+		var( --studio-white ) 100%
+	);
+	background-repeat: no-repeat;
+	background-position: 100% 0;
+	background-size: 300% 100%;
+	background-clip: text;
+	color: transparent;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	animation:
+		site-build-progress-text-wave 3s linear 220ms infinite,
+		site-build-progress-text-activate 260ms cubic-bezier( 0.22, 1, 0.36, 1 ) 220ms both;
+}
+
+@keyframes site-build-progress-text-activate {
+	from {
+		opacity: 0.5;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes site-build-progress-text-wave {
+	0% {
+		background-position: 100% 0;
+	}
+
+	55%,
+	100% {
+		background-position: 0% 0;
+	}
+}
+
 .site-build-progress .site-generation__sidebar-notice {
 	margin-block-start: 20px;
 	background: var( --site-generation-color-notice-surface );
@@ -1054,9 +1224,32 @@
 	.site-generation__page-preview,
 	.site-generation__tint,
 	.site-generation__waiting-title,
-	.site-generation__waiting-description,
-	.site-build-progress__activity {
+	.site-generation__waiting-description {
 		animation: none;
+	}
+	.site-generation__preview-scan,
+	.site-generation__sidebar-header,
+	.site-generation__conversation-message,
+	.site-build-progress__header,
+	.site-build-progress__item,
+	.site-build-progress__item::before,
+	.site-build-progress__indicator,
+	.site-build-progress__indicator::before,
+	.site-build-progress__check,
+	.site-build-progress__activity,
+	.site-build-progress__elapsed,
+	.site-build-progress__text-wave {
+		animation: none;
+	}
+
+	.site-build-progress__text-wave {
+		background: none;
+		color: var( --studio-white );
+		-webkit-text-fill-color: currentColor;
+	}
+
+	.site-generation__preview-scan {
+		display: none;
 	}
 }
 // A short landscape viewport needs the same graceful compression as other
