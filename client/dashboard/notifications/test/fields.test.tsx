@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { getFields, getNoteBodyParts, getNoteSender } from '../fields';
+import { getBlockSegments, getFields, getNoteBodyParts, getNoteSender } from '../fields';
 import type { Note } from '../engine';
 import type { View } from '@wordpress/dataviews';
 
@@ -95,8 +95,10 @@ describe( 'getNoteBodyParts', () => {
 				],
 			} )
 		);
-		expect( parts.comment ).toBe( 'Great write-up!\n\nThanks for sharing.' );
-		expect( parts.context ).toEqual( [ 'On the post: Hello world' ] );
+		expect( parts.comment?.text ).toBe( 'Great write-up!\n\nThanks for sharing.' );
+		expect( parts.context.map( ( block ) => block.text ) ).toEqual( [
+			'On the post: Hello world',
+		] );
 	} );
 
 	it( 'keeps user blocks as context when there is no comment', () => {
@@ -109,12 +111,57 @@ describe( 'getNoteBodyParts', () => {
 			} )
 		);
 		expect( parts.comment ).toBeNull();
-		expect( parts.context ).toEqual( [ 'Alice Adams', 'Bob Brown' ] );
+		expect( parts.context.map( ( block ) => block.text ) ).toEqual( [
+			'Alice Adams',
+			'Bob Brown',
+		] );
 	} );
 
 	it( 'ignores empty blocks', () => {
 		const parts = getNoteBodyParts( makeNote( 3, { body: [ { text: '  ' } ] } ) );
 		expect( parts.context ).toEqual( [] );
 		expect( parts.comment ).toBeNull();
+	} );
+} );
+
+describe( 'getBlockSegments', () => {
+	it( 'splits text into plain and linked segments', () => {
+		const segments = getBlockSegments( {
+			text: 'New achievement! See all your achievements.',
+			ranges: [
+				{
+					type: 'link',
+					indices: [ 17, 42 ],
+					url: 'https://wordpress.com/me/achievements',
+					id: 1,
+					parent: null,
+				},
+			],
+		} );
+		expect( segments ).toEqual( [
+			{ text: 'New achievement! ' },
+			{ text: 'See all your achievements', url: 'https://wordpress.com/me/achievements' },
+			{ text: '.' },
+		] );
+	} );
+
+	it( 'returns the whole text when there are no linkable ranges', () => {
+		const segments = getBlockSegments( {
+			text: 'Just text',
+			ranges: [ { type: 'b', indices: [ 0, 4 ], id: 2, parent: null } ],
+		} );
+		expect( segments ).toEqual( [ { text: 'Just text' } ] );
+	} );
+
+	it( 'drops overlapping and out-of-bounds ranges', () => {
+		const segments = getBlockSegments( {
+			text: 'abcdef',
+			ranges: [
+				{ type: 'link', indices: [ 0, 4 ], url: 'https://a.example', id: 3, parent: null },
+				{ type: 'link', indices: [ 2, 6 ], url: 'https://b.example', id: 4, parent: null },
+				{ type: 'link', indices: [ 5, 9 ], url: 'https://c.example', id: 5, parent: null },
+			],
+		} );
+		expect( segments ).toEqual( [ { text: 'abcd', url: 'https://a.example' }, { text: 'ef' } ] );
 	} );
 } );

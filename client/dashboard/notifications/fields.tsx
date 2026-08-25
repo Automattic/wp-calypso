@@ -51,12 +51,45 @@ export function getNoteExcerpt( note: Note ): string | null {
 	return note.subject.length > 1 ? note.subject[ 1 ].text : null;
 }
 
+export type NoteBlock = Note[ 'body' ][ number ];
+
 export type NoteBodyParts = {
-	/** Muted context lines (post title, prompt text, likers on non-comment notes). */
-	context: string[];
-	/** The quoted comment content, when the note carries one. */
-	comment: string | null;
+	/** Muted context blocks (post title, prompt text, likers on non-comment notes). */
+	context: NoteBlock[];
+	/** The quoted comment block, when the note carries one. */
+	comment: NoteBlock | null;
 };
+
+export type BlockSegment = { text: string; url?: string };
+
+/**
+ * Split a block's text into plain and linked segments using its `ranges`
+ * (substring offsets from the API). Overlapping or nested ranges keep the
+ * first; ranges without a URL don't affect the text.
+ */
+export function getBlockSegments( block: NoteBlock ): BlockSegment[] {
+	const linkRanges = ( block.ranges ?? [] )
+		.filter( ( range ) => !! range.url && range.indices[ 1 ] > range.indices[ 0 ] )
+		.sort( ( a, b ) => a.indices[ 0 ] - b.indices[ 0 ] );
+
+	const segments: BlockSegment[] = [];
+	let cursor = 0;
+	for ( const range of linkRanges ) {
+		const [ start, end ] = range.indices;
+		if ( start < cursor || end > block.text.length ) {
+			continue;
+		}
+		if ( start > cursor ) {
+			segments.push( { text: block.text.slice( cursor, start ) } );
+		}
+		segments.push( { text: block.text.slice( start, end ), url: range.url } );
+		cursor = end;
+	}
+	if ( cursor < block.text.length ) {
+		segments.push( { text: block.text.slice( cursor ) } );
+	}
+	return segments;
+}
 
 /**
  * Split the note's body blocks for display: the comment block becomes quoted
@@ -69,10 +102,9 @@ export function getNoteBodyParts( note: Note ): NoteBodyParts {
 	const commentBlock = blocks.find( ( block ) => block.type === 'comment' );
 	const context = blocks
 		.filter( ( block ) => block !== commentBlock )
-		.filter( ( block ) => ! ( commentBlock && block.type === 'user' ) )
-		.map( ( block ) => block.text );
+		.filter( ( block ) => ! ( commentBlock && block.type === 'user' ) );
 
-	return { context, comment: commentBlock?.text ?? null };
+	return { context, comment: commentBlock ?? null };
 }
 
 export function getFields(): Field< Note >[] {

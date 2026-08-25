@@ -169,7 +169,7 @@ export default function NoteActions( { note }: { note: Note } ) {
 				<HStack justify="flex-start" spacing={ 1 } wrap>
 					{ actions.approveComment && (
 						<Button
-							variant="tertiary"
+							variant="secondary"
 							icon={ check }
 							isPressed={ isApproved }
 							onClick={ () => setApprovalStatus( note, ! isApproved ) }
@@ -178,13 +178,13 @@ export default function NoteActions( { note }: { note: Note } ) {
 						</Button>
 					) }
 					{ actions.replyToComment && (
-						<Button variant="tertiary" isPressed={ mode === 'reply' } onClick={ startReply }>
+						<Button variant="secondary" isPressed={ mode === 'reply' } onClick={ startReply }>
 							{ __( 'Reply' ) }
 						</Button>
 					) }
 					{ canLike && (
 						<Button
-							variant="tertiary"
+							variant="secondary"
 							icon={ isLiked ? starFilled : starEmpty }
 							isPressed={ isLiked }
 							onClick={ () => setLikeStatus( note, ! isLiked ) }
@@ -194,7 +194,7 @@ export default function NoteActions( { note }: { note: Note } ) {
 					) }
 					{ actions.editComment && (
 						<Button
-							variant="tertiary"
+							variant="secondary"
 							icon={ pencil }
 							isPressed={ mode === 'edit' }
 							onClick={ startEdit }
@@ -203,13 +203,13 @@ export default function NoteActions( { note }: { note: Note } ) {
 						</Button>
 					) }
 					{ actions.spamComment && (
-						<Button variant="tertiary" isDestructive onClick={ () => spamNote( note ) }>
+						<Button variant="secondary" isDestructive onClick={ () => spamNote( note ) }>
 							{ __( 'Spam' ) }
 						</Button>
 					) }
 					{ actions.trashComment && (
 						<Button
-							variant="tertiary"
+							variant="secondary"
 							icon={ trash }
 							isDestructive
 							onClick={ () => trashNote( note ) }
@@ -219,7 +219,7 @@ export default function NoteActions( { note }: { note: Note } ) {
 					) }
 					{ actions.answerPromptHref && (
 						<Button
-							variant="tertiary"
+							variant="secondary"
 							href={ actions.answerPromptHref }
 							target="_blank"
 							rel="noreferrer"
@@ -228,7 +228,7 @@ export default function NoteActions( { note }: { note: Note } ) {
 						</Button>
 					) }
 					{ follow && (
-						<Button variant="tertiary" isPressed={ follow.isFollowing } onClick={ toggleFollow }>
+						<Button variant="secondary" isPressed={ follow.isFollowing } onClick={ toggleFollow }>
 							{ follow.isFollowing ? __( 'Following' ) : __( 'Follow' ) }
 						</Button>
 					) }

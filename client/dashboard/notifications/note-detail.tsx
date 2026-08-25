@@ -12,13 +12,30 @@ import { useEffect, useState } from 'react';
 import { Card, CardBody } from '../components/card';
 import { getRelativeTimeString } from '../utils/datetime';
 import { openNote, useNote } from './engine';
-import { getNoteBodyParts, getNoteExcerpt, getNoteTitle } from './fields';
+import { getBlockSegments, getNoteBodyParts, getNoteExcerpt, getNoteTitle } from './fields';
 import NoteActions from './note-actions';
+import type { NoteBlock } from './fields';
 
 // The engine has no error signal for a missing note: `openNote` just keeps
 // waiting for it to land in the store. Fall back to an empty state after this
 // long rather than spinning forever on a deleted or invalid note.
 const NOT_FOUND_TIMEOUT_MS = 10000;
+
+function BlockText( { block }: { block: NoteBlock } ) {
+	return (
+		<>
+			{ getBlockSegments( block ).map( ( segment, index ) =>
+				segment.url ? (
+					<a key={ index } href={ segment.url } target="_blank" rel="noreferrer">
+						{ segment.text }
+					</a>
+				) : (
+					segment.text
+				)
+			) }
+		</>
+	);
+}
 
 function DetailFrame( { onClose, children }: { onClose: () => void; children: React.ReactNode } ) {
 	return (
@@ -72,7 +89,6 @@ export default function NoteDetail( { noteId, onClose }: { noteId: string; onClo
 
 	const excerpt = getNoteExcerpt( note );
 	const { context, comment } = getNoteBodyParts( note );
-	const commentParagraphs = comment ? comment.split( /\n+/ ).filter( ( line ) => line.trim() ) : [];
 
 	return (
 		<DetailFrame onClose={ onClose }>
@@ -101,20 +117,16 @@ export default function NoteDetail( { noteId, onClose }: { noteId: string; onClo
 			</HStack>
 			<VStack spacing={ 3 } className="dashboard-notifications-inbox__body">
 				{ ! comment && excerpt && <Text>{ excerpt }</Text> }
-				{ context.map( ( text, index ) => (
+				{ context.map( ( block, index ) => (
 					<Text key={ index } variant="muted">
-						{ text }
+						<BlockText block={ block } />
 					</Text>
 				) ) }
 				{ comment && (
 					<blockquote className="dashboard-notifications-inbox__quote">
-						<VStack spacing={ 2 }>
-							{ commentParagraphs.map( ( text, index ) => (
-								<Text as="p" key={ index }>
-									{ text }
-								</Text>
-							) ) }
-						</VStack>
+						<Text as="p">
+							<BlockText block={ comment } />
+						</Text>
 					</blockquote>
 				) }
 			</VStack>
