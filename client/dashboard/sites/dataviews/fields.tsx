@@ -236,10 +236,10 @@ function getDefaultFields( {
 		{
 			id: 'is_deleted',
 			type: 'boolean',
-			label: __( 'Deleted' ),
+			label: __( 'Deleted sites' ),
 			elements: [
-				{ value: true, label: __( 'Yes' ) },
-				{ value: false, label: __( 'No' ) },
+				{ value: true, label: __( 'Show' ) },
+				{ value: false, label: __( 'Hide' ) },
 			],
 			filterBy: {
 				operators: [ 'is' as Operator ],
