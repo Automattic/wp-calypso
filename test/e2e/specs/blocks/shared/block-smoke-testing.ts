@@ -10,6 +10,16 @@ import {
 } from '@automattic/calypso-e2e';
 import { expect, tags as allTags, test } from '../../../lib/pw-base';
 
+// Publishing a post carrying a synced form saves two entities. On Atomic the second save
+// regularly outruns the cap that predates it, so only Atomic gets the longer one; Simple keeps
+// the tighter bound, where it still catches a regression. Omitting the argument would not lift
+// the cap either way: `waitForResponse` falls back to `actionTimeout` from playwright.config.ts.
+//
+// 60s was not enough: the Jetpack Forms flows overran it on the private variation, where four
+// workers share one site. Both values stay well inside the per-test budget set below.
+const PUBLISH_TIMEOUT = 15 * 1000;
+const ATOMIC_PUBLISH_TIMEOUT = 120 * 1000;
+
 /**
  * Creates a suite of block smoke tests for a set of block flows.
  *
@@ -93,7 +103,10 @@ export function createBlockTests(
 			}
 
 			await test.step( 'When I publish and visit the post', async () => {
-				await pageEditor.publish( { visit: true, timeout: 15 * 1000 } );
+				await pageEditor.publish( {
+					visit: true,
+					timeout: envVariables.TEST_ON_ATOMIC ? ATOMIC_PUBLISH_TIMEOUT : PUBLISH_TIMEOUT,
+				} );
 				publishedPostContext = {
 					browser: page.context().browser()!,
 					page,
