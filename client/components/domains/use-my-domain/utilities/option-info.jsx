@@ -10,10 +10,10 @@ const transferIllustration = <Icon icon={ TransferIcon } />;
 
 const optionTitleText = {
 	get transfer() {
-		return __( 'Transfer your domain' );
+		return __( 'Transfer your domain name to WordPress.com' );
 	},
 	get connect() {
-		return __( 'Connect your site address' );
+		return __( 'Connect your domain name to this site' );
 	},
 };
 
@@ -23,12 +23,19 @@ const transferSupported = {
 		return optionTitleText.transfer;
 	},
 	get topText() {
-		return __( 'Manage everything in one place.' );
+		return (
+			<>
+				<span>
+					{ __( 'We become your provider and you can manage everything from one place.' ) }
+				</span>
+				<span>{ __( 'Takes 5–7 days.' ) }</span>
+			</>
+		);
 	},
 	learnMoreLink: INCOMING_DOMAIN_TRANSFER,
 	get benefits() {
 		return [
-			{ icon: backup, text: __( 'Free domain name renewal for 1 year' ) },
+			{ icon: backup, text: __( 'Includes a year’s renewal' ) },
 			{ icon: wordpress, text: __( 'Manage everything from WordPress.com' ), iconSize: 16 },
 			{ icon: shield, text: __( 'Privacy protection and SSL included' ) },
 		];
@@ -52,12 +59,19 @@ const connectSupported = {
 		return optionTitleText.connect;
 	},
 	get topText() {
-		return __( 'Use your existing domain with your site.' );
+		return (
+			<>
+				<span>
+					{ __( 'Your domain name stays with GoDaddy and will just point to your new site.' ) }
+				</span>
+				<span>{ __( 'Takes a few hours.' ) }</span>
+			</>
+		);
 	},
 	learnMoreLink: MAP_EXISTING_DOMAIN,
 	get benefits() {
 		return [
-			{ icon: globe, text: __( 'Keep your current domain provider' ) },
+			{ icon: globe, text: __( 'Keep your current domain registrar' ) },
 			{ icon: envelope, text: __( 'Email and other services stay connected' ) },
 			{ icon: shield, text: __( 'Privacy protection and SSL included' ) },
 		];

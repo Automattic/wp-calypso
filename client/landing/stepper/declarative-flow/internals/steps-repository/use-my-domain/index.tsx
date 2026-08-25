@@ -209,7 +209,9 @@ const UseMyDomain: StepType< {
 		} else {
 			columnWidth = 6 as const;
 			headingText = __( 'Set up your domain' );
-			subText = __( 'Transfer your domain, or connect it from your current provider.' );
+			subText = __(
+				'Transfer your domain name to WordPress.com, or keep it with your current registrar.'
+			);
 		}
 
 		const getTopBarLeftElement = () => {

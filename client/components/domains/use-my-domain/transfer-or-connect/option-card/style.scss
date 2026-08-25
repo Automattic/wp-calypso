@@ -57,9 +57,13 @@
 		font-weight: 500;
 		line-height: 24px;
 		color: var(--color-text);
+		text-wrap: balance;
 	}
 
 	&__top-text {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 		font-size: $font-body-extra-small;
 		font-weight: 400;
 		line-height: 16px;
