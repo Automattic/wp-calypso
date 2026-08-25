@@ -17,6 +17,7 @@ import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import { useAiChatPlugin } from './plugin-ai-chat';
 import { addDashboardNode, useDashboardPlugin } from './plugin-dashboard';
+import { useFreeDomainPlugin } from './plugin-free-domain';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
 import { useLaunchSitePlugin } from './plugin-launch-site';
@@ -171,12 +172,14 @@ function ConnectedOmnibar( {
 	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
 	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const launchSiteNode = useLaunchSitePlugin( { site } );
+	const freeDomainNode = useFreeDomainPlugin( { site } );
 	const dashboardNode = useDashboardPlugin( { site, sectionGroup } );
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
 	const siteActions = [
 		...( baseOmnibarNodes.siteActions ?? [] ),
 		statsSparklineNode,
 		launchSiteNode,
+		freeDomainNode,
 	].filter( ( node ) => node !== undefined );
 
 	const plugins = baseOmnibarNodes.user

@@ -1,24 +1,20 @@
 /* eslint-disable no-restricted-imports */
-import { isEnabled } from '@automattic/calypso-config';
 import { Icon, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains/get-domain-and-plan-upsell-url';
 import { upsell } from '../../components/icons';
-import { isSimple } from '../../utils/site-types';
+import {
+	FREE_DOMAIN_UPSELL_ID,
+	getFreeDomainUpsellHref,
+	isFreeDomainUpsellEligible,
+} from '../free-domain-upsell';
 import type { Site } from '@automattic/api-core';
 
 import './omnibar-free-domain-chip.scss';
 
-const UPSELL_ID = 'omnibar-free-domain';
-
 export function OmnibarFreeDomainChip( { site }: { site: Site } ) {
-	const isEligible =
-		isEnabled( 'dashboard/omnibar-free-domain-chip' ) &&
-		!! site.plan?.is_free &&
-		isSimple( site ) &&
-		! site.is_wpcom_staging_site;
+	const isEligible = isFreeDomainUpsellEligible( site );
 
 	const hasRecordedImpression = useRef( false );
 	useEffect( () => {
@@ -26,7 +22,10 @@ export function OmnibarFreeDomainChip( { site }: { site: Site } ) {
 			return;
 		}
 		hasRecordedImpression.current = true;
-		recordTracksEvent( 'calypso_omnibar_upsell_impression', { upsell_id: UPSELL_ID } );
+		recordTracksEvent( 'calypso_omnibar_upsell_impression', {
+			upsell_id: FREE_DOMAIN_UPSELL_ID,
+			surface: 'calypso',
+		} );
 	}, [ isEligible ] );
 
 	if ( ! isEligible ) {
@@ -37,9 +36,12 @@ export function OmnibarFreeDomainChip( { site }: { site: Site } ) {
 		<Tooltip text={ __( 'Free domain with an annual plan' ) } placement="bottom">
 			<a
 				className="masterbar__item masterbar__item--always-show-content masterbar__item-free-domain-chip"
-				href={ getDomainAndPlanUpsellUrl( { siteSlug: site.slug } ) }
+				href={ getFreeDomainUpsellHref( site ) }
 				onClick={ () =>
-					recordTracksEvent( 'calypso_omnibar_upsell_click', { upsell_id: UPSELL_ID } )
+					recordTracksEvent( 'calypso_omnibar_upsell_click', {
+						upsell_id: FREE_DOMAIN_UPSELL_ID,
+						surface: 'calypso',
+					} )
 				}
 			>
 				<span className="masterbar__free-domain-chip-pill">
