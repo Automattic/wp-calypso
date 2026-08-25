@@ -67,6 +67,7 @@ export interface PressablePlan {
 	visits: number;
 	storage: number;
 	worker: number;
+	category: 'signature' | 'signature-high' | 'premium';
 	yearly_price?: number;
 }
 
@@ -78,6 +79,7 @@ export const pressableSignaturePlans: PressablePlan[] = [
 		visits: 30000,
 		storage: 20,
 		worker: 5,
+		category: 'signature',
 		yearly_price: 250,
 	},
 	{
@@ -87,6 +89,7 @@ export const pressableSignaturePlans: PressablePlan[] = [
 		visits: 50000,
 		storage: 30,
 		worker: 5,
+		category: 'signature',
 	},
 	{
 		slug: 'pressable-signature-3',
@@ -95,6 +98,7 @@ export const pressableSignaturePlans: PressablePlan[] = [
 		visits: 75000,
 		storage: 35,
 		worker: 5,
+		category: 'signature',
 	},
 	{
 		slug: 'pressable-signature-4',
@@ -103,6 +107,7 @@ export const pressableSignaturePlans: PressablePlan[] = [
 		visits: 150000,
 		storage: 50,
 		worker: 5,
+		category: 'signature',
 	},
 	{
 		slug: 'pressable-signature-5',
@@ -111,6 +116,7 @@ export const pressableSignaturePlans: PressablePlan[] = [
 		visits: 400000,
 		storage: 80,
 		worker: 5,
+		category: 'signature',
 	},
 	{
 		slug: 'pressable-signature-6',
@@ -119,6 +125,7 @@ export const pressableSignaturePlans: PressablePlan[] = [
 		visits: 1000000,
 		storage: 200,
 		worker: 5,
+		category: 'signature',
 	},
 	{
 		slug: 'pressable-signature-7',
@@ -127,6 +134,7 @@ export const pressableSignaturePlans: PressablePlan[] = [
 		visits: 1600000,
 		storage: 275,
 		worker: 5,
+		category: 'signature',
 	},
 	{
 		slug: 'pressable-signature-8',
@@ -135,6 +143,7 @@ export const pressableSignaturePlans: PressablePlan[] = [
 		visits: 2000000,
 		storage: 325,
 		worker: 5,
+		category: 'signature',
 	},
 	{
 		slug: 'pressable-signature-9',
@@ -143,6 +152,7 @@ export const pressableSignaturePlans: PressablePlan[] = [
 		visits: 2400000,
 		storage: 375,
 		worker: 5,
+		category: 'signature',
 	},
 	{
 		slug: 'pressable-signature-10',
@@ -151,6 +161,7 @@ export const pressableSignaturePlans: PressablePlan[] = [
 		visits: 3000000,
 		storage: 450,
 		worker: 5,
+		category: 'signature',
 	},
 ];
 
@@ -159,6 +170,180 @@ export const mockAgencyContext = {
 	managedSites: 12,
 	ownsPressablePlan: false,
 };
+
+export const pressableSignatureHighPlans: PressablePlan[] = [
+	{
+		slug: 'pressable-signature-11',
+		name: 'Signature 11',
+		install: 200,
+		visits: 4000000,
+		storage: 500,
+		worker: 5,
+		category: 'signature-high',
+	},
+	{
+		slug: 'pressable-signature-12',
+		name: 'Signature 12',
+		install: 250,
+		visits: 5000000,
+		storage: 550,
+		worker: 5,
+		category: 'signature-high',
+	},
+	{
+		slug: 'pressable-signature-13',
+		name: 'Signature 13',
+		install: 300,
+		visits: 6000000,
+		storage: 600,
+		worker: 5,
+		category: 'signature-high',
+	},
+	{
+		slug: 'pressable-signature-14',
+		name: 'Signature 14',
+		install: 350,
+		visits: 7000000,
+		storage: 700,
+		worker: 5,
+		category: 'signature-high',
+	},
+	{
+		slug: 'pressable-signature-15',
+		name: 'Signature 15',
+		install: 400,
+		visits: 8000000,
+		storage: 800,
+		worker: 5,
+		category: 'signature-high',
+	},
+	{
+		slug: 'pressable-signature-16',
+		name: 'Signature 16',
+		install: 450,
+		visits: 9000000,
+		storage: 900,
+		worker: 5,
+		category: 'signature-high',
+	},
+	{
+		slug: 'pressable-signature-17',
+		name: 'Signature 17',
+		install: 500,
+		visits: 10000000,
+		storage: 1000,
+		worker: 5,
+		category: 'signature-high',
+	},
+];
+
+export const pressablePremiumPlans: PressablePlan[] = [
+	{
+		slug: 'pressable-premium-1',
+		name: 'Premium 1',
+		install: 1,
+		visits: 150000,
+		storage: 30,
+		worker: 10,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-2',
+		name: 'Premium 2',
+		install: 1,
+		visits: 250000,
+		storage: 40,
+		worker: 10,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-3',
+		name: 'Premium 3',
+		install: 1,
+		visits: 350000,
+		storage: 50,
+		worker: 13,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-4',
+		name: 'Premium 4',
+		install: 1,
+		visits: 500000,
+		storage: 60,
+		worker: 15,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-5',
+		name: 'Premium 5',
+		install: 1,
+		visits: 750000,
+		storage: 70,
+		worker: 15,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-6',
+		name: 'Premium 6',
+		install: 1,
+		visits: 1000000,
+		storage: 80,
+		worker: 17,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-7',
+		name: 'Premium 7',
+		install: 1,
+		visits: 2000000,
+		storage: 90,
+		worker: 17,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-8',
+		name: 'Premium 8',
+		install: 1,
+		visits: 3000000,
+		storage: 100,
+		worker: 20,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-9',
+		name: 'Premium 9',
+		install: 1,
+		visits: 5000000,
+		storage: 125,
+		worker: 20,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-10',
+		name: 'Premium 10',
+		install: 1,
+		visits: 7000000,
+		storage: 150,
+		worker: 25,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-11',
+		name: 'Premium 11',
+		install: 1,
+		visits: 10000000,
+		storage: 175,
+		worker: 25,
+		category: 'premium',
+	},
+];
+
+export const pressablePlans: PressablePlan[] = [
+	...pressableSignaturePlans,
+	...pressableSignatureHighPlans,
+	...pressablePremiumPlans,
+];
 
 export const PRESSABLE_OVERAGES = {
 	storagePerGB: 0.5,
