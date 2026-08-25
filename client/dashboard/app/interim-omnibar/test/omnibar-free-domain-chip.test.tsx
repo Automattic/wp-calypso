@@ -14,21 +14,38 @@ const FREE_SIMPLE_SITE = {
 	ID: 123,
 	slug: 'test-site.wordpress.com',
 	plan: { is_free: true },
+	capabilities: { manage_options: true },
+	options: {},
 	jetpack: false,
 	is_wpcom_atomic: false,
 	is_garden: false,
 	is_wpcom_staging_site: false,
 } as Site;
 
-const PAID_SITE = {
+const MONTHLY_PLAN_SITE = {
 	...FREE_SIMPLE_SITE,
-	plan: { is_free: false },
+	plan: { is_free: false, billing_period: 'Monthly' },
+} as Site;
+
+const YEARLY_PAID_SITE = {
+	...FREE_SIMPLE_SITE,
+	plan: { is_free: false, billing_period: 'Yearly' },
+} as Site;
+
+const NON_ADMIN_SITE = {
+	...FREE_SIMPLE_SITE,
+	capabilities: { manage_options: false },
+} as Site;
+
+const MAPPED_DOMAIN_SITE = {
+	...FREE_SIMPLE_SITE,
+	slug: 'example.com',
 } as Site;
 
 // Seed a live assignment into the storage ExPlat reads from, so the real
 // `useExperiment` hook resolves to the given variation through its normal code
 // path — no network call, no mocking.
-function assignExperiment( variationName: string | null = null ) {
+function assignExperiment( variationName: string | null ) {
 	window.localStorage.setItem(
 		`explat-experiment--${ FREE_DOMAIN_UPSELL_EXPERIMENT }`,
 		JSON.stringify( {
@@ -51,7 +68,7 @@ describe( '<OmnibarFreeDomainChip>', () => {
 		disable( 'dashboard/omnibar-free-domain-chip' );
 	} );
 
-	test( 'shows the chip for an eligible site in the treatment group', async () => {
+	test( 'shows the chip for an eligible free site in the treatment group', async () => {
 		assignExperiment( 'treatment' );
 
 		render( <OmnibarFreeDomainChip site={ FREE_SIMPLE_SITE } /> );
@@ -64,7 +81,25 @@ describe( '<OmnibarFreeDomainChip>', () => {
 		);
 	} );
 
+	test( 'shows the chip for an eligible monthly-plan site in the treatment group', async () => {
+		assignExperiment( 'treatment' );
+
+		render( <OmnibarFreeDomainChip site={ MONTHLY_PLAN_SITE } /> );
+
+		expect( await screen.findByRole( 'link', { name: 'Free domain' } ) ).toBeVisible();
+	} );
+
 	test( 'does not show the chip for an eligible site in the control group', async () => {
+		assignExperiment( 'control' );
+
+		render( <OmnibarFreeDomainChip site={ FREE_SIMPLE_SITE } /> );
+
+		await waitFor( () => {
+			expect( screen.queryByRole( 'link', { name: 'Free domain' } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	test( 'does not show the chip while unassigned (null variation): safe default experience', async () => {
 		assignExperiment( null );
 
 		render( <OmnibarFreeDomainChip site={ FREE_SIMPLE_SITE } /> );
@@ -74,10 +109,30 @@ describe( '<OmnibarFreeDomainChip>', () => {
 		} );
 	} );
 
-	test( 'does not show the chip for a paid site, even in the treatment group', async () => {
+	test( 'does not show the chip for a yearly paid site, even in the treatment group', async () => {
 		assignExperiment( 'treatment' );
 
-		render( <OmnibarFreeDomainChip site={ PAID_SITE } /> );
+		render( <OmnibarFreeDomainChip site={ YEARLY_PAID_SITE } /> );
+
+		await waitFor( () => {
+			expect( screen.queryByRole( 'link', { name: 'Free domain' } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	test( 'does not show the chip for a non-admin, even in the treatment group', async () => {
+		assignExperiment( 'treatment' );
+
+		render( <OmnibarFreeDomainChip site={ NON_ADMIN_SITE } /> );
+
+		await waitFor( () => {
+			expect( screen.queryByRole( 'link', { name: 'Free domain' } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	test( 'does not show the chip for a site with a mapped primary domain, even in the treatment group', async () => {
+		assignExperiment( 'treatment' );
+
+		render( <OmnibarFreeDomainChip site={ MAPPED_DOMAIN_SITE } /> );
 
 		await waitFor( () => {
 			expect( screen.queryByRole( 'link', { name: 'Free domain' } ) ).not.toBeInTheDocument();
@@ -95,8 +150,8 @@ describe( '<OmnibarFreeDomainChip>', () => {
 		} );
 	} );
 
-	test( 'the omnibar_free_domain query param forces the chip on, overriding the assignment', async () => {
-		assignExperiment( null );
+	test( 'the omnibar_free_domain query param forces the chip on outside production, overriding the assignment', async () => {
+		assignExperiment( 'control' );
 		window.history.replaceState( {}, '', '/?omnibar_free_domain=1' );
 
 		render( <OmnibarFreeDomainChip site={ FREE_SIMPLE_SITE } /> );
