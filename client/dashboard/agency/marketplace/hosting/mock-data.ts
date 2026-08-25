@@ -69,6 +69,7 @@ export interface PressablePlan {
 	worker: number;
 	category: 'signature' | 'signature-high' | 'premium';
 	yearly_price?: number;
+	monthly_price?: number;
 }
 
 export const pressableSignaturePlans: PressablePlan[] = [

@@ -10,18 +10,26 @@ import { check } from '@wordpress/icons';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { getTieredPrice, formatUSD, wpcomHosting } from './mock-data';
-import type { PressablePlan } from './mock-data';
+import type { HostingProduct, PressablePlan } from './mock-data';
 
 type YourPlanProps = {
 	brand: 'wpcom' | 'pressable';
 	term: 'monthly' | 'yearly';
 	quantity: number;
 	plan?: PressablePlan;
+	product?: HostingProduct;
 	onAddToCart: () => void;
 };
 
-export default function YourPlan( { brand, term, quantity, plan, onAddToCart }: YourPlanProps ) {
-	const price = brand === 'wpcom' ? getTieredPrice( wpcomHosting, quantity, term ) : null;
+export default function YourPlan( {
+	brand,
+	term,
+	quantity,
+	plan,
+	product = wpcomHosting,
+	onAddToCart,
+}: YourPlanProps ) {
+	const price = brand === 'wpcom' ? getTieredPrice( product, quantity, term ) : null;
 	const isCustomPlan = brand === 'pressable' && ! plan;
 	const isPremiumPlan = brand === 'pressable' && plan?.category === 'premium';
 	const isContactSales = isCustomPlan || isPremiumPlan;
@@ -39,7 +47,10 @@ export default function YourPlan( { brand, term, quantity, plan, onAddToCart }: 
 					plan?.name ?? __( 'Custom' )
 			  );
 
-	const total = brand === 'wpcom' ? price?.discountedCost ?? null : plan?.yearly_price ?? null;
+	const total =
+		brand === 'wpcom'
+			? price?.discountedCost ?? null
+			: ( term === 'yearly' ? plan?.yearly_price : plan?.monthly_price ) ?? null;
 
 	const ctaLabel =
 		brand === 'wpcom'
