@@ -268,7 +268,7 @@ describe( '<Sites>', () => {
 			expect( screen.queryByText( 'My Staging Site' ) ).not.toBeInTheDocument();
 		} );
 
-		test( 'includes staging sites when the staging filter is set to yes', async () => {
+		test( 'includes staging sites when the staging filter is set to show', async () => {
 			// The persisted view comes from user preferences, which the shared mock returns empty.
 			nock.cleanAll();
 			nock( 'https://public-api.wordpress.com' )

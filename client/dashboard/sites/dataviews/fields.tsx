@@ -238,10 +238,10 @@ function getDefaultFields( {
 		{
 			id: STAGING_FILTER_FIELD,
 			type: 'boolean',
-			label: __( 'Staging' ),
+			label: __( 'Staging sites' ),
 			elements: [
-				{ value: true, label: __( 'Yes' ) },
-				{ value: false, label: __( 'No' ) },
+				{ value: true, label: __( 'Show' ) },
+				{ value: false, label: __( 'Hide' ) },
 			],
 			filterBy: {
 				operators: [ 'is' as Operator ],
@@ -252,10 +252,10 @@ function getDefaultFields( {
 		{
 			id: 'is_deleted',
 			type: 'boolean',
-			label: __( 'Deleted' ),
+			label: __( 'Deleted sites' ),
 			elements: [
-				{ value: true, label: __( 'Yes' ) },
-				{ value: false, label: __( 'No' ) },
+				{ value: true, label: __( 'Show' ) },
+				{ value: false, label: __( 'Hide' ) },
 			],
 			filterBy: {
 				operators: [ 'is' as Operator ],
