@@ -13,9 +13,9 @@
 	// Gutenberg editor-chrome colors with no color-studio token equivalent.
 	--site-generation-color-surface: #f0f0f0;
 	--site-generation-color-surface-muted: #e2e4e7;
-	// Match the docked Agents Manager shell and its inner dark surfaces.
+	// Match the docked Agents Manager shell and its dark-mode palette.
 	--site-generation-color-frame: #1e1e1e;
-	--site-generation-color-sidebar-foreground: #fff;
+	--site-generation-color-sidebar-foreground: var( --studio-white );
 	--site-generation-color-notice-surface: #2f2f2f;
 	--site-generation-color-frame-muted: #8f8f8f;
 	position: fixed;
@@ -1224,8 +1224,7 @@
 	.site-generation__page-preview,
 	.site-generation__tint,
 	.site-generation__waiting-title,
-	.site-generation__waiting-description,
-	.site-build-progress__activity {
+	.site-generation__waiting-description {
 		animation: none;
 	}
 	.site-generation__preview-scan,
