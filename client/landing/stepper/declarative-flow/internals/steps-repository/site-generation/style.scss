@@ -18,7 +18,6 @@
 	--site-generation-color-sidebar-foreground: #fff;
 	--site-generation-color-notice-surface: #2f2f2f;
 	--site-generation-color-frame-muted: #8f8f8f;
-	--site-generation-color-thinking: #757575;
 	position: fixed;
 	z-index: 1000000;
 	inset: 0;
@@ -1018,24 +1017,17 @@
 	display: inline-block;
 	background-color: var( --studio-white );
 	background-image: linear-gradient(
-		110deg,
+		90deg,
 		var( --studio-white ) 0%,
-		var( --studio-white ) 32%,
-		color-mix( in srgb, var( --studio-white ) 65%, var( --site-generation-color-thinking ) ) 40%,
-		color-mix( in srgb, var( --studio-white ) 25%, var( --site-generation-color-thinking ) ) 47%,
-		color-mix(
-				in srgb,
-				var( --site-generation-color-thinking ) 65%,
-				var( --site-generation-color-frame )
-			)
-			50%,
-		color-mix( in srgb, var( --studio-white ) 25%, var( --site-generation-color-thinking ) ) 53%,
-		color-mix( in srgb, var( --studio-white ) 65%, var( --site-generation-color-thinking ) ) 60%,
-		var( --studio-white ) 68%,
+		var( --studio-white ) 35%,
+		color-mix( in srgb, var( --studio-white ) 60%, var( --site-generation-color-frame-muted ) ) 45%,
+		var( --site-generation-color-frame-muted ) 50%,
+		color-mix( in srgb, var( --studio-white ) 60%, var( --site-generation-color-frame-muted ) ) 55%,
+		var( --studio-white ) 65%,
 		var( --studio-white ) 100%
 	);
 	background-repeat: no-repeat;
-	background-position: 100% 50%;
+	background-position: 100% 0;
 	background-size: 300% 100%;
 	background-clip: text;
 	color: transparent;
@@ -1045,14 +1037,13 @@
 }
 
 @keyframes site-build-progress-text-wave {
-	0%,
-	20% {
-		background-position: 100% 50%;
+	0% {
+		background-position: 100% 0;
 	}
 
-	75%,
+	55%,
 	100% {
-		background-position: 0% 50%;
+		background-position: 0% 0;
 	}
 }
 
