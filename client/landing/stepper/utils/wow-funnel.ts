@@ -12,17 +12,17 @@ import { logToLogstash } from 'calypso/lib/logstash';
  */
 
 /**
- * Where the customer lands after checkout, chosen by the CTA.
+ * Where the customer lands after checkout, when the CTA asks for somewhere specific.
  *
  * - `editor` — straight into the Site Editor on the built Atomic site.
- * - `manual` — the default post-checkout onboarding (Launchpad / My Home).
  *
- * Other funnels add their own destinations alongside their server-side funnel (e.g. the
+ * No (or unrecognized) `dest` means no override: the flow's ordinary post-checkout destination
+ * applies. Other funnels add their own values alongside their server-side funnel (e.g. the
  * blueprint funnel's site-spec hand-off).
  */
-export type WowFunnelDest = 'editor' | 'manual';
+export type WowFunnelDest = 'editor';
 
-const WOW_FUNNEL_DESTS: WowFunnelDest[] = [ 'editor', 'manual' ];
+const WOW_FUNNEL_DESTS: WowFunnelDest[] = [ 'editor' ];
 
 /**
  * A funnel site created for this flow, remembered so the create-site step can consume it rather
@@ -52,9 +52,9 @@ export function getWowFunnelSlug( queryParams: URLSearchParams ): string | null 
 	return slug || null;
 }
 
-export function getWowFunnelDest( queryParams: URLSearchParams ): WowFunnelDest {
+export function getWowFunnelDest( queryParams: URLSearchParams ): WowFunnelDest | null {
 	const dest = queryParams.get( 'dest' );
-	return WOW_FUNNEL_DESTS.find( ( d ) => d === dest ) ?? 'manual';
+	return WOW_FUNNEL_DESTS.find( ( d ) => d === dest ) ?? null;
 }
 
 export function logWowFunnelEvent(
