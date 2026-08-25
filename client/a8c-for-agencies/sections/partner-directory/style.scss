@@ -3,6 +3,12 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
+.partner-directory__dashboard {
+	.hosting-dashboard-layout__body-wrapper {
+		max-width: 700px;
+	}
+}
+
 .partner-directory-agency-cta__footer {
 	display: flex;
 	align-items: center;
