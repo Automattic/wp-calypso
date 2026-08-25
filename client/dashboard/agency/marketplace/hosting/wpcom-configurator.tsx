@@ -1,20 +1,18 @@
 import {
-	Icon,
 	TextControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
-import { check } from '@wordpress/icons';
 import { useState } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
-import { getNextDiscountNudge, hostingBrands, wpcomHosting } from './mock-data';
+import { CheckGrid } from './content-sections';
+import { getNextDiscountNudge, getTieredPrice, hostingBrands, wpcomHosting } from './mock-data';
 
 const PRESET_QUANTITIES = [ 1, 3, 5 ];
 
@@ -39,6 +37,7 @@ export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConf
 	const isCustom = preset === 'custom';
 	const quantity = isCustom ? customQuantity : Number( preset );
 	const nudge = getNextDiscountNudge( wpcomHosting, quantity, term );
+	const currentDiscount = getTieredPrice( wpcomHosting, quantity, term ).discountPercent;
 
 	return (
 		<Card>
@@ -91,7 +90,7 @@ export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConf
 								} }
 							/>
 						) }
-						{ nudge && (
+						{ nudge ? (
 							<Text variant="muted">
 								{ sprintf(
 									/* translators: %1$d: number of sites to add, %2$d: discount percentage */
@@ -104,6 +103,14 @@ export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConf
 									Math.round( nudge.discountPercent * 100 )
 								) }
 							</Text>
+						) : (
+							<Text variant="muted">
+								{ sprintf(
+									/* translators: %d: discount percentage */
+									__( 'You’ve unlocked the maximum %d%% discount.' ),
+									Math.round( currentDiscount * 100 )
+								) }
+							</Text>
 						) }
 					</VStack>
 					<CardDivider />
@@ -111,14 +118,7 @@ export default function WpcomConfigurator( { term, onQuantityChange }: WpcomConf
 						<Heading level={ 3 } size={ 13 }>
 							{ __( 'What’s included' ) }
 						</Heading>
-						<div className="marketplace-hosting__includes">
-							{ WHATS_INCLUDED.map( ( feature ) => (
-								<HStack key={ feature } spacing={ 2 } justify="flex-start" alignment="center">
-									<Icon icon={ check } className="marketplace-hosting__check" />
-									<Text>{ feature }</Text>
-								</HStack>
-							) ) }
-						</div>
+						<CheckGrid items={ WHATS_INCLUDED } />
 					</VStack>
 				</VStack>
 			</CardBody>

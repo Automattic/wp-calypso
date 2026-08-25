@@ -45,8 +45,8 @@
 
 .marketplace-hosting__includes {
 	display: grid;
-	grid-template-columns: repeat( 2, 1fr );
-	gap: 8px 24px;
+	grid-template-columns: repeat( 2, minmax( 0, max-content ) );
+	gap: 8px 48px;
 
 	@media ( max-width: 660px ) {
 		grid-template-columns: 1fr;
