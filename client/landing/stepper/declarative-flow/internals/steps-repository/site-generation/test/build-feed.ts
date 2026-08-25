@@ -36,9 +36,7 @@ describe( 'createBuildWowFeedReader', () => {
 	} );
 
 	it( 'does not report empty deltas', async () => {
-		const fetchFeed = jest
-			.fn()
-			.mockResolvedValue( { run_id: 'run-a', latest_seq: 2, events: [] } );
+		const fetchFeed = jest.fn().mockResolvedValue( { run_id: 'run-a', latest_seq: 2, events: [] } );
 		const onDelta = jest.fn();
 		const reader = createBuildWowFeedReader( { siteIdentifier: '123', onDelta, fetchFeed } );
 
@@ -110,8 +108,9 @@ describe( 'createBuildWowFeedReader', () => {
 		// its events.
 		expect( fetchFeed ).toHaveBeenCalledWith( '123', 0, expect.any( AbortSignal ) );
 		expect(
-			onDelta.mock.calls.some( ( [ delta ] ) =>
-				delta.events?.some( ( event: { type: string } ) => event.type === 'identity' )
+			onDelta.mock.calls.some(
+				( [ delta ] ) =>
+					delta.events?.some( ( event: { type: string } ) => event.type === 'identity' )
 			)
 		).toBe( true );
 
@@ -121,9 +120,7 @@ describe( 'createBuildWowFeedReader', () => {
 	it( 'does not hot-loop on a pending seq the server cannot satisfy', async () => {
 		// The feed is cleared at `live`: status reported seq 5, but the feed
 		// endpoint now has nothing. One request, then wait for the next poll.
-		const fetchFeed = jest
-			.fn()
-			.mockResolvedValue( { run_id: '', latest_seq: 0, events: [] } );
+		const fetchFeed = jest.fn().mockResolvedValue( { run_id: '', latest_seq: 0, events: [] } );
 		const onDelta = jest.fn();
 		const reader = createBuildWowFeedReader( { siteIdentifier: '123', onDelta, fetchFeed } );
 

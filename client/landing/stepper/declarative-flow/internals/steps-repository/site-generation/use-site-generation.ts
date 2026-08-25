@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/utils/build-wow';
 import { createBuildWowFeedReader } from './build-feed';
-import { EMPTY_LIVE_BUILD_STATE, foldFeedDelta } from './build-feed-state';
 import { pollForBuildWowStatus } from './build-status-poller';
-import type { LiveBuildState } from './build-feed-state';
+import { logBuildWowFeedDelta } from './log-feed-delta';
 import type { BuildWowUi } from './build-status-poller';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 
@@ -22,8 +21,6 @@ export type SiteGenerationState = {
 	failureLabel?: string;
 	failureDetail?: string;
 	steps: SiteGenerationStep[];
-	/** Folded live-build feed snapshot; EMPTY_LIVE_BUILD_STATE until events arrive. */
-	liveBuild: LiveBuildState;
 	retryBuild: ( () => void ) | null;
 	isRetryingBuild: boolean;
 };
@@ -76,7 +73,6 @@ export function useSiteGeneration( {
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >;
 } ): SiteGenerationState {
 	const [ serverSteps, setServerSteps ] = useState< SiteGenerationStep[] | null >( null );
-	const [ liveBuild, setLiveBuild ] = useState< LiveBuildState >( EMPTY_LIVE_BUILD_STATE );
 	const [ fallbackStartedAt, setFallbackStartedAt ] = useState( Date.now );
 	const [ failure, setFailure ] = useState< GenerationFailure | null >( null );
 	const [ buildAttempt, setBuildAttempt ] = useState( 0 );
@@ -94,13 +90,12 @@ export function useSiteGeneration( {
 			GENERATION_TIMEOUT_MS
 		);
 		// Live-build feed: the status poll reports the newest feed sequence
-		// number, the reader fetches the event delta only when it advanced,
-		// and each delta folds into the snapshot the waiting screen renders.
+		// number, and the reader fetches the event delta only when it advanced.
+		// Nothing renders the events yet — they go to the console so the feed can
+		// be watched end to end while the waiting-screen UI is designed.
 		const feedReader = createBuildWowFeedReader( {
 			siteIdentifier,
-			onDelta: ( delta ) => {
-				setLiveBuild( ( previous ) => foldFeedDelta( previous, delta ) );
-			},
+			onDelta: logBuildWowFeedDelta,
 		} );
 		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
@@ -147,7 +142,6 @@ export function useSiteGeneration( {
 			await requestBuildWowSite( siteIdentifier, specId, graph );
 			setFallbackStartedAt( Date.now() );
 			setServerSteps( null );
-			setLiveBuild( EMPTY_LIVE_BUILD_STATE );
 			setFailure( null );
 			setBuildAttempt( ( attempt ) => attempt + 1 );
 		} catch ( error ) {
@@ -177,7 +171,6 @@ export function useSiteGeneration( {
 		failureReason,
 		failureLabel: failedUi?.label,
 		failureDetail: failedUi?.detail,
-		liveBuild,
 		steps:
 			serverSteps ??
 			steps.map( ( step, index ) => ( {
