@@ -10,6 +10,17 @@
 	}
 }
 
+.marketplace-hosting__option-grid {
+	display: grid;
+	grid-template-columns: repeat( 2, 1fr );
+	gap: 16px;
+	align-items: stretch;
+
+	@media ( max-width: 660px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
 .marketplace-hosting__selector-card {
 	cursor: pointer;
 
